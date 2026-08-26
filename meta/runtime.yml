@@ -2,6 +2,13 @@
 requires_ansible: ">=2.16.0"
 action_groups:
   all:
+    - cam_policy
+    - cam_policy_info
+    - cam_role
+    - cam_role_info
+    - cam_user
+    - cos_bucket
+    - cos_bucket_info
     - cvm_instance
     - cvm_instance_info
     - eip
@@ -17,3 +24,9 @@ action_groups:
     - subnet_info
     - vpc
     - vpc_info
+
+# Deprecation process: modules and plugins are deprecated by adding a
+# plugin_routing.deprecation entry for them (with removal_in and
+# warning_text). A deprecated plugin stays available for at least one
+# major release before it is removed in a later major release.
+plugin_routing: {}

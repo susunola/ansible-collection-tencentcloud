@@ -48,7 +48,8 @@ def tencentcloud_argument_spec():
         "role_arn": {"type": "str", "fallback": (env_fallback, ["TENCENTCLOUD_ROLE_ARN"])},
         "role_session_name": {"type": "str", "default": "ansible-tencentcloud"},
         "role_session_duration": {"type": "int", "default": 7200},
-        "region": {"type": "str", "required": True, "fallback": (env_fallback, ["TENCENTCLOUD_REGION"])},
+        "profile": {"type": "str", "fallback": (env_fallback, ["TENCENTCLOUD_PROFILE"])},
+        "region": {"type": "str", "fallback": (env_fallback, ["TENCENTCLOUD_REGION"])},
         "endpoint": {"type": "str"},
         "timeout": {"type": "int", "default": 60},
     }

@@ -8,10 +8,16 @@ class ModuleDocFragment(object):
     DOCUMENTATION = r'''
 options:
   secret_id:
-    description: Tencent Cloud API secret ID. Falls back to C(TENCENTCLOUD_SECRET_ID).
+    description:
+      - Tencent Cloud API secret ID.
+      - Falls back to C(TENCENTCLOUD_SECRET_ID), then to the selected
+        O(profile) section in C(~/.tencentcloud/default.configure).
     type: str
   secret_key:
-    description: Tencent Cloud API secret key. Falls back to C(TENCENTCLOUD_SECRET_KEY).
+    description:
+      - Tencent Cloud API secret key.
+      - Falls back to C(TENCENTCLOUD_SECRET_KEY), then to the selected
+        O(profile) section in C(~/.tencentcloud/default.configure).
     type: str
   token:
     description: Temporary credential token. Falls back to C(TENCENTCLOUD_TOKEN).
@@ -32,10 +38,26 @@ options:
     description: Validity of the temporary role credentials in seconds.
     type: int
     default: 7200
-  region:
-    description: Tencent Cloud region. Falls back to C(TENCENTCLOUD_REGION).
+  profile:
+    description:
+      - Name of the TCCLI profile section in
+        C(~/.tencentcloud/default.configure) to read credentials and region
+        from, for example C(default) or C(prod).
+      - A profile only supplies values not given as module parameters or
+        environment variables; precedence is parameter > environment
+        variable > profile section.
+      - Falls back to C(TENCENTCLOUD_PROFILE); when neither is set the
+        C(default) section is used.
     type: str
-    required: true
+    version_added: "0.5.0"
+  region:
+    description:
+      - Tencent Cloud region.
+      - Falls back to C(TENCENTCLOUD_REGION), then to the C(region) key of
+        the selected O(profile) section in
+        C(~/.tencentcloud/default.configure).
+      - Required unless one of those fallbacks provides it.
+    type: str
   endpoint:
     description:
       - Override the Tencent Cloud API endpoint.

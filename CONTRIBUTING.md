@@ -9,6 +9,12 @@ ansible-test units --docker default
 ansible-galaxy collection build
 ```
 
+## Becoming a maintainer
+
+Active contributors are welcome to become maintainers. See
+[`MAINTAINERS.md`](MAINTAINERS.md) for the current maintainers, their
+responsibilities, and how to nominate yourself.
+
 ## Releasing
 
 Releases are cut from tags and published by
@@ -17,14 +23,7 @@ Releases are cut from tags and published by
 1. Bump `version` in `galaxy.yml` and add changelog fragments for the
    changes under `changelogs/fragments/` (lint them with
    `antsibull-changelog lint`).
-2. Optionally fold the fragments into `changelogs/changelog.yaml` and
-   `CHANGELOG.rst` and commit the result:
-
-   ```bash
-   antsibull-changelog release --version X.Y.Z
-   ```
-
-3. Tag the release and push the tag:
+2. Tag the release and push the tag:
 
    ```bash
    git tag vX.Y.Z
@@ -32,7 +31,10 @@ Releases are cut from tags and published by
    ```
 
 The workflow runs the sanity/unit tests, lints the changelog fragments,
-fails if the tag does not match `galaxy.yml` `version`, builds the tarball,
-and creates a GitHub release with the tarball attached. Publishing to
+fails if the tag does not match `galaxy.yml` `version`, folds the
+fragments into `changelogs/changelog.yaml` and `changelogs/CHANGELOG.rst`
+with `antsibull-changelog release` and commits them back to `main`,
+builds the tarball, and creates a GitHub release with the tarball
+attached. Publishing to
 Ansible Galaxy additionally requires the `GALAXY_API_KEY` repository secret;
 without it the publish step is skipped with a warning.

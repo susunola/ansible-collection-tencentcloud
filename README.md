@@ -20,6 +20,10 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `eip` | Allocate, release and bind elastic IP addresses |
 | `key_pair` | Create or import SSH key pairs |
 | `cvm_instance` | Manage CVM instance lifecycle (present/absent/running/stopped) |
+| `cos_bucket` | Manage COS buckets (ACL, versioning, native tags) |
+| `cam_user` | Manage CAM sub-users |
+| `cam_role` | Manage CAM roles (trust policy, native role tags) |
+| `cam_policy` | Manage CAM custom policies |
 
 Read-only `_info` modules (return `changed=false`):
 
@@ -40,6 +44,9 @@ Read-only `_info` modules (return `changed=false`):
 | `mongodb_instance_info` | Query TencentDB for MongoDB instances with IDs |
 | `kms_key_info` | Query KMS keys (list all, or describe by key IDs) |
 | `dnspod_record_info` | Query DNSPod records for a domain |
+| `cos_bucket_info` | Describe one COS bucket or list all buckets in a region |
+| `cam_role_info` | Query CAM roles with IDs or keyword filters |
+| `cam_policy_info` | Query CAM policies with IDs or keyword filters |
 
 The modules from `clb_load_balancer_info` down are generated from SDK
 metadata by `scripts/generate_info_modules.py` (run with `--check` to
@@ -50,6 +57,8 @@ verify they are up to date).
 | Plugin | Type | Purpose |
 | --- | --- | --- |
 | `tencentcloud_cvm` | inventory | Dynamic inventory of CVM instances with constructed groups and caching |
+| `sts_caller_identity` | lookup | Return the current caller identity (Uin, AccountId, Arn) |
+| `ssm_parameter` | lookup | Read secrets from Tencent Cloud Secrets Manager (SSM) |
 
 ## Requirements
 
@@ -57,6 +66,7 @@ verify they are up to date).
 - Python 3.10 or newer
 - `tencentcloud-sdk-python` 3.0.1000 or newer
 - `tencentcloud-sdk-python-tag` 3.0.1000 or newer (only for tag reconciliation)
+- `cos-python-sdk-v5` 1.9.0 or newer (only for the `cos_*` modules)
 
 Once 0.4.0 is published on Ansible Galaxy, install with:
 
@@ -85,6 +95,19 @@ export TENCENTCLOUD_REGION='ap-guangzhou'
 Temporary credentials can also set `TENCENTCLOUD_TOKEN`. Never commit keys.
 Use `endpoint` for a private API endpoint or test double, and `timeout` to
 control the SDK request timeout.
+
+Credentials and region can also come from a TCCLI-style profile file at
+`~/.tencentcloud/default.configure`; select a section with `profile` (or
+`TENCENTCLOUD_PROFILE`, default `[default]`). Precedence is: module
+parameter > environment variable > profile file.
+
+```ini
+# ~/.tencentcloud/default.configure
+[default]
+secret_id = ...
+secret_key = ...
+region = ap-guangzhou
+```
 
 To operate through a CAM role instead of long-lived keys, set `role_arn`
 (or `TENCENTCLOUD_ROLE_ARN`); the modules exchange the base credentials for

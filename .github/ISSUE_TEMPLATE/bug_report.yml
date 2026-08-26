@@ -1,0 +1,74 @@
+name: Bug Report
+description: Report a bug in the tencentcloud.cloud collection
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill in the
+        fields below so we can reproduce the problem.
+
+        **Never paste real Tencent Cloud credentials** (secret IDs, secret
+        keys, tokens) into this form; redact them from any logs or output.
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: Please confirm you agree to follow the Ansible Community Code of Conduct.
+      options:
+        - label: I agree to follow the Ansible Community Code of Conduct.
+          required: true
+  - type: input
+    id: collection_version
+    attributes:
+      label: Collection version
+      description: Output of `ansible-galaxy collection list tencentcloud.cloud`.
+      placeholder: "0.4.0"
+    validations:
+      required: true
+  - type: input
+    id: ansible_core_version
+    attributes:
+      label: ansible-core version
+      description: Output of `ansible --version` (the `core` line).
+      placeholder: "2.18.1"
+    validations:
+      required: true
+  - type: input
+    id: sdk_version
+    attributes:
+      label: Tencent Cloud SDK version
+      description: Output of `pip show tencentcloud-sdk-python` (the `Version` line).
+      placeholder: "3.0.1200"
+    validations:
+      required: false
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: A short description of the problem and which module or plugin is affected.
+    validations:
+      required: true
+  - type: textarea
+    id: reproducer
+    attributes:
+      label: Minimal playbook
+      description: The smallest playbook or task that reproduces the issue.
+      render: yaml
+    validations:
+      required: true
+  - type: textarea
+    id: expected_results
+    attributes:
+      label: Expected results
+      description: What you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: actual_results
+    attributes:
+      label: Actual results
+      description: What actually happened. Include the full task output (with credentials redacted).
+      render: shell
+    validations:
+      required: true

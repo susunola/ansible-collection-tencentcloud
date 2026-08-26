@@ -1,2 +1,4 @@
 tencentcloud-sdk-python>=3.0.1000
 tencentcloud-sdk-python-tag>=3.0.1000
+# Only needed for the cos_* modules (qcloud_cos SDK; COS is not API 3.0).
+cos-python-sdk-v5>=1.9.0
