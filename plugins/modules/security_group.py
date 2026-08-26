@@ -147,7 +147,8 @@ def _load_tag():
 
 def build_describe_request(models, name, security_group_id):
     request = models.DescribeSecurityGroupsRequest()
-    request.Limit = 100
+    # The VPC API accepts Limit/Offset as strings only.
+    request.Limit = "100"
     if security_group_id:
         request.SecurityGroupIds = [security_group_id]
     if name:
@@ -210,7 +211,8 @@ def _create(module, client, models, name, description, project_id, tags):
     request = models.CreateSecurityGroupRequest()
     request.GroupName = name
     request.GroupDescription = description or ""
-    request.ProjectId = project_id
+    # The VPC API accepts ProjectId as a string only.
+    request.ProjectId = str(project_id)
     if tags:
         request.Tags = build_sdk_tags(models, tags)
     response = module.sdk_call(client.CreateSecurityGroup, request)
@@ -253,6 +255,66 @@ def run_module():
 
     try:
         current = find_security_group(module, client, models, name, security_group_id)
+
+        if state == "absent":
+            if current is None:
+                module.exit_json(changed=False, msg="Security group already absent")
+            diff = build_diff(current, None)
+            if module.check_mode:
+                module.exit_json(changed=True, diff=diff, msg="Would delete security group")
+            try:
+                _delete(module, client, models, current["SecurityGroupId"])
+            except Exception as exc:
+                if is_idempotent_success(exc):
+                    module.exit_json(changed=True, diff=diff, msg="Security group deleted")
+                raise
+            module.exit_json(changed=True, diff=diff, security_group=None, msg="Security group deleted")
+
+        # state == present
+        desired = {"name": name, "description": description or "", "tags": tags}
+        if current is None:
+            diff = build_diff(None, desired)
+            if module.check_mode:
+                module.exit_json(changed=True, diff=diff, msg="Would create security group")
+            created = _create(module, client, models, name, description, project_id, tags)
+            module.exit_json(changed=True, diff=diff, security_group=created, msg="Security group created")
+
+        group_id = current["SecurityGroupId"]
+        current_name = current.get("SecurityGroupName")
+        current_desc = current.get("SecurityGroupDesc")
+        current_tags = current.get("TagSet") or []
+
+        changes = []
+        if current_name != name:
+            changes.append("name")
+        if (description or "") != (current_desc or ""):
+            changes.append("description")
+        tags_equal, to_add, to_remove = compare_tags(tags, current_tags)
+        if not tags_equal:
+            changes.append("tags")
+
+        if not changes:
+            module.exit_json(changed=False, security_group=current, msg="Security group is up to date")
+
+        if module.check_mode:
+            module.exit_json(changed=True, diff=build_diff(current, desired), msg="Would update security group")
+
+        if "name" in changes or "description" in changes:
+            _update_attributes(module, client, models, group_id, name, description or "")
+        if not tags_equal:
+            tag_models, tag_client = _load_tag()
+            tag_client_instance = module.create_client(
+                tag_client.TagClient, "tag.tencentcloudapi.com"
+            )
+            _apply_tags(module, tag_client_instance, tag_models, group_id, to_add, to_remove)
+
+        updated = find_security_group(module, client, models, None, group_id)
+        module.exit_json(
+            changed=True,
+            diff=build_diff(current, desired),
+            security_group=updated,
+            msg="Security group updated",
+        )
     except Exception as exc:
         module.fail_json(
             msg="Tencent Cloud API request failed",
@@ -260,66 +322,6 @@ def run_module():
             error_code=getattr(exc, "get_code", lambda: None)(),
             request_id=getattr(exc, "get_request_id", lambda: None)(),
         )
-
-    if state == "absent":
-        if current is None:
-            module.exit_json(changed=False, msg="Security group already absent")
-        diff = build_diff(current, None)
-        if module.check_mode:
-            module.exit_json(changed=True, diff=diff, msg="Would delete security group")
-        try:
-            _delete(module, client, models, current["SecurityGroupId"])
-        except Exception as exc:
-            if is_idempotent_success(exc):
-                module.exit_json(changed=True, diff=diff, msg="Security group deleted")
-            raise
-        module.exit_json(changed=True, diff=diff, security_group=None, msg="Security group deleted")
-
-    # state == present
-    desired = {"name": name, "description": description or "", "tags": tags}
-    if current is None:
-        diff = build_diff(None, desired)
-        if module.check_mode:
-            module.exit_json(changed=True, diff=diff, msg="Would create security group")
-        created = _create(module, client, models, name, description, project_id, tags)
-        module.exit_json(changed=True, diff=diff, security_group=created, msg="Security group created")
-
-    group_id = current["SecurityGroupId"]
-    current_name = current.get("SecurityGroupName")
-    current_desc = current.get("SecurityGroupDesc")
-    current_tags = current.get("TagSet") or []
-
-    changes = []
-    if current_name != name:
-        changes.append("name")
-    if (description or "") != (current_desc or ""):
-        changes.append("description")
-    tags_equal, to_add, to_remove = compare_tags(tags, current_tags)
-    if not tags_equal:
-        changes.append("tags")
-
-    if not changes:
-        module.exit_json(changed=False, security_group=current, msg="Security group is up to date")
-
-    if module.check_mode:
-        module.exit_json(changed=True, diff=build_diff(current, desired), msg="Would update security group")
-
-    if "name" in changes or "description" in changes:
-        _update_attributes(module, client, models, group_id, name, description or "")
-    if not tags_equal:
-        tag_models, tag_client = _load_tag()
-        tag_client_instance = module.create_client(
-            tag_client.TagClient, "tag.tencentcloudapi.com"
-        )
-        _apply_tags(module, tag_client_instance, tag_models, group_id, to_add, to_remove)
-
-    updated = find_security_group(module, client, models, None, group_id)
-    module.exit_json(
-        changed=True,
-        diff=build_diff(current, desired),
-        security_group=updated,
-        msg="Security group updated",
-    )
 
 
 def main():
