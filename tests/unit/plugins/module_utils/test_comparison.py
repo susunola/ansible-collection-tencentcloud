@@ -1,5 +1,8 @@
 """Unit tests for resource diff computation."""
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import (
     build_diff,
     changed,

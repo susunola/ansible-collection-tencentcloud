@@ -1,5 +1,8 @@
 """Unit tests for the paginator."""
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.paging import Paginator
 
 

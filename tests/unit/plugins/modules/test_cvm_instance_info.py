@@ -1,3 +1,7 @@
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 from ansible_collections.tencentcloud.cloud.plugins.modules.cvm_instance_info import build_request
 
 
