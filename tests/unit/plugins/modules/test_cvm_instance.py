@@ -1,5 +1,7 @@
 """Unit tests for the cvm_instance write module helpers."""
 
+from __future__ import absolute_import, division, print_function
+__metaclass__ = type
 from ansible_collections.tencentcloud.cloud.plugins.modules.cvm_instance import (
     _InstanceGone,
     build_describe_request,

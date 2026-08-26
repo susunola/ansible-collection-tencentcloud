@@ -1,5 +1,7 @@
 """Unit tests for the security_group_rule write module helpers."""
 
+from __future__ import absolute_import, division, print_function
+__metaclass__ = type
 from ansible_collections.tencentcloud.cloud.plugins.modules.security_group_rule import (
     build_describe_request,
     build_policy_set,

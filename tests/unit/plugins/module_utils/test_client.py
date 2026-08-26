@@ -1,5 +1,7 @@
 """Unit tests for the unified SDK client factory (STS AssumeRole support)."""
 
+from __future__ import absolute_import, division, print_function
+__metaclass__ = type
 import pytest
 
 from ansible_collections.tencentcloud.cloud.plugins.module_utils import base, client

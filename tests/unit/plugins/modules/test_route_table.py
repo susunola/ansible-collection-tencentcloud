@@ -1,5 +1,7 @@
 """Unit tests for the route_table write module helpers."""
 
+from __future__ import absolute_import, division, print_function
+__metaclass__ = type
 from ansible_collections.tencentcloud.cloud.plugins.modules.route_table import (
     build_describe_request,
     diff_routes,
