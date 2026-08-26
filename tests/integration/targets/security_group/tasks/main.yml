@@ -1,0 +1,68 @@
+---
+- name: Create a security group
+  tencentcloud.cloud.security_group:
+    region: "{{ tencentcloud_region }}"
+    state: present
+    name: "ansible-sg-it-{{ 99999999 | random }}"
+    description: integration test security group
+    tags:
+      ansible_test: "true"
+  register: create_result
+
+- name: Creation reports changed
+  ansible.builtin.assert:
+    that:
+      - create_result is changed
+      - create_result.security_group.SecurityGroupId is defined
+
+- name: Create the same group again (idempotency)
+  tencentcloud.cloud.security_group:
+    region: "{{ tencentcloud_region }}"
+    state: present
+    name: "{{ create_result.security_group.SecurityGroupName }}"
+    description: integration test security group
+    tags:
+      ansible_test: "true"
+  register: second_run
+
+- name: Second run reports no change
+  ansible.builtin.assert:
+    that:
+      - second_run is not changed
+
+- name: Check mode must not modify anything
+  tencentcloud.cloud.security_group:
+    region: "{{ tencentcloud_region }}"
+    state: absent
+    name: "{{ create_result.security_group.SecurityGroupName }}"
+  check_mode: true
+  register: check_delete
+
+- name: Check mode predicts a change
+  ansible.builtin.assert:
+    that:
+      - check_delete is changed
+
+- name: Delete the security group
+  tencentcloud.cloud.security_group:
+    region: "{{ tencentcloud_region }}"
+    state: absent
+    name: "{{ create_result.security_group.SecurityGroupName }}"
+  register: delete_result
+
+- name: Deletion reports changed
+  ansible.builtin.assert:
+    that:
+      - delete_result is changed
+
+- name: Delete again (idempotency for absent)
+  tencentcloud.cloud.security_group:
+    region: "{{ tencentcloud_region }}"
+    state: absent
+    name: "{{ create_result.security_group.SecurityGroupName }}"
+  register: second_delete
+
+- name: Second delete reports no change
+  ansible.builtin.assert:
+    that:
+      - second_delete is not changed
