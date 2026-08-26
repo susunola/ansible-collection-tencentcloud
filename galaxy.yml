@@ -9,10 +9,10 @@ license:
   - Apache-2.0
 tags: [cloud, tencentcloud, infrastructure, cvm]
 dependencies: {}
-repository: https://github.com/tencentcloud/ansible-collection-tencentcloud
-documentation: https://github.com/tencentcloud/ansible-collection-tencentcloud/tree/main/docs
-homepage: https://github.com/tencentcloud/ansible-collection-tencentcloud
-issues: https://github.com/tencentcloud/ansible-collection-tencentcloud/issues
+repository: https://github.com/susunola/ansible-collection-tencentcloud
+documentation: https://github.com/susunola/ansible-collection-tencentcloud/tree/main/docs
+homepage: https://github.com/susunola/ansible-collection-tencentcloud
+issues: https://github.com/susunola/ansible-collection-tencentcloud/issues
 build_ignore:
   - .github
   - .gitignore
