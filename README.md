@@ -4,6 +4,14 @@
 initial release contains a read-only CVM instance information module and a
 shared SDK client foundation for future resource modules.
 
+## Included modules
+
+| Module | Purpose |
+| --- | --- |
+| `cvm_instance_info` | Query CVM instances with IDs or API filters |
+| `vpc_info` | Query VPCs with IDs or API filters |
+| `security_group_info` | Query security groups with IDs or API filters |
+
 ## Requirements
 
 - ansible-core 2.16 or newer
@@ -27,6 +35,8 @@ export TENCENTCLOUD_REGION='ap-guangzhou'
 ```
 
 Temporary credentials can also set `TENCENTCLOUD_TOKEN`. Never commit keys.
+Use `endpoint` for a private API endpoint or test double, and `timeout` to
+control the SDK request timeout.
 
 ## Example
 
@@ -43,6 +53,7 @@ Temporary credentials can also set `TENCENTCLOUD_TOKEN`. Never commit keys.
 ```
 
 See [`docs/roadmap.md`](docs/roadmap.md) for the suggested implementation order.
+Contributor conventions are in [`docs/development.md`](docs/development.md).
 
 ## Development
 

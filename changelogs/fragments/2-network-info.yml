@@ -1,0 +1,5 @@
+minor_changes:
+  - Added shared SDK endpoint and timeout configuration.
+  - Added VPC and security group information modules.
+bugfixes:
+  - Return Tencent Cloud API error codes and request IDs for troubleshooting.

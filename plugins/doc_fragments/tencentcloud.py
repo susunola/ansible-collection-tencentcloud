@@ -20,4 +20,13 @@ options:
     description: Tencent Cloud region. Falls back to C(TENCENTCLOUD_REGION).
     type: str
     required: true
+  endpoint:
+    description:
+      - Override the Tencent Cloud API endpoint.
+      - Intended for private endpoints, proxies, and integration tests.
+    type: str
+  timeout:
+    description: SDK HTTP request timeout in seconds.
+    type: int
+    default: 60
 '''

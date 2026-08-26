@@ -1,0 +1,20 @@
+---
+- name: Discover Tencent Cloud network resources
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Gather VPCs
+      tencentcloud.cloud.vpc_info:
+        region: "{{ tencentcloud_region | default('ap-guangzhou') }}"
+      register: vpc_result
+
+    - name: Gather security groups
+      tencentcloud.cloud.security_group_info:
+        region: "{{ tencentcloud_region | default('ap-guangzhou') }}"
+      register: security_group_result
+
+    - name: Show resource counts
+      ansible.builtin.debug:
+        msg:
+          vpcs: "{{ vpc_result.total_count }}"
+          security_groups: "{{ security_group_result.total_count }}"

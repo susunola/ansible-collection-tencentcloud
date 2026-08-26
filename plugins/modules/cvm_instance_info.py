@@ -51,7 +51,8 @@ total_count:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud import (
-    create_credential, sdk_call, tencentcloud_argument_spec,
+    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    tencentcloud_argument_spec,
 )
 
 
@@ -78,20 +79,28 @@ def run_module():
         "filters": {"type": "dict", "default": {}},
         "page_size": {"type": "int", "default": 100, "choices": [20, 50, 100]},
     })
-    module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True)
+    module = AnsibleModule(
+        argument_spec=argument_spec,
+        mutually_exclusive=[("instance_ids", "filters")],
+        supports_check_mode=True,
+    )
     try:
         from tencentcloud.cvm.v20170312 import cvm_client, models
     except ImportError:
         module.fail_json(msg="The tencentcloud-sdk-python package with CVM support is required.")
 
-    client = cvm_client.CvmClient(create_credential(module), module.params["region"])
+    client = cvm_client.CvmClient(
+        create_credential(module),
+        module.params["region"],
+        create_client_profile(module, "cvm.tencentcloudapi.com"),
+    )
     instances = []
     offset = 0
     total_count = 0
     while True:
         request = build_request(models, module.params["instance_ids"], module.params["filters"], offset, module.params["page_size"])
         response = sdk_call(module, client.DescribeInstances, request)
-        batch = [item._serialize(allow_none=True) for item in (response.InstanceSet or [])]
+        batch = [serialize_sdk_object(item) for item in (response.InstanceSet or [])]
         instances.extend(batch)
         total_count = response.TotalCount or 0
         offset += len(batch)
