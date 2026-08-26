@@ -7,3 +7,6 @@
 __pycache__/
 tests/output/
 .ansible/
+
+# ansible-test generated inventory
+tests/integration/inventory
