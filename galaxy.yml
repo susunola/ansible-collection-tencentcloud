@@ -3,11 +3,11 @@ name: cloud
 version: 0.3.0
 readme: README.md
 authors:
-  - Tencent Cloud Ansible Collection Contributors
+  - Tencent Cloud Ansible Collection Contributors (@susunola)
 description: Ansible modules and plugins for managing Tencent Cloud resources.
 license:
-  - Apache-2.0
-tags: [cloud, tencentcloud, infrastructure, cvm]
+  - GPL-3.0-or-later
+tags: [cloud, tencentcloud, infrastructure, security, networking, compute, cvm, vpc]
 dependencies: {}
 repository: https://github.com/susunola/ansible-collection-tencentcloud
 documentation: https://github.com/susunola/ansible-collection-tencentcloud/tree/main/docs
