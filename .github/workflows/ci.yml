@@ -3,15 +3,60 @@ on:
   pull_request:
   push:
     branches: [main]
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    inputs:
+      run_integration:
+        description: Run integration tests against a real Tencent Cloud account
+        type: boolean
+        default: false
+
 jobs:
   sanity:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ansible-core: "2.16.*"
+            python: "3.10"
+          - ansible-core: "2.17.*"
+            python: "3.11"
+          - ansible-core: "2.18.*"
+            python: "3.12"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "ansible-core==${{ matrix.ansible-core }}" pytest pytest-xdist yamllint
+      - name: Sanity tests
+        run: ansible-test sanity --color --python ${{ matrix.python }}
+      - name: Unit tests
+        run: ansible-test units --color --python ${{ matrix.python }}
+      - name: Build collection
+        run: ansible-galaxy collection build
+
+  integration:
+    runs-on: ubuntu-latest
+    if: >-
+      (github.event_name == 'workflow_dispatch' && inputs.run_integration) ||
+      (github.event_name == 'push' && secrets.TENCENTCLOUD_SECRET_ID != '')
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: pip install -r requirements-dev.txt
-      - run: ansible-test sanity --color --python 3.12
-      - run: ansible-test units --color --python 3.12
       - run: ansible-galaxy collection build
+      - run: ansible-galaxy collection install tencentcloud-cloud-*.tar.gz --force
+      - name: Run integration tests
+        env:
+          TENCENTCLOUD_SECRET_ID: ${{ secrets.TENCENTCLOUD_SECRET_ID }}
+          TENCENTCLOUD_SECRET_KEY: ${{ secrets.TENCENTCLOUD_SECRET_KEY }}
+          TENCENTCLOUD_REGION: ap-guangzhou
+        run: ansible-test integration security_group --color --python 3.12
