@@ -125,7 +125,7 @@ security_group:
 '''
 
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import build_diff
+from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
@@ -259,25 +259,25 @@ def run_module():
         if state == "absent":
             if current is None:
                 module.exit_json(changed=False, msg="Security group already absent")
-            diff = build_diff(current, None)
+            diff = maybe_diff(module, current, None)
             if module.check_mode:
-                module.exit_json(changed=True, diff=diff, msg="Would delete security group")
+                module.exit_json(changed=True, **(diff or {}), msg="Would delete security group")
             try:
                 _delete(module, client, models, current["SecurityGroupId"])
             except Exception as exc:
                 if is_idempotent_success(exc):
-                    module.exit_json(changed=True, diff=diff, msg="Security group deleted")
+                    module.exit_json(changed=True, **(diff or {}), msg="Security group deleted")
                 raise
-            module.exit_json(changed=True, diff=diff, security_group=None, msg="Security group deleted")
+            module.exit_json(changed=True, **(diff or {}), security_group=None, msg="Security group deleted")
 
         # state == present
         desired = {"name": name, "description": description or "", "tags": tags}
         if current is None:
-            diff = build_diff(None, desired)
+            diff = maybe_diff(module, None, desired)
             if module.check_mode:
-                module.exit_json(changed=True, diff=diff, msg="Would create security group")
+                module.exit_json(changed=True, **(diff or {}), msg="Would create security group")
             created = _create(module, client, models, name, description, project_id, tags)
-            module.exit_json(changed=True, diff=diff, security_group=created, msg="Security group created")
+            module.exit_json(changed=True, **(diff or {}), security_group=created, msg="Security group created")
 
         group_id = current["SecurityGroupId"]
         current_name = current.get("SecurityGroupName")
@@ -297,7 +297,7 @@ def run_module():
             module.exit_json(changed=False, security_group=current, msg="Security group is up to date")
 
         if module.check_mode:
-            module.exit_json(changed=True, diff=build_diff(current, desired), msg="Would update security group")
+            module.exit_json(changed=True, **(maybe_diff(module, current, desired) or {}), msg="Would update security group")
 
         if "name" in changes or "description" in changes:
             _update_attributes(module, client, models, group_id, name, description or "")
@@ -311,7 +311,7 @@ def run_module():
         updated = find_security_group(module, client, models, None, group_id)
         module.exit_json(
             changed=True,
-            diff=build_diff(current, desired),
+            **(maybe_diff(module, current, desired) or {}),
             security_group=updated,
             msg="Security group updated",
         )

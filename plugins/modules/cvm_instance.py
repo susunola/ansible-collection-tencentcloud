@@ -239,7 +239,7 @@ instance:
 '''
 
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import build_diff
+from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
@@ -527,17 +527,17 @@ def run_module():
         if current is None:
             module.exit_json(changed=False, msg="Instance already absent")
         target_id = current["InstanceId"]
-        diff = build_diff(current, None)
+        diff = maybe_diff(module, current, None)
         if module.check_mode:
-            module.exit_json(changed=True, diff=diff, msg="Would terminate instance")
+            module.exit_json(changed=True, **(diff or {}), msg="Would terminate instance")
         try:
             _delete(module, client, models, target_id)
             _wait_gone(module, client, models, target_id)
         except Exception as exc:
             if is_idempotent_success(exc):
-                module.exit_json(changed=True, diff=diff, msg="Instance terminated")
+                module.exit_json(changed=True, **(diff or {}), msg="Instance terminated")
             raise
-        module.exit_json(changed=True, diff=diff, instance=None, msg="Instance terminated")
+        module.exit_json(changed=True, **(diff or {}), instance=None, msg="Instance terminated")
 
     if state in ("running", "stopped"):
         if current is None:
@@ -556,13 +556,13 @@ def run_module():
                     msg="Instance is in transitional state %s; retry once it settles" % current_state,
                     instance=current,
                 )
-            diff = build_diff({"InstanceState": "STOPPED"}, {"InstanceState": "RUNNING"})
+            diff = maybe_diff(module, {"InstanceState": "STOPPED"}, {"InstanceState": "RUNNING"})
             if module.check_mode:
-                module.exit_json(changed=True, diff=diff, msg="Would start instance")
+                module.exit_json(changed=True, **(diff or {}), msg="Would start instance")
             _start(module, client, models, target_id)
             _wait_state(module, client, models, target_id, ["RUNNING"])
             updated = find_instance(module, client, models, target_id, None)
-            module.exit_json(changed=True, diff=diff, instance=updated, msg="Instance started")
+            module.exit_json(changed=True, **(diff or {}), instance=updated, msg="Instance started")
         # state == "stopped"
         if current_state == "STOPPED":
             module.exit_json(changed=False, instance=current, msg="Instance already stopped")
@@ -571,13 +571,13 @@ def run_module():
                 msg="Instance is in transitional state %s; retry once it settles" % current_state,
                 instance=current,
             )
-        diff = build_diff({"InstanceState": "RUNNING"}, {"InstanceState": "STOPPED"})
+        diff = maybe_diff(module, {"InstanceState": "RUNNING"}, {"InstanceState": "STOPPED"})
         if module.check_mode:
-            module.exit_json(changed=True, diff=diff, msg="Would stop instance")
+            module.exit_json(changed=True, **(diff or {}), msg="Would stop instance")
         _stop(module, client, models, target_id)
         _wait_state(module, client, models, target_id, ["STOPPED"])
         updated = find_instance(module, client, models, target_id, None)
-        module.exit_json(changed=True, diff=diff, instance=updated, msg="Instance stopped")
+        module.exit_json(changed=True, **(diff or {}), instance=updated, msg="Instance stopped")
 
     # state == present
     desired = _desired_state(module.params)
@@ -586,18 +586,18 @@ def run_module():
             module.fail_json(
                 msg="image_id and instance_type are required when creating an instance"
             )
-        diff = build_diff(None, desired)
+        diff = maybe_diff(module, None, desired)
         if module.check_mode:
-            module.exit_json(changed=True, diff=diff, msg="Would create instance")
+            module.exit_json(changed=True, **(diff or {}), msg="Would create instance")
         new_id = _create(module, client, models, module.params)
         if module.params["dry_run"]:
             module.exit_json(
-                changed=True, diff=diff, instance=None,
+                changed=True, **(diff or {}), instance=None,
                 msg="Dry run succeeded; no instance was created",
             )
         _wait_state(module, client, models, new_id, ["RUNNING"])
         created = find_instance(module, client, models, new_id, None)
-        module.exit_json(changed=True, diff=diff, instance=created, msg="Instance created")
+        module.exit_json(changed=True, **(diff or {}), instance=created, msg="Instance created")
 
     target_id = current["InstanceId"]
     drifted = immutable_drift(
@@ -629,9 +629,9 @@ def run_module():
     if not changes:
         module.exit_json(changed=False, instance=current, msg="Instance is up to date")
 
-    diff = build_diff(current, desired)
+    diff = maybe_diff(module, current, desired)
     if module.check_mode:
-        module.exit_json(changed=True, diff=diff, msg="Would update instance")
+        module.exit_json(changed=True, **(diff or {}), msg="Would update instance")
 
     if "instance_name" in changes or "security_group_ids" in changes:
         _update_attributes(
@@ -650,7 +650,7 @@ def run_module():
     updated = find_instance(module, client, models, target_id, None)
     module.exit_json(
         changed=True,
-        diff=diff,
+        **(diff or {}),
         instance=updated,
         msg="Instance updated",
     )

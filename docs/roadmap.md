@@ -21,9 +21,15 @@
 ## Next
 
 8. Enterprise reliability follow-up: CI version matrix, CAM least-privilege
-   policy examples, integration account cost guardrails, Galaxy publishing.
-9. Service expansion by real usage: CLB, TKE, COS, CDB, CAM/KMS, Monitor/CLS.
-10. Generated API coverage once handwritten conventions are stable.
+   policy examples, integration account cost guardrails, Galaxy publishing
+   (release workflow added; the first `v0.4.0` tag publishes once
+   `GALAXY_API_KEY` is configured).
+9. Service expansion by real usage: write modules for CLB, TKE, COS, CDB,
+   CAM/KMS, Monitor/CLS (read-only coverage for CLB, CDB, TKE, CBS, Redis,
+   MongoDB, KMS and DNSPod landed in 0.4.0).
+10. Generated API coverage: `scripts/generate_info_modules.py` generates
+    `*_info` modules from SDK metadata; extend the spec to more services and
+    eventually to write modules once handwritten conventions are stable.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

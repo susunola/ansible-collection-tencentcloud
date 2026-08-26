@@ -32,6 +32,18 @@ Read-only `_info` modules (return `changed=false`):
 | `security_group_info` | Query security groups with IDs or API filters |
 | `eip_info` | Query elastic IP addresses with IDs, IPs or API filters |
 | `key_pair_info` | Query SSH key pairs with IDs or API filters |
+| `clb_load_balancer_info` | Query CLB load balancers with IDs or API filters |
+| `cdb_instance_info` | Query TencentDB for MySQL instances with IDs |
+| `tke_cluster_info` | Query TKE clusters with IDs or API filters |
+| `cbs_disk_info` | Query CBS cloud disks with IDs or API filters |
+| `redis_instance_info` | Query TencentDB for Redis instances with IDs |
+| `mongodb_instance_info` | Query TencentDB for MongoDB instances with IDs |
+| `kms_key_info` | Query KMS keys (list all, or describe by key IDs) |
+| `dnspod_record_info` | Query DNSPod records for a domain |
+
+The modules from `clb_load_balancer_info` down are generated from SDK
+metadata by `scripts/generate_info_modules.py` (run with `--check` to
+verify they are up to date).
 
 ## Included plugins
 
@@ -46,7 +58,13 @@ Read-only `_info` modules (return `changed=false`):
 - `tencentcloud-sdk-python` 3.0.1000 or newer
 - `tencentcloud-sdk-python-tag` 3.0.1000 or newer (only for tag reconciliation)
 
-Install from source:
+Once 0.4.0 is published on Ansible Galaxy, install with:
+
+```bash
+ansible-galaxy collection install tencentcloud.cloud
+```
+
+Until then, install from source:
 
 ```bash
 python -m pip install -r requirements.txt

@@ -152,7 +152,7 @@ subnet:
 '''
 
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import build_diff
+from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
@@ -311,16 +311,16 @@ def run_module():
     if state == "absent":
         if current is None:
             module.exit_json(changed=False, msg="Subnet already absent")
-        diff = build_diff(current, None)
+        diff = maybe_diff(module, current, None)
         if module.check_mode:
-            module.exit_json(changed=True, diff=diff, msg="Would delete subnet")
+            module.exit_json(changed=True, **(diff or {}), msg="Would delete subnet")
         try:
             _delete(module, client, models, current["SubnetId"])
         except Exception as exc:
             if is_idempotent_success(exc):
-                module.exit_json(changed=True, diff=diff, msg="Subnet deleted")
+                module.exit_json(changed=True, **(diff or {}), msg="Subnet deleted")
             raise
-        module.exit_json(changed=True, diff=diff, subnet=None, msg="Subnet deleted")
+        module.exit_json(changed=True, **(diff or {}), subnet=None, msg="Subnet deleted")
 
     # state == present
     if current is None:
@@ -332,15 +332,15 @@ def run_module():
             module.fail_json(msg="zone is required when creating a subnet")
         desired = {"name": name, "vpc_id": vpc_id, "cidr_block": cidr_block,
                    "zone": zone, "enable_broadcast": enable_broadcast, "tags": tags}
-        diff = build_diff(None, desired)
+        diff = maybe_diff(module, None, desired)
         if module.check_mode:
-            module.exit_json(changed=True, diff=diff, msg="Would create subnet")
+            module.exit_json(changed=True, **(diff or {}), msg="Would create subnet")
         created = _create(module, client, models, vpc_id, name, cidr_block, zone, tags)
         if enable_broadcast is not None:
             # CreateSubnet does not accept a broadcast flag; apply it now.
             _update(module, client, models, created["SubnetId"], name, enable_broadcast)
             created = find_subnet(module, client, models, created["SubnetId"], None, None)
-        module.exit_json(changed=True, diff=diff, subnet=created, msg="Subnet created")
+        module.exit_json(changed=True, **(diff or {}), subnet=created, msg="Subnet created")
 
     subnet_id = current["SubnetId"]
     current_name = current.get("SubnetName")
@@ -377,7 +377,7 @@ def run_module():
         module.exit_json(changed=False, subnet=current, msg="Subnet is up to date")
 
     if module.check_mode:
-        module.exit_json(changed=True, diff=build_diff(current, desired), msg="Would update subnet")
+        module.exit_json(changed=True, **(maybe_diff(module, current, desired) or {}), msg="Would update subnet")
 
     if "name" in changes or "enable_broadcast" in changes:
         _update(module, client, models, subnet_id, name, enable_broadcast)
@@ -391,7 +391,7 @@ def run_module():
     updated = find_subnet(module, client, models, subnet_id, None, None)
     module.exit_json(
         changed=True,
-        diff=build_diff(current, desired),
+        **(maybe_diff(module, current, desired) or {}),
         subnet=updated,
         msg="Subnet updated",
     )

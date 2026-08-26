@@ -1,0 +1,29 @@
+major_changes:
+  - modules - all write modules now honor Ansible's diff mode (``--diff``),
+    emitting the before/after diff on real runs as well as in check mode.
+  - scripts - add ``scripts/generate_info_modules.py``, a re-runnable
+    generator that produces read-only ``*_info`` modules from SDK metadata
+    (``--check`` verifies the generated files are current).
+minor_changes:
+  - clb_load_balancer_info - add a generated read-only module querying CLB
+    load balancers with IDs or API filters.
+  - cdb_instance_info - add a generated read-only module querying TencentDB
+    for MySQL instances with IDs.
+  - tke_cluster_info - add a generated read-only module querying TKE clusters
+    with IDs or API filters.
+  - cbs_disk_info - add a generated read-only module querying CBS cloud disks
+    with IDs or API filters.
+  - redis_instance_info - add a generated read-only module querying TencentDB
+    for Redis instances with IDs.
+  - mongodb_instance_info - add a generated read-only module querying
+    TencentDB for MongoDB instances with IDs.
+  - kms_key_info - add a generated read-only module listing KMS keys or
+    describing them by key IDs.
+  - dnspod_record_info - add a generated read-only module listing DNSPod
+    records for a domain.
+  - tests - add run_module-level unit tests for every write module covering
+    create, idempotency, delete, check mode and diff mode through a shared
+    test harness.
+  - ci - add a release workflow that lints the changelog, verifies the tag
+    matches ``galaxy.yml``, builds the collection, creates a GitHub Release
+    and publishes to Ansible Galaxy on ``v*`` tags.

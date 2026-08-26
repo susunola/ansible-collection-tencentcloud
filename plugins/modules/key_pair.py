@@ -143,7 +143,7 @@ private_key:
 '''
 
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import build_diff
+from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
@@ -247,30 +247,30 @@ def run_module():
     if state == "absent":
         if current is None:
             module.exit_json(changed=False, msg="Key pair already absent")
-        diff = build_diff(current, None)
+        diff = maybe_diff(module, current, None)
         if module.check_mode:
-            module.exit_json(changed=True, diff=diff, msg="Would delete key pair")
+            module.exit_json(changed=True, **(diff or {}), msg="Would delete key pair")
         try:
             _delete(module, client, models, current["KeyId"])
         except Exception as exc:
             if is_idempotent_success(exc):
-                module.exit_json(changed=True, diff=diff, msg="Key pair deleted")
+                module.exit_json(changed=True, **(diff or {}), msg="Key pair deleted")
             raise
-        module.exit_json(changed=True, diff=diff, key_pair=None, msg="Key pair deleted")
+        module.exit_json(changed=True, **(diff or {}), key_pair=None, msg="Key pair deleted")
 
     # state == present
     desired = {"name": name, "project_id": project_id}
     if current is None:
-        diff = build_diff(None, desired)
+        diff = maybe_diff(module, None, desired)
         if module.check_mode:
-            module.exit_json(changed=True, diff=diff, msg="Would create key pair")
+            module.exit_json(changed=True, **(diff or {}), msg="Would create key pair")
         if public_key:
             new_key_id = _import(module, client, models, name, project_id, public_key)
             created = find_key_pair(module, client, models, None, new_key_id)
-            module.exit_json(changed=True, diff=diff, key_pair=created, msg="Key pair imported")
+            module.exit_json(changed=True, **(diff or {}), key_pair=created, msg="Key pair imported")
         created, private_key = _create(module, client, models, name, project_id)
         module.exit_json(
-            changed=True, diff=diff, key_pair=created, private_key=private_key,
+            changed=True, **(diff or {}), key_pair=created, private_key=private_key,
             msg="Key pair created",
         )
 

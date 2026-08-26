@@ -1,0 +1,86 @@
+name: Release
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ansible_collections/tencentcloud/cloud
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: ansible_collections/tencentcloud/cloud
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "ansible-core==2.18.*" pytest pytest-xdist yamllint antsibull-changelog
+      - name: Lint changelog fragments
+        run: antsibull-changelog lint
+      - name: Sanity tests
+        run: ansible-test sanity --color --python 3.12
+      - name: Unit tests
+        run: ansible-test units --color --python 3.12
+      - name: Verify tag matches galaxy.yml version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          galaxy_version="$(python -c "import yaml; print(yaml.safe_load(open('galaxy.yml'))['version'])")"
+          if [ "$tag" != "$galaxy_version" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match galaxy.yml version ${galaxy_version}"
+            exit 1
+          fi
+          echo "Tag ${GITHUB_REF_NAME} matches galaxy.yml version ${galaxy_version}"
+      - name: Build collection
+        run: ansible-galaxy collection build
+      - name: Upload collection tarball
+        uses: actions/upload-artifact@v4
+        with:
+          name: collection-tarball
+          path: ansible_collections/tencentcloud/cloud/tencentcloud-cloud-*.tar.gz
+          if-no-files-found: error
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ansible_collections/tencentcloud/cloud
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: ansible_collections/tencentcloud/cloud
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install ansible-core
+        run: python -m pip install "ansible-core==2.18.*"
+      - name: Download collection tarball
+        uses: actions/download-artifact@v4
+        with:
+          name: collection-tarball
+          path: ansible_collections/tencentcloud/cloud
+      - name: Check Galaxy API key
+        env:
+          GALAXY_API_KEY: ${{ secrets.GALAXY_API_KEY }}
+        run: |
+          if [ -n "$GALAXY_API_KEY" ]; then
+            echo "HAS_KEY=true" >> "$GITHUB_ENV"
+          else
+            echo "HAS_KEY=false" >> "$GITHUB_ENV"
+            echo "::warning::GALAXY_API_KEY secret is not set; skipping Galaxy publish."
+          fi
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "${{ github.ref_name }}" --generate-notes --verify-tag tencentcloud-cloud-*.tar.gz
+      - name: Publish to Ansible Galaxy
+        if: env.HAS_KEY == 'true'
+        env:
+          GALAXY_API_KEY: ${{ secrets.GALAXY_API_KEY }}
+        run: ansible-galaxy collection publish tencentcloud-cloud-*.tar.gz --api-key "$GALAXY_API_KEY"

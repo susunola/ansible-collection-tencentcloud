@@ -37,6 +37,31 @@ def build_diff(before, after):
     return {"before": before, "after": after}
 
 
+def maybe_diff(module, before, after):
+    """Return ``exit_json`` keyword arguments carrying a resource diff.
+
+    Ansible surfaces a module's ``diff`` result in two situations: check mode
+    (where the diff *is* the preview of what would change) and runs with
+    ``--diff`` (``module._diff``). In a plain run the diff would only inflate
+    the result payload, so it is omitted. The convention mirrors
+    ``amazon.aws``.
+
+    Use with ``or {}`` and keyword unpacking so the ``diff`` key is left out
+    of the result entirely when no diff is wanted::
+
+        module.exit_json(changed=True, **(maybe_diff(module, before, after) or {}))
+
+    :param module: the running module (reads ``check_mode`` and ``_diff``).
+    :param before: current remote state (dict) or ``None`` when absent.
+    :param after: desired state (dict) or ``None`` when absent.
+    :returns: ``{"diff": build_diff(before, after)}`` in check mode or with
+        ``--diff`` active, otherwise ``None``.
+    """
+    if module.check_mode or getattr(module, "_diff", False):
+        return {"diff": build_diff(before, after)}
+    return None
+
+
 def changed(before, after, ignore_keys=()):
     """Return True when the desired state differs from the current state.
 

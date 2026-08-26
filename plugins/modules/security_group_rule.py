@@ -185,7 +185,7 @@ rules:
 '''
 
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import build_diff
+from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
@@ -396,14 +396,15 @@ def run_module():
         )
 
     after_rules = desired if purge else current + to_create
-    diff = build_diff(
+    diff = maybe_diff(
+        module,
         {"security_group_id": security_group_id, "rules": current},
         {"security_group_id": security_group_id, "rules": after_rules},
     )
     if module.check_mode:
         module.exit_json(
             changed=True,
-            diff=diff,
+            **(diff or {}),
             security_group_id=security_group_id,
             msg="Would reconcile security group rules",
         )
@@ -416,7 +417,7 @@ def run_module():
     updated = find_rules(module, client, models, security_group_id)
     module.exit_json(
         changed=True,
-        diff=diff,
+        **(diff or {}),
         security_group_id=security_group_id,
         rules=updated,
         msg="Security group rules reconciled",

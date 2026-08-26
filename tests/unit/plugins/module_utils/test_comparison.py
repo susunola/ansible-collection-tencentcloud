@@ -6,7 +6,15 @@ __metaclass__ = type
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import (
     build_diff,
     changed,
+    maybe_diff,
 )
+
+
+class FakeModule(object):
+    def __init__(self, check_mode=False, diff=False):
+        self.check_mode = check_mode
+        if diff is not None:
+            self._diff = diff
 
 
 def test_build_diff_create():
@@ -50,3 +58,21 @@ def test_changed_absent_vs_present():
 
 def test_changed_normalizes_empty_containers():
     assert not changed({"tags": {}}, {"tags": None})
+
+
+def test_maybe_diff_plain_run_returns_none():
+    assert maybe_diff(FakeModule(), {"a": 1}, {"a": 2}) is None
+
+
+def test_maybe_diff_check_mode_returns_diff():
+    diff = maybe_diff(FakeModule(check_mode=True), {"a": 1}, {"a": 2})
+    assert diff == {"diff": {"before": {"a": 1}, "after": {"a": 2}}}
+
+
+def test_maybe_diff_diff_mode_returns_diff():
+    diff = maybe_diff(FakeModule(diff=True), None, {"a": 1})
+    assert diff == {"diff": {"before": None, "after": {"a": 1}}}
+
+
+def test_maybe_diff_tolerates_missing_diff_attribute():
+    assert maybe_diff(FakeModule(diff=None), {"a": 1}, {"a": 2}) is None

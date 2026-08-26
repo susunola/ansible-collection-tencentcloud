@@ -183,7 +183,7 @@ route_table:
 '''
 
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import build_diff
+from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
@@ -415,31 +415,31 @@ def run_module():
     if state == "absent":
         if current is None:
             module.exit_json(changed=False, msg="Route table already absent")
-        diff = build_diff(current, None)
+        diff = maybe_diff(module, current, None)
         if module.check_mode:
-            module.exit_json(changed=True, diff=diff, msg="Would delete route table")
+            module.exit_json(changed=True, **(diff or {}), msg="Would delete route table")
         try:
             _delete(module, client, models, current["RouteTableId"])
         except Exception as exc:
             if is_idempotent_success(exc):
-                module.exit_json(changed=True, diff=diff, msg="Route table deleted")
+                module.exit_json(changed=True, **(diff or {}), msg="Route table deleted")
             raise
-        module.exit_json(changed=True, diff=diff, route_table=None, msg="Route table deleted")
+        module.exit_json(changed=True, **(diff or {}), route_table=None, msg="Route table deleted")
 
     # state == present
     desired = {"name": name, "routes": routes, "tags": tags}
     if current is None:
         if not vpc_id:
             module.fail_json(msg="vpc_id is required when creating a route table")
-        diff = build_diff(None, desired)
+        diff = maybe_diff(module, None, desired)
         if module.check_mode:
-            module.exit_json(changed=True, diff=diff, msg="Would create route table")
+            module.exit_json(changed=True, **(diff or {}), msg="Would create route table")
         created = _create(module, client, models, vpc_id, name, tags)
         if routes:
             to_add, _to_remove = diff_routes(routes, [])
             _apply_routes(module, client, models, created["RouteTableId"], to_add, [])
             created = find_route_table(module, client, models, created["RouteTableId"], None, None)
-        module.exit_json(changed=True, diff=diff, route_table=created, msg="Route table created")
+        module.exit_json(changed=True, **(diff or {}), route_table=created, msg="Route table created")
 
     table_id = current["RouteTableId"]
     current_name = current.get("RouteTableName")
@@ -462,7 +462,7 @@ def run_module():
         module.exit_json(changed=False, route_table=current, msg="Route table is up to date")
 
     if module.check_mode:
-        module.exit_json(changed=True, diff=build_diff(current, desired), msg="Would update route table")
+        module.exit_json(changed=True, **(maybe_diff(module, current, desired) or {}), msg="Would update route table")
 
     if "name" in changes:
         _update_name(module, client, models, table_id, name)
@@ -478,7 +478,7 @@ def run_module():
     updated = find_route_table(module, client, models, table_id, None, None)
     module.exit_json(
         changed=True,
-        diff=build_diff(current, desired),
+        **(maybe_diff(module, current, desired) or {}),
         route_table=updated,
         msg="Route table updated",
     )

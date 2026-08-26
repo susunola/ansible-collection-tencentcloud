@@ -160,7 +160,7 @@ eip:
 '''
 
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import build_diff
+from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
@@ -335,17 +335,17 @@ def run_module():
     if state == "absent":
         if current is None:
             module.exit_json(changed=False, msg="Address already absent")
-        diff = build_diff(current, None)
+        diff = maybe_diff(module, current, None)
         if module.check_mode:
-            module.exit_json(changed=True, diff=diff, msg="Would release address")
+            module.exit_json(changed=True, **(diff or {}), msg="Would release address")
         bound = bool(current.get("InstanceId"))
         try:
             _delete(module, client, models, current["AddressId"], bound)
         except Exception as exc:
             if is_idempotent_success(exc):
-                module.exit_json(changed=True, diff=diff, msg="Address released")
+                module.exit_json(changed=True, **(diff or {}), msg="Address released")
             raise
-        module.exit_json(changed=True, diff=diff, eip=None, msg="Address released")
+        module.exit_json(changed=True, **(diff or {}), eip=None, msg="Address released")
 
     # state == present
     desired = {
@@ -356,16 +356,16 @@ def run_module():
         "tags": tags,
     }
     if current is None:
-        diff = build_diff(None, desired)
+        diff = maybe_diff(module, None, desired)
         if module.check_mode:
-            module.exit_json(changed=True, diff=diff, msg="Would allocate address")
+            module.exit_json(changed=True, **(diff or {}), msg="Would allocate address")
         address_id = _create(
             module, client, models, name, internet_charge_type, internet_max_bandwidth_out, tags
         )
         if instance_id:
             _associate(module, client, models, address_id, instance_id)
         created = find_address(module, client, models, address_id, None, None)
-        module.exit_json(changed=True, diff=diff, eip=created, msg="Address allocated")
+        module.exit_json(changed=True, **(diff or {}), eip=created, msg="Address allocated")
 
     address_id = current["AddressId"]
     current_name = current.get("AddressName")
@@ -385,7 +385,7 @@ def run_module():
         module.exit_json(changed=False, eip=current, msg="Address is up to date")
 
     if module.check_mode:
-        module.exit_json(changed=True, diff=build_diff(current, desired), msg="Would update address")
+        module.exit_json(changed=True, **(maybe_diff(module, current, desired) or {}), msg="Would update address")
 
     if "name" in changes:
         _update_name(module, client, models, address_id, name)
@@ -404,7 +404,7 @@ def run_module():
     updated = find_address(module, client, models, address_id, None, None)
     module.exit_json(
         changed=True,
-        diff=build_diff(current, desired),
+        **(maybe_diff(module, current, desired) or {}),
         eip=updated,
         msg="Address updated",
     )

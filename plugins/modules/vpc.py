@@ -143,7 +143,7 @@ vpc:
 '''
 
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import build_diff
+from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
@@ -295,16 +295,16 @@ def run_module():
     if state == "absent":
         if current is None:
             module.exit_json(changed=False, msg="VPC already absent")
-        diff = build_diff(current, None)
+        diff = maybe_diff(module, current, None)
         if module.check_mode:
-            module.exit_json(changed=True, diff=diff, msg="Would delete VPC")
+            module.exit_json(changed=True, **(diff or {}), msg="Would delete VPC")
         try:
             _delete(module, client, models, current["VpcId"])
         except Exception as exc:
             if is_idempotent_success(exc):
-                module.exit_json(changed=True, diff=diff, msg="VPC deleted")
+                module.exit_json(changed=True, **(diff or {}), msg="VPC deleted")
             raise
-        module.exit_json(changed=True, diff=diff, vpc=None, msg="VPC deleted")
+        module.exit_json(changed=True, **(diff or {}), vpc=None, msg="VPC deleted")
 
     # state == present
     desired = {"name": name, "dns_servers": dns_servers, "domain_name": domain_name, "tags": tags}
@@ -312,11 +312,11 @@ def run_module():
         if not cidr_block:
             module.fail_json(msg="cidr_block is required when creating a VPC")
         desired["cidr_block"] = cidr_block
-        diff = build_diff(None, desired)
+        diff = maybe_diff(module, None, desired)
         if module.check_mode:
-            module.exit_json(changed=True, diff=diff, msg="Would create VPC")
+            module.exit_json(changed=True, **(diff or {}), msg="Would create VPC")
         created = _create(module, client, models, name, cidr_block, dns_servers, domain_name, tags)
-        module.exit_json(changed=True, diff=diff, vpc=created, msg="VPC created")
+        module.exit_json(changed=True, **(diff or {}), vpc=created, msg="VPC created")
 
     current_vpc_id = current["VpcId"]
     current_name = current.get("VpcName")
@@ -342,7 +342,7 @@ def run_module():
         module.exit_json(changed=False, vpc=current, msg="VPC is up to date")
 
     if module.check_mode:
-        module.exit_json(changed=True, diff=build_diff(current, desired), msg="Would update VPC")
+        module.exit_json(changed=True, **(maybe_diff(module, current, desired) or {}), msg="Would update VPC")
 
     if any(key in changes for key in ("name", "dns_servers", "domain_name")):
         # ModifyVpcAttribute rewrites all three attributes; pass the current
@@ -360,7 +360,7 @@ def run_module():
     updated = find_vpc(module, client, models, None, current_vpc_id)
     module.exit_json(
         changed=True,
-        diff=build_diff(current, desired),
+        **(maybe_diff(module, current, desired) or {}),
         vpc=updated,
         msg="VPC updated",
     )
