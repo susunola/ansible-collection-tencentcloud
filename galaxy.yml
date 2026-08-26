@@ -1,6 +1,6 @@
 namespace: tencentcloud
 name: cloud
-version: 0.3.0
+version: 0.4.0
 readme: README.md
 authors:
   - Tencent Cloud Ansible Collection Contributors (@susunola)
@@ -16,5 +16,8 @@ issues: https://github.com/susunola/ansible-collection-tencentcloud/issues
 build_ignore:
   - .github
   - .gitignore
+  - .venv
   - tests
   - '*.tar.gz'
+  - '*.pyc'
+  - __pycache__

@@ -151,7 +151,10 @@ def build_describe_request(models, name, security_group_id):
     if security_group_id:
         request.SecurityGroupIds = [security_group_id]
     if name:
-        request.Filters = [models.Filter(Name="security-group-name", Values=[name])]
+        name_filter = models.Filter()
+        name_filter.Name = "security-group-name"
+        name_filter.Values = [name]
+        request.Filters = [name_filter]
     return request
 
 

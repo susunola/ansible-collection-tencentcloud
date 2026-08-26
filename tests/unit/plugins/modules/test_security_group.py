@@ -10,9 +10,7 @@ from ansible_collections.tencentcloud.cloud.plugins.modules.security_group impor
 
 
 class FakeFilter(object):
-    def __init__(self, **kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
+    pass
 
 
 class FakeRequest(object):

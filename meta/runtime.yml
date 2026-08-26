@@ -1,2 +1,19 @@
 ---
 requires_ansible: ">=2.16.0"
+action_groups:
+  all:
+    - cvm_instance
+    - cvm_instance_info
+    - eip
+    - eip_info
+    - key_pair
+    - key_pair_info
+    - route_table
+    - route_table_info
+    - security_group
+    - security_group_info
+    - security_group_rule
+    - subnet
+    - subnet_info
+    - vpc
+    - vpc_info

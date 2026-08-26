@@ -84,4 +84,4 @@ jobs:
           TENCENTCLOUD_SECRET_ID: ${{ secrets.TENCENTCLOUD_SECRET_ID }}
           TENCENTCLOUD_SECRET_KEY: ${{ secrets.TENCENTCLOUD_SECRET_KEY }}
           TENCENTCLOUD_REGION: ap-guangzhou
-        run: ansible-test integration security_group --color --python 3.12
+        run: ansible-test integration security_group network --color --python 3.12

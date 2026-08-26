@@ -34,6 +34,10 @@ def create_credential(module):
 
     Supports secret id/key plus an optional temporary token. Parameter and
     environment-variable fallbacks are defined in the shared argument spec.
+
+    When ``role_arn`` is set, the long-lived credentials are first exchanged
+    for temporary ones via the STS ``AssumeRole`` API, and the returned
+    credential carries the temporary secret id, secret key and token.
     """
     require_sdk(module)
     secret_id = module.params.get("secret_id")
@@ -42,7 +46,56 @@ def create_credential(module):
         module.fail_json(
             msg="Set secret_id and secret_key, or their TENCENTCLOUD_* environment variables."
         )
-    return tc_credential.Credential(secret_id, secret_key, module.params.get("token"))
+    credential = tc_credential.Credential(secret_id, secret_key, module.params.get("token"))
+    if not module.params.get("role_arn"):
+        return credential
+    return assume_role_credential(module, credential)
+
+
+def build_assume_role_request(models, role_arn, role_session_name, role_session_duration):
+    """Build an STS AssumeRole request from module parameters."""
+    request = models.AssumeRoleRequest()
+    request.RoleArn = role_arn
+    request.RoleSessionName = role_session_name
+    request.DurationSeconds = role_session_duration
+    return request
+
+
+def _load_sts():
+    from tencentcloud.sts.v20180813 import models, sts_client
+    return models, sts_client
+
+
+def _assume_role(module, base_credential):
+    """Call STS AssumeRole and return the raw API response.
+
+    Kept as a separate function so unit tests can monkeypatch it (or the
+    client factory inside it) without importing the real SDK.
+    """
+    models, sts_client = _load_sts()
+    sts = sts_client.StsClient(
+        base_credential,
+        module.params.get("region"),
+        create_client_profile(module, "sts.tencentcloudapi.com"),
+    )
+    request = build_assume_role_request(
+        models,
+        module.params["role_arn"],
+        module.params.get("role_session_name"),
+        module.params.get("role_session_duration"),
+    )
+    return sts.AssumeRole(request)
+
+
+def assume_role_credential(module, base_credential):
+    """Exchange a base credential for temporary role credentials via STS."""
+    response = _assume_role(module, base_credential)
+    credentials = response.Credentials
+    return tc_credential.Credential(
+        credentials.TmpSecretId,
+        credentials.TmpSecretKey,
+        credentials.Token,
+    )
 
 
 def create_client_profile(module, default_endpoint):

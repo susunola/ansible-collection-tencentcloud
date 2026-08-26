@@ -1,0 +1,199 @@
+---
+- name: Network closure modules end-to-end (vpc, subnet, route_table, security_group_rule, eip)
+  vars:
+    region: "{{ lookup('ansible.builtin.env', 'TENCENTCLOUD_REGION') | default('ap-guangzhou', true) }}"
+    zone: "{{ lookup('ansible.builtin.env', 'TENCENTCLOUD_ZONE') | default('ap-guangzhou-1', true) }}"
+    run_id: "{{ 99999999 | random }}"
+    vpc_name: "ansible-net-it-{{ 99999999 | random }}"
+  module_defaults:
+    group/tencentcloud.cloud.all:
+      region: "{{ region }}"
+  block:
+    - name: Create a VPC
+      tencentcloud.cloud.vpc:
+        state: present
+        name: "{{ vpc_name }}"
+        cidr_block: 10.99.0.0/16
+        tags:
+          ansible_test: "true"
+      register: vpc_create
+
+    - name: VPC creation reports changed
+      ansible.builtin.assert:
+        that:
+          - vpc_create is changed
+          - vpc_create.vpc.VpcId is defined
+
+    - name: Create the same VPC again (idempotency)
+      tencentcloud.cloud.vpc:
+        state: present
+        name: "{{ vpc_name }}"
+        cidr_block: 10.99.0.0/16
+        tags:
+          ansible_test: "true"
+      register: vpc_second
+
+    - name: Second VPC run reports no change
+      ansible.builtin.assert:
+        that:
+          - vpc_second is not changed
+
+    - name: Create a subnet in the VPC
+      tencentcloud.cloud.subnet:
+        state: present
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        name: "ansible-subnet-it-{{ run_id }}"
+        cidr_block: 10.99.1.0/24
+        zone: "{{ zone }}"
+      register: subnet_create
+
+    - name: Subnet creation reports changed
+      ansible.builtin.assert:
+        that:
+          - subnet_create is changed
+          - subnet_create.subnet.SubnetId is defined
+
+    - name: Create the same subnet again (idempotency)
+      tencentcloud.cloud.subnet:
+        state: present
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        name: "ansible-subnet-it-{{ run_id }}"
+        cidr_block: 10.99.1.0/24
+        zone: "{{ zone }}"
+      register: subnet_second
+
+    - name: Second subnet run reports no change
+      ansible.builtin.assert:
+        that:
+          - subnet_second is not changed
+
+    - name: subnet_info finds the subnet
+      tencentcloud.cloud.subnet_info:
+        filters:
+          vpc-id: ["{{ vpc_create.vpc.VpcId }}"]
+      register: subnet_query
+
+    - name: subnet_info returns the created subnet
+      ansible.builtin.assert:
+        that:
+          - subnet_query.subnets | length >= 1
+
+    - name: Create a route table with one user route
+      tencentcloud.cloud.route_table:
+        state: present
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        name: "ansible-rtb-it-{{ run_id }}"
+      register: rtb_create
+
+    - name: Route table creation reports changed
+      ansible.builtin.assert:
+        that:
+          - rtb_create is changed
+
+    - name: Create the same route table again (idempotency)
+      tencentcloud.cloud.route_table:
+        state: present
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        name: "ansible-rtb-it-{{ run_id }}"
+      register: rtb_second
+
+    - name: Second route table run reports no change
+      ansible.builtin.assert:
+        that:
+          - rtb_second is not changed
+
+    - name: Create a security group for the rule test
+      tencentcloud.cloud.security_group:
+        state: present
+        name: "ansible-sgr-it-{{ run_id }}"
+        description: rule integration test
+      register: sg_create
+
+    - name: Reconcile ingress rules
+      tencentcloud.cloud.security_group_rule:
+        security_group_id: "{{ sg_create.security_group.SecurityGroupId }}"
+        rules:
+          - protocol: TCP
+            port: "443"
+            cidr_block: 0.0.0.0/0
+            action: ACCEPT
+            policy_description: https
+      register: rules_create
+
+    - name: Rule reconciliation reports changed
+      ansible.builtin.assert:
+        that:
+          - rules_create is changed
+
+    - name: Reconcile the same rules again (idempotency)
+      tencentcloud.cloud.security_group_rule:
+        security_group_id: "{{ sg_create.security_group.SecurityGroupId }}"
+        rules:
+          - protocol: TCP
+            port: "443"
+            cidr_block: 0.0.0.0/0
+            action: ACCEPT
+            policy_description: https
+      register: rules_second
+
+    - name: Second rule reconciliation reports no change
+      ansible.builtin.assert:
+        that:
+          - rules_second is not changed
+
+    - name: Allocate an EIP
+      tencentcloud.cloud.eip:
+        state: present
+        name: "ansible-eip-it-{{ run_id }}"
+      register: eip_create
+
+    - name: EIP allocation reports changed
+      ansible.builtin.assert:
+        that:
+          - eip_create is changed
+          - eip_create.eip.AddressId is defined
+
+    - name: eip_info finds the address
+      tencentcloud.cloud.eip_info:
+        address_ids: ["{{ eip_create.eip.AddressId }}"]
+      register: eip_query
+
+    - name: eip_info returns exactly one address
+      ansible.builtin.assert:
+        that:
+          - eip_query.addresses | length == 1
+
+  always:
+    - name: Release the EIP
+      tencentcloud.cloud.eip:
+        state: absent
+        eip_id: "{{ eip_create.eip.AddressId }}"
+      when: eip_create is defined and eip_create.eip is defined
+      ignore_errors: true
+
+    - name: Delete the security group
+      tencentcloud.cloud.security_group:
+        state: absent
+        name: "ansible-sgr-it-{{ run_id | default('') }}"
+      ignore_errors: true
+
+    - name: Delete the route table
+      tencentcloud.cloud.route_table:
+        state: absent
+        route_table_id: "{{ rtb_create.route_table.RouteTableId }}"
+      when: rtb_create is defined and rtb_create.route_table is defined
+      ignore_errors: true
+
+    - name: Delete the subnet
+      tencentcloud.cloud.subnet:
+        state: absent
+        subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+      when: subnet_create is defined and subnet_create.subnet is defined
+      ignore_errors: true
+
+    - name: Delete the VPC
+      tencentcloud.cloud.vpc:
+        state: absent
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+      when: vpc_create is defined and vpc_create.vpc is defined
+      ignore_errors: true
