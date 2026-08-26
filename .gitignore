@@ -1,0 +1,8 @@
+*.py[cod]
+*.retry
+*.tar.gz
+.DS_Store
+.pytest_cache/
+.venv/
+__pycache__/
+tests/output/

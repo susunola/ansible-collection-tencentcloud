@@ -1,0 +1,108 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
+DOCUMENTATION = r'''
+---
+module: cvm_instance_info
+short_description: Gather information about Tencent Cloud CVM instances
+version_added: "0.1.0"
+description: Returns CVM instances visible in a Tencent Cloud region.
+options:
+  instance_ids:
+    description: CVM instance IDs to return.
+    type: list
+    elements: str
+  filters:
+    description: Tencent Cloud CVM API filter names mapped to lists of values.
+    type: dict
+    default: {}
+  page_size:
+    description: Number of results requested per API call.
+    type: int
+    default: 100
+    choices: [20, 50, 100]
+extends_documentation_fragment:
+  - tencentcloud.cloud.tencentcloud
+author: Tencent Cloud Ansible Collection Contributors
+'''
+
+EXAMPLES = r'''
+- name: Find running CVM instances
+  tencentcloud.cloud.cvm_instance_info:
+    region: ap-guangzhou
+    filters:
+      instance-state: [RUNNING]
+'''
+
+RETURN = r'''
+instances:
+  description: Matching CVM instances represented as dictionaries.
+  returned: always
+  type: list
+  elements: dict
+total_count:
+  description: Number of instances reported by the API.
+  returned: always
+  type: int
+'''
+
+from ansible.module_utils.basic import AnsibleModule
+from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud import (
+    create_credential, sdk_call, tencentcloud_argument_spec,
+)
+
+
+def build_request(models, instance_ids, filters, offset, limit):
+    request = models.DescribeInstancesRequest()
+    request.Offset = offset
+    request.Limit = limit
+    if instance_ids:
+        request.InstanceIds = instance_ids
+    if filters:
+        request.Filters = []
+        for name, values in sorted(filters.items()):
+            api_filter = models.Filter()
+            api_filter.Name = name
+            api_filter.Values = values if isinstance(values, list) else [values]
+            request.Filters.append(api_filter)
+    return request
+
+
+def run_module():
+    argument_spec = tencentcloud_argument_spec()
+    argument_spec.update({
+        "instance_ids": {"type": "list", "elements": "str"},
+        "filters": {"type": "dict", "default": {}},
+        "page_size": {"type": "int", "default": 100, "choices": [20, 50, 100]},
+    })
+    module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True)
+    try:
+        from tencentcloud.cvm.v20170312 import cvm_client, models
+    except ImportError:
+        module.fail_json(msg="The tencentcloud-sdk-python package with CVM support is required.")
+
+    client = cvm_client.CvmClient(create_credential(module), module.params["region"])
+    instances = []
+    offset = 0
+    total_count = 0
+    while True:
+        request = build_request(models, module.params["instance_ids"], module.params["filters"], offset, module.params["page_size"])
+        response = sdk_call(module, client.DescribeInstances, request)
+        batch = [item._serialize(allow_none=True) for item in (response.InstanceSet or [])]
+        instances.extend(batch)
+        total_count = response.TotalCount or 0
+        offset += len(batch)
+        if not batch or offset >= total_count:
+            break
+    module.exit_json(changed=False, instances=instances, total_count=total_count)
+
+
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()

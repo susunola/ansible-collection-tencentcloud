@@ -1,0 +1,20 @@
+namespace: tencentcloud
+name: cloud
+version: 0.1.0
+readme: README.md
+authors:
+  - Tencent Cloud Ansible Collection Contributors
+description: Ansible modules and plugins for managing Tencent Cloud resources.
+license:
+  - Apache-2.0
+tags: [cloud, tencentcloud, infrastructure, cvm]
+dependencies: {}
+repository: https://github.com/tencentcloud/ansible-collection-tencentcloud
+documentation: https://github.com/tencentcloud/ansible-collection-tencentcloud/tree/main/docs
+homepage: https://github.com/tencentcloud/ansible-collection-tencentcloud
+issues: https://github.com/tencentcloud/ansible-collection-tencentcloud/issues
+build_ignore:
+  - .github
+  - .gitignore
+  - tests
+  - '*.tar.gz'
