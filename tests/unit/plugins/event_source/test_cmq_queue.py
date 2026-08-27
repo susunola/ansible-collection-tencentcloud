@@ -162,14 +162,25 @@ def test_build_client_requires_region(monkeypatch):
 # ---------------------------------------------------------------------------
 
 
-def _drive_main(monkeypatch, client, args):
-    """Run main() until the first event, then cancel; return the event."""
+def _drive_main(monkeypatch, client, args, wait_for=None):
+    """Run main() until the first event, then cancel; return the event.
+
+    ``wait_for`` is an optional callable polled until truthy (or a 2s
+    deadline) before the task is cancelled. The acknowledge delete runs
+    after ``queue.put``, so cancelling immediately races it on some event
+    loop implementations (observed on Python 3.10 but not 3.13).
+    """
     monkeypatch.setattr(src, "_build_client", lambda a: (client, FakeModels))
 
     async def run():
         queue = asyncio.Queue()
         task = asyncio.create_task(src.main(queue, args))
         event = await asyncio.wait_for(queue.get(), 2.0)
+        if wait_for is not None:
+            loop = asyncio.get_event_loop()
+            deadline = loop.time() + 2.0
+            while not wait_for() and loop.time() < deadline:
+                await asyncio.sleep(0.005)
         task.cancel()
         try:
             await task
@@ -204,6 +215,7 @@ def test_main_yields_message_and_acknowledges(monkeypatch):
         monkeypatch,
         client,
         {"region": "ap-guangzhou", "queue_name": "orders", "acknowledge": True},
+        wait_for=lambda: client.deleted,
     )
     assert event["cmq"]["msg_body"] == '{"order": 1}'
     assert event["cmq"]["msg_body_json"] == {"order": 1}
