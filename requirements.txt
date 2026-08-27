@@ -1,3 +1,9 @@
+# The _info module specs in scripts/info_specs_auto.py are regenerated
+# against a specific SDK release; scripts/check_sdk_drift.py compares CI's
+# installed SDK to the GENERATED_SDK_VERSION stamp and fails on drift.
+# After upgrading this constraint, run scripts/discover_info_specs.py and
+# scripts/generate_info_modules.py and commit the regeneration together
+# with the bump.
 tencentcloud-sdk-python>=3.0.1000
 tencentcloud-sdk-python-tag>=3.0.1000
 # Only needed for the cos_* modules (qcloud_cos SDK; COS is not API 3.0).

@@ -1,0 +1,3 @@
+minor_changes:
+  - generator - scripts/info_specs_auto.py now carries a ``GENERATED_SDK_VERSION`` stamp recording the tencentcloud SDK release the auto specs were discovered against, and a new scripts/check_sdk_drift.py compares CI's installed SDK to that stamp so stale specs are regenerated deliberately instead of shipping silently (wired into the CI sanity job).
+  - info modules - every generated ``*_info`` module now routes SDK call failures through ``fail_json`` with the error code and request id (pinned by new error-path unit tests for module_utils sdk_call and for every generated module), so a failed API call never surfaces as a traceback.

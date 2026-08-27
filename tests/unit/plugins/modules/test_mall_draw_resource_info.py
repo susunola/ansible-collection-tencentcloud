@@ -54,20 +54,28 @@ class ModuleExit(Exception):
     pass
 
 
+class ModuleFail(Exception):
+    def __init__(self, payload):
+        self.payload = payload
+        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
+
+
 class FakeModule:
     def __init__(self, params):
         self.params = params
         self.exit_payload = None
+        self.fail_payload = None
 
     def exit_json(self, **kwargs):
         self.exit_payload = kwargs
         raise ModuleExit()
 
     def fail_json(self, **kwargs):
-        raise AssertionError("fail_json called: %r" % (kwargs,))
+        self.fail_payload = kwargs
+        raise ModuleFail(kwargs)
 
 
-def _run(monkeypatch, client, **params):
+def _inject_sdk(monkeypatch, client):
     service = types.ModuleType("tencentcloud.mall.v20230518")
     service.models = FakeModels
     service.mall_client = types.SimpleNamespace(MallClient=lambda *args: client)
@@ -75,6 +83,10 @@ def _run(monkeypatch, client, **params):
     monkeypatch.setitem(sys.modules, "tencentcloud.mall",
                         types.ModuleType("tencentcloud.mall"))
     monkeypatch.setitem(sys.modules, "tencentcloud.mall.v20230518", service)
+
+
+def _run(monkeypatch, client, **params):
+    _inject_sdk(monkeypatch, client)
     fake = FakeModule(params)
     monkeypatch.setattr(mall_draw_resource_info, "AnsibleModule", lambda **kwargs: fake)
     monkeypatch.setattr(mall_draw_resource_info, "create_credential", lambda module: object())
@@ -97,3 +109,40 @@ def test_run_module_paginates_until_total_count(monkeypatch):
     assert payload["total_count"] == 3
     assert payload["request_id"] == "req-page"
     assert [request.PageNumber for request in client.requests] == [1, 2]
+
+
+def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
+    class FailingClient:
+        def DescribeDrawResourceList(self, request):
+            raise RuntimeError("api exploded")
+
+    def failing_sdk_call(module, function, request):
+        # Mirrors the real sdk_call failure contract pinned in
+        # tests/unit/plugins/module_utils/test_tencentcloud.py.
+        try:
+            return function(request)
+        except RuntimeError as exc:
+            module.fail_json(
+                msg="Tencent Cloud API request failed",
+                error=str(exc),
+                error_code="UnauthorizedOperation",
+                request_id="req-err",
+            )
+
+    _inject_sdk(monkeypatch, FailingClient())
+    # Same parameter set as the happy-path run so int/page modules find
+    # page_size (and ids/filters when declared) before the API call fails.
+    fake = FakeModule({
+        "region": "ap-guangzhou",
+        "page_size": 2,
+    })
+    monkeypatch.setattr(mall_draw_resource_info, "AnsibleModule", lambda **kwargs: fake)
+    monkeypatch.setattr(mall_draw_resource_info, "create_credential", lambda module: object())
+    monkeypatch.setattr(mall_draw_resource_info, "create_client_profile", lambda module, endpoint: object())
+    monkeypatch.setattr(mall_draw_resource_info, "sdk_call", failing_sdk_call)
+    with pytest.raises(ModuleFail) as excinfo:
+        mall_draw_resource_info.run_module()
+    payload = excinfo.value.payload
+    assert payload["msg"] == "Tencent Cloud API request failed"
+    assert payload["error_code"] == "UnauthorizedOperation"
+    assert payload["request_id"] == "req-err"

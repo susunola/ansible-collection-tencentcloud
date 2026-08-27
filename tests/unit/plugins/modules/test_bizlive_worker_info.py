@@ -47,20 +47,28 @@ class ModuleExit(Exception):
     pass
 
 
+class ModuleFail(Exception):
+    def __init__(self, payload):
+        self.payload = payload
+        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
+
+
 class FakeModule:
     def __init__(self, params):
         self.params = params
         self.exit_payload = None
+        self.fail_payload = None
 
     def exit_json(self, **kwargs):
         self.exit_payload = kwargs
         raise ModuleExit()
 
     def fail_json(self, **kwargs):
-        raise AssertionError("fail_json called: %r" % (kwargs,))
+        self.fail_payload = kwargs
+        raise ModuleFail(kwargs)
 
 
-def _run(monkeypatch, client, **params):
+def _inject_sdk(monkeypatch, client):
     service = types.ModuleType("tencentcloud.bizlive.v20190313")
     service.models = FakeModels
     service.bizlive_client = types.SimpleNamespace(BizliveClient=lambda *args: client)
@@ -68,6 +76,10 @@ def _run(monkeypatch, client, **params):
     monkeypatch.setitem(sys.modules, "tencentcloud.bizlive",
                         types.ModuleType("tencentcloud.bizlive"))
     monkeypatch.setitem(sys.modules, "tencentcloud.bizlive.v20190313", service)
+
+
+def _run(monkeypatch, client, **params):
+    _inject_sdk(monkeypatch, client)
     fake = FakeModule(params)
     monkeypatch.setattr(bizlive_worker_info, "AnsibleModule", lambda **kwargs: fake)
     monkeypatch.setattr(bizlive_worker_info, "create_credential", lambda module: object())
@@ -86,3 +98,35 @@ def test_run_module_returns_full_list(monkeypatch):
     assert payload["total_count"] == 2
     assert payload["request_id"] == "req-list"
     assert len(client.requests) == 1
+
+
+def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
+    class FailingClient:
+        def DescribeWorkers(self, request):
+            raise RuntimeError("api exploded")
+
+    def failing_sdk_call(module, function, request):
+        # Mirrors the real sdk_call failure contract pinned in
+        # tests/unit/plugins/module_utils/test_tencentcloud.py.
+        try:
+            return function(request)
+        except RuntimeError as exc:
+            module.fail_json(
+                msg="Tencent Cloud API request failed",
+                error=str(exc),
+                error_code="UnauthorizedOperation",
+                request_id="req-err",
+            )
+
+    _inject_sdk(monkeypatch, FailingClient())
+    fake = FakeModule({"region": "ap-guangzhou"})
+    monkeypatch.setattr(bizlive_worker_info, "AnsibleModule", lambda **kwargs: fake)
+    monkeypatch.setattr(bizlive_worker_info, "create_credential", lambda module: object())
+    monkeypatch.setattr(bizlive_worker_info, "create_client_profile", lambda module, endpoint: object())
+    monkeypatch.setattr(bizlive_worker_info, "sdk_call", failing_sdk_call)
+    with pytest.raises(ModuleFail) as excinfo:
+        bizlive_worker_info.run_module()
+    payload = excinfo.value.payload
+    assert payload["msg"] == "Tencent Cloud API request failed"
+    assert payload["error_code"] == "UnauthorizedOperation"
+    assert payload["request_id"] == "req-err"

@@ -685,8 +685,16 @@ def _render_value(value, indent):
 
 
 def render_auto_specs(specs):
-    """Render scripts/info_specs_auto.py deterministically."""
-    lines = ["SPECS_AUTO = ["]
+    """Render scripts/info_specs_auto.py deterministically.
+
+    The header records the installed SDK release the specs were discovered
+    against (``GENERATED_SDK_VERSION``); ``scripts/check_sdk_drift.py``
+    compares it to the environment's SDK in CI so a stale spec set fails
+    the build with regeneration instructions.
+    """
+    from importlib.metadata import version
+    sdk_version = version("tencentcloud-sdk-python")
+    lines = ["GENERATED_SDK_VERSION = %r\n" % sdk_version, "", "SPECS_AUTO = ["]
     for spec in specs:
         lines.append("    " + _render_value(spec, 4) + ",")
     lines.append("]")
@@ -699,6 +707,8 @@ Written by scripts/discover_info_specs.py -- regenerate instead of editing.
 Every spec was derived by introspecting the installed tencentcloud SDK
 packages (request/response field names, filter model shapes, pagination
 types) exactly like the curated SPECS in generate_info_modules.py.
+``GENERATED_SDK_VERSION`` records the SDK release the specs were
+discovered against; scripts/check_sdk_drift.py pins CI to it.
 """
 
 %s

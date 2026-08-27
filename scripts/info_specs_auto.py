@@ -5,7 +5,12 @@ Written by scripts/discover_info_specs.py -- regenerate instead of editing.
 Every spec was derived by introspecting the installed tencentcloud SDK
 packages (request/response field names, filter model shapes, pagination
 types) exactly like the curated SPECS in generate_info_modules.py.
+``GENERATED_SDK_VERSION`` records the SDK release the specs were
+discovered against; scripts/check_sdk_drift.py pins CI to it.
 """
+
+GENERATED_SDK_VERSION = '3.1.113'
+
 
 SPECS_AUTO = [
     {
