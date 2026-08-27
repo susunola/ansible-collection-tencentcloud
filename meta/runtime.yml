@@ -2,62 +2,188 @@
 requires_ansible: ">=2.16.0"
 action_groups:
   all:
+    - adp_agent_release_preview_info
+    - ags_sandbox_instance_info
+    - ame_ktv_robot_info
+    - antiddos_d_do_s_block_record_info
+    - ape_auth_user_info
+    - api_product_info
     - apigateway_service_info
+    - apis_agent_app_mcp_server_info
+    - apm_general_span_info
     - as_scaling_group_info
+    - asw_flow_service_info
+    - batch_compute_env_create_info
+    - bdrc_backup_vault_info
+    - bh_device_group_member_info
     - billing_balance_info
+    - bm_device_info
+    - bma_bp_fake_app_info
+    - bmeip_eip_acl_info
+    - bmlb_load_balancer_info
+    - bmvpc_customer_gateway_info
     - cam_policy
     - cam_policy_info
     - cam_role
     - cam_role_info
     - cam_user
     - cam_user_info
+    - cat_probe_task_info
     - cbs_disk_info
+    - ccc_extension_info
     - cdb_instance_info
+    - cdc_dedicated_cluster_order_info
     - cdn_domain_info
+    - cds_asset_info
+    - cdwch_cn_instance_info
+    - cdwdoris_cluster_configs_history_info
+    - cdwpg_account_info
+    - cetcd_etcd_instance_info
+    - cfg_action_library_info
     - cfs_file_system_info
+    - cfw_cluster_nat_ccn_fw_switch_info
+    - chc_device_info
     - ckafka_instance_info
     - clb_load_balancer_info
     - cloudaudit_event_info
+    - cloudhsm_vsm_info
     - cls_topic_info
+    - cme_platform_info
+    - cmq_queue_info
+    - cms_lib_sample_info
+    - cngw_cloud_native_api_gateway_llm_model_api_info
+    - config_aggregate_compliance_pack_info
+    - controlcenter_account_factory_baseline_item_info
     - cos_bucket
     - cos_bucket_info
+    - csip_asset_process_info
+    - ctem_api_sec_info
+    - ctsdb_cluster_info
     - cvm_instance
     - cvm_instance_info
     - cwp_machine_info
+    - cws_monitor_info
     - cynosdb_cluster_info
+    - dasb_device_info
+    - dayu_resource_info
+    - dbbrain_db_diag_event_info
+    - dbdc_db_custom_cluster_info
+    - dbs_backup_plan_info
+    - dc_direct_connect_tunnel_info
+    - dcdb_dcdb_instance_info
+    - dlc_task_info
     - dnspod_record_info
+    - domain_batch_operation_log_info
+    - dsgc_dspa_assessment_risk_info
+    - dts_subscribe_job_info
+    - eb_event_bus_info
+    - ecdn_domain_info
+    - ecm_address_info
+    - eiam_application_info
     - eip
     - eip_info
+    - eis_runtime_deployed_instances_mc_info
+    - emr_node_data_disk_info
     - es_cluster_info
+    - ess_file_url_info
+    - essbasic_template_info
+    - fwm_edge_acl_rule_info
+    - ga2_accelerate_area_info
     - gaap_proxy_info
+    - goosefs_file_system_info
+    - gs_android_app_info
+    - gwlb_gateway_load_balancer_info
+    - hai_application_info
+    - hasim_link_info
+    - ic_sms_info
+    - igtm_address_pool_info
+    - iotcloud_device_resource_info
+    - iotexplorer_device_position_info
+    - iotvideo_ai_model_application_info
+    - iotvideoindustry_all_device_info
+    - iss_device_snapshot_info
+    - ivld_custom_person_info
+    - keewidb_instance_backup_info
     - key_pair
     - key_pair_info
     - kms_key_info
     - lighthouse_instance_info
+    - live_audit_keyword_info
+    - lke_app_knowledge_info
+    - lowcode_knowledge_set_info
+    - mall_draw_resource_info
     - mariadb_instance_info
+    - memcached_instance_info
     - mongodb_instance_info
     - monitor_alarm_policy_info
+    - mps_person_sample_info
+    - mqtt_device_certificate_info
+    - ms_shield_instance_info
+    - msp_migration_project_info
     - nat_gateway_info
+    - oceanus_cluster_info
+    - omics_application_info
     - organization_member_info
+    - partners_agent_deals_by_cache_info
     - postgres_instance_info
+    - privatedns_account_vpc_info
+    - pts_cron_job_info
     - redis_instance_info
+    - region_product_info
     - route_table
     - route_table_info
+    - rum_project_info
     - scf_function_info
     - security_group
     - security_group_info
     - security_group_rule
+    - securitylake_security_alarm_table_info
+    - ses_black_email_address_info
+    - smh_library_info
     - sqlserver_instance_info
+    - ssa_check_config_asset_info
     - ssl_certificate_info
+    - sslpod_domain_info
     - subnet
     - subnet_info
+    - svp_saving_plan_coverage_info
     - tat_command_info
+    - tcaplusdb_cluster_info
+    - tcb_billing_info
+    - tcm_mesh_info
     - tcr_instance_info
+    - tcss_abnormal_process_event_info
+    - tdai_agent_duty_task_info
+    - tdcpg_cluster_instance_info
+    - tdmq_amqp_cluster_info
+    - tdmysql_db_instance_info
+    - tem_application_info
+    - teo_function_info
+    - thpc_cluster_info
+    - tione_dataset_info
+    - tiw_running_task_info
     - tke_cluster_info
+    - tokenhub_model_info
+    - tourism_draw_resource_info
+    - trabbit_rabbit_mq_serverless_instance_info
+    - trocket_consumer_client_info
+    - trp_code_batch_info
+    - trro_device_info
+    - trtc_call_info
+    - tse_sre_instance_info
+    - tsf_application_info
+    - vcube_vcube_resource_info
+    - vdb_instance_info
+    - vod_incremental_migration_strategy_info
     - vpc
     - vpc_info
     - vpn_gateway_info
     - waf_instance_info
+    - wedata_project_info
+    - weilingwith_element_profile_page_info
+    - wss_cert_info
+    - yinsuda_ktv_robot_info
+    - yunjing_account_statistic_info
 
 # Deprecation process: modules and plugins are deprecated by adding a
 # plugin_routing.deprecation entry for them (with removal_in and

@@ -162,3 +162,39 @@ def test_filter_value_field_override(generator):
     rendered = generator.render_module(_spec(generator, "cdn_domain_info"))
     assert "api_filter = models.DomainFilter()" in rendered
     assert "api_filter.Value = values if isinstance(values, list) else [values]" in rendered
+
+
+def test_auto_specs_are_appended_and_pin_release_version(generator):
+    auto_path = GENERATOR_PATH.with_name("info_specs_auto.py")
+    assert auto_path.exists(), "run scripts/discover_info_specs.py"
+    spec = importlib.util.spec_from_file_location("info_specs_auto", auto_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert module.SPECS_AUTO, "info_specs_auto.py must not be empty"
+    by_name = {entry["module"] for entry in generator.SPECS}
+    for entry in module.SPECS_AUTO:
+        assert entry["module"] in by_name
+        assert entry["version_added"] == "0.8.0"
+        rendered = generator.render_module(entry)
+        assert 'version_added: "0.8.0"' in rendered
+
+
+def test_simple_spec_tests_are_generated(generator):
+    for spec in generator.SPECS:
+        if not generator.is_simple_spec(spec):
+            continue
+        path = generator.test_path(spec)
+        assert path.exists(), "run scripts/generate_info_modules.py"
+        content = path.read_text()
+        if generator.MARKER in content:
+            assert content == generator.render_test(spec)
+
+
+def test_complex_specs_keep_hand_written_tests(generator):
+    for name in ("kms_key_info", "dnspod_record_info", "cfs_file_system_info",
+                 "cloudaudit_event_info", "monitor_alarm_policy_info",
+                 "billing_balance_info"):
+        spec = _spec(generator, name)
+        assert not generator.is_simple_spec(spec)
+        content = generator.test_path(spec).read_text()
+        assert generator.MARKER not in content
