@@ -177,14 +177,15 @@ def test_delete_soft_mode_sets_recovery_window():
     _delete(module, client, FakeModels, "prod/db", False, 30)
     request = client.calls[-1]
     assert request.SecretName == "prod/db"
-    assert request.DeleteMode == "recover"
     assert request.RecoveryWindowInDays == 30
+    assert not hasattr(request, "DeleteMode")
 
 
-def test_delete_immediate_mode():
+def test_delete_immediate_mode_zeroes_recovery_window():
     client = FakeClient(FakeResponse())
     module = FakeModule()
     _delete(module, client, FakeModels, "prod/db", True, 30)
     request = client.calls[-1]
-    assert request.DeleteMode == "immediate"
-    assert not hasattr(request, "RecoveryWindowInDays")
+    assert request.SecretName == "prod/db"
+    assert request.RecoveryWindowInDays == 0
+    assert not hasattr(request, "DeleteMode")

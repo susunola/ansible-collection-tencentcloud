@@ -339,7 +339,8 @@ WRITE_MODULE_BUILDERS = {
     ],
     "eip": [
         "_apply_tags", "_associate", "_create", "_delete", "_disassociate",
-        "_update_name", "build_describe_request",
+        "_update_bandwidth", "_update_charge_type", "_update_name",
+        "build_describe_request",
     ],
     "key_pair": [
         "_create", "_delete", "_import", "build_describe_request",
@@ -362,6 +363,52 @@ WRITE_MODULE_BUILDERS = {
     "vpc": [
         "_apply_tags", "_create", "_delete", "_update_attributes",
         "build_describe_request",
+    ],
+    "cbs_disk": [
+        "_attach", "_create", "_delete", "_detach", "_rename", "_resize",
+        "build_describe_request",
+    ],
+    "cdb_instance": [
+        "_create", "_delete", "_rename", "build_describe_request",
+    ],
+    "ckafka_topic": [
+        "_create", "_delete", "_scale_partitions", "_update", "find_topic",
+    ],
+    "clb_rule": [
+        "_create", "_delete", "_update", "build_describe_request",
+    ],
+    "dnspod_record": [
+        "_create", "_delete", "_update", "build_describe_request",
+    ],
+    "nat_gateway": [
+        "_create", "_delete", "_set_deletion_protection", "_update",
+        "build_describe_request",
+    ],
+    "peering_connection": [
+        "_accept", "_create", "_delete", "_update", "build_describe_request",
+    ],
+    "redis_instance": [
+        "_create", "_destroy", "_rename", "build_describe_request",
+    ],
+    "scf_function": [
+        "_create", "_delete", "_update_code", "_update_config",
+        "find_function",
+    ],
+    "ssl_certificate": [
+        "_delete", "_deploy", "_rename", "_upload", "build_describe_request",
+    ],
+    "ssm_parameter": [
+        "_create", "_delete", "_update_value", "find_secret",
+    ],
+    "tag": [
+        "_attach", "_detach", "_update_value", "build_describe_request",
+    ],
+    "tke_cluster": [
+        "_create", "_delete", "_set_deletion_protection", "_update",
+        "build_describe_request",
+    ],
+    "vpn_gateway": [
+        "_create", "_delete", "_update", "build_describe_request",
     ],
 }
 
@@ -765,6 +812,9 @@ def test_eip():
     module._associate(fake, client, models, "eip-xxxxxxxx", "ins-xxxxxxxx")
     module._disassociate(fake, client, models, "eip-xxxxxxxx")
     module._update_name(fake, client, models, "eip-xxxxxxxx", "web-eip")
+    module._update_bandwidth(fake, client, models, "eip-xxxxxxxx", 20)
+    module._update_charge_type(
+        fake, client, models, "eip-xxxxxxxx", "BANDWIDTH_PREPAID_BY_MONTH", 20)
     module._delete(fake, client, models, "eip-xxxxxxxx", True)
     module._apply_tags(fake, client, tag_models, "eip-xxxxxxxx", {"env": "prod"}, ["legacy"])
     errors.extend(audit_recorded(fake, "eip"))
@@ -1116,4 +1166,458 @@ def test_lighthouse_instance():
     module._isolate(fake, client, models, "lhins-xxxxxxxx")
     module._update_name(fake, client, models, "lhins-xxxxxxxx", "blog-01")
     errors.extend(audit_recorded(fake, "lighthouse_instance"))
+    assert errors == []
+
+
+def test_cbs_disk():
+    module = _import_plugin("cbs_disk")
+    models = _models("cbs.v20170312")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "disk-xxxxxxxx", None, None),
+        "cbs describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, "data-disk", None),
+        "cbs describe by name"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, None, "ap-guangzhou-3"),
+        "cbs describe by zone"))
+    params = {
+        "charge_type": "POSTPAID_BY_HOUR",
+        "disk_size": 100,
+        "disk_type": "CLOUD_PREMIUM",
+        "encrypt": False,
+        "name": "data-disk",
+        "prepaid_period_months": None,
+        "snapshot_id": None,
+        "tags": {"env": "prod"},
+        "zone": "ap-guangzhou-3",
+    }
+    module._create(fake, client, models, params)
+    module._rename(fake, client, models, "disk-xxxxxxxx", "data-disk-v2")
+    module._resize(fake, client, models, "disk-xxxxxxxx", 200)
+    module._attach(fake, client, models, "disk-xxxxxxxx", "ins-xxxxxxxx", True)
+    module._detach(fake, client, models, "disk-xxxxxxxx", "ins-xxxxxxxx")
+    module._delete(fake, client, models, "disk-xxxxxxxx", False)
+    errors.extend(audit_recorded(fake, "cbs_disk"))
+    assert errors == []
+
+
+def test_cdb_instance():
+    module = _import_plugin("cdb_instance")
+    models = _models("cdb.v20170320")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "cdb-xxxxxxxx", None),
+        "cdb describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, "order-db"),
+        "cdb describe by name"))
+    module._create(fake, client, models, {
+        "zone": "ap-guangzhou-3",
+        "engine_version": "8.0",
+        "memory": 4000,
+        "volume": 200,
+        "name": "order-db",
+        "password": "Sup3rSecret!",
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_id": "subnet-xxxxxxxx",
+        "project_id": 0,
+        "period_months": None,
+        "auto_renew": None,
+        "security_group": ["sg-xxxxxxxx"],
+        "tags": {"env": "prod"},
+    })
+    module._rename(fake, client, models, "cdb-xxxxxxxx", "order-db-v2")
+    module._delete(fake, client, models, "cdb-xxxxxxxx")
+    errors.extend(audit_recorded(fake, "cdb_instance"))
+    assert errors == []
+
+
+def test_ckafka_topic():
+    module = _import_plugin("ckafka_topic")
+    models = _models("ckafka.v20190819")
+    fake = _RecordingModule()
+    client = _StubClient()
+    module.find_topic(fake, client, models, "ckafka-xxxxxxxx", "order-events")
+    module._create(fake, client, models, {
+        "instance_id": "ckafka-xxxxxxxx",
+        "topic_name": "order-events",
+        "partition_num": 3,
+        "replica_num": 2,
+        "retention_ms": 86400000,
+        "retention_bytes": None,
+        "clean_up_policy": "delete",
+        "note": "Order event stream",
+        "max_message_bytes": None,
+    })
+    module._update(fake, client, models, "ckafka-xxxxxxxx", "order-events", 3, {
+        "partition_num": 6,
+        "replica_num": 2,
+        "retention_ms": 86400000,
+        "retention_bytes": None,
+        "clean_up_policy": "delete",
+        "note": "Order event stream (scaled)",
+        "max_message_bytes": None,
+    })
+    module._scale_partitions(fake, client, models, "ckafka-xxxxxxxx", "order-events", 3, 6)
+    module._delete(fake, client, models, "ckafka-xxxxxxxx", "order-events")
+    assert audit_recorded(fake, "ckafka_topic") == []
+
+
+def test_clb_rule():
+    module = _import_plugin("clb_rule")
+    models = _models("clb.v20180317")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "lb-xxxxxxxx", "lbl-xxxxxxxx"),
+        "clb_rule describe by ids"))
+    health_check = {
+        "health_switch": True,
+        "interval_time": 5,
+        "health_num": 3,
+        "un_health_num": 3,
+        "time_out": 3,
+        "check_type": "HTTP",
+        "check_port": 80,
+        "http_check_path": "/healthz",
+        "http_check_domain": "example.com",
+        "http_check_method": "GET",
+        "http_code": 200,
+        "http_version": "HTTP/1.0",
+    }
+    create_params = {
+        "load_balancer_id": "lb-xxxxxxxx",
+        "listener_id": "lbl-xxxxxxxx",
+        "domain": "api.example.com",
+        "url": "/v1/orders",
+        "scheduler": "WRR",
+        "session_expire_time": None,
+        "forward_type": None,
+        "cookie_name": None,
+        "http2": False,
+        "health_check": health_check,
+    }
+    location_id = module._create(fake, client, models, create_params)
+    update_params = dict(create_params, health_check=dict(health_check, interval_time=10))
+    module._update(fake, client, models, update_params, location_id or "loc-xxxxxxxx")
+    module._delete(fake, client, models, create_params, location_id or "loc-xxxxxxxx")
+    errors.extend(audit_recorded(fake, "clb_rule"))
+    assert errors == []
+
+
+def test_dnspod_record():
+    module = _import_plugin("dnspod_record")
+    models = _models("dnspod.v20210323")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "example.com", None, "www", "A", None),
+        "dnspod describe by domain and subdomain"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, 123456, "www", "A", "默认"),
+        "dnspod describe by domain id"))
+    params = {
+        "domain": "example.com",
+        "domain_id": None,
+        "subdomain": "www",
+        "record_type": "A",
+        "record_line": "默认",
+        "value": "1.2.3.4",
+        "ttl": 600,
+        "weight": None,
+        "mx": None,
+        "remark": "www frontend",
+        "status": "ENABLE",
+    }
+    module._create(fake, client, models, params)
+    module._update(fake, client, models, params, 123456789)
+    module._delete(fake, client, models, params, 123456789)
+    errors.extend(audit_recorded(fake, "dnspod_record"))
+    assert errors == []
+
+
+def test_nat_gateway():
+    module = _import_plugin("nat_gateway")
+    models = _models("vpc.v20170312")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "nat-xxxxxxxx", None, None),
+        "nat describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, "egress-nat", None),
+        "nat describe by name"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, None, "vpc-xxxxxxxx"),
+        "nat describe by vpc"))
+    module._create(fake, client, models, {
+        "vpc_id": "vpc-xxxxxxxx",
+        "name": "egress-nat",
+        "internet_max_bandwidth_out": 100,
+        "max_concurrent_connection": None,
+        "address_count": None,
+        "public_ip_addresses": ["eip-xxxxxxxx"],
+        "zone": "ap-guangzhou-3",
+    })
+    module._set_deletion_protection(fake, client, models, "nat-xxxxxxxx", True)
+    module._update(fake, client, models, "nat-xxxxxxxx", "egress-nat-v2", 200)
+    module._delete(fake, client, models, "nat-xxxxxxxx", True)
+    errors.extend(audit_recorded(fake, "nat_gateway"))
+    assert errors == []
+
+
+def test_peering_connection():
+    module = _import_plugin("peering_connection")
+    models = _models("vpc.v20170312")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "pcx-xxxxxxxx", None, None),
+        "peering describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, "app-peer", None),
+        "peering describe by name"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, None, "vpc-xxxxxxxx"),
+        "peering describe by source vpc"))
+    module._create(fake, client, models, {
+        "source_vpc_id": "vpc-xxxxxxxx",
+        "destination_vpc_id": "vpc-yyyyyyyy",
+        "name": "app-peer",
+        "destination_region": "ap-shanghai",
+        "destination_uin": "100000000001",
+        "bandwidth": 100,
+        "charge_type": "POSTPAID_BY_HOUR",
+        "qos_level": "PT",
+    })
+    module._accept(fake, client, models, "pcx-xxxxxxxx")
+    module._update(fake, client, models, "pcx-xxxxxxxx", "app-peer-v2", 200, "POSTPAID_BY_HOUR")
+    module._delete(fake, client, models, "pcx-xxxxxxxx")
+    errors.extend(audit_recorded(fake, "peering_connection"))
+    assert errors == []
+
+
+def test_redis_instance():
+    module = _import_plugin("redis_instance")
+    models = _models("redis.v20180412")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "crs-xxxxxxxx", None),
+        "redis describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, "session-cache"),
+        "redis describe by name"))
+    module._create(fake, client, models, {
+        "zone_name": "ap-guangzhou-3",
+        "type_id": 2,
+        "mem_size": 1024,
+        "name": "session-cache",
+        "redis_shard_num": 1,
+        "redis_replicas_num": 1,
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_id": "subnet-xxxxxxxx",
+        "password": "Sup3rSecret!",
+        "no_auth": False,
+        "project_id": 0,
+        "security_group_id_list": ["sg-xxxxxxxx"],
+        "tags": {"env": "prod"},
+    })
+    module._rename(fake, client, models, "crs-xxxxxxxx", "session-cache-v2")
+    module._destroy(fake, client, models, "crs-xxxxxxxx", "POSTPAID")
+    module._destroy(fake, client, models, "crs-xxxxxxxx", "PREPAID")
+    errors.extend(audit_recorded(fake, "redis_instance"))
+    assert errors == []
+
+
+def test_scf_function():
+    module = _import_plugin("scf_function")
+    models = _models("scf.v20180416")
+    fake = _RecordingModule()
+    client = _StubClient()
+    module.find_function(fake, client, models, "etl-job", "default")
+    create_params = {
+        "function_name": "etl-job",
+        "namespace": "default",
+        "handler": "index.handler",
+        "runtime": "Python3.9",
+        "description": "ETL job",
+        "memory_size": 256,
+        "execution_timeout": 30,
+        "environment": {"LOG_LEVEL": "info"},
+        "role": "cos-scf-role",
+        "vpc_id": None,
+        "subnet_id": None,
+        "zip_file": None,
+        "cos_bucket_name": "bucket-1250000000",
+        "cos_bucket_region": "ap-guangzhou",
+        "cos_object_name": "etl.zip",
+        "region": "ap-guangzhou",
+    }
+    module._create(fake, client, models, create_params)
+    module._update_code(fake, client, models, "etl-job", "default", {
+        "handler": "index.handler",
+        "zip_file": None,
+        "cos_bucket_name": "bucket-1250000000",
+        "cos_bucket_region": "ap-guangzhou",
+        "cos_object_name": "etl-v2.zip",
+        "region": "ap-guangzhou",
+    })
+    module._update_config(fake, client, models, "etl-job", "default", {
+        "description": "ETL job v2",
+        "environment": {"LOG_LEVEL": "debug"},
+        "execution_timeout": 60,
+        "memory_size": 512,
+        "role": "cos-scf-role",
+        "vpc_id": None,
+        "subnet_id": None,
+    })
+    module._delete(fake, client, models, "etl-job", "default")
+    assert audit_recorded(fake, "scf_function") == []
+
+
+def test_ssl_certificate():
+    module = _import_plugin("ssl_certificate")
+    models = _models("ssl.v20191205")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "cert-xxxxxxxx", None),
+        "ssl describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, "api.example.com"),
+        "ssl describe by alias"))
+    cert_id = module._upload(fake, client, models, {
+        "cert_content": "-----BEGIN CERTIFICATE-----\nMIIB\n-----END CERTIFICATE-----",
+        "private_key": "-----BEGIN PRIVATE KEY-----\nMIIE\n-----END PRIVATE KEY-----",
+        "certificate_type": "SVR",
+        "alias": "api.example.com",
+        "project_id": 0,
+        "tags": {"env": "prod"},
+    })
+    module._rename(fake, client, models, cert_id or "cert-xxxxxxxx", "api-v2.example.com")
+    module._deploy(fake, client, models, cert_id or "cert-xxxxxxxx",
+                   ["lbl-xxxxxxxx"], "clb")
+    module._delete(fake, client, models, cert_id or "cert-xxxxxxxx")
+    errors.extend(audit_recorded(fake, "ssl_certificate"))
+    assert errors == []
+
+
+def test_ssm_parameter():
+    module = _import_plugin("ssm_parameter")
+    models = _models("ssm.v20190923")
+    fake = _RecordingModule()
+    client = _StubClient()
+    module.find_secret(fake, client, models, "db-password")
+    module._create(fake, client, models, {
+        "secret_name": "db-password",
+        "secret_string": "Sup3rSecret!",
+        "secret_binary": None,
+        "description": "Database password",
+        "secret_type": 1,
+        "encrypt_type": 0,
+        "kms_key_id": None,
+    })
+    module._update_value(fake, client, models, "db-password", "NewSecret!", None)
+    module._delete(fake, client, models, "db-password", False, 30)
+    assert audit_recorded(fake, "ssm_parameter") == []
+
+
+def test_tag():
+    module = _import_plugin("tag")
+    models = _models("tag.v20180813")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "env", None, "cvm", "instance", "ap-guangzhou"),
+        "tag describe by key"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, "env", "prod", "cvm", "instance", None),
+        "tag describe by key and value"))
+    module.find_resources(fake, client, models, "env", "prod", "cvm", "instance", "ap-guangzhou")
+    module._attach(fake, client, models, "env", "prod", "cvm", "instance",
+                   "ap-guangzhou", ["ins-xxxxxxxx"])
+    module._update_value(fake, client, models, "env", "prod", "cvm", "instance",
+                         "ap-guangzhou", ["ins-xxxxxxxx"])
+    module._detach(fake, client, models, "env", "cvm", "instance",
+                   "ap-guangzhou", ["ins-xxxxxxxx"])
+    errors.extend(audit_recorded(fake, "tag"))
+    assert errors == []
+
+
+def test_tke_cluster():
+    module = _import_plugin("tke_cluster")
+    models = _models("tke.v20180525")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "cls-xxxxxxxx", None),
+        "tke describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, "order-cluster"),
+        "tke describe by name"))
+    module._create(fake, client, models, {
+        "cluster_type": "MANAGED_CLUSTER",
+        "name": "order-cluster",
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_id": "subnet-xxxxxxxx",
+        "cluster_version": "1.30.3",
+        "cluster_desc": "Order service cluster",
+        "project_id": 0,
+        "tags": {"env": "prod"},
+        "cluster_cidr": "10.244.0.0/16",
+        "service_cidr": "10.96.0.0/16",
+        "max_node_pod_num": 64,
+        "deletion_protection": True,
+    })
+    module._update(fake, client, models, "cls-xxxxxxxx", "order-cluster-v2",
+                   "Order service cluster v2", 0)
+    module._set_deletion_protection(fake, client, models, "cls-xxxxxxxx", False)
+    module._delete(fake, client, models, "cls-xxxxxxxx", "terminate")
+    errors.extend(audit_recorded(fake, "tke_cluster"))
+    assert errors == []
+
+
+def test_vpn_gateway():
+    module = _import_plugin("vpn_gateway")
+    models = _models("vpc.v20170312")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "vpngw-xxxxxxxx", None, None),
+        "vpn describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, "site-vpn", None),
+        "vpn describe by name"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, None, "vpc-xxxxxxxx"),
+        "vpn describe by vpc"))
+    module._create(fake, client, models, {
+        "vpc_id": "vpc-xxxxxxxx",
+        "name": "site-vpn",
+        "instance_charge_type": "POSTPAID_BY_HOUR",
+        "type": "IPSEC",
+        "internet_max_bandwidth_out": 100,
+        "max_connection": 100,
+        "zone": "ap-guangzhou-3",
+        "bgp_asn": 64512,
+    })
+    module._update(fake, client, models, "vpngw-xxxxxxxx", "site-vpn-v2", 200, 64512)
+    module._delete(fake, client, models, "vpngw-xxxxxxxx")
+    errors.extend(audit_recorded(fake, "vpn_gateway"))
     assert errors == []

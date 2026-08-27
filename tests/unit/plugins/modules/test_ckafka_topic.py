@@ -6,7 +6,9 @@ __metaclass__ = type
 from ansible_collections.susunola.tencentcloud.plugins.modules.ckafka_topic import (
     _create,
     _delete,
+    _scale_partitions,
     _update,
+    _validate_partition_scale,
     find_topic,
 )
 
@@ -18,6 +20,7 @@ class FakeRequest(object):
 class FakeModels(object):
     DescribeTopicRequest = FakeRequest
     CreateTopicRequest = FakeRequest
+    CreatePartitionRequest = FakeRequest
     ModifyTopicAttributesRequest = FakeRequest
     DeleteTopicRequest = FakeRequest
 
@@ -62,6 +65,12 @@ class FakeClient(object):
         return self.response
 
     def CreateTopic(self, request):
+        self.calls.append(request)
+        if self.exc:
+            raise self.exc
+        return self.response
+
+    def CreatePartition(self, request):
         self.calls.append(request)
         if self.exc:
             raise self.exc
@@ -160,22 +169,100 @@ def test_create_omits_optional_fields():
 def test_update_sends_changed_fields():
     client = FakeClient(FakeResponse())
     module = FakeModule()
-    _update(module, client, FakeModels, "ckafka-1", "order-events", {
+    _update(module, client, FakeModels, "ckafka-1", "order-events", 3, {
         "partition_num": 6,
         "replica_num": 3,
         "retention_ms": 86400000,
         "retention_bytes": None,
         "clean_up_policy": "compact",
         "note": "scaled",
+        "max_message_bytes": 1048576,
     })
     request = client.calls[-1]
     assert request.InstanceId == "ckafka-1"
     assert request.TopicName == "order-events"
-    assert request.PartitionNum == 6
+    assert not hasattr(request, "PartitionNum")
     assert request.ReplicaNum == 3
     assert request.CleanUpPolicy == "compact"
     assert request.Note == "scaled"
+    assert request.MaxMessageBytes == 1048576
     assert not hasattr(request, "RetentionBytes")
+
+
+def test_run_module_sequence_scales_then_modifies():
+    # run_module orchestrates partition scaling before attribute changes;
+    # assert the two builders compose to exactly two requests.
+    client = FakeClient(FakeResponse())
+    module = FakeModule()
+    _scale_partitions(module, client, FakeModels, "ckafka-1", "order-events", 3, 6)
+    _update(module, client, FakeModels, "ckafka-1", "order-events", 3, {
+        "partition_num": 6,
+        "replica_num": 3,
+        "retention_ms": 86400000,
+        "retention_bytes": None,
+        "clean_up_policy": "delete",
+        "note": "scaled",
+        "max_message_bytes": None,
+    })
+    assert len(client.calls) == 2
+    scale_request, modify_request = client.calls
+    assert scale_request.PartitionNum == 3  # 6 - 3 new partitions
+    assert modify_request.ReplicaNum == 3
+    assert not hasattr(modify_request, "PartitionNum")
+
+
+def test_update_with_unchanged_partitions_skips_scaling():
+    client = FakeClient(FakeResponse())
+    module = FakeModule()
+    _update(module, client, FakeModels, "ckafka-1", "order-events", 6, {
+        "partition_num": 6,
+        "replica_num": 2,
+        "retention_ms": None,
+        "retention_bytes": None,
+        "clean_up_policy": None,
+        "note": "same",
+        "max_message_bytes": None,
+    })
+    assert len(client.calls) == 1
+    assert not hasattr(client.calls[-1], "PartitionNum")
+
+
+def test_scale_partitions_requests_only_the_delta():
+    client = FakeClient(FakeResponse())
+    module = FakeModule()
+    _scale_partitions(module, client, FakeModels, "ckafka-1", "order-events", 3, 8)
+    request = client.calls[-1]
+    assert request.InstanceId == "ckafka-1"
+    assert request.TopicName == "order-events"
+    assert request.PartitionNum == 5
+
+
+def test_scale_partitions_is_noop_at_same_count():
+    client = FakeClient(FakeResponse())
+    module = FakeModule()
+    _scale_partitions(module, client, FakeModels, "ckafka-1", "order-events", 3, 3)
+    assert client.calls == []
+
+
+def test_scale_partitions_rejects_shrink():
+    client = FakeClient(FakeResponse())
+    module = FakeModule()
+    module.fail_json = lambda **kwargs: (_ for _ in ()).throw(
+        AssertionError(kwargs["msg"]))
+    try:
+        _scale_partitions(module, client, FakeModels, "ckafka-1", "order-events", 3, 2)
+        raise AssertionError("expected fail_json on shrink")
+    except AssertionError as exc:
+        assert "cannot reduce partitions" in str(exc)
+    assert client.calls == []
+
+
+def test_validate_partition_scale_allows_grow_and_equal():
+    module = FakeModule()
+    module.fail_json = lambda **kwargs: (_ for _ in ()).throw(
+        AssertionError(kwargs["msg"]))
+    _validate_partition_scale(module, "order-events", 3, 5)
+    _validate_partition_scale(module, "order-events", 3, 3)
 
 
 def test_delete_sends_instance_and_topic():

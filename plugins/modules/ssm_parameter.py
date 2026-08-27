@@ -218,11 +218,7 @@ def _update_value(module, client, models, secret_name, secret_string, secret_bin
 def _delete(module, client, models, secret_name, immediate, recovery_window_in_days):
     request = models.DeleteSecretRequest()
     request.SecretName = secret_name
-    if immediate:
-        request.DeleteMode = "immediate"
-    else:
-        request.DeleteMode = "recover"
-        request.RecoveryWindowInDays = recovery_window_in_days
+    request.RecoveryWindowInDays = 0 if immediate else recovery_window_in_days
     module.sdk_call(client.DeleteSecret, request)
 
 

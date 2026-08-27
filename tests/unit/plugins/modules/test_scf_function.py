@@ -251,7 +251,7 @@ def test_update_code_publishes_and_sends_zip():
         request = client.calls[-1]
         assert request.FunctionName == "hello"
         assert request.Namespace == "default"
-        assert request.Publish is True
+        assert request.Publish == "TRUE"
         assert request.ZipFile.startswith("UEsD")
     finally:
         os.unlink(path)

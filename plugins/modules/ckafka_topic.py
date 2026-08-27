@@ -197,12 +197,38 @@ def _create(module, client, models, params):
     return module.sdk_call(client.CreateTopic, request)
 
 
-def _update(module, client, models, instance_id, topic_name, params):
+def _validate_partition_scale(module, topic_name, current_partition_num,
+                              desired_partition_num):
+    """Fail when a partition change would require shrinking the topic.
+
+    CKafka partitions can only be added, never removed.
+    """
+    if desired_partition_num < current_partition_num:
+        module.fail_json(
+            msg="CKafka cannot reduce partitions: topic %s currently has %d, "
+                "requested %d" % (topic_name, current_partition_num,
+                                  desired_partition_num),
+        )
+
+
+def _scale_partitions(module, client, models, instance_id, topic_name,
+                      current_partition_num, desired_partition_num):
+    """Scale a topic up to *desired_partition_num* via CreatePartition."""
+    _validate_partition_scale(module, topic_name, current_partition_num,
+                              desired_partition_num)
+    if desired_partition_num == current_partition_num:
+        return
+    request = models.CreatePartitionRequest()
+    request.InstanceId = instance_id
+    request.TopicName = topic_name
+    request.PartitionNum = desired_partition_num - current_partition_num
+    module.sdk_call(client.CreatePartition, request)
+
+
+def _update(module, client, models, instance_id, topic_name, current_partition_num, params):
     request = models.ModifyTopicAttributesRequest()
     request.InstanceId = instance_id
     request.TopicName = topic_name
-    if params["partition_num"] is not None:
-        request.PartitionNum = params["partition_num"]
     if params["replica_num"] is not None:
         request.ReplicaNum = params["replica_num"]
     if params["retention_ms"] is not None:
@@ -213,6 +239,8 @@ def _update(module, client, models, instance_id, topic_name, params):
         request.CleanUpPolicy = params["clean_up_policy"]
     if params["note"] is not None:
         request.Note = params["note"]
+    if params["max_message_bytes"] is not None:
+        request.MaxMessageBytes = params["max_message_bytes"]
     module.sdk_call(client.ModifyTopicAttributes, request)
 
 
@@ -301,6 +329,9 @@ def run_module():
     note = module.params["note"]
     if note is not None and current.get("Note") != note:
         changes.append("note")
+    max_message_bytes = module.params["max_message_bytes"]
+    if max_message_bytes is not None and current.get("MaxMessageBytes") != max_message_bytes:
+        changes.append("max_message_bytes")
 
     if not changes:
         module.exit_json(changed=False, topic=current, msg="Topic is up to date")
@@ -310,10 +341,17 @@ def run_module():
         "ReplicaNum": replica_num if replica_num is not None else current.get("ReplicaNum"),
         "Note": note if note is not None else current.get("Note"),
     })
+    if partition_num is not None and partition_num != current.get("PartitionNum"):
+        _validate_partition_scale(module, topic_name, current.get("PartitionNum"),
+                                  partition_num)
     if module.check_mode:
         module.exit_json(changed=True, **(diff or {}), msg="Would update topic")
 
-    _update(module, client, models, instance_id, topic_name, module.params)
+    if partition_num is not None and partition_num != current.get("PartitionNum"):
+        _scale_partitions(module, client, models, instance_id, topic_name,
+                          current.get("PartitionNum"), partition_num)
+    _update(module, client, models, instance_id, topic_name,
+            current.get("PartitionNum"), module.params)
     updated = find_topic(module, client, models, instance_id, topic_name)
     module.exit_json(changed=True, **(diff or {}), topic=updated, msg="Topic updated")
 

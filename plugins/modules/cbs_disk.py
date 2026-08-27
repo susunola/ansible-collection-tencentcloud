@@ -294,7 +294,7 @@ def _create(module, client, models, params):
             sdk_tags.append(sdk_tag)
         request.Tags = sdk_tags
     response = module.sdk_call(client.CreateDisks, request)
-    return response.DiskIdSet[0]
+    return _first(response.DiskIdSet or [])
 
 
 def _rename(module, client, models, disk_id, name):

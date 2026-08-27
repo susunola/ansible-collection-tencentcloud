@@ -181,7 +181,6 @@ function:
 
 import base64
 import hashlib
-import os
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -283,7 +282,7 @@ def _update_code(module, client, models, function_name, namespace, params):
     request.FunctionName = function_name
     request.Namespace = namespace
     request.Handler = params["handler"]
-    request.Publish = True
+    request.Publish = "TRUE"
     code = _build_code(models, params)
     if params["zip_file"]:
         request.ZipFile = code.ZipFile
