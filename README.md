@@ -18,6 +18,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cam_policy` | Manage Tencent Cloud CAM policies |
 | `cam_role` | Manage Tencent Cloud CAM roles |
 | `cam_user` | Manage Tencent Cloud CAM sub-users |
+| `cbs_disk` | Manage Tencent Cloud CBS cloud disks |
 | `cfs_file_system` | Manage Tencent Cloud CFS file systems |
 | `ckafka_topic` | Manage Tencent Cloud CKafka topics |
 | `clb_listener` | Manage listeners on Tencent Cloud CLB load balancers |
@@ -26,6 +27,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cos_bucket` | Manage Tencent Cloud COS buckets |
 | `cvm_image` | Manage Tencent Cloud CVM custom images |
 | `cvm_instance` | Manage Tencent Cloud CVM instances |
+| `dnspod_record` | Manage Tencent Cloud DNSPod DNS records |
 | `eip` | Manage Tencent Cloud elastic IP addresses (EIP) |
 | `key_pair` | Manage Tencent Cloud CVM key pairs |
 | `lighthouse_instance` | Manage Tencent Cloud Lighthouse instances |

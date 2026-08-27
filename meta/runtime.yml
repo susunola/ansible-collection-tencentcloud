@@ -39,6 +39,7 @@ action_groups:
     - cam_user_info
     - captcha_captcha_user_all_app_id_info
     - cat_probe_task_info
+    - cbs_disk
     - cbs_disk_info
     - ccc_extension_info
     - cdb_instance_info
@@ -95,6 +96,7 @@ action_groups:
     - dc_direct_connect_tunnel_info
     - dcdb_dcdb_instance_info
     - dlc_task_info
+    - dnspod_record
     - dnspod_record_info
     - domain_batch_operation_log_info
     - dsgc_dspa_assessment_risk_info
