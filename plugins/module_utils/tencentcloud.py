@@ -30,6 +30,21 @@ try:
 except ImportError:
     HAS_TENCENTCLOUD_SDK = False
 
+    class TencentCloudSDKException(Exception):
+        """Placeholder for SDK-less environments.
+
+        The SDK is required at runtime, so a real SDK exception can never be
+        raised when it is missing. The placeholder keeps the name resolvable
+        so ``sdk_call``'s except clause stays valid and unit tests can patch
+        the name without the SDK installed.
+        """
+
+        def get_code(self):
+            return None
+
+        def get_request_id(self):
+            return None
+
 
 SDK_IMP_ERR = "The tencentcloud-sdk-python package is required on the Ansible controller."
 
