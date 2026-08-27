@@ -6,6 +6,7 @@ new_plugins_after_name: removed_features
 notesdir: fragments
 prelude_section_name: release_summary
 prelude_section_title: Release Summary
+title: Tencent Cloud
 sections:
   - [major_changes, Major Changes]
   - [minor_changes, Minor Changes]
