@@ -1,0 +1,8 @@
+minor_changes:
+  - ci - extend the sanity matrix to ansible-core 2.19/2.20/2.21 (Python 3.12/3.13) and add a whole-repo ``ruff check`` step so lint violations fail CI instead of only local runs.
+  - tests - raise the combined module_utils/modules coverage gate in CI from 50% to 70% now that every write module is exercised by the SDK contract suite (currently 79%).
+  - modules - construct SDK tag models by attribute assignment instead of keyword arguments so every write module works against the real Tencent Cloud SDK classes.
+bugfixes:
+  - ckafka_topic - scale partitions through ``CreatePartitionRequest`` with a delta instead of the nonexistent ``PartitionNum`` attribute on ``ModifyTopicAttributesRequest``; shrinking is now rejected with a clear error.
+  - ssm_parameter - use ``RecoveryWindowInDays`` for delete instead of the int-typed ``DeleteMode`` attribute.
+  - scf_function - set ``Publish`` on ``UpdateFunctionCodeRequest`` as the string ``"TRUE"`` the SDK declares, not a boolean.

@@ -25,6 +25,12 @@ jobs:
             python: "3.11"
           - ansible-core: "2.18.*"
             python: "3.12"
+          - ansible-core: "2.19.*"
+            python: "3.12"
+          - ansible-core: "2.20.*"
+            python: "3.13"
+          - ansible-core: "2.21.*"
+            python: "3.13"
     defaults:
       run:
         working-directory: ansible_collections/susunola/tencentcloud
@@ -38,13 +44,15 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install "ansible-core==${{ matrix.ansible-core }}" pytest pytest-xdist yamllint
+          python -m pip install "ansible-core==${{ matrix.ansible-core }}" pytest pytest-xdist yamllint ruff
       - name: Generated modules are up to date
         run: python scripts/generate_info_modules.py --check
       - name: Module registries are up to date
         run: python scripts/sync_registry.py --check
       - name: Module tiers are consistent
         run: python scripts/check_module_tiers.py --check
+      - name: Ruff lint
+        run: ruff check .
       - name: Sanity tests
         run: ansible-test sanity --color --python ${{ matrix.python }}
       - name: Unit tests
@@ -56,14 +64,14 @@ jobs:
       # cleanly when the SDK is not importable.
       #
       # Coverage: module_utils + modules are measured and the run fails
-      # below the threshold (--cov-fail-under=50), so a PR that silently
+      # below the threshold (--cov-fail-under=70), so a PR that silently
       # regresses overall coverage is blocked instead of merged.
       - name: SDK contract tests
         run: |
           python -m pip install -r requirements.txt pytest-cov
           PYTHONPATH="${{ github.workspace }}" python -m pytest tests/contract -q \
             --cov=plugins/module_utils --cov=plugins/modules \
-            --cov-report=term-missing --cov-fail-under=50
+            --cov-report=term-missing --cov-fail-under=70
       - name: Build collection
         run: ansible-galaxy collection build
 
