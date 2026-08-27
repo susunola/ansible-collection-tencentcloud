@@ -42,6 +42,7 @@ action_groups:
     - cbs_disk
     - cbs_disk_info
     - ccc_extension_info
+    - cdb_instance
     - cdb_instance_info
     - cdc_dedicated_cluster_order_info
     - cdn_domain_info
@@ -213,6 +214,7 @@ action_groups:
     - tiia_group_info
     - tione_dataset_info
     - tiw_running_task_info
+    - tke_cluster
     - tke_cluster_info
     - tokenhub_model_info
     - tourism_draw_resource_info

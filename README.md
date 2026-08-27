@@ -19,6 +19,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cam_role` | Manage Tencent Cloud CAM roles |
 | `cam_user` | Manage Tencent Cloud CAM sub-users |
 | `cbs_disk` | Manage Tencent Cloud CBS cloud disks |
+| `cdb_instance` | Manage Tencent Cloud CDB MySQL instances |
 | `cfs_file_system` | Manage Tencent Cloud CFS file systems |
 | `ckafka_topic` | Manage Tencent Cloud CKafka topics |
 | `clb_listener` | Manage listeners on Tencent Cloud CLB load balancers |
@@ -43,6 +44,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `ssm_parameter` | Manage Tencent Cloud SSM secrets (parameters) |
 | `subnet` | Manage Tencent Cloud VPC subnets |
 | `tag` | Manage tags on arbitrary Tencent Cloud resources |
+| `tke_cluster` | Manage Tencent Cloud TKE clusters |
 | `vpc` | Manage Tencent Cloud VPCs |
 | `vpn_gateway` | Manage Tencent Cloud VPN gateways |
 

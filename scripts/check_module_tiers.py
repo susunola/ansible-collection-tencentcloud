@@ -43,6 +43,7 @@ CORE_MODULES = {
     "cam_role",
     "cam_user",
     "cbs_disk",
+    "cdb_instance",
     "clb_rule",
     "ckafka_topic",
     "clb_listener",
@@ -67,6 +68,7 @@ CORE_MODULES = {
     "ssm_parameter",
     "subnet",
     "tag",
+    "tke_cluster",
     "vpc",
     "vpn_gateway",
     # Hand-written *_info modules that the generator cannot express.

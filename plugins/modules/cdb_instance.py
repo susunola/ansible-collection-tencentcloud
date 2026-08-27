@@ -1,0 +1,358 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
+DOCUMENTATION = r'''
+---
+module: cdb_instance
+short_description: Manage Tencent Cloud CDB MySQL instances
+version_added: "0.12.0"
+description:
+  - Create, rename and isolate CDB MySQL instances through the
+    C(cdb.v20170320) API.
+  - This module is idempotent. Running it twice leaves the instance
+    unchanged and the second run reports C(changed=false).
+  - Supports check mode; no API write happens in check mode, only reads.
+  - An instance is identified by O(instance_id) or by O(name). Instance
+    configuration (memory, volume, version, VPC) is only applied at
+    creation; scaling is out of scope for this module.
+options:
+  state:
+    description:
+      - C(present) creates the instance when it does not exist and renames
+        it when O(name) differs.
+      - C(absent) isolates the instance (the billing is stopped and the
+        instance moves to the recycle bin; postpaid instances are then
+        destroyed automatically after the retention period).
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - ID of an existing instance, e.g. C(cdb-xxxxxxxx).
+      - When given, the module operates on that instance; otherwise it is
+        matched by O(name).
+    type: str
+  name:
+    description:
+      - Name of the instance, written to V(CreateDBInstanceRequest.
+        InstanceName) and V(ModifyDBInstanceNameRequest.InstanceName).
+    type: str
+  zone:
+    description:
+      - Availability zone of the instance, e.g. C(ap-guangzhou-3), written
+        to V(CreateDBInstanceRequest.Zone).
+      - Required when creating the instance.
+    type: str
+  engine_version:
+    description:
+      - MySQL version of the instance, e.g. C(5.7) or C(8.0), written to
+        V(CreateDBInstanceRequest.EngineVersion).
+      - Required when creating the instance.
+    type: str
+  memory:
+    description:
+      - Memory size of the instance in MiB, written to
+        V(CreateDBInstanceRequest.Memory).
+      - Required when creating the instance.
+    type: int
+  volume:
+    description:
+      - Disk size of the instance in GiB, written to
+        V(CreateDBInstanceRequest.Volume).
+      - Required when creating the instance.
+    type: int
+  password:
+    description:
+      - Root password of the instance, written to
+        V(CreateDBInstanceRequest.Password).
+      - Only applied at creation; the value is masked from output.
+    type: str
+  vpc_id:
+    description:
+      - ID of the VPC, written to V(CreateDBInstanceRequest.UniqVpcId).
+      - Only applied at creation.
+    type: str
+  subnet_id:
+    description:
+      - ID of the subnet, written to V(CreateDBInstanceRequest.UniqSubnetId).
+      - Only applied at creation.
+    type: str
+  project_id:
+    description:
+      - Project the instance belongs to, written to
+        V(CreateDBInstanceRequest.ProjectId) and
+        V(ModifyDBInstanceNameRequest) via the project attribute.
+    type: int
+  period_months:
+    description:
+      - Prepaid period in months, written to V(CreateDBInstanceRequest.
+        Period).
+      - When given the instance is billed prepaid; otherwise it is created
+        postpaid.
+    type: int
+  auto_renew:
+    description:
+      - Auto-renew the prepaid instance, written to
+        V(CreateDBInstanceRequest.AutoRenewFlag).
+    type: int
+  security_group:
+    description:
+      - Security groups to bind at creation, written to
+        V(CreateDBInstanceRequest.SecurityGroup).
+    type: list
+    elements: str
+  tags:
+    description:
+      - Tags to apply to the instance as a dict, for example I(env=prod).
+      - Only applied at creation.
+    type: dict
+    default: {}
+  retries:
+    description: Number of retries for transient SDK failures.
+    type: int
+    default: 5
+  waiter_delay:
+    description: Seconds to wait between state-polling attempts.
+    type: int
+    default: 5
+  waiter_timeout:
+    description: Overall timeout in seconds for state polling.
+    type: int
+    default: 120
+  user_agent:
+    description:
+      - Value appended to the SDK User-Agent header so API usage can be
+        attributed to this collection.
+    type: str
+    default: ansible-collection.susunola.tencentcloud
+notes:
+  - Requires the C(tencentcloud-sdk-python-cdb) package on the controller.
+  - CDB instances are billed while present; isolate them as soon as they
+    are no longer needed to avoid unnecessary charges.
+  - Creation takes several minutes; the module returns as soon as the
+    creation order is accepted.
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+author: Tencent Cloud Ansible Collection Contributors (@susunola)
+'''
+
+EXAMPLES = r'''
+- name: Create a 4C8G MySQL 8.0 instance
+  susunola.tencentcloud.cdb_instance:
+    region: ap-guangzhou
+    state: present
+    name: prod-mysql
+    zone: ap-guangzhou-3
+    engine_version: "8.0"
+    memory: 8000
+    volume: 100
+    password: "{{ mysql_root_password }}"
+    tags:
+      env: prod
+
+- name: Rename it
+  susunola.tencentcloud.cdb_instance:
+    region: ap-guangzhou
+    state: present
+    name: prod-mysql-v2
+
+- name: Isolate it (stop billing)
+  susunola.tencentcloud.cdb_instance:
+    region: ap-guangzhou
+    state: absent
+    name: prod-mysql-v2
+'''
+
+RETURN = r'''
+instance:
+  description: The instance as reported by V(DescribeDBInstances) after the
+    operation.
+  returned: success
+  type: dict
+  sample:
+    InstanceId: cdb-xxxxxxxx
+    InstanceName: prod-mysql
+    Status: 1
+    Memory: 8000
+    Volume: 100
+    EngineVersion: "8.0"
+'''
+
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+
+
+def _load_cdb():
+    from tencentcloud.cdb.v20170320 import models, cdb_client
+    return models, cdb_client
+
+
+def build_describe_request(models, instance_id, name):
+    request = models.DescribeDBInstancesRequest()
+    request.Limit = 100
+    if instance_id:
+        request.InstanceIds = [instance_id]
+    elif name:
+        request.InstanceNames = [name]
+    return request
+
+
+def _first(collection):
+    return collection[0] if collection else None
+
+
+def find_instance(module, client, models, instance_id, name):
+    """Return the matching instance dict or None."""
+    request = build_describe_request(models, instance_id, name)
+    response = module.sdk_call(client.DescribeDBInstances, request)
+    if instance_id:
+        instance = _first(response.Items or [])
+        return instance._serialize(allow_none=True) if instance is not None else None
+    for instance in response.Items or []:
+        current = instance._serialize(allow_none=True)
+        if current.get("InstanceName") == name:
+            return current
+    return None
+
+
+def _create(module, client, models, params):
+    request = models.CreateDBInstanceRequest()
+    request.Zone = params["zone"]
+    request.EngineVersion = params["engine_version"]
+    request.Memory = params["memory"]
+    request.Volume = params["volume"]
+    request.GoodsNum = 1
+    request.InstanceName = params["name"]
+    if params["password"]:
+        request.Password = params["password"]
+    if params["vpc_id"]:
+        request.UniqVpcId = params["vpc_id"]
+    if params["subnet_id"]:
+        request.UniqSubnetId = params["subnet_id"]
+    if params["project_id"] is not None:
+        request.ProjectId = params["project_id"]
+    if params["period_months"] is not None:
+        request.Period = params["period_months"]
+    if params["auto_renew"] is not None:
+        request.AutoRenewFlag = params["auto_renew"]
+    if params["security_group"]:
+        request.SecurityGroup = params["security_group"]
+    if params["tags"]:
+        sdk_tags = []
+        for key, value in sorted(params["tags"].items()):
+            sdk_tag = models.TagInfoUnit()
+            sdk_tag.TagKey = key
+            sdk_tag.TagValue = value
+            sdk_tags.append(sdk_tag)
+        request.ResourceTags = sdk_tags
+    response = module.sdk_call(client.CreateDBInstance, request)
+    return _first(response.InstanceIds or [])
+
+
+def _rename(module, client, models, instance_id, name):
+    request = models.ModifyDBInstanceNameRequest()
+    request.InstanceId = instance_id
+    request.InstanceName = name
+    module.sdk_call(client.ModifyDBInstanceName, request)
+
+
+def _delete(module, client, models, instance_id):
+    request = models.IsolateDBInstanceRequest()
+    request.InstanceId = instance_id
+    module.sdk_call(client.IsolateDBInstance, request)
+
+
+def run_module():
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "instance_id": {"type": "str"},
+            "name": {"type": "str"},
+            "zone": {"type": "str"},
+            "engine_version": {"type": "str"},
+            "memory": {"type": "int"},
+            "volume": {"type": "int"},
+            "password": {"type": "str", "no_log": True},
+            "vpc_id": {"type": "str"},
+            "subnet_id": {"type": "str"},
+            "project_id": {"type": "int"},
+            "period_months": {"type": "int"},
+            "auto_renew": {"type": "int"},
+            "security_group": {"type": "list", "elements": "str"},
+            "tags": {"type": "dict", "default": {}},
+        },
+        supports_check_mode=True,
+    )
+    module.require_sdk()
+
+    state = module.params["state"]
+    instance_id = module.params["instance_id"]
+    name = module.params["name"]
+
+    if not instance_id and not name:
+        module.fail_json(msg="instance_id or name is required to identify the instance")
+
+    models, cdb_client = _load_cdb()
+    client = module.create_client(cdb_client.CdbClient, "cdb.tencentcloudapi.com")
+
+    try:
+        current = find_instance(module, client, models, instance_id, name)
+    except Exception as exc:
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
+
+    if state == "absent":
+        if current is None:
+            module.exit_json(changed=False, msg="CDB instance already absent")
+        target_id = current["InstanceId"]
+        diff = maybe_diff(module, current, None)
+        if module.check_mode:
+            module.exit_json(changed=True, **(diff or {}), msg="Would isolate CDB instance")
+        _delete(module, client, models, target_id)
+        module.exit_json(changed=True, **(diff or {}), instance=None, msg="CDB instance isolated")
+
+    # state == present
+    if current is None:
+        missing = [key for key in ("zone", "engine_version", "memory", "volume", "name") if not module.params[key]]
+        if missing:
+            module.fail_json(msg="%s is required when creating a CDB instance" % ", ".join(missing))
+        desired = {
+            "InstanceName": name,
+            "Zone": module.params["zone"],
+            "EngineVersion": module.params["engine_version"],
+            "Memory": module.params["memory"],
+            "Volume": module.params["volume"],
+        }
+        diff = maybe_diff(module, None, desired)
+        if module.check_mode:
+            module.exit_json(changed=True, **(diff or {}), msg="Would create CDB instance")
+        created_id = _create(module, client, models, module.params)
+        current = find_instance(module, client, models, created_id, None)
+        module.exit_json(changed=True, **(diff or {}), instance=current, msg="CDB instance created")
+
+    target_id = current["InstanceId"]
+    if name and current.get("InstanceName") != name:
+        diff = maybe_diff(module, current, {"InstanceName": name})
+        if module.check_mode:
+            module.exit_json(changed=True, **(diff or {}), msg="Would rename CDB instance")
+        _rename(module, client, models, target_id, name)
+        updated = find_instance(module, client, models, target_id, None)
+        module.exit_json(changed=True, **(diff or {}), instance=updated, msg="CDB instance renamed")
+
+    module.exit_json(changed=False, instance=current, msg="CDB instance is up to date")
+
+
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()

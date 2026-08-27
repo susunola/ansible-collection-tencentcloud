@@ -1,0 +1,3 @@
+minor_changes:
+  - cdb_instance - add the ``cdb_instance`` module to create, rename and isolate MySQL instances through the ``cdb.v20170320`` API with idempotency and check mode, including project, VPC, security group and tag placement.
+  - tke_cluster - add the ``tke_cluster`` module to create, update and delete Kubernetes clusters through the ``tke.v20180525`` API with idempotency and check mode, including CIDR settings, deletion protection and node termination policy on delete.
