@@ -69,20 +69,47 @@
 24. Module tier governance (0.12.0): `check_module_tiers.py` CI gate
     (generated vs core vs unclassified) plus structural validation of every
     generator spec (`validate_specs`). **Done**
+25. CVM pool scaling (0.11.0): `cvm_instance` `exact_count`/`count_tag`
+    batch create/terminate with oldest-first eviction and PREPAID
+    protection. **Done**
+26. Write module batches 2-7 (0.12.0): `peering_connection`,
+    `vpn_gateway`, `nat_gateway`, `ssm_parameter`, `scf_function`,
+    `ckafka_topic`, `cbs_disk`, `dnspod_record`, `clb_rule`,
+    `ssl_certificate`, `tag`, `redis_instance`, `cdb_instance`,
+    `tke_cluster` — the write-module count grows from 7 to 21, every one
+    with idempotency, check mode, diff and contract tests. **Done**
+27. COS bucket config face (0.12.0): `cos_bucket` CORS and lifecycle
+    configuration management on top of the `qcloud_cos` SDK. **Done**
+28. EIP elasticity (0.12.0): bandwidth and charge-type updates on existing
+    EIPs. **Done**
+29. CI hardening (0.12.0): matrix extended to ansible-core 2.19-2.21 and
+    Python 3.13, whole-repo ruff with the ansible-test rule set, coverage
+    gate raised to 70%. **Done**
+30. Integration target expansion (0.12.0): `cam_user`/`cos_bucket`/
+    `key_pair` targets plus opt-in `cvm_image`/`lighthouse` lifecycle
+    targets with an extended sweeper. **Done**
+31. Generated-module polish (0.12.0): `request_id` on every returned info,
+    token-paginated `ids`/`filters` passthrough fix, 5 auto modules
+    renamed to drop redundant prefixes, 4 zero-arg single-object modules
+    added (196 generated modules). **Done**
+32. SDK drift sentinel (0.12.0): `info_specs_auto.py` carries a
+    `GENERATED_SDK_VERSION` stamp; `check_sdk_drift.py` fails CI with
+    regeneration instructions when the environment SDK drifts. **Done**
+33. Failure-path coverage (0.12.0): the real `sdk_call` fail_json contract
+    is pinned in unit tests and every generated `_info` test gains a
+    `test_run_module_fails_cleanly_on_sdk_error` case. **Done**
 
 ## Next
 
-25. Remaining write modules (12 of the planned 15): `cvm_chc`, `mongodb`,
-    `redis`, `mysql`/`cdb`, `nat_gateway`, `vpn_gateway`, `gaap`, `cdn`,
-    `tke`, `tcr`, `scf`, `ckafka`.
-26. `cvm_instance` scaling: `exact_count`-style batch create/terminate with
-    per-zone spread.
-27. Coverage reporting for unit and integration tests.
-28. Galaxy namespace and publishing: the release workflow already publishes
-    on tags once `GALAXY_API_KEY` is configured.
-29. Curate auto-generated modules that hide required request parameters
+34. Remaining write modules: `cvm_chc`, `mongodb`, `mysql`, `gaap`, `cdn`,
+    `tcr`.
+35. Coverage reporting for unit and integration tests.
+36. Curate auto-generated modules that hide required request parameters
     (e.g. `teo` ZoneId, `mqtt`/`emr` InstanceId, `lcic` SdkAppId): move them
     into curated SPECS with `extra_params` or drop them.
+37. Deepen existing write modules: async long-running task polling beyond
+    CLB, multi-zone spread for `exact_count`, waiter coverage for database
+    instance lifecycles.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
