@@ -34,6 +34,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `lighthouse_instance` | Manage Tencent Cloud Lighthouse instances |
 | `nat_gateway` | Manage Tencent Cloud NAT gateways |
 | `peering_connection` | Manage Tencent Cloud VPC peering connections |
+| `redis_instance` | Manage Tencent Cloud Redis instances |
 | `route_table` | Manage Tencent Cloud VPC route tables |
 | `scf_function` | Manage Tencent Cloud SCF functions |
 | `security_group` | Manage Tencent Cloud security groups |
@@ -41,6 +42,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `ssl_certificate` | Manage Tencent Cloud SSL certificates |
 | `ssm_parameter` | Manage Tencent Cloud SSM secrets (parameters) |
 | `subnet` | Manage Tencent Cloud VPC subnets |
+| `tag` | Manage tags on arbitrary Tencent Cloud resources |
 | `vpc` | Manage Tencent Cloud VPCs |
 | `vpn_gateway` | Manage Tencent Cloud VPN gateways |
 

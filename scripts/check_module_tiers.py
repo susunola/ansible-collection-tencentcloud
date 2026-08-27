@@ -58,6 +58,7 @@ CORE_MODULES = {
     "lighthouse_instance",
     "nat_gateway",
     "peering_connection",
+    "redis_instance",
     "route_table",
     "scf_function",
     "security_group",
@@ -65,6 +66,7 @@ CORE_MODULES = {
     "ssl_certificate",
     "ssm_parameter",
     "subnet",
+    "tag",
     "vpc",
     "vpn_gateway",
     # Hand-written *_info modules that the generator cannot express.

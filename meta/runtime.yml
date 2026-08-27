@@ -169,6 +169,7 @@ action_groups:
     - postgres_instance_info
     - privatedns_account_vpc_info
     - pts_cron_job_info
+    - redis_instance
     - redis_instance_info
     - region_product_info
     - route_table
@@ -192,6 +193,7 @@ action_groups:
     - subnet
     - subnet_info
     - svp_saving_plan_coverage_info
+    - tag
     - tat_command_info
     - tbaas_block_info
     - tcaplusdb_cluster_info
