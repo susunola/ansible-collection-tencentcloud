@@ -2,9 +2,14 @@
 requires_ansible: ">=2.16.0"
 action_groups:
   all:
+    - acp_scan_task_info
     - adp_agent_release_preview_info
+    - advisor_strategy_info
     - ags_sandbox_instance_info
+    - alb_security_policy_info
     - ame_ktv_robot_info
+    - ams_task_info
+    - anicloud_resource_info
     - antiddos_d_do_s_block_record_info
     - ape_auth_user_info
     - api_product_info
@@ -12,22 +17,27 @@ action_groups:
     - apis_agent_app_mcp_server_info
     - apm_general_span_info
     - as_scaling_group_info
+    - asr_async_recognition_task_info
     - asw_flow_service_info
     - batch_compute_env_create_info
     - bdrc_backup_vault_info
     - bh_device_group_member_info
+    - bi_auth_api_key_info
     - billing_balance_info
+    - bizlive_worker_info
     - bm_device_info
     - bma_bp_fake_app_info
     - bmeip_eip_acl_info
     - bmlb_load_balancer_info
     - bmvpc_customer_gateway_info
+    - bsca_kb_component_info
     - cam_policy
     - cam_policy_info
     - cam_role
     - cam_role_info
     - cam_user
     - cam_user_info
+    - captcha_captcha_user_all_app_id_info
     - cat_probe_task_info
     - cbs_disk_info
     - ccc_extension_info
@@ -38,15 +48,20 @@ action_groups:
     - cdwch_cn_instance_info
     - cdwdoris_cluster_configs_history_info
     - cdwpg_account_info
+    - cdz_cloud_dedicated_zone_host_info
     - cetcd_etcd_instance_info
     - cfg_action_library_info
     - cfs_file_system_info
     - cfw_cluster_nat_ccn_fw_switch_info
     - chc_device_info
+    - chdfs_file_system_info
+    - ciam_user_store_info
     - ckafka_instance_info
     - clb_load_balancer_info
     - cloudaudit_event_info
     - cloudhsm_vsm_info
+    - cloudrc_resource_info
+    - cloudstudio_image_info
     - cls_topic_info
     - cme_platform_info
     - cmq_queue_info
@@ -56,6 +71,7 @@ action_groups:
     - controlcenter_account_factory_baseline_item_info
     - cos_bucket
     - cos_bucket_info
+    - cpdp_merchant_info_for_management_info
     - csip_asset_process_info
     - ctem_api_sec_info
     - ctsdb_cluster_info
@@ -65,6 +81,7 @@ action_groups:
     - cws_monitor_info
     - cynosdb_cluster_info
     - dasb_device_info
+    - dataagent_chunk_info
     - dayu_resource_info
     - dbbrain_db_diag_event_info
     - dbdc_db_custom_cluster_info
@@ -87,16 +104,24 @@ action_groups:
     - es_cluster_info
     - ess_file_url_info
     - essbasic_template_info
+    - facefusion_material_info
+    - faceid_we_chat_bill_info
+    - fmu_model_info
     - fwm_edge_acl_rule_info
     - ga2_accelerate_area_info
     - gaap_proxy_info
+    - gme_voice_print_info
     - goosefs_file_system_info
     - gs_android_app_info
     - gwlb_gateway_load_balancer_info
     - hai_application_info
     - hasim_link_info
+    - hunyuan_glossary_info
+    - iai_group_info
     - ic_sms_info
     - igtm_address_pool_info
+    - ioa_device_info
+    - iot_product_info
     - iotcloud_device_resource_info
     - iotexplorer_device_position_info
     - iotvideo_ai_model_application_info
@@ -107,6 +132,7 @@ action_groups:
     - key_pair
     - key_pair_info
     - kms_key_info
+    - lcic_answer_info
     - lighthouse_instance_info
     - live_audit_keyword_info
     - lke_app_knowledge_info
@@ -114,6 +140,8 @@ action_groups:
     - mall_draw_resource_info
     - mariadb_instance_info
     - memcached_instance_info
+    - mmps_resource_usage_info
+    - mna_access_region_info
     - mongodb_instance_info
     - monitor_alarm_policy_info
     - mps_person_sample_info
@@ -125,6 +153,7 @@ action_groups:
     - omics_application_info
     - organization_member_info
     - partners_agent_deals_by_cache_info
+    - portal_document_info
     - postgres_instance_info
     - privatedns_account_vpc_info
     - pts_cron_job_info
@@ -140,6 +169,7 @@ action_groups:
     - securitylake_security_alarm_table_info
     - ses_black_email_address_info
     - smh_library_info
+    - sms_sms_sign_info
     - sqlserver_instance_info
     - ssa_check_config_asset_info
     - ssl_certificate_info
@@ -148,8 +178,10 @@ action_groups:
     - subnet_info
     - svp_saving_plan_coverage_info
     - tat_command_info
+    - tbaas_block_info
     - tcaplusdb_cluster_info
     - tcb_billing_info
+    - tcbr_cloud_run_pod_info
     - tcm_mesh_info
     - tcr_instance_info
     - tcss_abnormal_process_event_info
@@ -160,6 +192,8 @@ action_groups:
     - tem_application_info
     - teo_function_info
     - thpc_cluster_info
+    - tia_job_info
+    - tiia_group_info
     - tione_dataset_info
     - tiw_running_task_info
     - tke_cluster_info
@@ -174,11 +208,13 @@ action_groups:
     - tsf_application_info
     - vcube_vcube_resource_info
     - vdb_instance_info
+    - vm_task_info
     - vod_incremental_migration_strategy_info
     - vpc
     - vpc_info
     - vpn_gateway_info
     - waf_instance_info
+    - wav_activity_info
     - wedata_project_info
     - weilingwith_element_profile_page_info
     - wss_cert_info

@@ -9,6 +9,34 @@ types) exactly like the curated SPECS in generate_info_modules.py.
 
 SPECS_AUTO = [
     {
+        'module': 'acp_scan_task_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.acp.v20220105',
+        'client_module': 'acp_client',
+        'client_class': 'AcpClient',
+        'sdk_package': 'tencentcloud-sdk-python-acp',
+        'endpoint': 'acp.tencentcloudapi.com',
+        'action': 'DescribeScanTaskList',
+        'request_class': 'DescribeScanTaskListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Data',
+        'response_total': 'Total',
+        'result_key': 'scan_tasks',
+        'pagination_type': 'page',
+        'page_number_field': 'PageNo',
+        'short_description': 'Gather information about Tencent Cloud ACP scan tasks',
+        'description': 'Returns ACP scan tasks visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching ACP scan tasks.',
+        'return_total_doc': 'Number of scan tasks reported by the API.',
+        'examples': """\
+- name: List all scan tasks
+  tencentcloud.cloud.acp_scan_task_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'adp_agent_release_preview_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.adp.v20260520',
@@ -32,6 +60,33 @@ SPECS_AUTO = [
         'examples': """\
 - name: List all agent release previews
   tencentcloud.cloud.adp_agent_release_preview_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'advisor_strategy_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.advisor.v20200721',
+        'client_module': 'advisor_client',
+        'client_class': 'AdvisorClient',
+        'sdk_package': 'tencentcloud-sdk-python-advisor',
+        'endpoint': 'advisor.tencentcloudapi.com',
+        'action': 'DescribeStrategies',
+        'request_class': 'DescribeStrategiesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Strategies',
+        'response_total': None,
+        'result_key': 'strategies',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud ADVISOR strategies',
+        'description': 'Returns ADVISOR strategies visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching ADVISOR strategies.',
+        'return_total_doc': 'Number of strategies returned (the API reports no total count).',
+        'examples': """\
+- name: List all strategies
+  tencentcloud.cloud.advisor_strategy_info:
     region: ap-guangzhou
 """,
     },
@@ -74,6 +129,45 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'alb_security_policy_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.alb.v20251030',
+        'client_module': 'alb_client',
+        'client_class': 'AlbClient',
+        'sdk_package': 'tencentcloud-sdk-python-alb',
+        'endpoint': 'alb.tencentcloudapi.com',
+        'action': 'DescribeSecurityPolicies',
+        'request_class': 'DescribeSecurityPoliciesRequest',
+        'ids': {
+            'param': 'security_policy_ids',
+            'field': 'SecurityPolicyIds',
+            'doc': 'Security policy IDs to return. Mutually exclusive with O(filters).',
+        },
+        'filters': {
+            'doc': 'ALB API filter names mapped to lists of values.',
+        },
+        'extra_params': [],
+        'response_items': 'SecurityPolicies',
+        'response_total': 'TotalCount',
+        'result_key': 'security_policies',
+        'pagination_type': 'token',
+        'list_over_field': None,
+        'short_description': 'Gather information about Tencent Cloud ALB security policies',
+        'description': 'Returns ALB security policies visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching ALB security policies.',
+        'return_total_doc': 'Number of security policies reported by the API.',
+        'examples': """\
+- name: List all security policies
+  tencentcloud.cloud.alb_security_policy_info:
+    region: ap-guangzhou
+
+- name: Find security policies by ID
+  tencentcloud.cloud.alb_security_policy_info:
+    region: ap-guangzhou
+    security_policy_ids: [x-xxxxxxxx]
+""",
+    },
+    {
         'module': 'ame_ktv_robot_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.ame.v20190916',
@@ -107,6 +201,64 @@ SPECS_AUTO = [
   tencentcloud.cloud.ame_ktv_robot_info:
     region: ap-guangzhou
     ktv_robot_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'ams_task_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.ams.v20201229',
+        'client_module': 'ams_client',
+        'client_class': 'AmsClient',
+        'sdk_package': 'tencentcloud-sdk-python-ams',
+        'endpoint': 'ams.tencentcloudapi.com',
+        'action': 'DescribeTasks',
+        'request_class': 'DescribeTasksRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Data',
+        'response_total': None,
+        'result_key': 'tasks',
+        'pagination_type': 'token',
+        'token_request_field': 'PageToken',
+        'token_response_field': 'PageToken',
+        'page_size_field': 'Limit',
+        'list_over_field': None,
+        'short_description': 'Gather information about Tencent Cloud AMS tasks',
+        'description': 'Returns AMS tasks visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching AMS tasks.',
+        'return_total_doc': 'Number of tasks returned (the API reports no total count).',
+        'examples': """\
+- name: List all tasks
+  tencentcloud.cloud.ams_task_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'anicloud_resource_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.anicloud.v20220923',
+        'client_module': 'anicloud_client',
+        'client_class': 'AnicloudClient',
+        'sdk_package': 'tencentcloud-sdk-python-anicloud',
+        'endpoint': 'anicloud.tencentcloudapi.com',
+        'action': 'QueryResource',
+        'request_class': 'QueryResourceRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Resources',
+        'response_total': 'Total',
+        'result_key': 'resources',
+        'pagination_type': 'page',
+        'short_description': 'Gather information about Tencent Cloud ANICLOUD resources',
+        'description': 'Returns ANICLOUD resources visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching ANICLOUD resources.',
+        'return_total_doc': 'Number of resources reported by the API.',
+        'examples': """\
+- name: List all resources
+  tencentcloud.cloud.anicloud_resource_info:
+    region: ap-guangzhou
 """,
     },
     {
@@ -256,6 +408,33 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'asr_async_recognition_task_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.asr.v20190614',
+        'client_module': 'asr_client',
+        'client_class': 'AsrClient',
+        'sdk_package': 'tencentcloud-sdk-python-asr',
+        'endpoint': 'asr.tencentcloudapi.com',
+        'action': 'DescribeAsyncRecognitionTasks',
+        'request_class': 'DescribeAsyncRecognitionTasksRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Data.Tasks',
+        'response_total': None,
+        'result_key': 'async_recognition_tasks',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud ASR async recognition tasks',
+        'description': 'Returns ASR async recognition tasks visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching ASR async recognition tasks.',
+        'return_total_doc': 'Number of async recognition tasks returned (the API reports no total count).',
+        'examples': """\
+- name: List all async recognition tasks
+  tencentcloud.cloud.asr_async_recognition_task_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'asw_flow_service_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.asw.v20200722',
@@ -397,6 +576,61 @@ SPECS_AUTO = [
   tencentcloud.cloud.bh_device_group_member_info:
     region: ap-guangzhou
     device_group_member_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'bi_auth_api_key_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.bi.v20220105',
+        'client_module': 'bi_client',
+        'client_class': 'BiClient',
+        'sdk_package': 'tencentcloud-sdk-python-bi',
+        'endpoint': 'bi.tencentcloudapi.com',
+        'action': 'DescribeAuthApiKeyList',
+        'request_class': 'DescribeAuthApiKeyListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Data.List',
+        'response_total': 'Data.Total',
+        'result_key': 'auth_api_keys',
+        'pagination_type': 'page',
+        'page_number_field': 'PageNo',
+        'short_description': 'Gather information about Tencent Cloud BI auth api keys',
+        'description': 'Returns BI auth api keys visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching BI auth api keys.',
+        'return_total_doc': 'Number of auth api keys reported by the API.',
+        'examples': """\
+- name: List all auth api keys
+  tencentcloud.cloud.bi_auth_api_key_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'bizlive_worker_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.bizlive.v20190313',
+        'client_module': 'bizlive_client',
+        'client_class': 'BizliveClient',
+        'sdk_package': 'tencentcloud-sdk-python-bizlive',
+        'endpoint': 'bizlive.tencentcloudapi.com',
+        'action': 'DescribeWorkers',
+        'request_class': 'DescribeWorkersRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'RegionDetail',
+        'response_total': None,
+        'result_key': 'workers',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud BIZLIVE workers',
+        'description': 'Returns BIZLIVE workers visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching BIZLIVE workers.',
+        'return_total_doc': 'Number of workers returned (the API reports no total count).',
+        'examples': """\
+- name: List all workers
+  tencentcloud.cloud.bizlive_worker_info:
+    region: ap-guangzhou
 """,
     },
     {
@@ -570,6 +804,60 @@ SPECS_AUTO = [
   tencentcloud.cloud.bmvpc_customer_gateway_info:
     region: ap-guangzhou
     customer_gateway_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'bsca_kb_component_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.bsca.v20210811',
+        'client_module': 'bsca_client',
+        'client_class': 'BscaClient',
+        'sdk_package': 'tencentcloud-sdk-python-bsca',
+        'endpoint': 'bsca.tencentcloudapi.com',
+        'action': 'SearchKBComponent',
+        'request_class': 'SearchKBComponentRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'ComponentList',
+        'response_total': 'Total',
+        'result_key': 'kb_components',
+        'pagination_type': 'page',
+        'short_description': 'Gather information about Tencent Cloud BSCA kb components',
+        'description': 'Returns BSCA kb components visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching BSCA kb components.',
+        'return_total_doc': 'Number of kb components reported by the API.',
+        'examples': """\
+- name: List all kb components
+  tencentcloud.cloud.bsca_kb_component_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'captcha_captcha_user_all_app_id_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.captcha.v20190722',
+        'client_module': 'captcha_client',
+        'client_class': 'CaptchaClient',
+        'sdk_package': 'tencentcloud-sdk-python-captcha',
+        'endpoint': 'captcha.tencentcloudapi.com',
+        'action': 'DescribeCaptchaUserAllAppId',
+        'request_class': 'DescribeCaptchaUserAllAppIdRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Data',
+        'response_total': None,
+        'result_key': 'captcha_user_all_app_ids',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CAPTCHA captcha user all app ids',
+        'description': 'Returns CAPTCHA captcha user all app ids visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CAPTCHA captcha user all app ids.',
+        'return_total_doc': 'Number of captcha user all app ids returned (the API reports no total count).',
+        'examples': """\
+- name: List all captcha user all app ids
+  tencentcloud.cloud.captcha_captcha_user_all_app_id_info:
+    region: ap-guangzhou
 """,
     },
     {
@@ -798,6 +1086,42 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'cdz_cloud_dedicated_zone_host_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.cdz.v20221123',
+        'client_module': 'cdz_client',
+        'client_class': 'CdzClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdz',
+        'endpoint': 'cdz.tencentcloudapi.com',
+        'action': 'DescribeCloudDedicatedZoneHosts',
+        'request_class': 'DescribeCloudDedicatedZoneHostsRequest',
+        'ids': {
+            'param': 'cloud_dedicated_zone_host_ids',
+            'field': 'HostUuids',
+            'doc': 'Cloud dedicated zone host IDs to return.',
+        },
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'CloudDedicatedZoneHostsInfoSet',
+        'response_total': None,
+        'result_key': 'cloud_dedicated_zone_hosts',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CDZ cloud dedicated zone hosts',
+        'description': 'Returns CDZ cloud dedicated zone hosts visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CDZ cloud dedicated zone hosts.',
+        'return_total_doc': 'Number of cloud dedicated zone hosts returned (the API reports no total count).',
+        'examples': """\
+- name: List all cloud dedicated zone hosts
+  tencentcloud.cloud.cdz_cloud_dedicated_zone_host_info:
+    region: ap-guangzhou
+
+- name: Find cloud dedicated zone hosts by ID
+  tencentcloud.cloud.cdz_cloud_dedicated_zone_host_info:
+    region: ap-guangzhou
+    cloud_dedicated_zone_host_ids: [x-xxxxxxxx]
+""",
+    },
+    {
         'module': 'cetcd_etcd_instance_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.cetcd.v20220325',
@@ -922,6 +1246,64 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'chdfs_file_system_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.chdfs.v20201112',
+        'client_module': 'chdfs_client',
+        'client_class': 'ChdfsClient',
+        'sdk_package': 'tencentcloud-sdk-python-chdfs',
+        'endpoint': 'chdfs.tencentcloudapi.com',
+        'action': 'DescribeFileSystems',
+        'request_class': 'DescribeFileSystemsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'FileSystems',
+        'response_total': None,
+        'result_key': 'file_systems',
+        'pagination_type': 'token',
+        'token_request_field': 'FileSystemIdMarker',
+        'token_response_field': 'NextFileSystemIdMarker',
+        'page_size_field': None,
+        'list_over_field': 'IsOver',
+        'short_description': 'Gather information about Tencent Cloud CHDFS file systems',
+        'description': 'Returns CHDFS file systems visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CHDFS file systems.',
+        'return_total_doc': 'Number of file systems returned (the API reports no total count).',
+        'examples': """\
+- name: List all file systems
+  tencentcloud.cloud.chdfs_file_system_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'ciam_user_store_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.ciam.v20220331',
+        'client_module': 'ciam_client',
+        'client_class': 'CiamClient',
+        'sdk_package': 'tencentcloud-sdk-python-ciam',
+        'endpoint': 'ciam.tencentcloudapi.com',
+        'action': 'ListUserStore',
+        'request_class': 'ListUserStoreRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'UserStoreSet',
+        'response_total': None,
+        'result_key': 'user_stores',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CIAM user stores',
+        'description': 'Returns CIAM user stores visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CIAM user stores.',
+        'return_total_doc': 'Number of user stores returned (the API reports no total count).',
+        'examples': """\
+- name: List all user stores
+  tencentcloud.cloud.ciam_user_store_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'cloudhsm_vsm_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.cloudhsm.v20191112',
@@ -945,6 +1327,65 @@ SPECS_AUTO = [
         'examples': """\
 - name: List all vsms
   tencentcloud.cloud.cloudhsm_vsm_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cloudrc_resource_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.cloudrc.v20240606',
+        'client_module': 'cloudrc_client',
+        'client_class': 'CloudrcClient',
+        'sdk_package': 'tencentcloud-sdk-python-cloudrc',
+        'endpoint': 'cloudrc.tencentcloudapi.com',
+        'action': 'SearchResources',
+        'request_class': 'SearchResourcesRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'CLOUDRC API filter names mapped to lists of values.',
+            'model': 'ExtendedFilter',
+            'name_field': 'Key',
+        },
+        'extra_params': [],
+        'response_items': 'Resources',
+        'response_total': None,
+        'result_key': 'resources',
+        'pagination_type': 'token',
+        'list_over_field': None,
+        'short_description': 'Gather information about Tencent Cloud CLOUDRC resources',
+        'description': 'Returns CLOUDRC resources visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CLOUDRC resources.',
+        'return_total_doc': 'Number of resources returned (the API reports no total count).',
+        'examples': """\
+- name: List all resources
+  tencentcloud.cloud.cloudrc_resource_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cloudstudio_image_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.cloudstudio.v20230508',
+        'client_module': 'cloudstudio_client',
+        'client_class': 'CloudstudioClient',
+        'sdk_package': 'tencentcloud-sdk-python-cloudstudio',
+        'endpoint': 'cloudstudio.tencentcloudapi.com',
+        'action': 'DescribeImages',
+        'request_class': 'DescribeImagesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Images',
+        'response_total': None,
+        'result_key': 'images',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CLOUDSTUDIO images',
+        'description': 'Returns CLOUDSTUDIO images visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CLOUDSTUDIO images.',
+        'return_total_doc': 'Number of images returned (the API reports no total count).',
+        'examples': """\
+- name: List all images
+  tencentcloud.cloud.cloudstudio_image_info:
     region: ap-guangzhou
 """,
     },
@@ -1133,6 +1574,33 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'cpdp_merchant_info_for_management_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.cpdp.v20190820',
+        'client_module': 'cpdp_client',
+        'client_class': 'CpdpClient',
+        'sdk_package': 'tencentcloud-sdk-python-cpdp',
+        'endpoint': 'cpdp.tencentcloudapi.com',
+        'action': 'QueryMerchantInfoForManagement',
+        'request_class': 'QueryMerchantInfoForManagementRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Result.List',
+        'response_total': 'Result.Total',
+        'result_key': 'merchant_info_for_managements',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CPDP merchant info for managements',
+        'description': 'Returns CPDP merchant info for managements visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CPDP merchant info for managements.',
+        'return_total_doc': 'Number of merchant info for managements reported by the API.',
+        'examples': """\
+- name: List all merchant info for managements
+  tencentcloud.cloud.cpdp_merchant_info_for_management_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'csip_asset_process_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.csip.v20221121',
@@ -1294,6 +1762,34 @@ SPECS_AUTO = [
   tencentcloud.cloud.dasb_device_info:
     region: ap-guangzhou
     device_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'dataagent_chunk_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.dataagent.v20250513',
+        'client_module': 'dataagent_client',
+        'client_class': 'DataagentClient',
+        'sdk_package': 'tencentcloud-sdk-python-dataagent',
+        'endpoint': 'dataagent.tencentcloudapi.com',
+        'action': 'QueryChunkList',
+        'request_class': 'QueryChunkListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Chunks',
+        'response_total': 'Total',
+        'result_key': 'chunks',
+        'pagination_type': 'page',
+        'page_number_field': 'Page',
+        'short_description': 'Gather information about Tencent Cloud DATAAGENT chunks',
+        'description': 'Returns DATAAGENT chunks visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching DATAAGENT chunks.',
+        'return_total_doc': 'Number of chunks reported by the API.',
+        'examples': """\
+- name: List all chunks
+  tencentcloud.cloud.dataagent_chunk_info:
+    region: ap-guangzhou
 """,
     },
     {
@@ -1911,6 +2407,92 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'facefusion_material_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.facefusion.v20220927',
+        'client_module': 'facefusion_client',
+        'client_class': 'FacefusionClient',
+        'sdk_package': 'tencentcloud-sdk-python-facefusion',
+        'endpoint': 'facefusion.tencentcloudapi.com',
+        'action': 'DescribeMaterialList',
+        'request_class': 'DescribeMaterialListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'MaterialInfos',
+        'response_total': None,
+        'result_key': 'materials',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud FACEFUSION materials',
+        'description': 'Returns FACEFUSION materials visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching FACEFUSION materials.',
+        'return_total_doc': 'Number of materials returned (the API reports no total count).',
+        'examples': """\
+- name: List all materials
+  tencentcloud.cloud.facefusion_material_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'faceid_we_chat_bill_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.faceid.v20180301',
+        'client_module': 'faceid_client',
+        'client_class': 'FaceidClient',
+        'sdk_package': 'tencentcloud-sdk-python-faceid',
+        'endpoint': 'faceid.tencentcloudapi.com',
+        'action': 'GetWeChatBillDetails',
+        'request_class': 'GetWeChatBillDetailsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'WeChatBillDetails',
+        'response_total': None,
+        'result_key': 'we_chat_bills',
+        'pagination_type': 'token',
+        'token_request_field': 'Cursor',
+        'token_response_field': 'NextCursor',
+        'page_size_field': None,
+        'list_over_field': None,
+        'has_more_field': 'HasNextPage',
+        'short_description': 'Gather information about Tencent Cloud FACEID we chat bills',
+        'description': 'Returns FACEID we chat bills visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching FACEID we chat bills.',
+        'return_total_doc': 'Number of we chat bills returned (the API reports no total count).',
+        'examples': """\
+- name: List all we chat bills
+  tencentcloud.cloud.faceid_we_chat_bill_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'fmu_model_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.fmu.v20191213',
+        'client_module': 'fmu_client',
+        'client_class': 'FmuClient',
+        'sdk_package': 'tencentcloud-sdk-python-fmu',
+        'endpoint': 'fmu.tencentcloudapi.com',
+        'action': 'GetModelList',
+        'request_class': 'GetModelListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'ModelInfos',
+        'response_total': None,
+        'result_key': 'models',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud FMU models',
+        'description': 'Returns FMU models visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching FMU models.',
+        'return_total_doc': 'Number of models returned (the API reports no total count).',
+        'examples': """\
+- name: List all models
+  tencentcloud.cloud.fmu_model_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'fwm_edge_acl_rule_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.fwm.v20250611',
@@ -1967,6 +2549,43 @@ SPECS_AUTO = [
 - name: List all accelerate areas
   tencentcloud.cloud.ga2_accelerate_area_info:
     region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'gme_voice_print_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.gme.v20180711',
+        'client_module': 'gme_client',
+        'client_class': 'GmeClient',
+        'sdk_package': 'tencentcloud-sdk-python-gme',
+        'endpoint': 'gme.tencentcloudapi.com',
+        'action': 'DescribeVoicePrint',
+        'request_class': 'DescribeVoicePrintRequest',
+        'ids': {
+            'param': 'voice_print_ids',
+            'field': 'VoicePrintIdList',
+            'doc': 'Voice print IDs to return.',
+        },
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Data',
+        'response_total': 'TotalCount',
+        'result_key': 'voice_prints',
+        'pagination_type': 'page',
+        'page_number_field': 'PageIndex',
+        'short_description': 'Gather information about Tencent Cloud GME voice prints',
+        'description': 'Returns GME voice prints visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching GME voice prints.',
+        'return_total_doc': 'Number of voice prints reported by the API.',
+        'examples': """\
+- name: List all voice prints
+  tencentcloud.cloud.gme_voice_print_info:
+    region: ap-guangzhou
+
+- name: Find voice prints by ID
+  tencentcloud.cloud.gme_voice_print_info:
+    region: ap-guangzhou
+    voice_print_ids: [x-xxxxxxxx]
 """,
     },
     {
@@ -2138,6 +2757,61 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'hunyuan_glossary_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.hunyuan.v20230901',
+        'client_module': 'hunyuan_client',
+        'client_class': 'HunyuanClient',
+        'sdk_package': 'tencentcloud-sdk-python-hunyuan',
+        'endpoint': 'hunyuan.tencentcloudapi.com',
+        'action': 'ListGlossary',
+        'request_class': 'ListGlossaryRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Glossaries',
+        'response_total': 'Total',
+        'result_key': 'glossaries',
+        'pagination_type': 'page',
+        'page_number_field': 'Page',
+        'short_description': 'Gather information about Tencent Cloud HUNYUAN glossaries',
+        'description': 'Returns HUNYUAN glossaries visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching HUNYUAN glossaries.',
+        'return_total_doc': 'Number of glossaries reported by the API.',
+        'examples': """\
+- name: List all glossaries
+  tencentcloud.cloud.hunyuan_glossary_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'iai_group_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.iai.v20200303',
+        'client_module': 'iai_client',
+        'client_class': 'IaiClient',
+        'sdk_package': 'tencentcloud-sdk-python-iai',
+        'endpoint': 'iai.tencentcloudapi.com',
+        'action': 'GetGroupList',
+        'request_class': 'GetGroupListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'GroupInfos',
+        'response_total': None,
+        'result_key': 'groups',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud IAI groups',
+        'description': 'Returns IAI groups visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching IAI groups.',
+        'return_total_doc': 'Number of groups returned (the API reports no total count).',
+        'examples': """\
+- name: List all groups
+  tencentcloud.cloud.iai_group_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'ic_sms_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.ic.v20190307',
@@ -2192,6 +2866,62 @@ SPECS_AUTO = [
         'examples': """\
 - name: List all address pools
   tencentcloud.cloud.igtm_address_pool_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'ioa_device_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.ioa.v20220601',
+        'client_module': 'ioa_client',
+        'client_class': 'IoaClient',
+        'sdk_package': 'tencentcloud-sdk-python-ioa',
+        'endpoint': 'ioa.tencentcloudapi.com',
+        'action': 'DescribeDevices',
+        'request_class': 'DescribeDevicesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Data.Items',
+        'response_total': None,
+        'result_key': 'devices',
+        'pagination_type': 'page',
+        'page_number_field': 'PageNum',
+        'short_description': 'Gather information about Tencent Cloud IOA devices',
+        'description': 'Returns IOA devices visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching IOA devices.',
+        'return_total_doc': 'Number of devices returned (the API reports no total count).',
+        'examples': """\
+- name: List all devices
+  tencentcloud.cloud.ioa_device_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'iot_product_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.iot.v20180123',
+        'client_module': 'iot_client',
+        'client_class': 'IotClient',
+        'sdk_package': 'tencentcloud-sdk-python-iot',
+        'endpoint': 'iot.tencentcloudapi.com',
+        'action': 'GetProducts',
+        'request_class': 'GetProductsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Products',
+        'response_total': 'Total',
+        'result_key': 'products',
+        'pagination_type': 'int',
+        'page_size_field': 'Length',
+        'short_description': 'Gather information about Tencent Cloud IOT products',
+        'description': 'Returns IOT products visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching IOT products.',
+        'return_total_doc': 'Number of products reported by the API.',
+        'examples': """\
+- name: List all products
+  tencentcloud.cloud.iot_product_info:
     region: ap-guangzhou
 """,
     },
@@ -2403,6 +3133,35 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'lcic_answer_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.lcic.v20220817',
+        'client_module': 'lcic_client',
+        'client_class': 'LcicClient',
+        'sdk_package': 'tencentcloud-sdk-python-lcic',
+        'endpoint': 'lcic.tencentcloudapi.com',
+        'action': 'DescribeAnswerList',
+        'request_class': 'DescribeAnswerListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'AnswerInfo',
+        'response_total': 'Total',
+        'result_key': 'answers',
+        'pagination_type': 'page',
+        'page_number_field': 'Page',
+        'page_size_field': 'Limit',
+        'short_description': 'Gather information about Tencent Cloud LCIC answers',
+        'description': 'Returns LCIC answers visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching LCIC answers.',
+        'return_total_doc': 'Number of answers reported by the API.',
+        'examples': """\
+- name: List all answers
+  tencentcloud.cloud.lcic_answer_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'live_audit_keyword_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.live.v20180801',
@@ -2553,6 +3312,60 @@ SPECS_AUTO = [
   tencentcloud.cloud.memcached_instance_info:
     region: ap-guangzhou
     instance_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'mmps_resource_usage_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.mmps.v20200710',
+        'client_module': 'mmps_client',
+        'client_class': 'MmpsClient',
+        'sdk_package': 'tencentcloud-sdk-python-mmps',
+        'endpoint': 'mmps.tencentcloudapi.com',
+        'action': 'DescribeResourceUsageInfo',
+        'request_class': 'DescribeResourceUsageInfoRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Data',
+        'response_total': 'Total',
+        'result_key': 'resource_usages',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud MMPS resource usages',
+        'description': 'Returns MMPS resource usages visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching MMPS resource usages.',
+        'return_total_doc': 'Number of resource usages reported by the API.',
+        'examples': """\
+- name: List all resource usages
+  tencentcloud.cloud.mmps_resource_usage_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'mna_access_region_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.mna.v20210119',
+        'client_module': 'mna_client',
+        'client_class': 'MnaClient',
+        'sdk_package': 'tencentcloud-sdk-python-mna',
+        'endpoint': 'mna.tencentcloudapi.com',
+        'action': 'DescribeAccessRegions',
+        'request_class': 'DescribeAccessRegionsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'RegionList',
+        'response_total': None,
+        'result_key': 'access_regions',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud MNA access regions',
+        'description': 'Returns MNA access regions visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching MNA access regions.',
+        'return_total_doc': 'Number of access regions returned (the API reports no total count).',
+        'examples': """\
+- name: List all access regions
+  tencentcloud.cloud.mna_access_region_info:
+    region: ap-guangzhou
 """,
     },
     {
@@ -2787,6 +3600,34 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'portal_document_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.portal.v20230413',
+        'client_module': 'portal_client',
+        'client_class': 'PortalClient',
+        'sdk_package': 'tencentcloud-sdk-python-portal',
+        'endpoint': 'portal.tencentcloudapi.com',
+        'action': 'SearchDocuments',
+        'request_class': 'SearchDocumentsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Documents',
+        'response_total': 'Total',
+        'result_key': 'documents',
+        'pagination_type': 'page',
+        'page_number_field': 'Page',
+        'short_description': 'Gather information about Tencent Cloud PORTAL documents',
+        'description': 'Returns PORTAL documents visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching PORTAL documents.',
+        'return_total_doc': 'Number of documents reported by the API.',
+        'examples': """\
+- name: List all documents
+  tencentcloud.cloud.portal_document_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'privatedns_account_vpc_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.privatedns.v20201028',
@@ -3001,6 +3842,33 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'sms_sms_sign_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.sms.v20210111',
+        'client_module': 'sms_client',
+        'client_class': 'SmsClient',
+        'sdk_package': 'tencentcloud-sdk-python-sms',
+        'endpoint': 'sms.tencentcloudapi.com',
+        'action': 'DescribeSmsSignList',
+        'request_class': 'DescribeSmsSignListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'DescribeSignListStatusSet',
+        'response_total': None,
+        'result_key': 'sms_signs',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud SMS sms signs',
+        'description': 'Returns SMS sms signs visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching SMS sms signs.',
+        'return_total_doc': 'Number of sms signs returned (the API reports no total count).',
+        'examples': """\
+- name: List all sms signs
+  tencentcloud.cloud.sms_sms_sign_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'ssa_check_config_asset_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.ssa.v20180608',
@@ -3082,6 +3950,33 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'tbaas_block_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.tbaas.v20180416',
+        'client_module': 'tbaas_client',
+        'client_class': 'TbaasClient',
+        'sdk_package': 'tencentcloud-sdk-python-tbaas',
+        'endpoint': 'tbaas.tencentcloudapi.com',
+        'action': 'GetBlockList',
+        'request_class': 'GetBlockListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'BlockList',
+        'response_total': 'TotalCount',
+        'result_key': 'blocks',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud TBAAS blocks',
+        'description': 'Returns TBAAS blocks visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TBAAS blocks.',
+        'return_total_doc': 'Number of blocks reported by the API.',
+        'examples': """\
+- name: List all blocks
+  tencentcloud.cloud.tbaas_block_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'tcaplusdb_cluster_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.tcaplusdb.v20190823',
@@ -3153,6 +4048,34 @@ SPECS_AUTO = [
   tencentcloud.cloud.tcb_billing_info:
     region: ap-guangzhou
     billing_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'tcbr_cloud_run_pod_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.tcbr.v20220217',
+        'client_module': 'tcbr_client',
+        'client_class': 'TcbrClient',
+        'sdk_package': 'tencentcloud-sdk-python-tcbr',
+        'endpoint': 'tcbr.tencentcloudapi.com',
+        'action': 'DescribeCloudRunPodList',
+        'request_class': 'DescribeCloudRunPodListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'PodList',
+        'response_total': 'TotalCount',
+        'result_key': 'cloud_run_pods',
+        'pagination_type': 'page',
+        'page_number_field': 'PageNum',
+        'short_description': 'Gather information about Tencent Cloud TCBR cloud run pods',
+        'description': 'Returns TCBR cloud run pods visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TCBR cloud run pods.',
+        'return_total_doc': 'Number of cloud run pods reported by the API.',
+        'examples': """\
+- name: List all cloud run pods
+  tencentcloud.cloud.tcbr_cloud_run_pod_info:
+    region: ap-guangzhou
 """,
     },
     {
@@ -3443,6 +4366,60 @@ SPECS_AUTO = [
   tencentcloud.cloud.thpc_cluster_info:
     region: ap-guangzhou
     cluster_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'tia_job_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.tia.v20180226',
+        'client_module': 'tia_client',
+        'client_class': 'TiaClient',
+        'sdk_package': 'tencentcloud-sdk-python-tia',
+        'endpoint': 'tia.tencentcloudapi.com',
+        'action': 'ListJobs',
+        'request_class': 'ListJobsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Jobs',
+        'response_total': None,
+        'result_key': 'jobs',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud TIA jobs',
+        'description': 'Returns TIA jobs visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TIA jobs.',
+        'return_total_doc': 'Number of jobs returned (the API reports no total count).',
+        'examples': """\
+- name: List all jobs
+  tencentcloud.cloud.tia_job_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tiia_group_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.tiia.v20190529',
+        'client_module': 'tiia_client',
+        'client_class': 'TiiaClient',
+        'sdk_package': 'tencentcloud-sdk-python-tiia',
+        'endpoint': 'tiia.tencentcloudapi.com',
+        'action': 'DescribeGroups',
+        'request_class': 'DescribeGroupsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Groups',
+        'response_total': None,
+        'result_key': 'groups',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud TIIA groups',
+        'description': 'Returns TIIA groups visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TIIA groups.',
+        'return_total_doc': 'Number of groups returned (the API reports no total count).',
+        'examples': """\
+- name: List all groups
+  tencentcloud.cloud.tiia_group_info:
+    region: ap-guangzhou
 """,
     },
     {
@@ -3850,6 +4827,37 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'vm_task_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.vm.v20210922',
+        'client_module': 'vm_client',
+        'client_class': 'VmClient',
+        'sdk_package': 'tencentcloud-sdk-python-vm',
+        'endpoint': 'vm.tencentcloudapi.com',
+        'action': 'DescribeTasks',
+        'request_class': 'DescribeTasksRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Data',
+        'response_total': None,
+        'result_key': 'tasks',
+        'pagination_type': 'token',
+        'token_request_field': 'PageToken',
+        'token_response_field': 'PageToken',
+        'page_size_field': 'Limit',
+        'list_over_field': None,
+        'short_description': 'Gather information about Tencent Cloud VM tasks',
+        'description': 'Returns VM tasks visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching VM tasks.',
+        'return_total_doc': 'Number of tasks returned (the API reports no total count).',
+        'examples': """\
+- name: List all tasks
+  tencentcloud.cloud.vm_task_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'vod_incremental_migration_strategy_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.vod.v20240718',
@@ -3875,6 +4883,37 @@ SPECS_AUTO = [
         'examples': """\
 - name: List all incremental migration strategies
   tencentcloud.cloud.vod_incremental_migration_strategy_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'wav_activity_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.wav.v20210129',
+        'client_module': 'wav_client',
+        'client_class': 'WavClient',
+        'sdk_package': 'tencentcloud-sdk-python-wav',
+        'endpoint': 'wav.tencentcloudapi.com',
+        'action': 'QueryActivityList',
+        'request_class': 'QueryActivityListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'PageData',
+        'response_total': None,
+        'result_key': 'activities',
+        'pagination_type': 'token',
+        'token_request_field': 'Cursor',
+        'token_response_field': 'NextCursor',
+        'page_size_field': 'Limit',
+        'list_over_field': None,
+        'short_description': 'Gather information about Tencent Cloud WAV activities',
+        'description': 'Returns WAV activities visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching WAV activities.',
+        'return_total_doc': 'Number of activities returned (the API reports no total count).',
+        'examples': """\
+- name: List all activities
+  tencentcloud.cloud.wav_activity_info:
     region: ap-guangzhou
 """,
     },

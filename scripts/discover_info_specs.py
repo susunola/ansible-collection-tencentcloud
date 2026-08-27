@@ -10,10 +10,18 @@ spec dict the generator can consume.
 A candidate action qualifies when:
 
 - the request model paginates with int ``Offset``/``Limit`` ("int") or int
-  ``PageNumber``/``PageSize`` ("page"),
-- the response model carries an items list (``list of <model>``) and a
-  total-count field (``TotalCount``/``Total``/``TotalNumber``/``TotalNum``),
-  either top-level or nested one level deep (``Result.X``),
+  page-number/page-size pairs ("page", field names PageNumber/PageSize,
+  Page/PageSize, Page/Limit, PageNo/PageSize, PageNum/PageSize,
+  PageIndex/PageSize), or continues with a request/response token pair
+  ("token", e.g. NextToken/NextToken, PageToken, Marker/NextMarker,
+  Cursor/NextCursor) with an optional MaxResults/Limit page-size field, or
+  takes no request fields at all and returns the full list in one call
+  ("list"),
+- the response model carries an items list (``list of <model>``) and
+  optionally a total-count field (``TotalCount``/``Total``/``TotalNumber``/
+  ``TotalNum``), either top-level or nested one level deep (``Result.X``);
+  without a total-count field offset/page pagination stops at the first
+  short page,
 - no old-style docstring marks a request field we cannot manage as required
   (``是否必填：是``).
 
@@ -23,10 +31,11 @@ shape (``Filter{Name,Values}``, ``QueryFilter{Names,Values}``,
 ``DomainFilter{Name,Value}``, ``Filter{Key,Values}`` ...).
 
 Confident specs are written to ``scripts/info_specs_auto.py`` (a plain
-``SPECS_AUTO = [...]`` list the generator appends). Products without a
-usable list API go to the skip report (stdout, or ``--report PATH``) with
-the reason. Run with the repository virtualenv python so the full SDK is
-importable.
+``SPECS_AUTO = [...]`` list the generator appends). Specs for products that
+already have one are reused verbatim so existing module output stays
+byte-identical. Products without a usable list API go to the skip report
+(stdout, or ``--report PATH``) with the reason. Run with the repository
+virtualenv python so the full SDK is importable.
 """
 
 from __future__ import annotations
@@ -46,7 +55,7 @@ GENERATOR_PATH = REPO_ROOT / "scripts" / "generate_info_modules.py"
 AUTO_SPECS_PATH = REPO_ROOT / "scripts" / "info_specs_auto.py"
 MODULES_DIR = REPO_ROOT / "plugins" / "modules"
 
-VERSION_ADDED = "0.8.0"
+VERSION_ADDED = "0.9.0"
 
 # Products already covered by curated SPECS or hand-written modules, or
 # deliberately out of scope (cos uses the qcloud_cos SDK, sts/ssm/tag are
@@ -65,13 +74,39 @@ PRODUCT_ALIASES = {
 
 _RTYPE_RE = re.compile(r":rtype:\s*(?P<rtype>[^\n]+)")
 _NESTED_RE = re.compile(r":class:`tencentcloud\.\w+\.\w+\.models\.(?P<cls>\w+)`")
-_ACTION_RE = re.compile(r"^(Describe|List)[A-Z]")
-_ACTION_PREFIX_RE = re.compile(r"^(Describe|List)")
+_ACTION_RE = re.compile(r"^(Describe|List|Get|Query|Search)[A-Z]")
+_ACTION_PREFIX_RE = re.compile(r"^(Describe|List|Get|Query|Search)")
 _IDS_RE = re.compile(r"(Ids|IdSet|IdList|IDList|IDSet)$", re.IGNORECASE)
 _REQUIRED_RE = re.compile(r"是否必填：是")
 _NO_LOG_RE = re.compile(r"key|secret|token|passw", re.IGNORECASE)
 _TOTAL_FIELDS = ("TotalCount", "Total", "TotalNumber", "TotalNum")
 _DROP_TOKENS = {"list", "detail", "details", "status", "info", "infos", "all", "new"}
+
+# Pagination shapes beyond the classic int Offset/Limit.
+_INT_SIZE_FIELDS = ("Limit", "Length")
+_PAGE_PAIRS = (
+    ("PageNumber", "PageSize"),
+    ("PageNumber", "Limit"),
+    ("Page", "PageSize"),
+    ("Page", "Limit"),
+    ("PageNo", "PageSize"),
+    ("PageNum", "PageSize"),
+    ("PageIndex", "PageSize"),
+)
+# Token request fields: the standard names plus product-specific markers
+# (chdfs FileSystemIdMarker). The response continuation field is either
+# "Next" + the request field (NextCursor, NextFileSystemIdMarker) or one of
+# the standard response names.
+_TOKEN_REQ_RE = re.compile(r"^(NextToken|Token|PageToken|Cursor|Marker|.*Marker)$")
+_TOKEN_RESP_FIELDS = ("NextToken", "NextMarker", "NextCursor", "PageToken", "Token")
+_TOKEN_SIZE_FIELDS = ("MaxResults", "Limit", "PageSize")
+_LIST_OVER_FIELDS = ("ListOver", "IsOver")
+_HAS_MORE_FIELDS = ("HasMore", "HasNextPage")
+_PAGINATION_NAMES = frozenset(
+    ["Offset", "NextToken", "Token", "PageToken", "Cursor"]
+    + list(_INT_SIZE_FIELDS)
+    + [name for pair in _PAGE_PAIRS for name in pair]
+    + list(_TOKEN_SIZE_FIELDS))
 
 
 def _props(cls):
@@ -94,11 +129,13 @@ def _load_module(path, name):
 
 
 def _curated_specs():
-    """Return the curated SPECS, excluding any previously auto-generated ones.
+    """Return (curated SPECS, previously auto-generated SPECS_AUTO).
 
     The generator appends ``SPECS_AUTO`` at import time, so the previously
     generated entries are filtered back out by module name to keep
-    re-runs of this tool idempotent.
+    re-runs of this tool idempotent. The auto specs themselves are returned
+    too: products that already have one get it reused verbatim, keeping the
+    existing module output byte-identical across re-runs.
     """
     generator = _load_module(GENERATOR_PATH, "generate_info_modules")
     auto = []
@@ -106,7 +143,7 @@ def _curated_specs():
         auto = _load_module(AUTO_SPECS_PATH, "info_specs_auto").SPECS_AUTO
     auto_names = {spec["module"] for spec in auto}
     curated = [spec for spec in generator.SPECS if spec["module"] not in auto_names]
-    return curated, auto_names
+    return curated, auto
 
 
 def _camel_words(name):
@@ -171,16 +208,21 @@ def _scan_response(models, pmap, prefix=""):
 
 
 def _response_shape(models, resp):
-    """Locate items/total fields, following one level of nesting."""
+    """Locate items/total fields, following one level of nesting.
+
+    The total-count field is optional: without it, offset/page pagination
+    stops at the first short page and the module reports the number of
+    items collected.
+    """
     total, items = _scan_response(models, _props(resp))
-    if total and items:
+    if items:
         return total, items
     for name, prop in _props(resp).items():
         match = _NESTED_RE.match(_rtype(prop))
         if match and hasattr(models, match.group("cls")):
             nested = _props(getattr(models, match.group("cls")))
             t2, i2 = _scan_response(models, nested, name + ".")
-            if t2 and i2:
+            if i2:
                 return t2, i2
     return total, items
 
@@ -226,48 +268,117 @@ def _filter_spec(models, request_props):
 
 
 def _ids_field(request_props, resource):
-    """Pick the request field carrying a list of resource IDs."""
+    """Pick the request field carrying a list of resource IDs.
+
+    The field name must reference the resource (InstanceIds for instances);
+    a lone *Ids-style field named after something else (bi's ModuleIdList on
+    DescribeProjectList) is not an ID selector for the listed resource.
+    """
     candidates = [name for name, prop in request_props.items()
                   if _rtype(prop) == "list of str" and _IDS_RE.search(name)]
     if not candidates:
         return None, None
-    if len(candidates) == 1:
-        return candidates[0], None
-    token = resource.split("_")[-1]
-    matching = [name for name in candidates if token in name.lower()]
+    tokens = [token for token in resource.split("_") if len(token) > 2]
+    matching = [name for name in candidates
+                if any(token in name.lower() for token in tokens)]
     if len(matching) == 1:
         return matching[0], None
-    return None, "ambiguous ids fields: %s" % ", ".join(sorted(candidates))
+    if len(matching) > 1:
+        return None, "ambiguous ids fields: %s" % ", ".join(sorted(matching))
+    return None, None
+
+
+def _detect_pagination(request_props, response_props):
+    """Classify the pagination shape; return (mode, info) or (None, reason).
+
+    ``info`` carries the generator spec keys whose values differ from the
+    generator defaults (``page_number_field``, ``page_size_field``,
+    ``token_request_field``, ``token_response_field``, ``list_over_field``,
+    ``has_more_field``); an explicit None disables a default (token specs
+    without a page-size or list-over field).
+    """
+    def field_type(props, name):
+        prop = props.get(name)
+        return _rtype(prop) if prop is not None else None
+
+    if "Offset" in request_props:
+        if field_type(request_props, "Offset") != "int":
+            return None, "Offset is not int-typed"
+        for size in _INT_SIZE_FIELDS:
+            if field_type(request_props, size) == "int":
+                info = {}
+                if size != "Limit":
+                    info["page_size_field"] = size
+                return "int", info
+        return None, "Offset without an int Limit/Length field"
+    page_number_seen = False
+    for number, size in _PAGE_PAIRS:
+        if number not in request_props:
+            continue
+        page_number_seen = True
+        if (field_type(request_props, number) == "int"
+                and field_type(request_props, size) == "int"):
+            info = {}
+            if number != "PageNumber":
+                info["page_number_field"] = number
+            if size != "PageSize":
+                info["page_size_field"] = size
+            return "page", info
+    if page_number_seen:
+        return None, "page number field without a supported int page-size field"
+    req_token = next((name for name, prop in request_props.items()
+                      if _TOKEN_REQ_RE.match(name)
+                      and _rtype(prop) in ("str", "int")), None)
+    if req_token is not None:
+        candidates = ("Next" + req_token,) + _TOKEN_RESP_FIELDS
+        resp_token = next((name for name in candidates
+                           if field_type(response_props, name) in ("str", "int")), None)
+        if resp_token is None:
+            return None, ("token request field %s has no response "
+                          "continuation field" % req_token)
+        size = next((name for name in _TOKEN_SIZE_FIELDS
+                     if field_type(request_props, name) == "int"), None)
+        list_over = next((name for name in _LIST_OVER_FIELDS
+                          if field_type(response_props, name) == "bool"), None)
+        has_more = next((name for name in _HAS_MORE_FIELDS
+                         if field_type(response_props, name) == "bool"), None)
+        info = {}
+        if req_token != "NextToken":
+            info["token_request_field"] = req_token
+        if resp_token != "NextToken":
+            info["token_response_field"] = resp_token
+        if size != "MaxResults":
+            info["page_size_field"] = size
+        if list_over != "ListOver":
+            info["list_over_field"] = list_over
+        if list_over is None and has_more is not None:
+            info["has_more_field"] = has_more
+        return "token", info
+    if any(name in _PAGINATION_NAMES or _TOKEN_REQ_RE.match(name)
+           for name in request_props):
+        return None, ("no supported pagination (int Offset/Limit, int page "
+                      "pair, or token continuation)")
+    if request_props:
+        return None, "unpaginated with request fields that cannot be managed"
+    return "list", {}
 
 
 def _analyze_action(models, action):
-    """Inspect one Describe/List action; return (candidate, reject reason)."""
+    """Inspect one Describe/List-style action; return (candidate, reason)."""
     request_cls = getattr(models, action + "Request", None)
     response_cls = getattr(models, action + "Response", None)
     if request_cls is None or response_cls is None:
         return None, "no request/response model"
     request_props = _props(request_cls)
-
-    pagination = None
-    if ("Offset" in request_props and "Limit" in request_props):
-        if _rtype(request_props["Offset"]) == "int" and _rtype(request_props["Limit"]) == "int":
-            pagination = "int"
-        else:
-            return None, "Offset/Limit are not int-typed"
-    elif "PageNumber" in request_props and "PageSize" in request_props:
-        if (_rtype(request_props["PageNumber"]) == "int"
-                and _rtype(request_props["PageSize"]) == "int"):
-            pagination = "page"
-        else:
-            return None, "PageNumber/PageSize are not int-typed"
-    if pagination is None:
-        return None, "no supported pagination (int Offset/Limit or PageNumber/PageSize)"
+    response_props = _props(response_cls)
 
     total, items = _response_shape(models, response_cls)
     if not items:
         return None, "response has no list-of-model items field"
-    if not total:
-        return None, "response has no total-count field"
+
+    pagination, info = _detect_pagination(request_props, response_props)
+    if pagination is None:
+        return None, info
 
     resource = _resource_name(action)
     if not resource or not resource.isidentifier() or keyword.iskeyword(resource):
@@ -276,28 +387,46 @@ def _analyze_action(models, action):
     ids_name, ids_note = _ids_field(request_props, resource)
     filters, filters_note = _filter_spec(models, request_props)
 
-    managed = {"Offset", "Limit", "PageNumber", "PageSize", "Filters", ids_name}
+    managed = {"Filters", ids_name}
+    if pagination == "int":
+        managed.add("Offset")
+        managed.add(info.get("page_size_field") or "Limit")
+    elif pagination == "page":
+        managed.add(info.get("page_number_field") or "PageNumber")
+        managed.add(info.get("page_size_field") or "PageSize")
+    elif pagination == "token":
+        managed.add(info.get("token_request_field") or "NextToken")
+        size_field = info.get("page_size_field", "MaxResults")
+        if size_field:
+            managed.add(size_field)
     for name, prop in request_props.items():
         if name in managed:
             continue
         if _REQUIRED_RE.search(prop.fget.__doc__ or ""):
             return None, "request field %s is marked required and is not manageable" % name
 
+    # Unmanaged optional fields (Query, ActivityId, ...) hint at an action
+    # that cannot be usefully called through the generic module options, so
+    # prefer the cleanest candidate of the product.
+    extras = [name for name in request_props if name not in managed]
+
     score = 0
     if ids_name:
         score += 4
     if filters:
         score += 2
-    if "." not in total:
+    if total and "." not in total:
         score += 1
     words = _camel_words(_ACTION_PREFIX_RE.sub("", action))
     if words and words[-1].endswith(("s", "List")):
         score += 2
+    score -= 2 * len(extras)
 
     return {
         "action": action,
         "request_class": action + "Request",
         "pagination": pagination,
+        "pagination_info": info,
         "response_items": items,
         "response_total": total,
         "resource": resource,
@@ -356,7 +485,12 @@ def _build_spec(product, version, client_cls, candidate):
 
     endpoint = getattr(client_cls, "_endpoint", None) or "%s.tencentcloudapi.com" % product
 
-    return {
+    if candidate["response_total"] is None:
+        return_total_doc = "Number of %s returned (the API reports no total count)." % words
+    else:
+        return_total_doc = "Number of %s reported by the API." % words
+
+    spec = {
         "module": module,
         "version_added": VERSION_ADDED,
         "service_package": "tencentcloud.%s.%s" % (product, version),
@@ -376,9 +510,18 @@ def _build_spec(product, version, client_cls, candidate):
         "short_description": "Gather information about Tencent Cloud %s %s" % (service, words),
         "description": "Returns %s %s visible in a Tencent Cloud region." % (service, words),
         "return_items_doc": "Matching %s %s." % (service, words),
-        "return_total_doc": "Number of %s reported by the API." % words,
+        "return_total_doc": return_total_doc,
         "examples": examples,
     }
+    pagination_info = candidate.get("pagination_info") or {}
+    if pagination_info:
+        items_order = list(spec.items())
+        index = [key for key, _value in items_order].index("pagination_type") + 1
+        for key, value in pagination_info.items():
+            items_order.insert(index, (key, value))
+            index += 1
+        spec = dict(items_order)
+    return spec
 
 
 def discover():
@@ -386,7 +529,9 @@ def discover():
     import tencentcloud
 
     package_dir = os.path.dirname(tencentcloud.__file__)
-    curated, auto_names = _curated_specs()
+    curated, old_auto = _curated_specs()
+    auto_names = {spec["module"] for spec in old_auto}
+    old_by_product = {spec["service_package"].split(".")[1]: spec for spec in old_auto}
     covered = COVERED_PRODUCTS | {
         spec["service_package"].split(".")[1] for spec in curated}
     used_names = ({spec["module"] for spec in curated}
@@ -420,6 +565,18 @@ def discover():
             skips.append((product, None, "import failed: %r" % (exc,)))
             continue
 
+        old = old_by_product.get(product)
+        if old is not None:
+            # Already covered by a previous discovery run: reuse the spec
+            # verbatim so the existing module output stays byte-identical.
+            candidate, _reason = _analyze_action(models, old["action"])
+            if candidate:
+                for note in candidate["notes"]:
+                    skips.append((product, old["action"], "note: " + note))
+            used_names.add(old["module"])
+            specs.append(old)
+            continue
+
         candidates, reasons = [], []
         for method in sorted(dir(client_cls)):
             if not _ACTION_RE.match(method):
@@ -430,8 +587,8 @@ def discover():
             elif reason:
                 reasons.append("%s: %s" % (method, reason))
         if not candidates:
-            skips.append((product, None, "no usable paginated list API (%s)" % (
-                reasons[0] if reasons else "no Describe/List actions")))
+            skips.append((product, None, "no usable list API (%s)" % (
+                reasons[0] if reasons else "no Describe/List-style actions")))
             continue
         candidates.sort(key=lambda c: (-c["score"], c["action"]))
         chosen = candidates[0]

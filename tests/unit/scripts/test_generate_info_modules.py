@@ -59,7 +59,7 @@ def test_every_spec_renders_valid_documentation_yaml(generator):
             expected_options.add(spec["ids"]["param"])
         if spec["filters"]:
             expected_options.add("filters")
-        if spec.get("pagination_type", "int") != "none":
+        if generator._page_size_field(spec) is not None:
             expected_options.add("page_size")
         assert set(doc["options"] or {}) == expected_options
 
@@ -174,9 +174,31 @@ def test_auto_specs_are_appended_and_pin_release_version(generator):
     by_name = {entry["module"] for entry in generator.SPECS}
     for entry in module.SPECS_AUTO:
         assert entry["module"] in by_name
-        assert entry["version_added"] == "0.8.0"
+        # 0.8.0 specs are reused verbatim by discovery; new batches pin the
+        # release they were nominated in.
+        assert entry["version_added"] in ("0.8.0", "0.9.0")
         rendered = generator.render_module(entry)
-        assert 'version_added: "0.8.0"' in rendered
+        assert 'version_added: "%s"' % entry["version_added"] in rendered
+
+
+def test_token_module_renders_custom_token_fields(generator):
+    rendered = generator.render_module(_spec(generator, "ams_task_info"))
+    assert "request.Limit = max_results" in rendered
+    assert "request.PageToken = next_token" in rendered
+    assert "next_token = response.PageToken" in rendered
+
+
+def test_token_module_without_page_size_field(generator):
+    rendered = generator.render_module(_spec(generator, "chdfs_file_system_info"))
+    assert "page_size" not in rendered
+    assert "response.IsOver or not next_token" in rendered
+
+
+def test_list_module_renders_single_call(generator):
+    rendered = generator.render_module(_spec(generator, "advisor_strategy_info"))
+    assert "Paginator" not in rendered
+    assert "items = response.Strategies or []" in rendered
+    assert "total_count=len(strategies)" in rendered
 
 
 def test_simple_spec_tests_are_generated(generator):

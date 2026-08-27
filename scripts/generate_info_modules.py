@@ -75,9 +75,28 @@ DOC_FRAGMENT = "tencentcloud.cloud.tencentcloud"
 #                    caps at 50)
 #   pagination_type  "int" (Offset/Limit ints, most services), "page"
 #                    (PageNumber/PageSize, monitor), "token" (NextToken/
-#                    MaxResults, cloudaudit) or "none" (unpaginated single
-#                    call returning one object, billing); verified via
-#                    docstrings
+#                    MaxResults, cloudaudit), "list" (unpaginated single
+#                    call returning an items list) or "none" (unpaginated
+#                    single call returning one object, billing); verified
+#                    via docstrings
+#   page_number_field / page_size_field
+#                    optional overrides for the pagination field names
+#                    ("page": PageNo/PageSize for gme, Page/Limit for lcic;
+#                    "int": Length instead of Limit for iot; "token": Limit
+#                    instead of MaxResults for ams). page_size_field may be
+#                    None for token specs without a page-size field (chdfs)
+#   token_request_field / token_response_field
+#                    optional overrides for the token continuation fields
+#                    (default NextToken/NextToken; ams uses PageToken, chdfs
+#                    FileSystemMarker-style names, faceid Cursor/NextCursor)
+#   list_over_field  token mode: bool response field that ends pagination
+#                    when true (default ListOver; None to disable)
+#   has_more_field   token mode: bool response field that ends pagination
+#                    when false (default None; faceid uses HasNextPage)
+#   response_total   may be None for int/page/token specs whose response
+#                    carries no total-count field; pagination then stops at
+#                    the first short page and total_count falls back to the
+#                    number of items returned
 SPECS = [
     {
         "module": "clb_load_balancer_info",
@@ -1324,9 +1343,23 @@ PAGINATOR_IMPORT = ("from ansible_collections.tencentcloud.cloud.plugins.module_
                     "import Paginator\n")
 
 
+def _page_size_field(spec):
+    """Return the request field receiving the page size, or None.
+
+    Defaults by pagination type: Limit (int), PageSize (page), MaxResults
+    (token). A spec may set ``page_size_field`` to override the name, or to
+    None for token APIs without a page-size field (chdfs, faceid).
+    """
+    pagination = spec.get("pagination_type", "int")
+    if pagination in ("none", "list"):
+        return None
+    default = {"int": "Limit", "page": "PageSize", "token": "MaxResults"}[pagination]
+    return spec.get("page_size_field", default)
+
+
 def _imports(spec):
-    """Render the import block; token/none specs do not use the Paginator."""
-    if spec.get("pagination_type", "int") in ("token", "none"):
+    """Render the import block; token/none/list specs do not use the Paginator."""
+    if spec.get("pagination_type", "int") in ("token", "none", "list"):
         return IMPORTS
     return IMPORTS.replace(
         "from ansible.module_utils.basic import AnsibleModule\n",
@@ -1367,7 +1400,7 @@ def _documentation(spec):
             "    type: dict",
             "    default: {}",
         ]
-    if spec.get("pagination_type", "int") != "none":
+    if _page_size_field(spec) is not None:
         option_lines += [
             "  page_size:",
             "    description: Number of results requested per API call.",
@@ -1439,19 +1472,26 @@ def build_describe_request(models, {ids['param']}):
         f"    request = models.{request_class}()",
     ]
     if pagination == "page":
+        page_number_field = spec.get("page_number_field", "PageNumber")
         lines += [
-            "    request.PageNumber = offset // limit + 1",
-            "    request.PageSize = limit",
+            f"    request.{page_number_field} = offset // limit + 1",
+            f"    request.{_page_size_field(spec)} = limit",
         ]
     elif pagination == "token":
-        lines.append("    request.MaxResults = max_results")
-    elif pagination == "none":
-        lines.insert(1, f"    # {spec['action']} takes no request arguments and is not\n"
-                        "    # paginated; offset and limit are accepted for signature uniformity.")
+        if _page_size_field(spec) is not None:
+            lines.append(f"    request.{_page_size_field(spec)} = max_results")
+    elif pagination in ("none", "list"):
+        if pagination == "none":
+            comment = (f"    # {spec['action']} takes no request arguments and is not\n"
+                       "    # paginated; offset and limit are accepted for signature uniformity.")
+        else:
+            comment = (f"    # {spec['action']} returns the full list in one call and is not\n"
+                       "    # paginated; offset and limit are accepted for signature uniformity.")
+        lines.insert(1, comment)
     else:
         lines += [
             "    request.Offset = offset",
-            "    request.Limit = limit",
+            f"    request.{_page_size_field(spec)} = limit",
         ]
     for param in spec["extra_params"]:
         if param.get("required") or "default" in param:
@@ -1484,9 +1524,10 @@ def build_describe_request(models, {ids['param']}):
             "            request.Filters.append(api_filter)",
         ]
     if pagination == "token":
+        token_field = spec.get("token_request_field", "NextToken")
         lines += [
             "    if next_token:",
-            "        request.NextToken = next_token",
+            f"        request.{token_field} = next_token",
         ]
     lines.append("    return request")
     return "\n".join(lines) + "\n"
@@ -1502,6 +1543,9 @@ def _nested_lambda(path):
 
 
 def _total_lambda(spec):
+    if spec["response_total"] is None:
+        # The API reports no total; pagination stops at the first short page.
+        return "lambda response: None"
     return _nested_lambda(spec["response_total"])
 
 
@@ -1527,7 +1571,7 @@ def _argument_spec_lines(spec):
         argument_lines.append(f'        "{spec["ids"]["param"]}": {ids_entry},')
     if spec["filters"]:
         argument_lines.append('        "filters": {"type": "dict", "default": {}},')
-    if spec.get("pagination_type", "int") != "none":
+    if _page_size_field(spec) is not None:
         argument_lines.append(
             f'        "page_size": {{"type": "int", "default": {spec.get("page_size_default", 100)}}},')
     return "\n".join(argument_lines)
@@ -1548,17 +1592,41 @@ def _client_setup_source(spec):
 
 
 def _run_module_token_source(spec):
-    """Render run_module for NextToken/MaxResults APIs (cloudaudit)."""
+    """Render run_module for token-paginated APIs (cloudaudit, alb, ...).
+
+    Field names come from the spec so products whose continuation token is
+    not called NextToken (ams PageToken, chdfs FileSystemIdMarker, faceid
+    Cursor) share the same loop; cloudaudit keeps the default field names.
+    """
+    token_response_field = spec.get("token_response_field", "NextToken")
+    list_over_field = spec.get("list_over_field", "ListOver")
+    has_more_field = spec.get("has_more_field")
+    if list_over_field:
+        termination = f"response.{list_over_field} or not next_token"
+    elif has_more_field:
+        termination = f"not response.{has_more_field} or not next_token"
+    else:
+        termination = "not next_token"
+    if spec["response_total"] is not None:
+        total_lines = (f"        if total_count is None and response.{spec['response_total']} is not None:\n"
+                       f"            total_count = response.{spec['response_total']}\n")
+    else:
+        total_lines = ""
+    page_size_arg = ('module.params["page_size"]' if _page_size_field(spec) is not None
+                     else "None")
     build_args = ["models"]
     build_args += [f'module.params["{param["name"]}"]' for param in spec["extra_params"]]
-    build_args += ["next_token", 'module.params["page_size"]']
+    build_args += ["next_token", page_size_arg]
     build_call = "build_request(\n            " + ",\n            ".join(build_args) + ")"
+    argument_lines = _argument_spec_lines(spec)
+    if argument_lines:
+        update = f"argument_spec.update({{\n{argument_lines}\n    }})"
+    else:
+        update = "argument_spec.update({})"
     return f"""\
 def run_module():
     argument_spec = tencentcloud_argument_spec()
-    argument_spec.update({{
-{_argument_spec_lines(spec)}
-    }})
+    {update}
     module = AnsibleModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
@@ -1571,14 +1639,47 @@ def run_module():
         response = sdk_call(module, client.{spec['action']}, request)
         batch = response.{spec['response_items']} or []
         {spec['result_key']}.extend(serialize_sdk_object(item) for item in batch)
-        if total_count is None and response.{spec['response_total']} is not None:
-            total_count = response.{spec['response_total']}
-        next_token = response.NextToken
-        if response.ListOver or not next_token:
+{total_lines}        next_token = response.{token_response_field}
+        if {termination}:
             break
     if total_count is None:
         total_count = len({spec['result_key']})
     module.exit_json(changed=False, {spec['result_key']}={spec['result_key']}, total_count=total_count)
+"""
+
+
+def _run_module_list_source(spec):
+    """Render run_module for unpaginated list APIs (advisor, captcha).
+
+    Unlike "none" (billing) the response carries an items list; the whole
+    list is returned by a single call and total_count is its length.
+    """
+    items_expr = spec["response_items"]
+    if "." in items_expr:
+        holder, _dot, field = items_expr.partition(".")
+        items_expr = (f"(response.{holder}.{field} "
+                      f"if response.{holder} is not None else None)")
+    else:
+        items_expr = f"response.{items_expr}"
+    argument_lines = _argument_spec_lines(spec)
+    if argument_lines:
+        update = f"argument_spec.update({{\n{argument_lines}\n    }})"
+    else:
+        update = "argument_spec.update({})"
+    return f"""\
+def run_module():
+    argument_spec = tencentcloud_argument_spec()
+    {update}
+    module = AnsibleModule(
+        argument_spec=argument_spec,
+        supports_check_mode=True,
+    )
+{_client_setup_source(spec)}    request = build_request(models, 0, 0)
+    response = sdk_call(module, client.{spec['action']}, request)
+    items = {items_expr} or []
+    {spec['result_key']} = [serialize_sdk_object(item) for item in items]
+    module.exit_json(changed=False, {spec['result_key']}={spec['result_key']},
+                     total_count=len({spec['result_key']}))
 """
 
 
@@ -1611,6 +1712,8 @@ def _run_module_source(spec):
         return _run_module_token_source(spec)
     if pagination == "none":
         return _run_module_none_source(spec)
+    if pagination == "list":
+        return _run_module_list_source(spec)
     argument_spec = _argument_spec_lines(spec)
 
     mutually_exclusive = ""
@@ -1715,11 +1818,15 @@ def test_path(spec):
 def is_simple_spec(spec):
     """True when *spec* fits the generated unit-test template.
 
-    Only plain offset/limit or page-number specs without extra params or a
-    dedicated describe-by-ids action are covered; every other spec keeps its
-    hand-written test file (never rewritten, never verified here).
+    Plain offset/limit or page-number specs (with or without a total-count
+    field) and unpaginated top-level list specs are covered; every other
+    spec keeps its hand-written test file (never rewritten, never verified
+    here).
     """
-    return (spec.get("pagination_type", "int") in ("int", "page")
+    pagination = spec.get("pagination_type", "int")
+    if pagination == "list":
+        return "." not in spec["response_items"]
+    return (pagination in ("int", "page")
             and not spec.get("ids_action")
             and not spec["extra_params"])
 
@@ -1729,6 +1836,8 @@ def _fake_response_fields(spec):
     holders = {}
     for path, value in ((spec["response_items"], "items"),
                         (spec["response_total"], "total_count")):
+        if path is None:
+            continue
         if "." in path:
             holder, _dot, field = path.partition(".")
             holders.setdefault(holder, {})[field] = value
@@ -1744,8 +1853,104 @@ def _fake_response_fields(spec):
     return "\n".join(lines)
 
 
+def render_list_test(spec):
+    """Render the unit test file for an unpaginated list spec."""
+    module = spec["module"]
+    product = spec["service_package"].split(".")[1]
+    return f'''\
+{MARKER}
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
+import sys
+import types
+
+import pytest
+
+from ansible_collections.tencentcloud.cloud.plugins.modules import {module}
+
+
+class FakeRequest:
+    pass
+
+
+class FakeModels:
+    {spec["request_class"]} = FakeRequest
+
+
+class FakeItem:
+    def __init__(self, marker):
+        self.marker = marker
+
+    def _serialize(self, allow_none=True):
+        return {{"Marker": self.marker}}
+
+
+class FakeResponse:
+    def __init__(self, items):
+        self.{spec["response_items"]} = items
+
+
+class FakeClient:
+    def __init__(self, pages):
+        self._pages = list(pages)
+        self.requests = []
+
+    def {spec["action"]}(self, request):
+        self.requests.append(request)
+        return self._pages.pop(0)
+
+
+class ModuleExit(Exception):
+    pass
+
+
+class FakeModule:
+    def __init__(self, params):
+        self.params = params
+        self.exit_payload = None
+
+    def exit_json(self, **kwargs):
+        self.exit_payload = kwargs
+        raise ModuleExit()
+
+    def fail_json(self, **kwargs):
+        raise AssertionError("fail_json called: %r" % (kwargs,))
+
+
+def _run(monkeypatch, client, **params):
+    service = types.ModuleType("{spec['service_package']}")
+    service.models = FakeModels
+    service.{spec["client_module"]} = types.SimpleNamespace({spec["client_class"]}=lambda *args: client)
+    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
+    monkeypatch.setitem(sys.modules, "tencentcloud.{product}",
+                        types.ModuleType("tencentcloud.{product}"))
+    monkeypatch.setitem(sys.modules, "{spec['service_package']}", service)
+    fake = FakeModule(params)
+    monkeypatch.setattr({module}, "AnsibleModule", lambda **kwargs: fake)
+    monkeypatch.setattr({module}, "create_credential", lambda module: object())
+    monkeypatch.setattr({module}, "create_client_profile", lambda module, endpoint: object())
+    with pytest.raises(ModuleExit):
+        {module}.run_module()
+    return fake
+
+
+def test_run_module_returns_full_list(monkeypatch):
+    client = FakeClient([FakeResponse([FakeItem("a"), FakeItem("b")])])
+    fake = _run(monkeypatch, client, region="ap-guangzhou")
+    payload = fake.exit_payload
+    assert payload["changed"] is False
+    assert [item["Marker"] for item in payload["{spec['result_key']}"]] == ["a", "b"]
+    assert payload["total_count"] == 2
+    assert len(client.requests) == 1
+'''
+
+
 def render_test(spec):
     """Render the unit test file for a simple spec (see is_simple_spec)."""
+    if spec.get("pagination_type") == "list":
+        return render_list_test(spec)
     module = spec["module"]
     ids = spec["ids"]
     filters = spec["filters"]
@@ -1774,13 +1979,14 @@ class FakeFilter:
         return f"{module}.build_request({', '.join(parts)})"
 
     if page:
-        pagination_asserts = ("    assert request.PageNumber == 3\n"
-                              "    assert request.PageSize == 100")
+        page_number_field = spec.get("page_number_field", "PageNumber")
+        pagination_asserts = (f"    assert request.{page_number_field} == 3\n"
+                              f"    assert request.{_page_size_field(spec)} == 100")
         page_numbers = "[1, 2]"
-        page_field = "PageNumber"
+        page_field = page_number_field
     else:
         pagination_asserts = ("    assert request.Offset == 200\n"
-                              "    assert request.Limit == 100")
+                              f"    assert request.{_page_size_field(spec)} == 100")
         page_numbers = "[0, 2]"
         page_field = "Offset"
 
@@ -1815,6 +2021,15 @@ def test_build_request_sorts_filters():
         params += f'{ids["param"]}=None, '
     if filters:
         params += "filters={}, "
+
+    if spec["response_total"] is None:
+        # No total-count field: pagination stops at the first short page and
+        # total_count falls back to the number of items collected.
+        pagination_test = "test_run_module_paginates_until_short_page"
+        fake_total = "None"
+    else:
+        pagination_test = "test_run_module_paginates_until_total_count"
+        fake_total = "3"
 
     return f'''\
 {MARKER}
@@ -1900,10 +2115,10 @@ def _run(monkeypatch, client, **params):
     return fake
 
 
-def test_run_module_paginates_until_total_count(monkeypatch):
+def {pagination_test}(monkeypatch):
     client = FakeClient([
-        FakeResponse([FakeItem("a"), FakeItem("b")], 3),
-        FakeResponse([FakeItem("c")], 3),
+        FakeResponse([FakeItem("a"), FakeItem("b")], {fake_total}),
+        FakeResponse([FakeItem("c")], {fake_total}),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
                 {params}page_size=2)

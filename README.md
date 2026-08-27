@@ -29,9 +29,14 @@ Read-only `_info` modules (return `changed=false`):
 
 | Module | Purpose |
 | --- | --- |
+| `acp_scan_task_info` | Gather information about Tencent Cloud ACP scan tasks |
 | `adp_agent_release_preview_info` | Gather information about Tencent Cloud ADP agent release previews |
+| `advisor_strategy_info` | Gather information about Tencent Cloud ADVISOR strategies |
 | `ags_sandbox_instance_info` | Gather information about Tencent Cloud AGS sandbox instances |
+| `alb_security_policy_info` | Gather information about Tencent Cloud ALB security policies |
 | `ame_ktv_robot_info` | Gather information about Tencent Cloud AME ktv robots |
+| `ams_task_info` | Gather information about Tencent Cloud AMS tasks |
+| `anicloud_resource_info` | Gather information about Tencent Cloud ANICLOUD resources |
 | `antiddos_d_do_s_block_record_info` | Gather information about Tencent Cloud ANTIDDOS d do s block records |
 | `ape_auth_user_info` | Gather information about Tencent Cloud APE auth users |
 | `api_product_info` | Gather information about Tencent Cloud API products |
@@ -39,19 +44,24 @@ Read-only `_info` modules (return `changed=false`):
 | `apis_agent_app_mcp_server_info` | Gather information about Tencent Cloud APIS agent app mcp servers |
 | `apm_general_span_info` | Gather information about Tencent Cloud APM general spans |
 | `as_scaling_group_info` | Gather information about Tencent Cloud auto scaling groups |
+| `asr_async_recognition_task_info` | Gather information about Tencent Cloud ASR async recognition tasks |
 | `asw_flow_service_info` | Gather information about Tencent Cloud ASW flow services |
 | `batch_compute_env_create_info` | Gather information about Tencent Cloud BATCH compute env creates |
 | `bdrc_backup_vault_info` | Gather information about Tencent Cloud BDRC backup vaults |
 | `bh_device_group_member_info` | Gather information about Tencent Cloud BH device group members |
+| `bi_auth_api_key_info` | Gather information about Tencent Cloud BI auth api keys |
 | `billing_balance_info` | Gather information about the Tencent Cloud account balance |
+| `bizlive_worker_info` | Gather information about Tencent Cloud BIZLIVE workers |
 | `bm_device_info` | Gather information about Tencent Cloud BM devices |
 | `bma_bp_fake_app_info` | Gather information about Tencent Cloud BMA bp fake apps |
 | `bmeip_eip_acl_info` | Gather information about Tencent Cloud BMEIP eip acls |
 | `bmlb_load_balancer_info` | Gather information about Tencent Cloud BMLB load balancers |
 | `bmvpc_customer_gateway_info` | Gather information about Tencent Cloud BMVPC customer gateways |
+| `bsca_kb_component_info` | Gather information about Tencent Cloud BSCA kb components |
 | `cam_policy_info` | Gather information about Tencent Cloud CAM policies |
 | `cam_role_info` | Gather information about Tencent Cloud CAM roles |
 | `cam_user_info` | Gather information about Tencent Cloud CAM sub-users |
+| `captcha_captcha_user_all_app_id_info` | Gather information about Tencent Cloud CAPTCHA captcha user all app ids |
 | `cat_probe_task_info` | Gather information about Tencent Cloud CAT probe tasks |
 | `cbs_disk_info` | Gather information about Tencent Cloud CBS disks |
 | `ccc_extension_info` | Gather information about Tencent Cloud CCC extensions |
@@ -62,15 +72,20 @@ Read-only `_info` modules (return `changed=false`):
 | `cdwch_cn_instance_info` | Gather information about Tencent Cloud CDWCH cn instances |
 | `cdwdoris_cluster_configs_history_info` | Gather information about Tencent Cloud CDWDORIS cluster configs histories |
 | `cdwpg_account_info` | Gather information about Tencent Cloud CDWPG accounts |
+| `cdz_cloud_dedicated_zone_host_info` | Gather information about Tencent Cloud CDZ cloud dedicated zone hosts |
 | `cetcd_etcd_instance_info` | Gather information about Tencent Cloud CETCD etcd instances |
 | `cfg_action_library_info` | Gather information about Tencent Cloud CFG action libraries |
 | `cfs_file_system_info` | Gather information about Tencent Cloud CFS file systems |
 | `cfw_cluster_nat_ccn_fw_switch_info` | Gather information about Tencent Cloud CFW cluster nat ccn fw switches |
 | `chc_device_info` | Gather information about Tencent Cloud CHC devices |
+| `chdfs_file_system_info` | Gather information about Tencent Cloud CHDFS file systems |
+| `ciam_user_store_info` | Gather information about Tencent Cloud CIAM user stores |
 | `ckafka_instance_info` | Gather information about Tencent Cloud CKafka instances |
 | `clb_load_balancer_info` | Gather information about Tencent Cloud CLB load balancers |
 | `cloudaudit_event_info` | Gather information about Tencent Cloud CloudAudit events |
 | `cloudhsm_vsm_info` | Gather information about Tencent Cloud CLOUDHSM vsms |
+| `cloudrc_resource_info` | Gather information about Tencent Cloud CLOUDRC resources |
+| `cloudstudio_image_info` | Gather information about Tencent Cloud CLOUDSTUDIO images |
 | `cls_topic_info` | Gather information about Tencent Cloud CLS log topics |
 | `cme_platform_info` | Gather information about Tencent Cloud CME platforms |
 | `cmq_queue_info` | Gather information about Tencent Cloud CMQ queues |
@@ -79,6 +94,7 @@ Read-only `_info` modules (return `changed=false`):
 | `config_aggregate_compliance_pack_info` | Gather information about Tencent Cloud CONFIG aggregate compliance packs |
 | `controlcenter_account_factory_baseline_item_info` | Gather information about Tencent Cloud CONTROLCENTER account factory baseline items |
 | `cos_bucket_info` | Gather information about Tencent Cloud COS buckets |
+| `cpdp_merchant_info_for_management_info` | Gather information about Tencent Cloud CPDP merchant info for managements |
 | `csip_asset_process_info` | Gather information about Tencent Cloud CSIP asset processes |
 | `ctem_api_sec_info` | Gather information about Tencent Cloud CTEM api secs |
 | `ctsdb_cluster_info` | Gather information about Tencent Cloud CTSDB clusters |
@@ -87,6 +103,7 @@ Read-only `_info` modules (return `changed=false`):
 | `cws_monitor_info` | Gather information about Tencent Cloud CWS monitors |
 | `cynosdb_cluster_info` | Gather information about TencentDB for CynosDB clusters |
 | `dasb_device_info` | Gather information about Tencent Cloud DASB devices |
+| `dataagent_chunk_info` | Gather information about Tencent Cloud DATAAGENT chunks |
 | `dayu_resource_info` | Gather information about Tencent Cloud DAYU resources |
 | `dbbrain_db_diag_event_info` | Gather information about Tencent Cloud DBBRAIN db diag events |
 | `dbdc_db_custom_cluster_info` | Gather information about Tencent Cloud DBDC db custom clusters |
@@ -108,16 +125,24 @@ Read-only `_info` modules (return `changed=false`):
 | `es_cluster_info` | Gather information about Tencent Cloud Elasticsearch clusters |
 | `ess_file_url_info` | Gather information about Tencent Cloud ESS file urls |
 | `essbasic_template_info` | Gather information about Tencent Cloud ESSBASIC templates |
+| `facefusion_material_info` | Gather information about Tencent Cloud FACEFUSION materials |
+| `faceid_we_chat_bill_info` | Gather information about Tencent Cloud FACEID we chat bills |
+| `fmu_model_info` | Gather information about Tencent Cloud FMU models |
 | `fwm_edge_acl_rule_info` | Gather information about Tencent Cloud FWM edge acl rules |
 | `ga2_accelerate_area_info` | Gather information about Tencent Cloud GA2 accelerate areas |
 | `gaap_proxy_info` | Gather information about Tencent Cloud GAAP proxies |
+| `gme_voice_print_info` | Gather information about Tencent Cloud GME voice prints |
 | `goosefs_file_system_info` | Gather information about Tencent Cloud GOOSEFS file systems |
 | `gs_android_app_info` | Gather information about Tencent Cloud GS android apps |
 | `gwlb_gateway_load_balancer_info` | Gather information about Tencent Cloud GWLB gateway load balancers |
 | `hai_application_info` | Gather information about Tencent Cloud HAI applications |
 | `hasim_link_info` | Gather information about Tencent Cloud HASIM links |
+| `hunyuan_glossary_info` | Gather information about Tencent Cloud HUNYUAN glossaries |
+| `iai_group_info` | Gather information about Tencent Cloud IAI groups |
 | `ic_sms_info` | Gather information about Tencent Cloud IC smses |
 | `igtm_address_pool_info` | Gather information about Tencent Cloud IGTM address pools |
+| `ioa_device_info` | Gather information about Tencent Cloud IOA devices |
+| `iot_product_info` | Gather information about Tencent Cloud IOT products |
 | `iotcloud_device_resource_info` | Gather information about Tencent Cloud IOTCLOUD device resources |
 | `iotexplorer_device_position_info` | Gather information about Tencent Cloud IOTEXPLORER device positions |
 | `iotvideo_ai_model_application_info` | Gather information about Tencent Cloud IOTVIDEO ai model applications |
@@ -127,6 +152,7 @@ Read-only `_info` modules (return `changed=false`):
 | `keewidb_instance_backup_info` | Gather information about Tencent Cloud KEEWIDB instance backups |
 | `key_pair_info` | Gather information about Tencent Cloud CVM key pairs |
 | `kms_key_info` | Gather information about Tencent Cloud KMS keys |
+| `lcic_answer_info` | Gather information about Tencent Cloud LCIC answers |
 | `lighthouse_instance_info` | Gather information about Tencent Cloud Lighthouse instances |
 | `live_audit_keyword_info` | Gather information about Tencent Cloud LIVE audit keywords |
 | `lke_app_knowledge_info` | Gather information about Tencent Cloud LKE app knowledges |
@@ -134,6 +160,8 @@ Read-only `_info` modules (return `changed=false`):
 | `mall_draw_resource_info` | Gather information about Tencent Cloud MALL draw resources |
 | `mariadb_instance_info` | Gather information about TencentDB for MariaDB instances |
 | `memcached_instance_info` | Gather information about Tencent Cloud MEMCACHED instances |
+| `mmps_resource_usage_info` | Gather information about Tencent Cloud MMPS resource usages |
+| `mna_access_region_info` | Gather information about Tencent Cloud MNA access regions |
 | `mongodb_instance_info` | Gather information about TencentDB for MongoDB instances |
 | `monitor_alarm_policy_info` | Gather information about Tencent Cloud Monitor alarm policies |
 | `mps_person_sample_info` | Gather information about Tencent Cloud MPS person samples |
@@ -145,6 +173,7 @@ Read-only `_info` modules (return `changed=false`):
 | `omics_application_info` | Gather information about Tencent Cloud OMICS applications |
 | `organization_member_info` | Gather information about Tencent Cloud Organization members |
 | `partners_agent_deals_by_cache_info` | Gather information about Tencent Cloud PARTNERS agent deals by caches |
+| `portal_document_info` | Gather information about Tencent Cloud PORTAL documents |
 | `postgres_instance_info` | Gather information about TencentDB for PostgreSQL instances |
 | `privatedns_account_vpc_info` | Gather information about Tencent Cloud PRIVATEDNS account vpcs |
 | `pts_cron_job_info` | Gather information about Tencent Cloud PTS cron jobs |
@@ -157,6 +186,7 @@ Read-only `_info` modules (return `changed=false`):
 | `securitylake_security_alarm_table_info` | Gather information about Tencent Cloud SECURITYLAKE security alarm tables |
 | `ses_black_email_address_info` | Gather information about Tencent Cloud SES black email addresses |
 | `smh_library_info` | Gather information about Tencent Cloud SMH libraries |
+| `sms_sms_sign_info` | Gather information about Tencent Cloud SMS sms signs |
 | `sqlserver_instance_info` | Gather information about TencentDB for SQL Server instances |
 | `ssa_check_config_asset_info` | Gather information about Tencent Cloud SSA check config assets |
 | `ssl_certificate_info` | Gather information about Tencent Cloud SSL certificates |
@@ -164,8 +194,10 @@ Read-only `_info` modules (return `changed=false`):
 | `subnet_info` | Gather information about Tencent Cloud subnets |
 | `svp_saving_plan_coverage_info` | Gather information about Tencent Cloud SVP saving plan coverages |
 | `tat_command_info` | Gather information about Tencent Cloud TAT commands |
+| `tbaas_block_info` | Gather information about Tencent Cloud TBAAS blocks |
 | `tcaplusdb_cluster_info` | Gather information about Tencent Cloud TCAPLUSDB clusters |
 | `tcb_billing_info` | Gather information about Tencent Cloud TCB billings |
+| `tcbr_cloud_run_pod_info` | Gather information about Tencent Cloud TCBR cloud run pods |
 | `tcm_mesh_info` | Gather information about Tencent Cloud TCM meshes |
 | `tcr_instance_info` | Gather information about Tencent Cloud TCR registries |
 | `tcss_abnormal_process_event_info` | Gather information about Tencent Cloud TCSS abnormal process events |
@@ -176,6 +208,8 @@ Read-only `_info` modules (return `changed=false`):
 | `tem_application_info` | Gather information about Tencent Cloud TEM applications |
 | `teo_function_info` | Gather information about Tencent Cloud TEO functions |
 | `thpc_cluster_info` | Gather information about Tencent Cloud THPC clusters |
+| `tia_job_info` | Gather information about Tencent Cloud TIA jobs |
+| `tiia_group_info` | Gather information about Tencent Cloud TIIA groups |
 | `tione_dataset_info` | Gather information about Tencent Cloud TIONE datasets |
 | `tiw_running_task_info` | Gather information about Tencent Cloud TIW running tasks |
 | `tke_cluster_info` | Gather information about Tencent Cloud TKE clusters |
@@ -190,10 +224,12 @@ Read-only `_info` modules (return `changed=false`):
 | `tsf_application_info` | Gather information about Tencent Cloud TSF applications |
 | `vcube_vcube_resource_info` | Gather information about Tencent Cloud VCUBE vcube resources |
 | `vdb_instance_info` | Gather information about Tencent Cloud VDB instances |
+| `vm_task_info` | Gather information about Tencent Cloud VM tasks |
 | `vod_incremental_migration_strategy_info` | Gather information about Tencent Cloud VOD incremental migration strategies |
 | `vpc_info` | Gather information about Tencent Cloud VPCs |
 | `vpn_gateway_info` | Gather information about Tencent Cloud VPN gateways |
 | `waf_instance_info` | Gather information about Tencent Cloud WAF instances |
+| `wav_activity_info` | Gather information about Tencent Cloud WAV activities |
 | `wedata_project_info` | Gather information about Tencent Cloud WEDATA projects |
 | `weilingwith_element_profile_page_info` | Gather information about Tencent Cloud WEILINGWITH element profile pages |
 | `wss_cert_info` | Gather information about Tencent Cloud WSS certs |

@@ -38,31 +38,30 @@
     gateways, GAAP, CDN, CloudAudit, CWP, WAF, SSL, Organization, Monitor,
     CLS, TAT and Billing; the generator now supports token and page-number
     pagination and unpaginated responses. **Done**
-
-14. Coverage batch 2 (0.7.0): generated `_info` modules for NAT/VPN
-    gateways, GAAP, CDN, CloudAudit, CWP, WAF, SSL, Organization, Monitor,
-    CLS, TAT and Billing; the generator now supports token and page-number
-    pagination and unpaginated responses. **Done**
 15. Coverage batches 3+4 (0.8.0): `scripts/discover_info_specs.py`
     introspects the installed SDK and nominates `_info` specs automatically;
     126 generated modules raise product coverage from 36 to 162 distinct
     services, each with a generated unit test and contract coverage. **Done**
+16. Coverage batch 5 (0.9.0): every product on the official API index with a
+    usable list API is covered — 36 more generated `_info` modules via new
+    pagination modes (no-total short-page termination, custom token field
+    pairs, unpaginated list calls). **Done**
 
 ## Next
 
-16. CLB write modules (`clb_load_balancer`, listeners and attachments) on top
+17. CLB write modules (`clb_load_balancer`, listeners and attachments) on top
     of the existing `clb_load_balancer_info`.
-17. `cvm_instance` scaling: `exact_count`-style batch create/terminate with
+18. `cvm_instance` scaling: `exact_count`-style batch create/terminate with
     per-zone spread.
-18. Integration CI: run the integration targets on a schedule against a real
+19. Integration CI: run the integration targets on a schedule against a real
     account, with cost guardrails (budget caps, automatic teardown of leaked
     resources).
-19. Coverage reporting for unit and integration tests.
-20. Galaxy namespace and publishing: the release workflow already publishes
+20. Coverage reporting for unit and integration tests.
+21. Galaxy namespace and publishing: the release workflow already publishes
     on tags once `GALAXY_API_KEY` is configured.
-21. Curate auto-generated modules that hide required request parameters
-    (e.g. `teo` ZoneId, `mqtt`/`emr` InstanceId): move them into curated
-    SPECS with `extra_params` or drop them.
+22. Curate auto-generated modules that hide required request parameters
+    (e.g. `teo` ZoneId, `mqtt`/`emr` InstanceId, `lcic` SdkAppId): move them
+    into curated SPECS with `extra_params` or drop them.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
