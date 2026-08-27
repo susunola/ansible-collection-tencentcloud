@@ -1,0 +1,85 @@
+---
+# End-to-end coverage for cam_user: create + idempotency + check mode +
+# delete. CAM is a global service and the sub-user is named
+# ansible-cam-user-it-<run_id>, which the cleanup sweeper removes if a run
+# dies before the always block below. Sub-users are free of charge.
+- name: CAM sub-user end-to-end
+  vars:
+    region: "{{ tencentcloud_region }}"
+    run_id: "{{ 99999999 | random }}"
+    user_name: "ansible-cam-user-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ region }}"
+  block:
+    - name: Create a CAM sub-user
+      susunola.tencentcloud.cam_user:
+        state: present
+        name: "{{ user_name }}"
+        remark: CI integration test
+        console_login: true
+      register: user_create
+
+    - name: Creation reports changed with the user details
+      ansible.builtin.assert:
+        that:
+          - user_create is changed
+          - user_create.user.Name == user_name
+          - user_create.user.Uin is defined
+
+    - name: Create the same sub-user again (idempotency)
+      susunola.tencentcloud.cam_user:
+        state: present
+        name: "{{ user_name }}"
+        remark: CI integration test
+        console_login: true
+      register: user_second
+
+    - name: Second run reports no change
+      ansible.builtin.assert:
+        that:
+          - user_second is not changed
+          - user_second.user.Uin == user_create.user.Uin
+
+    - name: Update the remark
+      susunola.tencentcloud.cam_user:
+        state: present
+        name: "{{ user_name }}"
+        remark: CI integration test updated
+      register: user_update
+
+    - name: Update reports changed with the new remark
+      ansible.builtin.assert:
+        that:
+          - user_update is changed
+          - user_update.user.Remark == "CI integration test updated"
+
+    - name: Check mode reports the delete without deleting
+      susunola.tencentcloud.cam_user:
+        state: absent
+        name: "{{ user_name }}"
+      check_mode: true
+      register: user_check_delete
+
+    - name: Check mode reports changed
+      ansible.builtin.assert:
+        that:
+          - user_check_delete is changed
+
+    - name: Delete the sub-user
+      susunola.tencentcloud.cam_user:
+        state: absent
+        name: "{{ user_name }}"
+      register: user_delete
+
+    - name: Deletion reports changed
+      ansible.builtin.assert:
+        that:
+          - user_delete is changed
+
+  always:
+    - name: Delete the sub-user if the run failed mid-way
+      susunola.tencentcloud.cam_user:
+        state: absent
+        name: "{{ user_name }}"
+      ignore_errors: true

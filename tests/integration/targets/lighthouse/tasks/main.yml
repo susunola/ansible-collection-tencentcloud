@@ -1,0 +1,82 @@
+---
+# End-to-end coverage for lighthouse_instance: create + idempotency +
+# delete.
+#
+# Lighthouse instances are billable, so this target only runs for real when
+# the operator supplies TENCENTCLOUD_LH_BUNDLE_ID and
+# TENCENTCLOUD_LH_BLUEPRINT_ID (a cheap bundle is recommended); without
+# them it reports that it was skipped. The instance is named
+# ansible-lh-it-<run_id> so the cleanup sweeper can isolate leftovers, and
+# the always block below isolates it again if the run dies mid-way.
+- name: Lighthouse instance end-to-end
+  vars:
+    region: "{{ tencentcloud_region }}"
+    run_id: "{{ 99999999 | random }}"
+    instance_name: "ansible-lh-it-{{ run_id }}"
+    lh_bundle_id: "{{ lookup('env', 'TENCENTCLOUD_LH_BUNDLE_ID') | default('', true) }}"
+    lh_blueprint_id: "{{ lookup('env', 'TENCENTCLOUD_LH_BLUEPRINT_ID') | default('', true) }}"
+    lh_zone: "{{ lookup('env', 'TENCENTCLOUD_LH_ZONE') | default('ap-guangzhou-1', true) }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ region }}"
+  block:
+    - name: Report skipped without bundle and blueprint
+      ansible.builtin.debug:
+        msg: >-
+          TENCENTCLOUD_LH_BUNDLE_ID / TENCENTCLOUD_LH_BLUEPRINT_ID are not
+          set; the lighthouse target is skipped (instances are billable).
+      when: lh_bundle_id | length == 0 or lh_blueprint_id | length == 0
+
+    - name: Create a Lighthouse instance
+      susunola.tencentcloud.lighthouse_instance:
+        state: present
+        instance_name: "{{ instance_name }}"
+        bundle_id: "{{ lh_bundle_id }}"
+        blueprint_id: "{{ lh_blueprint_id }}"
+        zones: ["{{ lh_zone }}"]
+      register: instance_create
+      when: lh_bundle_id | length > 0 and lh_blueprint_id | length > 0
+
+    - name: Creation reports changed with an instance id
+      ansible.builtin.assert:
+        that:
+          - instance_create is changed
+          - instance_create.instance.InstanceId is defined
+      when: lh_bundle_id | length > 0 and lh_blueprint_id | length > 0
+
+    - name: Create the same instance again (idempotency)
+      susunola.tencentcloud.lighthouse_instance:
+        state: present
+        instance_name: "{{ instance_name }}"
+        bundle_id: "{{ lh_bundle_id }}"
+        blueprint_id: "{{ lh_blueprint_id }}"
+        zones: ["{{ lh_zone }}"]
+      register: instance_second
+      when: lh_bundle_id | length > 0 and lh_blueprint_id | length > 0
+
+    - name: Second run reports no change
+      ansible.builtin.assert:
+        that:
+          - instance_second is not changed
+          - instance_second.instance.InstanceId == instance_create.instance.InstanceId
+      when: lh_bundle_id | length > 0 and lh_blueprint_id | length > 0
+
+    - name: Delete the instance
+      susunola.tencentcloud.lighthouse_instance:
+        state: absent
+        instance_name: "{{ instance_name }}"
+      register: instance_delete
+      when: lh_bundle_id | length > 0 and lh_blueprint_id | length > 0
+
+    - name: Deletion reports changed
+      ansible.builtin.assert:
+        that:
+          - instance_delete is changed
+      when: lh_bundle_id | length > 0 and lh_blueprint_id | length > 0
+
+  always:
+    - name: Delete the instance if the run failed mid-way
+      susunola.tencentcloud.lighthouse_instance:
+        state: absent
+        instance_name: "{{ instance_name }}"
+      ignore_errors: true

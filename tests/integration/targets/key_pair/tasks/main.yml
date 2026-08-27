@@ -1,0 +1,71 @@
+---
+# End-to-end coverage for key_pair: create (generated key) + idempotency +
+# check mode + delete. The key pair is named ansible-key-it-<run_id> so the
+# cleanup sweeper can find leftovers; key pairs are free of charge. The
+# generated private key is written to a temp file so it is available to the
+# module result only once, as documented.
+- name: Key pair end-to-end
+  vars:
+    region: "{{ tencentcloud_region }}"
+    run_id: "{{ 99999999 | random }}"
+    key_name: "ansible_key_it_{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ region }}"
+  block:
+    - name: Create a key pair
+      susunola.tencentcloud.key_pair:
+        state: present
+        name: "{{ key_name }}"
+      register: key_create
+
+    - name: Creation reports changed with a key id and the private key
+      ansible.builtin.assert:
+        that:
+          - key_create is changed
+          - key_create.key.KeyId is defined
+          - key_create.key.KeyName == key_name
+          - key_create.private_key is defined
+          - key_create.private_key is search("BEGIN RSA PRIVATE KEY")
+
+    - name: Create the same key pair again (idempotency)
+      susunola.tencentcloud.key_pair:
+        state: present
+        name: "{{ key_name }}"
+      register: key_second
+
+    - name: Second run reports no change
+      ansible.builtin.assert:
+        that:
+          - key_second is not changed
+          - key_second.key.KeyId == key_create.key.KeyId
+
+    - name: Check mode reports the delete without deleting
+      susunola.tencentcloud.key_pair:
+        state: absent
+        name: "{{ key_name }}"
+      check_mode: true
+      register: key_check_delete
+
+    - name: Check mode reports changed
+      ansible.builtin.assert:
+        that:
+          - key_check_delete is changed
+
+    - name: Delete the key pair
+      susunola.tencentcloud.key_pair:
+        state: absent
+        name: "{{ key_name }}"
+      register: key_delete
+
+    - name: Deletion reports changed
+      ansible.builtin.assert:
+        that:
+          - key_delete is changed
+
+  always:
+    - name: Delete the key pair if the run failed mid-way
+      susunola.tencentcloud.key_pair:
+        state: absent
+        name: "{{ key_name }}"
+      ignore_errors: true

@@ -1,0 +1,81 @@
+---
+# End-to-end coverage for cvm_image: create from a running instance +
+# idempotency + delete.
+#
+# Creating a custom image copies the source instance's disk, so this target
+# only runs for real when TENCENTCLOUD_CVM_IMAGE_SOURCE_INSTANCE points at
+# an instance the operator is willing to snapshot. Without it the target
+# simply reports that it was skipped. The image is named
+# ansible-cvm-image-it-<run_id>; there is no list-images info module, so a
+# leaked image (a run killed between create and delete) must be removed
+# manually or by re-running this target, which deletes by name in its
+# always block.
+- name: CVM image end-to-end
+  vars:
+    region: "{{ tencentcloud_region }}"
+    run_id: "{{ 99999999 | random }}"
+    image_name: "ansible-cvm-image-it-{{ run_id }}"
+    source_instance: "{{ lookup('env', 'TENCENTCLOUD_CVM_IMAGE_SOURCE_INSTANCE') | default('', true) }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ region }}"
+  block:
+    - name: Report skipped without a source instance
+      ansible.builtin.debug:
+        msg: >-
+          TENCENTCLOUD_CVM_IMAGE_SOURCE_INSTANCE is not set; the cvm_image
+          target is skipped (creating an image snapshots the source disk).
+      when: source_instance | length == 0
+
+    - name: Create an image from the source instance
+      susunola.tencentcloud.cvm_image:
+        state: present
+        image_name: "{{ image_name }}"
+        instance_id: "{{ source_instance }}"
+        image_description: CI integration test image
+      register: image_create
+      when: source_instance | length > 0
+
+    - name: Creation reports changed with an image id
+      ansible.builtin.assert:
+        that:
+          - image_create is changed
+          - image_create.image.ImageId is defined
+          - image_create.image.ImageName == image_name
+      when: source_instance | length > 0
+
+    - name: Create the same image again (idempotency)
+      susunola.tencentcloud.cvm_image:
+        state: present
+        image_name: "{{ image_name }}"
+        instance_id: "{{ source_instance }}"
+        image_description: CI integration test image
+      register: image_second
+      when: source_instance | length > 0
+
+    - name: Second run reports no change
+      ansible.builtin.assert:
+        that:
+          - image_second is not changed
+          - image_second.image.ImageId == image_create.image.ImageId
+      when: source_instance | length > 0
+
+    - name: Delete the image
+      susunola.tencentcloud.cvm_image:
+        state: absent
+        image_name: "{{ image_name }}"
+      register: image_delete
+      when: source_instance | length > 0
+
+    - name: Deletion reports changed
+      ansible.builtin.assert:
+        that:
+          - image_delete is changed
+      when: source_instance | length > 0
+
+  always:
+    - name: Delete the image if the run failed mid-way
+      susunola.tencentcloud.cvm_image:
+        state: absent
+        image_name: "{{ image_name }}"
+      ignore_errors: true

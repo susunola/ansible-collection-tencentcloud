@@ -48,6 +48,22 @@
       susunola.tencentcloud.cfs_file_system_info:
       register: file_systems
 
+    - name: Collect NAT gateways
+      susunola.tencentcloud.nat_gateway_info:
+      register: nat_gateways
+
+    - name: Collect key pairs
+      susunola.tencentcloud.key_pair_info:
+      register: key_pairs
+
+    - name: Collect Lighthouse instances
+      susunola.tencentcloud.lighthouse_instance_info:
+      register: lighthouse_instances
+
+    - name: Collect CAM users
+      susunola.tencentcloud.cam_user_info:
+      register: cam_users
+
     - name: Select test VPCs
       ansible.builtin.set_fact:
         test_vpcs: >-
@@ -107,6 +123,38 @@
              | selectattr('Name', 'truthy')
              | selectattr('Name', 'search', 'ansible-.*-it-') | list }}
 
+    - name: Select test NAT gateways
+      ansible.builtin.set_fact:
+        test_nat_gateways: >-
+          {{ nat_gateways.nat_gateways
+             | selectattr('NatGatewayName', 'defined')
+             | selectattr('NatGatewayName', 'truthy')
+             | selectattr('NatGatewayName', 'search', 'ansible-.*-it-') | list }}
+
+    - name: Select test key pairs
+      ansible.builtin.set_fact:
+        test_key_pairs: >-
+          {{ key_pairs.key_pairs
+             | selectattr('KeyName', 'defined')
+             | selectattr('KeyName', 'truthy')
+             | selectattr('KeyName', 'search', 'ansible-.*-it-') | list }}
+
+    - name: Select test Lighthouse instances
+      ansible.builtin.set_fact:
+        test_lighthouse_instances: >-
+          {{ lighthouse_instances.instances
+             | selectattr('InstanceName', 'defined')
+             | selectattr('InstanceName', 'truthy')
+             | selectattr('InstanceName', 'search', 'ansible-.*-it-') | list }}
+
+    - name: Select test CAM users
+      ansible.builtin.set_fact:
+        test_cam_users: >-
+          {{ cam_users.users
+             | selectattr('Name', 'defined')
+             | selectattr('Name', 'truthy')
+             | selectattr('Name', 'search', 'ansible-.*-it-') | list }}
+
     # ------------------------------------------------------------------
     # Tear down in reverse dependency order. Each delete is best-effort;
     # the sweeper must never fail a CI cleanup step because one resource
@@ -129,6 +177,40 @@
       loop: "{{ test_file_systems }}"
       ignore_errors: true
       when: item.FileSystemId is defined
+
+    # NAT gateways attach to subnets and hold EIPs, so they must go before
+    # the EIP release and the subnet/VPC teardown below.
+    - name: Delete test NAT gateways
+      susunola.tencentcloud.nat_gateway:
+        state: absent
+        nat_gateway_id: "{{ item.NatGatewayId }}"
+      loop: "{{ test_nat_gateways }}"
+      ignore_errors: true
+      when: item.NatGatewayId is defined
+
+    - name: Delete test key pairs
+      susunola.tencentcloud.key_pair:
+        state: absent
+        key_id: "{{ item.KeyId }}"
+      loop: "{{ test_key_pairs }}"
+      ignore_errors: true
+      when: item.KeyId is defined
+
+    - name: Delete test Lighthouse instances
+      susunola.tencentcloud.lighthouse_instance:
+        state: absent
+        instance_id: "{{ item.InstanceId }}"
+      loop: "{{ test_lighthouse_instances }}"
+      ignore_errors: true
+      when: item.InstanceId is defined
+
+    - name: Delete test CAM users
+      susunola.tencentcloud.cam_user:
+        state: absent
+        name: "{{ item.Name }}"
+      loop: "{{ test_cam_users }}"
+      ignore_errors: true
+      when: item.Name is defined
 
     - name: Release test EIPs
       susunola.tencentcloud.eip:
@@ -175,6 +257,10 @@
         msg: >-
           Swept {{ test_load_balancers | length }} CLB(s),
           {{ test_file_systems | length }} CFS file system(s),
+          {{ test_nat_gateways | length }} NAT gateway(s),
+          {{ test_key_pairs | length }} key pair(s),
+          {{ test_lighthouse_instances | length }} Lighthouse instance(s),
+          {{ test_cam_users | length }} CAM user(s),
           {{ test_eips | length }} EIP(s),
           {{ test_security_groups | length }} security group(s),
           {{ test_route_tables | length }} route table(s),

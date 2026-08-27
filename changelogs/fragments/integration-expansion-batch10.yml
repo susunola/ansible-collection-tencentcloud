@@ -1,0 +1,3 @@
+minor_changes:
+  - tests - add integration targets for cam_user, cos_bucket and key_pair (cheap, run by default in CI), plus opt-in targets for cvm_image (behind TENCENTCLOUD_CVM_IMAGE_SOURCE_INSTANCE) and lighthouse (behind TENCENTCLOUD_LH_BUNDLE_ID / TENCENTCLOUD_LH_BLUEPRINT_ID) that are skipped when the operator has not supplied billable resource inputs.
+  - tests - extend the cleanup sweeper to also remove NAT gateways, key pairs, Lighthouse instances and CAM sub-users left behind by failed or cancelled integration runs, in reverse dependency order.

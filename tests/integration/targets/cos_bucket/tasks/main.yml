@@ -1,0 +1,134 @@
+---
+# End-to-end coverage for cos_bucket: create + idempotency + configuration
+# faces (ACL, versioning, tags, CORS, lifecycle) + check mode + delete.
+# The bucket is named ansible-cos-it-<run_id> so the cleanup sweeper can
+# find leftovers; buckets are free until objects are stored in them, so the
+# cost of this target is negligible. The AppId suffix is resolved through
+# the STS GetCallerIdentity API by the module itself.
+- name: COS bucket end-to-end
+  vars:
+    region: "{{ tencentcloud_region }}"
+    run_id: "{{ 99999999 | random }}"
+    bucket_name: "ansible-cos-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ region }}"
+  block:
+    - name: Create a bucket with the full configuration face
+      susunola.tencentcloud.cos_bucket:
+        state: present
+        name: "{{ bucket_name }}"
+        acl: private
+        versioning: true
+        tags:
+          ansible_test: "true"
+        cors:
+          - id: web
+            allowed_origins:
+              - https://www.example.com
+            allowed_methods: [GET, HEAD]
+            max_age_seconds: 600
+        lifecycle:
+          - id: logs-expire
+            prefix: logs/
+            expiration_days: 30
+      register: bucket_create
+
+    - name: Creation reports changed with the full bucket
+      ansible.builtin.assert:
+        that:
+          - bucket_create is changed
+          - bucket_create.bucket.full_name is search(bucket_name)
+          - bucket_create.bucket.acl == "private"
+          - bucket_create.bucket.versioning is true
+          - bucket_create.bucket.tags.ansible_test == "true"
+          - bucket_create.bucket.cors | length == 1
+          - bucket_create.bucket.cors[0].AllowedMethod == ['GET', 'HEAD']
+          - bucket_create.bucket.lifecycle | length == 1
+          - bucket_create.bucket.lifecycle[0].Expiration.Days == 30
+
+    - name: Create the same bucket again (idempotency)
+      susunola.tencentcloud.cos_bucket:
+        state: present
+        name: "{{ bucket_name }}"
+        acl: private
+        versioning: true
+        tags:
+          ansible_test: "true"
+        cors:
+          - id: web
+            allowed_origins:
+              - https://www.example.com
+            allowed_methods: [GET, HEAD]
+            max_age_seconds: 600
+        lifecycle:
+          - id: logs-expire
+            prefix: logs/
+            expiration_days: 30
+      register: bucket_second
+
+    - name: Second run reports no change
+      ansible.builtin.assert:
+        that:
+          - bucket_second is not changed
+          - bucket_second.bucket.full_name == bucket_create.bucket.full_name
+
+    - name: Change the ACL and add a lifecycle transition
+      susunola.tencentcloud.cos_bucket:
+        state: present
+        name: "{{ bucket_name }}"
+        acl: public-read
+        versioning: true
+        tags:
+          ansible_test: "true"
+        cors:
+          - id: web
+            allowed_origins:
+              - https://www.example.com
+            allowed_methods: [GET, HEAD]
+            max_age_seconds: 600
+        lifecycle:
+          - id: logs-expire
+            prefix: logs/
+            expiration_days: 30
+            transitions:
+              - days: 7
+                storage_class: STANDARD_IA
+      register: bucket_update
+
+    - name: Update reports changed with the new ACL
+      ansible.builtin.assert:
+        that:
+          - bucket_update is changed
+          - bucket_update.bucket.acl == "public-read"
+          - bucket_update.bucket.lifecycle[0].Transition[0].Days == 7
+
+    - name: Check mode reports the delete without deleting
+      susunola.tencentcloud.cos_bucket:
+        state: absent
+        name: "{{ bucket_name }}"
+      check_mode: true
+      register: bucket_check_delete
+
+    - name: Check mode reports changed
+      ansible.builtin.assert:
+        that:
+          - bucket_check_delete is changed
+
+    - name: Delete the bucket
+      susunola.tencentcloud.cos_bucket:
+        state: absent
+        name: "{{ bucket_name }}"
+      register: bucket_delete
+
+    - name: Deletion reports changed
+      ansible.builtin.assert:
+        that:
+          - bucket_delete is changed
+
+  always:
+    - name: Delete the bucket if the run failed mid-way
+      susunola.tencentcloud.cos_bucket:
+        state: absent
+        name: "{{ bucket_name }}"
+      ignore_errors: true
