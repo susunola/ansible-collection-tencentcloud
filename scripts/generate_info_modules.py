@@ -2603,6 +2603,110 @@ def {pagination_test}(monkeypatch):
 '''
 
 
+_PAGINATION_TYPES = ("int", "page", "token", "list", "none")
+_EXTRA_PARAM_FIELDS = ("name", "field", "type", "doc")
+
+
+def validate_specs(specs):
+    """Return a list of structural problems across *specs* (empty means ok).
+
+    Catches spec mistakes that would otherwise surface only as broken
+    generated modules or silent runtime gaps, for example:
+
+    - a required key missing (the templates would raise KeyError)
+    - a ``pagination_type`` outside the supported set
+    - a paginated spec without a ``response_items`` field (the module would
+      never find its items) or a "none" spec that declares one
+    - duplicate module names across the curated and auto spec lists
+    - duplicate option names inside one spec's ``extra_params``
+    - dotted ``response_items``/``response_total`` paths with more than one
+      dot (only one holder level is supported by the templates)
+
+    Every spec in SPECS (curated + auto) must pass before generation.
+    """
+    problems = []
+    seen_modules = set()
+    for index, spec in enumerate(specs):
+        location = "specs[%d] %r" % (index, spec.get("module"))
+
+        module = spec.get("module")
+        if not module or not isinstance(module, str):
+            problems.append("%s: missing string 'module'" % location)
+            continue
+        if not module.endswith("_info"):
+            problems.append("%s: module name must end with _info" % location)
+        if module in seen_modules:
+            problems.append("%s: duplicate module name" % location)
+        seen_modules.add(module)
+
+        for key in ("service_package", "client_module", "client_class",
+                    "sdk_package", "endpoint", "action", "request_class",
+                    "result_key"):
+            if not spec.get(key):
+                problems.append("%s: missing required key %r" % (location, key))
+
+        pagination = spec.get("pagination_type", "int")
+        if pagination not in _PAGINATION_TYPES:
+            problems.append(
+                "%s: unknown pagination_type %r (expected one of %s)"
+                % (location, pagination, ", ".join(_PAGINATION_TYPES))
+            )
+        items = spec.get("response_items")
+        if pagination != "none" and not items:
+            problems.append(
+                "%s: pagination_type %r requires a response_items field"
+                % (location, pagination)
+            )
+        if pagination == "none" and items:
+            problems.append(
+                "%s: pagination_type 'none' must not declare response_items"
+                % location
+            )
+        for key in ("response_items", "response_total"):
+            value = spec.get(key)
+            if value and value.count(".") > 1:
+                problems.append(
+                    "%s: %s %r has more than one dot; only one holder level "
+                    "is supported" % (location, key, value)
+                )
+
+        ids = spec.get("ids")
+        if ids is not None and not (
+                isinstance(ids, dict)
+                and ids.get("param") and ids.get("field") and ids.get("doc")):
+            problems.append(
+                "%s: ids must be None or a dict with param/field/doc" % location)
+        filters = spec.get("filters")
+        if filters is not None and not (
+                isinstance(filters, dict) and filters.get("doc")):
+            problems.append(
+                "%s: filters must be None or a dict with a doc" % location)
+
+        param_names = set()
+        for param in spec.get("extra_params", []):
+            for key in _EXTRA_PARAM_FIELDS:
+                if not param.get(key):
+                    problems.append(
+                        "%s: extra_param %r missing %r"
+                        % (location, param.get("name"), key))
+            if param.get("required") is not None and not isinstance(
+                    param.get("required"), bool):
+                problems.append(
+                    "%s: extra_param %r 'required' must be a bool"
+                    % (location, param.get("name")))
+            name = param.get("name")
+            if name:
+                if name in param_names:
+                    problems.append(
+                        "%s: duplicate extra_param %r" % (location, name))
+                param_names.add(name)
+                if name == "region":
+                    problems.append(
+                        "%s: extra_param %r collides with the shared region "
+                        "parameter" % (location, name))
+    return problems
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -2610,6 +2714,13 @@ def main(argv=None):
         help="do not write files; fail if a generated module is missing or stale",
     )
     args = parser.parse_args(argv)
+
+    problems = validate_specs(SPECS)
+    if problems:
+        print("invalid generator specs:", file=sys.stderr)
+        for problem in problems:
+            print("  - %s" % problem, file=sys.stderr)
+        return 1
 
     stale = []
     for spec in SPECS:

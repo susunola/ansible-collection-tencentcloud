@@ -1,0 +1,153 @@
+---
+# End-to-end coverage for the CLB path: clb_load_balancer +
+# clb_listener + clb_load_balancer_info. Uses an INTERNAL load balancer in a
+# throwaway VPC (internal LBs do not bill bandwidth) so the target stays
+# effectively free.
+- name: CLB HTTP stack end-to-end
+  vars:
+    region: "{{ tencentcloud_region }}"
+    zone: "{{ tencentcloud_zone }}"
+    run_id: "{{ 99999999 | random }}"
+    lb_name: "ansible-clb-it-{{ run_id }}"
+    vpc_name: "ansible-vpc-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ region }}"
+  block:
+    - name: Create a VPC for the load balancer
+      susunola.tencentcloud.vpc:
+        state: present
+        name: "{{ vpc_name }}"
+        cidr_block: 10.97.0.0/16
+        tags:
+          ansible_test: "true"
+      register: vpc_create
+
+    - name: Create a subnet for the load balancer
+      susunola.tencentcloud.subnet:
+        state: present
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        name: "ansible-subnet-it-{{ run_id }}"
+        cidr_block: 10.97.1.0/24
+        zone: "{{ zone }}"
+      register: subnet_create
+
+    - name: Create an internal HTTP load balancer
+      susunola.tencentcloud.clb_load_balancer:
+        state: present
+        name: "{{ lb_name }}"
+        load_balancer_type: INTERNAL
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+        tags:
+          ansible_test: "true"
+      register: lb_create
+
+    - name: Creation reports changed with an ID and VIP
+      ansible.builtin.assert:
+        that:
+          - lb_create is changed
+          - lb_create.load_balancer.LoadBalancerId is defined
+          - lb_create.load_balancer.LoadBalancerName == lb_name
+
+    - name: Create the same load balancer again (idempotency)
+      susunola.tencentcloud.clb_load_balancer:
+        state: present
+        name: "{{ lb_name }}"
+        load_balancer_type: INTERNAL
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+        tags:
+          ansible_test: "true"
+      register: lb_second
+
+    - name: Second run reports no change
+      ansible.builtin.assert:
+        that:
+          - lb_second is not changed
+          - lb_second.load_balancer.LoadBalancerId == lb_create.load_balancer.LoadBalancerId
+
+    - name: clb_load_balancer_info finds the load balancer
+      susunola.tencentcloud.clb_load_balancer_info:
+        load_balancer_ids: ["{{ lb_create.load_balancer.LoadBalancerId }}"]
+      register: lb_query
+
+    - name: The info module returns exactly one load balancer
+      ansible.builtin.assert:
+        that:
+          - lb_query.load_balancers | length == 1
+
+    - name: Create an HTTP listener
+      susunola.tencentcloud.clb_listener:
+        state: present
+        load_balancer_id: "{{ lb_create.load_balancer.LoadBalancerId }}"
+        protocol: HTTP
+        port: 8080
+        name: "ansible-clb-http-it-{{ run_id }}"
+      register: listener_create
+
+    - name: Listener creation reports changed with an ID
+      ansible.builtin.assert:
+        that:
+          - listener_create is changed
+          - listener_create.listener.ListenerId is defined
+
+    - name: Create the same listener again (idempotency)
+      susunola.tencentcloud.clb_listener:
+        state: present
+        load_balancer_id: "{{ lb_create.load_balancer.LoadBalancerId }}"
+        protocol: HTTP
+        port: 8080
+        name: "ansible-clb-http-it-{{ run_id }}"
+      register: listener_second
+
+    - name: Second listener run reports no change
+      ansible.builtin.assert:
+        that:
+          - listener_second is not changed
+          - listener_second.listener.ListenerId == listener_create.listener.ListenerId
+
+    - name: Check mode predicts a deletion
+      susunola.tencentcloud.clb_listener:
+        state: absent
+        load_balancer_id: "{{ lb_create.load_balancer.LoadBalancerId }}"
+        protocol: HTTP
+        port: 8080
+      check_mode: true
+      register: listener_check_delete
+
+    - name: Check mode reports changed without deleting
+      ansible.builtin.assert:
+        that:
+          - listener_check_delete is changed
+
+  always:
+    - name: Delete the listener
+      susunola.tencentcloud.clb_listener:
+        state: absent
+        load_balancer_id: "{{ lb_create.load_balancer.LoadBalancerId }}"
+        protocol: HTTP
+        port: 8080
+      when: lb_create is defined and lb_create.load_balancer is defined
+      ignore_errors: true
+
+    - name: Delete the load balancer
+      susunola.tencentcloud.clb_load_balancer:
+        state: absent
+        load_balancer_id: "{{ lb_create.load_balancer.LoadBalancerId }}"
+      when: lb_create is defined and lb_create.load_balancer is defined
+      ignore_errors: true
+
+    - name: Delete the subnet
+      susunola.tencentcloud.subnet:
+        state: absent
+        subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+      when: subnet_create is defined and subnet_create.subnet is defined
+      ignore_errors: true
+
+    - name: Delete the VPC
+      susunola.tencentcloud.vpc:
+        state: absent
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+      when: vpc_create is defined and vpc_create.vpc is defined
+      ignore_errors: true

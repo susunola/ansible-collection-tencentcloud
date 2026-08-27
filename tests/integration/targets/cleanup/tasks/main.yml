@@ -40,6 +40,14 @@
       susunola.tencentcloud.eip_info:
       register: eips
 
+    - name: Collect CLB load balancers
+      susunola.tencentcloud.clb_load_balancer_info:
+      register: load_balancers
+
+    - name: Collect CFS file systems
+      susunola.tencentcloud.cfs_file_system_info:
+      register: file_systems
+
     - name: Select test VPCs
       ansible.builtin.set_fact:
         test_vpcs: >-
@@ -82,12 +90,46 @@
              | selectattr('AddressName', 'truthy')
              | selectattr('AddressName', 'search', 'ansible-.*-it-') | list }}
 
+    - name: Select test CLB load balancers
+      ansible.builtin.set_fact:
+        test_load_balancers: >-
+          {{ load_balancers.load_balancers
+             | selectattr('LoadBalancerName', 'defined')
+             | selectattr('LoadBalancerName', 'truthy')
+             | selectattr('LoadBalancerName', 'search',
+                          'ansible-.*-it-') | list }}
+
+    - name: Select test CFS file systems
+      ansible.builtin.set_fact:
+        test_file_systems: >-
+          {{ file_systems.file_systems
+             | selectattr('Name', 'defined')
+             | selectattr('Name', 'truthy')
+             | selectattr('Name', 'search', 'ansible-.*-it-') | list }}
+
     # ------------------------------------------------------------------
     # Tear down in reverse dependency order. Each delete is best-effort;
     # the sweeper must never fail a CI cleanup step because one resource
     # is still in use (e.g. a security group attached to a running
-    # instance that another test created).
+    # instance that another test created). CLB and CFS both attach to
+    # subnets, so they must be removed before the subnet/VPC pass below.
     # ------------------------------------------------------------------
+    - name: Delete test CLB load balancers
+      susunola.tencentcloud.clb_load_balancer:
+        state: absent
+        load_balancer_id: "{{ item.LoadBalancerId }}"
+      loop: "{{ test_load_balancers }}"
+      ignore_errors: true
+      when: item.LoadBalancerId is defined
+
+    - name: Delete test CFS file systems
+      susunola.tencentcloud.cfs_file_system:
+        state: absent
+        file_system_id: "{{ item.FileSystemId }}"
+      loop: "{{ test_file_systems }}"
+      ignore_errors: true
+      when: item.FileSystemId is defined
+
     - name: Release test EIPs
       susunola.tencentcloud.eip:
         state: absent
@@ -131,7 +173,9 @@
     - name: Report swept resources
       ansible.builtin.debug:
         msg: >-
-          Swept {{ test_eips | length }} EIP(s),
+          Swept {{ test_load_balancers | length }} CLB(s),
+          {{ test_file_systems | length }} CFS file system(s),
+          {{ test_eips | length }} EIP(s),
           {{ test_security_groups | length }} security group(s),
           {{ test_route_tables | length }} route table(s),
           {{ test_subnets | length }} subnet(s),

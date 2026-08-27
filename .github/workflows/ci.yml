@@ -43,6 +43,8 @@ jobs:
         run: python scripts/generate_info_modules.py --check
       - name: Module registries are up to date
         run: python scripts/sync_registry.py --check
+      - name: Module tiers are consistent
+        run: python scripts/check_module_tiers.py --check
       - name: Sanity tests
         run: ansible-test sanity --color --python ${{ matrix.python }}
       - name: Unit tests

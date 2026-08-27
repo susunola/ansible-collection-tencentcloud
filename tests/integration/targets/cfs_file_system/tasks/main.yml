@@ -1,0 +1,124 @@
+---
+# End-to-end coverage for cfs_file_system: create + idempotency + check
+# mode + delete, over a throwaway VPC/subnet. CFS SD storage is billed per
+# GiB-hour, so the resource cost of this target is negligible.
+- name: CFS file system end-to-end
+  vars:
+    region: "{{ tencentcloud_region }}"
+    zone: "{{ tencentcloud_zone }}"
+    run_id: "{{ 99999999 | random }}"
+    fs_name: "ansible-cfs-it-{{ run_id }}"
+    vpc_name: "ansible-vpc-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ region }}"
+  block:
+    - name: Create a VPC for the file system
+      susunola.tencentcloud.vpc:
+        state: present
+        name: "{{ vpc_name }}"
+        cidr_block: 10.98.0.0/16
+        tags:
+          ansible_test: "true"
+      register: vpc_create
+
+    - name: Create a subnet for the file system
+      susunola.tencentcloud.subnet:
+        state: present
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        name: "ansible-subnet-it-{{ run_id }}"
+        cidr_block: 10.98.1.0/24
+        zone: "{{ zone }}"
+      register: subnet_create
+
+    - name: Create a CFS file system
+      susunola.tencentcloud.cfs_file_system:
+        state: present
+        name: "{{ fs_name }}"
+        zone: "{{ zone }}"
+        protocol: NFS
+        storage_type: SD
+        capacity: 10
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+      register: cfs_create
+
+    - name: Creation reports changed with an ID
+      ansible.builtin.assert:
+        that:
+          - cfs_create is changed
+          - cfs_create.file_system.FileSystemId is defined
+          - cfs_create.file_system.Name == fs_name
+
+    - name: Create the same file system again (idempotency)
+      susunola.tencentcloud.cfs_file_system:
+        state: present
+        name: "{{ fs_name }}"
+        zone: "{{ zone }}"
+        protocol: NFS
+        storage_type: SD
+        capacity: 10
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+      register: cfs_second
+
+    - name: Second run reports no change
+      ansible.builtin.assert:
+        that:
+          - cfs_second is not changed
+          - cfs_second.file_system.FileSystemId == cfs_create.file_system.FileSystemId
+
+    - name: cfs_file_system_info finds the file system
+      susunola.tencentcloud.cfs_file_system_info:
+        file_system_id: "{{ cfs_create.file_system.FileSystemId }}"
+      register: cfs_query
+
+    - name: The info module returns exactly one file system
+      ansible.builtin.assert:
+        that:
+          - cfs_query.file_systems | length == 1
+
+    - name: Check mode predicts a deletion
+      susunola.tencentcloud.cfs_file_system:
+        state: absent
+        name: "{{ fs_name }}"
+      check_mode: true
+      register: cfs_check_delete
+
+    - name: Check mode reports changed without deleting
+      ansible.builtin.assert:
+        that:
+          - cfs_check_delete is changed
+
+    - name: Delete the file system
+      susunola.tencentcloud.cfs_file_system:
+        state: absent
+        name: "{{ fs_name }}"
+      register: cfs_delete
+
+    - name: Deletion reports changed
+      ansible.builtin.assert:
+        that:
+          - cfs_delete is changed
+
+  always:
+    - name: Delete the file system if the run failed mid-way
+      susunola.tencentcloud.cfs_file_system:
+        state: absent
+        file_system_id: "{{ cfs_create.file_system.FileSystemId }}"
+      when: cfs_create is defined and cfs_create.file_system is defined
+      ignore_errors: true
+
+    - name: Delete the subnet
+      susunola.tencentcloud.subnet:
+        state: absent
+        subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+      when: subnet_create is defined and subnet_create.subnet is defined
+      ignore_errors: true
+
+    - name: Delete the VPC
+      susunola.tencentcloud.vpc:
+        state: absent
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+      when: vpc_create is defined and vpc_create.vpc is defined
+      ignore_errors: true

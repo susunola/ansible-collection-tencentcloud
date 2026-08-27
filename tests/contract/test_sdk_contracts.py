@@ -314,6 +314,17 @@ WRITE_MODULE_BUILDERS = {
         "_apply_tags", "_delete", "_update_attributes", "_wait_task",
         "build_create_request", "build_describe_request",
     ],
+    "cfs_file_system": [
+        "_create", "_delete", "_update_name", "_update_size_limit",
+        "build_describe_request",
+    ],
+    "cvm_image": [
+        "_create", "_delete", "_update", "build_describe_request",
+    ],
+    "lighthouse_instance": [
+        "_isolate", "_start", "_stop", "_update_name",
+        "build_create_request", "build_describe_request",
+    ],
     "clb_listener": [
         "_delete", "_update", "_wait_task",
         "build_create_request", "build_describe_request",
@@ -1011,4 +1022,98 @@ def test_clb_listener_target():
         fake, client, models, "lb-xxxxxxxx", "lbl-xxxxxxxx", "loc-xxxxxxxx", targets)
     module._wait_task(fake, client, models, "req-0001")
     errors.extend(audit_recorded(fake, "clb_listener_target"))
+    assert errors == []
+
+
+def test_cvm_image():
+    module = _import_plugin("cvm_image")
+    models = _models("cvm.v20170312")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "img-xxxxxxxx", None),
+        "cvm_image describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, "web-prod"),
+        "cvm_image describe by name"))
+    module._create(fake, client, models, {
+        "instance_id": "ins-xxxxxxxx",
+        "image_name": "web-prod",
+        "image_description": "golden image",
+        "force_poweroff": True,
+        "sysprep": False,
+    })
+    module._update(fake, client, models, "img-xxxxxxxx", "web-prod-v2", "renamed")
+    module._delete(fake, client, models, "img-xxxxxxxx", True)
+    errors.extend(audit_recorded(fake, "cvm_image"))
+    assert errors == []
+
+
+def test_cfs_file_system():
+    module = _import_plugin("cfs_file_system")
+    models = _models("cfs.v20190719")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "cfs-xxxxxxxx", None),
+        "cfs describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, "app-share"),
+        "cfs describe by name"))
+    module._create(fake, client, models, {
+        "zone": "ap-guangzhou-3",
+        "protocol": "NFS",
+        "storage_type": "SD",
+        "capacity": 100,
+        "name": "app-share",
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_id": "subnet-xxxxxxxx",
+        "pgroup_id": "pgroup-xxxxxxxx",
+    })
+    module._update_name(fake, client, models, "cfs-xxxxxxxx", "app-share-v2")
+    module._update_size_limit(fake, client, models, "cfs-xxxxxxxx", 200)
+    module._delete(fake, client, models, "cfs-xxxxxxxx")
+    errors.extend(audit_recorded(fake, "cfs_file_system"))
+    assert errors == []
+
+
+def test_lighthouse_instance():
+    module = _import_plugin("lighthouse_instance")
+    models = _models("lighthouse.v20200324")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "lhins-xxxxxxxx", None),
+        "lighthouse describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, "blog-01"),
+        "lighthouse describe by name"))
+    errors.extend(audit_request(
+        module.build_create_request(models, {
+            "bundle_id": "bundle_2022_std_1c1g",
+            "blueprint_id": "lhbp-xxxxxxxx",
+            "instance_count": 1,
+            "instance_name": "blog-01",
+            "zones": ["ap-guangzhou-3"],
+            "password": "secret",
+            "prepaid_period": 1,
+        }),
+        "lighthouse create request"))
+    module._create(fake, client, models, {
+        "bundle_id": "bundle_2022_std_1c1g",
+        "blueprint_id": "lhbp-xxxxxxxx",
+        "instance_count": 1,
+        "instance_name": "blog-01",
+        "zones": ["ap-guangzhou-3"],
+        "password": "secret",
+        "prepaid_period": 1,
+    })
+    module._start(fake, client, models, "lhins-xxxxxxxx")
+    module._stop(fake, client, models, "lhins-xxxxxxxx")
+    module._isolate(fake, client, models, "lhins-xxxxxxxx")
+    module._update_name(fake, client, models, "lhins-xxxxxxxx", "blog-01")
+    errors.extend(audit_recorded(fake, "lighthouse_instance"))
     assert errors == []

@@ -49,18 +49,38 @@
 17. CLB write modules (0.10.0): `clb_load_balancer`, `clb_listener` and
     `clb_listener_target` with async task polling (`wait_for_task`), tag
     reconciliation and exact-set target management. **Done**
+18. Write module batch (0.12.0): `cvm_image`, `cfs_file_system` and
+    `lighthouse_instance` — the first three of the fifteen planned write
+    modules, each with idempotency, check mode, diff and contract tests.
+    **Done**
+19. TAT connection plugin (0.12.0): `connection/tat.py` runs commands and
+    streams files through the TAT agent (no public IP/SSH), reusing
+    `module_utils.client` via an option adapter. **Done**
+20. EDA event sources (0.12.0): `cls_topic` (rolling-window CLS log polling)
+    and `cmq_queue` (long-poll with optional ack) for Event-Driven Ansible.
+    **Done**
+21. Inventory expansion (0.12.0): `tencentcloud_clb` (load balancers +
+    listeners + backends) and `tencentcloud_sg` (security groups + ENIs).
+    **Done**
+22. Roles (0.12.0): `tc_launch` (CVM pool with `exact_count`) and
+    `tc_clb_http` (LB + HTTP listener + targets in one call). **Done**
+23. Integration test expansion (0.12.0): `cfs_file_system` and `clb_http`
+    targets over a throwaway VPC, sweeper extended to CLB/CFS. **Done**
+24. Module tier governance (0.12.0): `check_module_tiers.py` CI gate
+    (generated vs core vs unclassified) plus structural validation of every
+    generator spec (`validate_specs`). **Done**
 
 ## Next
 
-18. `cvm_instance` scaling: `exact_count`-style batch create/terminate with
+25. Remaining write modules (12 of the planned 15): `cvm_chc`, `mongodb`,
+    `redis`, `mysql`/`cdb`, `nat_gateway`, `vpn_gateway`, `gaap`, `cdn`,
+    `tke`, `tcr`, `scf`, `ckafka`.
+26. `cvm_instance` scaling: `exact_count`-style batch create/terminate with
     per-zone spread.
-19. Integration CI: run the integration targets on a schedule against a real
-    account, with cost guardrails (budget caps, automatic teardown of leaked
-    resources).
-20. Coverage reporting for unit and integration tests.
-21. Galaxy namespace and publishing: the release workflow already publishes
+27. Coverage reporting for unit and integration tests.
+28. Galaxy namespace and publishing: the release workflow already publishes
     on tags once `GALAXY_API_KEY` is configured.
-22. Curate auto-generated modules that hide required request parameters
+29. Curate auto-generated modules that hide required request parameters
     (e.g. `teo` ZoneId, `mqtt`/`emr` InstanceId, `lcic` SdkAppId): move them
     into curated SPECS with `extra_params` or drop them.
 

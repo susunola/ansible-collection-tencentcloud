@@ -1,6 +1,7 @@
 # Tencent Cloud Ansible Collection
 
 [![CI](https://github.com/susunola/ansible-collection-tencentcloud/actions/workflows/ci.yml/badge.svg)](https://github.com/susunola/ansible-collection-tencentcloud/actions/workflows/ci.yml)
+[![Galaxy](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgalaxy.ansible.com%2Fapi%2Fv3%2Fcollections%2Fsusunola%2Ftencentcloud%2F&query=highest_version.version&label=Ansible%20Galaxy&color=blue)](https://galaxy.ansible.com/susunola/tencentcloud)
 
 [![Ansible Galaxy](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgalaxy.ansible.com%2Fapi%2Fv3%2Fcollections%2Fsusunola%2Ftencentcloud%2F&query=highest_version.version&label=Ansible%20Galaxy&color=blue)](https://galaxy.ansible.com/susunola/tencentcloud)
 
@@ -17,13 +18,16 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cam_policy` | Manage Tencent Cloud CAM policies |
 | `cam_role` | Manage Tencent Cloud CAM roles |
 | `cam_user` | Manage Tencent Cloud CAM sub-users |
+| `cfs_file_system` | Manage Tencent Cloud CFS file systems |
 | `clb_listener` | Manage listeners on Tencent Cloud CLB load balancers |
 | `clb_listener_target` | Manage backend targets of Tencent Cloud CLB listeners |
 | `clb_load_balancer` | Manage Tencent Cloud CLB load balancers |
 | `cos_bucket` | Manage Tencent Cloud COS buckets |
+| `cvm_image` | Manage Tencent Cloud CVM custom images |
 | `cvm_instance` | Manage Tencent Cloud CVM instances |
 | `eip` | Manage Tencent Cloud elastic IP addresses (EIP) |
 | `key_pair` | Manage Tencent Cloud CVM key pairs |
+| `lighthouse_instance` | Manage Tencent Cloud Lighthouse instances |
 | `route_table` | Manage Tencent Cloud VPC route tables |
 | `security_group` | Manage Tencent Cloud security groups |
 | `security_group_rule` | Manage Tencent Cloud security group rules |
@@ -252,8 +256,20 @@ run with `--check` to verify they are up to date). The module tables and the
 | Plugin | Type | Purpose |
 | --- | --- | --- |
 | `tencentcloud_cvm` | inventory | Dynamic inventory of CVM instances with constructed groups and caching |
+| `tencentcloud_clb` | inventory | Dynamic inventory of CLB load balancers, listeners and backend targets |
+| `tencentcloud_sg` | inventory | Dynamic inventory of security groups and their associated network interfaces |
+| `tat` | connection | Run commands and transfer files over the TAT agent (no SSH or public IP required) |
+| `cls_topic` | event_source | Stream new log records from a CLS log topic (Event-Driven Ansible) |
+| `cmq_queue` | event_source | Long-poll a CMQ queue and stream messages (Event-Driven Ansible) |
 | `sts_caller_identity` | lookup | Return the current caller identity (Uin, AccountId, Arn) |
 | `ssm_parameter` | lookup | Read secrets from Tencent Cloud Secrets Manager (SSM) |
+
+## Included roles
+
+| Role | Purpose |
+| --- | --- |
+| `tc_launch` | Launch CVM instances with sensible defaults over `cvm_instance` (`exact_count` / `count_tag` supported) |
+| `tc_clb_http` | Create a CLB load balancer with HTTP listeners and backend targets in one call |
 
 ## Requirements
 
@@ -261,6 +277,7 @@ run with `--check` to verify they are up to date). The module tables and the
 - Python 3.10 or newer
 - `tencentcloud-sdk-python` 3.0.1000 or newer
 - `tencentcloud-sdk-python-tag` 3.0.1000 or newer (only for tag reconciliation)
+- `tencentcloud-sdk-python-tat` 3.0.1000 or newer (only for the `tat` connection plugin)
 - `cos-python-sdk-v5` 1.9.0 or newer (only for the `cos_*` modules)
 
 Install from Ansible Galaxy:
@@ -327,6 +344,39 @@ regions:
 keyed_groups:
   - key: Placement.Zone
     prefix: zone
+```
+
+Run commands on instances without a public IP or reachable SSH port via the
+TAT agent (requires the TAT agent on the target and
+`tencentcloud-sdk-python-tat` on the controller):
+
+```yaml
+- hosts: all
+  connection: susunola.tencentcloud.tat
+  vars:
+    ansible_tat_instance_id: "{{ inventory_hostname }}"
+  tasks:
+    - ansible.builtin.shell: uptime && df -h / | tail -1
+```
+
+Use the event sources from Event-Driven Ansible (ansible-rulebook) to react
+to CLS logs or CMQ messages:
+
+```yaml
+# rulebook.yml
+- name: react to error logs
+  hosts: all
+  sources:
+    - susunola.tencentcloud.cls_topic:
+        region: ap-guangzhou
+        topic_id: "{{ topic_id }}"
+        query: 'level:ERROR'
+  rules:
+    - name: page on error
+      condition: event.cls.level == "ERROR"
+      action:
+        run_playbook:
+          name: playbooks/on_error.yml
 ```
 
 ## Example

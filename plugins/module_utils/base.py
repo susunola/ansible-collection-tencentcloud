@@ -18,6 +18,8 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import time
+
 from ansible.module_utils.basic import AnsibleModule, env_fallback
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import client
@@ -52,6 +54,10 @@ class TencentCloudModule(AnsibleModule):
         if argument_spec:
             spec.update(argument_spec)
         super(TencentCloudModule, self).__init__(argument_spec=spec, **kwargs)
+        # Every successful/failed SDK call is recorded here; the payload is
+        # attached to exit_json/fail_json output so the
+        # tencentcloud_resource_actions callback can audit API usage.
+        self._tc_calls = []
 
     def require_sdk(self):
         client.require_sdk(self)
@@ -61,6 +67,16 @@ class TencentCloudModule(AnsibleModule):
 
     def create_client(self, client_class, default_endpoint):
         return client.create_client(self, client_class, default_endpoint)
+
+    def _record_sdk_call(self, operation_name, request_id, started, error=None):
+        """Append one API call to the audit trail (used by sdk_call)."""
+        self._tc_calls.append({
+            "operation": operation_name,
+            "request_id": request_id,
+            "duration_ms": int((time.time() - started) * 1000),
+            "status": "error" if error else "ok",
+            "error": str(error) if error else None,
+        })
 
     def sdk_call(self, operation, request=None, retry=True):
         """Run an SDK call with the module's retry policy.
@@ -73,11 +89,41 @@ class TencentCloudModule(AnsibleModule):
         Exhausted retries re-raise the last SDK exception; the caller is
         responsible for mapping it to ``fail_json`` (request id, error code).
         """
+        operation_name = getattr(operation, "__name__", str(operation))
+
         def invoke():
-            if request is not None:
-                return operation(request)
-            return operation()
+            started = time.time()
+            try:
+                if request is not None:
+                    result = operation(request)
+                else:
+                    result = operation()
+                request_id = getattr(result, "RequestId", None)
+                self._record_sdk_call(operation_name, request_id, started)
+                return result
+            except Exception as exc:
+                request_id = getattr(exc, "get_request_id", lambda: None)()
+                self._record_sdk_call(operation_name, request_id, started, error=exc)
+                raise
 
         if not retry:
             return invoke()
         return retry_on(invoke, retries=self.params["retries"])
+
+    def _drain_tc_calls(self):
+        """Return the recorded API calls and reset the trail."""
+        calls = list(self._tc_calls)
+        del self._tc_calls[:]
+        return calls
+
+    def exit_json(self, **kwargs):
+        calls = self._drain_tc_calls()
+        if calls:
+            kwargs.setdefault("tc_api_calls", calls)
+        super(TencentCloudModule, self).exit_json(**kwargs)
+
+    def fail_json(self, *args, **kwargs):
+        calls = self._drain_tc_calls()
+        if calls:
+            kwargs.setdefault("tc_api_calls", calls)
+        super(TencentCloudModule, self).fail_json(*args, **kwargs)

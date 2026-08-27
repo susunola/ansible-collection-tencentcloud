@@ -280,3 +280,125 @@ def test_curated_extra_params_tests_match_module_signature(generator):
         pagination_section = rendered.split("def test_run_module_paginates", 1)[1]
         for param in spec["extra_params"]:
             assert "%s=" % param["name"] in pagination_section
+
+
+# ---------------------------------------------------------------------------
+# validate_specs (generator tightening)
+# ---------------------------------------------------------------------------
+
+def _valid_spec(overrides=None):
+    spec = {
+        "module": "example_thing_info",
+        "version_added": "0.12.0",
+        "service_package": "tencentcloud.example.v20180101",
+        "client_module": "example_client",
+        "client_class": "ExampleClient",
+        "sdk_package": "tencentcloud-sdk-python-example",
+        "endpoint": "example.tencentcloudapi.com",
+        "action": "DescribeThings",
+        "request_class": "DescribeThingsRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [],
+        "response_items": "ThingSet",
+        "response_total": "TotalCount",
+        "result_key": "things",
+        "pagination_type": "int",
+    }
+    if overrides:
+        spec.update(overrides)
+    return spec
+
+
+def test_valid_spec_passes_validation(generator):
+    assert generator.validate_specs([_valid_spec()]) == []
+
+
+def test_validate_missing_module_key(generator):
+    problems = generator.validate_specs([_valid_spec({"module": None})])
+    assert any("missing string 'module'" in problem for problem in problems)
+
+
+def test_validate_non_info_module_name(generator):
+    problems = generator.validate_specs([_valid_spec({"module": "example_thing"})])
+    assert any("must end with _info" in problem for problem in problems)
+
+
+def test_validate_duplicate_module_names(generator):
+    problems = generator.validate_specs([_valid_spec(), _valid_spec()])
+    assert any("duplicate module name" in problem for problem in problems)
+
+
+def test_validate_missing_required_key(generator):
+    problems = generator.validate_specs([_valid_spec({"request_class": None})])
+    assert any("missing required key 'request_class'" in problem for problem in problems)
+
+
+def test_validate_unknown_pagination_type(generator):
+    problems = generator.validate_specs([_valid_spec({"pagination_type": "cursor"})])
+    assert any("unknown pagination_type" in problem for problem in problems)
+
+
+def test_validate_paginated_spec_requires_response_items(generator):
+    problems = generator.validate_specs([_valid_spec({"response_items": None})])
+    assert any("requires a response_items field" in problem for problem in problems)
+
+
+def test_validate_none_spec_must_not_declare_response_items(generator):
+    problems = generator.validate_specs([
+        _valid_spec({"pagination_type": "none", "response_items": "ThingSet",
+                     "response_total": None})
+    ])
+    assert any("must not declare response_items" in problem for problem in problems)
+
+
+def test_validate_deep_dotted_response_path(generator):
+    problems = generator.validate_specs([_valid_spec({"response_items": "A.B.C"})])
+    assert any("more than one dot" in problem for problem in problems)
+
+
+def test_validate_bad_ids_shape(generator):
+    problems = generator.validate_specs([_valid_spec({"ids": {"param": "x"}})])
+    assert any("ids must be None or a dict with param/field/doc" in problem
+               for problem in problems)
+
+
+def test_validate_bad_filters_shape(generator):
+    problems = generator.validate_specs([_valid_spec({"filters": {}})])
+    assert any("filters must be None or a dict with a doc" in problem
+               for problem in problems)
+
+
+def test_validate_extra_param_missing_field(generator):
+    spec = _valid_spec({"extra_params": [
+        {"name": "zone_id", "type": "str", "doc": "Zone ID."}
+    ]})
+    problems = generator.validate_specs([spec])
+    assert any("extra_param 'zone_id' missing 'field'" in problem for problem in problems)
+
+
+def test_validate_extra_param_non_bool_required(generator):
+    spec = _valid_spec({"extra_params": [
+        {"name": "zone_id", "field": "ZoneId", "type": "str", "doc": "Zone ID.",
+         "required": "yes"}
+    ]})
+    problems = generator.validate_specs([spec])
+    assert any("'required' must be a bool" in problem for problem in problems)
+
+
+def test_validate_extra_param_duplicate_and_region_collision(generator):
+    spec = _valid_spec({"extra_params": [
+        {"name": "region", "field": "Region", "type": "str", "doc": "collides"},
+        {"name": "zone_id", "field": "ZoneId", "type": "str", "doc": "Zone ID."},
+        {"name": "zone_id", "field": "ZoneId2", "type": "str", "doc": "dup"},
+    ]})
+    problems = generator.validate_specs([spec])
+    assert any("collides with the shared region parameter" in problem
+               for problem in problems)
+    assert any("duplicate extra_param 'zone_id'" in problem for problem in problems)
+
+
+def test_validate_real_combined_specs_pass(generator):
+    # The full curated + auto SPECS list must validate cleanly; CI runs
+    # generate_info_modules.py --check which rejects any violation.
+    assert generator.validate_specs(generator.SPECS) == []

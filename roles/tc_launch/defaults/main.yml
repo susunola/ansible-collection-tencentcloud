@@ -1,0 +1,36 @@
+---
+# Region, credentials and profile come from the module defaults
+# (TENCENTCLOUD_* environment variables or ~/.tencentcloud/default.configure).
+# Set them explicitly on the module invocation if you need to override.
+
+# Lifecycle: present | absent | running | stopped
+tc_launch_state: present
+
+# Identity: exactly one of these must resolve to an existing instance
+# when the instance already exists.
+tc_launch_instance_id: ""
+tc_launch_instance_name: ""
+
+# Creation settings (only applied when the instance does not exist yet)
+tc_launch_image_id: ""
+tc_launch_instance_type: ""
+tc_launch_vpc_id: ""
+tc_launch_subnet_id: ""
+tc_launch_hostname: ""
+tc_launch_password: ""
+tc_launch_key_ids: []
+tc_launch_security_group_ids: []
+tc_launch_tags: {}
+tc_launch_internet_charge_type: TRAFFIC_POSTPAID_BY_HOUR
+tc_launch_internet_max_bandwidth_out: 1
+tc_launch_public_ip_assigned: true
+tc_launch_instance_charge_type: POSTPAID_BY_HOUR
+
+# Optional exact-count pool management: bring the number of instances
+# carrying tc_launch_count_tag to tc_launch_exact_count.
+tc_launch_exact_count: null
+tc_launch_count_tag: {}
+
+# Waiter tuning
+tc_launch_waiter_timeout: 300
+tc_launch_waiter_delay: 5

@@ -9,7 +9,7 @@ on:
       targets:
         description: "Integration targets to run (space separated)"
         type: string
-        default: "security_group network"
+        default: "security_group network cfs_file_system clb_http"
 
 # Integration tests create billable resources in a shared Tencent Cloud
 # account. A single fixed concurrency group serialises every run (any
@@ -63,7 +63,7 @@ jobs:
           TENCENTCLOUD_SECRET_KEY: ${{ secrets.TENCENTCLOUD_SECRET_KEY }}
           TENCENTCLOUD_REGION: ap-guangzhou
         run: >-
-          ansible-test integration ${{ inputs.targets || 'security_group network' }}
+          ansible-test integration ${{ inputs.targets || 'security_group network cfs_file_system clb_http' }}
           --color --python 3.12
       # Sweeper: runs even when the tests above failed or timed out, so a
       # broken run cannot leave billable resources behind. Uses the same

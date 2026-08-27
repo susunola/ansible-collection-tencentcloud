@@ -1,0 +1,31 @@
+---
+- name: Manage CVM instance pool
+  susunola.tencentcloud.cvm_instance:
+    region: "{{ tc_launch_region | default(omit) }}"
+    state: "{{ tc_launch_state }}"
+    instance_id: "{{ tc_launch_instance_id | default(omit, true) }}"
+    instance_name: "{{ tc_launch_instance_name | default(omit, true) }}"
+    image_id: "{{ tc_launch_image_id | default(omit, true) }}"
+    instance_type: "{{ tc_launch_instance_type | default(omit, true) }}"
+    vpc_id: "{{ tc_launch_vpc_id | default(omit, true) }}"
+    subnet_id: "{{ tc_launch_subnet_id | default(omit, true) }}"
+    hostname: "{{ tc_launch_hostname | default(omit, true) }}"
+    password: "{{ tc_launch_password | default(omit, true) }}"
+    key_ids: "{{ tc_launch_key_ids | default(omit, true) }}"
+    security_group_ids: "{{ tc_launch_security_group_ids | default(omit, true) }}"
+    tags: "{{ tc_launch_tags | default({}, true) }}"
+    internet_charge_type: "{{ tc_launch_internet_charge_type | default(omit, true) }}"
+    internet_max_bandwidth_out: "{{ tc_launch_internet_max_bandwidth_out | default(omit, true) }}"
+    public_ip_assigned: "{{ tc_launch_public_ip_assigned | default(omit, true) }}"
+    instance_charge_type: "{{ tc_launch_instance_charge_type | default(omit, true) }}"
+    exact_count: "{{ tc_launch_exact_count | default(omit, true) }}"
+    count_tag: "{{ tc_launch_count_tag | default(omit, true) }}"
+    waiter_timeout: "{{ tc_launch_waiter_timeout }}"
+    waiter_delay: "{{ tc_launch_waiter_delay }}"
+  register: tc_launch_result
+
+- name: Report created or matched instances
+  ansible.builtin.debug:
+    msg:
+      - "changed={{ tc_launch_result.changed }}"
+      - "instance={{ tc_launch_result.instance | default('none') }}"

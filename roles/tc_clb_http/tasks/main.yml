@@ -1,0 +1,43 @@
+---
+- name: Provision the CLB load balancer
+  susunola.tencentcloud.clb_load_balancer:
+    region: "{{ tc_clb_http_region | default(omit) }}"
+    state: present
+    name: "{{ tc_clb_http_lb_name }}"
+    load_balancer_type: "{{ tc_clb_http_load_balancer_type }}"
+    vpc_id: "{{ tc_clb_http_vpc_id | default(omit, true) }}"
+    subnet_id: "{{ tc_clb_http_subnet_id | default(omit, true) }}"
+    internet_charge_type: "{{ tc_clb_http_internet_charge_type | default(omit, true) }}"
+    internet_max_bandwidth_out: "{{ tc_clb_http_internet_max_bandwidth_out | default(omit, true) }}"
+    tags: "{{ tc_clb_http_tags | default({}, true) }}"
+  register: tc_clb_http_lb
+
+- name: Create the HTTP listener
+  susunola.tencentcloud.clb_listener:
+    region: "{{ tc_clb_http_region | default(omit) }}"
+    state: present
+    load_balancer_id: "{{ tc_clb_http_lb.load_balancer.LoadBalancerId }}"
+    protocol: HTTP
+    port: "{{ tc_clb_http_listener_port }}"
+    name: "{{ tc_clb_http_listener_name | default(tc_clb_http_lb_name ~ '-http', true) }}"
+    scheduler: "{{ tc_clb_http_scheduler }}"
+    session_expire_time: "{{ tc_clb_http_session_expire_time }}"
+    health_check: "{{ tc_clb_http_health_check }}"
+  register: tc_clb_http_listener
+
+- name: Reconcile the backend target set
+  susunola.tencentcloud.clb_listener_target:
+    region: "{{ tc_clb_http_region | default(omit) }}"
+    state: present
+    load_balancer_id: "{{ tc_clb_http_lb.load_balancer.LoadBalancerId }}"
+    listener_id: "{{ tc_clb_http_listener.listener.ListenerId }}"
+    targets: "{{ tc_clb_http_targets }}"
+    purge: "{{ tc_clb_http_purge }}"
+  register: tc_clb_http_targets_result
+
+- name: Report the load balancer VIP
+  ansible.builtin.debug:
+    msg:
+      - "lb={{ tc_clb_http_lb.load_balancer.LoadBalancerId }}"
+      - "vip={{ tc_clb_http_lb.load_balancer.LoadBalancerVips | default([]) }}"
+      - "targets_changed={{ tc_clb_http_targets_result.changed }}"

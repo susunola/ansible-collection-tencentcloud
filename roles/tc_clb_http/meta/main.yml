@@ -1,0 +1,25 @@
+---
+galaxy_info:
+  role_name: tc_clb_http
+  namespace: susunola
+  author: Tencent Cloud Ansible Collection Contributors (@susunola)
+  description: Provision a Tencent Cloud CLB with an HTTP listener and register backends
+  company: Tencent Cloud
+  license: GPL-3.0-or-later
+  min_ansible_version: "2.16"
+  platforms:
+    - name: Generic
+      versions:
+        - all
+    - name: macOS
+      versions:
+        - all
+    - name: Windows
+      versions:
+        - all
+  galaxy_tags:
+    - tencentcloud
+    - clb
+    - loadbalancer
+    - cloud
+dependencies: []

@@ -51,6 +51,7 @@ action_groups:
     - cdz_cloud_dedicated_zone_host_info
     - cetcd_etcd_instance_info
     - cfg_action_library_info
+    - cfs_file_system
     - cfs_file_system_info
     - cfw_cluster_nat_ccn_fw_switch_info
     - chc_device_info
@@ -78,6 +79,7 @@ action_groups:
     - csip_asset_process_info
     - ctem_api_sec_info
     - ctsdb_cluster_info
+    - cvm_image
     - cvm_instance
     - cvm_instance_info
     - cwp_machine_info
@@ -136,6 +138,7 @@ action_groups:
     - key_pair_info
     - kms_key_info
     - lcic_answer_info
+    - lighthouse_instance
     - lighthouse_instance_info
     - live_audit_keyword_info
     - lke_app_knowledge_info

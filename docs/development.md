@@ -98,6 +98,51 @@
   `plugins/inventory/tencentcloud_cvm.py`.
 - Options are parsed from lookup terms with `parse_kv`; the SDK import is
   guarded by `HAS_TENCENTCLOUD_SDK`.
+- Inventory plugins paginate through `module_utils.paging.Paginator` and
+  extend `BaseInventoryPlugin` with `Constructable` and `Cacheable`
+  (`plugins/inventory/tencentcloud_clb.py` walks listeners/backends,
+  `tencentcloud_sg.py` deduplicates hosts across security groups).
+
+## Connection plugins
+
+- Connection plugins (`plugins/connection/`) run without a shell or module
+  runtime, so they must never import Ansible module machinery. Credentials
+  are resolved through `module_utils.client.load_profile` via a thin
+  `_OptionAdapter` that exposes connection options as module-like `params`
+  (see `plugins/connection/tat.py`).
+- Never call `super().exec_command/put_file/fetch_file`: the base class
+  methods are abstract in ansible-core and raise. Implement each method
+  fully.
+- Every command is stateless; `exec_command` returns
+  `(rc, stdout, stderr)` and must cope with a None `in_data` (pipelining is
+  disabled: `has_pipelining = False`).
+
+## Event source plugins
+
+- Event-Driven Ansible sources (`plugins/event_source/`) implement
+  `async def main(queue, args)`. Keep blocking SDK calls in
+  `asyncio.to_thread`; resolve credentials from args with
+  `TENCENTCLOUD_*` environment fallbacks; yield an error event (not an
+  exception) on transient API failures so the source stays alive.
+- Each source ships a standalone `__main__` runner for manual testing.
+  See `plugins/event_source/cls_topic.py` and `cmq_queue.py`.
+
+## Module tiers
+
+- `plugins/modules/*_info.py` are generated (see below); every other module
+  is core and must be listed in `CORE_MODULES` in
+  `scripts/check_module_tiers.py`. `python scripts/check_module_tiers.py --check`
+  fails on any unclassified module, and CI enforces it — a hand-written
+  module can never be silently overwritten by the generator. See
+  `docs/module_tiers.md`.
+
+## Contract tests
+
+- New write modules must register their request builders in
+  `tests/contract/test_sdk_contracts.py`: a `WRITE_MODULE_BUILDERS` entry
+  plus a `test_<module>()` function that runs against the real Tencent Cloud
+  SDK classes in CI. The contract suite also enforces the coverage
+  threshold (`--cov-fail-under=50`).
 
 ## Local collection layout
 

@@ -1,0 +1,31 @@
+---
+# Load balancer settings
+tc_clb_http_lb_name: ""
+tc_clb_http_load_balancer_type: OPEN
+tc_clb_http_vpc_id: ""
+tc_clb_http_subnet_id: ""
+tc_clb_http_internet_charge_type: TRAFFIC_POSTPAID_BY_HOUR
+tc_clb_http_internet_max_bandwidth_out: 10
+tc_clb_http_tags: {}
+
+# Listener settings
+tc_clb_http_listener_port: 80
+tc_clb_http_listener_name: ""
+tc_clb_http_scheduler: WRR
+tc_clb_http_session_expire_time: 0
+tc_clb_http_health_check:
+  health_switch: true
+  interval_time: 5
+  health_num: 3
+  un_health_num: 3
+  time_out: 2
+  check_type: HTTP
+  http_check_path: /healthz
+  http_check_domain: ""
+  http_check_method: HEAD
+  http_code: 31
+  http_version: HTTP/1.1
+
+# Backends: list of {instance_id|eni_ip, port, weight}
+tc_clb_http_targets: []
+tc_clb_http_purge: true
