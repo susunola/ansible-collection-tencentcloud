@@ -232,6 +232,16 @@ class FakeClientProfile(object):
         self.request_client = None
 
 
+class FakeHttpProfile(object):
+    """Minimal stand-in for ``tencentcloud.common.profile.HttpProfile``.
+
+    ``create_client_profile`` assigns ``endpoint`` and ``reqTimeout`` on it;
+    attributes are freely assignable, mirroring the real SDK class.
+    """
+
+    pass
+
+
 def test_create_client_profile_sets_user_agent(fake_sdk, monkeypatch):
     """The user_agent parameter must reach the SDK request_client field.
 
@@ -239,7 +249,8 @@ def test_create_client_profile_sets_user_agent(fake_sdk, monkeypatch):
     ``language`` again instead of ``request_client``, so a custom
     User-Agent never left the profile.
     """
-    monkeypatch.setattr(client, "ClientProfile", FakeClientProfile)
+    monkeypatch.setattr(client, "ClientProfile", FakeClientProfile, raising=False)
+    monkeypatch.setattr(client, "HttpProfile", FakeHttpProfile, raising=False)
     module = FakeModule(
         dict(BASE_PARAMS, user_agent="ansible-collection.tencentcloud.cloud")
     )
@@ -252,7 +263,8 @@ def test_create_client_profile_sets_user_agent(fake_sdk, monkeypatch):
 
 def test_create_client_profile_default_user_agent(fake_sdk, monkeypatch):
     """Without an explicit user_agent, the shared default must be used."""
-    monkeypatch.setattr(client, "ClientProfile", FakeClientProfile)
+    monkeypatch.setattr(client, "ClientProfile", FakeClientProfile, raising=False)
+    monkeypatch.setattr(client, "HttpProfile", FakeHttpProfile, raising=False)
     params = dict(BASE_PARAMS)
     params["user_agent"] = base.base_argument_spec()["user_agent"]["default"]
     profile = client.create_client_profile(FakeModule(params), "vpc.tencentcloudapi.com")
