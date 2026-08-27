@@ -788,6 +788,12 @@ def test_cvm_instance():
         module.build_describe_request(models, "ins-xxxxxxxx", None), "cvm describe by id"))
     errors.extend(audit_request(
         module.build_describe_request(models, None, "web-01"), "cvm describe by name"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, None, {"role": "web"}),
+        "cvm describe by count_tag"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, None, {"role": "web", "tier": "api"}),
+        "cvm describe by multi count_tag"))
     params = {
         "image_id": "img-xxxxxxxx",
         "instance_type": "S5.MEDIUM2",
@@ -811,6 +817,9 @@ def test_cvm_instance():
                            vpc_id=None, subnet_id=None, tags={})
     errors.extend(audit_request(
         module.build_run_request(models, password_params), "cvm run request (password)"))
+    bulk_params = dict(params, instance_count=3, dry_run=False)
+    errors.extend(audit_request(
+        module.build_run_request(models, bulk_params), "cvm run request (exact_count bulk)"))
     module._create(fake, client, models, params)
     module._delete(fake, client, models, "ins-xxxxxxxx")
     module._start(fake, client, models, "ins-xxxxxxxx")

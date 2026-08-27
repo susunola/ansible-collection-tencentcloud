@@ -229,3 +229,312 @@ def test_immutable_drift_ignores_unset_params():
 
 def test_instance_gone_reports_not_found_code():
     assert _InstanceGone("gone").get_code() == "InvalidInstanceId.NotFound"
+
+
+# ---------------------------------------------------------------------------
+# exact_count pool scaling (cvm_instance additions)
+# ---------------------------------------------------------------------------
+
+from unittest.mock import patch  # noqa: E402
+
+import pytest  # noqa: E402
+
+from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import (  # noqa: E402
+    TencentCloudModule,
+)
+from ansible_collections.tencentcloud.cloud.plugins.modules import cvm_instance  # noqa: E402
+from tests.unit.plugins.modules.harness import (  # noqa: E402
+    AnsibleExitJson,
+    AnsibleFailJson,
+    module_args,
+    run,
+    set_module_args,
+)
+
+
+class FakeScalingRequest(object):
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+
+class FakeScalingModels(object):
+    DescribeInstancesRequest = FakeScalingRequest
+    RunInstancesRequest = FakeScalingRequest
+    TerminateInstancesRequest = FakeScalingRequest
+    Filter = FakeScalingRequest
+    Placement = FakeScalingRequest
+    TagSpecification = FakeScalingRequest
+    Tag = FakeTag
+    VirtualPrivateCloud = FakeScalingRequest
+    InternetAccessible = FakeScalingRequest
+    LoginSettings = FakeScalingRequest
+
+
+class FakeScalingResponse(object):
+    def __init__(self, instances, total, new_ids=None):
+        self.InstanceSet = instances
+        self.TotalCount = total
+        if new_ids is not None:
+            self.InstanceIdSet = ["ins-new-%d" % i for i in range(new_ids)]
+
+
+class FakeScalingClient(object):
+    """Serves offset-sliced describe pages over a mutable instance set."""
+
+    def __init__(self, all_instances, page_size=2):
+        self.all = list(all_instances)
+        self.page_size = page_size
+        self.describe_calls = 0
+        self.run_requests = []
+        self.term_requests = []
+
+    def DescribeInstances(self, request):
+        self.describe_calls += 1
+        start = request.Offset or 0
+        page = self.all[start:start + self.page_size]
+        return FakeScalingResponse(page, len(self.all))
+
+    def RunInstances(self, request):
+        self.run_requests.append(request)
+        for index in range(request.InstanceCount or 1):
+            self.all.append(_scaling_resource("ins-new-%d" % index))
+        return FakeScalingResponse([], 0, new_ids=request.InstanceCount or 1)
+
+    def TerminateInstances(self, request):
+        self.term_requests.append(request)
+        doomed = set(request.InstanceIds)
+        self.all = [item for item in self.all if item.InstanceId not in doomed]
+        return FakeScalingResponse([], 0)
+
+
+class FakeScalingModule(object):
+    def __init__(self, client, check_mode=False):
+        self._client = client
+        self.check_mode = check_mode
+        self._diff = False
+        self.params = {"retries": 5}
+
+    def sdk_call(self, operation, request):
+        return operation(request)
+
+    def exit_json(self, **kwargs):
+        raise AnsibleExitJson(kwargs)
+
+    def fail_json(self, **kwargs):
+        kwargs["failed"] = True
+        raise AnsibleFailJson(kwargs)
+
+
+def _scale_params(**overrides):
+    params = {
+        "exact_count": 2,
+        "count_tag": {"role": "web"},
+        "image_id": "img-1",
+        "instance_type": "S5.MEDIUM2",
+        "instance_charge_type": "POSTPAID_BY_HOUR",
+        "instance_name": "web",
+        "hostname": None,
+        "security_group_ids": None,
+        "vpc_id": "vpc-1",
+        "subnet_id": "subnet-1",
+        "internet_charge_type": None,
+        "internet_max_bandwidth_out": None,
+        "public_ip_assigned": None,
+        "password": None,
+        "key_ids": None,
+        "tags": {"role": "web"},
+        "dry_run": False,
+    }
+    params.update(overrides)
+    return params
+
+
+def _scaling_resource(instance_id, state="RUNNING", charge_type="POSTPAID_BY_HOUR", created=None):
+    data = {
+        "InstanceId": instance_id,
+        "InstanceName": "web",
+        "InstanceState": state,
+        "InstanceChargeType": charge_type,
+    }
+    if created is not None:
+        data["CreatedTime"] = created
+    resource = FakeInstance(instance_id, "web", state)
+    resource._serialize = lambda allow_none=True: dict(data)
+    return resource
+
+
+@pytest.fixture(autouse=True)
+def _no_scaling_waiters():
+    with patch("ansible_collections.tencentcloud.cloud.plugins.modules.cvm_instance._wait_state",
+               return_value="RUNNING"), \
+            patch("ansible_collections.tencentcloud.cloud.plugins.modules.cvm_instance._wait_gone",
+                  return_value=None):
+        yield
+
+
+def _run_validation(args):
+    with patch.object(TencentCloudModule, "require_sdk", lambda self: None):
+        return run(cvm_instance.run_module)
+
+
+def test_exact_count_requires_count_tag():
+    set_module_args(module_args(exact_count=2))
+    with pytest.raises(AnsibleFailJson) as exc:
+        _run_validation(None)
+    assert "count_tag is required" in exc.value.args[0]["msg"]
+
+
+def test_exact_count_mutually_exclusive_with_instance_id():
+    set_module_args(module_args(exact_count=2, count_tag={"role": "web"}, instance_id="ins-1"))
+    with pytest.raises(AnsibleFailJson) as exc:
+        _run_validation(None)
+    assert "mutually exclusive" in exc.value.args[0]["msg"]
+
+
+def test_count_tag_requires_exact_count():
+    set_module_args(module_args(count_tag={"role": "web"}))
+    with pytest.raises(AnsibleFailJson) as exc:
+        _run_validation(None)
+    assert "count_tag requires exact_count" in exc.value.args[0]["msg"]
+
+
+def test_exact_count_only_applies_to_present():
+    set_module_args(module_args(exact_count=2, count_tag={"role": "web"}, state="running"))
+    with pytest.raises(AnsibleFailJson) as exc:
+        _run_validation(None)
+    assert "state=present" in exc.value.args[0]["msg"]
+
+
+def test_exact_count_must_be_non_negative():
+    set_module_args(module_args(exact_count=-1, count_tag={"role": "web"}))
+    with pytest.raises(AnsibleFailJson) as exc:
+        _run_validation(None)
+    assert "greater than or equal to 0" in exc.value.args[0]["msg"]
+
+
+def test_exact_count_rejects_dry_run():
+    set_module_args(module_args(exact_count=2, count_tag={"role": "web"}, dry_run=True))
+    with pytest.raises(AnsibleFailJson) as exc:
+        _run_validation(None)
+    assert "dry_run" in exc.value.args[0]["msg"]
+
+
+def test_describe_request_builds_tag_filters():
+    request = build_describe_request(FakeScalingModels, None, None, {"role": "web"})
+    assert [(item.Name, item.Values) for item in request.Filters] == [("tag:role", ["web"])]
+
+
+def test_describe_request_builds_multi_tag_filters_sorted():
+    request = build_describe_request(
+        FakeScalingModels, None, None, {"role": "web", "tier": "api"})
+    assert [(item.Name, item.Values) for item in request.Filters] == [
+        ("tag:role", ["web"]), ("tag:tier", ["api"]),
+    ]
+
+
+def test_run_request_sets_instance_count():
+    request = build_run_request(FakeScalingModels, _scale_params(instance_count=3))
+    assert request.InstanceCount == 3
+
+
+def test_run_request_omits_instance_count_by_default():
+    request = build_run_request(FakeScalingModels, _scale_params())
+    assert not hasattr(request, "InstanceCount")
+
+
+def test_find_instances_by_tags_paginates():
+    client = FakeScalingClient(
+        [_scaling_resource("ins-a"), _scaling_resource("ins-b"), _scaling_resource("ins-c")])
+    module = FakeScalingModule(client)
+    matches = cvm_instance.find_instances_by_tags(module, client, FakeScalingModels, {"role": "web"})
+    assert [item["InstanceId"] for item in matches] == ["ins-a", "ins-b", "ins-c"]
+    assert client.describe_calls == 2
+
+
+def test_find_instances_by_tags_skips_terminated():
+    client = FakeScalingClient(
+        [_scaling_resource("ins-a"), _scaling_resource("ins-b", state="TERMINATED"),
+         _scaling_resource("ins-c")])
+    module = FakeScalingModule(client)
+    matches = cvm_instance.find_instances_by_tags(module, client, FakeScalingModels, {"role": "web"})
+    assert [item["InstanceId"] for item in matches] == ["ins-a", "ins-c"]
+    assert client.describe_calls == 2
+
+
+def test_exact_count_already_met():
+    client = FakeScalingClient([_scaling_resource("ins-a"), _scaling_resource("ins-b")])
+    module = FakeScalingModule(client)
+    with pytest.raises(AnsibleExitJson) as exc:
+        cvm_instance._manage_exact_count(module, client, FakeScalingModels, _scale_params(exact_count=2))
+    payload = exc.value.args[0]
+    assert payload["changed"] is False
+    assert payload["count"] == 2
+    assert client.run_requests == []
+    assert client.term_requests == []
+
+
+def test_exact_count_creates_shortfall():
+    client = FakeScalingClient([_scaling_resource("ins-a")])
+    module = FakeScalingModule(client)
+    with pytest.raises(AnsibleExitJson) as exc:
+        cvm_instance._manage_exact_count(module, client, FakeScalingModels, _scale_params(exact_count=3))
+    payload = exc.value.args[0]
+    assert payload["changed"] is True
+    assert payload["count"] == 3
+    assert len(client.run_requests) == 1
+    assert client.run_requests[0].InstanceCount == 2
+
+
+def test_exact_count_terminates_oldest_first():
+    client = FakeScalingClient([
+        _scaling_resource("ins-a", created="2026-08-01 00:00:00"),
+        _scaling_resource("ins-b", created="2026-08-03 00:00:00"),
+        _scaling_resource("ins-c"),
+    ])
+    module = FakeScalingModule(client)
+    with pytest.raises(AnsibleExitJson) as exc:
+        cvm_instance._manage_exact_count(module, client, FakeScalingModels, _scale_params(exact_count=1))
+    payload = exc.value.args[0]
+    assert payload["changed"] is True
+    assert payload["count"] == 1
+    # Oldest first: ins-a then ins-b are removed; ins-c has no CreatedTime and
+    # is never preferred for removal, so it survives.
+    assert [r.InstanceIds for r in client.term_requests] == [["ins-a"], ["ins-b"]]
+
+
+def test_exact_count_fails_on_prepaid_termination():
+    client = FakeScalingClient([
+        _scaling_resource("ins-a", created="2026-08-01 00:00:00", charge_type="PREPAID"),
+        _scaling_resource("ins-b", created="2026-08-03 00:00:00"),
+    ])
+    module = FakeScalingModule(client)
+    with pytest.raises(AnsibleFailJson) as exc:
+        cvm_instance._manage_exact_count(module, client, FakeScalingModels, _scale_params(exact_count=1))
+    assert "PREPAID" in exc.value.args[0]["msg"]
+    assert client.term_requests == []
+
+
+def test_exact_count_check_mode_reports_termination_without_api():
+    client = FakeScalingClient([
+        _scaling_resource("ins-a", created="2026-08-01 00:00:00"),
+        _scaling_resource("ins-b", created="2026-08-03 00:00:00"),
+    ])
+    module = FakeScalingModule(client, check_mode=True)
+    with pytest.raises(AnsibleExitJson) as exc:
+        cvm_instance._manage_exact_count(module, client, FakeScalingModels, _scale_params(exact_count=1))
+    payload = exc.value.args[0]
+    assert payload["changed"] is True
+    assert payload["terminated"] == ["ins-a"]
+    assert client.term_requests == []
+    assert client.run_requests == []
+
+
+def test_exact_count_check_mode_reports_creation_without_api():
+    client = FakeScalingClient([_scaling_resource("ins-a")])
+    module = FakeScalingModule(client, check_mode=True)
+    with pytest.raises(AnsibleExitJson) as exc:
+        cvm_instance._manage_exact_count(module, client, FakeScalingModels, _scale_params(exact_count=3))
+    payload = exc.value.args[0]
+    assert payload["changed"] is True
+    assert client.run_requests == []

@@ -1,0 +1,2 @@
+minor_changes:
+  - cvm_instance - add ``exact_count``/``count_tag`` pool scaling mirroring the AWS ec2 module (the module counts the tag-matched instances and brings the pool to the requested size, creating the shortfall in one RunInstances call or terminating the excess oldest-first; PREPAID instances are never terminated automatically).

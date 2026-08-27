@@ -116,6 +116,28 @@ options:
     type: str
     choices: [PREPAID, POSTPAID_BY_HOUR]
     default: POSTPAID_BY_HOUR
+  exact_count:
+    description:
+      - Desired number of instances in the pool matched by O(count_tag).
+      - When O(state=present) and O(exact_count) are both given, the module
+        counts the instances matching O(count_tag) and brings the pool to the
+        requested size (fewer instances are created in one V(RunInstances)
+        call, extra instances are terminated oldest first).
+      - Mutually exclusive with O(instance_id); requires O(count_tag).
+      - Instances that are already in the desired count are left untouched.
+      - PREPAID instances are never terminated automatically; if a matched
+        instance that would be removed is PREPAID the module fails instead.
+    type: int
+  count_tag:
+    description:
+      - Tag key/value pairs identifying the pool of instances managed through
+        O(exact_count), for example I(role=web).
+      - Matching uses one C(tag:key) instance filter per pair, combined with
+        AND, so an instance must carry every pair to count towards the pool.
+      - The tag must already be attached to the instances; tags passed in
+        O(tags) are attached at creation and therefore match on subsequent
+        runs.
+    type: dict
   dry_run:
     description:
       - When C(true), creation calls V(RunInstances) with the API C(DryRun)
@@ -169,6 +191,12 @@ notes:
   - Updates on an existing instance are limited to the name, the security
     group bindings and tags via V(ModifyInstancesAttribute) and the tag
     service.
+  - When O(exact_count) creates several instances at once the platform appends
+    a numeric suffix to O(instance_name), so the created instances are named
+    I(web-01), I(web-02) and so on.
+  - O(exact_count) reads the pool through the C(tag:key) filter; tags attached
+    after creation through the console or the tag service are matched the same
+    way as tags set through O(tags).
 extends_documentation_fragment: tencentcloud.cloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
@@ -220,6 +248,29 @@ EXAMPLES = r'''
     region: ap-guangzhou
     state: absent
     instance_name: web-01
+
+- name: Scale the web pool to exactly 3 instances
+  tencentcloud.cloud.cvm_instance:
+    region: ap-guangzhou
+    state: present
+    exact_count: 3
+    count_tag:
+      role: web
+    instance_name: web
+    image_id: img-xxxxxxxx
+    instance_type: S5.MEDIUM2
+    vpc_id: vpc-xxxxxxxx
+    subnet_id: subnet-xxxxxxxx
+    tags:
+      role: web
+
+- name: Scale the web pool down to 1 (terminates the oldest extras)
+  tencentcloud.cloud.cvm_instance:
+    region: ap-guangzhou
+    state: present
+    exact_count: 1
+    count_tag:
+      role: web
 '''
 
 RETURN = r'''
@@ -270,7 +321,7 @@ class _InstanceGone(Exception):
         return "InvalidInstanceId.NotFound"
 
 
-def build_describe_request(models, instance_id, instance_name):
+def build_describe_request(models, instance_id, instance_name, count_tag=None):
     request = models.DescribeInstancesRequest()
     request.Offset = 0
     request.Limit = 100
@@ -281,6 +332,16 @@ def build_describe_request(models, instance_id, instance_name):
         name_filter.Name = "instance-name"
         name_filter.Values = [instance_name]
         request.Filters = [name_filter]
+    elif count_tag:
+        # The tag:key filter matches instances that carry the exact tag
+        # key/value pair, regardless of how the tag was attached.
+        filters = []
+        for key, value in sorted(count_tag.items()):
+            tag_filter = models.Filter()
+            tag_filter.Name = "tag:%s" % key
+            tag_filter.Values = [value]
+            filters.append(tag_filter)
+        request.Filters = filters
     return request
 
 
@@ -325,6 +386,8 @@ def build_run_request(models, params):
         tag_spec.ResourceType = "instance"
         tag_spec.Tags = build_sdk_tags(models, params["tags"])
         request.TagSpecification = [tag_spec]
+    if params.get("instance_count"):
+        request.InstanceCount = params["instance_count"]
     if params["dry_run"]:
         request.DryRun = True
     return request
@@ -342,6 +405,32 @@ def find_instance(module, client, models, instance_id, instance_name):
     if instance is None:
         return None
     return instance._serialize(allow_none=True)
+
+
+def find_instances_by_tags(module, client, models, count_tag):
+    """Return every non-terminated instance carrying the count_tag key/value.
+
+    DescribeInstances caps the page at 100 results, so the page offset is
+    advanced by the number of *scanned* instances on each page (not the
+    number kept after filtering), which keeps the paging correct even when
+    terminated instances are dropped from the result set. The loop stops
+    once the offset has passed TotalCount, the collected matches reach
+    TotalCount, or the API returns an empty page.
+    """
+    request = build_describe_request(models, None, None, count_tag)
+    instances = []
+    while True:
+        response = module.sdk_call(client.DescribeInstances, request)
+        page = response.InstanceSet or []
+        for item in page:
+            serialized = item._serialize(allow_none=True)
+            if serialized.get("InstanceState") != "TERMINATED":
+                instances.append(serialized)
+        request.Offset += len(page)
+        total = response.TotalCount or 0
+        if not page or request.Offset >= total or len(instances) >= total:
+            break
+    return instances
 
 
 def immutable_drift(current, image_id=None, instance_type=None, vpc_id=None, subnet_id=None):
@@ -362,7 +451,7 @@ def immutable_drift(current, image_id=None, instance_type=None, vpc_id=None, sub
 def _create(module, client, models, params):
     request = build_run_request(models, params)
     response = module.sdk_call(client.RunInstances, request)
-    return _first(response.InstanceIdSet or [])
+    return response.InstanceIdSet or []
 
 
 def _delete(module, client, models, instance_id):
@@ -464,6 +553,80 @@ def _desired_state(params):
     return {key: value for key, value in desired.items() if value is not None}
 
 
+def _manage_exact_count(module, client, models, params):
+    """Bring the count_tag-matched pool to exactly ``exact_count`` instances.
+
+    Fewer instances than the target are created in a single V(RunInstances)
+    call with V(InstanceCount) set to the shortfall; more instances than the
+    target are terminated oldest-first. PREPAID instances are never
+    terminated automatically, the module fails instead so the operator can
+    refund them manually.
+    """
+    exact_count = params["exact_count"]
+    matches = find_instances_by_tags(module, client, models, params["count_tag"])
+    current_count = len(matches)
+    diff = maybe_diff(module, {"count": current_count}, {"count": exact_count})
+
+    if current_count == exact_count:
+        module.exit_json(
+            changed=False, **(diff or {}), count=current_count, instances=matches,
+            msg="Pool already at exact_count=%d" % exact_count,
+        )
+
+    if current_count < exact_count:
+        to_create = exact_count - current_count
+        if module.check_mode:
+            module.exit_json(
+                changed=True, **(diff or {}), count=current_count,
+                msg="Would create %d instance(s) to reach exact_count=%d" % (
+                    to_create, exact_count),
+            )
+        create_params = dict(params)
+        create_params["instance_count"] = to_create
+        new_ids = _create(module, client, models, create_params)
+        for instance_id in new_ids:
+            _wait_state(module, client, models, instance_id, ["RUNNING"])
+        refreshed = find_instances_by_tags(module, client, models, params["count_tag"])
+        module.exit_json(
+            changed=True, **(diff or {}), count=len(refreshed), instances=refreshed,
+            msg="Created %d instance(s); pool is now at exact_count=%d" % (
+                to_create, exact_count),
+        )
+
+    # current_count > exact_count: terminate the oldest excess instances.
+    to_terminate = current_count - exact_count
+    ordered = sorted(
+        matches,
+        key=lambda item: (item.get("CreatedTime") is None, item.get("CreatedTime") or ""),
+    )
+    doomed = ordered[:to_terminate]
+    prepaid = [i["InstanceId"] for i in doomed if i.get("InstanceChargeType") == "PREPAID"]
+    if prepaid:
+        module.fail_json(
+            msg=(
+                "Cannot scale down: PREPAID instance(s) %s would need to be "
+                "terminated; refund prepaid instances manually first"
+            ) % ", ".join(prepaid),
+            count=current_count,
+        )
+    if module.check_mode:
+        module.exit_json(
+            changed=True, **(diff or {}), count=current_count,
+            terminated=[i["InstanceId"] for i in doomed],
+            msg="Would terminate %d instance(s) to reach exact_count=%d" % (
+                to_terminate, exact_count),
+        )
+    for instance in doomed:
+        _delete(module, client, models, instance["InstanceId"])
+        _wait_gone(module, client, models, instance["InstanceId"])
+    refreshed = find_instances_by_tags(module, client, models, params["count_tag"])
+    module.exit_json(
+        changed=True, **(diff or {}), count=len(refreshed), instances=refreshed,
+        msg="Terminated %d instance(s); pool is now at exact_count=%d" % (
+            to_terminate, exact_count),
+    )
+
+
 def run_module():
     module = TencentCloudModule(
         argument_spec={
@@ -494,6 +657,8 @@ def run_module():
                 "choices": ["PREPAID", "POSTPAID_BY_HOUR"],
                 "default": "POSTPAID_BY_HOUR",
             },
+            "exact_count": {"type": "int"},
+            "count_tag": {"type": "dict"},
             "dry_run": {"type": "bool", "default": False},
             "tags": {"type": "dict", "default": {}},
         },
@@ -506,6 +671,22 @@ def run_module():
     instance_name = module.params["instance_name"]
     security_group_ids = module.params["security_group_ids"]
     tags = module.params["tags"]
+    exact_count = module.params["exact_count"]
+    count_tag = module.params["count_tag"]
+
+    if exact_count is not None:
+        if instance_id:
+            module.fail_json(msg="exact_count is mutually exclusive with instance_id")
+        if not count_tag:
+            module.fail_json(msg="count_tag is required when exact_count is used")
+        if state != "present":
+            module.fail_json(msg="exact_count only applies to state=present")
+        if exact_count < 0:
+            module.fail_json(msg="exact_count must be greater than or equal to 0")
+        if module.params["dry_run"]:
+            module.fail_json(msg="dry_run cannot be combined with exact_count")
+    if count_tag and exact_count is None:
+        module.fail_json(msg="count_tag requires exact_count")
 
     if state in ("absent", "running", "stopped") and not instance_id and not instance_name:
         module.fail_json(msg="instance_id or instance_name is required when state=%s" % state)
@@ -514,6 +695,8 @@ def run_module():
     client = module.create_client(cvm_client.CvmClient, "cvm.tencentcloudapi.com")
 
     try:
+        if exact_count is not None:
+            return _manage_exact_count(module, client, models, module.params)
         current = find_instance(module, client, models, instance_id, instance_name)
     except Exception as exc:
         module.fail_json(
@@ -589,12 +772,13 @@ def run_module():
         diff = maybe_diff(module, None, desired)
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), msg="Would create instance")
-        new_id = _create(module, client, models, module.params)
+        new_ids = _create(module, client, models, module.params)
         if module.params["dry_run"]:
             module.exit_json(
                 changed=True, **(diff or {}), instance=None,
                 msg="Dry run succeeded; no instance was created",
             )
+        new_id = new_ids[0]
         _wait_state(module, client, models, new_id, ["RUNNING"])
         created = find_instance(module, client, models, new_id, None)
         module.exit_json(changed=True, **(diff or {}), instance=created, msg="Instance created")
