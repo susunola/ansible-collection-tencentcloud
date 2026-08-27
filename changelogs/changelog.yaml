@@ -164,3 +164,74 @@ releases:
         name: sts_caller_identity
         namespace: null
     release_date: '2026-08-27'
+  0.6.0:
+    changes:
+      bugfixes:
+      - meta - action_groups.all was missing 20 modules (all generated _info modules),
+        so module_defaults did not apply to them.
+      minor_changes:
+      - apigateway_service_info - add a generated read-only module querying API Gateway
+        services.
+      - as_scaling_group_info - add a generated read-only module querying auto scaling
+        groups.
+      - cfs_file_system_info - add a generated read-only module querying CFS file
+        systems.
+      - ckafka_instance_info - add a generated read-only module querying CKafka instances.
+      - cynosdb_cluster_info - add a generated read-only module querying CynosDB clusters.
+      - es_cluster_info - add a generated read-only module querying Elasticsearch
+        Service clusters.
+      - lighthouse_instance_info - add a generated read-only module querying Lighthouse
+        instances.
+      - mariadb_instance_info - add a generated read-only module querying TencentDB
+        for MariaDB instances.
+      - postgres_instance_info - add a generated read-only module querying TencentDB
+        for PostgreSQL instances.
+      - scf_function_info - add a generated read-only module querying SCF functions.
+      - scripts - add sync_registry.py keeping README module tables and the action_groups
+        registry in sync with plugins/modules, with a CI --check.
+      - sqlserver_instance_info - add a generated read-only module querying TencentDB
+        for SQL Server instances.
+      - tcr_instance_info - add a generated read-only module querying TCR registries.
+      - tests - the SDK contract tests now auto-discover every module and derive coverage
+        for generated _info modules from the generator specs, so new modules are audited
+        by default.
+    fragments:
+    - 8-info-batch1.yml
+    modules:
+    - description: Gather information about Tencent Cloud API Gateway services
+      name: apigateway_service_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud auto scaling groups
+      name: as_scaling_group_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud CFS file systems
+      name: cfs_file_system_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud CKafka instances
+      name: ckafka_instance_info
+      namespace: ''
+    - description: Gather information about TencentDB for CynosDB clusters
+      name: cynosdb_cluster_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud Elasticsearch clusters
+      name: es_cluster_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud Lighthouse instances
+      name: lighthouse_instance_info
+      namespace: ''
+    - description: Gather information about TencentDB for MariaDB instances
+      name: mariadb_instance_info
+      namespace: ''
+    - description: Gather information about TencentDB for PostgreSQL instances
+      name: postgres_instance_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud SCF functions
+      name: scf_function_info
+      namespace: ''
+    - description: Gather information about TencentDB for SQL Server instances
+      name: sqlserver_instance_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud TCR registries
+      name: tcr_instance_info
+      namespace: ''
+    release_date: '2026-08-27'

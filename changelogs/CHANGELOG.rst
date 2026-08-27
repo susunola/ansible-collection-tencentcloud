@@ -1,8 +1,50 @@
 ===============================
-Tencent Cloud 0.5 Release Notes
+Tencent Cloud 0.6 Release Notes
 ===============================
 
 .. contents:: Topics
+
+v0.6.0
+======
+
+Minor Changes
+-------------
+
+- apigateway_service_info - add a generated read-only module querying API Gateway services.
+- as_scaling_group_info - add a generated read-only module querying auto scaling groups.
+- cfs_file_system_info - add a generated read-only module querying CFS file systems.
+- ckafka_instance_info - add a generated read-only module querying CKafka instances.
+- cynosdb_cluster_info - add a generated read-only module querying CynosDB clusters.
+- es_cluster_info - add a generated read-only module querying Elasticsearch Service clusters.
+- lighthouse_instance_info - add a generated read-only module querying Lighthouse instances.
+- mariadb_instance_info - add a generated read-only module querying TencentDB for MariaDB instances.
+- postgres_instance_info - add a generated read-only module querying TencentDB for PostgreSQL instances.
+- scf_function_info - add a generated read-only module querying SCF functions.
+- scripts - add sync_registry.py keeping README module tables and the action_groups registry in sync with plugins/modules, with a CI --check.
+- sqlserver_instance_info - add a generated read-only module querying TencentDB for SQL Server instances.
+- tcr_instance_info - add a generated read-only module querying TCR registries.
+- tests - the SDK contract tests now auto-discover every module and derive coverage for generated _info modules from the generator specs, so new modules are audited by default.
+
+Bugfixes
+--------
+
+- meta - action_groups.all was missing 20 modules (all generated _info modules), so module_defaults did not apply to them.
+
+New Modules
+-----------
+
+- apigateway_service_info - Gather information about Tencent Cloud API Gateway services
+- as_scaling_group_info - Gather information about Tencent Cloud auto scaling groups
+- cfs_file_system_info - Gather information about Tencent Cloud CFS file systems
+- ckafka_instance_info - Gather information about Tencent Cloud CKafka instances
+- cynosdb_cluster_info - Gather information about TencentDB for CynosDB clusters
+- es_cluster_info - Gather information about Tencent Cloud Elasticsearch clusters
+- lighthouse_instance_info - Gather information about Tencent Cloud Lighthouse instances
+- mariadb_instance_info - Gather information about TencentDB for MariaDB instances
+- postgres_instance_info - Gather information about TencentDB for PostgreSQL instances
+- scf_function_info - Gather information about Tencent Cloud SCF functions
+- sqlserver_instance_info - Gather information about TencentDB for SQL Server instances
+- tcr_instance_info - Gather information about Tencent Cloud TCR registries
 
 v0.5.0
 ======

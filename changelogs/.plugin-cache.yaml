@@ -23,6 +23,16 @@ plugins:
       name: sts_caller_identity
       version_added: 0.5.0
   module:
+    apigateway_service_info:
+      description: Gather information about Tencent Cloud API Gateway services
+      name: apigateway_service_info
+      namespace: ''
+      version_added: 0.6.0
+    as_scaling_group_info:
+      description: Gather information about Tencent Cloud auto scaling groups
+      name: as_scaling_group_info
+      namespace: ''
+      version_added: 0.6.0
     cam_policy:
       description: Manage Tencent Cloud CAM policies
       name: cam_policy
@@ -63,6 +73,16 @@ plugins:
       name: cdb_instance_info
       namespace: ''
       version_added: 0.4.0
+    cfs_file_system_info:
+      description: Gather information about Tencent Cloud CFS file systems
+      name: cfs_file_system_info
+      namespace: ''
+      version_added: 0.6.0
+    ckafka_instance_info:
+      description: Gather information about Tencent Cloud CKafka instances
+      name: ckafka_instance_info
+      namespace: ''
+      version_added: 0.6.0
     clb_load_balancer_info:
       description: Gather information about Tencent Cloud CLB load balancers
       name: clb_load_balancer_info
@@ -88,6 +108,11 @@ plugins:
       name: cvm_instance_info
       namespace: ''
       version_added: 0.1.0
+    cynosdb_cluster_info:
+      description: Gather information about TencentDB for CynosDB clusters
+      name: cynosdb_cluster_info
+      namespace: ''
+      version_added: 0.6.0
     dnspod_record_info:
       description: Gather information about DNSPod records
       name: dnspod_record_info
@@ -103,6 +128,11 @@ plugins:
       name: eip_info
       namespace: ''
       version_added: 0.4.0
+    es_cluster_info:
+      description: Gather information about Tencent Cloud Elasticsearch clusters
+      name: es_cluster_info
+      namespace: ''
+      version_added: 0.6.0
     key_pair:
       description: Manage Tencent Cloud CVM key pairs
       name: key_pair
@@ -118,11 +148,26 @@ plugins:
       name: kms_key_info
       namespace: ''
       version_added: 0.4.0
+    lighthouse_instance_info:
+      description: Gather information about Tencent Cloud Lighthouse instances
+      name: lighthouse_instance_info
+      namespace: ''
+      version_added: 0.6.0
+    mariadb_instance_info:
+      description: Gather information about TencentDB for MariaDB instances
+      name: mariadb_instance_info
+      namespace: ''
+      version_added: 0.6.0
     mongodb_instance_info:
       description: Gather information about TencentDB for MongoDB instances
       name: mongodb_instance_info
       namespace: ''
       version_added: 0.4.0
+    postgres_instance_info:
+      description: Gather information about TencentDB for PostgreSQL instances
+      name: postgres_instance_info
+      namespace: ''
+      version_added: 0.6.0
     redis_instance_info:
       description: Gather information about TencentDB for Redis instances
       name: redis_instance_info
@@ -138,6 +183,11 @@ plugins:
       name: route_table_info
       namespace: ''
       version_added: 0.4.0
+    scf_function_info:
+      description: Gather information about Tencent Cloud SCF functions
+      name: scf_function_info
+      namespace: ''
+      version_added: 0.6.0
     security_group:
       description: Manage Tencent Cloud security groups
       name: security_group
@@ -153,6 +203,11 @@ plugins:
       name: security_group_rule
       namespace: ''
       version_added: 0.4.0
+    sqlserver_instance_info:
+      description: Gather information about TencentDB for SQL Server instances
+      name: sqlserver_instance_info
+      namespace: ''
+      version_added: 0.6.0
     subnet:
       description: Manage Tencent Cloud VPC subnets
       name: subnet
@@ -163,6 +218,11 @@ plugins:
       name: subnet_info
       namespace: ''
       version_added: 0.4.0
+    tcr_instance_info:
+      description: Gather information about Tencent Cloud TCR registries
+      name: tcr_instance_info
+      namespace: ''
+      version_added: 0.6.0
     tke_cluster_info:
       description: Gather information about Tencent Cloud TKE clusters
       name: tke_cluster_info
@@ -183,4 +243,4 @@ plugins:
   strategy: {}
   test: {}
   vars: {}
-version: 0.5.0
+version: 0.6.0
