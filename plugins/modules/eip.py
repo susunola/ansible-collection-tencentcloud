@@ -100,7 +100,7 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection/tencentcloud.cloud
+    default: ansible-collection.tencentcloud.cloud
 notes:
   - Requires the C(tencentcloud-sdk-python-vpc) package on the controller.
   - Tag reconciliation additionally requires C(tencentcloud-sdk-python-tag).

@@ -73,7 +73,7 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection/tencentcloud.cloud
+    default: ansible-collection.tencentcloud.cloud
 notes:
   - Requires the C(tencentcloud-sdk-python-cvm) package on the controller.
   - Key pairs are immutable after creation; name, project and public key

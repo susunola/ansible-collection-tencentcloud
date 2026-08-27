@@ -72,6 +72,8 @@ BASE_PARAMS = {
     "role_arn": None,
     "role_session_name": "ansible-tencentcloud",
     "role_session_duration": 7200,
+    "endpoint": None,
+    "timeout": 60,
 }
 
 
@@ -214,3 +216,58 @@ def test_maybe_assume_role_returns_temporary_triple(fake_sdk, monkeypatch):
     assert isinstance(captured["base_credential"], FakeCredential)
     assert captured["base_credential"].secret_id == "akid-test"
     assert triple == ("tmp-akid", "tmp-secret", "tmp-token")
+
+
+class FakeClientProfile(object):
+    """Minimal stand-in for ``tencentcloud.common.profile.ClientProfile``.
+
+    ``client.py`` builds a real ``ClientProfile`` through the SDK import;
+    unit tests replace the module-level reference so we can assert the
+    fields the factory sets without pulling the SDK into the test path.
+    """
+
+    def __init__(self):
+        self.httpProfile = None
+        self.language = None
+        self.request_client = None
+
+
+def test_create_client_profile_sets_user_agent(fake_sdk, monkeypatch):
+    """The user_agent parameter must reach the SDK request_client field.
+
+    Regression: the original implementation had a no-op branch that set
+    ``language`` again instead of ``request_client``, so a custom
+    User-Agent never left the profile.
+    """
+    monkeypatch.setattr(client, "ClientProfile", FakeClientProfile)
+    module = FakeModule(
+        dict(BASE_PARAMS, user_agent="ansible-collection.tencentcloud.cloud")
+    )
+    profile = client.create_client_profile(module, "vpc.tencentcloudapi.com")
+    assert isinstance(profile, FakeClientProfile)
+    assert profile.request_client == "ansible-collection.tencentcloud.cloud"
+    assert profile.httpProfile.endpoint == "vpc.tencentcloudapi.com"
+    assert profile.language == "en-US"
+
+
+def test_create_client_profile_default_user_agent(fake_sdk, monkeypatch):
+    """Without an explicit user_agent, the shared default must be used."""
+    monkeypatch.setattr(client, "ClientProfile", FakeClientProfile)
+    params = dict(BASE_PARAMS)
+    params["user_agent"] = base.base_argument_spec()["user_agent"]["default"]
+    profile = client.create_client_profile(FakeModule(params), "vpc.tencentcloudapi.com")
+    assert profile.request_client == "ansible-collection.tencentcloud.cloud"
+
+
+def test_base_argument_spec_user_agent_default_matches_sdk_regexp():
+    """The default UA must be accepted by the SDK's request_client regexp.
+
+    The SDK only forwards ``ClientProfile.request_client`` when it matches
+    ``^[0-9a-zA-Z-_,;.]+$`` and is at most 128 chars; a value with ``/``
+    (the historical default) is silently dropped with a warning.
+    """
+    default = base.base_argument_spec()["user_agent"]["default"]
+    assert "/" not in default
+    assert len(default) <= 128
+    import re
+    assert re.match(r"^[0-9a-zA-Z-_,;.]+$", default)

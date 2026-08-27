@@ -40,7 +40,7 @@ def base_argument_spec():
         "retries": {"type": "int", "default": 5},
         "waiter_timeout": {"type": "int", "default": 120},
         "waiter_delay": {"type": "int", "default": 5},
-        "user_agent": {"type": "str", "default": "ansible-collection/tencentcloud.cloud"},
+        "user_agent": {"type": "str", "default": "ansible-collection.tencentcloud.cloud"},
     }
 
 

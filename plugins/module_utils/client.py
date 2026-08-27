@@ -197,9 +197,14 @@ def create_client_profile(module, default_endpoint):
     client_profile = ClientProfile()
     client_profile.httpProfile = http_profile
     client_profile.language = "en-US"
+    # The SDK emits ``profile.request_client`` as the ``X-TC-RequestClient``
+    # header (its official client-identifier / User-Agent extension point).
+    # The value must match ``^[0-9a-zA-Z-_,;.]+$`` and stay under 128 chars
+    # or the SDK silently drops it; the default in ``base_argument_spec``
+    # already satisfies both constraints.
     user_agent = module.params.get("user_agent")
     if user_agent:
-        client_profile.language = "en-US"
+        client_profile.request_client = user_agent
     return client_profile
 
 

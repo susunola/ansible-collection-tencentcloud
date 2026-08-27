@@ -103,7 +103,7 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection/tencentcloud.cloud
+    default: ansible-collection.tencentcloud.cloud
 notes:
   - Requires the C(tencentcloud-sdk-python-clb) package on the controller.
   - Uses the C(clb.tencentcloudapi.com) endpoint by default.

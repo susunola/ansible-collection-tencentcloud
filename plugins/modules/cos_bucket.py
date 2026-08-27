@@ -84,7 +84,7 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection/tencentcloud.cloud
+    default: ansible-collection.tencentcloud.cloud
 notes:
   - Requires the C(cos-python-sdk-v5) package on the controller.
   - O(role_arn) is honoured; the temporary credentials obtained via STS

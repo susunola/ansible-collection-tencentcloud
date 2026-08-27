@@ -75,7 +75,7 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection/tencentcloud.cloud
+    default: ansible-collection.tencentcloud.cloud
 notes:
   - Requires the C(tencentcloud-sdk-python-cam) package on the controller.
   - CAM is a global service. O(region) is accepted (the shared argument spec
