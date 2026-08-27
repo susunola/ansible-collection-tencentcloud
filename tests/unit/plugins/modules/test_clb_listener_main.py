@@ -57,16 +57,16 @@ class FakeClbClient(object):
         matched = self.listeners
         ids = getattr(request, "ListenerIds", None)
         if ids:
-            matched = [l for l in matched if l["ListenerId"] in ids]
+            matched = [lst for lst in matched if lst["ListenerId"] in ids]
         else:
             port = getattr(request, "Port", None)
             protocol = getattr(request, "Protocol", None)
             if port is not None:
-                matched = [l for l in matched if l["Port"] == port]
+                matched = [lst for lst in matched if lst["Port"] == port]
             if protocol:
-                matched = [l for l in matched if l["Protocol"] == protocol]
+                matched = [lst for lst in matched if lst["Protocol"] == protocol]
         return SimpleNamespace(
-            Listeners=[FakeResource(l) for l in matched], TotalCount=len(matched))
+            Listeners=[FakeResource(lst) for lst in matched], TotalCount=len(matched))
 
     def _create(self, request):
         health_check = getattr(request, "HealthCheck", None)
@@ -89,7 +89,7 @@ class FakeClbClient(object):
         return SimpleNamespace(ListenerIds=[listener["ListenerId"]], RequestId="req-create")
 
     def _delete(self, request):
-        self.listeners = [l for l in self.listeners if l["ListenerId"] != request.ListenerId]
+        self.listeners = [lst for lst in self.listeners if lst["ListenerId"] != request.ListenerId]
         return SimpleNamespace(RequestId="req-delete")
 
     def _modify(self, request):

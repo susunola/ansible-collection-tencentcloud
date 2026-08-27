@@ -70,6 +70,6 @@ def test_exact_multiple_stops_after_last_full_page():
 
 
 def test_none_items_are_treated_as_empty():
-    p = Paginator(3, lambda o, l: {}, lambda r: FakeResponse(None, 0), lambda r: r.items, lambda r: r.total)
+    p = Paginator(3, lambda o, lim: {}, lambda r: FakeResponse(None, 0), lambda r: r.items, lambda r: r.total)
     items, total = p.fetch_all()
     assert items == []

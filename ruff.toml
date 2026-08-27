@@ -1,0 +1,15 @@
+# Ruff lint configuration.
+#
+# The selected rule set mirrors the flake8 subset that ansible-test
+# sanity enforces (E4/E7/E9/F/W). E402 is ignored because the
+# collection deliberately uses lazy SDK imports after the DOCUMENTATION
+# block in every module and plugin; ansible-test pep8 also permits this.
+#
+# Generated *_info modules are covered too: the generator emits
+# E402-style lazy imports only, which this configuration permits.
+line-length = 160
+target-version = "py310"
+
+[lint]
+select = ["E4", "E7", "E9", "F", "W"]
+ignore = ["E402"]
