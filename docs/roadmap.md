@@ -34,20 +34,25 @@
     Lighthouse, CynosDB, PostgreSQL, SQL Server, MariaDB, Elasticsearch,
     CKafka, TCR and API Gateway; contract tests auto-discover modules and
     `scripts/sync_registry.py` keeps README/action_groups in sync. **Done**
+14. Coverage batch 2 (0.7.0): generated `_info` modules for NAT/VPN
+    gateways, GAAP, CDN, CloudAudit, CWP, WAF, SSL, Organization, Monitor,
+    CLS, TAT and Billing; the generator now supports token and page-number
+    pagination and unpaginated responses. **Done**
 
 ## Next
 
-14. Coverage batch 2 (generated `_info`): NAT/VPN (vpc service), GAAP, CDN,
-    CloudAudit, CWP, WAF, SSL, Organization, Monitor, CLS, TAT, Billing.
-15. CLB write modules (`clb_load_balancer`, listeners and attachments) on top
+15. Coverage batch 3 (generated `_info`): remaining high-traffic services
+    (DC, ECM, TEO, EHPC, TDSQL, DTS, TSE, Oceanus, VOD, Live, SMS, SES) and
+    then long-tail on demand.
+16. CLB write modules (`clb_load_balancer`, listeners and attachments) on top
     of the existing `clb_load_balancer_info`.
-16. `cvm_instance` scaling: `exact_count`-style batch create/terminate with
+17. `cvm_instance` scaling: `exact_count`-style batch create/terminate with
     per-zone spread.
-17. Integration CI: run the integration targets on a schedule against a real
+18. Integration CI: run the integration targets on a schedule against a real
     account, with cost guardrails (budget caps, automatic teardown of leaked
     resources).
-18. Coverage reporting for unit and integration tests.
-19. Galaxy namespace and publishing: the release workflow already publishes
+19. Coverage reporting for unit and integration tests.
+20. Galaxy namespace and publishing: the release workflow already publishes
     on tags once `GALAXY_API_KEY` is configured.
 
 Resource modules must be idempotent, support check mode, expose API request

@@ -53,12 +53,20 @@ DOC_FRAGMENT = "tencentcloud.cloud.tencentcloud"
 #   filters          optional dict(doc=...) enabling the filters option
 #                    (API must expose a Filters list of Filter{Name,Values});
 #                    optional keys: model (default "Filter"), name_field
-#                    (default "Name") and name_wrap (wrap the name in a list,
-#                    for cynosdb's QueryFilter{Names,Values})
+#                    (default "Name"), value_field (default "Values", cdn's
+#                    DomainFilter uses Value) and name_wrap (wrap the name in
+#                    a list, for cynosdb's QueryFilter{Names,Values})
 #   extra_params     list of extra options, e.g. dnspod's required domain;
-#                    optional params are only set on the request when given
+#                    optional params are only set on the request when given,
+#                    params with "required" or "default" are always set
 #   result_key       Ansible return key for the resource list
-#   pagination_type  "int" for all services below (verified via docstrings)
+#   page_size_default  optional page_size default (cloudaudit's MaxResults
+#                    caps at 50)
+#   pagination_type  "int" (Offset/Limit ints, most services), "page"
+#                    (PageNumber/PageSize, monitor), "token" (NextToken/
+#                    MaxResults, cloudaudit) or "none" (unpaginated single
+#                    call returning one object, billing); verified via
+#                    docstrings
 SPECS = [
     {
         "module": "clb_load_balancer_info",
@@ -778,6 +786,489 @@ SPECS = [
       ServiceId: [service-xxxxxxxx]
 """,
     },
+    # --- Batch 2 (version_added "0.7.0") -----------------------------------
+    {
+        "module": "nat_gateway_info",
+        "version_added": "0.7.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeNatGateways",
+        "request_class": "DescribeNatGatewaysRequest",
+        "ids": {
+            "param": "nat_gateway_ids",
+            "field": "NatGatewayIds",
+            "doc": "NAT gateway IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "NatGatewaySet",
+        "response_total": "TotalCount",
+        "result_key": "nat_gateways",
+        # Unlike DescribeVpcs, the NAT gateway API takes int Offset/Limit.
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud NAT gateways",
+        "description": "Returns NAT gateways visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching NAT gateways.",
+        "return_total_doc": "Number of NAT gateways reported by the API.",
+        "examples": """\
+- name: List all NAT gateways
+  tencentcloud.cloud.nat_gateway_info:
+    region: ap-guangzhou
+
+- name: Find NAT gateways by ID
+  tencentcloud.cloud.nat_gateway_info:
+    region: ap-guangzhou
+    nat_gateway_ids: [nat-xxxxxxxx]
+""",
+    },
+    {
+        "module": "vpn_gateway_info",
+        "version_added": "0.7.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeVpnGateways",
+        "request_class": "DescribeVpnGatewaysRequest",
+        "ids": {
+            "param": "vpn_gateway_ids",
+            "field": "VpnGatewayIds",
+            "doc": "VPN gateway IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {
+            "doc": "VPC API filter names mapped to lists of values.",
+            # DescribeVpnGateways filters use FilterObject, same shape as Filter.
+            "model": "FilterObject",
+        },
+        "extra_params": [],
+        "response_items": "VpnGatewaySet",
+        "response_total": "TotalCount",
+        "result_key": "vpn_gateways",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud VPN gateways",
+        "description": "Returns VPN gateways visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching VPN gateways.",
+        "return_total_doc": "Number of VPN gateways reported by the API.",
+        "examples": """\
+- name: List all VPN gateways
+  tencentcloud.cloud.vpn_gateway_info:
+    region: ap-guangzhou
+
+- name: Find VPN gateways by ID
+  tencentcloud.cloud.vpn_gateway_info:
+    region: ap-guangzhou
+    vpn_gateway_ids: [vpngw-xxxxxxxx]
+""",
+    },
+    {
+        "module": "gaap_proxy_info",
+        "version_added": "0.7.0",
+        "service_package": "tencentcloud.gaap.v20180529",
+        "client_module": "gaap_client",
+        "client_class": "GaapClient",
+        "sdk_package": "tencentcloud-sdk-python-gaap",
+        "endpoint": "gaap.tencentcloudapi.com",
+        "action": "DescribeProxies",
+        "request_class": "DescribeProxiesRequest",
+        "ids": {
+            "param": "proxy_ids",
+            # InstanceIds is the deprecated spelling; ProxyIds replaced it.
+            "field": "ProxyIds",
+            "doc": "Proxy IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "GAAP API filter names mapped to lists of values."},
+        "extra_params": [],
+        # InstanceSet is the deprecated response field; ProxySet replaced it.
+        "response_items": "ProxySet",
+        "response_total": "TotalCount",
+        "result_key": "proxies",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud GAAP proxies",
+        "description": "Returns GAAP (Global Application Acceleration Platform) proxies "
+                       "visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching GAAP proxies.",
+        "return_total_doc": "Number of proxies reported by the API.",
+        "examples": """\
+- name: List all GAAP proxies
+  tencentcloud.cloud.gaap_proxy_info:
+    region: ap-guangzhou
+
+- name: Find proxies by ID
+  tencentcloud.cloud.gaap_proxy_info:
+    region: ap-guangzhou
+    proxy_ids: [link-xxxxxxxx]
+""",
+    },
+    {
+        "module": "cdn_domain_info",
+        "version_added": "0.7.0",
+        "service_package": "tencentcloud.cdn.v20180606",
+        "client_module": "cdn_client",
+        "client_class": "CdnClient",
+        "sdk_package": "tencentcloud-sdk-python-cdn",
+        "endpoint": "cdn.tencentcloudapi.com",
+        "action": "DescribeDomains",
+        "request_class": "DescribeDomainsRequest",
+        "ids": None,  # DescribeDomains cannot filter by a list of domain IDs.
+        "filters": {
+            "doc": "CDN API domain filter names mapped to lists of values.",
+            # CDN uses DomainFilter{Name, Value, Fuzzy}, not Filter{Name, Values}.
+            "model": "DomainFilter",
+            "value_field": "Value",
+        },
+        "extra_params": [],
+        "response_items": "Domains",
+        # The CDN API calls its total count TotalNumber.
+        "response_total": "TotalNumber",
+        "result_key": "domains",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud CDN domains",
+        "description": "Returns CDN acceleration domains visible in a Tencent Cloud account.",
+        "return_items_doc": "Matching CDN domains.",
+        "return_total_doc": "Number of domains reported by the API.",
+        "examples": """\
+- name: List all CDN domains
+  tencentcloud.cloud.cdn_domain_info:
+    region: ap-guangzhou
+
+- name: Find a domain by name
+  tencentcloud.cloud.cdn_domain_info:
+    region: ap-guangzhou
+    filters:
+      domain: [www.example.com]
+""",
+    },
+    {
+        "module": "cloudaudit_event_info",
+        "version_added": "0.7.0",
+        "service_package": "tencentcloud.cloudaudit.v20190319",
+        "client_module": "cloudaudit_client",
+        "client_class": "CloudauditClient",
+        "sdk_package": "tencentcloud-sdk-python-cloudaudit",
+        "endpoint": "cloudaudit.tencentcloudapi.com",
+        # LookUpEvents is the canonical CloudTrail-style lookup action;
+        # DescribeEvents is the legacy event list API.
+        "action": "LookUpEvents",
+        "request_class": "LookUpEventsRequest",
+        "ids": None,
+        "filters": None,  # LookUpEvents filters via LookupAttributes, not Filter.
+        "extra_params": [
+            {
+                "name": "start_time",
+                "field": "StartTime",
+                "type": "int",
+                "doc": "Start of the time range as a Unix timestamp.",
+            },
+            {
+                "name": "end_time",
+                "field": "EndTime",
+                "type": "int",
+                "doc": "End of the time range as a Unix timestamp.",
+            },
+        ],
+        "response_items": "Events",
+        "response_total": "TotalCount",
+        "result_key": "events",
+        # LookUpEvents paginates with NextToken/MaxResults and caps pages at 50.
+        "pagination_type": "token",
+        "page_size_default": 50,
+        "short_description": "Gather information about Tencent Cloud CloudAudit events",
+        "description": "Returns CloudAudit operation events visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching CloudAudit events.",
+        "return_total_doc": "Number of events reported by the API.",
+        "examples": """\
+- name: List recent CloudAudit events
+  tencentcloud.cloud.cloudaudit_event_info:
+    region: ap-guangzhou
+
+- name: List events in a time range
+  tencentcloud.cloud.cloudaudit_event_info:
+    region: ap-guangzhou
+    start_time: 1704067200
+    end_time: 1704153600
+""",
+    },
+    {
+        "module": "cwp_machine_info",
+        "version_added": "0.7.0",
+        "service_package": "tencentcloud.cwp.v20180228",
+        "client_module": "cwp_client",
+        "client_class": "CwpClient",
+        "sdk_package": "tencentcloud-sdk-python-cwp",
+        "endpoint": "cwp.tencentcloudapi.com",
+        "action": "DescribeMachines",
+        "request_class": "DescribeMachinesRequest",
+        "ids": None,  # Machines are queried by ID through Filters (Uuid/InstanceId).
+        "filters": {"doc": "CWP API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "Machines",
+        "response_total": "TotalCount",
+        "result_key": "machines",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud CWP machines",
+        "description": "Returns machines protected by Host Security (CWP) "
+                       "visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching CWP machines.",
+        "return_total_doc": "Number of machines reported by the API.",
+        "examples": """\
+- name: List all CWP machines
+  tencentcloud.cloud.cwp_machine_info:
+    region: ap-guangzhou
+
+- name: Find a machine by ID
+  tencentcloud.cloud.cwp_machine_info:
+    region: ap-guangzhou
+    filters:
+      InstanceId: [ins-xxxxxxxx]
+""",
+    },
+    {
+        "module": "waf_instance_info",
+        "version_added": "0.7.0",
+        "service_package": "tencentcloud.waf.v20180125",
+        "client_module": "waf_client",
+        "client_class": "WafClient",
+        "sdk_package": "tencentcloud-sdk-python-waf",
+        "endpoint": "waf.tencentcloudapi.com",
+        "action": "DescribeInstances",
+        "request_class": "DescribeInstancesRequest",
+        "ids": None,  # DescribeInstances filters by ID through Filters only.
+        "filters": {
+            "doc": "WAF API filter names mapped to lists of values.",
+            # WAF uses FiltersItemNew{Name, Values, ExactMatch}.
+            "model": "FiltersItemNew",
+        },
+        "extra_params": [],
+        "response_items": "Instances",
+        # The WAF API calls its total count Total.
+        "response_total": "Total",
+        "result_key": "instances",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud WAF instances",
+        "description": "Returns Web Application Firewall (WAF) instances "
+                       "visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching WAF instances.",
+        "return_total_doc": "Number of WAF instances reported by the API.",
+        "examples": """\
+- name: List all WAF instances
+  tencentcloud.cloud.waf_instance_info:
+    region: ap-guangzhou
+
+- name: Find a WAF instance by ID
+  tencentcloud.cloud.waf_instance_info:
+    region: ap-guangzhou
+    filters:
+      InstanceId: [waf_xxxxxxxx]
+""",
+    },
+    {
+        "module": "ssl_certificate_info",
+        "version_added": "0.7.0",
+        "service_package": "tencentcloud.ssl.v20191205",
+        "client_module": "ssl_client",
+        "client_class": "SslClient",
+        "sdk_package": "tencentcloud-sdk-python-ssl",
+        "endpoint": "ssl.tencentcloudapi.com",
+        "action": "DescribeCertificates",
+        "request_class": "DescribeCertificatesRequest",
+        "ids": {
+            "param": "certificate_ids",
+            "field": "CertIds",
+            "doc": "Certificate IDs to return.",
+        },
+        "filters": None,  # DescribeCertificates has no Filters field.
+        "extra_params": [],
+        "response_items": "Certificates",
+        "response_total": "TotalCount",
+        "result_key": "certificates",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud SSL certificates",
+        "description": "Returns SSL certificates visible in a Tencent Cloud account.",
+        "return_items_doc": "Matching SSL certificates.",
+        "return_total_doc": "Number of certificates reported by the API.",
+        "examples": """\
+- name: List all SSL certificates
+  tencentcloud.cloud.ssl_certificate_info:
+    region: ap-guangzhou
+
+- name: Find certificates by ID
+  tencentcloud.cloud.ssl_certificate_info:
+    region: ap-guangzhou
+    certificate_ids: ["xxxxxxxx"]
+""",
+    },
+    {
+        "module": "organization_member_info",
+        "version_added": "0.7.0",
+        "service_package": "tencentcloud.organization.v20210331",
+        "client_module": "organization_client",
+        "client_class": "OrganizationClient",
+        "sdk_package": "tencentcloud-sdk-python-organization",
+        "endpoint": "organization.tencentcloudapi.com",
+        "action": "DescribeOrganizationMembers",
+        "request_class": "DescribeOrganizationMembersRequest",
+        "ids": None,  # DescribeOrganizationMembers cannot filter by member ID.
+        "filters": None,  # DescribeOrganizationMembers has no Filters field.
+        "extra_params": [],
+        "response_items": "Items",
+        # The Organization API calls its total count Total.
+        "response_total": "Total",
+        "result_key": "members",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud Organization members",
+        "description": "Returns the members of a Tencent Cloud Organization.",
+        "return_items_doc": "Organization members.",
+        "return_total_doc": "Number of members reported by the API.",
+        "examples": """\
+- name: List all organization members
+  tencentcloud.cloud.organization_member_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        "module": "monitor_alarm_policy_info",
+        "version_added": "0.7.0",
+        "service_package": "tencentcloud.monitor.v20180724",
+        "client_module": "monitor_client",
+        "client_class": "MonitorClient",
+        "sdk_package": "tencentcloud-sdk-python-monitor",
+        "endpoint": "monitor.tencentcloudapi.com",
+        "action": "DescribeAlarmPolicies",
+        "request_class": "DescribeAlarmPoliciesRequest",
+        "ids": None,  # DescribeAlarmPolicies cannot filter by policy ID.
+        "filters": None,  # DescribeAlarmPolicies has no Filters field.
+        "extra_params": [
+            {
+                "name": "module",
+                "field": "Module",
+                "type": "str",
+                # The API requires Module; "monitor" is its only valid value.
+                "default": "monitor",
+                "doc": "Service type. The only valid value is C(monitor).",
+            },
+        ],
+        "response_items": "Policies",
+        "response_total": "TotalCount",
+        "result_key": "alarm_policies",
+        # The monitor API paginates with 1-based PageNumber/PageSize.
+        "pagination_type": "page",
+        "short_description": "Gather information about Tencent Cloud Monitor alarm policies",
+        "description": "Returns Cloud Monitor alarm policies visible in a Tencent Cloud account.",
+        "return_items_doc": "Matching alarm policies.",
+        "return_total_doc": "Number of alarm policies reported by the API.",
+        "examples": """\
+- name: List all alarm policies
+  tencentcloud.cloud.monitor_alarm_policy_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        "module": "cls_topic_info",
+        "version_added": "0.7.0",
+        "service_package": "tencentcloud.cls.v20201016",
+        "client_module": "cls_client",
+        "client_class": "ClsClient",
+        "sdk_package": "tencentcloud-sdk-python-cls",
+        "endpoint": "cls.tencentcloudapi.com",
+        "action": "DescribeTopics",
+        "request_class": "DescribeTopicsRequest",
+        "ids": None,  # DescribeTopics filters by ID through Filters only.
+        "filters": {
+            "doc": "CLS API filter keys mapped to lists of values.",
+            # The CLS Filter model spells its name field Key.
+            "name_field": "Key",
+        },
+        "extra_params": [],
+        "response_items": "Topics",
+        "response_total": "TotalCount",
+        "result_key": "topics",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud CLS log topics",
+        "description": "Returns CLS (Cloud Log Service) log topics visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching CLS log topics.",
+        "return_total_doc": "Number of log topics reported by the API.",
+        "examples": """\
+- name: List all CLS log topics
+  tencentcloud.cloud.cls_topic_info:
+    region: ap-guangzhou
+
+- name: Find topics of a logset
+  tencentcloud.cloud.cls_topic_info:
+    region: ap-guangzhou
+    filters:
+      logsetId: [xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx]
+""",
+    },
+    {
+        "module": "tat_command_info",
+        "version_added": "0.7.0",
+        "service_package": "tencentcloud.tat.v20201028",
+        "client_module": "tat_client",
+        "client_class": "TatClient",
+        "sdk_package": "tencentcloud-sdk-python-tat",
+        "endpoint": "tat.tencentcloudapi.com",
+        "action": "DescribeCommands",
+        "request_class": "DescribeCommandsRequest",
+        "ids": {
+            "param": "command_ids",
+            "field": "CommandIds",
+            "doc": "Command IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "TAT API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "CommandSet",
+        "response_total": "TotalCount",
+        "result_key": "commands",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud TAT commands",
+        "description": "Returns TAT (TencentCloud Automation Tools) commands "
+                       "visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching TAT commands.",
+        "return_total_doc": "Number of commands reported by the API.",
+        "examples": """\
+- name: List all TAT commands
+  tencentcloud.cloud.tat_command_info:
+    region: ap-guangzhou
+
+- name: Find commands by ID
+  tencentcloud.cloud.tat_command_info:
+    region: ap-guangzhou
+    command_ids: [cmd-xxxxxxxx]
+""",
+    },
+    {
+        "module": "billing_balance_info",
+        "version_added": "0.7.0",
+        "service_package": "tencentcloud.billing.v20180709",
+        "client_module": "billing_client",
+        "client_class": "BillingClient",
+        "sdk_package": "tencentcloud-sdk-python-billing",
+        "endpoint": "billing.tencentcloudapi.com",
+        # DescribeAccountBalance takes no request arguments and is not
+        # paginated; it returns a single account balance object.
+        "action": "DescribeAccountBalance",
+        "request_class": "DescribeAccountBalanceRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [],
+        "response_items": None,
+        "response_total": None,
+        "result_key": "balance",
+        "pagination_type": "none",
+        "short_description": "Gather information about the Tencent Cloud account balance",
+        "description": "Returns the balance of the Tencent Cloud account.",
+        "return_items_doc": "Account balance as reported by the API.",
+        "return_total_doc": "",
+        "examples": """\
+- name: Show the account balance
+  tencentcloud.cloud.billing_balance_info:
+    region: ap-guangzhou
+""",
+    },
 ]
 
 HEADER = f"""\
@@ -793,12 +1284,23 @@ __metaclass__ = type
 
 IMPORTS = """\
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.paging import Paginator
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud import (
     create_client_profile, create_credential, sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 """
+
+PAGINATOR_IMPORT = ("from ansible_collections.tencentcloud.cloud.plugins.module_utils.paging "
+                    "import Paginator\n")
+
+
+def _imports(spec):
+    """Render the import block; token/none specs do not use the Paginator."""
+    if spec.get("pagination_type", "int") in ("token", "none"):
+        return IMPORTS
+    return IMPORTS.replace(
+        "from ansible.module_utils.basic import AnsibleModule\n",
+        "from ansible.module_utils.basic import AnsibleModule\n" + PAGINATOR_IMPORT)
 
 
 def _documentation(spec):
@@ -810,33 +1312,43 @@ def _documentation(spec):
         f"description: {spec['description']}",
         "options:",
     ]
+    option_lines = []
     for param in spec["extra_params"]:
-        lines += [
+        option_lines += [
             f"  {param['name']}:",
             f"    description: {param['doc']}",
             f"    type: {param['type']}",
         ]
         if param.get("required"):
-            lines.append("    required: true")
+            option_lines.append("    required: true")
+        if "default" in param:
+            option_lines.append(f"    default: {param['default']}")
     if spec["ids"]:
-        lines += [
+        option_lines += [
             f"  {spec['ids']['param']}:",
             f"    description: {spec['ids']['doc']}",
             "    type: list",
             "    elements: str",
         ]
     if spec["filters"]:
-        lines += [
+        option_lines += [
             "  filters:",
             f"    description: {spec['filters']['doc']}",
             "    type: dict",
             "    default: {}",
         ]
+    if spec.get("pagination_type", "int") != "none":
+        option_lines += [
+            "  page_size:",
+            "    description: Number of results requested per API call.",
+            "    type: int",
+            f"    default: {spec.get('page_size_default', 100)}",
+        ]
+    if option_lines:
+        lines += option_lines
+    else:
+        lines[-1] = "options: {}"
     lines += [
-        "  page_size:",
-        "    description: Number of results requested per API call.",
-        "    type: int",
-        "    default: 100",
         f"extends_documentation_fragment: {DOC_FRAGMENT}",
         f"author: {AUTHOR}",
     ]
@@ -844,6 +1356,12 @@ def _documentation(spec):
 
 
 def _return_block(spec):
+    if spec.get("pagination_type") == "none":
+        return f"""\
+{spec['result_key']}:
+  description: {spec['return_items_doc']}
+  returned: always
+  type: dict"""
     return f"""\
 {spec['result_key']}:
   description: {spec['return_items_doc']}
@@ -875,21 +1393,38 @@ def build_describe_request(models, {ids['param']}):
     request.{ids['field']} = {ids['param']}
     return request
 """
+    pagination = spec.get("pagination_type", "int")
     args = ["models"]
     args += [param["name"] for param in spec["extra_params"]]
     if spec["ids"]:
         args.append(spec["ids"]["param"])
     if spec["filters"]:
         args.append("filters")
-    args += ["offset", "limit"]
+    if pagination == "token":
+        args += ["next_token", "max_results"]
+    else:
+        args += ["offset", "limit"]
     lines = [
         f"def build_request({', '.join(args)}):",
         f"    request = models.{request_class}()",
-        "    request.Offset = offset",
-        "    request.Limit = limit",
     ]
+    if pagination == "page":
+        lines += [
+            "    request.PageNumber = offset // limit + 1",
+            "    request.PageSize = limit",
+        ]
+    elif pagination == "token":
+        lines.append("    request.MaxResults = max_results")
+    elif pagination == "none":
+        lines.insert(1, f"    # {spec['action']} takes no request arguments and is not\n"
+                        "    # paginated; offset and limit are accepted for signature uniformity.")
+    else:
+        lines += [
+            "    request.Offset = offset",
+            "    request.Limit = limit",
+        ]
     for param in spec["extra_params"]:
-        if param.get("required"):
+        if param.get("required") or "default" in param:
             lines.append(f"    request.{param['field']} = {param['name']}")
         else:
             lines += [
@@ -904,6 +1439,7 @@ def build_describe_request(models, {ids['param']}):
     if spec["filters"]:
         filter_model = spec["filters"].get("model", "Filter")
         name_field = spec["filters"].get("name_field", "Name")
+        value_field = spec["filters"].get("value_field", "Values")
         if spec["filters"].get("name_wrap"):
             name_value = "[name]"
         else:
@@ -914,8 +1450,13 @@ def build_describe_request(models, {ids['param']}):
             "        for name, values in sorted(filters.items()):",
             f"            api_filter = models.{filter_model}()",
             f"            api_filter.{name_field} = {name_value}",
-            "            api_filter.Values = values if isinstance(values, list) else [values]",
+            f"            api_filter.{value_field} = values if isinstance(values, list) else [values]",
             "            request.Filters.append(api_filter)",
+        ]
+    if pagination == "token":
+        lines += [
+            "    if next_token:",
+            "        request.NextToken = next_token",
         ]
     lines.append("    return request")
     return "\n".join(lines) + "\n"
@@ -938,12 +1479,14 @@ def _items_lambda(spec):
     return _nested_lambda(spec["response_items"])
 
 
-def _run_module_source(spec):
+def _argument_spec_lines(spec):
     argument_lines = []
     for param in spec["extra_params"]:
         entry = f'{{"type": "{param["type"]}"'
         if param.get("required"):
             entry += ', "required": True'
+        if "default" in param:
+            entry += f', "default": "{param["default"]}"'
         entry += "}"
         argument_lines.append(f'        "{param["name"]}": {entry},')
     if spec["ids"]:
@@ -954,8 +1497,91 @@ def _run_module_source(spec):
         argument_lines.append(f'        "{spec["ids"]["param"]}": {ids_entry},')
     if spec["filters"]:
         argument_lines.append('        "filters": {"type": "dict", "default": {}},')
-    argument_lines.append('        "page_size": {"type": "int", "default": 100},')
-    argument_spec = "\n".join(argument_lines)
+    if spec.get("pagination_type", "int") != "none":
+        argument_lines.append(
+            f'        "page_size": {{"type": "int", "default": {spec.get("page_size_default", 100)}}},')
+    return "\n".join(argument_lines)
+
+
+def _client_setup_source(spec):
+    return f"""\
+    try:
+        from {spec['service_package']} import models, {spec['client_module']}
+    except ImportError:
+        module.fail_json(msg="The {spec['sdk_package']} package is required.")
+
+    client = {spec['client_module']}.{spec['client_class']}(
+        create_credential(module), module.params["region"],
+        create_client_profile(module, "{spec['endpoint']}"),
+    )
+"""
+
+
+def _run_module_token_source(spec):
+    """Render run_module for NextToken/MaxResults APIs (cloudaudit)."""
+    build_args = ["models"]
+    build_args += [f'module.params["{param["name"]}"]' for param in spec["extra_params"]]
+    build_args += ["next_token", 'module.params["page_size"]']
+    build_call = "build_request(\n            " + ",\n            ".join(build_args) + ")"
+    return f"""\
+def run_module():
+    argument_spec = tencentcloud_argument_spec()
+    argument_spec.update({{
+{_argument_spec_lines(spec)}
+    }})
+    module = AnsibleModule(
+        argument_spec=argument_spec,
+        supports_check_mode=True,
+    )
+{_client_setup_source(spec)}    {spec['result_key']} = []
+    next_token = None
+    total_count = None
+    while True:
+        request = {build_call}
+        response = sdk_call(module, client.{spec['action']}, request)
+        batch = response.{spec['response_items']} or []
+        {spec['result_key']}.extend(serialize_sdk_object(item) for item in batch)
+        if total_count is None and response.{spec['response_total']} is not None:
+            total_count = response.{spec['response_total']}
+        next_token = response.NextToken
+        if response.ListOver or not next_token:
+            break
+    if total_count is None:
+        total_count = len({spec['result_key']})
+    module.exit_json(changed=False, {spec['result_key']}={spec['result_key']}, total_count=total_count)
+"""
+
+
+def _run_module_none_source(spec):
+    """Render run_module for unpaginated single-object APIs (billing)."""
+    argument_lines = _argument_spec_lines(spec)
+    if argument_lines:
+        update = f"argument_spec.update({{\n{argument_lines}\n    }})"
+    else:
+        update = "argument_spec.update({})"
+    return f"""\
+def run_module():
+    argument_spec = tencentcloud_argument_spec()
+    {update}
+    module = AnsibleModule(
+        argument_spec=argument_spec,
+        supports_check_mode=True,
+    )
+{_client_setup_source(spec)}    request = build_request(models, 0, 0)
+    response = sdk_call(module, client.{spec['action']}, request)
+    {spec['result_key']} = serialize_sdk_object(response)
+    {spec['result_key']}.pop("RequestId", None)
+    module.exit_json(changed=False, {spec['result_key']}={spec['result_key']})
+"""
+
+
+def _run_module_source(spec):
+    pagination = spec.get("pagination_type", "int")
+    if pagination == "token":
+        return _run_module_token_source(spec)
+    if pagination == "none":
+        return _run_module_none_source(spec)
+    argument_spec = _argument_spec_lines(spec)
 
     mutually_exclusive = ""
     if spec["ids"] and spec["filters"] and not spec.get("ids_action"):
@@ -1004,16 +1630,7 @@ def run_module():
         argument_spec=argument_spec,{mutually_exclusive}
         supports_check_mode=True,
     )
-    try:
-        from {spec['service_package']} import models, {spec['client_module']}
-    except ImportError:
-        module.fail_json(msg="The {spec['sdk_package']} package is required.")
-
-    client = {spec['client_module']}.{spec['client_class']}(
-        create_credential(module), module.params["region"],
-        create_client_profile(module, "{spec['endpoint']}"),
-    )
-{ids_branch}\
+{_client_setup_source(spec)}{ids_branch}\
     paginator = Paginator(
         module.params["page_size"],
         {builder_lines},
@@ -1042,7 +1659,7 @@ RETURN = r'''
 {_return_block(spec)}
 '''
 
-{IMPORTS}
+{_imports(spec)}
 
 {_build_request_source(spec)}
 

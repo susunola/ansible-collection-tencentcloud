@@ -1,0 +1,15 @@
+minor_changes:
+  - nat_gateway_info - add a generated read-only module querying NAT gateways.
+  - vpn_gateway_info - add a generated read-only module querying VPN gateways.
+  - gaap_proxy_info - add a generated read-only module querying GAAP proxies.
+  - cdn_domain_info - add a generated read-only module querying CDN domains.
+  - cloudaudit_event_info - add a generated read-only module querying CloudAudit events (token-paginated LookUpEvents).
+  - cwp_machine_info - add a generated read-only module querying Cloud Workload Protection machines.
+  - waf_instance_info - add a generated read-only module querying WAF instances.
+  - ssl_certificate_info - add a generated read-only module querying SSL certificates.
+  - organization_member_info - add a generated read-only module querying Organization members.
+  - monitor_alarm_policy_info - add a generated read-only module querying Cloud Monitor alarm policies (page-number paginated).
+  - cls_topic_info - add a generated read-only module querying CLS log topics.
+  - tat_command_info - add a generated read-only module querying TAT commands.
+  - billing_balance_info - add a generated read-only module returning the account balance (unpaginated single call).
+  - scripts - the _info generator now supports token-based and page-number-based pagination, unpaginated single-object responses, and per-service filter models, so services with non-standard list APIs can be generated too.

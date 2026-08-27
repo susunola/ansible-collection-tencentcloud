@@ -59,12 +59,16 @@ def test_every_spec_renders_valid_documentation_yaml(generator):
             expected_options.add(spec["ids"]["param"])
         if spec["filters"]:
             expected_options.add("filters")
-        expected_options.add("page_size")
-        assert set(doc["options"]) == expected_options
+        if spec.get("pagination_type", "int") != "none":
+            expected_options.add("page_size")
+        assert set(doc["options"] or {}) == expected_options
 
         assert yaml.safe_load(blocks["EXAMPLES"])
         returned = yaml.safe_load(blocks["RETURN"])
-        assert set(returned) == {spec["result_key"], "total_count"}
+        expected_return = {spec["result_key"]}
+        if spec.get("pagination_type", "int") != "none":
+            expected_return.add("total_count")
+        assert set(returned) == expected_return
 
 
 def test_generated_files_are_up_to_date(generator):
@@ -112,3 +116,49 @@ def test_query_filter_model_override(generator):
 def test_optional_extra_param_renders_none_guard(generator):
     rendered = generator.render_module(_spec(generator, "cfs_file_system_info"))
     assert "    if file_system_id is not None:\n        request.FileSystemId = file_system_id" in rendered
+
+
+BATCH2_MODULES = (
+    "nat_gateway_info", "vpn_gateway_info", "gaap_proxy_info",
+    "cdn_domain_info", "cloudaudit_event_info", "cwp_machine_info",
+    "waf_instance_info", "ssl_certificate_info", "organization_member_info",
+    "monitor_alarm_policy_info", "cls_topic_info", "tat_command_info",
+    "billing_balance_info",
+)
+
+
+def test_batch2_specs_pin_release_version_added(generator):
+    for module in BATCH2_MODULES:
+        rendered = generator.render_module(_spec(generator, module))
+        assert 'version_added: "0.7.0"' in rendered
+
+
+def test_page_pagination_renders_page_number(generator):
+    rendered = generator.render_module(_spec(generator, "monitor_alarm_policy_info"))
+    assert "request.PageNumber = offset // limit + 1" in rendered
+    assert "request.PageSize = limit" in rendered
+    assert '"module": {"type": "str", "default": "monitor"}' in rendered
+
+
+def test_token_pagination_renders_next_token_loop(generator):
+    rendered = generator.render_module(_spec(generator, "cloudaudit_event_info"))
+    assert "request.MaxResults = max_results" in rendered
+    assert "    if next_token:\n        request.NextToken = next_token" in rendered
+    assert "if response.ListOver or not next_token:" in rendered
+    assert '"page_size": {"type": "int", "default": 50}' in rendered
+    # Token pagination does not use the offset/limit Paginator.
+    assert "Paginator" not in rendered
+
+
+def test_unpaginated_module_renders_single_call(generator):
+    rendered = generator.render_module(_spec(generator, "billing_balance_info"))
+    assert "Paginator" not in rendered
+    assert 'balance.pop("RequestId", None)' in rendered
+    assert "page_size" not in rendered
+    assert "options: {}" in rendered
+
+
+def test_filter_value_field_override(generator):
+    rendered = generator.render_module(_spec(generator, "cdn_domain_info"))
+    assert "api_filter = models.DomainFilter()" in rendered
+    assert "api_filter.Value = values if isinstance(values, list) else [values]" in rendered
