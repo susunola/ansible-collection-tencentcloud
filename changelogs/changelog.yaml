@@ -30,6 +30,76 @@ releases:
       name: clb_load_balancer
       namespace: ''
     release_date: '2026-08-27'
+  0.11.0:
+    changes:
+      breaking_changes:
+      - The collection has been renamed from ``tencentcloud.cloud`` to ``susunola.tencentcloud``
+        so it can be published to Ansible Galaxy (namespace must match a GitHub account).
+        Update every fully qualified collection name in playbooks and roles, for example
+        ``tencentcloud.cloud.cvm_instance`` becomes ``susunola.tencentcloud.cvm_instance``.
+        This also affects ``ansible-galaxy collection install`` (use ``susunola.tencentcloud``),
+        the built tarball name (``susunola-tencentcloud-<version>.tar.gz``) and any
+        ``ansible_collections.tencentcloud.cloud.*`` Python imports.
+      bugfixes:
+      - adp_agent_release_preview_info - require ``app_id``.
+      - apm_general_span_info - require ``instance_id``, ``start_time`` and ``end_time``.
+      - ccc_extension_info - require ``sdk_app_id``.
+      - cdwdoris_cluster_configs_history_info - require ``instance_id``, ``start_time``
+        and ``end_time``.
+      - cdwpg_account_info - require ``instance_id``.
+      - dsgc_dspa_assessment_risk_info - require ``dspa_id`` and ``task_id``.
+      - emr_node_data_disk_info - require ``instance_id`` and rename the ids parameter
+        to ``cvm_instance_ids`` (the API takes node CVM instance IDs, not data-disk
+        IDs).
+      - essbasic_template_info - require the nested ``agent`` dict with ``app_id``,
+        ``proxy_organization_open_id`` and ``proxy_operator_open_id``.
+      - iotvideo_ai_model_application_info - require ``model_id``.
+      - keewidb_instance_backup_info - require ``instance_id``.
+      - lowcode_knowledge_set_info - require ``env_id``.
+      - module_utils - change the default ``user_agent`` value to ``ansible-collection.susunola.tencentcloud``
+        (dot instead of slash) so it satisfies the SDK ``request_client`` regexp;
+        the previous value was silently dropped by the SDK.
+      - module_utils - the ``user_agent`` option is now forwarded to the SDK's ``ClientProfile.request_client``
+        so it actually reaches the ``X-TC-RequestClient`` request header (previously
+        a no-op that never left the profile).
+      - mqtt_device_certificate_info - require ``instance_id``.
+      - omics_application_info - require ``project_id``.
+      - tbaas_block_info - require ``channel_name``, ``group_name`` and ``cluster_id``;
+        default ``module``/``operation``/``channel_id``/``group_id`` to the fixed
+        values the API mandates.
+      - tcbr_cloud_run_pod_info - require ``env_id`` and ``server_name``.
+      - tdai_agent_duty_task_info - require ``instance_id``.
+      - tdcpg_cluster_instance_info - require ``cluster_id``.
+      - teo_function_info - require ``zone_id`` as the API rejects requests without
+        it.
+      - trocket_consumer_client_info - require ``instance_id``.
+      - trro_device_info - require ``project_id``.
+      - yinsuda_ktv_robot_info - require ``app_name`` and ``user_id``.
+      minor_changes:
+      - CI - SDK contract tests now measure coverage of module_utils and modules and
+        fail below the 50% threshold, blocking silent coverage regressions.
+      - cvm_instance - add ``exact_count``/``count_tag`` pool scaling mirroring the
+        AWS ec2 module (the module counts the tag-matched instances and brings the
+        pool to the requested size, creating the shortfall in one RunInstances call
+        or terminating the excess oldest-first; PREPAID instances are never terminated
+        automatically).
+      - integration - delete the test security group by ``security_group_id`` in the
+        network target cleanup instead of by name, so cleanup survives non-unique
+        or renamed groups.
+      - integration - move integration tests into a dedicated workflow (integration.yml)
+        with three guardrails (a fixed concurrency group that serialises every run
+        against the shared cloud account, a 40-minute budget cap via timeout-minutes,
+        and an always-on ``cleanup`` sweeper target that removes leftover test resources
+        - VPC/subnet/route table/security group/EIP named ``ansible-*-it-*`` - even
+        after a failed or timed-out run).
+    fragments:
+    - coverage-gate.yml
+    - cvm-exact-count.yml
+    - fqcn-rename.yml
+    - integration-guardrails.yml
+    - required-params-curation.yml
+    - user-agent-request-client.yml
+    release_date: '2026-08-27'
   0.5.0:
     changes:
       bugfixes:
@@ -115,8 +185,8 @@ releases:
         them by key IDs.
       - meta - add the ``susunola.tencentcloud.all`` action group so ``module_defaults``
         can set shared options (region, credentials, ``role_arn``) once per play.
-      - meta - register all new modules in the ``susunola.tencentcloud.all`` action group
-        and add an (empty) ``plugin_routing`` section documenting the deprecation
+      - meta - register all new modules in the ``susunola.tencentcloud.all`` action
+        group and add an (empty) ``plugin_routing`` section documenting the deprecation
         process.
       - module_utils - add a unified offset/limit paginator replacing the hand-rolled
         loops in the discovery modules.

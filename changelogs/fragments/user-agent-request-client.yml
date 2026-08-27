@@ -1,3 +1,0 @@
-bugfixes:
-  - module_utils - the ``user_agent`` option is now forwarded to the SDK's ``ClientProfile.request_client`` so it actually reaches the ``X-TC-RequestClient`` request header (previously a no-op that never left the profile).
-  - module_utils - change the default ``user_agent`` value to ``ansible-collection.susunola.tencentcloud`` (dot instead of slash) so it satisfies the SDK ``request_client`` regexp; the previous value was silently dropped by the SDK.
