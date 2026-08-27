@@ -174,7 +174,8 @@ def _load_tag():
 
 def build_describe_request(models, subnet_id, vpc_id, name):
     request = models.DescribeSubnetsRequest()
-    request.Limit = 100
+    # The VPC API accepts Limit/Offset as strings only.
+    request.Limit = "100"
     if subnet_id:
         request.SubnetIds = [subnet_id]
         return request

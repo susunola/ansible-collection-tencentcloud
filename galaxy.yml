@@ -1,6 +1,6 @@
 namespace: tencentcloud
 name: cloud
-version: 0.4.0
+version: 0.5.0
 readme: README.md
 authors:
   - Tencent Cloud Ansible Collection Contributors (@susunola)

@@ -2,6 +2,14 @@
 
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
+
+import pytest
+
+from ansible.errors import AnsibleError
+
+from ansible_collections.tencentcloud.cloud.plugins.inventory import (
+    tencentcloud_cvm as inv_mod,
+)
 from ansible_collections.tencentcloud.cloud.plugins.inventory.tencentcloud_cvm import (
     InventoryModule,
     build_describe_request,
@@ -212,3 +220,97 @@ def test_verify_file(tmp_path):
     assert plugin.verify_file(str(good)) is True
     assert plugin.verify_file(str(bad)) is False
     assert plugin.verify_file(str(tmp_path / "missing.tencentcloud_cvm.yml")) is False
+
+
+class FakeHttpProfile(object):
+    pass
+
+
+class FakeClientProfile(object):
+    pass
+
+
+class FakeCredentialModule(object):
+    class Credential(object):
+        def __init__(self, secret_id, secret_key, token=None):
+            self.secret_id = secret_id
+            self.secret_key = secret_key
+            self.token = token
+
+
+class FakeCvmClient(object):
+    def __init__(self, credential, region, profile=None):
+        self.credential = credential
+        self.region = region
+        self.profile = profile
+
+
+def _stub_inventory_sdk(monkeypatch):
+    monkeypatch.setattr(inv_mod, "tc_credential", FakeCredentialModule, raising=False)
+    monkeypatch.setattr(inv_mod, "HttpProfile", FakeHttpProfile, raising=False)
+    monkeypatch.setattr(inv_mod, "ClientProfile", FakeClientProfile, raising=False)
+    monkeypatch.setattr(
+        inv_mod, "cvm_client", type("cvm_client", (), {"CvmClient": FakeCvmClient}),
+        raising=False,
+    )
+
+
+CREATE_CLIENT_OPTIONS = {
+    "secret_id": "akid-param",
+    "secret_key": "secret-param",
+    "token": None,
+    "profile": None,
+}
+
+
+def test_create_client_uses_explicit_credentials(monkeypatch):
+    _stub_inventory_sdk(monkeypatch)
+
+    def explode(*args, **kwargs):
+        raise AssertionError("profile file must not be read")
+
+    monkeypatch.setattr(inv_mod, "load_profile", explode)
+    plugin = InventoryModule()
+    plugin.get_option = CREATE_CLIENT_OPTIONS.get
+    cvm = plugin._create_client("ap-guangzhou")
+    assert cvm.credential.secret_id == "akid-param"
+    assert cvm.credential.secret_key == "secret-param"
+    assert cvm.region == "ap-guangzhou"
+
+
+def test_create_client_falls_back_to_profile(monkeypatch):
+    _stub_inventory_sdk(monkeypatch)
+    monkeypatch.setattr(
+        inv_mod, "load_profile",
+        lambda profile=None: {"secret_id": "akid-prod", "secret_key": "secret-prod"},
+    )
+    options = dict(CREATE_CLIENT_OPTIONS, secret_id=None, secret_key=None, profile="prod")
+    plugin = InventoryModule()
+    plugin.get_option = options.get
+    cvm = plugin._create_client("ap-guangzhou")
+    assert cvm.credential.secret_id == "akid-prod"
+    assert cvm.credential.secret_key == "secret-prod"
+
+
+def test_create_client_partial_override_uses_profile_for_rest(monkeypatch):
+    _stub_inventory_sdk(monkeypatch)
+    monkeypatch.setattr(
+        inv_mod, "load_profile",
+        lambda profile=None: {"secret_id": "akid-default", "secret_key": "secret-default"},
+    )
+    options = dict(CREATE_CLIENT_OPTIONS, secret_key=None)
+    plugin = InventoryModule()
+    plugin.get_option = options.get
+    cvm = plugin._create_client("ap-guangzhou")
+    assert cvm.credential.secret_id == "akid-param"
+    assert cvm.credential.secret_key == "secret-default"
+
+
+def test_create_client_missing_everywhere_mentions_profile(monkeypatch):
+    _stub_inventory_sdk(monkeypatch)
+    monkeypatch.setattr(inv_mod, "load_profile", lambda profile=None: {})
+    options = dict(CREATE_CLIENT_OPTIONS, secret_id=None, secret_key=None)
+    plugin = InventoryModule()
+    plugin.get_option = options.get
+    with pytest.raises(AnsibleError, match="default.configure"):
+        plugin._create_client("ap-guangzhou")

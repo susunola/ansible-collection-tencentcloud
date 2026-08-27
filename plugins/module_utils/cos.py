@@ -30,6 +30,8 @@ try:
 except ImportError:
     HAS_COS_SDK = False
 
+from ansible_collections.tencentcloud.cloud.plugins.module_utils import client as api3_client
+
 COS_SDK_IMP_ERR = (
     "The cos-python-sdk-v5 package is required on the Ansible controller "
     "for cos_* modules."
@@ -54,9 +56,11 @@ def require_cos_sdk(module):
 def create_cos_client(module):
     """Build a ``CosS3Client`` from the module's standard parameters.
 
-    Supports secret id/key plus an optional temporary token. Unlike the API
-    3.0 client factory, ``role_arn`` is not honoured yet; COS users must pass
-    credentials that already have COS permissions.
+    Supports secret id/key plus an optional temporary token. When
+    ``role_arn`` is set, the long-lived credentials are first exchanged for
+    temporary ones via the STS ``AssumeRole`` API (through
+    :func:`client.maybe_assume_role`), which additionally requires the
+    ``tencentcloud-sdk-python-sts`` package.
     """
     require_cos_sdk(module)
     secret_id = module.params.get("secret_id")
@@ -65,11 +69,16 @@ def create_cos_client(module):
         module.fail_json(
             msg="Set secret_id and secret_key, or their TENCENTCLOUD_* environment variables."
         )
+    token = module.params.get("token")
+    if module.params.get("role_arn"):
+        secret_id, secret_key, token = api3_client.maybe_assume_role(
+            module, secret_id, secret_key, token
+        )
     config = CosConfig(
         Region=module.params["region"],
         SecretId=secret_id,
         SecretKey=secret_key,
-        Token=module.params.get("token"),
+        Token=token,
         Timeout=module.params.get("timeout") or 60,
         Endpoint=module.params.get("endpoint"),
         UA=module.params.get("user_agent"),

@@ -17,19 +17,32 @@
 7. Enterprise reliability (partial, 0.4.0): STS AssumeRole support in every
    module and the `tencentcloud_cvm` dynamic inventory plugin with
    constructed groups and caching. **Done**
+8. Lookup plugins (0.5.0): `sts_caller_identity` and `ssm_parameter`. **Done**
+9. Credential profiles (0.5.0): TCCLI-style profiles from
+   `~/.tencentcloud/default.configure` with param > env > profile precedence
+   for credentials and region. **Done**
+10. CAM and COS (0.5.0): `cam_user`, `cam_role`, `cam_policy` write modules,
+    `cam_role_info`/`cam_policy_info`, and `cos_bucket`/`cos_bucket_info`
+    built on the `qcloud_cos` SDK via `module_utils/cos.py`. **Done**
+11. Project governance (0.5.0): `MAINTAINERS.md`, `SECURITY.md`, issue and PR
+    templates, action groups and plugin routing in `meta/runtime.yml`, and
+    automatic changelog-fragment folding in the release workflow. **Done**
+12. SDK contract tests (0.5.0): `tests/contract/` audits every module's
+    request construction against the real SDK models in CI, catching wrong
+    field names and types that fake-based unit tests cannot. **Done**
 
 ## Next
 
-8. Enterprise reliability follow-up: CI version matrix, CAM least-privilege
-   policy examples, integration account cost guardrails, Galaxy publishing
-   (release workflow added; the first `v0.4.0` tag publishes once
-   `GALAXY_API_KEY` is configured).
-9. Service expansion by real usage: write modules for CLB, TKE, COS, CDB,
-   CAM/KMS, Monitor/CLS (read-only coverage for CLB, CDB, TKE, CBS, Redis,
-   MongoDB, KMS and DNSPod landed in 0.4.0).
-10. Generated API coverage: `scripts/generate_info_modules.py` generates
-    `*_info` modules from SDK metadata; extend the spec to more services and
-    eventually to write modules once handwritten conventions are stable.
+13. CLB write modules (`clb_load_balancer`, listeners and attachments) on top
+    of the existing `clb_load_balancer_info`.
+14. `cvm_instance` scaling: `exact_count`-style batch create/terminate with
+    per-zone spread.
+15. Integration CI: run the integration targets on a schedule against a real
+    account, with cost guardrails (budget caps, automatic teardown of leaked
+    resources).
+16. Coverage reporting for unit and integration tests.
+17. Galaxy namespace and publishing: the release workflow already publishes
+    on tags once `GALAXY_API_KEY` is configured.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

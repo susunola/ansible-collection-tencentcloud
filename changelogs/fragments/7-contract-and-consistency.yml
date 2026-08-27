@@ -1,0 +1,9 @@
+bugfixes:
+  - security_group - fix name/description updates being silently ignored. ModifySecurityGroupAttributeRequest takes GroupName / GroupDescription, not SecurityGroupName / SecurityGroupDesc. Found by the new SDK contract tests.
+  - subnet - fix DescribeSubnetsRequest.Limit being sent as an integer. The VPC API requires it as a string.
+minor_changes:
+  - cam_user_info - add a read-only module listing CAM sub-users with client-side name / name_keyword filters.
+  - tencentcloud_cvm inventory - support credential profiles (profile option, env TENCENTCLOUD_PROFILE), matching the modules.
+  - sts_caller_identity / ssm_parameter lookups - support credential profiles with the same param > env > profile precedence.
+  - cos_bucket / cos_bucket_info - honor role_arn by exchanging the base credentials for temporary ones before building the COS client.
+  - tests - add tests/contract with SDK contract tests that build every module's requests against the real SDK model classes in CI, catching wrong field names and scalar types that fake-based unit tests cannot.

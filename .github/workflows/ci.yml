@@ -45,6 +45,15 @@ jobs:
         run: ansible-test sanity --color --python ${{ matrix.python }}
       - name: Unit tests
         run: ansible-test units --color --python ${{ matrix.python }}
+      # Contract tests run each module's request construction against the
+      # real Tencent Cloud SDK classes. They are deliberately NOT part of
+      # ansible-test units (those environments lack the SDK), so they run
+      # here as a plain pytest step with the SDK installed; they skip
+      # cleanly when the SDK is not importable.
+      - name: SDK contract tests
+        run: |
+          python -m pip install -r requirements.txt
+          PYTHONPATH="${{ github.workspace }}" python -m pytest tests/contract -q
       - name: Build collection
         run: ansible-galaxy collection build
 

@@ -184,3 +184,33 @@ def test_base_argument_spec_role_options():
     assert spec["role_session_name"]["default"] == "ansible-tencentcloud"
     assert spec["role_session_duration"]["type"] == "int"
     assert spec["role_session_duration"]["default"] == 7200
+
+
+def test_maybe_assume_role_passthrough_without_role_arn(fake_sdk, monkeypatch):
+    def explode(module, credential):
+        raise AssertionError("STS must not be called without role_arn")
+
+    monkeypatch.setattr(client, "_assume_role", explode)
+    triple = client.maybe_assume_role(
+        FakeModule(dict(BASE_PARAMS)), "akid-test", "secret-test", "session-token"
+    )
+    assert triple == ("akid-test", "secret-test", "session-token")
+
+
+def test_maybe_assume_role_returns_temporary_triple(fake_sdk, monkeypatch):
+    captured = {}
+
+    def fake_assume_role(module, base_credential):
+        captured["base_credential"] = base_credential
+        return FakeAssumeRoleResponse(
+            FakeTempCredentials("tmp-akid", "tmp-secret", "tmp-token")
+        )
+
+    monkeypatch.setattr(client, "_assume_role", fake_assume_role)
+    params = dict(BASE_PARAMS, role_arn="qcs::cam::uin/1:roleName/ops")
+    triple = client.maybe_assume_role(
+        FakeModule(params), "akid-test", "secret-test", None
+    )
+    assert isinstance(captured["base_credential"], FakeCredential)
+    assert captured["base_credential"].secret_id == "akid-test"
+    assert triple == ("tmp-akid", "tmp-secret", "tmp-token")

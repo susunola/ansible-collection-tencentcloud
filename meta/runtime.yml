@@ -7,6 +7,7 @@ action_groups:
     - cam_role
     - cam_role_info
     - cam_user
+    - cam_user_info
     - cos_bucket
     - cos_bucket_info
     - cvm_instance

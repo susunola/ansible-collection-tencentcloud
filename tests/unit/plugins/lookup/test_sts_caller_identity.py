@@ -143,7 +143,51 @@ BASE_OPTIONS = {
     "token": None,
     "region": None,
     "role_arn": None,
+    "profile": None,
 }
+
+
+def test_run_uses_profile_credentials(monkeypatch):
+    client = FakeClient()
+    monkeypatch.setattr(
+        lookup_mod, "load_profile",
+        lambda profile=None: {"secret_id": "akid-prod", "secret_key": "secret-prod"},
+    )
+    options = dict(BASE_OPTIONS, secret_id=None, secret_key=None, profile="prod")
+    plugin = _lookup(options, client, monkeypatch)
+    result = plugin.run([])
+    assert result == [serialize_identity(FakeIdentityResponse())]
+    assert len(client.caller_requests) == 1
+
+
+def test_run_explicit_credentials_skip_profile(monkeypatch):
+    def explode(*args, **kwargs):
+        raise AssertionError("profile file must not be read")
+
+    monkeypatch.setattr(lookup_mod, "load_profile", explode)
+    plugin = _lookup(dict(BASE_OPTIONS), FakeClient(), monkeypatch)
+    assert len(plugin.run([])) == 1
+
+
+def test_run_profile_supplies_only_missing_secret_key(monkeypatch):
+    captured = {}
+
+    class RecordingCredentialModule(object):
+        class Credential(object):
+            def __init__(self, secret_id, secret_key, token=None):
+                captured["secret_id"] = secret_id
+                captured["secret_key"] = secret_key
+
+    monkeypatch.setattr(
+        lookup_mod, "load_profile",
+        lambda profile=None: {"secret_id": "akid-default", "secret_key": "secret-default"},
+    )
+    options = dict(BASE_OPTIONS, secret_key=None)
+    plugin = _lookup(options, FakeClient(), monkeypatch)
+    monkeypatch.setattr(lookup_mod, "tc_credential", RecordingCredentialModule)
+    plugin.run([])
+    assert captured["secret_id"] == "id"
+    assert captured["secret_key"] == "secret-default"
 
 
 def test_run_without_role(monkeypatch):
@@ -166,6 +210,7 @@ def test_run_with_role_assumes_role_first(monkeypatch):
 
 
 def test_run_requires_credentials(monkeypatch):
+    monkeypatch.setattr(lookup_mod, "load_profile", lambda profile=None: {})
     options = dict(BASE_OPTIONS, secret_id=None)
     plugin = _lookup(options, FakeClient(), monkeypatch)
     with pytest.raises(AnsibleError, match="secret_id and secret_key"):

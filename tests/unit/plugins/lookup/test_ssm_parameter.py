@@ -101,7 +101,44 @@ BASE_OPTIONS = {
     "token": None,
     "region": "ap-guangzhou",
     "with_decryption": True,
+    "profile": None,
 }
+
+
+def test_run_uses_profile_credentials_and_region(monkeypatch):
+    monkeypatch.setattr(
+        lookup_mod, "load_profile",
+        lambda profile=None: {
+            "secret_id": "akid-prod",
+            "secret_key": "secret-prod",
+            "region": "ap-shanghai",
+        },
+    )
+    options = dict(
+        BASE_OPTIONS, secret_id=None, secret_key=None, region=None, profile="prod"
+    )
+    seen = {}
+
+    def create_client(credential, region):
+        seen["region"] = region
+        seen["secret_id"] = credential.secret_id
+        return FakeClient({"db-password": FakeResponse(secret_string="s3cr3t")})
+
+    plugin = _lookup(options, FakeClient({}), monkeypatch)
+    plugin._create_client = create_client
+    assert plugin.run(["db-password"]) == ["s3cr3t"]
+    assert seen["secret_id"] == "akid-prod"
+    assert seen["region"] == "ap-shanghai"
+
+
+def test_run_explicit_options_skip_profile(monkeypatch):
+    def explode(*args, **kwargs):
+        raise AssertionError("profile file must not be read")
+
+    monkeypatch.setattr(lookup_mod, "load_profile", explode)
+    client = FakeClient({"db-password": FakeResponse(secret_string="s3cr3t")})
+    plugin = _lookup(dict(BASE_OPTIONS), client, monkeypatch)
+    assert plugin.run(["db-password"]) == ["s3cr3t"]
 
 
 def test_run_returns_values_in_term_order(monkeypatch):
@@ -122,6 +159,7 @@ def test_run_returns_binary_values(monkeypatch):
 
 
 def test_run_requires_region(monkeypatch):
+    monkeypatch.setattr(lookup_mod, "load_profile", lambda profile=None: {})
     options = dict(BASE_OPTIONS, region=None)
     plugin = _lookup(options, FakeClient({}), monkeypatch)
     with pytest.raises(AnsibleError, match="region"):
@@ -129,6 +167,7 @@ def test_run_requires_region(monkeypatch):
 
 
 def test_run_requires_credentials(monkeypatch):
+    monkeypatch.setattr(lookup_mod, "load_profile", lambda profile=None: {})
     options = dict(BASE_OPTIONS, secret_key=None)
     plugin = _lookup(options, FakeClient({}), monkeypatch)
     with pytest.raises(AnsibleError, match="secret_id and secret_key"):

@@ -47,6 +47,7 @@ Read-only `_info` modules (return `changed=false`):
 | `cos_bucket_info` | Describe one COS bucket or list all buckets in a region |
 | `cam_role_info` | Query CAM roles with IDs or keyword filters |
 | `cam_policy_info` | Query CAM policies with IDs or keyword filters |
+| `cam_user_info` | Query CAM sub-users with client-side name filters |
 
 The modules from `clb_load_balancer_info` down are generated from SDK
 metadata by `scripts/generate_info_modules.py` (run with `--check` to

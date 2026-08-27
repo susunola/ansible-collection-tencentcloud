@@ -43,6 +43,16 @@ options:
     type: str
     env:
       - name: TENCENTCLOUD_TOKEN
+  profile:
+    description:
+      - TCCLI credential profile section of C(~/.tencentcloud/default.configure)
+        used as a fallback for O(secret_id) and O(secret_key).
+      - Explicit options and their environment variables take precedence over
+        the profile.
+      - Falls back to C(TENCENTCLOUD_PROFILE).
+    type: str
+    env:
+      - name: TENCENTCLOUD_PROFILE
   filters:
     description:
       - Filters passed straight to the C(DescribeInstances) API.
@@ -104,6 +114,7 @@ compose:
 from ansible.errors import AnsibleError
 from ansible.plugins.inventory import BaseInventoryPlugin, Cacheable, Constructable
 
+from ansible_collections.tencentcloud.cloud.plugins.module_utils.client import load_profile
 from ansible_collections.tencentcloud.cloud.plugins.module_utils.paging import Paginator
 
 try:
@@ -227,8 +238,14 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         secret_id = self.get_option("secret_id")
         secret_key = self.get_option("secret_key")
         if not secret_id or not secret_key:
+            profile = load_profile(self.get_option("profile"))
+            secret_id = secret_id or profile.get("secret_id")
+            secret_key = secret_key or profile.get("secret_key")
+        if not secret_id or not secret_key:
             raise AnsibleError(
-                "Set secret_id and secret_key, or their TENCENTCLOUD_* environment variables."
+                "Set secret_id and secret_key, their TENCENTCLOUD_* environment "
+                "variables, or the secret_id/secret_key keys of a profile in "
+                "~/.tencentcloud/default.configure."
             )
         http_profile = HttpProfile()
         http_profile.endpoint = "cvm.tencentcloudapi.com"

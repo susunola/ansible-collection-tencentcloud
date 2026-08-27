@@ -176,8 +176,10 @@ def find_security_group(module, client, models, name, security_group_id):
 def _update_attributes(module, client, models, group_id, name, description):
     request = models.ModifySecurityGroupAttributeRequest()
     request.SecurityGroupId = group_id
-    request.SecurityGroupName = name
-    request.SecurityGroupDesc = description
+    # The request fields are GroupName/GroupDescription; the
+    # SecurityGroupName/SecurityGroupDesc spellings only exist in responses.
+    request.GroupName = name
+    request.GroupDescription = description
     module.sdk_call(client.ModifySecurityGroupAttribute, request)
 
 

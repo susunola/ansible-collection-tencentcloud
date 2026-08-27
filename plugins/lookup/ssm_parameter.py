@@ -49,6 +49,16 @@ options:
     type: str
     env:
       - name: TENCENTCLOUD_TOKEN
+  profile:
+    description:
+      - TCCLI credential profile section of C(~/.tencentcloud/default.configure)
+        used as a fallback for O(region), O(secret_id) and O(secret_key).
+      - Explicit terms and their environment variables take precedence over
+        the profile.
+      - Falls back to C(TENCENTCLOUD_PROFILE).
+    type: str
+    env:
+      - name: TENCENTCLOUD_PROFILE
 notes:
   - Requires the C(tencentcloud-sdk-python-ssm) package on the controller.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
@@ -82,6 +92,8 @@ from ansible.errors import AnsibleError
 from ansible.module_utils.common.text.converters import to_native
 from ansible.parsing.splitter import parse_kv
 from ansible.plugins.lookup import LookupBase
+
+from ansible_collections.tencentcloud.cloud.plugins.module_utils.client import load_profile
 
 try:
     from tencentcloud.ssm.v20190923 import ssm_client, models as ssm_models
@@ -149,14 +161,24 @@ class LookupModule(LookupBase):
                 names.append(term)
         self.set_options(var_options=variables, direct=kwargs)
 
-        region = self.get_option("region")
-        if not region:
-            raise AnsibleError("Set region or the TENCENTCLOUD_REGION environment variable.")
         secret_id = self.get_option("secret_id")
         secret_key = self.get_option("secret_key")
+        region = self.get_option("region")
+        if not secret_id or not secret_key or not region:
+            profile = load_profile(self.get_option("profile"))
+            secret_id = secret_id or profile.get("secret_id")
+            secret_key = secret_key or profile.get("secret_key")
+            region = region or profile.get("region")
+        if not region:
+            raise AnsibleError(
+                "Set region, the TENCENTCLOUD_REGION environment variable, or "
+                "the region key of a profile in ~/.tencentcloud/default.configure."
+            )
         if not secret_id or not secret_key:
             raise AnsibleError(
-                "Set secret_id and secret_key, or their TENCENTCLOUD_* environment variables."
+                "Set secret_id and secret_key, their TENCENTCLOUD_* environment "
+                "variables, or the secret_id/secret_key keys of a profile in "
+                "~/.tencentcloud/default.configure."
             )
 
         credential = tc_credential.Credential(secret_id, secret_key, self.get_option("token"))

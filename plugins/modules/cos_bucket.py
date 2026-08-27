@@ -87,8 +87,9 @@ options:
     default: ansible-collection/tencentcloud.cloud
 notes:
   - Requires the C(cos-python-sdk-v5) package on the controller.
-  - O(role_arn) is not supported for COS modules; pass credentials that
-    already have COS permissions.
+  - O(role_arn) is honoured; the temporary credentials obtained via STS
+    C(AssumeRole) additionally require the C(tencentcloud-sdk-python-sts)
+    package.
 extends_documentation_fragment: tencentcloud.cloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''

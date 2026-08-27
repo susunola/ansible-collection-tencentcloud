@@ -170,6 +170,24 @@ def assume_role_credential(module, base_credential):
     )
 
 
+def maybe_assume_role(module, secret_id, secret_key, token=None):
+    """Return the final ``(secret_id, secret_key, token)`` triple.
+
+    When ``role_arn`` is set, the long-lived credentials are exchanged for
+    temporary ones via the STS ``AssumeRole`` API (reusing the
+    :func:`_assume_role` seam) and the temporary triple is returned;
+    otherwise the input credentials pass through unchanged. Used by
+    non-API-3.0 clients (COS) that build their own credential objects but
+    still need role assumption.
+    """
+    if not module.params.get("role_arn"):
+        return secret_id, secret_key, token
+    require_sdk(module)
+    base_credential = tc_credential.Credential(secret_id, secret_key, token)
+    credentials = _assume_role(module, base_credential).Credentials
+    return credentials.TmpSecretId, credentials.TmpSecretKey, credentials.Token
+
+
 def create_client_profile(module, default_endpoint):
     """Create a consistent SDK profile for every service client."""
     require_sdk(module)

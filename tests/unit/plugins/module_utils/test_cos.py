@@ -155,3 +155,92 @@ def test_list_buckets_empty():
             return {"Buckets": None}
 
     assert cos.list_buckets(EmptyClient()) == []
+
+
+class FakeCosConfig(object):
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+
+
+class FakeCosS3Client(object):
+    def __init__(self, config):
+        self.config = config
+
+
+class FakeApi3CredentialModule(object):
+    class Credential(object):
+        def __init__(self, secret_id, secret_key, token=None):
+            self.secret_id = secret_id
+            self.secret_key = secret_key
+            self.token = token
+
+
+class FakeTempCredentials(object):
+    TmpSecretId = "tmp-akid"
+    TmpSecretKey = "tmp-secret"
+    Token = "tmp-token"
+
+
+class FakeAssumeRoleResponse(object):
+    Credentials = FakeTempCredentials()
+
+
+COS_PARAMS = {
+    "secret_id": "akid-test",
+    "secret_key": "secret-test",
+    "token": None,
+    "region": "ap-guangzhou",
+    "timeout": 60,
+    "endpoint": None,
+    "user_agent": None,
+    "role_arn": None,
+    "role_session_name": "ansible-tencentcloud",
+    "role_session_duration": 7200,
+}
+
+
+def _fake_cos_sdk(monkeypatch):
+    """Make cos.py believe both SDKs are present, with fake classes."""
+    monkeypatch.setattr(cos, "HAS_COS_SDK", True)
+    monkeypatch.setattr(cos, "CosConfig", FakeCosConfig, raising=False)
+    monkeypatch.setattr(cos, "CosS3Client", FakeCosS3Client, raising=False)
+    monkeypatch.setattr(cos.api3_client, "HAS_TENCENTCLOUD_SDK", True)
+    monkeypatch.setattr(
+        cos.api3_client, "tc_credential", FakeApi3CredentialModule, raising=False
+    )
+
+
+def test_create_cos_client_with_role_arn_uses_temporary_credentials(monkeypatch):
+    _fake_cos_sdk(monkeypatch)
+    captured = {}
+
+    def fake_assume_role(module, base_credential):
+        captured["base_credential"] = base_credential
+        return FakeAssumeRoleResponse()
+
+    monkeypatch.setattr(cos.api3_client, "_assume_role", fake_assume_role)
+    params = dict(COS_PARAMS, role_arn="qcs::cam::uin/1:roleName/ops")
+    module = SimpleNamespace(params=params)
+    s3_client = cos.create_cos_client(module)
+
+    assert captured["base_credential"].secret_id == "akid-test"
+    assert s3_client.config.SecretId == "tmp-akid"
+    assert s3_client.config.SecretKey == "tmp-secret"
+    assert s3_client.config.Token == "tmp-token"
+    assert s3_client.config.Region == "ap-guangzhou"
+
+
+def test_create_cos_client_without_role_arn_keeps_credentials(monkeypatch):
+    _fake_cos_sdk(monkeypatch)
+
+    def explode(module, credential):
+        raise AssertionError("STS must not be called without role_arn")
+
+    monkeypatch.setattr(cos.api3_client, "_assume_role", explode)
+    params = dict(COS_PARAMS, token="session-token")
+    module = SimpleNamespace(params=params)
+    s3_client = cos.create_cos_client(module)
+
+    assert s3_client.config.SecretId == "akid-test"
+    assert s3_client.config.SecretKey == "secret-test"
+    assert s3_client.config.Token == "session-token"

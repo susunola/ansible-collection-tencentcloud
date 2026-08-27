@@ -101,7 +101,8 @@ class FakeModule(object):
 def test_build_describe_request_by_id():
     request = build_describe_request(FakeModels, "subnet-123", None, None)
     assert request.SubnetIds == ["subnet-123"]
-    assert request.Limit == 100
+    # The VPC API only accepts Limit as a string.
+    assert request.Limit == "100"
     assert not hasattr(request, "Filters")
 
 
