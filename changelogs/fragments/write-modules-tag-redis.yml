@@ -1,3 +1,0 @@
-minor_changes:
-  - tag - add the generic ``tag`` module to attach, update and detach a tag key on arbitrary QCS resources (any service type and resource prefix) through the ``tag.v20180813`` API with idempotency and check mode, reusing the collection tagging helpers.
-  - redis_instance - add the ``redis_instance`` module to create, rename and destroy Redis instances (postpaid and prepaid destroy flows) through the ``redis.v20180412`` API with idempotency and check mode.

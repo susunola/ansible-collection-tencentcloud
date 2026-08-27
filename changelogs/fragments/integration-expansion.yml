@@ -1,3 +1,0 @@
----
-minor_changes:
-  - integration - add ``cfs_file_system`` and ``clb_http`` integration targets (create/idempotency/check-mode/delete over a throwaway VPC, effectively free — CFS SD storage billed per GiB-hour, internal CLB without bandwidth), extend the ``cleanup`` sweeper to collect and delete leftover CLB load balancers and CFS file systems in reverse dependency order, and include the new targets in the integration workflow default set.

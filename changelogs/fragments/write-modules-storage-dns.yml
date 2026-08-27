@@ -1,3 +1,0 @@
-minor_changes:
-  - cbs_disk - add the ``cbs_disk`` module to manage Tencent Cloud CBS cloud disks (create, rename, grow, attach, detach, terminate) through the ``cbs.v20170312`` API with idempotency, check mode and attachment state waiting.
-  - dnspod_record - add the ``dnspod_record`` module to manage Tencent Cloud DNSPod DNS records (create, update value/TTL/weight/MX/remark/status, delete) through the ``dnspod.v20210323`` API with idempotency and check mode.

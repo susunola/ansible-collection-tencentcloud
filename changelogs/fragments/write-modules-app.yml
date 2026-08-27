@@ -1,4 +1,0 @@
-minor_changes:
-  - ssm_parameter - add the ``ssm_parameter`` module to manage Tencent Cloud SSM secrets (create with plain-text or binary values, update value, soft or immediate delete) through the ``ssm.v20190923`` API with idempotency and check mode; secret values are no_log.
-  - scf_function - add the ``scf_function`` module to manage Tencent Cloud SCF functions (create from local zip or COS package, update code/config, delete) through the ``scf.v20180416`` API with idempotency and check mode.
-  - ckafka_topic - add the ``ckafka_topic`` module to manage CKafka topics (create, scale partitions/replicas, update retention and note, delete) through the ``ckafka.v20190819`` API with idempotency and check mode.

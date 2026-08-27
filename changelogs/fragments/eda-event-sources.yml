@@ -1,4 +1,0 @@
----
-minor_changes:
-  - cls_topic event_source - add the ``cls_topic`` event source for Event-Driven Ansible that polls a CLS log topic and yields each new matching log record as an event (rolling ``from``/``to`` window, context-aware pagination, error events keep the source alive).
-  - cmq_queue event_source - add the ``cmq_queue`` event source for Event-Driven Ansible that long-polls a CMQ queue and yields each received message as an event, with optional delete-after-yield acknowledgement and idle interval.

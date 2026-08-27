@@ -1,4 +1,0 @@
----
-minor_changes:
-  - tc_launch role - add the ``tc_launch`` role that wraps ``cvm_instance`` with sensible defaults for launching CVM instances, including ``exact_count``/``count_tag`` pool management and waiter tuning.
-  - tc_clb_http role - add the ``tc_clb_http`` role that provisions a CLB load balancer with an HTTP listener and backend target set in a single call, wrapping ``clb_load_balancer``, ``clb_listener`` and ``clb_listener_target``.

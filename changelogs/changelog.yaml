@@ -100,6 +100,272 @@ releases:
     - required-params-curation.yml
     - user-agent-request-client.yml
     release_date: '2026-08-27'
+  0.12.0:
+    changes:
+      breaking_changes:
+      - antiddos_d_do_s_block_record_info - renamed to antiddos_ddos_block_record_info;
+        the returned key changed from ``d_do_s_block_records`` to ``ddos_block_records``.
+      - captcha_captcha_user_all_app_id_info - renamed to captcha_user_all_app_id_info;
+        the returned key changed from ``captcha_user_all_app_ids`` to ``user_all_app_ids``.
+      - dcdb_dcdb_instance_info - renamed to dcdb_instance_info; the returned key
+        changed from ``dcdb_instances`` to ``instances`` and the ids option from ``dcdb_instance_ids``
+        to ``instance_ids``.
+      - sms_sms_sign_info - renamed to sms_sign_info; the returned key changed from
+        ``sms_signs`` to ``signs``.
+      - vcube_vcube_resource_info - renamed to vcube_resource_info; the returned key
+        changed from ``vcube_resources`` to ``resources``.
+      bugfixes:
+      - alb_security_policy_info - pass the documented ``security_policy_ids`` and
+        ``filters`` options through to the SDK request instead of dropping them (token-paginated
+        info modules generated with ids or filters options called ``build_request``
+        with the wrong signature and raised TypeError at runtime). cloudrc_resource_info
+        gets the same fix for ``filters``.
+      - ckafka_topic - scale partitions through ``CreatePartitionRequest`` with a
+        delta instead of the nonexistent ``PartitionNum`` attribute on ``ModifyTopicAttributesRequest``;
+        shrinking is now rejected with a clear error.
+      - scf_function - set ``Publish`` on ``UpdateFunctionCodeRequest`` as the string
+        ``"TRUE"`` the SDK declares, not a boolean.
+      - ssm_parameter - use ``RecoveryWindowInDays`` for delete instead of the int-typed
+        ``DeleteMode`` attribute.
+      minor_changes:
+      - callback - add the ``tencentcloud_resource_actions`` aggregate callback that
+        summarises every Tencent Cloud API call made during a play (operation, request
+        id, duration, success/failure) and prints a machine-readable JSON trail; every
+        module now records its SDK calls through ``sdk_call`` and attaches them to
+        the result as ``tc_api_calls``.
+      - cbs_disk - add the ``cbs_disk`` module to manage Tencent Cloud CBS cloud disks
+        (create, rename, grow, attach, detach, terminate) through the ``cbs.v20170312``
+        API with idempotency, check mode and attachment state waiting.
+      - cdb_instance - add the ``cdb_instance`` module to create, rename and isolate
+        MySQL instances through the ``cdb.v20170320`` API with idempotency and check
+        mode, including project, VPC, security group and tag placement.
+      - cfs_file_system - add the ``cfs_file_system`` module to manage Tencent Cloud
+        CFS file systems (create, update name/size limit, delete) through the ``cfs.v20190719``
+        API with idempotency and check mode.
+      - ci - extend the sanity matrix to ansible-core 2.19/2.20/2.21 (Python 3.12/3.13)
+        and add a whole-repo ``ruff check`` step so lint violations fail CI instead
+        of only local runs.
+      - ckafka_topic - add the ``ckafka_topic`` module to manage CKafka topics (create,
+        scale partitions/replicas, update retention and note, delete) through the
+        ``ckafka.v20190819`` API with idempotency and check mode.
+      - clb_rule - add the ``clb_rule`` module to manage Tencent Cloud CLB L7 forwarding
+        rules (create, update scheduler/session persistence/forward type/health check,
+        delete) through the ``clb.v20180317`` API with idempotency and check mode;
+        the returned ``location_id`` plugs into ``clb_listener_target`` for rule-level
+        target management.
+      - cls_topic event_source - add the ``cls_topic`` event source for Event-Driven
+        Ansible that polls a CLS log topic and yields each new matching log record
+        as an event (rolling ``from``/``to`` window, context-aware pagination, error
+        events keep the source alive).
+      - cmq_queue event_source - add the ``cmq_queue`` event source for Event-Driven
+        Ansible that long-polls a CMQ queue and yields each received message as an
+        event, with optional delete-after-yield acknowledgement and idle interval.
+      - cos_bucket - manage the bucket CORS configuration with the new ``cors`` parameter
+        (replacing rules, empty list removes all) and the lifecycle configuration
+        with the new ``lifecycle`` parameter (prefix-matched rules with day-based
+        expiration, storage-class transitions, noncurrent-version transitions and
+        incomplete-multipart-upload aborts).
+      - cos_bucket_info - the bucket description now includes the CORS and lifecycle
+        configurations alongside ACL, versioning and tags.
+      - cvm_image - add the ``cvm_image`` module to manage Tencent Cloud CVM custom
+        images (create, rename, describe, delete) through the ``cvm.v20170312`` API
+        with idempotency and check mode.
+      - dnspod_record - add the ``dnspod_record`` module to manage Tencent Cloud DNSPod
+        DNS records (create, update value/TTL/weight/MX/remark/status, delete) through
+        the ``dnspod.v20210323`` API with idempotency and check mode.
+      - eip - support updating ``internet_max_bandwidth_out`` on existing addresses
+        via ``ModifyAddressesBandwidth`` and switching ``internet_charge_type`` between
+        ``BANDWIDTH_PREPAID_BY_MONTH`` and ``TRAFFIC_POSTPAID_BY_HOUR`` via ``ModifyAddressInternetChargeType``;
+        both were previously allocation-only no-ops.
+      - "generate_info_modules - add ``validate_specs`` to the generator \u2014 every
+        curated and auto SPECS entry is structurally audited (missing keys, bad pagination
+        types, duplicate module/param names, malformed ids/filters, deep dotted response
+        paths, region collisions) and generation/``--check`` fails on any problem."
+      - generator - discover and generate zero-argument single-object info modules
+        (pagination_type "none") for products that expose no usable list API; adds
+        ba_auth_info, iap_login_session_duration_info, lkeap_character_usage_info
+        and tdid_over_summary_info.
+      - generator - scripts/info_specs_auto.py now carries a ``GENERATED_SDK_VERSION``
+        stamp recording the tencentcloud SDK release the auto specs were discovered
+        against, and a new scripts/check_sdk_drift.py compares CI's installed SDK
+        to that stamp so stale specs are regenerated deliberately instead of shipping
+        silently (wired into the CI sanity job).
+      - generator - the auto-discovered spec names drop the redundant product-prefix
+        repetition (dcdb_dcdb_instance_info -> dcdb_instance_info) and the mangle
+        of all-caps abbreviations (antiddos_d_do_s_block_record_info -> antiddos_ddos_block_record_info).
+      - info modules - every generated ``*_info`` module now returns ``request_id``
+        (the request ID of the last API call) alongside the resource list and ``total_count``,
+        so playbooks can cross-reference cloud audit logs.
+      - info modules - every generated ``*_info`` module now routes SDK call failures
+        through ``fail_json`` with the error code and request id (pinned by new error-path
+        unit tests for module_utils sdk_call and for every generated module), so a
+        failed API call never surfaces as a traceback.
+      - "integration - add ``cfs_file_system`` and ``clb_http`` integration targets
+        (create/idempotency/check-mode/delete over a throwaway VPC, effectively free
+        \u2014 CFS SD storage billed per GiB-hour, internal CLB without bandwidth),
+        extend the ``cleanup`` sweeper to collect and delete leftover CLB load balancers
+        and CFS file systems in reverse dependency order, and include the new targets
+        in the integration workflow default set."
+      - lighthouse_instance - add the ``lighthouse_instance`` module to manage Tencent
+        Cloud Lighthouse instances (create, start, stop, isolate) through the ``lighthouse.v20200324``
+        API with idempotency and check mode.
+      - module tiers - add ``scripts/check_module_tiers.py`` and a CI gate that classify
+        every module as generated (``# Generated by scripts/generate_info_modules.py``
+        marker) or core (hand-written, listed in ``CORE_MODULES``); an unclassified
+        module fails CI, preventing hand-written modules from being silently overwritten
+        by the generator; see ``docs/module_tiers.md``.
+      - modules - construct SDK tag models by attribute assignment instead of keyword
+        arguments so every write module works against the real Tencent Cloud SDK classes.
+      - nat_gateway - add the ``nat_gateway`` module to manage Tencent Cloud NAT gateways
+        (create with EIP allocation, update name/bandwidth/deletion protection, delete
+        with risk override) through the ``vpc.v20170312`` API with idempotency and
+        check mode.
+      - peering_connection - add the ``peering_connection`` module to manage Tencent
+        Cloud VPC peering connections (create, update name/bandwidth/charge type,
+        accept pending connections, delete) through the ``vpc.v20170312`` API with
+        idempotency and check mode.
+      - redis_instance - add the ``redis_instance`` module to create, rename and destroy
+        Redis instances (postpaid and prepaid destroy flows) through the ``redis.v20180412``
+        API with idempotency and check mode.
+      - scf_function - add the ``scf_function`` module to manage Tencent Cloud SCF
+        functions (create from local zip or COS package, update code/config, delete)
+        through the ``scf.v20180416`` API with idempotency and check mode.
+      - ssl_certificate - add the ``ssl_certificate`` module to upload, rename, deploy
+        (via ``DeployCertificateInstance``) and delete SSL certificates through the
+        ``ssl.v20191205`` API with idempotency and check mode, closing the loop with
+        the ``cert_id`` of ``clb_listener``/``clb_rule``.
+      - ssm_parameter - add the ``ssm_parameter`` module to manage Tencent Cloud SSM
+        secrets (create with plain-text or binary values, update value, soft or immediate
+        delete) through the ``ssm.v20190923`` API with idempotency and check mode;
+        secret values are no_log.
+      - tag - add the generic ``tag`` module to attach, update and detach a tag key
+        on arbitrary QCS resources (any service type and resource prefix) through
+        the ``tag.v20180813`` API with idempotency and check mode, reusing the collection
+        tagging helpers.
+      - tat connection - add the ``tat`` connection plugin that runs commands and
+        transfers files on Tencent Cloud CVM/Lighthouse instances through the TAT
+        agent (``CreateCommand`` + ``InvokeCommand`` with ``DescribeInvocationTasks``
+        polling); no public IP or SSH port is required, only the TAT agent and ``tencentcloud-sdk-python-tat``
+        on the controller.
+      - tc_clb_http role - add the ``tc_clb_http`` role that provisions a CLB load
+        balancer with an HTTP listener and backend target set in a single call, wrapping
+        ``clb_load_balancer``, ``clb_listener`` and ``clb_listener_target``.
+      - tc_launch role - add the ``tc_launch`` role that wraps ``cvm_instance`` with
+        sensible defaults for launching CVM instances, including ``exact_count``/``count_tag``
+        pool management and waiter tuning.
+      - tencentcloud_clb inventory - add the ``tencentcloud_clb`` inventory plugin
+        that lists CLB load balancers per region with their listeners (protocol/port)
+        and backend targets, supporting custom backend hostname templates and caching.
+      - tencentcloud_sg inventory - add the ``tencentcloud_sg`` inventory plugin that
+        lists security groups with their associated network interfaces (deduplicated
+        hosts accumulate ``sg_ids``/``sg_names``/``eni_ids``), supporting caching.
+      - tests - add integration targets for cam_user, cos_bucket and key_pair (cheap,
+        run by default in CI), plus opt-in targets for cvm_image (behind TENCENTCLOUD_CVM_IMAGE_SOURCE_INSTANCE)
+        and lighthouse (behind TENCENTCLOUD_LH_BUNDLE_ID / TENCENTCLOUD_LH_BLUEPRINT_ID)
+        that are skipped when the operator has not supplied billable resource inputs.
+      - tests - extend the cleanup sweeper to also remove NAT gateways, key pairs,
+        Lighthouse instances and CAM sub-users left behind by failed or cancelled
+        integration runs, in reverse dependency order.
+      - tests - raise the combined module_utils/modules coverage gate in CI from 50%
+        to 70% now that every write module is exercised by the SDK contract suite
+        (currently 79%).
+      - tke_cluster - add the ``tke_cluster`` module to create, update and delete
+        Kubernetes clusters through the ``tke.v20180525`` API with idempotency and
+        check mode, including CIDR settings, deletion protection and node termination
+        policy on delete.
+      - vpn_gateway - add the ``vpn_gateway`` module to manage Tencent Cloud VPN gateways
+        (create IPsec/SSL gateways, update name/connection cap/BGP ASN, delete) through
+        the ``vpc.v20170312`` API with idempotency and check mode.
+    fragments:
+    - callback-resource-actions.yml
+    - ci-lint-coverage.yml
+    - cos-bucket-config-face.yml
+    - eda-event-sources.yml
+    - generated-module-polish-batch11.yml
+    - integration-expansion-batch10.yml
+    - integration-expansion.yml
+    - inventory-plugins.yml
+    - module-tier-governance.yml
+    - roles-launch-clb.yml
+    - sdk-drift-sentinel-and-fail-paths.yml
+    - tat-connection.yml
+    - write-modules-app.yml
+    - write-modules-cdb-tke.yml
+    - write-modules-clb-ssl.yml
+    - write-modules-cvm-image.yml
+    - write-modules-network.yml
+    - write-modules-storage-dns.yml
+    - write-modules-tag-redis.yml
+    modules:
+    - description: Manage Tencent Cloud CBS cloud disks
+      name: cbs_disk
+      namespace: ''
+    - description: Manage Tencent Cloud CDB MySQL instances
+      name: cdb_instance
+      namespace: ''
+    - description: Manage Tencent Cloud CFS file systems
+      name: cfs_file_system
+      namespace: ''
+    - description: Manage Tencent Cloud CKafka topics
+      name: ckafka_topic
+      namespace: ''
+    - description: Manage Tencent Cloud CLB L7 forwarding rules
+      name: clb_rule
+      namespace: ''
+    - description: Manage Tencent Cloud CVM custom images
+      name: cvm_image
+      namespace: ''
+    - description: Manage Tencent Cloud DNSPod DNS records
+      name: dnspod_record
+      namespace: ''
+    - description: Manage Tencent Cloud Lighthouse instances
+      name: lighthouse_instance
+      namespace: ''
+    - description: Manage Tencent Cloud NAT gateways
+      name: nat_gateway
+      namespace: ''
+    - description: Manage Tencent Cloud VPC peering connections
+      name: peering_connection
+      namespace: ''
+    - description: Manage Tencent Cloud Redis instances
+      name: redis_instance
+      namespace: ''
+    - description: Manage Tencent Cloud SCF functions
+      name: scf_function
+      namespace: ''
+    - description: Manage Tencent Cloud SSL certificates
+      name: ssl_certificate
+      namespace: ''
+    - description: Manage Tencent Cloud SSM secrets (parameters)
+      name: ssm_parameter
+      namespace: ''
+    - description: Manage tags on arbitrary Tencent Cloud resources
+      name: tag
+      namespace: ''
+    - description: Manage Tencent Cloud TKE clusters
+      name: tke_cluster
+      namespace: ''
+    - description: Manage Tencent Cloud VPN gateways
+      name: vpn_gateway
+      namespace: ''
+    plugins:
+      callback:
+      - description: summarise Tencent Cloud API calls made during a play
+        name: tencentcloud_resource_actions
+        namespace: null
+      connection:
+      - description: Execute commands and transfer files on Tencent Cloud instances
+          via TAT
+        name: tat
+        namespace: null
+      inventory:
+      - description: Tencent Cloud CLB dynamic inventory source (backend instances)
+        name: tencentcloud_clb
+        namespace: null
+      - description: Tencent Cloud security group dynamic inventory source
+        name: tencentcloud_sg
+        namespace: null
+    release_date: '2026-08-27'
   0.5.0:
     changes:
       bugfixes:

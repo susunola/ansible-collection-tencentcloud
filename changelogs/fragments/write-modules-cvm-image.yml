@@ -1,5 +1,0 @@
----
-minor_changes:
-  - cvm_image - add the ``cvm_image`` module to manage Tencent Cloud CVM custom images (create, rename, describe, delete) through the ``cvm.v20170312`` API with idempotency and check mode.
-  - cfs_file_system - add the ``cfs_file_system`` module to manage Tencent Cloud CFS file systems (create, update name/size limit, delete) through the ``cfs.v20190719`` API with idempotency and check mode.
-  - lighthouse_instance - add the ``lighthouse_instance`` module to manage Tencent Cloud Lighthouse instances (create, start, stop, isolate) through the ``lighthouse.v20200324`` API with idempotency and check mode.

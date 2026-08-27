@@ -1,4 +1,0 @@
----
-minor_changes:
-  - tencentcloud_clb inventory - add the ``tencentcloud_clb`` inventory plugin that lists CLB load balancers per region with their listeners (protocol/port) and backend targets, supporting custom backend hostname templates and caching.
-  - tencentcloud_sg inventory - add the ``tencentcloud_sg`` inventory plugin that lists security groups with their associated network interfaces (deduplicated hosts accumulate ``sg_ids``/``sg_names``/``eni_ids``), supporting caching.

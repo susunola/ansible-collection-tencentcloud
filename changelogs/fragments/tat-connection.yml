@@ -1,3 +1,0 @@
----
-minor_changes:
-  - tat connection - add the ``tat`` connection plugin that runs commands and transfers files on Tencent Cloud CVM/Lighthouse instances through the TAT agent (``CreateCommand`` + ``InvokeCommand`` with ``DescribeInvocationTasks`` polling); no public IP or SSH port is required, only the TAT agent and ``tencentcloud-sdk-python-tat`` on the controller.
