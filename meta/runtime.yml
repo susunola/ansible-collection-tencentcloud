@@ -64,6 +64,7 @@ action_groups:
     - clb_listener_target
     - clb_load_balancer
     - clb_load_balancer_info
+    - clb_rule
     - cloudaudit_event_info
     - cloudhsm_vsm_info
     - cloudrc_resource_info
@@ -184,6 +185,7 @@ action_groups:
     - sms_sms_sign_info
     - sqlserver_instance_info
     - ssa_check_config_asset_info
+    - ssl_certificate
     - ssl_certificate_info
     - sslpod_domain_info
     - ssm_parameter

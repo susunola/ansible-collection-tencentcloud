@@ -1,0 +1,3 @@
+minor_changes:
+  - clb_rule - add the ``clb_rule`` module to manage Tencent Cloud CLB L7 forwarding rules (create, update scheduler/session persistence/forward type/health check, delete) through the ``clb.v20180317`` API with idempotency and check mode; the returned ``location_id`` plugs into ``clb_listener_target`` for rule-level target management.
+  - ssl_certificate - add the ``ssl_certificate`` module to upload, rename, deploy (via ``DeployCertificateInstance``) and delete SSL certificates through the ``ssl.v20191205`` API with idempotency and check mode, closing the loop with the ``cert_id`` of ``clb_listener``/``clb_rule``.

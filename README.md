@@ -24,6 +24,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `clb_listener` | Manage listeners on Tencent Cloud CLB load balancers |
 | `clb_listener_target` | Manage backend targets of Tencent Cloud CLB listeners |
 | `clb_load_balancer` | Manage Tencent Cloud CLB load balancers |
+| `clb_rule` | Manage Tencent Cloud CLB L7 forwarding rules |
 | `cos_bucket` | Manage Tencent Cloud COS buckets |
 | `cvm_image` | Manage Tencent Cloud CVM custom images |
 | `cvm_instance` | Manage Tencent Cloud CVM instances |
@@ -37,6 +38,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `scf_function` | Manage Tencent Cloud SCF functions |
 | `security_group` | Manage Tencent Cloud security groups |
 | `security_group_rule` | Manage Tencent Cloud security group rules |
+| `ssl_certificate` | Manage Tencent Cloud SSL certificates |
 | `ssm_parameter` | Manage Tencent Cloud SSM secrets (parameters) |
 | `subnet` | Manage Tencent Cloud VPC subnets |
 | `vpc` | Manage Tencent Cloud VPCs |
