@@ -235,3 +235,70 @@ releases:
       name: tcr_instance_info
       namespace: ''
     release_date: '2026-08-27'
+  0.7.0:
+    changes:
+      minor_changes:
+      - billing_balance_info - add a generated read-only module returning the account
+        balance (unpaginated single call).
+      - cdn_domain_info - add a generated read-only module querying CDN domains.
+      - cloudaudit_event_info - add a generated read-only module querying CloudAudit
+        events (token-paginated LookUpEvents).
+      - cls_topic_info - add a generated read-only module querying CLS log topics.
+      - cwp_machine_info - add a generated read-only module querying Cloud Workload
+        Protection machines.
+      - gaap_proxy_info - add a generated read-only module querying GAAP proxies.
+      - monitor_alarm_policy_info - add a generated read-only module querying Cloud
+        Monitor alarm policies (page-number paginated).
+      - nat_gateway_info - add a generated read-only module querying NAT gateways.
+      - organization_member_info - add a generated read-only module querying Organization
+        members.
+      - scripts - the _info generator now supports token-based and page-number-based
+        pagination, unpaginated single-object responses, and per-service filter models,
+        so services with non-standard list APIs can be generated too.
+      - ssl_certificate_info - add a generated read-only module querying SSL certificates.
+      - tat_command_info - add a generated read-only module querying TAT commands.
+      - vpn_gateway_info - add a generated read-only module querying VPN gateways.
+      - waf_instance_info - add a generated read-only module querying WAF instances.
+    fragments:
+    - 9-info-batch2.yml
+    modules:
+    - description: Gather information about the Tencent Cloud account balance
+      name: billing_balance_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud CDN domains
+      name: cdn_domain_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud CloudAudit events
+      name: cloudaudit_event_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud CLS log topics
+      name: cls_topic_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud CWP machines
+      name: cwp_machine_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud GAAP proxies
+      name: gaap_proxy_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud Monitor alarm policies
+      name: monitor_alarm_policy_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud NAT gateways
+      name: nat_gateway_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud Organization members
+      name: organization_member_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud SSL certificates
+      name: ssl_certificate_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud TAT commands
+      name: tat_command_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud VPN gateways
+      name: vpn_gateway_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud WAF instances
+      name: waf_instance_info
+      namespace: ''
+    release_date: '2026-08-27'

@@ -1,8 +1,46 @@
 ===============================
-Tencent Cloud 0.6 Release Notes
+Tencent Cloud 0.7 Release Notes
 ===============================
 
 .. contents:: Topics
+
+v0.7.0
+======
+
+Minor Changes
+-------------
+
+- billing_balance_info - add a generated read-only module returning the account balance (unpaginated single call).
+- cdn_domain_info - add a generated read-only module querying CDN domains.
+- cloudaudit_event_info - add a generated read-only module querying CloudAudit events (token-paginated LookUpEvents).
+- cls_topic_info - add a generated read-only module querying CLS log topics.
+- cwp_machine_info - add a generated read-only module querying Cloud Workload Protection machines.
+- gaap_proxy_info - add a generated read-only module querying GAAP proxies.
+- monitor_alarm_policy_info - add a generated read-only module querying Cloud Monitor alarm policies (page-number paginated).
+- nat_gateway_info - add a generated read-only module querying NAT gateways.
+- organization_member_info - add a generated read-only module querying Organization members.
+- scripts - the _info generator now supports token-based and page-number-based pagination, unpaginated single-object responses, and per-service filter models, so services with non-standard list APIs can be generated too.
+- ssl_certificate_info - add a generated read-only module querying SSL certificates.
+- tat_command_info - add a generated read-only module querying TAT commands.
+- vpn_gateway_info - add a generated read-only module querying VPN gateways.
+- waf_instance_info - add a generated read-only module querying WAF instances.
+
+New Modules
+-----------
+
+- billing_balance_info - Gather information about the Tencent Cloud account balance
+- cdn_domain_info - Gather information about Tencent Cloud CDN domains
+- cloudaudit_event_info - Gather information about Tencent Cloud CloudAudit events
+- cls_topic_info - Gather information about Tencent Cloud CLS log topics
+- cwp_machine_info - Gather information about Tencent Cloud CWP machines
+- gaap_proxy_info - Gather information about Tencent Cloud GAAP proxies
+- monitor_alarm_policy_info - Gather information about Tencent Cloud Monitor alarm policies
+- nat_gateway_info - Gather information about Tencent Cloud NAT gateways
+- organization_member_info - Gather information about Tencent Cloud Organization members
+- ssl_certificate_info - Gather information about Tencent Cloud SSL certificates
+- tat_command_info - Gather information about Tencent Cloud TAT commands
+- vpn_gateway_info - Gather information about Tencent Cloud VPN gateways
+- waf_instance_info - Gather information about Tencent Cloud WAF instances
 
 v0.6.0
 ======

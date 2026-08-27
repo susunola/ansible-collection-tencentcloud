@@ -33,6 +33,11 @@ plugins:
       name: as_scaling_group_info
       namespace: ''
       version_added: 0.6.0
+    billing_balance_info:
+      description: Gather information about the Tencent Cloud account balance
+      name: billing_balance_info
+      namespace: ''
+      version_added: 0.7.0
     cam_policy:
       description: Manage Tencent Cloud CAM policies
       name: cam_policy
@@ -73,6 +78,11 @@ plugins:
       name: cdb_instance_info
       namespace: ''
       version_added: 0.4.0
+    cdn_domain_info:
+      description: Gather information about Tencent Cloud CDN domains
+      name: cdn_domain_info
+      namespace: ''
+      version_added: 0.7.0
     cfs_file_system_info:
       description: Gather information about Tencent Cloud CFS file systems
       name: cfs_file_system_info
@@ -88,6 +98,16 @@ plugins:
       name: clb_load_balancer_info
       namespace: ''
       version_added: 0.4.0
+    cloudaudit_event_info:
+      description: Gather information about Tencent Cloud CloudAudit events
+      name: cloudaudit_event_info
+      namespace: ''
+      version_added: 0.7.0
+    cls_topic_info:
+      description: Gather information about Tencent Cloud CLS log topics
+      name: cls_topic_info
+      namespace: ''
+      version_added: 0.7.0
     cos_bucket:
       description: Manage Tencent Cloud COS buckets
       name: cos_bucket
@@ -108,6 +128,11 @@ plugins:
       name: cvm_instance_info
       namespace: ''
       version_added: 0.1.0
+    cwp_machine_info:
+      description: Gather information about Tencent Cloud CWP machines
+      name: cwp_machine_info
+      namespace: ''
+      version_added: 0.7.0
     cynosdb_cluster_info:
       description: Gather information about TencentDB for CynosDB clusters
       name: cynosdb_cluster_info
@@ -133,6 +158,11 @@ plugins:
       name: es_cluster_info
       namespace: ''
       version_added: 0.6.0
+    gaap_proxy_info:
+      description: Gather information about Tencent Cloud GAAP proxies
+      name: gaap_proxy_info
+      namespace: ''
+      version_added: 0.7.0
     key_pair:
       description: Manage Tencent Cloud CVM key pairs
       name: key_pair
@@ -163,6 +193,21 @@ plugins:
       name: mongodb_instance_info
       namespace: ''
       version_added: 0.4.0
+    monitor_alarm_policy_info:
+      description: Gather information about Tencent Cloud Monitor alarm policies
+      name: monitor_alarm_policy_info
+      namespace: ''
+      version_added: 0.7.0
+    nat_gateway_info:
+      description: Gather information about Tencent Cloud NAT gateways
+      name: nat_gateway_info
+      namespace: ''
+      version_added: 0.7.0
+    organization_member_info:
+      description: Gather information about Tencent Cloud Organization members
+      name: organization_member_info
+      namespace: ''
+      version_added: 0.7.0
     postgres_instance_info:
       description: Gather information about TencentDB for PostgreSQL instances
       name: postgres_instance_info
@@ -208,6 +253,11 @@ plugins:
       name: sqlserver_instance_info
       namespace: ''
       version_added: 0.6.0
+    ssl_certificate_info:
+      description: Gather information about Tencent Cloud SSL certificates
+      name: ssl_certificate_info
+      namespace: ''
+      version_added: 0.7.0
     subnet:
       description: Manage Tencent Cloud VPC subnets
       name: subnet
@@ -218,6 +268,11 @@ plugins:
       name: subnet_info
       namespace: ''
       version_added: 0.4.0
+    tat_command_info:
+      description: Gather information about Tencent Cloud TAT commands
+      name: tat_command_info
+      namespace: ''
+      version_added: 0.7.0
     tcr_instance_info:
       description: Gather information about Tencent Cloud TCR registries
       name: tcr_instance_info
@@ -238,9 +293,19 @@ plugins:
       name: vpc_info
       namespace: ''
       version_added: 0.2.0
+    vpn_gateway_info:
+      description: Gather information about Tencent Cloud VPN gateways
+      name: vpn_gateway_info
+      namespace: ''
+      version_added: 0.7.0
+    waf_instance_info:
+      description: Gather information about Tencent Cloud WAF instances
+      name: waf_instance_info
+      namespace: ''
+      version_added: 0.7.0
   netconf: {}
   shell: {}
   strategy: {}
   test: {}
   vars: {}
-version: 0.6.0
+version: 0.7.0
