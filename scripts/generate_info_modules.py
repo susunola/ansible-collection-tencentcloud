@@ -1817,7 +1817,11 @@ def _return_block(spec):
 {spec['result_key']}:
   description: {spec['return_items_doc']}
   returned: always
-  type: dict"""
+  type: dict
+request_id:
+  description: Request ID of the API call, for cross-referencing cloud audit logs.
+  returned: always
+  type: str"""
     return f"""\
 {spec['result_key']}:
   description: {spec['return_items_doc']}
@@ -1827,7 +1831,11 @@ def _return_block(spec):
 total_count:
   description: {spec['return_total_doc']}
   returned: always
-  type: int"""
+  type: int
+request_id:
+  description: Request ID of the last API call, for cross-referencing cloud audit logs.
+  returned: always
+  type: str"""
 
 
 def _build_request_source(spec):
@@ -2051,6 +2059,10 @@ def _run_module_token_source(spec):
                      else "None")
     build_args = ["models"]
     build_args += [f'module.params["{param["name"]}"]' for param in spec["extra_params"]]
+    if spec.get("ids") and not spec.get("ids_action"):
+        build_args.append(f'module.params["{spec["ids"]["param"]}"]')
+    if spec.get("filters"):
+        build_args.append('module.params["filters"]')
     build_args += ["next_token", page_size_arg]
     build_call = "build_request(\n            " + ",\n            ".join(build_args) + ")"
     argument_lines = _argument_spec_lines(spec)
@@ -2058,12 +2070,15 @@ def _run_module_token_source(spec):
         update = f"argument_spec.update({{\n{argument_lines}\n    }})"
     else:
         update = "argument_spec.update({})"
+    mutually_exclusive = ""
+    if spec["ids"] and spec["filters"] and not spec.get("ids_action"):
+        mutually_exclusive = (f'\n        mutually_exclusive=[("{spec["ids"]["param"]}", "filters")],')
     return f"""\
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     {update}
     module = AnsibleModule(
-        argument_spec=argument_spec,
+        argument_spec=argument_spec,{mutually_exclusive}
         supports_check_mode=True,
     )
 {_client_setup_source(spec)}    {spec['result_key']} = []
@@ -2079,7 +2094,9 @@ def run_module():
             break
     if total_count is None:
         total_count = len({spec['result_key']})
-    module.exit_json(changed=False, {spec['result_key']}={spec['result_key']}, total_count=total_count)
+    request_id = getattr(response, "RequestId", None)
+    module.exit_json(changed=False, {spec['result_key']}={spec['result_key']},
+                     total_count=total_count, request_id=request_id)
 """
 
 
@@ -2114,17 +2131,27 @@ def run_module():
     items = {items_expr} or []
     {spec['result_key']} = [serialize_sdk_object(item) for item in items]
     module.exit_json(changed=False, {spec['result_key']}={spec['result_key']},
-                     total_count=len({spec['result_key']}))
+                     total_count=len({spec['result_key']}), request_id=response.RequestId)
 """
 
 
 def _run_module_none_source(spec):
-    """Render run_module for unpaginated single-object APIs (billing)."""
+    """Render run_module for unpaginated single-object APIs (billing, ba)."""
     argument_lines = _argument_spec_lines(spec)
     if argument_lines:
         update = f"argument_spec.update({{\n{argument_lines}\n    }})"
     else:
         update = "argument_spec.update({})"
+    build_args = ["models"]
+    build_args += [f'module.params["{param["name"]}"]' for param in spec["extra_params"]]
+    if spec.get("ids") and not spec.get("ids_action"):
+        build_args.append(f'module.params["{spec["ids"]["param"]}"]')
+    if spec.get("filters"):
+        build_args.append('module.params["filters"]')
+    build_args += ["0", "0"]
+    build_call = "build_request(" + ", ".join(build_args) + ")"
+    if len(build_call) > 79:
+        build_call = "build_request(\n            " + ",\n            ".join(build_args) + ")"
     return f"""\
 def run_module():
     argument_spec = tencentcloud_argument_spec()
@@ -2133,11 +2160,12 @@ def run_module():
         argument_spec=argument_spec,
         supports_check_mode=True,
     )
-{_client_setup_source(spec)}    request = build_request(models, 0, 0)
+{_client_setup_source(spec)}    request = {build_call}
     response = sdk_call(module, client.{spec['action']}, request)
     {spec['result_key']} = serialize_sdk_object(response)
     {spec['result_key']}.pop("RequestId", None)
-    module.exit_json(changed=False, {spec['result_key']}={spec['result_key']})
+    module.exit_json(changed=False, {spec['result_key']}={spec['result_key']},
+                     request_id=response.RequestId)
 """
 
 
@@ -2178,7 +2206,7 @@ def _run_module_source(spec):
         items = response.{ids_action['response_items']} or []
         {spec['result_key']} = [serialize_sdk_object(item) for item in items]
         module.exit_json(changed=False, {spec['result_key']}={spec['result_key']},
-                         total_count=len({spec['result_key']}))
+                         total_count=len({spec['result_key']}), request_id=response.RequestId)
 """
 
     builder = "build_list_request(models, offset, limit)" if spec.get("ids_action") else build_call
@@ -2208,7 +2236,8 @@ def run_module():
     )
     item_set, total_count = paginator.fetch_all()
     {spec['result_key']} = [serialize_sdk_object(item) for item in item_set]
-    module.exit_json(changed=False, {spec['result_key']}={spec['result_key']}, total_count=total_count)
+    module.exit_json(changed=False, {spec['result_key']}={spec['result_key']},
+                     total_count=total_count, request_id=paginator.request_id)
 """
 
 
@@ -2333,6 +2362,7 @@ class FakeItem:
 class FakeResponse:
     def __init__(self, items):
         self.{spec["response_items"]} = items
+        self.RequestId = "req-list"
 
 
 class FakeClient:
@@ -2386,6 +2416,7 @@ def test_run_module_returns_full_list(monkeypatch):
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["{spec['result_key']}"]] == ["a", "b"]
     assert payload["total_count"] == 2
+    assert payload["request_id"] == "req-list"
     assert len(client.requests) == 1
 '''
 
@@ -2542,6 +2573,7 @@ class FakeItem:
 class FakeResponse:
     def __init__(self, items, total_count):
 {_fake_response_fields(spec)}
+        self.RequestId = "req-page"
 
 
 class FakeClient:
@@ -2599,6 +2631,7 @@ def {pagination_test}(monkeypatch):
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["{spec['result_key']}"]] == ["a", "b", "c"]
     assert payload["total_count"] == 3
+    assert payload["request_id"] == "req-page"
     assert [request.{page_field} for request in client.requests] == {page_numbers}
 '''
 

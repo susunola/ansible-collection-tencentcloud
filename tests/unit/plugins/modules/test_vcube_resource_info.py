@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.susunola.tencentcloud.plugins.modules import vcube_vcube_resource_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import vcube_resource_info
 
 
 class FakeRequest:
@@ -20,7 +20,7 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = vcube_vcube_resource_info.build_request(FakeModels, 200, 100)
+    request = vcube_resource_info.build_request(FakeModels, 200, 100)
     assert request.PageNumber == 3
     assert request.PageSize == 100
 
@@ -37,6 +37,7 @@ class FakeResponse:
     def __init__(self, items, total_count):
         self.ResourceList = items
         self.TotalCount = total_count
+        self.RequestId = "req-page"
 
 
 class FakeClient:
@@ -75,11 +76,11 @@ def _run(monkeypatch, client, **params):
                         types.ModuleType("tencentcloud.vcube"))
     monkeypatch.setitem(sys.modules, "tencentcloud.vcube.v20220410", service)
     fake = FakeModule(params)
-    monkeypatch.setattr(vcube_vcube_resource_info, "AnsibleModule", lambda **kwargs: fake)
-    monkeypatch.setattr(vcube_vcube_resource_info, "create_credential", lambda module: object())
-    monkeypatch.setattr(vcube_vcube_resource_info, "create_client_profile", lambda module, endpoint: object())
+    monkeypatch.setattr(vcube_resource_info, "AnsibleModule", lambda **kwargs: fake)
+    monkeypatch.setattr(vcube_resource_info, "create_credential", lambda module: object())
+    monkeypatch.setattr(vcube_resource_info, "create_client_profile", lambda module, endpoint: object())
     with pytest.raises(ModuleExit):
-        vcube_vcube_resource_info.run_module()
+        vcube_resource_info.run_module()
     return fake
 
 
@@ -92,6 +93,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
                 page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
-    assert [item["Marker"] for item in payload["vcube_resources"]] == ["a", "b", "c"]
+    assert [item["Marker"] for item in payload["resources"]] == ["a", "b", "c"]
     assert payload["total_count"] == 3
+    assert payload["request_id"] == "req-page"
     assert [request.PageNumber for request in client.requests] == [1, 2]

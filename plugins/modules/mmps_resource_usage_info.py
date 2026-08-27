@@ -34,6 +34,10 @@ total_count:
   description: Number of resource usages reported by the API.
   returned: always
   type: int
+request_id:
+  description: Request ID of the last API call, for cross-referencing cloud audit logs.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -71,7 +75,7 @@ def run_module():
     items = response.Data or []
     resource_usages = [serialize_sdk_object(item) for item in items]
     module.exit_json(changed=False, resource_usages=resource_usages,
-                     total_count=len(resource_usages))
+                     total_count=len(resource_usages), request_id=response.RequestId)
 
 
 def main():

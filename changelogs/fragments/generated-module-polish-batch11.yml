@@ -1,0 +1,12 @@
+bugfixes:
+  - alb_security_policy_info - pass the documented ``security_policy_ids`` and ``filters`` options through to the SDK request instead of dropping them (token-paginated info modules generated with ids or filters options called ``build_request`` with the wrong signature and raised TypeError at runtime). cloudrc_resource_info gets the same fix for ``filters``.
+minor_changes:
+  - info modules - every generated ``*_info`` module now returns ``request_id`` (the request ID of the last API call) alongside the resource list and ``total_count``, so playbooks can cross-reference cloud audit logs.
+  - generator - discover and generate zero-argument single-object info modules (pagination_type "none") for products that expose no usable list API; adds ba_auth_info, iap_login_session_duration_info, lkeap_character_usage_info and tdid_over_summary_info.
+  - generator - the auto-discovered spec names drop the redundant product-prefix repetition (dcdb_dcdb_instance_info -> dcdb_instance_info) and the mangle of all-caps abbreviations (antiddos_d_do_s_block_record_info -> antiddos_ddos_block_record_info).
+breaking_changes:
+  - antiddos_d_do_s_block_record_info - renamed to antiddos_ddos_block_record_info; the returned key changed from ``d_do_s_block_records`` to ``ddos_block_records``.
+  - captcha_captcha_user_all_app_id_info - renamed to captcha_user_all_app_id_info; the returned key changed from ``captcha_user_all_app_ids`` to ``user_all_app_ids``.
+  - dcdb_dcdb_instance_info - renamed to dcdb_instance_info; the returned key changed from ``dcdb_instances`` to ``instances`` and the ids option from ``dcdb_instance_ids`` to ``instance_ids``.
+  - sms_sms_sign_info - renamed to sms_sign_info; the returned key changed from ``sms_signs`` to ``signs``.
+  - vcube_vcube_resource_info - renamed to vcube_resource_info; the returned key changed from ``vcube_resources`` to ``resources``.

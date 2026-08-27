@@ -9,10 +9,10 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 ---
-module: antiddos_d_do_s_block_record_info
-short_description: Gather information about Tencent Cloud ANTIDDOS d do s block records
+module: antiddos_ddos_block_record_info
+short_description: Gather information about Tencent Cloud ANTIDDOS DDoS block records
 version_added: "0.8.0"
-description: Returns ANTIDDOS d do s block records visible in a Tencent Cloud region.
+description: Returns ANTIDDOS DDoS block records visible in a Tencent Cloud region.
 options:
   filters:
     description: ANTIDDOS API filter names mapped to lists of values.
@@ -27,21 +27,25 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all d do s block records
-  susunola.tencentcloud.antiddos_d_do_s_block_record_info:
+- name: List all DDoS block records
+  susunola.tencentcloud.antiddos_ddos_block_record_info:
     region: ap-guangzhou
 '''
 
 RETURN = r'''
-d_do_s_block_records:
-  description: Matching ANTIDDOS d do s block records.
+ddos_block_records:
+  description: Matching ANTIDDOS DDoS block records.
   returned: always
   type: list
   elements: dict
 total_count:
-  description: Number of d do s block records reported by the API.
+  description: Number of DDoS block records reported by the API.
   returned: always
   type: int
+request_id:
+  description: Request ID of the last API call, for cross-referencing cloud audit logs.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -93,8 +97,9 @@ def run_module():
         lambda response: response.TotalCount,
     )
     item_set, total_count = paginator.fetch_all()
-    d_do_s_block_records = [serialize_sdk_object(item) for item in item_set]
-    module.exit_json(changed=False, d_do_s_block_records=d_do_s_block_records, total_count=total_count)
+    ddos_block_records = [serialize_sdk_object(item) for item in item_set]
+    module.exit_json(changed=False, ddos_block_records=ddos_block_records,
+                     total_count=total_count, request_id=paginator.request_id)
 
 
 def main():

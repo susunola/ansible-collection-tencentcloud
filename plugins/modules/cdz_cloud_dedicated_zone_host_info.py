@@ -47,6 +47,10 @@ total_count:
   description: Number of cloud dedicated zone hosts returned (the API reports no total count).
   returned: always
   type: int
+request_id:
+  description: Request ID of the last API call, for cross-referencing cloud audit logs.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -98,7 +102,8 @@ def run_module():
     )
     item_set, total_count = paginator.fetch_all()
     cloud_dedicated_zone_hosts = [serialize_sdk_object(item) for item in item_set]
-    module.exit_json(changed=False, cloud_dedicated_zone_hosts=cloud_dedicated_zone_hosts, total_count=total_count)
+    module.exit_json(changed=False, cloud_dedicated_zone_hosts=cloud_dedicated_zone_hosts,
+                     total_count=total_count, request_id=paginator.request_id)
 
 
 def main():

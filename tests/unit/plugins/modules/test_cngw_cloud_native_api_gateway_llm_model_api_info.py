@@ -48,6 +48,7 @@ class FakeItem:
 class FakeResponse:
     def __init__(self, items, total_count):
         self.Result = types.SimpleNamespace(DataList=items, TotalCount=total_count)
+        self.RequestId = "req-page"
 
 
 class FakeClient:
@@ -105,4 +106,5 @@ def test_run_module_paginates_until_total_count(monkeypatch):
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["cloud_native_api_gateway_llm_model_apis"]] == ["a", "b", "c"]
     assert payload["total_count"] == 3
+    assert payload["request_id"] == "req-page"
     assert [request.Offset for request in client.requests] == [0, 2]

@@ -42,6 +42,10 @@ total_count:
   description: Number of alarm policies reported by the API.
   returned: always
   type: int
+request_id:
+  description: Request ID of the last API call, for cross-referencing cloud audit logs.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -88,7 +92,8 @@ def run_module():
     )
     item_set, total_count = paginator.fetch_all()
     alarm_policies = [serialize_sdk_object(item) for item in item_set]
-    module.exit_json(changed=False, alarm_policies=alarm_policies, total_count=total_count)
+    module.exit_json(changed=False, alarm_policies=alarm_policies,
+                     total_count=total_count, request_id=paginator.request_id)
 
 
 def main():

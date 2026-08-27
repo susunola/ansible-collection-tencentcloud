@@ -9,31 +9,30 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 ---
-module: captcha_captcha_user_all_app_id_info
-short_description: Gather information about Tencent Cloud CAPTCHA captcha user all app ids
+module: lkeap_character_usage_info
+short_description: Gather information about Tencent Cloud LKEAP character usage
 version_added: "0.9.0"
-description: Returns CAPTCHA captcha user all app ids visible in a Tencent Cloud region.
+description: Returns LKEAP character usage visible in a Tencent Cloud region.
 options: {}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all captcha user all app ids
-  susunola.tencentcloud.captcha_captcha_user_all_app_id_info:
+- name: Show the character usage
+  susunola.tencentcloud.lkeap_character_usage_info:
     region: ap-guangzhou
 '''
 
 RETURN = r'''
-captcha_user_all_app_ids:
-  description: Matching CAPTCHA captcha user all app ids.
+character_usage:
+  description: Matching LKEAP character usage.
   returned: always
-  type: list
-  elements: dict
-total_count:
-  description: Number of captcha user all app ids returned (the API reports no total count).
+  type: dict
+request_id:
+  description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always
-  type: int
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -44,9 +43,9 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 
 
 def build_request(models, offset, limit):
-    # DescribeCaptchaUserAllAppId returns the full list in one call and is not
+    # GetCharacterUsage takes no request arguments and is not
     # paginated; offset and limit are accepted for signature uniformity.
-    request = models.DescribeCaptchaUserAllAppIdRequest()
+    request = models.GetCharacterUsageRequest()
     return request
 
 
@@ -58,20 +57,20 @@ def run_module():
         supports_check_mode=True,
     )
     try:
-        from tencentcloud.captcha.v20190722 import models, captcha_client
+        from tencentcloud.lkeap.v20240522 import models, lkeap_client
     except ImportError:
-        module.fail_json(msg="The tencentcloud-sdk-python-captcha package is required.")
+        module.fail_json(msg="The tencentcloud-sdk-python-lkeap package is required.")
 
-    client = captcha_client.CaptchaClient(
+    client = lkeap_client.LkeapClient(
         create_credential(module), module.params["region"],
-        create_client_profile(module, "captcha.tencentcloudapi.com"),
+        create_client_profile(module, "lkeap.tencentcloudapi.com"),
     )
     request = build_request(models, 0, 0)
-    response = sdk_call(module, client.DescribeCaptchaUserAllAppId, request)
-    items = response.Data or []
-    captcha_user_all_app_ids = [serialize_sdk_object(item) for item in items]
-    module.exit_json(changed=False, captcha_user_all_app_ids=captcha_user_all_app_ids,
-                     total_count=len(captcha_user_all_app_ids))
+    response = sdk_call(module, client.GetCharacterUsage, request)
+    character_usage = serialize_sdk_object(response)
+    character_usage.pop("RequestId", None)
+    module.exit_json(changed=False, character_usage=character_usage,
+                     request_id=response.RequestId)
 
 
 def main():

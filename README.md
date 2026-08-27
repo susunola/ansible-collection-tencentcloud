@@ -60,7 +60,7 @@ Read-only `_info` modules (return `changed=false`):
 | `ame_ktv_robot_info` | Gather information about Tencent Cloud AME ktv robots |
 | `ams_task_info` | Gather information about Tencent Cloud AMS tasks |
 | `anicloud_resource_info` | Gather information about Tencent Cloud ANICLOUD resources |
-| `antiddos_d_do_s_block_record_info` | Gather information about Tencent Cloud ANTIDDOS d do s block records |
+| `antiddos_ddos_block_record_info` | Gather information about Tencent Cloud ANTIDDOS DDoS block records |
 | `ape_auth_user_info` | Gather information about Tencent Cloud APE auth users |
 | `api_product_info` | Gather information about Tencent Cloud API products |
 | `apigateway_service_info` | Gather information about Tencent Cloud API Gateway services |
@@ -69,6 +69,7 @@ Read-only `_info` modules (return `changed=false`):
 | `as_scaling_group_info` | Gather information about Tencent Cloud auto scaling groups |
 | `asr_async_recognition_task_info` | Gather information about Tencent Cloud ASR async recognition tasks |
 | `asw_flow_service_info` | Gather information about Tencent Cloud ASW flow services |
+| `ba_auth_info` | Gather information about Tencent Cloud BA auth |
 | `batch_compute_env_create_info` | Gather information about Tencent Cloud BATCH compute env creates |
 | `bdrc_backup_vault_info` | Gather information about Tencent Cloud BDRC backup vaults |
 | `bh_device_group_member_info` | Gather information about Tencent Cloud BH device group members |
@@ -84,7 +85,7 @@ Read-only `_info` modules (return `changed=false`):
 | `cam_policy_info` | Gather information about Tencent Cloud CAM policies |
 | `cam_role_info` | Gather information about Tencent Cloud CAM roles |
 | `cam_user_info` | Gather information about Tencent Cloud CAM sub-users |
-| `captcha_captcha_user_all_app_id_info` | Gather information about Tencent Cloud CAPTCHA captcha user all app ids |
+| `captcha_user_all_app_id_info` | Gather information about Tencent Cloud CAPTCHA user all app ids |
 | `cat_probe_task_info` | Gather information about Tencent Cloud CAT probe tasks |
 | `cbs_disk_info` | Gather information about Tencent Cloud CBS disks |
 | `ccc_extension_info` | Gather information about Tencent Cloud CCC extensions |
@@ -132,7 +133,7 @@ Read-only `_info` modules (return `changed=false`):
 | `dbdc_db_custom_cluster_info` | Gather information about Tencent Cloud DBDC db custom clusters |
 | `dbs_backup_plan_info` | Gather information about Tencent Cloud DBS backup plans |
 | `dc_direct_connect_tunnel_info` | Gather information about Tencent Cloud DC direct connect tunnels |
-| `dcdb_dcdb_instance_info` | Gather information about Tencent Cloud DCDB dcdb instances |
+| `dcdb_instance_info` | Gather information about Tencent Cloud DCDB instances |
 | `dlc_task_info` | Gather information about Tencent Cloud DLC tasks |
 | `dnspod_record_info` | Gather information about DNSPod records |
 | `domain_batch_operation_log_info` | Gather information about Tencent Cloud DOMAIN batch operation logs |
@@ -162,6 +163,7 @@ Read-only `_info` modules (return `changed=false`):
 | `hasim_link_info` | Gather information about Tencent Cloud HASIM links |
 | `hunyuan_glossary_info` | Gather information about Tencent Cloud HUNYUAN glossaries |
 | `iai_group_info` | Gather information about Tencent Cloud IAI groups |
+| `iap_login_session_duration_info` | Gather information about Tencent Cloud IAP login session duration |
 | `ic_sms_info` | Gather information about Tencent Cloud IC smses |
 | `igtm_address_pool_info` | Gather information about Tencent Cloud IGTM address pools |
 | `ioa_device_info` | Gather information about Tencent Cloud IOA devices |
@@ -179,6 +181,7 @@ Read-only `_info` modules (return `changed=false`):
 | `lighthouse_instance_info` | Gather information about Tencent Cloud Lighthouse instances |
 | `live_audit_keyword_info` | Gather information about Tencent Cloud LIVE audit keywords |
 | `lke_app_knowledge_info` | Gather information about Tencent Cloud LKE app knowledges |
+| `lkeap_character_usage_info` | Gather information about Tencent Cloud LKEAP character usage |
 | `lowcode_knowledge_set_info` | Gather information about Tencent Cloud LOWCODE knowledge sets |
 | `mall_draw_resource_info` | Gather information about Tencent Cloud MALL draw resources |
 | `mariadb_instance_info` | Gather information about TencentDB for MariaDB instances |
@@ -209,7 +212,7 @@ Read-only `_info` modules (return `changed=false`):
 | `securitylake_security_alarm_table_info` | Gather information about Tencent Cloud SECURITYLAKE security alarm tables |
 | `ses_black_email_address_info` | Gather information about Tencent Cloud SES black email addresses |
 | `smh_library_info` | Gather information about Tencent Cloud SMH libraries |
-| `sms_sms_sign_info` | Gather information about Tencent Cloud SMS sms signs |
+| `sms_sign_info` | Gather information about Tencent Cloud SMS signs |
 | `sqlserver_instance_info` | Gather information about TencentDB for SQL Server instances |
 | `ssa_check_config_asset_info` | Gather information about Tencent Cloud SSA check config assets |
 | `ssl_certificate_info` | Gather information about Tencent Cloud SSL certificates |
@@ -226,6 +229,7 @@ Read-only `_info` modules (return `changed=false`):
 | `tcss_abnormal_process_event_info` | Gather information about Tencent Cloud TCSS abnormal process events |
 | `tdai_agent_duty_task_info` | Gather information about Tencent Cloud TDAI agent duty tasks |
 | `tdcpg_cluster_instance_info` | Gather information about Tencent Cloud TDCPG cluster instances |
+| `tdid_over_summary_info` | Gather information about Tencent Cloud TDID over summary |
 | `tdmq_amqp_cluster_info` | Gather information about Tencent Cloud TDMQ amqp clusters |
 | `tdmysql_db_instance_info` | Gather information about Tencent Cloud TDMYSQL db instances |
 | `tem_application_info` | Gather information about Tencent Cloud TEM applications |
@@ -245,7 +249,7 @@ Read-only `_info` modules (return `changed=false`):
 | `trtc_call_info` | Gather information about Tencent Cloud TRTC calls |
 | `tse_sre_instance_info` | Gather information about Tencent Cloud TSE sre instances |
 | `tsf_application_info` | Gather information about Tencent Cloud TSF applications |
-| `vcube_vcube_resource_info` | Gather information about Tencent Cloud VCUBE vcube resources |
+| `vcube_resource_info` | Gather information about Tencent Cloud VCUBE resources |
 | `vdb_instance_info` | Gather information about Tencent Cloud VDB instances |
 | `vm_task_info` | Gather information about Tencent Cloud VM tasks |
 | `vod_incremental_migration_strategy_info` | Gather information about Tencent Cloud VOD incremental migration strategies |

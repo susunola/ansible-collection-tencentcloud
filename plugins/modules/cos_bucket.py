@@ -400,7 +400,7 @@ def run_module():
             "cors": {
                 "type": "list",
                 "elements": "dict",
-                "suboptions": {
+                "options": {
                     "id": {"type": "str"},
                     "allowed_origins": {"type": "list", "elements": "str", "required": True},
                     "allowed_methods": {"type": "list", "elements": "str", "required": True},
@@ -412,7 +412,7 @@ def run_module():
             "lifecycle": {
                 "type": "list",
                 "elements": "dict",
-                "suboptions": {
+                "options": {
                     "id": {"type": "str"},
                     "prefix": {"type": "str"},
                     "status": {"type": "str", "choices": ["enabled", "disabled"], "default": "enabled"},
@@ -421,7 +421,7 @@ def run_module():
                     "transitions": {
                         "type": "list",
                         "elements": "dict",
-                        "suboptions": {
+                        "options": {
                             "days": {"type": "int", "required": True},
                             "storage_class": {"type": "str", "required": True},
                         },
@@ -429,7 +429,7 @@ def run_module():
                     "noncurrent_version_transitions": {
                         "type": "list",
                         "elements": "dict",
-                        "suboptions": {
+                        "options": {
                             "noncurrent_days": {"type": "int", "required": True},
                             "storage_class": {"type": "str", "required": True},
                         },

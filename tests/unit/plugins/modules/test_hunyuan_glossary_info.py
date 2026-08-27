@@ -37,6 +37,7 @@ class FakeResponse:
     def __init__(self, items, total_count):
         self.Glossaries = items
         self.Total = total_count
+        self.RequestId = "req-page"
 
 
 class FakeClient:
@@ -94,4 +95,5 @@ def test_run_module_paginates_until_total_count(monkeypatch):
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["glossaries"]] == ["a", "b", "c"]
     assert payload["total_count"] == 3
+    assert payload["request_id"] == "req-page"
     assert [request.Page for request in client.requests] == [1, 2]

@@ -50,6 +50,10 @@ total_count:
   description: Number of events reported by the API.
   returned: always
   type: int
+request_id:
+  description: Request ID of the last API call, for cross-referencing cloud audit logs.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -111,7 +115,9 @@ def run_module():
             break
     if total_count is None:
         total_count = len(events)
-    module.exit_json(changed=False, events=events, total_count=total_count)
+    request_id = getattr(response, "RequestId", None)
+    module.exit_json(changed=False, events=events,
+                     total_count=total_count, request_id=request_id)
 
 
 def main():

@@ -43,6 +43,10 @@ total_count:
   description: Total number of records of the domain reported by the API.
   returned: always
   type: int
+request_id:
+  description: Request ID of the last API call, for cross-referencing cloud audit logs.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -89,7 +93,8 @@ def run_module():
     )
     item_set, total_count = paginator.fetch_all()
     records = [serialize_sdk_object(item) for item in item_set]
-    module.exit_json(changed=False, records=records, total_count=total_count)
+    module.exit_json(changed=False, records=records,
+                     total_count=total_count, request_id=paginator.request_id)
 
 
 def main():

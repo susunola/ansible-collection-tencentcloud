@@ -34,18 +34,23 @@ class Paginator(object):
         self.call_api = call_api
         self.items_of = items_of
         self.total_of = total_of
+        # RequestId of the last API response, set by fetch_all(). Modules can
+        # surface it to the caller for cross-referencing cloud audit logs.
+        self.request_id = None
 
     def fetch_all(self):
         """Return (items, total_count) walking every page exactly once.
 
         Termination is driven by the API's reported total (when available) or
         by a short page, never by a mutable total overwritten per round.
+        ``request_id`` is left set to the last response's RequestId.
         """
         items = []
         total_count = None
         offset = 0
         while True:
             response = self.call_api(self.build_request(offset, self.page_size))
+            self.request_id = getattr(response, "RequestId", None)
             batch = self.items_of(response) or []
             items.extend(batch)
             reported_total = self.total_of(response)

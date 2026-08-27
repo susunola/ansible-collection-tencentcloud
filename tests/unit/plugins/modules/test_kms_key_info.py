@@ -42,11 +42,13 @@ class FakeListResponse:
     def __init__(self, items, total_count):
         self.Keys = items
         self.TotalCount = total_count
+        self.RequestId = "req-list"
 
 
 class FakeDescribeResponse:
     def __init__(self, items):
         self.KeyMetadatas = items
+        self.RequestId = "req-describe"
 
 
 class FakeClient:
@@ -108,6 +110,7 @@ def test_run_module_lists_keys_with_pagination(monkeypatch):
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["kms_keys"]] == ["a", "b", "c"]
     assert payload["total_count"] == 3
+    assert payload["request_id"] == "req-list"
     assert [request.Offset for request in client.list_requests] == [0, 2]
     assert client.describe_requests == []
 
@@ -119,5 +122,6 @@ def test_run_module_describes_keys_without_pagination(monkeypatch):
     payload = fake.exit_payload
     assert [item["Marker"] for item in payload["kms_keys"]] == ["x", "y"]
     assert payload["total_count"] == 2
+    assert payload["request_id"] == "req-describe"
     assert client.describe_requests[0].KeyIds == ["key-1", "key-2"]
     assert client.list_requests == []

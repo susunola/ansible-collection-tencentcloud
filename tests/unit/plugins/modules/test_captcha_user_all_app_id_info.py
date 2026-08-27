@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.susunola.tencentcloud.plugins.modules import captcha_captcha_user_all_app_id_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import captcha_user_all_app_id_info
 
 
 class FakeRequest:
@@ -30,6 +30,7 @@ class FakeItem:
 class FakeResponse:
     def __init__(self, items):
         self.Data = items
+        self.RequestId = "req-list"
 
 
 class FakeClient:
@@ -68,11 +69,11 @@ def _run(monkeypatch, client, **params):
                         types.ModuleType("tencentcloud.captcha"))
     monkeypatch.setitem(sys.modules, "tencentcloud.captcha.v20190722", service)
     fake = FakeModule(params)
-    monkeypatch.setattr(captcha_captcha_user_all_app_id_info, "AnsibleModule", lambda **kwargs: fake)
-    monkeypatch.setattr(captcha_captcha_user_all_app_id_info, "create_credential", lambda module: object())
-    monkeypatch.setattr(captcha_captcha_user_all_app_id_info, "create_client_profile", lambda module, endpoint: object())
+    monkeypatch.setattr(captcha_user_all_app_id_info, "AnsibleModule", lambda **kwargs: fake)
+    monkeypatch.setattr(captcha_user_all_app_id_info, "create_credential", lambda module: object())
+    monkeypatch.setattr(captcha_user_all_app_id_info, "create_client_profile", lambda module, endpoint: object())
     with pytest.raises(ModuleExit):
-        captcha_captcha_user_all_app_id_info.run_module()
+        captcha_user_all_app_id_info.run_module()
     return fake
 
 
@@ -81,6 +82,7 @@ def test_run_module_returns_full_list(monkeypatch):
     fake = _run(monkeypatch, client, region="ap-guangzhou")
     payload = fake.exit_payload
     assert payload["changed"] is False
-    assert [item["Marker"] for item in payload["captcha_user_all_app_ids"]] == ["a", "b"]
+    assert [item["Marker"] for item in payload["user_all_app_ids"]] == ["a", "b"]
     assert payload["total_count"] == 2
+    assert payload["request_id"] == "req-list"
     assert len(client.requests) == 1

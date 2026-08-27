@@ -38,6 +38,10 @@ total_count:
   description: Number of tasks returned (the API reports no total count).
   returned: always
   type: int
+request_id:
+  description: Request ID of the last API call, for cross-referencing cloud audit logs.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -89,7 +93,9 @@ def run_module():
             break
     if total_count is None:
         total_count = len(tasks)
-    module.exit_json(changed=False, tasks=tasks, total_count=total_count)
+    request_id = getattr(response, "RequestId", None)
+    module.exit_json(changed=False, tasks=tasks,
+                     total_count=total_count, request_id=request_id)
 
 
 def main():

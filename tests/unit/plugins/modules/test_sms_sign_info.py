@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.susunola.tencentcloud.plugins.modules import sms_sms_sign_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import sms_sign_info
 
 
 class FakeRequest:
@@ -20,7 +20,7 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = sms_sms_sign_info.build_request(FakeModels, 200, 100)
+    request = sms_sign_info.build_request(FakeModels, 200, 100)
     assert request.Offset == 200
     assert request.Limit == 100
 
@@ -36,6 +36,7 @@ class FakeItem:
 class FakeResponse:
     def __init__(self, items, total_count):
         self.DescribeSignListStatusSet = items
+        self.RequestId = "req-page"
 
 
 class FakeClient:
@@ -74,11 +75,11 @@ def _run(monkeypatch, client, **params):
                         types.ModuleType("tencentcloud.sms"))
     monkeypatch.setitem(sys.modules, "tencentcloud.sms.v20210111", service)
     fake = FakeModule(params)
-    monkeypatch.setattr(sms_sms_sign_info, "AnsibleModule", lambda **kwargs: fake)
-    monkeypatch.setattr(sms_sms_sign_info, "create_credential", lambda module: object())
-    monkeypatch.setattr(sms_sms_sign_info, "create_client_profile", lambda module, endpoint: object())
+    monkeypatch.setattr(sms_sign_info, "AnsibleModule", lambda **kwargs: fake)
+    monkeypatch.setattr(sms_sign_info, "create_credential", lambda module: object())
+    monkeypatch.setattr(sms_sign_info, "create_client_profile", lambda module, endpoint: object())
     with pytest.raises(ModuleExit):
-        sms_sms_sign_info.run_module()
+        sms_sign_info.run_module()
     return fake
 
 
@@ -91,6 +92,7 @@ def test_run_module_paginates_until_short_page(monkeypatch):
                 page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
-    assert [item["Marker"] for item in payload["sms_signs"]] == ["a", "b", "c"]
+    assert [item["Marker"] for item in payload["signs"]] == ["a", "b", "c"]
     assert payload["total_count"] == 3
+    assert payload["request_id"] == "req-page"
     assert [request.Offset for request in client.requests] == [0, 2]

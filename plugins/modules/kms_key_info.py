@@ -47,6 +47,10 @@ total_count:
   description: Number of keys reported by the API, or the number of requested keys.
   returned: always
   type: int
+request_id:
+  description: Request ID of the last API call, for cross-referencing cloud audit logs.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -96,7 +100,7 @@ def run_module():
         items = response.KeyMetadatas or []
         kms_keys = [serialize_sdk_object(item) for item in items]
         module.exit_json(changed=False, kms_keys=kms_keys,
-                         total_count=len(kms_keys))
+                         total_count=len(kms_keys), request_id=response.RequestId)
     paginator = Paginator(
         module.params["page_size"],
         lambda offset, limit: build_list_request(models, offset, limit),
@@ -106,7 +110,8 @@ def run_module():
     )
     item_set, total_count = paginator.fetch_all()
     kms_keys = [serialize_sdk_object(item) for item in item_set]
-    module.exit_json(changed=False, kms_keys=kms_keys, total_count=total_count)
+    module.exit_json(changed=False, kms_keys=kms_keys,
+                     total_count=total_count, request_id=paginator.request_id)
 
 
 def main():

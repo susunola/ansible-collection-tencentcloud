@@ -9,15 +9,11 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 ---
-module: dcdb_dcdb_instance_info
-short_description: Gather information about Tencent Cloud DCDB dcdb instances
+module: vcube_resource_info
+short_description: Gather information about Tencent Cloud VCUBE resources
 version_added: "0.8.0"
-description: Returns DCDB dcdb instances visible in a Tencent Cloud region.
+description: Returns VCUBE resources visible in a Tencent Cloud region.
 options:
-  dcdb_instance_ids:
-    description: Dcdb instance IDs to return.
-    type: list
-    elements: str
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -27,26 +23,25 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all dcdb instances
-  susunola.tencentcloud.dcdb_dcdb_instance_info:
+- name: List all resources
+  susunola.tencentcloud.vcube_resource_info:
     region: ap-guangzhou
-
-- name: Find dcdb instances by ID
-  susunola.tencentcloud.dcdb_dcdb_instance_info:
-    region: ap-guangzhou
-    dcdb_instance_ids: [x-xxxxxxxx]
 '''
 
 RETURN = r'''
-dcdb_instances:
-  description: Matching DCDB dcdb instances.
+resources:
+  description: Matching VCUBE resources.
   returned: always
   type: list
   elements: dict
 total_count:
-  description: Number of dcdb instances reported by the API.
+  description: Number of resources reported by the API.
   returned: always
   type: int
+request_id:
+  description: Request ID of the last API call, for cross-referencing cloud audit logs.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -57,19 +52,16 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, dcdb_instance_ids, offset, limit):
-    request = models.DescribeDCDBInstancesRequest()
-    request.Offset = offset
-    request.Limit = limit
-    if dcdb_instance_ids:
-        request.InstanceIds = dcdb_instance_ids
+def build_request(models, offset, limit):
+    request = models.DescribeVcubeResourcesListRequest()
+    request.PageNumber = offset // limit + 1
+    request.PageSize = limit
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
-        "dcdb_instance_ids": {"type": "list", "elements": "str"},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -77,24 +69,25 @@ def run_module():
         supports_check_mode=True,
     )
     try:
-        from tencentcloud.dcdb.v20180411 import models, dcdb_client
+        from tencentcloud.vcube.v20220410 import models, vcube_client
     except ImportError:
-        module.fail_json(msg="The tencentcloud-sdk-python-dcdb package is required.")
+        module.fail_json(msg="The tencentcloud-sdk-python-vcube package is required.")
 
-    client = dcdb_client.DcdbClient(
+    client = vcube_client.VcubeClient(
         create_credential(module), module.params["region"],
-        create_client_profile(module, "dcdb.tencentcloudapi.com"),
+        create_client_profile(module, "vcube.tencentcloudapi.com"),
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, module.params["dcdb_instance_ids"], offset, limit),
-        lambda request: sdk_call(module, client.DescribeDCDBInstances, request),
-        lambda response: response.Instances,
+        lambda offset, limit: build_request(models, offset, limit),
+        lambda request: sdk_call(module, client.DescribeVcubeResourcesList, request),
+        lambda response: response.ResourceList,
         lambda response: response.TotalCount,
     )
     item_set, total_count = paginator.fetch_all()
-    dcdb_instances = [serialize_sdk_object(item) for item in item_set]
-    module.exit_json(changed=False, dcdb_instances=dcdb_instances, total_count=total_count)
+    resources = [serialize_sdk_object(item) for item in item_set]
+    module.exit_json(changed=False, resources=resources,
+                     total_count=total_count, request_id=paginator.request_id)
 
 
 def main():

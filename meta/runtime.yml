@@ -10,7 +10,7 @@ action_groups:
     - ame_ktv_robot_info
     - ams_task_info
     - anicloud_resource_info
-    - antiddos_d_do_s_block_record_info
+    - antiddos_ddos_block_record_info
     - ape_auth_user_info
     - api_product_info
     - apigateway_service_info
@@ -19,6 +19,7 @@ action_groups:
     - as_scaling_group_info
     - asr_async_recognition_task_info
     - asw_flow_service_info
+    - ba_auth_info
     - batch_compute_env_create_info
     - bdrc_backup_vault_info
     - bh_device_group_member_info
@@ -37,7 +38,7 @@ action_groups:
     - cam_role_info
     - cam_user
     - cam_user_info
-    - captcha_captcha_user_all_app_id_info
+    - captcha_user_all_app_id_info
     - cat_probe_task_info
     - cbs_disk
     - cbs_disk_info
@@ -96,7 +97,7 @@ action_groups:
     - dbdc_db_custom_cluster_info
     - dbs_backup_plan_info
     - dc_direct_connect_tunnel_info
-    - dcdb_dcdb_instance_info
+    - dcdb_instance_info
     - dlc_task_info
     - dnspod_record
     - dnspod_record_info
@@ -128,6 +129,7 @@ action_groups:
     - hasim_link_info
     - hunyuan_glossary_info
     - iai_group_info
+    - iap_login_session_duration_info
     - ic_sms_info
     - igtm_address_pool_info
     - ioa_device_info
@@ -147,6 +149,7 @@ action_groups:
     - lighthouse_instance_info
     - live_audit_keyword_info
     - lke_app_knowledge_info
+    - lkeap_character_usage_info
     - lowcode_knowledge_set_info
     - mall_draw_resource_info
     - mariadb_instance_info
@@ -184,7 +187,7 @@ action_groups:
     - securitylake_security_alarm_table_info
     - ses_black_email_address_info
     - smh_library_info
-    - sms_sms_sign_info
+    - sms_sign_info
     - sqlserver_instance_info
     - ssa_check_config_asset_info
     - ssl_certificate
@@ -205,6 +208,7 @@ action_groups:
     - tcss_abnormal_process_event_info
     - tdai_agent_duty_task_info
     - tdcpg_cluster_instance_info
+    - tdid_over_summary_info
     - tdmq_amqp_cluster_info
     - tdmysql_db_instance_info
     - tem_application_info
@@ -225,7 +229,7 @@ action_groups:
     - trtc_call_info
     - tse_sre_instance_info
     - tsf_application_info
-    - vcube_vcube_resource_info
+    - vcube_resource_info
     - vdb_instance_info
     - vm_task_info
     - vod_incremental_migration_strategy_info

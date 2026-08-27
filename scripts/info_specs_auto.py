@@ -262,7 +262,7 @@ SPECS_AUTO = [
 """,
     },
     {
-        'module': 'antiddos_d_do_s_block_record_info',
+        'module': 'antiddos_ddos_block_record_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.antiddos.v20250903',
         'client_module': 'antiddos_client',
@@ -278,15 +278,15 @@ SPECS_AUTO = [
         'extra_params': [],
         'response_items': 'BlockRecords',
         'response_total': 'TotalCount',
-        'result_key': 'd_do_s_block_records',
+        'result_key': 'ddos_block_records',
         'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud ANTIDDOS d do s block records',
-        'description': 'Returns ANTIDDOS d do s block records visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching ANTIDDOS d do s block records.',
-        'return_total_doc': 'Number of d do s block records reported by the API.',
+        'short_description': 'Gather information about Tencent Cloud ANTIDDOS DDoS block records',
+        'description': 'Returns ANTIDDOS DDoS block records visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching ANTIDDOS DDoS block records.',
+        'return_total_doc': 'Number of DDoS block records reported by the API.',
         'examples': """\
-- name: List all d do s block records
-  susunola.tencentcloud.antiddos_d_do_s_block_record_info:
+- name: List all DDoS block records
+  susunola.tencentcloud.antiddos_ddos_block_record_info:
     region: ap-guangzhou
 """,
     },
@@ -460,6 +460,33 @@ SPECS_AUTO = [
         'examples': """\
 - name: List all flow services
   susunola.tencentcloud.asw_flow_service_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'ba_auth_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.ba.v20200720',
+        'client_module': 'ba_client',
+        'client_class': 'BaClient',
+        'sdk_package': 'tencentcloud-sdk-python-ba',
+        'endpoint': 'ba.tencentcloudapi.com',
+        'action': 'DescribeGetAuthInfo',
+        'request_class': 'DescribeGetAuthInfoRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'auth',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about Tencent Cloud BA auth',
+        'description': 'Returns BA auth visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching BA auth.',
+        'return_total_doc': '',
+        'examples': """\
+- name: Show the auth
+  susunola.tencentcloud.ba_auth_info:
     region: ap-guangzhou
 """,
     },
@@ -834,7 +861,7 @@ SPECS_AUTO = [
 """,
     },
     {
-        'module': 'captcha_captcha_user_all_app_id_info',
+        'module': 'captcha_user_all_app_id_info',
         'version_added': '0.9.0',
         'service_package': 'tencentcloud.captcha.v20190722',
         'client_module': 'captcha_client',
@@ -848,15 +875,15 @@ SPECS_AUTO = [
         'extra_params': [],
         'response_items': 'Data',
         'response_total': None,
-        'result_key': 'captcha_user_all_app_ids',
+        'result_key': 'user_all_app_ids',
         'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud CAPTCHA captcha user all app ids',
-        'description': 'Returns CAPTCHA captcha user all app ids visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CAPTCHA captcha user all app ids.',
-        'return_total_doc': 'Number of captcha user all app ids returned (the API reports no total count).',
+        'short_description': 'Gather information about Tencent Cloud CAPTCHA user all app ids',
+        'description': 'Returns CAPTCHA user all app ids visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CAPTCHA user all app ids.',
+        'return_total_doc': 'Number of user all app ids reported by the API.',
         'examples': """\
-- name: List all captcha user all app ids
-  susunola.tencentcloud.captcha_captcha_user_all_app_id_info:
+- name: List all user all app ids
+  susunola.tencentcloud.captcha_user_all_app_id_info:
     region: ap-guangzhou
 """,
     },
@@ -1968,7 +1995,7 @@ SPECS_AUTO = [
 """,
     },
     {
-        'module': 'dcdb_dcdb_instance_info',
+        'module': 'dcdb_instance_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.dcdb.v20180411',
         'client_module': 'dcdb_client',
@@ -1978,29 +2005,29 @@ SPECS_AUTO = [
         'action': 'DescribeDCDBInstances',
         'request_class': 'DescribeDCDBInstancesRequest',
         'ids': {
-            'param': 'dcdb_instance_ids',
+            'param': 'instance_ids',
             'field': 'InstanceIds',
-            'doc': 'Dcdb instance IDs to return.',
+            'doc': 'Instances IDs to return.',
         },
         'filters': None,
         'extra_params': [],
         'response_items': 'Instances',
         'response_total': 'TotalCount',
-        'result_key': 'dcdb_instances',
+        'result_key': 'instances',
         'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud DCDB dcdb instances',
-        'description': 'Returns DCDB dcdb instances visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching DCDB dcdb instances.',
-        'return_total_doc': 'Number of dcdb instances reported by the API.',
+        'short_description': 'Gather information about Tencent Cloud DCDB instances',
+        'description': 'Returns DCDB instances visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching DCDB instances.',
+        'return_total_doc': 'Number of instances reported by the API.',
         'examples': """\
-- name: List all dcdb instances
-  susunola.tencentcloud.dcdb_dcdb_instance_info:
+- name: List all instances
+  susunola.tencentcloud.dcdb_instance_info:
     region: ap-guangzhou
 
-- name: Find dcdb instances by ID
-  susunola.tencentcloud.dcdb_dcdb_instance_info:
+- name: Find instances by ID
+  susunola.tencentcloud.dcdb_instance_info:
     region: ap-guangzhou
-    dcdb_instance_ids: [x-xxxxxxxx]
+    instance_ids: [x-xxxxxxxx]
 """,
     },
     {
@@ -2812,6 +2839,33 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'iap_login_session_duration_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.iap.v20240713',
+        'client_module': 'iap_client',
+        'client_class': 'IapClient',
+        'sdk_package': 'tencentcloud-sdk-python-iap',
+        'endpoint': 'iap.tencentcloudapi.com',
+        'action': 'DescribeIAPLoginSessionDuration',
+        'request_class': 'DescribeIAPLoginSessionDurationRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'login_session_duration',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about Tencent Cloud IAP login session duration',
+        'description': 'Returns IAP login session duration visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching IAP login session duration.',
+        'return_total_doc': '',
+        'examples': """\
+- name: Show the login session duration
+  susunola.tencentcloud.iap_login_session_duration_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'ic_sms_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.ic.v20190307',
@@ -3222,6 +3276,33 @@ SPECS_AUTO = [
   susunola.tencentcloud.lke_app_knowledge_info:
     region: ap-guangzhou
     app_knowledge_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'lkeap_character_usage_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.lkeap.v20240522',
+        'client_module': 'lkeap_client',
+        'client_class': 'LkeapClient',
+        'sdk_package': 'tencentcloud-sdk-python-lkeap',
+        'endpoint': 'lkeap.tencentcloudapi.com',
+        'action': 'GetCharacterUsage',
+        'request_class': 'GetCharacterUsageRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'character_usage',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about Tencent Cloud LKEAP character usage',
+        'description': 'Returns LKEAP character usage visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching LKEAP character usage.',
+        'return_total_doc': '',
+        'examples': """\
+- name: Show the character usage
+  susunola.tencentcloud.lkeap_character_usage_info:
+    region: ap-guangzhou
 """,
     },
     {
@@ -3842,7 +3923,7 @@ SPECS_AUTO = [
 """,
     },
     {
-        'module': 'sms_sms_sign_info',
+        'module': 'sms_sign_info',
         'version_added': '0.9.0',
         'service_package': 'tencentcloud.sms.v20210111',
         'client_module': 'sms_client',
@@ -3856,15 +3937,15 @@ SPECS_AUTO = [
         'extra_params': [],
         'response_items': 'DescribeSignListStatusSet',
         'response_total': None,
-        'result_key': 'sms_signs',
+        'result_key': 'signs',
         'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud SMS sms signs',
-        'description': 'Returns SMS sms signs visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching SMS sms signs.',
-        'return_total_doc': 'Number of sms signs returned (the API reports no total count).',
+        'short_description': 'Gather information about Tencent Cloud SMS signs',
+        'description': 'Returns SMS signs visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching SMS signs.',
+        'return_total_doc': 'Number of signs reported by the API.',
         'examples': """\
-- name: List all sms signs
-  susunola.tencentcloud.sms_sms_sign_info:
+- name: List all signs
+  susunola.tencentcloud.sms_sign_info:
     region: ap-guangzhou
 """,
     },
@@ -4190,6 +4271,33 @@ SPECS_AUTO = [
         'examples': """\
 - name: List all cluster instances
   susunola.tencentcloud.tdcpg_cluster_instance_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tdid_over_summary_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.tdid.v20210519',
+        'client_module': 'tdid_client',
+        'client_class': 'TdidClient',
+        'sdk_package': 'tencentcloud-sdk-python-tdid',
+        'endpoint': 'tdid.tencentcloudapi.com',
+        'action': 'GetOverSummary',
+        'request_class': 'GetOverSummaryRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'over_summary',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about Tencent Cloud TDID over summary',
+        'description': 'Returns TDID over summary visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TDID over summary.',
+        'return_total_doc': '',
+        'examples': """\
+- name: Show the over summary
+  susunola.tencentcloud.tdid_over_summary_info:
     region: ap-guangzhou
 """,
     },
@@ -4764,7 +4872,7 @@ SPECS_AUTO = [
 """,
     },
     {
-        'module': 'vcube_vcube_resource_info',
+        'module': 'vcube_resource_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.vcube.v20220410',
         'client_module': 'vcube_client',
@@ -4778,15 +4886,15 @@ SPECS_AUTO = [
         'extra_params': [],
         'response_items': 'ResourceList',
         'response_total': 'TotalCount',
-        'result_key': 'vcube_resources',
+        'result_key': 'resources',
         'pagination_type': 'page',
-        'short_description': 'Gather information about Tencent Cloud VCUBE vcube resources',
-        'description': 'Returns VCUBE vcube resources visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching VCUBE vcube resources.',
-        'return_total_doc': 'Number of vcube resources reported by the API.',
+        'short_description': 'Gather information about Tencent Cloud VCUBE resources',
+        'description': 'Returns VCUBE resources visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching VCUBE resources.',
+        'return_total_doc': 'Number of resources reported by the API.',
         'examples': """\
-- name: List all vcube resources
-  susunola.tencentcloud.vcube_vcube_resource_info:
+- name: List all resources
+  susunola.tencentcloud.vcube_resource_info:
     region: ap-guangzhou
 """,
     },

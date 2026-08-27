@@ -36,6 +36,7 @@ class FakeItem:
 class FakeResponse:
     def __init__(self, items, total_count):
         self.MaterialInfos = items
+        self.RequestId = "req-page"
 
 
 class FakeClient:
@@ -93,4 +94,5 @@ def test_run_module_paginates_until_short_page(monkeypatch):
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["materials"]] == ["a", "b", "c"]
     assert payload["total_count"] == 3
+    assert payload["request_id"] == "req-page"
     assert [request.Offset for request in client.requests] == [0, 2]

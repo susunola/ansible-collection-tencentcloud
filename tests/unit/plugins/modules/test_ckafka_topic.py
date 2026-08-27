@@ -247,7 +247,7 @@ def test_scale_partitions_is_noop_at_same_count():
 def test_scale_partitions_rejects_shrink():
     client = FakeClient(FakeResponse())
     module = FakeModule()
-    module.fail_json = lambda **kwargs: (_ for _ in ()).throw(
+    module.fail_json = lambda **kwargs: (_empty for _empty in ()).throw(
         AssertionError(kwargs["msg"]))
     try:
         _scale_partitions(module, client, FakeModels, "ckafka-1", "order-events", 3, 2)
@@ -259,7 +259,7 @@ def test_scale_partitions_rejects_shrink():
 
 def test_validate_partition_scale_allows_grow_and_equal():
     module = FakeModule()
-    module.fail_json = lambda **kwargs: (_ for _ in ()).throw(
+    module.fail_json = lambda **kwargs: (_empty for _empty in ()).throw(
         AssertionError(kwargs["msg"]))
     _validate_partition_scale(module, "order-events", 3, 5)
     _validate_partition_scale(module, "order-events", 3, 3)

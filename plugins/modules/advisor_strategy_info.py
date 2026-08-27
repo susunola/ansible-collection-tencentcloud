@@ -34,6 +34,10 @@ total_count:
   description: Number of strategies returned (the API reports no total count).
   returned: always
   type: int
+request_id:
+  description: Request ID of the last API call, for cross-referencing cloud audit logs.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -71,7 +75,7 @@ def run_module():
     items = response.Strategies or []
     strategies = [serialize_sdk_object(item) for item in items]
     module.exit_json(changed=False, strategies=strategies,
-                     total_count=len(strategies))
+                     total_count=len(strategies), request_id=response.RequestId)
 
 
 def main():

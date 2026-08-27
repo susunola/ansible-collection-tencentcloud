@@ -30,6 +30,7 @@ class FakeItem:
 class FakeResponse:
     def __init__(self, items):
         self.UserStoreSet = items
+        self.RequestId = "req-list"
 
 
 class FakeClient:
@@ -83,4 +84,5 @@ def test_run_module_returns_full_list(monkeypatch):
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["user_stores"]] == ["a", "b"]
     assert payload["total_count"] == 2
+    assert payload["request_id"] == "req-list"
     assert len(client.requests) == 1

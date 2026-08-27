@@ -51,6 +51,10 @@ total_count:
   description: Number of security policies reported by the API.
   returned: always
   type: int
+request_id:
+  description: Request ID of the last API call, for cross-referencing cloud audit logs.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -86,6 +90,7 @@ def run_module():
     })
     module = AnsibleModule(
         argument_spec=argument_spec,
+        mutually_exclusive=[("security_policy_ids", "filters")],
         supports_check_mode=True,
     )
     try:
@@ -103,6 +108,8 @@ def run_module():
     while True:
         request = build_request(
             models,
+            module.params["security_policy_ids"],
+            module.params["filters"],
             next_token,
             module.params["page_size"])
         response = sdk_call(module, client.DescribeSecurityPolicies, request)
@@ -115,7 +122,9 @@ def run_module():
             break
     if total_count is None:
         total_count = len(security_policies)
-    module.exit_json(changed=False, security_policies=security_policies, total_count=total_count)
+    request_id = getattr(response, "RequestId", None)
+    module.exit_json(changed=False, security_policies=security_policies,
+                     total_count=total_count, request_id=request_id)
 
 
 def main():

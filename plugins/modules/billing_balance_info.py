@@ -29,6 +29,10 @@ balance:
   description: Account balance as reported by the API.
   returned: always
   type: dict
+request_id:
+  description: Request ID of the API call, for cross-referencing cloud audit logs.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -65,7 +69,8 @@ def run_module():
     response = sdk_call(module, client.DescribeAccountBalance, request)
     balance = serialize_sdk_object(response)
     balance.pop("RequestId", None)
-    module.exit_json(changed=False, balance=balance)
+    module.exit_json(changed=False, balance=balance,
+                     request_id=response.RequestId)
 
 
 def main():

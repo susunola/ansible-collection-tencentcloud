@@ -8,11 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.susunola.tencentcloud.plugins.modules import antiddos_d_do_s_block_record_info
-
-
-class FakeFilter:
-    pass
+from ansible_collections.susunola.tencentcloud.plugins.modules import dcdb_instance_info
 
 
 class FakeRequest:
@@ -20,21 +16,18 @@ class FakeRequest:
 
 
 class FakeModels:
-    Filter = FakeFilter
-    DescribeDDoSBlockRecordsRequest = FakeRequest
+    DescribeDCDBInstancesRequest = FakeRequest
 
 
 def test_build_request_sets_pagination():
-    request = antiddos_d_do_s_block_record_info.build_request(FakeModels, {}, 200, 100)
+    request = dcdb_instance_info.build_request(FakeModels, None, 200, 100)
     assert request.Offset == 200
     assert request.Limit == 100
 
 
-def test_build_request_sorts_filters():
-    request = antiddos_d_do_s_block_record_info.build_request(FakeModels, {"b-name": ["v1"], "a-name": ["v2"]}, 0, 100)
-    assert [(item.Name, item.Values) for item in request.Filters] == [
-        ("a-name", ["v2"]), ("b-name", ["v1"]),
-    ]
+def test_build_request_maps_ids():
+    request = dcdb_instance_info.build_request(FakeModels, ["x-1"], 0, 100)
+    assert request.InstanceIds == ["x-1"]
 
 
 class FakeItem:
@@ -47,8 +40,9 @@ class FakeItem:
 
 class FakeResponse:
     def __init__(self, items, total_count):
-        self.BlockRecords = items
+        self.Instances = items
         self.TotalCount = total_count
+        self.RequestId = "req-page"
 
 
 class FakeClient:
@@ -56,7 +50,7 @@ class FakeClient:
         self._pages = list(pages)
         self.requests = []
 
-    def DescribeDDoSBlockRecords(self, request):
+    def DescribeDCDBInstances(self, request):
         self.requests.append(request)
         return self._pages.pop(0)
 
@@ -79,19 +73,19 @@ class FakeModule:
 
 
 def _run(monkeypatch, client, **params):
-    service = types.ModuleType("tencentcloud.antiddos.v20250903")
+    service = types.ModuleType("tencentcloud.dcdb.v20180411")
     service.models = FakeModels
-    service.antiddos_client = types.SimpleNamespace(AntiddosClient=lambda *args: client)
+    service.dcdb_client = types.SimpleNamespace(DcdbClient=lambda *args: client)
     monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.antiddos",
-                        types.ModuleType("tencentcloud.antiddos"))
-    monkeypatch.setitem(sys.modules, "tencentcloud.antiddos.v20250903", service)
+    monkeypatch.setitem(sys.modules, "tencentcloud.dcdb",
+                        types.ModuleType("tencentcloud.dcdb"))
+    monkeypatch.setitem(sys.modules, "tencentcloud.dcdb.v20180411", service)
     fake = FakeModule(params)
-    monkeypatch.setattr(antiddos_d_do_s_block_record_info, "AnsibleModule", lambda **kwargs: fake)
-    monkeypatch.setattr(antiddos_d_do_s_block_record_info, "create_credential", lambda module: object())
-    monkeypatch.setattr(antiddos_d_do_s_block_record_info, "create_client_profile", lambda module, endpoint: object())
+    monkeypatch.setattr(dcdb_instance_info, "AnsibleModule", lambda **kwargs: fake)
+    monkeypatch.setattr(dcdb_instance_info, "create_credential", lambda module: object())
+    monkeypatch.setattr(dcdb_instance_info, "create_client_profile", lambda module, endpoint: object())
     with pytest.raises(ModuleExit):
-        antiddos_d_do_s_block_record_info.run_module()
+        dcdb_instance_info.run_module()
     return fake
 
 
@@ -101,9 +95,10 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                filters={}, page_size=2)
+                instance_ids=None, page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
-    assert [item["Marker"] for item in payload["d_do_s_block_records"]] == ["a", "b", "c"]
+    assert [item["Marker"] for item in payload["instances"]] == ["a", "b", "c"]
     assert payload["total_count"] == 3
+    assert payload["request_id"] == "req-page"
     assert [request.Offset for request in client.requests] == [0, 2]

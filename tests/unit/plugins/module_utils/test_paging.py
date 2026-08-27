@@ -7,9 +7,10 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging impor
 
 
 class FakeResponse(object):
-    def __init__(self, items, total):
+    def __init__(self, items, total, request_id="req-1"):
         self.items = items
         self.total = total
+        self.RequestId = request_id
 
 
 def _paginator_rounds(rounds, page_size=10):
@@ -73,3 +74,22 @@ def test_none_items_are_treated_as_empty():
     p = Paginator(3, lambda o, lim: {}, lambda r: FakeResponse(None, 0), lambda r: r.items, lambda r: r.total)
     items, total = p.fetch_all()
     assert items == []
+
+
+def test_request_id_tracks_last_response():
+    # The paginator records the last response's RequestId; responses without
+    # one fall back to None instead of raising.
+    p = Paginator(
+        3,
+        lambda o, lim: {},
+        lambda r: FakeResponse([1, 2], 2, request_id="req-final"),
+        lambda r: r.items,
+        lambda r: r.total,
+    )
+    items, total = p.fetch_all()
+    assert (items, total) == ([1, 2], 2)
+    assert p.request_id == "req-final"
+
+    p = Paginator(3, lambda o, lim: {}, lambda r: object(), lambda r: [], lambda r: None)
+    p.fetch_all()
+    assert p.request_id is None

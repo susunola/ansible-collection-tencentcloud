@@ -34,6 +34,10 @@ total_count:
   description: Number of file systems returned (the API reports no total count).
   returned: always
   type: int
+request_id:
+  description: Request ID of the last API call, for cross-referencing cloud audit logs.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -82,7 +86,9 @@ def run_module():
             break
     if total_count is None:
         total_count = len(file_systems)
-    module.exit_json(changed=False, file_systems=file_systems, total_count=total_count)
+    request_id = getattr(response, "RequestId", None)
+    module.exit_json(changed=False, file_systems=file_systems,
+                     total_count=total_count, request_id=request_id)
 
 
 def main():

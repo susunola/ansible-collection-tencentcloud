@@ -9,10 +9,10 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 ---
-module: sms_sms_sign_info
-short_description: Gather information about Tencent Cloud SMS sms signs
+module: sms_sign_info
+short_description: Gather information about Tencent Cloud SMS signs
 version_added: "0.9.0"
-description: Returns SMS sms signs visible in a Tencent Cloud region.
+description: Returns SMS signs visible in a Tencent Cloud region.
 options:
   page_size:
     description: Number of results requested per API call.
@@ -23,21 +23,25 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all sms signs
-  susunola.tencentcloud.sms_sms_sign_info:
+- name: List all signs
+  susunola.tencentcloud.sms_sign_info:
     region: ap-guangzhou
 '''
 
 RETURN = r'''
-sms_signs:
-  description: Matching SMS sms signs.
+signs:
+  description: Matching SMS signs.
   returned: always
   type: list
   elements: dict
 total_count:
-  description: Number of sms signs returned (the API reports no total count).
+  description: Number of signs reported by the API.
   returned: always
   type: int
+request_id:
+  description: Request ID of the last API call, for cross-referencing cloud audit logs.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -81,8 +85,9 @@ def run_module():
         lambda response: None,
     )
     item_set, total_count = paginator.fetch_all()
-    sms_signs = [serialize_sdk_object(item) for item in item_set]
-    module.exit_json(changed=False, sms_signs=sms_signs, total_count=total_count)
+    signs = [serialize_sdk_object(item) for item in item_set]
+    module.exit_json(changed=False, signs=signs,
+                     total_count=total_count, request_id=paginator.request_id)
 
 
 def main():

@@ -217,7 +217,7 @@ def find_function(module, client, models, function_name, namespace):
 def _build_code(models, params, zip_digest=None):
     code = models.Code()
     if params["zip_file"]:
-        b64, _ = _read_zip_b64(params["zip_file"])
+        b64, _digest = _read_zip_b64(params["zip_file"])
         code.ZipFile = b64
     elif params["cos_bucket_name"]:
         code.CosBucketName = params["cos_bucket_name"]

@@ -24,8 +24,11 @@ def test_build_request_has_no_arguments():
 
 
 class FakeResponse:
+    def __init__(self):
+        self.RequestId = "req-123"
+
     def _serialize(self, allow_none=True):
-        return {"Balance": 1000, "RealBalance": 1000.0, "RequestId": "req-123"}
+        return {"Balance": 1000, "RealBalance": 1000.0, "RequestId": self.RequestId}
 
 
 class FakeClient:
@@ -72,10 +75,11 @@ def _run(monkeypatch, client, **params):
     return fake
 
 
-def test_run_module_returns_balance_without_request_id(monkeypatch):
+def test_run_module_returns_balance_with_request_id(monkeypatch):
     client = FakeClient()
     fake = _run(monkeypatch, client, region="ap-guangzhou")
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert payload["balance"] == {"Balance": 1000, "RealBalance": 1000.0}
+    assert payload["request_id"] == "req-123"
     assert len(client.requests) == 1

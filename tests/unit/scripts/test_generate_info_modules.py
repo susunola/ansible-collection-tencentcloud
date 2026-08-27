@@ -65,7 +65,7 @@ def test_every_spec_renders_valid_documentation_yaml(generator):
 
         assert yaml.safe_load(blocks["EXAMPLES"])
         returned = yaml.safe_load(blocks["RETURN"])
-        expected_return = {spec["result_key"]}
+        expected_return = {spec["result_key"], "request_id"}
         if spec.get("pagination_type", "int") != "none":
             expected_return.add("total_count")
         assert set(returned) == expected_return

@@ -72,6 +72,13 @@ PRODUCT_ALIASES = {
     "autoscaling": "as",
 }
 
+# Resource-name fixups for actions the camel-split mangles: single-letter
+# acronym tokens ("DDoSBlockRecords" -> d_do_s_block_record) get a curated
+# readable name. Keyed on the derived snake_case resource name.
+RESOURCE_ALIASES = {
+    "d_do_s_block_record": "ddos_block_record",
+}
+
 _RTYPE_RE = re.compile(r":rtype:\s*(?P<rtype>[^\n]+)")
 _NESTED_RE = re.compile(r":class:`tencentcloud\.\w+\.\w+\.models\.(?P<cls>\w+)`")
 _ACTION_RE = re.compile(r"^(Describe|List|Get|Query|Search)[A-Z]")
@@ -185,6 +192,10 @@ def _resource_name(action):
     words = [w.lower() for w in raw]
     while len(words) > 1 and words[-1] in _DROP_TOKENS:
         words.pop()
+    # DescribeGetAuthInfo-style actions embed the Get verb after the action
+    # prefix; drop it so the resource reads as the object name.
+    if words and words[0] == "get":
+        words.pop(0)
     if not words:
         return ""
     words[-1] = _singular(words[-1])
@@ -374,6 +385,33 @@ def _analyze_action(models, action):
 
     total, items = _response_shape(models, response_cls)
     if not items:
+        # No list field: a single-object action (GetXxx/InquiryPrice) is
+        # usable only when its request takes no arguments. Any request field
+        # would be a hidden required parameter the SDK docstring does not
+        # mark, so it is skipped instead of generating a module that can
+        # never be called successfully.
+        if not request_props:
+            object_fields = [name for name, prop in response_props.items()
+                             if name != "RequestId" and _rtype(prop)
+                             and not _rtype(prop).startswith("list of ")]
+            if not object_fields:
+                return None, "response carries no list-of-model items and no object fields"
+            resource = _resource_name(action)
+            if not resource or not resource.isidentifier() or keyword.iskeyword(resource):
+                return None, "cannot derive a usable resource name from %s" % action
+            return {
+                "action": action,
+                "request_class": action + "Request",
+                "pagination": "none",
+                "pagination_info": {},
+                "response_items": None,
+                "response_total": None,
+                "resource": resource,
+                "ids_field": None,
+                "filters": None,
+                "score": 0,
+                "notes": [],
+            }, None
         return None, "response has no list-of-model items field"
 
     pagination, info = _detect_pagination(request_props, response_props)
@@ -441,13 +479,21 @@ def _build_spec(product, version, client_cls, candidate):
     """Assemble the generator spec dict for one accepted candidate."""
     prefix = PRODUCT_ALIASES.get(product, product)
     resource = candidate["resource"]
+    # Some API actions embed the product name in the resource
+    # (DescribeDCDBInstances -> dcdb_instance); drop the redundant leading
+    # token so the module reads <product>_<resource>_info, not
+    # <product>_<product>_<resource>_info.
+    if resource.startswith(prefix + "_"):
+        resource = resource[len(prefix) + 1:]
+    resource = RESOURCE_ALIASES.get(resource, resource)
     module = "%s_%s_info" % (prefix, resource)
-    plural = _plural(resource)
+    single_object = candidate["pagination"] == "none"
+    plural = resource if single_object else _plural(resource)
     words = plural.replace("_", " ")
     service = product.upper()
 
     ids = None
-    if candidate["ids_field"]:
+    if candidate["ids_field"] and not single_object:
         doc = "%s IDs to return." % resource.replace("_", " ").capitalize()
         if candidate["filters"]:
             doc += " Mutually exclusive with O(filters)."
@@ -462,7 +508,7 @@ def _build_spec(product, version, client_cls, candidate):
             ids["no_log"] = False
 
     filters = None
-    if candidate["filters"]:
+    if candidate["filters"] and not single_object:
         filters = dict(candidate["filters"])
         filters["doc"] = "%s API filter names mapped to lists of values." % service
         # Generator default is the Filter model; keep the spec compact.
@@ -482,10 +528,18 @@ def _build_spec(product, version, client_cls, candidate):
     region: ap-guangzhou
     %s: [x-xxxxxxxx]
 """ % (words, module, ids["param"])
+    if single_object:
+        examples = """\
+- name: Show the %s
+  susunola.tencentcloud.%s:
+    region: ap-guangzhou
+""" % (words, module)
 
     endpoint = getattr(client_cls, "_endpoint", None) or "%s.tencentcloudapi.com" % product
 
-    if candidate["response_total"] is None:
+    if single_object:
+        return_total_doc = ""
+    elif candidate["response_total"] is None:
         return_total_doc = "Number of %s returned (the API reports no total count)." % words
     else:
         return_total_doc = "Number of %s reported by the API." % words
