@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/susunola/ansible-collection-tencentcloud/actions/workflows/ci.yml/badge.svg)](https://github.com/susunola/ansible-collection-tencentcloud/actions/workflows/ci.yml)
 
+[![Ansible Galaxy](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgalaxy.ansible.com%2Fapi%2Fv3%2Fcollections%2Fsusunola%2Ftencentcloud%2F&query=highest_version.version&label=Ansible%20Galaxy&color=blue)](https://galaxy.ansible.com/susunola/tencentcloud)
+
 `susunola.tencentcloud` provides Ansible modules and plugins for managing Tencent
 Cloud resources. It is developed as a community collection targeting inclusion
 in the `ansible-collections` GitHub organization.
@@ -261,13 +263,13 @@ run with `--check` to verify they are up to date). The module tables and the
 - `tencentcloud-sdk-python-tag` 3.0.1000 or newer (only for tag reconciliation)
 - `cos-python-sdk-v5` 1.9.0 or newer (only for the `cos_*` modules)
 
-Once 0.4.0 is published on Ansible Galaxy, install with:
+Install from Ansible Galaxy:
 
 ```bash
 ansible-galaxy collection install susunola.tencentcloud
 ```
 
-Until then, install from source:
+Or install from source:
 
 ```bash
 python -m pip install -r requirements.txt
