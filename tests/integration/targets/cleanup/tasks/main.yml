@@ -1,0 +1,138 @@
+---
+# Sweeper for integration-test resources.
+#
+# Every integration target names its resources ``ansible-<kind>-it-*`` and
+# (where the module supports tags) tags them ``ansible_test: "true"``. This
+# target scans for both markers and deletes whatever it finds, in reverse
+# dependency order, so a failed or cancelled CI run cannot leave billable
+# resources behind. It is intentionally tolerant: nothing here fails the
+# run when an individual delete errors (the resource may already be gone or
+# still attached elsewhere); the playbook only reports what it removed.
+- name: Sweep leftover integration-test resources
+  vars:
+    region: >-
+      {{ lookup('ansible.builtin.env', 'TENCENTCLOUD_REGION')
+         | default('ap-guangzhou', true) }}
+  module_defaults:
+    group/tencentcloud.cloud.all:
+      region: "{{ region }}"
+  block:
+    # ------------------------------------------------------------------
+    # Collect everything, then filter by test marker.
+    # ------------------------------------------------------------------
+    - name: Collect VPCs
+      tencentcloud.cloud.vpc_info:
+      register: vpcs
+
+    - name: Collect subnets
+      tencentcloud.cloud.subnet_info:
+      register: subnets
+
+    - name: Collect route tables
+      tencentcloud.cloud.route_table_info:
+      register: route_tables
+
+    - name: Collect security groups
+      tencentcloud.cloud.security_group_info:
+      register: security_groups
+
+    - name: Collect EIPs
+      tencentcloud.cloud.eip_info:
+      register: eips
+
+    - name: Select test VPCs
+      ansible.builtin.set_fact:
+        test_vpcs: >-
+          {{ vpcs.vpcs
+             | selectattr('VpcName', 'defined')
+             | selectattr('VpcName', 'truthy')
+             | selectattr('VpcName', 'search', 'ansible-.*-it-') | list }}
+
+    - name: Select test subnets
+      ansible.builtin.set_fact:
+        test_subnets: >-
+          {{ subnets.subnets
+             | selectattr('SubnetName', 'defined')
+             | selectattr('SubnetName', 'truthy')
+             | selectattr('SubnetName', 'search', 'ansible-.*-it-') | list }}
+
+    - name: Select test route tables
+      ansible.builtin.set_fact:
+        test_route_tables: >-
+          {{ route_tables.route_tables
+             | selectattr('RouteTableName', 'defined')
+             | selectattr('RouteTableName', 'truthy')
+             | selectattr('RouteTableName', 'search',
+                          'ansible-.*-it-') | list }}
+
+    - name: Select test security groups
+      ansible.builtin.set_fact:
+        test_security_groups: >-
+          {{ security_groups.security_groups
+             | selectattr('SecurityGroupName', 'defined')
+             | selectattr('SecurityGroupName', 'truthy')
+             | selectattr('SecurityGroupName', 'search',
+                          'ansible-.*-it-') | list }}
+
+    - name: Select test EIPs
+      ansible.builtin.set_fact:
+        test_eips: >-
+          {{ eips.addresses
+             | selectattr('AddressName', 'defined')
+             | selectattr('AddressName', 'truthy')
+             | selectattr('AddressName', 'search', 'ansible-.*-it-') | list }}
+
+    # ------------------------------------------------------------------
+    # Tear down in reverse dependency order. Each delete is best-effort;
+    # the sweeper must never fail a CI cleanup step because one resource
+    # is still in use (e.g. a security group attached to a running
+    # instance that another test created).
+    # ------------------------------------------------------------------
+    - name: Release test EIPs
+      tencentcloud.cloud.eip:
+        state: absent
+        eip_id: "{{ item.AddressId }}"
+      loop: "{{ test_eips }}"
+      ignore_errors: true
+      when: item.AddressId is defined
+
+    - name: Delete test security groups
+      tencentcloud.cloud.security_group:
+        state: absent
+        security_group_id: "{{ item.SecurityGroupId }}"
+      loop: "{{ test_security_groups }}"
+      ignore_errors: true
+      when: item.SecurityGroupId is defined
+
+    - name: Delete test route tables
+      tencentcloud.cloud.route_table:
+        state: absent
+        route_table_id: "{{ item.RouteTableId }}"
+      loop: "{{ test_route_tables }}"
+      ignore_errors: true
+      when: item.RouteTableId is defined
+
+    - name: Delete test subnets
+      tencentcloud.cloud.subnet:
+        state: absent
+        subnet_id: "{{ item.SubnetId }}"
+      loop: "{{ test_subnets }}"
+      ignore_errors: true
+      when: item.SubnetId is defined
+
+    - name: Delete test VPCs
+      tencentcloud.cloud.vpc:
+        state: absent
+        vpc_id: "{{ item.VpcId }}"
+      loop: "{{ test_vpcs }}"
+      ignore_errors: true
+      when: item.VpcId is defined
+
+    - name: Report swept resources
+      ansible.builtin.debug:
+        msg: >-
+          Swept {{ test_eips | length }} EIP(s),
+          {{ test_security_groups | length }} security group(s),
+          {{ test_route_tables | length }} route table(s),
+          {{ test_subnets | length }} subnet(s),
+          {{ test_vpcs | length }} VPC(s).

@@ -1,0 +1,3 @@
+minor_changes:
+  - integration - move integration tests into a dedicated workflow (integration.yml) with three guardrails: a fixed concurrency group that serialises every run against the shared cloud account, a 40-minute budget cap (timeout-minutes), and an always-on ``cleanup`` sweeper target that removes leftover test resources (VPC/subnet/route table/security group/EIP named ``ansible-*-it-*``) even after a failed or timed-out run.
+  - integration - delete the test security group by ``security_group_id`` in the network target cleanup instead of by name, so cleanup survives non-unique or renamed groups.

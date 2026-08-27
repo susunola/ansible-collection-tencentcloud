@@ -174,7 +174,8 @@
     - name: Delete the security group
       tencentcloud.cloud.security_group:
         state: absent
-        name: "ansible-sgr-it-{{ run_id | default('') }}"
+        security_group_id: "{{ sg_create.security_group.SecurityGroupId }}"
+      when: sg_create is defined and sg_create.security_group is defined
       ignore_errors: true
 
     - name: Delete the route table
