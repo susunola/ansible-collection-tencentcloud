@@ -58,6 +58,7 @@ action_groups:
     - chdfs_file_system_info
     - ciam_user_store_info
     - ckafka_instance_info
+    - ckafka_topic
     - clb_listener
     - clb_listener_target
     - clb_load_balancer
@@ -170,6 +171,7 @@ action_groups:
     - route_table
     - route_table_info
     - rum_project_info
+    - scf_function
     - scf_function_info
     - security_group
     - security_group_info
@@ -182,6 +184,7 @@ action_groups:
     - ssa_check_config_asset_info
     - ssl_certificate_info
     - sslpod_domain_info
+    - ssm_parameter
     - subnet
     - subnet_info
     - svp_saving_plan_coverage_info

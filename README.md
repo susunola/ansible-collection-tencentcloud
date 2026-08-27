@@ -19,6 +19,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cam_role` | Manage Tencent Cloud CAM roles |
 | `cam_user` | Manage Tencent Cloud CAM sub-users |
 | `cfs_file_system` | Manage Tencent Cloud CFS file systems |
+| `ckafka_topic` | Manage Tencent Cloud CKafka topics |
 | `clb_listener` | Manage listeners on Tencent Cloud CLB load balancers |
 | `clb_listener_target` | Manage backend targets of Tencent Cloud CLB listeners |
 | `clb_load_balancer` | Manage Tencent Cloud CLB load balancers |
@@ -31,8 +32,10 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `nat_gateway` | Manage Tencent Cloud NAT gateways |
 | `peering_connection` | Manage Tencent Cloud VPC peering connections |
 | `route_table` | Manage Tencent Cloud VPC route tables |
+| `scf_function` | Manage Tencent Cloud SCF functions |
 | `security_group` | Manage Tencent Cloud security groups |
 | `security_group_rule` | Manage Tencent Cloud security group rules |
+| `ssm_parameter` | Manage Tencent Cloud SSM secrets (parameters) |
 | `subnet` | Manage Tencent Cloud VPC subnets |
 | `vpc` | Manage Tencent Cloud VPCs |
 | `vpn_gateway` | Manage Tencent Cloud VPN gateways |
