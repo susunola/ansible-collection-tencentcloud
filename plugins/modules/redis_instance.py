@@ -244,10 +244,13 @@ def _create(module, client, models, params):
     if params["security_group_id_list"]:
         request.SecurityGroupIdList = params["security_group_id_list"]
     if params["tags"]:
-        request.ResourceTags = [
-            models.ResourceTag(**{"TagKey": key, "TagValue": value})
-            for key, value in sorted(params["tags"].items())
-        ]
+        sdk_tags = []
+        for key, value in sorted(params["tags"].items()):
+            sdk_tag = models.ResourceTag()
+            sdk_tag.TagKey = key
+            sdk_tag.TagValue = value
+            sdk_tags.append(sdk_tag)
+        request.ResourceTags = sdk_tags
     response = module.sdk_call(client.CreateInstances, request)
     return _first(response.InstanceIds or [])
 

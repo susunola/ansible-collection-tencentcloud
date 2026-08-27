@@ -286,10 +286,13 @@ def _create(module, client, models, params):
     if params["snapshot_id"]:
         request.SnapshotId = params["snapshot_id"]
     if params["tags"]:
-        request.Tags = [
-            models.Tag(**{"Key": key, "Value": value})
-            for key, value in sorted(params["tags"].items())
-        ]
+        sdk_tags = []
+        for key, value in sorted(params["tags"].items()):
+            sdk_tag = models.Tag()
+            sdk_tag.Key = key
+            sdk_tag.Value = value
+            sdk_tags.append(sdk_tag)
+        request.Tags = sdk_tags
     response = module.sdk_call(client.CreateDisks, request)
     return response.DiskIdSet[0]
 

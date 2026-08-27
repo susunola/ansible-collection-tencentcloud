@@ -211,10 +211,13 @@ def _upload(module, client, models, params):
     if params["project_id"] is not None:
         request.ProjectId = params["project_id"]
     if params["tags"]:
-        request.Tags = [
-            models.Tags(**{"TagKey": key, "TagValue": value})
-            for key, value in sorted(params["tags"].items())
-        ]
+        sdk_tags = []
+        for key, value in sorted(params["tags"].items()):
+            sdk_tag = models.Tags()
+            sdk_tag.TagKey = key
+            sdk_tag.TagValue = value
+            sdk_tags.append(sdk_tag)
+        request.Tags = sdk_tags
     response = module.sdk_call(client.UploadCertificate, request)
     return response.CertificateId
 
