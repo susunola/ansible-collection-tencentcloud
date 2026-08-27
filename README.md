@@ -12,46 +12,60 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 
 | Module | Purpose |
 | --- | --- |
-| `vpc` | Manage VPCs (CIDR, DNS servers, domain name, tags) |
-| `subnet` | Manage subnets inside a VPC |
-| `route_table` | Manage route tables and their user routes |
-| `security_group` | Create, update and delete security groups |
-| `security_group_rule` | Reconcile the ingress/egress rules of a security group |
-| `eip` | Allocate, release and bind elastic IP addresses |
-| `key_pair` | Create or import SSH key pairs |
-| `cvm_instance` | Manage CVM instance lifecycle (present/absent/running/stopped) |
-| `cos_bucket` | Manage COS buckets (ACL, versioning, native tags) |
-| `cam_user` | Manage CAM sub-users |
-| `cam_role` | Manage CAM roles (trust policy, native role tags) |
-| `cam_policy` | Manage CAM custom policies |
+| `cam_policy` | Manage Tencent Cloud CAM policies |
+| `cam_role` | Manage Tencent Cloud CAM roles |
+| `cam_user` | Manage Tencent Cloud CAM sub-users |
+| `cos_bucket` | Manage Tencent Cloud COS buckets |
+| `cvm_instance` | Manage Tencent Cloud CVM instances |
+| `eip` | Manage Tencent Cloud elastic IP addresses (EIP) |
+| `key_pair` | Manage Tencent Cloud CVM key pairs |
+| `route_table` | Manage Tencent Cloud VPC route tables |
+| `security_group` | Manage Tencent Cloud security groups |
+| `security_group_rule` | Manage Tencent Cloud security group rules |
+| `subnet` | Manage Tencent Cloud VPC subnets |
+| `vpc` | Manage Tencent Cloud VPCs |
 
 Read-only `_info` modules (return `changed=false`):
 
 | Module | Purpose |
 | --- | --- |
-| `cvm_instance_info` | Query CVM instances with IDs or API filters |
-| `vpc_info` | Query VPCs with IDs or API filters |
-| `subnet_info` | Query subnets with IDs or API filters |
-| `route_table_info` | Query route tables with IDs or API filters |
-| `security_group_info` | Query security groups with IDs or API filters |
-| `eip_info` | Query elastic IP addresses with IDs, IPs or API filters |
-| `key_pair_info` | Query SSH key pairs with IDs or API filters |
-| `clb_load_balancer_info` | Query CLB load balancers with IDs or API filters |
-| `cdb_instance_info` | Query TencentDB for MySQL instances with IDs |
-| `tke_cluster_info` | Query TKE clusters with IDs or API filters |
-| `cbs_disk_info` | Query CBS cloud disks with IDs or API filters |
-| `redis_instance_info` | Query TencentDB for Redis instances with IDs |
-| `mongodb_instance_info` | Query TencentDB for MongoDB instances with IDs |
-| `kms_key_info` | Query KMS keys (list all, or describe by key IDs) |
-| `dnspod_record_info` | Query DNSPod records for a domain |
-| `cos_bucket_info` | Describe one COS bucket or list all buckets in a region |
-| `cam_role_info` | Query CAM roles with IDs or keyword filters |
-| `cam_policy_info` | Query CAM policies with IDs or keyword filters |
-| `cam_user_info` | Query CAM sub-users with client-side name filters |
+| `apigateway_service_info` | Gather information about Tencent Cloud API Gateway services |
+| `as_scaling_group_info` | Gather information about Tencent Cloud auto scaling groups |
+| `cam_policy_info` | Gather information about Tencent Cloud CAM policies |
+| `cam_role_info` | Gather information about Tencent Cloud CAM roles |
+| `cam_user_info` | Gather information about Tencent Cloud CAM sub-users |
+| `cbs_disk_info` | Gather information about Tencent Cloud CBS disks |
+| `cdb_instance_info` | Gather information about TencentDB for MySQL instances |
+| `cfs_file_system_info` | Gather information about Tencent Cloud CFS file systems |
+| `ckafka_instance_info` | Gather information about Tencent Cloud CKafka instances |
+| `clb_load_balancer_info` | Gather information about Tencent Cloud CLB load balancers |
+| `cos_bucket_info` | Gather information about Tencent Cloud COS buckets |
+| `cvm_instance_info` | Gather information about Tencent Cloud CVM instances |
+| `cynosdb_cluster_info` | Gather information about TencentDB for CynosDB clusters |
+| `dnspod_record_info` | Gather information about DNSPod records |
+| `eip_info` | Gather information about Tencent Cloud elastic IP addresses (EIP) |
+| `es_cluster_info` | Gather information about Tencent Cloud Elasticsearch clusters |
+| `key_pair_info` | Gather information about Tencent Cloud CVM key pairs |
+| `kms_key_info` | Gather information about Tencent Cloud KMS keys |
+| `lighthouse_instance_info` | Gather information about Tencent Cloud Lighthouse instances |
+| `mariadb_instance_info` | Gather information about TencentDB for MariaDB instances |
+| `mongodb_instance_info` | Gather information about TencentDB for MongoDB instances |
+| `postgres_instance_info` | Gather information about TencentDB for PostgreSQL instances |
+| `redis_instance_info` | Gather information about TencentDB for Redis instances |
+| `route_table_info` | Gather information about Tencent Cloud VPC route tables |
+| `scf_function_info` | Gather information about Tencent Cloud SCF functions |
+| `security_group_info` | Gather information about Tencent Cloud security groups |
+| `sqlserver_instance_info` | Gather information about TencentDB for SQL Server instances |
+| `subnet_info` | Gather information about Tencent Cloud subnets |
+| `tcr_instance_info` | Gather information about Tencent Cloud TCR registries |
+| `tke_cluster_info` | Gather information about Tencent Cloud TKE clusters |
+| `vpc_info` | Gather information about Tencent Cloud VPCs |
 
-The modules from `clb_load_balancer_info` down are generated from SDK
-metadata by `scripts/generate_info_modules.py` (run with `--check` to
-verify they are up to date).
+Most `_info` modules are generated from SDK metadata by
+`scripts/generate_info_modules.py` (marked with a `# Generated by` comment;
+run with `--check` to verify they are up to date). The module tables and the
+`action_groups` registry are kept in sync with `scripts/sync_registry.py`
+(`--check` runs in CI).
 
 ## Included plugins
 

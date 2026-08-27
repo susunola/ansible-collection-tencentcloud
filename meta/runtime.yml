@@ -2,27 +2,47 @@
 requires_ansible: ">=2.16.0"
 action_groups:
   all:
+    - apigateway_service_info
+    - as_scaling_group_info
     - cam_policy
     - cam_policy_info
     - cam_role
     - cam_role_info
     - cam_user
     - cam_user_info
+    - cbs_disk_info
+    - cdb_instance_info
+    - cfs_file_system_info
+    - ckafka_instance_info
+    - clb_load_balancer_info
     - cos_bucket
     - cos_bucket_info
     - cvm_instance
     - cvm_instance_info
+    - cynosdb_cluster_info
+    - dnspod_record_info
     - eip
     - eip_info
+    - es_cluster_info
     - key_pair
     - key_pair_info
+    - kms_key_info
+    - lighthouse_instance_info
+    - mariadb_instance_info
+    - mongodb_instance_info
+    - postgres_instance_info
+    - redis_instance_info
     - route_table
     - route_table_info
+    - scf_function_info
     - security_group
     - security_group_info
     - security_group_rule
+    - sqlserver_instance_info
     - subnet
     - subnet_info
+    - tcr_instance_info
+    - tke_cluster_info
     - vpc
     - vpc_info
 

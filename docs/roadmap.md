@@ -30,18 +30,24 @@
 12. SDK contract tests (0.5.0): `tests/contract/` audits every module's
     request construction against the real SDK models in CI, catching wrong
     field names and types that fake-based unit tests cannot. **Done**
+13. Coverage batch 1 (0.6.0): generated `_info` modules for AS, SCF, CFS,
+    Lighthouse, CynosDB, PostgreSQL, SQL Server, MariaDB, Elasticsearch,
+    CKafka, TCR and API Gateway; contract tests auto-discover modules and
+    `scripts/sync_registry.py` keeps README/action_groups in sync. **Done**
 
 ## Next
 
-13. CLB write modules (`clb_load_balancer`, listeners and attachments) on top
+14. Coverage batch 2 (generated `_info`): NAT/VPN (vpc service), GAAP, CDN,
+    CloudAudit, CWP, WAF, SSL, Organization, Monitor, CLS, TAT, Billing.
+15. CLB write modules (`clb_load_balancer`, listeners and attachments) on top
     of the existing `clb_load_balancer_info`.
-14. `cvm_instance` scaling: `exact_count`-style batch create/terminate with
+16. `cvm_instance` scaling: `exact_count`-style batch create/terminate with
     per-zone spread.
-15. Integration CI: run the integration targets on a schedule against a real
+17. Integration CI: run the integration targets on a schedule against a real
     account, with cost guardrails (budget caps, automatic teardown of leaked
     resources).
-16. Coverage reporting for unit and integration tests.
-17. Galaxy namespace and publishing: the release workflow already publishes
+18. Coverage reporting for unit and integration tests.
+19. Galaxy namespace and publishing: the release workflow already publishes
     on tags once `GALAXY_API_KEY` is configured.
 
 Resource modules must be idempotent, support check mode, expose API request

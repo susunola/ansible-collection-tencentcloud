@@ -41,6 +41,8 @@ jobs:
           python -m pip install "ansible-core==${{ matrix.ansible-core }}" pytest pytest-xdist yamllint
       - name: Generated modules are up to date
         run: python scripts/generate_info_modules.py --check
+      - name: Module registries are up to date
+        run: python scripts/sync_registry.py --check
       - name: Sanity tests
         run: ansible-test sanity --color --python ${{ matrix.python }}
       - name: Unit tests

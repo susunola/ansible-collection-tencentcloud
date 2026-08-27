@@ -31,6 +31,14 @@ in CI as a plain pytest step (see ``.github/workflows/ci.yml``) that first
 installs ``requirements.txt``. When the SDK (or ansible-core) is not
 importable, every test here skips.
 
+Coverage is auto-discovered: ``test_module_request_builders_are_exercised``
+scans every ``plugins/modules/*.py`` for functions that construct SDK
+``*Request`` objects and fails loudly when such a builder is exercised by
+no contract test. New modules therefore need no registration to be caught;
+genuine exceptions (the ``cos_*`` modules use the ``qcloud_cos`` SDK, and
+``cam_policy_info.run_module`` builds one request inline) live in the
+reasoned ``NO_API3_CONTRACT`` / ``UNEXERCISED_BUILDERS`` tables below.
+
 Not covered, by design:
 
 - ``cos_bucket`` / ``cos_bucket_info``: COS is not an API 3.0 service; the
@@ -42,6 +50,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import ast
 import importlib
 import importlib.util
 import os
@@ -260,12 +269,134 @@ def audit_recorded(module, where):
 
 
 # ---------------------------------------------------------------------------
+# Auto-discovery and coverage audit
+# ---------------------------------------------------------------------------
+
+CLOUD_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+MODULES_DIR = os.path.join(CLOUD_DIR, "plugins", "modules")
+
+# Modules that genuinely have no API 3.0 request models to audit. Anything
+# not listed here is auto-discovered and must be covered by the tests below.
+NO_API3_CONTRACT = {
+    "cos_bucket": "cos_bucket uses the qcloud_cos SDK (COS is not an API 3.0 "
+                  "service), which has no declarative request models to audit",
+    "cos_bucket_info": "cos_bucket_info uses the qcloud_cos SDK (COS is not "
+                       "an API 3.0 service), which has no declarative request "
+                       "models to audit",
+}
+
+# Individual builders that exist but cannot be exercised by the contract
+# tests, keyed by (module, function), with the reason.
+UNEXERCISED_BUILDERS = {
+    ("cam_policy_info", "run_module"):
+        "run_module constructs a GetPolicyRequest inline and cannot be "
+        "called without real AnsibleModule params; the request is trivial "
+        "(PolicyId only) and the path is covered by unit tests",
+}
+
+# Write-module request builders exercised by the ``test_<module>`` functions
+# at the bottom of this file. Info-module builders are registered in
+# INFO_BUILDERS instead. Both sets are verified against the static scan.
+WRITE_MODULE_BUILDERS = {
+    "cam_policy": [
+        "_apply_tags", "_create", "_delete", "_update", "find_policy",
+    ],
+    "cam_role": [
+        "_create", "_delete", "_tag_role", "_untag_role",
+        "_update_description", "_update_policy_document", "find_role",
+    ],
+    "cam_user": [
+        "_apply_tags", "_create", "_current_tags", "_delete", "_update",
+        "find_user",
+    ],
+    "cvm_instance": [
+        "_apply_tags", "_delete", "_start", "_stop", "_update_attributes",
+        "build_describe_request", "build_run_request",
+    ],
+    "eip": [
+        "_apply_tags", "_associate", "_create", "_delete", "_disassociate",
+        "_update_name", "build_describe_request",
+    ],
+    "key_pair": [
+        "_create", "_delete", "_import", "build_describe_request",
+    ],
+    "route_table": [
+        "_apply_routes", "_apply_tags", "_create", "_delete", "_update_name",
+        "build_describe_request",
+    ],
+    "security_group": [
+        "_apply_tags", "_create", "_delete", "_update_attributes",
+        "build_describe_request",
+    ],
+    "security_group_rule": [
+        "build_describe_request", "create_rules", "delete_rules",
+    ],
+    "subnet": [
+        "_apply_tags", "_create", "_delete", "_update",
+        "build_describe_request",
+    ],
+    "vpc": [
+        "_apply_tags", "_create", "_delete", "_update_attributes",
+        "build_describe_request",
+    ],
+}
+
+
+def discover_modules():
+    """Return the names of every module in ``plugins/modules``."""
+    return sorted(
+        filename[:-len(".py")]
+        for filename in os.listdir(MODULES_DIR)
+        if filename.endswith(".py") and not filename.startswith("__")
+    )
+
+
+def discover_request_builders(module_name):
+    """Statically find a module's functions that build SDK request objects.
+
+    A module-level function counts as a request builder when its body calls
+    ``<something>models.<Name>Request()`` (matching both ``models`` and e.g.
+    ``tag_models``). The scan is a pure AST walk, so it also runs in
+    environments without the SDK.
+    """
+    path = os.path.join(MODULES_DIR, module_name + ".py")
+    with open(path, encoding="utf-8") as handle:
+        tree = ast.parse(handle.read(), filename=path)
+    builders = {}
+    for node in tree.body:
+        if not isinstance(node, ast.FunctionDef):
+            continue
+        for sub in ast.walk(node):
+            func = getattr(sub, "func", None)
+            if (isinstance(sub, ast.Call)
+                    and isinstance(func, ast.Attribute)
+                    and func.attr.endswith("Request")
+                    and isinstance(func.value, ast.Name)
+                    and func.value.id.endswith("models")):
+                builders.setdefault(node.name, set()).add(func.attr)
+    return builders
+
+
+def _exercised_builders(module_name):
+    """Return the builders registered as contract-tested for *module_name*."""
+    if module_name.endswith("_info"):
+        return {
+            builder
+            for name, _service, builder, _calls in INFO_BUILDERS
+            if name == module_name
+        }
+    return set(WRITE_MODULE_BUILDERS.get(module_name, ()))
+
+
+# ---------------------------------------------------------------------------
 # Info modules
 # ---------------------------------------------------------------------------
 
 # (module, SDK service, builder, [args tuples]) -- the real models module is
-# passed as the first positional argument by the test.
-INFO_BUILDERS = [
+# passed as the first positional argument by the test. Only hand-written info
+# modules are registered here; generated modules (those carrying the
+# generator's MARKER) are covered automatically via _generated_info_builders.
+INFO_BUILDERS_HANDWRITTEN = [
     ("vpc_info", "vpc.v20170312", "build_request", [
         (["vpc-xxxxxxxx"], None, 0, 100),
         (None, {"is-default": ["true"], "vpc-name": ["prod-vpc"]}, 0, 100),
@@ -300,38 +431,82 @@ INFO_BUILDERS = [
         ("local", "app-read-only", 1, 100),
         ("all", None, 1, 100),
     ]),
-    ("cbs_disk_info", "cbs.v20170312", "build_request", [
-        (["disk-xxxxxxxx"], None, 0, 100),
-        (None, {"zone": ["ap-guangzhou-1"]}, 0, 100),
-    ]),
-    ("cdb_instance_info", "cdb.v20170320", "build_request", [
-        (["cdb-xxxxxxxx"], 0, 100),
-        (None, 0, 100),
-    ]),
-    ("clb_load_balancer_info", "clb.v20180317", "build_request", [
-        (["lb-xxxxxxxx"], None, 0, 100),
-        (None, {"loadbalancer-name": ["web-lb"]}, 0, 100),
-    ]),
-    ("dnspod_record_info", "dnspod.v20210323", "build_request", [
-        ("example.com", 0, 100),
-    ]),
-    ("kms_key_info", "kms.v20190118", "build_list_request", [(0, 100)]),
-    ("kms_key_info", "kms.v20190118", "build_describe_request", [
-        (["xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"],),
-    ]),
-    ("mongodb_instance_info", "mongodb.v20190725", "build_request", [
-        (["cmgo-xxxxxxxx"], 0, 100),
-        (None, 0, 100),
-    ]),
-    ("redis_instance_info", "redis.v20180412", "build_request", [
-        (["crs-xxxxxxxx"], 0, 100),
-        (None, 0, 100),
-    ]),
-    ("tke_cluster_info", "tke.v20180525", "build_request", [
-        (["cls-xxxxxxxx"], None, 0, 100),
-        (None, {"ClusterName": ["prod"]}, 0, 100),
-    ]),
 ]
+
+GENERATOR_PATH = os.path.join(CLOUD_DIR, "scripts", "generate_info_modules.py")
+
+_SAMPLE_VALUES = {
+    "str": "sample",
+    "int": 1,
+    "bool": True,
+    "list": ["sample"],
+    "dict": {"key": "value"},
+}
+
+
+def _load_generator_specs():
+    """Load SPECS from scripts/generate_info_modules.py without running it."""
+    spec = importlib.util.spec_from_file_location("generate_info_modules", GENERATOR_PATH)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.SPECS
+
+
+def _generated_builder_calls(spec):
+    """Contract invocations for a generated info module, derived from its spec.
+
+    The generated builder signatures are fixed by the generator template:
+    ``build_list_request``/``build_describe_request`` for ids_action specs,
+    otherwise ``build_request(models, *extra_params, ids?, filters?, offset,
+    limit)``. Each builder is called once with no selectors and once with
+    every selector populated, so both branches are audited.
+    """
+    if spec.get("ids_action"):
+        return [
+            ("build_list_request", [(0, 100)]),
+            ("build_describe_request", [(["x-xxxxxxxx"],)]),
+        ]
+    extras = [_SAMPLE_VALUES[param["type"]] for param in spec["extra_params"]]
+    calls = []
+    selectors = [(None, {})]
+    if spec["ids"] or spec["filters"]:
+        selectors.append((
+            ["x-xxxxxxxx"] if spec["ids"] else None,
+            {"name": ["value"]} if spec["filters"] else {},
+        ))
+    for ids_value, filters_value in selectors:
+        args = list(extras)
+        if spec["ids"]:
+            args.append(ids_value)
+        if spec["filters"]:
+            args.append(filters_value)
+        args += [0, 100]
+        calls.append(tuple(args))
+    return [("build_request", calls)]
+
+
+def _generated_info_builders():
+    """Derive INFO_BUILDERS-style entries for every generated info module."""
+    entries = []
+    for spec in _load_generator_specs():
+        service = spec["service_package"].split(".", 1)[1]
+        for builder, calls in _generated_builder_calls(spec):
+            entries.append((spec["module"], service, builder, calls))
+    return entries
+
+
+INFO_BUILDERS = INFO_BUILDERS_HANDWRITTEN + _generated_info_builders()
+
+
+def test_info_builder_registrations_do_not_overlap():
+    """A module must be registered either by hand or via the generator."""
+    hand = {entry[0] for entry in INFO_BUILDERS_HANDWRITTEN}
+    generated = {spec["module"] for spec in _load_generator_specs()}
+    overlap = sorted(hand & generated)
+    assert not overlap, (
+        "modules registered in both INFO_BUILDERS_HANDWRITTEN and the "
+        "generator SPECS: %s" % ", ".join(overlap)
+    )
 
 
 @pytest.mark.parametrize(
@@ -349,12 +524,71 @@ def test_info_module_request_contract(module_name, service, builder, calls):
     assert errors == []
 
 
-def test_cos_modules_have_no_api3_contract():
-    """COS is not an API 3.0 service; nothing to audit here."""
-    pytest.skip(
-        "cos_bucket and cos_bucket_info use the qcloud_cos SDK, which has "
-        "no declarative request models to audit"
+@pytest.mark.parametrize("module_name", discover_modules())
+def test_module_request_builders_are_exercised(module_name):
+    """Audit: every discovered module's request builders are contract-tested.
+
+    This is what makes newly added modules fail loudly instead of silently
+    shipping without real-SDK coverage: a module whose builders appear in no
+    ``INFO_BUILDERS`` entry and no ``WRITE_MODULE_BUILDERS`` registration
+    fails here until coverage (or a reasoned exception above) is added.
+    """
+    discovered = discover_request_builders(module_name)
+    if module_name in NO_API3_CONTRACT:
+        assert not discovered, (
+            "%s is excepted via NO_API3_CONTRACT but now builds API 3.0 "
+            "requests (%s); drop the exception and add contract coverage"
+            % (module_name, ", ".join(sorted(discovered)))
+        )
+        pytest.skip(NO_API3_CONTRACT[module_name])
+
+    exercised = _exercised_builders(module_name)
+    if module_name.endswith("_info"):
+        hint = "add an INFO_BUILDERS_HANDWRITTEN entry"
+        marker = "# Generated by scripts/generate_info_modules.py"
+        with open(os.path.join(MODULES_DIR, module_name + ".py"), encoding="utf-8") as handle:
+            if marker in handle.read():
+                hint = ("the module is generated; add its SPECS entry to "
+                        "scripts/generate_info_modules.py")
+    else:
+        hint = ("add a WRITE_MODULE_BUILDERS entry and a test_%s function "
+                "exercising its builders" % module_name)
+    assert exercised or not discovered, (
+        "%s builds SDK requests (%s) but has no contract coverage; %s"
+        % (module_name, ", ".join(sorted(discovered)), hint)
     )
+
+    excepted = {
+        builder
+        for (name, builder) in UNEXERCISED_BUILDERS
+        if name == module_name
+    }
+    problems = []
+    unexercised = sorted(set(discovered) - excepted - exercised)
+    if unexercised:
+        problems.append("builders not exercised by any contract test: %s"
+                        % ", ".join(unexercised))
+    phantom = sorted(exercised - set(discovered))
+    if phantom:
+        problems.append("registered builders that build no requests "
+                        "(stale registration?): %s" % ", ".join(phantom))
+    stale_exceptions = sorted(excepted - set(discovered))
+    if stale_exceptions:
+        problems.append("stale UNEXERCISED_BUILDERS entries: %s"
+                        % ", ".join(stale_exceptions))
+    assert not problems, "%s: %s" % (module_name, "; ".join(problems))
+
+    module = _import_plugin(module_name)
+    for builder in sorted(exercised):
+        assert callable(getattr(module, builder, None)), (
+            "%s.%s is registered as exercised but does not exist"
+            % (module_name, builder)
+        )
+    if not module_name.endswith("_info"):
+        assert callable(globals().get("test_" + module_name)), (
+            "%s is registered in WRITE_MODULE_BUILDERS but test_%s is missing"
+            % (module_name, module_name)
+        )
 
 
 # ---------------------------------------------------------------------------
