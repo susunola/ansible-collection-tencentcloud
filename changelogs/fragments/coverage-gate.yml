@@ -1,0 +1,2 @@
+minor_changes:
+  - CI - SDK contract tests now measure coverage of module_utils and modules and fail below the 50% threshold, blocking silent coverage regressions.
