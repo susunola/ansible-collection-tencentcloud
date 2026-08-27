@@ -1,0 +1,3 @@
+minor_changes:
+  - cos_bucket - manage the bucket CORS configuration with the new ``cors`` parameter (replacing rules, empty list removes all) and the lifecycle configuration with the new ``lifecycle`` parameter (prefix-matched rules with day-based expiration, storage-class transitions, noncurrent-version transitions and incomplete-multipart-upload aborts).
+  - cos_bucket_info - the bucket description now includes the CORS and lifecycle configurations alongside ACL, versioning and tags.

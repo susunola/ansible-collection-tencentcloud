@@ -45,7 +45,7 @@ class FakeCosClient(object):
     """In-memory stand-in for CosS3Client; write ops are MagicMock-wrapped."""
 
     def __init__(self, buckets=None, delete_error=None):
-        # full_name -> {"location", "acl", "versioning", "tags"}
+        # full_name -> {"location", "acl", "versioning", "tags", "cors", "lifecycle"}
         self.buckets = dict(buckets or {})
         self.delete_error = delete_error
         self.create_bucket = MagicMock(side_effect=self._create_bucket)
@@ -54,6 +54,10 @@ class FakeCosClient(object):
         self.put_bucket_versioning = MagicMock(side_effect=self._put_bucket_versioning)
         self.put_bucket_tagging = MagicMock(side_effect=self._put_bucket_tagging)
         self.delete_bucket_tagging = MagicMock(side_effect=self._delete_bucket_tagging)
+        self.put_bucket_cors = MagicMock(side_effect=self._put_bucket_cors)
+        self.delete_bucket_cors = MagicMock(side_effect=self._delete_bucket_cors)
+        self.put_bucket_lifecycle = MagicMock(side_effect=self._put_bucket_lifecycle)
+        self.delete_bucket_lifecycle = MagicMock(side_effect=self._delete_bucket_lifecycle)
 
     def _create_bucket(self, Bucket, **kwargs):
         self.buckets[Bucket] = {
@@ -61,6 +65,8 @@ class FakeCosClient(object):
             "acl": kwargs.get("ACL", "private"),
             "versioning": None,
             "tags": {},
+            "cors": [],
+            "lifecycle": [],
         }
 
     def _delete_bucket(self, Bucket, **kwargs):
@@ -80,6 +86,22 @@ class FakeCosClient(object):
 
     def _delete_bucket_tagging(self, Bucket, **kwargs):
         self.buckets[Bucket]["tags"] = {}
+
+    def _put_bucket_cors(self, Bucket, **kwargs):
+        self.buckets[Bucket]["cors"] = kwargs["CORSConfiguration"]["CORSRule"]
+
+    def _delete_bucket_cors(self, Bucket, **kwargs):
+        if not self.buckets[Bucket].get("cors"):
+            raise FakeCosError("NoSuchCORSConfiguration")
+        self.buckets[Bucket]["cors"] = []
+
+    def _put_bucket_lifecycle(self, Bucket, **kwargs):
+        self.buckets[Bucket]["lifecycle"] = kwargs["LifecycleConfiguration"]["Rule"]
+
+    def _delete_bucket_lifecycle(self, Bucket, **kwargs):
+        if not self.buckets[Bucket].get("lifecycle"):
+            raise FakeCosError("NoSuchLifecycleConfiguration")
+        self.buckets[Bucket]["lifecycle"] = []
 
     def head_bucket(self, Bucket, **kwargs):
         if Bucket not in self.buckets:
@@ -102,9 +124,28 @@ class FakeCosClient(object):
             raise FakeCosError("NoSuchTagSet")
         return {"TagSet": {"Tag": [{"Key": k, "Value": v} for k, v in sorted(tags.items())]}}
 
+    def get_bucket_cors(self, Bucket, **kwargs):
+        rules = self.buckets[Bucket].get("cors") or []
+        if not rules:
+            raise FakeCosError("NoSuchCORSConfiguration")
+        return {"CORSConfiguration": {"CORSRule": rules}}
 
-def _bucket(acl="private", versioning=None, tags=None):
-    return {"location": "ap-guangzhou", "acl": acl, "versioning": versioning, "tags": tags or {}}
+    def get_bucket_lifecycle(self, Bucket, **kwargs):
+        rules = self.buckets[Bucket].get("lifecycle") or []
+        if not rules:
+            raise FakeCosError("NoSuchLifecycleConfiguration")
+        return {"LifecycleConfiguration": {"Rule": rules}}
+
+
+def _bucket(acl="private", versioning=None, tags=None, cors=None, lifecycle=None):
+    return {
+        "location": "ap-guangzhou",
+        "acl": acl,
+        "versioning": versioning,
+        "tags": tags or {},
+        "cors": cors or [],
+        "lifecycle": lifecycle or [],
+    }
 
 
 @pytest.fixture
@@ -296,3 +337,170 @@ def test_full_name_in_name_is_not_double_suffixed(client):
     result = run(cos_bucket.run_module)
     assert result["changed"] is True
     client.create_bucket.assert_called_once_with(Bucket=FULL_NAME, ACL="private")
+
+
+def test_create_with_cors_and_lifecycle(client):
+    module_args(
+        state="present", name="mybucket", appid=APPID,
+        cors=[{
+            "id": "web",
+            "allowed_origins": ["https://www.example.com"],
+            "allowed_methods": ["GET", "HEAD"],
+            "max_age_seconds": 600,
+        }],
+        lifecycle=[{
+            "id": "logs",
+            "prefix": "logs/",
+            "expiration_days": 30,
+            "transitions": [{"days": 7, "storage_class": "STANDARD_IA"}],
+        }],
+    )
+    result = run(cos_bucket.run_module)
+    assert result["changed"] is True
+    client.put_bucket_cors.assert_called_once_with(
+        Bucket=FULL_NAME,
+        CORSConfiguration={
+            "CORSRule": [{
+                "ID": "web",
+                "AllowedOrigin": ["https://www.example.com"],
+                "AllowedMethod": ["GET", "HEAD"],
+                "MaxAgeSeconds": 600,
+            }]
+        },
+    )
+    client.put_bucket_lifecycle.assert_called_once_with(
+        Bucket=FULL_NAME,
+        LifecycleConfiguration={
+            "Rule": [{
+                "ID": "logs",
+                "Status": "Enabled",
+                "Filter": {"Prefix": "logs/"},
+                "Expiration": {"Days": 30},
+                "Transition": [{"Days": 7, "StorageClass": "STANDARD_IA"}],
+            }]
+        },
+    )
+    assert result["bucket"]["cors"][0]["AllowedOrigin"] == ["https://www.example.com"]
+    assert result["bucket"]["lifecycle"][0]["Expiration"] == {"Days": 30}
+
+
+def test_cors_and_lifecycle_second_run_is_idempotent(client):
+    client.buckets[FULL_NAME] = _bucket(
+        cors=[{
+            "ID": "web",
+            "AllowedOrigin": ["https://www.example.com"],
+            "AllowedMethod": ["GET"],
+            "MaxAgeSeconds": 600,
+        }],
+        lifecycle=[{
+            "ID": "logs",
+            "Status": "Enabled",
+            "Filter": {"Prefix": "logs/"},
+            "Expiration": {"Days": 30},
+        }],
+    )
+    module_args(
+        state="present", name="mybucket", appid=APPID,
+        cors=[{
+            "id": "web",
+            "allowed_origins": ["https://www.example.com"],
+            "allowed_methods": ["GET"],
+            "max_age_seconds": 600,
+        }],
+        lifecycle=[{"id": "logs", "prefix": "logs/", "expiration_days": 30}],
+    )
+    result = run(cos_bucket.run_module)
+    assert result["changed"] is False
+    client.put_bucket_cors.assert_not_called()
+    client.put_bucket_lifecycle.assert_not_called()
+
+
+def test_update_cors_adds_rules(client):
+    client.buckets[FULL_NAME] = _bucket()
+    module_args(
+        state="present", name="mybucket", appid=APPID,
+        cors=[{"allowed_origins": ["https://a.example.com"], "allowed_methods": ["GET"]}],
+    )
+    result = run(cos_bucket.run_module)
+    assert result["changed"] is True
+    client.put_bucket_cors.assert_called_once_with(
+        Bucket=FULL_NAME,
+        CORSConfiguration={
+            "CORSRule": [{
+                "AllowedOrigin": ["https://a.example.com"],
+                "AllowedMethod": ["GET"],
+            }]
+        },
+    )
+
+
+def test_clearing_cors_calls_delete(client):
+    client.buckets[FULL_NAME] = _bucket(
+        cors=[{"ID": "web", "AllowedOrigin": ["https://a.example.com"], "AllowedMethod": ["GET"]}],
+    )
+    module_args(state="present", name="mybucket", appid=APPID, cors=[])
+    result = run(cos_bucket.run_module)
+    assert result["changed"] is True
+    client.delete_bucket_cors.assert_called_once_with(Bucket=FULL_NAME)
+
+
+def test_clearing_lifecycle_calls_delete(client):
+    client.buckets[FULL_NAME] = _bucket(
+        lifecycle=[{"ID": "logs", "Status": "Enabled", "Expiration": {"Days": 30}}],
+    )
+    module_args(state="present", name="mybucket", appid=APPID, lifecycle=[])
+    result = run(cos_bucket.run_module)
+    assert result["changed"] is True
+    client.delete_bucket_lifecycle.assert_called_once_with(Bucket=FULL_NAME)
+
+
+def test_unmanaged_cors_and_lifecycle_are_left_alone(client):
+    client.buckets[FULL_NAME] = _bucket(
+        cors=[{"ID": "web", "AllowedOrigin": ["https://a.example.com"], "AllowedMethod": ["GET"]}],
+        lifecycle=[{"ID": "logs", "Status": "Enabled", "Expiration": {"Days": 30}}],
+    )
+    module_args(state="present", name="mybucket", appid=APPID)
+    result = run(cos_bucket.run_module)
+    assert result["changed"] is False
+    client.put_bucket_cors.assert_not_called()
+    client.put_bucket_lifecycle.assert_not_called()
+    client.delete_bucket_cors.assert_not_called()
+    client.delete_bucket_lifecycle.assert_not_called()
+
+
+def test_lifecycle_rule_change_is_reconciled(client):
+    client.buckets[FULL_NAME] = _bucket(
+        lifecycle=[{"ID": "logs", "Status": "Enabled", "Expiration": {"Days": 30}}],
+    )
+    module_args(
+        state="present", name="mybucket", appid=APPID,
+        lifecycle=[{"id": "logs", "prefix": "logs/", "expiration_days": 60}],
+    )
+    result = run(cos_bucket.run_module)
+    assert result["changed"] is True
+    client.put_bucket_lifecycle.assert_called_once_with(
+        Bucket=FULL_NAME,
+        LifecycleConfiguration={
+            "Rule": [{
+                "ID": "logs",
+                "Status": "Enabled",
+                "Filter": {"Prefix": "logs/"},
+                "Expiration": {"Days": 60},
+            }]
+        },
+    )
+
+
+def test_check_mode_cors_lifecycle_makes_no_writes(client):
+    module_args(
+        state="present", name="mybucket", appid=APPID,
+        cors=[{"allowed_origins": ["https://a.example.com"], "allowed_methods": ["GET"]}],
+        lifecycle=[{"prefix": "logs/", "expiration_days": 30}],
+        _ansible_check_mode=True,
+    )
+    result = run(cos_bucket.run_module)
+    assert result["changed"] is True
+    assert "diff" in result
+    client.create_bucket.assert_not_called()
+    client.put_bucket_cors.assert_not_called()
+    client.put_bucket_lifecycle.assert_not_called()

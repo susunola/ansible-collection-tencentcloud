@@ -44,6 +44,8 @@ NOT_FOUND_CODES = (
     "NoSuchBucket",
     "NoSuchTagSet",
     "NoSuchTagSetError",
+    "NoSuchCORSConfiguration",
+    "NoSuchLifecycleConfiguration",
 )
 
 
@@ -204,7 +206,8 @@ def describe_bucket(client, full_name, short_name=None):
 
     Combines ``head_bucket`` (existence), ``get_bucket_location``,
     ``get_bucket_acl`` (whose response carries the parsed ``CannedACL``),
-    ``get_bucket_versioning`` and ``get_bucket_tagging``.
+    ``get_bucket_versioning``, ``get_bucket_tagging`` and the optional
+    CORS/lifecycle sub-configurations (empty lists when not configured).
     """
     try:
         client.head_bucket(Bucket=full_name)
@@ -222,6 +225,8 @@ def describe_bucket(client, full_name, short_name=None):
         "acl": acl.get("CannedACL", "private"),
         "versioning": versioning.get("Status") == "Enabled",
         "tags": get_bucket_tags(client, full_name),
+        "cors": get_bucket_cors(client, full_name),
+        "lifecycle": get_bucket_lifecycle(client, full_name),
     }
 
 
@@ -240,3 +245,169 @@ def list_buckets(client, region=None):
         }
         for item in bucket_list
     ]
+
+
+def cors_rules_desired(rules):
+    """Canonical form of user-supplied CORS rules.
+
+    Accepts the module parameter shape (snake_case keys) and returns the
+    XML shape ``put_bucket_cors`` expects, which is also the canonical form
+    used for idempotency comparison against :func:`cors_rules_current`.
+    Header/origin/method values are normalised to sorted lists and
+    ``max_age_seconds`` to an int so the two sides compare equal.
+    """
+    out = []
+    for rule in rules or []:
+        entry = {}
+        if rule.get("id"):
+            entry["ID"] = rule["id"]
+        for src, dst in (
+            ("allowed_origins", "AllowedOrigin"),
+            ("allowed_methods", "AllowedMethod"),
+            ("allowed_headers", "AllowedHeader"),
+            ("expose_headers", "ExposeHeader"),
+        ):
+            value = rule.get(src)
+            if value:
+                entry[dst] = sorted(value)
+        if rule.get("max_age_seconds") is not None:
+            entry["MaxAgeSeconds"] = int(rule["max_age_seconds"])
+        out.append(entry)
+    return out
+
+
+def cors_rules_current(rules):
+    """Canonical form of a COS ``get_bucket_cors`` rule list.
+
+    COS returns single values as bare strings (``AllowedOrigin`` may be
+    ``"http://a"`` instead of ``["http://a"]``) and ``MaxAgeSeconds`` as a
+    string; normalise both so the result compares equal to
+    :func:`cors_rules_desired`.
+    """
+    out = []
+    for rule in rules or []:
+        entry = {}
+        if rule.get("ID"):
+            entry["ID"] = rule["ID"]
+        for key in ("AllowedOrigin", "AllowedMethod", "AllowedHeader", "ExposeHeader"):
+            value = rule.get(key)
+            if value:
+                if isinstance(value, str):
+                    value = [value]
+                entry[key] = sorted(value)
+        if rule.get("MaxAgeSeconds") is not None:
+            entry["MaxAgeSeconds"] = int(rule["MaxAgeSeconds"])
+        out.append(entry)
+    return out
+
+
+def lifecycle_rules_desired(rules):
+    """Canonical form of user-supplied lifecycle rules.
+
+    Maps the module parameter shape (snake_case keys) to the XML shape
+    ``put_bucket_lifecycle`` expects, normalising numeric fields to ints and
+    turning ``status`` into ``Enabled``/``Disabled``. A rule with neither
+    ``expiration_days`` nor a transition nor an abort setting is rejected
+    because COS rejects empty rules.
+    """
+    out = []
+    for rule in rules or []:
+        entry = {}
+        if rule.get("id"):
+            entry["ID"] = rule["id"]
+        status = (rule.get("status") or "enabled").lower()
+        entry["Status"] = "Enabled" if status == "enabled" else "Disabled"
+        if rule.get("prefix"):
+            entry["Filter"] = {"Prefix": rule["prefix"]}
+        if rule.get("expiration_days") is not None:
+            entry["Expiration"] = {"Days": int(rule["expiration_days"])}
+        if rule.get("abort_incomplete_multipart_upload_days") is not None:
+            entry["AbortIncompleteMultipartUpload"] = {
+                "DaysAfterInitiation": int(rule["abort_incomplete_multipart_upload_days"])
+            }
+        transitions = rule.get("transitions")
+        if transitions:
+            entry["Transition"] = [
+                {"Days": int(t["days"]), "StorageClass": t["storage_class"]}
+                for t in transitions
+            ]
+        noncurrent = rule.get("noncurrent_version_transitions")
+        if noncurrent:
+            entry["NoncurrentVersionTransition"] = [
+                {"NoncurrentDays": int(t["noncurrent_days"]), "StorageClass": t["storage_class"]}
+                for t in noncurrent
+            ]
+        out.append(entry)
+    return out
+
+
+def lifecycle_rules_current(rules):
+    """Canonical form of a COS ``get_bucket_lifecycle`` rule list.
+
+    COS returns repeated elements as dicts when there is a single entry and
+    lists when there are several, and numeric fields as strings; normalise
+    both so the result compares equal to :func:`lifecycle_rules_desired`.
+    Date-based ``Expiration``/``Transition`` entries are kept as-is so an
+    unmanaged rule is never silently rewritten as a day-based one.
+    """
+    out = []
+    for rule in rules or []:
+        entry = {}
+        if rule.get("ID"):
+            entry["ID"] = rule["ID"]
+        entry["Status"] = rule.get("Status")
+        prefix = (rule.get("Filter") or {}).get("Prefix")
+        if prefix:
+            entry["Filter"] = {"Prefix": prefix}
+        expiration = rule.get("Expiration")
+        if expiration:
+            if "Days" in expiration:
+                entry["Expiration"] = {"Days": int(expiration["Days"])}
+            else:
+                entry["Expiration"] = dict(expiration)
+        abort = rule.get("AbortIncompleteMultipartUpload")
+        if abort:
+            entry["AbortIncompleteMultipartUpload"] = {
+                "DaysAfterInitiation": int(abort["DaysAfterInitiation"])
+            }
+        for src, dst, day_key in (
+            ("Transition", "Transition", "Days"),
+            ("NoncurrentVersionTransition", "NoncurrentVersionTransition", "NoncurrentDays"),
+        ):
+            items = rule.get(src) or []
+            if isinstance(items, dict):
+                items = [items]
+            if items:
+                entry[dst] = [
+                    {
+                        day_key: int(item[day_key]),
+                        "StorageClass": item["StorageClass"],
+                    }
+                    for item in items
+                ]
+        out.append(entry)
+    return out
+
+
+def get_bucket_cors(client, full_name):
+    """Return the bucket's CORS rules in canonical form (``[]`` when none)."""
+    try:
+        result = client.get_bucket_cors(Bucket=full_name)
+    except Exception as exc:
+        if is_not_found(exc):
+            return []
+        raise
+    rules = (result or {}).get("CORSConfiguration") or {}
+    return cors_rules_current(rules.get("CORSRule") or [])
+
+
+def get_bucket_lifecycle(client, full_name):
+    """Return the bucket's lifecycle rules in canonical form (``[]`` when none)."""
+    try:
+        result = client.get_bucket_lifecycle(Bucket=full_name)
+    except Exception as exc:
+        if is_not_found(exc):
+            return []
+        raise
+    rules = (result or {}).get("LifecycleConfiguration") or {}
+    return lifecycle_rules_current(rules.get("Rule") or [])

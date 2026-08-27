@@ -56,6 +56,18 @@ class FakeCosClient(object):
             raise FakeCosError("NoSuchTagSet")
         return {"TagSet": {"Tag": [{"Key": k, "Value": v} for k, v in sorted(tags.items())]}}
 
+    def get_bucket_cors(self, Bucket, **kwargs):
+        rules = self.buckets[Bucket].get("cors") or []
+        if not rules:
+            raise FakeCosError("NoSuchCORSConfiguration")
+        return {"CORSConfiguration": {"CORSRule": rules}}
+
+    def get_bucket_lifecycle(self, Bucket, **kwargs):
+        rules = self.buckets[Bucket].get("lifecycle") or []
+        if not rules:
+            raise FakeCosError("NoSuchLifecycleConfiguration")
+        return {"LifecycleConfiguration": {"Rule": rules}}
+
     def list_buckets(self, **kwargs):
         return {
             "Buckets": {
@@ -67,8 +79,15 @@ class FakeCosClient(object):
         }
 
 
-def _bucket(location="ap-guangzhou", acl="private", versioning=None, tags=None):
-    return {"location": location, "acl": acl, "versioning": versioning, "tags": tags or {}}
+def _bucket(location="ap-guangzhou", acl="private", versioning=None, tags=None, cors=None, lifecycle=None):
+    return {
+        "location": location,
+        "acl": acl,
+        "versioning": versioning,
+        "tags": tags or {},
+        "cors": cors or [],
+        "lifecycle": lifecycle or [],
+    }
 
 
 def test_error_accessors():
@@ -133,7 +152,51 @@ def test_describe_bucket_collects_attributes():
         "acl": "public-read",
         "versioning": True,
         "tags": {"env": "prod"},
+        "cors": [],
+        "lifecycle": [],
     }
+
+
+def test_describe_bucket_collects_cors_and_lifecycle():
+    client = FakeCosClient({
+        "b-1": _bucket(
+            cors=[
+                {
+                    "ID": "web",
+                    "AllowedOrigin": "https://www.example.com",
+                    "AllowedMethod": "GET",
+                    "MaxAgeSeconds": "600",
+                }
+            ],
+            lifecycle=[
+                {
+                    "ID": "logs",
+                    "Status": "Enabled",
+                    "Filter": {"Prefix": "logs/"},
+                    "Expiration": {"Days": "30"},
+                    "AbortIncompleteMultipartUpload": {"DaysAfterInitiation": "7"},
+                }
+            ],
+        ),
+    })
+    result = cos.describe_bucket(client, "b-1")
+    assert result["cors"] == [
+        {
+            "ID": "web",
+            "AllowedOrigin": ["https://www.example.com"],
+            "AllowedMethod": ["GET"],
+            "MaxAgeSeconds": 600,
+        }
+    ]
+    assert result["lifecycle"] == [
+        {
+            "ID": "logs",
+            "Status": "Enabled",
+            "Filter": {"Prefix": "logs/"},
+            "Expiration": {"Days": 30},
+            "AbortIncompleteMultipartUpload": {"DaysAfterInitiation": 7},
+        }
+    ]
 
 
 def test_describe_bucket_versioning_disabled():
@@ -244,3 +307,146 @@ def test_create_cos_client_without_role_arn_keeps_credentials(monkeypatch):
     assert s3_client.config.SecretId == "akid-test"
     assert s3_client.config.SecretKey == "secret-test"
     assert s3_client.config.Token == "session-token"
+
+
+def test_cors_rules_desired_normalizes_user_params():
+    rules = [
+        {
+            "id": "web",
+            "allowed_origins": ["https://b.example.com", "https://a.example.com"],
+            "allowed_methods": ["GET", "PUT"],
+            "allowed_headers": ["x-cos-meta-test"],
+            "expose_headers": ["ETag"],
+            "max_age_seconds": 600,
+        },
+        {
+            "allowed_origins": ["https://cdn.example.com"],
+            "allowed_methods": ["HEAD"],
+        },
+    ]
+    assert cos.cors_rules_desired(rules) == [
+        {
+            "ID": "web",
+            "AllowedOrigin": ["https://a.example.com", "https://b.example.com"],
+            "AllowedMethod": ["GET", "PUT"],
+            "AllowedHeader": ["x-cos-meta-test"],
+            "ExposeHeader": ["ETag"],
+            "MaxAgeSeconds": 600,
+        },
+        {
+            "AllowedOrigin": ["https://cdn.example.com"],
+            "AllowedMethod": ["HEAD"],
+        },
+    ]
+
+
+def test_cors_rules_current_normalizes_single_values_and_string_ints():
+    api_rules = [
+        {
+            "ID": "web",
+            "AllowedOrigin": "https://www.example.com",
+            "AllowedMethod": "GET",
+            "AllowedHeader": "x-cos-meta-test",
+            "MaxAgeSeconds": "600",
+        }
+    ]
+    assert cos.cors_rules_current(api_rules) == [
+        {
+            "ID": "web",
+            "AllowedOrigin": ["https://www.example.com"],
+            "AllowedMethod": ["GET"],
+            "AllowedHeader": ["x-cos-meta-test"],
+            "MaxAgeSeconds": 600,
+        }
+    ]
+
+
+def test_cors_desired_round_trips_against_current():
+    desired = cos.cors_rules_desired([
+        {"id": "web", "allowed_origins": ["https://a.example.com"], "allowed_methods": ["GET"]},
+    ])
+    current = cos.cors_rules_current([
+        {"ID": "web", "AllowedOrigin": "https://a.example.com", "AllowedMethod": "GET"},
+    ])
+    assert desired == current
+
+
+def test_lifecycle_rules_desired_maps_user_shape():
+    rules = [
+        {
+            "id": "logs",
+            "prefix": "logs/",
+            "status": "enabled",
+            "expiration_days": 30,
+            "abort_incomplete_multipart_upload_days": 7,
+            "transitions": [{"days": 7, "storage_class": "STANDARD_IA"}],
+            "noncurrent_version_transitions": [{"noncurrent_days": 15, "storage_class": "ARCHIVE"}],
+        },
+        {"prefix": "tmp/", "status": "disabled"},
+    ]
+    assert cos.lifecycle_rules_desired(rules) == [
+        {
+            "ID": "logs",
+            "Status": "Enabled",
+            "Filter": {"Prefix": "logs/"},
+            "Expiration": {"Days": 30},
+            "AbortIncompleteMultipartUpload": {"DaysAfterInitiation": 7},
+            "Transition": [{"Days": 7, "StorageClass": "STANDARD_IA"}],
+            "NoncurrentVersionTransition": [{"NoncurrentDays": 15, "StorageClass": "ARCHIVE"}],
+        },
+        {"Status": "Disabled", "Filter": {"Prefix": "tmp/"}},
+    ]
+
+
+def test_lifecycle_rules_current_handles_single_dict_elements_and_string_days():
+    api_rules = [
+        {
+            "ID": "logs",
+            "Status": "Enabled",
+            "Filter": {"Prefix": "logs/"},
+            "Expiration": {"Days": "30"},
+            "Transition": {"Days": "7", "StorageClass": "STANDARD_IA"},
+        }
+    ]
+    assert cos.lifecycle_rules_current(api_rules) == [
+        {
+            "ID": "logs",
+            "Status": "Enabled",
+            "Filter": {"Prefix": "logs/"},
+            "Expiration": {"Days": 30},
+            "Transition": [{"Days": 7, "StorageClass": "STANDARD_IA"}],
+        }
+    ]
+
+
+def test_lifecycle_rules_current_keeps_date_based_expiration():
+    api_rules = [
+        {
+            "ID": "fixed",
+            "Status": "Enabled",
+            "Expiration": {"Date": "2027-01-01T00:00:00Z"},
+        }
+    ]
+    assert cos.lifecycle_rules_current(api_rules) == [
+        {"ID": "fixed", "Status": "Enabled", "Expiration": {"Date": "2027-01-01T00:00:00Z"}}
+    ]
+
+
+def test_lifecycle_desired_round_trips_against_current():
+    desired = cos.lifecycle_rules_desired([
+        {"id": "logs", "prefix": "logs/", "expiration_days": 30},
+    ])
+    current = cos.lifecycle_rules_current([
+        {"ID": "logs", "Status": "Enabled", "Filter": {"Prefix": "logs/"}, "Expiration": {"Days": "30"}},
+    ])
+    assert desired == current
+
+
+def test_get_bucket_cors_maps_missing_configuration_to_empty():
+    client = FakeCosClient({"b-1": _bucket()})
+    assert cos.get_bucket_cors(client, "b-1") == []
+
+
+def test_get_bucket_lifecycle_maps_missing_configuration_to_empty():
+    client = FakeCosClient({"b-1": _bucket()})
+    assert cos.get_bucket_lifecycle(client, "b-1") == []

@@ -59,6 +59,18 @@ class FakeCosClient(object):
             raise FakeCosError("NoSuchTagSet")
         return {"TagSet": {"Tag": [{"Key": k, "Value": v} for k, v in sorted(tags.items())]}}
 
+    def get_bucket_cors(self, Bucket, **kwargs):
+        rules = self.buckets[Bucket].get("cors") or []
+        if not rules:
+            raise FakeCosError("NoSuchCORSConfiguration")
+        return {"CORSConfiguration": {"CORSRule": rules}}
+
+    def get_bucket_lifecycle(self, Bucket, **kwargs):
+        rules = self.buckets[Bucket].get("lifecycle") or []
+        if not rules:
+            raise FakeCosError("NoSuchLifecycleConfiguration")
+        return {"LifecycleConfiguration": {"Rule": rules}}
+
     def list_buckets(self, **kwargs):
         self.list_region = kwargs.get("Region")
         return {
@@ -71,8 +83,15 @@ class FakeCosClient(object):
         }
 
 
-def _bucket(location="ap-guangzhou", acl="private", versioning=None, tags=None):
-    return {"location": location, "acl": acl, "versioning": versioning, "tags": tags or {}}
+def _bucket(location="ap-guangzhou", acl="private", versioning=None, tags=None, cors=None, lifecycle=None):
+    return {
+        "location": location,
+        "acl": acl,
+        "versioning": versioning,
+        "tags": tags or {},
+        "cors": cors or [],
+        "lifecycle": lifecycle or [],
+    }
 
 
 @pytest.fixture
