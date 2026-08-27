@@ -1,0 +1,186 @@
+objects:
+  role: {}
+plugins:
+  become: {}
+  cache: {}
+  callback: {}
+  cliconf: {}
+  connection: {}
+  filter: {}
+  httpapi: {}
+  inventory:
+    tencentcloud_cvm:
+      description: Tencent Cloud CVM dynamic inventory source
+      name: tencentcloud_cvm
+      version_added: 0.4.0
+  lookup:
+    ssm_parameter:
+      description: Retrieve Tencent Cloud Secrets Manager secret values
+      name: ssm_parameter
+      version_added: 0.5.0
+    sts_caller_identity:
+      description: Get information about the Tencent Cloud credentials in use
+      name: sts_caller_identity
+      version_added: 0.5.0
+  module:
+    cam_policy:
+      description: Manage Tencent Cloud CAM policies
+      name: cam_policy
+      namespace: ''
+      version_added: 0.5.0
+    cam_policy_info:
+      description: Gather information about Tencent Cloud CAM policies
+      name: cam_policy_info
+      namespace: ''
+      version_added: 0.5.0
+    cam_role:
+      description: Manage Tencent Cloud CAM roles
+      name: cam_role
+      namespace: ''
+      version_added: 0.5.0
+    cam_role_info:
+      description: Gather information about Tencent Cloud CAM roles
+      name: cam_role_info
+      namespace: ''
+      version_added: 0.5.0
+    cam_user:
+      description: Manage Tencent Cloud CAM sub-users
+      name: cam_user
+      namespace: ''
+      version_added: 0.5.0
+    cam_user_info:
+      description: Gather information about Tencent Cloud CAM sub-users
+      name: cam_user_info
+      namespace: ''
+      version_added: 0.5.0
+    cbs_disk_info:
+      description: Gather information about Tencent Cloud CBS disks
+      name: cbs_disk_info
+      namespace: ''
+      version_added: 0.4.0
+    cdb_instance_info:
+      description: Gather information about TencentDB for MySQL instances
+      name: cdb_instance_info
+      namespace: ''
+      version_added: 0.4.0
+    clb_load_balancer_info:
+      description: Gather information about Tencent Cloud CLB load balancers
+      name: clb_load_balancer_info
+      namespace: ''
+      version_added: 0.4.0
+    cos_bucket:
+      description: Manage Tencent Cloud COS buckets
+      name: cos_bucket
+      namespace: ''
+      version_added: 0.5.0
+    cos_bucket_info:
+      description: Gather information about Tencent Cloud COS buckets
+      name: cos_bucket_info
+      namespace: ''
+      version_added: 0.5.0
+    cvm_instance:
+      description: Manage Tencent Cloud CVM instances
+      name: cvm_instance
+      namespace: ''
+      version_added: 0.4.0
+    cvm_instance_info:
+      description: Gather information about Tencent Cloud CVM instances
+      name: cvm_instance_info
+      namespace: ''
+      version_added: 0.1.0
+    dnspod_record_info:
+      description: Gather information about DNSPod records
+      name: dnspod_record_info
+      namespace: ''
+      version_added: 0.4.0
+    eip:
+      description: Manage Tencent Cloud elastic IP addresses (EIP)
+      name: eip
+      namespace: ''
+      version_added: 0.4.0
+    eip_info:
+      description: Gather information about Tencent Cloud elastic IP addresses (EIP)
+      name: eip_info
+      namespace: ''
+      version_added: 0.4.0
+    key_pair:
+      description: Manage Tencent Cloud CVM key pairs
+      name: key_pair
+      namespace: ''
+      version_added: 0.4.0
+    key_pair_info:
+      description: Gather information about Tencent Cloud CVM key pairs
+      name: key_pair_info
+      namespace: ''
+      version_added: 0.4.0
+    kms_key_info:
+      description: Gather information about Tencent Cloud KMS keys
+      name: kms_key_info
+      namespace: ''
+      version_added: 0.4.0
+    mongodb_instance_info:
+      description: Gather information about TencentDB for MongoDB instances
+      name: mongodb_instance_info
+      namespace: ''
+      version_added: 0.4.0
+    redis_instance_info:
+      description: Gather information about TencentDB for Redis instances
+      name: redis_instance_info
+      namespace: ''
+      version_added: 0.4.0
+    route_table:
+      description: Manage Tencent Cloud VPC route tables
+      name: route_table
+      namespace: ''
+      version_added: 0.4.0
+    route_table_info:
+      description: Gather information about Tencent Cloud VPC route tables
+      name: route_table_info
+      namespace: ''
+      version_added: 0.4.0
+    security_group:
+      description: Manage Tencent Cloud security groups
+      name: security_group
+      namespace: ''
+      version_added: 0.3.0
+    security_group_info:
+      description: Gather information about Tencent Cloud security groups
+      name: security_group_info
+      namespace: ''
+      version_added: 0.2.0
+    security_group_rule:
+      description: Manage Tencent Cloud security group rules
+      name: security_group_rule
+      namespace: ''
+      version_added: 0.4.0
+    subnet:
+      description: Manage Tencent Cloud VPC subnets
+      name: subnet
+      namespace: ''
+      version_added: 0.4.0
+    subnet_info:
+      description: Gather information about Tencent Cloud subnets
+      name: subnet_info
+      namespace: ''
+      version_added: 0.4.0
+    tke_cluster_info:
+      description: Gather information about Tencent Cloud TKE clusters
+      name: tke_cluster_info
+      namespace: ''
+      version_added: 0.4.0
+    vpc:
+      description: Manage Tencent Cloud VPCs
+      name: vpc
+      namespace: ''
+      version_added: 0.4.0
+    vpc_info:
+      description: Gather information about Tencent Cloud VPCs
+      name: vpc_info
+      namespace: ''
+      version_added: 0.2.0
+  netconf: {}
+  shell: {}
+  strategy: {}
+  test: {}
+  vars: {}
+version: 0.5.0
