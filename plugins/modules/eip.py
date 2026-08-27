@@ -49,8 +49,10 @@ options:
   internet_charge_type:
     description:
       - Network billing mode of the address.
-      - Only applied at allocation; the C(ModifyAddressAttribute) API cannot
-        change it, so it is ignored for existing addresses.
+      - Applied at allocation; on an existing address the module switches
+        the mode with V(ModifyAddressInternetChargeType). Only
+        C(BANDWIDTH_PREPAID_BY_MONTH) and C(TRAFFIC_POSTPAID_BY_HOUR) are
+        interchangeable, and each address can switch at most twice.
     type: str
     choices:
       - BANDWIDTH_PACKAGE
@@ -60,8 +62,9 @@ options:
   internet_max_bandwidth_out:
     description:
       - Outbound bandwidth cap of the address in Mbps.
-      - Only applied at allocation; the C(ModifyAddressAttribute) API cannot
-        change it, so it is ignored for existing addresses.
+      - Applied at allocation; on an existing address the module adjusts the
+        bandwidth with V(ModifyAddressesBandwidth), which supports postpaid,
+        prepaid and bandwidth-package addresses.
     type: int
   instance_id:
     description:
@@ -104,8 +107,6 @@ options:
 notes:
   - Requires the C(tencentcloud-sdk-python-vpc) package on the controller.
   - Tag reconciliation additionally requires C(tencentcloud-sdk-python-tag).
-  - C(internet_charge_type) and C(internet_max_bandwidth_out) are applied at
-    allocation only; changing them on an existing address is a no-op.
   - Uses the C(vpc.tencentcloudapi.com) endpoint by default.
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
@@ -230,6 +231,32 @@ def _update_name(module, client, models, address_id, name):
     request.AddressId = address_id
     request.AddressName = name
     module.sdk_call(client.ModifyAddressAttribute, request)
+
+
+def _update_bandwidth(module, client, models, address_id, bandwidth):
+    """Adjust the bandwidth of an existing address.
+
+    Uses V(ModifyAddressesBandwidth), which supports postpaid, prepaid and
+    bandwidth-package EIPs.
+    """
+    request = models.ModifyAddressesBandwidthRequest()
+    request.AddressIds = [address_id]
+    request.InternetMaxBandwidthOut = bandwidth
+    module.sdk_call(client.ModifyAddressesBandwidth, request)
+
+
+def _update_charge_type(module, client, models, address_id, charge_type, bandwidth):
+    """Switch the network billing mode of an existing address.
+
+    Uses V(ModifyAddressInternetChargeType); only the two traffic/bandwidth
+    modes are interchangeable, and each address can switch at most twice.
+    """
+    request = models.ModifyAddressInternetChargeTypeRequest()
+    request.AddressId = address_id
+    request.InternetChargeType = charge_type
+    if bandwidth is not None:
+        request.InternetMaxBandwidthOut = bandwidth
+    module.sdk_call(client.ModifyAddressInternetChargeType, request)
 
 
 def _apply_tags(module, client, tag_models, address_id, to_add, to_remove):
@@ -371,6 +398,8 @@ def run_module():
     current_name = current.get("AddressName")
     current_tags = current.get("TagSet") or []
     current_instance = current.get("InstanceId") or ""
+    current_bandwidth = current.get("Bandwidth")
+    current_charge_type = current.get("InternetChargeType")
 
     changes = []
     if name is not None and name != (current_name or ""):
@@ -380,6 +409,16 @@ def run_module():
         changes.append("tags")
     if instance_id is not None and (instance_id or "") != current_instance:
         changes.append("association")
+    if (
+        internet_max_bandwidth_out is not None
+        and current_bandwidth != internet_max_bandwidth_out
+    ):
+        changes.append("bandwidth")
+    if (
+        internet_charge_type is not None
+        and current_charge_type != internet_charge_type
+    ):
+        changes.append("charge_type")
 
     if not changes:
         module.exit_json(changed=False, eip=current, msg="Address is up to date")
@@ -389,6 +428,12 @@ def run_module():
 
     if "name" in changes:
         _update_name(module, client, models, address_id, name)
+    if "bandwidth" in changes:
+        _update_bandwidth(module, client, models, address_id, internet_max_bandwidth_out)
+    if "charge_type" in changes:
+        _update_charge_type(
+            module, client, models, address_id, internet_charge_type, internet_max_bandwidth_out
+        )
     if "association" in changes:
         if current_instance:
             _disassociate(module, client, models, address_id)

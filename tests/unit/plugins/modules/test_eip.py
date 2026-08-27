@@ -7,6 +7,8 @@ from ansible_collections.susunola.tencentcloud.plugins.modules.eip import (
     find_address,
     _create,
     _delete,
+    _update_bandwidth,
+    _update_charge_type,
 )
 
 
@@ -33,6 +35,8 @@ class FakeModels(object):
     AllocateAddressesRequest = FakeRequest
     ReleaseAddressesRequest = FakeRequest
     DisassociateAddressRequest = FakeRequest
+    ModifyAddressesBandwidthRequest = FakeRequest
+    ModifyAddressInternetChargeTypeRequest = FakeRequest
 
 
 class FakeAddress(object):
@@ -87,6 +91,12 @@ class FakeClient(object):
 
     def DisassociateAddress(self, request):
         self.calls.append(("DisassociateAddress", request))
+
+    def ModifyAddressesBandwidth(self, request):
+        self.calls.append(("ModifyAddressesBandwidth", request))
+
+    def ModifyAddressInternetChargeType(self, request):
+        self.calls.append(("ModifyAddressInternetChargeType", request))
 
 
 class FakeModule(object):
@@ -195,3 +205,33 @@ def test_delete_disassociates_bound_address_first():
     assert names == ["DisassociateAddress", "ReleaseAddresses"]
     assert client.calls[0][1].AddressId == "eip-1"
     assert client.calls[1][1].AddressIds == ["eip-1"]
+
+
+def test_update_bandwidth_sends_address_ids_and_bandwidth():
+    module = FakeModule()
+    client = FakeClient()
+    _update_bandwidth(module, client, FakeModels, "eip-1", 25)
+    assert [call[0] for call in client.calls] == ["ModifyAddressesBandwidth"]
+    request = client.calls[0][1]
+    assert request.AddressIds == ["eip-1"]
+    assert request.InternetMaxBandwidthOut == 25
+
+
+def test_update_charge_type_switches_mode_with_bandwidth():
+    module = FakeModule()
+    client = FakeClient()
+    _update_charge_type(module, client, FakeModels, "eip-1", "BANDWIDTH_PREPAID_BY_MONTH", 10)
+    assert [call[0] for call in client.calls] == ["ModifyAddressInternetChargeType"]
+    request = client.calls[0][1]
+    assert request.AddressId == "eip-1"
+    assert request.InternetChargeType == "BANDWIDTH_PREPAID_BY_MONTH"
+    assert request.InternetMaxBandwidthOut == 10
+
+
+def test_update_charge_type_omits_bandwidth_when_none():
+    module = FakeModule()
+    client = FakeClient()
+    _update_charge_type(module, client, FakeModels, "eip-1", "TRAFFIC_POSTPAID_BY_HOUR", None)
+    request = client.calls[0][1]
+    assert request.InternetChargeType == "TRAFFIC_POSTPAID_BY_HOUR"
+    assert not hasattr(request, "InternetMaxBandwidthOut")
