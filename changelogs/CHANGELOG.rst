@@ -1,8 +1,27 @@
-===============================
-Tencent Cloud 0.9 Release Notes
-===============================
+================================
+Tencent Cloud 0.10 Release Notes
+================================
 
 .. contents:: Topics
+
+v0.10.0
+=======
+
+Minor Changes
+-------------
+
+- clb_listener - new write module managing CLB listeners (TCP/UDP/HTTP/HTTPS), idempotent on load balancer + port + protocol, with health-check and certificate suboptions, drift-only updates, and async task polling.
+- clb_listener_target - new write module registering/deregistering CLB backend targets (CVM instances or ENI IPs) on a listener or L7 rule, with exact-set reconciliation, in-place weight updates and optional purge.
+- clb_load_balancer - new write module managing CLB instances (present/absent, check mode, diff, tag reconciliation via the tag service, client-token idempotency, status waiters, and task-status recovery when ``CreateLoadBalancer`` returns no IDs).
+- module_utils/errors.py - recognize CLB not-found error codes (``InvalidParameter.LBIdNotFound``, ``InvalidParameter.ListenerIdNotFound``) for delete/absent idempotency.
+- module_utils/waiters.py - new ``wait_for_task`` helper implementing the Tencent Cloud ``DescribeTaskStatus`` async-task polling convention.
+
+New Modules
+-----------
+
+- clb_listener - Manage listeners on Tencent Cloud CLB load balancers
+- clb_listener_target - Manage backend targets of Tencent Cloud CLB listeners
+- clb_load_balancer - Manage Tencent Cloud CLB load balancers
 
 v0.9.0
 ======

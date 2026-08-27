@@ -301,6 +301,21 @@ plugins:
       name: ckafka_instance_info
       namespace: ''
       version_added: 0.6.0
+    clb_listener:
+      description: Manage listeners on Tencent Cloud CLB load balancers
+      name: clb_listener
+      namespace: ''
+      version_added: 0.10.0
+    clb_listener_target:
+      description: Manage backend targets of Tencent Cloud CLB listeners
+      name: clb_listener_target
+      namespace: ''
+      version_added: 0.10.0
+    clb_load_balancer:
+      description: Manage Tencent Cloud CLB load balancers
+      name: clb_load_balancer
+      namespace: ''
+      version_added: 0.10.0
     clb_load_balancer_info:
       description: Gather information about Tencent Cloud CLB load balancers
       name: clb_load_balancer_info
@@ -1130,4 +1145,4 @@ plugins:
   strategy: {}
   test: {}
   vars: {}
-version: 0.9.0
+version: 0.10.0
