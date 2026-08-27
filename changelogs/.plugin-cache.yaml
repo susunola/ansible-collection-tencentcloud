@@ -23,21 +23,46 @@ plugins:
       name: sts_caller_identity
       version_added: 0.5.0
   module:
+    acp_scan_task_info:
+      description: Gather information about Tencent Cloud ACP scan tasks
+      name: acp_scan_task_info
+      namespace: ''
+      version_added: 0.9.0
     adp_agent_release_preview_info:
       description: Gather information about Tencent Cloud ADP agent release previews
       name: adp_agent_release_preview_info
       namespace: ''
       version_added: 0.8.0
+    advisor_strategy_info:
+      description: Gather information about Tencent Cloud ADVISOR strategies
+      name: advisor_strategy_info
+      namespace: ''
+      version_added: 0.9.0
     ags_sandbox_instance_info:
       description: Gather information about Tencent Cloud AGS sandbox instances
       name: ags_sandbox_instance_info
       namespace: ''
       version_added: 0.8.0
+    alb_security_policy_info:
+      description: Gather information about Tencent Cloud ALB security policies
+      name: alb_security_policy_info
+      namespace: ''
+      version_added: 0.9.0
     ame_ktv_robot_info:
       description: Gather information about Tencent Cloud AME ktv robots
       name: ame_ktv_robot_info
       namespace: ''
       version_added: 0.8.0
+    ams_task_info:
+      description: Gather information about Tencent Cloud AMS tasks
+      name: ams_task_info
+      namespace: ''
+      version_added: 0.9.0
+    anicloud_resource_info:
+      description: Gather information about Tencent Cloud ANICLOUD resources
+      name: anicloud_resource_info
+      namespace: ''
+      version_added: 0.9.0
     antiddos_d_do_s_block_record_info:
       description: Gather information about Tencent Cloud ANTIDDOS d do s block records
       name: antiddos_d_do_s_block_record_info
@@ -73,6 +98,11 @@ plugins:
       name: as_scaling_group_info
       namespace: ''
       version_added: 0.6.0
+    asr_async_recognition_task_info:
+      description: Gather information about Tencent Cloud ASR async recognition tasks
+      name: asr_async_recognition_task_info
+      namespace: ''
+      version_added: 0.9.0
     asw_flow_service_info:
       description: Gather information about Tencent Cloud ASW flow services
       name: asw_flow_service_info
@@ -93,11 +123,21 @@ plugins:
       name: bh_device_group_member_info
       namespace: ''
       version_added: 0.8.0
+    bi_auth_api_key_info:
+      description: Gather information about Tencent Cloud BI auth api keys
+      name: bi_auth_api_key_info
+      namespace: ''
+      version_added: 0.9.0
     billing_balance_info:
       description: Gather information about the Tencent Cloud account balance
       name: billing_balance_info
       namespace: ''
       version_added: 0.7.0
+    bizlive_worker_info:
+      description: Gather information about Tencent Cloud BIZLIVE workers
+      name: bizlive_worker_info
+      namespace: ''
+      version_added: 0.9.0
     bm_device_info:
       description: Gather information about Tencent Cloud BM devices
       name: bm_device_info
@@ -123,6 +163,11 @@ plugins:
       name: bmvpc_customer_gateway_info
       namespace: ''
       version_added: 0.8.0
+    bsca_kb_component_info:
+      description: Gather information about Tencent Cloud BSCA kb components
+      name: bsca_kb_component_info
+      namespace: ''
+      version_added: 0.9.0
     cam_policy:
       description: Manage Tencent Cloud CAM policies
       name: cam_policy
@@ -153,6 +198,12 @@ plugins:
       name: cam_user_info
       namespace: ''
       version_added: 0.5.0
+    captcha_captcha_user_all_app_id_info:
+      description: Gather information about Tencent Cloud CAPTCHA captcha user all
+        app ids
+      name: captcha_captcha_user_all_app_id_info
+      namespace: ''
+      version_added: 0.9.0
     cat_probe_task_info:
       description: Gather information about Tencent Cloud CAT probe tasks
       name: cat_probe_task_info
@@ -204,6 +255,12 @@ plugins:
       name: cdwpg_account_info
       namespace: ''
       version_added: 0.8.0
+    cdz_cloud_dedicated_zone_host_info:
+      description: Gather information about Tencent Cloud CDZ cloud dedicated zone
+        hosts
+      name: cdz_cloud_dedicated_zone_host_info
+      namespace: ''
+      version_added: 0.9.0
     cetcd_etcd_instance_info:
       description: Gather information about Tencent Cloud CETCD etcd instances
       name: cetcd_etcd_instance_info
@@ -229,6 +286,16 @@ plugins:
       name: chc_device_info
       namespace: ''
       version_added: 0.8.0
+    chdfs_file_system_info:
+      description: Gather information about Tencent Cloud CHDFS file systems
+      name: chdfs_file_system_info
+      namespace: ''
+      version_added: 0.9.0
+    ciam_user_store_info:
+      description: Gather information about Tencent Cloud CIAM user stores
+      name: ciam_user_store_info
+      namespace: ''
+      version_added: 0.9.0
     ckafka_instance_info:
       description: Gather information about Tencent Cloud CKafka instances
       name: ckafka_instance_info
@@ -249,6 +316,16 @@ plugins:
       name: cloudhsm_vsm_info
       namespace: ''
       version_added: 0.8.0
+    cloudrc_resource_info:
+      description: Gather information about Tencent Cloud CLOUDRC resources
+      name: cloudrc_resource_info
+      namespace: ''
+      version_added: 0.9.0
+    cloudstudio_image_info:
+      description: Gather information about Tencent Cloud CLOUDSTUDIO images
+      name: cloudstudio_image_info
+      namespace: ''
+      version_added: 0.9.0
     cls_topic_info:
       description: Gather information about Tencent Cloud CLS log topics
       name: cls_topic_info
@@ -297,6 +374,11 @@ plugins:
       name: cos_bucket_info
       namespace: ''
       version_added: 0.5.0
+    cpdp_merchant_info_for_management_info:
+      description: Gather information about Tencent Cloud CPDP merchant info for managements
+      name: cpdp_merchant_info_for_management_info
+      namespace: ''
+      version_added: 0.9.0
     csip_asset_process_info:
       description: Gather information about Tencent Cloud CSIP asset processes
       name: csip_asset_process_info
@@ -342,6 +424,11 @@ plugins:
       name: dasb_device_info
       namespace: ''
       version_added: 0.8.0
+    dataagent_chunk_info:
+      description: Gather information about Tencent Cloud DATAAGENT chunks
+      name: dataagent_chunk_info
+      namespace: ''
+      version_added: 0.9.0
     dayu_resource_info:
       description: Gather information about Tencent Cloud DAYU resources
       name: dayu_resource_info
@@ -453,6 +540,21 @@ plugins:
       name: essbasic_template_info
       namespace: ''
       version_added: 0.8.0
+    facefusion_material_info:
+      description: Gather information about Tencent Cloud FACEFUSION materials
+      name: facefusion_material_info
+      namespace: ''
+      version_added: 0.9.0
+    faceid_we_chat_bill_info:
+      description: Gather information about Tencent Cloud FACEID we chat bills
+      name: faceid_we_chat_bill_info
+      namespace: ''
+      version_added: 0.9.0
+    fmu_model_info:
+      description: Gather information about Tencent Cloud FMU models
+      name: fmu_model_info
+      namespace: ''
+      version_added: 0.9.0
     fwm_edge_acl_rule_info:
       description: Gather information about Tencent Cloud FWM edge acl rules
       name: fwm_edge_acl_rule_info
@@ -468,6 +570,11 @@ plugins:
       name: gaap_proxy_info
       namespace: ''
       version_added: 0.7.0
+    gme_voice_print_info:
+      description: Gather information about Tencent Cloud GME voice prints
+      name: gme_voice_print_info
+      namespace: ''
+      version_added: 0.9.0
     goosefs_file_system_info:
       description: Gather information about Tencent Cloud GOOSEFS file systems
       name: goosefs_file_system_info
@@ -493,6 +600,16 @@ plugins:
       name: hasim_link_info
       namespace: ''
       version_added: 0.8.0
+    hunyuan_glossary_info:
+      description: Gather information about Tencent Cloud HUNYUAN glossaries
+      name: hunyuan_glossary_info
+      namespace: ''
+      version_added: 0.9.0
+    iai_group_info:
+      description: Gather information about Tencent Cloud IAI groups
+      name: iai_group_info
+      namespace: ''
+      version_added: 0.9.0
     ic_sms_info:
       description: Gather information about Tencent Cloud IC smses
       name: ic_sms_info
@@ -503,6 +620,16 @@ plugins:
       name: igtm_address_pool_info
       namespace: ''
       version_added: 0.8.0
+    ioa_device_info:
+      description: Gather information about Tencent Cloud IOA devices
+      name: ioa_device_info
+      namespace: ''
+      version_added: 0.9.0
+    iot_product_info:
+      description: Gather information about Tencent Cloud IOT products
+      name: iot_product_info
+      namespace: ''
+      version_added: 0.9.0
     iotcloud_device_resource_info:
       description: Gather information about Tencent Cloud IOTCLOUD device resources
       name: iotcloud_device_resource_info
@@ -553,6 +680,11 @@ plugins:
       name: kms_key_info
       namespace: ''
       version_added: 0.4.0
+    lcic_answer_info:
+      description: Gather information about Tencent Cloud LCIC answers
+      name: lcic_answer_info
+      namespace: ''
+      version_added: 0.9.0
     lighthouse_instance_info:
       description: Gather information about Tencent Cloud Lighthouse instances
       name: lighthouse_instance_info
@@ -588,6 +720,16 @@ plugins:
       name: memcached_instance_info
       namespace: ''
       version_added: 0.8.0
+    mmps_resource_usage_info:
+      description: Gather information about Tencent Cloud MMPS resource usages
+      name: mmps_resource_usage_info
+      namespace: ''
+      version_added: 0.9.0
+    mna_access_region_info:
+      description: Gather information about Tencent Cloud MNA access regions
+      name: mna_access_region_info
+      namespace: ''
+      version_added: 0.9.0
     mongodb_instance_info:
       description: Gather information about TencentDB for MongoDB instances
       name: mongodb_instance_info
@@ -644,6 +786,11 @@ plugins:
       name: partners_agent_deals_by_cache_info
       namespace: ''
       version_added: 0.8.0
+    portal_document_info:
+      description: Gather information about Tencent Cloud PORTAL documents
+      name: portal_document_info
+      namespace: ''
+      version_added: 0.9.0
     postgres_instance_info:
       description: Gather information about TencentDB for PostgreSQL instances
       name: postgres_instance_info
@@ -720,6 +867,11 @@ plugins:
       name: smh_library_info
       namespace: ''
       version_added: 0.8.0
+    sms_sms_sign_info:
+      description: Gather information about Tencent Cloud SMS sms signs
+      name: sms_sms_sign_info
+      namespace: ''
+      version_added: 0.9.0
     sqlserver_instance_info:
       description: Gather information about TencentDB for SQL Server instances
       name: sqlserver_instance_info
@@ -760,6 +912,11 @@ plugins:
       name: tat_command_info
       namespace: ''
       version_added: 0.7.0
+    tbaas_block_info:
+      description: Gather information about Tencent Cloud TBAAS blocks
+      name: tbaas_block_info
+      namespace: ''
+      version_added: 0.9.0
     tcaplusdb_cluster_info:
       description: Gather information about Tencent Cloud TCAPLUSDB clusters
       name: tcaplusdb_cluster_info
@@ -770,6 +927,11 @@ plugins:
       name: tcb_billing_info
       namespace: ''
       version_added: 0.8.0
+    tcbr_cloud_run_pod_info:
+      description: Gather information about Tencent Cloud TCBR cloud run pods
+      name: tcbr_cloud_run_pod_info
+      namespace: ''
+      version_added: 0.9.0
     tcm_mesh_info:
       description: Gather information about Tencent Cloud TCM meshes
       name: tcm_mesh_info
@@ -820,6 +982,16 @@ plugins:
       name: thpc_cluster_info
       namespace: ''
       version_added: 0.8.0
+    tia_job_info:
+      description: Gather information about Tencent Cloud TIA jobs
+      name: tia_job_info
+      namespace: ''
+      version_added: 0.9.0
+    tiia_group_info:
+      description: Gather information about Tencent Cloud TIIA groups
+      name: tiia_group_info
+      namespace: ''
+      version_added: 0.9.0
     tione_dataset_info:
       description: Gather information about Tencent Cloud TIONE datasets
       name: tione_dataset_info
@@ -891,6 +1063,11 @@ plugins:
       name: vdb_instance_info
       namespace: ''
       version_added: 0.8.0
+    vm_task_info:
+      description: Gather information about Tencent Cloud VM tasks
+      name: vm_task_info
+      namespace: ''
+      version_added: 0.9.0
     vod_incremental_migration_strategy_info:
       description: Gather information about Tencent Cloud VOD incremental migration
         strategies
@@ -917,6 +1094,11 @@ plugins:
       name: waf_instance_info
       namespace: ''
       version_added: 0.7.0
+    wav_activity_info:
+      description: Gather information about Tencent Cloud WAV activities
+      name: wav_activity_info
+      namespace: ''
+      version_added: 0.9.0
     wedata_project_info:
       description: Gather information about Tencent Cloud WEDATA projects
       name: wedata_project_info
@@ -948,4 +1130,4 @@ plugins:
   strategy: {}
   test: {}
   vars: {}
-version: 0.8.0
+version: 0.9.0

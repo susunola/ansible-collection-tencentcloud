@@ -1,8 +1,58 @@
 ===============================
-Tencent Cloud 0.8 Release Notes
+Tencent Cloud 0.9 Release Notes
 ===============================
 
 .. contents:: Topics
+
+v0.9.0
+======
+
+Minor Changes
+-------------
+
+- coverage batch 5 - add 36 generated read-only ``_info`` modules so that every product on the official API index (https://www.tencentcloud.com/document/api) with a usable list API is now covered. Highlights: chdfs_file_system_info, iai_group_info, faceid_we_chat_bill_info, sms_sms_sign_info, gme_voice_print_info, hunyuan_glossary_info, bi_auth_api_key_info, tbaas_block_info, facefusion_material_info, advisor_strategy_info, cdz_cloud_dedicated_zone_host_info, asr_async_recognition_task_info, lcic_answer_info, captcha_captcha_user_all_app_id_info, mna_access_region_info.
+- scripts/discover_info_specs.py - reuses existing auto specs verbatim so previously generated modules cannot drift, recognizes ``Get``/``Query``/``Search`` list actions, page-number aliases (``PageNo``/``PageNum``/``PageIndex``), token continuation without a size field, and penalizes candidates with unmanaged optional inputs.
+- scripts/generate_info_modules.py - new pagination modes: pagination without a total-count field (stop at the first short page), custom token field pairs (e.g. ``Cursor``/``NextCursor``, ``FileSystemIdMarker``/``NextFileSystemIdMarker``) with optional ``ListOver``/``IsOver``/``HasMore``/``HasNextPage`` flags, and ``list`` mode for unpaginated actions returning an items list.
+
+New Modules
+-----------
+
+- acp_scan_task_info - Gather information about Tencent Cloud ACP scan tasks
+- advisor_strategy_info - Gather information about Tencent Cloud ADVISOR strategies
+- alb_security_policy_info - Gather information about Tencent Cloud ALB security policies
+- ams_task_info - Gather information about Tencent Cloud AMS tasks
+- anicloud_resource_info - Gather information about Tencent Cloud ANICLOUD resources
+- asr_async_recognition_task_info - Gather information about Tencent Cloud ASR async recognition tasks
+- bi_auth_api_key_info - Gather information about Tencent Cloud BI auth api keys
+- bizlive_worker_info - Gather information about Tencent Cloud BIZLIVE workers
+- bsca_kb_component_info - Gather information about Tencent Cloud BSCA kb components
+- captcha_captcha_user_all_app_id_info - Gather information about Tencent Cloud CAPTCHA captcha user all app ids
+- cdz_cloud_dedicated_zone_host_info - Gather information about Tencent Cloud CDZ cloud dedicated zone hosts
+- chdfs_file_system_info - Gather information about Tencent Cloud CHDFS file systems
+- ciam_user_store_info - Gather information about Tencent Cloud CIAM user stores
+- cloudrc_resource_info - Gather information about Tencent Cloud CLOUDRC resources
+- cloudstudio_image_info - Gather information about Tencent Cloud CLOUDSTUDIO images
+- cpdp_merchant_info_for_management_info - Gather information about Tencent Cloud CPDP merchant info for managements
+- dataagent_chunk_info - Gather information about Tencent Cloud DATAAGENT chunks
+- facefusion_material_info - Gather information about Tencent Cloud FACEFUSION materials
+- faceid_we_chat_bill_info - Gather information about Tencent Cloud FACEID we chat bills
+- fmu_model_info - Gather information about Tencent Cloud FMU models
+- gme_voice_print_info - Gather information about Tencent Cloud GME voice prints
+- hunyuan_glossary_info - Gather information about Tencent Cloud HUNYUAN glossaries
+- iai_group_info - Gather information about Tencent Cloud IAI groups
+- ioa_device_info - Gather information about Tencent Cloud IOA devices
+- iot_product_info - Gather information about Tencent Cloud IOT products
+- lcic_answer_info - Gather information about Tencent Cloud LCIC answers
+- mmps_resource_usage_info - Gather information about Tencent Cloud MMPS resource usages
+- mna_access_region_info - Gather information about Tencent Cloud MNA access regions
+- portal_document_info - Gather information about Tencent Cloud PORTAL documents
+- sms_sms_sign_info - Gather information about Tencent Cloud SMS sms signs
+- tbaas_block_info - Gather information about Tencent Cloud TBAAS blocks
+- tcbr_cloud_run_pod_info - Gather information about Tencent Cloud TCBR cloud run pods
+- tia_job_info - Gather information about Tencent Cloud TIA jobs
+- tiia_group_info - Gather information about Tencent Cloud TIIA groups
+- vm_task_info - Gather information about Tencent Cloud VM tasks
+- wav_activity_info - Gather information about Tencent Cloud WAV activities
 
 v0.8.0
 ======

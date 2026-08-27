@@ -722,3 +722,137 @@ releases:
       name: yunjing_account_statistic_info
       namespace: ''
     release_date: '2026-08-27'
+  0.9.0:
+    changes:
+      minor_changes:
+      - 'coverage batch 5 - add 36 generated read-only ``_info`` modules so that every
+        product on the official API index (https://www.tencentcloud.com/document/api)
+        with a usable list API is now covered. Highlights: chdfs_file_system_info,
+        iai_group_info, faceid_we_chat_bill_info, sms_sms_sign_info, gme_voice_print_info,
+        hunyuan_glossary_info, bi_auth_api_key_info, tbaas_block_info, facefusion_material_info,
+        advisor_strategy_info, cdz_cloud_dedicated_zone_host_info, asr_async_recognition_task_info,
+        lcic_answer_info, captcha_captcha_user_all_app_id_info, mna_access_region_info.'
+      - scripts/discover_info_specs.py - reuses existing auto specs verbatim so previously
+        generated modules cannot drift, recognizes ``Get``/``Query``/``Search`` list
+        actions, page-number aliases (``PageNo``/``PageNum``/``PageIndex``), token
+        continuation without a size field, and penalizes candidates with unmanaged
+        optional inputs.
+      - 'scripts/generate_info_modules.py - new pagination modes: pagination without
+        a total-count field (stop at the first short page), custom token field pairs
+        (e.g. ``Cursor``/``NextCursor``, ``FileSystemIdMarker``/``NextFileSystemIdMarker``)
+        with optional ``ListOver``/``IsOver``/``HasMore``/``HasNextPage`` flags, and
+        ``list`` mode for unpaginated actions returning an items list.'
+    fragments:
+    - 11-info-batch5.yml
+    modules:
+    - description: Gather information about Tencent Cloud ACP scan tasks
+      name: acp_scan_task_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud ADVISOR strategies
+      name: advisor_strategy_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud ALB security policies
+      name: alb_security_policy_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud AMS tasks
+      name: ams_task_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud ANICLOUD resources
+      name: anicloud_resource_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud ASR async recognition tasks
+      name: asr_async_recognition_task_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud BI auth api keys
+      name: bi_auth_api_key_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud BIZLIVE workers
+      name: bizlive_worker_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud BSCA kb components
+      name: bsca_kb_component_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud CAPTCHA captcha user all
+        app ids
+      name: captcha_captcha_user_all_app_id_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud CDZ cloud dedicated zone
+        hosts
+      name: cdz_cloud_dedicated_zone_host_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud CHDFS file systems
+      name: chdfs_file_system_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud CIAM user stores
+      name: ciam_user_store_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud CLOUDRC resources
+      name: cloudrc_resource_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud CLOUDSTUDIO images
+      name: cloudstudio_image_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud CPDP merchant info for managements
+      name: cpdp_merchant_info_for_management_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud DATAAGENT chunks
+      name: dataagent_chunk_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud FACEFUSION materials
+      name: facefusion_material_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud FACEID we chat bills
+      name: faceid_we_chat_bill_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud FMU models
+      name: fmu_model_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud GME voice prints
+      name: gme_voice_print_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud HUNYUAN glossaries
+      name: hunyuan_glossary_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud IAI groups
+      name: iai_group_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud IOA devices
+      name: ioa_device_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud IOT products
+      name: iot_product_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud LCIC answers
+      name: lcic_answer_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud MMPS resource usages
+      name: mmps_resource_usage_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud MNA access regions
+      name: mna_access_region_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud PORTAL documents
+      name: portal_document_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud SMS sms signs
+      name: sms_sms_sign_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud TBAAS blocks
+      name: tbaas_block_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud TCBR cloud run pods
+      name: tcbr_cloud_run_pod_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud TIA jobs
+      name: tia_job_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud TIIA groups
+      name: tiia_group_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud VM tasks
+      name: vm_task_info
+      namespace: ''
+    - description: Gather information about Tencent Cloud WAV activities
+      name: wav_activity_info
+      namespace: ''
+    release_date: '2026-08-27'
