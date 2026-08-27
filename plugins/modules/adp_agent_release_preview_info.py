@@ -14,6 +14,10 @@ short_description: Gather information about Tencent Cloud ADP agent release prev
 version_added: "0.8.0"
 description: Returns ADP agent release previews visible in a Tencent Cloud region.
 options:
+  app_id:
+    description: Application ID.
+    type: str
+    required: true
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -23,9 +27,10 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all agent release previews
+- name: List agent release previews
   tencentcloud.cloud.adp_agent_release_preview_info:
     region: ap-guangzhou
+    app_id: "204000000016"
 '''
 
 RETURN = r'''
@@ -48,16 +53,18 @@ from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud im
 )
 
 
-def build_request(models, offset, limit):
+def build_request(models, app_id, offset, limit):
     request = models.DescribeAgentReleasePreviewListRequest()
     request.PageNumber = offset // limit + 1
     request.PageSize = limit
+    request.AppId = app_id
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "app_id": {"type": "str", "required": True},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -75,7 +82,7 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, offset, limit),
+        lambda offset, limit: build_request(models, module.params["app_id"], offset, limit),
         lambda request: sdk_call(module, client.DescribeAgentReleasePreviewList, request),
         lambda response: response.ReleaseList,
         lambda response: response.TotalCount,

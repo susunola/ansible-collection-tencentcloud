@@ -20,13 +20,13 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = yinsuda_ktv_robot_info.build_request(FakeModels, None, 200, 100)
+    request = yinsuda_ktv_robot_info.build_request(FakeModels, "sample", "sample", None, 200, 100)
     assert request.Offset == 200
     assert request.Limit == 100
 
 
 def test_build_request_maps_ids():
-    request = yinsuda_ktv_robot_info.build_request(FakeModels, ["x-1"], 0, 100)
+    request = yinsuda_ktv_robot_info.build_request(FakeModels, "sample", "sample", ["x-1"], 0, 100)
     assert request.RobotIds == ["x-1"]
 
 
@@ -94,7 +94,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                ktv_robot_ids=None, page_size=2)
+                app_name="sample", user_id="sample", ktv_robot_ids=None, page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["ktv_robots"]] == ["a", "b", "c"]

@@ -14,6 +14,10 @@ short_description: Gather information about Tencent Cloud CCC extensions
 version_added: "0.8.0"
 description: Returns CCC extensions visible in a Tencent Cloud region.
 options:
+  sdk_app_id:
+    description: CCC application ID (required by the API).
+    type: int
+    required: true
   extension_ids:
     description: Extension IDs to return.
     type: list
@@ -27,14 +31,10 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all extensions
+- name: List extensions of a CCC application
   tencentcloud.cloud.ccc_extension_info:
     region: ap-guangzhou
-
-- name: Find extensions by ID
-  tencentcloud.cloud.ccc_extension_info:
-    region: ap-guangzhou
-    extension_ids: [x-xxxxxxxx]
+    sdk_app_id: 1400000000
 '''
 
 RETURN = r'''
@@ -57,10 +57,11 @@ from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud im
 )
 
 
-def build_request(models, extension_ids, offset, limit):
+def build_request(models, sdk_app_id, extension_ids, offset, limit):
     request = models.DescribeExtensionsRequest()
     request.PageNumber = offset // limit + 1
     request.PageSize = limit
+    request.SdkAppId = sdk_app_id
     if extension_ids:
         request.ExtensionIds = extension_ids
     return request
@@ -69,6 +70,7 @@ def build_request(models, extension_ids, offset, limit):
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "sdk_app_id": {"type": "int", "required": True},
         "extension_ids": {"type": "list", "elements": "str"},
         "page_size": {"type": "int", "default": 100},
     })
@@ -87,7 +89,12 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, module.params["extension_ids"], offset, limit),
+        lambda offset, limit: build_request(
+            models,
+            module.params["sdk_app_id"],
+            module.params["extension_ids"],
+            offset,
+            limit),
         lambda request: sdk_call(module, client.DescribeExtensions, request),
         lambda response: response.ExtensionList,
         lambda response: response.Total,

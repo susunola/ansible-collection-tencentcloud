@@ -14,6 +14,10 @@ short_description: Gather information about Tencent Cloud TEO functions
 version_added: "0.8.0"
 description: Returns TEO functions visible in a Tencent Cloud region.
 options:
+  zone_id:
+    description: Zone ID whose edge functions are returned.
+    type: str
+    required: true
   function_ids:
     description: Function IDs to return. Mutually exclusive with O(filters).
     type: list
@@ -31,14 +35,10 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all functions
+- name: List functions of a zone
   tencentcloud.cloud.teo_function_info:
     region: ap-guangzhou
-
-- name: Find functions by ID
-  tencentcloud.cloud.teo_function_info:
-    region: ap-guangzhou
-    function_ids: [x-xxxxxxxx]
+    zone_id: zone-xxxxxxxx
 '''
 
 RETURN = r'''
@@ -61,10 +61,11 @@ from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud im
 )
 
 
-def build_request(models, function_ids, filters, offset, limit):
+def build_request(models, zone_id, function_ids, filters, offset, limit):
     request = models.DescribeFunctionsRequest()
     request.Offset = offset
     request.Limit = limit
+    request.ZoneId = zone_id
     if function_ids:
         request.FunctionIds = function_ids
     if filters:
@@ -80,6 +81,7 @@ def build_request(models, function_ids, filters, offset, limit):
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "zone_id": {"type": "str", "required": True},
         "function_ids": {"type": "list", "elements": "str"},
         "filters": {"type": "dict", "default": {}},
         "page_size": {"type": "int", "default": 100},
@@ -102,6 +104,7 @@ def run_module():
         module.params["page_size"],
         lambda offset, limit: build_request(
             models,
+            module.params["zone_id"],
             module.params["function_ids"],
             module.params["filters"],
             offset,

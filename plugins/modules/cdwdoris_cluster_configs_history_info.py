@@ -14,6 +14,18 @@ short_description: Gather information about Tencent Cloud CDWDORIS cluster confi
 version_added: "0.8.0"
 description: Returns CDWDORIS cluster configs histories visible in a Tencent Cloud region.
 options:
+  instance_id:
+    description: Cluster ID (name).
+    type: str
+    required: true
+  start_time:
+    description: Start of the configuration-change history time range.
+    type: str
+    required: true
+  end_time:
+    description: End of the configuration-change history time range.
+    type: str
+    required: true
   cluster_configs_history_ids:
     description: Cluster configs history IDs to return.
     type: list
@@ -27,14 +39,12 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all cluster configs histories
+- name: List cluster configuration history
   tencentcloud.cloud.cdwdoris_cluster_configs_history_info:
     region: ap-guangzhou
-
-- name: Find cluster configs histories by ID
-  tencentcloud.cloud.cdwdoris_cluster_configs_history_info:
-    region: ap-guangzhou
-    cluster_configs_history_ids: [x-xxxxxxxx]
+    instance_id: cdwdoris-xxxxxxxx
+    start_time: "2024-01-01 00:00:00"
+    end_time: "2024-02-01 00:00:00"
 '''
 
 RETURN = r'''
@@ -57,10 +67,13 @@ from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud im
 )
 
 
-def build_request(models, cluster_configs_history_ids, offset, limit):
+def build_request(models, instance_id, start_time, end_time, cluster_configs_history_ids, offset, limit):
     request = models.DescribeClusterConfigsHistoryRequest()
     request.Offset = offset
     request.Limit = limit
+    request.InstanceId = instance_id
+    request.StartTime = start_time
+    request.EndTime = end_time
     if cluster_configs_history_ids:
         request.ComputeGroupIds = cluster_configs_history_ids
     return request
@@ -69,6 +82,9 @@ def build_request(models, cluster_configs_history_ids, offset, limit):
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "instance_id": {"type": "str", "required": True},
+        "start_time": {"type": "str", "required": True},
+        "end_time": {"type": "str", "required": True},
         "cluster_configs_history_ids": {"type": "list", "elements": "str"},
         "page_size": {"type": "int", "default": 100},
     })
@@ -89,6 +105,9 @@ def run_module():
         module.params["page_size"],
         lambda offset, limit: build_request(
             models,
+            module.params["instance_id"],
+            module.params["start_time"],
+            module.params["end_time"],
             module.params["cluster_configs_history_ids"],
             offset,
             limit),

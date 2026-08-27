@@ -14,8 +14,12 @@ short_description: Gather information about Tencent Cloud EMR node data disks
 version_added: "0.8.0"
 description: Returns EMR node data disks visible in a Tencent Cloud region.
 options:
-  node_data_disk_ids:
-    description: Node data disk IDs to return. Mutually exclusive with O(filters).
+  instance_id:
+    description: EMR cluster instance ID.
+    type: str
+    required: true
+  cvm_instance_ids:
+    description: CVM instance IDs whose node data disks are returned.
     type: list
     elements: str
   filters:
@@ -31,14 +35,11 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all node data disks
+- name: List node data disks of a cluster
   tencentcloud.cloud.emr_node_data_disk_info:
     region: ap-guangzhou
-
-- name: Find node data disks by ID
-  tencentcloud.cloud.emr_node_data_disk_info:
-    region: ap-guangzhou
-    node_data_disk_ids: [x-xxxxxxxx]
+    instance_id: emr-xxxxxxxx
+    cvm_instance_ids: [ins-xxxxxxxx]
 '''
 
 RETURN = r'''
@@ -61,12 +62,13 @@ from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud im
 )
 
 
-def build_request(models, node_data_disk_ids, filters, offset, limit):
+def build_request(models, instance_id, cvm_instance_ids, filters, offset, limit):
     request = models.DescribeNodeDataDisksRequest()
     request.Offset = offset
     request.Limit = limit
-    if node_data_disk_ids:
-        request.CvmInstanceIds = node_data_disk_ids
+    request.InstanceId = instance_id
+    if cvm_instance_ids:
+        request.CvmInstanceIds = cvm_instance_ids
     if filters:
         request.Filters = []
         for name, values in sorted(filters.items()):
@@ -80,13 +82,14 @@ def build_request(models, node_data_disk_ids, filters, offset, limit):
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
-        "node_data_disk_ids": {"type": "list", "elements": "str"},
+        "instance_id": {"type": "str", "required": True},
+        "cvm_instance_ids": {"type": "list", "elements": "str"},
         "filters": {"type": "dict", "default": {}},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
         argument_spec=argument_spec,
-        mutually_exclusive=[("node_data_disk_ids", "filters")],
+        mutually_exclusive=[("cvm_instance_ids", "filters")],
         supports_check_mode=True,
     )
     try:
@@ -102,7 +105,8 @@ def run_module():
         module.params["page_size"],
         lambda offset, limit: build_request(
             models,
-            module.params["node_data_disk_ids"],
+            module.params["instance_id"],
+            module.params["cvm_instance_ids"],
             module.params["filters"],
             offset,
             limit),

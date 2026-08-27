@@ -14,6 +14,14 @@ short_description: Gather information about Tencent Cloud YINSUDA ktv robots
 version_added: "0.8.0"
 description: Returns YINSUDA ktv robots visible in a Tencent Cloud region.
 options:
+  app_name:
+    description: Application name.
+    type: str
+    required: true
+  user_id:
+    description: User identifier.
+    type: str
+    required: true
   ktv_robot_ids:
     description: Ktv robot IDs to return.
     type: list
@@ -27,14 +35,11 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all ktv robots
+- name: List KTV robots of a user
   tencentcloud.cloud.yinsuda_ktv_robot_info:
     region: ap-guangzhou
-
-- name: Find ktv robots by ID
-  tencentcloud.cloud.yinsuda_ktv_robot_info:
-    region: ap-guangzhou
-    ktv_robot_ids: [x-xxxxxxxx]
+    app_name: ktv
+    user_id: "10001"
 '''
 
 RETURN = r'''
@@ -57,10 +62,12 @@ from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud im
 )
 
 
-def build_request(models, ktv_robot_ids, offset, limit):
+def build_request(models, app_name, user_id, ktv_robot_ids, offset, limit):
     request = models.DescribeKTVRobotsRequest()
     request.Offset = offset
     request.Limit = limit
+    request.AppName = app_name
+    request.UserId = user_id
     if ktv_robot_ids:
         request.RobotIds = ktv_robot_ids
     return request
@@ -69,6 +76,8 @@ def build_request(models, ktv_robot_ids, offset, limit):
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "app_name": {"type": "str", "required": True},
+        "user_id": {"type": "str", "required": True},
         "ktv_robot_ids": {"type": "list", "elements": "str"},
         "page_size": {"type": "int", "default": 100},
     })
@@ -87,7 +96,13 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, module.params["ktv_robot_ids"], offset, limit),
+        lambda offset, limit: build_request(
+            models,
+            module.params["app_name"],
+            module.params["user_id"],
+            module.params["ktv_robot_ids"],
+            offset,
+            limit),
         lambda request: sdk_call(module, client.DescribeKTVRobots, request),
         lambda response: response.KTVRobotInfoSet,
         lambda response: response.TotalCount,

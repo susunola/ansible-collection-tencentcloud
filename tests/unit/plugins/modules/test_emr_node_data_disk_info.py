@@ -25,18 +25,18 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = emr_node_data_disk_info.build_request(FakeModels, None, {}, 200, 100)
+    request = emr_node_data_disk_info.build_request(FakeModels, "sample", None, {}, 200, 100)
     assert request.Offset == 200
     assert request.Limit == 100
 
 
 def test_build_request_maps_ids():
-    request = emr_node_data_disk_info.build_request(FakeModels, ["x-1"], {}, 0, 100)
+    request = emr_node_data_disk_info.build_request(FakeModels, "sample", ["x-1"], {}, 0, 100)
     assert request.CvmInstanceIds == ["x-1"]
 
 
 def test_build_request_sorts_filters():
-    request = emr_node_data_disk_info.build_request(FakeModels, None, {"b-name": ["v1"], "a-name": ["v2"]}, 0, 100)
+    request = emr_node_data_disk_info.build_request(FakeModels, "sample", None, {"b-name": ["v1"], "a-name": ["v2"]}, 0, 100)
     assert [(item.Name, item.Values) for item in request.Filters] == [
         ("a-name", ["v2"]), ("b-name", ["v1"]),
     ]
@@ -106,7 +106,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                node_data_disk_ids=None, filters={}, page_size=2)
+                instance_id="sample", cvm_instance_ids=None, filters={}, page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["node_data_disks"]] == ["a", "b", "c"]

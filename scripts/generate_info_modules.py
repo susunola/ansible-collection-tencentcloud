@@ -1320,6 +1320,387 @@ def _load_auto_specs():
 
 SPECS = SPECS + _load_auto_specs()
 
+# ---------------------------------------------------------------------------
+# Curated required-parameter overrides for auto-discovered specs.
+#
+# The Tencent Cloud Python SDK request models carry no structured required
+# markers (only 16 legacy "是否必填：是" hints across the whole SDK), so the
+# auto-discovered specs cannot know which request fields the API mandates.
+# Each entry below was verified against the official API documentation
+# (cloud.tencent.com/document/api/...) and injects the missing required
+# parameters (and, where needed, corrected ids mappings) into the spec at
+# generation time. Because the override layer is keyed by module name it
+# survives ``discover_info_specs.py`` re-runs, matching the design intent
+# that curated data overrides auto-discovered data.
+# ---------------------------------------------------------------------------
+REQUIRED_PARAM_OVERRIDES = {
+    "teo_function_info": {
+        "extra_params": [
+            {"name": "zone_id", "field": "ZoneId", "type": "str", "required": True,
+             "doc": "Zone ID whose edge functions are returned."},
+        ],
+    },
+    "mqtt_device_certificate_info": {
+        "extra_params": [
+            {"name": "instance_id", "field": "InstanceId", "type": "str", "required": True,
+             "doc": "Tencent Cloud MQTT instance ID."},
+        ],
+    },
+    "emr_node_data_disk_info": {
+        "extra_params": [
+            {"name": "instance_id", "field": "InstanceId", "type": "str", "required": True,
+             "doc": "EMR cluster instance ID."},
+        ],
+        # The API requires the node CVM *instance* IDs, not data-disk IDs; the
+        # auto-discovered ids mapping was wrong (and undocumented).
+        "ids": {
+            "param": "cvm_instance_ids",
+            "field": "CvmInstanceIds",
+            "doc": "CVM instance IDs whose node data disks are returned.",
+        },
+    },
+    "ccc_extension_info": {
+        "extra_params": [
+            {"name": "sdk_app_id", "field": "SdkAppId", "type": "int", "required": True,
+             "doc": "CCC application ID (required by the API)."},
+        ],
+    },
+    "apm_general_span_info": {
+        "extra_params": [
+            {"name": "instance_id", "field": "InstanceId", "type": "str", "required": True,
+             "doc": "Business system (APM instance) ID."},
+            {"name": "start_time", "field": "StartTime", "type": "int", "required": True,
+             "doc": "Span query start timestamp (seconds)."},
+            {"name": "end_time", "field": "EndTime", "type": "int", "required": True,
+             "doc": "Span query end timestamp (seconds)."},
+        ],
+    },
+    "tbaas_block_info": {
+        "extra_params": [
+            {"name": "module", "field": "Module", "type": "str", "default": "block",
+             "doc": "Module name; the API requires the fixed value block."},
+            {"name": "operation", "field": "Operation", "type": "str", "default": "block_list",
+             "doc": "Operation name; the API requires the fixed value block_list."},
+            {"name": "channel_id", "field": "ChannelId", "type": "int", "default": 0,
+             "doc": "Channel ID; the API requires the fixed value 0."},
+            {"name": "group_id", "field": "GroupId", "type": "int", "default": 0,
+             "doc": "Organization ID; the API requires the fixed value 0."},
+            {"name": "channel_name", "field": "ChannelName", "type": "str", "required": True,
+             "doc": "Channel name to query."},
+            {"name": "group_name", "field": "GroupName", "type": "str", "required": True,
+             "doc": "Organization name to query."},
+            {"name": "cluster_id", "field": "ClusterId", "type": "str", "required": True,
+             "doc": "Blockchain network ID."},
+        ],
+    },
+    "cdwdoris_cluster_configs_history_info": {
+        "extra_params": [
+            {"name": "instance_id", "field": "InstanceId", "type": "str", "required": True,
+             "doc": "Cluster ID (name)."},
+            {"name": "start_time", "field": "StartTime", "type": "str", "required": True,
+             "doc": "Start of the configuration-change history time range."},
+            {"name": "end_time", "field": "EndTime", "type": "str", "required": True,
+             "doc": "End of the configuration-change history time range."},
+        ],
+    },
+    "tcbr_cloud_run_pod_info": {
+        "extra_params": [
+            {"name": "env_id", "field": "EnvId", "type": "str", "required": True,
+             "doc": "Environment ID."},
+            {"name": "server_name", "field": "ServerName", "type": "str", "required": True,
+             "doc": "Service name."},
+        ],
+    },
+    "cdwpg_account_info": {
+        "extra_params": [
+            {"name": "instance_id", "field": "InstanceId", "type": "str", "required": True,
+             "doc": "Instance ID."},
+        ],
+    },
+    "trocket_consumer_client_info": {
+        "extra_params": [
+            {"name": "instance_id", "field": "InstanceId", "type": "str", "required": True,
+             "doc": "Tencent Cloud RocketMQ instance ID."},
+        ],
+    },
+    "keewidb_instance_backup_info": {
+        "extra_params": [
+            {"name": "instance_id", "field": "InstanceId", "type": "str", "required": True,
+             "doc": "Instance ID whose backups are returned."},
+        ],
+    },
+    "lowcode_knowledge_set_info": {
+        "extra_params": [
+            {"name": "env_id", "field": "EnvId", "type": "str", "required": True,
+             "doc": "Environment ID."},
+        ],
+    },
+    "tdcpg_cluster_instance_info": {
+        "extra_params": [
+            {"name": "cluster_id", "field": "ClusterId", "type": "str", "required": True,
+             "doc": "Cluster ID."},
+        ],
+    },
+    "yinsuda_ktv_robot_info": {
+        "extra_params": [
+            {"name": "app_name", "field": "AppName", "type": "str", "required": True,
+             "doc": "Application name."},
+            {"name": "user_id", "field": "UserId", "type": "str", "required": True,
+             "doc": "User identifier."},
+        ],
+    },
+    "iotvideo_ai_model_application_info": {
+        "extra_params": [
+            {"name": "model_id", "field": "ModelId", "type": "str", "required": True,
+             "doc": "AI model ID."},
+        ],
+    },
+    "trro_device_info": {
+        "extra_params": [
+            {"name": "project_id", "field": "ProjectId", "type": "str", "required": True,
+             "doc": "Project ID the devices belong to."},
+        ],
+    },
+    "tdai_agent_duty_task_info": {
+        "extra_params": [
+            {"name": "instance_id", "field": "InstanceId", "type": "str", "required": True,
+             "doc": "Agent instance ID."},
+        ],
+    },
+    "dsgc_dspa_assessment_risk_info": {
+        "extra_params": [
+            {"name": "dspa_id", "field": "DspaId", "type": "str", "required": True,
+             "doc": "DSPA instance ID (format dspa-xxxxxxxx)."},
+            {"name": "task_id", "field": "TaskId", "type": "str", "required": True,
+             "doc": "Assessment task ID (format task-xxxxxxxx)."},
+        ],
+    },
+    "omics_application_info": {
+        "extra_params": [
+            {"name": "project_id", "field": "ProjectId", "type": "str", "required": True,
+             "doc": "Project ID."},
+        ],
+    },
+    "adp_agent_release_preview_info": {
+        "extra_params": [
+            {"name": "app_id", "field": "AppId", "type": "str", "required": True,
+             "doc": "Application ID."},
+        ],
+    },
+    "essbasic_template_info": {
+        "extra_params": [
+            {
+                "name": "agent", "field": "Agent", "type": "dict", "required": True,
+                "model": "Agent",
+                "doc": "Channel application information; the sub-enterprise and its "
+                       "operator must have passed real-name verification.",
+                "struct": [
+                    {"key": "app_id", "field": "AppId", "type": "str", "required": True,
+                     "doc": "Channel application ID."},
+                    {"key": "proxy_organization_open_id", "field": "ProxyOrganizationOpenId",
+                     "type": "str", "required": True,
+                     "doc": "Sub-enterprise organization open ID."},
+                    {"key": "proxy_operator_open_id", "field": "ProxyOperator.OpenId",
+                     "type": "str", "required": True, "holder": "ProxyOperator",
+                     "holder_model": "UserInfo",
+                     "doc": "Sub-enterprise operator (employee) open ID."},
+                ],
+            },
+        ],
+    },
+}
+
+#: New example blocks for overridden modules (the auto-generated "List all X"
+#: examples omit the required parameters and are unusable as-is).
+REQUIRED_EXAMPLE_OVERRIDES = {
+    "teo_function_info": """\
+- name: List functions of a zone
+  tencentcloud.cloud.teo_function_info:
+    region: ap-guangzhou
+    zone_id: zone-xxxxxxxx
+""",
+    "mqtt_device_certificate_info": """\
+- name: List device certificates of an instance
+  tencentcloud.cloud.mqtt_device_certificate_info:
+    region: ap-guangzhou
+    instance_id: mqtt-xxxxxxxx
+""",
+    "emr_node_data_disk_info": """\
+- name: List node data disks of a cluster
+  tencentcloud.cloud.emr_node_data_disk_info:
+    region: ap-guangzhou
+    instance_id: emr-xxxxxxxx
+    cvm_instance_ids: [ins-xxxxxxxx]
+""",
+    "ccc_extension_info": """\
+- name: List extensions of a CCC application
+  tencentcloud.cloud.ccc_extension_info:
+    region: ap-guangzhou
+    sdk_app_id: 1400000000
+""",
+    "apm_general_span_info": """\
+- name: List general spans
+  tencentcloud.cloud.apm_general_span_info:
+    region: ap-guangzhou
+    instance_id: apm-xxxxxxxx
+    start_time: 1700000000
+    end_time: 1700003600
+""",
+    "tbaas_block_info": """\
+- name: List blocks of a channel
+  tencentcloud.cloud.tbaas_block_info:
+    region: ap-guangzhou
+    channel_name: my-channel
+    group_name: my-group
+    cluster_id: bcos-xxxxxxxx
+""",
+    "cdwdoris_cluster_configs_history_info": """\
+- name: List cluster configuration history
+  tencentcloud.cloud.cdwdoris_cluster_configs_history_info:
+    region: ap-guangzhou
+    instance_id: cdwdoris-xxxxxxxx
+    start_time: "2024-01-01 00:00:00"
+    end_time: "2024-02-01 00:00:00"
+""",
+    "tcbr_cloud_run_pod_info": """\
+- name: List cloud run pods
+  tencentcloud.cloud.tcbr_cloud_run_pod_info:
+    region: ap-guangzhou
+    env_id: env-xxxxxxxx
+    server_name: my-service
+""",
+    "cdwpg_account_info": """\
+- name: List accounts of an instance
+  tencentcloud.cloud.cdwpg_account_info:
+    region: ap-guangzhou
+    instance_id: cdwpg-xxxxxxxx
+""",
+    "trocket_consumer_client_info": """\
+- name: List consumer clients of an instance
+  tencentcloud.cloud.trocket_consumer_client_info:
+    region: ap-guangzhou
+    instance_id: rocketmq-xxxxxxxx
+""",
+    "keewidb_instance_backup_info": """\
+- name: List backups of an instance
+  tencentcloud.cloud.keewidb_instance_backup_info:
+    region: ap-guangzhou
+    instance_id: kee-xxxxxxxx
+""",
+    "lowcode_knowledge_set_info": """\
+- name: List knowledge sets of an environment
+  tencentcloud.cloud.lowcode_knowledge_set_info:
+    region: ap-guangzhou
+    env_id: lowcode-xxxxxxxx
+""",
+    "tdcpg_cluster_instance_info": """\
+- name: List instances of a cluster
+  tencentcloud.cloud.tdcpg_cluster_instance_info:
+    region: ap-guangzhou
+    cluster_id: tdcpg-xxxxxxxx
+""",
+    "yinsuda_ktv_robot_info": """\
+- name: List KTV robots of a user
+  tencentcloud.cloud.yinsuda_ktv_robot_info:
+    region: ap-guangzhou
+    app_name: ktv
+    user_id: "10001"
+""",
+    "iotvideo_ai_model_application_info": """\
+- name: List AI model applications
+  tencentcloud.cloud.iotvideo_ai_model_application_info:
+    region: ap-guangzhou
+    model_id: body_detection
+""",
+    "trro_device_info": """\
+- name: List devices of a project
+  tencentcloud.cloud.trro_device_info:
+    region: ap-guangzhou
+    project_id: f3glr49ry0i0xlm7
+""",
+    "tdai_agent_duty_task_info": """\
+- name: List duty tasks of an agent instance
+  tencentcloud.cloud.tdai_agent_duty_task_info:
+    region: ap-guangzhou
+    instance_id: agtinst-xxxxxxxx
+""",
+    "dsgc_dspa_assessment_risk_info": """\
+- name: List assessment risks
+  tencentcloud.cloud.dsgc_dspa_assessment_risk_info:
+    region: ap-guangzhou
+    dspa_id: dspa-xxxxxxxx
+    task_id: task-xxxxxxxx
+""",
+    "omics_application_info": """\
+- name: List applications of a project
+  tencentcloud.cloud.omics_application_info:
+    region: ap-guangzhou
+    project_id: prj-xxxxxxxx
+""",
+    "adp_agent_release_preview_info": """\
+- name: List agent release previews
+  tencentcloud.cloud.adp_agent_release_preview_info:
+    region: ap-guangzhou
+    app_id: "204000000016"
+""",
+    "essbasic_template_info": """\
+- name: List templates of a sub-enterprise
+  tencentcloud.cloud.essbasic_template_info:
+    region: ap-guangzhou
+    agent:
+      app_id: "1400000000"
+      proxy_organization_open_id: org_xxxxxxxx
+      proxy_operator_open_id: op_xxxxxxxx
+""",
+}
+
+
+def _apply_required_overrides(spec):
+    """Merge curated required-parameter overrides into *spec* in place.
+
+    Idempotent: fields that already exist are left untouched so repeated
+    generation runs (and repeated calls) never duplicate parameters.
+    """
+    overrides = REQUIRED_PARAM_OVERRIDES.get(spec["module"])
+    if not overrides:
+        return
+    if "ids" in overrides:
+        spec["ids"] = overrides["ids"]
+    for ep in overrides.get("extra_params", []):
+        existing = [p for p in spec.get("extra_params", [])
+                    if p.get("field") == ep["field"]]
+        if not existing:
+            spec.setdefault("extra_params", []).append(ep)
+    if spec["module"] in REQUIRED_EXAMPLE_OVERRIDES:
+        spec["examples"] = REQUIRED_EXAMPLE_OVERRIDES[spec["module"]]
+
+
+for _spec in SPECS:
+    _apply_required_overrides(_spec)
+
+
+def _validate_required_overrides():
+    """Fail loudly when a curated override references a spec that does not exist.
+
+    The override layer is keyed by module name; a ``discover_info_specs.py``
+    re-run that renames or removes a module would otherwise silently disable
+    the curation and the regenerated module would lose its required
+    parameters without any error. This runs at import time, so the generator,
+    ``--check`` CI step and the contract tests all fail when curation is stale.
+    """
+    known = {spec["module"] for spec in SPECS}
+    missing = sorted(
+        (set(REQUIRED_PARAM_OVERRIDES) | set(REQUIRED_EXAMPLE_OVERRIDES))
+        - known)
+    if missing:
+        raise SystemExit(
+            "REQUIRED_PARAM_OVERRIDES / REQUIRED_EXAMPLE_OVERRIDES reference "
+            "specs that no longer exist (removed or renamed by "
+            "discover_info_specs.py?): %s" % ", ".join(missing))
+
+
+_validate_required_overrides()
+
 HEADER = f"""\
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
@@ -1386,6 +1767,18 @@ def _documentation(spec):
             option_lines.append("    required: true")
         if "default" in param:
             option_lines.append(f"    default: {param['default']}")
+        if param.get("struct"):
+            # Ansible module documentation nests sub-options under
+            # ``suboptions:`` (validate-modules rejects ``options:`` here).
+            option_lines.append("    suboptions:")
+            for sub in param["struct"]:
+                option_lines += [
+                    f"      {sub['key']}:",
+                    f"        description: {sub['doc']}",
+                    f"        type: {sub['type']}",
+                ]
+                if sub.get("required"):
+                    option_lines.append("        required: true")
     if spec["ids"]:
         option_lines += [
             f"  {spec['ids']['param']}:",
@@ -1494,7 +1887,24 @@ def build_describe_request(models, {ids['param']}):
             f"    request.{_page_size_field(spec)} = limit",
         ]
     for param in spec["extra_params"]:
-        if param.get("required") or "default" in param:
+        if param.get("struct"):
+            # dict parameter rendered as an SDK model object (e.g. Agent).
+            obj = f"_{param['name']}_obj"
+            lines.append(f"    if {param['name']} is not None:")
+            lines.append(f"        {obj} = models.{param['model']}()")
+            for sub in param["struct"]:
+                sub_field = sub["field"].split(".")[-1]
+                if sub.get("holder"):
+                    lines.append(f"        {obj}.{sub['holder']} = models.{sub['holder_model']}()")
+                    lines.append(
+                        f"        {obj}.{sub['holder']}.{sub_field} = "
+                        f"{param['name']}.get({sub['key']!r})")
+                else:
+                    lines.append(
+                        f"        {obj}.{sub['field']} = "
+                        f"{param['name']}.get({sub['key']!r})")
+            lines.append(f"        request.{param['field']} = {obj}")
+        elif param.get("required") or "default" in param:
             lines.append(f"    request.{param['field']} = {param['name']}")
         else:
             lines += [
@@ -1556,11 +1966,36 @@ def _items_lambda(spec):
 def _argument_spec_lines(spec):
     argument_lines = []
     for param in spec["extra_params"]:
+        if param.get("struct"):
+            # Nested dict parameter (e.g. Agent) rendered with sub-options so
+            # Ansible validates the required sub-fields at argument_spec level.
+            sub_entries = []
+            for sub in param["struct"]:
+                sub_entry = f'{{"type": "{sub["type"]}"'
+                if sub.get("required"):
+                    sub_entry += ', "required": True'
+                sub_entry += "}"
+                sub_entries.append(f'                "{sub["key"]}": {sub_entry},')
+            entry = '{\n            "type": "dict"'
+            if param.get("required"):
+                entry += ',\n            "required": True'
+            entry += ',\n            "options": {\n'
+            entry += "\n".join(sub_entries)
+            entry += "\n            },"
+            argument_lines.append(f'        "{param["name"]}": {entry}\n        }},')
+            continue
         entry = f'{{"type": "{param["type"]}"'
         if param.get("required"):
             entry += ', "required": True'
         if "default" in param:
-            entry += f', "default": "{param["default"]}"'
+            default = param["default"]
+            if isinstance(default, bool):
+                rendered = "True" if default else "False"
+            elif isinstance(default, int):
+                rendered = str(default)
+            else:
+                rendered = f'"{default}"'
+            entry += f", \"default\": {rendered}"
         entry += "}"
         argument_lines.append(f'        "{param["name"]}": {entry},')
     if spec["ids"]:
@@ -1819,16 +2254,24 @@ def is_simple_spec(spec):
     """True when *spec* fits the generated unit-test template.
 
     Plain offset/limit or page-number specs (with or without a total-count
-    field) and unpaginated top-level list specs are covered; every other
-    spec keeps its hand-written test file (never rewritten, never verified
-    here).
+    field), unpaginated top-level list specs and curated specs whose extra
+    parameters are simple scalars or one-level dicts are covered; every
+    other spec keeps its hand-written test file (never rewritten, never
+    verified here).
     """
     pagination = spec.get("pagination_type", "int")
     if pagination == "list":
         return "." not in spec["response_items"]
-    return (pagination in ("int", "page")
-            and not spec.get("ids_action")
-            and not spec["extra_params"])
+    if pagination not in ("int", "page") or spec.get("ids_action"):
+        return False
+    for param in spec.get("extra_params", []):
+        if param["type"] not in ("str", "int", "bool", "dict"):
+            return False
+        if param.get("struct"):
+            for sub in param["struct"]:
+                if sub["type"] not in ("str", "int", "bool"):
+                    return False
+    return True
 
 
 def _fake_response_fields(spec):
@@ -1965,12 +2408,40 @@ class FakeFilter:
     pass
 """
 
+    def sample_expr(param, full=False):
+        """Python literal used to exercise *param* in generated unit tests.
+
+        Dict (struct) parameters render all sub-keys only in the keyword
+        argument call; positional build_call lines stay short to satisfy
+        pep8's 160-column limit.
+        """
+        if param["type"] == "int":
+            return "1"
+        if param["type"] == "bool":
+            return "True"
+        if param.get("struct"):
+            keys = [sub["key"] for sub in param["struct"]]
+            if not full:
+                keys = keys[:1]
+            kvs = ", ".join('"%s": "sample"' % key for key in keys)
+            return "{%s}" % kvs
+        return '"sample"'
+
+    extra_samples = [sample_expr(param) for param in spec["extra_params"]]
     fake_models = f'    {spec["request_class"]} = FakeRequest'
     if filters:
         fake_models = f'    {filters.get("model", "Filter")} = FakeFilter\n' + fake_models
+    for param in spec["extra_params"]:
+        if not param.get("struct"):
+            continue
+        models_needed = [param["model"]]
+        models_needed += [sub["holder_model"] for sub in param["struct"]
+                          if sub.get("holder_model")]
+        for model in dict.fromkeys(models_needed):
+            fake_models = f'    {model} = FakeRequest\n' + fake_models
 
     def build_call(ids_value, filters_value, offset, limit):
-        parts = ["FakeModels"]
+        parts = ["FakeModels"] + list(extra_samples)
         if ids:
             parts.append(ids_value)
         if filters:
@@ -2017,6 +2488,8 @@ def test_build_request_sorts_filters():
 '''
 
     params = ""
+    for param in spec["extra_params"]:
+        params += f"{param['name']}={sample_expr(param, full=True)}, "
     if ids:
         params += f'{ids["param"]}=None, '
     if filters:

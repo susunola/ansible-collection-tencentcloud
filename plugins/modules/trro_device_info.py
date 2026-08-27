@@ -14,6 +14,10 @@ short_description: Gather information about Tencent Cloud TRRO devices
 version_added: "0.8.0"
 description: Returns TRRO devices visible in a Tencent Cloud region.
 options:
+  project_id:
+    description: Project ID the devices belong to.
+    type: str
+    required: true
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -23,9 +27,10 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all devices
+- name: List devices of a project
   tencentcloud.cloud.trro_device_info:
     region: ap-guangzhou
+    project_id: f3glr49ry0i0xlm7
 '''
 
 RETURN = r'''
@@ -48,16 +53,18 @@ from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud im
 )
 
 
-def build_request(models, offset, limit):
+def build_request(models, project_id, offset, limit):
     request = models.DescribeDeviceListRequest()
     request.PageNumber = offset // limit + 1
     request.PageSize = limit
+    request.ProjectId = project_id
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "project_id": {"type": "str", "required": True},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -75,7 +82,7 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, offset, limit),
+        lambda offset, limit: build_request(models, module.params["project_id"], offset, limit),
         lambda request: sdk_call(module, client.DescribeDeviceList, request),
         lambda response: response.Devices,
         lambda response: response.Total,

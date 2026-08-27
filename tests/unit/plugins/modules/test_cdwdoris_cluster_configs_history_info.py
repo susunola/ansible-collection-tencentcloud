@@ -20,13 +20,13 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = cdwdoris_cluster_configs_history_info.build_request(FakeModels, None, 200, 100)
+    request = cdwdoris_cluster_configs_history_info.build_request(FakeModels, "sample", "sample", "sample", None, 200, 100)
     assert request.Offset == 200
     assert request.Limit == 100
 
 
 def test_build_request_maps_ids():
-    request = cdwdoris_cluster_configs_history_info.build_request(FakeModels, ["x-1"], 0, 100)
+    request = cdwdoris_cluster_configs_history_info.build_request(FakeModels, "sample", "sample", "sample", ["x-1"], 0, 100)
     assert request.ComputeGroupIds == ["x-1"]
 
 
@@ -94,7 +94,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                cluster_configs_history_ids=None, page_size=2)
+                instance_id="sample", start_time="sample", end_time="sample", cluster_configs_history_ids=None, page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["cluster_configs_histories"]] == ["a", "b", "c"]

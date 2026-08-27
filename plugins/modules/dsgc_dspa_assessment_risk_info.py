@@ -14,6 +14,14 @@ short_description: Gather information about Tencent Cloud DSGC dspa assessment r
 version_added: "0.8.0"
 description: Returns DSGC dspa assessment risks visible in a Tencent Cloud region.
 options:
+  dspa_id:
+    description: DSPA instance ID (format dspa-xxxxxxxx).
+    type: str
+    required: true
+  task_id:
+    description: Assessment task ID (format task-xxxxxxxx).
+    type: str
+    required: true
   filters:
     description: DSGC API filter names mapped to lists of values.
     type: dict
@@ -27,9 +35,11 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all dspa assessment risks
+- name: List assessment risks
   tencentcloud.cloud.dsgc_dspa_assessment_risk_info:
     region: ap-guangzhou
+    dspa_id: dspa-xxxxxxxx
+    task_id: task-xxxxxxxx
 '''
 
 RETURN = r'''
@@ -52,10 +62,12 @@ from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud im
 )
 
 
-def build_request(models, filters, offset, limit):
+def build_request(models, dspa_id, task_id, filters, offset, limit):
     request = models.DescribeDSPAAssessmentRisksRequest()
     request.Offset = offset
     request.Limit = limit
+    request.DspaId = dspa_id
+    request.TaskId = task_id
     if filters:
         request.Filters = []
         for name, values in sorted(filters.items()):
@@ -69,6 +81,8 @@ def build_request(models, filters, offset, limit):
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "dspa_id": {"type": "str", "required": True},
+        "task_id": {"type": "str", "required": True},
         "filters": {"type": "dict", "default": {}},
         "page_size": {"type": "int", "default": 100},
     })
@@ -87,7 +101,13 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, module.params["filters"], offset, limit),
+        lambda offset, limit: build_request(
+            models,
+            module.params["dspa_id"],
+            module.params["task_id"],
+            module.params["filters"],
+            offset,
+            limit),
         lambda request: sdk_call(module, client.DescribeDSPAAssessmentRisks, request),
         lambda response: response.Items,
         lambda response: response.TotalCount,

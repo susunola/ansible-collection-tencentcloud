@@ -14,6 +14,10 @@ short_description: Gather information about Tencent Cloud OMICS applications
 version_added: "0.8.0"
 description: Returns OMICS applications visible in a Tencent Cloud region.
 options:
+  project_id:
+    description: Project ID.
+    type: str
+    required: true
   filters:
     description: OMICS API filter names mapped to lists of values.
     type: dict
@@ -27,9 +31,10 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all applications
+- name: List applications of a project
   tencentcloud.cloud.omics_application_info:
     region: ap-guangzhou
+    project_id: prj-xxxxxxxx
 '''
 
 RETURN = r'''
@@ -52,10 +57,11 @@ from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud im
 )
 
 
-def build_request(models, filters, offset, limit):
+def build_request(models, project_id, filters, offset, limit):
     request = models.DescribeApplicationsRequest()
     request.Offset = offset
     request.Limit = limit
+    request.ProjectId = project_id
     if filters:
         request.Filters = []
         for name, values in sorted(filters.items()):
@@ -69,6 +75,7 @@ def build_request(models, filters, offset, limit):
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "project_id": {"type": "str", "required": True},
         "filters": {"type": "dict", "default": {}},
         "page_size": {"type": "int", "default": 100},
     })
@@ -87,7 +94,12 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, module.params["filters"], offset, limit),
+        lambda offset, limit: build_request(
+            models,
+            module.params["project_id"],
+            module.params["filters"],
+            offset,
+            limit),
         lambda request: sdk_call(module, client.DescribeApplications, request),
         lambda response: response.Applications,
         lambda response: response.TotalCount,

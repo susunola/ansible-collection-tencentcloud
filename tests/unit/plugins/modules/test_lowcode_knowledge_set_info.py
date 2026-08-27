@@ -20,7 +20,7 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = lowcode_knowledge_set_info.build_request(FakeModels, 200, 100)
+    request = lowcode_knowledge_set_info.build_request(FakeModels, "sample", 200, 100)
     assert request.Offset == 200
     assert request.Limit == 100
 
@@ -88,7 +88,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                page_size=2)
+                env_id="sample", page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["knowledge_sets"]] == ["a", "b", "c"]

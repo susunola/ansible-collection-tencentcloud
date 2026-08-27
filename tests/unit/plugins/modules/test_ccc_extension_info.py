@@ -20,13 +20,13 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = ccc_extension_info.build_request(FakeModels, None, 200, 100)
+    request = ccc_extension_info.build_request(FakeModels, 1, None, 200, 100)
     assert request.PageNumber == 3
     assert request.PageSize == 100
 
 
 def test_build_request_maps_ids():
-    request = ccc_extension_info.build_request(FakeModels, ["x-1"], 0, 100)
+    request = ccc_extension_info.build_request(FakeModels, 1, ["x-1"], 0, 100)
     assert request.ExtensionIds == ["x-1"]
 
 
@@ -94,7 +94,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                extension_ids=None, page_size=2)
+                sdk_app_id=1, extension_ids=None, page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["extensions"]] == ["a", "b", "c"]

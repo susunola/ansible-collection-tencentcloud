@@ -16,17 +16,19 @@ class FakeRequest:
 
 
 class FakeModels:
+    UserInfo = FakeRequest
+    Agent = FakeRequest
     DescribeTemplatesRequest = FakeRequest
 
 
 def test_build_request_sets_pagination():
-    request = essbasic_template_info.build_request(FakeModels, None, 200, 100)
+    request = essbasic_template_info.build_request(FakeModels, {"app_id": "sample"}, None, 200, 100)
     assert request.Offset == 200
     assert request.Limit == 100
 
 
 def test_build_request_maps_ids():
-    request = essbasic_template_info.build_request(FakeModels, ["x-1"], 0, 100)
+    request = essbasic_template_info.build_request(FakeModels, {"app_id": "sample"}, ["x-1"], 0, 100)
     assert request.TemplateIds == ["x-1"]
 
 
@@ -94,7 +96,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                template_ids=None, page_size=2)
+                agent={"app_id": "sample", "proxy_organization_open_id": "sample", "proxy_operator_open_id": "sample"}, template_ids=None, page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["templates"]] == ["a", "b", "c"]

@@ -14,6 +14,34 @@ short_description: Gather information about Tencent Cloud TBAAS blocks
 version_added: "0.9.0"
 description: Returns TBAAS blocks visible in a Tencent Cloud region.
 options:
+  module:
+    description: Module name; the API requires the fixed value block.
+    type: str
+    default: block
+  operation:
+    description: Operation name; the API requires the fixed value block_list.
+    type: str
+    default: block_list
+  channel_id:
+    description: Channel ID; the API requires the fixed value 0.
+    type: int
+    default: 0
+  group_id:
+    description: Organization ID; the API requires the fixed value 0.
+    type: int
+    default: 0
+  channel_name:
+    description: Channel name to query.
+    type: str
+    required: true
+  group_name:
+    description: Organization name to query.
+    type: str
+    required: true
+  cluster_id:
+    description: Blockchain network ID.
+    type: str
+    required: true
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -23,9 +51,12 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all blocks
+- name: List blocks of a channel
   tencentcloud.cloud.tbaas_block_info:
     region: ap-guangzhou
+    channel_name: my-channel
+    group_name: my-group
+    cluster_id: bcos-xxxxxxxx
 '''
 
 RETURN = r'''
@@ -48,16 +79,30 @@ from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud im
 )
 
 
-def build_request(models, offset, limit):
+def build_request(models, module, operation, channel_id, group_id, channel_name, group_name, cluster_id, offset, limit):
     request = models.GetBlockListRequest()
     request.Offset = offset
     request.Limit = limit
+    request.Module = module
+    request.Operation = operation
+    request.ChannelId = channel_id
+    request.GroupId = group_id
+    request.ChannelName = channel_name
+    request.GroupName = group_name
+    request.ClusterId = cluster_id
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "module": {"type": "str", "default": "block"},
+        "operation": {"type": "str", "default": "block_list"},
+        "channel_id": {"type": "int", "default": 0},
+        "group_id": {"type": "int", "default": 0},
+        "channel_name": {"type": "str", "required": True},
+        "group_name": {"type": "str", "required": True},
+        "cluster_id": {"type": "str", "required": True},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -75,7 +120,17 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, offset, limit),
+        lambda offset, limit: build_request(
+            models,
+            module.params["module"],
+            module.params["operation"],
+            module.params["channel_id"],
+            module.params["group_id"],
+            module.params["channel_name"],
+            module.params["group_name"],
+            module.params["cluster_id"],
+            offset,
+            limit),
         lambda request: sdk_call(module, client.GetBlockList, request),
         lambda response: response.BlockList,
         lambda response: response.TotalCount,

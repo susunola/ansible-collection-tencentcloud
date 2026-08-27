@@ -25,18 +25,18 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = teo_function_info.build_request(FakeModels, None, {}, 200, 100)
+    request = teo_function_info.build_request(FakeModels, "sample", None, {}, 200, 100)
     assert request.Offset == 200
     assert request.Limit == 100
 
 
 def test_build_request_maps_ids():
-    request = teo_function_info.build_request(FakeModels, ["x-1"], {}, 0, 100)
+    request = teo_function_info.build_request(FakeModels, "sample", ["x-1"], {}, 0, 100)
     assert request.FunctionIds == ["x-1"]
 
 
 def test_build_request_sorts_filters():
-    request = teo_function_info.build_request(FakeModels, None, {"b-name": ["v1"], "a-name": ["v2"]}, 0, 100)
+    request = teo_function_info.build_request(FakeModels, "sample", None, {"b-name": ["v1"], "a-name": ["v2"]}, 0, 100)
     assert [(item.Name, item.Values) for item in request.Filters] == [
         ("a-name", ["v2"]), ("b-name", ["v1"]),
     ]
@@ -106,7 +106,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                function_ids=None, filters={}, page_size=2)
+                zone_id="sample", function_ids=None, filters={}, page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["functions"]] == ["a", "b", "c"]

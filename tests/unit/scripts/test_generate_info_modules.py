@@ -212,11 +212,71 @@ def test_simple_spec_tests_are_generated(generator):
             assert content == generator.render_test(spec)
 
 
-def test_complex_specs_keep_hand_written_tests(generator):
+def test_hand_written_tests_survive_regeneration(generator):
+    """Hand-finished test files (no MARKER) are never rewritten or checked.
+
+    The generator skips any test file that does not carry the generation
+    MARKER (see ``main()``), so hand-written coverage is preserved even for
+    specs that now qualify for the generated test template (e.g. curated
+    specs whose extra parameters are simple scalars).
+    """
     for name in ("kms_key_info", "dnspod_record_info", "cfs_file_system_info",
                  "cloudaudit_event_info", "monitor_alarm_policy_info",
                  "billing_balance_info"):
         spec = _spec(generator, name)
-        assert not generator.is_simple_spec(spec)
         content = generator.test_path(spec).read_text()
         assert generator.MARKER not in content
+
+
+def _top_level_arg_count(region):
+    """Count comma-separated args in *region*, ignoring commas inside braces.
+
+    Dict parameters (e.g. essbasic's Agent) nest braces in the call, so a
+    naive ``str.count(",")`` would over-count; only depth-0 commas separate
+    positional arguments.
+    """
+    depth = 0
+    count = 1
+    for char in region:
+        if char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+        elif char == "," and depth == 0:
+            count += 1
+    return count
+
+
+def test_curated_extra_params_tests_match_module_signature(generator):
+    """Generated unit tests for curated specs exercise the required params.
+
+    Curated modules (REQUIRED_PARAM_OVERRIDES) carry extra parameters, so
+    their generated tests must call ``build_request`` with the same
+    positional signature and pass every parameter through ``run_module``.
+    """
+    for module_name in ("tbaas_block_info", "essbasic_template_info",
+                        "emr_node_data_disk_info"):
+        spec = _spec(generator, module_name)
+        assert generator.is_simple_spec(spec)
+        rendered = generator.render_test(spec)
+        # The generated file is in sync with the module signature (the repo's
+        # own generated test file is checked against render_test output).
+        path = generator.test_path(spec)
+        content = path.read_text()
+        assert generator.MARKER in content
+        assert content == rendered
+        # build_request is called with every extra param sample populated:
+        # the test's positional args match the module signature exactly.
+        build_line = [line for line in rendered.splitlines()
+                      if "build_request(FakeModels" in line][0]
+        call_args = build_line.split("(", 1)[1].rsplit(")", 1)[0]
+        module_src = generator.render_module(spec)
+        def_line = [line for line in module_src.splitlines()
+                    if line.startswith("def build_request(")][0]
+        def_args = def_line.split("(", 1)[1].rsplit(")", 1)[0]
+        assert _top_level_arg_count(call_args) == _top_level_arg_count(def_args)
+        # run_module is driven with the same parameters (keyword args on the
+        # _run(...) call inside the pagination test).
+        pagination_section = rendered.split("def test_run_module_paginates", 1)[1]
+        for param in spec["extra_params"]:
+            assert "%s=" % param["name"] in pagination_section

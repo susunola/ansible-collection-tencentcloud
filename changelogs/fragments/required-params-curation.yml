@@ -1,0 +1,22 @@
+bugfixes:
+  - teo_function_info - require ``zone_id`` as the API rejects requests without it.
+  - mqtt_device_certificate_info - require ``instance_id``.
+  - emr_node_data_disk_info - require ``instance_id`` and rename the ids parameter to ``cvm_instance_ids`` (the API takes node CVM instance IDs, not data-disk IDs).
+  - ccc_extension_info - require ``sdk_app_id``.
+  - apm_general_span_info - require ``instance_id``, ``start_time`` and ``end_time``.
+  - tbaas_block_info - require ``channel_name``, ``group_name`` and ``cluster_id``; default ``module``/``operation``/``channel_id``/``group_id`` to the fixed values the API mandates.
+  - cdwdoris_cluster_configs_history_info - require ``instance_id``, ``start_time`` and ``end_time``.
+  - tcbr_cloud_run_pod_info - require ``env_id`` and ``server_name``.
+  - cdwpg_account_info - require ``instance_id``.
+  - trocket_consumer_client_info - require ``instance_id``.
+  - keewidb_instance_backup_info - require ``instance_id``.
+  - lowcode_knowledge_set_info - require ``env_id``.
+  - tdcpg_cluster_instance_info - require ``cluster_id``.
+  - yinsuda_ktv_robot_info - require ``app_name`` and ``user_id``.
+  - iotvideo_ai_model_application_info - require ``model_id``.
+  - trro_device_info - require ``project_id``.
+  - tdai_agent_duty_task_info - require ``instance_id``.
+  - dsgc_dspa_assessment_risk_info - require ``dspa_id`` and ``task_id``.
+  - omics_application_info - require ``project_id``.
+  - adp_agent_release_preview_info - require ``app_id``.
+  - essbasic_template_info - require the nested ``agent`` dict with ``app_id``, ``proxy_organization_open_id`` and ``proxy_operator_open_id``.

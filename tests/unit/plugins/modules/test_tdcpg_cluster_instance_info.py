@@ -25,13 +25,13 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = tdcpg_cluster_instance_info.build_request(FakeModels, {}, 200, 100)
+    request = tdcpg_cluster_instance_info.build_request(FakeModels, "sample", {}, 200, 100)
     assert request.PageNumber == 3
     assert request.PageSize == 100
 
 
 def test_build_request_sorts_filters():
-    request = tdcpg_cluster_instance_info.build_request(FakeModels, {"b-name": ["v1"], "a-name": ["v2"]}, 0, 100)
+    request = tdcpg_cluster_instance_info.build_request(FakeModels, "sample", {"b-name": ["v1"], "a-name": ["v2"]}, 0, 100)
     assert [(item.Name, item.Values) for item in request.Filters] == [
         ("a-name", ["v2"]), ("b-name", ["v1"]),
     ]
@@ -101,7 +101,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                filters={}, page_size=2)
+                cluster_id="sample", filters={}, page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["cluster_instances"]] == ["a", "b", "c"]

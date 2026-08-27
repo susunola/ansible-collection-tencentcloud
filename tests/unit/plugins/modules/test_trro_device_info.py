@@ -20,7 +20,7 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = trro_device_info.build_request(FakeModels, 200, 100)
+    request = trro_device_info.build_request(FakeModels, "sample", 200, 100)
     assert request.PageNumber == 3
     assert request.PageSize == 100
 
@@ -89,7 +89,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                page_size=2)
+                project_id="sample", page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["devices"]] == ["a", "b", "c"]

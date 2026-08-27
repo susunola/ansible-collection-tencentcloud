@@ -20,7 +20,7 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = tbaas_block_info.build_request(FakeModels, 200, 100)
+    request = tbaas_block_info.build_request(FakeModels, "sample", "sample", 1, 1, "sample", "sample", "sample", 200, 100)
     assert request.Offset == 200
     assert request.Limit == 100
 
@@ -89,7 +89,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                page_size=2)
+                module="sample", operation="sample", channel_id=1, group_id=1, channel_name="sample", group_name="sample", cluster_id="sample", page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["blocks"]] == ["a", "b", "c"]

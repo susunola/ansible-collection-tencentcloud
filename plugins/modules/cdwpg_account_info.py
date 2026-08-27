@@ -14,6 +14,10 @@ short_description: Gather information about Tencent Cloud CDWPG accounts
 version_added: "0.8.0"
 description: Returns CDWPG accounts visible in a Tencent Cloud region.
 options:
+  instance_id:
+    description: Instance ID.
+    type: str
+    required: true
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -23,9 +27,10 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all accounts
+- name: List accounts of an instance
   tencentcloud.cloud.cdwpg_account_info:
     region: ap-guangzhou
+    instance_id: cdwpg-xxxxxxxx
 '''
 
 RETURN = r'''
@@ -48,16 +53,18 @@ from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud im
 )
 
 
-def build_request(models, offset, limit):
+def build_request(models, instance_id, offset, limit):
     request = models.DescribeAccountsRequest()
     request.Offset = offset
     request.Limit = limit
+    request.InstanceId = instance_id
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "instance_id": {"type": "str", "required": True},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -75,7 +82,7 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, offset, limit),
+        lambda offset, limit: build_request(models, module.params["instance_id"], offset, limit),
         lambda request: sdk_call(module, client.DescribeAccounts, request),
         lambda response: response.Accounts,
         lambda response: response.TotalCount,

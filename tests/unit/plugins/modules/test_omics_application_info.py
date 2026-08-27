@@ -25,13 +25,13 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = omics_application_info.build_request(FakeModels, {}, 200, 100)
+    request = omics_application_info.build_request(FakeModels, "sample", {}, 200, 100)
     assert request.Offset == 200
     assert request.Limit == 100
 
 
 def test_build_request_sorts_filters():
-    request = omics_application_info.build_request(FakeModels, {"b-name": ["v1"], "a-name": ["v2"]}, 0, 100)
+    request = omics_application_info.build_request(FakeModels, "sample", {"b-name": ["v1"], "a-name": ["v2"]}, 0, 100)
     assert [(item.Name, item.Values) for item in request.Filters] == [
         ("a-name", ["v2"]), ("b-name", ["v1"]),
     ]
@@ -101,7 +101,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                filters={}, page_size=2)
+                project_id="sample", filters={}, page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["applications"]] == ["a", "b", "c"]

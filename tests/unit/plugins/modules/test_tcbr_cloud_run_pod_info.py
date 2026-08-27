@@ -20,7 +20,7 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = tcbr_cloud_run_pod_info.build_request(FakeModels, 200, 100)
+    request = tcbr_cloud_run_pod_info.build_request(FakeModels, "sample", "sample", 200, 100)
     assert request.PageNum == 3
     assert request.PageSize == 100
 
@@ -89,7 +89,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                page_size=2)
+                env_id="sample", server_name="sample", page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["cloud_run_pods"]] == ["a", "b", "c"]

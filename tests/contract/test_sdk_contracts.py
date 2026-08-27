@@ -465,6 +465,18 @@ def _load_generator_specs():
     return module.SPECS
 
 
+def _param_sample(param):
+    """Sample value used to exercise *param* against the real SDK models.
+
+    Dict (struct) parameters include every declared sub-key so the SDK audit
+    verifies each sub-field mapping (e.g. essbasic Agent.AppId,
+    Agent.ProxyOperator.OpenId) rather than silently passing Nones.
+    """
+    if param.get("struct"):
+        return {sub["key"]: "sample" for sub in param["struct"]}
+    return _SAMPLE_VALUES[param["type"]]
+
+
 def _generated_builder_calls(spec):
     """Contract invocations for a generated info module, derived from its spec.
 
@@ -479,7 +491,7 @@ def _generated_builder_calls(spec):
             ("build_list_request", [(0, 100)]),
             ("build_describe_request", [(["x-xxxxxxxx"],)]),
         ]
-    extras = [_SAMPLE_VALUES[param["type"]] for param in spec["extra_params"]]
+    extras = [_param_sample(param) for param in spec["extra_params"]]
     calls = []
     selectors = [(None, {})]
     if spec["ids"] or spec["filters"]:

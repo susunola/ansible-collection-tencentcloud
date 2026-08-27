@@ -14,6 +14,23 @@ short_description: Gather information about Tencent Cloud ESSBASIC templates
 version_added: "0.8.0"
 description: Returns ESSBASIC templates visible in a Tencent Cloud region.
 options:
+  agent:
+    description: Channel application information; the sub-enterprise and its operator must have passed real-name verification.
+    type: dict
+    required: true
+    suboptions:
+      app_id:
+        description: Channel application ID.
+        type: str
+        required: true
+      proxy_organization_open_id:
+        description: Sub-enterprise organization open ID.
+        type: str
+        required: true
+      proxy_operator_open_id:
+        description: Sub-enterprise operator (employee) open ID.
+        type: str
+        required: true
   template_ids:
     description: Template IDs to return.
     type: list
@@ -27,14 +44,13 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all templates
+- name: List templates of a sub-enterprise
   tencentcloud.cloud.essbasic_template_info:
     region: ap-guangzhou
-
-- name: Find templates by ID
-  tencentcloud.cloud.essbasic_template_info:
-    region: ap-guangzhou
-    template_ids: [x-xxxxxxxx]
+    agent:
+      app_id: "1400000000"
+      proxy_organization_open_id: org_xxxxxxxx
+      proxy_operator_open_id: op_xxxxxxxx
 '''
 
 RETURN = r'''
@@ -57,10 +73,17 @@ from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud im
 )
 
 
-def build_request(models, template_ids, offset, limit):
+def build_request(models, agent, template_ids, offset, limit):
     request = models.DescribeTemplatesRequest()
     request.Offset = offset
     request.Limit = limit
+    if agent is not None:
+        _agent_obj = models.Agent()
+        _agent_obj.AppId = agent.get('app_id')
+        _agent_obj.ProxyOrganizationOpenId = agent.get('proxy_organization_open_id')
+        _agent_obj.ProxyOperator = models.UserInfo()
+        _agent_obj.ProxyOperator.OpenId = agent.get('proxy_operator_open_id')
+        request.Agent = _agent_obj
     if template_ids:
         request.TemplateIds = template_ids
     return request
@@ -69,6 +92,15 @@ def build_request(models, template_ids, offset, limit):
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "agent": {
+            "type": "dict",
+            "required": True,
+            "options": {
+                "app_id": {"type": "str", "required": True},
+                "proxy_organization_open_id": {"type": "str", "required": True},
+                "proxy_operator_open_id": {"type": "str", "required": True},
+            },
+        },
         "template_ids": {"type": "list", "elements": "str"},
         "page_size": {"type": "int", "default": 100},
     })
@@ -87,7 +119,12 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, module.params["template_ids"], offset, limit),
+        lambda offset, limit: build_request(
+            models,
+            module.params["agent"],
+            module.params["template_ids"],
+            offset,
+            limit),
         lambda request: sdk_call(module, client.DescribeTemplates, request),
         lambda response: response.Templates,
         lambda response: response.TotalCount,

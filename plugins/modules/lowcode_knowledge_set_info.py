@@ -14,6 +14,10 @@ short_description: Gather information about Tencent Cloud LOWCODE knowledge sets
 version_added: "0.8.0"
 description: Returns LOWCODE knowledge sets visible in a Tencent Cloud region.
 options:
+  env_id:
+    description: Environment ID.
+    type: str
+    required: true
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -23,9 +27,10 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all knowledge sets
+- name: List knowledge sets of an environment
   tencentcloud.cloud.lowcode_knowledge_set_info:
     region: ap-guangzhou
+    env_id: lowcode-xxxxxxxx
 '''
 
 RETURN = r'''
@@ -48,16 +53,18 @@ from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud im
 )
 
 
-def build_request(models, offset, limit):
+def build_request(models, env_id, offset, limit):
     request = models.DescribeKnowledgeSetListRequest()
     request.Offset = offset
     request.Limit = limit
+    request.EnvId = env_id
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "env_id": {"type": "str", "required": True},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -75,7 +82,7 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, offset, limit),
+        lambda offset, limit: build_request(models, module.params["env_id"], offset, limit),
         lambda request: sdk_call(module, client.DescribeKnowledgeSetList, request),
         lambda response: response.Data.KnowledgeSets if response.Data is not None else None,
         lambda response: response.Data.Total if response.Data is not None else None,

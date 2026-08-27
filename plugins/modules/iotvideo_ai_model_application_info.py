@@ -14,6 +14,10 @@ short_description: Gather information about Tencent Cloud IOTVIDEO ai model appl
 version_added: "0.8.0"
 description: Returns IOTVIDEO ai model applications visible in a Tencent Cloud region.
 options:
+  model_id:
+    description: AI model ID.
+    type: str
+    required: true
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -23,9 +27,10 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all ai model applications
+- name: List AI model applications
   tencentcloud.cloud.iotvideo_ai_model_application_info:
     region: ap-guangzhou
+    model_id: body_detection
 '''
 
 RETURN = r'''
@@ -48,16 +53,18 @@ from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud im
 )
 
 
-def build_request(models, offset, limit):
+def build_request(models, model_id, offset, limit):
     request = models.DescribeAIModelApplicationsRequest()
     request.Offset = offset
     request.Limit = limit
+    request.ModelId = model_id
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "model_id": {"type": "str", "required": True},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -75,7 +82,7 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, offset, limit),
+        lambda offset, limit: build_request(models, module.params["model_id"], offset, limit),
         lambda request: sdk_call(module, client.DescribeAIModelApplications, request),
         lambda response: response.Applications,
         lambda response: response.TotalCount,

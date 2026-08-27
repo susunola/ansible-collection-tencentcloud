@@ -14,6 +14,14 @@ short_description: Gather information about Tencent Cloud TCBR cloud run pods
 version_added: "0.9.0"
 description: Returns TCBR cloud run pods visible in a Tencent Cloud region.
 options:
+  env_id:
+    description: Environment ID.
+    type: str
+    required: true
+  server_name:
+    description: Service name.
+    type: str
+    required: true
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -23,9 +31,11 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all cloud run pods
+- name: List cloud run pods
   tencentcloud.cloud.tcbr_cloud_run_pod_info:
     region: ap-guangzhou
+    env_id: env-xxxxxxxx
+    server_name: my-service
 '''
 
 RETURN = r'''
@@ -48,16 +58,20 @@ from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud im
 )
 
 
-def build_request(models, offset, limit):
+def build_request(models, env_id, server_name, offset, limit):
     request = models.DescribeCloudRunPodListRequest()
     request.PageNum = offset // limit + 1
     request.PageSize = limit
+    request.EnvId = env_id
+    request.ServerName = server_name
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "env_id": {"type": "str", "required": True},
+        "server_name": {"type": "str", "required": True},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -75,7 +89,12 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, offset, limit),
+        lambda offset, limit: build_request(
+            models,
+            module.params["env_id"],
+            module.params["server_name"],
+            offset,
+            limit),
         lambda request: sdk_call(module, client.DescribeCloudRunPodList, request),
         lambda response: response.PodList,
         lambda response: response.TotalCount,
