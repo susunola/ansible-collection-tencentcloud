@@ -154,11 +154,13 @@ action_groups:
     - mqtt_device_certificate_info
     - ms_shield_instance_info
     - msp_migration_project_info
+    - nat_gateway
     - nat_gateway_info
     - oceanus_cluster_info
     - omics_application_info
     - organization_member_info
     - partners_agent_deals_by_cache_info
+    - peering_connection
     - portal_document_info
     - postgres_instance_info
     - privatedns_account_vpc_info
@@ -218,6 +220,7 @@ action_groups:
     - vod_incremental_migration_strategy_info
     - vpc
     - vpc_info
+    - vpn_gateway
     - vpn_gateway_info
     - waf_instance_info
     - wav_activity_info

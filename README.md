@@ -28,11 +28,14 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `eip` | Manage Tencent Cloud elastic IP addresses (EIP) |
 | `key_pair` | Manage Tencent Cloud CVM key pairs |
 | `lighthouse_instance` | Manage Tencent Cloud Lighthouse instances |
+| `nat_gateway` | Manage Tencent Cloud NAT gateways |
+| `peering_connection` | Manage Tencent Cloud VPC peering connections |
 | `route_table` | Manage Tencent Cloud VPC route tables |
 | `security_group` | Manage Tencent Cloud security groups |
 | `security_group_rule` | Manage Tencent Cloud security group rules |
 | `subnet` | Manage Tencent Cloud VPC subnets |
 | `vpc` | Manage Tencent Cloud VPCs |
+| `vpn_gateway` | Manage Tencent Cloud VPN gateways |
 
 Read-only `_info` modules (return `changed=false`):
 
