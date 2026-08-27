@@ -15,6 +15,9 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cam_policy` | Manage Tencent Cloud CAM policies |
 | `cam_role` | Manage Tencent Cloud CAM roles |
 | `cam_user` | Manage Tencent Cloud CAM sub-users |
+| `clb_listener` | Manage listeners on Tencent Cloud CLB load balancers |
+| `clb_listener_target` | Manage backend targets of Tencent Cloud CLB listeners |
+| `clb_load_balancer` | Manage Tencent Cloud CLB load balancers |
 | `cos_bucket` | Manage Tencent Cloud COS buckets |
 | `cvm_instance` | Manage Tencent Cloud CVM instances |
 | `eip` | Manage Tencent Cloud elastic IP addresses (EIP) |

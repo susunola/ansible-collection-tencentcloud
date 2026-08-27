@@ -46,11 +46,12 @@
     usable list API is covered — 36 more generated `_info` modules via new
     pagination modes (no-total short-page termination, custom token field
     pairs, unpaginated list calls). **Done**
+17. CLB write modules (0.10.0): `clb_load_balancer`, `clb_listener` and
+    `clb_listener_target` with async task polling (`wait_for_task`), tag
+    reconciliation and exact-set target management. **Done**
 
 ## Next
 
-17. CLB write modules (`clb_load_balancer`, listeners and attachments) on top
-    of the existing `clb_load_balancer_info`.
 18. `cvm_instance` scaling: `exact_count`-style batch create/terminate with
     per-zone spread.
 19. Integration CI: run the integration targets on a schedule against a real

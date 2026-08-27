@@ -57,6 +57,7 @@ import os
 import re
 import sys
 import tempfile
+from types import SimpleNamespace
 
 import pytest
 
@@ -308,6 +309,18 @@ WRITE_MODULE_BUILDERS = {
     "cam_user": [
         "_apply_tags", "_create", "_current_tags", "_delete", "_update",
         "find_user",
+    ],
+    "clb_load_balancer": [
+        "_apply_tags", "_delete", "_update_attributes", "_wait_task",
+        "build_create_request", "build_describe_request",
+    ],
+    "clb_listener": [
+        "_delete", "_update", "_wait_task",
+        "build_create_request", "build_describe_request",
+    ],
+    "clb_listener_target": [
+        "_deregister", "_register", "_wait_task",
+        "build_describe_request",
     ],
     "cvm_instance": [
         "_apply_tags", "_delete", "_start", "_stop", "_update_attributes",
@@ -858,3 +871,123 @@ def test_cam_policy():
     module._delete(fake, client, models, 1000001)
     module._apply_tags(fake, client, tag_models, "1000001", {"env": "prod"}, ["legacy"])
     assert audit_recorded(fake, "cam_policy") == []
+
+
+class _ClbTaskModule(_RecordingModule):
+    """Recording module carrying the waiter parameters the CLB helpers read."""
+
+    def __init__(self):
+        super(_ClbTaskModule, self).__init__()
+        self.params.update({"waiter_timeout": 5, "waiter_delay": 1})
+        self.check_mode = False
+
+
+class _ClbStubClient(_StubClient):
+    """CLB stub whose asynchronous tasks always succeed immediately."""
+
+    def DescribeTaskStatus(self, request):
+        return SimpleNamespace(Status=0, Message=None, LoadBalancerIds=["lb-xxxxxxxx"])
+
+
+def test_clb_load_balancer():
+    module = _import_plugin("clb_load_balancer")
+    models = _models("clb.v20180317")
+    tag_models = _models("tag.v20180813")
+    fake = _ClbTaskModule()
+    client = _ClbStubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "lb-xxxxxxxx", None, None),
+        "clb describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, "web-lb", "vpc-xxxxxxxx"),
+        "clb describe by name"))
+    params = {
+        "name": "web-lb",
+        "load_balancer_type": "OPEN",
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_id": None,
+        "project_id": 0,
+        "internet_charge_type": "TRAFFIC_POSTPAID_BY_HOUR",
+        "internet_max_bandwidth_out": 10,
+        "client_token": "ansible-0001",
+        "tags": {"env": "prod"},
+    }
+    errors.extend(audit_request(
+        module.build_create_request(models, params), "clb create request"))
+    module._delete(fake, client, models, "lb-xxxxxxxx")
+    module._update_attributes(fake, client, models, "lb-xxxxxxxx", "web-lb",
+                              "TRAFFIC_POSTPAID_BY_HOUR", 10)
+    module._apply_tags(fake, client, tag_models, "lb-xxxxxxxx", {"env": "prod"}, ["legacy"])
+    module._wait_task(fake, client, models, "req-0001")
+    errors.extend(audit_recorded(fake, "clb_load_balancer"))
+    assert errors == []
+
+
+def test_clb_listener():
+    module = _import_plugin("clb_listener")
+    models = _models("clb.v20180317")
+    fake = _ClbTaskModule()
+    client = _ClbStubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "lb-xxxxxxxx", "lbl-xxxxxxxx", None, None),
+        "listener describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, "lb-xxxxxxxx", None, 8080, "TCP"),
+        "listener describe by port/protocol"))
+    params = {
+        "load_balancer_id": "lb-xxxxxxxx",
+        "port": 8080,
+        "protocol": "TCP",
+        "name": "tcp-8080",
+        "scheduler": "WRR",
+        "session_expire_time": 0,
+        "health_check": {
+            "health_switch": True, "interval_time": 5, "health_num": 3,
+            "un_health_num": 3, "time_out": 2, "check_type": "HTTP",
+            "http_check_path": "/healthz", "http_check_domain": "example.com",
+            "http_check_method": "HEAD", "http_code": 31,
+            "http_version": "HTTP/1.1",
+        },
+        "certificate": None,
+        "sni_switch": None,
+        "keepalive_enable": None,
+    }
+    errors.extend(audit_request(
+        module.build_create_request(models, params), "listener create request (TCP)"))
+    https_params = dict(
+        params, protocol="HTTPS", port=443, health_check=None,
+        certificate={"ssl_mode": "UNIDIRECTIONAL", "cert_id": "abc", "cert_ca_id": None},
+        sni_switch=False, keepalive_enable=True,
+    )
+    errors.extend(audit_request(
+        module.build_create_request(models, https_params),
+        "listener create request (HTTPS)"))
+    module._delete(fake, client, models, "lb-xxxxxxxx", "lbl-xxxxxxxx")
+    changes = ["name", "scheduler", "session_expire_time", "health_check", "certificate"]
+    module._update(fake, client, models, "lb-xxxxxxxx", "lbl-xxxxxxxx", https_params, changes)
+    module._wait_task(fake, client, models, "req-0001")
+    errors.extend(audit_recorded(fake, "clb_listener"))
+    assert errors == []
+
+
+def test_clb_listener_target():
+    module = _import_plugin("clb_listener_target")
+    models = _models("clb.v20180317")
+    fake = _ClbTaskModule()
+    client = _ClbStubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "lb-xxxxxxxx", "lbl-xxxxxxxx"),
+        "targets describe"))
+    targets = [
+        {"instance_id": "ins-aaaaaaaa", "eni_ip": None, "port": 8080, "weight": 20},
+        {"instance_id": None, "eni_ip": "10.0.1.15", "port": 8081, "weight": 10},
+    ]
+    module._register(fake, client, models, "lb-xxxxxxxx", "lbl-xxxxxxxx", None, targets)
+    module._deregister(
+        fake, client, models, "lb-xxxxxxxx", "lbl-xxxxxxxx", "loc-xxxxxxxx", targets)
+    module._wait_task(fake, client, models, "req-0001")
+    errors.extend(audit_recorded(fake, "clb_listener_target"))
+    assert errors == []

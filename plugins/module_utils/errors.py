@@ -45,6 +45,8 @@ def is_not_found(exc):
         "InvalidVpcId.NotFound",
         "InvalidSubnetId.NotFound",
         "InvalidParameterValue.NotFound",
+        "InvalidParameter.LBIdNotFound",
+        "InvalidParameter.ListenerIdNotFound",
     )
 
 

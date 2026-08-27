@@ -70,3 +70,41 @@ def wait_until_gone(module, poll, timeout=120, delay=5, sleep_fn=None):
         sleep_fn(delay)
         waited += delay
     module.fail_json(msg="Timed out waiting for resource deletion", timeout=timeout)
+
+
+def wait_for_task(module, poll, timeout=120, delay=5, sleep_fn=None):
+    """Poll an asynchronous task until it completes.
+
+    Several Tencent Cloud services (for example CLB) run mutating operations
+    as background tasks whose progress is reported by a DescribeTaskStatus
+    style API with the shared status convention: 0 success, 1 failed,
+    2 in progress.
+
+    :param module: module instance (used for check-mode and fail_json).
+    :param poll: zero-argument callable returning ``(status, message,
+        payload)``; ``payload`` is handed back to the caller on success (for
+        example the task response carrying the created resource IDs).
+    :param timeout: maximum wait in seconds.
+    :param delay: interval between polls in seconds.
+    :param sleep_fn: injectable sleep for tests.
+    :returns: the payload of the successful poll.
+    :raises: SystemExit via ``module.fail_json`` on task failure or timeout,
+        unless the module is running in check mode (no API writes happen, so
+        waiting is skipped).
+    """
+    if module.check_mode:
+        return None
+    sleep_fn = sleep_fn or time.sleep
+    waited = 0
+    while waited < timeout:
+        status, message, payload = poll()
+        if status == 0:
+            return payload
+        if status == 1:
+            module.fail_json(
+                msg="Asynchronous task failed: %s" % (message or "no reason reported"),
+                timeout=timeout,
+            )
+        sleep_fn(delay)
+        waited += delay
+    module.fail_json(msg="Timed out waiting for asynchronous task", timeout=timeout)

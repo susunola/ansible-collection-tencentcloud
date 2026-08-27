@@ -57,6 +57,9 @@ action_groups:
     - chdfs_file_system_info
     - ciam_user_store_info
     - ckafka_instance_info
+    - clb_listener
+    - clb_listener_target
+    - clb_load_balancer
     - clb_load_balancer_info
     - cloudaudit_event_info
     - cloudhsm_vsm_info
