@@ -7,7 +7,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import clb_load_balancer_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import clb_load_balancer_info
 
 
 class FakeFilter:

@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/susunola/ansible-collection-tencentcloud/actions/workflows/ci.yml/badge.svg)](https://github.com/susunola/ansible-collection-tencentcloud/actions/workflows/ci.yml)
 
-`tencentcloud.cloud` provides Ansible modules and plugins for managing Tencent
+`susunola.tencentcloud` provides Ansible modules and plugins for managing Tencent
 Cloud resources. It is developed as a community collection targeting inclusion
 in the `ansible-collections` GitHub organization.
 
@@ -264,7 +264,7 @@ run with `--check` to verify they are up to date). The module tables and the
 Once 0.4.0 is published on Ansible Galaxy, install with:
 
 ```bash
-ansible-galaxy collection install tencentcloud.cloud
+ansible-galaxy collection install susunola.tencentcloud
 ```
 
 Until then, install from source:
@@ -272,7 +272,7 @@ Until then, install from source:
 ```bash
 python -m pip install -r requirements.txt
 ansible-galaxy collection build
-ansible-galaxy collection install tencentcloud-cloud-*.tar.gz
+ansible-galaxy collection install susunola-tencentcloud-*.tar.gz
 ```
 
 ## Authentication
@@ -307,7 +307,7 @@ To operate through a CAM role instead of long-lived keys, set `role_arn`
 temporary ones via STS AssumeRole before calling any other API:
 
 ```yaml
-- tencentcloud.cloud.vpc:
+- susunola.tencentcloud.vpc:
     region: ap-guangzhou
     role_arn: qcs::cam::uin/1000000000:roleName/AnsibleDeploy
     state: present
@@ -319,7 +319,7 @@ The `tencentcloud_cvm` inventory plugin reads the same environment variables:
 
 ```yaml
 # inventory.tencentcloud_cvm.yml
-plugin: tencentcloud.cloud.tencentcloud_cvm
+plugin: susunola.tencentcloud.tencentcloud_cvm
 regions:
   - ap-guangzhou
 keyed_groups:
@@ -333,11 +333,11 @@ keyed_groups:
 - hosts: localhost
   gather_facts: false
   module_defaults:
-    group/tencentcloud.cloud.all:
+    group/susunola.tencentcloud.all:
       region: ap-guangzhou
   tasks:
     - name: Ensure a security group exists
-      tencentcloud.cloud.security_group:
+      susunola.tencentcloud.security_group:
         state: present
         name: web-sg
         description: Web tier security group
@@ -347,7 +347,7 @@ keyed_groups:
 
 All modules accept the shared options (`region`, `endpoint`, `timeout`,
 credentials and `role_arn`); `module_defaults` with the
-`group/tencentcloud.cloud.all` action group applies them once per play.
+`group/susunola.tencentcloud.all` action group applies them once per play.
 
 See [`docs/roadmap.md`](docs/roadmap.md) for the suggested implementation order.
 Contributor conventions are in [`docs/development.md`](docs/development.md).

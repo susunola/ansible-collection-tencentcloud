@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import dc_direct_connect_tunnel_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import dc_direct_connect_tunnel_info
 
 
 class FakeFilter:

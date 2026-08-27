@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import eb_event_bus_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import eb_event_bus_info
 
 
 class FakeFilter:

@@ -103,7 +103,7 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection.tencentcloud.cloud
+    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-clb) package on the controller.
   - Uses the C(clb.tencentcloudapi.com) endpoint by default.
@@ -111,13 +111,13 @@ notes:
     polls V(DescribeTaskStatus) until each task succeeds.
   - V(RegisterTargets) also updates the weight of an already registered
     target, so weight drift is fixed by re-registering.
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: Set the exact backend targets of a TCP listener
-  tencentcloud.cloud.clb_listener_target:
+  susunola.tencentcloud.clb_listener_target:
     region: ap-guangzhou
     load_balancer_id: lb-xxxxxxxx
     listener_id: lbl-xxxxxxxx
@@ -130,7 +130,7 @@ EXAMPLES = r'''
         weight: 10
 
 - name: Add an ENI target without removing existing ones
-  tencentcloud.cloud.clb_listener_target:
+  susunola.tencentcloud.clb_listener_target:
     region: ap-guangzhou
     load_balancer_id: lb-xxxxxxxx
     listener_id: lbl-xxxxxxxx
@@ -140,7 +140,7 @@ EXAMPLES = r'''
         port: 8080
 
 - name: Bind targets to an HTTPS forwarding rule
-  tencentcloud.cloud.clb_listener_target:
+  susunola.tencentcloud.clb_listener_target:
     region: ap-guangzhou
     load_balancer_id: lb-xxxxxxxx
     listener_id: lbl-xxxxxxxx
@@ -150,7 +150,7 @@ EXAMPLES = r'''
         port: 443
 
 - name: Deregister a backend target
-  tencentcloud.cloud.clb_listener_target:
+  susunola.tencentcloud.clb_listener_target:
     region: ap-guangzhou
     state: absent
     load_balancer_id: lb-xxxxxxxx
@@ -175,9 +175,9 @@ targets:
       weight: 20
 '''
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.waiters import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import (
     wait_for_task,
 )
 

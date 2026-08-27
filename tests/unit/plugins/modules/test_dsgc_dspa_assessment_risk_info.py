@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import dsgc_dspa_assessment_risk_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import dsgc_dspa_assessment_risk_info
 
 
 class FakeFilter:

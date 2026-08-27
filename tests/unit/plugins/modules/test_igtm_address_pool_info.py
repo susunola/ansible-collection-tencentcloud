@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import igtm_address_pool_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import igtm_address_pool_info
 
 
 class FakeFilter:

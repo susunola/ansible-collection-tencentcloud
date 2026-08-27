@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import tdmysql_db_instance_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import tdmysql_db_instance_info
 
 
 class FakeFilter:

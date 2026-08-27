@@ -100,20 +100,20 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection.tencentcloud.cloud
+    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-vpc) package on the controller.
   - Tag reconciliation additionally requires C(tencentcloud-sdk-python-tag).
   - C(internet_charge_type) and C(internet_max_bandwidth_out) are applied at
     allocation only; changing them on an existing address is a no-op.
   - Uses the C(vpc.tencentcloudapi.com) endpoint by default.
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: Allocate an EIP
-  tencentcloud.cloud.eip:
+  susunola.tencentcloud.eip:
     region: ap-guangzhou
     state: present
     name: web-eip
@@ -123,21 +123,21 @@ EXAMPLES = r'''
       env: prod
 
 - name: Allocate an EIP and associate it with a CVM instance
-  tencentcloud.cloud.eip:
+  susunola.tencentcloud.eip:
     region: ap-guangzhou
     state: present
     name: web-eip
     instance_id: ins-xxxxxxxx
 
 - name: Make sure an EIP is not associated with anything
-  tencentcloud.cloud.eip:
+  susunola.tencentcloud.eip:
     region: ap-guangzhou
     state: present
     address_ip: 1.2.3.4
     instance_id: ""
 
 - name: Release an EIP (disassociates it first when bound)
-  tencentcloud.cloud.eip:
+  susunola.tencentcloud.eip:
     region: ap-guangzhou
     state: absent
     eip_id: eip-xxxxxxxx
@@ -159,12 +159,12 @@ eip:
     TagSet: []
 '''
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.tagging import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tagging import (
     build_sdk_tags,
     compare_tags,
 )

@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import gs_android_app_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import gs_android_app_info
 
 
 class FakeFilter:

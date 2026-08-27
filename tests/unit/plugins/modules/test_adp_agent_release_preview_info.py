@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import adp_agent_release_preview_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import adp_agent_release_preview_info
 
 
 class FakeRequest:

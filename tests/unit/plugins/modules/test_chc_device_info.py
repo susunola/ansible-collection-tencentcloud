@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import chc_device_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import chc_device_info
 
 
 class FakeFilter:

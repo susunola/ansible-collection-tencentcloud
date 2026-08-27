@@ -7,7 +7,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import dnspod_record_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import dnspod_record_info
 
 
 class FakeRequest:

@@ -1,6 +1,6 @@
 ---
 - name: Create a security group
-  tencentcloud.cloud.security_group:
+  susunola.tencentcloud.security_group:
     region: "{{ tencentcloud_region }}"
     state: present
     name: "ansible-sg-it-{{ 99999999 | random }}"
@@ -16,7 +16,7 @@
       - create_result.security_group.SecurityGroupId is defined
 
 - name: Create the same group again (idempotency)
-  tencentcloud.cloud.security_group:
+  susunola.tencentcloud.security_group:
     region: "{{ tencentcloud_region }}"
     state: present
     name: "{{ create_result.security_group.SecurityGroupName }}"
@@ -31,7 +31,7 @@
       - second_run is not changed
 
 - name: Check mode must not modify anything
-  tencentcloud.cloud.security_group:
+  susunola.tencentcloud.security_group:
     region: "{{ tencentcloud_region }}"
     state: absent
     name: "{{ create_result.security_group.SecurityGroupName }}"
@@ -44,7 +44,7 @@
       - check_delete is changed
 
 - name: Delete the security group
-  tencentcloud.cloud.security_group:
+  susunola.tencentcloud.security_group:
     region: "{{ tencentcloud_region }}"
     state: absent
     name: "{{ create_result.security_group.SecurityGroupName }}"
@@ -56,7 +56,7 @@
       - delete_result is changed
 
 - name: Delete again (idempotency for absent)
-  tencentcloud.cloud.security_group:
+  susunola.tencentcloud.security_group:
     region: "{{ tencentcloud_region }}"
     state: absent
     name: "{{ create_result.security_group.SecurityGroupName }}"

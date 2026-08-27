@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import apis_agent_app_mcp_server_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import apis_agent_app_mcp_server_info
 
 
 class FakeRequest:

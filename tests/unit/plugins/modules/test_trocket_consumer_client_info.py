@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import trocket_consumer_client_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import trocket_consumer_client_info
 
 
 class FakeFilter:

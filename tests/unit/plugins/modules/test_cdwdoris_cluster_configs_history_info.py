@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import cdwdoris_cluster_configs_history_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import cdwdoris_cluster_configs_history_info
 
 
 class FakeRequest:

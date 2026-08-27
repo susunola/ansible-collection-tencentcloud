@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import dbbrain_db_diag_event_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import dbbrain_db_diag_event_info
 
 
 class FakeRequest:

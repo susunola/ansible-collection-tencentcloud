@@ -30,7 +30,7 @@ try:
 except ImportError:
     HAS_COS_SDK = False
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils import client as api3_client
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import client as api3_client
 
 COS_SDK_IMP_ERR = (
     "The cos-python-sdk-v5 package is required on the Ansible controller "

@@ -3,7 +3,7 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
-from ansible_collections.tencentcloud.cloud.plugins.modules.clb_load_balancer import (
+from ansible_collections.susunola.tencentcloud.plugins.modules.clb_load_balancer import (
     _clb_tags_to_sdk_shape,
     build_create_request,
     build_describe_request,

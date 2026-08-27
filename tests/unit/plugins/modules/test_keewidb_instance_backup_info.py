@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import keewidb_instance_backup_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import keewidb_instance_backup_info
 
 
 class FakeRequest:

@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import antiddos_d_do_s_block_record_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import antiddos_d_do_s_block_record_info
 
 
 class FakeFilter:

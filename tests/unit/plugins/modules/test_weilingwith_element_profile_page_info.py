@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import weilingwith_element_profile_page_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import weilingwith_element_profile_page_info
 
 
 class FakeRequest:

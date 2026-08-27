@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import captcha_captcha_user_all_app_id_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import captcha_captcha_user_all_app_id_info
 
 
 class FakeRequest:

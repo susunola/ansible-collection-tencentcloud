@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import yinsuda_ktv_robot_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import yinsuda_ktv_robot_info
 
 
 class FakeRequest:

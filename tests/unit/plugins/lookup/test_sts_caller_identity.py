@@ -7,8 +7,8 @@ import pytest
 
 from ansible.errors import AnsibleError
 
-from ansible_collections.tencentcloud.cloud.plugins.lookup import sts_caller_identity as lookup_mod
-from ansible_collections.tencentcloud.cloud.plugins.lookup.sts_caller_identity import (
+from ansible_collections.susunola.tencentcloud.plugins.lookup import sts_caller_identity as lookup_mod
+from ansible_collections.susunola.tencentcloud.plugins.lookup.sts_caller_identity import (
     LookupModule,
     assume_role,
     build_credential,

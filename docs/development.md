@@ -102,7 +102,7 @@
 ## Local collection layout
 
 `ansible-test` requires the checkout to appear below
-`ansible_collections/tencentcloud/cloud`. Clone it into that layout or create a
+`ansible_collections/susunola/tencentcloud`. Clone it into that layout or create a
 temporary copy before running tests.
 
 ## Adding a service

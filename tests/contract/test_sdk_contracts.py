@@ -80,7 +80,7 @@ pytestmark = pytest.mark.skipif(
 
 
 def _ensure_collection_importable():
-    """Make ``ansible_collections.tencentcloud.cloud`` importable.
+    """Make ``ansible_collections.susunola.tencentcloud`` importable.
 
     The preferred layout is the standard ``.../ansible_collections/
     tencentcloud/cloud`` checkout (CI, synced test trees). When this file
@@ -111,7 +111,7 @@ def _models(service):
 
 def _import_plugin(name):
     return importlib.import_module(
-        "ansible_collections.tencentcloud.cloud.plugins.modules." + name
+        "ansible_collections.susunola.tencentcloud.plugins.modules." + name
     )
 
 

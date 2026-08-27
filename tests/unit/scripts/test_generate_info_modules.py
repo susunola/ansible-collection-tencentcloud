@@ -52,7 +52,7 @@ def test_every_spec_renders_valid_documentation_yaml(generator):
         doc = yaml.safe_load(blocks["DOCUMENTATION"])
         assert doc["module"] == spec["module"]
         assert doc["version_added"] == spec.get("version_added", generator.VERSION_ADDED)
-        assert doc["extends_documentation_fragment"] == "tencentcloud.cloud.tencentcloud"
+        assert doc["extends_documentation_fragment"] == "susunola.tencentcloud.tencentcloud"
 
         expected_options = {param["name"] for param in spec["extra_params"]}
         if spec["ids"]:

@@ -7,7 +7,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import monitor_alarm_policy_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import monitor_alarm_policy_info
 
 
 class FakeRequest:

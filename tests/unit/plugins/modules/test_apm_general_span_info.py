@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import apm_general_span_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import apm_general_span_info
 
 
 class FakeRequest:

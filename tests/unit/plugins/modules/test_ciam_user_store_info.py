@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import ciam_user_store_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import ciam_user_store_info
 
 
 class FakeRequest:

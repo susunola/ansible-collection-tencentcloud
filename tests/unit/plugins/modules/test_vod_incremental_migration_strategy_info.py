@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import vod_incremental_migration_strategy_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import vod_incremental_migration_strategy_info
 
 
 class FakeFilter:

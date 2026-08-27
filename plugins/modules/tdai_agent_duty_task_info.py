@@ -22,13 +22,13 @@ options:
     description: Number of results requested per API call.
     type: int
     default: 100
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: List duty tasks of an agent instance
-  tencentcloud.cloud.tdai_agent_duty_task_info:
+  susunola.tencentcloud.tdai_agent_duty_task_info:
     region: ap-guangzhou
     instance_id: agtinst-xxxxxxxx
 '''
@@ -46,8 +46,8 @@ total_count:
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.paging import Paginator
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import Paginator
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
     create_client_profile, create_credential, sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )

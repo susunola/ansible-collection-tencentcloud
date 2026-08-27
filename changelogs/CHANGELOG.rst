@@ -337,8 +337,8 @@ Minor Changes
 - key_pair - add an idempotent module creating or importing SSH key pairs; generated private keys are returned once at creation.
 - key_pair_info - add a read-only module querying key pairs with IDs or API filters.
 - kms_key_info - add a generated read-only module listing KMS keys or describing them by key IDs.
-- meta - add the ``tencentcloud.cloud.all`` action group so ``module_defaults`` can set shared options (region, credentials, ``role_arn``) once per play.
-- meta - register all new modules in the ``tencentcloud.cloud.all`` action group and add an (empty) ``plugin_routing`` section documenting the deprecation process.
+- meta - add the ``susunola.tencentcloud.all`` action group so ``module_defaults`` can set shared options (region, credentials, ``role_arn``) once per play.
+- meta - register all new modules in the ``susunola.tencentcloud.all`` action group and add an (empty) ``plugin_routing`` section documenting the deprecation process.
 - module_utils - add a unified offset/limit paginator replacing the hand-rolled loops in the discovery modules.
 - module_utils - all new modules share a retry policy with exponential backoff and jitter for throttled and transient API failures.
 - module_utils - split the single-file helper into focused modules (errors, retries, paging, tagging, comparison, waiters, client, base); the original tencentcloud module remains as a backward-compatible shim.

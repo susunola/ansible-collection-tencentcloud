@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import csip_asset_process_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import csip_asset_process_info
 
 
 class FakeFilter:

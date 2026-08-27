@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import bmeip_eip_acl_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import bmeip_eip_acl_info
 
 
 class FakeRequest:

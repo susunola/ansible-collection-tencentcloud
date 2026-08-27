@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import bmvpc_customer_gateway_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import bmvpc_customer_gateway_info
 
 
 class FakeFilter:

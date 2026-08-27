@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import cngw_cloud_native_api_gateway_llm_model_api_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import cngw_cloud_native_api_gateway_llm_model_api_info
 
 
 class FakeFilter:

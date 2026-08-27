@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import ape_auth_user_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import ape_auth_user_info
 
 
 class FakeRequest:

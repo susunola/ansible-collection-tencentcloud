@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import tcbr_cloud_run_pod_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import tcbr_cloud_run_pod_info
 
 
 class FakeRequest:

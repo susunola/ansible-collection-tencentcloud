@@ -88,20 +88,20 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection.tencentcloud.cloud
+    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-cam) package on the controller.
   - Tag reconciliation additionally requires C(tencentcloud-sdk-python-tag).
   - CAM is a global service. O(region) is accepted (the shared argument spec
     requires it) but ignored; the global C(cam.tencentcloudapi.com) endpoint
     is used.
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: Create a custom CAM policy
-  tencentcloud.cloud.cam_policy:
+  susunola.tencentcloud.cam_policy:
     region: ap-guangzhou
     state: present
     policy_name: app-read-only
@@ -118,7 +118,7 @@ EXAMPLES = r'''
       env: prod
 
 - name: Check whether the policy would be updated (no changes applied)
-  tencentcloud.cloud.cam_policy:
+  susunola.tencentcloud.cam_policy:
     region: ap-guangzhou
     state: present
     policy_name: app-read-only
@@ -126,7 +126,7 @@ EXAMPLES = r'''
   check_mode: true
 
 - name: Delete a custom CAM policy
-  tencentcloud.cloud.cam_policy:
+  susunola.tencentcloud.cam_policy:
     region: ap-guangzhou
     state: absent
     policy_name: app-read-only
@@ -148,13 +148,13 @@ policy:
 
 import json
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
     is_idempotent_success,
     is_not_found,
 )
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.tagging import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tagging import (
     build_sdk_tags,
     compare_tags,
 )

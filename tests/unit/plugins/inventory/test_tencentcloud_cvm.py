@@ -7,10 +7,10 @@ import pytest
 
 from ansible.errors import AnsibleError
 
-from ansible_collections.tencentcloud.cloud.plugins.inventory import (
+from ansible_collections.susunola.tencentcloud.plugins.inventory import (
     tencentcloud_cvm as inv_mod,
 )
-from ansible_collections.tencentcloud.cloud.plugins.inventory.tencentcloud_cvm import (
+from ansible_collections.susunola.tencentcloud.plugins.inventory.tencentcloud_cvm import (
     InventoryModule,
     build_describe_request,
     fetch_instances,
@@ -214,7 +214,7 @@ def test_populate_strict_is_forwarded():
 def test_verify_file(tmp_path):
     plugin = InventoryModule()
     good = tmp_path / "inventory.tencentcloud_cvm.yml"
-    good.write_text("plugin: tencentcloud.cloud.tencentcloud_cvm\n")
+    good.write_text("plugin: susunola.tencentcloud.tencentcloud_cvm\n")
     bad = tmp_path / "inventory.yml"
     bad.write_text("plugin: something_else\n")
     assert plugin.verify_file(str(good)) is True

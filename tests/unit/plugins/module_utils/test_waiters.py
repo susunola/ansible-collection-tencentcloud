@@ -6,7 +6,7 @@ __metaclass__ = type
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.waiters import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import (
     wait_for_task,
 )
 

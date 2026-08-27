@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import ctem_api_sec_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import ctem_api_sec_info
 
 
 class FakeFilter:

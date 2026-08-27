@@ -100,7 +100,7 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection.tencentcloud.cloud
+    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-vpc) package on the controller.
   - The C(DeleteSecurityGroupPolicies) API accepts rules of a single direction
@@ -110,13 +110,13 @@ notes:
   - Rules using service templates or address templates are not supported;
     such pre-existing rules are only deleted when O(purge=true) because they
     never match a rule from O(rules).
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: Set the exact ingress rules of a security group
-  tencentcloud.cloud.security_group_rule:
+  susunola.tencentcloud.security_group_rule:
     region: ap-guangzhou
     security_group_id: sg-xxxxxxxx
     rules:
@@ -133,7 +133,7 @@ EXAMPLES = r'''
         direction: ingress
 
 - name: Add a rule without removing existing ones
-  tencentcloud.cloud.security_group_rule:
+  susunola.tencentcloud.security_group_rule:
     region: ap-guangzhou
     security_group_id: sg-xxxxxxxx
     purge: false
@@ -145,7 +145,7 @@ EXAMPLES = r'''
         direction: egress
 
 - name: Preview the reconciliation (no changes applied)
-  tencentcloud.cloud.security_group_rule:
+  susunola.tencentcloud.security_group_rule:
     region: ap-guangzhou
     security_group_id: sg-xxxxxxxx
     rules:
@@ -156,7 +156,7 @@ EXAMPLES = r'''
   check_mode: true
 
 - name: Remove every rule from a security group
-  tencentcloud.cloud.security_group_rule:
+  susunola.tencentcloud.security_group_rule:
     region: ap-guangzhou
     security_group_id: sg-xxxxxxxx
     rules: []
@@ -184,9 +184,9 @@ rules:
       direction: ingress
 '''
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
 

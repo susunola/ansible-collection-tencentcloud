@@ -29,11 +29,11 @@ jobs:
     timeout-minutes: 40
     defaults:
       run:
-        working-directory: ansible_collections/tencentcloud/cloud
+        working-directory: ansible_collections/susunola/tencentcloud
     steps:
       - uses: actions/checkout@v4
         with:
-          path: ansible_collections/tencentcloud/cloud
+          path: ansible_collections/susunola/tencentcloud
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -55,7 +55,7 @@ jobs:
         run: ansible-galaxy collection build
       - name: Install collection
         if: steps.creds.outputs.available == 'true'
-        run: ansible-galaxy collection install tencentcloud-cloud-*.tar.gz --force
+        run: ansible-galaxy collection install susunola-tencentcloud-*.tar.gz --force
       - name: Run integration tests
         if: steps.creds.outputs.available == 'true'
         env:

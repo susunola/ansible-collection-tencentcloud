@@ -14,7 +14,7 @@ __metaclass__ = type
 
 import time
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
     is_not_found,
 )
 

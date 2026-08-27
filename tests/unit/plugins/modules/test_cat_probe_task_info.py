@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import cat_probe_task_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import cat_probe_task_info
 
 
 class FakeRequest:

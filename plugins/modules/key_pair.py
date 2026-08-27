@@ -73,7 +73,7 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection.tencentcloud.cloud
+    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-cvm) package on the controller.
   - Key pairs are immutable after creation; name, project and public key
@@ -84,13 +84,13 @@ notes:
     save it immediately (for example with the C(copy) module and
     C(no_log=true)).
   - Uses the C(cvm.tencentcloudapi.com) endpoint by default.
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: Create a key pair (private key returned once)
-  tencentcloud.cloud.key_pair:
+  susunola.tencentcloud.key_pair:
     region: ap-guangzhou
     state: present
     name: deploy-key
@@ -106,14 +106,14 @@ EXAMPLES = r'''
   when: generated_key.private_key is defined
 
 - name: Import an existing public key
-  tencentcloud.cloud.key_pair:
+  susunola.tencentcloud.key_pair:
     region: ap-guangzhou
     state: present
     name: deploy-key
     public_key: "ssh-rsa AAAA..."
 
 - name: Delete a key pair
-  tencentcloud.cloud.key_pair:
+  susunola.tencentcloud.key_pair:
     region: ap-guangzhou
     state: absent
     name: deploy-key
@@ -142,9 +142,9 @@ private_key:
   sample: "-----BEGIN RSA PRIVATE KEY-----\n..."
 '''
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
 

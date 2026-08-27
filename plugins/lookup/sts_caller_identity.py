@@ -64,12 +64,12 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 EXAMPLES = r'''
 - name: Show the caller identity
   ansible.builtin.debug:
-    msg: "{{ lookup('tencentcloud.cloud.sts_caller_identity') }}"
+    msg: "{{ lookup('susunola.tencentcloud.sts_caller_identity') }}"
 
 - name: Identity of an assumed role in a specific region
   ansible.builtin.debug:
     msg: >-
-      {{ lookup('tencentcloud.cloud.sts_caller_identity',
+      {{ lookup('susunola.tencentcloud.sts_caller_identity',
                 'region=ap-guangzhou',
                 'role_arn=qcs::cam::uin/100000000001:roleName/ops') }}
 '''
@@ -90,7 +90,7 @@ from ansible.module_utils.common.text.converters import to_native
 from ansible.parsing.splitter import parse_kv
 from ansible.plugins.lookup import LookupBase
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.client import load_profile
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.client import load_profile
 
 try:
     from tencentcloud.sts.v20180813 import sts_client, models as sts_models

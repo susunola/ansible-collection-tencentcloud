@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import live_audit_keyword_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import live_audit_keyword_info
 
 
 class FakeRequest:

@@ -161,20 +161,20 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection.tencentcloud.cloud
+    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-clb) package on the controller.
   - Uses the C(clb.tencentcloudapi.com) endpoint by default.
   - Listener operations are asynchronous; V(CreateListener),
     V(ModifyListener) and V(DeleteListener) return a request ID the module
     polls through V(DescribeTaskStatus) until the task succeeds.
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: Create a TCP listener with a custom health check
-  tencentcloud.cloud.clb_listener:
+  susunola.tencentcloud.clb_listener:
     region: ap-guangzhou
     load_balancer_id: lb-xxxxxxxx
     protocol: TCP
@@ -190,7 +190,7 @@ EXAMPLES = r'''
       time_out: 2
 
 - name: Create an HTTPS listener with a certificate
-  tencentcloud.cloud.clb_listener:
+  susunola.tencentcloud.clb_listener:
     region: ap-guangzhou
     load_balancer_id: lb-xxxxxxxx
     protocol: HTTPS
@@ -202,7 +202,7 @@ EXAMPLES = r'''
     sni_switch: false
 
 - name: Preview the listener changes (no changes applied)
-  tencentcloud.cloud.clb_listener:
+  susunola.tencentcloud.clb_listener:
     region: ap-guangzhou
     load_balancer_id: lb-xxxxxxxx
     protocol: TCP
@@ -211,7 +211,7 @@ EXAMPLES = r'''
   check_mode: true
 
 - name: Delete a listener
-  tencentcloud.cloud.clb_listener:
+  susunola.tencentcloud.clb_listener:
     region: ap-guangzhou
     state: absent
     load_balancer_id: lb-xxxxxxxx
@@ -238,12 +238,12 @@ listener_id:
   sample: lbl-xxxxxxxx
 '''
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.waiters import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import (
     wait_for_task,
 )
 

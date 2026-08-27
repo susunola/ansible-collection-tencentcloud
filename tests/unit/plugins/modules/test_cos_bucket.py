@@ -6,7 +6,7 @@ __metaclass__ = type
 
 from unittest.mock import MagicMock
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import cos_bucket
+from ansible_collections.susunola.tencentcloud.plugins.modules import cos_bucket
 
 
 def test_normalize_tags_stringifies_values():

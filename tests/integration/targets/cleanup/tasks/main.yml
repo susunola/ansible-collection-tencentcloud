@@ -14,30 +14,30 @@
       {{ lookup('ansible.builtin.env', 'TENCENTCLOUD_REGION')
          | default('ap-guangzhou', true) }}
   module_defaults:
-    group/tencentcloud.cloud.all:
+    group/susunola.tencentcloud.all:
       region: "{{ region }}"
   block:
     # ------------------------------------------------------------------
     # Collect everything, then filter by test marker.
     # ------------------------------------------------------------------
     - name: Collect VPCs
-      tencentcloud.cloud.vpc_info:
+      susunola.tencentcloud.vpc_info:
       register: vpcs
 
     - name: Collect subnets
-      tencentcloud.cloud.subnet_info:
+      susunola.tencentcloud.subnet_info:
       register: subnets
 
     - name: Collect route tables
-      tencentcloud.cloud.route_table_info:
+      susunola.tencentcloud.route_table_info:
       register: route_tables
 
     - name: Collect security groups
-      tencentcloud.cloud.security_group_info:
+      susunola.tencentcloud.security_group_info:
       register: security_groups
 
     - name: Collect EIPs
-      tencentcloud.cloud.eip_info:
+      susunola.tencentcloud.eip_info:
       register: eips
 
     - name: Select test VPCs
@@ -89,7 +89,7 @@
     # instance that another test created).
     # ------------------------------------------------------------------
     - name: Release test EIPs
-      tencentcloud.cloud.eip:
+      susunola.tencentcloud.eip:
         state: absent
         eip_id: "{{ item.AddressId }}"
       loop: "{{ test_eips }}"
@@ -97,7 +97,7 @@
       when: item.AddressId is defined
 
     - name: Delete test security groups
-      tencentcloud.cloud.security_group:
+      susunola.tencentcloud.security_group:
         state: absent
         security_group_id: "{{ item.SecurityGroupId }}"
       loop: "{{ test_security_groups }}"
@@ -105,7 +105,7 @@
       when: item.SecurityGroupId is defined
 
     - name: Delete test route tables
-      tencentcloud.cloud.route_table:
+      susunola.tencentcloud.route_table:
         state: absent
         route_table_id: "{{ item.RouteTableId }}"
       loop: "{{ test_route_tables }}"
@@ -113,7 +113,7 @@
       when: item.RouteTableId is defined
 
     - name: Delete test subnets
-      tencentcloud.cloud.subnet:
+      susunola.tencentcloud.subnet:
         state: absent
         subnet_id: "{{ item.SubnetId }}"
       loop: "{{ test_subnets }}"
@@ -121,7 +121,7 @@
       when: item.SubnetId is defined
 
     - name: Delete test VPCs
-      tencentcloud.cloud.vpc:
+      susunola.tencentcloud.vpc:
         state: absent
         vpc_id: "{{ item.VpcId }}"
       loop: "{{ test_vpcs }}"

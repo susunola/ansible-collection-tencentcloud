@@ -22,17 +22,17 @@ options:
     description: Number of results requested per API call.
     type: int
     default: 100
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: List all KMS keys
-  tencentcloud.cloud.kms_key_info:
+  susunola.tencentcloud.kms_key_info:
     region: ap-guangzhou
 
 - name: Describe specific KMS keys
-  tencentcloud.cloud.kms_key_info:
+  susunola.tencentcloud.kms_key_info:
     region: ap-guangzhou
     key_ids: [xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx]
 '''
@@ -50,8 +50,8 @@ total_count:
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.paging import Paginator
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import Paginator
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
     create_client_profile, create_credential, sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )

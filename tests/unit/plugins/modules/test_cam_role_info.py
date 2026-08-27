@@ -2,7 +2,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from ansible_collections.tencentcloud.cloud.plugins.modules.cam_role_info import build_request
+from ansible_collections.susunola.tencentcloud.plugins.modules.cam_role_info import build_request
 
 
 class FakeRequest:

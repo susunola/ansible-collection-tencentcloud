@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import eis_runtime_deployed_instances_mc_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import eis_runtime_deployed_instances_mc_info
 
 
 class FakeRequest:

@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import batch_compute_env_create_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import batch_compute_env_create_info
 
 
 class FakeFilter:

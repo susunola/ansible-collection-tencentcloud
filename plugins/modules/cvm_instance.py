@@ -177,7 +177,7 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection.tencentcloud.cloud
+    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-cvm) package on the controller.
   - Tag reconciliation additionally requires C(tencentcloud-sdk-python-tag).
@@ -197,13 +197,13 @@ notes:
   - O(exact_count) reads the pool through the C(tag:key) filter; tags attached
     after creation through the console or the tag service are matched the same
     way as tags set through O(tags).
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: Create a CVM instance
-  tencentcloud.cloud.cvm_instance:
+  susunola.tencentcloud.cvm_instance:
     region: ap-guangzhou
     state: present
     instance_name: web-01
@@ -223,7 +223,7 @@ EXAMPLES = r'''
       tier: web
 
 - name: Validate a creation request without creating (API dry run)
-  tencentcloud.cloud.cvm_instance:
+  susunola.tencentcloud.cvm_instance:
     region: ap-guangzhou
     state: present
     instance_name: web-01
@@ -232,25 +232,25 @@ EXAMPLES = r'''
     dry_run: true
 
 - name: Stop an instance
-  tencentcloud.cloud.cvm_instance:
+  susunola.tencentcloud.cvm_instance:
     region: ap-guangzhou
     state: stopped
     instance_name: web-01
 
 - name: Start an instance
-  tencentcloud.cloud.cvm_instance:
+  susunola.tencentcloud.cvm_instance:
     region: ap-guangzhou
     state: running
     instance_name: web-01
 
 - name: Terminate an instance
-  tencentcloud.cloud.cvm_instance:
+  susunola.tencentcloud.cvm_instance:
     region: ap-guangzhou
     state: absent
     instance_name: web-01
 
 - name: Scale the web pool to exactly 3 instances
-  tencentcloud.cloud.cvm_instance:
+  susunola.tencentcloud.cvm_instance:
     region: ap-guangzhou
     state: present
     exact_count: 3
@@ -265,7 +265,7 @@ EXAMPLES = r'''
       role: web
 
 - name: Scale the web pool down to 1 (terminates the oldest extras)
-  tencentcloud.cloud.cvm_instance:
+  susunola.tencentcloud.cvm_instance:
     region: ap-guangzhou
     state: present
     exact_count: 1
@@ -289,16 +289,16 @@ instance:
     Tags: []
 '''
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.tagging import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tagging import (
     build_sdk_tags,
     compare_tags,
 )
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.waiters import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import (
     wait_for_state,
     wait_until_gone,
 )

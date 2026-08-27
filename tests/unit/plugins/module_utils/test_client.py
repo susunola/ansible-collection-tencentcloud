@@ -4,7 +4,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils import base, client
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import base, client
 
 
 class AnsibleFailJson(Exception):
@@ -252,11 +252,11 @@ def test_create_client_profile_sets_user_agent(fake_sdk, monkeypatch):
     monkeypatch.setattr(client, "ClientProfile", FakeClientProfile, raising=False)
     monkeypatch.setattr(client, "HttpProfile", FakeHttpProfile, raising=False)
     module = FakeModule(
-        dict(BASE_PARAMS, user_agent="ansible-collection.tencentcloud.cloud")
+        dict(BASE_PARAMS, user_agent="ansible-collection.susunola.tencentcloud")
     )
     profile = client.create_client_profile(module, "vpc.tencentcloudapi.com")
     assert isinstance(profile, FakeClientProfile)
-    assert profile.request_client == "ansible-collection.tencentcloud.cloud"
+    assert profile.request_client == "ansible-collection.susunola.tencentcloud"
     assert profile.httpProfile.endpoint == "vpc.tencentcloudapi.com"
     assert profile.language == "en-US"
 
@@ -268,7 +268,7 @@ def test_create_client_profile_default_user_agent(fake_sdk, monkeypatch):
     params = dict(BASE_PARAMS)
     params["user_agent"] = base.base_argument_spec()["user_agent"]["default"]
     profile = client.create_client_profile(FakeModule(params), "vpc.tencentcloudapi.com")
-    assert profile.request_client == "ansible-collection.tencentcloud.cloud"
+    assert profile.request_client == "ansible-collection.susunola.tencentcloud"
 
 
 def test_base_argument_spec_user_agent_default_matches_sdk_regexp():

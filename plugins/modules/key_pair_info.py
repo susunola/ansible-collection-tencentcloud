@@ -29,23 +29,23 @@ options:
     description: Number of results requested per API call (maximum 100).
     type: int
     default: 100
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: List all key pairs in a region
-  tencentcloud.cloud.key_pair_info:
+  susunola.tencentcloud.key_pair_info:
     region: ap-guangzhou
 
 - name: Find a key pair by name
-  tencentcloud.cloud.key_pair_info:
+  susunola.tencentcloud.key_pair_info:
     region: ap-guangzhou
     filters:
       key-name: [deploy-key]
 
 - name: Describe specific key pairs
-  tencentcloud.cloud.key_pair_info:
+  susunola.tencentcloud.key_pair_info:
     region: ap-guangzhou
     key_ids:
       - skey-xxxxxxxx
@@ -64,7 +64,7 @@ total_count:
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
     create_client_profile, create_credential, sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )

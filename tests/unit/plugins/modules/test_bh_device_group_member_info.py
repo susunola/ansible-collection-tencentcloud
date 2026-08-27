@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import bh_device_group_member_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import bh_device_group_member_info
 
 
 class FakeFilter:

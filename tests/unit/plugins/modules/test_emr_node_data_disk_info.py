@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import emr_node_data_disk_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import emr_node_data_disk_info
 
 
 class FakeFilter:

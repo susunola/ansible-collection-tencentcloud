@@ -14,13 +14,13 @@ short_description: Gather information about Tencent Cloud CHDFS file systems
 version_added: "0.9.0"
 description: Returns CHDFS file systems visible in a Tencent Cloud region.
 options: {}
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: List all file systems
-  tencentcloud.cloud.chdfs_file_system_info:
+  susunola.tencentcloud.chdfs_file_system_info:
     region: ap-guangzhou
 '''
 
@@ -37,7 +37,7 @@ total_count:
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
     create_client_profile, create_credential, sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )

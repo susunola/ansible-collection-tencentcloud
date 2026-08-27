@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
-from ansible_collections.tencentcloud.cloud.plugins.modules.vpc import (
+from ansible_collections.susunola.tencentcloud.plugins.modules.vpc import (
     build_describe_request,
     find_vpc,
 )

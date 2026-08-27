@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import memcached_instance_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import memcached_instance_info
 
 
 class FakeRequest:

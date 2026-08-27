@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import cdz_cloud_dedicated_zone_host_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import cdz_cloud_dedicated_zone_host_info
 
 
 class FakeRequest:

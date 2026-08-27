@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import config_aggregate_compliance_pack_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import config_aggregate_compliance_pack_info
 
 
 class FakeRequest:

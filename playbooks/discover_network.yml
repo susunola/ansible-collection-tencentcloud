@@ -4,12 +4,12 @@
   gather_facts: false
   tasks:
     - name: Gather VPCs
-      tencentcloud.cloud.vpc_info:
+      susunola.tencentcloud.vpc_info:
         region: "{{ tencentcloud_region | default('ap-guangzhou') }}"
       register: vpc_result
 
     - name: Gather security groups
-      tencentcloud.cloud.security_group_info:
+      susunola.tencentcloud.security_group_info:
         region: "{{ tencentcloud_region | default('ap-guangzhou') }}"
       register: security_group_result
 

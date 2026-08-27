@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
-from ansible_collections.tencentcloud.cloud.plugins.modules.security_group_rule import (
+from ansible_collections.susunola.tencentcloud.plugins.modules.security_group_rule import (
     build_describe_request,
     build_policy_set,
     delete_rules,

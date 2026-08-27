@@ -20,8 +20,8 @@ __metaclass__ = type
 
 from ansible.module_utils.basic import AnsibleModule, env_fallback
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils import client
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.retries import retry_on
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import client
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.retries import retry_on
 
 
 def base_argument_spec():
@@ -40,7 +40,7 @@ def base_argument_spec():
         "retries": {"type": "int", "default": 5},
         "waiter_timeout": {"type": "int", "default": 120},
         "waiter_delay": {"type": "int", "default": 5},
-        "user_agent": {"type": "str", "default": "ansible-collection.tencentcloud.cloud"},
+        "user_agent": {"type": "str", "default": "ansible-collection.susunola.tencentcloud"},
     }
 
 

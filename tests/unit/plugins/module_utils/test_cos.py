@@ -6,7 +6,7 @@ __metaclass__ = type
 
 from types import SimpleNamespace
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils import cos
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 
 
 class FakeCosError(Exception):

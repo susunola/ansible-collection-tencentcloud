@@ -67,12 +67,12 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 EXAMPLES = r'''
 - name: Look up a single secret
   ansible.builtin.debug:
-    msg: "{{ lookup('tencentcloud.cloud.ssm_parameter', 'db-password', region='ap-guangzhou') }}"
+    msg: "{{ lookup('susunola.tencentcloud.ssm_parameter', 'db-password', region='ap-guangzhou') }}"
 
 - name: Look up several secrets at once
   ansible.builtin.debug:
     msg: >-
-      {{ lookup('tencentcloud.cloud.ssm_parameter',
+      {{ lookup('susunola.tencentcloud.ssm_parameter',
                 'db-password', 'api-token',
                 'region=ap-guangzhou') }}
 '''
@@ -93,7 +93,7 @@ from ansible.module_utils.common.text.converters import to_native
 from ansible.parsing.splitter import parse_kv
 from ansible.plugins.lookup import LookupBase
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.client import load_profile
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.client import load_profile
 
 try:
     from tencentcloud.ssm.v20190923 import ssm_client, models as ssm_models

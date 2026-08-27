@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import securitylake_security_alarm_table_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import securitylake_security_alarm_table_info
 
 
 class FakeFilter:

@@ -13,8 +13,8 @@ import pytest
 
 from ansible.module_utils.basic import env_fallback
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils import base, client
-from ansible_collections.tencentcloud.cloud.plugins.module_utils import tencentcloud as legacy
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import base, client
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import tencentcloud as legacy
 
 
 class AnsibleFailJson(Exception):

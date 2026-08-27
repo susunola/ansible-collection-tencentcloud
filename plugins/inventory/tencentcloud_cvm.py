@@ -19,7 +19,7 @@ options:
     description: Marks this file as a Tencent Cloud CVM inventory source.
     type: str
     required: true
-    choices: ["tencentcloud_cvm", "tencentcloud.cloud.tencentcloud_cvm"]
+    choices: ["tencentcloud_cvm", "susunola.tencentcloud.tencentcloud_cvm"]
   regions:
     description:
       - Regions to query for CVM instances.
@@ -90,12 +90,12 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 
 EXAMPLES = r'''
 # Minimal source file, e.g. inventory.tencentcloud_cvm.yml
-plugin: tencentcloud.cloud.tencentcloud_cvm
+plugin: susunola.tencentcloud.tencentcloud_cvm
 regions:
   - ap-guangzhou
 
 # Filter running instances, group by image and compose ansible_host
-plugin: tencentcloud.cloud.tencentcloud_cvm
+plugin: susunola.tencentcloud.tencentcloud_cvm
 regions:
   - ap-guangzhou
 filters:
@@ -114,8 +114,8 @@ compose:
 from ansible.errors import AnsibleError
 from ansible.plugins.inventory import BaseInventoryPlugin, Cacheable, Constructable
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.client import load_profile
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.paging import Paginator
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.client import load_profile
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import Paginator
 
 try:
     from tencentcloud.cvm.v20170312 import cvm_client, models as cvm_models

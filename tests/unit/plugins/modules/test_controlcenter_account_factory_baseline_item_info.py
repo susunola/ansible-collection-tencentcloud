@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import controlcenter_account_factory_baseline_item_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import controlcenter_account_factory_baseline_item_info
 
 
 class FakeRequest:

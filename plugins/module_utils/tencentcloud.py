@@ -20,9 +20,9 @@ __metaclass__ = type
 
 from ansible.module_utils.basic import env_fallback
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils import client as _client
-from ansible_collections.tencentcloud.cloud.plugins.module_utils import errors as _errors
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.paging import Paginator
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import client as _client
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import errors as _errors
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import Paginator
 
 try:
     from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentCloudSDKException

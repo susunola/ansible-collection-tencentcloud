@@ -6,7 +6,7 @@ __metaclass__ = type
 
 from types import SimpleNamespace
 
-from ansible_collections.tencentcloud.cloud.plugins.modules.cam_role import (
+from ansible_collections.susunola.tencentcloud.plugins.modules.cam_role import (
     _create,
     _delete,
     _documents_equal,
@@ -18,7 +18,7 @@ from ansible_collections.tencentcloud.cloud.plugins.modules.cam_role import (
     find_role,
     normalize_document,
 )
-from ansible_collections.tencentcloud.cloud.tests.unit.plugins.modules.harness import (
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
     FakeModels,
     FakeResource,
 )

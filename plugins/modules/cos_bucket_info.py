@@ -53,25 +53,25 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection.tencentcloud.cloud
+    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(cos-python-sdk-v5) package on the controller.
   - O(role_arn) is honoured; the temporary credentials obtained via STS
     C(AssumeRole) additionally require the C(tencentcloud-sdk-python-sts)
     package.
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: Describe a single bucket
-  tencentcloud.cloud.cos_bucket_info:
+  susunola.tencentcloud.cos_bucket_info:
     region: ap-guangzhou
     name: mybucket
     appid: "1300000000"
 
 - name: List all buckets in a region
-  tencentcloud.cloud.cos_bucket_info:
+  susunola.tencentcloud.cos_bucket_info:
     region: ap-guangzhou
 '''
 
@@ -92,8 +92,8 @@ buckets:
       tags: {}
 '''
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils import cos
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 
 
 def run_module():

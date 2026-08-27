@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import cfw_cluster_nat_ccn_fw_switch_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import cfw_cluster_nat_ccn_fw_switch_info
 
 
 class FakeFilter:

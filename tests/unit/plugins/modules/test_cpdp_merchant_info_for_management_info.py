@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import cpdp_merchant_info_for_management_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import cpdp_merchant_info_for_management_info
 
 
 class FakeRequest:

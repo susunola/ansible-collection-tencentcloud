@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import dbdc_db_custom_cluster_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import dbdc_db_custom_cluster_info
 
 
 class FakeFilter:

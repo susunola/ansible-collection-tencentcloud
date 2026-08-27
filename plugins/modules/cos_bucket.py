@@ -84,19 +84,19 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection.tencentcloud.cloud
+    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(cos-python-sdk-v5) package on the controller.
   - O(role_arn) is honoured; the temporary credentials obtained via STS
     C(AssumeRole) additionally require the C(tencentcloud-sdk-python-sts)
     package.
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: Create a COS bucket
-  tencentcloud.cloud.cos_bucket:
+  susunola.tencentcloud.cos_bucket:
     region: ap-guangzhou
     state: present
     name: mybucket
@@ -107,7 +107,7 @@ EXAMPLES = r'''
       env: prod
 
 - name: Check whether the bucket would be updated (no changes applied)
-  tencentcloud.cloud.cos_bucket:
+  susunola.tencentcloud.cos_bucket:
     region: ap-guangzhou
     state: present
     name: mybucket
@@ -116,7 +116,7 @@ EXAMPLES = r'''
   check_mode: true
 
 - name: Delete a COS bucket
-  tencentcloud.cloud.cos_bucket:
+  susunola.tencentcloud.cos_bucket:
     region: ap-guangzhou
     state: absent
     name: mybucket
@@ -138,9 +138,9 @@ bucket:
       env: prod
 '''
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils import cos
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 
 
 def normalize_tags(tags):

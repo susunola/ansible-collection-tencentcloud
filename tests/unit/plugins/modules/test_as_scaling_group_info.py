@@ -7,7 +7,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import as_scaling_group_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import as_scaling_group_info
 
 
 class FakeFilter:

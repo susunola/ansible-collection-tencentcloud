@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import partners_agent_deals_by_cache_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import partners_agent_deals_by_cache_info
 
 
 class FakeRequest:

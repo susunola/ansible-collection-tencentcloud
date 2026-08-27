@@ -4,7 +4,7 @@
   gather_facts: false
   tasks:
     - name: Gather CVM instances
-      tencentcloud.cloud.cvm_instance_info:
+      susunola.tencentcloud.cvm_instance_info:
         region: "{{ tencentcloud_region | default('ap-guangzhou') }}"
       register: cvm_result
     - name: Show CVM instances

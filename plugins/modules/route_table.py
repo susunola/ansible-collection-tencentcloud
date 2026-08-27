@@ -117,7 +117,7 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection.tencentcloud.cloud
+    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-vpc) package on the controller.
   - Tag reconciliation additionally requires C(tencentcloud-sdk-python-tag)
@@ -126,13 +126,13 @@ notes:
   - Route reconciliation only manages user-created (C(USER)) routes; system
     routes such as the local route and CCN/NETD routes are left untouched.
   - Uses the C(vpc.tencentcloudapi.com) endpoint by default.
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: Create a route table with routes
-  tencentcloud.cloud.route_table:
+  susunola.tencentcloud.route_table:
     region: ap-guangzhou
     state: present
     vpc_id: vpc-xxxxxxxx
@@ -146,14 +146,14 @@ EXAMPLES = r'''
       env: prod
 
 - name: Ensure a route table exists without touching its routes
-  tencentcloud.cloud.route_table:
+  susunola.tencentcloud.route_table:
     region: ap-guangzhou
     state: present
     vpc_id: vpc-xxxxxxxx
     name: app-rtb
 
 - name: Remove all user routes from a route table
-  tencentcloud.cloud.route_table:
+  susunola.tencentcloud.route_table:
     region: ap-guangzhou
     state: present
     route_table_id: rtb-xxxxxxxx
@@ -161,7 +161,7 @@ EXAMPLES = r'''
     routes: []
 
 - name: Delete a route table
-  tencentcloud.cloud.route_table:
+  susunola.tencentcloud.route_table:
     region: ap-guangzhou
     state: absent
     route_table_id: rtb-xxxxxxxx
@@ -182,12 +182,12 @@ route_table:
     CreatedTime: "2026-08-26 12:00:00"
 '''
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.tagging import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tagging import (
     build_sdk_tags,
     compare_tags,
 )

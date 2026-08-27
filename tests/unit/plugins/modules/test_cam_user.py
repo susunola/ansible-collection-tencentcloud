@@ -6,7 +6,7 @@ __metaclass__ = type
 
 from types import SimpleNamespace
 
-from ansible_collections.tencentcloud.cloud.plugins.modules.cam_user import (
+from ansible_collections.susunola.tencentcloud.plugins.modules.cam_user import (
     _apply_tags,
     _create,
     _current_tags,
@@ -14,7 +14,7 @@ from ansible_collections.tencentcloud.cloud.plugins.modules.cam_user import (
     _update,
     find_user,
 )
-from ansible_collections.tencentcloud.cloud.tests.unit.plugins.modules.harness import (
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
     FakeModels,
     FakeResource,
 )

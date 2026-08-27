@@ -9,10 +9,10 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils import cos
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.modules import cos_bucket
-from ansible_collections.tencentcloud.cloud.tests.unit.plugins.modules.harness import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.modules import cos_bucket
+from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
     AnsibleFailJson,
     module_args,
     run,

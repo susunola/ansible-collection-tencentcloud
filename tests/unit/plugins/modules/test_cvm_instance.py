@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
-from ansible_collections.tencentcloud.cloud.plugins.modules.cvm_instance import (
+from ansible_collections.susunola.tencentcloud.plugins.modules.cvm_instance import (
     _InstanceGone,
     build_describe_request,
     build_run_request,
@@ -239,10 +239,10 @@ from unittest.mock import patch  # noqa: E402
 
 import pytest  # noqa: E402
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import (  # noqa: E402
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import (  # noqa: E402
     TencentCloudModule,
 )
-from ansible_collections.tencentcloud.cloud.plugins.modules import cvm_instance  # noqa: E402
+from ansible_collections.susunola.tencentcloud.plugins.modules import cvm_instance  # noqa: E402
 from tests.unit.plugins.modules.harness import (  # noqa: E402
     AnsibleExitJson,
     AnsibleFailJson,
@@ -366,9 +366,9 @@ def _scaling_resource(instance_id, state="RUNNING", charge_type="POSTPAID_BY_HOU
 
 @pytest.fixture(autouse=True)
 def _no_scaling_waiters():
-    with patch("ansible_collections.tencentcloud.cloud.plugins.modules.cvm_instance._wait_state",
+    with patch("ansible_collections.susunola.tencentcloud.plugins.modules.cvm_instance._wait_state",
                return_value="RUNNING"), \
-            patch("ansible_collections.tencentcloud.cloud.plugins.modules.cvm_instance._wait_gone",
+            patch("ansible_collections.susunola.tencentcloud.plugins.modules.cvm_instance._wait_gone",
                   return_value=None):
         yield
 

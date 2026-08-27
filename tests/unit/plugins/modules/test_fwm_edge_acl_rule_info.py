@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import fwm_edge_acl_rule_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import fwm_edge_acl_rule_info
 
 
 class FakeFilter:

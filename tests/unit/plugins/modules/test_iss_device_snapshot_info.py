@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import iss_device_snapshot_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import iss_device_snapshot_info
 
 
 class FakeRequest:

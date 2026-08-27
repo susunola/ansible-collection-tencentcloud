@@ -7,7 +7,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import ckafka_instance_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import ckafka_instance_info
 
 
 class FakeFilter:

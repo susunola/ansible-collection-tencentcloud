@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import msp_migration_project_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import msp_migration_project_info
 
 
 class FakeRequest:

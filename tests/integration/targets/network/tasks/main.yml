@@ -6,11 +6,11 @@
     run_id: "{{ 99999999 | random }}"
     vpc_name: "ansible-net-it-{{ 99999999 | random }}"
   module_defaults:
-    group/tencentcloud.cloud.all:
+    group/susunola.tencentcloud.all:
       region: "{{ region }}"
   block:
     - name: Create a VPC
-      tencentcloud.cloud.vpc:
+      susunola.tencentcloud.vpc:
         state: present
         name: "{{ vpc_name }}"
         cidr_block: 10.99.0.0/16
@@ -25,7 +25,7 @@
           - vpc_create.vpc.VpcId is defined
 
     - name: Create the same VPC again (idempotency)
-      tencentcloud.cloud.vpc:
+      susunola.tencentcloud.vpc:
         state: present
         name: "{{ vpc_name }}"
         cidr_block: 10.99.0.0/16
@@ -39,7 +39,7 @@
           - vpc_second is not changed
 
     - name: Create a subnet in the VPC
-      tencentcloud.cloud.subnet:
+      susunola.tencentcloud.subnet:
         state: present
         vpc_id: "{{ vpc_create.vpc.VpcId }}"
         name: "ansible-subnet-it-{{ run_id }}"
@@ -54,7 +54,7 @@
           - subnet_create.subnet.SubnetId is defined
 
     - name: Create the same subnet again (idempotency)
-      tencentcloud.cloud.subnet:
+      susunola.tencentcloud.subnet:
         state: present
         vpc_id: "{{ vpc_create.vpc.VpcId }}"
         name: "ansible-subnet-it-{{ run_id }}"
@@ -68,7 +68,7 @@
           - subnet_second is not changed
 
     - name: subnet_info finds the subnet
-      tencentcloud.cloud.subnet_info:
+      susunola.tencentcloud.subnet_info:
         filters:
           vpc-id: ["{{ vpc_create.vpc.VpcId }}"]
       register: subnet_query
@@ -79,7 +79,7 @@
           - subnet_query.subnets | length >= 1
 
     - name: Create a route table with one user route
-      tencentcloud.cloud.route_table:
+      susunola.tencentcloud.route_table:
         state: present
         vpc_id: "{{ vpc_create.vpc.VpcId }}"
         name: "ansible-rtb-it-{{ run_id }}"
@@ -91,7 +91,7 @@
           - rtb_create is changed
 
     - name: Create the same route table again (idempotency)
-      tencentcloud.cloud.route_table:
+      susunola.tencentcloud.route_table:
         state: present
         vpc_id: "{{ vpc_create.vpc.VpcId }}"
         name: "ansible-rtb-it-{{ run_id }}"
@@ -103,14 +103,14 @@
           - rtb_second is not changed
 
     - name: Create a security group for the rule test
-      tencentcloud.cloud.security_group:
+      susunola.tencentcloud.security_group:
         state: present
         name: "ansible-sgr-it-{{ run_id }}"
         description: rule integration test
       register: sg_create
 
     - name: Reconcile ingress rules
-      tencentcloud.cloud.security_group_rule:
+      susunola.tencentcloud.security_group_rule:
         security_group_id: "{{ sg_create.security_group.SecurityGroupId }}"
         rules:
           - protocol: TCP
@@ -126,7 +126,7 @@
           - rules_create is changed
 
     - name: Reconcile the same rules again (idempotency)
-      tencentcloud.cloud.security_group_rule:
+      susunola.tencentcloud.security_group_rule:
         security_group_id: "{{ sg_create.security_group.SecurityGroupId }}"
         rules:
           - protocol: TCP
@@ -142,7 +142,7 @@
           - rules_second is not changed
 
     - name: Allocate an EIP
-      tencentcloud.cloud.eip:
+      susunola.tencentcloud.eip:
         state: present
         name: "ansible-eip-it-{{ run_id }}"
       register: eip_create
@@ -154,7 +154,7 @@
           - eip_create.eip.AddressId is defined
 
     - name: eip_info finds the address
-      tencentcloud.cloud.eip_info:
+      susunola.tencentcloud.eip_info:
         address_ids: ["{{ eip_create.eip.AddressId }}"]
       register: eip_query
 
@@ -165,35 +165,35 @@
 
   always:
     - name: Release the EIP
-      tencentcloud.cloud.eip:
+      susunola.tencentcloud.eip:
         state: absent
         eip_id: "{{ eip_create.eip.AddressId }}"
       when: eip_create is defined and eip_create.eip is defined
       ignore_errors: true
 
     - name: Delete the security group
-      tencentcloud.cloud.security_group:
+      susunola.tencentcloud.security_group:
         state: absent
         security_group_id: "{{ sg_create.security_group.SecurityGroupId }}"
       when: sg_create is defined and sg_create.security_group is defined
       ignore_errors: true
 
     - name: Delete the route table
-      tencentcloud.cloud.route_table:
+      susunola.tencentcloud.route_table:
         state: absent
         route_table_id: "{{ rtb_create.route_table.RouteTableId }}"
       when: rtb_create is defined and rtb_create.route_table is defined
       ignore_errors: true
 
     - name: Delete the subnet
-      tencentcloud.cloud.subnet:
+      susunola.tencentcloud.subnet:
         state: absent
         subnet_id: "{{ subnet_create.subnet.SubnetId }}"
       when: subnet_create is defined and subnet_create.subnet is defined
       ignore_errors: true
 
     - name: Delete the VPC
-      tencentcloud.cloud.vpc:
+      susunola.tencentcloud.vpc:
         state: absent
         vpc_id: "{{ vpc_create.vpc.VpcId }}"
       when: vpc_create is defined and vpc_create.vpc is defined

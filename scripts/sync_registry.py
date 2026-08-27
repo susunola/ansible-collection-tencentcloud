@@ -5,7 +5,7 @@ Three registries duplicate the list of modules in ``plugins/modules/`` and
 rot silently when a module is added or removed:
 
 * ``meta/runtime.yml`` -- the ``action_groups.all`` list that powers
-  ``module_defaults: group/tencentcloud.cloud.all``;
+  ``module_defaults: group/susunola.tencentcloud.all``;
 * ``README.md`` -- the resource-module table and the ``_info`` module table.
 
 Run without arguments to rewrite the managed regions in place; run with

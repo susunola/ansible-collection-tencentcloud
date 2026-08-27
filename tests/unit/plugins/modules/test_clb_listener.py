@@ -3,7 +3,7 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
-from ansible_collections.tencentcloud.cloud.plugins.modules.clb_listener import (
+from ansible_collections.susunola.tencentcloud.plugins.modules.clb_listener import (
     build_certificate,
     build_create_request,
     build_describe_request,

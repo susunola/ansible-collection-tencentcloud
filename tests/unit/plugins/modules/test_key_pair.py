@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
-from ansible_collections.tencentcloud.cloud.plugins.modules.key_pair import (
+from ansible_collections.susunola.tencentcloud.plugins.modules.key_pair import (
     _create,
     _delete,
     _import,

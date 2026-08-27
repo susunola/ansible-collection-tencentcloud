@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import advisor_strategy_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import advisor_strategy_info
 
 
 class FakeRequest:

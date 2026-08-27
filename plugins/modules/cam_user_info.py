@@ -27,22 +27,22 @@ notes:
   - Requires the C(tencentcloud-sdk-python-cam) package on the controller.
   - CAM is a global service. O(region) is accepted but ignored; the global
     C(cam.tencentcloudapi.com) endpoint is used.
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: List all CAM sub-users
-  tencentcloud.cloud.cam_user_info:
+  susunola.tencentcloud.cam_user_info:
     region: ap-guangzhou
 
 - name: Find a sub-user by exact name
-  tencentcloud.cloud.cam_user_info:
+  susunola.tencentcloud.cam_user_info:
     region: ap-guangzhou
     name: deploy-bot
 
 - name: Find sub-users whose name contains a keyword
-  tencentcloud.cloud.cam_user_info:
+  susunola.tencentcloud.cam_user_info:
     region: ap-guangzhou
     name_keyword: bot
 '''
@@ -67,7 +67,7 @@ total_count:
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
     create_client_profile, create_credential, sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )

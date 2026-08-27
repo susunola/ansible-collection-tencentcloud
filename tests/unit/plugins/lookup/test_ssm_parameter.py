@@ -7,8 +7,8 @@ import pytest
 
 from ansible.errors import AnsibleError
 
-from ansible_collections.tencentcloud.cloud.plugins.lookup import ssm_parameter as lookup_mod
-from ansible_collections.tencentcloud.cloud.plugins.lookup.ssm_parameter import (
+from ansible_collections.susunola.tencentcloud.plugins.lookup import ssm_parameter as lookup_mod
+from ansible_collections.susunola.tencentcloud.plugins.lookup.ssm_parameter import (
     LookupModule,
     build_get_secret_value_request,
     extract_value,

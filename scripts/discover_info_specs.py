@@ -472,13 +472,13 @@ def _build_spec(product, version, client_cls, candidate):
 
     examples = """\
 - name: List all %s
-  tencentcloud.cloud.%s:
+  susunola.tencentcloud.%s:
     region: ap-guangzhou
 """ % (words, module)
     if ids:
         examples += """
 - name: Find %s by ID
-  tencentcloud.cloud.%s:
+  susunola.tencentcloud.%s:
     region: ap-guangzhou
     %s: [x-xxxxxxxx]
 """ % (words, module, ids["param"])

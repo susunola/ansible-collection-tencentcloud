@@ -6,7 +6,7 @@ __metaclass__ = type
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules.clb_listener_target import (
+from ansible_collections.susunola.tencentcloud.plugins.modules.clb_listener_target import (
     _matches,
     build_describe_request,
     build_targets,

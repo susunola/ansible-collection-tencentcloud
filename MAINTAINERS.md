@@ -1,6 +1,6 @@
 # Maintainers
 
-This file lists the maintainers of the `tencentcloud.cloud` Ansible
+This file lists the maintainers of the `susunola.tencentcloud` Ansible
 collection and their responsibilities. It follows the
 [Ansible guidelines for collection maintainers](https://docs.ansible.com/ansible/latest/community/maintainers.html).
 

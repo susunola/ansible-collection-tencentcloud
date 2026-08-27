@@ -27,11 +27,11 @@ jobs:
             python: "3.12"
     defaults:
       run:
-        working-directory: ansible_collections/tencentcloud/cloud
+        working-directory: ansible_collections/susunola/tencentcloud
     steps:
       - uses: actions/checkout@v4
         with:
-          path: ansible_collections/tencentcloud/cloud
+          path: ansible_collections/susunola/tencentcloud
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}

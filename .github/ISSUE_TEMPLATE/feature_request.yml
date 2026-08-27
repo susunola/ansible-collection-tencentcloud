@@ -1,5 +1,5 @@
 name: Feature Request
-description: Suggest a new module, plugin, or enhancement for the tencentcloud.cloud collection
+description: Suggest a new module, plugin, or enhancement for the susunola.tencentcloud collection
 labels: ["enhancement"]
 body:
   - type: markdown
@@ -19,7 +19,7 @@ body:
     id: collection_version
     attributes:
       label: Collection version
-      description: Output of `ansible-galaxy collection list tencentcloud.cloud`.
+      description: Output of `ansible-galaxy collection list susunola.tencentcloud`.
       placeholder: "0.4.0"
     validations:
       required: false

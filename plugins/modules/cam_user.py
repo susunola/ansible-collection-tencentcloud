@@ -79,7 +79,7 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection.tencentcloud.cloud
+    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-cam) package on the controller.
   - Tag reconciliation additionally requires C(tencentcloud-sdk-python-tag).
@@ -88,13 +88,13 @@ notes:
     is used.
   - API keys for the sub-user are never created (C(AddUser) is called with
     C(UseApi=0)), so no secret material appears in the module result.
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: Create a CAM sub-user with console access
-  tencentcloud.cloud.cam_user:
+  susunola.tencentcloud.cam_user:
     region: ap-guangzhou
     state: present
     name: deploy-bot
@@ -105,7 +105,7 @@ EXAMPLES = r'''
       env: prod
 
 - name: Check whether the sub-user would be updated (no changes applied)
-  tencentcloud.cloud.cam_user:
+  susunola.tencentcloud.cam_user:
     region: ap-guangzhou
     state: present
     name: deploy-bot
@@ -113,7 +113,7 @@ EXAMPLES = r'''
   check_mode: true
 
 - name: Delete a CAM sub-user
-  tencentcloud.cloud.cam_user:
+  susunola.tencentcloud.cam_user:
     region: ap-guangzhou
     state: absent
     name: deploy-bot
@@ -133,12 +133,12 @@ user:
     CreateTime: "2026-08-26 12:00:00"
 '''
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.tagging import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tagging import (
     compare_tags,
 )
 

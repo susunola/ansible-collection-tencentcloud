@@ -75,19 +75,19 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection.tencentcloud.cloud
+    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-cam) package on the controller.
   - CAM is a global service. O(region) is accepted (the shared argument spec
     requires it) but ignored; the global C(cam.tencentcloudapi.com) endpoint
     is used.
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: Create a CAM role assumable by CVM
-  tencentcloud.cloud.cam_role:
+  susunola.tencentcloud.cam_role:
     region: ap-guangzhou
     state: present
     role_name: app-instance-role
@@ -104,7 +104,7 @@ EXAMPLES = r'''
       env: prod
 
 - name: Check whether the role would be updated (no changes applied)
-  tencentcloud.cloud.cam_role:
+  susunola.tencentcloud.cam_role:
     region: ap-guangzhou
     state: present
     role_name: app-instance-role
@@ -112,7 +112,7 @@ EXAMPLES = r'''
   check_mode: true
 
 - name: Delete a CAM role
-  tencentcloud.cloud.cam_role:
+  susunola.tencentcloud.cam_role:
     region: ap-guangzhou
     state: absent
     role_name: app-instance-role
@@ -134,12 +134,12 @@ role:
 
 import json
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.tagging import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tagging import (
     compare_tags,
 )
 

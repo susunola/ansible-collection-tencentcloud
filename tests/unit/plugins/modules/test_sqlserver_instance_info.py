@@ -7,7 +7,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import sqlserver_instance_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import sqlserver_instance_info
 
 
 class FakeRequest:

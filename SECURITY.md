@@ -3,7 +3,7 @@
 ## Supported versions
 
 Security fixes are applied to the latest minor release line of the
-`tencentcloud.cloud` collection.
+`susunola.tencentcloud` collection.
 
 | Version | Supported |
 |---|---|

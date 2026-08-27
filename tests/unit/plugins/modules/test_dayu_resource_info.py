@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import dayu_resource_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import dayu_resource_info
 
 
 class FakeRequest:

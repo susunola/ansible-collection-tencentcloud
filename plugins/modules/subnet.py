@@ -93,20 +93,20 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection.tencentcloud.cloud
+    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-vpc) package on the controller.
   - Tag reconciliation additionally requires C(tencentcloud-sdk-python-tag).
   - C(cidr_block), C(zone) and C(vpc_id) cannot be changed after creation;
     the module warns and leaves them untouched.
   - Uses the C(vpc.tencentcloudapi.com) endpoint by default.
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: Create a subnet
-  tencentcloud.cloud.subnet:
+  susunola.tencentcloud.subnet:
     region: ap-guangzhou
     state: present
     vpc_id: vpc-xxxxxxxx
@@ -118,7 +118,7 @@ EXAMPLES = r'''
       tier: web
 
 - name: Disable broadcast on an existing subnet (no changes applied)
-  tencentcloud.cloud.subnet:
+  susunola.tencentcloud.subnet:
     region: ap-guangzhou
     state: present
     subnet_id: subnet-xxxxxxxx
@@ -127,7 +127,7 @@ EXAMPLES = r'''
   check_mode: true
 
 - name: Delete a subnet
-  tencentcloud.cloud.subnet:
+  susunola.tencentcloud.subnet:
     region: ap-guangzhou
     state: absent
     vpc_id: vpc-xxxxxxxx
@@ -151,12 +151,12 @@ subnet:
     TagSet: []
 '''
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.tagging import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tagging import (
     build_sdk_tags,
     compare_tags,
 )

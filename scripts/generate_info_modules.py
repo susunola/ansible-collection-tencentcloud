@@ -39,7 +39,7 @@ VERSION_ADDED = "0.6.0"
 # Modules generated before the 0.6.0 batch keep their original version_added.
 LEGACY_VERSION_ADDED = "0.4.0"
 AUTHOR = "Tencent Cloud Ansible Collection Contributors (@susunola)"
-DOC_FRAGMENT = "tencentcloud.cloud.tencentcloud"
+DOC_FRAGMENT = "susunola.tencentcloud.tencentcloud"
 
 # Hand-curated per-module specification. All SDK field names were verified
 # against the installed tencentcloud-sdk-python-<service> packages.
@@ -125,11 +125,11 @@ SPECS = [
         "return_total_doc": "Number of load balancers reported by the API.",
         "examples": """\
 - name: List all CLB load balancers
-  tencentcloud.cloud.clb_load_balancer_info:
+  susunola.tencentcloud.clb_load_balancer_info:
     region: ap-guangzhou
 
 - name: Find load balancers by ID
-  tencentcloud.cloud.clb_load_balancer_info:
+  susunola.tencentcloud.clb_load_balancer_info:
     region: ap-guangzhou
     load_balancer_ids: [lb-xxxxxxxx]
 """,
@@ -161,11 +161,11 @@ SPECS = [
         "return_total_doc": "Number of instances reported by the API.",
         "examples": """\
 - name: List all TencentDB for MySQL instances
-  tencentcloud.cloud.cdb_instance_info:
+  susunola.tencentcloud.cdb_instance_info:
     region: ap-guangzhou
 
 - name: Find instances by ID
-  tencentcloud.cloud.cdb_instance_info:
+  susunola.tencentcloud.cdb_instance_info:
     region: ap-guangzhou
     instance_ids: [cdb-xxxxxxxx]
 """,
@@ -197,11 +197,11 @@ SPECS = [
         "return_total_doc": "Number of clusters reported by the API.",
         "examples": """\
 - name: List all TKE clusters
-  tencentcloud.cloud.tke_cluster_info:
+  susunola.tencentcloud.tke_cluster_info:
     region: ap-guangzhou
 
 - name: Find clusters by ID
-  tencentcloud.cloud.tke_cluster_info:
+  susunola.tencentcloud.tke_cluster_info:
     region: ap-guangzhou
     cluster_ids: [cls-xxxxxxxx]
 """,
@@ -233,12 +233,12 @@ SPECS = [
         "return_total_doc": "Number of disks reported by the API.",
         "examples": """\
 - name: List all CBS disks
-  tencentcloud.cloud.cbs_disk_info:
+  susunola.tencentcloud.cbs_disk_info:
     region: ap-guangzhou
   register: disks
 
 - name: Find disks by ID
-  tencentcloud.cloud.cbs_disk_info:
+  susunola.tencentcloud.cbs_disk_info:
     region: ap-guangzhou
     disk_ids: [disk-xxxxxxxx]
 """,
@@ -270,11 +270,11 @@ SPECS = [
         "return_total_doc": "Number of instances reported by the API.",
         "examples": """\
 - name: List all TencentDB for Redis instances
-  tencentcloud.cloud.redis_instance_info:
+  susunola.tencentcloud.redis_instance_info:
     region: ap-guangzhou
 
 - name: Find instances by ID
-  tencentcloud.cloud.redis_instance_info:
+  susunola.tencentcloud.redis_instance_info:
     region: ap-guangzhou
     instance_ids: [crs-xxxxxxxx]
 """,
@@ -306,11 +306,11 @@ SPECS = [
         "return_total_doc": "Number of instances reported by the API.",
         "examples": """\
 - name: List all TencentDB for MongoDB instances
-  tencentcloud.cloud.mongodb_instance_info:
+  susunola.tencentcloud.mongodb_instance_info:
     region: ap-guangzhou
 
 - name: Find instances by ID
-  tencentcloud.cloud.mongodb_instance_info:
+  susunola.tencentcloud.mongodb_instance_info:
     region: ap-guangzhou
     instance_ids: [cmgo-xxxxxxxx]
 """,
@@ -351,11 +351,11 @@ SPECS = [
         "return_total_doc": "Number of keys reported by the API, or the number of requested keys.",
         "examples": """\
 - name: List all KMS keys
-  tencentcloud.cloud.kms_key_info:
+  susunola.tencentcloud.kms_key_info:
     region: ap-guangzhou
 
 - name: Describe specific KMS keys
-  tencentcloud.cloud.kms_key_info:
+  susunola.tencentcloud.kms_key_info:
     region: ap-guangzhou
     key_ids: [xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx]
 """,
@@ -391,7 +391,7 @@ SPECS = [
         "return_total_doc": "Total number of records of the domain reported by the API.",
         "examples": """\
 - name: List DNS records for a domain
-  tencentcloud.cloud.dnspod_record_info:
+  susunola.tencentcloud.dnspod_record_info:
     region: ap-guangzhou
     domain: example.com
 """,
@@ -423,11 +423,11 @@ SPECS = [
         "return_total_doc": "Number of auto scaling groups reported by the API.",
         "examples": """\
 - name: List all auto scaling groups
-  tencentcloud.cloud.as_scaling_group_info:
+  susunola.tencentcloud.as_scaling_group_info:
     region: ap-guangzhou
 
 - name: Find auto scaling groups by ID
-  tencentcloud.cloud.as_scaling_group_info:
+  susunola.tencentcloud.as_scaling_group_info:
     region: ap-guangzhou
     auto_scaling_group_ids: [asg-xxxxxxxx]
 """,
@@ -454,7 +454,7 @@ SPECS = [
         "return_total_doc": "Number of functions reported by the API.",
         "examples": """\
 - name: List all SCF functions
-  tencentcloud.cloud.scf_function_info:
+  susunola.tencentcloud.scf_function_info:
     region: ap-guangzhou
 """,
     },
@@ -487,11 +487,11 @@ SPECS = [
         "return_total_doc": "Number of file systems reported by the API.",
         "examples": """\
 - name: List all CFS file systems
-  tencentcloud.cloud.cfs_file_system_info:
+  susunola.tencentcloud.cfs_file_system_info:
     region: ap-guangzhou
 
 - name: Describe a single file system
-  tencentcloud.cloud.cfs_file_system_info:
+  susunola.tencentcloud.cfs_file_system_info:
     region: ap-guangzhou
     file_system_id: cfs-xxxxxxxx
 """,
@@ -522,11 +522,11 @@ SPECS = [
         "return_total_doc": "Number of instances reported by the API.",
         "examples": """\
 - name: List all Lighthouse instances
-  tencentcloud.cloud.lighthouse_instance_info:
+  susunola.tencentcloud.lighthouse_instance_info:
     region: ap-guangzhou
 
 - name: Find instances by ID
-  tencentcloud.cloud.lighthouse_instance_info:
+  susunola.tencentcloud.lighthouse_instance_info:
     region: ap-guangzhou
     instance_ids: [lhins-xxxxxxxx]
 """,
@@ -560,11 +560,11 @@ SPECS = [
         "return_total_doc": "Number of clusters reported by the API.",
         "examples": """\
 - name: List all CynosDB clusters
-  tencentcloud.cloud.cynosdb_cluster_info:
+  susunola.tencentcloud.cynosdb_cluster_info:
     region: ap-guangzhou
 
 - name: Find a cluster by ID
-  tencentcloud.cloud.cynosdb_cluster_info:
+  susunola.tencentcloud.cynosdb_cluster_info:
     region: ap-guangzhou
     filters:
       ClusterId: [cynosdbmysql-xxxxxxxx]
@@ -592,11 +592,11 @@ SPECS = [
         "return_total_doc": "Number of instances reported by the API.",
         "examples": """\
 - name: List all TencentDB for PostgreSQL instances
-  tencentcloud.cloud.postgres_instance_info:
+  susunola.tencentcloud.postgres_instance_info:
     region: ap-guangzhou
 
 - name: Find an instance by ID
-  tencentcloud.cloud.postgres_instance_info:
+  susunola.tencentcloud.postgres_instance_info:
     region: ap-guangzhou
     filters:
       db-instance-id: [postgres-xxxxxxxx]
@@ -629,11 +629,11 @@ SPECS = [
         "return_total_doc": "Number of instances reported by the API.",
         "examples": """\
 - name: List all TencentDB for SQL Server instances
-  tencentcloud.cloud.sqlserver_instance_info:
+  susunola.tencentcloud.sqlserver_instance_info:
     region: ap-guangzhou
 
 - name: Find instances by ID
-  tencentcloud.cloud.sqlserver_instance_info:
+  susunola.tencentcloud.sqlserver_instance_info:
     region: ap-guangzhou
     instance_ids: [mssql-xxxxxxxx]
 """,
@@ -664,11 +664,11 @@ SPECS = [
         "return_total_doc": "Number of instances reported by the API.",
         "examples": """\
 - name: List all TencentDB for MariaDB instances
-  tencentcloud.cloud.mariadb_instance_info:
+  susunola.tencentcloud.mariadb_instance_info:
     region: ap-guangzhou
 
 - name: Find instances by ID
-  tencentcloud.cloud.mariadb_instance_info:
+  susunola.tencentcloud.mariadb_instance_info:
     region: ap-guangzhou
     instance_ids: [tdsql-xxxxxxxx]
 """,
@@ -699,11 +699,11 @@ SPECS = [
         "return_total_doc": "Number of clusters reported by the API.",
         "examples": """\
 - name: List all Elasticsearch clusters
-  tencentcloud.cloud.es_cluster_info:
+  susunola.tencentcloud.es_cluster_info:
     region: ap-guangzhou
 
 - name: Find clusters by ID
-  tencentcloud.cloud.es_cluster_info:
+  susunola.tencentcloud.es_cluster_info:
     region: ap-guangzhou
     instance_ids: [es-xxxxxxxx]
 """,
@@ -737,11 +737,11 @@ SPECS = [
         "return_total_doc": "Number of instances reported by the API.",
         "examples": """\
 - name: List all CKafka instances
-  tencentcloud.cloud.ckafka_instance_info:
+  susunola.tencentcloud.ckafka_instance_info:
     region: ap-guangzhou
 
 - name: Find instances by ID
-  tencentcloud.cloud.ckafka_instance_info:
+  susunola.tencentcloud.ckafka_instance_info:
     region: ap-guangzhou
     instance_ids: [ckafka-xxxxxxxx]
 """,
@@ -774,11 +774,11 @@ SPECS = [
         "return_total_doc": "Number of registries reported by the API.",
         "examples": """\
 - name: List all TCR registries
-  tencentcloud.cloud.tcr_instance_info:
+  susunola.tencentcloud.tcr_instance_info:
     region: ap-guangzhou
 
 - name: Find registries by ID
-  tencentcloud.cloud.tcr_instance_info:
+  susunola.tencentcloud.tcr_instance_info:
     region: ap-guangzhou
     registry_ids: [tcr-xxxxxxxx]
 """,
@@ -806,11 +806,11 @@ SPECS = [
         "return_total_doc": "Number of services reported by the API.",
         "examples": """\
 - name: List all API Gateway services
-  tencentcloud.cloud.apigateway_service_info:
+  susunola.tencentcloud.apigateway_service_info:
     region: ap-guangzhou
 
 - name: Find a service by ID
-  tencentcloud.cloud.apigateway_service_info:
+  susunola.tencentcloud.apigateway_service_info:
     region: ap-guangzhou
     filters:
       ServiceId: [service-xxxxxxxx]
@@ -845,11 +845,11 @@ SPECS = [
         "return_total_doc": "Number of NAT gateways reported by the API.",
         "examples": """\
 - name: List all NAT gateways
-  tencentcloud.cloud.nat_gateway_info:
+  susunola.tencentcloud.nat_gateway_info:
     region: ap-guangzhou
 
 - name: Find NAT gateways by ID
-  tencentcloud.cloud.nat_gateway_info:
+  susunola.tencentcloud.nat_gateway_info:
     region: ap-guangzhou
     nat_gateway_ids: [nat-xxxxxxxx]
 """,
@@ -885,11 +885,11 @@ SPECS = [
         "return_total_doc": "Number of VPN gateways reported by the API.",
         "examples": """\
 - name: List all VPN gateways
-  tencentcloud.cloud.vpn_gateway_info:
+  susunola.tencentcloud.vpn_gateway_info:
     region: ap-guangzhou
 
 - name: Find VPN gateways by ID
-  tencentcloud.cloud.vpn_gateway_info:
+  susunola.tencentcloud.vpn_gateway_info:
     region: ap-guangzhou
     vpn_gateway_ids: [vpngw-xxxxxxxx]
 """,
@@ -924,11 +924,11 @@ SPECS = [
         "return_total_doc": "Number of proxies reported by the API.",
         "examples": """\
 - name: List all GAAP proxies
-  tencentcloud.cloud.gaap_proxy_info:
+  susunola.tencentcloud.gaap_proxy_info:
     region: ap-guangzhou
 
 - name: Find proxies by ID
-  tencentcloud.cloud.gaap_proxy_info:
+  susunola.tencentcloud.gaap_proxy_info:
     region: ap-guangzhou
     proxy_ids: [link-xxxxxxxx]
 """,
@@ -962,11 +962,11 @@ SPECS = [
         "return_total_doc": "Number of domains reported by the API.",
         "examples": """\
 - name: List all CDN domains
-  tencentcloud.cloud.cdn_domain_info:
+  susunola.tencentcloud.cdn_domain_info:
     region: ap-guangzhou
 
 - name: Find a domain by name
-  tencentcloud.cloud.cdn_domain_info:
+  susunola.tencentcloud.cdn_domain_info:
     region: ap-guangzhou
     filters:
       domain: [www.example.com]
@@ -1012,11 +1012,11 @@ SPECS = [
         "return_total_doc": "Number of events reported by the API.",
         "examples": """\
 - name: List recent CloudAudit events
-  tencentcloud.cloud.cloudaudit_event_info:
+  susunola.tencentcloud.cloudaudit_event_info:
     region: ap-guangzhou
 
 - name: List events in a time range
-  tencentcloud.cloud.cloudaudit_event_info:
+  susunola.tencentcloud.cloudaudit_event_info:
     region: ap-guangzhou
     start_time: 1704067200
     end_time: 1704153600
@@ -1046,11 +1046,11 @@ SPECS = [
         "return_total_doc": "Number of machines reported by the API.",
         "examples": """\
 - name: List all CWP machines
-  tencentcloud.cloud.cwp_machine_info:
+  susunola.tencentcloud.cwp_machine_info:
     region: ap-guangzhou
 
 - name: Find a machine by ID
-  tencentcloud.cloud.cwp_machine_info:
+  susunola.tencentcloud.cwp_machine_info:
     region: ap-guangzhou
     filters:
       InstanceId: [ins-xxxxxxxx]
@@ -1085,11 +1085,11 @@ SPECS = [
         "return_total_doc": "Number of WAF instances reported by the API.",
         "examples": """\
 - name: List all WAF instances
-  tencentcloud.cloud.waf_instance_info:
+  susunola.tencentcloud.waf_instance_info:
     region: ap-guangzhou
 
 - name: Find a WAF instance by ID
-  tencentcloud.cloud.waf_instance_info:
+  susunola.tencentcloud.waf_instance_info:
     region: ap-guangzhou
     filters:
       InstanceId: [waf_xxxxxxxx]
@@ -1122,11 +1122,11 @@ SPECS = [
         "return_total_doc": "Number of certificates reported by the API.",
         "examples": """\
 - name: List all SSL certificates
-  tencentcloud.cloud.ssl_certificate_info:
+  susunola.tencentcloud.ssl_certificate_info:
     region: ap-guangzhou
 
 - name: Find certificates by ID
-  tencentcloud.cloud.ssl_certificate_info:
+  susunola.tencentcloud.ssl_certificate_info:
     region: ap-guangzhou
     certificate_ids: ["xxxxxxxx"]
 """,
@@ -1155,7 +1155,7 @@ SPECS = [
         "return_total_doc": "Number of members reported by the API.",
         "examples": """\
 - name: List all organization members
-  tencentcloud.cloud.organization_member_info:
+  susunola.tencentcloud.organization_member_info:
     region: ap-guangzhou
 """,
     },
@@ -1192,7 +1192,7 @@ SPECS = [
         "return_total_doc": "Number of alarm policies reported by the API.",
         "examples": """\
 - name: List all alarm policies
-  tencentcloud.cloud.monitor_alarm_policy_info:
+  susunola.tencentcloud.monitor_alarm_policy_info:
     region: ap-guangzhou
 """,
     },
@@ -1223,11 +1223,11 @@ SPECS = [
         "return_total_doc": "Number of log topics reported by the API.",
         "examples": """\
 - name: List all CLS log topics
-  tencentcloud.cloud.cls_topic_info:
+  susunola.tencentcloud.cls_topic_info:
     region: ap-guangzhou
 
 - name: Find topics of a logset
-  tencentcloud.cloud.cls_topic_info:
+  susunola.tencentcloud.cls_topic_info:
     region: ap-guangzhou
     filters:
       logsetId: [xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx]
@@ -1261,11 +1261,11 @@ SPECS = [
         "return_total_doc": "Number of commands reported by the API.",
         "examples": """\
 - name: List all TAT commands
-  tencentcloud.cloud.tat_command_info:
+  susunola.tencentcloud.tat_command_info:
     region: ap-guangzhou
 
 - name: Find commands by ID
-  tencentcloud.cloud.tat_command_info:
+  susunola.tencentcloud.tat_command_info:
     region: ap-guangzhou
     command_ids: [cmd-xxxxxxxx]
 """,
@@ -1295,7 +1295,7 @@ SPECS = [
         "return_total_doc": "",
         "examples": """\
 - name: Show the account balance
-  tencentcloud.cloud.billing_balance_info:
+  susunola.tencentcloud.billing_balance_info:
     region: ap-guangzhou
 """,
     },
@@ -1515,32 +1515,32 @@ REQUIRED_PARAM_OVERRIDES = {
 REQUIRED_EXAMPLE_OVERRIDES = {
     "teo_function_info": """\
 - name: List functions of a zone
-  tencentcloud.cloud.teo_function_info:
+  susunola.tencentcloud.teo_function_info:
     region: ap-guangzhou
     zone_id: zone-xxxxxxxx
 """,
     "mqtt_device_certificate_info": """\
 - name: List device certificates of an instance
-  tencentcloud.cloud.mqtt_device_certificate_info:
+  susunola.tencentcloud.mqtt_device_certificate_info:
     region: ap-guangzhou
     instance_id: mqtt-xxxxxxxx
 """,
     "emr_node_data_disk_info": """\
 - name: List node data disks of a cluster
-  tencentcloud.cloud.emr_node_data_disk_info:
+  susunola.tencentcloud.emr_node_data_disk_info:
     region: ap-guangzhou
     instance_id: emr-xxxxxxxx
     cvm_instance_ids: [ins-xxxxxxxx]
 """,
     "ccc_extension_info": """\
 - name: List extensions of a CCC application
-  tencentcloud.cloud.ccc_extension_info:
+  susunola.tencentcloud.ccc_extension_info:
     region: ap-guangzhou
     sdk_app_id: 1400000000
 """,
     "apm_general_span_info": """\
 - name: List general spans
-  tencentcloud.cloud.apm_general_span_info:
+  susunola.tencentcloud.apm_general_span_info:
     region: ap-guangzhou
     instance_id: apm-xxxxxxxx
     start_time: 1700000000
@@ -1548,7 +1548,7 @@ REQUIRED_EXAMPLE_OVERRIDES = {
 """,
     "tbaas_block_info": """\
 - name: List blocks of a channel
-  tencentcloud.cloud.tbaas_block_info:
+  susunola.tencentcloud.tbaas_block_info:
     region: ap-guangzhou
     channel_name: my-channel
     group_name: my-group
@@ -1556,7 +1556,7 @@ REQUIRED_EXAMPLE_OVERRIDES = {
 """,
     "cdwdoris_cluster_configs_history_info": """\
 - name: List cluster configuration history
-  tencentcloud.cloud.cdwdoris_cluster_configs_history_info:
+  susunola.tencentcloud.cdwdoris_cluster_configs_history_info:
     region: ap-guangzhou
     instance_id: cdwdoris-xxxxxxxx
     start_time: "2024-01-01 00:00:00"
@@ -1564,88 +1564,88 @@ REQUIRED_EXAMPLE_OVERRIDES = {
 """,
     "tcbr_cloud_run_pod_info": """\
 - name: List cloud run pods
-  tencentcloud.cloud.tcbr_cloud_run_pod_info:
+  susunola.tencentcloud.tcbr_cloud_run_pod_info:
     region: ap-guangzhou
     env_id: env-xxxxxxxx
     server_name: my-service
 """,
     "cdwpg_account_info": """\
 - name: List accounts of an instance
-  tencentcloud.cloud.cdwpg_account_info:
+  susunola.tencentcloud.cdwpg_account_info:
     region: ap-guangzhou
     instance_id: cdwpg-xxxxxxxx
 """,
     "trocket_consumer_client_info": """\
 - name: List consumer clients of an instance
-  tencentcloud.cloud.trocket_consumer_client_info:
+  susunola.tencentcloud.trocket_consumer_client_info:
     region: ap-guangzhou
     instance_id: rocketmq-xxxxxxxx
 """,
     "keewidb_instance_backup_info": """\
 - name: List backups of an instance
-  tencentcloud.cloud.keewidb_instance_backup_info:
+  susunola.tencentcloud.keewidb_instance_backup_info:
     region: ap-guangzhou
     instance_id: kee-xxxxxxxx
 """,
     "lowcode_knowledge_set_info": """\
 - name: List knowledge sets of an environment
-  tencentcloud.cloud.lowcode_knowledge_set_info:
+  susunola.tencentcloud.lowcode_knowledge_set_info:
     region: ap-guangzhou
     env_id: lowcode-xxxxxxxx
 """,
     "tdcpg_cluster_instance_info": """\
 - name: List instances of a cluster
-  tencentcloud.cloud.tdcpg_cluster_instance_info:
+  susunola.tencentcloud.tdcpg_cluster_instance_info:
     region: ap-guangzhou
     cluster_id: tdcpg-xxxxxxxx
 """,
     "yinsuda_ktv_robot_info": """\
 - name: List KTV robots of a user
-  tencentcloud.cloud.yinsuda_ktv_robot_info:
+  susunola.tencentcloud.yinsuda_ktv_robot_info:
     region: ap-guangzhou
     app_name: ktv
     user_id: "10001"
 """,
     "iotvideo_ai_model_application_info": """\
 - name: List AI model applications
-  tencentcloud.cloud.iotvideo_ai_model_application_info:
+  susunola.tencentcloud.iotvideo_ai_model_application_info:
     region: ap-guangzhou
     model_id: body_detection
 """,
     "trro_device_info": """\
 - name: List devices of a project
-  tencentcloud.cloud.trro_device_info:
+  susunola.tencentcloud.trro_device_info:
     region: ap-guangzhou
     project_id: f3glr49ry0i0xlm7
 """,
     "tdai_agent_duty_task_info": """\
 - name: List duty tasks of an agent instance
-  tencentcloud.cloud.tdai_agent_duty_task_info:
+  susunola.tencentcloud.tdai_agent_duty_task_info:
     region: ap-guangzhou
     instance_id: agtinst-xxxxxxxx
 """,
     "dsgc_dspa_assessment_risk_info": """\
 - name: List assessment risks
-  tencentcloud.cloud.dsgc_dspa_assessment_risk_info:
+  susunola.tencentcloud.dsgc_dspa_assessment_risk_info:
     region: ap-guangzhou
     dspa_id: dspa-xxxxxxxx
     task_id: task-xxxxxxxx
 """,
     "omics_application_info": """\
 - name: List applications of a project
-  tencentcloud.cloud.omics_application_info:
+  susunola.tencentcloud.omics_application_info:
     region: ap-guangzhou
     project_id: prj-xxxxxxxx
 """,
     "adp_agent_release_preview_info": """\
 - name: List agent release previews
-  tencentcloud.cloud.adp_agent_release_preview_info:
+  susunola.tencentcloud.adp_agent_release_preview_info:
     region: ap-guangzhou
     app_id: "204000000016"
 """,
     "essbasic_template_info": """\
 - name: List templates of a sub-enterprise
-  tencentcloud.cloud.essbasic_template_info:
+  susunola.tencentcloud.essbasic_template_info:
     region: ap-guangzhou
     agent:
       app_id: "1400000000"
@@ -1714,13 +1714,13 @@ __metaclass__ = type
 
 IMPORTS = """\
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.tencentcloud import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
     create_client_profile, create_credential, sdk_call, serialize_sdk_object,
     tencentcloud_argument_spec,
 )
 """
 
-PAGINATOR_IMPORT = ("from ansible_collections.tencentcloud.cloud.plugins.module_utils.paging "
+PAGINATOR_IMPORT = ("from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging "
                     "import Paginator\n")
 
 
@@ -2311,7 +2311,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import {module}
+from ansible_collections.susunola.tencentcloud.plugins.modules import {module}
 
 
 class FakeRequest:
@@ -2515,7 +2515,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import {module}
+from ansible_collections.susunola.tencentcloud.plugins.modules import {module}
 {fake_filter}
 
 class FakeRequest:

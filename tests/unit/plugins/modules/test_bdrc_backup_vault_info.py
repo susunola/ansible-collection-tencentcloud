@@ -8,7 +8,7 @@ import types
 
 import pytest
 
-from ansible_collections.tencentcloud.cloud.plugins.modules import bdrc_backup_vault_info
+from ansible_collections.susunola.tencentcloud.plugins.modules import bdrc_backup_vault_info
 
 
 class FakeFilter:

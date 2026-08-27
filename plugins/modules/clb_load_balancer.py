@@ -126,7 +126,7 @@ options:
     description:
       - User-Agent string sent with API requests.
     type: str
-    default: ansible-collection.tencentcloud.cloud
+    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-clb) package on the controller.
   - Tag reconciliation additionally requires C(tencentcloud-sdk-python-tag).
@@ -138,13 +138,13 @@ notes:
   - Network type, VPC and subnet cannot be changed on an existing load
     balancer; the module fails with a clear message when they drift instead of
     silently ignoring them.
-extends_documentation_fragment: tencentcloud.cloud.tencentcloud
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: Create a public CLB load balancer
-  tencentcloud.cloud.clb_load_balancer:
+  susunola.tencentcloud.clb_load_balancer:
     region: ap-guangzhou
     state: present
     name: web-lb
@@ -157,7 +157,7 @@ EXAMPLES = r'''
       tier: web
 
 - name: Create a private CLB load balancer
-  tencentcloud.cloud.clb_load_balancer:
+  susunola.tencentcloud.clb_load_balancer:
     region: ap-guangzhou
     state: present
     name: internal-lb
@@ -166,7 +166,7 @@ EXAMPLES = r'''
     subnet_id: subnet-xxxxxxxx
 
 - name: Preview the changes without applying them
-  tencentcloud.cloud.clb_load_balancer:
+  susunola.tencentcloud.clb_load_balancer:
     region: ap-guangzhou
     state: present
     name: web-lb
@@ -174,7 +174,7 @@ EXAMPLES = r'''
   check_mode: true
 
 - name: Delete a load balancer
-  tencentcloud.cloud.clb_load_balancer:
+  susunola.tencentcloud.clb_load_balancer:
     region: ap-guangzhou
     state: absent
     name: web-lb
@@ -196,15 +196,15 @@ load_balancer:
     Tags: []
 '''
 
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.errors import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
     is_idempotent_success,
 )
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.tagging import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tagging import (
     compare_tags,
 )
-from ansible_collections.tencentcloud.cloud.plugins.module_utils.waiters import (
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import (
     wait_for_state,
     wait_for_task,
     wait_until_gone,
