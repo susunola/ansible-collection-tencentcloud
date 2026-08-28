@@ -1,0 +1,5 @@
+minor_changes:
+  - >-
+    Extend ``monitor_alarm_policy`` with project assignment, dimension filters,
+    group-by dimensions, trigger tasks, hierarchical notices, notification
+    content-template bindings and creation-time alarm-policy tags.

@@ -224,6 +224,20 @@ def test_monitor_policy_convergence():
     assert monitor_alarm_policy._policy_converged(current, desired)
 
 
+def test_monitor_notice_and_task_requests(models):
+    params = {
+        "module": "monitor", "notice_ids": ["notice-1"],
+        "hierarchical_notices": [{"NoticeId": "notice-1", "Classification": ["warning"]}],
+        "notice_content_template_bindings": [{"NoticeID": "notice-1", "ContentTmplID": "tmpl-1"}],
+        "trigger_tasks": [{"Type": "AS", "TaskConfig": "{}"}],
+    }
+    notice = monitor_alarm_policy.build_notice_request(models, params, "policy-x")
+    tasks = monitor_alarm_policy.build_tasks_request(models, params, "policy-x")
+    assert notice.HierarchicalNotices[0].raw_json == '{"NoticeId": "notice-1", "Classification": ["warning"]}'
+    assert notice.NoticeContentTmplBindInfos[0].raw_json == '{"NoticeID": "notice-1", "ContentTmplID": "tmpl-1"}'
+    assert tasks.TriggerTasks[0].raw_json == '{"Type": "AS", "TaskConfig": "{}"}'
+
+
 def test_tke_values_are_canonical_json():
     encoded = tke_addon._raw({"b": 2, "a": 1})
     assert tke_addon._canonical_raw(encoded) == '{"a":1,"b":2}'

@@ -23,6 +23,13 @@ options:
   condition: {description: Alarm metric condition in Tencent Cloud API shape., type: raw}
   event_condition: {description: Event alarm condition in Tencent Cloud API shape., type: raw}
   notice_ids: {description: Alarm notification rule IDs., type: list, elements: str, default: []}
+  project_id: {description: Project ID assigned when creating the policy., type: int}
+  filter: {description: Alarm-policy dimension filter in Tencent Cloud API shape., type: raw}
+  group_by: {description: Dimension names used to aggregate alarm objects., type: list, elements: str}
+  trigger_tasks: {description: Alarm trigger tasks in Tencent Cloud API shape., type: list, elements: raw}
+  hierarchical_notices: {description: Hierarchical notification bindings in Tencent Cloud API shape., type: list, elements: raw}
+  notice_content_template_bindings: {description: Notification content-template bindings in Tencent Cloud API shape., type: list, elements: raw}
+  tags: {description: Alarm-policy tags applied at creation., type: dict}
   retries: {description: Number of retries for transient SDK failures., type: int, default: 5}
   waiter_delay: {description: Seconds between state-polling attempts., type: int, default: 5}
   waiter_timeout: {description: Overall timeout in seconds for state polling., type: int, default: 120}
@@ -89,6 +96,12 @@ def _model(models, cls_name, value):
     return obj
 
 
+def _model_list(models, cls_name, values):
+    if values is None:
+        return None
+    return [_model(models, cls_name, value) for value in values]
+
+
 def build_create_request(models, params):
     request = models.CreateAlarmPolicyRequest()
     request.Module, request.PolicyName = params["module"], params["name"]
@@ -101,6 +114,20 @@ def build_create_request(models, params):
     request.Condition = _model(models, "AlarmPolicyCondition", params["condition"])
     request.EventCondition = _model(models, "AlarmPolicyEventCondition", params["event_condition"])
     request.NoticeIds = params["notice_ids"]
+    request.ProjectId = params.get("project_id")
+    request.Filter = _model(models, "AlarmPolicyFilter", params.get("filter"))
+    request.GroupBy = params.get("group_by")
+    request.TriggerTasks = _model_list(models, "AlarmPolicyTriggerTask", params.get("trigger_tasks"))
+    request.HierarchicalNotices = _model_list(models, "AlarmHierarchicalNotice", params.get("hierarchical_notices"))
+    request.NoticeContentTmplBindInfos = _model_list(
+        models, "NoticeContentTmplBindInfo", params.get("notice_content_template_bindings")
+    )
+    if params.get("tags") is not None:
+        request.Tags = []
+        for key, value in sorted(params["tags"].items()):
+            tag = models.Tag()
+            tag.Key, tag.Value = str(key), str(value)
+            request.Tags.append(tag)
     return request
 
 
@@ -114,6 +141,29 @@ def build_condition_request(models, params, policy_id, current=None):
     request.Condition = _model(models, "AlarmPolicyCondition", condition)
     request.EventCondition = _model(models, "AlarmPolicyEventCondition", event_condition)
     request.NoticeIds = params["notice_ids"]
+    request.Filter = _model(
+        models, "AlarmPolicyFilter",
+        params.get("filter") if params.get("filter") is not None else current.get("Filter"),
+    )
+    request.GroupBy = params.get("group_by") if params.get("group_by") is not None else current.get("GroupBy")
+    return request
+
+
+def build_notice_request(models, params, policy_id):
+    request = models.ModifyAlarmPolicyNoticeRequest()
+    request.Module, request.PolicyId = params["module"], policy_id
+    request.NoticeIds = params["notice_ids"]
+    request.HierarchicalNotices = _model_list(models, "AlarmHierarchicalNotice", params.get("hierarchical_notices"))
+    request.NoticeContentTmplBindInfos = _model_list(
+        models, "NoticeContentTmplBindInfo", params.get("notice_content_template_bindings")
+    )
+    return request
+
+
+def build_tasks_request(models, params, policy_id):
+    request = models.ModifyAlarmPolicyTasksRequest()
+    request.Module, request.PolicyId = params["module"], policy_id
+    request.TriggerTasks = _model_list(models, "AlarmPolicyTriggerTask", params.get("trigger_tasks"))
     return request
 
 
@@ -139,6 +189,11 @@ def _policy_converged(current, desired):
         bool(current.get("Enable")) == bool(desired["Enable"]),
         desired.get("Condition") is None or _contains(current.get("Condition"), desired["Condition"]),
         desired.get("EventCondition") is None or _contains(current.get("EventCondition"), desired["EventCondition"]),
+        desired.get("Filter") is None or _contains(current.get("Filter"), desired["Filter"]),
+        desired.get("GroupBy") is None or current.get("GroupBy") == desired["GroupBy"],
+        desired.get("TriggerTasks") is None or _contains(current.get("TriggerTasks"), desired["TriggerTasks"]),
+        desired.get("HierarchicalNotices") is None or _contains(current.get("HierarchicalNotices"), desired["HierarchicalNotices"]),
+        desired.get("NoticeContentTmplBindInfos") is None or _contains(current.get("NoticeContentTmplBindInfos"), desired["NoticeContentTmplBindInfos"]),
         sorted(current.get("NoticeIds") or []) == sorted(desired.get("NoticeIds") or []),
     ))
 
@@ -174,6 +229,13 @@ def run_module():
             "condition": {"type": "raw"},
             "event_condition": {"type": "raw"},
             "notice_ids": {"type": "list", "elements": "str", "default": []},
+            "project_id": {"type": "int"},
+            "filter": {"type": "raw"},
+            "group_by": {"type": "list", "elements": "str"},
+            "trigger_tasks": {"type": "list", "elements": "raw"},
+            "hierarchical_notices": {"type": "list", "elements": "raw"},
+            "notice_content_template_bindings": {"type": "list", "elements": "raw"},
+            "tags": {"type": "dict"},
         },
         supports_check_mode=True,
     )
@@ -205,6 +267,10 @@ def run_module():
             "Enable": 1 if p["enabled"] else 0,
             "Condition": p["condition"], "EventCondition": p["event_condition"],
             "NoticeIds": p["notice_ids"],
+            "Filter": p["filter"], "GroupBy": p["group_by"],
+            "TriggerTasks": p["trigger_tasks"],
+            "HierarchicalNotices": p["hierarchical_notices"],
+            "NoticeContentTmplBindInfos": p["notice_content_template_bindings"],
         }
         if current is None:
             diff = maybe_diff(module, None, desired)
@@ -228,9 +294,27 @@ def run_module():
         condition_drift = any((
             p["condition"] is not None and not _contains(current.get("Condition"), p["condition"]),
             p["event_condition"] is not None and not _contains(current.get("EventCondition"), p["event_condition"]),
-            sorted(current.get("NoticeIds") or []) != sorted(p["notice_ids"]),
+            p["filter"] is not None and not _contains(current.get("Filter"), p["filter"]),
+            p["group_by"] is not None and current.get("GroupBy") != p["group_by"],
         ))
-        if not changes and not status_drift and not condition_drift:
+        notice_drift = any((
+            sorted(current.get("NoticeIds") or []) != sorted(p["notice_ids"]),
+            p["hierarchical_notices"] is not None and not _contains(current.get("HierarchicalNotices"), p["hierarchical_notices"]),
+            p["notice_content_template_bindings"] is not None and not _contains(
+                current.get("NoticeContentTmplBindInfos"), p["notice_content_template_bindings"]
+            ),
+        ))
+        tasks_drift = p["trigger_tasks"] is not None and not _contains(current.get("TriggerTasks"), p["trigger_tasks"])
+        immutable_drift = {}
+        if p["project_id"] is not None and int(current.get("ProjectId") or 0) != p["project_id"]:
+            immutable_drift["project_id"] = {"current": current.get("ProjectId"), "desired": p["project_id"]}
+        if p["tags"] is not None:
+            current_tags = {item.get("Key"): item.get("Value") for item in (current.get("Tags") or [])}
+            if current_tags != {str(k): str(v) for k, v in p["tags"].items()}:
+                immutable_drift["tags"] = {"current": current_tags, "desired": p["tags"]}
+        if immutable_drift:
+            module.fail_json(msg="Alarm policy has immutable attribute drift", immutable_drift=immutable_drift)
+        if not changes and not status_drift and not condition_drift and not notice_drift and not tasks_drift:
             module.exit_json(changed=False, policy=current, msg="Alarm policy is up to date")
         diff = maybe_diff(module, current, desired)
         if module.check_mode:
@@ -247,6 +331,16 @@ def run_module():
             module.sdk_call(
                 client.ModifyAlarmPolicyCondition,
                 build_condition_request(models, p, current["PolicyId"], current),
+            )
+        if notice_drift:
+            module.sdk_call(
+                client.ModifyAlarmPolicyNotice,
+                build_notice_request(models, p, current["PolicyId"]),
+            )
+        if tasks_drift:
+            module.sdk_call(
+                client.ModifyAlarmPolicyTasks,
+                build_tasks_request(models, p, current["PolicyId"]),
             )
         current = wait_for_policy(
             module, client, models, current["PolicyId"], None, p["module"], desired,

@@ -447,7 +447,10 @@ WRITE_MODULE_BUILDERS = {
         "build_cancel_deletion_request", "build_create_request",
         "build_list_key_request", "build_rotation_request", "describe_key",
     ],
-    "monitor_alarm_policy": ["build_condition_request", "build_create_request", "find_policy"],
+    "monitor_alarm_policy": [
+        "build_condition_request", "build_create_request", "build_notice_request",
+        "build_tasks_request", "find_policy",
+    ],
     "tke_addon": ["build_install_request", "build_update_request", "describe_addon"],
     "tke_cluster": [
         "_create", "_delete", "_set_deletion_protection", "_update",
@@ -2205,6 +2208,20 @@ def _audit_p1_resource_request_builders():
             "notice_ids": ["notice-1"],
         }, "policy-xxxxxxxx"),
         "monitor condition update request",
+    ))
+    monitor_params = {
+        "module": "monitor", "notice_ids": ["notice-1"],
+        "hierarchical_notices": [{"NoticeId": "notice-1", "Classification": ["warning"]}],
+        "notice_content_template_bindings": [{"NoticeID": "notice-1", "ContentTmplID": "tmpl-1"}],
+        "trigger_tasks": [{"Type": "AS", "TaskConfig": "{}"}],
+    }
+    errors.extend(audit_request(
+        monitor.build_notice_request(monitor_models, monitor_params, "policy-xxxxxxxx"),
+        "monitor notice update request",
+    ))
+    errors.extend(audit_request(
+        monitor.build_tasks_request(monitor_models, monitor_params, "policy-xxxxxxxx"),
+        "monitor tasks update request",
     ))
     _import_plugin("monitor_alarm_policy").find_policy(
         fake, client, _models("monitor.v20180724"), "policy-xxxxxxxx", None, "monitor"
