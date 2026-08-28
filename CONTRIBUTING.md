@@ -60,9 +60,11 @@ it. An SDK upgrade is therefore a deliberate, reviewed change:
 3. review the spec/module diff (new products, changed field names),
 4. commit the bump and the regeneration together.
 
-`tencentcloud-sdk-python-tag` is pinned in lockstep for reproducible
-contract runs; the `cos-python-sdk-v5` line (only used by the `cos_*`
-modules) is intentionally loose.
+`tencentcloud-sdk-python-tag` and the per-product subpackages whose models
+the committed specs reference (`-alb`, `-bdrc`, `-cloudrc`, `-cngw`,
+`-fwm`, `-portal`) are pinned in lockstep for reproducible builds; the
+`cos-python-sdk-v5` line (only used by the `cos_*` modules) is
+intentionally loose.
 
 ## Roles
 

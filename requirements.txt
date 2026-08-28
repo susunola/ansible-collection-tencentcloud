@@ -1,14 +1,23 @@
 # The _info module specs in scripts/info_specs_auto.py are regenerated
 # against a specific SDK release; scripts/check_sdk_drift.py compares CI's
 # installed tencentcloud-sdk-python to the GENERATED_SDK_VERSION stamp and
-# fails on drift. Both SDK packages are therefore pinned exactly so CI
-# installs the same versions the specs and contract tests were produced
-# against (the sentinel checks the main package; the tag package is pinned
-# in lockstep for reproducible builds).
-# After upgrading either constraint, run scripts/discover_info_specs.py and
+# fails on drift. SDK packages are therefore pinned exactly so CI installs
+# the same versions the specs and contract tests were produced against
+# (the sentinel checks the main package; the others are pinned in lockstep
+# for reproducible builds).
+# After upgrading any constraint, run scripts/discover_info_specs.py and
 # scripts/generate_info_modules.py and commit the regeneration together
 # with the bump.
 tencentcloud-sdk-python==3.1.113
 tencentcloud-sdk-python-tag==3.1.109
+# The committed specs reference models from these per-product subpackages
+# (the main package bundles most products but not these); the hidden
+# required-param audit and contract tests need them importable.
+tencentcloud-sdk-python-alb==3.1.155
+tencentcloud-sdk-python-bdrc==3.1.165
+tencentcloud-sdk-python-cloudrc==3.1.162
+tencentcloud-sdk-python-cngw==3.1.165
+tencentcloud-sdk-python-fwm==3.1.166
+tencentcloud-sdk-python-portal==3.1.162
 # Only needed for the cos_* modules (qcloud_cos SDK; COS is not API 3.0).
 cos-python-sdk-v5>=1.9.0
