@@ -91,11 +91,13 @@ jobs:
           python -m pip install -r requirements.txt pytest-cov
           PYTHONPATH="${{ github.workspace }}" python -m pytest tests/contract tests/unit/plugins/module_utils tests/unit/plugins/modules -q \
             --cov=plugins/module_utils --cov=plugins/modules \
-            --cov-report=term-missing --cov-report=xml:coverage.xml \
-            --cov-report=html:coverage-html --cov-fail-under=70
+            --cov-report=term-missing --cov-report=xml:${GITHUB_WORKSPACE}/coverage.xml \
+            --cov-report=html:${GITHUB_WORKSPACE}/coverage-html --cov-fail-under=70
       # Coverage is reported as an artifact so the numbers behind the
       # 70% gate are inspectable (XML for tooling, HTML for humans),
-      # even when the run fails the threshold.
+      # even when the run fails the threshold. upload-artifact resolves
+      # paths against GITHUB_WORKSPACE (not the job working-directory),
+      # so the reports are written there by the step above.
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4

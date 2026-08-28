@@ -68,7 +68,9 @@ jobs:
       # Coverage is collected (not gated) on real-cloud runs: the numbers
       # fluctuate with the account's resource state, so they are reported
       # as an artifact for inspection instead of failing the run. The XML
-      # report lands in tests/output/report/ via ansible-test coverage xml.
+      # report lands in tests/output/report/ via ansible-test coverage
+      # xml; upload-artifact resolves paths against GITHUB_WORKSPACE (not
+      # the job working-directory), so the full path is given here.
       - name: Generate integration coverage report
         if: always() && steps.creds.outputs.available == 'true'
         continue-on-error: true
@@ -80,7 +82,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: integration-coverage
-          path: tests/output/report/
+          path: ansible_collections/susunola/tencentcloud/tests/output/report/
           if-no-files-found: warn
       # Sweeper: runs even when the tests above failed or timed out, so a
       # broken run cannot leave billable resources behind. Uses the same
