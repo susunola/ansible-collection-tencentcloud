@@ -80,16 +80,31 @@ jobs:
       # Coverage: module_utils + modules are measured and the run fails
       # below the threshold (--cov-fail-under=70), so a PR that silently
       # regresses overall coverage is blocked instead of merged. The
-      # module_utils unit tests are collected here as well (they are pure
-      # Python and pass with or without the SDK), because the gate only
-      # counts what this step measures. COS modules are excluded from the
-      # scope by design via .coveragerc (COS is not an API 3.0 service).
+      # module_utils AND module unit tests are collected here as well
+      # (they are pure Python and pass with or without the SDK), because
+      # the gate only counts what this step measures: without them the
+      # module bodies would only be imported, never exercised. COS modules
+      # are excluded from the scope by design via .coveragerc (COS is not
+      # an API 3.0 service).
       - name: SDK contract tests
         run: |
           python -m pip install -r requirements.txt pytest-cov
-          PYTHONPATH="${{ github.workspace }}" python -m pytest tests/contract tests/unit/plugins/module_utils -q \
+          PYTHONPATH="${{ github.workspace }}" python -m pytest tests/contract tests/unit/plugins/module_utils tests/unit/plugins/modules -q \
             --cov=plugins/module_utils --cov=plugins/modules \
-            --cov-report=term-missing --cov-fail-under=70
+            --cov-report=term-missing --cov-report=xml:coverage.xml \
+            --cov-report=html:coverage-html --cov-fail-under=70
+      # Coverage is reported as an artifact so the numbers behind the
+      # 70% gate are inspectable (XML for tooling, HTML for humans),
+      # even when the run fails the threshold.
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            coverage.xml
+            coverage-html/
+          if-no-files-found: warn
       - name: Build collection
         run: ansible-galaxy collection build
 

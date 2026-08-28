@@ -3,13 +3,16 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
+import pytest
 from ansible_collections.susunola.tencentcloud.plugins.modules.cvm_chc import (
     _configure_vpc,
     _remove_assist,
     _remove_deploy,
     _rename,
+    _set_network_mode,
     build_describe_request,
     find_host,
+    run_module,
 )
 
 
@@ -37,6 +40,7 @@ class FakeModels(object):
     ModifyChcAttributeRequest = FakeRequest
     RemoveChcAssistVpcRequest = FakeRequest
     RemoveChcDeployVpcRequest = FakeRequest
+    ModifyChcNetworkModeRequest = FakeRequest
     VirtualPrivateCloud = FakeNetwork
 
 
@@ -48,6 +52,7 @@ class FakeHost(object):
         self.DeployVirtualPrivateCloud = deploy_vpc
         self.BmcSecurityGroupIds = None
         self.DeploySecurityGroupIds = None
+        self.NetworkMode = None
 
     def _serialize(self, allow_none=True):
         return {
@@ -57,6 +62,7 @@ class FakeHost(object):
             "DeployVirtualPrivateCloud": self.DeployVirtualPrivateCloud,
             "BmcSecurityGroupIds": self.BmcSecurityGroupIds,
             "DeploySecurityGroupIds": self.DeploySecurityGroupIds,
+            "NetworkMode": self.NetworkMode,
         }
 
 
@@ -101,13 +107,39 @@ class FakeClient(object):
             raise self.exc
         return self.response
 
+    def ModifyChcNetworkMode(self, request):
+        self.calls.append(request)
+        if self.exc:
+            raise self.exc
+        return self.response
+
 
 class FakeModule(object):
-    def __init__(self):
-        self.params = {"retries": 2}
+    def __init__(self, params=None, check_mode=False, supports_check_mode=None, argument_spec=None):
+        if params is None:
+            params = {}
+            for key, spec in (argument_spec or {}).items():
+                if "default" in spec:
+                    params[key] = spec["default"]
+        self.params = params
+        self.check_mode = check_mode
+        self.result = {}
 
     def sdk_call(self, operation, request):
         return operation(request)
+
+    def fail_json(self, **kwargs):
+        raise AssertionError("unexpected fail_json: %s" % (kwargs,))
+
+    def exit_json(self, **kwargs):
+        self.result = kwargs
+        raise SystemExit(0)
+
+    def require_sdk(self):
+        pass
+
+    def create_client(self, client_cls, endpoint):
+        return FakeClient(FakeResponse([]))
 
 
 def test_build_describe_request_by_id():
@@ -221,3 +253,63 @@ def test_remove_deploy_sends_chc_ids():
     module = FakeModule()
     _remove_deploy(module, client, FakeModels, "chc-1")
     assert client.calls[-1].ChcIds == ["chc-1"]
+
+
+def test_set_network_mode_sends_chc_ids_and_mode():
+    client = FakeClient(FakeResponse(None))
+    module = FakeModule()
+    _set_network_mode(module, client, FakeModels, "chc-1", "BUSINESS")
+    request = client.calls[-1]
+    assert request.ChcIds == ["chc-1"]
+    assert request.NetworkMode == "BUSINESS"
+
+
+class _FakeCvmClientModule(object):
+    CvmClient = object
+
+
+def _run_with_host(monkeypatch, params, host, check_mode=False):
+    """Drive run_module with the given host as the described CHC server."""
+    import ansible_collections.susunola.tencentcloud.plugins.modules.cvm_chc as mod
+
+    params.setdefault("state", "present")
+    params.setdefault("chc_id", "chc-1")
+    params.setdefault("name", None)
+    params.setdefault("bmc_vpc_id", None)
+    params.setdefault("bmc_subnet_id", None)
+    params.setdefault("bmc_security_group_ids", None)
+    params.setdefault("deploy_vpc_id", None)
+    params.setdefault("deploy_subnet_id", None)
+    params.setdefault("deploy_security_group_ids", None)
+    params.setdefault("network_mode", None)
+    client = FakeClient(FakeResponse([host]))
+    module = FakeModule(params=params, check_mode=check_mode)
+    monkeypatch.setattr(mod, "TencentCloudModule", lambda argument_spec=None, supports_check_mode=None: module)
+    monkeypatch.setattr(mod, "_load_cvm", lambda: (FakeModels, _FakeCvmClientModule))
+    monkeypatch.setattr(module, "create_client", lambda cls, ep: client)
+    with pytest.raises(SystemExit):
+        run_module()
+    return client
+
+
+def test_run_module_switches_network_mode_when_drifted(monkeypatch):
+    host = FakeHost("chc-1", "chc-prod-01")
+    host.NetworkMode = "DEPLOY"
+    client = _run_with_host(monkeypatch, {"network_mode": "BUSINESS"}, host)
+    mode_calls = [c for c in client.calls if hasattr(c, "NetworkMode")]
+    assert len(mode_calls) == 1
+    assert mode_calls[0].NetworkMode == "BUSINESS"
+
+
+def test_run_module_keeps_network_mode_when_matching(monkeypatch):
+    host = FakeHost("chc-1", "chc-prod-01")
+    host.NetworkMode = "BUSINESS"
+    client = _run_with_host(monkeypatch, {"network_mode": "BUSINESS"}, host)
+    assert not any(hasattr(c, "NetworkMode") for c in client.calls)
+
+
+def test_run_module_check_mode_network_mode(monkeypatch):
+    host = FakeHost("chc-1", "chc-prod-01")
+    host.NetworkMode = "DEPLOY"
+    client = _run_with_host(monkeypatch, {"network_mode": "BUSINESS"}, host, check_mode=True)
+    assert not any(hasattr(c, "NetworkMode") for c in client.calls)

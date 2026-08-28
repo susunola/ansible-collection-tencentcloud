@@ -64,7 +64,24 @@ jobs:
           TENCENTCLOUD_REGION: ap-guangzhou
         run: >-
           ansible-test integration ${{ inputs.targets || 'security_group network cfs_file_system clb_http cam_user cos_bucket key_pair' }}
-          --color --python 3.12
+          --color --python 3.12 --coverage
+      # Coverage is collected (not gated) on real-cloud runs: the numbers
+      # fluctuate with the account's resource state, so they are reported
+      # as an artifact for inspection instead of failing the run. The XML
+      # report lands in tests/output/report/ via ansible-test coverage xml.
+      - name: Generate integration coverage report
+        if: always() && steps.creds.outputs.available == 'true'
+        continue-on-error: true
+        run: |
+          ansible-test coverage xml --python 3.12
+          ansible-test coverage report --python 3.12
+      - name: Upload integration coverage report
+        if: always() && steps.creds.outputs.available == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-coverage
+          path: tests/output/report/
+          if-no-files-found: warn
       # Sweeper: runs even when the tests above failed or timed out, so a
       # broken run cannot leave billable resources behind. Uses the same
       # credential set and the collection installed above.

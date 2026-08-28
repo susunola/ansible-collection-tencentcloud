@@ -113,15 +113,26 @@
     (create/rename/isolate), `gaap_proxy` (create/open/close/destroy),
     `cdn_domain` (add/start/stop/delete) and `tcr_instance`
     (create/update/delete with idempotent deletion protection).
-36. Coverage reporting for unit and integration tests.
+36. Coverage reporting for unit and integration tests. **Done**: the CI
+    SDK contract tests step now collects the module unit tests too (the
+    gate only counts what that step measures), and uploads XML + HTML
+    coverage reports as artifacts; integration runs collect coverage via
+    ``ansible-test --coverage`` and upload it as a report (not a gate,
+    since real-cloud coverage fluctuates with account state).
 37. Curate auto-generated modules that hide required request parameters
     (e.g. `teo` ZoneId, `mqtt`/`emr` InstanceId, `lcic` SdkAppId): move them
     into curated SPECS with `extra_params` or drop them.
 38. Deepen existing write modules: async long-running task polling beyond
     CLB, multi-zone spread for `exact_count`, waiter coverage for database
     instance lifecycles.
-39. CVM CHC server lifecycle: rescue mode (`EnterRescueMode`/`ExitRescueMode`)
-    and network mode switching (`ModifyChcNetworkMode`) on top of `cvm_chc`.
+39. CVM CHC server lifecycle: rescue mode and network mode switching on
+    top of `cvm_chc`. **Done** — the network mode half
+    (`ModifyChcNetworkMode`, DEPLOY/BUSINESS) shipped as the
+    ``network_mode`` option. The rescue-mode half is NOT API-addressable:
+    `EnterRescueMode`/`ExitRescueMode` take an instance `InstanceId` (plain
+    CVM, not CHC), and the CHC-specific minios command
+    (`ExecuteChcMiniOsCommand`) is absent from the public SDK, so there is
+    no supported API surface for it.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

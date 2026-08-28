@@ -1,0 +1,14 @@
+minor_changes:
+  - cvm_chc - add ``network_mode`` option (DEPLOY/BUSINESS) to switch the
+    CHC server business NIC network mode via ModifyChcNetworkMode, applied
+    idempotently when it drifts from the DescribeChcHosts state.
+  - CI - the SDK contract tests step now also collects the module unit
+    tests and uploads XML and HTML coverage reports as an artifact, so the
+    numbers behind the 70% gate are inspectable even on failed runs.
+  - CI - integration runs collect coverage with ``ansible-test
+    --coverage`` and upload the report as an artifact (reported, not
+    gated, because real-cloud coverage fluctuates with account state).
+  - requirements.txt - pin the write-module SDK subpackages
+    (cvm/mongodb/gaap/cdn/tcr) so their contract tests run in CI instead
+    of silently skipping; cvm is pinned to 3.1.158 for the
+    ChcHost.NetworkMode field the ``cvm_chc`` drift check reads.

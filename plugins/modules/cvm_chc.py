@@ -30,7 +30,8 @@ options:
         O(bmc_subnet_id), O(deploy_vpc_id) and O(deploy_subnet_id) when
         they are given, updating it with V(ConfigureChcAssistVpc) when it
         drifts. The instance name is enforced with V(ModifyChcAttribute)
-        when O(name) differs.
+        when O(name) differs, and the network mode is enforced with
+        V(ModifyChcNetworkMode) when O(network_mode) differs.
       - C(absent) removes the BMC and deployment VPC configuration with
         V(RemoveChcAssistVpc) and V(RemoveChcDeployVpc). The physical
         server itself is not destroyed.
@@ -87,6 +88,16 @@ options:
       - Only applied when it drifts from the current configuration.
     type: list
     elements: str
+  network_mode:
+    description:
+      - Network mode of the CHC server's business NIC, written to
+        V(ModifyChcNetworkModeRequest.NetworkMode).
+      - C(DEPLOY) puts the server in deployment network mode, C(BUSINESS)
+        in business network mode.
+      - Only applied when it drifts from the current configuration as
+        reported by V(DescribeChcHosts).
+    type: str
+    choices: [DEPLOY, BUSINESS]
   retries:
     description: Number of retries for transient SDK failures.
     type: int
@@ -134,6 +145,13 @@ EXAMPLES = r'''
     state: present
     chc_id: chc-xxxxxxxx
     name: chc-prod-01
+
+- name: Switch to business network mode
+  susunola.tencentcloud.cvm_chc:
+    region: ap-guangzhou
+    state: present
+    chc_id: chc-xxxxxxxx
+    network_mode: BUSINESS
 
 - name: Remove the network configuration (lease untouched)
   susunola.tencentcloud.cvm_chc:
@@ -269,6 +287,13 @@ def _remove_deploy(module, client, models, chc_id):
     module.sdk_call(client.RemoveChcDeployVpc, request)
 
 
+def _set_network_mode(module, client, models, chc_id, network_mode):
+    request = models.ModifyChcNetworkModeRequest()
+    request.ChcIds = [chc_id]
+    request.NetworkMode = network_mode
+    module.sdk_call(client.ModifyChcNetworkMode, request)
+
+
 def run_module():
     module = TencentCloudModule(
         argument_spec={
@@ -281,6 +306,7 @@ def run_module():
             "deploy_vpc_id": {"type": "str"},
             "deploy_subnet_id": {"type": "str"},
             "deploy_security_group_ids": {"type": "list", "elements": "str"},
+            "network_mode": {"type": "str", "choices": ["DEPLOY", "BUSINESS"]},
         },
         supports_check_mode=True,
     )
@@ -371,6 +397,15 @@ def run_module():
         _rename(module, client, models, target_id, name)
         updated = find_host(module, client, models, target_id, None)
         module.exit_json(changed=True, **(diff or {}), chc_host=updated, msg="CHC server renamed")
+
+    network_mode = module.params.get("network_mode")
+    if network_mode and current.get("NetworkMode") != network_mode:
+        diff = maybe_diff(module, current, {"NetworkMode": network_mode})
+        if module.check_mode:
+            module.exit_json(changed=True, **(diff or {}), msg="Would switch CHC network mode")
+        _set_network_mode(module, client, models, target_id, network_mode)
+        updated = find_host(module, client, models, target_id, None)
+        module.exit_json(changed=True, **(diff or {}), chc_host=updated, msg="CHC network mode switched")
 
     module.exit_json(changed=False, chc_host=current, msg="CHC server is up to date")
 

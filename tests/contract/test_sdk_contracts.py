@@ -324,7 +324,7 @@ WRITE_MODULE_BUILDERS = {
     ],
     "cvm_chc": [
         "_configure_vpc", "_remove_assist", "_remove_deploy", "_rename",
-        "build_describe_request",
+        "_set_network_mode", "build_describe_request",
     ],
     "cvm_image": [
         "_create", "_delete", "_update", "build_describe_request",
@@ -1805,6 +1805,7 @@ def test_cvm_chc():
     module._rename(fake, client, models, "chc-xxxxxxxx", "chc-prod-01")
     module._remove_assist(fake, client, models, "chc-xxxxxxxx")
     module._remove_deploy(fake, client, models, "chc-xxxxxxxx")
+    module._set_network_mode(fake, client, models, "chc-xxxxxxxx", "BUSINESS")
     errors.extend(audit_recorded(fake, "cvm_chc"))
     assert errors == []
 
