@@ -97,6 +97,50 @@ def test_kms_create_request(models):
     assert request.Type == 1
 
 
+def test_kms_alias_lookup_uses_exact_match_and_paginates(models):
+    calls = []
+
+    class Metadata(SimpleNamespace):
+        def to_json_string(self):
+            return '{"Alias":"%s","KeyId":"%s"}' % (self.Alias, self.KeyId)
+
+    def list_keys(request):
+        calls.append(request.Offset)
+        items = (
+            [Metadata(Alias="production-copy", KeyId="key-copy")]
+            if request.Offset == 0
+            else [Metadata(Alias="production", KeyId="key-exact")]
+        )
+        return SimpleNamespace(KeyMetadatas=items, TotalCount=2)
+
+    module = SimpleNamespace(
+        sdk_call=lambda method, request: method(request),
+        fail_json=lambda **kwargs: pytest.fail(kwargs["msg"]),
+    )
+    client = SimpleNamespace(ListKeyDetail=list_keys)
+    result = kms_key.find_key_by_alias(module, client, models, "production")
+    assert result["KeyId"] == "key-exact"
+    assert calls == [0, 1]
+
+
+@pytest.mark.parametrize("enabled,request_name,rotate_days", [
+    (None, "GetKeyRotationStatusRequest", None),
+    (True, "EnableKeyRotationRequest", 90),
+    (False, "DisableKeyRotationRequest", None),
+])
+def test_kms_rotation_requests(models, enabled, request_name, rotate_days):
+    request = kms_key.build_rotation_request(models, "key-x", enabled, rotate_days)
+    assert type(request).__name__ == request_name
+    assert request.KeyId == "key-x"
+    if enabled:
+        assert request.RotateDays == 90
+
+
+def test_kms_cancel_deletion_request(models):
+    request = kms_key.build_cancel_deletion_request(models, "key-x")
+    assert request.KeyId == "key-x"
+
+
 def test_monitor_create_request_maps_conditions(models):
     request = monitor_alarm_policy.build_create_request(models, {
         "module": "monitor", "name": "cpu-high", "monitor_type": "MT_QCE",

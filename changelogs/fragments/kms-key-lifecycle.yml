@@ -1,0 +1,5 @@
+minor_changes:
+  - >-
+    Extend ``kms_key`` with exact alias-based discovery, cancellation of
+    scheduled deletion when restoring a key, and optional automatic rotation
+    management with a configurable 7-365 day period.

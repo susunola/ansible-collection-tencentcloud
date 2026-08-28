@@ -443,7 +443,10 @@ WRITE_MODULE_BUILDERS = {
     ],
     "tcr_repository": ["build_create_request", "find_repository"],
     "cam_policy_attachment": ["build_list_request", "build_mutation_request"],
-    "kms_key": ["build_create_request", "describe_key"],
+    "kms_key": [
+        "build_cancel_deletion_request", "build_create_request",
+        "build_list_key_request", "build_rotation_request", "describe_key",
+    ],
     "monitor_alarm_policy": ["build_create_request", "find_policy"],
     "tke_addon": ["build_install_request", "describe_addon"],
     "tke_cluster": [
@@ -2174,6 +2177,16 @@ def _audit_p1_resource_request_builders():
     _import_plugin("kms_key").describe_key(
         fake, client, _models("kms.v20190118"), "key-xxxxxxxx"
     )
+    kms = _import_plugin("kms_key")
+    kms_models = _models("kms.v20190118")
+    for request in (
+        kms.build_list_key_request(kms_models, "production"),
+        kms.build_rotation_request(kms_models, "key-xxxxxxxx", None, None),
+        kms.build_rotation_request(kms_models, "key-xxxxxxxx", True, 90),
+        kms.build_rotation_request(kms_models, "key-xxxxxxxx", False, None),
+        kms.build_cancel_deletion_request(kms_models, "key-xxxxxxxx"),
+    ):
+        errors.extend(audit_request(request, "kms lifecycle request"))
     _import_plugin("monitor_alarm_policy").find_policy(
         fake, client, _models("monitor.v20180724"), "policy-xxxxxxxx", None, "monitor"
     )
