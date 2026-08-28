@@ -1,0 +1,71 @@
+---
+- name: KMS key end-to-end
+  vars:
+    alias: "ansible-kms-it-{{ 99999999 | random }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  block:
+    - name: Create key with rotation
+      susunola.tencentcloud.kms_key:
+        alias: "{{ alias }}"
+        description: CI integration test
+        rotation_enabled: true
+        rotation_days: 90
+      register: created
+
+    - name: Verify creation
+      ansible.builtin.assert:
+        that:
+          - created is changed
+          - created.key.KeyId is defined
+
+    - name: Reconcile key again
+      susunola.tencentcloud.kms_key:
+        alias: "{{ alias }}"
+        description: CI integration test
+        rotation_enabled: true
+        rotation_days: 90
+      register: second
+
+    - name: Verify idempotency
+      ansible.builtin.assert:
+        that: second is not changed
+
+    - name: Check update without writing
+      susunola.tencentcloud.kms_key:
+        key_id: "{{ created.key.KeyId }}"
+        alias: "{{ alias }}"
+        description: CI integration test updated
+        enabled: false
+        rotation_enabled: false
+      check_mode: true
+      register: checked
+
+    - name: Verify check mode
+      ansible.builtin.assert:
+        that: checked is changed
+
+    - name: Apply update
+      susunola.tencentcloud.kms_key:
+        key_id: "{{ created.key.KeyId }}"
+        alias: "{{ alias }}"
+        description: CI integration test updated
+        enabled: false
+        rotation_enabled: false
+      register: updated
+
+    - name: Verify update
+      ansible.builtin.assert:
+        that:
+          - updated is changed
+          - updated.key.Description == 'CI integration test updated'
+
+  always:
+    - name: Schedule test key deletion
+      susunola.tencentcloud.kms_key:
+        state: absent
+        key_id: "{{ created.key.KeyId }}"
+        deletion_window_days: 7
+      when: created is defined and created.key is defined and created.key.KeyId is defined
+      ignore_errors: true

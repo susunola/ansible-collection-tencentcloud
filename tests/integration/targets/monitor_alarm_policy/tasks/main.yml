@@ -1,0 +1,63 @@
+---
+- name: Monitor alarm policy end-to-end
+  vars:
+    policy_name: "ansible-monitor-it-{{ 99999999 | random }}"
+    namespace: "{{ lookup('env', 'TENCENTCLOUD_MONITOR_NAMESPACE') | default('QCE/CVM', true) }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  block:
+    - name: Create policy
+      susunola.tencentcloud.monitor_alarm_policy:
+        name: "{{ policy_name }}"
+        namespace: "{{ namespace }}"
+        remark: CI integration test
+        enabled: false
+        condition:
+          IsUnionRule: 0
+          Rules: []
+      register: created
+
+    - name: Reconcile policy again
+      susunola.tencentcloud.monitor_alarm_policy:
+        policy_id: "{{ created.policy.PolicyId }}"
+        name: "{{ policy_name }}"
+        namespace: "{{ namespace }}"
+        remark: CI integration test
+        enabled: false
+        condition:
+          IsUnionRule: 0
+          Rules: []
+      register: second
+
+    - name: Verify idempotency
+      ansible.builtin.assert:
+        that:
+          - created is changed
+          - second is not changed
+
+    - name: Update policy remark
+      susunola.tencentcloud.monitor_alarm_policy:
+        policy_id: "{{ created.policy.PolicyId }}"
+        name: "{{ policy_name }}"
+        namespace: "{{ namespace }}"
+        remark: CI integration test updated
+        enabled: false
+        condition:
+          IsUnionRule: 0
+          Rules: []
+      register: updated
+
+    - name: Verify update
+      ansible.builtin.assert:
+        that:
+          - updated is changed
+          - updated.policy.Remark == 'CI integration test updated'
+
+  always:
+    - name: Delete integration policy
+      susunola.tencentcloud.monitor_alarm_policy:
+        state: absent
+        policy_id: "{{ created.policy.PolicyId }}"
+      when: created is defined and created.policy is defined and created.policy.PolicyId is defined
+      ignore_errors: true
