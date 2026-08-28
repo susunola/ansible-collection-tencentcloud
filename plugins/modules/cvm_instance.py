@@ -28,8 +28,13 @@ options:
         for the V(RUNNING) state. The instance must already exist.
       - C(stopped) stops a running instance with V(StopInstances) and waits
         for the V(STOPPED) state. The instance must already exist.
+      - C(rebooted) reboots a running instance with V(RebootInstances) and
+        waits for it to come back to the V(RUNNING) state. The instance must
+        already exist and be running; rebooting a stopped instance fails.
+        Reboot is a one-shot action - every run with C(state=rebooted) issues
+        a reboot, so the module always reports C(changed=true).
     type: str
-    choices: [present, absent, running, stopped]
+    choices: [present, absent, running, stopped, rebooted]
     default: present
   instance_id:
     description:
@@ -56,8 +61,12 @@ options:
       - Instance model, e.g. C(S5.MEDIUM2). See V(DescribeInstanceTypeConfigs)
         for the available values.
       - Required when the instance does not exist yet.
-      - Only applied at creation; changing it on an existing instance fails
-        with a message asking to recreate the instance.
+      - On an existing instance a different value is applied with
+        V(ResetInstancesType) (instance resizing). The instance must be
+        stopped first - change O(instance_type) together with C(state=stopped),
+        or stop it beforehand, otherwise the module fails with guidance.
+        Resizing keeps the instance stopped; start it afterwards with
+        C(state=running).
     type: str
   vpc_id:
     description:
@@ -88,6 +97,16 @@ options:
       - Mutually exclusive with O(key_ids) on the API side; Windows instances
         do not support key pairs.
     type: str
+  reset_password:
+    description:
+      - When C(true), resets the login password of an existing instance with
+        V(ResetInstancesPassword) using the value of O(password).
+      - Only applies with C(state=present); requires O(password). The module
+        cannot read the current password, so every run with
+        C(reset_password=true) resets it and reports C(changed=true). Use it
+        as an explicit one-shot action, not as a reconciliation flag.
+    type: bool
+    default: false
   key_ids:
     description:
       - Key pair IDs associated with the instance at creation through
@@ -182,15 +201,19 @@ notes:
   - Requires the C(tencentcloud-sdk-python-cvm) package on the controller.
   - Tag reconciliation additionally requires C(tencentcloud-sdk-python-tag).
   - Uses the C(cvm.tencentcloudapi.com) endpoint by default.
-  - After any create or update the module waits for the instance to reach
+  - After a create or a start the module waits for the instance to reach
     V(RUNNING) before returning; make sure the instance is able to run, a
     stopped instance would keep the waiter waiting until O(waiter_timeout).
-  - Image, instance type, VPC and subnet changes require recreating the
+    Updates on an existing instance never change the power state, so a
+    stopped instance stays stopped and no wait is performed.
+  - Image, VPC and subnet changes require recreating the
     instance; the module fails with a clear message when they drift on an
     existing instance instead of silently ignoring them.
-  - Updates on an existing instance are limited to the name, the security
-    group bindings and tags via V(ModifyInstancesAttribute) and the tag
-    service.
+  - Updates on an existing instance cover the name, security group bindings
+    and tags via V(ModifyInstancesAttribute) and the tag service, the
+    instance model via V(ResetInstancesType) (instance must be stopped) and
+    the login password via V(ResetInstancesPassword) when O(reset_password)
+    is set.
   - When O(exact_count) creates several instances at once the platform appends
     a numeric suffix to O(instance_name), so the created instances are named
     I(web-01), I(web-02) and so on.
@@ -242,6 +265,33 @@ EXAMPLES = r'''
     region: ap-guangzhou
     state: running
     instance_name: web-01
+
+- name: Reboot a running instance (one-shot action, always changed)
+  susunola.tencentcloud.cvm_instance:
+    region: ap-guangzhou
+    state: rebooted
+    instance_name: web-01
+
+- name: Stop the instance before resizing it
+  susunola.tencentcloud.cvm_instance:
+    region: ap-guangzhou
+    state: stopped
+    instance_name: web-01
+
+- name: Resize the stopped instance to a larger model
+  susunola.tencentcloud.cvm_instance:
+    region: ap-guangzhou
+    state: present
+    instance_name: web-01
+    instance_type: S5.LARGE4
+
+- name: Reset the login password of an existing instance
+  susunola.tencentcloud.cvm_instance:
+    region: ap-guangzhou
+    state: present
+    instance_name: web-01
+    reset_password: true
+    password: "N3w-Sup3r-Secret!"
 
 - name: Terminate an instance
   susunola.tencentcloud.cvm_instance:
@@ -433,13 +483,16 @@ def find_instances_by_tags(module, client, models, count_tag):
     return instances
 
 
-def immutable_drift(current, image_id=None, instance_type=None, vpc_id=None, subnet_id=None):
-    """Return the creation-only fields that drifted on an existing instance."""
+def immutable_drift(current, image_id=None, vpc_id=None, subnet_id=None):
+    """Return the creation-only fields that drifted on an existing instance.
+
+    The instance model is deliberately not listed here: a different
+    O(instance_type) on an existing (stopped) instance is applied with
+    V(ResetInstancesType) instead of failing.
+    """
     drifted = []
     if image_id and current.get("ImageId") != image_id:
         drifted.append("image_id")
-    if instance_type and current.get("InstanceType") != instance_type:
-        drifted.append("instance_type")
     vpc = current.get("VirtualPrivateCloud") or {}
     if vpc_id and vpc.get("VpcId") != vpc_id:
         drifted.append("vpc_id")
@@ -470,6 +523,26 @@ def _stop(module, client, models, instance_id):
     request = models.StopInstancesRequest()
     request.InstanceIds = [instance_id]
     module.sdk_call(client.StopInstances, request)
+
+
+def _reboot(module, client, models, instance_id):
+    request = models.RebootInstancesRequest()
+    request.InstanceIds = [instance_id]
+    module.sdk_call(client.RebootInstances, request)
+
+
+def _reset_password(module, client, models, instance_id, password):
+    request = models.ResetInstancesPasswordRequest()
+    request.InstanceIds = [instance_id]
+    request.Password = password
+    module.sdk_call(client.ResetInstancesPassword, request)
+
+
+def _reset_type(module, client, models, instance_id, instance_type):
+    request = models.ResetInstancesTypeRequest()
+    request.InstanceIds = [instance_id]
+    request.InstanceType = instance_type
+    module.sdk_call(client.ResetInstancesType, request)
 
 
 def _update_attributes(module, client, models, instance_id, instance_name, security_group_ids):
@@ -630,7 +703,7 @@ def _manage_exact_count(module, client, models, params):
 def run_module():
     module = TencentCloudModule(
         argument_spec={
-            "state": {"type": "str", "choices": ["present", "absent", "running", "stopped"], "default": "present"},
+            "state": {"type": "str", "choices": ["present", "absent", "running", "stopped", "rebooted"], "default": "present"},
             "instance_id": {"type": "str"},
             "instance_name": {"type": "str"},
             "image_id": {"type": "str"},
@@ -640,6 +713,7 @@ def run_module():
             "security_group_ids": {"type": "list", "elements": "str"},
             "hostname": {"type": "str"},
             "password": {"type": "str", "no_log": True},
+            "reset_password": {"type": "bool", "default": False},
             "key_ids": {"type": "list", "elements": "str", "no_log": False},
             "internet_charge_type": {
                 "type": "str",
@@ -673,6 +747,7 @@ def run_module():
     tags = module.params["tags"]
     exact_count = module.params["exact_count"]
     count_tag = module.params["count_tag"]
+    reset_password = module.params["reset_password"]
 
     if exact_count is not None:
         if instance_id:
@@ -685,10 +760,18 @@ def run_module():
             module.fail_json(msg="exact_count must be greater than or equal to 0")
         if module.params["dry_run"]:
             module.fail_json(msg="dry_run cannot be combined with exact_count")
+        if reset_password:
+            module.fail_json(msg="reset_password cannot be combined with exact_count")
     if count_tag and exact_count is None:
         module.fail_json(msg="count_tag requires exact_count")
 
-    if state in ("absent", "running", "stopped") and not instance_id and not instance_name:
+    if reset_password:
+        if not module.params["password"]:
+            module.fail_json(msg="password is required when reset_password=true")
+        if state != "present":
+            module.fail_json(msg="reset_password only applies to state=present")
+
+    if state in ("absent", "running", "stopped", "rebooted") and not instance_id and not instance_name:
         module.fail_json(msg="instance_id or instance_name is required when state=%s" % state)
 
     models, cvm_client = _load_cvm()
@@ -762,6 +845,33 @@ def run_module():
         updated = find_instance(module, client, models, target_id, None)
         module.exit_json(changed=True, **(diff or {}), instance=updated, msg="Instance stopped")
 
+    if state == "rebooted":
+        if current is None:
+            module.fail_json(
+                msg="Instance not found; use state=present to create it",
+                instance_id=instance_id,
+                instance_name=instance_name,
+            )
+        target_id = current["InstanceId"]
+        current_state = current.get("InstanceState")
+        if current_state == "STOPPED":
+            module.fail_json(
+                msg="Cannot reboot a stopped instance; start it first with state=running",
+                instance=current,
+            )
+        if current_state != "RUNNING":
+            module.fail_json(
+                msg="Instance is in transitional state %s; retry once it settles" % current_state,
+                instance=current,
+            )
+        diff = maybe_diff(module, {"InstanceState": "RUNNING"}, {"InstanceState": "RUNNING", "Rebooted": True})
+        if module.check_mode:
+            module.exit_json(changed=True, **(diff or {}), msg="Would reboot instance")
+        _reboot(module, client, models, target_id)
+        _wait_state(module, client, models, target_id, ["RUNNING"])
+        updated = find_instance(module, client, models, target_id, None)
+        module.exit_json(changed=True, **(diff or {}), instance=updated, msg="Instance rebooted")
+
     # state == present
     desired = _desired_state(module.params)
     if current is None:
@@ -787,7 +897,6 @@ def run_module():
     drifted = immutable_drift(
         current,
         image_id=module.params["image_id"],
-        instance_type=module.params["instance_type"],
         vpc_id=module.params["vpc_id"],
         subnet_id=module.params["subnet_id"],
     )
@@ -809,6 +918,19 @@ def run_module():
     tags_equal, to_add, to_remove = compare_tags(tags, current.get("Tags") or [])
     if not tags_equal:
         changes.append("tags")
+    new_type = module.params["instance_type"]
+    if new_type and current.get("InstanceType") != new_type:
+        if current.get("InstanceState") != "STOPPED":
+            module.fail_json(
+                msg=(
+                    "Resizing an instance requires it to be stopped; run with "
+                    "state=stopped first (current state is %s)" % current.get("InstanceState")
+                ),
+                instance=current,
+            )
+        changes.append("instance_type")
+    if reset_password:
+        changes.append("reset_password")
 
     if not changes:
         module.exit_json(changed=False, instance=current, msg="Instance is up to date")
@@ -829,6 +951,22 @@ def run_module():
             tag_client.TagClient, "tag.tencentcloudapi.com"
         )
         _apply_tags(module, tag_client_instance, tag_models, target_id, to_add, to_remove)
+    if "instance_type" in changes:
+        _reset_type(module, client, models, target_id, new_type)
+    if "reset_password" in changes:
+        _reset_password(module, client, models, target_id, module.params["password"])
+
+    # Updates do not change the power state: an instance that entered this
+    # flow stopped stays stopped, and ResetInstancesType leaves the instance
+    # stopped. Only wait for RUNNING when the instance was already running.
+    if current.get("InstanceState") == "STOPPED":
+        updated = find_instance(module, client, models, target_id, None)
+        module.exit_json(
+            changed=True,
+            **(diff or {}),
+            instance=updated,
+            msg="Instance resized" if "instance_type" in changes else "Instance updated",
+        )
 
     _wait_state(module, client, models, target_id, ["RUNNING"])
     updated = find_instance(module, client, models, target_id, None)

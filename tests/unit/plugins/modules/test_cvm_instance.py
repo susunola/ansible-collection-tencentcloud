@@ -4,6 +4,9 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 from ansible_collections.susunola.tencentcloud.plugins.modules.cvm_instance import (
     _InstanceGone,
+    _reboot,
+    _reset_password,
+    _reset_type,
     build_describe_request,
     build_run_request,
     find_instance,
@@ -37,6 +40,9 @@ class FakeModels(object):
     LoginSettings = FakeRequest
     DescribeInstancesRequest = FakeRequest
     RunInstancesRequest = FakeRequest
+    RebootInstancesRequest = FakeRequest
+    ResetInstancesPasswordRequest = FakeRequest
+    ResetInstancesTypeRequest = FakeRequest
 
 
 class FakeInstance(object):
@@ -69,6 +75,15 @@ class FakeClient(object):
         if self.exc:
             raise self.exc
         return self.response
+
+    def RebootInstances(self, request):
+        self.calls.append(request)
+
+    def ResetInstancesPassword(self, request):
+        self.calls.append(request)
+
+    def ResetInstancesType(self, request):
+        self.calls.append(request)
 
 
 class FakeModule(object):
@@ -206,8 +221,7 @@ def test_immutable_drift_none():
         "InstanceType": "S5.MEDIUM2",
         "VirtualPrivateCloud": {"VpcId": "vpc-1", "SubnetId": "subnet-1"},
     }
-    assert immutable_drift(current, image_id="img-1", instance_type="S5.MEDIUM2",
-                           vpc_id="vpc-1", subnet_id="subnet-1") == []
+    assert immutable_drift(current, image_id="img-1", vpc_id="vpc-1", subnet_id="subnet-1") == []
 
 
 def test_immutable_drift_detects_changes():
@@ -217,9 +231,41 @@ def test_immutable_drift_detects_changes():
         "VirtualPrivateCloud": {"VpcId": "vpc-1", "SubnetId": "subnet-1"},
     }
     assert immutable_drift(current, image_id="img-2") == ["image_id"]
-    assert immutable_drift(current, instance_type="S5.LARGE4") == ["instance_type"]
     assert immutable_drift(current, vpc_id="vpc-2") == ["vpc_id"]
     assert immutable_drift(current, subnet_id="subnet-2") == ["subnet_id"]
+
+
+def test_immutable_drift_ignores_instance_type():
+    # The instance model is resized through ResetInstancesType on a stopped
+    # instance, so it must never be reported as immutable.
+    current = {"ImageId": "img-1", "InstanceType": "S5.MEDIUM2"}
+    assert immutable_drift(current) == []
+
+
+def test_reboot_sends_instance_ids():
+    client = FakeClient()
+    module = FakeModule()
+    _reboot(module, client, FakeModels, "ins-123")
+    assert len(client.calls) == 1
+    assert client.calls[0].InstanceIds == ["ins-123"]
+
+
+def test_reset_password_sends_ids_and_password():
+    client = FakeClient()
+    module = FakeModule()
+    _reset_password(module, client, FakeModels, "ins-123", "Sup3rSecret!")
+    assert len(client.calls) == 1
+    assert client.calls[0].InstanceIds == ["ins-123"]
+    assert client.calls[0].Password == "Sup3rSecret!"
+
+
+def test_reset_type_sends_ids_and_new_model():
+    client = FakeClient()
+    module = FakeModule()
+    _reset_type(module, client, FakeModels, "ins-123", "S5.LARGE4")
+    assert len(client.calls) == 1
+    assert client.calls[0].InstanceIds == ["ins-123"]
+    assert client.calls[0].InstanceType == "S5.LARGE4"
 
 
 def test_immutable_drift_ignores_unset_params():

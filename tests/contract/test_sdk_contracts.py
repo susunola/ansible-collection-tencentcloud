@@ -334,7 +334,8 @@ WRITE_MODULE_BUILDERS = {
         "build_describe_request",
     ],
     "cvm_instance": [
-        "_apply_tags", "_delete", "_start", "_stop", "_update_attributes",
+        "_apply_tags", "_delete", "_reboot", "_reset_password", "_reset_type",
+        "_start", "_stop", "_update_attributes",
         "build_describe_request", "build_run_request",
     ],
     "eip": [
@@ -1021,6 +1022,9 @@ def test_cvm_instance():
     module._delete(fake, client, models, "ins-xxxxxxxx")
     module._start(fake, client, models, "ins-xxxxxxxx")
     module._stop(fake, client, models, "ins-xxxxxxxx")
+    module._reboot(fake, client, models, "ins-xxxxxxxx")
+    module._reset_password(fake, client, models, "ins-xxxxxxxx", "Sup3rSecret!")
+    module._reset_type(fake, client, models, "ins-xxxxxxxx", "S5.LARGE4")
     module._update_attributes(fake, client, models, "ins-xxxxxxxx", "web-01", ["sg-xxxxxxxx"])
     module._apply_tags(fake, client, tag_models, "ins-xxxxxxxx", {"env": "prod"}, ["legacy"])
     errors.extend(audit_recorded(fake, "cvm_instance"))

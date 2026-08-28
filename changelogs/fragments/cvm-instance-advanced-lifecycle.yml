@@ -1,0 +1,11 @@
+minor_changes:
+  - cvm_instance - add ``state=rebooted`` to reboot a running instance with
+    ``RebootInstances`` (one-shot action, always reports changed).
+  - cvm_instance - add ``reset_password`` to reset the login password of an
+    existing instance with ``ResetInstancesPassword``; requires ``password``
+    and only applies with ``state=present``.
+  - cvm_instance - a different ``instance_type`` on an existing stopped
+    instance is now applied with ``ResetInstancesType`` (instance resizing)
+    instead of failing; resizing keeps the instance stopped.
+  - cvm_instance - updates on a stopped instance no longer wait for the
+    ``RUNNING`` state; the power state is never changed by an update.
