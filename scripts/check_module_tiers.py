@@ -41,6 +41,7 @@ CORE_MODULES = {
     # Idempotent write modules with check mode and contract tests.
     "cam_policy",
     "cam_policy_attachment",
+    "cam_group_membership",
     "cam_role",
     "cam_user",
     "cbs_disk",

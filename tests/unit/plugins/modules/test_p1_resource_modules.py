@@ -9,6 +9,7 @@ from types import SimpleNamespace
 import pytest
 
 from ansible_collections.susunola.tencentcloud.plugins.modules import cam_policy_attachment
+from ansible_collections.susunola.tencentcloud.plugins.modules import cam_group_membership
 from ansible_collections.susunola.tencentcloud.plugins.modules import kms_key
 from ansible_collections.susunola.tencentcloud.plugins.modules import kms_key_rotation
 from ansible_collections.susunola.tencentcloud.plugins.modules import monitor_alarm_policy
@@ -87,6 +88,19 @@ def test_cam_attachment_detection_paginates():
     params = {"target_type": "user", "target_id": 1001, "target_name": None, "policy_id": 9}
     assert cam_policy_attachment.is_attached(module, client, Models(), params) is True
     assert calls == [1, 2]
+
+
+@pytest.mark.parametrize("present,request_name", [
+    (True, "AddUserToGroupRequest"),
+    (False, "RemoveUserFromGroupRequest"),
+])
+def test_cam_group_membership_requests(models, present, request_name):
+    request = cam_group_membership.build_mutation_request(models, {
+        "group_id": 7, "sub_uin": 1001, "uid": None,
+    }, present)
+    assert type(request).__name__ == request_name
+    assert request.Info[0].GroupId == 7
+    assert request.Info[0].Uin == 1001
 
 
 def test_kms_create_request(models):

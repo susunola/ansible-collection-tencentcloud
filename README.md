@@ -13,6 +13,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 
 | Module | Purpose |
 | --- | --- |
+| `cam_group_membership` | Manage Tencent Cloud CAM user group membership |
 | `cam_policy` | Manage Tencent Cloud CAM policies |
 | `cam_policy_attachment` | Manage a Tencent Cloud CAM policy attachment |
 | `cam_role` | Manage Tencent Cloud CAM roles |

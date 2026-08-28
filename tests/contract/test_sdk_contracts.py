@@ -443,6 +443,7 @@ WRITE_MODULE_BUILDERS = {
     ],
     "tcr_repository": ["build_create_request", "find_repository"],
     "cam_policy_attachment": ["build_list_request", "build_mutation_request"],
+    "cam_group_membership": ["build_list_request", "build_mutation_request"],
     "kms_key": [
         "build_cancel_deletion_request", "build_create_request",
         "build_list_key_request", "build_rotation_request", "describe_key",
@@ -2262,6 +2263,20 @@ def test_tcr_repository():
 
 def test_cam_policy_attachment():
     _audit_p1_resource_request_builders()
+
+
+def test_cam_group_membership():
+    module = _import_plugin("cam_group_membership")
+    models = _models("cam.v20190116")
+    params = {"group_id": 7, "sub_uin": 1000000001, "uid": None}
+    errors = []
+    for request in (
+        module.build_list_request(models, params),
+        module.build_mutation_request(models, params, True),
+        module.build_mutation_request(models, params, False),
+    ):
+        errors.extend(audit_request(request, "cam group membership request"))
+    assert errors == []
 
 
 def test_kms_key():

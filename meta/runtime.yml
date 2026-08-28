@@ -32,6 +32,7 @@ action_groups:
     - bmlb_load_balancer_info
     - bmvpc_customer_gateway_info
     - bsca_kb_component_info
+    - cam_group_membership
     - cam_policy
     - cam_policy_attachment
     - cam_policy_info
