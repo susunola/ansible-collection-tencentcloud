@@ -141,6 +141,23 @@ def test_kms_cancel_deletion_request(models):
     assert request.KeyId == "key-x"
 
 
+def test_kms_waiter_normalizes_pending_delete(monkeypatch, models):
+    states = iter([
+        {"KeyState": "Enabled"},
+        {"KeyState": "Pending_Delete"},
+    ])
+    monkeypatch.setattr(kms_key, "describe_key", lambda *args: next(states))
+    monkeypatch.setattr(kms_key.time, "sleep", lambda delay: None)
+    module = SimpleNamespace(
+        params={"waiter_timeout": 10, "waiter_delay": 1},
+        fail_json=lambda **kwargs: pytest.fail(kwargs["msg"]),
+    )
+    result = kms_key.wait_for_key_state(
+        module, None, models, "key-x", ("PendingDelete",)
+    )
+    assert result["KeyState"] == "Pending_Delete"
+
+
 def test_monitor_create_request_maps_conditions(models):
     request = monitor_alarm_policy.build_create_request(models, {
         "module": "monitor", "name": "cpu-high", "monitor_type": "MT_QCE",
@@ -165,6 +182,33 @@ def test_monitor_condition_update_preserves_unmanaged_event(models):
     assert request.Condition.raw_json == '{"IsUnionRule": 1}'
     assert request.EventCondition.raw_json == '{"Rules": []}'
     assert request.NoticeIds == ["notice-1"]
+
+
+def test_monitor_condition_comparison_allows_api_fields():
+    actual = {
+        "IsUnionRule": 0,
+        "Rules": [{"MetricName": "cpu", "Period": 60, "Extra": None}],
+        "ComplexExpression": None,
+    }
+    expected = {
+        "IsUnionRule": 0,
+        "Rules": [{"MetricName": "cpu", "Period": 60}],
+    }
+    assert monitor_alarm_policy._contains(actual, expected)
+
+
+def test_monitor_policy_convergence():
+    current = {
+        "PolicyName": "cpu-high", "Remark": "CPU", "Enable": 1,
+        "Condition": {"IsUnionRule": 0, "Rules": []},
+        "EventCondition": None, "NoticeIds": ["notice-2", "notice-1"],
+    }
+    desired = {
+        "PolicyName": "cpu-high", "Remark": "CPU", "Enable": 1,
+        "Condition": {"IsUnionRule": 0}, "EventCondition": None,
+        "NoticeIds": ["notice-1", "notice-2"],
+    }
+    assert monitor_alarm_policy._policy_converged(current, desired)
 
 
 def test_tke_values_are_canonical_json():

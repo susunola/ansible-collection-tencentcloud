@@ -31,6 +31,7 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 import json
+import time
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -123,6 +124,23 @@ def build_cancel_deletion_request(models, key_id):
     return request
 
 
+def wait_for_key_state(module, client, models, key_id, expected_states):
+    expected = {str(state).lower().replace("_", "") for state in expected_states}
+    deadline = time.time() + module.params["waiter_timeout"]
+    while True:
+        current = describe_key(module, client, models, key_id)
+        state = str((current or {}).get("KeyState") or "").lower().replace("_", "")
+        if state in expected:
+            return current
+        if time.time() >= deadline:
+            module.fail_json(
+                msg="Timed out waiting for KMS key state",
+                key=current,
+                expected_states=sorted(expected_states),
+            )
+        time.sleep(module.params["waiter_delay"])
+
+
 def build_create_request(models, params):
     request = models.CreateKeyRequest()
     request.Alias = params["alias"]
@@ -185,7 +203,8 @@ def run_module():
             request = models.ScheduleKeyDeletionRequest()
             request.KeyId, request.PendingWindowInDays = p["key_id"], p["deletion_window_days"]
             module.sdk_call(client.ScheduleKeyDeletion, request)
-            module.exit_json(changed=True, **(diff or {}), key=None, msg="KMS key deletion scheduled")
+            current = wait_for_key_state(module, client, models, p["key_id"], ("PendingDelete",))
+            module.exit_json(changed=True, **(diff or {}), key=current, msg="KMS key deletion scheduled")
         if current is None:
             desired = {"Alias": p["alias"], "Description": p["description"], "KeyUsage": p["key_usage"], "Enabled": p["enabled"]}
             if p["rotation_enabled"] is not None:
@@ -195,12 +214,12 @@ def run_module():
                 module.exit_json(changed=True, **(diff or {}), key=None, msg="Would create KMS key")
             response = module.sdk_call(client.CreateKey, build_create_request(models, p))
             p["key_id"] = getattr(response, "KeyId", None)
-            current = describe_key(module, client, models, p["key_id"])
+            current = wait_for_key_state(module, client, models, p["key_id"], ("Enabled",))
             if not p["enabled"]:
                 request = models.DisableKeyRequest()
                 request.KeyId = p["key_id"]
                 module.sdk_call(client.DisableKey, request)
-                current = describe_key(module, client, models, p["key_id"])
+                current = wait_for_key_state(module, client, models, p["key_id"], ("Disabled",))
             if p["rotation_enabled"] is not None:
                 set_rotation(module, client, models, p["key_id"], p["rotation_enabled"], p["rotation_days"])
                 current = describe_key(module, client, models, p["key_id"])
@@ -232,6 +251,7 @@ def run_module():
         if "cancel_deletion" in changes:
             request = build_cancel_deletion_request(models, p["key_id"])
             module.sdk_call(client.CancelKeyDeletion, request)
+            wait_for_key_state(module, client, models, p["key_id"], ("Enabled", "Disabled"))
         if "description" in changes:
             request = models.UpdateKeyDescriptionRequest()
             request.KeyId, request.Description = p["key_id"], p["description"]
@@ -240,6 +260,10 @@ def run_module():
             request = models.EnableKeyRequest() if p["enabled"] else models.DisableKeyRequest()
             request.KeyId = p["key_id"]
             module.sdk_call(client.EnableKey if p["enabled"] else client.DisableKey, request)
+            wait_for_key_state(
+                module, client, models, p["key_id"],
+                ("Enabled",) if p["enabled"] else ("Disabled",),
+            )
         if "rotation" in changes:
             set_rotation(module, client, models, p["key_id"], p["rotation_enabled"], p["rotation_days"])
         module.exit_json(changed=True, **(diff or {}), key=describe_key(module, client, models, p["key_id"]), msg="KMS key updated")

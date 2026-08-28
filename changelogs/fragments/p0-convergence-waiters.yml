@@ -1,0 +1,7 @@
+bugfixes:
+  - >-
+    Wait for KMS key creation, enable/disable, deletion cancellation and
+    scheduled deletion operations to reach their observable terminal states.
+  - >-
+    Wait for Cloud Monitor alarm policy create, update and delete operations
+    to converge, using subset comparison for API-expanded condition objects.

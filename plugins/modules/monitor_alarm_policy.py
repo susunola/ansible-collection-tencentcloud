@@ -43,6 +43,7 @@ policy: {description: Alarm policy metadata, type: dict, returned: always}
 '''
 
 import json
+import time
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -116,8 +117,47 @@ def build_condition_request(models, params, policy_id, current=None):
     return request
 
 
-def _canonical(value):
-    return json.dumps(value, sort_keys=True, separators=(",", ":"))
+def _contains(actual, expected):
+    if isinstance(expected, dict):
+        return isinstance(actual, dict) and all(
+            key in actual and _contains(actual[key], value)
+            for key, value in expected.items()
+        )
+    if isinstance(expected, list):
+        return isinstance(actual, list) and len(actual) == len(expected) and all(
+            _contains(left, right) for left, right in zip(actual, expected)
+        )
+    return actual == expected
+
+
+def _policy_converged(current, desired):
+    if not current:
+        return False
+    return all((
+        not desired.get("PolicyName") or current.get("PolicyName") == desired["PolicyName"],
+        (current.get("Remark") or "") == desired["Remark"],
+        bool(current.get("Enable")) == bool(desired["Enable"]),
+        desired.get("Condition") is None or _contains(current.get("Condition"), desired["Condition"]),
+        desired.get("EventCondition") is None or _contains(current.get("EventCondition"), desired["EventCondition"]),
+        sorted(current.get("NoticeIds") or []) == sorted(desired.get("NoticeIds") or []),
+    ))
+
+
+def wait_for_policy(module, client, models, policy_id, name, module_name, desired=None, absent=False):
+    deadline = time.time() + module.params["waiter_timeout"]
+    while True:
+        current = find_policy(module, client, models, policy_id, name, module_name)
+        if absent and current is None:
+            return None
+        if not absent and _policy_converged(current, desired):
+            return current
+        if time.time() >= deadline:
+            module.fail_json(
+                msg="Timed out waiting for alarm policy convergence",
+                policy=current,
+                expected="absent" if absent else desired,
+            )
+        time.sleep(module.params["waiter_delay"])
 
 
 def run_module():
@@ -156,6 +196,9 @@ def run_module():
             request = models.DeleteAlarmPolicyRequest()
             request.Module, request.PolicyIds = p["module"], [current["PolicyId"]]
             module.sdk_call(client.DeleteAlarmPolicy, request)
+            wait_for_policy(
+                module, client, models, current["PolicyId"], None, p["module"], absent=True,
+            )
             module.exit_json(changed=True, **(diff or {}), policy=None, msg="Alarm policy deleted")
         desired = {
             "PolicyName": p["name"], "Remark": p["remark"],
@@ -169,8 +212,11 @@ def run_module():
                 module.exit_json(changed=True, **(diff or {}), policy=None, msg="Would create alarm policy")
             response = module.sdk_call(client.CreateAlarmPolicy, build_create_request(models, p))
             new_id = getattr(response, "PolicyId", None)
+            current = wait_for_policy(
+                module, client, models, new_id, p["name"], p["module"], desired,
+            )
             module.exit_json(
-                changed=True, **(diff or {}), policy=find_policy(module, client, models, new_id, p["name"], p["module"]), msg="Alarm policy created"
+                changed=True, **(diff or {}), policy=current, msg="Alarm policy created"
             )
         changes = []
         if p["name"] and current.get("PolicyName") != p["name"]:
@@ -180,8 +226,8 @@ def run_module():
         current_enabled = bool(current.get("Enable"))
         status_drift = current_enabled != p["enabled"]
         condition_drift = any((
-            p["condition"] is not None and _canonical(current.get("Condition")) != _canonical(p["condition"]),
-            p["event_condition"] is not None and _canonical(current.get("EventCondition")) != _canonical(p["event_condition"]),
+            p["condition"] is not None and not _contains(current.get("Condition"), p["condition"]),
+            p["event_condition"] is not None and not _contains(current.get("EventCondition"), p["event_condition"]),
             sorted(current.get("NoticeIds") or []) != sorted(p["notice_ids"]),
         ))
         if not changes and not status_drift and not condition_drift:
@@ -202,8 +248,11 @@ def run_module():
                 client.ModifyAlarmPolicyCondition,
                 build_condition_request(models, p, current["PolicyId"], current),
             )
+        current = wait_for_policy(
+            module, client, models, current["PolicyId"], None, p["module"], desired,
+        )
         module.exit_json(
-            changed=True, **(diff or {}), policy=find_policy(module, client, models, current["PolicyId"], None, p["module"]), msg="Alarm policy updated"
+            changed=True, **(diff or {}), policy=current, msg="Alarm policy updated"
         )
     except Exception as exc:
         module.fail_json(
