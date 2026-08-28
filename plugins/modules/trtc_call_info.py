@@ -14,6 +14,22 @@ short_description: Gather information about Tencent Cloud TRTC calls
 version_added: "0.8.0"
 description: Returns TRTC calls visible in a Tencent Cloud region.
 options:
+  comm_id:
+    description: Call ID in the form SdkAppId_RoomId_CreateTime, e.g. 1400xxxxxx_218695_1590065777 (required by the API).
+    type: str
+    required: true
+  sdk_app_id:
+    description: TRTC application ID.
+    type: int
+    required: true
+  start_time:
+    description: Start of the query window, a Unix timestamp in seconds.
+    type: int
+    required: true
+  end_time:
+    description: End of the query window, a Unix timestamp in seconds.
+    type: int
+    required: true
   call_ids:
     description: Call IDs to return.
     type: list
@@ -27,14 +43,13 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all calls
+- name: List call details
   susunola.tencentcloud.trtc_call_info:
     region: ap-guangzhou
-
-- name: Find calls by ID
-  susunola.tencentcloud.trtc_call_info:
-    region: ap-guangzhou
-    call_ids: [x-xxxxxxxx]
+    comm_id: 1400000000_218695_1590065777
+    sdk_app_id: 1400000000
+    start_time: 1700000000
+    end_time: 1700003600
 '''
 
 RETURN = r'''
@@ -61,10 +76,14 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, call_ids, offset, limit):
+def build_request(models, comm_id, sdk_app_id, start_time, end_time, call_ids, offset, limit):
     request = models.DescribeCallDetailInfoRequest()
-    request.PageNumber = offset // limit + 1
+    request.PageNumber = offset // limit
     request.PageSize = limit
+    request.CommId = comm_id
+    request.SdkAppId = sdk_app_id
+    request.StartTime = start_time
+    request.EndTime = end_time
     if call_ids:
         request.UserIds = call_ids
     return request
@@ -73,6 +92,10 @@ def build_request(models, call_ids, offset, limit):
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "comm_id": {"type": "str", "required": True},
+        "sdk_app_id": {"type": "int", "required": True},
+        "start_time": {"type": "int", "required": True},
+        "end_time": {"type": "int", "required": True},
         "call_ids": {"type": "list", "elements": "str"},
         "page_size": {"type": "int", "default": 100},
     })
@@ -91,7 +114,15 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, module.params["call_ids"], offset, limit),
+        lambda offset, limit: build_request(
+            models,
+            module.params["comm_id"],
+            module.params["sdk_app_id"],
+            module.params["start_time"],
+            module.params["end_time"],
+            module.params["call_ids"],
+            offset,
+            limit),
         lambda request: sdk_call(module, client.DescribeCallDetailInfo, request),
         lambda response: response.UserList,
         lambda response: response.Total,

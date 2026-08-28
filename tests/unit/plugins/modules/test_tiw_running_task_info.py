@@ -20,7 +20,7 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = tiw_running_task_info.build_request(FakeModels, 200, 100)
+    request = tiw_running_task_info.build_request(FakeModels, 1, "sample", 200, 100)
     assert request.Offset == 200
     assert request.Limit == 100
 
@@ -102,7 +102,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                page_size=2)
+                sdk_app_id=1, task_type="sample", page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["running_tasks"]] == ["a", "b", "c"]
@@ -134,6 +134,8 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
     # page_size (and ids/filters when declared) before the API call fails.
     fake = FakeModule({
         "region": "ap-guangzhou",
+        "sdk_app_id": 1,
+        "task_type": "sample",
         "page_size": 2,
     })
     monkeypatch.setattr(tiw_running_task_info, "AnsibleModule", lambda **kwargs: fake)

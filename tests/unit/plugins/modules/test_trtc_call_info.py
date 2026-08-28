@@ -20,13 +20,13 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = trtc_call_info.build_request(FakeModels, None, 200, 100)
-    assert request.PageNumber == 3
+    request = trtc_call_info.build_request(FakeModels, "sample", 1, 1, 1, None, 200, 100)
+    assert request.PageNumber == 2
     assert request.PageSize == 100
 
 
 def test_build_request_maps_ids():
-    request = trtc_call_info.build_request(FakeModels, ["x-1"], 0, 100)
+    request = trtc_call_info.build_request(FakeModels, "sample", 1, 1, 1, ["x-1"], 0, 100)
     assert request.UserIds == ["x-1"]
 
 
@@ -107,13 +107,13 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                call_ids=None, page_size=2)
+                comm_id="sample", sdk_app_id=1, start_time=1, end_time=1, call_ids=None, page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["calls"]] == ["a", "b", "c"]
     assert payload["total_count"] == 3
     assert payload["request_id"] == "req-page"
-    assert [request.PageNumber for request in client.requests] == [1, 2]
+    assert [request.PageNumber for request in client.requests] == [0, 1]
 
 
 def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
@@ -139,6 +139,10 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
     # page_size (and ids/filters when declared) before the API call fails.
     fake = FakeModule({
         "region": "ap-guangzhou",
+        "comm_id": "sample",
+        "sdk_app_id": 1,
+        "start_time": 1,
+        "end_time": 1,
         "call_ids": None,
         "page_size": 2,
     })

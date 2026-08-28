@@ -14,6 +14,14 @@ short_description: Gather information about Tencent Cloud SES black email addres
 version_added: "0.8.0"
 description: Returns SES black email addresses visible in a Tencent Cloud region.
 options:
+  start_date:
+    description: Start date in YYYY-MM-DD format (required by the API).
+    type: str
+    required: true
+  end_date:
+    description: End date in YYYY-MM-DD format (required by the API).
+    type: str
+    required: true
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -23,9 +31,11 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all black email addresses
+- name: List black email addresses in a date range
   susunola.tencentcloud.ses_black_email_address_info:
-    region: ap-guangzhou
+    region: ap-singapore
+    start_date: "2026-01-01"
+    end_date: "2026-01-31"
 '''
 
 RETURN = r'''
@@ -52,16 +62,20 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, offset, limit):
+def build_request(models, start_date, end_date, offset, limit):
     request = models.ListBlackEmailAddressRequest()
     request.Offset = offset
     request.Limit = limit
+    request.StartDate = start_date
+    request.EndDate = end_date
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "start_date": {"type": "str", "required": True},
+        "end_date": {"type": "str", "required": True},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -79,7 +93,12 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, offset, limit),
+        lambda offset, limit: build_request(
+            models,
+            module.params["start_date"],
+            module.params["end_date"],
+            offset,
+            limit),
         lambda request: sdk_call(module, client.ListBlackEmailAddress, request),
         lambda response: response.BlackList,
         lambda response: response.TotalCount,

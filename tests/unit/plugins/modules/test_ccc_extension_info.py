@@ -21,7 +21,7 @@ class FakeModels:
 
 def test_build_request_sets_pagination():
     request = ccc_extension_info.build_request(FakeModels, 1, None, 200, 100)
-    assert request.PageNumber == 3
+    assert request.PageNumber == 2
     assert request.PageSize == 100
 
 
@@ -113,7 +113,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
     assert [item["Marker"] for item in payload["extensions"]] == ["a", "b", "c"]
     assert payload["total_count"] == 3
     assert payload["request_id"] == "req-page"
-    assert [request.PageNumber for request in client.requests] == [1, 2]
+    assert [request.PageNumber for request in client.requests] == [0, 1]
 
 
 def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):

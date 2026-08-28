@@ -20,13 +20,13 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = weilingwith_element_profile_page_info.build_request(FakeModels, None, 200, 100)
+    request = weilingwith_element_profile_page_info.build_request(FakeModels, "sample", "sample", "sample", None, 200, 100)
     assert request.PageNumber == 3
     assert request.PageSize == 100
 
 
 def test_build_request_maps_ids():
-    request = weilingwith_element_profile_page_info.build_request(FakeModels, ["x-1"], 0, 100)
+    request = weilingwith_element_profile_page_info.build_request(FakeModels, "sample", "sample", "sample", ["x-1"], 0, 100)
     assert request.ParentElementIds == ["x-1"]
 
 
@@ -106,7 +106,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                element_profile_page_ids=None, page_size=2)
+                workspace_id="sample", application_token="sample", building_id="sample", element_profile_page_ids=None, page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["element_profile_pages"]] == ["a", "b", "c"]
@@ -138,6 +138,9 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
     # page_size (and ids/filters when declared) before the API call fails.
     fake = FakeModule({
         "region": "ap-guangzhou",
+        "workspace_id": "sample",
+        "application_token": "sample",
+        "building_id": "sample",
         "element_profile_page_ids": None,
         "page_size": 2,
     })

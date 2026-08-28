@@ -1,0 +1,22 @@
+---
+minor_changes:
+  - Curate hidden required request parameters for eight more ``*_info``
+    modules so generated modules expose every field the API requires:
+    ``trtc_call_info`` (CommId/SdkAppId/StartTime/EndTime),
+    ``ess_file_url_info`` (Operator/BusinessType),
+    ``tiw_running_task_info`` (SdkAppID/TaskType),
+    ``weilingwith_element_profile_page_info``
+    (WorkspaceId/ApplicationToken/BuildingId), ``bsca_kb_component_info``
+    (Query), ``svp_saving_plan_coverage_info`` (StartDate/EndDate),
+    ``gme_voice_print_info`` (DescribeMode) and
+    ``ses_black_email_address_info`` (StartDate/EndDate). Curated params
+    are validated against the official Tencent Cloud API documentation.
+  - The generator now supports ``page_number_base`` for APIs that number
+    pages from zero (trtc, ccc, bsca), emitting ``offset // limit`` instead
+    of the 1-based ``offset // limit + 1`` so pagination no longer skips
+    the first page; ``REQUIRED_PARAM_OVERRIDES`` entries may carry
+    ``page_number_base`` and it is propagated into the spec.
+  - Curated ``extra_params`` may carry ``no_log: True`` (used for
+    ``weilingwith_element_profile_page_info.application_token``) so
+    token-like parameters are masked in module output and pass
+    ``validate-modules``.

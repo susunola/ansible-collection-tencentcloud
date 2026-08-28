@@ -14,6 +14,19 @@ short_description: Gather information about Tencent Cloud ESS file urls
 version_added: "0.8.0"
 description: Returns ESS file urls visible in a Tencent Cloud region.
 options:
+  operator:
+    description: Operator (employee) who performs the operation; the employee must have permission on the requested file resources.
+    type: dict
+    required: true
+    suboptions:
+      user_id:
+        description: User ID of the operator in ESS.
+        type: str
+        required: true
+  business_type:
+    description: Business type of the files (FLOW, TEMPLATE, DOCUMENT, SEAL, DIGITFILE or ARCHIVE).
+    type: str
+    required: true
   file_url_ids:
     description: File url IDs to return.
     type: list
@@ -27,14 +40,14 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all file urls
+- name: Get download URLs of flow files
   susunola.tencentcloud.ess_file_url_info:
     region: ap-guangzhou
-
-- name: Find file urls by ID
-  susunola.tencentcloud.ess_file_url_info:
-    region: ap-guangzhou
-    file_url_ids: [x-xxxxxxxx]
+    operator:
+      user_id: yDRSRUUgygj6qnwfUuO4zjEwc193c2hH
+    business_type: FLOW
+    file_url_ids:
+      - yDwFkUUckpstzjhfUugNAWf1KibXqS26
 '''
 
 RETURN = r'''
@@ -61,10 +74,15 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, file_url_ids, offset, limit):
+def build_request(models, operator, business_type, file_url_ids, offset, limit):
     request = models.DescribeFileUrlsRequest()
     request.Offset = offset
     request.Limit = limit
+    if operator is not None:
+        _operator_obj = models.UserInfo()
+        _operator_obj.UserId = operator.get('user_id')
+        request.Operator = _operator_obj
+    request.BusinessType = business_type
     if file_url_ids:
         request.BusinessIds = file_url_ids
     return request
@@ -73,6 +91,14 @@ def build_request(models, file_url_ids, offset, limit):
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "operator": {
+            "type": "dict",
+            "required": True,
+            "options": {
+                "user_id": {"type": "str", "required": True},
+            },
+        },
+        "business_type": {"type": "str", "required": True},
         "file_url_ids": {"type": "list", "elements": "str"},
         "page_size": {"type": "int", "default": 100},
     })
@@ -91,7 +117,13 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, module.params["file_url_ids"], offset, limit),
+        lambda offset, limit: build_request(
+            models,
+            module.params["operator"],
+            module.params["business_type"],
+            module.params["file_url_ids"],
+            offset,
+            limit),
         lambda request: sdk_call(module, client.DescribeFileUrls, request),
         lambda response: response.FileUrls,
         lambda response: response.TotalCount,

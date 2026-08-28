@@ -121,7 +121,15 @@
     since real-cloud coverage fluctuates with account state).
 37. Curate auto-generated modules that hide required request parameters
     (e.g. `teo` ZoneId, `mqtt`/`emr` InstanceId, `lcic` SdkAppId): move them
-    into curated SPECS with `extra_params` or drop them.
+    into curated SPECS with `extra_params` or drop them. **In progress** —
+    batch 2 verified every remaining candidate against official API docs
+    and curated eight more modules (`trtc_call_info`, `ess_file_url_info`,
+    `tiw_running_task_info`, `weilingwith_element_profile_page_info`,
+    `bsca_kb_component_info`, `svp_saving_plan_coverage_info`,
+    `gme_voice_print_info`, `ses_black_email_address_info`). The docstring
+    pass confirmed the rest carry no required parameters (filter-only
+    fields), and the generator gained `page_number_base` (0-based paging
+    for trtc/ccc/bsca) and `no_log` support for curated params.
 38. Deepen existing write modules: async long-running task polling beyond
     CLB, multi-zone spread for `exact_count`, waiter coverage for database
     instance lifecycles.

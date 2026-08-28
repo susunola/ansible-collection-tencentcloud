@@ -1370,6 +1370,8 @@ REQUIRED_PARAM_OVERRIDES = {
             {"name": "sdk_app_id", "field": "SdkAppId", "type": "int", "required": True,
              "doc": "CCC application ID (required by the API)."},
         ],
+        # ccc numbers pages from 0 (DescribeExtensions docstring).
+        "page_number_base": 0,
     },
     "apm_general_span_info": {
         "extra_params": [
@@ -1512,6 +1514,89 @@ REQUIRED_PARAM_OVERRIDES = {
                      "doc": "Sub-enterprise operator (employee) open ID."},
                 ],
             },
+        ],
+    },
+    "trtc_call_info": {
+        "extra_params": [
+            {"name": "comm_id", "field": "CommId", "type": "str", "required": True,
+             "doc": "Call ID in the form SdkAppId_RoomId_CreateTime, e.g. "
+                    "1400xxxxxx_218695_1590065777 (required by the API)."},
+            {"name": "sdk_app_id", "field": "SdkAppId", "type": "int", "required": True,
+             "doc": "TRTC application ID."},
+            {"name": "start_time", "field": "StartTime", "type": "int", "required": True,
+             "doc": "Start of the query window, a Unix timestamp in seconds."},
+            {"name": "end_time", "field": "EndTime", "type": "int", "required": True,
+             "doc": "End of the query window, a Unix timestamp in seconds."},
+        ],
+        # trtc numbers pages from 0 (DescribeCallDetailInfo docstring).
+        "page_number_base": 0,
+    },
+    "ess_file_url_info": {
+        "extra_params": [
+            {
+                "name": "operator", "field": "Operator", "type": "dict", "required": True,
+                "model": "UserInfo",
+                "doc": "Operator (employee) who performs the operation; the employee "
+                       "must have permission on the requested file resources.",
+                "struct": [
+                    {"key": "user_id", "field": "UserId", "type": "str", "required": True,
+                     "doc": "User ID of the operator in ESS."},
+                ],
+            },
+            {"name": "business_type", "field": "BusinessType", "type": "str", "required": True,
+             "doc": "Business type of the files (FLOW, TEMPLATE, DOCUMENT, SEAL, "
+                    "DIGITFILE or ARCHIVE)."},
+        ],
+    },
+    "tiw_running_task_info": {
+        "extra_params": [
+            {"name": "sdk_app_id", "field": "SdkAppID", "type": "int", "required": True,
+             "doc": "TIW whiteboard application ID."},
+            {"name": "task_type", "field": "TaskType", "type": "str", "required": True,
+             "doc": "Task type to list (TranscodeH5, TranscodeJPG, WhiteboardPush "
+                    "or OnlineRecord)."},
+        ],
+    },
+    "weilingwith_element_profile_page_info": {
+        "extra_params": [
+            {"name": "workspace_id", "field": "WorkspaceId", "type": "str", "required": True,
+             "doc": "Project space ID."},
+            {"name": "application_token", "field": "ApplicationToken", "type": "str",
+             "required": True, "no_log": True,
+             "doc": "Application token issued for the workspace."},
+            {"name": "building_id", "field": "BuildingId", "type": "str", "required": True,
+             "doc": "Building ID."},
+        ],
+    },
+    "bsca_kb_component_info": {
+        "extra_params": [
+            {"name": "query", "field": "Query", "type": "str", "required": True,
+             "doc": "Component name to search for (required by the API)."},
+        ],
+        # bsca numbers pages from 0 (SearchKBComponent docstring).
+        "page_number_base": 0,
+    },
+    "svp_saving_plan_coverage_info": {
+        "extra_params": [
+            {"name": "start_date", "field": "StartDate", "type": "str", "required": True,
+             "doc": "Coverage start date in yyyy-MM-dd format."},
+            {"name": "end_date", "field": "EndDate", "type": "str", "required": True,
+             "doc": "Coverage end date in yyyy-MM-dd format."},
+        ],
+    },
+    "ses_black_email_address_info": {
+        "extra_params": [
+            {"name": "start_date", "field": "StartDate", "type": "str", "required": True,
+             "doc": "Start date in YYYY-MM-DD format (required by the API)."},
+            {"name": "end_date", "field": "EndDate", "type": "str", "required": True,
+             "doc": "End date in YYYY-MM-DD format (required by the API)."},
+        ],
+    },
+    "gme_voice_print_info": {
+        "extra_params": [
+            {"name": "describe_mode", "field": "DescribeMode", "type": "int", "required": True,
+             "doc": "Query mode (0 queries a specific voice print with "
+                    "voice_print_ids, 1 lists voice prints by page)."},
         ],
     },
 }
@@ -1658,6 +1743,66 @@ REQUIRED_EXAMPLE_OVERRIDES = {
       proxy_organization_open_id: org_xxxxxxxx
       proxy_operator_open_id: op_xxxxxxxx
 """,
+    "trtc_call_info": """\
+- name: List call details
+  susunola.tencentcloud.trtc_call_info:
+    region: ap-guangzhou
+    comm_id: 1400000000_218695_1590065777
+    sdk_app_id: 1400000000
+    start_time: 1700000000
+    end_time: 1700003600
+""",
+    "ess_file_url_info": """\
+- name: Get download URLs of flow files
+  susunola.tencentcloud.ess_file_url_info:
+    region: ap-guangzhou
+    operator:
+      user_id: yDRSRUUgygj6qnwfUuO4zjEwc193c2hH
+    business_type: FLOW
+    file_url_ids:
+      - yDwFkUUckpstzjhfUugNAWf1KibXqS26
+""",
+    "tiw_running_task_info": """\
+- name: List running tasks of a whiteboard app
+  susunola.tencentcloud.tiw_running_task_info:
+    region: ap-guangzhou
+    sdk_app_id: 1400000001
+    task_type: WhiteboardPush
+""",
+    "weilingwith_element_profile_page_info": """\
+- name: List element profiles of a building
+  susunola.tencentcloud.weilingwith_element_profile_page_info:
+    region: ap-guangzhou
+    workspace_id: "1016"
+    application_token: ZRCJHdnhqEUEqO1vyskCgWimPucHhREV
+    building_id: 956bd069-c802-4bbb-b325-18d30d7bcd3c
+""",
+    "bsca_kb_component_info": """\
+- name: Search knowledge base components
+  susunola.tencentcloud.bsca_kb_component_info:
+    region: ap-guangzhou
+    query: openssl
+""",
+    "svp_saving_plan_coverage_info": """\
+- name: List saving plan coverage
+  susunola.tencentcloud.svp_saving_plan_coverage_info:
+    region: ap-guangzhou
+    start_date: "2024-01-01"
+    end_date: "2024-01-31"
+""",
+    "ses_black_email_address_info": """\
+- name: List black email addresses in a date range
+  susunola.tencentcloud.ses_black_email_address_info:
+    region: ap-singapore
+    start_date: "2026-01-01"
+    end_date: "2026-01-31"
+""",
+    "gme_voice_print_info": """\
+- name: List voice prints
+  susunola.tencentcloud.gme_voice_print_info:
+    region: ap-guangzhou
+    describe_mode: 1
+""",
 }
 
 
@@ -1672,6 +1817,9 @@ def _apply_required_overrides(spec):
         return
     if "ids" in overrides:
         spec["ids"] = overrides["ids"]
+    for key in ("page_number_base", "page_number_field", "pagination_type"):
+        if key in overrides:
+            spec[key] = overrides[key]
     for ep in overrides.get("extra_params", []):
         existing = [p for p in spec.get("extra_params", [])
                     if p.get("field") == ep["field"]]
@@ -1880,8 +2028,14 @@ def build_describe_request(models, {ids['param']}):
     ]
     if pagination == "page":
         page_number_field = spec.get("page_number_field", "PageNumber")
+        # A few APIs (e.g. trtc) number pages from 0; offset // limit is the
+        # correct 0-based page when page_number_base is 0.
+        if spec.get("page_number_base", 1) == 0:
+            page_number_expr = "offset // limit"
+        else:
+            page_number_expr = "offset // limit + 1"
         lines += [
-            f"    request.{page_number_field} = offset // limit + 1",
+            f"    request.{page_number_field} = {page_number_expr}",
             f"    request.{_page_size_field(spec)} = limit",
         ]
     elif pagination == "token":
@@ -2010,6 +2164,8 @@ def _argument_spec_lines(spec):
             else:
                 rendered = f'"{default}"'
             entry += f", \"default\": {rendered}"
+        if param.get("no_log"):
+            entry += ', "no_log": True'
         entry += "}"
         argument_lines.append(f'        "{param["name"]}": {entry},')
     if spec["ids"]:
@@ -2532,9 +2688,16 @@ class FakeFilter:
 
     if page:
         page_number_field = spec.get("page_number_field", "PageNumber")
-        pagination_asserts = (f"    assert request.{page_number_field} == 3\n"
-                              f"    assert request.{_page_size_field(spec)} == 100")
-        page_numbers = "[1, 2]"
+        base = spec.get("page_number_base", 1)
+        if base == 0:
+            # 0-based pages: offset 200 / limit 100 -> page 2, loop visits 0,1.
+            pagination_asserts = (f"    assert request.{page_number_field} == 2\n"
+                                  f"    assert request.{_page_size_field(spec)} == 100")
+            page_numbers = "[0, 1]"
+        else:
+            pagination_asserts = (f"    assert request.{page_number_field} == 3\n"
+                                  f"    assert request.{_page_size_field(spec)} == 100")
+            page_numbers = "[1, 2]"
         page_field = page_number_field
     else:
         pagination_asserts = ("    assert request.Offset == 200\n"

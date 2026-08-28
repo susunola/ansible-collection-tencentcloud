@@ -140,6 +140,27 @@ def test_page_pagination_renders_page_number(generator):
     assert '"module": {"type": "str", "default": "monitor"}' in rendered
 
 
+def test_zero_based_page_pagination_renders_offset_division(generator):
+    # trtc/ccc/bsca number pages from 0; the 1-based offset // limit + 1
+    # would skip the first page on these APIs.
+    for module in ("trtc_call_info", "ccc_extension_info",
+                   "bsca_kb_component_info"):
+        spec = _spec(generator, module)
+        assert spec.get("page_number_base") == 0
+        rendered = generator.render_module(spec)
+        assert "request.PageNumber = offset // limit" in rendered
+        test_rendered = generator.render_test(spec)
+        assert "assert request.PageNumber == 2" in test_rendered
+        assert "[0, 1]" in test_rendered
+
+
+def test_curated_param_no_log_renders_in_argument_spec(generator):
+    spec = _spec(generator, "weilingwith_element_profile_page_info")
+    rendered = generator.render_module(spec)
+    assert ('"application_token": {"type": "str", "required": True, '
+            '"no_log": True}' in rendered)
+
+
 def test_token_pagination_renders_next_token_loop(generator):
     rendered = generator.render_module(_spec(generator, "cloudaudit_event_info"))
     assert "request.MaxResults = max_results" in rendered

@@ -14,6 +14,14 @@ short_description: Gather information about Tencent Cloud TIW running tasks
 version_added: "0.8.0"
 description: Returns TIW running tasks visible in a Tencent Cloud region.
 options:
+  sdk_app_id:
+    description: TIW whiteboard application ID.
+    type: int
+    required: true
+  task_type:
+    description: Task type to list (TranscodeH5, TranscodeJPG, WhiteboardPush or OnlineRecord).
+    type: str
+    required: true
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -23,9 +31,11 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all running tasks
+- name: List running tasks of a whiteboard app
   susunola.tencentcloud.tiw_running_task_info:
     region: ap-guangzhou
+    sdk_app_id: 1400000001
+    task_type: WhiteboardPush
 '''
 
 RETURN = r'''
@@ -52,16 +62,20 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, offset, limit):
+def build_request(models, sdk_app_id, task_type, offset, limit):
     request = models.DescribeRunningTasksRequest()
     request.Offset = offset
     request.Limit = limit
+    request.SdkAppID = sdk_app_id
+    request.TaskType = task_type
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "sdk_app_id": {"type": "int", "required": True},
+        "task_type": {"type": "str", "required": True},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -79,7 +93,12 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, offset, limit),
+        lambda offset, limit: build_request(
+            models,
+            module.params["sdk_app_id"],
+            module.params["task_type"],
+            offset,
+            limit),
         lambda request: sdk_call(module, client.DescribeRunningTasks, request),
         lambda response: response.Tasks,
         lambda response: response.Total,
