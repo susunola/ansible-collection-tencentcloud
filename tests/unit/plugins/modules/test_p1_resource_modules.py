@@ -154,8 +154,9 @@ def test_monitor_create_request_maps_conditions(models):
 
 
 def test_tke_values_are_canonical_json():
-    assert tke_addon._raw({"b": 2, "a": 1}) == '{"a":1,"b":2}'
-    assert tke_addon._raw('{"b":2,"a":1}') == '{"a":1,"b":2}'
+    encoded = tke_addon._raw({"b": 2, "a": 1})
+    assert tke_addon._canonical_raw(encoded) == '{"a":1,"b":2}'
+    assert tke_addon._canonical_raw('{"b":2,"a":1}') == '{"a":1,"b":2}'
 
 
 def test_tke_install_request(models):
@@ -165,4 +166,30 @@ def test_tke_install_request(models):
     })
     assert request.ClusterId == "cls-x"
     assert request.AddonName == "cbs"
-    assert request.RawValues == '{"replicaCount":2}'
+    assert tke_addon._canonical_raw(request.RawValues) == '{"replicaCount":2}'
+
+
+def test_tke_describe_selects_named_addon(models):
+    class Addon(SimpleNamespace):
+        def to_json_string(self):
+            return '{"AddonName":"%s","Phase":"%s"}' % (self.AddonName, self.Phase)
+
+    response = SimpleNamespace(Addons=[
+        Addon(AddonName="cbs", Phase="Succeeded"),
+        Addon(AddonName="metrics", Phase="Installing"),
+    ])
+    module = SimpleNamespace(sdk_call=lambda method, request: response)
+    client = SimpleNamespace(DescribeAddon=lambda request: response)
+    result = tke_addon.describe_addon(module, client, models, "cls-x", "metrics")
+    assert result == {"AddonName": "metrics", "Phase": "Installing"}
+
+
+def test_tke_waiter_surfaces_failed_phase(monkeypatch, models):
+    addon = {"AddonName": "cbs", "Phase": "InstallFailed", "Reason": "bad values"}
+    monkeypatch.setattr(tke_addon, "describe_addon", lambda *args: addon)
+    module = SimpleNamespace(
+        params={"waiter_timeout": 10, "waiter_delay": 0},
+        fail_json=lambda **kwargs: (_ for _ in ()).throw(RuntimeError(kwargs["reason"])),
+    )
+    with pytest.raises(RuntimeError, match="bad values"):
+        tke_addon.wait_for_addon(module, None, models, "cls-x", "cbs")

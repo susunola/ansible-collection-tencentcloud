@@ -1,0 +1,9 @@
+minor_changes:
+  - >-
+    Harden ``tke_addon`` with bounded install, upgrade and deletion waiters,
+    terminal failure detection, merge/replace update strategies and sensitive
+    values handling.
+bugfixes:
+  - >-
+    Read addons from the ``DescribeAddon`` response list and encode addon
+    values as the Base64 JSON representation required by the TKE API.
