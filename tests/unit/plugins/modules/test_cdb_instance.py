@@ -9,11 +9,13 @@ from ansible_collections.susunola.tencentcloud.plugins.modules.cdb_instance impo
     build_describe_request,
     build_restart_request,
     build_task_status_request,
+    build_upgrade_request,
     find_instance,
     _create,
     _rename,
     _delete,
     _restart,
+    _upgrade,
     _wait_delivered,
     _wait_status,
 )
@@ -35,6 +37,7 @@ class FakeModels(object):
     ModifyDBInstanceNameRequest = FakeRequest
     IsolateDBInstanceRequest = FakeRequest
     RestartDBInstancesRequest = FakeRequest
+    UpgradeDBInstanceRequest = FakeRequest
     DescribeAsyncRequestInfoRequest = FakeRequest
     TagInfoUnit = FakeTagInfoUnit
 
@@ -89,6 +92,7 @@ class FakeClient(object):
         self.create_response = create_response
         self.exc = exc
         self.restart_response = None
+        self.upgrade_response = None
         self.task_responses = []
         self.calls = []
 
@@ -113,6 +117,10 @@ class FakeClient(object):
     def RestartDBInstances(self, request):
         self.calls.append(("RestartDBInstances", request))
         return self.restart_response
+
+    def UpgradeDBInstance(self, request):
+        self.calls.append(("UpgradeDBInstance", request))
+        return self.upgrade_response
 
     def DescribeAsyncRequestInfo(self, request):
         self.calls.append(("DescribeAsyncRequestInfo", request))
@@ -306,6 +314,59 @@ def test_restart_fails_when_no_async_request_id():
         _restart(module, client, FakeModels, "cdb-1")
     assert "no AsyncRequestId" in excinfo.value.args[0]["msg"]
     assert [c[0] for c in client.calls] == ["RestartDBInstances"]
+
+
+def test_build_upgrade_request_sends_id_memory_volume():
+    request = build_upgrade_request(FakeModels, "cdb-1", 16000, 200)
+    assert request.InstanceId == "cdb-1"
+    assert request.Memory == 16000
+    assert request.Volume == 200
+
+
+def test_upgrade_polls_async_task_until_success():
+    client = FakeClient()
+    client.upgrade_response = FakeRestartResponse("task-9")
+    client.task_responses = [
+        FakeTaskResponse("RUNNING"),
+        FakeTaskResponse("SUCCESS", "spec change ok"),
+    ]
+    module = FakeModule()
+    _upgrade(module, client, FakeModels, "cdb-1", 16000, 200)
+    names = [c[0] for c in client.calls]
+    assert names == [
+        "UpgradeDBInstance",
+        "DescribeAsyncRequestInfo",
+        "DescribeAsyncRequestInfo",
+    ]
+    request = client.calls[0][1]
+    assert request.InstanceId == "cdb-1"
+    assert request.Memory == 16000
+    assert request.Volume == 200
+    assert all(
+        task.AsyncRequestId == "task-9"
+        for name, task in client.calls[1:]
+    )
+
+
+def test_upgrade_fails_fast_on_task_failure():
+    client = FakeClient()
+    client.upgrade_response = FakeRestartResponse("task-9")
+    client.task_responses = [FakeTaskResponse("FAILED", "spec rejected")]
+    module = FakeModule()
+    with pytest.raises(SystemExit) as excinfo:
+        _upgrade(module, client, FakeModels, "cdb-1", 16000, 200)
+    assert "spec rejected" in excinfo.value.args[0]["msg"]
+    assert [c[0] for c in client.calls] == ["UpgradeDBInstance", "DescribeAsyncRequestInfo"]
+
+
+def test_upgrade_fails_when_no_async_request_id():
+    client = FakeClient()
+    client.upgrade_response = FakeRestartResponse(None)
+    module = FakeModule()
+    with pytest.raises(SystemExit) as excinfo:
+        _upgrade(module, client, FakeModels, "cdb-1", 16000, 200)
+    assert "no AsyncRequestId" in excinfo.value.args[0]["msg"]
+    assert [c[0] for c in client.calls] == ["UpgradeDBInstance"]
 
 
 def _wait_module(timeout=10, delay=1):

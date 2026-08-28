@@ -159,6 +159,18 @@
     CVM, not CHC), and the CHC-specific minios command
     (`ExecuteChcMiniOsCommand`) is absent from the public SDK, so there is
     no supported API surface for it.
+40. Deepen write modules batch 2: CDB specification changes, NAT gateway
+    forwarding rules and a standalone CBS snapshot module. **In progress** —
+    the CDB half shipped: `cdb_instance` now detects `memory`/`volume`
+    drift on an existing instance and applies it with
+    `UpgradeDBInstance` (verified against the official
+    cloud.tencent.com/document/api/236/15876 doc, which supports both
+    upgrade and downgrade; disk capacity can only be expanded). The change
+    is tracked through the same `DescribeAsyncRequestInfo` async-task
+    polling as `state=restarted` (SUCCESS/FAILED terminal statuses), and
+    when only one dimension is given the current value of the other is
+    used. Remaining halves: `nat_gateway` DNAT/SNAT rule management and a
+    standalone `cbs_snapshot` write module.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

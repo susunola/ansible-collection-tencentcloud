@@ -387,9 +387,9 @@ WRITE_MODULE_BUILDERS = {
         "build_describe_request",
     ],
     "cdb_instance": [
-        "_create", "_delete", "_rename",
+        "_create", "_delete", "_rename", "_upgrade",
         "build_describe_request", "build_restart_request",
-        "build_task_status_request",
+        "build_task_status_request", "build_upgrade_request",
     ],
     "ckafka_topic": [
         "_create", "_delete", "_scale_partitions", "_update", "find_topic",
@@ -1406,9 +1406,13 @@ def test_cdb_instance():
     errors.extend(audit_request(
         module.build_task_status_request(models, "9ad9c2d5-88007b27-7d2c8b8c-f2598f12"),
         "cdb async task status"))
-    # Drive the full restart path: the async task client returns the
-    # doc-shaped RestartDBInstances/DescribeAsyncRequestInfo responses so
-    # the polling loop terminates on SUCCESS.
+    errors.extend(audit_request(
+        module.build_upgrade_request(models, "cdb-xxxxxxxx", 16000, 200),
+        "cdb spec resize"))
+    # Drive the full restart and spec-resize paths: the async task client
+    # returns the doc-shaped RestartDBInstances/UpgradeDBInstance responses
+    # (each carrying an AsyncRequestId) and the DescribeAsyncRequestInfo
+    # responses so the polling loops terminate on SUCCESS.
 
     class _AsyncTaskClient(_StubClient):
         def RestartDBInstances(self, request):
@@ -1416,13 +1420,19 @@ def test_cdb_instance():
             response.AsyncRequestId = "9ad9c2d5-88007b27-7d2c8b8c-f2598f12"
             return response
 
+        def UpgradeDBInstance(self, request):
+            response = _StubResponse()
+            response.AsyncRequestId = "a6040589-3b098df5-b551d9e5-81c6bfdc"
+            return response
+
         def DescribeAsyncRequestInfo(self, request):
             response = _StubResponse()
             response.Status = "SUCCESS"
-            response.Info = "restart succeeded"
+            response.Info = "task succeeded"
             return response
 
     module._restart(fake, _AsyncTaskClient(), models, "cdb-xxxxxxxx")
+    module._upgrade(fake, _AsyncTaskClient(), models, "cdb-xxxxxxxx", 16000, 200)
     errors.extend(audit_recorded(fake, "cdb_instance"))
     assert errors == []
 

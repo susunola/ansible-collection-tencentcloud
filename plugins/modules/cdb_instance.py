@@ -17,9 +17,11 @@ description:
   - This module is idempotent. Running it twice leaves the instance
     unchanged and the second run reports C(changed=false).
   - Supports check mode; no API write happens in check mode, only reads.
-  - An instance is identified by O(instance_id) or by O(name). Instance
-    configuration (memory, volume, version, VPC) is only applied at
-    creation; scaling is out of scope for this module.
+  - An instance is identified by O(instance_id) or by O(name). Zone,
+    engine version, VPC and password are only applied at creation; when
+    O(memory) or O(volume) drift from the running instance the module
+    changes the specification with V(UpgradeDBInstance) and waits for
+    the asynchronous spec-change task to report C(SUCCESS).
 options:
   state:
     description:
@@ -67,14 +69,22 @@ options:
   memory:
     description:
       - Memory size of the instance in MiB, written to
-        V(CreateDBInstanceRequest.Memory).
-      - Required when creating the instance.
+        V(CreateDBInstanceRequest.Memory) at creation and to
+        V(UpgradeDBInstanceRequest.Memory) when it drifts from an
+        existing instance.
+      - Required when creating the instance; optional on an existing
+        instance, where it triggers a specification change when it
+        differs from the current value.
     type: int
   volume:
     description:
       - Disk size of the instance in GiB, written to
-        V(CreateDBInstanceRequest.Volume).
-      - Required when creating the instance.
+        V(CreateDBInstanceRequest.Volume) at creation and to
+        V(UpgradeDBInstanceRequest.Volume) when it drifts from an
+        existing instance.
+      - Required when creating the instance; optional on an existing
+        instance, where it triggers a specification change when it
+        differs from the current value.
     type: int
   password:
     description:
@@ -134,10 +144,10 @@ options:
     description:
       - Overall timeout in seconds for lifecycle state polling; it bounds
         creation delivery (Status 1 with TaskStatus 0), isolation
-        (Status 5) and the restart task.
-      - Database creation takes several minutes, so the default is 900
-        seconds; lower it when the playbook only renames or restarts an
-        existing instance.
+        (Status 5), the restart task and the spec-change task.
+      - Database creation and specification changes take several minutes,
+        so the default is 900 seconds; lower it when the playbook only
+        renames an existing instance.
     type: int
     default: 900
   user_agent:
@@ -156,6 +166,12 @@ notes:
   - Restart is asynchronous on the CDB side; the module polls
     V(DescribeAsyncRequestInfo) until the task reports C(SUCCESS) or
     fails, bounded by O(waiter_timeout).
+  - Specification changes (V(UpgradeDBInstance)) are also asynchronous;
+    the module waits for the C(SUCCESS) task outcome before returning.
+    The API supports both upgrade and downgrade of the specification;
+    note that disk capacity can only be expanded, never reduced. For
+    valid Memory and Volume values use the DescribeDBInstanceConfig
+    salesable-spec API.
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
@@ -179,6 +195,14 @@ EXAMPLES = r'''
     region: ap-guangzhou
     state: present
     name: prod-mysql-v2
+
+- name: Resize it (waits for the async spec-change task)
+  susunola.tencentcloud.cdb_instance:
+    region: ap-guangzhou
+    state: present
+    instance_id: cdb-xxxxxxxx
+    memory: 16000
+    volume: 200
 
 - name: Restart it (waits for the async restart task)
   susunola.tencentcloud.cdb_instance:
@@ -394,6 +418,52 @@ def _restart(module, client, models, instance_id):
     )
 
 
+def build_upgrade_request(models, instance_id, memory, volume):
+    request = models.UpgradeDBInstanceRequest()
+    request.InstanceId = instance_id
+    request.Memory = memory
+    request.Volume = volume
+    return request
+
+
+def _upgrade(module, client, models, instance_id, memory, volume):
+    """Change the instance specification and wait for the async task.
+
+    ``UpgradeDBInstance`` changes (upgrades or downgrades) the memory and
+    disk of an existing instance. It returns an ``AsyncRequestId`` that
+    the official documentation says to query with
+    ``DescribeAsyncRequestInfo`` - the same polling pattern as the
+    restart path, so the string-status waiter is reused verbatim.
+    """
+    response = module.sdk_call(
+        client.UpgradeDBInstance,
+        build_upgrade_request(models, instance_id, memory, volume),
+    )
+    task_id = getattr(response, "AsyncRequestId", None)
+    if task_id is None:
+        module.fail_json(
+            msg="UpgradeDBInstance returned no AsyncRequestId; cannot track "
+                "the asynchronous spec-change task",
+            instance_id=instance_id,
+        )
+
+    def poll():
+        task_response = module.sdk_call(
+            client.DescribeAsyncRequestInfo,
+            build_task_status_request(models, task_id),
+        )
+        return task_response.Status, task_response.Info, task_response
+
+    wait_for_task(
+        module,
+        poll,
+        timeout=module.params["waiter_timeout"],
+        delay=module.params["waiter_delay"],
+        success_statuses=("SUCCESS",),
+        failure_statuses=("FAILED", "KILLED", "REMOVED", "PAUSED"),
+    )
+
+
 def run_module():
     module = TencentCloudModule(
         argument_spec={
@@ -500,6 +570,29 @@ def run_module():
         _rename(module, client, models, target_id, name)
         updated = find_instance(module, client, models, target_id, None)
         module.exit_json(changed=True, **(diff or {}), instance=updated, msg="CDB instance renamed")
+
+    memory = module.params["memory"]
+    volume = module.params["volume"]
+    if memory is not None or volume is not None:
+        desired = {}
+        if memory is not None and current.get("Memory") != memory:
+            desired["Memory"] = memory
+        if volume is not None and current.get("Volume") != volume:
+            desired["Volume"] = volume
+        if desired:
+            diff = maybe_diff(module, current, desired)
+            if module.check_mode:
+                module.exit_json(changed=True, **(diff or {}), msg="Would resize CDB instance")
+            _upgrade(
+                module,
+                client,
+                models,
+                target_id,
+                memory if memory is not None else current.get("Memory"),
+                volume if volume is not None else current.get("Volume"),
+            )
+            updated = find_instance(module, client, models, target_id, None)
+            module.exit_json(changed=True, **(diff or {}), instance=updated, msg="CDB instance resized")
 
     module.exit_json(changed=False, instance=current, msg="CDB instance is up to date")
 
