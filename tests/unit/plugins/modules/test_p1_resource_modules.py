@@ -97,6 +97,19 @@ def test_kms_create_request(models):
     assert request.Type == 1
 
 
+def test_kms_create_request_maps_tags(models):
+    request = kms_key.build_create_request(models, {
+        "alias": "production", "description": "Data key",
+        "key_usage": None, "key_type": None,
+        "tags": {"environment": "production", "owner": "platform"},
+    })
+    assert request.KeyUsage == "ENCRYPT_DECRYPT"
+    assert request.Type == 1
+    assert [(tag.TagKey, tag.TagValue) for tag in request.Tags] == [
+        ("environment", "production"), ("owner", "platform"),
+    ]
+
+
 def test_kms_alias_lookup_uses_exact_match_and_paginates(models):
     calls = []
 

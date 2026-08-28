@@ -16,12 +16,14 @@ options:
   key_id: {description: Existing KMS key ID. Takes precedence over O(alias)., type: str}
   alias: {description: Alias used to find or create the key. Exact matching is applied to API search results., type: str}
   description: {description: Human-readable key description., type: str, default: ''}
-  key_usage: {description: Cryptographic use of the key., type: str, choices: [ENCRYPT_DECRYPT, ASYMMETRIC_DECRYPT_RSA_2048, ASYMMETRIC_DECRYPT_SM2, ASYMMETRIC_SIGN_VERIFY_ECC, ASYMMETRIC_SIGN_VERIFY_SM2], default: ENCRYPT_DECRYPT}
-  key_type: {description: KMS key origin type., type: int, choices: [1, 2], default: 1}
+  key_usage: {description: Cryptographic use of the key. Defaults to C(ENCRYPT_DECRYPT) when creating., type: str, choices: [ENCRYPT_DECRYPT, ASYMMETRIC_DECRYPT_RSA_2048, ASYMMETRIC_DECRYPT_SM2, ASYMMETRIC_SIGN_VERIFY_ECC, ASYMMETRIC_SIGN_VERIFY_SM2]}
+  key_type: {description: KMS key origin type. Defaults to C(1) when creating., type: int, choices: [1, 2]}
+  tags: {description: Tags applied when creating the key., type: dict}
   enabled: {description: Whether the key is enabled., type: bool, default: true}
   rotation_enabled: {description: "Whether automatic rotation is enabled. When omitted, rotation is not managed.", type: bool}
   rotation_days: {description: Automatic rotation period in days., type: int, default: 365}
   deletion_window_days: {description: Waiting period before permanent deletion., type: int, default: 7}
+  deletion_protection: {description: Refuse O(state=absent) while enabled., type: bool, default: false}
   retries: {description: Number of retries for transient SDK failures., type: int, default: 5}
   waiter_delay: {description: Seconds between state-polling attempts., type: int, default: 5}
   waiter_timeout: {description: Overall timeout in seconds for state polling., type: int, default: 120}
@@ -144,7 +146,14 @@ def wait_for_key_state(module, client, models, key_id, expected_states):
 def build_create_request(models, params):
     request = models.CreateKeyRequest()
     request.Alias = params["alias"]
-    request.Description, request.KeyUsage, request.Type = params["description"], params["key_usage"], params["key_type"]
+    request.Description = params["description"]
+    request.KeyUsage, request.Type = params["key_usage"] or "ENCRYPT_DECRYPT", params["key_type"] or 1
+    if params.get("tags"):
+        request.Tags = []
+        for key, value in sorted(params["tags"].items()):
+            tag = models.Tag()
+            tag.TagKey, tag.TagValue = str(key), str(value)
+            request.Tags.append(tag)
     return request
 
 
@@ -164,13 +173,14 @@ def run_module():
                     "ASYMMETRIC_SIGN_VERIFY_ECC",
                     "ASYMMETRIC_SIGN_VERIFY_SM2",
                 ],
-                "default": "ENCRYPT_DECRYPT",
             },
-            "key_type": {"type": "int", "choices": [1, 2], "default": 1},
+            "key_type": {"type": "int", "choices": [1, 2]},
+            "tags": {"type": "dict"},
             "enabled": {"type": "bool", "default": True},
             "rotation_enabled": {"type": "bool"},
             "rotation_days": {"type": "int", "default": 365},
             "deletion_window_days": {"type": "int", "default": 7},
+            "deletion_protection": {"type": "bool", "default": False},
         },
         supports_check_mode=True,
     )
@@ -179,6 +189,8 @@ def run_module():
         module.fail_json(msg="alias is required to create a KMS key")
     if p["state"] == "absent" and not p["key_id"] and not p["alias"]:
         module.fail_json(msg="key_id or alias is required when state=absent")
+    if p["state"] == "absent" and p["deletion_protection"]:
+        module.fail_json(msg="KMS key deletion is blocked by deletion_protection")
     if not 7 <= p["deletion_window_days"] <= 30:
         module.fail_json(msg="deletion_window_days must be between 7 and 30")
     if not 7 <= p["rotation_days"] <= 365:
@@ -206,7 +218,13 @@ def run_module():
             current = wait_for_key_state(module, client, models, p["key_id"], ("PendingDelete",))
             module.exit_json(changed=True, **(diff or {}), key=current, msg="KMS key deletion scheduled")
         if current is None:
-            desired = {"Alias": p["alias"], "Description": p["description"], "KeyUsage": p["key_usage"], "Enabled": p["enabled"]}
+            desired = {
+                "Alias": p["alias"], "Description": p["description"],
+                "KeyUsage": p["key_usage"] or "ENCRYPT_DECRYPT",
+                "Type": p["key_type"] or 1, "Enabled": p["enabled"],
+            }
+            if p["tags"] is not None:
+                desired["Tags"] = p["tags"]
             if p["rotation_enabled"] is not None:
                 desired["RotationEnabled"] = p["rotation_enabled"]
             diff = maybe_diff(module, None, desired)
@@ -225,6 +243,18 @@ def run_module():
                 current = describe_key(module, client, models, p["key_id"])
             module.exit_json(changed=True, **(diff or {}), key=current, msg="KMS key created")
         changes = []
+        immutable_drift = {}
+        if p["alias"] is not None and current.get("Alias") != p["alias"]:
+            immutable_drift["alias"] = {"current": current.get("Alias"), "desired": p["alias"]}
+        if p["key_usage"] is not None and current.get("KeyUsage") != p["key_usage"]:
+            immutable_drift["key_usage"] = {"current": current.get("KeyUsage"), "desired": p["key_usage"]}
+        if p["key_type"] is not None and int(current.get("Type") or 0) != p["key_type"]:
+            immutable_drift["key_type"] = {"current": current.get("Type"), "desired": p["key_type"]}
+        if immutable_drift:
+            module.fail_json(
+                msg="KMS key has immutable attribute drift; create a replacement key",
+                immutable_drift=immutable_drift,
+            )
         pending_delete = str(current.get("KeyState", "")).lower() in ("pendingdelete", "pending_delete")
         if pending_delete:
             changes.append("cancel_deletion")
