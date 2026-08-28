@@ -162,6 +162,7 @@ secret:
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found
 
 
 def _load_ssm():
@@ -180,8 +181,7 @@ def find_secret(module, client, models, secret_name):
         request.SecretName = secret_name
         response = module.sdk_call(client.DescribeSecret, request)
     except Exception as exc:
-        code = getattr(exc, "get_code", lambda: None)()
-        if code and "NotFound" in str(code):
+        if is_not_found(exc):
             return None
         raise
     return response._serialize(allow_none=True)

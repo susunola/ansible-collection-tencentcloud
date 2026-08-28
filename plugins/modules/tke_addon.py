@@ -48,6 +48,7 @@ import yaml
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found
 
 
 def _load_tke():
@@ -112,7 +113,7 @@ def describe_addon(module, client, models, cluster_id, name):
     try:
         response = module.sdk_call(client.DescribeAddon, request)
     except Exception as exc:
-        if getattr(exc, "get_code", lambda: "")() in ("ResourceNotFound", "ResourceNotFound.Addon"):
+        if is_not_found(exc):
             return None
         raise
     addons = list(getattr(response, "Addons", None) or [])

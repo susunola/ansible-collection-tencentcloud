@@ -1,0 +1,5 @@
+bugfixes:
+  - >-
+    Use the shared Tencent Cloud not-found classifier in SCF, SSM, TKE and
+    Private DNS resource discovery paths for consistent absent idempotency.
+
