@@ -95,6 +95,7 @@ CORE_MODULES = {
     "tke_node_pool",
     "vpc",
     "vpn_gateway",
+    "vpn_connection",
     # Hand-written *_info modules that the generator cannot express.
     "cam_policy_info",
     "cam_role_info",

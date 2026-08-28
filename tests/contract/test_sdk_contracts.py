@@ -484,6 +484,10 @@ WRITE_MODULE_BUILDERS = {
         "build_create_request", "build_delete_request",
         "build_describe_request", "build_update_request",
     ],
+    "vpn_connection": [
+        "build_create_request", "build_delete_request", "build_describe_request",
+        "build_update_request",
+    ],
 }
 
 
@@ -1947,6 +1951,30 @@ def test_customer_gateway():
     errors.extend(audit_request(
         module.build_delete_request(models, "cgw-xxxxxxxx"),
         "customer gateway delete"))
+    assert errors == []
+
+
+def test_vpn_connection():
+    module = _import_plugin("vpn_connection")
+    models = _models("vpc.v20170312")
+    params = {
+        "name": "office", "vpn_gateway_id": "vpngw-xxxxxxxx",
+        "customer_gateway_id": "cgw-xxxxxxxx", "vpc_id": "vpc-xxxxxxxx",
+        "pre_shared_key": "secret", "rotate_pre_shared_key": True,
+        "security_policy_databases": [{"local_cidr": "10.0.0.0/16", "remote_cidr": "192.168.0.0/16"}],
+        "route_type": "Policy", "negotiation_type": "active", "dpd_enabled": True,
+        "dpd_timeout": 30, "dpd_action": "restart", "tags": {"env": "prod"},
+    }
+    requests = [
+        module.build_describe_request(models, "vpnx-xxxxxxxx"),
+        module.build_describe_request(models, name="office", gateway_id="vpngw-xxxxxxxx"),
+        module.build_create_request(models, params),
+        module.build_update_request(models, "vpnx-xxxxxxxx", params),
+        module.build_delete_request(models, "vpngw-xxxxxxxx", "vpnx-xxxxxxxx"),
+    ]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "vpn connection request %s" % index))
     assert errors == []
 
 

@@ -1,0 +1,4 @@
+minor_changes:
+  - >-
+    Add vpn_connection for idempotent IPsec tunnel lifecycle, exact SPD route
+    reconciliation, DPD settings and explicit pre-shared-key rotation.

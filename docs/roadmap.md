@@ -209,9 +209,10 @@
     request-model contract audit.
 43. VPN topology closure: customer gateway and VPN connection lifecycle,
     followed by CLB target groups. **In progress** — `customer_gateway`
-    manages remote peer definitions by ID or unique name, including public IP,
-    mutable name/BGP ASN, creation tags, check mode, diff and convergence
-    polling.
+    manages remote peer definitions by ID or unique name; `vpn_connection`
+    manages IPsec tunnel lifecycle, exact SPD CIDR pairs, negotiation and DPD
+    settings, plus explicit pre-shared-key rotation. Both support check mode,
+    diff output and convergence polling.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

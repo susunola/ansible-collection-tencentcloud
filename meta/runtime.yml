@@ -259,6 +259,7 @@ action_groups:
     - vod_incremental_migration_strategy_info
     - vpc
     - vpc_info
+    - vpn_connection
     - vpn_gateway
     - vpn_gateway_info
     - waf_instance_info
