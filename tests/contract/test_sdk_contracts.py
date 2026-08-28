@@ -404,6 +404,11 @@ WRITE_MODULE_BUILDERS = {
         "_create", "_delete", "_set_deletion_protection", "_update",
         "build_describe_request",
     ],
+    "nat_gateway_rule": [
+        "_create_dnat", "_create_snat", "_delete_dnat", "_delete_snat",
+        "build_dnat_describe_request", "build_snat_describe_request",
+        "find_gateway",
+    ],
     "peering_connection": [
         "_accept", "_create", "_delete", "_update", "build_describe_request",
     ],
@@ -1571,6 +1576,39 @@ def test_nat_gateway():
     module._update(fake, client, models, "nat-xxxxxxxx", "egress-nat-v2", 200)
     module._delete(fake, client, models, "nat-xxxxxxxx", True)
     errors.extend(audit_recorded(fake, "nat_gateway"))
+    assert errors == []
+
+
+def test_nat_gateway_rule():
+    module = _import_plugin("nat_gateway_rule")
+    models = _models("vpc.v20170312")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_dnat_describe_request(models, "nat-xxxxxxxx"),
+        "nat_gateway_rule dnat describe"))
+    errors.extend(audit_request(
+        module.build_snat_describe_request(models, "nat-xxxxxxxx"),
+        "nat_gateway_rule snat describe"))
+    dnat = module.normalize_dnat({
+        "ip_protocol": "tcp", "public_ip_address": "114.182.81.73",
+        "public_port": 8989, "private_ip_address": "10.80.80.41",
+        "private_port": 8989, "description": "web",
+    })
+    snat = module.normalize_snat({
+        "resource_type": "cvm", "resource_id": "cvm-xxxxxxxx",
+        "private_ip_address": "10.0.0.5",
+        "public_ip_addresses": ["180.12.59.43"], "description": "prod",
+    })
+    module.find_gateway(fake, client, models, "nat-xxxxxxxx")
+    module.list_dnat_rules(fake, client, models, "nat-xxxxxxxx")
+    module.list_snat_rules(fake, client, models, "nat-xxxxxxxx")
+    module._create_dnat(fake, client, models, "nat-xxxxxxxx", [dnat])
+    module._delete_dnat(fake, client, models, "nat-xxxxxxxx", [dnat])
+    module._create_snat(fake, client, models, "nat-xxxxxxxx", [snat])
+    module._delete_snat(fake, client, models, "nat-xxxxxxxx", ["snat-xxxxxxxx"])
+    errors.extend(audit_recorded(fake, "nat_gateway_rule"))
     assert errors == []
 
 

@@ -168,6 +168,7 @@ action_groups:
     - msp_migration_project_info
     - nat_gateway
     - nat_gateway_info
+    - nat_gateway_rule
     - oceanus_cluster_info
     - omics_application_info
     - organization_member_info

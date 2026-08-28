@@ -36,6 +36,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `lighthouse_instance` | Manage Tencent Cloud Lighthouse instances |
 | `mongodb_instance` | Manage Tencent Cloud MongoDB instances |
 | `nat_gateway` | Manage Tencent Cloud NAT gateways |
+| `nat_gateway_rule` | Manage Tencent Cloud NAT gateway DNAT and SNAT rules |
 | `peering_connection` | Manage Tencent Cloud VPC peering connections |
 | `redis_instance` | Manage Tencent Cloud Redis instances |
 | `route_table` | Manage Tencent Cloud VPC route tables |

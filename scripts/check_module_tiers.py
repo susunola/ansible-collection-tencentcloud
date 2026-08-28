@@ -62,6 +62,7 @@ CORE_MODULES = {
     "lighthouse_instance",
     "mongodb_instance",
     "nat_gateway",
+    "nat_gateway_rule",
     "peering_connection",
     "redis_instance",
     "route_table",
