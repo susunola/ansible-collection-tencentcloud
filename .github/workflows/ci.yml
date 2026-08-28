@@ -60,6 +60,11 @@ jobs:
         run: python scripts/sync_registry.py --check
       - name: Module tiers are consistent
         run: python scripts/check_module_tiers.py --check
+      # Generated _info modules must expose every required request field:
+      # a spec hiding one makes every call fail with a confusing API error.
+      # Runs after the SDK drift sentinel so the models are importable.
+      - name: No hidden required params
+        run: python scripts/check_hidden_required_params.py --check
       - name: Ruff lint
         run: ruff check .
       - name: Sanity tests
