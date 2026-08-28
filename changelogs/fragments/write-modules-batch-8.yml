@@ -1,0 +1,19 @@
+minor_changes:
+  - cvm_chc - new module to manage the VPC network configuration of CHC
+    physical servers, attaching or updating the out-of-band (BMC) and
+    deployment VPCs with ``ConfigureChcAssistVpc``, renaming the server
+    with ``ModifyChcAttribute``, and removing the network configuration
+    with ``RemoveChcAssistVpc``/``RemoveChcDeployVpc``. CHC servers are
+    delivered offline and cannot be created through an API, so a missing
+    server fails instead of being created.
+  - mongodb_instance - new module to create, rename and isolate MongoDB
+    instances with the ``mongodb.v20190725`` API. Prepaid instances are
+    created with ``CreateDBInstance``, postpaid with
+    ``CreateDBInstanceHour``.
+  - gaap_proxy - new module to create, rename, open, close and destroy
+    GAAP proxies with the ``gaap.v20180529`` API.
+  - cdn_domain - new module to add, start, stop and delete CDN
+    acceleration domains with the ``cdn.v20180606`` API.
+  - tcr_instance - new module to create, update and delete TCR enterprise
+    instances with the ``tcr.v20190924`` API; deletion protection is
+    enforced idempotently on existing instances with ``ModifyInstance``.

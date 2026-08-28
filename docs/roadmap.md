@@ -106,8 +106,13 @@
 
 ## Next
 
-35. Remaining write modules: `cvm_chc`, `mongodb`, `mysql`, `gaap`, `cdn`,
-    `tcr`.
+35. Remaining write modules: `cvm_chc`, `mongodb`, `gaap`, `cdn`, `tcr`
+    (the write-module count grows from 21 to 26). **Done** — `mysql` was
+    already covered by `cdb_instance` (0.12.0): the new batch adds
+    `cvm_chc` (CHC VPC network configuration), `mongodb_instance`
+    (create/rename/isolate), `gaap_proxy` (create/open/close/destroy),
+    `cdn_domain` (add/start/stop/delete) and `tcr_instance`
+    (create/update/delete with idempotent deletion protection).
 36. Coverage reporting for unit and integration tests.
 37. Curate auto-generated modules that hide required request parameters
     (e.g. `teo` ZoneId, `mqtt`/`emr` InstanceId, `lcic` SdkAppId): move them
@@ -115,6 +120,8 @@
 38. Deepen existing write modules: async long-running task polling beyond
     CLB, multi-zone spread for `exact_count`, waiter coverage for database
     instance lifecycles.
+39. CVM CHC server lifecycle: rescue mode (`EnterRescueMode`/`ExitRescueMode`)
+    and network mode switching (`ModifyChcNetworkMode`) on top of `cvm_chc`.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

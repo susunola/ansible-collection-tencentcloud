@@ -318,11 +318,23 @@ WRITE_MODULE_BUILDERS = {
         "_create", "_delete", "_update_name", "_update_size_limit",
         "build_describe_request",
     ],
+    "cdn_domain": [
+        "_delete", "_start", "_stop",
+        "build_add_request", "build_describe_request",
+    ],
+    "cvm_chc": [
+        "_configure_vpc", "_remove_assist", "_remove_deploy", "_rename",
+        "build_describe_request",
+    ],
     "cvm_image": [
         "_create", "_delete", "_update", "build_describe_request",
     ],
     "lighthouse_instance": [
         "_isolate", "_start", "_stop", "_update_name",
+        "build_create_request", "build_describe_request",
+    ],
+    "mongodb_instance": [
+        "_delete", "_rename",
         "build_create_request", "build_describe_request",
     ],
     "clb_listener": [
@@ -342,6 +354,10 @@ WRITE_MODULE_BUILDERS = {
         "_apply_tags", "_associate", "_create", "_delete", "_disassociate",
         "_update_bandwidth", "_update_charge_type", "_update_name",
         "build_describe_request",
+    ],
+    "gaap_proxy": [
+        "_close", "_destroy", "_open", "_rename",
+        "build_create_request", "build_describe_request",
     ],
     "key_pair": [
         "_create", "_delete", "_import", "build_describe_request",
@@ -403,6 +419,9 @@ WRITE_MODULE_BUILDERS = {
     ],
     "tag": [
         "_attach", "_detach", "_update_value", "build_describe_request",
+    ],
+    "tcr_instance": [
+        "_delete", "_update", "build_create_request", "build_describe_request",
     ],
     "tke_cluster": [
         "_create", "_delete", "_set_deletion_protection", "_update",
@@ -1760,4 +1779,205 @@ def test_vpn_gateway():
     module._update(fake, client, models, "vpngw-xxxxxxxx", "site-vpn-v2", 200, 64512)
     module._delete(fake, client, models, "vpngw-xxxxxxxx")
     errors.extend(audit_recorded(fake, "vpn_gateway"))
+    assert errors == []
+
+
+def test_cvm_chc():
+    module = _import_plugin("cvm_chc")
+    models = _models("cvm.v20170312")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "chc-xxxxxxxx", None),
+        "chc describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, "chc-prod-01"),
+        "chc describe by name"))
+    module._configure_vpc(fake, client, models, "chc-xxxxxxxx", {
+        "bmc_vpc_id": "vpc-aaaaaaaa",
+        "bmc_subnet_id": "subnet-aaaaaaaa",
+        "bmc_security_group_ids": ["sg-xxxxxxxx"],
+        "deploy_vpc_id": "vpc-bbbbbbbb",
+        "deploy_subnet_id": "subnet-bbbbbbbb",
+        "deploy_security_group_ids": ["sg-yyyyyyyy"],
+    })
+    module._rename(fake, client, models, "chc-xxxxxxxx", "chc-prod-01")
+    module._remove_assist(fake, client, models, "chc-xxxxxxxx")
+    module._remove_deploy(fake, client, models, "chc-xxxxxxxx")
+    errors.extend(audit_recorded(fake, "cvm_chc"))
+    assert errors == []
+
+
+def test_mongodb_instance():
+    module = _import_plugin("mongodb_instance")
+    models = _models("mongodb.v20190725")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "cmgo-xxxxxxxx", None),
+        "mongodb describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, "prod-mongo"),
+        "mongodb describe by name"))
+    errors.extend(audit_request(
+        module.build_create_request(models, {
+            "name": "prod-mongo",
+            "memory": 8,
+            "volume": 100,
+            "mongo_version": "5.0",
+            "zone": "ap-guangzhou-3",
+            "cluster_type": "REPLSET",
+            "node_num": 3,
+            "replicate_set_num": None,
+            "password": "secret",
+            "vpc_id": "vpc-xxxxxxxx",
+            "subnet_id": "subnet-xxxxxxxx",
+            "project_id": None,
+            "period_months": 1,
+            "auto_renew": None,
+            "security_group": None,
+            "tags": {"env": "prod"},
+        }),
+        "mongodb create request"))
+    module._create(fake, client, models, {
+        "name": "prod-mongo",
+        "memory": 8,
+        "volume": 100,
+        "mongo_version": "5.0",
+        "zone": "ap-guangzhou-3",
+        "cluster_type": "REPLSET",
+        "node_num": 3,
+        "replicate_set_num": None,
+        "password": "secret",
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_id": "subnet-xxxxxxxx",
+        "project_id": None,
+        "period_months": 1,
+        "auto_renew": None,
+        "security_group": None,
+        "tags": {"env": "prod"},
+    })
+    module._rename(fake, client, models, "cmgo-xxxxxxxx", "prod-mongo-v2")
+    module._delete(fake, client, models, "cmgo-xxxxxxxx")
+    errors.extend(audit_recorded(fake, "mongodb_instance"))
+    assert errors == []
+
+
+def test_gaap_proxy():
+    module = _import_plugin("gaap_proxy")
+    models = _models("gaap.v20180529")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "proxy-xxxxxxxx", None),
+        "gaap describe by id"))
+    errors.extend(audit_request(
+        module.build_create_request(models, {
+            "name": "prod-gaap",
+            "access_region": "ap-guangzhou",
+            "real_server_region": "ap-hongkong",
+            "bandwidth": 20,
+            "concurrent": 2,
+            "project_id": None,
+            "billing_type": 0,
+            "network_type": "normal",
+            "ip_address_version": "IPv4",
+            "group_id": None,
+        }),
+        "gaap create request"))
+    module._create(fake, client, models, {
+        "name": "prod-gaap",
+        "access_region": "ap-guangzhou",
+        "real_server_region": "ap-hongkong",
+        "bandwidth": 20,
+        "concurrent": 2,
+        "project_id": None,
+        "billing_type": 0,
+        "network_type": "normal",
+        "ip_address_version": "IPv4",
+        "group_id": None,
+    })
+    module._rename(fake, client, models, "proxy-xxxxxxxx", "prod-gaap-v2")
+    module._open(fake, client, models, "proxy-xxxxxxxx")
+    module._close(fake, client, models, "proxy-xxxxxxxx")
+    module._destroy(fake, client, models, "proxy-xxxxxxxx")
+    errors.extend(audit_recorded(fake, "gaap_proxy"))
+    assert errors == []
+
+
+def test_cdn_domain():
+    module = _import_plugin("cdn_domain")
+    models = _models("cdn.v20180606")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "cdn.example.com"),
+        "cdn describe by domain"))
+    errors.extend(audit_request(
+        module.build_add_request(models, {
+            "domain": "cdn.example.com",
+            "service_type": "web",
+            "origins": ["origin.example.com"],
+            "origin_type": "domain",
+            "origin_protocol": "http",
+            "backup_origins": None,
+            "project_id": None,
+            "area": None,
+        }),
+        "cdn add request"))
+    module._add(fake, client, models, {
+        "domain": "cdn.example.com",
+        "service_type": "web",
+        "origins": ["origin.example.com"],
+        "origin_type": "domain",
+        "origin_protocol": "http",
+        "backup_origins": None,
+        "project_id": None,
+        "area": None,
+    })
+    module._start(fake, client, models, "cdn.example.com")
+    module._stop(fake, client, models, "cdn.example.com")
+    module._delete(fake, client, models, "cdn.example.com")
+    errors.extend(audit_recorded(fake, "cdn_domain"))
+    assert errors == []
+
+
+def test_tcr_instance():
+    module = _import_plugin("tcr_instance")
+    models = _models("tcr.v20190924")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "tcr-xxxxxxxx", None),
+        "tcr describe by id"))
+    errors.extend(audit_request(
+        module.build_create_request(models, {
+            "name": "prod-registry",
+            "registry_type": "basic",
+            "deletion_protection": True,
+            "period_months": 12,
+            "auto_renew": 1,
+            "sync_tag": None,
+            "enable_cos_maz": None,
+            "tags": {"env": "prod"},
+        }),
+        "tcr create request"))
+    module._create(fake, client, models, {
+        "name": "prod-registry",
+        "registry_type": "basic",
+        "deletion_protection": True,
+        "period_months": 12,
+        "auto_renew": 1,
+        "sync_tag": None,
+        "enable_cos_maz": None,
+        "tags": {"env": "prod"},
+    })
+    module._update(fake, client, models, "tcr-xxxxxxxx", False)
+    module._delete(fake, client, models, "tcr-xxxxxxxx", True)
+    errors.extend(audit_recorded(fake, "tcr_instance"))
     assert errors == []

@@ -46,6 +46,7 @@ action_groups:
     - cdb_instance
     - cdb_instance_info
     - cdc_dedicated_cluster_order_info
+    - cdn_domain
     - cdn_domain_info
     - cds_asset_info
     - cdwch_cn_instance_info
@@ -84,6 +85,7 @@ action_groups:
     - csip_asset_process_info
     - ctem_api_sec_info
     - ctsdb_cluster_info
+    - cvm_chc
     - cvm_image
     - cvm_instance
     - cvm_instance_info
@@ -120,6 +122,7 @@ action_groups:
     - fmu_model_info
     - fwm_edge_acl_rule_info
     - ga2_accelerate_area_info
+    - gaap_proxy
     - gaap_proxy_info
     - gme_voice_print_info
     - goosefs_file_system_info
@@ -156,6 +159,7 @@ action_groups:
     - memcached_instance_info
     - mmps_resource_usage_info
     - mna_access_region_info
+    - mongodb_instance
     - mongodb_instance_info
     - monitor_alarm_policy_info
     - mps_person_sample_info
@@ -204,6 +208,7 @@ action_groups:
     - tcb_billing_info
     - tcbr_cloud_run_pod_info
     - tcm_mesh_info
+    - tcr_instance
     - tcr_instance_info
     - tcss_abnormal_process_event_info
     - tdai_agent_duty_task_info

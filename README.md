@@ -18,6 +18,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cam_user` | Manage Tencent Cloud CAM sub-users |
 | `cbs_disk` | Manage Tencent Cloud CBS cloud disks |
 | `cdb_instance` | Manage Tencent Cloud CDB MySQL instances |
+| `cdn_domain` | Manage Tencent Cloud CDN domains |
 | `cfs_file_system` | Manage Tencent Cloud CFS file systems |
 | `ckafka_topic` | Manage Tencent Cloud CKafka topics |
 | `clb_listener` | Manage listeners on Tencent Cloud CLB load balancers |
@@ -25,12 +26,15 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `clb_load_balancer` | Manage Tencent Cloud CLB load balancers |
 | `clb_rule` | Manage Tencent Cloud CLB L7 forwarding rules |
 | `cos_bucket` | Manage Tencent Cloud COS buckets |
+| `cvm_chc` | Manage Tencent Cloud CHC physical server network configuration |
 | `cvm_image` | Manage Tencent Cloud CVM custom images |
 | `cvm_instance` | Manage Tencent Cloud CVM instances |
 | `dnspod_record` | Manage Tencent Cloud DNSPod DNS records |
 | `eip` | Manage Tencent Cloud elastic IP addresses (EIP) |
+| `gaap_proxy` | Manage Tencent Cloud GAAP proxies |
 | `key_pair` | Manage Tencent Cloud CVM key pairs |
 | `lighthouse_instance` | Manage Tencent Cloud Lighthouse instances |
+| `mongodb_instance` | Manage Tencent Cloud MongoDB instances |
 | `nat_gateway` | Manage Tencent Cloud NAT gateways |
 | `peering_connection` | Manage Tencent Cloud VPC peering connections |
 | `redis_instance` | Manage Tencent Cloud Redis instances |
@@ -42,6 +46,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `ssm_parameter` | Manage Tencent Cloud SSM secrets (parameters) |
 | `subnet` | Manage Tencent Cloud VPC subnets |
 | `tag` | Manage tags on arbitrary Tencent Cloud resources |
+| `tcr_instance` | Manage Tencent Cloud TCR enterprise instances |
 | `tke_cluster` | Manage Tencent Cloud TKE clusters |
 | `vpc` | Manage Tencent Cloud VPCs |
 | `vpn_gateway` | Manage Tencent Cloud VPN gateways |
