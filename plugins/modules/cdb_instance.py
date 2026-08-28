@@ -24,10 +24,14 @@ options:
   state:
     description:
       - C(present) creates the instance when it does not exist and renames
-        it when O(name) differs.
+        it when O(name) differs. After creation the module waits for the
+        instance to be delivered (Status 1 with TaskStatus 0) before
+        returning, bounded by O(waiter_timeout).
       - C(absent) isolates the instance (the billing is stopped and the
         instance moves to the recycle bin; postpaid instances are then
-        destroyed automatically after the retention period).
+        destroyed automatically after the retention period). The module
+        waits for the isolation to complete (Status 5) before returning,
+        bounded by O(waiter_timeout).
       - C(restarted) restarts a running instance with
         V(RestartDBInstances) and waits for the asynchronous restart task
         to report C(SUCCESS).
@@ -127,9 +131,15 @@ options:
     type: int
     default: 5
   waiter_timeout:
-    description: Overall timeout in seconds for state polling.
+    description:
+      - Overall timeout in seconds for lifecycle state polling; it bounds
+        creation delivery (Status 1 with TaskStatus 0), isolation
+        (Status 5) and the restart task.
+      - Database creation takes several minutes, so the default is 900
+        seconds; lower it when the playbook only renames or restarts an
+        existing instance.
     type: int
-    default: 120
+    default: 900
   user_agent:
     description:
       - Value appended to the SDK User-Agent header so API usage can be
@@ -140,8 +150,9 @@ notes:
   - Requires the C(tencentcloud-sdk-python-cdb) package on the controller.
   - CDB instances are billed while present; isolate them as soon as they
     are no longer needed to avoid unnecessary charges.
-  - Creation takes several minutes; the module returns as soon as the
-    creation order is accepted.
+  - Creation takes several minutes; after the creation order is accepted
+    the module waits for the instance to be delivered (Status 1 with
+    TaskStatus 0) before returning.
   - Restart is asynchronous on the CDB side; the module polls
     V(DescribeAsyncRequestInfo) until the task reports C(SUCCESS) or
     fails, bounded by O(waiter_timeout).
@@ -199,7 +210,10 @@ instance:
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_task
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import (
+    wait_for_state,
+    wait_for_task,
+)
 
 
 def _load_cdb():
@@ -282,6 +296,57 @@ def _delete(module, client, models, instance_id):
     module.sdk_call(client.IsolateDBInstance, request)
 
 
+def _delivered_poll(module, client, models, instance_id):
+    """Poll returning ``(Status, TaskStatus)``; None while not yet visible."""
+    def poll():
+        current = find_instance(module, client, models, instance_id, None)
+        if current is None:
+            return None
+        return current.get("Status"), current.get("TaskStatus")
+    return poll
+
+
+def _wait_delivered(module, client, models, instance_id):
+    """Wait until the created instance is delivered.
+
+    The CreateDBInstanceHour documentation defines delivery as Status 1
+    (running) with TaskStatus 0 (no task in progress).
+    """
+    return wait_for_state(
+        module,
+        _delivered_poll(module, client, models, instance_id),
+        [(1, 0)],
+        timeout=module.params["waiter_timeout"],
+        delay=module.params["waiter_delay"],
+    )
+
+
+def _status_poll(module, client, models, instance_id, gone_terminal=None):
+    """Poll returning the instance Status; ``gone_terminal`` when missing.
+
+    The destroy/isolate paths can end with the instance disappearing from
+    the describe API once recycling completes; ``gone_terminal`` reports a
+    missing instance as that terminal status instead of polling forever.
+    """
+    def poll():
+        current = find_instance(module, client, models, instance_id, None)
+        if current is None:
+            return gone_terminal
+        return current.get("Status")
+    return poll
+
+
+def _wait_status(module, client, models, instance_id, desired_states, gone_terminal=None):
+    """Wait until the instance Status is one of ``desired_states``."""
+    return wait_for_state(
+        module,
+        _status_poll(module, client, models, instance_id, gone_terminal),
+        desired_states,
+        timeout=module.params["waiter_timeout"],
+        delay=module.params["waiter_delay"],
+    )
+
+
 def build_restart_request(models, instance_id):
     request = models.RestartDBInstancesRequest()
     request.InstanceIds = [instance_id]
@@ -347,6 +412,7 @@ def run_module():
             "auto_renew": {"type": "int"},
             "security_group": {"type": "list", "elements": "str"},
             "tags": {"type": "dict", "default": {}},
+            "waiter_timeout": {"type": "int", "default": 900},
         },
         supports_check_mode=True,
     )
@@ -380,7 +446,9 @@ def run_module():
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), msg="Would isolate CDB instance")
         _delete(module, client, models, target_id)
-        module.exit_json(changed=True, **(diff or {}), instance=None, msg="CDB instance isolated")
+        _wait_status(module, client, models, target_id, [5])
+        isolated = find_instance(module, client, models, target_id, None)
+        module.exit_json(changed=True, **(diff or {}), instance=isolated, msg="CDB instance isolated")
 
     if state == "restarted":
         if current is None:
@@ -420,6 +488,7 @@ def run_module():
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), msg="Would create CDB instance")
         created_id = _create(module, client, models, module.params)
+        _wait_delivered(module, client, models, created_id)
         current = find_instance(module, client, models, created_id, None)
         module.exit_json(changed=True, **(diff or {}), instance=current, msg="CDB instance created")
 

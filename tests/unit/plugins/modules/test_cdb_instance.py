@@ -14,6 +14,8 @@ from ansible_collections.susunola.tencentcloud.plugins.modules.cdb_instance impo
     _rename,
     _delete,
     _restart,
+    _wait_delivered,
+    _wait_status,
 )
 
 
@@ -38,10 +40,11 @@ class FakeModels(object):
 
 
 class FakeInstance(object):
-    def __init__(self, instance_id, name):
+    def __init__(self, instance_id, name, status=1, task_status=0):
         self.InstanceId = instance_id
         self.InstanceName = name
-        self.Status = 1
+        self.Status = status
+        self.TaskStatus = task_status
         self.Memory = 8000
         self.Volume = 100
         self.EngineVersion = "8.0"
@@ -51,6 +54,7 @@ class FakeInstance(object):
             "InstanceId": self.InstanceId,
             "InstanceName": self.InstanceName,
             "Status": self.Status,
+            "TaskStatus": self.TaskStatus,
             "Memory": self.Memory,
             "Volume": self.Volume,
             "EngineVersion": self.EngineVersion,
@@ -81,6 +85,7 @@ class FakeTaskResponse(object):
 class FakeClient(object):
     def __init__(self, describe_response=None, create_response=None, exc=None):
         self.describe_response = describe_response
+        self.describe_pages = []
         self.create_response = create_response
         self.exc = exc
         self.restart_response = None
@@ -91,6 +96,8 @@ class FakeClient(object):
         self.calls.append(("DescribeDBInstances", request))
         if self.exc:
             raise self.exc
+        if self.describe_pages:
+            return FakeDescribeResponse(self.describe_pages.pop(0))
         return self.describe_response
 
     def CreateDBInstance(self, request):
@@ -299,3 +306,55 @@ def test_restart_fails_when_no_async_request_id():
         _restart(module, client, FakeModels, "cdb-1")
     assert "no AsyncRequestId" in excinfo.value.args[0]["msg"]
     assert [c[0] for c in client.calls] == ["RestartDBInstances"]
+
+
+def _wait_module(timeout=10, delay=1):
+    module = FakeModule()
+    module.params = {"retries": 2, "waiter_timeout": timeout, "waiter_delay": delay}
+    return module
+
+
+def test_wait_delivered_polls_until_status_1_task_0():
+    client = FakeClient()
+    client.describe_pages = [
+        [FakeInstance("cdb-1", "prod-mysql", status=0, task_status=10)],
+        [FakeInstance("cdb-1", "prod-mysql", status=1, task_status=12)],
+        [FakeInstance("cdb-1", "prod-mysql", status=1, task_status=0)],
+    ]
+    module = _wait_module(timeout=10, delay=0.01)
+    assert _wait_delivered(module, client, FakeModels, "cdb-1") == (1, 0)
+    assert len(client.calls) == 3
+
+
+def test_wait_delivered_keeps_polling_while_instance_not_visible():
+    client = FakeClient()
+    client.describe_pages = [
+        [],
+        [FakeInstance("cdb-1", "prod-mysql", status=0, task_status=2)],
+        [FakeInstance("cdb-1", "prod-mysql", status=1, task_status=0)],
+    ]
+    module = _wait_module(timeout=10, delay=0.01)
+    assert _wait_delivered(module, client, FakeModels, "cdb-1") == (1, 0)
+    assert len(client.calls) == 3
+
+
+def test_wait_delivered_times_out_on_stuck_creation():
+    client = FakeClient()
+    client.describe_pages = [[FakeInstance("cdb-1", "prod-mysql", status=0, task_status=2)]] * 20
+    module = _wait_module(timeout=0.15, delay=0.05)
+    with pytest.raises(SystemExit) as excinfo:
+        _wait_delivered(module, client, FakeModels, "cdb-1")
+    assert "Timed out waiting for resource state" in excinfo.value.args[0]["msg"]
+    assert excinfo.value.args[0]["expected_states"] == [(1, 0)]
+
+
+def test_wait_status_waits_for_isolated():
+    client = FakeClient()
+    client.describe_pages = [
+        [FakeInstance("cdb-1", "prod-mysql", status=1)],
+        [FakeInstance("cdb-1", "prod-mysql", status=4)],
+        [FakeInstance("cdb-1", "prod-mysql", status=5)],
+    ]
+    module = _wait_module(timeout=10, delay=0.01)
+    assert _wait_status(module, client, FakeModels, "cdb-1", [5]) == 5
+    assert len(client.calls) == 3

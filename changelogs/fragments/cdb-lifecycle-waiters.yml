@@ -1,0 +1,7 @@
+---
+minor_changes:
+  - cdb_instance - after creation the module now waits for the instance to
+    be delivered (Status 1 with TaskStatus 0) and after isolation waits for
+    Status 5, both bounded by ``waiter_timeout``; the default
+    ``waiter_timeout`` is raised from 120 to 900 seconds because database
+    creation takes several minutes.
