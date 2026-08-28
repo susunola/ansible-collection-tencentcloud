@@ -19,5 +19,11 @@ tencentcloud-sdk-python-cloudrc==3.1.162
 tencentcloud-sdk-python-cngw==3.1.165
 tencentcloud-sdk-python-fwm==3.1.166
 tencentcloud-sdk-python-portal==3.1.162
+# cds/dbdc ARE bundled by the main package but at older versions whose
+# models lack request classes the committed specs reference (e.g.
+# cds DescribeAssetsListRequest, dbdc DescribeDBCustomClustersRequest);
+# pin the subpackages so CI imports the same (newer) models as local.
+tencentcloud-sdk-python-cds==3.1.157
+tencentcloud-sdk-python-dbdc==3.1.163
 # Only needed for the cos_* modules (qcloud_cos SDK; COS is not API 3.0).
 cos-python-sdk-v5>=1.9.0
