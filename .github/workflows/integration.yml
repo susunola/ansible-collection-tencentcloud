@@ -9,7 +9,7 @@ on:
       targets:
         description: "Integration targets to run (space separated)"
         type: string
-        default: "security_group network cfs_file_system clb_http cam_user cos_bucket key_pair kms_key monitor_alarm_policy tke_addon"
+        default: "security_group network cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns tke_addon"
 
 # Integration tests create billable resources in a shared Tencent Cloud
 # account. A single fixed concurrency group serialises every run (any
@@ -66,8 +66,12 @@ jobs:
           TENCENTCLOUD_TKE_ADDON_NAME: ${{ vars.TENCENTCLOUD_TKE_ADDON_NAME }}
           TENCENTCLOUD_TKE_ADDON_VERSION: ${{ vars.TENCENTCLOUD_TKE_ADDON_VERSION }}
           TENCENTCLOUD_MONITOR_NAMESPACE: ${{ vars.TENCENTCLOUD_MONITOR_NAMESPACE }}
+          TENCENTCLOUD_MONITOR_NOTICE_ID: ${{ secrets.TENCENTCLOUD_MONITOR_NOTICE_ID }}
+          TENCENTCLOUD_PRIVATE_DNS_VPC_ID: ${{ secrets.TENCENTCLOUD_PRIVATE_DNS_VPC_ID }}
+          TENCENTCLOUD_CAM_GROUP_ID: ${{ secrets.TENCENTCLOUD_CAM_GROUP_ID }}
+          TENCENTCLOUD_CAM_SUB_UIN: ${{ secrets.TENCENTCLOUD_CAM_SUB_UIN }}
         run: >-
-          ansible-test integration ${{ inputs.targets || 'security_group network cfs_file_system clb_http cam_user cos_bucket key_pair kms_key monitor_alarm_policy tke_addon' }}
+          ansible-test integration ${{ inputs.targets || 'security_group network cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns tke_addon' }}
           --color --python 3.12 --coverage
       # Coverage is collected (not gated) on real-cloud runs: the numbers
       # fluctuate with the account's resource state, so they are reported

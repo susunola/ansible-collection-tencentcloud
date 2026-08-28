@@ -3,6 +3,7 @@
   vars:
     policy_name: "ansible-monitor-it-{{ 99999999 | random }}"
     namespace: "{{ lookup('env', 'TENCENTCLOUD_MONITOR_NAMESPACE') | default('QCE/CVM', true) }}"
+    notice_id: "{{ lookup('env', 'TENCENTCLOUD_MONITOR_NOTICE_ID') | default('', true) }}"
   module_defaults:
     group/susunola.tencentcloud.all:
       region: "{{ tencentcloud_region }}"
@@ -53,6 +54,27 @@
         that:
           - updated is changed
           - updated.policy.Remark == 'CI integration test updated'
+
+    - name: Bind notification independently
+      susunola.tencentcloud.monitor_alarm_policy_notice:
+        policy_id: "{{ created.policy.PolicyId }}"
+        notice_ids: ["{{ notice_id }}"]
+      register: notice_update
+      when: notice_id
+
+    - name: Reconcile notification independently
+      susunola.tencentcloud.monitor_alarm_policy_notice:
+        policy_id: "{{ created.policy.PolicyId }}"
+        notice_ids: ["{{ notice_id }}"]
+      register: notice_second
+      when: notice_id
+
+    - name: Verify notification idempotency
+      ansible.builtin.assert:
+        that:
+          - notice_update is changed
+          - notice_second is not changed
+      when: notice_id
 
   always:
     - name: Delete integration policy

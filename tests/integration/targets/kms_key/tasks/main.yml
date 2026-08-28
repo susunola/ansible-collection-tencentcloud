@@ -32,6 +32,26 @@
       ansible.builtin.assert:
         that: second is not changed
 
+    - name: Manage rotation independently
+      susunola.tencentcloud.kms_key_rotation:
+        key_id: "{{ created.key.KeyId }}"
+        enabled: true
+        rotation_days: 120
+      register: rotation_update
+
+    - name: Reconcile independent rotation again
+      susunola.tencentcloud.kms_key_rotation:
+        key_id: "{{ created.key.KeyId }}"
+        enabled: true
+        rotation_days: 120
+      register: rotation_second
+
+    - name: Verify independent rotation lifecycle
+      ansible.builtin.assert:
+        that:
+          - rotation_update is changed
+          - rotation_second is not changed
+
     - name: Check update without writing
       susunola.tencentcloud.kms_key:
         key_id: "{{ created.key.KeyId }}"
