@@ -93,3 +93,18 @@ def test_request_id_tracks_last_response():
     p = Paginator(3, lambda o, lim: {}, lambda r: object(), lambda r: [], lambda r: None)
     p.fetch_all()
     assert p.request_id is None
+
+
+def test_paginate_wrapper_returns_items_and_total():
+    from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import paginate
+
+    items, total = paginate(
+        None,
+        2,
+        lambda offset, limit: {"offset": offset},
+        lambda req: FakeResponse([1, 2], 2, request_id="req-w"),
+        lambda r: r.items,
+        lambda r: r.total,
+    )
+    assert items == [1, 2]
+    assert total == 2

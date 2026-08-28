@@ -607,6 +607,142 @@ def test_info_module_request_contract(module_name, service, builder, calls):
     assert errors == []
 
 
+def _smoke_response(spec):
+    """Spec-driven fake SDK response for a generated module's run_module.
+
+    The paginator terminates after the first call either because the
+    reported total (0) equals the collected items (0), or because a short
+    page (0 < page_size) or a missing continuation token ends the loop.
+    Dotted response paths (e.g. ``RecordCountInfo.TotalCount``) are
+    materialised as nested namespaces so the generator's guarded accessor
+    lambdas work.
+    """
+    resp = SimpleNamespace(RequestId="req-smoke")
+    for path, value in (
+        (spec["response_items"], []),
+        (spec["response_total"], 0),
+        # Generator defaults mirror _run_module_token_source: ListOver is
+        # read by every token template even when the spec omits it.
+        (spec.get("token_response_field", "NextToken"), None),
+        (spec.get("list_over_field", "ListOver"), None),
+        (spec.get("has_more_field"), None),
+        # ids_action describe branches read their own response list field.
+        (spec.get("ids_action", {}).get("response_items"), []),
+    ):
+        if not path:
+            continue
+        holder = resp
+        parts = path.split(".")
+        for part in parts[:-1]:
+            nested = getattr(holder, part, None)
+            if nested is None:
+                nested = SimpleNamespace()
+                setattr(holder, part, nested)
+            holder = nested
+        setattr(holder, parts[-1], value)
+    return resp
+
+
+class _SmokeModule(object):
+    """Module stand-in that records the exit payload instead of exiting."""
+
+    def __init__(self, params):
+        self.params = params
+        self.exit_payload = None
+
+    def exit_json(self, **kwargs):
+        self.exit_payload = kwargs
+
+    def fail_json(self, **kwargs):
+        raise AssertionError("module failed during smoke run: %r" % (kwargs,))
+
+
+def _smoke_params(spec):
+    """Every param the generated ``run_module`` reads, with sample values.
+
+    ``AnsibleModule`` is stubbed out (see ``_smoke_run_module``) so
+    argument_spec validation and ``mutually_exclusive`` checks are bypassed;
+    the module only ever reads ``module.params[...]`` for the names the
+    generator emits, so every one of them must be present.
+    """
+    params = {"region": "ap-guangzhou"}
+    for param in spec["extra_params"]:
+        params[param["name"]] = _param_sample(param)
+    if spec["ids"]:
+        params[spec["ids"]["param"]] = ["x-xxxxxxxx"]
+    if spec["filters"]:
+        params["filters"] = {"name": ["value"]}
+    params["page_size"] = 100
+    return params
+
+
+def _smoke_run_module(monkeypatch, spec, params):
+    """Run a generated info module's ``run_module`` end to end (mocked SDK).
+
+    Every network boundary is stubbed: the client class constructor is
+    replaced with ``_StubClient``, ``sdk_call`` returns the spec-driven fake
+    response, and ``AnsibleModule`` is replaced by ``_SmokeModule`` so the
+    argument assembly, request construction and pagination logic run without
+    exiting the process. ``serialize_sdk_object`` is neutralised because the
+    fake response is not a real SDK model.
+    """
+    mod = _import_plugin(spec["module"])
+    # Import the service package first: the client submodule below resolves
+    # against it, and the import also registers the models the generated
+    # module references at import time.
+    importlib.import_module(spec["service_package"])
+    client_module = importlib.import_module(
+        "%s.%s" % (spec["service_package"], spec["client_module"])
+    )
+    monkeypatch.setattr(client_module, spec["client_class"],
+                        lambda *args, **kwargs: _StubClient())
+    fake = _SmokeModule(params)
+    monkeypatch.setattr(mod, "AnsibleModule", lambda **kwargs: fake)
+    monkeypatch.setattr(mod, "create_credential", lambda module: None)
+    monkeypatch.setattr(mod, "create_client_profile", lambda module, endpoint: None)
+    monkeypatch.setattr(mod, "sdk_call",
+                        lambda module, function, request: _smoke_response(spec))
+    monkeypatch.setattr(mod, "serialize_sdk_object", lambda value: {})
+    mod.run_module()
+    return fake
+
+
+SMOKE_SPECS = _load_generator_specs()
+
+
+@pytest.mark.parametrize(
+    "module_name",
+    [spec["module"] for spec in SMOKE_SPECS],
+    ids=[spec["module"] for spec in SMOKE_SPECS],
+)
+def test_info_module_run_module_smoke(monkeypatch, module_name):
+    """Every generated info module's ``run_module`` runs to completion.
+
+    The builder-only contract tests audit request construction; this smoke
+    test additionally executes the whole ``run_module`` body against the
+    real SDK packages (with the network stubbed) and catches wiring
+    regressions a builder audit cannot see: renamed params, broken
+    pagination lambdas, missing response-field reads, argument_spec typos.
+    ``ids_action`` modules branch on the ids option, so both arms run.
+    """
+    spec = next(s for s in SMOKE_SPECS if s["module"] == module_name)
+    params = _smoke_params(spec)
+    param_sets = [params]
+    if spec.get("ids_action"):
+        # ids_action modules read module.params[ids] unconditionally and
+        # branch on its truthiness; the list-all arm therefore passes an
+        # empty list rather than omitting the key.
+        no_ids = dict(params)
+        no_ids[spec["ids"]["param"]] = []
+        param_sets.append(no_ids)
+    for params in param_sets:
+        fake = _smoke_run_module(monkeypatch, spec, params)
+        assert fake.exit_payload is not None, \
+            "run_module returned without exit_json"
+        assert fake.exit_payload["changed"] is False
+        assert fake.exit_payload["request_id"] == "req-smoke"
+
+
 @pytest.mark.parametrize("module_name", discover_modules())
 def test_module_request_builders_are_exercised(module_name):
     """Audit: every discovered module's request builders are contract-tested.

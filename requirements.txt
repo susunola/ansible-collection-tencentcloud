@@ -25,5 +25,10 @@ tencentcloud-sdk-python-portal==3.1.162
 # pin the subpackages so CI imports the same (newer) models as local.
 tencentcloud-sdk-python-cds==3.1.157
 tencentcloud-sdk-python-dbdc==3.1.163
+# Same story for ga2 (DescribeAccelerateAreasRequest.Filters) and tokenhub
+# (DescribeModelListRequest Offset/Limit/ModelIds): the main 3.1.113 bundle
+# carries older models, the subpackages declare the fields the specs use.
+tencentcloud-sdk-python-ga2==3.1.149
+tencentcloud-sdk-python-tokenhub==3.1.161
 # Only needed for the cos_* modules (qcloud_cos SDK; COS is not API 3.0).
 cos-python-sdk-v5>=1.9.0

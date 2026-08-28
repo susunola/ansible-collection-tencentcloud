@@ -283,3 +283,34 @@ def test_base_argument_spec_user_agent_default_matches_sdk_regexp():
     assert len(default) <= 128
     import re
     assert re.match(r"^[0-9a-zA-Z-_,;.]+$", default)
+
+
+def test_require_sdk_fails_when_sdk_unavailable(monkeypatch):
+    module = FakeModule(dict(BASE_PARAMS))
+    monkeypatch.setattr(client, "HAS_TENCENTCLOUD_SDK", False)
+    with pytest.raises(AnsibleFailJson):
+        client.require_sdk(module)
+    assert module.failures
+    assert "tencentcloud-sdk-python" in module.failures[0]["msg"]
+
+
+def test_create_client_wires_credential_region_and_profile(fake_sdk, monkeypatch):
+    seen = {}
+
+    class _Client(object):
+        def __init__(self, credential, region, profile):
+            seen["credential"] = credential
+            seen["region"] = region
+            seen["profile"] = profile
+
+    monkeypatch.setattr(client, "create_credential", lambda module: "cred")
+    monkeypatch.setattr(client, "create_client_profile", lambda module, endpoint: "profile")
+    params = dict(BASE_PARAMS)
+    params["region"] = "ap-shanghai"
+    result = client.create_client(FakeModule(params), _Client, "vpc.tencentcloudapi.com")
+    assert result is not None
+    assert seen == {
+        "credential": "cred",
+        "region": "ap-shanghai",
+        "profile": "profile",
+    }

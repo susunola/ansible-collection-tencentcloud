@@ -92,3 +92,43 @@ def test_sdk_call_unexpected_error_fails_cleanly(monkeypatch):
     assert payload is not None
     assert payload["msg"] == "Unexpected Tencent Cloud API error"
     assert payload["error"] == "boom"
+
+
+def test_serialize_sdk_object_returns_plain_dict():
+    class _Model(object):
+        def _serialize(self, allow_none=True):
+            assert allow_none is True
+            return {"InstanceId": "ins-1"}
+
+    assert tc.serialize_sdk_object(_Model()) == {"InstanceId": "ins-1"}
+
+
+def test_create_credential_delegates_to_client(monkeypatch):
+    from ansible_collections.susunola.tencentcloud.plugins.module_utils import client as client_mod
+
+    sentinel = object()
+    monkeypatch.setattr(client_mod, "create_credential", lambda module: sentinel)
+    assert tc.create_credential(object()) is sentinel
+
+
+def test_create_client_profile_delegates_to_client(monkeypatch):
+    from ansible_collections.susunola.tencentcloud.plugins.module_utils import client as client_mod
+
+    sentinel = object()
+    monkeypatch.setattr(client_mod, "create_client_profile", lambda module, endpoint: sentinel)
+    assert tc.create_client_profile(object(), "vpc.tencentcloudapi.com") is sentinel
+
+
+def test_paginate_returns_items_and_total():
+    from types import SimpleNamespace
+
+    items, total = tc.paginate(
+        None,
+        2,
+        lambda offset, limit: {"offset": offset},
+        lambda req: SimpleNamespace(items=[1, 2], TotalCount=2, RequestId="req-p"),
+        lambda r: r.items,
+        lambda r: r.TotalCount,
+    )
+    assert items == [1, 2]
+    assert total == 2
