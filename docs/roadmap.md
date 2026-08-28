@@ -98,16 +98,21 @@
 33. Failure-path coverage (0.12.0): the real `sdk_call` fail_json contract
     is pinned in unit tests and every generated `_info` test gains a
     `test_run_module_fails_cleanly_on_sdk_error` case. **Done**
+34. CVM advanced lifecycle (0.13.0): `cvm_instance` gains `state=rebooted`
+    (one-shot `RebootInstances`), `reset_password` (`ResetInstancesPassword`)
+    and in-place instance resizing — a drifted `instance_type` on a stopped
+    instance is applied with `ResetInstancesType` instead of failing as
+    immutable. **Done**
 
 ## Next
 
-34. Remaining write modules: `cvm_chc`, `mongodb`, `mysql`, `gaap`, `cdn`,
+35. Remaining write modules: `cvm_chc`, `mongodb`, `mysql`, `gaap`, `cdn`,
     `tcr`.
-35. Coverage reporting for unit and integration tests.
-36. Curate auto-generated modules that hide required request parameters
+36. Coverage reporting for unit and integration tests.
+37. Curate auto-generated modules that hide required request parameters
     (e.g. `teo` ZoneId, `mqtt`/`emr` InstanceId, `lcic` SdkAppId): move them
     into curated SPECS with `extra_params` or drop them.
-37. Deepen existing write modules: async long-running task polling beyond
+38. Deepen existing write modules: async long-running task polling beyond
     CLB, multi-zone spread for `exact_count`, waiter coverage for database
     instance lifecycles.
 
