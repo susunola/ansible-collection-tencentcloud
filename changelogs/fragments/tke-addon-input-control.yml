@@ -1,0 +1,5 @@
+minor_changes:
+  - >-
+    Let ``tke_addon`` manage version and values independently, accept JSON or
+    YAML values from inline data or controller-side files, optionally perform
+    API DryRun validation, and block numeric version downgrades by default.

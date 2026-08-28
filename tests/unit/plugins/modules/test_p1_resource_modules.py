@@ -227,6 +227,30 @@ def test_tke_install_request(models):
     assert tke_addon._canonical_raw(request.RawValues) == '{"replicaCount":2}'
 
 
+def test_tke_update_can_leave_values_unmanaged(models):
+    request = tke_addon.build_update_request(models, {
+        "cluster_id": "cls-x", "name": "cbs", "version": "1.5.0",
+        "values": None, "update_strategy": "merge",
+    }, {"AddonVersion": "1.4.0"})
+    assert request.AddonVersion == "1.5.0"
+    assert not hasattr(request, "RawValues")
+    assert request.UpdateStrategy == "merge"
+
+
+def test_tke_loads_yaml_values_file(tmp_path):
+    path = tmp_path / "values.yml"
+    path.write_text("replicaCount: 2\nfeature:\n  enabled: true\n", encoding="utf-8")
+    value = tke_addon.load_values({
+        "values": None, "values_file": str(path), "values_format": "auto",
+    })
+    assert value == {"replicaCount": 2, "feature": {"enabled": True}}
+
+
+def test_tke_numeric_version_comparison():
+    assert tke_addon._version_tuple("v1.10.0") > tke_addon._version_tuple("1.9.9")
+    assert tke_addon._version_tuple("latest") is None
+
+
 def test_tke_describe_selects_named_addon(models):
     class Addon(SimpleNamespace):
         def to_json_string(self):

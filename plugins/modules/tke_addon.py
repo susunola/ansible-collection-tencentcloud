@@ -16,8 +16,12 @@ options:
   cluster_id: {description: ID of the parent TKE cluster., type: str, required: true}
   name: {description: Addon name from the TKE addon catalog., type: str, required: true}
   version: {description: Addon version to install or enforce., type: str}
-  values: {description: "Addon values as a mapping or raw JSON string. The value is treated as sensitive.", type: raw, default: {}}
+  values: {description: "Addon values as a mapping or raw JSON/YAML string. When omitted on an existing addon, values are not managed.", type: raw}
+  values_file: {description: Controller-side JSON or YAML file containing addon values., type: path}
+  values_format: {description: Format used for O(values_file) or a string O(values)., type: str, choices: [auto, json, yaml], default: auto}
   update_strategy: {description: Strategy used to apply addon values., type: str, choices: [merge, replace], default: merge}
+  api_dry_run: {description: Run the TKE API DryRun validation before installation or update., type: bool, default: false}
+  allow_downgrade: {description: Allow changing to a numerically lower addon version., type: bool, default: false}
   retries: {description: Number of retries for transient SDK failures., type: int, default: 5}
   waiter_delay: {description: Seconds between state-polling attempts., type: int, default: 5}
   waiter_timeout: {description: Overall timeout in seconds for state polling., type: int, default: 120}
@@ -40,6 +44,8 @@ import base64
 import json
 import time
 
+import yaml
+
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 
@@ -57,6 +63,24 @@ def _values_json(value):
         except ValueError:
             return value
     return json.dumps(value or {}, sort_keys=True, separators=(",", ":"))
+
+
+def load_values(params):
+    value = params.get("values")
+    if params.get("values_file"):
+        with open(params["values_file"], "r", encoding="utf-8") as stream:
+            value = stream.read()
+    if value is None or not isinstance(value, str):
+        return value
+    value_format = params.get("values_format", "auto")
+    if value_format == "json":
+        return json.loads(value)
+    if value_format == "yaml":
+        return yaml.safe_load(value)
+    try:
+        return json.loads(value)
+    except ValueError:
+        return yaml.safe_load(value)
 
 
 def _raw(value):
@@ -128,6 +152,23 @@ def build_install_request(models, params):
     return request
 
 
+def build_update_request(models, params, current):
+    request = models.UpdateAddonRequest()
+    request.ClusterId, request.AddonName = params["cluster_id"], params["name"]
+    request.AddonVersion = params["version"] or current.get("AddonVersion")
+    if params["values"] is not None:
+        request.RawValues = _raw(params["values"])
+    request.UpdateStrategy = params["update_strategy"]
+    return request
+
+
+def _version_tuple(value):
+    try:
+        return tuple(int(part) for part in str(value).lstrip("v").split("."))
+    except ValueError:
+        return None
+
+
 def run_module():
     module = TencentCloudModule(
         argument_spec={
@@ -135,12 +176,21 @@ def run_module():
             "cluster_id": {"type": "str", "required": True},
             "name": {"type": "str", "required": True},
             "version": {"type": "str"},
-            "values": {"type": "raw", "default": {}, "no_log": True},
+            "values": {"type": "raw", "no_log": True},
+            "values_file": {"type": "path"},
+            "values_format": {"type": "str", "choices": ["auto", "json", "yaml"], "default": "auto"},
             "update_strategy": {"type": "str", "choices": ["merge", "replace"], "default": "merge"},
+            "api_dry_run": {"type": "bool", "default": False},
+            "allow_downgrade": {"type": "bool", "default": False},
         },
         supports_check_mode=True,
+        mutually_exclusive=[("values", "values_file")],
     )
     p = module.params
+    try:
+        p["values"] = load_values(p)
+    except (OSError, ValueError, yaml.YAMLError) as exc:
+        module.fail_json(msg="Unable to load addon values", error=str(exc))
     module.require_sdk()
     models, tke_client = _load_tke()
     client = module.create_client(tke_client.TkeClient, "tke.tencentcloudapi.com")
@@ -157,27 +207,52 @@ def run_module():
             module.sdk_call(client.DeleteAddon, request)
             wait_for_addon(module, client, models, p["cluster_id"], p["name"], absent=True)
             module.exit_json(changed=True, **(diff or {}), addon=None, msg="TKE addon deleted")
-        desired = {"AddonName": p["name"], "AddonVersion": p["version"], "RawValues": _raw(p["values"])}
+        desired = {"AddonName": p["name"], "AddonVersion": p["version"]}
+        if p["values"] is not None:
+            desired["RawValues"] = _raw(p["values"])
         if current is None:
             if not p["version"]:
                 module.fail_json(msg="version is required to install a TKE addon")
             diff = maybe_diff(module, None, _safe(desired))
-            if module.check_mode:
+            if module.check_mode and not p["api_dry_run"]:
                 module.exit_json(changed=True, **(diff or {}), addon=None, msg="Would install TKE addon")
-            module.sdk_call(client.InstallAddon, build_install_request(models, p))
+            request = build_install_request(models, p)
+            if p["api_dry_run"]:
+                request.DryRun = True
+                module.sdk_call(client.InstallAddon, request)
+                if module.check_mode:
+                    module.exit_json(changed=True, **(diff or {}), addon=None, msg="TKE addon installation validated")
+                request = build_install_request(models, p)
+            module.sdk_call(client.InstallAddon, request)
             current = wait_for_addon(module, client, models, p["cluster_id"], p["name"])
             module.exit_json(changed=True, **(diff or {}), addon=_safe(current), msg="TKE addon installed")
         version_drift = p["version"] is not None and current.get("AddonVersion") != p["version"]
-        values_drift = _canonical_raw(current.get("RawValues")) != _values_json(p["values"])
+        values_drift = (
+            p["values"] is not None
+            and _canonical_raw(current.get("RawValues")) != _values_json(p["values"])
+        )
+        current_version = _version_tuple(current.get("AddonVersion"))
+        desired_version = _version_tuple(p["version"])
+        if (
+            version_drift and not p["allow_downgrade"]
+            and current_version and desired_version and desired_version < current_version
+        ):
+            module.fail_json(
+                msg="Addon version downgrade is blocked; set allow_downgrade=true to continue",
+                current_version=current.get("AddonVersion"), desired_version=p["version"],
+            )
         if not version_drift and not values_drift:
             module.exit_json(changed=False, addon=_safe(current), msg="TKE addon is up to date")
         diff = maybe_diff(module, _safe(current), _safe(desired))
-        if module.check_mode:
+        if module.check_mode and not p["api_dry_run"]:
             module.exit_json(changed=True, **(diff or {}), addon=_safe(current), msg="Would update TKE addon")
-        request = models.UpdateAddonRequest()
-        request.ClusterId, request.AddonName = p["cluster_id"], p["name"]
-        request.AddonVersion, request.RawValues = p["version"] or current.get("AddonVersion"), _raw(p["values"])
-        request.UpdateStrategy = p["update_strategy"]
+        request = build_update_request(models, p, current)
+        if p["api_dry_run"]:
+            request.DryRun = True
+            module.sdk_call(client.UpdateAddon, request)
+            if module.check_mode:
+                module.exit_json(changed=True, **(diff or {}), addon=_safe(current), msg="TKE addon update validated")
+            request = build_update_request(models, p, current)
         module.sdk_call(client.UpdateAddon, request)
         current = wait_for_addon(module, client, models, p["cluster_id"], p["name"])
         module.exit_json(changed=True, **(diff or {}), addon=_safe(current), msg="TKE addon updated")

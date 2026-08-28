@@ -448,7 +448,7 @@ WRITE_MODULE_BUILDERS = {
         "build_list_key_request", "build_rotation_request", "describe_key",
     ],
     "monitor_alarm_policy": ["build_condition_request", "build_create_request", "find_policy"],
-    "tke_addon": ["build_install_request", "describe_addon"],
+    "tke_addon": ["build_install_request", "build_update_request", "describe_addon"],
     "tke_cluster": [
         "_create", "_delete", "_set_deletion_protection", "_update",
         "build_describe_request",
@@ -2187,6 +2187,15 @@ def _audit_p1_resource_request_builders():
         kms.build_cancel_deletion_request(kms_models, "key-xxxxxxxx"),
     ):
         errors.extend(audit_request(request, "kms lifecycle request"))
+    tke = _import_plugin("tke_addon")
+    tke_models = _models("tke.v20180525")
+    errors.extend(audit_request(
+        tke.build_update_request(tke_models, {
+            "cluster_id": "cls-xxxxxxxx", "name": "cbs", "version": "1.5.0",
+            "values": {"replicaCount": 2}, "update_strategy": "replace",
+        }, {"AddonVersion": "1.4.0"}),
+        "tke addon update request",
+    ))
     monitor = _import_plugin("monitor_alarm_policy")
     monitor_models = _models("monitor.v20180724")
     errors.extend(audit_request(
