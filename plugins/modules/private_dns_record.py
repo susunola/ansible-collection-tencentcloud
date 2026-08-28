@@ -41,6 +41,7 @@ record: {description: Private DNS record metadata, type: dict, returned: always}
 '''
 
 import json
+import time
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -75,6 +76,22 @@ def find_record(module, client, models, zone_id, record_id, subdomain, record_ty
     if len(matches) > 1:
         module.fail_json(msg="Multiple private DNS records match; specify record_id")
     return matches[0] if matches else None
+
+
+def wait_for_record(module, client, models, zone_id, record_id, desired=None, absent=False):
+    deadline = time.time() + module.params["waiter_timeout"]
+    while True:
+        current = find_record(module, client, models, zone_id, record_id, None, None)
+        if absent and current is None:
+            return None
+        if not absent and current and all(current.get(key) == value for key, value in desired.items()):
+            return current
+        if time.time() >= deadline:
+            module.fail_json(
+                msg="Timed out waiting for Private DNS record convergence",
+                record=current, expected="absent" if absent else desired,
+            )
+        time.sleep(module.params["waiter_delay"])
 
 
 def _apply(request, params):
@@ -132,6 +149,7 @@ def run_module():
             request = models.DeletePrivateZoneRecordRequest()
             request.ZoneId, request.RecordId = p["zone_id"], current["RecordId"]
             module.sdk_call(client.DeletePrivateZoneRecord, request)
+            wait_for_record(module, client, models, p["zone_id"], current["RecordId"], absent=True)
             module.exit_json(changed=True, **(diff or {}), record=None, msg="Private DNS record deleted")
         desired = {
             "SubDomain": p["subdomain"],
@@ -149,7 +167,9 @@ def run_module():
             if module.check_mode:
                 module.exit_json(changed=True, **(diff or {}), record=None, msg="Would create private DNS record")
             response = module.sdk_call(client.CreatePrivateZoneRecord, build_create_request(models, p))
-            current = find_record(module, client, models, p["zone_id"], getattr(response, "RecordId", None), p["subdomain"], p["record_type"])
+            current = wait_for_record(
+                module, client, models, p["zone_id"], getattr(response, "RecordId", None), desired,
+            )
             module.exit_json(changed=True, **(diff or {}), record=current, msg="Private DNS record created")
         changed = any(current.get(key) != value for key, value in desired.items())
         if not changed:
@@ -158,7 +178,7 @@ def run_module():
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), record=current, msg="Would update private DNS record")
         module.sdk_call(client.ModifyPrivateZoneRecord, build_update_request(models, p, current["RecordId"]))
-        current = find_record(module, client, models, p["zone_id"], current["RecordId"], None, None)
+        current = wait_for_record(module, client, models, p["zone_id"], current["RecordId"], desired)
         module.exit_json(changed=True, **(diff or {}), record=current, msg="Private DNS record updated")
     except Exception as exc:
         module.fail_json(

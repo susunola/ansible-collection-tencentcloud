@@ -105,6 +105,15 @@ def test_cam_group_membership_requests(models, present, request_name):
     assert request.Info[0].Uin == 1001
 
 
+def test_cam_membership_waiter(monkeypatch, models):
+    monkeypatch.setattr(cam_group_membership, "is_member", lambda *args: True)
+    module = SimpleNamespace(
+        params={"waiter_timeout": 10, "waiter_delay": 0},
+        fail_json=lambda **kwargs: pytest.fail(kwargs["msg"]),
+    )
+    assert cam_group_membership.wait_for_membership(module, None, models, {}, True)
+
+
 def test_kms_create_request(models):
     request = kms_key.build_create_request(models, {
         "alias": "production", "description": "Data key",
@@ -199,6 +208,19 @@ def test_kms_rotation_module_update_request(models, enabled, request_name):
     assert request.KeyId == "key-x"
     if enabled:
         assert request.RotateDays == 90
+
+
+def test_kms_rotation_waiter(monkeypatch, models):
+    monkeypatch.setattr(kms_key_rotation, "get_rotation", lambda *args: {
+        "enabled": True, "rotation_days": 90,
+    })
+    module = SimpleNamespace(
+        params={"waiter_timeout": 10, "waiter_delay": 0},
+        fail_json=lambda **kwargs: pytest.fail(kwargs["msg"]),
+    )
+    assert kms_key_rotation.wait_for_rotation(
+        module, None, models, "key-x", True, 90
+    )["enabled"]
 
 
 def test_monitor_create_request_maps_conditions(models):
@@ -298,6 +320,23 @@ def test_private_dns_record_requests(models):
     update = private_dns_record.build_update_request(models, params, "record-x")
     assert create.RecordValue == "10.0.0.8"
     assert update.RecordId == "record-x"
+
+
+def test_private_dns_waiters(monkeypatch, models):
+    zone = {"ZoneId": "zone-x", "Remark": "ready", "VpcSet": []}
+    record = {"RecordId": "record-x", "RecordValue": "10.0.0.8"}
+    monkeypatch.setattr(private_dns_zone, "find_zone", lambda *args: zone)
+    monkeypatch.setattr(private_dns_record, "find_record", lambda *args: record)
+    module = SimpleNamespace(
+        params={"waiter_timeout": 10, "waiter_delay": 0},
+        fail_json=lambda **kwargs: pytest.fail(kwargs["msg"]),
+    )
+    assert private_dns_zone.wait_for_zone(
+        module, None, models, "zone-x", {"Remark": "ready", "VpcSet": []}
+    ) == zone
+    assert private_dns_record.wait_for_record(
+        module, None, models, "zone-x", "record-x", {"RecordValue": "10.0.0.8"}
+    ) == record
 
 
 def test_tke_values_are_canonical_json():

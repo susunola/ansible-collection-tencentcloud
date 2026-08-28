@@ -35,6 +35,8 @@ membership:
   returned: always
 '''
 
+import time
+
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 
@@ -71,6 +73,20 @@ def is_member(module, client, models, params):
         page += 1
 
 
+def wait_for_membership(module, client, models, params, expected):
+    deadline = time.time() + module.params["waiter_timeout"]
+    while True:
+        current = is_member(module, client, models, params)
+        if current == expected:
+            return current
+        if time.time() >= deadline:
+            module.fail_json(
+                msg="Timed out waiting for CAM group membership",
+                expected=expected, current=current,
+            )
+        time.sleep(module.params["waiter_delay"])
+
+
 def run_module():
     module = TencentCloudModule(
         argument_spec={
@@ -99,6 +115,7 @@ def run_module():
             module.exit_json(changed=True, **(diff or {}), membership=membership, msg="Would update CAM group membership")
         request = build_mutation_request(models, p, desired)
         module.sdk_call(client.AddUserToGroup if desired else client.RemoveUserFromGroup, request)
+        wait_for_membership(module, client, models, p, desired)
         module.exit_json(changed=True, **(diff or {}), membership=after, msg="CAM group membership updated")
     except Exception as exc:
         module.fail_json(

@@ -1,0 +1,8 @@
+bugfixes:
+  - >-
+    Wait for CAM group membership and KMS key rotation changes to become
+    observable before returning success.
+  - >-
+    Wait for Private DNS zone and record create, update and delete operations
+    to converge, and consistently recognize API not-found responses.
+

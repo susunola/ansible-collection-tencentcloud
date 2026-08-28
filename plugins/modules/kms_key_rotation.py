@@ -35,6 +35,8 @@ rotation:
   returned: always
 '''
 
+import time
+
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 
@@ -76,6 +78,23 @@ def get_rotation(module, client, models, key_id):
     }
 
 
+def wait_for_rotation(module, client, models, key_id, enabled, rotation_days):
+    deadline = time.time() + module.params["waiter_timeout"]
+    while True:
+        current = get_rotation(module, client, models, key_id)
+        if current["enabled"] == enabled and (
+            not enabled or current["rotation_days"] in (None, rotation_days)
+        ):
+            return current
+        if time.time() >= deadline:
+            module.fail_json(
+                msg="Timed out waiting for KMS key rotation",
+                rotation=current,
+                expected={"enabled": enabled, "rotation_days": rotation_days},
+            )
+        time.sleep(module.params["waiter_delay"])
+
+
 def run_module():
     module = TencentCloudModule(
         argument_spec={
@@ -104,7 +123,8 @@ def run_module():
             module.exit_json(changed=True, **(diff or {}), rotation=current, msg="Would update KMS key rotation")
         request = build_update_request(models, p["key_id"], p["enabled"], p["rotation_days"])
         module.sdk_call(client.EnableKeyRotation if p["enabled"] else client.DisableKeyRotation, request)
-        module.exit_json(changed=True, **(diff or {}), rotation=get_rotation(module, client, models, p["key_id"]), msg="KMS key rotation updated")
+        current = wait_for_rotation(module, client, models, p["key_id"], p["enabled"], p["rotation_days"])
+        module.exit_json(changed=True, **(diff or {}), rotation=current, msg="KMS key rotation updated")
     except Exception as exc:
         module.fail_json(
             msg="Tencent Cloud API request failed", error=str(exc),

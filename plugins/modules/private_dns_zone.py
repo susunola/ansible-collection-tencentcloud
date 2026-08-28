@@ -37,9 +37,11 @@ zone: {description: Private DNS zone metadata, type: dict, returned: always}
 '''
 
 import json
+import time
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found
 
 
 def _load_private_dns():
@@ -88,7 +90,7 @@ def find_zone(module, client, models, zone_id, domain):
         try:
             return _dict(getattr(module.sdk_call(client.DescribePrivateZone, request), "PrivateZone", None))
         except Exception as exc:
-            if "ResourceNotFound" in str(getattr(exc, "get_code", lambda: "")() or ""):
+            if is_not_found(exc):
                 return None
             raise
     offset, matches = 0, []
@@ -104,6 +106,25 @@ def find_zone(module, client, models, zone_id, domain):
     if len(matches) > 1:
         module.fail_json(msg="Multiple private zones have the requested domain", domain=domain)
     return matches[0] if matches else None
+
+
+def wait_for_zone(module, client, models, zone_id, desired=None, absent=False):
+    deadline = time.time() + module.params["waiter_timeout"]
+    while True:
+        current = find_zone(module, client, models, zone_id, None)
+        if absent and current is None:
+            return None
+        if not absent and current:
+            remark_ok = (current.get("Remark") or "") == desired["Remark"]
+            vpcs_ok = "VpcSet" not in desired or _vpcs(current.get("VpcSet")) == desired["VpcSet"]
+            if remark_ok and vpcs_ok:
+                return current
+        if time.time() >= deadline:
+            module.fail_json(
+                msg="Timed out waiting for Private DNS zone convergence",
+                zone=current, expected="absent" if absent else desired,
+            )
+        time.sleep(module.params["waiter_delay"])
 
 
 def run_module():
@@ -136,6 +157,7 @@ def run_module():
             request = models.DeletePrivateZoneRequest()
             request.ZoneId = current["ZoneId"]
             module.sdk_call(client.DeletePrivateZone, request)
+            wait_for_zone(module, client, models, current["ZoneId"], absent=True)
             module.exit_json(changed=True, **(diff or {}), zone=None, msg="Private DNS zone deleted")
         desired = {"Domain": p["domain"], "Remark": p["remark"]}
         if p["vpcs"] is not None:
@@ -145,7 +167,7 @@ def run_module():
             if module.check_mode:
                 module.exit_json(changed=True, **(diff or {}), zone=None, msg="Would create private DNS zone")
             response = module.sdk_call(client.CreatePrivateZone, build_create_request(models, p))
-            current = find_zone(module, client, models, getattr(response, "ZoneId", None), p["domain"])
+            current = wait_for_zone(module, client, models, getattr(response, "ZoneId", None), desired)
             module.exit_json(changed=True, **(diff or {}), zone=current, msg="Private DNS zone created")
         remark_drift = (current.get("Remark") or "") != p["remark"]
         vpc_drift = p["vpcs"] is not None and _vpcs(current.get("VpcSet")) != _vpcs(p["vpcs"])
@@ -162,7 +184,8 @@ def run_module():
             request = models.ModifyPrivateZoneVpcRequest()
             request.ZoneId, request.VpcSet = current["ZoneId"], build_vpcs(models, p["vpcs"])
             module.sdk_call(client.ModifyPrivateZoneVpc, request)
-        module.exit_json(changed=True, **(diff or {}), zone=find_zone(module, client, models, current["ZoneId"], None), msg="Private DNS zone updated")
+        current = wait_for_zone(module, client, models, current["ZoneId"], desired)
+        module.exit_json(changed=True, **(diff or {}), zone=current, msg="Private DNS zone updated")
     except Exception as exc:
         module.fail_json(
             msg="Tencent Cloud API request failed",
