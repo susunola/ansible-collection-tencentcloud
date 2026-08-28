@@ -1,8 +1,8 @@
 ---
 minor_changes:
   - Curate hidden required request parameters for eight more ``*_info``
-    modules so generated modules expose every field the API requires:
-    ``trtc_call_info`` (CommId/SdkAppId/StartTime/EndTime),
+    modules so generated modules expose every field the API requires
+    (``trtc_call_info`` CommId/SdkAppId/StartTime/EndTime,
     ``ess_file_url_info`` (Operator/BusinessType),
     ``tiw_running_task_info`` (SdkAppID/TaskType),
     ``weilingwith_element_profile_page_info``
@@ -16,7 +16,7 @@ minor_changes:
     of the 1-based ``offset // limit + 1`` so pagination no longer skips
     the first page; ``REQUIRED_PARAM_OVERRIDES`` entries may carry
     ``page_number_base`` and it is propagated into the spec.
-  - Curated ``extra_params`` may carry ``no_log: True`` (used for
+  - Curated ``extra_params`` may carry ``no_log`` (used for
     ``weilingwith_element_profile_page_info.application_token``) so
     token-like parameters are masked in module output and pass
     ``validate-modules``.
