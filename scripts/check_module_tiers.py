@@ -43,6 +43,7 @@ CORE_MODULES = {
     "cam_role",
     "cam_user",
     "cbs_disk",
+    "cbs_snapshot",
     "cdb_instance",
     "cdn_domain",
     "clb_rule",

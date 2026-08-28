@@ -17,6 +17,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cam_role` | Manage Tencent Cloud CAM roles |
 | `cam_user` | Manage Tencent Cloud CAM sub-users |
 | `cbs_disk` | Manage Tencent Cloud CBS cloud disks |
+| `cbs_snapshot` | Manage Tencent Cloud CBS disk snapshots |
 | `cdb_instance` | Manage Tencent Cloud CDB MySQL instances |
 | `cdn_domain` | Manage Tencent Cloud CDN domains |
 | `cfs_file_system` | Manage Tencent Cloud CFS file systems |

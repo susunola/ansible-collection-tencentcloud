@@ -160,8 +160,8 @@
     (`ExecuteChcMiniOsCommand`) is absent from the public SDK, so there is
     no supported API surface for it.
 40. Deepen write modules batch 2: CDB specification changes, NAT gateway
-    forwarding rules and a standalone CBS snapshot module. **In progress** —
-    two of three halves shipped. The CDB half: `cdb_instance` now detects
+    forwarding rules and a standalone CBS snapshot module. **Done** — all
+    three halves shipped. The CDB half: `cdb_instance` now detects
     `memory`/`volume` drift on an existing instance and applies it with
     `UpgradeDBInstance` (verified against the official
     cloud.tencent.com/document/api/236/15876 doc, which supports both
@@ -173,8 +173,12 @@
     DNAT and SNAT rule sets of a gateway (identity keyed on the DNAT
     five-tuple and the SNAT resource triple, replace = delete and
     re-create, deletes run before creates, output-only `NatGatewaySnatId`
-    excluded from comparison). Remaining half: a standalone `cbs_snapshot`
-    write module.
+    excluded from comparison). The CBS half: a standalone `cbs_snapshot`
+    write module manages cloud disk snapshots identified by
+    `snapshot_id` or `disk_id` + `snapshot_name` (name lookups return the
+    newest snapshot), with `state=present`/`absent`, an async wait for
+    `SnapshotState=NORMAL` bounded by `waiter_timeout`, and check mode +
+    diff.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

@@ -42,6 +42,7 @@ action_groups:
     - cat_probe_task_info
     - cbs_disk
     - cbs_disk_info
+    - cbs_snapshot
     - ccc_extension_info
     - cdb_instance
     - cdb_instance_info

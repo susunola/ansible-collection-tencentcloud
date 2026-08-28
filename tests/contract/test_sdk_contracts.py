@@ -386,6 +386,9 @@ WRITE_MODULE_BUILDERS = {
         "_attach", "_create", "_delete", "_detach", "_rename", "_resize",
         "build_describe_request",
     ],
+    "cbs_snapshot": [
+        "_create", "_delete", "build_describe_request",
+    ],
     "cdb_instance": [
         "_create", "_delete", "_rename",
         "build_describe_request", "build_restart_request",
@@ -1373,6 +1376,25 @@ def test_cbs_disk():
     module._detach(fake, client, models, "disk-xxxxxxxx", "ins-xxxxxxxx")
     module._delete(fake, client, models, "disk-xxxxxxxx", False)
     errors.extend(audit_recorded(fake, "cbs_disk"))
+    assert errors == []
+
+
+def test_cbs_snapshot():
+    module = _import_plugin("cbs_snapshot")
+    models = _models("cbs.v20170312")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, ["snap-xxxxxxxx"], None, None),
+        "cbs_snapshot describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, None, "disk-xxxxxxxx", "nightly"),
+        "cbs_snapshot describe by disk and name"))
+    module.find_snapshot(fake, client, models, None, "disk-xxxxxxxx", "nightly")
+    module._create(fake, client, models, "disk-xxxxxxxx", "nightly")
+    module._delete(fake, client, models, ["snap-xxxxxxxx"])
+    errors.extend(audit_recorded(fake, "cbs_snapshot"))
     assert errors == []
 
 

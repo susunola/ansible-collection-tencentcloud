@@ -1,0 +1,9 @@
+---
+minor_changes:
+  - cbs_snapshot - new standalone write module for CBS cloud disk
+    snapshots. A snapshot is identified either by ``snapshot_id`` or by
+    the combination of ``disk_id`` and ``snapshot_name``; name lookups
+    return the newest snapshot for that name. ``state=present`` creates
+    the snapshot when it does not exist and, by default, waits until the
+    snapshot becomes available (``SnapshotState=NORMAL``); ``state=absent``
+    deletes the snapshot. Supports check mode and diff output.
