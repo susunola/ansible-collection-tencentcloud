@@ -199,6 +199,14 @@
     `waiter_timeout`). Every module ships idempotent present/absent
     semantics, check mode, diff output and contract + unit tests. The
     count now stands at 45 of the 50-module target.
+42. P1 resource closure: five write modules complete the 50-module target.
+    **Done** — `tcr_repository` manages Enterprise Edition repositories;
+    `cam_policy_attachment` manages policy relationships for users, roles and
+    groups; `kms_key` manages key creation, enabled state, descriptions and
+    scheduled deletion; `monitor_alarm_policy` manages alarm-policy lifecycle;
+    and `tke_addon` manages addon installation, upgrades, values and deletion.
+    All five support check mode and diff output and are registered in the SDK
+    request-model contract audit.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

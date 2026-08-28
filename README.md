@@ -14,6 +14,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | Module | Purpose |
 | --- | --- |
 | `cam_policy` | Manage Tencent Cloud CAM policies |
+| `cam_policy_attachment` | Manage a Tencent Cloud CAM policy attachment |
 | `cam_role` | Manage Tencent Cloud CAM roles |
 | `cam_user` | Manage Tencent Cloud CAM sub-users |
 | `cbs_disk` | Manage Tencent Cloud CBS cloud disks |
@@ -35,8 +36,10 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `elasticsearch_instance` | Manage Tencent Cloud Elasticsearch clusters |
 | `gaap_proxy` | Manage Tencent Cloud GAAP proxies |
 | `key_pair` | Manage Tencent Cloud CVM key pairs |
+| `kms_key` | Manage a Tencent Cloud KMS key |
 | `lighthouse_instance` | Manage Tencent Cloud Lighthouse instances |
 | `mongodb_instance` | Manage Tencent Cloud MongoDB instances |
+| `monitor_alarm_policy` | Manage a Tencent Cloud Monitor alarm policy |
 | `nat_gateway` | Manage Tencent Cloud NAT gateways |
 | `nat_gateway_rule` | Manage Tencent Cloud NAT gateway DNAT and SNAT rules |
 | `network_interface` | Manage Tencent Cloud elastic network interfaces |
@@ -54,6 +57,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tag` | Manage tags on arbitrary Tencent Cloud resources |
 | `tcr_instance` | Manage Tencent Cloud TCR enterprise instances |
 | `tcr_namespace` | Manage Tencent Cloud TCR namespaces |
+| `tcr_repository` | Manage a Tencent Cloud TCR repository |
+| `tke_addon` | Manage a Tencent Kubernetes Engine addon |
 | `tke_cluster` | Manage Tencent Cloud TKE clusters |
 | `tke_node_pool` | Manage Tencent Cloud TKE cluster node pools |
 | `vpc` | Manage Tencent Cloud VPCs |

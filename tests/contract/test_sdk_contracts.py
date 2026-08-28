@@ -294,6 +294,10 @@ UNEXERCISED_BUILDERS = {
         "run_module constructs a GetPolicyRequest inline and cannot be "
         "called without real AnsibleModule params; the request is trivial "
         "(PolicyId only) and the path is covered by unit tests",
+    ("kms_key", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("monitor_alarm_policy", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tcr_repository", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tke_addon", "run_module"): "inline lifecycle requests are covered by unit tests",
 }
 
 # Write-module request builders exercised by the ``test_<module>`` functions
@@ -437,6 +441,11 @@ WRITE_MODULE_BUILDERS = {
     "tcr_namespace": [
         "_delete", "_update", "build_create_request", "build_describe_request",
     ],
+    "tcr_repository": ["build_create_request", "find_repository"],
+    "cam_policy_attachment": ["build_list_request", "build_mutation_request"],
+    "kms_key": ["build_create_request", "describe_key"],
+    "monitor_alarm_policy": ["build_create_request", "find_policy"],
+    "tke_addon": ["build_install_request", "describe_addon"],
     "tke_cluster": [
         "_create", "_delete", "_set_deletion_protection", "_update",
         "build_describe_request",
@@ -2126,6 +2135,95 @@ def test_tcr_namespace():
     module._delete(fake, client, models, "tcr-xxxxxxxx", "team-a")
     errors.extend(audit_recorded(fake, "tcr_namespace"))
     assert errors == []
+
+
+def _audit_p1_resource_request_builders():
+    cases = [
+        ("tcr_repository", "tcr.v20190924", "build_create_request", {
+            "registry_id": "tcr-xxxxxxxx", "namespace": "prod", "name": "api",
+            "brief_description": "API", "description": "Production API",
+        }),
+        ("kms_key", "kms.v20190118", "build_create_request", {
+            "alias": "production", "description": "Production key",
+            "key_usage": "ENCRYPT_DECRYPT", "key_type": 1,
+        }),
+        ("monitor_alarm_policy", "monitor.v20180724", "build_create_request", {
+            "module": "monitor", "name": "cpu-high", "monitor_type": "MT_QCE",
+            "namespace": "QCE/CVM", "remark": "", "enabled": True,
+            "condition": None, "event_condition": None, "notice_ids": [],
+        }),
+        ("tke_addon", "tke.v20180525", "build_install_request", {
+            "cluster_id": "cls-xxxxxxxx", "name": "cbs", "version": "1.4.0",
+            "values": {},
+        }),
+    ]
+    errors = []
+    for module_name, service, builder_name, params in cases:
+        module = _import_plugin(module_name)
+        models = _models(service)
+        errors.extend(audit_request(
+            getattr(module, builder_name)(models, params),
+            "%s request" % module_name,
+        ))
+
+    fake = _RecordingModule()
+    client = _StubClient()
+    _import_plugin("tcr_repository").find_repository(
+        fake, client, _models("tcr.v20190924"), "tcr-xxxxxxxx", "prod", "api"
+    )
+    _import_plugin("kms_key").describe_key(
+        fake, client, _models("kms.v20190118"), "key-xxxxxxxx"
+    )
+    _import_plugin("monitor_alarm_policy").find_policy(
+        fake, client, _models("monitor.v20180724"), "policy-xxxxxxxx", None, "monitor"
+    )
+    _import_plugin("tke_addon").describe_addon(
+        fake, client, _models("tke.v20180525"), "cls-xxxxxxxx", "cbs"
+    )
+    errors.extend(audit_recorded(fake, "P1 describe requests"))
+
+    cam = _import_plugin("cam_policy_attachment")
+    cam_models = _models("cam.v20190116")
+    for target_type, target_id, target_name in (
+        ("user", 1000000001, None), ("role", "1", "deploy"), ("group", 2, None),
+    ):
+        params = {
+            "target_type": target_type, "target_id": target_id,
+            "target_name": target_name, "policy_id": 123,
+        }
+        errors.extend(audit_request(
+            cam.build_list_request(cam_models, params),
+            "cam %s list request" % target_type,
+        ))
+        errors.extend(audit_request(
+            cam.build_mutation_request(cam_models, params, True),
+            "cam %s attach request" % target_type,
+        ))
+        errors.extend(audit_request(
+            cam.build_mutation_request(cam_models, params, False),
+            "cam %s detach request" % target_type,
+        ))
+    assert errors == []
+
+
+def test_tcr_repository():
+    _audit_p1_resource_request_builders()
+
+
+def test_cam_policy_attachment():
+    _audit_p1_resource_request_builders()
+
+
+def test_kms_key():
+    _audit_p1_resource_request_builders()
+
+
+def test_monitor_alarm_policy():
+    _audit_p1_resource_request_builders()
+
+
+def test_tke_addon():
+    _audit_p1_resource_request_builders()
 
 
 def test_tke_node_pool():

@@ -1,0 +1,19 @@
+minor_changes:
+  - >-
+    Add ``tcr_repository`` with idempotent repository create, description
+    reconciliation, force-aware deletion, check mode and diff output.
+  - >-
+    Add ``cam_policy_attachment`` for idempotent CAM policy attachment and
+    detachment across users, roles and groups.
+  - >-
+    Add ``kms_key`` for customer-managed key creation, description and enabled
+    state reconciliation, and scheduled deletion with a bounded waiting window.
+  - >-
+    Add ``monitor_alarm_policy`` for alarm-policy creation, metadata and status
+    reconciliation, and deletion.
+  - >-
+    Add ``tke_addon`` for TKE addon installation, version and values updates,
+    and deletion.
+  - >-
+    Register all five modules in SDK request-model contract tests and add unit
+    coverage for request construction and canonical values comparison.
