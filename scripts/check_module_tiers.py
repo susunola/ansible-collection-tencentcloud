@@ -55,6 +55,7 @@ CORE_MODULES = {
     "clb_load_balancer",
     "cos_bucket",
     "cfs_file_system",
+    "customer_gateway",
     "cvm_chc",
     "cvm_image",
     "cvm_instance",

@@ -29,6 +29,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `clb_load_balancer` | Manage Tencent Cloud CLB load balancers |
 | `clb_rule` | Manage Tencent Cloud CLB L7 forwarding rules |
 | `cos_bucket` | Manage Tencent Cloud COS buckets |
+| `customer_gateway` | Manage Tencent Cloud VPN customer gateways |
 | `cvm_chc` | Manage Tencent Cloud CHC physical server network configuration |
 | `cvm_image` | Manage Tencent Cloud CVM custom images |
 | `cvm_instance` | Manage Tencent Cloud CVM instances |

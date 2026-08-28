@@ -480,6 +480,10 @@ WRITE_MODULE_BUILDERS = {
     "vpn_gateway": [
         "_create", "_delete", "_update", "build_describe_request",
     ],
+    "customer_gateway": [
+        "build_create_request", "build_delete_request",
+        "build_describe_request", "build_update_request",
+    ],
 }
 
 
@@ -1918,6 +1922,31 @@ def test_vpn_gateway():
     module._update(fake, client, models, "vpngw-xxxxxxxx", "site-vpn-v2", 200, 64512)
     module._delete(fake, client, models, "vpngw-xxxxxxxx")
     errors.extend(audit_recorded(fake, "vpn_gateway"))
+    assert errors == []
+
+
+def test_customer_gateway():
+    module = _import_plugin("customer_gateway")
+    models = _models("vpc.v20170312")
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "cgw-xxxxxxxx"),
+        "customer gateway describe by id"))
+    errors.extend(audit_request(
+        module.build_describe_request(models, name="office-peer"),
+        "customer gateway describe by name"))
+    params = {
+        "name": "office-peer", "ip_address": "203.0.113.10",
+        "bgp_asn": 65001, "tags": {"env": "prod"},
+    }
+    errors.extend(audit_request(
+        module.build_create_request(models, params), "customer gateway create"))
+    errors.extend(audit_request(
+        module.build_update_request(models, "cgw-xxxxxxxx", "office-v2", 65002),
+        "customer gateway update"))
+    errors.extend(audit_request(
+        module.build_delete_request(models, "cgw-xxxxxxxx"),
+        "customer gateway delete"))
     assert errors == []
 
 

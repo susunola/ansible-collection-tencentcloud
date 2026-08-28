@@ -207,6 +207,11 @@
     and `tke_addon` manages addon installation, upgrades, values and deletion.
     All five support check mode and diff output and are registered in the SDK
     request-model contract audit.
+43. VPN topology closure: customer gateway and VPN connection lifecycle,
+    followed by CLB target groups. **In progress** — `customer_gateway`
+    manages remote peer definitions by ID or unique name, including public IP,
+    mutable name/BGP ASN, creation tags, check mode, diff and convergence
+    polling.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

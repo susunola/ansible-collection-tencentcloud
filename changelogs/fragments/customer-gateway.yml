@@ -1,0 +1,5 @@
+minor_changes:
+  - >-
+    Add the customer_gateway module for idempotent VPN remote-peer lifecycle,
+    including BGP ASN updates, creation tags, check mode, diff and waiters.
+

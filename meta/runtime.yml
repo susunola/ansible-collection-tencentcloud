@@ -88,6 +88,7 @@ action_groups:
     - csip_asset_process_info
     - ctem_api_sec_info
     - ctsdb_cluster_info
+    - customer_gateway
     - cvm_chc
     - cvm_image
     - cvm_instance
