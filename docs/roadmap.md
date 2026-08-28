@@ -139,8 +139,11 @@
     SUCCESS/FAILED/KILLED/REMOVED/PAUSED), and `cdb_instance` gained
     `state=restarted` which restarts via `RestartDBInstances` and blocks on
     the async task (verified against the official
-    cloud.tencent.com/document/product/236/17488 doc). Remaining: multi-zone
-    spread for `exact_count` and database instance lifecycle waiters.
+    cloud.tencent.com/document/product/236/17488 doc). The multi-zone half
+    also shipped: `cvm_instance` `exact_count` accepts `zones` (plus
+    optional parallel `subnet_ids`) and spreads the created shortfall
+    across the listed AZs as evenly as possible, one `RunInstances` call
+    per zone. Remaining: database instance lifecycle waiters.
 39. CVM CHC server lifecycle: rescue mode and network mode switching on
     top of `cvm_chc`. **Done** — the network mode half
     (`ModifyChcNetworkMode`, DEPLOY/BUSINESS) shipped as the

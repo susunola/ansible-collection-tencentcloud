@@ -390,6 +390,8 @@ def _scale_params(**overrides):
         "password": None,
         "key_ids": None,
         "tags": {"role": "web"},
+        "zones": None,
+        "subnet_ids": None,
         "dry_run": False,
     }
     params.update(overrides)
@@ -530,6 +532,74 @@ def test_exact_count_creates_shortfall():
     assert payload["count"] == 3
     assert len(client.run_requests) == 1
     assert client.run_requests[0].InstanceCount == 2
+
+
+def test_spread_counts_splits_evenly_with_remainder():
+    assert cvm_instance._spread_counts(5, ["az-a", "az-b"]) == [3, 2]
+    assert cvm_instance._spread_counts(4, ["az-a", "az-b"]) == [2, 2]
+    assert cvm_instance._spread_counts(1, ["az-a", "az-b", "az-c"]) == [1, 0, 0]
+
+
+def test_run_request_sets_placement_zone():
+    request = build_run_request(FakeScalingModels, _scale_params(zone="ap-guangzhou-3"))
+    assert request.Placement.Zone == "ap-guangzhou-3"
+
+
+def test_run_request_omits_placement_zone_by_default():
+    request = build_run_request(FakeScalingModels, _scale_params())
+    assert not hasattr(request.Placement, "Zone")
+
+
+def test_exact_count_zones_requires_exact_count():
+    set_module_args(module_args(zones=["ap-guangzhou-3", "ap-guangzhou-4"]))
+    with pytest.raises(AnsibleFailJson) as exc:
+        _run_validation(None)
+    assert "zones only applies" in exc.value.args[0]["msg"]
+
+
+def test_subnet_ids_requires_zones():
+    set_module_args(module_args(exact_count=3, count_tag={"role": "web"}, subnet_ids=["subnet-3"]))
+    with pytest.raises(AnsibleFailJson) as exc:
+        _run_validation(None)
+    assert "subnet_ids requires zones" in exc.value.args[0]["msg"]
+
+
+def test_exact_count_spreads_shortfall_across_zones():
+    client = FakeScalingClient([_scaling_resource("ins-a")])
+    module = FakeScalingModule(client)
+    with pytest.raises(AnsibleExitJson) as exc:
+        cvm_instance._manage_exact_count(
+            module, client, FakeScalingModels,
+            _scale_params(exact_count=6, zones=["ap-guangzhou-3", "ap-guangzhou-4"],
+                          subnet_ids=["subnet-3", "subnet-4"]))
+    payload = exc.value.args[0]
+    assert payload["changed"] is True
+    assert payload["count"] == 6
+    # 5 shortfall over 2 zones -> [3, 2], one RunInstances call per zone.
+    assert len(client.run_requests) == 2
+    first, second = client.run_requests
+    assert first.InstanceCount == 3
+    assert first.Placement.Zone == "ap-guangzhou-3"
+    assert first.VirtualPrivateCloud.SubnetId == "subnet-3"
+    assert second.InstanceCount == 2
+    assert second.Placement.Zone == "ap-guangzhou-4"
+    assert second.VirtualPrivateCloud.SubnetId == "subnet-4"
+
+
+def test_exact_count_skips_zero_share_zones():
+    client = FakeScalingClient([])
+    module = FakeScalingModule(client)
+    with pytest.raises(AnsibleExitJson) as exc:
+        cvm_instance._manage_exact_count(
+            module, client, FakeScalingModels,
+            _scale_params(exact_count=1, zones=["ap-guangzhou-3", "ap-guangzhou-4", "ap-guangzhou-5"]))
+    payload = exc.value.args[0]
+    assert payload["changed"] is True
+    assert payload["count"] == 1
+    # 1 over 3 zones -> [1, 0, 0]; only the first zone gets a call.
+    assert len(client.run_requests) == 1
+    assert client.run_requests[0].InstanceCount == 1
+    assert client.run_requests[0].Placement.Zone == "ap-guangzhou-3"
 
 
 def test_exact_count_terminates_oldest_first():

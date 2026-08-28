@@ -1040,6 +1040,10 @@ def test_cvm_instance():
     bulk_params = dict(params, instance_count=3, dry_run=False)
     errors.extend(audit_request(
         module.build_run_request(models, bulk_params), "cvm run request (exact_count bulk)"))
+    zone_params = dict(params, instance_count=3, dry_run=False,
+                       zone="ap-guangzhou-3", subnet_id="subnet-az3")
+    errors.extend(audit_request(
+        module.build_run_request(models, zone_params), "cvm run request (exact_count zone spread)"))
     module._create(fake, client, models, params)
     module._delete(fake, client, models, "ins-xxxxxxxx")
     module._start(fake, client, models, "ins-xxxxxxxx")

@@ -142,6 +142,9 @@ options:
         counts the instances matching O(count_tag) and brings the pool to the
         requested size (fewer instances are created in one V(RunInstances)
         call, extra instances are terminated oldest first).
+      - When O(zones) is also given, the created shortfall is spread across
+        the listed availability zones as evenly as possible, with one
+        V(RunInstances) call per zone.
       - Mutually exclusive with O(instance_id); requires O(count_tag).
       - Instances that are already in the desired count are left untouched.
       - PREPAID instances are never terminated automatically; if a matched
@@ -157,6 +160,24 @@ options:
         O(tags) are attached at creation and therefore match on subsequent
         runs.
     type: dict
+  zones:
+    description:
+      - Availability zones to spread the O(exact_count) shortfall across,
+        for example C([ap-guangzhou-3, ap-guangzhou-4]).
+      - Each zone receives as close to an equal share of the created
+        instances as possible; a zone with a zero share is skipped.
+      - Only applies to O(exact_count) pool creation; the zone of existing
+        instances is never changed.
+    type: list
+    elements: str
+  subnet_ids:
+    description:
+      - Subnets used when creating instances spread across O(zones), one per
+        zone in the same order, for example C([subnet-az3, subnet-az4]).
+      - When the list is shorter than O(zones) it is reused cyclically.
+      - Requires O(zones); ignored otherwise.
+    type: list
+    elements: str
   dry_run:
     description:
       - When C(true), creation calls V(RunInstances) with the API C(DryRun)
@@ -314,6 +335,22 @@ EXAMPLES = r'''
     tags:
       role: web
 
+- name: Scale the web pool to 5 instances spread across two zones
+  susunola.tencentcloud.cvm_instance:
+    region: ap-guangzhou
+    state: present
+    exact_count: 5
+    count_tag:
+      role: web
+    instance_name: web
+    image_id: img-xxxxxxxx
+    instance_type: S5.MEDIUM2
+    vpc_id: vpc-xxxxxxxx
+    zones: [ap-guangzhou-3, ap-guangzhou-4]
+    subnet_ids: [subnet-az3, subnet-az4]
+    tags:
+      role: web
+
 - name: Scale the web pool down to 1 (terminates the oldest extras)
   susunola.tencentcloud.cvm_instance:
     region: ap-guangzhou
@@ -438,6 +475,8 @@ def build_run_request(models, params):
         request.TagSpecification = [tag_spec]
     if params.get("instance_count"):
         request.InstanceCount = params["instance_count"]
+    if params.get("zone"):
+        request.Placement.Zone = params["zone"]
     if params["dry_run"]:
         request.DryRun = True
     return request
@@ -626,6 +665,16 @@ def _desired_state(params):
     return {key: value for key, value in desired.items() if value is not None}
 
 
+def _spread_counts(total, zones):
+    """Split ``total`` instances across ``zones`` as evenly as possible.
+
+    5 over 2 zones becomes [3, 2]; 1 over 3 zones becomes [1, 0, 0] (the
+    zero-share zone is skipped by the caller).
+    """
+    base, extra = divmod(total, len(zones))
+    return [base + (1 if index < extra else 0) for index in range(len(zones))]
+
+
 def _manage_exact_count(module, client, models, params):
     """Bring the count_tag-matched pool to exactly ``exact_count`` instances.
 
@@ -634,6 +683,11 @@ def _manage_exact_count(module, client, models, params):
     target are terminated oldest-first. PREPAID instances are never
     terminated automatically, the module fails instead so the operator can
     refund them manually.
+
+    When O(zones) is given the shortfall is spread across the zones as
+    evenly as possible with one V(RunInstances) call per zone (each call
+    sets V(Placement.Zone) and, when O(subnet_ids) is given, the matching
+    per-zone subnet).
     """
     exact_count = params["exact_count"]
     matches = find_instances_by_tags(module, client, models, params["count_tag"])
@@ -649,16 +703,36 @@ def _manage_exact_count(module, client, models, params):
     if current_count < exact_count:
         to_create = exact_count - current_count
         if module.check_mode:
+            zones_hint = ""
+            if params.get("zones"):
+                zones_hint = " spread across %s" % ", ".join(params["zones"])
             module.exit_json(
                 changed=True, **(diff or {}), count=current_count,
-                msg="Would create %d instance(s) to reach exact_count=%d" % (
-                    to_create, exact_count),
+                msg="Would create %d instance(s)%s to reach exact_count=%d" % (
+                    to_create, zones_hint, exact_count),
             )
-        create_params = dict(params)
-        create_params["instance_count"] = to_create
-        new_ids = _create(module, client, models, create_params)
-        for instance_id in new_ids:
-            _wait_state(module, client, models, instance_id, ["RUNNING"])
+        new_ids = []
+        zones = params.get("zones") or []
+        if zones:
+            counts = _spread_counts(to_create, zones)
+            for index, zone in enumerate(zones):
+                count = counts[index]
+                if count == 0:
+                    continue
+                zone_params = dict(params)
+                zone_params["instance_count"] = count
+                zone_params["zone"] = zone
+                if params.get("subnet_ids"):
+                    zone_params["subnet_id"] = params["subnet_ids"][index % len(params["subnet_ids"])]
+                for instance_id in _create(module, client, models, zone_params):
+                    new_ids.append(instance_id)
+                    _wait_state(module, client, models, instance_id, ["RUNNING"])
+        else:
+            create_params = dict(params)
+            create_params["instance_count"] = to_create
+            new_ids = _create(module, client, models, create_params)
+            for instance_id in new_ids:
+                _wait_state(module, client, models, instance_id, ["RUNNING"])
         refreshed = find_instances_by_tags(module, client, models, params["count_tag"])
         module.exit_json(
             changed=True, **(diff or {}), count=len(refreshed), instances=refreshed,
@@ -733,6 +807,8 @@ def run_module():
             },
             "exact_count": {"type": "int"},
             "count_tag": {"type": "dict"},
+            "zones": {"type": "list", "elements": "str"},
+            "subnet_ids": {"type": "list", "elements": "str"},
             "dry_run": {"type": "bool", "default": False},
             "tags": {"type": "dict", "default": {}},
         },
@@ -764,6 +840,10 @@ def run_module():
             module.fail_json(msg="reset_password cannot be combined with exact_count")
     if count_tag and exact_count is None:
         module.fail_json(msg="count_tag requires exact_count")
+    if module.params["zones"] and exact_count is None:
+        module.fail_json(msg="zones only applies when exact_count is set")
+    if module.params["subnet_ids"] and not module.params["zones"]:
+        module.fail_json(msg="subnet_ids requires zones")
 
     if reset_password:
         if not module.params["password"]:
