@@ -1,0 +1,11 @@
+---
+minor_changes:
+  - cdb_instance - add ``state=restarted`` to restart a running CDB instance
+    with ``RestartDBInstances`` and wait for the asynchronous restart task
+    via ``DescribeAsyncRequestInfo`` until it reports SUCCESS (or fails),
+    bounded by ``waiter_timeout``.
+  - The ``wait_for_task`` waiter now accepts ``success_statuses`` and
+    ``failure_statuses`` so services whose task-status APIs use a different
+    convention than the CLB 0/1/2 integers (for example the CDB
+    SUCCESS/FAILED/KILLED/REMOVED/PAUSED strings) can reuse it; the default
+    keeps the CLB behaviour unchanged.

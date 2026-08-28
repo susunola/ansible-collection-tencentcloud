@@ -3,12 +3,17 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
+import pytest
+
 from ansible_collections.susunola.tencentcloud.plugins.modules.cdb_instance import (
     build_describe_request,
+    build_restart_request,
+    build_task_status_request,
     find_instance,
     _create,
     _rename,
     _delete,
+    _restart,
 )
 
 
@@ -27,6 +32,8 @@ class FakeModels(object):
     CreateDBInstanceRequest = FakeRequest
     ModifyDBInstanceNameRequest = FakeRequest
     IsolateDBInstanceRequest = FakeRequest
+    RestartDBInstancesRequest = FakeRequest
+    DescribeAsyncRequestInfoRequest = FakeRequest
     TagInfoUnit = FakeTagInfoUnit
 
 
@@ -60,11 +67,24 @@ class FakeCreateResponse(object):
         self.InstanceIds = instance_ids
 
 
+class FakeRestartResponse(object):
+    def __init__(self, async_request_id):
+        self.AsyncRequestId = async_request_id
+
+
+class FakeTaskResponse(object):
+    def __init__(self, status, info=None):
+        self.Status = status
+        self.Info = info
+
+
 class FakeClient(object):
     def __init__(self, describe_response=None, create_response=None, exc=None):
         self.describe_response = describe_response
         self.create_response = create_response
         self.exc = exc
+        self.restart_response = None
+        self.task_responses = []
         self.calls = []
 
     def DescribeDBInstances(self, request):
@@ -83,13 +103,28 @@ class FakeClient(object):
     def IsolateDBInstance(self, request):
         self.calls.append(("IsolateDBInstance", request))
 
+    def RestartDBInstances(self, request):
+        self.calls.append(("RestartDBInstances", request))
+        return self.restart_response
+
+    def DescribeAsyncRequestInfo(self, request):
+        self.calls.append(("DescribeAsyncRequestInfo", request))
+        return self.task_responses.pop(0)
+
 
 class FakeModule(object):
     def __init__(self):
-        self.params = {"retries": 2}
+        self.params = {"retries": 2, "waiter_timeout": 10, "waiter_delay": 1}
+        self.check_mode = False
 
     def sdk_call(self, operation, request):
         return operation(request)
+
+    def fail_json(self, *args, **kwargs):
+        if args:
+            kwargs["msg"] = args[0]
+        kwargs["failed"] = True
+        raise SystemExit(kwargs)
 
 
 def test_build_describe_request_by_id():
@@ -209,3 +244,58 @@ def test_delete_isolates_instance():
     _delete(module, client, FakeModels, "cdb-1")
     assert [c[0] for c in client.calls] == ["IsolateDBInstance"]
     assert client.calls[-1][1].InstanceId == "cdb-1"
+
+
+def test_build_restart_request_sends_instance_ids_array():
+    request = build_restart_request(FakeModels, "cdb-1")
+    assert request.InstanceIds == ["cdb-1"]
+
+
+def test_build_task_status_request_sends_async_request_id():
+    request = build_task_status_request(FakeModels, "task-1")
+    assert request.AsyncRequestId == "task-1"
+
+
+def test_restart_polls_async_task_until_success():
+    client = FakeClient()
+    client.restart_response = FakeRestartResponse("task-1")
+    client.task_responses = [
+        FakeTaskResponse("RUNNING"),
+        FakeTaskResponse("INITIAL"),
+        FakeTaskResponse("SUCCESS", "restart ok"),
+    ]
+    module = FakeModule()
+    _restart(module, client, FakeModels, "cdb-1")
+    names = [c[0] for c in client.calls]
+    assert names == [
+        "RestartDBInstances",
+        "DescribeAsyncRequestInfo",
+        "DescribeAsyncRequestInfo",
+        "DescribeAsyncRequestInfo",
+    ]
+    assert client.calls[0][1].InstanceIds == ["cdb-1"]
+    assert all(
+        request.AsyncRequestId == "task-1"
+        for name, request in client.calls[1:]
+    )
+
+
+def test_restart_fails_fast_on_task_failure():
+    client = FakeClient()
+    client.restart_response = FakeRestartResponse("task-1")
+    client.task_responses = [FakeTaskResponse("FAILED", "restart rejected")]
+    module = FakeModule()
+    with pytest.raises(SystemExit) as excinfo:
+        _restart(module, client, FakeModels, "cdb-1")
+    assert "restart rejected" in excinfo.value.args[0]["msg"]
+    assert [c[0] for c in client.calls] == ["RestartDBInstances", "DescribeAsyncRequestInfo"]
+
+
+def test_restart_fails_when_no_async_request_id():
+    client = FakeClient()
+    client.restart_response = FakeRestartResponse(None)
+    module = FakeModule()
+    with pytest.raises(SystemExit) as excinfo:
+        _restart(module, client, FakeModels, "cdb-1")
+    assert "no AsyncRequestId" in excinfo.value.args[0]["msg"]
+    assert [c[0] for c in client.calls] == ["RestartDBInstances"]

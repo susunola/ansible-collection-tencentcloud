@@ -148,7 +148,8 @@ class _RecordingModule(object):
     """Module stand-in that captures every request passed to ``sdk_call``."""
 
     def __init__(self):
-        self.params = {"region": "ap-guangzhou"}
+        self.params = {"region": "ap-guangzhou", "waiter_timeout": 10, "waiter_delay": 1}
+        self.check_mode = False
         self.requests = []
 
     def sdk_call(self, operation, request):
@@ -386,7 +387,9 @@ WRITE_MODULE_BUILDERS = {
         "build_describe_request",
     ],
     "cdb_instance": [
-        "_create", "_delete", "_rename", "build_describe_request",
+        "_create", "_delete", "_rename",
+        "build_describe_request", "build_restart_request",
+        "build_task_status_request",
     ],
     "ckafka_topic": [
         "_create", "_delete", "_scale_partitions", "_update", "find_topic",
@@ -1393,6 +1396,28 @@ def test_cdb_instance():
     })
     module._rename(fake, client, models, "cdb-xxxxxxxx", "order-db-v2")
     module._delete(fake, client, models, "cdb-xxxxxxxx")
+    errors.extend(audit_request(
+        module.build_restart_request(models, "cdb-xxxxxxxx"),
+        "cdb restart by id"))
+    errors.extend(audit_request(
+        module.build_task_status_request(models, "9ad9c2d5-88007b27-7d2c8b8c-f2598f12"),
+        "cdb async task status"))
+    # Drive the full restart path: the async task client returns the
+    # doc-shaped RestartDBInstances/DescribeAsyncRequestInfo responses so
+    # the polling loop terminates on SUCCESS.
+    class _AsyncTaskClient(_StubClient):
+        def RestartDBInstances(self, request):
+            response = _StubResponse()
+            response.AsyncRequestId = "9ad9c2d5-88007b27-7d2c8b8c-f2598f12"
+            return response
+
+        def DescribeAsyncRequestInfo(self, request):
+            response = _StubResponse()
+            response.Status = "SUCCESS"
+            response.Info = "restart succeeded"
+            return response
+
+    module._restart(fake, _AsyncTaskClient(), models, "cdb-xxxxxxxx")
     errors.extend(audit_recorded(fake, "cdb_instance"))
     assert errors == []
 

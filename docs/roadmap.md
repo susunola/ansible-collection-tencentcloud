@@ -132,7 +132,15 @@
     for trtc/ccc/bsca) and `no_log` support for curated params.
 38. Deepen existing write modules: async long-running task polling beyond
     CLB, multi-zone spread for `exact_count`, waiter coverage for database
-    instance lifecycles.
+    instance lifecycles. **In progress** — the async polling half shipped:
+    `wait_for_task` now accepts `success_statuses`/`failure_statuses` so
+    services with a different status convention than the CLB 0/1/2 integers
+    can reuse it (CDB `DescribeAsyncRequestInfo` reports
+    SUCCESS/FAILED/KILLED/REMOVED/PAUSED), and `cdb_instance` gained
+    `state=restarted` which restarts via `RestartDBInstances` and blocks on
+    the async task (verified against the official
+    cloud.tencent.com/document/product/236/17488 doc). Remaining: multi-zone
+    spread for `exact_count` and database instance lifecycle waiters.
 39. CVM CHC server lifecycle: rescue mode and network mode switching on
     top of `cvm_chc`. **Done** — the network mode half
     (`ModifyChcNetworkMode`, DEPLOY/BUSINESS) shipped as the

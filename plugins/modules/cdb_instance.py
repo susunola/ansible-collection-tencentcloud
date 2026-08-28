@@ -12,7 +12,7 @@ module: cdb_instance
 short_description: Manage Tencent Cloud CDB MySQL instances
 version_added: "0.12.0"
 description:
-  - Create, rename and isolate CDB MySQL instances through the
+  - Create, rename, restart and isolate CDB MySQL instances through the
     C(cdb.v20170320) API.
   - This module is idempotent. Running it twice leaves the instance
     unchanged and the second run reports C(changed=false).
@@ -28,8 +28,14 @@ options:
       - C(absent) isolates the instance (the billing is stopped and the
         instance moves to the recycle bin; postpaid instances are then
         destroyed automatically after the retention period).
+      - C(restarted) restarts a running instance with
+        V(RestartDBInstances) and waits for the asynchronous restart task
+        to report C(SUCCESS).
+      - Restart is a one-shot action - every run with C(state=restarted)
+        issues a restart; the instance must be running (Status 1) with no
+        other async task in progress.
     type: str
-    choices: [present, absent]
+    choices: [present, absent, restarted]
     default: present
   instance_id:
     description:
@@ -136,6 +142,9 @@ notes:
     are no longer needed to avoid unnecessary charges.
   - Creation takes several minutes; the module returns as soon as the
     creation order is accepted.
+  - Restart is asynchronous on the CDB side; the module polls
+    V(DescribeAsyncRequestInfo) until the task reports C(SUCCESS) or
+    fails, bounded by O(waiter_timeout).
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
@@ -159,6 +168,12 @@ EXAMPLES = r'''
     region: ap-guangzhou
     state: present
     name: prod-mysql-v2
+
+- name: Restart it (waits for the async restart task)
+  susunola.tencentcloud.cdb_instance:
+    region: ap-guangzhou
+    state: restarted
+    instance_id: cdb-xxxxxxxx
 
 - name: Isolate it (stop billing)
   susunola.tencentcloud.cdb_instance:
@@ -184,6 +199,7 @@ instance:
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_task
 
 
 def _load_cdb():
@@ -266,10 +282,57 @@ def _delete(module, client, models, instance_id):
     module.sdk_call(client.IsolateDBInstance, request)
 
 
+def build_restart_request(models, instance_id):
+    request = models.RestartDBInstancesRequest()
+    request.InstanceIds = [instance_id]
+    return request
+
+
+def build_task_status_request(models, task_id):
+    request = models.DescribeAsyncRequestInfoRequest()
+    request.AsyncRequestId = task_id
+    return request
+
+
+def _restart(module, client, models, instance_id):
+    """Restart the instance and wait for the async restart task.
+
+    ``RestartDBInstances`` returns an ``AsyncRequestId`` that the official
+    documentation says to query with ``DescribeAsyncRequestInfo``. Its
+    ``Status`` is a string (INITIAL/RUNNING/SUCCESS/FAILED/KILLED/REMOVED/
+    PAUSED), a different convention from the CLB task API, so the generic
+    waiter is told which values are terminal.
+    """
+    response = module.sdk_call(client.RestartDBInstances, build_restart_request(models, instance_id))
+    task_id = getattr(response, "AsyncRequestId", None)
+    if task_id is None:
+        module.fail_json(
+            msg="RestartDBInstances returned no AsyncRequestId; cannot track "
+                "the asynchronous restart task",
+            instance_id=instance_id,
+        )
+
+    def poll():
+        task_response = module.sdk_call(
+            client.DescribeAsyncRequestInfo,
+            build_task_status_request(models, task_id),
+        )
+        return task_response.Status, task_response.Info, task_response
+
+    wait_for_task(
+        module,
+        poll,
+        timeout=module.params["waiter_timeout"],
+        delay=module.params["waiter_delay"],
+        success_statuses=("SUCCESS",),
+        failure_statuses=("FAILED", "KILLED", "REMOVED", "PAUSED"),
+    )
+
+
 def run_module():
     module = TencentCloudModule(
         argument_spec={
-            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "state": {"type": "str", "choices": ["present", "absent", "restarted"], "default": "present"},
             "instance_id": {"type": "str"},
             "name": {"type": "str"},
             "zone": {"type": "str"},
@@ -318,6 +381,28 @@ def run_module():
             module.exit_json(changed=True, **(diff or {}), msg="Would isolate CDB instance")
         _delete(module, client, models, target_id)
         module.exit_json(changed=True, **(diff or {}), instance=None, msg="CDB instance isolated")
+
+    if state == "restarted":
+        if current is None:
+            module.fail_json(
+                msg="CDB instance not found; use state=present to create it",
+                instance_id=instance_id,
+                name=name,
+            )
+        target_id = current["InstanceId"]
+        current_status = current.get("Status")
+        if current_status != 1:
+            module.fail_json(
+                msg="Restart requires a running instance (Status 1) with no "
+                    "async task in progress; current Status is %s" % current_status,
+                instance=current,
+            )
+        diff = maybe_diff(module, {"Status": 1}, {"Status": 1, "Restarted": True})
+        if module.check_mode:
+            module.exit_json(changed=True, **(diff or {}), msg="Would restart CDB instance")
+        _restart(module, client, models, target_id)
+        updated = find_instance(module, client, models, target_id, None)
+        module.exit_json(changed=True, **(diff or {}), instance=updated, msg="CDB instance restarted")
 
     # state == present
     if current is None:

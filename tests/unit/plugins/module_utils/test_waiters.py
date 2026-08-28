@@ -98,6 +98,49 @@ def test_wait_for_task_skips_polling_in_check_mode():
     assert wait_for_task(module, poll, timeout=10, delay=1, sleep_fn=_no_sleep) is None
 
 
+def test_wait_for_task_with_string_status_convention():
+    """CDB DescribeAsyncRequestInfo reports string statuses; the generic
+    waiter must accept a non-CLB convention."""
+    module = FakeModule()
+    statuses = iter([("RUNNING", None, None), ("INITIAL", None, None), ("SUCCESS", "ok", "restarted")])
+
+    def poll():
+        return next(statuses)
+
+    payload = wait_for_task(
+        module,
+        poll,
+        timeout=10,
+        delay=1,
+        sleep_fn=_no_sleep,
+        success_statuses=("SUCCESS",),
+        failure_statuses=("FAILED", "KILLED", "REMOVED", "PAUSED"),
+    )
+    assert payload == "restarted"
+
+
+def test_wait_for_task_fails_fast_on_string_failure_status():
+    module = FakeModule()
+    calls = []
+
+    def poll():
+        calls.append(1)
+        return "FAILED", "restart rejected", None
+
+    with pytest.raises(SystemExit) as excinfo:
+        wait_for_task(
+            module,
+            poll,
+            timeout=10,
+            delay=1,
+            sleep_fn=_no_sleep,
+            success_statuses=("SUCCESS",),
+            failure_statuses=("FAILED", "KILLED", "REMOVED", "PAUSED"),
+        )
+    assert len(calls) == 1
+    assert "restart rejected" in excinfo.value.args[0]["msg"]
+
+
 def test_wait_for_state_returns_immediately_on_match():
     module = FakeModule()
     calls = []

@@ -72,13 +72,17 @@ def wait_until_gone(module, poll, timeout=120, delay=5, sleep_fn=None):
     module.fail_json(msg="Timed out waiting for resource deletion", timeout=timeout)
 
 
-def wait_for_task(module, poll, timeout=120, delay=5, sleep_fn=None):
+def wait_for_task(module, poll, timeout=120, delay=5, sleep_fn=None,
+                  success_statuses=(0,), failure_statuses=(1,)):
     """Poll an asynchronous task until it completes.
 
     Several Tencent Cloud services (for example CLB) run mutating operations
     as background tasks whose progress is reported by a DescribeTaskStatus
     style API with the shared status convention: 0 success, 1 failed,
-    2 in progress.
+    2 in progress. Services with a different convention pass their own
+    terminal status values - for example CDB ``DescribeAsyncRequestInfo``
+    reports ``SUCCESS``/``FAILED``/``KILLED``/``REMOVED``/``PAUSED`` while
+    the task is ``INITIAL`` or ``RUNNING``.
 
     :param module: module instance (used for check-mode and fail_json).
     :param poll: zero-argument callable returning ``(status, message,
@@ -87,6 +91,8 @@ def wait_for_task(module, poll, timeout=120, delay=5, sleep_fn=None):
     :param timeout: maximum wait in seconds.
     :param delay: interval between polls in seconds.
     :param sleep_fn: injectable sleep for tests.
+    :param success_statuses: iterable of status values that mean success.
+    :param failure_statuses: iterable of status values that mean failure.
     :returns: the payload of the successful poll.
     :raises: SystemExit via ``module.fail_json`` on task failure or timeout,
         unless the module is running in check mode (no API writes happen, so
@@ -98,9 +104,9 @@ def wait_for_task(module, poll, timeout=120, delay=5, sleep_fn=None):
     waited = 0
     while waited < timeout:
         status, message, payload = poll()
-        if status == 0:
+        if status in success_statuses:
             return payload
-        if status == 1:
+        if status in failure_statuses:
             module.fail_json(
                 msg="Asynchronous task failed: %s" % (message or "no reason reported"),
                 timeout=timeout,
