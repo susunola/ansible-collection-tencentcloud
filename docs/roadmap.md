@@ -132,7 +132,7 @@
     for trtc/ccc/bsca) and `no_log` support for curated params.
 38. Deepen existing write modules: async long-running task polling beyond
     CLB, multi-zone spread for `exact_count`, waiter coverage for database
-    instance lifecycles. **In progress** — the async polling half shipped:
+    instance lifecycles. **Done** — the async polling half shipped:
     `wait_for_task` now accepts `success_statuses`/`failure_statuses` so
     services with a different status convention than the CLB 0/1/2 integers
     can reuse it (CDB `DescribeAsyncRequestInfo` reports
@@ -143,7 +143,14 @@
     also shipped: `cvm_instance` `exact_count` accepts `zones` (plus
     optional parallel `subnet_ids`) and spreads the created shortfall
     across the listed AZs as evenly as possible, one `RunInstances` call
-    per zone. Remaining: database instance lifecycle waiters.
+    per zone. The lifecycle-waiter half shipped too: `cdb_instance` waits
+    for delivery after creation (Status 1 with TaskStatus 0, per the
+    CreateDBInstanceHour doc) and for Status 5 (isolated) after
+    `state=absent`; `redis_instance` waits for Status 2 (running) after
+    creation and Status -3 (pending recycle, or a vanished instance) after
+    `state=absent` — all bounded by `waiter_timeout`, whose default rose
+    from 120 to 900 seconds in both database modules because creation takes
+    several minutes.
 39. CVM CHC server lifecycle: rescue mode and network mode switching on
     top of `cvm_chc`. **Done** — the network mode half
     (`ModifyChcNetworkMode`, DEPLOY/BUSINESS) shipped as the

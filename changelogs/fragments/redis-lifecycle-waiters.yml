@@ -1,0 +1,8 @@
+---
+minor_changes:
+  - redis_instance - after creation the module now waits for the instance
+    to reach Status 2 (running) and after destruction waits for Status -3
+    (pending recycle, or the instance disappearing from the describe API),
+    both bounded by ``waiter_timeout``; the default ``waiter_timeout`` is
+    raised from 120 to 900 seconds because database creation takes several
+    minutes.

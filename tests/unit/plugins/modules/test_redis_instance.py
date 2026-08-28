@@ -3,12 +3,15 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
+import pytest
+
 from ansible_collections.susunola.tencentcloud.plugins.modules.redis_instance import (
     build_describe_request,
     find_instance,
     _create,
     _rename,
     _destroy,
+    _wait_status,
 )
 
 
@@ -32,10 +35,10 @@ class FakeModels(object):
 
 
 class FakeInstance(object):
-    def __init__(self, instance_id, name, billing_mode="POSTPAID"):
+    def __init__(self, instance_id, name, billing_mode="POSTPAID", status=0):
         self.InstanceId = instance_id
         self.InstanceName = name
-        self.Status = 0
+        self.Status = status
         self.BillingMode = billing_mode
         self.RedisShardSize = 4096
         self.ZoneId = 100003
@@ -64,6 +67,7 @@ class FakeCreateResponse(object):
 class FakeClient(object):
     def __init__(self, describe_response=None, create_response=None, exc=None):
         self.describe_response = describe_response
+        self.describe_pages = []
         self.create_response = create_response
         self.exc = exc
         self.calls = []
@@ -72,6 +76,8 @@ class FakeClient(object):
         self.calls.append(("DescribeInstances", request))
         if self.exc:
             raise self.exc
+        if self.describe_pages:
+            return FakeDescribeResponse(self.describe_pages.pop(0))
         return self.describe_response
 
     def CreateInstances(self, request):
@@ -90,10 +96,17 @@ class FakeClient(object):
 
 class FakeModule(object):
     def __init__(self):
-        self.params = {"retries": 2}
+        self.params = {"retries": 2, "waiter_timeout": 10, "waiter_delay": 1}
+        self.check_mode = False
 
     def sdk_call(self, operation, request):
         return operation(request)
+
+    def fail_json(self, *args, **kwargs):
+        if args:
+            kwargs["msg"] = args[0]
+        kwargs["failed"] = True
+        raise SystemExit(kwargs)
 
 
 def test_build_describe_request_by_id():
@@ -219,3 +232,38 @@ def test_destroy_prepaid_instance():
     _destroy(module, client, FakeModels, "crs-1", "PREPAID")
     assert [c[0] for c in client.calls] == ["DestroyPrepaidInstance"]
     assert client.calls[-1][1].InstanceId == "crs-1"
+
+
+def _wait_module(timeout=10, delay=1):
+    module = FakeModule()
+    module.params = {"retries": 2, "waiter_timeout": timeout, "waiter_delay": delay}
+    return module
+
+
+def test_wait_status_waits_for_running():
+    client = FakeClient()
+    client.describe_pages = [
+        [FakeInstance("crs-1", "prod-cache", status=0)],
+        [FakeInstance("crs-1", "prod-cache", status=1)],
+        [FakeInstance("crs-1", "prod-cache", status=2)],
+    ]
+    module = _wait_module(timeout=10, delay=0.01)
+    assert _wait_status(module, client, FakeModels, "crs-1", [2]) == 2
+    assert len(client.calls) == 3
+
+
+def test_wait_status_treats_missing_instance_as_gone_terminal():
+    client = FakeClient()
+    client.describe_pages = [[]]
+    module = _wait_module(timeout=10, delay=0.01)
+    assert _wait_status(module, client, FakeModels, "crs-1", [-3], gone_terminal=-3) == -3
+    assert len(client.calls) == 1
+
+
+def test_wait_status_times_out_on_stuck_state():
+    client = FakeClient()
+    client.describe_pages = [[FakeInstance("crs-1", "prod-cache", status=1)]] * 20
+    module = _wait_module(timeout=0.15, delay=0.05)
+    with pytest.raises(SystemExit) as excinfo:
+        _wait_status(module, client, FakeModels, "crs-1", [2])
+    assert "Timed out waiting for resource state" in excinfo.value.args[0]["msg"]
