@@ -300,6 +300,7 @@ UNEXERCISED_BUILDERS = {
     ("tke_addon", "run_module"): "inline lifecycle requests are covered by unit tests",
     ("private_dns_zone", "run_module"): "inline update and delete requests are covered by unit tests",
     ("private_dns_record", "run_module"): "inline delete requests are covered by unit tests",
+    ("network_acl", "run_module"): "inline lifecycle requests are covered by unit tests",
 }
 
 # Write-module request builders exercised by the ``test_<module>`` functions
@@ -491,6 +492,9 @@ WRITE_MODULE_BUILDERS = {
     "clb_target_group": [
         "build_create_request", "build_delete_request", "build_describe_request",
         "build_update_request", "find_instances",
+    ],
+    "network_acl": [
+        "build_create_request", "build_describe_request", "build_entries_request",
     ],
 }
 
@@ -2001,6 +2005,24 @@ def test_clb_target_group():
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "target group request %s" % index))
     errors.extend(audit_recorded(fake, "target group instances"))
+    assert errors == []
+
+
+def test_network_acl():
+    module = _import_plugin("network_acl")
+    models = _models("vpc.v20170312")
+    params = {"name": "app", "vpc_id": "vpc-xxxxxxxx", "acl_type": None, "tags": {"env": "prod"}}
+    rules = [{"protocol": "TCP", "port": "443", "cidr": "10.0.0.0/8", "ipv6_cidr": None, "action": "ACCEPT", "description": "https", "priority": 1}]
+    requests = [
+        module.build_describe_request(models, "acl-xxxxxxxx"),
+        module.build_describe_request(models, name="app", vpc_id="vpc-xxxxxxxx"),
+        module.build_create_request(models, params),
+        module.build_entries_request(models, "acl-xxxxxxxx", rules, []),
+        module.build_subnets_request(models, models.AssociateNetworkAclSubnetsRequest, "acl-xxxxxxxx", ["subnet-xxxxxxxx"]),
+    ]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "network ACL request %s" % index))
     assert errors == []
 
 

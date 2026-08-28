@@ -179,6 +179,7 @@ action_groups:
     - nat_gateway
     - nat_gateway_info
     - nat_gateway_rule
+    - network_acl
     - network_interface
     - oceanus_cluster_info
     - omics_application_info

@@ -213,6 +213,9 @@
     settings, plus explicit pre-shared-key rotation. `clb_target_group` adds
     target-group lifecycle and exact-set backend IP/port/weight reconciliation.
     All three support check mode, diff output and convergence polling.
+44. VPC network ACL closure. **Done** — `network_acl` manages ACL lifecycle,
+    name changes, exact ingress/egress rule sets and exact subnet associations,
+    with check mode, diff output and SDK contract coverage.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

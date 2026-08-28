@@ -47,6 +47,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `monitor_alarm_policy_notice` | Manage notification bindings for a Cloud Monitor alarm policy |
 | `nat_gateway` | Manage Tencent Cloud NAT gateways |
 | `nat_gateway_rule` | Manage Tencent Cloud NAT gateway DNAT and SNAT rules |
+| `network_acl` | Manage Tencent Cloud VPC network ACLs |
 | `network_interface` | Manage Tencent Cloud elastic network interfaces |
 | `peering_connection` | Manage Tencent Cloud VPC peering connections |
 | `private_dns_record` | Manage a Tencent Cloud Private DNS record |

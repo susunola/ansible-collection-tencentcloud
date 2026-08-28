@@ -74,6 +74,7 @@ CORE_MODULES = {
     "nat_gateway",
     "nat_gateway_rule",
     "network_interface",
+    "network_acl",
     "peering_connection",
     "private_dns_record",
     "private_dns_zone",
