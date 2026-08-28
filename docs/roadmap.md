@@ -207,12 +207,12 @@
     and `tke_addon` manages addon installation, upgrades, values and deletion.
     All five support check mode and diff output and are registered in the SDK
     request-model contract audit.
-43. VPN topology closure: customer gateway and VPN connection lifecycle,
-    followed by CLB target groups. **In progress** — `customer_gateway`
+43. VPN topology and CLB target-group closure. **Done** — `customer_gateway`
     manages remote peer definitions by ID or unique name; `vpn_connection`
     manages IPsec tunnel lifecycle, exact SPD CIDR pairs, negotiation and DPD
-    settings, plus explicit pre-shared-key rotation. Both support check mode,
-    diff output and convergence polling.
+    settings, plus explicit pre-shared-key rotation. `clb_target_group` adds
+    target-group lifecycle and exact-set backend IP/port/weight reconciliation.
+    All three support check mode, diff output and convergence polling.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

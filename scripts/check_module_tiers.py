@@ -49,6 +49,7 @@ CORE_MODULES = {
     "cdb_instance",
     "cdn_domain",
     "clb_rule",
+    "clb_target_group",
     "ckafka_topic",
     "clb_listener",
     "clb_listener_target",

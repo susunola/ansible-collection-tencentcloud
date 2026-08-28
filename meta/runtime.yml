@@ -71,6 +71,7 @@ action_groups:
     - clb_load_balancer
     - clb_load_balancer_info
     - clb_rule
+    - clb_target_group
     - cloudaudit_event_info
     - cloudhsm_vsm_info
     - cloudrc_resource_info

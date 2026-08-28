@@ -488,6 +488,10 @@ WRITE_MODULE_BUILDERS = {
         "build_create_request", "build_delete_request", "build_describe_request",
         "build_update_request",
     ],
+    "clb_target_group": [
+        "build_create_request", "build_delete_request", "build_describe_request",
+        "build_update_request", "find_instances",
+    ],
 }
 
 
@@ -1975,6 +1979,28 @@ def test_vpn_connection():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "vpn connection request %s" % index))
+    assert errors == []
+
+
+def test_clb_target_group():
+    module = _import_plugin("clb_target_group")
+    models = _models("clb.v20180317")
+    params = {"name": "api", "vpc_id": "vpc-xxxxxxxx", "type": "v2", "protocol": "HTTP", "port": 8080, "schedule_algorithm": "WRR", "weight": 10, "tags": {"env": "prod"}}
+    requests = [
+        module.build_describe_request(models, "lbtg-xxxxxxxx"),
+        module.build_describe_request(models, name="api", vpc_id="vpc-xxxxxxxx"),
+        module.build_create_request(models, params),
+        module.build_update_request(models, "lbtg-xxxxxxxx", params),
+        module.build_delete_request(models, "lbtg-xxxxxxxx"),
+        module.build_instances_request(models, "lbtg-xxxxxxxx", [{"ip": "10.0.0.1", "port": 8080, "weight": 10}], models.RegisterTargetGroupInstancesRequest),
+        module.build_instances_request(models, "lbtg-xxxxxxxx", [{"ip": "10.0.0.1", "port": 8080, "weight": 10}], models.DeregisterTargetGroupInstancesRequest),
+    ]
+    fake = _RecordingModule()
+    module.find_instances(fake, _StubClient(), models, "lbtg-xxxxxxxx")
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "target group request %s" % index))
+    errors.extend(audit_recorded(fake, "target group instances"))
     assert errors == []
 
 

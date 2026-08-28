@@ -1,0 +1,4 @@
+minor_changes:
+  - >-
+    Add clb_target_group with idempotent target-group lifecycle and exact-set
+    reconciliation of backend IP, port and weight.
