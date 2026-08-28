@@ -114,6 +114,7 @@ action_groups:
     - eip
     - eip_info
     - eis_runtime_deployed_instances_mc_info
+    - elasticsearch_instance
     - emr_node_data_disk_info
     - es_cluster_info
     - ess_file_url_info
@@ -170,6 +171,7 @@ action_groups:
     - nat_gateway
     - nat_gateway_info
     - nat_gateway_rule
+    - network_interface
     - oceanus_cluster_info
     - omics_application_info
     - organization_member_info
@@ -185,8 +187,10 @@ action_groups:
     - route_table
     - route_table_info
     - rum_project_info
+    - scf_alias
     - scf_function
     - scf_function_info
+    - scf_version
     - security_group
     - security_group_info
     - security_group_rule
@@ -212,6 +216,7 @@ action_groups:
     - tcm_mesh_info
     - tcr_instance
     - tcr_instance_info
+    - tcr_namespace
     - tcss_abnormal_process_event_info
     - tdai_agent_duty_task_info
     - tdcpg_cluster_instance_info
@@ -227,6 +232,7 @@ action_groups:
     - tiw_running_task_info
     - tke_cluster
     - tke_cluster_info
+    - tke_node_pool
     - tokenhub_model_info
     - tourism_draw_resource_info
     - trabbit_rabbit_mq_serverless_instance_info

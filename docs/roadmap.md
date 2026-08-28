@@ -179,6 +179,26 @@
     newest snapshot), with `state=present`/`absent`, an async wait for
     `SnapshotState=NORMAL` bounded by `waiter_timeout`, and check mode +
     diff.
+41. Write module batch 9: six new write modules growing the count from 39
+    to 45. **Done** — `tcr_namespace` (namespaces identified by
+    `registry_id` + `name`; public access, auto-scan and vulnerability
+    prevention enforced with `ModifyNamespace`), `scf_alias`
+    (function aliases identified by `function_name` + `name`, target
+    `function_version` enforced with `UpdateAlias`), `scf_version`
+    (publish/delete function versions; `$LATEST`/`default` rejected as
+    identities), `network_interface` (ENIs identified by
+    `network_interface_id` or `name` + `subnet_id`; name, description and
+    bound security groups reconciled with
+    `ModifyNetworkInterfaceAttribute`), `tke_node_pool` (node pools
+    identified by `cluster_id` + `name`, `LaunchConfigurePara` passed as
+    raw JSON, autoscale/labels/taints/deletion-protection drift enforced
+    with `ModifyClusterNodePool`, `keep_instance` delete option) and
+    `elasticsearch_instance` (clusters identified by `instance_id` or
+    `name`, creation via `NodeInfoList` with Type=hotData, waits for
+    Status 1 on create and disappearance on destroy, bounded by
+    `waiter_timeout`). Every module ships idempotent present/absent
+    semantics, check mode, diff output and contract + unit tests. The
+    count now stands at 45 of the 50-module target.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

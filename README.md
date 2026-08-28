@@ -32,16 +32,20 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cvm_instance` | Manage Tencent Cloud CVM instances |
 | `dnspod_record` | Manage Tencent Cloud DNSPod DNS records |
 | `eip` | Manage Tencent Cloud elastic IP addresses (EIP) |
+| `elasticsearch_instance` | Manage Tencent Cloud Elasticsearch clusters |
 | `gaap_proxy` | Manage Tencent Cloud GAAP proxies |
 | `key_pair` | Manage Tencent Cloud CVM key pairs |
 | `lighthouse_instance` | Manage Tencent Cloud Lighthouse instances |
 | `mongodb_instance` | Manage Tencent Cloud MongoDB instances |
 | `nat_gateway` | Manage Tencent Cloud NAT gateways |
 | `nat_gateway_rule` | Manage Tencent Cloud NAT gateway DNAT and SNAT rules |
+| `network_interface` | Manage Tencent Cloud elastic network interfaces |
 | `peering_connection` | Manage Tencent Cloud VPC peering connections |
 | `redis_instance` | Manage Tencent Cloud Redis instances |
 | `route_table` | Manage Tencent Cloud VPC route tables |
+| `scf_alias` | Manage Tencent Cloud SCF function aliases |
 | `scf_function` | Manage Tencent Cloud SCF functions |
+| `scf_version` | Manage Tencent Cloud SCF function versions |
 | `security_group` | Manage Tencent Cloud security groups |
 | `security_group_rule` | Manage Tencent Cloud security group rules |
 | `ssl_certificate` | Manage Tencent Cloud SSL certificates |
@@ -49,7 +53,9 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `subnet` | Manage Tencent Cloud VPC subnets |
 | `tag` | Manage tags on arbitrary Tencent Cloud resources |
 | `tcr_instance` | Manage Tencent Cloud TCR enterprise instances |
+| `tcr_namespace` | Manage Tencent Cloud TCR namespaces |
 | `tke_cluster` | Manage Tencent Cloud TKE clusters |
+| `tke_node_pool` | Manage Tencent Cloud TKE cluster node pools |
 | `vpc` | Manage Tencent Cloud VPCs |
 | `vpn_gateway` | Manage Tencent Cloud VPN gateways |
 

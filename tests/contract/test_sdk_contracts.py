@@ -434,9 +434,27 @@ WRITE_MODULE_BUILDERS = {
     "tcr_instance": [
         "_delete", "_update", "build_create_request", "build_describe_request",
     ],
+    "tcr_namespace": [
+        "_delete", "_update", "build_create_request", "build_describe_request",
+    ],
     "tke_cluster": [
         "_create", "_delete", "_set_deletion_protection", "_update",
         "build_describe_request",
+    ],
+    "tke_node_pool": [
+        "_delete", "_update", "build_create_request", "build_describe_request",
+    ],
+    "network_interface": [
+        "_delete", "_update", "build_create_request", "build_describe_request",
+    ],
+    "scf_alias": [
+        "_delete", "_update", "build_create_request", "build_get_request",
+    ],
+    "scf_version": [
+        "_delete", "build_list_request", "build_publish_request",
+    ],
+    "elasticsearch_instance": [
+        "_destroy", "_rename", "build_create_request", "build_describe_request",
     ],
     "vpn_gateway": [
         "_create", "_delete", "_update", "build_describe_request",
@@ -2081,4 +2099,169 @@ def test_tcr_instance():
     module._update(fake, client, models, "tcr-xxxxxxxx", False)
     module._delete(fake, client, models, "tcr-xxxxxxxx", True)
     errors.extend(audit_recorded(fake, "tcr_instance"))
+    assert errors == []
+
+
+def test_tcr_namespace():
+    module = _import_plugin("tcr_namespace")
+    models = _models("tcr.v20190924")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "tcr-xxxxxxxx", "team-a"),
+        "tcr namespace describe request"))
+    params = {
+        "registry_id": "tcr-xxxxxxxx",
+        "name": "team-a",
+        "is_public": False,
+        "is_auto_scan": True,
+        "is_prevent_vul": True,
+        "severity": "high",
+    }
+    errors.extend(audit_request(
+        module.build_create_request(models, params),
+        "tcr namespace create request"))
+    module._update(fake, client, models, params)
+    module._delete(fake, client, models, "tcr-xxxxxxxx", "team-a")
+    errors.extend(audit_recorded(fake, "tcr_namespace"))
+    assert errors == []
+
+
+def test_tke_node_pool():
+    module = _import_plugin("tke_node_pool")
+    models = _models("tke.v20180525")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "cls-xxxxxxxx"),
+        "tke node pool describe request"))
+    params = {
+        "cluster_id": "cls-xxxxxxxx",
+        "name": "workers",
+        "launch_configuration_json": '{"InstanceTypes":["S5.LARGE8"]}',
+        "autoscaling_group_json": "",
+        "enable_autoscale": True,
+        "max_nodes_num": 10,
+        "min_nodes_num": 2,
+        "labels": {"app": "workers"},
+        "taints": [{"key": "dedicated", "value": "true", "effect": "NoSchedule"}],
+        "node_pool_os": "tlinux2.4x86_64",
+        "deletion_protection": True,
+        "tags": {"env": "prod"},
+    }
+    errors.extend(audit_request(
+        module.build_create_request(models, params),
+        "tke node pool create request"))
+    module._update(fake, client, models, params, "np-xxxxxxxx")
+    module._delete(fake, client, models, "cls-xxxxxxxx", "np-xxxxxxxx", False)
+    errors.extend(audit_recorded(fake, "tke_node_pool"))
+    assert errors == []
+
+
+def test_network_interface():
+    module = _import_plugin("network_interface")
+    models = _models("vpc.v20170312")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "eni-xxxxxxxx", None, None),
+        "eni describe request"))
+    params = {
+        "vpc_id": "vpc-xxxxxxxx",
+        "name": "web-eni",
+        "subnet_id": "subnet-xxxxxxxx",
+        "description": "Web tier interface",
+        "security_group_ids": ["sg-xxxxxxxx"],
+        "secondary_private_ip_count": 2,
+        "tags": {"env": "prod"},
+    }
+    errors.extend(audit_request(
+        module.build_create_request(models, params),
+        "eni create request"))
+    module._update(fake, client, models, params, "eni-xxxxxxxx")
+    module._delete(fake, client, models, "eni-xxxxxxxx")
+    errors.extend(audit_recorded(fake, "network_interface"))
+    assert errors == []
+
+
+def test_scf_alias():
+    module = _import_plugin("scf_alias")
+    models = _models("scf.v20180416")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    params = {
+        "function_name": "my-func",
+        "name": "prod",
+        "function_version": "2",
+        "namespace": "default",
+        "description": "Production traffic",
+    }
+    errors.extend(audit_request(
+        module.build_get_request(models, params),
+        "scf alias get request"))
+    errors.extend(audit_request(
+        module.build_create_request(models, params),
+        "scf alias create request"))
+    module._update(fake, client, models, params)
+    module._delete(fake, client, models, params)
+    errors.extend(audit_recorded(fake, "scf_alias"))
+    assert errors == []
+
+
+def test_scf_version():
+    module = _import_plugin("scf_version")
+    models = _models("scf.v20180416")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    params = {
+        "function_name": "my-func",
+        "version": "2",
+        "namespace": "default",
+        "description": "Deployed by ansible",
+        "force_delete": False,
+    }
+    errors.extend(audit_request(
+        module.build_list_request(models, params),
+        "scf version list request"))
+    errors.extend(audit_request(
+        module.build_publish_request(models, params),
+        "scf version publish request"))
+    module._delete(fake, client, models, params)
+    errors.extend(audit_recorded(fake, "scf_version"))
+    assert errors == []
+
+
+def test_elasticsearch_instance():
+    module = _import_plugin("elasticsearch_instance")
+    models = _models("es.v20180416")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(
+        module.build_describe_request(models, "es-xxxxxxxx", None),
+        "es describe request"))
+    params = {
+        "zone": "ap-guangzhou-3",
+        "es_version": "7.10.1",
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_id": "subnet-xxxxxxxx",
+        "password": "secret-pass-1",
+        "name": "logs-es",
+        "node_type": "ES.S1.MEDIUM8",
+        "node_num": 3,
+        "disk_type": "CLOUD_SSD",
+        "disk_size": 200,
+        "license_type": "basic",
+    }
+    errors.extend(audit_request(
+        module.build_create_request(models, params),
+        "es create request"))
+    module._rename(fake, client, models, "es-xxxxxxxx", "logs-es-v2")
+    module._destroy(fake, client, models, "es-xxxxxxxx")
+    errors.extend(audit_recorded(fake, "elasticsearch_instance"))
     assert errors == []

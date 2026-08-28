@@ -112,8 +112,12 @@ class TencentCloudModule(AnsibleModule):
 
     def _drain_tc_calls(self):
         """Return the recorded API calls and reset the trail."""
-        calls = list(self._tc_calls)
-        del self._tc_calls[:]
+        # ``exit_json``/``fail_json`` can be reached from the
+        # ``AnsibleModule.__init__`` argument validation, before the
+        # ``_tc_calls`` trail exists; treat that as an empty trail.
+        calls = list(getattr(self, "_tc_calls", ()))
+        if calls:
+            del self._tc_calls[:]
         return calls
 
     def exit_json(self, **kwargs):
