@@ -387,7 +387,7 @@ WRITE_MODULE_BUILDERS = {
         "build_describe_request",
     ],
     "cdb_instance": [
-        "_create", "_delete", "_rename", "_upgrade",
+        "_create", "_delete", "_rename",
         "build_describe_request", "build_restart_request",
         "build_task_status_request", "build_upgrade_request",
     ],
