@@ -1409,6 +1409,7 @@ def test_cdb_instance():
     # Drive the full restart path: the async task client returns the
     # doc-shaped RestartDBInstances/DescribeAsyncRequestInfo responses so
     # the polling loop terminates on SUCCESS.
+
     class _AsyncTaskClient(_StubClient):
         def RestartDBInstances(self, request):
             response = _StubResponse()
