@@ -447,6 +447,7 @@ WRITE_MODULE_BUILDERS = {
         "build_cancel_deletion_request", "build_create_request",
         "build_list_key_request", "build_rotation_request", "describe_key",
     ],
+    "kms_key_rotation": ["build_describe_request", "build_status_request", "build_update_request"],
     "monitor_alarm_policy": [
         "build_condition_request", "build_create_request", "build_notice_request",
         "build_tasks_request", "find_policy",
@@ -2267,8 +2268,32 @@ def test_kms_key():
     _audit_p1_resource_request_builders()
 
 
+def test_kms_key_rotation():
+    module = _import_plugin("kms_key_rotation")
+    models = _models("kms.v20190118")
+    errors = []
+    for request in (
+        module.build_describe_request(models, "key-xxxxxxxx"),
+        module.build_status_request(models, "key-xxxxxxxx"),
+        module.build_update_request(models, "key-xxxxxxxx", True, 90),
+        module.build_update_request(models, "key-xxxxxxxx", False, 90),
+    ):
+        errors.extend(audit_request(request, "kms rotation request"))
+    assert errors == []
+
+
 def test_monitor_alarm_policy():
     _audit_p1_resource_request_builders()
+
+
+def test_monitor_alarm_policy_notice():
+    module = _import_plugin("monitor_alarm_policy_notice")
+    models = _models("monitor.v20180724")
+    request = module.build_notice_request(models, {
+        "module": "monitor", "notice_ids": ["notice-1"],
+        "hierarchical_notices": [], "notice_content_template_bindings": [],
+    }, "policy-xxxxxxxx")
+    assert audit_request(request, "monitor notice request") == []
 
 
 def test_tke_addon():

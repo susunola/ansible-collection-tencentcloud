@@ -151,6 +151,7 @@ action_groups:
     - key_pair_info
     - kms_key
     - kms_key_info
+    - kms_key_rotation
     - lcic_answer_info
     - lighthouse_instance
     - lighthouse_instance_info
@@ -167,6 +168,7 @@ action_groups:
     - mongodb_instance_info
     - monitor_alarm_policy
     - monitor_alarm_policy_info
+    - monitor_alarm_policy_notice
     - mps_person_sample_info
     - mqtt_device_certificate_info
     - ms_shield_instance_info

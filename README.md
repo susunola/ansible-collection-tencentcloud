@@ -37,9 +37,11 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `gaap_proxy` | Manage Tencent Cloud GAAP proxies |
 | `key_pair` | Manage Tencent Cloud CVM key pairs |
 | `kms_key` | Manage a Tencent Cloud KMS key |
+| `kms_key_rotation` | Manage automatic rotation for a Tencent Cloud KMS key |
 | `lighthouse_instance` | Manage Tencent Cloud Lighthouse instances |
 | `mongodb_instance` | Manage Tencent Cloud MongoDB instances |
 | `monitor_alarm_policy` | Manage a Tencent Cloud Monitor alarm policy |
+| `monitor_alarm_policy_notice` | Manage notification bindings for a Cloud Monitor alarm policy |
 | `nat_gateway` | Manage Tencent Cloud NAT gateways |
 | `nat_gateway_rule` | Manage Tencent Cloud NAT gateway DNAT and SNAT rules |
 | `network_interface` | Manage Tencent Cloud elastic network interfaces |

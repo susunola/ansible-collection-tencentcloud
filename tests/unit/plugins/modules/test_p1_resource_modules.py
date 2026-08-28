@@ -10,7 +10,9 @@ import pytest
 
 from ansible_collections.susunola.tencentcloud.plugins.modules import cam_policy_attachment
 from ansible_collections.susunola.tencentcloud.plugins.modules import kms_key
+from ansible_collections.susunola.tencentcloud.plugins.modules import kms_key_rotation
 from ansible_collections.susunola.tencentcloud.plugins.modules import monitor_alarm_policy
+from ansible_collections.susunola.tencentcloud.plugins.modules import monitor_alarm_policy_notice
 from ansible_collections.susunola.tencentcloud.plugins.modules import tcr_repository
 from ansible_collections.susunola.tencentcloud.plugins.modules import tke_addon
 
@@ -171,6 +173,18 @@ def test_kms_waiter_normalizes_pending_delete(monkeypatch, models):
     assert result["KeyState"] == "Pending_Delete"
 
 
+@pytest.mark.parametrize("enabled,request_name", [
+    (True, "EnableKeyRotationRequest"),
+    (False, "DisableKeyRotationRequest"),
+])
+def test_kms_rotation_module_update_request(models, enabled, request_name):
+    request = kms_key_rotation.build_update_request(models, "key-x", enabled, 90)
+    assert type(request).__name__ == request_name
+    assert request.KeyId == "key-x"
+    if enabled:
+        assert request.RotateDays == 90
+
+
 def test_monitor_create_request_maps_conditions(models):
     request = monitor_alarm_policy.build_create_request(models, {
         "module": "monitor", "name": "cpu-high", "monitor_type": "MT_QCE",
@@ -236,6 +250,15 @@ def test_monitor_notice_and_task_requests(models):
     assert notice.HierarchicalNotices[0].raw_json == '{"NoticeId": "notice-1", "Classification": ["warning"]}'
     assert notice.NoticeContentTmplBindInfos[0].raw_json == '{"NoticeID": "notice-1", "ContentTmplID": "tmpl-1"}'
     assert tasks.TriggerTasks[0].raw_json == '{"Type": "AS", "TaskConfig": "{}"}'
+
+
+def test_monitor_notice_module_view_is_canonical():
+    result = monitor_alarm_policy_notice._view({
+        "NoticeIds": ["notice-2", "notice-1"],
+        "HierarchicalNotices": [{"NoticeId": "notice-1"}],
+        "NoticeContentTmplBindInfos": [],
+    })
+    assert result["notice_ids"] == ["notice-1", "notice-2"]
 
 
 def test_tke_values_are_canonical_json():

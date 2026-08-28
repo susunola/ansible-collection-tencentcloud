@@ -1,0 +1,7 @@
+minor_changes:
+  - >-
+    Add ``kms_key_rotation`` for independently authorized automatic key
+    rotation management with last and next rotation metadata.
+  - >-
+    Add ``monitor_alarm_policy_notice`` for independently reconciling alarm
+    notification rules, hierarchical notices and content-template bindings.
