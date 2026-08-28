@@ -47,6 +47,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `nat_gateway_rule` | Manage Tencent Cloud NAT gateway DNAT and SNAT rules |
 | `network_interface` | Manage Tencent Cloud elastic network interfaces |
 | `peering_connection` | Manage Tencent Cloud VPC peering connections |
+| `private_dns_record` | Manage a Tencent Cloud Private DNS record |
+| `private_dns_zone` | Manage a Tencent Cloud Private DNS zone |
 | `redis_instance` | Manage Tencent Cloud Redis instances |
 | `route_table` | Manage Tencent Cloud VPC route tables |
 | `scf_alias` | Manage Tencent Cloud SCF function aliases |

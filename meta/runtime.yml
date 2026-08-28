@@ -185,6 +185,8 @@ action_groups:
     - peering_connection
     - portal_document_info
     - postgres_instance_info
+    - private_dns_record
+    - private_dns_zone
     - privatedns_account_vpc_info
     - pts_cron_job_info
     - redis_instance

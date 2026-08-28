@@ -73,6 +73,8 @@ CORE_MODULES = {
     "nat_gateway_rule",
     "network_interface",
     "peering_connection",
+    "private_dns_record",
+    "private_dns_zone",
     "redis_instance",
     "route_table",
     "scf_alias",

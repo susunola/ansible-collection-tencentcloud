@@ -298,6 +298,8 @@ UNEXERCISED_BUILDERS = {
     ("monitor_alarm_policy", "run_module"): "inline lifecycle requests are covered by unit tests",
     ("tcr_repository", "run_module"): "inline lifecycle requests are covered by unit tests",
     ("tke_addon", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("private_dns_zone", "run_module"): "inline update and delete requests are covered by unit tests",
+    ("private_dns_record", "run_module"): "inline delete requests are covered by unit tests",
 }
 
 # Write-module request builders exercised by the ``test_<module>`` functions
@@ -419,6 +421,8 @@ WRITE_MODULE_BUILDERS = {
     "peering_connection": [
         "_accept", "_create", "_delete", "_update", "build_describe_request",
     ],
+    "private_dns_zone": ["build_create_request", "find_zone"],
+    "private_dns_record": ["build_create_request", "build_update_request", "find_record"],
     "redis_instance": [
         "_create", "_destroy", "_rename", "build_describe_request",
     ],
@@ -2309,6 +2313,44 @@ def test_monitor_alarm_policy_notice():
         "hierarchical_notices": [], "notice_content_template_bindings": [],
     }, "policy-xxxxxxxx")
     assert audit_request(request, "monitor notice request") == []
+
+
+def test_private_dns_zone():
+    module = _import_plugin("private_dns_zone")
+    models = _models("privatedns.v20201028")
+    params = {
+        "domain": "internal.example.com", "remark": "internal",
+        "vpcs": [{"region": "ap-guangzhou", "vpc_id": "vpc-xxxxxxxx"}],
+        "tags": {"environment": "test"},
+    }
+    errors = audit_request(module.build_create_request(models, params), "private DNS zone create")
+    for item in module.build_vpcs(models, params["vpcs"]):
+        errors.extend(audit_request(item, "private DNS VPC"))
+    fake = _RecordingModule()
+    response = SimpleNamespace(PrivateZoneSet=[], TotalCount=0)
+    client = SimpleNamespace(DescribePrivateZoneList=lambda request: response)
+    module.find_zone(fake, client, models, None, params["domain"])
+    errors.extend(audit_recorded(fake, "private DNS zone describe"))
+    assert errors == []
+
+
+def test_private_dns_record():
+    module = _import_plugin("private_dns_record")
+    models = _models("privatedns.v20201028")
+    params = {
+        "zone_id": "zone-xxxxxxxx", "subdomain": "api", "record_type": "A",
+        "value": "10.0.0.8", "ttl": 300, "mx": None, "weight": 10,
+        "remark": "API",
+    }
+    errors = []
+    errors.extend(audit_request(module.build_create_request(models, params), "private DNS record create"))
+    errors.extend(audit_request(module.build_update_request(models, params, "record-xxxxxxxx"), "private DNS record update"))
+    fake = _RecordingModule()
+    response = SimpleNamespace(RecordSet=[], TotalCount=0)
+    client = SimpleNamespace(DescribePrivateZoneRecordList=lambda request: response)
+    module.find_record(fake, client, models, params["zone_id"], None, "api", "A")
+    errors.extend(audit_recorded(fake, "private DNS record describe"))
+    assert errors == []
 
 
 def test_tke_addon():

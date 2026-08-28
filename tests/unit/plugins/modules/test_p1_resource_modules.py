@@ -14,6 +14,8 @@ from ansible_collections.susunola.tencentcloud.plugins.modules import kms_key
 from ansible_collections.susunola.tencentcloud.plugins.modules import kms_key_rotation
 from ansible_collections.susunola.tencentcloud.plugins.modules import monitor_alarm_policy
 from ansible_collections.susunola.tencentcloud.plugins.modules import monitor_alarm_policy_notice
+from ansible_collections.susunola.tencentcloud.plugins.modules import private_dns_record
+from ansible_collections.susunola.tencentcloud.plugins.modules import private_dns_zone
 from ansible_collections.susunola.tencentcloud.plugins.modules import tcr_repository
 from ansible_collections.susunola.tencentcloud.plugins.modules import tke_addon
 
@@ -273,6 +275,29 @@ def test_monitor_notice_module_view_is_canonical():
         "NoticeContentTmplBindInfos": [],
     })
     assert result["notice_ids"] == ["notice-1", "notice-2"]
+
+
+def test_private_dns_zone_create_request(models):
+    request = private_dns_zone.build_create_request(models, {
+        "domain": "internal.example.com", "remark": "internal",
+        "vpcs": [{"region": "ap-guangzhou", "vpc_id": "vpc-x"}],
+        "tags": {"environment": "test"},
+    })
+    assert request.Domain == "internal.example.com"
+    assert request.VpcSet[0].UniqVpcId == "vpc-x"
+    assert request.TagSet[0].TagKey == "environment"
+
+
+def test_private_dns_record_requests(models):
+    params = {
+        "zone_id": "zone-x", "subdomain": "api", "record_type": "A",
+        "value": "10.0.0.8", "ttl": 300, "mx": None, "weight": 10,
+        "remark": "API",
+    }
+    create = private_dns_record.build_create_request(models, params)
+    update = private_dns_record.build_update_request(models, params, "record-x")
+    assert create.RecordValue == "10.0.0.8"
+    assert update.RecordId == "record-x"
 
 
 def test_tke_values_are_canonical_json():
