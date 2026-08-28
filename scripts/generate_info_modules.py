@@ -1334,6 +1334,12 @@ SPECS = SPECS + _load_auto_specs()
 # that curated data overrides auto-discovered data.
 # ---------------------------------------------------------------------------
 REQUIRED_PARAM_OVERRIDES = {
+    "lcic_answer_info": {
+        "extra_params": [
+            {"name": "question_id", "field": "QuestionId", "type": "str", "required": True,
+             "doc": "Question ID whose answer list is returned (required by the API)."},
+        ],
+    },
     "teo_function_info": {
         "extra_params": [
             {"name": "zone_id", "field": "ZoneId", "type": "str", "required": True,

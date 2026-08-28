@@ -20,7 +20,7 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = lcic_answer_info.build_request(FakeModels, 200, 100)
+    request = lcic_answer_info.build_request(FakeModels, "sample", 200, 100)
     assert request.Page == 3
     assert request.Limit == 100
 
@@ -102,7 +102,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                page_size=2)
+                question_id="sample", page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["answers"]] == ["a", "b", "c"]
@@ -134,6 +134,7 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
     # page_size (and ids/filters when declared) before the API call fails.
     fake = FakeModule({
         "region": "ap-guangzhou",
+        "question_id": "sample",
         "page_size": 2,
     })
     monkeypatch.setattr(lcic_answer_info, "AnsibleModule", lambda **kwargs: fake)

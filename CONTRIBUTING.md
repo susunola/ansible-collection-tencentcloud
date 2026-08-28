@@ -47,6 +47,23 @@ the release workflow folds them into `changelogs/` on tag.
   `module_utils.paging.Paginator`, and declare their options in
   `DOCUMENTATION` with an example YAML file.
 
+## Dependencies
+
+`requirements.txt` pins `tencentcloud-sdk-python` exactly: the committed
+`*_info` specs carry a `GENERATED_SDK_VERSION` stamp and
+`scripts/check_sdk_drift.py` fails CI when the installed SDK drifts from
+it. An SDK upgrade is therefore a deliberate, reviewed change:
+
+1. bump the pin (dependabot opens the PR, or do it by hand),
+2. run `scripts/discover_info_specs.py` then
+   `scripts/generate_info_modules.py`,
+3. review the spec/module diff (new products, changed field names),
+4. commit the bump and the regeneration together.
+
+`tencentcloud-sdk-python-tag` is pinned in lockstep for reproducible
+contract runs; the `cos-python-sdk-v5` line (only used by the `cos_*`
+modules) is intentionally loose.
+
 ## Roles
 
 Roles use the `tc_` prefix (e.g. `tc_launch`, `tc_clb_http`). Every role

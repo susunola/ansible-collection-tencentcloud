@@ -1,0 +1,7 @@
+# Default owners for everything in the repo.
+# The collection is currently maintained by a single human maintainer;
+# automation (github-actions[bot]) only commits folded changelogs.
+* @susunola
+
+# CI and release workflows need the same review bar as source code.
+.github/ @susunola

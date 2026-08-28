@@ -14,6 +14,10 @@ short_description: Gather information about Tencent Cloud LCIC answers
 version_added: "0.9.0"
 description: Returns LCIC answers visible in a Tencent Cloud region.
 options:
+  question_id:
+    description: Question ID whose answer list is returned (required by the API).
+    type: str
+    required: true
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -52,16 +56,18 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, offset, limit):
+def build_request(models, question_id, offset, limit):
     request = models.DescribeAnswerListRequest()
     request.Page = offset // limit + 1
     request.Limit = limit
+    request.QuestionId = question_id
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "question_id": {"type": "str", "required": True},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -79,7 +85,7 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, offset, limit),
+        lambda offset, limit: build_request(models, module.params["question_id"], offset, limit),
         lambda request: sdk_call(module, client.DescribeAnswerList, request),
         lambda response: response.AnswerInfo,
         lambda response: response.Total,

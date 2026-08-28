@@ -1,0 +1,27 @@
+# Dependency update automation.
+#
+# The SDK packages in requirements.txt are pinned exactly: the generated
+# *_info specs carry a GENERATED_SDK_VERSION stamp and
+# scripts/check_sdk_drift.py fails CI when the installed SDK drifts from
+# it. A dependabot bump to tencentcloud-sdk-python will therefore turn CI
+# red until scripts/discover_info_specs.py + scripts/generate_info_modules.py
+# are re-run and the regeneration is committed together with the bump -
+# which is the intended review workflow for an SDK upgrade.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
