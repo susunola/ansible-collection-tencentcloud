@@ -59,16 +59,25 @@ def _dict(value):
 
 
 def find_policy(module, client, models, policy_id, name, module_name):
-    request = models.DescribeAlarmPoliciesRequest()
-    request.Module, request.PageNumber, request.PageSize = module_name, 1, 100
-    if name:
-        request.PolicyName = name
-    response = module.sdk_call(client.DescribeAlarmPolicies, request)
-    for item in getattr(response, "PolicyList", None) or []:
-        value = _dict(item)
-        if (policy_id and value.get("PolicyId") == policy_id) or (not policy_id and value.get("PolicyName") == name):
-            return value
-    return None
+    page, matches = 1, []
+    while True:
+        request = models.DescribeAlarmPoliciesRequest()
+        request.Module, request.PageNumber, request.PageSize = module_name, page, 100
+        if name:
+            request.PolicyName = name
+        response = module.sdk_call(client.DescribeAlarmPolicies, request)
+        items = list(getattr(response, "PolicyList", None) or [])
+        for item in items:
+            value = _dict(item)
+            if (policy_id and value.get("PolicyId") == policy_id) or (not policy_id and value.get("PolicyName") == name):
+                matches.append(value)
+        total = int(getattr(response, "TotalCount", 0) or 0)
+        if not items or page * 100 >= total:
+            break
+        page += 1
+    if len(matches) > 1:
+        module.fail_json(msg="Multiple alarm policies have the requested name", name=name)
+    return matches[0] if matches else None
 
 
 def _model(models, cls_name, value):
@@ -92,6 +101,23 @@ def build_create_request(models, params):
     request.EventCondition = _model(models, "AlarmPolicyEventCondition", params["event_condition"])
     request.NoticeIds = params["notice_ids"]
     return request
+
+
+def build_condition_request(models, params, policy_id, current=None):
+    current = current or {}
+    request = models.ModifyAlarmPolicyConditionRequest()
+    request.Module, request.PolicyId = params["module"], policy_id
+    request.PolicyName = params["name"] or current.get("PolicyName")
+    condition = params["condition"] if params["condition"] is not None else current.get("Condition")
+    event_condition = params["event_condition"] if params["event_condition"] is not None else current.get("EventCondition")
+    request.Condition = _model(models, "AlarmPolicyCondition", condition)
+    request.EventCondition = _model(models, "AlarmPolicyEventCondition", event_condition)
+    request.NoticeIds = params["notice_ids"]
+    return request
+
+
+def _canonical(value):
+    return json.dumps(value, sort_keys=True, separators=(",", ":"))
 
 
 def run_module():
@@ -131,7 +157,12 @@ def run_module():
             request.Module, request.PolicyIds = p["module"], [current["PolicyId"]]
             module.sdk_call(client.DeleteAlarmPolicy, request)
             module.exit_json(changed=True, **(diff or {}), policy=None, msg="Alarm policy deleted")
-        desired = {"PolicyName": p["name"], "Remark": p["remark"], "Enable": 1 if p["enabled"] else 0}
+        desired = {
+            "PolicyName": p["name"], "Remark": p["remark"],
+            "Enable": 1 if p["enabled"] else 0,
+            "Condition": p["condition"], "EventCondition": p["event_condition"],
+            "NoticeIds": p["notice_ids"],
+        }
         if current is None:
             diff = maybe_diff(module, None, desired)
             if module.check_mode:
@@ -148,7 +179,12 @@ def run_module():
             changes.append(("REMARK", p["remark"]))
         current_enabled = bool(current.get("Enable"))
         status_drift = current_enabled != p["enabled"]
-        if not changes and not status_drift:
+        condition_drift = any((
+            p["condition"] is not None and _canonical(current.get("Condition")) != _canonical(p["condition"]),
+            p["event_condition"] is not None and _canonical(current.get("EventCondition")) != _canonical(p["event_condition"]),
+            sorted(current.get("NoticeIds") or []) != sorted(p["notice_ids"]),
+        ))
+        if not changes and not status_drift and not condition_drift:
             module.exit_json(changed=False, policy=current, msg="Alarm policy is up to date")
         diff = maybe_diff(module, current, desired)
         if module.check_mode:
@@ -161,6 +197,11 @@ def run_module():
             request = models.ModifyAlarmPolicyStatusRequest()
             request.Module, request.PolicyId, request.Enable = p["module"], current["PolicyId"], 1 if p["enabled"] else 0
             module.sdk_call(client.ModifyAlarmPolicyStatus, request)
+        if condition_drift:
+            module.sdk_call(
+                client.ModifyAlarmPolicyCondition,
+                build_condition_request(models, p, current["PolicyId"], current),
+            )
         module.exit_json(
             changed=True, **(diff or {}), policy=find_policy(module, client, models, current["PolicyId"], None, p["module"]), msg="Alarm policy updated"
         )

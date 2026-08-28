@@ -153,6 +153,20 @@ def test_monitor_create_request_maps_conditions(models):
     assert request.Condition.raw_json == '{"IsUnionRule": 0}'
 
 
+def test_monitor_condition_update_preserves_unmanaged_event(models):
+    request = monitor_alarm_policy.build_condition_request(models, {
+        "module": "monitor", "name": None,
+        "condition": {"IsUnionRule": 1}, "event_condition": None,
+        "notice_ids": ["notice-1"],
+    }, "policy-x", {
+        "PolicyName": "cpu-high", "EventCondition": {"Rules": []},
+    })
+    assert request.PolicyName == "cpu-high"
+    assert request.Condition.raw_json == '{"IsUnionRule": 1}'
+    assert request.EventCondition.raw_json == '{"Rules": []}'
+    assert request.NoticeIds == ["notice-1"]
+
+
 def test_tke_values_are_canonical_json():
     encoded = tke_addon._raw({"b": 2, "a": 1})
     assert tke_addon._canonical_raw(encoded) == '{"a":1,"b":2}'

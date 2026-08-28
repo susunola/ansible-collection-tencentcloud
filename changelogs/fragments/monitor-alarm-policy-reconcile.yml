@@ -1,0 +1,4 @@
+minor_changes:
+  - >-
+    Extend ``monitor_alarm_policy`` reconciliation to update metric and event
+    conditions plus notification rule bindings, and paginate policy discovery.

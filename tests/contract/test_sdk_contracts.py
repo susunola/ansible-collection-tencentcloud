@@ -447,7 +447,7 @@ WRITE_MODULE_BUILDERS = {
         "build_cancel_deletion_request", "build_create_request",
         "build_list_key_request", "build_rotation_request", "describe_key",
     ],
-    "monitor_alarm_policy": ["build_create_request", "find_policy"],
+    "monitor_alarm_policy": ["build_condition_request", "build_create_request", "find_policy"],
     "tke_addon": ["build_install_request", "describe_addon"],
     "tke_cluster": [
         "_create", "_delete", "_set_deletion_protection", "_update",
@@ -2187,6 +2187,16 @@ def _audit_p1_resource_request_builders():
         kms.build_cancel_deletion_request(kms_models, "key-xxxxxxxx"),
     ):
         errors.extend(audit_request(request, "kms lifecycle request"))
+    monitor = _import_plugin("monitor_alarm_policy")
+    monitor_models = _models("monitor.v20180724")
+    errors.extend(audit_request(
+        monitor.build_condition_request(monitor_models, {
+            "module": "monitor", "name": "cpu-high",
+            "condition": {"IsUnionRule": 0}, "event_condition": None,
+            "notice_ids": ["notice-1"],
+        }, "policy-xxxxxxxx"),
+        "monitor condition update request",
+    ))
     _import_plugin("monitor_alarm_policy").find_policy(
         fake, client, _models("monitor.v20180724"), "policy-xxxxxxxx", None, "monitor"
     )
