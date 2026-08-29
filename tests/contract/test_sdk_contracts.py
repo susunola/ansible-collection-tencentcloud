@@ -276,6 +276,17 @@ UNEXERCISED_BUILDERS = {
     ("private_dns_zone", "run_module"): "inline update and delete requests are covered by unit tests",
     ("private_dns_record", "run_module"): "inline delete requests are covered by unit tests",
     ("network_acl", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("api_gateway_api", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("as_scaling_policy", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("as_scheduled_action", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("cls_index", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("cls_machine_group", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("cmq_subscription", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("cmq_topic", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("dts_migration_job", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("scf_trigger", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tcr_replication_rule", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tdmq_subscription", "run_module"): "inline lifecycle requests are covered by unit tests",
 }
 
 # Write-module request builders exercised by the ``test_<module>`` functions
@@ -675,6 +686,17 @@ WRITE_MODULE_BUILDERS = {
     "dbbrain_sql_filter": ["build_create_request", "build_delete_request", "build_describe_request"],
     "cmq_queue": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tcr_replication_instance": ["build_create_request", "build_delete_request", "build_describe_request"],
+    "api_gateway_api": ["build_get", "build_list"],
+    "as_scaling_policy": ["find"],
+    "as_scheduled_action": ["find"],
+    "cls_index": ["find"],
+    "cls_machine_group": ["find"],
+    "cmq_subscription": ["find"],
+    "cmq_topic": ["describe_request"],
+    "dts_migration_job": ["describe_request"],
+    "scf_trigger": ["create", "delete_request", "find"],
+    "tcr_replication_rule": ["find"],
+    "tdmq_subscription": ["delete_request", "describe_request"],
 }
 
 
@@ -3462,4 +3484,161 @@ def test_elasticsearch_instance():
     module._rename(fake, client, models, "es-xxxxxxxx", "logs-es-v2")
     module._destroy(fake, client, models, "es-xxxxxxxx")
     errors.extend(audit_recorded(fake, "elasticsearch_instance"))
+    assert errors == []
+
+
+def test_api_gateway_api():
+    module = _import_plugin("api_gateway_api")
+    models = _models("apigateway.v20180808")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(module.build_list(models, "service-xxxxxxxx", "orders", 0), "api gateway api list"))
+    errors.extend(audit_request(module.build_list(models, "service-xxxxxxxx", None, 0), "api gateway api list all"))
+    errors.extend(audit_request(module.build_get(models, "service-xxxxxxxx", "api-xxxxxxxx"), "api gateway api get"))
+    p = {"api_id": "api-xxxxxxxx", "service_id": "service-xxxxxxxx", "name": "orders"}
+    module.find(fake, client, models, p)
+    errors.extend(audit_recorded(fake, "api_gateway_api"))
+    assert errors == []
+
+
+def test_as_scaling_policy():
+    module = _import_plugin("as_scaling_policy")
+    models = _models("autoscaling.v20180419")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    p = {"policy_id": "asap-xxxxxxxx", "scaling_group_id": "asg-xxxxxxxx", "name": "add-two"}
+    module.find(fake, client, models, p)
+    p2 = {"policy_id": None, "scaling_group_id": "asg-xxxxxxxx", "name": "add-two"}
+    module.find(fake, client, models, p2)
+    errors.extend(audit_recorded(fake, "as_scaling_policy"))
+    assert errors == []
+
+
+def test_as_scheduled_action():
+    module = _import_plugin("as_scheduled_action")
+    models = _models("autoscaling.v20180419")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    p = {"action_id": "asac-xxxxxxxx", "scaling_group_id": "asg-xxxxxxxx", "name": "scale-up"}
+    module.find(fake, client, models, p)
+    errors.extend(audit_recorded(fake, "as_scheduled_action"))
+    assert errors == []
+
+
+def test_cls_index():
+    module = _import_plugin("cls_index")
+    models = _models("cls.v20201016")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    module.find(fake, client, models, "topic-xxxxxxxx")
+    errors.extend(audit_recorded(fake, "cls_index"))
+    assert errors == []
+
+
+def test_cls_machine_group():
+    module = _import_plugin("cls_machine_group")
+    models = _models("cls.v20201016")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    p = {"group_id": None, "name": "prod-group"}
+    module.find(fake, client, models, p)
+    p2 = {"group_id": "mg-xxxxxxxx", "name": None}
+    module.find(fake, client, models, p2)
+    errors.extend(audit_recorded(fake, "cls_machine_group"))
+    assert errors == []
+
+
+def test_cmq_subscription():
+    module = _import_plugin("cmq_subscription")
+    models = _models("tdmq.v20200217")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    module.find(fake, client, models, "order-events", "order-webhook")
+    errors.extend(audit_recorded(fake, "cmq_subscription"))
+    assert errors == []
+
+
+def test_cmq_topic():
+    module = _import_plugin("cmq_topic")
+    models = _models("tdmq.v20200217")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, "order-events"), "cmq topic describe"))
+    module.find(fake, client, models, "order-events")
+    errors.extend(audit_recorded(fake, "cmq_topic"))
+    assert errors == []
+
+
+def test_dts_migration_job():
+    module = _import_plugin("dts_migration_job")
+    models = _models("dts.v20211206")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, "dts-xxxxxxxx", None, 0), "dts describe by id"))
+    errors.extend(audit_request(module.describe_request(models, None, "prod-migration", 0), "dts describe by name"))
+    module.find(fake, client, models, "dts-xxxxxxxx", None)
+    errors.extend(audit_recorded(fake, "dts_migration_job"))
+    assert errors == []
+
+
+def test_scf_trigger():
+    module = _import_plugin("scf_trigger")
+    models = _models("scf.v20180416")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    p = {
+        "function_name": "orders-processor",
+        "namespace": "default",
+        "qualifier": "$LATEST",
+        "name": "cron-trigger",
+        "trigger_type": "timer",
+        "trigger_desc": "0 */5 * * * * *",
+        "enabled": True,
+        "custom_argument": "env=prod",
+        "description": "Five-minute cron",
+    }
+    module.find(fake, client, models, p)
+    errors.extend(audit_request(module.delete_request(models, p), "scf trigger delete"))
+    module.create(fake, client, models, p)
+    errors.extend(audit_recorded(fake, "scf_trigger"))
+    assert errors == []
+
+
+def test_tcr_replication_rule():
+    module = _import_plugin("tcr_replication_rule")
+    models = _models("tcr.v20190924")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    module.find(fake, client, models, "tcr-xxxxxxxx", "production-images")
+    errors.extend(audit_recorded(fake, "tcr_replication_rule"))
+    assert errors == []
+
+
+def test_tdmq_subscription():
+    module = _import_plugin("tdmq_subscription")
+    models = _models("tdmq.v20200217")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    p = {
+        "cluster_id": "pulsar-xxxxxxxx",
+        "environment_id": "production",
+        "topic_name": "orders",
+        "name": "order-workers",
+        "force": False,
+    }
+    errors.extend(audit_request(module.describe_request(models, p, 0), "tdmq subscription describe"))
+    errors.extend(audit_request(module.delete_request(models, p), "tdmq subscription delete"))
+    module.find(fake, client, models, p)
+    errors.extend(audit_recorded(fake, "tdmq_subscription"))
     assert errors == []
