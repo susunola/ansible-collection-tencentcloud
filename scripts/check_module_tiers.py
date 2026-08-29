@@ -102,6 +102,7 @@ CORE_MODULES = {
     "ssm_parameter",
     "subnet",
     "tag",
+    "tat_command",
     "tdmq_topic",
     "teo_dns_record",
     "tcr_instance",

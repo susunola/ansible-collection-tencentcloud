@@ -522,6 +522,7 @@ WRITE_MODULE_BUILDERS = {
     "cloudaudit_track": ["build_create_request", "build_delete_request", "build_describe_request", "build_list_request", "build_update_request"],
     "config_rule": ["build_create_request", "build_delete_request", "build_describe_request", "build_list_request", "build_update_request"],
     "organization_node": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
+    "tat_command": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
 }
 
 
@@ -2247,6 +2248,17 @@ def test_organization_node():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "Organization node request %s" % index))
+    assert errors == []
+
+
+def test_tat_command():
+    module = _import_plugin("tat_command")
+    models = _models("tat.v20201028")
+    params = {"name": "hello", "content": "#!/bin/bash\necho {{word}}", "description": "hello", "command_type": "SHELL", "working_directory": "/root", "timeout": 60, "enable_parameters": True, "default_parameters": {"word": "hello"}, "username": "root", "output_cos_bucket_url": None, "output_cos_key_prefix": None, "tags": {"env": "prod"}}
+    requests = [module.build_describe_request(models, name="hello"), module.build_create_request(models, params), module.build_update_request(models, "cmd-x", params), module.build_delete_request(models, "cmd-x")]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "TAT command request %s" % index))
     assert errors == []
 
 

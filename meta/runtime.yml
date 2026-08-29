@@ -232,6 +232,7 @@ action_groups:
     - subnet_info
     - svp_saving_plan_coverage_info
     - tag
+    - tat_command
     - tat_command_info
     - tbaas_block_info
     - tcaplusdb_cluster_info

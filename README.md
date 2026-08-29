@@ -76,6 +76,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `ssm_parameter` | Manage Tencent Cloud SSM secrets (parameters) |
 | `subnet` | Manage Tencent Cloud VPC subnets |
 | `tag` | Manage tags on arbitrary Tencent Cloud resources |
+| `tat_command` | Manage Tencent Cloud TAT commands |
 | `tcr_instance` | Manage Tencent Cloud TCR enterprise instances |
 | `tcr_namespace` | Manage Tencent Cloud TCR namespaces |
 | `tcr_repository` | Manage a Tencent Cloud TCR repository |
