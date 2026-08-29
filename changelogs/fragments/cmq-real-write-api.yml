@@ -1,0 +1,2 @@
+bugfixes:
+  - Fix ``cmq_queue`` to use the supported TDMQ CMQ write APIs and wait for queue convergence.

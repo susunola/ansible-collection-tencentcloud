@@ -14,5 +14,6 @@ P = {
 
 def test_builders():
     assert m.build_describe_request(FakeModels(), "jobs").QueueName == "jobs"
-    assert m.build_create_payload(P)["PollingWaitSeconds"] == 10
-    assert m.build_delete_payload("jobs") == {"QueueName": "jobs"}
+    assert m.build_create_request(FakeModels(), P).PollingWaitSeconds == 10
+    assert m.build_update_request(FakeModels(), P).VisibilityTimeout == 30
+    assert m.build_delete_request(FakeModels(), "jobs").QueueName == "jobs"

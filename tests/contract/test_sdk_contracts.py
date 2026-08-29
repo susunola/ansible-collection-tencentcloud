@@ -526,7 +526,7 @@ WRITE_MODULE_BUILDERS = {
     "as_scaling_group": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "dts_consumer_group": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "dbbrain_sql_filter": ["build_create_request", "build_delete_request", "build_describe_request"],
-    "cmq_queue": ["build_describe_request"],
+    "cmq_queue": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tcr_replication_instance": ["build_create_request", "build_delete_request", "build_describe_request"],
 }
 
@@ -2299,7 +2299,10 @@ def test_dbbrain_sql_filter():
 
 def test_cmq_queue():
     module = _import_plugin("cmq_queue")
-    assert audit_request(module.build_describe_request(_models("cmq.v20190304"), "jobs"), "CMQ queue describe") == []
+    models = _models("tdmq.v20200217")
+    params = {"queue_name": "jobs", "max_msg_heap_num": 10000000, "polling_wait_seconds": 10, "visibility_timeout": 30, "max_msg_size": 1048576, "msg_retention_seconds": 3600, "rewind_seconds": 0}
+    requests = [module.build_describe_request(models, "jobs"), module.build_create_request(models, params), module.build_update_request(models, params), module.build_delete_request(models, "jobs")]
+    assert [error for index, request in enumerate(requests) for error in audit_request(request, "CMQ queue request %s" % index)] == []
 
 
 def test_tcr_replication_instance():
