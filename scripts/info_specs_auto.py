@@ -9,7 +9,7 @@ types) exactly like the curated SPECS in generate_info_modules.py.
 discovered against; scripts/check_sdk_drift.py pins CI to it.
 """
 
-GENERATED_SDK_VERSION = '3.1.113'
+GENERATED_SDK_VERSION = '3.1.164'
 
 
 SPECS_AUTO = [
