@@ -77,6 +77,7 @@ action_groups:
     - clb_rule
     - clb_target_group
     - cloudaudit_event_info
+    - cloudaudit_track
     - cloudhsm_vsm_info
     - cloudrc_resource_info
     - cloudstudio_image_info

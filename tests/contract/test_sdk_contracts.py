@@ -519,6 +519,7 @@ WRITE_MODULE_BUILDERS = {
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "teo_dns_record": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "cfw_address_template": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
+    "cloudaudit_track": ["build_create_request", "build_delete_request", "build_describe_request", "build_list_request", "build_update_request"],
 }
 
 
@@ -2211,6 +2212,17 @@ def test_cfw_address_template():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "CFW address template request %s" % index))
+    assert errors == []
+
+
+def test_cloudaudit_track():
+    module = _import_plugin("cloudaudit_track")
+    models = _models("cloudaudit.v20190319")
+    params = {"name": "events", "enabled": True, "action_type": "*", "resource_type": "*", "event_names": ["*"], "track_all_members": False, "storage_type": "cls", "storage_region": "ap-guangzhou", "storage_name": "topic-x", "storage_prefix": "", "storage_account_id": None, "storage_app_id": None, "compress": True}
+    requests = [module.build_list_request(models), module.build_describe_request(models, 12), module.build_create_request(models, params), module.build_update_request(models, 12, params), module.build_delete_request(models, 12)]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CloudAudit track request %s" % index))
     assert errors == []
 
 

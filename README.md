@@ -33,6 +33,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `clb_load_balancer` | Manage Tencent Cloud CLB load balancers |
 | `clb_rule` | Manage Tencent Cloud CLB L7 forwarding rules |
 | `clb_target_group` | Manage Tencent Cloud CLB target groups and members |
+| `cloudaudit_track` | Manage Tencent Cloud CloudAudit tracks |
 | `cls_logset` | Manage Tencent Cloud CLS logsets |
 | `cls_topic` | Manage Tencent Cloud CLS topics |
 | `cos_bucket` | Manage Tencent Cloud COS buckets |

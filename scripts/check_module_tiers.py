@@ -55,6 +55,7 @@ CORE_MODULES = {
     "clb_target_group",
     "cls_logset",
     "cls_topic",
+    "cloudaudit_track",
     "ckafka_topic",
     "clb_listener",
     "clb_listener_target",
