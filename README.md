@@ -18,6 +18,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `as_scaling_group` | Manage Tencent Cloud Auto Scaling groups |
 | `as_scaling_policy` | Manage Tencent Cloud Auto Scaling policies |
 | `as_scheduled_action` | Manage Tencent Cloud Auto Scaling scheduled actions |
+| `cam_group` | Manage Tencent Cloud CAM user groups |
 | `cam_group_membership` | Manage Tencent Cloud CAM user group membership |
 | `cam_policy` | Manage Tencent Cloud CAM policies |
 | `cam_policy_attachment` | Manage a Tencent Cloud CAM policy attachment |
@@ -28,9 +29,11 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `ccn` | Manage Tencent Cloud Cloud Connect Networks |
 | `ccn_attachment` | Attach network instances to Tencent Cloud CCN |
 | `cdb_instance` | Manage Tencent Cloud CDB MySQL instances |
+| `cdb_parameter_template` | Manage Tencent Cloud CDB parameter templates |
 | `cdn_domain` | Manage Tencent Cloud CDN domains |
 | `cfs_file_system` | Manage Tencent Cloud CFS file systems |
 | `cfw_address_template` | Manage Tencent Cloud Cloud Firewall address templates |
+| `ckafka_acl` | Manage Tencent Cloud CKafka ACL entries |
 | `ckafka_topic` | Manage Tencent Cloud CKafka topics |
 | `clb_listener` | Manage listeners on Tencent Cloud CLB load balancers |
 | `clb_listener_target` | Manage backend targets of Tencent Cloud CLB listeners |
@@ -53,6 +56,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cvm_instance` | Manage Tencent Cloud CVM instances |
 | `cynosdb_account` | Manage Tencent Cloud CynosDB accounts |
 | `dbbrain_sql_filter` | Manage Tencent Cloud DBbrain SQL filters |
+| `dnspod_domain` | Manage Tencent Cloud DNSPod domains |
 | `dnspod_record` | Manage Tencent Cloud DNSPod DNS records |
 | `dts_consumer_group` | Manage Tencent Cloud DTS consumer groups |
 | `dts_migration_job` | Manage Tencent Cloud DTS migration jobs |
@@ -73,11 +77,13 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `organization_node` | Manage Tencent Cloud Organization nodes |
 | `peering_connection` | Manage Tencent Cloud VPC peering connections |
 | `postgresql_account` | Manage TencentDB for PostgreSQL accounts |
+| `postgresql_parameter_template` | Manage Tencent Cloud PostgreSQL parameter templates |
 | `private_dns_record` | Manage a Tencent Cloud Private DNS record |
 | `private_dns_zone` | Manage a Tencent Cloud Private DNS zone |
 | `privatelink_endpoint` | Manage Tencent Cloud PrivateLink endpoints |
 | `privatelink_endpoint_service` | Manage Tencent Cloud PrivateLink endpoint services |
 | `redis_instance` | Manage Tencent Cloud Redis instances |
+| `redis_parameter_template` | Manage Tencent Cloud Redis parameter templates |
 | `route_table` | Manage Tencent Cloud VPC route tables |
 | `scf_alias` | Manage Tencent Cloud SCF function aliases |
 | `scf_function` | Manage Tencent Cloud SCF functions |

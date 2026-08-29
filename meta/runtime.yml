@@ -37,6 +37,7 @@ action_groups:
     - bmlb_load_balancer_info
     - bmvpc_customer_gateway_info
     - bsca_kb_component_info
+    - cam_group
     - cam_group_membership
     - cam_policy
     - cam_policy_attachment
@@ -55,6 +56,7 @@ action_groups:
     - ccn_attachment
     - cdb_instance
     - cdb_instance_info
+    - cdb_parameter_template
     - cdc_dedicated_cluster_order_info
     - cdn_domain
     - cdn_domain_info
@@ -72,6 +74,7 @@ action_groups:
     - chc_device_info
     - chdfs_file_system_info
     - ciam_user_store_info
+    - ckafka_acl
     - ckafka_instance_info
     - ckafka_topic
     - clb_listener
@@ -125,6 +128,7 @@ action_groups:
     - dc_direct_connect_tunnel_info
     - dcdb_instance_info
     - dlc_task_info
+    - dnspod_domain
     - dnspod_record
     - dnspod_record_info
     - domain_batch_operation_log_info
@@ -211,6 +215,7 @@ action_groups:
     - portal_document_info
     - postgres_instance_info
     - postgresql_account
+    - postgresql_parameter_template
     - private_dns_record
     - private_dns_zone
     - privatedns_account_vpc_info
@@ -219,6 +224,7 @@ action_groups:
     - pts_cron_job_info
     - redis_instance
     - redis_instance_info
+    - redis_parameter_template
     - region_product_info
     - route_table
     - route_table_info
