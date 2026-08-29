@@ -516,6 +516,7 @@ WRITE_MODULE_BUILDERS = {
     "cynosdb_account": ["build_create_request", "build_delete_request", "build_describe_request", "build_description_request", "build_password_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
+    "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
 }
 
 
@@ -2165,6 +2166,17 @@ def test_waf_ip_access_control():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "WAF IP rule request %s" % index))
+    assert errors == []
+
+
+def test_tdmq_topic():
+    module = _import_plugin("tdmq_topic")
+    models = _models("tdmq.v20200217")
+    params = {"cluster_id": "pulsar-x", "environment_id": "prod", "name": "orders", "partitions": 4, "topic_type": 3, "remark": "orders", "message_ttl": 86400, "isolate_consumer": True, "ack_timeout": 120, "delay_message_policy": "defaultPolicy"}
+    requests = [module.build_describe_request(models, "pulsar-x", "prod", "orders"), module.build_create_request(models, params), module.build_update_request(models, params), module.build_delete_request(models, "pulsar-x", "prod", "orders", True)]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "TDMQ topic request %s" % index))
     assert errors == []
 
 

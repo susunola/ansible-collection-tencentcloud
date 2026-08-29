@@ -98,6 +98,7 @@ CORE_MODULES = {
     "ssm_parameter",
     "subnet",
     "tag",
+    "tdmq_topic",
     "tcr_instance",
     "tcr_namespace",
     "tcr_repository",

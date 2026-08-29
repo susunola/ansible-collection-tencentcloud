@@ -243,6 +243,7 @@ action_groups:
     - tdcpg_cluster_instance_info
     - tdid_over_summary_info
     - tdmq_amqp_cluster_info
+    - tdmq_topic
     - tdmysql_db_instance_info
     - tem_application_info
     - teo_function_info

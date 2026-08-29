@@ -75,6 +75,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tcr_instance` | Manage Tencent Cloud TCR enterprise instances |
 | `tcr_namespace` | Manage Tencent Cloud TCR namespaces |
 | `tcr_repository` | Manage a Tencent Cloud TCR repository |
+| `tdmq_topic` | Manage Tencent Cloud TDMQ Pulsar topics |
 | `tke_addon` | Manage a Tencent Kubernetes Engine addon |
 | `tke_cluster` | Manage Tencent Cloud TKE clusters |
 | `tke_node_pool` | Manage Tencent Cloud TKE cluster node pools |
