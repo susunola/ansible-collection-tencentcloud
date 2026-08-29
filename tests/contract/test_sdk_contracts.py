@@ -510,6 +510,7 @@ WRITE_MODULE_BUILDERS = {
         "build_update_request",
     ],
     "cls_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
+    "privatelink_endpoint_service": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
 }
 
 
@@ -2093,6 +2094,17 @@ def test_cls_topic():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "CLS topic request %s" % index))
+    assert errors == []
+
+
+def test_privatelink_endpoint_service():
+    module = _import_plugin("privatelink_endpoint_service")
+    models = _models("vpc.v20170312")
+    params = {"name": "api", "vpc_id": "vpc-x", "service_instance_id": "lb-x", "service_type": "CLB", "auto_accept": True, "ip_address_type": "IPv4", "tags": {"env": "prod"}}
+    requests = [module.build_describe_request(models, "vpcsvc-x"), module.build_create_request(models, params), module.build_update_request(models, "vpcsvc-x", params), module.build_delete_request(models, "vpcsvc-x", "IPv4")]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "PrivateLink service request %s" % index))
     assert errors == []
 
 

@@ -1,0 +1,2 @@
+minor_changes:
+  - Add privatelink_endpoint_service for publishing CLB-backed private services.

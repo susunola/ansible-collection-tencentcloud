@@ -82,6 +82,7 @@ CORE_MODULES = {
     "peering_connection",
     "private_dns_record",
     "private_dns_zone",
+    "privatelink_endpoint_service",
     "redis_instance",
     "route_table",
     "scf_alias",

@@ -195,6 +195,7 @@ action_groups:
     - private_dns_record
     - private_dns_zone
     - privatedns_account_vpc_info
+    - privatelink_endpoint_service
     - pts_cron_job_info
     - redis_instance
     - redis_instance_info
