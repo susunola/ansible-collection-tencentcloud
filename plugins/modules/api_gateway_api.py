@@ -29,6 +29,10 @@ options:
   service_timeout: {type: int, default: 15, description: Backend timeout in seconds.}
   mock_response: {type: str, default: '{}', description: MOCK response body.}
   enable_cors: {type: bool, default: false, description: Enable CORS.}
+  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
+  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
+  retries: {description: Number of retries for transient failures., type: int, default: 5}
+  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """

@@ -26,6 +26,10 @@ options:
   destination_region: {description: Destination Tencent Cloud region., type: str}
   instance_class: {description: DTS migration instance class., type: str, default: micro}
   tags: {description: Tags applied at creation., type: dict, default: {}}
+  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
+  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
+  retries: {description: Number of retries for transient failures., type: int, default: 5}
+  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """

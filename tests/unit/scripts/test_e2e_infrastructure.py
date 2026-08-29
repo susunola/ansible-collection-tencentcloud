@@ -16,7 +16,14 @@ def load_script(name):
 
 def test_manifest_validate_and_load(tmp_path):
     module = load_script("e2e_manifest")
-    entry = {"run_id": "1", "target": "cmq_queue", "resource_type": "cmq_queue", "resource_id": "q-1", "region": "ap-guangzhou", "expires_at": (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat()}
+    entry = {
+        "run_id": "1",
+        "target": "cmq_queue",
+        "resource_type": "cmq_queue",
+        "resource_id": "q-1",
+        "region": "ap-guangzhou",
+        "expires_at": (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat(),
+    }
     module.validate(entry)
     path = tmp_path / "manifest.jsonl"
     path.write_text(json.dumps(entry) + "\n", encoding="utf-8")

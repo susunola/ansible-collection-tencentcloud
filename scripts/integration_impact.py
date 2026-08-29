@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Map changed collection files to real-cloud integration targets."""
 
 from __future__ import annotations

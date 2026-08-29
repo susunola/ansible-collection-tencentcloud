@@ -6,17 +6,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = r"""
+DOCUMENTATION = r'''
 ---
 module: cmq_subscription
 short_description: Manage Tencent Cloud CMQ topic subscriptions
 version_added: "0.14.0"
 description: Creates, updates and deletes push subscriptions for a CMQ topic.
 options:
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
   state: {type: str, choices: [present, absent], default: present, description: Desired state.}
   topic_name: {type: str, required: true, description: Parent topic name.}
   subscription_name: {type: str, required: true, description: Subscription name.}
@@ -25,17 +21,21 @@ options:
   notify_strategy: {type: str, choices: [BACKOFF_RETRY, EXPONENTIAL_DECAY_RETRY], default: BACKOFF_RETRY, description: Retry strategy.}
   notify_content_format: {type: str, choices: [JSON, SIMPLIFIED], default: JSON, description: Push payload format.}
   filter_tags: {type: list, elements: str, default: [], description: Message filter tags.}
-  routing_bindings: {type: list, elements: str, default: [], description: Routing binding keys.}
+  binding_key: {type: list, elements: str, default: [], description: Routing binding keys.}
+  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
+  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
+  retries: {description: Number of retries for transient failures., type: int, default: 5}
+  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-"""
-EXAMPLES = r"""
+'''
+EXAMPLES = r'''
 - susunola.tencentcloud.cmq_subscription:
     topic_name: order-events
     subscription_name: order-webhook
     endpoint: https://example.com/events
-"""
-RETURN = r"""subscription: {description: Subscription metadata., type: dict, returned: always}"""
+'''
+RETURN = r'''subscription: {description: Subscription metadata., type: dict, returned: always}'''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -44,7 +44,6 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.tdmq.v20200217 import models, tdmq_client
-
     return models, tdmq_client
 
 
@@ -57,44 +56,28 @@ def find(module, client, models, topic, name):
 
 
 def target(p):
-    return {
-        "SubscriptionName": p["subscription_name"],
-        "Protocol": p["protocol"],
-        "Endpoint": p["endpoint"],
-        "NotifyStrategy": p["notify_strategy"],
-        "NotifyContentFormat": p["notify_content_format"],
-        "FilterTags": sorted(p["filter_tags"]),
-        "BindingKey": sorted(p["routing_bindings"]),
-    }
+    return {"SubscriptionName": p["subscription_name"], "Protocol": p["protocol"], "Endpoint": p["endpoint"],
+            "NotifyStrategy": p["notify_strategy"], "NotifyContentFormat": p["notify_content_format"],
+            "FilterTags": sorted(p["filter_tags"]), "BindingKey": sorted(p["binding_key"])}
 
 
 def current_fields(value):
-    return {
-        "SubscriptionName": value.get("SubscriptionName"),
-        "Protocol": value.get("Protocol"),
-        "Endpoint": value.get("Endpoint"),
-        "NotifyStrategy": value.get("NotifyStrategy"),
-        "NotifyContentFormat": value.get("NotifyContentFormat"),
-        "FilterTags": sorted(value.get("FilterTags") or value.get("FilterTag") or []),
-        "BindingKey": sorted(value.get("BindingKey") or []),
-    }
+    return {"SubscriptionName": value.get("SubscriptionName"), "Protocol": value.get("Protocol"),
+            "Endpoint": value.get("Endpoint"), "NotifyStrategy": value.get("NotifyStrategy"),
+            "NotifyContentFormat": value.get("NotifyContentFormat"),
+            "FilterTags": sorted(value.get("FilterTags") or value.get("FilterTag") or []),
+            "BindingKey": sorted(value.get("BindingKey") or [])}
 
 
 def run_module():
-    module = TencentCloudModule(
-        argument_spec={
-            "state": {"choices": ["present", "absent"], "default": "present"},
-            "topic_name": {"required": True},
-            "subscription_name": {"required": True},
-            "protocol": {"choices": ["http", "queue"], "default": "http"},
-            "endpoint": {"required": True},
-            "notify_strategy": {"choices": ["BACKOFF_RETRY", "EXPONENTIAL_DECAY_RETRY"], "default": "BACKOFF_RETRY"},
-            "notify_content_format": {"choices": ["JSON", "SIMPLIFIED"], "default": "JSON"},
-            "filter_tags": {"type": "list", "elements": "str", "default": []},
-            "routing_bindings": {"type": "list", "elements": "str", "default": []},
-        },
-        supports_check_mode=True,
-    )
+    module = TencentCloudModule(argument_spec={
+        "state": {"choices": ["present", "absent"], "default": "present"}, "topic_name": {"required": True},
+        "subscription_name": {"required": True}, "protocol": {"choices": ["http", "queue"], "default": "http"},
+        "endpoint": {"required": True}, "notify_strategy": {"choices": ["BACKOFF_RETRY", "EXPONENTIAL_DECAY_RETRY"], "default": "BACKOFF_RETRY"},
+        "notify_content_format": {"choices": ["JSON", "SIMPLIFIED"], "default": "JSON"},
+        "filter_tags": {"type": "list", "elements": "str", "default": []},
+        "binding_key": {"type": "list", "elements": "str", "default": [], "no_log": False},
+    }, supports_check_mode=True)
     p = module.params
     module.require_sdk()
     models, client_module = _load()
@@ -121,14 +104,14 @@ def run_module():
                 request = models.ModifyCmqSubscriptionAttributeRequest()
                 request.TopicName, request.SubscriptionName = p["topic_name"], p["subscription_name"]
                 request.NotifyStrategy, request.NotifyContentFormat = p["notify_strategy"], p["notify_content_format"]
-                request.FilterTags, request.BindingKey = p["filter_tags"], p["routing_bindings"]
+                request.FilterTags, request.BindingKey = p["filter_tags"], p["binding_key"]
                 module.sdk_call(client.ModifyCmqSubscriptionAttribute, request)
             else:
                 request = models.CreateCmqSubscribeRequest()
                 request.TopicName, request.SubscriptionName = p["topic_name"], p["subscription_name"]
                 request.Protocol, request.Endpoint = p["protocol"], p["endpoint"]
                 request.NotifyStrategy, request.NotifyContentFormat = p["notify_strategy"], p["notify_content_format"]
-                request.FilterTag, request.BindingKey = p["filter_tags"], p["routing_bindings"]
+                request.FilterTag, request.BindingKey = p["filter_tags"], p["binding_key"]
                 module.sdk_call(client.CreateCmqSubscribe, request)
             current = find(module, client, models, p["topic_name"], p["subscription_name"])
         module.exit_json(changed=True, **(diff or {}), subscription=current)

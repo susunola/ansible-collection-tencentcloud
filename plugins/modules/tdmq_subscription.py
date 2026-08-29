@@ -26,6 +26,10 @@ options:
   idempotent: {description: Enable broker-side idempotency., type: bool, default: true}
   auto_create_policy_topic: {description: Automatically create retry and dead-letter policy topics., type: bool, default: true}
   force: {description: Force deletion even when consumers are connected., type: bool, default: false}
+  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
+  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
+  retries: {description: Number of retries for transient failures., type: int, default: 5}
+  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """

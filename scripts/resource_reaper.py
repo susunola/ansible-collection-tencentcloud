@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Find expired E2E resources and emit a cleanup plan.
 
 Deletion remains delegated to the collection's cleanup integration target so
