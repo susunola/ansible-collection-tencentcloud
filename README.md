@@ -38,6 +38,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cvm_chc` | Manage Tencent Cloud CHC physical server network configuration |
 | `cvm_image` | Manage Tencent Cloud CVM custom images |
 | `cvm_instance` | Manage Tencent Cloud CVM instances |
+| `cynosdb_account` | Manage Tencent Cloud CynosDB accounts |
 | `dnspod_record` | Manage Tencent Cloud DNSPod DNS records |
 | `eip` | Manage Tencent Cloud elastic IP addresses (EIP) |
 | `elasticsearch_instance` | Manage Tencent Cloud Elasticsearch clusters |

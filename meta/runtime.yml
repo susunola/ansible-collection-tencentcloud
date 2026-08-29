@@ -100,6 +100,7 @@ action_groups:
     - cvm_instance_info
     - cwp_machine_info
     - cws_monitor_info
+    - cynosdb_account
     - cynosdb_cluster_info
     - dasb_device_info
     - dataagent_chunk_info

@@ -513,6 +513,7 @@ WRITE_MODULE_BUILDERS = {
     "privatelink_endpoint_service": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "privatelink_endpoint": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "postgresql_account": ["build_create_request", "build_delete_request", "build_describe_request", "build_password_request", "build_remark_request"],
+    "cynosdb_account": ["build_create_request", "build_delete_request", "build_describe_request", "build_description_request", "build_password_request"],
 }
 
 
@@ -2129,6 +2130,17 @@ def test_postgresql_account():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "PostgreSQL account request %s" % index))
+    assert errors == []
+
+
+def test_cynosdb_account():
+    module = _import_plugin("cynosdb_account")
+    models = _models("cynosdb.v20190107")
+    params = {"cluster_id": "cynosdbmysql-x", "account_name": "app", "host": "%", "password": "secret", "description": "application", "max_user_connections": 100, "password_rotation": 90}
+    requests = [module.build_describe_request(models, params["cluster_id"], params["account_name"], params["host"]), module.build_create_request(models, params), module.build_description_request(models, params), module.build_password_request(models, params), module.build_delete_request(models, params)]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CynosDB account request %s" % index))
     assert errors == []
 
 

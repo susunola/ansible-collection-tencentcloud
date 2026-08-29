@@ -64,6 +64,7 @@ CORE_MODULES = {
     "cvm_chc",
     "cvm_image",
     "cvm_instance",
+    "cynosdb_account",
     "dnspod_record",
     "eip",
     "elasticsearch_instance",
