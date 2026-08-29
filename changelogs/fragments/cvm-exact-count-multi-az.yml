@@ -1,7 +1,0 @@
----
-minor_changes:
-  - cvm_instance - add ``zones`` (and optional parallel ``subnet_ids``) for
-    ``exact_count`` pool creation; the shortfall is spread across the listed
-    availability zones as evenly as possible with one ``RunInstances`` call
-    per zone (``Placement.Zone`` plus the matching subnet), so a pool can be
-    kept available across AZs instead of landing in a single one.

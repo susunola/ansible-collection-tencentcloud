@@ -1,4 +1,0 @@
-minor_changes:
-  - >-
-    Add KMS key creation tags, task-level deletion protection and explicit
-    immutable drift detection for alias, key usage and key origin type.

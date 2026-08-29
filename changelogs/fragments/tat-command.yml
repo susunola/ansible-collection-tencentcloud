@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``tat_command`` for idempotent reusable TAT command lifecycle management.

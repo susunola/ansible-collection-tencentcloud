@@ -1,8 +1,130 @@
 ================================
-Tencent Cloud 0.12 Release Notes
+Tencent Cloud 0.13 Release Notes
 ================================
 
 .. contents:: Topics
+
+v0.13.0
+=======
+
+Minor Changes
+-------------
+
+- Add KMS key creation tags, task-level deletion protection and explicit immutable drift detection for alias, key usage and key origin type.
+- Add ``as_scaling_group`` for idempotent Auto Scaling group lifecycle and capacity management.
+- Add ``cam_group_membership`` for paginated, idempotent CAM sub-user membership management by UIN or UID.
+- Add ``cam_policy_attachment`` for idempotent CAM policy attachment and detachment across users, roles and groups.
+- Add ``cfw_address_template`` for idempotent Cloud Firewall address and domain template management.
+- Add ``cloudaudit_track`` for idempotent CloudAudit event delivery management.
+- Add ``cmq_queue`` for idempotent CMQ queue lifecycle and delivery settings.
+- Add ``config_rule`` for idempotent Tencent Cloud Config compliance rule management.
+- Add ``dbbrain_sql_filter`` for DBbrain SQL concurrency filter lifecycle management.
+- Add ``dts_consumer_group`` for idempotent DTS data subscription consumer management.
+- Add ``kms_key_rotation`` for independently authorized automatic key rotation management with last and next rotation metadata.
+- Add ``kms_key`` for customer-managed key creation, description and enabled state reconciliation, and scheduled deletion with a bounded waiting window.
+- Add ``monitor_alarm_policy_notice`` for independently reconciling alarm notification rules, hierarchical notices and content-template bindings.
+- Add ``monitor_alarm_policy`` for alarm-policy creation, metadata and status reconciliation, and deletion.
+- Add ``organization_node`` for idempotent Tencent Cloud Organization unit management.
+- Add ``private_dns_record`` for idempotent private DNS record create, update and delete operations.
+- Add ``private_dns_zone`` for private-zone lifecycle, VPC associations and creation tags.
+- Add ``tat_command`` for idempotent reusable TAT command lifecycle management.
+- Add ``tcr_replication_instance`` for TCR cross-region replication instance lifecycle management.
+- Add ``tcr_repository`` with idempotent repository create, description reconciliation, force-aware deletion, check mode and diff output.
+- Add ``tdmq_topic`` for idempotent TDMQ Pulsar topic lifecycle management.
+- Add ``teo_dns_record`` for idempotent EdgeOne DNS record lifecycle management.
+- Add ``tke_addon`` for TKE addon installation, version and values updates, and deletion.
+- Add api_gateway_service for idempotent API Gateway service lifecycle.
+- Add ccn for Cloud Connect Network lifecycle and mutable routing feature flags, with check mode, diff and convergence polling.
+- Add ccn_attachment for idempotent VPC, VPN gateway, direct-connect gateway and BM VPC association with CCN.
+- Add clb_target_group with idempotent target-group lifecycle and exact-set reconciliation of backend IP, port and weight.
+- Add cls_logset for idempotent CLS logset lifecycle, naming and exact tags.
+- Add cls_topic for idempotent topic lifecycle, retention, partitions, storage and tags.
+- Add cynosdb_account for account lifecycle, descriptions and explicit password rotation.
+- Add network_acl for ACL lifecycle, exact ingress/egress rules and exact subnet association reconciliation.
+- Add postgresql_account for account lifecycle, remarks and explicit password rotation.
+- Add privatelink_endpoint for consumer endpoint lifecycle and security groups.
+- Add privatelink_endpoint_service for publishing CLB-backed private services.
+- Add risk-aware E2E coverage mapping, resource manifests, TTL reaper planning, reliability policy, registry validation, secret-safe telemetry, and six P0 integration targets.
+- Add the customer_gateway module for idempotent VPN remote-peer lifecycle, including BGP ASN updates, creation tags, check mode, diff and waiters.
+- Add vpc_flow_log for flow-log lifecycle, CLS topic delivery, mutable metadata and enable/disable state management.
+- Add vpn_connection for idempotent IPsec tunnel lifecycle, exact SPD route reconciliation, DPD settings and explicit pre-shared-key rotation.
+- Add waf_ip_access_control for idempotent IP allowlist and blocklist rules.
+- CI - integration runs collect coverage with ``ansible-test --coverage`` and upload the report as an artifact (reported, not gated, because real-cloud coverage fluctuates with account state).
+- CI - the SDK contract tests step now also collects the module unit tests and uploads XML and HTML coverage reports as an artifact, so the numbers behind the 70% gate are inspectable even on failed runs.
+- Curate hidden required request parameters for eight more ``*_info`` modules so generated modules expose every field the API requires (``trtc_call_info`` CommId/SdkAppId/StartTime/EndTime, ``ess_file_url_info`` (Operator/BusinessType), ``tiw_running_task_info`` (SdkAppID/TaskType), ``weilingwith_element_profile_page_info`` (WorkspaceId/ApplicationToken/BuildingId), ``bsca_kb_component_info`` (Query), ``svp_saving_plan_coverage_info`` (StartDate/EndDate), ``gme_voice_print_info`` (DescribeMode) and ``ses_black_email_address_info`` (StartDate/EndDate). Curated params are validated against the official Tencent Cloud API documentation.
+- Curated ``extra_params`` may carry ``no_log`` (used for ``weilingwith_element_profile_page_info.application_token``) so token-like parameters are masked in module output and pass ``validate-modules``.
+- Deepen ``ckafka_topic`` with replica safety, throughput quota and message timestamp controls backed by topic-attribute state reads.
+- Extend ``kms_key`` with exact alias-based discovery, cancellation of scheduled deletion when restoring a key, and optional automatic rotation management with a configurable 7-365 day period.
+- Extend ``monitor_alarm_policy`` reconciliation to update metric and event conditions plus notification rule bindings, and paginate policy discovery.
+- Extend ``monitor_alarm_policy`` with project assignment, dimension filters, group-by dimensions, trigger tasks, hierarchical notices, notification content-template bindings and creation-time alarm-policy tags.
+- Harden ``tke_addon`` with bounded install, upgrade and deletion waiters, terminal failure detection, merge/replace update strategies and sensitive values handling.
+- Let ``tke_addon`` manage version and values independently, accept JSON or YAML values from inline data or controller-side files, optionally perform API DryRun validation, and block numeric version downgrades by default.
+- Register all five modules in SDK request-model contract tests and add unit coverage for request construction and canonical values comparison.
+- The ``wait_for_task`` waiter now accepts ``success_statuses`` and ``failure_statuses`` so services whose task-status APIs use a different convention than the CLB 0/1/2 integers (for example the CDB SUCCESS/FAILED/KILLED/REMOVED/PAUSED strings) can reuse it; the default keeps the CLB behaviour unchanged.
+- The generator now supports ``page_number_base`` for APIs that number pages from zero (trtc, ccc, bsca), emitting ``offset // limit`` instead of the 1-based ``offset // limit + 1`` so pagination no longer skips the first page; ``REQUIRED_PARAM_OVERRIDES`` entries may carry ``page_number_base`` and it is propagated into the spec.
+- cbs_snapshot - new standalone write module for CBS cloud disk snapshots. A snapshot is identified either by ``snapshot_id`` or by the combination of ``disk_id`` and ``snapshot_name``; name lookups return the newest snapshot for that name. ``state=present`` creates the snapshot when it does not exist and, by default, waits until the snapshot becomes available (``SnapshotState=NORMAL``); ``state=absent`` deletes the snapshot. Supports check mode and diff output.
+- cdb_instance - add ``state=restarted`` to restart a running CDB instance with ``RestartDBInstances`` and wait for the asynchronous restart task via ``DescribeAsyncRequestInfo`` until it reports SUCCESS (or fails), bounded by ``waiter_timeout``.
+- cdb_instance - after creation the module now waits for the instance to be delivered (Status 1 with TaskStatus 0) and after isolation waits for Status 5, both bounded by ``waiter_timeout``; the default ``waiter_timeout`` is raised from 120 to 900 seconds because database creation takes several minutes.
+- cdb_instance - state=present now changes the instance specification when ``memory`` or ``volume`` drift from the running instance. The change is applied with UpgradeDBInstance (upgrade and downgrade are both supported; disk capacity can only be expanded) and the module waits for the asynchronous spec-change task to report SUCCESS, bounded by ``waiter_timeout``. When only one dimension is given the current value of the other dimension is used.
+- cdn_domain - new module to add, start, stop and delete CDN acceleration domains with the ``cdn.v20180606`` API.
+- community governance - add ``CODEOWNERS`` (single maintainer) and ``.github/dependabot.yml`` (weekly pip + github-actions updates); the contributing guide now documents the SDK pin/regeneration workflow that the drift sentinel enforces.
+- cvm_chc - add ``network_mode`` option (DEPLOY/BUSINESS) to switch the CHC server business NIC network mode via ModifyChcNetworkMode, applied idempotently when it drifts from the DescribeChcHosts state.
+- cvm_chc - new module to manage the VPC network configuration of CHC physical servers, attaching or updating the out-of-band (BMC) and deployment VPCs with ``ConfigureChcAssistVpc``, renaming the server with ``ModifyChcAttribute``, and removing the network configuration with ``RemoveChcAssistVpc``/``RemoveChcDeployVpc``. CHC servers are delivered offline and cannot be created through an API, so a missing server fails instead of being created.
+- cvm_instance - a different ``instance_type`` on an existing stopped instance is now applied with ``ResetInstancesType`` (instance resizing) instead of failing; resizing keeps the instance stopped.
+- cvm_instance - add ``reset_password`` to reset the login password of an existing instance with ``ResetInstancesPassword``; requires ``password`` and only applies with ``state=present``.
+- cvm_instance - add ``state=rebooted`` to reboot a running instance with ``RebootInstances`` (one-shot action, always reports changed).
+- cvm_instance - add ``zones`` (and optional parallel ``subnet_ids``) for ``exact_count`` pool creation; the shortfall is spread across the listed availability zones as evenly as possible with one ``RunInstances`` call per zone (``Placement.Zone`` plus the matching subnet), so a pool can be kept available across AZs instead of landing in a single one.
+- cvm_instance - updates on a stopped instance no longer wait for the ``RUNNING`` state; the power state is never changed by an update.
+- elasticsearch_instance - new module to create, rename and destroy Elasticsearch clusters with the ``es.v20180416`` API. Creation uses ``CreateInstance`` with a ``NodeInfoList`` (Type=hotData) and waits for the cluster to reach Status 1; ``state=absent`` destroys the cluster with ``DeleteInstance`` and waits for it to disappear, bounded by ``waiter_timeout``.
+- gaap_proxy - new module to create, rename, open, close and destroy GAAP proxies with the ``gaap.v20180529`` API.
+- mongodb_instance - new module to create, rename and isolate MongoDB instances with the ``mongodb.v20190725`` API. Prepaid instances are created with ``CreateDBInstance``, postpaid with ``CreateDBInstanceHour``.
+- nat_gateway_rule - new module that reconciles the DNAT and SNAT rule sets of a NAT gateway. The desired rules are compared against the rules currently configured on the gateway, the missing delta is created and, when ``purge=true`` (the default), the surplus is deleted. A DNAT rule is identified by protocol, public IP, public port, private IP and private port; a SNAT rule by resource type, resource ID and private IP, so changing the public IPs or the description of an existing rule replaces it (delete and re-create). Supports check mode and diff output.
+- network_interface - new module to create, update and delete VPC elastic network interfaces with the ``vpc.v20170312`` API. An interface is identified by ``network_interface_id`` or by ``name`` + ``subnet_id``; the name, description and bound security groups are reconciled on an existing interface with ``ModifyNetworkInterfaceAttribute``.
+- redis_instance - after creation the module now waits for the instance to reach Status 2 (running) and after destruction waits for Status -3 (pending recycle, or the instance disappearing from the describe API), both bounded by ``waiter_timeout``; the default ``waiter_timeout`` is raised from 120 to 900 seconds because database creation takes several minutes.
+- requirements.txt - pin the write-module SDK subpackages (cvm/mongodb/gaap/cdn/tcr) so their contract tests run in CI instead of silently skipping; cvm is pinned to 3.1.158 for the ChcHost.NetworkMode field the ``cvm_chc`` drift check reads.
+- scf_alias - new module to manage SCF function aliases with the ``scf.v20180416`` API. An alias is identified by ``function_name`` + ``name``; the target ``function_version`` and ``description`` are enforced on an existing alias with ``UpdateAlias``.
+- scf_version - new module to publish and delete SCF function versions with the ``scf.v20180416`` API. Versions are published with ``PublishVersion``, listed with ``ListVersionByFunction`` and removed with ``DeleteFunctionVersion``; ``$LATEST`` and ``default`` are rejected as identities.
+- scripts/check_hidden_required_params.py now runs as a CI gate (``--check``) alongside the SDK drift sentinel, failing the build when a generated ``*_info`` spec hides a required request field of its SDK model. Unit coverage for the docstring heuristics, pagination coverage logic and the gate's exit behaviour was added under ``tests/unit/scripts/``.
+- tcr_instance - new module to create, update and delete TCR enterprise instances with the ``tcr.v20190924`` API; deletion protection is enforced idempotently on existing instances with ``ModifyInstance``.
+- tcr_namespace - new module to create, update and delete TCR namespace resources with the ``tcr.v20190924`` API. A namespace is identified by ``registry_id`` + ``name``; public access, auto-scan and vulnerability prevention settings are enforced with ``ModifyNamespace``.
+- tke_node_pool - new module to create, update and delete TKE node pools with the ``tke.v20220501`` API. A pool is identified by ``cluster_id`` + ``name``; the autoscaling range, labels, taints and deletion protection are reconciled on an existing pool with ``ModifyClusterNodePool``; ``keep_instance`` controls whether instances survive deletion.
+
+Bugfixes
+--------
+
+- Fix ``cmq_queue`` to use the supported TDMQ CMQ write APIs and wait for queue convergence.
+- Read addons from the ``DescribeAddon`` response list and encode addon values as the Base64 JSON representation required by the TKE API.
+- Use the shared Tencent Cloud not-found classifier in SCF, SSM, TKE and Private DNS resource discovery paths for consistent absent idempotency.
+- Wait for CAM group membership and KMS key rotation changes to become observable before returning success.
+- Wait for Cloud Monitor alarm policy create, update and delete operations to converge, using subset comparison for API-expanded condition objects.
+- Wait for DBbrain SQL filters and TCR replication instances to reach their terminal desired state.
+- Wait for KMS key creation, enable/disable, deletion cancellation and scheduled deletion operations to reach their observable terminal states.
+- Wait for Private DNS zone and record create, update and delete operations to converge, and consistently recognize API not-found responses.
+
+New Modules
+-----------
+
+- cam_group_membership - Manage Tencent Cloud CAM user group membership
+- cam_policy_attachment - Manage a Tencent Cloud CAM policy attachment
+- cdn_domain - Manage Tencent Cloud CDN domains
+- cvm_chc - Manage Tencent Cloud CHC physical server network configuration
+- elasticsearch_instance - Manage Tencent Cloud Elasticsearch clusters
+- gaap_proxy - Manage Tencent Cloud GAAP proxies
+- kms_key - Manage a Tencent Cloud KMS key
+- kms_key_rotation - Manage automatic rotation for a Tencent Cloud KMS key
+- mongodb_instance - Manage Tencent Cloud MongoDB instances
+- monitor_alarm_policy - Manage a Tencent Cloud Monitor alarm policy
+- monitor_alarm_policy_notice - Manage notification bindings for a Cloud Monitor alarm policy
+- network_interface - Manage Tencent Cloud elastic network interfaces
+- private_dns_record - Manage a Tencent Cloud Private DNS record
+- private_dns_zone - Manage a Tencent Cloud Private DNS zone
+- scf_alias - Manage Tencent Cloud SCF function aliases
+- scf_version - Manage Tencent Cloud SCF function versions
+- tcr_instance - Manage Tencent Cloud TCR enterprise instances
+- tcr_namespace - Manage Tencent Cloud TCR namespaces
+- tcr_repository - Manage a Tencent Cloud TCR repository
+- tke_addon - Manage a Tencent Kubernetes Engine addon
+- tke_node_pool - Manage Tencent Cloud TKE cluster node pools
 
 v0.12.0
 =======

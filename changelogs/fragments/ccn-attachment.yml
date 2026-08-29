@@ -1,4 +1,0 @@
-minor_changes:
-  - >-
-    Add ccn_attachment for idempotent VPC, VPN gateway, direct-connect gateway
-    and BM VPC association with CCN.

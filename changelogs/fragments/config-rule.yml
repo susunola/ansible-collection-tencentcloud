@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``config_rule`` for idempotent Tencent Cloud Config compliance rule management.

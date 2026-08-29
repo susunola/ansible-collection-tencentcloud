@@ -1,2 +1,0 @@
-minor_changes:
-  - Add cls_topic for idempotent topic lifecycle, retention, partitions, storage and tags.

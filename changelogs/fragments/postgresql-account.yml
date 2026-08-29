@@ -1,2 +1,0 @@
-minor_changes:
-  - Add postgresql_account for account lifecycle, remarks and explicit password rotation.

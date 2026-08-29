@@ -1,6 +1,0 @@
----
-minor_changes:
-  - community governance - add ``CODEOWNERS`` (single maintainer) and
-    ``.github/dependabot.yml`` (weekly pip + github-actions updates); the
-    contributing guide now documents the SDK pin/regeneration workflow that
-    the drift sentinel enforces.

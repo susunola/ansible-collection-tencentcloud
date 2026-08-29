@@ -1,2 +1,0 @@
-minor_changes:
-  - Add cynosdb_account for account lifecycle, descriptions and explicit password rotation.

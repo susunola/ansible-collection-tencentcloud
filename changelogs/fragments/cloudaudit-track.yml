@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``cloudaudit_track`` for idempotent CloudAudit event delivery management.

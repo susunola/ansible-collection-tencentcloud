@@ -1,9 +1,0 @@
----
-minor_changes:
-  - cdb_instance - state=present now changes the instance specification
-    when ``memory`` or ``volume`` drift from the running instance. The
-    change is applied with UpgradeDBInstance (upgrade and downgrade are
-    both supported; disk capacity can only be expanded) and the module
-    waits for the asynchronous spec-change task to report SUCCESS,
-    bounded by ``waiter_timeout``. When only one dimension is given the
-    current value of the other dimension is used.
