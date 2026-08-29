@@ -21,7 +21,11 @@ options:
   policy_id: {type: str, description: Existing policy ID.}
   name: {type: str, description: Policy name.}
   policy_type: {type: str, choices: [SIMPLE, TARGET_TRACKING], default: SIMPLE, description: Policy type.}
-  adjustment_type: {type: str, choices: [CHANGE_IN_CAPACITY, EXACT_CAPACITY, PERCENT_CHANGE_IN_CAPACITY], default: CHANGE_IN_CAPACITY, description: Capacity adjustment type.}
+  adjustment_type:
+    description: Capacity adjustment type.
+    type: str
+    choices: [CHANGE_IN_CAPACITY, EXACT_CAPACITY, PERCENT_CHANGE_IN_CAPACITY]
+    default: CHANGE_IN_CAPACITY
   adjustment_value: {type: int, default: 1, description: Capacity adjustment value.}
   cooldown: {type: int, default: 300, description: Cooldown seconds.}
   predefined_metric_type: {type: str, description: Target-tracking metric.}

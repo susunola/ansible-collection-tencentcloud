@@ -24,10 +24,6 @@ options:
   filter_type: {type: int, choices: [1, 2], default: 1, description: Subscription filter type.}
   trace: {type: bool, default: false, description: Enable message tracing.}
   tags: {type: dict, default: {}, description: Tags applied at creation.}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
