@@ -78,6 +78,7 @@ action_groups:
     - cloudhsm_vsm_info
     - cloudrc_resource_info
     - cloudstudio_image_info
+    - cls_logset
     - cls_topic_info
     - cme_platform_info
     - cmq_queue_info

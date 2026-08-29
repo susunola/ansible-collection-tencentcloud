@@ -505,6 +505,10 @@ WRITE_MODULE_BUILDERS = {
         "build_update_request",
     ],
     "ccn_attachment": ["build_describe_request"],
+    "cls_logset": [
+        "build_create_request", "build_delete_request", "build_describe_request",
+        "build_update_request",
+    ],
 }
 
 
@@ -2067,6 +2071,16 @@ def test_ccn_attachment():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "CCN attachment request %s" % index))
+    assert errors == []
+
+
+def test_cls_logset():
+    module = _import_plugin("cls_logset")
+    models = _models("cls.v20201016")
+    requests = [module.build_describe_request(models, "logset-xxxxxxxx"), module.build_create_request(models, "prod", {"env": "prod"}), module.build_update_request(models, "logset-xxxxxxxx", "prod-v2", {"env": "prod"}), module.build_delete_request(models, "logset-xxxxxxxx")]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CLS logset request %s" % index))
     assert errors == []
 
 
