@@ -47,6 +47,7 @@ action_groups:
     - cbs_snapshot
     - ccc_extension_info
     - ccn
+    - ccn_attachment
     - cdb_instance
     - cdb_instance_info
     - cdc_dedicated_cluster_order_info

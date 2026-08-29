@@ -504,6 +504,7 @@ WRITE_MODULE_BUILDERS = {
         "build_create_request", "build_delete_request", "build_describe_request",
         "build_update_request",
     ],
+    "ccn_attachment": ["build_describe_request"],
 }
 
 
@@ -2053,6 +2054,19 @@ def test_ccn():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "CCN request %s" % index))
+    assert errors == []
+
+
+def test_ccn_attachment():
+    module = _import_plugin("ccn_attachment")
+    models = _models("vpc.v20170312")
+    params = {"ccn_id": "ccn-xxxxxxxx", "instance_id": "vpc-xxxxxxxx", "instance_region": "ap-guangzhou", "instance_type": "VPC", "description": "prod", "route_table_id": None}
+    requests = [module.build_describe_request(models, params["ccn_id"])]
+    for operation in (models.AttachCcnInstancesRequest, models.DetachCcnInstancesRequest, models.ModifyCcnAttachedInstancesAttributeRequest):
+        requests.append(module.build_mutation_request(models, params, operation))
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CCN attachment request %s" % index))
     assert errors == []
 
 

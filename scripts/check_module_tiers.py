@@ -48,6 +48,7 @@ CORE_MODULES = {
     "cbs_snapshot",
     "cdb_instance",
     "ccn",
+    "ccn_attachment",
     "cdn_domain",
     "clb_rule",
     "clb_target_group",
