@@ -81,9 +81,12 @@ def build_delete_request(models, name):
 
 def _desired(p):
     return {
-        "QueueName": p["queue_name"], "MaxMsgHeapNum": p["max_msg_heap_num"],
-        "PollingWaitSeconds": p["polling_wait_seconds"], "VisibilityTimeout": p["visibility_timeout"],
-        "MaxMsgSize": p["max_msg_size"], "MsgRetentionSeconds": p["msg_retention_seconds"],
+        "QueueName": p["queue_name"],
+        "MaxMsgHeapNum": p["max_msg_heap_num"],
+        "PollingWaitSeconds": p["polling_wait_seconds"],
+        "VisibilityTimeout": p["visibility_timeout"],
+        "MaxMsgSize": p["max_msg_size"],
+        "MsgRetentionSeconds": p["msg_retention_seconds"],
         "RewindSeconds": p["rewind_seconds"],
     }
 
@@ -113,8 +116,8 @@ def run_module():
         "max_msg_heap_num": {"type": "int", "default": 10000000},
         "polling_wait_seconds": {"type": "int", "default": 0},
         "visibility_timeout": {"type": "int", "default": 30},
-            "max_msg_size": {"type": "int", "default": 1048576},
-            "msg_retention_seconds": {"type": "int", "default": 3600},
+        "max_msg_size": {"type": "int", "default": 1048576},
+        "msg_retention_seconds": {"type": "int", "default": 3600},
         "rewind_seconds": {"type": "int", "default": 0},
     }
     module = TencentCloudModule(argument_spec=spec, supports_check_mode=True)

@@ -1,10 +1,25 @@
 """Tests for config_rule."""
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 from ansible_collections.susunola.tencentcloud.plugins.modules import config_rule
 from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import FakeModels
 
-
-PARAMS = {"name": "encrypted-disks", "identifier": "CBS_DISK_ENCRYPTED", "identifier_type": "SYSTEM", "resource_types": ["QCS::CBS::Disk"], "triggers": [{"message_type": "ConfigurationItemChangeNotification", "maximum_execution_frequency": None}], "risk_level": 1, "input_parameters": {"required": "true"}, "description": "Encrypted disks", "regions": ["ap-shanghai", "ap-guangzhou"], "tags": {"env": "prod"}, "excluded_resource_ids": ["disk-x"]}
+PARAMS = {
+    "name": "encrypted-disks",
+    "identifier": "CBS_DISK_ENCRYPTED",
+    "identifier_type": "SYSTEM",
+    "resource_types": ["QCS::CBS::Disk"],
+    "triggers": [{"message_type": "ConfigurationItemChangeNotification", "maximum_execution_frequency": None}],
+    "risk_level": 1,
+    "input_parameters": {"required": "true"},
+    "description": "Encrypted disks",
+    "regions": ["ap-shanghai", "ap-guangzhou"],
+    "tags": {"env": "prod"},
+    "excluded_resource_ids": ["disk-x"],
+}
 
 
 def test_request_builders():

@@ -1,5 +1,9 @@
 """Tests for the customer_gateway write module."""
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -28,11 +32,7 @@ def test_request_builders():
 
 def test_create_main_path(monkeypatch):
     models = FakeModels()
-    client = SimpleNamespace(
-        CreateCustomerGateway=MagicMock(
-            return_value=SimpleNamespace(CustomerGateway=SimpleNamespace(CustomerGatewayId="cgw-1"))
-        )
-    )
+    client = SimpleNamespace(CreateCustomerGateway=MagicMock(return_value=SimpleNamespace(CustomerGateway=SimpleNamespace(CustomerGatewayId="cgw-1"))))
     monkeypatch.setattr(TencentCloudModule, "require_sdk", lambda self: None)
     monkeypatch.setattr(customer_gateway, "_load_vpc", lambda: (models, SimpleNamespace(VpcClient=object)))
     monkeypatch.setattr(TencentCloudModule, "create_client", lambda self, cls, endpoint: client)

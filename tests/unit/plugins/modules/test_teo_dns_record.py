@@ -1,10 +1,22 @@
 """Tests for teo_dns_record."""
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 from ansible_collections.susunola.tencentcloud.plugins.modules import teo_dns_record
 from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import FakeModels
 
-
-PARAMS = {"zone_id": "zone-x", "name": "api.example.com", "record_type": "A", "content": "203.0.113.10", "location": "Default", "ttl": 300, "weight": -1, "priority": 0}
+PARAMS = {
+    "zone_id": "zone-x",
+    "name": "api.example.com",
+    "record_type": "A",
+    "content": "203.0.113.10",
+    "location": "Default",
+    "ttl": 300,
+    "weight": -1,
+    "priority": 0,
+}
 
 
 def test_request_builders():

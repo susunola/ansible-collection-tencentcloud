@@ -50,6 +50,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_vpc():
     from tencentcloud.vpc.v20170312 import models, vpc_client
+
     return models, vpc_client
 
 
@@ -142,7 +143,22 @@ def wait_for_endpoint(module, client, models, endpoint_id, desired=None, absent=
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"type": "str", "choices": ["present", "absent"], "default": "present"}, "endpoint_id": {"type": "str"}, "name": {"type": "str"}, "vpc_id": {"type": "str"}, "subnet_id": {"type": "str"}, "endpoint_service_id": {"type": "str"}, "endpoint_vip": {"type": "str"}, "security_group_ids": {"type": "list", "elements": "str"}, "ip_address_type": {"type": "str", "choices": ["IPv4", "IPv6"], "default": "IPv4"}, "tags": {"type": "dict", "default": {}}}, required_one_of=[("endpoint_id", "name")], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "endpoint_id": {"type": "str"},
+            "name": {"type": "str"},
+            "vpc_id": {"type": "str"},
+            "subnet_id": {"type": "str"},
+            "endpoint_service_id": {"type": "str"},
+            "endpoint_vip": {"type": "str"},
+            "security_group_ids": {"type": "list", "elements": "str"},
+            "ip_address_type": {"type": "str", "choices": ["IPv4", "IPv6"], "default": "IPv4"},
+            "tags": {"type": "dict", "default": {}},
+        },
+        required_one_of=[("endpoint_id", "name")],
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load_vpc()
@@ -178,7 +194,12 @@ def run_module():
         current = wait_for_endpoint(module, client, models, current["EndPointId"], desired)
         module.exit_json(changed=True, **(diff or {}), endpoint=current, msg="PrivateLink endpoint updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

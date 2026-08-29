@@ -1,10 +1,26 @@
 """Tests for tat_command."""
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 from ansible_collections.susunola.tencentcloud.plugins.modules import tat_command
 from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import FakeModels
 
-
-PARAMS = {"name": "hello", "content": "#!/bin/bash\necho {{word}}", "description": "hello", "command_type": "SHELL", "working_directory": "/root", "timeout": 60, "enable_parameters": True, "default_parameters": {"word": "hello"}, "username": "root", "output_cos_bucket_url": None, "output_cos_key_prefix": None, "tags": {"env": "prod"}}
+PARAMS = {
+    "name": "hello",
+    "content": "#!/bin/bash\necho {{word}}",
+    "description": "hello",
+    "command_type": "SHELL",
+    "working_directory": "/root",
+    "timeout": 60,
+    "enable_parameters": True,
+    "default_parameters": {"word": "hello"},
+    "username": "root",
+    "output_cos_bucket_url": None,
+    "output_cos_key_prefix": None,
+    "tags": {"env": "prod"},
+}
 
 
 def test_request_builders_encode_content_and_parameters():

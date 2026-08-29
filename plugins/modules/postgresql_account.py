@@ -49,6 +49,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_postgres():
     from tencentcloud.postgres.v20170312 import models, postgres_client
+
     return models, postgres_client
 
 
@@ -112,7 +113,19 @@ def wait_for_account(module, client, models, instance_id, username, remark=None,
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"type": "str", "choices": ["present", "absent"], "default": "present"}, "instance_id": {"type": "str", "required": True}, "username": {"type": "str", "required": True}, "password": {"type": "str", "no_log": True}, "rotate_password": {"type": "bool", "default": False}, "account_type": {"type": "str", "choices": ["normal", "tencentDBSuper"], "default": "normal"}, "remark": {"type": "str", "default": ""}, "cam_auth": {"type": "bool", "default": False}}, supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "instance_id": {"type": "str", "required": True},
+            "username": {"type": "str", "required": True},
+            "password": {"type": "str", "no_log": True},
+            "rotate_password": {"type": "bool", "default": False},
+            "account_type": {"type": "str", "choices": ["normal", "tencentDBSuper"], "default": "normal"},
+            "remark": {"type": "str", "default": ""},
+            "cam_auth": {"type": "bool", "default": False},
+        },
+        supports_check_mode=True,
+    )
     p = module.params
     if p["rotate_password"] and not p["password"]:
         module.fail_json(msg="password is required when rotate_password=true")
@@ -155,7 +168,12 @@ def run_module():
         current = wait_for_account(module, client, models, p["instance_id"], p["username"], p["remark"])
         module.exit_json(changed=True, **(diff or {}), account=current, msg="PostgreSQL account updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

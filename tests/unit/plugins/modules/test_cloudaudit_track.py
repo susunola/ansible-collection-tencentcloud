@@ -1,10 +1,27 @@
 """Tests for cloudaudit_track."""
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 from ansible_collections.susunola.tencentcloud.plugins.modules import cloudaudit_track
 from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import FakeModels
 
-
-PARAMS = {"name": "events", "enabled": True, "action_type": "*", "resource_type": "*", "event_names": ["*"], "track_all_members": False, "storage_type": "cls", "storage_region": "ap-guangzhou", "storage_name": "topic-x", "storage_prefix": "", "storage_account_id": None, "storage_app_id": None, "compress": True}
+PARAMS = {
+    "name": "events",
+    "enabled": True,
+    "action_type": "*",
+    "resource_type": "*",
+    "event_names": ["*"],
+    "track_all_members": False,
+    "storage_type": "cls",
+    "storage_region": "ap-guangzhou",
+    "storage_name": "topic-x",
+    "storage_prefix": "",
+    "storage_account_id": None,
+    "storage_app_id": None,
+    "compress": True,
+}
 
 
 def test_request_builders():

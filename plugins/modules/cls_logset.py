@@ -41,6 +41,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_cls():
     from tencentcloud.cls.v20201016 import cls_client, models
+
     return models, cls_client
 
 
@@ -127,7 +128,16 @@ def wait_for_logset(module, client, models, logset_id, desired=None, absent=Fals
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"type": "str", "choices": ["present", "absent"], "default": "present"}, "logset_id": {"type": "str"}, "name": {"type": "str"}, "tags": {"type": "dict"}}, required_one_of=[("logset_id", "name")], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "logset_id": {"type": "str"},
+            "name": {"type": "str"},
+            "tags": {"type": "dict"},
+        },
+        required_one_of=[("logset_id", "name")],
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load_cls()
@@ -165,7 +175,12 @@ def run_module():
         current = wait_for_logset(module, client, models, current["LogsetId"], desired)
         module.exit_json(changed=True, **(diff or {}), logset=current, msg="CLS logset updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

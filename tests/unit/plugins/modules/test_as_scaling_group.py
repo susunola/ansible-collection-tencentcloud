@@ -1,10 +1,28 @@
 """Tests for as_scaling_group."""
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 from ansible_collections.susunola.tencentcloud.plugins.modules import as_scaling_group
 from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import FakeModels
 
-
-PARAMS = {"name": "web", "launch_configuration_id": "asc-x", "vpc_id": "vpc-x", "subnet_ids": ["subnet-a", "subnet-b"], "min_size": 0, "max_size": 10, "desired_capacity": 0, "default_cooldown": 300, "termination_policy": "OLDEST_INSTANCE", "retry_policy": "IMMEDIATE_RETRY", "subnet_policy": "PRIORITY", "health_check_type": "CVM", "capacity_rebalance": False, "project_id": 0}
+PARAMS = {
+    "name": "web",
+    "launch_configuration_id": "asc-x",
+    "vpc_id": "vpc-x",
+    "subnet_ids": ["subnet-a", "subnet-b"],
+    "min_size": 0,
+    "max_size": 10,
+    "desired_capacity": 0,
+    "default_cooldown": 300,
+    "termination_policy": "OLDEST_INSTANCE",
+    "retry_policy": "IMMEDIATE_RETRY",
+    "subnet_policy": "PRIORITY",
+    "health_check_type": "CVM",
+    "capacity_rebalance": False,
+    "project_id": 0,
+}
 
 
 def test_request_builders():

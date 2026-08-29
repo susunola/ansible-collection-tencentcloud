@@ -5,4 +5,3 @@ bugfixes:
   - >-
     Wait for Private DNS zone and record create, update and delete operations
     to converge, and consistently recognize API not-found responses.
-

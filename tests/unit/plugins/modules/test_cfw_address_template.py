@@ -1,8 +1,11 @@
 """Tests for cfw_address_template."""
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 from ansible_collections.susunola.tencentcloud.plugins.modules import cfw_address_template
 from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import FakeModels
-
 
 PARAMS = {"name": "trusted", "description": "internal", "addresses": ["192.168.0.0/16", "10.0.0.0/8"], "template_type": "ip", "ip_version": 0}
 

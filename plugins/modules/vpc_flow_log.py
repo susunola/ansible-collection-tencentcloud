@@ -58,6 +58,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_vpc():
     from tencentcloud.vpc.v20170312 import models, vpc_client
+
     return models, vpc_client
 
 
@@ -136,14 +137,25 @@ def wait_for_flow_log(module, client, models, vpc_id, flow_log_id, enabled=None,
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={
-        "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
-        "flow_log_id": {"type": "str"}, "name": {"type": "str"}, "vpc_id": {"type": "str", "required": True},
-        "resource_type": {"type": "str", "choices": ["NETWORKINTERFACE", "NAT", "CCN", "DCG"]}, "resource_id": {"type": "str"},
-        "traffic_type": {"type": "str", "choices": ["ACCEPT", "REJECT", "ALL"], "default": "ALL"},
-        "cls_topic_id": {"type": "str"}, "cls_region": {"type": "str"}, "description": {"type": "str", "default": ""},
-        "enabled": {"type": "bool", "default": True}, "period": {"type": "int", "choices": [60, 300, 600]}, "tags": {"type": "dict", "default": {}},
-    }, required_one_of=[("flow_log_id", "name")], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "flow_log_id": {"type": "str"},
+            "name": {"type": "str"},
+            "vpc_id": {"type": "str", "required": True},
+            "resource_type": {"type": "str", "choices": ["NETWORKINTERFACE", "NAT", "CCN", "DCG"]},
+            "resource_id": {"type": "str"},
+            "traffic_type": {"type": "str", "choices": ["ACCEPT", "REJECT", "ALL"], "default": "ALL"},
+            "cls_topic_id": {"type": "str"},
+            "cls_region": {"type": "str"},
+            "description": {"type": "str", "default": ""},
+            "enabled": {"type": "bool", "default": True},
+            "period": {"type": "int", "choices": [60, 300, 600]},
+            "tags": {"type": "dict", "default": {}},
+        },
+        required_one_of=[("flow_log_id", "name")],
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load_vpc()
@@ -164,7 +176,15 @@ def run_module():
             missing = [key for key in ("name", "resource_type", "resource_id", "cls_topic_id") if not p[key]]
             if missing:
                 module.fail_json(msg="Required when creating: %s" % ", ".join(missing))
-            desired = {"FlowLogName": p["name"], "ResourceType": p["resource_type"], "ResourceId": p["resource_id"], "TrafficType": p["traffic_type"], "CloudLogId": p["cls_topic_id"], "FlowLogDescription": p["description"], "Enable": p["enabled"]}
+            desired = {
+                "FlowLogName": p["name"],
+                "ResourceType": p["resource_type"],
+                "ResourceId": p["resource_id"],
+                "TrafficType": p["traffic_type"],
+                "CloudLogId": p["cls_topic_id"],
+                "FlowLogDescription": p["description"],
+                "Enable": p["enabled"],
+            }
             diff = maybe_diff(module, None, desired)
             if module.check_mode:
                 module.exit_json(changed=True, **(diff or {}), flow_log=None, msg="Would create flow log")
@@ -188,7 +208,12 @@ def run_module():
         current = wait_for_flow_log(module, client, models, p["vpc_id"], current["FlowLogId"], p["enabled"])
         module.exit_json(changed=True, **(diff or {}), flow_log=current, msg="Flow log updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

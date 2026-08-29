@@ -50,6 +50,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_teo():
     from tencentcloud.teo.v20220901 import models, teo_client
+
     return models, teo_client
 
 
@@ -97,7 +98,7 @@ def build_delete_request(models, zone_id, record_id):
 def find_record(module, client, models, zone_id, record_id=None, name=None):
     response = module.sdk_call(client.DescribeDnsRecords, build_describe_request(models, zone_id, record_id, name))
     matches = []
-    for item in (response.DnsRecords or []):
+    for item in response.DnsRecords or []:
         value = item._serialize(allow_none=True)
         if (record_id and value.get("RecordId") == record_id) or (not record_id and value.get("Name") == name):
             matches.append(value)
@@ -107,7 +108,15 @@ def find_record(module, client, models, zone_id, record_id=None, name=None):
 
 
 def _desired(params):
-    return {"Name": params["name"], "Type": params["record_type"], "Content": params["content"], "Location": params["location"], "TTL": params["ttl"], "Weight": params["weight"], "Priority": params["priority"]}
+    return {
+        "Name": params["name"],
+        "Type": params["record_type"],
+        "Content": params["content"],
+        "Location": params["location"],
+        "TTL": params["ttl"],
+        "Weight": params["weight"],
+        "Priority": params["priority"],
+    }
 
 
 def _matches(current, desired):
@@ -128,7 +137,23 @@ def wait_for_record(module, client, models, record_id, desired=None, absent=Fals
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"type": "str", "choices": ["present", "absent"], "default": "present"}, "zone_id": {"type": "str", "required": True}, "record_id": {"type": "str"}, "name": {"type": "str"}, "record_type": {"type": "str", "choices": ["A", "AAAA", "CNAME", "TXT", "NS", "CAA", "SRV", "MX"]}, "content": {"type": "str"}, "location": {"type": "str", "default": "Default"}, "ttl": {"type": "int", "default": 300}, "weight": {"type": "int", "default": -1}, "priority": {"type": "int", "default": 0}}, required_one_of=[("record_id", "name")], required_if=[("state", "present", ("name", "record_type", "content"))], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "zone_id": {"type": "str", "required": True},
+            "record_id": {"type": "str"},
+            "name": {"type": "str"},
+            "record_type": {"type": "str", "choices": ["A", "AAAA", "CNAME", "TXT", "NS", "CAA", "SRV", "MX"]},
+            "content": {"type": "str"},
+            "location": {"type": "str", "default": "Default"},
+            "ttl": {"type": "int", "default": 300},
+            "weight": {"type": "int", "default": -1},
+            "priority": {"type": "int", "default": 0},
+        },
+        required_one_of=[("record_id", "name")],
+        required_if=[("state", "present", ("name", "record_type", "content"))],
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load_teo()
@@ -161,7 +186,12 @@ def run_module():
         current = wait_for_record(module, client, models, current["RecordId"], desired)
         module.exit_json(changed=True, **(diff or {}), record=current, msg="EdgeOne DNS record updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

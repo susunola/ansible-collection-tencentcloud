@@ -1,5 +1,9 @@
 """Tests for clb_target_group."""
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -10,7 +14,16 @@ from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harnes
 
 def test_builders_and_member_normalization():
     models = FakeModels()
-    params = {"name": "api", "vpc_id": "vpc-1", "type": "v2", "protocol": "HTTP", "port": 8080, "schedule_algorithm": "WRR", "weight": 10, "tags": {"env": "prod"}}
+    params = {
+        "name": "api",
+        "vpc_id": "vpc-1",
+        "type": "v2",
+        "protocol": "HTTP",
+        "port": 8080,
+        "schedule_algorithm": "WRR",
+        "weight": 10,
+        "tags": {"env": "prod"},
+    }
     request = clb_target_group.build_create_request(models, params)
     assert request.TargetGroupName == "api"
     assert request.Tags[0].TagKey == "env"

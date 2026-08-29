@@ -50,6 +50,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors impor
 
 def _load_api_gateway():
     from tencentcloud.apigateway.v20180808 import apigateway_client, models
+
     return models, apigateway_client
 
 
@@ -149,7 +150,22 @@ def wait_for_service(module, client, models, service_id, desired=None, absent=Fa
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"type": "str", "choices": ["present", "absent"], "default": "present"}, "service_id": {"type": "str"}, "name": {"type": "str"}, "description": {"type": "str", "default": ""}, "protocol": {"type": "str", "choices": ["http", "https", "http&https"], "default": "http&https"}, "network_types": {"type": "list", "elements": "str", "choices": ["INNER", "OUTER"], "default": ["OUTER"]}, "ip_version": {"type": "str", "choices": ["IPv4", "IPv6"], "default": "IPv4"}, "vpc_id": {"type": "str"}, "instance_id": {"type": "str"}, "tags": {"type": "dict", "default": {}}}, required_one_of=[("service_id", "name")], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "service_id": {"type": "str"},
+            "name": {"type": "str"},
+            "description": {"type": "str", "default": ""},
+            "protocol": {"type": "str", "choices": ["http", "https", "http&https"], "default": "http&https"},
+            "network_types": {"type": "list", "elements": "str", "choices": ["INNER", "OUTER"], "default": ["OUTER"]},
+            "ip_version": {"type": "str", "choices": ["IPv4", "IPv6"], "default": "IPv4"},
+            "vpc_id": {"type": "str"},
+            "instance_id": {"type": "str"},
+            "tags": {"type": "dict", "default": {}},
+        },
+        required_one_of=[("service_id", "name")],
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load_api_gateway()
@@ -184,7 +200,12 @@ def run_module():
         current = wait_for_service(module, client, models, current["ServiceId"], desired)
         module.exit_json(changed=True, **(diff or {}), service=current, msg="API Gateway service updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

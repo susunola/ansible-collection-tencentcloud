@@ -56,6 +56,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_tat():
     from tencentcloud.tat.v20201028 import models, tat_client
+
     return models, tat_client
 
 
@@ -127,7 +128,9 @@ def find_command(module, client, models, command_id=None, name=None):
         items = list(response.CommandSet or [])
         for item in items:
             value = item._serialize(allow_none=True)
-            if (command_id and value.get("CommandId") == command_id) or (not command_id and value.get("CommandName") == name and value.get("CreatedBy") == "USER"):
+            if (command_id and value.get("CommandId") == command_id) or (
+                not command_id and value.get("CommandName") == name and value.get("CreatedBy") == "USER"
+            ):
                 matches.append(value)
         offset += len(items)
         if command_id or not items or offset >= int(response.TotalCount or 0):
@@ -142,7 +145,20 @@ def _tags(values):
 
 
 def _desired(params):
-    return {"CommandName": params["name"], "Content": _content(params["content"]), "Description": params["description"], "CommandType": params["command_type"], "WorkingDirectory": params["working_directory"], "Timeout": params["timeout"], "EnableParameter": params["enable_parameters"], "DefaultParameters": _parameters(params["default_parameters"]), "Username": params["username"], "OutputCOSBucketUrl": params["output_cos_bucket_url"], "OutputCOSKeyPrefix": params["output_cos_key_prefix"], "Tags": {str(k): str(v) for k, v in params["tags"].items()}}
+    return {
+        "CommandName": params["name"],
+        "Content": _content(params["content"]),
+        "Description": params["description"],
+        "CommandType": params["command_type"],
+        "WorkingDirectory": params["working_directory"],
+        "Timeout": params["timeout"],
+        "EnableParameter": params["enable_parameters"],
+        "DefaultParameters": _parameters(params["default_parameters"]),
+        "Username": params["username"],
+        "OutputCOSBucketUrl": params["output_cos_bucket_url"],
+        "OutputCOSKeyPrefix": params["output_cos_key_prefix"],
+        "Tags": {str(k): str(v) for k, v in params["tags"].items()},
+    }
 
 
 def _matches(current, desired):
@@ -163,7 +179,27 @@ def wait_for_command(module, client, models, command_id, desired=None, absent=Fa
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"type": "str", "choices": ["present", "absent"], "default": "present"}, "command_id": {"type": "str"}, "name": {"type": "str"}, "content": {"type": "str"}, "description": {"type": "str", "default": ""}, "command_type": {"type": "str", "choices": ["SHELL", "POWERSHELL", "BAT"], "default": "SHELL"}, "working_directory": {"type": "str", "default": "/root"}, "timeout": {"type": "int", "default": 60}, "enable_parameters": {"type": "bool", "default": False}, "default_parameters": {"type": "dict", "default": {}}, "username": {"type": "str", "default": "root"}, "output_cos_bucket_url": {"type": "str"}, "output_cos_key_prefix": {"type": "str", "no_log": False}, "tags": {"type": "dict", "default": {}}}, required_one_of=[("command_id", "name")], required_if=[("state", "present", ("name", "content"))], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "command_id": {"type": "str"},
+            "name": {"type": "str"},
+            "content": {"type": "str"},
+            "description": {"type": "str", "default": ""},
+            "command_type": {"type": "str", "choices": ["SHELL", "POWERSHELL", "BAT"], "default": "SHELL"},
+            "working_directory": {"type": "str", "default": "/root"},
+            "timeout": {"type": "int", "default": 60},
+            "enable_parameters": {"type": "bool", "default": False},
+            "default_parameters": {"type": "dict", "default": {}},
+            "username": {"type": "str", "default": "root"},
+            "output_cos_bucket_url": {"type": "str"},
+            "output_cos_key_prefix": {"type": "str", "no_log": False},
+            "tags": {"type": "dict", "default": {}},
+        },
+        required_one_of=[("command_id", "name")],
+        required_if=[("state", "present", ("name", "content"))],
+        supports_check_mode=True,
+    )
     p = module.params
     if p["default_parameters"] and not p["enable_parameters"]:
         module.fail_json(msg="enable_parameters must be true when default_parameters are provided")
@@ -202,7 +238,12 @@ def run_module():
         current = wait_for_command(module, client, models, current["CommandId"], desired)
         module.exit_json(changed=True, **(diff or {}), command=current, msg="TAT command updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

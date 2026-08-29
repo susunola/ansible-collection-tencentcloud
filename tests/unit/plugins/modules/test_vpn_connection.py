@@ -1,5 +1,9 @@
 """Tests for vpn_connection."""
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -10,10 +14,15 @@ from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harnes
 
 def params():
     return {
-        "name": "office", "vpn_gateway_id": "vpngw-1", "customer_gateway_id": "cgw-1",
-        "vpc_id": "vpc-1", "pre_shared_key": "secret", "rotate_pre_shared_key": False,
+        "name": "office",
+        "vpn_gateway_id": "vpngw-1",
+        "customer_gateway_id": "cgw-1",
+        "vpc_id": "vpc-1",
+        "pre_shared_key": "secret",
+        "rotate_pre_shared_key": False,
         "security_policy_databases": [{"local_cidr": "10.0.0.0/16", "remote_cidr": "192.168.0.0/16"}],
-        "route_type": "Policy", "tags": {},
+        "route_type": "Policy",
+        "tags": {},
     }
 
 

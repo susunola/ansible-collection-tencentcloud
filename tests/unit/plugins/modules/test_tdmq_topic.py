@@ -1,10 +1,24 @@
 """Tests for tdmq_topic."""
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 from ansible_collections.susunola.tencentcloud.plugins.modules import tdmq_topic
 from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import FakeModels
 
-
-PARAMS = {"cluster_id": "pulsar-x", "environment_id": "prod", "name": "orders", "partitions": 4, "topic_type": 3, "remark": "orders", "message_ttl": 86400, "isolate_consumer": True, "ack_timeout": 120, "delay_message_policy": "defaultPolicy"}
+PARAMS = {
+    "cluster_id": "pulsar-x",
+    "environment_id": "prod",
+    "name": "orders",
+    "partitions": 4,
+    "topic_type": 3,
+    "remark": "orders",
+    "message_ttl": 86400,
+    "isolate_consumer": True,
+    "ack_timeout": 120,
+    "delay_message_policy": "defaultPolicy",
+}
 
 
 def test_request_builders():

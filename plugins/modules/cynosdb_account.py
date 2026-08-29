@@ -48,6 +48,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_cynosdb():
     from tencentcloud.cynosdb.v20190107 import cynosdb_client, models
+
     return models, cynosdb_client
 
 
@@ -121,7 +122,20 @@ def wait_for_account(module, client, models, params, absent=False):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"type": "str", "choices": ["present", "absent"], "default": "present"}, "cluster_id": {"type": "str", "required": True}, "account_name": {"type": "str", "required": True}, "host": {"type": "str", "default": "%"}, "password": {"type": "str", "no_log": True}, "rotate_password": {"type": "bool", "default": False}, "description": {"type": "str", "default": ""}, "max_user_connections": {"type": "int"}, "password_rotation": {"type": "int", "no_log": False}}, supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "cluster_id": {"type": "str", "required": True},
+            "account_name": {"type": "str", "required": True},
+            "host": {"type": "str", "default": "%"},
+            "password": {"type": "str", "no_log": True},
+            "rotate_password": {"type": "bool", "default": False},
+            "description": {"type": "str", "default": ""},
+            "max_user_connections": {"type": "int"},
+            "password_rotation": {"type": "int", "no_log": False},
+        },
+        supports_check_mode=True,
+    )
     p = module.params
     if p["rotate_password"] and not p["password"]:
         module.fail_json(msg="password is required when rotate_password=true")
@@ -163,7 +177,12 @@ def run_module():
         current = wait_for_account(module, client, models, p)
         module.exit_json(changed=True, **(diff or {}), account=current, msg="CynosDB account updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

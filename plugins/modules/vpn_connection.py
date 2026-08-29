@@ -68,13 +68,16 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_vpc():
     from tencentcloud.vpc.v20170312 import models, vpc_client
+
     return models, vpc_client
 
 
 def _policies(values):
     return sorted(
-        ({"LocalCidrBlock": x.get("LocalCidrBlock") or x.get("local_cidr"),
-          "RemoteCidrBlock": x.get("RemoteCidrBlock") or [x.get("remote_cidr")]} for x in (values or [])),
+        (
+            {"LocalCidrBlock": x.get("LocalCidrBlock") or x.get("local_cidr"), "RemoteCidrBlock": x.get("RemoteCidrBlock") or [x.get("remote_cidr")]}
+            for x in (values or [])
+        ),
         key=lambda x: (x["LocalCidrBlock"], tuple(x["RemoteCidrBlock"])),
     )
 
@@ -138,7 +141,9 @@ def build_create_request(models, params):
 
 def build_update_request(models, connection_id, params):
     request = _apply_mutable(
-        models.ModifyVpnConnectionAttributeRequest(), models, params,
+        models.ModifyVpnConnectionAttributeRequest(),
+        models,
+        params,
         params.get("rotate_pre_shared_key", False),
     )
     request.VpnConnectionId = connection_id
@@ -203,17 +208,31 @@ def wait_for_connection(module, client, models, connection_id, desired=None, abs
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={
-        "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
-        "vpn_connection_id": {"type": "str"}, "name": {"type": "str"},
-        "vpn_gateway_id": {"type": "str"}, "customer_gateway_id": {"type": "str"}, "vpc_id": {"type": "str"},
-        "pre_shared_key": {"type": "str", "no_log": True}, "rotate_pre_shared_key": {"type": "bool", "default": False},
-        "security_policy_databases": {"type": "list", "elements": "dict", "options": {"local_cidr": {"type": "str", "required": True}, "remote_cidr": {"type": "str", "required": True}}},
-        "route_type": {"type": "str", "choices": ["StaticRoute", "BgpRoute", "Policy"], "default": "Policy"},
-        "negotiation_type": {"type": "str", "choices": ["active", "passive", "flowTrigger"]},
-        "dpd_enabled": {"type": "bool"}, "dpd_timeout": {"type": "int"},
-        "dpd_action": {"type": "str", "choices": ["clear", "restart"]}, "tags": {"type": "dict", "default": {}},
-    }, required_one_of=[("vpn_connection_id", "name")], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "vpn_connection_id": {"type": "str"},
+            "name": {"type": "str"},
+            "vpn_gateway_id": {"type": "str"},
+            "customer_gateway_id": {"type": "str"},
+            "vpc_id": {"type": "str"},
+            "pre_shared_key": {"type": "str", "no_log": True},
+            "rotate_pre_shared_key": {"type": "bool", "default": False},
+            "security_policy_databases": {
+                "type": "list",
+                "elements": "dict",
+                "options": {"local_cidr": {"type": "str", "required": True}, "remote_cidr": {"type": "str", "required": True}},
+            },
+            "route_type": {"type": "str", "choices": ["StaticRoute", "BgpRoute", "Policy"], "default": "Policy"},
+            "negotiation_type": {"type": "str", "choices": ["active", "passive", "flowTrigger"]},
+            "dpd_enabled": {"type": "bool"},
+            "dpd_timeout": {"type": "int"},
+            "dpd_action": {"type": "str", "choices": ["clear", "restart"]},
+            "tags": {"type": "dict", "default": {}},
+        },
+        required_one_of=[("vpn_connection_id", "name")],
+        supports_check_mode=True,
+    )
     p = module.params
     if p["rotate_pre_shared_key"] and not p["pre_shared_key"]:
         module.fail_json(msg="pre_shared_key is required when rotate_pre_shared_key=true")
@@ -254,7 +273,12 @@ def run_module():
         current = wait_for_connection(module, client, models, current["VpnConnectionId"], desired)
         module.exit_json(changed=True, **(diff or {}), vpn_connection=current, msg="VPN connection updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

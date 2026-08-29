@@ -51,6 +51,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_cls():
     from tencentcloud.cls.v20201016 import cls_client, models
+
     return models, cls_client
 
 
@@ -129,7 +130,15 @@ def find_topic(module, client, models, topic_id, logset_id, name):
 
 
 def _desired(params):
-    result = {"TopicName": params["name"], "PartitionCount": params["partition_count"], "Period": params["period"], "StorageType": params["storage_type"], "AutoSplit": params["auto_split"], "MaxSplitPartitions": params["max_split_partitions"], "Describes": params["description"]}
+    result = {
+        "TopicName": params["name"],
+        "PartitionCount": params["partition_count"],
+        "Period": params["period"],
+        "StorageType": params["storage_type"],
+        "AutoSplit": params["auto_split"],
+        "MaxSplitPartitions": params["max_split_partitions"],
+        "Describes": params["description"],
+    }
     if params["hot_period"] is not None:
         result["HotPeriod"] = params["hot_period"]
     if params["tags"] is not None:
@@ -155,7 +164,24 @@ def wait_for_topic(module, client, models, topic_id, logset_id, desired=None, ab
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"type": "str", "choices": ["present", "absent"], "default": "present"}, "topic_id": {"type": "str"}, "logset_id": {"type": "str", "required": True}, "name": {"type": "str"}, "partition_count": {"type": "int", "default": 1}, "period": {"type": "int", "default": 30}, "hot_period": {"type": "int"}, "storage_type": {"type": "str", "choices": ["hot", "cold"], "default": "hot"}, "auto_split": {"type": "bool", "default": True}, "max_split_partitions": {"type": "int", "default": 50}, "description": {"type": "str", "default": ""}, "tags": {"type": "dict"}}, required_one_of=[("topic_id", "name")], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "topic_id": {"type": "str"},
+            "logset_id": {"type": "str", "required": True},
+            "name": {"type": "str"},
+            "partition_count": {"type": "int", "default": 1},
+            "period": {"type": "int", "default": 30},
+            "hot_period": {"type": "int"},
+            "storage_type": {"type": "str", "choices": ["hot", "cold"], "default": "hot"},
+            "auto_split": {"type": "bool", "default": True},
+            "max_split_partitions": {"type": "int", "default": 50},
+            "description": {"type": "str", "default": ""},
+            "tags": {"type": "dict"},
+        },
+        required_one_of=[("topic_id", "name")],
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load_cls()
@@ -190,7 +216,12 @@ def run_module():
         current = wait_for_topic(module, client, models, current["TopicId"], p["logset_id"], desired)
         module.exit_json(changed=True, **(diff or {}), topic=current, msg="CLS topic updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

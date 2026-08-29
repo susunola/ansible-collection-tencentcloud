@@ -16,7 +16,10 @@ options:
   key_id: {description: Existing KMS key ID. Takes precedence over O(alias)., type: str}
   alias: {description: Alias used to find or create the key. Exact matching is applied to API search results., type: str}
   description: {description: Human-readable key description., type: str, default: ''}
-  key_usage: {description: Cryptographic use of the key. Defaults to C(ENCRYPT_DECRYPT) when creating., type: str, choices: [ENCRYPT_DECRYPT, ASYMMETRIC_DECRYPT_RSA_2048, ASYMMETRIC_DECRYPT_SM2, ASYMMETRIC_SIGN_VERIFY_ECC, ASYMMETRIC_SIGN_VERIFY_SM2]}
+  key_usage:
+    description: Cryptographic use of the key. Defaults to C(ENCRYPT_DECRYPT) when creating.
+    type: str
+    choices: [ENCRYPT_DECRYPT, ASYMMETRIC_DECRYPT_RSA_2048, ASYMMETRIC_DECRYPT_SM2, ASYMMETRIC_SIGN_VERIFY_ECC, ASYMMETRIC_SIGN_VERIFY_SM2]
   key_type: {description: KMS key origin type. Defaults to C(1) when creating., type: int, choices: [1, 2]}
   tags: {description: Tags applied when creating the key., type: dict}
   enabled: {description: Whether the key is enabled., type: bool, default: true}
@@ -219,9 +222,11 @@ def run_module():
             module.exit_json(changed=True, **(diff or {}), key=current, msg="KMS key deletion scheduled")
         if current is None:
             desired = {
-                "Alias": p["alias"], "Description": p["description"],
+                "Alias": p["alias"],
+                "Description": p["description"],
                 "KeyUsage": p["key_usage"] or "ENCRYPT_DECRYPT",
-                "Type": p["key_type"] or 1, "Enabled": p["enabled"],
+                "Type": p["key_type"] or 1,
+                "Enabled": p["enabled"],
             }
             if p["tags"] is not None:
                 desired["Tags"] = p["tags"]
@@ -291,7 +296,10 @@ def run_module():
             request.KeyId = p["key_id"]
             module.sdk_call(client.EnableKey if p["enabled"] else client.DisableKey, request)
             wait_for_key_state(
-                module, client, models, p["key_id"],
+                module,
+                client,
+                models,
+                p["key_id"],
                 ("Enabled",) if p["enabled"] else ("Disabled",),
             )
         if "rotation" in changes:

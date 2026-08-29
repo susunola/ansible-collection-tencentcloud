@@ -48,6 +48,7 @@ TYPES = {"ip": 1, "domain": 5}
 
 def _load_cfw():
     from tencentcloud.cfw.v20190904 import cfw_client, models
+
     return models, cfw_client
 
 
@@ -92,7 +93,7 @@ def build_delete_request(models, uuid):
 def find_template(module, client, models, uuid=None, name=None):
     response = module.sdk_call(client.DescribeAddressTemplateList, build_describe_request(models, uuid, name))
     matches = []
-    for item in (response.Data or []):
+    for item in response.Data or []:
         value = item._serialize(allow_none=True)
         if (uuid and value.get("Uuid") == uuid) or (not uuid and value.get("Name") == name):
             matches.append(value)
@@ -102,7 +103,13 @@ def find_template(module, client, models, uuid=None, name=None):
 
 
 def _desired(params):
-    return {"Name": params["name"], "Detail": params["description"], "IpString": _address_string(params["addresses"]), "Type": TYPES[params["template_type"]], "IpVersion": params["ip_version"]}
+    return {
+        "Name": params["name"],
+        "Detail": params["description"],
+        "IpString": _address_string(params["addresses"]),
+        "Type": TYPES[params["template_type"]],
+        "IpVersion": params["ip_version"],
+    }
 
 
 def _matches(current, desired):
@@ -125,7 +132,20 @@ def wait_for_template(module, client, models, uuid, desired=None, absent=False):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"type": "str", "choices": ["present", "absent"], "default": "present"}, "uuid": {"type": "str"}, "name": {"type": "str"}, "template_type": {"type": "str", "choices": ["ip", "domain"], "default": "ip"}, "addresses": {"type": "list", "elements": "str"}, "description": {"type": "str", "default": ""}, "ip_version": {"type": "int", "choices": [0, 1], "default": 0}}, required_one_of=[("uuid", "name")], required_if=[("state", "present", ("name", "addresses"))], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "uuid": {"type": "str"},
+            "name": {"type": "str"},
+            "template_type": {"type": "str", "choices": ["ip", "domain"], "default": "ip"},
+            "addresses": {"type": "list", "elements": "str"},
+            "description": {"type": "str", "default": ""},
+            "ip_version": {"type": "int", "choices": [0, 1], "default": 0},
+        },
+        required_one_of=[("uuid", "name")],
+        required_if=[("state", "present", ("name", "addresses"))],
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load_cfw()
@@ -152,7 +172,11 @@ def run_module():
         if _matches(current, desired):
             module.exit_json(changed=False, template=current, msg="Cloud Firewall address template is up to date")
         if current.get("IpVersion") != desired["IpVersion"]:
-            module.fail_json(msg="Cloud Firewall address template ip_version cannot be changed; recreate the template", current_ip_version=current.get("IpVersion"), requested_ip_version=desired["IpVersion"])
+            module.fail_json(
+                msg="Cloud Firewall address template ip_version cannot be changed; recreate the template",
+                current_ip_version=current.get("IpVersion"),
+                requested_ip_version=desired["IpVersion"],
+            )
         diff = maybe_diff(module, current, desired)
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), template=current, msg="Would update Cloud Firewall address template")
@@ -160,7 +184,12 @@ def run_module():
         current = wait_for_template(module, client, models, current["Uuid"], desired)
         module.exit_json(changed=True, **(diff or {}), template=current, msg="Cloud Firewall address template updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

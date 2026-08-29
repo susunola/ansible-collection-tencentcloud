@@ -50,6 +50,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_vpc():
     from tencentcloud.vpc.v20170312 import models, vpc_client
+
     return models, vpc_client
 
 
@@ -81,7 +82,11 @@ def find_attachment(module, client, models, params):
         items = list(getattr(response, "InstanceSet", None) or [])
         for item in items:
             value = item._serialize(allow_none=True)
-            if value.get("InstanceId") == params["instance_id"] and value.get("InstanceRegion") == params["instance_region"] and value.get("InstanceType") == params["instance_type"]:
+            if (
+                value.get("InstanceId") == params["instance_id"]
+                and value.get("InstanceRegion") == params["instance_region"]
+                and value.get("InstanceType") == params["instance_type"]
+            ):
                 return value
         offset += len(items)
         if not items or offset >= int(getattr(response, "TotalCount", 0) or 0):
@@ -102,20 +107,31 @@ def wait_for_attachment(module, client, models, params, absent=False):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={
-        "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
-        "ccn_id": {"type": "str", "required": True}, "instance_id": {"type": "str", "required": True},
-        "instance_region": {"type": "str", "required": True},
-        "instance_type": {"type": "str", "choices": ["VPC", "VPNGW", "DIRECTCONNECT", "BMVPC"], "required": True},
-        "description": {"type": "str", "default": ""}, "route_table_id": {"type": "str"},
-    }, supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "ccn_id": {"type": "str", "required": True},
+            "instance_id": {"type": "str", "required": True},
+            "instance_region": {"type": "str", "required": True},
+            "instance_type": {"type": "str", "choices": ["VPC", "VPNGW", "DIRECTCONNECT", "BMVPC"], "required": True},
+            "description": {"type": "str", "default": ""},
+            "route_table_id": {"type": "str"},
+        },
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load_vpc()
     client = module.create_client(client_module.VpcClient, "vpc.tencentcloudapi.com")
     try:
         current = find_attachment(module, client, models, p)
-        desired = {"CcnId": p["ccn_id"], "InstanceId": p["instance_id"], "InstanceRegion": p["instance_region"], "InstanceType": p["instance_type"], "Description": p["description"]}
+        desired = {
+            "CcnId": p["ccn_id"],
+            "InstanceId": p["instance_id"],
+            "InstanceRegion": p["instance_region"],
+            "InstanceType": p["instance_type"],
+            "Description": p["description"],
+        }
         if p["state"] == "absent":
             if current is None:
                 module.exit_json(changed=False, attachment=None, msg="CCN attachment is absent")
@@ -144,7 +160,12 @@ def run_module():
         current = wait_for_attachment(module, client, models, p)
         module.exit_json(changed=True, **(diff or {}), attachment=current, msg="CCN attachment updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

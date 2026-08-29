@@ -64,6 +64,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_clb():
     from tencentcloud.clb.v20180317 import clb_client, models
+
     return models, clb_client
 
 
@@ -166,7 +167,10 @@ def find_instances(module, client, models, target_group_id):
 
 def _members(values):
     return sorted(
-        ({"ip": x.get("BindIP") or x.get("ip"), "port": x.get("Port") or x.get("port"), "weight": x.get("Weight", x.get("weight", 10))} for x in (values or [])),
+        (
+            {"ip": x.get("BindIP") or x.get("ip"), "port": x.get("Port") or x.get("port"), "weight": x.get("Weight", x.get("weight", 10))}
+            for x in (values or [])
+        ),
         key=lambda x: (x["ip"], x["port"]),
     )
 
@@ -202,16 +206,27 @@ def wait_for_group(module, client, models, target_group_id, desired=None, absent
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={
-        "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
-        "target_group_id": {"type": "str"}, "name": {"type": "str"}, "vpc_id": {"type": "str"},
-        "port": {"type": "int"}, "type": {"type": "str", "choices": ["v1", "v2"], "default": "v2"},
-        "protocol": {"type": "str", "choices": ["TCP", "UDP", "HTTP", "HTTPS", "GRPC"], "default": "TCP"},
-        "schedule_algorithm": {"type": "str", "choices": ["WRR", "LEAST_CONN", "IP_HASH"]},
-        "weight": {"type": "int"},
-        "instances": {"type": "list", "elements": "dict", "options": {"ip": {"type": "str", "required": True}, "port": {"type": "int", "required": True}, "weight": {"type": "int", "default": 10}}},
-        "tags": {"type": "dict", "default": {}},
-    }, required_one_of=[("target_group_id", "name")], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "target_group_id": {"type": "str"},
+            "name": {"type": "str"},
+            "vpc_id": {"type": "str"},
+            "port": {"type": "int"},
+            "type": {"type": "str", "choices": ["v1", "v2"], "default": "v2"},
+            "protocol": {"type": "str", "choices": ["TCP", "UDP", "HTTP", "HTTPS", "GRPC"], "default": "TCP"},
+            "schedule_algorithm": {"type": "str", "choices": ["WRR", "LEAST_CONN", "IP_HASH"]},
+            "weight": {"type": "int"},
+            "instances": {
+                "type": "list",
+                "elements": "dict",
+                "options": {"ip": {"type": "str", "required": True}, "port": {"type": "int", "required": True}, "weight": {"type": "int", "default": 10}},
+            },
+            "tags": {"type": "dict", "default": {}},
+        },
+        required_one_of=[("target_group_id", "name")],
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load_clb()
@@ -260,7 +275,12 @@ def run_module():
         current = wait_for_group(module, client, models, current["TargetGroupId"], desired)
         module.exit_json(changed=True, **(diff or {}), target_group=current, msg="Target group updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

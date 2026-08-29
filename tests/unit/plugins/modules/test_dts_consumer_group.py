@@ -1,8 +1,11 @@
 """Tests for dts_consumer_group."""
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 from ansible_collections.susunola.tencentcloud.plugins.modules import dts_consumer_group
 from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import FakeModels
-
 
 PARAMS = {"subscribe_id": "subs-x", "consumer_group_name": "analytics", "account_name": "reader", "password": "secret", "description": "analytics"}
 

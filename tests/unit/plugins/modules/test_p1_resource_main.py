@@ -1,5 +1,9 @@
 """Run-module tests for the independently managed P1 resources."""
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -124,14 +128,21 @@ def test_private_dns_record_creates(monkeypatch):
     wire_module(monkeypatch, private_dns_record, "_load_private_dns", "PrivatednsClient", client)
     monkeypatch.setattr(private_dns_record, "find_record", lambda *args: None)
     record = {
-        "RecordId": "record-1", "SubDomain": "api", "RecordType": "A",
-        "RecordValue": "10.0.0.8", "TTL": 300, "Remark": "",
+        "RecordId": "record-1",
+        "SubDomain": "api",
+        "RecordType": "A",
+        "RecordValue": "10.0.0.8",
+        "TTL": 300,
+        "Remark": "",
     }
     monkeypatch.setattr(private_dns_record, "wait_for_record", MagicMock(return_value=record))
 
     module_args(
-        zone_id="zone-1", subdomain="api", record_type="A",
-        value="10.0.0.8", state="present",
+        zone_id="zone-1",
+        subdomain="api",
+        record_type="A",
+        value="10.0.0.8",
+        state="present",
     )
     result = run(private_dns_record.run_module)
 
@@ -146,8 +157,12 @@ def test_private_dns_record_check_mode_does_not_write(monkeypatch):
     monkeypatch.setattr(private_dns_record, "find_record", lambda *args: None)
 
     module_args(
-        zone_id="zone-1", subdomain="api", record_type="A", value="10.0.0.8",
-        state="present", _ansible_check_mode=True,
+        zone_id="zone-1",
+        subdomain="api",
+        record_type="A",
+        value="10.0.0.8",
+        state="present",
+        _ansible_check_mode=True,
     )
     result = run(private_dns_record.run_module)
 

@@ -46,6 +46,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_dts():
     from tencentcloud.dts.v20211206 import dts_client, models
+
     return models, dts_client
 
 
@@ -88,7 +89,9 @@ def find_group(module, client, models, subscribe_id, consumer_group_name, accoun
         items = list(response.Items or [])
         for item in items:
             value = item._serialize(allow_none=True)
-            if _name_matches(value.get("ConsumerGroupName", ""), consumer_group_name, "consumer-grp-%s" % subscribe_id) and _name_matches(value.get("Account", ""), account_name, "account-%s" % subscribe_id):
+            if _name_matches(value.get("ConsumerGroupName", ""), consumer_group_name, "consumer-grp-%s" % subscribe_id) and _name_matches(
+                value.get("Account", ""), account_name, "account-%s" % subscribe_id
+            ):
                 matches.append(value)
         offset += len(items)
         if not items or offset >= int(response.TotalCount or 0):
@@ -117,7 +120,17 @@ def wait_for_group(module, client, models, desired=None, absent=False):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"type": "str", "choices": ["present", "absent"], "default": "present"}, "subscribe_id": {"type": "str", "required": True}, "consumer_group_name": {"type": "str", "required": True}, "account_name": {"type": "str", "required": True}, "password": {"type": "str", "no_log": True}, "description": {"type": "str", "default": ""}}, supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "subscribe_id": {"type": "str", "required": True},
+            "consumer_group_name": {"type": "str", "required": True},
+            "account_name": {"type": "str", "required": True},
+            "password": {"type": "str", "no_log": True},
+            "description": {"type": "str", "default": ""},
+        },
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load_dts()
@@ -148,11 +161,19 @@ def run_module():
         diff = maybe_diff(module, current, desired)
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), consumer_group=current, msg="Would update DTS consumer group")
-        module.sdk_call(client.ModifyConsumerGroupDescription, build_update_request(models, p["subscribe_id"], current["ConsumerGroupName"], current["Account"], p["description"]))
+        module.sdk_call(
+            client.ModifyConsumerGroupDescription,
+            build_update_request(models, p["subscribe_id"], current["ConsumerGroupName"], current["Account"], p["description"]),
+        )
         current = wait_for_group(module, client, models, desired)
         module.exit_json(changed=True, **(diff or {}), consumer_group=current, msg="DTS consumer group updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

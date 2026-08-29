@@ -44,7 +44,10 @@ import base64
 import json
 import time
 
-import yaml
+try:
+    import yaml
+except ImportError:
+    yaml = None
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -66,6 +69,15 @@ def _values_json(value):
     return json.dumps(value or {}, sort_keys=True, separators=(",", ":"))
 
 
+def _safe_load_yaml(value):
+    if yaml is None:
+        raise ValueError("PyYAML is required to parse YAML addon values (install PyYAML)")
+    try:
+        return yaml.safe_load(value)
+    except yaml.YAMLError as exc:
+        raise ValueError("Invalid YAML addon values: %s" % exc)
+
+
 def load_values(params):
     value = params.get("values")
     if params.get("values_file"):
@@ -77,11 +89,11 @@ def load_values(params):
     if value_format == "json":
         return json.loads(value)
     if value_format == "yaml":
-        return yaml.safe_load(value)
+        return _safe_load_yaml(value)
     try:
         return json.loads(value)
     except ValueError:
-        return yaml.safe_load(value)
+        return _safe_load_yaml(value)
 
 
 def _raw(value):
@@ -190,7 +202,7 @@ def run_module():
     p = module.params
     try:
         p["values"] = load_values(p)
-    except (OSError, ValueError, yaml.YAMLError) as exc:
+    except (OSError, ValueError) as exc:
         module.fail_json(msg="Unable to load addon values", error=str(exc))
     module.require_sdk()
     models, tke_client = _load_tke()
@@ -228,19 +240,14 @@ def run_module():
             current = wait_for_addon(module, client, models, p["cluster_id"], p["name"])
             module.exit_json(changed=True, **(diff or {}), addon=_safe(current), msg="TKE addon installed")
         version_drift = p["version"] is not None and current.get("AddonVersion") != p["version"]
-        values_drift = (
-            p["values"] is not None
-            and _canonical_raw(current.get("RawValues")) != _values_json(p["values"])
-        )
+        values_drift = p["values"] is not None and _canonical_raw(current.get("RawValues")) != _values_json(p["values"])
         current_version = _version_tuple(current.get("AddonVersion"))
         desired_version = _version_tuple(p["version"])
-        if (
-            version_drift and not p["allow_downgrade"]
-            and current_version and desired_version and desired_version < current_version
-        ):
+        if version_drift and not p["allow_downgrade"] and current_version and desired_version and desired_version < current_version:
             module.fail_json(
                 msg="Addon version downgrade is blocked; set allow_downgrade=true to continue",
-                current_version=current.get("AddonVersion"), desired_version=p["version"],
+                current_version=current.get("AddonVersion"),
+                desired_version=p["version"],
             )
         if not version_drift and not values_drift:
             module.exit_json(changed=False, addon=_safe(current), msg="TKE addon is up to date")

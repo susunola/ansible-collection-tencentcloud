@@ -19,7 +19,7 @@ options:
   name: {description: ACL name., type: str}
   vpc_id: {description: Parent VPC ID., type: str}
   acl_type: {description: ACL type applied at creation., type: str}
-  ingress: &rules
+  ingress:
     description: Exact ingress rule set.
     type: list
     elements: dict
@@ -32,8 +32,17 @@ options:
       description: {description: Rule description., type: str, default: ''}
       priority: {description: Rule priority starting at one., type: int, required: true}
   egress:
-    <<: *rules
     description: Exact egress rule set.
+    type: list
+    elements: dict
+    suboptions:
+      protocol: {description: Network protocol., type: str, choices: [TCP, UDP, ICMP, ALL], default: ALL}
+      port: {description: Port or range such as C(443) or C(8000-9000)., type: str}
+      cidr: {description: IPv4 CIDR., type: str}
+      ipv6_cidr: {description: IPv6 CIDR., type: str}
+      action: {description: Rule action., type: str, choices: [ACCEPT, DROP], required: true}
+      description: {description: Rule description., type: str, default: ''}
+      priority: {description: Rule priority starting at one., type: int, required: true}
   subnet_ids: {description: Exact set of associated subnet IDs., type: list, elements: str}
   tags: {description: Tags applied at creation., type: dict, default: {}}
   retries: {description: Number of retries for transient failures., type: int, default: 5}
@@ -65,6 +74,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_vpc():
     from tencentcloud.vpc.v20170312 import models, vpc_client
+
     return models, vpc_client
 
 
@@ -148,15 +158,17 @@ def find_acl(module, client, models, acl_id, name, vpc_id):
 def _rules(values):
     result = []
     for value in values or []:
-        result.append({
-            "protocol": value.get("Protocol") or value.get("protocol", "ALL"),
-            "port": value.get("Port") or value.get("port"),
-            "cidr": value.get("CidrBlock") or value.get("cidr"),
-            "ipv6_cidr": value.get("Ipv6CidrBlock") or value.get("ipv6_cidr"),
-            "action": value.get("Action") or value.get("action"),
-            "description": value.get("Description") or value.get("description", ""),
-            "priority": value.get("Priority") or value.get("priority"),
-        })
+        result.append(
+            {
+                "protocol": value.get("Protocol") or value.get("protocol", "ALL"),
+                "port": value.get("Port") or value.get("port"),
+                "cidr": value.get("CidrBlock") or value.get("cidr"),
+                "ipv6_cidr": value.get("Ipv6CidrBlock") or value.get("ipv6_cidr"),
+                "action": value.get("Action") or value.get("action"),
+                "description": value.get("Description") or value.get("description", ""),
+                "priority": value.get("Priority") or value.get("priority"),
+            }
+        )
     return sorted(result, key=lambda x: x["priority"])
 
 
@@ -165,13 +177,33 @@ def _subnets(values):
 
 
 def run_module():
-    rule = {"type": "dict", "options": {"protocol": {"type": "str", "choices": ["TCP", "UDP", "ICMP", "ALL"], "default": "ALL"}, "port": {"type": "str"}, "cidr": {"type": "str"}, "ipv6_cidr": {"type": "str"}, "action": {"type": "str", "choices": ["ACCEPT", "DROP"], "required": True}, "description": {"type": "str", "default": ""}, "priority": {"type": "int", "required": True}}}
-    module = TencentCloudModule(argument_spec={
-        "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
-        "network_acl_id": {"type": "str"}, "name": {"type": "str"}, "vpc_id": {"type": "str"}, "acl_type": {"type": "str"},
-        "ingress": dict(rule, type="list", elements="dict"), "egress": dict(rule, type="list", elements="dict"),
-        "subnet_ids": {"type": "list", "elements": "str"}, "tags": {"type": "dict", "default": {}},
-    }, required_one_of=[("network_acl_id", "name")], supports_check_mode=True)
+    rule = {
+        "type": "dict",
+        "options": {
+            "protocol": {"type": "str", "choices": ["TCP", "UDP", "ICMP", "ALL"], "default": "ALL"},
+            "port": {"type": "str"},
+            "cidr": {"type": "str"},
+            "ipv6_cidr": {"type": "str"},
+            "action": {"type": "str", "choices": ["ACCEPT", "DROP"], "required": True},
+            "description": {"type": "str", "default": ""},
+            "priority": {"type": "int", "required": True},
+        },
+    }
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "network_acl_id": {"type": "str"},
+            "name": {"type": "str"},
+            "vpc_id": {"type": "str"},
+            "acl_type": {"type": "str"},
+            "ingress": dict(rule, type="list", elements="dict"),
+            "egress": dict(rule, type="list", elements="dict"),
+            "subnet_ids": {"type": "list", "elements": "str"},
+            "tags": {"type": "dict", "default": {}},
+        },
+        required_one_of=[("network_acl_id", "name")],
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load_vpc()
@@ -225,7 +257,12 @@ def run_module():
         updated = find_acl(module, client, models, acl_id, None, None)
         module.exit_json(changed=True, **(diff or {}), network_acl=updated, msg="Network ACL reconciled")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

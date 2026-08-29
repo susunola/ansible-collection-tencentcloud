@@ -1,8 +1,11 @@
 """Tests for organization_node."""
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 from ansible_collections.susunola.tencentcloud.plugins.modules import organization_node
 from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import FakeModels
-
 
 PARAMS = {"parent_node_id": 1001, "name": "Production", "remark": "Production units", "tags": {"env": "prod"}}
 

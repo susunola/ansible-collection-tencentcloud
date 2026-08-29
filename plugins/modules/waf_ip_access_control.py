@@ -50,6 +50,7 @@ ACTION = {"allow": 40, "block": 42}
 
 def _load_waf():
     from tencentcloud.waf.v20180125 import models, waf_client
+
     return models, waf_client
 
 
@@ -97,7 +98,11 @@ def find_rule(module, client, models, params):
         value = item._serialize(allow_none=True)
         if params.get("rule_id") is not None and int(value.get("RuleId") or value.get("Id") or 0) == params["rule_id"]:
             return value
-        if params.get("rule_id") is None and sorted(value.get("IpList") or []) == sorted(params.get("ip_list") or []) and (value.get("Note") or "") == params["note"]:
+        if (
+            params.get("rule_id") is None
+            and sorted(value.get("IpList") or []) == sorted(params.get("ip_list") or [])
+            and (value.get("Note") or "") == params["note"]
+        ):
             return value
     return None
 
@@ -107,7 +112,12 @@ def _desired(params):
 
 
 def _matches(current, desired):
-    return current.get("ActionType") == desired["ActionType"] and sorted(current.get("IpList") or []) == desired["IpList"] and (current.get("Note") or "") == desired["Note"] and int(current.get("ValidTs") or 0) == desired["ValidTs"]
+    return (
+        current.get("ActionType") == desired["ActionType"]
+        and sorted(current.get("IpList") or []) == desired["IpList"]
+        and (current.get("Note") or "") == desired["Note"]
+        and int(current.get("ValidTs") or 0) == desired["ValidTs"]
+    )
 
 
 def wait_for_rule(module, client, models, params, desired=None, absent=False):
@@ -124,7 +134,21 @@ def wait_for_rule(module, client, models, params, desired=None, absent=False):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"type": "str", "choices": ["present", "absent"], "default": "present"}, "rule_id": {"type": "int"}, "domain": {"type": "str", "required": True}, "action": {"type": "str", "choices": ["allow", "block"], "required": True}, "ip_list": {"type": "list", "elements": "str"}, "note": {"type": "str", "default": ""}, "valid_until": {"type": "int", "default": 0}, "instance_id": {"type": "str"}, "edition": {"type": "str"}}, required_if=[("state", "present", ["ip_list"])], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "rule_id": {"type": "int"},
+            "domain": {"type": "str", "required": True},
+            "action": {"type": "str", "choices": ["allow", "block"], "required": True},
+            "ip_list": {"type": "list", "elements": "str"},
+            "note": {"type": "str", "default": ""},
+            "valid_until": {"type": "int", "default": 0},
+            "instance_id": {"type": "str"},
+            "edition": {"type": "str"},
+        },
+        required_if=[("state", "present", ["ip_list"])],
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load_waf()
@@ -161,7 +185,12 @@ def run_module():
         current = wait_for_rule(module, client, models, p, desired)
         module.exit_json(changed=True, **(diff or {}), rule=current, msg="WAF IP rule updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

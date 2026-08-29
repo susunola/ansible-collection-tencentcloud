@@ -16,7 +16,13 @@ options:
   zone_id: {description: Existing private zone ID., type: str}
   domain: {description: Private zone domain used to find or create the zone., type: str}
   remark: {description: Zone remark., type: str, default: ''}
-  vpcs: {description: Exact associated VPC list with C(region) and C(vpc_id)., type: list, elements: dict, suboptions: {region: {description: Tencent Cloud region containing the VPC., type: str, required: true}, vpc_id: {description: VPC ID to associate with the zone., type: str, required: true}}}
+  vpcs:
+    description: Exact associated VPC list with C(region) and C(vpc_id).
+    type: list
+    elements: dict
+    suboptions:
+      region: {description: Tencent Cloud region containing the VPC., type: str, required: true}
+      vpc_id: {description: VPC ID to associate with the zone., type: str, required: true}
   tags: {description: Tags applied when creating the zone., type: dict}
   retries: {description: Number of retries for transient SDK failures., type: int, default: 5}
   waiter_delay: {description: Seconds between state-polling attempts., type: int, default: 5}
@@ -122,7 +128,8 @@ def wait_for_zone(module, client, models, zone_id, desired=None, absent=False):
         if time.time() >= deadline:
             module.fail_json(
                 msg="Timed out waiting for Private DNS zone convergence",
-                zone=current, expected="absent" if absent else desired,
+                zone=current,
+                expected="absent" if absent else desired,
             )
         time.sleep(module.params["waiter_delay"])
 

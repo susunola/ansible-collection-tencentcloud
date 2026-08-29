@@ -162,6 +162,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_ckafka():
     from tencentcloud.ckafka.v20190819 import models, ckafka_client
+
     return models, ckafka_client
 
 
@@ -177,7 +178,7 @@ def find_topic(module, client, models, instance_id, topic_name):
     request.Offset = 0
     request.SearchWord = topic_name
     response = module.sdk_call(client.DescribeTopic, request)
-    for item in (response.Result or []):
+    for item in response.Result or []:
         if getattr(item, "TopicName", None) == topic_name:
             current = item._serialize(allow_none=True)
             detail = models.DescribeTopicAttributesRequest()
@@ -214,25 +215,20 @@ def _create(module, client, models, params):
     return module.sdk_call(client.CreateTopic, request)
 
 
-def _validate_partition_scale(module, topic_name, current_partition_num,
-                              desired_partition_num):
+def _validate_partition_scale(module, topic_name, current_partition_num, desired_partition_num):
     """Fail when a partition change would require shrinking the topic.
 
     CKafka partitions can only be added, never removed.
     """
     if desired_partition_num < current_partition_num:
         module.fail_json(
-            msg="CKafka cannot reduce partitions: topic %s currently has %d, "
-                "requested %d" % (topic_name, current_partition_num,
-                                  desired_partition_num),
+            msg="CKafka cannot reduce partitions: topic %s currently has %d, requested %d" % (topic_name, current_partition_num, desired_partition_num),
         )
 
 
-def _scale_partitions(module, client, models, instance_id, topic_name,
-                      current_partition_num, desired_partition_num):
+def _scale_partitions(module, client, models, instance_id, topic_name, current_partition_num, desired_partition_num):
     """Scale a topic up to *desired_partition_num* via CreatePartition."""
-    _validate_partition_scale(module, topic_name, current_partition_num,
-                              desired_partition_num)
+    _validate_partition_scale(module, topic_name, current_partition_num, desired_partition_num)
     if desired_partition_num == current_partition_num:
         return
     request = models.CreatePartitionRequest()
@@ -366,7 +362,12 @@ def run_module():
     max_message_bytes = module.params["max_message_bytes"]
     if max_message_bytes is not None and current.get("MaxMessageBytes") != max_message_bytes:
         changes.append("max_message_bytes")
-    for parameter, field in (("min_insync_replicas", "MinInsyncReplicas"), ("producer_quota_mb", "QuotaProducerByteRate"), ("consumer_quota_mb", "QuotaConsumerByteRate"), ("message_timestamp_type", "LogMsgTimestampType")):
+    for parameter, field in (
+        ("min_insync_replicas", "MinInsyncReplicas"),
+        ("producer_quota_mb", "QuotaProducerByteRate"),
+        ("consumer_quota_mb", "QuotaConsumerByteRate"),
+        ("message_timestamp_type", "LogMsgTimestampType"),
+    ):
         value = module.params[parameter]
         if value is not None and current.get(field) != value:
             changes.append(parameter)
@@ -377,22 +378,23 @@ def run_module():
     if not changes:
         module.exit_json(changed=False, topic=current, msg="Topic is up to date")
 
-    diff = maybe_diff(module, current, {
-        "PartitionNum": partition_num if partition_num is not None else current.get("PartitionNum"),
-        "ReplicaNum": replica_num if replica_num is not None else current.get("ReplicaNum"),
-        "Note": note if note is not None else current.get("Note"),
-    })
+    diff = maybe_diff(
+        module,
+        current,
+        {
+            "PartitionNum": partition_num if partition_num is not None else current.get("PartitionNum"),
+            "ReplicaNum": replica_num if replica_num is not None else current.get("ReplicaNum"),
+            "Note": note if note is not None else current.get("Note"),
+        },
+    )
     if partition_num is not None and partition_num != current.get("PartitionNum"):
-        _validate_partition_scale(module, topic_name, current.get("PartitionNum"),
-                                  partition_num)
+        _validate_partition_scale(module, topic_name, current.get("PartitionNum"), partition_num)
     if module.check_mode:
         module.exit_json(changed=True, **(diff or {}), msg="Would update topic")
 
     if partition_num is not None and partition_num != current.get("PartitionNum"):
-        _scale_partitions(module, client, models, instance_id, topic_name,
-                          current.get("PartitionNum"), partition_num)
-    _update(module, client, models, instance_id, topic_name,
-            current.get("PartitionNum"), module.params)
+        _scale_partitions(module, client, models, instance_id, topic_name, current.get("PartitionNum"), partition_num)
+    _update(module, client, models, instance_id, topic_name, current.get("PartitionNum"), module.params)
     updated = find_topic(module, client, models, instance_id, topic_name)
     module.exit_json(changed=True, **(diff or {}), topic=updated, msg="Topic updated")
 

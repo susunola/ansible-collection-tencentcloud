@@ -58,6 +58,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_autoscaling():
     from tencentcloud.autoscaling.v20180419 import autoscaling_client, models
+
     return models, autoscaling_client
 
 
@@ -109,7 +110,9 @@ def find_group(module, client, models, scaling_group_id=None, name=None):
         items = list(response.AutoScalingGroupSet or [])
         for item in items:
             value = item._serialize(allow_none=True)
-            if (scaling_group_id and value.get("AutoScalingGroupId") == scaling_group_id) or (not scaling_group_id and value.get("AutoScalingGroupName") == name):
+            if (scaling_group_id and value.get("AutoScalingGroupId") == scaling_group_id) or (
+                not scaling_group_id and value.get("AutoScalingGroupName") == name
+            ):
                 matches.append(value)
         offset += len(items)
         if scaling_group_id or not items or offset >= int(response.TotalCount or 0):
@@ -120,7 +123,22 @@ def find_group(module, client, models, scaling_group_id=None, name=None):
 
 
 def _desired(params):
-    return {"AutoScalingGroupName": params["name"], "LaunchConfigurationId": params["launch_configuration_id"], "VpcId": params["vpc_id"], "SubnetIdSet": params["subnet_ids"], "MinSize": params["min_size"], "MaxSize": params["max_size"], "DesiredCapacity": params["desired_capacity"], "DefaultCooldown": params["default_cooldown"], "TerminationPolicySet": [params["termination_policy"]], "RetryPolicy": params["retry_policy"], "MultiZoneSubnetPolicy": params["subnet_policy"], "HealthCheckType": params["health_check_type"], "CapacityRebalance": params["capacity_rebalance"], "ProjectId": params["project_id"]}
+    return {
+        "AutoScalingGroupName": params["name"],
+        "LaunchConfigurationId": params["launch_configuration_id"],
+        "VpcId": params["vpc_id"],
+        "SubnetIdSet": params["subnet_ids"],
+        "MinSize": params["min_size"],
+        "MaxSize": params["max_size"],
+        "DesiredCapacity": params["desired_capacity"],
+        "DefaultCooldown": params["default_cooldown"],
+        "TerminationPolicySet": [params["termination_policy"]],
+        "RetryPolicy": params["retry_policy"],
+        "MultiZoneSubnetPolicy": params["subnet_policy"],
+        "HealthCheckType": params["health_check_type"],
+        "CapacityRebalance": params["capacity_rebalance"],
+        "ProjectId": params["project_id"],
+    }
 
 
 def _matches(current, desired):
@@ -141,7 +159,29 @@ def wait_for_group(module, client, models, scaling_group_id, desired=None, absen
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"type": "str", "choices": ["present", "absent"], "default": "present"}, "scaling_group_id": {"type": "str"}, "name": {"type": "str"}, "launch_configuration_id": {"type": "str"}, "vpc_id": {"type": "str"}, "subnet_ids": {"type": "list", "elements": "str"}, "min_size": {"type": "int", "default": 0}, "max_size": {"type": "int", "default": 0}, "desired_capacity": {"type": "int", "default": 0}, "default_cooldown": {"type": "int", "default": 300}, "termination_policy": {"type": "str", "choices": ["OLDEST_INSTANCE", "NEWEST_INSTANCE"], "default": "OLDEST_INSTANCE"}, "retry_policy": {"type": "str", "choices": ["IMMEDIATE_RETRY", "INCREMENTAL_INTERVALS", "NO_RETRY"], "default": "IMMEDIATE_RETRY"}, "subnet_policy": {"type": "str", "choices": ["PRIORITY", "EQUALITY"], "default": "PRIORITY"}, "health_check_type": {"type": "str", "choices": ["CVM", "CLB"], "default": "CVM"}, "capacity_rebalance": {"type": "bool", "default": False}, "project_id": {"type": "int", "default": 0}}, required_one_of=[("scaling_group_id", "name")], required_if=[("state", "present", ("name", "launch_configuration_id", "vpc_id", "subnet_ids"))], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "scaling_group_id": {"type": "str"},
+            "name": {"type": "str"},
+            "launch_configuration_id": {"type": "str"},
+            "vpc_id": {"type": "str"},
+            "subnet_ids": {"type": "list", "elements": "str"},
+            "min_size": {"type": "int", "default": 0},
+            "max_size": {"type": "int", "default": 0},
+            "desired_capacity": {"type": "int", "default": 0},
+            "default_cooldown": {"type": "int", "default": 300},
+            "termination_policy": {"type": "str", "choices": ["OLDEST_INSTANCE", "NEWEST_INSTANCE"], "default": "OLDEST_INSTANCE"},
+            "retry_policy": {"type": "str", "choices": ["IMMEDIATE_RETRY", "INCREMENTAL_INTERVALS", "NO_RETRY"], "default": "IMMEDIATE_RETRY"},
+            "subnet_policy": {"type": "str", "choices": ["PRIORITY", "EQUALITY"], "default": "PRIORITY"},
+            "health_check_type": {"type": "str", "choices": ["CVM", "CLB"], "default": "CVM"},
+            "capacity_rebalance": {"type": "bool", "default": False},
+            "project_id": {"type": "int", "default": 0},
+        },
+        required_one_of=[("scaling_group_id", "name")],
+        required_if=[("state", "present", ("name", "launch_configuration_id", "vpc_id", "subnet_ids"))],
+        supports_check_mode=True,
+    )
     p = module.params
     if not 0 <= p["min_size"] <= p["desired_capacity"] <= p["max_size"] <= 2000:
         module.fail_json(msg="capacity must satisfy 0 <= min_size <= desired_capacity <= max_size <= 2000")
@@ -176,7 +216,12 @@ def run_module():
         current = wait_for_group(module, client, models, current["AutoScalingGroupId"], desired)
         module.exit_json(changed=True, **(diff or {}), scaling_group=current, msg="Auto Scaling group updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

@@ -57,6 +57,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_cloudaudit():
     from tencentcloud.cloudaudit.v20190319 import cloudaudit_client, models
+
     return models, cloudaudit_client
 
 
@@ -132,12 +133,26 @@ def find_track(module, client, models, track_id=None, name=None):
 
 
 def _desired(params):
-    storage = {"StorageType": params["storage_type"], "StorageRegion": params["storage_region"], "StorageName": params["storage_name"], "StoragePrefix": params["storage_prefix"], "Compress": 1 if params["compress"] else 2}
+    storage = {
+        "StorageType": params["storage_type"],
+        "StorageRegion": params["storage_region"],
+        "StorageName": params["storage_name"],
+        "StoragePrefix": params["storage_prefix"],
+        "Compress": 1 if params["compress"] else 2,
+    }
     if params.get("storage_account_id"):
         storage["StorageAccountId"] = params["storage_account_id"]
     if params.get("storage_app_id"):
         storage["StorageAppId"] = params["storage_app_id"]
-    return {"Name": params["name"], "Status": int(params["enabled"]), "ActionType": params["action_type"], "ResourceType": params["resource_type"], "EventNames": sorted(set(params["event_names"])), "TrackForAllMembers": int(params["track_all_members"]), "Storage": storage}
+    return {
+        "Name": params["name"],
+        "Status": int(params["enabled"]),
+        "ActionType": params["action_type"],
+        "ResourceType": params["resource_type"],
+        "EventNames": sorted(set(params["event_names"])),
+        "TrackForAllMembers": int(params["track_all_members"]),
+        "Storage": storage,
+    }
 
 
 def _matches(current, desired):
@@ -166,7 +181,28 @@ def wait_for_track(module, client, models, track_id, desired=None, absent=False)
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"type": "str", "choices": ["present", "absent"], "default": "present"}, "track_id": {"type": "int"}, "name": {"type": "str"}, "enabled": {"type": "bool", "default": True}, "action_type": {"type": "str", "choices": ["*", "Read", "Write"], "default": "*"}, "resource_type": {"type": "str", "default": "*"}, "event_names": {"type": "list", "elements": "str", "default": ["*"]}, "track_all_members": {"type": "bool", "default": False}, "storage_type": {"type": "str", "choices": ["cos", "cls", "ckafka"]}, "storage_region": {"type": "str"}, "storage_name": {"type": "str"}, "storage_prefix": {"type": "str", "default": ""}, "storage_account_id": {"type": "str"}, "storage_app_id": {"type": "str"}, "compress": {"type": "bool", "default": True}}, required_one_of=[("track_id", "name")], required_if=[("state", "present", ("name", "storage_type", "storage_region", "storage_name"))], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "track_id": {"type": "int"},
+            "name": {"type": "str"},
+            "enabled": {"type": "bool", "default": True},
+            "action_type": {"type": "str", "choices": ["*", "Read", "Write"], "default": "*"},
+            "resource_type": {"type": "str", "default": "*"},
+            "event_names": {"type": "list", "elements": "str", "default": ["*"]},
+            "track_all_members": {"type": "bool", "default": False},
+            "storage_type": {"type": "str", "choices": ["cos", "cls", "ckafka"]},
+            "storage_region": {"type": "str"},
+            "storage_name": {"type": "str"},
+            "storage_prefix": {"type": "str", "default": ""},
+            "storage_account_id": {"type": "str"},
+            "storage_app_id": {"type": "str"},
+            "compress": {"type": "bool", "default": True},
+        },
+        required_one_of=[("track_id", "name")],
+        required_if=[("state", "present", ("name", "storage_type", "storage_region", "storage_name"))],
+        supports_check_mode=True,
+    )
     p = module.params
     if p["resource_type"] == "*" and p["event_names"] != ["*"]:
         module.fail_json(msg="event_names must be ['*'] when resource_type is '*'")
@@ -201,7 +237,12 @@ def run_module():
         current = wait_for_track(module, client, models, current["TrackId"], desired)
         module.exit_json(changed=True, **(diff or {}), track=current, msg="CloudAudit track updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

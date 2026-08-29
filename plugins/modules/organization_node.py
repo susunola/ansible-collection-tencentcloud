@@ -46,6 +46,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_organization():
     from tencentcloud.organization.v20210331 import models, organization_client
+
     return models, organization_client
 
 
@@ -105,7 +106,12 @@ def _tags(values):
 
 
 def _desired(params):
-    return {"ParentNodeId": params["parent_node_id"], "Name": params["name"], "Remark": params["remark"], "Tags": {str(k): str(v) for k, v in params["tags"].items()}}
+    return {
+        "ParentNodeId": params["parent_node_id"],
+        "Name": params["name"],
+        "Remark": params["remark"],
+        "Tags": {str(k): str(v) for k, v in params["tags"].items()},
+    }
 
 
 def _matches(current, desired):
@@ -126,7 +132,19 @@ def wait_for_node(module, client, models, node_id, desired=None, absent=False):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"type": "str", "choices": ["present", "absent"], "default": "present"}, "node_id": {"type": "int"}, "parent_node_id": {"type": "int"}, "name": {"type": "str"}, "remark": {"type": "str", "default": ""}, "tags": {"type": "dict", "default": {}}}, required_one_of=[("node_id", "name")], required_if=[("state", "present", ("parent_node_id", "name"))], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "node_id": {"type": "int"},
+            "parent_node_id": {"type": "int"},
+            "name": {"type": "str"},
+            "remark": {"type": "str", "default": ""},
+            "tags": {"type": "dict", "default": {}},
+        },
+        required_one_of=[("node_id", "name")],
+        required_if=[("state", "present", ("parent_node_id", "name"))],
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load_organization()
@@ -151,9 +169,17 @@ def run_module():
             current = wait_for_node(module, client, models, response.NodeId, desired)
             module.exit_json(changed=True, **(diff or {}), node=current, msg="Organization node created")
         if current.get("ParentNodeId") != desired["ParentNodeId"]:
-            module.fail_json(msg="Organization node parent cannot be changed; recreate the node", current_parent_node_id=current.get("ParentNodeId"), requested_parent_node_id=desired["ParentNodeId"])
+            module.fail_json(
+                msg="Organization node parent cannot be changed; recreate the node",
+                current_parent_node_id=current.get("ParentNodeId"),
+                requested_parent_node_id=desired["ParentNodeId"],
+            )
         if _tags(current.get("Tags")) != desired["Tags"]:
-            module.fail_json(msg="Organization node tags cannot be changed by the Organization API; recreate the node", current_tags=_tags(current.get("Tags")), requested_tags=desired["Tags"])
+            module.fail_json(
+                msg="Organization node tags cannot be changed by the Organization API; recreate the node",
+                current_tags=_tags(current.get("Tags")),
+                requested_tags=desired["Tags"],
+            )
         if _matches(current, desired):
             module.exit_json(changed=False, node=current, msg="Organization node is up to date")
         diff = maybe_diff(module, current, desired)
@@ -163,7 +189,12 @@ def run_module():
         current = wait_for_node(module, client, models, current["NodeId"], desired)
         module.exit_json(changed=True, **(diff or {}), node=current, msg="Organization node updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():

@@ -61,6 +61,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_config():
     from tencentcloud.config.v20220802 import config_client, models
+
     return models, config_client
 
 
@@ -158,14 +159,29 @@ def find_rule(module, client, models, rule_id=None, name=None):
 
 
 def _canon_triggers(values):
-    return sorted(({"MessageType": x.get("MessageType"), "MaximumExecutionFrequency": x.get("MaximumExecutionFrequency")} for x in (values or [])), key=lambda x: (x["MessageType"] or "", x["MaximumExecutionFrequency"] or ""))
+    return sorted(
+        ({"MessageType": x.get("MessageType"), "MaximumExecutionFrequency": x.get("MaximumExecutionFrequency")} for x in (values or [])),
+        key=lambda x: (x["MessageType"] or "", x["MaximumExecutionFrequency"] or ""),
+    )
 
 
 def _desired(params):
     triggers = [{"MessageType": x["message_type"], "MaximumExecutionFrequency": x.get("maximum_execution_frequency")} for x in params["triggers"]]
     inputs = [{"ParameterKey": str(k), "Type": "Optional", "Value": str(v)} for k, v in sorted(params["input_parameters"].items())]
     tags = [{"TagKey": str(k), "TagValue": str(v)} for k, v in sorted(params["tags"].items())]
-    return {"Identifier": params["identifier"], "IdentifierType": params["identifier_type"], "RuleName": params["name"], "ResourceType": sorted(set(params["resource_types"])), "TriggerType": _canon_triggers(triggers), "RiskLevel": params["risk_level"], "InputParameter": inputs, "Description": params["description"], "RegionsScope": sorted(set(params["regions"])), "TagsScope": tags, "ExcludeResourceIdsScope": sorted(set(params["excluded_resource_ids"]))}
+    return {
+        "Identifier": params["identifier"],
+        "IdentifierType": params["identifier_type"],
+        "RuleName": params["name"],
+        "ResourceType": sorted(set(params["resource_types"])),
+        "TriggerType": _canon_triggers(triggers),
+        "RiskLevel": params["risk_level"],
+        "InputParameter": inputs,
+        "Description": params["description"],
+        "RegionsScope": sorted(set(params["regions"])),
+        "TagsScope": tags,
+        "ExcludeResourceIdsScope": sorted(set(params["excluded_resource_ids"])),
+    }
 
 
 def _matches(current, desired):
@@ -198,7 +214,34 @@ def wait_for_rule(module, client, models, rule_id, desired=None, absent=False):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"type": "str", "choices": ["present", "absent"], "default": "present"}, "rule_id": {"type": "str"}, "name": {"type": "str"}, "identifier": {"type": "str"}, "identifier_type": {"type": "str", "choices": ["SYSTEM", "CUSTOMIZE"], "default": "SYSTEM"}, "resource_types": {"type": "list", "elements": "str"}, "triggers": {"type": "list", "elements": "dict", "default": [{"message_type": "ConfigurationItemChangeNotification"}], "options": {"message_type": {"type": "str", "choices": ["ScheduledNotification", "ConfigurationItemChangeNotification"], "required": True}, "maximum_execution_frequency": {"type": "str"}}}, "risk_level": {"type": "int", "choices": [1, 2, 3], "default": 2}, "input_parameters": {"type": "dict", "default": {}}, "description": {"type": "str", "default": ""}, "regions": {"type": "list", "elements": "str", "default": []}, "tags": {"type": "dict", "default": {}}, "excluded_resource_ids": {"type": "list", "elements": "str", "default": []}}, required_one_of=[("rule_id", "name")], required_if=[("state", "present", ("name", "identifier", "resource_types"))], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "rule_id": {"type": "str"},
+            "name": {"type": "str"},
+            "identifier": {"type": "str"},
+            "identifier_type": {"type": "str", "choices": ["SYSTEM", "CUSTOMIZE"], "default": "SYSTEM"},
+            "resource_types": {"type": "list", "elements": "str"},
+            "triggers": {
+                "type": "list",
+                "elements": "dict",
+                "default": [{"message_type": "ConfigurationItemChangeNotification"}],
+                "options": {
+                    "message_type": {"type": "str", "choices": ["ScheduledNotification", "ConfigurationItemChangeNotification"], "required": True},
+                    "maximum_execution_frequency": {"type": "str"},
+                },
+            },
+            "risk_level": {"type": "int", "choices": [1, 2, 3], "default": 2},
+            "input_parameters": {"type": "dict", "default": {}},
+            "description": {"type": "str", "default": ""},
+            "regions": {"type": "list", "elements": "str", "default": []},
+            "tags": {"type": "dict", "default": {}},
+            "excluded_resource_ids": {"type": "list", "elements": "str", "default": []},
+        },
+        required_one_of=[("rule_id", "name")],
+        required_if=[("state", "present", ("name", "identifier", "resource_types"))],
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load_config()
@@ -234,7 +277,12 @@ def run_module():
         current = wait_for_rule(module, client, models, current["ConfigRuleId"], desired)
         module.exit_json(changed=True, **(diff or {}), rule=current, msg="Config rule updated")
     except Exception as exc:
-        module.fail_json(msg="Tencent Cloud API request failed", error=str(exc), error_code=getattr(exc, "get_code", lambda: None)(), request_id=getattr(exc, "get_request_id", lambda: None)())
+        module.fail_json(
+            msg="Tencent Cloud API request failed",
+            error=str(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )
 
 
 def main():
