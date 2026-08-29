@@ -86,6 +86,7 @@ action_groups:
     - cls_topic
     - cls_topic_info
     - cme_platform_info
+    - cmq_queue
     - cmq_queue_info
     - cms_lib_sample_info
     - cngw_cloud_native_api_gateway_llm_model_api_info
@@ -111,6 +112,7 @@ action_groups:
     - dataagent_chunk_info
     - dayu_resource_info
     - dbbrain_db_diag_event_info
+    - dbbrain_sql_filter
     - dbdc_db_custom_cluster_info
     - dbs_backup_plan_info
     - dc_direct_connect_tunnel_info
@@ -244,6 +246,7 @@ action_groups:
     - tcr_instance
     - tcr_instance_info
     - tcr_namespace
+    - tcr_replication_instance
     - tcr_repository
     - tcss_abnormal_process_event_info
     - tdai_agent_duty_task_info

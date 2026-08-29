@@ -1,0 +1,4 @@
+minor_changes:
+  - Add ``dbbrain_sql_filter`` for DBbrain SQL concurrency filter lifecycle management.
+  - Add ``cmq_queue`` for idempotent CMQ queue lifecycle and delivery settings.
+  - Add ``tcr_replication_instance`` for TCR cross-region replication instance lifecycle management.

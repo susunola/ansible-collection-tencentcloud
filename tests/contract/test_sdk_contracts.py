@@ -525,6 +525,9 @@ WRITE_MODULE_BUILDERS = {
     "tat_command": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "as_scaling_group": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "dts_consumer_group": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
+    "dbbrain_sql_filter": ["build_create_request", "build_delete_request", "build_describe_request"],
+    "cmq_queue": ["build_describe_request"],
+    "tcr_replication_instance": ["build_create_request", "build_delete_request", "build_describe_request"],
 }
 
 
@@ -2284,6 +2287,27 @@ def test_dts_consumer_group():
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "DTS consumer group request %s" % index))
     assert errors == []
+
+
+def test_dbbrain_sql_filter():
+    module = _import_plugin("dbbrain_sql_filter")
+    models = _models("dbbrain.v20210527")
+    params = {"instance_id": "cdb-x", "sql_type": "SELECT", "filter_key": "select,user", "max_concurrency": 2, "duration": -1, "session_token": "token", "product": "mysql"}
+    requests = [module.build_describe_request(models, params), module.build_create_request(models, params), module.build_delete_request(models, params, [1])]
+    assert [error for index, request in enumerate(requests) for error in audit_request(request, "DBbrain SQL filter request %s" % index)] == []
+
+
+def test_cmq_queue():
+    module = _import_plugin("cmq_queue")
+    assert audit_request(module.build_describe_request(_models("cmq.v20190304"), "jobs"), "CMQ queue describe") == []
+
+
+def test_tcr_replication_instance():
+    module = _import_plugin("tcr_replication_instance")
+    models = _models("tcr.v20190924")
+    params = {"registry_id": "tcr-x", "replication_region_id": 1, "replication_region_name": "ap-shanghai", "sync_tag": False}
+    requests = [module.build_describe_request(models, "tcr-x"), module.build_create_request(models, params), module.build_delete_request(models, "tcr-x", "tcr-y", 1)]
+    assert [error for index, request in enumerate(requests) for error in audit_request(request, "TCR replication request %s" % index)] == []
 
 
 def test_cvm_chc():

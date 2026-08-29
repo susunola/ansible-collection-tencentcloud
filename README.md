@@ -37,6 +37,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cloudaudit_track` | Manage Tencent Cloud CloudAudit tracks |
 | `cls_logset` | Manage Tencent Cloud CLS logsets |
 | `cls_topic` | Manage Tencent Cloud CLS topics |
+| `cmq_queue` | Manage Tencent Cloud CMQ queues |
 | `config_rule` | Manage Tencent Cloud Config compliance rules |
 | `cos_bucket` | Manage Tencent Cloud COS buckets |
 | `customer_gateway` | Manage Tencent Cloud VPN customer gateways |
@@ -44,6 +45,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cvm_image` | Manage Tencent Cloud CVM custom images |
 | `cvm_instance` | Manage Tencent Cloud CVM instances |
 | `cynosdb_account` | Manage Tencent Cloud CynosDB accounts |
+| `dbbrain_sql_filter` | Manage Tencent Cloud DBbrain SQL filters |
 | `dnspod_record` | Manage Tencent Cloud DNSPod DNS records |
 | `dts_consumer_group` | Manage Tencent Cloud DTS consumer groups |
 | `eip` | Manage Tencent Cloud elastic IP addresses (EIP) |
@@ -81,6 +83,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tat_command` | Manage Tencent Cloud TAT commands |
 | `tcr_instance` | Manage Tencent Cloud TCR enterprise instances |
 | `tcr_namespace` | Manage Tencent Cloud TCR namespaces |
+| `tcr_replication_instance` | Manage Tencent Cloud TCR replication instances |
 | `tcr_repository` | Manage a Tencent Cloud TCR repository |
 | `tdmq_topic` | Manage Tencent Cloud TDMQ Pulsar topics |
 | `teo_dns_record` | Manage Tencent Cloud TEO DNS records |
