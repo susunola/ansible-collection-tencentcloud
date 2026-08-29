@@ -12,6 +12,7 @@ action_groups:
     - anicloud_resource_info
     - antiddos_ddos_block_record_info
     - ape_auth_user_info
+    - api_gateway_api
     - api_gateway_service
     - api_product_info
     - apigateway_service_info
@@ -88,6 +89,8 @@ action_groups:
     - cme_platform_info
     - cmq_queue
     - cmq_queue_info
+    - cmq_subscription
+    - cmq_topic
     - cms_lib_sample_info
     - cngw_cloud_native_api_gateway_llm_model_api_info
     - config_aggregate_compliance_pack_info

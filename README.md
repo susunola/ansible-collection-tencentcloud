@@ -13,6 +13,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 
 | Module | Purpose |
 | --- | --- |
+| `api_gateway_api` | Manage Tencent Cloud API Gateway APIs |
 | `api_gateway_service` | Manage Tencent Cloud API Gateway services |
 | `as_scaling_group` | Manage Tencent Cloud Auto Scaling groups |
 | `cam_group_membership` | Manage Tencent Cloud CAM user group membership |
@@ -38,6 +39,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cls_logset` | Manage Tencent Cloud CLS logsets |
 | `cls_topic` | Manage Tencent Cloud CLS topics |
 | `cmq_queue` | Manage Tencent Cloud CMQ queues |
+| `cmq_subscription` | Manage Tencent Cloud CMQ topic subscriptions |
+| `cmq_topic` | Manage Tencent Cloud CMQ topics |
 | `config_rule` | Manage Tencent Cloud Config compliance rules |
 | `cos_bucket` | Manage Tencent Cloud COS buckets |
 | `customer_gateway` | Manage Tencent Cloud VPN customer gateways |
