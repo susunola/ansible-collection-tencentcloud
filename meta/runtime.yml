@@ -120,6 +120,7 @@ action_groups:
     - dnspod_record_info
     - domain_batch_operation_log_info
     - dsgc_dspa_assessment_risk_info
+    - dts_consumer_group
     - dts_subscribe_job_info
     - eb_event_bus_info
     - ecdn_domain_info

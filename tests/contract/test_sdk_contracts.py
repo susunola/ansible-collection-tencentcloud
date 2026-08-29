@@ -524,6 +524,7 @@ WRITE_MODULE_BUILDERS = {
     "organization_node": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tat_command": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "as_scaling_group": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
+    "dts_consumer_group": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
 }
 
 
@@ -2271,6 +2272,17 @@ def test_as_scaling_group():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "Auto Scaling group request %s" % index))
+    assert errors == []
+
+
+def test_dts_consumer_group():
+    module = _import_plugin("dts_consumer_group")
+    models = _models("dts.v20211206")
+    params = {"subscribe_id": "subs-x", "consumer_group_name": "analytics", "account_name": "reader", "password": "secret", "description": "analytics"}
+    requests = [module.build_describe_request(models, "subs-x"), module.build_create_request(models, params), module.build_update_request(models, "subs-x", "consumer-full", "account-full", "new"), module.build_delete_request(models, "subs-x", "consumer-full", "account-full")]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "DTS consumer group request %s" % index))
     assert errors == []
 
 

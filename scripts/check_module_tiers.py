@@ -71,6 +71,7 @@ CORE_MODULES = {
     "cvm_instance",
     "cynosdb_account",
     "dnspod_record",
+    "dts_consumer_group",
     "eip",
     "elasticsearch_instance",
     "gaap_proxy",

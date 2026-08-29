@@ -45,6 +45,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cvm_instance` | Manage Tencent Cloud CVM instances |
 | `cynosdb_account` | Manage Tencent Cloud CynosDB accounts |
 | `dnspod_record` | Manage Tencent Cloud DNSPod DNS records |
+| `dts_consumer_group` | Manage Tencent Cloud DTS consumer groups |
 | `eip` | Manage Tencent Cloud elastic IP addresses (EIP) |
 | `elasticsearch_instance` | Manage Tencent Cloud Elasticsearch clusters |
 | `gaap_proxy` | Manage Tencent Cloud GAAP proxies |
