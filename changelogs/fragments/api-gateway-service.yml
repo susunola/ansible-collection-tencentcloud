@@ -1,0 +1,2 @@
+minor_changes:
+  - Add api_gateway_service for idempotent API Gateway service lifecycle.

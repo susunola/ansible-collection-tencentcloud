@@ -12,6 +12,7 @@ action_groups:
     - anicloud_resource_info
     - antiddos_ddos_block_record_info
     - ape_auth_user_info
+    - api_gateway_service
     - api_product_info
     - apigateway_service_info
     - apis_agent_app_mcp_server_info

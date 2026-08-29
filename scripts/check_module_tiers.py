@@ -44,6 +44,7 @@ CORE_MODULES = {
     "cam_group_membership",
     "cam_role",
     "cam_user",
+    "api_gateway_service",
     "cbs_disk",
     "cbs_snapshot",
     "cdb_instance",

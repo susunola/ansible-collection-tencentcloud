@@ -514,6 +514,7 @@ WRITE_MODULE_BUILDERS = {
     "privatelink_endpoint": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "postgresql_account": ["build_create_request", "build_delete_request", "build_describe_request", "build_password_request", "build_remark_request"],
     "cynosdb_account": ["build_create_request", "build_delete_request", "build_describe_request", "build_description_request", "build_password_request"],
+    "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
 }
 
 
@@ -2141,6 +2142,17 @@ def test_cynosdb_account():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "CynosDB account request %s" % index))
+    assert errors == []
+
+
+def test_api_gateway_service():
+    module = _import_plugin("api_gateway_service")
+    models = _models("apigateway.v20180808")
+    params = {"name": "orders", "description": "order APIs", "protocol": "http&https", "network_types": ["OUTER"], "ip_version": "IPv4", "vpc_id": None, "instance_id": None, "tags": {"env": "prod"}}
+    requests = [module.build_list_request(models, params["name"]), module.build_get_request(models, "service-x"), module.build_create_request(models, params), module.build_update_request(models, "service-x", params), module.build_delete_request(models, "service-x")]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "API Gateway service request %s" % index))
     assert errors == []
 
 
