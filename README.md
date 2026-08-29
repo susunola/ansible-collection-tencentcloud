@@ -56,6 +56,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `peering_connection` | Manage Tencent Cloud VPC peering connections |
 | `private_dns_record` | Manage a Tencent Cloud Private DNS record |
 | `private_dns_zone` | Manage a Tencent Cloud Private DNS zone |
+| `privatelink_endpoint` | Manage Tencent Cloud PrivateLink endpoints |
 | `privatelink_endpoint_service` | Manage Tencent Cloud PrivateLink endpoint services |
 | `redis_instance` | Manage Tencent Cloud Redis instances |
 | `route_table` | Manage Tencent Cloud VPC route tables |

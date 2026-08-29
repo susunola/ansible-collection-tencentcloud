@@ -83,6 +83,7 @@ CORE_MODULES = {
     "private_dns_record",
     "private_dns_zone",
     "privatelink_endpoint_service",
+    "privatelink_endpoint",
     "redis_instance",
     "route_table",
     "scf_alias",
