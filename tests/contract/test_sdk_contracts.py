@@ -500,6 +500,10 @@ WRITE_MODULE_BUILDERS = {
         "build_create_request", "build_delete_request", "build_describe_request",
         "build_toggle_request", "build_update_request",
     ],
+    "ccn": [
+        "build_create_request", "build_delete_request", "build_describe_request",
+        "build_update_request",
+    ],
 }
 
 
@@ -2038,6 +2042,17 @@ def test_vpc_flow_log():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "flow log request %s" % index))
+    assert errors == []
+
+
+def test_ccn():
+    module = _import_plugin("ccn")
+    models = _models("vpc.v20170312")
+    params = {"name": "backbone", "description": "prod", "qos_level": "AU", "instance_charge_type": "POSTPAID", "bandwidth_limit_type": "OUTER_REGION_LIMIT", "route_ecmp": True, "route_overlap": False, "traffic_marking_policy": True, "tags": {"env": "prod"}}
+    requests = [module.build_describe_request(models, "ccn-xxxxxxxx"), module.build_describe_request(models, name="backbone"), module.build_create_request(models, params), module.build_update_request(models, "ccn-xxxxxxxx", params), module.build_delete_request(models, "ccn-xxxxxxxx")]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CCN request %s" % index))
     assert errors == []
 
 

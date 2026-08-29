@@ -47,6 +47,7 @@ CORE_MODULES = {
     "cbs_disk",
     "cbs_snapshot",
     "cdb_instance",
+    "ccn",
     "cdn_domain",
     "clb_rule",
     "clb_target_group",

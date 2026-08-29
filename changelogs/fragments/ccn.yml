@@ -1,0 +1,4 @@
+minor_changes:
+  - >-
+    Add ccn for Cloud Connect Network lifecycle and mutable routing feature
+    flags, with check mode, diff and convergence polling.
