@@ -521,6 +521,7 @@ WRITE_MODULE_BUILDERS = {
     "cfw_address_template": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "cloudaudit_track": ["build_create_request", "build_delete_request", "build_describe_request", "build_list_request", "build_update_request"],
     "config_rule": ["build_create_request", "build_delete_request", "build_describe_request", "build_list_request", "build_update_request"],
+    "organization_node": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
 }
 
 
@@ -2235,6 +2236,17 @@ def test_config_rule():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "Config rule request %s" % index))
+    assert errors == []
+
+
+def test_organization_node():
+    module = _import_plugin("organization_node")
+    models = _models("organization.v20210331")
+    params = {"parent_node_id": 1001, "name": "Production", "remark": "Production units", "tags": {"env": "prod"}}
+    requests = [module.build_describe_request(models), module.build_create_request(models, params), module.build_update_request(models, 1002, params), module.build_delete_request(models, 1002)]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "Organization node request %s" % index))
     assert errors == []
 
 

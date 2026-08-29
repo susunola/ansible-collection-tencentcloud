@@ -85,6 +85,7 @@ CORE_MODULES = {
     "network_interface",
     "network_acl",
     "peering_connection",
+    "organization_node",
     "private_dns_record",
     "private_dns_zone",
     "postgresql_account",
