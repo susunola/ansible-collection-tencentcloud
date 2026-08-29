@@ -523,6 +523,7 @@ WRITE_MODULE_BUILDERS = {
     "config_rule": ["build_create_request", "build_delete_request", "build_describe_request", "build_list_request", "build_update_request"],
     "organization_node": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tat_command": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
+    "as_scaling_group": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
 }
 
 
@@ -2259,6 +2260,17 @@ def test_tat_command():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "TAT command request %s" % index))
+    assert errors == []
+
+
+def test_as_scaling_group():
+    module = _import_plugin("as_scaling_group")
+    models = _models("autoscaling.v20180419")
+    params = {"name": "web", "launch_configuration_id": "asc-x", "vpc_id": "vpc-x", "subnet_ids": ["subnet-a"], "min_size": 0, "max_size": 10, "desired_capacity": 0, "default_cooldown": 300, "termination_policy": "OLDEST_INSTANCE", "retry_policy": "IMMEDIATE_RETRY", "subnet_policy": "PRIORITY", "health_check_type": "CVM", "capacity_rebalance": False, "project_id": 0}
+    requests = [module.build_describe_request(models, name="web"), module.build_create_request(models, params), module.build_update_request(models, "asg-x", params), module.build_delete_request(models, "asg-x")]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "Auto Scaling group request %s" % index))
     assert errors == []
 
 

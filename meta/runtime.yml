@@ -17,6 +17,7 @@ action_groups:
     - apigateway_service_info
     - apis_agent_app_mcp_server_info
     - apm_general_span_info
+    - as_scaling_group
     - as_scaling_group_info
     - asr_async_recognition_task_info
     - asw_flow_service_info

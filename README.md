@@ -14,6 +14,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | Module | Purpose |
 | --- | --- |
 | `api_gateway_service` | Manage Tencent Cloud API Gateway services |
+| `as_scaling_group` | Manage Tencent Cloud Auto Scaling groups |
 | `cam_group_membership` | Manage Tencent Cloud CAM user group membership |
 | `cam_policy` | Manage Tencent Cloud CAM policies |
 | `cam_policy_attachment` | Manage a Tencent Cloud CAM policy attachment |

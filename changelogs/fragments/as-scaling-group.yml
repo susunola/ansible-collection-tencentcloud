@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``as_scaling_group`` for idempotent Auto Scaling group lifecycle and capacity management.
