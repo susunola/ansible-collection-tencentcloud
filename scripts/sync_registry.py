@@ -37,7 +37,7 @@ README_MD = REPO_ROOT / "README.md"
 TABLE_HEADER = "| Module | Purpose |"
 TABLE_SEPARATOR = "| --- | --- |"
 
-_DOC_RE = re.compile(r"^DOCUMENTATION = r?'''\n(?P<body>.*?)\n'''", re.M | re.S)
+_DOC_RE = re.compile(r"^DOCUMENTATION = r?(?P<quote>'''|\"\"\")\n(?P<body>.*?)\n(?P=quote)", re.M | re.S)
 
 
 def discover_modules(modules_dir):

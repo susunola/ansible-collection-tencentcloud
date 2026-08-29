@@ -1,16 +1,22 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: cmq_topic
 short_description: Manage Tencent Cloud CMQ topics
 version_added: "0.14.0"
 description: Creates, updates and deletes CMQ topics idempotently.
 options:
+  retries: {description: Number of retries for transient failures., type: int, default: 5}
+  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
+  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
+  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
   state: {type: str, choices: [present, absent], default: present, description: Desired state.}
   topic_name: {type: str, required: true, description: Topic name.}
   max_msg_size: {type: int, default: 65536, description: Maximum message size.}
@@ -20,13 +26,13 @@ options:
   tags: {type: dict, default: {}, description: Tags applied at creation.}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.cmq_topic:
     topic_name: order-events
     message_retention_seconds: 172800
-'''
-RETURN = r'''topic: {description: Topic metadata., type: dict, returned: always}'''
+"""
+RETURN = r"""topic: {description: Topic metadata., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -35,6 +41,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.tdmq.v20200217 import models, tdmq_client
+
     return models, tdmq_client
 
 
@@ -54,9 +61,13 @@ def tags(models, values):
 
 
 def desired(p):
-    return {"TopicName": p["topic_name"], "MaxMsgSize": p["max_msg_size"],
-            "MsgRetentionSeconds": p["message_retention_seconds"], "FilterType": p["filter_type"],
-            "Trace": p["trace"]}
+    return {
+        "TopicName": p["topic_name"],
+        "MaxMsgSize": p["max_msg_size"],
+        "MsgRetentionSeconds": p["message_retention_seconds"],
+        "FilterType": p["filter_type"],
+        "Trace": p["trace"],
+    }
 
 
 def find(module, client, models, name):
@@ -69,13 +80,18 @@ def find(module, client, models, name):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={
-        "state": {"choices": ["present", "absent"], "default": "present"},
-        "topic_name": {"required": True}, "max_msg_size": {"type": "int", "default": 65536},
-        "message_retention_seconds": {"type": "int", "default": 86400},
-        "filter_type": {"type": "int", "choices": [1, 2], "default": 1},
-        "trace": {"type": "bool", "default": False}, "tags": {"type": "dict", "default": {}},
-    }, supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "topic_name": {"required": True},
+            "max_msg_size": {"type": "int", "default": 65536},
+            "message_retention_seconds": {"type": "int", "default": 86400},
+            "filter_type": {"type": "int", "choices": [1, 2], "default": 1},
+            "trace": {"type": "bool", "default": False},
+            "tags": {"type": "dict", "default": {}},
+        },
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load()

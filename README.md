@@ -16,6 +16,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `api_gateway_api` | Manage Tencent Cloud API Gateway APIs |
 | `api_gateway_service` | Manage Tencent Cloud API Gateway services |
 | `as_scaling_group` | Manage Tencent Cloud Auto Scaling groups |
+| `as_scaling_policy` | Manage Tencent Cloud Auto Scaling policies |
+| `as_scheduled_action` | Manage Tencent Cloud Auto Scaling scheduled actions |
 | `cam_group_membership` | Manage Tencent Cloud CAM user group membership |
 | `cam_policy` | Manage Tencent Cloud CAM policies |
 | `cam_policy_attachment` | Manage a Tencent Cloud CAM policy attachment |
@@ -36,7 +38,9 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `clb_rule` | Manage Tencent Cloud CLB L7 forwarding rules |
 | `clb_target_group` | Manage Tencent Cloud CLB target groups and members |
 | `cloudaudit_track` | Manage Tencent Cloud CloudAudit tracks |
+| `cls_index` | Manage Tencent Cloud CLS topic indexes |
 | `cls_logset` | Manage Tencent Cloud CLS logsets |
+| `cls_machine_group` | Manage Tencent Cloud CLS machine groups |
 | `cls_topic` | Manage Tencent Cloud CLS topics |
 | `cmq_queue` | Manage Tencent Cloud CMQ queues |
 | `cmq_subscription` | Manage Tencent Cloud CMQ topic subscriptions |
@@ -77,6 +81,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `route_table` | Manage Tencent Cloud VPC route tables |
 | `scf_alias` | Manage Tencent Cloud SCF function aliases |
 | `scf_function` | Manage Tencent Cloud SCF functions |
+| `scf_trigger` | Manage Tencent Cloud SCF triggers |
 | `scf_version` | Manage Tencent Cloud SCF function versions |
 | `security_group` | Manage Tencent Cloud security groups |
 | `security_group_rule` | Manage Tencent Cloud security group rules |

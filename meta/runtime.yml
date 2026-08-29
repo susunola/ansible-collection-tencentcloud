@@ -20,6 +20,8 @@ action_groups:
     - apm_general_span_info
     - as_scaling_group
     - as_scaling_group_info
+    - as_scaling_policy
+    - as_scheduled_action
     - asr_async_recognition_task_info
     - asw_flow_service_info
     - ba_auth_info
@@ -83,7 +85,9 @@ action_groups:
     - cloudhsm_vsm_info
     - cloudrc_resource_info
     - cloudstudio_image_info
+    - cls_index
     - cls_logset
+    - cls_machine_group
     - cls_topic
     - cls_topic_info
     - cme_platform_info
@@ -222,6 +226,7 @@ action_groups:
     - scf_alias
     - scf_function
     - scf_function_info
+    - scf_trigger
     - scf_version
     - security_group
     - security_group_info

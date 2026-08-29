@@ -1,31 +1,44 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: tcr_replication_rule
 short_description: Manage Tencent Cloud TCR replication rules
 version_added: "0.14.0"
 description: Creates, updates, enables and deletes Enterprise Edition TCR replication policies.
 options:
+  retries: {description: Number of retries for transient failures., type: int, default: 5}
+  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
+  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
+  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
   state: {description: Desired state., type: str, choices: [present, absent], default: present}
   registry_id: {description: Source registry ID., type: str, required: true}
   destination_registry_id: {description: Destination replication registry ID., type: str, required: true}
   destination_region_id: {description: Destination region numeric ID., type: int, required: true}
   name: {description: Replication rule name., type: str, required: true}
   destination_namespace: {description: Destination namespace template., type: str, default: ''}
-  filters: {description: Replication filters with type and value., type: list, elements: dict, default: []}
+  filters:
+    description: Replication filters.
+    type: list
+    elements: dict
+    default: []
+    suboptions:
+      type: {description: Filter type., type: str, required: true}
+      value: {description: Filter value., type: str, required: true}
   override: {description: Overwrite an existing destination image., type: bool, default: true}
   deletion: {description: Replicate source image deletion., type: bool, default: false}
   enabled: {description: Enable the replication rule., type: bool, default: true}
   description: {description: Rule description., type: str, default: ''}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.tcr_replication_rule:
     registry_id: tcr-xxxxxxxx
     destination_registry_id: tcr-yyyyyyyy
@@ -33,8 +46,8 @@ EXAMPLES = r'''
     name: production-images
     filters:
       - {type: namespace, value: production}
-'''
-RETURN = r'''replication_rule: {description: Replication rule metadata., type: dict, returned: always}'''
+"""
+RETURN = r"""replication_rule: {description: Replication rule metadata., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -43,6 +56,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.tcr.v20190924 import models, tcr_client
+
     return models, tcr_client
 
 
@@ -56,16 +70,24 @@ def filter_models(models, values):
 
 
 def desired(p):
-    return {"Name": p["name"], "Description": p["description"],
-            "Override": p["override"], "Enabled": p["enabled"],
-            "Filters": sorted(p["filters"], key=lambda x: (x["type"], x["value"]))}
+    return {
+        "Name": p["name"],
+        "Description": p["description"],
+        "Override": p["override"],
+        "Enabled": p["enabled"],
+        "Filters": sorted(p["filters"], key=lambda x: (x["type"], x["value"])),
+    }
 
 
 def normalize(value):
     filters = [{"type": x.get("Type"), "value": x.get("Value")} for x in (value.get("Filters") or [])]
-    return {"Name": value.get("Name"), "Description": value.get("Description") or "",
-            "Override": bool(value.get("Override")),
-            "Enabled": bool(value.get("Enabled")), "Filters": sorted(filters, key=lambda x: (x["type"], x["value"]))}
+    return {
+        "Name": value.get("Name"),
+        "Description": value.get("Description") or "",
+        "Override": bool(value.get("Override")),
+        "Enabled": bool(value.get("Enabled")),
+        "Filters": sorted(filters, key=lambda x: (x["type"], x["value"])),
+    }
 
 
 def find(module, client, models, registry_id, name):
@@ -95,15 +117,27 @@ def rule_model(models, p, modifying=False):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={
-        "state": {"choices": ["present", "absent"], "default": "present"}, "registry_id": {"required": True},
-        "destination_registry_id": {"required": True}, "destination_region_id": {"type": "int", "required": True},
-        "name": {"required": True}, "destination_namespace": {"default": ""},
-        "filters": {"type": "list", "elements": "dict", "default": [], "options": {
-            "type": {"type": "str", "required": True}, "value": {"type": "str", "required": True}}},
-        "override": {"type": "bool", "default": True}, "deletion": {"type": "bool", "default": False},
-        "enabled": {"type": "bool", "default": True}, "description": {"default": ""},
-    }, supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "registry_id": {"required": True},
+            "destination_registry_id": {"required": True},
+            "destination_region_id": {"type": "int", "required": True},
+            "name": {"required": True},
+            "destination_namespace": {"default": ""},
+            "filters": {
+                "type": "list",
+                "elements": "dict",
+                "default": [],
+                "options": {"type": {"type": "str", "required": True}, "value": {"type": "str", "required": True}},
+            },
+            "override": {"type": "bool", "default": True},
+            "deletion": {"type": "bool", "default": False},
+            "enabled": {"type": "bool", "default": True},
+            "description": {"default": ""},
+        },
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load()

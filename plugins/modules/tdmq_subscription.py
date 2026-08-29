@@ -1,16 +1,22 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: tdmq_subscription
 short_description: Manage Tencent Cloud TDMQ Pulsar subscriptions
 version_added: "0.14.0"
 description: Creates, updates and deletes subscriptions for TDMQ Pulsar topics.
 options:
+  retries: {description: Number of retries for transient failures., type: int, default: 5}
+  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
+  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
+  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
   state: {description: Desired state., type: str, choices: [present, absent], default: present}
   cluster_id: {description: Pulsar cluster ID., type: str, required: true}
   environment_id: {description: Pulsar namespace name., type: str, required: true}
@@ -22,15 +28,15 @@ options:
   force: {description: Force deletion even when consumers are connected., type: bool, default: false}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.tdmq_subscription:
     cluster_id: pulsar-xxxxxxxx
     environment_id: production
     topic_name: orders
     name: order-workers
-'''
-RETURN = r'''subscription: {description: Subscription metadata., type: dict, returned: always}'''
+"""
+RETURN = r"""subscription: {description: Subscription metadata., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -39,6 +45,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.tdmq.v20200217 import models, tdmq_client
+
     return models, tdmq_client
 
 
@@ -73,14 +80,20 @@ def delete_request(models, p):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={
-        "state": {"choices": ["present", "absent"], "default": "present"},
-        "cluster_id": {"required": True}, "environment_id": {"required": True},
-        "topic_name": {"required": True}, "name": {"required": True}, "remark": {"default": ""},
-        "idempotent": {"type": "bool", "default": True},
-        "auto_create_policy_topic": {"type": "bool", "default": True},
-        "force": {"type": "bool", "default": False},
-    }, supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "cluster_id": {"required": True},
+            "environment_id": {"required": True},
+            "topic_name": {"required": True},
+            "name": {"required": True},
+            "remark": {"default": ""},
+            "idempotent": {"type": "bool", "default": True},
+            "auto_create_policy_topic": {"type": "bool", "default": True},
+            "force": {"type": "bool", "default": False},
+        },
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load()

@@ -1,16 +1,22 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: dts_migration_job
 short_description: Manage Tencent Cloud DTS migration jobs
 version_added: "0.14.0"
 description: Purchases, renames, resizes and destroys DTS migration jobs.
 options:
+  retries: {description: Number of retries for transient failures., type: int, default: 5}
+  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
+  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
+  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
   state: {description: Desired state., type: str, choices: [present, absent], default: present}
   job_id: {description: Existing migration job ID., type: str}
   name: {description: Migration job name., type: str}
@@ -22,8 +28,8 @@ options:
   tags: {description: Tags applied at creation., type: dict, default: {}}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.dts_migration_job:
     name: mysql-migration
     source_database_type: mysql
@@ -31,8 +37,8 @@ EXAMPLES = r'''
     source_region: ap-guangzhou
     destination_region: ap-shanghai
     instance_class: small
-'''
-RETURN = r'''migration_job: {description: DTS migration job metadata., type: dict, returned: always}'''
+"""
+RETURN = r"""migration_job: {description: DTS migration job metadata., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -41,6 +47,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.dts.v20211206 import dts_client, models
+
     return models, dts_client
 
 
@@ -74,11 +81,21 @@ def tag_list(models, values):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={
-        "state": {"choices": ["present", "absent"], "default": "present"}, "job_id": {}, "name": {},
-        "source_database_type": {}, "destination_database_type": {}, "source_region": {}, "destination_region": {},
-        "instance_class": {"default": "micro"}, "tags": {"type": "dict", "default": {}},
-    }, required_one_of=[("job_id", "name")], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "job_id": {},
+            "name": {},
+            "source_database_type": {},
+            "destination_database_type": {},
+            "source_region": {},
+            "destination_region": {},
+            "instance_class": {"default": "micro"},
+            "tags": {"type": "dict", "default": {}},
+        },
+        required_one_of=[("job_id", "name")],
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load()

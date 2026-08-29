@@ -1,16 +1,22 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: api_gateway_api
 short_description: Manage Tencent Cloud API Gateway APIs
 version_added: "0.14.0"
 description: Creates, updates and deletes an HTTP API within an API Gateway service.
 options:
+  retries: {description: Number of retries for transient failures., type: int, default: 5}
+  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
+  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
+  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
   state: {type: str, choices: [present, absent], default: present, description: Desired state.}
   service_id: {type: str, required: true, description: Parent service ID.}
   api_id: {type: str, description: Existing API ID.}
@@ -25,15 +31,15 @@ options:
   enable_cors: {type: bool, default: false, description: Enable CORS.}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.api_gateway_api:
     service_id: service-xxxxxxxx
     name: health
     path: /health
     method: GET
-'''
-RETURN = r'''api: {description: API metadata., type: dict, returned: always}'''
+"""
+RETURN = r"""api: {description: API metadata., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -43,6 +49,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.apigateway.v20180808 import apigateway_client, models
+
     return models, apigateway_client
 
 
@@ -83,17 +90,30 @@ def apply_request(request, models, p, api_id=None):
 
 
 def desired(p):
-    return {"ApiName": p["name"], "ApiDesc": p["description"], "AuthType": p["auth_type"],
-            "ServiceType": p["service_type"], "ServiceTimeout": p["service_timeout"],
-            "EnableCORS": p["enable_cors"], "Path": p["path"], "Method": p["method"]}
+    return {
+        "ApiName": p["name"],
+        "ApiDesc": p["description"],
+        "AuthType": p["auth_type"],
+        "ServiceType": p["service_type"],
+        "ServiceTimeout": p["service_timeout"],
+        "EnableCORS": p["enable_cors"],
+        "Path": p["path"],
+        "Method": p["method"],
+    }
 
 
 def comparable(value):
     config = value.get("RequestConfig") or {}
-    return {"ApiName": value.get("ApiName"), "ApiDesc": value.get("ApiDesc") or "",
-            "AuthType": value.get("AuthType"), "ServiceType": value.get("ServiceType"),
-            "ServiceTimeout": value.get("ServiceTimeout"), "EnableCORS": bool(value.get("EnableCORS")),
-            "Path": config.get("Path"), "Method": config.get("Method")}
+    return {
+        "ApiName": value.get("ApiName"),
+        "ApiDesc": value.get("ApiDesc") or "",
+        "AuthType": value.get("AuthType"),
+        "ServiceType": value.get("ServiceType"),
+        "ServiceTimeout": value.get("ServiceTimeout"),
+        "EnableCORS": bool(value.get("EnableCORS")),
+        "Path": config.get("Path"),
+        "Method": config.get("Method"),
+    }
 
 
 def find(module, client, models, p):
@@ -122,14 +142,24 @@ def find(module, client, models, p):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={
-        "state": {"choices": ["present", "absent"], "default": "present"},
-        "service_id": {"required": True}, "api_id": {}, "name": {}, "path": {"default": "/"},
-        "method": {"choices": ["GET", "POST", "PUT", "DELETE", "HEAD", "ANY", "OPTIONS", "PATCH"], "default": "ANY"},
-        "description": {"default": ""}, "auth_type": {"choices": ["NONE", "SECRET", "OAUTH"], "default": "NONE"},
-        "service_type": {"choices": ["HTTP", "MOCK"], "default": "MOCK"}, "service_timeout": {"type": "int", "default": 15},
-        "mock_response": {"default": "{}"}, "enable_cors": {"type": "bool", "default": False},
-    }, required_one_of=[("api_id", "name")], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "service_id": {"required": True},
+            "api_id": {},
+            "name": {},
+            "path": {"default": "/"},
+            "method": {"choices": ["GET", "POST", "PUT", "DELETE", "HEAD", "ANY", "OPTIONS", "PATCH"], "default": "ANY"},
+            "description": {"default": ""},
+            "auth_type": {"choices": ["NONE", "SECRET", "OAUTH"], "default": "NONE"},
+            "service_type": {"choices": ["HTTP", "MOCK"], "default": "MOCK"},
+            "service_timeout": {"type": "int", "default": 15},
+            "mock_response": {"default": "{}"},
+            "enable_cors": {"type": "bool", "default": False},
+        },
+        required_one_of=[("api_id", "name")],
+        supports_check_mode=True,
+    )
     p = module.params
     module.require_sdk()
     models, client_module = _load()
