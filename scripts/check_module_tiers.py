@@ -53,6 +53,7 @@ CORE_MODULES = {
     "clb_rule",
     "clb_target_group",
     "cls_logset",
+    "cls_topic",
     "ckafka_topic",
     "clb_listener",
     "clb_listener_target",

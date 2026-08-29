@@ -509,6 +509,7 @@ WRITE_MODULE_BUILDERS = {
         "build_create_request", "build_delete_request", "build_describe_request",
         "build_update_request",
     ],
+    "cls_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
 }
 
 
@@ -2081,6 +2082,17 @@ def test_cls_logset():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "CLS logset request %s" % index))
+    assert errors == []
+
+
+def test_cls_topic():
+    module = _import_plugin("cls_topic")
+    models = _models("cls.v20201016")
+    params = {"logset_id": "logset-x", "name": "network", "partition_count": 2, "period": 30, "hot_period": 7, "storage_type": "hot", "auto_split": True, "max_split_partitions": 50, "description": "flow", "tags": {"env": "prod"}}
+    requests = [module.build_describe_request(models, logset_id=params["logset_id"], name=params["name"]), module.build_create_request(models, params), module.build_update_request(models, "topic-x", params), module.build_delete_request(models, "topic-x")]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CLS topic request %s" % index))
     assert errors == []
 
 

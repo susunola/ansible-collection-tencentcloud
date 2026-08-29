@@ -32,6 +32,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `clb_rule` | Manage Tencent Cloud CLB L7 forwarding rules |
 | `clb_target_group` | Manage Tencent Cloud CLB target groups and members |
 | `cls_logset` | Manage Tencent Cloud CLS logsets |
+| `cls_topic` | Manage Tencent Cloud CLS topics |
 | `cos_bucket` | Manage Tencent Cloud COS buckets |
 | `customer_gateway` | Manage Tencent Cloud VPN customer gateways |
 | `cvm_chc` | Manage Tencent Cloud CHC physical server network configuration |
