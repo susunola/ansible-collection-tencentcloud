@@ -51,6 +51,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `dbbrain_sql_filter` | Manage Tencent Cloud DBbrain SQL filters |
 | `dnspod_record` | Manage Tencent Cloud DNSPod DNS records |
 | `dts_consumer_group` | Manage Tencent Cloud DTS consumer groups |
+| `dts_migration_job` | Manage Tencent Cloud DTS migration jobs |
 | `eip` | Manage Tencent Cloud elastic IP addresses (EIP) |
 | `elasticsearch_instance` | Manage Tencent Cloud Elasticsearch clusters |
 | `gaap_proxy` | Manage Tencent Cloud GAAP proxies |
@@ -87,7 +88,9 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tcr_instance` | Manage Tencent Cloud TCR enterprise instances |
 | `tcr_namespace` | Manage Tencent Cloud TCR namespaces |
 | `tcr_replication_instance` | Manage Tencent Cloud TCR replication instances |
+| `tcr_replication_rule` | Manage Tencent Cloud TCR replication rules |
 | `tcr_repository` | Manage a Tencent Cloud TCR repository |
+| `tdmq_subscription` | Manage Tencent Cloud TDMQ Pulsar subscriptions |
 | `tdmq_topic` | Manage Tencent Cloud TDMQ Pulsar topics |
 | `teo_dns_record` | Manage Tencent Cloud TEO DNS records |
 | `tke_addon` | Manage a Tencent Kubernetes Engine addon |

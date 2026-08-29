@@ -126,6 +126,7 @@ action_groups:
     - domain_batch_operation_log_info
     - dsgc_dspa_assessment_risk_info
     - dts_consumer_group
+    - dts_migration_job
     - dts_subscribe_job_info
     - eb_event_bus_info
     - ecdn_domain_info
@@ -250,12 +251,14 @@ action_groups:
     - tcr_instance_info
     - tcr_namespace
     - tcr_replication_instance
+    - tcr_replication_rule
     - tcr_repository
     - tcss_abnormal_process_event_info
     - tdai_agent_duty_task_info
     - tdcpg_cluster_instance_info
     - tdid_over_summary_info
     - tdmq_amqp_cluster_info
+    - tdmq_subscription
     - tdmq_topic
     - tdmysql_db_instance_info
     - tem_application_info
