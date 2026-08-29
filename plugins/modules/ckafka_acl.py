@@ -50,19 +50,32 @@ def _load():
 
 def wanted(p):
     return {
-        "ResourceType": p["resource_type"],
+        "ResourceType": _RESOURCE_TYPES[p["resource_type"]],
         "ResourceName": p["resource_name"],
-        "Operation": p["operation"],
-        "PermissionType": p["permission"],
+        "Operation": _OPERATIONS[p["operation"]],
+        "PermissionType": _PERMISSIONS[p["permission"]],
         "Host": p["host"],
         "Principal": p["principal"],
     }
 
 
+# The CKafka ACL API encodes resource type, operation and permission as
+# integers (see the CreateAclRequest field documentation); the module
+# accepts human-readable strings and maps them here.
+_RESOURCE_TYPES = {"TOPIC": 2, "GROUP": 3, "CLUSTER": 4, "TRANSACTIONAL_ID": 5}
+_OPERATIONS = {
+    "ALL": 2, "READ": 3, "WRITE": 4, "CREATE": 5, "DELETE": 6, "ALTER": 7,
+    "DESCRIBE": 8, "CLUSTER_ACTION": 9, "DESCRIBE_CONFIGS": 10,
+    "ALTER_CONFIGS": 11, "IDEMPOTENT_WRITE": 12,
+}
+_PERMISSIONS = {"DENY": 2, "ALLOW": 3}
+
+
 def find(module, client, models, p):
     request = models.DescribeACLRequest()
-    request.InstanceId, request.ResourceType, request.ResourceName = p["instance_id"], p["resource_type"], p["resource_name"]
-    request.Offset, request.Limit = 0, 100
+    request.InstanceId = p["instance_id"]
+    request.ResourceType = _RESOURCE_TYPES[p["resource_type"]]
+    request.ResourceName, request.Offset, request.Limit = p["resource_name"], 0, 100
     result = module.sdk_call(client.DescribeACL, request).Result
     target = wanted(p)
     return next((x._serialize(allow_none=True) for x in (result.AclList or []) if all(getattr(x, k) == v for k, v in target.items())), None)
@@ -70,8 +83,10 @@ def find(module, client, models, p):
 
 def request_for(models, p, deleting=False):
     request = models.DeleteAclRequest() if deleting else models.CreateAclRequest()
-    request.InstanceId, request.ResourceType, request.ResourceName = p["instance_id"], p["resource_type"], p["resource_name"]
-    request.Operation, request.PermissionType, request.Host, request.Principal = p["operation"], p["permission"], p["host"], p["principal"]
+    request.InstanceId, request.ResourceType, request.ResourceName = p["instance_id"], _RESOURCE_TYPES[p["resource_type"]], p["resource_name"]
+    request.Operation = _OPERATIONS[p["operation"]]
+    request.PermissionType = _PERMISSIONS[p["permission"]]
+    request.Host, request.Principal = p["host"], p["principal"]
     return request
 
 

@@ -287,6 +287,11 @@ UNEXERCISED_BUILDERS = {
     ("scf_trigger", "run_module"): "inline lifecycle requests are covered by unit tests",
     ("tcr_replication_rule", "run_module"): "inline lifecycle requests are covered by unit tests",
     ("tdmq_subscription", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("cam_group", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("cdb_parameter_template", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("dnspod_domain", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("postgresql_parameter_template", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("redis_parameter_template", "run_module"): "inline lifecycle requests are covered by unit tests",
 }
 
 # Write-module request builders exercised by the ``test_<module>`` functions
@@ -697,6 +702,12 @@ WRITE_MODULE_BUILDERS = {
     "scf_trigger": ["create", "delete_request", "find"],
     "tcr_replication_rule": ["find"],
     "tdmq_subscription": ["delete_request", "describe_request"],
+    "cam_group": ["find"],
+    "cdb_parameter_template": ["find"],
+    "ckafka_acl": ["find", "request_for"],
+    "dnspod_domain": ["find"],
+    "postgresql_parameter_template": ["find"],
+    "redis_parameter_template": ["find"],
 }
 
 
@@ -3641,4 +3652,83 @@ def test_tdmq_subscription():
     errors.extend(audit_request(module.delete_request(models, p), "tdmq subscription delete"))
     module.find(fake, client, models, p)
     errors.extend(audit_recorded(fake, "tdmq_subscription"))
+    assert errors == []
+
+
+def test_cam_group():
+    module = _import_plugin("cam_group")
+    models = _models("cam.v20190116")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    module.find(fake, client, models, 1, "operators")
+    module.find(fake, client, models, None, "operators")
+    errors.extend(audit_recorded(fake, "cam_group"))
+    assert errors == []
+
+
+def test_cdb_parameter_template():
+    module = _import_plugin("cdb_parameter_template")
+    models = _models("cdb.v20170320")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    module.find(fake, client, models, 12345, None)
+    errors.extend(audit_recorded(fake, "cdb_parameter_template"))
+    assert errors == []
+
+
+def test_ckafka_acl():
+    module = _import_plugin("ckafka_acl")
+    models = _models("ckafka.v20190819")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    p = {
+        "instance_id": "ckafka-xxxxxxxx",
+        "resource_type": "TOPIC",
+        "resource_name": "orders",
+        "operation": "ALL",
+        "permission": "ALLOW",
+        "host": "*",
+        "principal": "User:consumer-app",
+    }
+    module.find(fake, client, models, p)
+    errors.extend(audit_request(module.request_for(models, p), "ckafka acl create"))
+    errors.extend(audit_request(module.request_for(models, p, deleting=True), "ckafka acl delete"))
+    errors.extend(audit_recorded(fake, "ckafka_acl"))
+    assert errors == []
+
+
+def test_dnspod_domain():
+    module = _import_plugin("dnspod_domain")
+    models = _models("dnspod.v20210323")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    module.find(fake, client, models, 1234567, None)
+    module.find(fake, client, models, None, "example.com")
+    errors.extend(audit_recorded(fake, "dnspod_domain"))
+    assert errors == []
+
+
+def test_postgresql_parameter_template():
+    module = _import_plugin("postgresql_parameter_template")
+    models = _models("postgres.v20170312")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    module.find(fake, client, models, "tpl-xxxxxxxx", None)
+    errors.extend(audit_recorded(fake, "postgresql_parameter_template"))
+    assert errors == []
+
+
+def test_redis_parameter_template():
+    module = _import_plugin("redis_parameter_template")
+    models = _models("redis.v20180412")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    module.find(fake, client, models, "tpl-xxxxxxxx", None)
+    errors.extend(audit_recorded(fake, "redis_parameter_template"))
     assert errors == []

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Generate a reviewable module-to-Tencent-Cloud-API action manifest."""
 
 from __future__ import annotations
