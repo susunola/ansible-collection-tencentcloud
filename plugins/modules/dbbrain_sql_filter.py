@@ -39,6 +39,8 @@ RETURN = r"""sql_filter: {description: SQL filter metadata., type: dict, returne
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+import time
 
 
 def _load_dbbrain():
@@ -88,6 +90,24 @@ def _find(items, p):
     )
 
 
+def wait_for_filter(module, client, models, desired=None, absent=False):
+    deadline = time.time() + module.params["waiter_timeout"]
+    while True:
+        response = module.sdk_call(client.DescribeSqlFilters, build_describe_request(models, module.params))
+        current = _find(response.Items or [], module.params)
+        if absent and current is None:
+            return None
+        if not absent and current and all(current.get(key) == value for key, value in desired.items()):
+            return current
+        if time.time() >= deadline:
+            module.fail_json(
+                msg="Timed out waiting for DBbrain SQL filter convergence",
+                sql_filter=current,
+                expected="absent" if absent else desired,
+            )
+        time.sleep(module.params["waiter_delay"])
+
+
 def run_module():
     module = TencentCloudModule(
         argument_spec={
@@ -114,6 +134,7 @@ def run_module():
             diff = maybe_diff(module, current, None)
             if not module.check_mode:
                 module.sdk_call(client.DeleteSqlFilters, build_delete_request(models, p, [current["Id"]]))
+                wait_for_filter(module, client, models, absent=True)
             module.exit_json(changed=True, **(diff or {}), sql_filter=current if module.check_mode else None)
         desired = _desired(p)
         if current and all(current.get(k) == v for k, v in desired.items()):
@@ -122,16 +143,12 @@ def run_module():
         if not module.check_mode:
             if current:
                 module.sdk_call(client.DeleteSqlFilters, build_delete_request(models, p, [current["Id"]]))
-            response = module.sdk_call(client.CreateSqlFilter, build_create_request(models, p))
-            desired["Id"] = response.FilterId
-        module.exit_json(changed=True, **(diff or {}), sql_filter=current if module.check_mode else desired)
+                wait_for_filter(module, client, models, absent=True)
+            module.sdk_call(client.CreateSqlFilter, build_create_request(models, p))
+            current = wait_for_filter(module, client, models, desired=desired)
+        module.exit_json(changed=True, **(diff or {}), sql_filter=current if module.check_mode else current)
     except Exception as exc:
-        module.fail_json(
-            msg="Tencent Cloud API request failed",
-            error=str(exc),
-            error_code=getattr(exc, "get_code", lambda: None)(),
-            request_id=getattr(exc, "get_request_id", lambda: None)(),
-        )
+        module.fail_json(**sdk_error_payload(exc))
 
 
 def main():

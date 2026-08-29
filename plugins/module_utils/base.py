@@ -19,11 +19,26 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import time
+import re
 
 from ansible.module_utils.basic import AnsibleModule, env_fallback
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import client
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.retries import retry_on
+
+
+_SECRET_PATTERNS = (
+    re.compile(r"(?i)(secret(?:id|key)?|token|password|credential)(\s*[=:]\s*)([^\s,;]+)"),
+    re.compile(r"(?i)(authorization\s*:\s*)([^\s,;]+)"),
+)
+
+
+def sanitize_error(value):
+    """Redact common credential shapes before exposing SDK telemetry."""
+    text = str(value)
+    for pattern in _SECRET_PATTERNS:
+        text = pattern.sub(lambda match: match.group(1) + (match.group(2) if match.lastindex == 3 else "") + "<redacted>", text)
+    return text
 
 
 def base_argument_spec():
@@ -75,7 +90,7 @@ class TencentCloudModule(AnsibleModule):
             "request_id": request_id,
             "duration_ms": int((time.time() - started) * 1000),
             "status": "error" if error else "ok",
-            "error": str(error) if error else None,
+            "error": sanitize_error(error) if error else None,
         })
 
     def sdk_call(self, operation, request=None, retry=True):

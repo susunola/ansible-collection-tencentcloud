@@ -1,0 +1,61 @@
+---
+- name: API Gateway service real-cloud lifecycle
+  vars:
+    run_id: "{{ lookup('env', 'GITHUB_RUN_ID') | default(99999999 | random, true) }}"
+    service_name: "ansible-apigw-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  block:
+    - name: Predict service creation
+      susunola.tencentcloud.api_gateway_service:
+        name: "{{ service_name }}"
+        description: integration
+      check_mode: true
+      register: predicted
+    - name: Create service
+      susunola.tencentcloud.api_gateway_service:
+        name: "{{ service_name }}"
+        description: integration
+      register: created
+    - name: Reconcile service
+      susunola.tencentcloud.api_gateway_service:
+        service_id: "{{ created.service.ServiceId }}"
+        name: "{{ service_name }}"
+        description: integration
+      register: same
+    - name: Update service
+      susunola.tencentcloud.api_gateway_service:
+        service_id: "{{ created.service.ServiceId }}"
+        name: "{{ service_name }}"
+        description: integration-updated
+      register: updated
+    - name: Verify API Gateway contract
+      ansible.builtin.assert:
+        that:
+          - predicted is changed
+          - created is changed
+          - same is not changed
+          - updated is changed
+    - name: Delete service
+      susunola.tencentcloud.api_gateway_service:
+        state: absent
+        service_id: "{{ created.service.ServiceId }}"
+      register: deleted
+    - name: Delete service again
+      susunola.tencentcloud.api_gateway_service:
+        state: absent
+        service_id: "{{ created.service.ServiceId }}"
+      register: deleted_again
+    - name: Verify API Gateway deletion
+      ansible.builtin.assert:
+        that:
+          - deleted is changed
+          - deleted_again is not changed
+  always:
+    - name: Clean up service
+      susunola.tencentcloud.api_gateway_service:
+        state: absent
+        service_id: "{{ created.service.ServiceId | default(omit) }}"
+        name: "{{ service_name }}"
+      ignore_errors: true

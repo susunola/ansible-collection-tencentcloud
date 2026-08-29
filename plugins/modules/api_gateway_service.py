@@ -106,7 +106,12 @@ def build_delete_request(models, service_id):
 
 def find_service(module, client, models, service_id, name):
     if service_id:
-        response = module.sdk_call(client.DescribeService, build_get_request(models, service_id))
+        try:
+            response = module.sdk_call(client.DescribeService, build_get_request(models, service_id))
+        except Exception as exc:
+            if is_not_found(exc):
+                return None
+            raise
         result = getattr(response, "Result", None)
         return result._serialize(allow_none=True) if result else None
     offset, matches = 0, []

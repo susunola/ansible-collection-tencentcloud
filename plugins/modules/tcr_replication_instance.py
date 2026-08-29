@@ -32,6 +32,8 @@ EXAMPLES = r"""
 RETURN = r"""replication_instance: {description: Replication instance metadata., type: dict, returned: always}"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+import time
 
 
 def _load_tcr():
@@ -69,6 +71,30 @@ def _find(items, region_id):
     return next((x._serialize(allow_none=True) for x in items if x.ReplicationRegionId == region_id), None)
 
 
+def wait_for_replication(module, client, models, desired=None, absent=False):
+    deadline = time.time() + module.params["waiter_timeout"]
+    while True:
+        response = module.sdk_call(
+            client.DescribeReplicationInstances,
+            build_describe_request(models, module.params["registry_id"]),
+        )
+        current = _find(response.ReplicationRegistries or [], module.params["replication_region_id"])
+        if absent and current is None:
+            return None
+        if current and str(current.get("Status", "")).lower() in ("failed", "createfailed", "deletefailed"):
+            module.fail_json(msg="TCR replication instance entered a failed state", replication_instance=current)
+        if not absent and current and str(current.get("Status", "")).lower() in ("running", "normal", "ready"):
+            if not desired or current.get("ReplicationRegionName") == desired["ReplicationRegionName"]:
+                return current
+        if time.time() >= deadline:
+            module.fail_json(
+                msg="Timed out waiting for TCR replication instance convergence",
+                replication_instance=current,
+                expected="absent" if absent else desired,
+            )
+        time.sleep(module.params["waiter_delay"])
+
+
 def run_module():
     module = TencentCloudModule(
         argument_spec={
@@ -96,21 +122,18 @@ def run_module():
                     client.DeleteReplicationInstance,
                     build_delete_request(models, p["registry_id"], current["ReplicationRegistryId"], p["replication_region_id"]),
                 )
+                wait_for_replication(module, client, models, absent=True)
             module.exit_json(changed=True, **(diff or {}), replication_instance=current if module.check_mode else None)
         if current:
             module.exit_json(changed=False, replication_instance=current)
         desired = {"RegistryId": p["registry_id"], "ReplicationRegionId": p["replication_region_id"], "ReplicationRegionName": p["replication_region_name"]}
         diff = maybe_diff(module, None, desired)
         if not module.check_mode:
-            desired["ReplicationRegistryId"] = module.sdk_call(client.CreateReplicationInstance, build_create_request(models, p)).ReplicationRegistryId
-        module.exit_json(changed=True, **(diff or {}), replication_instance=None if module.check_mode else desired)
+            module.sdk_call(client.CreateReplicationInstance, build_create_request(models, p))
+            current = wait_for_replication(module, client, models, desired=desired)
+        module.exit_json(changed=True, **(diff or {}), replication_instance=None if module.check_mode else current)
     except Exception as exc:
-        module.fail_json(
-            msg="Tencent Cloud API request failed",
-            error=str(exc),
-            error_code=getattr(exc, "get_code", lambda: None)(),
-            request_id=getattr(exc, "get_request_id", lambda: None)(),
-        )
+        module.fail_json(**sdk_error_payload(exc))
 
 
 def main():

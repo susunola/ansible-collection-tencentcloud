@@ -1,0 +1,2 @@
+minor_changes:
+  - Add risk-aware E2E coverage mapping, resource manifests, TTL reaper planning, reliability policy, registry validation, secret-safe telemetry, and six P0 integration targets.

@@ -60,6 +60,8 @@ jobs:
         run: python scripts/sync_registry.py --check
       - name: Module tiers are consistent
         run: python scripts/check_module_tiers.py --check
+      - name: Integration coverage registry is valid
+        run: python scripts/integration_impact.py --check --files plugins/module_utils/base.py
       # Generated _info modules must expose every required request field:
       # a spec hiding one makes every call fail with a confusing API error.
       # Runs after the SDK drift sentinel so the models are importable.

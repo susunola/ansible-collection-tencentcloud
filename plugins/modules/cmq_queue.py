@@ -35,6 +35,10 @@ EXAMPLES = r"""
 RETURN = r"""queue: {description: Queue metadata., type: dict, returned: always}"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import (
+    require_immutable_unchanged,
+    sdk_error_payload,
+)
 import time
 
 
@@ -139,8 +143,8 @@ def run_module():
         comparable = {k: current.get(k) for k in desired} if current else None
         if comparable == desired:
             module.exit_json(changed=False, queue=current)
-        if current and current.get("MaxMsgSize") != desired["MaxMsgSize"]:
-            module.fail_json(msg="max_msg_size is immutable for an existing CMQ queue", queue=current)
+        if current:
+            require_immutable_unchanged(module, current, desired, ("MaxMsgSize",), "CMQ queue")
         diff = maybe_diff(module, comparable, desired)
         if not module.check_mode:
             operation = client.ModifyCmqQueueAttribute if current else client.CreateCmqQueue
@@ -149,12 +153,7 @@ def run_module():
             current = wait_for_queue(module, client, models, desired)
         module.exit_json(changed=True, **(diff or {}), queue=current if module.check_mode else current)
     except Exception as exc:
-        module.fail_json(
-            msg="Tencent Cloud API request failed",
-            error=str(exc),
-            error_code=getattr(exc, "get_code", lambda: None)(),
-            request_id=getattr(exc, "get_request_id", lambda: None)(),
-        )
+        module.fail_json(**sdk_error_payload(exc))
 
 
 def main():

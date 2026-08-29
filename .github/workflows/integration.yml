@@ -9,7 +9,7 @@ on:
       targets:
         description: "Integration targets to run (space separated)"
         type: string
-        default: "security_group network cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns tke_addon"
+        default: "security_group network cmq_queue cls_log_pipeline api_gateway_service tat_command cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns tke_addon"
 
 # Integration tests create billable resources in a shared Tencent Cloud
 # account. A single fixed concurrency group serialises every run (any
@@ -70,8 +70,13 @@ jobs:
           TENCENTCLOUD_PRIVATE_DNS_VPC_ID: ${{ secrets.TENCENTCLOUD_PRIVATE_DNS_VPC_ID }}
           TENCENTCLOUD_CAM_GROUP_ID: ${{ secrets.TENCENTCLOUD_CAM_GROUP_ID }}
           TENCENTCLOUD_CAM_SUB_UIN: ${{ secrets.TENCENTCLOUD_CAM_SUB_UIN }}
+          TENCENTCLOUD_DBBRAIN_INSTANCE_ID: ${{ secrets.TENCENTCLOUD_DBBRAIN_INSTANCE_ID }}
+          TENCENTCLOUD_DBBRAIN_SESSION_TOKEN: ${{ secrets.TENCENTCLOUD_DBBRAIN_SESSION_TOKEN }}
+          TENCENTCLOUD_TCR_REGISTRY_ID: ${{ secrets.TENCENTCLOUD_TCR_REGISTRY_ID }}
+          TENCENTCLOUD_TCR_REPLICATION_REGION_ID: ${{ vars.TENCENTCLOUD_TCR_REPLICATION_REGION_ID }}
+          TENCENTCLOUD_TCR_REPLICATION_REGION_NAME: ${{ vars.TENCENTCLOUD_TCR_REPLICATION_REGION_NAME }}
         run: >-
-          ansible-test integration ${{ inputs.targets || 'security_group network cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns tke_addon' }}
+          ansible-test integration ${{ inputs.targets || 'security_group network cmq_queue cls_log_pipeline api_gateway_service tat_command cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns tke_addon' }}
           --color --python 3.12 --coverage
       # Coverage is collected (not gated) on real-cloud runs: the numbers
       # fluctuate with the account's resource state, so they are reported
@@ -103,3 +108,16 @@ jobs:
           TENCENTCLOUD_SECRET_KEY: ${{ secrets.TENCENTCLOUD_SECRET_KEY }}
           TENCENTCLOUD_REGION: ap-guangzhou
         run: ansible-test integration cleanup --color --python 3.12
+      - name: Audit expired manifest resources
+        if: always() && steps.creds.outputs.available == 'true'
+        continue-on-error: true
+        run: python scripts/resource_reaper.py --fail-on-expired
+      - name: Upload E2E resource manifests
+        if: always() && steps.creds.outputs.available == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-resource-manifests
+          path: |
+            ansible_collections/susunola/tencentcloud/tests/output/e2e-resources.jsonl
+            ansible_collections/susunola/tencentcloud/tests/output/reaper-plan.json
+          if-no-files-found: ignore

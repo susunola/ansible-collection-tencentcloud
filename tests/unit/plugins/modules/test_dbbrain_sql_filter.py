@@ -25,3 +25,8 @@ def test_builders():
 
 def test_desired():
     assert m._desired(P)["MaxConcurrency"] == 2
+
+
+def test_find_running_filter():
+    item = type("Item", (), {"SqlType": "SELECT", "OriginKeys": "select,user", "Status": "RUNNING", "_serialize": lambda self, allow_none=True: {"Id": 1}})()
+    assert m._find([item], P) == {"Id": 1}

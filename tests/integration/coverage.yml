@@ -1,0 +1,20 @@
+version: 1
+targets:
+  cam_user: {cost: free, modules: [cam_user]}
+  cam_group_membership: {cost: free, modules: [cam_group_membership]}
+  key_pair: {cost: free, modules: [key_pair]}
+  security_group: {cost: free, modules: [security_group, security_group_rule]}
+  network: {cost: low, modules: [vpc, subnet, route_table, network_acl, eip]}
+  cos_bucket: {cost: low, modules: [cos_bucket]}
+  cfs_file_system: {cost: medium, modules: [cfs_file_system]}
+  clb_http: {cost: medium, modules: [clb_load_balancer, clb_listener, clb_rule]}
+  kms_key: {cost: low, modules: [kms_key, kms_key_rotation]}
+  monitor_alarm_policy: {cost: free, modules: [monitor_alarm_policy, monitor_alarm_policy_notice]}
+  private_dns: {cost: low, modules: [private_dns_zone, private_dns_record]}
+  tke_addon: {cost: medium, modules: [tke_addon]}
+  cmq_queue: {cost: low, modules: [cmq_queue]}
+  dbbrain_sql_filter: {cost: high, modules: [dbbrain_sql_filter]}
+  tcr_replication_instance: {cost: high, modules: [tcr_replication_instance]}
+  cls_log_pipeline: {cost: low, modules: [cls_logset, cls_topic]}
+  api_gateway_service: {cost: low, modules: [api_gateway_service]}
+  tat_command: {cost: free, modules: [tat_command]}

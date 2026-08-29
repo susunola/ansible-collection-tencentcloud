@@ -26,3 +26,15 @@ def test_request_builders():
     update = api_gateway_service.build_update_request(models, "service-1", params)
     assert update.ServiceId == "service-1"
     assert api_gateway_service.build_delete_request(models, "service-1").ServiceId == "service-1"
+
+
+def test_find_service_treats_not_found_as_absent(monkeypatch):
+    class Module:
+        def sdk_call(self, operation, request):
+            raise RuntimeError("missing")
+
+    class Client:
+        DescribeService = object()
+
+    monkeypatch.setattr(api_gateway_service, "is_not_found", lambda exc: True)
+    assert api_gateway_service.find_service(Module(), Client(), FakeModels(), "service-1", None) is None
