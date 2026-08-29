@@ -1,0 +1,2 @@
+minor_changes:
+  - Deepen ``ckafka_topic`` with replica safety, throughput quota and message timestamp controls backed by topic-attribute state reads.

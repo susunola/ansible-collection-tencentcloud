@@ -1556,6 +1556,11 @@ def test_ckafka_topic():
         "clean_up_policy": "delete",
         "note": "Order event stream",
         "max_message_bytes": None,
+        "min_insync_replicas": 1,
+        "unclean_leader_election": False,
+        "producer_quota_mb": None,
+        "consumer_quota_mb": None,
+        "message_timestamp_type": "CreateTime",
     })
     module._update(fake, client, models, "ckafka-xxxxxxxx", "order-events", 3, {
         "partition_num": 6,
@@ -1565,6 +1570,11 @@ def test_ckafka_topic():
         "clean_up_policy": "delete",
         "note": "Order event stream (scaled)",
         "max_message_bytes": None,
+        "min_insync_replicas": 1,
+        "unclean_leader_election": False,
+        "producer_quota_mb": 20,
+        "consumer_quota_mb": 30,
+        "message_timestamp_type": "LogAppendTime",
     })
     module._scale_partitions(fake, client, models, "ckafka-xxxxxxxx", "order-events", 3, 6)
     module._delete(fake, client, models, "ckafka-xxxxxxxx", "order-events")
