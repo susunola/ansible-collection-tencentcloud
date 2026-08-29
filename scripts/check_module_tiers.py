@@ -61,6 +61,7 @@ CORE_MODULES = {
     "clb_listener_target",
     "clb_load_balancer",
     "cos_bucket",
+    "config_rule",
     "cfs_file_system",
     "cfw_address_template",
     "customer_gateway",

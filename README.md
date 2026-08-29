@@ -36,6 +36,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cloudaudit_track` | Manage Tencent Cloud CloudAudit tracks |
 | `cls_logset` | Manage Tencent Cloud CLS logsets |
 | `cls_topic` | Manage Tencent Cloud CLS topics |
+| `config_rule` | Manage Tencent Cloud Config compliance rules |
 | `cos_bucket` | Manage Tencent Cloud COS buckets |
 | `customer_gateway` | Manage Tencent Cloud VPN customer gateways |
 | `cvm_chc` | Manage Tencent Cloud CHC physical server network configuration |

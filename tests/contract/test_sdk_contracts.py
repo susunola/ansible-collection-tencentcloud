@@ -520,6 +520,7 @@ WRITE_MODULE_BUILDERS = {
     "teo_dns_record": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "cfw_address_template": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "cloudaudit_track": ["build_create_request", "build_delete_request", "build_describe_request", "build_list_request", "build_update_request"],
+    "config_rule": ["build_create_request", "build_delete_request", "build_describe_request", "build_list_request", "build_update_request"],
 }
 
 
@@ -2223,6 +2224,17 @@ def test_cloudaudit_track():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "CloudAudit track request %s" % index))
+    assert errors == []
+
+
+def test_config_rule():
+    module = _import_plugin("config_rule")
+    models = _models("config.v20220802")
+    params = {"name": "encrypted-disks", "identifier": "CBS_DISK_ENCRYPTED", "identifier_type": "SYSTEM", "resource_types": ["QCS::CBS::Disk"], "triggers": [{"message_type": "ConfigurationItemChangeNotification", "maximum_execution_frequency": None}], "risk_level": 1, "input_parameters": {"required": "true"}, "description": "Encrypted disks", "regions": ["ap-guangzhou"], "tags": {"env": "prod"}, "excluded_resource_ids": []}
+    requests = [module.build_list_request(models, params["name"]), module.build_describe_request(models, "rule-x"), module.build_create_request(models, params), module.build_update_request(models, "rule-x", params), module.build_delete_request(models, "rule-x")]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "Config rule request %s" % index))
     assert errors == []
 
 
