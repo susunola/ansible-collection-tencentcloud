@@ -107,6 +107,7 @@ CORE_MODULES = {
     "vpc",
     "vpc_flow_log",
     "vpn_gateway",
+    "waf_ip_access_control",
     "vpn_connection",
     # Hand-written *_info modules that the generator cannot express.
     "cam_policy_info",

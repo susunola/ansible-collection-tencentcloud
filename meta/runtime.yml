@@ -275,6 +275,7 @@ action_groups:
     - vpn_gateway
     - vpn_gateway_info
     - waf_instance_info
+    - waf_ip_access_control
     - wav_activity_info
     - wedata_project_info
     - weilingwith_element_profile_page_info

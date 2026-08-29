@@ -82,6 +82,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `vpc_flow_log` | Manage Tencent Cloud VPC flow logs |
 | `vpn_connection` | Manage Tencent Cloud IPsec VPN connections |
 | `vpn_gateway` | Manage Tencent Cloud VPN gateways |
+| `waf_ip_access_control` | Manage Tencent Cloud WAF IP access-control rules |
 
 Read-only `_info` modules (return `changed=false`):
 

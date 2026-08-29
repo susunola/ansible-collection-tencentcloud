@@ -515,6 +515,7 @@ WRITE_MODULE_BUILDERS = {
     "postgresql_account": ["build_create_request", "build_delete_request", "build_describe_request", "build_password_request", "build_remark_request"],
     "cynosdb_account": ["build_create_request", "build_delete_request", "build_describe_request", "build_description_request", "build_password_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
+    "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
 }
 
 
@@ -2153,6 +2154,17 @@ def test_api_gateway_service():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "API Gateway service request %s" % index))
+    assert errors == []
+
+
+def test_waf_ip_access_control():
+    module = _import_plugin("waf_ip_access_control")
+    models = _models("waf.v20180125")
+    params = {"rule_id": 123, "domain": "api.example.com", "action": "block", "ip_list": ["203.0.113.0/24"], "note": "abuse", "valid_until": 0, "instance_id": "waf-x", "edition": "sparta-waf"}
+    requests = [module.build_describe_request(models, params), module.build_create_request(models, params), module.build_update_request(models, params), module.build_delete_request(models, params)]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "WAF IP rule request %s" % index))
     assert errors == []
 
 
