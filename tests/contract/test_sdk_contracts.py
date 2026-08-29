@@ -517,6 +517,7 @@ WRITE_MODULE_BUILDERS = {
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
+    "teo_dns_record": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
 }
 
 
@@ -2187,6 +2188,17 @@ def test_tdmq_topic():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "TDMQ topic request %s" % index))
+    assert errors == []
+
+
+def test_teo_dns_record():
+    module = _import_plugin("teo_dns_record")
+    models = _models("teo.v20220901")
+    params = {"zone_id": "zone-x", "name": "api.example.com", "record_type": "A", "content": "203.0.113.10", "location": "Default", "ttl": 300, "weight": -1, "priority": 0}
+    requests = [module.build_describe_request(models, "zone-x", name="api.example.com"), module.build_create_request(models, params), module.build_update_request(models, "record-x", params), module.build_delete_request(models, "zone-x", "record-x")]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "TEO DNS record request %s" % index))
     assert errors == []
 
 

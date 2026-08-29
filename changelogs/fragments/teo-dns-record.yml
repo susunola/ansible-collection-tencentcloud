@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``teo_dns_record`` for idempotent EdgeOne DNS record lifecycle management.

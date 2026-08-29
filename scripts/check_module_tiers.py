@@ -99,6 +99,7 @@ CORE_MODULES = {
     "subnet",
     "tag",
     "tdmq_topic",
+    "teo_dns_record",
     "tcr_instance",
     "tcr_namespace",
     "tcr_repository",

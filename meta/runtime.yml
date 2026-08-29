@@ -246,6 +246,7 @@ action_groups:
     - tdmq_topic
     - tdmysql_db_instance_info
     - tem_application_info
+    - teo_dns_record
     - teo_function_info
     - thpc_cluster_info
     - tia_job_info
