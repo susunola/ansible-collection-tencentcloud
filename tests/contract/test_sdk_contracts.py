@@ -496,6 +496,10 @@ WRITE_MODULE_BUILDERS = {
     "network_acl": [
         "build_create_request", "build_describe_request", "build_entries_request",
     ],
+    "vpc_flow_log": [
+        "build_create_request", "build_delete_request", "build_describe_request",
+        "build_toggle_request", "build_update_request",
+    ],
 }
 
 
@@ -2023,6 +2027,17 @@ def test_network_acl():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "network ACL request %s" % index))
+    assert errors == []
+
+
+def test_vpc_flow_log():
+    module = _import_plugin("vpc_flow_log")
+    models = _models("vpc.v20170312")
+    params = {"name": "eni-flow", "vpc_id": "vpc-xxxxxxxx", "resource_type": "NETWORKINTERFACE", "resource_id": "eni-xxxxxxxx", "traffic_type": "ALL", "cls_topic_id": "topic-xxxxxxxx", "description": "audit", "cls_region": "ap-guangzhou", "period": None, "tags": {"env": "prod"}}
+    requests = [module.build_describe_request(models, params["vpc_id"], name=params["name"]), module.build_create_request(models, params), module.build_update_request(models, "fl-xxxxxxxx", params), module.build_toggle_request(models, True, "fl-xxxxxxxx"), module.build_toggle_request(models, False, "fl-xxxxxxxx"), module.build_delete_request(models, params["vpc_id"], "fl-xxxxxxxx")]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "flow log request %s" % index))
     assert errors == []
 
 

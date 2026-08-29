@@ -216,6 +216,9 @@
 44. VPC network ACL closure. **Done** — `network_acl` manages ACL lifecycle,
     name changes, exact ingress/egress rule sets and exact subnet associations,
     with check mode, diff output and SDK contract coverage.
+45. VPC traffic observability. **Done** — `vpc_flow_log` manages flow-log
+    lifecycle for ENI, NAT, CCN and direct-connect resources, CLS topic
+    delivery, mutable metadata and enabled state with convergence polling.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
