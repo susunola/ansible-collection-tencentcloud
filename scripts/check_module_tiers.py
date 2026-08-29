@@ -82,6 +82,7 @@ CORE_MODULES = {
     "peering_connection",
     "private_dns_record",
     "private_dns_zone",
+    "postgresql_account",
     "privatelink_endpoint_service",
     "privatelink_endpoint",
     "redis_instance",

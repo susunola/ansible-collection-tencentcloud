@@ -512,6 +512,7 @@ WRITE_MODULE_BUILDERS = {
     "cls_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "privatelink_endpoint_service": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "privatelink_endpoint": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
+    "postgresql_account": ["build_create_request", "build_delete_request", "build_describe_request", "build_password_request", "build_remark_request"],
 }
 
 
@@ -2117,6 +2118,17 @@ def test_privatelink_endpoint():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "PrivateLink endpoint request %s" % index))
+    assert errors == []
+
+
+def test_postgresql_account():
+    module = _import_plugin("postgresql_account")
+    models = _models("postgres.v20170312")
+    params = {"instance_id": "postgres-x", "username": "app", "password": "secret", "account_type": "normal", "remark": "application", "cam_auth": False}
+    requests = [module.build_describe_request(models, params["instance_id"]), module.build_create_request(models, params), module.build_remark_request(models, params["instance_id"], params["username"], params["remark"]), module.build_password_request(models, params["instance_id"], params["username"], params["password"]), module.build_delete_request(models, params["instance_id"], params["username"])]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "PostgreSQL account request %s" % index))
     assert errors == []
 
 

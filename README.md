@@ -54,6 +54,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `network_acl` | Manage Tencent Cloud VPC network ACLs |
 | `network_interface` | Manage Tencent Cloud elastic network interfaces |
 | `peering_connection` | Manage Tencent Cloud VPC peering connections |
+| `postgresql_account` | Manage TencentDB for PostgreSQL accounts |
 | `private_dns_record` | Manage a Tencent Cloud Private DNS record |
 | `private_dns_zone` | Manage a Tencent Cloud Private DNS zone |
 | `privatelink_endpoint` | Manage Tencent Cloud PrivateLink endpoints |

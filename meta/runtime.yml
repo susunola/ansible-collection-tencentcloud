@@ -192,6 +192,7 @@ action_groups:
     - peering_connection
     - portal_document_info
     - postgres_instance_info
+    - postgresql_account
     - private_dns_record
     - private_dns_zone
     - privatedns_account_vpc_info
