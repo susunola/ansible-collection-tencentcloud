@@ -63,6 +63,7 @@ action_groups:
     - cfg_action_library_info
     - cfs_file_system
     - cfs_file_system_info
+    - cfw_address_template
     - cfw_cluster_nat_ccn_fw_switch_info
     - chc_device_info
     - chdfs_file_system_info

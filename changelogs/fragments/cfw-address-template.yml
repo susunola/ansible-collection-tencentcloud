@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``cfw_address_template`` for idempotent Cloud Firewall address and domain template management.

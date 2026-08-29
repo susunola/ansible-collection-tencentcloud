@@ -26,6 +26,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cdb_instance` | Manage Tencent Cloud CDB MySQL instances |
 | `cdn_domain` | Manage Tencent Cloud CDN domains |
 | `cfs_file_system` | Manage Tencent Cloud CFS file systems |
+| `cfw_address_template` | Manage Tencent Cloud Cloud Firewall address templates |
 | `ckafka_topic` | Manage Tencent Cloud CKafka topics |
 | `clb_listener` | Manage listeners on Tencent Cloud CLB load balancers |
 | `clb_listener_target` | Manage backend targets of Tencent Cloud CLB listeners |

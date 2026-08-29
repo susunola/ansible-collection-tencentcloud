@@ -518,6 +518,7 @@ WRITE_MODULE_BUILDERS = {
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "teo_dns_record": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
+    "cfw_address_template": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
 }
 
 
@@ -2199,6 +2200,17 @@ def test_teo_dns_record():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "TEO DNS record request %s" % index))
+    assert errors == []
+
+
+def test_cfw_address_template():
+    module = _import_plugin("cfw_address_template")
+    models = _models("cfw.v20190904")
+    params = {"name": "trusted", "description": "internal", "addresses": ["10.0.0.0/8"], "template_type": "ip", "ip_version": 0}
+    requests = [module.build_describe_request(models, name="trusted"), module.build_create_request(models, params), module.build_update_request(models, "uuid-x", params), module.build_delete_request(models, "uuid-x")]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CFW address template request %s" % index))
     assert errors == []
 
 
