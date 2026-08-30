@@ -491,6 +491,9 @@ modules:
   - DescribeAccounts
   - ModifyAccountDescription
   - ResetAccountPassword
+  cynosdb_backup_config:
+  - DescribeBackupConfig
+  - ModifyBackupConfig
   cynosdb_cluster_info:
   - DescribeClusters
   dasb_device_info:

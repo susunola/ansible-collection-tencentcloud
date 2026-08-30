@@ -78,6 +78,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cvm_image` | Manage Tencent Cloud CVM custom images |
 | `cvm_instance` | Manage Tencent Cloud CVM instances |
 | `cynosdb_account` | Manage Tencent Cloud CynosDB accounts |
+| `cynosdb_backup_config` | Manage Tencent Cloud CynosDB backup configuration |
 | `dbbrain_sql_filter` | Manage Tencent Cloud DBbrain SQL filters |
 | `dnspod_custom_line` | Manage DNSPod domain custom lines |
 | `dnspod_domain` | Manage Tencent Cloud DNSPod domains |

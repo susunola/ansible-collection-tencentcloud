@@ -13,6 +13,7 @@ minor_changes:
   - Add multi-engine CKafka Datahub connection lifecycle management with recursive credential scrubbing.
   - Add CKafka Datahub source and sink task lifecycle, capacity tuning, pause and resume management.
   - Add idempotent SQL Server regular backup strategy management.
+  - Add idempotent CynosDB backup window and retention management.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

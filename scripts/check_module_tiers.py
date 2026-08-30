@@ -104,6 +104,7 @@ CORE_MODULES = {
     "cvm_image",
     "cvm_instance",
     "cynosdb_account",
+    "cynosdb_backup_config",
     "dnspod_record",
     "dnspod_custom_line",
     "dnspod_line_group",
