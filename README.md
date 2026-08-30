@@ -189,6 +189,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `vpn_connection` | Manage Tencent Cloud IPsec VPN connections |
 | `vpn_gateway` | Manage Tencent Cloud VPN gateways |
 | `waf_anti_info_leak_rule` | Manage Tencent Cloud WAF sensitive-information leakage rules |
+| `waf_attack_white_rule` | Manage Tencent Cloud WAF attack-signature allow rules |
 | `waf_custom_rule` | Manage Tencent Cloud WAF custom rules |
 | `waf_host` | Manage Tencent Cloud WAF protected hosts |
 | `waf_ip_access_control` | Manage Tencent Cloud WAF IP access-control rules |

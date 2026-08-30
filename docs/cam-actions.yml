@@ -1292,6 +1292,11 @@ modules:
   - DescribeAntiInfoLeakageRules
   - ModifyAntiInfoLeakRuleStatus
   - ModifyAntiInfoLeakRules
+  waf_attack_white_rule:
+  - AddAttackWhiteRule
+  - DeleteAttackWhiteRule
+  - DescribeAttackWhiteRule
+  - ModifyAttackWhiteRule
   waf_custom_rule:
   - AddCustomRule
   - DeleteCustomRule
