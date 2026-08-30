@@ -186,6 +186,8 @@ CORE_MODULES = {
     "security_group_rule",
     "ssl_certificate",
     "ssm_parameter",
+    "ssm_secret_version",
+    "ssm_rotation",
     "subnet",
     "tag",
     "tat_command",

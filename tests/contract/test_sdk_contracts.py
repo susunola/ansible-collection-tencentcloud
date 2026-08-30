@@ -358,6 +358,8 @@ WRITE_MODULE_BUILDERS = {
     "cfs_auto_snapshot_policy": ["bind_request", "create_request", "delete_request", "describe_request", "unbind_request", "update_request"],
     "cbs_auto_snapshot_policy": ["bind_request", "create_request", "delete_request", "describe_request", "unbind_request", "update_request"],
     "cbs_snapshot_share": ["describe_request", "modify_request"],
+    "ssm_secret_version": ["create_request", "delete_request", "get_request", "list_request"],
+    "ssm_rotation": ["describe_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4640,4 +4642,22 @@ def test_cbs_snapshot_share():
     errors.extend(audit_request(module.describe_request(models, "snap-xxxxxxxx"), "CBS snapshot share describe"))
     errors.extend(audit_request(module.modify_request(models, "snap-xxxxxxxx", ["100001122000"], "SHARE"), "CBS snapshot share add"))
     errors.extend(audit_request(module.modify_request(models, "snap-xxxxxxxx", ["100001122000"], "CANCEL"), "CBS snapshot share remove"))
+    assert errors == []
+
+
+def test_ssm_secret_version():
+    module = _import_plugin("ssm_secret_version"); models = _models("ssm.v20190923")
+    p = {"secret_name": "prod/database", "version_id": "release-1", "secret_string": "redacted", "secret_binary": None}; errors = []
+    errors.extend(audit_request(module.list_request(models, p["secret_name"]), "SSM version list"))
+    errors.extend(audit_request(module.get_request(models, p), "SSM version get"))
+    errors.extend(audit_request(module.create_request(models, p), "SSM version create"))
+    errors.extend(audit_request(module.delete_request(models, p), "SSM version delete"))
+    assert errors == []
+
+
+def test_ssm_rotation():
+    module = _import_plugin("ssm_rotation"); models = _models("ssm.v20190923")
+    p = {"secret_name": "prod/database", "enabled": True, "frequency": 30, "begin_time": "2026-09-01T02:00:00Z"}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p["secret_name"]), "SSM rotation describe"))
+    errors.extend(audit_request(module.update_request(models, p), "SSM rotation update"))
     assert errors == []

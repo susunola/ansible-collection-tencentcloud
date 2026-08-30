@@ -1075,6 +1075,14 @@ modules:
   - DeleteSecret
   - DescribeSecret
   - UpdateSecret
+  ssm_rotation:
+  - DescribeRotationDetail
+  - UpdateRotationStatus
+  ssm_secret_version:
+  - DeleteSecretVersion
+  - GetSecretValue
+  - ListSecretVersionIds
+  - PutSecretValue
   subnet:
   - AttachResourcesTag
   - CreateSubnet

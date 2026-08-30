@@ -160,6 +160,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `sqlserver_backup_config` | Manage TencentDB for SQL Server backup configuration |
 | `ssl_certificate` | Manage Tencent Cloud SSL certificates |
 | `ssm_parameter` | Manage Tencent Cloud SSM secrets (parameters) |
+| `ssm_rotation` | Manage Tencent Cloud SSM secret rotation settings |
+| `ssm_secret_version` | Manage Tencent Cloud SSM secret versions |
 | `subnet` | Manage Tencent Cloud VPC subnets |
 | `tag` | Manage tags on arbitrary Tencent Cloud resources |
 | `tat_command` | Manage Tencent Cloud TAT commands |
