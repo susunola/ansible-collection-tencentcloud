@@ -227,6 +227,7 @@ CORE_MODULES = {
     "teo_dns_record",
     "teo_acceleration_domain",
     "teo_origin_group",
+    "teo_security_ip_group",
     "teo_zone",
     "tcr_instance",
     "tcr_namespace",

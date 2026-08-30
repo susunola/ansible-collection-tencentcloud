@@ -49,6 +49,7 @@ minor_changes:
   - Add EdgeOne zone lifecycle with access-mode configuration and pause-state convergence.
   - Add EdgeOne origin-group lifecycle with exact origin-record and weight convergence.
   - Add EdgeOne acceleration-domain lifecycle with origin, protocol, port, IPv6 and online-state convergence.
+  - Add EdgeOne security IP-group lifecycle with complete large-set IP and CIDR convergence.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

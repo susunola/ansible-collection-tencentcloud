@@ -457,6 +457,7 @@ WRITE_MODULE_BUILDERS = {
     "config_aggregate_delivery": ["describe_request", "update_request"],
     "teo_acceleration_domain": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
     "teo_origin_group": ["create_request", "delete_request", "describe_request", "update_request"],
+    "teo_security_ip_group": ["content_request", "create_request", "delete_request", "describe_request", "update_request"],
     "teo_zone": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
     "cvm_chc": [
         "_configure_vpc",
@@ -4914,4 +4915,15 @@ def test_teo_acceleration_domain():
     errors.extend(audit_request(module.update_request(models, p), "TEO acceleration domain update"))
     errors.extend(audit_request(module.status_request(models, p), "TEO acceleration domain status"))
     errors.extend(audit_request(module.delete_request(models, p), "TEO acceleration domain delete"))
+    assert errors == []
+
+
+def test_teo_security_ip_group():
+    module = _import_plugin("teo_security_ip_group"); models = _models("teo.v20220901")
+    p = {"zone_id": "zone-xxxxxxxx", "group_id": None, "name": "trusted-offices", "content": ["192.0.2.0/24", "2001:db8::/48"]}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "TEO security IP group describe"))
+    errors.extend(audit_request(module.content_request(models, p, 1001), "TEO security IP group content"))
+    errors.extend(audit_request(module.create_request(models, p), "TEO security IP group create"))
+    errors.extend(audit_request(module.update_request(models, p, 1001), "TEO security IP group update"))
+    errors.extend(audit_request(module.delete_request(models, p, 1001), "TEO security IP group delete"))
     assert errors == []

@@ -1340,6 +1340,12 @@ modules:
   - DeleteOriginGroup
   - DescribeOriginGroup
   - ModifyOriginGroup
+  teo_security_ip_group:
+  - CreateSecurityIPGroup
+  - DeleteSecurityIPGroup
+  - DescribeSecurityIPGroupContent
+  - DescribeSecurityIPGroupInfo
+  - ModifySecurityIPGroup
   teo_zone:
   - CreateZone
   - DeleteZone
