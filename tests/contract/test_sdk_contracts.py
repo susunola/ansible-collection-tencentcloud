@@ -315,6 +315,7 @@ WRITE_MODULE_BUILDERS = {
     "mariadb_account_privilege": ["describe_request", "grant_request"],
     "elasticsearch_index": ["create_request", "delete_request", "describe_request", "update_request"],
     "ckafka_user": ["create_request", "delete_request", "describe_request", "password_request"],
+    "ckafka_route": ["create_request", "delete_request", "describe_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4148,6 +4149,17 @@ def test_ckafka_user():
     errors.extend(audit_request(module.create_request(models, p), "ckafka user create"))
     errors.extend(audit_request(module.password_request(models, p), "ckafka user password"))
     errors.extend(audit_request(module.delete_request(models, p), "ckafka user delete"))
+    assert errors == []
+
+
+def test_ckafka_route():
+    module = _import_plugin("ckafka_route")
+    models = _models("ckafka.v20190819")
+    errors = []
+    p = {"instance_id": "ckafka-xxxxxxxx", "network_type": 3, "access_type": 3, "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "public_bandwidth": None, "note": "private", "security_group_ids": ["sg-xxxxxxxx"], "ip_whitelist": []}
+    errors.extend(audit_request(module.describe_request(models, p["instance_id"]), "ckafka route describe"))
+    errors.extend(audit_request(module.create_request(models, p), "ckafka route create"))
+    errors.extend(audit_request(module.delete_request(models, p["instance_id"], 123), "ckafka route delete"))
     assert errors == []
 
 

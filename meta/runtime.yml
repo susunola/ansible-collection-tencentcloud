@@ -86,6 +86,7 @@ action_groups:
     - ciam_user_store_info
     - ckafka_acl
     - ckafka_instance_info
+    - ckafka_route
     - ckafka_topic
     - ckafka_user
     - clb_listener

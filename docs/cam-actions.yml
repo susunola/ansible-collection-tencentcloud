@@ -275,6 +275,10 @@ modules:
   - DescribeACL
   ckafka_instance_info:
   - DescribeInstancesDetail
+  ckafka_route:
+  - CreateRoute
+  - DeleteRoute
+  - DescribeRoute
   ckafka_topic:
   - CreatePartition
   - CreateTopic
