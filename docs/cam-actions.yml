@@ -1153,6 +1153,10 @@ modules:
   - DescribeAddon
   - InstallAddon
   - UpdateAddon
+  tke_backup_storage_location:
+  - CreateBackupStorageLocation
+  - DeleteBackupStorageLocation
+  - DescribeBackupStorageLocations
   tke_cluster:
   - CreateCluster
   - DeleteCluster

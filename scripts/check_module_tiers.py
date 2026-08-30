@@ -191,6 +191,7 @@ CORE_MODULES = {
     "tke_cluster_endpoint",
     "tke_cluster_authentication",
     "tke_cluster_audit",
+    "tke_backup_storage_location",
     "tke_node_pool",
     "vpc",
     "vpc_flow_log",

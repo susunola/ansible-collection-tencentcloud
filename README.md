@@ -161,6 +161,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tdmq_topic` | Manage Tencent Cloud TDMQ Pulsar topics |
 | `teo_dns_record` | Manage Tencent Cloud TEO DNS records |
 | `tke_addon` | Manage a Tencent Kubernetes Engine addon |
+| `tke_backup_storage_location` | Manage Tencent Kubernetes Engine backup storage locations |
 | `tke_cluster` | Manage Tencent Cloud TKE clusters |
 | `tke_cluster_audit` | Manage Tencent Cloud TKE cluster audit logging |
 | `tke_cluster_authentication` | Manage Tencent Cloud TKE cluster authentication options |

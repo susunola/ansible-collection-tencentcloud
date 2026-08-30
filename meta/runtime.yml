@@ -337,6 +337,7 @@ action_groups:
     - tione_dataset_info
     - tiw_running_task_info
     - tke_addon
+    - tke_backup_storage_location
     - tke_cluster
     - tke_cluster_audit
     - tke_cluster_authentication

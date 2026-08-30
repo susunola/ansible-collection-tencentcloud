@@ -331,6 +331,7 @@ WRITE_MODULE_BUILDERS = {
     "tdmq_rocketmq_cluster": ["create_request", "delete_request", "describe_request", "update_request"],
     "waf_protect_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "cls_shipper": ["create_request", "delete_request", "describe_request", "update_request"],
+    "tke_backup_storage_location": ["create_request", "delete_request", "describe_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -2896,6 +2897,17 @@ def test_cls_shipper():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "CLS shipper request %s" % index))
+    assert errors == []
+
+
+def test_tke_backup_storage_location():
+    module = _import_plugin("tke_backup_storage_location")
+    models = _models("tke.v20180525")
+    p = {"name": "production-backups", "storage_region": "ap-guangzhou", "bucket": "tke-backup-1250000000", "provider": "tencentcloud", "path": "production/"}
+    requests = [module.describe_request(models, p["name"]), module.create_request(models, p), module.delete_request(models, p["name"])]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "TKE backup storage location request %s" % index))
     assert errors == []
 
 
