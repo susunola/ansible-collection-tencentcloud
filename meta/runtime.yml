@@ -6,6 +6,8 @@ action_groups:
     - adp_agent_release_preview_info
     - advisor_strategy_info
     - ags_sandbox_instance_info
+    - alb_listener
+    - alb_load_balancer
     - alb_security_policy_info
     - alb_target_group
     - alb_target_group_targets

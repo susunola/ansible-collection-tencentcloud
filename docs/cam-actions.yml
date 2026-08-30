@@ -8,6 +8,19 @@ modules:
   - DescribeStrategies
   ags_sandbox_instance_info:
   - DescribeSandboxInstanceList
+  alb_listener:
+  - CreateListener
+  - DeleteListener
+  - DescribeListenerDetail
+  - DescribeListeners
+  - ModifyListenerAttributes
+  alb_load_balancer:
+  - CreateLoadBalancer
+  - DeleteLoadBalancers
+  - DescribeLoadBalancerDetail
+  - DescribeLoadBalancers
+  - ModifyLoadBalancerAddressType
+  - ModifyLoadBalancerAttributes
   alb_security_policy_info:
   - DescribeSecurityPolicies
   alb_target_group:

@@ -311,6 +311,8 @@ UNEXERCISED_BUILDERS = {
 # at the bottom of this file. Info-module builders are registered in
 # INFO_BUILDERS instead. Both sets are verified against the static scan.
 WRITE_MODULE_BUILDERS = {
+    "alb_load_balancer": ["address_request", "create_request", "delete_request", "describe_request", "list_request", "update_request"],
+    "alb_listener": ["create_request", "delete_request", "describe_request", "list_request", "update_request"],
     "alb_target_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "alb_target_group_targets": ["add_request", "describe_request", "remove_request", "update_request"],
     "mqtt_authorization_policy": ["create_request", "delete_request", "describe_request", "update_request"],
@@ -5305,6 +5307,29 @@ def test_teo_origin_group():
     errors.extend(audit_request(module.create_request(models, p), "TEO origin group create"))
     errors.extend(audit_request(module.update_request(models, p, "origin-xxxxxxxx"), "TEO origin group update"))
     errors.extend(audit_request(module.delete_request(models, p, "origin-xxxxxxxx"), "TEO origin group delete"))
+    assert errors == []
+
+
+def test_alb_load_balancer():
+    module = _import_plugin("alb_load_balancer"); models = _models("alb.v20251030")
+    p = {"load_balancer_id": None, "name": "public-app", "address_type": "Internet", "vpc_id": "vpc-xxxxxxxx", "zone_mappings": [{"ZoneId": "ap-guangzhou-3", "SubnetId": "subnet-xxxxxxxx"}, {"ZoneId": "ap-guangzhou-4", "SubnetId": "subnet-yyyyyyyy"}], "ip_version": "IPv4", "charge_type": "POSTPAID_BY_HOUR", "bandwidth_package_id": None, "internet_address_type": "EIP", "deletion_protection": True, "deletion_protection_reason": "Managed by Ansible", "tags": {"env": "production"}, "client_token": "contract-test"}; errors = []
+    errors.extend(audit_request(module.list_request(models), "ALB list"))
+    errors.extend(audit_request(module.describe_request(models, "alb-xxxxxxxx"), "ALB detail"))
+    errors.extend(audit_request(module.create_request(models, p), "ALB create"))
+    errors.extend(audit_request(module.update_request(models, p, "alb-xxxxxxxx", p["name"], True), "ALB update"))
+    errors.extend(audit_request(module.address_request(models, p, "alb-xxxxxxxx", "Intranet"), "ALB address conversion"))
+    errors.extend(audit_request(module.delete_request(models, p, "alb-xxxxxxxx"), "ALB delete"))
+    assert errors == []
+
+
+def test_alb_listener():
+    module = _import_plugin("alb_listener"); models = _models("alb.v20251030")
+    p = {"load_balancer_id": "alb-xxxxxxxx", "listener_id": None, "name": "https", "port": 443, "protocol": "HTTPS", "default_actions": [{"Type": "ForwardGroup", "TargetGroupConfig": {"TargetGroups": [{"TargetGroupId": "alb-tg-xxxxxxxx", "Weight": 100}]}}], "certificate_ids": ["cert-xxxxxxxx"], "ca_enabled": False, "ca_certificate_ids": [], "security_policy_id": "tls-xxxxxxxx", "gzip_enabled": True, "http2_enabled": True, "idle_timeout": 15, "request_timeout": 60, "x_forwarded_for": {"XForwardedForProtoEnabled": True}, "tags": {"env": "production"}, "client_token": "contract-test"}; errors = []
+    errors.extend(audit_request(module.list_request(models, p), "ALB listener list"))
+    errors.extend(audit_request(module.describe_request(models, p, "lbl-xxxxxxxx"), "ALB listener detail"))
+    errors.extend(audit_request(module.create_request(models, p), "ALB listener create"))
+    errors.extend(audit_request(module.update_request(models, p, "lbl-xxxxxxxx"), "ALB listener update"))
+    errors.extend(audit_request(module.delete_request(models, p, "lbl-xxxxxxxx"), "ALB listener delete"))
     assert errors == []
 
 
