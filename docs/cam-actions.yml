@@ -1055,6 +1055,11 @@ modules:
   - GetOverSummary
   tdmq_amqp_cluster_info:
   - DescribeAMQPClusters
+  tdmq_namespace:
+  - CreateEnvironment
+  - DeleteEnvironments
+  - DescribeEnvironments
+  - ModifyEnvironmentAttributes
   tdmq_subscription:
   - CreateSubscription
   - DeleteSubscriptions

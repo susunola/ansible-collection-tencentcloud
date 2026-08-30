@@ -317,6 +317,7 @@ WRITE_MODULE_BUILDERS = {
     "ckafka_user": ["create_request", "delete_request", "describe_request", "password_request"],
     "ckafka_route": ["create_request", "delete_request", "describe_request"],
     "ckafka_acl_rule": ["create_request", "delete_request", "describe_request", "update_request"],
+    "tdmq_namespace": ["create_request", "delete_request", "describe_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4173,6 +4174,18 @@ def test_ckafka_acl_rule():
     errors.extend(audit_request(module.create_request(models, p), "ckafka acl rule create"))
     errors.extend(audit_request(module.update_request(models, p), "ckafka acl rule update"))
     errors.extend(audit_request(module.delete_request(models, p), "ckafka acl rule delete"))
+    assert errors == []
+
+
+def test_tdmq_namespace():
+    module = _import_plugin("tdmq_namespace")
+    models = _models("tdmq.v20200217")
+    errors = []
+    p = {"cluster_id": "pulsar-xxxxxxxx", "name": "production", "message_ttl": 604800, "remark": "prod", "retention_minutes": 1440, "retention_size_mb": 10240, "auto_subscription_creation": False, "subscription_expiration_enabled": True, "subscription_expiration_time": 2592000}
+    errors.extend(audit_request(module.describe_request(models, p), "tdmq namespace describe"))
+    errors.extend(audit_request(module.create_request(models, p), "tdmq namespace create"))
+    errors.extend(audit_request(module.update_request(models, p), "tdmq namespace update"))
+    errors.extend(audit_request(module.delete_request(models, p), "tdmq namespace delete"))
     assert errors == []
 
 
