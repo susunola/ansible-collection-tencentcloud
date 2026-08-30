@@ -1494,6 +1494,9 @@ modules:
   - DeleteAttackWhiteRule
   - DescribeAttackWhiteRule
   - ModifyAttackWhiteRule
+  waf_auto_deny:
+  - DescribeWafAutoDenyRules
+  - ModifyWafAutoDenyRules
   waf_cc_rule:
   - DeleteCCRule
   - DescribeCCRuleList
@@ -1521,11 +1524,19 @@ modules:
   - DeleteIpAccessControl
   - DescribeIpAccessControl
   - ModifyIpAccessControl
+  waf_owasp_white_rule:
+  - CreateOwaspWhiteRule
+  - DeleteOwaspWhiteRule
+  - DescribeOwaspWhiteRules
+  - ModifyOwaspWhiteRule
   waf_protect_group:
   - CreateProtectGroup
   - DeleteProtectGroup
   - DescribeProtectGroup
   - ModifyProtectGroup
+  waf_threat_intelligence:
+  - DescribeWafThreatenIntelligence
+  - ModifyWafThreatenIntelligence
   wav_activity_info:
   - QueryActivityList
   wedata_project_info:

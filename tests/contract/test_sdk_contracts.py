@@ -358,6 +358,9 @@ WRITE_MODULE_BUILDERS = {
     "waf_attack_white_rule": ["create_request", "delete_request", "describe_request", "update_request"],
     "waf_anti_tamper_rule": ["create_request", "delete_request", "describe_request", "refresh_request", "status_request", "update_request"],
     "waf_area_ban_rule": ["create_request", "describe_request", "status_request", "update_request"],
+    "waf_owasp_white_rule": ["create_request", "delete_request", "describe_request", "update_request"],
+    "waf_auto_deny": ["describe_request", "update_request"],
+    "waf_threat_intelligence": ["describe_request", "update_request"],
     "waf_custom_white_rule": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
     "waf_cc_rule": ["delete_request", "describe_request", "upsert_request"],
     "cfs_permission_group": ["create_request", "delete_request", "describe_request", "update_request"],
@@ -4774,6 +4777,29 @@ def test_waf_area_ban_rule():
     requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p), module.status_request(models, p, True)]
     errors = []
     for index, request in enumerate(requests): errors.extend(audit_request(request, "WAF area-ban request %s" % index))
+    assert errors == []
+
+
+def test_waf_owasp_white_rule():
+    module = _import_plugin("waf_owasp_white_rule"); models = _models("waf.v20180125")
+    p = {"domain": "api.example.com", "name": "allow-health", "allow_type": 0, "owasp_ids": [100001], "strategies": [{"Field": "URI", "CompareFunc": "prefix", "Content": "/health", "Arg": ""}], "logical_operator": "and", "expire_time": 0, "enabled": True}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p, 123), module.delete_request(models, p, 123)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "WAF OWASP allowlist request %s" % index))
+    assert errors == []
+
+
+def test_waf_auto_deny():
+    module = _import_plugin("waf_auto_deny"); models = _models("waf.v20180125")
+    p = {"domain": "api.example.com", "enabled": True, "attack_threshold": 20, "time_threshold": 5, "deny_time_threshold": 120}
+    errors = audit_request(module.describe_request(models, p), "WAF auto deny describe") + audit_request(module.update_request(models, p), "WAF auto deny update")
+    assert errors == []
+
+
+def test_waf_threat_intelligence():
+    module = _import_plugin("waf_threat_intelligence"); models = _models("waf.v20180125")
+    p = {"enabled": True, "tags": ["botnet", "scanner"]}
+    errors = audit_request(module.describe_request(models), "WAF threat intelligence describe") + audit_request(module.update_request(models, p), "WAF threat intelligence update")
     assert errors == []
 
 

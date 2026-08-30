@@ -235,12 +235,15 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `waf_anti_tamper_rule` | Manage Tencent Cloud WAF anti-tamper URL rules |
 | `waf_area_ban_rule` | Manage Tencent Cloud WAF geographic blocking |
 | `waf_attack_white_rule` | Manage Tencent Cloud WAF attack-signature allow rules |
+| `waf_auto_deny` | Manage Tencent Cloud WAF automatic IP blocking |
 | `waf_cc_rule` | Manage Tencent Cloud WAF CC protection rules |
 | `waf_custom_rule` | Manage Tencent Cloud WAF custom rules |
 | `waf_custom_white_rule` | Manage Tencent Cloud WAF precision allowlist rules |
 | `waf_host` | Manage Tencent Cloud WAF protected hosts |
 | `waf_ip_access_control` | Manage Tencent Cloud WAF IP access-control rules |
+| `waf_owasp_white_rule` | Manage Tencent Cloud WAF OWASP allowlist rules |
 | `waf_protect_group` | Manage Tencent Cloud WAF protection object groups |
+| `waf_threat_intelligence` | Manage Tencent Cloud WAF threat-intelligence blocking |
 
 Read-only `_info` modules (return `changed=false`):
 
