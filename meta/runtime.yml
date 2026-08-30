@@ -140,6 +140,7 @@ action_groups:
     - cwp_machine_info
     - cws_monitor_info
     - cynosdb_account
+    - cynosdb_account_privilege
     - cynosdb_backup_config
     - cynosdb_cluster_info
     - dasb_device_info

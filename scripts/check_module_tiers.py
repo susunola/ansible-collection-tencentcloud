@@ -105,6 +105,7 @@ CORE_MODULES = {
     "cvm_instance",
     "cynosdb_account",
     "cynosdb_backup_config",
+    "cynosdb_account_privilege",
     "dnspod_record",
     "dnspod_custom_line",
     "dnspod_line_group",

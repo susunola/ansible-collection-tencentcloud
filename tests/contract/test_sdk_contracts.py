@@ -341,6 +341,7 @@ WRITE_MODULE_BUILDERS = {
     "ckafka_datahub_task": ["create_request", "delete_request", "describe_request", "list_request", "pause_request", "resume_request", "update_request"],
     "sqlserver_backup_config": ["describe_request", "update_request"],
     "cynosdb_backup_config": ["describe_request", "update_request"],
+    "cynosdb_account_privilege": ["describe_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -2615,6 +2616,14 @@ def test_cynosdb_backup_config():
     p = {"cluster_id": "cynosdbmysql-x", "backup_start": 10800, "backup_end": 14400, "retention_seconds": 2592000}
     errors = audit_request(module.describe_request(models, p["cluster_id"]), "CynosDB backup describe")
     errors.extend(audit_request(module.update_request(models, p), "CynosDB backup update"))
+    assert errors == []
+
+
+def test_cynosdb_account_privilege():
+    module = _import_plugin("cynosdb_account_privilege"); models = _models("cynosdb.v20190107")
+    p = {"cluster_id": "cynosdbmysql-x", "account_name": "app", "host": "%", "global_privileges": ["show_db"], "database_privileges": [{"database": "orders", "privileges": ["select", "insert"]}], "table_privileges": [{"database": "orders", "table": "audit", "privileges": ["select"]}]}
+    errors = audit_request(module.describe_request(models, p), "CynosDB account privilege describe")
+    errors.extend(audit_request(module.update_request(models, p), "CynosDB account privilege update"))
     assert errors == []
 
 
