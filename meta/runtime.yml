@@ -103,6 +103,7 @@ action_groups:
     - ckafka_datahub_connection
     - ckafka_datahub_task
     - ckafka_datahub_topic
+    - ckafka_instance
     - ckafka_instance_info
     - ckafka_route
     - ckafka_topic

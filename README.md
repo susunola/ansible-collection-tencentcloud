@@ -62,6 +62,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `ckafka_datahub_connection` | Manage Tencent Cloud CKafka Datahub connection resources |
 | `ckafka_datahub_task` | Manage Tencent Cloud CKafka Datahub tasks |
 | `ckafka_datahub_topic` | Manage Tencent Cloud CKafka Datahub topics |
+| `ckafka_instance` | Manage Tencent Cloud CKafka instances |
 | `ckafka_route` | Manage Tencent Cloud CKafka access routes |
 | `ckafka_topic` | Manage Tencent Cloud CKafka topics |
 | `ckafka_user` | Manage Tencent Cloud CKafka users |

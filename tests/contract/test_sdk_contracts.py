@@ -825,6 +825,7 @@ WRITE_MODULE_BUILDERS = {
     "postgresql_account": ["build_create_request", "build_delete_request", "build_describe_request", "build_password_request", "build_remark_request"],
     "cynosdb_account": ["build_create_request", "build_delete_request", "build_describe_request", "build_description_request", "build_password_request"],
     "cynosdb_cluster": ["create_request", "describe_request", "isolate_request", "offline_request", "rename_request", "slave_zone_request", "storage_request", "version_request"],
+    "ckafka_instance": ["attributes_request", "create_postpaid_request", "create_prepaid_request", "delete_postpaid_request", "delete_prepaid_request", "list_request", "modify_request", "resize_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
@@ -1908,6 +1909,15 @@ def test_cdb_instance():
     module._restart(fake, _AsyncTaskClient(), models, "cdb-xxxxxxxx")
     module._upgrade(fake, _AsyncTaskClient(), models, "cdb-xxxxxxxx", 16000, 200)
     errors.extend(audit_recorded(fake, "cdb_instance"))
+    assert errors == []
+
+
+def test_ckafka_instance():
+    module = _import_plugin("ckafka_instance"); models = _models("ckafka.v20190819")
+    p = {"instance_id": "ckafka-x", "name": "production-kafka", "zones": [100003, 100004], "vpc_id": "vpc-x", "subnet_id": "subnet-x", "period_months": 1, "auto_renew": False, "instance_type": 1, "specification": "profession", "kafka_version": "2.8.1", "disk_type": "CLOUD_BASIC", "disk_size": 500, "bandwidth": 40, "partitions": 400, "topic_count": 200, "retention_minutes": 1440, "max_message_bytes": 12582912, "retention_bytes": 1073741824, "unclean_leader_election": False, "deletion_protection": True, "tags": {"environment": "production"}}
+    requests = [module.list_request(models, p), module.attributes_request(models, p["instance_id"]), module.create_prepaid_request(models, p), module.create_postpaid_request(models, p), module.modify_request(models, p, p["instance_id"]), module.resize_request(models, p, p["instance_id"]), module.delete_prepaid_request(models, p["instance_id"]), module.delete_postpaid_request(models, p["instance_id"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "CKafka instance request %s" % index))
     assert errors == []
 
 

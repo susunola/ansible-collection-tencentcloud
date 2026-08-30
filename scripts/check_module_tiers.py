@@ -85,6 +85,7 @@ CORE_MODULES = {
     "cloudaudit_track",
     "cloudaudit_audit",
     "ckafka_topic",
+    "ckafka_instance",
     "ckafka_user",
     "ckafka_route",
     "ckafka_acl_rule",

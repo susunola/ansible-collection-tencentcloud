@@ -372,6 +372,15 @@ modules:
   - DeleteDatahubTopic
   - DescribeDatahubTopic
   - ModifyDatahubTopic
+  ckafka_instance:
+  - CreateInstancePre
+  - CreatePostPaidInstance
+  - DeleteInstancePost
+  - DeleteInstancePre
+  - DescribeInstanceAttributes
+  - DescribeInstancesDetail
+  - ModifyInstanceAttributes
+  - ModifyInstancePre
   ckafka_instance_info:
   - DescribeInstancesDetail
   ckafka_route:
