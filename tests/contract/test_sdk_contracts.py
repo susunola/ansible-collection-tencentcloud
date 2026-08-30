@@ -302,6 +302,8 @@ UNEXERCISED_BUILDERS = {
 WRITE_MODULE_BUILDERS = {
     "cdb_account": ["create", "describe"],
     "cdb_account_privilege": ["describe_request", "modify_request"],
+    "cdb_audit_config": ["describe_request", "modify_request"],
+    "cdb_database": ["create_request", "delete_request", "describe_request"],
     "organization_member": ["create", "delete", "describe", "move", "update"],
     "organization_member_identity": ["create_request", "delete_request", "describe_request"],
     "organization_member_policy": ["create_request", "delete_request", "describe_request", "update_request"],
@@ -3982,6 +3984,28 @@ def test_cdb_account_privilege():
     wanted = {"GlobalPrivileges": ["SELECT"], "DatabasePrivileges": [{"database": "orders", "privileges": ["SELECT", "INSERT"]}], "TablePrivileges": [{"database": "orders", "table": "events", "privileges": ["SELECT"]}], "ColumnPrivileges": [{"database": "orders", "table": "events", "column": "id", "privileges": ["SELECT"]}]}
     errors.extend(audit_request(module.describe_request(models, p), "cdb account privilege describe"))
     errors.extend(audit_request(module.modify_request(models, p, wanted), "cdb account privilege modify"))
+    assert errors == []
+
+
+def test_cdb_database():
+    module = _import_plugin("cdb_database")
+    models = _models("cdb.v20170320")
+    errors = []
+    p = {"instance_id": "cdb-xxxxxxxx", "name": "orders", "character_set": "utf8mb4"}
+    errors.extend(audit_request(module.describe_request(models, p["instance_id"]), "cdb database describe"))
+    errors.extend(audit_request(module.create_request(models, p), "cdb database create"))
+    errors.extend(audit_request(module.delete_request(models, p), "cdb database delete"))
+    assert errors == []
+
+
+def test_cdb_audit_config():
+    module = _import_plugin("cdb_audit_config")
+    models = _models("cdb.v20170320")
+    errors = []
+    p = {"instance_id": "cdb-xxxxxxxx", "enabled": True, "retention_days": 180}
+    errors.extend(audit_request(module.describe_request(models, p["instance_id"]), "cdb audit config describe"))
+    errors.extend(audit_request(module.modify_request(models, p), "cdb audit config modify"))
+    errors.extend(audit_request(module.modify_request(models, dict(p, enabled=False)), "cdb audit config close"))
     assert errors == []
 
 

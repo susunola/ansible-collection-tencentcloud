@@ -35,7 +35,9 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `ccn_attachment` | Attach network instances to Tencent Cloud CCN |
 | `cdb_account` | Manage TencentDB for MySQL accounts |
 | `cdb_account_privilege` | Manage TencentDB for MySQL account privileges |
+| `cdb_audit_config` | Manage TencentDB for MySQL audit configuration |
 | `cdb_backup_config` | Manage TencentDB for MySQL backup configuration |
+| `cdb_database` | Manage databases in TencentDB for MySQL |
 | `cdb_instance` | Manage Tencent Cloud CDB MySQL instances |
 | `cdb_parameter_template` | Manage Tencent Cloud CDB parameter templates |
 | `cdn_domain` | Manage Tencent Cloud CDN domains |

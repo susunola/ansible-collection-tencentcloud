@@ -198,9 +198,16 @@ modules:
   cdb_account_privilege:
   - DescribeAccountPrivileges
   - ModifyAccountPrivileges
+  cdb_audit_config:
+  - DescribeAuditConfig
+  - ModifyAuditConfig
   cdb_backup_config:
   - DescribeBackupConfig
   - ModifyBackupConfig
+  cdb_database:
+  - CreateDatabase
+  - DeleteDatabase
+  - DescribeDatabases
   cdb_instance:
   - CreateDBInstance
   - DescribeAsyncRequestInfo

@@ -61,7 +61,9 @@ action_groups:
     - ccn_attachment
     - cdb_account
     - cdb_account_privilege
+    - cdb_audit_config
     - cdb_backup_config
+    - cdb_database
     - cdb_instance
     - cdb_instance_info
     - cdb_parameter_template

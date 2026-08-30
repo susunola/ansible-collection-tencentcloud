@@ -3,3 +3,5 @@ minor_changes:
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."
   - "Add organization member access policy lifecycle management."
+  - "Add CDB database lifecycle management with immutable character-set protection."
+  - "Add CDB audit enablement, retention and closure configuration."
