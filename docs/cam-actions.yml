@@ -1083,6 +1083,11 @@ modules:
   - DeleteRabbitMQVirtualHost
   - DescribeRabbitMQVirtualHost
   - ModifyRabbitMQVirtualHost
+  tdmq_rocketmq_cluster:
+  - CreateRocketMQCluster
+  - DeleteRocketMQCluster
+  - DescribeRocketMQClusters
+  - ModifyRocketMQCluster
   tdmq_rocketmq_group:
   - CreateRocketMQGroup
   - DeleteRocketMQGroup

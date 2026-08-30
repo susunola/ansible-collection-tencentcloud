@@ -177,6 +177,7 @@ CORE_MODULES = {
     "tdmq_rocketmq_group",
     "tdmq_rocketmq_role",
     "tdmq_rocketmq_permission",
+    "tdmq_rocketmq_cluster",
     "tdmq_subscription",
     "teo_dns_record",
     "tcr_instance",

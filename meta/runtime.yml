@@ -318,6 +318,7 @@ action_groups:
     - tdmq_rabbitmq_permission
     - tdmq_rabbitmq_user
     - tdmq_rabbitmq_vhost
+    - tdmq_rocketmq_cluster
     - tdmq_rocketmq_group
     - tdmq_rocketmq_namespace
     - tdmq_rocketmq_permission
