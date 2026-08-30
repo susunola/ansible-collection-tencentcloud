@@ -266,6 +266,16 @@ modules:
   - UpdateCfsFileSystemSizeLimit
   cfs_file_system_info:
   - DescribeCfsFileSystems
+  cfs_permission_group:
+  - CreateCfsPGroup
+  - DeleteCfsPGroup
+  - DescribeCfsPGroups
+  - UpdateCfsPGroup
+  cfs_permission_rule:
+  - CreateCfsRule
+  - DeleteCfsRule
+  - DescribeCfsRules
+  - UpdateCfsRule
   cfw_address_template:
   - CreateAddressTemplate
   - DeleteAddressTemplate

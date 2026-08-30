@@ -352,6 +352,8 @@ WRITE_MODULE_BUILDERS = {
     "waf_anti_info_leak_rule": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
     "waf_attack_white_rule": ["create_request", "delete_request", "describe_request", "update_request"],
     "waf_cc_rule": ["delete_request", "describe_request", "upsert_request"],
+    "cfs_permission_group": ["create_request", "delete_request", "describe_request", "update_request"],
+    "cfs_permission_rule": ["create_request", "delete_request", "describe_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4572,4 +4574,24 @@ def test_waf_cc_rule():
     errors.extend(audit_request(module.upsert_request(models, p, 0), "WAF CC create"))
     errors.extend(audit_request(module.upsert_request(models, p, 123), "WAF CC update"))
     errors.extend(audit_request(module.delete_request(models, p, 123), "WAF CC delete"))
+    assert errors == []
+
+
+def test_cfs_permission_group():
+    module = _import_plugin("cfs_permission_group"); models = _models("cfs.v20190719")
+    p = {"name": "production", "description": "Production clients"}; errors = []
+    errors.extend(audit_request(module.describe_request(models), "CFS permission group describe"))
+    errors.extend(audit_request(module.create_request(models, p), "CFS permission group create"))
+    errors.extend(audit_request(module.update_request(models, p, "pgroup-xxxxxxxx"), "CFS permission group update"))
+    errors.extend(audit_request(module.delete_request(models, "pgroup-xxxxxxxx"), "CFS permission group delete"))
+    assert errors == []
+
+
+def test_cfs_permission_rule():
+    module = _import_plugin("cfs_permission_rule"); models = _models("cfs.v20190719")
+    p = {"permission_group_id": "pgroup-xxxxxxxx", "client_ip": "10.0.0.0/16", "priority": 10, "access": "RW", "user_permission": "root_squash"}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p["permission_group_id"]), "CFS permission rule describe"))
+    errors.extend(audit_request(module.create_request(models, p), "CFS permission rule create"))
+    errors.extend(audit_request(module.update_request(models, p, "rule-xxxxxxxx"), "CFS permission rule update"))
+    errors.extend(audit_request(module.delete_request(models, p, "rule-xxxxxxxx"), "CFS permission rule delete"))
     assert errors == []

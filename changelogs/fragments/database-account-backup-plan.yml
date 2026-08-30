@@ -21,6 +21,7 @@ minor_changes:
   - Add WAF sensitive-information leakage rule lifecycle with immutable URI protection.
   - Add WAF attack-signature allow-rule lifecycle with exact-set signature and condition reconciliation.
   - Add WAF CC rate-protection rule lifecycle with canonical advanced-condition comparison.
+  - Add CFS permission group and client permission rule lifecycle management.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."
