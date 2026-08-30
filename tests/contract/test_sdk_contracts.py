@@ -361,6 +361,7 @@ WRITE_MODULE_BUILDERS = {
     "ssm_secret_version": ["create_request", "delete_request", "get_request", "list_request"],
     "ssm_rotation": ["describe_request", "update_request"],
     "tat_invoker": ["create_request", "delete_request", "describe_request", "enable_request", "update_request"],
+    "cbs_disk_backup": ["create_request", "delete_request", "describe_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4673,4 +4674,13 @@ def test_tat_invoker():
     errors.extend(audit_request(module.enable_request(models, "ivk-xxxxxxxx", True), "TAT invoker enable"))
     errors.extend(audit_request(module.enable_request(models, "ivk-xxxxxxxx", False), "TAT invoker disable"))
     errors.extend(audit_request(module.delete_request(models, "ivk-xxxxxxxx"), "TAT invoker delete"))
+    assert errors == []
+
+
+def test_cbs_disk_backup():
+    module = _import_plugin("cbs_disk_backup"); models = _models("cbs.v20170312")
+    p = {"disk_backup_id": None, "disk_id": "disk-xxxxxxxx", "name": "before-upgrade"}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "CBS disk backup describe"))
+    errors.extend(audit_request(module.create_request(models, p), "CBS disk backup create"))
+    errors.extend(audit_request(module.delete_request(models, "dbp-xxxxxxxx"), "CBS disk backup delete"))
     assert errors == []

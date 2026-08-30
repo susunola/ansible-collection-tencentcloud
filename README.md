@@ -33,6 +33,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cam_user` | Manage Tencent Cloud CAM sub-users |
 | `cbs_auto_snapshot_policy` | Manage Tencent Cloud CBS automatic snapshot policies |
 | `cbs_disk` | Manage Tencent Cloud CBS cloud disks |
+| `cbs_disk_backup` | Manage Tencent Cloud CBS disk backup points |
 | `cbs_snapshot` | Manage Tencent Cloud CBS disk snapshots |
 | `cbs_snapshot_share` | Manage Tencent Cloud CBS snapshot sharing permissions |
 | `ccn` | Manage Tencent Cloud Cloud Connect Networks |

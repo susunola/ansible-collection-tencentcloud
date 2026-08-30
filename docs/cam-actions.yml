@@ -187,6 +187,10 @@ modules:
   - ModifyDiskAttributes
   - ResizeDisk
   - TerminateDisks
+  cbs_disk_backup:
+  - CreateDiskBackup
+  - DeleteDiskBackups
+  - DescribeDiskBackups
   cbs_disk_info:
   - DescribeDisks
   cbs_snapshot:

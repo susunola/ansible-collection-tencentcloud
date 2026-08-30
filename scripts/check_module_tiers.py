@@ -61,6 +61,7 @@ CORE_MODULES = {
     "cbs_snapshot",
     "cbs_auto_snapshot_policy",
     "cbs_snapshot_share",
+    "cbs_disk_backup",
     "cdb_instance",
     "cdb_parameter_template",
     "cdb_backup_config",

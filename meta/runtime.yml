@@ -57,6 +57,7 @@ action_groups:
     - cat_probe_task_info
     - cbs_auto_snapshot_policy
     - cbs_disk
+    - cbs_disk_backup
     - cbs_disk_info
     - cbs_snapshot
     - cbs_snapshot_share
