@@ -397,7 +397,11 @@ action_groups:
     - tcaplusdb_cluster
     - tcaplusdb_cluster_info
     - tcb_billing_info
+    - tcb_environment
+    - tcb_http_service_route
     - tcbr_cloud_run_pod_info
+    - tcm_mesh
+    - tcm_mesh_clusters
     - tcm_mesh_info
     - tcr_instance
     - tcr_instance_info

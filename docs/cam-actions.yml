@@ -1494,8 +1494,28 @@ modules:
   - DescribeClusters
   tcb_billing_info:
   - DescribeBillingInfo
+  tcb_environment:
+  - CreateEnv
+  - DescribeEnvs
+  - DestroyEnv
+  - ModifyEnv
+  tcb_http_service_route:
+  - CreateHTTPServiceRoute
+  - DeleteHTTPServiceRoute
+  - DescribeHTTPServiceRoute
+  - ModifyHTTPServiceRoute
   tcbr_cloud_run_pod_info:
   - DescribeCloudRunPodList
+  tcm_mesh:
+  - CreateMesh
+  - DeleteMesh
+  - DescribeMesh
+  - DescribeMeshList
+  - ModifyMesh
+  tcm_mesh_clusters:
+  - DescribeMesh
+  - LinkClusterList
+  - UnlinkCluster
   tcm_mesh_info:
   - DescribeMeshList
   tcr_instance:

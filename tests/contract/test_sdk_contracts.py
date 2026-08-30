@@ -311,6 +311,10 @@ UNEXERCISED_BUILDERS = {
 # at the bottom of this file. Info-module builders are registered in
 # INFO_BUILDERS instead. Both sets are verified against the static scan.
 WRITE_MODULE_BUILDERS = {
+    "tcb_environment": ["create_request", "delete_request", "describe_request", "update_request"],
+    "tcb_http_service_route": ["create_request", "delete_request", "describe_request", "update_request"],
+    "tcm_mesh": ["create_request", "delete_request", "describe_request", "list_request", "update_request"],
+    "tcm_mesh_clusters": ["describe_request", "link_request", "unlink_request"],
     "cdwdoris_instance": ["create_request", "delete_request", "describe_request", "state_request", "update_request"],
     "cdwpg_instance": ["create_request", "delete_request", "describe_request", "state_request", "update_request"],
     "emr_cluster": ["create_request", "delete_request", "describe_request", "update_request"],
@@ -5323,6 +5327,45 @@ def test_teo_origin_group():
     errors.extend(audit_request(module.create_request(models, p), "TEO origin group create"))
     errors.extend(audit_request(module.update_request(models, p, "origin-xxxxxxxx"), "TEO origin group update"))
     errors.extend(audit_request(module.delete_request(models, p, "origin-xxxxxxxx"), "TEO origin group delete"))
+    assert errors == []
+
+
+def test_tcb_environment():
+    module = _import_plugin("tcb_environment"); models = _models("tcb.v20180608")
+    p = {"alias": "production-app", "package_id": "baas_package", "resources": ["flexdb", "storage", "function"], "period": 1, "auto_voucher": True, "tags": {"env": "production"}, "renew_flag": "NOTIFY_AND_MANUAL_RENEW", "external_storage": None, "enable_overrun": "FALSE", "force_destroy": False, "bypass_destroy_check": False}; errors = []
+    errors.extend(audit_request(module.describe_request(models, "env-xxxxxxxx"), "CloudBase environment describe"))
+    errors.extend(audit_request(module.create_request(models, p), "CloudBase environment create"))
+    errors.extend(audit_request(module.update_request(models, "env-xxxxxxxx", "production-renamed"), "CloudBase environment update"))
+    errors.extend(audit_request(module.delete_request(models, p, "env-xxxxxxxx"), "CloudBase environment delete"))
+    assert errors == []
+
+
+def test_tcb_http_service_route():
+    module = _import_plugin("tcb_http_service_route"); models = _models("tcb.v20180608")
+    p = {"env_id": "env-xxxxxxxx", "domain": "api.example.com"}; target = {"Domain": "api.example.com", "Protocol": "https", "Enable": True, "Routes": [{"Path": "/api", "UpstreamResourceType": "cloudrun", "UpstreamResourceName": "backend"}]}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p["env_id"]), "CloudBase route describe"))
+    errors.extend(audit_request(module.create_request(models, p, target), "CloudBase route create"))
+    errors.extend(audit_request(module.update_request(models, p, target), "CloudBase route update"))
+    errors.extend(audit_request(module.delete_request(models, p), "CloudBase route delete"))
+    assert errors == []
+
+
+def test_tcm_mesh():
+    module = _import_plugin("tcm_mesh"); models = _models("tcm.v20210413")
+    p = {"name": "production-mesh", "mesh_version": "1.20.5", "mesh_type": "HOSTED", "config": {"Istio": {}}, "clusters": [], "tags": {"env": "production"}, "delete_cls": False, "delete_tmp": False, "delete_apm": False, "delete_grafana": False}; target = {"DisplayName": "production-mesh", "Config": {"Istio": {}}}; errors = []
+    errors.extend(audit_request(module.list_request(models), "TCM mesh list"))
+    errors.extend(audit_request(module.describe_request(models, "mesh-xxxxxxxx"), "TCM mesh describe"))
+    errors.extend(audit_request(module.create_request(models, p), "TCM mesh create"))
+    errors.extend(audit_request(module.update_request(models, "mesh-xxxxxxxx", target), "TCM mesh update"))
+    errors.extend(audit_request(module.delete_request(models, p, "mesh-xxxxxxxx"), "TCM mesh delete"))
+    assert errors == []
+
+
+def test_tcm_mesh_clusters():
+    module = _import_plugin("tcm_mesh_clusters"); models = _models("tcm.v20210413"); clusters = [{"ClusterId": "cls-xxxxxxxx", "Region": "ap-guangzhou", "Role": "REMOTE"}]; errors = []
+    errors.extend(audit_request(module.describe_request(models, "mesh-xxxxxxxx"), "TCM mesh cluster describe"))
+    errors.extend(audit_request(module.link_request(models, "mesh-xxxxxxxx", clusters), "TCM mesh cluster link"))
+    errors.extend(audit_request(module.unlink_request(models, "mesh-xxxxxxxx", "cls-xxxxxxxx"), "TCM mesh cluster unlink"))
     assert errors == []
 
 

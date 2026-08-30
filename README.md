@@ -237,6 +237,10 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tat_command` | Manage Tencent Cloud TAT commands |
 | `tat_invoker` | Manage Tencent Cloud TAT scheduled invokers |
 | `tcaplusdb_cluster` | Manage Tencent Cloud TcaplusDB clusters |
+| `tcb_environment` | Manage Tencent CloudBase environments |
+| `tcb_http_service_route` | Manage Tencent CloudBase HTTP service domain routes |
+| `tcm_mesh` | Manage Tencent Cloud Mesh instances |
+| `tcm_mesh_clusters` | Reconcile Tencent Cloud Mesh cluster links |
 | `tcr_instance` | Manage Tencent Cloud TCR enterprise instances |
 | `tcr_namespace` | Manage Tencent Cloud TCR namespaces |
 | `tcr_replication_instance` | Manage Tencent Cloud TCR replication instances |
