@@ -573,6 +573,11 @@ modules:
   - DeleteInstancesDisasterRecoverGroups
   - DescribeInstances
   - ModifyInstancesDisasterRecoverGroup
+  cvm_hpc_cluster:
+  - CreateHpcCluster
+  - DeleteHpcClusters
+  - DescribeHpcClusters
+  - ModifyHpcClusterAttribute
   cvm_image:
   - CreateImage
   - DeleteImages
@@ -590,6 +595,10 @@ modules:
   - StartInstances
   - StopInstances
   - TerminateInstances
+  cvm_instance_action_timer:
+  - DeleteInstancesActionTimer
+  - DescribeInstancesActionTimer
+  - ImportInstancesActionTimer
   cvm_instance_info:
   - DescribeInstances
   cvm_launch_template:

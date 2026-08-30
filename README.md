@@ -108,8 +108,10 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cvm_chc` | Manage Tencent Cloud CHC physical server network configuration |
 | `cvm_disaster_recover_group` | Manage Tencent Cloud CVM placement groups |
 | `cvm_disaster_recover_group_binding` | Bind a Tencent Cloud CVM instance to a placement group |
+| `cvm_hpc_cluster` | Manage Tencent Cloud CVM high-performance clusters |
 | `cvm_image` | Manage Tencent Cloud CVM custom images |
 | `cvm_instance` | Manage Tencent Cloud CVM instances |
+| `cvm_instance_action_timer` | Manage Tencent Cloud CVM instance action timers |
 | `cvm_launch_template` | Manage Tencent Cloud CVM launch templates |
 | `cvm_launch_template_version` | Manage Tencent Cloud CVM launch-template versions |
 | `cynosdb_account` | Manage Tencent Cloud CynosDB accounts |

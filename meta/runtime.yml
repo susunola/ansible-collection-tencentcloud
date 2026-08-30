@@ -167,8 +167,10 @@ action_groups:
     - cvm_chc
     - cvm_disaster_recover_group
     - cvm_disaster_recover_group_binding
+    - cvm_hpc_cluster
     - cvm_image
     - cvm_instance
+    - cvm_instance_action_timer
     - cvm_instance_info
     - cvm_launch_template
     - cvm_launch_template_version

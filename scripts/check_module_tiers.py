@@ -138,6 +138,8 @@ CORE_MODULES = {
     "cvm_disaster_recover_group_binding",
     "cvm_launch_template",
     "cvm_launch_template_version",
+    "cvm_hpc_cluster",
+    "cvm_instance_action_timer",
     "cynosdb_account",
     "cynosdb_backup_config",
     "cynosdb_account_privilege",

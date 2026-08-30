@@ -315,6 +315,8 @@ WRITE_MODULE_BUILDERS = {
     "cvm_disaster_recover_group_binding": ["bind_request", "describe_request", "unbind_request"],
     "cvm_launch_template": ["create_request", "default_request", "delete_request", "describe_request"],
     "cvm_launch_template_version": ["create_request", "default_request", "delete_request", "describe_request"],
+    "cvm_hpc_cluster": ["create_request", "delete_request", "describe_request", "update_request"],
+    "cvm_instance_action_timer": ["create_request", "delete_request", "describe_request"],
     "cdb_account": ["create", "describe"],
     "cdb_account_privilege": ["describe_request", "modify_request"],
     "cdb_audit_config": ["describe_request", "modify_request"],
@@ -2821,6 +2823,24 @@ def test_tke_cluster_audit():
     requests = [module.build_describe(models, "cls-x"), module.build_enable(models, params), module.build_disable(models, params)]
     errors = []
     for index, request in enumerate(requests): errors.extend(audit_request(request, "TKE audit request %s" % index))
+    assert errors == []
+
+
+def test_cvm_hpc_cluster():
+    module = _import_plugin("cvm_hpc_cluster"); models = _models("cvm.v20170312")
+    p = {"cluster_id": "hpc-xxxxxxxx", "name": "rdma-production", "zone": "ap-guangzhou-3", "remark": "Production RDMA", "cluster_type": "STANDARD", "business_id": None}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p, p["cluster_id"]), module.delete_request(models, p["cluster_id"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "CVM HPC cluster request %s" % index))
+    assert errors == []
+
+
+def test_cvm_instance_action_timer():
+    module = _import_plugin("cvm_instance_action_timer"); models = _models("cvm.v20170312")
+    p = {"instance_id": "ins-xxxxxxxx", "action_time": "2026-09-01T12:00:00Z", "timer_id": "timer-xxxxxxxx"}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.delete_request(models, p["timer_id"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "CVM action-timer request %s" % index))
     assert errors == []
 
 
