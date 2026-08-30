@@ -368,6 +368,11 @@ modules:
   - DeleteMachineGroup
   - DescribeMachineGroups
   - ModifyMachineGroup
+  cls_shipper:
+  - CreateShipper
+  - DeleteShipper
+  - DescribeShippers
+  - ModifyShipper
   cls_topic:
   - CreateTopic
   - DeleteTopic

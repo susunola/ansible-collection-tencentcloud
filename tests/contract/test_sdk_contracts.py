@@ -330,6 +330,7 @@ WRITE_MODULE_BUILDERS = {
     "tdmq_rocketmq_permission": ["create_request", "delete_request", "describe_request", "update_request"],
     "tdmq_rocketmq_cluster": ["create_request", "delete_request", "describe_request", "update_request"],
     "waf_protect_group": ["create_request", "delete_request", "describe_request", "update_request"],
+    "cls_shipper": ["create_request", "delete_request", "describe_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -2884,6 +2885,17 @@ def test_waf_protect_group():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "WAF protect group request %s" % index))
+    assert errors == []
+
+
+def test_cls_shipper():
+    module = _import_plugin("cls_shipper")
+    models = _models("cls.v20201016")
+    p = {"shipper_id": "shipper-x", "topic_id": "topic-x", "name": "archive", "bucket": "logs-1250000000", "prefix": "cls/", "enabled": True, "interval": 300, "max_size": 256, "partition": "%Y/%m/%d/%H", "compress": {"Format": "gzip"}, "content": {"Format": "json"}, "filter_rules": [], "filename_mode": 0, "storage_type": "STANDARD", "role_arn": None, "external_id": None, "time_zone": "UTC+08:00", "dsl_filter": ""}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p, p["shipper_id"]), module.delete_request(models, p["shipper_id"])]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CLS shipper request %s" % index))
     assert errors == []
 
 

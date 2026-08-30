@@ -5,6 +5,7 @@ minor_changes:
   - Add exact-set TDMQ RocketMQ namespace role permission management.
   - Add standard TDMQ RocketMQ cluster lifecycle management with secret-safe output.
   - Add exact-set WAF protection object group lifecycle management.
+  - Add CLS continuous COS shipper lifecycle management.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

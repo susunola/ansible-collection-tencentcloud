@@ -59,6 +59,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cls_index` | Manage Tencent Cloud CLS topic indexes |
 | `cls_logset` | Manage Tencent Cloud CLS logsets |
 | `cls_machine_group` | Manage Tencent Cloud CLS machine groups |
+| `cls_shipper` | Manage Tencent Cloud CLS delivery tasks to COS |
 | `cls_topic` | Manage Tencent Cloud CLS topics |
 | `cmq_queue` | Manage Tencent Cloud CMQ queues |
 | `cmq_subscription` | Manage Tencent Cloud CMQ topic subscriptions |

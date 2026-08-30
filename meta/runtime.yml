@@ -106,6 +106,7 @@ action_groups:
     - cls_index
     - cls_logset
     - cls_machine_group
+    - cls_shipper
     - cls_topic
     - cls_topic_info
     - cme_platform_info

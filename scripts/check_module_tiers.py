@@ -72,6 +72,7 @@ CORE_MODULES = {
     "cls_logset",
     "cls_config",
     "cls_config_machine_group_binding",
+    "cls_shipper",
     "cls_index",
     "cls_machine_group",
     "cls_topic",
