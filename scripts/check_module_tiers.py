@@ -195,6 +195,7 @@ CORE_MODULES = {
     "vpc_flow_log",
     "vpn_gateway",
     "waf_ip_access_control",
+    "waf_protect_group",
     "waf_host",
     "waf_custom_rule",
     "vpn_connection",

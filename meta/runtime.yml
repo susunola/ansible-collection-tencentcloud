@@ -365,6 +365,7 @@ action_groups:
     - waf_host
     - waf_instance_info
     - waf_ip_access_control
+    - waf_protect_group
     - wav_activity_info
     - wedata_project_info
     - weilingwith_element_profile_page_info

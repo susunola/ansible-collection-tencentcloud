@@ -1242,6 +1242,11 @@ modules:
   - DeleteIpAccessControl
   - DescribeIpAccessControl
   - ModifyIpAccessControl
+  waf_protect_group:
+  - CreateProtectGroup
+  - DeleteProtectGroup
+  - DescribeProtectGroup
+  - ModifyProtectGroup
   wav_activity_info:
   - QueryActivityList
   wedata_project_info:

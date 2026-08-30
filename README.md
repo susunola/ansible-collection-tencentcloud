@@ -172,6 +172,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `waf_custom_rule` | Manage Tencent Cloud WAF custom rules |
 | `waf_host` | Manage Tencent Cloud WAF protected hosts |
 | `waf_ip_access_control` | Manage Tencent Cloud WAF IP access-control rules |
+| `waf_protect_group` | Manage Tencent Cloud WAF protection object groups |
 
 Read-only `_info` modules (return `changed=false`):
 

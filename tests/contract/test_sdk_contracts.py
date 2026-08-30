@@ -329,6 +329,7 @@ WRITE_MODULE_BUILDERS = {
     "tdmq_rocketmq_role": ["create_request", "delete_request", "describe_request", "update_request"],
     "tdmq_rocketmq_permission": ["create_request", "delete_request", "describe_request", "update_request"],
     "tdmq_rocketmq_cluster": ["create_request", "delete_request", "describe_request", "update_request"],
+    "waf_protect_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -2872,6 +2873,17 @@ def test_waf_ip_access_control():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "WAF IP rule request %s" % index))
+    assert errors == []
+
+
+def test_waf_protect_group():
+    module = _import_plugin("waf_protect_group")
+    models = _models("waf.v20180125")
+    p = {"group_id": 123, "name": "production-apps", "domains": ["api.example.com"], "remark": "apps"}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p, 123), module.delete_request(models, 123)]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "WAF protect group request %s" % index))
     assert errors == []
 
 
