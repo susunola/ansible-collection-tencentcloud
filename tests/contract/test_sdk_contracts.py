@@ -362,6 +362,7 @@ WRITE_MODULE_BUILDERS = {
     "ssm_rotation": ["describe_request", "update_request"],
     "tat_invoker": ["create_request", "delete_request", "describe_request", "enable_request", "update_request"],
     "cbs_disk_backup": ["create_request", "delete_request", "describe_request"],
+    "lighthouse_firewall_rules": ["create_request", "delete_request", "describe_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4683,4 +4684,13 @@ def test_cbs_disk_backup():
     errors.extend(audit_request(module.describe_request(models, p), "CBS disk backup describe"))
     errors.extend(audit_request(module.create_request(models, p), "CBS disk backup create"))
     errors.extend(audit_request(module.delete_request(models, "dbp-xxxxxxxx"), "CBS disk backup delete"))
+    assert errors == []
+
+
+def test_lighthouse_firewall_rules():
+    module = _import_plugin("lighthouse_firewall_rules"); models = _models("lighthouse.v20200324")
+    rules = [{"Protocol": "TCP", "Port": "443", "CidrBlock": "0.0.0.0/0", "Action": "ACCEPT", "FirewallRuleDescription": "HTTPS"}]; errors = []
+    errors.extend(audit_request(module.describe_request(models, "lhins-xxxxxxxx"), "Lighthouse firewall describe"))
+    errors.extend(audit_request(module.create_request(models, "lhins-xxxxxxxx", rules, 1), "Lighthouse firewall create"))
+    errors.extend(audit_request(module.delete_request(models, "lhins-xxxxxxxx", rules, 1), "Lighthouse firewall delete"))
     assert errors == []

@@ -730,6 +730,10 @@ modules:
   - GetKeyRotationStatus
   lcic_answer_info:
   - DescribeAnswerList
+  lighthouse_firewall_rules:
+  - CreateFirewallRules
+  - DeleteFirewallRules
+  - DescribeFirewallRules
   lighthouse_instance:
   - CreateInstances
   - DescribeInstances
