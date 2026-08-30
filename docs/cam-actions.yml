@@ -1065,6 +1065,10 @@ modules:
   - DeleteEnvironmentRoles
   - DescribeEnvironmentRoles
   - ModifyEnvironmentRole
+  tdmq_rabbitmq_binding:
+  - CreateRabbitMQBinding
+  - DeleteRabbitMQBinding
+  - DescribeRabbitMQBindings
   tdmq_rabbitmq_permission:
   - DeleteRabbitMQPermission
   - DescribeRabbitMQPermission

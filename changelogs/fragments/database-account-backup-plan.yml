@@ -20,3 +20,4 @@ minor_changes:
   - "Add TDMQ RabbitMQ virtual host lifecycle and tracing configuration."
   - "Add TDMQ RabbitMQ user lifecycle, limits, CAM authentication and password rotation."
   - "Add TDMQ RabbitMQ virtual host configure, write and read permission lifecycle."
+  - "Add TDMQ RabbitMQ queue and exchange binding lifecycle management."

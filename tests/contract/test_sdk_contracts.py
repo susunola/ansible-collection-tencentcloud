@@ -322,6 +322,7 @@ WRITE_MODULE_BUILDERS = {
     "tdmq_rabbitmq_vhost": ["create_request", "delete_request", "describe_request", "update_request"],
     "tdmq_rabbitmq_user": ["create_request", "delete_request", "describe_request", "update_request"],
     "tdmq_rabbitmq_permission": ["delete_request", "describe_request", "modify_request"],
+    "tdmq_rabbitmq_binding": ["create_request", "delete_request", "describe_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4237,6 +4238,17 @@ def test_tdmq_rabbitmq_permission():
     errors.extend(audit_request(module.describe_request(models, p), "tdmq rabbitmq permission describe"))
     errors.extend(audit_request(module.modify_request(models, p), "tdmq rabbitmq permission modify"))
     errors.extend(audit_request(module.delete_request(models, p), "tdmq rabbitmq permission delete"))
+    assert errors == []
+
+
+def test_tdmq_rabbitmq_binding():
+    module = _import_plugin("tdmq_rabbitmq_binding")
+    models = _models("tdmq.v20200217")
+    errors = []
+    p = {"instance_id": "amqp-xxxxxxxx", "virtual_host": "production", "source_exchange": "orders", "destination_type": "queue", "destination": "order-workers", "routing_key": "orders.created"}
+    errors.extend(audit_request(module.describe_request(models, p), "tdmq rabbitmq binding describe"))
+    errors.extend(audit_request(module.create_request(models, p), "tdmq rabbitmq binding create"))
+    errors.extend(audit_request(module.delete_request(models, p, 123), "tdmq rabbitmq binding delete"))
     assert errors == []
 
 
