@@ -79,6 +79,7 @@ CORE_MODULES = {
     "ckafka_topic",
     "ckafka_user",
     "ckafka_route",
+    "ckafka_acl_rule",
     "ckafka_acl",
     "clb_listener",
     "clb_listener_target",

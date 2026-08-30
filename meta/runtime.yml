@@ -85,6 +85,7 @@ action_groups:
     - chdfs_file_system_info
     - ciam_user_store_info
     - ckafka_acl
+    - ckafka_acl_rule
     - ckafka_instance_info
     - ckafka_route
     - ckafka_topic

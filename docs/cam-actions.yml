@@ -273,6 +273,11 @@ modules:
   - CreateAcl
   - DeleteAcl
   - DescribeACL
+  ckafka_acl_rule:
+  - CreateAclRule
+  - DeleteAclRule
+  - DescribeAclRule
+  - ModifyAclRule
   ckafka_instance_info:
   - DescribeInstancesDetail
   ckafka_route:

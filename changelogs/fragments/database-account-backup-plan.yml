@@ -14,3 +14,4 @@ minor_changes:
   - "Add Elasticsearch index lifecycle with service-added metadata tolerance."
   - "Add CKafka user lifecycle and explicit password rotation."
   - "Add CKafka VPC, public and internal access-route lifecycle management."
+  - "Add CKafka prefixed and preset ACL rule lifecycle management."

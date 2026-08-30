@@ -316,6 +316,7 @@ WRITE_MODULE_BUILDERS = {
     "elasticsearch_index": ["create_request", "delete_request", "describe_request", "update_request"],
     "ckafka_user": ["create_request", "delete_request", "describe_request", "password_request"],
     "ckafka_route": ["create_request", "delete_request", "describe_request"],
+    "ckafka_acl_rule": ["create_request", "delete_request", "describe_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4160,6 +4161,18 @@ def test_ckafka_route():
     errors.extend(audit_request(module.describe_request(models, p["instance_id"]), "ckafka route describe"))
     errors.extend(audit_request(module.create_request(models, p), "ckafka route create"))
     errors.extend(audit_request(module.delete_request(models, p["instance_id"], 123), "ckafka route delete"))
+    assert errors == []
+
+
+def test_ckafka_acl_rule():
+    module = _import_plugin("ckafka_acl_rule")
+    models = _models("ckafka.v20190819")
+    errors = []
+    p = {"instance_id": "ckafka-xxxxxxxx", "name": "orders-producers", "pattern_type": "PREFIXED", "pattern": "orders-", "apply_to_new_topics": False, "comment": "producer access", "rules": [{"operation": "Write", "permission": "Allow", "host": "*", "principal": "User:producer"}]}
+    errors.extend(audit_request(module.describe_request(models, p), "ckafka acl rule describe"))
+    errors.extend(audit_request(module.create_request(models, p), "ckafka acl rule create"))
+    errors.extend(audit_request(module.update_request(models, p), "ckafka acl rule update"))
+    errors.extend(audit_request(module.delete_request(models, p), "ckafka acl rule delete"))
     assert errors == []
 
 
