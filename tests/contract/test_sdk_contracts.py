@@ -304,6 +304,7 @@ WRITE_MODULE_BUILDERS = {
     "cdb_account_privilege": ["describe_request", "modify_request"],
     "organization_member": ["create", "delete", "describe", "move", "update"],
     "organization_member_identity": ["create_request", "delete_request", "describe_request"],
+    "organization_member_policy": ["create_request", "delete_request", "describe_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4008,6 +4009,18 @@ def test_organization_member_identity():
     errors.extend(audit_request(module.describe_request(models, 100000000001), "organization member identity describe"))
     errors.extend(audit_request(module.create_request(models, 100000000001, [1, 12]), "organization member identity create"))
     errors.extend(audit_request(module.delete_request(models, 100000000001, 12), "organization member identity delete"))
+    assert errors == []
+
+
+def test_organization_member_policy():
+    module = _import_plugin("organization_member_policy")
+    models = _models("organization.v20210331")
+    errors = []
+    p = {"member_uin": 100000000001, "name": "operations", "identity_id": 12, "description": "Operations access"}
+    errors.extend(audit_request(module.describe_request(models, p["member_uin"]), "organization member policy describe"))
+    errors.extend(audit_request(module.create_request(models, p), "organization member policy create"))
+    errors.extend(audit_request(module.update_request(models, p, 101), "organization member policy update"))
+    errors.extend(audit_request(module.delete_request(models, 101), "organization member policy delete"))
     assert errors == []
 
 

@@ -768,6 +768,11 @@ modules:
   - DescribeOrganizationMemberAuthIdentities
   organization_member_info:
   - DescribeOrganizationMembers
+  organization_member_policy:
+  - CreateOrganizationMemberPolicy
+  - DeleteOrganizationMembersPolicy
+  - DescribeOrganizationMemberPolicies
+  - UpdateOrganizationMembersPolicy
   organization_node:
   - AddOrganizationNode
   - DeleteOrganizationNodes

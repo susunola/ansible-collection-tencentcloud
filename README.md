@@ -101,6 +101,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `network_interface` | Manage Tencent Cloud elastic network interfaces |
 | `organization_member` | Manage Tencent Cloud Organization members |
 | `organization_member_identity` | Reconcile Tencent Cloud Organization member identities |
+| `organization_member_policy` | Manage Tencent Cloud Organization member access policies |
 | `organization_node` | Manage Tencent Cloud Organization nodes |
 | `peering_connection` | Manage Tencent Cloud VPC peering connections |
 | `postgresql_account` | Manage TencentDB for PostgreSQL accounts |

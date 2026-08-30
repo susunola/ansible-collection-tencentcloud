@@ -129,6 +129,7 @@ CORE_MODULES = {
     "organization_node",
     "organization_member",
     "organization_member_identity",
+    "organization_member_policy",
     "private_dns_record",
     "private_dns_zone",
     "postgresql_account",

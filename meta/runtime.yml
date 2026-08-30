@@ -236,6 +236,7 @@ action_groups:
     - organization_member
     - organization_member_identity
     - organization_member_info
+    - organization_member_policy
     - organization_node
     - partners_agent_deals_by_cache_info
     - peering_connection
