@@ -836,6 +836,7 @@ WRITE_MODULE_BUILDERS = {
     "vdb_instance": ["create_request", "describe_request", "destroy_request", "isolate_request", "recover_request", "scale_out_request", "scale_up_request", "security_groups_request"],
     "thpc_cluster": ["create_request", "delete_request", "deletion_protection_request", "describe_request"],
     "tdmysql_db_instance": ["create_request", "describe_request", "destroy_request", "detail_request", "expand_request", "isolate_request", "recover_request", "rename_request", "renew_request", "security_groups_describe_request", "security_groups_request", "upgrade_request"],
+    "dbdc_db_custom_cluster": ["add_nodes_request", "attributes_request", "create_request", "describe_request", "destroy_request", "detail_request", "nodes_request", "remove_nodes_request", "tags_request", "task_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
@@ -2706,6 +2707,15 @@ def test_tdmysql_db_instance():
     requests = [module.describe_request(models, p), module.detail_request(models, p["instance_id"]), module.security_groups_describe_request(models, p["instance_id"]), module.create_request(models, p), module.expand_request(models, p, p["instance_id"], 4), module.upgrade_request(models, p, p["instance_id"], current), module.rename_request(models, p["instance_id"], p["name"]), module.isolate_request(models, p["instance_id"]), module.recover_request(models, p["instance_id"]), module.destroy_request(models, p["instance_id"]), module.renew_request(models, p["instance_id"], True), module.security_groups_request(models, p["instance_id"], p["security_group_ids"])]
     errors = []
     for index, request in enumerate(requests): errors.extend(audit_request(request, "TDMysql instance request %s" % index))
+    assert errors == []
+
+
+def test_dbdc_db_custom_cluster():
+    module = _import_plugin("dbdc_db_custom_cluster"); models = _models("dbdc.v20201029")
+    p = {"cluster_id": "dbcc-x", "name": "production-db-custom", "description": "production", "container_vpc_id": "vpc-x", "container_subnet_ids": ["subnet-a", "subnet-b"], "api_server_vpc_id": "vpc-x", "api_server_subnet_id": "subnet-a", "deletion_protection": True, "tags": {"environment": "production"}, "client_token": "contract-token", "node_image_id": "img-x", "login_password": None, "login_key_id": "skey-x", "keep_image_login": None, "labels": {"workload": "database"}, "taints": [{"key": "database", "value": "true", "effect": "NoSchedule"}], "host_name": "db-{R:1}", "host_name_type": 1, "force_node_removal": False}
+    requests = [module.describe_request(models, p), module.detail_request(models, p["cluster_id"]), module.nodes_request(models, p["cluster_id"]), module.task_request(models, 123), module.create_request(models, p), module.attributes_request(models, p["cluster_id"], False), module.tags_request(models, p["cluster_id"], p["tags"], ["old"]), module.add_nodes_request(models, p, p["cluster_id"], ["dbcn-a"]), module.remove_nodes_request(models, p, p["cluster_id"], ["dbcn-b"]), module.destroy_request(models, p["cluster_id"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "DB Custom cluster request %s" % index))
     assert errors == []
 
 

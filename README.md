@@ -120,6 +120,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cynosdb_backup_config` | Manage Tencent Cloud CynosDB backup configuration |
 | `cynosdb_cluster` | Manage Tencent Cloud CynosDB clusters |
 | `dbbrain_sql_filter` | Manage Tencent Cloud DBbrain SQL filters |
+| `dbdc_db_custom_cluster` | Manage Tencent Cloud DB Custom clusters |
 | `dcdb_instance` | Manage Tencent Cloud DCDB instances |
 | `dnspod_custom_line` | Manage DNSPod domain custom lines |
 | `dnspod_domain` | Manage Tencent Cloud DNSPod domains |
