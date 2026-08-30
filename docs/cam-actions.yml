@@ -1355,6 +1355,9 @@ modules:
   teo_security_managed_rules:
   - DescribeSecurityPolicy
   - ModifySecurityPolicy
+  teo_security_rate_limiting_rules:
+  - DescribeSecurityPolicy
+  - ModifySecurityPolicy
   teo_security_template_binding:
   - BindSecurityTemplateToEntity
   - DescribeSecurityTemplateBindings

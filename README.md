@@ -210,6 +210,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `teo_security_exception_rules` | Manage Tencent Cloud EdgeOne web security exception rules |
 | `teo_security_ip_group` | Manage Tencent Cloud EdgeOne security IP groups |
 | `teo_security_managed_rules` | Manage Tencent Cloud EdgeOne managed WAF rules |
+| `teo_security_rate_limiting_rules` | Manage Tencent Cloud EdgeOne precise rate-limiting rules |
 | `teo_security_template_binding` | Manage Tencent Cloud EdgeOne security template bindings |
 | `teo_web_security_template` | Manage Tencent Cloud EdgeOne web security templates |
 | `teo_zone` | Manage Tencent Cloud EdgeOne zones |

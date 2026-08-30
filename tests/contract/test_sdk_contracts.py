@@ -461,6 +461,7 @@ WRITE_MODULE_BUILDERS = {
     "teo_security_custom_rules": ["describe_request", "update_request"],
     "teo_security_exception_rules": ["describe_request", "update_request"],
     "teo_security_managed_rules": ["describe_request", "update_request"],
+    "teo_security_rate_limiting_rules": ["describe_request", "update_request"],
     "teo_security_template_binding": ["bind_request", "describe_request", "unbind_request"],
     "teo_web_security_template": ["create_request", "delete_request", "describe_request", "update_request"],
     "teo_zone": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
@@ -4974,4 +4975,12 @@ def test_teo_security_exception_rules():
     p = {"zone_id": "zone-xxxxxxxx", "scope": "template", "template_id": "temp-xxxxxxxx", "host": None, "rules": [{"rule_id": None, "name": "trusted_upload_payload", "condition": "$http.request.uri.path eq '/upload'", "enabled": True, "skip_scope": "ManagedRules", "skip_option": "SkipOnSpecifiedRequestFields", "web_security_modules": [], "managed_rule_ids": [], "managed_rule_group_ids": ["OWASP"], "request_fields": [{"field_scope": "body", "condition": "", "target_field": "multipart"}]}]}; errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEO exception rules describe"))
     errors.extend(audit_request(module.update_request(models, p, []), "TEO exception rules update"))
+    assert errors == []
+
+
+def test_teo_security_rate_limiting_rules():
+    module = _import_plugin("teo_security_rate_limiting_rules"); models = _models("teo.v20220901")
+    p = {"zone_id": "zone-xxxxxxxx", "scope": "template", "template_id": "temp-xxxxxxxx", "host": None, "rules": [{"rule_id": None, "name": "login_limit", "condition": "$http.request.uri.path eq '/login'", "mode": "Block", "count_by": ["http.request.ip"], "threshold": 30, "counting_period": "1m", "action_duration": "10m", "action": "Deny", "challenge_option": "ManagedChallenge", "redirect_url": None, "priority": 10, "enabled": True}]}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "TEO rate limiting rules describe"))
+    errors.extend(audit_request(module.update_request(models, p, []), "TEO rate limiting rules update"))
     assert errors == []

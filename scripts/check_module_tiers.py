@@ -229,6 +229,7 @@ CORE_MODULES = {
     "teo_origin_group",
     "teo_security_ip_group",
     "teo_security_managed_rules",
+    "teo_security_rate_limiting_rules",
     "teo_security_custom_rules",
     "teo_security_exception_rules",
     "teo_security_template_binding",
