@@ -52,6 +52,7 @@ minor_changes:
   - Add EdgeOne security IP-group lifecycle with complete large-set IP and CIDR convergence.
   - Add EdgeOne web security template lifecycle while preserving independently managed policy rules.
   - Add exact EdgeOne web security template domain-binding reconciliation with explicit unbind policy.
+  - Add exact EdgeOne L7 custom security rule reconciliation across zone, template and host scopes.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

@@ -458,6 +458,7 @@ WRITE_MODULE_BUILDERS = {
     "teo_acceleration_domain": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
     "teo_origin_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "teo_security_ip_group": ["content_request", "create_request", "delete_request", "describe_request", "update_request"],
+    "teo_security_custom_rules": ["describe_request", "update_request"],
     "teo_security_template_binding": ["bind_request", "describe_request", "unbind_request"],
     "teo_web_security_template": ["create_request", "delete_request", "describe_request", "update_request"],
     "teo_zone": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
@@ -4947,4 +4948,12 @@ def test_teo_security_template_binding():
     errors.extend(audit_request(module.describe_request(models, p), "TEO security template binding describe"))
     errors.extend(audit_request(module.bind_request(models, p, p["domains"]), "TEO security template bind"))
     errors.extend(audit_request(module.unbind_request(models, p, p["domains"][0]), "TEO security template unbind"))
+    assert errors == []
+
+
+def test_teo_security_custom_rules():
+    module = _import_plugin("teo_security_custom_rules"); models = _models("teo.v20220901")
+    p = {"zone_id": "zone-xxxxxxxx", "scope": "template", "template_id": "temp-xxxxxxxx", "host": None, "rules": [{"rule_id": None, "name": "block_known_attackers", "condition": "$http.request.ip in '1234'", "action": "Deny", "enabled": True, "rule_type": "PreciseMatchRule", "priority": 10}]}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "TEO custom security rules describe"))
+    errors.extend(audit_request(module.update_request(models, p, []), "TEO custom security rules update"))
     assert errors == []
