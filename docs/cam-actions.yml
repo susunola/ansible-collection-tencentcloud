@@ -1594,10 +1594,26 @@ modules:
   - DescribeDrawResourceList
   trabbit_rabbit_mq_serverless_instance_info:
   - ListRabbitMQServerlessInstances
+  trabbit_serverless_binding:
+  - CreateRabbitMQServerlessBinding
+  - DeleteRabbitMQServerlessBinding
+  - DescribeRabbitMQServerlessBindings
+  trabbit_serverless_exchange:
+  - CreateRabbitMQServerlessExchange
+  - DeleteRabbitMQServerlessExchange
+  - DescribeRabbitMQServerlessExchangeDetail
+  - DescribeRabbitMQServerlessExchanges
+  - ModifyRabbitMQServerlessExchange
   trabbit_serverless_permission:
   - DeleteRabbitMQServerlessPermission
   - DescribeRabbitMQServerlessPermission
   - ModifyRabbitMQServerlessPermission
+  trabbit_serverless_queue:
+  - CreateRabbitMQServerlessQueue
+  - DeleteRabbitMQServerlessQueue
+  - DescribeRabbitMQServerlessQueueDetail
+  - DescribeRabbitMQServerlessQueues
+  - ModifyRabbitMQServerlessQueue
   trabbit_serverless_user:
   - CreateRabbitMQServerlessUser
   - DeleteRabbitMQServerlessUser

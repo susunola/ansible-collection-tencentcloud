@@ -86,6 +86,7 @@ minor_changes:
   - Add DB Custom cluster lifecycle with exact node membership, tags and guarded multi-stage destruction.
   - Add TCHouse-C instance lifecycle with observable node, specification and disk convergence.
   - Add RabbitMQ Serverless virtual-host, user and permission lifecycle management.
+  - Add RabbitMQ Serverless exchange, queue and binding lifecycle management.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

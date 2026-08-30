@@ -251,7 +251,10 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tke_cluster_authentication` | Manage Tencent Cloud TKE cluster authentication options |
 | `tke_cluster_endpoint` | Manage Tencent Cloud TKE cluster access endpoints |
 | `tke_node_pool` | Manage Tencent Cloud TKE cluster node pools |
+| `trabbit_serverless_binding` | Manage Tencent Cloud RabbitMQ Serverless bindings |
+| `trabbit_serverless_exchange` | Manage Tencent Cloud RabbitMQ Serverless exchanges |
 | `trabbit_serverless_permission` | Manage Tencent Cloud RabbitMQ Serverless permissions |
+| `trabbit_serverless_queue` | Manage Tencent Cloud RabbitMQ Serverless queues |
 | `trabbit_serverless_user` | Manage Tencent Cloud RabbitMQ Serverless users |
 | `trabbit_serverless_vhost` | Manage Tencent Cloud RabbitMQ Serverless virtual hosts |
 | `tse_sre_instance` | Manage Tencent Cloud TSE service registry engines |

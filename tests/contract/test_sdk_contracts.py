@@ -841,6 +841,9 @@ WRITE_MODULE_BUILDERS = {
     "trabbit_serverless_vhost": ["create_request", "delete_request", "describe_request", "update_request"],
     "trabbit_serverless_user": ["create_request", "delete_request", "describe_request", "update_request"],
     "trabbit_serverless_permission": ["delete_request", "describe_request", "modify_request"],
+    "trabbit_serverless_exchange": ["create_request", "delete_request", "describe_request", "detail_request", "update_request"],
+    "trabbit_serverless_queue": ["create_request", "delete_request", "describe_request", "detail_request", "update_request"],
+    "trabbit_serverless_binding": ["create_request", "delete_request", "describe_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
@@ -2746,6 +2749,22 @@ def _check_trabbit_serverless_identity_resources():
 def test_trabbit_serverless_vhost(): _check_trabbit_serverless_identity_resources()
 def test_trabbit_serverless_user(): _check_trabbit_serverless_identity_resources()
 def test_trabbit_serverless_permission(): _check_trabbit_serverless_identity_resources()
+
+
+def _check_trabbit_serverless_messaging_resources():
+    models = _models("trabbit.v20230418")
+    exchange = _import_plugin("trabbit_serverless_exchange"); ep = {"instance_id": "amqp-x", "virtual_host": "production", "name": "orders", "exchange_type": "topic", "remark": "Orders", "durable": True, "auto_delete": False, "internal": False, "alternate_exchange": "orders-dlx", "delayed_exchange_type": None}
+    queue = _import_plugin("trabbit_serverless_queue"); qp = {"instance_id": "amqp-x", "virtual_host": "production", "name": "order-workers", "queue_type": "classic", "durable": True, "auto_delete": False, "remark": "Workers", "message_ttl": 86400000, "auto_expire": None, "max_length": 100000, "max_length_bytes": None, "delivery_limit": None, "overflow_behaviour": "reject-publish", "dead_letter_exchange": "orders-dlx", "dead_letter_routing_key": "orders.failed", "single_active_consumer": True, "maximum_priority": 10, "lazy_mode": False, "master_locator": "min-masters", "max_in_memory_length": None, "max_in_memory_bytes": None, "node": None, "dead_letter_strategy": None, "queue_leader_locator": None, "quorum_initial_group_size": None}
+    binding = _import_plugin("trabbit_serverless_binding"); bp = {"instance_id": "amqp-x", "virtual_host": "production", "binding_id": 1, "source_exchange": "orders", "destination_type": "queue", "destination": "order-workers", "routing_key": "orders.created"}
+    requests = [exchange.describe_request(models, ep), exchange.detail_request(models, ep), exchange.create_request(models, ep), exchange.update_request(models, ep), exchange.delete_request(models, ep), queue.describe_request(models, qp), queue.detail_request(models, qp), queue.create_request(models, qp), queue.update_request(models, qp, {}), queue.delete_request(models, qp), binding.describe_request(models, bp), binding.create_request(models, bp), binding.delete_request(models, bp, 1)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "RabbitMQ Serverless messaging request %s" % index))
+    assert errors == []
+
+
+def test_trabbit_serverless_exchange(): _check_trabbit_serverless_messaging_resources()
+def test_trabbit_serverless_queue(): _check_trabbit_serverless_messaging_resources()
+def test_trabbit_serverless_binding(): _check_trabbit_serverless_messaging_resources()
 
 
 def test_tdcpg_cluster():
