@@ -356,6 +356,7 @@ WRITE_MODULE_BUILDERS = {
     "cfs_permission_rule": ["create_request", "delete_request", "describe_request", "update_request"],
     "cfs_snapshot": ["create_request", "delete_request", "describe_request", "update_request"],
     "cfs_auto_snapshot_policy": ["bind_request", "create_request", "delete_request", "describe_request", "unbind_request", "update_request"],
+    "cbs_auto_snapshot_policy": ["bind_request", "create_request", "delete_request", "describe_request", "unbind_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4618,4 +4619,16 @@ def test_cfs_auto_snapshot_policy():
     errors.extend(audit_request(module.bind_request(models, "asp-xxxxxxxx", p["file_system_ids"]), "CFS auto snapshot bind"))
     errors.extend(audit_request(module.unbind_request(models, "asp-xxxxxxxx", p["file_system_ids"]), "CFS auto snapshot unbind"))
     errors.extend(audit_request(module.delete_request(models, "asp-xxxxxxxx"), "CFS auto snapshot delete"))
+    assert errors == []
+
+
+def test_cbs_auto_snapshot_policy():
+    module = _import_plugin("cbs_auto_snapshot_policy"); models = _models("cbs.v20170312")
+    p = {"policy_id": None, "name": "nightly", "schedules": [{"Hour": [2], "DayOfWeek": [0, 1, 2, 3, 4, 5, 6]}], "enabled": True, "permanent": False, "retention_days": 30, "disk_ids": ["disk-xxxxxxxx"]}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "CBS auto snapshot describe"))
+    errors.extend(audit_request(module.create_request(models, p), "CBS auto snapshot create"))
+    errors.extend(audit_request(module.update_request(models, p, "asp-xxxxxxxx"), "CBS auto snapshot update"))
+    errors.extend(audit_request(module.bind_request(models, "asp-xxxxxxxx", p["disk_ids"]), "CBS auto snapshot bind"))
+    errors.extend(audit_request(module.unbind_request(models, "asp-xxxxxxxx", p["disk_ids"]), "CBS auto snapshot unbind"))
+    errors.extend(audit_request(module.delete_request(models, "asp-xxxxxxxx"), "CBS auto snapshot delete"))
     assert errors == []

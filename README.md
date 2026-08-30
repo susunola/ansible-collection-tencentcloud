@@ -31,6 +31,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cam_role` | Manage Tencent Cloud CAM roles |
 | `cam_saml_provider` | Manage Tencent Cloud CAM SAML identity providers |
 | `cam_user` | Manage Tencent Cloud CAM sub-users |
+| `cbs_auto_snapshot_policy` | Manage Tencent Cloud CBS automatic snapshot policies |
 | `cbs_disk` | Manage Tencent Cloud CBS cloud disks |
 | `cbs_snapshot` | Manage Tencent Cloud CBS disk snapshots |
 | `ccn` | Manage Tencent Cloud Cloud Connect Networks |

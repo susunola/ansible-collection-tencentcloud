@@ -55,6 +55,7 @@ action_groups:
     - cam_user_info
     - captcha_user_all_app_id_info
     - cat_probe_task_info
+    - cbs_auto_snapshot_policy
     - cbs_disk
     - cbs_disk_info
     - cbs_snapshot

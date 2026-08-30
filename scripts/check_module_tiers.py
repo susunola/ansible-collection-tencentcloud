@@ -59,6 +59,7 @@ CORE_MODULES = {
     "as_scheduled_action",
     "cbs_disk",
     "cbs_snapshot",
+    "cbs_auto_snapshot_policy",
     "cdb_instance",
     "cdb_parameter_template",
     "cdb_backup_config",

@@ -172,6 +172,13 @@ modules:
   - DescribeCaptchaUserAllAppId
   cat_probe_task_info:
   - DescribeProbeTasks
+  cbs_auto_snapshot_policy:
+  - BindAutoSnapshotPolicy
+  - CreateAutoSnapshotPolicy
+  - DeleteAutoSnapshotPolicies
+  - DescribeAutoSnapshotPolicies
+  - ModifyAutoSnapshotPolicyAttribute
+  - UnbindAutoSnapshotPolicy
   cbs_disk:
   - AttachDisks
   - CreateDisks

@@ -23,6 +23,7 @@ minor_changes:
   - Add WAF CC rate-protection rule lifecycle with canonical advanced-condition comparison.
   - Add CFS permission group and client permission rule lifecycle management.
   - Add CFS manual snapshots and automatic snapshot policies with exact-set file-system bindings.
+  - Add CBS automatic snapshot policy lifecycle with exact-set cloud-disk bindings.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."
