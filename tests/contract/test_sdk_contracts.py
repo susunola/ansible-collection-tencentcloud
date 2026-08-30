@@ -311,6 +311,7 @@ UNEXERCISED_BUILDERS = {
 # at the bottom of this file. Info-module builders are registered in
 # INFO_BUILDERS instead. Both sets are verified against the static scan.
 WRITE_MODULE_BUILDERS = {
+    "emr_cluster": ["create_request", "delete_request", "describe_request", "update_request"],
     "chdfs_file_system": ["create_request", "delete_request", "describe_request", "update_request"],
     "chdfs_mount_point": ["create_request", "delete_request", "describe_request", "update_request"],
     "chdfs_access_group": ["create_request", "delete_request", "describe_request", "update_request"],
@@ -5320,6 +5321,16 @@ def test_teo_origin_group():
     errors.extend(audit_request(module.create_request(models, p), "TEO origin group create"))
     errors.extend(audit_request(module.update_request(models, p, "origin-xxxxxxxx"), "TEO origin group update"))
     errors.extend(audit_request(module.delete_request(models, p, "origin-xxxxxxxx"), "TEO origin group delete"))
+    assert errors == []
+
+
+def test_emr_cluster():
+    module = _import_plugin("emr_cluster"); models = _models("emr.v20190103")
+    p = {"name": "analytics-emr", "product_version": "EMR-V3.5.0", "enable_ha": True, "charge_type": "POSTPAID_BY_HOUR", "login_settings": {"Password": "example-password"}, "scene_software_config": {"Software": ["HDFS", "YARN"], "SceneName": "Hadoop"}, "prepaid": None, "security_group_ids": ["sg-xxxxxxxx"], "bootstrap_actions": [], "client_token": "client-token-xxxxxxxx", "need_master_wan": "NOT_NEED_MASTER_WAN", "enable_remote_login": False, "enable_kerberos": False, "custom_conf": None, "tags": {"env": "production"}, "disaster_recover_group_ids": [], "enable_cbs_encrypt": True, "enable_cbs_system_encrypt": True, "meta_db_info": None, "depend_services": [], "zone_resource_configurations": [{"VirtualPrivateCloud": {"VpcId": "vpc-xxxxxxxx", "SubnetId": "subnet-xxxxxxxx"}, "Placement": {"Zone": "ap-guangzhou-3", "ProjectId": 0}, "AllNodeResourceSpec": {"MasterCount": 3, "CoreCount": 3, "TaskCount": 0}}], "cos_bucket": None, "node_marks": [], "load_balancer_id": None, "default_meta_version": "mysql8", "need_cdb_audit": 0, "source_ip": "10.0.0.0/16", "partition_number": 1, "web_ui_version": 1}; errors = []
+    errors.extend(audit_request(module.describe_request(models, "emr-xxxxxxxx"), "EMR cluster describe"))
+    errors.extend(audit_request(module.create_request(models, p), "EMR cluster create"))
+    errors.extend(audit_request(module.update_request(models, "emr-xxxxxxxx", "analytics-renamed"), "EMR cluster update"))
+    errors.extend(audit_request(module.delete_request(models, "emr-xxxxxxxx", False), "EMR cluster delete"))
     assert errors == []
 
 

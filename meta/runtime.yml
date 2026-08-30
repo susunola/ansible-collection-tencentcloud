@@ -230,6 +230,7 @@ action_groups:
     - elasticsearch_index
     - elasticsearch_instance
     - elasticsearch_snapshot
+    - emr_cluster
     - emr_node_data_disk_info
     - es_cluster_info
     - ess_file_url_info

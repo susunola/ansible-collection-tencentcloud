@@ -855,6 +855,11 @@ modules:
   - CreateClusterSnapshot
   - DeleteClusterSnapshot
   - DescribeClusterSnapshot
+  emr_cluster:
+  - CreateCluster
+  - DescribeInstances
+  - ModifyInstanceBasic
+  - TerminateInstance
   emr_node_data_disk_info:
   - DescribeNodeDataDisks
   es_cluster_info:
