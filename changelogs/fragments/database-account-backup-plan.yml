@@ -41,6 +41,7 @@ minor_changes:
   - Add account-level CloudAudit COS delivery, CMQ notification, KMS encryption and logging-state management.
   - Add Config recorder lifecycle with exact monitored resource-type convergence.
   - Add Config change and resource-inventory delivery management for COS and CLS targets.
+  - Add Config compliance pack lifecycle with exact rule membership, input parameters and activation state.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

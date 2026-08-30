@@ -135,6 +135,7 @@ action_groups:
     - cms_lib_sample_info
     - cngw_cloud_native_api_gateway_llm_model_api_info
     - config_aggregate_compliance_pack_info
+    - config_compliance_pack
     - config_delivery
     - config_recorder
     - config_rule

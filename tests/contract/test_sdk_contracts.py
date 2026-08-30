@@ -450,6 +450,7 @@ WRITE_MODULE_BUILDERS = {
     "cloudaudit_audit": ["describe_request", "start_request", "stop_request", "update_request"],
     "config_recorder": ["close_request", "describe_request", "open_request", "update_request"],
     "config_delivery": ["describe_request", "update_request"],
+    "config_compliance_pack": ["create_request", "delete_request", "describe_request", "list_request", "status_request", "update_request"],
     "cvm_chc": [
         "_configure_vpc",
         "_remove_assist",
@@ -3533,6 +3534,18 @@ def test_config_delivery():
     p = {"enabled": True, "name": "compliance-archive", "target_arn": "qcs::cos:ap-guangzhou:100000000001:prefix/1250000000/config-archive", "prefix": "config", "delivery_type": "COS", "content_type": 3}; errors = []
     errors.extend(audit_request(module.describe_request(models), "Config delivery describe"))
     errors.extend(audit_request(module.update_request(models, p), "Config delivery update"))
+    assert errors == []
+
+
+def test_config_compliance_pack():
+    module = _import_plugin("config_compliance_pack"); models = _models("config.v20220802")
+    p = {"name": "production-security", "description": "Production baseline", "risk_level": 1, "rules": [{"name": "public-bucket-denied", "risk_level": 1, "identifier": "cos-public-read-prohibited", "config_rule_id": "cr-xxxxxxxx", "managed_rule_identifier": "cos-public-read-prohibited", "description": "No public buckets", "input_parameters": [{"parameter_name": "allowed", "type": "boolean", "value": "false"}]}]}; errors = []
+    errors.extend(audit_request(module.list_request(models, p), "Config compliance pack list"))
+    errors.extend(audit_request(module.describe_request(models, "cp-xxxxxxxx"), "Config compliance pack describe"))
+    errors.extend(audit_request(module.create_request(models, p), "Config compliance pack create"))
+    errors.extend(audit_request(module.update_request(models, p, "cp-xxxxxxxx"), "Config compliance pack update"))
+    errors.extend(audit_request(module.status_request(models, "cp-xxxxxxxx", True), "Config compliance pack status"))
+    errors.extend(audit_request(module.delete_request(models, "cp-xxxxxxxx"), "Config compliance pack delete"))
     assert errors == []
 
 
