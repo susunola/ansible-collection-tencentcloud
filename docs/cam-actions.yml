@@ -1083,11 +1083,26 @@ modules:
   - DeleteRabbitMQVirtualHost
   - DescribeRabbitMQVirtualHost
   - ModifyRabbitMQVirtualHost
+  tdmq_rocketmq_group:
+  - CreateRocketMQGroup
+  - DeleteRocketMQGroup
+  - DescribeRocketMQGroups
+  - ModifyRocketMQGroup
   tdmq_rocketmq_namespace:
   - CreateRocketMQNamespace
   - DeleteRocketMQNamespace
   - DescribeRocketMQNamespaces
   - ModifyRocketMQNamespace
+  tdmq_rocketmq_role:
+  - CreateRocketMQRole
+  - DeleteRocketMQRoles
+  - DescribeRocketMQRoles
+  - ModifyRocketMQRole
+  tdmq_rocketmq_topic:
+  - CreateRocketMQTopic
+  - DeleteRocketMQTopic
+  - DescribeRocketMQTopics
+  - ModifyRocketMQTopic
   tdmq_subscription:
   - CreateSubscription
   - DeleteSubscriptions

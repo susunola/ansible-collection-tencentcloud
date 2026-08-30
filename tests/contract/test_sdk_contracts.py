@@ -324,6 +324,9 @@ WRITE_MODULE_BUILDERS = {
     "tdmq_rabbitmq_permission": ["delete_request", "describe_request", "modify_request"],
     "tdmq_rabbitmq_binding": ["create_request", "delete_request", "describe_request"],
     "tdmq_rocketmq_namespace": ["create_request", "delete_request", "describe_request", "update_request"],
+    "tdmq_rocketmq_topic": ["create_request", "delete_request", "describe_request", "update_request"],
+    "tdmq_rocketmq_group": ["create_request", "delete_request", "describe_request", "update_request"],
+    "tdmq_rocketmq_role": ["create_request", "delete_request", "describe_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4262,6 +4265,42 @@ def test_tdmq_rocketmq_namespace():
     errors.extend(audit_request(module.create_request(models, p), "tdmq rocketmq namespace create"))
     errors.extend(audit_request(module.update_request(models, p), "tdmq rocketmq namespace update"))
     errors.extend(audit_request(module.delete_request(models, p), "tdmq rocketmq namespace delete"))
+    assert errors == []
+
+
+def test_tdmq_rocketmq_topic():
+    module = _import_plugin("tdmq_rocketmq_topic")
+    models = _models("tdmq.v20200217")
+    errors = []
+    p = {"cluster_id": "rocketmq-xxxxxxxx", "namespace": "production", "name": "orders", "topic_type": "PartitionedOrder", "partition_num": 6, "remark": "orders"}
+    errors.extend(audit_request(module.describe_request(models, p), "tdmq rocketmq topic describe"))
+    errors.extend(audit_request(module.create_request(models, p), "tdmq rocketmq topic create"))
+    errors.extend(audit_request(module.update_request(models, p), "tdmq rocketmq topic update"))
+    errors.extend(audit_request(module.delete_request(models, p), "tdmq rocketmq topic delete"))
+    assert errors == []
+
+
+def test_tdmq_rocketmq_group():
+    module = _import_plugin("tdmq_rocketmq_group")
+    models = _models("tdmq.v20200217")
+    errors = []
+    p = {"cluster_id": "rocketmq-xxxxxxxx", "namespace": "production", "name": "order-workers", "group_type": "TCP", "read_enabled": True, "broadcast_enabled": False, "retry_max_times": 12, "remark": "workers"}
+    errors.extend(audit_request(module.describe_request(models, p), "tdmq rocketmq group describe"))
+    errors.extend(audit_request(module.create_request(models, p), "tdmq rocketmq group create"))
+    errors.extend(audit_request(module.update_request(models, p), "tdmq rocketmq group update"))
+    errors.extend(audit_request(module.delete_request(models, p), "tdmq rocketmq group delete"))
+    assert errors == []
+
+
+def test_tdmq_rocketmq_role():
+    module = _import_plugin("tdmq_rocketmq_role")
+    models = _models("tdmq.v20200217")
+    errors = []
+    p = {"cluster_id": "rocketmq-xxxxxxxx", "name": "order-service", "permission_type": "TopicAndGroup", "remark": "orders"}
+    errors.extend(audit_request(module.describe_request(models, p), "tdmq rocketmq role describe"))
+    errors.extend(audit_request(module.create_request(models, p), "tdmq rocketmq role create"))
+    errors.extend(audit_request(module.update_request(models, p), "tdmq rocketmq role update"))
+    errors.extend(audit_request(module.delete_request(models, p), "tdmq rocketmq role delete"))
     assert errors == []
 
 
