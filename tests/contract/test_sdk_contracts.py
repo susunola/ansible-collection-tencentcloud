@@ -827,6 +827,7 @@ WRITE_MODULE_BUILDERS = {
     "cynosdb_cluster": ["create_request", "describe_request", "isolate_request", "offline_request", "rename_request", "slave_zone_request", "storage_request", "version_request"],
     "ckafka_instance": ["attributes_request", "create_postpaid_request", "create_prepaid_request", "delete_postpaid_request", "delete_prepaid_request", "list_request", "modify_request", "resize_request"],
     "dcdb_instance": ["create_hour_request", "create_prepaid_request", "describe_request", "destroy_request", "isolate_request", "rename_request", "upgrade_request"],
+    "tcaplusdb_cluster": ["create_request", "delete_request", "describe_request", "password_request", "rename_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
@@ -2669,6 +2670,15 @@ def test_postgresql_account():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "PostgreSQL account request %s" % index))
+    assert errors == []
+
+
+def test_tcaplusdb_cluster():
+    module = _import_plugin("tcaplusdb_cluster"); models = _models("tcaplusdb.v20190823")
+    p = {"cluster_id": "tcaplus-x", "name": "production-tcaplus", "idl_type": "TDR", "vpc_id": "vpc-x", "subnet_id": "subnet-x", "password": "Old-Secret-123", "new_password": "New-Secret-456", "rotate_password": True, "old_password_expire_time": "2026-09-01 00:00:00", "cluster_type": 1, "auth_type": 1, "ipv6": False, "servers": [{"server_uid": "svr-x", "machine_type": "SVR1"}], "proxies": [{"proxy_uid": "proxy-x", "machine_type": "PROXY1", "available_count": 2}], "tags": {"environment": "production"}}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.rename_request(models, p["cluster_id"], p["name"]), module.password_request(models, p, p["cluster_id"]), module.delete_request(models, p["cluster_id"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "TcaplusDB cluster request %s" % index))
     assert errors == []
 
 

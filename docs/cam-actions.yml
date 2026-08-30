@@ -1307,6 +1307,12 @@ modules:
   - ModifyInvoker
   tbaas_block_info:
   - GetBlockList
+  tcaplusdb_cluster:
+  - CreateCluster
+  - DeleteCluster
+  - DescribeClusters
+  - ModifyClusterName
+  - ModifyClusterPassword
   tcaplusdb_cluster_info:
   - DescribeClusters
   tcb_billing_info:

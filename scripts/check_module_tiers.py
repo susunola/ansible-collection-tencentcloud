@@ -265,6 +265,7 @@ CORE_MODULES = {
     "tke_cluster_authentication",
     "tke_cluster_audit",
     "tke_backup_storage_location",
+    "tcaplusdb_cluster",
     "tke_node_pool",
     "vpc",
     "havip",

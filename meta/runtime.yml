@@ -362,6 +362,7 @@ action_groups:
     - tat_command_info
     - tat_invoker
     - tbaas_block_info
+    - tcaplusdb_cluster
     - tcaplusdb_cluster_info
     - tcb_billing_info
     - tcbr_cloud_run_pod_info

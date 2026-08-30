@@ -74,6 +74,7 @@ minor_changes:
   - Add CynosDB cluster lifecycle with storage, secondary-zone and kernel upgrades.
   - Add prepaid and postpaid CKafka instance lifecycle with runtime controls and prepaid capacity changes.
   - Add prepaid and postpaid DCDB instance lifecycle with shard expansion and specification upgrades.
+  - Add TcaplusDB cluster lifecycle with storage and proxy topology plus password rotation.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."
