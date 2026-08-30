@@ -357,6 +357,7 @@ WRITE_MODULE_BUILDERS = {
     "cfs_snapshot": ["create_request", "delete_request", "describe_request", "update_request"],
     "cfs_auto_snapshot_policy": ["bind_request", "create_request", "delete_request", "describe_request", "unbind_request", "update_request"],
     "cbs_auto_snapshot_policy": ["bind_request", "create_request", "delete_request", "describe_request", "unbind_request", "update_request"],
+    "cbs_snapshot_share": ["describe_request", "modify_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4631,4 +4632,12 @@ def test_cbs_auto_snapshot_policy():
     errors.extend(audit_request(module.bind_request(models, "asp-xxxxxxxx", p["disk_ids"]), "CBS auto snapshot bind"))
     errors.extend(audit_request(module.unbind_request(models, "asp-xxxxxxxx", p["disk_ids"]), "CBS auto snapshot unbind"))
     errors.extend(audit_request(module.delete_request(models, "asp-xxxxxxxx"), "CBS auto snapshot delete"))
+    assert errors == []
+
+
+def test_cbs_snapshot_share():
+    module = _import_plugin("cbs_snapshot_share"); models = _models("cbs.v20170312"); errors = []
+    errors.extend(audit_request(module.describe_request(models, "snap-xxxxxxxx"), "CBS snapshot share describe"))
+    errors.extend(audit_request(module.modify_request(models, "snap-xxxxxxxx", ["100001122000"], "SHARE"), "CBS snapshot share add"))
+    errors.extend(audit_request(module.modify_request(models, "snap-xxxxxxxx", ["100001122000"], "CANCEL"), "CBS snapshot share remove"))
     assert errors == []

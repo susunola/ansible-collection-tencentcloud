@@ -34,6 +34,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cbs_auto_snapshot_policy` | Manage Tencent Cloud CBS automatic snapshot policies |
 | `cbs_disk` | Manage Tencent Cloud CBS cloud disks |
 | `cbs_snapshot` | Manage Tencent Cloud CBS disk snapshots |
+| `cbs_snapshot_share` | Manage Tencent Cloud CBS snapshot sharing permissions |
 | `ccn` | Manage Tencent Cloud Cloud Connect Networks |
 | `ccn_attachment` | Attach network instances to Tencent Cloud CCN |
 | `cdb_account` | Manage TencentDB for MySQL accounts |

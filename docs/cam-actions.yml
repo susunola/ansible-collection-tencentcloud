@@ -193,6 +193,9 @@ modules:
   - CreateSnapshot
   - DeleteSnapshots
   - DescribeSnapshots
+  cbs_snapshot_share:
+  - DescribeSnapshotSharePermission
+  - ModifySnapshotsSharePermission
   ccc_extension_info:
   - DescribeExtensions
   ccn:
