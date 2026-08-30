@@ -10,7 +10,20 @@ v0.13.0
 Minor Changes
 -------------
 
+- Add API Gateway API lifecycle management with route, method, authentication and backend controls.
+- Add Auto Scaling scheduled capacity action lifecycle management.
+- Add Auto Scaling simple and target-tracking policy lifecycle management.
+- Add CAM group lifecycle management.
+- Add CDB and Redis parameter-template lifecycle and exact parameter reconciliation.
+- Add CLS full-text index and LogListener machine-group management.
+- Add CMQ topic and push-subscription lifecycle management, including retention, tracing, filtering and retry policy controls.
+- Add DNSPod domain lifecycle, status, group, remark and creation-tag controls.
+- Add DTS migration job purchase, rename, resize and destroy operations.
 - Add KMS key creation tags, task-level deletion protection and explicit immutable drift detection for alias, key usage and key origin type.
+- Add PostgreSQL parameter-template lifecycle and exact parameter reconciliation.
+- Add SCF trigger lifecycle, status control and explicit safe replacement.
+- Add TCR Enterprise replication rule lifecycle management with filters and overwrite/deletion controls.
+- Add TDMQ Pulsar subscription lifecycle management.
 - Add ``as_scaling_group`` for idempotent Auto Scaling group lifecycle and capacity management.
 - Add ``cam_group_membership`` for paginated, idempotent CAM sub-user membership management by UIN or UID.
 - Add ``cam_policy_attachment`` for idempotent CAM policy attachment and detachment across users, roles and groups.
@@ -33,6 +46,7 @@ Minor Changes
 - Add ``tdmq_topic`` for idempotent TDMQ Pulsar topic lifecycle management.
 - Add ``teo_dns_record`` for idempotent EdgeOne DNS record lifecycle management.
 - Add ``tke_addon`` for TKE addon installation, version and values updates, and deletion.
+- Add a generated per-module Tencent Cloud API action manifest as the basis for least-privilege CAM policies.
 - Add api_gateway_service for idempotent API Gateway service lifecycle.
 - Add ccn for Cloud Connect Network lifecycle and mutable routing feature flags, with check mode, diff and convergence polling.
 - Add ccn_attachment for idempotent VPC, VPN gateway, direct-connect gateway and BM VPC association with CCN.
@@ -40,6 +54,7 @@ Minor Changes
 - Add cls_logset for idempotent CLS logset lifecycle, naming and exact tags.
 - Add cls_topic for idempotent topic lifecycle, retention, partitions, storage and tags.
 - Add cynosdb_account for account lifecycle, descriptions and explicit password rotation.
+- Add exact CKafka ACL grant management.
 - Add network_acl for ACL lifecycle, exact ingress/egress rules and exact subnet association reconciliation.
 - Add postgresql_account for account lifecycle, remarks and explicit password rotation.
 - Add privatelink_endpoint for consumer endpoint lifecycle and security groups.
@@ -92,6 +107,7 @@ Minor Changes
 Bugfixes
 --------
 
+- Complete inherited retry/waiter documentation and GPL headers for the recent product-depth modules so strict Ansible validation succeeds.
 - Fix ``cmq_queue`` to use the supported TDMQ CMQ write APIs and wait for queue convergence.
 - Read addons from the ``DescribeAddon`` response list and encode addon values as the Base64 JSON representation required by the TKE API.
 - Use the shared Tencent Cloud not-found classifier in SCF, SSM, TKE and Private DNS resource discovery paths for consistent absent idempotency.

@@ -1,7 +1,0 @@
-minor_changes:
-  - Add CAM group lifecycle management.
-  - Add DNSPod domain lifecycle, status, group, remark and creation-tag controls.
-  - Add exact CKafka ACL grant management.
-  - Add CDB and Redis parameter-template lifecycle and exact parameter reconciliation.
-  - Add PostgreSQL parameter-template lifecycle and exact parameter reconciliation.
-  - Add a generated per-module Tencent Cloud API action manifest as the basis for least-privilege CAM policies.
