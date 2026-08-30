@@ -4,6 +4,7 @@ from __future__ import absolute_import, division, print_function
 
 import importlib.util
 import io
+import re
 from pathlib import Path
 
 import pytest
@@ -56,9 +57,15 @@ def test_matching_version_passes(drift, monkeypatch, tmp_path):
 
 def test_real_committed_file_passes(drift, monkeypatch):
     """The committed info_specs_auto.py parses and matches its own stamp."""
+    # The mock "installed" version must mirror the stamp the committed file
+    # actually carries (it moves on every deliberate SDK bump), otherwise
+    # this test couples itself to a specific SDK release.
+    stamp = re.search(
+        r"^GENERATED_SDK_VERSION\s*=\s*['\"]([^'\"]+)['\"]",
+        REAL_AUTO_SPECS.read_text(encoding="utf-8"), re.M).group(1)
     rc, out, err = _invoke(
         drift, monkeypatch, tmp_path=Path(REPO_ROOT) / "scripts",
-        installed="3.1.113", content=None, name="info_specs_auto.py")
+        installed=stamp, content=None, name="info_specs_auto.py")
     assert rc == 0
     assert "SDK drift check OK" in out.getvalue()
 
