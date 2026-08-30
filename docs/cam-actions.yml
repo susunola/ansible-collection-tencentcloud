@@ -648,6 +648,9 @@ modules:
   - DescribeResourceUsageInfo
   mna_access_region_info:
   - DescribeAccessRegions
+  mongodb_backup_config:
+  - DescribeBackupRules
+  - SetBackupRules
   mongodb_instance:
   - CreateDBInstance
   - CreateDBInstanceHour

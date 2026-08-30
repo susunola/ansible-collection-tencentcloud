@@ -108,6 +108,7 @@ CORE_MODULES = {
     "kms_key_rotation",
     "lighthouse_instance",
     "mongodb_instance",
+    "mongodb_backup_config",
     "monitor_alarm_policy",
     "monitor_alarm_policy_notice",
     "monitor_prometheus_scrape_job",

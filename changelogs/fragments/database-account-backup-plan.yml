@@ -5,3 +5,4 @@ minor_changes:
   - "Add organization member access policy lifecycle management."
   - "Add CDB database lifecycle management with immutable character-set protection."
   - "Add CDB audit enablement, retention and closure configuration."
+  - "Add MongoDB automatic backup schedule, method, retention and alert configuration."

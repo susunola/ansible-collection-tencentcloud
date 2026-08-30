@@ -307,6 +307,7 @@ WRITE_MODULE_BUILDERS = {
     "organization_member": ["create", "delete", "describe", "move", "update"],
     "organization_member_identity": ["create_request", "delete_request", "describe_request"],
     "organization_member_policy": ["create_request", "delete_request", "describe_request", "update_request"],
+    "mongodb_backup_config": ["describe_request", "set_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4045,6 +4046,16 @@ def test_organization_member_policy():
     errors.extend(audit_request(module.create_request(models, p), "organization member policy create"))
     errors.extend(audit_request(module.update_request(models, p, 101), "organization member policy update"))
     errors.extend(audit_request(module.delete_request(models, 101), "organization member policy delete"))
+    assert errors == []
+
+
+def test_mongodb_backup_config():
+    module = _import_plugin("mongodb_backup_config")
+    models = _models("mongodb.v20190725")
+    errors = []
+    p = {"instance_id": "cmgo-xxxxxxxx", "backup_method": 1, "backup_hour": 3, "frequency_hours": 24, "active_weekdays": [1, 3, 5], "retention_days": 30, "oplog_retention_days": 14, "backup_version": 1, "alert_threshold": 100}
+    errors.extend(audit_request(module.describe_request(models, p["instance_id"]), "mongodb backup config describe"))
+    errors.extend(audit_request(module.set_request(models, p), "mongodb backup config set"))
     assert errors == []
 
 

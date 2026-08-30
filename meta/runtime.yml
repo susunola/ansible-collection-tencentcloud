@@ -206,6 +206,7 @@ action_groups:
     - memcached_instance_info
     - mmps_resource_usage_info
     - mna_access_region_info
+    - mongodb_backup_config
     - mongodb_instance
     - mongodb_instance_info
     - monitor_alarm_policy
