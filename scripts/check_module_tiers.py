@@ -228,6 +228,7 @@ CORE_MODULES = {
     "teo_acceleration_domain",
     "teo_origin_group",
     "teo_security_ip_group",
+    "teo_security_template_binding",
     "teo_web_security_template",
     "teo_zone",
     "tcr_instance",

@@ -458,6 +458,7 @@ WRITE_MODULE_BUILDERS = {
     "teo_acceleration_domain": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
     "teo_origin_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "teo_security_ip_group": ["content_request", "create_request", "delete_request", "describe_request", "update_request"],
+    "teo_security_template_binding": ["bind_request", "describe_request", "unbind_request"],
     "teo_web_security_template": ["create_request", "delete_request", "describe_request", "update_request"],
     "teo_zone": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
     "cvm_chc": [
@@ -4937,4 +4938,13 @@ def test_teo_web_security_template():
     errors.extend(audit_request(module.create_request(models, p), "TEO web security template create"))
     errors.extend(audit_request(module.update_request(models, p, "temp-xxxxxxxx"), "TEO web security template update"))
     errors.extend(audit_request(module.delete_request(models, p, "temp-xxxxxxxx"), "TEO web security template delete"))
+    assert errors == []
+
+
+def test_teo_security_template_binding():
+    module = _import_plugin("teo_security_template_binding"); models = _models("teo.v20220901")
+    p = {"zone_id": "zone-xxxxxxxx", "template_id": "temp-xxxxxxxx", "domains": ["app.example.com"], "overwrite": True, "unbind_policy": "keep-policy"}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "TEO security template binding describe"))
+    errors.extend(audit_request(module.bind_request(models, p, p["domains"]), "TEO security template bind"))
+    errors.extend(audit_request(module.unbind_request(models, p, p["domains"][0]), "TEO security template unbind"))
     assert errors == []
