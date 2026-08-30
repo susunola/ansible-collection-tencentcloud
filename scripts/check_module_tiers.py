@@ -168,6 +168,8 @@ CORE_MODULES = {
     "elasticsearch_index",
     "elasticsearch_snapshot",
     "emr_cluster",
+    "cdwdoris_instance",
+    "cdwpg_instance",
     "gaap_proxy",
     "gwlb_load_balancer",
     "gwlb_target_group",

@@ -311,6 +311,8 @@ UNEXERCISED_BUILDERS = {
 # at the bottom of this file. Info-module builders are registered in
 # INFO_BUILDERS instead. Both sets are verified against the static scan.
 WRITE_MODULE_BUILDERS = {
+    "cdwdoris_instance": ["create_request", "delete_request", "describe_request", "state_request", "update_request"],
+    "cdwpg_instance": ["create_request", "delete_request", "describe_request", "state_request", "update_request"],
     "emr_cluster": ["create_request", "delete_request", "describe_request", "update_request"],
     "chdfs_file_system": ["create_request", "delete_request", "describe_request", "update_request"],
     "chdfs_mount_point": ["create_request", "delete_request", "describe_request", "update_request"],
@@ -5321,6 +5323,28 @@ def test_teo_origin_group():
     errors.extend(audit_request(module.create_request(models, p), "TEO origin group create"))
     errors.extend(audit_request(module.update_request(models, p, "origin-xxxxxxxx"), "TEO origin group update"))
     errors.extend(audit_request(module.delete_request(models, p, "origin-xxxxxxxx"), "TEO origin group delete"))
+    assert errors == []
+
+
+def test_cdwdoris_instance():
+    module = _import_plugin("cdwdoris_instance"); models = _models("cdwdoris.v20211228")
+    p = {"instance_id": None, "name": "analytics-doris", "zone": "ap-guangzhou-3", "fe_spec": {"SpecName": "S_4_16_H", "Count": 3, "DiskSize": 100}, "be_spec": {"SpecName": "S_8_32_H", "Count": 3, "DiskSize": 500}, "ha": True, "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "product_version": "2.1", "charge_properties": {"ChargeType": "POSTPAID_BY_HOUR"}, "admin_password": "example-password", "tags": {"env": "production"}, "ha_type": 1, "case_sensitive": 0, "enable_multi_zones": False, "multi_zone_infos": [], "is_ssc": False, "ssc_cu": None, "cache_data_disk_size": None}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "CDW Doris describe"))
+    errors.extend(audit_request(module.state_request(models, "cdwdoris-xxxxxxxx"), "CDW Doris state"))
+    errors.extend(audit_request(module.create_request(models, p), "CDW Doris create"))
+    errors.extend(audit_request(module.update_request(models, "cdwdoris-xxxxxxxx", "analytics-renamed"), "CDW Doris update"))
+    errors.extend(audit_request(module.delete_request(models, "cdwdoris-xxxxxxxx"), "CDW Doris delete"))
+    assert errors == []
+
+
+def test_cdwpg_instance():
+    module = _import_plugin("cdwpg_instance"); models = _models("cdwpg.v20201230")
+    p = {"instance_id": None, "name": "analytics-pg", "zone": "ap-guangzhou-3", "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "charge_properties": {"ChargeType": "POSTPAID_BY_HOUR"}, "admin_password": "example-password", "resources": [{"SpecName": "S_4_16_H", "Count": 2, "Type": "cn"}, {"SpecName": "S_8_32_H", "Count": 3, "Type": "dn"}], "tags": {"env": "production"}, "product_version": "6.3.0"}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "CDW PostgreSQL describe"))
+    errors.extend(audit_request(module.state_request(models, "cdwpg-xxxxxxxx"), "CDW PostgreSQL state"))
+    errors.extend(audit_request(module.create_request(models, p), "CDW PostgreSQL create"))
+    errors.extend(audit_request(module.update_request(models, "cdwpg-xxxxxxxx", "analytics-renamed"), "CDW PostgreSQL update"))
+    errors.extend(audit_request(module.delete_request(models, "cdwpg-xxxxxxxx"), "CDW PostgreSQL delete"))
     assert errors == []
 
 

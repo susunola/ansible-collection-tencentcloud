@@ -84,7 +84,9 @@ action_groups:
     - cdwch_cn_instance_info
     - cdwch_instance
     - cdwdoris_cluster_configs_history_info
+    - cdwdoris_instance
     - cdwpg_account_info
+    - cdwpg_instance
     - cdz_cloud_dedicated_zone_host_info
     - cetcd_etcd_instance_info
     - cfg_action_library_info

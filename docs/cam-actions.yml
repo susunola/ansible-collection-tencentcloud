@@ -304,8 +304,20 @@ modules:
   - ScaleUpInstance
   cdwdoris_cluster_configs_history_info:
   - DescribeClusterConfigsHistory
+  cdwdoris_instance:
+  - CreateInstanceNew
+  - DescribeInstanceState
+  - DescribeInstances
+  - DestroyInstance
+  - ModifyInstance
   cdwpg_account_info:
   - DescribeAccounts
+  cdwpg_instance:
+  - CreateInstanceByApi
+  - DescribeInstanceState
+  - DescribeInstances
+  - DestroyInstanceByApi
+  - ModifyInstance
   cdz_cloud_dedicated_zone_host_info:
   - DescribeCloudDedicatedZoneHosts
   cetcd_etcd_instance_info:

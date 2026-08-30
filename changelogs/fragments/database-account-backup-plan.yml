@@ -2,6 +2,7 @@ minor_changes:
   - Add GooseFS file system lifecycle with expansion-only capacity management and fileset quota lifecycle.
   - Add CHDFS file systems, mount points, access groups, exact access rules and mount bindings.
   - Add EMR cluster creation, rename, convergence waiting and termination lifecycle.
+  - Add CDW Doris and CDW PostgreSQL instance creation, rename, convergence waiting and destruction lifecycle.
   - Add physical Direct Connect and secret-safe Direct Connect tunnel lifecycle management.
   - Add complete GWLB lifecycle coverage for load balancers, target groups, associations, and exact-set backend instances.
   - Add ALB instance and listener lifecycle with deletion protection, address conversion, TLS settings, and target-group default actions.
