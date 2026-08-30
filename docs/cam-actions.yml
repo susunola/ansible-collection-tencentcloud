@@ -256,6 +256,7 @@ modules:
   - DescribeDomains
   - StartCdnDomain
   - StopCdnDomain
+  - UpdateDomainConfig
   cdn_domain_info:
   - DescribeDomains
   cds_asset_info:

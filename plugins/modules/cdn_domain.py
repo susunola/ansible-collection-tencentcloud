@@ -17,9 +17,8 @@ description:
   - This module is idempotent. Running it twice leaves the domain unchanged
     and the second run reports C(changed=false).
   - Supports check mode; no API write happens in check mode, only reads.
-  - A domain is identified by its O(domain) name. The origin and
-    service-type configuration is only applied at creation; full
-    configuration updates are out of scope for this module.
+  - A domain is identified by its O(domain) name. Origin, service type,
+    project and acceleration area are reconciled on existing domains.
 options:
   state:
     description:
@@ -67,27 +66,27 @@ options:
         V(Origin.OriginPullProtocol).
       - C(http) and C(https) force the protocol, C(follow) follows the
         client request.
-      - Only applied at creation.
+      - Updated on existing domains when supplied.
     type: str
     choices: [http, https, follow]
   backup_origins:
     description:
       - Backup origin addresses, written to V(Origin.BackupOrigins).
-      - Only applied at creation.
+      - Updated on existing domains when supplied.
     type: list
     elements: str
   project_id:
     description:
       - Project the domain belongs to, written to
         V(AddCdnDomainRequest.ProjectId).
-      - Only applied at creation.
+      - Updated on existing domains when supplied.
     type: int
   area:
     description:
       - Acceleration area, written to V(AddCdnDomainRequest.Area).
       - C(mainland) accelerates in mainland China, C(overseas) outside,
         C(global) everywhere.
-      - Only applied at creation.
+      - Updated on existing domains when supplied.
     type: str
     choices: [mainland, overseas, global]
   retries:
@@ -222,9 +221,64 @@ def build_add_request(models, params):
     return request
 
 
+def _origin(models, params):
+    origin = models.Origin()
+    origin.Origins = params["origins"]
+    origin.OriginType = params["origin_type"]
+    if params["origin_protocol"]:
+        origin.OriginPullProtocol = params["origin_protocol"]
+    if params["backup_origins"] is not None:
+        origin.BackupOrigins = params["backup_origins"]
+    return origin
+
+
+def build_update_request(models, params):
+    request = models.UpdateDomainConfigRequest()
+    request.Domain = params["domain"]
+    if params["origins"] is not None or params["origin_type"] is not None or params["origin_protocol"] is not None or params["backup_origins"] is not None:
+        request.Origin = _origin(models, params)
+    if params["service_type"] is not None:
+        request.ServiceType = params["service_type"]
+    if params["project_id"] is not None:
+        request.ProjectId = params["project_id"]
+    if params["area"] is not None:
+        request.Area = params["area"]
+    return request
+
+
 def _add(module, client, models, params):
     request = build_add_request(models, params)
     module.sdk_call(client.AddCdnDomain, request)
+
+
+def _update(module, client, models, params):
+    module.sdk_call(client.UpdateDomainConfig, build_update_request(models, params))
+
+
+def _desired_config(params):
+    desired = {}
+    mapping = (("service_type", "ServiceType"), ("project_id", "ProjectId"), ("area", "Area"))
+    for source, target in mapping:
+        if params[source] is not None:
+            desired[target] = params[source]
+    origin = {}
+    for source, target in (("origins", "Origins"), ("origin_type", "OriginType"), ("origin_protocol", "OriginPullProtocol"), ("backup_origins", "BackupOrigins")):
+        if params[source] is not None:
+            origin[target] = params[source]
+    if origin:
+        desired["Origin"] = origin
+    return desired
+
+
+def _current_config(current, desired):
+    result = {}
+    for key, value in desired.items():
+        if key != "Origin":
+            result[key] = current.get(key)
+            continue
+        existing = current.get("Origin") or {}
+        result["Origin"] = {name: existing.get(name) for name in value}
+    return result
 
 
 def _delete(module, client, models, domain):
@@ -329,7 +383,21 @@ def run_module():
         current = find_domain(module, client, models, domain)
         module.exit_json(changed=True, **(diff or {}), domain=current, msg="CDN domain added")
 
-    module.exit_json(changed=False, domain=current, msg="CDN domain is up to date")
+    desired = _desired_config(module.params)
+    before = _current_config(current, desired)
+    if before == desired:
+        module.exit_json(changed=False, domain=current, msg="CDN domain is up to date")
+    diff = maybe_diff(module, before, desired)
+    if module.check_mode:
+        module.exit_json(changed=True, **(diff or {}), domain=current, msg="Would update CDN domain")
+    update_params = dict(module.params)
+    existing_origin = current.get("Origin") or {}
+    for source, target in (("origins", "Origins"), ("origin_type", "OriginType"), ("origin_protocol", "OriginPullProtocol"), ("backup_origins", "BackupOrigins")):
+        if update_params[source] is None:
+            update_params[source] = existing_origin.get(target)
+    _update(module, client, models, update_params)
+    current = find_domain(module, client, models, domain)
+    module.exit_json(changed=True, **(diff or {}), domain=current, msg="CDN domain updated")
 
 
 def main():

@@ -440,6 +440,7 @@ WRITE_MODULE_BUILDERS = {
         "_stop",
         "build_add_request",
         "build_describe_request",
+        "build_update_request",
     ],
     "cvm_chc": [
         "_configure_vpc",
@@ -3399,7 +3400,12 @@ def test_cdn_domain():
     fake = _RecordingModule()
     client = _StubClient()
     errors = []
+    update_params = {
+        "domain": "cdn.example.com", "service_type": "download", "origins": ["new-origin.example.com"],
+        "origin_type": "domain", "origin_protocol": "https", "backup_origins": [], "project_id": 2, "area": "global",
+    }
     errors.extend(audit_request(module.build_describe_request(models, "cdn.example.com"), "cdn describe by domain"))
+    errors.extend(audit_request(module.build_update_request(models, update_params), "cdn update request"))
     errors.extend(
         audit_request(
             module.build_add_request(
@@ -3434,6 +3440,7 @@ def test_cdn_domain():
         },
     )
     module._start(fake, client, models, "cdn.example.com")
+    module._update(fake, client, models, update_params)
     module._stop(fake, client, models, "cdn.example.com")
     module._delete(fake, client, models, "cdn.example.com")
     errors.extend(audit_recorded(fake, "cdn_domain"))
