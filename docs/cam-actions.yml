@@ -1060,6 +1060,11 @@ modules:
   - DeleteEnvironments
   - DescribeEnvironments
   - ModifyEnvironmentAttributes
+  tdmq_namespace_role:
+  - CreateEnvironmentRole
+  - DeleteEnvironmentRoles
+  - DescribeEnvironmentRoles
+  - ModifyEnvironmentRole
   tdmq_subscription:
   - CreateSubscription
   - DeleteSubscriptions

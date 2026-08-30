@@ -145,6 +145,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tcr_replication_rule` | Manage Tencent Cloud TCR replication rules |
 | `tcr_repository` | Manage a Tencent Cloud TCR repository |
 | `tdmq_namespace` | Manage Tencent Cloud TDMQ Pulsar namespaces |
+| `tdmq_namespace_role` | Manage TDMQ Pulsar namespace role permissions |
 | `tdmq_subscription` | Manage Tencent Cloud TDMQ Pulsar subscriptions |
 | `tdmq_topic` | Manage Tencent Cloud TDMQ Pulsar topics |
 | `teo_dns_record` | Manage Tencent Cloud TEO DNS records |

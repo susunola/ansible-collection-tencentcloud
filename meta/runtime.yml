@@ -313,6 +313,7 @@ action_groups:
     - tdid_over_summary_info
     - tdmq_amqp_cluster_info
     - tdmq_namespace
+    - tdmq_namespace_role
     - tdmq_subscription
     - tdmq_topic
     - tdmysql_db_instance_info

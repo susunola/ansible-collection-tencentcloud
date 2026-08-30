@@ -167,6 +167,7 @@ CORE_MODULES = {
     "tat_command",
     "tdmq_topic",
     "tdmq_namespace",
+    "tdmq_namespace_role",
     "tdmq_subscription",
     "teo_dns_record",
     "tcr_instance",

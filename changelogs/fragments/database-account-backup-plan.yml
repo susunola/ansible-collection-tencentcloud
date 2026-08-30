@@ -16,3 +16,4 @@ minor_changes:
   - "Add CKafka VPC, public and internal access-route lifecycle management."
   - "Add CKafka prefixed and preset ACL rule lifecycle management."
   - "Add TDMQ Pulsar namespace retention and subscription-policy lifecycle management."
+  - "Add TDMQ Pulsar namespace role permission lifecycle management."
