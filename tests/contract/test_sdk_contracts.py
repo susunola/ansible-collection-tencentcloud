@@ -311,6 +311,8 @@ UNEXERCISED_BUILDERS = {
 # at the bottom of this file. Info-module builders are registered in
 # INFO_BUILDERS instead. Both sets are verified against the static scan.
 WRITE_MODULE_BUILDERS = {
+    "cvm_disaster_recover_group": ["create_request", "delete_request", "describe_request", "update_request"],
+    "cvm_disaster_recover_group_binding": ["bind_request", "describe_request", "unbind_request"],
     "cdb_account": ["create", "describe"],
     "cdb_account_privilege": ["describe_request", "modify_request"],
     "cdb_audit_config": ["describe_request", "modify_request"],
@@ -2817,6 +2819,24 @@ def test_tke_cluster_audit():
     requests = [module.build_describe(models, "cls-x"), module.build_enable(models, params), module.build_disable(models, params)]
     errors = []
     for index, request in enumerate(requests): errors.extend(audit_request(request, "TKE audit request %s" % index))
+    assert errors == []
+
+
+def test_cvm_disaster_recover_group():
+    module = _import_plugin("cvm_disaster_recover_group"); models = _models("cvm.v20170312")
+    p = {"group_id": "ps-xxxxxxxx", "name": "production-spread", "placement_type": "RACK", "strategy": "SPREAD", "partition_count": None, "affinity": 2}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p, p["group_id"]), module.delete_request(models, p["group_id"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "CVM placement-group request %s" % index))
+    assert errors == []
+
+
+def test_cvm_disaster_recover_group_binding():
+    module = _import_plugin("cvm_disaster_recover_group_binding"); models = _models("cvm.v20170312")
+    p = {"instance_id": "ins-xxxxxxxx", "group_id": "ps-xxxxxxxx", "partition_number": 2, "force_migrate": True}
+    requests = [module.describe_request(models, p["instance_id"]), module.bind_request(models, p), module.unbind_request(models, p)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "CVM placement binding request %s" % index))
     assert errors == []
 
 

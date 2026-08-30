@@ -564,6 +564,15 @@ modules:
   - ModifyChcNetworkMode
   - RemoveChcAssistVpc
   - RemoveChcDeployVpc
+  cvm_disaster_recover_group:
+  - CreateDisasterRecoverGroup
+  - DeleteDisasterRecoverGroups
+  - DescribeDisasterRecoverGroups
+  - ModifyDisasterRecoverGroupAttribute
+  cvm_disaster_recover_group_binding:
+  - DeleteInstancesDisasterRecoverGroups
+  - DescribeInstances
+  - ModifyInstancesDisasterRecoverGroup
   cvm_image:
   - CreateImage
   - DeleteImages

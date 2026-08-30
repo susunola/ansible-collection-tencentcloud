@@ -134,6 +134,8 @@ CORE_MODULES = {
     "cvm_chc",
     "cvm_image",
     "cvm_instance",
+    "cvm_disaster_recover_group",
+    "cvm_disaster_recover_group_binding",
     "cynosdb_account",
     "cynosdb_backup_config",
     "cynosdb_account_privilege",

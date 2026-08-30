@@ -106,6 +106,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cos_bucket_website` | Manage Tencent Cloud COS static website configuration |
 | `customer_gateway` | Manage Tencent Cloud VPN customer gateways |
 | `cvm_chc` | Manage Tencent Cloud CHC physical server network configuration |
+| `cvm_disaster_recover_group` | Manage Tencent Cloud CVM placement groups |
+| `cvm_disaster_recover_group_binding` | Bind a Tencent Cloud CVM instance to a placement group |
 | `cvm_image` | Manage Tencent Cloud CVM custom images |
 | `cvm_instance` | Manage Tencent Cloud CVM instances |
 | `cynosdb_account` | Manage Tencent Cloud CynosDB accounts |

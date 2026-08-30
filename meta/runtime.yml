@@ -165,6 +165,8 @@ action_groups:
     - ctsdb_cluster_info
     - customer_gateway
     - cvm_chc
+    - cvm_disaster_recover_group
+    - cvm_disaster_recover_group_binding
     - cvm_image
     - cvm_instance
     - cvm_instance_info
