@@ -338,6 +338,7 @@ WRITE_MODULE_BUILDERS = {
     "dnspod_line_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "ckafka_datahub_topic": ["create_request", "delete_request", "describe_request", "update_request"],
     "ckafka_datahub_connection": ["create_request", "delete_request", "describe_request", "list_request", "update_request"],
+    "ckafka_datahub_task": ["create_request", "delete_request", "describe_request", "list_request", "pause_request", "resume_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4281,6 +4282,15 @@ def test_ckafka_datahub_connection():
     requests = [module.describe_request(models, p["resource_id"]), module.list_request(models, p), module.create_request(models, p), module.update_request(models, p, p["resource_id"]), module.delete_request(models, p["resource_id"])]
     errors = []
     for request in requests: errors.extend(audit_request(request, "CKafka Datahub connection request"))
+    assert errors == []
+
+
+def test_ckafka_datahub_task():
+    module = _import_plugin("ckafka_datahub_task"); models = _models("ckafka.v20190819")
+    p = {"task_id": "task-x", "name": "mysql-orders", "task_type": "SOURCE", "source_resource": {"Type": "MYSQL", "MySQLParam": {"Resource": "resource-x", "Database": "orders", "Table": "*"}}, "target_resource": {"Type": "TOPIC", "TopicParam": {"Resource": "1250000000-orders"}}, "transform": None, "transforms": None, "schema_id": None, "description": "orders", "desired_status": "running", "tasks_max": 2, "sync_throttle_limit": 20, "auto_expand": True}
+    requests = [module.describe_request(models, p["task_id"]), module.list_request(models, p), module.create_request(models, p), module.update_request(models, p, p["task_id"]), module.pause_request(models, p["task_id"]), module.resume_request(models, p["task_id"]), module.delete_request(models, p["task_id"])]
+    errors = []
+    for request in requests: errors.extend(audit_request(request, "CKafka Datahub task request"))
     assert errors == []
 
 

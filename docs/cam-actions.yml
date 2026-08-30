@@ -294,6 +294,14 @@ modules:
   - DescribeConnectResource
   - DescribeConnectResources
   - ModifyConnectResource
+  ckafka_datahub_task:
+  - CreateDatahubTask
+  - DeleteDatahubTask
+  - DescribeDatahubTask
+  - DescribeDatahubTasks
+  - ModifyDatahubTask
+  - PauseDatahubTask
+  - ResumeDatahubTask
   ckafka_datahub_topic:
   - CreateDatahubTopic
   - DeleteDatahubTopic

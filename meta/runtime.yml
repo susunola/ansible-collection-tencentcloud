@@ -89,6 +89,7 @@ action_groups:
     - ckafka_acl
     - ckafka_acl_rule
     - ckafka_datahub_connection
+    - ckafka_datahub_task
     - ckafka_datahub_topic
     - ckafka_instance_info
     - ckafka_route

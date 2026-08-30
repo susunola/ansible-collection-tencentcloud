@@ -85,6 +85,7 @@ CORE_MODULES = {
     "ckafka_acl_rule",
     "ckafka_datahub_topic",
     "ckafka_datahub_connection",
+    "ckafka_datahub_task",
     "ckafka_acl",
     "clb_listener",
     "clb_listener_target",
