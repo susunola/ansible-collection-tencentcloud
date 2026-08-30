@@ -448,6 +448,8 @@ WRITE_MODULE_BUILDERS = {
     "cfw_nat_acl_rule": ["create_request", "delete_request", "describe_request", "update_request"],
     "cfw_vpc_acl_rule": ["create_request", "delete_request", "describe_request", "update_request"],
     "cloudaudit_audit": ["describe_request", "start_request", "stop_request", "update_request"],
+    "config_recorder": ["close_request", "describe_request", "open_request", "update_request"],
+    "config_delivery": ["describe_request", "update_request"],
     "cvm_chc": [
         "_configure_vpc",
         "_remove_assist",
@@ -3514,6 +3516,23 @@ def test_cloudaudit_audit():
     errors.extend(audit_request(module.update_request(models, p), "CloudAudit audit update"))
     errors.extend(audit_request(module.start_request(models, p["audit_name"]), "CloudAudit audit start"))
     errors.extend(audit_request(module.stop_request(models, p["audit_name"]), "CloudAudit audit stop"))
+    assert errors == []
+
+
+def test_config_recorder():
+    module = _import_plugin("config_recorder"); models = _models("config.v20220802"); errors = []
+    errors.extend(audit_request(module.describe_request(models), "Config recorder describe"))
+    errors.extend(audit_request(module.update_request(models, ["QCS::CVM::Instance", "QCS::VPC::VPC"]), "Config recorder update"))
+    errors.extend(audit_request(module.open_request(models), "Config recorder open"))
+    errors.extend(audit_request(module.close_request(models), "Config recorder close"))
+    assert errors == []
+
+
+def test_config_delivery():
+    module = _import_plugin("config_delivery"); models = _models("config.v20220802")
+    p = {"enabled": True, "name": "compliance-archive", "target_arn": "qcs::cos:ap-guangzhou:100000000001:prefix/1250000000/config-archive", "prefix": "config", "delivery_type": "COS", "content_type": 3}; errors = []
+    errors.extend(audit_request(module.describe_request(models), "Config delivery describe"))
+    errors.extend(audit_request(module.update_request(models, p), "Config delivery update"))
     assert errors == []
 
 

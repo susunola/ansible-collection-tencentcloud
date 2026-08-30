@@ -82,6 +82,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cmq_queue` | Manage Tencent Cloud CMQ queues |
 | `cmq_subscription` | Manage Tencent Cloud CMQ topic subscriptions |
 | `cmq_topic` | Manage Tencent Cloud CMQ topics |
+| `config_delivery` | Manage Tencent Cloud Config delivery settings |
+| `config_recorder` | Manage Tencent Cloud Config resource recorder |
 | `config_rule` | Manage Tencent Cloud Config compliance rules |
 | `cos_bucket` | Manage Tencent Cloud COS buckets |
 | `cos_bucket_domain` | Manage Tencent Cloud COS custom domains |

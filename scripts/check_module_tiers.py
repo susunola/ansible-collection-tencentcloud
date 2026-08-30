@@ -105,6 +105,8 @@ CORE_MODULES = {
     "cos_bucket_referer",
     "cos_bucket_domain",
     "config_rule",
+    "config_recorder",
+    "config_delivery",
     "cmq_queue",
     "cmq_topic",
     "cmq_subscription",
