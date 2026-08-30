@@ -81,8 +81,13 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `monitor_alarm_policy_notice` | Manage notification bindings for a Cloud Monitor alarm policy |
 | `monitor_grafana_instance` | Manage Tencent Cloud Managed Grafana instances |
 | `monitor_grafana_integration` | Manage Tencent Cloud Managed Grafana integrations |
+| `monitor_grafana_internet` | Manage internet access for Tencent Cloud Managed Grafana |
+| `monitor_grafana_notification_channel` | Manage Tencent Cloud Managed Grafana notification channels |
+| `monitor_grafana_whitelist` | Manage a Tencent Cloud Managed Grafana IP whitelist |
 | `monitor_prometheus_alert_group` | Manage Tencent Cloud Managed Prometheus alert groups |
+| `monitor_prometheus_alertmanager_config` | Manage Managed Prometheus Alertmanager configuration |
 | `monitor_prometheus_cluster_agent` | Manage Managed Prometheus cluster agents |
+| `monitor_prometheus_global_notification` | Manage Managed Prometheus global notification settings |
 | `monitor_prometheus_grafana_binding` | Bind Managed Prometheus and Grafana instances |
 | `monitor_prometheus_instance` | Manage Tencent Cloud pay-as-you-go Managed Prometheus instances |
 | `monitor_prometheus_record_rule` | Manage Tencent Cloud Managed Prometheus recording rules |

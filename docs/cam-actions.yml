@@ -658,15 +658,32 @@ modules:
   - DeleteGrafanaIntegration
   - DescribeGrafanaIntegrations
   - UpdateGrafanaIntegration
+  monitor_grafana_internet:
+  - DescribeGrafanaInstances
+  - EnableGrafanaInternet
+  monitor_grafana_notification_channel:
+  - CreateGrafanaNotificationChannel
+  - DeleteGrafanaNotificationChannel
+  - DescribeGrafanaNotificationChannels
+  - UpdateGrafanaNotificationChannel
+  monitor_grafana_whitelist:
+  - DescribeGrafanaWhiteList
+  - UpdateGrafanaWhiteList
   monitor_prometheus_alert_group:
   - CreatePrometheusAlertGroup
   - DeletePrometheusAlertGroups
   - DescribePrometheusAlertGroups
   - UpdatePrometheusAlertGroup
+  monitor_prometheus_alertmanager_config:
+  - DescribePrometheusAlertmanagerConfig
+  - ReplacePrometheusAlertmanagerConfig
   monitor_prometheus_cluster_agent:
   - CreatePrometheusClusterAgent
   - DeletePrometheusClusterAgent
   - DescribePrometheusClusterAgents
+  monitor_prometheus_global_notification:
+  - DescribePrometheusGlobalNotification
+  - ModifyPrometheusGlobalNotification
   monitor_prometheus_grafana_binding:
   - BindPrometheusManagedGrafana
   - DescribePrometheusInstances

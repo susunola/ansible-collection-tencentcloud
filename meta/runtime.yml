@@ -208,8 +208,13 @@ action_groups:
     - monitor_alarm_policy_notice
     - monitor_grafana_instance
     - monitor_grafana_integration
+    - monitor_grafana_internet
+    - monitor_grafana_notification_channel
+    - monitor_grafana_whitelist
     - monitor_prometheus_alert_group
+    - monitor_prometheus_alertmanager_config
     - monitor_prometheus_cluster_agent
+    - monitor_prometheus_global_notification
     - monitor_prometheus_grafana_binding
     - monitor_prometheus_instance
     - monitor_prometheus_record_rule

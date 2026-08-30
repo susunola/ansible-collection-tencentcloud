@@ -320,6 +320,11 @@ WRITE_MODULE_BUILDERS = {
     "monitor_grafana_instance": ["build_create", "build_delete", "build_describe", "build_update"],
     "monitor_prometheus_grafana_binding": ["build_bind", "build_describe", "build_unbind"],
     "monitor_grafana_integration": ["build_create", "build_delete", "build_describe", "build_update"],
+    "monitor_grafana_whitelist": ["build_describe", "build_update"],
+    "monitor_grafana_internet": ["build_describe", "build_update"],
+    "monitor_grafana_notification_channel": ["build_create", "build_delete", "build_describe", "build_update"],
+    "monitor_prometheus_global_notification": ["build_describe", "build_update"],
+    "monitor_prometheus_alertmanager_config": ["build_describe", "build_update"],
     "cam_policy": [
         "_apply_tags",
         "_create",
@@ -2748,6 +2753,38 @@ def test_monitor_prometheus_cluster_agent(): _audit_monitor_platform("monitor_pr
 def test_monitor_grafana_instance(): _audit_monitor_platform("monitor_grafana_instance")
 def test_monitor_prometheus_grafana_binding(): _audit_monitor_platform("monitor_prometheus_grafana_binding")
 def test_monitor_grafana_integration(): _audit_monitor_platform("monitor_grafana_integration")
+
+
+def test_monitor_grafana_whitelist():
+    module=_import_plugin("monitor_grafana_whitelist"); models=_models("monitor.v20180724")
+    errors=[]
+    for index,request in enumerate([module.build_describe(models,"grafana-x"),module.build_update(models,"grafana-x",["203.0.113.10/32"])]): errors.extend(audit_request(request,"Grafana whitelist request %s"%index))
+    assert errors==[]
+
+
+def test_monitor_grafana_internet():
+    module=_import_plugin("monitor_grafana_internet"); models=_models("monitor.v20180724")
+    errors=[]
+    for index,request in enumerate([module.build_describe(models,"grafana-x"),module.build_update(models,"grafana-x",True)]): errors.extend(audit_request(request,"Grafana internet request %s"%index))
+    assert errors==[]
+
+
+def test_monitor_notification_controls():
+    models=_models("monitor.v20180724"); requests=[]
+    channel=_import_plugin("monitor_grafana_notification_channel"); p={"instance_id":"grafana-x","channel_id":"nchannel-x","name":"ops","receivers":["notice-x"],"organization_ids":["1"]}
+    requests += [channel.build_describe(models,p),channel.build_create(models,p),channel.build_update(models,p,"nchannel-x"),channel.build_delete(models,p,"nchannel-x")]
+    notification=_import_plugin("monitor_prometheus_global_notification"); value={"Enabled":True,"Type":"amp","RepeatInterval":"1h","ReceiverGroups":["notice-x"]}
+    requests += [notification.build_describe(models,"prom-x"),notification.build_update(models,"prom-x",value)]
+    alertmanager=_import_plugin("monitor_prometheus_alertmanager_config"); config={"InhibitRules":[]}
+    requests += [alertmanager.build_describe(models,"prom-x"),alertmanager.build_update(models,"prom-x",config)]
+    errors=[]
+    for index,request in enumerate(requests): errors.extend(audit_request(request,"Monitor notification request %s"%index))
+    assert errors==[]
+
+
+def test_monitor_grafana_notification_channel(): test_monitor_notification_controls()
+def test_monitor_prometheus_global_notification(): test_monitor_notification_controls()
+def test_monitor_prometheus_alertmanager_config(): test_monitor_notification_controls()
 
 
 def test_waf_ip_access_control():
