@@ -1061,8 +1061,29 @@ modules:
   - UpdatePrometheusScrapeJob
   mps_person_sample_info:
   - DescribePersonSamples
+  mqtt_authorization_policy:
+  - CreateAuthorizationPolicy
+  - DeleteAuthorizationPolicy
+  - DescribeAuthorizationPolicies
+  - ModifyAuthorizationPolicy
   mqtt_device_certificate_info:
   - DescribeDeviceCertificates
+  mqtt_instance:
+  - CreateInstance
+  - DeleteInstance
+  - DescribeInstance
+  - DescribeInstanceList
+  - ModifyInstance
+  mqtt_topic:
+  - CreateTopic
+  - DeleteTopic
+  - DescribeTopic
+  - ModifyTopic
+  mqtt_user:
+  - CreateUser
+  - DeleteUser
+  - DescribeUserList
+  - ModifyUser
   ms_shield_instance_info:
   - DescribeShieldInstances
   msp_migration_project_info:

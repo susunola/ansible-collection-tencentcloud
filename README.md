@@ -170,6 +170,10 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `monitor_prometheus_instance` | Manage Tencent Cloud pay-as-you-go Managed Prometheus instances |
 | `monitor_prometheus_record_rule` | Manage Tencent Cloud Managed Prometheus recording rules |
 | `monitor_prometheus_scrape_job` | Manage Tencent Cloud Managed Prometheus scrape jobs |
+| `mqtt_authorization_policy` | Manage Tencent Cloud MQTT authorization policies |
+| `mqtt_instance` | Manage Tencent Cloud MQTT instances |
+| `mqtt_topic` | Manage Tencent Cloud MQTT topics |
+| `mqtt_user` | Manage Tencent Cloud MQTT users |
 | `nat_gateway` | Manage Tencent Cloud NAT gateways |
 | `nat_gateway_rule` | Manage Tencent Cloud NAT gateway DNAT and SNAT rules |
 | `network_acl` | Manage Tencent Cloud VPC network ACLs |

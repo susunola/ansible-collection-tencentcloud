@@ -311,6 +311,10 @@ UNEXERCISED_BUILDERS = {
 # at the bottom of this file. Info-module builders are registered in
 # INFO_BUILDERS instead. Both sets are verified against the static scan.
 WRITE_MODULE_BUILDERS = {
+    "mqtt_authorization_policy": ["create_request", "delete_request", "describe_request", "update_request"],
+    "mqtt_instance": ["create_request", "delete_request", "describe_request", "list_request", "update_request"],
+    "mqtt_topic": ["create_request", "delete_request", "describe_request", "update_request"],
+    "mqtt_user": ["create_request", "delete_request", "describe_request", "update_request"],
     "eb_connection": ["create_request", "delete_request", "list_request", "update_request"],
     "eb_event_bus": ["create_request", "delete_request", "get_request", "list_request", "update_request"],
     "eb_rule": ["create_request", "delete_request", "get_request", "list_request", "update_request"],
@@ -5299,6 +5303,41 @@ def test_teo_origin_group():
     errors.extend(audit_request(module.create_request(models, p), "TEO origin group create"))
     errors.extend(audit_request(module.update_request(models, p, "origin-xxxxxxxx"), "TEO origin group update"))
     errors.extend(audit_request(module.delete_request(models, p, "origin-xxxxxxxx"), "TEO origin group delete"))
+    assert errors == []
+
+
+def test_mqtt_instance():
+    module = _import_plugin("mqtt_instance"); models = _models("mqtt.v20240516")
+    p = {"instance_id": None, "name": "production-mqtt", "instance_type": "PRO", "sku_code": "pro_2k", "remark": "production", "vpcs": [{"vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx"}], "ip_rules": [{"ip": "192.0.2.0/24", "allow": True, "remark": "office"}], "enable_public": True, "bandwidth": 10, "tags": {"env": "production"}, "pay_mode": 0, "period_months": 1, "auto_renew": True, "authorization_policy": True, "message_rate": 100}; errors = []
+    errors.extend(audit_request(module.list_request(models), "MQTT instance list"))
+    errors.extend(audit_request(module.describe_request(models, "mqtt-xxxxxxxx"), "MQTT instance describe"))
+    errors.extend(audit_request(module.create_request(models, p), "MQTT instance create"))
+    errors.extend(audit_request(module.update_request(models, p, {"InstanceId": "mqtt-xxxxxxxx", "InstanceName": p["name"], "SkuCode": p["sku_code"]}), "MQTT instance update"))
+    errors.extend(audit_request(module.delete_request(models, "mqtt-xxxxxxxx"), "MQTT instance delete"))
+    assert errors == []
+
+
+def test_mqtt_topic():
+    module = _import_plugin("mqtt_topic"); models = _models("mqtt.v20240516")
+    p = {"instance_id": "mqtt-xxxxxxxx", "topic": "orders/created", "remark": "orders"}; errors = []
+    for name, builder in (("describe", module.describe_request), ("create", module.create_request), ("update", module.update_request), ("delete", module.delete_request)): errors.extend(audit_request(builder(models, p), "MQTT topic " + name))
+    assert errors == []
+
+
+def test_mqtt_user():
+    module = _import_plugin("mqtt_user"); models = _models("mqtt.v20240516")
+    p = {"instance_id": "mqtt-xxxxxxxx", "username": "application", "password": "secret-value", "remark": "application"}; errors = []
+    for name, builder in (("describe", module.describe_request), ("create", module.create_request), ("update", module.update_request), ("delete", module.delete_request)): errors.extend(audit_request(builder(models, p), "MQTT user " + name))
+    assert errors == []
+
+
+def test_mqtt_authorization_policy():
+    module = _import_plugin("mqtt_authorization_policy"); models = _models("mqtt.v20240516")
+    p = {"instance_id": "mqtt-xxxxxxxx", "policy_id": None, "name": "publish-orders", "priority": 10, "effect": "allow", "actions": ["connect", "pub"], "resources": ["orders/#"], "username": "application", "client_id": "", "ip": "", "retain": 3, "qos": [0, 1], "remark": "orders"}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "MQTT policy describe"))
+    errors.extend(audit_request(module.create_request(models, p), "MQTT policy create"))
+    errors.extend(audit_request(module.update_request(models, p, 1001), "MQTT policy update"))
+    errors.extend(audit_request(module.delete_request(models, p, 1001), "MQTT policy delete"))
     assert errors == []
 
 

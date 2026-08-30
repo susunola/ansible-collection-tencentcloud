@@ -298,7 +298,11 @@ action_groups:
     - monitor_prometheus_record_rule
     - monitor_prometheus_scrape_job
     - mps_person_sample_info
+    - mqtt_authorization_policy
     - mqtt_device_certificate_info
+    - mqtt_instance
+    - mqtt_topic
+    - mqtt_user
     - ms_shield_instance_info
     - msp_migration_project_info
     - nat_gateway
