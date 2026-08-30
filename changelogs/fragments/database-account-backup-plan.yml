@@ -58,6 +58,7 @@ minor_changes:
   - Add exact EdgeOne precise rate-limiting rules with composite counters, block/throttle modes and enforcement actions.
   - Add EdgeOne CAPTCHA page and AI crawler detection lifecycle across all security policy scopes.
   - Add COS object-lock enablement and default governance or compliance retention management with irreversible-state protection.
+  - Add COS intelligent-tiering, origin-rule and response-control configuration management.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."
