@@ -1286,6 +1286,12 @@ modules:
   - ModifyVpnGatewayAttribute
   vpn_gateway_info:
   - DescribeVpnGateways
+  waf_anti_info_leak_rule:
+  - AddAntiInfoLeakRules
+  - DeleteAntiInfoLeakRule
+  - DescribeAntiInfoLeakageRules
+  - ModifyAntiInfoLeakRuleStatus
+  - ModifyAntiInfoLeakRules
   waf_custom_rule:
   - AddCustomRule
   - DeleteCustomRule

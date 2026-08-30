@@ -349,6 +349,7 @@ WRITE_MODULE_BUILDERS = {
     "cynosdb_backup_config": ["describe_request", "update_request"],
     "cynosdb_account_privilege": ["describe_request", "update_request"],
     "elasticsearch_snapshot": ["create_request", "delete_request", "describe_request"],
+    "waf_anti_info_leak_rule": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4532,4 +4533,17 @@ def test_redis_parameter_template():
     errors = []
     module.find(fake, client, models, "tpl-xxxxxxxx", None)
     errors.extend(audit_recorded(fake, "redis_parameter_template"))
+    assert errors == []
+
+
+def test_waf_anti_info_leak_rule():
+    module = _import_plugin("waf_anti_info_leak_rule")
+    models = _models("waf.v20180125")
+    p = {"domain": "api.example.com", "name": "mask-phone", "action": 1, "strategies": [{"Field": "information", "CompareFunc": "contains", "Content": "phone"}], "uri": "/customers", "enabled": True}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "WAF anti-info-leak describe"))
+    errors.extend(audit_request(module.create_request(models, p), "WAF anti-info-leak create"))
+    errors.extend(audit_request(module.update_request(models, p, 123), "WAF anti-info-leak update"))
+    errors.extend(audit_request(module.status_request(models, p, 123), "WAF anti-info-leak status"))
+    errors.extend(audit_request(module.delete_request(models, p, 123), "WAF anti-info-leak delete"))
     assert errors == []

@@ -217,6 +217,7 @@ CORE_MODULES = {
     "waf_protect_group",
     "waf_host",
     "waf_custom_rule",
+    "waf_anti_info_leak_rule",
     "vpn_connection",
     # Hand-written *_info modules that the generator cannot express.
     "cam_policy_info",

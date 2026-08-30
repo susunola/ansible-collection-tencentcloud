@@ -18,6 +18,7 @@ minor_changes:
   - Add Elasticsearch cluster snapshot lifecycle with explicit safe replacement.
   - Add COS static website, default encryption, and access logging resource modules.
   - Add COS scheduled inventory, hotlink protection, and custom-domain resource modules.
+  - Add WAF sensitive-information leakage rule lifecycle with immutable URI protection.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

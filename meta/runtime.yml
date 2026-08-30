@@ -380,6 +380,7 @@ action_groups:
     - vpn_connection
     - vpn_gateway
     - vpn_gateway_info
+    - waf_anti_info_leak_rule
     - waf_custom_rule
     - waf_host
     - waf_instance_info
