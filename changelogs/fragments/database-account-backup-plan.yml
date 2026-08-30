@@ -1,4 +1,5 @@
 minor_changes:
+  - Add complete GWLB lifecycle coverage for load balancers, target groups, associations, and exact-set backend instances.
   - Add ALB instance and listener lifecycle with deletion protection, address conversion, TLS settings, and target-group default actions.
   - Add ALB target group lifecycle and exact-set backend target reconciliation.
   - Add MQTT instance, topic, secret-safe user, and authorization policy lifecycle management.

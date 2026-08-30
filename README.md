@@ -142,6 +142,10 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `elasticsearch_instance` | Manage Tencent Cloud Elasticsearch clusters |
 | `elasticsearch_snapshot` | Manage Tencent Cloud Elasticsearch cluster snapshots |
 | `gaap_proxy` | Manage Tencent Cloud GAAP proxies |
+| `gwlb_load_balancer` | Manage Tencent Cloud Gateway Load Balancers |
+| `gwlb_target_group` | Manage Tencent Cloud GWLB target groups |
+| `gwlb_target_group_association` | Manage Tencent Cloud GWLB target group associations |
+| `gwlb_target_group_instances` | Reconcile Tencent Cloud GWLB target group instances |
 | `havip` | Manage Tencent Cloud VPC high-availability virtual IPs |
 | `havip_association` | Manage Tencent Cloud HAVIP drift-scope associations |
 | `key_pair` | Manage Tencent Cloud CVM key pairs |

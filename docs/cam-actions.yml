@@ -856,6 +856,25 @@ modules:
   - DescribeAndroidApps
   gwlb_gateway_load_balancer_info:
   - DescribeGatewayLoadBalancers
+  gwlb_load_balancer:
+  - CreateGatewayLoadBalancer
+  - DeleteGatewayLoadBalancer
+  - DescribeGatewayLoadBalancers
+  - ModifyGatewayLoadBalancerAttribute
+  gwlb_target_group:
+  - CreateTargetGroup
+  - DeleteTargetGroups
+  - DescribeTargetGroups
+  - ModifyTargetGroupAttribute
+  gwlb_target_group_association:
+  - AssociateTargetGroups
+  - DescribeGatewayLoadBalancers
+  - DisassociateTargetGroups
+  gwlb_target_group_instances:
+  - DeregisterTargetGroupInstances
+  - DescribeTargetGroupInstances
+  - ModifyTargetGroupInstancesWeight
+  - RegisterTargetGroupInstances
   hai_application_info:
   - DescribeApplications
   hasim_link_info:

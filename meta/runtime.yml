@@ -238,6 +238,10 @@ action_groups:
     - goosefs_file_system_info
     - gs_android_app_info
     - gwlb_gateway_load_balancer_info
+    - gwlb_load_balancer
+    - gwlb_target_group
+    - gwlb_target_group_association
+    - gwlb_target_group_instances
     - hai_application_info
     - hasim_link_info
     - havip

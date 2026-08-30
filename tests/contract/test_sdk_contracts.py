@@ -311,6 +311,10 @@ UNEXERCISED_BUILDERS = {
 # at the bottom of this file. Info-module builders are registered in
 # INFO_BUILDERS instead. Both sets are verified against the static scan.
 WRITE_MODULE_BUILDERS = {
+    "gwlb_load_balancer": ["create_request", "delete_request", "describe_request", "update_request"],
+    "gwlb_target_group": ["create_request", "delete_request", "describe_request", "update_request"],
+    "gwlb_target_group_association": ["association_request", "describe_request", "disassociation_request"],
+    "gwlb_target_group_instances": ["deregister_request", "describe_request", "register_request", "weight_request"],
     "alb_load_balancer": ["address_request", "create_request", "delete_request", "describe_request", "list_request", "update_request"],
     "alb_listener": ["create_request", "delete_request", "describe_request", "list_request", "update_request"],
     "alb_target_group": ["create_request", "delete_request", "describe_request", "update_request"],
@@ -5307,6 +5311,45 @@ def test_teo_origin_group():
     errors.extend(audit_request(module.create_request(models, p), "TEO origin group create"))
     errors.extend(audit_request(module.update_request(models, p, "origin-xxxxxxxx"), "TEO origin group update"))
     errors.extend(audit_request(module.delete_request(models, p, "origin-xxxxxxxx"), "TEO origin group delete"))
+    assert errors == []
+
+
+def test_gwlb_load_balancer():
+    module = _import_plugin("gwlb_load_balancer"); models = _models("gwlb.v20240906")
+    p = {"load_balancer_id": None, "name": "security-appliance", "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "charge_type": "POSTPAID_BY_HOUR", "deletion_protection": True, "tags": {"env": "production"}}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "GWLB describe"))
+    errors.extend(audit_request(module.create_request(models, p), "GWLB create"))
+    errors.extend(audit_request(module.update_request(models, "gwlb-xxxxxxxx", p["name"], True), "GWLB update"))
+    errors.extend(audit_request(module.delete_request(models, "gwlb-xxxxxxxx"), "GWLB delete"))
+    assert errors == []
+
+
+def test_gwlb_target_group():
+    module = _import_plugin("gwlb_target_group"); models = _models("gwlb.v20240906")
+    p = {"target_group_id": None, "name": "security-appliances", "vpc_id": "vpc-xxxxxxxx", "port": 6081, "protocol": "GENEVE", "schedule_algorithm": "WRR", "health_check": {"HealthSwitch": True, "Protocol": "TCP", "Port": 80}, "all_dead_to_alive": False, "forwarding_mode": None, "tags": {"env": "production"}}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "GWLB target group describe"))
+    errors.extend(audit_request(module.create_request(models, p), "GWLB target group create"))
+    errors.extend(audit_request(module.update_request(models, p, "lbtg-xxxxxxxx"), "GWLB target group update"))
+    errors.extend(audit_request(module.delete_request(models, "lbtg-xxxxxxxx"), "GWLB target group delete"))
+    assert errors == []
+
+
+def test_gwlb_target_group_association():
+    module = _import_plugin("gwlb_target_group_association"); models = _models("gwlb.v20240906")
+    p = {"load_balancer_id": "gwlb-xxxxxxxx", "target_group_id": "lbtg-xxxxxxxx"}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p["load_balancer_id"]), "GWLB association describe"))
+    errors.extend(audit_request(module.association_request(models, p), "GWLB associate"))
+    errors.extend(audit_request(module.disassociation_request(models, p), "GWLB disassociate"))
+    assert errors == []
+
+
+def test_gwlb_target_group_instances():
+    module = _import_plugin("gwlb_target_group_instances"); models = _models("gwlb.v20240906")
+    p = {"target_group_id": "lbtg-xxxxxxxx"}; values = [{"ip": "10.0.1.10", "port": 6081, "weight": 50}]; errors = []
+    errors.extend(audit_request(module.describe_request(models, p["target_group_id"]), "GWLB instances describe"))
+    errors.extend(audit_request(module.register_request(models, p, values), "GWLB instances register"))
+    errors.extend(audit_request(module.weight_request(models, p, values), "GWLB instances weight"))
+    errors.extend(audit_request(module.deregister_request(models, p, values), "GWLB instances deregister"))
     assert errors == []
 
 
