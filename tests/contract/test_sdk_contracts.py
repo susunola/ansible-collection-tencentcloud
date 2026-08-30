@@ -453,6 +453,8 @@ WRITE_MODULE_BUILDERS = {
     "config_compliance_pack": ["create_request", "delete_request", "describe_request", "list_request", "status_request", "update_request"],
     "config_remediation": ["create_request", "delete_request", "list_request", "update_request"],
     "config_alarm_policy": ["create_request", "delete_request", "list_request", "update_request"],
+    "config_aggregator": ["create_request", "describe_request", "list_request"],
+    "config_aggregate_delivery": ["describe_request", "update_request"],
     "cvm_chc": [
         "_configure_vpc",
         "_remove_assist",
@@ -3568,6 +3570,23 @@ def test_config_alarm_policy():
     errors.extend(audit_request(module.create_request(models, p), "Config alarm policy create"))
     errors.extend(audit_request(module.update_request(models, p, 123456), "Config alarm policy update"))
     errors.extend(audit_request(module.delete_request(models, 123456), "Config alarm policy delete"))
+    assert errors == []
+
+
+def test_config_aggregator():
+    module = _import_plugin("config_aggregator"); models = _models("config.v20220802")
+    p = {"name": "organization-security", "description": "Organization aggregator", "aggregator_type": "CUSTOM", "accounts": [{"member_uin": 100000000002, "member_name": "production"}]}; errors = []
+    errors.extend(audit_request(module.list_request(models), "Config aggregator list"))
+    errors.extend(audit_request(module.describe_request(models, "ag-xxxxxxxx"), "Config aggregator describe"))
+    errors.extend(audit_request(module.create_request(models, p), "Config aggregator create"))
+    assert errors == []
+
+
+def test_config_aggregate_delivery():
+    module = _import_plugin("config_aggregate_delivery"); models = _models("config.v20220802")
+    p = {"account_group_id": "ag-xxxxxxxx", "enabled": True, "name": "organization-archive", "target_arn": "qcs::cos:ap-guangzhou:100000000001:prefix/1250000000/config-org", "prefix": "config", "delivery_type": "COS", "delivery_uin": 0, "content_type": 3}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p["account_group_id"]), "Config aggregate delivery describe"))
+    errors.extend(audit_request(module.update_request(models, p), "Config aggregate delivery update"))
     assert errors == []
 
 

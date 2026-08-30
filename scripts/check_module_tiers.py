@@ -110,6 +110,8 @@ CORE_MODULES = {
     "config_compliance_pack",
     "config_remediation",
     "config_alarm_policy",
+    "config_aggregator",
+    "config_aggregate_delivery",
     "cmq_queue",
     "cmq_topic",
     "cmq_subscription",

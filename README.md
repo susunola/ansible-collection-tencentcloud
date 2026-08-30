@@ -82,6 +82,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cmq_queue` | Manage Tencent Cloud CMQ queues |
 | `cmq_subscription` | Manage Tencent Cloud CMQ topic subscriptions |
 | `cmq_topic` | Manage Tencent Cloud CMQ topics |
+| `config_aggregate_delivery` | Manage Tencent Cloud Config cross-account aggregate delivery |
+| `config_aggregator` | Manage creation of Tencent Cloud Config account aggregators |
 | `config_alarm_policy` | Manage Tencent Cloud Config alarm policies |
 | `config_compliance_pack` | Manage Tencent Cloud Config compliance packs |
 | `config_delivery` | Manage Tencent Cloud Config delivery settings |

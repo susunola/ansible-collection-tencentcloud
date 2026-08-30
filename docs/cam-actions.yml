@@ -504,6 +504,13 @@ modules:
   - DescribeCloudNativeAPIGatewayLLMModelAPIs
   config_aggregate_compliance_pack_info:
   - ListAggregateCompliancePacks
+  config_aggregate_delivery:
+  - DescribeAggregateConfigDeliver
+  - UpdateAggregateConfigDeliver
+  config_aggregator:
+  - CreateAggregator
+  - DescribeAggregator
+  - ListAggregators
   config_alarm_policy:
   - AddAlarmPolicy
   - DeleteAlarmPolicy
