@@ -333,6 +333,11 @@ modules:
   - DeleteNatFwDnatRule
   - DescribeNatFwDnatRule
   - SetNatFwDnatRule
+  cfw_vpc_acl_rule:
+  - AddVpcAcRule
+  - DescribeVpcAcRule
+  - ModifyVpcAcRule
+  - RemoveVpcAcRule
   chc_device_info:
   - DescribeDeviceList
   chdfs_file_system_info:

@@ -446,6 +446,7 @@ WRITE_MODULE_BUILDERS = {
     "cfw_internet_acl_rule": ["create_request", "delete_request", "describe_request", "update_request"],
     "cfw_nat_dnat_rule": ["create_request", "delete_request", "describe_request", "update_request"],
     "cfw_nat_acl_rule": ["create_request", "delete_request", "describe_request", "update_request"],
+    "cfw_vpc_acl_rule": ["create_request", "delete_request", "describe_request", "update_request"],
     "cvm_chc": [
         "_configure_vpc",
         "_remove_assist",
@@ -3492,6 +3493,16 @@ def test_cfw_nat_acl_rule():
     errors.extend(audit_request(module.create_request(models, p), "CFW NAT ACL create"))
     errors.extend(audit_request(module.update_request(models, p, 123456), "CFW NAT ACL update"))
     errors.extend(audit_request(module.delete_request(models, p, 123456), "CFW NAT ACL delete"))
+    assert errors == []
+
+
+def test_cfw_vpc_acl_rule():
+    module = _import_plugin("cfw_vpc_acl_rule"); models = _models("cfw.v20190904")
+    p = {"description": "allow-vpc-https", "edge_id": "vpcfw-edge-xxxxxxxx", "source": "10.0.0.0/16", "destination": "10.20.0.0/16", "destination_type": "net", "protocol": "TCP", "ports": "443", "action": "accept", "enabled": True, "order_index": -1, "firewall_group_id": "cfwg-xxxxxxxx", "parameter_template_id": None, "ip_version": 0}; errors = []
+    errors.extend(audit_request(module.describe_request(models), "CFW VPC ACL describe"))
+    errors.extend(audit_request(module.create_request(models, p), "CFW VPC ACL create"))
+    errors.extend(audit_request(module.update_request(models, p, 123456), "CFW VPC ACL update"))
+    errors.extend(audit_request(module.delete_request(models, p, 123456), "CFW VPC ACL delete"))
     assert errors == []
 
 

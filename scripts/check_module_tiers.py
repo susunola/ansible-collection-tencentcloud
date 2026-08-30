@@ -116,6 +116,7 @@ CORE_MODULES = {
     "cfw_internet_acl_rule",
     "cfw_nat_dnat_rule",
     "cfw_nat_acl_rule",
+    "cfw_vpc_acl_rule",
     "customer_gateway",
     "cvm_chc",
     "cvm_image",

@@ -56,6 +56,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cfw_internet_acl_rule` | Manage Tencent Cloud Cloud Firewall internet border ACL rules |
 | `cfw_nat_acl_rule` | Manage Tencent Cloud Cloud Firewall NAT access-control rules |
 | `cfw_nat_dnat_rule` | Manage Tencent Cloud Cloud Firewall NAT DNAT rules |
+| `cfw_vpc_acl_rule` | Manage Tencent Cloud Cloud Firewall inter-VPC ACL rules |
 | `ckafka_acl` | Manage Tencent Cloud CKafka ACL entries |
 | `ckafka_acl_rule` | Manage Tencent Cloud CKafka ACL rules |
 | `ckafka_datahub_connection` | Manage Tencent Cloud CKafka Datahub connection resources |

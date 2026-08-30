@@ -94,6 +94,7 @@ action_groups:
     - cfw_internet_acl_rule
     - cfw_nat_acl_rule
     - cfw_nat_dnat_rule
+    - cfw_vpc_acl_rule
     - chc_device_info
     - chdfs_file_system_info
     - ciam_user_store_info
