@@ -187,6 +187,7 @@ CORE_MODULES = {
     "thpc_cluster",
     "tdmysql_db_instance",
     "dbdc_db_custom_cluster",
+    "cdwch_instance",
     "monitor_prometheus_record_rule",
     "monitor_prometheus_alert_group",
     "monitor_prometheus_instance",

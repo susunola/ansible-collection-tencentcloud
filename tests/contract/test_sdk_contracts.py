@@ -837,6 +837,7 @@ WRITE_MODULE_BUILDERS = {
     "thpc_cluster": ["create_request", "delete_request", "deletion_protection_request", "describe_request"],
     "tdmysql_db_instance": ["create_request", "describe_request", "destroy_request", "detail_request", "expand_request", "isolate_request", "recover_request", "rename_request", "renew_request", "security_groups_describe_request", "security_groups_request", "upgrade_request"],
     "dbdc_db_custom_cluster": ["add_nodes_request", "attributes_request", "create_request", "describe_request", "destroy_request", "detail_request", "nodes_request", "remove_nodes_request", "tags_request", "task_request"],
+    "cdwch_instance": ["create_request", "describe_request", "destroy_request", "detail_request", "resize_disk_request", "scale_nodes_request", "scale_spec_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
@@ -2716,6 +2717,15 @@ def test_dbdc_db_custom_cluster():
     requests = [module.describe_request(models, p), module.detail_request(models, p["cluster_id"]), module.nodes_request(models, p["cluster_id"]), module.task_request(models, 123), module.create_request(models, p), module.attributes_request(models, p["cluster_id"], False), module.tags_request(models, p["cluster_id"], p["tags"], ["old"]), module.add_nodes_request(models, p, p["cluster_id"], ["dbcn-a"]), module.remove_nodes_request(models, p, p["cluster_id"], ["dbcn-b"]), module.destroy_request(models, p["cluster_id"])]
     errors = []
     for index, request in enumerate(requests): errors.extend(audit_request(request, "DB Custom cluster request %s" % index))
+    assert errors == []
+
+
+def test_cdwch_instance():
+    module = _import_plugin("cdwch_instance"); models = _models("cdwch.v20200915")
+    p = {"instance_id": "cdwch-x", "name": "production-clickhouse", "zone": "ap-beijing-2", "vpc_id": "vpc-x", "subnet_id": "subnet-x", "product_version": "23.8.9.1", "high_availability": True, "zk_high_availability": True, "data_spec_name": "S_16_64_H", "data_node_count": 2, "data_disk_size": 200, "common_spec_name": "S_4_16_H", "common_node_count": 3, "common_disk_size": 100, "charge_type": "POSTPAID_BY_HOUR", "period_months": 1, "auto_renew": False, "password": "Secret-1234", "tags": {"environment": "production"}, "cls_logset_id": "logset-x", "cos_bucket_name": "bucket-x", "mount_disk_type": 0, "secondary_zones": [{"zone": "ap-beijing-3", "subnet_id": "subnet-y", "user_ip_count": 10}], "scale_out_cluster": "default_cluster", "user_subnet_ip_count": 20, "scale_out_node_ip": "10.0.0.10", "reduce_shard_info": ["10.0.0.11"], "rolling_spec_change": True}
+    requests = [module.describe_request(models, p), module.detail_request(models, p["instance_id"]), module.create_request(models, p), module.scale_nodes_request(models, p, p["instance_id"], "DATA", 4), module.scale_spec_request(models, p["instance_id"], "DATA", p["data_spec_name"]), module.resize_disk_request(models, p["instance_id"], "DATA", 300), module.destroy_request(models, p["instance_id"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "TCHouse-C instance request %s" % index))
     assert errors == []
 
 

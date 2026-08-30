@@ -271,6 +271,14 @@ modules:
   - DescribeAssetsList
   cdwch_cn_instance_info:
   - DescribeCNInstances
+  cdwch_instance:
+  - CreateInstanceNew
+  - DescribeInstance
+  - DescribeInstancesNew
+  - DestroyInstance
+  - ResizeDisk
+  - ScaleOutInstance
+  - ScaleUpInstance
   cdwdoris_cluster_configs_history_info:
   - DescribeClusterConfigsHistory
   cdwpg_account_info:

@@ -47,6 +47,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cdb_parameter_template` | Manage Tencent Cloud CDB parameter templates |
 | `cdn_cls_log_topic` | Manage Tencent Cloud CDN real-time CLS log topics |
 | `cdn_domain` | Manage Tencent Cloud CDN domains |
+| `cdwch_instance` | Manage Tencent Cloud TCHouse-C instances |
 | `cfs_auto_snapshot_policy` | Manage Tencent Cloud CFS automatic snapshot policies |
 | `cfs_file_system` | Manage Tencent Cloud CFS file systems |
 | `cfs_permission_group` | Manage Tencent Cloud CFS permission groups |

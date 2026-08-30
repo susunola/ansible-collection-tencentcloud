@@ -78,6 +78,7 @@ action_groups:
     - cdn_domain_info
     - cds_asset_info
     - cdwch_cn_instance_info
+    - cdwch_instance
     - cdwdoris_cluster_configs_history_info
     - cdwpg_account_info
     - cdz_cloud_dedicated_zone_host_info
