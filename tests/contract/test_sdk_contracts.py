@@ -336,6 +336,7 @@ WRITE_MODULE_BUILDERS = {
     "cam_oidc_provider": ["create_request", "delete_request", "describe_request", "update_request"],
     "dnspod_custom_line": ["create_request", "delete_request", "describe_request", "update_request"],
     "dnspod_line_group": ["create_request", "delete_request", "describe_request", "update_request"],
+    "ckafka_datahub_topic": ["create_request", "delete_request", "describe_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4261,6 +4262,15 @@ def test_ckafka_acl_rule():
     errors.extend(audit_request(module.create_request(models, p), "ckafka acl rule create"))
     errors.extend(audit_request(module.update_request(models, p), "ckafka acl rule update"))
     errors.extend(audit_request(module.delete_request(models, p), "ckafka acl rule delete"))
+    assert errors == []
+
+
+def test_ckafka_datahub_topic():
+    module = _import_plugin("ckafka_datahub_topic"); models = _models("ckafka.v20190819")
+    p = {"name": "1250000000-orders", "partition_num": 6, "retention_ms": 86400000, "note": "orders"}
+    requests = [module.describe_request(models, p["name"]), module.create_request(models, p), module.update_request(models, p), module.delete_request(models, p["name"])]
+    errors = []
+    for request in requests: errors.extend(audit_request(request, "CKafka Datahub topic request"))
     assert errors == []
 
 

@@ -9,6 +9,7 @@ minor_changes:
   - Add TKE backup storage location lifecycle with explicit safe replacement.
   - Add CAM SAML and OIDC identity provider lifecycle management.
   - Add DNSPod custom line and exact-set line group lifecycle management.
+  - Add secret-safe CKafka Datahub elastic topic lifecycle management.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

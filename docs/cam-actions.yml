@@ -288,6 +288,11 @@ modules:
   - DeleteAclRule
   - DescribeAclRule
   - ModifyAclRule
+  ckafka_datahub_topic:
+  - CreateDatahubTopic
+  - DeleteDatahubTopic
+  - DescribeDatahubTopic
+  - ModifyDatahubTopic
   ckafka_instance_info:
   - DescribeInstancesDetail
   ckafka_route:
