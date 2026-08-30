@@ -33,6 +33,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cbs_snapshot` | Manage Tencent Cloud CBS disk snapshots |
 | `ccn` | Manage Tencent Cloud Cloud Connect Networks |
 | `ccn_attachment` | Attach network instances to Tencent Cloud CCN |
+| `cdb_account` | Manage TencentDB for MySQL accounts |
 | `cdb_backup_config` | Manage TencentDB for MySQL backup configuration |
 | `cdb_instance` | Manage Tencent Cloud CDB MySQL instances |
 | `cdb_parameter_template` | Manage Tencent Cloud CDB parameter templates |
@@ -97,6 +98,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `nat_gateway_rule` | Manage Tencent Cloud NAT gateway DNAT and SNAT rules |
 | `network_acl` | Manage Tencent Cloud VPC network ACLs |
 | `network_interface` | Manage Tencent Cloud elastic network interfaces |
+| `organization_member` | Manage Tencent Cloud Organization members |
 | `organization_node` | Manage Tencent Cloud Organization nodes |
 | `peering_connection` | Manage Tencent Cloud VPC peering connections |
 | `postgresql_account` | Manage TencentDB for PostgreSQL accounts |

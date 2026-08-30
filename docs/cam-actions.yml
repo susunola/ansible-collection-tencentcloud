@@ -188,6 +188,13 @@ modules:
   - DescribeCcnAttachedInstances
   - DetachCcnInstances
   - ModifyCcnAttachedInstancesAttribute
+  cdb_account:
+  - CreateAccounts
+  - DeleteAccounts
+  - DescribeAccounts
+  - ModifyAccountDescription
+  - ModifyAccountMaxUserConnections
+  - ModifyAccountPassword
   cdb_backup_config:
   - DescribeBackupConfig
   - ModifyBackupConfig
@@ -746,6 +753,12 @@ modules:
   - DescribeClusters
   omics_application_info:
   - DescribeApplications
+  organization_member:
+  - CreateOrganizationMember
+  - DeleteOrganizationMembers
+  - DescribeOrganizationMembers
+  - MoveOrganizationNodeMembers
+  - UpdateOrganizationMember
   organization_member_info:
   - DescribeOrganizationMembers
   organization_node:

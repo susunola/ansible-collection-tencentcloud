@@ -300,6 +300,8 @@ UNEXERCISED_BUILDERS = {
 # at the bottom of this file. Info-module builders are registered in
 # INFO_BUILDERS instead. Both sets are verified against the static scan.
 WRITE_MODULE_BUILDERS = {
+    "cdb_account": ["create", "describe"],
+    "organization_member": ["create", "delete", "describe", "move", "update"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -3950,6 +3952,39 @@ def test_cdb_parameter_template():
     errors = []
     module.find(fake, client, models, 12345, None)
     errors.extend(audit_recorded(fake, "cdb_parameter_template"))
+    assert errors == []
+
+
+def test_cdb_account():
+    module = _import_plugin("cdb_account")
+    models = _models("cdb.v20170320")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    p = {"instance_id": "cdb-xxxxxxxx", "username": "app", "host": "%", "password": "secret", "description": "app", "max_user_connections": 100}
+    errors.extend(audit_request(module.describe(models, p), "cdb account describe"))
+    errors.extend(audit_request(module.create(models, p), "cdb account create"))
+    for kind in ("DeleteAccounts", "ModifyAccountDescription", "ModifyAccountMaxUserConnections", "ModifyAccountPassword"):
+        errors.extend(audit_request(module.simple(models, kind, p), "cdb account " + kind))
+    module.find(fake, client, models, p)
+    errors.extend(audit_recorded(fake, "cdb_account"))
+    assert errors == []
+
+
+def test_organization_member():
+    module = _import_plugin("organization_member")
+    models = _models("organization.v20210331")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    p = {"member_uin": 100000000001, "name": "production", "account_name": "production", "node_id": 1001, "remark": "prod", "permission_ids": [1, 2], "identity_role_ids": [1], "allow_quit": "Denied"}
+    errors.extend(audit_request(module.describe(models), "organization member describe"))
+    errors.extend(audit_request(module.create(models, p), "organization member create"))
+    errors.extend(audit_request(module.update(models, p, p["member_uin"]), "organization member update"))
+    errors.extend(audit_request(module.move(models, p["node_id"], p["member_uin"]), "organization member move"))
+    errors.extend(audit_request(module.delete(models, p["member_uin"]), "organization member delete"))
+    module.find(fake, client, models, p)
+    errors.extend(audit_recorded(fake, "organization_member"))
     assert errors == []
 
 
