@@ -640,6 +640,12 @@ modules:
   - DescribeKnowledgeSetList
   mall_draw_resource_info:
   - DescribeDrawResourceList
+  mariadb_account:
+  - CreateAccount
+  - DeleteAccount
+  - DescribeAccounts
+  - ModifyAccountDescription
+  - ResetAccountPassword
   mariadb_instance_info:
   - DescribeDBInstances
   memcached_instance_info:

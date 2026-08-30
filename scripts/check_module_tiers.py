@@ -110,6 +110,7 @@ CORE_MODULES = {
     "mongodb_instance",
     "mongodb_backup_config",
     "mongodb_account",
+    "mariadb_account",
     "sqlserver_account",
     "monitor_alarm_policy",
     "monitor_alarm_policy_notice",

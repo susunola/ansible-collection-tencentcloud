@@ -202,6 +202,7 @@ action_groups:
     - lkeap_character_usage_info
     - lowcode_knowledge_set_info
     - mall_draw_resource_info
+    - mariadb_account
     - mariadb_instance_info
     - memcached_instance_info
     - mmps_resource_usage_info
