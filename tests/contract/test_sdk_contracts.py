@@ -325,6 +325,8 @@ WRITE_MODULE_BUILDERS = {
     "monitor_grafana_notification_channel": ["build_create", "build_delete", "build_describe", "build_update"],
     "monitor_prometheus_global_notification": ["build_describe", "build_update"],
     "monitor_prometheus_alertmanager_config": ["build_describe", "build_update"],
+    "cdb_backup_config": ["build_describe", "build_update"],
+    "redis_backup_config": ["build_describe", "build_update"],
     "cam_policy": [
         "_apply_tags",
         "_create",
@@ -2785,6 +2787,20 @@ def test_monitor_notification_controls():
 def test_monitor_grafana_notification_channel(): test_monitor_notification_controls()
 def test_monitor_prometheus_global_notification(): test_monitor_notification_controls()
 def test_monitor_prometheus_alertmanager_config(): test_monitor_notification_controls()
+
+
+def test_cdb_backup_config():
+    module=_import_plugin("cdb_backup_config"); models=_models("cdb.v20170320"); p={"instance_id":"cdb-x","expire_days":30,"start_time":"03:00","backup_method":"physical","binlog_expire_days":7,"backup_time_window":"03:00-04:00"}
+    errors=[]
+    for i,r in enumerate([module.build_describe(models,"cdb-x"),module.build_update(models,p)]): errors.extend(audit_request(r,"CDB backup request %s"%i))
+    assert errors==[]
+
+
+def test_redis_backup_config():
+    module=_import_plugin("redis_backup_config"); models=_models("redis.v20180412"); p={"instance_id":"crs-x","week_days":["Monday"],"time_period":"03:00-04:00","backup_type":0,"storage_days":30}
+    errors=[]
+    for i,r in enumerate([module.build_describe(models,"crs-x"),module.build_update(models,p)]): errors.extend(audit_request(r,"Redis backup request %s"%i))
+    assert errors==[]
 
 
 def test_waf_ip_access_control():

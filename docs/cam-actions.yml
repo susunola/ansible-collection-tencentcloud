@@ -188,6 +188,9 @@ modules:
   - DescribeCcnAttachedInstances
   - DetachCcnInstances
   - ModifyCcnAttachedInstancesAttribute
+  cdb_backup_config:
+  - DescribeBackupConfig
+  - ModifyBackupConfig
   cdb_instance:
   - CreateDBInstance
   - DescribeAsyncRequestInfo
@@ -800,6 +803,9 @@ modules:
   - ModifyVpcEndPointServiceAttribute
   pts_cron_job_info:
   - DescribeCronJobs
+  redis_backup_config:
+  - DescribeAutoBackupConfig
+  - ModifyAutoBackupConfig
   redis_instance:
   - CreateInstances
   - DescribeInstances

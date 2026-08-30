@@ -33,6 +33,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cbs_snapshot` | Manage Tencent Cloud CBS disk snapshots |
 | `ccn` | Manage Tencent Cloud Cloud Connect Networks |
 | `ccn_attachment` | Attach network instances to Tencent Cloud CCN |
+| `cdb_backup_config` | Manage TencentDB for MySQL backup configuration |
 | `cdb_instance` | Manage Tencent Cloud CDB MySQL instances |
 | `cdb_parameter_template` | Manage Tencent Cloud CDB parameter templates |
 | `cdn_domain` | Manage Tencent Cloud CDN domains |
@@ -104,6 +105,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `private_dns_zone` | Manage a Tencent Cloud Private DNS zone |
 | `privatelink_endpoint` | Manage Tencent Cloud PrivateLink endpoints |
 | `privatelink_endpoint_service` | Manage Tencent Cloud PrivateLink endpoint services |
+| `redis_backup_config` | Manage TencentDB for Redis automatic backup configuration |
 | `redis_instance` | Manage Tencent Cloud Redis instances |
 | `redis_parameter_template` | Manage Tencent Cloud Redis parameter templates |
 | `route_table` | Manage Tencent Cloud VPC route tables |

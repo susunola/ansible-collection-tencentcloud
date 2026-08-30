@@ -59,6 +59,7 @@ action_groups:
     - ccc_extension_info
     - ccn
     - ccn_attachment
+    - cdb_backup_config
     - cdb_instance
     - cdb_instance_info
     - cdb_parameter_template
@@ -244,6 +245,7 @@ action_groups:
     - privatelink_endpoint
     - privatelink_endpoint_service
     - pts_cron_job_info
+    - redis_backup_config
     - redis_instance
     - redis_instance_info
     - redis_parameter_template
