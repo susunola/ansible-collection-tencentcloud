@@ -56,6 +56,7 @@ minor_changes:
   - Add EdgeOne managed WAF lifecycle with group overrides, automatic updates and high-frequency scanning protection.
   - Add exact EdgeOne web security exception rules for modules, managed rules, rule groups and request fields.
   - Add exact EdgeOne precise rate-limiting rules with composite counters, block/throttle modes and enforcement actions.
+  - Add EdgeOne CAPTCHA page and AI crawler detection lifecycle across all security policy scopes.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

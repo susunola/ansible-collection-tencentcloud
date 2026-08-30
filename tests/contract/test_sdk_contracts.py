@@ -459,6 +459,7 @@ WRITE_MODULE_BUILDERS = {
     "teo_origin_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "teo_security_ip_group": ["content_request", "create_request", "delete_request", "describe_request", "update_request"],
     "teo_security_custom_rules": ["describe_request", "update_request"],
+    "teo_security_bot_lite": ["describe_request", "update_request"],
     "teo_security_exception_rules": ["describe_request", "update_request"],
     "teo_security_managed_rules": ["describe_request", "update_request"],
     "teo_security_rate_limiting_rules": ["describe_request", "update_request"],
@@ -4983,4 +4984,12 @@ def test_teo_security_rate_limiting_rules():
     p = {"zone_id": "zone-xxxxxxxx", "scope": "template", "template_id": "temp-xxxxxxxx", "host": None, "rules": [{"rule_id": None, "name": "login_limit", "condition": "$http.request.uri.path eq '/login'", "mode": "Block", "count_by": ["http.request.ip"], "threshold": 30, "counting_period": "1m", "action_duration": "10m", "action": "Deny", "challenge_option": "ManagedChallenge", "redirect_url": None, "priority": 10, "enabled": True}]}; errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEO rate limiting rules describe"))
     errors.extend(audit_request(module.update_request(models, p, []), "TEO rate limiting rules update"))
+    assert errors == []
+
+
+def test_teo_security_bot_lite():
+    module = _import_plugin("teo_security_bot_lite"); models = _models("teo.v20220901")
+    p = {"zone_id": "zone-xxxxxxxx", "scope": "template", "template_id": "temp-xxxxxxxx", "host": None, "captcha_page_enabled": True, "ai_crawler_enabled": True, "ai_crawler_action": "Challenge", "challenge_option": "ManagedChallenge"}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "TEO Bot lite describe"))
+    errors.extend(audit_request(module.update_request(models, p), "TEO Bot lite update"))
     assert errors == []

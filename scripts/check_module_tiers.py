@@ -231,6 +231,7 @@ CORE_MODULES = {
     "teo_security_managed_rules",
     "teo_security_rate_limiting_rules",
     "teo_security_custom_rules",
+    "teo_security_bot_lite",
     "teo_security_exception_rules",
     "teo_security_template_binding",
     "teo_web_security_template",

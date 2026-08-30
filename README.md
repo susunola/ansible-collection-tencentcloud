@@ -206,6 +206,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `teo_acceleration_domain` | Manage Tencent Cloud EdgeOne acceleration domains |
 | `teo_dns_record` | Manage Tencent Cloud TEO DNS records |
 | `teo_origin_group` | Manage Tencent Cloud EdgeOne origin groups |
+| `teo_security_bot_lite` | Manage Tencent Cloud EdgeOne basic Bot protection |
 | `teo_security_custom_rules` | Manage Tencent Cloud EdgeOne web security custom rules |
 | `teo_security_exception_rules` | Manage Tencent Cloud EdgeOne web security exception rules |
 | `teo_security_ip_group` | Manage Tencent Cloud EdgeOne security IP groups |
