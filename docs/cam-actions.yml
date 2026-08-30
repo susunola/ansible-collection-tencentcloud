@@ -318,6 +318,11 @@ modules:
   - ModifyAddressTemplate
   cfw_cluster_nat_ccn_fw_switch_info:
   - DescribeClusterNatCcnFwSwitchList
+  cfw_internet_acl_rule:
+  - AddAclRule
+  - DescribeAclRule
+  - ModifyAclRule
+  - RemoveAclRule
   chc_device_info:
   - DescribeDeviceList
   chdfs_file_system_info:

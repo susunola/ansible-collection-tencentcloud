@@ -91,6 +91,7 @@ action_groups:
     - cfs_snapshot
     - cfw_address_template
     - cfw_cluster_nat_ccn_fw_switch_info
+    - cfw_internet_acl_rule
     - chc_device_info
     - chdfs_file_system_info
     - ciam_user_store_info

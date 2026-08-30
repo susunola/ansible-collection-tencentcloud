@@ -443,6 +443,7 @@ WRITE_MODULE_BUILDERS = {
         "build_update_request",
     ],
     "cdn_cls_log_topic": ["create_request", "delete_request", "disable_request", "enable_request", "list_domains_request", "list_topics_request", "manage_domains_request"],
+    "cfw_internet_acl_rule": ["create_request", "delete_request", "describe_request", "update_request"],
     "cvm_chc": [
         "_configure_vpc",
         "_remove_assist",
@@ -3458,6 +3459,16 @@ def test_cdn_cls_log_topic():
     errors.extend(audit_request(module.enable_request(models, p, "topic-xxxxxxxx", p["logset_id"]), "CDN CLS topic enable"))
     errors.extend(audit_request(module.disable_request(models, p, "topic-xxxxxxxx", p["logset_id"]), "CDN CLS topic disable"))
     errors.extend(audit_request(module.delete_request(models, p, "topic-xxxxxxxx", p["logset_id"]), "CDN CLS topic delete"))
+    assert errors == []
+
+
+def test_cfw_internet_acl_rule():
+    module = _import_plugin("cfw_internet_acl_rule"); models = _models("cfw.v20190904")
+    p = {"description": "allow-trusted-https", "source": "10.0.0.0/8", "source_type": "ip", "destination": "203.0.113.0/24", "destination_type": "ip", "protocol": "TCP", "ports": "443", "action": "accept", "direction": "outbound", "enabled": True, "order_index": -1, "scope": None, "parameter_template_id": None}; errors = []
+    errors.extend(audit_request(module.describe_request(models), "CFW internet ACL describe"))
+    errors.extend(audit_request(module.create_request(models, p), "CFW internet ACL create"))
+    errors.extend(audit_request(module.update_request(models, p, 123456), "CFW internet ACL update"))
+    errors.extend(audit_request(module.delete_request(models, p, 123456), "CFW internet ACL delete"))
     assert errors == []
 
 

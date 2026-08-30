@@ -53,6 +53,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cfs_permission_rule` | Manage Tencent Cloud CFS permission rules |
 | `cfs_snapshot` | Manage Tencent Cloud CFS snapshots |
 | `cfw_address_template` | Manage Tencent Cloud Cloud Firewall address templates |
+| `cfw_internet_acl_rule` | Manage Tencent Cloud Cloud Firewall internet border ACL rules |
 | `ckafka_acl` | Manage Tencent Cloud CKafka ACL entries |
 | `ckafka_acl_rule` | Manage Tencent Cloud CKafka ACL rules |
 | `ckafka_datahub_connection` | Manage Tencent Cloud CKafka Datahub connection resources |
