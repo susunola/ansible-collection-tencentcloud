@@ -1063,6 +1063,14 @@ modules:
   - DeleteBackupPlan
   - DescribeBackupPlans
   - ModifyBackupPlan
+  postgresql_instance:
+  - CreateInstances
+  - DescribeDBInstances
+  - DestroyDBInstance
+  - IsolateDBInstances
+  - ModifyDBInstanceName
+  - ModifyDBInstanceSpec
+  - SetAutoRenewFlag
   postgresql_parameter_template:
   - CreateParameterTemplate
   - DeleteParameterTemplate

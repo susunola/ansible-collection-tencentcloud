@@ -171,6 +171,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `peering_connection` | Manage Tencent Cloud VPC peering connections |
 | `postgresql_account` | Manage TencentDB for PostgreSQL accounts |
 | `postgresql_backup_plan` | Manage TencentDB for PostgreSQL backup plans |
+| `postgresql_instance` | Manage Tencent Cloud PostgreSQL instances |
 | `postgresql_parameter_template` | Manage Tencent Cloud PostgreSQL parameter templates |
 | `private_dns_record` | Manage a Tencent Cloud Private DNS record |
 | `private_dns_zone` | Manage a Tencent Cloud Private DNS zone |

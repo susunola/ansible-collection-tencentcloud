@@ -68,6 +68,7 @@ minor_changes:
   - Add VPC HAVIP lifecycle and exact CVM or ENI drift-scope associations.
   - Add reusable VPC address templates and exact address-template group membership.
   - Add complete SSM custom-secret lifecycle with initial material, enablement, recovery and scheduled deletion.
+  - Add PostgreSQL instance creation, resize, rename, renewal, isolation and guarded permanent destruction.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

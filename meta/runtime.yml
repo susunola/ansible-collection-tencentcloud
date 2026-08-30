@@ -309,6 +309,7 @@ action_groups:
     - postgres_instance_info
     - postgresql_account
     - postgresql_backup_plan
+    - postgresql_instance
     - postgresql_parameter_template
     - private_dns_record
     - private_dns_zone

@@ -417,6 +417,7 @@ WRITE_MODULE_BUILDERS = {
     "redis_backup_config": ["build_describe", "build_update"],
     "redis_account": ["build_create", "build_delete", "build_describe", "build_update"],
     "postgresql_backup_plan": ["build_create", "build_delete", "build_describe", "build_update"],
+    "postgresql_instance": ["create_request", "describe_request", "destroy_request", "isolate_request", "rename_request", "renew_request", "resize_request"],
     "cam_policy": [
         "_apply_tags",
         "_create",
@@ -3048,6 +3049,15 @@ def test_redis_account():
     errors=[]
     for i,r in enumerate(requests): errors.extend(audit_request(r,"Redis account request %s"%i))
     assert errors==[]
+
+
+def test_postgresql_instance():
+    module = _import_plugin("postgresql_instance"); models = _models("postgres.v20170312")
+    p = {"instance_id": "postgres-xxxxxxxx", "name": "production-postgres", "zone": "ap-guangzhou-3", "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "spec_code": "pg.it.medium2", "storage": 100, "cpu": 2, "memory": 4, "major_version": "15", "charset": "UTF8", "admin_name": "dbadmin", "admin_password": "Secret123!", "charge_type": "POSTPAID_BY_HOUR", "period_months": 1, "auto_renew": None, "security_group_ids": ["sg-xxxxxxxx"], "deletion_protection": False, "recovery_window_days": 7}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.rename_request(models, p["instance_id"], p["name"]), module.resize_request(models, p, p["instance_id"]), module.renew_request(models, p["instance_id"], 1), module.isolate_request(models, p["instance_id"]), module.destroy_request(models, p["instance_id"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "PostgreSQL instance request %s" % index))
+    assert errors == []
 
 
 def test_postgresql_backup_plan():

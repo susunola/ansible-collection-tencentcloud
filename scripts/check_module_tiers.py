@@ -200,6 +200,7 @@ CORE_MODULES = {
     "postgresql_account",
     "postgresql_parameter_template",
     "postgresql_backup_plan",
+    "postgresql_instance",
     "privatelink_endpoint_service",
     "privatelink_endpoint",
     "redis_instance",
