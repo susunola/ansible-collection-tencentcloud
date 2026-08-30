@@ -212,6 +212,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tcr_replication_instance` | Manage Tencent Cloud TCR replication instances |
 | `tcr_replication_rule` | Manage Tencent Cloud TCR replication rules |
 | `tcr_repository` | Manage a Tencent Cloud TCR repository |
+| `tdcpg_cluster` | Manage Tencent Cloud TDSQL-C PostgreSQL clusters |
 | `tdmq_namespace` | Manage Tencent Cloud TDMQ Pulsar namespaces |
 | `tdmq_namespace_role` | Manage TDMQ Pulsar namespace role permissions |
 | `tdmq_rabbitmq_binding` | Manage TDMQ RabbitMQ bindings |

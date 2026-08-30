@@ -1363,6 +1363,17 @@ modules:
   - DescribeAbnormalProcessEvents
   tdai_agent_duty_task_info:
   - DescribeAgentDutyTasks
+  tdcpg_cluster:
+  - CreateCluster
+  - CreateClusterInstances
+  - DeleteCluster
+  - DeleteClusterInstances
+  - DescribeClusterInstances
+  - DescribeClusters
+  - IsolateCluster
+  - ModifyClusterInstancesSpec
+  - ModifyClusterName
+  - ModifyClustersAutoRenewFlag
   tdcpg_cluster_instance_info:
   - DescribeClusterInstances
   tdid_over_summary_info:

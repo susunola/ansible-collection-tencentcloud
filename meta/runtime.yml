@@ -377,6 +377,7 @@ action_groups:
     - tcr_repository
     - tcss_abnormal_process_event_info
     - tdai_agent_duty_task_info
+    - tdcpg_cluster
     - tdcpg_cluster_instance_info
     - tdid_over_summary_info
     - tdmq_amqp_cluster_info

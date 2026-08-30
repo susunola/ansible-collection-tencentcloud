@@ -832,6 +832,7 @@ WRITE_MODULE_BUILDERS = {
     "oceanus_workspace": ["create_request", "delete_request", "describe_request", "modify_request"],
     "oceanus_job": ["create_request", "delete_request", "describe_request", "modify_request", "run_request", "stop_request"],
     "tse_sre_instance": ["create_request", "delete_request", "describe_request", "internet_request"],
+    "tdcpg_cluster": ["create_instances_request", "create_request", "delete_instances_request", "delete_request", "describe_request", "instances_request", "isolate_request", "rename_request", "renew_request", "resize_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
@@ -2674,6 +2675,15 @@ def test_postgresql_account():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "PostgreSQL account request %s" % index))
+    assert errors == []
+
+
+def test_tdcpg_cluster():
+    module = _import_plugin("tdcpg_cluster"); models = _models("tdcpg.v20211118")
+    p = {"cluster_id": "tdcpg-x", "name": "production-tdcpg", "zone": "ap-guangzhou-3", "vpc_id": "vpc-x", "subnet_id": "subnet-x", "master_password": "Secret-1234", "cpu": 4, "memory": 8, "instance_count": 2, "db_version": "13.3", "db_major_version": "13", "db_kernel_version": "v1", "pay_mode": "POSTPAID_BY_HOUR", "period_months": 1, "auto_renew": False, "port": 5432, "storage_pay_mode": "POSTPAID_BY_HOUR", "storage": 100}
+    requests = [module.describe_request(models, p), module.instances_request(models, p["cluster_id"]), module.create_request(models, p), module.create_instances_request(models, p, p["cluster_id"], 1), module.resize_request(models, p, p["cluster_id"], ["ins-x"]), module.delete_instances_request(models, p["cluster_id"], ["ins-x"]), module.rename_request(models, p["cluster_id"], p["name"]), module.renew_request(models, p["cluster_id"], True), module.isolate_request(models, p["cluster_id"]), module.delete_request(models, p["cluster_id"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "TDSQL-C PostgreSQL request %s" % index))
     assert errors == []
 
 

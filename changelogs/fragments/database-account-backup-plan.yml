@@ -79,6 +79,7 @@ minor_changes:
   - Add Oceanus workspace lifecycle as the ownership boundary for jobs and resources.
   - Add Oceanus job lifecycle with start, stop, pause and resume controls.
   - Add TSE service-registry engine lifecycle with Apollo topology and client internet access.
+  - Add TDSQL-C PostgreSQL cluster lifecycle with instance topology and specification reconciliation.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."
