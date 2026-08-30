@@ -168,6 +168,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `nat_gateway_rule` | Manage Tencent Cloud NAT gateway DNAT and SNAT rules |
 | `network_acl` | Manage Tencent Cloud VPC network ACLs |
 | `network_interface` | Manage Tencent Cloud elastic network interfaces |
+| `oceanus_workspace` | Manage Tencent Cloud Oceanus workspaces |
 | `organization_member` | Manage Tencent Cloud Organization members |
 | `organization_member_identity` | Reconcile Tencent Cloud Organization member identities |
 | `organization_member_policy` | Manage Tencent Cloud Organization member access policies |

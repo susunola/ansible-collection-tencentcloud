@@ -829,6 +829,7 @@ WRITE_MODULE_BUILDERS = {
     "dcdb_instance": ["create_hour_request", "create_prepaid_request", "describe_request", "destroy_request", "isolate_request", "rename_request", "upgrade_request"],
     "tcaplusdb_cluster": ["create_request", "delete_request", "describe_request", "password_request", "rename_request"],
     "tdmq_rabbitmq_instance": ["create_request", "delete_request", "describe_request", "modify_request"],
+    "oceanus_workspace": ["create_request", "delete_request", "describe_request", "modify_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
@@ -2671,6 +2672,15 @@ def test_postgresql_account():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "PostgreSQL account request %s" % index))
+    assert errors == []
+
+
+def test_oceanus_workspace():
+    module = _import_plugin("oceanus_workspace"); models = _models("oceanus.v20190422")
+    p = {"workspace_id": "space-x", "name": "production-streaming", "description": "Production Flink resources"}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.modify_request(models, p["workspace_id"], p["name"], p["description"]), module.delete_request(models, p["workspace_id"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "Oceanus workspace request %s" % index))
     assert errors == []
 
 

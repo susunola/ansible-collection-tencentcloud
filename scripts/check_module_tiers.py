@@ -179,6 +179,7 @@ CORE_MODULES = {
     "monitor_alarm_policy",
     "monitor_alarm_policy_notice",
     "monitor_prometheus_scrape_job",
+    "oceanus_workspace",
     "monitor_prometheus_record_rule",
     "monitor_prometheus_alert_group",
     "monitor_prometheus_instance",

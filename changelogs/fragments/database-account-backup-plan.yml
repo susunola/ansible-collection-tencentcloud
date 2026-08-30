@@ -76,6 +76,7 @@ minor_changes:
   - Add prepaid and postpaid DCDB instance lifecycle with shard expansion and specification upgrades.
   - Add TcaplusDB cluster lifecycle with storage and proxy topology plus password rotation.
   - Add TDMQ RabbitMQ dedicated-instance lifecycle with topology and deletion-protection controls.
+  - Add Oceanus workspace lifecycle as the ownership boundary for jobs and resources.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

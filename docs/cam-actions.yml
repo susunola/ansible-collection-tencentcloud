@@ -1056,6 +1056,11 @@ modules:
   - ModifyNetworkInterfaceAttribute
   oceanus_cluster_info:
   - DescribeClusters
+  oceanus_workspace:
+  - CreateWorkSpace
+  - DeleteWorkSpace
+  - DescribeWorkSpaces
+  - ModifyWorkSpace
   omics_application_info:
   - DescribeApplications
   organization_member:

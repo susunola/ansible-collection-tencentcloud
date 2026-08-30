@@ -301,6 +301,7 @@ action_groups:
     - network_acl
     - network_interface
     - oceanus_cluster_info
+    - oceanus_workspace
     - omics_application_info
     - organization_member
     - organization_member_identity
