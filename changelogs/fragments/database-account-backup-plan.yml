@@ -60,6 +60,7 @@ minor_changes:
   - Add COS object-lock enablement and default governance or compliance retention management with irreversible-state protection.
   - Add COS intelligent-tiering, origin-rule and response-control configuration management.
   - Add idempotent COS custom-domain certificate binding by Tencent Cloud SSL certificate ID.
+  - Add WAF anti-tamper URL lifecycle, precision allowlist rules and geographic blocking management.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

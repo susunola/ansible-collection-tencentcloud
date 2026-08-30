@@ -356,6 +356,9 @@ WRITE_MODULE_BUILDERS = {
     "elasticsearch_snapshot": ["create_request", "delete_request", "describe_request"],
     "waf_anti_info_leak_rule": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
     "waf_attack_white_rule": ["create_request", "delete_request", "describe_request", "update_request"],
+    "waf_anti_tamper_rule": ["create_request", "delete_request", "describe_request", "refresh_request", "status_request", "update_request"],
+    "waf_area_ban_rule": ["create_request", "describe_request", "status_request", "update_request"],
+    "waf_custom_white_rule": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
     "waf_cc_rule": ["delete_request", "describe_request", "upsert_request"],
     "cfs_permission_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "cfs_permission_rule": ["create_request", "delete_request", "describe_request", "update_request"],
@@ -4751,6 +4754,36 @@ def test_waf_attack_white_rule():
     errors.extend(audit_request(module.create_request(models, p), "WAF attack allow create"))
     errors.extend(audit_request(module.update_request(models, p, 123), "WAF attack allow update"))
     errors.extend(audit_request(module.delete_request(models, p, 123), "WAF attack allow delete"))
+    assert errors == []
+
+
+def test_waf_anti_tamper_rule():
+    module = _import_plugin("waf_anti_tamper_rule")
+    models = _models("waf.v20180125")
+    p = {"domain": "www.example.com", "name": "protect-homepage", "uri": "/index.html", "enabled": True}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p, 123), module.status_request(models, p, 123), module.refresh_request(models, p, 123), module.delete_request(models, p, 123)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "WAF anti-tamper request %s" % index))
+    assert errors == []
+
+
+def test_waf_area_ban_rule():
+    module = _import_plugin("waf_area_ban_rule")
+    models = _models("waf.v20180125")
+    p = {"domain": "api.example.com", "areas": [{"Country": "中国", "Region": "广东", "City": "深圳"}], "job_type": "TimedJob", "job_datetime": {"Timed": [{"StartDateTime": 1788134400, "EndDateTime": 1788220800}], "TimeTZone": "Asia/Shanghai"}, "language": "cn"}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p), module.status_request(models, p, True)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "WAF area-ban request %s" % index))
+    assert errors == []
+
+
+def test_waf_custom_white_rule():
+    module = _import_plugin("waf_custom_white_rule")
+    models = _models("waf.v20180125")
+    p = {"domain": "api.example.com", "name": "allow-health", "priority": 100, "bypass_modules": "owasp,acl", "strategies": [{"Field": "URI", "CompareFunc": "prefix", "Content": "/health", "Arg": ""}], "logical_operator": "and", "expire_time": 0, "enabled": True}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p, 123), module.status_request(models, p, 123), module.delete_request(models, p, 123)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "WAF precision allowlist request %s" % index))
     assert errors == []
 
 

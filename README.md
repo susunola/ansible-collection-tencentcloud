@@ -232,9 +232,12 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `vpn_connection` | Manage Tencent Cloud IPsec VPN connections |
 | `vpn_gateway` | Manage Tencent Cloud VPN gateways |
 | `waf_anti_info_leak_rule` | Manage Tencent Cloud WAF sensitive-information leakage rules |
+| `waf_anti_tamper_rule` | Manage Tencent Cloud WAF anti-tamper URL rules |
+| `waf_area_ban_rule` | Manage Tencent Cloud WAF geographic blocking |
 | `waf_attack_white_rule` | Manage Tencent Cloud WAF attack-signature allow rules |
 | `waf_cc_rule` | Manage Tencent Cloud WAF CC protection rules |
 | `waf_custom_rule` | Manage Tencent Cloud WAF custom rules |
+| `waf_custom_white_rule` | Manage Tencent Cloud WAF precision allowlist rules |
 | `waf_host` | Manage Tencent Cloud WAF protected hosts |
 | `waf_ip_access_control` | Manage Tencent Cloud WAF IP access-control rules |
 | `waf_protect_group` | Manage Tencent Cloud WAF protection object groups |

@@ -1477,6 +1477,18 @@ modules:
   - DescribeAntiInfoLeakageRules
   - ModifyAntiInfoLeakRuleStatus
   - ModifyAntiInfoLeakRules
+  waf_anti_tamper_rule:
+  - AddAntiFakeUrl
+  - DeleteAntiFakeUrl
+  - DescribeAntiFakeRules
+  - FreshAntiFakeUrl
+  - ModifyAntiFakeUrl
+  - ModifyAntiFakeUrlStatus
+  waf_area_ban_rule:
+  - CreateAreaBanRule
+  - DescribeAreaBanRule
+  - ModifyAreaBanRule
+  - ModifyAreaBanStatus
   waf_attack_white_rule:
   - AddAttackWhiteRule
   - DeleteAttackWhiteRule
@@ -1491,6 +1503,12 @@ modules:
   - DeleteCustomRule
   - DescribeCustomRuleList
   - ModifyCustomRule
+  waf_custom_white_rule:
+  - AddCustomWhiteRule
+  - DeleteCustomWhiteRule
+  - DescribeCustomWhiteRule
+  - ModifyCustomWhiteRule
+  - ModifyCustomWhiteRuleStatus
   waf_host:
   - CreateHost
   - DeleteHost

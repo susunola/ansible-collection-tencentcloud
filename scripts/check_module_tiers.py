@@ -262,6 +262,9 @@ CORE_MODULES = {
     "waf_custom_rule",
     "waf_anti_info_leak_rule",
     "waf_attack_white_rule",
+    "waf_anti_tamper_rule",
+    "waf_area_ban_rule",
+    "waf_custom_white_rule",
     "waf_cc_rule",
     "vpn_connection",
     # Hand-written *_info modules that the generator cannot express.
