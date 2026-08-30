@@ -323,6 +323,11 @@ modules:
   - DescribeAclRule
   - ModifyAclRule
   - RemoveAclRule
+  cfw_nat_dnat_rule:
+  - CreateNatFwDnatRule
+  - DeleteNatFwDnatRule
+  - DescribeNatFwDnatRule
+  - SetNatFwDnatRule
   chc_device_info:
   - DescribeDeviceList
   chdfs_file_system_info:

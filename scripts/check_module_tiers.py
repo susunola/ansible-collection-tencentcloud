@@ -114,6 +114,7 @@ CORE_MODULES = {
     "cfs_auto_snapshot_policy",
     "cfw_address_template",
     "cfw_internet_acl_rule",
+    "cfw_nat_dnat_rule",
     "customer_gateway",
     "cvm_chc",
     "cvm_image",

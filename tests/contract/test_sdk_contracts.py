@@ -444,6 +444,7 @@ WRITE_MODULE_BUILDERS = {
     ],
     "cdn_cls_log_topic": ["create_request", "delete_request", "disable_request", "enable_request", "list_domains_request", "list_topics_request", "manage_domains_request"],
     "cfw_internet_acl_rule": ["create_request", "delete_request", "describe_request", "update_request"],
+    "cfw_nat_dnat_rule": ["create_request", "delete_request", "describe_request", "update_request"],
     "cvm_chc": [
         "_configure_vpc",
         "_remove_assist",
@@ -3469,6 +3470,17 @@ def test_cfw_internet_acl_rule():
     errors.extend(audit_request(module.create_request(models, p), "CFW internet ACL create"))
     errors.extend(audit_request(module.update_request(models, p, 123456), "CFW internet ACL update"))
     errors.extend(audit_request(module.delete_request(models, p, 123456), "CFW internet ACL delete"))
+    assert errors == []
+
+
+def test_cfw_nat_dnat_rule():
+    module = _import_plugin("cfw_nat_dnat_rule"); models = _models("cfw.v20190904")
+    p = {"firewall_instance_id": "cfwnat-xxxxxxxx", "mode": 0, "protocol": "TCP", "public_ip": "203.0.113.10", "public_port": 443, "private_ip": "10.0.1.10", "private_port": 8443, "description": "application HTTPS"}
+    current = {"IpProtocol": "TCP", "PublicIpAddress": "203.0.113.10", "PublicPort": 443, "PrivateIpAddress": "10.0.1.9", "PrivatePort": 443, "Description": "old"}; errors = []
+    errors.extend(audit_request(module.describe_request(models), "CFW NAT DNAT describe"))
+    errors.extend(audit_request(module.create_request(models, p), "CFW NAT DNAT create"))
+    errors.extend(audit_request(module.update_request(models, p, current), "CFW NAT DNAT update"))
+    errors.extend(audit_request(module.delete_request(models, p, current), "CFW NAT DNAT delete"))
     assert errors == []
 
 
