@@ -833,6 +833,7 @@ WRITE_MODULE_BUILDERS = {
     "oceanus_job": ["create_request", "delete_request", "describe_request", "modify_request", "run_request", "stop_request"],
     "tse_sre_instance": ["create_request", "delete_request", "describe_request", "internet_request"],
     "tdcpg_cluster": ["create_instances_request", "create_request", "delete_instances_request", "delete_request", "describe_request", "instances_request", "isolate_request", "rename_request", "renew_request", "resize_request"],
+    "vdb_instance": ["create_request", "describe_request", "destroy_request", "isolate_request", "recover_request", "scale_out_request", "scale_up_request", "security_groups_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
@@ -2675,6 +2676,15 @@ def test_postgresql_account():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "PostgreSQL account request %s" % index))
+    assert errors == []
+
+
+def test_vdb_instance():
+    module = _import_plugin("vdb_instance"); models = _models("vdb.v20230616")
+    p = {"instance_id": "vdb-x", "name": "production-vectors", "zone": "ap-guangzhou-3", "slave_zones": ["ap-guangzhou-4"], "vpc_id": "vpc-x", "subnet_id": "subnet-x", "pay_mode": 0, "pay_period": 1, "auto_renew": 0, "product_type": 1, "instance_type": "NORMAL", "mode": "CLUSTER", "network_type": "VPC", "engine_name": "VectorDB", "engine_version": "1.0", "node_type": "NORMAL", "cpu": 4, "memory": 16, "disk_size": 500, "worker_node_count": 3, "security_group_ids": ["sg-x"], "tags": {"environment": "production"}, "project": "0", "brief": "production", "chief": "owner", "dba": "dba", "run_now": True}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.scale_out_request(models, p["instance_id"], 3), module.scale_up_request(models, p, p["instance_id"]), module.security_groups_request(models, p["instance_id"], p["security_group_ids"]), module.isolate_request(models, p["instance_id"]), module.recover_request(models, p["instance_id"], 1), module.destroy_request(models, p["instance_id"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "VectorDB instance request %s" % index))
     assert errors == []
 
 

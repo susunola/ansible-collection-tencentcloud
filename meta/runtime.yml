@@ -435,6 +435,7 @@ action_groups:
     - tse_sre_instance_info
     - tsf_application_info
     - vcube_resource_info
+    - vdb_instance
     - vdb_instance_info
     - vm_task_info
     - vod_incremental_migration_strategy_info

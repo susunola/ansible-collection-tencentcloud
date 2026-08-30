@@ -182,6 +182,7 @@ CORE_MODULES = {
     "oceanus_workspace",
     "oceanus_job",
     "tse_sre_instance",
+    "vdb_instance",
     "tdcpg_cluster",
     "monitor_prometheus_record_rule",
     "monitor_prometheus_alert_group",

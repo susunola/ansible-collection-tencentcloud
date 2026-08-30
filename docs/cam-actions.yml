@@ -1576,6 +1576,15 @@ modules:
   - DescribeApplications
   vcube_resource_info:
   - DescribeVcubeResourcesList
+  vdb_instance:
+  - CreateInstance
+  - DescribeInstances
+  - DestroyInstances
+  - IsolateInstance
+  - ModifyDBInstanceSecurityGroups
+  - RecoverInstance
+  - ScaleOutInstance
+  - ScaleUpInstance
   vdb_instance_info:
   - DescribeInstances
   vm_task_info:
