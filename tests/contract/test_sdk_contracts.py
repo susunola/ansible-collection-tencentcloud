@@ -311,6 +311,8 @@ UNEXERCISED_BUILDERS = {
 # at the bottom of this file. Info-module builders are registered in
 # INFO_BUILDERS instead. Both sets are verified against the static scan.
 WRITE_MODULE_BUILDERS = {
+    "dc_direct_connect": ["create_request", "delete_request", "describe_request", "update_request"],
+    "dc_direct_connect_tunnel": ["create_request", "delete_request", "describe_request", "update_request"],
     "gwlb_load_balancer": ["create_request", "delete_request", "describe_request", "update_request"],
     "gwlb_target_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "gwlb_target_group_association": ["association_request", "describe_request", "disassociation_request"],
@@ -5311,6 +5313,26 @@ def test_teo_origin_group():
     errors.extend(audit_request(module.create_request(models, p), "TEO origin group create"))
     errors.extend(audit_request(module.update_request(models, p, "origin-xxxxxxxx"), "TEO origin group update"))
     errors.extend(audit_request(module.delete_request(models, p, "origin-xxxxxxxx"), "TEO origin group delete"))
+    assert errors == []
+
+
+def test_dc_direct_connect():
+    module = _import_plugin("dc_direct_connect"); models = _models("dc.v20180410")
+    p = {"direct_connect_id": None, "name": "primary-circuit", "access_point_id": "ap-xxxxxxxx", "line_operator": "ChinaTelecom", "port_type": "10GBase-LR", "circuit_code": "CT-10001", "location": "Customer IDC A", "bandwidth": 1000, "redundant_direct_connect_id": None, "vlan": 100, "tencent_address": "192.0.2.1/30", "customer_address": "192.0.2.2/30", "customer_name": "Example Corp", "customer_contact_mail": "network@example.com", "customer_contact_number": "13800000000", "fault_contact_name": "NOC", "fault_contact_number": "13800000000", "fault_contact_email": "noc@example.com", "sign_law": True, "macsec": False, "tags": {"env": "production"}}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "Direct Connect describe"))
+    errors.extend(audit_request(module.create_request(models, p), "Direct Connect create"))
+    errors.extend(audit_request(module.update_request(models, p, "dc-xxxxxxxx"), "Direct Connect update"))
+    errors.extend(audit_request(module.delete_request(models, "dc-xxxxxxxx"), "Direct Connect delete"))
+    assert errors == []
+
+
+def test_dc_direct_connect_tunnel():
+    module = _import_plugin("dc_direct_connect_tunnel"); models = _models("dc.v20180410")
+    p = {"tunnel_id": None, "name": "production-vpc", "direct_connect_id": "dc-xxxxxxxx", "owner_account": None, "network_type": "VPC", "network_region": "ap-guangzhou", "vpc_id": "vpc-xxxxxxxx", "direct_connect_gateway_id": "dcg-xxxxxxxx", "bandwidth": 500, "route_type": "BGP", "bgp_peer": {"Asn": 65001, "AuthKey": "secret-value"}, "route_filter_prefixes": ["10.0.0.0/8"], "vlan": 100, "tencent_address": "192.0.2.1/30", "customer_address": "192.0.2.2/30", "tencent_backup_address": None, "bfd_enabled": 1, "nqa_enabled": 0, "tags": {"env": "production"}}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "Direct Connect tunnel describe"))
+    errors.extend(audit_request(module.create_request(models, p), "Direct Connect tunnel create"))
+    errors.extend(audit_request(module.update_request(models, p, "dcx-xxxxxxxx"), "Direct Connect tunnel update"))
+    errors.extend(audit_request(module.delete_request(models, "dcx-xxxxxxxx"), "Direct Connect tunnel delete"))
     assert errors == []
 
 

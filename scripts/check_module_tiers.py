@@ -148,6 +148,8 @@ CORE_MODULES = {
     "cynosdb_account",
     "cynosdb_cluster",
     "dcdb_instance",
+    "dc_direct_connect",
+    "dc_direct_connect_tunnel",
     "eb_connection",
     "eb_event_bus",
     "eb_rule",
