@@ -459,6 +459,7 @@ WRITE_MODULE_BUILDERS = {
     "teo_origin_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "teo_security_ip_group": ["content_request", "create_request", "delete_request", "describe_request", "update_request"],
     "teo_security_custom_rules": ["describe_request", "update_request"],
+    "teo_security_exception_rules": ["describe_request", "update_request"],
     "teo_security_managed_rules": ["describe_request", "update_request"],
     "teo_security_template_binding": ["bind_request", "describe_request", "unbind_request"],
     "teo_web_security_template": ["create_request", "delete_request", "describe_request", "update_request"],
@@ -4965,4 +4966,12 @@ def test_teo_security_managed_rules():
     p = {"zone_id": "zone-xxxxxxxx", "scope": "template", "template_id": "temp-xxxxxxxx", "host": None, "enabled": True, "detection_only": False, "semantic_analysis": True, "auto_update": True, "groups": [{"group_id": "OWASP", "sensitivity": "strict", "action": "Deny", "rule_actions": []}], "frequent_scanning": {"enabled": True, "action": "Deny", "count_by": "http.request.ip", "block_threshold": 100, "counting_period": 60, "action_duration": 600}}; errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEO managed rules describe"))
     errors.extend(audit_request(module.update_request(models, p), "TEO managed rules update"))
+    assert errors == []
+
+
+def test_teo_security_exception_rules():
+    module = _import_plugin("teo_security_exception_rules"); models = _models("teo.v20220901")
+    p = {"zone_id": "zone-xxxxxxxx", "scope": "template", "template_id": "temp-xxxxxxxx", "host": None, "rules": [{"rule_id": None, "name": "trusted_upload_payload", "condition": "$http.request.uri.path eq '/upload'", "enabled": True, "skip_scope": "ManagedRules", "skip_option": "SkipOnSpecifiedRequestFields", "web_security_modules": [], "managed_rule_ids": [], "managed_rule_group_ids": ["OWASP"], "request_fields": [{"field_scope": "body", "condition": "", "target_field": "multipart"}]}]}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "TEO exception rules describe"))
+    errors.extend(audit_request(module.update_request(models, p, []), "TEO exception rules update"))
     assert errors == []

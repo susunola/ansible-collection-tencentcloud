@@ -1343,6 +1343,9 @@ modules:
   teo_security_custom_rules:
   - DescribeSecurityPolicy
   - ModifySecurityPolicy
+  teo_security_exception_rules:
+  - DescribeSecurityPolicy
+  - ModifySecurityPolicy
   teo_security_ip_group:
   - CreateSecurityIPGroup
   - DeleteSecurityIPGroup
