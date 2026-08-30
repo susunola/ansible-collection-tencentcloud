@@ -17,3 +17,4 @@ minor_changes:
   - "Add CKafka prefixed and preset ACL rule lifecycle management."
   - "Add TDMQ Pulsar namespace retention and subscription-policy lifecycle management."
   - "Add TDMQ Pulsar namespace role permission lifecycle management."
+  - "Add TDMQ RabbitMQ virtual host lifecycle and tracing configuration."

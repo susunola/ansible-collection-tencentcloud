@@ -1065,6 +1065,11 @@ modules:
   - DeleteEnvironmentRoles
   - DescribeEnvironmentRoles
   - ModifyEnvironmentRole
+  tdmq_rabbitmq_vhost:
+  - CreateRabbitMQVirtualHost
+  - DeleteRabbitMQVirtualHost
+  - DescribeRabbitMQVirtualHost
+  - ModifyRabbitMQVirtualHost
   tdmq_subscription:
   - CreateSubscription
   - DeleteSubscriptions

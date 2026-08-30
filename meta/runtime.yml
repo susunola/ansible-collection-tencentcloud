@@ -314,6 +314,7 @@ action_groups:
     - tdmq_amqp_cluster_info
     - tdmq_namespace
     - tdmq_namespace_role
+    - tdmq_rabbitmq_vhost
     - tdmq_subscription
     - tdmq_topic
     - tdmysql_db_instance_info
