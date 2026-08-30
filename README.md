@@ -100,11 +100,13 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `organization_node` | Manage Tencent Cloud Organization nodes |
 | `peering_connection` | Manage Tencent Cloud VPC peering connections |
 | `postgresql_account` | Manage TencentDB for PostgreSQL accounts |
+| `postgresql_backup_plan` | Manage TencentDB for PostgreSQL backup plans |
 | `postgresql_parameter_template` | Manage Tencent Cloud PostgreSQL parameter templates |
 | `private_dns_record` | Manage a Tencent Cloud Private DNS record |
 | `private_dns_zone` | Manage a Tencent Cloud Private DNS zone |
 | `privatelink_endpoint` | Manage Tencent Cloud PrivateLink endpoints |
 | `privatelink_endpoint_service` | Manage Tencent Cloud PrivateLink endpoint services |
+| `redis_account` | Manage TencentDB for Redis accounts |
 | `redis_backup_config` | Manage TencentDB for Redis automatic backup configuration |
 | `redis_instance` | Manage Tencent Cloud Redis instances |
 | `redis_parameter_template` | Manage Tencent Cloud Redis parameter templates |

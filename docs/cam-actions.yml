@@ -771,6 +771,11 @@ modules:
   - DescribeAccounts
   - ModifyAccountRemark
   - ResetAccountPassword
+  postgresql_backup_plan:
+  - CreateBackupPlan
+  - DeleteBackupPlan
+  - DescribeBackupPlans
+  - ModifyBackupPlan
   postgresql_parameter_template:
   - CreateParameterTemplate
   - DeleteParameterTemplate
@@ -803,6 +808,11 @@ modules:
   - ModifyVpcEndPointServiceAttribute
   pts_cron_job_info:
   - DescribeCronJobs
+  redis_account:
+  - CreateInstanceAccount
+  - DeleteInstanceAccount
+  - DescribeInstanceAccount
+  - ModifyInstanceAccount
   redis_backup_config:
   - DescribeAutoBackupConfig
   - ModifyAutoBackupConfig

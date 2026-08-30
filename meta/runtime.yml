@@ -238,6 +238,7 @@ action_groups:
     - portal_document_info
     - postgres_instance_info
     - postgresql_account
+    - postgresql_backup_plan
     - postgresql_parameter_template
     - private_dns_record
     - private_dns_zone
@@ -245,6 +246,7 @@ action_groups:
     - privatelink_endpoint
     - privatelink_endpoint_service
     - pts_cron_job_info
+    - redis_account
     - redis_backup_config
     - redis_instance
     - redis_instance_info

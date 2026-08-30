@@ -327,6 +327,8 @@ WRITE_MODULE_BUILDERS = {
     "monitor_prometheus_alertmanager_config": ["build_describe", "build_update"],
     "cdb_backup_config": ["build_describe", "build_update"],
     "redis_backup_config": ["build_describe", "build_update"],
+    "redis_account": ["build_create", "build_delete", "build_describe", "build_update"],
+    "postgresql_backup_plan": ["build_create", "build_delete", "build_describe", "build_update"],
     "cam_policy": [
         "_apply_tags",
         "_create",
@@ -2800,6 +2802,22 @@ def test_redis_backup_config():
     module=_import_plugin("redis_backup_config"); models=_models("redis.v20180412"); p={"instance_id":"crs-x","week_days":["Monday"],"time_period":"03:00-04:00","backup_type":0,"storage_days":30}
     errors=[]
     for i,r in enumerate([module.build_describe(models,"crs-x"),module.build_update(models,p)]): errors.extend(audit_request(r,"Redis backup request %s"%i))
+    assert errors==[]
+
+
+def test_redis_account():
+    module=_import_plugin("redis_account"); models=_models("redis.v20180412"); p={"instance_id":"crs-x","name":"app","password":"Password_123","privilege":"rw","readonly_policy":["master"],"remark":"app","encrypt_password":False}
+    requests=[module.build_describe(models,"crs-x"),module.build_create(models,p),module.build_update(models,p,True),module.build_delete(models,p)]
+    errors=[]
+    for i,r in enumerate(requests): errors.extend(audit_request(r,"Redis account request %s"%i))
+    assert errors==[]
+
+
+def test_postgresql_backup_plan():
+    module=_import_plugin("postgresql_backup_plan"); models=_models("postgres.v20170312"); p={"instance_id":"postgres-x","name":"prod","period_type":"week","periods":["monday"],"min_start_time":"03:00:00","max_start_time":"04:00:00","retention_days":30,"log_retention_days":7}
+    requests=[module.build_describe(models,"postgres-x"),module.build_create(models,p),module.build_update(models,p,"plan-x"),module.build_delete(models,"postgres-x","plan-x")]
+    errors=[]
+    for i,r in enumerate(requests): errors.extend(audit_request(r,"PostgreSQL backup-plan request %s"%i))
     assert errors==[]
 
 
