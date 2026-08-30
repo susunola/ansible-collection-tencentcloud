@@ -47,6 +47,7 @@ minor_changes:
   - Add Config account aggregator creation with explicit immutable membership semantics.
   - Add cross-account aggregate Config delivery management for COS and CLS targets.
   - Add EdgeOne zone lifecycle with access-mode configuration and pause-state convergence.
+  - Add EdgeOne origin-group lifecycle with exact origin-record and weight convergence.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

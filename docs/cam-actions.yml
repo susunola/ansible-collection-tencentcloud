@@ -1329,6 +1329,11 @@ modules:
   - ModifyDnsRecords
   teo_function_info:
   - DescribeFunctions
+  teo_origin_group:
+  - CreateOriginGroup
+  - DeleteOriginGroup
+  - DescribeOriginGroup
+  - ModifyOriginGroup
   teo_zone:
   - CreateZone
   - DeleteZone

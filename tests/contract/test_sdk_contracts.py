@@ -455,6 +455,7 @@ WRITE_MODULE_BUILDERS = {
     "config_alarm_policy": ["create_request", "delete_request", "list_request", "update_request"],
     "config_aggregator": ["create_request", "describe_request", "list_request"],
     "config_aggregate_delivery": ["describe_request", "update_request"],
+    "teo_origin_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "teo_zone": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
     "cvm_chc": [
         "_configure_vpc",
@@ -4891,4 +4892,14 @@ def test_lighthouse_disk():
     errors.extend(audit_request(module.attach_request(models, "lhdisk-xxxxxxxx", "lhins-xxxxxxxx", p["renew_flag"]), "Lighthouse disk attach"))
     errors.extend(audit_request(module.detach_request(models, "lhdisk-xxxxxxxx"), "Lighthouse disk detach"))
     errors.extend(audit_request(module.delete_request(models, "lhdisk-xxxxxxxx"), "Lighthouse disk delete"))
+    assert errors == []
+
+
+def test_teo_origin_group():
+    module = _import_plugin("teo_origin_group"); models = _models("teo.v20220901")
+    p = {"zone_id": "zone-xxxxxxxx", "group_id": None, "name": "app-origins", "group_type": "HTTP", "host_header": "origin.example.com", "records": [{"record": "192.0.2.10", "record_type": "IP_DOMAIN", "weight": 100}]}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "TEO origin group describe"))
+    errors.extend(audit_request(module.create_request(models, p), "TEO origin group create"))
+    errors.extend(audit_request(module.update_request(models, p, "origin-xxxxxxxx"), "TEO origin group update"))
+    errors.extend(audit_request(module.delete_request(models, p, "origin-xxxxxxxx"), "TEO origin group delete"))
     assert errors == []
