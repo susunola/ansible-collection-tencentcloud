@@ -120,6 +120,11 @@ modules:
   - AddUserToGroup
   - ListGroupsForUser
   - RemoveUserFromGroup
+  cam_oidc_provider:
+  - CreateOIDCConfig
+  - DeleteOIDCConfig
+  - DescribeOIDCConfig
+  - UpdateOIDCConfig
   cam_policy:
   - AttachResourcesTag
   - CreatePolicy
@@ -148,6 +153,11 @@ modules:
   - UpdateRoleDescription
   cam_role_info:
   - DescribeRoleList
+  cam_saml_provider:
+  - CreateSAMLProvider
+  - DeleteSAMLProvider
+  - GetSAMLProvider
+  - UpdateSAMLProvider
   cam_user:
   - AddUser
   - AttachResourcesTag

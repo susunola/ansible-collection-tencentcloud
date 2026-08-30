@@ -25,9 +25,11 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `as_scheduled_action` | Manage Tencent Cloud Auto Scaling scheduled actions |
 | `cam_group` | Manage Tencent Cloud CAM user groups |
 | `cam_group_membership` | Manage Tencent Cloud CAM user group membership |
+| `cam_oidc_provider` | Manage Tencent Cloud CAM OIDC identity providers |
 | `cam_policy` | Manage Tencent Cloud CAM policies |
 | `cam_policy_attachment` | Manage a Tencent Cloud CAM policy attachment |
 | `cam_role` | Manage Tencent Cloud CAM roles |
+| `cam_saml_provider` | Manage Tencent Cloud CAM SAML identity providers |
 | `cam_user` | Manage Tencent Cloud CAM sub-users |
 | `cbs_disk` | Manage Tencent Cloud CBS cloud disks |
 | `cbs_snapshot` | Manage Tencent Cloud CBS disk snapshots |

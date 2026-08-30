@@ -332,6 +332,8 @@ WRITE_MODULE_BUILDERS = {
     "waf_protect_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "cls_shipper": ["create_request", "delete_request", "describe_request", "update_request"],
     "tke_backup_storage_location": ["create_request", "delete_request", "describe_request"],
+    "cam_saml_provider": ["create_request", "delete_request", "get_request", "update_request"],
+    "cam_oidc_provider": ["create_request", "delete_request", "describe_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -3617,6 +3619,24 @@ def test_tcr_repository():
 
 def test_cam_policy_attachment():
     _audit_p1_resource_request_builders()
+
+
+def test_cam_saml_provider():
+    module = _import_plugin("cam_saml_provider"); models = _models("cam.v20190116")
+    p = {"name": "corporate-idp", "description": "Corporate", "metadata_document": "PHhtbD48L3htbD4="}
+    requests = [module.get_request(models, p["name"]), module.create_request(models, p), module.update_request(models, p), module.delete_request(models, p["name"])]
+    errors = []
+    for request in requests: errors.extend(audit_request(request, "CAM SAML provider request"))
+    assert errors == []
+
+
+def test_cam_oidc_provider():
+    module = _import_plugin("cam_oidc_provider"); models = _models("cam.v20190116")
+    p = {"name": "ci-workloads", "identity_url": "https://issuer.example.com", "client_ids": ["sts.tencentcloudapi.com"], "identity_key": "cHVibGljLWtleQ==", "description": "CI"}
+    requests = [module.describe_request(models, p["name"]), module.create_request(models, p), module.update_request(models, p), module.delete_request(models, p["name"])]
+    errors = []
+    for request in requests: errors.extend(audit_request(request, "CAM OIDC provider request"))
+    assert errors == []
 
 
 def test_cam_group_membership():

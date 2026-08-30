@@ -44,11 +44,13 @@ action_groups:
     - bsca_kb_component_info
     - cam_group
     - cam_group_membership
+    - cam_oidc_provider
     - cam_policy
     - cam_policy_attachment
     - cam_policy_info
     - cam_role
     - cam_role_info
+    - cam_saml_provider
     - cam_user
     - cam_user_info
     - captcha_user_all_app_id_info
