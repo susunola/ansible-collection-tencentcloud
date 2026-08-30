@@ -172,6 +172,8 @@ CORE_MODULES = {
     "gwlb_target_group",
     "gwlb_target_group_association",
     "gwlb_target_group_instances",
+    "goosefs_file_system",
+    "goosefs_fileset",
     "key_pair",
     "kms_key",
     "kms_key_rotation",

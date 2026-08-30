@@ -144,6 +144,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `elasticsearch_instance` | Manage Tencent Cloud Elasticsearch clusters |
 | `elasticsearch_snapshot` | Manage Tencent Cloud Elasticsearch cluster snapshots |
 | `gaap_proxy` | Manage Tencent Cloud GAAP proxies |
+| `goosefs_file_system` | Manage Tencent Cloud GooseFS file systems |
+| `goosefs_fileset` | Manage Tencent Cloud GooseFS filesets |
 | `gwlb_load_balancer` | Manage Tencent Cloud Gateway Load Balancers |
 | `gwlb_target_group` | Manage Tencent Cloud GWLB target groups |
 | `gwlb_target_group_association` | Manage Tencent Cloud GWLB target group associations |

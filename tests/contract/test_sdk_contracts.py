@@ -311,6 +311,8 @@ UNEXERCISED_BUILDERS = {
 # at the bottom of this file. Info-module builders are registered in
 # INFO_BUILDERS instead. Both sets are verified against the static scan.
 WRITE_MODULE_BUILDERS = {
+    "goosefs_file_system": ["create_request", "delete_request", "describe_request", "expand_request"],
+    "goosefs_fileset": ["create_request", "delete_request", "describe_request", "update_request"],
     "dc_direct_connect": ["create_request", "delete_request", "describe_request", "update_request"],
     "dc_direct_connect_tunnel": ["create_request", "delete_request", "describe_request", "update_request"],
     "gwlb_load_balancer": ["create_request", "delete_request", "describe_request", "update_request"],
@@ -5313,6 +5315,26 @@ def test_teo_origin_group():
     errors.extend(audit_request(module.create_request(models, p), "TEO origin group create"))
     errors.extend(audit_request(module.update_request(models, p, "origin-xxxxxxxx"), "TEO origin group update"))
     errors.extend(audit_request(module.delete_request(models, p, "origin-xxxxxxxx"), "TEO origin group delete"))
+    assert errors == []
+
+
+def test_goosefs_file_system():
+    module = _import_plugin("goosefs_file_system"); models = _models("goosefs.v20220519")
+    p = {"file_system_id": None, "name": "analytics-cache", "description": "analytics", "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "zone": "ap-guangzhou-3", "file_system_type": "GooseFSx", "build_elements": [{"Model": "GOOSFSX_C60", "Capacity": 10}], "capacity": 10, "security_group_id": "sg-xxxxxxxx", "cluster_port": 9200, "tags": {"env": "production"}}; errors = []
+    errors.extend(audit_request(module.describe_request(models), "GooseFS describe"))
+    errors.extend(audit_request(module.create_request(models, p), "GooseFS create"))
+    errors.extend(audit_request(module.expand_request(models, "x-c60-xxxxxxxx", 20), "GooseFS expand"))
+    errors.extend(audit_request(module.delete_request(models, "x-c60-xxxxxxxx"), "GooseFS delete"))
+    assert errors == []
+
+
+def test_goosefs_fileset():
+    module = _import_plugin("goosefs_fileset"); models = _models("goosefs.v20220519")
+    p = {"file_system_id": "x-c60-xxxxxxxx", "fileset_id": None, "name": "analytics", "directory": "/analytics", "quota_size_limit": "1099511627776", "quota_files_limit": "1000000", "audit_state": "Enabled"}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "GooseFS fileset describe"))
+    errors.extend(audit_request(module.create_request(models, p), "GooseFS fileset create"))
+    errors.extend(audit_request(module.update_request(models, p, "fset-xxxxxxxx"), "GooseFS fileset update"))
+    errors.extend(audit_request(module.delete_request(models, p, "fset-xxxxxxxx"), "GooseFS fileset delete"))
     assert errors == []
 
 

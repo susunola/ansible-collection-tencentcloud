@@ -860,8 +860,18 @@ modules:
   - DescribeProxies
   gme_voice_print_info:
   - DescribeVoicePrint
+  goosefs_file_system:
+  - CreateFileSystem
+  - DeleteFileSystem
+  - DescribeFileSystems
+  - ExpandCapacity
   goosefs_file_system_info:
   - DescribeFileSystems
+  goosefs_fileset:
+  - CreateFileset
+  - DeleteFileset
+  - DescribeFilesets
+  - UpdateFileset
   gs_android_app_info:
   - DescribeAndroidApps
   gwlb_gateway_load_balancer_info:

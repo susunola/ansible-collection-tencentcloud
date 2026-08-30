@@ -237,7 +237,9 @@ action_groups:
     - gaap_proxy
     - gaap_proxy_info
     - gme_voice_print_info
+    - goosefs_file_system
     - goosefs_file_system_info
+    - goosefs_fileset
     - gs_android_app_info
     - gwlb_gateway_load_balancer_info
     - gwlb_load_balancer
