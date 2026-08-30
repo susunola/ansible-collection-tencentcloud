@@ -102,6 +102,8 @@ CORE_MODULES = {
     "cvm_instance",
     "cynosdb_account",
     "dnspod_record",
+    "dnspod_custom_line",
+    "dnspod_line_group",
     "dnspod_domain",
     "dts_consumer_group",
     "dts_migration_job",

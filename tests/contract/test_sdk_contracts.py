@@ -334,6 +334,8 @@ WRITE_MODULE_BUILDERS = {
     "tke_backup_storage_location": ["create_request", "delete_request", "describe_request"],
     "cam_saml_provider": ["create_request", "delete_request", "get_request", "update_request"],
     "cam_oidc_provider": ["create_request", "delete_request", "describe_request", "update_request"],
+    "dnspod_custom_line": ["create_request", "delete_request", "describe_request", "update_request"],
+    "dnspod_line_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -1948,6 +1950,24 @@ def test_dnspod_record():
     module._update(fake, client, models, params, 123456789)
     module._delete(fake, client, models, params, 123456789)
     errors.extend(audit_recorded(fake, "dnspod_record"))
+    assert errors == []
+
+
+def test_dnspod_custom_line():
+    module = _import_plugin("dnspod_custom_line"); models = _models("dnspod.v20210323")
+    p = {"domain": "example.com", "domain_id": None, "name": "office", "area": "203.0.113.1-203.0.113.254"}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p), module.delete_request(models, p)]
+    errors = []
+    for request in requests: errors.extend(audit_request(request, "DNSPod custom line request"))
+    assert errors == []
+
+
+def test_dnspod_line_group():
+    module = _import_plugin("dnspod_line_group"); models = _models("dnspod.v20210323")
+    p = {"domain": "example.com", "domain_id": None, "line_group_id": 123, "name": "corporate", "lines": ["office", "vpn"]}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p, 123), module.delete_request(models, p, 123)]
+    errors = []
+    for request in requests: errors.extend(audit_request(request, "DNSPod line group request"))
     assert errors == []
 
 

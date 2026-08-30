@@ -496,12 +496,22 @@ modules:
   - DescribeDCDBInstances
   dlc_task_info:
   - DescribeTaskList
+  dnspod_custom_line:
+  - CreateDomainCustomLine
+  - DeleteDomainCustomLine
+  - DescribeDomainCustomLineList
+  - ModifyDomainCustomLine
   dnspod_domain:
   - CreateDomain
   - DeleteDomain
   - DescribeDomainList
   - ModifyDomainRemark
   - ModifyDomainStatus
+  dnspod_line_group:
+  - CreateLineGroup
+  - DeleteLineGroup
+  - DescribeLineGroupList
+  - ModifyLineGroup
   dnspod_record:
   - CreateRecord
   - DeleteRecord

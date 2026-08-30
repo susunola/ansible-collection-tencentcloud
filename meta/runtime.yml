@@ -148,7 +148,9 @@ action_groups:
     - dc_direct_connect_tunnel_info
     - dcdb_instance_info
     - dlc_task_info
+    - dnspod_custom_line
     - dnspod_domain
+    - dnspod_line_group
     - dnspod_record
     - dnspod_record_info
     - domain_batch_operation_log_info
