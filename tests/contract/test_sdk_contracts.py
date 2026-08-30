@@ -313,6 +313,8 @@ UNEXERCISED_BUILDERS = {
 WRITE_MODULE_BUILDERS = {
     "cvm_disaster_recover_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "cvm_disaster_recover_group_binding": ["bind_request", "describe_request", "unbind_request"],
+    "cvm_launch_template": ["create_request", "default_request", "delete_request", "describe_request"],
+    "cvm_launch_template_version": ["create_request", "default_request", "delete_request", "describe_request"],
     "cdb_account": ["create", "describe"],
     "cdb_account_privilege": ["describe_request", "modify_request"],
     "cdb_audit_config": ["describe_request", "modify_request"],
@@ -2819,6 +2821,24 @@ def test_tke_cluster_audit():
     requests = [module.build_describe(models, "cls-x"), module.build_enable(models, params), module.build_disable(models, params)]
     errors = []
     for index, request in enumerate(requests): errors.extend(audit_request(request, "TKE audit request %s" % index))
+    assert errors == []
+
+
+def test_cvm_launch_template():
+    module = _import_plugin("cvm_launch_template"); models = _models("cvm.v20170312")
+    p = {"template_id": "lt-xxxxxxxx", "name": "web-production", "initial_data": {"Placement": {"Zone": "ap-guangzhou-3"}, "ImageId": "img-xxxxxxxx", "InstanceType": "S5.MEDIUM4", "SecurityGroupIds": ["sg-xxxxxxxx"]}, "version_description": "initial version"}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.default_request(models, p["template_id"], 1), module.delete_request(models, p["template_id"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "CVM launch-template request %s" % index))
+    assert errors == []
+
+
+def test_cvm_launch_template_version():
+    module = _import_plugin("cvm_launch_template_version"); models = _models("cvm.v20170312")
+    p = {"template_id": "lt-xxxxxxxx", "version": None, "description": "web-v2", "template_data": {"Placement": {"Zone": "ap-guangzhou-3"}, "ImageId": "img-xxxxxxxx", "InstanceType": "S5.LARGE8"}, "base_version": 1}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.default_request(models, p, 2), module.delete_request(models, p, 2)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "CVM launch-template version request %s" % index))
     assert errors == []
 
 

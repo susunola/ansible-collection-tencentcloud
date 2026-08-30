@@ -63,6 +63,7 @@ minor_changes:
   - Add WAF anti-tamper URL lifecycle, precision allowlist rules and geographic blocking management.
   - Add WAF OWASP allowlists, automatic attack-source denial and threat-intelligence blocking management.
   - Add CVM spread and partition placement groups plus per-instance placement bindings.
+  - Add CVM launch-template lifecycle, immutable configuration versions and safe default-version promotion.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

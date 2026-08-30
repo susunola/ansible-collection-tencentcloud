@@ -592,6 +592,16 @@ modules:
   - TerminateInstances
   cvm_instance_info:
   - DescribeInstances
+  cvm_launch_template:
+  - CreateLaunchTemplate
+  - DeleteLaunchTemplate
+  - DescribeLaunchTemplates
+  - ModifyLaunchTemplateDefaultVersion
+  cvm_launch_template_version:
+  - CreateLaunchTemplateVersion
+  - DeleteLaunchTemplateVersions
+  - DescribeLaunchTemplateVersions
+  - ModifyLaunchTemplateDefaultVersion
   cwp_machine_info:
   - DescribeMachines
   cws_monitor_info:

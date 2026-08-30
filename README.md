@@ -110,6 +110,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cvm_disaster_recover_group_binding` | Bind a Tencent Cloud CVM instance to a placement group |
 | `cvm_image` | Manage Tencent Cloud CVM custom images |
 | `cvm_instance` | Manage Tencent Cloud CVM instances |
+| `cvm_launch_template` | Manage Tencent Cloud CVM launch templates |
+| `cvm_launch_template_version` | Manage Tencent Cloud CVM launch-template versions |
 | `cynosdb_account` | Manage Tencent Cloud CynosDB accounts |
 | `cynosdb_account_privilege` | Manage Tencent Cloud CynosDB account privileges |
 | `cynosdb_backup_config` | Manage Tencent Cloud CynosDB backup configuration |

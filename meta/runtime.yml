@@ -170,6 +170,8 @@ action_groups:
     - cvm_image
     - cvm_instance
     - cvm_instance_info
+    - cvm_launch_template
+    - cvm_launch_template_version
     - cwp_machine_info
     - cws_monitor_info
     - cynosdb_account
