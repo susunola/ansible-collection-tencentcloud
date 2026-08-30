@@ -627,6 +627,15 @@ modules:
   cynosdb_backup_config:
   - DescribeBackupConfig
   - ModifyBackupConfig
+  cynosdb_cluster:
+  - CreateClusters
+  - DescribeClusters
+  - IsolateCluster
+  - ModifyClusterName
+  - ModifyClusterSlaveZone
+  - ModifyClusterStorage
+  - OfflineCluster
+  - UpgradeClusterVersion
   cynosdb_cluster_info:
   - DescribeClusters
   dasb_device_info:

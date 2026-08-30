@@ -117,6 +117,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cynosdb_account` | Manage Tencent Cloud CynosDB accounts |
 | `cynosdb_account_privilege` | Manage Tencent Cloud CynosDB account privileges |
 | `cynosdb_backup_config` | Manage Tencent Cloud CynosDB backup configuration |
+| `cynosdb_cluster` | Manage Tencent Cloud CynosDB clusters |
 | `dbbrain_sql_filter` | Manage Tencent Cloud DBbrain SQL filters |
 | `dnspod_custom_line` | Manage DNSPod domain custom lines |
 | `dnspod_domain` | Manage Tencent Cloud DNSPod domains |

@@ -141,6 +141,7 @@ CORE_MODULES = {
     "cvm_hpc_cluster",
     "cvm_instance_action_timer",
     "cynosdb_account",
+    "cynosdb_cluster",
     "cynosdb_backup_config",
     "cynosdb_account_privilege",
     "dnspod_record",

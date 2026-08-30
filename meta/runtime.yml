@@ -179,6 +179,7 @@ action_groups:
     - cynosdb_account
     - cynosdb_account_privilege
     - cynosdb_backup_config
+    - cynosdb_cluster
     - cynosdb_cluster_info
     - dasb_device_info
     - dataagent_chunk_info

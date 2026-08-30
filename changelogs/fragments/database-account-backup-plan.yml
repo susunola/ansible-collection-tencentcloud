@@ -71,6 +71,7 @@ minor_changes:
   - Add PostgreSQL instance creation, resize, rename, renewal, isolation and guarded permanent destruction.
   - Add prepaid and postpaid MariaDB instance lifecycle with deployment and specification changes.
   - Add SQL Server instance lifecycle with specification and high-availability controls.
+  - Add CynosDB cluster lifecycle with storage, secondary-zone and kernel upgrades.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

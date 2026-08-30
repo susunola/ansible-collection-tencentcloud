@@ -824,6 +824,7 @@ WRITE_MODULE_BUILDERS = {
     "privatelink_endpoint": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "postgresql_account": ["build_create_request", "build_delete_request", "build_describe_request", "build_password_request", "build_remark_request"],
     "cynosdb_account": ["build_create_request", "build_delete_request", "build_describe_request", "build_description_request", "build_password_request"],
+    "cynosdb_cluster": ["create_request", "describe_request", "isolate_request", "offline_request", "rename_request", "slave_zone_request", "storage_request", "version_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
@@ -2657,6 +2658,15 @@ def test_postgresql_account():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "PostgreSQL account request %s" % index))
+    assert errors == []
+
+
+def test_cynosdb_cluster():
+    module = _import_plugin("cynosdb_cluster"); models = _models("cynosdb.v20190107")
+    p = {"cluster_id": "cynosdbmysql-x", "name": "production-cynosdb", "zone": "ap-guangzhou-3", "slave_zone": "ap-guangzhou-4", "vpc_id": "vpc-x", "subnet_id": "subnet-x", "db_type": "MYSQL", "db_version": "8.0", "cynos_version": "3.1.2", "cpu": 2, "memory": 4, "instance_count": 2, "storage": 100, "admin_password": "Secret-1234", "port": 3306, "pay_mode": 0, "period_months": 1, "auto_renew": False, "security_group_ids": ["sg-x"]}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.rename_request(models, p["cluster_id"], p["name"]), module.storage_request(models, p["cluster_id"], 50, 100), module.slave_zone_request(models, p["cluster_id"], "ap-guangzhou-3", p["slave_zone"]), module.version_request(models, p["cluster_id"], p["cynos_version"]), module.isolate_request(models, p["cluster_id"], p["db_type"]), module.offline_request(models, p["cluster_id"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "CynosDB cluster request %s" % index))
     assert errors == []
 
 
