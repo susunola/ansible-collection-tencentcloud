@@ -142,6 +142,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `security_group` | Manage Tencent Cloud security groups |
 | `security_group_rule` | Manage Tencent Cloud security group rules |
 | `sqlserver_account` | Manage TencentDB for SQL Server accounts |
+| `sqlserver_backup_config` | Manage TencentDB for SQL Server backup configuration |
 | `ssl_certificate` | Manage Tencent Cloud SSL certificates |
 | `ssm_parameter` | Manage Tencent Cloud SSM secrets (parameters) |
 | `subnet` | Manage Tencent Cloud VPC subnets |

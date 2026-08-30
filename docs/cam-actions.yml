@@ -1011,6 +1011,9 @@ modules:
   - ModifyAccountPrivilege
   - ModifyAccountRemark
   - ResetAccountPassword
+  sqlserver_backup_config:
+  - DescribeDBInstances
+  - ModifyBackupStrategy
   sqlserver_instance_info:
   - DescribeDBInstances
   ssa_check_config_asset_info:

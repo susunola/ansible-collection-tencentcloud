@@ -292,6 +292,7 @@ action_groups:
     - smh_library_info
     - sms_sign_info
     - sqlserver_account
+    - sqlserver_backup_config
     - sqlserver_instance_info
     - ssa_check_config_asset_info
     - ssl_certificate

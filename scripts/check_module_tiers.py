@@ -126,6 +126,7 @@ CORE_MODULES = {
     "mariadb_backup_config",
     "mariadb_account_privilege",
     "sqlserver_account",
+    "sqlserver_backup_config",
     "monitor_alarm_policy",
     "monitor_alarm_policy_notice",
     "monitor_prometheus_scrape_job",

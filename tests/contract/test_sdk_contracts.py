@@ -339,6 +339,7 @@ WRITE_MODULE_BUILDERS = {
     "ckafka_datahub_topic": ["create_request", "delete_request", "describe_request", "update_request"],
     "ckafka_datahub_connection": ["create_request", "delete_request", "describe_request", "list_request", "update_request"],
     "ckafka_datahub_task": ["create_request", "delete_request", "describe_request", "list_request", "pause_request", "resume_request", "update_request"],
+    "sqlserver_backup_config": ["describe_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4183,6 +4184,14 @@ def test_sqlserver_account():
     errors.extend(audit_request(module.remark_request(models, p), "sqlserver account remark"))
     errors.extend(audit_request(module.password_request(models, p), "sqlserver account password"))
     errors.extend(audit_request(module.delete_request(models, p), "sqlserver account delete"))
+    assert errors == []
+
+
+def test_sqlserver_backup_config():
+    module = _import_plugin("sqlserver_backup_config"); models = _models("sqlserver.v20180328")
+    p = {"instance_id": "mssql-xxxxxxxx", "backup_type": "weekly", "backup_hour": 3, "backup_cycle": [1, 3, 5], "backup_model": "master_pkg", "retention_days": 30}
+    errors = audit_request(module.describe_request(models, p["instance_id"]), "SQL Server backup describe")
+    errors.extend(audit_request(module.update_request(models, p), "SQL Server backup update"))
     assert errors == []
 
 
