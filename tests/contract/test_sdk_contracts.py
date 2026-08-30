@@ -308,6 +308,7 @@ WRITE_MODULE_BUILDERS = {
     "organization_member_identity": ["create_request", "delete_request", "describe_request"],
     "organization_member_policy": ["create_request", "delete_request", "describe_request", "update_request"],
     "mongodb_backup_config": ["describe_request", "set_request"],
+    "mongodb_account": ["create_request", "delete_request", "describe_request", "password_request", "privilege_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4056,6 +4057,19 @@ def test_mongodb_backup_config():
     p = {"instance_id": "cmgo-xxxxxxxx", "backup_method": 1, "backup_hour": 3, "frequency_hours": 24, "active_weekdays": [1, 3, 5], "retention_days": 30, "oplog_retention_days": 14, "backup_version": 1, "alert_threshold": 100}
     errors.extend(audit_request(module.describe_request(models, p["instance_id"]), "mongodb backup config describe"))
     errors.extend(audit_request(module.set_request(models, p), "mongodb backup config set"))
+    assert errors == []
+
+
+def test_mongodb_account():
+    module = _import_plugin("mongodb_account")
+    models = _models("mongodb.v20190725")
+    errors = []
+    p = {"instance_id": "cmgo-xxxxxxxx", "username": "app", "password": "Password_123", "mongo_user_password": "Admin_123", "description": "app", "roles": [{"namespace": "orders", "access": "read_write"}]}
+    errors.extend(audit_request(module.describe_request(models, p["instance_id"]), "mongodb account describe"))
+    errors.extend(audit_request(module.create_request(models, p), "mongodb account create"))
+    errors.extend(audit_request(module.privilege_request(models, p), "mongodb account privilege"))
+    errors.extend(audit_request(module.password_request(models, p), "mongodb account password"))
+    errors.extend(audit_request(module.delete_request(models, p), "mongodb account delete"))
     assert errors == []
 
 

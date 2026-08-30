@@ -81,6 +81,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `kms_key` | Manage a Tencent Cloud KMS key |
 | `kms_key_rotation` | Manage automatic rotation for a Tencent Cloud KMS key |
 | `lighthouse_instance` | Manage Tencent Cloud Lighthouse instances |
+| `mongodb_account` | Manage TencentDB for MongoDB accounts |
 | `mongodb_backup_config` | Manage TencentDB for MongoDB automatic backup rules |
 | `mongodb_instance` | Manage Tencent Cloud MongoDB instances |
 | `monitor_alarm_policy` | Manage a Tencent Cloud Monitor alarm policy |

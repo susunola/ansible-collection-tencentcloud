@@ -648,6 +648,12 @@ modules:
   - DescribeResourceUsageInfo
   mna_access_region_info:
   - DescribeAccessRegions
+  mongodb_account:
+  - CreateAccountUser
+  - DeleteAccountUser
+  - DescribeAccountUsers
+  - ResetDBInstancePassword
+  - SetAccountUserPrivilege
   mongodb_backup_config:
   - DescribeBackupRules
   - SetBackupRules

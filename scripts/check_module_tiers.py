@@ -109,6 +109,7 @@ CORE_MODULES = {
     "lighthouse_instance",
     "mongodb_instance",
     "mongodb_backup_config",
+    "mongodb_account",
     "monitor_alarm_policy",
     "monitor_alarm_policy_notice",
     "monitor_prometheus_scrape_job",
