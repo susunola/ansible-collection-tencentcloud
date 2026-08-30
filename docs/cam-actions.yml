@@ -1207,6 +1207,14 @@ modules:
   ssm_rotation:
   - DescribeRotationDetail
   - UpdateRotationStatus
+  ssm_secret:
+  - CreateSecret
+  - DeleteSecret
+  - DescribeSecret
+  - DisableSecret
+  - EnableSecret
+  - RestoreSecret
+  - UpdateDescription
   ssm_secret_version:
   - DeleteSecretVersion
   - GetSecretValue

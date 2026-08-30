@@ -216,6 +216,7 @@ CORE_MODULES = {
     "ssl_certificate",
     "ssm_parameter",
     "ssm_secret_version",
+    "ssm_secret",
     "ssm_rotation",
     "subnet",
     "tag",

@@ -380,6 +380,7 @@ WRITE_MODULE_BUILDERS = {
     "cbs_auto_snapshot_policy": ["bind_request", "create_request", "delete_request", "describe_request", "unbind_request", "update_request"],
     "cbs_snapshot_share": ["describe_request", "modify_request"],
     "ssm_secret_version": ["create_request", "delete_request", "get_request", "list_request"],
+    "ssm_secret": ["create_request", "delete_request", "describe_request", "description_request", "restore_request", "state_request"],
     "ssm_rotation": ["describe_request", "update_request"],
     "tat_invoker": ["create_request", "delete_request", "describe_request", "enable_request", "update_request"],
     "cbs_disk_backup": ["create_request", "delete_request", "describe_request"],
@@ -4984,6 +4985,15 @@ def test_cbs_snapshot_share():
     errors.extend(audit_request(module.describe_request(models, "snap-xxxxxxxx"), "CBS snapshot share describe"))
     errors.extend(audit_request(module.modify_request(models, "snap-xxxxxxxx", ["100001122000"], "SHARE"), "CBS snapshot share add"))
     errors.extend(audit_request(module.modify_request(models, "snap-xxxxxxxx", ["100001122000"], "CANCEL"), "CBS snapshot share remove"))
+    assert errors == []
+
+
+def test_ssm_secret():
+    module = _import_plugin("ssm_secret"); models = _models("ssm.v20190923")
+    p = {"secret_name": "prod-database", "initial_version_id": "bootstrap", "description": "Production database", "initial_secret_string": "secret", "initial_secret_binary": None, "kms_key_id": "key-xxxxxxxx", "kms_hsm_cluster_id": None, "encrypt_type": 0, "recovery_window_days": 7}
+    requests = [module.describe_request(models, p["secret_name"]), module.create_request(models, p), module.description_request(models, p), module.state_request(models, p["secret_name"], True), module.state_request(models, p["secret_name"], False), module.restore_request(models, p["secret_name"]), module.delete_request(models, p)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "SSM secret request %s" % index))
     assert errors == []
 
 

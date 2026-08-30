@@ -346,6 +346,7 @@ action_groups:
     - sslpod_domain_info
     - ssm_parameter
     - ssm_rotation
+    - ssm_secret
     - ssm_secret_version
     - subnet
     - subnet_info
