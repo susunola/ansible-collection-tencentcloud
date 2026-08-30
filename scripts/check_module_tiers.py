@@ -185,6 +185,7 @@ CORE_MODULES = {
     "vdb_instance",
     "tdcpg_cluster",
     "thpc_cluster",
+    "tdmysql_db_instance",
     "monitor_prometheus_record_rule",
     "monitor_prometheus_alert_group",
     "monitor_prometheus_instance",

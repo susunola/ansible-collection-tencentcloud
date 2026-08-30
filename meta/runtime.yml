@@ -396,6 +396,7 @@ action_groups:
     - tdmq_rocketmq_topic
     - tdmq_subscription
     - tdmq_topic
+    - tdmysql_db_instance
     - tdmysql_db_instance_info
     - tem_application_info
     - teo_acceleration_domain

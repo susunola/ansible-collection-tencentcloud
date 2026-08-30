@@ -835,6 +835,7 @@ WRITE_MODULE_BUILDERS = {
     "tdcpg_cluster": ["create_instances_request", "create_request", "delete_instances_request", "delete_request", "describe_request", "instances_request", "isolate_request", "rename_request", "renew_request", "resize_request"],
     "vdb_instance": ["create_request", "describe_request", "destroy_request", "isolate_request", "recover_request", "scale_out_request", "scale_up_request", "security_groups_request"],
     "thpc_cluster": ["create_request", "delete_request", "deletion_protection_request", "describe_request"],
+    "tdmysql_db_instance": ["create_request", "describe_request", "destroy_request", "detail_request", "expand_request", "isolate_request", "recover_request", "rename_request", "renew_request", "security_groups_describe_request", "security_groups_request", "upgrade_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
@@ -2695,6 +2696,16 @@ def test_thpc_cluster():
     requests = [module.describe_request(models, p), module.create_request(models, p), module.deletion_protection_request(models, p["cluster_id"], True), module.delete_request(models, p["cluster_id"])]
     errors = []
     for index, request in enumerate(requests): errors.extend(audit_request(request, "THPC cluster request %s" % index))
+    assert errors == []
+
+
+def test_tdmysql_db_instance():
+    module = _import_plugin("tdmysql_db_instance"); models = _models("tdmysql.v20211122")
+    p = {"instance_id": "tdmysql-x", "name": "production-tdmysql", "zone": "ap-guangzhou-3", "zones": ["ap-guangzhou-3", "ap-guangzhou-4"], "vpc_id": "vpc-x", "subnet_id": "subnet-x", "spec_code": "tdsql.mysql.x4.medium", "disk": 200, "storage_node_count": 3, "replications": 3, "full_replications": 1, "storage_node_cpu": 4, "storage_node_memory": 16, "storage_type": "CLOUD_HSSD", "instance_type": "separate", "instance_mode": "standard", "sql_mode": "MySQL", "create_version": "8.0", "instance_count": 1, "pay_mode": "0", "period_months": 1, "az_mode": 3, "primary_zone": "ap-guangzhou-3", "port": 3306, "template_id": "tpl-x", "init_params": {"character_set_server": "utf8mb4"}, "auto_scale_min": None, "auto_scale_max": None, "security_group_ids": ["sg-x"], "username": "dbaadmin", "password": "Secret-1234", "encryption": True, "tags": {"environment": "production"}}
+    current = {"SpecCode": p["spec_code"], "Disk": p["disk"], "StorageNodeCpu": p["storage_node_cpu"], "StorageNodeMem": p["storage_node_memory"], "StorageType": p["storage_type"]}
+    requests = [module.describe_request(models, p), module.detail_request(models, p["instance_id"]), module.security_groups_describe_request(models, p["instance_id"]), module.create_request(models, p), module.expand_request(models, p, p["instance_id"], 4), module.upgrade_request(models, p, p["instance_id"], current), module.rename_request(models, p["instance_id"], p["name"]), module.isolate_request(models, p["instance_id"]), module.recover_request(models, p["instance_id"]), module.destroy_request(models, p["instance_id"]), module.renew_request(models, p["instance_id"], True), module.security_groups_request(models, p["instance_id"], p["security_group_ids"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "TDMysql instance request %s" % index))
     assert errors == []
 
 

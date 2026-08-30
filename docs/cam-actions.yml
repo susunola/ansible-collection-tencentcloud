@@ -1452,6 +1452,19 @@ modules:
   - DeleteTopics
   - DescribeTopics
   - ModifyTopic
+  tdmysql_db_instance:
+  - CancelIsolateDBInstances
+  - CreateDBInstances
+  - DescribeDBInstanceDetail
+  - DescribeDBInstances
+  - DescribeDBSecurityGroups
+  - DestroyInstances
+  - ExpandInstance
+  - IsolateDBInstance
+  - ModifyAutoRenewFlag
+  - ModifyDBInstanceSecurityGroups
+  - ModifyInstanceName
+  - UpgradeInstance
   tdmysql_db_instance_info:
   - DescribeDBInstances
   tem_application_info:
