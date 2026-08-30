@@ -646,6 +646,9 @@ modules:
   - DescribeAccounts
   - ModifyAccountDescription
   - ResetAccountPassword
+  mariadb_account_privilege:
+  - DescribeAccountPrivileges
+  - GrantAccountPrivileges
   mariadb_backup_config:
   - DescribeBackupConfigs
   - ModifyBackupConfigs

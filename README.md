@@ -82,6 +82,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `kms_key_rotation` | Manage automatic rotation for a Tencent Cloud KMS key |
 | `lighthouse_instance` | Manage Tencent Cloud Lighthouse instances |
 | `mariadb_account` | Manage TencentDB for MariaDB accounts |
+| `mariadb_account_privilege` | Manage a scoped TencentDB for MariaDB account privilege set |
 | `mariadb_backup_config` | Manage TencentDB for MariaDB automatic backup configuration |
 | `mongodb_account` | Manage TencentDB for MongoDB accounts |
 | `mongodb_backup_config` | Manage TencentDB for MongoDB automatic backup rules |

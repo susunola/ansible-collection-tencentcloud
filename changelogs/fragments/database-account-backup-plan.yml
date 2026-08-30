@@ -10,3 +10,4 @@ minor_changes:
   - "Add SQL Server account, database privilege, remark and password lifecycle management."
   - "Add MariaDB account creation, description update, password rotation and deletion."
   - "Add MariaDB automatic backup retention, window, weekday and archive configuration."
+  - "Add declarative scoped MariaDB account privilege reconciliation."

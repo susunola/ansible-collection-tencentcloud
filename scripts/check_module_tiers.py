@@ -112,6 +112,7 @@ CORE_MODULES = {
     "mongodb_account",
     "mariadb_account",
     "mariadb_backup_config",
+    "mariadb_account_privilege",
     "sqlserver_account",
     "monitor_alarm_policy",
     "monitor_alarm_policy_notice",
