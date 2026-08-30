@@ -45,6 +45,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cfw_address_template` | Manage Tencent Cloud Cloud Firewall address templates |
 | `ckafka_acl` | Manage Tencent Cloud CKafka ACL entries |
 | `ckafka_topic` | Manage Tencent Cloud CKafka topics |
+| `ckafka_user` | Manage Tencent Cloud CKafka users |
 | `clb_listener` | Manage listeners on Tencent Cloud CLB load balancers |
 | `clb_listener_target` | Manage backend targets of Tencent Cloud CLB listeners |
 | `clb_load_balancer` | Manage Tencent Cloud CLB load balancers |

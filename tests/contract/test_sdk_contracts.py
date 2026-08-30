@@ -314,6 +314,7 @@ WRITE_MODULE_BUILDERS = {
     "mariadb_backup_config": ["describe_request", "modify_request"],
     "mariadb_account_privilege": ["describe_request", "grant_request"],
     "elasticsearch_index": ["create_request", "delete_request", "describe_request", "update_request"],
+    "ckafka_user": ["create_request", "delete_request", "describe_request", "password_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4135,6 +4136,18 @@ def test_elasticsearch_index():
     errors.extend(audit_request(module.create_request(models, p), "elasticsearch index create"))
     errors.extend(audit_request(module.update_request(models, p), "elasticsearch index update"))
     errors.extend(audit_request(module.delete_request(models, p), "elasticsearch index delete"))
+    assert errors == []
+
+
+def test_ckafka_user():
+    module = _import_plugin("ckafka_user")
+    models = _models("ckafka.v20190819")
+    errors = []
+    p = {"instance_id": "ckafka-xxxxxxxx", "name": "producer", "password": "Password_123", "current_password": "OldPassword_123"}
+    errors.extend(audit_request(module.describe_request(models, p), "ckafka user describe"))
+    errors.extend(audit_request(module.create_request(models, p), "ckafka user create"))
+    errors.extend(audit_request(module.password_request(models, p), "ckafka user password"))
+    errors.extend(audit_request(module.delete_request(models, p), "ckafka user delete"))
     assert errors == []
 
 

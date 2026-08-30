@@ -77,6 +77,7 @@ CORE_MODULES = {
     "cls_topic",
     "cloudaudit_track",
     "ckafka_topic",
+    "ckafka_user",
     "ckafka_acl",
     "clb_listener",
     "clb_listener_target",

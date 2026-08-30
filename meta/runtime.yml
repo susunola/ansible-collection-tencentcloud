@@ -87,6 +87,7 @@ action_groups:
     - ckafka_acl
     - ckafka_instance_info
     - ckafka_topic
+    - ckafka_user
     - clb_listener
     - clb_listener_target
     - clb_load_balancer

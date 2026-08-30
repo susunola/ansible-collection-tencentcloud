@@ -282,6 +282,11 @@ modules:
   - DescribeTopic
   - DescribeTopicAttributes
   - ModifyTopicAttributes
+  ckafka_user:
+  - CreateUser
+  - DeleteUser
+  - DescribeUser
+  - ModifyPassword
   clb_listener:
   - CreateListener
   - DeleteListener
