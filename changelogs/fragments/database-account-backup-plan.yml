@@ -81,6 +81,7 @@ minor_changes:
   - Add TSE service-registry engine lifecycle with Apollo topology and client internet access.
   - Add TDSQL-C PostgreSQL cluster lifecycle with instance topology and specification reconciliation.
   - Add VectorDB instance lifecycle with vertical scaling, replica expansion and security groups.
+  - Add THPC cluster lifecycle with complete node topology and explicit deletion-protection control.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

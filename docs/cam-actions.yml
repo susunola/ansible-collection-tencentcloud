@@ -1509,6 +1509,11 @@ modules:
   - DescribeZones
   - ModifyZone
   - ModifyZoneStatus
+  thpc_cluster:
+  - CreateCluster
+  - DeleteCluster
+  - DescribeClusters
+  - ModifyClusterDeletionProtection
   thpc_cluster_info:
   - DescribeClusters
   tia_job_info:

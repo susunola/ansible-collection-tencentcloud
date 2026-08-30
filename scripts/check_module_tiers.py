@@ -184,6 +184,7 @@ CORE_MODULES = {
     "tse_sre_instance",
     "vdb_instance",
     "tdcpg_cluster",
+    "thpc_cluster",
     "monitor_prometheus_record_rule",
     "monitor_prometheus_alert_group",
     "monitor_prometheus_instance",

@@ -411,6 +411,7 @@ action_groups:
     - teo_security_template_binding
     - teo_web_security_template
     - teo_zone
+    - thpc_cluster
     - thpc_cluster_info
     - tia_job_info
     - tiia_group_info

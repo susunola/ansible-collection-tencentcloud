@@ -834,6 +834,7 @@ WRITE_MODULE_BUILDERS = {
     "tse_sre_instance": ["create_request", "delete_request", "describe_request", "internet_request"],
     "tdcpg_cluster": ["create_instances_request", "create_request", "delete_instances_request", "delete_request", "describe_request", "instances_request", "isolate_request", "rename_request", "renew_request", "resize_request"],
     "vdb_instance": ["create_request", "describe_request", "destroy_request", "isolate_request", "recover_request", "scale_out_request", "scale_up_request", "security_groups_request"],
+    "thpc_cluster": ["create_request", "delete_request", "deletion_protection_request", "describe_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
@@ -2685,6 +2686,15 @@ def test_vdb_instance():
     requests = [module.describe_request(models, p), module.create_request(models, p), module.scale_out_request(models, p["instance_id"], 3), module.scale_up_request(models, p, p["instance_id"]), module.security_groups_request(models, p["instance_id"], p["security_group_ids"]), module.isolate_request(models, p["instance_id"]), module.recover_request(models, p["instance_id"], 1), module.destroy_request(models, p["instance_id"])]
     errors = []
     for index, request in enumerate(requests): errors.extend(audit_request(request, "VectorDB instance request %s" % index))
+    assert errors == []
+
+
+def test_thpc_cluster():
+    module = _import_plugin("thpc_cluster"); models = _models("thpc.v20230321")
+    p = {"cluster_id": "x-hpc", "name": "production-hpc", "zone": "ap-guangzhou-3", "manager_node": {"instance_type": "S5.LARGE8", "system_disk": {"disk_type": "CLOUD_PREMIUM", "disk_size": 100}}, "manager_node_count": 1, "compute_node": {"instance_type": "HCCPNV5.24XLARGE384", "instance_charge_type": "POSTPAID_BY_HOUR"}, "compute_node_count": 2, "login_node": {"instance_type": "S5.LARGE8"}, "login_node_count": 1, "scheduler_type": "SLURM", "scheduler_version": "latest", "image_id": "img-x", "vpc_id": "vpc-x", "subnet_id": "subnet-x", "login_password": None, "login_key_ids": ["skey-x"], "security_group_ids": ["sg-x"], "client_token": "contract-token", "account_type": "NIS", "storage_option": None, "tags": {"environment": "production"}, "auto_scaling_type": "THPC_AS", "init_node_scripts": [{"script_path": "cos://bucket/init.sh", "timeout": 60}], "hpc_cluster_id": "hpc-x"}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.deletion_protection_request(models, p["cluster_id"], True), module.delete_request(models, p["cluster_id"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "THPC cluster request %s" % index))
     assert errors == []
 
 
