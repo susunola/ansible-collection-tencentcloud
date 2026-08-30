@@ -143,6 +143,7 @@ CORE_MODULES = {
     "cvm_instance_action_timer",
     "cynosdb_account",
     "cynosdb_cluster",
+    "dcdb_instance",
     "cynosdb_backup_config",
     "cynosdb_account_privilege",
     "dnspod_record",

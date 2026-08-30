@@ -826,6 +826,7 @@ WRITE_MODULE_BUILDERS = {
     "cynosdb_account": ["build_create_request", "build_delete_request", "build_describe_request", "build_description_request", "build_password_request"],
     "cynosdb_cluster": ["create_request", "describe_request", "isolate_request", "offline_request", "rename_request", "slave_zone_request", "storage_request", "version_request"],
     "ckafka_instance": ["attributes_request", "create_postpaid_request", "create_prepaid_request", "delete_postpaid_request", "delete_prepaid_request", "list_request", "modify_request", "resize_request"],
+    "dcdb_instance": ["create_hour_request", "create_prepaid_request", "describe_request", "destroy_request", "isolate_request", "rename_request", "upgrade_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
@@ -2668,6 +2669,16 @@ def test_postgresql_account():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "PostgreSQL account request %s" % index))
+    assert errors == []
+
+
+def test_dcdb_instance():
+    module = _import_plugin("dcdb_instance"); models = _models("dcdb.v20180411")
+    p = {"instance_id": "dcdbt-x", "name": "production-dcdb", "zones": ["ap-guangzhou-3", "ap-guangzhou-4"], "vpc_id": "vpc-x", "subnet_id": "subnet-x", "db_version": "8.0", "shard_memory": 8, "shard_storage": 100, "shard_node_count": 2, "shard_count": 4, "shard_cpu": 4, "period_months": 1, "auto_renew": False, "security_group_ids": ["sg-x"], "ipv6": False}
+    current = {"InstanceId": p["instance_id"], "ShardDetail": [{"ShardInstanceId": "shard-x"}]}
+    requests = [module.describe_request(models, p), module.create_prepaid_request(models, p), module.create_hour_request(models, p), module.rename_request(models, p["instance_id"], p["name"]), module.upgrade_request(models, p, current, hourly=True), module.upgrade_request(models, p, current, 2, False), module.isolate_request(models, p["instance_id"], True), module.isolate_request(models, p["instance_id"], False), module.destroy_request(models, p["instance_id"], True), module.destroy_request(models, p["instance_id"], False)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "DCDB instance request %s" % index))
     assert errors == []
 
 

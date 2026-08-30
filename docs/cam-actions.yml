@@ -665,6 +665,17 @@ modules:
   - DescribeBackupPlans
   dc_direct_connect_tunnel_info:
   - DescribeDirectConnectTunnels
+  dcdb_instance:
+  - CreateDCDBInstance
+  - CreateHourDCDBInstance
+  - DescribeDCDBInstances
+  - DestroyDCDBInstance
+  - DestroyHourDCDBInstance
+  - IsolateDCDBInstance
+  - IsolateHourDCDBInstance
+  - ModifyDBInstanceName
+  - UpgradeDCDBInstance
+  - UpgradeHourDCDBInstance
   dcdb_instance_info:
   - DescribeDCDBInstances
   dlc_task_info:
