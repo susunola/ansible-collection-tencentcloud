@@ -203,6 +203,7 @@ action_groups:
     - lowcode_knowledge_set_info
     - mall_draw_resource_info
     - mariadb_account
+    - mariadb_backup_config
     - mariadb_instance_info
     - memcached_instance_info
     - mmps_resource_usage_info

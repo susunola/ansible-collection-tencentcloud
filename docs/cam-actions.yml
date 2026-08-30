@@ -646,6 +646,9 @@ modules:
   - DescribeAccounts
   - ModifyAccountDescription
   - ResetAccountPassword
+  mariadb_backup_config:
+  - DescribeBackupConfigs
+  - ModifyBackupConfigs
   mariadb_instance_info:
   - DescribeDBInstances
   memcached_instance_info:

@@ -311,6 +311,7 @@ WRITE_MODULE_BUILDERS = {
     "mongodb_account": ["create_request", "delete_request", "describe_request", "password_request", "privilege_request"],
     "sqlserver_account": ["create_request", "delete_request", "describe_request", "password_request", "privilege_request", "remark_request"],
     "mariadb_account": ["create_request", "delete_request", "describe_request", "description_request", "password_request"],
+    "mariadb_backup_config": ["describe_request", "modify_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4099,6 +4100,16 @@ def test_mariadb_account():
     errors.extend(audit_request(module.description_request(models, p), "mariadb account description"))
     errors.extend(audit_request(module.password_request(models, p), "mariadb account password"))
     errors.extend(audit_request(module.delete_request(models, p), "mariadb account delete"))
+    assert errors == []
+
+
+def test_mariadb_backup_config():
+    module = _import_plugin("mariadb_backup_config")
+    models = _models("mariadb.v20170312")
+    errors = []
+    p = {"instance_id": "tdsql-xxxxxxxx", "retention_days": 30, "start_time": "02:00", "end_time": "03:00", "weekdays": ["Monday", "Wednesday", "Friday"], "archive_after_days": -1}
+    errors.extend(audit_request(module.describe_request(models, p["instance_id"]), "mariadb backup config describe"))
+    errors.extend(audit_request(module.modify_request(models, p), "mariadb backup config modify"))
     assert errors == []
 
 
