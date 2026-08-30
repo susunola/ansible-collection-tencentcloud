@@ -331,6 +331,7 @@ WRITE_MODULE_BUILDERS = {
     "mongodb_backup_config": ["describe_request", "set_request"],
     "mongodb_account": ["create_request", "delete_request", "describe_request", "password_request", "privilege_request"],
     "sqlserver_account": ["create_request", "delete_request", "describe_request", "password_request", "privilege_request", "remark_request"],
+    "sqlserver_instance": ["create_request", "describe_request", "destroy_request", "isolate_request", "rename_request", "renew_request", "resize_request", "security_groups_request"],
     "mariadb_account": ["create_request", "delete_request", "describe_request", "description_request", "password_request"],
     "mariadb_backup_config": ["describe_request", "modify_request"],
     "mariadb_instance": ["create_hour_request", "create_prepaid_request", "describe_request", "destroy_request", "isolate_request", "rename_request", "resize_hour_request", "resize_prepaid_request"],
@@ -4507,6 +4508,15 @@ def test_mongodb_account():
     errors.extend(audit_request(module.privilege_request(models, p), "mongodb account privilege"))
     errors.extend(audit_request(module.password_request(models, p), "mongodb account password"))
     errors.extend(audit_request(module.delete_request(models, p), "mongodb account delete"))
+    assert errors == []
+
+
+def test_sqlserver_instance():
+    module = _import_plugin("sqlserver_instance"); models = _models("sqlserver.v20180328")
+    p = {"instance_id": "mssql-xxxxxxxx", "name": "production-sqlserver", "zone": "ap-guangzhou-3", "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "memory": 8, "storage": 100, "cpu": 4, "db_version": "2019", "charge_type": "POSTPAID", "period_months": 1, "auto_renew": False, "security_group_ids": ["sg-xxxxxxxx"], "ha_type": "DUAL", "secondary_zones": ["ap-guangzhou-4"]}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.rename_request(models, p["instance_id"], p["name"]), module.resize_request(models, p, p["instance_id"]), module.security_groups_request(models, p["instance_id"], p["security_group_ids"]), module.renew_request(models, p["instance_id"], True), module.isolate_request(models, p["instance_id"]), module.destroy_request(models, p["instance_id"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "SQL Server instance request %s" % index))
     assert errors == []
 
 

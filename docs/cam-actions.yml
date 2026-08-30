@@ -1204,6 +1204,13 @@ modules:
   sqlserver_backup_config:
   - DescribeDBInstances
   - ModifyBackupStrategy
+  sqlserver_instance:
+  - CreateDBInstances
+  - DeleteDBInstance
+  - DescribeDBInstances
+  - ModifyDBInstanceName
+  - TerminateDBInstance
+  - UpgradeDBInstance
   sqlserver_instance_info:
   - DescribeDBInstances
   ssa_check_config_asset_info:

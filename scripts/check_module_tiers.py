@@ -171,6 +171,7 @@ CORE_MODULES = {
     "mariadb_instance",
     "mariadb_account_privilege",
     "sqlserver_account",
+    "sqlserver_instance",
     "sqlserver_backup_config",
     "monitor_alarm_policy",
     "monitor_alarm_policy_notice",
