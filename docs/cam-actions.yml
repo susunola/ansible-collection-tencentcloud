@@ -767,6 +767,15 @@ modules:
   - DescribeApplications
   hasim_link_info:
   - DescribeLinks
+  havip:
+  - CreateHaVip
+  - DeleteHaVip
+  - DescribeHaVips
+  - ModifyHaVipAttribute
+  havip_association:
+  - AssociateHaVipInstance
+  - DescribeHaVips
+  - DisassociateHaVipInstance
   hunyuan_glossary_info:
   - ListGlossary
   iai_group_info:

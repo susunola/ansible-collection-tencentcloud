@@ -129,6 +129,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `elasticsearch_instance` | Manage Tencent Cloud Elasticsearch clusters |
 | `elasticsearch_snapshot` | Manage Tencent Cloud Elasticsearch cluster snapshots |
 | `gaap_proxy` | Manage Tencent Cloud GAAP proxies |
+| `havip` | Manage Tencent Cloud VPC high-availability virtual IPs |
+| `havip_association` | Manage Tencent Cloud HAVIP drift-scope associations |
 | `key_pair` | Manage Tencent Cloud CVM key pairs |
 | `kms_key` | Manage a Tencent Cloud KMS key |
 | `kms_key_rotation` | Manage automatic rotation for a Tencent Cloud KMS key |

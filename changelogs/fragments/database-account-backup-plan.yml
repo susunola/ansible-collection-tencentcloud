@@ -65,6 +65,7 @@ minor_changes:
   - Add CVM spread and partition placement groups plus per-instance placement bindings.
   - Add CVM launch-template lifecycle, immutable configuration versions and safe default-version promotion.
   - Add CVM HPC cluster lifecycle and declarative per-instance scheduled termination timers.
+  - Add VPC HAVIP lifecycle and exact CVM or ENI drift-scope associations.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

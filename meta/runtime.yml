@@ -227,6 +227,8 @@ action_groups:
     - gwlb_gateway_load_balancer_info
     - hai_application_info
     - hasim_link_info
+    - havip
+    - havip_association
     - hunyuan_glossary_info
     - iai_group_info
     - iap_login_session_duration_info

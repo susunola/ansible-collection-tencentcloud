@@ -311,6 +311,8 @@ UNEXERCISED_BUILDERS = {
 # at the bottom of this file. Info-module builders are registered in
 # INFO_BUILDERS instead. Both sets are verified against the static scan.
 WRITE_MODULE_BUILDERS = {
+    "havip": ["create_request", "delete_request", "describe_request", "update_request"],
+    "havip_association": ["associate_request", "describe_request", "disassociate_request"],
     "cvm_disaster_recover_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "cvm_disaster_recover_group_binding": ["bind_request", "describe_request", "unbind_request"],
     "cvm_launch_template": ["create_request", "default_request", "delete_request", "describe_request"],
@@ -2823,6 +2825,24 @@ def test_tke_cluster_audit():
     requests = [module.build_describe(models, "cls-x"), module.build_enable(models, params), module.build_disable(models, params)]
     errors = []
     for index, request in enumerate(requests): errors.extend(audit_request(request, "TKE audit request %s" % index))
+    assert errors == []
+
+
+def test_havip():
+    module = _import_plugin("havip"); models = _models("vpc.v20170312")
+    p = {"havip_id": "havip-xxxxxxxx", "name": "database-vip", "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "vip": "10.0.1.100", "check_associate": True}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p["havip_id"], p["name"]), module.delete_request(models, p["havip_id"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "HAVIP request %s" % index))
+    assert errors == []
+
+
+def test_havip_association():
+    module = _import_plugin("havip_association"); models = _models("vpc.v20170312")
+    p = {"havip_id": "havip-xxxxxxxx", "instance_id": "ins-xxxxxxxx", "instance_type": "CVM"}
+    requests = [module.describe_request(models, p["havip_id"]), module.associate_request(models, p), module.disassociate_request(models, p)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "HAVIP association request %s" % index))
     assert errors == []
 
 
