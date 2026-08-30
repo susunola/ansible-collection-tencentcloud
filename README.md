@@ -90,6 +90,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `eip` | Manage Tencent Cloud elastic IP addresses (EIP) |
 | `elasticsearch_index` | Manage indexes in Tencent Cloud Elasticsearch Service |
 | `elasticsearch_instance` | Manage Tencent Cloud Elasticsearch clusters |
+| `elasticsearch_snapshot` | Manage Tencent Cloud Elasticsearch cluster snapshots |
 | `gaap_proxy` | Manage Tencent Cloud GAAP proxies |
 | `key_pair` | Manage Tencent Cloud CVM key pairs |
 | `kms_key` | Manage a Tencent Cloud KMS key |

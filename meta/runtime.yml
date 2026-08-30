@@ -172,6 +172,7 @@ action_groups:
     - eis_runtime_deployed_instances_mc_info
     - elasticsearch_index
     - elasticsearch_instance
+    - elasticsearch_snapshot
     - emr_node_data_disk_info
     - es_cluster_info
     - ess_file_url_info

@@ -116,6 +116,7 @@ CORE_MODULES = {
     "eip",
     "elasticsearch_instance",
     "elasticsearch_index",
+    "elasticsearch_snapshot",
     "gaap_proxy",
     "key_pair",
     "kms_key",

@@ -342,6 +342,7 @@ WRITE_MODULE_BUILDERS = {
     "sqlserver_backup_config": ["describe_request", "update_request"],
     "cynosdb_backup_config": ["describe_request", "update_request"],
     "cynosdb_account_privilege": ["describe_request", "update_request"],
+    "elasticsearch_snapshot": ["create_request", "delete_request", "describe_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4256,6 +4257,15 @@ def test_elasticsearch_index():
     errors.extend(audit_request(module.create_request(models, p), "elasticsearch index create"))
     errors.extend(audit_request(module.update_request(models, p), "elasticsearch index update"))
     errors.extend(audit_request(module.delete_request(models, p), "elasticsearch index delete"))
+    assert errors == []
+
+
+def test_elasticsearch_snapshot():
+    module = _import_plugin("elasticsearch_snapshot"); models = _models("es.v20180416")
+    p = {"instance_id": "es-xxxxxxxx", "repository_name": "repo", "name": "before-upgrade", "indices": ["orders"], "repository_type": 1, "storage_days": 30, "lock_retention": False, "retain_until": None, "retention_grace_days": 0, "remote_cos": False, "remote_region": None, "multi_az": False, "max_snapshot_per_sec": "40m"}
+    errors = audit_request(module.describe_request(models, p), "Elasticsearch snapshot describe")
+    errors.extend(audit_request(module.create_request(models, p), "Elasticsearch snapshot create"))
+    errors.extend(audit_request(module.delete_request(models, p), "Elasticsearch snapshot delete"))
     assert errors == []
 
 

@@ -594,6 +594,10 @@ modules:
   - DeleteInstance
   - DescribeInstances
   - UpdateInstance
+  elasticsearch_snapshot:
+  - CreateClusterSnapshot
+  - DeleteClusterSnapshot
+  - DescribeClusterSnapshot
   emr_node_data_disk_info:
   - DescribeNodeDataDisks
   es_cluster_info:
