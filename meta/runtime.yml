@@ -263,6 +263,7 @@ action_groups:
     - mariadb_account
     - mariadb_account_privilege
     - mariadb_backup_config
+    - mariadb_instance
     - mariadb_instance_info
     - memcached_instance_info
     - mmps_resource_usage_info

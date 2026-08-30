@@ -886,6 +886,17 @@ modules:
   mariadb_backup_config:
   - DescribeBackupConfigs
   - ModifyBackupConfigs
+  mariadb_instance:
+  - CreateDBInstance
+  - CreateHourDBInstance
+  - DescribeDBInstances
+  - DestroyDBInstance
+  - DestroyHourDBInstance
+  - IsolateDBInstance
+  - IsolateHourDBInstance
+  - ModifyDBInstanceName
+  - UpgradeDBInstance
+  - UpgradeHourDBInstance
   mariadb_instance_info:
   - DescribeDBInstances
   memcached_instance_info:

@@ -142,6 +142,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `mariadb_account` | Manage TencentDB for MariaDB accounts |
 | `mariadb_account_privilege` | Manage a scoped TencentDB for MariaDB account privilege set |
 | `mariadb_backup_config` | Manage TencentDB for MariaDB automatic backup configuration |
+| `mariadb_instance` | Manage Tencent Cloud MariaDB instances |
 | `mongodb_account` | Manage TencentDB for MongoDB accounts |
 | `mongodb_backup_config` | Manage TencentDB for MongoDB automatic backup rules |
 | `mongodb_instance` | Manage Tencent Cloud MongoDB instances |

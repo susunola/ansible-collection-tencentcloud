@@ -333,6 +333,7 @@ WRITE_MODULE_BUILDERS = {
     "sqlserver_account": ["create_request", "delete_request", "describe_request", "password_request", "privilege_request", "remark_request"],
     "mariadb_account": ["create_request", "delete_request", "describe_request", "description_request", "password_request"],
     "mariadb_backup_config": ["describe_request", "modify_request"],
+    "mariadb_instance": ["create_hour_request", "create_prepaid_request", "describe_request", "destroy_request", "isolate_request", "rename_request", "resize_hour_request", "resize_prepaid_request"],
     "mariadb_account_privilege": ["describe_request", "grant_request"],
     "elasticsearch_index": ["create_request", "delete_request", "describe_request", "update_request"],
     "ckafka_user": ["create_request", "delete_request", "describe_request", "password_request"],
@@ -4528,6 +4529,15 @@ def test_sqlserver_backup_config():
     p = {"instance_id": "mssql-xxxxxxxx", "backup_type": "weekly", "backup_hour": 3, "backup_cycle": [1, 3, 5], "backup_model": "master_pkg", "retention_days": 30}
     errors = audit_request(module.describe_request(models, p["instance_id"]), "SQL Server backup describe")
     errors.extend(audit_request(module.update_request(models, p), "SQL Server backup update"))
+    assert errors == []
+
+
+def test_mariadb_instance():
+    module = _import_plugin("mariadb_instance"); models = _models("mariadb.v20170312")
+    p = {"instance_id": "tdsql-xxxxxxxx", "name": "production-mariadb", "zones": ["ap-guangzhou-3", "ap-guangzhou-4"], "node_count": 2, "memory": 8, "storage": 100, "db_version": "10.1", "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "period_months": 1, "auto_renew": False, "security_group_ids": ["sg-xxxxxxxx"], "ipv6": False}
+    requests = [module.describe_request(models, p), module.create_hour_request(models, p), module.create_prepaid_request(models, p), module.rename_request(models, p["instance_id"], p["name"]), module.resize_hour_request(models, p, p["instance_id"]), module.resize_prepaid_request(models, p, p["instance_id"]), module.isolate_request(models, p["instance_id"], True), module.isolate_request(models, p["instance_id"], False), module.destroy_request(models, p["instance_id"], True), module.destroy_request(models, p["instance_id"], False)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "MariaDB instance request %s" % index))
     assert errors == []
 
 

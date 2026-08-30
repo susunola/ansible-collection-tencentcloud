@@ -69,6 +69,7 @@ minor_changes:
   - Add reusable VPC address templates and exact address-template group membership.
   - Add complete SSM custom-secret lifecycle with initial material, enablement, recovery and scheduled deletion.
   - Add PostgreSQL instance creation, resize, rename, renewal, isolation and guarded permanent destruction.
+  - Add prepaid and postpaid MariaDB instance lifecycle with deployment and specification changes.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

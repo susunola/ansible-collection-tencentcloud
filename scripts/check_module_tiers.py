@@ -168,6 +168,7 @@ CORE_MODULES = {
     "mongodb_account",
     "mariadb_account",
     "mariadb_backup_config",
+    "mariadb_instance",
     "mariadb_account_privilege",
     "sqlserver_account",
     "sqlserver_backup_config",
