@@ -146,6 +146,7 @@ action_groups:
     - controlcenter_account_factory_baseline_item_info
     - cos_bucket
     - cos_bucket_domain
+    - cos_bucket_domain_certificate
     - cos_bucket_encryption
     - cos_bucket_info
     - cos_bucket_intelligent_tiering

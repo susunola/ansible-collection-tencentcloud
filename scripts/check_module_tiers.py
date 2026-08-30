@@ -108,6 +108,7 @@ CORE_MODULES = {
     "cos_bucket_inventory",
     "cos_bucket_referer",
     "cos_bucket_domain",
+    "cos_bucket_domain_certificate",
     "config_rule",
     "config_recorder",
     "config_delivery",

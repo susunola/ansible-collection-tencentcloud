@@ -92,6 +92,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `config_rule` | Manage Tencent Cloud Config compliance rules |
 | `cos_bucket` | Manage Tencent Cloud COS buckets |
 | `cos_bucket_domain` | Manage Tencent Cloud COS custom domains |
+| `cos_bucket_domain_certificate` | Manage Tencent Cloud COS custom-domain certificates |
 | `cos_bucket_encryption` | Manage Tencent Cloud COS default bucket encryption |
 | `cos_bucket_intelligent_tiering` | Manage Tencent Cloud COS bucket intelligent tiering |
 | `cos_bucket_inventory` | Manage Tencent Cloud COS bucket inventory rules |
