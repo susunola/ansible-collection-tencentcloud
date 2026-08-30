@@ -181,6 +181,7 @@ CORE_MODULES = {
     "monitor_prometheus_scrape_job",
     "oceanus_workspace",
     "oceanus_job",
+    "tse_sre_instance",
     "monitor_prometheus_record_rule",
     "monitor_prometheus_alert_group",
     "monitor_prometheus_instance",

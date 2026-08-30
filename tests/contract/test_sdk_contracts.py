@@ -831,6 +831,7 @@ WRITE_MODULE_BUILDERS = {
     "tdmq_rabbitmq_instance": ["create_request", "delete_request", "describe_request", "modify_request"],
     "oceanus_workspace": ["create_request", "delete_request", "describe_request", "modify_request"],
     "oceanus_job": ["create_request", "delete_request", "describe_request", "modify_request", "run_request", "stop_request"],
+    "tse_sre_instance": ["create_request", "delete_request", "describe_request", "internet_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
@@ -2673,6 +2674,15 @@ def test_postgresql_account():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "PostgreSQL account request %s" % index))
+    assert errors == []
+
+
+def test_tse_sre_instance():
+    module = _import_plugin("tse_sre_instance"); models = _models("tse.v20201207")
+    p = {"instance_id": "ins-x", "name": "production-apollo", "region": "ap-guangzhou", "engine_type": "apollo", "engine_version": "2.2.0", "product_version": "STANDARD", "resource_spec": "spec-x", "node_count": 3, "vpc_id": "vpc-x", "subnet_id": "subnet-x", "zone_ids": [100003], "storage_type": "CLOUD_PREMIUM", "storage_capacity": 50, "storage_option": [1], "admin_name": "admin", "admin_password": "Secret-1234", "admin_token": "token-x", "apollo_environments": [{"name": "prod", "resource_spec": "spec-x", "node_count": 3, "storage_capacity": 35, "vpc_id": "vpc-x", "subnet_id": "subnet-x", "description": "Production"}], "tags": {"environment": "production"}}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.internet_request(models, p["instance_id"], p["engine_type"], True), module.delete_request(models, p["instance_id"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "TSE registry engine request %s" % index))
     assert errors == []
 
 

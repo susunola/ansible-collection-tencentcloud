@@ -430,6 +430,7 @@ action_groups:
     - trp_code_batch_info
     - trro_device_info
     - trtc_call_info
+    - tse_sre_instance
     - tse_sre_instance_info
     - tsf_application_info
     - vcube_resource_info

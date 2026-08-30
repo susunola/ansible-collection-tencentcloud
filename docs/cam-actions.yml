@@ -1554,6 +1554,11 @@ modules:
   - DescribeDeviceList
   trtc_call_info:
   - DescribeCallDetailInfo
+  tse_sre_instance:
+  - CreateEngine
+  - DeleteEngine
+  - DescribeSREInstances
+  - UpdateEngineInternetAccess
   tse_sre_instance_info:
   - DescribeSREInstances
   tsf_application_info:
