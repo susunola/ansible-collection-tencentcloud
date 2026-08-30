@@ -360,6 +360,7 @@ WRITE_MODULE_BUILDERS = {
     "cbs_snapshot_share": ["describe_request", "modify_request"],
     "ssm_secret_version": ["create_request", "delete_request", "get_request", "list_request"],
     "ssm_rotation": ["describe_request", "update_request"],
+    "tat_invoker": ["create_request", "delete_request", "describe_request", "enable_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4660,4 +4661,16 @@ def test_ssm_rotation():
     p = {"secret_name": "prod/database", "enabled": True, "frequency": 30, "begin_time": "2026-09-01T02:00:00Z"}; errors = []
     errors.extend(audit_request(module.describe_request(models, p["secret_name"]), "SSM rotation describe"))
     errors.extend(audit_request(module.update_request(models, p), "SSM rotation update"))
+    assert errors == []
+
+
+def test_tat_invoker():
+    module = _import_plugin("tat_invoker"); models = _models("tat.v20201028")
+    p = {"invoker_id": None, "name": "nightly", "command_id": "cmd-xxxxxxxx", "instance_ids": ["ins-xxxxxxxx"], "username": "root", "parameters": {"environment": "production"}, "policy": "RECURRENCE", "recurrence": "0 2 * * *", "invoke_time": None, "enabled": True}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "TAT invoker describe"))
+    errors.extend(audit_request(module.create_request(models, p), "TAT invoker create"))
+    errors.extend(audit_request(module.update_request(models, p, "ivk-xxxxxxxx"), "TAT invoker update"))
+    errors.extend(audit_request(module.enable_request(models, "ivk-xxxxxxxx", True), "TAT invoker enable"))
+    errors.extend(audit_request(module.enable_request(models, "ivk-xxxxxxxx", False), "TAT invoker disable"))
+    errors.extend(audit_request(module.delete_request(models, "ivk-xxxxxxxx"), "TAT invoker delete"))
     assert errors == []

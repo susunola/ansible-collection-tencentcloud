@@ -191,6 +191,7 @@ CORE_MODULES = {
     "subnet",
     "tag",
     "tat_command",
+    "tat_invoker",
     "tdmq_topic",
     "tdmq_namespace",
     "tdmq_namespace_role",

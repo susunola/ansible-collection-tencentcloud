@@ -26,6 +26,7 @@ minor_changes:
   - Add CBS automatic snapshot policy lifecycle with exact-set cloud-disk bindings.
   - Add exact-set CBS snapshot sharing permission management.
   - Add SSM explicit secret-version lifecycle and automatic rotation configuration.
+  - Add scheduled TAT invoker lifecycle with secret-safe parameter comparison and enablement control.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

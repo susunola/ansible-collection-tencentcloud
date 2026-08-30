@@ -165,6 +165,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `subnet` | Manage Tencent Cloud VPC subnets |
 | `tag` | Manage tags on arbitrary Tencent Cloud resources |
 | `tat_command` | Manage Tencent Cloud TAT commands |
+| `tat_invoker` | Manage Tencent Cloud TAT scheduled invokers |
 | `tcr_instance` | Manage Tencent Cloud TCR enterprise instances |
 | `tcr_namespace` | Manage Tencent Cloud TCR namespaces |
 | `tcr_replication_instance` | Manage Tencent Cloud TCR replication instances |

@@ -1106,6 +1106,13 @@ modules:
   - ModifyCommand
   tat_command_info:
   - DescribeCommands
+  tat_invoker:
+  - CreateInvoker
+  - DeleteInvoker
+  - DescribeInvokers
+  - DisableInvoker
+  - EnableInvoker
+  - ModifyInvoker
   tbaas_block_info:
   - GetBlockList
   tcaplusdb_cluster_info:
