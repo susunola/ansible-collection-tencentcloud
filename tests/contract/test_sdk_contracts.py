@@ -838,6 +838,9 @@ WRITE_MODULE_BUILDERS = {
     "tdmysql_db_instance": ["create_request", "describe_request", "destroy_request", "detail_request", "expand_request", "isolate_request", "recover_request", "rename_request", "renew_request", "security_groups_describe_request", "security_groups_request", "upgrade_request"],
     "dbdc_db_custom_cluster": ["add_nodes_request", "attributes_request", "create_request", "describe_request", "destroy_request", "detail_request", "nodes_request", "remove_nodes_request", "tags_request", "task_request"],
     "cdwch_instance": ["create_request", "describe_request", "destroy_request", "detail_request", "resize_disk_request", "scale_nodes_request", "scale_spec_request"],
+    "trabbit_serverless_vhost": ["create_request", "delete_request", "describe_request", "update_request"],
+    "trabbit_serverless_user": ["create_request", "delete_request", "describe_request", "update_request"],
+    "trabbit_serverless_permission": ["delete_request", "describe_request", "modify_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
@@ -2727,6 +2730,22 @@ def test_cdwch_instance():
     errors = []
     for index, request in enumerate(requests): errors.extend(audit_request(request, "TCHouse-C instance request %s" % index))
     assert errors == []
+
+
+def _check_trabbit_serverless_identity_resources():
+    models = _models("trabbit.v20230418")
+    vhost = _import_plugin("trabbit_serverless_vhost"); vp = {"instance_id": "amqp-x", "name": "production", "description": "Production", "trace_enabled": True, "apply_trace": True, "mirror_queue_policy": True}
+    user = _import_plugin("trabbit_serverless_user"); up = {"instance_id": "amqp-x", "name": "application", "password": "Secret-1234", "rotate_password": True, "description": "Application", "tags": ["management"], "max_connections": 100, "max_channels": 200}
+    permission = _import_plugin("trabbit_serverless_permission"); pp = {"instance_id": "amqp-x", "user": "application", "virtual_host": "production", "configure_regex": ".*", "write_regex": ".*", "read_regex": ".*"}
+    requests = [vhost.describe_request(models, vp), vhost.create_request(models, vp), vhost.update_request(models, vp), vhost.delete_request(models, vp), user.describe_request(models, up), user.create_request(models, up), user.update_request(models, up), user.delete_request(models, up), permission.describe_request(models, pp), permission.modify_request(models, pp), permission.delete_request(models, pp)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "RabbitMQ Serverless identity request %s" % index))
+    assert errors == []
+
+
+def test_trabbit_serverless_vhost(): _check_trabbit_serverless_identity_resources()
+def test_trabbit_serverless_user(): _check_trabbit_serverless_identity_resources()
+def test_trabbit_serverless_permission(): _check_trabbit_serverless_identity_resources()
 
 
 def test_tdcpg_cluster():

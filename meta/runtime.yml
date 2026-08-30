@@ -431,6 +431,9 @@ action_groups:
     - tokenhub_model_info
     - tourism_draw_resource_info
     - trabbit_rabbit_mq_serverless_instance_info
+    - trabbit_serverless_permission
+    - trabbit_serverless_user
+    - trabbit_serverless_vhost
     - trocket_consumer_client_info
     - trp_code_batch_info
     - trro_device_info
