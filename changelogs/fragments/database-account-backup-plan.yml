@@ -11,3 +11,4 @@ minor_changes:
   - "Add MariaDB account creation, description update, password rotation and deletion."
   - "Add MariaDB automatic backup retention, window, weekday and archive configuration."
   - "Add declarative scoped MariaDB account privilege reconciliation."
+  - "Add Elasticsearch index lifecycle with service-added metadata tolerance."

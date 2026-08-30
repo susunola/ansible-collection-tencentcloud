@@ -157,6 +157,7 @@ action_groups:
     - eip
     - eip_info
     - eis_runtime_deployed_instances_mc_info
+    - elasticsearch_index
     - elasticsearch_instance
     - emr_node_data_disk_info
     - es_cluster_info

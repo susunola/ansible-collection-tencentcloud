@@ -520,6 +520,11 @@ modules:
   - DescribeAddresses
   eis_runtime_deployed_instances_mc_info:
   - ListRuntimeDeployedInstancesMC
+  elasticsearch_index:
+  - CreateIndex
+  - DeleteIndex
+  - DescribeIndexMeta
+  - UpdateIndex
   elasticsearch_instance:
   - CreateInstance
   - DeleteInstance

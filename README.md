@@ -75,6 +75,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `dts_consumer_group` | Manage Tencent Cloud DTS consumer groups |
 | `dts_migration_job` | Manage Tencent Cloud DTS migration jobs |
 | `eip` | Manage Tencent Cloud elastic IP addresses (EIP) |
+| `elasticsearch_index` | Manage indexes in Tencent Cloud Elasticsearch Service |
 | `elasticsearch_instance` | Manage Tencent Cloud Elasticsearch clusters |
 | `gaap_proxy` | Manage Tencent Cloud GAAP proxies |
 | `key_pair` | Manage Tencent Cloud CVM key pairs |

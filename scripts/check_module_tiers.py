@@ -102,6 +102,7 @@ CORE_MODULES = {
     "dbbrain_sql_filter",
     "eip",
     "elasticsearch_instance",
+    "elasticsearch_index",
     "gaap_proxy",
     "key_pair",
     "kms_key",

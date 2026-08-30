@@ -313,6 +313,7 @@ WRITE_MODULE_BUILDERS = {
     "mariadb_account": ["create_request", "delete_request", "describe_request", "description_request", "password_request"],
     "mariadb_backup_config": ["describe_request", "modify_request"],
     "mariadb_account_privilege": ["describe_request", "grant_request"],
+    "elasticsearch_index": ["create_request", "delete_request", "describe_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4122,6 +4123,18 @@ def test_mariadb_account_privilege():
     errors.extend(audit_request(module.describe_request(models, p), "mariadb account privilege describe"))
     errors.extend(audit_request(module.grant_request(models, p, ["SELECT", "INSERT"]), "mariadb account privilege grant"))
     errors.extend(audit_request(module.grant_request(models, p, []), "mariadb account privilege clear"))
+    assert errors == []
+
+
+def test_elasticsearch_index():
+    module = _import_plugin("elasticsearch_index")
+    models = _models("es.v20180416")
+    errors = []
+    p = {"instance_id": "es-xxxxxxxx", "name": "orders", "index_type": "normal", "metadata": {"settings": {"number_of_shards": 3}, "mappings": {"properties": {"order_id": {"type": "keyword"}}}}, "username": "elastic", "password": "Password_123"}
+    errors.extend(audit_request(module.describe_request(models, p), "elasticsearch index describe"))
+    errors.extend(audit_request(module.create_request(models, p), "elasticsearch index create"))
+    errors.extend(audit_request(module.update_request(models, p), "elasticsearch index update"))
+    errors.extend(audit_request(module.delete_request(models, p), "elasticsearch index delete"))
     assert errors == []
 
 
