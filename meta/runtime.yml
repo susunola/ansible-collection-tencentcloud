@@ -320,6 +320,7 @@ action_groups:
     - tdmq_rabbitmq_vhost
     - tdmq_rocketmq_group
     - tdmq_rocketmq_namespace
+    - tdmq_rocketmq_permission
     - tdmq_rocketmq_role
     - tdmq_rocketmq_topic
     - tdmq_subscription

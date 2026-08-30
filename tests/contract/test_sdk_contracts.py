@@ -327,6 +327,7 @@ WRITE_MODULE_BUILDERS = {
     "tdmq_rocketmq_topic": ["create_request", "delete_request", "describe_request", "update_request"],
     "tdmq_rocketmq_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "tdmq_rocketmq_role": ["create_request", "delete_request", "describe_request", "update_request"],
+    "tdmq_rocketmq_permission": ["create_request", "delete_request", "describe_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4301,6 +4302,18 @@ def test_tdmq_rocketmq_role():
     errors.extend(audit_request(module.create_request(models, p), "tdmq rocketmq role create"))
     errors.extend(audit_request(module.update_request(models, p), "tdmq rocketmq role update"))
     errors.extend(audit_request(module.delete_request(models, p), "tdmq rocketmq role delete"))
+    assert errors == []
+
+
+def test_tdmq_rocketmq_permission():
+    module = _import_plugin("tdmq_rocketmq_permission")
+    models = _models("tdmq.v20200217")
+    errors = []
+    p = {"cluster_id": "rocketmq-xxxxxxxx", "namespace": "production", "role_name": "order-service", "permissions": ["produce", "consume"]}
+    errors.extend(audit_request(module.describe_request(models, p), "tdmq rocketmq permission describe"))
+    errors.extend(audit_request(module.create_request(models, p), "tdmq rocketmq permission create"))
+    errors.extend(audit_request(module.update_request(models, p), "tdmq rocketmq permission update"))
+    errors.extend(audit_request(module.delete_request(models, p), "tdmq rocketmq permission delete"))
     assert errors == []
 
 

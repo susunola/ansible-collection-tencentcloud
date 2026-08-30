@@ -1093,6 +1093,11 @@ modules:
   - DeleteRocketMQNamespace
   - DescribeRocketMQNamespaces
   - ModifyRocketMQNamespace
+  tdmq_rocketmq_permission:
+  - CreateRocketMQEnvironmentRole
+  - DeleteRocketMQEnvironmentRoles
+  - DescribeRocketMQEnvironmentRoles
+  - ModifyRocketMQEnvironmentRole
   tdmq_rocketmq_role:
   - CreateRocketMQRole
   - DeleteRocketMQRoles

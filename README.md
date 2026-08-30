@@ -152,6 +152,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tdmq_rabbitmq_vhost` | Manage TDMQ RabbitMQ virtual hosts |
 | `tdmq_rocketmq_group` | Manage TDMQ RocketMQ consumer groups |
 | `tdmq_rocketmq_namespace` | Manage TDMQ RocketMQ namespaces |
+| `tdmq_rocketmq_permission` | Manage TDMQ RocketMQ namespace role permissions |
 | `tdmq_rocketmq_role` | Manage TDMQ RocketMQ roles |
 | `tdmq_rocketmq_topic` | Manage TDMQ RocketMQ topics |
 | `tdmq_subscription` | Manage Tencent Cloud TDMQ Pulsar subscriptions |
