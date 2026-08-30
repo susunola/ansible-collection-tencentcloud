@@ -53,6 +53,7 @@ minor_changes:
   - Add EdgeOne web security template lifecycle while preserving independently managed policy rules.
   - Add exact EdgeOne web security template domain-binding reconciliation with explicit unbind policy.
   - Add exact EdgeOne L7 custom security rule reconciliation across zone, template and host scopes.
+  - Add EdgeOne managed WAF lifecycle with group overrides, automatic updates and high-frequency scanning protection.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

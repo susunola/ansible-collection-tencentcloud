@@ -1349,6 +1349,9 @@ modules:
   - DescribeSecurityIPGroupContent
   - DescribeSecurityIPGroupInfo
   - ModifySecurityIPGroup
+  teo_security_managed_rules:
+  - DescribeSecurityPolicy
+  - ModifySecurityPolicy
   teo_security_template_binding:
   - BindSecurityTemplateToEntity
   - DescribeSecurityTemplateBindings
