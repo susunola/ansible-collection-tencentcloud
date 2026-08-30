@@ -29,6 +29,7 @@ minor_changes:
   - Add scheduled TAT invoker lifecycle with secret-safe parameter comparison and enablement control.
   - Add CBS cloud-disk backup point lifecycle with NORMAL-state convergence and safe replacement.
   - Add exact-set Lighthouse instance firewall rule management with version-aware writes.
+  - Add Lighthouse instance snapshot lifecycle with rename and NORMAL-state convergence.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

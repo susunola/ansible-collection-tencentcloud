@@ -363,6 +363,7 @@ WRITE_MODULE_BUILDERS = {
     "tat_invoker": ["create_request", "delete_request", "describe_request", "enable_request", "update_request"],
     "cbs_disk_backup": ["create_request", "delete_request", "describe_request"],
     "lighthouse_firewall_rules": ["create_request", "delete_request", "describe_request"],
+    "lighthouse_snapshot": ["create_request", "delete_request", "describe_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4693,4 +4694,14 @@ def test_lighthouse_firewall_rules():
     errors.extend(audit_request(module.describe_request(models, "lhins-xxxxxxxx"), "Lighthouse firewall describe"))
     errors.extend(audit_request(module.create_request(models, "lhins-xxxxxxxx", rules, 1), "Lighthouse firewall create"))
     errors.extend(audit_request(module.delete_request(models, "lhins-xxxxxxxx", rules, 1), "Lighthouse firewall delete"))
+    assert errors == []
+
+
+def test_lighthouse_snapshot():
+    module = _import_plugin("lighthouse_snapshot"); models = _models("lighthouse.v20200324")
+    p = {"snapshot_id": None, "instance_id": "lhins-xxxxxxxx", "name": "before-upgrade"}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "Lighthouse snapshot describe"))
+    errors.extend(audit_request(module.create_request(models, p), "Lighthouse snapshot create"))
+    errors.extend(audit_request(module.update_request(models, "lhsnap-xxxxxxxx", p["name"]), "Lighthouse snapshot update"))
+    errors.extend(audit_request(module.delete_request(models, "lhsnap-xxxxxxxx"), "Lighthouse snapshot delete"))
     assert errors == []

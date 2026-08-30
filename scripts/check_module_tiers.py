@@ -136,6 +136,7 @@ CORE_MODULES = {
     "kms_key_rotation",
     "lighthouse_instance",
     "lighthouse_firewall_rules",
+    "lighthouse_snapshot",
     "mongodb_instance",
     "mongodb_backup_config",
     "mongodb_account",

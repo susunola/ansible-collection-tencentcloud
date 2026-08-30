@@ -743,6 +743,11 @@ modules:
   - StopInstances
   lighthouse_instance_info:
   - DescribeInstances
+  lighthouse_snapshot:
+  - CreateInstanceSnapshot
+  - DeleteSnapshots
+  - DescribeSnapshots
+  - ModifySnapshotAttribute
   live_audit_keyword_info:
   - DescribeAuditKeywords
   lke_app_knowledge_info:
