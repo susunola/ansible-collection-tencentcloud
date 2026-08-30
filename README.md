@@ -14,7 +14,12 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | Module | Purpose |
 | --- | --- |
 | `api_gateway_api` | Manage Tencent Cloud API Gateway APIs |
+| `api_gateway_api_key` | Manage Tencent Cloud API Gateway API keys |
 | `api_gateway_service` | Manage Tencent Cloud API Gateway services |
+| `api_gateway_service_release` | Manage Tencent Cloud API Gateway service releases |
+| `api_gateway_usage_plan` | Manage Tencent Cloud API Gateway usage plans |
+| `api_gateway_usage_plan_binding` | Bind API Gateway usage plans to service environments or APIs |
+| `api_gateway_usage_plan_key_binding` | Bind API Gateway keys to usage plans |
 | `as_scaling_group` | Manage Tencent Cloud Auto Scaling groups |
 | `as_scaling_policy` | Manage Tencent Cloud Auto Scaling policies |
 | `as_scheduled_action` | Manage Tencent Cloud Auto Scaling scheduled actions |
@@ -41,6 +46,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `clb_rule` | Manage Tencent Cloud CLB L7 forwarding rules |
 | `clb_target_group` | Manage Tencent Cloud CLB target groups and members |
 | `cloudaudit_track` | Manage Tencent Cloud CloudAudit tracks |
+| `cls_config` | Manage Tencent Cloud CLS collection configurations |
+| `cls_config_machine_group_binding` | Bind CLS collection configurations to machine groups |
 | `cls_index` | Manage Tencent Cloud CLS topic indexes |
 | `cls_logset` | Manage Tencent Cloud CLS logsets |
 | `cls_machine_group` | Manage Tencent Cloud CLS machine groups |
@@ -50,6 +57,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cmq_topic` | Manage Tencent Cloud CMQ topics |
 | `config_rule` | Manage Tencent Cloud Config compliance rules |
 | `cos_bucket` | Manage Tencent Cloud COS buckets |
+| `cos_bucket_policy` | Manage Tencent Cloud COS bucket policies |
+| `cos_bucket_replication` | Manage Tencent Cloud COS bucket replication |
 | `customer_gateway` | Manage Tencent Cloud VPN customer gateways |
 | `cvm_chc` | Manage Tencent Cloud CHC physical server network configuration |
 | `cvm_image` | Manage Tencent Cloud CVM custom images |
@@ -70,6 +79,14 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `mongodb_instance` | Manage Tencent Cloud MongoDB instances |
 | `monitor_alarm_policy` | Manage a Tencent Cloud Monitor alarm policy |
 | `monitor_alarm_policy_notice` | Manage notification bindings for a Cloud Monitor alarm policy |
+| `monitor_grafana_instance` | Manage Tencent Cloud Managed Grafana instances |
+| `monitor_grafana_integration` | Manage Tencent Cloud Managed Grafana integrations |
+| `monitor_prometheus_alert_group` | Manage Tencent Cloud Managed Prometheus alert groups |
+| `monitor_prometheus_cluster_agent` | Manage Managed Prometheus cluster agents |
+| `monitor_prometheus_grafana_binding` | Bind Managed Prometheus and Grafana instances |
+| `monitor_prometheus_instance` | Manage Tencent Cloud pay-as-you-go Managed Prometheus instances |
+| `monitor_prometheus_record_rule` | Manage Tencent Cloud Managed Prometheus recording rules |
+| `monitor_prometheus_scrape_job` | Manage Tencent Cloud Managed Prometheus scrape jobs |
 | `nat_gateway` | Manage Tencent Cloud NAT gateways |
 | `nat_gateway_rule` | Manage Tencent Cloud NAT gateway DNAT and SNAT rules |
 | `network_acl` | Manage Tencent Cloud VPC network ACLs |
@@ -106,11 +123,16 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `teo_dns_record` | Manage Tencent Cloud TEO DNS records |
 | `tke_addon` | Manage a Tencent Kubernetes Engine addon |
 | `tke_cluster` | Manage Tencent Cloud TKE clusters |
+| `tke_cluster_audit` | Manage Tencent Cloud TKE cluster audit logging |
+| `tke_cluster_authentication` | Manage Tencent Cloud TKE cluster authentication options |
+| `tke_cluster_endpoint` | Manage Tencent Cloud TKE cluster access endpoints |
 | `tke_node_pool` | Manage Tencent Cloud TKE cluster node pools |
 | `vpc` | Manage Tencent Cloud VPCs |
 | `vpc_flow_log` | Manage Tencent Cloud VPC flow logs |
 | `vpn_connection` | Manage Tencent Cloud IPsec VPN connections |
 | `vpn_gateway` | Manage Tencent Cloud VPN gateways |
+| `waf_custom_rule` | Manage Tencent Cloud WAF custom rules |
+| `waf_host` | Manage Tencent Cloud WAF protected hosts |
 | `waf_ip_access_control` | Manage Tencent Cloud WAF IP access-control rules |
 
 Read-only `_info` modules (return `changed=false`):

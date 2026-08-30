@@ -261,6 +261,8 @@ MODULE_UTILS_DIR = os.path.join(CLOUD_DIR, "plugins", "module_utils")
 NO_API3_CONTRACT = {
     "cos_bucket": "cos_bucket uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
     "cos_bucket_info": "cos_bucket_info uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
+    "cos_bucket_policy": "cos_bucket_policy uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
+    "cos_bucket_replication": "cos_bucket_replication uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
 }
 
 # Individual builders that exist but cannot be exercised by the contract
@@ -298,6 +300,26 @@ UNEXERCISED_BUILDERS = {
 # at the bottom of this file. Info-module builders are registered in
 # INFO_BUILDERS instead. Both sets are verified against the static scan.
 WRITE_MODULE_BUILDERS = {
+    "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
+    "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
+    "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
+    "api_gateway_usage_plan_binding": ["build_change", "build_describe"],
+    "api_gateway_usage_plan_key_binding": ["build_bind", "build_describe", "build_unbind"],
+    "cls_config": ["build_create", "build_delete", "build_describe", "build_update"],
+    "cls_config_machine_group_binding": ["build_apply", "build_describe", "build_remove"],
+    "tke_cluster_endpoint": ["build_create", "build_delete", "build_describe", "build_status"],
+    "tke_cluster_authentication": ["build_describe", "build_modify"],
+    "tke_cluster_audit": ["build_describe", "build_disable", "build_enable"],
+    "waf_host": ["build_create", "build_delete", "build_get", "build_update"],
+    "waf_custom_rule": ["build_create", "build_delete", "build_list", "build_update"],
+    "monitor_prometheus_scrape_job": ["build_create", "build_delete", "build_describe", "build_update"],
+    "monitor_prometheus_record_rule": ["build_create", "build_delete", "build_describe", "build_update"],
+    "monitor_prometheus_alert_group": ["build_create", "build_delete", "build_describe", "build_update"],
+    "monitor_prometheus_instance": ["build_create", "build_delete", "build_describe", "build_update"],
+    "monitor_prometheus_cluster_agent": ["build_create", "build_delete", "build_describe"],
+    "monitor_grafana_instance": ["build_create", "build_delete", "build_describe", "build_update"],
+    "monitor_prometheus_grafana_binding": ["build_bind", "build_describe", "build_unbind"],
+    "monitor_grafana_integration": ["build_create", "build_delete", "build_describe", "build_update"],
     "cam_policy": [
         "_apply_tags",
         "_create",
@@ -2544,6 +2566,188 @@ def test_api_gateway_service():
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "API Gateway service request %s" % index))
     assert errors == []
+
+
+def _api_gateway_resource_family_requests():
+    models = _models("apigateway.v20180808")
+    release = _import_plugin("api_gateway_service_release")
+    usage = _import_plugin("api_gateway_usage_plan")
+    binding = _import_plugin("api_gateway_usage_plan_binding")
+    release_params = {"service_id": "service-x", "environment": "release", "description": "production"}
+    usage_params = {"name": "clients", "description": "production clients", "qps": 100, "max_request_num": 1000000}
+    binding_params = {"usage_plan_id": "usagePlan-x", "service_id": "service-x", "environment": "release", "api_id": "api-x"}
+    requests = [
+        release.build_describe(models, "service-x"),
+        release.build_release(models, release_params),
+        release.build_unrelease(models, release_params),
+        usage.build_get(models, "usagePlan-x"),
+        usage.build_list(models, "clients"),
+        usage.build_create(models, usage_params),
+        usage.build_update(models, usage_params, "usagePlan-x"),
+        usage.build_delete(models, "usagePlan-x"),
+        binding.build_describe(models, "usagePlan-x"),
+        binding.build_change(models, binding_params),
+        binding.build_change(models, binding_params, unbind=True),
+    ]
+    return requests
+
+
+def _audit_api_gateway_resource_family():
+    errors = []
+    requests = _api_gateway_resource_family_requests()
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "API Gateway resource-family request %s" % index))
+    assert errors == []
+
+
+def test_api_gateway_service_release():
+    _audit_api_gateway_resource_family()
+
+
+def test_api_gateway_usage_plan():
+    _audit_api_gateway_resource_family()
+
+
+def test_api_gateway_usage_plan_binding():
+    _audit_api_gateway_resource_family()
+
+
+def test_cls_config():
+    module = _import_plugin("cls_config")
+    models = _models("cls.v20201016")
+    params = {"name": "nginx", "topic_id": "topic-x", "path": "/var/log/nginx/access.log", "log_type": "minimalist_log", "extract_rule": None, "exclude_paths": [], "user_define_rule": None, "advanced_config": None, "input_type": None}
+    requests = [module.build_describe(models, "nginx"), module.build_create(models, params), module.build_update(models, params, "config-x"), module.build_delete(models, "config-x")]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "CLS config request %s" % index))
+    assert errors == []
+
+
+def test_cls_config_machine_group_binding():
+    module = _import_plugin("cls_config_machine_group_binding")
+    models = _models("cls.v20201016")
+    requests = [module.build_describe(models, "group-x"), module.build_apply(models, "config-x", "group-x"), module.build_remove(models, "config-x", "group-x")]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "CLS config binding request %s" % index))
+    assert errors == []
+
+
+def test_api_gateway_api_key():
+    module = _import_plugin("api_gateway_api_key"); models = _models("apigateway.v20180808")
+    params = {"name": "client", "key_type": "manual", "access_key_id": "AKIDexample", "access_key_secret": "secret_example"}
+    requests = [module.build_get(models, "AKIDexample"), module.build_list(models, "client"), module.build_create(models, params), module.build_update(models, "AKIDexample", "secret_example"), module.build_delete(models, "AKIDexample")]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "API Gateway API key request %s" % index))
+    assert errors == []
+
+
+def test_api_gateway_usage_plan_key_binding():
+    module = _import_plugin("api_gateway_usage_plan_key_binding"); models = _models("apigateway.v20180808")
+    requests = [module.build_describe(models, "usagePlan-x"), module.build_bind(models, "usagePlan-x", "AKIDexample"), module.build_unbind(models, "usagePlan-x", "AKIDexample")]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "API Gateway key binding request %s" % index))
+    assert errors == []
+
+
+def test_tke_cluster_endpoint():
+    module = _import_plugin("tke_cluster_endpoint"); models = _models("tke.v20180525")
+    params = {"cluster_id": "cls-x", "access": "public", "subnet_id": None, "domain": None, "security_group_id": "sg-x", "load_balancer_id": None, "extensive_parameters": {"InternetAccessible": {"InternetChargeType": "TRAFFIC_POSTPAID_BY_HOUR", "InternetMaxBandwidthOut": 10}}}
+    requests = [module.build_describe(models, "cls-x"), module.build_status(models, "cls-x", True), module.build_create(models, params), module.build_delete(models, params)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "TKE endpoint request %s" % index))
+    assert errors == []
+
+
+def test_tke_cluster_authentication():
+    module = _import_plugin("tke_cluster_authentication"); models = _models("tke.v20180525")
+    params = {"cluster_id": "cls-x", "service_accounts": {"UseTKEDefault": True, "AutoCreateDiscoveryAnonymousAuth": True}, "oidc": {"AutoCreateOIDCConfig": True, "AutoCreateClientId": ["kubernetes"], "AutoInstallPodIdentityWebhookAddon": True}}
+    requests = [module.build_describe(models, "cls-x"), module.build_modify(models, params)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "TKE authentication request %s" % index))
+    assert errors == []
+
+
+def test_tke_cluster_audit():
+    module = _import_plugin("tke_cluster_audit"); models = _models("tke.v20180525")
+    params = {"cluster_id": "cls-x", "logset_id": "logset-x", "topic_id": "topic-x", "topic_region": "ap-guangzhou", "delete_logset_and_topic": False}
+    requests = [module.build_describe(models, "cls-x"), module.build_enable(models, params), module.build_disable(models, params)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "TKE audit request %s" % index))
+    assert errors == []
+
+
+def test_waf_host():
+    module = _import_plugin("waf_host"); models = _models("waf.v20180125")
+    params = {"instance_id": "waf-x", "domain": "api.example.com", "domain_id": "domain-x", "host": {"Domain": "api.example.com", "Edition": "clb-waf", "Region": "ap-guangzhou", "LoadBalancerSet": [], "FlowMode": 1}, "tags": {"env": "prod"}}
+    requests = [module.build_get(models, params), module.build_create(models, params), module.build_update(models, params), module.build_delete(models, params)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "WAF host request %s" % index))
+    assert errors == []
+
+
+def test_waf_custom_rule():
+    module = _import_plugin("waf_custom_rule"); models = _models("waf.v20180125")
+    params = {"domain": "api.example.com", "name": "block-admin", "edition": "sparta-waf", "priority": 10, "action": "1", "strategies": [{"Field": "URI", "CompareFunc": "contains", "Content": "/admin", "CaseNotSensitive": 1}], "logical_operator": "and", "redirect": "", "expire_time": 0, "action_ratio": 100}
+    requests = [module.build_list(models, params), module.build_create(models, params), module.build_update(models, params, 123), module.build_delete(models, params, 123)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "WAF custom rule request %s" % index))
+    assert errors == []
+
+
+def test_monitor_prometheus_scrape_job():
+    module = _import_plugin("monitor_prometheus_scrape_job"); models = _models("monitor.v20180724")
+    params = {"instance_id": "prom-x", "agent_id": "agent-x", "job_id": "job-x", "name": "application", "config": "job_name: application"}
+    requests = [module.build_describe(models, params), module.build_create(models, params), module.build_update(models, params, "job-x"), module.build_delete(models, params, "job-x")]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "Prometheus scrape-job request %s" % index))
+    assert errors == []
+
+
+def test_monitor_prometheus_record_rule():
+    module = _import_plugin("monitor_prometheus_record_rule"); models = _models("monitor.v20180724")
+    params = {"instance_id": "prom-x", "name": "rollups", "content": "groups: []"}
+    requests = [module.build_describe(models, "prom-x", "rollups"), module.build_create(models, params), module.build_update(models, params), module.build_delete(models, params)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "Prometheus record-rule request %s" % index))
+    assert errors == []
+
+
+def test_monitor_prometheus_alert_group():
+    module = _import_plugin("monitor_prometheus_alert_group"); models = _models("monitor.v20180724")
+    params = {"instance_id": "prom-x", "group_id": "alert-x", "name": "application", "enabled": True, "receivers": ["notice-x"], "custom_receiver": None, "repeat_interval": "1h", "rules": [{"RuleName": "high-errors", "Expr": "rate(errors_total[5m]) > 1", "Duration": "5m", "State": 2}]}
+    requests = [module.build_describe(models, params), module.build_create(models, params), module.build_update(models, params, "alert-x"), module.build_delete(models, "prom-x", "alert-x")]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "Prometheus alert-group request %s" % index))
+    assert errors == []
+
+
+def _monitor_platform_requests(name):
+    models = _models("monitor.v20180724"); module = _import_plugin(name)
+    if name == "monitor_prometheus_instance":
+        p={"name":"prod","vpc_id":"vpc-x","subnet_id":"subnet-x","zone":"ap-guangzhou-3","retention_days":30,"grafana_instance_id":None,"tags":{"env":"prod"},"instance_attributes":{}}
+        return [module.build_describe(models,"prom-x","prod"),module.build_create(models,p),module.build_update(models,p,"prom-x"),module.build_delete(models,"prom-x")]
+    if name == "monitor_prometheus_cluster_agent":
+        p={"instance_id":"prom-x","cluster_id":"cls-x","cluster_type":"tke","region":"ap-guangzhou","agent":{}}
+        return [module.build_describe(models,p),module.build_create(models,p),module.build_delete(models,p)]
+    if name == "monitor_grafana_instance":
+        p={"name":"grafana","vpc_id":"vpc-x","subnet_ids":["subnet-x"],"enable_internet":False,"initial_password":None,"tags":{"env":"prod"}}
+        return [module.build_describe(models,"grafana-x","grafana"),module.build_create(models,p),module.build_update(models,"grafana-x","grafana"),module.build_delete(models,"grafana-x")]
+    if name == "monitor_prometheus_grafana_binding":
+        return [module.build_describe(models,"prom-x"),module.build_bind(models,"prom-x","grafana-x"),module.build_unbind(models,"prom-x","grafana-x")]
+    p={"instance_id":"grafana-x","integration_id":"integration-x","kind":"tencent-cloud-prometheus","content":"{}"}
+    return [module.build_describe(models,p),module.build_create(models,p),module.build_update(models,p,"integration-x"),module.build_delete(models,p,"integration-x")]
+
+
+def _audit_monitor_platform(name):
+    errors=[]
+    for index,request in enumerate(_monitor_platform_requests(name)): errors.extend(audit_request(request,"%s request %s"%(name,index)))
+    assert errors==[]
+
+
+def test_monitor_prometheus_instance(): _audit_monitor_platform("monitor_prometheus_instance")
+def test_monitor_prometheus_cluster_agent(): _audit_monitor_platform("monitor_prometheus_cluster_agent")
+def test_monitor_grafana_instance(): _audit_monitor_platform("monitor_grafana_instance")
+def test_monitor_prometheus_grafana_binding(): _audit_monitor_platform("monitor_prometheus_grafana_binding")
+def test_monitor_grafana_integration(): _audit_monitor_platform("monitor_grafana_integration")
 
 
 def test_waf_ip_access_control():

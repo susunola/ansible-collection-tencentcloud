@@ -1,0 +1,8 @@
+minor_changes:
+  - "Add API Gateway service release, usage plan, and usage plan environment binding modules to complete the publish and traffic-governance resource family."
+  - "Add CLS collection configuration and machine-group binding modules to complete the LogListener collection path."
+  - "Add API Gateway API key and usage-plan key binding modules, COS bucket policy management, and TKE cluster endpoint management."
+  - "Add COS bucket replication plus TKE cluster authentication and audit logging modules."
+  - "Add WAF protected-host and custom-rule lifecycle modules."
+  - "Add Managed Prometheus scrape-job, recording-rule, and alert-group lifecycle modules."
+  - "Add Managed Prometheus instance and cluster-agent modules plus Grafana instance, integration, and binding modules."

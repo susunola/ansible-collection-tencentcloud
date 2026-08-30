@@ -26,12 +26,36 @@ modules:
   - DescribeApi
   - DescribeApisStatus
   - ModifyApi
+  api_gateway_api_key:
+  - CreateApiKey
+  - DeleteApiKey
+  - DescribeApiKey
+  - DescribeApiKeysStatus
+  - UpdateApiKey
   api_gateway_service:
   - CreateService
   - DeleteService
   - DescribeService
   - DescribeServicesStatus
   - ModifyService
+  api_gateway_service_release:
+  - DescribeServiceEnvironmentList
+  - ReleaseService
+  - UnReleaseService
+  api_gateway_usage_plan:
+  - CreateUsagePlan
+  - DeleteUsagePlan
+  - DescribeUsagePlan
+  - DescribeUsagePlansStatus
+  - ModifyUsagePlan
+  api_gateway_usage_plan_binding:
+  - BindEnvironment
+  - DescribeUsagePlanEnvironments
+  - UnBindEnvironment
+  api_gateway_usage_plan_key_binding:
+  - BindSecretIds
+  - DescribeUsagePlanSecretIds
+  - UnBindSecretIds
   api_product_info:
   - DescribeProducts
   apigateway_service_info:
@@ -286,6 +310,15 @@ modules:
   - SearchResources
   cloudstudio_image_info:
   - DescribeImages
+  cls_config:
+  - CreateConfig
+  - DeleteConfig
+  - DescribeConfigs
+  - ModifyConfig
+  cls_config_machine_group_binding:
+  - ApplyConfigToMachineGroup
+  - DeleteConfigFromMachineGroup
+  - DescribeMachineGroupConfigs
   cls_index:
   - CreateIndex
   - DeleteIndex
@@ -615,6 +648,44 @@ modules:
   - DescribeAlarmPolicies
   monitor_alarm_policy_notice:
   - ModifyAlarmPolicyNotice
+  monitor_grafana_instance:
+  - CreateGrafanaInstance
+  - DeleteGrafanaInstance
+  - DescribeGrafanaInstances
+  - ModifyGrafanaInstance
+  monitor_grafana_integration:
+  - CreateGrafanaIntegration
+  - DeleteGrafanaIntegration
+  - DescribeGrafanaIntegrations
+  - UpdateGrafanaIntegration
+  monitor_prometheus_alert_group:
+  - CreatePrometheusAlertGroup
+  - DeletePrometheusAlertGroups
+  - DescribePrometheusAlertGroups
+  - UpdatePrometheusAlertGroup
+  monitor_prometheus_cluster_agent:
+  - CreatePrometheusClusterAgent
+  - DeletePrometheusClusterAgent
+  - DescribePrometheusClusterAgents
+  monitor_prometheus_grafana_binding:
+  - BindPrometheusManagedGrafana
+  - DescribePrometheusInstances
+  - UnbindPrometheusManagedGrafana
+  monitor_prometheus_instance:
+  - CreatePrometheusMultiTenantInstancePostPayMode
+  - DescribePrometheusInstances
+  - ModifyPrometheusInstanceAttributes
+  - TerminatePrometheusInstances
+  monitor_prometheus_record_rule:
+  - CreatePrometheusRecordRuleYaml
+  - DeletePrometheusRecordRuleYaml
+  - DescribePrometheusRecordRules
+  - ModifyPrometheusRecordRuleYaml
+  monitor_prometheus_scrape_job:
+  - CreatePrometheusScrapeJob
+  - DeletePrometheusScrapeJobs
+  - DescribePrometheusScrapeJobs
+  - UpdatePrometheusScrapeJob
   mps_person_sample_info:
   - DescribePersonSamples
   mqtt_device_certificate_info:
@@ -912,6 +983,17 @@ modules:
   - DeleteCluster
   - DescribeClusters
   - ModifyClusterAttribute
+  tke_cluster_audit:
+  - DescribeLogSwitches
+  - DisableClusterAudit
+  - EnableClusterAudit
+  tke_cluster_authentication:
+  - DescribeClusterAuthenticationOptions
+  - ModifyClusterAuthenticationOptions
+  tke_cluster_endpoint:
+  - CreateClusterEndpoint
+  - DeleteClusterEndpoint
+  - DescribeClusterEndpoints
   tke_cluster_info:
   - DescribeClusters
   tke_node_pool:
@@ -973,6 +1055,16 @@ modules:
   - ModifyVpnGatewayAttribute
   vpn_gateway_info:
   - DescribeVpnGateways
+  waf_custom_rule:
+  - AddCustomRule
+  - DeleteCustomRule
+  - DescribeCustomRuleList
+  - ModifyCustomRule
+  waf_host:
+  - CreateHost
+  - DeleteHost
+  - DescribeHost
+  - ModifyHost
   waf_instance_info:
   - DescribeInstances
   waf_ip_access_control:

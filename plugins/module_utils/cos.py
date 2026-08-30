@@ -46,6 +46,7 @@ NOT_FOUND_CODES = (
     "NoSuchTagSetError",
     "NoSuchCORSConfiguration",
     "NoSuchLifecycleConfiguration",
+    "NoSuchReplicationConfiguration",
 )
 
 
