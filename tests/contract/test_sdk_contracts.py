@@ -337,6 +337,7 @@ WRITE_MODULE_BUILDERS = {
     "dnspod_custom_line": ["create_request", "delete_request", "describe_request", "update_request"],
     "dnspod_line_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "ckafka_datahub_topic": ["create_request", "delete_request", "describe_request", "update_request"],
+    "ckafka_datahub_connection": ["create_request", "delete_request", "describe_request", "list_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4271,6 +4272,15 @@ def test_ckafka_datahub_topic():
     requests = [module.describe_request(models, p["name"]), module.create_request(models, p), module.update_request(models, p), module.delete_request(models, p["name"])]
     errors = []
     for request in requests: errors.extend(audit_request(request, "CKafka Datahub topic request"))
+    assert errors == []
+
+
+def test_ckafka_datahub_connection():
+    module = _import_plugin("ckafka_datahub_connection"); models = _models("ckafka.v20190819")
+    p = {"resource_id": "resource-x", "name": "analytics-kafka", "connection_type": "KAFKA", "description": "analytics", "config": {"Resource": "ckafka-x", "SelfBuilt": False}}
+    requests = [module.describe_request(models, p["resource_id"]), module.list_request(models, p), module.create_request(models, p), module.update_request(models, p, p["resource_id"]), module.delete_request(models, p["resource_id"])]
+    errors = []
+    for request in requests: errors.extend(audit_request(request, "CKafka Datahub connection request"))
     assert errors == []
 
 

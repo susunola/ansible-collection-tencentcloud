@@ -288,6 +288,12 @@ modules:
   - DeleteAclRule
   - DescribeAclRule
   - ModifyAclRule
+  ckafka_datahub_connection:
+  - CreateConnectResource
+  - DeleteConnectResource
+  - DescribeConnectResource
+  - DescribeConnectResources
+  - ModifyConnectResource
   ckafka_datahub_topic:
   - CreateDatahubTopic
   - DeleteDatahubTopic
