@@ -1487,6 +1487,16 @@ modules:
   - DescribeVpcs
   - DetachResourcesTag
   - ModifyVpcAttribute
+  vpc_address_template:
+  - CreateAddressTemplate
+  - DeleteAddressTemplate
+  - DescribeAddressTemplates
+  - ModifyAddressTemplateAttribute
+  vpc_address_template_group:
+  - CreateAddressTemplateGroup
+  - DeleteAddressTemplateGroup
+  - DescribeAddressTemplateGroups
+  - ModifyAddressTemplateGroupAttribute
   vpc_flow_log:
   - CreateFlowLog
   - DeleteFlowLog

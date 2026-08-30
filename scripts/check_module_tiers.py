@@ -262,6 +262,8 @@ CORE_MODULES = {
     "vpc",
     "havip",
     "havip_association",
+    "vpc_address_template",
+    "vpc_address_template_group",
     "vpc_flow_log",
     "vpn_gateway",
     "waf_ip_access_control",

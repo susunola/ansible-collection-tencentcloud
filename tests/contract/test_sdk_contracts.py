@@ -313,6 +313,8 @@ UNEXERCISED_BUILDERS = {
 WRITE_MODULE_BUILDERS = {
     "havip": ["create_request", "delete_request", "describe_request", "update_request"],
     "havip_association": ["associate_request", "describe_request", "disassociate_request"],
+    "vpc_address_template": ["create_request", "delete_request", "describe_request", "update_request"],
+    "vpc_address_template_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "cvm_disaster_recover_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "cvm_disaster_recover_group_binding": ["bind_request", "describe_request", "unbind_request"],
     "cvm_launch_template": ["create_request", "default_request", "delete_request", "describe_request"],
@@ -2825,6 +2827,24 @@ def test_tke_cluster_audit():
     requests = [module.build_describe(models, "cls-x"), module.build_enable(models, params), module.build_disable(models, params)]
     errors = []
     for index, request in enumerate(requests): errors.extend(audit_request(request, "TKE audit request %s" % index))
+    assert errors == []
+
+
+def test_vpc_address_template():
+    module = _import_plugin("vpc_address_template"); models = _models("vpc.v20170312")
+    p = {"name": "office-networks", "addresses": ["10.10.0.0/16", "192.0.2.10"], "address_extra": []}
+    requests = [module.describe_request(models), module.create_request(models, p), module.update_request(models, p, "ipm-xxxxxxxx"), module.delete_request(models, "ipm-xxxxxxxx")]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "VPC address-template request %s" % index))
+    assert errors == []
+
+
+def test_vpc_address_template_group():
+    module = _import_plugin("vpc_address_template_group"); models = _models("vpc.v20170312")
+    p = {"name": "trusted-sources", "template_ids": ["ipm-xxxxxxxx", "ipm-yyyyyyyy"]}
+    requests = [module.describe_request(models), module.create_request(models, p), module.update_request(models, p, "ipmg-xxxxxxxx"), module.delete_request(models, "ipmg-xxxxxxxx")]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "VPC address-template group request %s" % index))
     assert errors == []
 
 

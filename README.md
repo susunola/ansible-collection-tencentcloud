@@ -236,6 +236,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tke_cluster_endpoint` | Manage Tencent Cloud TKE cluster access endpoints |
 | `tke_node_pool` | Manage Tencent Cloud TKE cluster node pools |
 | `vpc` | Manage Tencent Cloud VPCs |
+| `vpc_address_template` | Manage Tencent Cloud VPC address templates |
+| `vpc_address_template_group` | Manage Tencent Cloud VPC address-template groups |
 | `vpc_flow_log` | Manage Tencent Cloud VPC flow logs |
 | `vpn_connection` | Manage Tencent Cloud IPsec VPN connections |
 | `vpn_gateway` | Manage Tencent Cloud VPN gateways |
