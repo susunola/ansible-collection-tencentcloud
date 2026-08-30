@@ -1,4 +1,5 @@
 minor_changes:
+  - Add idempotent TDMQ RocketMQ namespace lifecycle management.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

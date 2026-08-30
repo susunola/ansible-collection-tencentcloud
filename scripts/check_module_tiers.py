@@ -172,6 +172,7 @@ CORE_MODULES = {
     "tdmq_rabbitmq_user",
     "tdmq_rabbitmq_permission",
     "tdmq_rabbitmq_binding",
+    "tdmq_rocketmq_namespace",
     "tdmq_subscription",
     "teo_dns_record",
     "tcr_instance",

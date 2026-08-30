@@ -150,6 +150,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tdmq_rabbitmq_permission` | Manage TDMQ RabbitMQ virtual host permissions |
 | `tdmq_rabbitmq_user` | Manage TDMQ RabbitMQ users |
 | `tdmq_rabbitmq_vhost` | Manage TDMQ RabbitMQ virtual hosts |
+| `tdmq_rocketmq_namespace` | Manage TDMQ RocketMQ namespaces |
 | `tdmq_subscription` | Manage Tencent Cloud TDMQ Pulsar subscriptions |
 | `tdmq_topic` | Manage Tencent Cloud TDMQ Pulsar topics |
 | `teo_dns_record` | Manage Tencent Cloud TEO DNS records |
