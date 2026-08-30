@@ -743,6 +743,12 @@ modules:
   - StopInstances
   lighthouse_instance_info:
   - DescribeInstances
+  lighthouse_key_pair:
+  - AssociateInstancesKeyPairs
+  - DeleteKeyPairs
+  - DescribeKeyPairs
+  - DisassociateInstancesKeyPairs
+  - ImportKeyPair
   lighthouse_snapshot:
   - CreateInstanceSnapshot
   - DeleteSnapshots

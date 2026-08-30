@@ -364,6 +364,7 @@ WRITE_MODULE_BUILDERS = {
     "cbs_disk_backup": ["create_request", "delete_request", "describe_request"],
     "lighthouse_firewall_rules": ["create_request", "delete_request", "describe_request"],
     "lighthouse_snapshot": ["create_request", "delete_request", "describe_request", "update_request"],
+    "lighthouse_key_pair": ["associate_request", "delete_request", "describe_request", "disassociate_request", "import_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4704,4 +4705,15 @@ def test_lighthouse_snapshot():
     errors.extend(audit_request(module.create_request(models, p), "Lighthouse snapshot create"))
     errors.extend(audit_request(module.update_request(models, "lhsnap-xxxxxxxx", p["name"]), "Lighthouse snapshot update"))
     errors.extend(audit_request(module.delete_request(models, "lhsnap-xxxxxxxx"), "Lighthouse snapshot delete"))
+    assert errors == []
+
+
+def test_lighthouse_key_pair():
+    module = _import_plugin("lighthouse_key_pair"); models = _models("lighthouse.v20200324")
+    p = {"key_id": None, "name": "automation", "public_key": "ssh-ed25519 AAAATEST automation", "instance_ids": ["lhins-xxxxxxxx"], "association_type": "ONLINE", "username": "root"}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "Lighthouse key describe"))
+    errors.extend(audit_request(module.import_request(models, p), "Lighthouse key import"))
+    errors.extend(audit_request(module.associate_request(models, p, "lhkp-xxxxxxxx", p["instance_ids"]), "Lighthouse key associate"))
+    errors.extend(audit_request(module.disassociate_request(models, p, "lhkp-xxxxxxxx", p["instance_ids"]), "Lighthouse key disassociate"))
+    errors.extend(audit_request(module.delete_request(models, "lhkp-xxxxxxxx"), "Lighthouse key delete"))
     assert errors == []

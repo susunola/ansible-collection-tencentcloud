@@ -226,6 +226,7 @@ action_groups:
     - lighthouse_firewall_rules
     - lighthouse_instance
     - lighthouse_instance_info
+    - lighthouse_key_pair
     - lighthouse_snapshot
     - live_audit_keyword_info
     - lke_app_knowledge_info
