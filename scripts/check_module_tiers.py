@@ -108,6 +108,7 @@ CORE_MODULES = {
     "config_recorder",
     "config_delivery",
     "config_compliance_pack",
+    "config_remediation",
     "cmq_queue",
     "cmq_topic",
     "cmq_subscription",

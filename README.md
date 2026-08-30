@@ -85,6 +85,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `config_compliance_pack` | Manage Tencent Cloud Config compliance packs |
 | `config_delivery` | Manage Tencent Cloud Config delivery settings |
 | `config_recorder` | Manage Tencent Cloud Config resource recorder |
+| `config_remediation` | Manage Tencent Cloud Config remediation settings |
 | `config_rule` | Manage Tencent Cloud Config compliance rules |
 | `cos_bucket` | Manage Tencent Cloud COS buckets |
 | `cos_bucket_domain` | Manage Tencent Cloud COS custom domains |

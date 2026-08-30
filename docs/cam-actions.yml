@@ -519,6 +519,11 @@ modules:
   - DescribeConfigRecorder
   - OpenConfigRecorder
   - UpdateConfigRecorder
+  config_remediation:
+  - CreateRemediation
+  - DeleteRemediations
+  - ListRemediations
+  - UpdateRemediation
   config_rule:
   - AddConfigRule
   - DeleteConfigRule

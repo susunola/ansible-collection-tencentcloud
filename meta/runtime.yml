@@ -138,6 +138,7 @@ action_groups:
     - config_compliance_pack
     - config_delivery
     - config_recorder
+    - config_remediation
     - config_rule
     - controlcenter_account_factory_baseline_item_info
     - cos_bucket

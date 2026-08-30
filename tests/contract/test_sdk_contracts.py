@@ -451,6 +451,7 @@ WRITE_MODULE_BUILDERS = {
     "config_recorder": ["close_request", "describe_request", "open_request", "update_request"],
     "config_delivery": ["describe_request", "update_request"],
     "config_compliance_pack": ["create_request", "delete_request", "describe_request", "list_request", "status_request", "update_request"],
+    "config_remediation": ["create_request", "delete_request", "list_request", "update_request"],
     "cvm_chc": [
         "_configure_vpc",
         "_remove_assist",
@@ -3546,6 +3547,16 @@ def test_config_compliance_pack():
     errors.extend(audit_request(module.update_request(models, p, "cp-xxxxxxxx"), "Config compliance pack update"))
     errors.extend(audit_request(module.status_request(models, "cp-xxxxxxxx", True), "Config compliance pack status"))
     errors.extend(audit_request(module.delete_request(models, "cp-xxxxxxxx"), "Config compliance pack delete"))
+    assert errors == []
+
+
+def test_config_remediation():
+    module = _import_plugin("config_remediation"); models = _models("config.v20220802")
+    p = {"rule_id": "cr-xxxxxxxx", "remediation_type": "predefined", "remediation_template_id": "rt-xxxxxxxx", "invoke_type": "AUTO", "source_type": "CONFIG"}; errors = []
+    errors.extend(audit_request(module.list_request(models, p["rule_id"]), "Config remediation list"))
+    errors.extend(audit_request(module.create_request(models, p), "Config remediation create"))
+    errors.extend(audit_request(module.update_request(models, p, "rem-xxxxxxxx"), "Config remediation update"))
+    errors.extend(audit_request(module.delete_request(models, "rem-xxxxxxxx"), "Config remediation delete"))
     assert errors == []
 
 
