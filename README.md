@@ -71,8 +71,11 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cmq_topic` | Manage Tencent Cloud CMQ topics |
 | `config_rule` | Manage Tencent Cloud Config compliance rules |
 | `cos_bucket` | Manage Tencent Cloud COS buckets |
+| `cos_bucket_encryption` | Manage Tencent Cloud COS default bucket encryption |
+| `cos_bucket_logging` | Manage Tencent Cloud COS bucket access logging |
 | `cos_bucket_policy` | Manage Tencent Cloud COS bucket policies |
 | `cos_bucket_replication` | Manage Tencent Cloud COS bucket replication |
+| `cos_bucket_website` | Manage Tencent Cloud COS static website configuration |
 | `customer_gateway` | Manage Tencent Cloud VPN customer gateways |
 | `cvm_chc` | Manage Tencent Cloud CHC physical server network configuration |
 | `cvm_image` | Manage Tencent Cloud CVM custom images |

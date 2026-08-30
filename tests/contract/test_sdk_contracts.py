@@ -263,6 +263,9 @@ NO_API3_CONTRACT = {
     "cos_bucket_info": "cos_bucket_info uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
     "cos_bucket_policy": "cos_bucket_policy uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
     "cos_bucket_replication": "cos_bucket_replication uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
+    "cos_bucket_website": "cos_bucket_website uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
+    "cos_bucket_encryption": "cos_bucket_encryption uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
+    "cos_bucket_logging": "cos_bucket_logging uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
 }
 
 # Individual builders that exist but cannot be exercised by the contract

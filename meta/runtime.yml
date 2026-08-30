@@ -125,9 +125,12 @@ action_groups:
     - config_rule
     - controlcenter_account_factory_baseline_item_info
     - cos_bucket
+    - cos_bucket_encryption
     - cos_bucket_info
+    - cos_bucket_logging
     - cos_bucket_policy
     - cos_bucket_replication
+    - cos_bucket_website
     - cpdp_merchant_info_for_management_info
     - csip_asset_process_info
     - ctem_api_sec_info

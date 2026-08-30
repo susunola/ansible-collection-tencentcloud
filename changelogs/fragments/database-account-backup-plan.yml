@@ -16,6 +16,7 @@ minor_changes:
   - Add idempotent CynosDB backup window and retention management.
   - Add exact-set CynosDB global, database and table account privilege management.
   - Add Elasticsearch cluster snapshot lifecycle with explicit safe replacement.
+  - Add COS static website, default encryption, and access logging resource modules.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."
