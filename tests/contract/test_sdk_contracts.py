@@ -351,6 +351,7 @@ WRITE_MODULE_BUILDERS = {
     "elasticsearch_snapshot": ["create_request", "delete_request", "describe_request"],
     "waf_anti_info_leak_rule": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
     "waf_attack_white_rule": ["create_request", "delete_request", "describe_request", "update_request"],
+    "waf_cc_rule": ["delete_request", "describe_request", "upsert_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4559,4 +4560,16 @@ def test_waf_attack_white_rule():
     errors.extend(audit_request(module.create_request(models, p), "WAF attack allow create"))
     errors.extend(audit_request(module.update_request(models, p, 123), "WAF attack allow update"))
     errors.extend(audit_request(module.delete_request(models, p, 123), "WAF attack allow delete"))
+    assert errors == []
+
+
+def test_waf_cc_rule():
+    module = _import_plugin("waf_cc_rule")
+    models = _models("waf.v20180125")
+    p = {"domain": "api.example.com", "name": "protect-login", "edition": "sparta-waf", "enabled": True, "threshold": 100, "interval": 60, "action": 22, "priority": 50, "valid_time": 600, "url": "/login", "match_function": 0, "advanced": False, "options": [], "session_ids": [], "limit_method": "only_limit", "logical_operator": "and", "action_ratio": 100}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "WAF CC describe"))
+    errors.extend(audit_request(module.upsert_request(models, p, 0), "WAF CC create"))
+    errors.extend(audit_request(module.upsert_request(models, p, 123), "WAF CC update"))
+    errors.extend(audit_request(module.delete_request(models, p, 123), "WAF CC delete"))
     assert errors == []

@@ -382,6 +382,7 @@ action_groups:
     - vpn_gateway_info
     - waf_anti_info_leak_rule
     - waf_attack_white_rule
+    - waf_cc_rule
     - waf_custom_rule
     - waf_host
     - waf_instance_info

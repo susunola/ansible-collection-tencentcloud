@@ -1297,6 +1297,10 @@ modules:
   - DeleteAttackWhiteRule
   - DescribeAttackWhiteRule
   - ModifyAttackWhiteRule
+  waf_cc_rule:
+  - DeleteCCRule
+  - DescribeCCRuleList
+  - UpsertCCRule
   waf_custom_rule:
   - AddCustomRule
   - DeleteCustomRule
