@@ -301,7 +301,9 @@ UNEXERCISED_BUILDERS = {
 # INFO_BUILDERS instead. Both sets are verified against the static scan.
 WRITE_MODULE_BUILDERS = {
     "cdb_account": ["create", "describe"],
+    "cdb_account_privilege": ["describe_request", "modify_request"],
     "organization_member": ["create", "delete", "describe", "move", "update"],
+    "organization_member_identity": ["create_request", "delete_request", "describe_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -3971,6 +3973,17 @@ def test_cdb_account():
     assert errors == []
 
 
+def test_cdb_account_privilege():
+    module = _import_plugin("cdb_account_privilege")
+    models = _models("cdb.v20170320")
+    errors = []
+    p = {"instance_id": "cdb-xxxxxxxx", "username": "app", "host": "%"}
+    wanted = {"GlobalPrivileges": ["SELECT"], "DatabasePrivileges": [{"database": "orders", "privileges": ["SELECT", "INSERT"]}], "TablePrivileges": [{"database": "orders", "table": "events", "privileges": ["SELECT"]}], "ColumnPrivileges": [{"database": "orders", "table": "events", "column": "id", "privileges": ["SELECT"]}]}
+    errors.extend(audit_request(module.describe_request(models, p), "cdb account privilege describe"))
+    errors.extend(audit_request(module.modify_request(models, p, wanted), "cdb account privilege modify"))
+    assert errors == []
+
+
 def test_organization_member():
     module = _import_plugin("organization_member")
     models = _models("organization.v20210331")
@@ -3985,6 +3998,16 @@ def test_organization_member():
     errors.extend(audit_request(module.delete(models, p["member_uin"]), "organization member delete"))
     module.find(fake, client, models, p)
     errors.extend(audit_recorded(fake, "organization_member"))
+    assert errors == []
+
+
+def test_organization_member_identity():
+    module = _import_plugin("organization_member_identity")
+    models = _models("organization.v20210331")
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, 100000000001), "organization member identity describe"))
+    errors.extend(audit_request(module.create_request(models, 100000000001, [1, 12]), "organization member identity create"))
+    errors.extend(audit_request(module.delete_request(models, 100000000001, 12), "organization member identity delete"))
     assert errors == []
 
 

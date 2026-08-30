@@ -195,6 +195,9 @@ modules:
   - ModifyAccountDescription
   - ModifyAccountMaxUserConnections
   - ModifyAccountPassword
+  cdb_account_privilege:
+  - DescribeAccountPrivileges
+  - ModifyAccountPrivileges
   cdb_backup_config:
   - DescribeBackupConfig
   - ModifyBackupConfig
@@ -759,6 +762,10 @@ modules:
   - DescribeOrganizationMembers
   - MoveOrganizationNodeMembers
   - UpdateOrganizationMember
+  organization_member_identity:
+  - CreateOrganizationMemberAuthIdentity
+  - DeleteOrganizationMemberAuthIdentity
+  - DescribeOrganizationMemberAuthIdentities
   organization_member_info:
   - DescribeOrganizationMembers
   organization_node:

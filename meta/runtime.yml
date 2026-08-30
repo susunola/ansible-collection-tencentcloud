@@ -60,6 +60,7 @@ action_groups:
     - ccn
     - ccn_attachment
     - cdb_account
+    - cdb_account_privilege
     - cdb_backup_config
     - cdb_instance
     - cdb_instance_info
@@ -233,6 +234,7 @@ action_groups:
     - oceanus_cluster_info
     - omics_application_info
     - organization_member
+    - organization_member_identity
     - organization_member_info
     - organization_node
     - partners_agent_deals_by_cache_info

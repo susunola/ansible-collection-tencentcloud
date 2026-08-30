@@ -34,6 +34,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `ccn` | Manage Tencent Cloud Cloud Connect Networks |
 | `ccn_attachment` | Attach network instances to Tencent Cloud CCN |
 | `cdb_account` | Manage TencentDB for MySQL accounts |
+| `cdb_account_privilege` | Manage TencentDB for MySQL account privileges |
 | `cdb_backup_config` | Manage TencentDB for MySQL backup configuration |
 | `cdb_instance` | Manage Tencent Cloud CDB MySQL instances |
 | `cdb_parameter_template` | Manage Tencent Cloud CDB parameter templates |
@@ -99,6 +100,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `network_acl` | Manage Tencent Cloud VPC network ACLs |
 | `network_interface` | Manage Tencent Cloud elastic network interfaces |
 | `organization_member` | Manage Tencent Cloud Organization members |
+| `organization_member_identity` | Reconcile Tencent Cloud Organization member identities |
 | `organization_node` | Manage Tencent Cloud Organization nodes |
 | `peering_connection` | Manage Tencent Cloud VPC peering connections |
 | `postgresql_account` | Manage TencentDB for PostgreSQL accounts |
