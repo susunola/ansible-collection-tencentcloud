@@ -205,7 +205,11 @@ action_groups:
     - dts_consumer_group
     - dts_migration_job
     - dts_subscribe_job_info
+    - eb_connection
+    - eb_event_bus
     - eb_event_bus_info
+    - eb_rule
+    - eb_target
     - ecdn_domain_info
     - ecm_address_info
     - eiam_application_info

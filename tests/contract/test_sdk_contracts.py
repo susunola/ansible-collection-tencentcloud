@@ -311,6 +311,10 @@ UNEXERCISED_BUILDERS = {
 # at the bottom of this file. Info-module builders are registered in
 # INFO_BUILDERS instead. Both sets are verified against the static scan.
 WRITE_MODULE_BUILDERS = {
+    "eb_connection": ["create_request", "delete_request", "list_request", "update_request"],
+    "eb_event_bus": ["create_request", "delete_request", "get_request", "list_request", "update_request"],
+    "eb_rule": ["create_request", "delete_request", "get_request", "list_request", "update_request"],
+    "eb_target": ["create_request", "delete_request", "list_request", "update_request"],
     "havip": ["create_request", "delete_request", "describe_request", "update_request"],
     "havip_association": ["associate_request", "describe_request", "disassociate_request"],
     "vpc_address_template": ["create_request", "delete_request", "describe_request", "update_request"],
@@ -5295,6 +5299,48 @@ def test_teo_origin_group():
     errors.extend(audit_request(module.create_request(models, p), "TEO origin group create"))
     errors.extend(audit_request(module.update_request(models, p, "origin-xxxxxxxx"), "TEO origin group update"))
     errors.extend(audit_request(module.delete_request(models, p, "origin-xxxxxxxx"), "TEO origin group delete"))
+    assert errors == []
+
+
+def test_eb_event_bus():
+    module = _import_plugin("eb_event_bus"); models = _models("eb.v20210416")
+    p = {"event_bus_id": None, "name": "production-events", "description": "events", "save_days": 7, "enable_store": True}; errors = []
+    errors.extend(audit_request(module.list_request(models, p), "EventBridge event bus list"))
+    errors.extend(audit_request(module.get_request(models, "eb-xxxxxxxx"), "EventBridge event bus get"))
+    errors.extend(audit_request(module.create_request(models, p), "EventBridge event bus create"))
+    errors.extend(audit_request(module.update_request(models, p, "eb-xxxxxxxx"), "EventBridge event bus update"))
+    errors.extend(audit_request(module.delete_request(models, "eb-xxxxxxxx"), "EventBridge event bus delete"))
+    assert errors == []
+
+
+def test_eb_rule():
+    module = _import_plugin("eb_rule"); models = _models("eb.v20210416")
+    p = {"event_bus_id": "eb-xxxxxxxx", "rule_id": None, "name": "order-created", "event_pattern": '{"source":["orders"]}', "enabled": True, "description": "orders"}; errors = []
+    errors.extend(audit_request(module.list_request(models, p), "EventBridge rule list"))
+    errors.extend(audit_request(module.get_request(models, p, "rule-xxxxxxxx"), "EventBridge rule get"))
+    errors.extend(audit_request(module.create_request(models, p), "EventBridge rule create"))
+    errors.extend(audit_request(module.update_request(models, p, "rule-xxxxxxxx"), "EventBridge rule update"))
+    errors.extend(audit_request(module.delete_request(models, p, "rule-xxxxxxxx"), "EventBridge rule delete"))
+    assert errors == []
+
+
+def test_eb_target():
+    module = _import_plugin("eb_target"); models = _models("eb.v20210416")
+    p = {"event_bus_id": "eb-xxxxxxxx", "rule_id": "rule-xxxxxxxx", "target_id": None, "target_type": "scf", "target_description": {"ResourceDescription": "{}"}, "enable_batch_delivery": True, "batch_timeout": 5, "batch_event_count": 10}; errors = []
+    errors.extend(audit_request(module.list_request(models, p), "EventBridge target list"))
+    errors.extend(audit_request(module.create_request(models, p), "EventBridge target create"))
+    errors.extend(audit_request(module.update_request(models, p, "target-xxxxxxxx"), "EventBridge target update"))
+    errors.extend(audit_request(module.delete_request(models, p, "target-xxxxxxxx"), "EventBridge target delete"))
+    assert errors == []
+
+
+def test_eb_connection():
+    module = _import_plugin("eb_connection"); models = _models("eb.v20210416")
+    p = {"event_bus_id": "eb-xxxxxxxx", "connection_id": None, "name": "kafka-orders", "connection_type": "ckafka", "connection_description": {"ResourceDescription": "{}"}, "enabled": True, "description": "orders"}; errors = []
+    errors.extend(audit_request(module.list_request(models, p), "EventBridge connection list"))
+    errors.extend(audit_request(module.create_request(models, p), "EventBridge connection create"))
+    errors.extend(audit_request(module.update_request(models, p, "connection-xxxxxxxx"), "EventBridge connection update"))
+    errors.extend(audit_request(module.delete_request(models, p, "connection-xxxxxxxx"), "EventBridge connection delete"))
     assert errors == []
 
 

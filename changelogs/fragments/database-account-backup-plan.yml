@@ -1,4 +1,5 @@
 minor_changes:
+  - Add EventBridge event bus, rule, target, and connection lifecycle management with explicit immutable delivery and source configuration.
   - Add idempotent TDMQ RocketMQ namespace lifecycle management.
   - Add idempotent TDMQ RocketMQ topic and consumer group lifecycle management.
   - Add secret-safe TDMQ RocketMQ role lifecycle management.

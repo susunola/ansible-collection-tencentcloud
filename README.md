@@ -129,6 +129,10 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `dnspod_record` | Manage Tencent Cloud DNSPod DNS records |
 | `dts_consumer_group` | Manage Tencent Cloud DTS consumer groups |
 | `dts_migration_job` | Manage Tencent Cloud DTS migration jobs |
+| `eb_connection` | Manage Tencent Cloud EventBridge connections |
+| `eb_event_bus` | Manage Tencent Cloud EventBridge event buses |
+| `eb_rule` | Manage Tencent Cloud EventBridge rules |
+| `eb_target` | Manage Tencent Cloud EventBridge rule targets |
 | `eip` | Manage Tencent Cloud elastic IP addresses (EIP) |
 | `elasticsearch_index` | Manage indexes in Tencent Cloud Elasticsearch Service |
 | `elasticsearch_instance` | Manage Tencent Cloud Elasticsearch clusters |

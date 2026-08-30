@@ -739,8 +739,30 @@ modules:
   - ModifyMigrateName
   dts_subscribe_job_info:
   - DescribeSubscribeJobs
+  eb_connection:
+  - CreateConnection
+  - DeleteConnection
+  - ListConnections
+  - UpdateConnection
+  eb_event_bus:
+  - CreateEventBus
+  - DeleteEventBus
+  - GetEventBus
+  - ListEventBuses
+  - UpdateEventBus
   eb_event_bus_info:
   - ListEventBuses
+  eb_rule:
+  - CreateRule
+  - DeleteRule
+  - GetRule
+  - ListRules
+  - UpdateRule
+  eb_target:
+  - CreateTarget
+  - DeleteTarget
+  - ListTargets
+  - UpdateTarget
   ecdn_domain_info:
   - DescribeDomains
   ecm_address_info:
