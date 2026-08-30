@@ -95,6 +95,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cos_bucket_encryption` | Manage Tencent Cloud COS default bucket encryption |
 | `cos_bucket_inventory` | Manage Tencent Cloud COS bucket inventory rules |
 | `cos_bucket_logging` | Manage Tencent Cloud COS bucket access logging |
+| `cos_bucket_object_lock` | Manage Tencent Cloud COS bucket object lock |
 | `cos_bucket_policy` | Manage Tencent Cloud COS bucket policies |
 | `cos_bucket_referer` | Manage Tencent Cloud COS hotlink protection |
 | `cos_bucket_replication` | Manage Tencent Cloud COS bucket replication |

@@ -150,6 +150,7 @@ action_groups:
     - cos_bucket_info
     - cos_bucket_inventory
     - cos_bucket_logging
+    - cos_bucket_object_lock
     - cos_bucket_policy
     - cos_bucket_referer
     - cos_bucket_replication

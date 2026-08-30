@@ -101,6 +101,7 @@ CORE_MODULES = {
     "cos_bucket_website",
     "cos_bucket_encryption",
     "cos_bucket_logging",
+    "cos_bucket_object_lock",
     "cos_bucket_inventory",
     "cos_bucket_referer",
     "cos_bucket_domain",
