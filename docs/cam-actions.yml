@@ -929,6 +929,13 @@ modules:
   - DescribeLibraries
   sms_sign_info:
   - DescribeSmsSignList
+  sqlserver_account:
+  - CreateAccount
+  - DeleteAccount
+  - DescribeAccounts
+  - ModifyAccountPrivilege
+  - ModifyAccountRemark
+  - ResetAccountPassword
   sqlserver_instance_info:
   - DescribeDBInstances
   ssa_check_config_asset_info:

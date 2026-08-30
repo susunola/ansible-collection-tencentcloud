@@ -309,6 +309,7 @@ WRITE_MODULE_BUILDERS = {
     "organization_member_policy": ["create_request", "delete_request", "describe_request", "update_request"],
     "mongodb_backup_config": ["describe_request", "set_request"],
     "mongodb_account": ["create_request", "delete_request", "describe_request", "password_request", "privilege_request"],
+    "sqlserver_account": ["create_request", "delete_request", "describe_request", "password_request", "privilege_request", "remark_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4070,6 +4071,20 @@ def test_mongodb_account():
     errors.extend(audit_request(module.privilege_request(models, p), "mongodb account privilege"))
     errors.extend(audit_request(module.password_request(models, p), "mongodb account password"))
     errors.extend(audit_request(module.delete_request(models, p), "mongodb account delete"))
+    assert errors == []
+
+
+def test_sqlserver_account():
+    module = _import_plugin("sqlserver_account")
+    models = _models("sqlserver.v20180328")
+    errors = []
+    p = {"instance_id": "mssql-xxxxxxxx", "username": "app", "password": "Password_123", "remark": "app", "account_type": "L3", "database_privileges": [{"database": "orders", "privilege": "ReadWrite"}]}
+    errors.extend(audit_request(module.describe_request(models, p), "sqlserver account describe"))
+    errors.extend(audit_request(module.create_request(models, p), "sqlserver account create"))
+    errors.extend(audit_request(module.privilege_request(models, p, p["database_privileges"]), "sqlserver account privilege"))
+    errors.extend(audit_request(module.remark_request(models, p), "sqlserver account remark"))
+    errors.extend(audit_request(module.password_request(models, p), "sqlserver account password"))
+    errors.extend(audit_request(module.delete_request(models, p), "sqlserver account delete"))
     assert errors == []
 
 

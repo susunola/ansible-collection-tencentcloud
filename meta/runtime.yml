@@ -276,6 +276,7 @@ action_groups:
     - ses_black_email_address_info
     - smh_library_info
     - sms_sign_info
+    - sqlserver_account
     - sqlserver_instance_info
     - ssa_check_config_asset_info
     - ssl_certificate
