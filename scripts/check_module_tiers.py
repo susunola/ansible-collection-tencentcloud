@@ -72,6 +72,7 @@ CORE_MODULES = {
     "ccn",
     "ccn_attachment",
     "cdn_domain",
+    "cdn_cls_log_topic",
     "clb_rule",
     "clb_target_group",
     "cls_logset",

@@ -442,6 +442,7 @@ WRITE_MODULE_BUILDERS = {
         "build_describe_request",
         "build_update_request",
     ],
+    "cdn_cls_log_topic": ["create_request", "delete_request", "disable_request", "enable_request", "list_domains_request", "list_topics_request", "manage_domains_request"],
     "cvm_chc": [
         "_configure_vpc",
         "_remove_assist",
@@ -3444,6 +3445,19 @@ def test_cdn_domain():
     module._stop(fake, client, models, "cdn.example.com")
     module._delete(fake, client, models, "cdn.example.com")
     errors.extend(audit_recorded(fake, "cdn_domain"))
+    assert errors == []
+
+
+def test_cdn_cls_log_topic():
+    module = _import_plugin("cdn_cls_log_topic"); models = _models("cdn.v20180606")
+    p = {"topic_name": "cdn-access", "logset_id": "logset-xxxxxxxx", "channel": "cdn", "domain_area_configs": [{"domain": "cdn.example.com", "areas": ["mainland"]}], "inherit_domain_tags": True}; errors = []
+    errors.extend(audit_request(module.list_topics_request(models, p["channel"]), "CDN CLS topic list"))
+    errors.extend(audit_request(module.list_domains_request(models, p, "topic-xxxxxxxx", p["logset_id"]), "CDN CLS domain list"))
+    errors.extend(audit_request(module.create_request(models, p), "CDN CLS topic create"))
+    errors.extend(audit_request(module.manage_domains_request(models, p, "topic-xxxxxxxx", p["logset_id"]), "CDN CLS domains manage"))
+    errors.extend(audit_request(module.enable_request(models, p, "topic-xxxxxxxx", p["logset_id"]), "CDN CLS topic enable"))
+    errors.extend(audit_request(module.disable_request(models, p, "topic-xxxxxxxx", p["logset_id"]), "CDN CLS topic disable"))
+    errors.extend(audit_request(module.delete_request(models, p, "topic-xxxxxxxx", p["logset_id"]), "CDN CLS topic delete"))
     assert errors == []
 
 

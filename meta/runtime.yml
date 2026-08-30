@@ -73,6 +73,7 @@ action_groups:
     - cdb_instance_info
     - cdb_parameter_template
     - cdc_dedicated_cluster_order_info
+    - cdn_cls_log_topic
     - cdn_domain
     - cdn_domain_info
     - cds_asset_info

@@ -250,6 +250,14 @@ modules:
   - ModifyParamTemplate
   cdc_dedicated_cluster_order_info:
   - DescribeDedicatedClusterOrders
+  cdn_cls_log_topic:
+  - CreateClsLogTopic
+  - DeleteClsLogTopic
+  - DisableClsLogTopic
+  - EnableClsLogTopic
+  - ListClsLogTopics
+  - ListClsTopicDomains
+  - ManageClsTopicDomains
   cdn_domain:
   - AddCdnDomain
   - DeleteCdnDomain
