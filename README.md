@@ -62,6 +62,11 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cfw_nat_acl_rule` | Manage Tencent Cloud Cloud Firewall NAT access-control rules |
 | `cfw_nat_dnat_rule` | Manage Tencent Cloud Cloud Firewall NAT DNAT rules |
 | `cfw_vpc_acl_rule` | Manage Tencent Cloud Cloud Firewall inter-VPC ACL rules |
+| `chdfs_access_group` | Manage Tencent Cloud CHDFS access groups |
+| `chdfs_access_rules` | Reconcile Tencent Cloud CHDFS access rules |
+| `chdfs_file_system` | Manage Tencent Cloud CHDFS file systems |
+| `chdfs_mount_access_groups` | Reconcile CHDFS mount point access-group bindings |
+| `chdfs_mount_point` | Manage Tencent Cloud CHDFS mount points |
 | `ckafka_acl` | Manage Tencent Cloud CKafka ACL entries |
 | `ckafka_acl_rule` | Manage Tencent Cloud CKafka ACL rules |
 | `ckafka_datahub_connection` | Manage Tencent Cloud CKafka Datahub connection resources |

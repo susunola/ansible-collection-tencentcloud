@@ -371,8 +371,32 @@ modules:
   - RemoveVpcAcRule
   chc_device_info:
   - DescribeDeviceList
+  chdfs_access_group:
+  - CreateAccessGroup
+  - DeleteAccessGroup
+  - DescribeAccessGroups
+  - ModifyAccessGroup
+  chdfs_access_rules:
+  - CreateAccessRules
+  - DeleteAccessRules
+  - DescribeAccessRules
+  - ModifyAccessRules
+  chdfs_file_system:
+  - CreateFileSystem
+  - DeleteFileSystem
+  - DescribeFileSystems
+  - ModifyFileSystem
   chdfs_file_system_info:
   - DescribeFileSystems
+  chdfs_mount_access_groups:
+  - AssociateAccessGroups
+  - DescribeMountPoints
+  - DisassociateAccessGroups
+  chdfs_mount_point:
+  - CreateMountPoint
+  - DeleteMountPoint
+  - DescribeMountPoints
+  - ModifyMountPoint
   ciam_user_store_info:
   - ListUserStore
   ckafka_acl:

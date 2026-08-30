@@ -311,6 +311,11 @@ UNEXERCISED_BUILDERS = {
 # at the bottom of this file. Info-module builders are registered in
 # INFO_BUILDERS instead. Both sets are verified against the static scan.
 WRITE_MODULE_BUILDERS = {
+    "chdfs_file_system": ["create_request", "delete_request", "describe_request", "update_request"],
+    "chdfs_mount_point": ["create_request", "delete_request", "describe_request", "update_request"],
+    "chdfs_access_group": ["create_request", "delete_request", "describe_request", "update_request"],
+    "chdfs_access_rules": ["create_request", "delete_request", "describe_request", "update_request"],
+    "chdfs_mount_access_groups": ["associate_request", "describe_request", "disassociate_request"],
     "goosefs_file_system": ["create_request", "delete_request", "describe_request", "expand_request"],
     "goosefs_fileset": ["create_request", "delete_request", "describe_request", "update_request"],
     "dc_direct_connect": ["create_request", "delete_request", "describe_request", "update_request"],
@@ -5315,6 +5320,55 @@ def test_teo_origin_group():
     errors.extend(audit_request(module.create_request(models, p), "TEO origin group create"))
     errors.extend(audit_request(module.update_request(models, p, "origin-xxxxxxxx"), "TEO origin group update"))
     errors.extend(audit_request(module.delete_request(models, p, "origin-xxxxxxxx"), "TEO origin group delete"))
+    assert errors == []
+
+
+def test_chdfs_file_system():
+    module = _import_plugin("chdfs_file_system"); models = _models("chdfs.v20201112")
+    p = {"file_system_id": None, "name": "analytics", "description": "warehouse", "capacity_quota": 1099511627776, "super_users": ["hadoop"], "posix_acl": True, "root_inode_user": "hadoop", "root_inode_group": "supergroup", "enable_ranger": False, "ranger_service_addresses": [], "tags": {"env": "production"}}; errors = []
+    target = {"FileSystemName": "analytics", "Description": "warehouse", "CapacityQuota": 1099511627776, "SuperUsers": ["hadoop"], "PosixAcl": True, "EnableRanger": False, "RangerServiceAddresses": []}
+    errors.extend(audit_request(module.describe_request(models), "CHDFS file system describe"))
+    errors.extend(audit_request(module.create_request(models, p), "CHDFS file system create"))
+    errors.extend(audit_request(module.update_request(models, "f-xxxxxxxx", target), "CHDFS file system update"))
+    errors.extend(audit_request(module.delete_request(models, "f-xxxxxxxx"), "CHDFS file system delete"))
+    assert errors == []
+
+
+def test_chdfs_mount_point():
+    module = _import_plugin("chdfs_mount_point"); models = _models("chdfs.v20201112")
+    p = {"file_system_id": "f-xxxxxxxx", "name": "analytics-mount", "status": 1}; target = {"MountPointName": "analytics-mount", "Status": 1}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p["file_system_id"]), "CHDFS mount point describe"))
+    errors.extend(audit_request(module.create_request(models, p), "CHDFS mount point create"))
+    errors.extend(audit_request(module.update_request(models, "mp-xxxxxxxx", target), "CHDFS mount point update"))
+    errors.extend(audit_request(module.delete_request(models, "mp-xxxxxxxx"), "CHDFS mount point delete"))
+    assert errors == []
+
+
+def test_chdfs_access_group():
+    module = _import_plugin("chdfs_access_group"); models = _models("chdfs.v20201112")
+    p = {"name": "analytics-access", "vpc_type": 1, "vpc_id": "vpc-xxxxxxxx", "description": "analytics"}; target = {"AccessGroupName": "analytics-access", "Description": "analytics"}; errors = []
+    errors.extend(audit_request(module.describe_request(models), "CHDFS access group describe"))
+    errors.extend(audit_request(module.create_request(models, p), "CHDFS access group create"))
+    errors.extend(audit_request(module.update_request(models, "ag-xxxxxxxx", target), "CHDFS access group update"))
+    errors.extend(audit_request(module.delete_request(models, "ag-xxxxxxxx"), "CHDFS access group delete"))
+    assert errors == []
+
+
+def test_chdfs_access_rules():
+    module = _import_plugin("chdfs_access_rules"); models = _models("chdfs.v20201112")
+    rules = [{"address": "10.0.0.0/16", "access_mode": 2, "priority": 10}]; updated = [dict(rules[0], access_rule_id=123)]; errors = []
+    errors.extend(audit_request(module.describe_request(models, "ag-xxxxxxxx"), "CHDFS access rules describe"))
+    errors.extend(audit_request(module.create_request(models, "ag-xxxxxxxx", rules), "CHDFS access rules create"))
+    errors.extend(audit_request(module.update_request(models, updated), "CHDFS access rules update"))
+    errors.extend(audit_request(module.delete_request(models, [123]), "CHDFS access rules delete"))
+    assert errors == []
+
+
+def test_chdfs_mount_access_groups():
+    module = _import_plugin("chdfs_mount_access_groups"); models = _models("chdfs.v20201112"); errors = []
+    errors.extend(audit_request(module.describe_request(models, "f-xxxxxxxx"), "CHDFS mount binding describe"))
+    errors.extend(audit_request(module.associate_request(models, "mp-xxxxxxxx", ["ag-xxxxxxxx"]), "CHDFS mount binding associate"))
+    errors.extend(audit_request(module.disassociate_request(models, "mp-xxxxxxxx", ["ag-xxxxxxxx"]), "CHDFS mount binding disassociate"))
     assert errors == []
 
 

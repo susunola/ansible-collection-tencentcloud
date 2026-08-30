@@ -101,7 +101,12 @@ action_groups:
     - cfw_nat_dnat_rule
     - cfw_vpc_acl_rule
     - chc_device_info
+    - chdfs_access_group
+    - chdfs_access_rules
+    - chdfs_file_system
     - chdfs_file_system_info
+    - chdfs_mount_access_groups
+    - chdfs_mount_point
     - ciam_user_store_info
     - ckafka_acl
     - ckafka_acl_rule
