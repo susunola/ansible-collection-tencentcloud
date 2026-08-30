@@ -373,6 +373,7 @@ action_groups:
     - tdmq_topic
     - tdmysql_db_instance_info
     - tem_application_info
+    - teo_acceleration_domain
     - teo_dns_record
     - teo_function_info
     - teo_origin_group

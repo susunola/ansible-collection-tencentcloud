@@ -455,6 +455,7 @@ WRITE_MODULE_BUILDERS = {
     "config_alarm_policy": ["create_request", "delete_request", "list_request", "update_request"],
     "config_aggregator": ["create_request", "describe_request", "list_request"],
     "config_aggregate_delivery": ["describe_request", "update_request"],
+    "teo_acceleration_domain": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
     "teo_origin_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "teo_zone": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
     "cvm_chc": [
@@ -4902,4 +4903,15 @@ def test_teo_origin_group():
     errors.extend(audit_request(module.create_request(models, p), "TEO origin group create"))
     errors.extend(audit_request(module.update_request(models, p, "origin-xxxxxxxx"), "TEO origin group update"))
     errors.extend(audit_request(module.delete_request(models, p, "origin-xxxxxxxx"), "TEO origin group delete"))
+    assert errors == []
+
+
+def test_teo_acceleration_domain():
+    module = _import_plugin("teo_acceleration_domain"); models = _models("teo.v20220901")
+    p = {"zone_id": "zone-xxxxxxxx", "domain_name": "app.example.com", "origin_type": "ORIGIN_GROUP", "origin": "origin-xxxxxxxx", "host_header": None, "origin_protocol": "HTTPS", "http_origin_port": 80, "https_origin_port": 443, "ipv6_status": "follow", "enabled": True, "force": False}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "TEO acceleration domain describe"))
+    errors.extend(audit_request(module.create_request(models, p), "TEO acceleration domain create"))
+    errors.extend(audit_request(module.update_request(models, p), "TEO acceleration domain update"))
+    errors.extend(audit_request(module.status_request(models, p), "TEO acceleration domain status"))
+    errors.extend(audit_request(module.delete_request(models, p), "TEO acceleration domain delete"))
     assert errors == []

@@ -1322,6 +1322,12 @@ modules:
   - DescribeDBInstances
   tem_application_info:
   - DescribeApplications
+  teo_acceleration_domain:
+  - CreateAccelerationDomain
+  - DeleteAccelerationDomains
+  - DescribeAccelerationDomains
+  - ModifyAccelerationDomain
+  - ModifyAccelerationDomainStatuses
   teo_dns_record:
   - CreateDnsRecord
   - DeleteDnsRecords
