@@ -225,6 +225,7 @@ CORE_MODULES = {
     "tdmq_rocketmq_cluster",
     "tdmq_subscription",
     "teo_dns_record",
+    "teo_zone",
     "tcr_instance",
     "tcr_namespace",
     "tcr_repository",

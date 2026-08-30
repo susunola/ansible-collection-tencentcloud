@@ -375,6 +375,7 @@ action_groups:
     - tem_application_info
     - teo_dns_record
     - teo_function_info
+    - teo_zone
     - thpc_cluster_info
     - tia_job_info
     - tiia_group_info

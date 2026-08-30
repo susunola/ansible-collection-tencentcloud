@@ -1329,6 +1329,12 @@ modules:
   - ModifyDnsRecords
   teo_function_info:
   - DescribeFunctions
+  teo_zone:
+  - CreateZone
+  - DeleteZone
+  - DescribeZones
+  - ModifyZone
+  - ModifyZoneStatus
   thpc_cluster_info:
   - DescribeClusters
   tia_job_info:
