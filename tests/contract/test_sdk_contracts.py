@@ -458,6 +458,7 @@ WRITE_MODULE_BUILDERS = {
     "teo_acceleration_domain": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
     "teo_origin_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "teo_security_ip_group": ["content_request", "create_request", "delete_request", "describe_request", "update_request"],
+    "teo_web_security_template": ["create_request", "delete_request", "describe_request", "update_request"],
     "teo_zone": ["create_request", "delete_request", "describe_request", "status_request", "update_request"],
     "cvm_chc": [
         "_configure_vpc",
@@ -4926,4 +4927,14 @@ def test_teo_security_ip_group():
     errors.extend(audit_request(module.create_request(models, p), "TEO security IP group create"))
     errors.extend(audit_request(module.update_request(models, p, 1001), "TEO security IP group update"))
     errors.extend(audit_request(module.delete_request(models, p, 1001), "TEO security IP group delete"))
+    assert errors == []
+
+
+def test_teo_web_security_template():
+    module = _import_plugin("teo_web_security_template"); models = _models("teo.v20220901")
+    p = {"zone_id": "zone-xxxxxxxx", "template_id": None, "name": "production_security"}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "TEO web security template describe"))
+    errors.extend(audit_request(module.create_request(models, p), "TEO web security template create"))
+    errors.extend(audit_request(module.update_request(models, p, "temp-xxxxxxxx"), "TEO web security template update"))
+    errors.extend(audit_request(module.delete_request(models, p, "temp-xxxxxxxx"), "TEO web security template delete"))
     assert errors == []

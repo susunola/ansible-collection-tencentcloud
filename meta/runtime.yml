@@ -378,6 +378,7 @@ action_groups:
     - teo_function_info
     - teo_origin_group
     - teo_security_ip_group
+    - teo_web_security_template
     - teo_zone
     - thpc_cluster_info
     - tia_job_info

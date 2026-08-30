@@ -1346,6 +1346,11 @@ modules:
   - DescribeSecurityIPGroupContent
   - DescribeSecurityIPGroupInfo
   - ModifySecurityIPGroup
+  teo_web_security_template:
+  - CreateWebSecurityTemplate
+  - DeleteWebSecurityTemplate
+  - DescribeWebSecurityTemplates
+  - ModifyWebSecurityTemplate
   teo_zone:
   - CreateZone
   - DeleteZone
