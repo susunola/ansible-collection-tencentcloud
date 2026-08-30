@@ -138,6 +138,7 @@ CORE_MODULES = {
     "lighthouse_firewall_rules",
     "lighthouse_snapshot",
     "lighthouse_key_pair",
+    "lighthouse_disk",
     "mongodb_instance",
     "mongodb_backup_config",
     "mongodb_account",

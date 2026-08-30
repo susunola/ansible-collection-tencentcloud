@@ -365,6 +365,7 @@ WRITE_MODULE_BUILDERS = {
     "lighthouse_firewall_rules": ["create_request", "delete_request", "describe_request"],
     "lighthouse_snapshot": ["create_request", "delete_request", "describe_request", "update_request"],
     "lighthouse_key_pair": ["associate_request", "delete_request", "describe_request", "disassociate_request", "import_request"],
+    "lighthouse_disk": ["attach_request", "create_request", "delete_request", "describe_request", "detach_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4716,4 +4717,16 @@ def test_lighthouse_key_pair():
     errors.extend(audit_request(module.associate_request(models, p, "lhkp-xxxxxxxx", p["instance_ids"]), "Lighthouse key associate"))
     errors.extend(audit_request(module.disassociate_request(models, p, "lhkp-xxxxxxxx", p["instance_ids"]), "Lighthouse key disassociate"))
     errors.extend(audit_request(module.delete_request(models, "lhkp-xxxxxxxx"), "Lighthouse key delete"))
+    assert errors == []
+
+
+def test_lighthouse_disk():
+    module = _import_plugin("lighthouse_disk"); models = _models("lighthouse.v20200324")
+    p = {"disk_id": None, "name": "app-data", "zone": "ap-guangzhou-3", "disk_size": 100, "disk_type": "CLOUD_SSD", "prepaid_period": 12, "renew_flag": "NOTIFY_AND_MANUAL_RENEW"}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "Lighthouse disk describe"))
+    errors.extend(audit_request(module.create_request(models, p), "Lighthouse disk create"))
+    errors.extend(audit_request(module.update_request(models, "lhdisk-xxxxxxxx", p["name"]), "Lighthouse disk update"))
+    errors.extend(audit_request(module.attach_request(models, "lhdisk-xxxxxxxx", "lhins-xxxxxxxx", p["renew_flag"]), "Lighthouse disk attach"))
+    errors.extend(audit_request(module.detach_request(models, "lhdisk-xxxxxxxx"), "Lighthouse disk detach"))
+    errors.extend(audit_request(module.delete_request(models, "lhdisk-xxxxxxxx"), "Lighthouse disk delete"))
     assert errors == []

@@ -31,6 +31,7 @@ minor_changes:
   - Add exact-set Lighthouse instance firewall rule management with version-aware writes.
   - Add Lighthouse instance snapshot lifecycle with rename and NORMAL-state convergence.
   - Add imported Lighthouse SSH key pair lifecycle with exact-set instance associations.
+  - Add Lighthouse data disk lifecycle with rename, attachment convergence and guarded replacement.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

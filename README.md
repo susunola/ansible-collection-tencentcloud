@@ -108,6 +108,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `key_pair` | Manage Tencent Cloud CVM key pairs |
 | `kms_key` | Manage a Tencent Cloud KMS key |
 | `kms_key_rotation` | Manage automatic rotation for a Tencent Cloud KMS key |
+| `lighthouse_disk` | Manage Tencent Cloud Lighthouse data disks |
 | `lighthouse_firewall_rules` | Manage Tencent Cloud Lighthouse instance firewall rules |
 | `lighthouse_instance` | Manage Tencent Cloud Lighthouse instances |
 | `lighthouse_key_pair` | Manage imported Tencent Cloud Lighthouse SSH key pairs |

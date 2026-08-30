@@ -730,6 +730,13 @@ modules:
   - GetKeyRotationStatus
   lcic_answer_info:
   - DescribeAnswerList
+  lighthouse_disk:
+  - AttachDisks
+  - CreateDisks
+  - DescribeDisks
+  - DetachDisks
+  - ModifyDisksAttribute
+  - TerminateDisks
   lighthouse_firewall_rules:
   - CreateFirewallRules
   - DeleteFirewallRules

@@ -223,6 +223,7 @@ action_groups:
     - kms_key_info
     - kms_key_rotation
     - lcic_answer_info
+    - lighthouse_disk
     - lighthouse_firewall_rules
     - lighthouse_instance
     - lighthouse_instance_info
