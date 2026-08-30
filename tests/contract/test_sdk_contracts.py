@@ -354,6 +354,8 @@ WRITE_MODULE_BUILDERS = {
     "waf_cc_rule": ["delete_request", "describe_request", "upsert_request"],
     "cfs_permission_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "cfs_permission_rule": ["create_request", "delete_request", "describe_request", "update_request"],
+    "cfs_snapshot": ["create_request", "delete_request", "describe_request", "update_request"],
+    "cfs_auto_snapshot_policy": ["bind_request", "create_request", "delete_request", "describe_request", "unbind_request", "update_request"],
     "api_gateway_service_release": ["build_describe", "build_release", "build_unrelease"],
     "api_gateway_api_key": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
     "api_gateway_usage_plan": ["build_create", "build_delete", "build_get", "build_list", "build_update"],
@@ -4594,4 +4596,26 @@ def test_cfs_permission_rule():
     errors.extend(audit_request(module.create_request(models, p), "CFS permission rule create"))
     errors.extend(audit_request(module.update_request(models, p, "rule-xxxxxxxx"), "CFS permission rule update"))
     errors.extend(audit_request(module.delete_request(models, p, "rule-xxxxxxxx"), "CFS permission rule delete"))
+    assert errors == []
+
+
+def test_cfs_snapshot():
+    module = _import_plugin("cfs_snapshot"); models = _models("cfs.v20190719")
+    p = {"snapshot_id": None, "file_system_id": "cfs-xxxxxxxx", "name": "before-upgrade", "alive_days": 30}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "CFS snapshot describe"))
+    errors.extend(audit_request(module.create_request(models, p), "CFS snapshot create"))
+    errors.extend(audit_request(module.update_request(models, p, "snap-xxxxxxxx"), "CFS snapshot update"))
+    errors.extend(audit_request(module.delete_request(models, "snap-xxxxxxxx"), "CFS snapshot delete"))
+    assert errors == []
+
+
+def test_cfs_auto_snapshot_policy():
+    module = _import_plugin("cfs_auto_snapshot_policy"); models = _models("cfs.v20190719")
+    p = {"policy_id": None, "name": "nightly", "hour": "02", "day_of_week": "1,2,3,4,5,6,7", "day_of_month": "", "interval_days": 0, "alive_days": 30, "enabled": True, "file_system_ids": ["cfs-xxxxxxxx"]}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "CFS auto snapshot describe"))
+    errors.extend(audit_request(module.create_request(models, p), "CFS auto snapshot create"))
+    errors.extend(audit_request(module.update_request(models, p, "asp-xxxxxxxx"), "CFS auto snapshot update"))
+    errors.extend(audit_request(module.bind_request(models, "asp-xxxxxxxx", p["file_system_ids"]), "CFS auto snapshot bind"))
+    errors.extend(audit_request(module.unbind_request(models, "asp-xxxxxxxx", p["file_system_ids"]), "CFS auto snapshot unbind"))
+    errors.extend(audit_request(module.delete_request(models, "asp-xxxxxxxx"), "CFS auto snapshot delete"))
     assert errors == []

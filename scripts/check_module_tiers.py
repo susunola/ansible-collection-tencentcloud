@@ -106,6 +106,8 @@ CORE_MODULES = {
     "cfs_file_system",
     "cfs_permission_group",
     "cfs_permission_rule",
+    "cfs_snapshot",
+    "cfs_auto_snapshot_policy",
     "cfw_address_template",
     "customer_gateway",
     "cvm_chc",

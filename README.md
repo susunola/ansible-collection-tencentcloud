@@ -43,9 +43,11 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cdb_instance` | Manage Tencent Cloud CDB MySQL instances |
 | `cdb_parameter_template` | Manage Tencent Cloud CDB parameter templates |
 | `cdn_domain` | Manage Tencent Cloud CDN domains |
+| `cfs_auto_snapshot_policy` | Manage Tencent Cloud CFS automatic snapshot policies |
 | `cfs_file_system` | Manage Tencent Cloud CFS file systems |
 | `cfs_permission_group` | Manage Tencent Cloud CFS permission groups |
 | `cfs_permission_rule` | Manage Tencent Cloud CFS permission rules |
+| `cfs_snapshot` | Manage Tencent Cloud CFS snapshots |
 | `cfw_address_template` | Manage Tencent Cloud Cloud Firewall address templates |
 | `ckafka_acl` | Manage Tencent Cloud CKafka ACL entries |
 | `ckafka_acl_rule` | Manage Tencent Cloud CKafka ACL rules |

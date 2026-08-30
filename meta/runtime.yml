@@ -79,10 +79,12 @@ action_groups:
     - cdz_cloud_dedicated_zone_host_info
     - cetcd_etcd_instance_info
     - cfg_action_library_info
+    - cfs_auto_snapshot_policy
     - cfs_file_system
     - cfs_file_system_info
     - cfs_permission_group
     - cfs_permission_rule
+    - cfs_snapshot
     - cfw_address_template
     - cfw_cluster_nat_ccn_fw_switch_info
     - chc_device_info

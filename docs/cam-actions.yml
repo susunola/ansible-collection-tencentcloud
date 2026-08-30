@@ -258,6 +258,13 @@ modules:
   - DescribeEtcdInstances
   cfg_action_library_info:
   - DescribeActionLibraryList
+  cfs_auto_snapshot_policy:
+  - BindAutoSnapshotPolicy
+  - CreateAutoSnapshotPolicy
+  - DeleteAutoSnapshotPolicy
+  - DescribeAutoSnapshotPolicies
+  - UnbindAutoSnapshotPolicy
+  - UpdateAutoSnapshotPolicy
   cfs_file_system:
   - CreateCfsFileSystem
   - DeleteCfsFileSystem
@@ -276,6 +283,11 @@ modules:
   - DeleteCfsRule
   - DescribeCfsRules
   - UpdateCfsRule
+  cfs_snapshot:
+  - CreateCfsSnapshot
+  - DeleteCfsSnapshot
+  - DescribeCfsSnapshots
+  - UpdateCfsSnapshotAttribute
   cfw_address_template:
   - CreateAddressTemplate
   - DeleteAddressTemplate
