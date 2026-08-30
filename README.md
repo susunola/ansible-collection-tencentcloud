@@ -263,6 +263,10 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tdmq_subscription` | Manage Tencent Cloud TDMQ Pulsar subscriptions |
 | `tdmq_topic` | Manage Tencent Cloud TDMQ Pulsar topics |
 | `tdmysql_db_instance` | Manage Tencent Cloud TDMysql instances |
+| `tem_application` | Manage Tencent Cloud TEM applications |
+| `tem_application_deployment` | Deploy Tencent Cloud TEM application versions |
+| `tem_application_service` | Manage Tencent Cloud TEM application access services |
+| `tem_environment` | Manage Tencent Cloud TEM environments |
 | `teo_acceleration_domain` | Manage Tencent Cloud EdgeOne acceleration domains |
 | `teo_dns_record` | Manage Tencent Cloud TEO DNS records |
 | `teo_origin_group` | Manage Tencent Cloud EdgeOne origin groups |

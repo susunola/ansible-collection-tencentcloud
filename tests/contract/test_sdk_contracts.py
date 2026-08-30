@@ -311,6 +311,10 @@ UNEXERCISED_BUILDERS = {
 # at the bottom of this file. Info-module builders are registered in
 # INFO_BUILDERS instead. Both sets are verified against the static scan.
 WRITE_MODULE_BUILDERS = {
+    "tem_application": ["create_request", "delete_request", "describe_request", "update_request"],
+    "tem_environment": ["create_request", "delete_request", "describe_request", "update_request"],
+    "tem_application_service": ["create_request", "delete_request", "describe_request", "update_request"],
+    "tem_application_deployment": ["deploy_request", "describe_request"],
     "tcb_environment": ["create_request", "delete_request", "describe_request", "update_request"],
     "tcb_http_service_route": ["create_request", "delete_request", "describe_request", "update_request"],
     "tcm_mesh": ["create_request", "delete_request", "describe_request", "list_request", "update_request"],
@@ -5327,6 +5331,44 @@ def test_teo_origin_group():
     errors.extend(audit_request(module.create_request(models, p), "TEO origin group create"))
     errors.extend(audit_request(module.update_request(models, p, "origin-xxxxxxxx"), "TEO origin group update"))
     errors.extend(audit_request(module.delete_request(models, p, "origin-xxxxxxxx"), "TEO origin group delete"))
+    assert errors == []
+
+
+def test_tem_application():
+    module = _import_plugin("tem_application"); models = _models("tem.v20210701")
+    p = {"application_id": None, "name": "order-api", "description": "Order service", "use_default_image_service": 1, "repo_type": 0, "instance_id": None, "repo_server": None, "repo_name": None, "source_channel": 0, "subnet_ids": ["subnet-xxxxxxxx"], "coding_language": "JAVA", "deploy_mode": "IMAGE", "enable_tracing": 1, "default_repo_parameters": None, "tags": {"env": "production"}, "environment_id": "en-xxxxxxxx", "delete_if_no_running_version": True}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "TEM application describe"))
+    errors.extend(audit_request(module.create_request(models, p), "TEM application create"))
+    errors.extend(audit_request(module.update_request(models, p, "app-xxxxxxxx", "Updated"), "TEM application update"))
+    errors.extend(audit_request(module.delete_request(models, p, "app-xxxxxxxx"), "TEM application delete"))
+    assert errors == []
+
+
+def test_tem_environment():
+    module = _import_plugin("tem_environment"); models = _models("tem.v20210701")
+    p = {"environment_id": None, "name": "production", "description": "Production", "vpc_id": "vpc-xxxxxxxx", "subnet_ids": ["subnet-xxxxxxxx"], "kubernetes_version": "1.28", "source_channel": 0, "enable_tsw_tracing": True, "tags": {"env": "production"}, "environment_type": "prod", "create_region": "ap-guangzhou", "setup_vpc": False, "setup_prometheus": False, "prometheus_id": None, "apm_id": None}; target = {"EnvironmentName": "production", "Description": "Production", "Vpc": "vpc-xxxxxxxx", "SubnetIds": ["subnet-xxxxxxxx"], "EnvType": "prod"}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "TEM environment describe"))
+    errors.extend(audit_request(module.create_request(models, p), "TEM environment create"))
+    errors.extend(audit_request(module.update_request(models, p, "en-xxxxxxxx", target), "TEM environment update"))
+    errors.extend(audit_request(module.delete_request(models, p, "en-xxxxxxxx"), "TEM environment delete"))
+    assert errors == []
+
+
+def test_tem_application_service():
+    module = _import_plugin("tem_application_service"); models = _models("tem.v20210701")
+    p = {"application_id": "app-xxxxxxxx", "environment_id": "en-xxxxxxxx", "name": "order-api", "access_type": "CLUSTER", "service": {"Ports": [8080], "PortMappingItemList": [{"Port": 80, "TargetPort": 8080, "Protocol": "TCP"}]}, "source_channel": 0}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "TEM application service describe"))
+    errors.extend(audit_request(module.create_request(models, p), "TEM application service create"))
+    errors.extend(audit_request(module.update_request(models, p), "TEM application service update"))
+    errors.extend(audit_request(module.delete_request(models, p), "TEM application service delete"))
+    assert errors == []
+
+
+def test_tem_application_deployment():
+    module = _import_plugin("tem_application_deployment"); models = _models("tem.v20210701")
+    p = {"application_id": "app-xxxxxxxx", "environment_id": "en-xxxxxxxx", "deploy_version": "v2026.08.31", "configuration": {"InitPodNum": 2, "CpuSpec": 1.0, "MemorySpec": 2.0, "DeployMode": "IMAGE", "ImgRepo": "ccr.ccs.tencentyun.com/example/order:v2026.08.31", "SecurityGroupIds": ["sg-xxxxxxxx"]}, "source_channel": 0}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "TEM deployment describe"))
+    errors.extend(audit_request(module.deploy_request(models, p), "TEM deployment create"))
     assert errors == []
 
 

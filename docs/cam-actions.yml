@@ -1652,8 +1652,26 @@ modules:
   - UpgradeInstance
   tdmysql_db_instance_info:
   - DescribeDBInstances
+  tem_application:
+  - CreateApplication
+  - DeleteApplication
+  - DescribeApplications
+  - ModifyApplicationInfo
+  tem_application_deployment:
+  - DeployApplication
+  - DescribeApplicationInfo
   tem_application_info:
   - DescribeApplications
+  tem_application_service:
+  - CreateApplicationService
+  - DeleteApplicationService
+  - DescribeApplicationServiceList
+  - ModifyApplicationService
+  tem_environment:
+  - CreateEnvironment
+  - DescribeEnvironments
+  - DestroyEnvironment
+  - ModifyEnvironment
   teo_acceleration_domain:
   - CreateAccelerationDomain
   - DeleteAccelerationDomains
