@@ -169,6 +169,8 @@ CORE_MODULES = {
     "tdmq_namespace",
     "tdmq_namespace_role",
     "tdmq_rabbitmq_vhost",
+    "tdmq_rabbitmq_user",
+    "tdmq_rabbitmq_permission",
     "tdmq_subscription",
     "teo_dns_record",
     "tcr_instance",

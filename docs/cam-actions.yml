@@ -1065,6 +1065,15 @@ modules:
   - DeleteEnvironmentRoles
   - DescribeEnvironmentRoles
   - ModifyEnvironmentRole
+  tdmq_rabbitmq_permission:
+  - DeleteRabbitMQPermission
+  - DescribeRabbitMQPermission
+  - ModifyRabbitMQPermission
+  tdmq_rabbitmq_user:
+  - CreateRabbitMQUser
+  - DeleteRabbitMQUser
+  - DescribeRabbitMQUser
+  - ModifyRabbitMQUser
   tdmq_rabbitmq_vhost:
   - CreateRabbitMQVirtualHost
   - DeleteRabbitMQVirtualHost
