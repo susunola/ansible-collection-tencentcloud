@@ -36,6 +36,7 @@ minor_changes:
   - Add CDN real-time CLS log topic lifecycle with exact-set domain and area bindings.
   - Add Cloud Firewall internet-border ACL rule lifecycle with templates, ordering and enable-state management.
   - Add Cloud Firewall NAT DNAT forwarding rule lifecycle with in-place private-target updates.
+  - Add Cloud Firewall NAT access-control rule lifecycle with ordering, scope and parameter-template support.
   - "Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules."
   - "Add organization member creation, update, node movement and deletion lifecycle."
   - "Add declarative CDB account privileges and organization member identity reconciliation."

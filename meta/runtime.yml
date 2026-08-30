@@ -92,6 +92,7 @@ action_groups:
     - cfw_address_template
     - cfw_cluster_nat_ccn_fw_switch_info
     - cfw_internet_acl_rule
+    - cfw_nat_acl_rule
     - cfw_nat_dnat_rule
     - chc_device_info
     - chdfs_file_system_info

@@ -323,6 +323,11 @@ modules:
   - DescribeAclRule
   - ModifyAclRule
   - RemoveAclRule
+  cfw_nat_acl_rule:
+  - AddNatAcRule
+  - DescribeNatAcRule
+  - ModifyNatAcRule
+  - RemoveNatAcRule
   cfw_nat_dnat_rule:
   - CreateNatFwDnatRule
   - DeleteNatFwDnatRule
