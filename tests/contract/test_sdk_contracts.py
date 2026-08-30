@@ -452,6 +452,7 @@ WRITE_MODULE_BUILDERS = {
     "config_delivery": ["describe_request", "update_request"],
     "config_compliance_pack": ["create_request", "delete_request", "describe_request", "list_request", "status_request", "update_request"],
     "config_remediation": ["create_request", "delete_request", "list_request", "update_request"],
+    "config_alarm_policy": ["create_request", "delete_request", "list_request", "update_request"],
     "cvm_chc": [
         "_configure_vpc",
         "_remove_assist",
@@ -3557,6 +3558,16 @@ def test_config_remediation():
     errors.extend(audit_request(module.create_request(models, p), "Config remediation create"))
     errors.extend(audit_request(module.update_request(models, p, "rem-xxxxxxxx"), "Config remediation update"))
     errors.extend(audit_request(module.delete_request(models, "rem-xxxxxxxx"), "Config remediation delete"))
+    assert errors == []
+
+
+def test_config_alarm_policy():
+    module = _import_plugin("config_alarm_policy"); models = _models("config.v20220802")
+    p = {"name": "high-risk-compliance", "event_type": 1, "event_scopes": [1], "risk_levels": [1], "notice_time": "09:00-18:00", "notification_mechanism": "USER", "enabled": True, "notice_period": [1, 2, 3, 4, 5], "description": "High risk events"}; errors = []
+    errors.extend(audit_request(module.list_request(models), "Config alarm policy list"))
+    errors.extend(audit_request(module.create_request(models, p), "Config alarm policy create"))
+    errors.extend(audit_request(module.update_request(models, p, 123456), "Config alarm policy update"))
+    errors.extend(audit_request(module.delete_request(models, 123456), "Config alarm policy delete"))
     assert errors == []
 
 
