@@ -213,6 +213,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tdmq_namespace` | Manage Tencent Cloud TDMQ Pulsar namespaces |
 | `tdmq_namespace_role` | Manage TDMQ Pulsar namespace role permissions |
 | `tdmq_rabbitmq_binding` | Manage TDMQ RabbitMQ bindings |
+| `tdmq_rabbitmq_instance` | Manage Tencent Cloud TDMQ RabbitMQ dedicated instances |
 | `tdmq_rabbitmq_permission` | Manage TDMQ RabbitMQ virtual host permissions |
 | `tdmq_rabbitmq_user` | Manage TDMQ RabbitMQ users |
 | `tdmq_rabbitmq_vhost` | Manage TDMQ RabbitMQ virtual hosts |

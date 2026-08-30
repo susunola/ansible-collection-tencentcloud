@@ -828,6 +828,7 @@ WRITE_MODULE_BUILDERS = {
     "ckafka_instance": ["attributes_request", "create_postpaid_request", "create_prepaid_request", "delete_postpaid_request", "delete_prepaid_request", "list_request", "modify_request", "resize_request"],
     "dcdb_instance": ["create_hour_request", "create_prepaid_request", "describe_request", "destroy_request", "isolate_request", "rename_request", "upgrade_request"],
     "tcaplusdb_cluster": ["create_request", "delete_request", "describe_request", "password_request", "rename_request"],
+    "tdmq_rabbitmq_instance": ["create_request", "delete_request", "describe_request", "modify_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
@@ -4730,6 +4731,15 @@ def test_tdmq_namespace_role():
     errors.extend(audit_request(module.create_request(models, p), "tdmq namespace role create"))
     errors.extend(audit_request(module.update_request(models, p), "tdmq namespace role update"))
     errors.extend(audit_request(module.delete_request(models, p), "tdmq namespace role delete"))
+    assert errors == []
+
+
+def test_tdmq_rabbitmq_instance():
+    module = _import_plugin("tdmq_rabbitmq_instance"); models = _models("tdmq.v20200217")
+    p = {"instance_id": "amqp-x", "name": "production-rabbitmq", "zone_ids": [100003, 100004, 100005], "vpc_id": "vpc-x", "subnet_id": "subnet-x", "node_spec": "rabbit-vip-profession-4c16g", "node_count": 3, "storage_size": 500, "cluster_version": "3.13.7", "pay_mode": 0, "period_months": 1, "auto_renew": True, "default_ha_mirror_queue": True, "bandwidth": 10, "public_access": False, "deletion_protection": True, "remark": "production", "tags": {"environment": "production"}, "international": False}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.modify_request(models, p, p["instance_id"]), module.delete_request(models, p["instance_id"], False)]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "TDMQ RabbitMQ instance request %s" % index))
     assert errors == []
 
 

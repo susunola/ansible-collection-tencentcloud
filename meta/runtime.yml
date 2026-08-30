@@ -381,6 +381,7 @@ action_groups:
     - tdmq_namespace
     - tdmq_namespace_role
     - tdmq_rabbitmq_binding
+    - tdmq_rabbitmq_instance
     - tdmq_rabbitmq_permission
     - tdmq_rabbitmq_user
     - tdmq_rabbitmq_vhost

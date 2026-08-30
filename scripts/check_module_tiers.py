@@ -235,6 +235,7 @@ CORE_MODULES = {
     "tdmq_rabbitmq_user",
     "tdmq_rabbitmq_permission",
     "tdmq_rabbitmq_binding",
+    "tdmq_rabbitmq_instance",
     "tdmq_rocketmq_namespace",
     "tdmq_rocketmq_topic",
     "tdmq_rocketmq_group",

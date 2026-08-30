@@ -1371,6 +1371,11 @@ modules:
   - CreateRabbitMQBinding
   - DeleteRabbitMQBinding
   - DescribeRabbitMQBindings
+  tdmq_rabbitmq_instance:
+  - CreateRabbitMQVipInstance
+  - DeleteRabbitMQVipInstance
+  - DescribeRabbitMQVipInstances
+  - ModifyRabbitMQVipInstance
   tdmq_rabbitmq_permission:
   - DeleteRabbitMQPermission
   - DescribeRabbitMQPermission
