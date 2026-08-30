@@ -13,6 +13,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 
 | Module | Purpose |
 | --- | --- |
+| `alb_target_group` | Manage Tencent Cloud ALB target groups |
+| `alb_target_group_targets` | Reconcile Tencent Cloud ALB target group backends |
 | `api_gateway_api` | Manage Tencent Cloud API Gateway APIs |
 | `api_gateway_api_key` | Manage Tencent Cloud API Gateway API keys |
 | `api_gateway_service` | Manage Tencent Cloud API Gateway services |

@@ -311,6 +311,8 @@ UNEXERCISED_BUILDERS = {
 # at the bottom of this file. Info-module builders are registered in
 # INFO_BUILDERS instead. Both sets are verified against the static scan.
 WRITE_MODULE_BUILDERS = {
+    "alb_target_group": ["create_request", "delete_request", "describe_request", "update_request"],
+    "alb_target_group_targets": ["add_request", "describe_request", "remove_request", "update_request"],
     "mqtt_authorization_policy": ["create_request", "delete_request", "describe_request", "update_request"],
     "mqtt_instance": ["create_request", "delete_request", "describe_request", "list_request", "update_request"],
     "mqtt_topic": ["create_request", "delete_request", "describe_request", "update_request"],
@@ -5303,6 +5305,26 @@ def test_teo_origin_group():
     errors.extend(audit_request(module.create_request(models, p), "TEO origin group create"))
     errors.extend(audit_request(module.update_request(models, p, "origin-xxxxxxxx"), "TEO origin group update"))
     errors.extend(audit_request(module.delete_request(models, p, "origin-xxxxxxxx"), "TEO origin group delete"))
+    assert errors == []
+
+
+def test_alb_target_group():
+    module = _import_plugin("alb_target_group"); models = _models("alb.v20251030")
+    p = {"target_group_id": None, "name": "application-http", "vpc_id": "vpc-xxxxxxxx", "target_type": "Instance", "protocol": "HTTP", "scheduler_algorithm": "wrr", "keepalive_enabled": True, "health_check": {"HealthCheckEnabled": True, "HealthCheckPath": "/health"}, "sticky_session": {"StickySessionEnabled": False}, "tags": {"env": "production"}}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "ALB target group describe"))
+    errors.extend(audit_request(module.create_request(models, p), "ALB target group create"))
+    errors.extend(audit_request(module.update_request(models, p, "alb-tg-xxxxxxxx"), "ALB target group update"))
+    errors.extend(audit_request(module.delete_request(models, "alb-tg-xxxxxxxx"), "ALB target group delete"))
+    assert errors == []
+
+
+def test_alb_target_group_targets():
+    module = _import_plugin("alb_target_group_targets"); models = _models("alb.v20251030")
+    p = {"target_group_id": "alb-tg-xxxxxxxx"}; values = [{"ip": "10.0.1.10", "port": 8080, "weight": 50}]; errors = []
+    errors.extend(audit_request(module.describe_request(models, p["target_group_id"]), "ALB targets describe"))
+    errors.extend(audit_request(module.add_request(models, p, values), "ALB targets add"))
+    errors.extend(audit_request(module.update_request(models, p, values), "ALB targets update"))
+    errors.extend(audit_request(module.remove_request(models, p, values), "ALB targets remove"))
     assert errors == []
 
 

@@ -1,4 +1,5 @@
 minor_changes:
+  - Add ALB target group lifecycle and exact-set backend target reconciliation.
   - Add MQTT instance, topic, secret-safe user, and authorization policy lifecycle management.
   - Add EventBridge event bus, rule, target, and connection lifecycle management with explicit immutable delivery and source configuration.
   - Add idempotent TDMQ RocketMQ namespace lifecycle management.

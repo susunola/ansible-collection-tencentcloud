@@ -7,6 +7,8 @@ action_groups:
     - advisor_strategy_info
     - ags_sandbox_instance_info
     - alb_security_policy_info
+    - alb_target_group
+    - alb_target_group_targets
     - ame_ktv_robot_info
     - ams_task_info
     - anicloud_resource_info

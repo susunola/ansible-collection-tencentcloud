@@ -10,6 +10,16 @@ modules:
   - DescribeSandboxInstanceList
   alb_security_policy_info:
   - DescribeSecurityPolicies
+  alb_target_group:
+  - CreateTargetGroup
+  - DeleteTargetGroups
+  - DescribeTargetGroups
+  - ModifyTargetGroupAttributes
+  alb_target_group_targets:
+  - AddTargetsToTargetGroup
+  - DescribeTargetGroupTargets
+  - ModifyTargetsInTargetGroup
+  - RemoveTargetsFromTargetGroup
   ame_ktv_robot_info:
   - DescribeKTVRobots
   ams_task_info:
