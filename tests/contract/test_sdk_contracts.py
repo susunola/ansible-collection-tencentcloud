@@ -830,6 +830,7 @@ WRITE_MODULE_BUILDERS = {
     "tcaplusdb_cluster": ["create_request", "delete_request", "describe_request", "password_request", "rename_request"],
     "tdmq_rabbitmq_instance": ["create_request", "delete_request", "describe_request", "modify_request"],
     "oceanus_workspace": ["create_request", "delete_request", "describe_request", "modify_request"],
+    "oceanus_job": ["create_request", "delete_request", "describe_request", "modify_request", "run_request", "stop_request"],
     "api_gateway_service": ["build_create_request", "build_delete_request", "build_get_request", "build_list_request", "build_update_request"],
     "waf_ip_access_control": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "tdmq_topic": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
@@ -2672,6 +2673,15 @@ def test_postgresql_account():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "PostgreSQL account request %s" % index))
+    assert errors == []
+
+
+def test_oceanus_job():
+    module = _import_plugin("oceanus_job"); models = _models("oceanus.v20190422")
+    p = {"job_id": "job-x", "name": "orders-stream", "workspace_id": "space-x", "job_type": 1, "cluster_type": 2, "cluster_id": "cluster-x", "cu_memory": 4, "folder_id": "root", "flink_version": "Flink-1.17", "jdk_version": "JDK11", "remark": "production", "description": "Order stream", "default_alarm": True, "continue_alarm": False, "tags": {"environment": "production"}, "job_config_version": 3, "start_mode": "LATEST", "savepoint_id": "savepoint-x", "savepoint_path": "cosn://bucket/savepoint"}
+    requests = [module.describe_request(models, p), module.create_request(models, p), module.modify_request(models, p, p["job_id"], p["name"], p["remark"], p["description"], p["folder_id"]), module.run_request(models, p, p["job_id"], True), module.stop_request(models, p, p["job_id"], True), module.delete_request(models, p, p["job_id"], p["name"])]
+    errors = []
+    for index, request in enumerate(requests): errors.extend(audit_request(request, "Oceanus job request %s" % index))
     assert errors == []
 
 
