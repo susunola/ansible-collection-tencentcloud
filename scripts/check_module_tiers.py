@@ -83,6 +83,7 @@ CORE_MODULES = {
     "cls_machine_group",
     "cls_topic",
     "cloudaudit_track",
+    "cloudaudit_audit",
     "ckafka_topic",
     "ckafka_user",
     "ckafka_route",

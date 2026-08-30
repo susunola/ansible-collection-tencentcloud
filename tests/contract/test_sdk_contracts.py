@@ -447,6 +447,7 @@ WRITE_MODULE_BUILDERS = {
     "cfw_nat_dnat_rule": ["create_request", "delete_request", "describe_request", "update_request"],
     "cfw_nat_acl_rule": ["create_request", "delete_request", "describe_request", "update_request"],
     "cfw_vpc_acl_rule": ["create_request", "delete_request", "describe_request", "update_request"],
+    "cloudaudit_audit": ["describe_request", "start_request", "stop_request", "update_request"],
     "cvm_chc": [
         "_configure_vpc",
         "_remove_assist",
@@ -3503,6 +3504,16 @@ def test_cfw_vpc_acl_rule():
     errors.extend(audit_request(module.create_request(models, p), "CFW VPC ACL create"))
     errors.extend(audit_request(module.update_request(models, p, 123456), "CFW VPC ACL update"))
     errors.extend(audit_request(module.delete_request(models, p, 123456), "CFW VPC ACL delete"))
+    assert errors == []
+
+
+def test_cloudaudit_audit():
+    module = _import_plugin("cloudaudit_audit"); models = _models("cloudaudit.v20190319")
+    p = {"audit_name": "default", "read_write_attribute": 3, "cos_region": "ap-guangzhou", "cos_bucket_name": "audit-logs-1250000000", "create_new_bucket": False, "log_file_prefix": "CloudAudit", "cmq_notify": True, "cmq_region": "ap-guangzhou", "cmq_queue_name": "audit-events", "create_new_queue": False, "kms_encryption": True, "kms_region": "ap-guangzhou", "key_id": "key-xxxxxxxx"}; errors = []
+    errors.extend(audit_request(module.describe_request(models, p["audit_name"]), "CloudAudit audit describe"))
+    errors.extend(audit_request(module.update_request(models, p), "CloudAudit audit update"))
+    errors.extend(audit_request(module.start_request(models, p["audit_name"]), "CloudAudit audit start"))
+    errors.extend(audit_request(module.stop_request(models, p["audit_name"]), "CloudAudit audit stop"))
     assert errors == []
 
 

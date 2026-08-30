@@ -70,6 +70,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `clb_load_balancer` | Manage Tencent Cloud CLB load balancers |
 | `clb_rule` | Manage Tencent Cloud CLB L7 forwarding rules |
 | `clb_target_group` | Manage Tencent Cloud CLB target groups and members |
+| `cloudaudit_audit` | Manage Tencent Cloud account-level CloudAudit delivery |
 | `cloudaudit_track` | Manage Tencent Cloud CloudAudit tracks |
 | `cls_config` | Manage Tencent Cloud CLS collection configurations |
 | `cls_config_machine_group_binding` | Bind CLS collection configurations to machine groups |

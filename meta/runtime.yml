@@ -113,6 +113,7 @@ action_groups:
     - clb_load_balancer_info
     - clb_rule
     - clb_target_group
+    - cloudaudit_audit
     - cloudaudit_event_info
     - cloudaudit_track
     - cloudhsm_vsm_info

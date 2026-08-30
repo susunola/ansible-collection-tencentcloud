@@ -424,6 +424,11 @@ modules:
   - DescribeTargetGroups
   - ModifyTargetGroupAttribute
   - RegisterTargetGroupInstances
+  cloudaudit_audit:
+  - DescribeAudit
+  - StartLogging
+  - StopLogging
+  - UpdateAudit
   cloudaudit_event_info:
   - LookUpEvents
   cloudaudit_track:
