@@ -1,6 +1,6 @@
 namespace: susunola
 name: tencentcloud
-version: 0.12.0
+version: 0.13.0
 readme: README.md
 authors:
   - Tencent Cloud Ansible Collection Contributors (@susunola)
