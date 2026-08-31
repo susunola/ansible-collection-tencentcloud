@@ -18,8 +18,16 @@ triggers and optional API Gateway service publication.
           - name: every-five-minutes
             trigger_type: timer
             trigger_desc: '0 */5 * * * * *'
+        tc_serverless_application_api_gateway_enabled: true
+        tc_serverless_application_api_service_name: order-api
+        tc_serverless_application_apis:
+          - name: order-webhook
+            path: /orders
+            method: POST
+            service_type: SCF
+            scf_function_qualifier: production
 ```
 
-API Gateway APIs currently expose the HTTP/MOCK fields supported by
-`api_gateway_api`; SCF backend binding can be represented with an explicit SCF
-`apigw` trigger until the API module gains typed SCF backend options.
+For an API item with `service_type: SCF`, the role defaults the backend
+function and namespace to the function managed by the role. A version or alias
+can be selected with `scf_function_qualifier`.

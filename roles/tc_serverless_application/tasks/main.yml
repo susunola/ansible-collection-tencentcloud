@@ -106,6 +106,13 @@
     service_type: "{{ item.service_type | default('MOCK') }}"
     service_timeout: "{{ item.service_timeout | default(15) }}"
     mock_response: "{{ item.mock_response | default('{}') }}"
+    scf_function_name: >-
+      {{ item.scf_function_name | default(
+         tc_serverless_application_function_name if item.service_type | default('MOCK') == 'SCF' else omit) }}
+    scf_function_namespace: "{{ item.scf_function_namespace | default(tc_serverless_application_namespace) }}"
+    scf_function_qualifier: "{{ item.scf_function_qualifier | default(item.qualifier | default('$LATEST')) }}"
+    scf_function_type: "{{ item.scf_function_type | default('EVENT') }}"
+    scf_integrated_response: "{{ item.scf_integrated_response | default(false) }}"
     enable_cors: "{{ item.enable_cors | default(false) }}"
   loop: "{{ tc_serverless_application_apis }}"
   loop_control:

@@ -11,7 +11,7 @@ DOCUMENTATION = r"""
 module: api_gateway_api
 short_description: Manage Tencent Cloud API Gateway APIs
 version_added: "0.14.0"
-description: Creates, updates and deletes an HTTP API within an API Gateway service.
+description: Creates, updates and deletes an API within an API Gateway service, including MOCK and SCF backends.
 options:
   retries: {description: Number of retries for transient failures., type: int, default: 5}
   waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
@@ -25,9 +25,14 @@ options:
   method: {type: str, choices: [GET, POST, PUT, DELETE, HEAD, ANY, OPTIONS, PATCH], default: ANY, description: HTTP method.}
   description: {type: str, default: '', description: API description.}
   auth_type: {type: str, choices: [NONE, SECRET, OAUTH], default: NONE, description: Authentication type.}
-  service_type: {type: str, choices: [HTTP, MOCK], default: MOCK, description: Backend type.}
+  service_type: {type: str, choices: [HTTP, MOCK, SCF], default: MOCK, description: Backend type.}
   service_timeout: {type: int, default: 15, description: Backend timeout in seconds.}
   mock_response: {type: str, default: '{}', description: MOCK response body.}
+  scf_function_name: {type: str, description: SCF function name; required for an SCF backend.}
+  scf_function_namespace: {type: str, default: default, description: SCF function namespace.}
+  scf_function_qualifier: {type: str, default: '$LATEST', description: SCF version or alias qualifier.}
+  scf_function_type: {type: str, choices: [EVENT, HTTP], default: EVENT, description: SCF event or web-function mode.}
+  scf_integrated_response: {type: bool, default: false, description: Enable SCF integrated response handling.}
   enable_cors: {type: bool, default: false, description: Enable CORS.}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
@@ -38,6 +43,18 @@ EXAMPLES = r"""
     name: health
     path: /health
     method: GET
+
+- name: Expose an SCF alias through API Gateway
+  susunola.tencentcloud.api_gateway_api:
+    service_id: service-xxxxxxxx
+    name: order-webhook
+    path: /orders
+    method: POST
+    service_type: SCF
+    scf_function_name: order-webhook
+    scf_function_namespace: default
+    scf_function_qualifier: production
+    scf_function_type: EVENT
 """
 RETURN = r"""api: {description: API metadata., type: dict, returned: always}"""
 
@@ -84,13 +101,19 @@ def apply_request(request, models, p, api_id=None):
     request.EnableCORS = p["enable_cors"]
     if p["service_type"] == "MOCK":
         request.ServiceMockReturnMessage = p["mock_response"]
+    if p["service_type"] == "SCF":
+        request.ServiceScfFunctionName = p["scf_function_name"]
+        request.ServiceScfFunctionNamespace = p["scf_function_namespace"]
+        request.ServiceScfFunctionQualifier = p["scf_function_qualifier"]
+        request.ServiceScfFunctionType = p["scf_function_type"]
+        request.ServiceScfIsIntegratedResponse = p["scf_integrated_response"]
     if api_id:
         request.ApiId = api_id
     return request
 
 
 def desired(p):
-    return {
+    value = {
         "ApiName": p["name"],
         "ApiDesc": p["description"],
         "AuthType": p["auth_type"],
@@ -100,11 +123,22 @@ def desired(p):
         "Path": p["path"],
         "Method": p["method"],
     }
+    if p["service_type"] == "MOCK":
+        value["ServiceMockReturnMessage"] = p["mock_response"]
+    if p["service_type"] == "SCF":
+        value.update({
+            "ServiceScfFunctionName": p["scf_function_name"],
+            "ServiceScfFunctionNamespace": p["scf_function_namespace"],
+            "ServiceScfFunctionQualifier": p["scf_function_qualifier"],
+            "ServiceScfFunctionType": p["scf_function_type"],
+            "ServiceScfIsIntegratedResponse": p["scf_integrated_response"],
+        })
+    return value
 
 
 def comparable(value):
     config = value.get("RequestConfig") or {}
-    return {
+    result = {
         "ApiName": value.get("ApiName"),
         "ApiDesc": value.get("ApiDesc") or "",
         "AuthType": value.get("AuthType"),
@@ -114,6 +148,17 @@ def comparable(value):
         "Path": config.get("Path"),
         "Method": config.get("Method"),
     }
+    if value.get("ServiceType") == "MOCK":
+        result["ServiceMockReturnMessage"] = value.get("ServiceMockReturnMessage") or ""
+    if value.get("ServiceType") == "SCF":
+        result.update({
+            "ServiceScfFunctionName": value.get("ServiceScfFunctionName"),
+            "ServiceScfFunctionNamespace": value.get("ServiceScfFunctionNamespace"),
+            "ServiceScfFunctionQualifier": value.get("ServiceScfFunctionQualifier"),
+            "ServiceScfFunctionType": value.get("ServiceScfFunctionType"),
+            "ServiceScfIsIntegratedResponse": bool(value.get("ServiceScfIsIntegratedResponse")),
+        })
+    return result
 
 
 def find(module, client, models, p):
@@ -152,12 +197,18 @@ def run_module():
             "method": {"choices": ["GET", "POST", "PUT", "DELETE", "HEAD", "ANY", "OPTIONS", "PATCH"], "default": "ANY"},
             "description": {"default": ""},
             "auth_type": {"choices": ["NONE", "SECRET", "OAUTH"], "default": "NONE"},
-            "service_type": {"choices": ["HTTP", "MOCK"], "default": "MOCK"},
+            "service_type": {"choices": ["HTTP", "MOCK", "SCF"], "default": "MOCK"},
             "service_timeout": {"type": "int", "default": 15},
             "mock_response": {"default": "{}"},
+            "scf_function_name": {},
+            "scf_function_namespace": {"default": "default"},
+            "scf_function_qualifier": {"default": "$LATEST"},
+            "scf_function_type": {"choices": ["EVENT", "HTTP"], "default": "EVENT"},
+            "scf_integrated_response": {"type": "bool", "default": False},
             "enable_cors": {"type": "bool", "default": False},
         },
         required_one_of=[("api_id", "name")],
+        required_if=[("service_type", "SCF", ("scf_function_name",))],
         supports_check_mode=True,
     )
     p = module.params

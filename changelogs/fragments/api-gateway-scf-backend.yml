@@ -1,0 +1,7 @@
+minor_changes:
+  - >-
+    api_gateway_api - add typed SCF backend function, namespace, qualifier,
+    function type and integrated-response options, and reconcile MOCK payloads.
+  - >-
+    tc_serverless_application - bind API Gateway routes directly to the SCF
+    function managed by the role.
