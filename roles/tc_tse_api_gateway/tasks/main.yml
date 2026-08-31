@@ -10,6 +10,7 @@
       - tc_tse_api_gateway_consumers is sequence
       - tc_tse_api_gateway_consumer_groups is sequence
       - tc_tse_api_gateway_consumer_group_memberships is sequence
+      - tc_tse_api_gateway_model_api_group_auths is sequence
       - tc_tse_api_gateway_secret_keys is sequence
       - tc_tse_api_gateway_certificates is sequence
       - tc_tse_api_gateway_waf_domains is sequence
@@ -108,6 +109,14 @@
   loop_control: {label: "{{ item.consumer_group_id | default('unnamed') }}"}
   register: _tc_tse_api_gateway_consumer_group_memberships_result
 
+- name: Reconcile TSE API gateway Model API group authorizations
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_model_api_group_auth:
+  args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_api_gateway_model_api_group_auths }}"
+  loop_control: {label: "{{ item.model_api_id | default('unnamed') }}"}
+  register: _tc_tse_api_gateway_model_api_group_auths_result
+
 - name: Reconcile TSE API gateway secret keys
   when: tc_tse_api_gateway_state == 'present'
   susunola.tencentcloud.tse_gateway_secret_key:
@@ -180,6 +189,7 @@
       consumers: "{{ _tc_tse_api_gateway_consumers_result.results | default([]) | map(attribute='consumer') | list }}"
       consumer_groups: "{{ _tc_tse_api_gateway_consumer_groups_result.results | default([]) | map(attribute='consumer_group') | list }}"
       consumer_group_memberships: "{{ _tc_tse_api_gateway_consumer_group_memberships_result.results | default([]) | map(attribute='membership') | list }}"
+      model_api_group_auths: "{{ _tc_tse_api_gateway_model_api_group_auths_result.results | default([]) | map(attribute='authorization') | list }}"
       secret_keys: "{{ _tc_tse_api_gateway_secret_keys_result.results | default([]) | map(attribute='secret_key') | list }}"
       certificates: "{{ _tc_tse_api_gateway_certificates_result.results | default([]) | map(attribute='certificate_info') | list }}"
       waf_domains: "{{ _tc_tse_api_gateway_waf_domains_result.waf_domains | default([]) }}"
@@ -291,6 +301,15 @@
     consumer_ids: "{{ item.consumer_ids }}"
     state: absent
   loop: "{{ tc_tse_api_gateway_consumer_group_memberships | reverse | list }}"
+
+- name: Remove TSE API gateway Model API group authorizations
+  when: tc_tse_api_gateway_state == 'absent'
+  susunola.tencentcloud.tse_gateway_model_api_group_auth:
+    gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
+    model_api_id: "{{ item.model_api_id }}"
+    consumer_group_ids: "{{ item.consumer_group_ids }}"
+    state: absent
+  loop: "{{ tc_tse_api_gateway_model_api_group_auths | reverse | list }}"
 
 - name: Remove TSE API gateway consumer groups
   when: tc_tse_api_gateway_state == 'absent'
