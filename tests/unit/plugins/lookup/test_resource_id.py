@@ -38,6 +38,7 @@ class Models(object):
     DescribeSubnetsRequest = Request
     DescribeSecurityGroupsRequest = Request
     DescribeInstancesRequest = Request
+    DescribeAutoScalingGroupsRequest = Request
     DescribeLoadBalancersRequest = Request
     DescribeClustersRequest = Request
     DescribeDBInstancesRequest = Request
@@ -80,6 +81,14 @@ def test_subnet_request_scopes_to_vpc():
 def test_cdb_request_uses_instance_names():
     request = build_request("cdb_instance", Models, "orders")
     assert request.InstanceNames == ["orders"]
+
+
+def test_autoscaling_group_request_uses_exact_name_filter():
+    request = build_request("autoscaling_group", Models, "web-fleet")
+    assert request.Limit == 100
+    assert request.Offset == 0
+    assert request.Filters[0].Name == "auto-scaling-group-name"
+    assert request.Filters[0].Values == ["web-fleet"]
 
 
 def test_postgresql_request_uses_instance_name_filter():
