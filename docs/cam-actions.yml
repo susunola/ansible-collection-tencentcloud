@@ -843,6 +843,11 @@ modules:
   - UpdateStandardEngineResourceGroupBaseInfo
   - UpdateStandardEngineResourceGroupConfigInfo
   - UpdateStandardEngineResourceGroupResourceInfo
+  dlc_job_spec:
+  - CreateJobSpec
+  - DeleteJobSpec
+  - ListJobSpecs
+  - UpdateJobSpec
   dlc_lab:
   - CreateLab
   - DeleteLab

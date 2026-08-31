@@ -37,6 +37,7 @@
     _tc_dlc_partition_queue_ids: {}
     _tc_dlc_resource_config_ids: {}
     _tc_dlc_ray_cluster_ids: {}
+    _tc_dlc_job_spec_ids: {}
     _tc_dlc_lab_ids: {}
     _tc_dlc_spark_job_ids: {}
     _tc_dlc_database_names: []
@@ -144,6 +145,23 @@
     _tc_dlc_ray_cluster_ids: >-
       {{ dict((tc_dlc_access_governance_ray_clusters | map(attribute='name') | list)
               | zip(_tc_dlc_ray_results.results | map(attribute='ray_cluster_id') | list)) }}
+
+- name: Reconcile DLC job specifications after compute targets
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_job_spec:
+  args: "{{ _tc_dlc_job_spec | combine({'state': 'present'}) }}"
+  loop: "{{ tc_dlc_access_governance_job_specs }}"
+  loop_control:
+    loop_var: _tc_dlc_job_spec
+    label: "{{ _tc_dlc_job_spec.name }}"
+  register: _tc_dlc_job_spec_results
+
+- name: Record DLC job-specification identities
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dlc_job_spec_ids: >-
+      {{ dict((tc_dlc_access_governance_job_specs | map(attribute='name') | list)
+              | zip(_tc_dlc_job_spec_results.results | map(attribute='job_spec_id') | list)) }}
 
 - name: Reconcile DLC laboratories after queues and resource templates
   when: tc_dlc_access_governance_state == 'present'
@@ -303,6 +321,17 @@
     loop_var: _tc_dlc_lab
     label: "{{ _tc_dlc_lab.name }}"
 
+- name: Remove DLC job specifications before compute targets
+  when:
+    - tc_dlc_access_governance_state == 'absent'
+    - tc_dlc_access_governance_allow_destroy | bool
+  susunola.tencentcloud.dlc_job_spec:
+  args: "{{ _tc_dlc_job_spec | combine({'state': 'absent', 'allow_delete': true}) }}"
+  loop: "{{ tc_dlc_access_governance_job_specs | reverse | list }}"
+  loop_control:
+    loop_var: _tc_dlc_job_spec
+    label: "{{ _tc_dlc_job_spec.name }}"
+
 - name: Remove DLC Ray clusters before resource templates
   when:
     - tc_dlc_access_governance_state == 'absent'
@@ -391,6 +420,7 @@
       partition_queue_ids: "{{ _tc_dlc_partition_queue_ids }}"
       resource_config_ids: "{{ _tc_dlc_resource_config_ids }}"
       ray_cluster_ids: "{{ _tc_dlc_ray_cluster_ids }}"
+      job_spec_ids: "{{ _tc_dlc_job_spec_ids }}"
       lab_ids: "{{ _tc_dlc_lab_ids }}"
       spark_job_ids: "{{ _tc_dlc_spark_job_ids }}"
       database_names: "{{ _tc_dlc_database_names }}"

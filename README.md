@@ -152,6 +152,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `dlc_data_mask_strategy` | Manage Tencent Cloud Data Lake Compute masking strategies |
 | `dlc_database` | Manage Tencent Cloud Data Lake Compute metadata databases |
 | `dlc_engine_resource_group` | Manage Tencent Cloud DLC standard engine resource groups |
+| `dlc_job_spec` | Manage reusable Tencent Cloud DLC job specifications |
 | `dlc_lab` | Manage Tencent Cloud DLC data laboratories |
 | `dlc_partition_queue` | Manage Tencent Cloud DLC resource partition queues |
 | `dlc_ray_cluster` | Manage Tencent Cloud DLC Ray clusters |

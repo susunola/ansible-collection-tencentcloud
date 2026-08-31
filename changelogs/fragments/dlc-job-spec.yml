@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_job_spec`` for reusable DLC job definitions with exact compute-target, JSON, tag and running-job deletion semantics.
