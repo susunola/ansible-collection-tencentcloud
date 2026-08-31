@@ -383,6 +383,7 @@ CORE_MODULES = {
     "tem_application_deployment",
     "tke_node_pool",
     "tione_dataset",
+    "tione_data_source",
     "vpc",
     "havip",
     "havip_association",

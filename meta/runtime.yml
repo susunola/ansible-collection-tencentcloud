@@ -517,6 +517,7 @@ action_groups:
     - thpc_cluster_info
     - tia_job_info
     - tiia_group_info
+    - tione_data_source
     - tione_dataset
     - tione_dataset_info
     - tiw_running_task_info

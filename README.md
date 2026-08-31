@@ -333,6 +333,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `teo_web_security_template` | Manage Tencent Cloud EdgeOne web security templates |
 | `teo_zone` | Manage Tencent Cloud EdgeOne zones |
 | `thpc_cluster` | Manage Tencent Cloud THPC clusters |
+| `tione_data_source` | Manage Tencent Cloud TIONE data sources |
 | `tione_dataset` | Manage Tencent Cloud TIONE datasets |
 | `tke_addon` | Manage a Tencent Kubernetes Engine addon |
 | `tke_backup_storage_location` | Manage Tencent Kubernetes Engine backup storage locations |

@@ -2023,6 +2023,11 @@ modules:
   - ListJobs
   tiia_group_info:
   - DescribeGroups
+  tione_data_source:
+  - CreateDataSource
+  - DeleteDataSource
+  - DescribeDataSource
+  - DescribeDataSources
   tione_dataset:
   - CreateDataset
   - DeleteDataset

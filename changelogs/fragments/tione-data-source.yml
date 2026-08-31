@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``tione_data_source`` with exact-name discovery, immutable-drift reporting, stable-ID guarded deletion and creation/deletion visibility waiting.
