@@ -1,0 +1,2 @@
+minor_changes:
+  - Expand Oceanus job versions with PyFlink, expert mode, trace, operator graph, per-class logging, Elasticsearch Serverless logging, variable replacement and state bucket controls.

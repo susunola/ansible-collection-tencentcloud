@@ -27,6 +27,17 @@ options:
   cls_logset_id: {type: str, description: CLS logset ID.}
   cls_topic_id: {type: str, description: CLS topic ID.}
   log_level: {type: str, description: Job log level.}
+  python_version: {type: str, description: PyFlink runtime Python version.}
+  job_manager_spec: {type: float, description: Legacy JobManager CU specification.}
+  task_manager_spec: {type: float, description: Legacy TaskManager CU specification.}
+  clazz_levels: {type: list, elements: dict, description: Per-class SDK ClazzLevel logging overrides.}
+  expert_mode_on: {type: bool, description: Enable expert-mode operator configuration.}
+  expert_mode_configuration: {type: dict, description: SDK ExpertModeConfiguration payload.}
+  trace_mode_on: {type: bool, description: Enable operator trace collection.}
+  trace_mode_configuration: {type: dict, description: SDK TraceModeConfiguration payload.}
+  job_graph: {type: dict, description: SDK JobGraph operator topology configuration.}
+  es_serverless_index: {type: str, description: Elasticsearch Serverless log index.}
+  es_serverless_space: {type: str, description: Elasticsearch Serverless log space.}
   auto_recover: {type: bool, description: Enable platform recovery.}
   checkpoint_retained: {type: int, description: Number of retained checkpoints.}
   checkpoint_timeout: {type: int, description: Checkpoint timeout in seconds.}
@@ -37,6 +48,8 @@ options:
   task_manager_memory: {type: float, description: TaskManager memory.}
   flink_version: {type: str, description: Flink runtime version.}
   jdk_version: {type: str, description: JDK runtime version.}
+  variable_replace_mode: {type: int, choices: [0, 1], description: Table-variable or global SQL-variable replacement mode.}
+  state_cos_bucket: {type: str, description: COS bucket used for Flink state.}
   config_scope: {type: int, choices: [0, 1, 2], default: 0, description: Full, development-only or operations-only scope.}
   allow_delete: {type: bool, default: false, description: Explicitly authorize deletion of a historical configuration version.}
   retries: {type: int, default: 5, description: Number of retries for transient failures.}
@@ -61,7 +74,7 @@ import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
-FIELDS={"entrypoint_class":"EntrypointClass","program_args":"ProgramArgs","remark":"Remark","default_parallelism":"DefaultParallelism","properties":"Properties","resource_refs":"ResourceRefDetails","cos_bucket":"COSBucket","log_collect":"LogCollect","log_collect_type":"LogCollectType","cls_logset_id":"ClsLogsetId","cls_topic_id":"ClsTopicId","log_level":"LogLevel","checkpoint_retained":"CheckpointRetainedNum","checkpoint_timeout":"CheckpointTimeoutSecond","checkpoint_interval":"CheckpointIntervalSecond","job_manager_cpu":"JobManagerCpu","job_manager_memory":"JobManagerMem","task_manager_cpu":"TaskManagerCpu","task_manager_memory":"TaskManagerMem","flink_version":"FlinkVersion","jdk_version":"JdkVersion"}
+FIELDS={"entrypoint_class":"EntrypointClass","program_args":"ProgramArgs","remark":"Remark","default_parallelism":"DefaultParallelism","properties":"Properties","resource_refs":"ResourceRefDetails","cos_bucket":"COSBucket","log_collect":"LogCollect","log_collect_type":"LogCollectType","cls_logset_id":"ClsLogsetId","cls_topic_id":"ClsTopicId","log_level":"LogLevel","python_version":"PythonVersion","job_manager_spec":"JobManagerSpec","task_manager_spec":"TaskManagerSpec","clazz_levels":"ClazzLevels","expert_mode_on":"ExpertModeOn","expert_mode_configuration":"ExpertModeConfiguration","trace_mode_on":"TraceModeOn","trace_mode_configuration":"TraceModeConfiguration","job_graph":"JobGraph","es_serverless_index":"EsServerlessIndex","es_serverless_space":"EsServerlessSpace","checkpoint_retained":"CheckpointRetainedNum","checkpoint_timeout":"CheckpointTimeoutSecond","checkpoint_interval":"CheckpointIntervalSecond","job_manager_cpu":"JobManagerCpu","job_manager_memory":"JobManagerMem","task_manager_cpu":"TaskManagerCpu","task_manager_memory":"TaskManagerMem","flink_version":"FlinkVersion","jdk_version":"JdkVersion","variable_replace_mode":"VariableReplaceMode","state_cos_bucket":"StateCOSBucket"}
 def _load():
     from tencentcloud.oceanus.v20190422 import models,oceanus_client
     return models,oceanus_client
@@ -72,6 +85,20 @@ def desired(p):
     return value
 def normalize_resource_refs(values):
     return sorted(({key:item.get(key) for key in ("ResourceId","Version","Type")} for item in values or []),key=lambda item:(item.get("Type",0),item.get("ResourceId","") or "",item.get("Version",-1)))
+def managed_value(current,target):
+    if isinstance(target,dict):
+        current=current if isinstance(current,dict) else {}
+        return {key:managed_value(current.get(key),value) for key,value in target.items()}
+    if isinstance(target,list):
+        current=current if isinstance(current,list) else []
+        return [managed_value(current[index] if index<len(current) else None,value) for index,value in enumerate(target)]
+    return current
+def observed(current,target):
+    value=managed_value(current,target)
+    if "LogCollect" in target: value["LogCollect"]=current.get("LogCollect") not in (None,0)
+    if "LogCollectType" in target: value["LogCollectType"]={1:2,4:3}.get(current.get("LogCollect"))
+    if "ResourceRefDetails" in target: value["ResourceRefDetails"]=normalize_resource_refs(current.get("ResourceRefDetails"))
+    return value
 def named_refs(resources,refs):
     by_name={}
     for resource in resources:
@@ -104,7 +131,7 @@ def delete_request(models,p): r=models.DeleteJobConfigsRequest(); r.JobId=p["job
 def run_module():
     ref_options={"ResourceId":{"required":True},"Version":{"type":"int","required":True},"Type":{"type":"int","choices":[0,1,2,3,4],"required":True}}
     named_ref_options={"Name":{"required":True},"Version":{"type":"int"},"Type":{"type":"int","choices":[0,1,2,3,4],"required":True}}
-    spec={"state":{"choices":["present","absent"],"default":"present"},"job_id":{"required":True},"workspace_id":{"required":True},"version":{"type":"int"},"entrypoint_class":{},"program_args":{},"remark":{},"default_parallelism":{"type":"int"},"properties":{"type":"list","elements":"dict"},"resource_refs":{"type":"list","elements":"dict","options":ref_options},"resource_ref_names":{"type":"list","elements":"dict","options":named_ref_options},"auto_delete_oldest":{"type":"bool","default":False},"cos_bucket":{},"log_collect":{"type":"bool"},"log_collect_type":{"type":"int","choices":[2,3]},"cls_logset_id":{},"cls_topic_id":{},"log_level":{},"auto_recover":{"type":"bool"},"checkpoint_retained":{"type":"int"},"checkpoint_timeout":{"type":"int"},"checkpoint_interval":{"type":"int"},"job_manager_cpu":{"type":"float"},"job_manager_memory":{"type":"float"},"task_manager_cpu":{"type":"float"},"task_manager_memory":{"type":"float"},"flink_version":{},"jdk_version":{},"config_scope":{"type":"int","choices":[0,1,2],"default":0},"allow_delete":{"type":"bool","default":False}}
+    spec={"state":{"choices":["present","absent"],"default":"present"},"job_id":{"required":True},"workspace_id":{"required":True},"version":{"type":"int"},"entrypoint_class":{},"program_args":{},"remark":{},"default_parallelism":{"type":"int"},"properties":{"type":"list","elements":"dict"},"resource_refs":{"type":"list","elements":"dict","options":ref_options},"resource_ref_names":{"type":"list","elements":"dict","options":named_ref_options},"auto_delete_oldest":{"type":"bool","default":False},"cos_bucket":{},"log_collect":{"type":"bool"},"log_collect_type":{"type":"int","choices":[2,3]},"cls_logset_id":{},"cls_topic_id":{},"log_level":{},"python_version":{},"job_manager_spec":{"type":"float"},"task_manager_spec":{"type":"float"},"clazz_levels":{"type":"list","elements":"dict"},"expert_mode_on":{"type":"bool"},"expert_mode_configuration":{"type":"dict"},"trace_mode_on":{"type":"bool"},"trace_mode_configuration":{"type":"dict"},"job_graph":{"type":"dict"},"es_serverless_index":{},"es_serverless_space":{},"auto_recover":{"type":"bool"},"checkpoint_retained":{"type":"int"},"checkpoint_timeout":{"type":"int"},"checkpoint_interval":{"type":"int"},"job_manager_cpu":{"type":"float"},"job_manager_memory":{"type":"float"},"task_manager_cpu":{"type":"float"},"task_manager_memory":{"type":"float"},"flink_version":{},"jdk_version":{},"variable_replace_mode":{"type":"int","choices":[0,1]},"state_cos_bucket":{},"config_scope":{"type":"int","choices":[0,1,2],"default":0},"allow_delete":{"type":"bool","default":False}}
     module=TencentCloudModule(argument_spec=spec,required_if=[("state","absent",["version"])],mutually_exclusive=[("resource_refs","resource_ref_names")],supports_check_mode=True); p=module.params; module.require_sdk(); models,cm=_load(); client=module.create_client(cm.OceanusClient,"oceanus.tencentcloudapi.com")
     try:
         if p["state"]=="absent":
@@ -117,7 +144,7 @@ def run_module():
         if p.get("resource_ref_names") is not None: p["resource_refs"]=resolve_named_refs(module,client,models,p)
         target=desired(p)
         if not target: module.fail_json(msg="at least one managed configuration field is required to publish an Oceanus job configuration")
-        current=describe(module,client,models,p); before={key:(normalize_resource_refs(current.get(key)) if key=="ResourceRefDetails" else current.get(key)) for key in target} if current else None
+        current=describe(module,client,models,p); before=observed(current,target) if current else None
         if before==target: module.exit_json(changed=False,job_config=current,version=current.get("Version"))
         diff=maybe_diff(module,before,target); version=None
         if not module.check_mode: version=module.sdk_call(client.CreateJobConfig,create_request(models,p,target)).Version; current=describe(module,client,models,p,version)
