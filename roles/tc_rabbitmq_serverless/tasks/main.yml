@@ -1,0 +1,59 @@
+---
+- name: Validate RabbitMQ Serverless inputs
+  ansible.builtin.assert:
+    that:
+      - tc_rabbitmq_serverless_state in ['present', 'absent']
+      - tc_rabbitmq_serverless_instance_id | length > 0
+    fail_msg: RabbitMQ Serverless currently requires an existing instance ID.
+
+- name: Reconcile RabbitMQ Serverless users
+  when: tc_rabbitmq_serverless_state == 'present'
+  susunola.tencentcloud.trabbit_serverless_user:
+    region: "{{ tc_rabbitmq_serverless_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ tc_rabbitmq_serverless_instance_id }}"
+    name: "{{ item.name }}"
+    password: "{{ item.password | default(omit, true) }}"
+    rotate_password: "{{ item.rotate_password | default(false) }}"
+    description: "{{ item.description | default('') }}"
+    tags: "{{ item.tags | default([]) }}"
+    max_connections: "{{ item.max_connections | default(omit) }}"
+    max_channels: "{{ item.max_channels | default(omit) }}"
+  loop: "{{ tc_rabbitmq_serverless_users }}"
+  loop_control: {label: "{{ item.name }}"}
+  no_log: "{{ item.password is defined }}"
+  register: _tc_rabbitmq_serverless_users
+
+- name: Reconcile RabbitMQ Serverless virtual hosts and resources
+  when: tc_rabbitmq_serverless_state == 'present'
+  ansible.builtin.include_tasks: virtual_host.yml
+  loop: "{{ tc_rabbitmq_serverless_virtual_hosts }}"
+  loop_control:
+    loop_var: _tc_serverless_vhost
+    label: "{{ _tc_serverless_vhost.name }}"
+
+- name: Remove RabbitMQ Serverless bindings and virtual-host resources
+  when: tc_rabbitmq_serverless_state == 'absent'
+  ansible.builtin.include_tasks: teardown_virtual_host.yml
+  loop: "{{ tc_rabbitmq_serverless_virtual_hosts }}"
+  loop_control:
+    loop_var: _tc_serverless_vhost
+    label: "{{ _tc_serverless_vhost.name }}"
+
+- name: Remove RabbitMQ Serverless users
+  when: tc_rabbitmq_serverless_state == 'absent'
+  susunola.tencentcloud.trabbit_serverless_user:
+    region: "{{ tc_rabbitmq_serverless_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_rabbitmq_serverless_instance_id }}"
+    name: "{{ item.name }}"
+  loop: "{{ tc_rabbitmq_serverless_users }}"
+  loop_control: {label: "{{ item.name }}"}
+
+- name: Publish RabbitMQ Serverless result
+  when: tc_rabbitmq_serverless_state == 'present'
+  ansible.builtin.set_fact:
+    tc_rabbitmq_serverless_result:
+      instance_id: "{{ tc_rabbitmq_serverless_instance_id }}"
+      users: "{{ _tc_rabbitmq_serverless_users | default({}) }}"
+      virtual_host_count: "{{ tc_rabbitmq_serverless_virtual_hosts | length }}"

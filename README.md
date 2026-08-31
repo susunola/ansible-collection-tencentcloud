@@ -584,6 +584,7 @@ for product-level write, discovery and reusable-role maturity.
 | `tc_kafka_platform` | Provision CKafka instances, routes, users, topics and exact ACL controls |
 | `tc_rocketmq_platform` | Provision TDMQ RocketMQ clusters, namespaces, roles, permissions, topics and groups |
 | `tc_rabbitmq_platform` | Provision TDMQ RabbitMQ dedicated instances, users, virtual hosts, permissions and bindings |
+| `tc_rabbitmq_serverless` | Manage users, vhosts, permissions, exchanges, queues and bindings in an existing RabbitMQ Serverless instance |
 | `tc_cmq_messaging` | Provision CMQ queues, topics and HTTP or queue subscriptions |
 
 ## Requirements

@@ -1,0 +1,47 @@
+---
+- name: Remove RabbitMQ Serverless bindings
+  susunola.tencentcloud.trabbit_serverless_binding:
+    region: "{{ tc_rabbitmq_serverless_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_rabbitmq_serverless_instance_id }}"
+    virtual_host: "{{ _tc_serverless_vhost.name }}"
+    binding_id: "{{ item.binding_id | default(omit) }}"
+    source_exchange: "{{ item.source_exchange }}"
+    destination_type: "{{ item.destination_type }}"
+    destination: "{{ item.destination }}"
+    routing_key: "{{ item.routing_key | default('') }}"
+  loop: "{{ _tc_serverless_vhost.bindings | default([]) }}"
+
+- name: Remove RabbitMQ Serverless permissions
+  susunola.tencentcloud.trabbit_serverless_permission:
+    region: "{{ tc_rabbitmq_serverless_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_rabbitmq_serverless_instance_id }}"
+    user: "{{ item.user }}"
+    virtual_host: "{{ _tc_serverless_vhost.name }}"
+  loop: "{{ _tc_serverless_vhost.permissions | default([]) }}"
+
+- name: Remove RabbitMQ Serverless queues
+  susunola.tencentcloud.trabbit_serverless_queue:
+    region: "{{ tc_rabbitmq_serverless_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_rabbitmq_serverless_instance_id }}"
+    virtual_host: "{{ _tc_serverless_vhost.name }}"
+    name: "{{ item.name }}"
+  loop: "{{ _tc_serverless_vhost.queues | default([]) }}"
+
+- name: Remove RabbitMQ Serverless exchanges
+  susunola.tencentcloud.trabbit_serverless_exchange:
+    region: "{{ tc_rabbitmq_serverless_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_rabbitmq_serverless_instance_id }}"
+    virtual_host: "{{ _tc_serverless_vhost.name }}"
+    name: "{{ item.name }}"
+  loop: "{{ _tc_serverless_vhost.exchanges | default([]) }}"
+
+- name: Delete RabbitMQ Serverless virtual host
+  susunola.tencentcloud.trabbit_serverless_vhost:
+    region: "{{ tc_rabbitmq_serverless_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_rabbitmq_serverless_instance_id }}"
+    name: "{{ _tc_serverless_vhost.name }}"

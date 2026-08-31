@@ -228,6 +228,14 @@ def test_cmq_teardown_removes_subscriptions_before_topics_and_queues():
     assert "Delete CMQ topic subscriptions" in teardown
 
 
+def test_rabbitmq_serverless_teardown_removes_bindings_before_resources():
+    main = role_tasks("tc_rabbitmq_serverless")
+    vhost = (ROOT / "roles" / "tc_rabbitmq_serverless" / "tasks" / "teardown_virtual_host.yml").read_text(encoding="utf-8")
+    assert_order(vhost, "Remove RabbitMQ Serverless bindings", "Remove RabbitMQ Serverless permissions", "Remove RabbitMQ Serverless queues", "Remove RabbitMQ Serverless exchanges", "Delete RabbitMQ Serverless virtual host")
+    assert "Remove RabbitMQ Serverless users" in main
+    assert "existing instance ID" in main
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(

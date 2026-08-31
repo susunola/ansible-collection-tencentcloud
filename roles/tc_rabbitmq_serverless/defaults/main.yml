@@ -1,0 +1,8 @@
+---
+tc_rabbitmq_serverless_state: present
+tc_rabbitmq_serverless_region: ""
+tc_rabbitmq_serverless_instance_id: ""
+# User items use trabbit_serverless_user parameters; passwords are creation/rotation only.
+tc_rabbitmq_serverless_users: []
+# Vhost items may contain permissions, exchanges, queues and bindings.
+tc_rabbitmq_serverless_virtual_hosts: []

@@ -1,0 +1,6 @@
+---
+minor_changes:
+  - >-
+    solution roles - add ``tc_rabbitmq_serverless`` for managing users, virtual
+    hosts, permissions, exchanges, queues and bindings inside an explicitly
+    supplied existing Serverless instance.

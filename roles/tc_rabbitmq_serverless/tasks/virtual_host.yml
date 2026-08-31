@@ -1,0 +1,88 @@
+---
+- name: Reconcile RabbitMQ Serverless virtual host
+  susunola.tencentcloud.trabbit_serverless_vhost:
+    region: "{{ tc_rabbitmq_serverless_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ tc_rabbitmq_serverless_instance_id }}"
+    name: "{{ _tc_serverless_vhost.name }}"
+    description: "{{ _tc_serverless_vhost.description | default('') }}"
+    mirror_queue_policy: "{{ _tc_serverless_vhost.mirror_queue_policy | default(true) }}"
+    trace_enabled: "{{ _tc_serverless_vhost.trace_enabled | default(omit) }}"
+    apply_trace: "{{ _tc_serverless_vhost.apply_trace | default(false) }}"
+
+- name: Reconcile RabbitMQ Serverless permissions
+  susunola.tencentcloud.trabbit_serverless_permission:
+    region: "{{ tc_rabbitmq_serverless_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ tc_rabbitmq_serverless_instance_id }}"
+    user: "{{ item.user }}"
+    virtual_host: "{{ _tc_serverless_vhost.name }}"
+    configure_regex: "{{ item.configure_regex | default('.*') }}"
+    write_regex: "{{ item.write_regex | default('.*') }}"
+    read_regex: "{{ item.read_regex | default('.*') }}"
+  loop: "{{ _tc_serverless_vhost.permissions | default([]) }}"
+  loop_control: {label: "{{ item.user }}"}
+
+- name: Reconcile RabbitMQ Serverless exchanges
+  susunola.tencentcloud.trabbit_serverless_exchange:
+    region: "{{ tc_rabbitmq_serverless_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ tc_rabbitmq_serverless_instance_id }}"
+    virtual_host: "{{ _tc_serverless_vhost.name }}"
+    name: "{{ item.name }}"
+    exchange_type: "{{ item.exchange_type | default(omit, true) }}"
+    remark: "{{ item.remark | default('') }}"
+    durable: "{{ item.durable | default(omit) }}"
+    auto_delete: "{{ item.auto_delete | default(omit) }}"
+    internal: "{{ item.internal | default(omit) }}"
+    alternate_exchange: "{{ item.alternate_exchange | default('') }}"
+    delayed_exchange_type: "{{ item.delayed_exchange_type | default(omit, true) }}"
+  loop: "{{ _tc_serverless_vhost.exchanges | default([]) }}"
+  loop_control: {label: "{{ item.name }}"}
+
+- name: Reconcile RabbitMQ Serverless queues
+  susunola.tencentcloud.trabbit_serverless_queue:
+    region: "{{ tc_rabbitmq_serverless_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ tc_rabbitmq_serverless_instance_id }}"
+    virtual_host: "{{ _tc_serverless_vhost.name }}"
+    name: "{{ item.name }}"
+    queue_type: "{{ item.queue_type | default(omit, true) }}"
+    durable: "{{ item.durable | default(omit) }}"
+    auto_delete: "{{ item.auto_delete | default(omit) }}"
+    remark: "{{ item.remark | default('') }}"
+    message_ttl: "{{ item.message_ttl | default(omit) }}"
+    auto_expire: "{{ item.auto_expire | default(omit) }}"
+    max_length: "{{ item.max_length | default(omit) }}"
+    max_length_bytes: "{{ item.max_length_bytes | default(omit) }}"
+    delivery_limit: "{{ item.delivery_limit | default(omit) }}"
+    overflow_behaviour: "{{ item.overflow_behaviour | default(omit, true) }}"
+    dead_letter_exchange: "{{ item.dead_letter_exchange | default(omit, true) }}"
+    dead_letter_routing_key: "{{ item.dead_letter_routing_key | default(omit, true) }}"
+    single_active_consumer: "{{ item.single_active_consumer | default(omit) }}"
+    maximum_priority: "{{ item.maximum_priority | default(omit) }}"
+    lazy_mode: "{{ item.lazy_mode | default(omit) }}"
+    master_locator: "{{ item.master_locator | default(omit, true) }}"
+    max_in_memory_length: "{{ item.max_in_memory_length | default(omit) }}"
+    max_in_memory_bytes: "{{ item.max_in_memory_bytes | default(omit) }}"
+    node: "{{ item.node | default(omit, true) }}"
+    dead_letter_strategy: "{{ item.dead_letter_strategy | default(omit, true) }}"
+    queue_leader_locator: "{{ item.queue_leader_locator | default(omit, true) }}"
+    quorum_initial_group_size: "{{ item.quorum_initial_group_size | default(omit) }}"
+  loop: "{{ _tc_serverless_vhost.queues | default([]) }}"
+  loop_control: {label: "{{ item.name }}"}
+
+- name: Reconcile RabbitMQ Serverless bindings
+  susunola.tencentcloud.trabbit_serverless_binding:
+    region: "{{ tc_rabbitmq_serverless_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ tc_rabbitmq_serverless_instance_id }}"
+    virtual_host: "{{ _tc_serverless_vhost.name }}"
+    binding_id: "{{ item.binding_id | default(omit) }}"
+    source_exchange: "{{ item.source_exchange }}"
+    destination_type: "{{ item.destination_type }}"
+    destination: "{{ item.destination }}"
+    routing_key: "{{ item.routing_key | default('') }}"
+  loop: "{{ _tc_serverless_vhost.bindings | default([]) }}"
+  loop_control:
+    label: "{{ item.source_exchange }} -> {{ item.destination }}"

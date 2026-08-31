@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **28**
+- Solution roles: **29**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -200,7 +200,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `tke` | solution | 7 | 1 | `tc_tke_platform` | `tke_addon`, `tke_backup_storage_location`, `tke_cluster`, `tke_cluster_audit`, `tke_cluster_authentication`, `tke_cluster_endpoint`, `tke_node_pool` |
 | `tokenhub` | discovery-only | 0 | 1 | — | — |
 | `tourism` | discovery-only | 0 | 1 | — | — |
-| `trabbit` | resource-family | 6 | 1 | — | `trabbit_serverless_binding`, `trabbit_serverless_exchange`, `trabbit_serverless_permission`, `trabbit_serverless_queue`, `trabbit_serverless_user`, `trabbit_serverless_vhost` |
+| `trabbit` | solution | 6 | 1 | `tc_rabbitmq_serverless` | `trabbit_serverless_binding`, `trabbit_serverless_exchange`, `trabbit_serverless_permission`, `trabbit_serverless_queue`, `trabbit_serverless_user`, `trabbit_serverless_vhost` |
 | `trocket` | discovery-only | 0 | 1 | — | — |
 | `trp` | discovery-only | 0 | 1 | — | — |
 | `trro` | discovery-only | 0 | 1 | — | — |
