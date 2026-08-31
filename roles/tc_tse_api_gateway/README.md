@@ -18,6 +18,17 @@ route creation. Guarded teardown removes routes and services before the gateway.
           feature_version: STANDARD
           node_config: {Specification: 2c4g, Number: 2}
           vpc_config: {VpcId: vpc-xxxxxxxx, SubnetId: subnet-xxxxxxxx}
+        tc_tse_api_gateway_autoscaler_strategies:
+          - name: production-elasticity
+            max_replicas: 10
+            metric_config:
+              Enabled: true
+              MaxReplicas: 10
+              Metrics: [{Type: Resource, ResourceName: cpu, TargetType: Utilization, TargetValue: 60}]
+        tc_tse_api_gateway_autoscaler_bindings:
+          - strategy_name: production-elasticity
+            group_ids: [group-xxxxxxxx]
+            purge_unlisted: true
         tc_tse_api_gateway_services:
           - name: orders
             protocol: http
@@ -96,3 +107,5 @@ They are resolved from resources created in the same role run. Direct
 `config.SecretKeyIds` and `config.ListModelServiceId` remain supported.
 Memberships and Model API authorizations similarly accept name-based references;
 their direct ID fields remain supported for externally managed resources.
+Autoscaler bindings accept `strategy_name`; the binding module resolves it for
+both creation and teardown. Direct `strategy_id` remains available.

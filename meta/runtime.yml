@@ -585,6 +585,8 @@ action_groups:
     - tse_cloud_native_gateway
     - tse_config_file
     - tse_config_file_group
+    - tse_gateway_autoscaler_binding
+    - tse_gateway_autoscaler_strategy
     - tse_gateway_canary_rule
     - tse_gateway_certificate
     - tse_gateway_consumer

@@ -376,6 +376,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tse_cloud_native_gateway` | Manage a Tencent Cloud TSE cloud-native API gateway |
 | `tse_config_file` | Manage a Tencent Cloud TSE configuration file |
 | `tse_config_file_group` | Manage a Tencent Cloud TSE configuration file group |
+| `tse_gateway_autoscaler_binding` | Bind a TSE gateway autoscaler strategy to gateway groups |
+| `tse_gateway_autoscaler_strategy` | Manage a Tencent Cloud TSE gateway autoscaler strategy |
 | `tse_gateway_canary_rule` | Manage a Tencent Cloud TSE gateway canary rule |
 | `tse_gateway_certificate` | Manage a Tencent Cloud TSE gateway certificate |
 | `tse_gateway_consumer` | Manage a Tencent Cloud TSE API gateway consumer |

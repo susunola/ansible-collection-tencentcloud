@@ -276,6 +276,8 @@ CORE_MODULES = {
     "tse_config_file_group",
     "tse_config_file",
     "tse_cloud_native_gateway",
+    "tse_gateway_autoscaler_binding",
+    "tse_gateway_autoscaler_strategy",
     "tse_gateway_service",
     "tse_gateway_waf_domains",
     "tse_gateway_waf_protection",

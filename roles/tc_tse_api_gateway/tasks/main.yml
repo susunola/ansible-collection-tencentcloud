@@ -4,6 +4,8 @@
     that:
       - tc_tse_api_gateway_state in ['present', 'absent']
       - tc_tse_api_gateway_gateway is mapping
+      - tc_tse_api_gateway_autoscaler_strategies is sequence
+      - tc_tse_api_gateway_autoscaler_bindings is sequence
       - tc_tse_api_gateway_services is sequence
       - tc_tse_api_gateway_routes is sequence
       - tc_tse_api_gateway_canary_rules is sequence
@@ -35,6 +37,59 @@
   when: tc_tse_api_gateway_state == 'present'
   ansible.builtin.set_fact:
     _tc_tse_api_gateway_id: "{{ _tc_tse_api_gateway_gateway.gateway.GatewayId }}"
+
+- name: Reconcile TSE API gateway autoscaler strategies
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_autoscaler_strategy:
+  args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_api_gateway_autoscaler_strategies }}"
+  loop_control: {label: "{{ item.name | default('unnamed') }}"}
+  register: _tc_tse_api_gateway_autoscaler_strategies_result
+
+- name: Validate TSE API gateway autoscaler binding references
+  when:
+    - tc_tse_api_gateway_state == 'present'
+    - item.strategy_name is defined
+  ansible.builtin.assert:
+    that:
+      - >-
+        [item.strategy_name] | difference(
+          _tc_tse_api_gateway_autoscaler_strategies_result.results
+          | map(attribute='strategy.StrategyName') | list
+        ) | length == 0
+    fail_msg: An autoscaler binding references an unknown strategy name.
+  loop: "{{ tc_tse_api_gateway_autoscaler_bindings }}"
+  loop_control: {label: "{{ item.strategy_name | default(item.strategy_id | default('unnamed')) }}"}
+
+- name: Initialize resolved TSE API gateway autoscaler bindings
+  when: tc_tse_api_gateway_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_tse_api_gateway_resolved_autoscaler_bindings: []
+
+- name: Resolve TSE API gateway autoscaler strategy names
+  when: tc_tse_api_gateway_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_tse_api_gateway_resolved_autoscaler_bindings: >-
+      {{ _tc_tse_api_gateway_resolved_autoscaler_bindings + [
+        (item | dict2items | rejectattr('key', 'equalto', 'strategy_name') | items2dict)
+        | combine({
+          'strategy_id': item.strategy_id
+            if item.strategy_id is defined else
+            (_tc_tse_api_gateway_autoscaler_strategies_result.results
+              | selectattr('strategy.StrategyName', 'equalto', item.strategy_name)
+              | map(attribute='strategy.StrategyId') | first)
+        })
+      ] }}
+  loop: "{{ tc_tse_api_gateway_autoscaler_bindings }}"
+  loop_control: {label: "{{ item.strategy_name | default(item.strategy_id | default('unnamed')) }}"}
+
+- name: Reconcile TSE API gateway autoscaler bindings
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_autoscaler_binding:
+  args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
+  loop: "{{ _tc_tse_api_gateway_resolved_autoscaler_bindings }}"
+  loop_control: {label: "{{ item.strategy_id | default('unnamed') }}"}
+  register: _tc_tse_api_gateway_autoscaler_bindings_result
 
 - name: Reconcile TSE API gateway services
   when: tc_tse_api_gateway_state == 'present'
@@ -375,6 +430,8 @@
   ansible.builtin.set_fact:
     tc_tse_api_gateway_result:
       gateway: "{{ _tc_tse_api_gateway_gateway.gateway }}"
+      autoscaler_strategies: "{{ _tc_tse_api_gateway_autoscaler_strategies_result.results | default([]) | map(attribute='strategy') | list }}"
+      autoscaler_bindings: "{{ _tc_tse_api_gateway_autoscaler_bindings_result.results | default([]) | map(attribute='binding') | list }}"
       services: "{{ _tc_tse_api_gateway_services.results | default([]) | map(attribute='service') | list }}"
       routes: "{{ _tc_tse_api_gateway_routes_result.results | default([]) | map(attribute='route') | list }}"
       canary_rules: "{{ _tc_tse_api_gateway_canary_rules_result.results | default([]) | map(attribute='canary_rule') | list }}"
@@ -399,6 +456,25 @@
     - tc_tse_api_gateway_gateway.gateway_id | default('') | length == 0
   ansible.builtin.fail:
     msg: gateway.gateway_id is required for deterministic TSE API gateway teardown.
+
+- name: Remove TSE API gateway autoscaler bindings
+  when: tc_tse_api_gateway_state == 'absent'
+  susunola.tencentcloud.tse_gateway_autoscaler_binding:
+    gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
+    strategy_id: "{{ item.strategy_id | default(omit) }}"
+    strategy_name: "{{ item.strategy_name | default(omit) }}"
+    group_ids: "{{ item.group_ids }}"
+    state: absent
+  loop: "{{ tc_tse_api_gateway_autoscaler_bindings | reverse | list }}"
+
+- name: Remove TSE API gateway autoscaler strategies
+  when: tc_tse_api_gateway_state == 'absent'
+  susunola.tencentcloud.tse_gateway_autoscaler_strategy:
+    gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
+    strategy_id: "{{ item.strategy_id | default(omit) }}"
+    name: "{{ item.name | default(omit) }}"
+    state: absent
+  loop: "{{ tc_tse_api_gateway_autoscaler_strategies | reverse | list }}"
 
 - name: Remove TSE API gateway rate limits
   when: tc_tse_api_gateway_state == 'absent'
