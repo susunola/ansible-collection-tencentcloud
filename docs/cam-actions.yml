@@ -824,6 +824,10 @@ modules:
   - ModifyDataEngineDescription
   - SuspendResumeDataEngine
   - UpdateDataEngine
+  dlc_data_engine_config:
+  - DescribeDataEngines
+  - DescribeUserDataEngineConfig
+  - UpdateUserDataEngineConfig
   dlc_data_mask_strategy:
   - CreateDataMaskStrategy
   - DeleteDataMaskStrategy

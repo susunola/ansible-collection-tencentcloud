@@ -220,6 +220,7 @@ action_groups:
     - dcdb_security_config
     - dlc_cluster_group
     - dlc_data_engine
+    - dlc_data_engine_config
     - dlc_data_mask_strategy
     - dlc_database
     - dlc_engine_resource_group

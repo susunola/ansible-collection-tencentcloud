@@ -149,6 +149,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `dcdb_security_config` | Manage Tencent Cloud DCDB encryption, SSL and security groups |
 | `dlc_cluster_group` | Manage Tencent Cloud DLC compute cluster groups |
 | `dlc_data_engine` | Manage Tencent Cloud Data Lake Compute engines |
+| `dlc_data_engine_config` | Reconcile Tencent Cloud DLC data-engine runtime configuration |
 | `dlc_data_mask_strategy` | Manage Tencent Cloud Data Lake Compute masking strategies |
 | `dlc_database` | Manage Tencent Cloud Data Lake Compute metadata databases |
 | `dlc_engine_resource_group` | Manage Tencent Cloud DLC standard engine resource groups |

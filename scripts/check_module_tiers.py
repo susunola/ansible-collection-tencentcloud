@@ -165,6 +165,7 @@ CORE_MODULES = {
     "dlc_work_group_membership",
     "dlc_work_group_policy",
     "dlc_data_engine",
+    "dlc_data_engine_config",
     "dlc_engine_resource_group",
     "dlc_lab",
     "dlc_partition_queue",
