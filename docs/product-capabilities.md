@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **18**
+- Solution roles: **19**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -144,7 +144,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `lkeap` | discovery-only | 0 | 1 | — | — |
 | `lowcode` | discovery-only | 0 | 1 | — | — |
 | `mall` | discovery-only | 0 | 1 | — | — |
-| `mariadb` | resource-family | 4 | 1 | — | `mariadb_account`, `mariadb_account_privilege`, `mariadb_backup_config`, `mariadb_instance` |
+| `mariadb` | solution | 4 | 1 | `tc_mariadb_stack` | `mariadb_account`, `mariadb_account_privilege`, `mariadb_backup_config`, `mariadb_instance` |
 | `memcached` | discovery-only | 0 | 1 | — | — |
 | `mmps` | discovery-only | 0 | 1 | — | — |
 | `mna` | discovery-only | 0 | 1 | — | — |

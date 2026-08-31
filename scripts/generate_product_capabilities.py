@@ -24,6 +24,7 @@ ROLE_SERVICES = {
     "tc_kafka_platform": "ckafka",
     "tc_database_stack": "cdb",
     "tc_mongodb_stack": "mongodb",
+    "tc_mariadb_stack": "mariadb",
     "tc_mqtt_broker": "mqtt",
     "tc_postgresql_stack": "postgres",
     "tc_redis_stack": "redis",

@@ -1,0 +1,5 @@
+minor_changes:
+  - >-
+    solution roles - add ``tc_mariadb_stack`` for MariaDB instances, accounts,
+    scoped privilege sets and automatic backups with exact-name adoption and
+    explicit two-stage isolation and purge semantics.

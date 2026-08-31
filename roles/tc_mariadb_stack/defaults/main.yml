@@ -1,0 +1,27 @@
+---
+tc_mariadb_stack_state: present
+tc_mariadb_stack_region: ""
+tc_mariadb_stack_instance_id: ""
+tc_mariadb_stack_name: ""
+tc_mariadb_stack_zones: []
+tc_mariadb_stack_node_count: 2
+tc_mariadb_stack_memory: null
+tc_mariadb_stack_storage: null
+tc_mariadb_stack_db_version: ""
+tc_mariadb_stack_vpc_id: ""
+tc_mariadb_stack_subnet_id: ""
+tc_mariadb_stack_charge_type: POSTPAID_BY_HOUR
+tc_mariadb_stack_period_months: 1
+tc_mariadb_stack_auto_renew: false
+tc_mariadb_stack_security_group_ids: []
+tc_mariadb_stack_ipv6: false
+tc_mariadb_stack_purge: false
+
+# Accounts may contain privileges: [{database, object_type?, object_name?, column?, privileges}].
+tc_mariadb_stack_accounts: []
+tc_mariadb_stack_backup_enabled: true
+tc_mariadb_stack_backup_retention_days: 7
+tc_mariadb_stack_backup_start_time: "22:00"
+tc_mariadb_stack_backup_end_time: "23:59"
+tc_mariadb_stack_backup_weekdays: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday]
+tc_mariadb_stack_backup_archive_after_days: -1

@@ -566,6 +566,7 @@ for product-level write, discovery and reusable-role maturity.
 | `tc_database_stack` | Provision TencentDB for MySQL with databases, accounts, privileges and backup retention |
 | `tc_redis_stack` | Provision TencentDB for Redis with accounts, automatic backups and parameter templates |
 | `tc_mongodb_stack` | Provision TencentDB for MongoDB with accounts, exact database roles and automatic backups |
+| `tc_mariadb_stack` | Provision MariaDB instances, accounts, scoped privileges and automatic backups |
 | `tc_mqtt_broker` | Provision MQTT instances, topics, users and ordered authorization policies |
 | `tc_postgresql_stack` | Provision PostgreSQL instances, accounts, backup plans and parameter templates |
 | `tc_serverless_application` | Deploy an SCF function with aliases, triggers and optional API Gateway exposure |

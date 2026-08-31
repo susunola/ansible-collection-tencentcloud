@@ -1,0 +1,54 @@
+---
+- name: Provision MariaDB account
+  when: tc_mariadb_stack_state == 'present'
+  susunola.tencentcloud.mariadb_account:
+    region: "{{ tc_mariadb_stack_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ _tc_mariadb_stack_instance_id }}"
+    username: "{{ _tc_mariadb_account.username }}"
+    host: "{{ _tc_mariadb_account.host | default('%') }}"
+    password: "{{ _tc_mariadb_account.password | default(omit) }}"
+    rotate_password: "{{ _tc_mariadb_account.rotate_password | default(false) }}"
+    description: "{{ _tc_mariadb_account.description | default('') }}"
+    read_only: "{{ _tc_mariadb_account.read_only | default(0) }}"
+    delay_threshold: "{{ _tc_mariadb_account.delay_threshold | default(10) }}"
+    sticky_replica: "{{ _tc_mariadb_account.sticky_replica | default(false) }}"
+    max_user_connections: "{{ _tc_mariadb_account.max_user_connections | default(0) }}"
+
+- name: Reconcile MariaDB account privilege scopes
+  when: tc_mariadb_stack_state == 'present'
+  susunola.tencentcloud.mariadb_account_privilege:
+    region: "{{ tc_mariadb_stack_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ _tc_mariadb_stack_instance_id }}"
+    username: "{{ _tc_mariadb_account.username }}"
+    host: "{{ _tc_mariadb_account.host | default('%') }}"
+    database: "{{ item.database | default('*') }}"
+    object_type: "{{ item.object_type | default('*') }}"
+    object_name: "{{ item.object_name | default('*') }}"
+    column: "{{ item.column | default('*') }}"
+    privileges: "{{ item.privileges }}"
+  loop: "{{ _tc_mariadb_account.privileges | default([]) }}"
+
+- name: Remove MariaDB account privilege scopes
+  when: tc_mariadb_stack_state == 'absent'
+  susunola.tencentcloud.mariadb_account_privilege:
+    region: "{{ tc_mariadb_stack_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_mariadb_stack_instance_id }}"
+    username: "{{ _tc_mariadb_account.username }}"
+    host: "{{ _tc_mariadb_account.host | default('%') }}"
+    database: "{{ item.database | default('*') }}"
+    object_type: "{{ item.object_type | default('*') }}"
+    object_name: "{{ item.object_name | default('*') }}"
+    column: "{{ item.column | default('*') }}"
+  loop: "{{ _tc_mariadb_account.privileges | default([]) }}"
+
+- name: Remove MariaDB account
+  when: tc_mariadb_stack_state == 'absent'
+  susunola.tencentcloud.mariadb_account:
+    region: "{{ tc_mariadb_stack_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_mariadb_stack_instance_id }}"
+    username: "{{ _tc_mariadb_account.username }}"
+    host: "{{ _tc_mariadb_account.host | default('%') }}"
