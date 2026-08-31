@@ -1316,6 +1316,7 @@ modules:
   - CreateJob
   - DeleteJobs
   - DescribeJobs
+  - DescribeTreeJobs
   - ModifyJob
   - RunJobs
   - StopJobs

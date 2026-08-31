@@ -86,11 +86,23 @@ def stop_request(models, p, job_id, pause=False):
     r = models.StopJobsRequest(); r.WorkSpaceId, r.StopJobDescriptions = p["workspace_id"], [item]; return r
 def delete_request(models, p, job_id, name):
     r = models.DeleteJobsRequest(); r.WorkSpaceId, r.JobIds, r.JobNames = p["workspace_id"], [job_id], [name]; return r
+def _folder_for_job(node, job_id):
+    if not isinstance(node, dict): return None
+    if any(item.get("JobId") == job_id for item in node.get("JobSet") or []): return node.get("Id")
+    for child in node.get("Children") or []:
+        folder_id = _folder_for_job(child, job_id)
+        if folder_id is not None: return folder_id
+    return None
+def job_folder(module, client, models, p, job_id):
+    r = models.DescribeTreeJobsRequest(); r.WorkSpaceId, r.FlatMode = p["workspace_id"], 0
+    return _folder_for_job(module.sdk_call(client.DescribeTreeJobs, r)._serialize(allow_none=True), job_id)
 def find(module, client, models, p):
     response = module.sdk_call(client.DescribeJobs, describe_request(models, p)); matches = []
     for item in response.JobSet or []:
         value = item._serialize(allow_none=True)
-        if (p.get("job_id") and value.get("JobId") == p["job_id"]) or (not p.get("job_id") and value.get("Name") == p.get("name")): matches.append(value)
+        if (p.get("job_id") and value.get("JobId") == p["job_id"]) or (not p.get("job_id") and value.get("Name") == p.get("name")):
+            if p.get("folder_id") is not None: value["FolderId"] = job_folder(module, client, models, p, value["JobId"])
+            matches.append(value)
     if len(matches) > 1: module.fail_json(msg="Multiple Oceanus jobs matched; specify job_id")
     return matches[0] if matches else None
 def _wait(module, client, models, p, states):
@@ -119,10 +131,12 @@ def run_module():
         else: changed, diff = False, None
         immutable = {"JobType": p.get("job_type"), "ClusterType": p.get("cluster_type"), "ClusterId": p.get("cluster_id"), "CuMem": p.get("cu_memory"), "FlinkVersion": p.get("flink_version"), "JdkVersion": p.get("jdk_version")}; drift = {k: (current.get(k), v) for k, v in immutable.items() if v is not None and current.get(k) != v}
         if drift: module.fail_json(msg="Oceanus job engine and cluster placement are immutable", immutable_drift=drift)
-        desired = {"Name": p.get("name") or current.get("Name"), "Remark": p.get("remark") if p.get("remark") is not None else current.get("Remark"), "Description": p.get("description") if p.get("description") is not None else current.get("Description"), "ContinueAlarm": p.get("continue_alarm") if p.get("continue_alarm") is not None else current.get("ContinueAlarm")}; before = {k: current.get(k) for k in desired}
+        desired = {"Name": p.get("name") or current.get("Name"), "Remark": p.get("remark") if p.get("remark") is not None else current.get("Remark"), "Description": p.get("description") if p.get("description") is not None else current.get("Description"), "ContinueAlarm": p.get("continue_alarm") if p.get("continue_alarm") is not None else current.get("ContinueAlarm")}
+        if p.get("folder_id") is not None: desired["FolderId"] = p["folder_id"]
+        before = {k: current.get(k) for k in desired}
         if before != desired:
             changed = True; diff = maybe_diff(module, before, desired)
-            if not module.check_mode: module.sdk_call(client.ModifyJob, modify_request(models, p, current["JobId"], desired["Name"], desired["Remark"], desired["Description"], None)); p["job_id"] = current["JobId"]; current = find(module, client, models, p)
+            if not module.check_mode: module.sdk_call(client.ModifyJob, modify_request(models, p, current["JobId"], desired["Name"], desired["Remark"], desired["Description"], desired.get("FolderId"))); p["job_id"] = current["JobId"]; current = find(module, client, models, p)
         status_target = {"running": 4, "stopped": 5, "paused": 6}.get(p.get("desired_status"))
         if status_target is not None and current.get("Status") != status_target:
             changed = True; job_id = current.get("JobId") or p.get("job_id")

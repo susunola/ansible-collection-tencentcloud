@@ -18,6 +18,7 @@ options:
   remark: {type: str, description: Version remark.}
   default_parallelism: {type: int, description: Default job parallelism.}
   properties: {type: list, elements: dict, description: SDK Property list.}
+  resource_refs: {type: list, elements: dict, description: ResourceRef list binding managed Oceanus resource IDs and immutable versions to this job version.}
   auto_delete_oldest: {type: bool, default: false, description: Automatically delete the earliest deletable version at the service limit.}
   cos_bucket: {type: str, description: Job artifact COS bucket.}
   log_collect: {type: bool, description: Enable log collection.}
@@ -57,14 +58,17 @@ import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
-FIELDS={"entrypoint_class":"EntrypointClass","program_args":"ProgramArgs","remark":"Remark","default_parallelism":"DefaultParallelism","properties":"Properties","cos_bucket":"COSBucket","log_collect":"LogCollect","log_collect_type":"LogCollectType","cls_logset_id":"ClsLogsetId","cls_topic_id":"ClsTopicId","log_level":"LogLevel","checkpoint_retained":"CheckpointRetainedNum","checkpoint_timeout":"CheckpointTimeoutSecond","checkpoint_interval":"CheckpointIntervalSecond","job_manager_cpu":"JobManagerCpu","job_manager_memory":"JobManagerMem","task_manager_cpu":"TaskManagerCpu","task_manager_memory":"TaskManagerMem","flink_version":"FlinkVersion","jdk_version":"JdkVersion"}
+FIELDS={"entrypoint_class":"EntrypointClass","program_args":"ProgramArgs","remark":"Remark","default_parallelism":"DefaultParallelism","properties":"Properties","resource_refs":"ResourceRefDetails","cos_bucket":"COSBucket","log_collect":"LogCollect","log_collect_type":"LogCollectType","cls_logset_id":"ClsLogsetId","cls_topic_id":"ClsTopicId","log_level":"LogLevel","checkpoint_retained":"CheckpointRetainedNum","checkpoint_timeout":"CheckpointTimeoutSecond","checkpoint_interval":"CheckpointIntervalSecond","job_manager_cpu":"JobManagerCpu","job_manager_memory":"JobManagerMem","task_manager_cpu":"TaskManagerCpu","task_manager_memory":"TaskManagerMem","flink_version":"FlinkVersion","jdk_version":"JdkVersion"}
 def _load():
     from tencentcloud.oceanus.v20190422 import models,oceanus_client
     return models,oceanus_client
 def desired(p):
     value={sdk:p[key] for key,sdk in FIELDS.items() if p.get(key) is not None}
+    if "ResourceRefDetails" in value: value["ResourceRefDetails"]=normalize_resource_refs(value["ResourceRefDetails"])
     if p.get("auto_recover") is not None: value["AutoRecover"]=1 if p["auto_recover"] else -1
     return value
+def normalize_resource_refs(values):
+    return sorted(({key:item.get(key) for key in ("ResourceId","Version","Type")} for item in values or []),key=lambda item:(item.get("Type",0),item.get("ResourceId","") or "",item.get("Version",-1)))
 def describe(module,client,models,p,version=None):
     r=models.DescribeJobConfigsRequest(); r.JobId=p["job_id"]; r.WorkSpaceId=p["workspace_id"]; r.Offset,r.Limit=0,100
     if version is not None: r.JobConfigVersions=[version]
@@ -72,10 +76,12 @@ def describe(module,client,models,p,version=None):
     if version is not None: return next((x for x in values if x.get("Version")==version),None)
     return max(values,key=lambda x:x.get("Version",-1)) if values else None
 def create_request(models,p,target):
-    r=models.CreateJobConfigRequest(); payload=dict(target); payload.update({"JobId":p["job_id"],"WorkSpaceId":p["workspace_id"],"AutoDelete":1 if p["auto_delete_oldest"] else 0,"ConfigScope":p["config_scope"]}); r.from_json_string(json.dumps(payload)); return r
+    r=models.CreateJobConfigRequest(); payload=dict(target)
+    if "ResourceRefDetails" in payload: payload["ResourceRefs"]=payload.pop("ResourceRefDetails")
+    payload.update({"JobId":p["job_id"],"WorkSpaceId":p["workspace_id"],"AutoDelete":1 if p["auto_delete_oldest"] else 0,"ConfigScope":p["config_scope"]}); r.from_json_string(json.dumps(payload)); return r
 def delete_request(models,p): r=models.DeleteJobConfigsRequest(); r.JobId=p["job_id"]; r.WorkSpaceId=p["workspace_id"]; r.JobConfigVersions=[p["version"]]; r.ConfigScope=p["config_scope"]; return r
 def run_module():
-    spec={"state":{"choices":["present","absent"],"default":"present"},"job_id":{"required":True},"workspace_id":{"required":True},"version":{"type":"int"},"entrypoint_class":{},"program_args":{},"remark":{},"default_parallelism":{"type":"int"},"properties":{"type":"list","elements":"dict"},"auto_delete_oldest":{"type":"bool","default":False},"cos_bucket":{},"log_collect":{"type":"bool"},"log_collect_type":{"type":"int","choices":[2,3]},"cls_logset_id":{},"cls_topic_id":{},"log_level":{},"auto_recover":{"type":"bool"},"checkpoint_retained":{"type":"int"},"checkpoint_timeout":{"type":"int"},"checkpoint_interval":{"type":"int"},"job_manager_cpu":{"type":"float"},"job_manager_memory":{"type":"float"},"task_manager_cpu":{"type":"float"},"task_manager_memory":{"type":"float"},"flink_version":{},"jdk_version":{},"config_scope":{"type":"int","choices":[0,1,2],"default":0},"allow_delete":{"type":"bool","default":False}}
+    spec={"state":{"choices":["present","absent"],"default":"present"},"job_id":{"required":True},"workspace_id":{"required":True},"version":{"type":"int"},"entrypoint_class":{},"program_args":{},"remark":{},"default_parallelism":{"type":"int"},"properties":{"type":"list","elements":"dict"},"resource_refs":{"type":"list","elements":"dict","options":{"ResourceId":{"required":True},"Version":{"type":"int","required":True},"Type":{"type":"int","choices":[0,1,2,3,4],"required":True}}},"auto_delete_oldest":{"type":"bool","default":False},"cos_bucket":{},"log_collect":{"type":"bool"},"log_collect_type":{"type":"int","choices":[2,3]},"cls_logset_id":{},"cls_topic_id":{},"log_level":{},"auto_recover":{"type":"bool"},"checkpoint_retained":{"type":"int"},"checkpoint_timeout":{"type":"int"},"checkpoint_interval":{"type":"int"},"job_manager_cpu":{"type":"float"},"job_manager_memory":{"type":"float"},"task_manager_cpu":{"type":"float"},"task_manager_memory":{"type":"float"},"flink_version":{},"jdk_version":{},"config_scope":{"type":"int","choices":[0,1,2],"default":0},"allow_delete":{"type":"bool","default":False}}
     module=TencentCloudModule(argument_spec=spec,required_if=[("state","absent",["version"])],supports_check_mode=True); p=module.params; module.require_sdk(); models,cm=_load(); client=module.create_client(cm.OceanusClient,"oceanus.tencentcloudapi.com")
     try:
         if p["state"]=="absent":
@@ -87,7 +93,7 @@ def run_module():
             module.exit_json(changed=True,**(diff or {}),job_config=None)
         target=desired(p)
         if not target: module.fail_json(msg="at least one managed configuration field is required to publish an Oceanus job configuration")
-        current=describe(module,client,models,p); before={key:current.get(key) for key in target} if current else None
+        current=describe(module,client,models,p); before={key:(normalize_resource_refs(current.get(key)) if key=="ResourceRefDetails" else current.get(key)) for key in target} if current else None
         if before==target: module.exit_json(changed=False,job_config=current,version=current.get("Version"))
         diff=maybe_diff(module,before,target); version=None
         if not module.check_mode: version=module.sdk_call(client.CreateJobConfig,create_request(models,p,target)).Version; current=describe(module,client,models,p,version)

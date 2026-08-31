@@ -1,0 +1,2 @@
+minor_changes:
+  - Add content-aware Oceanus job configuration resource references so managed artifacts and exact versions can be bound to SQL, JAR and Python jobs.
