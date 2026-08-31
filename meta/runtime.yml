@@ -224,6 +224,7 @@ action_groups:
     - dlc_database
     - dlc_engine_resource_group
     - dlc_inference_model
+    - dlc_inference_service
     - dlc_job_spec
     - dlc_lab
     - dlc_model_version

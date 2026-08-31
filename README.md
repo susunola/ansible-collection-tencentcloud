@@ -153,6 +153,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `dlc_database` | Manage Tencent Cloud Data Lake Compute metadata databases |
 | `dlc_engine_resource_group` | Manage Tencent Cloud DLC standard engine resource groups |
 | `dlc_inference_model` | Ensure and reconcile Tencent Cloud DLC inference models |
+| `dlc_inference_service` | Manage Tencent Cloud DLC inference-service runtime state |
 | `dlc_job_spec` | Manage reusable Tencent Cloud DLC job specifications |
 | `dlc_lab` | Manage Tencent Cloud DLC data laboratories |
 | `dlc_model_version` | Publish immutable Tencent Cloud DLC model versions |
