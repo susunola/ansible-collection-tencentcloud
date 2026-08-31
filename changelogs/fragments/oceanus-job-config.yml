@@ -1,2 +1,3 @@
 minor_changes:
   - Add idempotent Oceanus immutable job configuration publishing and guarded historical-version deletion.
+  - Update the Oceanus streaming platform role to reconcile job definition, configuration publication and runtime state in order.

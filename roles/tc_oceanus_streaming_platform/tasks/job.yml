@@ -1,14 +1,51 @@
 ---
-- name: Reconcile Oceanus job
+- name: Resolve Oceanus job definition and desired runtime state
+  ansible.builtin.set_fact:
+    _tc_oceanus_job_definition: "{{ _tc_oceanus_job.job | default(_tc_oceanus_job) }}"
+    _tc_oceanus_job_desired_status: "{{ _tc_oceanus_job.desired_status | default((_tc_oceanus_job.job | default({})).desired_status | default('')) }}"
+
+- name: Reconcile Oceanus job definition before publishing configuration
+  when: tc_oceanus_streaming_platform_state == 'present'
   susunola.tencentcloud.oceanus_job:
   args: >-
     {{
-      _tc_oceanus_job
-      | combine({'state': tc_oceanus_streaming_platform_state, 'workspace_id': _tc_oceanus_workspace_id})
+      _tc_oceanus_job_definition
+      | combine({'state': 'present', 'workspace_id': _tc_oceanus_workspace_id, 'desired_status': omit, 'job_config_version': omit})
       | combine(
           {'cluster_id': _tc_oceanus_cluster_id}
-          if (_tc_oceanus_job.cluster_type | default(1) | int == 2 and _tc_oceanus_cluster_id | length > 0)
+          if (_tc_oceanus_job_definition.cluster_type | default(1) | int == 2 and _tc_oceanus_cluster_id | length > 0)
           else {}
         )
     }}
-  register: _tc_oceanus_job_result
+  register: _tc_oceanus_job_definition_result
+
+- name: Publish Oceanus job configuration version
+  when:
+    - tc_oceanus_streaming_platform_state == 'present'
+    - _tc_oceanus_job.config is defined
+  susunola.tencentcloud.oceanus_job_config:
+  args: "{{ _tc_oceanus_job.config | combine({'state': 'present', 'workspace_id': _tc_oceanus_workspace_id, 'job_id': _tc_oceanus_job_definition_result.job.JobId}) }}"
+  register: _tc_oceanus_job_config_result
+
+- name: Reconcile Oceanus job runtime after configuration publishing
+  when:
+    - tc_oceanus_streaming_platform_state == 'present'
+    - _tc_oceanus_job_desired_status | length > 0
+  susunola.tencentcloud.oceanus_job:
+    state: present
+    workspace_id: "{{ _tc_oceanus_workspace_id }}"
+    job_id: "{{ _tc_oceanus_job_definition_result.job.JobId }}"
+    desired_status: "{{ _tc_oceanus_job_desired_status }}"
+    job_config_version: >-
+      {{
+        _tc_oceanus_job_config_result.version
+        if _tc_oceanus_job.config is defined
+        else (_tc_oceanus_job.job_config_version | default(omit))
+      }}
+  register: _tc_oceanus_job_runtime_result
+
+- name: Remove Oceanus job
+  when: tc_oceanus_streaming_platform_state == 'absent'
+  susunola.tencentcloud.oceanus_job:
+  args: "{{ _tc_oceanus_job_definition | combine({'state': 'absent', 'workspace_id': _tc_oceanus_workspace_id}) }}"
+  register: _tc_oceanus_job_delete_result

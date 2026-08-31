@@ -19,11 +19,19 @@ Builds an Oceanus workspace, an optional dedicated Flink cluster, and its jobs. 
           default_cos_bucket: flink-artifacts-1250000000
           cu: 19
         tc_oceanus_streaming_platform_jobs:
-          - name: orders-stream
-            job_type: 1
-            cluster_type: 2
-            flink_version: Flink-1.17
+          - job:
+              name: orders-stream
+              job_type: 1
+              cluster_type: 2
+              flink_version: Flink-1.17
+            config:
+              program_args: SELECT * FROM orders
+              default_parallelism: 4
+              checkpoint_interval: 60
+              auto_recover: true
             desired_status: stopped
 ```
+
+Each structured job is reconciled in three phases: definition, immutable configuration publication, then runtime state using the new version. Flat job dictionaries remain supported when no configuration publication is needed.
 
 Set `tc_oceanus_streaming_platform_allow_destroy: true` only for intentional teardown. CU scale-down also requires `allow_scale_down: true` in the cluster input.
