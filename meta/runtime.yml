@@ -601,6 +601,7 @@ action_groups:
     - tse_gateway_rate_limit
     - tse_gateway_route
     - tse_gateway_secret_key
+    - tse_gateway_server_group
     - tse_gateway_service
     - tse_gateway_waf_domains
     - tse_gateway_waf_protection

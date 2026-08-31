@@ -4,6 +4,7 @@
     that:
       - tc_tse_api_gateway_state in ['present', 'absent']
       - tc_tse_api_gateway_gateway is mapping
+      - tc_tse_api_gateway_server_groups is sequence
       - tc_tse_api_gateway_autoscaler_strategies is sequence
       - tc_tse_api_gateway_autoscaler_bindings is sequence
       - tc_tse_api_gateway_services is sequence
@@ -37,6 +38,14 @@
   when: tc_tse_api_gateway_state == 'present'
   ansible.builtin.set_fact:
     _tc_tse_api_gateway_id: "{{ _tc_tse_api_gateway_gateway.gateway.GatewayId }}"
+
+- name: Reconcile TSE API gateway server groups
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_server_group:
+  args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_api_gateway_server_groups }}"
+  loop_control: {label: "{{ item.name | default(item.group_id | default('unnamed')) }}"}
+  register: _tc_tse_api_gateway_server_groups_result
 
 - name: Reconcile TSE API gateway autoscaler strategies
   when: tc_tse_api_gateway_state == 'present'
@@ -637,6 +646,16 @@
     vip: "{{ item.vip | default(omit) }}"
     state: absent
   loop: "{{ tc_tse_api_gateway_public_networks | reverse | list }}"
+
+- name: Remove TSE API gateway server groups
+  when: tc_tse_api_gateway_state == 'absent'
+  susunola.tencentcloud.tse_gateway_server_group:
+    gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
+    group_id: "{{ item.group_id | default(omit) }}"
+    name: "{{ item.name | default(omit) }}"
+    state: absent
+  loop: "{{ tc_tse_api_gateway_server_groups | reverse | list }}"
+  loop_control: {label: "{{ item.name | default(item.group_id | default('unnamed')) }}"}
 
 - name: Remove TSE cloud-native API gateway
   when: tc_tse_api_gateway_state == 'absent'

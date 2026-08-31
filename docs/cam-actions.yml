@@ -2380,6 +2380,12 @@ modules:
   - DescribeCloudNativeAPIGatewaySecretKeyList
   - DescribeCloudNativeAPIGatewaySecretKeyValue
   - ModifyCloudNativeAPIGatewaySecretKeyStatus
+  tse_gateway_server_group:
+  - CreateNativeGatewayServerGroup
+  - DeleteNativeGatewayServerGroup
+  - DescribeNativeGatewayServerGroups
+  - ModifyNativeGatewayServerGroup
+  - UpdateCloudNativeAPIGatewaySpec
   tse_gateway_service:
   - CreateCloudNativeAPIGatewayService
   - DeleteCloudNativeAPIGatewayService
