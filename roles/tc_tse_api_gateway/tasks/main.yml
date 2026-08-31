@@ -7,6 +7,8 @@
       - tc_tse_api_gateway_services is sequence
       - tc_tse_api_gateway_routes is sequence
       - tc_tse_api_gateway_consumers is sequence
+      - tc_tse_api_gateway_consumer_groups is sequence
+      - tc_tse_api_gateway_secret_keys is sequence
       - tc_tse_api_gateway_rate_limits is sequence
       - tc_tse_api_gateway_public_networks is sequence
       - tc_tse_api_gateway_gateway.gateway_id | default(tc_tse_api_gateway_gateway.name | default('')) | length > 0
@@ -75,6 +77,23 @@
   loop_control: {label: "{{ item.name | default('unnamed') }}"}
   register: _tc_tse_api_gateway_consumers_result
 
+- name: Reconcile TSE API gateway consumer groups
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_consumer_group:
+  args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_api_gateway_consumer_groups }}"
+  loop_control: {label: "{{ item.name | default('unnamed') }}"}
+  register: _tc_tse_api_gateway_consumer_groups_result
+
+- name: Reconcile TSE API gateway secret keys
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_secret_key:
+  args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_api_gateway_secret_keys }}"
+  loop_control: {label: "{{ item.name | default('unnamed') }}"}
+  register: _tc_tse_api_gateway_secret_keys_result
+  no_log: "{{ item.secret_value is defined or item.reveal_secret_value | default(false) | bool }}"
+
 - name: Reconcile TSE API gateway rate limits
   when: tc_tse_api_gateway_state == 'present'
   susunola.tencentcloud.tse_gateway_rate_limit:
@@ -91,6 +110,8 @@
       services: "{{ _tc_tse_api_gateway_services.results | default([]) | map(attribute='service') | list }}"
       routes: "{{ _tc_tse_api_gateway_routes_result.results | default([]) | map(attribute='route') | list }}"
       consumers: "{{ _tc_tse_api_gateway_consumers_result.results | default([]) | map(attribute='consumer') | list }}"
+      consumer_groups: "{{ _tc_tse_api_gateway_consumer_groups_result.results | default([]) | map(attribute='consumer_group') | list }}"
+      secret_keys: "{{ _tc_tse_api_gateway_secret_keys_result.results | default([]) | map(attribute='secret_key') | list }}"
       rate_limits: "{{ _tc_tse_api_gateway_rate_limits_result.results | default([]) | map(attribute='rate_limit') | list }}"
       public_networks: "{{ _tc_tse_api_gateway_public_networks_result.results | default([]) | map(attribute='public_network') | list }}"
 
@@ -117,6 +138,26 @@
     name: "{{ item.name | default(omit) }}"
     state: absent
   loop: "{{ tc_tse_api_gateway_routes | reverse | list }}"
+
+- name: Remove TSE API gateway secret keys
+  when: tc_tse_api_gateway_state == 'absent'
+  susunola.tencentcloud.tse_gateway_secret_key:
+    gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
+    secret_key_id: "{{ item.secret_key_id | default(omit) }}"
+    name: "{{ item.name | default(omit) }}"
+    resource_type: "{{ item.resource_type | default(omit) }}"
+    state: absent
+  loop: "{{ tc_tse_api_gateway_secret_keys | reverse | list }}"
+  no_log: true
+
+- name: Remove TSE API gateway consumer groups
+  when: tc_tse_api_gateway_state == 'absent'
+  susunola.tencentcloud.tse_gateway_consumer_group:
+    gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
+    consumer_group_id: "{{ item.consumer_group_id | default(omit) }}"
+    name: "{{ item.name | default(omit) }}"
+    state: absent
+  loop: "{{ tc_tse_api_gateway_consumer_groups | reverse | list }}"
 
 - name: Remove TSE API gateway consumers
   when: tc_tse_api_gateway_state == 'absent'

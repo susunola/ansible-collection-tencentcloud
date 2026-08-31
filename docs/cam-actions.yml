@@ -2293,6 +2293,12 @@ modules:
   - DescribeCloudNativeAPIGatewayConsumer
   - DescribeCloudNativeAPIGatewayConsumerList
   - ModifyCloudNativeAPIGatewayConsumer
+  tse_gateway_consumer_group:
+  - CreateCloudNativeAPIGatewayConsumerGroup
+  - DeleteCloudNativeAPIGatewayConsumerGroup
+  - DescribeCloudNativeAPIGatewayConsumerGroup
+  - DescribeCloudNativeAPIGatewayConsumerGroupList
+  - ModifyCloudNativeAPIGatewayConsumerGroup
   tse_gateway_public_network:
   - CreateCloudNativeAPIGatewayPublicNetwork
   - DeleteCloudNativeAPIGatewayPublicNetwork
@@ -2313,6 +2319,13 @@ modules:
   - DeleteCloudNativeAPIGatewayRoute
   - DescribeCloudNativeAPIGatewayRoutes
   - ModifyCloudNativeAPIGatewayRoute
+  tse_gateway_secret_key:
+  - CreateCloudNativeAPIGatewaySecretKey
+  - DeleteCloudNativeAPIGatewaySecretKey
+  - DescribeCloudNativeAPIGatewaySecretKey
+  - DescribeCloudNativeAPIGatewaySecretKeyList
+  - DescribeCloudNativeAPIGatewaySecretKeyValue
+  - ModifyCloudNativeAPIGatewaySecretKeyStatus
   tse_gateway_service:
   - CreateCloudNativeAPIGatewayService
   - DeleteCloudNativeAPIGatewayService

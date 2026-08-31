@@ -279,6 +279,8 @@ CORE_MODULES = {
     "tse_gateway_service",
     "tse_gateway_route",
     "tse_gateway_consumer",
+    "tse_gateway_consumer_group",
+    "tse_gateway_secret_key",
     "tse_gateway_rate_limit",
     "tse_gateway_public_network",
     "vdb_instance",

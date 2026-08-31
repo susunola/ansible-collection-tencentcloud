@@ -5,3 +5,4 @@ minor_changes:
   - Add ``tc_tse_api_gateway`` to compose gateway, upstream service and route lifecycles.
   - Add ``tse_gateway_consumer`` and scope-aware ``tse_gateway_rate_limit`` governance modules.
   - Add ``tse_gateway_public_network`` with asynchronous CLB lifecycle, immutable zone topology and exact access control.
+  - Add idempotent ``tse_gateway_consumer_group`` lifecycle management and guarded ``tse_gateway_secret_key`` credential rotation with redacted results.

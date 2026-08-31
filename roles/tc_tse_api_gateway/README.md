@@ -1,7 +1,7 @@
 # tc_tse_api_gateway
 
 Provisions a TSE cloud-native API gateway, upstream services, routes,
-consumers, public networks with access control, and service- or route-scoped
+consumers, consumer groups, credentials, public networks with access control, and service- or route-scoped
 rate limits. Routes
 may reference `service_name`; the role resolves the created service ID before
 route creation. Guarded teardown removes routes and services before the gateway.
@@ -32,4 +32,11 @@ route creation. Guarded teardown removes routes and services before the gateway.
             methods: [GET, POST]
             paths: [/orders]
             protocols: [https]
+        tc_tse_api_gateway_consumer_groups:
+          - {name: trusted-clients, status: Enable}
+        tc_tse_api_gateway_secret_keys:
+          - name: mobile-api-key
+            secret_type: ApiKey
+            generate_type: System
+            resource_type: Consumer
 ```
