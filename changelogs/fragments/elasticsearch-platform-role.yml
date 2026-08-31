@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - Added Elasticsearch exact-name lookup and the tc_elasticsearch_platform role for clusters, indexes and snapshots.

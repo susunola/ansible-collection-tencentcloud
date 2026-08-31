@@ -25,7 +25,7 @@ options:
     description: Resource family to query.
     type: str
     required: true
-    choices: [vpc, subnet, security_group, cvm_instance, lighthouse_instance, autoscaling_group, cbs_disk, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, cynosdb_cluster, redis_instance, mongodb_instance, cfs_file_system, chdfs_file_system, chdfs_access_group, chdfs_mount_point, ckafka_instance, mqtt_instance, rocketmq_cluster, rabbitmq_instance, prometheus_instance, edgeone_zone, event_bus, api_gateway_service, tcr_instance, tem_environment, tem_application]
+    choices: [vpc, subnet, security_group, cvm_instance, lighthouse_instance, autoscaling_group, cbs_disk, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, cynosdb_cluster, redis_instance, mongodb_instance, elasticsearch_instance, cfs_file_system, chdfs_file_system, chdfs_access_group, chdfs_mount_point, ckafka_instance, mqtt_instance, rocketmq_cluster, rabbitmq_instance, prometheus_instance, edgeone_zone, event_bus, api_gateway_service, tcr_instance, tem_environment, tem_application]
   vpc_id:
     description: Optional VPC scope for subnet and CLB lookups.
     type: str
@@ -142,6 +142,7 @@ RESOURCE_SPECS = {
     "cynosdb_cluster": ("cynosdb.v20190107", "CynosdbClient", "cynosdb.tencentcloudapi.com", "DescribeClusters", "ClusterSet", "ClusterId", "ClusterName"),
     "redis_instance": ("redis.v20180412", "RedisClient", "redis.tencentcloudapi.com", "DescribeInstances", "InstanceSet", "InstanceId", "InstanceName"),
     "mongodb_instance": ("mongodb.v20190725", "MongodbClient", "mongodb.tencentcloudapi.com", "DescribeDBInstances", "InstanceDetails", "InstanceId", "InstanceName"),
+    "elasticsearch_instance": ("es.v20180416", "EsClient", "es.tencentcloudapi.com", "DescribeInstances", "InstanceList", "InstanceId", "InstanceName"),
     "cfs_file_system": ("cfs.v20190719", "CfsClient", "cfs.tencentcloudapi.com", "DescribeCfsFileSystems", "FileSystems", "FileSystemId", "Name"),
     "chdfs_file_system": ("chdfs.v20201112", "ChdfsClient", "chdfs.tencentcloudapi.com", "DescribeFileSystems", "FileSystems", "FileSystemId", "FileSystemName"),
     "chdfs_access_group": ("chdfs.v20201112", "ChdfsClient", "chdfs.tencentcloudapi.com", "DescribeAccessGroups", "AccessGroups", "AccessGroupId", "AccessGroupName"),
@@ -179,6 +180,7 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         "cynosdb_cluster": "DescribeClustersRequest",
         "redis_instance": "DescribeInstancesRequest",
         "mongodb_instance": "DescribeDBInstancesRequest",
+        "elasticsearch_instance": "DescribeInstancesRequest",
         "cfs_file_system": "DescribeCfsFileSystemsRequest",
         "chdfs_file_system": "DescribeFileSystemsRequest",
         "chdfs_access_group": "DescribeAccessGroupsRequest",
@@ -229,6 +231,8 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         request.InstanceName = name
     elif resource_type == "mongodb_instance":
         request.SearchKey = name
+    elif resource_type == "elasticsearch_instance":
+        request.InstanceNames = [name]
     elif resource_type in ("cfs_file_system", "chdfs_file_system", "chdfs_access_group", "chdfs_mount_point"):
         pass
     elif resource_type == "ckafka_instance":

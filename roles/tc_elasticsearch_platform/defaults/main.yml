@@ -1,0 +1,18 @@
+---
+tc_elasticsearch_platform_state: present
+tc_elasticsearch_platform_region: ""
+tc_elasticsearch_platform_instance_id: ""
+tc_elasticsearch_platform_name: ""
+tc_elasticsearch_platform_zone: ""
+tc_elasticsearch_platform_version: ""
+tc_elasticsearch_platform_vpc_id: ""
+tc_elasticsearch_platform_subnet_id: ""
+tc_elasticsearch_platform_password: ""
+tc_elasticsearch_platform_node_type: ""
+tc_elasticsearch_platform_node_num: null
+tc_elasticsearch_platform_disk_type: ""
+tc_elasticsearch_platform_disk_size: null
+tc_elasticsearch_platform_license_type: ""
+tc_elasticsearch_platform_username: elastic
+tc_elasticsearch_platform_indices: []
+tc_elasticsearch_platform_snapshots: []

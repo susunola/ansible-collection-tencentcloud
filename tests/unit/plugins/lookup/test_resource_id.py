@@ -126,6 +126,13 @@ def test_mariadb_request_uses_search_name():
     assert request.SearchName == "orders"
 
 
+def test_elasticsearch_request_uses_instance_names():
+    request = build_request("elasticsearch_instance", Models, "search-platform", offset=100)
+    assert request.InstanceNames == ["search-platform"]
+    assert request.Limit == 100
+    assert request.Offset == 100
+
+
 def test_cynosdb_request_uses_cluster_name_query_filter():
     request = build_request("cynosdb_cluster", Models, "orders")
     assert request.Filters[0].Names == ["ClusterName"]

@@ -311,6 +311,17 @@ def test_cloud_firewall_removes_all_rule_layers_before_templates():
     )
 
 
+def test_elasticsearch_teardown_removes_data_children_before_cluster():
+    text = role_tasks("tc_elasticsearch_platform")
+    assert_order(
+        text,
+        "Remove Elasticsearch snapshots",
+        "Remove Elasticsearch indexes",
+        "Remove Elasticsearch instance",
+    )
+    assert text.count("no_log:") >= 2
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -345,6 +356,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_edgeone_application": "resource_type='edgeone_zone'",
         "tc_api_gateway_platform": "resource_type='api_gateway_service'",
         "tc_chdfs_data_lake": "resource_type='chdfs_file_system'",
+        "tc_elasticsearch_platform": "resource_type='elasticsearch_instance'",
         "tc_rocketmq_platform": "resource_type='rocketmq_cluster'",
         "tc_rabbitmq_platform": "resource_type='rabbitmq_instance'",
         "tc_eventbridge_router": "resource_type='event_bus'",
