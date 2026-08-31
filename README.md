@@ -459,6 +459,7 @@ Read-only `_info` modules (return `changed=false`):
 | `dlc_notebook_session_log_info` | Gather Tencent Cloud DLC Notebook session logs |
 | `dlc_notebook_statement_info` | Gather a Tencent Cloud DLC Notebook statement and SQL results |
 | `dlc_ray_job_info` | Gather Tencent Cloud DLC Ray job diagnostics |
+| `dlc_ray_job_list_info` | List Tencent Cloud DLC Ray jobs |
 | `dlc_task_info` | Gather information about Tencent Cloud DLC tasks |
 | `dnspod_record_info` | Gather information about DNSPod records |
 | `domain_batch_operation_log_info` | Gather information about Tencent Cloud DOMAIN batch operation logs |

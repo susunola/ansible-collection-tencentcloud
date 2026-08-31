@@ -177,6 +177,7 @@ CORE_MODULES = {
     "dlc_resource_config",
     "dlc_ray_cluster",
     "dlc_ray_job_info",
+    "dlc_ray_job_list_info",
     "dlc_cluster_group",
     "dlc_job_spec",
     "dlc_inference_model",

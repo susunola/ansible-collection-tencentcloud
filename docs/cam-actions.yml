@@ -909,6 +909,8 @@ modules:
   - GetRayJobHistory
   - GetRayJobPods
   - GetRayJobYaml
+  dlc_ray_job_list_info:
+  - ListRayJobs
   dlc_resource_config:
   - CreateResourceConfig
   - DeleteResourceConfig

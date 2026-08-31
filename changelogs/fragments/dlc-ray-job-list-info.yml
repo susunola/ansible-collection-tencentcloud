@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_ray_job_list_info`` with bounded pagination, stable filters, time bounds and ordered sorting without fabricating a missing API total count.
