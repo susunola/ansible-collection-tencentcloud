@@ -581,6 +581,7 @@ for product-level write, discovery and reusable-role maturity.
 | `tc_object_storage_baseline` | Establish a secure COS bucket with encryption, lifecycle, policy, logging and replication |
 | `tc_shared_file_storage` | Provision CFS with permission groups, client rules and automatic snapshot retention |
 | `tc_security_baseline` | Establish CAM, CloudAudit and Config compliance controls |
+| `tc_waf_application` | Manage protected WAF domains and the complete application-security rule set |
 | `tc_container_registry` | Provision TCR namespaces, repositories, vulnerability controls and replication |
 | `tc_kafka_platform` | Provision CKafka instances, routes, users, topics and exact ACL controls |
 | `tc_rocketmq_platform` | Provision TDMQ RocketMQ clusters, namespaces, roles, permissions, topics and groups |

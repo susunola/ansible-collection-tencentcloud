@@ -1,0 +1,5 @@
+---
+minor_changes:
+  - >-
+    solution roles - add ``tc_waf_application`` covering every WAF write module
+    with existing-instance ownership boundaries and dependency-safe teardown.

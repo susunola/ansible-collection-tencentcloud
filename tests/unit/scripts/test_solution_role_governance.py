@@ -244,6 +244,15 @@ def test_prometheus_teardown_removes_jobs_and_children_before_instance():
     assert "agent_id is required" in agent
 
 
+def test_waf_teardown_removes_groups_and_rules_before_hosts():
+    main = role_tasks("tc_waf_application")
+    domain = (ROOT / "roles" / "tc_waf_application" / "tasks" / "teardown_domain.yml").read_text(encoding="utf-8")
+    assert_order(main, "Remove WAF protection groups before domains", "Remove WAF domain rules and protected hosts", "Disable WAF global threat intelligence")
+    assert domain.index("Remove WAF anti-information-leak rules") < domain.index("Remove WAF protected host")
+    assert domain.index("Remove WAF IP access controls") < domain.index("Remove WAF protected host")
+    assert "enabled: false" in main
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(

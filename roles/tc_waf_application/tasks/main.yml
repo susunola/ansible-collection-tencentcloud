@@ -1,0 +1,69 @@
+---
+- name: Validate WAF application inputs
+  ansible.builtin.assert:
+    that:
+      - tc_waf_application_state in ['present', 'absent']
+      - tc_waf_application_instance_id | length > 0
+      - tc_waf_application_region | length > 0
+    fail_msg: WAF application management requires an existing WAF instance ID and explicit region.
+
+- name: Reconcile WAF protected domains and rules
+  when: tc_waf_application_state == 'present'
+  ansible.builtin.include_tasks: domain.yml
+  loop: "{{ tc_waf_application_domains }}"
+  loop_control:
+    loop_var: _tc_waf_domain
+    label: "{{ _tc_waf_domain.domain }}"
+
+- name: Reconcile WAF protection groups
+  when: tc_waf_application_state == 'present'
+  susunola.tencentcloud.waf_protect_group:
+  args: >-
+    {{ item | combine({'state': 'present', 'region': tc_waf_application_region}) }}
+  loop: "{{ tc_waf_application_protect_groups }}"
+  loop_control: {label: "{{ item.name }}"}
+  register: _tc_waf_application_groups
+
+- name: Configure WAF global threat intelligence
+  when:
+    - tc_waf_application_state == 'present'
+    - tc_waf_application_threat_intelligence is not none
+  susunola.tencentcloud.waf_threat_intelligence:
+  args: "{{ tc_waf_application_threat_intelligence | combine({'region': tc_waf_application_region}) }}"
+  register: _tc_waf_application_threat_intelligence
+
+- name: Remove WAF protection groups before domains
+  when: tc_waf_application_state == 'absent'
+  susunola.tencentcloud.waf_protect_group:
+    region: "{{ tc_waf_application_region | default(omit, true) }}"
+    state: absent
+    group_id: "{{ item.group_id | default(omit) }}"
+    name: "{{ item.name }}"
+  loop: "{{ tc_waf_application_protect_groups }}"
+  loop_control: {label: "{{ item.name }}"}
+
+- name: Remove WAF domain rules and protected hosts
+  when: tc_waf_application_state == 'absent'
+  ansible.builtin.include_tasks: teardown_domain.yml
+  loop: "{{ tc_waf_application_domains }}"
+  loop_control:
+    loop_var: _tc_waf_domain
+    label: "{{ _tc_waf_domain.domain }}"
+
+- name: Disable WAF global threat intelligence
+  when:
+    - tc_waf_application_state == 'absent'
+    - tc_waf_application_threat_intelligence is not none
+  susunola.tencentcloud.waf_threat_intelligence:
+    region: "{{ tc_waf_application_region | default(omit, true) }}"
+    enabled: false
+    tags: []
+
+- name: Publish WAF application result
+  when: tc_waf_application_state == 'present'
+  ansible.builtin.set_fact:
+    tc_waf_application_result:
+      instance_id: "{{ tc_waf_application_instance_id }}"
+      domain_count: "{{ tc_waf_application_domains | length }}"
+      protection_groups: "{{ _tc_waf_application_groups | default({}) }}"
+      threat_intelligence: "{{ _tc_waf_application_threat_intelligence | default({}) }}"

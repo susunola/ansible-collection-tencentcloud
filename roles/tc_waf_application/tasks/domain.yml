@@ -1,0 +1,60 @@
+---
+- name: Reconcile WAF protected host
+  susunola.tencentcloud.waf_host:
+    region: "{{ tc_waf_application_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ tc_waf_application_instance_id }}"
+    domain: "{{ _tc_waf_domain.domain }}"
+    domain_id: "{{ _tc_waf_domain.domain_id | default(omit, true) }}"
+    host: "{{ _tc_waf_domain.host }}"
+    tags: "{{ _tc_waf_domain.tags | default({}) }}"
+
+- name: Reconcile WAF IP access controls
+  susunola.tencentcloud.waf_ip_access_control:
+  args: "{{ item | combine({'state': 'present', 'domain': _tc_waf_domain.domain, 'instance_id': tc_waf_application_instance_id, 'region': tc_waf_application_region}) }}"
+  loop: "{{ _tc_waf_domain.ip_access_controls | default([]) }}"
+
+- name: Reconcile WAF custom rules
+  susunola.tencentcloud.waf_custom_rule:
+  args: "{{ item | combine({'state': 'present', 'domain': _tc_waf_domain.domain, 'region': tc_waf_application_region}) }}"
+  loop: "{{ _tc_waf_domain.custom_rules | default([]) }}"
+
+- name: Reconcile WAF CC rules
+  susunola.tencentcloud.waf_cc_rule:
+  args: "{{ item | combine({'state': 'present', 'domain': _tc_waf_domain.domain, 'region': tc_waf_application_region}) }}"
+  loop: "{{ _tc_waf_domain.cc_rules | default([]) }}"
+
+- name: Reconcile WAF custom allow rules
+  susunola.tencentcloud.waf_custom_white_rule:
+  args: "{{ item | combine({'state': 'present', 'domain': _tc_waf_domain.domain, 'region': tc_waf_application_region}) }}"
+  loop: "{{ _tc_waf_domain.custom_white_rules | default([]) }}"
+
+- name: Reconcile WAF attack allow rules
+  susunola.tencentcloud.waf_attack_white_rule:
+  args: "{{ item | combine({'state': 'present', 'domain': _tc_waf_domain.domain, 'region': tc_waf_application_region}) }}"
+  loop: "{{ _tc_waf_domain.attack_white_rules | default([]) }}"
+
+- name: Reconcile WAF OWASP allow rules
+  susunola.tencentcloud.waf_owasp_white_rule:
+  args: "{{ item | combine({'state': 'present', 'domain': _tc_waf_domain.domain, 'region': tc_waf_application_region}) }}"
+  loop: "{{ _tc_waf_domain.owasp_white_rules | default([]) }}"
+
+- name: Reconcile WAF anti-tamper rules
+  susunola.tencentcloud.waf_anti_tamper_rule:
+  args: "{{ item | combine({'state': 'present', 'domain': _tc_waf_domain.domain, 'region': tc_waf_application_region}) }}"
+  loop: "{{ _tc_waf_domain.anti_tamper_rules | default([]) }}"
+
+- name: Reconcile WAF anti-information-leak rules
+  susunola.tencentcloud.waf_anti_info_leak_rule:
+  args: "{{ item | combine({'state': 'present', 'domain': _tc_waf_domain.domain, 'region': tc_waf_application_region}) }}"
+  loop: "{{ _tc_waf_domain.anti_info_leak_rules | default([]) }}"
+
+- name: Configure WAF geographic blocking
+  when: _tc_waf_domain.area_ban is defined
+  susunola.tencentcloud.waf_area_ban_rule:
+  args: "{{ _tc_waf_domain.area_ban | combine({'state': 'present', 'domain': _tc_waf_domain.domain, 'region': tc_waf_application_region}) }}"
+
+- name: Configure WAF automatic deny
+  when: _tc_waf_domain.auto_deny is defined
+  susunola.tencentcloud.waf_auto_deny:
+  args: "{{ _tc_waf_domain.auto_deny | combine({'domain': _tc_waf_domain.domain, 'region': tc_waf_application_region}) }}"

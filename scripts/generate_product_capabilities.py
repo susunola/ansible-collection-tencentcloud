@@ -50,6 +50,7 @@ ROLE_SERVICES = {
     "tc_tem_application": "tem",
     "tc_tke_platform": "tke",
     "tc_vpc_foundation": "vpc",
+    "tc_waf_application": "waf",
 }
 
 

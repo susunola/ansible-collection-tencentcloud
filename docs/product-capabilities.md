@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **30**
+- Solution roles: **31**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -212,7 +212,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `vm` | discovery-only | 0 | 1 | — | — |
 | `vod` | discovery-only | 0 | 1 | — | — |
 | `vpc` | solution | 23 | 7 | `tc_vpc_foundation` | `ccn`, `ccn_attachment`, `customer_gateway`, `eip`, `havip`, `havip_association`, `nat_gateway`, `nat_gateway_rule`, +15 more |
-| `waf` | resource-family | 13 | 1 | — | `waf_anti_info_leak_rule`, `waf_anti_tamper_rule`, `waf_area_ban_rule`, `waf_attack_white_rule`, `waf_auto_deny`, `waf_cc_rule`, `waf_custom_rule`, `waf_custom_white_rule`, +5 more |
+| `waf` | solution | 13 | 1 | `tc_waf_application` | `waf_anti_info_leak_rule`, `waf_anti_tamper_rule`, `waf_area_ban_rule`, `waf_attack_white_rule`, `waf_auto_deny`, `waf_cc_rule`, `waf_custom_rule`, `waf_custom_white_rule`, +5 more |
 | `wav` | discovery-only | 0 | 1 | — | — |
 | `wedata` | discovery-only | 0 | 1 | — | — |
 | `weilingwith` | discovery-only | 0 | 1 | — | — |

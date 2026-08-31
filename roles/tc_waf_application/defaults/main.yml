@@ -1,0 +1,11 @@
+---
+tc_waf_application_state: present
+tc_waf_application_region: ""
+tc_waf_application_instance_id: ""
+
+# Domain items require domain and host, and may declare every waf_* rule list.
+tc_waf_application_domains: []
+# Protection groups reference exact domain sets.
+tc_waf_application_protect_groups: []
+# Optional global configuration: {enabled: bool, tags: []}.
+tc_waf_application_threat_intelligence: null
