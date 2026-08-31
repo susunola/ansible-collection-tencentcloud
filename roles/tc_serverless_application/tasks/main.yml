@@ -5,6 +5,7 @@
       - tc_serverless_application_state in ['present', 'absent']
       - tc_serverless_application_function_name | length > 0
       - not tc_serverless_application_api_gateway_enabled or tc_serverless_application_api_service_id | length > 0 or tc_serverless_application_api_service_name | length > 0
+      - tc_serverless_application_state == 'present' or not tc_serverless_application_api_gateway_enabled or tc_serverless_application_api_service_id | length > 0
     fail_msg: function_name is required; API Gateway also requires a service ID or name.
 
 - name: Provision SCF function
@@ -132,6 +133,39 @@
     environment: "{{ tc_serverless_application_api_release_environment }}"
     description: "{{ tc_serverless_application_api_release_description }}"
   register: _tc_serverless_application_release
+
+- name: Unrelease API Gateway service
+  when:
+    - tc_serverless_application_state == 'absent'
+    - tc_serverless_application_api_gateway_enabled
+  susunola.tencentcloud.api_gateway_service_release:
+    region: "{{ tc_serverless_application_region | default(omit, true) }}"
+    state: absent
+    service_id: "{{ tc_serverless_application_api_service_id }}"
+    environment: "{{ tc_serverless_application_api_release_environment }}"
+
+- name: Remove API Gateway APIs
+  when:
+    - tc_serverless_application_state == 'absent'
+    - tc_serverless_application_api_gateway_enabled
+  susunola.tencentcloud.api_gateway_api:
+    region: "{{ tc_serverless_application_region | default(omit, true) }}"
+    state: absent
+    service_id: "{{ tc_serverless_application_api_service_id }}"
+    api_id: "{{ item.api_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+  loop: "{{ tc_serverless_application_apis }}"
+  loop_control:
+    label: "{{ item.name | default(item.api_id | default('api')) }}"
+
+- name: Remove API Gateway service
+  when:
+    - tc_serverless_application_state == 'absent'
+    - tc_serverless_application_api_gateway_enabled
+  susunola.tencentcloud.api_gateway_service:
+    region: "{{ tc_serverless_application_region | default(omit, true) }}"
+    state: absent
+    service_id: "{{ tc_serverless_application_api_service_id }}"
 
 - name: Remove SCF triggers
   when: tc_serverless_application_state == 'absent'

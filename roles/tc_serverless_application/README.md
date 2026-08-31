@@ -31,3 +31,8 @@ triggers and optional API Gateway service publication.
 For an API item with `service_type: SCF`, the role defaults the backend
 function and namespace to the function managed by the role. A version or alias
 can be selected with `scf_function_qualifier`.
+
+When deleting an API-enabled application, pass the explicit
+`tc_serverless_application_api_service_id`. The role unreleases the selected
+environment, removes managed APIs and deletes the service before removing SCF
+triggers, aliases and the function.

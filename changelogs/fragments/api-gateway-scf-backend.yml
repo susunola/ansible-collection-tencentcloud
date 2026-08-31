@@ -5,3 +5,8 @@ minor_changes:
   - >-
     tc_serverless_application - bind API Gateway routes directly to the SCF
     function managed by the role.
+bugfixes:
+  - >-
+    tc_serverless_application - unrelease and remove managed API Gateway APIs
+    and their service during teardown instead of leaving externally reachable
+    resources behind.
