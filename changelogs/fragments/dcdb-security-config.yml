@@ -1,0 +1,4 @@
+---
+minor_changes:
+  - Add DCDB one-way data-at-rest encryption, SSL and exact security-group configuration.
+  - Extend tc_dcdb_stack with optional security controls.

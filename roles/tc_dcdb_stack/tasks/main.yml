@@ -22,6 +22,15 @@
   args: "{{ tc_dcdb_stack_backup_config | combine({'instance_id': _tc_dcdb_stack_instance.instance.InstanceId}) }}"
   register: _tc_dcdb_stack_backup
 
+- name: Reconcile DCDB encryption SSL and security groups
+  when:
+    - tc_dcdb_stack_state == 'present'
+    - tc_dcdb_stack_security_config | length > 0
+    - _tc_dcdb_stack_instance.instance.InstanceId is defined
+  susunola.tencentcloud.dcdb_security_config:
+  args: "{{ tc_dcdb_stack_security_config | combine({'instance_id': _tc_dcdb_stack_instance.instance.InstanceId}) }}"
+  register: _tc_dcdb_stack_security
+
 - name: Reconcile DCDB accounts and scoped privileges
   when:
     - tc_dcdb_stack_state == 'present'
@@ -37,6 +46,7 @@
     tc_dcdb_stack_result:
       instance: "{{ _tc_dcdb_stack_instance.instance }}"
       backup_config: "{{ _tc_dcdb_stack_backup.backup_config | default({}) }}"
+      security_config: "{{ _tc_dcdb_stack_security.security_config | default({}) }}"
 
 - name: Require explicit authorization before DCDB teardown
   when:

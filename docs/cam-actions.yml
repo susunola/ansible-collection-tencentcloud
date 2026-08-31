@@ -778,6 +778,13 @@ modules:
   - UpgradeHourDCDBInstance
   dcdb_instance_info:
   - DescribeDCDBInstances
+  dcdb_security_config:
+  - DescribeDBEncryptAttributes
+  - DescribeDBSecurityGroups
+  - DescribeInstanceSSLAttributes
+  - ModifyDBEncryptAttributes
+  - ModifyDBInstanceSecurityGroups
+  - ModifyInstanceSSLAttributes
   dlc_task_info:
   - DescribeTaskList
   dnspod_custom_line:

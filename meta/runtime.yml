@@ -210,6 +210,7 @@ action_groups:
     - dcdb_backup_config
     - dcdb_instance
     - dcdb_instance_info
+    - dcdb_security_config
     - dlc_task_info
     - dnspod_custom_line
     - dnspod_domain

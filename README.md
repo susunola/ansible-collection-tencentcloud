@@ -139,6 +139,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `dcdb_account_privilege` | Manage scoped Tencent Cloud DCDB account privileges |
 | `dcdb_backup_config` | Manage Tencent Cloud DCDB automatic backup configuration |
 | `dcdb_instance` | Manage Tencent Cloud DCDB instances |
+| `dcdb_security_config` | Manage Tencent Cloud DCDB encryption, SSL and security groups |
 | `dnspod_custom_line` | Manage DNSPod domain custom lines |
 | `dnspod_domain` | Manage Tencent Cloud DNSPod domains |
 | `dnspod_line_group` | Manage DNSPod custom line groups |
