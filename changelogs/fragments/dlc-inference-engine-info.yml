@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_inference_engine_info`` for discovering inference runtime compatibility, visibility, enablement and capabilities with bounded pagination.

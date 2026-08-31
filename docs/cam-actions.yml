@@ -850,6 +850,8 @@ modules:
   - UpdateStandardEngineResourceGroupBaseInfo
   - UpdateStandardEngineResourceGroupConfigInfo
   - UpdateStandardEngineResourceGroupResourceInfo
+  dlc_inference_engine_info:
+  - ListInferenceEngines
   dlc_inference_model:
   - CreateInferenceModel
   - ListInferenceModels

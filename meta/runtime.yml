@@ -224,6 +224,7 @@ action_groups:
     - dlc_data_mask_strategy
     - dlc_database
     - dlc_engine_resource_group
+    - dlc_inference_engine_info
     - dlc_inference_model
     - dlc_inference_model_info
     - dlc_inference_service

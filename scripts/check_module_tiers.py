@@ -180,6 +180,7 @@ CORE_MODULES = {
     "dlc_ray_job_list_info",
     "dlc_cluster_group",
     "dlc_job_spec",
+    "dlc_inference_engine_info",
     "dlc_inference_model",
     "dlc_inference_model_info",
     "dlc_inference_service",
