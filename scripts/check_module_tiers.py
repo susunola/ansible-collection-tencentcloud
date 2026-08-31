@@ -282,6 +282,7 @@ CORE_MODULES = {
     "tse_gateway_canary_rule",
     "tse_gateway_certificate",
     "tse_gateway_consumer_group",
+    "tse_gateway_consumer_group_membership",
     "tse_gateway_cors",
     "tse_gateway_ip_restriction",
     "tse_gateway_secret_key",

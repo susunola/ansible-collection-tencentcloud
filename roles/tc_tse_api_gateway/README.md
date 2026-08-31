@@ -34,6 +34,9 @@ route creation. Guarded teardown removes routes and services before the gateway.
             protocols: [https]
         tc_tse_api_gateway_consumer_groups:
           - {name: trusted-clients, status: Enable}
+        tc_tse_api_gateway_consumer_group_memberships:
+          - consumer_group_id: cg-xxxxxxxx
+            consumer_ids: [consumer-xxxxxxxx]
         tc_tse_api_gateway_secret_keys:
           - name: mobile-api-key
             secret_type: ApiKey

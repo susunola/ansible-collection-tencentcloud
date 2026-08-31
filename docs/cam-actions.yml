@@ -2310,6 +2310,10 @@ modules:
   - DescribeCloudNativeAPIGatewayConsumerGroup
   - DescribeCloudNativeAPIGatewayConsumerGroupList
   - ModifyCloudNativeAPIGatewayConsumerGroup
+  tse_gateway_consumer_group_membership:
+  - AddCloudNativeAPIGatewayConsumerInGroup
+  - DescribeCloudNativeAPIGatewayConsumer
+  - RemoveCloudNativeAPIGatewayConsumerInGroup
   tse_gateway_cors:
   - CreateOrModifyCloudNativeAPIGatewayCORS
   - DeleteCloudNativeAPIGatewayCORS
