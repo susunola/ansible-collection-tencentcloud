@@ -456,6 +456,8 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert main.index("susunola.tencentcloud.dlc_engine_resource_group") < main.index("susunola.tencentcloud.dlc_database")
     assert main.index("susunola.tencentcloud.dlc_engine_resource_group") < main.index("susunola.tencentcloud.dlc_spark_job")
     assert main.index("susunola.tencentcloud.dlc_engine_resource_group") < main.index("susunola.tencentcloud.dlc_lab")
+    assert main.index("susunola.tencentcloud.dlc_cluster_group") < main.index("susunola.tencentcloud.dlc_lab")
+    assert main.index("susunola.tencentcloud.dlc_cluster_group") < main.index("susunola.tencentcloud.dlc_ray_cluster")
     assert main.index("susunola.tencentcloud.dlc_partition_queue") < main.index("susunola.tencentcloud.dlc_lab")
     assert main.index("susunola.tencentcloud.dlc_resource_config") < main.index("susunola.tencentcloud.dlc_lab")
     assert main.index("susunola.tencentcloud.dlc_resource_config") < main.index("susunola.tencentcloud.dlc_ray_cluster")
@@ -474,6 +476,7 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert main.rindex("susunola.tencentcloud.dlc_lab") < main.rindex("susunola.tencentcloud.dlc_partition_queue")
     assert main.rindex("susunola.tencentcloud.dlc_lab") < main.rindex("susunola.tencentcloud.dlc_resource_config")
     assert main.rindex("susunola.tencentcloud.dlc_ray_cluster") < main.rindex("susunola.tencentcloud.dlc_resource_config")
+    assert main.rindex("susunola.tencentcloud.dlc_ray_cluster") < main.rindex("susunola.tencentcloud.dlc_cluster_group")
     assert main.rindex("susunola.tencentcloud.dlc_resource_config") < main.rindex("susunola.tencentcloud.dlc_partition_queue")
     assert main.index("susunola.tencentcloud.dlc_data_engine") < main.index("susunola.tencentcloud.dlc_user_vpc_connection")
     assert "allow_delete': true" in main
@@ -481,6 +484,7 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert "tc_dlc_access_governance_vpc_connections: []" in defaults
     assert "tc_dlc_access_governance_data_engines: []" in defaults
     assert "tc_dlc_access_governance_engine_resource_groups: []" in defaults
+    assert "tc_dlc_access_governance_cluster_groups: []" in defaults
     assert "tc_dlc_access_governance_spark_jobs: []" in defaults
     assert "tc_dlc_access_governance_labs: []" in defaults
     assert "tc_dlc_access_governance_partition_queues: []" in defaults

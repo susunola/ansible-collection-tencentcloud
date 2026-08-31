@@ -811,6 +811,12 @@ modules:
   - ModifyDBEncryptAttributes
   - ModifyDBInstanceSecurityGroups
   - ModifyInstanceSSLAttributes
+  dlc_cluster_group:
+  - CreateClusterGroup
+  - DeleteClusterGroup
+  - DescribeClusterGroupClusters
+  - ListClusterGroups
+  - UpdateClusterGroup
   dlc_data_engine:
   - CreateDataEngine
   - DeleteDataEngine

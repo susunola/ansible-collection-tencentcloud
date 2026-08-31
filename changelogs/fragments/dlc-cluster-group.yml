@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_cluster_group`` for exact, reference-aware DLC compute-group lifecycle and semantic configuration reconciliation.

@@ -33,6 +33,7 @@
     _tc_dlc_vpc_endpoint_ids: {}
     _tc_dlc_data_engine_ids: {}
     _tc_dlc_engine_resource_group_ids: {}
+    _tc_dlc_cluster_group_ids: {}
     _tc_dlc_partition_queue_ids: {}
     _tc_dlc_resource_config_ids: {}
     _tc_dlc_ray_cluster_ids: {}
@@ -92,6 +93,23 @@
     _tc_dlc_partition_queue_ids: >-
       {{ dict((tc_dlc_access_governance_partition_queues | map(attribute='name') | list)
               | zip(_tc_dlc_queue_results.results | map(attribute='queue_id') | list)) }}
+
+- name: Reconcile DLC cluster groups before dependent compute workloads
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_cluster_group:
+  args: "{{ _tc_dlc_cluster_group | combine({'state': 'present'}) }}"
+  loop: "{{ tc_dlc_access_governance_cluster_groups }}"
+  loop_control:
+    loop_var: _tc_dlc_cluster_group
+    label: "{{ _tc_dlc_cluster_group.name }}"
+  register: _tc_dlc_cluster_group_results
+
+- name: Record DLC cluster-group identities
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dlc_cluster_group_ids: >-
+      {{ dict((tc_dlc_access_governance_cluster_groups | map(attribute='name') | list)
+              | zip(_tc_dlc_cluster_group_results.results | map(attribute='cluster_group_id') | list)) }}
 
 - name: Reconcile DLC resource templates before laboratories
   when: tc_dlc_access_governance_state == 'present'
@@ -307,6 +325,17 @@
     loop_var: _tc_dlc_config
     label: "{{ _tc_dlc_config.name }}"
 
+- name: Remove DLC cluster groups after dependent compute workloads
+  when:
+    - tc_dlc_access_governance_state == 'absent'
+    - tc_dlc_access_governance_allow_destroy | bool
+  susunola.tencentcloud.dlc_cluster_group:
+  args: "{{ _tc_dlc_cluster_group | combine({'state': 'absent', 'allow_delete': true}) }}"
+  loop: "{{ tc_dlc_access_governance_cluster_groups | reverse | list }}"
+  loop_control:
+    loop_var: _tc_dlc_cluster_group
+    label: "{{ _tc_dlc_cluster_group.name }}"
+
 - name: Remove DLC partition queues after laboratories and resource templates
   when:
     - tc_dlc_access_governance_state == 'absent'
@@ -358,6 +387,7 @@
       vpc_endpoint_ids: "{{ _tc_dlc_vpc_endpoint_ids }}"
       data_engine_ids: "{{ _tc_dlc_data_engine_ids }}"
       engine_resource_group_ids: "{{ _tc_dlc_engine_resource_group_ids }}"
+      cluster_group_ids: "{{ _tc_dlc_cluster_group_ids }}"
       partition_queue_ids: "{{ _tc_dlc_partition_queue_ids }}"
       resource_config_ids: "{{ _tc_dlc_resource_config_ids }}"
       ray_cluster_ids: "{{ _tc_dlc_ray_cluster_ids }}"
