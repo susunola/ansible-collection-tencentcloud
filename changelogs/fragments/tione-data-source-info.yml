@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``tione_data_source_info`` with workspace scoping, stable filters, tag filters, sorting and bounded offset pagination.

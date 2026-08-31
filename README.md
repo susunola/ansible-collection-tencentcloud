@@ -569,6 +569,7 @@ Read-only `_info` modules (return `changed=false`):
 | `thpc_cluster_info` | Gather information about Tencent Cloud THPC clusters |
 | `tia_job_info` | Gather information about Tencent Cloud TIA jobs |
 | `tiia_group_info` | Gather information about Tencent Cloud TIIA groups |
+| `tione_data_source_info` | Gather Tencent Cloud TIONE data sources |
 | `tione_dataset_info` | Gather information about Tencent Cloud TIONE datasets |
 | `tiw_running_task_info` | Gather information about Tencent Cloud TIW running tasks |
 | `tke_cluster_info` | Gather information about Tencent Cloud TKE clusters |

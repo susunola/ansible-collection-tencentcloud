@@ -2028,6 +2028,8 @@ modules:
   - DeleteDataSource
   - DescribeDataSource
   - DescribeDataSources
+  tione_data_source_info:
+  - DescribeDataSources
   tione_dataset:
   - CreateDataset
   - DeleteDataset

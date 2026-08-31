@@ -384,6 +384,7 @@ CORE_MODULES = {
     "tke_node_pool",
     "tione_dataset",
     "tione_data_source",
+    "tione_data_source_info",
     "vpc",
     "havip",
     "havip_association",

@@ -518,6 +518,7 @@ action_groups:
     - tia_job_info
     - tiia_group_info
     - tione_data_source
+    - tione_data_source_info
     - tione_dataset
     - tione_dataset_info
     - tiw_running_task_info
