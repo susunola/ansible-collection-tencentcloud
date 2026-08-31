@@ -496,6 +496,8 @@ action_groups:
     - tdmysql_account
     - tdmysql_account_info
     - tdmysql_account_privilege
+    - tdmysql_backup_policy
+    - tdmysql_backup_policy_info
     - tdmysql_database_object_info
     - tdmysql_db_instance
     - tdmysql_db_instance_info

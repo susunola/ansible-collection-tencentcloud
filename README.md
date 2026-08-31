@@ -317,6 +317,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tdmq_topic` | Manage Tencent Cloud TDMQ Pulsar topics |
 | `tdmysql_account` | Manage Tencent Cloud TDSQL MySQL accounts |
 | `tdmysql_account_privilege` | Manage scoped Tencent Cloud TDSQL MySQL account privileges |
+| `tdmysql_backup_policy` | Manage Tencent Cloud TDSQL MySQL backup policy |
 | `tdmysql_db_instance` | Manage Tencent Cloud TDMysql instances |
 | `tdmysql_maintenance_window` | Manage Tencent Cloud TDSQL MySQL maintenance windows |
 | `tdmysql_parameter` | Manage Tencent Cloud TDSQL MySQL instance parameters |
@@ -576,6 +577,7 @@ Read-only `_info` modules (return `changed=false`):
 | `tdid_over_summary_info` | Gather information about Tencent Cloud TDID over summary |
 | `tdmq_amqp_cluster_info` | Gather information about Tencent Cloud TDMQ amqp clusters |
 | `tdmysql_account_info` | Gather Tencent Cloud TDSQL MySQL accounts |
+| `tdmysql_backup_policy_info` | Gather Tencent Cloud TDSQL MySQL backup policy |
 | `tdmysql_database_object_info` | Gather Tencent Cloud TDSQL MySQL databases and objects |
 | `tdmysql_db_instance_info` | Gather information about Tencent Cloud TDMYSQL db instances |
 | `tdmysql_parameter_info` | Gather Tencent Cloud TDSQL MySQL instance parameters |

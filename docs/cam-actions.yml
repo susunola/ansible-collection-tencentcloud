@@ -1936,6 +1936,11 @@ modules:
   tdmysql_account_privilege:
   - DescribeUserPrivileges
   - ModifyUserPrivileges
+  tdmysql_backup_policy:
+  - DescribeDBSBackupPolicy
+  - ModifyDBSBackupPolicy
+  tdmysql_backup_policy_info:
+  - DescribeDBSBackupPolicy
   tdmysql_database_object_info:
   - DescribeDatabaseObjects
   - DescribeDatabases

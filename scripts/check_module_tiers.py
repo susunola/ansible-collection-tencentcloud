@@ -283,6 +283,8 @@ CORE_MODULES = {
     "tdmysql_parameter_info",
     "tdmysql_maintenance_window",
     "tdmysql_ssl",
+    "tdmysql_backup_policy",
+    "tdmysql_backup_policy_info",
     "dbdc_db_custom_cluster",
     "cdwch_instance",
     "cdwch_backup_config",
