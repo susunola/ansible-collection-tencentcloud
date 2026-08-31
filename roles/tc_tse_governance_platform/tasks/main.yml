@@ -8,6 +8,7 @@
       - tc_tse_governance_platform_discover_topology is boolean
       - tc_tse_governance_platform_namespaces is sequence
       - tc_tse_governance_platform_services is sequence
+      - tc_tse_governance_platform_service_contract_queries is sequence
       - tc_tse_governance_platform_instances is sequence
       - tc_tse_governance_platform_aliases is sequence
       - tc_tse_governance_platform_lane_groups is sequence
@@ -61,6 +62,14 @@
   loop: "{{ tc_tse_governance_platform_services }}"
   loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.name | default('unnamed') }}"}
   register: _tc_tse_governance_platform_services
+
+- name: Gather TSE governance service contracts
+  when: tc_tse_governance_platform_state == 'present'
+  susunola.tencentcloud.tse_governance_service_contract_info:
+  args: "{{ item | combine({'instance_id': _tc_tse_governance_platform_instance_id}) }}"
+  loop: "{{ tc_tse_governance_platform_service_contract_queries }}"
+  loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.service | default('unnamed') }}"}
+  register: _tc_tse_governance_platform_service_contracts
 
 - name: Reconcile TSE governance service instances
   when: tc_tse_governance_platform_state == 'present'
@@ -131,6 +140,7 @@
         interface_count: "{{ _tc_tse_governance_platform_topology.interface_count | default(0) }}"
       namespaces: "{{ _tc_tse_governance_platform_namespaces.results | default([]) | map(attribute='namespace') | list }}"
       services: "{{ _tc_tse_governance_platform_services.results | default([]) | map(attribute='service') | list }}"
+      service_contracts: "{{ _tc_tse_governance_platform_service_contracts.results | default([]) }}"
       instances: "{{ _tc_tse_governance_platform_instances.results | default([]) | map(attribute='governance_instance') | list }}"
       aliases: "{{ _tc_tse_governance_platform_aliases.results | default([]) | map(attribute='alias_info') | list }}"
       lane_groups: "{{ _tc_tse_governance_platform_lane_groups.results | default([]) | map(attribute='lane_group') | list }}"

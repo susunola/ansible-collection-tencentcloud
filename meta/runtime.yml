@@ -614,6 +614,7 @@ action_groups:
     - tse_governance_lane_group
     - tse_governance_namespace
     - tse_governance_service
+    - tse_governance_service_contract_info
     - tse_sre_access_address_info
     - tse_sre_instance
     - tse_sre_instance_info

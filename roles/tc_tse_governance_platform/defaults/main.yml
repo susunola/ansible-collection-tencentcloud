@@ -5,6 +5,7 @@ tc_tse_governance_platform_access_address_query: {}
 tc_tse_governance_platform_discover_topology: true
 tc_tse_governance_platform_namespaces: []
 tc_tse_governance_platform_services: []
+tc_tse_governance_platform_service_contract_queries: []
 tc_tse_governance_platform_instances: []
 tc_tse_governance_platform_aliases: []
 tc_tse_governance_platform_lane_groups: []

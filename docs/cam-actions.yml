@@ -2449,6 +2449,9 @@ modules:
   - DeleteGovernanceServices
   - DescribeGovernanceServices
   - ModifyGovernanceServices
+  tse_governance_service_contract_info:
+  - DescribeGovernanceServiceContractVersions
+  - DescribeGovernanceServiceContracts
   tse_sre_access_address_info:
   - DescribeSREInstanceAccessAddress
   tse_sre_instance:
