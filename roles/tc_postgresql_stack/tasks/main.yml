@@ -1,0 +1,156 @@
+---
+- name: Resolve existing PostgreSQL instance ID for teardown
+  when:
+    - tc_postgresql_stack_state == 'absent'
+    - tc_postgresql_stack_instance_id | length == 0
+    - tc_postgresql_stack_name | length > 0
+  ansible.builtin.set_fact:
+    tc_postgresql_stack_instance_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_postgresql_stack_name,
+                resource_type='postgresql_instance', region=tc_postgresql_stack_region) }}
+
+- name: Validate PostgreSQL stack inputs
+  ansible.builtin.assert:
+    that:
+      - tc_postgresql_stack_state in ['present', 'absent']
+      - tc_postgresql_stack_instance_id | length > 0 or tc_postgresql_stack_name | length > 0
+      - tc_postgresql_stack_state == 'present' or tc_postgresql_stack_instance_id | length > 0
+      - tc_postgresql_stack_state == 'absent' or tc_postgresql_stack_instance_id | length > 0 or tc_postgresql_stack_zone | length > 0
+      - tc_postgresql_stack_state == 'absent' or tc_postgresql_stack_instance_id | length > 0 or tc_postgresql_stack_spec_code | length > 0
+      - tc_postgresql_stack_state == 'absent' or tc_postgresql_stack_instance_id | length > 0 or tc_postgresql_stack_storage is not none
+      - not tc_postgresql_stack_purge or tc_postgresql_stack_state == 'absent'
+    fail_msg: PostgreSQL creation requires placement, specification and storage; purge is valid only during teardown.
+
+- name: Provision PostgreSQL parameter template
+  when:
+    - tc_postgresql_stack_state == 'present'
+    - tc_postgresql_stack_parameter_template.name | length > 0
+  susunola.tencentcloud.postgresql_parameter_template:
+    region: "{{ tc_postgresql_stack_region | default(omit, true) }}"
+    state: present
+    template_id: "{{ tc_postgresql_stack_parameter_template.template_id | default(omit, true) }}"
+    name: "{{ tc_postgresql_stack_parameter_template.name }}"
+    description: "{{ tc_postgresql_stack_parameter_template.description }}"
+    database_major_version: "{{ tc_postgresql_stack_parameter_template.database_major_version | default(omit, true) }}"
+    database_engine: "{{ tc_postgresql_stack_parameter_template.database_engine }}"
+    parameters: "{{ tc_postgresql_stack_parameter_template.parameters }}"
+    reset_parameters: "{{ tc_postgresql_stack_parameter_template.reset_parameters }}"
+  register: _tc_postgresql_stack_parameter_template
+
+- name: Provision PostgreSQL instance
+  when: tc_postgresql_stack_state == 'present'
+  susunola.tencentcloud.postgresql_instance:
+    region: "{{ tc_postgresql_stack_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ tc_postgresql_stack_instance_id | default(omit, true) }}"
+    name: "{{ tc_postgresql_stack_name | default(omit, true) }}"
+    zone: "{{ tc_postgresql_stack_zone | default(omit, true) }}"
+    vpc_id: "{{ tc_postgresql_stack_vpc_id | default(omit, true) }}"
+    subnet_id: "{{ tc_postgresql_stack_subnet_id | default(omit, true) }}"
+    spec_code: "{{ tc_postgresql_stack_spec_code | default(omit, true) }}"
+    storage: "{{ tc_postgresql_stack_storage | default(omit) }}"
+    cpu: "{{ tc_postgresql_stack_cpu | default(omit) }}"
+    memory: "{{ tc_postgresql_stack_memory | default(omit) }}"
+    major_version: "{{ tc_postgresql_stack_major_version | default(omit, true) }}"
+    charset: "{{ tc_postgresql_stack_charset }}"
+    admin_name: "{{ tc_postgresql_stack_admin_name }}"
+    admin_password: "{{ tc_postgresql_stack_admin_password | default(omit, true) }}"
+    charge_type: "{{ tc_postgresql_stack_charge_type }}"
+    period_months: "{{ tc_postgresql_stack_period_months }}"
+    auto_renew: "{{ tc_postgresql_stack_auto_renew | default(omit) }}"
+    security_group_ids: "{{ tc_postgresql_stack_security_group_ids }}"
+    deletion_protection: "{{ tc_postgresql_stack_deletion_protection }}"
+    waiter_timeout: "{{ tc_postgresql_stack_waiter_timeout }}"
+    waiter_delay: "{{ tc_postgresql_stack_waiter_delay }}"
+  register: _tc_postgresql_stack_instance
+
+- name: Resolve PostgreSQL instance ID
+  when: tc_postgresql_stack_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_postgresql_stack_instance_id: >-
+      {{ tc_postgresql_stack_instance_id
+         or (_tc_postgresql_stack_instance.instance.DBInstanceId | default('')) }}
+
+- name: Provision PostgreSQL accounts
+  when: tc_postgresql_stack_state == 'present'
+  susunola.tencentcloud.postgresql_account:
+    region: "{{ tc_postgresql_stack_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ _tc_postgresql_stack_instance_id }}"
+    username: "{{ item.username }}"
+    password: "{{ item.password | default(omit) }}"
+    rotate_password: "{{ item.rotate_password | default(false) }}"
+    account_type: "{{ item.account_type | default('normal') }}"
+    remark: "{{ item.remark | default('') }}"
+    cam_auth: "{{ item.cam_auth | default(false) }}"
+  loop: "{{ tc_postgresql_stack_accounts }}"
+  loop_control: {label: "{{ item.username }}"}
+  register: _tc_postgresql_stack_accounts
+
+- name: Reconcile PostgreSQL backup plans
+  when: tc_postgresql_stack_state == 'present'
+  susunola.tencentcloud.postgresql_backup_plan:
+    region: "{{ tc_postgresql_stack_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ _tc_postgresql_stack_instance_id }}"
+    plan_id: "{{ item.plan_id | default(omit, true) }}"
+    name: "{{ item.name }}"
+    period_type: "{{ item.period_type | default('week') }}"
+    periods: "{{ item.periods | default([]) }}"
+    min_start_time: "{{ item.min_start_time }}"
+    max_start_time: "{{ item.max_start_time }}"
+    retention_days: "{{ item.retention_days }}"
+    log_retention_days: "{{ item.log_retention_days | default(omit) }}"
+  loop: "{{ tc_postgresql_stack_backup_plans }}"
+  loop_control: {label: "{{ item.name }}"}
+  register: _tc_postgresql_stack_backup_plans
+
+- name: Remove PostgreSQL backup plans
+  when: tc_postgresql_stack_state == 'absent'
+  susunola.tencentcloud.postgresql_backup_plan:
+    region: "{{ tc_postgresql_stack_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_postgresql_stack_instance_id }}"
+    plan_id: "{{ item.plan_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+  loop: "{{ tc_postgresql_stack_backup_plans }}"
+
+- name: Remove PostgreSQL accounts
+  when: tc_postgresql_stack_state == 'absent'
+  susunola.tencentcloud.postgresql_account:
+    region: "{{ tc_postgresql_stack_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_postgresql_stack_instance_id }}"
+    username: "{{ item.username }}"
+  loop: "{{ tc_postgresql_stack_accounts }}"
+
+- name: Isolate or purge PostgreSQL instance
+  when: tc_postgresql_stack_state == 'absent'
+  susunola.tencentcloud.postgresql_instance:
+    region: "{{ tc_postgresql_stack_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_postgresql_stack_instance_id }}"
+    purge: "{{ tc_postgresql_stack_purge }}"
+    waiter_timeout: "{{ tc_postgresql_stack_waiter_timeout }}"
+    waiter_delay: "{{ tc_postgresql_stack_waiter_delay }}"
+
+- name: Remove PostgreSQL parameter template
+  when:
+    - tc_postgresql_stack_state == 'absent'
+    - tc_postgresql_stack_parameter_template.remove_on_absent
+    - tc_postgresql_stack_parameter_template.template_id | length > 0 or tc_postgresql_stack_parameter_template.name | length > 0
+  susunola.tencentcloud.postgresql_parameter_template:
+    region: "{{ tc_postgresql_stack_region | default(omit, true) }}"
+    state: absent
+    template_id: "{{ tc_postgresql_stack_parameter_template.template_id | default(omit, true) }}"
+    name: "{{ tc_postgresql_stack_parameter_template.name | default(omit, true) }}"
+
+- name: Publish PostgreSQL stack result
+  when: tc_postgresql_stack_state == 'present'
+  ansible.builtin.set_fact:
+    tc_postgresql_stack_result:
+      instance_id: "{{ _tc_postgresql_stack_instance_id }}"
+      instance: "{{ _tc_postgresql_stack_instance.instance }}"
+      accounts: "{{ _tc_postgresql_stack_accounts.results | default([]) }}"
+      backup_plans: "{{ _tc_postgresql_stack_backup_plans.results | default([]) }}"
+      parameter_template: "{{ _tc_postgresql_stack_parameter_template | default({}) }}"

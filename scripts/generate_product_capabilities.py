@@ -25,6 +25,7 @@ ROLE_SERVICES = {
     "tc_database_stack": "cdb",
     "tc_mongodb_stack": "mongodb",
     "tc_mqtt_broker": "mqtt",
+    "tc_postgresql_stack": "postgres",
     "tc_redis_stack": "redis",
     "tc_launch": "cvm",
     "tc_clb_http": "clb",

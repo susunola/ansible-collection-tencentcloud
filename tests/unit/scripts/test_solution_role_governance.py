@@ -121,6 +121,12 @@ def test_mqtt_teardown_removes_policies_and_children_before_instance():
     assert "passwords are creation-only" in (ROOT / "roles" / "tc_mqtt_broker" / "defaults" / "main.yml").read_text(encoding="utf-8")
 
 
+def test_postgresql_teardown_removes_children_before_two_stage_instance_action():
+    text = role_tasks("tc_postgresql_stack")
+    assert_order(text, "Remove PostgreSQL backup plans", "Remove PostgreSQL accounts", "Isolate or purge PostgreSQL instance")
+    assert "purge: \"{{ tc_postgresql_stack_purge }}\"" in text
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -145,6 +151,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_kafka_platform": "resource_type='ckafka_instance'",
         "tc_alb_application_entry": "resource_type='alb_load_balancer'",
         "tc_mqtt_broker": "resource_type='mqtt_instance'",
+        "tc_postgresql_stack": "resource_type='postgresql_instance'",
         "tc_container_registry": "resource_type='tcr_instance'",
         "tc_tem_application": "resource_type='tem_environment'",
         "tc_serverless_application": "resource_type='api_gateway_service'",

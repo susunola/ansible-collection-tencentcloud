@@ -1,0 +1,35 @@
+---
+tc_postgresql_stack_state: present
+tc_postgresql_stack_region: ""
+tc_postgresql_stack_instance_id: ""
+tc_postgresql_stack_name: ""
+tc_postgresql_stack_zone: ""
+tc_postgresql_stack_vpc_id: ""
+tc_postgresql_stack_subnet_id: ""
+tc_postgresql_stack_spec_code: ""
+tc_postgresql_stack_storage: null
+tc_postgresql_stack_cpu: null
+tc_postgresql_stack_memory: null
+tc_postgresql_stack_major_version: ""
+tc_postgresql_stack_charset: UTF8
+tc_postgresql_stack_admin_name: dbadmin
+tc_postgresql_stack_admin_password: ""
+tc_postgresql_stack_charge_type: POSTPAID_BY_HOUR
+tc_postgresql_stack_period_months: 1
+tc_postgresql_stack_auto_renew: null
+tc_postgresql_stack_security_group_ids: []
+tc_postgresql_stack_deletion_protection: false
+tc_postgresql_stack_purge: false
+tc_postgresql_stack_accounts: []
+tc_postgresql_stack_backup_plans: []
+tc_postgresql_stack_parameter_template:
+  name: ""
+  template_id: ""
+  description: ""
+  database_major_version: ""
+  database_engine: postgresql
+  parameters: {}
+  reset_parameters: []
+  remove_on_absent: false
+tc_postgresql_stack_waiter_timeout: 900
+tc_postgresql_stack_waiter_delay: 10

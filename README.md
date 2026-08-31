@@ -567,6 +567,7 @@ for product-level write, discovery and reusable-role maturity.
 | `tc_redis_stack` | Provision TencentDB for Redis with accounts, automatic backups and parameter templates |
 | `tc_mongodb_stack` | Provision TencentDB for MongoDB with accounts, exact database roles and automatic backups |
 | `tc_mqtt_broker` | Provision MQTT instances, topics, users and ordered authorization policies |
+| `tc_postgresql_stack` | Provision PostgreSQL instances, accounts, backup plans and parameter templates |
 | `tc_serverless_application` | Deploy an SCF function with aliases, triggers and optional API Gateway exposure |
 | `tc_observability_baseline` | Establish CLS indexed topics and Cloud Monitor alarm policies |
 | `tc_object_storage_baseline` | Establish a secure COS bucket with encryption, lifecycle, policy, logging and replication |
