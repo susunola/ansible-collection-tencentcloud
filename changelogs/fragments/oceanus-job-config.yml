@@ -1,0 +1,2 @@
+minor_changes:
+  - Add idempotent Oceanus immutable job configuration publishing and guarded historical-version deletion.

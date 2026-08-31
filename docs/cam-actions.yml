@@ -1313,6 +1313,10 @@ modules:
   - ModifyJob
   - RunJobs
   - StopJobs
+  oceanus_job_config:
+  - CreateJobConfig
+  - DeleteJobConfigs
+  - DescribeJobConfigs
   oceanus_workspace:
   - CreateWorkSpace
   - DeleteWorkSpace

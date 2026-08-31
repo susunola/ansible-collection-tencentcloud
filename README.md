@@ -218,6 +218,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `network_interface` | Manage Tencent Cloud elastic network interfaces |
 | `oceanus_cluster` | Manage Tencent Cloud Oceanus dedicated clusters |
 | `oceanus_job` | Manage Tencent Cloud Oceanus jobs |
+| `oceanus_job_config` | Manage Tencent Cloud Oceanus job configuration versions |
 | `oceanus_workspace` | Manage Tencent Cloud Oceanus workspaces |
 | `organization_member` | Manage Tencent Cloud Organization members |
 | `organization_member_identity` | Reconcile Tencent Cloud Organization member identities |
