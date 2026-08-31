@@ -1,0 +1,14 @@
+---
+- name: Manage repositories in namespace
+  susunola.tencentcloud.tcr_repository:
+    region: "{{ tc_container_registry_region | default(omit, true) }}"
+    state: "{{ tc_container_registry_state }}"
+    registry_id: "{{ _tc_container_registry_id | default(tc_container_registry_id) }}"
+    namespace: "{{ _tc_tcr_namespace.name }}"
+    name: "{{ item.name }}"
+    brief_description: "{{ item.brief_description | default('') }}"
+    description: "{{ item.description | default('') }}"
+    force_delete: "{{ item.force_delete | default(false) }}"
+  loop: "{{ _tc_tcr_namespace.repositories | default([]) }}"
+  loop_control:
+    label: "{{ _tc_tcr_namespace.name }}/{{ item.name }}"

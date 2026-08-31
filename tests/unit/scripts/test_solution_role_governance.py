@@ -51,3 +51,16 @@ def test_observability_teardown_removes_topics_before_logset():
     text = role_tasks("tc_observability_baseline")
     assert_order(text, "Remove CLS topics", "Remove CLS logset")
     assert "tc_observability_baseline_logset_id | length > 0" in text
+
+
+def test_container_registry_disables_protection_and_removes_children_first():
+    text = role_tasks("tc_container_registry")
+    assert_order(
+        text,
+        "Disable TCR deletion protection before teardown",
+        "Remove TCR replication rules",
+        "Remove TCR repositories",
+        "Remove TCR namespaces",
+        "Remove TCR instance",
+    )
+    assert "tc_container_registry_id | length > 0" in text

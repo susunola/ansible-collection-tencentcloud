@@ -1,0 +1,162 @@
+---
+- name: Validate container registry inputs
+  ansible.builtin.assert:
+    that:
+      - tc_container_registry_state in ['present', 'absent']
+      - tc_container_registry_id | length > 0 or tc_container_registry_name | length > 0
+      - tc_container_registry_state == 'present' or (tc_container_registry_namespaces | length == 0 and tc_container_registry_replication_instances | length == 0 and tc_container_registry_replication_rules | length == 0) or tc_container_registry_id | length > 0
+    fail_msg: Creation requires a registry name; child-first deletion requires an explicit registry ID.
+
+- name: Provision TCR instance
+  when: tc_container_registry_state == 'present'
+  susunola.tencentcloud.tcr_instance:
+    region: "{{ tc_container_registry_region | default(omit, true) }}"
+    state: present
+    registry_id: "{{ tc_container_registry_id | default(omit, true) }}"
+    name: "{{ tc_container_registry_name | default(omit, true) }}"
+    registry_type: "{{ tc_container_registry_type }}"
+    deletion_protection: "{{ tc_container_registry_deletion_protection }}"
+    period_months: "{{ tc_container_registry_period_months | default(omit, true) }}"
+    auto_renew: "{{ tc_container_registry_auto_renew | default(omit, true) }}"
+    sync_tag: "{{ tc_container_registry_sync_tag }}"
+    enable_cos_maz: "{{ tc_container_registry_enable_cos_maz }}"
+    tags: "{{ tc_container_registry_tags }}"
+    waiter_timeout: "{{ tc_container_registry_waiter_timeout }}"
+    waiter_delay: "{{ tc_container_registry_waiter_delay }}"
+  register: _tc_container_registry
+
+- name: Resolve TCR registry ID
+  when: tc_container_registry_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_container_registry_id: >-
+      {{ tc_container_registry_id
+         or (_tc_container_registry.instance.RegistryId | default('')) }}
+
+- name: Provision TCR namespaces
+  when:
+    - tc_container_registry_state == 'present'
+    - _tc_container_registry_id | length > 0
+  susunola.tencentcloud.tcr_namespace:
+    region: "{{ tc_container_registry_region | default(omit, true) }}"
+    state: present
+    registry_id: "{{ _tc_container_registry_id }}"
+    name: "{{ item.name }}"
+    is_public: "{{ item.is_public | default(false) }}"
+    is_auto_scan: "{{ item.is_auto_scan | default(omit) }}"
+    is_prevent_vul: "{{ item.is_prevent_vul | default(omit) }}"
+    severity: "{{ item.severity | default(omit) }}"
+  loop: "{{ tc_container_registry_namespaces }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: _tc_container_registry_namespaces
+
+- name: Provision TCR repositories
+  when:
+    - tc_container_registry_state == 'present'
+    - _tc_container_registry_id | length > 0
+  ansible.builtin.include_tasks: repositories.yml
+  loop: "{{ tc_container_registry_namespaces }}"
+  loop_control:
+    loop_var: _tc_tcr_namespace
+    label: "{{ _tc_tcr_namespace.name }}"
+
+- name: Provision TCR replication instances
+  when:
+    - tc_container_registry_state == 'present'
+    - _tc_container_registry_id | length > 0
+  susunola.tencentcloud.tcr_replication_instance:
+    region: "{{ tc_container_registry_region | default(omit, true) }}"
+    state: present
+    registry_id: "{{ _tc_container_registry_id }}"
+    replication_region_id: "{{ item.replication_region_id }}"
+    replication_region_name: "{{ item.replication_region_name }}"
+    sync_tag: "{{ item.sync_tag | default(false) }}"
+  loop: "{{ tc_container_registry_replication_instances }}"
+  loop_control:
+    label: "{{ item.replication_region_name }}"
+  register: _tc_container_registry_replication_instances
+
+- name: Reconcile TCR replication rules
+  when:
+    - tc_container_registry_state == 'present'
+    - _tc_container_registry_id | length > 0
+  susunola.tencentcloud.tcr_replication_rule:
+    region: "{{ tc_container_registry_region | default(omit, true) }}"
+    state: present
+    registry_id: "{{ _tc_container_registry_id }}"
+    destination_registry_id: "{{ item.destination_registry_id }}"
+    destination_region_id: "{{ item.destination_region_id }}"
+    name: "{{ item.name }}"
+    destination_namespace: "{{ item.destination_namespace | default('') }}"
+    filters: "{{ item.filters | default([]) }}"
+    override: "{{ item.override | default(true) }}"
+    deletion: "{{ item.deletion | default(false) }}"
+    enabled: "{{ item.enabled | default(true) }}"
+    description: "{{ item.description | default('') }}"
+  loop: "{{ tc_container_registry_replication_rules }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Disable TCR deletion protection before teardown
+  when: tc_container_registry_state == 'absent'
+  susunola.tencentcloud.tcr_instance:
+    region: "{{ tc_container_registry_region | default(omit, true) }}"
+    state: present
+    registry_id: "{{ tc_container_registry_id }}"
+    deletion_protection: false
+
+- name: Remove TCR replication rules
+  when: tc_container_registry_state == 'absent'
+  susunola.tencentcloud.tcr_replication_rule:
+    region: "{{ tc_container_registry_region | default(omit, true) }}"
+    state: absent
+    registry_id: "{{ tc_container_registry_id }}"
+    destination_registry_id: "{{ item.destination_registry_id }}"
+    destination_region_id: "{{ item.destination_region_id }}"
+    name: "{{ item.name }}"
+  loop: "{{ tc_container_registry_replication_rules }}"
+
+- name: Remove TCR repositories
+  when: tc_container_registry_state == 'absent'
+  ansible.builtin.include_tasks: repositories.yml
+  loop: "{{ tc_container_registry_namespaces }}"
+  loop_control:
+    loop_var: _tc_tcr_namespace
+    label: "{{ _tc_tcr_namespace.name }}"
+
+- name: Remove TCR namespaces
+  when: tc_container_registry_state == 'absent'
+  susunola.tencentcloud.tcr_namespace:
+    region: "{{ tc_container_registry_region | default(omit, true) }}"
+    state: absent
+    registry_id: "{{ tc_container_registry_id }}"
+    name: "{{ item.name }}"
+  loop: "{{ tc_container_registry_namespaces }}"
+
+- name: Remove TCR replication instances
+  when: tc_container_registry_state == 'absent'
+  susunola.tencentcloud.tcr_replication_instance:
+    region: "{{ tc_container_registry_region | default(omit, true) }}"
+    state: absent
+    registry_id: "{{ tc_container_registry_id }}"
+    replication_region_id: "{{ item.replication_region_id }}"
+    replication_region_name: "{{ item.replication_region_name }}"
+  loop: "{{ tc_container_registry_replication_instances }}"
+
+- name: Remove TCR instance
+  when: tc_container_registry_state == 'absent'
+  susunola.tencentcloud.tcr_instance:
+    region: "{{ tc_container_registry_region | default(omit, true) }}"
+    state: absent
+    registry_id: "{{ tc_container_registry_id | default(omit, true) }}"
+    name: "{{ tc_container_registry_name | default(omit, true) }}"
+    deletion_protection: false
+
+- name: Publish container registry result
+  when: tc_container_registry_state == 'present'
+  ansible.builtin.set_fact:
+    tc_container_registry_result:
+      registry_id: "{{ _tc_container_registry_id }}"
+      instance: "{{ _tc_container_registry.instance }}"
+      namespaces: "{{ _tc_container_registry_namespaces.results | default([]) }}"
+      replication_instances: "{{ _tc_container_registry_replication_instances.results | default([]) }}"

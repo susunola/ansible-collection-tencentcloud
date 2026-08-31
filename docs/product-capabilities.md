@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **9**
+- Solution roles: **10**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -183,7 +183,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `tcb` | managed | 2 | 1 | — | `tcb_environment`, `tcb_http_service_route` |
 | `tcbr` | discovery-only | 0 | 1 | — | — |
 | `tcm` | managed | 2 | 1 | — | `tcm_mesh`, `tcm_mesh_clusters` |
-| `tcr` | resource-family | 5 | 1 | — | `tcr_instance`, `tcr_namespace`, `tcr_replication_instance`, `tcr_replication_rule`, `tcr_repository` |
+| `tcr` | solution | 5 | 1 | `tc_container_registry` | `tcr_instance`, `tcr_namespace`, `tcr_replication_instance`, `tcr_replication_rule`, `tcr_repository` |
 | `tcss` | discovery-only | 0 | 1 | — | — |
 | `tdai` | discovery-only | 0 | 1 | — | — |
 | `tdcpg` | managed | 1 | 1 | — | `tdcpg_cluster` |

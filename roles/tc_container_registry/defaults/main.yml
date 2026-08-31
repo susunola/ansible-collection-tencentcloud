@@ -1,0 +1,20 @@
+---
+tc_container_registry_state: present
+tc_container_registry_region: ""
+tc_container_registry_id: ""
+tc_container_registry_name: ""
+tc_container_registry_type: standard
+tc_container_registry_deletion_protection: true
+tc_container_registry_period_months: null
+tc_container_registry_auto_renew: null
+tc_container_registry_sync_tag: true
+tc_container_registry_enable_cos_maz: false
+tc_container_registry_tags: {}
+
+# Namespace items follow tcr_namespace options and may contain repositories.
+tc_container_registry_namespaces: []
+# Destination instance and replication-rule items follow their modules.
+tc_container_registry_replication_instances: []
+tc_container_registry_replication_rules: []
+tc_container_registry_waiter_timeout: 1800
+tc_container_registry_waiter_delay: 10

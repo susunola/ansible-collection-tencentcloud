@@ -20,6 +20,7 @@ SPECIAL_SERVICES = {
     "tag": "tag",
 }
 ROLE_SERVICES = {
+    "tc_container_registry": "tcr",
     "tc_database_stack": "cdb",
     "tc_launch": "cvm",
     "tc_clb_http": "clb",
