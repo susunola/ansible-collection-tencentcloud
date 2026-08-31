@@ -6,9 +6,9 @@ This matrix is generated from module SDK imports and role metadata. It is a
 navigation and gap-discovery aid, not a claim that every Tencent Cloud API is covered.
 
 - Products/services: **203**
-- Write modules: **372**
-- Information modules: **234**
-- Solution roles: **58**
+- Write modules: **373**
+- Information modules: **235**
+- Solution roles: **59**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -177,7 +177,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `ssm` | solution | 6 | 4 | `tc_ssm_secret_governance` | `ssm_parameter`, `ssm_product_secret`, `ssm_rotation`, `ssm_secret`, `ssm_secret_version`, `ssm_ssh_key_pair_secret` |
 | `svp` | discovery-only | 0 | 1 | — | — |
 | `tag` | managed | 1 | 0 | — | `tag` |
-| `tat` | managed | 2 | 1 | — | `tat_command`, `tat_invoker` |
+| `tat` | solution | 3 | 2 | `tc_tat_fleet_automation` | `tat_command`, `tat_invocation`, `tat_invoker` |
 | `tbaas` | discovery-only | 0 | 1 | — | — |
 | `tcaplusdb` | managed | 1 | 1 | — | `tcaplusdb_cluster` |
 | `tcb` | managed | 2 | 1 | — | `tcb_environment`, `tcb_http_service_route` |

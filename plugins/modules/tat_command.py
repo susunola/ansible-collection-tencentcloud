@@ -52,6 +52,7 @@ import time
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
 
 
 def _load_tat():
@@ -238,12 +239,7 @@ def run_module():
         current = wait_for_command(module, client, models, current["CommandId"], desired)
         module.exit_json(changed=True, **(diff or {}), command=current, msg="TAT command updated")
     except Exception as exc:
-        module.fail_json(
-            msg="Tencent Cloud API request failed",
-            error=str(exc),
-            error_code=getattr(exc, "get_code", lambda: None)(),
-            request_id=getattr(exc, "get_request_id", lambda: None)(),
-        )
+        module.fail_json(**sdk_error_payload(exc))
 
 
 def main():

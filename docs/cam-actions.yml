@@ -1798,6 +1798,13 @@ modules:
   - ModifyCommand
   tat_command_info:
   - DescribeCommands
+  tat_invocation:
+  - CancelInvocation
+  - DescribeInvocationTasks
+  - InvokeCommand
+  tat_invocation_info:
+  - DescribeInvocationTasks
+  - DescribeInvocations
   tat_invoker:
   - CreateInvoker
   - DeleteInvoker

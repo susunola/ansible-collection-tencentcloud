@@ -291,6 +291,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `subnet` | Manage Tencent Cloud VPC subnets |
 | `tag` | Manage tags on arbitrary Tencent Cloud resources |
 | `tat_command` | Manage Tencent Cloud TAT commands |
+| `tat_invocation` | Invoke or cancel a Tencent Cloud TAT command |
 | `tat_invoker` | Manage Tencent Cloud TAT scheduled invokers |
 | `tcaplusdb_cluster` | Manage Tencent Cloud TcaplusDB clusters |
 | `tcb_environment` | Manage Tencent CloudBase environments |
@@ -572,6 +573,7 @@ Read-only `_info` modules (return `changed=false`):
 | `subnet_info` | Gather information about Tencent Cloud subnets |
 | `svp_saving_plan_coverage_info` | Gather information about Tencent Cloud SVP saving plan coverages |
 | `tat_command_info` | Gather information about Tencent Cloud TAT commands |
+| `tat_invocation_info` | Gather Tencent Cloud TAT invocations and instance tasks |
 | `tbaas_block_info` | Gather information about Tencent Cloud TBAAS blocks |
 | `tcaplusdb_cluster_info` | Gather information about Tencent Cloud TCAPLUSDB clusters |
 | `tcb_billing_info` | Gather information about Tencent Cloud TCB billings |

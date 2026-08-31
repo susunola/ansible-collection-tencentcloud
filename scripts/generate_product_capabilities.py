@@ -75,6 +75,7 @@ ROLE_SERVICES = {
     "tc_tke_platform": "tke",
     "tc_tione_ml_pipeline": "tione",
     "tc_tdsql_mysql_platform": "tdmysql",
+    "tc_tat_fleet_automation": "tat",
     "tc_ssm_secret_governance": "ssm",
     "tc_vpc_foundation": "vpc",
     "tc_waf_application": "waf",

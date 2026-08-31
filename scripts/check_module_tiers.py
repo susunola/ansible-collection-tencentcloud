@@ -351,6 +351,8 @@ CORE_MODULES = {
     "tag",
     "tat_command",
     "tat_invoker",
+    "tat_invocation",
+    "tat_invocation_info",
     "tdmq_topic",
     "tdmq_namespace",
     "tdmq_namespace_role",

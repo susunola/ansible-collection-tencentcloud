@@ -1,0 +1,67 @@
+---
+- name: Validate TAT fleet automation inputs
+  ansible.builtin.assert:
+    that:
+      - tc_tat_fleet_automation_state in ['present', 'absent']
+      - tc_tat_fleet_automation_command is mapping
+      - tc_tat_fleet_automation_command.command_id | default(tc_tat_fleet_automation_command.name | default('')) | length > 0
+      - tc_tat_fleet_automation_invocations is sequence
+      - tc_tat_fleet_automation_schedules is sequence
+      - tc_tat_fleet_automation_state == 'present' or tc_tat_fleet_automation_allow_destroy | bool
+    fail_msg: TAT automation requires command_id or name; destruction requires tc_tat_fleet_automation_allow_destroy=true.
+
+- name: Reconcile reusable TAT command
+  when: tc_tat_fleet_automation_state == 'present'
+  susunola.tencentcloud.tat_command:
+  args: "{{ tc_tat_fleet_automation_command | combine({'state': 'present'}) }}"
+  register: _tc_tat_fleet_automation_command
+  no_log: true
+
+- name: Capture reusable TAT command ID
+  when: tc_tat_fleet_automation_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_tat_fleet_automation_command_id: "{{ _tc_tat_fleet_automation_command.command.CommandId }}"
+
+- name: Execute immediate TAT fleet operations
+  when: tc_tat_fleet_automation_state == 'present'
+  susunola.tencentcloud.tat_invocation:
+  args: "{{ item | combine({'command_id': _tc_tat_fleet_automation_command_id, 'state': 'started'}) }}"
+  loop: "{{ tc_tat_fleet_automation_invocations }}"
+  loop_control:
+    label: "{{ item.name | default(item.instance_ids | default([]) | join(',')) }}"
+  register: _tc_tat_fleet_automation_invocations
+  no_log: true
+
+- name: Reconcile scheduled TAT fleet operations
+  when: tc_tat_fleet_automation_state == 'present'
+  susunola.tencentcloud.tat_invoker:
+  args: "{{ item | combine({'command_id': _tc_tat_fleet_automation_command_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tat_fleet_automation_schedules }}"
+  loop_control:
+    label: "{{ item.name | default('unnamed') }}"
+  register: _tc_tat_fleet_automation_schedules
+  no_log: true
+
+- name: Publish TAT fleet automation outputs
+  when: tc_tat_fleet_automation_state == 'present'
+  ansible.builtin.set_fact:
+    tc_tat_fleet_automation_result:
+      command: "{{ _tc_tat_fleet_automation_command.command }}"
+      invocation_ids: "{{ _tc_tat_fleet_automation_invocations.results | default([]) | map(attribute='invocation_id') | list }}"
+      schedules: "{{ _tc_tat_fleet_automation_schedules.results | default([]) | map(attribute='invoker') | list }}"
+  no_log: true
+
+- name: Remove scheduled TAT fleet operations
+  when: tc_tat_fleet_automation_state == 'absent'
+  susunola.tencentcloud.tat_invoker:
+  args: "{{ item | combine({'state': 'absent'}) }}"
+  loop: "{{ tc_tat_fleet_automation_schedules | reverse | list }}"
+  loop_control:
+    label: "{{ item.invoker_id | default(item.name | default('unnamed')) }}"
+  no_log: true
+
+- name: Remove reusable TAT command
+  when: tc_tat_fleet_automation_state == 'absent'
+  susunola.tencentcloud.tat_command:
+  args: "{{ tc_tat_fleet_automation_command | combine({'state': 'absent'}) }}"
+  no_log: true

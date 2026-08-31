@@ -1,0 +1,6 @@
+---
+tc_tat_fleet_automation_state: present
+tc_tat_fleet_automation_command: {}
+tc_tat_fleet_automation_invocations: []
+tc_tat_fleet_automation_schedules: []
+tc_tat_fleet_automation_allow_destroy: false

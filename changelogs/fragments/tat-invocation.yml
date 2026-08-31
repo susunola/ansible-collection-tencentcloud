@@ -1,0 +1,5 @@
+minor_changes:
+  - Add ``tat_invocation`` for immediate reusable-command execution, per-instance convergence, redacted output and explicit cancellation.
+  - Add the ``tc_tat_fleet_automation`` solution role for reusable commands, immediate execution and scheduled invokers.
+bugfixes:
+  - Standardize ``tat_command`` API failures with the collection lifecycle error contract.
