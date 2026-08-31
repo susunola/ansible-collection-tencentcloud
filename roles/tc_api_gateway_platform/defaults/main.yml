@@ -1,0 +1,18 @@
+---
+tc_api_gateway_platform_state: present
+tc_api_gateway_platform_region: ""
+tc_api_gateway_platform_service_id: ""
+tc_api_gateway_platform_name: ""
+tc_api_gateway_platform_description: ""
+tc_api_gateway_platform_protocol: http&https
+tc_api_gateway_platform_network_types: [OUTER]
+tc_api_gateway_platform_ip_version: IPv4
+tc_api_gateway_platform_vpc_id: ""
+tc_api_gateway_platform_instance_id: ""
+tc_api_gateway_platform_tags: {}
+
+tc_api_gateway_platform_apis: []
+tc_api_gateway_platform_releases: []
+tc_api_gateway_platform_api_keys: []
+# Plan items may contain bindings and key_bindings with explicit referenced IDs.
+tc_api_gateway_platform_usage_plans: []

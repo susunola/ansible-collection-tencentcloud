@@ -1,0 +1,6 @@
+---
+minor_changes:
+  - >-
+    solution roles - add ``tc_api_gateway_platform`` for service adoption,
+    APIs, releases, keys, usage plans and both binding types with secret-safe,
+    dependency-aware teardown.

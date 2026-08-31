@@ -1,0 +1,29 @@
+---
+- name: Reconcile API Gateway usage plan
+  susunola.tencentcloud.api_gateway_usage_plan:
+    region: "{{ tc_api_gateway_platform_region }}"
+    state: present
+    usage_plan_id: "{{ _tc_api_gateway_plan.usage_plan_id | default(omit, true) }}"
+    name: "{{ _tc_api_gateway_plan.name | default(omit, true) }}"
+    description: "{{ _tc_api_gateway_plan.description | default('') }}"
+    qps: "{{ _tc_api_gateway_plan.qps | default(-1) }}"
+    max_request_num: "{{ _tc_api_gateway_plan.max_request_num | default(-1) }}"
+  register: _tc_api_gateway_plan_result
+
+- name: Resolve API Gateway usage plan ID
+  ansible.builtin.set_fact:
+    _tc_api_gateway_plan_id: >-
+      {{ _tc_api_gateway_plan.usage_plan_id | default('')
+         or (_tc_api_gateway_plan_result.usage_plan.UsagePlanId | default('')) }}
+
+- name: Reconcile API Gateway usage plan service bindings
+  when: _tc_api_gateway_plan_id | length > 0
+  susunola.tencentcloud.api_gateway_usage_plan_binding:
+  args: "{{ item | combine({'state': 'present', 'usage_plan_id': _tc_api_gateway_plan_id, 'service_id': _tc_api_gateway_platform_service_id, 'region': tc_api_gateway_platform_region}) }}"
+  loop: "{{ _tc_api_gateway_plan.bindings | default([]) }}"
+
+- name: Reconcile API Gateway usage plan key bindings
+  when: _tc_api_gateway_plan_id | length > 0
+  susunola.tencentcloud.api_gateway_usage_plan_key_binding:
+  args: "{{ item | combine({'state': 'present', 'usage_plan_id': _tc_api_gateway_plan_id, 'region': tc_api_gateway_platform_region}) }}"
+  loop: "{{ _tc_api_gateway_plan.key_bindings | default([]) }}"

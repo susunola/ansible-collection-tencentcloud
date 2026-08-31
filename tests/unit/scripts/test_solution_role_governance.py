@@ -261,6 +261,15 @@ def test_edgeone_teardown_clears_security_and_delivery_before_zone():
     assert "template_id is required" in template
 
 
+def test_api_gateway_teardown_removes_bindings_and_children_before_service():
+    main = role_tasks("tc_api_gateway_platform")
+    plan = (ROOT / "roles" / "tc_api_gateway_platform" / "tasks" / "teardown_usage_plan.yml").read_text(encoding="utf-8")
+    assert_order(plan, "Remove API Gateway usage plan service bindings", "Remove API Gateway usage plan key bindings", "Delete API Gateway usage plan")
+    assert_order(main, "Remove API Gateway usage plan bindings and plans", "Unrelease API Gateway environments", "Remove API Gateway APIs", "Remove API Gateway API keys", "Remove API Gateway service")
+    assert "usage_plan_id is required" in plan
+    assert "no_log:" in main
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -293,6 +302,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_lighthouse_stack": "resource_type='lighthouse_instance'",
         "tc_prometheus_platform": "resource_type='prometheus_instance'",
         "tc_edgeone_application": "resource_type='edgeone_zone'",
+        "tc_api_gateway_platform": "resource_type='api_gateway_service'",
         "tc_rocketmq_platform": "resource_type='rocketmq_cluster'",
         "tc_rabbitmq_platform": "resource_type='rabbitmq_instance'",
         "tc_eventbridge_router": "resource_type='event_bus'",

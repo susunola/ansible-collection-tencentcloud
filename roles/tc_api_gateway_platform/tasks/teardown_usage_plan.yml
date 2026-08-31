@@ -1,0 +1,22 @@
+---
+- name: Validate API Gateway usage plan teardown identity
+  ansible.builtin.assert:
+    that:
+      - _tc_api_gateway_plan.usage_plan_id | default('') | length > 0
+    fail_msg: usage_plan_id is required to remove plan bindings and the plan.
+
+- name: Remove API Gateway usage plan service bindings
+  susunola.tencentcloud.api_gateway_usage_plan_binding:
+  args: "{{ item | combine({'state': 'absent', 'usage_plan_id': _tc_api_gateway_plan.usage_plan_id, 'service_id': tc_api_gateway_platform_service_id, 'region': tc_api_gateway_platform_region}) }}"
+  loop: "{{ _tc_api_gateway_plan.bindings | default([]) }}"
+
+- name: Remove API Gateway usage plan key bindings
+  susunola.tencentcloud.api_gateway_usage_plan_key_binding:
+  args: "{{ item | combine({'state': 'absent', 'usage_plan_id': _tc_api_gateway_plan.usage_plan_id, 'region': tc_api_gateway_platform_region}) }}"
+  loop: "{{ _tc_api_gateway_plan.key_bindings | default([]) }}"
+
+- name: Delete API Gateway usage plan
+  susunola.tencentcloud.api_gateway_usage_plan:
+    region: "{{ tc_api_gateway_platform_region }}"
+    state: absent
+    usage_plan_id: "{{ _tc_api_gateway_plan.usage_plan_id }}"
