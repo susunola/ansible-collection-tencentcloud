@@ -46,3 +46,22 @@ def test_no_colon_space_in_yaml_list_items():
             if pattern.match(line):
                 offenders.append("%s: %s" % (path.name, line.strip()))
     assert not offenders, "Colon+space in DOCUMENTATION list items:\n%s" % "\n".join(offenders)
+
+
+def test_write_modules_use_diagnostic_error_envelopes():
+    """Every write module must retain error code and request ID on failure."""
+    offenders = []
+    for path in _module_paths():
+        if path.stem.endswith("_info"):
+            continue
+        text = path.read_text(encoding="utf-8")
+        api3_helper = "sdk_error_payload(exc)" in text or "fail_sdk_error(exc)" in text
+        api3_inline = all(fragment in text for fragment in (
+            'error=str(exc)',
+            'get_code", lambda: None',
+            'get_request_id", lambda: None',
+        ))
+        cos_helper = "fail_on_cos_error(module, exc" in text
+        if not (api3_helper or api3_inline or cos_helper):
+            offenders.append(path.name)
+    assert not offenders, "write modules without diagnostic SDK errors: %s" % ", ".join(offenders)

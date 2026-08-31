@@ -146,3 +146,12 @@ class TencentCloudModule(AnsibleModule):
         if calls:
             kwargs.setdefault("tc_api_calls", calls)
         super(TencentCloudModule, self).fail_json(*args, **kwargs)
+
+    def fail_sdk_error(self, exc, message="Tencent Cloud API request failed"):
+        """Fail with the collection's standard SDK diagnostic envelope."""
+        self.fail_json(
+            msg=message,
+            error=sanitize_error(exc),
+            error_code=getattr(exc, "get_code", lambda: None)(),
+            request_id=getattr(exc, "get_request_id", lambda: None)(),
+        )

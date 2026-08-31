@@ -1,0 +1,9 @@
+bugfixes:
+  - >-
+    tag - stop treating tag-query authorization, throttling or service errors
+    as an empty remote tag set before a write operation.
+minor_changes:
+  - >-
+    lifecycle governance - add a shared ``fail_sdk_error`` method and a
+    source-level gate requiring every write module to preserve error code and
+    request ID diagnostics.

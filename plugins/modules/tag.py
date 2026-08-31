@@ -169,14 +169,12 @@ def find_resources(module, client, models, tag_key, tag_value, service_type, res
     """Return {resource_id: value} for resources carrying tag_key.
 
     When tag_value is given only exact matches are returned; otherwise any
-    resource carrying the key is returned. Failures (e.g. an unsupported
-    key-only filter) surface as an empty dict so callers degrade to attach.
+    resource carrying the key is returned. Query failures must surface to the
+    caller: treating an authorization or throttling error as an empty result
+    could cause an unsafe write based on unknown remote state.
     """
     request = build_describe_request(models, tag_key, tag_value, service_type, resource_prefix, resource_region)
-    try:
-        response = module.sdk_call(client.DescribeResourcesByTags, request)
-    except Exception:
-        return {}
+    response = module.sdk_call(client.DescribeResourcesByTags, request)
     result = {}
     for item in response.ResourceTags or []:
         tags = tags_from_sdk(item.Tags or [])
@@ -220,21 +218,7 @@ def _detach(module, client, models, tag_key, service_type, resource_prefix, reso
     module.sdk_call(client.DetachResourcesTag, request)
 
 
-def run_module():
-    module = TencentCloudModule(
-        argument_spec={
-            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
-            "tag_key": {"type": "str", "required": True, "no_log": False},
-            "tag_value": {"type": "str"},
-            "service_type": {"type": "str", "required": True},
-            "resource_prefix": {"type": "str", "required": True},
-            "resource_ids": {"type": "list", "elements": "str", "required": True},
-            "resource_region": {"type": "str"},
-        },
-        supports_check_mode=True,
-    )
-    module.require_sdk()
-
+def _reconcile(module):
     state = module.params["state"]
     tag_key = module.params["tag_key"]
     tag_value = module.params["tag_value"]
@@ -268,7 +252,6 @@ def run_module():
         result = {rid: ("detached" if rid in to_detach else "ok") for rid in resource_ids}
         module.exit_json(changed=True, resource_ids=result, msg="Tag detached")
 
-    # state == present
     to_attach = [rid for rid in resource_ids if rid not in exact and rid not in key_only]
     to_update = [rid for rid in resource_ids if rid in key_only and rid not in exact]
 
@@ -292,6 +275,23 @@ def run_module():
     for rid in to_update:
         result[rid] = "updated"
     module.exit_json(changed=True, resource_ids=result, msg="Tag reconciled")
+
+
+def run_module():
+    module = TencentCloudModule(argument_spec={
+            "state": {"type": "str", "choices": ["present", "absent"], "default": "present"},
+            "tag_key": {"type": "str", "required": True, "no_log": False},
+            "tag_value": {"type": "str"},
+            "service_type": {"type": "str", "required": True},
+            "resource_prefix": {"type": "str", "required": True},
+            "resource_ids": {"type": "list", "elements": "str", "required": True},
+            "resource_region": {"type": "str"},
+        }, supports_check_mode=True)
+    module.require_sdk()
+    try:
+        _reconcile(module)
+    except Exception as exc:
+        module.fail_sdk_error(exc)
 
 
 def main():

@@ -119,13 +119,15 @@ def test_find_resources_returns_empty_when_none():
     assert find_resources(module, client, FakeModels, "env", None, "cvm", "instance", "ap-guangzhou") == {}
 
 
-def test_find_resources_degrades_to_empty_on_exception():
+def test_find_resources_propagates_exception_without_guessing_remote_state():
     class Boom(Exception):
         pass
 
     client = FakeClient(exc=Boom("api error"))
     module = FakeModule()
-    assert find_resources(module, client, FakeModels, "env", None, "cvm", "instance", "ap-guangzhou") == {}
+    import pytest
+    with pytest.raises(Boom, match="api error"):
+        find_resources(module, client, FakeModels, "env", None, "cvm", "instance", "ap-guangzhou")
 
 
 def test_attach_sends_all_fields():
