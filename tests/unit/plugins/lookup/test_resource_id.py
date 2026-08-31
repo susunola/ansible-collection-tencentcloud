@@ -101,6 +101,12 @@ def test_cbs_disk_request_uses_exact_name_filter():
     assert request.Filters[0].Values == ["application-data"]
 
 
+def test_lighthouse_instance_request_uses_exact_name_filter():
+    request = build_request("lighthouse_instance", Models, "edge-node")
+    assert request.Filters[0].Name == "instance-name"
+    assert request.Filters[0].Values == ["edge-node"]
+
+
 def test_postgresql_request_uses_instance_name_filter():
     request = build_request("postgresql_instance", Models, "orders")
     assert request.Filters[0].Name == "db-instance-name"

@@ -9,6 +9,7 @@ minor_changes:
   - lookup resource_id - add exact-name, paginated Auto Scaling group resolution.
   - lookup resource_id - add exact-name, paginated EventBridge event-bus resolution.
   - lookup resource_id - add exact-name, paginated CBS cloud-disk resolution.
+  - lookup resource_id - add exact-name, paginated Lighthouse instance resolution.
   - >-
     lookup plugins - add ``resource_id`` for exact, ambiguity-safe name-to-ID
     resolution across VPC, subnet, security group, CVM, CLB, TKE and CDB.
