@@ -811,6 +811,13 @@ modules:
   - ModifyDBEncryptAttributes
   - ModifyDBInstanceSecurityGroups
   - ModifyInstanceSSLAttributes
+  dlc_data_engine:
+  - CreateDataEngine
+  - DeleteDataEngine
+  - DescribeDataEngines
+  - ModifyDataEngineDescription
+  - SuspendResumeDataEngine
+  - UpdateDataEngine
   dlc_task_info:
   - DescribeTaskList
   dlc_work_group:
