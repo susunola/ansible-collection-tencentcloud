@@ -499,8 +499,10 @@ action_groups:
     - tdmysql_database_object_info
     - tdmysql_db_instance
     - tdmysql_db_instance_info
+    - tdmysql_maintenance_window
     - tdmysql_parameter
     - tdmysql_parameter_info
+    - tdmysql_ssl
     - tem_application
     - tem_application_deployment
     - tem_application_info

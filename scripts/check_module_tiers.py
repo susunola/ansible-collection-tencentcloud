@@ -281,6 +281,8 @@ CORE_MODULES = {
     "tdmysql_database_object_info",
     "tdmysql_parameter",
     "tdmysql_parameter_info",
+    "tdmysql_maintenance_window",
+    "tdmysql_ssl",
     "dbdc_db_custom_cluster",
     "cdwch_instance",
     "cdwch_backup_config",

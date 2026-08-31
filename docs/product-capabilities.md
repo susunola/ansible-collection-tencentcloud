@@ -6,7 +6,7 @@ This matrix is generated from module SDK imports and role metadata. It is a
 navigation and gap-discovery aid, not a claim that every Tencent Cloud API is covered.
 
 - Products/services: **203**
-- Write modules: **366**
+- Write modules: **368**
 - Information modules: **229**
 - Solution roles: **55**
 
@@ -189,7 +189,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `tdcpg` | managed | 1 | 1 | — | `tdcpg_cluster` |
 | `tdid` | discovery-only | 0 | 1 | — | — |
 | `tdmq` | solution | 18 | 1 | `tc_cmq_messaging`, `tc_rabbitmq_platform`, `tc_rocketmq_platform` | `cmq_queue`, `cmq_subscription`, `cmq_topic`, `tdmq_namespace`, `tdmq_namespace_role`, `tdmq_rabbitmq_binding`, `tdmq_rabbitmq_instance`, `tdmq_rabbitmq_permission`, +10 more |
-| `tdmysql` | resource-family | 4 | 4 | — | `tdmysql_account`, `tdmysql_account_privilege`, `tdmysql_db_instance`, `tdmysql_parameter` |
+| `tdmysql` | resource-family | 6 | 4 | — | `tdmysql_account`, `tdmysql_account_privilege`, `tdmysql_db_instance`, `tdmysql_maintenance_window`, `tdmysql_parameter`, `tdmysql_ssl` |
 | `tem` | solution | 4 | 1 | `tc_tem_application` | `tem_application`, `tem_application_deployment`, `tem_application_service`, `tem_environment` |
 | `teo` | solution | 12 | 1 | `tc_edgeone_application` | `teo_acceleration_domain`, `teo_dns_record`, `teo_origin_group`, `teo_security_bot_lite`, `teo_security_custom_rules`, `teo_security_exception_rules`, `teo_security_ip_group`, `teo_security_managed_rules`, +4 more |
 | `thpc` | managed | 1 | 1 | — | `thpc_cluster` |

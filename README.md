@@ -318,7 +318,9 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tdmysql_account` | Manage Tencent Cloud TDSQL MySQL accounts |
 | `tdmysql_account_privilege` | Manage scoped Tencent Cloud TDSQL MySQL account privileges |
 | `tdmysql_db_instance` | Manage Tencent Cloud TDMysql instances |
+| `tdmysql_maintenance_window` | Manage Tencent Cloud TDSQL MySQL maintenance windows |
 | `tdmysql_parameter` | Manage Tencent Cloud TDSQL MySQL instance parameters |
+| `tdmysql_ssl` | Manage Tencent Cloud TDSQL MySQL SSL state |
 | `tem_application` | Manage Tencent Cloud TEM applications |
 | `tem_application_deployment` | Deploy Tencent Cloud TEM application versions |
 | `tem_application_service` | Manage Tencent Cloud TEM application access services |
