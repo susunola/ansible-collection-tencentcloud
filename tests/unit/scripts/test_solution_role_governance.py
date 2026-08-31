@@ -436,6 +436,18 @@ def test_container_registry_disables_protection_and_removes_children_first():
     assert "tc_container_registry_id | length > 0" in text
 
 
+def test_dlc_governance_teardown_removes_access_before_group():
+    teardown = (ROOT / "roles" / "tc_dlc_access_governance" / "tasks" / "teardown_work_group.yml").read_text(encoding="utf-8")
+    assert_order(
+        teardown,
+        "Remove DLC work-group policies before members",
+        "Remove DLC work-group members before group",
+        "Remove empty DLC work group",
+    )
+    main = role_tasks("tc_dlc_access_governance")
+    assert "tc_dlc_access_governance_allow_destroy" in main
+
+
 def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
     expectations = {
         "tc_vpc_foundation": "resource_type='vpc'",

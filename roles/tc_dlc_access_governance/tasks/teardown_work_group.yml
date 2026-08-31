@@ -1,0 +1,16 @@
+---
+- name: Remove DLC work-group policies before members
+  susunola.tencentcloud.dlc_work_group_policy:
+    work_group_id: "{{ _tc_dlc_group.work_group.work_group_id }}"
+    policies: []
+    allow_empty: true
+
+- name: Remove DLC work-group members before group
+  susunola.tencentcloud.dlc_work_group_membership:
+    work_group_id: "{{ _tc_dlc_group.work_group.work_group_id }}"
+    user_ids: []
+    allow_empty: true
+
+- name: Remove empty DLC work group
+  susunola.tencentcloud.dlc_work_group:
+  args: "{{ _tc_dlc_group.work_group | combine({'state': 'absent', 'allow_delete_nonempty': false}) }}"

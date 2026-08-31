@@ -1,0 +1,2 @@
+minor_changes:
+  - Add a DLC access-governance role that composes work groups, exact memberships and exact authorization policies with dependency-safe teardown.

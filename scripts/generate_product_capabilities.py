@@ -56,6 +56,7 @@ ROLE_SERVICES = {
     "tc_goosefs_cache": "goosefs",
     "tc_cloud_audit_governance": "cloudaudit",
     "tc_dts_migration": "dts",
+    "tc_dlc_access_governance": "dlc",
     "tc_emr_platform": "emr",
     "tc_gaap_accelerator": "gaap",
     "tc_dcdb_stack": "dcdb",

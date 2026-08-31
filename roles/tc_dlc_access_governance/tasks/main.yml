@@ -1,0 +1,48 @@
+---
+- name: Validate DLC access-governance inputs
+  ansible.builtin.assert:
+    that:
+      - tc_dlc_access_governance_state in ['present', 'absent']
+      - >-
+        tc_dlc_access_governance_state == 'present'
+        or (tc_dlc_access_governance_work_groups
+            | map(attribute='work_group')
+            | selectattr('work_group_id', 'defined')
+            | list | length == tc_dlc_access_governance_work_groups | length)
+    fail_msg: DLC access-governance teardown requires work_group_id for every declared group.
+
+- name: Initialize DLC work-group identity map
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dlc_work_group_ids: {}
+
+- name: Reconcile DLC work groups, members and policies
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.include_tasks: work_group.yml
+  loop: "{{ tc_dlc_access_governance_work_groups }}"
+  loop_control:
+    loop_var: _tc_dlc_group
+    label: "{{ _tc_dlc_group.work_group.name }}"
+
+- name: Require explicit authorization before DLC governance teardown
+  when:
+    - tc_dlc_access_governance_state == 'absent'
+    - not tc_dlc_access_governance_allow_destroy | bool
+  ansible.builtin.fail:
+    msg: Set tc_dlc_access_governance_allow_destroy=true to authorize policy, membership and work-group deletion.
+
+- name: Remove DLC policies, members and work groups
+  when:
+    - tc_dlc_access_governance_state == 'absent'
+    - tc_dlc_access_governance_allow_destroy | bool
+  ansible.builtin.include_tasks: teardown_work_group.yml
+  loop: "{{ tc_dlc_access_governance_work_groups | reverse | list }}"
+  loop_control:
+    loop_var: _tc_dlc_group
+    label: "{{ _tc_dlc_group.work_group.work_group_id }}"
+
+- name: Publish DLC access-governance result
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.set_fact:
+    tc_dlc_access_governance_result:
+      work_group_ids: "{{ _tc_dlc_work_group_ids }}"

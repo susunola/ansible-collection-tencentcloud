@@ -1,0 +1,27 @@
+---
+- name: Reconcile DLC work group
+  susunola.tencentcloud.dlc_work_group:
+  args: "{{ _tc_dlc_group.work_group | combine({'state': 'present'}) }}"
+  register: _tc_dlc_group_result
+
+- name: Resolve DLC work-group ID
+  ansible.builtin.set_fact:
+    _tc_dlc_group_id: "{{ _tc_dlc_group_result.work_group_id }}"
+
+- name: Reconcile exact DLC work-group members
+  when: _tc_dlc_group.members is defined
+  susunola.tencentcloud.dlc_work_group_membership:
+    work_group_id: "{{ _tc_dlc_group_id }}"
+    user_ids: "{{ _tc_dlc_group.members }}"
+    allow_empty: "{{ _tc_dlc_group.allow_empty_members | default(false) }}"
+
+- name: Reconcile exact DLC work-group policies
+  when: _tc_dlc_group.policies is defined
+  susunola.tencentcloud.dlc_work_group_policy:
+    work_group_id: "{{ _tc_dlc_group_id }}"
+    policies: "{{ _tc_dlc_group.policies }}"
+    allow_empty: "{{ _tc_dlc_group.allow_empty_policies | default(false) }}"
+
+- name: Record DLC work-group identity
+  ansible.builtin.set_fact:
+    _tc_dlc_work_group_ids: "{{ _tc_dlc_work_group_ids | combine({_tc_dlc_group.work_group.name: _tc_dlc_group_id}) }}"
