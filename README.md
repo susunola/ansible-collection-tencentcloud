@@ -335,6 +335,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `thpc_cluster` | Manage Tencent Cloud THPC clusters |
 | `tione_data_source` | Manage Tencent Cloud TIONE data sources |
 | `tione_dataset` | Manage Tencent Cloud TIONE datasets |
+| `tione_notebook` | Manage Tencent Cloud TIONE notebooks |
 | `tke_addon` | Manage a Tencent Kubernetes Engine addon |
 | `tke_backup_storage_location` | Manage Tencent Kubernetes Engine backup storage locations |
 | `tke_cluster` | Manage Tencent Cloud TKE clusters |

@@ -385,6 +385,7 @@ CORE_MODULES = {
     "tione_dataset",
     "tione_data_source",
     "tione_data_source_info",
+    "tione_notebook",
     "vpc",
     "havip",
     "havip_association",

@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``tione_notebook`` with create/update/start/stop/delete state reconciliation, stopped-state updates, immutable drift reporting and guarded deletion.
