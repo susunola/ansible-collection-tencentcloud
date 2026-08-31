@@ -1,0 +1,6 @@
+---
+minor_changes:
+  - >-
+    solution roles - add ``tc_lighthouse_stack`` for exact-name instance
+    adoption, SSH keys, firewall rules, data disks and snapshots with
+    child-first teardown and explicit isolation semantics.

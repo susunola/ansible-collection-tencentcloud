@@ -190,6 +190,20 @@ def test_block_storage_teardown_clears_protection_and_detaches_before_disk():
     assert "account_ids: []" in text
 
 
+def test_lighthouse_teardown_removes_children_before_isolation():
+    text = role_tasks("tc_lighthouse_stack")
+    assert_order(
+        text,
+        "Remove Lighthouse snapshots",
+        "Clear Lighthouse firewall rules",
+        "Detach and remove Lighthouse data disks",
+        "Disassociate and remove Lighthouse key pairs",
+        "Isolate Lighthouse instance",
+    )
+    assert "state: absent" in text
+    assert "permanent" in (ROOT / "roles" / "tc_lighthouse_stack" / "README.md").read_text(encoding="utf-8")
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -219,6 +233,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_cynosdb_cluster": "resource_type='cynosdb_cluster'",
         "tc_autoscaling_group": "resource_type='autoscaling_group'",
         "tc_block_storage": "resource_type='cbs_disk'",
+        "tc_lighthouse_stack": "resource_type='lighthouse_instance'",
         "tc_eventbridge_router": "resource_type='event_bus'",
         "tc_container_registry": "resource_type='tcr_instance'",
         "tc_tem_application": "resource_type='tem_environment'",

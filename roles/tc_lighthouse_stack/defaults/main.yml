@@ -1,0 +1,20 @@
+---
+tc_lighthouse_stack_state: present
+tc_lighthouse_stack_region: ""
+tc_lighthouse_stack_instance_id: ""
+tc_lighthouse_stack_name: ""
+tc_lighthouse_stack_bundle_id: ""
+tc_lighthouse_stack_blueprint_id: ""
+tc_lighthouse_stack_zones: []
+tc_lighthouse_stack_password: ""
+tc_lighthouse_stack_prepaid_period: null
+tc_lighthouse_stack_firewall_rules: []
+
+# Key items use lighthouse_key_pair parameters; instance_ids defaults to this instance.
+tc_lighthouse_stack_key_pairs: []
+# Disk items use lighthouse_disk parameters; instance_id defaults to this instance.
+tc_lighthouse_stack_disks: []
+# Snapshot items use lighthouse_snapshot parameters.
+tc_lighthouse_stack_snapshots: []
+tc_lighthouse_stack_waiter_delay: 5
+tc_lighthouse_stack_waiter_timeout: 600

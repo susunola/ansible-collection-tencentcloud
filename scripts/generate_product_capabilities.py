@@ -24,6 +24,7 @@ ROLE_SERVICES = {
     "tc_autoscaling_group": "autoscaling",
     "tc_container_registry": "tcr",
     "tc_kafka_platform": "ckafka",
+    "tc_lighthouse_stack": "lighthouse",
     "tc_database_stack": "cdb",
     "tc_dns_zone": "dnspod",
     "tc_cynosdb_cluster": "cynosdb",

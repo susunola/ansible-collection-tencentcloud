@@ -1,0 +1,176 @@
+---
+- name: Resolve existing Lighthouse instance ID for teardown
+  when:
+    - tc_lighthouse_stack_state == 'absent'
+    - tc_lighthouse_stack_instance_id | length == 0
+    - tc_lighthouse_stack_name | length > 0
+  ansible.builtin.set_fact:
+    tc_lighthouse_stack_instance_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_lighthouse_stack_name,
+                resource_type='lighthouse_instance', region=tc_lighthouse_stack_region) }}
+
+- name: Validate Lighthouse stack inputs
+  ansible.builtin.assert:
+    that:
+      - tc_lighthouse_stack_state in ['present', 'absent']
+      - tc_lighthouse_stack_instance_id | length > 0 or tc_lighthouse_stack_name | length > 0
+      - tc_lighthouse_stack_state == 'present' or tc_lighthouse_stack_instance_id | length > 0
+      - tc_lighthouse_stack_state == 'absent' or tc_lighthouse_stack_instance_id | length > 0 or tc_lighthouse_stack_bundle_id | length > 0
+      - tc_lighthouse_stack_state == 'absent' or tc_lighthouse_stack_instance_id | length > 0 or tc_lighthouse_stack_blueprint_id | length > 0
+    fail_msg: Lighthouse creation requires bundle and blueprint IDs; teardown requires a resolvable instance ID.
+
+- name: Provision Lighthouse instance
+  when: tc_lighthouse_stack_state == 'present'
+  susunola.tencentcloud.lighthouse_instance:
+    region: "{{ tc_lighthouse_stack_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ tc_lighthouse_stack_instance_id | default(omit, true) }}"
+    instance_name: "{{ tc_lighthouse_stack_name | default(omit, true) }}"
+    bundle_id: "{{ tc_lighthouse_stack_bundle_id | default(omit, true) }}"
+    blueprint_id: "{{ tc_lighthouse_stack_blueprint_id | default(omit, true) }}"
+    zones: "{{ tc_lighthouse_stack_zones | default(omit, true) }}"
+    password: "{{ tc_lighthouse_stack_password | default(omit, true) }}"
+    prepaid_period: "{{ tc_lighthouse_stack_prepaid_period | default(omit) }}"
+    waiter_delay: "{{ tc_lighthouse_stack_waiter_delay }}"
+    waiter_timeout: "{{ tc_lighthouse_stack_waiter_timeout }}"
+  register: _tc_lighthouse_stack_instance
+  no_log: "{{ tc_lighthouse_stack_password | length > 0 }}"
+
+- name: Resolve Lighthouse instance ID
+  when: tc_lighthouse_stack_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_lighthouse_stack_instance_id: >-
+      {{ tc_lighthouse_stack_instance_id
+         or (_tc_lighthouse_stack_instance.instance.InstanceId | default('')) }}
+
+- name: Reconcile Lighthouse key pairs
+  when:
+    - tc_lighthouse_stack_state == 'present'
+    - _tc_lighthouse_stack_instance_id | length > 0
+  susunola.tencentcloud.lighthouse_key_pair:
+    region: "{{ tc_lighthouse_stack_region | default(omit, true) }}"
+    state: present
+    key_id: "{{ item.key_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+    public_key: "{{ item.public_key | default(omit, true) }}"
+    instance_ids: "{{ item.instance_ids | default([_tc_lighthouse_stack_instance_id]) }}"
+    association_type: "{{ item.association_type | default('ONLINE') }}"
+    username: "{{ item.username | default(omit, true) }}"
+    force_replace: "{{ item.force_replace | default(false) }}"
+  loop: "{{ tc_lighthouse_stack_key_pairs }}"
+  loop_control:
+    label: "{{ item.name | default(item.key_id | default('key pair')) }}"
+  register: _tc_lighthouse_stack_key_pairs
+
+- name: Reconcile Lighthouse firewall rules
+  when:
+    - tc_lighthouse_stack_state == 'present'
+    - _tc_lighthouse_stack_instance_id | length > 0
+  susunola.tencentcloud.lighthouse_firewall_rules:
+    region: "{{ tc_lighthouse_stack_region | default(omit, true) }}"
+    instance_id: "{{ _tc_lighthouse_stack_instance_id }}"
+    rules: "{{ tc_lighthouse_stack_firewall_rules }}"
+  register: _tc_lighthouse_stack_firewall
+
+- name: Reconcile Lighthouse data disks
+  when:
+    - tc_lighthouse_stack_state == 'present'
+    - _tc_lighthouse_stack_instance_id | length > 0
+  susunola.tencentcloud.lighthouse_disk:
+    region: "{{ tc_lighthouse_stack_region | default(omit, true) }}"
+    state: present
+    disk_id: "{{ item.disk_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+    zone: "{{ item.zone | default(omit, true) }}"
+    disk_size: "{{ item.disk_size | default(omit) }}"
+    disk_type: "{{ item.disk_type | default(omit, true) }}"
+    prepaid_period: "{{ item.prepaid_period | default(omit) }}"
+    renew_flag: "{{ item.renew_flag | default('NOTIFY_AND_MANUAL_RENEW') }}"
+    instance_id: "{{ item.instance_id | default(_tc_lighthouse_stack_instance_id) }}"
+    force_replace: "{{ item.force_replace | default(false) }}"
+    force_detach: "{{ item.force_detach | default(false) }}"
+    wait: "{{ item.wait | default(true) }}"
+    waiter_delay: "{{ tc_lighthouse_stack_waiter_delay }}"
+    waiter_timeout: "{{ tc_lighthouse_stack_waiter_timeout }}"
+  loop: "{{ tc_lighthouse_stack_disks }}"
+  loop_control:
+    label: "{{ item.name | default(item.disk_id | default('disk')) }}"
+  register: _tc_lighthouse_stack_disks
+
+- name: Reconcile Lighthouse snapshots
+  when:
+    - tc_lighthouse_stack_state == 'present'
+    - _tc_lighthouse_stack_instance_id | length > 0
+  susunola.tencentcloud.lighthouse_snapshot:
+    region: "{{ tc_lighthouse_stack_region | default(omit, true) }}"
+    state: present
+    snapshot_id: "{{ item.snapshot_id | default(omit, true) }}"
+    instance_id: "{{ _tc_lighthouse_stack_instance_id }}"
+    name: "{{ item.name | default(omit, true) }}"
+    wait: "{{ item.wait | default(true) }}"
+    waiter_delay: "{{ tc_lighthouse_stack_waiter_delay }}"
+    waiter_timeout: "{{ tc_lighthouse_stack_waiter_timeout }}"
+  loop: "{{ tc_lighthouse_stack_snapshots }}"
+  loop_control:
+    label: "{{ item.name | default(item.snapshot_id | default('snapshot')) }}"
+  register: _tc_lighthouse_stack_snapshots
+
+- name: Remove Lighthouse snapshots
+  when: tc_lighthouse_stack_state == 'absent'
+  susunola.tencentcloud.lighthouse_snapshot:
+    region: "{{ tc_lighthouse_stack_region | default(omit, true) }}"
+    state: absent
+    snapshot_id: "{{ item.snapshot_id | default(omit, true) }}"
+    instance_id: "{{ tc_lighthouse_stack_instance_id }}"
+    name: "{{ item.name | default(omit, true) }}"
+  loop: "{{ tc_lighthouse_stack_snapshots }}"
+
+- name: Clear Lighthouse firewall rules
+  when: tc_lighthouse_stack_state == 'absent'
+  susunola.tencentcloud.lighthouse_firewall_rules:
+    region: "{{ tc_lighthouse_stack_region | default(omit, true) }}"
+    instance_id: "{{ tc_lighthouse_stack_instance_id }}"
+    rules: []
+
+- name: Detach and remove Lighthouse data disks
+  when: tc_lighthouse_stack_state == 'absent'
+  susunola.tencentcloud.lighthouse_disk:
+    region: "{{ tc_lighthouse_stack_region | default(omit, true) }}"
+    state: absent
+    disk_id: "{{ item.disk_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+    force_detach: true
+    wait: "{{ item.wait | default(true) }}"
+    waiter_delay: "{{ tc_lighthouse_stack_waiter_delay }}"
+    waiter_timeout: "{{ tc_lighthouse_stack_waiter_timeout }}"
+  loop: "{{ tc_lighthouse_stack_disks }}"
+
+- name: Disassociate and remove Lighthouse key pairs
+  when: tc_lighthouse_stack_state == 'absent'
+  susunola.tencentcloud.lighthouse_key_pair:
+    region: "{{ tc_lighthouse_stack_region | default(omit, true) }}"
+    state: absent
+    key_id: "{{ item.key_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+    association_type: "{{ item.association_type | default('ONLINE') }}"
+    username: "{{ item.username | default(omit, true) }}"
+    force_delete: true
+  loop: "{{ tc_lighthouse_stack_key_pairs }}"
+
+- name: Isolate Lighthouse instance
+  when: tc_lighthouse_stack_state == 'absent'
+  susunola.tencentcloud.lighthouse_instance:
+    region: "{{ tc_lighthouse_stack_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_lighthouse_stack_instance_id }}"
+
+- name: Publish Lighthouse stack result
+  when: tc_lighthouse_stack_state == 'present'
+  ansible.builtin.set_fact:
+    tc_lighthouse_stack_result:
+      instance_id: "{{ _tc_lighthouse_stack_instance_id }}"
+      instance: "{{ _tc_lighthouse_stack_instance.instance | default({}) }}"
+      key_pairs: "{{ _tc_lighthouse_stack_key_pairs | default({}) }}"
+      firewall: "{{ _tc_lighthouse_stack_firewall | default({}) }}"
+      disks: "{{ _tc_lighthouse_stack_disks | default({}) }}"
+      snapshots: "{{ _tc_lighthouse_stack_snapshots | default({}) }}"
