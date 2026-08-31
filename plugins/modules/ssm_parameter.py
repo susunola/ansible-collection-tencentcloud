@@ -14,8 +14,11 @@ version_added: "0.12.0"
 description:
   - Create, update and delete Tencent Cloud SSM secrets through the
     C(ssm.v20190923) API.
-  - This module is idempotent. Running it twice leaves the secret unchanged
-    and the second run reports C(changed=false).
+  - This compatibility module manages a secret and its current value. New
+    playbooks should prefer C(ssm_secret) with C(ssm_secret_version) for
+    explicit, immutable version management.
+  - The supplied value is compared with the current value without returning
+    it; an unchanged value reports C(changed=false).
   - Supports check mode; no API write happens in check mode, only reads.
 options:
   state:
@@ -61,12 +64,12 @@ options:
     default: 0
   encrypt_type:
     description:
-      - Encryption type, C(0) uses the default CMK, C(1) uses a customer
-        CMK identified by O(kms_key_id), C(2) uses SM4.
+      - Encryption type. C(0) uses KMS encryption and C(1) uses software-key
+        encryption. O(kms_key_id) selects a customer KMS key with C(0).
     type: int
   kms_key_id:
     description:
-      - Customer master key ID when O(encrypt_type=1).
+      - Customer master key ID when O(encrypt_type=0).
     type: str
   tags:
     description:
@@ -163,6 +166,7 @@ secret:
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
 
 
 def _load_ssm():
@@ -202,6 +206,13 @@ def _create(module, client, models, params):
         request.EncryptType = params["encrypt_type"]
     if params["kms_key_id"]:
         request.KmsKeyId = params["kms_key_id"]
+    if params.get("tags"):
+        request.Tags = []
+        for key, value in sorted(params["tags"].items()):
+            tag = models.Tag()
+            tag.TagKey = key
+            tag.TagValue = value
+            request.Tags.append(tag)
     return module.sdk_call(client.CreateSecret, request)
 
 
@@ -213,6 +224,28 @@ def _update_value(module, client, models, secret_name, secret_string, secret_bin
     if secret_binary is not None:
         request.SecretBinary = secret_binary
     module.sdk_call(client.UpdateSecret, request)
+
+
+def _value_matches(module, client, models, secret_name, secret_string, secret_binary):
+    request = models.GetSecretValueRequest()
+    request.SecretName = secret_name
+    response = module.sdk_call(client.GetSecretValue, request)
+    if secret_string is not None:
+        return response.SecretString == secret_string
+    return response.SecretBinary == secret_binary
+
+
+def _update_description(module, client, models, secret_name, description):
+    request = models.UpdateDescriptionRequest()
+    request.SecretName = secret_name
+    request.Description = description
+    module.sdk_call(client.UpdateDescription, request)
+
+
+def _restore(module, client, models, secret_name):
+    request = models.RestoreSecretRequest()
+    request.SecretName = secret_name
+    module.sdk_call(client.RestoreSecret, request)
 
 
 def _delete(module, client, models, secret_name, immediate, recovery_window_in_days):
@@ -231,7 +264,7 @@ def run_module():
             "secret_binary": {"type": "str", "no_log": True},
             "description": {"type": "str"},
             "secret_type": {"type": "int", "default": 0},
-            "encrypt_type": {"type": "int"},
+            "encrypt_type": {"type": "int", "choices": [0, 1]},
             "kms_key_id": {"type": "str"},
             "tags": {"type": "dict", "default": {}},
             "delete_mode": {"type": "str", "choices": ["soft", "immediate"], "default": "soft"},
@@ -248,6 +281,8 @@ def run_module():
 
     if secret_string is not None and secret_binary is not None:
         module.fail_json(msg="secret_string and secret_binary are mutually exclusive")
+    if not 0 <= module.params["recovery_window_in_days"] <= 30:
+        module.fail_json(msg="recovery_window_in_days must be between 0 and 30")
 
     models, ssm_client = _load_ssm()
     client = module.create_client(ssm_client.SsmClient, "ssm.tencentcloudapi.com")
@@ -255,12 +290,7 @@ def run_module():
     try:
         current = find_secret(module, client, models, secret_name)
     except Exception as exc:
-        module.fail_json(
-            msg="Tencent Cloud API request failed",
-            error=str(exc),
-            error_code=getattr(exc, "get_code", lambda: None)(),
-            request_id=getattr(exc, "get_request_id", lambda: None)(),
-        )
+        module.fail_json(**sdk_error_payload(exc))
 
     if state == "absent":
         if current is None:
@@ -294,8 +324,11 @@ def run_module():
         created = find_secret(module, client, models, secret_name)
         module.exit_json(changed=True, **(diff or {}), secret=created, msg="Secret created")
 
-    changes = []
-    if secret_string is not None or secret_binary is not None:
+    restored = current.get("Status") == "PendingDelete"
+    changes = ["restore"] if restored else []
+    if (secret_string is not None or secret_binary is not None) and (
+        restored or not _value_matches(module, client, models, secret_name, secret_string, secret_binary)
+    ):
         changes.append("value")
     description = module.params["description"]
     if description is not None and current.get("Description") != description:
@@ -312,12 +345,12 @@ def run_module():
     if module.check_mode:
         module.exit_json(changed=True, **(diff or {}), msg="Would update secret")
 
+    if "restore" in changes:
+        _restore(module, client, models, secret_name)
     if "value" in changes:
         _update_value(module, client, models, secret_name, secret_string, secret_binary)
     if "description" in changes and description is not None:
-        # Description is only set at creation; the value update above already
-        # moved the secret forward, so re-report the fresh metadata.
-        pass
+        _update_description(module, client, models, secret_name, description)
     updated = find_secret(module, client, models, secret_name)
     module.exit_json(changed=True, **(diff or {}), secret=updated, msg="Secret updated")
 

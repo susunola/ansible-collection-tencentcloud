@@ -6,7 +6,10 @@ __metaclass__ = type
 from ansible_collections.susunola.tencentcloud.plugins.modules.ssm_parameter import (
     _create,
     _delete,
+    _restore,
+    _update_description,
     _update_value,
+    _value_matches,
     find_secret,
 )
 
@@ -20,6 +23,10 @@ class FakeModels(object):
     CreateSecretRequest = FakeRequest
     UpdateSecretRequest = FakeRequest
     DeleteSecretRequest = FakeRequest
+    GetSecretValueRequest = FakeRequest
+    UpdateDescriptionRequest = FakeRequest
+    RestoreSecretRequest = FakeRequest
+    Tag = FakeRequest
 
 
 class FakeSecret(object):
@@ -70,6 +77,18 @@ class FakeClient(object):
         self.calls.append(request)
         if self.exc:
             raise self.exc
+        return self.response
+
+    def GetSecretValue(self, request):
+        self.calls.append(request)
+        return self.response
+
+    def UpdateDescription(self, request):
+        self.calls.append(request)
+        return self.response
+
+    def RestoreSecret(self, request):
+        self.calls.append(request)
         return self.response
 
 
@@ -125,6 +144,7 @@ def test_create_sends_all_provided_fields():
         "secret_type": 0,
         "encrypt_type": 1,
         "kms_key_id": "kms-123",
+        "tags": {"env": "prod", "owner": "platform"},
     })
     request = client.calls[-1]
     assert request.SecretName == "prod/db"
@@ -133,6 +153,7 @@ def test_create_sends_all_provided_fields():
     assert request.SecretType == 0
     assert request.EncryptType == 1
     assert request.KmsKeyId == "kms-123"
+    assert [(tag.TagKey, tag.TagValue) for tag in request.Tags] == [("env", "prod"), ("owner", "platform")]
 
 
 def test_create_omits_optional_fields():
@@ -146,6 +167,7 @@ def test_create_omits_optional_fields():
         "secret_type": 0,
         "encrypt_type": None,
         "kms_key_id": None,
+        "tags": {},
     })
     request = client.calls[-1]
     assert request.SecretName == "prod/db"
@@ -189,3 +211,25 @@ def test_delete_immediate_mode_zeroes_recovery_window():
     assert request.SecretName == "prod/db"
     assert request.RecoveryWindowInDays == 0
     assert not hasattr(request, "DeleteMode")
+
+
+def test_value_matches_current_string_without_returning_it():
+    response = FakeResponse()
+    response.SecretString = "same"
+    response.SecretBinary = None
+    client = FakeClient(response)
+    assert _value_matches(FakeModule(), client, FakeModels, "prod/db", "same", None)
+    assert client.calls[-1].SecretName == "prod/db"
+
+
+def test_update_description_uses_dedicated_api():
+    client = FakeClient(FakeResponse())
+    _update_description(FakeModule(), client, FakeModels, "prod/db", "new description")
+    assert client.calls[-1].SecretName == "prod/db"
+    assert client.calls[-1].Description == "new description"
+
+
+def test_restore_uses_restore_secret_api():
+    client = FakeClient(FakeResponse())
+    _restore(FakeModule(), client, FakeModels, "prod/db")
+    assert client.calls[-1].SecretName == "prod/db"

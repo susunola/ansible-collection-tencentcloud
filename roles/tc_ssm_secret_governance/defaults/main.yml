@@ -1,0 +1,6 @@
+---
+tc_ssm_secret_governance_state: present
+tc_ssm_secret_governance_secret: {}
+tc_ssm_secret_governance_versions: []
+tc_ssm_secret_governance_rotation: {}
+tc_ssm_secret_governance_allow_destroy: false

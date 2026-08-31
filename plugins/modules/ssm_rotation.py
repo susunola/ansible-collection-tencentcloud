@@ -14,7 +14,7 @@ options:
   secret_name: {type: str, required: true, description: Existing SSM secret name.}
   enabled: {type: bool, default: true, description: Whether automatic rotation is enabled.}
   frequency: {type: int, default: 30, description: Rotation frequency in days.}
-  begin_time: {type: str, description: RFC3339 timestamp for the first rotation window.}
+  begin_time: {type: str, description: First rotation time in C(YYYY-MM-DD HH:MM:SS) format.}
   retries: {description: Number of retries for transient failures., type: int, default: 5}
   waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
   waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
@@ -27,7 +27,7 @@ EXAMPLES = r'''
     secret_name: prod/database-managed
     enabled: true
     frequency: 30
-    begin_time: '2026-09-01T02:00:00Z'
+    begin_time: '2026-09-01 02:00:00'
 '''
 RETURN = r'''rotation: {description: Effective SSM rotation configuration., type: dict, returned: always}'''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
@@ -51,7 +51,9 @@ def result(response):
 
 def run_module():
     module = TencentCloudModule(argument_spec={"secret_name": {"required": True}, "enabled": {"type": "bool", "default": True}, "frequency": {"type": "int", "default": 30}, "begin_time": {}}, supports_check_mode=True)
-    p = module.params; module.require_sdk(); models, cm = _load(); client = module.create_client(cm.SsmClient, "ssm.tencentcloudapi.com")
+    p = module.params
+    if not 30 <= p["frequency"] <= 365: module.fail_json(msg="frequency must be between 30 and 365 days")
+    module.require_sdk(); models, cm = _load(); client = module.create_client(cm.SsmClient, "ssm.tencentcloudapi.com")
     try:
         response = module.sdk_call(client.DescribeRotationDetail, describe_request(models, p["secret_name"])); current = comparable(response)
         target = {"EnableRotation": p["enabled"], "Frequency": p["frequency"]}

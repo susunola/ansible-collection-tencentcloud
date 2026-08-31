@@ -1,0 +1,5 @@
+bugfixes:
+  - Make ``ssm_parameter`` genuinely idempotent for unchanged current values, apply creation tags, update descriptions through the supported API, and restore secrets pending deletion.
+  - Align ``ssm_rotation`` begin-time documentation and frequency validation with the SSM API contract.
+minor_changes:
+  - Add the ``tc_ssm_secret_governance`` solution role for guarded secret, version and rotation composition.

@@ -1722,6 +1722,9 @@ modules:
   - CreateSecret
   - DeleteSecret
   - DescribeSecret
+  - GetSecretValue
+  - RestoreSecret
+  - UpdateDescription
   - UpdateSecret
   ssm_rotation:
   - DescribeRotationDetail

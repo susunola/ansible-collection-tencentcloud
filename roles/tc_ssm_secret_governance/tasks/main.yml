@@ -1,0 +1,51 @@
+---
+- name: Validate SSM secret governance inputs
+  ansible.builtin.assert:
+    that:
+      - tc_ssm_secret_governance_state in ['present', 'absent']
+      - tc_ssm_secret_governance_secret is mapping
+      - tc_ssm_secret_governance_secret.secret_name | default('') | length > 0
+      - tc_ssm_secret_governance_versions is sequence
+      - tc_ssm_secret_governance_rotation is mapping
+      - tc_ssm_secret_governance_state == 'present' or tc_ssm_secret_governance_allow_destroy | bool
+    fail_msg: SSM governance requires secret.secret_name; destruction requires tc_ssm_secret_governance_allow_destroy=true.
+
+- name: Reconcile governed SSM secret metadata
+  when: tc_ssm_secret_governance_state == 'present'
+  susunola.tencentcloud.ssm_secret:
+  args: "{{ tc_ssm_secret_governance_secret | combine({'state': 'present'}) }}"
+  register: _tc_ssm_secret_governance_secret
+  no_log: true
+
+- name: Reconcile governed immutable secret versions
+  when: tc_ssm_secret_governance_state == 'present'
+  susunola.tencentcloud.ssm_secret_version:
+  args: "{{ item | combine({'secret_name': tc_ssm_secret_governance_secret.secret_name, 'state': 'present'}) }}"
+  loop: "{{ tc_ssm_secret_governance_versions }}"
+  loop_control:
+    label: "{{ item.version_id | default('unnamed') }}"
+  register: _tc_ssm_secret_governance_versions
+  no_log: true
+
+- name: Reconcile managed-product secret rotation
+  when:
+    - tc_ssm_secret_governance_state == 'present'
+    - tc_ssm_secret_governance_rotation | length > 0
+  susunola.tencentcloud.ssm_rotation:
+  args: "{{ tc_ssm_secret_governance_rotation | combine({'secret_name': tc_ssm_secret_governance_secret.secret_name}) }}"
+  register: _tc_ssm_secret_governance_rotation
+
+- name: Publish SSM secret governance outputs
+  when: tc_ssm_secret_governance_state == 'present'
+  ansible.builtin.set_fact:
+    tc_ssm_secret_governance_result:
+      secret: "{{ _tc_ssm_secret_governance_secret.secret }}"
+      versions: "{{ _tc_ssm_secret_governance_versions.results | default([]) | map(attribute='version') | list }}"
+      rotation: "{{ _tc_ssm_secret_governance_rotation.rotation | default({}) }}"
+  no_log: true
+
+- name: Schedule governed SSM secret deletion
+  when: tc_ssm_secret_governance_state == 'absent'
+  susunola.tencentcloud.ssm_secret:
+  args: "{{ tc_ssm_secret_governance_secret | combine({'state': 'absent'}) }}"
+  no_log: true
