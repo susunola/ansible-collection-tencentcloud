@@ -72,6 +72,7 @@ ROLE_SERVICES = {
     "tc_tem_application": "tem",
     "tc_edgeone_application": "teo",
     "tc_tke_platform": "tke",
+    "tc_tione_ml_pipeline": "tione",
     "tc_vpc_foundation": "vpc",
     "tc_waf_application": "waf",
 }

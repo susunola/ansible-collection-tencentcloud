@@ -1,0 +1,7 @@
+---
+galaxy_info:
+  author: Tencent Cloud Ansible Collection Contributors
+  description: Compose TIONE data, training, model registry and online inference into one guarded ML pipeline
+  license: GPL-3.0-or-later
+  min_ansible_version: "2.16"
+dependencies: []

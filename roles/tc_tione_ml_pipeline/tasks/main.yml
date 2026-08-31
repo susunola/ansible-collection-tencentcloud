@@ -1,0 +1,125 @@
+---
+- name: Validate TIONE ML pipeline inputs
+  ansible.builtin.assert:
+    that:
+      - tc_tione_ml_pipeline_state in ['present', 'absent']
+      - tc_tione_ml_pipeline_service_state in ['running', 'stopped']
+      - tc_tione_ml_pipeline_data_source is mapping
+      - tc_tione_ml_pipeline_dataset is mapping
+      - tc_tione_ml_pipeline_training_task is mapping
+      - tc_tione_ml_pipeline_model_version is mapping
+      - tc_tione_ml_pipeline_model_service is mapping
+      - tc_tione_ml_pipeline_state == 'present' or tc_tione_ml_pipeline_allow_destroy | bool
+    fail_msg: TIONE pipeline dictionaries must be valid; destruction requires tc_tione_ml_pipeline_allow_destroy=true.
+
+- name: Reconcile TIONE data source
+  when:
+    - tc_tione_ml_pipeline_state == 'present'
+    - tc_tione_ml_pipeline_data_source | length > 0
+  susunola.tencentcloud.tione_data_source:
+  args: "{{ tc_tione_ml_pipeline_data_source | combine({'state': 'present'}) }}"
+  register: _tc_tione_ml_pipeline_data_source
+
+- name: Reconcile TIONE dataset
+  when:
+    - tc_tione_ml_pipeline_state == 'present'
+    - tc_tione_ml_pipeline_dataset | length > 0
+  susunola.tencentcloud.tione_dataset:
+  args: "{{ tc_tione_ml_pipeline_dataset | combine({'state': 'present'}) }}"
+  register: _tc_tione_ml_pipeline_dataset
+
+- name: Run or reconcile TIONE training task
+  when:
+    - tc_tione_ml_pipeline_state == 'present'
+    - tc_tione_ml_pipeline_training_task | length > 0
+  susunola.tencentcloud.tione_training_task:
+  args: "{{ tc_tione_ml_pipeline_training_task | combine({'state': 'started'}) }}"
+  register: _tc_tione_ml_pipeline_training_task
+
+- name: Register TIONE training-model version
+  when:
+    - tc_tione_ml_pipeline_state == 'present'
+    - tc_tione_ml_pipeline_model_version | length > 0
+  susunola.tencentcloud.tione_training_model_version:
+  args: "{{ tc_tione_ml_pipeline_model_version | combine({'state': 'present'}) }}"
+  register: _tc_tione_ml_pipeline_model_version
+
+- name: Build online service configuration
+  when:
+    - tc_tione_ml_pipeline_state == 'present'
+    - tc_tione_ml_pipeline_model_service | length > 0
+  ansible.builtin.set_fact:
+    _tc_tione_ml_pipeline_service_config: >-
+      {{ tc_tione_ml_pipeline_model_service | combine(
+           ({'model_info': {
+               'ModelId': _tc_tione_ml_pipeline_model_version.model_id,
+               'ModelVersionId': _tc_tione_ml_pipeline_model_version.version_id
+             }} if tc_tione_ml_pipeline_auto_bind_model_version | bool
+                 and _tc_tione_ml_pipeline_model_version is defined
+                 and 'model_info' not in tc_tione_ml_pipeline_model_service else {}),
+           recursive=True) }}
+
+- name: Reconcile TIONE online model service
+  when:
+    - tc_tione_ml_pipeline_state == 'present'
+    - tc_tione_ml_pipeline_model_service | length > 0
+  susunola.tencentcloud.tione_model_service:
+  args: "{{ _tc_tione_ml_pipeline_service_config | combine({'state': 'present'}) }}"
+  register: _tc_tione_ml_pipeline_model_service
+
+- name: Reconcile TIONE online service operational state
+  when:
+    - tc_tione_ml_pipeline_state == 'present'
+    - _tc_tione_ml_pipeline_model_service is defined
+    - _tc_tione_ml_pipeline_model_service.service_id | default('') | length > 0
+  susunola.tencentcloud.tione_model_service_state:
+    service_id: "{{ _tc_tione_ml_pipeline_model_service.service_id }}"
+    project_id: "{{ tc_tione_ml_pipeline_model_service.project_id | default(omit) }}"
+    state: "{{ tc_tione_ml_pipeline_service_state }}"
+  register: _tc_tione_ml_pipeline_service_state
+
+- name: Publish TIONE ML pipeline outputs
+  when: tc_tione_ml_pipeline_state == 'present'
+  ansible.builtin.set_fact:
+    tc_tione_ml_pipeline_result:
+      data_source: "{{ _tc_tione_ml_pipeline_data_source.data_source | default({}) }}"
+      dataset: "{{ _tc_tione_ml_pipeline_dataset.dataset | default({}) }}"
+      training_task: "{{ _tc_tione_ml_pipeline_training_task.training_task | default({}) }}"
+      model_version: "{{ _tc_tione_ml_pipeline_model_version.model_version | default({}) }}"
+      model_service: "{{ _tc_tione_ml_pipeline_model_service.service | default({}) }}"
+      service_state: "{{ _tc_tione_ml_pipeline_service_state.service | default({}) }}"
+
+- name: Remove TIONE online model service
+  when:
+    - tc_tione_ml_pipeline_state == 'absent'
+    - tc_tione_ml_pipeline_model_service.service_id | default('') | length > 0
+  susunola.tencentcloud.tione_model_service:
+  args: "{{ tc_tione_ml_pipeline_model_service | combine({'state': 'absent', 'allow_delete': true}) }}"
+
+- name: Remove TIONE training-model version
+  when:
+    - tc_tione_ml_pipeline_state == 'absent'
+    - tc_tione_ml_pipeline_model_version.version_id | default('') | length > 0
+  susunola.tencentcloud.tione_training_model_version:
+  args: "{{ tc_tione_ml_pipeline_model_version | combine({'state': 'absent', 'allow_delete': true}) }}"
+
+- name: Remove TIONE training task
+  when:
+    - tc_tione_ml_pipeline_state == 'absent'
+    - tc_tione_ml_pipeline_training_task.task_id | default('') | length > 0
+  susunola.tencentcloud.tione_training_task:
+  args: "{{ tc_tione_ml_pipeline_training_task | combine({'state': 'absent', 'allow_delete': true}) }}"
+
+- name: Remove TIONE dataset
+  when:
+    - tc_tione_ml_pipeline_state == 'absent'
+    - tc_tione_ml_pipeline_dataset.dataset_id | default('') | length > 0
+  susunola.tencentcloud.tione_dataset:
+  args: "{{ tc_tione_ml_pipeline_dataset | combine({'state': 'absent', 'allow_delete': true}) }}"
+
+- name: Remove TIONE data source
+  when:
+    - tc_tione_ml_pipeline_state == 'absent'
+    - tc_tione_ml_pipeline_data_source.data_source_id | default('') | length > 0
+  susunola.tencentcloud.tione_data_source:
+  args: "{{ tc_tione_ml_pipeline_data_source | combine({'state': 'absent', 'allow_delete': true}) }}"

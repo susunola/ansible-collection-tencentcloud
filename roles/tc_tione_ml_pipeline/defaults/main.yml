@@ -1,0 +1,10 @@
+---
+tc_tione_ml_pipeline_state: present
+tc_tione_ml_pipeline_data_source: {}
+tc_tione_ml_pipeline_dataset: {}
+tc_tione_ml_pipeline_training_task: {}
+tc_tione_ml_pipeline_model_version: {}
+tc_tione_ml_pipeline_model_service: {}
+tc_tione_ml_pipeline_service_state: running
+tc_tione_ml_pipeline_auto_bind_model_version: true
+tc_tione_ml_pipeline_allow_destroy: false
