@@ -39,6 +39,12 @@ route creation. Guarded teardown removes routes and services before the gateway.
             upstream_type: IPList
             upstream_info:
               Targets: [{Host: 10.0.0.10, Port: 8080, Weight: 100}]
+            targets:
+              - {Host: 10.0.0.10, Port: 8080, Weight: 100}
+              - {Host: 10.0.0.11, Port: 8080, Weight: 100}
+            health_check_config:
+              EnableActiveHealthCheck: true
+              ActiveHealthCheck: {HealthyInterval: 5, UnhealthyInterval: 5, HttpPath: /healthz}
         tc_tse_api_gateway_routes:
           - name: orders-api
             service_name: orders

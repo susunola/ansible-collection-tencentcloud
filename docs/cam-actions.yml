@@ -2277,6 +2277,7 @@ modules:
   - DescribeCloudNativeAPIGateway
   - DescribeCloudNativeAPIGateways
   - ModifyCloudNativeAPIGateway
+  - UpdateCloudNativeAPIGatewaySpec
   tse_config_file:
   - CreateConfigFile
   - DeleteConfigFiles
@@ -2384,7 +2385,10 @@ modules:
   - DeleteCloudNativeAPIGatewayService
   - DescribeCloudNativeAPIGatewayServices
   - DescribeOneCloudNativeAPIGatewayService
+  - DescribeUpstreamHealthCheckConfig
   - ModifyCloudNativeAPIGatewayService
+  - UpdateUpstreamHealthCheckConfig
+  - UpdateUpstreamTargets
   tse_gateway_waf_domains:
   - CreateWafDomains
   - DeleteWafDomains
