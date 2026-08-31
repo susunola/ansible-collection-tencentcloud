@@ -81,6 +81,12 @@ def test_cdb_request_uses_instance_names():
     assert request.InstanceNames == ["orders"]
 
 
+def test_postgresql_request_uses_instance_name_filter():
+    request = build_request("postgresql_instance", Models, "orders")
+    assert request.Filters[0].Name == "db-instance-name"
+    assert request.Filters[0].Values == ["orders"]
+
+
 def test_cfs_request_scans_names_with_numeric_pagination():
     request = build_request("cfs_file_system", Models, "shared-data", offset=100)
     assert request.Limit == 100

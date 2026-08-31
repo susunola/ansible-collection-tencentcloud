@@ -25,7 +25,7 @@ options:
     description: Resource family to query.
     type: str
     required: true
-    choices: [vpc, subnet, security_group, cvm_instance, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, redis_instance, mongodb_instance, cfs_file_system, ckafka_instance, mqtt_instance, api_gateway_service, tcr_instance, tem_environment, tem_application]
+    choices: [vpc, subnet, security_group, cvm_instance, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, postgresql_instance, redis_instance, mongodb_instance, cfs_file_system, ckafka_instance, mqtt_instance, api_gateway_service, tcr_instance, tem_environment, tem_application]
   vpc_id:
     description: Optional VPC scope for subnet and CLB lookups.
     type: str
@@ -131,6 +131,7 @@ RESOURCE_SPECS = {
     "alb_load_balancer": ("alb.v20251030", "AlbClient", "alb.tencentcloudapi.com", "DescribeLoadBalancers", "LoadBalancers", "LoadBalancerId", "LoadBalancerName"),
     "tke_cluster": ("tke.v20180525", "TkeClient", "tke.tencentcloudapi.com", "DescribeClusters", "Clusters", "ClusterId", "ClusterName"),
     "cdb_instance": ("cdb.v20170320", "CdbClient", "cdb.tencentcloudapi.com", "DescribeDBInstances", "Items", "InstanceId", "InstanceName"),
+    "postgresql_instance": ("postgres.v20170312", "PostgresClient", "postgres.tencentcloudapi.com", "DescribeDBInstances", "DBInstanceSet", "DBInstanceId", "DBInstanceName"),
     "redis_instance": ("redis.v20180412", "RedisClient", "redis.tencentcloudapi.com", "DescribeInstances", "InstanceSet", "InstanceId", "InstanceName"),
     "mongodb_instance": ("mongodb.v20190725", "MongodbClient", "mongodb.tencentcloudapi.com", "DescribeDBInstances", "InstanceDetails", "InstanceId", "InstanceName"),
     "cfs_file_system": ("cfs.v20190719", "CfsClient", "cfs.tencentcloudapi.com", "DescribeCfsFileSystems", "FileSystems", "FileSystemId", "Name"),
@@ -154,6 +155,7 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         "alb_load_balancer": "DescribeLoadBalancersRequest",
         "tke_cluster": "DescribeClustersRequest",
         "cdb_instance": "DescribeDBInstancesRequest",
+        "postgresql_instance": "DescribeDBInstancesRequest",
         "redis_instance": "DescribeInstancesRequest",
         "mongodb_instance": "DescribeDBInstancesRequest",
         "cfs_file_system": "DescribeCfsFileSystemsRequest",
@@ -176,6 +178,10 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         request.Offset = offset
     if resource_type == "cdb_instance":
         request.InstanceNames = [name]
+    elif resource_type == "postgresql_instance":
+        api_filter = models.Filter()
+        api_filter.Name, api_filter.Values = "db-instance-name", [name]
+        request.Filters = [api_filter]
     elif resource_type == "redis_instance":
         request.InstanceName = name
     elif resource_type == "mongodb_instance":
