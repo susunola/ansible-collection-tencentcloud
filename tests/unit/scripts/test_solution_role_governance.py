@@ -469,6 +469,15 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert "Each DLC inference service requires exactly one model_uid or managed model_name reference" in main
     assert "_tc_dlc_inference_model_uids[_tc_dlc_model_version.model_name]" in main
     assert "_tc_dlc_inference_model_uids[_tc_dlc_inference_service.model_name]" in main
+    assert "DLC Ray cluster references must use one valid managed name or direct ID" in main
+    assert "DLC job specifications require one valid compute target" in main
+    assert "DLC laboratory references must use one valid managed name or direct ID" in main
+    assert "_tc_dlc_cluster_group_ids[_tc_dlc_ray.group_name]" in main
+    assert "_tc_dlc_resource_config_ids[_tc_dlc_ray.resource_config_name]" in main
+    assert "_tc_dlc_ray_cluster_ids[_tc_dlc_job_spec.cluster_name]" in main
+    assert main.count("'resource_config_name': omit") >= 6
+    assert main.count("'group_name': omit") >= 6
+    assert main.count("'cluster_name': omit") >= 2
     assert main.index("susunola.tencentcloud.dlc_database") < main.index("include_tasks: work_group.yml")
     assert main.index("susunola.tencentcloud.dlc_database") < main.index("susunola.tencentcloud.dlc_script")
     assert main.index("susunola.tencentcloud.dlc_database") < main.index("susunola.tencentcloud.dlc_table")

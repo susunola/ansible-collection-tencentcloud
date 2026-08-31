@@ -9,6 +9,15 @@
       - >-
         tc_dlc_access_governance_inference_services | map(attribute='name') | unique | list | length
         == tc_dlc_access_governance_inference_services | length
+      - >-
+        tc_dlc_access_governance_cluster_groups | map(attribute='name') | unique | list | length
+        == tc_dlc_access_governance_cluster_groups | length
+      - >-
+        tc_dlc_access_governance_resource_configs | map(attribute='name') | unique | list | length
+        == tc_dlc_access_governance_resource_configs | length
+      - >-
+        tc_dlc_access_governance_ray_clusters | map(attribute='name') | unique | list | length
+        == tc_dlc_access_governance_ray_clusters | length
       - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_inference_models | length == 0
       - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_model_versions | length == 0
       - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_inference_services | length == 0
@@ -144,14 +153,51 @@
       {{ dict((tc_dlc_access_governance_resource_configs | map(attribute='name') | list)
               | zip(_tc_dlc_config_results.results | map(attribute='resource_config_id') | list)) }}
 
-- name: Reconcile DLC Ray clusters after queues and resource templates
+- name: Validate DLC Ray cluster parent references
   when: tc_dlc_access_governance_state == 'present'
-  susunola.tencentcloud.dlc_ray_cluster:
-  args: "{{ _tc_dlc_ray | combine({'state': 'present'}) }}"
+  ansible.builtin.assert:
+    that:
+      - not (_tc_dlc_ray.group_id is defined and _tc_dlc_ray.group_name is defined)
+      - _tc_dlc_ray.group_name is not defined or _tc_dlc_ray.group_name in _tc_dlc_cluster_group_ids
+      - not (_tc_dlc_ray.resource_config_id is defined and _tc_dlc_ray.resource_config_name is defined)
+      - >-
+        not (_tc_dlc_ray.resource_config is defined
+             and (_tc_dlc_ray.resource_config_id is defined
+                  or _tc_dlc_ray.resource_config_name is defined))
+      - >-
+        _tc_dlc_ray.resource_config_name is not defined
+        or _tc_dlc_ray.resource_config_name in _tc_dlc_resource_config_ids
+    fail_msg: DLC Ray cluster references must use one valid managed name or direct ID per parent resource.
   loop: "{{ tc_dlc_access_governance_ray_clusters }}"
   loop_control:
     loop_var: _tc_dlc_ray
     label: "{{ _tc_dlc_ray.name }}"
+
+- name: Reconcile DLC Ray clusters after queues and resource templates
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_ray_cluster:
+  args: >-
+    {{ _tc_dlc_ray
+       | combine({'state': 'present',
+                  'group_id': _tc_dlc_resolved_ray_group_id,
+                  'group_name': omit,
+                  'resource_config_id': _tc_dlc_resolved_ray_config_id,
+                  'resource_config_name': omit}) }}
+  loop: "{{ tc_dlc_access_governance_ray_clusters }}"
+  loop_control:
+    loop_var: _tc_dlc_ray
+    label: "{{ _tc_dlc_ray.name }}"
+  vars:
+    _tc_dlc_resolved_ray_group_id: >-
+      {{ _tc_dlc_ray.group_id
+         if _tc_dlc_ray.group_id is defined
+         else (_tc_dlc_cluster_group_ids[_tc_dlc_ray.group_name]
+               if _tc_dlc_ray.group_name is defined else omit) }}
+    _tc_dlc_resolved_ray_config_id: >-
+      {{ _tc_dlc_ray.resource_config_id
+         if _tc_dlc_ray.resource_config_id is defined
+         else (_tc_dlc_resource_config_ids[_tc_dlc_ray.resource_config_name]
+               if _tc_dlc_ray.resource_config_name is defined else omit) }}
   register: _tc_dlc_ray_results
 
 - name: Record DLC Ray cluster identities
@@ -161,14 +207,63 @@
       {{ dict((tc_dlc_access_governance_ray_clusters | map(attribute='name') | list)
               | zip(_tc_dlc_ray_results.results | map(attribute='ray_cluster_id') | list)) }}
 
-- name: Reconcile DLC job specifications after compute targets
+- name: Validate DLC job-specification parent references
   when: tc_dlc_access_governance_state == 'present'
-  susunola.tencentcloud.dlc_job_spec:
-  args: "{{ _tc_dlc_job_spec | combine({'state': 'present'}) }}"
+  ansible.builtin.assert:
+    that:
+      - not (_tc_dlc_job_spec.group_id is defined and _tc_dlc_job_spec.group_name is defined)
+      - not (_tc_dlc_job_spec.cluster_id is defined and _tc_dlc_job_spec.cluster_name is defined)
+      - >-
+        not ((_tc_dlc_job_spec.group_id is defined or _tc_dlc_job_spec.group_name is defined)
+             and (_tc_dlc_job_spec.cluster_id is defined or _tc_dlc_job_spec.cluster_name is defined))
+      - _tc_dlc_job_spec.group_name is not defined or _tc_dlc_job_spec.group_name in _tc_dlc_cluster_group_ids
+      - _tc_dlc_job_spec.cluster_name is not defined or _tc_dlc_job_spec.cluster_name in _tc_dlc_ray_cluster_ids
+      - not (_tc_dlc_job_spec.resource_config_id is defined and _tc_dlc_job_spec.resource_config_name is defined)
+      - >-
+        not (_tc_dlc_job_spec.resource_config is defined
+             and (_tc_dlc_job_spec.resource_config_id is defined
+                  or _tc_dlc_job_spec.resource_config_name is defined))
+      - >-
+        _tc_dlc_job_spec.resource_config_name is not defined
+        or _tc_dlc_job_spec.resource_config_name in _tc_dlc_resource_config_ids
+    fail_msg: DLC job specifications require one valid compute target and at most one resource-configuration source.
   loop: "{{ tc_dlc_access_governance_job_specs }}"
   loop_control:
     loop_var: _tc_dlc_job_spec
     label: "{{ _tc_dlc_job_spec.name }}"
+
+- name: Reconcile DLC job specifications after compute targets
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_job_spec:
+  args: >-
+    {{ _tc_dlc_job_spec
+       | combine({'state': 'present',
+                  'group_id': _tc_dlc_resolved_job_group_id,
+                  'group_name': omit,
+                  'cluster_id': _tc_dlc_resolved_job_cluster_id,
+                  'cluster_name': omit,
+                  'resource_config_id': _tc_dlc_resolved_job_config_id,
+                  'resource_config_name': omit}) }}
+  loop: "{{ tc_dlc_access_governance_job_specs }}"
+  loop_control:
+    loop_var: _tc_dlc_job_spec
+    label: "{{ _tc_dlc_job_spec.name }}"
+  vars:
+    _tc_dlc_resolved_job_group_id: >-
+      {{ _tc_dlc_job_spec.group_id
+         if _tc_dlc_job_spec.group_id is defined
+         else (_tc_dlc_cluster_group_ids[_tc_dlc_job_spec.group_name]
+               if _tc_dlc_job_spec.group_name is defined else omit) }}
+    _tc_dlc_resolved_job_cluster_id: >-
+      {{ _tc_dlc_job_spec.cluster_id
+         if _tc_dlc_job_spec.cluster_id is defined
+         else (_tc_dlc_ray_cluster_ids[_tc_dlc_job_spec.cluster_name]
+               if _tc_dlc_job_spec.cluster_name is defined else omit) }}
+    _tc_dlc_resolved_job_config_id: >-
+      {{ _tc_dlc_job_spec.resource_config_id
+         if _tc_dlc_job_spec.resource_config_id is defined
+         else (_tc_dlc_resource_config_ids[_tc_dlc_job_spec.resource_config_name]
+               if _tc_dlc_job_spec.resource_config_name is defined else omit) }}
   register: _tc_dlc_job_spec_results
 
 - name: Record DLC job-specification identities
@@ -178,14 +273,51 @@
       {{ dict((tc_dlc_access_governance_job_specs | map(attribute='name') | list)
               | zip(_tc_dlc_job_spec_results.results | map(attribute='job_spec_id') | list)) }}
 
-- name: Reconcile DLC laboratories after queues and resource templates
+- name: Validate DLC laboratory parent references
   when: tc_dlc_access_governance_state == 'present'
-  susunola.tencentcloud.dlc_lab:
-  args: "{{ _tc_dlc_lab | combine({'state': 'present'}) }}"
+  ansible.builtin.assert:
+    that:
+      - not (_tc_dlc_lab.group_id is defined and _tc_dlc_lab.group_name is defined)
+      - _tc_dlc_lab.group_name is not defined or _tc_dlc_lab.group_name in _tc_dlc_cluster_group_ids
+      - not (_tc_dlc_lab.resource_config_id is defined and _tc_dlc_lab.resource_config_name is defined)
+      - >-
+        not (_tc_dlc_lab.resource_config is defined
+             and (_tc_dlc_lab.resource_config_id is defined
+                  or _tc_dlc_lab.resource_config_name is defined))
+      - >-
+        _tc_dlc_lab.resource_config_name is not defined
+        or _tc_dlc_lab.resource_config_name in _tc_dlc_resource_config_ids
+    fail_msg: DLC laboratory references must use one valid managed name or direct ID per parent resource.
   loop: "{{ tc_dlc_access_governance_labs }}"
   loop_control:
     loop_var: _tc_dlc_lab
     label: "{{ _tc_dlc_lab.name }}"
+
+- name: Reconcile DLC laboratories after queues and resource templates
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_lab:
+  args: >-
+    {{ _tc_dlc_lab
+       | combine({'state': 'present',
+                  'group_id': _tc_dlc_resolved_lab_group_id,
+                  'group_name': omit,
+                  'resource_config_id': _tc_dlc_resolved_lab_config_id,
+                  'resource_config_name': omit}) }}
+  loop: "{{ tc_dlc_access_governance_labs }}"
+  loop_control:
+    loop_var: _tc_dlc_lab
+    label: "{{ _tc_dlc_lab.name }}"
+  vars:
+    _tc_dlc_resolved_lab_group_id: >-
+      {{ _tc_dlc_lab.group_id
+         if _tc_dlc_lab.group_id is defined
+         else (_tc_dlc_cluster_group_ids[_tc_dlc_lab.group_name]
+               if _tc_dlc_lab.group_name is defined else omit) }}
+    _tc_dlc_resolved_lab_config_id: >-
+      {{ _tc_dlc_lab.resource_config_id
+         if _tc_dlc_lab.resource_config_id is defined
+         else (_tc_dlc_resource_config_ids[_tc_dlc_lab.resource_config_name]
+               if _tc_dlc_lab.resource_config_name is defined else omit) }}
   register: _tc_dlc_lab_results
 
 - name: Record DLC laboratory identities
@@ -503,7 +635,10 @@
     - tc_dlc_access_governance_state == 'absent'
     - tc_dlc_access_governance_allow_destroy | bool
   susunola.tencentcloud.dlc_lab:
-  args: "{{ _tc_dlc_lab | combine({'state': 'absent', 'allow_delete': true}) }}"
+  args: >-
+    {{ _tc_dlc_lab
+       | combine({'state': 'absent', 'allow_delete': true,
+                  'group_name': omit, 'resource_config_name': omit}) }}
   loop: "{{ tc_dlc_access_governance_labs | reverse | list }}"
   loop_control:
     loop_var: _tc_dlc_lab
@@ -514,7 +649,11 @@
     - tc_dlc_access_governance_state == 'absent'
     - tc_dlc_access_governance_allow_destroy | bool
   susunola.tencentcloud.dlc_job_spec:
-  args: "{{ _tc_dlc_job_spec | combine({'state': 'absent', 'allow_delete': true}) }}"
+  args: >-
+    {{ _tc_dlc_job_spec
+       | combine({'state': 'absent', 'allow_delete': true,
+                  'group_name': omit, 'cluster_name': omit,
+                  'resource_config_name': omit}) }}
   loop: "{{ tc_dlc_access_governance_job_specs | reverse | list }}"
   loop_control:
     loop_var: _tc_dlc_job_spec
@@ -525,7 +664,10 @@
     - tc_dlc_access_governance_state == 'absent'
     - tc_dlc_access_governance_allow_destroy | bool
   susunola.tencentcloud.dlc_ray_cluster:
-  args: "{{ _tc_dlc_ray | combine({'state': 'absent', 'allow_delete': true}) }}"
+  args: >-
+    {{ _tc_dlc_ray
+       | combine({'state': 'absent', 'allow_delete': true,
+                  'group_name': omit, 'resource_config_name': omit}) }}
   loop: "{{ tc_dlc_access_governance_ray_clusters | reverse | list }}"
   loop_control:
     loop_var: _tc_dlc_ray

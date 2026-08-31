@@ -1,0 +1,2 @@
+minor_changes:
+  - Resolve managed compute-group, resource-template and Ray-cluster names inside ``tc_dlc_access_governance`` for Ray clusters, laboratories and job specifications.
