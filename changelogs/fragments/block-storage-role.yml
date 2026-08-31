@@ -1,0 +1,6 @@
+---
+minor_changes:
+  - >-
+    solution roles - add ``tc_block_storage`` for exact-name CBS disk adoption,
+    attachment, snapshots, sharing, backup points and automatic snapshot
+    policies with dependency-safe teardown.

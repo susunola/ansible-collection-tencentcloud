@@ -1,0 +1,25 @@
+---
+tc_block_storage_state: present
+tc_block_storage_region: ""
+tc_block_storage_disk_id: ""
+tc_block_storage_name: ""
+tc_block_storage_zone: ""
+tc_block_storage_disk_type: ""
+tc_block_storage_disk_size: null
+tc_block_storage_charge_type: POSTPAID_BY_HOUR
+tc_block_storage_prepaid_period_months: null
+tc_block_storage_instance_id: ""
+tc_block_storage_delete_with_instance: null
+tc_block_storage_encrypt: null
+tc_block_storage_source_snapshot_id: ""
+tc_block_storage_delete_snapshots_with_disk: false
+tc_block_storage_tags: {}
+
+# Snapshot items: snapshot_name or snapshot_id, wait?, account_ids?.
+tc_block_storage_snapshots: []
+# Backup items: name or disk_backup_id, wait?, force_replace?.
+tc_block_storage_backups: []
+# Policy items use cbs_auto_snapshot_policy parameters. disk_ids defaults to this disk.
+tc_block_storage_snapshot_policies: []
+tc_block_storage_waiter_delay: 5
+tc_block_storage_waiter_timeout: 600

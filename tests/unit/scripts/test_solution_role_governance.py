@@ -175,6 +175,21 @@ def test_dns_zone_teardown_removes_children_before_domain():
     )
 
 
+def test_block_storage_teardown_clears_protection_and_detaches_before_disk():
+    text = role_tasks("tc_block_storage")
+    assert_order(
+        text,
+        "Remove CBS snapshot sharing",
+        "Remove CBS snapshots",
+        "Remove CBS disk backup points",
+        "Unbind and remove CBS automatic snapshot policies",
+        "Detach CBS disk before teardown",
+        "Terminate CBS disk",
+    )
+    assert "force_delete: true" in text
+    assert "account_ids: []" in text
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -203,6 +218,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_mariadb_stack": "resource_type='mariadb_instance'",
         "tc_cynosdb_cluster": "resource_type='cynosdb_cluster'",
         "tc_autoscaling_group": "resource_type='autoscaling_group'",
+        "tc_block_storage": "resource_type='cbs_disk'",
         "tc_eventbridge_router": "resource_type='event_bus'",
         "tc_container_registry": "resource_type='tcr_instance'",
         "tc_tem_application": "resource_type='tem_environment'",

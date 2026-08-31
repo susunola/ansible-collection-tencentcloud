@@ -558,6 +558,7 @@ for product-level write, discovery and reusable-role maturity.
 | Role | Purpose |
 | --- | --- |
 | `tc_launch` | Launch CVM instances with sensible defaults over `cvm_instance` (`exact_count` / `count_tag` supported) |
+| `tc_block_storage` | Provision CBS disks, snapshots, sharing, backup points and automatic retention policies |
 | `tc_clb_http` | Create a CLB load balancer with HTTP listeners and backend targets in one call |
 | `tc_alb_application_entry` | Provision ALB target groups, exact backends and HTTP, HTTPS or QUIC listeners |
 | `tc_autoscaling_group` | Provision Auto Scaling groups with policies and scheduled capacity actions |
