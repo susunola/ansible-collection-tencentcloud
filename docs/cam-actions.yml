@@ -1299,6 +1299,11 @@ modules:
   - DeleteNetworkInterface
   - DescribeNetworkInterfaces
   - ModifyNetworkInterfaceAttribute
+  oceanus_cluster:
+  - CreateOceanusCluster
+  - DeleteOceanusCluster
+  - DescribeClusters
+  - ScaleOceanusCluster
   oceanus_cluster_info:
   - DescribeClusters
   oceanus_job:

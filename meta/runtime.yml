@@ -348,6 +348,7 @@ action_groups:
     - nat_gateway_rule
     - network_acl
     - network_interface
+    - oceanus_cluster
     - oceanus_cluster_info
     - oceanus_job
     - oceanus_workspace
