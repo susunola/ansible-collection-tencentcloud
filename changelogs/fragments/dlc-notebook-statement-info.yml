@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_notebook_statement_info`` for strong-identity statement inspection and continuation-token SQL-result pagination.

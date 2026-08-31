@@ -885,6 +885,9 @@ modules:
   - DescribeNotebookSessions
   dlc_notebook_session_info:
   - DescribeNotebookSessions
+  dlc_notebook_statement_info:
+  - DescribeNotebookSessionStatement
+  - DescribeNotebookSessionStatementSqlResult
   dlc_partition_queue:
   - CreatePartitionQueue
   - DeletePartitionQueue

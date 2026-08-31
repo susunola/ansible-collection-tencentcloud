@@ -169,6 +169,7 @@ CORE_MODULES = {
     "dlc_network_connection",
     "dlc_notebook_session",
     "dlc_notebook_session_info",
+    "dlc_notebook_statement_info",
     "dlc_engine_resource_group",
     "dlc_lab",
     "dlc_partition_queue",
