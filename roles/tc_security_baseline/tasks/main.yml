@@ -1,0 +1,163 @@
+---
+- name: Validate security baseline state
+  ansible.builtin.assert:
+    that: tc_security_baseline_state in ['present', 'absent']
+
+- name: Provision CAM roles
+  when: tc_security_baseline_state == 'present'
+  susunola.tencentcloud.cam_role:
+    region: "{{ tc_security_baseline_region | default(omit, true) }}"
+    state: present
+    role_id: "{{ item.role_id | default(omit, true) }}"
+    role_name: "{{ item.role_name }}"
+    description: "{{ item.description | default(omit) }}"
+    assume_policy_document: "{{ item.assume_policy_document }}"
+    tags: "{{ item.tags | default(tc_security_baseline_tags) }}"
+  loop: "{{ tc_security_baseline_roles }}"
+  loop_control:
+    label: "{{ item.role_name }}"
+  register: _tc_security_roles
+
+- name: Provision CAM groups
+  when: tc_security_baseline_state == 'present'
+  susunola.tencentcloud.cam_group:
+    region: "{{ tc_security_baseline_region | default(omit, true) }}"
+    state: present
+    group_id: "{{ item.group_id | default(omit, true) }}"
+    name: "{{ item.name }}"
+    remark: "{{ item.remark | default('') }}"
+  loop: "{{ tc_security_baseline_groups }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: _tc_security_groups
+
+- name: Provision CAM users
+  when: tc_security_baseline_state == 'present'
+  susunola.tencentcloud.cam_user:
+    region: "{{ tc_security_baseline_region | default(omit, true) }}"
+    state: present
+    name: "{{ item.name }}"
+    remark: "{{ item.remark | default(omit) }}"
+    console_login: "{{ item.console_login | default(omit) }}"
+    password: "{{ item.password | default(omit) }}"
+    tags: "{{ item.tags | default(tc_security_baseline_tags) }}"
+  loop: "{{ tc_security_baseline_users }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: _tc_security_users
+
+- name: Provision CAM policies and attachments
+  when: tc_security_baseline_state == 'present'
+  ansible.builtin.include_tasks: policy.yml
+  loop: "{{ tc_security_baseline_policies }}"
+  loop_control:
+    loop_var: _tc_security_policy_spec
+    label: "{{ _tc_security_policy_spec.policy_name }}"
+
+- name: Provision CloudAudit tracks
+  when: tc_security_baseline_state == 'present'
+  susunola.tencentcloud.cloudaudit_track:
+    region: "{{ tc_security_baseline_region | default(omit, true) }}"
+    state: present
+    track_id: "{{ item.track_id | default(omit, true) }}"
+    name: "{{ item.name }}"
+    enabled: "{{ item.enabled | default(true) }}"
+    action_type: "{{ item.action_type | default('*') }}"
+    resource_type: "{{ item.resource_type | default('*') }}"
+    event_names: "{{ item.event_names | default(['*']) }}"
+    track_all_members: "{{ item.track_all_members | default(false) }}"
+    storage_type: "{{ item.storage_type }}"
+    storage_region: "{{ item.storage_region }}"
+    storage_name: "{{ item.storage_name }}"
+    storage_prefix: "{{ item.storage_prefix | default('') }}"
+    storage_account_id: "{{ item.storage_account_id | default(omit) }}"
+    storage_app_id: "{{ item.storage_app_id | default(omit) }}"
+    compress: "{{ item.compress | default(true) }}"
+  loop: "{{ tc_security_baseline_audit_tracks }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: _tc_security_audit_tracks
+
+- name: Provision Config compliance rules
+  when: tc_security_baseline_state == 'present'
+  susunola.tencentcloud.config_rule:
+    region: "{{ tc_security_baseline_region | default(omit, true) }}"
+    state: present
+    rule_id: "{{ item.rule_id | default(omit, true) }}"
+    name: "{{ item.name }}"
+    identifier: "{{ item.identifier }}"
+    identifier_type: "{{ item.identifier_type | default('SYSTEM') }}"
+    resource_types: "{{ item.resource_types | default(omit) }}"
+    triggers: "{{ item.triggers | default([{'message_type': 'ConfigurationItemChangeNotification'}]) }}"
+    risk_level: "{{ item.risk_level | default(2) }}"
+    input_parameters: "{{ item.input_parameters | default({}) }}"
+    description: "{{ item.description | default('') }}"
+    regions: "{{ item.regions | default([]) }}"
+    tags: "{{ item.tags | default({}) }}"
+    excluded_resource_ids: "{{ item.excluded_resource_ids | default([]) }}"
+  loop: "{{ tc_security_baseline_config_rules }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: _tc_security_config_rules
+
+- name: Remove Config compliance rules
+  when: tc_security_baseline_state == 'absent'
+  susunola.tencentcloud.config_rule:
+    region: "{{ tc_security_baseline_region | default(omit, true) }}"
+    state: absent
+    rule_id: "{{ item.rule_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+  loop: "{{ tc_security_baseline_config_rules }}"
+
+- name: Remove CloudAudit tracks
+  when: tc_security_baseline_state == 'absent'
+  susunola.tencentcloud.cloudaudit_track:
+    region: "{{ tc_security_baseline_region | default(omit, true) }}"
+    state: absent
+    track_id: "{{ item.track_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+  loop: "{{ tc_security_baseline_audit_tracks }}"
+
+- name: Remove CAM policies and attachments
+  when: tc_security_baseline_state == 'absent'
+  ansible.builtin.include_tasks: policy.yml
+  loop: "{{ tc_security_baseline_policies }}"
+  loop_control:
+    loop_var: _tc_security_policy_spec
+    label: "{{ _tc_security_policy_spec.policy_name }}"
+
+- name: Remove CAM users
+  when: tc_security_baseline_state == 'absent'
+  susunola.tencentcloud.cam_user:
+    region: "{{ tc_security_baseline_region | default(omit, true) }}"
+    state: absent
+    name: "{{ item.name }}"
+  loop: "{{ tc_security_baseline_users }}"
+
+- name: Remove CAM groups
+  when: tc_security_baseline_state == 'absent'
+  susunola.tencentcloud.cam_group:
+    region: "{{ tc_security_baseline_region | default(omit, true) }}"
+    state: absent
+    group_id: "{{ item.group_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+  loop: "{{ tc_security_baseline_groups }}"
+
+- name: Remove CAM roles
+  when: tc_security_baseline_state == 'absent'
+  susunola.tencentcloud.cam_role:
+    region: "{{ tc_security_baseline_region | default(omit, true) }}"
+    state: absent
+    role_id: "{{ item.role_id | default(omit, true) }}"
+    role_name: "{{ item.role_name | default(omit, true) }}"
+  loop: "{{ tc_security_baseline_roles }}"
+
+- name: Publish security baseline result
+  when: tc_security_baseline_state == 'present'
+  ansible.builtin.set_fact:
+    tc_security_baseline_result:
+      roles: "{{ _tc_security_roles.results | default([]) }}"
+      groups: "{{ _tc_security_groups.results | default([]) }}"
+      users: "{{ _tc_security_users.results | default([]) }}"
+      audit_tracks: "{{ _tc_security_audit_tracks.results | default([]) }}"
+      config_rules: "{{ _tc_security_config_rules.results | default([]) }}"

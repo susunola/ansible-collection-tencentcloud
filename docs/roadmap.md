@@ -236,8 +236,7 @@ into this roadmap because those numbers change with every coverage batch.
 2. **Ship reusable solutions.** Grow from low-level modules into roles for a
    VPC foundation, TKE platform, database stack, serverless application,
    logging baseline, monitoring baseline and security baseline. TEM, VPC, TKE,
-   CDB, SCF and observability now form the first solution-role waves; the
-   security baseline remains next.
+   CDB, SCF, observability and security now form the first solution-role waves.
 3. **Normalize lifecycle behavior.** Apply the shared SDK error payload,
    request IDs, bounded waiters, deletion protection, immutable-field errors
    and absent-resource idempotency to every write module.

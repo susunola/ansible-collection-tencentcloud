@@ -25,6 +25,7 @@ ROLE_SERVICES = {
     "tc_clb_http": "clb",
     "tc_observability_baseline": "cls",
     "tc_serverless_application": "scf",
+    "tc_security_baseline": "cam",
     "tc_tem_application": "tem",
     "tc_tke_platform": "tke",
     "tc_vpc_foundation": "vpc",

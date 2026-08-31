@@ -1,0 +1,45 @@
+---
+- name: Manage CAM policy
+  susunola.tencentcloud.cam_policy:
+    region: "{{ tc_security_baseline_region | default(omit, true) }}"
+    state: "{{ tc_security_baseline_state }}"
+    policy_id: "{{ _tc_security_policy_spec.policy_id | default(omit, true) }}"
+    policy_name: "{{ _tc_security_policy_spec.policy_name }}"
+    description: "{{ _tc_security_policy_spec.description | default(omit) }}"
+    policy_document: "{{ _tc_security_policy_spec.policy_document | default(omit) }}"
+    tags: "{{ _tc_security_policy_spec.tags | default(tc_security_baseline_tags) }}"
+  register: _tc_security_policy
+  when: tc_security_baseline_state == 'present'
+
+- name: Resolve present CAM policy ID
+  when: tc_security_baseline_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_security_policy_id: >-
+      {{ _tc_security_policy_spec.policy_id | default(
+         _tc_security_policy.policy.PolicyId | default(''), true) }}
+
+- name: Resolve absent CAM policy ID
+  when: tc_security_baseline_state == 'absent'
+  ansible.builtin.set_fact:
+    _tc_security_policy_id: "{{ _tc_security_policy_spec.policy_id | default('') }}"
+
+- name: Manage CAM policy attachments
+  when: _tc_security_policy_id | string | length > 0
+  susunola.tencentcloud.cam_policy_attachment:
+    region: "{{ tc_security_baseline_region | default(omit, true) }}"
+    state: "{{ tc_security_baseline_state }}"
+    policy_id: "{{ _tc_security_policy_id }}"
+    target_type: "{{ item.target_type }}"
+    target_id: "{{ item.target_id | default(omit) }}"
+    target_name: "{{ item.target_name | default(omit) }}"
+  loop: "{{ _tc_security_policy_spec.attachments | default([]) }}"
+  loop_control:
+    label: "{{ item.target_type }}:{{ item.target_name | default(item.target_id | default('unknown')) }}"
+
+- name: Remove CAM policy
+  when: tc_security_baseline_state == 'absent'
+  susunola.tencentcloud.cam_policy:
+    region: "{{ tc_security_baseline_region | default(omit, true) }}"
+    state: absent
+    policy_id: "{{ _tc_security_policy_spec.policy_id | default(omit, true) }}"
+    policy_name: "{{ _tc_security_policy_spec.policy_name }}"

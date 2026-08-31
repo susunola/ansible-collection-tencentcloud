@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **8**
+- Solution roles: **9**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -46,7 +46,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `bmlb` | discovery-only | 0 | 1 | — | — |
 | `bmvpc` | discovery-only | 0 | 1 | — | — |
 | `bsca` | discovery-only | 0 | 1 | — | — |
-| `cam` | resource-family | 8 | 3 | — | `cam_group`, `cam_group_membership`, `cam_oidc_provider`, `cam_policy`, `cam_policy_attachment`, `cam_role`, `cam_saml_provider`, `cam_user` |
+| `cam` | solution | 8 | 3 | `tc_security_baseline` | `cam_group`, `cam_group_membership`, `cam_oidc_provider`, `cam_policy`, `cam_policy_attachment`, `cam_role`, `cam_saml_provider`, `cam_user` |
 | `captcha` | discovery-only | 0 | 1 | — | — |
 | `cat` | discovery-only | 0 | 1 | — | — |
 | `cbs` | resource-family | 5 | 1 | — | `cbs_auto_snapshot_policy`, `cbs_disk`, `cbs_disk_backup`, `cbs_snapshot`, `cbs_snapshot_share` |

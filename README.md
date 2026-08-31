@@ -564,6 +564,7 @@ for product-level write, discovery and reusable-role maturity.
 | `tc_database_stack` | Provision TencentDB for MySQL with databases, accounts, privileges and backup retention |
 | `tc_serverless_application` | Deploy an SCF function with aliases, triggers and optional API Gateway exposure |
 | `tc_observability_baseline` | Establish CLS indexed topics and Cloud Monitor alarm policies |
+| `tc_security_baseline` | Establish CAM, CloudAudit and Config compliance controls |
 
 ## Requirements
 

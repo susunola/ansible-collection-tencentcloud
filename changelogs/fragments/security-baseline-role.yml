@@ -1,0 +1,4 @@
+minor_changes:
+  - >-
+    roles - add ``tc_security_baseline`` for CAM identities and policy
+    attachments, CloudAudit delivery and Config compliance rules.

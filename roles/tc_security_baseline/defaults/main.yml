@@ -1,0 +1,15 @@
+---
+tc_security_baseline_state: present
+tc_security_baseline_region: ""
+tc_security_baseline_tags: {}
+
+# Policy items: {policy_id?, policy_name, description?, policy_document,
+# attachments?: [{target_type, target_id?, target_name?}]}
+tc_security_baseline_policies: []
+# Identity items follow cam_role, cam_user and cam_group options.
+tc_security_baseline_roles: []
+tc_security_baseline_users: []
+tc_security_baseline_groups: []
+# Audit tracks and Config rules follow their module options.
+tc_security_baseline_audit_tracks: []
+tc_security_baseline_config_rules: []
