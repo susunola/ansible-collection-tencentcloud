@@ -25,7 +25,7 @@ options:
     description: Resource family to query.
     type: str
     required: true
-    choices: [vpc, subnet, security_group, cvm_instance, lighthouse_instance, autoscaling_group, cbs_disk, clb_load_balancer, alb_load_balancer, gwlb_load_balancer, gwlb_target_group, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, sqlserver_instance, cynosdb_cluster, redis_instance, mongodb_instance, elasticsearch_instance, cfs_file_system, chdfs_file_system, chdfs_access_group, chdfs_mount_point, direct_connect, direct_connect_tunnel, ckafka_instance, mqtt_instance, rocketmq_cluster, rabbitmq_instance, prometheus_instance, edgeone_zone, event_bus, api_gateway_service, tcr_instance, tem_environment, tem_application, organization_member]
+    choices: [vpc, subnet, security_group, cvm_instance, lighthouse_instance, autoscaling_group, cbs_disk, clb_load_balancer, alb_load_balancer, gwlb_load_balancer, gwlb_target_group, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, sqlserver_instance, cynosdb_cluster, redis_instance, mongodb_instance, elasticsearch_instance, cfs_file_system, chdfs_file_system, chdfs_access_group, chdfs_mount_point, goosefs_file_system, direct_connect, direct_connect_tunnel, ckafka_instance, mqtt_instance, rocketmq_cluster, rabbitmq_instance, prometheus_instance, edgeone_zone, event_bus, api_gateway_service, tcr_instance, tem_environment, tem_application, organization_member]
   vpc_id:
     description: Optional VPC scope for subnet and CLB lookups.
     type: str
@@ -150,6 +150,7 @@ RESOURCE_SPECS = {
     "chdfs_file_system": ("chdfs.v20201112", "ChdfsClient", "chdfs.tencentcloudapi.com", "DescribeFileSystems", "FileSystems", "FileSystemId", "FileSystemName"),
     "chdfs_access_group": ("chdfs.v20201112", "ChdfsClient", "chdfs.tencentcloudapi.com", "DescribeAccessGroups", "AccessGroups", "AccessGroupId", "AccessGroupName"),
     "chdfs_mount_point": ("chdfs.v20201112", "ChdfsClient", "chdfs.tencentcloudapi.com", "DescribeMountPoints", "MountPoints", "MountPointId", "MountPointName"),
+    "goosefs_file_system": ("goosefs.v20220519", "GoosefsClient", "goosefs.tencentcloudapi.com", "DescribeFileSystems", "FSAttributeList", "FileSystemId", "Name"),
     "direct_connect": ("dc.v20180410", "DcClient", "dc.tencentcloudapi.com", "DescribeDirectConnects", "DirectConnectSet", "DirectConnectId", "DirectConnectName"),
     "direct_connect_tunnel": ("dc.v20180410", "DcClient", "dc.tencentcloudapi.com", "DescribeDirectConnectTunnels", "DirectConnectTunnelSet", "DirectConnectTunnelId", "DirectConnectTunnelName"),
     "ckafka_instance": ("ckafka.v20190819", "CkafkaClient", "ckafka.tencentcloudapi.com", "DescribeInstancesDetail", "Result.InstanceList", "InstanceId", "InstanceName"),
@@ -194,6 +195,7 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         "chdfs_file_system": "DescribeFileSystemsRequest",
         "chdfs_access_group": "DescribeAccessGroupsRequest",
         "chdfs_mount_point": "DescribeMountPointsRequest",
+        "goosefs_file_system": "DescribeFileSystemsRequest",
         "direct_connect": "DescribeDirectConnectsRequest",
         "direct_connect_tunnel": "DescribeDirectConnectTunnelsRequest",
         "ckafka_instance": "DescribeInstancesDetailRequest",
@@ -247,7 +249,7 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         request.SearchKey = name
     elif resource_type == "elasticsearch_instance":
         request.InstanceNames = [name]
-    elif resource_type in ("cfs_file_system", "chdfs_file_system", "chdfs_access_group", "chdfs_mount_point"):
+    elif resource_type in ("cfs_file_system", "chdfs_file_system", "chdfs_access_group", "chdfs_mount_point", "goosefs_file_system"):
         pass
     elif resource_type in ("direct_connect", "direct_connect_tunnel"):
         pass

@@ -1,0 +1,16 @@
+---
+tc_goosefs_cache_state: present
+tc_goosefs_cache_region: ""
+tc_goosefs_cache_file_system_id: ""
+tc_goosefs_cache_name: ""
+tc_goosefs_cache_description: ""
+tc_goosefs_cache_vpc_id: ""
+tc_goosefs_cache_subnet_id: ""
+tc_goosefs_cache_zone: ""
+tc_goosefs_cache_file_system_type: ""
+tc_goosefs_cache_build_elements: []
+tc_goosefs_cache_capacity: null
+tc_goosefs_cache_security_group_id: ""
+tc_goosefs_cache_cluster_port: null
+tc_goosefs_cache_tags: {}
+tc_goosefs_cache_filesets: []

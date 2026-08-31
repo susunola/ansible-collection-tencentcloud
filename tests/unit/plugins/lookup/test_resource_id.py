@@ -263,6 +263,11 @@ def test_direct_connect_requests_scan_with_numeric_pagination():
     assert (tunnel.Offset, tunnel.Limit) == (200, 100)
 
 
+def test_goosefs_request_scans_with_numeric_pagination():
+    request = build_request("goosefs_file_system", Models, "analytics-cache", offset=100)
+    assert (request.Offset, request.Limit) == (100, 100)
+
+
 def test_resolve_alb_follows_next_token():
     class TokenClient(object):
         def __init__(self):

@@ -395,6 +395,15 @@ def test_cdn_delivery_removes_log_topics_before_domains():
     )
 
 
+def test_goosefs_teardown_removes_filesets_before_file_system():
+    text = role_tasks("tc_goosefs_cache")
+    assert_order(
+        text,
+        "Remove GooseFS filesets before file system",
+        "Remove GooseFS file system",
+    )
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -439,6 +448,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_tem_application": "resource_type='tem_environment'",
         "tc_serverless_application": "resource_type='api_gateway_service'",
         "tc_direct_connect_fabric": "resource_type='direct_connect'",
+        "tc_goosefs_cache": "resource_type='goosefs_file_system'",
     }
     for role, lookup_type in expectations.items():
         text = role_tasks(role)
