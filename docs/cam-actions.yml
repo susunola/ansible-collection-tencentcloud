@@ -1726,6 +1726,16 @@ modules:
   - RestoreSecret
   - UpdateDescription
   - UpdateSecret
+  ssm_product_secret:
+  - CreateProductSecret
+  - DeleteSecret
+  - DescribeAsyncRequestInfo
+  - DescribeSecret
+  - DisableSecret
+  - EnableSecret
+  - RestoreSecret
+  - UpdateDescription
+  - UpdateRotationStatus
   ssm_rotation:
   - DescribeRotationDetail
   - UpdateRotationStatus

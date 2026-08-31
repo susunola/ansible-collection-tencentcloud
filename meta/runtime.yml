@@ -446,6 +446,7 @@ action_groups:
     - ssl_certificate_info
     - sslpod_domain_info
     - ssm_parameter
+    - ssm_product_secret
     - ssm_rotation
     - ssm_rotation_info
     - ssm_secret

@@ -282,6 +282,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `sqlserver_instance` | Manage TencentDB for SQL Server instances |
 | `ssl_certificate` | Manage Tencent Cloud SSL certificates |
 | `ssm_parameter` | Manage Tencent Cloud SSM secrets (parameters) |
+| `ssm_product_secret` | Manage Tencent Cloud SSM managed-product secrets |
 | `ssm_rotation` | Manage Tencent Cloud SSM secret rotation settings |
 | `ssm_secret` | Manage Tencent Cloud Secrets Manager custom secrets |
 | `ssm_secret_version` | Manage Tencent Cloud SSM secret versions |

@@ -337,6 +337,7 @@ CORE_MODULES = {
     "security_group_rule",
     "ssl_certificate",
     "ssm_parameter",
+    "ssm_product_secret",
     "ssm_secret_version",
     "ssm_secret_info",
     "ssm_secret_version_info",
