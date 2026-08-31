@@ -2036,6 +2036,11 @@ modules:
   - DescribeDatasets
   tione_dataset_info:
   - DescribeDatasets
+  tione_model_service:
+  - CreateModelService
+  - DeleteModelService
+  - DescribeModelService
+  - ModifyModelService
   tione_model_service_diagnostics_info:
   - DescribeModelServiceCallInfo
   - DescribeModelServiceHotUpdated

@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``tione_model_service`` with readable configuration reconciliation, explicit create-only drift and guarded deletion.
