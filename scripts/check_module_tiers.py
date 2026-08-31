@@ -289,6 +289,7 @@ CORE_MODULES = {
     "tsf_cluster",
     "tsf_microservice",
     "tsf_namespace",
+    "tsf_vm_deployment_group",
     "tse_governance_namespace",
     "tse_governance_alias",
     "tse_governance_instance",

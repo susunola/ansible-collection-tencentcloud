@@ -7,6 +7,7 @@
       - tc_tsf_microservice_platform_namespaces is sequence
       - tc_tsf_microservice_platform_applications is sequence
       - tc_tsf_microservice_platform_microservices is sequence
+      - tc_tsf_microservice_platform_vm_deployment_groups is sequence
       - tc_tsf_microservice_platform_state == 'present' or tc_tsf_microservice_platform_allow_destroy | bool
     fail_msg: TSF platform destruction requires tc_tsf_microservice_platform_allow_destroy=true.
 
@@ -42,6 +43,14 @@
   loop_control: {label: "{{ item.namespace_id | default('?') }}/{{ item.name | default(item.microservice_id | default('unnamed')) }}"}
   register: _tc_tsf_microservice_platform_microservices
 
+- name: Reconcile TSF VM deployment groups
+  when: tc_tsf_microservice_platform_state == 'present'
+  susunola.tencentcloud.tsf_vm_deployment_group:
+  args: "{{ item | combine({'state': 'present'}) }}"
+  loop: "{{ tc_tsf_microservice_platform_vm_deployment_groups }}"
+  loop_control: {label: "{{ item.name | default(item.group_id | default('unnamed')) }}"}
+  register: _tc_tsf_microservice_platform_vm_deployment_groups
+
 - name: Publish TSF microservice platform outputs
   when: tc_tsf_microservice_platform_state == 'present'
   ansible.builtin.set_fact:
@@ -50,16 +59,19 @@
       namespaces: "{{ _tc_tsf_microservice_platform_namespaces.results | default([]) | map(attribute='namespace') | list }}"
       applications: "{{ _tc_tsf_microservice_platform_applications.results | default([]) | map(attribute='application') | list }}"
       microservices: "{{ _tc_tsf_microservice_platform_microservices.results | default([]) | map(attribute='microservice') | list }}"
+      vm_deployment_groups: "{{ _tc_tsf_microservice_platform_vm_deployment_groups.results | default([]) | map(attribute='deployment_group') | list }}"
 
-- name: Remove TSF applications
+- name: Remove TSF VM deployment groups
   when: tc_tsf_microservice_platform_state == 'absent'
-  susunola.tencentcloud.tsf_application:
-    application_id: "{{ item.application_id | default(omit) }}"
+  susunola.tencentcloud.tsf_vm_deployment_group:
+    group_id: "{{ item.group_id | default(omit) }}"
     name: "{{ item.name }}"
-    sync_delete_image_repository: "{{ item.sync_delete_image_repository | default(false) }}"
+    application_id: "{{ item.application_id }}"
+    namespace_id: "{{ item.namespace_id }}"
+    cluster_id: "{{ item.cluster_id }}"
     state: absent
-  loop: "{{ tc_tsf_microservice_platform_applications | reverse | list }}"
-  loop_control: {label: "{{ item.name | default(item.application_id | default('unnamed')) }}"}
+  loop: "{{ tc_tsf_microservice_platform_vm_deployment_groups | reverse | list }}"
+  loop_control: {label: "{{ item.name | default(item.group_id | default('unnamed')) }}"}
 
 - name: Remove TSF microservices
   when: tc_tsf_microservice_platform_state == 'absent'
@@ -70,6 +82,16 @@
     state: absent
   loop: "{{ tc_tsf_microservice_platform_microservices | reverse | list }}"
   loop_control: {label: "{{ item.namespace_id | default('?') }}/{{ item.name | default(item.microservice_id | default('unnamed')) }}"}
+
+- name: Remove TSF applications
+  when: tc_tsf_microservice_platform_state == 'absent'
+  susunola.tencentcloud.tsf_application:
+    application_id: "{{ item.application_id | default(omit) }}"
+    name: "{{ item.name }}"
+    sync_delete_image_repository: "{{ item.sync_delete_image_repository | default(false) }}"
+    state: absent
+  loop: "{{ tc_tsf_microservice_platform_applications | reverse | list }}"
+  loop_control: {label: "{{ item.name | default(item.application_id | default('unnamed')) }}"}
 
 - name: Remove TSF namespaces
   when: tc_tsf_microservice_platform_state == 'absent'

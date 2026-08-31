@@ -2516,6 +2516,11 @@ modules:
   - DeleteNamespace
   - DescribeSimpleNamespaces
   - ModifyNamespace
+  tsf_vm_deployment_group:
+  - CreateGroup
+  - DeleteGroup
+  - DescribeGroups
+  - ModifyGroup
   vcube_resource_info:
   - DescribeVcubeResourcesList
   vdb_instance:

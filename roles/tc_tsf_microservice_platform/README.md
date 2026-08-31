@@ -25,4 +25,6 @@ Destruction requires an explicit safety opt-in.
             framework_type: SpringCloud
         tc_tsf_microservice_platform_microservices:
           - {namespace_id: namespace-xxxxxxxx, name: orders, description: Order service}
+        tc_tsf_microservice_platform_vm_deployment_groups:
+          - {name: orders-vm, application_id: application-xxxxxxxx, namespace_id: namespace-xxxxxxxx, cluster_id: cluster-xxxxxxxx}
 ```
