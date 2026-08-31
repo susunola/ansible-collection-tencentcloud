@@ -50,6 +50,7 @@ class Models(object):
     DescribeInstancesDetailRequest = Request
     DescribeInstanceListRequest = Request
     DescribeRocketMQClustersRequest = Request
+    DescribeRabbitMQVipInstancesRequest = Request
     ListEventBusesRequest = Request
 
 
@@ -160,6 +161,13 @@ def test_resolve_rocketmq_cluster_supports_nested_identity():
         ClusterId="rocketmq-1", ClusterName="orders"))])
     assert resolve_resource(
         Client(response), Models, "rocketmq_cluster", "orders") == "rocketmq-1"
+
+
+def test_rabbitmq_instance_request_uses_instance_name_filter():
+    request = build_request("rabbitmq_instance", Models, "orders", offset=100)
+    assert request.Filters[0].Name == "instanceName"
+    assert request.Filters[0].Values == ["orders"]
+    assert request.Offset == 100
 
 
 def test_alb_request_uses_token_pagination():
