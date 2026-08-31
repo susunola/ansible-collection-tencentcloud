@@ -1,0 +1,7 @@
+---
+tc_dts_migration_state: present
+tc_dts_migration_job: {}
+tc_dts_migration_configuration: {}
+tc_dts_migration_run_check: true
+tc_dts_migration_auto_start: false
+tc_dts_migration_allow_destroy: false

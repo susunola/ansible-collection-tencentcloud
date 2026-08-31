@@ -1,0 +1,65 @@
+---
+- name: Validate DTS migration inputs
+  ansible.builtin.assert:
+    that:
+      - tc_dts_migration_state in ['present', 'absent']
+      - tc_dts_migration_job | length > 0
+      - tc_dts_migration_state == 'absent' or tc_dts_migration_configuration | length > 0
+    fail_msg: DTS migration requires job purchase/identity fields and, when present, a complete migration configuration.
+
+- name: Purchase or discover DTS migration job
+  when: tc_dts_migration_state == 'present'
+  susunola.tencentcloud.dts_migration_job:
+  args: "{{ tc_dts_migration_job | combine({'state': 'present'}) }}"
+  register: _tc_dts_migration_job
+
+- name: Capture DTS migration job ID
+  when: tc_dts_migration_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dts_migration_job_id: "{{ _tc_dts_migration_job.migration_job.JobId }}"
+
+- name: Configure DTS migration endpoints and options
+  when: tc_dts_migration_state == 'present'
+  susunola.tencentcloud.dts_migration_job_config:
+  args: "{{ tc_dts_migration_configuration | combine({'job_id': _tc_dts_migration_job_id}) }}"
+  register: _tc_dts_migration_config
+
+- name: Run DTS pre-migration check
+  when:
+    - tc_dts_migration_state == 'present'
+    - tc_dts_migration_run_check | bool
+  susunola.tencentcloud.dts_migration_check:
+    job_id: "{{ _tc_dts_migration_job_id }}"
+  register: _tc_dts_migration_check
+
+- name: Start DTS migration after successful check
+  when:
+    - tc_dts_migration_state == 'present'
+    - tc_dts_migration_auto_start | bool
+  susunola.tencentcloud.dts_migration_action:
+    job_id: "{{ _tc_dts_migration_job_id }}"
+    action: start
+  register: _tc_dts_migration_start
+
+- name: Publish DTS migration result
+  when: tc_dts_migration_state == 'present'
+  ansible.builtin.set_fact:
+    tc_dts_migration_result:
+      job: "{{ _tc_dts_migration_job.migration_job }}"
+      configuration: "{{ _tc_dts_migration_config.migration_job }}"
+      check: "{{ _tc_dts_migration_check.migration_check | default({}) }}"
+      start: "{{ _tc_dts_migration_start.migration_job | default({}) }}"
+
+- name: Require explicit authorization before destroying DTS migration job
+  when:
+    - tc_dts_migration_state == 'absent'
+    - not tc_dts_migration_allow_destroy | bool
+  ansible.builtin.fail:
+    msg: Set tc_dts_migration_allow_destroy=true to authorize destroying the billable DTS migration job.
+
+- name: Destroy DTS migration job
+  when:
+    - tc_dts_migration_state == 'absent'
+    - tc_dts_migration_allow_destroy | bool
+  susunola.tencentcloud.dts_migration_job:
+  args: "{{ tc_dts_migration_job | combine({'state': 'absent'}) }}"
