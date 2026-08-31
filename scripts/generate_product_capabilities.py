@@ -62,6 +62,7 @@ ROLE_SERVICES = {
     "tc_doris_analytics_platform": "cdwdoris",
     "tc_clickhouse_platform": "cdwch",
     "tc_cdwpg_analytics_platform": "cdwpg",
+    "tc_oceanus_streaming_platform": "oceanus",
     "tc_observability_baseline": "cls",
     "tc_object_storage_baseline": "cos",
     "tc_serverless_application": "scf",

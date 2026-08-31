@@ -1,0 +1,14 @@
+---
+- name: Reconcile Oceanus job
+  susunola.tencentcloud.oceanus_job:
+  args: >-
+    {{
+      _tc_oceanus_job
+      | combine({'state': tc_oceanus_streaming_platform_state, 'workspace_id': _tc_oceanus_workspace_id})
+      | combine(
+          {'cluster_id': _tc_oceanus_cluster_id}
+          if (_tc_oceanus_job.cluster_type | default(1) | int == 2 and _tc_oceanus_cluster_id | length > 0)
+          else {}
+        )
+    }}
+  register: _tc_oceanus_job_result

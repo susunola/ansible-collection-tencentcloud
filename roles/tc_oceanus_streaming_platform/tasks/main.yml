@@ -1,0 +1,87 @@
+---
+- name: Validate Oceanus streaming platform inputs
+  ansible.builtin.assert:
+    that:
+      - tc_oceanus_streaming_platform_state in ['present', 'absent']
+      - tc_oceanus_streaming_platform_workspace | length > 0
+      - tc_oceanus_streaming_platform_state != 'absent' or tc_oceanus_streaming_platform_workspace.workspace_id is defined
+      - tc_oceanus_streaming_platform_state != 'absent' or tc_oceanus_streaming_platform_cluster | length == 0 or tc_oceanus_streaming_platform_cluster.cluster_id is defined
+    fail_msg: Oceanus platform teardown requires existing workspace_id and cluster_id identities.
+
+- name: Reconcile Oceanus workspace
+  when: tc_oceanus_streaming_platform_state == 'present'
+  susunola.tencentcloud.oceanus_workspace:
+  args: "{{ tc_oceanus_streaming_platform_workspace | combine({'state': 'present'}) }}"
+  register: _tc_oceanus_platform_workspace
+
+- name: Reconcile Oceanus dedicated cluster
+  when:
+    - tc_oceanus_streaming_platform_state == 'present'
+    - tc_oceanus_streaming_platform_cluster | length > 0
+  susunola.tencentcloud.oceanus_cluster:
+  args: "{{ tc_oceanus_streaming_platform_cluster | combine({'state': 'present'}) }}"
+  register: _tc_oceanus_platform_cluster
+
+- name: Resolve Oceanus platform resource identities
+  ansible.builtin.set_fact:
+    _tc_oceanus_workspace_id: >-
+      {{
+        _tc_oceanus_platform_workspace.workspace.WorkSpaceId
+        if tc_oceanus_streaming_platform_state == 'present'
+        else tc_oceanus_streaming_platform_workspace.workspace_id
+      }}
+    _tc_oceanus_cluster_id: >-
+      {{
+        ((_tc_oceanus_platform_cluster | default({})).get('cluster', {})).get('ClusterId', '')
+        if tc_oceanus_streaming_platform_state == 'present'
+        else (tc_oceanus_streaming_platform_cluster.cluster_id | default(''))
+      }}
+
+- name: Reconcile Oceanus jobs
+  when: tc_oceanus_streaming_platform_state == 'present'
+  ansible.builtin.include_tasks: job.yml
+  loop: "{{ tc_oceanus_streaming_platform_jobs }}"
+  loop_control:
+    loop_var: _tc_oceanus_job
+    label: "{{ _tc_oceanus_job.name | default(_tc_oceanus_job.job_id | default('unnamed')) }}"
+
+- name: Publish Oceanus streaming platform result
+  when: tc_oceanus_streaming_platform_state == 'present'
+  ansible.builtin.set_fact:
+    tc_oceanus_streaming_platform_result:
+      workspace: "{{ _tc_oceanus_platform_workspace.workspace }}"
+      cluster: "{{ (_tc_oceanus_platform_cluster | default({})).get('cluster', {}) }}"
+      workspace_id: "{{ _tc_oceanus_workspace_id }}"
+      cluster_id: "{{ _tc_oceanus_cluster_id }}"
+
+- name: Require explicit authorization before Oceanus teardown
+  when:
+    - tc_oceanus_streaming_platform_state == 'absent'
+    - not tc_oceanus_streaming_platform_allow_destroy | bool
+  ansible.builtin.fail:
+    msg: Set tc_oceanus_streaming_platform_allow_destroy=true to authorize job, cluster and workspace deletion.
+
+- name: Remove Oceanus jobs before infrastructure
+  when:
+    - tc_oceanus_streaming_platform_state == 'absent'
+    - tc_oceanus_streaming_platform_allow_destroy | bool
+  ansible.builtin.include_tasks: job.yml
+  loop: "{{ tc_oceanus_streaming_platform_jobs }}"
+  loop_control:
+    loop_var: _tc_oceanus_job
+    label: "{{ _tc_oceanus_job.name | default(_tc_oceanus_job.job_id | default('unnamed')) }}"
+
+- name: Delete Oceanus dedicated cluster
+  when:
+    - tc_oceanus_streaming_platform_state == 'absent'
+    - tc_oceanus_streaming_platform_allow_destroy | bool
+    - tc_oceanus_streaming_platform_cluster | length > 0
+  susunola.tencentcloud.oceanus_cluster:
+  args: "{{ tc_oceanus_streaming_platform_cluster | combine({'state': 'absent'}) }}"
+
+- name: Delete Oceanus workspace
+  when:
+    - tc_oceanus_streaming_platform_state == 'absent'
+    - tc_oceanus_streaming_platform_allow_destroy | bool
+  susunola.tencentcloud.oceanus_workspace:
+  args: "{{ tc_oceanus_streaming_platform_workspace | combine({'state': 'absent'}) }}"

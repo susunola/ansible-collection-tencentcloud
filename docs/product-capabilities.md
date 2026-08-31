@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **320**
 - Information modules: **210**
-- Solution roles: **52**
+- Solution roles: **53**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -154,7 +154,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `mqtt` | solution | 4 | 1 | `tc_mqtt_broker` | `mqtt_authorization_policy`, `mqtt_instance`, `mqtt_topic`, `mqtt_user` |
 | `ms` | discovery-only | 0 | 1 | — | — |
 | `msp` | discovery-only | 0 | 1 | — | — |
-| `oceanus` | resource-family | 3 | 1 | — | `oceanus_cluster`, `oceanus_job`, `oceanus_workspace` |
+| `oceanus` | solution | 3 | 1 | `tc_oceanus_streaming_platform` | `oceanus_cluster`, `oceanus_job`, `oceanus_workspace` |
 | `omics` | discovery-only | 0 | 1 | — | — |
 | `organization` | solution | 4 | 1 | `tc_organization_governance` | `organization_member`, `organization_member_identity`, `organization_member_policy`, `organization_node` |
 | `partners` | discovery-only | 0 | 1 | — | — |
