@@ -18,7 +18,7 @@ options:
   vpc_id: {type: str, description: VPC ID; immutable after creation.}
   subnet_id: {type: str, description: Subnet ID; immutable after creation.}
   spec_code: {type: str, description: Sales specification code required during creation.}
-  storage: {type: int, description: Storage size in GiB, adjustable after creation.}
+  storage: {type: int, description: "Storage size in GiB, adjustable after creation."}
   cpu: {type: int, description: CPU cores for specification changes.}
   memory: {type: int, description: Memory in GiB for specification changes.}
   major_version: {type: str, description: PostgreSQL major version; immutable after creation.}
@@ -27,7 +27,7 @@ options:
   admin_password: {type: str, description: Initial administrator password.}
   charge_type: {type: str, choices: [PREPAID, POSTPAID_BY_HOUR], default: POSTPAID_BY_HOUR, description: Billing mode.}
   period_months: {type: int, default: 1, description: Purchase period in months.}
-  auto_renew: {type: int, choices: [0, 1, 2], description: Manual renewal, automatic renewal or no renewal for prepaid instances.}
+  auto_renew: {type: int, choices: [0, 1, 2], description: "Manual renewal, automatic renewal or no renewal for prepaid instances."}
   security_group_ids: {type: list, elements: str, default: [], description: Security groups bound during creation.}
   deletion_protection: {type: bool, default: false, description: Enable deletion protection during creation.}
   purge: {type: bool, default: false, description: Permanently destroy an already isolated instance instead of retaining it in the recycle bin.}
@@ -90,7 +90,7 @@ def _wait(module, client, models, p, states):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"choices": ["present", "absent"], "default": "present"}, "instance_id": {}, "name": {}, "zone": {}, "vpc_id": {}, "subnet_id": {}, "spec_code": {}, "storage": {"type": "int"}, "cpu": {"type": "int"}, "memory": {"type": "int"}, "major_version": {}, "charset": {"choices": ["UTF8", "LATIN1"], "default": "UTF8"}, "admin_name": {"default": "dbadmin"}, "admin_password": {"no_log": True}, "charge_type": {"choices": ["PREPAID", "POSTPAID_BY_HOUR"], "default": "POSTPAID_BY_HOUR"}, "period_months": {"type": "int", "default": 1}, "auto_renew": {"type": "int", "choices": [0, 1, 2]}, "security_group_ids": {"type": "list", "elements": "str", "default": []}, "deletion_protection": {"type": "bool", "default": False}, "purge": {"type": "bool", "default": False}}, required_one_of=[("instance_id", "name")], supports_check_mode=True)
+    module = TencentCloudModule(argument_spec={"state": {"choices": ["present", "absent"], "default": "present"}, "instance_id": {}, "name": {}, "zone": {}, "vpc_id": {}, "subnet_id": {}, "spec_code": {}, "storage": {"type": "int"}, "cpu": {"type": "int"}, "memory": {"type": "int"}, "major_version": {}, "charset": {"choices": ["UTF8", "LATIN1"], "default": "UTF8"}, "admin_name": {"default": "dbadmin"}, "admin_password": {"no_log": True}, "charge_type": {"choices": ["PREPAID", "POSTPAID_BY_HOUR"], "default": "POSTPAID_BY_HOUR"}, "period_months": {"type": "int", "default": 1}, "auto_renew": {"type": "int", "choices": [0, 1, 2]}, "security_group_ids": {"type": "list", "elements": "str", "default": []}, "deletion_protection": {"type": "bool", "default": False}, "purge": {"type": "bool", "default": False}, "waiter_delay": {"type": "int", "default": 10}, "waiter_timeout": {"type": "int", "default": 900}}, required_one_of=[("instance_id", "name")], supports_check_mode=True)
     p = module.params; module.require_sdk(); models, cm = _load(); client = module.create_client(cm.PostgresClient, "postgres.tencentcloudapi.com")
     try:
         current = find(module, client, models, p)

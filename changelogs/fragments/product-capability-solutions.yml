@@ -1,0 +1,16 @@
+minor_changes:
+  - >-
+    roles - add ``tc_tem_application`` to provision a TEM environment,
+    application definition, deployment and access-service mappings as one
+    reusable solution.
+  - >-
+    governance - generate ``docs/product-capabilities.md`` from modules and
+    roles, enforce freshness in CI, and replace the obsolete 50-module roadmap
+    target with product-family priorities.
+bugfixes:
+  - >-
+    postgresql_instance - align long-running waiter defaults with documentation
+    and correct inline documentation parsing.
+  - >-
+    waf_custom_white_rule - mark ``bypass_modules`` as explicitly non-secret
+    so Ansible validation does not reject the public module-name list.

@@ -536,6 +536,9 @@ run with `--check` to verify they are up to date). The module tables and the
 `action_groups` registry are kept in sync with `scripts/sync_registry.py`
 (`--check` runs in CI).
 
+See the generated [product capability matrix](docs/product-capabilities.md)
+for product-level write, discovery and reusable-role maturity.
+
 ## Included plugins
 
 | Plugin | Type | Purpose |
@@ -555,6 +558,7 @@ run with `--check` to verify they are up to date). The module tables and the
 | --- | --- |
 | `tc_launch` | Launch CVM instances with sensible defaults over `cvm_instance` (`exact_count` / `count_tag` supported) |
 | `tc_clb_http` | Create a CLB load balancer with HTTP listeners and backend targets in one call |
+| `tc_tem_application` | Provision a TEM environment, deploy an application version and reconcile access services |
 
 ## Requirements
 

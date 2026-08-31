@@ -1,0 +1,44 @@
+---
+tc_tem_application_state: present
+tc_tem_application_region: ""
+
+# Environment
+tc_tem_application_environment_id: ""
+tc_tem_application_environment_name: ""
+tc_tem_application_environment_description: ""
+tc_tem_application_environment_type: prod
+tc_tem_application_vpc_id: ""
+tc_tem_application_subnet_ids: []
+tc_tem_application_setup_vpc: false
+tc_tem_application_setup_prometheus: false
+tc_tem_application_prometheus_id: ""
+tc_tem_application_apm_id: ""
+
+# Application definition
+tc_tem_application_id: ""
+tc_tem_application_name: ""
+tc_tem_application_description: ""
+tc_tem_application_coding_language: ""
+tc_tem_application_deploy_mode: IMAGE
+tc_tem_application_enable_tracing: 0
+tc_tem_application_use_default_image_service: 1
+tc_tem_application_repo_type: 0
+tc_tem_application_registry_instance_id: ""
+tc_tem_application_repo_server: ""
+tc_tem_application_repo_name: ""
+tc_tem_application_tags: {}
+
+# Deployment. Leave deploy_version empty to manage only the definition.
+tc_tem_application_deploy_version: ""
+tc_tem_application_deployment: {}
+tc_tem_application_force_redeploy: false
+
+# Service mappings. Each item requires name and access_type; service contains
+# the TEM ServicePortMapping fields.
+tc_tem_application_services: []
+tc_tem_application_destroy_environment: false
+
+tc_tem_application_source_channel: 0
+tc_tem_application_wait: true
+tc_tem_application_waiter_timeout: 1800
+tc_tem_application_waiter_delay: 5

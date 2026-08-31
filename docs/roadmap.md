@@ -104,7 +104,7 @@
     instance is applied with `ResetInstancesType` instead of failing as
     immutable. **Done**
 
-## Next
+## Completed expansion (historical)
 
 35. Remaining write modules: `cvm_chc`, `mongodb`, `gaap`, `cdn`, `tcr`
     (the write-module count grows from 21 to 26). **Done** — `mysql` was
@@ -222,3 +222,33 @@
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
+
+## Current priorities
+
+The collection has moved beyond the original 50-write-module target. Current
+module and product counts are generated in
+[`product-capabilities.md`](product-capabilities.md); they should not be copied
+into this roadmap because those numbers change with every coverage batch.
+
+1. **Deepen the eight highest-use resource families.** Close runtime and
+   operational workflows in TEM, TKE, CLB, CDB/Redis/MongoDB, TCR, SCF,
+   API Gateway and CLS/Monitor before adding more discovery-only products.
+2. **Ship reusable solutions.** Grow from low-level modules into roles for a
+   VPC foundation, TKE platform, database stack, serverless application,
+   logging baseline, monitoring baseline and security baseline. TEM is the
+   first new solution role.
+3. **Normalize lifecycle behavior.** Apply the shared SDK error payload,
+   request IDs, bounded waiters, deletion protection, immutable-field errors
+   and absent-resource idempotency to every write module.
+4. **Replace raw SDK dictionaries on common paths.** Expose typed suboptions
+   for frequently used deployment, node-pool, listener, database and gateway
+   fields while retaining an explicitly advanced raw payload escape hatch.
+5. **Improve cross-resource composition.** Add consistent name-to-ID lookups,
+   exact-set reconciliation modes and result contracts so playbooks do not
+   require chains of ad-hoc query tasks and `set_fact` expressions.
+6. **Finish generated-info curation.** Resolve the remaining hidden-required-
+   parameter candidates and keep the SDK drift sentinel authoritative.
+
+Each product-family milestone should include a complete resource graph,
+one runnable golden-path playbook, least-privilege CAM actions, and a clear
+statement of SDK/API limitations.

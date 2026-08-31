@@ -136,6 +136,10 @@
   module can never be silently overwritten by the generator. See
   `docs/module_tiers.md`.
 
+When modules or roles change, run
+`python scripts/generate_product_capabilities.py`. CI checks that the
+product-level capability matrix is current.
+
 ## Contract tests
 
 - New write modules must register their request builders in

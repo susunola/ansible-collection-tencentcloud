@@ -82,7 +82,7 @@ def find(module, client, models, p):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"choices": ["present", "absent"], "default": "present"}, "domain": {"required": True}, "rule_id": {"type": "int"}, "name": {}, "priority": {"type": "int", "default": 100}, "bypass_modules": {"default": ""}, "strategies": {"type": "list", "elements": "dict", "default": []}, "logical_operator": {"choices": ["and", "or"], "default": "and"}, "expire_time": {"type": "int", "default": 0}, "enabled": {"type": "bool", "default": True}}, required_one_of=[("rule_id", "name")], supports_check_mode=True)
+    module = TencentCloudModule(argument_spec={"state": {"choices": ["present", "absent"], "default": "present"}, "domain": {"required": True}, "rule_id": {"type": "int"}, "name": {}, "priority": {"type": "int", "default": 100}, "bypass_modules": {"default": "", "no_log": False}, "strategies": {"type": "list", "elements": "dict", "default": []}, "logical_operator": {"choices": ["and", "or"], "default": "and"}, "expire_time": {"type": "int", "default": 0}, "enabled": {"type": "bool", "default": True}}, required_one_of=[("rule_id", "name")], supports_check_mode=True)
     p = module.params
     if p["state"] == "present" and not p.get("name"): module.fail_json(msg="name is required when state=present")
     module.require_sdk(); models, cm = _load(); client = module.create_client(cm.WafClient, "waf.tencentcloudapi.com")
