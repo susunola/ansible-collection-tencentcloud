@@ -49,6 +49,7 @@ class Models(object):
     DescribeCfsFileSystemsRequest = Request
     DescribeInstancesDetailRequest = Request
     DescribeInstanceListRequest = Request
+    DescribeRocketMQClustersRequest = Request
     ListEventBusesRequest = Request
 
 
@@ -146,6 +147,19 @@ def test_event_bus_request_scans_names_with_numeric_pagination():
     request = build_request("event_bus", Models, "application-events", offset=100)
     assert request.Limit == 100
     assert request.Offset == 100
+
+
+def test_rocketmq_cluster_request_uses_name_keyword():
+    request = build_request("rocketmq_cluster", Models, "orders", offset=100)
+    assert request.NameKeyword == "orders"
+    assert request.Offset == 100
+
+
+def test_resolve_rocketmq_cluster_supports_nested_identity():
+    response = Object(ClusterList=[Object(Info=Object(
+        ClusterId="rocketmq-1", ClusterName="orders"))])
+    assert resolve_resource(
+        Client(response), Models, "rocketmq_cluster", "orders") == "rocketmq-1"
 
 
 def test_alb_request_uses_token_pagination():

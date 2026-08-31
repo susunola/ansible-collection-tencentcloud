@@ -25,7 +25,7 @@ options:
     description: Resource family to query.
     type: str
     required: true
-    choices: [vpc, subnet, security_group, cvm_instance, lighthouse_instance, autoscaling_group, cbs_disk, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, cynosdb_cluster, redis_instance, mongodb_instance, cfs_file_system, ckafka_instance, mqtt_instance, event_bus, api_gateway_service, tcr_instance, tem_environment, tem_application]
+    choices: [vpc, subnet, security_group, cvm_instance, lighthouse_instance, autoscaling_group, cbs_disk, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, cynosdb_cluster, redis_instance, mongodb_instance, cfs_file_system, ckafka_instance, mqtt_instance, rocketmq_cluster, event_bus, api_gateway_service, tcr_instance, tem_environment, tem_application]
   vpc_id:
     description: Optional VPC scope for subnet and CLB lookups.
     type: str
@@ -142,6 +142,7 @@ RESOURCE_SPECS = {
     "cfs_file_system": ("cfs.v20190719", "CfsClient", "cfs.tencentcloudapi.com", "DescribeCfsFileSystems", "FileSystems", "FileSystemId", "Name"),
     "ckafka_instance": ("ckafka.v20190819", "CkafkaClient", "ckafka.tencentcloudapi.com", "DescribeInstancesDetail", "Result.InstanceList", "InstanceId", "InstanceName"),
     "mqtt_instance": ("mqtt.v20240516", "MqttClient", "mqtt.tencentcloudapi.com", "DescribeInstanceList", "Data", "InstanceId", "InstanceName"),
+    "rocketmq_cluster": ("tdmq.v20200217", "TdmqClient", "tdmq.tencentcloudapi.com", "DescribeRocketMQClusters", "ClusterList", "Info.ClusterId", "Info.ClusterName"),
     "event_bus": ("eb.v20210416", "EbClient", "eb.tencentcloudapi.com", "ListEventBuses", "EventBuses", "EventBusId", "EventBusName"),
     "api_gateway_service": ("apigateway.v20180808", "ApigatewayClient", "apigateway.tencentcloudapi.com", "DescribeServicesStatus", "Result.ServiceSet", "ServiceId", "ServiceName"),
     "tcr_instance": ("tcr.v20190924", "TcrClient", "tcr.tencentcloudapi.com", "DescribeInstances", "Registries", "RegistryId", "RegistryName"),
@@ -172,6 +173,7 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         "cfs_file_system": "DescribeCfsFileSystemsRequest",
         "ckafka_instance": "DescribeInstancesDetailRequest",
         "mqtt_instance": "DescribeInstanceListRequest",
+        "rocketmq_cluster": "DescribeRocketMQClustersRequest",
         "event_bus": "ListEventBusesRequest",
         "api_gateway_service": "DescribeServicesStatusRequest",
         "tcr_instance": "DescribeInstancesRequest",
@@ -214,6 +216,8 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         pass
     elif resource_type == "event_bus":
         pass
+    elif resource_type == "rocketmq_cluster":
+        request.NameKeyword = name
     elif resource_type == "alb_load_balancer":
         pass
     elif resource_type == "api_gateway_service":
@@ -278,7 +282,7 @@ def resolve_resource(client, models, resource_type, name, vpc_id=None):
             if values is None:
                 break
         page = list(values or [])
-        matches.extend(item for item in page if getattr(item, spec[6], None) == name)
+        matches.extend(item for item in page if nested_attribute(item, spec[6]) == name)
         if resource_type == "alb_load_balancer":
             page_token = getattr(response, "NextToken", None)
             if not page_token:
@@ -291,7 +295,16 @@ def resolve_resource(client, models, resource_type, name, vpc_id=None):
         raise AnsibleError("No %s named %r was found" % (resource_type, name))
     if len(matches) > 1:
         raise AnsibleError("Multiple %s resources named %r matched; use an explicit ID" % (resource_type, name))
-    return str(getattr(matches[0], spec[5]))
+    return str(nested_attribute(matches[0], spec[5]))
+
+
+def nested_attribute(value, path):
+    """Resolve dotted SDK response attributes without serializing secrets."""
+    for attribute in path.split("."):
+        value = getattr(value, attribute, None)
+        if value is None:
+            break
+    return value
 
 
 def sdk_error_message(resource_type, name, exc):
