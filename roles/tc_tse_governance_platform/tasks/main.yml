@@ -4,6 +4,7 @@
     that:
       - tc_tse_governance_platform_state in ['present', 'absent']
       - tc_tse_governance_platform_engine is mapping
+      - tc_tse_governance_platform_access_address_query is mapping
       - tc_tse_governance_platform_namespaces is sequence
       - tc_tse_governance_platform_services is sequence
       - tc_tse_governance_platform_instances is sequence
@@ -26,6 +27,12 @@
   when: tc_tse_governance_platform_state == 'present'
   ansible.builtin.set_fact:
     _tc_tse_governance_platform_instance_id: "{{ _tc_tse_governance_platform_engine.instance.InstanceId }}"
+
+- name: Discover TSE registry engine access addresses
+  when: tc_tse_governance_platform_state == 'present'
+  susunola.tencentcloud.tse_sre_access_address_info:
+  args: "{{ tc_tse_governance_platform_access_address_query | combine({'instance_id': _tc_tse_governance_platform_instance_id}) }}"
+  register: _tc_tse_governance_platform_access_address
 
 - name: Reconcile TSE governance namespaces
   when: tc_tse_governance_platform_state == 'present'
@@ -96,6 +103,7 @@
   ansible.builtin.set_fact:
     tc_tse_governance_platform_result:
       engine: "{{ _tc_tse_governance_platform_engine.instance }}"
+      access_address: "{{ _tc_tse_governance_platform_access_address.access_address }}"
       namespaces: "{{ _tc_tse_governance_platform_namespaces.results | default([]) | map(attribute='namespace') | list }}"
       services: "{{ _tc_tse_governance_platform_services.results | default([]) | map(attribute='service') | list }}"
       instances: "{{ _tc_tse_governance_platform_instances.results | default([]) | map(attribute='governance_instance') | list }}"

@@ -271,6 +271,7 @@ CORE_MODULES = {
     "oceanus_resource",
     "oceanus_resource_config",
     "tse_sre_instance",
+    "tse_sre_access_address_info",
     "tse_governance_namespace",
     "tse_governance_alias",
     "tse_governance_instance",

@@ -26,3 +26,4 @@ minor_changes:
   - Add governance service-instance registration, mutable runtime policy reconciliation and deterministic deletion.
   - Add configuration release publication, version-aware rollback and deletion lifecycle management.
   - Wait for TSE engine deletion and verify internet-access state convergence instead of returning on a stale running status.
+  - Add TSE registry-engine access endpoint discovery and expose it from the governance platform role.

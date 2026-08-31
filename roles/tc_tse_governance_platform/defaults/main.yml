@@ -1,6 +1,7 @@
 ---
 tc_tse_governance_platform_state: present
 tc_tse_governance_platform_engine: {}
+tc_tse_governance_platform_access_address_query: {}
 tc_tse_governance_platform_namespaces: []
 tc_tse_governance_platform_services: []
 tc_tse_governance_platform_instances: []

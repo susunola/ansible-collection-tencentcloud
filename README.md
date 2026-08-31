@@ -649,6 +649,7 @@ Read-only `_info` modules (return `changed=false`):
 | `trp_code_batch_info` | Gather information about Tencent Cloud TRP code batches |
 | `trro_device_info` | Gather information about Tencent Cloud TRRO devices |
 | `trtc_call_info` | Gather information about Tencent Cloud TRTC calls |
+| `tse_sre_access_address_info` | Gather Tencent Cloud TSE registry-engine access addresses |
 | `tse_sre_instance_info` | Gather information about Tencent Cloud TSE sre instances |
 | `tsf_application_info` | Gather information about Tencent Cloud TSF applications |
 | `vcube_resource_info` | Gather information about Tencent Cloud VCUBE resources |

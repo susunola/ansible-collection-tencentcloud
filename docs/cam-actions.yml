@@ -2440,6 +2440,8 @@ modules:
   - DeleteGovernanceServices
   - DescribeGovernanceServices
   - ModifyGovernanceServices
+  tse_sre_access_address_info:
+  - DescribeSREInstanceAccessAddress
   tse_sre_instance:
   - CreateEngine
   - DeleteEngine

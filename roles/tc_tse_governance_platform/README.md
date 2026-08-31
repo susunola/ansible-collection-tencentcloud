@@ -15,6 +15,8 @@ explicit engine ID and removes dependent resources in reverse order.
           engine_type: nacos
           engine_version: '2.4.3'
           product_version: STANDARD
+        tc_tse_governance_platform_access_address_query:
+          workload: polaris-limiter
         tc_tse_governance_platform_namespaces:
           - name: production
         tc_tse_governance_platform_services:

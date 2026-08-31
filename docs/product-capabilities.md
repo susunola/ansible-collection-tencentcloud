@@ -7,7 +7,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 
 - Products/services: **203**
 - Write modules: **411**
-- Information modules: **235**
+- Information modules: **236**
 - Solution roles: **64**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
@@ -205,7 +205,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `trp` | discovery-only | 0 | 1 | — | — |
 | `trro` | discovery-only | 0 | 1 | — | — |
 | `trtc` | discovery-only | 0 | 1 | — | — |
-| `tse` | solution | 31 | 1 | `tc_tse_api_gateway`, `tc_tse_governance_platform` | `tse_cloud_native_gateway`, `tse_config_file`, `tse_config_file_group`, `tse_config_file_release`, `tse_gateway_autoscaler_binding`, `tse_gateway_autoscaler_strategy`, `tse_gateway_canary_rule`, `tse_gateway_certificate`, +23 more |
+| `tse` | solution | 31 | 2 | `tc_tse_api_gateway`, `tc_tse_governance_platform` | `tse_cloud_native_gateway`, `tse_config_file`, `tse_config_file_group`, `tse_config_file_release`, `tse_gateway_autoscaler_binding`, `tse_gateway_autoscaler_strategy`, `tse_gateway_canary_rule`, `tse_gateway_certificate`, +23 more |
 | `tsf` | discovery-only | 0 | 1 | — | — |
 | `vcube` | discovery-only | 0 | 1 | — | — |
 | `vdb` | managed | 1 | 1 | — | `vdb_instance` |
