@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``tse_cloud_native_gateway`` with topology drift protection, mutable policy reconciliation and guarded deletion.

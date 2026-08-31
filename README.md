@@ -373,6 +373,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `trabbit_serverless_queue` | Manage Tencent Cloud RabbitMQ Serverless queues |
 | `trabbit_serverless_user` | Manage Tencent Cloud RabbitMQ Serverless users |
 | `trabbit_serverless_vhost` | Manage Tencent Cloud RabbitMQ Serverless virtual hosts |
+| `tse_cloud_native_gateway` | Manage a Tencent Cloud TSE cloud-native API gateway |
 | `tse_config_file` | Manage a Tencent Cloud TSE configuration file |
 | `tse_config_file_group` | Manage a Tencent Cloud TSE configuration file group |
 | `tse_governance_namespace` | Manage a Tencent Cloud TSE governance namespace |

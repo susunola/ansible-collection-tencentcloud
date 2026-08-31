@@ -2271,6 +2271,12 @@ modules:
   - DescribeDeviceList
   trtc_call_info:
   - DescribeCallDetailInfo
+  tse_cloud_native_gateway:
+  - CreateCloudNativeAPIGateway
+  - DeleteCloudNativeAPIGateway
+  - DescribeCloudNativeAPIGateway
+  - DescribeCloudNativeAPIGateways
+  - ModifyCloudNativeAPIGateway
   tse_config_file:
   - CreateConfigFile
   - DeleteConfigFiles

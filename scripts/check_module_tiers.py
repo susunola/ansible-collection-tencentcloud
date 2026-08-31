@@ -275,6 +275,7 @@ CORE_MODULES = {
     "tse_governance_service",
     "tse_config_file_group",
     "tse_config_file",
+    "tse_cloud_native_gateway",
     "vdb_instance",
     "tdcpg_cluster",
     "tdcpg_account",
