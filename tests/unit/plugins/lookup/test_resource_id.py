@@ -87,6 +87,11 @@ def test_postgresql_request_uses_instance_name_filter():
     assert request.Filters[0].Values == ["orders"]
 
 
+def test_mariadb_request_uses_search_name():
+    request = build_request("mariadb_instance", Models, "orders")
+    assert request.SearchName == "orders"
+
+
 def test_cfs_request_scans_names_with_numeric_pagination():
     request = build_request("cfs_file_system", Models, "shared-data", offset=100)
     assert request.Limit == 100

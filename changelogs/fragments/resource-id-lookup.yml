@@ -4,6 +4,7 @@ minor_changes:
   - lookup resource_id - add exact-name ALB resolution with native token pagination.
   - lookup resource_id - add exact-name, paginated MQTT instance resolution.
   - lookup resource_id - add exact-name, paginated PostgreSQL instance resolution.
+  - lookup resource_id - add exact-name, paginated MariaDB instance resolution.
   - >-
     lookup plugins - add ``resource_id`` for exact, ambiguity-safe name-to-ID
     resolution across VPC, subnet, security group, CVM, CLB, TKE and CDB.
