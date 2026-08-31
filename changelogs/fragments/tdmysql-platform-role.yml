@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``tc_tdsql_mysql_platform`` to compose instance, accounts, scoped privileges, parameters, backup, SSL and maintenance.

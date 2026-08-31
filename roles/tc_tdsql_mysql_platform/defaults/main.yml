@@ -1,0 +1,10 @@
+---
+tc_tdsql_mysql_platform_state: present
+tc_tdsql_mysql_platform_instance: {}
+tc_tdsql_mysql_platform_accounts: []
+tc_tdsql_mysql_platform_privileges: []
+tc_tdsql_mysql_platform_parameters: {}
+tc_tdsql_mysql_platform_backup_policy: {}
+tc_tdsql_mysql_platform_ssl_enabled: null
+tc_tdsql_mysql_platform_maintenance_window: {}
+tc_tdsql_mysql_platform_allow_destroy: false

@@ -1,0 +1,114 @@
+---
+- name: Validate TDSQL MySQL platform inputs
+  ansible.builtin.assert:
+    that:
+      - tc_tdsql_mysql_platform_state in ['present', 'absent']
+      - tc_tdsql_mysql_platform_instance is mapping
+      - tc_tdsql_mysql_platform_instance | length > 0
+      - tc_tdsql_mysql_platform_accounts is sequence
+      - tc_tdsql_mysql_platform_privileges is sequence
+      - tc_tdsql_mysql_platform_parameters is mapping
+      - tc_tdsql_mysql_platform_backup_policy is mapping
+      - tc_tdsql_mysql_platform_maintenance_window is mapping
+      - tc_tdsql_mysql_platform_state == 'present' or tc_tdsql_mysql_platform_allow_destroy | bool
+    fail_msg: TDSQL MySQL platform requires instance configuration; destruction requires tc_tdsql_mysql_platform_allow_destroy=true.
+
+- name: Reconcile TDSQL MySQL instance
+  when: tc_tdsql_mysql_platform_state == 'present'
+  susunola.tencentcloud.tdmysql_db_instance:
+  args: "{{ tc_tdsql_mysql_platform_instance | combine({'state': 'present'}) }}"
+  register: _tc_tdsql_mysql_platform_instance
+
+- name: Capture TDSQL MySQL instance ID
+  when: tc_tdsql_mysql_platform_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_tdsql_mysql_platform_instance_id: "{{ _tc_tdsql_mysql_platform_instance.instance.InstanceId }}"
+
+- name: Reconcile TDSQL MySQL accounts
+  when: tc_tdsql_mysql_platform_state == 'present'
+  susunola.tencentcloud.tdmysql_account:
+  args: "{{ item | combine({'instance_id': _tc_tdsql_mysql_platform_instance_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tdsql_mysql_platform_accounts }}"
+  loop_control:
+    label: "{{ item.username }}@{{ item.host | default('%') }}"
+  register: _tc_tdsql_mysql_platform_accounts
+
+- name: Reconcile TDSQL MySQL scoped privileges
+  when: tc_tdsql_mysql_platform_state == 'present'
+  susunola.tencentcloud.tdmysql_account_privilege:
+  args: "{{ item | combine({'instance_id': _tc_tdsql_mysql_platform_instance_id}) }}"
+  loop: "{{ tc_tdsql_mysql_platform_privileges }}"
+  loop_control:
+    label: "{{ item.username }}@{{ item.host | default('%') }} {{ item.scope }}"
+  register: _tc_tdsql_mysql_platform_privileges
+
+- name: Reconcile TDSQL MySQL parameters
+  when:
+    - tc_tdsql_mysql_platform_state == 'present'
+    - tc_tdsql_mysql_platform_parameters | length > 0
+  susunola.tencentcloud.tdmysql_parameter:
+    instance_id: "{{ _tc_tdsql_mysql_platform_instance_id }}"
+    parameters: "{{ tc_tdsql_mysql_platform_parameters }}"
+  register: _tc_tdsql_mysql_platform_parameters
+
+- name: Reconcile TDSQL MySQL backup policy
+  when:
+    - tc_tdsql_mysql_platform_state == 'present'
+    - tc_tdsql_mysql_platform_backup_policy | length > 0
+  susunola.tencentcloud.tdmysql_backup_policy:
+  args: "{{ tc_tdsql_mysql_platform_backup_policy | combine({'instance_id': _tc_tdsql_mysql_platform_instance_id}) }}"
+  register: _tc_tdsql_mysql_platform_backup_policy
+
+- name: Reconcile TDSQL MySQL SSL
+  when:
+    - tc_tdsql_mysql_platform_state == 'present'
+    - tc_tdsql_mysql_platform_ssl_enabled is not none
+  susunola.tencentcloud.tdmysql_ssl:
+    instance_id: "{{ _tc_tdsql_mysql_platform_instance_id }}"
+    enabled: "{{ tc_tdsql_mysql_platform_ssl_enabled }}"
+  register: _tc_tdsql_mysql_platform_ssl
+
+- name: Reconcile TDSQL MySQL maintenance window
+  when:
+    - tc_tdsql_mysql_platform_state == 'present'
+    - tc_tdsql_mysql_platform_maintenance_window | length > 0
+  susunola.tencentcloud.tdmysql_maintenance_window:
+  args: "{{ tc_tdsql_mysql_platform_maintenance_window | combine({'instance_id': _tc_tdsql_mysql_platform_instance_id}) }}"
+  register: _tc_tdsql_mysql_platform_maintenance
+
+- name: Publish TDSQL MySQL platform outputs
+  when: tc_tdsql_mysql_platform_state == 'present'
+  ansible.builtin.set_fact:
+    tc_tdsql_mysql_platform_result:
+      instance: "{{ _tc_tdsql_mysql_platform_instance.instance }}"
+      accounts: "{{ _tc_tdsql_mysql_platform_accounts.results | default([]) | map(attribute='account') | list }}"
+      privileges: "{{ _tc_tdsql_mysql_platform_privileges.results | default([]) | map(attribute='privilege') | list }}"
+      parameters: "{{ _tc_tdsql_mysql_platform_parameters.parameters | default({}) }}"
+      backup_policy: "{{ _tc_tdsql_mysql_platform_backup_policy.backup_policy | default({}) }}"
+      ssl: "{{ _tc_tdsql_mysql_platform_ssl.ssl | default({}) }}"
+      maintenance_window: "{{ _tc_tdsql_mysql_platform_maintenance.maintenance_window | default({}) }}"
+
+- name: Resolve TDSQL MySQL instance ID for teardown
+  when: tc_tdsql_mysql_platform_state == 'absent'
+  ansible.builtin.set_fact:
+    _tc_tdsql_mysql_platform_instance_id: "{{ tc_tdsql_mysql_platform_instance.instance_id | default('') }}"
+
+- name: Require stable TDSQL MySQL instance ID for teardown
+  when:
+    - tc_tdsql_mysql_platform_state == 'absent'
+    - _tc_tdsql_mysql_platform_instance_id | length == 0
+  ansible.builtin.fail:
+    msg: instance.instance_id is required for deterministic TDSQL MySQL platform teardown.
+
+- name: Remove TDSQL MySQL accounts before instance isolation
+  when: tc_tdsql_mysql_platform_state == 'absent'
+  susunola.tencentcloud.tdmysql_account:
+  args: "{{ item | combine({'instance_id': _tc_tdsql_mysql_platform_instance_id, 'state': 'absent', 'allow_delete': true}) }}"
+  loop: "{{ tc_tdsql_mysql_platform_accounts | reverse | list }}"
+  loop_control:
+    label: "{{ item.username }}@{{ item.host | default('%') }}"
+
+- name: Isolate or purge TDSQL MySQL instance
+  when: tc_tdsql_mysql_platform_state == 'absent'
+  susunola.tencentcloud.tdmysql_db_instance:
+  args: "{{ tc_tdsql_mysql_platform_instance | combine({'state': 'absent'}) }}"

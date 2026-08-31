@@ -1,0 +1,7 @@
+---
+galaxy_info:
+  author: Tencent Cloud Ansible Collection Contributors
+  description: Provision and govern a production TDSQL MySQL platform
+  license: GPL-3.0-or-later
+  min_ansible_version: "2.16"
+dependencies: []
