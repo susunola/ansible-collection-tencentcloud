@@ -149,6 +149,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `dcdb_security_config` | Manage Tencent Cloud DCDB encryption, SSL and security groups |
 | `dlc_work_group` | Manage Tencent Cloud Data Lake Compute work groups |
 | `dlc_work_group_membership` | Manage Tencent Cloud Data Lake Compute work-group members |
+| `dlc_work_group_policy` | Manage Tencent Cloud Data Lake Compute work-group policies |
 | `dnspod_custom_line` | Manage DNSPod domain custom lines |
 | `dnspod_domain` | Manage Tencent Cloud DNSPod domains |
 | `dnspod_line_group` | Manage DNSPod custom line groups |

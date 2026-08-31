@@ -163,6 +163,7 @@ CORE_MODULES = {
     "dnspod_record",
     "dlc_work_group",
     "dlc_work_group_membership",
+    "dlc_work_group_policy",
     "dnspod_custom_line",
     "dnspod_line_group",
     "dnspod_domain",

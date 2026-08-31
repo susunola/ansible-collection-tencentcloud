@@ -822,6 +822,10 @@ modules:
   - AddUsersToWorkGroup
   - DeleteUsersFromWorkGroup
   - DescribeWorkGroups
+  dlc_work_group_policy:
+  - AttachWorkGroupPolicy
+  - DescribeWorkGroups
+  - DetachWorkGroupPolicy
   dnspod_custom_line:
   - CreateDomainCustomLine
   - DeleteDomainCustomLine

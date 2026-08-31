@@ -1,0 +1,2 @@
+minor_changes:
+  - Add exact DLC work-group policy reconciliation with writable-field normalization, deterministic detach IDs, empty-set protection and convergence waiting.

@@ -221,6 +221,7 @@ action_groups:
     - dlc_task_info
     - dlc_work_group
     - dlc_work_group_membership
+    - dlc_work_group_policy
     - dnspod_custom_line
     - dnspod_domain
     - dnspod_line_group
