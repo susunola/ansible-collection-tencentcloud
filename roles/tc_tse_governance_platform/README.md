@@ -48,6 +48,10 @@ explicit engine ID and removes dependent resources in reverse order.
             release_name: production
             format: YAML
             content: "server:\n  port: 8080\n"
+        # Use deployments instead of separate file/release entries when the
+        # draft and active release must change atomically.
+        tc_tse_governance_platform_config_deployments:
+          - {namespace: production, group: application, name: flags.yaml, release_name: production, format: YAML, content: "feature: true\n"}
         tc_tse_governance_platform_config_release_audits:
           - {namespace: production, group: application, name: orders.yaml}
 ```

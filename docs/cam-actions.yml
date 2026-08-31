@@ -2283,6 +2283,12 @@ modules:
   - DeleteConfigFiles
   - DescribeConfigFile
   - ModifyConfigFiles
+  tse_config_file_deployment:
+  - CreateOrUpdateConfigFileAndRelease
+  - DeleteConfigFileReleases
+  - DeleteConfigFiles
+  - DescribeConfigFile
+  - DescribeConfigFileRelease
   tse_config_file_group:
   - CreateConfigFileGroup
   - DeleteConfigFileGroup

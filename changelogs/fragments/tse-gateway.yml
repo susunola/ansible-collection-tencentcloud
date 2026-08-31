@@ -31,3 +31,4 @@ minor_changes:
   - Add aggregated gateway network, port, public-address and node runtime discovery.
   - Add configuration release, immutable version and publication-history audit discovery.
   - Add paginated governance service-contract and contract-version discovery.
+  - Add atomic configuration file and release deployment with deterministic teardown.

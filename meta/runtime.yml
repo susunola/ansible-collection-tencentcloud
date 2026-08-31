@@ -584,6 +584,7 @@ action_groups:
     - trtc_call_info
     - tse_cloud_native_gateway
     - tse_config_file
+    - tse_config_file_deployment
     - tse_config_file_group
     - tse_config_file_release
     - tse_config_file_release_info

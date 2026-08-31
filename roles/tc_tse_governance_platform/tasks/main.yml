@@ -15,6 +15,7 @@
       - tc_tse_governance_platform_config_groups is sequence
       - tc_tse_governance_platform_config_files is sequence
       - tc_tse_governance_platform_config_releases is sequence
+      - tc_tse_governance_platform_config_deployments is sequence
       - tc_tse_governance_platform_config_release_audits is sequence
       - tc_tse_governance_platform_engine.instance_id | default(tc_tse_governance_platform_engine.name | default('')) | length > 0
       - tc_tse_governance_platform_state == 'present' or tc_tse_governance_platform_allow_destroy | bool
@@ -119,6 +120,14 @@
   loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.group | default('?') }}/{{ item.name | default('?') }}@{{ item.release_name | default('unnamed') }}"}
   register: _tc_tse_governance_platform_config_releases
 
+- name: Reconcile atomic TSE configuration deployments
+  when: tc_tse_governance_platform_state == 'present'
+  susunola.tencentcloud.tse_config_file_deployment:
+  args: "{{ item | combine({'instance_id': _tc_tse_governance_platform_instance_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_governance_platform_config_deployments }}"
+  loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.group | default('?') }}/{{ item.name | default('unnamed') }}"}
+  register: _tc_tse_governance_platform_config_deployments
+
 - name: Gather TSE configuration release audit data
   when: tc_tse_governance_platform_state == 'present'
   susunola.tencentcloud.tse_config_file_release_info:
@@ -147,6 +156,7 @@
       config_groups: "{{ _tc_tse_governance_platform_config_groups.results | default([]) | map(attribute='group') | list }}"
       config_files: "{{ _tc_tse_governance_platform_config_files.results | default([]) | map(attribute='config_file') | list }}"
       config_releases: "{{ _tc_tse_governance_platform_config_releases.results | default([]) | map(attribute='release') | list }}"
+      config_deployments: "{{ _tc_tse_governance_platform_config_deployments.results | default([]) | map(attribute='deployment') | list }}"
       config_release_audits: "{{ _tc_tse_governance_platform_config_release_audits.results | default([]) }}"
 
 - name: Require engine ID for deterministic teardown
@@ -155,6 +165,18 @@
     - tc_tse_governance_platform_engine.instance_id | default('') | length == 0
   ansible.builtin.fail:
     msg: engine.instance_id is required for deterministic TSE governance teardown.
+
+- name: Remove atomic TSE configuration deployments
+  when: tc_tse_governance_platform_state == 'absent'
+  susunola.tencentcloud.tse_config_file_deployment:
+    instance_id: "{{ tc_tse_governance_platform_engine.instance_id }}"
+    namespace: "{{ item.namespace }}"
+    group: "{{ item.group }}"
+    name: "{{ item.name }}"
+    release_name: "{{ item.release_name }}"
+    state: absent
+  loop: "{{ tc_tse_governance_platform_config_deployments | reverse | list }}"
+  loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.group | default('?') }}/{{ item.name | default('unnamed') }}"}
 
 - name: Remove TSE configuration releases
   when: tc_tse_governance_platform_state == 'absent'
