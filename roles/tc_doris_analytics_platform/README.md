@@ -27,6 +27,9 @@ Builds a CDW Doris analytics platform and reconciles named workload groups after
           - name: batch
             cpu_share: 200
             memory_limit: 60
+        tc_doris_analytics_platform_cooldown_policies:
+          - name: archive-after-30-days
+            cooldown_ttl: 30 DAY
         tc_doris_analytics_platform_user_bindings:
           - user_name: analyst
             hosts: ['%']

@@ -304,6 +304,10 @@ modules:
   - ScaleUpInstance
   cdwdoris_cluster_configs_history_info:
   - DescribeClusterConfigsHistory
+  cdwdoris_cooldown_policy:
+  - CreateCoolDownPolicy
+  - DescribeCoolDownPolicies
+  - ModifyCoolDownPolicy
   cdwdoris_instance:
   - CreateInstanceNew
   - DescribeInstanceState

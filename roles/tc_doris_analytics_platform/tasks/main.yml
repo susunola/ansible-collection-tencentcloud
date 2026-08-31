@@ -13,6 +13,18 @@
   args: "{{ tc_doris_analytics_platform_instance | combine({'state': 'present'}) }}"
   register: _tc_doris_platform_instance
 
+- name: Reconcile Doris hot and cold tiering policies
+  when:
+    - tc_doris_analytics_platform_state == 'present'
+    - _tc_doris_platform_instance.instance.InstanceId is defined
+  susunola.tencentcloud.cdwdoris_cooldown_policy:
+  args: "{{ _tc_doris_cooldown_policy | combine({'instance_id': _tc_doris_platform_instance.instance.InstanceId}) }}"
+  loop: "{{ tc_doris_analytics_platform_cooldown_policies }}"
+  loop_control:
+    loop_var: _tc_doris_cooldown_policy
+    label: "{{ _tc_doris_cooldown_policy.name | default('unnamed') }}"
+  register: _tc_doris_platform_cooldown_policies
+
 - name: Reconcile Doris workload groups
   when:
     - tc_doris_analytics_platform_state == 'present'
@@ -45,6 +57,7 @@
   ansible.builtin.set_fact:
     tc_doris_analytics_platform_result:
       instance: "{{ _tc_doris_platform_instance.instance }}"
+      cooldown_policies: "{{ _tc_doris_platform_cooldown_policies.results | default([]) | map(attribute='policy') | list }}"
       workload_groups: "{{ _tc_doris_platform_workload_groups.results | default([]) | map(attribute='workload_group') | list }}"
       user_bindings: "{{ _tc_doris_platform_user_bindings.results | default([]) | map(attribute='binding') | list }}"
 

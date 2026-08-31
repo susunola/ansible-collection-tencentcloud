@@ -6,7 +6,7 @@ This matrix is generated from module SDK imports and role metadata. It is a
 navigation and gap-discovery aid, not a claim that every Tencent Cloud API is covered.
 
 - Products/services: **203**
-- Write modules: **314**
+- Write modules: **315**
 - Information modules: **210**
 - Solution roles: **50**
 
@@ -56,7 +56,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `cdn` | solution | 2 | 1 | `tc_cdn_delivery` | `cdn_cls_log_topic`, `cdn_domain` |
 | `cds` | discovery-only | 0 | 1 | — | — |
 | `cdwch` | managed | 1 | 1 | — | `cdwch_instance` |
-| `cdwdoris` | solution | 3 | 1 | `tc_doris_analytics_platform` | `cdwdoris_instance`, `cdwdoris_user_workload_group`, `cdwdoris_workload_group` |
+| `cdwdoris` | solution | 4 | 1 | `tc_doris_analytics_platform` | `cdwdoris_cooldown_policy`, `cdwdoris_instance`, `cdwdoris_user_workload_group`, `cdwdoris_workload_group` |
 | `cdwpg` | managed | 1 | 1 | — | `cdwpg_instance` |
 | `cdz` | discovery-only | 0 | 1 | — | — |
 | `cetcd` | discovery-only | 0 | 1 | — | — |
