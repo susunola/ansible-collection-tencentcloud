@@ -2046,6 +2046,9 @@ modules:
   - StopNotebook
   tione_notebook_info:
   - DescribeNotebooks
+  tione_training_model_version_info:
+  - DescribeTrainingModelVersion
+  - DescribeTrainingModelVersions
   tione_training_task:
   - CreateTrainingTask
   - DeleteTrainingTask

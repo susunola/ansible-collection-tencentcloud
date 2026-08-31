@@ -7,7 +7,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 
 - Products/services: **203**
 - Write modules: **358**
-- Information modules: **223**
+- Information modules: **224**
 - Solution roles: **54**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
@@ -195,7 +195,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `thpc` | managed | 1 | 1 | — | `thpc_cluster` |
 | `tia` | discovery-only | 0 | 1 | — | — |
 | `tiia` | discovery-only | 0 | 1 | — | — |
-| `tione` | resource-family | 4 | 4 | — | `tione_data_source`, `tione_dataset`, `tione_notebook`, `tione_training_task` |
+| `tione` | resource-family | 4 | 5 | — | `tione_data_source`, `tione_dataset`, `tione_notebook`, `tione_training_task` |
 | `tiw` | discovery-only | 0 | 1 | — | — |
 | `tke` | solution | 7 | 1 | `tc_tke_platform` | `tke_addon`, `tke_backup_storage_location`, `tke_cluster`, `tke_cluster_audit`, `tke_cluster_authentication`, `tke_cluster_endpoint`, `tke_node_pool` |
 | `tokenhub` | discovery-only | 0 | 1 | — | — |
