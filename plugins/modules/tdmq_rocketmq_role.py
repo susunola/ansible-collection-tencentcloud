@@ -5,7 +5,7 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: tdmq_rocketmq_role
 short_description: Manage TDMQ RocketMQ roles
@@ -25,26 +25,26 @@ options:
   user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.tdmq_rocketmq_role:
     cluster_id: rocketmq-xxxxxxxx
     name: order-service
     permission_type: TopicAndGroup
     remark: Order service identity
-'''
-RETURN = r'''role: {description: RocketMQ role metadata with all credential fields removed., type: dict, returned: always}'''
+"""
+RETURN = r"""role: {description: RocketMQ role metadata with all credential fields removed., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
-
 
 SENSITIVE_FIELDS = ("Token", "AccessKey", "SecretKey", "SecretName")
 
 
 def _load():
     from tencentcloud.tdmq.v20200217 import models, tdmq_client
+
     return models, tdmq_client
 
 
@@ -74,19 +74,23 @@ def delete_request(models, p):
 
 
 def sanitize(value):
-    if not value: return value
+    if not value:
+        return value
     return {key: item for key, item in value.items() if key not in SENSITIVE_FIELDS}
 
 
 def find(module, client, models, p):
     offset = 0
     while True:
-        response = module.sdk_call(client.DescribeRocketMQRoles, describe_request(models, p, offset)); items = list(response.RoleSets or [])
+        response = module.sdk_call(client.DescribeRocketMQRoles, describe_request(models, p, offset))
+        items = list(response.RoleSets or [])
         for item in items:
             value = item._serialize(allow_none=True)
-            if value.get("RoleName") == p["name"]: return sanitize(value)
+            if value.get("RoleName") == p["name"]:
+                return sanitize(value)
         offset += len(items)
-        if not items or offset >= int(response.TotalCount or 0): return None
+        if not items or offset >= int(response.TotalCount or 0):
+            return None
 
 
 def comparable(value):
@@ -98,25 +102,45 @@ def desired(p):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"choices": ["present", "absent"], "default": "present"}, "cluster_id": {"required": True}, "name": {"required": True}, "permission_type": {"choices": ["Cluster", "TopicAndGroup"], "default": "Cluster"}, "remark": {"default": ""}}, supports_check_mode=True)
-    p = module.params; module.require_sdk(); models, cm = _load(); client = module.create_client(cm.TdmqClient, "tdmq.tencentcloudapi.com")
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "cluster_id": {"required": True},
+            "name": {"required": True},
+            "permission_type": {"choices": ["Cluster", "TopicAndGroup"], "default": "Cluster"},
+            "remark": {"default": ""},
+        },
+        supports_check_mode=True,
+    )
+    p = module.params
+    module.require_sdk()
+    models, cm = _load()
+    client = module.create_client(cm.TdmqClient, "tdmq.tencentcloudapi.com")
     try:
         current = find(module, client, models, p)
         if p["state"] == "absent":
-            if not current: module.exit_json(changed=False, role=None)
+            if not current:
+                module.exit_json(changed=False, role=None)
             diff = maybe_diff(module, current, None)
-            if not module.check_mode: module.sdk_call(client.DeleteRocketMQRoles, delete_request(models, p))
+            if not module.check_mode:
+                module.sdk_call(client.DeleteRocketMQRoles, delete_request(models, p))
             module.exit_json(changed=True, **(diff or {}), role=current if module.check_mode else None)
         target, before = desired(p), comparable(current) if current else None
-        if before == target: module.exit_json(changed=False, role=current)
+        if before == target:
+            module.exit_json(changed=False, role=current)
         diff = maybe_diff(module, before, target)
         if not module.check_mode:
             method = client.ModifyRocketMQRole if current else client.CreateRocketMQRole
-            module.sdk_call(method, update_request(models, p) if current else create_request(models, p)); current = find(module, client, models, p)
+            module.sdk_call(method, update_request(models, p) if current else create_request(models, p))
+            current = find(module, client, models, p)
         module.exit_json(changed=True, **(diff or {}), role=current)
     except Exception as exc:
         module.fail_json(**sdk_error_payload(exc))
 
 
-def main(): run_module()
-if __name__ == "__main__": main()
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()

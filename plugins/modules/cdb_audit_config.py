@@ -5,7 +5,7 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: cdb_audit_config
 short_description: Manage TencentDB for MySQL audit configuration
@@ -21,14 +21,14 @@ options:
   user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.cdb_audit_config:
     instance_id: cdb-xxxxxxxx
     enabled: true
     retention_days: 180
-'''
-RETURN = r'''audit_config: {description: Normalized audit configuration., type: dict, returned: always}'''
+"""
+RETURN = r"""audit_config: {description: Normalized audit configuration., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -37,16 +37,21 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.cdb.v20170320 import cdb_client, models
+
     return models, cdb_client
 
 
 def describe_request(models, instance_id):
-    request = models.DescribeAuditConfigRequest(); request.InstanceId = instance_id; return request
+    request = models.DescribeAuditConfigRequest()
+    request.InstanceId = instance_id
+    return request
 
 
 def modify_request(models, p):
-    request = models.ModifyAuditConfigRequest(); request.InstanceId, request.CloseAudit = p["instance_id"], not p["enabled"]
-    if p["enabled"]: request.LogExpireDay = p["retention_days"]
+    request = models.ModifyAuditConfigRequest()
+    request.InstanceId, request.CloseAudit = p["instance_id"], not p["enabled"]
+    if p["enabled"]:
+        request.LogExpireDay = p["retention_days"]
     return request
 
 
@@ -57,12 +62,23 @@ def normalize(response):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"instance_id": {"required": True}, "enabled": {"type": "bool", "default": True}, "retention_days": {"type": "int", "choices": [7, 30, 180, 365, 1095, 1825], "default": 30}}, supports_check_mode=True)
-    p = module.params; module.require_sdk(); models, cm = _load(); client = module.create_client(cm.CdbClient, "cdb.tencentcloudapi.com")
+    module = TencentCloudModule(
+        argument_spec={
+            "instance_id": {"required": True},
+            "enabled": {"type": "bool", "default": True},
+            "retention_days": {"type": "int", "choices": [7, 30, 180, 365, 1095, 1825], "default": 30},
+        },
+        supports_check_mode=True,
+    )
+    p = module.params
+    module.require_sdk()
+    models, cm = _load()
+    client = module.create_client(cm.CdbClient, "cdb.tencentcloudapi.com")
     try:
         current = normalize(module.sdk_call(client.DescribeAuditConfig, describe_request(models, p["instance_id"])))
         target = {"enabled": p["enabled"], "retention_days": p["retention_days"] if p["enabled"] else 0}
-        if current == target: module.exit_json(changed=False, audit_config=current)
+        if current == target:
+            module.exit_json(changed=False, audit_config=current)
         diff = maybe_diff(module, current, target)
         if not module.check_mode:
             module.sdk_call(client.ModifyAuditConfig, modify_request(models, p))
@@ -72,5 +88,9 @@ def run_module():
         module.fail_json(**sdk_error_payload(exc))
 
 
-def main(): run_module()
-if __name__ == "__main__": main()
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()

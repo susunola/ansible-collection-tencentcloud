@@ -262,18 +262,28 @@ NO_API3_CONTRACT = {
     "cos_bucket": "cos_bucket uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
     "cos_bucket_info": "cos_bucket_info uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
     "cos_bucket_policy": "cos_bucket_policy uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
-    "cos_bucket_replication": "cos_bucket_replication uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
+    "cos_bucket_replication": (
+        "cos_bucket_replication uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit"
+    ),
     "cos_bucket_website": "cos_bucket_website uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
     "cos_bucket_encryption": "cos_bucket_encryption uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
     "cos_bucket_logging": "cos_bucket_logging uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
-    "cos_bucket_object_lock": "cos_bucket_object_lock uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
-    "cos_bucket_intelligent_tiering": "cos_bucket_intelligent_tiering uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
+    "cos_bucket_object_lock": (
+        "cos_bucket_object_lock uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit"
+    ),
+    "cos_bucket_intelligent_tiering": (
+        "cos_bucket_intelligent_tiering uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit"
+    ),
     "cos_bucket_origin": "cos_bucket_origin uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
-    "cos_bucket_response_control": "cos_bucket_response_control uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
+    "cos_bucket_response_control": (
+        "cos_bucket_response_control uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit"
+    ),
     "cos_bucket_inventory": "cos_bucket_inventory uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
     "cos_bucket_referer": "cos_bucket_referer uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
     "cos_bucket_domain": "cos_bucket_domain uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
-    "cos_bucket_domain_certificate": "cos_bucket_domain_certificate uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
+    "cos_bucket_domain_certificate": (
+        "cos_bucket_domain_certificate uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit"
+    ),
 }
 
 # Individual builders that exist but cannot be exercised by the contract
@@ -367,10 +377,28 @@ WRITE_MODULE_BUILDERS = {
     "mongodb_backup_config": ["describe_request", "set_request"],
     "mongodb_account": ["create_request", "delete_request", "describe_request", "password_request", "privilege_request"],
     "sqlserver_account": ["create_request", "delete_request", "describe_request", "password_request", "privilege_request", "remark_request"],
-    "sqlserver_instance": ["create_request", "describe_request", "destroy_request", "isolate_request", "rename_request", "renew_request", "resize_request", "security_groups_request"],
+    "sqlserver_instance": [
+        "create_request",
+        "describe_request",
+        "destroy_request",
+        "isolate_request",
+        "rename_request",
+        "renew_request",
+        "resize_request",
+        "security_groups_request",
+    ],
     "mariadb_account": ["create_request", "delete_request", "describe_request", "description_request", "password_request"],
     "mariadb_backup_config": ["describe_request", "modify_request"],
-    "mariadb_instance": ["create_hour_request", "create_prepaid_request", "describe_request", "destroy_request", "isolate_request", "rename_request", "resize_hour_request", "resize_prepaid_request"],
+    "mariadb_instance": [
+        "create_hour_request",
+        "create_prepaid_request",
+        "describe_request",
+        "destroy_request",
+        "isolate_request",
+        "rename_request",
+        "resize_hour_request",
+        "resize_prepaid_request",
+    ],
     "mariadb_account_privilege": ["describe_request", "grant_request"],
     "elasticsearch_index": ["create_request", "delete_request", "describe_request", "update_request"],
     "ckafka_user": ["create_request", "delete_request", "describe_request", "password_request"],
@@ -503,7 +531,15 @@ WRITE_MODULE_BUILDERS = {
         "build_describe_request",
         "build_update_request",
     ],
-    "cdn_cls_log_topic": ["create_request", "delete_request", "disable_request", "enable_request", "list_domains_request", "list_topics_request", "manage_domains_request"],
+    "cdn_cls_log_topic": [
+        "create_request",
+        "delete_request",
+        "disable_request",
+        "enable_request",
+        "list_domains_request",
+        "list_topics_request",
+        "manage_domains_request",
+    ],
     "cfw_internet_acl_rule": ["create_request", "delete_request", "describe_request", "update_request"],
     "cfw_nat_dnat_rule": ["create_request", "delete_request", "describe_request", "update_request"],
     "cfw_nat_acl_rule": ["create_request", "delete_request", "describe_request", "update_request"],
@@ -860,20 +896,98 @@ WRITE_MODULE_BUILDERS = {
     "privatelink_endpoint": ["build_create_request", "build_delete_request", "build_describe_request", "build_update_request"],
     "postgresql_account": ["build_create_request", "build_delete_request", "build_describe_request", "build_password_request", "build_remark_request"],
     "cynosdb_account": ["build_create_request", "build_delete_request", "build_describe_request", "build_description_request", "build_password_request"],
-    "cynosdb_cluster": ["create_request", "describe_request", "isolate_request", "offline_request", "rename_request", "slave_zone_request", "storage_request", "version_request"],
-    "ckafka_instance": ["attributes_request", "create_postpaid_request", "create_prepaid_request", "delete_postpaid_request", "delete_prepaid_request", "list_request", "modify_request", "resize_request"],
-    "dcdb_instance": ["create_hour_request", "create_prepaid_request", "describe_request", "destroy_request", "isolate_request", "rename_request", "upgrade_request"],
+    "cynosdb_cluster": [
+        "create_request",
+        "describe_request",
+        "isolate_request",
+        "offline_request",
+        "rename_request",
+        "slave_zone_request",
+        "storage_request",
+        "version_request",
+    ],
+    "ckafka_instance": [
+        "attributes_request",
+        "create_postpaid_request",
+        "create_prepaid_request",
+        "delete_postpaid_request",
+        "delete_prepaid_request",
+        "list_request",
+        "modify_request",
+        "resize_request",
+    ],
+    "dcdb_instance": [
+        "create_hour_request",
+        "create_prepaid_request",
+        "describe_request",
+        "destroy_request",
+        "isolate_request",
+        "rename_request",
+        "upgrade_request",
+    ],
     "tcaplusdb_cluster": ["create_request", "delete_request", "describe_request", "password_request", "rename_request"],
     "tdmq_rabbitmq_instance": ["create_request", "delete_request", "describe_request", "modify_request"],
     "oceanus_workspace": ["create_request", "delete_request", "describe_request", "modify_request"],
     "oceanus_job": ["create_request", "delete_request", "describe_request", "modify_request", "run_request", "stop_request"],
     "tse_sre_instance": ["create_request", "delete_request", "describe_request", "internet_request"],
-    "tdcpg_cluster": ["create_instances_request", "create_request", "delete_instances_request", "delete_request", "describe_request", "instances_request", "isolate_request", "rename_request", "renew_request", "resize_request"],
-    "vdb_instance": ["create_request", "describe_request", "destroy_request", "isolate_request", "recover_request", "scale_out_request", "scale_up_request", "security_groups_request"],
+    "tdcpg_cluster": [
+        "create_instances_request",
+        "create_request",
+        "delete_instances_request",
+        "delete_request",
+        "describe_request",
+        "instances_request",
+        "isolate_request",
+        "rename_request",
+        "renew_request",
+        "resize_request",
+    ],
+    "vdb_instance": [
+        "create_request",
+        "describe_request",
+        "destroy_request",
+        "isolate_request",
+        "recover_request",
+        "scale_out_request",
+        "scale_up_request",
+        "security_groups_request",
+    ],
     "thpc_cluster": ["create_request", "delete_request", "deletion_protection_request", "describe_request"],
-    "tdmysql_db_instance": ["create_request", "describe_request", "destroy_request", "detail_request", "expand_request", "isolate_request", "recover_request", "rename_request", "renew_request", "security_groups_describe_request", "security_groups_request", "upgrade_request"],
-    "dbdc_db_custom_cluster": ["add_nodes_request", "attributes_request", "create_request", "describe_request", "destroy_request", "detail_request", "nodes_request", "remove_nodes_request", "tags_request", "task_request"],
-    "cdwch_instance": ["create_request", "describe_request", "destroy_request", "detail_request", "resize_disk_request", "scale_nodes_request", "scale_spec_request"],
+    "tdmysql_db_instance": [
+        "create_request",
+        "describe_request",
+        "destroy_request",
+        "detail_request",
+        "expand_request",
+        "isolate_request",
+        "recover_request",
+        "rename_request",
+        "renew_request",
+        "security_groups_describe_request",
+        "security_groups_request",
+        "upgrade_request",
+    ],
+    "dbdc_db_custom_cluster": [
+        "add_nodes_request",
+        "attributes_request",
+        "create_request",
+        "describe_request",
+        "destroy_request",
+        "detail_request",
+        "nodes_request",
+        "remove_nodes_request",
+        "tags_request",
+        "task_request",
+    ],
+    "cdwch_instance": [
+        "create_request",
+        "describe_request",
+        "destroy_request",
+        "detail_request",
+        "resize_disk_request",
+        "scale_nodes_request",
+        "scale_spec_request",
+    ],
     "trabbit_serverless_vhost": ["create_request", "delete_request", "describe_request", "update_request"],
     "trabbit_serverless_user": ["create_request", "delete_request", "describe_request", "update_request"],
     "trabbit_serverless_permission": ["delete_request", "describe_request", "modify_request"],
@@ -1967,11 +2081,44 @@ def test_cdb_instance():
 
 
 def test_ckafka_instance():
-    module = _import_plugin("ckafka_instance"); models = _models("ckafka.v20190819")
-    p = {"instance_id": "ckafka-x", "name": "production-kafka", "zones": [100003, 100004], "vpc_id": "vpc-x", "subnet_id": "subnet-x", "period_months": 1, "auto_renew": False, "instance_type": 1, "specification": "profession", "kafka_version": "2.8.1", "disk_type": "CLOUD_BASIC", "disk_size": 500, "bandwidth": 40, "partitions": 400, "topic_count": 200, "retention_minutes": 1440, "max_message_bytes": 12582912, "retention_bytes": 1073741824, "unclean_leader_election": False, "deletion_protection": True, "tags": {"environment": "production"}}
-    requests = [module.list_request(models, p), module.attributes_request(models, p["instance_id"]), module.create_prepaid_request(models, p), module.create_postpaid_request(models, p), module.modify_request(models, p, p["instance_id"]), module.resize_request(models, p, p["instance_id"]), module.delete_prepaid_request(models, p["instance_id"]), module.delete_postpaid_request(models, p["instance_id"])]
+    module = _import_plugin("ckafka_instance")
+    models = _models("ckafka.v20190819")
+    p = {
+        "instance_id": "ckafka-x",
+        "name": "production-kafka",
+        "zones": [100003, 100004],
+        "vpc_id": "vpc-x",
+        "subnet_id": "subnet-x",
+        "period_months": 1,
+        "auto_renew": False,
+        "instance_type": 1,
+        "specification": "profession",
+        "kafka_version": "2.8.1",
+        "disk_type": "CLOUD_BASIC",
+        "disk_size": 500,
+        "bandwidth": 40,
+        "partitions": 400,
+        "topic_count": 200,
+        "retention_minutes": 1440,
+        "max_message_bytes": 12582912,
+        "retention_bytes": 1073741824,
+        "unclean_leader_election": False,
+        "deletion_protection": True,
+        "tags": {"environment": "production"},
+    }
+    requests = [
+        module.list_request(models, p),
+        module.attributes_request(models, p["instance_id"]),
+        module.create_prepaid_request(models, p),
+        module.create_postpaid_request(models, p),
+        module.modify_request(models, p, p["instance_id"]),
+        module.resize_request(models, p, p["instance_id"]),
+        module.delete_prepaid_request(models, p["instance_id"]),
+        module.delete_postpaid_request(models, p["instance_id"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "CKafka instance request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CKafka instance request %s" % index))
     assert errors == []
 
 
@@ -2099,20 +2246,29 @@ def test_dnspod_record():
 
 
 def test_dnspod_custom_line():
-    module = _import_plugin("dnspod_custom_line"); models = _models("dnspod.v20210323")
+    module = _import_plugin("dnspod_custom_line")
+    models = _models("dnspod.v20210323")
     p = {"domain": "example.com", "domain_id": None, "name": "office", "area": "203.0.113.1-203.0.113.254"}
     requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p), module.delete_request(models, p)]
     errors = []
-    for request in requests: errors.extend(audit_request(request, "DNSPod custom line request"))
+    for request in requests:
+        errors.extend(audit_request(request, "DNSPod custom line request"))
     assert errors == []
 
 
 def test_dnspod_line_group():
-    module = _import_plugin("dnspod_line_group"); models = _models("dnspod.v20210323")
+    module = _import_plugin("dnspod_line_group")
+    models = _models("dnspod.v20210323")
     p = {"domain": "example.com", "domain_id": None, "line_group_id": 123, "name": "corporate", "lines": ["office", "vpn"]}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p, 123), module.delete_request(models, p, 123)]
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.update_request(models, p, 123),
+        module.delete_request(models, p, 123),
+    ]
     errors = []
-    for request in requests: errors.extend(audit_request(request, "DNSPod line group request"))
+    for request in requests:
+        errors.extend(audit_request(request, "DNSPod line group request"))
     assert errors == []
 
 
@@ -2726,144 +2882,633 @@ def test_postgresql_account():
 
 
 def test_vdb_instance():
-    module = _import_plugin("vdb_instance"); models = _models("vdb.v20230616")
-    p = {"instance_id": "vdb-x", "name": "production-vectors", "zone": "ap-guangzhou-3", "slave_zones": ["ap-guangzhou-4"], "vpc_id": "vpc-x", "subnet_id": "subnet-x", "pay_mode": 0, "pay_period": 1, "auto_renew": 0, "product_type": 1, "instance_type": "NORMAL", "mode": "CLUSTER", "network_type": "VPC", "engine_name": "VectorDB", "engine_version": "1.0", "node_type": "NORMAL", "cpu": 4, "memory": 16, "disk_size": 500, "worker_node_count": 3, "security_group_ids": ["sg-x"], "tags": {"environment": "production"}, "project": "0", "brief": "production", "chief": "owner", "dba": "dba", "run_now": True}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.scale_out_request(models, p["instance_id"], 3), module.scale_up_request(models, p, p["instance_id"]), module.security_groups_request(models, p["instance_id"], p["security_group_ids"]), module.isolate_request(models, p["instance_id"]), module.recover_request(models, p["instance_id"], 1), module.destroy_request(models, p["instance_id"])]
+    module = _import_plugin("vdb_instance")
+    models = _models("vdb.v20230616")
+    p = {
+        "instance_id": "vdb-x",
+        "name": "production-vectors",
+        "zone": "ap-guangzhou-3",
+        "slave_zones": ["ap-guangzhou-4"],
+        "vpc_id": "vpc-x",
+        "subnet_id": "subnet-x",
+        "pay_mode": 0,
+        "pay_period": 1,
+        "auto_renew": 0,
+        "product_type": 1,
+        "instance_type": "NORMAL",
+        "mode": "CLUSTER",
+        "network_type": "VPC",
+        "engine_name": "VectorDB",
+        "engine_version": "1.0",
+        "node_type": "NORMAL",
+        "cpu": 4,
+        "memory": 16,
+        "disk_size": 500,
+        "worker_node_count": 3,
+        "security_group_ids": ["sg-x"],
+        "tags": {"environment": "production"},
+        "project": "0",
+        "brief": "production",
+        "chief": "owner",
+        "dba": "dba",
+        "run_now": True,
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.scale_out_request(models, p["instance_id"], 3),
+        module.scale_up_request(models, p, p["instance_id"]),
+        module.security_groups_request(models, p["instance_id"], p["security_group_ids"]),
+        module.isolate_request(models, p["instance_id"]),
+        module.recover_request(models, p["instance_id"], 1),
+        module.destroy_request(models, p["instance_id"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "VectorDB instance request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "VectorDB instance request %s" % index))
     assert errors == []
 
 
 def test_thpc_cluster():
-    module = _import_plugin("thpc_cluster"); models = _models("thpc.v20230321")
-    p = {"cluster_id": "x-hpc", "name": "production-hpc", "zone": "ap-guangzhou-3", "manager_node": {"instance_type": "S5.LARGE8", "system_disk": {"disk_type": "CLOUD_PREMIUM", "disk_size": 100}}, "manager_node_count": 1, "compute_node": {"instance_type": "HCCPNV5.24XLARGE384", "instance_charge_type": "POSTPAID_BY_HOUR"}, "compute_node_count": 2, "login_node": {"instance_type": "S5.LARGE8"}, "login_node_count": 1, "scheduler_type": "SLURM", "scheduler_version": "latest", "image_id": "img-x", "vpc_id": "vpc-x", "subnet_id": "subnet-x", "login_password": None, "login_key_ids": ["skey-x"], "security_group_ids": ["sg-x"], "client_token": "contract-token", "account_type": "NIS", "storage_option": None, "tags": {"environment": "production"}, "auto_scaling_type": "THPC_AS", "init_node_scripts": [{"script_path": "cos://bucket/init.sh", "timeout": 60}], "hpc_cluster_id": "hpc-x"}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.deletion_protection_request(models, p["cluster_id"], True), module.delete_request(models, p["cluster_id"])]
+    module = _import_plugin("thpc_cluster")
+    models = _models("thpc.v20230321")
+    p = {
+        "cluster_id": "x-hpc",
+        "name": "production-hpc",
+        "zone": "ap-guangzhou-3",
+        "manager_node": {"instance_type": "S5.LARGE8", "system_disk": {"disk_type": "CLOUD_PREMIUM", "disk_size": 100}},
+        "manager_node_count": 1,
+        "compute_node": {"instance_type": "HCCPNV5.24XLARGE384", "instance_charge_type": "POSTPAID_BY_HOUR"},
+        "compute_node_count": 2,
+        "login_node": {"instance_type": "S5.LARGE8"},
+        "login_node_count": 1,
+        "scheduler_type": "SLURM",
+        "scheduler_version": "latest",
+        "image_id": "img-x",
+        "vpc_id": "vpc-x",
+        "subnet_id": "subnet-x",
+        "login_password": None,
+        "login_key_ids": ["skey-x"],
+        "security_group_ids": ["sg-x"],
+        "client_token": "contract-token",
+        "account_type": "NIS",
+        "storage_option": None,
+        "tags": {"environment": "production"},
+        "auto_scaling_type": "THPC_AS",
+        "init_node_scripts": [{"script_path": "cos://bucket/init.sh", "timeout": 60}],
+        "hpc_cluster_id": "hpc-x",
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.deletion_protection_request(models, p["cluster_id"], True),
+        module.delete_request(models, p["cluster_id"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "THPC cluster request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "THPC cluster request %s" % index))
     assert errors == []
 
 
 def test_tdmysql_db_instance():
-    module = _import_plugin("tdmysql_db_instance"); models = _models("tdmysql.v20211122")
-    p = {"instance_id": "tdmysql-x", "name": "production-tdmysql", "zone": "ap-guangzhou-3", "zones": ["ap-guangzhou-3", "ap-guangzhou-4"], "vpc_id": "vpc-x", "subnet_id": "subnet-x", "spec_code": "tdsql.mysql.x4.medium", "disk": 200, "storage_node_count": 3, "replications": 3, "full_replications": 1, "storage_node_cpu": 4, "storage_node_memory": 16, "storage_type": "CLOUD_HSSD", "instance_type": "separate", "instance_mode": "standard", "sql_mode": "MySQL", "create_version": "8.0", "instance_count": 1, "pay_mode": "0", "period_months": 1, "az_mode": 3, "primary_zone": "ap-guangzhou-3", "port": 3306, "template_id": "tpl-x", "init_params": {"character_set_server": "utf8mb4"}, "auto_scale_min": None, "auto_scale_max": None, "security_group_ids": ["sg-x"], "username": "dbaadmin", "password": "Secret-1234", "encryption": True, "tags": {"environment": "production"}}
-    current = {"SpecCode": p["spec_code"], "Disk": p["disk"], "StorageNodeCpu": p["storage_node_cpu"], "StorageNodeMem": p["storage_node_memory"], "StorageType": p["storage_type"]}
-    requests = [module.describe_request(models, p), module.detail_request(models, p["instance_id"]), module.security_groups_describe_request(models, p["instance_id"]), module.create_request(models, p), module.expand_request(models, p, p["instance_id"], 4), module.upgrade_request(models, p, p["instance_id"], current), module.rename_request(models, p["instance_id"], p["name"]), module.isolate_request(models, p["instance_id"]), module.recover_request(models, p["instance_id"]), module.destroy_request(models, p["instance_id"]), module.renew_request(models, p["instance_id"], True), module.security_groups_request(models, p["instance_id"], p["security_group_ids"])]
+    module = _import_plugin("tdmysql_db_instance")
+    models = _models("tdmysql.v20211122")
+    p = {
+        "instance_id": "tdmysql-x",
+        "name": "production-tdmysql",
+        "zone": "ap-guangzhou-3",
+        "zones": ["ap-guangzhou-3", "ap-guangzhou-4"],
+        "vpc_id": "vpc-x",
+        "subnet_id": "subnet-x",
+        "spec_code": "tdsql.mysql.x4.medium",
+        "disk": 200,
+        "storage_node_count": 3,
+        "replications": 3,
+        "full_replications": 1,
+        "storage_node_cpu": 4,
+        "storage_node_memory": 16,
+        "storage_type": "CLOUD_HSSD",
+        "instance_type": "separate",
+        "instance_mode": "standard",
+        "sql_mode": "MySQL",
+        "create_version": "8.0",
+        "instance_count": 1,
+        "pay_mode": "0",
+        "period_months": 1,
+        "az_mode": 3,
+        "primary_zone": "ap-guangzhou-3",
+        "port": 3306,
+        "template_id": "tpl-x",
+        "init_params": {"character_set_server": "utf8mb4"},
+        "auto_scale_min": None,
+        "auto_scale_max": None,
+        "security_group_ids": ["sg-x"],
+        "username": "dbaadmin",
+        "password": "Secret-1234",
+        "encryption": True,
+        "tags": {"environment": "production"},
+    }
+    current = {
+        "SpecCode": p["spec_code"],
+        "Disk": p["disk"],
+        "StorageNodeCpu": p["storage_node_cpu"],
+        "StorageNodeMem": p["storage_node_memory"],
+        "StorageType": p["storage_type"],
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.detail_request(models, p["instance_id"]),
+        module.security_groups_describe_request(models, p["instance_id"]),
+        module.create_request(models, p),
+        module.expand_request(models, p, p["instance_id"], 4),
+        module.upgrade_request(models, p, p["instance_id"], current),
+        module.rename_request(models, p["instance_id"], p["name"]),
+        module.isolate_request(models, p["instance_id"]),
+        module.recover_request(models, p["instance_id"]),
+        module.destroy_request(models, p["instance_id"]),
+        module.renew_request(models, p["instance_id"], True),
+        module.security_groups_request(models, p["instance_id"], p["security_group_ids"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "TDMysql instance request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "TDMysql instance request %s" % index))
     assert errors == []
 
 
 def test_dbdc_db_custom_cluster():
-    module = _import_plugin("dbdc_db_custom_cluster"); models = _models("dbdc.v20201029")
-    p = {"cluster_id": "dbcc-x", "name": "production-db-custom", "description": "production", "container_vpc_id": "vpc-x", "container_subnet_ids": ["subnet-a", "subnet-b"], "api_server_vpc_id": "vpc-x", "api_server_subnet_id": "subnet-a", "deletion_protection": True, "tags": {"environment": "production"}, "client_token": "contract-token", "node_image_id": "img-x", "login_password": None, "login_key_id": "skey-x", "keep_image_login": None, "labels": {"workload": "database"}, "taints": [{"key": "database", "value": "true", "effect": "NoSchedule"}], "host_name": "db-{R:1}", "host_name_type": 1, "force_node_removal": False}
-    requests = [module.describe_request(models, p), module.detail_request(models, p["cluster_id"]), module.nodes_request(models, p["cluster_id"]), module.task_request(models, 123), module.create_request(models, p), module.attributes_request(models, p["cluster_id"], False), module.tags_request(models, p["cluster_id"], p["tags"], ["old"]), module.add_nodes_request(models, p, p["cluster_id"], ["dbcn-a"]), module.remove_nodes_request(models, p, p["cluster_id"], ["dbcn-b"]), module.destroy_request(models, p["cluster_id"])]
+    module = _import_plugin("dbdc_db_custom_cluster")
+    models = _models("dbdc.v20201029")
+    p = {
+        "cluster_id": "dbcc-x",
+        "name": "production-db-custom",
+        "description": "production",
+        "container_vpc_id": "vpc-x",
+        "container_subnet_ids": ["subnet-a", "subnet-b"],
+        "api_server_vpc_id": "vpc-x",
+        "api_server_subnet_id": "subnet-a",
+        "deletion_protection": True,
+        "tags": {"environment": "production"},
+        "client_token": "contract-token",
+        "node_image_id": "img-x",
+        "login_password": None,
+        "login_key_id": "skey-x",
+        "keep_image_login": None,
+        "labels": {"workload": "database"},
+        "taints": [{"key": "database", "value": "true", "effect": "NoSchedule"}],
+        "host_name": "db-{R:1}",
+        "host_name_type": 1,
+        "force_node_removal": False,
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.detail_request(models, p["cluster_id"]),
+        module.nodes_request(models, p["cluster_id"]),
+        module.task_request(models, 123),
+        module.create_request(models, p),
+        module.attributes_request(models, p["cluster_id"], False),
+        module.tags_request(models, p["cluster_id"], p["tags"], ["old"]),
+        module.add_nodes_request(models, p, p["cluster_id"], ["dbcn-a"]),
+        module.remove_nodes_request(models, p, p["cluster_id"], ["dbcn-b"]),
+        module.destroy_request(models, p["cluster_id"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "DB Custom cluster request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "DB Custom cluster request %s" % index))
     assert errors == []
 
 
 def test_cdwch_instance():
-    module = _import_plugin("cdwch_instance"); models = _models("cdwch.v20200915")
-    p = {"instance_id": "cdwch-x", "name": "production-clickhouse", "zone": "ap-beijing-2", "vpc_id": "vpc-x", "subnet_id": "subnet-x", "product_version": "23.8.9.1", "high_availability": True, "zk_high_availability": True, "data_spec_name": "S_16_64_H", "data_node_count": 2, "data_disk_size": 200, "common_spec_name": "S_4_16_H", "common_node_count": 3, "common_disk_size": 100, "charge_type": "POSTPAID_BY_HOUR", "period_months": 1, "auto_renew": False, "password": "Secret-1234", "tags": {"environment": "production"}, "cls_logset_id": "logset-x", "cos_bucket_name": "bucket-x", "mount_disk_type": 0, "secondary_zones": [{"zone": "ap-beijing-3", "subnet_id": "subnet-y", "user_ip_count": 10}], "scale_out_cluster": "default_cluster", "user_subnet_ip_count": 20, "scale_out_node_ip": "10.0.0.10", "reduce_shard_info": ["10.0.0.11"], "rolling_spec_change": True}
-    requests = [module.describe_request(models, p), module.detail_request(models, p["instance_id"]), module.create_request(models, p), module.scale_nodes_request(models, p, p["instance_id"], "DATA", 4), module.scale_spec_request(models, p["instance_id"], "DATA", p["data_spec_name"]), module.resize_disk_request(models, p["instance_id"], "DATA", 300), module.destroy_request(models, p["instance_id"])]
+    module = _import_plugin("cdwch_instance")
+    models = _models("cdwch.v20200915")
+    p = {
+        "instance_id": "cdwch-x",
+        "name": "production-clickhouse",
+        "zone": "ap-beijing-2",
+        "vpc_id": "vpc-x",
+        "subnet_id": "subnet-x",
+        "product_version": "23.8.9.1",
+        "high_availability": True,
+        "zk_high_availability": True,
+        "data_spec_name": "S_16_64_H",
+        "data_node_count": 2,
+        "data_disk_size": 200,
+        "common_spec_name": "S_4_16_H",
+        "common_node_count": 3,
+        "common_disk_size": 100,
+        "charge_type": "POSTPAID_BY_HOUR",
+        "period_months": 1,
+        "auto_renew": False,
+        "password": "Secret-1234",
+        "tags": {"environment": "production"},
+        "cls_logset_id": "logset-x",
+        "cos_bucket_name": "bucket-x",
+        "mount_disk_type": 0,
+        "secondary_zones": [{"zone": "ap-beijing-3", "subnet_id": "subnet-y", "user_ip_count": 10}],
+        "scale_out_cluster": "default_cluster",
+        "user_subnet_ip_count": 20,
+        "scale_out_node_ip": "10.0.0.10",
+        "reduce_shard_info": ["10.0.0.11"],
+        "rolling_spec_change": True,
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.detail_request(models, p["instance_id"]),
+        module.create_request(models, p),
+        module.scale_nodes_request(models, p, p["instance_id"], "DATA", 4),
+        module.scale_spec_request(models, p["instance_id"], "DATA", p["data_spec_name"]),
+        module.resize_disk_request(models, p["instance_id"], "DATA", 300),
+        module.destroy_request(models, p["instance_id"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "TCHouse-C instance request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "TCHouse-C instance request %s" % index))
     assert errors == []
 
 
 def _check_trabbit_serverless_identity_resources():
     models = _models("trabbit.v20230418")
-    vhost = _import_plugin("trabbit_serverless_vhost"); vp = {"instance_id": "amqp-x", "name": "production", "description": "Production", "trace_enabled": True, "apply_trace": True, "mirror_queue_policy": True}
-    user = _import_plugin("trabbit_serverless_user"); up = {"instance_id": "amqp-x", "name": "application", "password": "Secret-1234", "rotate_password": True, "description": "Application", "tags": ["management"], "max_connections": 100, "max_channels": 200}
-    permission = _import_plugin("trabbit_serverless_permission"); pp = {"instance_id": "amqp-x", "user": "application", "virtual_host": "production", "configure_regex": ".*", "write_regex": ".*", "read_regex": ".*"}
-    requests = [vhost.describe_request(models, vp), vhost.create_request(models, vp), vhost.update_request(models, vp), vhost.delete_request(models, vp), user.describe_request(models, up), user.create_request(models, up), user.update_request(models, up), user.delete_request(models, up), permission.describe_request(models, pp), permission.modify_request(models, pp), permission.delete_request(models, pp)]
+    vhost = _import_plugin("trabbit_serverless_vhost")
+    vp = {"instance_id": "amqp-x", "name": "production", "description": "Production", "trace_enabled": True, "apply_trace": True, "mirror_queue_policy": True}
+    user = _import_plugin("trabbit_serverless_user")
+    up = {
+        "instance_id": "amqp-x",
+        "name": "application",
+        "password": "Secret-1234",
+        "rotate_password": True,
+        "description": "Application",
+        "tags": ["management"],
+        "max_connections": 100,
+        "max_channels": 200,
+    }
+    permission = _import_plugin("trabbit_serverless_permission")
+    pp = {"instance_id": "amqp-x", "user": "application", "virtual_host": "production", "configure_regex": ".*", "write_regex": ".*", "read_regex": ".*"}
+    requests = [
+        vhost.describe_request(models, vp),
+        vhost.create_request(models, vp),
+        vhost.update_request(models, vp),
+        vhost.delete_request(models, vp),
+        user.describe_request(models, up),
+        user.create_request(models, up),
+        user.update_request(models, up),
+        user.delete_request(models, up),
+        permission.describe_request(models, pp),
+        permission.modify_request(models, pp),
+        permission.delete_request(models, pp),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "RabbitMQ Serverless identity request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "RabbitMQ Serverless identity request %s" % index))
     assert errors == []
 
 
-def test_trabbit_serverless_vhost(): _check_trabbit_serverless_identity_resources()
-def test_trabbit_serverless_user(): _check_trabbit_serverless_identity_resources()
-def test_trabbit_serverless_permission(): _check_trabbit_serverless_identity_resources()
+def test_trabbit_serverless_vhost():
+    _check_trabbit_serverless_identity_resources()
+
+
+def test_trabbit_serverless_user():
+    _check_trabbit_serverless_identity_resources()
+
+
+def test_trabbit_serverless_permission():
+    _check_trabbit_serverless_identity_resources()
 
 
 def _check_trabbit_serverless_messaging_resources():
     models = _models("trabbit.v20230418")
-    exchange = _import_plugin("trabbit_serverless_exchange"); ep = {"instance_id": "amqp-x", "virtual_host": "production", "name": "orders", "exchange_type": "topic", "remark": "Orders", "durable": True, "auto_delete": False, "internal": False, "alternate_exchange": "orders-dlx", "delayed_exchange_type": None}
-    queue = _import_plugin("trabbit_serverless_queue"); qp = {"instance_id": "amqp-x", "virtual_host": "production", "name": "order-workers", "queue_type": "classic", "durable": True, "auto_delete": False, "remark": "Workers", "message_ttl": 86400000, "auto_expire": None, "max_length": 100000, "max_length_bytes": None, "delivery_limit": None, "overflow_behaviour": "reject-publish", "dead_letter_exchange": "orders-dlx", "dead_letter_routing_key": "orders.failed", "single_active_consumer": True, "maximum_priority": 10, "lazy_mode": False, "master_locator": "min-masters", "max_in_memory_length": None, "max_in_memory_bytes": None, "node": None, "dead_letter_strategy": None, "queue_leader_locator": None, "quorum_initial_group_size": None}
-    binding = _import_plugin("trabbit_serverless_binding"); bp = {"instance_id": "amqp-x", "virtual_host": "production", "binding_id": 1, "source_exchange": "orders", "destination_type": "queue", "destination": "order-workers", "routing_key": "orders.created"}
-    requests = [exchange.describe_request(models, ep), exchange.detail_request(models, ep), exchange.create_request(models, ep), exchange.update_request(models, ep), exchange.delete_request(models, ep), queue.describe_request(models, qp), queue.detail_request(models, qp), queue.create_request(models, qp), queue.update_request(models, qp, {}), queue.delete_request(models, qp), binding.describe_request(models, bp), binding.create_request(models, bp), binding.delete_request(models, bp, 1)]
+    exchange = _import_plugin("trabbit_serverless_exchange")
+    ep = {
+        "instance_id": "amqp-x",
+        "virtual_host": "production",
+        "name": "orders",
+        "exchange_type": "topic",
+        "remark": "Orders",
+        "durable": True,
+        "auto_delete": False,
+        "internal": False,
+        "alternate_exchange": "orders-dlx",
+        "delayed_exchange_type": None,
+    }
+    queue = _import_plugin("trabbit_serverless_queue")
+    qp = {
+        "instance_id": "amqp-x",
+        "virtual_host": "production",
+        "name": "order-workers",
+        "queue_type": "classic",
+        "durable": True,
+        "auto_delete": False,
+        "remark": "Workers",
+        "message_ttl": 86400000,
+        "auto_expire": None,
+        "max_length": 100000,
+        "max_length_bytes": None,
+        "delivery_limit": None,
+        "overflow_behaviour": "reject-publish",
+        "dead_letter_exchange": "orders-dlx",
+        "dead_letter_routing_key": "orders.failed",
+        "single_active_consumer": True,
+        "maximum_priority": 10,
+        "lazy_mode": False,
+        "master_locator": "min-masters",
+        "max_in_memory_length": None,
+        "max_in_memory_bytes": None,
+        "node": None,
+        "dead_letter_strategy": None,
+        "queue_leader_locator": None,
+        "quorum_initial_group_size": None,
+    }
+    binding = _import_plugin("trabbit_serverless_binding")
+    bp = {
+        "instance_id": "amqp-x",
+        "virtual_host": "production",
+        "binding_id": 1,
+        "source_exchange": "orders",
+        "destination_type": "queue",
+        "destination": "order-workers",
+        "routing_key": "orders.created",
+    }
+    requests = [
+        exchange.describe_request(models, ep),
+        exchange.detail_request(models, ep),
+        exchange.create_request(models, ep),
+        exchange.update_request(models, ep),
+        exchange.delete_request(models, ep),
+        queue.describe_request(models, qp),
+        queue.detail_request(models, qp),
+        queue.create_request(models, qp),
+        queue.update_request(models, qp, {}),
+        queue.delete_request(models, qp),
+        binding.describe_request(models, bp),
+        binding.create_request(models, bp),
+        binding.delete_request(models, bp, 1),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "RabbitMQ Serverless messaging request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "RabbitMQ Serverless messaging request %s" % index))
     assert errors == []
 
 
-def test_trabbit_serverless_exchange(): _check_trabbit_serverless_messaging_resources()
-def test_trabbit_serverless_queue(): _check_trabbit_serverless_messaging_resources()
-def test_trabbit_serverless_binding(): _check_trabbit_serverless_messaging_resources()
+def test_trabbit_serverless_exchange():
+    _check_trabbit_serverless_messaging_resources()
+
+
+def test_trabbit_serverless_queue():
+    _check_trabbit_serverless_messaging_resources()
+
+
+def test_trabbit_serverless_binding():
+    _check_trabbit_serverless_messaging_resources()
 
 
 def test_tdcpg_cluster():
-    module = _import_plugin("tdcpg_cluster"); models = _models("tdcpg.v20211118")
-    p = {"cluster_id": "tdcpg-x", "name": "production-tdcpg", "zone": "ap-guangzhou-3", "vpc_id": "vpc-x", "subnet_id": "subnet-x", "master_password": "Secret-1234", "cpu": 4, "memory": 8, "instance_count": 2, "db_version": "13.3", "db_major_version": "13", "db_kernel_version": "v1", "pay_mode": "POSTPAID_BY_HOUR", "period_months": 1, "auto_renew": False, "port": 5432, "storage_pay_mode": "POSTPAID_BY_HOUR", "storage": 100}
-    requests = [module.describe_request(models, p), module.instances_request(models, p["cluster_id"]), module.create_request(models, p), module.create_instances_request(models, p, p["cluster_id"], 1), module.resize_request(models, p, p["cluster_id"], ["ins-x"]), module.delete_instances_request(models, p["cluster_id"], ["ins-x"]), module.rename_request(models, p["cluster_id"], p["name"]), module.renew_request(models, p["cluster_id"], True), module.isolate_request(models, p["cluster_id"]), module.delete_request(models, p["cluster_id"])]
+    module = _import_plugin("tdcpg_cluster")
+    models = _models("tdcpg.v20211118")
+    p = {
+        "cluster_id": "tdcpg-x",
+        "name": "production-tdcpg",
+        "zone": "ap-guangzhou-3",
+        "vpc_id": "vpc-x",
+        "subnet_id": "subnet-x",
+        "master_password": "Secret-1234",
+        "cpu": 4,
+        "memory": 8,
+        "instance_count": 2,
+        "db_version": "13.3",
+        "db_major_version": "13",
+        "db_kernel_version": "v1",
+        "pay_mode": "POSTPAID_BY_HOUR",
+        "period_months": 1,
+        "auto_renew": False,
+        "port": 5432,
+        "storage_pay_mode": "POSTPAID_BY_HOUR",
+        "storage": 100,
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.instances_request(models, p["cluster_id"]),
+        module.create_request(models, p),
+        module.create_instances_request(models, p, p["cluster_id"], 1),
+        module.resize_request(models, p, p["cluster_id"], ["ins-x"]),
+        module.delete_instances_request(models, p["cluster_id"], ["ins-x"]),
+        module.rename_request(models, p["cluster_id"], p["name"]),
+        module.renew_request(models, p["cluster_id"], True),
+        module.isolate_request(models, p["cluster_id"]),
+        module.delete_request(models, p["cluster_id"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "TDSQL-C PostgreSQL request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "TDSQL-C PostgreSQL request %s" % index))
     assert errors == []
 
 
 def test_tse_sre_instance():
-    module = _import_plugin("tse_sre_instance"); models = _models("tse.v20201207")
-    p = {"instance_id": "ins-x", "name": "production-apollo", "region": "ap-guangzhou", "engine_type": "apollo", "engine_version": "2.2.0", "product_version": "STANDARD", "resource_spec": "spec-x", "node_count": 3, "vpc_id": "vpc-x", "subnet_id": "subnet-x", "zone_ids": [100003], "storage_type": "CLOUD_PREMIUM", "storage_capacity": 50, "storage_option": [1], "admin_name": "admin", "admin_password": "Secret-1234", "admin_token": "token-x", "apollo_environments": [{"name": "prod", "resource_spec": "spec-x", "node_count": 3, "storage_capacity": 35, "vpc_id": "vpc-x", "subnet_id": "subnet-x", "description": "Production"}], "tags": {"environment": "production"}}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.internet_request(models, p["instance_id"], p["engine_type"], True), module.delete_request(models, p["instance_id"])]
+    module = _import_plugin("tse_sre_instance")
+    models = _models("tse.v20201207")
+    p = {
+        "instance_id": "ins-x",
+        "name": "production-apollo",
+        "region": "ap-guangzhou",
+        "engine_type": "apollo",
+        "engine_version": "2.2.0",
+        "product_version": "STANDARD",
+        "resource_spec": "spec-x",
+        "node_count": 3,
+        "vpc_id": "vpc-x",
+        "subnet_id": "subnet-x",
+        "zone_ids": [100003],
+        "storage_type": "CLOUD_PREMIUM",
+        "storage_capacity": 50,
+        "storage_option": [1],
+        "admin_name": "admin",
+        "admin_password": "Secret-1234",
+        "admin_token": "token-x",
+        "apollo_environments": [
+            {
+                "name": "prod",
+                "resource_spec": "spec-x",
+                "node_count": 3,
+                "storage_capacity": 35,
+                "vpc_id": "vpc-x",
+                "subnet_id": "subnet-x",
+                "description": "Production",
+            }
+        ],
+        "tags": {"environment": "production"},
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.internet_request(models, p["instance_id"], p["engine_type"], True),
+        module.delete_request(models, p["instance_id"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "TSE registry engine request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "TSE registry engine request %s" % index))
     assert errors == []
 
 
 def test_oceanus_job():
-    module = _import_plugin("oceanus_job"); models = _models("oceanus.v20190422")
-    p = {"job_id": "job-x", "name": "orders-stream", "workspace_id": "space-x", "job_type": 1, "cluster_type": 2, "cluster_id": "cluster-x", "cu_memory": 4, "folder_id": "root", "flink_version": "Flink-1.17", "jdk_version": "JDK11", "remark": "production", "description": "Order stream", "default_alarm": True, "continue_alarm": False, "tags": {"environment": "production"}, "job_config_version": 3, "start_mode": "LATEST", "savepoint_id": "savepoint-x", "savepoint_path": "cosn://bucket/savepoint"}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.modify_request(models, p, p["job_id"], p["name"], p["remark"], p["description"], p["folder_id"]), module.run_request(models, p, p["job_id"], True), module.stop_request(models, p, p["job_id"], True), module.delete_request(models, p, p["job_id"], p["name"])]
+    module = _import_plugin("oceanus_job")
+    models = _models("oceanus.v20190422")
+    p = {
+        "job_id": "job-x",
+        "name": "orders-stream",
+        "workspace_id": "space-x",
+        "job_type": 1,
+        "cluster_type": 2,
+        "cluster_id": "cluster-x",
+        "cu_memory": 4,
+        "folder_id": "root",
+        "flink_version": "Flink-1.17",
+        "jdk_version": "JDK11",
+        "remark": "production",
+        "description": "Order stream",
+        "default_alarm": True,
+        "continue_alarm": False,
+        "tags": {"environment": "production"},
+        "job_config_version": 3,
+        "start_mode": "LATEST",
+        "savepoint_id": "savepoint-x",
+        "savepoint_path": "cosn://bucket/savepoint",
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.modify_request(models, p, p["job_id"], p["name"], p["remark"], p["description"], p["folder_id"]),
+        module.run_request(models, p, p["job_id"], True),
+        module.stop_request(models, p, p["job_id"], True),
+        module.delete_request(models, p, p["job_id"], p["name"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "Oceanus job request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "Oceanus job request %s" % index))
     assert errors == []
 
 
 def test_oceanus_workspace():
-    module = _import_plugin("oceanus_workspace"); models = _models("oceanus.v20190422")
+    module = _import_plugin("oceanus_workspace")
+    models = _models("oceanus.v20190422")
     p = {"workspace_id": "space-x", "name": "production-streaming", "description": "Production Flink resources"}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.modify_request(models, p["workspace_id"], p["name"], p["description"]), module.delete_request(models, p["workspace_id"])]
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.modify_request(models, p["workspace_id"], p["name"], p["description"]),
+        module.delete_request(models, p["workspace_id"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "Oceanus workspace request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "Oceanus workspace request %s" % index))
     assert errors == []
 
 
 def test_tcaplusdb_cluster():
-    module = _import_plugin("tcaplusdb_cluster"); models = _models("tcaplusdb.v20190823")
-    p = {"cluster_id": "tcaplus-x", "name": "production-tcaplus", "idl_type": "TDR", "vpc_id": "vpc-x", "subnet_id": "subnet-x", "password": "Old-Secret-123", "new_password": "New-Secret-456", "rotate_password": True, "old_password_expire_time": "2026-09-01 00:00:00", "cluster_type": 1, "auth_type": 1, "ipv6": False, "servers": [{"server_uid": "svr-x", "machine_type": "SVR1"}], "proxies": [{"proxy_uid": "proxy-x", "machine_type": "PROXY1", "available_count": 2}], "tags": {"environment": "production"}}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.rename_request(models, p["cluster_id"], p["name"]), module.password_request(models, p, p["cluster_id"]), module.delete_request(models, p["cluster_id"])]
+    module = _import_plugin("tcaplusdb_cluster")
+    models = _models("tcaplusdb.v20190823")
+    p = {
+        "cluster_id": "tcaplus-x",
+        "name": "production-tcaplus",
+        "idl_type": "TDR",
+        "vpc_id": "vpc-x",
+        "subnet_id": "subnet-x",
+        "password": "Old-Secret-123",
+        "new_password": "New-Secret-456",
+        "rotate_password": True,
+        "old_password_expire_time": "2026-09-01 00:00:00",
+        "cluster_type": 1,
+        "auth_type": 1,
+        "ipv6": False,
+        "servers": [{"server_uid": "svr-x", "machine_type": "SVR1"}],
+        "proxies": [{"proxy_uid": "proxy-x", "machine_type": "PROXY1", "available_count": 2}],
+        "tags": {"environment": "production"},
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.rename_request(models, p["cluster_id"], p["name"]),
+        module.password_request(models, p, p["cluster_id"]),
+        module.delete_request(models, p["cluster_id"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "TcaplusDB cluster request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "TcaplusDB cluster request %s" % index))
     assert errors == []
 
 
 def test_dcdb_instance():
-    module = _import_plugin("dcdb_instance"); models = _models("dcdb.v20180411")
-    p = {"instance_id": "dcdbt-x", "name": "production-dcdb", "zones": ["ap-guangzhou-3", "ap-guangzhou-4"], "vpc_id": "vpc-x", "subnet_id": "subnet-x", "db_version": "8.0", "shard_memory": 8, "shard_storage": 100, "shard_node_count": 2, "shard_count": 4, "shard_cpu": 4, "period_months": 1, "auto_renew": False, "security_group_ids": ["sg-x"], "ipv6": False}
+    module = _import_plugin("dcdb_instance")
+    models = _models("dcdb.v20180411")
+    p = {
+        "instance_id": "dcdbt-x",
+        "name": "production-dcdb",
+        "zones": ["ap-guangzhou-3", "ap-guangzhou-4"],
+        "vpc_id": "vpc-x",
+        "subnet_id": "subnet-x",
+        "db_version": "8.0",
+        "shard_memory": 8,
+        "shard_storage": 100,
+        "shard_node_count": 2,
+        "shard_count": 4,
+        "shard_cpu": 4,
+        "period_months": 1,
+        "auto_renew": False,
+        "security_group_ids": ["sg-x"],
+        "ipv6": False,
+    }
     current = {"InstanceId": p["instance_id"], "ShardDetail": [{"ShardInstanceId": "shard-x"}]}
-    requests = [module.describe_request(models, p), module.create_prepaid_request(models, p), module.create_hour_request(models, p), module.rename_request(models, p["instance_id"], p["name"]), module.upgrade_request(models, p, current, hourly=True), module.upgrade_request(models, p, current, 2, False), module.isolate_request(models, p["instance_id"], True), module.isolate_request(models, p["instance_id"], False), module.destroy_request(models, p["instance_id"], True), module.destroy_request(models, p["instance_id"], False)]
+    requests = [
+        module.describe_request(models, p),
+        module.create_prepaid_request(models, p),
+        module.create_hour_request(models, p),
+        module.rename_request(models, p["instance_id"], p["name"]),
+        module.upgrade_request(models, p, current, hourly=True),
+        module.upgrade_request(models, p, current, 2, False),
+        module.isolate_request(models, p["instance_id"], True),
+        module.isolate_request(models, p["instance_id"], False),
+        module.destroy_request(models, p["instance_id"], True),
+        module.destroy_request(models, p["instance_id"], False),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "DCDB instance request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "DCDB instance request %s" % index))
     assert errors == []
 
 
 def test_cynosdb_cluster():
-    module = _import_plugin("cynosdb_cluster"); models = _models("cynosdb.v20190107")
-    p = {"cluster_id": "cynosdbmysql-x", "name": "production-cynosdb", "zone": "ap-guangzhou-3", "slave_zone": "ap-guangzhou-4", "vpc_id": "vpc-x", "subnet_id": "subnet-x", "db_type": "MYSQL", "db_version": "8.0", "cynos_version": "3.1.2", "cpu": 2, "memory": 4, "instance_count": 2, "storage": 100, "admin_password": "Secret-1234", "port": 3306, "pay_mode": 0, "period_months": 1, "auto_renew": False, "security_group_ids": ["sg-x"]}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.rename_request(models, p["cluster_id"], p["name"]), module.storage_request(models, p["cluster_id"], 50, 100), module.slave_zone_request(models, p["cluster_id"], "ap-guangzhou-3", p["slave_zone"]), module.version_request(models, p["cluster_id"], p["cynos_version"]), module.isolate_request(models, p["cluster_id"], p["db_type"]), module.offline_request(models, p["cluster_id"])]
+    module = _import_plugin("cynosdb_cluster")
+    models = _models("cynosdb.v20190107")
+    p = {
+        "cluster_id": "cynosdbmysql-x",
+        "name": "production-cynosdb",
+        "zone": "ap-guangzhou-3",
+        "slave_zone": "ap-guangzhou-4",
+        "vpc_id": "vpc-x",
+        "subnet_id": "subnet-x",
+        "db_type": "MYSQL",
+        "db_version": "8.0",
+        "cynos_version": "3.1.2",
+        "cpu": 2,
+        "memory": 4,
+        "instance_count": 2,
+        "storage": 100,
+        "admin_password": "Secret-1234",
+        "port": 3306,
+        "pay_mode": 0,
+        "period_months": 1,
+        "auto_renew": False,
+        "security_group_ids": ["sg-x"],
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.rename_request(models, p["cluster_id"], p["name"]),
+        module.storage_request(models, p["cluster_id"], 50, 100),
+        module.slave_zone_request(models, p["cluster_id"], "ap-guangzhou-3", p["slave_zone"]),
+        module.version_request(models, p["cluster_id"], p["cynos_version"]),
+        module.isolate_request(models, p["cluster_id"], p["db_type"]),
+        module.offline_request(models, p["cluster_id"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "CynosDB cluster request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CynosDB cluster request %s" % index))
     assert errors == []
 
 
@@ -2893,7 +3538,8 @@ def test_cynosdb_account():
 
 
 def test_cynosdb_backup_config():
-    module = _import_plugin("cynosdb_backup_config"); models = _models("cynosdb.v20190107")
+    module = _import_plugin("cynosdb_backup_config")
+    models = _models("cynosdb.v20190107")
     p = {"cluster_id": "cynosdbmysql-x", "backup_start": 10800, "backup_end": 14400, "retention_seconds": 2592000}
     errors = audit_request(module.describe_request(models, p["cluster_id"]), "CynosDB backup describe")
     errors.extend(audit_request(module.update_request(models, p), "CynosDB backup update"))
@@ -2901,8 +3547,16 @@ def test_cynosdb_backup_config():
 
 
 def test_cynosdb_account_privilege():
-    module = _import_plugin("cynosdb_account_privilege"); models = _models("cynosdb.v20190107")
-    p = {"cluster_id": "cynosdbmysql-x", "account_name": "app", "host": "%", "global_privileges": ["show_db"], "database_privileges": [{"database": "orders", "privileges": ["select", "insert"]}], "table_privileges": [{"database": "orders", "table": "audit", "privileges": ["select"]}]}
+    module = _import_plugin("cynosdb_account_privilege")
+    models = _models("cynosdb.v20190107")
+    p = {
+        "cluster_id": "cynosdbmysql-x",
+        "account_name": "app",
+        "host": "%",
+        "global_privileges": ["show_db"],
+        "database_privileges": [{"database": "orders", "privileges": ["select", "insert"]}],
+        "table_privileges": [{"database": "orders", "table": "audit", "privileges": ["select"]}],
+    }
     errors = audit_request(module.describe_request(models, p), "CynosDB account privilege describe")
     errors.extend(audit_request(module.update_request(models, p), "CynosDB account privilege update"))
     assert errors == []
@@ -2981,10 +3635,26 @@ def test_api_gateway_usage_plan_binding():
 def test_cls_config():
     module = _import_plugin("cls_config")
     models = _models("cls.v20201016")
-    params = {"name": "nginx", "topic_id": "topic-x", "path": "/var/log/nginx/access.log", "log_type": "minimalist_log", "extract_rule": None, "exclude_paths": [], "user_define_rule": None, "advanced_config": None, "input_type": None}
-    requests = [module.build_describe(models, "nginx"), module.build_create(models, params), module.build_update(models, params, "config-x"), module.build_delete(models, "config-x")]
+    params = {
+        "name": "nginx",
+        "topic_id": "topic-x",
+        "path": "/var/log/nginx/access.log",
+        "log_type": "minimalist_log",
+        "extract_rule": None,
+        "exclude_paths": [],
+        "user_define_rule": None,
+        "advanced_config": None,
+        "input_type": None,
+    }
+    requests = [
+        module.build_describe(models, "nginx"),
+        module.build_create(models, params),
+        module.build_update(models, params, "config-x"),
+        module.build_delete(models, "config-x"),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "CLS config request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CLS config request %s" % index))
     assert errors == []
 
 
@@ -2993,288 +3663,588 @@ def test_cls_config_machine_group_binding():
     models = _models("cls.v20201016")
     requests = [module.build_describe(models, "group-x"), module.build_apply(models, "config-x", "group-x"), module.build_remove(models, "config-x", "group-x")]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "CLS config binding request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CLS config binding request %s" % index))
     assert errors == []
 
 
 def test_api_gateway_api_key():
-    module = _import_plugin("api_gateway_api_key"); models = _models("apigateway.v20180808")
+    module = _import_plugin("api_gateway_api_key")
+    models = _models("apigateway.v20180808")
     params = {"name": "client", "key_type": "manual", "access_key_id": "AKIDexample", "access_key_secret": "secret_example"}
-    requests = [module.build_get(models, "AKIDexample"), module.build_list(models, "client"), module.build_create(models, params), module.build_update(models, "AKIDexample", "secret_example"), module.build_delete(models, "AKIDexample")]
+    requests = [
+        module.build_get(models, "AKIDexample"),
+        module.build_list(models, "client"),
+        module.build_create(models, params),
+        module.build_update(models, "AKIDexample", "secret_example"),
+        module.build_delete(models, "AKIDexample"),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "API Gateway API key request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "API Gateway API key request %s" % index))
     assert errors == []
 
 
 def test_api_gateway_usage_plan_key_binding():
-    module = _import_plugin("api_gateway_usage_plan_key_binding"); models = _models("apigateway.v20180808")
-    requests = [module.build_describe(models, "usagePlan-x"), module.build_bind(models, "usagePlan-x", "AKIDexample"), module.build_unbind(models, "usagePlan-x", "AKIDexample")]
+    module = _import_plugin("api_gateway_usage_plan_key_binding")
+    models = _models("apigateway.v20180808")
+    requests = [
+        module.build_describe(models, "usagePlan-x"),
+        module.build_bind(models, "usagePlan-x", "AKIDexample"),
+        module.build_unbind(models, "usagePlan-x", "AKIDexample"),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "API Gateway key binding request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "API Gateway key binding request %s" % index))
     assert errors == []
 
 
 def test_tke_cluster_endpoint():
-    module = _import_plugin("tke_cluster_endpoint"); models = _models("tke.v20180525")
-    params = {"cluster_id": "cls-x", "access": "public", "subnet_id": None, "domain": None, "security_group_id": "sg-x", "load_balancer_id": None, "extensive_parameters": {"InternetAccessible": {"InternetChargeType": "TRAFFIC_POSTPAID_BY_HOUR", "InternetMaxBandwidthOut": 10}}}
-    requests = [module.build_describe(models, "cls-x"), module.build_status(models, "cls-x", True), module.build_create(models, params), module.build_delete(models, params)]
+    module = _import_plugin("tke_cluster_endpoint")
+    models = _models("tke.v20180525")
+    params = {
+        "cluster_id": "cls-x",
+        "access": "public",
+        "subnet_id": None,
+        "domain": None,
+        "security_group_id": "sg-x",
+        "load_balancer_id": None,
+        "extensive_parameters": {"InternetAccessible": {"InternetChargeType": "TRAFFIC_POSTPAID_BY_HOUR", "InternetMaxBandwidthOut": 10}},
+    }
+    requests = [
+        module.build_describe(models, "cls-x"),
+        module.build_status(models, "cls-x", True),
+        module.build_create(models, params),
+        module.build_delete(models, params),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "TKE endpoint request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "TKE endpoint request %s" % index))
     assert errors == []
 
 
 def test_tke_cluster_authentication():
-    module = _import_plugin("tke_cluster_authentication"); models = _models("tke.v20180525")
-    params = {"cluster_id": "cls-x", "service_accounts": {"UseTKEDefault": True, "AutoCreateDiscoveryAnonymousAuth": True}, "oidc": {"AutoCreateOIDCConfig": True, "AutoCreateClientId": ["kubernetes"], "AutoInstallPodIdentityWebhookAddon": True}}
+    module = _import_plugin("tke_cluster_authentication")
+    models = _models("tke.v20180525")
+    params = {
+        "cluster_id": "cls-x",
+        "service_accounts": {"UseTKEDefault": True, "AutoCreateDiscoveryAnonymousAuth": True},
+        "oidc": {"AutoCreateOIDCConfig": True, "AutoCreateClientId": ["kubernetes"], "AutoInstallPodIdentityWebhookAddon": True},
+    }
     requests = [module.build_describe(models, "cls-x"), module.build_modify(models, params)]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "TKE authentication request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "TKE authentication request %s" % index))
     assert errors == []
 
 
 def test_tke_cluster_audit():
-    module = _import_plugin("tke_cluster_audit"); models = _models("tke.v20180525")
+    module = _import_plugin("tke_cluster_audit")
+    models = _models("tke.v20180525")
     params = {"cluster_id": "cls-x", "logset_id": "logset-x", "topic_id": "topic-x", "topic_region": "ap-guangzhou", "delete_logset_and_topic": False}
     requests = [module.build_describe(models, "cls-x"), module.build_enable(models, params), module.build_disable(models, params)]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "TKE audit request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "TKE audit request %s" % index))
     assert errors == []
 
 
 def test_vpc_address_template():
-    module = _import_plugin("vpc_address_template"); models = _models("vpc.v20170312")
+    module = _import_plugin("vpc_address_template")
+    models = _models("vpc.v20170312")
     p = {"name": "office-networks", "addresses": ["10.10.0.0/16", "192.0.2.10"], "address_extra": []}
-    requests = [module.describe_request(models), module.create_request(models, p), module.update_request(models, p, "ipm-xxxxxxxx"), module.delete_request(models, "ipm-xxxxxxxx")]
+    requests = [
+        module.describe_request(models),
+        module.create_request(models, p),
+        module.update_request(models, p, "ipm-xxxxxxxx"),
+        module.delete_request(models, "ipm-xxxxxxxx"),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "VPC address-template request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "VPC address-template request %s" % index))
     assert errors == []
 
 
 def test_vpc_address_template_group():
-    module = _import_plugin("vpc_address_template_group"); models = _models("vpc.v20170312")
+    module = _import_plugin("vpc_address_template_group")
+    models = _models("vpc.v20170312")
     p = {"name": "trusted-sources", "template_ids": ["ipm-xxxxxxxx", "ipm-yyyyyyyy"]}
-    requests = [module.describe_request(models), module.create_request(models, p), module.update_request(models, p, "ipmg-xxxxxxxx"), module.delete_request(models, "ipmg-xxxxxxxx")]
+    requests = [
+        module.describe_request(models),
+        module.create_request(models, p),
+        module.update_request(models, p, "ipmg-xxxxxxxx"),
+        module.delete_request(models, "ipmg-xxxxxxxx"),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "VPC address-template group request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "VPC address-template group request %s" % index))
     assert errors == []
 
 
 def test_havip():
-    module = _import_plugin("havip"); models = _models("vpc.v20170312")
-    p = {"havip_id": "havip-xxxxxxxx", "name": "database-vip", "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "vip": "10.0.1.100", "check_associate": True}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p["havip_id"], p["name"]), module.delete_request(models, p["havip_id"])]
+    module = _import_plugin("havip")
+    models = _models("vpc.v20170312")
+    p = {
+        "havip_id": "havip-xxxxxxxx",
+        "name": "database-vip",
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_id": "subnet-xxxxxxxx",
+        "vip": "10.0.1.100",
+        "check_associate": True,
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.update_request(models, p["havip_id"], p["name"]),
+        module.delete_request(models, p["havip_id"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "HAVIP request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "HAVIP request %s" % index))
     assert errors == []
 
 
 def test_havip_association():
-    module = _import_plugin("havip_association"); models = _models("vpc.v20170312")
+    module = _import_plugin("havip_association")
+    models = _models("vpc.v20170312")
     p = {"havip_id": "havip-xxxxxxxx", "instance_id": "ins-xxxxxxxx", "instance_type": "CVM"}
     requests = [module.describe_request(models, p["havip_id"]), module.associate_request(models, p), module.disassociate_request(models, p)]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "HAVIP association request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "HAVIP association request %s" % index))
     assert errors == []
 
 
 def test_cvm_hpc_cluster():
-    module = _import_plugin("cvm_hpc_cluster"); models = _models("cvm.v20170312")
-    p = {"cluster_id": "hpc-xxxxxxxx", "name": "rdma-production", "zone": "ap-guangzhou-3", "remark": "Production RDMA", "cluster_type": "STANDARD", "business_id": None}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p, p["cluster_id"]), module.delete_request(models, p["cluster_id"])]
+    module = _import_plugin("cvm_hpc_cluster")
+    models = _models("cvm.v20170312")
+    p = {
+        "cluster_id": "hpc-xxxxxxxx",
+        "name": "rdma-production",
+        "zone": "ap-guangzhou-3",
+        "remark": "Production RDMA",
+        "cluster_type": "STANDARD",
+        "business_id": None,
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.update_request(models, p, p["cluster_id"]),
+        module.delete_request(models, p["cluster_id"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "CVM HPC cluster request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CVM HPC cluster request %s" % index))
     assert errors == []
 
 
 def test_cvm_instance_action_timer():
-    module = _import_plugin("cvm_instance_action_timer"); models = _models("cvm.v20170312")
+    module = _import_plugin("cvm_instance_action_timer")
+    models = _models("cvm.v20170312")
     p = {"instance_id": "ins-xxxxxxxx", "action_time": "2026-09-01T12:00:00Z", "timer_id": "timer-xxxxxxxx"}
     requests = [module.describe_request(models, p), module.create_request(models, p), module.delete_request(models, p["timer_id"])]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "CVM action-timer request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CVM action-timer request %s" % index))
     assert errors == []
 
 
 def test_cvm_launch_template():
-    module = _import_plugin("cvm_launch_template"); models = _models("cvm.v20170312")
-    p = {"template_id": "lt-xxxxxxxx", "name": "web-production", "initial_data": {"Placement": {"Zone": "ap-guangzhou-3"}, "ImageId": "img-xxxxxxxx", "InstanceType": "S5.MEDIUM4", "SecurityGroupIds": ["sg-xxxxxxxx"]}, "version_description": "initial version"}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.default_request(models, p["template_id"], 1), module.delete_request(models, p["template_id"])]
+    module = _import_plugin("cvm_launch_template")
+    models = _models("cvm.v20170312")
+    p = {
+        "template_id": "lt-xxxxxxxx",
+        "name": "web-production",
+        "initial_data": {"Placement": {"Zone": "ap-guangzhou-3"}, "ImageId": "img-xxxxxxxx", "InstanceType": "S5.MEDIUM4", "SecurityGroupIds": ["sg-xxxxxxxx"]},
+        "version_description": "initial version",
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.default_request(models, p["template_id"], 1),
+        module.delete_request(models, p["template_id"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "CVM launch-template request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CVM launch-template request %s" % index))
     assert errors == []
 
 
 def test_cvm_launch_template_version():
-    module = _import_plugin("cvm_launch_template_version"); models = _models("cvm.v20170312")
-    p = {"template_id": "lt-xxxxxxxx", "version": None, "description": "web-v2", "template_data": {"Placement": {"Zone": "ap-guangzhou-3"}, "ImageId": "img-xxxxxxxx", "InstanceType": "S5.LARGE8"}, "base_version": 1}
+    module = _import_plugin("cvm_launch_template_version")
+    models = _models("cvm.v20170312")
+    p = {
+        "template_id": "lt-xxxxxxxx",
+        "version": None,
+        "description": "web-v2",
+        "template_data": {"Placement": {"Zone": "ap-guangzhou-3"}, "ImageId": "img-xxxxxxxx", "InstanceType": "S5.LARGE8"},
+        "base_version": 1,
+    }
     requests = [module.describe_request(models, p), module.create_request(models, p), module.default_request(models, p, 2), module.delete_request(models, p, 2)]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "CVM launch-template version request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CVM launch-template version request %s" % index))
     assert errors == []
 
 
 def test_cvm_disaster_recover_group():
-    module = _import_plugin("cvm_disaster_recover_group"); models = _models("cvm.v20170312")
-    p = {"group_id": "ps-xxxxxxxx", "name": "production-spread", "placement_type": "RACK", "strategy": "SPREAD", "partition_count": None, "affinity": 2}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p, p["group_id"]), module.delete_request(models, p["group_id"])]
+    module = _import_plugin("cvm_disaster_recover_group")
+    models = _models("cvm.v20170312")
+    p = {"group_id": "ps-xxxxxxxx", "name": "production-spread", "placement_type": "RACK", "affinity": 2}
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.update_request(models, p, p["group_id"]),
+        module.delete_request(models, p["group_id"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "CVM placement-group request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CVM placement-group request %s" % index))
     assert errors == []
 
 
 def test_cvm_disaster_recover_group_binding():
-    module = _import_plugin("cvm_disaster_recover_group_binding"); models = _models("cvm.v20170312")
-    p = {"instance_id": "ins-xxxxxxxx", "group_id": "ps-xxxxxxxx", "partition_number": 2, "force_migrate": True}
+    module = _import_plugin("cvm_disaster_recover_group_binding")
+    models = _models("cvm.v20170312")
+    p = {"instance_id": "ins-xxxxxxxx", "group_id": "ps-xxxxxxxx", "force_migrate": True}
     requests = [module.describe_request(models, p["instance_id"]), module.bind_request(models, p), module.unbind_request(models, p)]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "CVM placement binding request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "CVM placement binding request %s" % index))
     assert errors == []
 
 
 def test_waf_host():
-    module = _import_plugin("waf_host"); models = _models("waf.v20180125")
-    params = {"instance_id": "waf-x", "domain": "api.example.com", "domain_id": "domain-x", "host": {"Domain": "api.example.com", "Edition": "clb-waf", "Region": "ap-guangzhou", "LoadBalancerSet": [], "FlowMode": 1}, "tags": {"env": "prod"}}
+    module = _import_plugin("waf_host")
+    models = _models("waf.v20180125")
+    params = {
+        "instance_id": "waf-x",
+        "domain": "api.example.com",
+        "domain_id": "domain-x",
+        "host": {"Domain": "api.example.com", "Edition": "clb-waf", "Region": "ap-guangzhou", "LoadBalancerSet": [], "FlowMode": 1},
+        "tags": {"env": "prod"},
+    }
     requests = [module.build_get(models, params), module.build_create(models, params), module.build_update(models, params), module.build_delete(models, params)]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "WAF host request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "WAF host request %s" % index))
     assert errors == []
 
 
 def test_waf_custom_rule():
-    module = _import_plugin("waf_custom_rule"); models = _models("waf.v20180125")
-    params = {"domain": "api.example.com", "name": "block-admin", "edition": "sparta-waf", "priority": 10, "action": "1", "strategies": [{"Field": "URI", "CompareFunc": "contains", "Content": "/admin", "CaseNotSensitive": 1}], "logical_operator": "and", "redirect": "", "expire_time": 0, "action_ratio": 100}
-    requests = [module.build_list(models, params), module.build_create(models, params), module.build_update(models, params, 123), module.build_delete(models, params, 123)]
+    module = _import_plugin("waf_custom_rule")
+    models = _models("waf.v20180125")
+    params = {
+        "domain": "api.example.com",
+        "name": "block-admin",
+        "edition": "sparta-waf",
+        "priority": 10,
+        "action": "1",
+        "strategies": [{"Field": "URI", "CompareFunc": "contains", "Content": "/admin", "CaseNotSensitive": 1}],
+        "logical_operator": "and",
+        "redirect": "",
+        "expire_time": 0,
+        "action_ratio": 100,
+    }
+    requests = [
+        module.build_list(models, params),
+        module.build_create(models, params),
+        module.build_update(models, params, 123),
+        module.build_delete(models, params, 123),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "WAF custom rule request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "WAF custom rule request %s" % index))
     assert errors == []
 
 
 def test_monitor_prometheus_scrape_job():
-    module = _import_plugin("monitor_prometheus_scrape_job"); models = _models("monitor.v20180724")
+    module = _import_plugin("monitor_prometheus_scrape_job")
+    models = _models("monitor.v20180724")
     params = {"instance_id": "prom-x", "agent_id": "agent-x", "job_id": "job-x", "name": "application", "config": "job_name: application"}
-    requests = [module.build_describe(models, params), module.build_create(models, params), module.build_update(models, params, "job-x"), module.build_delete(models, params, "job-x")]
+    requests = [
+        module.build_describe(models, params),
+        module.build_create(models, params),
+        module.build_update(models, params, "job-x"),
+        module.build_delete(models, params, "job-x"),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "Prometheus scrape-job request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "Prometheus scrape-job request %s" % index))
     assert errors == []
 
 
 def test_monitor_prometheus_record_rule():
-    module = _import_plugin("monitor_prometheus_record_rule"); models = _models("monitor.v20180724")
+    module = _import_plugin("monitor_prometheus_record_rule")
+    models = _models("monitor.v20180724")
     params = {"instance_id": "prom-x", "name": "rollups", "content": "groups: []"}
-    requests = [module.build_describe(models, "prom-x", "rollups"), module.build_create(models, params), module.build_update(models, params), module.build_delete(models, params)]
+    requests = [
+        module.build_describe(models, "prom-x", "rollups"),
+        module.build_create(models, params),
+        module.build_update(models, params),
+        module.build_delete(models, params),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "Prometheus record-rule request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "Prometheus record-rule request %s" % index))
     assert errors == []
 
 
 def test_monitor_prometheus_alert_group():
-    module = _import_plugin("monitor_prometheus_alert_group"); models = _models("monitor.v20180724")
-    params = {"instance_id": "prom-x", "group_id": "alert-x", "name": "application", "enabled": True, "receivers": ["notice-x"], "custom_receiver": None, "repeat_interval": "1h", "rules": [{"RuleName": "high-errors", "Expr": "rate(errors_total[5m]) > 1", "Duration": "5m", "State": 2}]}
-    requests = [module.build_describe(models, params), module.build_create(models, params), module.build_update(models, params, "alert-x"), module.build_delete(models, "prom-x", "alert-x")]
+    module = _import_plugin("monitor_prometheus_alert_group")
+    models = _models("monitor.v20180724")
+    params = {
+        "instance_id": "prom-x",
+        "group_id": "alert-x",
+        "name": "application",
+        "enabled": True,
+        "receivers": ["notice-x"],
+        "custom_receiver": None,
+        "repeat_interval": "1h",
+        "rules": [{"RuleName": "high-errors", "Expr": "rate(errors_total[5m]) > 1", "Duration": "5m", "State": 2}],
+    }
+    requests = [
+        module.build_describe(models, params),
+        module.build_create(models, params),
+        module.build_update(models, params, "alert-x"),
+        module.build_delete(models, "prom-x", "alert-x"),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "Prometheus alert-group request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "Prometheus alert-group request %s" % index))
     assert errors == []
 
 
 def _monitor_platform_requests(name):
-    models = _models("monitor.v20180724"); module = _import_plugin(name)
+    models = _models("monitor.v20180724")
+    module = _import_plugin(name)
     if name == "monitor_prometheus_instance":
-        p={"name":"prod","vpc_id":"vpc-x","subnet_id":"subnet-x","zone":"ap-guangzhou-3","retention_days":30,"grafana_instance_id":None,"tags":{"env":"prod"},"instance_attributes":{}}
-        return [module.build_describe(models,"prom-x","prod"),module.build_create(models,p),module.build_update(models,p,"prom-x"),module.build_delete(models,"prom-x")]
+        p = {
+            "name": "prod",
+            "vpc_id": "vpc-x",
+            "subnet_id": "subnet-x",
+            "zone": "ap-guangzhou-3",
+            "retention_days": 30,
+            "grafana_instance_id": None,
+            "tags": {"env": "prod"},
+            "instance_attributes": {},
+        }
+        return [
+            module.build_describe(models, "prom-x", "prod"),
+            module.build_create(models, p),
+            module.build_update(models, p, "prom-x"),
+            module.build_delete(models, "prom-x"),
+        ]
     if name == "monitor_prometheus_cluster_agent":
-        p={"instance_id":"prom-x","cluster_id":"cls-x","cluster_type":"tke","region":"ap-guangzhou","agent":{}}
-        return [module.build_describe(models,p),module.build_create(models,p),module.build_delete(models,p)]
+        p = {"instance_id": "prom-x", "cluster_id": "cls-x", "cluster_type": "tke", "region": "ap-guangzhou", "agent": {}}
+        return [module.build_describe(models, p), module.build_create(models, p), module.build_delete(models, p)]
     if name == "monitor_grafana_instance":
-        p={"name":"grafana","vpc_id":"vpc-x","subnet_ids":["subnet-x"],"enable_internet":False,"initial_password":None,"tags":{"env":"prod"}}
-        return [module.build_describe(models,"grafana-x","grafana"),module.build_create(models,p),module.build_update(models,"grafana-x","grafana"),module.build_delete(models,"grafana-x")]
+        p = {"name": "grafana", "vpc_id": "vpc-x", "subnet_ids": ["subnet-x"], "enable_internet": False, "initial_password": None, "tags": {"env": "prod"}}
+        return [
+            module.build_describe(models, "grafana-x", "grafana"),
+            module.build_create(models, p),
+            module.build_update(models, "grafana-x", "grafana"),
+            module.build_delete(models, "grafana-x"),
+        ]
     if name == "monitor_prometheus_grafana_binding":
-        return [module.build_describe(models,"prom-x"),module.build_bind(models,"prom-x","grafana-x"),module.build_unbind(models,"prom-x","grafana-x")]
-    p={"instance_id":"grafana-x","integration_id":"integration-x","kind":"tencent-cloud-prometheus","content":"{}"}
-    return [module.build_describe(models,p),module.build_create(models,p),module.build_update(models,p,"integration-x"),module.build_delete(models,p,"integration-x")]
+        return [module.build_describe(models, "prom-x"), module.build_bind(models, "prom-x", "grafana-x"), module.build_unbind(models, "prom-x", "grafana-x")]
+    p = {"instance_id": "grafana-x", "integration_id": "integration-x", "kind": "tencent-cloud-prometheus", "content": "{}"}
+    return [
+        module.build_describe(models, p),
+        module.build_create(models, p),
+        module.build_update(models, p, "integration-x"),
+        module.build_delete(models, p, "integration-x"),
+    ]
 
 
 def _audit_monitor_platform(name):
-    errors=[]
-    for index,request in enumerate(_monitor_platform_requests(name)): errors.extend(audit_request(request,"%s request %s"%(name,index)))
-    assert errors==[]
+    errors = []
+    for index, request in enumerate(_monitor_platform_requests(name)):
+        errors.extend(audit_request(request, "%s request %s" % (name, index)))
+    assert errors == []
 
 
-def test_monitor_prometheus_instance(): _audit_monitor_platform("monitor_prometheus_instance")
-def test_monitor_prometheus_cluster_agent(): _audit_monitor_platform("monitor_prometheus_cluster_agent")
-def test_monitor_grafana_instance(): _audit_monitor_platform("monitor_grafana_instance")
-def test_monitor_prometheus_grafana_binding(): _audit_monitor_platform("monitor_prometheus_grafana_binding")
-def test_monitor_grafana_integration(): _audit_monitor_platform("monitor_grafana_integration")
+def test_monitor_prometheus_instance():
+    _audit_monitor_platform("monitor_prometheus_instance")
+
+
+def test_monitor_prometheus_cluster_agent():
+    _audit_monitor_platform("monitor_prometheus_cluster_agent")
+
+
+def test_monitor_grafana_instance():
+    _audit_monitor_platform("monitor_grafana_instance")
+
+
+def test_monitor_prometheus_grafana_binding():
+    _audit_monitor_platform("monitor_prometheus_grafana_binding")
+
+
+def test_monitor_grafana_integration():
+    _audit_monitor_platform("monitor_grafana_integration")
 
 
 def test_monitor_grafana_whitelist():
-    module=_import_plugin("monitor_grafana_whitelist"); models=_models("monitor.v20180724")
-    errors=[]
-    for index,request in enumerate([module.build_describe(models,"grafana-x"),module.build_update(models,"grafana-x",["203.0.113.10/32"])]): errors.extend(audit_request(request,"Grafana whitelist request %s"%index))
-    assert errors==[]
+    module = _import_plugin("monitor_grafana_whitelist")
+    models = _models("monitor.v20180724")
+    errors = []
+    for index, request in enumerate([module.build_describe(models, "grafana-x"), module.build_update(models, "grafana-x", ["203.0.113.10/32"])]):
+        errors.extend(audit_request(request, "Grafana whitelist request %s" % index))
+    assert errors == []
 
 
 def test_monitor_grafana_internet():
-    module=_import_plugin("monitor_grafana_internet"); models=_models("monitor.v20180724")
-    errors=[]
-    for index,request in enumerate([module.build_describe(models,"grafana-x"),module.build_update(models,"grafana-x",True)]): errors.extend(audit_request(request,"Grafana internet request %s"%index))
-    assert errors==[]
+    module = _import_plugin("monitor_grafana_internet")
+    models = _models("monitor.v20180724")
+    errors = []
+    for index, request in enumerate([module.build_describe(models, "grafana-x"), module.build_update(models, "grafana-x", True)]):
+        errors.extend(audit_request(request, "Grafana internet request %s" % index))
+    assert errors == []
 
 
 def test_monitor_notification_controls():
-    models=_models("monitor.v20180724"); requests=[]
-    channel=_import_plugin("monitor_grafana_notification_channel"); p={"instance_id":"grafana-x","channel_id":"nchannel-x","name":"ops","receivers":["notice-x"],"organization_ids":["1"]}
-    requests += [channel.build_describe(models,p),channel.build_create(models,p),channel.build_update(models,p,"nchannel-x"),channel.build_delete(models,p,"nchannel-x")]
-    notification=_import_plugin("monitor_prometheus_global_notification"); value={"Enabled":True,"Type":"amp","RepeatInterval":"1h","ReceiverGroups":["notice-x"]}
-    requests += [notification.build_describe(models,"prom-x"),notification.build_update(models,"prom-x",value)]
-    alertmanager=_import_plugin("monitor_prometheus_alertmanager_config"); config={"InhibitRules":[]}
-    requests += [alertmanager.build_describe(models,"prom-x"),alertmanager.build_update(models,"prom-x",config)]
-    errors=[]
-    for index,request in enumerate(requests): errors.extend(audit_request(request,"Monitor notification request %s"%index))
-    assert errors==[]
+    models = _models("monitor.v20180724")
+    requests = []
+    channel = _import_plugin("monitor_grafana_notification_channel")
+    p = {"instance_id": "grafana-x", "channel_id": "nchannel-x", "name": "ops", "receivers": ["notice-x"], "organization_ids": ["1"]}
+    requests += [
+        channel.build_describe(models, p),
+        channel.build_create(models, p),
+        channel.build_update(models, p, "nchannel-x"),
+        channel.build_delete(models, p, "nchannel-x"),
+    ]
+    notification = _import_plugin("monitor_prometheus_global_notification")
+    value = {"Enabled": True, "Type": "amp", "RepeatInterval": "1h", "ReceiverGroups": ["notice-x"]}
+    requests += [notification.build_describe(models, "prom-x"), notification.build_update(models, "prom-x", value)]
+    alertmanager = _import_plugin("monitor_prometheus_alertmanager_config")
+    config = {"InhibitRules": []}
+    requests += [alertmanager.build_describe(models, "prom-x"), alertmanager.build_update(models, "prom-x", config)]
+    errors = []
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "Monitor notification request %s" % index))
+    assert errors == []
 
 
-def test_monitor_grafana_notification_channel(): test_monitor_notification_controls()
-def test_monitor_prometheus_global_notification(): test_monitor_notification_controls()
-def test_monitor_prometheus_alertmanager_config(): test_monitor_notification_controls()
+def test_monitor_grafana_notification_channel():
+    test_monitor_notification_controls()
+
+
+def test_monitor_prometheus_global_notification():
+    test_monitor_notification_controls()
+
+
+def test_monitor_prometheus_alertmanager_config():
+    test_monitor_notification_controls()
 
 
 def test_cdb_backup_config():
-    module=_import_plugin("cdb_backup_config"); models=_models("cdb.v20170320"); p={"instance_id":"cdb-x","expire_days":30,"start_time":"03:00","backup_method":"physical","binlog_expire_days":7,"backup_time_window":"03:00-04:00"}
-    errors=[]
-    for i,r in enumerate([module.build_describe(models,"cdb-x"),module.build_update(models,p)]): errors.extend(audit_request(r,"CDB backup request %s"%i))
-    assert errors==[]
+    module = _import_plugin("cdb_backup_config")
+    models = _models("cdb.v20170320")
+    p = {
+        "instance_id": "cdb-x",
+        "expire_days": 30,
+        "start_time": "03:00",
+        "backup_method": "physical",
+        "binlog_expire_days": 7,
+        "backup_time_window": "03:00-04:00",
+    }
+    errors = []
+    for i, r in enumerate([module.build_describe(models, "cdb-x"), module.build_update(models, p)]):
+        errors.extend(audit_request(r, "CDB backup request %s" % i))
+    assert errors == []
 
 
 def test_redis_backup_config():
-    module=_import_plugin("redis_backup_config"); models=_models("redis.v20180412"); p={"instance_id":"crs-x","week_days":["Monday"],"time_period":"03:00-04:00","backup_type":0,"storage_days":30}
-    errors=[]
-    for i,r in enumerate([module.build_describe(models,"crs-x"),module.build_update(models,p)]): errors.extend(audit_request(r,"Redis backup request %s"%i))
-    assert errors==[]
+    module = _import_plugin("redis_backup_config")
+    models = _models("redis.v20180412")
+    p = {"instance_id": "crs-x", "week_days": ["Monday"], "time_period": "03:00-04:00", "backup_type": 0, "storage_days": 30}
+    errors = []
+    for i, r in enumerate([module.build_describe(models, "crs-x"), module.build_update(models, p)]):
+        errors.extend(audit_request(r, "Redis backup request %s" % i))
+    assert errors == []
 
 
 def test_redis_account():
-    module=_import_plugin("redis_account"); models=_models("redis.v20180412"); p={"instance_id":"crs-x","name":"app","password":"Password_123","privilege":"rw","readonly_policy":["master"],"remark":"app","encrypt_password":False}
-    requests=[module.build_describe(models,"crs-x"),module.build_create(models,p),module.build_update(models,p,True),module.build_delete(models,p)]
-    errors=[]
-    for i,r in enumerate(requests): errors.extend(audit_request(r,"Redis account request %s"%i))
-    assert errors==[]
+    module = _import_plugin("redis_account")
+    models = _models("redis.v20180412")
+    p = {
+        "instance_id": "crs-x",
+        "name": "app",
+        "password": "Password_123",
+        "privilege": "rw",
+        "readonly_policy": ["master"],
+        "remark": "app",
+        "encrypt_password": False,
+    }
+    requests = [module.build_describe(models, "crs-x"), module.build_create(models, p), module.build_update(models, p, True), module.build_delete(models, p)]
+    errors = []
+    for i, r in enumerate(requests):
+        errors.extend(audit_request(r, "Redis account request %s" % i))
+    assert errors == []
 
 
 def test_postgresql_instance():
-    module = _import_plugin("postgresql_instance"); models = _models("postgres.v20170312")
-    p = {"instance_id": "postgres-xxxxxxxx", "name": "production-postgres", "zone": "ap-guangzhou-3", "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "spec_code": "pg.it.medium2", "storage": 100, "cpu": 2, "memory": 4, "major_version": "15", "charset": "UTF8", "admin_name": "dbadmin", "admin_password": "Secret123!", "charge_type": "POSTPAID_BY_HOUR", "period_months": 1, "auto_renew": None, "security_group_ids": ["sg-xxxxxxxx"], "deletion_protection": False, "recovery_window_days": 7}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.rename_request(models, p["instance_id"], p["name"]), module.resize_request(models, p, p["instance_id"]), module.renew_request(models, p["instance_id"], 1), module.isolate_request(models, p["instance_id"]), module.destroy_request(models, p["instance_id"])]
+    module = _import_plugin("postgresql_instance")
+    models = _models("postgres.v20170312")
+    p = {
+        "instance_id": "postgres-xxxxxxxx",
+        "name": "production-postgres",
+        "zone": "ap-guangzhou-3",
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_id": "subnet-xxxxxxxx",
+        "spec_code": "pg.it.medium2",
+        "storage": 100,
+        "cpu": 2,
+        "memory": 4,
+        "major_version": "15",
+        "charset": "UTF8",
+        "admin_name": "dbadmin",
+        "admin_password": "Secret123!",
+        "charge_type": "POSTPAID_BY_HOUR",
+        "period_months": 1,
+        "auto_renew": None,
+        "security_group_ids": ["sg-xxxxxxxx"],
+        "deletion_protection": False,
+        "recovery_window_days": 7,
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.rename_request(models, p["instance_id"], p["name"]),
+        module.resize_request(models, p, p["instance_id"]),
+        module.renew_request(models, p["instance_id"], 1),
+        module.isolate_request(models, p["instance_id"]),
+        module.destroy_request(models, p["instance_id"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "PostgreSQL instance request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "PostgreSQL instance request %s" % index))
     assert errors == []
 
 
 def test_postgresql_backup_plan():
-    module=_import_plugin("postgresql_backup_plan"); models=_models("postgres.v20170312"); p={"instance_id":"postgres-x","name":"prod","period_type":"week","periods":["monday"],"min_start_time":"03:00:00","max_start_time":"04:00:00","retention_days":30,"log_retention_days":7}
-    requests=[module.build_describe(models,"postgres-x"),module.build_create(models,p),module.build_update(models,p,"plan-x"),module.build_delete(models,"postgres-x","plan-x")]
-    errors=[]
-    for i,r in enumerate(requests): errors.extend(audit_request(r,"PostgreSQL backup-plan request %s"%i))
-    assert errors==[]
+    module = _import_plugin("postgresql_backup_plan")
+    models = _models("postgres.v20170312")
+    p = {
+        "instance_id": "postgres-x",
+        "name": "prod",
+        "period_type": "week",
+        "periods": ["monday"],
+        "min_start_time": "03:00:00",
+        "max_start_time": "04:00:00",
+        "retention_days": 30,
+        "log_retention_days": 7,
+    }
+    requests = [
+        module.build_describe(models, "postgres-x"),
+        module.build_create(models, p),
+        module.build_update(models, p, "plan-x"),
+        module.build_delete(models, "postgres-x", "plan-x"),
+    ]
+    errors = []
+    for i, r in enumerate(requests):
+        errors.extend(audit_request(r, "PostgreSQL backup-plan request %s" % i))
+    assert errors == []
 
 
 def test_waf_ip_access_control():
@@ -3316,8 +4286,32 @@ def test_waf_protect_group():
 def test_cls_shipper():
     module = _import_plugin("cls_shipper")
     models = _models("cls.v20201016")
-    p = {"shipper_id": "shipper-x", "topic_id": "topic-x", "name": "archive", "bucket": "logs-1250000000", "prefix": "cls/", "enabled": True, "interval": 300, "max_size": 256, "partition": "%Y/%m/%d/%H", "compress": {"Format": "gzip"}, "content": {"Format": "json"}, "filter_rules": [], "filename_mode": 0, "storage_type": "STANDARD", "role_arn": None, "external_id": None, "time_zone": "UTC+08:00", "dsl_filter": ""}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p, p["shipper_id"]), module.delete_request(models, p["shipper_id"])]
+    p = {
+        "shipper_id": "shipper-x",
+        "topic_id": "topic-x",
+        "name": "archive",
+        "bucket": "logs-1250000000",
+        "prefix": "cls/",
+        "enabled": True,
+        "interval": 300,
+        "max_size": 256,
+        "partition": "%Y/%m/%d/%H",
+        "compress": {"Format": "gzip"},
+        "content": {"Format": "json"},
+        "filter_rules": [],
+        "filename_mode": 0,
+        "storage_type": "STANDARD",
+        "role_arn": None,
+        "external_id": None,
+        "time_zone": "UTC+08:00",
+        "dsl_filter": "",
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.update_request(models, p, p["shipper_id"]),
+        module.delete_request(models, p["shipper_id"]),
+    ]
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "CLS shipper request %s" % index))
@@ -3756,8 +4750,14 @@ def test_cdn_domain():
     client = _StubClient()
     errors = []
     update_params = {
-        "domain": "cdn.example.com", "service_type": "download", "origins": ["new-origin.example.com"],
-        "origin_type": "domain", "origin_protocol": "https", "backup_origins": [], "project_id": 2, "area": "global",
+        "domain": "cdn.example.com",
+        "service_type": "download",
+        "origins": ["new-origin.example.com"],
+        "origin_type": "domain",
+        "origin_protocol": "https",
+        "backup_origins": [],
+        "project_id": 2,
+        "area": "global",
     }
     errors.extend(audit_request(module.build_describe_request(models, "cdn.example.com"), "cdn describe by domain"))
     errors.extend(audit_request(module.build_update_request(models, update_params), "cdn update request"))
@@ -3803,8 +4803,16 @@ def test_cdn_domain():
 
 
 def test_cdn_cls_log_topic():
-    module = _import_plugin("cdn_cls_log_topic"); models = _models("cdn.v20180606")
-    p = {"topic_name": "cdn-access", "logset_id": "logset-xxxxxxxx", "channel": "cdn", "domain_area_configs": [{"domain": "cdn.example.com", "areas": ["mainland"]}], "inherit_domain_tags": True}; errors = []
+    module = _import_plugin("cdn_cls_log_topic")
+    models = _models("cdn.v20180606")
+    p = {
+        "topic_name": "cdn-access",
+        "logset_id": "logset-xxxxxxxx",
+        "channel": "cdn",
+        "domain_area_configs": [{"domain": "cdn.example.com", "areas": ["mainland"]}],
+        "inherit_domain_tags": True,
+    }
+    errors = []
     errors.extend(audit_request(module.list_topics_request(models, p["channel"]), "CDN CLS topic list"))
     errors.extend(audit_request(module.list_domains_request(models, p, "topic-xxxxxxxx", p["logset_id"]), "CDN CLS domain list"))
     errors.extend(audit_request(module.create_request(models, p), "CDN CLS topic create"))
@@ -3816,8 +4824,24 @@ def test_cdn_cls_log_topic():
 
 
 def test_cfw_internet_acl_rule():
-    module = _import_plugin("cfw_internet_acl_rule"); models = _models("cfw.v20190904")
-    p = {"description": "allow-trusted-https", "source": "10.0.0.0/8", "source_type": "ip", "destination": "203.0.113.0/24", "destination_type": "ip", "protocol": "TCP", "ports": "443", "action": "accept", "direction": "outbound", "enabled": True, "order_index": -1, "scope": None, "parameter_template_id": None}; errors = []
+    module = _import_plugin("cfw_internet_acl_rule")
+    models = _models("cfw.v20190904")
+    p = {
+        "description": "allow-trusted-https",
+        "source": "10.0.0.0/8",
+        "source_type": "ip",
+        "destination": "203.0.113.0/24",
+        "destination_type": "ip",
+        "protocol": "TCP",
+        "ports": "443",
+        "action": "accept",
+        "direction": "outbound",
+        "enabled": True,
+        "order_index": -1,
+        "scope": None,
+        "parameter_template_id": None,
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models), "CFW internet ACL describe"))
     errors.extend(audit_request(module.create_request(models, p), "CFW internet ACL create"))
     errors.extend(audit_request(module.update_request(models, p, 123456), "CFW internet ACL update"))
@@ -3826,9 +4850,27 @@ def test_cfw_internet_acl_rule():
 
 
 def test_cfw_nat_dnat_rule():
-    module = _import_plugin("cfw_nat_dnat_rule"); models = _models("cfw.v20190904")
-    p = {"firewall_instance_id": "cfwnat-xxxxxxxx", "mode": 0, "protocol": "TCP", "public_ip": "203.0.113.10", "public_port": 443, "private_ip": "10.0.1.10", "private_port": 8443, "description": "application HTTPS"}
-    current = {"IpProtocol": "TCP", "PublicIpAddress": "203.0.113.10", "PublicPort": 443, "PrivateIpAddress": "10.0.1.9", "PrivatePort": 443, "Description": "old"}; errors = []
+    module = _import_plugin("cfw_nat_dnat_rule")
+    models = _models("cfw.v20190904")
+    p = {
+        "firewall_instance_id": "cfwnat-xxxxxxxx",
+        "mode": 0,
+        "protocol": "TCP",
+        "public_ip": "203.0.113.10",
+        "public_port": 443,
+        "private_ip": "10.0.1.10",
+        "private_port": 8443,
+        "description": "application HTTPS",
+    }
+    current = {
+        "IpProtocol": "TCP",
+        "PublicIpAddress": "203.0.113.10",
+        "PublicPort": 443,
+        "PrivateIpAddress": "10.0.1.9",
+        "PrivatePort": 443,
+        "Description": "old",
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models), "CFW NAT DNAT describe"))
     errors.extend(audit_request(module.create_request(models, p), "CFW NAT DNAT create"))
     errors.extend(audit_request(module.update_request(models, p, current), "CFW NAT DNAT update"))
@@ -3837,8 +4879,24 @@ def test_cfw_nat_dnat_rule():
 
 
 def test_cfw_nat_acl_rule():
-    module = _import_plugin("cfw_nat_acl_rule"); models = _models("cfw.v20190904")
-    p = {"description": "allow-app-egress", "source": "10.0.0.0/8", "source_type": "ip", "destination": "203.0.113.0/24", "destination_type": "ip", "protocol": "TCP", "ports": "443", "action": "accept", "direction": "outbound", "enabled": True, "order_index": -1, "scope": "cfwnat-xxxxxxxx", "parameter_template_id": None}; errors = []
+    module = _import_plugin("cfw_nat_acl_rule")
+    models = _models("cfw.v20190904")
+    p = {
+        "description": "allow-app-egress",
+        "source": "10.0.0.0/8",
+        "source_type": "ip",
+        "destination": "203.0.113.0/24",
+        "destination_type": "ip",
+        "protocol": "TCP",
+        "ports": "443",
+        "action": "accept",
+        "direction": "outbound",
+        "enabled": True,
+        "order_index": -1,
+        "scope": "cfwnat-xxxxxxxx",
+        "parameter_template_id": None,
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models), "CFW NAT ACL describe"))
     errors.extend(audit_request(module.create_request(models, p), "CFW NAT ACL create"))
     errors.extend(audit_request(module.update_request(models, p, 123456), "CFW NAT ACL update"))
@@ -3847,8 +4905,24 @@ def test_cfw_nat_acl_rule():
 
 
 def test_cfw_vpc_acl_rule():
-    module = _import_plugin("cfw_vpc_acl_rule"); models = _models("cfw.v20190904")
-    p = {"description": "allow-vpc-https", "edge_id": "vpcfw-edge-xxxxxxxx", "source": "10.0.0.0/16", "destination": "10.20.0.0/16", "destination_type": "net", "protocol": "TCP", "ports": "443", "action": "accept", "enabled": True, "order_index": -1, "firewall_group_id": "cfwg-xxxxxxxx", "parameter_template_id": None, "ip_version": 0}; errors = []
+    module = _import_plugin("cfw_vpc_acl_rule")
+    models = _models("cfw.v20190904")
+    p = {
+        "description": "allow-vpc-https",
+        "edge_id": "vpcfw-edge-xxxxxxxx",
+        "source": "10.0.0.0/16",
+        "destination": "10.20.0.0/16",
+        "destination_type": "net",
+        "protocol": "TCP",
+        "ports": "443",
+        "action": "accept",
+        "enabled": True,
+        "order_index": -1,
+        "firewall_group_id": "cfwg-xxxxxxxx",
+        "parameter_template_id": None,
+        "ip_version": 0,
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models), "CFW VPC ACL describe"))
     errors.extend(audit_request(module.create_request(models, p), "CFW VPC ACL create"))
     errors.extend(audit_request(module.update_request(models, p, 123456), "CFW VPC ACL update"))
@@ -3857,8 +4931,24 @@ def test_cfw_vpc_acl_rule():
 
 
 def test_cloudaudit_audit():
-    module = _import_plugin("cloudaudit_audit"); models = _models("cloudaudit.v20190319")
-    p = {"audit_name": "default", "read_write_attribute": 3, "cos_region": "ap-guangzhou", "cos_bucket_name": "audit-logs-1250000000", "create_new_bucket": False, "log_file_prefix": "CloudAudit", "cmq_notify": True, "cmq_region": "ap-guangzhou", "cmq_queue_name": "audit-events", "create_new_queue": False, "kms_encryption": True, "kms_region": "ap-guangzhou", "key_id": "key-xxxxxxxx"}; errors = []
+    module = _import_plugin("cloudaudit_audit")
+    models = _models("cloudaudit.v20190319")
+    p = {
+        "audit_name": "default",
+        "read_write_attribute": 3,
+        "cos_region": "ap-guangzhou",
+        "cos_bucket_name": "audit-logs-1250000000",
+        "create_new_bucket": False,
+        "log_file_prefix": "CloudAudit",
+        "cmq_notify": True,
+        "cmq_region": "ap-guangzhou",
+        "cmq_queue_name": "audit-events",
+        "create_new_queue": False,
+        "kms_encryption": True,
+        "kms_region": "ap-guangzhou",
+        "key_id": "key-xxxxxxxx",
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p["audit_name"]), "CloudAudit audit describe"))
     errors.extend(audit_request(module.update_request(models, p), "CloudAudit audit update"))
     errors.extend(audit_request(module.start_request(models, p["audit_name"]), "CloudAudit audit start"))
@@ -3867,7 +4957,9 @@ def test_cloudaudit_audit():
 
 
 def test_config_recorder():
-    module = _import_plugin("config_recorder"); models = _models("config.v20220802"); errors = []
+    module = _import_plugin("config_recorder")
+    models = _models("config.v20220802")
+    errors = []
     errors.extend(audit_request(module.describe_request(models), "Config recorder describe"))
     errors.extend(audit_request(module.update_request(models, ["QCS::CVM::Instance", "QCS::VPC::VPC"]), "Config recorder update"))
     errors.extend(audit_request(module.open_request(models), "Config recorder open"))
@@ -3876,16 +4968,42 @@ def test_config_recorder():
 
 
 def test_config_delivery():
-    module = _import_plugin("config_delivery"); models = _models("config.v20220802")
-    p = {"enabled": True, "name": "compliance-archive", "target_arn": "qcs::cos:ap-guangzhou:100000000001:prefix/1250000000/config-archive", "prefix": "config", "delivery_type": "COS", "content_type": 3}; errors = []
+    module = _import_plugin("config_delivery")
+    models = _models("config.v20220802")
+    p = {
+        "enabled": True,
+        "name": "compliance-archive",
+        "target_arn": "qcs::cos:ap-guangzhou:100000000001:prefix/1250000000/config-archive",
+        "prefix": "config",
+        "delivery_type": "COS",
+        "content_type": 3,
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models), "Config delivery describe"))
     errors.extend(audit_request(module.update_request(models, p), "Config delivery update"))
     assert errors == []
 
 
 def test_config_compliance_pack():
-    module = _import_plugin("config_compliance_pack"); models = _models("config.v20220802")
-    p = {"name": "production-security", "description": "Production baseline", "risk_level": 1, "rules": [{"name": "public-bucket-denied", "risk_level": 1, "identifier": "cos-public-read-prohibited", "config_rule_id": "cr-xxxxxxxx", "managed_rule_identifier": "cos-public-read-prohibited", "description": "No public buckets", "input_parameters": [{"parameter_name": "allowed", "type": "boolean", "value": "false"}]}]}; errors = []
+    module = _import_plugin("config_compliance_pack")
+    models = _models("config.v20220802")
+    p = {
+        "name": "production-security",
+        "description": "Production baseline",
+        "risk_level": 1,
+        "rules": [
+            {
+                "name": "public-bucket-denied",
+                "risk_level": 1,
+                "identifier": "cos-public-read-prohibited",
+                "config_rule_id": "cr-xxxxxxxx",
+                "managed_rule_identifier": "cos-public-read-prohibited",
+                "description": "No public buckets",
+                "input_parameters": [{"parameter_name": "allowed", "type": "boolean", "value": "false"}],
+            }
+        ],
+    }
+    errors = []
     errors.extend(audit_request(module.list_request(models, p), "Config compliance pack list"))
     errors.extend(audit_request(module.describe_request(models, "cp-xxxxxxxx"), "Config compliance pack describe"))
     errors.extend(audit_request(module.create_request(models, p), "Config compliance pack create"))
@@ -3896,8 +5014,10 @@ def test_config_compliance_pack():
 
 
 def test_config_remediation():
-    module = _import_plugin("config_remediation"); models = _models("config.v20220802")
-    p = {"rule_id": "cr-xxxxxxxx", "remediation_type": "predefined", "remediation_template_id": "rt-xxxxxxxx", "invoke_type": "AUTO", "source_type": "CONFIG"}; errors = []
+    module = _import_plugin("config_remediation")
+    models = _models("config.v20220802")
+    p = {"rule_id": "cr-xxxxxxxx", "remediation_type": "predefined", "remediation_template_id": "rt-xxxxxxxx", "invoke_type": "AUTO", "source_type": "CONFIG"}
+    errors = []
     errors.extend(audit_request(module.list_request(models, p["rule_id"]), "Config remediation list"))
     errors.extend(audit_request(module.create_request(models, p), "Config remediation create"))
     errors.extend(audit_request(module.update_request(models, p, "rem-xxxxxxxx"), "Config remediation update"))
@@ -3906,8 +5026,20 @@ def test_config_remediation():
 
 
 def test_config_alarm_policy():
-    module = _import_plugin("config_alarm_policy"); models = _models("config.v20220802")
-    p = {"name": "high-risk-compliance", "event_type": 1, "event_scopes": [1], "risk_levels": [1], "notice_time": "09:00-18:00", "notification_mechanism": "USER", "enabled": True, "notice_period": [1, 2, 3, 4, 5], "description": "High risk events"}; errors = []
+    module = _import_plugin("config_alarm_policy")
+    models = _models("config.v20220802")
+    p = {
+        "name": "high-risk-compliance",
+        "event_type": 1,
+        "event_scopes": [1],
+        "risk_levels": [1],
+        "notice_time": "09:00-18:00",
+        "notification_mechanism": "USER",
+        "enabled": True,
+        "notice_period": [1, 2, 3, 4, 5],
+        "description": "High risk events",
+    }
+    errors = []
     errors.extend(audit_request(module.list_request(models), "Config alarm policy list"))
     errors.extend(audit_request(module.create_request(models, p), "Config alarm policy create"))
     errors.extend(audit_request(module.update_request(models, p, 123456), "Config alarm policy update"))
@@ -3916,8 +5048,15 @@ def test_config_alarm_policy():
 
 
 def test_config_aggregator():
-    module = _import_plugin("config_aggregator"); models = _models("config.v20220802")
-    p = {"name": "organization-security", "description": "Organization aggregator", "aggregator_type": "CUSTOM", "accounts": [{"member_uin": 100000000002, "member_name": "production"}]}; errors = []
+    module = _import_plugin("config_aggregator")
+    models = _models("config.v20220802")
+    p = {
+        "name": "organization-security",
+        "description": "Organization aggregator",
+        "aggregator_type": "CUSTOM",
+        "accounts": [{"member_uin": 100000000002, "member_name": "production"}],
+    }
+    errors = []
     errors.extend(audit_request(module.list_request(models), "Config aggregator list"))
     errors.extend(audit_request(module.describe_request(models, "ag-xxxxxxxx"), "Config aggregator describe"))
     errors.extend(audit_request(module.create_request(models, p), "Config aggregator create"))
@@ -3925,16 +5064,29 @@ def test_config_aggregator():
 
 
 def test_config_aggregate_delivery():
-    module = _import_plugin("config_aggregate_delivery"); models = _models("config.v20220802")
-    p = {"account_group_id": "ag-xxxxxxxx", "enabled": True, "name": "organization-archive", "target_arn": "qcs::cos:ap-guangzhou:100000000001:prefix/1250000000/config-org", "prefix": "config", "delivery_type": "COS", "delivery_uin": 0, "content_type": 3}; errors = []
+    module = _import_plugin("config_aggregate_delivery")
+    models = _models("config.v20220802")
+    p = {
+        "account_group_id": "ag-xxxxxxxx",
+        "enabled": True,
+        "name": "organization-archive",
+        "target_arn": "qcs::cos:ap-guangzhou:100000000001:prefix/1250000000/config-org",
+        "prefix": "config",
+        "delivery_type": "COS",
+        "delivery_uin": 0,
+        "content_type": 3,
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p["account_group_id"]), "Config aggregate delivery describe"))
     errors.extend(audit_request(module.update_request(models, p), "Config aggregate delivery update"))
     assert errors == []
 
 
 def test_teo_zone():
-    module = _import_plugin("teo_zone"); models = _models("teo.v20220901")
-    p = {"zone_id": None, "name": "example.com", "zone_type": "partial", "area": "global", "alias_name": "example-global", "plan_id": "edgeone-plan-xxxxxxxx"}; errors = []
+    module = _import_plugin("teo_zone")
+    models = _models("teo.v20220901")
+    p = {"zone_id": None, "name": "example.com", "zone_type": "partial", "area": "global", "alias_name": "example-global", "plan_id": "edgeone-plan-xxxxxxxx"}
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEO zone describe"))
     errors.extend(audit_request(module.create_request(models, p), "TEO zone create"))
     errors.extend(audit_request(module.update_request(models, p, "zone-xxxxxxxx"), "TEO zone update"))
@@ -4191,20 +5343,40 @@ def test_cam_policy_attachment():
 
 
 def test_cam_saml_provider():
-    module = _import_plugin("cam_saml_provider"); models = _models("cam.v20190116")
+    module = _import_plugin("cam_saml_provider")
+    models = _models("cam.v20190116")
     p = {"name": "corporate-idp", "description": "Corporate", "metadata_document": "PHhtbD48L3htbD4="}
-    requests = [module.get_request(models, p["name"]), module.create_request(models, p), module.update_request(models, p), module.delete_request(models, p["name"])]
+    requests = [
+        module.get_request(models, p["name"]),
+        module.create_request(models, p),
+        module.update_request(models, p),
+        module.delete_request(models, p["name"]),
+    ]
     errors = []
-    for request in requests: errors.extend(audit_request(request, "CAM SAML provider request"))
+    for request in requests:
+        errors.extend(audit_request(request, "CAM SAML provider request"))
     assert errors == []
 
 
 def test_cam_oidc_provider():
-    module = _import_plugin("cam_oidc_provider"); models = _models("cam.v20190116")
-    p = {"name": "ci-workloads", "identity_url": "https://issuer.example.com", "client_ids": ["sts.tencentcloudapi.com"], "identity_key": "cHVibGljLWtleQ==", "description": "CI"}
-    requests = [module.describe_request(models, p["name"]), module.create_request(models, p), module.update_request(models, p), module.delete_request(models, p["name"])]
+    module = _import_plugin("cam_oidc_provider")
+    models = _models("cam.v20190116")
+    p = {
+        "name": "ci-workloads",
+        "identity_url": "https://issuer.example.com",
+        "client_ids": ["sts.tencentcloudapi.com"],
+        "identity_key": "cHVibGljLWtleQ==",
+        "description": "CI",
+    }
+    requests = [
+        module.describe_request(models, p["name"]),
+        module.create_request(models, p),
+        module.update_request(models, p),
+        module.delete_request(models, p["name"]),
+    ]
     errors = []
-    for request in requests: errors.extend(audit_request(request, "CAM OIDC provider request"))
+    for request in requests:
+        errors.extend(audit_request(request, "CAM OIDC provider request"))
     assert errors == []
 
 
@@ -4628,7 +5800,12 @@ def test_cdb_account_privilege():
     models = _models("cdb.v20170320")
     errors = []
     p = {"instance_id": "cdb-xxxxxxxx", "username": "app", "host": "%"}
-    wanted = {"GlobalPrivileges": ["SELECT"], "DatabasePrivileges": [{"database": "orders", "privileges": ["SELECT", "INSERT"]}], "TablePrivileges": [{"database": "orders", "table": "events", "privileges": ["SELECT"]}], "ColumnPrivileges": [{"database": "orders", "table": "events", "column": "id", "privileges": ["SELECT"]}]}
+    wanted = {
+        "GlobalPrivileges": ["SELECT"],
+        "DatabasePrivileges": [{"database": "orders", "privileges": ["SELECT", "INSERT"]}],
+        "TablePrivileges": [{"database": "orders", "table": "events", "privileges": ["SELECT"]}],
+        "ColumnPrivileges": [{"database": "orders", "table": "events", "column": "id", "privileges": ["SELECT"]}],
+    }
     errors.extend(audit_request(module.describe_request(models, p), "cdb account privilege describe"))
     errors.extend(audit_request(module.modify_request(models, p, wanted), "cdb account privilege modify"))
     assert errors == []
@@ -4662,7 +5839,16 @@ def test_organization_member():
     fake = _RecordingModule()
     client = _StubClient()
     errors = []
-    p = {"member_uin": 100000000001, "name": "production", "account_name": "production", "node_id": 1001, "remark": "prod", "permission_ids": [1, 2], "identity_role_ids": [1], "allow_quit": "Denied"}
+    p = {
+        "member_uin": 100000000001,
+        "name": "production",
+        "account_name": "production",
+        "node_id": 1001,
+        "remark": "prod",
+        "permission_ids": [1, 2],
+        "identity_role_ids": [1],
+        "allow_quit": "Denied",
+    }
     errors.extend(audit_request(module.describe(models), "organization member describe"))
     errors.extend(audit_request(module.create(models, p), "organization member create"))
     errors.extend(audit_request(module.update(models, p, p["member_uin"]), "organization member update"))
@@ -4699,7 +5885,17 @@ def test_mongodb_backup_config():
     module = _import_plugin("mongodb_backup_config")
     models = _models("mongodb.v20190725")
     errors = []
-    p = {"instance_id": "cmgo-xxxxxxxx", "backup_method": 1, "backup_hour": 3, "frequency_hours": 24, "active_weekdays": [1, 3, 5], "retention_days": 30, "oplog_retention_days": 14, "backup_version": 1, "alert_threshold": 100}
+    p = {
+        "instance_id": "cmgo-xxxxxxxx",
+        "backup_method": 1,
+        "backup_hour": 3,
+        "frequency_hours": 24,
+        "active_weekdays": [1, 3, 5],
+        "retention_days": 30,
+        "oplog_retention_days": 14,
+        "backup_version": 1,
+        "alert_threshold": 100,
+    }
     errors.extend(audit_request(module.describe_request(models, p["instance_id"]), "mongodb backup config describe"))
     errors.extend(audit_request(module.set_request(models, p), "mongodb backup config set"))
     assert errors == []
@@ -4709,7 +5905,14 @@ def test_mongodb_account():
     module = _import_plugin("mongodb_account")
     models = _models("mongodb.v20190725")
     errors = []
-    p = {"instance_id": "cmgo-xxxxxxxx", "username": "app", "password": "Password_123", "mongo_user_password": "Admin_123", "description": "app", "roles": [{"namespace": "orders", "access": "read_write"}]}
+    p = {
+        "instance_id": "cmgo-xxxxxxxx",
+        "username": "app",
+        "password": "Password_123",
+        "mongo_user_password": "Admin_123",
+        "description": "app",
+        "roles": [{"namespace": "orders", "access": "read_write"}],
+    }
     errors.extend(audit_request(module.describe_request(models, p["instance_id"]), "mongodb account describe"))
     errors.extend(audit_request(module.create_request(models, p), "mongodb account create"))
     errors.extend(audit_request(module.privilege_request(models, p), "mongodb account privilege"))
@@ -4719,11 +5922,38 @@ def test_mongodb_account():
 
 
 def test_sqlserver_instance():
-    module = _import_plugin("sqlserver_instance"); models = _models("sqlserver.v20180328")
-    p = {"instance_id": "mssql-xxxxxxxx", "name": "production-sqlserver", "zone": "ap-guangzhou-3", "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "memory": 8, "storage": 100, "cpu": 4, "db_version": "2019", "charge_type": "POSTPAID", "period_months": 1, "auto_renew": False, "security_group_ids": ["sg-xxxxxxxx"], "ha_type": "DUAL", "secondary_zones": ["ap-guangzhou-4"]}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.rename_request(models, p["instance_id"], p["name"]), module.resize_request(models, p, p["instance_id"]), module.security_groups_request(models, p["instance_id"], p["security_group_ids"]), module.renew_request(models, p["instance_id"], True), module.isolate_request(models, p["instance_id"]), module.destroy_request(models, p["instance_id"])]
+    module = _import_plugin("sqlserver_instance")
+    models = _models("sqlserver.v20180328")
+    p = {
+        "instance_id": "mssql-xxxxxxxx",
+        "name": "production-sqlserver",
+        "zone": "ap-guangzhou-3",
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_id": "subnet-xxxxxxxx",
+        "memory": 8,
+        "storage": 100,
+        "cpu": 4,
+        "db_version": "2019",
+        "charge_type": "POSTPAID",
+        "period_months": 1,
+        "auto_renew": False,
+        "security_group_ids": ["sg-xxxxxxxx"],
+        "ha_type": "DUAL",
+        "secondary_zones": ["ap-guangzhou-4"],
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.rename_request(models, p["instance_id"], p["name"]),
+        module.resize_request(models, p, p["instance_id"]),
+        module.security_groups_request(models, p["instance_id"], p["security_group_ids"]),
+        module.renew_request(models, p["instance_id"], True),
+        module.isolate_request(models, p["instance_id"]),
+        module.destroy_request(models, p["instance_id"]),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "SQL Server instance request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "SQL Server instance request %s" % index))
     assert errors == []
 
 
@@ -4731,7 +5961,14 @@ def test_sqlserver_account():
     module = _import_plugin("sqlserver_account")
     models = _models("sqlserver.v20180328")
     errors = []
-    p = {"instance_id": "mssql-xxxxxxxx", "username": "app", "password": "Password_123", "remark": "app", "account_type": "L3", "database_privileges": [{"database": "orders", "privilege": "ReadWrite"}]}
+    p = {
+        "instance_id": "mssql-xxxxxxxx",
+        "username": "app",
+        "password": "Password_123",
+        "remark": "app",
+        "account_type": "L3",
+        "database_privileges": [{"database": "orders", "privilege": "ReadWrite"}],
+    }
     errors.extend(audit_request(module.describe_request(models, p), "sqlserver account describe"))
     errors.extend(audit_request(module.create_request(models, p), "sqlserver account create"))
     errors.extend(audit_request(module.privilege_request(models, p, p["database_privileges"]), "sqlserver account privilege"))
@@ -4742,19 +5979,54 @@ def test_sqlserver_account():
 
 
 def test_sqlserver_backup_config():
-    module = _import_plugin("sqlserver_backup_config"); models = _models("sqlserver.v20180328")
-    p = {"instance_id": "mssql-xxxxxxxx", "backup_type": "weekly", "backup_hour": 3, "backup_cycle": [1, 3, 5], "backup_model": "master_pkg", "retention_days": 30}
+    module = _import_plugin("sqlserver_backup_config")
+    models = _models("sqlserver.v20180328")
+    p = {
+        "instance_id": "mssql-xxxxxxxx",
+        "backup_type": "weekly",
+        "backup_hour": 3,
+        "backup_cycle": [1, 3, 5],
+        "backup_model": "master_pkg",
+        "retention_days": 30,
+    }
     errors = audit_request(module.describe_request(models, p["instance_id"]), "SQL Server backup describe")
     errors.extend(audit_request(module.update_request(models, p), "SQL Server backup update"))
     assert errors == []
 
 
 def test_mariadb_instance():
-    module = _import_plugin("mariadb_instance"); models = _models("mariadb.v20170312")
-    p = {"instance_id": "tdsql-xxxxxxxx", "name": "production-mariadb", "zones": ["ap-guangzhou-3", "ap-guangzhou-4"], "node_count": 2, "memory": 8, "storage": 100, "db_version": "10.1", "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "period_months": 1, "auto_renew": False, "security_group_ids": ["sg-xxxxxxxx"], "ipv6": False}
-    requests = [module.describe_request(models, p), module.create_hour_request(models, p), module.create_prepaid_request(models, p), module.rename_request(models, p["instance_id"], p["name"]), module.resize_hour_request(models, p, p["instance_id"]), module.resize_prepaid_request(models, p, p["instance_id"]), module.isolate_request(models, p["instance_id"], True), module.isolate_request(models, p["instance_id"], False), module.destroy_request(models, p["instance_id"], True), module.destroy_request(models, p["instance_id"], False)]
+    module = _import_plugin("mariadb_instance")
+    models = _models("mariadb.v20170312")
+    p = {
+        "instance_id": "tdsql-xxxxxxxx",
+        "name": "production-mariadb",
+        "zones": ["ap-guangzhou-3", "ap-guangzhou-4"],
+        "node_count": 2,
+        "memory": 8,
+        "storage": 100,
+        "db_version": "10.1",
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_id": "subnet-xxxxxxxx",
+        "period_months": 1,
+        "auto_renew": False,
+        "security_group_ids": ["sg-xxxxxxxx"],
+        "ipv6": False,
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.create_hour_request(models, p),
+        module.create_prepaid_request(models, p),
+        module.rename_request(models, p["instance_id"], p["name"]),
+        module.resize_hour_request(models, p, p["instance_id"]),
+        module.resize_prepaid_request(models, p, p["instance_id"]),
+        module.isolate_request(models, p["instance_id"], True),
+        module.isolate_request(models, p["instance_id"], False),
+        module.destroy_request(models, p["instance_id"], True),
+        module.destroy_request(models, p["instance_id"], False),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "MariaDB instance request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "MariaDB instance request %s" % index))
     assert errors == []
 
 
@@ -4762,7 +6034,17 @@ def test_mariadb_account():
     module = _import_plugin("mariadb_account")
     models = _models("mariadb.v20170312")
     errors = []
-    p = {"instance_id": "tdsql-xxxxxxxx", "username": "app", "host": "%", "password": "Password_123", "description": "app", "read_only": 0, "delay_threshold": 10, "sticky_replica": False, "max_user_connections": 0}
+    p = {
+        "instance_id": "tdsql-xxxxxxxx",
+        "username": "app",
+        "host": "%",
+        "password": "Password_123",
+        "description": "app",
+        "read_only": 0,
+        "delay_threshold": 10,
+        "sticky_replica": False,
+        "max_user_connections": 0,
+    }
     errors.extend(audit_request(module.describe_request(models, p["instance_id"]), "mariadb account describe"))
     errors.extend(audit_request(module.create_request(models, p), "mariadb account create"))
     errors.extend(audit_request(module.description_request(models, p), "mariadb account description"))
@@ -4775,7 +6057,14 @@ def test_mariadb_backup_config():
     module = _import_plugin("mariadb_backup_config")
     models = _models("mariadb.v20170312")
     errors = []
-    p = {"instance_id": "tdsql-xxxxxxxx", "retention_days": 30, "start_time": "02:00", "end_time": "03:00", "weekdays": ["Monday", "Wednesday", "Friday"], "archive_after_days": -1}
+    p = {
+        "instance_id": "tdsql-xxxxxxxx",
+        "retention_days": 30,
+        "start_time": "02:00",
+        "end_time": "03:00",
+        "weekdays": ["Monday", "Wednesday", "Friday"],
+        "archive_after_days": -1,
+    }
     errors.extend(audit_request(module.describe_request(models, p["instance_id"]), "mariadb backup config describe"))
     errors.extend(audit_request(module.modify_request(models, p), "mariadb backup config modify"))
     assert errors == []
@@ -4796,7 +6085,14 @@ def test_elasticsearch_index():
     module = _import_plugin("elasticsearch_index")
     models = _models("es.v20180416")
     errors = []
-    p = {"instance_id": "es-xxxxxxxx", "name": "orders", "index_type": "normal", "metadata": {"settings": {"number_of_shards": 3}, "mappings": {"properties": {"order_id": {"type": "keyword"}}}}, "username": "elastic", "password": "Password_123"}
+    p = {
+        "instance_id": "es-xxxxxxxx",
+        "name": "orders",
+        "index_type": "normal",
+        "metadata": {"settings": {"number_of_shards": 3}, "mappings": {"properties": {"order_id": {"type": "keyword"}}}},
+        "username": "elastic",
+        "password": "Password_123",
+    }
     errors.extend(audit_request(module.describe_request(models, p), "elasticsearch index describe"))
     errors.extend(audit_request(module.create_request(models, p), "elasticsearch index create"))
     errors.extend(audit_request(module.update_request(models, p), "elasticsearch index update"))
@@ -4805,8 +6101,23 @@ def test_elasticsearch_index():
 
 
 def test_elasticsearch_snapshot():
-    module = _import_plugin("elasticsearch_snapshot"); models = _models("es.v20180416")
-    p = {"instance_id": "es-xxxxxxxx", "repository_name": "repo", "name": "before-upgrade", "indices": ["orders"], "repository_type": 1, "storage_days": 30, "lock_retention": False, "retain_until": None, "retention_grace_days": 0, "remote_cos": False, "remote_region": None, "multi_az": False, "max_snapshot_per_sec": "40m"}
+    module = _import_plugin("elasticsearch_snapshot")
+    models = _models("es.v20180416")
+    p = {
+        "instance_id": "es-xxxxxxxx",
+        "repository_name": "repo",
+        "name": "before-upgrade",
+        "indices": ["orders"],
+        "repository_type": 1,
+        "storage_days": 30,
+        "lock_retention": False,
+        "retain_until": None,
+        "retention_grace_days": 0,
+        "remote_cos": False,
+        "remote_region": None,
+        "multi_az": False,
+        "max_snapshot_per_sec": "40m",
+    }
     errors = audit_request(module.describe_request(models, p), "Elasticsearch snapshot describe")
     errors.extend(audit_request(module.create_request(models, p), "Elasticsearch snapshot create"))
     errors.extend(audit_request(module.delete_request(models, p), "Elasticsearch snapshot delete"))
@@ -4829,7 +6140,17 @@ def test_ckafka_route():
     module = _import_plugin("ckafka_route")
     models = _models("ckafka.v20190819")
     errors = []
-    p = {"instance_id": "ckafka-xxxxxxxx", "network_type": 3, "access_type": 3, "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "public_bandwidth": None, "note": "private", "security_group_ids": ["sg-xxxxxxxx"], "ip_whitelist": []}
+    p = {
+        "instance_id": "ckafka-xxxxxxxx",
+        "network_type": 3,
+        "access_type": 3,
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_id": "subnet-xxxxxxxx",
+        "public_bandwidth": None,
+        "note": "private",
+        "security_group_ids": ["sg-xxxxxxxx"],
+        "ip_whitelist": [],
+    }
     errors.extend(audit_request(module.describe_request(models, p["instance_id"]), "ckafka route describe"))
     errors.extend(audit_request(module.create_request(models, p), "ckafka route create"))
     errors.extend(audit_request(module.delete_request(models, p["instance_id"], 123), "ckafka route delete"))
@@ -4840,7 +6161,15 @@ def test_ckafka_acl_rule():
     module = _import_plugin("ckafka_acl_rule")
     models = _models("ckafka.v20190819")
     errors = []
-    p = {"instance_id": "ckafka-xxxxxxxx", "name": "orders-producers", "pattern_type": "PREFIXED", "pattern": "orders-", "apply_to_new_topics": False, "comment": "producer access", "rules": [{"operation": "Write", "permission": "Allow", "host": "*", "principal": "User:producer"}]}
+    p = {
+        "instance_id": "ckafka-xxxxxxxx",
+        "name": "orders-producers",
+        "pattern_type": "PREFIXED",
+        "pattern": "orders-",
+        "apply_to_new_topics": False,
+        "comment": "producer access",
+        "rules": [{"operation": "Write", "permission": "Allow", "host": "*", "principal": "User:producer"}],
+    }
     errors.extend(audit_request(module.describe_request(models, p), "ckafka acl rule describe"))
     errors.extend(audit_request(module.create_request(models, p), "ckafka acl rule create"))
     errors.extend(audit_request(module.update_request(models, p), "ckafka acl rule update"))
@@ -4849,29 +6178,74 @@ def test_ckafka_acl_rule():
 
 
 def test_ckafka_datahub_topic():
-    module = _import_plugin("ckafka_datahub_topic"); models = _models("ckafka.v20190819")
+    module = _import_plugin("ckafka_datahub_topic")
+    models = _models("ckafka.v20190819")
     p = {"name": "1250000000-orders", "partition_num": 6, "retention_ms": 86400000, "note": "orders"}
-    requests = [module.describe_request(models, p["name"]), module.create_request(models, p), module.update_request(models, p), module.delete_request(models, p["name"])]
+    requests = [
+        module.describe_request(models, p["name"]),
+        module.create_request(models, p),
+        module.update_request(models, p),
+        module.delete_request(models, p["name"]),
+    ]
     errors = []
-    for request in requests: errors.extend(audit_request(request, "CKafka Datahub topic request"))
+    for request in requests:
+        errors.extend(audit_request(request, "CKafka Datahub topic request"))
     assert errors == []
 
 
 def test_ckafka_datahub_connection():
-    module = _import_plugin("ckafka_datahub_connection"); models = _models("ckafka.v20190819")
-    p = {"resource_id": "resource-x", "name": "analytics-kafka", "connection_type": "KAFKA", "description": "analytics", "config": {"Resource": "ckafka-x", "SelfBuilt": False}}
-    requests = [module.describe_request(models, p["resource_id"]), module.list_request(models, p), module.create_request(models, p), module.update_request(models, p, p["resource_id"]), module.delete_request(models, p["resource_id"])]
+    module = _import_plugin("ckafka_datahub_connection")
+    models = _models("ckafka.v20190819")
+    p = {
+        "resource_id": "resource-x",
+        "name": "analytics-kafka",
+        "connection_type": "KAFKA",
+        "description": "analytics",
+        "config": {"Resource": "ckafka-x", "SelfBuilt": False},
+    }
+    requests = [
+        module.describe_request(models, p["resource_id"]),
+        module.list_request(models, p),
+        module.create_request(models, p),
+        module.update_request(models, p, p["resource_id"]),
+        module.delete_request(models, p["resource_id"]),
+    ]
     errors = []
-    for request in requests: errors.extend(audit_request(request, "CKafka Datahub connection request"))
+    for request in requests:
+        errors.extend(audit_request(request, "CKafka Datahub connection request"))
     assert errors == []
 
 
 def test_ckafka_datahub_task():
-    module = _import_plugin("ckafka_datahub_task"); models = _models("ckafka.v20190819")
-    p = {"task_id": "task-x", "name": "mysql-orders", "task_type": "SOURCE", "source_resource": {"Type": "MYSQL", "MySQLParam": {"Resource": "resource-x", "Database": "orders", "Table": "*"}}, "target_resource": {"Type": "TOPIC", "TopicParam": {"Resource": "1250000000-orders"}}, "transform": None, "transforms": None, "schema_id": None, "description": "orders", "desired_status": "running", "tasks_max": 2, "sync_throttle_limit": 20, "auto_expand": True}
-    requests = [module.describe_request(models, p["task_id"]), module.list_request(models, p), module.create_request(models, p), module.update_request(models, p, p["task_id"]), module.pause_request(models, p["task_id"]), module.resume_request(models, p["task_id"]), module.delete_request(models, p["task_id"])]
+    module = _import_plugin("ckafka_datahub_task")
+    models = _models("ckafka.v20190819")
+    p = {
+        "task_id": "task-x",
+        "name": "mysql-orders",
+        "task_type": "SOURCE",
+        "source_resource": {"Type": "MYSQL", "MySQLParam": {"Resource": "resource-x", "Database": "orders", "Table": "*"}},
+        "target_resource": {"Type": "TOPIC", "TopicParam": {"Resource": "1250000000-orders"}},
+        "transform": None,
+        "transforms": None,
+        "schema_id": None,
+        "description": "orders",
+        "desired_status": "running",
+        "tasks_max": 2,
+        "sync_throttle_limit": 20,
+        "auto_expand": True,
+    }
+    requests = [
+        module.describe_request(models, p["task_id"]),
+        module.list_request(models, p),
+        module.create_request(models, p),
+        module.update_request(models, p, p["task_id"]),
+        module.pause_request(models, p["task_id"]),
+        module.resume_request(models, p["task_id"]),
+        module.delete_request(models, p["task_id"]),
+    ]
     errors = []
-    for request in requests: errors.extend(audit_request(request, "CKafka Datahub task request"))
+    for request in requests:
+        errors.extend(audit_request(request, "CKafka Datahub task request"))
     assert errors == []
 
 
@@ -4879,7 +6253,17 @@ def test_tdmq_namespace():
     module = _import_plugin("tdmq_namespace")
     models = _models("tdmq.v20200217")
     errors = []
-    p = {"cluster_id": "pulsar-xxxxxxxx", "name": "production", "message_ttl": 604800, "remark": "prod", "retention_minutes": 1440, "retention_size_mb": 10240, "auto_subscription_creation": False, "subscription_expiration_enabled": True, "subscription_expiration_time": 2592000}
+    p = {
+        "cluster_id": "pulsar-xxxxxxxx",
+        "name": "production",
+        "message_ttl": 604800,
+        "remark": "prod",
+        "retention_minutes": 1440,
+        "retention_size_mb": 10240,
+        "auto_subscription_creation": False,
+        "subscription_expiration_enabled": True,
+        "subscription_expiration_time": 2592000,
+    }
     errors.extend(audit_request(module.describe_request(models, p), "tdmq namespace describe"))
     errors.extend(audit_request(module.create_request(models, p), "tdmq namespace create"))
     errors.extend(audit_request(module.update_request(models, p), "tdmq namespace update"))
@@ -4900,11 +6284,38 @@ def test_tdmq_namespace_role():
 
 
 def test_tdmq_rabbitmq_instance():
-    module = _import_plugin("tdmq_rabbitmq_instance"); models = _models("tdmq.v20200217")
-    p = {"instance_id": "amqp-x", "name": "production-rabbitmq", "zone_ids": [100003, 100004, 100005], "vpc_id": "vpc-x", "subnet_id": "subnet-x", "node_spec": "rabbit-vip-profession-4c16g", "node_count": 3, "storage_size": 500, "cluster_version": "3.13.7", "pay_mode": 0, "period_months": 1, "auto_renew": True, "default_ha_mirror_queue": True, "bandwidth": 10, "public_access": False, "deletion_protection": True, "remark": "production", "tags": {"environment": "production"}, "international": False}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.modify_request(models, p, p["instance_id"]), module.delete_request(models, p["instance_id"], False)]
+    module = _import_plugin("tdmq_rabbitmq_instance")
+    models = _models("tdmq.v20200217")
+    p = {
+        "instance_id": "amqp-x",
+        "name": "production-rabbitmq",
+        "zone_ids": [100003, 100004, 100005],
+        "vpc_id": "vpc-x",
+        "subnet_id": "subnet-x",
+        "node_spec": "rabbit-vip-profession-4c16g",
+        "node_count": 3,
+        "storage_size": 500,
+        "cluster_version": "3.13.7",
+        "pay_mode": 0,
+        "period_months": 1,
+        "auto_renew": True,
+        "default_ha_mirror_queue": True,
+        "bandwidth": 10,
+        "public_access": False,
+        "deletion_protection": True,
+        "remark": "production",
+        "tags": {"environment": "production"},
+        "international": False,
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.modify_request(models, p, p["instance_id"]),
+        module.delete_request(models, p["instance_id"], False),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "TDMQ RabbitMQ instance request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "TDMQ RabbitMQ instance request %s" % index))
     assert errors == []
 
 
@@ -4924,7 +6335,17 @@ def test_tdmq_rabbitmq_user():
     module = _import_plugin("tdmq_rabbitmq_user")
     models = _models("tdmq.v20200217")
     errors = []
-    p = {"instance_id": "amqp-xxxxxxxx", "name": "application", "password": "Password_123", "rotate_password": True, "description": "app", "tags": ["management"], "max_connections": 100, "max_channels": 200, "cam_auth_enabled": False}
+    p = {
+        "instance_id": "amqp-xxxxxxxx",
+        "name": "application",
+        "password": "Password_123",
+        "rotate_password": True,
+        "description": "app",
+        "tags": ["management"],
+        "max_connections": 100,
+        "max_channels": 200,
+        "cam_auth_enabled": False,
+    }
     errors.extend(audit_request(module.describe_request(models, p), "tdmq rabbitmq user describe"))
     errors.extend(audit_request(module.create_request(models, p), "tdmq rabbitmq user create"))
     errors.extend(audit_request(module.update_request(models, p), "tdmq rabbitmq user update"))
@@ -4936,7 +6357,14 @@ def test_tdmq_rabbitmq_permission():
     module = _import_plugin("tdmq_rabbitmq_permission")
     models = _models("tdmq.v20200217")
     errors = []
-    p = {"instance_id": "amqp-xxxxxxxx", "user": "application", "virtual_host": "production", "configure_regex": "^orders\\.", "write_regex": "^orders\\.", "read_regex": "^orders\\."}
+    p = {
+        "instance_id": "amqp-xxxxxxxx",
+        "user": "application",
+        "virtual_host": "production",
+        "configure_regex": "^orders\\.",
+        "write_regex": "^orders\\.",
+        "read_regex": "^orders\\.",
+    }
     errors.extend(audit_request(module.describe_request(models, p), "tdmq rabbitmq permission describe"))
     errors.extend(audit_request(module.modify_request(models, p), "tdmq rabbitmq permission modify"))
     errors.extend(audit_request(module.delete_request(models, p), "tdmq rabbitmq permission delete"))
@@ -4947,7 +6375,14 @@ def test_tdmq_rabbitmq_binding():
     module = _import_plugin("tdmq_rabbitmq_binding")
     models = _models("tdmq.v20200217")
     errors = []
-    p = {"instance_id": "amqp-xxxxxxxx", "virtual_host": "production", "source_exchange": "orders", "destination_type": "queue", "destination": "order-workers", "routing_key": "orders.created"}
+    p = {
+        "instance_id": "amqp-xxxxxxxx",
+        "virtual_host": "production",
+        "source_exchange": "orders",
+        "destination_type": "queue",
+        "destination": "order-workers",
+        "routing_key": "orders.created",
+    }
     errors.extend(audit_request(module.describe_request(models, p), "tdmq rabbitmq binding describe"))
     errors.extend(audit_request(module.create_request(models, p), "tdmq rabbitmq binding create"))
     errors.extend(audit_request(module.delete_request(models, p, 123), "tdmq rabbitmq binding delete"))
@@ -4970,7 +6405,14 @@ def test_tdmq_rocketmq_topic():
     module = _import_plugin("tdmq_rocketmq_topic")
     models = _models("tdmq.v20200217")
     errors = []
-    p = {"cluster_id": "rocketmq-xxxxxxxx", "namespace": "production", "name": "orders", "topic_type": "PartitionedOrder", "partition_num": 6, "remark": "orders"}
+    p = {
+        "cluster_id": "rocketmq-xxxxxxxx",
+        "namespace": "production",
+        "name": "orders",
+        "topic_type": "PartitionedOrder",
+        "partition_num": 6,
+        "remark": "orders",
+    }
     errors.extend(audit_request(module.describe_request(models, p), "tdmq rocketmq topic describe"))
     errors.extend(audit_request(module.create_request(models, p), "tdmq rocketmq topic create"))
     errors.extend(audit_request(module.update_request(models, p), "tdmq rocketmq topic update"))
@@ -4982,7 +6424,16 @@ def test_tdmq_rocketmq_group():
     module = _import_plugin("tdmq_rocketmq_group")
     models = _models("tdmq.v20200217")
     errors = []
-    p = {"cluster_id": "rocketmq-xxxxxxxx", "namespace": "production", "name": "order-workers", "group_type": "TCP", "read_enabled": True, "broadcast_enabled": False, "retry_max_times": 12, "remark": "workers"}
+    p = {
+        "cluster_id": "rocketmq-xxxxxxxx",
+        "namespace": "production",
+        "name": "order-workers",
+        "group_type": "TCP",
+        "read_enabled": True,
+        "broadcast_enabled": False,
+        "retry_max_times": 12,
+        "remark": "workers",
+    }
     errors.extend(audit_request(module.describe_request(models, p), "tdmq rocketmq group describe"))
     errors.extend(audit_request(module.create_request(models, p), "tdmq rocketmq group create"))
     errors.extend(audit_request(module.update_request(models, p), "tdmq rocketmq group update"))
@@ -5085,7 +6536,14 @@ def test_redis_parameter_template():
 def test_waf_anti_info_leak_rule():
     module = _import_plugin("waf_anti_info_leak_rule")
     models = _models("waf.v20180125")
-    p = {"domain": "api.example.com", "name": "mask-phone", "action": 1, "strategies": [{"Field": "information", "CompareFunc": "contains", "Content": "phone"}], "uri": "/customers", "enabled": True}
+    p = {
+        "domain": "api.example.com",
+        "name": "mask-phone",
+        "action": 1,
+        "strategies": [{"Field": "information", "CompareFunc": "contains", "Content": "phone"}],
+        "uri": "/customers",
+        "enabled": True,
+    }
     errors = []
     errors.extend(audit_request(module.describe_request(models, p), "WAF anti-info-leak describe"))
     errors.extend(audit_request(module.create_request(models, p), "WAF anti-info-leak create"))
@@ -5098,7 +6556,15 @@ def test_waf_anti_info_leak_rule():
 def test_waf_attack_white_rule():
     module = _import_plugin("waf_attack_white_rule")
     models = _models("waf.v20180125")
-    p = {"domain": "api.example.com", "name": "allow-health", "enabled": True, "mode": 0, "signature_ids": ["100001"], "type_ids": [], "rules": [{"MatchField": "URI", "MatchMethod": "prefix", "MatchContent": "/health", "MatchParams": ""}]}
+    p = {
+        "domain": "api.example.com",
+        "name": "allow-health",
+        "enabled": True,
+        "mode": 0,
+        "signature_ids": ["100001"],
+        "type_ids": [],
+        "rules": [{"MatchField": "URI", "MatchMethod": "prefix", "MatchContent": "/health", "MatchParams": ""}],
+    }
     errors = []
     errors.extend(audit_request(module.describe_request(models, p), "WAF attack allow describe"))
     errors.extend(audit_request(module.create_request(models, p), "WAF attack allow create"))
@@ -5111,59 +6577,130 @@ def test_waf_anti_tamper_rule():
     module = _import_plugin("waf_anti_tamper_rule")
     models = _models("waf.v20180125")
     p = {"domain": "www.example.com", "name": "protect-homepage", "uri": "/index.html", "enabled": True}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p, 123), module.status_request(models, p, 123), module.refresh_request(models, p, 123), module.delete_request(models, p, 123)]
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.update_request(models, p, 123),
+        module.status_request(models, p, 123),
+        module.refresh_request(models, p, 123),
+        module.delete_request(models, p, 123),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "WAF anti-tamper request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "WAF anti-tamper request %s" % index))
     assert errors == []
 
 
 def test_waf_area_ban_rule():
     module = _import_plugin("waf_area_ban_rule")
     models = _models("waf.v20180125")
-    p = {"domain": "api.example.com", "areas": [{"Country": "中国", "Region": "广东", "City": "深圳"}], "job_type": "TimedJob", "job_datetime": {"Timed": [{"StartDateTime": 1788134400, "EndDateTime": 1788220800}], "TimeTZone": "Asia/Shanghai"}, "language": "cn"}
+    p = {
+        "domain": "api.example.com",
+        "areas": [{"Country": "中国", "Region": "广东", "City": "深圳"}],
+        "job_type": "TimedJob",
+        "job_datetime": {"Timed": [{"StartDateTime": 1788134400, "EndDateTime": 1788220800}], "TimeTZone": "Asia/Shanghai"},
+        "language": "cn",
+    }
     requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p), module.status_request(models, p, True)]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "WAF area-ban request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "WAF area-ban request %s" % index))
     assert errors == []
 
 
 def test_waf_owasp_white_rule():
-    module = _import_plugin("waf_owasp_white_rule"); models = _models("waf.v20180125")
-    p = {"domain": "api.example.com", "name": "allow-health", "allow_type": 0, "owasp_ids": [100001], "strategies": [{"Field": "URI", "CompareFunc": "prefix", "Content": "/health", "Arg": ""}], "logical_operator": "and", "expire_time": 0, "enabled": True}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p, 123), module.delete_request(models, p, 123)]
+    module = _import_plugin("waf_owasp_white_rule")
+    models = _models("waf.v20180125")
+    p = {
+        "domain": "api.example.com",
+        "name": "allow-health",
+        "allow_type": 0,
+        "owasp_ids": [100001],
+        "strategies": [{"Field": "URI", "CompareFunc": "prefix", "Content": "/health", "Arg": ""}],
+        "logical_operator": "and",
+        "expire_time": 0,
+        "enabled": True,
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.update_request(models, p, 123),
+        module.delete_request(models, p, 123),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "WAF OWASP allowlist request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "WAF OWASP allowlist request %s" % index))
     assert errors == []
 
 
 def test_waf_auto_deny():
-    module = _import_plugin("waf_auto_deny"); models = _models("waf.v20180125")
+    module = _import_plugin("waf_auto_deny")
+    models = _models("waf.v20180125")
     p = {"domain": "api.example.com", "enabled": True, "attack_threshold": 20, "time_threshold": 5, "deny_time_threshold": 120}
-    errors = audit_request(module.describe_request(models, p), "WAF auto deny describe") + audit_request(module.update_request(models, p), "WAF auto deny update")
+    errors = audit_request(module.describe_request(models, p), "WAF auto deny describe") + audit_request(
+        module.update_request(models, p), "WAF auto deny update"
+    )
     assert errors == []
 
 
 def test_waf_threat_intelligence():
-    module = _import_plugin("waf_threat_intelligence"); models = _models("waf.v20180125")
+    module = _import_plugin("waf_threat_intelligence")
+    models = _models("waf.v20180125")
     p = {"enabled": True, "tags": ["botnet", "scanner"]}
-    errors = audit_request(module.describe_request(models), "WAF threat intelligence describe") + audit_request(module.update_request(models, p), "WAF threat intelligence update")
+    errors = audit_request(module.describe_request(models), "WAF threat intelligence describe") + audit_request(
+        module.update_request(models, p), "WAF threat intelligence update"
+    )
     assert errors == []
 
 
 def test_waf_custom_white_rule():
     module = _import_plugin("waf_custom_white_rule")
     models = _models("waf.v20180125")
-    p = {"domain": "api.example.com", "name": "allow-health", "priority": 100, "bypass_modules": "owasp,acl", "strategies": [{"Field": "URI", "CompareFunc": "prefix", "Content": "/health", "Arg": ""}], "logical_operator": "and", "expire_time": 0, "enabled": True}
-    requests = [module.describe_request(models, p), module.create_request(models, p), module.update_request(models, p, 123), module.status_request(models, p, 123), module.delete_request(models, p, 123)]
+    p = {
+        "domain": "api.example.com",
+        "name": "allow-health",
+        "priority": 100,
+        "bypass_modules": "owasp,acl",
+        "strategies": [{"Field": "URI", "CompareFunc": "prefix", "Content": "/health", "Arg": ""}],
+        "logical_operator": "and",
+        "expire_time": 0,
+        "enabled": True,
+    }
+    requests = [
+        module.describe_request(models, p),
+        module.create_request(models, p),
+        module.update_request(models, p, 123),
+        module.status_request(models, p, 123),
+        module.delete_request(models, p, 123),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "WAF precision allowlist request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "WAF precision allowlist request %s" % index))
     assert errors == []
 
 
 def test_waf_cc_rule():
     module = _import_plugin("waf_cc_rule")
     models = _models("waf.v20180125")
-    p = {"domain": "api.example.com", "name": "protect-login", "edition": "sparta-waf", "enabled": True, "threshold": 100, "interval": 60, "action": 22, "priority": 50, "valid_time": 600, "url": "/login", "match_function": 0, "advanced": False, "options": [], "session_ids": [], "limit_method": "only_limit", "logical_operator": "and", "action_ratio": 100}
+    p = {
+        "domain": "api.example.com",
+        "name": "protect-login",
+        "edition": "sparta-waf",
+        "enabled": True,
+        "threshold": 100,
+        "interval": 60,
+        "action": 22,
+        "priority": 50,
+        "valid_time": 600,
+        "url": "/login",
+        "match_function": 0,
+        "advanced": False,
+        "options": [],
+        "session_ids": [],
+        "limit_method": "only_limit",
+        "logical_operator": "and",
+        "action_ratio": 100,
+    }
     errors = []
     errors.extend(audit_request(module.describe_request(models, p), "WAF CC describe"))
     errors.extend(audit_request(module.upsert_request(models, p, 0), "WAF CC create"))
@@ -5173,8 +6710,10 @@ def test_waf_cc_rule():
 
 
 def test_cfs_permission_group():
-    module = _import_plugin("cfs_permission_group"); models = _models("cfs.v20190719")
-    p = {"name": "production", "description": "Production clients"}; errors = []
+    module = _import_plugin("cfs_permission_group")
+    models = _models("cfs.v20190719")
+    p = {"name": "production", "description": "Production clients"}
+    errors = []
     errors.extend(audit_request(module.describe_request(models), "CFS permission group describe"))
     errors.extend(audit_request(module.create_request(models, p), "CFS permission group create"))
     errors.extend(audit_request(module.update_request(models, p, "pgroup-xxxxxxxx"), "CFS permission group update"))
@@ -5183,8 +6722,10 @@ def test_cfs_permission_group():
 
 
 def test_cfs_permission_rule():
-    module = _import_plugin("cfs_permission_rule"); models = _models("cfs.v20190719")
-    p = {"permission_group_id": "pgroup-xxxxxxxx", "client_ip": "10.0.0.0/16", "priority": 10, "access": "RW", "user_permission": "root_squash"}; errors = []
+    module = _import_plugin("cfs_permission_rule")
+    models = _models("cfs.v20190719")
+    p = {"permission_group_id": "pgroup-xxxxxxxx", "client_ip": "10.0.0.0/16", "priority": 10, "access": "RW", "user_permission": "root_squash"}
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p["permission_group_id"]), "CFS permission rule describe"))
     errors.extend(audit_request(module.create_request(models, p), "CFS permission rule create"))
     errors.extend(audit_request(module.update_request(models, p, "rule-xxxxxxxx"), "CFS permission rule update"))
@@ -5193,8 +6734,10 @@ def test_cfs_permission_rule():
 
 
 def test_cfs_snapshot():
-    module = _import_plugin("cfs_snapshot"); models = _models("cfs.v20190719")
-    p = {"snapshot_id": None, "file_system_id": "cfs-xxxxxxxx", "name": "before-upgrade", "alive_days": 30}; errors = []
+    module = _import_plugin("cfs_snapshot")
+    models = _models("cfs.v20190719")
+    p = {"snapshot_id": None, "file_system_id": "cfs-xxxxxxxx", "name": "before-upgrade", "alive_days": 30}
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "CFS snapshot describe"))
     errors.extend(audit_request(module.create_request(models, p), "CFS snapshot create"))
     errors.extend(audit_request(module.update_request(models, p, "snap-xxxxxxxx"), "CFS snapshot update"))
@@ -5203,8 +6746,20 @@ def test_cfs_snapshot():
 
 
 def test_cfs_auto_snapshot_policy():
-    module = _import_plugin("cfs_auto_snapshot_policy"); models = _models("cfs.v20190719")
-    p = {"policy_id": None, "name": "nightly", "hour": "02", "day_of_week": "1,2,3,4,5,6,7", "day_of_month": "", "interval_days": 0, "alive_days": 30, "enabled": True, "file_system_ids": ["cfs-xxxxxxxx"]}; errors = []
+    module = _import_plugin("cfs_auto_snapshot_policy")
+    models = _models("cfs.v20190719")
+    p = {
+        "policy_id": None,
+        "name": "nightly",
+        "hour": "02",
+        "day_of_week": "1,2,3,4,5,6,7",
+        "day_of_month": "",
+        "interval_days": 0,
+        "alive_days": 30,
+        "enabled": True,
+        "file_system_ids": ["cfs-xxxxxxxx"],
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "CFS auto snapshot describe"))
     errors.extend(audit_request(module.create_request(models, p), "CFS auto snapshot create"))
     errors.extend(audit_request(module.update_request(models, p, "asp-xxxxxxxx"), "CFS auto snapshot update"))
@@ -5215,8 +6770,18 @@ def test_cfs_auto_snapshot_policy():
 
 
 def test_cbs_auto_snapshot_policy():
-    module = _import_plugin("cbs_auto_snapshot_policy"); models = _models("cbs.v20170312")
-    p = {"policy_id": None, "name": "nightly", "schedules": [{"Hour": [2], "DayOfWeek": [0, 1, 2, 3, 4, 5, 6]}], "enabled": True, "permanent": False, "retention_days": 30, "disk_ids": ["disk-xxxxxxxx"]}; errors = []
+    module = _import_plugin("cbs_auto_snapshot_policy")
+    models = _models("cbs.v20170312")
+    p = {
+        "policy_id": None,
+        "name": "nightly",
+        "schedules": [{"Hour": [2], "DayOfWeek": [0, 1, 2, 3, 4, 5, 6]}],
+        "enabled": True,
+        "permanent": False,
+        "retention_days": 30,
+        "disk_ids": ["disk-xxxxxxxx"],
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "CBS auto snapshot describe"))
     errors.extend(audit_request(module.create_request(models, p), "CBS auto snapshot create"))
     errors.extend(audit_request(module.update_request(models, p, "asp-xxxxxxxx"), "CBS auto snapshot update"))
@@ -5227,7 +6792,9 @@ def test_cbs_auto_snapshot_policy():
 
 
 def test_cbs_snapshot_share():
-    module = _import_plugin("cbs_snapshot_share"); models = _models("cbs.v20170312"); errors = []
+    module = _import_plugin("cbs_snapshot_share")
+    models = _models("cbs.v20170312")
+    errors = []
     errors.extend(audit_request(module.describe_request(models, "snap-xxxxxxxx"), "CBS snapshot share describe"))
     errors.extend(audit_request(module.modify_request(models, "snap-xxxxxxxx", ["100001122000"], "SHARE"), "CBS snapshot share add"))
     errors.extend(audit_request(module.modify_request(models, "snap-xxxxxxxx", ["100001122000"], "CANCEL"), "CBS snapshot share remove"))
@@ -5235,17 +6802,39 @@ def test_cbs_snapshot_share():
 
 
 def test_ssm_secret():
-    module = _import_plugin("ssm_secret"); models = _models("ssm.v20190923")
-    p = {"secret_name": "prod-database", "initial_version_id": "bootstrap", "description": "Production database", "initial_secret_string": "secret", "initial_secret_binary": None, "kms_key_id": "key-xxxxxxxx", "kms_hsm_cluster_id": None, "encrypt_type": 0, "recovery_window_days": 7}
-    requests = [module.describe_request(models, p["secret_name"]), module.create_request(models, p), module.description_request(models, p), module.state_request(models, p["secret_name"], True), module.state_request(models, p["secret_name"], False), module.restore_request(models, p["secret_name"]), module.delete_request(models, p)]
+    module = _import_plugin("ssm_secret")
+    models = _models("ssm.v20190923")
+    p = {
+        "secret_name": "prod-database",
+        "initial_version_id": "bootstrap",
+        "description": "Production database",
+        "initial_secret_string": "secret",
+        "initial_secret_binary": None,
+        "kms_key_id": "key-xxxxxxxx",
+        "kms_hsm_cluster_id": None,
+        "encrypt_type": 0,
+        "recovery_window_days": 7,
+    }
+    requests = [
+        module.describe_request(models, p["secret_name"]),
+        module.create_request(models, p),
+        module.description_request(models, p),
+        module.state_request(models, p["secret_name"], True),
+        module.state_request(models, p["secret_name"], False),
+        module.restore_request(models, p["secret_name"]),
+        module.delete_request(models, p),
+    ]
     errors = []
-    for index, request in enumerate(requests): errors.extend(audit_request(request, "SSM secret request %s" % index))
+    for index, request in enumerate(requests):
+        errors.extend(audit_request(request, "SSM secret request %s" % index))
     assert errors == []
 
 
 def test_ssm_secret_version():
-    module = _import_plugin("ssm_secret_version"); models = _models("ssm.v20190923")
-    p = {"secret_name": "prod/database", "version_id": "release-1", "secret_string": "redacted", "secret_binary": None}; errors = []
+    module = _import_plugin("ssm_secret_version")
+    models = _models("ssm.v20190923")
+    p = {"secret_name": "prod/database", "version_id": "release-1", "secret_string": "redacted", "secret_binary": None}
+    errors = []
     errors.extend(audit_request(module.list_request(models, p["secret_name"]), "SSM version list"))
     errors.extend(audit_request(module.get_request(models, p), "SSM version get"))
     errors.extend(audit_request(module.create_request(models, p), "SSM version create"))
@@ -5254,16 +6843,31 @@ def test_ssm_secret_version():
 
 
 def test_ssm_rotation():
-    module = _import_plugin("ssm_rotation"); models = _models("ssm.v20190923")
-    p = {"secret_name": "prod/database", "enabled": True, "frequency": 30, "begin_time": "2026-09-01T02:00:00Z"}; errors = []
+    module = _import_plugin("ssm_rotation")
+    models = _models("ssm.v20190923")
+    p = {"secret_name": "prod/database", "enabled": True, "frequency": 30, "begin_time": "2026-09-01T02:00:00Z"}
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p["secret_name"]), "SSM rotation describe"))
     errors.extend(audit_request(module.update_request(models, p), "SSM rotation update"))
     assert errors == []
 
 
 def test_tat_invoker():
-    module = _import_plugin("tat_invoker"); models = _models("tat.v20201028")
-    p = {"invoker_id": None, "name": "nightly", "command_id": "cmd-xxxxxxxx", "instance_ids": ["ins-xxxxxxxx"], "username": "root", "parameters": {"environment": "production"}, "policy": "RECURRENCE", "recurrence": "0 2 * * *", "invoke_time": None, "enabled": True}; errors = []
+    module = _import_plugin("tat_invoker")
+    models = _models("tat.v20201028")
+    p = {
+        "invoker_id": None,
+        "name": "nightly",
+        "command_id": "cmd-xxxxxxxx",
+        "instance_ids": ["ins-xxxxxxxx"],
+        "username": "root",
+        "parameters": {"environment": "production"},
+        "policy": "RECURRENCE",
+        "recurrence": "0 2 * * *",
+        "invoke_time": None,
+        "enabled": True,
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TAT invoker describe"))
     errors.extend(audit_request(module.create_request(models, p), "TAT invoker create"))
     errors.extend(audit_request(module.update_request(models, p, "ivk-xxxxxxxx"), "TAT invoker update"))
@@ -5274,8 +6878,10 @@ def test_tat_invoker():
 
 
 def test_cbs_disk_backup():
-    module = _import_plugin("cbs_disk_backup"); models = _models("cbs.v20170312")
-    p = {"disk_backup_id": None, "disk_id": "disk-xxxxxxxx", "name": "before-upgrade"}; errors = []
+    module = _import_plugin("cbs_disk_backup")
+    models = _models("cbs.v20170312")
+    p = {"disk_backup_id": None, "disk_id": "disk-xxxxxxxx", "name": "before-upgrade"}
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "CBS disk backup describe"))
     errors.extend(audit_request(module.create_request(models, p), "CBS disk backup create"))
     errors.extend(audit_request(module.delete_request(models, "dbp-xxxxxxxx"), "CBS disk backup delete"))
@@ -5283,8 +6889,10 @@ def test_cbs_disk_backup():
 
 
 def test_lighthouse_firewall_rules():
-    module = _import_plugin("lighthouse_firewall_rules"); models = _models("lighthouse.v20200324")
-    rules = [{"Protocol": "TCP", "Port": "443", "CidrBlock": "0.0.0.0/0", "Action": "ACCEPT", "FirewallRuleDescription": "HTTPS"}]; errors = []
+    module = _import_plugin("lighthouse_firewall_rules")
+    models = _models("lighthouse.v20200324")
+    rules = [{"Protocol": "TCP", "Port": "443", "CidrBlock": "0.0.0.0/0", "Action": "ACCEPT", "FirewallRuleDescription": "HTTPS"}]
+    errors = []
     errors.extend(audit_request(module.describe_request(models, "lhins-xxxxxxxx"), "Lighthouse firewall describe"))
     errors.extend(audit_request(module.create_request(models, "lhins-xxxxxxxx", rules, 1), "Lighthouse firewall create"))
     errors.extend(audit_request(module.delete_request(models, "lhins-xxxxxxxx", rules, 1), "Lighthouse firewall delete"))
@@ -5292,8 +6900,10 @@ def test_lighthouse_firewall_rules():
 
 
 def test_lighthouse_snapshot():
-    module = _import_plugin("lighthouse_snapshot"); models = _models("lighthouse.v20200324")
-    p = {"snapshot_id": None, "instance_id": "lhins-xxxxxxxx", "name": "before-upgrade"}; errors = []
+    module = _import_plugin("lighthouse_snapshot")
+    models = _models("lighthouse.v20200324")
+    p = {"snapshot_id": None, "instance_id": "lhins-xxxxxxxx", "name": "before-upgrade"}
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "Lighthouse snapshot describe"))
     errors.extend(audit_request(module.create_request(models, p), "Lighthouse snapshot create"))
     errors.extend(audit_request(module.update_request(models, "lhsnap-xxxxxxxx", p["name"]), "Lighthouse snapshot update"))
@@ -5302,8 +6912,17 @@ def test_lighthouse_snapshot():
 
 
 def test_lighthouse_key_pair():
-    module = _import_plugin("lighthouse_key_pair"); models = _models("lighthouse.v20200324")
-    p = {"key_id": None, "name": "automation", "public_key": "ssh-ed25519 AAAATEST automation", "instance_ids": ["lhins-xxxxxxxx"], "association_type": "ONLINE", "username": "root"}; errors = []
+    module = _import_plugin("lighthouse_key_pair")
+    models = _models("lighthouse.v20200324")
+    p = {
+        "key_id": None,
+        "name": "automation",
+        "public_key": "ssh-ed25519 AAAATEST automation",
+        "instance_ids": ["lhins-xxxxxxxx"],
+        "association_type": "ONLINE",
+        "username": "root",
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "Lighthouse key describe"))
     errors.extend(audit_request(module.import_request(models, p), "Lighthouse key import"))
     errors.extend(audit_request(module.associate_request(models, p, "lhkp-xxxxxxxx", p["instance_ids"]), "Lighthouse key associate"))
@@ -5313,8 +6932,18 @@ def test_lighthouse_key_pair():
 
 
 def test_lighthouse_disk():
-    module = _import_plugin("lighthouse_disk"); models = _models("lighthouse.v20200324")
-    p = {"disk_id": None, "name": "app-data", "zone": "ap-guangzhou-3", "disk_size": 100, "disk_type": "CLOUD_SSD", "prepaid_period": 12, "renew_flag": "NOTIFY_AND_MANUAL_RENEW"}; errors = []
+    module = _import_plugin("lighthouse_disk")
+    models = _models("lighthouse.v20200324")
+    p = {
+        "disk_id": None,
+        "name": "app-data",
+        "zone": "ap-guangzhou-3",
+        "disk_size": 100,
+        "disk_type": "CLOUD_SSD",
+        "prepaid_period": 12,
+        "renew_flag": "NOTIFY_AND_MANUAL_RENEW",
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "Lighthouse disk describe"))
     errors.extend(audit_request(module.create_request(models, p), "Lighthouse disk create"))
     errors.extend(audit_request(module.update_request(models, "lhdisk-xxxxxxxx", p["name"]), "Lighthouse disk update"))
@@ -5325,8 +6954,17 @@ def test_lighthouse_disk():
 
 
 def test_teo_origin_group():
-    module = _import_plugin("teo_origin_group"); models = _models("teo.v20220901")
-    p = {"zone_id": "zone-xxxxxxxx", "group_id": None, "name": "app-origins", "group_type": "HTTP", "host_header": "origin.example.com", "records": [{"record": "192.0.2.10", "record_type": "IP_DOMAIN", "weight": 100}]}; errors = []
+    module = _import_plugin("teo_origin_group")
+    models = _models("teo.v20220901")
+    p = {
+        "zone_id": "zone-xxxxxxxx",
+        "group_id": None,
+        "name": "app-origins",
+        "group_type": "HTTP",
+        "host_header": "origin.example.com",
+        "records": [{"record": "192.0.2.10", "record_type": "IP_DOMAIN", "weight": 100}],
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEO origin group describe"))
     errors.extend(audit_request(module.create_request(models, p), "TEO origin group create"))
     errors.extend(audit_request(module.update_request(models, p, "origin-xxxxxxxx"), "TEO origin group update"))
@@ -5335,8 +6973,28 @@ def test_teo_origin_group():
 
 
 def test_tem_application():
-    module = _import_plugin("tem_application"); models = _models("tem.v20210701")
-    p = {"application_id": None, "name": "order-api", "description": "Order service", "use_default_image_service": 1, "repo_type": 0, "instance_id": None, "repo_server": None, "repo_name": None, "source_channel": 0, "subnet_ids": ["subnet-xxxxxxxx"], "coding_language": "JAVA", "deploy_mode": "IMAGE", "enable_tracing": 1, "default_repo_parameters": None, "tags": {"env": "production"}, "environment_id": "en-xxxxxxxx", "delete_if_no_running_version": True}; errors = []
+    module = _import_plugin("tem_application")
+    models = _models("tem.v20210701")
+    p = {
+        "application_id": None,
+        "name": "order-api",
+        "description": "Order service",
+        "use_default_image_service": 1,
+        "repo_type": 0,
+        "instance_id": None,
+        "repo_server": None,
+        "repo_name": None,
+        "source_channel": 0,
+        "subnet_ids": ["subnet-xxxxxxxx"],
+        "coding_language": "JAVA",
+        "deploy_mode": "IMAGE",
+        "enable_tracing": 1,
+        "default_repo_parameters": None,
+        "tags": {"env": "production"},
+        "environment_id": "en-xxxxxxxx",
+        "delete_if_no_running_version": True,
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEM application describe"))
     errors.extend(audit_request(module.create_request(models, p), "TEM application create"))
     errors.extend(audit_request(module.update_request(models, p, "app-xxxxxxxx", "Updated"), "TEM application update"))
@@ -5345,8 +7003,27 @@ def test_tem_application():
 
 
 def test_tem_environment():
-    module = _import_plugin("tem_environment"); models = _models("tem.v20210701")
-    p = {"environment_id": None, "name": "production", "description": "Production", "vpc_id": "vpc-xxxxxxxx", "subnet_ids": ["subnet-xxxxxxxx"], "kubernetes_version": "1.28", "source_channel": 0, "enable_tsw_tracing": True, "tags": {"env": "production"}, "environment_type": "prod", "create_region": "ap-guangzhou", "setup_vpc": False, "setup_prometheus": False, "prometheus_id": None, "apm_id": None}; target = {"EnvironmentName": "production", "Description": "Production", "Vpc": "vpc-xxxxxxxx", "SubnetIds": ["subnet-xxxxxxxx"], "EnvType": "prod"}; errors = []
+    module = _import_plugin("tem_environment")
+    models = _models("tem.v20210701")
+    p = {
+        "environment_id": None,
+        "name": "production",
+        "description": "Production",
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_ids": ["subnet-xxxxxxxx"],
+        "kubernetes_version": "1.28",
+        "source_channel": 0,
+        "enable_tsw_tracing": True,
+        "tags": {"env": "production"},
+        "environment_type": "prod",
+        "create_region": "ap-guangzhou",
+        "setup_vpc": False,
+        "setup_prometheus": False,
+        "prometheus_id": None,
+        "apm_id": None,
+    }
+    target = {"EnvironmentName": "production", "Description": "Production", "Vpc": "vpc-xxxxxxxx", "SubnetIds": ["subnet-xxxxxxxx"], "EnvType": "prod"}
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEM environment describe"))
     errors.extend(audit_request(module.create_request(models, p), "TEM environment create"))
     errors.extend(audit_request(module.update_request(models, p, "en-xxxxxxxx", target), "TEM environment update"))
@@ -5355,8 +7032,17 @@ def test_tem_environment():
 
 
 def test_tem_application_service():
-    module = _import_plugin("tem_application_service"); models = _models("tem.v20210701")
-    p = {"application_id": "app-xxxxxxxx", "environment_id": "en-xxxxxxxx", "name": "order-api", "access_type": "CLUSTER", "service": {"Ports": [8080], "PortMappingItemList": [{"Port": 80, "TargetPort": 8080, "Protocol": "TCP"}]}, "source_channel": 0}; errors = []
+    module = _import_plugin("tem_application_service")
+    models = _models("tem.v20210701")
+    p = {
+        "application_id": "app-xxxxxxxx",
+        "environment_id": "en-xxxxxxxx",
+        "name": "order-api",
+        "access_type": "CLUSTER",
+        "service": {"Ports": [8080], "PortMappingItemList": [{"Port": 80, "TargetPort": 8080, "Protocol": "TCP"}]},
+        "source_channel": 0,
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEM application service describe"))
     errors.extend(audit_request(module.create_request(models, p), "TEM application service create"))
     errors.extend(audit_request(module.update_request(models, p), "TEM application service update"))
@@ -5365,16 +7051,45 @@ def test_tem_application_service():
 
 
 def test_tem_application_deployment():
-    module = _import_plugin("tem_application_deployment"); models = _models("tem.v20210701")
-    p = {"application_id": "app-xxxxxxxx", "environment_id": "en-xxxxxxxx", "deploy_version": "v2026.08.31", "configuration": {"InitPodNum": 2, "CpuSpec": 1.0, "MemorySpec": 2.0, "DeployMode": "IMAGE", "ImgRepo": "ccr.ccs.tencentyun.com/example/order:v2026.08.31", "SecurityGroupIds": ["sg-xxxxxxxx"]}, "source_channel": 0}; errors = []
+    module = _import_plugin("tem_application_deployment")
+    models = _models("tem.v20210701")
+    p = {
+        "application_id": "app-xxxxxxxx",
+        "environment_id": "en-xxxxxxxx",
+        "deploy_version": "v2026.08.31",
+        "configuration": {
+            "InitPodNum": 2,
+            "CpuSpec": 1.0,
+            "MemorySpec": 2.0,
+            "DeployMode": "IMAGE",
+            "ImgRepo": "ccr.ccs.tencentyun.com/example/order:v2026.08.31",
+            "SecurityGroupIds": ["sg-xxxxxxxx"],
+        },
+        "source_channel": 0,
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEM deployment describe"))
     errors.extend(audit_request(module.deploy_request(models, p), "TEM deployment create"))
     assert errors == []
 
 
 def test_tcb_environment():
-    module = _import_plugin("tcb_environment"); models = _models("tcb.v20180608")
-    p = {"alias": "production-app", "package_id": "baas_package", "resources": ["flexdb", "storage", "function"], "period": 1, "auto_voucher": True, "tags": {"env": "production"}, "renew_flag": "NOTIFY_AND_MANUAL_RENEW", "external_storage": None, "enable_overrun": "FALSE", "force_destroy": False, "bypass_destroy_check": False}; errors = []
+    module = _import_plugin("tcb_environment")
+    models = _models("tcb.v20180608")
+    p = {
+        "alias": "production-app",
+        "package_id": "baas_package",
+        "resources": ["flexdb", "storage", "function"],
+        "period": 1,
+        "auto_voucher": True,
+        "tags": {"env": "production"},
+        "renew_flag": "NOTIFY_AND_MANUAL_RENEW",
+        "external_storage": None,
+        "enable_overrun": "FALSE",
+        "force_destroy": False,
+        "bypass_destroy_check": False,
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, "env-xxxxxxxx"), "CloudBase environment describe"))
     errors.extend(audit_request(module.create_request(models, p), "CloudBase environment create"))
     errors.extend(audit_request(module.update_request(models, "env-xxxxxxxx", "production-renamed"), "CloudBase environment update"))
@@ -5383,8 +7098,16 @@ def test_tcb_environment():
 
 
 def test_tcb_http_service_route():
-    module = _import_plugin("tcb_http_service_route"); models = _models("tcb.v20180608")
-    p = {"env_id": "env-xxxxxxxx", "domain": "api.example.com"}; target = {"Domain": "api.example.com", "Protocol": "https", "Enable": True, "Routes": [{"Path": "/api", "UpstreamResourceType": "cloudrun", "UpstreamResourceName": "backend"}]}; errors = []
+    module = _import_plugin("tcb_http_service_route")
+    models = _models("tcb.v20180608")
+    p = {"env_id": "env-xxxxxxxx", "domain": "api.example.com"}
+    target = {
+        "Domain": "api.example.com",
+        "Protocol": "https",
+        "Enable": True,
+        "Routes": [{"Path": "/api", "UpstreamResourceType": "cloudrun", "UpstreamResourceName": "backend"}],
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p["env_id"]), "CloudBase route describe"))
     errors.extend(audit_request(module.create_request(models, p, target), "CloudBase route create"))
     errors.extend(audit_request(module.update_request(models, p, target), "CloudBase route update"))
@@ -5393,8 +7116,22 @@ def test_tcb_http_service_route():
 
 
 def test_tcm_mesh():
-    module = _import_plugin("tcm_mesh"); models = _models("tcm.v20210413")
-    p = {"name": "production-mesh", "mesh_version": "1.20.5", "mesh_type": "HOSTED", "config": {"Istio": {}}, "clusters": [], "tags": {"env": "production"}, "delete_cls": False, "delete_tmp": False, "delete_apm": False, "delete_grafana": False}; target = {"DisplayName": "production-mesh", "Config": {"Istio": {}}}; errors = []
+    module = _import_plugin("tcm_mesh")
+    models = _models("tcm.v20210413")
+    p = {
+        "name": "production-mesh",
+        "mesh_version": "1.20.5",
+        "mesh_type": "HOSTED",
+        "config": {"Istio": {}},
+        "clusters": [],
+        "tags": {"env": "production"},
+        "delete_cls": False,
+        "delete_tmp": False,
+        "delete_apm": False,
+        "delete_grafana": False,
+    }
+    target = {"DisplayName": "production-mesh", "Config": {"Istio": {}}}
+    errors = []
     errors.extend(audit_request(module.list_request(models), "TCM mesh list"))
     errors.extend(audit_request(module.describe_request(models, "mesh-xxxxxxxx"), "TCM mesh describe"))
     errors.extend(audit_request(module.create_request(models, p), "TCM mesh create"))
@@ -5404,7 +7141,10 @@ def test_tcm_mesh():
 
 
 def test_tcm_mesh_clusters():
-    module = _import_plugin("tcm_mesh_clusters"); models = _models("tcm.v20210413"); clusters = [{"ClusterId": "cls-xxxxxxxx", "Region": "ap-guangzhou", "Role": "REMOTE"}]; errors = []
+    module = _import_plugin("tcm_mesh_clusters")
+    models = _models("tcm.v20210413")
+    clusters = [{"ClusterId": "cls-xxxxxxxx", "Region": "ap-guangzhou", "Role": "REMOTE"}]
+    errors = []
     errors.extend(audit_request(module.describe_request(models, "mesh-xxxxxxxx"), "TCM mesh cluster describe"))
     errors.extend(audit_request(module.link_request(models, "mesh-xxxxxxxx", clusters), "TCM mesh cluster link"))
     errors.extend(audit_request(module.unlink_request(models, "mesh-xxxxxxxx", "cls-xxxxxxxx"), "TCM mesh cluster unlink"))
@@ -5412,8 +7152,30 @@ def test_tcm_mesh_clusters():
 
 
 def test_cdwdoris_instance():
-    module = _import_plugin("cdwdoris_instance"); models = _models("cdwdoris.v20211228")
-    p = {"instance_id": None, "name": "analytics-doris", "zone": "ap-guangzhou-3", "fe_spec": {"SpecName": "S_4_16_H", "Count": 3, "DiskSize": 100}, "be_spec": {"SpecName": "S_8_32_H", "Count": 3, "DiskSize": 500}, "ha": True, "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "product_version": "2.1", "charge_properties": {"ChargeType": "POSTPAID_BY_HOUR"}, "admin_password": "example-password", "tags": {"env": "production"}, "ha_type": 1, "case_sensitive": 0, "enable_multi_zones": False, "multi_zone_infos": [], "is_ssc": False, "ssc_cu": None, "cache_data_disk_size": None}; errors = []
+    module = _import_plugin("cdwdoris_instance")
+    models = _models("cdwdoris.v20211228")
+    p = {
+        "instance_id": None,
+        "name": "analytics-doris",
+        "zone": "ap-guangzhou-3",
+        "fe_spec": {"SpecName": "S_4_16_H", "Count": 3, "DiskSize": 100},
+        "be_spec": {"SpecName": "S_8_32_H", "Count": 3, "DiskSize": 500},
+        "ha": True,
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_id": "subnet-xxxxxxxx",
+        "product_version": "2.1",
+        "charge_properties": {"ChargeType": "POSTPAID_BY_HOUR"},
+        "admin_password": "example-password",
+        "tags": {"env": "production"},
+        "ha_type": 1,
+        "case_sensitive": 0,
+        "enable_multi_zones": False,
+        "multi_zone_infos": [],
+        "is_ssc": False,
+        "ssc_cu": None,
+        "cache_data_disk_size": None,
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "CDW Doris describe"))
     errors.extend(audit_request(module.state_request(models, "cdwdoris-xxxxxxxx"), "CDW Doris state"))
     errors.extend(audit_request(module.create_request(models, p), "CDW Doris create"))
@@ -5423,8 +7185,21 @@ def test_cdwdoris_instance():
 
 
 def test_cdwpg_instance():
-    module = _import_plugin("cdwpg_instance"); models = _models("cdwpg.v20201230")
-    p = {"instance_id": None, "name": "analytics-pg", "zone": "ap-guangzhou-3", "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "charge_properties": {"ChargeType": "POSTPAID_BY_HOUR"}, "admin_password": "example-password", "resources": [{"SpecName": "S_4_16_H", "Count": 2, "Type": "cn"}, {"SpecName": "S_8_32_H", "Count": 3, "Type": "dn"}], "tags": {"env": "production"}, "product_version": "6.3.0"}; errors = []
+    module = _import_plugin("cdwpg_instance")
+    models = _models("cdwpg.v20201230")
+    p = {
+        "instance_id": None,
+        "name": "analytics-pg",
+        "zone": "ap-guangzhou-3",
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_id": "subnet-xxxxxxxx",
+        "charge_properties": {"ChargeType": "POSTPAID_BY_HOUR"},
+        "admin_password": "example-password",
+        "resources": [{"SpecName": "S_4_16_H", "Count": 2, "Type": "cn"}, {"SpecName": "S_8_32_H", "Count": 3, "Type": "dn"}],
+        "tags": {"env": "production"},
+        "product_version": "6.3.0",
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "CDW PostgreSQL describe"))
     errors.extend(audit_request(module.state_request(models, "cdwpg-xxxxxxxx"), "CDW PostgreSQL state"))
     errors.extend(audit_request(module.create_request(models, p), "CDW PostgreSQL create"))
@@ -5434,8 +7209,46 @@ def test_cdwpg_instance():
 
 
 def test_emr_cluster():
-    module = _import_plugin("emr_cluster"); models = _models("emr.v20190103")
-    p = {"name": "analytics-emr", "product_version": "EMR-V3.5.0", "enable_ha": True, "charge_type": "POSTPAID_BY_HOUR", "login_settings": {"Password": "example-password"}, "scene_software_config": {"Software": ["HDFS", "YARN"], "SceneName": "Hadoop"}, "prepaid": None, "security_group_ids": ["sg-xxxxxxxx"], "bootstrap_actions": [], "client_token": "client-token-xxxxxxxx", "need_master_wan": "NOT_NEED_MASTER_WAN", "enable_remote_login": False, "enable_kerberos": False, "custom_conf": None, "tags": {"env": "production"}, "disaster_recover_group_ids": [], "enable_cbs_encrypt": True, "enable_cbs_system_encrypt": True, "meta_db_info": None, "depend_services": [], "zone_resource_configurations": [{"VirtualPrivateCloud": {"VpcId": "vpc-xxxxxxxx", "SubnetId": "subnet-xxxxxxxx"}, "Placement": {"Zone": "ap-guangzhou-3", "ProjectId": 0}, "AllNodeResourceSpec": {"MasterCount": 3, "CoreCount": 3, "TaskCount": 0}}], "cos_bucket": None, "node_marks": [], "load_balancer_id": None, "default_meta_version": "mysql8", "need_cdb_audit": 0, "source_ip": "10.0.0.0/16", "partition_number": 1, "web_ui_version": 1}; errors = []
+    module = _import_plugin("emr_cluster")
+    models = _models("emr.v20190103")
+    p = {
+        "name": "analytics-emr",
+        "product_version": "EMR-V3.5.0",
+        "enable_ha": True,
+        "charge_type": "POSTPAID_BY_HOUR",
+        "login_settings": {"Password": "example-password"},
+        "scene_software_config": {"Software": ["HDFS", "YARN"], "SceneName": "Hadoop"},
+        "prepaid": None,
+        "security_group_ids": ["sg-xxxxxxxx"],
+        "bootstrap_actions": [],
+        "client_token": "client-token-xxxxxxxx",
+        "need_master_wan": "NOT_NEED_MASTER_WAN",
+        "enable_remote_login": False,
+        "enable_kerberos": False,
+        "custom_conf": None,
+        "tags": {"env": "production"},
+        "disaster_recover_group_ids": [],
+        "enable_cbs_encrypt": True,
+        "enable_cbs_system_encrypt": True,
+        "meta_db_info": None,
+        "depend_services": [],
+        "zone_resource_configurations": [
+            {
+                "VirtualPrivateCloud": {"VpcId": "vpc-xxxxxxxx", "SubnetId": "subnet-xxxxxxxx"},
+                "Placement": {"Zone": "ap-guangzhou-3", "ProjectId": 0},
+                "AllNodeResourceSpec": {"MasterCount": 3, "CoreCount": 3, "TaskCount": 0},
+            }
+        ],
+        "cos_bucket": None,
+        "node_marks": [],
+        "load_balancer_id": None,
+        "default_meta_version": "mysql8",
+        "need_cdb_audit": 0,
+        "source_ip": "10.0.0.0/16",
+        "partition_number": 1,
+        "web_ui_version": 1,
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, "emr-xxxxxxxx"), "EMR cluster describe"))
     errors.extend(audit_request(module.create_request(models, p), "EMR cluster create"))
     errors.extend(audit_request(module.update_request(models, "emr-xxxxxxxx", "analytics-renamed"), "EMR cluster update"))
@@ -5444,9 +7257,31 @@ def test_emr_cluster():
 
 
 def test_chdfs_file_system():
-    module = _import_plugin("chdfs_file_system"); models = _models("chdfs.v20201112")
-    p = {"file_system_id": None, "name": "analytics", "description": "warehouse", "capacity_quota": 1099511627776, "super_users": ["hadoop"], "posix_acl": True, "root_inode_user": "hadoop", "root_inode_group": "supergroup", "enable_ranger": False, "ranger_service_addresses": [], "tags": {"env": "production"}}; errors = []
-    target = {"FileSystemName": "analytics", "Description": "warehouse", "CapacityQuota": 1099511627776, "SuperUsers": ["hadoop"], "PosixAcl": True, "EnableRanger": False, "RangerServiceAddresses": []}
+    module = _import_plugin("chdfs_file_system")
+    models = _models("chdfs.v20201112")
+    p = {
+        "file_system_id": None,
+        "name": "analytics",
+        "description": "warehouse",
+        "capacity_quota": 1099511627776,
+        "super_users": ["hadoop"],
+        "posix_acl": True,
+        "root_inode_user": "hadoop",
+        "root_inode_group": "supergroup",
+        "enable_ranger": False,
+        "ranger_service_addresses": [],
+        "tags": {"env": "production"},
+    }
+    errors = []
+    target = {
+        "FileSystemName": "analytics",
+        "Description": "warehouse",
+        "CapacityQuota": 1099511627776,
+        "SuperUsers": ["hadoop"],
+        "PosixAcl": True,
+        "EnableRanger": False,
+        "RangerServiceAddresses": [],
+    }
     errors.extend(audit_request(module.describe_request(models), "CHDFS file system describe"))
     errors.extend(audit_request(module.create_request(models, p), "CHDFS file system create"))
     errors.extend(audit_request(module.update_request(models, "f-xxxxxxxx", target), "CHDFS file system update"))
@@ -5455,8 +7290,11 @@ def test_chdfs_file_system():
 
 
 def test_chdfs_mount_point():
-    module = _import_plugin("chdfs_mount_point"); models = _models("chdfs.v20201112")
-    p = {"file_system_id": "f-xxxxxxxx", "name": "analytics-mount", "status": 1}; target = {"MountPointName": "analytics-mount", "Status": 1}; errors = []
+    module = _import_plugin("chdfs_mount_point")
+    models = _models("chdfs.v20201112")
+    p = {"file_system_id": "f-xxxxxxxx", "name": "analytics-mount", "status": 1}
+    target = {"MountPointName": "analytics-mount", "Status": 1}
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p["file_system_id"]), "CHDFS mount point describe"))
     errors.extend(audit_request(module.create_request(models, p), "CHDFS mount point create"))
     errors.extend(audit_request(module.update_request(models, "mp-xxxxxxxx", target), "CHDFS mount point update"))
@@ -5465,8 +7303,11 @@ def test_chdfs_mount_point():
 
 
 def test_chdfs_access_group():
-    module = _import_plugin("chdfs_access_group"); models = _models("chdfs.v20201112")
-    p = {"name": "analytics-access", "vpc_type": 1, "vpc_id": "vpc-xxxxxxxx", "description": "analytics"}; target = {"AccessGroupName": "analytics-access", "Description": "analytics"}; errors = []
+    module = _import_plugin("chdfs_access_group")
+    models = _models("chdfs.v20201112")
+    p = {"name": "analytics-access", "vpc_type": 1, "vpc_id": "vpc-xxxxxxxx", "description": "analytics"}
+    target = {"AccessGroupName": "analytics-access", "Description": "analytics"}
+    errors = []
     errors.extend(audit_request(module.describe_request(models), "CHDFS access group describe"))
     errors.extend(audit_request(module.create_request(models, p), "CHDFS access group create"))
     errors.extend(audit_request(module.update_request(models, "ag-xxxxxxxx", target), "CHDFS access group update"))
@@ -5475,8 +7316,11 @@ def test_chdfs_access_group():
 
 
 def test_chdfs_access_rules():
-    module = _import_plugin("chdfs_access_rules"); models = _models("chdfs.v20201112")
-    rules = [{"address": "10.0.0.0/16", "access_mode": 2, "priority": 10}]; updated = [dict(rules[0], access_rule_id=123)]; errors = []
+    module = _import_plugin("chdfs_access_rules")
+    models = _models("chdfs.v20201112")
+    rules = [{"address": "10.0.0.0/16", "access_mode": 2, "priority": 10}]
+    updated = [dict(rules[0], access_rule_id=123)]
+    errors = []
     errors.extend(audit_request(module.describe_request(models, "ag-xxxxxxxx"), "CHDFS access rules describe"))
     errors.extend(audit_request(module.create_request(models, "ag-xxxxxxxx", rules), "CHDFS access rules create"))
     errors.extend(audit_request(module.update_request(models, updated), "CHDFS access rules update"))
@@ -5485,7 +7329,9 @@ def test_chdfs_access_rules():
 
 
 def test_chdfs_mount_access_groups():
-    module = _import_plugin("chdfs_mount_access_groups"); models = _models("chdfs.v20201112"); errors = []
+    module = _import_plugin("chdfs_mount_access_groups")
+    models = _models("chdfs.v20201112")
+    errors = []
     errors.extend(audit_request(module.describe_request(models, "f-xxxxxxxx"), "CHDFS mount binding describe"))
     errors.extend(audit_request(module.associate_request(models, "mp-xxxxxxxx", ["ag-xxxxxxxx"]), "CHDFS mount binding associate"))
     errors.extend(audit_request(module.disassociate_request(models, "mp-xxxxxxxx", ["ag-xxxxxxxx"]), "CHDFS mount binding disassociate"))
@@ -5493,8 +7339,23 @@ def test_chdfs_mount_access_groups():
 
 
 def test_goosefs_file_system():
-    module = _import_plugin("goosefs_file_system"); models = _models("goosefs.v20220519")
-    p = {"file_system_id": None, "name": "analytics-cache", "description": "analytics", "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "zone": "ap-guangzhou-3", "file_system_type": "GooseFSx", "build_elements": [{"Model": "GOOSFSX_C60", "Capacity": 10}], "capacity": 10, "security_group_id": "sg-xxxxxxxx", "cluster_port": 9200, "tags": {"env": "production"}}; errors = []
+    module = _import_plugin("goosefs_file_system")
+    models = _models("goosefs.v20220519")
+    p = {
+        "file_system_id": None,
+        "name": "analytics-cache",
+        "description": "analytics",
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_id": "subnet-xxxxxxxx",
+        "zone": "ap-guangzhou-3",
+        "file_system_type": "GooseFSx",
+        "build_elements": [{"Model": "GOOSFSX_C60", "Capacity": 10}],
+        "capacity": 10,
+        "security_group_id": "sg-xxxxxxxx",
+        "cluster_port": 9200,
+        "tags": {"env": "production"},
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models), "GooseFS describe"))
     errors.extend(audit_request(module.create_request(models, p), "GooseFS create"))
     errors.extend(audit_request(module.expand_request(models, "x-c60-xxxxxxxx", 20), "GooseFS expand"))
@@ -5503,8 +7364,18 @@ def test_goosefs_file_system():
 
 
 def test_goosefs_fileset():
-    module = _import_plugin("goosefs_fileset"); models = _models("goosefs.v20220519")
-    p = {"file_system_id": "x-c60-xxxxxxxx", "fileset_id": None, "name": "analytics", "directory": "/analytics", "quota_size_limit": "1099511627776", "quota_files_limit": "1000000", "audit_state": "Enabled"}; errors = []
+    module = _import_plugin("goosefs_fileset")
+    models = _models("goosefs.v20220519")
+    p = {
+        "file_system_id": "x-c60-xxxxxxxx",
+        "fileset_id": None,
+        "name": "analytics",
+        "directory": "/analytics",
+        "quota_size_limit": "1099511627776",
+        "quota_files_limit": "1000000",
+        "audit_state": "Enabled",
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "GooseFS fileset describe"))
     errors.extend(audit_request(module.create_request(models, p), "GooseFS fileset create"))
     errors.extend(audit_request(module.update_request(models, p, "fset-xxxxxxxx"), "GooseFS fileset update"))
@@ -5513,8 +7384,32 @@ def test_goosefs_fileset():
 
 
 def test_dc_direct_connect():
-    module = _import_plugin("dc_direct_connect"); models = _models("dc.v20180410")
-    p = {"direct_connect_id": None, "name": "primary-circuit", "access_point_id": "ap-xxxxxxxx", "line_operator": "ChinaTelecom", "port_type": "10GBase-LR", "circuit_code": "CT-10001", "location": "Customer IDC A", "bandwidth": 1000, "redundant_direct_connect_id": None, "vlan": 100, "tencent_address": "192.0.2.1/30", "customer_address": "192.0.2.2/30", "customer_name": "Example Corp", "customer_contact_mail": "network@example.com", "customer_contact_number": "13800000000", "fault_contact_name": "NOC", "fault_contact_number": "13800000000", "fault_contact_email": "noc@example.com", "sign_law": True, "macsec": False, "tags": {"env": "production"}}; errors = []
+    module = _import_plugin("dc_direct_connect")
+    models = _models("dc.v20180410")
+    p = {
+        "direct_connect_id": None,
+        "name": "primary-circuit",
+        "access_point_id": "ap-xxxxxxxx",
+        "line_operator": "ChinaTelecom",
+        "port_type": "10GBase-LR",
+        "circuit_code": "CT-10001",
+        "location": "Customer IDC A",
+        "bandwidth": 1000,
+        "redundant_direct_connect_id": None,
+        "vlan": 100,
+        "tencent_address": "192.0.2.1/30",
+        "customer_address": "192.0.2.2/30",
+        "customer_name": "Example Corp",
+        "customer_contact_mail": "network@example.com",
+        "customer_contact_number": "13800000000",
+        "fault_contact_name": "NOC",
+        "fault_contact_number": "13800000000",
+        "fault_contact_email": "noc@example.com",
+        "sign_law": True,
+        "macsec": False,
+        "tags": {"env": "production"},
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "Direct Connect describe"))
     errors.extend(audit_request(module.create_request(models, p), "Direct Connect create"))
     errors.extend(audit_request(module.update_request(models, p, "dc-xxxxxxxx"), "Direct Connect update"))
@@ -5523,8 +7418,30 @@ def test_dc_direct_connect():
 
 
 def test_dc_direct_connect_tunnel():
-    module = _import_plugin("dc_direct_connect_tunnel"); models = _models("dc.v20180410")
-    p = {"tunnel_id": None, "name": "production-vpc", "direct_connect_id": "dc-xxxxxxxx", "owner_account": None, "network_type": "VPC", "network_region": "ap-guangzhou", "vpc_id": "vpc-xxxxxxxx", "direct_connect_gateway_id": "dcg-xxxxxxxx", "bandwidth": 500, "route_type": "BGP", "bgp_peer": {"Asn": 65001, "AuthKey": "secret-value"}, "route_filter_prefixes": ["10.0.0.0/8"], "vlan": 100, "tencent_address": "192.0.2.1/30", "customer_address": "192.0.2.2/30", "tencent_backup_address": None, "bfd_enabled": 1, "nqa_enabled": 0, "tags": {"env": "production"}}; errors = []
+    module = _import_plugin("dc_direct_connect_tunnel")
+    models = _models("dc.v20180410")
+    p = {
+        "tunnel_id": None,
+        "name": "production-vpc",
+        "direct_connect_id": "dc-xxxxxxxx",
+        "owner_account": None,
+        "network_type": "VPC",
+        "network_region": "ap-guangzhou",
+        "vpc_id": "vpc-xxxxxxxx",
+        "direct_connect_gateway_id": "dcg-xxxxxxxx",
+        "bandwidth": 500,
+        "route_type": "BGP",
+        "bgp_peer": {"Asn": 65001, "AuthKey": "secret-value"},
+        "route_filter_prefixes": ["10.0.0.0/8"],
+        "vlan": 100,
+        "tencent_address": "192.0.2.1/30",
+        "customer_address": "192.0.2.2/30",
+        "tencent_backup_address": None,
+        "bfd_enabled": 1,
+        "nqa_enabled": 0,
+        "tags": {"env": "production"},
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "Direct Connect tunnel describe"))
     errors.extend(audit_request(module.create_request(models, p), "Direct Connect tunnel create"))
     errors.extend(audit_request(module.update_request(models, p, "dcx-xxxxxxxx"), "Direct Connect tunnel update"))
@@ -5533,8 +7450,18 @@ def test_dc_direct_connect_tunnel():
 
 
 def test_gwlb_load_balancer():
-    module = _import_plugin("gwlb_load_balancer"); models = _models("gwlb.v20240906")
-    p = {"load_balancer_id": None, "name": "security-appliance", "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "charge_type": "POSTPAID_BY_HOUR", "deletion_protection": True, "tags": {"env": "production"}}; errors = []
+    module = _import_plugin("gwlb_load_balancer")
+    models = _models("gwlb.v20240906")
+    p = {
+        "load_balancer_id": None,
+        "name": "security-appliance",
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_id": "subnet-xxxxxxxx",
+        "charge_type": "POSTPAID_BY_HOUR",
+        "deletion_protection": True,
+        "tags": {"env": "production"},
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "GWLB describe"))
     errors.extend(audit_request(module.create_request(models, p), "GWLB create"))
     errors.extend(audit_request(module.update_request(models, "gwlb-xxxxxxxx", p["name"], True), "GWLB update"))
@@ -5543,8 +7470,21 @@ def test_gwlb_load_balancer():
 
 
 def test_gwlb_target_group():
-    module = _import_plugin("gwlb_target_group"); models = _models("gwlb.v20240906")
-    p = {"target_group_id": None, "name": "security-appliances", "vpc_id": "vpc-xxxxxxxx", "port": 6081, "protocol": "GENEVE", "schedule_algorithm": "WRR", "health_check": {"HealthSwitch": True, "Protocol": "TCP", "Port": 80}, "all_dead_to_alive": False, "forwarding_mode": None, "tags": {"env": "production"}}; errors = []
+    module = _import_plugin("gwlb_target_group")
+    models = _models("gwlb.v20240906")
+    p = {
+        "target_group_id": None,
+        "name": "security-appliances",
+        "vpc_id": "vpc-xxxxxxxx",
+        "port": 6081,
+        "protocol": "GENEVE",
+        "schedule_algorithm": "WRR",
+        "health_check": {"HealthSwitch": True, "Protocol": "TCP", "Port": 80},
+        "all_dead_to_alive": False,
+        "forwarding_mode": None,
+        "tags": {"env": "production"},
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "GWLB target group describe"))
     errors.extend(audit_request(module.create_request(models, p), "GWLB target group create"))
     errors.extend(audit_request(module.update_request(models, p, "lbtg-xxxxxxxx"), "GWLB target group update"))
@@ -5553,8 +7493,10 @@ def test_gwlb_target_group():
 
 
 def test_gwlb_target_group_association():
-    module = _import_plugin("gwlb_target_group_association"); models = _models("gwlb.v20240906")
-    p = {"load_balancer_id": "gwlb-xxxxxxxx", "target_group_id": "lbtg-xxxxxxxx"}; errors = []
+    module = _import_plugin("gwlb_target_group_association")
+    models = _models("gwlb.v20240906")
+    p = {"load_balancer_id": "gwlb-xxxxxxxx", "target_group_id": "lbtg-xxxxxxxx"}
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p["load_balancer_id"]), "GWLB association describe"))
     errors.extend(audit_request(module.association_request(models, p), "GWLB associate"))
     errors.extend(audit_request(module.disassociation_request(models, p), "GWLB disassociate"))
@@ -5562,8 +7504,11 @@ def test_gwlb_target_group_association():
 
 
 def test_gwlb_target_group_instances():
-    module = _import_plugin("gwlb_target_group_instances"); models = _models("gwlb.v20240906")
-    p = {"target_group_id": "lbtg-xxxxxxxx"}; values = [{"ip": "10.0.1.10", "port": 6081, "weight": 50}]; errors = []
+    module = _import_plugin("gwlb_target_group_instances")
+    models = _models("gwlb.v20240906")
+    p = {"target_group_id": "lbtg-xxxxxxxx"}
+    values = [{"ip": "10.0.1.10", "port": 6081, "weight": 50}]
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p["target_group_id"]), "GWLB instances describe"))
     errors.extend(audit_request(module.register_request(models, p, values), "GWLB instances register"))
     errors.extend(audit_request(module.weight_request(models, p, values), "GWLB instances weight"))
@@ -5572,8 +7517,24 @@ def test_gwlb_target_group_instances():
 
 
 def test_alb_load_balancer():
-    module = _import_plugin("alb_load_balancer"); models = _models("alb.v20251030")
-    p = {"load_balancer_id": None, "name": "public-app", "address_type": "Internet", "vpc_id": "vpc-xxxxxxxx", "zone_mappings": [{"ZoneId": "ap-guangzhou-3", "SubnetId": "subnet-xxxxxxxx"}, {"ZoneId": "ap-guangzhou-4", "SubnetId": "subnet-yyyyyyyy"}], "ip_version": "IPv4", "charge_type": "POSTPAID_BY_HOUR", "bandwidth_package_id": None, "internet_address_type": "EIP", "deletion_protection": True, "deletion_protection_reason": "Managed by Ansible", "tags": {"env": "production"}, "client_token": "contract-test"}; errors = []
+    module = _import_plugin("alb_load_balancer")
+    models = _models("alb.v20251030")
+    p = {
+        "load_balancer_id": None,
+        "name": "public-app",
+        "address_type": "Internet",
+        "vpc_id": "vpc-xxxxxxxx",
+        "zone_mappings": [{"ZoneId": "ap-guangzhou-3", "SubnetId": "subnet-xxxxxxxx"}, {"ZoneId": "ap-guangzhou-4", "SubnetId": "subnet-yyyyyyyy"}],
+        "ip_version": "IPv4",
+        "charge_type": "POSTPAID_BY_HOUR",
+        "bandwidth_package_id": None,
+        "internet_address_type": "EIP",
+        "deletion_protection": True,
+        "deletion_protection_reason": "Managed by Ansible",
+        "tags": {"env": "production"},
+        "client_token": "contract-test",
+    }
+    errors = []
     errors.extend(audit_request(module.list_request(models), "ALB list"))
     errors.extend(audit_request(module.describe_request(models, "alb-xxxxxxxx"), "ALB detail"))
     errors.extend(audit_request(module.create_request(models, p), "ALB create"))
@@ -5584,8 +7545,28 @@ def test_alb_load_balancer():
 
 
 def test_alb_listener():
-    module = _import_plugin("alb_listener"); models = _models("alb.v20251030")
-    p = {"load_balancer_id": "alb-xxxxxxxx", "listener_id": None, "name": "https", "port": 443, "protocol": "HTTPS", "default_actions": [{"Type": "ForwardGroup", "TargetGroupConfig": {"TargetGroups": [{"TargetGroupId": "alb-tg-xxxxxxxx", "Weight": 100}]}}], "certificate_ids": ["cert-xxxxxxxx"], "ca_enabled": False, "ca_certificate_ids": [], "security_policy_id": "tls-xxxxxxxx", "gzip_enabled": True, "http2_enabled": True, "idle_timeout": 15, "request_timeout": 60, "x_forwarded_for": {"XForwardedForProtoEnabled": True}, "tags": {"env": "production"}, "client_token": "contract-test"}; errors = []
+    module = _import_plugin("alb_listener")
+    models = _models("alb.v20251030")
+    p = {
+        "load_balancer_id": "alb-xxxxxxxx",
+        "listener_id": None,
+        "name": "https",
+        "port": 443,
+        "protocol": "HTTPS",
+        "default_actions": [{"Type": "ForwardGroup", "TargetGroupConfig": {"TargetGroups": [{"TargetGroupId": "alb-tg-xxxxxxxx", "Weight": 100}]}}],
+        "certificate_ids": ["cert-xxxxxxxx"],
+        "ca_enabled": False,
+        "ca_certificate_ids": [],
+        "security_policy_id": "tls-xxxxxxxx",
+        "gzip_enabled": True,
+        "http2_enabled": True,
+        "idle_timeout": 15,
+        "request_timeout": 60,
+        "x_forwarded_for": {"XForwardedForProtoEnabled": True},
+        "tags": {"env": "production"},
+        "client_token": "contract-test",
+    }
+    errors = []
     errors.extend(audit_request(module.list_request(models, p), "ALB listener list"))
     errors.extend(audit_request(module.describe_request(models, p, "lbl-xxxxxxxx"), "ALB listener detail"))
     errors.extend(audit_request(module.create_request(models, p), "ALB listener create"))
@@ -5595,8 +7576,21 @@ def test_alb_listener():
 
 
 def test_alb_target_group():
-    module = _import_plugin("alb_target_group"); models = _models("alb.v20251030")
-    p = {"target_group_id": None, "name": "application-http", "vpc_id": "vpc-xxxxxxxx", "target_type": "Instance", "protocol": "HTTP", "scheduler_algorithm": "wrr", "keepalive_enabled": True, "health_check": {"HealthCheckEnabled": True, "HealthCheckPath": "/health"}, "sticky_session": {"StickySessionEnabled": False}, "tags": {"env": "production"}}; errors = []
+    module = _import_plugin("alb_target_group")
+    models = _models("alb.v20251030")
+    p = {
+        "target_group_id": None,
+        "name": "application-http",
+        "vpc_id": "vpc-xxxxxxxx",
+        "target_type": "Instance",
+        "protocol": "HTTP",
+        "scheduler_algorithm": "wrr",
+        "keepalive_enabled": True,
+        "health_check": {"HealthCheckEnabled": True, "HealthCheckPath": "/health"},
+        "sticky_session": {"StickySessionEnabled": False},
+        "tags": {"env": "production"},
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "ALB target group describe"))
     errors.extend(audit_request(module.create_request(models, p), "ALB target group create"))
     errors.extend(audit_request(module.update_request(models, p, "alb-tg-xxxxxxxx"), "ALB target group update"))
@@ -5605,8 +7599,11 @@ def test_alb_target_group():
 
 
 def test_alb_target_group_targets():
-    module = _import_plugin("alb_target_group_targets"); models = _models("alb.v20251030")
-    p = {"target_group_id": "alb-tg-xxxxxxxx"}; values = [{"ip": "10.0.1.10", "port": 8080, "weight": 50}]; errors = []
+    module = _import_plugin("alb_target_group_targets")
+    models = _models("alb.v20251030")
+    p = {"target_group_id": "alb-tg-xxxxxxxx"}
+    values = [{"ip": "10.0.1.10", "port": 8080, "weight": 50}]
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p["target_group_id"]), "ALB targets describe"))
     errors.extend(audit_request(module.add_request(models, p, values), "ALB targets add"))
     errors.extend(audit_request(module.update_request(models, p, values), "ALB targets update"))
@@ -5615,33 +7612,87 @@ def test_alb_target_group_targets():
 
 
 def test_mqtt_instance():
-    module = _import_plugin("mqtt_instance"); models = _models("mqtt.v20240516")
-    p = {"instance_id": None, "name": "production-mqtt", "instance_type": "PRO", "sku_code": "pro_2k", "remark": "production", "vpcs": [{"vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx"}], "ip_rules": [{"ip": "192.0.2.0/24", "allow": True, "remark": "office"}], "enable_public": True, "bandwidth": 10, "tags": {"env": "production"}, "pay_mode": 0, "period_months": 1, "auto_renew": True, "authorization_policy": True, "message_rate": 100}; errors = []
+    module = _import_plugin("mqtt_instance")
+    models = _models("mqtt.v20240516")
+    p = {
+        "instance_id": None,
+        "name": "production-mqtt",
+        "instance_type": "PRO",
+        "sku_code": "pro_2k",
+        "remark": "production",
+        "vpcs": [{"vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx"}],
+        "ip_rules": [{"ip": "192.0.2.0/24", "allow": True, "remark": "office"}],
+        "enable_public": True,
+        "bandwidth": 10,
+        "tags": {"env": "production"},
+        "pay_mode": 0,
+        "period_months": 1,
+        "auto_renew": True,
+        "authorization_policy": True,
+        "message_rate": 100,
+    }
+    errors = []
     errors.extend(audit_request(module.list_request(models), "MQTT instance list"))
     errors.extend(audit_request(module.describe_request(models, "mqtt-xxxxxxxx"), "MQTT instance describe"))
     errors.extend(audit_request(module.create_request(models, p), "MQTT instance create"))
-    errors.extend(audit_request(module.update_request(models, p, {"InstanceId": "mqtt-xxxxxxxx", "InstanceName": p["name"], "SkuCode": p["sku_code"]}), "MQTT instance update"))
+    errors.extend(
+        audit_request(
+            module.update_request(models, p, {"InstanceId": "mqtt-xxxxxxxx", "InstanceName": p["name"], "SkuCode": p["sku_code"]}), "MQTT instance update"
+        )
+    )
     errors.extend(audit_request(module.delete_request(models, "mqtt-xxxxxxxx"), "MQTT instance delete"))
     assert errors == []
 
 
 def test_mqtt_topic():
-    module = _import_plugin("mqtt_topic"); models = _models("mqtt.v20240516")
-    p = {"instance_id": "mqtt-xxxxxxxx", "topic": "orders/created", "remark": "orders"}; errors = []
-    for name, builder in (("describe", module.describe_request), ("create", module.create_request), ("update", module.update_request), ("delete", module.delete_request)): errors.extend(audit_request(builder(models, p), "MQTT topic " + name))
+    module = _import_plugin("mqtt_topic")
+    models = _models("mqtt.v20240516")
+    p = {"instance_id": "mqtt-xxxxxxxx", "topic": "orders/created", "remark": "orders"}
+    errors = []
+    for name, builder in (
+        ("describe", module.describe_request),
+        ("create", module.create_request),
+        ("update", module.update_request),
+        ("delete", module.delete_request),
+    ):
+        errors.extend(audit_request(builder(models, p), "MQTT topic " + name))
     assert errors == []
 
 
 def test_mqtt_user():
-    module = _import_plugin("mqtt_user"); models = _models("mqtt.v20240516")
-    p = {"instance_id": "mqtt-xxxxxxxx", "username": "application", "password": "secret-value", "remark": "application"}; errors = []
-    for name, builder in (("describe", module.describe_request), ("create", module.create_request), ("update", module.update_request), ("delete", module.delete_request)): errors.extend(audit_request(builder(models, p), "MQTT user " + name))
+    module = _import_plugin("mqtt_user")
+    models = _models("mqtt.v20240516")
+    p = {"instance_id": "mqtt-xxxxxxxx", "username": "application", "password": "secret-value", "remark": "application"}
+    errors = []
+    for name, builder in (
+        ("describe", module.describe_request),
+        ("create", module.create_request),
+        ("update", module.update_request),
+        ("delete", module.delete_request),
+    ):
+        errors.extend(audit_request(builder(models, p), "MQTT user " + name))
     assert errors == []
 
 
 def test_mqtt_authorization_policy():
-    module = _import_plugin("mqtt_authorization_policy"); models = _models("mqtt.v20240516")
-    p = {"instance_id": "mqtt-xxxxxxxx", "policy_id": None, "name": "publish-orders", "priority": 10, "effect": "allow", "actions": ["connect", "pub"], "resources": ["orders/#"], "username": "application", "client_id": "", "ip": "", "retain": 3, "qos": [0, 1], "remark": "orders"}; errors = []
+    module = _import_plugin("mqtt_authorization_policy")
+    models = _models("mqtt.v20240516")
+    p = {
+        "instance_id": "mqtt-xxxxxxxx",
+        "policy_id": None,
+        "name": "publish-orders",
+        "priority": 10,
+        "effect": "allow",
+        "actions": ["connect", "pub"],
+        "resources": ["orders/#"],
+        "username": "application",
+        "client_id": "",
+        "ip": "",
+        "retain": 3,
+        "qos": [0, 1],
+        "remark": "orders",
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "MQTT policy describe"))
     errors.extend(audit_request(module.create_request(models, p), "MQTT policy create"))
     errors.extend(audit_request(module.update_request(models, p, 1001), "MQTT policy update"))
@@ -5650,8 +7701,10 @@ def test_mqtt_authorization_policy():
 
 
 def test_eb_event_bus():
-    module = _import_plugin("eb_event_bus"); models = _models("eb.v20210416")
-    p = {"event_bus_id": None, "name": "production-events", "description": "events", "save_days": 7, "enable_store": True}; errors = []
+    module = _import_plugin("eb_event_bus")
+    models = _models("eb.v20210416")
+    p = {"event_bus_id": None, "name": "production-events", "description": "events", "save_days": 7, "enable_store": True}
+    errors = []
     errors.extend(audit_request(module.list_request(models, p), "EventBridge event bus list"))
     errors.extend(audit_request(module.get_request(models, "eb-xxxxxxxx"), "EventBridge event bus get"))
     errors.extend(audit_request(module.create_request(models, p), "EventBridge event bus create"))
@@ -5661,8 +7714,17 @@ def test_eb_event_bus():
 
 
 def test_eb_rule():
-    module = _import_plugin("eb_rule"); models = _models("eb.v20210416")
-    p = {"event_bus_id": "eb-xxxxxxxx", "rule_id": None, "name": "order-created", "event_pattern": '{"source":["orders"]}', "enabled": True, "description": "orders"}; errors = []
+    module = _import_plugin("eb_rule")
+    models = _models("eb.v20210416")
+    p = {
+        "event_bus_id": "eb-xxxxxxxx",
+        "rule_id": None,
+        "name": "order-created",
+        "event_pattern": '{"source":["orders"]}',
+        "enabled": True,
+        "description": "orders",
+    }
+    errors = []
     errors.extend(audit_request(module.list_request(models, p), "EventBridge rule list"))
     errors.extend(audit_request(module.get_request(models, p, "rule-xxxxxxxx"), "EventBridge rule get"))
     errors.extend(audit_request(module.create_request(models, p), "EventBridge rule create"))
@@ -5672,8 +7734,19 @@ def test_eb_rule():
 
 
 def test_eb_target():
-    module = _import_plugin("eb_target"); models = _models("eb.v20210416")
-    p = {"event_bus_id": "eb-xxxxxxxx", "rule_id": "rule-xxxxxxxx", "target_id": None, "target_type": "scf", "target_description": {"ResourceDescription": "{}"}, "enable_batch_delivery": True, "batch_timeout": 5, "batch_event_count": 10}; errors = []
+    module = _import_plugin("eb_target")
+    models = _models("eb.v20210416")
+    p = {
+        "event_bus_id": "eb-xxxxxxxx",
+        "rule_id": "rule-xxxxxxxx",
+        "target_id": None,
+        "target_type": "scf",
+        "target_description": {"ResourceDescription": "{}"},
+        "enable_batch_delivery": True,
+        "batch_timeout": 5,
+        "batch_event_count": 10,
+    }
+    errors = []
     errors.extend(audit_request(module.list_request(models, p), "EventBridge target list"))
     errors.extend(audit_request(module.create_request(models, p), "EventBridge target create"))
     errors.extend(audit_request(module.update_request(models, p, "target-xxxxxxxx"), "EventBridge target update"))
@@ -5682,8 +7755,18 @@ def test_eb_target():
 
 
 def test_eb_connection():
-    module = _import_plugin("eb_connection"); models = _models("eb.v20210416")
-    p = {"event_bus_id": "eb-xxxxxxxx", "connection_id": None, "name": "kafka-orders", "connection_type": "ckafka", "connection_description": {"ResourceDescription": "{}"}, "enabled": True, "description": "orders"}; errors = []
+    module = _import_plugin("eb_connection")
+    models = _models("eb.v20210416")
+    p = {
+        "event_bus_id": "eb-xxxxxxxx",
+        "connection_id": None,
+        "name": "kafka-orders",
+        "connection_type": "ckafka",
+        "connection_description": {"ResourceDescription": "{}"},
+        "enabled": True,
+        "description": "orders",
+    }
+    errors = []
     errors.extend(audit_request(module.list_request(models, p), "EventBridge connection list"))
     errors.extend(audit_request(module.create_request(models, p), "EventBridge connection create"))
     errors.extend(audit_request(module.update_request(models, p, "connection-xxxxxxxx"), "EventBridge connection update"))
@@ -5692,8 +7775,22 @@ def test_eb_connection():
 
 
 def test_teo_acceleration_domain():
-    module = _import_plugin("teo_acceleration_domain"); models = _models("teo.v20220901")
-    p = {"zone_id": "zone-xxxxxxxx", "domain_name": "app.example.com", "origin_type": "ORIGIN_GROUP", "origin": "origin-xxxxxxxx", "host_header": None, "origin_protocol": "HTTPS", "http_origin_port": 80, "https_origin_port": 443, "ipv6_status": "follow", "enabled": True, "force": False}; errors = []
+    module = _import_plugin("teo_acceleration_domain")
+    models = _models("teo.v20220901")
+    p = {
+        "zone_id": "zone-xxxxxxxx",
+        "domain_name": "app.example.com",
+        "origin_type": "ORIGIN_GROUP",
+        "origin": "origin-xxxxxxxx",
+        "host_header": None,
+        "origin_protocol": "HTTPS",
+        "http_origin_port": 80,
+        "https_origin_port": 443,
+        "ipv6_status": "follow",
+        "enabled": True,
+        "force": False,
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEO acceleration domain describe"))
     errors.extend(audit_request(module.create_request(models, p), "TEO acceleration domain create"))
     errors.extend(audit_request(module.update_request(models, p), "TEO acceleration domain update"))
@@ -5703,8 +7800,10 @@ def test_teo_acceleration_domain():
 
 
 def test_teo_security_ip_group():
-    module = _import_plugin("teo_security_ip_group"); models = _models("teo.v20220901")
-    p = {"zone_id": "zone-xxxxxxxx", "group_id": None, "name": "trusted-offices", "content": ["192.0.2.0/24", "2001:db8::/48"]}; errors = []
+    module = _import_plugin("teo_security_ip_group")
+    models = _models("teo.v20220901")
+    p = {"zone_id": "zone-xxxxxxxx", "group_id": None, "name": "trusted-offices", "content": ["192.0.2.0/24", "2001:db8::/48"]}
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEO security IP group describe"))
     errors.extend(audit_request(module.content_request(models, p, 1001), "TEO security IP group content"))
     errors.extend(audit_request(module.create_request(models, p), "TEO security IP group create"))
@@ -5714,8 +7813,10 @@ def test_teo_security_ip_group():
 
 
 def test_teo_web_security_template():
-    module = _import_plugin("teo_web_security_template"); models = _models("teo.v20220901")
-    p = {"zone_id": "zone-xxxxxxxx", "template_id": None, "name": "production_security"}; errors = []
+    module = _import_plugin("teo_web_security_template")
+    models = _models("teo.v20220901")
+    p = {"zone_id": "zone-xxxxxxxx", "template_id": None, "name": "production_security"}
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEO web security template describe"))
     errors.extend(audit_request(module.create_request(models, p), "TEO web security template create"))
     errors.extend(audit_request(module.update_request(models, p, "temp-xxxxxxxx"), "TEO web security template update"))
@@ -5724,8 +7825,10 @@ def test_teo_web_security_template():
 
 
 def test_teo_security_template_binding():
-    module = _import_plugin("teo_security_template_binding"); models = _models("teo.v20220901")
-    p = {"zone_id": "zone-xxxxxxxx", "template_id": "temp-xxxxxxxx", "domains": ["app.example.com"], "overwrite": True, "unbind_policy": "keep-policy"}; errors = []
+    module = _import_plugin("teo_security_template_binding")
+    models = _models("teo.v20220901")
+    p = {"zone_id": "zone-xxxxxxxx", "template_id": "temp-xxxxxxxx", "domains": ["app.example.com"], "overwrite": True, "unbind_policy": "keep-policy"}
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEO security template binding describe"))
     errors.extend(audit_request(module.bind_request(models, p, p["domains"]), "TEO security template bind"))
     errors.extend(audit_request(module.unbind_request(models, p, p["domains"][0]), "TEO security template unbind"))
@@ -5733,40 +7836,134 @@ def test_teo_security_template_binding():
 
 
 def test_teo_security_custom_rules():
-    module = _import_plugin("teo_security_custom_rules"); models = _models("teo.v20220901")
-    p = {"zone_id": "zone-xxxxxxxx", "scope": "template", "template_id": "temp-xxxxxxxx", "host": None, "rules": [{"rule_id": None, "name": "block_known_attackers", "condition": "$http.request.ip in '1234'", "action": "Deny", "enabled": True, "rule_type": "PreciseMatchRule", "priority": 10}]}; errors = []
+    module = _import_plugin("teo_security_custom_rules")
+    models = _models("teo.v20220901")
+    p = {
+        "zone_id": "zone-xxxxxxxx",
+        "scope": "template",
+        "template_id": "temp-xxxxxxxx",
+        "host": None,
+        "rules": [
+            {
+                "rule_id": None,
+                "name": "block_known_attackers",
+                "condition": "$http.request.ip in '1234'",
+                "action": "Deny",
+                "enabled": True,
+                "rule_type": "PreciseMatchRule",
+                "priority": 10,
+            }
+        ],
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEO custom security rules describe"))
     errors.extend(audit_request(module.update_request(models, p, []), "TEO custom security rules update"))
     assert errors == []
 
 
 def test_teo_security_managed_rules():
-    module = _import_plugin("teo_security_managed_rules"); models = _models("teo.v20220901")
-    p = {"zone_id": "zone-xxxxxxxx", "scope": "template", "template_id": "temp-xxxxxxxx", "host": None, "enabled": True, "detection_only": False, "semantic_analysis": True, "auto_update": True, "groups": [{"group_id": "OWASP", "sensitivity": "strict", "action": "Deny", "rule_actions": []}], "frequent_scanning": {"enabled": True, "action": "Deny", "count_by": "http.request.ip", "block_threshold": 100, "counting_period": 60, "action_duration": 600}}; errors = []
+    module = _import_plugin("teo_security_managed_rules")
+    models = _models("teo.v20220901")
+    p = {
+        "zone_id": "zone-xxxxxxxx",
+        "scope": "template",
+        "template_id": "temp-xxxxxxxx",
+        "host": None,
+        "enabled": True,
+        "detection_only": False,
+        "semantic_analysis": True,
+        "auto_update": True,
+        "groups": [{"group_id": "OWASP", "sensitivity": "strict", "action": "Deny", "rule_actions": []}],
+        "frequent_scanning": {
+            "enabled": True,
+            "action": "Deny",
+            "count_by": "http.request.ip",
+            "block_threshold": 100,
+            "counting_period": 60,
+            "action_duration": 600,
+        },
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEO managed rules describe"))
     errors.extend(audit_request(module.update_request(models, p), "TEO managed rules update"))
     assert errors == []
 
 
 def test_teo_security_exception_rules():
-    module = _import_plugin("teo_security_exception_rules"); models = _models("teo.v20220901")
-    p = {"zone_id": "zone-xxxxxxxx", "scope": "template", "template_id": "temp-xxxxxxxx", "host": None, "rules": [{"rule_id": None, "name": "trusted_upload_payload", "condition": "$http.request.uri.path eq '/upload'", "enabled": True, "skip_scope": "ManagedRules", "skip_option": "SkipOnSpecifiedRequestFields", "web_security_modules": [], "managed_rule_ids": [], "managed_rule_group_ids": ["OWASP"], "request_fields": [{"field_scope": "body", "condition": "", "target_field": "multipart"}]}]}; errors = []
+    module = _import_plugin("teo_security_exception_rules")
+    models = _models("teo.v20220901")
+    p = {
+        "zone_id": "zone-xxxxxxxx",
+        "scope": "template",
+        "template_id": "temp-xxxxxxxx",
+        "host": None,
+        "rules": [
+            {
+                "rule_id": None,
+                "name": "trusted_upload_payload",
+                "condition": "$http.request.uri.path eq '/upload'",
+                "enabled": True,
+                "skip_scope": "ManagedRules",
+                "skip_option": "SkipOnSpecifiedRequestFields",
+                "web_security_modules": [],
+                "managed_rule_ids": [],
+                "managed_rule_group_ids": ["OWASP"],
+                "request_fields": [{"field_scope": "body", "condition": "", "target_field": "multipart"}],
+            }
+        ],
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEO exception rules describe"))
     errors.extend(audit_request(module.update_request(models, p, []), "TEO exception rules update"))
     assert errors == []
 
 
 def test_teo_security_rate_limiting_rules():
-    module = _import_plugin("teo_security_rate_limiting_rules"); models = _models("teo.v20220901")
-    p = {"zone_id": "zone-xxxxxxxx", "scope": "template", "template_id": "temp-xxxxxxxx", "host": None, "rules": [{"rule_id": None, "name": "login_limit", "condition": "$http.request.uri.path eq '/login'", "mode": "Block", "count_by": ["http.request.ip"], "threshold": 30, "counting_period": "1m", "action_duration": "10m", "action": "Deny", "challenge_option": "ManagedChallenge", "redirect_url": None, "priority": 10, "enabled": True}]}; errors = []
+    module = _import_plugin("teo_security_rate_limiting_rules")
+    models = _models("teo.v20220901")
+    p = {
+        "zone_id": "zone-xxxxxxxx",
+        "scope": "template",
+        "template_id": "temp-xxxxxxxx",
+        "host": None,
+        "rules": [
+            {
+                "rule_id": None,
+                "name": "login_limit",
+                "condition": "$http.request.uri.path eq '/login'",
+                "mode": "Block",
+                "count_by": ["http.request.ip"],
+                "threshold": 30,
+                "counting_period": "1m",
+                "action_duration": "10m",
+                "action": "Deny",
+                "challenge_option": "ManagedChallenge",
+                "redirect_url": None,
+                "priority": 10,
+                "enabled": True,
+            }
+        ],
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEO rate limiting rules describe"))
     errors.extend(audit_request(module.update_request(models, p, []), "TEO rate limiting rules update"))
     assert errors == []
 
 
 def test_teo_security_bot_lite():
-    module = _import_plugin("teo_security_bot_lite"); models = _models("teo.v20220901")
-    p = {"zone_id": "zone-xxxxxxxx", "scope": "template", "template_id": "temp-xxxxxxxx", "host": None, "captcha_page_enabled": True, "ai_crawler_enabled": True, "ai_crawler_action": "Challenge", "challenge_option": "ManagedChallenge"}; errors = []
+    module = _import_plugin("teo_security_bot_lite")
+    models = _models("teo.v20220901")
+    p = {
+        "zone_id": "zone-xxxxxxxx",
+        "scope": "template",
+        "template_id": "temp-xxxxxxxx",
+        "host": None,
+        "captcha_page_enabled": True,
+        "ai_crawler_enabled": True,
+        "ai_crawler_action": "Challenge",
+        "challenge_option": "ManagedChallenge",
+    }
+    errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEO Bot lite describe"))
     errors.extend(audit_request(module.update_request(models, p), "TEO Bot lite update"))
     assert errors == []

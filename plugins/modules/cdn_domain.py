@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: cdn_domain
 short_description: Manage Tencent Cloud CDN domains
@@ -115,9 +115,9 @@ notes:
     re-added afterwards.
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: Add a CDN domain with a domain origin
   susunola.tencentcloud.cdn_domain:
     region: ap-guangzhou
@@ -146,9 +146,9 @@ EXAMPLES = r'''
     region: ap-guangzhou
     state: absent
     domain: cdn.example.com
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 domain:
   description: The domain as reported by V(DescribeDomains) after the
     operation.
@@ -163,7 +163,7 @@ domain:
       Origins:
         - origin.example.com
       OriginType: domain
-'''
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -171,6 +171,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_cdn():
     from tencentcloud.cdn.v20180606 import models, cdn_client
+
     return models, cdn_client
 
 
@@ -262,7 +263,12 @@ def _desired_config(params):
         if params[source] is not None:
             desired[target] = params[source]
     origin = {}
-    for source, target in (("origins", "Origins"), ("origin_type", "OriginType"), ("origin_protocol", "OriginPullProtocol"), ("backup_origins", "BackupOrigins")):
+    for source, target in (
+        ("origins", "Origins"),
+        ("origin_type", "OriginType"),
+        ("origin_protocol", "OriginPullProtocol"),
+        ("backup_origins", "BackupOrigins"),
+    ):
         if params[source] is not None:
             origin[target] = params[source]
     if origin:
@@ -392,7 +398,12 @@ def run_module():
         module.exit_json(changed=True, **(diff or {}), domain=current, msg="Would update CDN domain")
     update_params = dict(module.params)
     existing_origin = current.get("Origin") or {}
-    for source, target in (("origins", "Origins"), ("origin_type", "OriginType"), ("origin_protocol", "OriginPullProtocol"), ("backup_origins", "BackupOrigins")):
+    for source, target in (
+        ("origins", "Origins"),
+        ("origin_type", "OriginType"),
+        ("origin_protocol", "OriginPullProtocol"),
+        ("backup_origins", "BackupOrigins"),
+    ):
         if update_params[source] is None:
             update_params[source] = existing_origin.get(target)
     _update(module, client, models, update_params)

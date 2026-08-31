@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: redis_account
 short_description: Manage TencentDB for Redis accounts
@@ -28,15 +28,15 @@ options:
   user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.redis_account:
     instance_id: crs-xxxxxxxx
     name: application
     password: '{{ vault_redis_password }}'
     privilege: rw
-'''
-RETURN = r'''account: {description: Redis account metadata., type: dict, returned: always}'''
+"""
+RETURN = r"""account: {description: Redis account metadata., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -45,6 +45,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.redis.v20180412 import models, redis_client
+
     return models, redis_client
 
 
@@ -88,38 +89,64 @@ def desired(p):
 
 
 def comparable(value):
-    return {"AccountName": value.get("AccountName"), "Privilege": value.get("Privilege"), "ReadonlyPolicy": sorted(value.get("ReadonlyPolicy") or []), "Remark": value.get("Remark") or ""}
+    return {
+        "AccountName": value.get("AccountName"),
+        "Privilege": value.get("Privilege"),
+        "ReadonlyPolicy": sorted(value.get("ReadonlyPolicy") or []),
+        "Remark": value.get("Remark") or "",
+    }
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={
-        "state": {"choices": ["present", "absent"], "default": "present"}, "instance_id": {"required": True}, "name": {"required": True},
-        "password": {"no_log": True}, "rotate_password": {"type": "bool", "default": False}, "privilege": {"choices": ["r", "w", "rw"], "default": "rw"},
-        "readonly_policy": {"type": "list", "elements": "str", "default": ["master"]}, "remark": {"default": ""}, "encrypt_password": {"type": "bool", "default": False},
-    }, supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "instance_id": {"required": True},
+            "name": {"required": True},
+            "password": {"no_log": True},
+            "rotate_password": {"type": "bool", "default": False},
+            "privilege": {"choices": ["r", "w", "rw"], "default": "rw"},
+            "readonly_policy": {"type": "list", "elements": "str", "default": ["master"]},
+            "remark": {"default": ""},
+            "encrypt_password": {"type": "bool", "default": False},
+        },
+        supports_check_mode=True,
+    )
     p = module.params
     if p["rotate_password"] and not p["password"]:
         module.fail_json(msg="password is required when rotate_password=true")
-    module.require_sdk(); models, cm = _load(); client = module.create_client(cm.RedisClient, "redis.tencentcloudapi.com")
+    module.require_sdk()
+    models, cm = _load()
+    client = module.create_client(cm.RedisClient, "redis.tencentcloudapi.com")
     try:
         current = find(module, client, models, p)
         if p["state"] == "absent":
-            if not current: module.exit_json(changed=False, account=None)
+            if not current:
+                module.exit_json(changed=False, account=None)
             diff = maybe_diff(module, current, None)
-            if not module.check_mode: module.sdk_call(client.DeleteInstanceAccount, build_delete(models, p))
+            if not module.check_mode:
+                module.sdk_call(client.DeleteInstanceAccount, build_delete(models, p))
             module.exit_json(changed=True, **(diff or {}), account=current if module.check_mode else None)
         target, before = desired(p), comparable(current) if current else None
-        if before == target and not p["rotate_password"]: module.exit_json(changed=False, account=current)
-        if not current and not p["password"]: module.fail_json(msg="password is required when creating")
+        if before == target and not p["rotate_password"]:
+            module.exit_json(changed=False, account=current)
+        if not current and not p["password"]:
+            module.fail_json(msg="password is required when creating")
         diff = maybe_diff(module, before, target)
         if not module.check_mode:
-            if current: module.sdk_call(client.ModifyInstanceAccount, build_update(models, p, p["rotate_password"]))
-            else: module.sdk_call(client.CreateInstanceAccount, build_create(models, p))
+            if current:
+                module.sdk_call(client.ModifyInstanceAccount, build_update(models, p, p["rotate_password"]))
+            else:
+                module.sdk_call(client.CreateInstanceAccount, build_create(models, p))
             current = find(module, client, models, p)
         module.exit_json(changed=True, **(diff or {}), account=current)
     except Exception as exc:
         module.fail_json(**sdk_error_payload(exc))
 
 
-def main(): run_module()
-if __name__ == "__main__": main()
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()
