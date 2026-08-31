@@ -1,0 +1,2 @@
+minor_changes:
+  - Reconcile Oceanus job and resource folders before contained platform objects and delete them in reverse declaration order during teardown.

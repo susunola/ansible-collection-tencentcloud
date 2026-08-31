@@ -37,6 +37,14 @@
         else (tc_oceanus_streaming_platform_cluster.cluster_id | default(''))
       }}
 
+- name: Reconcile Oceanus folders before contained objects
+  when: tc_oceanus_streaming_platform_state == 'present'
+  ansible.builtin.include_tasks: folder.yml
+  loop: "{{ tc_oceanus_streaming_platform_folders }}"
+  loop_control:
+    loop_var: _tc_oceanus_folder
+    label: "{{ _tc_oceanus_folder.name | default(_tc_oceanus_folder.folder_id | default('unnamed')) }}"
+
 - name: Reconcile Oceanus resources before jobs
   when: tc_oceanus_streaming_platform_state == 'present'
   ansible.builtin.include_tasks: resource.yml
@@ -88,6 +96,16 @@
   loop_control:
     loop_var: _tc_oceanus_resource
     label: "{{ _tc_oceanus_resource.name | default((_tc_oceanus_resource.resource | default({})).name | default('unnamed')) }}"
+
+- name: Remove Oceanus folders after contained objects
+  when:
+    - tc_oceanus_streaming_platform_state == 'absent'
+    - tc_oceanus_streaming_platform_allow_destroy | bool
+  ansible.builtin.include_tasks: folder.yml
+  loop: "{{ tc_oceanus_streaming_platform_folders | reverse | list }}"
+  loop_control:
+    loop_var: _tc_oceanus_folder
+    label: "{{ _tc_oceanus_folder.name | default(_tc_oceanus_folder.folder_id | default('unnamed')) }}"
 
 - name: Delete Oceanus dedicated cluster
   when:

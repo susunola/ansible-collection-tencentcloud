@@ -1,0 +1,13 @@
+---
+- name: Reconcile Oceanus folder
+  susunola.tencentcloud.oceanus_folder:
+  args: >-
+    {{
+      _tc_oceanus_folder
+      | combine({'state': tc_oceanus_streaming_platform_state, 'workspace_id': _tc_oceanus_workspace_id})
+      | combine(
+          {'allow_delete_nonempty': tc_oceanus_streaming_platform_allow_destroy}
+          if tc_oceanus_streaming_platform_state == 'absent'
+          else {}
+        )
+    }}

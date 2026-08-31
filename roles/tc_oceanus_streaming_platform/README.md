@@ -18,6 +18,9 @@ Builds an Oceanus workspace, an optional dedicated Flink cluster, and its jobs. 
           vpc_descriptions: [{VpcId: vpc-xxxxxxxx, SubnetId: subnet-xxxxxxxx}]
           default_cos_bucket: flink-artifacts-1250000000
           cu: 19
+        tc_oceanus_streaming_platform_folders:
+          - {name: production-jobs, folder_type: 0, parent_id: root}
+          - {name: production-artifacts, folder_type: 1, parent_id: root}
         tc_oceanus_streaming_platform_resources:
           - resource:
               name: orders-processor
@@ -45,7 +48,7 @@ Builds an Oceanus workspace, an optional dedicated Flink cluster, and its jobs. 
             # savepoint: {description: before-release-2026-08-31}
 ```
 
-Resources and their desired latest immutable artifact version are reconciled before jobs. Each structured job is reconciled in three phases: definition, immutable configuration publication, then runtime state using the new version. Flat job dictionaries remain supported when no configuration publication is needed. Teardown reverses the dependency order by deleting jobs before resources.
+Folders are created before contained resources and jobs. Resources and their desired latest immutable artifact version are reconciled before jobs. Each structured job is reconciled in three phases: definition, immutable configuration publication, then runtime state using the new version. Flat job dictionaries remain supported when no configuration publication is needed. Teardown reverses the dependency order by deleting jobs, resources and then folders; nested folders should be declared parent-first because teardown reverses the list.
 
 An optional `savepoint` is triggered only after the job has converged to `running`. Its description acts as an idempotency key; change it for each intentional release checkpoint or set `force: true` for an explicitly repeated snapshot.
 
