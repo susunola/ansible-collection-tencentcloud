@@ -837,6 +837,11 @@ modules:
   - UpdateStandardEngineResourceGroupBaseInfo
   - UpdateStandardEngineResourceGroupConfigInfo
   - UpdateStandardEngineResourceGroupResourceInfo
+  dlc_lab:
+  - CreateLab
+  - DeleteLab
+  - ListLabs
+  - UpdateLab
   dlc_spark_job:
   - CreateSparkApp
   - DeleteSparkApp

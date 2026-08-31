@@ -3,6 +3,7 @@ tc_dlc_access_governance_state: present
 tc_dlc_access_governance_vpc_connections: []
 tc_dlc_access_governance_data_engines: []
 tc_dlc_access_governance_engine_resource_groups: []
+tc_dlc_access_governance_labs: []
 tc_dlc_access_governance_spark_jobs: []
 tc_dlc_access_governance_databases: []
 tc_dlc_access_governance_users: []

@@ -43,6 +43,14 @@ ignored when comparing desired access, so repeated runs remain idempotent.
             executor_size: large
             executor_nums: 2
             package_source: cos
+        tc_dlc_access_governance_labs:
+          - name: analytics-notebook
+            resource_partition_id: rp-xxxxxxxx
+            queue: default
+            lab_image: ccr.ccs.tencentyun.com/dlc/jupyter:latest
+            image_pull_type: BuiltIn
+            lab_image_pull_type: BuiltIn
+            enable_token: true
         tc_dlc_access_governance_databases:
           - name: sales
             comment: Curated sales datasets
@@ -80,6 +88,7 @@ The resulting endpoint IDs, engine IDs, database names and user IDs are publishe
 `tc_dlc_access_governance_result.data_engine_ids`,
 `tc_dlc_access_governance_result.engine_resource_group_ids` and
 `tc_dlc_access_governance_result.spark_job_ids` and
+`tc_dlc_access_governance_result.lab_ids` and
 `tc_dlc_access_governance_result.database_names` and
 `tc_dlc_access_governance_result.user_ids`. Mask strategy IDs are available in
 `tc_dlc_access_governance_result.data_mask_strategy_ids`.
@@ -95,6 +104,8 @@ non-empty database deletion additionally requires
 Spark job definitions are created after engines and resource groups. Teardown removes
 them before compute resources and retains the module's active-task guard; set
 `allow_delete_running: true` on an individual job only when interruption is intended.
+Laboratories follow the same compute-foundation ordering and publish stable IDs for
+downstream automation.
 
 Direct-user policies are exact-set managed when `policies` is declared. During
 teardown the role removes direct policies before deleting each user. Work-group

@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_lab`` for guarded DLC development-workspace lifecycle, image, scheduling, tag and persistent-directory reconciliation.
