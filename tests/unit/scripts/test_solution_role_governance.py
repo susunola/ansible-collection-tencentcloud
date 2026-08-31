@@ -81,6 +81,18 @@ def test_object_storage_teardown_removes_reversible_configuration_before_bucket(
     assert "cos_bucket_intelligent_tiering" not in teardown
 
 
+def test_shared_file_storage_teardown_unbinds_policy_before_parent_resources():
+    text = role_tasks("tc_shared_file_storage")
+    assert_order(
+        text,
+        "Remove CFS automatic snapshot policy",
+        "Remove CFS file system",
+        "Remove CFS permission rules",
+        "Remove CFS permission group",
+    )
+    assert "force_delete: true" in text
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -101,6 +113,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_database_stack": "resource_type='cdb_instance'",
         "tc_redis_stack": "resource_type='redis_instance'",
         "tc_mongodb_stack": "resource_type='mongodb_instance'",
+        "tc_shared_file_storage": "resource_type='cfs_file_system'",
         "tc_container_registry": "resource_type='tcr_instance'",
         "tc_tem_application": "resource_type='tem_environment'",
         "tc_serverless_application": "resource_type='api_gateway_service'",

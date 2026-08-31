@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **13**
+- Solution roles: **14**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -61,7 +61,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `cdz` | discovery-only | 0 | 1 | — | — |
 | `cetcd` | discovery-only | 0 | 1 | — | — |
 | `cfg` | discovery-only | 0 | 1 | — | — |
-| `cfs` | resource-family | 5 | 1 | — | `cfs_auto_snapshot_policy`, `cfs_file_system`, `cfs_permission_group`, `cfs_permission_rule`, `cfs_snapshot` |
+| `cfs` | solution | 5 | 1 | `tc_shared_file_storage` | `cfs_auto_snapshot_policy`, `cfs_file_system`, `cfs_permission_group`, `cfs_permission_rule`, `cfs_snapshot` |
 | `cfw` | resource-family | 5 | 1 | — | `cfw_address_template`, `cfw_internet_acl_rule`, `cfw_nat_acl_rule`, `cfw_nat_dnat_rule`, `cfw_vpc_acl_rule` |
 | `chc` | discovery-only | 0 | 1 | — | — |
 | `chdfs` | resource-family | 5 | 1 | — | `chdfs_access_group`, `chdfs_access_rules`, `chdfs_file_system`, `chdfs_mount_access_groups`, `chdfs_mount_point` |

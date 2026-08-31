@@ -1,0 +1,28 @@
+---
+tc_shared_file_storage_state: present
+tc_shared_file_storage_region: ""
+tc_shared_file_storage_file_system_id: ""
+tc_shared_file_storage_name: ""
+tc_shared_file_storage_zone: ""
+tc_shared_file_storage_protocol: NFS
+tc_shared_file_storage_storage_type: SD
+tc_shared_file_storage_capacity: 10
+tc_shared_file_storage_size_limit: null
+tc_shared_file_storage_vpc_id: ""
+tc_shared_file_storage_subnet_id: ""
+
+tc_shared_file_storage_permission_group_id: ""
+tc_shared_file_storage_permission_group_name: ""
+tc_shared_file_storage_permission_group_description: ""
+# Items: {rule_id?, client_ip, priority?, access?, user_permission?}
+tc_shared_file_storage_permission_rules: []
+
+tc_shared_file_storage_snapshot_policy:
+  enabled: false
+  policy_id: ""
+  name: ""
+  hour: "00"
+  day_of_week: ""
+  day_of_month: ""
+  interval_days: 0
+  alive_days: 0

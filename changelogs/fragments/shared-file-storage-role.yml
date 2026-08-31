@@ -1,0 +1,5 @@
+minor_changes:
+  - >-
+    solution roles - add ``tc_shared_file_storage`` for CFS file systems,
+    permission groups, exact client rules and automatic snapshot binding with
+    name adoption and dependency-ordered teardown.

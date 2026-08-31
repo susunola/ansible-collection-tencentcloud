@@ -30,6 +30,7 @@ ROLE_SERVICES = {
     "tc_object_storage_baseline": "cos",
     "tc_serverless_application": "scf",
     "tc_security_baseline": "cam",
+    "tc_shared_file_storage": "cfs",
     "tc_tem_application": "tem",
     "tc_tke_platform": "tke",
     "tc_vpc_foundation": "vpc",
