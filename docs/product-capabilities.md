@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **10**
+- Solution roles: **11**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -162,7 +162,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `postgres` | resource-family | 4 | 1 | — | `postgresql_account`, `postgresql_backup_plan`, `postgresql_instance`, `postgresql_parameter_template` |
 | `privatedns` | managed | 2 | 1 | — | `private_dns_record`, `private_dns_zone` |
 | `pts` | discovery-only | 0 | 1 | — | — |
-| `redis` | resource-family | 4 | 1 | — | `redis_account`, `redis_backup_config`, `redis_instance`, `redis_parameter_template` |
+| `redis` | solution | 4 | 1 | `tc_redis_stack` | `redis_account`, `redis_backup_config`, `redis_instance`, `redis_parameter_template` |
 | `region` | discovery-only | 0 | 1 | — | — |
 | `rum` | discovery-only | 0 | 1 | — | — |
 | `scf` | solution | 4 | 1 | `tc_serverless_application` | `scf_alias`, `scf_function`, `scf_trigger`, `scf_version` |

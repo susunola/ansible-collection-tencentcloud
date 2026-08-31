@@ -1,0 +1,38 @@
+---
+tc_redis_stack_state: present
+tc_redis_stack_region: ""
+tc_redis_stack_instance_id: ""
+tc_redis_stack_name: ""
+tc_redis_stack_zone_name: ""
+tc_redis_stack_type_id: null
+tc_redis_stack_mem_size: null
+tc_redis_stack_shard_num: 1
+tc_redis_stack_replicas_num: 1
+tc_redis_stack_vpc_id: ""
+tc_redis_stack_subnet_id: ""
+tc_redis_stack_password: ""
+tc_redis_stack_no_auth: false
+tc_redis_stack_project_id: null
+tc_redis_stack_security_group_ids: []
+tc_redis_stack_tags: {}
+
+# Items: {name, password?, rotate_password?, privilege?, readonly_policy?, remark?, encrypt_password?}
+tc_redis_stack_accounts: []
+
+tc_redis_stack_backup_enabled: true
+tc_redis_stack_backup_week_days: [Monday, Wednesday, Friday]
+tc_redis_stack_backup_time_period: "03:00-04:00"
+tc_redis_stack_backup_type: 0
+tc_redis_stack_backup_storage_days: 7
+
+# Optional reusable template. Set name to enable management.
+tc_redis_stack_parameter_template:
+  name: ""
+  template_id: ""
+  description: ""
+  product_type: null
+  parameters: {}
+  remove_on_absent: false
+
+tc_redis_stack_waiter_timeout: 900
+tc_redis_stack_waiter_delay: 5

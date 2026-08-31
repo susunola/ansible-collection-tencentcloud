@@ -1,0 +1,5 @@
+minor_changes:
+  - >-
+    solution roles - add ``tc_redis_stack`` for Redis instances, application
+    accounts, explicit password rotation, automatic backups and reusable
+    parameter templates, including exact-name adoption and child-first teardown.

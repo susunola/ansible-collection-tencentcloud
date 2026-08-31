@@ -47,6 +47,12 @@ def test_database_teardown_removes_logical_children_before_instance():
     assert "tc_database_stack_instance_id | length > 0" in text
 
 
+def test_redis_teardown_removes_accounts_before_instance_and_optional_template():
+    text = role_tasks("tc_redis_stack")
+    assert_order(text, "Remove Redis accounts", "Remove Redis instance", "Remove Redis parameter template")
+    assert "tc_redis_stack_instance_id | length > 0" in text
+
+
 def test_observability_teardown_removes_topics_before_logset():
     text = role_tasks("tc_observability_baseline")
     assert_order(text, "Remove CLS topics", "Remove CLS logset")
@@ -71,6 +77,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_vpc_foundation": "resource_type='vpc'",
         "tc_tke_platform": "resource_type='tke_cluster'",
         "tc_database_stack": "resource_type='cdb_instance'",
+        "tc_redis_stack": "resource_type='redis_instance'",
         "tc_container_registry": "resource_type='tcr_instance'",
         "tc_tem_application": "resource_type='tem_environment'",
         "tc_serverless_application": "resource_type='api_gateway_service'",

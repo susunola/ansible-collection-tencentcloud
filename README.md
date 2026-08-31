@@ -563,6 +563,7 @@ for product-level write, discovery and reusable-role maturity.
 | `tc_vpc_foundation` | Build a VPC foundation with subnets, NAT gateways, routes and security controls |
 | `tc_tke_platform` | Provision a TKE cluster with node pools, endpoints, addons, authentication and audit delivery |
 | `tc_database_stack` | Provision TencentDB for MySQL with databases, accounts, privileges and backup retention |
+| `tc_redis_stack` | Provision TencentDB for Redis with accounts, automatic backups and parameter templates |
 | `tc_serverless_application` | Deploy an SCF function with aliases, triggers and optional API Gateway exposure |
 | `tc_observability_baseline` | Establish CLS indexed topics and Cloud Monitor alarm policies |
 | `tc_security_baseline` | Establish CAM, CloudAudit and Config compliance controls |

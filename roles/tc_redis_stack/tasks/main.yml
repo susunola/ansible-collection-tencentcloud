@@ -1,0 +1,141 @@
+---
+- name: Resolve existing Redis instance ID for teardown
+  when:
+    - tc_redis_stack_state == 'absent'
+    - tc_redis_stack_instance_id | length == 0
+    - tc_redis_stack_name | length > 0
+  ansible.builtin.set_fact:
+    tc_redis_stack_instance_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_redis_stack_name,
+                resource_type='redis_instance', region=tc_redis_stack_region) }}
+
+- name: Validate Redis stack inputs
+  ansible.builtin.assert:
+    that:
+      - tc_redis_stack_state in ['present', 'absent']
+      - tc_redis_stack_instance_id | length > 0 or tc_redis_stack_name | length > 0
+      - tc_redis_stack_state == 'absent' or tc_redis_stack_instance_id | length > 0 or tc_redis_stack_zone_name | length > 0
+      - tc_redis_stack_state == 'absent' or tc_redis_stack_instance_id | length > 0 or tc_redis_stack_type_id is not none
+      - tc_redis_stack_state == 'absent' or tc_redis_stack_instance_id | length > 0 or tc_redis_stack_mem_size is not none
+      - tc_redis_stack_state == 'present' or tc_redis_stack_accounts | length == 0 or tc_redis_stack_instance_id | length > 0
+    fail_msg: Creating Redis requires name, zone_name, type_id and mem_size; deleting declared accounts requires a resolvable instance.
+
+- name: Provision Redis parameter template
+  when:
+    - tc_redis_stack_state == 'present'
+    - tc_redis_stack_parameter_template.name | default('') | length > 0
+  susunola.tencentcloud.redis_parameter_template:
+    region: "{{ tc_redis_stack_region | default(omit, true) }}"
+    state: present
+    template_id: "{{ tc_redis_stack_parameter_template.template_id | default(omit, true) }}"
+    name: "{{ tc_redis_stack_parameter_template.name }}"
+    description: "{{ tc_redis_stack_parameter_template.description | default('') }}"
+    product_type: "{{ tc_redis_stack_parameter_template.product_type | default(omit, true) }}"
+    parameters: "{{ tc_redis_stack_parameter_template.parameters | default({}) }}"
+  register: _tc_redis_stack_parameter_template
+
+- name: Provision Redis instance
+  when: tc_redis_stack_state == 'present'
+  susunola.tencentcloud.redis_instance:
+    region: "{{ tc_redis_stack_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ tc_redis_stack_instance_id | default(omit, true) }}"
+    name: "{{ tc_redis_stack_name | default(omit, true) }}"
+    zone_name: "{{ tc_redis_stack_zone_name | default(omit, true) }}"
+    type_id: "{{ tc_redis_stack_type_id | default(omit, true) }}"
+    mem_size: "{{ tc_redis_stack_mem_size | default(omit, true) }}"
+    redis_shard_num: "{{ tc_redis_stack_shard_num }}"
+    redis_replicas_num: "{{ tc_redis_stack_replicas_num }}"
+    vpc_id: "{{ tc_redis_stack_vpc_id | default(omit, true) }}"
+    subnet_id: "{{ tc_redis_stack_subnet_id | default(omit, true) }}"
+    password: "{{ tc_redis_stack_password | default(omit, true) }}"
+    no_auth: "{{ tc_redis_stack_no_auth }}"
+    project_id: "{{ tc_redis_stack_project_id | default(omit, true) }}"
+    security_group_id_list: "{{ tc_redis_stack_security_group_ids }}"
+    tags: "{{ tc_redis_stack_tags }}"
+    waiter_timeout: "{{ tc_redis_stack_waiter_timeout }}"
+    waiter_delay: "{{ tc_redis_stack_waiter_delay }}"
+  register: _tc_redis_stack_instance
+
+- name: Resolve Redis instance ID
+  when: tc_redis_stack_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_redis_stack_instance_id: >-
+      {{ tc_redis_stack_instance_id
+         or (_tc_redis_stack_instance.instance.InstanceId | default('')) }}
+
+- name: Provision Redis accounts
+  when:
+    - tc_redis_stack_state == 'present'
+    - _tc_redis_stack_instance_id | length > 0
+  susunola.tencentcloud.redis_account:
+    region: "{{ tc_redis_stack_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ _tc_redis_stack_instance_id }}"
+    name: "{{ item.name }}"
+    password: "{{ item.password | default(omit) }}"
+    rotate_password: "{{ item.rotate_password | default(false) }}"
+    privilege: "{{ item.privilege | default('rw') }}"
+    readonly_policy: "{{ item.readonly_policy | default(['master']) }}"
+    remark: "{{ item.remark | default('') }}"
+    encrypt_password: "{{ item.encrypt_password | default(false) }}"
+  loop: "{{ tc_redis_stack_accounts }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: _tc_redis_stack_accounts
+
+- name: Configure Redis automatic backup
+  when:
+    - tc_redis_stack_state == 'present'
+    - _tc_redis_stack_instance_id | length > 0
+    - tc_redis_stack_backup_enabled
+  susunola.tencentcloud.redis_backup_config:
+    region: "{{ tc_redis_stack_region | default(omit, true) }}"
+    instance_id: "{{ _tc_redis_stack_instance_id }}"
+    week_days: "{{ tc_redis_stack_backup_week_days }}"
+    time_period: "{{ tc_redis_stack_backup_time_period }}"
+    backup_type: "{{ tc_redis_stack_backup_type }}"
+    storage_days: "{{ tc_redis_stack_backup_storage_days }}"
+  register: _tc_redis_stack_backup
+
+- name: Remove Redis accounts
+  when: tc_redis_stack_state == 'absent'
+  susunola.tencentcloud.redis_account:
+    region: "{{ tc_redis_stack_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_redis_stack_instance_id }}"
+    name: "{{ item.name }}"
+  loop: "{{ tc_redis_stack_accounts }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Remove Redis instance
+  when: tc_redis_stack_state == 'absent'
+  susunola.tencentcloud.redis_instance:
+    region: "{{ tc_redis_stack_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_redis_stack_instance_id | default(omit, true) }}"
+    name: "{{ tc_redis_stack_name | default(omit, true) }}"
+    waiter_timeout: "{{ tc_redis_stack_waiter_timeout }}"
+    waiter_delay: "{{ tc_redis_stack_waiter_delay }}"
+
+- name: Remove Redis parameter template
+  when:
+    - tc_redis_stack_state == 'absent'
+    - tc_redis_stack_parameter_template.remove_on_absent | default(false)
+    - tc_redis_stack_parameter_template.template_id | default('') | length > 0 or tc_redis_stack_parameter_template.name | default('') | length > 0
+  susunola.tencentcloud.redis_parameter_template:
+    region: "{{ tc_redis_stack_region | default(omit, true) }}"
+    state: absent
+    template_id: "{{ tc_redis_stack_parameter_template.template_id | default(omit, true) }}"
+    name: "{{ tc_redis_stack_parameter_template.name | default(omit, true) }}"
+
+- name: Publish Redis stack result
+  when: tc_redis_stack_state == 'present'
+  ansible.builtin.set_fact:
+    tc_redis_stack_result:
+      instance_id: "{{ _tc_redis_stack_instance_id }}"
+      instance: "{{ _tc_redis_stack_instance.instance }}"
+      accounts: "{{ _tc_redis_stack_accounts.results | default([]) }}"
+      backup: "{{ _tc_redis_stack_backup | default({}) }}"
+      parameter_template: "{{ _tc_redis_stack_parameter_template | default({}) }}"
