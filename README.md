@@ -337,6 +337,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tione_dataset` | Manage Tencent Cloud TIONE datasets |
 | `tione_model_service` | Manage Tencent Cloud TIONE online model service configuration |
 | `tione_model_service_state` | Manage Tencent Cloud TIONE online model service state |
+| `tione_model_service_traffic` | Manage Tencent Cloud TIONE service authorization and version traffic |
 | `tione_notebook` | Manage Tencent Cloud TIONE notebooks |
 | `tione_training_model_version` | Manage versions of an existing Tencent Cloud TIONE training model |
 | `tione_training_task` | Manage Tencent Cloud TIONE training tasks |

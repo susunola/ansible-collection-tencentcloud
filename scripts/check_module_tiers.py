@@ -395,6 +395,7 @@ CORE_MODULES = {
     "tione_model_service",
     "tione_model_service_diagnostics_info",
     "tione_model_service_state",
+    "tione_model_service_traffic",
     "vpc",
     "havip",
     "havip_association",

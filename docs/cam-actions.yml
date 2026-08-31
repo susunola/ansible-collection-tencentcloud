@@ -2052,6 +2052,10 @@ modules:
   - DeleteModelService
   - DescribeModelService
   - ModifyModelService
+  tione_model_service_traffic:
+  - DescribeModelServiceGroup
+  - ModifyModelServiceAuthorization
+  - ModifyServiceGroupWeights
   tione_notebook:
   - CreateNotebook
   - DeleteNotebook
