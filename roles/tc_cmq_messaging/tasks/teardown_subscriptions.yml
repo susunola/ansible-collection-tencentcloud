@@ -1,0 +1,11 @@
+---
+- name: Delete CMQ topic subscriptions
+  susunola.tencentcloud.cmq_subscription:
+    region: "{{ tc_cmq_messaging_region | default(omit, true) }}"
+    state: absent
+    topic_name: "{{ _tc_cmq_topic.topic_name }}"
+    subscription_name: "{{ item.subscription_name }}"
+    protocol: "{{ item.protocol | default('http') }}"
+    endpoint: "{{ item.endpoint }}"
+  loop: "{{ _tc_cmq_topic.subscriptions | default([]) }}"
+  loop_control: {label: "{{ item.subscription_name }}"}

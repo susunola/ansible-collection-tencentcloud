@@ -1,0 +1,7 @@
+---
+tc_cmq_messaging_state: present
+tc_cmq_messaging_region: ""
+# Queue items use cmq_queue parameters.
+tc_cmq_messaging_queues: []
+# Topic items use cmq_topic parameters and may contain subscriptions.
+tc_cmq_messaging_topics: []

@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **27**
+- Solution roles: **28**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -188,7 +188,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `tdai` | discovery-only | 0 | 1 | — | — |
 | `tdcpg` | managed | 1 | 1 | — | `tdcpg_cluster` |
 | `tdid` | discovery-only | 0 | 1 | — | — |
-| `tdmq` | solution | 18 | 1 | `tc_rabbitmq_platform`, `tc_rocketmq_platform` | `cmq_queue`, `cmq_subscription`, `cmq_topic`, `tdmq_namespace`, `tdmq_namespace_role`, `tdmq_rabbitmq_binding`, `tdmq_rabbitmq_instance`, `tdmq_rabbitmq_permission`, +10 more |
+| `tdmq` | solution | 18 | 1 | `tc_cmq_messaging`, `tc_rabbitmq_platform`, `tc_rocketmq_platform` | `cmq_queue`, `cmq_subscription`, `cmq_topic`, `tdmq_namespace`, `tdmq_namespace_role`, `tdmq_rabbitmq_binding`, `tdmq_rabbitmq_instance`, `tdmq_rabbitmq_permission`, +10 more |
 | `tdmysql` | managed | 1 | 1 | — | `tdmysql_db_instance` |
 | `tem` | solution | 4 | 1 | `tc_tem_application` | `tem_application`, `tem_application_deployment`, `tem_application_service`, `tem_environment` |
 | `teo` | resource-family | 12 | 1 | — | `teo_acceleration_domain`, `teo_dns_record`, `teo_origin_group`, `teo_security_bot_lite`, `teo_security_custom_rules`, `teo_security_exception_rules`, `teo_security_ip_group`, `teo_security_managed_rules`, +4 more |

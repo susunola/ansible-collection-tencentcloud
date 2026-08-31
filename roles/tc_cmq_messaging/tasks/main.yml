@@ -1,0 +1,63 @@
+---
+- name: Validate CMQ messaging inputs
+  ansible.builtin.assert:
+    that:
+      - tc_cmq_messaging_state in ['present', 'absent']
+    fail_msg: CMQ messaging state must be present or absent.
+
+- name: Reconcile CMQ queues
+  when: tc_cmq_messaging_state == 'present'
+  susunola.tencentcloud.cmq_queue:
+    region: "{{ tc_cmq_messaging_region | default(omit, true) }}"
+    state: present
+    queue_name: "{{ item.queue_name }}"
+    max_msg_heap_num: "{{ item.max_msg_heap_num | default(10000000) }}"
+    polling_wait_seconds: "{{ item.polling_wait_seconds | default(0) }}"
+    visibility_timeout: "{{ item.visibility_timeout | default(30) }}"
+    max_msg_size: "{{ item.max_msg_size | default(1048576) }}"
+    msg_retention_seconds: "{{ item.msg_retention_seconds | default(3600) }}"
+    rewind_seconds: "{{ item.rewind_seconds | default(0) }}"
+  loop: "{{ tc_cmq_messaging_queues }}"
+  loop_control: {label: "{{ item.queue_name }}"}
+  register: _tc_cmq_messaging_queues
+
+- name: Reconcile CMQ topics and subscriptions
+  when: tc_cmq_messaging_state == 'present'
+  ansible.builtin.include_tasks: topic.yml
+  loop: "{{ tc_cmq_messaging_topics }}"
+  loop_control:
+    loop_var: _tc_cmq_topic
+    label: "{{ _tc_cmq_topic.topic_name }}"
+
+- name: Remove CMQ subscriptions
+  when: tc_cmq_messaging_state == 'absent'
+  ansible.builtin.include_tasks: teardown_subscriptions.yml
+  loop: "{{ tc_cmq_messaging_topics }}"
+  loop_control:
+    loop_var: _tc_cmq_topic
+    label: "{{ _tc_cmq_topic.topic_name }}"
+
+- name: Remove CMQ topics
+  when: tc_cmq_messaging_state == 'absent'
+  susunola.tencentcloud.cmq_topic:
+    region: "{{ tc_cmq_messaging_region | default(omit, true) }}"
+    state: absent
+    topic_name: "{{ item.topic_name }}"
+  loop: "{{ tc_cmq_messaging_topics }}"
+  loop_control: {label: "{{ item.topic_name }}"}
+
+- name: Remove CMQ queues
+  when: tc_cmq_messaging_state == 'absent'
+  susunola.tencentcloud.cmq_queue:
+    region: "{{ tc_cmq_messaging_region | default(omit, true) }}"
+    state: absent
+    queue_name: "{{ item.queue_name }}"
+  loop: "{{ tc_cmq_messaging_queues }}"
+  loop_control: {label: "{{ item.queue_name }}"}
+
+- name: Publish CMQ messaging result
+  when: tc_cmq_messaging_state == 'present'
+  ansible.builtin.set_fact:
+    tc_cmq_messaging_result:
+      queues: "{{ _tc_cmq_messaging_queues | default({}) }}"
+      topic_count: "{{ tc_cmq_messaging_topics | length }}"

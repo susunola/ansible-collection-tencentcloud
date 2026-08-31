@@ -221,6 +221,13 @@ def test_rabbitmq_teardown_removes_access_before_protected_instance():
     assert "no_log:" in main
 
 
+def test_cmq_teardown_removes_subscriptions_before_topics_and_queues():
+    text = role_tasks("tc_cmq_messaging")
+    assert_order(text, "Remove CMQ subscriptions", "Remove CMQ topics", "Remove CMQ queues")
+    teardown = (ROOT / "roles" / "tc_cmq_messaging" / "tasks" / "teardown_subscriptions.yml").read_text(encoding="utf-8")
+    assert "Delete CMQ topic subscriptions" in teardown
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(

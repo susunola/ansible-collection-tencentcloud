@@ -1,0 +1,26 @@
+---
+- name: Reconcile CMQ topic
+  susunola.tencentcloud.cmq_topic:
+    region: "{{ tc_cmq_messaging_region | default(omit, true) }}"
+    state: present
+    topic_name: "{{ _tc_cmq_topic.topic_name }}"
+    max_msg_size: "{{ _tc_cmq_topic.max_msg_size | default(65536) }}"
+    message_retention_seconds: "{{ _tc_cmq_topic.message_retention_seconds | default(86400) }}"
+    filter_type: "{{ _tc_cmq_topic.filter_type | default(1) }}"
+    trace: "{{ _tc_cmq_topic.trace | default(false) }}"
+    tags: "{{ _tc_cmq_topic.tags | default({}) }}"
+
+- name: Reconcile CMQ subscriptions
+  susunola.tencentcloud.cmq_subscription:
+    region: "{{ tc_cmq_messaging_region | default(omit, true) }}"
+    state: present
+    topic_name: "{{ _tc_cmq_topic.topic_name }}"
+    subscription_name: "{{ item.subscription_name }}"
+    protocol: "{{ item.protocol | default('http') }}"
+    endpoint: "{{ item.endpoint }}"
+    notify_strategy: "{{ item.notify_strategy | default('BACKOFF_RETRY') }}"
+    notify_content_format: "{{ item.notify_content_format | default('JSON') }}"
+    filter_tags: "{{ item.filter_tags | default([]) }}"
+    binding_key: "{{ item.binding_key | default([]) }}"
+  loop: "{{ _tc_cmq_topic.subscriptions | default([]) }}"
+  loop_control: {label: "{{ item.subscription_name }}"}

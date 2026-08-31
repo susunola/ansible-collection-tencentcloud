@@ -1,0 +1,5 @@
+---
+minor_changes:
+  - >-
+    solution roles - add ``tc_cmq_messaging`` for CMQ queues, topics and HTTP
+    or queue subscriptions with endpoint-safe teardown ordering.

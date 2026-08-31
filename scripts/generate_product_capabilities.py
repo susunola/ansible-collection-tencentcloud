@@ -23,6 +23,7 @@ ROLE_SERVICES = {
     "tc_block_storage": "cbs",
     "tc_autoscaling_group": "autoscaling",
     "tc_container_registry": "tcr",
+    "tc_cmq_messaging": "tdmq",
     "tc_kafka_platform": "ckafka",
     "tc_lighthouse_stack": "lighthouse",
     "tc_database_stack": "cdb",
