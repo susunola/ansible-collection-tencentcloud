@@ -279,6 +279,7 @@ CORE_MODULES = {
     "tse_config_file_deployment",
     "tse_gateway_service_inventory_info",
     "tse_gateway_ip_lookup_info",
+    "tse_gateway_upstream_node_status",
     "tse_governance_namespace",
     "tse_governance_alias",
     "tse_governance_instance",

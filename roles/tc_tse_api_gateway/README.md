@@ -52,6 +52,8 @@ route creation. Guarded teardown removes routes and services before the gateway.
             timeout: 30000
             retries_count: 2
             upstream_type: IPList
+        tc_tse_api_gateway_upstream_node_states:
+          - {service_name: orders, host: 10.0.0.20, port: 8080, status: HEALTHY}
             upstream_source_name: customer-nacos
             upstream_info:
               Targets: [{Host: 10.0.0.10, Port: 8080, Weight: 100}]

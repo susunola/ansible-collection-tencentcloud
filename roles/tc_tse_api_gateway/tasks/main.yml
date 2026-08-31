@@ -11,6 +11,7 @@
       - tc_tse_api_gateway_autoscaler_bindings is sequence
       - tc_tse_api_gateway_service_sources is sequence
       - tc_tse_api_gateway_services is sequence
+      - tc_tse_api_gateway_upstream_node_states is sequence
       - tc_tse_api_gateway_routes is sequence
       - tc_tse_api_gateway_canary_rules is sequence
       - tc_tse_api_gateway_consumers is sequence
@@ -155,6 +156,14 @@
   loop: "{{ _tc_tse_api_gateway_resolved_services }}"
   loop_control: {label: "{{ item.name | default('unnamed') }}"}
   register: _tc_tse_api_gateway_services
+
+- name: Reconcile TSE API gateway upstream node states
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_upstream_node_status:
+  args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id}) }}"
+  loop: "{{ tc_tse_api_gateway_upstream_node_states }}"
+  loop_control: {label: "{{ item.service_name | default('?') }}/{{ item.host | default('?') }}:{{ item.port | default('?') }}"}
+  register: _tc_tse_api_gateway_upstream_node_states_result
 
 - name: Reconcile TSE API gateway public networks
   when: tc_tse_api_gateway_state == 'present'
@@ -514,6 +523,7 @@
       autoscaler_bindings: "{{ _tc_tse_api_gateway_autoscaler_bindings_result.results | default([]) | map(attribute='binding') | list }}"
       service_sources: "{{ _tc_tse_api_gateway_service_sources_result.results | default([]) | map(attribute='source') | list }}"
       services: "{{ _tc_tse_api_gateway_services.results | default([]) | map(attribute='service') | list }}"
+      upstream_node_states: "{{ _tc_tse_api_gateway_upstream_node_states_result.results | default([]) | map(attribute='node') | list }}"
       routes: "{{ _tc_tse_api_gateway_routes_result.results | default([]) | map(attribute='route') | list }}"
       canary_rules: "{{ _tc_tse_api_gateway_canary_rules_result.results | default([]) | map(attribute='canary_rule') | list }}"
       consumers: "{{ _tc_tse_api_gateway_consumers_result.results | default([]) | map(attribute='consumer') | list }}"

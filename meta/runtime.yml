@@ -610,6 +610,7 @@ action_groups:
     - tse_gateway_service
     - tse_gateway_service_inventory_info
     - tse_gateway_service_source
+    - tse_gateway_upstream_node_status
     - tse_gateway_waf_domains
     - tse_gateway_waf_protection
     - tse_governance_alias

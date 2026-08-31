@@ -2427,6 +2427,9 @@ modules:
   - DeleteNativeGatewayServiceSource
   - DescribeNativeGatewayServiceSources
   - ModifyNativeGatewayServiceSource
+  tse_gateway_upstream_node_status:
+  - DescribeCloudNativeAPIGatewayUpstream
+  - ModifyUpstreamNodeStatus
   tse_gateway_waf_domains:
   - CreateWafDomains
   - DeleteWafDomains
