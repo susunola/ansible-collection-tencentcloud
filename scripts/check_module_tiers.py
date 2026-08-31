@@ -278,6 +278,8 @@ CORE_MODULES = {
     "tse_cloud_native_gateway",
     "tse_gateway_service",
     "tse_gateway_route",
+    "tse_gateway_consumer",
+    "tse_gateway_rate_limit",
     "vdb_instance",
     "tdcpg_cluster",
     "tdcpg_account",

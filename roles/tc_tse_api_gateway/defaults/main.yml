@@ -3,4 +3,6 @@ tc_tse_api_gateway_state: present
 tc_tse_api_gateway_gateway: {}
 tc_tse_api_gateway_services: []
 tc_tse_api_gateway_routes: []
+tc_tse_api_gateway_consumers: []
+tc_tse_api_gateway_rate_limits: []
 tc_tse_api_gateway_allow_destroy: false

@@ -1,6 +1,7 @@
 # tc_tse_api_gateway
 
-Provisions a TSE cloud-native API gateway, upstream services and routes. Routes
+Provisions a TSE cloud-native API gateway, upstream services, routes,
+consumers and service- or route-scoped rate limits. Routes
 may reference `service_name`; the role resolves the created service ID before
 route creation. Guarded teardown removes routes and services before the gateway.
 

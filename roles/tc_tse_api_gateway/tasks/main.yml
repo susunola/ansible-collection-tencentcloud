@@ -6,6 +6,8 @@
       - tc_tse_api_gateway_gateway is mapping
       - tc_tse_api_gateway_services is sequence
       - tc_tse_api_gateway_routes is sequence
+      - tc_tse_api_gateway_consumers is sequence
+      - tc_tse_api_gateway_rate_limits is sequence
       - tc_tse_api_gateway_gateway.gateway_id | default(tc_tse_api_gateway_gateway.name | default('')) | length > 0
       - tc_tse_api_gateway_state == 'present' or tc_tse_api_gateway_allow_destroy | bool
     fail_msg: TSE API gateway requires gateway_id or name; destruction requires tc_tse_api_gateway_allow_destroy=true.
@@ -56,6 +58,22 @@
   loop_control: {label: "{{ item.name | default('unnamed') }}"}
   register: _tc_tse_api_gateway_routes_result
 
+- name: Reconcile TSE API gateway consumers
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_consumer:
+  args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_api_gateway_consumers }}"
+  loop_control: {label: "{{ item.name | default('unnamed') }}"}
+  register: _tc_tse_api_gateway_consumers_result
+
+- name: Reconcile TSE API gateway rate limits
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_rate_limit:
+  args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_api_gateway_rate_limits }}"
+  loop_control: {label: "{{ item.scope | default('?') }}/{{ item.resource | default('unnamed') }}"}
+  register: _tc_tse_api_gateway_rate_limits_result
+
 - name: Publish TSE API gateway outputs
   when: tc_tse_api_gateway_state == 'present'
   ansible.builtin.set_fact:
@@ -63,6 +81,8 @@
       gateway: "{{ _tc_tse_api_gateway_gateway.gateway }}"
       services: "{{ _tc_tse_api_gateway_services.results | default([]) | map(attribute='service') | list }}"
       routes: "{{ _tc_tse_api_gateway_routes_result.results | default([]) | map(attribute='route') | list }}"
+      consumers: "{{ _tc_tse_api_gateway_consumers_result.results | default([]) | map(attribute='consumer') | list }}"
+      rate_limits: "{{ _tc_tse_api_gateway_rate_limits_result.results | default([]) | map(attribute='rate_limit') | list }}"
 
 - name: Require gateway ID for deterministic teardown
   when:
@@ -71,13 +91,31 @@
   ansible.builtin.fail:
     msg: gateway.gateway_id is required for deterministic TSE API gateway teardown.
 
+- name: Remove TSE API gateway rate limits
+  when: tc_tse_api_gateway_state == 'absent'
+  susunola.tencentcloud.tse_gateway_rate_limit:
+    gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
+    scope: "{{ item.scope }}"
+    resource: "{{ item.resource }}"
+    state: absent
+  loop: "{{ tc_tse_api_gateway_rate_limits | reverse | list }}"
+
 - name: Remove TSE API gateway routes
   when: tc_tse_api_gateway_state == 'absent'
   susunola.tencentcloud.tse_gateway_route:
     gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
-    name: "{{ item.name }}"
+    name: "{{ item.name | default(omit) }}"
     state: absent
   loop: "{{ tc_tse_api_gateway_routes | reverse | list }}"
+
+- name: Remove TSE API gateway consumers
+  when: tc_tse_api_gateway_state == 'absent'
+  susunola.tencentcloud.tse_gateway_consumer:
+    gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
+    consumer_id: "{{ item.consumer_id | default(omit) }}"
+    name: "{{ item.name | default(omit) }}"
+    state: absent
+  loop: "{{ tc_tse_api_gateway_consumers | reverse | list }}"
 
 - name: Remove TSE API gateway services
   when: tc_tse_api_gateway_state == 'absent'

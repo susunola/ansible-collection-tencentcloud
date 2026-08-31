@@ -2287,6 +2287,21 @@ modules:
   - DeleteConfigFileGroup
   - DescribeConfigFileGroups
   - ModifyConfigFileGroup
+  tse_gateway_consumer:
+  - CreateCloudNativeAPIGatewayConsumer
+  - DeleteCloudNativeAPIGatewayConsumer
+  - DescribeCloudNativeAPIGatewayConsumer
+  - DescribeCloudNativeAPIGatewayConsumerList
+  - ModifyCloudNativeAPIGatewayConsumer
+  tse_gateway_rate_limit:
+  - CreateCloudNativeAPIGatewayRouteRateLimit
+  - CreateCloudNativeAPIGatewayServiceRateLimit
+  - DeleteCloudNativeAPIGatewayRouteRateLimit
+  - DeleteCloudNativeAPIGatewayServiceRateLimit
+  - DescribeCloudNativeAPIGatewayRouteRateLimit
+  - DescribeCloudNativeAPIGatewayServiceRateLimit
+  - ModifyCloudNativeAPIGatewayRouteRateLimit
+  - ModifyCloudNativeAPIGatewayServiceRateLimit
   tse_gateway_route:
   - CreateCloudNativeAPIGatewayRoute
   - DeleteCloudNativeAPIGatewayRoute
