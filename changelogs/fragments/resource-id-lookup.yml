@@ -12,6 +12,7 @@ minor_changes:
   - lookup resource_id - add exact-name, paginated Lighthouse instance resolution.
   - lookup resource_id - add exact-name, paginated TDMQ RocketMQ cluster resolution.
   - lookup resource_id - add exact-name, paginated TDMQ RabbitMQ instance resolution.
+  - lookup resource_id - add exact-name, paginated Managed Prometheus instance resolution.
   - >-
     lookup plugins - add ``resource_id`` for exact, ambiguity-safe name-to-ID
     resolution across VPC, subnet, security group, CVM, CLB, TKE and CDB.

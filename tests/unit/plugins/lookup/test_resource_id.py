@@ -51,6 +51,7 @@ class Models(object):
     DescribeInstanceListRequest = Request
     DescribeRocketMQClustersRequest = Request
     DescribeRabbitMQVipInstancesRequest = Request
+    DescribePrometheusInstancesRequest = Request
     ListEventBusesRequest = Request
 
 
@@ -168,6 +169,12 @@ def test_rabbitmq_instance_request_uses_instance_name_filter():
     assert request.Filters[0].Name == "instanceName"
     assert request.Filters[0].Values == ["orders"]
     assert request.Offset == 100
+
+
+def test_prometheus_instance_request_uses_instance_name():
+    request = build_request("prometheus_instance", Models, "platform-metrics")
+    assert request.InstanceName == "platform-metrics"
+    assert request.Limit == 100
 
 
 def test_alb_request_uses_token_pagination():
