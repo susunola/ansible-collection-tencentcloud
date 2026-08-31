@@ -1,0 +1,15 @@
+---
+- name: Remove Config rule remediations
+  susunola.tencentcloud.config_remediation:
+    region: "{{ tc_config_governance_region }}"
+    state: absent
+    remediation_id: "{{ item.remediation_id | default(omit, true) }}"
+    rule_id: "{{ _tc_config_rule.rule_id }}"
+  loop: "{{ _tc_config_rule.remediations | default([]) }}"
+
+- name: Remove Config governance rule
+  susunola.tencentcloud.config_rule:
+    region: "{{ tc_config_governance_region }}"
+    state: absent
+    rule_id: "{{ _tc_config_rule.rule_id | default(omit, true) }}"
+    name: "{{ _tc_config_rule.name | default(omit, true) }}"

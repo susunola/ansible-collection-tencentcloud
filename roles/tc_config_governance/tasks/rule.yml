@@ -1,0 +1,37 @@
+---
+- name: Reconcile Config governance rule
+  susunola.tencentcloud.config_rule:
+    region: "{{ tc_config_governance_region }}"
+    state: present
+    rule_id: "{{ _tc_config_rule.rule_id | default(omit, true) }}"
+    name: "{{ _tc_config_rule.name }}"
+    identifier: "{{ _tc_config_rule.identifier }}"
+    identifier_type: "{{ _tc_config_rule.identifier_type | default('SYSTEM') }}"
+    resource_types: "{{ _tc_config_rule.resource_types }}"
+    triggers: "{{ _tc_config_rule.triggers | default([{'message_type': 'ConfigurationItemChangeNotification'}]) }}"
+    risk_level: "{{ _tc_config_rule.risk_level | default(2) }}"
+    input_parameters: "{{ _tc_config_rule.input_parameters | default({}) }}"
+    description: "{{ _tc_config_rule.description | default('') }}"
+    regions: "{{ _tc_config_rule.regions | default([]) }}"
+    tags: "{{ _tc_config_rule.tags | default({}) }}"
+    excluded_resource_ids: "{{ _tc_config_rule.excluded_resource_ids | default([]) }}"
+  register: _tc_config_rule_result
+
+- name: Resolve Config governance rule ID
+  ansible.builtin.set_fact:
+    _tc_config_rule_id: >-
+      {{ _tc_config_rule.rule_id | default('')
+         or (_tc_config_rule_result.rule.ConfigRuleId | default('')) }}
+
+- name: Reconcile Config rule remediations
+  when: _tc_config_rule_id | length > 0
+  susunola.tencentcloud.config_remediation:
+    region: "{{ tc_config_governance_region }}"
+    state: present
+    remediation_id: "{{ item.remediation_id | default(omit, true) }}"
+    rule_id: "{{ _tc_config_rule_id }}"
+    remediation_type: "{{ item.remediation_type }}"
+    remediation_template_id: "{{ item.remediation_template_id }}"
+    invoke_type: "{{ item.invoke_type }}"
+    source_type: "{{ item.source_type }}"
+  loop: "{{ _tc_config_rule.remediations | default([]) }}"

@@ -1,0 +1,136 @@
+---
+- name: Validate Config governance inputs
+  ansible.builtin.assert:
+    that:
+      - tc_config_governance_state in ['present', 'absent']
+      - tc_config_governance_region | length > 0
+      - tc_config_governance_state == 'present' or tc_config_governance_aggregator | length == 0
+    fail_msg: Config governance requires a region; aggregators cannot be removed because Tencent Cloud exposes no delete API.
+
+- name: Configure Config resource recorder
+  when: tc_config_governance_state == 'present'
+  susunola.tencentcloud.config_recorder:
+    region: "{{ tc_config_governance_region }}"
+    enabled: "{{ tc_config_governance_recorder.enabled | default(true) }}"
+    resource_types: "{{ tc_config_governance_recorder.resource_types | default([]) }}"
+  register: _tc_config_recorder
+
+- name: Configure Config delivery
+  when:
+    - tc_config_governance_state == 'present'
+    - tc_config_governance_delivery | length > 0
+  susunola.tencentcloud.config_delivery:
+    region: "{{ tc_config_governance_region }}"
+    enabled: "{{ tc_config_governance_delivery.enabled | default(true) }}"
+    name: "{{ tc_config_governance_delivery.name }}"
+    target_arn: "{{ tc_config_governance_delivery.target_arn }}"
+    prefix: "{{ tc_config_governance_delivery.prefix | default('config') }}"
+    delivery_type: "{{ tc_config_governance_delivery.delivery_type }}"
+    content_type: "{{ tc_config_governance_delivery.content_type | default(3) }}"
+  register: _tc_config_delivery
+
+- name: Reconcile Config rules and remediations
+  when: tc_config_governance_state == 'present'
+  ansible.builtin.include_tasks: rule.yml
+  loop: "{{ tc_config_governance_rules }}"
+  loop_control:
+    loop_var: _tc_config_rule
+    label: "{{ _tc_config_rule.name }}"
+
+- name: Reconcile Config compliance packs
+  when: tc_config_governance_state == 'present'
+  susunola.tencentcloud.config_compliance_pack:
+  args: "{{ item | combine({'state': 'present', 'region': tc_config_governance_region}) }}"
+  loop: "{{ tc_config_governance_compliance_packs }}"
+  register: _tc_config_compliance_packs
+
+- name: Reconcile Config alarm policies
+  when: tc_config_governance_state == 'present'
+  susunola.tencentcloud.config_alarm_policy:
+  args: "{{ item | combine({'state': 'present', 'region': tc_config_governance_region}) }}"
+  loop: "{{ tc_config_governance_alarm_policies }}"
+  register: _tc_config_alarm_policies
+
+- name: Create or adopt Config aggregator
+  when:
+    - tc_config_governance_state == 'present'
+    - tc_config_governance_aggregator | length > 0
+  susunola.tencentcloud.config_aggregator:
+  args: "{{ tc_config_governance_aggregator | combine({'region': tc_config_governance_region}) }}"
+  register: _tc_config_aggregator
+
+- name: Resolve Config aggregator account group ID
+  when:
+    - tc_config_governance_state == 'present'
+    - tc_config_governance_aggregator | length > 0
+  ansible.builtin.set_fact:
+    _tc_config_account_group_id: >-
+      {{ tc_config_governance_aggregator.account_group_id | default('')
+         or (_tc_config_aggregator.aggregator.AccountGroupId | default('')) }}
+
+- name: Configure aggregate Config delivery
+  when:
+    - tc_config_governance_state == 'present'
+    - tc_config_governance_aggregate_delivery | length > 0
+    - _tc_config_account_group_id | default('') | length > 0
+  susunola.tencentcloud.config_aggregate_delivery:
+  args: >-
+    {{ tc_config_governance_aggregate_delivery
+       | combine({'account_group_id': _tc_config_account_group_id, 'region': tc_config_governance_region}) }}
+  register: _tc_config_aggregate_delivery
+
+- name: Remove Config alarm policies
+  when: tc_config_governance_state == 'absent'
+  susunola.tencentcloud.config_alarm_policy:
+    region: "{{ tc_config_governance_region }}"
+    state: absent
+    alarm_policy_id: "{{ item.alarm_policy_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+  loop: "{{ tc_config_governance_alarm_policies }}"
+
+- name: Remove Config compliance packs
+  when: tc_config_governance_state == 'absent'
+  susunola.tencentcloud.config_compliance_pack:
+    region: "{{ tc_config_governance_region }}"
+    state: absent
+    compliance_pack_id: "{{ item.compliance_pack_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+  loop: "{{ tc_config_governance_compliance_packs }}"
+
+- name: Remove Config remediations and rules
+  when: tc_config_governance_state == 'absent'
+  ansible.builtin.include_tasks: teardown_rule.yml
+  loop: "{{ tc_config_governance_rules }}"
+  loop_control:
+    loop_var: _tc_config_rule
+
+- name: Disable Config delivery
+  when:
+    - tc_config_governance_state == 'absent'
+    - tc_config_governance_delivery | length > 0
+  susunola.tencentcloud.config_delivery:
+    region: "{{ tc_config_governance_region }}"
+    enabled: false
+    name: "{{ tc_config_governance_delivery.name }}"
+    target_arn: "{{ tc_config_governance_delivery.target_arn }}"
+    prefix: "{{ tc_config_governance_delivery.prefix | default('config') }}"
+    delivery_type: "{{ tc_config_governance_delivery.delivery_type }}"
+    content_type: "{{ tc_config_governance_delivery.content_type | default(3) }}"
+
+- name: Disable Config resource recorder
+  when: tc_config_governance_state == 'absent'
+  susunola.tencentcloud.config_recorder:
+    region: "{{ tc_config_governance_region }}"
+    enabled: false
+    resource_types: "{{ tc_config_governance_recorder.resource_types | default([]) }}"
+
+- name: Publish Config governance result
+  when: tc_config_governance_state == 'present'
+  ansible.builtin.set_fact:
+    tc_config_governance_result:
+      recorder: "{{ _tc_config_recorder.recorder | default({}) }}"
+      delivery: "{{ _tc_config_delivery.delivery | default({}) }}"
+      compliance_packs: "{{ _tc_config_compliance_packs | default({}) }}"
+      alarm_policies: "{{ _tc_config_alarm_policies | default({}) }}"
+      aggregator: "{{ _tc_config_aggregator.aggregator | default({}) }}"
+      aggregate_delivery: "{{ _tc_config_aggregate_delivery.delivery | default({}) }}"

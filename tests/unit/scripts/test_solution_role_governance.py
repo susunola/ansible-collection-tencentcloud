@@ -270,6 +270,21 @@ def test_api_gateway_teardown_removes_bindings_and_children_before_service():
     assert "no_log:" in main
 
 
+def test_config_governance_teardown_removes_policy_layers_before_rules_and_recorder():
+    main = role_tasks("tc_config_governance")
+    rule = (ROOT / "roles" / "tc_config_governance" / "tasks" / "teardown_rule.yml").read_text(encoding="utf-8")
+    assert_order(rule, "Remove Config rule remediations", "Remove Config governance rule")
+    assert_order(
+        main,
+        "Remove Config alarm policies",
+        "Remove Config compliance packs",
+        "Remove Config remediations and rules",
+        "Disable Config delivery",
+        "Disable Config resource recorder",
+    )
+    assert "aggregators cannot be removed" in main
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(

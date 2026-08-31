@@ -1,0 +1,12 @@
+---
+tc_config_governance_state: present
+tc_config_governance_region: ""
+tc_config_governance_recorder:
+  enabled: true
+  resource_types: []
+tc_config_governance_delivery: {}
+tc_config_governance_rules: []
+tc_config_governance_compliance_packs: []
+tc_config_governance_alarm_policies: []
+tc_config_governance_aggregator: {}
+tc_config_governance_aggregate_delivery: {}
