@@ -54,6 +54,7 @@ ROLE_SERVICES = {
     "tc_direct_connect_fabric": "dc",
     "tc_cdn_delivery": "cdn",
     "tc_goosefs_cache": "goosefs",
+    "tc_cloud_audit_governance": "cloudaudit",
     "tc_observability_baseline": "cls",
     "tc_object_storage_baseline": "cos",
     "tc_serverless_application": "scf",

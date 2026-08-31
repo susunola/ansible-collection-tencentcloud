@@ -588,6 +588,7 @@ for product-level write, discovery and reusable-role maturity.
 | `tc_direct_connect_fabric` | Provision or adopt Direct Connect circuits and private tunnels |
 | `tc_cdn_delivery` | Operate CDN domains, serving state and real-time CLS access logs |
 | `tc_goosefs_cache` | Provision GooseFS file systems and quota-governed Filesets |
+| `tc_cloud_audit_governance` | Govern account CloudAudit delivery and scoped audit tracks |
 | `tc_observability_baseline` | Establish CLS indexed topics and Cloud Monitor alarm policies |
 | `tc_prometheus_platform` | Provision Managed Prometheus with collection agents, rules, alerts, notifications and Grafana bindings |
 | `tc_object_storage_baseline` | Establish a secure COS bucket with encryption, lifecycle, policy, logging and replication |

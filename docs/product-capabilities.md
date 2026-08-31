@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **44**
+- Solution roles: **45**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -68,7 +68,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `ciam` | discovery-only | 0 | 1 | — | — |
 | `ckafka` | solution | 9 | 1 | `tc_kafka_platform` | `ckafka_acl`, `ckafka_acl_rule`, `ckafka_datahub_connection`, `ckafka_datahub_task`, `ckafka_datahub_topic`, `ckafka_instance`, `ckafka_route`, `ckafka_topic`, +1 more |
 | `clb` | solution | 5 | 1 | `tc_clb_http` | `clb_listener`, `clb_listener_target`, `clb_load_balancer`, `clb_rule`, `clb_target_group` |
-| `cloudaudit` | managed | 2 | 1 | — | `cloudaudit_audit`, `cloudaudit_track` |
+| `cloudaudit` | solution | 2 | 1 | `tc_cloud_audit_governance` | `cloudaudit_audit`, `cloudaudit_track` |
 | `cloudhsm` | discovery-only | 0 | 1 | — | — |
 | `cloudrc` | discovery-only | 0 | 1 | — | — |
 | `cloudstudio` | discovery-only | 0 | 1 | — | — |

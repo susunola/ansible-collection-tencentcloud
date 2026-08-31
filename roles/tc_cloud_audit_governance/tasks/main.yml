@@ -1,0 +1,47 @@
+---
+- name: Validate CloudAudit governance inputs
+  ansible.builtin.assert:
+    that:
+      - tc_cloud_audit_governance_state in ['present', 'absent']
+      - tc_cloud_audit_governance_region | length > 0
+      - tc_cloud_audit_governance_audit | length > 0
+    fail_msg: CloudAudit governance requires a region and complete account audit delivery configuration.
+
+- name: Reconcile account-level CloudAudit delivery
+  when: tc_cloud_audit_governance_state == 'present'
+  susunola.tencentcloud.cloudaudit_audit:
+  args: >-
+    {{ tc_cloud_audit_governance_audit
+       | combine({'enabled': tc_cloud_audit_governance_audit.enabled | default(true),
+                  'region': tc_cloud_audit_governance_region}) }}
+  register: _tc_cloud_audit_account
+
+- name: Reconcile CloudAudit tracks
+  when: tc_cloud_audit_governance_state == 'present'
+  susunola.tencentcloud.cloudaudit_track:
+  args: "{{ item | combine({'state': 'present', 'region': tc_cloud_audit_governance_region}) }}"
+  loop: "{{ tc_cloud_audit_governance_tracks }}"
+  register: _tc_cloud_audit_tracks
+
+- name: Remove CloudAudit tracks before stopping account audit
+  when: tc_cloud_audit_governance_state == 'absent'
+  susunola.tencentcloud.cloudaudit_track:
+    region: "{{ tc_cloud_audit_governance_region }}"
+    state: absent
+    track_id: "{{ item.track_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+  loop: "{{ tc_cloud_audit_governance_tracks }}"
+
+- name: Stop account-level CloudAudit logging
+  when: tc_cloud_audit_governance_state == 'absent'
+  susunola.tencentcloud.cloudaudit_audit:
+  args: >-
+    {{ tc_cloud_audit_governance_audit
+       | combine({'enabled': false, 'region': tc_cloud_audit_governance_region}) }}
+
+- name: Publish CloudAudit governance result
+  when: tc_cloud_audit_governance_state == 'present'
+  ansible.builtin.set_fact:
+    tc_cloud_audit_governance_result:
+      audit: "{{ _tc_cloud_audit_account.audit | default({}) }}"
+      tracks: "{{ _tc_cloud_audit_tracks | default({}) }}"

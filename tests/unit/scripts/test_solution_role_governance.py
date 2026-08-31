@@ -404,6 +404,16 @@ def test_goosefs_teardown_removes_filesets_before_file_system():
     )
 
 
+def test_cloud_audit_removes_tracks_before_stop_only_account_teardown():
+    text = role_tasks("tc_cloud_audit_governance")
+    assert_order(
+        text,
+        "Remove CloudAudit tracks before stopping account audit",
+        "Stop account-level CloudAudit logging",
+    )
+    assert "combine({'enabled': false" in text
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(

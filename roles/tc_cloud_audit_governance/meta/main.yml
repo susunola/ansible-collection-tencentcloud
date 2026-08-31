@@ -1,0 +1,7 @@
+---
+galaxy_info:
+  author: Tencent Cloud Ansible Collection Contributors
+  description: Govern account CloudAudit delivery and scoped audit tracks
+  license: GPL-3.0-or-later
+  min_ansible_version: "2.16"
+dependencies: []

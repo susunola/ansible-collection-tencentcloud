@@ -1,0 +1,6 @@
+---
+tc_cloud_audit_governance_state: present
+tc_cloud_audit_governance_region: ""
+# Account audit fields follow cloudaudit_audit options.
+tc_cloud_audit_governance_audit: {}
+tc_cloud_audit_governance_tracks: []
