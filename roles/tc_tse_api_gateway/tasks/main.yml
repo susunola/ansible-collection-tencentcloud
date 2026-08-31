@@ -6,6 +6,7 @@
       - tc_tse_api_gateway_gateway is mapping
       - tc_tse_api_gateway_services is sequence
       - tc_tse_api_gateway_routes is sequence
+      - tc_tse_api_gateway_canary_rules is sequence
       - tc_tse_api_gateway_consumers is sequence
       - tc_tse_api_gateway_consumer_groups is sequence
       - tc_tse_api_gateway_secret_keys is sequence
@@ -71,6 +72,14 @@
   loop_control: {label: "{{ item.name | default('unnamed') }}"}
   register: _tc_tse_api_gateway_routes_result
 
+- name: Reconcile TSE API gateway canary rules
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_canary_rule:
+  args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_api_gateway_canary_rules }}"
+  loop_control: {label: "{{ item.service_id | default('unnamed') }}/{{ item.priority | default('?') }}"}
+  register: _tc_tse_api_gateway_canary_rules_result
+
 - name: Reconcile TSE API gateway consumers
   when: tc_tse_api_gateway_state == 'present'
   susunola.tencentcloud.tse_gateway_consumer:
@@ -127,6 +136,7 @@
       gateway: "{{ _tc_tse_api_gateway_gateway.gateway }}"
       services: "{{ _tc_tse_api_gateway_services.results | default([]) | map(attribute='service') | list }}"
       routes: "{{ _tc_tse_api_gateway_routes_result.results | default([]) | map(attribute='route') | list }}"
+      canary_rules: "{{ _tc_tse_api_gateway_canary_rules_result.results | default([]) | map(attribute='canary_rule') | list }}"
       consumers: "{{ _tc_tse_api_gateway_consumers_result.results | default([]) | map(attribute='consumer') | list }}"
       consumer_groups: "{{ _tc_tse_api_gateway_consumer_groups_result.results | default([]) | map(attribute='consumer_group') | list }}"
       secret_keys: "{{ _tc_tse_api_gateway_secret_keys_result.results | default([]) | map(attribute='secret_key') | list }}"
@@ -159,6 +169,16 @@
     resource_id: "{{ item.resource_id }}"
     state: absent
   loop: "{{ tc_tse_api_gateway_ip_restrictions | reverse | list }}"
+
+- name: Remove TSE API gateway canary rules
+  when: tc_tse_api_gateway_state == 'absent'
+  susunola.tencentcloud.tse_gateway_canary_rule:
+    gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
+    service_id: "{{ item.service_id }}"
+    priority: "{{ item.priority }}"
+    rule_type: "{{ item.rule_type | default('Standard') }}"
+    state: absent
+  loop: "{{ tc_tse_api_gateway_canary_rules | reverse | list }}"
 
 - name: Remove TSE API gateway CORS policies
   when: tc_tse_api_gateway_state == 'absent'

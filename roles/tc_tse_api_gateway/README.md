@@ -2,7 +2,7 @@
 
 Provisions a TSE cloud-native API gateway, upstream services, routes,
 consumers, consumer groups, credentials, public networks with access control, and service- or route-scoped
-rate limits, CORS and IP restrictions. Policy entries use the concrete service or route `resource_id`. Routes
+rate limits, canary traffic rules, CORS and IP restrictions. Policy entries use concrete service or route IDs. Routes
 may reference `service_name`; the role resolves the created service ID before
 route creation. Guarded teardown removes routes and services before the gateway.
 
@@ -39,6 +39,13 @@ route creation. Guarded teardown removes routes and services before the gateway.
             secret_type: ApiKey
             generate_type: System
             resource_type: Consumer
+        tc_tse_api_gateway_canary_rules:
+          - service_id: service-xxxxxxxx
+            priority: 90
+            config:
+              Enabled: true
+              ConditionList: [{Type: header, Key: X-Canary, Operator: exact, Value: beta}]
+              BalancedServiceList: [{ServiceID: service-xxxxxxxx, Percent: 100}]
         tc_tse_api_gateway_cors_policies:
           - scope: route
             resource_id: route-xxxxxxxx

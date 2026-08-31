@@ -2287,6 +2287,11 @@ modules:
   - DeleteConfigFileGroup
   - DescribeConfigFileGroups
   - ModifyConfigFileGroup
+  tse_gateway_canary_rule:
+  - CreateCloudNativeAPIGatewayCanaryRule
+  - DeleteCloudNativeAPIGatewayCanaryRule
+  - DescribeCloudNativeAPIGatewayCanaryRules
+  - ModifyCloudNativeAPIGatewayCanaryRule
   tse_gateway_consumer:
   - CreateCloudNativeAPIGatewayConsumer
   - DeleteCloudNativeAPIGatewayConsumer

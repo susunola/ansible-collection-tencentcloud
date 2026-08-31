@@ -3,6 +3,7 @@ tc_tse_api_gateway_state: present
 tc_tse_api_gateway_gateway: {}
 tc_tse_api_gateway_services: []
 tc_tse_api_gateway_routes: []
+tc_tse_api_gateway_canary_rules: []
 tc_tse_api_gateway_consumers: []
 tc_tse_api_gateway_consumer_groups: []
 tc_tse_api_gateway_secret_keys: []
