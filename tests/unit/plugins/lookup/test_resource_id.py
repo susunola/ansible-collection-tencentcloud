@@ -39,6 +39,7 @@ class Models(object):
     DescribeSecurityGroupsRequest = Request
     DescribeInstancesRequest = Request
     DescribeAutoScalingGroupsRequest = Request
+    DescribeDisksRequest = Request
     DescribeLoadBalancersRequest = Request
     DescribeClustersRequest = Request
     DescribeDBInstancesRequest = Request
@@ -90,6 +91,14 @@ def test_autoscaling_group_request_uses_exact_name_filter():
     assert request.Offset == 0
     assert request.Filters[0].Name == "auto-scaling-group-name"
     assert request.Filters[0].Values == ["web-fleet"]
+
+
+def test_cbs_disk_request_uses_exact_name_filter():
+    request = build_request("cbs_disk", Models, "application-data", offset=100)
+    assert request.Limit == 100
+    assert request.Offset == 100
+    assert request.Filters[0].Name == "disk-name"
+    assert request.Filters[0].Values == ["application-data"]
 
 
 def test_postgresql_request_uses_instance_name_filter():

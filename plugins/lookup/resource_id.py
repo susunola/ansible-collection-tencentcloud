@@ -25,7 +25,7 @@ options:
     description: Resource family to query.
     type: str
     required: true
-    choices: [vpc, subnet, security_group, cvm_instance, autoscaling_group, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, cynosdb_cluster, redis_instance, mongodb_instance, cfs_file_system, ckafka_instance, mqtt_instance, event_bus, api_gateway_service, tcr_instance, tem_environment, tem_application]
+    choices: [vpc, subnet, security_group, cvm_instance, autoscaling_group, cbs_disk, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, cynosdb_cluster, redis_instance, mongodb_instance, cfs_file_system, ckafka_instance, mqtt_instance, event_bus, api_gateway_service, tcr_instance, tem_environment, tem_application]
   vpc_id:
     description: Optional VPC scope for subnet and CLB lookups.
     type: str
@@ -128,6 +128,7 @@ RESOURCE_SPECS = {
     "security_group": ("vpc.v20170312", "VpcClient", "vpc.tencentcloudapi.com", "DescribeSecurityGroups", "SecurityGroupSet", "SecurityGroupId", "SecurityGroupName"),
     "cvm_instance": ("cvm.v20170312", "CvmClient", "cvm.tencentcloudapi.com", "DescribeInstances", "InstanceSet", "InstanceId", "InstanceName"),
     "autoscaling_group": ("autoscaling.v20180419", "AutoscalingClient", "as.tencentcloudapi.com", "DescribeAutoScalingGroups", "AutoScalingGroupSet", "AutoScalingGroupId", "AutoScalingGroupName"),
+    "cbs_disk": ("cbs.v20170312", "CbsClient", "cbs.tencentcloudapi.com", "DescribeDisks", "DiskSet", "DiskId", "DiskName"),
     "clb_load_balancer": ("clb.v20180317", "ClbClient", "clb.tencentcloudapi.com", "DescribeLoadBalancers", "LoadBalancerSet", "LoadBalancerId", "LoadBalancerName"),
     "alb_load_balancer": ("alb.v20251030", "AlbClient", "alb.tencentcloudapi.com", "DescribeLoadBalancers", "LoadBalancers", "LoadBalancerId", "LoadBalancerName"),
     "tke_cluster": ("tke.v20180525", "TkeClient", "tke.tencentcloudapi.com", "DescribeClusters", "Clusters", "ClusterId", "ClusterName"),
@@ -156,6 +157,7 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         "security_group": "DescribeSecurityGroupsRequest",
         "cvm_instance": "DescribeInstancesRequest",
         "autoscaling_group": "DescribeAutoScalingGroupsRequest",
+        "cbs_disk": "DescribeDisksRequest",
         "clb_load_balancer": "DescribeLoadBalancersRequest",
         "alb_load_balancer": "DescribeLoadBalancersRequest",
         "tke_cluster": "DescribeClustersRequest",
@@ -226,6 +228,10 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
     elif resource_type == "autoscaling_group":
         api_filter = models.Filter()
         api_filter.Name, api_filter.Values = "auto-scaling-group-name", [name]
+        request.Filters = [api_filter]
+    elif resource_type == "cbs_disk":
+        api_filter = models.Filter()
+        api_filter.Name, api_filter.Values = "disk-name", [name]
         request.Filters = [api_filter]
     elif resource_type == "clb_load_balancer":
         request.LoadBalancerName = name
