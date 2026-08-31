@@ -1,0 +1,2 @@
+bugfixes:
+  - Paginate Oceanus job and workspace identity lookups to prevent duplicate creation in environments larger than one API page.

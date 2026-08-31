@@ -97,12 +97,16 @@ def job_folder(module, client, models, p, job_id):
     r = models.DescribeTreeJobsRequest(); r.WorkSpaceId, r.FlatMode = p["workspace_id"], 0
     return _folder_for_job(module.sdk_call(client.DescribeTreeJobs, r)._serialize(allow_none=True), job_id)
 def find(module, client, models, p):
-    response = module.sdk_call(client.DescribeJobs, describe_request(models, p)); matches = []
-    for item in response.JobSet or []:
-        value = item._serialize(allow_none=True)
-        if (p.get("job_id") and value.get("JobId") == p["job_id"]) or (not p.get("job_id") and value.get("Name") == p.get("name")):
-            if p.get("folder_id") is not None: value["FolderId"] = job_folder(module, client, models, p, value["JobId"])
-            matches.append(value)
+    offset = 0; matches = []
+    while True:
+        response = module.sdk_call(client.DescribeJobs, describe_request(models, p, offset)); page = response.JobSet or []
+        for item in page:
+            value = item._serialize(allow_none=True)
+            if (p.get("job_id") and value.get("JobId") == p["job_id"]) or (not p.get("job_id") and value.get("Name") == p.get("name")):
+                if p.get("folder_id") is not None: value["FolderId"] = job_folder(module, client, models, p, value["JobId"])
+                matches.append(value)
+        offset += len(page)
+        if not page or offset >= int(response.TotalCount or 0): break
     if len(matches) > 1: module.fail_json(msg="Multiple Oceanus jobs matched; specify job_id")
     return matches[0] if matches else None
 def _wait(module, client, models, p, states):

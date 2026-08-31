@@ -48,10 +48,14 @@ def modify_request(models, workspace_id, name, description):
 def delete_request(models, workspace_id):
     r = models.DeleteWorkSpaceRequest(); r.WorkSpaceId = workspace_id; return r
 def find(module, client, models, p):
-    response = module.sdk_call(client.DescribeWorkSpaces, describe_request(models, p)); matches = []
-    for item in response.WorkSpaceSetItem or []:
-        value = item._serialize(allow_none=True)
-        if (p.get("workspace_id") and value.get("WorkSpaceId") == p["workspace_id"]) or (not p.get("workspace_id") and value.get("WorkSpaceName") == p.get("name")): matches.append(value)
+    offset = 0; matches = []
+    while True:
+        response = module.sdk_call(client.DescribeWorkSpaces, describe_request(models, p, offset)); page = response.WorkSpaceSetItem or []
+        for item in page:
+            value = item._serialize(allow_none=True)
+            if (p.get("workspace_id") and value.get("WorkSpaceId") == p["workspace_id"]) or (not p.get("workspace_id") and value.get("WorkSpaceName") == p.get("name")): matches.append(value)
+        offset += len(page)
+        if not page or offset >= int(response.TotalCount or 0): break
     if len(matches) > 1: module.fail_json(msg="Multiple Oceanus workspaces matched; specify workspace_id")
     return matches[0] if matches else None
 
