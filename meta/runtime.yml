@@ -91,6 +91,7 @@ action_groups:
     - cdwdoris_user_workload_group
     - cdwdoris_workload_group
     - cdwpg_account_info
+    - cdwpg_hba_config
     - cdwpg_instance
     - cdz_cloud_dedicated_zone_host_info
     - cetcd_etcd_instance_info

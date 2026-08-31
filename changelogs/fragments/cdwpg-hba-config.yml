@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ordered, exact CDW PostgreSQL HBA rule management with guarded empty-rule replacement.

@@ -332,6 +332,9 @@ modules:
   - ModifyWorkloadGroupStatus
   cdwpg_account_info:
   - DescribeAccounts
+  cdwpg_hba_config:
+  - DescribeUserHbaConfig
+  - ModifyUserHba
   cdwpg_instance:
   - CreateInstanceByApi
   - DescribeInstanceState
