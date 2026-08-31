@@ -1,0 +1,5 @@
+---
+minor_changes:
+  - >-
+    solution roles - add ``tc_dns_zone`` for child-first management of DNSPod
+    domains, custom routing lines, line groups and DNS records.

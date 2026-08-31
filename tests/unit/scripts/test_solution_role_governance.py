@@ -164,6 +164,17 @@ def test_eventbridge_teardown_removes_targets_before_rules_and_bus():
     assert "rule_id is required" in rule
 
 
+def test_dns_zone_teardown_removes_children_before_domain():
+    text = role_tasks("tc_dns_zone")
+    assert_order(
+        text,
+        "Remove DNSPod records",
+        "Remove DNSPod custom line groups",
+        "Remove DNSPod custom lines",
+        "Remove DNSPod domain",
+    )
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(

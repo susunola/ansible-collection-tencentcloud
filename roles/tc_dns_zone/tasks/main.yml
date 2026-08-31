@@ -1,0 +1,129 @@
+---
+- name: Validate DNS zone inputs
+  ansible.builtin.assert:
+    that:
+      - tc_dns_zone_state in ['present', 'absent']
+      - tc_dns_zone_domain_id is not none or tc_dns_zone_name | length > 0
+      - tc_dns_zone_state == 'absent' or tc_dns_zone_name | length > 0
+    fail_msg: DNS zone creation requires a domain name; teardown requires a domain name or ID.
+
+- name: Provision DNSPod domain
+  when: tc_dns_zone_state == 'present'
+  susunola.tencentcloud.dnspod_domain:
+    region: "{{ tc_dns_zone_region | default(omit, true) }}"
+    state: present
+    domain_id: "{{ tc_dns_zone_domain_id | default(omit) }}"
+    name: "{{ tc_dns_zone_name }}"
+    group_id: "{{ tc_dns_zone_group_id }}"
+    remark: "{{ tc_dns_zone_remark }}"
+    enabled: "{{ tc_dns_zone_enabled }}"
+    tags: "{{ tc_dns_zone_tags }}"
+  register: _tc_dns_zone_domain
+
+- name: Resolve DNSPod domain ID
+  when: tc_dns_zone_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dns_zone_domain_id: >-
+      {{ tc_dns_zone_domain_id
+         if tc_dns_zone_domain_id is not none
+         else (_tc_dns_zone_domain.domain.DomainId | default(none)) }}
+
+- name: Reconcile DNSPod custom lines
+  when: tc_dns_zone_state == 'present'
+  susunola.tencentcloud.dnspod_custom_line:
+    region: "{{ tc_dns_zone_region | default(omit, true) }}"
+    state: present
+    domain_id: "{{ _tc_dns_zone_domain_id | default(omit) }}"
+    name: "{{ item.name }}"
+    area: "{{ item.area }}"
+  loop: "{{ tc_dns_zone_custom_lines }}"
+  loop_control: {label: "{{ item.name }}"}
+  register: _tc_dns_zone_custom_lines
+
+- name: Reconcile DNSPod custom line groups
+  when: tc_dns_zone_state == 'present'
+  susunola.tencentcloud.dnspod_line_group:
+    region: "{{ tc_dns_zone_region | default(omit, true) }}"
+    state: present
+    domain_id: "{{ _tc_dns_zone_domain_id | default(omit) }}"
+    line_group_id: "{{ item.line_group_id | default(omit) }}"
+    name: "{{ item.name }}"
+    lines: "{{ item.lines }}"
+  loop: "{{ tc_dns_zone_line_groups }}"
+  loop_control: {label: "{{ item.name }}"}
+  register: _tc_dns_zone_line_groups
+
+- name: Reconcile DNSPod records
+  when: tc_dns_zone_state == 'present'
+  susunola.tencentcloud.dnspod_record:
+    region: "{{ tc_dns_zone_region | default(omit, true) }}"
+    state: present
+    domain_id: "{{ _tc_dns_zone_domain_id | default(omit) }}"
+    subdomain: "{{ item.subdomain | default('@') }}"
+    record_type: "{{ item.record_type }}"
+    record_line: "{{ item.record_line | default('默认') }}"
+    value: "{{ item.value }}"
+    ttl: "{{ item.ttl | default(omit) }}"
+    weight: "{{ item.weight | default(omit) }}"
+    mx: "{{ item.mx | default(omit) }}"
+    remark: "{{ item.remark | default(omit) }}"
+    status: "{{ item.status | default(omit) }}"
+  loop: "{{ tc_dns_zone_records }}"
+  loop_control:
+    label: "{{ item.subdomain | default('@') }} {{ item.record_type }}"
+  register: _tc_dns_zone_records
+
+- name: Remove DNSPod records
+  when: tc_dns_zone_state == 'absent'
+  susunola.tencentcloud.dnspod_record:
+    region: "{{ tc_dns_zone_region | default(omit, true) }}"
+    state: absent
+    domain: "{{ tc_dns_zone_name | default(omit, true) }}"
+    domain_id: "{{ tc_dns_zone_domain_id | default(omit) }}"
+    subdomain: "{{ item.subdomain | default('@') }}"
+    record_type: "{{ item.record_type }}"
+    record_line: "{{ item.record_line | default('默认') }}"
+  loop: "{{ tc_dns_zone_records }}"
+  loop_control:
+    label: "{{ item.subdomain | default('@') }} {{ item.record_type }}"
+
+- name: Remove DNSPod custom line groups
+  when: tc_dns_zone_state == 'absent'
+  susunola.tencentcloud.dnspod_line_group:
+    region: "{{ tc_dns_zone_region | default(omit, true) }}"
+    state: absent
+    domain: "{{ tc_dns_zone_name | default(omit, true) }}"
+    domain_id: "{{ tc_dns_zone_domain_id | default(omit) }}"
+    line_group_id: "{{ item.line_group_id | default(omit) }}"
+    name: "{{ item.name }}"
+  loop: "{{ tc_dns_zone_line_groups }}"
+  loop_control: {label: "{{ item.name }}"}
+
+- name: Remove DNSPod custom lines
+  when: tc_dns_zone_state == 'absent'
+  susunola.tencentcloud.dnspod_custom_line:
+    region: "{{ tc_dns_zone_region | default(omit, true) }}"
+    state: absent
+    domain: "{{ tc_dns_zone_name | default(omit, true) }}"
+    domain_id: "{{ tc_dns_zone_domain_id | default(omit) }}"
+    name: "{{ item.name }}"
+  loop: "{{ tc_dns_zone_custom_lines }}"
+  loop_control: {label: "{{ item.name }}"}
+
+- name: Remove DNSPod domain
+  when: tc_dns_zone_state == 'absent'
+  susunola.tencentcloud.dnspod_domain:
+    region: "{{ tc_dns_zone_region | default(omit, true) }}"
+    state: absent
+    domain_id: "{{ tc_dns_zone_domain_id | default(omit) }}"
+    name: "{{ tc_dns_zone_name | default(omit, true) }}"
+
+- name: Publish DNS zone result
+  when: tc_dns_zone_state == 'present'
+  ansible.builtin.set_fact:
+    tc_dns_zone_result:
+      domain_id: "{{ _tc_dns_zone_domain_id }}"
+      domain: "{{ _tc_dns_zone_domain.domain }}"
+      custom_lines: "{{ _tc_dns_zone_custom_lines | default({}) }}"
+      line_groups: "{{ _tc_dns_zone_line_groups | default({}) }}"
+      records: "{{ _tc_dns_zone_records | default({}) }}"

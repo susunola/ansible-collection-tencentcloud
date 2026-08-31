@@ -1,0 +1,16 @@
+---
+tc_dns_zone_state: present
+tc_dns_zone_region: ""
+tc_dns_zone_domain_id: null
+tc_dns_zone_name: ""
+tc_dns_zone_group_id: 1
+tc_dns_zone_remark: ""
+tc_dns_zone_enabled: true
+tc_dns_zone_tags: {}
+
+# Items use dnspod_custom_line parameters and require name and area when present.
+tc_dns_zone_custom_lines: []
+# Items use dnspod_line_group parameters and require name and lines when present.
+tc_dns_zone_line_groups: []
+# Items use dnspod_record parameters and require record_type; value is required on create.
+tc_dns_zone_records: []
