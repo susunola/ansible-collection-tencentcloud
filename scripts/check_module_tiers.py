@@ -288,6 +288,8 @@ CORE_MODULES = {
     "tse_gateway_cors",
     "tse_gateway_ip_restriction",
     "tse_gateway_model_api_group_auth",
+    "tse_gateway_model_api",
+    "tse_gateway_model_service",
     "tse_gateway_secret_key",
     "tse_gateway_rate_limit",
     "tse_gateway_public_network",

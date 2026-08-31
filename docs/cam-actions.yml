@@ -2322,10 +2322,22 @@ modules:
   - CreateOrModifyCloudNativeAPIGatewayIPRestriction
   - DeleteCloudNativeAPIGatewayIPRestriction
   - DescribeCloudNativeAPIGatewayIPRestriction
+  tse_gateway_model_api:
+  - CreateCloudNativeAPIGatewayLLMModelAPI
+  - DeleteCloudNativeAPIGatewayLLMModelAPI
+  - DescribeCloudNativeAPIGatewayLLMModelAPI
+  - DescribeCloudNativeAPIGatewayLLMModelAPIs
+  - ModifyCloudNativeAPIGatewayLLMModelAPI
   tse_gateway_model_api_group_auth:
   - AddCloudNativeAPIGatewayConsumerGroupAuth
   - DescribeCloudNativeAPIGatewayLLMModelAPI
   - RemoveCloudNativeAPIGatewayConsumerGroupAuth
+  tse_gateway_model_service:
+  - CreateCloudNativeAPIGatewayLLMModelService
+  - DeleteCloudNativeAPIGatewayLLMModelService
+  - DescribeCloudNativeAPIGatewayLLMModelService
+  - DescribeCloudNativeAPIGatewayLLMModelServices
+  - ModifyCloudNativeAPIGatewayLLMModelService
   tse_gateway_public_network:
   - CreateCloudNativeAPIGatewayPublicNetwork
   - DeleteCloudNativeAPIGatewayPublicNetwork
