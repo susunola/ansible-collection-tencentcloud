@@ -350,6 +350,7 @@ action_groups:
     - network_interface
     - oceanus_cluster
     - oceanus_cluster_info
+    - oceanus_folder
     - oceanus_job
     - oceanus_job_config
     - oceanus_job_savepoint

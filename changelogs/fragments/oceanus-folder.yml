@@ -1,0 +1,2 @@
+minor_changes:
+  - Add Oceanus job and resource folder lifecycle with rename, move and non-empty deletion protection.

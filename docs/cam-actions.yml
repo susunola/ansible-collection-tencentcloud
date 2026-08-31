@@ -1306,6 +1306,12 @@ modules:
   - ScaleOceanusCluster
   oceanus_cluster_info:
   - DescribeClusters
+  oceanus_folder:
+  - CreateFolder
+  - DeleteFolders
+  - DescribeTreeJobs
+  - DescribeTreeResources
+  - ModifyFolder
   oceanus_job:
   - CreateJob
   - DeleteJobs

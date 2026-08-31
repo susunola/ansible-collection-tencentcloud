@@ -217,6 +217,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `network_acl` | Manage Tencent Cloud VPC network ACLs |
 | `network_interface` | Manage Tencent Cloud elastic network interfaces |
 | `oceanus_cluster` | Manage Tencent Cloud Oceanus dedicated clusters |
+| `oceanus_folder` | Manage Tencent Cloud Oceanus folders |
 | `oceanus_job` | Manage Tencent Cloud Oceanus jobs |
 | `oceanus_job_config` | Manage Tencent Cloud Oceanus job configuration versions |
 | `oceanus_job_savepoint` | Create Tencent Cloud Oceanus job savepoints |

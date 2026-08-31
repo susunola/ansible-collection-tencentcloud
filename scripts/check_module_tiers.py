@@ -224,6 +224,7 @@ CORE_MODULES = {
     "monitor_alarm_policy_notice",
     "monitor_prometheus_scrape_job",
     "oceanus_workspace",
+    "oceanus_folder",
     "oceanus_job",
     "oceanus_cluster",
     "oceanus_job_config",
