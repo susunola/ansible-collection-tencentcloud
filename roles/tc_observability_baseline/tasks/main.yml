@@ -4,6 +4,7 @@
     that:
       - tc_observability_baseline_state in ['present', 'absent']
       - tc_observability_baseline_logset_id | length > 0 or tc_observability_baseline_logset_name | length > 0
+      - tc_observability_baseline_state == 'present' or tc_observability_baseline_topics | length == 0 or tc_observability_baseline_logset_id | length > 0
     fail_msg: A CLS logset ID or name is required.
 
 - name: Provision CLS logset

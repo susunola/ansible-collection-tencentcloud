@@ -7,6 +7,7 @@
       - tc_tke_platform_state == 'absent' or tc_tke_platform_cluster_id | length > 0 or tc_tke_platform_vpc_id | length > 0
       - not tc_tke_platform_authentication_enabled or tc_tke_platform_service_accounts | length > 0
       - not tc_tke_platform_authentication_enabled or tc_tke_platform_oidc | length > 0
+      - tc_tke_platform_state == 'present' or (tc_tke_platform_node_pools | length == 0 and tc_tke_platform_endpoints | length == 0 and tc_tke_platform_addons | length == 0) or tc_tke_platform_cluster_id | length > 0
     fail_msg: >-
       A cluster ID or name is required; creation also requires vpc_id.
       Authentication requires both service_accounts and oidc payloads.

@@ -1,0 +1,8 @@
+bugfixes:
+  - >-
+    solution roles - require explicit parent IDs before deleting declared child
+    resources in the VPC, TKE, CDB and observability roles.
+minor_changes:
+  - >-
+    solution-role governance - add source contracts that enforce child-first
+    teardown ordering for stateful and externally reachable resources.

@@ -7,6 +7,7 @@
       - tc_database_stack_state == 'absent' or tc_database_stack_instance_id | length > 0 or tc_database_stack_zone | length > 0
       - tc_database_stack_state == 'absent' or tc_database_stack_instance_id | length > 0 or tc_database_stack_memory is not none
       - tc_database_stack_state == 'absent' or tc_database_stack_instance_id | length > 0 or tc_database_stack_volume is not none
+      - tc_database_stack_state == 'present' or (tc_database_stack_databases | length == 0 and tc_database_stack_accounts | length == 0) or tc_database_stack_instance_id | length > 0
     fail_msg: Creating a CDB stack requires name, zone, memory and volume; an existing instance may be selected by ID.
 
 - name: Provision CDB instance

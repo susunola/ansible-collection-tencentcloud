@@ -5,6 +5,7 @@
       - tc_vpc_foundation_state in ['present', 'absent']
       - tc_vpc_foundation_vpc_id | length > 0 or tc_vpc_foundation_name | length > 0
       - tc_vpc_foundation_state == 'absent' or tc_vpc_foundation_vpc_id | length > 0 or tc_vpc_foundation_cidr_block | length > 0
+      - tc_vpc_foundation_state == 'present' or (tc_vpc_foundation_subnets | length == 0 and tc_vpc_foundation_route_tables | length == 0 and tc_vpc_foundation_nat_gateways | length == 0) or tc_vpc_foundation_vpc_id | length > 0
     fail_msg: A VPC ID or name is required; creating a VPC also requires cidr_block.
 
 - name: Provision VPC
