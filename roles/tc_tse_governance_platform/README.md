@@ -21,6 +21,11 @@ explicit engine ID and removes dependent resources in reverse order.
           - {namespace: production, name: orders}
         tc_tse_governance_platform_aliases:
           - {alias_namespace: shared, alias: orders-api, namespace: production, service: orders}
+        tc_tse_governance_platform_lane_groups:
+          - name: orders-gray
+            traffic_entries: [{Namespace: production, Service: edge-gateway}]
+            destinations: [{Namespace: production, Service: orders}]
+            rules: [{Name: canary, Enable: true}]
         tc_tse_governance_platform_config_groups:
           - {namespace: production, name: application}
         tc_tse_governance_platform_config_files:

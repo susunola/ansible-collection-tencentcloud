@@ -4,6 +4,7 @@ tc_tse_governance_platform_engine: {}
 tc_tse_governance_platform_namespaces: []
 tc_tse_governance_platform_services: []
 tc_tse_governance_platform_aliases: []
+tc_tse_governance_platform_lane_groups: []
 tc_tse_governance_platform_config_groups: []
 tc_tse_governance_platform_config_files: []
 tc_tse_governance_platform_allow_destroy: false

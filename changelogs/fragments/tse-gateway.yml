@@ -22,3 +22,4 @@ minor_changes:
   - Add gateway autoscaler strategy lifecycle and read-backed group binding reconciliation.
   - Resolve gateway server groups by name in autoscaler bindings and public-network lifecycle operations.
   - Add governance service-alias lifecycle management and compose aliases after their target services.
+  - Add governance lane-group lifecycle management with authoritative entry, destination and rule sets.
