@@ -1,0 +1,2 @@
+minor_changes:
+  - Add exact DLC work-group membership reconciliation with minimal add/remove calls, empty-set protection and convergence waiting.

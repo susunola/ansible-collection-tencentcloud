@@ -162,6 +162,7 @@ CORE_MODULES = {
     "cynosdb_account_privilege",
     "dnspod_record",
     "dlc_work_group",
+    "dlc_work_group_membership",
     "dnspod_custom_line",
     "dnspod_line_group",
     "dnspod_domain",

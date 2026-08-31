@@ -220,6 +220,7 @@ action_groups:
     - dcdb_security_config
     - dlc_task_info
     - dlc_work_group
+    - dlc_work_group_membership
     - dnspod_custom_line
     - dnspod_domain
     - dnspod_line_group

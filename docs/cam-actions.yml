@@ -818,6 +818,10 @@ modules:
   - DeleteWorkGroup
   - DescribeWorkGroups
   - ModifyWorkGroup
+  dlc_work_group_membership:
+  - AddUsersToWorkGroup
+  - DeleteUsersFromWorkGroup
+  - DescribeWorkGroups
   dnspod_custom_line:
   - CreateDomainCustomLine
   - DeleteDomainCustomLine
