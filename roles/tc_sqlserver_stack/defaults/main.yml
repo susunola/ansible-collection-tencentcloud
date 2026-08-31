@@ -1,0 +1,21 @@
+---
+tc_sqlserver_stack_state: present
+tc_sqlserver_stack_region: ""
+tc_sqlserver_stack_instance_id: ""
+tc_sqlserver_stack_name: ""
+tc_sqlserver_stack_zone: ""
+tc_sqlserver_stack_vpc_id: ""
+tc_sqlserver_stack_subnet_id: ""
+tc_sqlserver_stack_memory: null
+tc_sqlserver_stack_storage: null
+tc_sqlserver_stack_cpu: null
+tc_sqlserver_stack_db_version: ""
+tc_sqlserver_stack_charge_type: POSTPAID
+tc_sqlserver_stack_period_months: 1
+tc_sqlserver_stack_auto_renew: false
+tc_sqlserver_stack_security_group_ids: []
+tc_sqlserver_stack_ha_type: ""
+tc_sqlserver_stack_secondary_zones: []
+tc_sqlserver_stack_purge: false
+tc_sqlserver_stack_backup_config: {}
+tc_sqlserver_stack_accounts: []

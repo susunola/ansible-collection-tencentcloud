@@ -126,6 +126,12 @@ def test_mariadb_request_uses_search_name():
     assert request.SearchName == "orders"
 
 
+def test_sqlserver_request_uses_instance_name_set():
+    request = build_request("sqlserver_instance", Models, "orders", offset=100)
+    assert request.InstanceNameSet == ["orders"]
+    assert request.Offset == 100
+
+
 def test_elasticsearch_request_uses_instance_names():
     request = build_request("elasticsearch_instance", Models, "search-platform", offset=100)
     assert request.InstanceNames == ["search-platform"]

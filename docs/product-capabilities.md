@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **37**
+- Solution roles: **38**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -170,7 +170,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `ses` | discovery-only | 0 | 1 | — | — |
 | `smh` | discovery-only | 0 | 1 | — | — |
 | `sms` | discovery-only | 0 | 1 | — | — |
-| `sqlserver` | resource-family | 3 | 1 | — | `sqlserver_account`, `sqlserver_backup_config`, `sqlserver_instance` |
+| `sqlserver` | solution | 3 | 1 | `tc_sqlserver_stack` | `sqlserver_account`, `sqlserver_backup_config`, `sqlserver_instance` |
 | `ssa` | discovery-only | 0 | 1 | — | — |
 | `ssl` | managed | 1 | 1 | — | `ssl_certificate` |
 | `sslpod` | discovery-only | 0 | 1 | — | — |
