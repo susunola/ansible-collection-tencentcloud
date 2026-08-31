@@ -336,6 +336,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tione_data_source` | Manage Tencent Cloud TIONE data sources |
 | `tione_dataset` | Manage Tencent Cloud TIONE datasets |
 | `tione_notebook` | Manage Tencent Cloud TIONE notebooks |
+| `tione_training_model_version` | Manage versions of an existing Tencent Cloud TIONE training model |
 | `tione_training_task` | Manage Tencent Cloud TIONE training tasks |
 | `tke_addon` | Manage a Tencent Kubernetes Engine addon |
 | `tke_backup_storage_location` | Manage Tencent Kubernetes Engine backup storage locations |

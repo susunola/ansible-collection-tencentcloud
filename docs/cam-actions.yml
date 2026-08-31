@@ -2046,6 +2046,11 @@ modules:
   - StopNotebook
   tione_notebook_info:
   - DescribeNotebooks
+  tione_training_model_version:
+  - CreateTrainingModel
+  - DeleteTrainingModelVersion
+  - DescribeTrainingModelVersion
+  - DescribeTrainingModelVersions
   tione_training_model_version_info:
   - DescribeTrainingModelVersion
   - DescribeTrainingModelVersions

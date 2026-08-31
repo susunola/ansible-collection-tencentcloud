@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``tione_training_model_version`` with strong parent scoping, immutable import convergence, status waiting and guarded stable-version deletion.
