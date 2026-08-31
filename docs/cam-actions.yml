@@ -831,9 +831,11 @@ modules:
   dlc_engine_resource_group:
   - CreateStandardEngineResourceGroup
   - DeleteStandardEngineResourceGroup
+  - DescribeStandardEngineResourceGroupConfigInfo
   - DescribeStandardEngineResourceGroups
   - UpdateEngineResourceGroupNetworkConfigInfo
   - UpdateStandardEngineResourceGroupBaseInfo
+  - UpdateStandardEngineResourceGroupConfigInfo
   - UpdateStandardEngineResourceGroupResourceInfo
   dlc_task_info:
   - DescribeTaskList
