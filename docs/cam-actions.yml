@@ -825,6 +825,12 @@ modules:
   - DescribeTables
   dlc_task_info:
   - DescribeTaskList
+  dlc_user:
+  - CreateUser
+  - DeleteUser
+  - DescribeUsers
+  - ModifyUser
+  - ModifyUserType
   dlc_user_vpc_connection:
   - CreateUserVpcConnection
   - DeleteUserVpcConnection

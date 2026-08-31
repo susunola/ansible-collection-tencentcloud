@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_user`` with mutable descriptions and user types, owner protection, exact discovery and guarded bound-user deletion.

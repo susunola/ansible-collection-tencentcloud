@@ -167,6 +167,7 @@ CORE_MODULES = {
     "dlc_data_engine",
     "dlc_database",
     "dlc_user_vpc_connection",
+    "dlc_user",
     "dnspod_custom_line",
     "dnspod_line_group",
     "dnspod_domain",
