@@ -824,6 +824,7 @@ modules:
   - DescribeDataEngines
   - ModifyDataEngineDescription
   - SuspendResumeDataEngine
+  - SwitchDataEngine
   - SwitchDataEngineImage
   - UpdateDataEngine
   dlc_data_engine_config:

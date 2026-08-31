@@ -33,6 +33,8 @@ options:
   engine_generation: {type: str, choices: [Native, SuperSQL], description: Creation-time engine generation.}
   image_version_name: {type: str, description: Desired engine image name, resolved to an online image version ID for existing engines.}
   allow_image_switch: {type: bool, default: false, description: Explicitly authorize switching an existing engine image.}
+  standby_cluster: {type: bool, description: Enable or disable the engine standby cluster for high availability.}
+  allow_standby_switch: {type: bool, default: false, description: Explicitly authorize changing standby-cluster availability and cost posture.}
   pay_mode: {type: int, choices: [0, 1], default: 0, description: Payment type used during creation.}
   allow_scale_down: {type: bool, default: false, description: Explicitly authorize reducing size or cluster bounds.}
   allow_delete: {type: bool, default: false, description: Explicitly authorize engine deletion.}
@@ -162,12 +164,17 @@ def image_switch_request(models, engine_id, image_id):
     request = models.SwitchDataEngineImageRequest(); request.DataEngineId, request.NewImageVersionId = engine_id, image_id; return request
 
 
+def standby_request(models, name, enabled):
+    request = models.SwitchDataEngineRequest(); request.DataEngineName, request.StartStandbyCluster = name, enabled; return request
+
+
 def desired_view(p, current=None):
     result = dict(current or {})
     for source, target in MUTABLE.items():
         if p.get(source) is not None: result[target] = p[source]
     if p.get("description") is not None: result["Message"] = p["description"]
     if p.get("image_version_name") is not None: result["ImageVersionName"] = p["image_version_name"]
+    if p.get("standby_cluster") is not None: result["StartStandbyCluster"] = p["standby_cluster"]
     return result
 
 
@@ -201,9 +208,10 @@ def run_module():
         "max_concurrency": {"type": "int"}, "tolerable_queue_time": {"type": "int"}, "description": {},
         "cidr_block": {}, "engine_network_id": {}, "engine_exec_type": {"choices": ["SQL", "BATCH"]},
         "resource_type": {"choices": ["Standard_CU", "Memory_CU"]},
-        "engine_generation": {"choices": ["Native", "SuperSQL"]}, "image_version_name": {},
+        "engine_generation": {"choices": ["Native", "SuperSQL"]}, "image_version_name": {}, "standby_cluster": {"type": "bool"},
         "pay_mode": {"type": "int", "choices": [0, 1], "default": 0},
         "allow_scale_down": {"type": "bool", "default": False}, "allow_image_switch": {"type": "bool", "default": False},
+        "allow_standby_switch": {"type": "bool", "default": False},
         "allow_delete": {"type": "bool", "default": False},
         "wait": {"type": "bool", "default": True}, "waiter_delay": {"type": "int", "default": 10},
         "waiter_timeout": {"type": "int", "default": 1800},
@@ -230,8 +238,12 @@ def run_module():
             diff_value = maybe_diff(module, None, target)
             if not module.check_mode:
                 engine_id = module.sdk_call(client.CreateDataEngine, create_request(models, p)).DataEngineId
-                if p["wait"]: wait_engine(module, client, models, p, "ready", {k: v for k, v in target.items() if k not in ("State", "DataEngineName")})
+                if p["wait"]: wait_engine(module, client, models, p, "ready", {k: v for k, v in target.items() if k not in ("State", "DataEngineName", "StartStandbyCluster")})
                 current = find(module, client, models, p["name"])
+                if p.get("standby_cluster") is not None and (current or {}).get("StartStandbyCluster") != p["standby_cluster"]:
+                    module.sdk_call(client.SwitchDataEngine, standby_request(models, p["name"], p["standby_cluster"]))
+                    if p["wait"]: wait_engine(module, client, models, p, "ready", {"StartStandbyCluster": p["standby_cluster"]})
+                    current = find(module, client, models, p["name"])
                 target_state = {"running": 2, "suspended": 1}.get(p["state"])
                 if target_state is not None and (current or {}).get("State") != target_state:
                     operation = "resume" if target_state == 2 else "suspend"
@@ -249,6 +261,9 @@ def run_module():
             if not p["allow_image_switch"]: module.fail_json(msg="set allow_image_switch=true to authorize switching the DLC engine image", image_drift={"ImageVersionName": (current.get("ImageVersionName"), p["image_version_name"])}, image_target=image_target)
             changes["ImageVersionName"] = (current.get("ImageVersionName"), image_target["ImageVersionName"])
             changes["ImageVersionId"] = (current.get("ImageVersionId"), image_target["ImageVersionId"])
+        if p.get("standby_cluster") is not None and current.get("StartStandbyCluster") != p["standby_cluster"]:
+            if not p["allow_standby_switch"]: module.fail_json(msg="set allow_standby_switch=true to authorize changing the DLC standby cluster", standby_drift={"StartStandbyCluster": (current.get("StartStandbyCluster"), p["standby_cluster"])})
+            changes["StartStandbyCluster"] = (current.get("StartStandbyCluster"), p["standby_cluster"])
         for key in ("Size", "MinClusters", "MaxClusters"):
             if key in changes and changes[key][0] is not None and changes[key][1] < changes[key][0] and not p["allow_scale_down"]:
                 module.fail_json(msg="set allow_scale_down=true to authorize reducing DLC engine capacity", capacity_drift={key: changes[key]})
@@ -263,9 +278,11 @@ def run_module():
         if not module.check_mode:
             mutable_changes = {k: v for k, v in changes.items() if k != "Message"}
             mutable_changes = {k: v for k, v in mutable_changes.items() if k not in ("ImageVersionName", "ImageVersionId")}
+            mutable_changes.pop("StartStandbyCluster", None)
             if mutable_changes: module.sdk_call(client.UpdateDataEngine, update_request(models, p))
             if "Message" in changes: module.sdk_call(client.ModifyDataEngineDescription, description_request(models, p["name"], p["description"]))
             if image_target: module.sdk_call(client.SwitchDataEngineImage, image_switch_request(models, current["DataEngineId"], image_target["ImageVersionId"]))
+            if "StartStandbyCluster" in changes: module.sdk_call(client.SwitchDataEngine, standby_request(models, p["name"], p["standby_cluster"]))
             if changes and p["wait"]: wait_engine(module, client, models, p, "ready", {k: v[1] for k, v in changes.items()})
             current = find(module, client, models, p["name"])
             if state_change and current.get("State") != target_state:

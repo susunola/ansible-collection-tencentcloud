@@ -1,5 +1,5 @@
 from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_data_engine import (
-    create_request, delete_request, describe_request, drift, image_switch_request, image_versions_request, operation_request, update_request,
+    create_request, delete_request, describe_request, drift, image_switch_request, image_versions_request, operation_request, standby_request, update_request,
 )
 
 
@@ -18,6 +18,7 @@ class Models:
     DeleteDataEngineRequest = Object
     DescribeDataEngineImageVersionsRequest = Object
     SwitchDataEngineImageRequest = Object
+    SwitchDataEngineRequest = Object
     Filter = Filter
 
 
@@ -59,6 +60,8 @@ def test_image_switch_uses_catalog_lookup_and_stable_ids():
     assert request.EngineType == "SparkSQL" and request.Sort == "UpdateTime" and request.Asc is False
     request = image_switch_request(Models, "engine-1", "image-2")
     assert request.DataEngineId == "engine-1" and request.NewImageVersionId == "image-2"
+    request = standby_request(Models, "spark-prod", True)
+    assert request.DataEngineName == "spark-prod" and request.StartStandbyCluster is True
 
 
 def test_drift_ignores_omitted_values():
