@@ -575,6 +575,7 @@ Read-only `_info` modules (return `changed=false`):
 | `tiia_group_info` | Gather information about Tencent Cloud TIIA groups |
 | `tione_data_source_info` | Gather Tencent Cloud TIONE data sources |
 | `tione_dataset_info` | Gather information about Tencent Cloud TIONE datasets |
+| `tione_model_service_diagnostics_info` | Gather Tencent Cloud TIONE model service diagnostics |
 | `tione_model_service_info` | Gather Tencent Cloud TIONE online model services |
 | `tione_notebook_info` | Gather Tencent Cloud TIONE notebooks |
 | `tione_training_model_version_info` | Gather Tencent Cloud TIONE training-model versions |
