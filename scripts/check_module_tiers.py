@@ -176,6 +176,7 @@ CORE_MODULES = {
     "dlc_inference_service",
     "dlc_model_version",
     "dlc_script",
+    "dlc_store_location",
     "dlc_table",
     "dlc_table_partition",
     "dlc_spark_job",

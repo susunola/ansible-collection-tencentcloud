@@ -21,6 +21,7 @@
       - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_inference_models | length == 0
       - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_model_versions | length == 0
       - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_inference_services | length == 0
+      - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_store_location | length == 0
       - >-
         tc_dlc_access_governance_state == 'present'
         or (tc_dlc_access_governance_work_groups
@@ -68,6 +69,14 @@
     _tc_dlc_user_ids: []
     _tc_dlc_work_group_ids: {}
     _tc_dlc_data_mask_strategy_ids: {}
+
+- name: Configure DLC query-result storage before data and compute resources
+  when:
+    - tc_dlc_access_governance_state == 'present'
+    - tc_dlc_access_governance_store_location | length > 0
+  susunola.tencentcloud.dlc_store_location:
+  args: "{{ tc_dlc_access_governance_store_location }}"
+  register: _tc_dlc_store_location_result
 
 - name: Reconcile DLC VPC connections before compute engines
   when: tc_dlc_access_governance_state == 'present'
@@ -744,6 +753,7 @@
   ansible.builtin.set_fact:
     tc_dlc_access_governance_result:
       vpc_endpoint_ids: "{{ _tc_dlc_vpc_endpoint_ids }}"
+      store_location_config: "{{ (_tc_dlc_store_location_result | default({})).store_location_config | default({}) }}"
       data_engine_ids: "{{ _tc_dlc_data_engine_ids }}"
       engine_resource_group_ids: "{{ _tc_dlc_engine_resource_group_ids }}"
       cluster_group_ids: "{{ _tc_dlc_cluster_group_ids }}"

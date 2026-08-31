@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_store_location`` for immutable base query-result storage initialization and mutable advanced storage reconciliation.

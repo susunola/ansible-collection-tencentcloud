@@ -233,6 +233,7 @@ action_groups:
     - dlc_resource_config
     - dlc_script
     - dlc_spark_job
+    - dlc_store_location
     - dlc_table
     - dlc_table_partition
     - dlc_task_info

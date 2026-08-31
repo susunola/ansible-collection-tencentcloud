@@ -892,6 +892,11 @@ modules:
   - DeleteSparkApp
   - DescribeSparkAppJob
   - ModifySparkApp
+  dlc_store_location:
+  - CreateStoreLocation
+  - DescribeAdvancedStoreLocation
+  - DescribeStoreLocation
+  - ModifyAdvancedStoreLocation
   dlc_table:
   - CreateTable
   - CreateTasks

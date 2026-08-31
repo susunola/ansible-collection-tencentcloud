@@ -1,5 +1,6 @@
 ---
 tc_dlc_access_governance_state: present
+tc_dlc_access_governance_store_location: {}
 tc_dlc_access_governance_vpc_connections: []
 tc_dlc_access_governance_data_engines: []
 tc_dlc_access_governance_engine_resource_groups: []

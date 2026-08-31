@@ -506,6 +506,9 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert "allow_delete': true" in main
     defaults = (ROOT / "roles" / "tc_dlc_access_governance" / "defaults" / "main.yml").read_text(encoding="utf-8")
     assert "tc_dlc_access_governance_vpc_connections: []" in defaults
+    assert "tc_dlc_access_governance_store_location: {}" in defaults
+    assert main.index("susunola.tencentcloud.dlc_store_location") < main.index("include_tasks: data_engine.yml")
+    assert "tc_dlc_access_governance_store_location | length == 0" in main
     assert "tc_dlc_access_governance_data_engines: []" in defaults
     assert "tc_dlc_access_governance_engine_resource_groups: []" in defaults
     assert "tc_dlc_access_governance_cluster_groups: []" in defaults
