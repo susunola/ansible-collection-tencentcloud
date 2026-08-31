@@ -48,6 +48,7 @@ class Models(object):
     DescribeCfsFileSystemsRequest = Request
     DescribeInstancesDetailRequest = Request
     DescribeInstanceListRequest = Request
+    ListEventBusesRequest = Request
 
 
 class Client(object):
@@ -124,6 +125,12 @@ def test_mqtt_request_scans_names_with_numeric_pagination():
     request = build_request("mqtt_instance", Models, "device-broker", offset=200)
     assert request.Limit == 100
     assert request.Offset == 200
+
+
+def test_event_bus_request_scans_names_with_numeric_pagination():
+    request = build_request("event_bus", Models, "application-events", offset=100)
+    assert request.Limit == 100
+    assert request.Offset == 100
 
 
 def test_alb_request_uses_token_pagination():
