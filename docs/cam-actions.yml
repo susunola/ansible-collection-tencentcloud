@@ -2451,6 +2451,9 @@ modules:
   - DeleteGovernanceAliases
   - DescribeGovernanceAliases
   - ModifyGovernanceAlias
+  tse_governance_host_retirement:
+  - DeleteGovernanceInstancesByHost
+  - DescribeGovernanceInstances
   tse_governance_instance:
   - CreateGovernanceInstances
   - DeleteGovernanceInstances

@@ -11,6 +11,7 @@
       - tc_tse_governance_platform_services is sequence
       - tc_tse_governance_platform_service_contract_queries is sequence
       - tc_tse_governance_platform_instances is sequence
+      - tc_tse_governance_platform_retired_hosts is sequence
       - tc_tse_governance_platform_aliases is sequence
       - tc_tse_governance_platform_lane_groups is sequence
       - tc_tse_governance_platform_config_groups is sequence
@@ -79,6 +80,25 @@
   loop: "{{ tc_tse_governance_platform_services }}"
   loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.name | default('unnamed') }}"}
   register: _tc_tse_governance_platform_services
+
+- name: Validate retired TSE governance hosts
+  when: tc_tse_governance_platform_state == 'present'
+  ansible.builtin.assert:
+    that:
+      - >-
+        tc_tse_governance_platform_retired_hosts | intersect(
+          tc_tse_governance_platform_instances | map(attribute='host') | list
+        ) | length == 0
+    fail_msg: A retired governance host cannot also appear in tc_tse_governance_platform_instances.
+
+- name: Retire TSE governance hosts
+  when: tc_tse_governance_platform_state == 'present'
+  susunola.tencentcloud.tse_governance_host_retirement:
+    instance_id: "{{ _tc_tse_governance_platform_instance_id }}"
+    host: "{{ item }}"
+    state: absent
+  loop: "{{ tc_tse_governance_platform_retired_hosts }}"
+  register: _tc_tse_governance_platform_retired_hosts
 
 - name: Gather TSE governance service contracts
   when: tc_tse_governance_platform_state == 'present'
@@ -177,6 +197,7 @@
       services: "{{ _tc_tse_governance_platform_services.results | default([]) | map(attribute='service') | list }}"
       service_contracts: "{{ _tc_tse_governance_platform_service_contracts.results | default([]) }}"
       instances: "{{ _tc_tse_governance_platform_instances.results | default([]) | map(attribute='governance_instance') | list }}"
+      retired_hosts: "{{ _tc_tse_governance_platform_retired_hosts.results | default([]) | map(attribute='host') | list }}"
       aliases: "{{ _tc_tse_governance_platform_aliases.results | default([]) | map(attribute='alias_info') | list }}"
       lane_groups: "{{ _tc_tse_governance_platform_lane_groups.results | default([]) | map(attribute='lane_group') | list }}"
       config_groups: "{{ _tc_tse_governance_platform_config_groups.results | default([]) | map(attribute='group') | list }}"

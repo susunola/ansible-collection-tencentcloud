@@ -284,6 +284,7 @@ CORE_MODULES = {
     "tse_gateway_console_network",
     "tse_config_file_template_info",
     "tse_config_file_catalog_info",
+    "tse_governance_host_retirement",
     "tse_governance_namespace",
     "tse_governance_alias",
     "tse_governance_instance",
