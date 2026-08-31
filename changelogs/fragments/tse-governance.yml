@@ -1,0 +1,5 @@
+minor_changes:
+  - Add ``tse_governance_namespace`` with exact operator and service-visibility reconciliation.
+  - Add ``tse_governance_service`` with namespace-scoped lifecycle and exact access-set reconciliation.
+  - Add ``tse_config_file_group`` and ``tse_config_file`` for configuration-center content and access governance.
+  - Add ``tc_tse_governance_platform`` to compose engine, service-governance and configuration-center lifecycles.

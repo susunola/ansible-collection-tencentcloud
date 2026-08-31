@@ -6,9 +6,9 @@ This matrix is generated from module SDK imports and role metadata. It is a
 navigation and gap-discovery aid, not a claim that every Tencent Cloud API is covered.
 
 - Products/services: **203**
-- Write modules: **381**
+- Write modules: **385**
 - Information modules: **235**
-- Solution roles: **62**
+- Solution roles: **63**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -205,7 +205,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `trp` | discovery-only | 0 | 1 | — | — |
 | `trro` | discovery-only | 0 | 1 | — | — |
 | `trtc` | discovery-only | 0 | 1 | — | — |
-| `tse` | managed | 1 | 1 | — | `tse_sre_instance` |
+| `tse` | solution | 5 | 1 | `tc_tse_governance_platform` | `tse_config_file`, `tse_config_file_group`, `tse_governance_namespace`, `tse_governance_service`, `tse_sre_instance` |
 | `tsf` | discovery-only | 0 | 1 | — | — |
 | `vcube` | discovery-only | 0 | 1 | — | — |
 | `vdb` | managed | 1 | 1 | — | `vdb_instance` |

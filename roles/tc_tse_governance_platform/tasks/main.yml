@@ -1,0 +1,102 @@
+---
+- name: Validate TSE governance platform inputs
+  ansible.builtin.assert:
+    that:
+      - tc_tse_governance_platform_state in ['present', 'absent']
+      - tc_tse_governance_platform_engine is mapping
+      - tc_tse_governance_platform_namespaces is sequence
+      - tc_tse_governance_platform_services is sequence
+      - tc_tse_governance_platform_config_groups is sequence
+      - tc_tse_governance_platform_config_files is sequence
+      - tc_tse_governance_platform_engine.instance_id | default(tc_tse_governance_platform_engine.name | default('')) | length > 0
+      - tc_tse_governance_platform_state == 'present' or tc_tse_governance_platform_allow_destroy | bool
+    fail_msg: TSE governance requires instance_id or name; destruction requires tc_tse_governance_platform_allow_destroy=true.
+
+- name: Reconcile TSE registry engine
+  when: tc_tse_governance_platform_state == 'present'
+  susunola.tencentcloud.tse_sre_instance:
+  args: "{{ tc_tse_governance_platform_engine | combine({'state': 'present'}) }}"
+  register: _tc_tse_governance_platform_engine
+
+- name: Capture TSE registry engine ID
+  when: tc_tse_governance_platform_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_tse_governance_platform_instance_id: "{{ _tc_tse_governance_platform_engine.instance.InstanceId }}"
+
+- name: Reconcile TSE governance namespaces
+  when: tc_tse_governance_platform_state == 'present'
+  susunola.tencentcloud.tse_governance_namespace:
+  args: "{{ item | combine({'instance_id': _tc_tse_governance_platform_instance_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_governance_platform_namespaces }}"
+  loop_control: {label: "{{ item.name | default('unnamed') }}"}
+  register: _tc_tse_governance_platform_namespaces
+
+- name: Reconcile TSE governance services
+  when: tc_tse_governance_platform_state == 'present'
+  susunola.tencentcloud.tse_governance_service:
+  args: "{{ item | combine({'instance_id': _tc_tse_governance_platform_instance_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_governance_platform_services }}"
+  loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.name | default('unnamed') }}"}
+  register: _tc_tse_governance_platform_services
+
+- name: Reconcile TSE configuration groups
+  when: tc_tse_governance_platform_state == 'present'
+  susunola.tencentcloud.tse_config_file_group:
+  args: "{{ item | combine({'instance_id': _tc_tse_governance_platform_instance_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_governance_platform_config_groups }}"
+  loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.name | default('unnamed') }}"}
+  register: _tc_tse_governance_platform_config_groups
+
+- name: Reconcile TSE configuration files
+  when: tc_tse_governance_platform_state == 'present'
+  susunola.tencentcloud.tse_config_file:
+  args: "{{ item | combine({'instance_id': _tc_tse_governance_platform_instance_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_governance_platform_config_files }}"
+  loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.group | default('?') }}/{{ item.name | default('unnamed') }}"}
+  register: _tc_tse_governance_platform_config_files
+
+- name: Publish TSE governance platform outputs
+  when: tc_tse_governance_platform_state == 'present'
+  ansible.builtin.set_fact:
+    tc_tse_governance_platform_result:
+      engine: "{{ _tc_tse_governance_platform_engine.instance }}"
+      namespaces: "{{ _tc_tse_governance_platform_namespaces.results | default([]) | map(attribute='namespace') | list }}"
+      services: "{{ _tc_tse_governance_platform_services.results | default([]) | map(attribute='service') | list }}"
+      config_groups: "{{ _tc_tse_governance_platform_config_groups.results | default([]) | map(attribute='group') | list }}"
+      config_files: "{{ _tc_tse_governance_platform_config_files.results | default([]) | map(attribute='config_file') | list }}"
+
+- name: Require engine ID for deterministic teardown
+  when:
+    - tc_tse_governance_platform_state == 'absent'
+    - tc_tse_governance_platform_engine.instance_id | default('') | length == 0
+  ansible.builtin.fail:
+    msg: engine.instance_id is required for deterministic TSE governance teardown.
+
+- name: Remove TSE configuration files
+  when: tc_tse_governance_platform_state == 'absent'
+  susunola.tencentcloud.tse_config_file:
+  args: "{{ item | combine({'instance_id': tc_tse_governance_platform_engine.instance_id, 'state': 'absent'}) }}"
+  loop: "{{ tc_tse_governance_platform_config_files | reverse | list }}"
+
+- name: Remove TSE configuration groups
+  when: tc_tse_governance_platform_state == 'absent'
+  susunola.tencentcloud.tse_config_file_group:
+  args: "{{ item | combine({'instance_id': tc_tse_governance_platform_engine.instance_id, 'state': 'absent'}) }}"
+  loop: "{{ tc_tse_governance_platform_config_groups | reverse | list }}"
+
+- name: Remove TSE governance services
+  when: tc_tse_governance_platform_state == 'absent'
+  susunola.tencentcloud.tse_governance_service:
+  args: "{{ item | combine({'instance_id': tc_tse_governance_platform_engine.instance_id, 'state': 'absent'}) }}"
+  loop: "{{ tc_tse_governance_platform_services | reverse | list }}"
+
+- name: Remove TSE governance namespaces
+  when: tc_tse_governance_platform_state == 'absent'
+  susunola.tencentcloud.tse_governance_namespace:
+  args: "{{ item | combine({'instance_id': tc_tse_governance_platform_engine.instance_id, 'state': 'absent'}) }}"
+  loop: "{{ tc_tse_governance_platform_namespaces | reverse | list }}"
+
+- name: Remove TSE registry engine
+  when: tc_tse_governance_platform_state == 'absent'
+  susunola.tencentcloud.tse_sre_instance:
+  args: "{{ tc_tse_governance_platform_engine | combine({'state': 'absent'}) }}"

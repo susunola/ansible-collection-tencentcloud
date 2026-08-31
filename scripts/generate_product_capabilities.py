@@ -50,6 +50,7 @@ ROLE_SERVICES = {
     "tc_cloudbase_platform": "tcb",
     "tc_service_mesh_platform": "tcm",
     "tc_tdcpg_platform": "tdcpg",
+    "tc_tse_governance_platform": "tse",
     "tc_elasticsearch_platform": "es",
     "tc_sqlserver_stack": "sqlserver",
     "tc_gwlb_service_chain": "gwlb",
