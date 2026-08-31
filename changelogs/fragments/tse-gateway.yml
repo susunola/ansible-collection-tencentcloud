@@ -24,3 +24,4 @@ minor_changes:
   - Add governance service-alias lifecycle management and compose aliases after their target services.
   - Add governance lane-group lifecycle management with authoritative entry, destination and rule sets.
   - Add governance service-instance registration, mutable runtime policy reconciliation and deterministic deletion.
+  - Add configuration release publication, version-aware rollback and deletion lifecycle management.

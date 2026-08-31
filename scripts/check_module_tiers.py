@@ -278,6 +278,7 @@ CORE_MODULES = {
     "tse_governance_service",
     "tse_config_file_group",
     "tse_config_file",
+    "tse_config_file_release",
     "tse_cloud_native_gateway",
     "tse_gateway_autoscaler_binding",
     "tse_gateway_autoscaler_strategy",

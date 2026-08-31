@@ -11,6 +11,7 @@
       - tc_tse_governance_platform_lane_groups is sequence
       - tc_tse_governance_platform_config_groups is sequence
       - tc_tse_governance_platform_config_files is sequence
+      - tc_tse_governance_platform_config_releases is sequence
       - tc_tse_governance_platform_engine.instance_id | default(tc_tse_governance_platform_engine.name | default('')) | length > 0
       - tc_tse_governance_platform_state == 'present' or tc_tse_governance_platform_allow_destroy | bool
     fail_msg: TSE governance requires instance_id or name; destruction requires tc_tse_governance_platform_allow_destroy=true.
@@ -82,6 +83,14 @@
   loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.group | default('?') }}/{{ item.name | default('unnamed') }}"}
   register: _tc_tse_governance_platform_config_files
 
+- name: Reconcile TSE configuration releases
+  when: tc_tse_governance_platform_state == 'present'
+  susunola.tencentcloud.tse_config_file_release:
+  args: "{{ item | combine({'instance_id': _tc_tse_governance_platform_instance_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_governance_platform_config_releases }}"
+  loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.group | default('?') }}/{{ item.name | default('?') }}@{{ item.release_name | default('unnamed') }}"}
+  register: _tc_tse_governance_platform_config_releases
+
 - name: Publish TSE governance platform outputs
   when: tc_tse_governance_platform_state == 'present'
   ansible.builtin.set_fact:
@@ -94,6 +103,7 @@
       lane_groups: "{{ _tc_tse_governance_platform_lane_groups.results | default([]) | map(attribute='lane_group') | list }}"
       config_groups: "{{ _tc_tse_governance_platform_config_groups.results | default([]) | map(attribute='group') | list }}"
       config_files: "{{ _tc_tse_governance_platform_config_files.results | default([]) | map(attribute='config_file') | list }}"
+      config_releases: "{{ _tc_tse_governance_platform_config_releases.results | default([]) | map(attribute='release') | list }}"
 
 - name: Require engine ID for deterministic teardown
   when:
@@ -101,6 +111,19 @@
     - tc_tse_governance_platform_engine.instance_id | default('') | length == 0
   ansible.builtin.fail:
     msg: engine.instance_id is required for deterministic TSE governance teardown.
+
+- name: Remove TSE configuration releases
+  when: tc_tse_governance_platform_state == 'absent'
+  susunola.tencentcloud.tse_config_file_release:
+    instance_id: "{{ tc_tse_governance_platform_engine.instance_id }}"
+    namespace: "{{ item.namespace }}"
+    group: "{{ item.group }}"
+    name: "{{ item.name }}"
+    release_name: "{{ item.release_name }}"
+    release_id: "{{ item.release_id | default(omit) }}"
+    state: absent
+  loop: "{{ tc_tse_governance_platform_config_releases | reverse | list }}"
+  loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.group | default('?') }}/{{ item.name | default('?') }}@{{ item.release_name | default('unnamed') }}"}
 
 - name: Remove TSE configuration files
   when: tc_tse_governance_platform_state == 'absent'

@@ -1,7 +1,7 @@
 # tc_tse_governance_platform
 
 Provisions a TSE registry engine with governance namespaces, services, aliases,
-configuration groups and draft configuration files. Destruction requires an
+configuration groups, draft configuration files and versioned releases. Destruction requires an
 explicit engine ID and removes dependent resources in reverse order.
 
 ```yaml
@@ -34,6 +34,13 @@ explicit engine ID and removes dependent resources in reverse order.
           - namespace: production
             group: application
             name: orders.yaml
+            format: YAML
+            content: "server:\n  port: 8080\n"
+        tc_tse_governance_platform_config_releases:
+          - namespace: production
+            group: application
+            name: orders.yaml
+            release_name: production
             format: YAML
             content: "server:\n  port: 8080\n"
 ```

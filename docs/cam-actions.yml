@@ -2288,6 +2288,11 @@ modules:
   - DeleteConfigFileGroup
   - DescribeConfigFileGroups
   - ModifyConfigFileGroup
+  tse_config_file_release:
+  - DeleteConfigFileReleases
+  - DescribeConfigFileRelease
+  - PublishConfigFiles
+  - RollbackConfigFileReleases
   tse_gateway_autoscaler_binding:
   - BindAutoScalerResourceStrategyToGroups
   - DescribeAutoScalerResourceStrategies
