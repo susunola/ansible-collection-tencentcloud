@@ -17,6 +17,7 @@ explicit engine ID and removes dependent resources in reverse order.
           product_version: STANDARD
         tc_tse_governance_platform_access_address_query:
           workload: polaris-limiter
+        tc_tse_governance_platform_discover_topology: true
         tc_tse_governance_platform_namespaces:
           - name: production
         tc_tse_governance_platform_services:

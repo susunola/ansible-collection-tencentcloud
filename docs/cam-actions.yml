@@ -2449,6 +2449,11 @@ modules:
   - UpdateEngineInternetAccess
   tse_sre_instance_info:
   - DescribeSREInstances
+  tse_sre_topology_info:
+  - DescribeNacosReplicas
+  - DescribeNacosServerInterfaces
+  - DescribeZookeeperReplicas
+  - DescribeZookeeperServerInterfaces
   tsf_application_info:
   - DescribeApplications
   vcube_resource_info:

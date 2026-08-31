@@ -615,6 +615,7 @@ action_groups:
     - tse_sre_access_address_info
     - tse_sre_instance
     - tse_sre_instance_info
+    - tse_sre_topology_info
     - tsf_application_info
     - vcube_resource_info
     - vdb_instance
