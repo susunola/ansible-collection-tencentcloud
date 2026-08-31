@@ -3,4 +3,6 @@ tc_ssm_secret_governance_state: present
 tc_ssm_secret_governance_secret: {}
 tc_ssm_secret_governance_versions: []
 tc_ssm_secret_governance_rotation: {}
+tc_ssm_secret_governance_product_secrets: []
+tc_ssm_secret_governance_ssh_key_pair_secrets: []
 tc_ssm_secret_governance_allow_destroy: false

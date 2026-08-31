@@ -286,6 +286,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `ssm_rotation` | Manage Tencent Cloud SSM secret rotation settings |
 | `ssm_secret` | Manage Tencent Cloud Secrets Manager custom secrets |
 | `ssm_secret_version` | Manage Tencent Cloud SSM secret versions |
+| `ssm_ssh_key_pair_secret` | Manage Tencent Cloud SSM SSH key-pair secrets |
 | `subnet` | Manage Tencent Cloud VPC subnets |
 | `tag` | Manage tags on arbitrary Tencent Cloud resources |
 | `tat_command` | Manage Tencent Cloud TAT commands |

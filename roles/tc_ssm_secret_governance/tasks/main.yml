@@ -7,6 +7,8 @@
       - tc_ssm_secret_governance_secret.secret_name | default('') | length > 0
       - tc_ssm_secret_governance_versions is sequence
       - tc_ssm_secret_governance_rotation is mapping
+      - tc_ssm_secret_governance_product_secrets is sequence
+      - tc_ssm_secret_governance_ssh_key_pair_secrets is sequence
       - tc_ssm_secret_governance_state == 'present' or tc_ssm_secret_governance_allow_destroy | bool
     fail_msg: SSM governance requires secret.secret_name; destruction requires tc_ssm_secret_governance_allow_destroy=true.
 
@@ -42,6 +44,22 @@
       secret: "{{ _tc_ssm_secret_governance_secret.secret }}"
       versions: "{{ _tc_ssm_secret_governance_versions.results | default([]) | map(attribute='version') | list }}"
       rotation: "{{ _tc_ssm_secret_governance_rotation.rotation | default({}) }}"
+  no_log: true
+
+- name: Reconcile SSM managed-product secrets
+  susunola.tencentcloud.ssm_product_secret:
+  args: "{{ item | combine({'state': tc_ssm_secret_governance_state}) }}"
+  loop: "{{ tc_ssm_secret_governance_product_secrets }}"
+  loop_control:
+    label: "{{ item.secret_name | default('unnamed') }}"
+  no_log: true
+
+- name: Reconcile SSM SSH key-pair secrets
+  susunola.tencentcloud.ssm_ssh_key_pair_secret:
+  args: "{{ item | combine({'state': tc_ssm_secret_governance_state}) }}"
+  loop: "{{ tc_ssm_secret_governance_ssh_key_pair_secrets }}"
+  loop_control:
+    label: "{{ item.secret_name | default('unnamed') }}"
   no_log: true
 
 - name: Schedule governed SSM secret deletion

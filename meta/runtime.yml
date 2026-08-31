@@ -453,6 +453,7 @@ action_groups:
     - ssm_secret_info
     - ssm_secret_version
     - ssm_secret_version_info
+    - ssm_ssh_key_pair_secret
     - subnet
     - subnet_info
     - svp_saving_plan_coverage_info
