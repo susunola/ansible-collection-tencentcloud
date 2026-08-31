@@ -1,9 +1,13 @@
-from ansible_collections.susunola.tencentcloud.plugins.modules.tse_gateway_public_network import contains, create_request, desired
+from ansible_collections.susunola.tencentcloud.plugins.modules.tse_gateway_public_network import contains, create_request, desired, group_request
 
 
 class Value(object):
     def from_json_string(self,raw): self.raw=raw
-class Models(object): CreateCloudNativeAPIGatewayPublicNetworkRequest=Value
+class Filter(object): pass
+class Models(object):
+    CreateCloudNativeAPIGatewayPublicNetworkRequest=Value
+    DescribeNativeGatewayServerGroupsRequest=Value
+    Filter=Filter
 
 
 def test_public_network_payload_and_access_control_comparison():
@@ -11,3 +15,5 @@ def test_public_network_payload_and_access_control_comparison():
     assert '"GroupId": "grp1"' in create_request(Models,p).raw
     target=desired(p)
     assert contains(dict(target,Status="Open"),target)
+    lookup=group_request(Models,{"gateway_id":"g1","group_name":"workers"})
+    assert lookup.Filters[0].Values==["workers"]

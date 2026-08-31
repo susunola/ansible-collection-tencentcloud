@@ -485,8 +485,10 @@
   ansible.builtin.set_fact:
     tc_tse_api_gateway_result:
       gateway: "{{ _tc_tse_api_gateway_gateway.gateway }}"
+      server_groups: "{{ _tc_tse_api_gateway_server_groups_result.results | default([]) | map(attribute='group') | list }}"
       autoscaler_strategies: "{{ _tc_tse_api_gateway_autoscaler_strategies_result.results | default([]) | map(attribute='strategy') | list }}"
       autoscaler_bindings: "{{ _tc_tse_api_gateway_autoscaler_bindings_result.results | default([]) | map(attribute='binding') | list }}"
+      service_sources: "{{ _tc_tse_api_gateway_service_sources_result.results | default([]) | map(attribute='source') | list }}"
       services: "{{ _tc_tse_api_gateway_services.results | default([]) | map(attribute='service') | list }}"
       routes: "{{ _tc_tse_api_gateway_routes_result.results | default([]) | map(attribute='route') | list }}"
       canary_rules: "{{ _tc_tse_api_gateway_canary_rules_result.results | default([]) | map(attribute='canary_rule') | list }}"
@@ -518,7 +520,8 @@
     gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
     strategy_id: "{{ item.strategy_id | default(omit) }}"
     strategy_name: "{{ item.strategy_name | default(omit) }}"
-    group_ids: "{{ item.group_ids }}"
+    group_ids: "{{ item.group_ids | default(omit) }}"
+    group_names: "{{ item.group_names | default(omit) }}"
     state: absent
   loop: "{{ tc_tse_api_gateway_autoscaler_bindings | reverse | list }}"
 
@@ -700,7 +703,8 @@
   when: tc_tse_api_gateway_state == 'absent'
   susunola.tencentcloud.tse_gateway_public_network:
     gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
-    group_id: "{{ item.group_id }}"
+    group_id: "{{ item.group_id | default(omit) }}"
+    group_name: "{{ item.group_name | default(omit) }}"
     network_id: "{{ item.network_id | default(omit) }}"
     address_version: "{{ item.address_version | default('IPV4') }}"
     vip: "{{ item.vip | default(omit) }}"

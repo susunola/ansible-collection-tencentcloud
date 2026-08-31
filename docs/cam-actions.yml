@@ -2292,6 +2292,7 @@ modules:
   - BindAutoScalerResourceStrategyToGroups
   - DescribeAutoScalerResourceStrategies
   - DescribeAutoScalerResourceStrategyBindingGroups
+  - DescribeNativeGatewayServerGroups
   - UnbindAutoScalerResourceStrategyFromGroups
   tse_gateway_autoscaler_strategy:
   - CreateAutoScalerResourceStrategy
@@ -2356,6 +2357,7 @@ modules:
   tse_gateway_public_network:
   - CreateCloudNativeAPIGatewayPublicNetwork
   - DeleteCloudNativeAPIGatewayPublicNetwork
+  - DescribeNativeGatewayServerGroups
   - DescribePublicNetwork
   - ModifyNetworkAccessStrategy
   - ModifyNetworkBasicInfo

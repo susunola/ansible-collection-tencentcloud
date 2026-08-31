@@ -13,7 +13,8 @@ options:
   gateway_id: {type: str, required: true, description: Gateway ID.}
   strategy_id: {type: str, description: Autoscaler strategy ID.}
   strategy_name: {type: str, description: Autoscaler strategy name resolved within the gateway.}
-  group_ids: {type: list, elements: str, required: true, description: Unique gateway group IDs.}
+  group_ids: {type: list, elements: str, description: Unique gateway group IDs.}
+  group_names: {type: list, elements: str, description: Unique gateway group names resolved within the gateway.}
   purge_unlisted: {type: bool, default: false, description: With state=present, unbind groups not listed here.}
   retries: {type: int, default: 5, description: Transient API retry count.}
   user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
@@ -24,7 +25,7 @@ EXAMPLES = r'''
 - susunola.tencentcloud.tse_gateway_autoscaler_binding:
     gateway_id: gateway-xxxxxxxx
     strategy_name: production-elasticity
-    group_ids: [group-xxxxxxxx]
+    group_names: [production-secondary]
     purge_unlisted: true
 '''
 RETURN = r'''binding: {description: Effective strategy group bindings., type: dict, returned: always}'''
@@ -42,6 +43,8 @@ def mutation_request(cls,p,group_ids):
     r=cls(); r.GatewayId,r.StrategyId,r.GroupIds=p["gateway_id"],p["strategy_id"],group_ids; return r
 def strategy_request(models,p):
     r=models.DescribeAutoScalerResourceStrategiesRequest(); r.GatewayId=p["gateway_id"]; return r
+def groups_request(models,p):
+    r=models.DescribeNativeGatewayServerGroupsRequest(); r.GatewayId,r.Offset,r.Limit=p["gateway_id"],0,100; return r
 def resolve_strategy(module,client,models,p):
     if p.get("strategy_id"): return
     result=module.sdk_call(client.DescribeAutoScalerResourceStrategies,strategy_request(models,p)).Result; matches=[]
@@ -51,6 +54,17 @@ def resolve_strategy(module,client,models,p):
     if not matches: module.fail_json(msg="TSE autoscaler strategy name was not found",strategy_name=p["strategy_name"])
     if len(matches)>1: module.fail_json(msg="Multiple TSE autoscaler strategies matched the name",strategy_name=p["strategy_name"])
     p["strategy_id"]=matches[0]
+def resolve_groups(module,client,models,p):
+    names=p.get("group_names") or []
+    if not names: return
+    result=module.sdk_call(client.DescribeNativeGatewayServerGroups,groups_request(models,p)).Result; by_name={}
+    for item in (result.GatewayGroupList if result else []) or []:
+        value=item._serialize(allow_none=True); by_name.setdefault(value.get("Name"),[]).append(value.get("GroupId"))
+    missing=[name for name in names if name not in by_name]
+    ambiguous=[name for name in names if len(by_name.get(name,[]))>1]
+    if missing: module.fail_json(msg="TSE gateway group names were not found",group_names=missing)
+    if ambiguous: module.fail_json(msg="Multiple TSE gateway groups matched names",group_names=ambiguous)
+    p["group_ids"]=(p.get("group_ids") or [])+[by_name[name][0] for name in names]
 def current(module,client,models,p):
     offset=0; values=[]
     while True:
@@ -58,11 +72,14 @@ def current(module,client,models,p):
         values.extend(item._serialize(allow_none=True) for item in page or []); offset+=len(page or [])
         if not result or offset>=int(result.TotalCount or 0): return values
 def run_module():
-    module=TencentCloudModule(argument_spec={"state":{"choices":["present","absent"],"default":"present"},"gateway_id":{"required":True},"strategy_id":{},"strategy_name":{},"group_ids":{"type":"list","elements":"str","required":True},"purge_unlisted":{"type":"bool","default":False}},required_one_of=[("strategy_id","strategy_name")],mutually_exclusive=[("strategy_id","strategy_name")],supports_check_mode=True); p=module.params
+    module=TencentCloudModule(argument_spec={"state":{"choices":["present","absent"],"default":"present"},"gateway_id":{"required":True},"strategy_id":{},"strategy_name":{},"group_ids":{"type":"list","elements":"str"},"group_names":{"type":"list","elements":"str"},"purge_unlisted":{"type":"bool","default":False}},required_one_of=[("strategy_id","strategy_name"),("group_ids","group_names")],mutually_exclusive=[("strategy_id","strategy_name")],supports_check_mode=True); p=module.params
+    if len(set(p.get("group_names") or []))!=len(p.get("group_names") or []): module.fail_json(msg="group_names must not contain duplicates")
+    module.require_sdk(); models,cm=_load(); client=module.create_client(cm.TseClient,"tse.tencentcloudapi.com")
+    try: resolve_groups(module,client,models,p)
+    except Exception as exc: module.fail_json(**sdk_error_payload(exc))
     if not p["group_ids"]: module.fail_json(msg="group_ids must contain at least one entry")
     if len(set(p["group_ids"]))!=len(p["group_ids"]): module.fail_json(msg="group_ids must not contain duplicates")
     if p["state"]=="absent" and p["purge_unlisted"]: module.fail_json(msg="purge_unlisted is only valid with state=present")
-    module.require_sdk(); models,cm=_load(); client=module.create_client(cm.TseClient,"tse.tencentcloudapi.com")
     try:
         resolve_strategy(module,client,models,p)
         details=current(module,client,models,p); existing={item.get("GroupId") for item in details if item.get("GroupId")}; requested=set(p["group_ids"])

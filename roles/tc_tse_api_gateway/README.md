@@ -33,7 +33,7 @@ route creation. Guarded teardown removes routes and services before the gateway.
               Metrics: [{Type: Resource, ResourceName: cpu, TargetType: Utilization, TargetValue: 60}]
         tc_tse_api_gateway_autoscaler_bindings:
           - strategy_name: production-elasticity
-            group_ids: [group-xxxxxxxx]
+            group_names: [production-secondary]
             purge_unlisted: true
         tc_tse_api_gateway_service_sources:
           - source_name: customer-nacos

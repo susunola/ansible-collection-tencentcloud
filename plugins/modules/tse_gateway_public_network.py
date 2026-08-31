@@ -11,7 +11,8 @@ description: Creates, updates and deletes a gateway-group public CLB and reconci
 options:
   state: {type: str, choices: [present, absent], default: present, description: Desired state.}
   gateway_id: {type: str, required: true, description: Gateway ID.}
-  group_id: {type: str, required: true, description: Native gateway server group ID.}
+  group_id: {type: str, description: Native gateway server group ID.}
+  group_name: {type: str, description: Native gateway server group name resolved within the gateway.}
   network_id: {type: str, description: Existing public network ID.}
   config: {type: dict, description: SDK InternetConfig payload used for creation and mutable CLB fields.}
   access_control: {type: dict, description: Exact SDK NetworkAccessControl payload.}
@@ -27,7 +28,7 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 EXAMPLES = r'''
 - susunola.tencentcloud.tse_gateway_public_network:
     gateway_id: gateway-xxxxxxxx
-    group_id: group-xxxxxxxx
+    group_name: production-secondary
     config:
       InternetAddressVersion: IPV4
       InternetPayMode: BANDWIDTH
@@ -48,6 +49,17 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 def _load():
     from tencentcloud.tse.v20201207 import models,tse_client
     return models,tse_client
+def group_request(models,p):
+    r=models.DescribeNativeGatewayServerGroupsRequest(); r.GatewayId,r.Offset,r.Limit=p["gateway_id"],0,100; f=models.Filter(); f.Name,f.Values="Name",[p["group_name"]]; r.Filters=[f]; return r
+def resolve_group(module,client,models,p):
+    if p.get("group_id"): return
+    result=module.sdk_call(client.DescribeNativeGatewayServerGroups,group_request(models,p)).Result; matches=[]
+    for item in (result.GatewayGroupList if result else []) or []:
+        value=item._serialize(allow_none=True)
+        if value.get("Name")==p["group_name"]: matches.append(value.get("GroupId"))
+    if not matches: module.fail_json(msg="TSE gateway group name was not found",group_name=p["group_name"])
+    if len(matches)>1: module.fail_json(msg="Multiple TSE gateway groups matched the name",group_name=p["group_name"])
+    p["group_id"]=matches[0]
 def describe_request(models,p): r=models.DescribePublicNetworkRequest(); r.GatewayId,r.GroupId,r.NetworkId=p["gateway_id"],p["group_id"],p.get("network_id"); return r
 def create_request(models,p):
     r=models.CreateCloudNativeAPIGatewayPublicNetworkRequest(); r.from_json_string(json.dumps({"GatewayId":p["gateway_id"],"GroupId":p["group_id"],"InternetConfig":p["config"]})); return r
@@ -83,8 +95,9 @@ def wait(module,client,models,p,target,absent=False):
 
 
 def run_module():
-    module=TencentCloudModule(argument_spec={"state":{"choices":["present","absent"],"default":"present"},"gateway_id":{"required":True},"group_id":{"required":True},"network_id":{},"config":{"type":"dict"},"access_control":{"type":"dict"},"address_version":{"choices":["IPV4","IPV6"],"default":"IPV4"},"vip":{}},supports_check_mode=True); p=module.params; module.require_sdk(); models,cm=_load(); client=module.create_client(cm.TseClient,"tse.tencentcloudapi.com")
+    module=TencentCloudModule(argument_spec={"state":{"choices":["present","absent"],"default":"present"},"gateway_id":{"required":True},"group_id":{},"group_name":{},"network_id":{},"config":{"type":"dict"},"access_control":{"type":"dict"},"address_version":{"choices":["IPV4","IPV6"],"default":"IPV4"},"vip":{}},required_one_of=[("group_id","group_name")],mutually_exclusive=[("group_id","group_name")],supports_check_mode=True); p=module.params; module.require_sdk(); models,cm=_load(); client=module.create_client(cm.TseClient,"tse.tencentcloudapi.com")
     try:
+        resolve_group(module,client,models,p)
         before=current(module,client,models,p)
         if p["state"]=="absent":
             if not before: module.exit_json(changed=False,public_network=None)

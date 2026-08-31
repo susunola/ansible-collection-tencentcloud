@@ -20,3 +20,4 @@ minor_changes:
   - Resolve consumers, consumer groups and Model APIs by name for role-managed membership and authorization relationships.
   - Resolve relationship resource names inside membership and Model API authorization modules so name-based teardown is independently reliable.
   - Add gateway autoscaler strategy lifecycle and read-backed group binding reconciliation.
+  - Resolve gateway server groups by name in autoscaler bindings and public-network lifecycle operations.
