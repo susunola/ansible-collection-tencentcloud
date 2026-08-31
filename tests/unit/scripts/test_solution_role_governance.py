@@ -530,10 +530,14 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert "tc_dlc_access_governance_job_specs: []" in defaults
     assert "tc_dlc_access_governance_inference_models: []" in defaults
     assert "tc_dlc_access_governance_model_versions: []" in defaults
+    assert "tc_dlc_access_governance_model_artifact_checks: []" in defaults
     assert "tc_dlc_access_governance_inference_services: []" in defaults
     assert "tc_dlc_access_governance_inference_models | length == 0" in main
     assert "tc_dlc_access_governance_model_versions | length == 0" in main
+    assert "tc_dlc_access_governance_model_artifact_checks | length == 0" in main
     assert "tc_dlc_access_governance_inference_services | length == 0" in main
+    assert "susunola.tencentcloud.dlc_model_artifact_info" in main
+    assert "model_artifacts:" in main
     assert "tc_dlc_access_governance_databases: []" in defaults
     assert "tc_dlc_access_governance_tables: []" in defaults
     assert "tc_dlc_access_governance_table_partitions: []" in defaults

@@ -1,0 +1,2 @@
+minor_changes:
+  - Extend ``tc_dlc_access_governance`` with opt-in, parent-aware model artifact checks between version publication and inference-service deployment, and publish their results for release gates.

@@ -132,6 +132,12 @@ ignored when comparing desired access, so repeated runs remain idempotent.
             description: Reveal only the final four digits
             groups:
               - {WorkGroupId: 10042, StrategyType: MASK_SHOW_LAST_4}
+        tc_dlc_access_governance_model_artifact_checks:
+          - model_name: bge-managed
+            model_version: v2
+            include_config: true
+            include_files: true
+            include_readme: true
 ```
 
 The resulting endpoint IDs, engine IDs, database names and user IDs are published in
@@ -146,6 +152,10 @@ The resulting endpoint IDs, engine IDs, database names and user IDs are publishe
 `tc_dlc_access_governance_result.partition_queue_ids` and
 `tc_dlc_access_governance_result.resource_config_ids` and
 `tc_dlc_access_governance_result.ray_cluster_ids` and
+`tc_dlc_access_governance_result.inference_model_uids`,
+`tc_dlc_access_governance_result.model_version_ids`,
+`tc_dlc_access_governance_result.model_artifacts`,
+`tc_dlc_access_governance_result.inference_service_ids` and
 `tc_dlc_access_governance_result.database_names` and
 `tc_dlc_access_governance_result.user_ids`. Mask strategy IDs are available in
 `tc_dlc_access_governance_result.data_mask_strategy_ids`.
@@ -174,6 +184,11 @@ Resource templates are created before laboratories and deleted only after Lab/Ra
 references are gone. External references require `allow_delete_in_use: true`.
 Ray clusters share the same queue and resource-template foundations as laboratories
 and are removed before those foundations during teardown.
+
+Model artifact checks run after immutable model versions are published and before
+inference services are reconciled. Each check resolves either a direct `model_uid`
+or a managed `model_name`, and can independently select config.json, file-tree and
+README reads. The collected results are published for downstream release gates.
 
 Direct-user policies are exact-set managed when `policies` is declared. During
 teardown the role removes direct policies before deleting each user. Work-group

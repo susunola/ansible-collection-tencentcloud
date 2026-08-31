@@ -20,6 +20,7 @@
         == tc_dlc_access_governance_ray_clusters | length
       - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_inference_models | length == 0
       - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_model_versions | length == 0
+      - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_model_artifact_checks | length == 0
       - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_inference_services | length == 0
       - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_store_location | length == 0
       - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_data_engine_configs | length == 0
@@ -64,6 +65,7 @@
     _tc_dlc_job_spec_ids: {}
     _tc_dlc_inference_model_uids: {}
     _tc_dlc_model_version_ids: []
+    _tc_dlc_model_artifacts: []
     _tc_dlc_inference_service_ids: {}
     _tc_dlc_lab_ids: {}
     _tc_dlc_spark_job_ids: {}
@@ -442,6 +444,47 @@
   ansible.builtin.set_fact:
     _tc_dlc_model_version_ids: >-
       {{ _tc_dlc_model_version_results.results | map(attribute='version_id') | list }}
+
+- name: Validate DLC model-artifact parent references
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.assert:
+    that:
+      - (_tc_dlc_model_artifact_check.model_uid is defined) != (_tc_dlc_model_artifact_check.model_name is defined)
+      - _tc_dlc_model_artifact_check.model_version is defined
+      - >-
+        _tc_dlc_model_artifact_check.model_name is not defined
+        or _tc_dlc_model_artifact_check.model_name in _tc_dlc_inference_model_uids
+    fail_msg: Each DLC model-artifact check requires a model version and exactly one model_uid or managed model_name reference.
+  loop: "{{ tc_dlc_access_governance_model_artifact_checks }}"
+  loop_control:
+    loop_var: _tc_dlc_model_artifact_check
+    label: "{{ _tc_dlc_model_artifact_check.model_uid | default(_tc_dlc_model_artifact_check.model_name) }}/{{ _tc_dlc_model_artifact_check.model_version }}"
+
+- name: Inspect DLC model artifacts before inference-service deployment
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_model_artifact_info:
+    model_uid: "{{ _tc_dlc_resolved_artifact_model_uid }}"
+    model_version: "{{ _tc_dlc_model_artifact_check.model_version }}"
+    include_config: "{{ _tc_dlc_model_artifact_check.include_config | default(true) }}"
+    include_files: "{{ _tc_dlc_model_artifact_check.include_files | default(true) }}"
+    include_readme: "{{ _tc_dlc_model_artifact_check.include_readme | default(true) }}"
+  loop: "{{ tc_dlc_access_governance_model_artifact_checks }}"
+  loop_control:
+    loop_var: _tc_dlc_model_artifact_check
+    label: "{{ _tc_dlc_model_artifact_check.model_uid | default(_tc_dlc_model_artifact_check.model_name) }}/{{ _tc_dlc_model_artifact_check.model_version }}"
+  vars:
+    _tc_dlc_resolved_artifact_model_uid: >-
+      {{ _tc_dlc_model_artifact_check.model_uid
+         if _tc_dlc_model_artifact_check.model_uid is defined
+         else _tc_dlc_inference_model_uids[_tc_dlc_model_artifact_check.model_name] }}
+  register: _tc_dlc_model_artifact_results
+
+- name: Record inspected DLC model artifacts
+  when:
+    - tc_dlc_access_governance_state == 'present'
+    - tc_dlc_access_governance_model_artifact_checks | length > 0
+  ansible.builtin.set_fact:
+    _tc_dlc_model_artifacts: "{{ _tc_dlc_model_artifact_results.results }}"
 
 - name: Validate DLC inference-service parent references
   when: tc_dlc_access_governance_state == 'present'
@@ -856,6 +899,7 @@
       job_spec_ids: "{{ _tc_dlc_job_spec_ids }}"
       inference_model_uids: "{{ _tc_dlc_inference_model_uids }}"
       model_version_ids: "{{ _tc_dlc_model_version_ids }}"
+      model_artifacts: "{{ _tc_dlc_model_artifacts }}"
       inference_service_ids: "{{ _tc_dlc_inference_service_ids }}"
       lab_ids: "{{ _tc_dlc_lab_ids }}"
       spark_job_ids: "{{ _tc_dlc_spark_job_ids }}"
