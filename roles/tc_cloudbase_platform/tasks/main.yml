@@ -1,0 +1,95 @@
+---
+- name: Validate CloudBase platform inputs
+  ansible.builtin.assert:
+    that:
+      - tc_cloudbase_platform_state in ['present', 'absent']
+      - tc_cloudbase_platform_environment is mapping
+      - tc_cloudbase_platform_static_store is mapping
+      - tc_cloudbase_platform_auth_domains is sequence
+      - tc_cloudbase_platform_http_routes is sequence
+      - tc_cloudbase_platform_environment.env_id | default(tc_cloudbase_platform_environment.alias | default('')) | length > 0
+      - tc_cloudbase_platform_state == 'present' or tc_cloudbase_platform_allow_destroy | bool
+    fail_msg: CloudBase requires environment env_id or alias; destruction requires tc_cloudbase_platform_allow_destroy=true.
+
+- name: Reconcile CloudBase environment
+  when: tc_cloudbase_platform_state == 'present'
+  susunola.tencentcloud.tcb_environment:
+  args: "{{ tc_cloudbase_platform_environment | combine({'state': 'present'}) }}"
+  register: _tc_cloudbase_platform_environment
+
+- name: Capture CloudBase environment ID
+  when: tc_cloudbase_platform_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_cloudbase_platform_env_id: "{{ _tc_cloudbase_platform_environment.environment.EnvId }}"
+
+- name: Reconcile CloudBase static hosting
+  when:
+    - tc_cloudbase_platform_state == 'present'
+    - tc_cloudbase_platform_static_store | length > 0
+  susunola.tencentcloud.tcb_static_store:
+  args: "{{ tc_cloudbase_platform_static_store | combine({'env_id': _tc_cloudbase_platform_env_id, 'state': 'present'}) }}"
+  register: _tc_cloudbase_platform_static_store
+
+- name: Reconcile CloudBase authentication domains
+  when: tc_cloudbase_platform_state == 'present'
+  susunola.tencentcloud.tcb_auth_domain:
+    env_id: "{{ _tc_cloudbase_platform_env_id }}"
+    domain: "{{ item }}"
+    state: present
+  loop: "{{ tc_cloudbase_platform_auth_domains }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: Reconcile CloudBase HTTP service routes
+  when: tc_cloudbase_platform_state == 'present'
+  susunola.tencentcloud.tcb_http_service_route:
+  args: "{{ item | combine({'env_id': _tc_cloudbase_platform_env_id, 'state': 'present'}) }}"
+  loop: "{{ tc_cloudbase_platform_http_routes }}"
+  loop_control:
+    label: "{{ item.domain | default('unnamed') }}"
+  register: _tc_cloudbase_platform_http_routes
+
+- name: Publish CloudBase platform outputs
+  when: tc_cloudbase_platform_state == 'present'
+  ansible.builtin.set_fact:
+    tc_cloudbase_platform_result:
+      environment: "{{ _tc_cloudbase_platform_environment.environment }}"
+      static_store: "{{ _tc_cloudbase_platform_static_store.static_store | default({}) }}"
+      routes: "{{ _tc_cloudbase_platform_http_routes.results | default([]) | map(attribute='route') | list }}"
+
+- name: Require environment ID for deterministic teardown
+  when:
+    - tc_cloudbase_platform_state == 'absent'
+    - tc_cloudbase_platform_environment.env_id | default('') | length == 0
+  ansible.builtin.fail:
+    msg: environment.env_id is required for deterministic CloudBase teardown.
+
+- name: Remove CloudBase HTTP service routes
+  when: tc_cloudbase_platform_state == 'absent'
+  susunola.tencentcloud.tcb_http_service_route:
+  args: "{{ item | combine({'env_id': tc_cloudbase_platform_environment.env_id, 'state': 'absent'}) }}"
+  loop: "{{ tc_cloudbase_platform_http_routes | reverse | list }}"
+  loop_control:
+    label: "{{ item.domain | default('unnamed') }}"
+
+- name: Remove CloudBase authentication domains
+  when: tc_cloudbase_platform_state == 'absent'
+  susunola.tencentcloud.tcb_auth_domain:
+    env_id: "{{ tc_cloudbase_platform_environment.env_id }}"
+    domain: "{{ item }}"
+    state: absent
+  loop: "{{ tc_cloudbase_platform_auth_domains | reverse | list }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: Remove CloudBase static hosting
+  when:
+    - tc_cloudbase_platform_state == 'absent'
+    - tc_cloudbase_platform_static_store | length > 0
+  susunola.tencentcloud.tcb_static_store:
+  args: "{{ tc_cloudbase_platform_static_store | combine({'env_id': tc_cloudbase_platform_environment.env_id, 'state': 'absent'}) }}"
+
+- name: Remove CloudBase environment
+  when: tc_cloudbase_platform_state == 'absent'
+  susunola.tencentcloud.tcb_environment:
+  args: "{{ tc_cloudbase_platform_environment | combine({'state': 'absent'}) }}"

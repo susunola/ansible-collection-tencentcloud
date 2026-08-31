@@ -47,6 +47,7 @@ ROLE_SERVICES = {
     "tc_config_governance": "config",
     "tc_chdfs_data_lake": "chdfs",
     "tc_cloud_firewall_policy": "cfw",
+    "tc_cloudbase_platform": "tcb",
     "tc_elasticsearch_platform": "es",
     "tc_sqlserver_stack": "sqlserver",
     "tc_gwlb_service_chain": "gwlb",

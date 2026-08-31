@@ -1822,6 +1822,10 @@ modules:
   - ModifyClusterPassword
   tcaplusdb_cluster_info:
   - DescribeClusters
+  tcb_auth_domain:
+  - CreateAuthDomain
+  - DeleteAuthDomain
+  - DescribeAuthDomains
   tcb_billing_info:
   - DescribeBillingInfo
   tcb_environment:
@@ -1834,6 +1838,10 @@ modules:
   - DeleteHTTPServiceRoute
   - DescribeHTTPServiceRoute
   - ModifyHTTPServiceRoute
+  tcb_static_store:
+  - CreateStaticStore
+  - DescribeStaticStore
+  - DestroyStaticStore
   tcbr_cloud_run_pod_info:
   - DescribeCloudRunPodList
   tcm_mesh:

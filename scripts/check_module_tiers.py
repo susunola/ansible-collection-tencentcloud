@@ -393,6 +393,8 @@ CORE_MODULES = {
     "tke_backup_storage_location",
     "tcaplusdb_cluster",
     "tcb_environment",
+    "tcb_auth_domain",
+    "tcb_static_store",
     "tcb_http_service_route",
     "tcm_mesh",
     "tcm_mesh_clusters",

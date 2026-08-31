@@ -1,0 +1,4 @@
+minor_changes:
+  - Add ``tcb_auth_domain`` for idempotent CloudBase user authentication-domain lifecycle management.
+  - Add ``tcb_static_store`` with asynchronous online and destruction convergence for CloudBase static hosting.
+  - Add the ``tc_cloudbase_platform`` solution role for environment, static hosting, authentication-domain and HTTP-route composition.

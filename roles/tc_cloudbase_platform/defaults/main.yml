@@ -1,0 +1,7 @@
+---
+tc_cloudbase_platform_state: present
+tc_cloudbase_platform_environment: {}
+tc_cloudbase_platform_static_store: {}
+tc_cloudbase_platform_auth_domains: []
+tc_cloudbase_platform_http_routes: []
+tc_cloudbase_platform_allow_destroy: false

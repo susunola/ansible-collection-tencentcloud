@@ -468,9 +468,11 @@ action_groups:
     - tbaas_block_info
     - tcaplusdb_cluster
     - tcaplusdb_cluster_info
+    - tcb_auth_domain
     - tcb_billing_info
     - tcb_environment
     - tcb_http_service_route
+    - tcb_static_store
     - tcbr_cloud_run_pod_info
     - tcm_mesh
     - tcm_mesh_clusters
