@@ -17,6 +17,8 @@ route creation. Guarded teardown removes routes and services before the gateway.
           gateway_version: 2.5.1
           feature_version: STANDARD
           node_config: {Specification: 2c4g, Number: 2}
+          # Required only when changing node_config after creation.
+          spec_group_id: group-xxxxxxxx
           vpc_config: {VpcId: vpc-xxxxxxxx, SubnetId: subnet-xxxxxxxx}
         tc_tse_api_gateway_autoscaler_strategies:
           - name: production-elasticity

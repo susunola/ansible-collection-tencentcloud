@@ -1,4 +1,6 @@
-from ansible_collections.susunola.tencentcloud.plugins.modules.tse_cloud_native_gateway import create_request, update_request
+import json
+
+from ansible_collections.susunola.tencentcloud.plugins.modules.tse_cloud_native_gateway import create_request, spec_request, update_request
 
 
 class Value(object):
@@ -6,6 +8,7 @@ class Value(object):
 class Models(object):
     CreateCloudNativeAPIGatewayRequest=Value
     ModifyCloudNativeAPIGatewayRequest=Value
+    UpdateCloudNativeAPIGatewaySpecRequest=Value
 
 
 def test_gateway_requests_map_creation_and_mutable_fields():
@@ -13,3 +16,12 @@ def test_gateway_requests_map_creation_and_mutable_fields():
     assert '"EngineRegion": "ap-guangzhou"' in create_request(Models,p).raw
     value=update_request(Models,"g1",{"Name":"gw2","Description":"x","EnableCls":True,"InternetPayMode":"TRAFFIC","DeleteProtect":True})
     assert value.GatewayId=="g1" and value.DeleteProtect is True
+
+
+def test_gateway_spec_request_maps_group_and_node_configuration():
+    value=spec_request(Models,"g1","group-1",{"Specification":"4c8g","Number":4})
+    assert json.loads(value.raw)=={
+        "GatewayId":"g1",
+        "GroupId":"group-1",
+        "NodeConfig":{"Specification":"4c8g","Number":4},
+    }
