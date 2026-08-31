@@ -2,3 +2,6 @@ minor_changes:
   - >-
     lookup plugins - add ``resource_id`` for exact, ambiguity-safe name-to-ID
     resolution across VPC, subnet, security group, CVM, CLB, TKE and CDB.
+  - >-
+    resource_id lookup - add STS AssumeRole, endpoint override, request timeout
+    and SDK client-identifier options consistent with resource modules.

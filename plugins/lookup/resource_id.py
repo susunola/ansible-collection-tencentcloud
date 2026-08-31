@@ -49,6 +49,29 @@ options:
     description: TCCLI credential profile used as a fallback.
     type: str
     env: [{name: TENCENTCLOUD_PROFILE}]
+  role_arn:
+    description: CAM role ARN to assume before resolving resources.
+    type: str
+    env: [{name: TENCENTCLOUD_ROLE_ARN}]
+  role_session_name:
+    description: Session name used by STS AssumeRole.
+    type: str
+    default: ansible-tencentcloud-resource-lookup
+  role_session_duration:
+    description: STS session duration in seconds.
+    type: int
+    default: 7200
+  endpoint:
+    description: Override the selected product API endpoint.
+    type: str
+  timeout:
+    description: API request timeout in seconds.
+    type: int
+    default: 60
+  user_agent:
+    description: Client identifier appended to Tencent Cloud SDK requests.
+    type: str
+    default: ansible-collection.susunola.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
@@ -64,6 +87,13 @@ EXAMPLES = r'''
     app_subnet_id: >-
       {{ lookup('susunola.tencentcloud.resource_id', 'app-a',
                 resource_type='subnet', vpc_id=production_vpc_id,
+                region='ap-guangzhou') }}
+
+- name: Resolve through an assumed cross-account role
+  ansible.builtin.set_fact:
+    shared_vpc_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', 'shared-services',
+                resource_type='vpc', role_arn=shared_account_role,
                 region='ap-guangzhou') }}
 '''
 
@@ -168,6 +198,43 @@ def sdk_error_message(resource_type, name, exc):
     return "Resolve %s %r failed: %s" % (resource_type, name, detail)
 
 
+def build_client_profile(endpoint, timeout=60, user_agent=None):
+    """Build the same endpoint, timeout and client identifier profile as modules."""
+    http_profile = HttpProfile()
+    http_profile.endpoint = endpoint
+    http_profile.reqTimeout = timeout
+    profile = ClientProfile()
+    profile.httpProfile = http_profile
+    profile.language = "en-US"
+    if user_agent:
+        profile.request_client = user_agent
+    return profile
+
+
+def assume_role(base_credential, role_arn, session_name, duration, region, timeout, user_agent,
+                models=None, client_module=None):
+    """Exchange base credentials for temporary STS role credentials."""
+    if models is None or client_module is None:
+        package = "tencentcloud.sts.v20180813"
+        models = importlib.import_module(package + ".models")
+        client_module = importlib.import_module(package + ".sts_client")
+    client = client_module.StsClient(
+        base_credential,
+        region,
+        build_client_profile("sts.tencentcloudapi.com", timeout, user_agent),
+    )
+    request = models.AssumeRoleRequest()
+    request.RoleArn = role_arn
+    request.RoleSessionName = session_name
+    request.DurationSeconds = duration
+    temporary = client.AssumeRole(request).Credentials
+    return tc_credential.Credential(
+        temporary.TmpSecretId,
+        temporary.TmpSecretKey,
+        temporary.Token,
+    )
+
+
 class LookupModule(LookupBase):
 
     def run(self, terms, variables=None, **kwargs):
@@ -192,12 +259,23 @@ class LookupModule(LookupBase):
         package = "tencentcloud.%s" % spec[0]
         models = importlib.import_module(package + ".models")
         client_module = importlib.import_module(package + "." + spec[0].split(".")[0] + "_client")
-        profile = ClientProfile()
-        profile.httpProfile = HttpProfile()
-        profile.httpProfile.endpoint = spec[2]
-        profile.httpProfile.reqTimeout = 60
-        profile.language = "en-US"
+        timeout = self.get_option("timeout")
+        user_agent = self.get_option("user_agent")
+        profile = build_client_profile(self.get_option("endpoint") or spec[2], timeout, user_agent)
         credential = tc_credential.Credential(secret_id, secret_key, self.get_option("token"))
+        if self.get_option("role_arn"):
+            try:
+                credential = assume_role(
+                    credential,
+                    self.get_option("role_arn"),
+                    self.get_option("role_session_name"),
+                    self.get_option("role_session_duration"),
+                    region,
+                    timeout,
+                    user_agent,
+                )
+            except Exception as exc:
+                raise AnsibleError(sdk_error_message("sts_role", self.get_option("role_arn"), exc))
         client = getattr(client_module, spec[1])(credential, region, profile)
         values = []
         for name in terms:

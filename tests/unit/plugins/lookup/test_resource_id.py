@@ -8,10 +8,13 @@ import pytest
 from ansible.errors import AnsibleError
 
 from ansible_collections.susunola.tencentcloud.plugins.lookup.resource_id import (
+    assume_role,
+    build_client_profile,
     build_request,
     resolve_resource,
     sdk_error_message,
 )
+from ansible_collections.susunola.tencentcloud.plugins.lookup import resource_id as lookup_mod
 
 
 class Object(object):
@@ -101,3 +104,42 @@ def test_sdk_error_message_keeps_code_and_request_id():
     message = sdk_error_message("vpc", "production", Failure("denied"))
     assert "UnauthorizedOperation" in message
     assert "req-1" in message
+
+
+def test_build_client_profile_applies_enterprise_client_options(monkeypatch):
+    monkeypatch.setattr(lookup_mod, "HttpProfile", Object)
+    monkeypatch.setattr(lookup_mod, "ClientProfile", Object)
+    profile = build_client_profile("vpc.internal.example", 17, "ansible-test-client")
+    assert profile.httpProfile.endpoint == "vpc.internal.example"
+    assert profile.httpProfile.reqTimeout == 17
+    assert profile.request_client == "ansible-test-client"
+    assert profile.language == "en-US"
+
+
+def test_assume_role_returns_temporary_credential(monkeypatch):
+    class Credential(object):
+        def __init__(self, secret_id, secret_key, token=None):
+            self.values = (secret_id, secret_key, token)
+
+    class StsClient(object):
+        def __init__(self, credential, region, profile):
+            self.region = region
+
+        def AssumeRole(self, request):
+            assert request.RoleArn == "qcs::cam::uin/1:roleName/reader"
+            assert request.RoleSessionName == "lookup"
+            assert request.DurationSeconds == 900
+            return Object(Credentials=Object(
+                TmpSecretId="tmp-id", TmpSecretKey="tmp-key", Token="tmp-token"))
+
+    monkeypatch.setattr(lookup_mod, "tc_credential", Object(Credential=Credential))
+    monkeypatch.setattr(lookup_mod, "HttpProfile", Object)
+    monkeypatch.setattr(lookup_mod, "ClientProfile", Object)
+    result = assume_role(
+        Credential("base", "base-key"),
+        "qcs::cam::uin/1:roleName/reader",
+        "lookup", 900, "ap-guangzhou", 30, "agent",
+        models=Object(AssumeRoleRequest=Request),
+        client_module=Object(StsClient=StsClient),
+    )
+    assert result.values == ("tmp-id", "tmp-key", "tmp-token")
