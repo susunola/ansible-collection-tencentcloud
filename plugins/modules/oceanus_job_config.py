@@ -74,6 +74,7 @@ import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
 FIELDS={"entrypoint_class":"EntrypointClass","program_args":"ProgramArgs","remark":"Remark","default_parallelism":"DefaultParallelism","properties":"Properties","resource_refs":"ResourceRefDetails","cos_bucket":"COSBucket","log_collect":"LogCollect","log_collect_type":"LogCollectType","cls_logset_id":"ClsLogsetId","cls_topic_id":"ClsTopicId","log_level":"LogLevel","python_version":"PythonVersion","job_manager_spec":"JobManagerSpec","task_manager_spec":"TaskManagerSpec","clazz_levels":"ClazzLevels","expert_mode_on":"ExpertModeOn","expert_mode_configuration":"ExpertModeConfiguration","trace_mode_on":"TraceModeOn","trace_mode_configuration":"TraceModeConfiguration","job_graph":"JobGraph","es_serverless_index":"EsServerlessIndex","es_serverless_space":"EsServerlessSpace","checkpoint_retained":"CheckpointRetainedNum","checkpoint_timeout":"CheckpointTimeoutSecond","checkpoint_interval":"CheckpointIntervalSecond","job_manager_cpu":"JobManagerCpu","job_manager_memory":"JobManagerMem","task_manager_cpu":"TaskManagerCpu","task_manager_memory":"TaskManagerMem","flink_version":"FlinkVersion","jdk_version":"JdkVersion","variable_replace_mode":"VariableReplaceMode","state_cos_bucket":"StateCOSBucket"}
 def _load():
     from tencentcloud.oceanus.v20190422 import models,oceanus_client
@@ -128,6 +129,8 @@ def create_request(models,p,target):
     if "ResourceRefDetails" in payload: payload["ResourceRefs"]=payload.pop("ResourceRefDetails")
     payload.update({"JobId":p["job_id"],"WorkSpaceId":p["workspace_id"],"AutoDelete":1 if p["auto_delete_oldest"] else 0,"ConfigScope":p["config_scope"]}); r.from_json_string(json.dumps(payload)); return r
 def delete_request(models,p): r=models.DeleteJobConfigsRequest(); r.JobId=p["job_id"]; r.WorkSpaceId=p["workspace_id"]; r.JobConfigVersions=[p["version"]]; r.ConfigScope=p["config_scope"]; return r
+def wait_config(module,client,models,p,version,present):
+    wait_for_state(module,lambda:"present" if describe(module,client,models,p,version) is not None else "absent",["present" if present else "absent"],timeout=p["waiter_timeout"],delay=p["waiter_delay"])
 def run_module():
     ref_options={"ResourceId":{"required":True},"Version":{"type":"int","required":True},"Type":{"type":"int","choices":[0,1,2,3,4],"required":True}}
     named_ref_options={"Name":{"required":True},"Version":{"type":"int"},"Type":{"type":"int","choices":[0,1,2,3,4],"required":True}}
@@ -139,7 +142,7 @@ def run_module():
             if not current: module.exit_json(changed=False,job_config=None)
             if not p["allow_delete"]: module.fail_json(msg="set allow_delete=true to authorize deleting an Oceanus job configuration version",version=p["version"])
             diff=maybe_diff(module,current,None)
-            if not module.check_mode: module.sdk_call(client.DeleteJobConfigs,delete_request(models,p))
+            if not module.check_mode: module.sdk_call(client.DeleteJobConfigs,delete_request(models,p)); wait_config(module,client,models,p,p["version"],False)
             module.exit_json(changed=True,**(diff or {}),job_config=None)
         if p.get("resource_ref_names") is not None: p["resource_refs"]=resolve_named_refs(module,client,models,p)
         target=desired(p)
@@ -147,7 +150,7 @@ def run_module():
         current=describe(module,client,models,p); before=observed(current,target) if current else None
         if before==target: module.exit_json(changed=False,job_config=current,version=current.get("Version"))
         diff=maybe_diff(module,before,target); version=None
-        if not module.check_mode: version=module.sdk_call(client.CreateJobConfig,create_request(models,p,target)).Version; current=describe(module,client,models,p,version)
+        if not module.check_mode: version=module.sdk_call(client.CreateJobConfig,create_request(models,p,target)).Version; wait_config(module,client,models,p,version,True); current=describe(module,client,models,p,version)
         module.exit_json(changed=True,**(diff or {}),job_config=current if not module.check_mode else target,version=version)
     except Exception as exc: module.fail_json(**sdk_error_payload(exc))
 def main(): run_module()

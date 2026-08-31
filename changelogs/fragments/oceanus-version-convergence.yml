@@ -1,0 +1,2 @@
+bugfixes:
+  - Wait for Oceanus resources and immutable resource/job configuration versions to become visible or disappear before returning.

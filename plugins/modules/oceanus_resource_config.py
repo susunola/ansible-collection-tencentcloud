@@ -39,6 +39,7 @@ import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
 def _load():
     from tencentcloud.oceanus.v20190422 import models,oceanus_client
     return models,oceanus_client
@@ -74,6 +75,12 @@ def references(module,client,models,p,version):
 def create_request(models,p):
     r=models.CreateResourceConfigRequest(); r.ResourceId,r.WorkSpaceId=p["resource_id"],p["workspace_id"]; r.ResourceLoc=_model(models.ResourceLoc,p["resource_location"]); r.Remark=p.get("remark"); r.AutoDelete=1 if p["auto_delete_oldest"] else 0; return r
 def delete_request(models,p): r=models.DeleteResourceConfigsRequest(); r.ResourceId,r.WorkSpaceId=p["resource_id"],p["workspace_id"]; r.ResourceConfigVersions=[p["version"]]; return r
+def wait_config(module,client,models,p,version,present):
+    def poll():
+        current=describe(module,client,models,p,version)
+        if not present: return "absent" if current is None else "present"
+        return "ready" if current is not None and current.get("Status") in (None,1) else "pending"
+    wait_for_state(module,poll,["ready" if present else "absent"],timeout=p["waiter_timeout"],delay=p["waiter_delay"])
 def run_module():
     spec={"state":{"choices":["present","absent"],"default":"present"},"resource_id":{"required":True},"workspace_id":{"required":True},"version":{"type":"int"},"resource_location":{"type":"dict"},"remark":{},"auto_delete_oldest":{"type":"bool","default":False},"allow_delete_in_use":{"type":"bool","default":False}}
     module=TencentCloudModule(argument_spec=spec,required_if=[("state","present",["resource_location"]),("state","absent",["version"])],supports_check_mode=True); p=module.params; module.require_sdk(); models,cm=_load(); client=module.create_client(cm.OceanusClient,"oceanus.tencentcloudapi.com")
@@ -84,12 +91,12 @@ def run_module():
             refs=references(module,client,models,p,p["version"])
             if refs and not p["allow_delete_in_use"]: module.fail_json(msg="Oceanus resource version is referenced by job configurations; set allow_delete_in_use=true to authorize deletion",version=p["version"],references=refs)
             diff=maybe_diff(module,current,None)
-            if not module.check_mode: module.sdk_call(client.DeleteResourceConfigs,delete_request(models,p))
+            if not module.check_mode: module.sdk_call(client.DeleteResourceConfigs,delete_request(models,p)); wait_config(module,client,models,p,p["version"],False)
             module.exit_json(changed=True,**(diff or {}),resource_config=None)
         target=desired(p); current=describe(module,client,models,p); before=managed_value(current,target) if current else None
         if before==target: module.exit_json(changed=False,resource_config=current,version=current.get("Version"))
         diff=maybe_diff(module,before,target); version=None
-        if not module.check_mode: version=module.sdk_call(client.CreateResourceConfig,create_request(models,p)).Version; current=describe(module,client,models,p,version)
+        if not module.check_mode: version=module.sdk_call(client.CreateResourceConfig,create_request(models,p)).Version; wait_config(module,client,models,p,version,True); current=describe(module,client,models,p,version)
         module.exit_json(changed=True,**(diff or {}),resource_config=current if not module.check_mode else target,version=version)
     except Exception as exc: module.fail_json(**sdk_error_payload(exc))
 def main(): run_module()

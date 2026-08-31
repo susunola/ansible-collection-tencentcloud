@@ -40,6 +40,7 @@ import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
 def _load():
     from tencentcloud.oceanus.v20190422 import models,oceanus_client
     return models,oceanus_client
@@ -70,6 +71,8 @@ def references(module,client,models,p,resource_id):
 def create_request(models,p):
     r=models.CreateResourceRequest(); r.ResourceLoc=_model(models.ResourceLoc,p["resource_location"]); r.ResourceType=p["resource_type"]; r.Remark,r.Name=p.get("remark"),p["name"]; r.ResourceConfigRemark=p.get("version_remark"); r.FolderId,r.WorkSpaceId=p["folder_id"],p["workspace_id"]; return r
 def delete_request(models,p,resource_id): r=models.DeleteResourcesRequest(); r.ResourceIds=[resource_id]; r.WorkSpaceId=p["workspace_id"]; return r
+def wait_resource(module,client,models,p,present):
+    wait_for_state(module,lambda:"present" if find(module,client,models,p) is not None else "absent",["present" if present else "absent"],timeout=p["waiter_timeout"],delay=p["waiter_delay"])
 def run_module():
     spec={"state":{"choices":["present","absent"],"default":"present"},"resource_id":{},"name":{},"workspace_id":{"required":True},"resource_type":{"type":"int","choices":[1],"default":1},"resource_location":{"type":"dict"},"remark":{},"version_remark":{},"folder_id":{"default":"root"},"allow_delete_in_use":{"type":"bool","default":False}}
     module=TencentCloudModule(argument_spec=spec,required_one_of=[("resource_id","name")],supports_check_mode=True); p=module.params; module.require_sdk(); models,cm=_load(); client=module.create_client(cm.OceanusClient,"oceanus.tencentcloudapi.com")
@@ -80,14 +83,15 @@ def run_module():
             refs=references(module,client,models,p,current["ResourceId"])
             if refs and not p["allow_delete_in_use"]: module.fail_json(msg="Oceanus resource is referenced by job configurations; set allow_delete_in_use=true to authorize deletion",references=refs)
             diff=maybe_diff(module,current,None)
-            if not module.check_mode: module.sdk_call(client.DeleteResources,delete_request(models,p,current["ResourceId"]))
+            if not module.check_mode:
+                p["resource_id"]=current["ResourceId"]; module.sdk_call(client.DeleteResources,delete_request(models,p,current["ResourceId"])); wait_resource(module,client,models,p,False)
             module.exit_json(changed=True,**(diff or {}),resource=None)
         if not current:
             missing=[x for x in ("name","resource_location") if p.get(x) is None]
             if missing: module.fail_json(msg="name and resource_location are required to create an Oceanus resource",missing=missing)
             target={"Name":p["name"],"ResourceType":p["resource_type"],"ResourceLoc":p["resource_location"]}; diff=maybe_diff(module,None,target); version=None
             if not module.check_mode:
-                response=module.sdk_call(client.CreateResource,create_request(models,p)); p["resource_id"],version=response.ResourceId,response.Version; current=find(module,client,models,p)
+                response=module.sdk_call(client.CreateResource,create_request(models,p)); p["resource_id"],version=response.ResourceId,response.Version; wait_resource(module,client,models,p,True); current=find(module,client,models,p)
             module.exit_json(changed=True,**(diff or {}),resource=current if not module.check_mode else target,version=version)
         drift={}
         if p.get("name") and current.get("Name")!=p["name"]: drift["Name"]=(current.get("Name"),p["name"])
