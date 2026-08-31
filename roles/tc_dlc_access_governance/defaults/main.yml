@@ -3,6 +3,9 @@ tc_dlc_access_governance_state: present
 tc_dlc_access_governance_store_location: {}
 tc_dlc_access_governance_vpc_connections: []
 tc_dlc_access_governance_data_engines: []
+tc_dlc_access_governance_data_engine_configs: []
+tc_dlc_access_governance_network_connections: []
+tc_dlc_access_governance_notebook_sessions: []
 tc_dlc_access_governance_engine_resource_groups: []
 tc_dlc_access_governance_cluster_groups: []
 tc_dlc_access_governance_partition_queues: []

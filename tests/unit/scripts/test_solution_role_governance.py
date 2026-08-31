@@ -450,6 +450,7 @@ def test_dlc_governance_teardown_removes_access_before_group():
 
 def test_dlc_governance_orders_engines_around_access_resources():
     main = role_tasks("tc_dlc_access_governance")
+    engine_module = "susunola.tencentcloud.dlc_data_engine:\n"
     assert main.index("include_tasks: vpc_connection.yml") < main.index("include_tasks: data_engine.yml")
     assert main.index("include_tasks: data_engine.yml") < main.index("include_tasks: work_group.yml")
     assert main.index("include_tasks: data_engine.yml") < main.index("susunola.tencentcloud.dlc_engine_resource_group")
@@ -486,17 +487,17 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert main.index("include_tasks: work_group.yml") < main.index("susunola.tencentcloud.dlc_data_mask_strategy")
     assert main.index("include_tasks: work_group.yml") < main.index("susunola.tencentcloud.dlc_udf_policy")
     assert main.index("susunola.tencentcloud.dlc_udf_policy") < main.index("susunola.tencentcloud.dlc_data_mask_strategy")
-    assert main.index("include_tasks: teardown_work_group.yml") < main.index("susunola.tencentcloud.dlc_data_engine")
+    assert main.index("include_tasks: teardown_work_group.yml") < main.index(engine_module)
     assert main.rindex("susunola.tencentcloud.dlc_data_mask_strategy") < main.index("include_tasks: teardown_work_group.yml")
     assert main.rindex("susunola.tencentcloud.dlc_udf_policy") < main.index("include_tasks: teardown_work_group.yml")
     assert main.index("include_tasks: teardown_work_group.yml") < main.index("include_tasks: teardown_user.yml")
     assert main.index("include_tasks: teardown_user.yml") < main.rindex("susunola.tencentcloud.dlc_database")
-    assert main.rindex("susunola.tencentcloud.dlc_database") < main.index("susunola.tencentcloud.dlc_data_engine")
+    assert main.rindex("susunola.tencentcloud.dlc_database") < main.index(engine_module)
     assert main.rindex("susunola.tencentcloud.dlc_script") < main.rindex("susunola.tencentcloud.dlc_database")
     assert main.rindex("susunola.tencentcloud.dlc_table:\n") < main.rindex("susunola.tencentcloud.dlc_database")
     assert main.rindex("susunola.tencentcloud.dlc_table_partition:\n") < main.rindex("susunola.tencentcloud.dlc_table:\n")
     assert main.rindex("susunola.tencentcloud.dlc_database") < main.rindex("susunola.tencentcloud.dlc_engine_resource_group")
-    assert main.rindex("susunola.tencentcloud.dlc_engine_resource_group") < main.index("susunola.tencentcloud.dlc_data_engine")
+    assert main.rindex("susunola.tencentcloud.dlc_engine_resource_group") < main.index(engine_module)
     assert main.rindex("susunola.tencentcloud.dlc_spark_job") < main.rindex("susunola.tencentcloud.dlc_engine_resource_group")
     assert main.rindex("susunola.tencentcloud.dlc_lab") < main.rindex("susunola.tencentcloud.dlc_engine_resource_group")
     assert main.rindex("susunola.tencentcloud.dlc_lab") < main.rindex("susunola.tencentcloud.dlc_partition_queue")
@@ -505,7 +506,7 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert main.rindex("susunola.tencentcloud.dlc_job_spec") < main.rindex("susunola.tencentcloud.dlc_ray_cluster")
     assert main.rindex("susunola.tencentcloud.dlc_ray_cluster") < main.rindex("susunola.tencentcloud.dlc_cluster_group")
     assert main.rindex("susunola.tencentcloud.dlc_resource_config") < main.rindex("susunola.tencentcloud.dlc_partition_queue")
-    assert main.index("susunola.tencentcloud.dlc_data_engine") < main.index("susunola.tencentcloud.dlc_user_vpc_connection")
+    assert main.index(engine_module) < main.index("susunola.tencentcloud.dlc_user_vpc_connection")
     assert "allow_delete': true" in main
     defaults = (ROOT / "roles" / "tc_dlc_access_governance" / "defaults" / "main.yml").read_text(encoding="utf-8")
     assert "tc_dlc_access_governance_vpc_connections: []" in defaults
@@ -513,6 +514,12 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert main.index("susunola.tencentcloud.dlc_store_location") < main.index("include_tasks: data_engine.yml")
     assert "tc_dlc_access_governance_store_location | length == 0" in main
     assert "tc_dlc_access_governance_data_engines: []" in defaults
+    assert "tc_dlc_access_governance_data_engine_configs: []" in defaults
+    assert "tc_dlc_access_governance_network_connections: []" in defaults
+    assert "tc_dlc_access_governance_notebook_sessions: []" in defaults
+    assert main.index("include_tasks: data_engine.yml") < main.index("susunola.tencentcloud.dlc_data_engine_config")
+    assert main.index("susunola.tencentcloud.dlc_data_engine_config") < main.index("susunola.tencentcloud.dlc_notebook_session")
+    assert main.rindex("susunola.tencentcloud.dlc_notebook_session") < main.rindex(engine_module)
     assert "tc_dlc_access_governance_engine_resource_groups: []" in defaults
     assert "tc_dlc_access_governance_cluster_groups: []" in defaults
     assert "tc_dlc_access_governance_spark_jobs: []" in defaults

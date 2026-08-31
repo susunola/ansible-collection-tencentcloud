@@ -1,0 +1,2 @@
+minor_changes:
+  - Extend ``tc_dlc_access_governance`` with ordered engine configuration, network metadata and Notebook session orchestration plus published identities.

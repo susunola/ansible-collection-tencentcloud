@@ -25,6 +25,27 @@ ignored when comparing desired access, so repeated runs remain idempotent.
             max_clusters: 4
             auto_suspend: true
             state: running
+        tc_dlc_access_governance_data_engine_configs:
+          - engine_name: production-spark
+            config_pairs:
+              - {key: spark.sql.adaptive.enabled, value: 'true'}
+              - {key: spark.sql.shuffle.partitions, value: '200'}
+            session_resource_template:
+              driver_size: medium
+              executor_size: large
+              executor_nums: 2
+              executor_max_numbers: 8
+        tc_dlc_access_governance_network_connections:
+          - name: private-data
+            data_engine_name: production-spark
+            description: Production analytics data-source route
+        tc_dlc_access_governance_notebook_sessions:
+          - name: analyst-pyspark
+            kind: pyspark
+            data_engine_name: production-spark
+            driver_size: medium
+            executor_size: medium
+            executor_numbers: 2
         tc_dlc_access_governance_engine_resource_groups:
           - name: production-etl
             data_engine_name: production-spark
@@ -116,6 +137,9 @@ ignored when comparing desired access, so repeated runs remain idempotent.
 The resulting endpoint IDs, engine IDs, database names and user IDs are published in
 `tc_dlc_access_governance_result.vpc_endpoint_ids` and
 `tc_dlc_access_governance_result.data_engine_ids`,
+`tc_dlc_access_governance_result.data_engine_config_ids`,
+`tc_dlc_access_governance_result.network_connection_names`,
+`tc_dlc_access_governance_result.notebook_session_ids`,
 `tc_dlc_access_governance_result.engine_resource_group_ids` and
 `tc_dlc_access_governance_result.spark_job_ids` and
 `tc_dlc_access_governance_result.lab_ids` and
@@ -139,6 +163,11 @@ them before compute resources and retains the module's active-task guard; set
 `allow_delete_running: true` on an individual job only when interruption is intended.
 Laboratories follow the same compute-foundation ordering and publish stable IDs for
 downstream automation.
+Engine runtime configuration and existing network metadata are reconciled immediately
+after their parent engines. Notebook sessions are created after those settings converge
+and are deleted before engine teardown. Runtime configuration and network-description
+lists must be empty in role teardown mode because their APIs expose no delete/reset
+lifecycle.
 Partition queues are reconciled before laboratories and removed afterwards. A default
 queue additionally requires `allow_delete_default: true` on that queue item.
 Resource templates are created before laboratories and deleted only after Lab/Ray

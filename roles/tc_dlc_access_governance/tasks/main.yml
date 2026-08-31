@@ -22,6 +22,8 @@
       - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_model_versions | length == 0
       - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_inference_services | length == 0
       - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_store_location | length == 0
+      - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_data_engine_configs | length == 0
+      - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_network_connections | length == 0
       - >-
         tc_dlc_access_governance_state == 'present'
         or (tc_dlc_access_governance_work_groups
@@ -51,6 +53,9 @@
   ansible.builtin.set_fact:
     _tc_dlc_vpc_endpoint_ids: {}
     _tc_dlc_data_engine_ids: {}
+    _tc_dlc_data_engine_config_ids: []
+    _tc_dlc_network_connection_names: []
+    _tc_dlc_notebook_session_ids: {}
     _tc_dlc_engine_resource_group_ids: {}
     _tc_dlc_cluster_group_ids: {}
     _tc_dlc_partition_queue_ids: {}
@@ -94,6 +99,52 @@
   loop_control:
     loop_var: _tc_dlc_engine
     label: "{{ _tc_dlc_engine.name }}"
+
+- name: Reconcile DLC engine runtime configurations after parent engines
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_data_engine_config:
+  args: "{{ _tc_dlc_engine_config }}"
+  loop: "{{ tc_dlc_access_governance_data_engine_configs }}"
+  loop_control:
+    loop_var: _tc_dlc_engine_config
+    label: "{{ _tc_dlc_engine_config.engine_name | default(_tc_dlc_engine_config.engine_id) }}"
+  register: _tc_dlc_engine_config_results
+
+- name: Record configured DLC engine identities
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dlc_data_engine_config_ids: "{{ _tc_dlc_engine_config_results.results | map(attribute='engine_id') | list }}"
+
+- name: Reconcile existing DLC network-connection metadata after engines
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_network_connection:
+  args: "{{ _tc_dlc_network_connection }}"
+  loop: "{{ tc_dlc_access_governance_network_connections }}"
+  loop_control:
+    loop_var: _tc_dlc_network_connection
+    label: "{{ _tc_dlc_network_connection.name }}"
+
+- name: Record managed DLC network-connection names
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dlc_network_connection_names: "{{ tc_dlc_access_governance_network_connections | map(attribute='name') | list }}"
+
+- name: Reconcile DLC Notebook sessions after engine configuration
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_notebook_session:
+  args: "{{ _tc_dlc_notebook | combine({'state': 'present'}) }}"
+  loop: "{{ tc_dlc_access_governance_notebook_sessions }}"
+  loop_control:
+    loop_var: _tc_dlc_notebook
+    label: "{{ _tc_dlc_notebook.name | default(_tc_dlc_notebook.session_id) }}"
+  register: _tc_dlc_notebook_results
+
+- name: Record DLC Notebook session identities
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dlc_notebook_session_ids: >-
+      {{ dict((tc_dlc_access_governance_notebook_sessions | map(attribute='name') | list)
+              | zip(_tc_dlc_notebook_results.results | map(attribute='session_id') | list)) }}
 
 - name: Reconcile DLC engine resource groups after parent engines
   when: tc_dlc_access_governance_state == 'present'
@@ -754,6 +805,17 @@
     loop_var: _tc_dlc_resource_group
     label: "{{ _tc_dlc_resource_group.name }}"
 
+- name: Remove DLC Notebook sessions before parent engines
+  when:
+    - tc_dlc_access_governance_state == 'absent'
+    - tc_dlc_access_governance_allow_destroy | bool
+  susunola.tencentcloud.dlc_notebook_session:
+  args: "{{ _tc_dlc_notebook | combine({'state': 'absent', 'allow_delete': true}) }}"
+  loop: "{{ tc_dlc_access_governance_notebook_sessions | reverse | list }}"
+  loop_control:
+    loop_var: _tc_dlc_notebook
+    label: "{{ _tc_dlc_notebook.name | default(_tc_dlc_notebook.session_id) }}"
+
 - name: Remove DLC data engines after access policies, groups and databases
   when:
     - tc_dlc_access_governance_state == 'absent'
@@ -783,6 +845,9 @@
       vpc_endpoint_ids: "{{ _tc_dlc_vpc_endpoint_ids }}"
       store_location_config: "{{ (_tc_dlc_store_location_result | default({})).store_location_config | default({}) }}"
       data_engine_ids: "{{ _tc_dlc_data_engine_ids }}"
+      data_engine_config_ids: "{{ _tc_dlc_data_engine_config_ids }}"
+      network_connection_names: "{{ _tc_dlc_network_connection_names }}"
+      notebook_session_ids: "{{ _tc_dlc_notebook_session_ids }}"
       engine_resource_group_ids: "{{ _tc_dlc_engine_resource_group_ids }}"
       cluster_group_ids: "{{ _tc_dlc_cluster_group_ids }}"
       partition_queue_ids: "{{ _tc_dlc_partition_queue_ids }}"
