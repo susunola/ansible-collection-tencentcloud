@@ -630,6 +630,7 @@ action_groups:
     - tse_sre_topology_info
     - tsf_application
     - tsf_application_info
+    - tsf_cluster
     - tsf_namespace
     - vcube_resource_info
     - vdb_instance

@@ -2501,6 +2501,11 @@ modules:
   - ModifyApplication
   tsf_application_info:
   - DescribeApplications
+  tsf_cluster:
+  - CreateCluster
+  - DeleteCluster
+  - DescribeClusters
+  - ModifyCluster
   tsf_namespace:
   - CreateNamespace
   - DeleteNamespace
