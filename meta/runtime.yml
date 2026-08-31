@@ -223,6 +223,7 @@ action_groups:
     - dlc_database
     - dlc_engine_resource_group
     - dlc_lab
+    - dlc_partition_queue
     - dlc_spark_job
     - dlc_task_info
     - dlc_user

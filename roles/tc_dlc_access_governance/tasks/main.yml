@@ -33,6 +33,7 @@
     _tc_dlc_vpc_endpoint_ids: {}
     _tc_dlc_data_engine_ids: {}
     _tc_dlc_engine_resource_group_ids: {}
+    _tc_dlc_partition_queue_ids: {}
     _tc_dlc_lab_ids: {}
     _tc_dlc_spark_job_ids: {}
     _tc_dlc_database_names: []
@@ -73,7 +74,24 @@
       {{ dict((tc_dlc_access_governance_engine_resource_groups | map(attribute='name') | list)
               | zip(_tc_dlc_resource_group_results.results | map(attribute='resource_group_id') | list)) }}
 
-- name: Reconcile DLC laboratories after compute resources
+- name: Reconcile DLC partition queues before laboratories
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_partition_queue:
+  args: "{{ _tc_dlc_queue | combine({'state': 'present'}) }}"
+  loop: "{{ tc_dlc_access_governance_partition_queues }}"
+  loop_control:
+    loop_var: _tc_dlc_queue
+    label: "{{ _tc_dlc_queue.partition_code }}/{{ _tc_dlc_queue.name }}"
+  register: _tc_dlc_queue_results
+
+- name: Record DLC partition queue identities
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dlc_partition_queue_ids: >-
+      {{ dict((tc_dlc_access_governance_partition_queues | map(attribute='name') | list)
+              | zip(_tc_dlc_queue_results.results | map(attribute='queue_id') | list)) }}
+
+- name: Reconcile DLC laboratories after partition queues
   when: tc_dlc_access_governance_state == 'present'
   susunola.tencentcloud.dlc_lab:
   args: "{{ _tc_dlc_lab | combine({'state': 'present'}) }}"
@@ -231,6 +249,17 @@
     loop_var: _tc_dlc_lab
     label: "{{ _tc_dlc_lab.name }}"
 
+- name: Remove DLC partition queues after laboratories
+  when:
+    - tc_dlc_access_governance_state == 'absent'
+    - tc_dlc_access_governance_allow_destroy | bool
+  susunola.tencentcloud.dlc_partition_queue:
+  args: "{{ _tc_dlc_queue | combine({'state': 'absent', 'allow_delete': true}) }}"
+  loop: "{{ tc_dlc_access_governance_partition_queues | reverse | list }}"
+  loop_control:
+    loop_var: _tc_dlc_queue
+    label: "{{ _tc_dlc_queue.partition_code }}/{{ _tc_dlc_queue.name }}"
+
 - name: Remove DLC engine resource groups before parent engines
   when:
     - tc_dlc_access_governance_state == 'absent'
@@ -271,6 +300,7 @@
       vpc_endpoint_ids: "{{ _tc_dlc_vpc_endpoint_ids }}"
       data_engine_ids: "{{ _tc_dlc_data_engine_ids }}"
       engine_resource_group_ids: "{{ _tc_dlc_engine_resource_group_ids }}"
+      partition_queue_ids: "{{ _tc_dlc_partition_queue_ids }}"
       lab_ids: "{{ _tc_dlc_lab_ids }}"
       spark_job_ids: "{{ _tc_dlc_spark_job_ids }}"
       database_names: "{{ _tc_dlc_database_names }}"

@@ -167,6 +167,7 @@ CORE_MODULES = {
     "dlc_data_engine",
     "dlc_engine_resource_group",
     "dlc_lab",
+    "dlc_partition_queue",
     "dlc_spark_job",
     "dlc_database",
     "dlc_data_mask_strategy",

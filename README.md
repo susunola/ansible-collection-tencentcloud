@@ -152,6 +152,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `dlc_database` | Manage Tencent Cloud Data Lake Compute metadata databases |
 | `dlc_engine_resource_group` | Manage Tencent Cloud DLC standard engine resource groups |
 | `dlc_lab` | Manage Tencent Cloud DLC data laboratories |
+| `dlc_partition_queue` | Manage Tencent Cloud DLC resource partition queues |
 | `dlc_spark_job` | Manage Tencent Cloud DLC Spark job definitions |
 | `dlc_user` | Manage Tencent Cloud Data Lake Compute users |
 | `dlc_user_policy` | Manage Tencent Cloud Data Lake Compute user policies |
