@@ -1,0 +1,4 @@
+---
+minor_changes:
+  - Add idempotent named EMR load-based and time-based automatic scaling strategy management.
+  - Add the tc_emr_platform role with guarded cluster termination.

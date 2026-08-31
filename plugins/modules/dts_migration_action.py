@@ -53,12 +53,14 @@ def execute(module, client, models, params):
     cls_name = {"start": "StartMigrateJobRequest", "pause": "PauseMigrateJobRequest",
                 "resume": "ResumeMigrateJobRequest", "stop": "StopMigrateJobRequest",
                 "complete": "CompleteMigrateJobRequest"}[action]
-    method_name = {"start": "StartMigrateJob", "pause": "PauseMigrateJob", "resume": "ResumeMigrateJob",
-                   "stop": "StopMigrateJob", "complete": "CompleteMigrateJob"}[action]
     request = getattr(models, cls_name)(); request.JobId = params["job_id"]
     if action == "resume": request.ResumeOption = params["resume_option"]
     if action == "complete": request.CompleteMode = params["complete_mode"]
-    module.sdk_call(getattr(client, method_name), request)
+    if action == "start": module.sdk_call(client.StartMigrateJob, request)
+    elif action == "pause": module.sdk_call(client.PauseMigrateJob, request)
+    elif action == "resume": module.sdk_call(client.ResumeMigrateJob, request)
+    elif action == "stop": module.sdk_call(client.StopMigrateJob, request)
+    else: module.sdk_call(client.CompleteMigrateJob, request)
 
 
 def run_module():

@@ -6,9 +6,9 @@ This matrix is generated from module SDK imports and role metadata. It is a
 navigation and gap-discovery aid, not a claim that every Tencent Cloud API is covered.
 
 - Products/services: **203**
-- Write modules: **304**
+- Write modules: **305**
 - Information modules: **210**
-- Solution roles: **46**
+- Solution roles: **47**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -106,7 +106,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `ecm` | discovery-only | 0 | 1 | — | — |
 | `eiam` | discovery-only | 0 | 1 | — | — |
 | `eis` | discovery-only | 0 | 1 | — | — |
-| `emr` | managed | 1 | 1 | — | `emr_cluster` |
+| `emr` | solution | 2 | 1 | `tc_emr_platform` | `emr_auto_scale_strategy`, `emr_cluster` |
 | `es` | solution | 3 | 1 | `tc_elasticsearch_platform` | `elasticsearch_index`, `elasticsearch_instance`, `elasticsearch_snapshot` |
 | `ess` | discovery-only | 0 | 1 | — | — |
 | `essbasic` | discovery-only | 0 | 1 | — | — |

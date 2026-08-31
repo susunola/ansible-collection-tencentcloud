@@ -1,0 +1,5 @@
+---
+tc_emr_platform_state: present
+tc_emr_platform_cluster: {}
+tc_emr_platform_scaling_strategies: []
+tc_emr_platform_allow_destroy: false

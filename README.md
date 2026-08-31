@@ -153,6 +153,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `elasticsearch_index` | Manage indexes in Tencent Cloud Elasticsearch Service |
 | `elasticsearch_instance` | Manage Tencent Cloud Elasticsearch clusters |
 | `elasticsearch_snapshot` | Manage Tencent Cloud Elasticsearch cluster snapshots |
+| `emr_auto_scale_strategy` | Manage Tencent Cloud EMR automatic scaling strategies |
 | `emr_cluster` | Manage Tencent Cloud EMR clusters |
 | `gaap_proxy` | Manage Tencent Cloud GAAP proxies |
 | `goosefs_file_system` | Manage Tencent Cloud GooseFS file systems |

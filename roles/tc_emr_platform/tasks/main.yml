@@ -1,0 +1,41 @@
+---
+- name: Validate EMR platform inputs
+  ansible.builtin.assert:
+    that:
+      - tc_emr_platform_state in ['present', 'absent']
+      - tc_emr_platform_cluster | length > 0
+    fail_msg: EMR platform requires cluster creation fields or an existing cluster identity.
+
+- name: Reconcile EMR cluster
+  when: tc_emr_platform_state == 'present'
+  susunola.tencentcloud.emr_cluster:
+  args: "{{ tc_emr_platform_cluster | combine({'state': 'present'}) }}"
+  register: _tc_emr_platform_cluster
+
+- name: Reconcile EMR automatic scaling strategies
+  when: tc_emr_platform_state == 'present'
+  susunola.tencentcloud.emr_auto_scale_strategy:
+  args: "{{ item | combine({'state': 'present', 'cluster_id': _tc_emr_platform_cluster.cluster.ClusterId}) }}"
+  loop: "{{ tc_emr_platform_scaling_strategies }}"
+  register: _tc_emr_platform_scaling
+
+- name: Publish EMR platform result
+  when: tc_emr_platform_state == 'present'
+  ansible.builtin.set_fact:
+    tc_emr_platform_result:
+      cluster: "{{ _tc_emr_platform_cluster.cluster }}"
+      scaling_strategies: "{{ _tc_emr_platform_scaling.results | default([]) }}"
+
+- name: Require explicit authorization before destroying EMR cluster
+  when:
+    - tc_emr_platform_state == 'absent'
+    - not tc_emr_platform_allow_destroy | bool
+  ansible.builtin.fail:
+    msg: Set tc_emr_platform_allow_destroy=true to authorize EMR cluster termination.
+
+- name: Terminate EMR cluster
+  when:
+    - tc_emr_platform_state == 'absent'
+    - tc_emr_platform_allow_destroy | bool
+  susunola.tencentcloud.emr_cluster:
+  args: "{{ tc_emr_platform_cluster | combine({'state': 'absent'}) }}"

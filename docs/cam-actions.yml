@@ -800,12 +800,26 @@ modules:
   - DeleteConsumerGroup
   - DescribeConsumerGroups
   - ModifyConsumerGroupDescription
+  dts_migration_action:
+  - CompleteMigrateJob
+  - DescribeMigrationDetail
+  - PauseMigrateJob
+  - ResumeMigrateJob
+  - StartMigrateJob
+  - StopMigrateJob
+  dts_migration_check:
+  - CreateMigrateCheckJob
+  - DescribeMigrationCheckJob
   dts_migration_job:
   - CreateMigrationService
   - DescribeMigrationJobs
   - DestroyMigrateJob
   - ModifyMigrateJobSpec
   - ModifyMigrateName
+  dts_migration_job_config:
+  - DescribeMigrationDetail
+  - DescribeMigrationJobs
+  - ModifyMigrationJob
   dts_subscribe_job_info:
   - DescribeSubscribeJobs
   eb_connection:
@@ -867,6 +881,11 @@ modules:
   - CreateClusterSnapshot
   - DeleteClusterSnapshot
   - DescribeClusterSnapshot
+  emr_auto_scale_strategy:
+  - AddMetricScaleStrategy
+  - DeleteAutoScaleStrategy
+  - DescribeAutoScaleStrategies
+  - ModifyAutoScaleStrategy
   emr_cluster:
   - CreateCluster
   - DescribeInstances

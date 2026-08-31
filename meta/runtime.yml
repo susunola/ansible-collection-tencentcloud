@@ -235,6 +235,7 @@ action_groups:
     - elasticsearch_index
     - elasticsearch_instance
     - elasticsearch_snapshot
+    - emr_auto_scale_strategy
     - emr_cluster
     - emr_node_data_disk_info
     - es_cluster_info
