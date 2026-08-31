@@ -1,0 +1,10 @@
+minor_changes:
+  - >-
+    roles - add ``tc_database_stack`` for a CDB instance, databases, accounts,
+    exact privilege sets and backup retention.
+  - >-
+    roles - add ``tc_serverless_application`` for SCF code and configuration,
+    aliases, triggers and optional API Gateway publication.
+  - >-
+    roles - add ``tc_observability_baseline`` for CLS indexed topics and Cloud
+    Monitor alarm policies.

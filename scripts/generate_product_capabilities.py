@@ -20,8 +20,11 @@ SPECIAL_SERVICES = {
     "tag": "tag",
 }
 ROLE_SERVICES = {
+    "tc_database_stack": "cdb",
     "tc_launch": "cvm",
     "tc_clb_http": "clb",
+    "tc_observability_baseline": "cls",
+    "tc_serverless_application": "scf",
     "tc_tem_application": "tem",
     "tc_tke_platform": "tke",
     "tc_vpc_foundation": "vpc",

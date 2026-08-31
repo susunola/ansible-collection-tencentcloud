@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **5**
+- Solution roles: **8**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -51,7 +51,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `cat` | discovery-only | 0 | 1 | — | — |
 | `cbs` | resource-family | 5 | 1 | — | `cbs_auto_snapshot_policy`, `cbs_disk`, `cbs_disk_backup`, `cbs_snapshot`, `cbs_snapshot_share` |
 | `ccc` | discovery-only | 0 | 1 | — | — |
-| `cdb` | resource-family | 7 | 1 | — | `cdb_account`, `cdb_account_privilege`, `cdb_audit_config`, `cdb_backup_config`, `cdb_database`, `cdb_instance`, `cdb_parameter_template` |
+| `cdb` | solution | 7 | 1 | `tc_database_stack` | `cdb_account`, `cdb_account_privilege`, `cdb_audit_config`, `cdb_backup_config`, `cdb_database`, `cdb_instance`, `cdb_parameter_template` |
 | `cdc` | discovery-only | 0 | 1 | — | — |
 | `cdn` | managed | 2 | 1 | — | `cdn_cls_log_topic`, `cdn_domain` |
 | `cds` | discovery-only | 0 | 1 | — | — |
@@ -72,7 +72,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `cloudhsm` | discovery-only | 0 | 1 | — | — |
 | `cloudrc` | discovery-only | 0 | 1 | — | — |
 | `cloudstudio` | discovery-only | 0 | 1 | — | — |
-| `cls` | resource-family | 7 | 1 | — | `cls_config`, `cls_config_machine_group_binding`, `cls_index`, `cls_logset`, `cls_machine_group`, `cls_shipper`, `cls_topic` |
+| `cls` | solution | 7 | 1 | `tc_observability_baseline` | `cls_config`, `cls_config_machine_group_binding`, `cls_index`, `cls_logset`, `cls_machine_group`, `cls_shipper`, `cls_topic` |
 | `cme` | discovery-only | 0 | 1 | — | — |
 | `cmq` | discovery-only | 0 | 1 | — | — |
 | `cms` | discovery-only | 0 | 1 | — | — |
@@ -165,7 +165,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `redis` | resource-family | 4 | 1 | — | `redis_account`, `redis_backup_config`, `redis_instance`, `redis_parameter_template` |
 | `region` | discovery-only | 0 | 1 | — | — |
 | `rum` | discovery-only | 0 | 1 | — | — |
-| `scf` | resource-family | 4 | 1 | — | `scf_alias`, `scf_function`, `scf_trigger`, `scf_version` |
+| `scf` | solution | 4 | 1 | `tc_serverless_application` | `scf_alias`, `scf_function`, `scf_trigger`, `scf_version` |
 | `securitylake` | discovery-only | 0 | 1 | — | — |
 | `ses` | discovery-only | 0 | 1 | — | — |
 | `smh` | discovery-only | 0 | 1 | — | — |

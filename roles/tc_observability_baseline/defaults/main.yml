@@ -1,0 +1,11 @@
+---
+tc_observability_baseline_state: present
+tc_observability_baseline_region: ""
+tc_observability_baseline_logset_id: ""
+tc_observability_baseline_logset_name: ""
+tc_observability_baseline_tags: {}
+
+# Topic items follow cls_topic; optional index maps to cls_index options.
+tc_observability_baseline_topics: []
+# Policy items follow monitor_alarm_policy.
+tc_observability_baseline_alarm_policies: []

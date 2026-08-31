@@ -1,0 +1,31 @@
+---
+tc_database_stack_state: present
+tc_database_stack_region: ""
+tc_database_stack_instance_id: ""
+tc_database_stack_name: ""
+tc_database_stack_zone: ""
+tc_database_stack_engine_version: "8.0"
+tc_database_stack_memory: null
+tc_database_stack_volume: null
+tc_database_stack_root_password: ""
+tc_database_stack_vpc_id: ""
+tc_database_stack_subnet_id: ""
+tc_database_stack_security_groups: []
+tc_database_stack_project_id: null
+tc_database_stack_period_months: null
+tc_database_stack_auto_renew: null
+tc_database_stack_tags: {}
+
+# Items: {name, character_set?}
+tc_database_stack_databases: []
+# Items: {username, host?, password?, rotate_password?, description?, privileges?}
+tc_database_stack_accounts: []
+
+tc_database_stack_backup_enabled: true
+tc_database_stack_backup_expire_days: 7
+tc_database_stack_backup_start_time: "02:00"
+tc_database_stack_backup_method: physical
+tc_database_stack_binlog_expire_days: 7
+tc_database_stack_backup_time_window: ""
+tc_database_stack_waiter_timeout: 1800
+tc_database_stack_waiter_delay: 10

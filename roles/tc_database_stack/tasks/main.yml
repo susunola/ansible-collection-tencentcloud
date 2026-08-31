@@ -1,0 +1,148 @@
+---
+- name: Validate database stack inputs
+  ansible.builtin.assert:
+    that:
+      - tc_database_stack_state in ['present', 'absent']
+      - tc_database_stack_instance_id | length > 0 or tc_database_stack_name | length > 0
+      - tc_database_stack_state == 'absent' or tc_database_stack_instance_id | length > 0 or tc_database_stack_zone | length > 0
+      - tc_database_stack_state == 'absent' or tc_database_stack_instance_id | length > 0 or tc_database_stack_memory is not none
+      - tc_database_stack_state == 'absent' or tc_database_stack_instance_id | length > 0 or tc_database_stack_volume is not none
+    fail_msg: Creating a CDB stack requires name, zone, memory and volume; an existing instance may be selected by ID.
+
+- name: Provision CDB instance
+  when: tc_database_stack_state == 'present'
+  susunola.tencentcloud.cdb_instance:
+    region: "{{ tc_database_stack_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ tc_database_stack_instance_id | default(omit, true) }}"
+    name: "{{ tc_database_stack_name | default(omit, true) }}"
+    zone: "{{ tc_database_stack_zone | default(omit, true) }}"
+    engine_version: "{{ tc_database_stack_engine_version }}"
+    memory: "{{ tc_database_stack_memory | default(omit, true) }}"
+    volume: "{{ tc_database_stack_volume | default(omit, true) }}"
+    password: "{{ tc_database_stack_root_password | default(omit, true) }}"
+    vpc_id: "{{ tc_database_stack_vpc_id | default(omit, true) }}"
+    subnet_id: "{{ tc_database_stack_subnet_id | default(omit, true) }}"
+    security_group: "{{ tc_database_stack_security_groups | default(omit, true) }}"
+    project_id: "{{ tc_database_stack_project_id | default(omit, true) }}"
+    period_months: "{{ tc_database_stack_period_months | default(omit, true) }}"
+    auto_renew: "{{ tc_database_stack_auto_renew | default(omit, true) }}"
+    tags: "{{ tc_database_stack_tags }}"
+    waiter_timeout: "{{ tc_database_stack_waiter_timeout }}"
+    waiter_delay: "{{ tc_database_stack_waiter_delay }}"
+  register: _tc_database_stack_instance
+
+- name: Resolve CDB instance ID
+  when: tc_database_stack_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_database_stack_instance_id: >-
+      {{ tc_database_stack_instance_id
+         or (_tc_database_stack_instance.instance.InstanceId | default(
+             _tc_database_stack_instance.instance.DBInstanceId | default(''))) }}
+
+- name: Provision databases
+  when:
+    - tc_database_stack_state == 'present'
+    - _tc_database_stack_instance_id | length > 0
+  susunola.tencentcloud.cdb_database:
+    region: "{{ tc_database_stack_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ _tc_database_stack_instance_id }}"
+    name: "{{ item.name }}"
+    character_set: "{{ item.character_set | default('utf8mb4') }}"
+  loop: "{{ tc_database_stack_databases }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: _tc_database_stack_databases
+
+- name: Provision database accounts
+  when:
+    - tc_database_stack_state == 'present'
+    - _tc_database_stack_instance_id | length > 0
+  susunola.tencentcloud.cdb_account:
+    region: "{{ tc_database_stack_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ _tc_database_stack_instance_id }}"
+    username: "{{ item.username }}"
+    host: "{{ item.host | default('%') }}"
+    password: "{{ item.password | default(omit) }}"
+    rotate_password: "{{ item.rotate_password | default(false) }}"
+    description: "{{ item.description | default('') }}"
+    max_user_connections: "{{ item.max_user_connections | default(10240) }}"
+  loop: "{{ tc_database_stack_accounts }}"
+  loop_control:
+    label: "{{ item.username }}@{{ item.host | default('%') }}"
+  register: _tc_database_stack_accounts
+
+- name: Reconcile account privileges
+  when:
+    - tc_database_stack_state == 'present'
+    - _tc_database_stack_instance_id | length > 0
+    - item.privileges is defined
+  susunola.tencentcloud.cdb_account_privilege:
+    region: "{{ tc_database_stack_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ _tc_database_stack_instance_id }}"
+    username: "{{ item.username }}"
+    host: "{{ item.host | default('%') }}"
+    global_privileges: "{{ item.privileges.global | default([]) }}"
+    database_privileges: "{{ item.privileges.databases | default([]) }}"
+    table_privileges: "{{ item.privileges.tables | default([]) }}"
+    column_privileges: "{{ item.privileges.columns | default([]) }}"
+  loop: "{{ tc_database_stack_accounts }}"
+  loop_control:
+    label: "{{ item.username }} privileges"
+
+- name: Configure CDB backup retention
+  when:
+    - tc_database_stack_state == 'present'
+    - _tc_database_stack_instance_id | length > 0
+    - tc_database_stack_backup_enabled
+  susunola.tencentcloud.cdb_backup_config:
+    region: "{{ tc_database_stack_region | default(omit, true) }}"
+    instance_id: "{{ _tc_database_stack_instance_id }}"
+    expire_days: "{{ tc_database_stack_backup_expire_days }}"
+    start_time: "{{ tc_database_stack_backup_start_time }}"
+    backup_method: "{{ tc_database_stack_backup_method }}"
+    binlog_expire_days: "{{ tc_database_stack_binlog_expire_days }}"
+    backup_time_window: "{{ tc_database_stack_backup_time_window | default(omit, true) }}"
+  register: _tc_database_stack_backup
+
+- name: Remove database accounts
+  when: tc_database_stack_state == 'absent'
+  susunola.tencentcloud.cdb_account:
+    region: "{{ tc_database_stack_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_database_stack_instance_id }}"
+    username: "{{ item.username }}"
+    host: "{{ item.host | default('%') }}"
+  loop: "{{ tc_database_stack_accounts }}"
+
+- name: Remove databases
+  when: tc_database_stack_state == 'absent'
+  susunola.tencentcloud.cdb_database:
+    region: "{{ tc_database_stack_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_database_stack_instance_id }}"
+    name: "{{ item.name }}"
+  loop: "{{ tc_database_stack_databases }}"
+
+- name: Remove CDB instance
+  when: tc_database_stack_state == 'absent'
+  susunola.tencentcloud.cdb_instance:
+    region: "{{ tc_database_stack_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_database_stack_instance_id | default(omit, true) }}"
+    name: "{{ tc_database_stack_name | default(omit, true) }}"
+    waiter_timeout: "{{ tc_database_stack_waiter_timeout }}"
+    waiter_delay: "{{ tc_database_stack_waiter_delay }}"
+
+- name: Publish database stack result
+  when: tc_database_stack_state == 'present'
+  ansible.builtin.set_fact:
+    tc_database_stack_result:
+      instance_id: "{{ _tc_database_stack_instance_id }}"
+      instance: "{{ _tc_database_stack_instance.instance }}"
+      databases: "{{ _tc_database_stack_databases.results | default([]) }}"
+      accounts: "{{ _tc_database_stack_accounts.results | default([]) }}"
+      backup: "{{ _tc_database_stack_backup | default({}) }}"

@@ -1,0 +1,32 @@
+---
+tc_serverless_application_state: present
+tc_serverless_application_region: ""
+tc_serverless_application_function_name: ""
+tc_serverless_application_namespace: default
+tc_serverless_application_runtime: ""
+tc_serverless_application_handler: ""
+tc_serverless_application_zip_file: ""
+tc_serverless_application_cos_bucket_name: ""
+tc_serverless_application_cos_object_name: ""
+tc_serverless_application_cos_bucket_region: ""
+tc_serverless_application_memory_size: null
+tc_serverless_application_execution_timeout: null
+tc_serverless_application_description: ""
+tc_serverless_application_environment: {}
+tc_serverless_application_role: ""
+tc_serverless_application_vpc_id: ""
+tc_serverless_application_subnet_id: ""
+
+# Items follow scf_alias and scf_trigger options.
+tc_serverless_application_aliases: []
+tc_serverless_application_triggers: []
+
+tc_serverless_application_api_gateway_enabled: false
+tc_serverless_application_api_service_id: ""
+tc_serverless_application_api_service_name: ""
+tc_serverless_application_api_service_description: ""
+tc_serverless_application_api_protocol: http&https
+tc_serverless_application_api_network_types: [OUTER]
+tc_serverless_application_apis: []
+tc_serverless_application_api_release_environment: release
+tc_serverless_application_api_release_description: Managed by Ansible
