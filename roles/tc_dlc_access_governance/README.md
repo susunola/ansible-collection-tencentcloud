@@ -73,6 +73,14 @@ ignored when comparing desired access, so repeated runs remain idempotent.
                 min_pod_num: 1
                 max_pod_num: 8
                 enable_auto_scaling: true
+        tc_dlc_access_governance_ray_clusters:
+          - name: analytics-ray
+            resource_partition_id: rp-xxxxxxxx
+            queue: default
+            image: ccr.ccs.tencentyun.com/dlc/ray:latest
+            image_pull_type: BuiltIn
+            resource_config_id: rc-xxxxxxxx
+            priority: 5
         tc_dlc_access_governance_databases:
           - name: sales
             comment: Curated sales datasets
@@ -113,6 +121,7 @@ The resulting endpoint IDs, engine IDs, database names and user IDs are publishe
 `tc_dlc_access_governance_result.lab_ids` and
 `tc_dlc_access_governance_result.partition_queue_ids` and
 `tc_dlc_access_governance_result.resource_config_ids` and
+`tc_dlc_access_governance_result.ray_cluster_ids` and
 `tc_dlc_access_governance_result.database_names` and
 `tc_dlc_access_governance_result.user_ids`. Mask strategy IDs are available in
 `tc_dlc_access_governance_result.data_mask_strategy_ids`.
@@ -134,6 +143,8 @@ Partition queues are reconciled before laboratories and removed afterwards. A de
 queue additionally requires `allow_delete_default: true` on that queue item.
 Resource templates are created before laboratories and deleted only after Lab/Ray
 references are gone. External references require `allow_delete_in_use: true`.
+Ray clusters share the same queue and resource-template foundations as laboratories
+and are removed before those foundations during teardown.
 
 Direct-user policies are exact-set managed when `policies` is declared. During
 teardown the role removes direct policies before deleting each user. Work-group

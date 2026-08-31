@@ -224,6 +224,7 @@ action_groups:
     - dlc_engine_resource_group
     - dlc_lab
     - dlc_partition_queue
+    - dlc_ray_cluster
     - dlc_resource_config
     - dlc_spark_job
     - dlc_task_info

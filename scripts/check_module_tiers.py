@@ -169,6 +169,7 @@ CORE_MODULES = {
     "dlc_lab",
     "dlc_partition_queue",
     "dlc_resource_config",
+    "dlc_ray_cluster",
     "dlc_spark_job",
     "dlc_database",
     "dlc_data_mask_strategy",

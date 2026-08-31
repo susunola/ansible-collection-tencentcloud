@@ -847,6 +847,11 @@ modules:
   - DeletePartitionQueue
   - DescribePartitionQueues
   - ModifyPartitionQueue
+  dlc_ray_cluster:
+  - CreateRayCluster
+  - DeleteRayCluster
+  - ListRayClusters
+  - UpdateRayCluster
   dlc_resource_config:
   - CreateResourceConfig
   - DeleteResourceConfig

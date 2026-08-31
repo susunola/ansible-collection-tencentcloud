@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_ray_cluster`` for guarded DLC Ray cluster lifecycle with normalized image, template, mount, advanced-option and tag reconciliation.
