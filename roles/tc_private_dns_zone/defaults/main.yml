@@ -1,0 +1,6 @@
+---
+tc_private_dns_zone_state: present
+tc_private_dns_zone_accounts: []
+tc_private_dns_zone: {}
+tc_private_dns_zone_records: []
+tc_private_dns_zone_allow_destroy: false

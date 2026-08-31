@@ -1581,6 +1581,10 @@ modules:
   - DescribeParameterTemplateAttributes
   - DescribeParameterTemplates
   - ModifyParameterTemplate
+  private_dns_account:
+  - CreatePrivateDNSAccount
+  - DeletePrivateDNSAccount
+  - DescribePrivateDNSAccountList
   private_dns_record:
   - CreatePrivateZoneRecord
   - DeletePrivateZoneRecord

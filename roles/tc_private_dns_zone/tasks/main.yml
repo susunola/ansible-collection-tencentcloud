@@ -1,0 +1,74 @@
+---
+- name: Validate Private DNS zone inputs
+  ansible.builtin.assert:
+    that:
+      - tc_private_dns_zone_state in ['present', 'absent']
+      - tc_private_dns_zone_accounts is sequence
+      - tc_private_dns_zone is mapping
+      - tc_private_dns_zone_records is sequence
+      - tc_private_dns_zone.zone_id | default(tc_private_dns_zone.domain | default('')) | length > 0
+      - tc_private_dns_zone_state == 'present' or tc_private_dns_zone_allow_destroy | bool
+    fail_msg: Private DNS requires zone_id or domain; destruction requires tc_private_dns_zone_allow_destroy=true.
+
+- name: Reconcile authorized Private DNS accounts
+  when: tc_private_dns_zone_state == 'present'
+  susunola.tencentcloud.private_dns_account:
+  args: "{{ item | combine({'state': 'present'}) }}"
+  loop: "{{ tc_private_dns_zone_accounts }}"
+  loop_control:
+    label: "{{ item.uin | default('unknown') }}"
+
+- name: Reconcile Private DNS zone and VPC associations
+  when: tc_private_dns_zone_state == 'present'
+  susunola.tencentcloud.private_dns_zone:
+  args: "{{ tc_private_dns_zone | combine({'state': 'present'}) }}"
+  register: _tc_private_dns_zone
+
+- name: Capture Private DNS zone ID
+  when: tc_private_dns_zone_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_private_dns_zone_id: "{{ _tc_private_dns_zone.zone.ZoneId }}"
+
+- name: Reconcile Private DNS records
+  when: tc_private_dns_zone_state == 'present'
+  susunola.tencentcloud.private_dns_record:
+  args: "{{ item | combine({'zone_id': _tc_private_dns_zone_id, 'state': 'present'}) }}"
+  loop: "{{ tc_private_dns_zone_records }}"
+  loop_control:
+    label: "{{ item.subdomain | default('@') }} {{ item.record_type | default('') }}"
+  register: _tc_private_dns_zone_records
+
+- name: Publish Private DNS outputs
+  when: tc_private_dns_zone_state == 'present'
+  ansible.builtin.set_fact:
+    tc_private_dns_zone_result:
+      zone: "{{ _tc_private_dns_zone.zone }}"
+      records: "{{ _tc_private_dns_zone_records.results | default([]) | map(attribute='record') | list }}"
+
+- name: Require stable zone ID for Private DNS teardown
+  when:
+    - tc_private_dns_zone_state == 'absent'
+    - tc_private_dns_zone.zone_id | default('') | length == 0
+  ansible.builtin.fail:
+    msg: zone.zone_id is required for deterministic Private DNS teardown.
+
+- name: Remove declared Private DNS records
+  when: tc_private_dns_zone_state == 'absent'
+  susunola.tencentcloud.private_dns_record:
+  args: "{{ item | combine({'zone_id': tc_private_dns_zone.zone_id, 'state': 'absent'}) }}"
+  loop: "{{ tc_private_dns_zone_records | reverse | list }}"
+  loop_control:
+    label: "{{ item.record_id | default(item.subdomain | default('unknown')) }}"
+
+- name: Remove Private DNS zone
+  when: tc_private_dns_zone_state == 'absent'
+  susunola.tencentcloud.private_dns_zone:
+  args: "{{ tc_private_dns_zone | combine({'state': 'absent'}) }}"
+
+- name: Remove authorized Private DNS accounts
+  when: tc_private_dns_zone_state == 'absent'
+  susunola.tencentcloud.private_dns_account:
+  args: "{{ item | combine({'state': 'absent'}) }}"
+  loop: "{{ tc_private_dns_zone_accounts | reverse | list }}"
+  loop_control:
+    label: "{{ item.uin | default('unknown') }}"

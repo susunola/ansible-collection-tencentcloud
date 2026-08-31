@@ -23,6 +23,14 @@ options:
     suboptions:
       region: {description: Tencent Cloud region containing the VPC., type: str, required: true}
       vpc_id: {description: VPC ID to associate with the zone., type: str, required: true}
+  account_vpcs:
+    description: Exact VPC list from authorized primary accounts.
+    type: list
+    elements: dict
+    suboptions:
+      uin: {description: VPC owner primary-account UIN., type: str, required: true}
+      region: {description: Tencent Cloud region containing the VPC., type: str, required: true}
+      vpc_id: {description: VPC ID to associate with the zone., type: str, required: true}
   tags: {description: Tags applied when creating the zone., type: dict}
   retries: {description: Number of retries for transient SDK failures., type: int, default: 5}
   waiter_delay: {description: Seconds between state-polling attempts., type: int, default: 5}
@@ -48,6 +56,7 @@ import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
 
 
 def _load_private_dns():
@@ -67,11 +76,30 @@ def _vpcs(value):
     )
 
 
+def _account_vpcs(value):
+    return sorted(
+        ({"Uin": str(item.get("Uin") or item.get("uin")), "Region": item.get("Region") or item.get("region"), "UniqVpcId": item.get("UniqVpcId") or item.get("vpc_id")} for item in (value or [])),
+        key=lambda item: (item["Uin"], item["Region"], item["UniqVpcId"]),
+    )
+
+
 def build_vpcs(models, values):
     result = []
     for value in values or []:
         item = models.VpcInfo()
-        item.Region, item.UniqVpcId = value["region"], value["vpc_id"]
+        item.Region = value.get("region") or value.get("Region")
+        item.UniqVpcId = value.get("vpc_id") or value.get("UniqVpcId")
+        result.append(item)
+    return result
+
+
+def build_account_vpcs(models, values):
+    result = []
+    for value in values or []:
+        item = models.AccountVpcInfo()
+        item.Uin = str(value.get("uin") or value.get("Uin"))
+        item.Region = value.get("region") or value.get("Region")
+        item.UniqVpcId = value.get("vpc_id") or value.get("UniqVpcId")
         result.append(item)
     return result
 
@@ -80,6 +108,7 @@ def build_create_request(models, params):
     request = models.CreatePrivateZoneRequest()
     request.Domain, request.Remark = params["domain"], params["remark"]
     request.VpcSet = build_vpcs(models, params.get("vpcs"))
+    request.AccountVpcSet = build_account_vpcs(models, params.get("account_vpcs"))
     if params.get("tags"):
         request.TagSet = []
         for key, value in sorted(params["tags"].items()):
@@ -123,7 +152,8 @@ def wait_for_zone(module, client, models, zone_id, desired=None, absent=False):
         if not absent and current:
             remark_ok = (current.get("Remark") or "") == desired["Remark"]
             vpcs_ok = "VpcSet" not in desired or _vpcs(current.get("VpcSet")) == desired["VpcSet"]
-            if remark_ok and vpcs_ok:
+            account_vpcs_ok = "AccountVpcSet" not in desired or _account_vpcs(current.get("AccountVpcSet")) == desired["AccountVpcSet"]
+            if remark_ok and vpcs_ok and account_vpcs_ok:
                 return current
         if time.time() >= deadline:
             module.fail_json(
@@ -142,6 +172,7 @@ def run_module():
             "domain": {"type": "str"},
             "remark": {"type": "str", "default": ""},
             "vpcs": {"type": "list", "elements": "dict", "options": {"region": {"type": "str", "required": True}, "vpc_id": {"type": "str", "required": True}}},
+            "account_vpcs": {"type": "list", "elements": "dict", "options": {"uin": {"type": "str", "required": True}, "region": {"type": "str", "required": True}, "vpc_id": {"type": "str", "required": True}}},
             "tags": {"type": "dict"},
         },
         required_one_of=[("zone_id", "domain")],
@@ -169,6 +200,8 @@ def run_module():
         desired = {"Domain": p["domain"], "Remark": p["remark"]}
         if p["vpcs"] is not None:
             desired["VpcSet"] = _vpcs(p["vpcs"])
+        if p["account_vpcs"] is not None:
+            desired["AccountVpcSet"] = _account_vpcs(p["account_vpcs"])
         if current is None:
             diff = maybe_diff(module, None, desired)
             if module.check_mode:
@@ -178,7 +211,8 @@ def run_module():
             module.exit_json(changed=True, **(diff or {}), zone=current, msg="Private DNS zone created")
         remark_drift = (current.get("Remark") or "") != p["remark"]
         vpc_drift = p["vpcs"] is not None and _vpcs(current.get("VpcSet")) != _vpcs(p["vpcs"])
-        if not remark_drift and not vpc_drift:
+        account_vpc_drift = p["account_vpcs"] is not None and _account_vpcs(current.get("AccountVpcSet")) != _account_vpcs(p["account_vpcs"])
+        if not remark_drift and not vpc_drift and not account_vpc_drift:
             module.exit_json(changed=False, zone=current, msg="Private DNS zone is up to date")
         diff = maybe_diff(module, current, desired)
         if module.check_mode:
@@ -187,19 +221,16 @@ def run_module():
             request = models.ModifyPrivateZoneRequest()
             request.ZoneId, request.Remark = current["ZoneId"], p["remark"]
             module.sdk_call(client.ModifyPrivateZone, request)
-        if vpc_drift:
+        if vpc_drift or account_vpc_drift:
             request = models.ModifyPrivateZoneVpcRequest()
-            request.ZoneId, request.VpcSet = current["ZoneId"], build_vpcs(models, p["vpcs"])
+            request.ZoneId = current["ZoneId"]
+            request.VpcSet = build_vpcs(models, p["vpcs"] if p["vpcs"] is not None else _vpcs(current.get("VpcSet")))
+            request.AccountVpcSet = build_account_vpcs(models, p["account_vpcs"] if p["account_vpcs"] is not None else _account_vpcs(current.get("AccountVpcSet")))
             module.sdk_call(client.ModifyPrivateZoneVpc, request)
         current = wait_for_zone(module, client, models, current["ZoneId"], desired)
         module.exit_json(changed=True, **(diff or {}), zone=current, msg="Private DNS zone updated")
     except Exception as exc:
-        module.fail_json(
-            msg="Tencent Cloud API request failed",
-            error=str(exc),
-            error_code=getattr(exc, "get_code", lambda: None)(),
-            request_id=getattr(exc, "get_request_id", lambda: None)(),
-        )
+        module.fail_json(**sdk_error_payload(exc))
 
 
 def main():

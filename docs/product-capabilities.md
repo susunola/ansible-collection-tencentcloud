@@ -6,9 +6,9 @@ This matrix is generated from module SDK imports and role metadata. It is a
 navigation and gap-discovery aid, not a claim that every Tencent Cloud API is covered.
 
 - Products/services: **203**
-- Write modules: **371**
+- Write modules: **372**
 - Information modules: **234**
-- Solution roles: **57**
+- Solution roles: **58**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -160,7 +160,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `partners` | discovery-only | 0 | 1 | — | — |
 | `portal` | discovery-only | 0 | 1 | — | — |
 | `postgres` | solution | 4 | 1 | `tc_postgresql_stack` | `postgresql_account`, `postgresql_backup_plan`, `postgresql_instance`, `postgresql_parameter_template` |
-| `privatedns` | managed | 2 | 1 | — | `private_dns_record`, `private_dns_zone` |
+| `privatedns` | solution | 3 | 1 | `tc_private_dns_zone` | `private_dns_account`, `private_dns_record`, `private_dns_zone` |
 | `pts` | discovery-only | 0 | 1 | — | — |
 | `redis` | solution | 4 | 1 | `tc_redis_stack` | `redis_account`, `redis_backup_config`, `redis_instance`, `redis_parameter_template` |
 | `region` | discovery-only | 0 | 1 | — | — |

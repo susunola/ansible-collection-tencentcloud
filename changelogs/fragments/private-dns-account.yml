@@ -1,0 +1,6 @@
+minor_changes:
+  - Add ``private_dns_account`` for idempotent Private DNS cross-account authorization relationships.
+  - Extend ``private_dns_zone`` with exact cross-account VPC associations through ``account_vpcs``.
+  - Add the ``tc_private_dns_zone`` solution role for account authorization, VPC association and record composition.
+bugfixes:
+  - Standardize Private DNS zone and record API failure payloads with the collection lifecycle contract.

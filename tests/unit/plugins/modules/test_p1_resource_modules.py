@@ -376,6 +376,16 @@ def test_private_dns_zone_create_request(models):
     assert request.TagSet[0].TagKey == "environment"
 
 
+def test_private_dns_zone_cross_account_vpcs(models):
+    models.AccountVpcInfo = Request
+    request = private_dns_zone.build_create_request(models, {
+        "domain": "internal.example.com", "remark": "", "vpcs": [], "tags": {},
+        "account_vpcs": [{"uin": "100000000001", "region": "ap-guangzhou", "vpc_id": "vpc-shared"}],
+    })
+    assert request.AccountVpcSet[0].Uin == "100000000001"
+    assert request.AccountVpcSet[0].UniqVpcId == "vpc-shared"
+
+
 def test_private_dns_record_requests(models):
     params = {
         "zone_id": "zone-x",
