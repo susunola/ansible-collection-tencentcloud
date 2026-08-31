@@ -172,6 +172,7 @@ CORE_MODULES = {
     "dlc_ray_cluster",
     "dlc_cluster_group",
     "dlc_job_spec",
+    "dlc_inference_model",
     "dlc_script",
     "dlc_table",
     "dlc_table_partition",

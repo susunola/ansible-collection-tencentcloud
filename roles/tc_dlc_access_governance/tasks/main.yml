@@ -3,6 +3,7 @@
   ansible.builtin.assert:
     that:
       - tc_dlc_access_governance_state in ['present', 'absent']
+      - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_inference_models | length == 0
       - >-
         tc_dlc_access_governance_state == 'present'
         or (tc_dlc_access_governance_work_groups
@@ -25,7 +26,7 @@
         or (tc_dlc_access_governance_data_mask_strategies
             | selectattr('strategy_id', 'defined')
             | list | length == tc_dlc_access_governance_data_mask_strategies | length)
-    fail_msg: DLC teardown requires exact work_group_id, user_id, strategy_id and endpoint_id identities for declared resources.
+    fail_msg: DLC teardown requires exact identities and cannot remove inference models because the service exposes no deletion API.
 
 - name: Initialize DLC managed-resource identity maps
   when: tc_dlc_access_governance_state == 'present'
@@ -38,6 +39,7 @@
     _tc_dlc_resource_config_ids: {}
     _tc_dlc_ray_cluster_ids: {}
     _tc_dlc_job_spec_ids: {}
+    _tc_dlc_inference_model_uids: {}
     _tc_dlc_lab_ids: {}
     _tc_dlc_spark_job_ids: {}
     _tc_dlc_database_names: []
@@ -182,6 +184,23 @@
     _tc_dlc_lab_ids: >-
       {{ dict((tc_dlc_access_governance_labs | map(attribute='name') | list)
               | zip(_tc_dlc_lab_results.results | map(attribute='lab_id') | list)) }}
+
+- name: Reconcile DLC inference models before inference versions and services
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_inference_model:
+  args: "{{ _tc_dlc_inference_model }}"
+  loop: "{{ tc_dlc_access_governance_inference_models }}"
+  loop_control:
+    loop_var: _tc_dlc_inference_model
+    label: "{{ _tc_dlc_inference_model.name }}"
+  register: _tc_dlc_inference_model_results
+
+- name: Record DLC inference-model identities
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dlc_inference_model_uids: >-
+      {{ dict((tc_dlc_access_governance_inference_models | map(attribute='name') | list)
+              | zip(_tc_dlc_inference_model_results.results | map(attribute='model_uid') | list)) }}
 
 - name: Reconcile DLC Spark job definitions after compute resources
   when: tc_dlc_access_governance_state == 'present'
@@ -503,6 +522,7 @@
       resource_config_ids: "{{ _tc_dlc_resource_config_ids }}"
       ray_cluster_ids: "{{ _tc_dlc_ray_cluster_ids }}"
       job_spec_ids: "{{ _tc_dlc_job_spec_ids }}"
+      inference_model_uids: "{{ _tc_dlc_inference_model_uids }}"
       lab_ids: "{{ _tc_dlc_lab_ids }}"
       spark_job_ids: "{{ _tc_dlc_spark_job_ids }}"
       database_names: "{{ _tc_dlc_database_names }}"

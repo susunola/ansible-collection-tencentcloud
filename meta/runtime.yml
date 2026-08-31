@@ -223,6 +223,7 @@ action_groups:
     - dlc_data_mask_strategy
     - dlc_database
     - dlc_engine_resource_group
+    - dlc_inference_model
     - dlc_job_spec
     - dlc_lab
     - dlc_partition_queue

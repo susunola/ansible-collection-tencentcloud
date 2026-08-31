@@ -843,6 +843,10 @@ modules:
   - UpdateStandardEngineResourceGroupBaseInfo
   - UpdateStandardEngineResourceGroupConfigInfo
   - UpdateStandardEngineResourceGroupResourceInfo
+  dlc_inference_model:
+  - CreateInferenceModel
+  - ListInferenceModels
+  - UpdateInferenceModel
   dlc_job_spec:
   - CreateJobSpec
   - DeleteJobSpec
