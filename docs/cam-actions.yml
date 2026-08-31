@@ -2325,6 +2325,7 @@ modules:
   - DescribeCloudNativeAPIGatewayCertificateDetails
   - DescribeCloudNativeAPIGatewayCertificates
   - ModifyCloudNativeAPIGatewayCertificate
+  - UpdateCloudNativeAPIGatewayCertificateInfo
   tse_gateway_console_network:
   - DescribeCloudNativeAPIGatewayConfig
   - ModifyConsoleNetwork

@@ -1,4 +1,4 @@
-from ansible_collections.susunola.tencentcloud.plugins.modules.tse_gateway_certificate import create_payload, modify_payload, scrub
+from ansible_collections.susunola.tencentcloud.plugins.modules.tse_gateway_certificate import create_payload, metadata_request, modify_payload, scrub
 
 
 def test_ssl_create_payload_excludes_private_material():
@@ -15,3 +15,12 @@ def test_native_modify_requires_explicit_material_from_params():
 
 def test_private_key_is_always_scrubbed():
     assert scrub({"Cert":{"Key":"private","Crt":"public"}})=={"Cert":{"Crt":"public"}}
+
+
+class Value(object): pass
+class Models(object): UpdateCloudNativeAPIGatewayCertificateInfoRequest=Value
+
+
+def test_metadata_request_does_not_require_certificate_material():
+    value=metadata_request(Models,{"gateway_id":"g1","name":"renamed","bind_domains":["api.example.com"]},{"Id":"c1","Name":"old","BindDomains":[]})
+    assert (value.GatewayId,value.Id,value.Name,value.BindDomains)==("g1","c1","renamed",["api.example.com"])

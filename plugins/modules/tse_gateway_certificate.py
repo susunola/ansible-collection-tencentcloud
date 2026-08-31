@@ -70,6 +70,8 @@ def modify_payload(p,current):
     if source=="ssl": payload["CertId"]=p.get("ssl_certificate_id") or current.get("CertId")
     else: payload.update({"Key":p.get("private_key"),"Crt":p.get("certificate") or current.get("Crt")})
     return payload
+def metadata_request(models,p,current):
+    r=models.UpdateCloudNativeAPIGatewayCertificateInfoRequest(); r.GatewayId,r.Id=p["gateway_id"],current["Id"]; r.Name=p.get("name") or current.get("Name"); r.BindDomains=p.get("bind_domains") if p.get("bind_domains") is not None else current.get("BindDomains"); return r
 def json_request(cls,payload):
     r=cls(); r.from_json_string(json.dumps(payload)); return r
 def find(module,client,models,p):
@@ -118,9 +120,13 @@ def run_module():
             before={key:current.get(key) for key in target}
             changed=before!=target or p["rotate_certificate"]
             if not changed: module.exit_json(changed=False,certificate_info=current)
-            if source=="native" and (not p.get("private_key") or not (p.get("certificate") or current.get("Crt"))): module.fail_json(msg="private_key and certificate are required to modify a native certificate")
+            material_update=material_changed or p["rotate_certificate"]
+            if material_update and source=="native" and (not p.get("private_key") or not (p.get("certificate") or current.get("Crt"))): module.fail_json(msg="private_key and certificate are required to rotate a native certificate")
             diff=maybe_diff(module,before,target)
-            if not module.check_mode: module.sdk_call(client.ModifyCloudNativeAPIGatewayCertificate,json_request(models.ModifyCloudNativeAPIGatewayCertificateRequest,modify_payload(p,current))); current=find(module,client,models,p)
+            if not module.check_mode:
+                if material_update: module.sdk_call(client.ModifyCloudNativeAPIGatewayCertificate,json_request(models.ModifyCloudNativeAPIGatewayCertificateRequest,modify_payload(p,current)))
+                else: module.sdk_call(client.UpdateCloudNativeAPIGatewayCertificateInfo,metadata_request(models,p,current))
+                current=find(module,client,models,p)
             module.exit_json(changed=True,**(diff or {}),certificate_info=current if not module.check_mode else target)
         diff=maybe_diff(module,None,scrub(create_payload(p)))
         if not module.check_mode:
