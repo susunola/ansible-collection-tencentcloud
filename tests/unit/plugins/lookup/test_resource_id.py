@@ -45,6 +45,7 @@ class Models(object):
     DescribeApplicationsRequest = Request
     DescribeCfsFileSystemsRequest = Request
     DescribeInstancesDetailRequest = Request
+    DescribeInstanceListRequest = Request
 
 
 class Client(object):
@@ -90,6 +91,12 @@ def test_ckafka_request_uses_instance_name_filter():
     request = build_request("ckafka_instance", Models, "event-platform")
     assert request.Filters[0].Name == "instance-name"
     assert request.Filters[0].Values == ["event-platform"]
+
+
+def test_mqtt_request_scans_names_with_numeric_pagination():
+    request = build_request("mqtt_instance", Models, "device-broker", offset=200)
+    assert request.Limit == 100
+    assert request.Offset == 200
 
 
 def test_alb_request_uses_token_pagination():

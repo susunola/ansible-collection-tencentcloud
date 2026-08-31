@@ -25,7 +25,7 @@ options:
     description: Resource family to query.
     type: str
     required: true
-    choices: [vpc, subnet, security_group, cvm_instance, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, redis_instance, mongodb_instance, cfs_file_system, ckafka_instance, api_gateway_service, tcr_instance, tem_environment, tem_application]
+    choices: [vpc, subnet, security_group, cvm_instance, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, redis_instance, mongodb_instance, cfs_file_system, ckafka_instance, mqtt_instance, api_gateway_service, tcr_instance, tem_environment, tem_application]
   vpc_id:
     description: Optional VPC scope for subnet and CLB lookups.
     type: str
@@ -135,6 +135,7 @@ RESOURCE_SPECS = {
     "mongodb_instance": ("mongodb.v20190725", "MongodbClient", "mongodb.tencentcloudapi.com", "DescribeDBInstances", "InstanceDetails", "InstanceId", "InstanceName"),
     "cfs_file_system": ("cfs.v20190719", "CfsClient", "cfs.tencentcloudapi.com", "DescribeCfsFileSystems", "FileSystems", "FileSystemId", "Name"),
     "ckafka_instance": ("ckafka.v20190819", "CkafkaClient", "ckafka.tencentcloudapi.com", "DescribeInstancesDetail", "Result.InstanceList", "InstanceId", "InstanceName"),
+    "mqtt_instance": ("mqtt.v20240516", "MqttClient", "mqtt.tencentcloudapi.com", "DescribeInstanceList", "Data", "InstanceId", "InstanceName"),
     "api_gateway_service": ("apigateway.v20180808", "ApigatewayClient", "apigateway.tencentcloudapi.com", "DescribeServicesStatus", "Result.ServiceSet", "ServiceId", "ServiceName"),
     "tcr_instance": ("tcr.v20190924", "TcrClient", "tcr.tencentcloudapi.com", "DescribeInstances", "Registries", "RegistryId", "RegistryName"),
     "tem_environment": ("tem.v20210701", "TemClient", "tem.tencentcloudapi.com", "DescribeEnvironments", "Result.Records", "EnvironmentId", "EnvironmentName"),
@@ -157,6 +158,7 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         "mongodb_instance": "DescribeDBInstancesRequest",
         "cfs_file_system": "DescribeCfsFileSystemsRequest",
         "ckafka_instance": "DescribeInstancesDetailRequest",
+        "mqtt_instance": "DescribeInstanceListRequest",
         "api_gateway_service": "DescribeServicesStatusRequest",
         "tcr_instance": "DescribeInstancesRequest",
         "tem_environment": "DescribeEnvironmentsRequest",
@@ -184,6 +186,8 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         api_filter = models.Filter()
         api_filter.Name, api_filter.Values = "instance-name", [name]
         request.Filters = [api_filter]
+    elif resource_type == "mqtt_instance":
+        pass
     elif resource_type == "alb_load_balancer":
         pass
     elif resource_type == "api_gateway_service":
