@@ -25,7 +25,7 @@ options:
     description: Resource family to query.
     type: str
     required: true
-    choices: [vpc, subnet, security_group, cvm_instance, lighthouse_instance, autoscaling_group, cbs_disk, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, sqlserver_instance, cynosdb_cluster, redis_instance, mongodb_instance, elasticsearch_instance, cfs_file_system, chdfs_file_system, chdfs_access_group, chdfs_mount_point, ckafka_instance, mqtt_instance, rocketmq_cluster, rabbitmq_instance, prometheus_instance, edgeone_zone, event_bus, api_gateway_service, tcr_instance, tem_environment, tem_application]
+    choices: [vpc, subnet, security_group, cvm_instance, lighthouse_instance, autoscaling_group, cbs_disk, clb_load_balancer, alb_load_balancer, gwlb_load_balancer, gwlb_target_group, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, sqlserver_instance, cynosdb_cluster, redis_instance, mongodb_instance, elasticsearch_instance, cfs_file_system, chdfs_file_system, chdfs_access_group, chdfs_mount_point, ckafka_instance, mqtt_instance, rocketmq_cluster, rabbitmq_instance, prometheus_instance, edgeone_zone, event_bus, api_gateway_service, tcr_instance, tem_environment, tem_application]
   vpc_id:
     description: Optional VPC scope for subnet and CLB lookups.
     type: str
@@ -135,6 +135,8 @@ RESOURCE_SPECS = {
     "cbs_disk": ("cbs.v20170312", "CbsClient", "cbs.tencentcloudapi.com", "DescribeDisks", "DiskSet", "DiskId", "DiskName"),
     "clb_load_balancer": ("clb.v20180317", "ClbClient", "clb.tencentcloudapi.com", "DescribeLoadBalancers", "LoadBalancerSet", "LoadBalancerId", "LoadBalancerName"),
     "alb_load_balancer": ("alb.v20251030", "AlbClient", "alb.tencentcloudapi.com", "DescribeLoadBalancers", "LoadBalancers", "LoadBalancerId", "LoadBalancerName"),
+    "gwlb_load_balancer": ("gwlb.v20240906", "GwlbClient", "gwlb.tencentcloudapi.com", "DescribeGatewayLoadBalancers", "LoadBalancerSet", "LoadBalancerId", "LoadBalancerName"),
+    "gwlb_target_group": ("gwlb.v20240906", "GwlbClient", "gwlb.tencentcloudapi.com", "DescribeTargetGroups", "TargetGroupSet", "TargetGroupId", "TargetGroupName"),
     "tke_cluster": ("tke.v20180525", "TkeClient", "tke.tencentcloudapi.com", "DescribeClusters", "Clusters", "ClusterId", "ClusterName"),
     "cdb_instance": ("cdb.v20170320", "CdbClient", "cdb.tencentcloudapi.com", "DescribeDBInstances", "Items", "InstanceId", "InstanceName"),
     "postgresql_instance": ("postgres.v20170312", "PostgresClient", "postgres.tencentcloudapi.com", "DescribeDBInstances", "DBInstanceSet", "DBInstanceId", "DBInstanceName"),
@@ -174,6 +176,8 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         "cbs_disk": "DescribeDisksRequest",
         "clb_load_balancer": "DescribeLoadBalancersRequest",
         "alb_load_balancer": "DescribeLoadBalancersRequest",
+        "gwlb_load_balancer": "DescribeGatewayLoadBalancersRequest",
+        "gwlb_target_group": "DescribeTargetGroupsRequest",
         "tke_cluster": "DescribeClustersRequest",
         "cdb_instance": "DescribeDBInstancesRequest",
         "postgresql_instance": "DescribeDBInstancesRequest",
@@ -260,6 +264,8 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         api_filter.Name, api_filter.Values = "zone-name", [name]
         request.Filters = [api_filter]
     elif resource_type == "alb_load_balancer":
+        pass
+    elif resource_type in ("gwlb_load_balancer", "gwlb_target_group"):
         pass
     elif resource_type == "api_gateway_service":
         api_filter = models.Filter()

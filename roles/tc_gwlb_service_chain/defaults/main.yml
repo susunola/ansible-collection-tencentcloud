@@ -1,0 +1,12 @@
+---
+tc_gwlb_service_chain_state: present
+tc_gwlb_service_chain_region: ""
+tc_gwlb_service_chain_load_balancer_id: ""
+tc_gwlb_service_chain_name: ""
+tc_gwlb_service_chain_vpc_id: ""
+tc_gwlb_service_chain_subnet_id: ""
+tc_gwlb_service_chain_charge_type: POSTPAID_BY_HOUR
+tc_gwlb_service_chain_deletion_protection: true
+tc_gwlb_service_chain_tags: {}
+# Target groups support module fields plus instances and associate (default true).
+tc_gwlb_service_chain_target_groups: []

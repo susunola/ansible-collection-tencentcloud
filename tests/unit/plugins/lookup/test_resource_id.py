@@ -42,6 +42,8 @@ class Models(object):
     DescribeAutoScalingGroupsRequest = Request
     DescribeDisksRequest = Request
     DescribeLoadBalancersRequest = Request
+    DescribeGatewayLoadBalancersRequest = Request
+    DescribeTargetGroupsRequest = Request
     DescribeClustersRequest = Request
     DescribeDBInstancesRequest = Request
     DescribeServicesStatusRequest = Request
@@ -236,6 +238,13 @@ def test_alb_request_uses_token_pagination():
     request = build_request("alb_load_balancer", Models, "application", page_token="next-1")
     assert request.MaxResults == 100
     assert request.NextToken == "next-1"
+
+
+def test_gwlb_requests_scan_with_numeric_pagination():
+    load_balancer = build_request("gwlb_load_balancer", Models, "inspection", offset=100)
+    target_group = build_request("gwlb_target_group", Models, "appliances", offset=200)
+    assert (load_balancer.Offset, load_balancer.Limit) == (100, 100)
+    assert (target_group.Offset, target_group.Limit) == (200, 100)
 
 
 def test_resolve_alb_follows_next_token():

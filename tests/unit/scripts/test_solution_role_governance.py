@@ -333,6 +333,23 @@ def test_sqlserver_teardown_removes_accounts_before_two_stage_instance_action():
     assert "no_log:" in text
 
 
+def test_gwlb_teardown_disassociates_and_deregisters_before_parents():
+    main = role_tasks("tc_gwlb_service_chain")
+    group = (ROOT / "roles" / "tc_gwlb_service_chain" / "tasks" / "teardown_target_group.yml").read_text(encoding="utf-8")
+    assert_order(
+        group,
+        "Disassociate GWLB target group",
+        "Deregister GWLB appliance instances",
+        "Remove GWLB target group",
+    )
+    assert_order(
+        main,
+        "Disassociate and remove GWLB target groups",
+        "Disable GWLB deletion protection and remove load balancer",
+    )
+    assert "deletion_protection: false" in main
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -369,6 +386,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_chdfs_data_lake": "resource_type='chdfs_file_system'",
         "tc_elasticsearch_platform": "resource_type='elasticsearch_instance'",
         "tc_sqlserver_stack": "resource_type='sqlserver_instance'",
+        "tc_gwlb_service_chain": "resource_type='gwlb_load_balancer'",
         "tc_rocketmq_platform": "resource_type='rocketmq_cluster'",
         "tc_rabbitmq_platform": "resource_type='rabbitmq_instance'",
         "tc_eventbridge_router": "resource_type='event_bus'",

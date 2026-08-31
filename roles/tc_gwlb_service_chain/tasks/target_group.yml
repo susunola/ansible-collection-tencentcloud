@@ -1,0 +1,40 @@
+---
+- name: Reconcile GWLB target group
+  susunola.tencentcloud.gwlb_target_group:
+    region: "{{ tc_gwlb_service_chain_region }}"
+    state: present
+    target_group_id: "{{ _tc_gwlb_target_group.target_group_id | default(omit, true) }}"
+    name: "{{ _tc_gwlb_target_group.name }}"
+    vpc_id: "{{ _tc_gwlb_target_group.vpc_id | default(tc_gwlb_service_chain_vpc_id) }}"
+    port: "{{ _tc_gwlb_target_group.port | default(6081) }}"
+    protocol: "{{ _tc_gwlb_target_group.protocol | default('GENEVE') }}"
+    schedule_algorithm: "{{ _tc_gwlb_target_group.schedule_algorithm | default(omit) }}"
+    health_check: "{{ _tc_gwlb_target_group.health_check | default(omit) }}"
+    all_dead_to_alive: "{{ _tc_gwlb_target_group.all_dead_to_alive | default(false) }}"
+    forwarding_mode: "{{ _tc_gwlb_target_group.forwarding_mode | default(omit) }}"
+    tags: "{{ _tc_gwlb_target_group.tags | default(tc_gwlb_service_chain_tags) }}"
+  register: _tc_gwlb_target_group_result
+
+- name: Resolve GWLB target group ID
+  ansible.builtin.set_fact:
+    _tc_gwlb_target_group_id: >-
+      {{ _tc_gwlb_target_group.target_group_id | default('')
+         or (_tc_gwlb_target_group_result.target_group.TargetGroupId | default('')) }}
+
+- name: Reconcile GWLB appliance instances
+  when: _tc_gwlb_target_group_id | length > 0
+  susunola.tencentcloud.gwlb_target_group_instances:
+    region: "{{ tc_gwlb_service_chain_region }}"
+    target_group_id: "{{ _tc_gwlb_target_group_id }}"
+    instances: "{{ _tc_gwlb_target_group.instances | default([]) }}"
+    purge: "{{ _tc_gwlb_target_group.purge_instances | default(true) }}"
+
+- name: Associate GWLB target group
+  when:
+    - _tc_gwlb_target_group_id | length > 0
+    - _tc_gwlb_target_group.associate | default(true) | bool
+  susunola.tencentcloud.gwlb_target_group_association:
+    region: "{{ tc_gwlb_service_chain_region }}"
+    state: present
+    load_balancer_id: "{{ _tc_gwlb_load_balancer_id }}"
+    target_group_id: "{{ _tc_gwlb_target_group_id }}"

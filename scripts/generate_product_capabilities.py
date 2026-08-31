@@ -48,6 +48,7 @@ ROLE_SERVICES = {
     "tc_cloud_firewall_policy": "cfw",
     "tc_elasticsearch_platform": "es",
     "tc_sqlserver_stack": "sqlserver",
+    "tc_gwlb_service_chain": "gwlb",
     "tc_observability_baseline": "cls",
     "tc_object_storage_baseline": "cos",
     "tc_serverless_application": "scf",

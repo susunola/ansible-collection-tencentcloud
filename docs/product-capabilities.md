@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **38**
+- Solution roles: **39**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -119,7 +119,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `gme` | discovery-only | 0 | 1 | — | — |
 | `goosefs` | managed | 2 | 1 | — | `goosefs_file_system`, `goosefs_fileset` |
 | `gs` | discovery-only | 0 | 1 | — | — |
-| `gwlb` | resource-family | 4 | 1 | — | `gwlb_load_balancer`, `gwlb_target_group`, `gwlb_target_group_association`, `gwlb_target_group_instances` |
+| `gwlb` | solution | 4 | 1 | `tc_gwlb_service_chain` | `gwlb_load_balancer`, `gwlb_target_group`, `gwlb_target_group_association`, `gwlb_target_group_instances` |
 | `hai` | discovery-only | 0 | 1 | — | — |
 | `hasim` | discovery-only | 0 | 1 | — | — |
 | `hunyuan` | discovery-only | 0 | 1 | — | — |
