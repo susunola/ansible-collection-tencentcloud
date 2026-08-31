@@ -25,12 +25,28 @@
     label: "{{ _tc_doris_workload_group.name | default('unnamed') }}"
   register: _tc_doris_platform_workload_groups
 
+- name: Bind Doris users to workload groups
+  when:
+    - tc_doris_analytics_platform_state == 'present'
+    - _tc_doris_platform_instance.instance.InstanceId is defined
+  susunola.tencentcloud.cdwdoris_user_workload_group:
+    instance_id: "{{ _tc_doris_platform_instance.instance.InstanceId }}"
+    user_name: "{{ _tc_doris_user_binding.user_name }}"
+    hosts: "{{ _tc_doris_user_binding.hosts }}"
+    workload_group: "{{ _tc_doris_user_binding.workload_group }}"
+  loop: "{{ tc_doris_analytics_platform_user_bindings }}"
+  loop_control:
+    loop_var: _tc_doris_user_binding
+    label: "{{ _tc_doris_user_binding.user_name | default('unnamed') }}"
+  register: _tc_doris_platform_user_bindings
+
 - name: Publish Doris analytics platform result
   when: tc_doris_analytics_platform_state == 'present'
   ansible.builtin.set_fact:
     tc_doris_analytics_platform_result:
       instance: "{{ _tc_doris_platform_instance.instance }}"
       workload_groups: "{{ _tc_doris_platform_workload_groups.results | default([]) | map(attribute='workload_group') | list }}"
+      user_bindings: "{{ _tc_doris_platform_user_bindings.results | default([]) | map(attribute='binding') | list }}"
 
 - name: Require explicit authorization before Doris platform teardown
   when:
@@ -38,6 +54,21 @@
     - not tc_doris_analytics_platform_allow_destroy | bool
   ansible.builtin.fail:
     msg: Set tc_doris_analytics_platform_allow_destroy=true to authorize workload-group removal and instance destruction.
+
+- name: Move Doris users to their teardown workload group
+  when:
+    - tc_doris_analytics_platform_state == 'absent'
+    - tc_doris_analytics_platform_allow_destroy | bool
+    - _tc_doris_user_binding.teardown_workload_group is defined
+  susunola.tencentcloud.cdwdoris_user_workload_group:
+    instance_id: "{{ tc_doris_analytics_platform_instance.instance_id }}"
+    user_name: "{{ _tc_doris_user_binding.user_name }}"
+    hosts: "{{ _tc_doris_user_binding.hosts }}"
+    workload_group: "{{ _tc_doris_user_binding.teardown_workload_group }}"
+  loop: "{{ tc_doris_analytics_platform_user_bindings }}"
+  loop_control:
+    loop_var: _tc_doris_user_binding
+    label: "{{ _tc_doris_user_binding.user_name | default('unnamed') }}"
 
 - name: Remove Doris workload groups before the instance
   when:

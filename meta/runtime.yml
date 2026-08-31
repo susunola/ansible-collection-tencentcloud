@@ -85,6 +85,7 @@ action_groups:
     - cdwch_instance
     - cdwdoris_cluster_configs_history_info
     - cdwdoris_instance
+    - cdwdoris_user_workload_group
     - cdwdoris_workload_group
     - cdwpg_account_info
     - cdwpg_instance

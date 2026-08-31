@@ -27,6 +27,11 @@ Builds a CDW Doris analytics platform and reconciles named workload groups after
           - name: batch
             cpu_share: 200
             memory_limit: 60
+        tc_doris_analytics_platform_user_bindings:
+          - user_name: analyst
+            hosts: ['%']
+            workload_group: interactive
+            teardown_workload_group: normal
 ```
 
-Set `tc_doris_analytics_platform_allow_destroy: true` only for an intentional teardown.
+Set `tc_doris_analytics_platform_allow_destroy: true` only for an intentional teardown. A binding with `teardown_workload_group` is moved there before custom groups are deleted.

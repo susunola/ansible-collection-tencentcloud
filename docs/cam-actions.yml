@@ -310,6 +310,9 @@ modules:
   - DescribeInstances
   - DestroyInstance
   - ModifyInstance
+  cdwdoris_user_workload_group:
+  - DescribeUserBindWorkloadGroup
+  - ModifyUserBindWorkloadGroup
   cdwdoris_workload_group:
   - CreateWorkloadGroup
   - DeleteWorkloadGroup

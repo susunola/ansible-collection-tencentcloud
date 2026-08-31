@@ -1,3 +1,4 @@
 minor_changes:
   - Add idempotent CDW Doris workload-group management, including resource limits and the instance-wide enable switch.
   - Add the tc_doris_analytics_platform role for ordered Doris instance and workload-governance lifecycle management.
+  - Add declarative Doris user-to-workload-group binding and ordered teardown rebinding.
