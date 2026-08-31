@@ -35,12 +35,20 @@ route creation. Guarded teardown removes routes and services before the gateway.
           - strategy_name: production-elasticity
             group_ids: [group-xxxxxxxx]
             purge_unlisted: true
+        tc_tse_api_gateway_service_sources:
+          - source_name: customer-nacos
+            source_type: Customer-Nacos
+            source_id: nacos-instance-id
+            source_info:
+              Addresses: [10.0.0.20:8848]
+              VpcInfo: {VpcID: vpc-xxxxxxxx, SubnetID: subnet-xxxxxxxx}
         tc_tse_api_gateway_services:
           - name: orders
             protocol: http
             timeout: 30000
             retries_count: 2
             upstream_type: IPList
+            upstream_source_name: customer-nacos
             upstream_info:
               Targets: [{Host: 10.0.0.10, Port: 8080, Weight: 100}]
             targets:

@@ -2395,6 +2395,11 @@ modules:
   - ModifyCloudNativeAPIGatewayService
   - UpdateUpstreamHealthCheckConfig
   - UpdateUpstreamTargets
+  tse_gateway_service_source:
+  - CreateNativeGatewayServiceSource
+  - DeleteNativeGatewayServiceSource
+  - DescribeNativeGatewayServiceSources
+  - ModifyNativeGatewayServiceSource
   tse_gateway_waf_domains:
   - CreateWafDomains
   - DeleteWafDomains

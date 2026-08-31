@@ -603,6 +603,7 @@ action_groups:
     - tse_gateway_secret_key
     - tse_gateway_server_group
     - tse_gateway_service
+    - tse_gateway_service_source
     - tse_gateway_waf_domains
     - tse_gateway_waf_protection
     - tse_governance_namespace

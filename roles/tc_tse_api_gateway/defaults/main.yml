@@ -4,6 +4,7 @@ tc_tse_api_gateway_gateway: {}
 tc_tse_api_gateway_server_groups: []
 tc_tse_api_gateway_autoscaler_strategies: []
 tc_tse_api_gateway_autoscaler_bindings: []
+tc_tse_api_gateway_service_sources: []
 tc_tse_api_gateway_services: []
 tc_tse_api_gateway_routes: []
 tc_tse_api_gateway_canary_rules: []
