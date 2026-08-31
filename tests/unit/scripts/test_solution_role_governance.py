@@ -350,6 +350,24 @@ def test_gwlb_teardown_disassociates_and_deregisters_before_parents():
     assert "deletion_protection: false" in main
 
 
+def test_organization_teardown_removes_access_before_members_and_nodes():
+    main = role_tasks("tc_organization_governance")
+    member = (ROOT / "roles" / "tc_organization_governance" / "tasks" / "teardown_member.yml").read_text(encoding="utf-8")
+    assert_order(
+        member,
+        "Remove Organization member policies",
+        "Remove Organization member identities",
+        "Delete Organization member",
+    )
+    assert "resource_type='organization_member'" in member
+    assert_order(
+        main,
+        "Remove Organization policies identities and members",
+        "Remove Organization nodes child first",
+    )
+    assert "| reverse | list" in main
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(

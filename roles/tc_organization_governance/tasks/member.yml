@@ -1,0 +1,46 @@
+---
+- name: Resolve Organization member node ID
+  ansible.builtin.set_fact:
+    _tc_organization_member_node_id: >-
+      {{ _tc_organization_member.node_id | default('')
+         or _tc_organization_node_ids[_tc_organization_member.node_name] }}
+
+- name: Reconcile Organization member
+  susunola.tencentcloud.organization_member:
+    region: "{{ tc_organization_governance_region }}"
+    state: present
+    member_uin: "{{ _tc_organization_member.member_uin | default(omit, true) }}"
+    name: "{{ _tc_organization_member.name }}"
+    account_name: "{{ _tc_organization_member.account_name | default(omit, true) }}"
+    node_id: "{{ _tc_organization_member_node_id }}"
+    remark: "{{ _tc_organization_member.remark | default('') }}"
+    permission_ids: "{{ _tc_organization_member.permission_ids | default([1, 2]) }}"
+    identity_role_ids: "{{ _tc_organization_member.identity_role_ids | default([1]) }}"
+    allow_quit: "{{ _tc_organization_member.allow_quit | default('Denied') }}"
+  register: _tc_organization_member_result
+
+- name: Resolve Organization member UIN
+  ansible.builtin.set_fact:
+    _tc_organization_member_uin: >-
+      {{ _tc_organization_member.member_uin | default('')
+         or (_tc_organization_member_result.member.MemberUin | default('')) }}
+
+- name: Reconcile Organization member identities
+  when: _tc_organization_member_uin | string | length > 0
+  susunola.tencentcloud.organization_member_identity:
+    region: "{{ tc_organization_governance_region }}"
+    member_uin: "{{ _tc_organization_member_uin }}"
+    identity_ids: "{{ _tc_organization_member.identity_ids | default([]) }}"
+    purge: "{{ _tc_organization_member.purge_identities | default(true) }}"
+
+- name: Reconcile Organization member policies
+  when: _tc_organization_member_uin | string | length > 0
+  susunola.tencentcloud.organization_member_policy:
+    region: "{{ tc_organization_governance_region }}"
+    state: present
+    policy_id: "{{ item.policy_id | default(omit, true) }}"
+    member_uin: "{{ _tc_organization_member_uin }}"
+    name: "{{ item.name }}"
+    identity_id: "{{ item.identity_id }}"
+    description: "{{ item.description | default('') }}"
+  loop: "{{ _tc_organization_member.policies | default([]) }}"

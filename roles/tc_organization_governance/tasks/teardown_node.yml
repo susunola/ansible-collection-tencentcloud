@@ -1,0 +1,14 @@
+---
+- name: Validate Organization node teardown identity
+  ansible.builtin.assert:
+    that:
+      - _tc_organization_node.node_id | default('') | string | length > 0 or _tc_organization_node.parent_node_id | default('') | string | length > 0
+    fail_msg: Organization node teardown requires node_id, or parent_node_id together with name.
+
+- name: Remove Organization node
+  susunola.tencentcloud.organization_node:
+    region: "{{ tc_organization_governance_region }}"
+    state: absent
+    node_id: "{{ _tc_organization_node.node_id | default(omit, true) }}"
+    parent_node_id: "{{ _tc_organization_node.parent_node_id | default(omit, true) }}"
+    name: "{{ _tc_organization_node.name | default(omit, true) }}"

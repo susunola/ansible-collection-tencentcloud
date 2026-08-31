@@ -1,0 +1,48 @@
+---
+- name: Validate Organization governance inputs
+  ansible.builtin.assert:
+    that:
+      - tc_organization_governance_state in ['present', 'absent']
+      - tc_organization_governance_region | length > 0
+    fail_msg: Organization governance requires a valid state and explicit region.
+
+- name: Initialize Organization node identity map
+  when: tc_organization_governance_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_organization_node_ids: {}
+
+- name: Reconcile Organization nodes parent first
+  when: tc_organization_governance_state == 'present'
+  ansible.builtin.include_tasks: node.yml
+  loop: "{{ tc_organization_governance_nodes }}"
+  loop_control:
+    loop_var: _tc_organization_node
+    label: "{{ _tc_organization_node.name }}"
+
+- name: Reconcile Organization members identities and policies
+  when: tc_organization_governance_state == 'present'
+  ansible.builtin.include_tasks: member.yml
+  loop: "{{ tc_organization_governance_members }}"
+  loop_control:
+    loop_var: _tc_organization_member
+    label: "{{ _tc_organization_member.name }}"
+
+- name: Remove Organization policies identities and members
+  when: tc_organization_governance_state == 'absent'
+  ansible.builtin.include_tasks: teardown_member.yml
+  loop: "{{ tc_organization_governance_members }}"
+  loop_control:
+    loop_var: _tc_organization_member
+
+- name: Remove Organization nodes child first
+  when: tc_organization_governance_state == 'absent'
+  ansible.builtin.include_tasks: teardown_node.yml
+  loop: "{{ tc_organization_governance_nodes | reverse | list }}"
+  loop_control:
+    loop_var: _tc_organization_node
+
+- name: Publish Organization governance result
+  when: tc_organization_governance_state == 'present'
+  ansible.builtin.set_fact:
+    tc_organization_governance_result:
+      node_ids: "{{ _tc_organization_node_ids }}"

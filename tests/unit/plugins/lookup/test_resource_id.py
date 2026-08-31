@@ -49,6 +49,7 @@ class Models(object):
     DescribeServicesStatusRequest = Request
     DescribeEnvironmentsRequest = Request
     DescribeApplicationsRequest = Request
+    DescribeOrganizationMembersRequest = Request
     DescribeCfsFileSystemsRequest = Request
     DescribeFileSystemsRequest = Request
     DescribeAccessGroupsRequest = Request
@@ -245,6 +246,12 @@ def test_gwlb_requests_scan_with_numeric_pagination():
     target_group = build_request("gwlb_target_group", Models, "appliances", offset=200)
     assert (load_balancer.Offset, load_balancer.Limit) == (100, 100)
     assert (target_group.Offset, target_group.Limit) == (200, 100)
+
+
+def test_organization_member_request_scans_with_numeric_pagination():
+    request = build_request("organization_member", Models, "production", offset=100)
+    assert request.Offset == 100
+    assert request.Limit == 100
 
 
 def test_resolve_alb_follows_next_token():

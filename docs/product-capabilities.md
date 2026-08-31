@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **39**
+- Solution roles: **40**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -156,7 +156,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `msp` | discovery-only | 0 | 1 | — | — |
 | `oceanus` | managed | 2 | 1 | — | `oceanus_job`, `oceanus_workspace` |
 | `omics` | discovery-only | 0 | 1 | — | — |
-| `organization` | resource-family | 4 | 1 | — | `organization_member`, `organization_member_identity`, `organization_member_policy`, `organization_node` |
+| `organization` | solution | 4 | 1 | `tc_organization_governance` | `organization_member`, `organization_member_identity`, `organization_member_policy`, `organization_node` |
 | `partners` | discovery-only | 0 | 1 | — | — |
 | `portal` | discovery-only | 0 | 1 | — | — |
 | `postgres` | solution | 4 | 1 | `tc_postgresql_stack` | `postgresql_account`, `postgresql_backup_plan`, `postgresql_instance`, `postgresql_parameter_template` |

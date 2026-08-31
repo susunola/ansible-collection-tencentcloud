@@ -1,0 +1,7 @@
+---
+tc_organization_governance_state: present
+tc_organization_governance_region: ""
+# Nodes must be parent-first for creation. Use node_id or parent_node_id on teardown.
+tc_organization_governance_nodes: []
+# Members support node_id/node_name plus identity_ids and policies.
+tc_organization_governance_members: []

@@ -1,0 +1,25 @@
+---
+- name: Resolve Organization parent node ID
+  ansible.builtin.set_fact:
+    _tc_organization_parent_node_id: >-
+      {{ _tc_organization_node.parent_node_id | default('')
+         or _tc_organization_node_ids[_tc_organization_node.parent_name] }}
+
+- name: Reconcile Organization node
+  susunola.tencentcloud.organization_node:
+    region: "{{ tc_organization_governance_region }}"
+    state: present
+    node_id: "{{ _tc_organization_node.node_id | default(omit, true) }}"
+    parent_node_id: "{{ _tc_organization_parent_node_id }}"
+    name: "{{ _tc_organization_node.name }}"
+    remark: "{{ _tc_organization_node.remark | default('') }}"
+    tags: "{{ _tc_organization_node.tags | default({}) }}"
+  register: _tc_organization_node_result
+
+- name: Record Organization node identity
+  ansible.builtin.set_fact:
+    _tc_organization_node_ids: >-
+      {{ _tc_organization_node_ids
+         | combine({_tc_organization_node.name:
+             (_tc_organization_node.node_id | default('')
+              or (_tc_organization_node_result.node.NodeId | default('')))}) }}
