@@ -1,0 +1,12 @@
+---
+- name: Reconcile DLC user
+  susunola.tencentcloud.dlc_user:
+  args: "{{ _tc_dlc_user.user | combine({'state': 'present'}) }}"
+
+- name: Reconcile exact DLC direct-user policies
+  when: _tc_dlc_user.policies is defined
+  susunola.tencentcloud.dlc_user_policy:
+    user_id: "{{ _tc_dlc_user.user.user_id }}"
+    account_source: "{{ _tc_dlc_user.user.account_source | default('TencentAccount') }}"
+    policies: "{{ _tc_dlc_user.policies }}"
+    allow_empty: "{{ _tc_dlc_user.allow_empty_policies | default(false) }}"

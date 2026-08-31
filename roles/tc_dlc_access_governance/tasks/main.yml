@@ -14,7 +14,13 @@
         or (tc_dlc_access_governance_vpc_connections
             | selectattr('endpoint_id', 'defined')
             | list | length == tc_dlc_access_governance_vpc_connections | length)
-    fail_msg: DLC teardown requires work_group_id for every group and endpoint_id for every VPC connection.
+      - >-
+        tc_dlc_access_governance_state == 'present'
+        or (tc_dlc_access_governance_users
+            | map(attribute='user')
+            | selectattr('user_id', 'defined')
+            | list | length == tc_dlc_access_governance_users | length)
+    fail_msg: DLC teardown requires work_group_id, user_id and endpoint_id identities for declared resources.
 
 - name: Initialize DLC managed-resource identity maps
   when: tc_dlc_access_governance_state == 'present'
@@ -58,17 +64,16 @@
 
 - name: Reconcile DLC users before work-group membership
   when: tc_dlc_access_governance_state == 'present'
-  susunola.tencentcloud.dlc_user:
-  args: "{{ _tc_dlc_user | combine({'state': 'present'}) }}"
+  ansible.builtin.include_tasks: user.yml
   loop: "{{ tc_dlc_access_governance_users }}"
   loop_control:
     loop_var: _tc_dlc_user
-    label: "{{ _tc_dlc_user.user_id }}"
+    label: "{{ _tc_dlc_user.user.user_id }}"
 
 - name: Record DLC user identities
   when: tc_dlc_access_governance_state == 'present'
   ansible.builtin.set_fact:
-    _tc_dlc_user_ids: "{{ tc_dlc_access_governance_users | map(attribute='user_id') | list }}"
+    _tc_dlc_user_ids: "{{ tc_dlc_access_governance_users | map(attribute='user') | map(attribute='user_id') | list }}"
 
 - name: Reconcile DLC work groups, members and policies
   when: tc_dlc_access_governance_state == 'present'
@@ -99,12 +104,11 @@
   when:
     - tc_dlc_access_governance_state == 'absent'
     - tc_dlc_access_governance_allow_destroy | bool
-  susunola.tencentcloud.dlc_user:
-  args: "{{ _tc_dlc_user | combine({'state': 'absent', 'allow_delete': true}) }}"
+  ansible.builtin.include_tasks: teardown_user.yml
   loop: "{{ tc_dlc_access_governance_users | reverse | list }}"
   loop_control:
     loop_var: _tc_dlc_user
-    label: "{{ _tc_dlc_user.user_id }}"
+    label: "{{ _tc_dlc_user.user.user_id }}"
 
 - name: Remove DLC databases after users and access policies
   when:

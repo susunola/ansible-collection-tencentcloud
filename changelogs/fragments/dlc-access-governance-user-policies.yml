@@ -1,0 +1,2 @@
+minor_changes:
+  - Extend ``tc_dlc_access_governance`` with exact direct-user policies and policy-first user teardown.

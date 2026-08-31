@@ -29,9 +29,15 @@ ignored when comparing desired access, so repeated runs remain idempotent.
           - name: sales
             comment: Curated sales datasets
         tc_dlc_access_governance_users:
-          - user_id: '100012345678'
-            alias: analytics-engineer
-            description: Analytics engineering account
+          - user:
+              user_id: '100012345678'
+              alias: analytics-engineer
+              description: Analytics engineering account
+            policies:
+              - Catalog: DataLakeCatalog
+                Database: sales
+                Operation: SELECT
+                PolicyType: DATABASE
         tc_dlc_access_governance_work_groups:
           - work_group:
               name: analytics-engineers
@@ -57,3 +63,7 @@ and members, deletes empty work groups and users, then databases, engines and VP
 endpoints. Bound user deletion requires `allow_delete_bound: true` on the user;
 non-empty database deletion additionally requires
 `allow_delete_nonempty: true` on that database item.
+
+Direct-user policies are exact-set managed when `policies` is declared. During
+teardown the role removes direct policies before deleting each user. Work-group
+membership remains managed from each work group's `members` list.

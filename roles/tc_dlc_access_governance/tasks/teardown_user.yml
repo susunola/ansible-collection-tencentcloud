@@ -1,0 +1,11 @@
+---
+- name: Remove DLC direct-user policies before user
+  susunola.tencentcloud.dlc_user_policy:
+    user_id: "{{ _tc_dlc_user.user.user_id }}"
+    account_source: "{{ _tc_dlc_user.user.account_source | default('TencentAccount') }}"
+    policies: []
+    allow_empty: true
+
+- name: Remove unbound DLC user
+  susunola.tencentcloud.dlc_user:
+  args: "{{ _tc_dlc_user.user | combine({'state': 'absent', 'allow_delete': true}) }}"
