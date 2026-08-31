@@ -25,7 +25,7 @@ options:
     description: Resource family to query.
     type: str
     required: true
-    choices: [vpc, subnet, security_group, cvm_instance, lighthouse_instance, autoscaling_group, cbs_disk, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, cynosdb_cluster, redis_instance, mongodb_instance, cfs_file_system, ckafka_instance, mqtt_instance, rocketmq_cluster, rabbitmq_instance, prometheus_instance, event_bus, api_gateway_service, tcr_instance, tem_environment, tem_application]
+    choices: [vpc, subnet, security_group, cvm_instance, lighthouse_instance, autoscaling_group, cbs_disk, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, cynosdb_cluster, redis_instance, mongodb_instance, cfs_file_system, ckafka_instance, mqtt_instance, rocketmq_cluster, rabbitmq_instance, prometheus_instance, edgeone_zone, event_bus, api_gateway_service, tcr_instance, tem_environment, tem_application]
   vpc_id:
     description: Optional VPC scope for subnet and CLB lookups.
     type: str
@@ -145,6 +145,7 @@ RESOURCE_SPECS = {
     "rocketmq_cluster": ("tdmq.v20200217", "TdmqClient", "tdmq.tencentcloudapi.com", "DescribeRocketMQClusters", "ClusterList", "Info.ClusterId", "Info.ClusterName"),
     "rabbitmq_instance": ("tdmq.v20200217", "TdmqClient", "tdmq.tencentcloudapi.com", "DescribeRabbitMQVipInstances", "Instances", "InstanceId", "InstanceName"),
     "prometheus_instance": ("monitor.v20180724", "MonitorClient", "monitor.tencentcloudapi.com", "DescribePrometheusInstances", "InstanceSet", "InstanceId", "InstanceName"),
+    "edgeone_zone": ("teo.v20220901", "TeoClient", "teo.tencentcloudapi.com", "DescribeZones", "Zones", "ZoneId", "ZoneName"),
     "event_bus": ("eb.v20210416", "EbClient", "eb.tencentcloudapi.com", "ListEventBuses", "EventBuses", "EventBusId", "EventBusName"),
     "api_gateway_service": ("apigateway.v20180808", "ApigatewayClient", "apigateway.tencentcloudapi.com", "DescribeServicesStatus", "Result.ServiceSet", "ServiceId", "ServiceName"),
     "tcr_instance": ("tcr.v20190924", "TcrClient", "tcr.tencentcloudapi.com", "DescribeInstances", "Registries", "RegistryId", "RegistryName"),
@@ -178,6 +179,7 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         "rocketmq_cluster": "DescribeRocketMQClustersRequest",
         "rabbitmq_instance": "DescribeRabbitMQVipInstancesRequest",
         "prometheus_instance": "DescribePrometheusInstancesRequest",
+        "edgeone_zone": "DescribeZonesRequest",
         "event_bus": "ListEventBusesRequest",
         "api_gateway_service": "DescribeServicesStatusRequest",
         "tcr_instance": "DescribeInstancesRequest",
@@ -228,6 +230,10 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         request.Filters = [api_filter]
     elif resource_type == "prometheus_instance":
         request.InstanceName = name
+    elif resource_type == "edgeone_zone":
+        api_filter = models.AdvancedFilter()
+        api_filter.Name, api_filter.Values = "zone-name", [name]
+        request.Filters = [api_filter]
     elif resource_type == "alb_load_balancer":
         pass
     elif resource_type == "api_gateway_service":

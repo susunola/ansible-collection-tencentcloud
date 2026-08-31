@@ -34,6 +34,7 @@ class Request(Object):
 class Models(object):
     Filter = Filter
     QueryFilter = Filter
+    AdvancedFilter = Filter
     DescribeVpcsRequest = Request
     DescribeSubnetsRequest = Request
     DescribeSecurityGroupsRequest = Request
@@ -52,6 +53,7 @@ class Models(object):
     DescribeRocketMQClustersRequest = Request
     DescribeRabbitMQVipInstancesRequest = Request
     DescribePrometheusInstancesRequest = Request
+    DescribeZonesRequest = Request
     ListEventBusesRequest = Request
 
 
@@ -175,6 +177,13 @@ def test_prometheus_instance_request_uses_instance_name():
     request = build_request("prometheus_instance", Models, "platform-metrics")
     assert request.InstanceName == "platform-metrics"
     assert request.Limit == 100
+
+
+def test_edgeone_zone_request_uses_advanced_name_filter():
+    request = build_request("edgeone_zone", Models, "example.com", offset=100)
+    assert request.Filters[0].Name == "zone-name"
+    assert request.Filters[0].Values == ["example.com"]
+    assert request.Offset == 100
 
 
 def test_alb_request_uses_token_pagination():
