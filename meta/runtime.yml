@@ -522,6 +522,7 @@ action_groups:
     - tione_dataset
     - tione_dataset_info
     - tione_notebook
+    - tione_notebook_info
     - tiw_running_task_info
     - tke_addon
     - tke_backup_storage_location

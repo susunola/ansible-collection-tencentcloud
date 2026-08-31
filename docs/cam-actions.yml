@@ -2044,6 +2044,8 @@ modules:
   - ModifyNotebook
   - StartNotebook
   - StopNotebook
+  tione_notebook_info:
+  - DescribeNotebooks
   tiw_running_task_info:
   - DescribeRunningTasks
   tke_addon:
