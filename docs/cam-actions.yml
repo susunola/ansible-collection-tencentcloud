@@ -813,6 +813,11 @@ modules:
   - ModifyInstanceSSLAttributes
   dlc_task_info:
   - DescribeTaskList
+  dlc_work_group:
+  - CreateWorkGroup
+  - DeleteWorkGroup
+  - DescribeWorkGroups
+  - ModifyWorkGroup
   dnspod_custom_line:
   - CreateDomainCustomLine
   - DeleteDomainCustomLine

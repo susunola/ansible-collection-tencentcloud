@@ -161,6 +161,7 @@ CORE_MODULES = {
     "cynosdb_backup_config",
     "cynosdb_account_privilege",
     "dnspod_record",
+    "dlc_work_group",
     "dnspod_custom_line",
     "dnspod_line_group",
     "dnspod_domain",

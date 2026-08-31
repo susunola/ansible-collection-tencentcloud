@@ -6,7 +6,7 @@ This matrix is generated from module SDK imports and role metadata. It is a
 navigation and gap-discovery aid, not a claim that every Tencent Cloud API is covered.
 
 - Products/services: **203**
-- Write modules: **326**
+- Write modules: **327**
 - Information modules: **210**
 - Solution roles: **53**
 
@@ -96,7 +96,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `dbs` | discovery-only | 0 | 1 | — | — |
 | `dc` | solution | 2 | 1 | `tc_direct_connect_fabric` | `dc_direct_connect`, `dc_direct_connect_tunnel` |
 | `dcdb` | solution | 5 | 1 | `tc_dcdb_stack` | `dcdb_account`, `dcdb_account_privilege`, `dcdb_backup_config`, `dcdb_instance`, `dcdb_security_config` |
-| `dlc` | discovery-only | 0 | 1 | — | — |
+| `dlc` | managed | 1 | 1 | — | `dlc_work_group` |
 | `dnspod` | solution | 4 | 1 | `tc_dns_zone` | `dnspod_custom_line`, `dnspod_domain`, `dnspod_line_group`, `dnspod_record` |
 | `domain` | discovery-only | 0 | 1 | — | — |
 | `dsgc` | discovery-only | 0 | 1 | — | — |
