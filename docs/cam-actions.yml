@@ -837,6 +837,11 @@ modules:
   - UpdateStandardEngineResourceGroupBaseInfo
   - UpdateStandardEngineResourceGroupConfigInfo
   - UpdateStandardEngineResourceGroupResourceInfo
+  dlc_spark_job:
+  - CreateSparkApp
+  - DeleteSparkApp
+  - DescribeSparkAppJob
+  - ModifySparkApp
   dlc_task_info:
   - DescribeTaskList
   dlc_user:
