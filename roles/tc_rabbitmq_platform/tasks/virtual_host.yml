@@ -1,0 +1,38 @@
+---
+- name: Reconcile RabbitMQ virtual host
+  susunola.tencentcloud.tdmq_rabbitmq_vhost:
+    region: "{{ tc_rabbitmq_platform_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ _tc_rabbitmq_platform_instance_id }}"
+    name: "{{ _tc_rabbitmq_vhost.name }}"
+    description: "{{ _tc_rabbitmq_vhost.description | default('') }}"
+    trace_enabled: "{{ _tc_rabbitmq_vhost.trace_enabled | default(false) }}"
+    mirror_queue_policy: "{{ _tc_rabbitmq_vhost.mirror_queue_policy | default(true) }}"
+
+- name: Reconcile RabbitMQ virtual host permissions
+  susunola.tencentcloud.tdmq_rabbitmq_permission:
+    region: "{{ tc_rabbitmq_platform_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ _tc_rabbitmq_platform_instance_id }}"
+    user: "{{ item.user }}"
+    virtual_host: "{{ _tc_rabbitmq_vhost.name }}"
+    configure_regex: "{{ item.configure_regex | default('.*') }}"
+    write_regex: "{{ item.write_regex | default('.*') }}"
+    read_regex: "{{ item.read_regex | default('.*') }}"
+  loop: "{{ _tc_rabbitmq_vhost.permissions | default([]) }}"
+  loop_control: {label: "{{ item.user }}"}
+
+- name: Reconcile RabbitMQ bindings
+  susunola.tencentcloud.tdmq_rabbitmq_binding:
+    region: "{{ tc_rabbitmq_platform_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ _tc_rabbitmq_platform_instance_id }}"
+    virtual_host: "{{ _tc_rabbitmq_vhost.name }}"
+    binding_id: "{{ item.binding_id | default(omit) }}"
+    source_exchange: "{{ item.source_exchange }}"
+    destination_type: "{{ item.destination_type }}"
+    destination: "{{ item.destination }}"
+    routing_key: "{{ item.routing_key | default('') }}"
+  loop: "{{ _tc_rabbitmq_vhost.bindings | default([]) }}"
+  loop_control:
+    label: "{{ item.source_exchange }} -> {{ item.destination }}"

@@ -1,0 +1,29 @@
+---
+- name: Remove RabbitMQ bindings
+  susunola.tencentcloud.tdmq_rabbitmq_binding:
+    region: "{{ tc_rabbitmq_platform_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_rabbitmq_platform_instance_id }}"
+    virtual_host: "{{ _tc_rabbitmq_vhost.name }}"
+    binding_id: "{{ item.binding_id | default(omit) }}"
+    source_exchange: "{{ item.source_exchange }}"
+    destination_type: "{{ item.destination_type }}"
+    destination: "{{ item.destination }}"
+    routing_key: "{{ item.routing_key | default('') }}"
+  loop: "{{ _tc_rabbitmq_vhost.bindings | default([]) }}"
+
+- name: Remove RabbitMQ virtual host permissions
+  susunola.tencentcloud.tdmq_rabbitmq_permission:
+    region: "{{ tc_rabbitmq_platform_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_rabbitmq_platform_instance_id }}"
+    user: "{{ item.user }}"
+    virtual_host: "{{ _tc_rabbitmq_vhost.name }}"
+  loop: "{{ _tc_rabbitmq_vhost.permissions | default([]) }}"
+
+- name: Delete RabbitMQ virtual host
+  susunola.tencentcloud.tdmq_rabbitmq_vhost:
+    region: "{{ tc_rabbitmq_platform_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_rabbitmq_platform_instance_id }}"
+    name: "{{ _tc_rabbitmq_vhost.name }}"

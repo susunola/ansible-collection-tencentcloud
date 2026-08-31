@@ -212,6 +212,15 @@ def test_rocketmq_teardown_removes_permissions_and_resources_before_cluster():
     assert "credential fields" in (ROOT / "roles" / "tc_rocketmq_platform" / "README.md").read_text(encoding="utf-8")
 
 
+def test_rabbitmq_teardown_removes_access_before_protected_instance():
+    main = role_tasks("tc_rabbitmq_platform")
+    vhost = (ROOT / "roles" / "tc_rabbitmq_platform" / "tasks" / "teardown_virtual_host.yml").read_text(encoding="utf-8")
+    assert_order(vhost, "Remove RabbitMQ bindings", "Remove RabbitMQ virtual host permissions", "Delete RabbitMQ virtual host")
+    assert_order(main, "Remove RabbitMQ bindings permissions and virtual hosts", "Remove RabbitMQ users", "Disable RabbitMQ deletion protection and remove instance")
+    assert "deletion_protection: false" in main
+    assert "no_log:" in main
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -243,6 +252,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_block_storage": "resource_type='cbs_disk'",
         "tc_lighthouse_stack": "resource_type='lighthouse_instance'",
         "tc_rocketmq_platform": "resource_type='rocketmq_cluster'",
+        "tc_rabbitmq_platform": "resource_type='rabbitmq_instance'",
         "tc_eventbridge_router": "resource_type='event_bus'",
         "tc_container_registry": "resource_type='tcr_instance'",
         "tc_tem_application": "resource_type='tem_environment'",

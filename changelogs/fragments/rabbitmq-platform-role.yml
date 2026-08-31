@@ -1,0 +1,6 @@
+---
+minor_changes:
+  - >-
+    solution roles - add ``tc_rabbitmq_platform`` for exact-name dedicated
+    instance adoption, users, virtual hosts, permissions and bindings with
+    secret-safe tasks and deletion-protection-aware teardown.

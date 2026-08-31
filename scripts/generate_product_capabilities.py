@@ -33,6 +33,7 @@ ROLE_SERVICES = {
     "tc_mariadb_stack": "mariadb",
     "tc_mqtt_broker": "mqtt",
     "tc_postgresql_stack": "postgres",
+    "tc_rabbitmq_platform": "tdmq",
     "tc_redis_stack": "redis",
     "tc_rocketmq_platform": "tdmq",
     "tc_launch": "cvm",

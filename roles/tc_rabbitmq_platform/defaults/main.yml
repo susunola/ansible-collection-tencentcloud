@@ -1,0 +1,29 @@
+---
+tc_rabbitmq_platform_state: present
+tc_rabbitmq_platform_region: ""
+tc_rabbitmq_platform_instance_id: ""
+tc_rabbitmq_platform_name: ""
+tc_rabbitmq_platform_zone_ids: []
+tc_rabbitmq_platform_vpc_id: ""
+tc_rabbitmq_platform_subnet_id: ""
+tc_rabbitmq_platform_node_spec: rabbit-vip-basic-1
+tc_rabbitmq_platform_node_count: null
+tc_rabbitmq_platform_storage_size: 200
+tc_rabbitmq_platform_version: "3.11.8"
+tc_rabbitmq_platform_pay_mode: 0
+tc_rabbitmq_platform_period_months: 1
+tc_rabbitmq_platform_auto_renew: true
+tc_rabbitmq_platform_default_ha_mirror_queue: false
+tc_rabbitmq_platform_bandwidth: null
+tc_rabbitmq_platform_public_access: false
+tc_rabbitmq_platform_deletion_protection: true
+tc_rabbitmq_platform_remark: ""
+tc_rabbitmq_platform_tags: {}
+tc_rabbitmq_platform_international: false
+
+# User items use tdmq_rabbitmq_user parameters. Passwords are creation/rotation only.
+tc_rabbitmq_platform_users: []
+# Vhost items may contain permissions and bindings lists.
+tc_rabbitmq_platform_virtual_hosts: []
+tc_rabbitmq_platform_waiter_delay: 10
+tc_rabbitmq_platform_waiter_timeout: 1200
