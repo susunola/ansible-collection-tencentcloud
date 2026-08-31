@@ -1,0 +1,5 @@
+---
+tc_gaap_accelerator_state: present
+tc_gaap_accelerator_proxy: {}
+tc_gaap_accelerator_listeners: []
+tc_gaap_accelerator_allow_destroy: false

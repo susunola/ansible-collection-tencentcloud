@@ -99,6 +99,10 @@ options:
         V(CreateProxyRequest.GroupId).
       - Only applied at creation.
     type: str
+  force_destroy:
+    description: Force proxy deletion when listeners or origins remain bound.
+    type: bool
+    default: false
   retries:
     description: Number of retries for transient SDK failures.
     type: int
@@ -174,6 +178,7 @@ proxy:
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
 
 
 def _load_gaap():
@@ -181,9 +186,10 @@ def _load_gaap():
     return models, gaap_client
 
 
-def build_describe_request(models, proxy_id, name):
+def build_describe_request(models, proxy_id, name, offset=0):
     request = models.DescribeProxiesRequest()
     request.Limit = 100
+    request.Offset = offset
     if proxy_id:
         request.ProxyIds = [proxy_id]
     # The DescribeProxies filters do not support the proxy name, so the
@@ -201,16 +207,17 @@ def _serialize(item):
 
 def find_proxy(module, client, models, proxy_id, name):
     """Return the matching proxy dict or None."""
-    request = build_describe_request(models, proxy_id, name)
-    response = module.sdk_call(client.DescribeProxies, request)
-    if proxy_id:
-        proxy = _first(response.ProxySet or [])
-        return _serialize(proxy) if proxy is not None else None
-    for proxy in response.ProxySet or []:
-        current = _serialize(proxy)
-        if current.get("ProxyName") == name:
-            return current
-    return None
+    offset, matches = 0, []
+    while True:
+        request = build_describe_request(models, proxy_id, name, offset)
+        response = module.sdk_call(client.DescribeProxies, request); page = response.ProxySet or []
+        for proxy in page:
+            current = _serialize(proxy)
+            if (proxy_id and current.get("ProxyId") == proxy_id) or (not proxy_id and current.get("ProxyName") == name): matches.append(current)
+        offset += len(page)
+        if proxy_id or not page or offset >= int(getattr(response, "TotalCount", 0) or 0): break
+    if len(matches) > 1: module.fail_json(msg="Multiple GAAP proxies have the requested name; specify proxy_id", name=name)
+    return matches[0] if matches else None
 
 
 def build_create_request(models, params):
@@ -235,7 +242,7 @@ def build_create_request(models, params):
 
 def _create(module, client, models, params):
     request = build_create_request(models, params)
-    module.sdk_call(client.CreateProxy, request)
+    return module.sdk_call(client.CreateProxy, request)
 
 
 def _rename(module, client, models, proxy_id, name):
@@ -257,11 +264,23 @@ def _close(module, client, models, proxy_id):
     module.sdk_call(client.CloseProxies, request)
 
 
-def _destroy(module, client, models, proxy_id):
+def _destroy(module, client, models, proxy_id, force=False):
     request = models.DestroyProxiesRequest()
     request.ProxyIds = [proxy_id]
-    request.Force = 1
+    request.Force = int(force)
     module.sdk_call(client.DestroyProxies, request)
+
+
+def normalized_status(value):
+    return str(value or "").upper()
+
+
+def wait_proxy(module, client, models, proxy_id, desired):
+    def poll():
+        current = find_proxy(module, client, models, proxy_id, None)
+        return normalized_status((current or {}).get("Status"))
+    wait_for_state(module, poll, set(desired), timeout=module.params["waiter_timeout"], delay=module.params["waiter_delay"])
+    return find_proxy(module, client, models, proxy_id, None)
 
 
 def run_module():
@@ -279,6 +298,7 @@ def run_module():
             "network_type": {"type": "str", "choices": ["normal", "cn2", "triple"]},
             "ip_address_version": {"type": "str", "choices": ["IPv4", "IPv6"]},
             "group_id": {"type": "str"},
+            "force_destroy": {"type": "bool", "default": False},
         },
         supports_check_mode=True,
     )
@@ -311,7 +331,7 @@ def run_module():
         diff = maybe_diff(module, current, None)
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), msg="Would destroy GAAP proxy")
-        _destroy(module, client, models, target_id)
+        _destroy(module, client, models, target_id, module.params["force_destroy"])
         module.exit_json(changed=True, **(diff or {}), proxy=None, msg="GAAP proxy destroyed")
 
     if state in ("running", "stopped"):
@@ -322,20 +342,22 @@ def run_module():
                 name=name,
             )
         target_id = current["ProxyId"]
-        status = current.get("Status")
+        status = normalized_status(current.get("Status"))
         if state == "running":
-            if status == "running":
+            if status == "RUNNING":
                 module.exit_json(changed=False, proxy=current, msg="GAAP proxy already running")
             if module.check_mode:
                 module.exit_json(changed=True, proxy=current, msg="Would open GAAP proxy")
             _open(module, client, models, target_id)
+            current = wait_proxy(module, client, models, target_id, {"RUNNING"})
             module.exit_json(changed=True, proxy=current, msg="GAAP proxy opened")
         # state == "stopped"
-        if status == "closed":
+        if status == "CLOSED":
             module.exit_json(changed=False, proxy=current, msg="GAAP proxy already stopped")
         if module.check_mode:
             module.exit_json(changed=True, proxy=current, msg="Would close GAAP proxy")
         _close(module, client, models, target_id)
+        current = wait_proxy(module, client, models, target_id, {"CLOSED"})
         module.exit_json(changed=True, proxy=current, msg="GAAP proxy closed")
 
     # state == present
@@ -353,8 +375,9 @@ def run_module():
         diff = maybe_diff(module, None, desired)
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), msg="Would create GAAP proxy")
-        _create(module, client, models, module.params)
-        current = find_proxy(module, client, models, None, name)
+        response = _create(module, client, models, module.params)
+        proxy_id = response.ProxyId if getattr(response, "ProxyId", None) else response.InstanceId
+        current = wait_proxy(module, client, models, proxy_id, {"RUNNING", "CLOSED"})
         module.exit_json(changed=True, **(diff or {}), proxy=current, msg="GAAP proxy created")
 
     target_id = current["ProxyId"]

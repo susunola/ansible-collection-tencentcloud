@@ -1,0 +1,22 @@
+---
+- name: Reconcile GAAP layer-4 listener
+  susunola.tencentcloud.gaap_layer4_listener:
+  args: >-
+    {{ _tc_gaap_listener_spec.listener
+       | combine({'state': 'present', 'proxy_id': _tc_gaap_accelerator_proxy.proxy.ProxyId}) }}
+  register: _tc_gaap_listener
+
+- name: Initialize desired GAAP listener binding set
+  ansible.builtin.set_fact:
+    _tc_gaap_listener_bindings: []
+
+- name: Register GAAP origins and build binding set
+  ansible.builtin.include_tasks: origin.yml
+  loop: "{{ _tc_gaap_listener_spec.real_servers | default([]) }}"
+  loop_control:
+    loop_var: _tc_gaap_origin_spec
+
+- name: Reconcile complete GAAP listener binding set
+  susunola.tencentcloud.gaap_listener_real_servers:
+    listener_id: "{{ _tc_gaap_listener.listener.ListenerId }}"
+    real_servers: "{{ _tc_gaap_listener_bindings }}"

@@ -51,6 +51,7 @@ class Models(object):
     DescribeApplicationsRequest = Request
     DescribeOrganizationMembersRequest = Request
     DescribeMigrationJobsRequest = Request
+    DescribeProxiesRequest = Request
     DescribeCfsFileSystemsRequest = Request
     DescribeFileSystemsRequest = Request
     DescribeAccessGroupsRequest = Request
@@ -269,6 +270,17 @@ def test_resolve_dts_migration_job_requires_exact_name():
         Object(JobId="dts-1", JobName="orders-migration"),
     ])
     assert resolve_resource(Client(response), Models, "dts_migration_job", "orders-migration") == "dts-1"
+
+
+def test_gaap_proxy_request_scans_with_numeric_pagination():
+    request = build_request("gaap_proxy", Models, "global-entry", offset=100)
+    assert (request.Offset, request.Limit) == (100, 100)
+
+
+def test_resolve_gaap_proxy_uses_exact_name():
+    response = Object(ProxySet=[Object(ProxyId="proxy-old", ProxyName="global-entry-old"),
+                                      Object(ProxyId="proxy-1", ProxyName="global-entry")])
+    assert resolve_resource(Client(response), Models, "gaap_proxy", "global-entry") == "proxy-1"
 
 
 def test_direct_connect_requests_scan_with_numeric_pagination():

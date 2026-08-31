@@ -12,6 +12,7 @@ from ansible_collections.susunola.tencentcloud.plugins.modules.gaap_proxy import
     build_create_request,
     build_describe_request,
     find_proxy,
+    normalized_status,
 )
 
 
@@ -45,6 +46,7 @@ class FakeProxy(object):
 class FakeResponse(object):
     def __init__(self, proxies):
         self.ProxySet = proxies
+        self.TotalCount = len(proxies or [])
 
 
 class FakeClient(object):
@@ -102,6 +104,7 @@ def test_build_describe_request_by_id():
     request = build_describe_request(FakeModels, "proxy-123", None)
     assert request.ProxyIds == ["proxy-123"]
     assert request.Limit == 100
+    assert request.Offset == 0
 
 
 def test_build_describe_request_by_name_has_no_filter():
@@ -220,7 +223,12 @@ def test_close_sends_proxy_ids():
 def test_destroy_sends_proxy_ids_and_force():
     client = FakeClient(FakeResponse(None))
     module = FakeModule()
-    _destroy(module, client, FakeModels, "proxy-1")
+    _destroy(module, client, FakeModels, "proxy-1", True)
     request = client.calls[-1]
     assert request.ProxyIds == ["proxy-1"]
     assert request.Force == 1
+
+
+def test_status_normalization_matches_current_api_values():
+    assert normalized_status("running") == "RUNNING"
+    assert normalized_status("CLOSED") == "CLOSED"

@@ -1,0 +1,5 @@
+---
+minor_changes:
+  - Add GAAP TCP/UDP listener, reusable real-server and exact listener binding modules.
+  - Add the tc_gaap_accelerator role for a complete proxy-to-origin delivery chain.
+  - Add GAAP proxy name resolution to the resource_id lookup.

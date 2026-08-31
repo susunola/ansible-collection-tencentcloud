@@ -6,9 +6,9 @@ This matrix is generated from module SDK imports and role metadata. It is a
 navigation and gap-discovery aid, not a claim that every Tencent Cloud API is covered.
 
 - Products/services: **203**
-- Write modules: **305**
+- Write modules: **308**
 - Information modules: **210**
-- Solution roles: **47**
+- Solution roles: **48**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -115,7 +115,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `fmu` | discovery-only | 0 | 1 | — | — |
 | `fwm` | discovery-only | 0 | 1 | — | — |
 | `ga2` | discovery-only | 0 | 1 | — | — |
-| `gaap` | managed | 1 | 1 | — | `gaap_proxy` |
+| `gaap` | solution | 4 | 1 | `tc_gaap_accelerator` | `gaap_layer4_listener`, `gaap_listener_real_servers`, `gaap_proxy`, `gaap_real_server` |
 | `gme` | discovery-only | 0 | 1 | — | — |
 | `goosefs` | solution | 2 | 1 | `tc_goosefs_cache` | `goosefs_file_system`, `goosefs_fileset` |
 | `gs` | discovery-only | 0 | 1 | — | — |

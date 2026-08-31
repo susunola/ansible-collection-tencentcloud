@@ -1,0 +1,20 @@
+---
+- name: Register reusable GAAP origin
+  susunola.tencentcloud.gaap_real_server:
+    state: present
+    real_server_id: "{{ _tc_gaap_origin_spec.real_server_id | default(omit, true) }}"
+    address: "{{ _tc_gaap_origin_spec.address }}"
+    name: "{{ _tc_gaap_origin_spec.name }}"
+    project_id: "{{ _tc_gaap_origin_spec.project_id | default(0) }}"
+  register: _tc_gaap_origin
+
+- name: Append GAAP origin binding
+  ansible.builtin.set_fact:
+    _tc_gaap_listener_bindings: >-
+      {{ _tc_gaap_listener_bindings + [{
+           'real_server_id': _tc_gaap_origin.real_server.RealServerId,
+           'address': _tc_gaap_origin.real_server.RealServerIP,
+           'port': _tc_gaap_origin_spec.port,
+           'weight': _tc_gaap_origin_spec.weight | default(1),
+           'failover_role': _tc_gaap_origin_spec.failover_role | default(None)
+         }] }}

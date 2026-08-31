@@ -909,6 +909,17 @@ modules:
   - DescribeEdgeAclRules
   ga2_accelerate_area_info:
   - DescribeAccelerateAreas
+  gaap_layer4_listener:
+  - CreateTCPListeners
+  - CreateUDPListeners
+  - DeleteListeners
+  - DescribeTCPListeners
+  - DescribeUDPListeners
+  - ModifyTCPListenerAttribute
+  - ModifyUDPListenerAttribute
+  gaap_listener_real_servers:
+  - BindListenerRealServers
+  - DescribeListenerRealServers
   gaap_proxy:
   - CloseProxies
   - CreateProxy
@@ -918,6 +929,11 @@ modules:
   - OpenProxies
   gaap_proxy_info:
   - DescribeProxies
+  gaap_real_server:
+  - AddRealServers
+  - DescribeRealServers
+  - ModifyRealServerName
+  - RemoveRealServers
   gme_voice_print_info:
   - DescribeVoicePrint
   goosefs_file_system:

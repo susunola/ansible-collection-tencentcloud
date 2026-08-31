@@ -1,0 +1,45 @@
+---
+- name: Validate GAAP accelerator inputs
+  ansible.builtin.assert:
+    that:
+      - tc_gaap_accelerator_state in ['present', 'absent']
+      - tc_gaap_accelerator_proxy | length > 0
+    fail_msg: GAAP accelerator requires proxy creation fields or an existing proxy identity.
+
+- name: Reconcile GAAP proxy
+  when: tc_gaap_accelerator_state == 'present'
+  susunola.tencentcloud.gaap_proxy:
+  args: "{{ tc_gaap_accelerator_proxy | combine({'state': 'present'}) }}"
+  register: _tc_gaap_accelerator_proxy
+
+- name: Ensure GAAP proxy is running
+  when:
+    - tc_gaap_accelerator_state == 'present'
+    - _tc_gaap_accelerator_proxy.proxy.ProxyId is defined
+  susunola.tencentcloud.gaap_proxy:
+    proxy_id: "{{ _tc_gaap_accelerator_proxy.proxy.ProxyId }}"
+    state: running
+  register: _tc_gaap_accelerator_running
+
+- name: Reconcile GAAP listener delivery chains
+  when:
+    - tc_gaap_accelerator_state == 'present'
+    - _tc_gaap_accelerator_proxy.proxy.ProxyId is defined
+  ansible.builtin.include_tasks: listener.yml
+  loop: "{{ tc_gaap_accelerator_listeners }}"
+  loop_control:
+    loop_var: _tc_gaap_listener_spec
+
+- name: Require explicit authorization before destroying GAAP proxy
+  when:
+    - tc_gaap_accelerator_state == 'absent'
+    - not tc_gaap_accelerator_allow_destroy | bool
+  ansible.builtin.fail:
+    msg: Set tc_gaap_accelerator_allow_destroy=true to authorize forced proxy and listener destruction.
+
+- name: Destroy GAAP proxy and its declared delivery chain
+  when:
+    - tc_gaap_accelerator_state == 'absent'
+    - tc_gaap_accelerator_allow_destroy | bool
+  susunola.tencentcloud.gaap_proxy:
+  args: "{{ tc_gaap_accelerator_proxy | combine({'state': 'absent', 'force_destroy': true}) }}"

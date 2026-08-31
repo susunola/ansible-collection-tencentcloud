@@ -246,8 +246,11 @@ action_groups:
     - fmu_model_info
     - fwm_edge_acl_rule_info
     - ga2_accelerate_area_info
+    - gaap_layer4_listener
+    - gaap_listener_real_servers
     - gaap_proxy
     - gaap_proxy_info
+    - gaap_real_server
     - gme_voice_print_info
     - goosefs_file_system
     - goosefs_file_system_info

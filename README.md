@@ -155,7 +155,10 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `elasticsearch_snapshot` | Manage Tencent Cloud Elasticsearch cluster snapshots |
 | `emr_auto_scale_strategy` | Manage Tencent Cloud EMR automatic scaling strategies |
 | `emr_cluster` | Manage Tencent Cloud EMR clusters |
+| `gaap_layer4_listener` | Manage Tencent Cloud GAAP TCP and UDP listeners |
+| `gaap_listener_real_servers` | Reconcile Tencent Cloud GAAP listener origin bindings |
 | `gaap_proxy` | Manage Tencent Cloud GAAP proxies |
+| `gaap_real_server` | Manage Tencent Cloud GAAP real servers |
 | `goosefs_file_system` | Manage Tencent Cloud GooseFS file systems |
 | `goosefs_fileset` | Manage Tencent Cloud GooseFS filesets |
 | `gwlb_load_balancer` | Manage Tencent Cloud Gateway Load Balancers |

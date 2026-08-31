@@ -57,6 +57,7 @@ ROLE_SERVICES = {
     "tc_cloud_audit_governance": "cloudaudit",
     "tc_dts_migration": "dts",
     "tc_emr_platform": "emr",
+    "tc_gaap_accelerator": "gaap",
     "tc_observability_baseline": "cls",
     "tc_object_storage_baseline": "cos",
     "tc_serverless_application": "scf",
