@@ -54,6 +54,8 @@ class Models(object):
     DescribeFileSystemsRequest = Request
     DescribeAccessGroupsRequest = Request
     DescribeMountPointsRequest = Request
+    DescribeDirectConnectsRequest = Request
+    DescribeDirectConnectTunnelsRequest = Request
     DescribeInstancesDetailRequest = Request
     DescribeInstanceListRequest = Request
     DescribeRocketMQClustersRequest = Request
@@ -252,6 +254,13 @@ def test_organization_member_request_scans_with_numeric_pagination():
     request = build_request("organization_member", Models, "production", offset=100)
     assert request.Offset == 100
     assert request.Limit == 100
+
+
+def test_direct_connect_requests_scan_with_numeric_pagination():
+    circuit = build_request("direct_connect", Models, "primary", offset=100)
+    tunnel = build_request("direct_connect_tunnel", Models, "production", offset=200)
+    assert (circuit.Offset, circuit.Limit) == (100, 100)
+    assert (tunnel.Offset, tunnel.Limit) == (200, 100)
 
 
 def test_resolve_alb_follows_next_token():

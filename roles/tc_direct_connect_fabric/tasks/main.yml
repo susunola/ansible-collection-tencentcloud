@@ -1,0 +1,76 @@
+---
+- name: Resolve physical Direct Connect ID for teardown
+  when:
+    - tc_direct_connect_fabric_state == 'absent'
+    - tc_direct_connect_fabric_direct_connect_id | length == 0
+    - tc_direct_connect_fabric_connection.name | default('') | length > 0
+  ansible.builtin.set_fact:
+    tc_direct_connect_fabric_direct_connect_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_direct_connect_fabric_connection.name,
+                resource_type='direct_connect', region=tc_direct_connect_fabric_region) }}
+
+- name: Validate Direct Connect fabric inputs
+  ansible.builtin.assert:
+    that:
+      - tc_direct_connect_fabric_state in ['present', 'absent']
+      - tc_direct_connect_fabric_region | length > 0
+      - tc_direct_connect_fabric_direct_connect_id | length > 0 or tc_direct_connect_fabric_connection.name | default('') | length > 0
+      - tc_direct_connect_fabric_state == 'present' or tc_direct_connect_fabric_direct_connect_id | length > 0
+    fail_msg: Direct Connect fabric requires a region and physical connection identity.
+
+- name: Provision or adopt physical Direct Connect
+  when: tc_direct_connect_fabric_state == 'present'
+  susunola.tencentcloud.dc_direct_connect:
+  args: >-
+    {{ tc_direct_connect_fabric_connection
+       | combine({'state': 'present',
+                  'direct_connect_id': tc_direct_connect_fabric_direct_connect_id or omit,
+                  'region': tc_direct_connect_fabric_region}) }}
+  register: _tc_direct_connect_connection
+
+- name: Resolve physical Direct Connect ID
+  when: tc_direct_connect_fabric_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_direct_connect_id: >-
+      {{ tc_direct_connect_fabric_direct_connect_id
+         or (_tc_direct_connect_connection.direct_connect.DirectConnectId | default('')) }}
+
+- name: Reconcile Direct Connect tunnels
+  when:
+    - tc_direct_connect_fabric_state == 'present'
+    - _tc_direct_connect_id | length > 0
+  susunola.tencentcloud.dc_direct_connect_tunnel:
+  args: >-
+    {{ item | combine({'state': 'present', 'direct_connect_id': _tc_direct_connect_id,
+                       'region': tc_direct_connect_fabric_region}) }}
+  loop: "{{ tc_direct_connect_fabric_tunnels }}"
+  no_log: true
+  register: _tc_direct_connect_tunnels
+
+- name: Remove Direct Connect tunnels before physical connection
+  when: tc_direct_connect_fabric_state == 'absent'
+  susunola.tencentcloud.dc_direct_connect_tunnel:
+    region: "{{ tc_direct_connect_fabric_region }}"
+    state: absent
+    tunnel_id: "{{ item.tunnel_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+    direct_connect_id: "{{ tc_direct_connect_fabric_direct_connect_id }}"
+  loop: "{{ tc_direct_connect_fabric_tunnels }}"
+  no_log: true
+
+- name: Remove physical Direct Connect when explicitly authorized
+  when:
+    - tc_direct_connect_fabric_state == 'absent'
+    - tc_direct_connect_fabric_delete_physical_connection | bool
+  susunola.tencentcloud.dc_direct_connect:
+    region: "{{ tc_direct_connect_fabric_region }}"
+    state: absent
+    direct_connect_id: "{{ tc_direct_connect_fabric_direct_connect_id }}"
+
+- name: Publish Direct Connect fabric result
+  when: tc_direct_connect_fabric_state == 'present'
+  ansible.builtin.set_fact:
+    tc_direct_connect_fabric_result:
+      direct_connect_id: "{{ _tc_direct_connect_id }}"
+      direct_connect: "{{ _tc_direct_connect_connection.direct_connect | default({}) }}"
+      tunnels: "{{ _tc_direct_connect_tunnels | default({}) }}"

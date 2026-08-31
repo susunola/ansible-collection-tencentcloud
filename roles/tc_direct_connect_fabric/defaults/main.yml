@@ -1,0 +1,8 @@
+---
+tc_direct_connect_fabric_state: present
+tc_direct_connect_fabric_region: ""
+tc_direct_connect_fabric_direct_connect_id: ""
+# Physical connection fields follow dc_direct_connect options.
+tc_direct_connect_fabric_connection: {}
+tc_direct_connect_fabric_tunnels: []
+tc_direct_connect_fabric_delete_physical_connection: false

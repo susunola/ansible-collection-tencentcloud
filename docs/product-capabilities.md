@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **41**
+- Solution roles: **42**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -94,7 +94,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `dbbrain` | managed | 1 | 1 | — | `dbbrain_sql_filter` |
 | `dbdc` | managed | 1 | 1 | — | `dbdc_db_custom_cluster` |
 | `dbs` | discovery-only | 0 | 1 | — | — |
-| `dc` | managed | 2 | 1 | — | `dc_direct_connect`, `dc_direct_connect_tunnel` |
+| `dc` | solution | 2 | 1 | `tc_direct_connect_fabric` | `dc_direct_connect`, `dc_direct_connect_tunnel` |
 | `dcdb` | managed | 1 | 1 | — | `dcdb_instance` |
 | `dlc` | discovery-only | 0 | 1 | — | — |
 | `dnspod` | solution | 4 | 1 | `tc_dns_zone` | `dnspod_custom_line`, `dnspod_domain`, `dnspod_line_group`, `dnspod_record` |

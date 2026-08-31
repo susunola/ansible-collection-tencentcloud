@@ -375,6 +375,17 @@ def test_kms_keyring_requires_explicit_scheduled_deletion_authorization():
     assert "Schedule KMS key deletion" in text
 
 
+def test_direct_connect_removes_tunnels_before_guarded_physical_connection():
+    text = role_tasks("tc_direct_connect_fabric")
+    assert_order(
+        text,
+        "Remove Direct Connect tunnels before physical connection",
+        "Remove physical Direct Connect when explicitly authorized",
+    )
+    assert "tc_direct_connect_fabric_delete_physical_connection | bool" in text
+    assert "no_log:" in text
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -418,6 +429,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_container_registry": "resource_type='tcr_instance'",
         "tc_tem_application": "resource_type='tem_environment'",
         "tc_serverless_application": "resource_type='api_gateway_service'",
+        "tc_direct_connect_fabric": "resource_type='direct_connect'",
     }
     for role, lookup_type in expectations.items():
         text = role_tasks(role)
