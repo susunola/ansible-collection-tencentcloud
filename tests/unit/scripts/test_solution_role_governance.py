@@ -465,6 +465,10 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert "susunola.tencentcloud.dlc_inference_model" in main
     assert main.index("susunola.tencentcloud.dlc_inference_model") < main.index("susunola.tencentcloud.dlc_model_version")
     assert main.index("susunola.tencentcloud.dlc_model_version") < main.index("susunola.tencentcloud.dlc_inference_service")
+    assert "Each DLC model version requires exactly one model_uid or managed model_name reference" in main
+    assert "Each DLC inference service requires exactly one model_uid or managed model_name reference" in main
+    assert "_tc_dlc_inference_model_uids[_tc_dlc_model_version.model_name]" in main
+    assert "_tc_dlc_inference_model_uids[_tc_dlc_inference_service.model_name]" in main
     assert main.index("susunola.tencentcloud.dlc_database") < main.index("include_tasks: work_group.yml")
     assert main.index("susunola.tencentcloud.dlc_database") < main.index("susunola.tencentcloud.dlc_script")
     assert main.index("susunola.tencentcloud.dlc_database") < main.index("susunola.tencentcloud.dlc_table")

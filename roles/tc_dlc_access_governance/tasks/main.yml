@@ -3,6 +3,12 @@
   ansible.builtin.assert:
     that:
       - tc_dlc_access_governance_state in ['present', 'absent']
+      - >-
+        tc_dlc_access_governance_inference_models | map(attribute='name') | unique | list | length
+        == tc_dlc_access_governance_inference_models | length
+      - >-
+        tc_dlc_access_governance_inference_services | map(attribute='name') | unique | list | length
+        == tc_dlc_access_governance_inference_services | length
       - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_inference_models | length == 0
       - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_model_versions | length == 0
       - tc_dlc_access_governance_state == 'present' or tc_dlc_access_governance_inference_services | length == 0
@@ -206,14 +212,36 @@
       {{ dict((tc_dlc_access_governance_inference_models | map(attribute='name') | list)
               | zip(_tc_dlc_inference_model_results.results | map(attribute='model_uid') | list)) }}
 
-- name: Publish DLC model versions after parent inference models
+- name: Validate DLC model-version parent references
   when: tc_dlc_access_governance_state == 'present'
-  susunola.tencentcloud.dlc_model_version:
-  args: "{{ _tc_dlc_model_version }}"
+  ansible.builtin.assert:
+    that:
+      - (_tc_dlc_model_version.model_uid is defined) != (_tc_dlc_model_version.model_name is defined)
+      - >-
+        _tc_dlc_model_version.model_name is not defined
+        or _tc_dlc_model_version.model_name in _tc_dlc_inference_model_uids
+    fail_msg: Each DLC model version requires exactly one model_uid or managed model_name reference.
   loop: "{{ tc_dlc_access_governance_model_versions }}"
   loop_control:
     loop_var: _tc_dlc_model_version
-    label: "{{ _tc_dlc_model_version.model_uid }}/{{ _tc_dlc_model_version.version }}"
+    label: "{{ _tc_dlc_model_version.version }}"
+
+- name: Publish DLC model versions after parent inference models
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_model_version:
+  args: >-
+    {{ _tc_dlc_model_version
+       | combine({'model_uid': _tc_dlc_resolved_model_uid,
+                  'model_name': omit}) }}
+  loop: "{{ tc_dlc_access_governance_model_versions }}"
+  loop_control:
+    loop_var: _tc_dlc_model_version
+    label: "{{ _tc_dlc_model_version.model_uid | default(_tc_dlc_model_version.model_name) }}/{{ _tc_dlc_model_version.version }}"
+  vars:
+    _tc_dlc_resolved_model_uid: >-
+      {{ _tc_dlc_model_version.model_uid
+         if _tc_dlc_model_version.model_uid is defined
+         else _tc_dlc_inference_model_uids[_tc_dlc_model_version.model_name] }}
   register: _tc_dlc_model_version_results
 
 - name: Record DLC model-version identities
@@ -222,14 +250,36 @@
     _tc_dlc_model_version_ids: >-
       {{ _tc_dlc_model_version_results.results | map(attribute='version_id') | list }}
 
-- name: Reconcile DLC inference-service runtime state after model versions
+- name: Validate DLC inference-service parent references
   when: tc_dlc_access_governance_state == 'present'
-  susunola.tencentcloud.dlc_inference_service:
-  args: "{{ _tc_dlc_inference_service }}"
+  ansible.builtin.assert:
+    that:
+      - (_tc_dlc_inference_service.model_uid is defined) != (_tc_dlc_inference_service.model_name is defined)
+      - >-
+        _tc_dlc_inference_service.model_name is not defined
+        or _tc_dlc_inference_service.model_name in _tc_dlc_inference_model_uids
+    fail_msg: Each DLC inference service requires exactly one model_uid or managed model_name reference.
   loop: "{{ tc_dlc_access_governance_inference_services }}"
   loop_control:
     loop_var: _tc_dlc_inference_service
     label: "{{ _tc_dlc_inference_service.name }}"
+
+- name: Reconcile DLC inference-service runtime state after model versions
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_inference_service:
+  args: >-
+    {{ _tc_dlc_inference_service
+       | combine({'model_uid': _tc_dlc_resolved_service_model_uid,
+                  'model_name': omit}) }}
+  loop: "{{ tc_dlc_access_governance_inference_services }}"
+  loop_control:
+    loop_var: _tc_dlc_inference_service
+    label: "{{ _tc_dlc_inference_service.name }}"
+  vars:
+    _tc_dlc_resolved_service_model_uid: >-
+      {{ _tc_dlc_inference_service.model_uid
+         if _tc_dlc_inference_service.model_uid is defined
+         else _tc_dlc_inference_model_uids[_tc_dlc_inference_service.model_name] }}
   register: _tc_dlc_inference_service_results
 
 - name: Record DLC inference-service identities
