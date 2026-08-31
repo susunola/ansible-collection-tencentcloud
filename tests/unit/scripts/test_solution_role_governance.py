@@ -115,6 +115,12 @@ def test_alb_teardown_removes_listeners_and_backends_before_parents():
     assert "deletion_protection: false" in main
 
 
+def test_mqtt_teardown_removes_policies_and_children_before_instance():
+    text = role_tasks("tc_mqtt_broker")
+    assert_order(text, "Remove MQTT authorization policies", "Remove MQTT topics", "Remove MQTT users", "Remove MQTT instance")
+    assert "passwords are creation-only" in (ROOT / "roles" / "tc_mqtt_broker" / "defaults" / "main.yml").read_text(encoding="utf-8")
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -138,6 +144,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_shared_file_storage": "resource_type='cfs_file_system'",
         "tc_kafka_platform": "resource_type='ckafka_instance'",
         "tc_alb_application_entry": "resource_type='alb_load_balancer'",
+        "tc_mqtt_broker": "resource_type='mqtt_instance'",
         "tc_container_registry": "resource_type='tcr_instance'",
         "tc_tem_application": "resource_type='tem_environment'",
         "tc_serverless_application": "resource_type='api_gateway_service'",

@@ -1,0 +1,5 @@
+minor_changes:
+  - >-
+    solution roles - add ``tc_mqtt_broker`` for MQTT instances, network
+    access, topics, users and ordered authorization policies with exact-name
+    adoption and dependency-ordered teardown.

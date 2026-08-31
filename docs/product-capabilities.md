@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **16**
+- Solution roles: **17**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -151,7 +151,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `mongodb` | solution | 3 | 1 | `tc_mongodb_stack` | `mongodb_account`, `mongodb_backup_config`, `mongodb_instance` |
 | `monitor` | resource-family | 15 | 1 | — | `monitor_alarm_policy`, `monitor_alarm_policy_notice`, `monitor_grafana_instance`, `monitor_grafana_integration`, `monitor_grafana_internet`, `monitor_grafana_notification_channel`, `monitor_grafana_whitelist`, `monitor_prometheus_alert_group`, +7 more |
 | `mps` | discovery-only | 0 | 1 | — | — |
-| `mqtt` | resource-family | 4 | 1 | — | `mqtt_authorization_policy`, `mqtt_instance`, `mqtt_topic`, `mqtt_user` |
+| `mqtt` | solution | 4 | 1 | `tc_mqtt_broker` | `mqtt_authorization_policy`, `mqtt_instance`, `mqtt_topic`, `mqtt_user` |
 | `ms` | discovery-only | 0 | 1 | — | — |
 | `msp` | discovery-only | 0 | 1 | — | — |
 | `oceanus` | managed | 2 | 1 | — | `oceanus_job`, `oceanus_workspace` |

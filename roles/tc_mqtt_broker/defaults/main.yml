@@ -1,0 +1,25 @@
+---
+tc_mqtt_broker_state: present
+tc_mqtt_broker_region: ""
+tc_mqtt_broker_instance_id: ""
+tc_mqtt_broker_name: ""
+tc_mqtt_broker_instance_type: ""
+tc_mqtt_broker_sku_code: ""
+tc_mqtt_broker_remark: ""
+tc_mqtt_broker_vpcs: []
+tc_mqtt_broker_enable_public: false
+tc_mqtt_broker_bandwidth: null
+tc_mqtt_broker_ip_rules: []
+tc_mqtt_broker_tags: {}
+tc_mqtt_broker_pay_mode: 0
+tc_mqtt_broker_period_months: 1
+tc_mqtt_broker_auto_renew: true
+tc_mqtt_broker_authorization_enabled: true
+tc_mqtt_broker_message_rate: null
+
+# Items: {topic, remark?}
+tc_mqtt_broker_topics: []
+# Items: {username, password?, remark?}; passwords are creation-only.
+tc_mqtt_broker_users: []
+# Items use mqtt_authorization_policy parameters.
+tc_mqtt_broker_policies: []

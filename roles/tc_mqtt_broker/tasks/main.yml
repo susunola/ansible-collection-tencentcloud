@@ -1,0 +1,143 @@
+---
+- name: Resolve existing MQTT instance ID for teardown
+  when:
+    - tc_mqtt_broker_state == 'absent'
+    - tc_mqtt_broker_instance_id | length == 0
+    - tc_mqtt_broker_name | length > 0
+  ansible.builtin.set_fact:
+    tc_mqtt_broker_instance_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_mqtt_broker_name,
+                resource_type='mqtt_instance', region=tc_mqtt_broker_region) }}
+
+- name: Validate MQTT broker inputs
+  ansible.builtin.assert:
+    that:
+      - tc_mqtt_broker_state in ['present', 'absent']
+      - tc_mqtt_broker_instance_id | length > 0 or tc_mqtt_broker_name | length > 0
+      - tc_mqtt_broker_state == 'present' or tc_mqtt_broker_instance_id | length > 0
+      - tc_mqtt_broker_state == 'absent' or tc_mqtt_broker_instance_id | length > 0 or tc_mqtt_broker_instance_type | length > 0
+      - tc_mqtt_broker_state == 'absent' or tc_mqtt_broker_instance_id | length > 0 or tc_mqtt_broker_sku_code | length > 0
+      - tc_mqtt_broker_state == 'absent' or tc_mqtt_broker_instance_id | length > 0 or tc_mqtt_broker_vpcs | length > 0
+      - tc_mqtt_broker_policies | length == 0 or tc_mqtt_broker_authorization_enabled
+    fail_msg: MQTT creation requires edition, SKU and VPC bindings; policies require authorization_enabled=true.
+
+- name: Provision MQTT instance
+  when: tc_mqtt_broker_state == 'present'
+  susunola.tencentcloud.mqtt_instance:
+    region: "{{ tc_mqtt_broker_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ tc_mqtt_broker_instance_id | default(omit, true) }}"
+    name: "{{ tc_mqtt_broker_name | default(omit, true) }}"
+    instance_type: "{{ tc_mqtt_broker_instance_type | default(omit, true) }}"
+    sku_code: "{{ tc_mqtt_broker_sku_code | default(omit, true) }}"
+    remark: "{{ tc_mqtt_broker_remark }}"
+    vpcs: "{{ tc_mqtt_broker_vpcs | default(omit, true) }}"
+    enable_public: "{{ tc_mqtt_broker_enable_public }}"
+    bandwidth: "{{ tc_mqtt_broker_bandwidth | default(omit) }}"
+    ip_rules: "{{ tc_mqtt_broker_ip_rules }}"
+    tags: "{{ tc_mqtt_broker_tags }}"
+    pay_mode: "{{ tc_mqtt_broker_pay_mode }}"
+    period_months: "{{ tc_mqtt_broker_period_months }}"
+    auto_renew: "{{ tc_mqtt_broker_auto_renew }}"
+    authorization_policy: "{{ tc_mqtt_broker_authorization_enabled }}"
+    message_rate: "{{ tc_mqtt_broker_message_rate | default(omit) }}"
+  register: _tc_mqtt_broker_instance
+
+- name: Resolve MQTT instance ID
+  when: tc_mqtt_broker_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_mqtt_broker_instance_id: >-
+      {{ tc_mqtt_broker_instance_id
+         or (_tc_mqtt_broker_instance.instance.InstanceId | default('')) }}
+
+- name: Provision MQTT topics
+  when: tc_mqtt_broker_state == 'present'
+  susunola.tencentcloud.mqtt_topic:
+    region: "{{ tc_mqtt_broker_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ _tc_mqtt_broker_instance_id }}"
+    topic: "{{ item.topic }}"
+    remark: "{{ item.remark | default('') }}"
+  loop: "{{ tc_mqtt_broker_topics }}"
+  loop_control: {label: "{{ item.topic }}"}
+  register: _tc_mqtt_broker_topics
+
+- name: Provision MQTT users
+  when: tc_mqtt_broker_state == 'present'
+  susunola.tencentcloud.mqtt_user:
+    region: "{{ tc_mqtt_broker_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ _tc_mqtt_broker_instance_id }}"
+    username: "{{ item.username }}"
+    password: "{{ item.password | default(omit) }}"
+    remark: "{{ item.remark | default('') }}"
+  loop: "{{ tc_mqtt_broker_users }}"
+  loop_control: {label: "{{ item.username }}"}
+  register: _tc_mqtt_broker_users
+
+- name: Reconcile MQTT authorization policies
+  when: tc_mqtt_broker_state == 'present'
+  susunola.tencentcloud.mqtt_authorization_policy:
+    region: "{{ tc_mqtt_broker_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ _tc_mqtt_broker_instance_id }}"
+    policy_id: "{{ item.policy_id | default(omit) }}"
+    name: "{{ item.name }}"
+    priority: "{{ item.priority }}"
+    effect: "{{ item.effect }}"
+    actions: "{{ item.actions }}"
+    resources: "{{ item.resources }}"
+    username: "{{ item.username | default('') }}"
+    client_id: "{{ item.client_id | default('') }}"
+    ip: "{{ item.ip | default('') }}"
+    retain: "{{ item.retain | default(omit) }}"
+    qos: "{{ item.qos | default(omit) }}"
+    remark: "{{ item.remark | default('') }}"
+  loop: "{{ tc_mqtt_broker_policies }}"
+  loop_control: {label: "{{ item.name }}"}
+  register: _tc_mqtt_broker_policies
+
+- name: Remove MQTT authorization policies
+  when: tc_mqtt_broker_state == 'absent'
+  susunola.tencentcloud.mqtt_authorization_policy:
+    region: "{{ tc_mqtt_broker_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_mqtt_broker_instance_id }}"
+    policy_id: "{{ item.policy_id | default(omit) }}"
+    name: "{{ item.name | default(omit, true) }}"
+  loop: "{{ tc_mqtt_broker_policies }}"
+
+- name: Remove MQTT topics
+  when: tc_mqtt_broker_state == 'absent'
+  susunola.tencentcloud.mqtt_topic:
+    region: "{{ tc_mqtt_broker_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_mqtt_broker_instance_id }}"
+    topic: "{{ item.topic }}"
+  loop: "{{ tc_mqtt_broker_topics }}"
+
+- name: Remove MQTT users
+  when: tc_mqtt_broker_state == 'absent'
+  susunola.tencentcloud.mqtt_user:
+    region: "{{ tc_mqtt_broker_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_mqtt_broker_instance_id }}"
+    username: "{{ item.username }}"
+  loop: "{{ tc_mqtt_broker_users }}"
+
+- name: Remove MQTT instance
+  when: tc_mqtt_broker_state == 'absent'
+  susunola.tencentcloud.mqtt_instance:
+    region: "{{ tc_mqtt_broker_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_mqtt_broker_instance_id }}"
+
+- name: Publish MQTT broker result
+  when: tc_mqtt_broker_state == 'present'
+  ansible.builtin.set_fact:
+    tc_mqtt_broker_result:
+      instance_id: "{{ _tc_mqtt_broker_instance_id }}"
+      instance: "{{ _tc_mqtt_broker_instance.instance }}"
+      topics: "{{ _tc_mqtt_broker_topics.results | default([]) }}"
+      users: "{{ _tc_mqtt_broker_users.results | default([]) }}"
+      policies: "{{ _tc_mqtt_broker_policies.results | default([]) }}"
