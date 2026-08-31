@@ -41,6 +41,7 @@
     _tc_dlc_lab_ids: {}
     _tc_dlc_spark_job_ids: {}
     _tc_dlc_database_names: []
+    _tc_dlc_table_names: []
     _tc_dlc_script_ids: {}
     _tc_dlc_user_ids: []
     _tc_dlc_work_group_ids: {}
@@ -230,6 +231,20 @@
       {{ dict((tc_dlc_access_governance_scripts | map(attribute='name') | list)
               | zip(_tc_dlc_script_results.results | map(attribute='script_id') | list)) }}
 
+- name: Reconcile DLC tables after databases
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_table:
+  args: "{{ _tc_dlc_table | combine({'state': 'present'}) }}"
+  loop: "{{ tc_dlc_access_governance_tables }}"
+  loop_control:
+    loop_var: _tc_dlc_table
+    label: "{{ _tc_dlc_table.database_name }}.{{ _tc_dlc_table.name }}"
+
+- name: Record DLC table identities
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dlc_table_names: "{{ tc_dlc_access_governance_tables | map(attribute='name') | list }}"
+
 - name: Reconcile DLC users before work-group membership
   when: tc_dlc_access_governance_state == 'present'
   ansible.builtin.include_tasks: user.yml
@@ -316,6 +331,17 @@
   loop_control:
     loop_var: _tc_dlc_script
     label: "{{ _tc_dlc_script.name }}"
+
+- name: Remove DLC tables before their databases
+  when:
+    - tc_dlc_access_governance_state == 'absent'
+    - tc_dlc_access_governance_allow_destroy | bool
+  susunola.tencentcloud.dlc_table:
+  args: "{{ _tc_dlc_table | combine({'state': 'absent', 'allow_delete': true}) }}"
+  loop: "{{ tc_dlc_access_governance_tables | reverse | list }}"
+  loop_control:
+    loop_var: _tc_dlc_table
+    label: "{{ _tc_dlc_table.database_name }}.{{ _tc_dlc_table.name }}"
 
 - name: Remove DLC databases after users and access policies
   when:
@@ -453,6 +479,7 @@
       lab_ids: "{{ _tc_dlc_lab_ids }}"
       spark_job_ids: "{{ _tc_dlc_spark_job_ids }}"
       database_names: "{{ _tc_dlc_database_names }}"
+      table_names: "{{ _tc_dlc_table_names }}"
       script_ids: "{{ _tc_dlc_script_ids }}"
       user_ids: "{{ _tc_dlc_user_ids }}"
       work_group_ids: "{{ _tc_dlc_work_group_ids }}"

@@ -879,6 +879,12 @@ modules:
   - DeleteSparkApp
   - DescribeSparkAppJob
   - ModifySparkApp
+  dlc_table:
+  - CreateTable
+  - CreateTasks
+  - DeleteTable
+  - DescribeTable
+  - DescribeTaskDetail
   dlc_task_info:
   - DescribeTaskList
   dlc_user:

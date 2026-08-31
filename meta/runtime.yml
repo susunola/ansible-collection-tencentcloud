@@ -230,6 +230,7 @@ action_groups:
     - dlc_resource_config
     - dlc_script
     - dlc_spark_job
+    - dlc_table
     - dlc_task_info
     - dlc_user
     - dlc_user_policy
