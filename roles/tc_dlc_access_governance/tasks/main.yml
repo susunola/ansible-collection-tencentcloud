@@ -68,6 +68,7 @@
     _tc_dlc_script_ids: {}
     _tc_dlc_user_ids: []
     _tc_dlc_work_group_ids: {}
+    _tc_dlc_udf_policy_identities: []
     _tc_dlc_data_mask_strategy_ids: {}
 
 - name: Configure DLC query-result storage before data and compute resources
@@ -529,6 +530,22 @@
     loop_var: _tc_dlc_group
     label: "{{ _tc_dlc_group.work_group.name }}"
 
+- name: Reconcile DLC UDF policies after users and work groups
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_udf_policy:
+  args: "{{ _tc_dlc_udf_policy }}"
+  loop: "{{ tc_dlc_access_governance_udf_policies }}"
+  loop_control:
+    loop_var: _tc_dlc_udf_policy
+    label: "{{ _tc_dlc_udf_policy.catalog_name }}.{{ _tc_dlc_udf_policy.database_name }}.{{ _tc_dlc_udf_policy.name }}"
+
+- name: Record DLC UDF-policy identities
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dlc_udf_policy_identities: >-
+      {{ tc_dlc_access_governance_udf_policies
+         | map(attribute='name') | list }}
+
 - name: Reconcile DLC data masking after users and work groups
   when: tc_dlc_access_governance_state == 'present'
   susunola.tencentcloud.dlc_data_mask_strategy:
@@ -563,6 +580,17 @@
   loop_control:
     loop_var: _tc_dlc_mask
     label: "{{ _tc_dlc_mask.strategy_id }}"
+
+- name: Clear DLC UDF policies before users and work groups
+  when:
+    - tc_dlc_access_governance_state == 'absent'
+    - tc_dlc_access_governance_allow_destroy | bool
+  susunola.tencentcloud.dlc_udf_policy:
+  args: "{{ _tc_dlc_udf_policy | combine({'policy_infos': [], 'allow_empty': true}) }}"
+  loop: "{{ tc_dlc_access_governance_udf_policies | reverse | list }}"
+  loop_control:
+    loop_var: _tc_dlc_udf_policy
+    label: "{{ _tc_dlc_udf_policy.catalog_name }}.{{ _tc_dlc_udf_policy.database_name }}.{{ _tc_dlc_udf_policy.name }}"
 
 - name: Remove DLC policies, members and work groups after masking strategies
   when:
@@ -772,4 +800,5 @@
       script_ids: "{{ _tc_dlc_script_ids }}"
       user_ids: "{{ _tc_dlc_user_ids }}"
       work_group_ids: "{{ _tc_dlc_work_group_ids }}"
+      udf_policy_identities: "{{ _tc_dlc_udf_policy_identities }}"
       data_mask_strategy_ids: "{{ _tc_dlc_data_mask_strategy_ids }}"

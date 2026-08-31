@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_udf_policy`` for exact, order-insensitive UDF user and work-group policy reconciliation with guarded full-policy clearing.

@@ -237,6 +237,7 @@ action_groups:
     - dlc_table
     - dlc_table_partition
     - dlc_task_info
+    - dlc_udf_policy
     - dlc_user
     - dlc_user_policy
     - dlc_user_vpc_connection

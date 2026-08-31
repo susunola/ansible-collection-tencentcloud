@@ -184,6 +184,7 @@ CORE_MODULES = {
     "dlc_data_mask_strategy",
     "dlc_user_vpc_connection",
     "dlc_user",
+    "dlc_udf_policy",
     "dlc_user_policy",
     "dnspod_custom_line",
     "dnspod_line_group",

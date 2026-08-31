@@ -165,6 +165,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `dlc_store_location` | Configure Tencent Cloud DLC query-result storage locations |
 | `dlc_table` | Manage Tencent Cloud DLC metadata tables |
 | `dlc_table_partition` | Manage Tencent Cloud DLC table partition entries |
+| `dlc_udf_policy` | Reconcile Tencent Cloud DLC UDF access policies |
 | `dlc_user` | Manage Tencent Cloud Data Lake Compute users |
 | `dlc_user_policy` | Manage Tencent Cloud Data Lake Compute user policies |
 | `dlc_user_vpc_connection` | Connect DLC engine networks to Tencent Cloud VPCs |

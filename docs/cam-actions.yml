@@ -910,6 +910,9 @@ modules:
   - DropDMSPartitions
   dlc_task_info:
   - DescribeTaskList
+  dlc_udf_policy:
+  - DescribeUDFPolicy
+  - UpdateUDFPolicy
   dlc_user:
   - CreateUser
   - DeleteUser

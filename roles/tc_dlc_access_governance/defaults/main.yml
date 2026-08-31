@@ -20,5 +20,6 @@ tc_dlc_access_governance_table_partitions: []
 tc_dlc_access_governance_scripts: []
 tc_dlc_access_governance_users: []
 tc_dlc_access_governance_work_groups: []
+tc_dlc_access_governance_udf_policies: []
 tc_dlc_access_governance_data_mask_strategies: []
 tc_dlc_access_governance_allow_destroy: false
