@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``tione_training_task`` with immutable definition convergence, guarded lifecycle actions, successful-terminal idempotency and explicit failed-task handling.

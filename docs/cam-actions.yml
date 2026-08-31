@@ -2046,6 +2046,13 @@ modules:
   - StopNotebook
   tione_notebook_info:
   - DescribeNotebooks
+  tione_training_task:
+  - CreateTrainingTask
+  - DeleteTrainingTask
+  - DescribeTrainingTask
+  - DescribeTrainingTasks
+  - StartTrainingTask
+  - StopTrainingTask
   tione_training_task_info:
   - DescribeTrainingTask
   - DescribeTrainingTasks

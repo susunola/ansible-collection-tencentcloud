@@ -388,6 +388,7 @@ CORE_MODULES = {
     "tione_notebook",
     "tione_notebook_info",
     "tione_training_task_info",
+    "tione_training_task",
     "vpc",
     "havip",
     "havip_association",
