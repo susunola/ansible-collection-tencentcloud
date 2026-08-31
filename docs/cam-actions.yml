@@ -901,6 +901,12 @@ modules:
   - ListRayClusters
   - ModifyClusterPriority
   - UpdateRayCluster
+  dlc_ray_job_info:
+  - GetRayJob
+  - GetRayJobEvent
+  - GetRayJobHistory
+  - GetRayJobPods
+  - GetRayJobYaml
   dlc_resource_config:
   - CreateResourceConfig
   - DeleteResourceConfig

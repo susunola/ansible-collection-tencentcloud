@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_ray_job_info`` with opt-in status history, context-paginated events, Pod inventory and submitted YAML diagnostics.

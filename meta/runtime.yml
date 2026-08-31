@@ -236,6 +236,7 @@ action_groups:
     - dlc_notebook_statement_info
     - dlc_partition_queue
     - dlc_ray_cluster
+    - dlc_ray_job_info
     - dlc_resource_config
     - dlc_script
     - dlc_spark_job
