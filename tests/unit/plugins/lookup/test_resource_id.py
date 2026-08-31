@@ -33,6 +33,7 @@ class Request(Object):
 
 class Models(object):
     Filter = Filter
+    QueryFilter = Filter
     DescribeVpcsRequest = Request
     DescribeSubnetsRequest = Request
     DescribeSecurityGroupsRequest = Request
@@ -90,6 +91,12 @@ def test_postgresql_request_uses_instance_name_filter():
 def test_mariadb_request_uses_search_name():
     request = build_request("mariadb_instance", Models, "orders")
     assert request.SearchName == "orders"
+
+
+def test_cynosdb_request_uses_cluster_name_query_filter():
+    request = build_request("cynosdb_cluster", Models, "orders")
+    assert request.Filters[0].Names == ["ClusterName"]
+    assert request.Filters[0].Values == ["orders"]
 
 
 def test_cfs_request_scans_names_with_numeric_pagination():

@@ -25,7 +25,7 @@ options:
     description: Resource family to query.
     type: str
     required: true
-    choices: [vpc, subnet, security_group, cvm_instance, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, redis_instance, mongodb_instance, cfs_file_system, ckafka_instance, mqtt_instance, api_gateway_service, tcr_instance, tem_environment, tem_application]
+    choices: [vpc, subnet, security_group, cvm_instance, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, cynosdb_cluster, redis_instance, mongodb_instance, cfs_file_system, ckafka_instance, mqtt_instance, api_gateway_service, tcr_instance, tem_environment, tem_application]
   vpc_id:
     description: Optional VPC scope for subnet and CLB lookups.
     type: str
@@ -133,6 +133,7 @@ RESOURCE_SPECS = {
     "cdb_instance": ("cdb.v20170320", "CdbClient", "cdb.tencentcloudapi.com", "DescribeDBInstances", "Items", "InstanceId", "InstanceName"),
     "postgresql_instance": ("postgres.v20170312", "PostgresClient", "postgres.tencentcloudapi.com", "DescribeDBInstances", "DBInstanceSet", "DBInstanceId", "DBInstanceName"),
     "mariadb_instance": ("mariadb.v20170312", "MariadbClient", "mariadb.tencentcloudapi.com", "DescribeDBInstances", "Instances", "InstanceId", "InstanceName"),
+    "cynosdb_cluster": ("cynosdb.v20190107", "CynosdbClient", "cynosdb.tencentcloudapi.com", "DescribeClusters", "ClusterSet", "ClusterId", "ClusterName"),
     "redis_instance": ("redis.v20180412", "RedisClient", "redis.tencentcloudapi.com", "DescribeInstances", "InstanceSet", "InstanceId", "InstanceName"),
     "mongodb_instance": ("mongodb.v20190725", "MongodbClient", "mongodb.tencentcloudapi.com", "DescribeDBInstances", "InstanceDetails", "InstanceId", "InstanceName"),
     "cfs_file_system": ("cfs.v20190719", "CfsClient", "cfs.tencentcloudapi.com", "DescribeCfsFileSystems", "FileSystems", "FileSystemId", "Name"),
@@ -158,6 +159,7 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         "cdb_instance": "DescribeDBInstancesRequest",
         "postgresql_instance": "DescribeDBInstancesRequest",
         "mariadb_instance": "DescribeDBInstancesRequest",
+        "cynosdb_cluster": "DescribeClustersRequest",
         "redis_instance": "DescribeInstancesRequest",
         "mongodb_instance": "DescribeDBInstancesRequest",
         "cfs_file_system": "DescribeCfsFileSystemsRequest",
@@ -186,6 +188,10 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         request.Filters = [api_filter]
     elif resource_type == "mariadb_instance":
         request.SearchName = name
+    elif resource_type == "cynosdb_cluster":
+        api_filter = models.QueryFilter()
+        api_filter.Names, api_filter.Values = ["ClusterName"], [name]
+        request.Filters = [api_filter]
     elif resource_type == "redis_instance":
         request.InstanceName = name
     elif resource_type == "mongodb_instance":
