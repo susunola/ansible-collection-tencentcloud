@@ -229,6 +229,7 @@ action_groups:
     - dlc_job_spec
     - dlc_lab
     - dlc_model_version
+    - dlc_network_connection
     - dlc_partition_queue
     - dlc_ray_cluster
     - dlc_resource_config

@@ -870,6 +870,9 @@ modules:
   dlc_model_version:
   - CreateModelVersion
   - ListModelVersions
+  dlc_network_connection:
+  - DescribeNetworkConnections
+  - UpdateNetworkConnection
   dlc_partition_queue:
   - CreatePartitionQueue
   - DeletePartitionQueue
