@@ -2,8 +2,8 @@
 
 Connects DLC engine networks to VPC endpoints, creates compute engines, then
 creates metadata databases and exactly reconciles work-group members and
-authorization policies. Server-generated policy metadata is ignored when comparing
-desired access, so repeated runs remain idempotent.
+authorization policies for managed DLC users. Server-generated policy metadata is
+ignored when comparing desired access, so repeated runs remain idempotent.
 
 ```yaml
 - hosts: localhost
@@ -28,6 +28,10 @@ desired access, so repeated runs remain idempotent.
         tc_dlc_access_governance_databases:
           - name: sales
             comment: Curated sales datasets
+        tc_dlc_access_governance_users:
+          - user_id: '100012345678'
+            alias: analytics-engineer
+            description: Analytics engineering account
         tc_dlc_access_governance_work_groups:
           - work_group:
               name: analytics-engineers
@@ -41,13 +45,15 @@ desired access, so repeated runs remain idempotent.
                 PolicyType: TABLE
 ```
 
-The resulting endpoint IDs, engine IDs and database names are published in
+The resulting endpoint IDs, engine IDs, database names and user IDs are published in
 `tc_dlc_access_governance_result.vpc_endpoint_ids` and
 `tc_dlc_access_governance_result.data_engine_ids` and
-`tc_dlc_access_governance_result.database_names`.
+`tc_dlc_access_governance_result.database_names` and
+`tc_dlc_access_governance_result.user_ids`.
 
 Teardown requires `work_group_id` for every group, `endpoint_id` for every VPC
 connection and `tc_dlc_access_governance_allow_destroy: true`. It removes policies
-and members, deletes empty work groups and databases, then removes engines and VPC
-endpoints. Non-empty database deletion additionally requires
+and members, deletes empty work groups and users, then databases, engines and VPC
+endpoints. Bound user deletion requires `allow_delete_bound: true` on the user;
+non-empty database deletion additionally requires
 `allow_delete_nonempty: true` on that database item.

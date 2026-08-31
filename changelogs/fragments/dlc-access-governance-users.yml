@@ -1,0 +1,2 @@
+minor_changes:
+  - Extend ``tc_dlc_access_governance`` to create users before membership reconciliation and remove them after access teardown.

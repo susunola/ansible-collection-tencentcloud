@@ -22,6 +22,7 @@
     _tc_dlc_vpc_endpoint_ids: {}
     _tc_dlc_data_engine_ids: {}
     _tc_dlc_database_names: []
+    _tc_dlc_user_ids: []
     _tc_dlc_work_group_ids: {}
 
 - name: Reconcile DLC VPC connections before compute engines
@@ -55,6 +56,20 @@
   ansible.builtin.set_fact:
     _tc_dlc_database_names: "{{ tc_dlc_access_governance_databases | map(attribute='name') | list }}"
 
+- name: Reconcile DLC users before work-group membership
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_user:
+  args: "{{ _tc_dlc_user | combine({'state': 'present'}) }}"
+  loop: "{{ tc_dlc_access_governance_users }}"
+  loop_control:
+    loop_var: _tc_dlc_user
+    label: "{{ _tc_dlc_user.user_id }}"
+
+- name: Record DLC user identities
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dlc_user_ids: "{{ tc_dlc_access_governance_users | map(attribute='user_id') | list }}"
+
 - name: Reconcile DLC work groups, members and policies
   when: tc_dlc_access_governance_state == 'present'
   ansible.builtin.include_tasks: work_group.yml
@@ -80,7 +95,18 @@
     loop_var: _tc_dlc_group
     label: "{{ _tc_dlc_group.work_group.work_group_id }}"
 
-- name: Remove DLC databases after access policies and groups
+- name: Remove DLC users after work-group access is detached
+  when:
+    - tc_dlc_access_governance_state == 'absent'
+    - tc_dlc_access_governance_allow_destroy | bool
+  susunola.tencentcloud.dlc_user:
+  args: "{{ _tc_dlc_user | combine({'state': 'absent', 'allow_delete': true}) }}"
+  loop: "{{ tc_dlc_access_governance_users | reverse | list }}"
+  loop_control:
+    loop_var: _tc_dlc_user
+    label: "{{ _tc_dlc_user.user_id }}"
+
+- name: Remove DLC databases after users and access policies
   when:
     - tc_dlc_access_governance_state == 'absent'
     - tc_dlc_access_governance_allow_destroy | bool
@@ -120,4 +146,5 @@
       vpc_endpoint_ids: "{{ _tc_dlc_vpc_endpoint_ids }}"
       data_engine_ids: "{{ _tc_dlc_data_engine_ids }}"
       database_names: "{{ _tc_dlc_database_names }}"
+      user_ids: "{{ _tc_dlc_user_ids }}"
       work_group_ids: "{{ _tc_dlc_work_group_ids }}"
