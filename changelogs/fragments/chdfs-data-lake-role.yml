@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - Added CHDFS exact-name resource lookup and the tc_chdfs_data_lake role for file systems, access controls and mounts.

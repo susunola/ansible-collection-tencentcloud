@@ -578,6 +578,7 @@ for product-level write, discovery and reusable-role maturity.
 | `tc_serverless_application` | Deploy an SCF function with aliases, triggers and optional API Gateway exposure |
 | `tc_api_gateway_platform` | Provision API Gateway services, APIs, releases, keys and usage plans |
 | `tc_config_governance` | Operate Config recording, delivery, compliance, remediation, alerting and aggregation |
+| `tc_chdfs_data_lake` | Provision CHDFS file systems, access groups, rules, mounts and bindings |
 | `tc_observability_baseline` | Establish CLS indexed topics and Cloud Monitor alarm policies |
 | `tc_prometheus_platform` | Provision Managed Prometheus with collection agents, rules, alerts, notifications and Grafana bindings |
 | `tc_object_storage_baseline` | Establish a secure COS bucket with encryption, lifecycle, policy, logging and replication |

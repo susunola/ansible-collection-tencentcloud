@@ -1,0 +1,27 @@
+---
+- name: Reconcile CHDFS mount point
+  susunola.tencentcloud.chdfs_mount_point:
+    region: "{{ tc_chdfs_data_lake_region }}"
+    state: present
+    file_system_id: "{{ _tc_chdfs_file_system_id }}"
+    mount_point_id: "{{ _tc_chdfs_mount_point.mount_point_id | default(omit, true) }}"
+    name: "{{ _tc_chdfs_mount_point.name }}"
+    status: "{{ _tc_chdfs_mount_point.status | default(omit) }}"
+  register: _tc_chdfs_mount_point_result
+
+- name: Resolve CHDFS mount point ID
+  ansible.builtin.set_fact:
+    _tc_chdfs_mount_point_id: >-
+      {{ _tc_chdfs_mount_point.mount_point_id | default('')
+         or (_tc_chdfs_mount_point_result.mount_point.MountPointId | default('')) }}
+
+- name: Reconcile CHDFS mount access groups
+  when: _tc_chdfs_mount_point_id | length > 0
+  susunola.tencentcloud.chdfs_mount_access_groups:
+    region: "{{ tc_chdfs_data_lake_region }}"
+    file_system_id: "{{ _tc_chdfs_file_system_id }}"
+    mount_point_id: "{{ _tc_chdfs_mount_point_id }}"
+    access_group_ids: >-
+      {{ ((_tc_chdfs_mount_point.access_group_ids | default([]))
+          + ((_tc_chdfs_mount_point.access_group_names | default([]))
+             | map('extract', _tc_chdfs_access_group_ids) | list)) | unique | list }}

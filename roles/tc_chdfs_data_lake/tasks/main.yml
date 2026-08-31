@@ -1,0 +1,98 @@
+---
+- name: Resolve CHDFS file system ID for teardown
+  when:
+    - tc_chdfs_data_lake_state == 'absent'
+    - tc_chdfs_data_lake_file_system_id | length == 0
+    - tc_chdfs_data_lake_name | length > 0
+  ansible.builtin.set_fact:
+    tc_chdfs_data_lake_file_system_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_chdfs_data_lake_name,
+                resource_type='chdfs_file_system', region=tc_chdfs_data_lake_region) }}
+
+- name: Validate CHDFS data lake inputs
+  ansible.builtin.assert:
+    that:
+      - tc_chdfs_data_lake_state in ['present', 'absent']
+      - tc_chdfs_data_lake_region | length > 0
+      - tc_chdfs_data_lake_file_system_id | length > 0 or tc_chdfs_data_lake_name | length > 0
+      - tc_chdfs_data_lake_state == 'present' or tc_chdfs_data_lake_file_system_id | length > 0
+    fail_msg: CHDFS requires a region and file-system identity; teardown requires a resolvable file-system ID.
+
+- name: Provision CHDFS file system
+  when: tc_chdfs_data_lake_state == 'present'
+  susunola.tencentcloud.chdfs_file_system:
+    region: "{{ tc_chdfs_data_lake_region }}"
+    state: present
+    file_system_id: "{{ tc_chdfs_data_lake_file_system_id | default(omit, true) }}"
+    name: "{{ tc_chdfs_data_lake_name }}"
+    description: "{{ tc_chdfs_data_lake_description | default(omit, true) }}"
+    capacity_quota: "{{ tc_chdfs_data_lake_capacity_quota | default(omit, true) }}"
+    super_users: "{{ tc_chdfs_data_lake_super_users }}"
+    posix_acl: "{{ tc_chdfs_data_lake_posix_acl }}"
+    root_inode_user: "{{ tc_chdfs_data_lake_root_inode_user | default(omit, true) }}"
+    root_inode_group: "{{ tc_chdfs_data_lake_root_inode_group | default(omit, true) }}"
+    enable_ranger: "{{ tc_chdfs_data_lake_enable_ranger }}"
+    ranger_service_addresses: "{{ tc_chdfs_data_lake_ranger_service_addresses }}"
+    tags: "{{ tc_chdfs_data_lake_tags }}"
+  register: _tc_chdfs_file_system
+
+- name: Resolve CHDFS file system ID
+  when: tc_chdfs_data_lake_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_chdfs_file_system_id: >-
+      {{ tc_chdfs_data_lake_file_system_id
+         or (_tc_chdfs_file_system.file_system.FileSystemId | default('')) }}
+
+- name: Initialize CHDFS access group identity map
+  when: tc_chdfs_data_lake_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_chdfs_access_group_ids: {}
+
+- name: Reconcile CHDFS access groups and rules
+  when:
+    - tc_chdfs_data_lake_state == 'present'
+    - _tc_chdfs_file_system_id | length > 0
+  ansible.builtin.include_tasks: access_group.yml
+  loop: "{{ tc_chdfs_data_lake_access_groups }}"
+  loop_control:
+    loop_var: _tc_chdfs_access_group
+    label: "{{ _tc_chdfs_access_group.name }}"
+
+- name: Reconcile CHDFS mount points and bindings
+  when:
+    - tc_chdfs_data_lake_state == 'present'
+    - _tc_chdfs_file_system_id | length > 0
+  ansible.builtin.include_tasks: mount_point.yml
+  loop: "{{ tc_chdfs_data_lake_mount_points }}"
+  loop_control:
+    loop_var: _tc_chdfs_mount_point
+    label: "{{ _tc_chdfs_mount_point.name }}"
+
+- name: Disassociate and remove CHDFS mount points
+  when: tc_chdfs_data_lake_state == 'absent'
+  ansible.builtin.include_tasks: teardown_mount.yml
+  loop: "{{ tc_chdfs_data_lake_mount_points }}"
+  loop_control:
+    loop_var: _tc_chdfs_mount_point
+
+- name: Clear rules and remove CHDFS access groups
+  when: tc_chdfs_data_lake_state == 'absent'
+  ansible.builtin.include_tasks: teardown_access_group.yml
+  loop: "{{ tc_chdfs_data_lake_access_groups }}"
+  loop_control:
+    loop_var: _tc_chdfs_access_group
+
+- name: Remove CHDFS file system
+  when: tc_chdfs_data_lake_state == 'absent'
+  susunola.tencentcloud.chdfs_file_system:
+    region: "{{ tc_chdfs_data_lake_region }}"
+    state: absent
+    file_system_id: "{{ tc_chdfs_data_lake_file_system_id }}"
+
+- name: Publish CHDFS data lake result
+  when: tc_chdfs_data_lake_state == 'present'
+  ansible.builtin.set_fact:
+    tc_chdfs_data_lake_result:
+      file_system_id: "{{ _tc_chdfs_file_system_id }}"
+      file_system: "{{ _tc_chdfs_file_system.file_system | default({}) }}"
+      access_group_ids: "{{ _tc_chdfs_access_group_ids }}"

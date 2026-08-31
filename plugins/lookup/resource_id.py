@@ -25,9 +25,12 @@ options:
     description: Resource family to query.
     type: str
     required: true
-    choices: [vpc, subnet, security_group, cvm_instance, lighthouse_instance, autoscaling_group, cbs_disk, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, cynosdb_cluster, redis_instance, mongodb_instance, cfs_file_system, ckafka_instance, mqtt_instance, rocketmq_cluster, rabbitmq_instance, prometheus_instance, edgeone_zone, event_bus, api_gateway_service, tcr_instance, tem_environment, tem_application]
+    choices: [vpc, subnet, security_group, cvm_instance, lighthouse_instance, autoscaling_group, cbs_disk, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, cynosdb_cluster, redis_instance, mongodb_instance, cfs_file_system, chdfs_file_system, chdfs_access_group, chdfs_mount_point, ckafka_instance, mqtt_instance, rocketmq_cluster, rabbitmq_instance, prometheus_instance, edgeone_zone, event_bus, api_gateway_service, tcr_instance, tem_environment, tem_application]
   vpc_id:
     description: Optional VPC scope for subnet and CLB lookups.
+    type: str
+  file_system_id:
+    description: Parent CHDFS file-system ID required for mount-point lookups.
     type: str
   region:
     description: Tencent Cloud region, falling back to C(TENCENTCLOUD_REGION).
@@ -140,6 +143,9 @@ RESOURCE_SPECS = {
     "redis_instance": ("redis.v20180412", "RedisClient", "redis.tencentcloudapi.com", "DescribeInstances", "InstanceSet", "InstanceId", "InstanceName"),
     "mongodb_instance": ("mongodb.v20190725", "MongodbClient", "mongodb.tencentcloudapi.com", "DescribeDBInstances", "InstanceDetails", "InstanceId", "InstanceName"),
     "cfs_file_system": ("cfs.v20190719", "CfsClient", "cfs.tencentcloudapi.com", "DescribeCfsFileSystems", "FileSystems", "FileSystemId", "Name"),
+    "chdfs_file_system": ("chdfs.v20201112", "ChdfsClient", "chdfs.tencentcloudapi.com", "DescribeFileSystems", "FileSystems", "FileSystemId", "FileSystemName"),
+    "chdfs_access_group": ("chdfs.v20201112", "ChdfsClient", "chdfs.tencentcloudapi.com", "DescribeAccessGroups", "AccessGroups", "AccessGroupId", "AccessGroupName"),
+    "chdfs_mount_point": ("chdfs.v20201112", "ChdfsClient", "chdfs.tencentcloudapi.com", "DescribeMountPoints", "MountPoints", "MountPointId", "MountPointName"),
     "ckafka_instance": ("ckafka.v20190819", "CkafkaClient", "ckafka.tencentcloudapi.com", "DescribeInstancesDetail", "Result.InstanceList", "InstanceId", "InstanceName"),
     "mqtt_instance": ("mqtt.v20240516", "MqttClient", "mqtt.tencentcloudapi.com", "DescribeInstanceList", "Data", "InstanceId", "InstanceName"),
     "rocketmq_cluster": ("tdmq.v20200217", "TdmqClient", "tdmq.tencentcloudapi.com", "DescribeRocketMQClusters", "ClusterList", "Info.ClusterId", "Info.ClusterName"),
@@ -154,7 +160,7 @@ RESOURCE_SPECS = {
 }
 
 
-def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token=None):
+def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token=None, file_system_id=None):
     """Build the narrowest supported exact-name request."""
     request_names = {
         "vpc": "DescribeVpcsRequest",
@@ -174,6 +180,9 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         "redis_instance": "DescribeInstancesRequest",
         "mongodb_instance": "DescribeDBInstancesRequest",
         "cfs_file_system": "DescribeCfsFileSystemsRequest",
+        "chdfs_file_system": "DescribeFileSystemsRequest",
+        "chdfs_access_group": "DescribeAccessGroupsRequest",
+        "chdfs_mount_point": "DescribeMountPointsRequest",
         "ckafka_instance": "DescribeInstancesDetailRequest",
         "mqtt_instance": "DescribeInstanceListRequest",
         "rocketmq_cluster": "DescribeRocketMQClustersRequest",
@@ -187,7 +196,15 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         "tem_application": "DescribeApplicationsRequest",
     }
     request = getattr(models, request_names[resource_type])()
-    if resource_type == "alb_load_balancer":
+    if resource_type == "chdfs_file_system":
+        request.FileSystemIdMarker = page_token
+    elif resource_type == "chdfs_access_group":
+        request.AccessGroupIdMarker = page_token
+    elif resource_type == "chdfs_mount_point":
+        if not file_system_id:
+            raise AnsibleError("file_system_id is required for chdfs_mount_point lookups")
+        request.FileSystemId = file_system_id
+    elif resource_type == "alb_load_balancer":
         request.MaxResults = 100
         request.NextToken = page_token
     elif resource_type in ("vpc", "subnet", "security_group"):
@@ -212,7 +229,7 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         request.InstanceName = name
     elif resource_type == "mongodb_instance":
         request.SearchKey = name
-    elif resource_type == "cfs_file_system":
+    elif resource_type in ("cfs_file_system", "chdfs_file_system", "chdfs_access_group", "chdfs_mount_point"):
         pass
     elif resource_type == "ckafka_instance":
         api_filter = models.Filter()
@@ -283,7 +300,7 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
     return request
 
 
-def resolve_resource(client, models, resource_type, name, vpc_id=None):
+def resolve_resource(client, models, resource_type, name, vpc_id=None, file_system_id=None):
     """Return one exact-match ID or raise a useful lookup error."""
     spec = RESOURCE_SPECS[resource_type]
     matches = []
@@ -291,7 +308,7 @@ def resolve_resource(client, models, resource_type, name, vpc_id=None):
     page_token = None
     while True:
         response = getattr(client, spec[3])(
-            build_request(resource_type, models, name, vpc_id, offset, page_token))
+            build_request(resource_type, models, name, vpc_id, offset, page_token, file_system_id))
         values = response
         for attribute in spec[4].split("."):
             values = getattr(values, attribute, None)
@@ -299,6 +316,14 @@ def resolve_resource(client, models, resource_type, name, vpc_id=None):
                 break
         page = list(values or [])
         matches.extend(item for item in page if nested_attribute(item, spec[6]) == name)
+        if resource_type in ("chdfs_file_system", "chdfs_access_group"):
+            marker_name = "NextFileSystemIdMarker" if resource_type == "chdfs_file_system" else "NextAccessGroupIdMarker"
+            page_token = getattr(response, marker_name, None)
+            if getattr(response, "IsOver", False) or not page_token:
+                break
+            continue
+        if resource_type == "chdfs_mount_point":
+            break
         if resource_type == "alb_load_balancer":
             page_token = getattr(response, "NextToken", None)
             if not page_token:
@@ -416,7 +441,9 @@ class LookupModule(LookupBase):
         values = []
         for name in terms:
             try:
-                values.append(resolve_resource(client, models, resource_type, name, self.get_option("vpc_id")))
+                values.append(resolve_resource(
+                    client, models, resource_type, name, self.get_option("vpc_id"),
+                    self.get_option("file_system_id")))
             except AnsibleError:
                 raise
             except Exception as exc:

@@ -1,0 +1,22 @@
+---
+- name: Resolve CHDFS mount point ID for teardown
+  ansible.builtin.set_fact:
+    _tc_chdfs_mount_point_id: >-
+      {{ _tc_chdfs_mount_point.mount_point_id | default('')
+         or lookup('susunola.tencentcloud.resource_id', _tc_chdfs_mount_point.name,
+                   resource_type='chdfs_mount_point', file_system_id=_tc_chdfs_file_system_id,
+                   region=tc_chdfs_data_lake_region) }}
+
+- name: Disassociate CHDFS mount access groups
+  susunola.tencentcloud.chdfs_mount_access_groups:
+    region: "{{ tc_chdfs_data_lake_region }}"
+    file_system_id: "{{ _tc_chdfs_file_system_id }}"
+    mount_point_id: "{{ _tc_chdfs_mount_point_id }}"
+    access_group_ids: []
+
+- name: Remove CHDFS mount point
+  susunola.tencentcloud.chdfs_mount_point:
+    region: "{{ tc_chdfs_data_lake_region }}"
+    state: absent
+    file_system_id: "{{ _tc_chdfs_file_system_id }}"
+    mount_point_id: "{{ _tc_chdfs_mount_point_id }}"

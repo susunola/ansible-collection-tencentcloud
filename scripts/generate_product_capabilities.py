@@ -44,6 +44,7 @@ ROLE_SERVICES = {
     "tc_alb_application_entry": "alb",
     "tc_api_gateway_platform": "apigateway",
     "tc_config_governance": "config",
+    "tc_chdfs_data_lake": "chdfs",
     "tc_observability_baseline": "cls",
     "tc_object_storage_baseline": "cos",
     "tc_serverless_application": "scf",

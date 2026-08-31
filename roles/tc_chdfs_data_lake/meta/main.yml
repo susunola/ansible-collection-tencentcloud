@@ -1,0 +1,7 @@
+---
+galaxy_info:
+  author: Tencent Cloud Ansible Collection Contributors
+  description: Provision a CHDFS file system with governed mounts and network access
+  license: GPL-3.0-or-later
+  min_ansible_version: "2.16"
+dependencies: []

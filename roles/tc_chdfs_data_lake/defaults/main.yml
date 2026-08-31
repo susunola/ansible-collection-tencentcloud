@@ -1,0 +1,19 @@
+---
+tc_chdfs_data_lake_state: present
+tc_chdfs_data_lake_region: ""
+tc_chdfs_data_lake_file_system_id: ""
+tc_chdfs_data_lake_name: ""
+tc_chdfs_data_lake_description: ""
+tc_chdfs_data_lake_capacity_quota: null
+tc_chdfs_data_lake_super_users: []
+tc_chdfs_data_lake_posix_acl: true
+tc_chdfs_data_lake_root_inode_user: ""
+tc_chdfs_data_lake_root_inode_group: ""
+tc_chdfs_data_lake_enable_ranger: false
+tc_chdfs_data_lake_ranger_service_addresses: []
+tc_chdfs_data_lake_tags: {}
+
+# Access-group items support module fields plus rules: [{address, access_mode, priority}].
+tc_chdfs_data_lake_access_groups: []
+# Mount items support module fields plus access_group_ids and access_group_names.
+tc_chdfs_data_lake_mount_points: []

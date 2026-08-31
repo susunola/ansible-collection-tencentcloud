@@ -48,6 +48,9 @@ class Models(object):
     DescribeEnvironmentsRequest = Request
     DescribeApplicationsRequest = Request
     DescribeCfsFileSystemsRequest = Request
+    DescribeFileSystemsRequest = Request
+    DescribeAccessGroupsRequest = Request
+    DescribeMountPointsRequest = Request
     DescribeInstancesDetailRequest = Request
     DescribeInstanceListRequest = Request
     DescribeRocketMQClustersRequest = Request
@@ -133,6 +136,36 @@ def test_cfs_request_scans_names_with_numeric_pagination():
     request = build_request("cfs_file_system", Models, "shared-data", offset=100)
     assert request.Limit == 100
     assert request.Offset == 100
+
+
+def test_chdfs_requests_use_product_markers_and_parent_scope():
+    file_system = build_request("chdfs_file_system", Models, "analytics", page_token="f-next")
+    access_group = build_request("chdfs_access_group", Models, "analytics", page_token="ag-next")
+    mount_point = build_request(
+        "chdfs_mount_point", Models, "analytics-mount", file_system_id="f-1")
+    assert file_system.FileSystemIdMarker == "f-next"
+    assert access_group.AccessGroupIdMarker == "ag-next"
+    assert mount_point.FileSystemId == "f-1"
+
+
+def test_resolve_chdfs_file_system_follows_product_marker():
+    class MarkerClient(object):
+        def __init__(self):
+            self.markers = []
+
+        def DescribeFileSystems(self, request):
+            self.markers.append(request.FileSystemIdMarker)
+            if request.FileSystemIdMarker is None:
+                return Object(FileSystems=[], IsOver=False, NextFileSystemIdMarker="f-next")
+            return Object(
+                FileSystems=[Object(FileSystemId="f-1", FileSystemName="analytics")],
+                IsOver=True,
+                NextFileSystemIdMarker=None,
+            )
+
+    client = MarkerClient()
+    assert resolve_resource(client, Models, "chdfs_file_system", "analytics") == "f-1"
+    assert client.markers == [None, "f-next"]
 
 
 def test_ckafka_request_uses_instance_name_filter():

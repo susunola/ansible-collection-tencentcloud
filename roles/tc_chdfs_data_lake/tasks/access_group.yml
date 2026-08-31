@@ -1,0 +1,31 @@
+---
+- name: Reconcile CHDFS access group
+  susunola.tencentcloud.chdfs_access_group:
+    region: "{{ tc_chdfs_data_lake_region }}"
+    state: present
+    access_group_id: "{{ _tc_chdfs_access_group.access_group_id | default(omit, true) }}"
+    name: "{{ _tc_chdfs_access_group.name }}"
+    vpc_type: "{{ _tc_chdfs_access_group.vpc_type }}"
+    vpc_id: "{{ _tc_chdfs_access_group.vpc_id }}"
+    description: "{{ _tc_chdfs_access_group.description | default(omit) }}"
+  register: _tc_chdfs_access_group_result
+
+- name: Resolve CHDFS access group ID
+  ansible.builtin.set_fact:
+    _tc_chdfs_access_group_id: >-
+      {{ _tc_chdfs_access_group.access_group_id | default('')
+         or (_tc_chdfs_access_group_result.access_group.AccessGroupId | default('')) }}
+
+- name: Record CHDFS access group identity
+  when: _tc_chdfs_access_group_id | length > 0
+  ansible.builtin.set_fact:
+    _tc_chdfs_access_group_ids: >-
+      {{ _tc_chdfs_access_group_ids
+         | combine({_tc_chdfs_access_group.name: _tc_chdfs_access_group_id}) }}
+
+- name: Reconcile CHDFS access rules
+  when: _tc_chdfs_access_group_id | length > 0
+  susunola.tencentcloud.chdfs_access_rules:
+    region: "{{ tc_chdfs_data_lake_region }}"
+    access_group_id: "{{ _tc_chdfs_access_group_id }}"
+    rules: "{{ _tc_chdfs_access_group.rules | default([]) }}"

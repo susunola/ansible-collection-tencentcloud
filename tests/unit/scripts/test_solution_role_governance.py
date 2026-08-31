@@ -285,6 +285,20 @@ def test_config_governance_teardown_removes_policy_layers_before_rules_and_recor
     assert "aggregators cannot be removed" in main
 
 
+def test_chdfs_teardown_disassociates_and_removes_children_before_file_system():
+    main = role_tasks("tc_chdfs_data_lake")
+    mount = (ROOT / "roles" / "tc_chdfs_data_lake" / "tasks" / "teardown_mount.yml").read_text(encoding="utf-8")
+    access_group = (ROOT / "roles" / "tc_chdfs_data_lake" / "tasks" / "teardown_access_group.yml").read_text(encoding="utf-8")
+    assert_order(mount, "Disassociate CHDFS mount access groups", "Remove CHDFS mount point")
+    assert_order(access_group, "Remove CHDFS access rules", "Remove CHDFS access group")
+    assert_order(
+        main,
+        "Disassociate and remove CHDFS mount points",
+        "Clear rules and remove CHDFS access groups",
+        "Remove CHDFS file system",
+    )
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -318,6 +332,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_prometheus_platform": "resource_type='prometheus_instance'",
         "tc_edgeone_application": "resource_type='edgeone_zone'",
         "tc_api_gateway_platform": "resource_type='api_gateway_service'",
+        "tc_chdfs_data_lake": "resource_type='chdfs_file_system'",
         "tc_rocketmq_platform": "resource_type='rocketmq_cluster'",
         "tc_rabbitmq_platform": "resource_type='rabbitmq_instance'",
         "tc_eventbridge_router": "resource_type='event_bus'",

@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **34**
+- Solution roles: **35**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -64,7 +64,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `cfs` | solution | 5 | 1 | `tc_shared_file_storage` | `cfs_auto_snapshot_policy`, `cfs_file_system`, `cfs_permission_group`, `cfs_permission_rule`, `cfs_snapshot` |
 | `cfw` | resource-family | 5 | 1 | — | `cfw_address_template`, `cfw_internet_acl_rule`, `cfw_nat_acl_rule`, `cfw_nat_dnat_rule`, `cfw_vpc_acl_rule` |
 | `chc` | discovery-only | 0 | 1 | — | — |
-| `chdfs` | resource-family | 5 | 1 | — | `chdfs_access_group`, `chdfs_access_rules`, `chdfs_file_system`, `chdfs_mount_access_groups`, `chdfs_mount_point` |
+| `chdfs` | solution | 5 | 1 | `tc_chdfs_data_lake` | `chdfs_access_group`, `chdfs_access_rules`, `chdfs_file_system`, `chdfs_mount_access_groups`, `chdfs_mount_point` |
 | `ciam` | discovery-only | 0 | 1 | — | — |
 | `ckafka` | solution | 9 | 1 | `tc_kafka_platform` | `ckafka_acl`, `ckafka_acl_rule`, `ckafka_datahub_connection`, `ckafka_datahub_task`, `ckafka_datahub_topic`, `ckafka_instance`, `ckafka_route`, `ckafka_topic`, +1 more |
 | `clb` | solution | 5 | 1 | `tc_clb_http` | `clb_listener`, `clb_listener_target`, `clb_load_balancer`, `clb_rule`, `clb_target_group` |
