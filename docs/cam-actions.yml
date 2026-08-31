@@ -292,6 +292,10 @@ modules:
   - DescribeDomains
   cds_asset_info:
   - DescribeAssetsList
+  cdwch_backup_config:
+  - CreateBackUpSchedule
+  - DescribeBackUpSchedule
+  - OpenBackUp
   cdwch_cn_instance_info:
   - DescribeCNInstances
   cdwch_instance:

@@ -81,6 +81,7 @@ action_groups:
     - cdn_domain
     - cdn_domain_info
     - cds_asset_info
+    - cdwch_backup_config
     - cdwch_cn_instance_info
     - cdwch_instance
     - cdwdoris_cluster_configs_history_info

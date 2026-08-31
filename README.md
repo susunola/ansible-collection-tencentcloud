@@ -51,6 +51,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cdb_parameter_template` | Manage Tencent Cloud CDB parameter templates |
 | `cdn_cls_log_topic` | Manage Tencent Cloud CDN real-time CLS log topics |
 | `cdn_domain` | Manage Tencent Cloud CDN domains |
+| `cdwch_backup_config` | Manage Tencent Cloud CDW ClickHouse backup configuration |
 | `cdwch_instance` | Manage Tencent Cloud TCHouse-C instances |
 | `cdwdoris_cooldown_policy` | Manage a Tencent Cloud CDW Doris cooldown policy |
 | `cdwdoris_instance` | Manage Tencent Cloud CDW Doris instances |
