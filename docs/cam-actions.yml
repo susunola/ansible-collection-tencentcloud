@@ -2046,6 +2046,9 @@ modules:
   - StopNotebook
   tione_notebook_info:
   - DescribeNotebooks
+  tione_training_task_info:
+  - DescribeTrainingTask
+  - DescribeTrainingTasks
   tiw_running_task_info:
   - DescribeRunningTasks
   tke_addon:

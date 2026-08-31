@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``tione_training_task_info`` with exact and historical-instance detail lookup plus workspace, state, identity and tag-filtered bounded pagination.
