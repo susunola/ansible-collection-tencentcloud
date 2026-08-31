@@ -606,6 +606,7 @@ action_groups:
     - tse_gateway_service_source
     - tse_gateway_waf_domains
     - tse_gateway_waf_protection
+    - tse_governance_alias
     - tse_governance_namespace
     - tse_governance_service
     - tse_sre_instance

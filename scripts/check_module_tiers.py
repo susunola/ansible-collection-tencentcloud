@@ -272,6 +272,7 @@ CORE_MODULES = {
     "oceanus_resource_config",
     "tse_sre_instance",
     "tse_governance_namespace",
+    "tse_governance_alias",
     "tse_governance_service",
     "tse_config_file_group",
     "tse_config_file",

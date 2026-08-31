@@ -2410,6 +2410,11 @@ modules:
   - CloseWafProtection
   - DescribeWafProtection
   - OpenWafProtection
+  tse_governance_alias:
+  - CreateGovernanceAlias
+  - DeleteGovernanceAliases
+  - DescribeGovernanceAliases
+  - ModifyGovernanceAlias
   tse_governance_namespace:
   - CreateGovernanceNamespaces
   - DeleteGovernanceNamespaces

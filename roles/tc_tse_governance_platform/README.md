@@ -1,6 +1,6 @@
 # tc_tse_governance_platform
 
-Provisions a TSE registry engine with governance namespaces, services,
+Provisions a TSE registry engine with governance namespaces, services, aliases,
 configuration groups and draft configuration files. Destruction requires an
 explicit engine ID and removes dependent resources in reverse order.
 
@@ -19,6 +19,8 @@ explicit engine ID and removes dependent resources in reverse order.
           - name: production
         tc_tse_governance_platform_services:
           - {namespace: production, name: orders}
+        tc_tse_governance_platform_aliases:
+          - {alias_namespace: shared, alias: orders-api, namespace: production, service: orders}
         tc_tse_governance_platform_config_groups:
           - {namespace: production, name: application}
         tc_tse_governance_platform_config_files:
