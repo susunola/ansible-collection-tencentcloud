@@ -818,6 +818,11 @@ modules:
   - ModifyDataEngineDescription
   - SuspendResumeDataEngine
   - UpdateDataEngine
+  dlc_database:
+  - CreateMetaDatabase
+  - DeleteMetaDatabase
+  - DescribeDatabase
+  - DescribeTables
   dlc_task_info:
   - DescribeTaskList
   dlc_user_vpc_connection:
