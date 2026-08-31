@@ -6,7 +6,7 @@ This matrix is generated from module SDK imports and role metadata. It is a
 navigation and gap-discovery aid, not a claim that every Tencent Cloud API is covered.
 
 - Products/services: **203**
-- Write modules: **323**
+- Write modules: **324**
 - Information modules: **210**
 - Solution roles: **53**
 
@@ -154,7 +154,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `mqtt` | solution | 4 | 1 | `tc_mqtt_broker` | `mqtt_authorization_policy`, `mqtt_instance`, `mqtt_topic`, `mqtt_user` |
 | `ms` | discovery-only | 0 | 1 | — | — |
 | `msp` | discovery-only | 0 | 1 | — | — |
-| `oceanus` | solution | 6 | 1 | `tc_oceanus_streaming_platform` | `oceanus_cluster`, `oceanus_job`, `oceanus_job_config`, `oceanus_resource`, `oceanus_resource_config`, `oceanus_workspace` |
+| `oceanus` | solution | 7 | 1 | `tc_oceanus_streaming_platform` | `oceanus_cluster`, `oceanus_job`, `oceanus_job_config`, `oceanus_job_savepoint`, `oceanus_resource`, `oceanus_resource_config`, `oceanus_workspace` |
 | `omics` | discovery-only | 0 | 1 | — | — |
 | `organization` | solution | 4 | 1 | `tc_organization_governance` | `organization_member`, `organization_member_identity`, `organization_member_policy`, `organization_node` |
 | `partners` | discovery-only | 0 | 1 | — | — |

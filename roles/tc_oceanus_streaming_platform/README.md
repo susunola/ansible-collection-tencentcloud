@@ -41,8 +41,12 @@ Builds an Oceanus workspace, an optional dedicated Flink cluster, and its jobs. 
               checkpoint_interval: 60
               auto_recover: true
             desired_status: stopped
+            # For a running job, add a stable description to create one reusable savepoint:
+            # savepoint: {description: before-release-2026-08-31}
 ```
 
 Resources and their desired latest immutable artifact version are reconciled before jobs. Each structured job is reconciled in three phases: definition, immutable configuration publication, then runtime state using the new version. Flat job dictionaries remain supported when no configuration publication is needed. Teardown reverses the dependency order by deleting jobs before resources.
+
+An optional `savepoint` is triggered only after the job has converged to `running`. Its description acts as an idempotency key; change it for each intentional release checkpoint or set `force: true` for an explicitly repeated snapshot.
 
 Set `tc_oceanus_streaming_platform_allow_destroy: true` only for intentional teardown. CU scale-down also requires `allow_scale_down: true` in the cluster input.

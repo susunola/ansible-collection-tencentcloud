@@ -44,6 +44,15 @@
       }}
   register: _tc_oceanus_job_runtime_result
 
+- name: Create declared Oceanus job savepoint after runtime convergence
+  when:
+    - tc_oceanus_streaming_platform_state == 'present'
+    - _tc_oceanus_job.savepoint is defined
+    - _tc_oceanus_job_desired_status == 'running'
+  susunola.tencentcloud.oceanus_job_savepoint:
+  args: "{{ _tc_oceanus_job.savepoint | combine({'workspace_id': _tc_oceanus_workspace_id, 'job_id': _tc_oceanus_job_definition_result.job.JobId}) }}"
+  register: _tc_oceanus_job_savepoint_result
+
 - name: Remove Oceanus job
   when: tc_oceanus_streaming_platform_state == 'absent'
   susunola.tencentcloud.oceanus_job:
