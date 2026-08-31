@@ -92,6 +92,31 @@ def test_ckafka_request_uses_instance_name_filter():
     assert request.Filters[0].Values == ["event-platform"]
 
 
+def test_alb_request_uses_token_pagination():
+    request = build_request("alb_load_balancer", Models, "application", page_token="next-1")
+    assert request.MaxResults == 100
+    assert request.NextToken == "next-1"
+
+
+def test_resolve_alb_follows_next_token():
+    class TokenClient(object):
+        def __init__(self):
+            self.tokens = []
+
+        def DescribeLoadBalancers(self, request):
+            self.tokens.append(request.NextToken)
+            if request.NextToken is None:
+                return Object(LoadBalancers=[], NextToken="page-2")
+            return Object(
+                LoadBalancers=[Object(LoadBalancerId="alb-1", LoadBalancerName="application")],
+                NextToken=None,
+            )
+
+    client = TokenClient()
+    assert resolve_resource(client, Models, "alb_load_balancer", "application") == "alb-1"
+    assert client.tokens == [None, "page-2"]
+
+
 def test_tem_and_api_gateway_requests_use_product_specific_filters():
     environment = build_request("tem_environment", Models, "production")
     assert environment.SourceChannel == 0

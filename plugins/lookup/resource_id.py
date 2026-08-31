@@ -25,7 +25,7 @@ options:
     description: Resource family to query.
     type: str
     required: true
-    choices: [vpc, subnet, security_group, cvm_instance, clb_load_balancer, tke_cluster, cdb_instance, redis_instance, mongodb_instance, cfs_file_system, ckafka_instance, api_gateway_service, tcr_instance, tem_environment, tem_application]
+    choices: [vpc, subnet, security_group, cvm_instance, clb_load_balancer, alb_load_balancer, tke_cluster, cdb_instance, redis_instance, mongodb_instance, cfs_file_system, ckafka_instance, api_gateway_service, tcr_instance, tem_environment, tem_application]
   vpc_id:
     description: Optional VPC scope for subnet and CLB lookups.
     type: str
@@ -128,6 +128,7 @@ RESOURCE_SPECS = {
     "security_group": ("vpc.v20170312", "VpcClient", "vpc.tencentcloudapi.com", "DescribeSecurityGroups", "SecurityGroupSet", "SecurityGroupId", "SecurityGroupName"),
     "cvm_instance": ("cvm.v20170312", "CvmClient", "cvm.tencentcloudapi.com", "DescribeInstances", "InstanceSet", "InstanceId", "InstanceName"),
     "clb_load_balancer": ("clb.v20180317", "ClbClient", "clb.tencentcloudapi.com", "DescribeLoadBalancers", "LoadBalancerSet", "LoadBalancerId", "LoadBalancerName"),
+    "alb_load_balancer": ("alb.v20251030", "AlbClient", "alb.tencentcloudapi.com", "DescribeLoadBalancers", "LoadBalancers", "LoadBalancerId", "LoadBalancerName"),
     "tke_cluster": ("tke.v20180525", "TkeClient", "tke.tencentcloudapi.com", "DescribeClusters", "Clusters", "ClusterId", "ClusterName"),
     "cdb_instance": ("cdb.v20170320", "CdbClient", "cdb.tencentcloudapi.com", "DescribeDBInstances", "Items", "InstanceId", "InstanceName"),
     "redis_instance": ("redis.v20180412", "RedisClient", "redis.tencentcloudapi.com", "DescribeInstances", "InstanceSet", "InstanceId", "InstanceName"),
@@ -141,7 +142,7 @@ RESOURCE_SPECS = {
 }
 
 
-def build_request(resource_type, models, name, vpc_id=None, offset=0):
+def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token=None):
     """Build the narrowest supported exact-name request."""
     request_names = {
         "vpc": "DescribeVpcsRequest",
@@ -149,6 +150,7 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0):
         "security_group": "DescribeSecurityGroupsRequest",
         "cvm_instance": "DescribeInstancesRequest",
         "clb_load_balancer": "DescribeLoadBalancersRequest",
+        "alb_load_balancer": "DescribeLoadBalancersRequest",
         "tke_cluster": "DescribeClustersRequest",
         "cdb_instance": "DescribeDBInstancesRequest",
         "redis_instance": "DescribeInstancesRequest",
@@ -161,7 +163,10 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0):
         "tem_application": "DescribeApplicationsRequest",
     }
     request = getattr(models, request_names[resource_type])()
-    if resource_type in ("vpc", "subnet", "security_group"):
+    if resource_type == "alb_load_balancer":
+        request.MaxResults = 100
+        request.NextToken = page_token
+    elif resource_type in ("vpc", "subnet", "security_group"):
         request.Limit = "100"
         request.Offset = str(offset)
     else:
@@ -179,6 +184,8 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0):
         api_filter = models.Filter()
         api_filter.Name, api_filter.Values = "instance-name", [name]
         request.Filters = [api_filter]
+    elif resource_type == "alb_load_balancer":
+        pass
     elif resource_type == "api_gateway_service":
         api_filter = models.Filter()
         api_filter.Name, api_filter.Values = "ServiceName", [name]
@@ -219,9 +226,10 @@ def resolve_resource(client, models, resource_type, name, vpc_id=None):
     spec = RESOURCE_SPECS[resource_type]
     matches = []
     offset = 0
+    page_token = None
     while True:
         response = getattr(client, spec[3])(
-            build_request(resource_type, models, name, vpc_id, offset))
+            build_request(resource_type, models, name, vpc_id, offset, page_token))
         values = response
         for attribute in spec[4].split("."):
             values = getattr(values, attribute, None)
@@ -229,6 +237,11 @@ def resolve_resource(client, models, resource_type, name, vpc_id=None):
                 break
         page = list(values or [])
         matches.extend(item for item in page if getattr(item, spec[6], None) == name)
+        if resource_type == "alb_load_balancer":
+            page_token = getattr(response, "NextToken", None)
+            if not page_token:
+                break
+            continue
         if len(page) < 100:
             break
         offset += len(page)
