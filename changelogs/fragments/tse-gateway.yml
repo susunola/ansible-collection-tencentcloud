@@ -32,3 +32,4 @@ minor_changes:
   - Add configuration release, immutable version and publication-history audit discovery.
   - Add paginated governance service-contract and contract-version discovery.
   - Add atomic configuration file and release deployment with deterministic teardown.
+  - Add paginated gateway service-to-route inventory with optional upstream target discovery.

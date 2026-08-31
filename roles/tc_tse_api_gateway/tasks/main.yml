@@ -5,6 +5,7 @@
       - tc_tse_api_gateway_state in ['present', 'absent']
       - tc_tse_api_gateway_gateway is mapping
       - tc_tse_api_gateway_runtime_query is mapping
+      - tc_tse_api_gateway_inventory_query is mapping
       - tc_tse_api_gateway_server_groups is sequence
       - tc_tse_api_gateway_autoscaler_strategies is sequence
       - tc_tse_api_gateway_autoscaler_bindings is sequence
@@ -487,6 +488,12 @@
   loop_control: {label: "{{ item.scope | default('?') }}/{{ item.resource_id | default('unnamed') }}"}
   register: _tc_tse_api_gateway_ip_restrictions_result
 
+- name: Discover TSE API gateway service and route inventory
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_service_inventory_info:
+  args: "{{ tc_tse_api_gateway_inventory_query | combine({'gateway_id': _tc_tse_api_gateway_id}) }}"
+  register: _tc_tse_api_gateway_inventory
+
 - name: Publish TSE API gateway outputs
   when: tc_tse_api_gateway_state == 'present'
   ansible.builtin.set_fact:
@@ -498,6 +505,10 @@
         public_addresses: "{{ _tc_tse_api_gateway_runtime.public_addresses }}"
         nodes: "{{ _tc_tse_api_gateway_runtime.nodes }}"
         node_count: "{{ _tc_tse_api_gateway_runtime.node_count }}"
+      inventory:
+        services: "{{ _tc_tse_api_gateway_inventory.services }}"
+        upstreams: "{{ _tc_tse_api_gateway_inventory.upstreams }}"
+        total_count: "{{ _tc_tse_api_gateway_inventory.total_count }}"
       server_groups: "{{ _tc_tse_api_gateway_server_groups_result.results | default([]) | map(attribute='group') | list }}"
       autoscaler_strategies: "{{ _tc_tse_api_gateway_autoscaler_strategies_result.results | default([]) | map(attribute='strategy') | list }}"
       autoscaler_bindings: "{{ _tc_tse_api_gateway_autoscaler_bindings_result.results | default([]) | map(attribute='binding') | list }}"

@@ -22,6 +22,8 @@ route creation. Guarded teardown removes routes and services before the gateway.
           vpc_config: {VpcId: vpc-xxxxxxxx, SubnetId: subnet-xxxxxxxx}
         tc_tse_api_gateway_runtime_query:
           group_id: group-xxxxxxxx
+        tc_tse_api_gateway_inventory_query:
+          include_upstreams: true
         tc_tse_api_gateway_server_groups:
           - name: production-secondary
             node_config: {Specification: 4c8g, Number: 3}

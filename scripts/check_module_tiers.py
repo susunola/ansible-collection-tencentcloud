@@ -277,6 +277,7 @@ CORE_MODULES = {
     "tse_config_file_release_info",
     "tse_governance_service_contract_info",
     "tse_config_file_deployment",
+    "tse_gateway_service_inventory_info",
     "tse_governance_namespace",
     "tse_governance_alias",
     "tse_governance_instance",
