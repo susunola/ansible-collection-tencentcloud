@@ -5,10 +5,10 @@
 This matrix is generated from module SDK imports and role metadata. It is a
 navigation and gap-discovery aid, not a claim that every Tencent Cloud API is covered.
 
-- Products/services: **203**
-- Write modules: **415**
+- Products/services: **204**
+- Write modules: **417**
 - Information modules: **245**
-- Solution roles: **64**
+- Solution roles: **65**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -81,6 +81,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `controlcenter` | discovery-only | 0 | 1 | — | — |
 | `cos` | solution | 14 | 1 | `tc_object_storage_baseline` | `cos_bucket`, `cos_bucket_domain`, `cos_bucket_domain_certificate`, `cos_bucket_encryption`, `cos_bucket_intelligent_tiering`, `cos_bucket_inventory`, `cos_bucket_logging`, `cos_bucket_object_lock`, +6 more |
 | `cpdp` | discovery-only | 0 | 1 | — | — |
+| `cross-product` | role-only | 0 | 0 | `tc_tsf_microservice_platform` | — |
 | `csip` | discovery-only | 0 | 1 | — | — |
 | `ctem` | discovery-only | 0 | 1 | — | — |
 | `ctsdb` | discovery-only | 0 | 1 | — | — |
@@ -206,7 +207,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `trro` | discovery-only | 0 | 1 | — | — |
 | `trtc` | discovery-only | 0 | 1 | — | — |
 | `tse` | solution | 35 | 11 | `tc_tse_api_gateway`, `tc_tse_governance_platform` | `tse_cloud_native_gateway`, `tse_config_file`, `tse_config_file_deployment`, `tse_config_file_group`, `tse_config_file_release`, `tse_gateway_autoscaler_binding`, `tse_gateway_autoscaler_strategy`, `tse_gateway_canary_rule`, +27 more |
-| `tsf` | discovery-only | 0 | 1 | — | — |
+| `tsf` | managed | 2 | 1 | — | `tsf_application`, `tsf_namespace` |
 | `vcube` | discovery-only | 0 | 1 | — | — |
 | `vdb` | managed | 1 | 1 | — | `vdb_instance` |
 | `vm` | discovery-only | 0 | 1 | — | — |

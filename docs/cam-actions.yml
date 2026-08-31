@@ -2493,8 +2493,19 @@ modules:
   - DescribeNacosServerInterfaces
   - DescribeZookeeperReplicas
   - DescribeZookeeperServerInterfaces
+  tsf_application:
+  - CreateApplication
+  - DeleteApplication
+  - DescribeApplication
+  - DescribeApplications
+  - ModifyApplication
   tsf_application_info:
   - DescribeApplications
+  tsf_namespace:
+  - CreateNamespace
+  - DeleteNamespace
+  - DescribeSimpleNamespaces
+  - ModifyNamespace
   vcube_resource_info:
   - DescribeVcubeResourcesList
   vdb_instance:

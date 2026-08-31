@@ -628,7 +628,9 @@ action_groups:
     - tse_sre_instance
     - tse_sre_instance_info
     - tse_sre_topology_info
+    - tsf_application
     - tsf_application_info
+    - tsf_namespace
     - vcube_resource_info
     - vdb_instance
     - vdb_instance_info
