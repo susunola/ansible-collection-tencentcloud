@@ -281,6 +281,7 @@ CORE_MODULES = {
     "tse_gateway_ip_lookup_info",
     "tse_gateway_upstream_node_status",
     "tse_instance_tag_info",
+    "tse_gateway_console_network",
     "tse_governance_namespace",
     "tse_governance_alias",
     "tse_governance_instance",

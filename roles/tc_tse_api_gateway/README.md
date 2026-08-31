@@ -24,6 +24,9 @@ route creation. Guarded teardown removes routes and services before the gateway.
           group_id: group-xxxxxxxx
         tc_tse_api_gateway_inventory_query:
           include_upstreams: true
+        tc_tse_api_gateway_console_network:
+          state: open
+          access_control: {Mode: Whitelist, CidrWhiteList: [203.0.113.0/24]}
         tc_tse_api_gateway_server_groups:
           - name: production-secondary
             node_config: {Specification: 4c8g, Number: 3}

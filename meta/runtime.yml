@@ -592,6 +592,7 @@ action_groups:
     - tse_gateway_autoscaler_strategy
     - tse_gateway_canary_rule
     - tse_gateway_certificate
+    - tse_gateway_console_network
     - tse_gateway_consumer
     - tse_gateway_consumer_group
     - tse_gateway_consumer_group_membership

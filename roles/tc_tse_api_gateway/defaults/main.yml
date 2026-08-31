@@ -2,6 +2,7 @@
 tc_tse_api_gateway_state: present
 tc_tse_api_gateway_runtime_query: {}
 tc_tse_api_gateway_inventory_query: {}
+tc_tse_api_gateway_console_network: {}
 tc_tse_api_gateway_gateway: {}
 tc_tse_api_gateway_server_groups: []
 tc_tse_api_gateway_autoscaler_strategies: []

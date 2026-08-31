@@ -6,6 +6,7 @@
       - tc_tse_api_gateway_gateway is mapping
       - tc_tse_api_gateway_runtime_query is mapping
       - tc_tse_api_gateway_inventory_query is mapping
+      - tc_tse_api_gateway_console_network is mapping
       - tc_tse_api_gateway_server_groups is sequence
       - tc_tse_api_gateway_autoscaler_strategies is sequence
       - tc_tse_api_gateway_autoscaler_bindings is sequence
@@ -48,6 +49,14 @@
   susunola.tencentcloud.tse_instance_tag_info:
     instance_id: "{{ _tc_tse_api_gateway_id }}"
   register: _tc_tse_api_gateway_tags
+
+- name: Reconcile TSE API gateway console network
+  when:
+    - tc_tse_api_gateway_state == 'present'
+    - tc_tse_api_gateway_console_network | length > 0
+  susunola.tencentcloud.tse_gateway_console_network:
+  args: "{{ tc_tse_api_gateway_console_network | combine({'gateway_id': _tc_tse_api_gateway_id}) }}"
+  register: _tc_tse_api_gateway_console_network_result
 
 - name: Reconcile TSE API gateway server groups
   when: tc_tse_api_gateway_state == 'present'
@@ -515,6 +524,7 @@
     tc_tse_api_gateway_result:
       gateway: "{{ _tc_tse_api_gateway_gateway.gateway }}"
       tags: "{{ _tc_tse_api_gateway_tags.tags }}"
+      console_network: "{{ _tc_tse_api_gateway_console_network_result.console_network | default({}) }}"
       runtime:
         network_config: "{{ _tc_tse_api_gateway_runtime.network_config }}"
         ports: "{{ _tc_tse_api_gateway_runtime.ports }}"
