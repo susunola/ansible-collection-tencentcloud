@@ -10,6 +10,8 @@
       - tc_tse_api_gateway_consumer_groups is sequence
       - tc_tse_api_gateway_secret_keys is sequence
       - tc_tse_api_gateway_rate_limits is sequence
+      - tc_tse_api_gateway_cors_policies is sequence
+      - tc_tse_api_gateway_ip_restrictions is sequence
       - tc_tse_api_gateway_public_networks is sequence
       - tc_tse_api_gateway_gateway.gateway_id | default(tc_tse_api_gateway_gateway.name | default('')) | length > 0
       - tc_tse_api_gateway_state == 'present' or tc_tse_api_gateway_allow_destroy | bool
@@ -102,6 +104,22 @@
   loop_control: {label: "{{ item.scope | default('?') }}/{{ item.resource | default('unnamed') }}"}
   register: _tc_tse_api_gateway_rate_limits_result
 
+- name: Reconcile TSE API gateway CORS policies
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_cors:
+  args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_api_gateway_cors_policies }}"
+  loop_control: {label: "{{ item.scope | default('?') }}/{{ item.resource_id | default('unnamed') }}"}
+  register: _tc_tse_api_gateway_cors_result
+
+- name: Reconcile TSE API gateway IP restrictions
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_ip_restriction:
+  args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_api_gateway_ip_restrictions }}"
+  loop_control: {label: "{{ item.scope | default('?') }}/{{ item.resource_id | default('unnamed') }}"}
+  register: _tc_tse_api_gateway_ip_restrictions_result
+
 - name: Publish TSE API gateway outputs
   when: tc_tse_api_gateway_state == 'present'
   ansible.builtin.set_fact:
@@ -113,6 +131,8 @@
       consumer_groups: "{{ _tc_tse_api_gateway_consumer_groups_result.results | default([]) | map(attribute='consumer_group') | list }}"
       secret_keys: "{{ _tc_tse_api_gateway_secret_keys_result.results | default([]) | map(attribute='secret_key') | list }}"
       rate_limits: "{{ _tc_tse_api_gateway_rate_limits_result.results | default([]) | map(attribute='rate_limit') | list }}"
+      cors_policies: "{{ _tc_tse_api_gateway_cors_result.results | default([]) | map(attribute='cors') | list }}"
+      ip_restrictions: "{{ _tc_tse_api_gateway_ip_restrictions_result.results | default([]) | map(attribute='ip_restriction') | list }}"
       public_networks: "{{ _tc_tse_api_gateway_public_networks_result.results | default([]) | map(attribute='public_network') | list }}"
 
 - name: Require gateway ID for deterministic teardown
@@ -130,6 +150,24 @@
     resource: "{{ item.resource }}"
     state: absent
   loop: "{{ tc_tse_api_gateway_rate_limits | reverse | list }}"
+
+- name: Remove TSE API gateway IP restrictions
+  when: tc_tse_api_gateway_state == 'absent'
+  susunola.tencentcloud.tse_gateway_ip_restriction:
+    gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
+    scope: "{{ item.scope }}"
+    resource_id: "{{ item.resource_id }}"
+    state: absent
+  loop: "{{ tc_tse_api_gateway_ip_restrictions | reverse | list }}"
+
+- name: Remove TSE API gateway CORS policies
+  when: tc_tse_api_gateway_state == 'absent'
+  susunola.tencentcloud.tse_gateway_cors:
+    gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
+    scope: "{{ item.scope }}"
+    resource_id: "{{ item.resource_id }}"
+    state: absent
+  loop: "{{ tc_tse_api_gateway_cors_policies | reverse | list }}"
 
 - name: Remove TSE API gateway routes
   when: tc_tse_api_gateway_state == 'absent'

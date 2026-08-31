@@ -2299,6 +2299,14 @@ modules:
   - DescribeCloudNativeAPIGatewayConsumerGroup
   - DescribeCloudNativeAPIGatewayConsumerGroupList
   - ModifyCloudNativeAPIGatewayConsumerGroup
+  tse_gateway_cors:
+  - CreateOrModifyCloudNativeAPIGatewayCORS
+  - DeleteCloudNativeAPIGatewayCORS
+  - DescribeCloudNativeAPIGatewayCORS
+  tse_gateway_ip_restriction:
+  - CreateOrModifyCloudNativeAPIGatewayIPRestriction
+  - DeleteCloudNativeAPIGatewayIPRestriction
+  - DescribeCloudNativeAPIGatewayIPRestriction
   tse_gateway_public_network:
   - CreateCloudNativeAPIGatewayPublicNetwork
   - DeleteCloudNativeAPIGatewayPublicNetwork

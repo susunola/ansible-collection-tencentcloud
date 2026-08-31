@@ -2,7 +2,7 @@
 
 Provisions a TSE cloud-native API gateway, upstream services, routes,
 consumers, consumer groups, credentials, public networks with access control, and service- or route-scoped
-rate limits. Routes
+rate limits, CORS and IP restrictions. Policy entries use the concrete service or route `resource_id`. Routes
 may reference `service_name`; the role resolves the created service ID before
 route creation. Guarded teardown removes routes and services before the gateway.
 
@@ -39,4 +39,14 @@ route creation. Guarded teardown removes routes and services before the gateway.
             secret_type: ApiKey
             generate_type: System
             resource_type: Consumer
+        tc_tse_api_gateway_cors_policies:
+          - scope: route
+            resource_id: route-xxxxxxxx
+            origins: ['https://app.example.com']
+            methods: [GET, POST]
+        tc_tse_api_gateway_ip_restrictions:
+          - scope: service
+            resource_id: service-xxxxxxxx
+            restriction_type: whiteList
+            addresses: [10.0.0.0/8]
 ```

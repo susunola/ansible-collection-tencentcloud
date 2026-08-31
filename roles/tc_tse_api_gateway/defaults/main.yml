@@ -7,5 +7,7 @@ tc_tse_api_gateway_consumers: []
 tc_tse_api_gateway_consumer_groups: []
 tc_tse_api_gateway_secret_keys: []
 tc_tse_api_gateway_rate_limits: []
+tc_tse_api_gateway_cors_policies: []
+tc_tse_api_gateway_ip_restrictions: []
 tc_tse_api_gateway_public_networks: []
 tc_tse_api_gateway_allow_destroy: false
