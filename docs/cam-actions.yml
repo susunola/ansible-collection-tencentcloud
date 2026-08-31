@@ -828,6 +828,13 @@ modules:
   - DeleteMetaDatabase
   - DescribeDatabase
   - DescribeTables
+  dlc_engine_resource_group:
+  - CreateStandardEngineResourceGroup
+  - DeleteStandardEngineResourceGroup
+  - DescribeStandardEngineResourceGroups
+  - UpdateEngineResourceGroupNetworkConfigInfo
+  - UpdateStandardEngineResourceGroupBaseInfo
+  - UpdateStandardEngineResourceGroupResourceInfo
   dlc_task_info:
   - DescribeTaskList
   dlc_user:

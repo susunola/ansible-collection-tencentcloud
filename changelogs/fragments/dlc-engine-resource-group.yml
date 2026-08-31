@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_engine_resource_group`` for guarded DLC standard resource-group lifecycle, capacity and network reconciliation.

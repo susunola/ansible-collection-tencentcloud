@@ -221,6 +221,7 @@ action_groups:
     - dlc_data_engine
     - dlc_data_mask_strategy
     - dlc_database
+    - dlc_engine_resource_group
     - dlc_task_info
     - dlc_user
     - dlc_user_policy

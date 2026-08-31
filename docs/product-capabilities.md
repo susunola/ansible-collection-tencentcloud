@@ -6,7 +6,7 @@ This matrix is generated from module SDK imports and role metadata. It is a
 navigation and gap-discovery aid, not a claim that every Tencent Cloud API is covered.
 
 - Products/services: **203**
-- Write modules: **335**
+- Write modules: **336**
 - Information modules: **210**
 - Solution roles: **54**
 
@@ -96,7 +96,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `dbs` | discovery-only | 0 | 1 | — | — |
 | `dc` | solution | 2 | 1 | `tc_direct_connect_fabric` | `dc_direct_connect`, `dc_direct_connect_tunnel` |
 | `dcdb` | solution | 5 | 1 | `tc_dcdb_stack` | `dcdb_account`, `dcdb_account_privilege`, `dcdb_backup_config`, `dcdb_instance`, `dcdb_security_config` |
-| `dlc` | solution | 9 | 1 | `tc_dlc_access_governance` | `dlc_data_engine`, `dlc_data_mask_strategy`, `dlc_database`, `dlc_user`, `dlc_user_policy`, `dlc_user_vpc_connection`, `dlc_work_group`, `dlc_work_group_membership`, +1 more |
+| `dlc` | solution | 10 | 1 | `tc_dlc_access_governance` | `dlc_data_engine`, `dlc_data_mask_strategy`, `dlc_database`, `dlc_engine_resource_group`, `dlc_user`, `dlc_user_policy`, `dlc_user_vpc_connection`, `dlc_work_group`, +2 more |
 | `dnspod` | solution | 4 | 1 | `tc_dns_zone` | `dnspod_custom_line`, `dnspod_domain`, `dnspod_line_group`, `dnspod_record` |
 | `domain` | discovery-only | 0 | 1 | — | — |
 | `dsgc` | discovery-only | 0 | 1 | — | — |

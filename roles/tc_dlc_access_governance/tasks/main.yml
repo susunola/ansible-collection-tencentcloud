@@ -32,6 +32,7 @@
   ansible.builtin.set_fact:
     _tc_dlc_vpc_endpoint_ids: {}
     _tc_dlc_data_engine_ids: {}
+    _tc_dlc_engine_resource_group_ids: {}
     _tc_dlc_database_names: []
     _tc_dlc_user_ids: []
     _tc_dlc_work_group_ids: {}
@@ -52,6 +53,23 @@
   loop_control:
     loop_var: _tc_dlc_engine
     label: "{{ _tc_dlc_engine.name }}"
+
+- name: Reconcile DLC engine resource groups after parent engines
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_engine_resource_group:
+  args: "{{ _tc_dlc_resource_group | combine({'state': 'present'}) }}"
+  loop: "{{ tc_dlc_access_governance_engine_resource_groups }}"
+  loop_control:
+    loop_var: _tc_dlc_resource_group
+    label: "{{ _tc_dlc_resource_group.name }}"
+  register: _tc_dlc_resource_group_results
+
+- name: Record DLC engine resource-group identities
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dlc_engine_resource_group_ids: >-
+      {{ dict((tc_dlc_access_governance_engine_resource_groups | map(attribute='name') | list)
+              | zip(_tc_dlc_resource_group_results.results | map(attribute='resource_group_id') | list)) }}
 
 - name: Reconcile DLC databases before access policies
   when: tc_dlc_access_governance_state == 'present'
@@ -155,6 +173,17 @@
     loop_var: _tc_dlc_database
     label: "{{ _tc_dlc_database.name }}"
 
+- name: Remove DLC engine resource groups before parent engines
+  when:
+    - tc_dlc_access_governance_state == 'absent'
+    - tc_dlc_access_governance_allow_destroy | bool
+  susunola.tencentcloud.dlc_engine_resource_group:
+  args: "{{ _tc_dlc_resource_group | combine({'state': 'absent', 'allow_delete': true}) }}"
+  loop: "{{ tc_dlc_access_governance_engine_resource_groups | reverse | list }}"
+  loop_control:
+    loop_var: _tc_dlc_resource_group
+    label: "{{ _tc_dlc_resource_group.name }}"
+
 - name: Remove DLC data engines after access policies, groups and databases
   when:
     - tc_dlc_access_governance_state == 'absent'
@@ -183,6 +212,7 @@
     tc_dlc_access_governance_result:
       vpc_endpoint_ids: "{{ _tc_dlc_vpc_endpoint_ids }}"
       data_engine_ids: "{{ _tc_dlc_data_engine_ids }}"
+      engine_resource_group_ids: "{{ _tc_dlc_engine_resource_group_ids }}"
       database_names: "{{ _tc_dlc_database_names }}"
       user_ids: "{{ _tc_dlc_user_ids }}"
       work_group_ids: "{{ _tc_dlc_work_group_ids }}"

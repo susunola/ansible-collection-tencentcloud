@@ -25,6 +25,14 @@ ignored when comparing desired access, so repeated runs remain idempotent.
             max_clusters: 4
             auto_suspend: true
             state: running
+        tc_dlc_access_governance_engine_resource_groups:
+          - name: production-etl
+            data_engine_name: production-spark
+            driver_cu_spec: medium
+            executor_cu_spec: large
+            min_executors: 2
+            max_executors: 10
+            network_config_names: [private-data]
         tc_dlc_access_governance_databases:
           - name: sales
             comment: Curated sales datasets
@@ -59,14 +67,16 @@ ignored when comparing desired access, so repeated runs remain idempotent.
 
 The resulting endpoint IDs, engine IDs, database names and user IDs are published in
 `tc_dlc_access_governance_result.vpc_endpoint_ids` and
-`tc_dlc_access_governance_result.data_engine_ids` and
+`tc_dlc_access_governance_result.data_engine_ids`,
+`tc_dlc_access_governance_result.engine_resource_group_ids` and
 `tc_dlc_access_governance_result.database_names` and
 `tc_dlc_access_governance_result.user_ids`. Mask strategy IDs are available in
 `tc_dlc_access_governance_result.data_mask_strategy_ids`.
 
 Teardown requires `work_group_id` for every group, `endpoint_id` for every VPC
 connection and `tc_dlc_access_governance_allow_destroy: true`. It removes policies
-and members, deletes empty work groups and users, then databases, engines and VPC
+and members, deletes empty work groups and users, then databases, engine resource
+groups, engines and VPC
 endpoints. Bound user deletion requires `allow_delete_bound: true` on the user;
 non-empty database deletion additionally requires
 `allow_delete_nonempty: true` on that database item.
