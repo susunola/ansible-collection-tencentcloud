@@ -34,6 +34,7 @@ ROLE_SERVICES = {
     "tc_mqtt_broker": "mqtt",
     "tc_postgresql_stack": "postgres",
     "tc_redis_stack": "redis",
+    "tc_rocketmq_platform": "tdmq",
     "tc_launch": "cvm",
     "tc_clb_http": "clb",
     "tc_alb_application_entry": "alb",

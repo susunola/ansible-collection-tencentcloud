@@ -1,0 +1,47 @@
+---
+- name: Reconcile RocketMQ namespace
+  susunola.tencentcloud.tdmq_rocketmq_namespace:
+    region: "{{ tc_rocketmq_platform_region | default(omit, true) }}"
+    state: present
+    cluster_id: "{{ _tc_rocketmq_platform_cluster_id }}"
+    name: "{{ _tc_rocketmq_namespace.name }}"
+    remark: "{{ _tc_rocketmq_namespace.remark | default('') }}"
+
+- name: Reconcile RocketMQ topics
+  susunola.tencentcloud.tdmq_rocketmq_topic:
+    region: "{{ tc_rocketmq_platform_region | default(omit, true) }}"
+    state: present
+    cluster_id: "{{ _tc_rocketmq_platform_cluster_id }}"
+    namespace: "{{ _tc_rocketmq_namespace.name }}"
+    name: "{{ item.name }}"
+    topic_type: "{{ item.topic_type | default('Normal') }}"
+    partition_num: "{{ item.partition_num | default(1) }}"
+    remark: "{{ item.remark | default('') }}"
+  loop: "{{ _tc_rocketmq_namespace.topics | default([]) }}"
+  loop_control: {label: "{{ item.name }}"}
+
+- name: Reconcile RocketMQ consumer groups
+  susunola.tencentcloud.tdmq_rocketmq_group:
+    region: "{{ tc_rocketmq_platform_region | default(omit, true) }}"
+    state: present
+    cluster_id: "{{ _tc_rocketmq_platform_cluster_id }}"
+    namespace: "{{ _tc_rocketmq_namespace.name }}"
+    name: "{{ item.name }}"
+    group_type: "{{ item.group_type | default('TCP') }}"
+    read_enabled: "{{ item.read_enabled | default(true) }}"
+    broadcast_enabled: "{{ item.broadcast_enabled | default(false) }}"
+    retry_max_times: "{{ item.retry_max_times | default(16) }}"
+    remark: "{{ item.remark | default('') }}"
+  loop: "{{ _tc_rocketmq_namespace.groups | default([]) }}"
+  loop_control: {label: "{{ item.name }}"}
+
+- name: Reconcile RocketMQ namespace permissions
+  susunola.tencentcloud.tdmq_rocketmq_permission:
+    region: "{{ tc_rocketmq_platform_region | default(omit, true) }}"
+    state: present
+    cluster_id: "{{ _tc_rocketmq_platform_cluster_id }}"
+    namespace: "{{ _tc_rocketmq_namespace.name }}"
+    role_name: "{{ item.role_name }}"
+    permissions: "{{ item.permissions | default(['produce', 'consume']) }}"
+  loop: "{{ _tc_rocketmq_namespace.permissions | default([]) }}"
+  loop_control: {label: "{{ item.role_name }}"}

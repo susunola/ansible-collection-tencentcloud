@@ -1,0 +1,94 @@
+---
+- name: Resolve existing RocketMQ cluster ID for teardown
+  when:
+    - tc_rocketmq_platform_state == 'absent'
+    - tc_rocketmq_platform_cluster_id | length == 0
+    - tc_rocketmq_platform_name | length > 0
+  ansible.builtin.set_fact:
+    tc_rocketmq_platform_cluster_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_rocketmq_platform_name,
+                resource_type='rocketmq_cluster', region=tc_rocketmq_platform_region) }}
+
+- name: Validate RocketMQ platform inputs
+  ansible.builtin.assert:
+    that:
+      - tc_rocketmq_platform_state in ['present', 'absent']
+      - tc_rocketmq_platform_name | length > 0
+      - tc_rocketmq_platform_state == 'present' or tc_rocketmq_platform_cluster_id | length > 0
+    fail_msg: RocketMQ requires a cluster name; teardown also requires a resolvable cluster ID.
+
+- name: Provision RocketMQ cluster
+  when: tc_rocketmq_platform_state == 'present'
+  susunola.tencentcloud.tdmq_rocketmq_cluster:
+    region: "{{ tc_rocketmq_platform_region | default(omit, true) }}"
+    state: present
+    cluster_id: "{{ tc_rocketmq_platform_cluster_id | default(omit, true) }}"
+    name: "{{ tc_rocketmq_platform_name }}"
+    remark: "{{ tc_rocketmq_platform_remark }}"
+  register: _tc_rocketmq_platform_cluster
+
+- name: Resolve RocketMQ cluster ID
+  when: tc_rocketmq_platform_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_rocketmq_platform_cluster_id: >-
+      {{ tc_rocketmq_platform_cluster_id
+         or (_tc_rocketmq_platform_cluster.cluster.ClusterId | default('')) }}
+
+- name: Reconcile RocketMQ roles
+  when:
+    - tc_rocketmq_platform_state == 'present'
+    - _tc_rocketmq_platform_cluster_id | length > 0
+  susunola.tencentcloud.tdmq_rocketmq_role:
+    region: "{{ tc_rocketmq_platform_region | default(omit, true) }}"
+    state: present
+    cluster_id: "{{ _tc_rocketmq_platform_cluster_id }}"
+    name: "{{ item.name }}"
+    permission_type: "{{ item.permission_type | default('Cluster') }}"
+    remark: "{{ item.remark | default('') }}"
+  loop: "{{ tc_rocketmq_platform_roles }}"
+  loop_control: {label: "{{ item.name }}"}
+  register: _tc_rocketmq_platform_roles
+
+- name: Reconcile RocketMQ namespaces and messaging resources
+  when:
+    - tc_rocketmq_platform_state == 'present'
+    - _tc_rocketmq_platform_cluster_id | length > 0
+  ansible.builtin.include_tasks: namespace.yml
+  loop: "{{ tc_rocketmq_platform_namespaces }}"
+  loop_control:
+    loop_var: _tc_rocketmq_namespace
+    label: "{{ _tc_rocketmq_namespace.name }}"
+
+- name: Remove RocketMQ namespace permissions and resources
+  when: tc_rocketmq_platform_state == 'absent'
+  ansible.builtin.include_tasks: teardown_namespace.yml
+  loop: "{{ tc_rocketmq_platform_namespaces }}"
+  loop_control:
+    loop_var: _tc_rocketmq_namespace
+    label: "{{ _tc_rocketmq_namespace.name }}"
+
+- name: Remove RocketMQ roles
+  when: tc_rocketmq_platform_state == 'absent'
+  susunola.tencentcloud.tdmq_rocketmq_role:
+    region: "{{ tc_rocketmq_platform_region | default(omit, true) }}"
+    state: absent
+    cluster_id: "{{ tc_rocketmq_platform_cluster_id }}"
+    name: "{{ item.name }}"
+  loop: "{{ tc_rocketmq_platform_roles }}"
+  loop_control: {label: "{{ item.name }}"}
+
+- name: Remove RocketMQ cluster
+  when: tc_rocketmq_platform_state == 'absent'
+  susunola.tencentcloud.tdmq_rocketmq_cluster:
+    region: "{{ tc_rocketmq_platform_region | default(omit, true) }}"
+    state: absent
+    cluster_id: "{{ tc_rocketmq_platform_cluster_id }}"
+    name: "{{ tc_rocketmq_platform_name }}"
+
+- name: Publish RocketMQ platform result
+  when: tc_rocketmq_platform_state == 'present'
+  ansible.builtin.set_fact:
+    tc_rocketmq_platform_result:
+      cluster_id: "{{ _tc_rocketmq_platform_cluster_id }}"
+      cluster: "{{ _tc_rocketmq_platform_cluster.cluster | default({}) }}"
+      roles: "{{ _tc_rocketmq_platform_roles | default({}) }}"

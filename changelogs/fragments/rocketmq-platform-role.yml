@@ -1,0 +1,6 @@
+---
+minor_changes:
+  - >-
+    solution roles - add ``tc_rocketmq_platform`` for exact-name cluster
+    adoption and child-first orchestration of RocketMQ namespaces, roles,
+    permissions, topics and consumer groups.

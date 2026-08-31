@@ -582,6 +582,7 @@ for product-level write, discovery and reusable-role maturity.
 | `tc_security_baseline` | Establish CAM, CloudAudit and Config compliance controls |
 | `tc_container_registry` | Provision TCR namespaces, repositories, vulnerability controls and replication |
 | `tc_kafka_platform` | Provision CKafka instances, routes, users, topics and exact ACL controls |
+| `tc_rocketmq_platform` | Provision TDMQ RocketMQ clusters, namespaces, roles, permissions, topics and groups |
 
 ## Requirements
 

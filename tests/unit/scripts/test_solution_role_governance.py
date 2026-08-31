@@ -204,6 +204,14 @@ def test_lighthouse_teardown_removes_children_before_isolation():
     assert "permanent" in (ROOT / "roles" / "tc_lighthouse_stack" / "README.md").read_text(encoding="utf-8")
 
 
+def test_rocketmq_teardown_removes_permissions_and_resources_before_cluster():
+    main = role_tasks("tc_rocketmq_platform")
+    namespace = (ROOT / "roles" / "tc_rocketmq_platform" / "tasks" / "teardown_namespace.yml").read_text(encoding="utf-8")
+    assert_order(namespace, "Remove RocketMQ namespace permissions", "Remove RocketMQ consumer groups", "Remove RocketMQ topics", "Delete RocketMQ namespace")
+    assert_order(main, "Remove RocketMQ namespace permissions and resources", "Remove RocketMQ roles", "Remove RocketMQ cluster")
+    assert "credential fields" in (ROOT / "roles" / "tc_rocketmq_platform" / "README.md").read_text(encoding="utf-8")
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -234,6 +242,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_autoscaling_group": "resource_type='autoscaling_group'",
         "tc_block_storage": "resource_type='cbs_disk'",
         "tc_lighthouse_stack": "resource_type='lighthouse_instance'",
+        "tc_rocketmq_platform": "resource_type='rocketmq_cluster'",
         "tc_eventbridge_router": "resource_type='event_bus'",
         "tc_container_registry": "resource_type='tcr_instance'",
         "tc_tem_application": "resource_type='tem_environment'",

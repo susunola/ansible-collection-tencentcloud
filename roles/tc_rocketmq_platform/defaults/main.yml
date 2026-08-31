@@ -1,0 +1,11 @@
+---
+tc_rocketmq_platform_state: present
+tc_rocketmq_platform_region: ""
+tc_rocketmq_platform_cluster_id: ""
+tc_rocketmq_platform_name: ""
+tc_rocketmq_platform_remark: ""
+
+# Role items use tdmq_rocketmq_role parameters.
+tc_rocketmq_platform_roles: []
+# Namespace items: name, remark?, topics?, groups?, permissions?.
+tc_rocketmq_platform_namespaces: []

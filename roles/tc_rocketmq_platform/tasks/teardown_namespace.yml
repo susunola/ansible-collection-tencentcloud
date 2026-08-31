@@ -1,0 +1,34 @@
+---
+- name: Remove RocketMQ namespace permissions
+  susunola.tencentcloud.tdmq_rocketmq_permission:
+    region: "{{ tc_rocketmq_platform_region | default(omit, true) }}"
+    state: absent
+    cluster_id: "{{ tc_rocketmq_platform_cluster_id }}"
+    namespace: "{{ _tc_rocketmq_namespace.name }}"
+    role_name: "{{ item.role_name }}"
+  loop: "{{ _tc_rocketmq_namespace.permissions | default([]) }}"
+
+- name: Remove RocketMQ consumer groups
+  susunola.tencentcloud.tdmq_rocketmq_group:
+    region: "{{ tc_rocketmq_platform_region | default(omit, true) }}"
+    state: absent
+    cluster_id: "{{ tc_rocketmq_platform_cluster_id }}"
+    namespace: "{{ _tc_rocketmq_namespace.name }}"
+    name: "{{ item.name }}"
+  loop: "{{ _tc_rocketmq_namespace.groups | default([]) }}"
+
+- name: Remove RocketMQ topics
+  susunola.tencentcloud.tdmq_rocketmq_topic:
+    region: "{{ tc_rocketmq_platform_region | default(omit, true) }}"
+    state: absent
+    cluster_id: "{{ tc_rocketmq_platform_cluster_id }}"
+    namespace: "{{ _tc_rocketmq_namespace.name }}"
+    name: "{{ item.name }}"
+  loop: "{{ _tc_rocketmq_namespace.topics | default([]) }}"
+
+- name: Delete RocketMQ namespace
+  susunola.tencentcloud.tdmq_rocketmq_namespace:
+    region: "{{ tc_rocketmq_platform_region | default(omit, true) }}"
+    state: absent
+    cluster_id: "{{ tc_rocketmq_platform_cluster_id }}"
+    name: "{{ _tc_rocketmq_namespace.name }}"
