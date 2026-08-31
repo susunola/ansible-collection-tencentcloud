@@ -567,6 +567,7 @@ Read-only `_info` modules (return `changed=false`):
 | `ssm_rotation_info` | Gather Tencent Cloud Secrets Manager rotation state |
 | `ssm_secret_info` | Gather Tencent Cloud Secrets Manager metadata |
 | `ssm_secret_version_info` | Gather Tencent Cloud Secrets Manager versions |
+| `ssm_supported_product_info` | Gather cloud products supported by Tencent Cloud SSM |
 | `subnet_info` | Gather information about Tencent Cloud subnets |
 | `svp_saving_plan_coverage_info` | Gather information about Tencent Cloud SVP saving plan coverages |
 | `tat_command_info` | Gather information about Tencent Cloud TAT commands |

@@ -1769,6 +1769,8 @@ modules:
   - EnableSecret
   - RestoreSecret
   - UpdateDescription
+  ssm_supported_product_info:
+  - DescribeSupportedProducts
   subnet:
   - AttachResourcesTag
   - CreateSubnet

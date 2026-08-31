@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``ssm_supported_product_info`` to discover region-specific product identifiers accepted by SSM managed credentials.

@@ -7,7 +7,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 
 - Products/services: **203**
 - Write modules: **371**
-- Information modules: **233**
+- Information modules: **234**
 - Solution roles: **57**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
@@ -174,7 +174,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `ssa` | discovery-only | 0 | 1 | — | — |
 | `ssl` | managed | 1 | 1 | — | `ssl_certificate` |
 | `sslpod` | discovery-only | 0 | 1 | — | — |
-| `ssm` | solution | 6 | 3 | `tc_ssm_secret_governance` | `ssm_parameter`, `ssm_product_secret`, `ssm_rotation`, `ssm_secret`, `ssm_secret_version`, `ssm_ssh_key_pair_secret` |
+| `ssm` | solution | 6 | 4 | `tc_ssm_secret_governance` | `ssm_parameter`, `ssm_product_secret`, `ssm_rotation`, `ssm_secret`, `ssm_secret_version`, `ssm_ssh_key_pair_secret` |
 | `svp` | discovery-only | 0 | 1 | — | — |
 | `tag` | managed | 1 | 0 | — | `tag` |
 | `tat` | managed | 2 | 1 | — | `tat_command`, `tat_invoker` |

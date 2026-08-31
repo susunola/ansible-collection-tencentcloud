@@ -341,6 +341,7 @@ CORE_MODULES = {
     "ssm_secret_version",
     "ssm_secret_info",
     "ssm_secret_version_info",
+    "ssm_supported_product_info",
     "ssm_rotation_info",
     "ssm_secret",
     "ssm_ssh_key_pair_secret",
