@@ -854,6 +854,8 @@ modules:
   - CreateInferenceModel
   - ListInferenceModels
   - UpdateInferenceModel
+  dlc_inference_model_info:
+  - ListInferenceModels
   dlc_inference_service:
   - CreateInferenceService
   - GetInferenceService

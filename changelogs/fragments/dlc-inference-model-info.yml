@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_inference_model_info`` with parameter-size bounds, time bounds, stable filters, ordered sorting and bounded pagination.
