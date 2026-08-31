@@ -4,6 +4,7 @@
     that:
       - tc_tse_api_gateway_state in ['present', 'absent']
       - tc_tse_api_gateway_gateway is mapping
+      - tc_tse_api_gateway_runtime_query is mapping
       - tc_tse_api_gateway_server_groups is sequence
       - tc_tse_api_gateway_autoscaler_strategies is sequence
       - tc_tse_api_gateway_autoscaler_bindings is sequence
@@ -161,6 +162,12 @@
   loop: "{{ tc_tse_api_gateway_public_networks }}"
   loop_control: {label: "{{ item.group_id | default('unnamed') }}"}
   register: _tc_tse_api_gateway_public_networks_result
+
+- name: Discover TSE API gateway runtime topology
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_runtime_info:
+  args: "{{ tc_tse_api_gateway_runtime_query | combine({'gateway_id': _tc_tse_api_gateway_id}) }}"
+  register: _tc_tse_api_gateway_runtime
 
 - name: Initialize resolved TSE API gateway routes
   when: tc_tse_api_gateway_state == 'present'
@@ -485,6 +492,12 @@
   ansible.builtin.set_fact:
     tc_tse_api_gateway_result:
       gateway: "{{ _tc_tse_api_gateway_gateway.gateway }}"
+      runtime:
+        network_config: "{{ _tc_tse_api_gateway_runtime.network_config }}"
+        ports: "{{ _tc_tse_api_gateway_runtime.ports }}"
+        public_addresses: "{{ _tc_tse_api_gateway_runtime.public_addresses }}"
+        nodes: "{{ _tc_tse_api_gateway_runtime.nodes }}"
+        node_count: "{{ _tc_tse_api_gateway_runtime.node_count }}"
       server_groups: "{{ _tc_tse_api_gateway_server_groups_result.results | default([]) | map(attribute='group') | list }}"
       autoscaler_strategies: "{{ _tc_tse_api_gateway_autoscaler_strategies_result.results | default([]) | map(attribute='strategy') | list }}"
       autoscaler_bindings: "{{ _tc_tse_api_gateway_autoscaler_bindings_result.results | default([]) | map(attribute='binding') | list }}"

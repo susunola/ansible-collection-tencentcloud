@@ -2380,6 +2380,11 @@ modules:
   - DeleteCloudNativeAPIGatewayRoute
   - DescribeCloudNativeAPIGatewayRoutes
   - ModifyCloudNativeAPIGatewayRoute
+  tse_gateway_runtime_info:
+  - DescribeCloudNativeAPIGatewayConfig
+  - DescribeCloudNativeAPIGatewayNodes
+  - DescribeCloudNativeAPIGatewayPorts
+  - DescribePublicAddressConfig
   tse_gateway_secret_key:
   - CreateCloudNativeAPIGatewaySecretKey
   - DeleteCloudNativeAPIGatewaySecretKey
