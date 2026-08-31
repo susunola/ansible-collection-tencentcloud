@@ -18,6 +18,17 @@ Builds an Oceanus workspace, an optional dedicated Flink cluster, and its jobs. 
           vpc_descriptions: [{VpcId: vpc-xxxxxxxx, SubnetId: subnet-xxxxxxxx}]
           default_cos_bucket: flink-artifacts-1250000000
           cu: 19
+        tc_oceanus_streaming_platform_resources:
+          - resource:
+              name: orders-processor
+              resource_location:
+                StorageType: 1
+                Param: {Bucket: flink-artifacts-1250000000, Path: jars/orders-1.0.jar, Region: ap-guangzhou}
+            config:
+              resource_location:
+                StorageType: 1
+                Param: {Bucket: flink-artifacts-1250000000, Path: jars/orders-1.1.jar, Region: ap-guangzhou}
+              remark: desired-release
         tc_oceanus_streaming_platform_jobs:
           - job:
               name: orders-stream
@@ -32,6 +43,6 @@ Builds an Oceanus workspace, an optional dedicated Flink cluster, and its jobs. 
             desired_status: stopped
 ```
 
-Each structured job is reconciled in three phases: definition, immutable configuration publication, then runtime state using the new version. Flat job dictionaries remain supported when no configuration publication is needed.
+Resources and their desired latest immutable artifact version are reconciled before jobs. Each structured job is reconciled in three phases: definition, immutable configuration publication, then runtime state using the new version. Flat job dictionaries remain supported when no configuration publication is needed. Teardown reverses the dependency order by deleting jobs before resources.
 
 Set `tc_oceanus_streaming_platform_allow_destroy: true` only for intentional teardown. CU scale-down also requires `allow_scale_down: true` in the cluster input.

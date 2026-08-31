@@ -352,6 +352,8 @@ action_groups:
     - oceanus_cluster_info
     - oceanus_job
     - oceanus_job_config
+    - oceanus_resource
+    - oceanus_resource_config
     - oceanus_workspace
     - omics_application_info
     - organization_member

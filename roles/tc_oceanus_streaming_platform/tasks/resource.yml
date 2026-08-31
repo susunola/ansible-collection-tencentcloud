@@ -1,0 +1,23 @@
+---
+- name: Resolve Oceanus resource definition
+  ansible.builtin.set_fact:
+    _tc_oceanus_resource_definition: "{{ _tc_oceanus_resource.resource | default(_tc_oceanus_resource) }}"
+
+- name: Reconcile Oceanus resource before publishing versions
+  when: tc_oceanus_streaming_platform_state == 'present'
+  susunola.tencentcloud.oceanus_resource:
+  args: "{{ _tc_oceanus_resource_definition | combine({'state': 'present', 'workspace_id': _tc_oceanus_workspace_id}) }}"
+  register: _tc_oceanus_resource_result
+
+- name: Publish desired latest Oceanus resource version
+  when:
+    - tc_oceanus_streaming_platform_state == 'present'
+    - _tc_oceanus_resource.config is defined
+  susunola.tencentcloud.oceanus_resource_config:
+  args: "{{ _tc_oceanus_resource.config | combine({'state': 'present', 'workspace_id': _tc_oceanus_workspace_id, 'resource_id': _tc_oceanus_resource_result.resource.ResourceId}) }}"
+  register: _tc_oceanus_resource_config_result
+
+- name: Remove Oceanus resource
+  when: tc_oceanus_streaming_platform_state == 'absent'
+  susunola.tencentcloud.oceanus_resource:
+  args: "{{ _tc_oceanus_resource_definition | combine({'state': 'absent', 'workspace_id': _tc_oceanus_workspace_id, 'allow_delete_in_use': tc_oceanus_streaming_platform_allow_destroy}) }}"

@@ -1317,6 +1317,16 @@ modules:
   - CreateJobConfig
   - DeleteJobConfigs
   - DescribeJobConfigs
+  oceanus_resource:
+  - CreateResource
+  - DeleteResources
+  - DescribeResourceRelatedJobs
+  - DescribeResources
+  oceanus_resource_config:
+  - CreateResourceConfig
+  - DeleteResourceConfigs
+  - DescribeResourceConfigs
+  - DescribeResourceRelatedJobs
   oceanus_workspace:
   - CreateWorkSpace
   - DeleteWorkSpace

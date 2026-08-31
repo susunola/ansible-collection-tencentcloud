@@ -37,6 +37,14 @@
         else (tc_oceanus_streaming_platform_cluster.cluster_id | default(''))
       }}
 
+- name: Reconcile Oceanus resources before jobs
+  when: tc_oceanus_streaming_platform_state == 'present'
+  ansible.builtin.include_tasks: resource.yml
+  loop: "{{ tc_oceanus_streaming_platform_resources }}"
+  loop_control:
+    loop_var: _tc_oceanus_resource
+    label: "{{ _tc_oceanus_resource.name | default((_tc_oceanus_resource.resource | default({})).name | default('unnamed')) }}"
+
 - name: Reconcile Oceanus jobs
   when: tc_oceanus_streaming_platform_state == 'present'
   ansible.builtin.include_tasks: job.yml
@@ -70,6 +78,16 @@
   loop_control:
     loop_var: _tc_oceanus_job
     label: "{{ _tc_oceanus_job.name | default(_tc_oceanus_job.job_id | default('unnamed')) }}"
+
+- name: Remove Oceanus resources after jobs
+  when:
+    - tc_oceanus_streaming_platform_state == 'absent'
+    - tc_oceanus_streaming_platform_allow_destroy | bool
+  ansible.builtin.include_tasks: resource.yml
+  loop: "{{ tc_oceanus_streaming_platform_resources }}"
+  loop_control:
+    loop_var: _tc_oceanus_resource
+    label: "{{ _tc_oceanus_resource.name | default((_tc_oceanus_resource.resource | default({})).name | default('unnamed')) }}"
 
 - name: Delete Oceanus dedicated cluster
   when:
