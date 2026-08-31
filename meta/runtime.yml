@@ -220,6 +220,7 @@ action_groups:
     - dcdb_security_config
     - dlc_data_engine
     - dlc_task_info
+    - dlc_user_vpc_connection
     - dlc_work_group
     - dlc_work_group_membership
     - dlc_work_group_policy

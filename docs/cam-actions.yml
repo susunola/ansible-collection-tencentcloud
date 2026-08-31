@@ -820,6 +820,10 @@ modules:
   - UpdateDataEngine
   dlc_task_info:
   - DescribeTaskList
+  dlc_user_vpc_connection:
+  - CreateUserVpcConnection
+  - DeleteUserVpcConnection
+  - DescribeUserVpcConnection
   dlc_work_group:
   - CreateWorkGroup
   - DeleteWorkGroup

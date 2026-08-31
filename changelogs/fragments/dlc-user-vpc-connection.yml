@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_user_vpc_connection`` with exact discovery, convergence and guarded deletion for DLC engine-network VPC endpoints.
