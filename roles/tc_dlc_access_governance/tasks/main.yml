@@ -34,6 +34,7 @@
     _tc_dlc_data_engine_ids: {}
     _tc_dlc_engine_resource_group_ids: {}
     _tc_dlc_partition_queue_ids: {}
+    _tc_dlc_resource_config_ids: {}
     _tc_dlc_lab_ids: {}
     _tc_dlc_spark_job_ids: {}
     _tc_dlc_database_names: []
@@ -91,7 +92,24 @@
       {{ dict((tc_dlc_access_governance_partition_queues | map(attribute='name') | list)
               | zip(_tc_dlc_queue_results.results | map(attribute='queue_id') | list)) }}
 
-- name: Reconcile DLC laboratories after partition queues
+- name: Reconcile DLC resource templates before laboratories
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_resource_config:
+  args: "{{ _tc_dlc_config | combine({'state': 'present'}) }}"
+  loop: "{{ tc_dlc_access_governance_resource_configs }}"
+  loop_control:
+    loop_var: _tc_dlc_config
+    label: "{{ _tc_dlc_config.name }}"
+  register: _tc_dlc_config_results
+
+- name: Record DLC resource-template identities
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dlc_resource_config_ids: >-
+      {{ dict((tc_dlc_access_governance_resource_configs | map(attribute='name') | list)
+              | zip(_tc_dlc_config_results.results | map(attribute='resource_config_id') | list)) }}
+
+- name: Reconcile DLC laboratories after queues and resource templates
   when: tc_dlc_access_governance_state == 'present'
   susunola.tencentcloud.dlc_lab:
   args: "{{ _tc_dlc_lab | combine({'state': 'present'}) }}"
@@ -249,7 +267,18 @@
     loop_var: _tc_dlc_lab
     label: "{{ _tc_dlc_lab.name }}"
 
-- name: Remove DLC partition queues after laboratories
+- name: Remove DLC resource templates after laboratories
+  when:
+    - tc_dlc_access_governance_state == 'absent'
+    - tc_dlc_access_governance_allow_destroy | bool
+  susunola.tencentcloud.dlc_resource_config:
+  args: "{{ _tc_dlc_config | combine({'state': 'absent', 'allow_delete': true}) }}"
+  loop: "{{ tc_dlc_access_governance_resource_configs | reverse | list }}"
+  loop_control:
+    loop_var: _tc_dlc_config
+    label: "{{ _tc_dlc_config.name }}"
+
+- name: Remove DLC partition queues after laboratories and resource templates
   when:
     - tc_dlc_access_governance_state == 'absent'
     - tc_dlc_access_governance_allow_destroy | bool
@@ -301,6 +330,7 @@
       data_engine_ids: "{{ _tc_dlc_data_engine_ids }}"
       engine_resource_group_ids: "{{ _tc_dlc_engine_resource_group_ids }}"
       partition_queue_ids: "{{ _tc_dlc_partition_queue_ids }}"
+      resource_config_ids: "{{ _tc_dlc_resource_config_ids }}"
       lab_ids: "{{ _tc_dlc_lab_ids }}"
       spark_job_ids: "{{ _tc_dlc_spark_job_ids }}"
       database_names: "{{ _tc_dlc_database_names }}"

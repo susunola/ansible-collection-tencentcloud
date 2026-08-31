@@ -457,6 +457,7 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert main.index("susunola.tencentcloud.dlc_engine_resource_group") < main.index("susunola.tencentcloud.dlc_spark_job")
     assert main.index("susunola.tencentcloud.dlc_engine_resource_group") < main.index("susunola.tencentcloud.dlc_lab")
     assert main.index("susunola.tencentcloud.dlc_partition_queue") < main.index("susunola.tencentcloud.dlc_lab")
+    assert main.index("susunola.tencentcloud.dlc_resource_config") < main.index("susunola.tencentcloud.dlc_lab")
     assert main.index("susunola.tencentcloud.dlc_database") < main.index("include_tasks: work_group.yml")
     assert main.index("include_tasks: user.yml") < main.index("include_tasks: work_group.yml")
     assert main.index("include_tasks: work_group.yml") < main.index("susunola.tencentcloud.dlc_data_mask_strategy")
@@ -470,6 +471,8 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert main.rindex("susunola.tencentcloud.dlc_spark_job") < main.rindex("susunola.tencentcloud.dlc_engine_resource_group")
     assert main.rindex("susunola.tencentcloud.dlc_lab") < main.rindex("susunola.tencentcloud.dlc_engine_resource_group")
     assert main.rindex("susunola.tencentcloud.dlc_lab") < main.rindex("susunola.tencentcloud.dlc_partition_queue")
+    assert main.rindex("susunola.tencentcloud.dlc_lab") < main.rindex("susunola.tencentcloud.dlc_resource_config")
+    assert main.rindex("susunola.tencentcloud.dlc_resource_config") < main.rindex("susunola.tencentcloud.dlc_partition_queue")
     assert main.index("susunola.tencentcloud.dlc_data_engine") < main.index("susunola.tencentcloud.dlc_user_vpc_connection")
     assert "allow_delete': true" in main
     defaults = (ROOT / "roles" / "tc_dlc_access_governance" / "defaults" / "main.yml").read_text(encoding="utf-8")
@@ -479,6 +482,7 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert "tc_dlc_access_governance_spark_jobs: []" in defaults
     assert "tc_dlc_access_governance_labs: []" in defaults
     assert "tc_dlc_access_governance_partition_queues: []" in defaults
+    assert "tc_dlc_access_governance_resource_configs: []" in defaults
     assert "tc_dlc_access_governance_databases: []" in defaults
     assert "tc_dlc_access_governance_users: []" in defaults
     assert "tc_dlc_access_governance_data_mask_strategies: []" in defaults

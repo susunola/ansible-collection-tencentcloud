@@ -847,6 +847,13 @@ modules:
   - DeletePartitionQueue
   - DescribePartitionQueues
   - ModifyPartitionQueue
+  dlc_resource_config:
+  - CreateResourceConfig
+  - DeleteResourceConfig
+  - ListLabs
+  - ListRayClusters
+  - ListResourceConfigs
+  - UpdateResourceConfig
   dlc_spark_job:
   - CreateSparkApp
   - DeleteSparkApp
