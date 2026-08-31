@@ -831,6 +831,10 @@ modules:
   - DescribeUsers
   - ModifyUser
   - ModifyUserType
+  dlc_user_policy:
+  - AttachUserPolicy
+  - DescribeUsers
+  - DetachUserPolicy
   dlc_user_vpc_connection:
   - CreateUserVpcConnection
   - DeleteUserVpcConnection
