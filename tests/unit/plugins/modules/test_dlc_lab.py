@@ -1,4 +1,4 @@
-from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_lab import delete_request, desired, drift, list_request, make_request, normalize
+from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_lab import delete_request, desired, drift, list_request, make_request, normalize, priority_request
 
 
 class Object:
@@ -10,6 +10,7 @@ class Models:
     CreateLabRequest = Object
     UpdateLabRequest = Object
     DeleteLabRequest = Object
+    ModifyLabPriorityRequest = Object
 
 
 def params():
@@ -35,6 +36,7 @@ def test_create_normalizes_tags_and_json():
 def test_update_excludes_creation_only_contracts():
     request = make_request(Models, params(), update=True)
     assert request.Description == "team lab" and not hasattr(request, "ResourceConfig")
+    assert not hasattr(request, "Priority")
 
 
 def test_normalization_makes_order_and_json_whitespace_idempotent():
@@ -45,3 +47,5 @@ def test_normalization_makes_order_and_json_whitespace_idempotent():
 
 def test_delete_uses_stable_lab_id():
     assert delete_request(Models, "lab-1").Id == "lab-1"
+    request = priority_request(Models, "lab-1", 8)
+    assert request.Id == "lab-1" and request.Priority == 8

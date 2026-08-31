@@ -153,6 +153,7 @@ def make_request(models, p, update=False, spec_id=None):
     payload = {"Name": p["name"]}
     if spec_id: payload["SpecId"] = spec_id
     for source, target in FIELDS.items():
+        if update and source == "priority": continue
         if p.get(source) is not None:
             payload[target] = tags(p[source]) if source == "tags" else (canonical(p[source]) if source in JSON_FIELDS else p[source])
     request.from_json_string(json.dumps(payload)); return request
@@ -160,6 +161,10 @@ def make_request(models, p, update=False, spec_id=None):
 
 def delete_request(models, spec_id):
     request = models.DeleteJobSpecRequest(); request.SpecId = spec_id; return request
+
+
+def priority_request(models, spec_id, priority):
+    request = models.UpdateJobSpecPriorityRequest(); request.SpecId, request.Priority = spec_id, priority; return request
 
 
 def wait_spec(module, client, models, p, absent=False, expected=None):
@@ -215,7 +220,9 @@ def run_module():
         if not changes: module.exit_json(changed=False, job_spec=current, job_spec_id=current.get("Id"))
         after, diff_value = desired(p, current), maybe_diff(module, current, desired(p, current))
         if not module.check_mode:
-            module.sdk_call(client.UpdateJobSpec, make_request(models, p, update=True, spec_id=current["Id"]))
+            regular_changes = {key: value for key, value in changes.items() if key != "Priority"}
+            if regular_changes: module.sdk_call(client.UpdateJobSpec, make_request(models, p, update=True, spec_id=current["Id"]))
+            if "Priority" in changes: module.sdk_call(client.UpdateJobSpecPriority, priority_request(models, current["Id"], p["priority"]))
             if p["wait"]: wait_spec(module, client, models, p, expected={k: v[1] for k, v in changes.items()})
             current = find(module, client, models, p["name"])
         module.exit_json(changed=True, **(diff_value or {}), job_spec=current if not module.check_mode else after, job_spec_id=current.get("Id"))

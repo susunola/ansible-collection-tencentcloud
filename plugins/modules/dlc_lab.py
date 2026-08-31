@@ -148,6 +148,8 @@ def normalize(value):
 def request_payload(p, update=False):
     payload = {"Name": p["name"]}
     for source, target in MUTABLE.items():
+        if update and source == "priority":
+            continue
         if p.get(source) is not None:
             payload[target] = _tags(p[source]) if source == "tags" else p[source]
     if not update:
@@ -164,6 +166,10 @@ def make_request(models, p, update=False):
 
 def delete_request(models, lab_id):
     request = models.DeleteLabRequest(); request.Id = lab_id; return request
+
+
+def priority_request(models, lab_id, priority):
+    request = models.ModifyLabPriorityRequest(); request.Id, request.Priority = lab_id, priority; return request
 
 
 def desired(p, current=None):
@@ -251,7 +257,9 @@ def run_module():
         if not changes: module.exit_json(changed=False, lab=current, lab_id=current.get("Id"))
         after, diff_value = desired(p, current), maybe_diff(module, current, desired(p, current))
         if not module.check_mode:
-            module.sdk_call(client.UpdateLab, make_request(models, p, update=True))
+            regular_changes = {key: value for key, value in changes.items() if key != "Priority"}
+            if regular_changes: module.sdk_call(client.UpdateLab, make_request(models, p, update=True))
+            if "Priority" in changes: module.sdk_call(client.ModifyLabPriority, priority_request(models, current["Id"], p["priority"]))
             if p["wait"]: wait_lab(module, client, models, p, expected={k: v[1] for k, v in changes.items()})
             current = find(module, client, models, p["name"])
         module.exit_json(changed=True, **(diff_value or {}), lab=current if not module.check_mode else after, lab_id=current.get("Id"))

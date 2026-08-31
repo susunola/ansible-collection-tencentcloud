@@ -1,4 +1,4 @@
-from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_ray_cluster import delete_request, drift, list_request, make_request, normalize
+from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_ray_cluster import delete_request, drift, list_request, make_request, normalize, priority_request
 
 
 class Object:
@@ -10,6 +10,7 @@ class Models:
     CreateRayClusterRequest = Object
     UpdateRayClusterRequest = Object
     DeleteRayClusterRequest = Object
+    ModifyClusterPriorityRequest = Object
 
 
 def params():
@@ -30,8 +31,11 @@ def test_create_normalizes_json_and_tags():
 
 
 def test_update_and_delete_use_stable_cluster_id():
-    assert make_request(Models, params(), update=True, cluster_id="ray-1").Id == "ray-1"
+    update = make_request(Models, params(), update=True, cluster_id="ray-1")
+    assert update.Id == "ray-1" and not hasattr(update, "Priority")
     assert delete_request(Models, "ray-1").Id == "ray-1"
+    priority = priority_request(Models, "ray-1", 6)
+    assert priority.Id == "ray-1" and priority.Priority == 6
 
 
 def test_normalized_readback_is_idempotent():

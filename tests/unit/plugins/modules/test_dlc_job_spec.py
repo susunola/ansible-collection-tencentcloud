@@ -1,4 +1,4 @@
-from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_job_spec import delete_request, drift, list_request, make_request, normalize
+from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_job_spec import delete_request, drift, list_request, make_request, normalize, priority_request
 
 
 class Request:
@@ -12,6 +12,7 @@ class Models:
     CreateJobSpecRequest = Request
     UpdateJobSpecRequest = Request
     DeleteJobSpecRequest = Request
+    UpdateJobSpecPriorityRequest = Request
 
 
 def test_json_and_tags_compare_semantically():
@@ -28,4 +29,7 @@ def test_requests_use_spec_id_and_normalized_payload():
     listing = list_request(Models, 2)
     assert create.RuntimeEnv == '{"a":2,"z":1}' and create.Tags[0]["TagKey"] == "a"
     assert update.SpecId == "spec-1" and delete.SpecId == "spec-1"
+    assert not hasattr(update, "Priority")
+    priority = priority_request(Models, "spec-1", 7)
+    assert priority.SpecId == "spec-1" and priority.Priority == 7
     assert listing.Page == 2 and listing.PageSize == 200

@@ -125,10 +125,11 @@ def find(module, client, models, name):
     return normalize(matches[0]) if matches else None
 
 
-def payload(p, cluster_id=None):
+def payload(p, cluster_id=None, update=False):
     result = {"Name": p["name"]}
     if cluster_id: result["Id"] = cluster_id
     for source, target in FIELDS.items():
+        if update and source == "priority": continue
         if p.get(source) is not None:
             value = _tags(p[source]) if source == "tags" else (_canonical(p[source]) if source in JSON_FIELDS else p[source])
             result[target] = value
@@ -137,11 +138,15 @@ def payload(p, cluster_id=None):
 
 def make_request(models, p, update=False, cluster_id=None):
     request = models.UpdateRayClusterRequest() if update else models.CreateRayClusterRequest()
-    request.from_json_string(json.dumps(payload(p, cluster_id))); return request
+    request.from_json_string(json.dumps(payload(p, cluster_id, update))); return request
 
 
 def delete_request(models, cluster_id):
     request = models.DeleteRayClusterRequest(); request.Id = cluster_id; return request
+
+
+def priority_request(models, cluster_id, priority):
+    request = models.ModifyClusterPriorityRequest(); request.Id, request.Priority = cluster_id, priority; return request
 
 
 def desired(p, current=None):
@@ -214,7 +219,9 @@ def run_module():
         if not changes: module.exit_json(changed=False, ray_cluster=current, ray_cluster_id=current.get("Id"))
         after, diff_value = desired(p, current), maybe_diff(module, current, desired(p, current))
         if not module.check_mode:
-            module.sdk_call(client.UpdateRayCluster, make_request(models, p, update=True, cluster_id=current["Id"]))
+            regular_changes = {key: value for key, value in changes.items() if key != "Priority"}
+            if regular_changes: module.sdk_call(client.UpdateRayCluster, make_request(models, p, update=True, cluster_id=current["Id"]))
+            if "Priority" in changes: module.sdk_call(client.ModifyClusterPriority, priority_request(models, current["Id"], p["priority"]))
             if p["wait"]: wait_cluster(module, client, models, p, expected={k: v[1] for k, v in changes.items()})
             current = find(module, client, models, p["name"])
         module.exit_json(changed=True, **(diff_value or {}), ray_cluster=current if not module.check_mode else after, ray_cluster_id=current.get("Id"))

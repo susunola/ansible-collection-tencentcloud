@@ -862,10 +862,12 @@ modules:
   - DeleteJobSpec
   - ListJobSpecs
   - UpdateJobSpec
+  - UpdateJobSpecPriority
   dlc_lab:
   - CreateLab
   - DeleteLab
   - ListLabs
+  - ModifyLabPriority
   - UpdateLab
   dlc_model_version:
   - CreateModelVersion
@@ -887,6 +889,7 @@ modules:
   - CreateRayCluster
   - DeleteRayCluster
   - ListRayClusters
+  - ModifyClusterPriority
   - UpdateRayCluster
   dlc_resource_config:
   - CreateResourceConfig

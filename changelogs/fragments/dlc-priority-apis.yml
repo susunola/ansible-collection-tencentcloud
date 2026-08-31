@@ -1,0 +1,2 @@
+bugfixes:
+  - Route DLC Lab, JobSpec and Ray cluster priority changes through their dedicated priority APIs instead of generic update requests.
