@@ -1,0 +1,2 @@
+bugfixes:
+  - Wait for Oceanus workspace create, update and delete convergence and for job deletion before returning, preventing dependent-task races.

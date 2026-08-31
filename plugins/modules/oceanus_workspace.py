@@ -31,6 +31,7 @@ RETURN = r'''workspace: {description: Effective Oceanus workspace metadata., typ
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
 
 
 def _load():
@@ -58,6 +59,14 @@ def find(module, client, models, p):
         if not page or offset >= int(response.TotalCount or 0): break
     if len(matches) > 1: module.fail_json(msg="Multiple Oceanus workspaces matched; specify workspace_id")
     return matches[0] if matches else None
+def wait_workspace(module, client, models, p, desired=None, absent=False):
+    def poll():
+        current = find(module, client, models, p)
+        if absent: return "absent" if current is None else "present"
+        if current is None: return "absent"
+        matches = all((current.get(key) or "") == (value or "") if key == "Description" else current.get(key) == value for key, value in (desired or {}).items())
+        return "ready" if matches else "pending"
+    return wait_for_state(module, poll, ["absent" if absent else "ready"], timeout=module.params["waiter_timeout"], delay=module.params["waiter_delay"])
 
 
 def run_module():
@@ -68,17 +77,20 @@ def run_module():
         if p["state"] == "absent":
             if not current: module.exit_json(changed=False, workspace=None)
             diff = maybe_diff(module, current, None)
-            if not module.check_mode: module.sdk_call(client.DeleteWorkSpace, delete_request(models, current["WorkSpaceId"]))
+            if not module.check_mode:
+                p["workspace_id"] = current["WorkSpaceId"]; module.sdk_call(client.DeleteWorkSpace, delete_request(models, current["WorkSpaceId"])); wait_workspace(module, client, models, p, absent=True)
             module.exit_json(changed=True, **(diff or {}), workspace=None)
         if not current:
             if not p.get("name"): module.fail_json(msg="name is required to create an Oceanus workspace")
             target = {"WorkSpaceName": p["name"], "Description": p.get("description") or ""}; diff = maybe_diff(module, None, target)
-            if not module.check_mode: p["workspace_id"] = module.sdk_call(client.CreateWorkSpace, create_request(models, p)).WorkSpaceId; current = find(module, client, models, p)
+            if not module.check_mode:
+                p["workspace_id"] = module.sdk_call(client.CreateWorkSpace, create_request(models, p)).WorkSpaceId; wait_workspace(module, client, models, p, target); current = find(module, client, models, p)
             module.exit_json(changed=True, **(diff or {}), workspace=current if not module.check_mode else target)
         desired = {"WorkSpaceName": p.get("name") or current.get("WorkSpaceName"), "Description": p.get("description") if p.get("description") is not None else current.get("Description")}; before = {k: current.get(k) for k in desired}
         if before == desired: module.exit_json(changed=False, workspace=current)
         diff = maybe_diff(module, before, desired)
-        if not module.check_mode: module.sdk_call(client.ModifyWorkSpace, modify_request(models, current["WorkSpaceId"], desired["WorkSpaceName"], desired["Description"])); p["workspace_id"] = current["WorkSpaceId"]; current = find(module, client, models, p)
+        if not module.check_mode:
+            module.sdk_call(client.ModifyWorkSpace, modify_request(models, current["WorkSpaceId"], desired["WorkSpaceName"], desired["Description"])); p["workspace_id"] = current["WorkSpaceId"]; wait_workspace(module, client, models, p, desired); current = find(module, client, models, p)
         module.exit_json(changed=True, **(diff or {}), workspace=current)
     except Exception as exc: module.fail_json(**sdk_error_payload(exc))
 

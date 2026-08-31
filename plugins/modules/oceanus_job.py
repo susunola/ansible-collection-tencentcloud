@@ -111,6 +111,8 @@ def find(module, client, models, p):
     return matches[0] if matches else None
 def _wait(module, client, models, p, states):
     wait_for_state(module, lambda: (find(module, client, models, p) or {}).get("Status"), states, timeout=module.params["waiter_timeout"], delay=module.params["waiter_delay"])
+def _wait_gone(module, client, models, p):
+    wait_for_state(module, lambda: "absent" if find(module, client, models, p) is None else "present", ["absent"], timeout=module.params["waiter_timeout"], delay=module.params["waiter_delay"])
 
 
 def run_module():
@@ -123,7 +125,7 @@ def run_module():
             diff = maybe_diff(module, current, None); job_id = current["JobId"]
             if not module.check_mode:
                 if current.get("Status") in (3, 4, 6): module.sdk_call(client.StopJobs, stop_request(models, p, job_id)); p["job_id"] = job_id; _wait(module, client, models, p, [5])
-                module.sdk_call(client.DeleteJobs, delete_request(models, p, job_id, current["Name"]))
+                module.sdk_call(client.DeleteJobs, delete_request(models, p, job_id, current["Name"])); _wait_gone(module, client, models, p)
             module.exit_json(changed=True, **(diff or {}), job=None)
         if not current:
             if not p.get("name") or p.get("job_type") is None: module.fail_json(msg="name and job_type are required to create an Oceanus job")
