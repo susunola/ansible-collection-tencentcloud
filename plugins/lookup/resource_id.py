@@ -139,7 +139,7 @@ RESOURCE_SPECS = {
 }
 
 
-def build_request(resource_type, models, name, vpc_id=None):
+def build_request(resource_type, models, name, vpc_id=None, offset=0):
     """Build the narrowest supported exact-name request."""
     request_names = {
         "vpc": "DescribeVpcsRequest",
@@ -159,8 +159,10 @@ def build_request(resource_type, models, name, vpc_id=None):
     request = getattr(models, request_names[resource_type])()
     if resource_type in ("vpc", "subnet", "security_group"):
         request.Limit = "100"
+        request.Offset = str(offset)
     else:
         request.Limit = 100
+        request.Offset = offset
     if resource_type == "cdb_instance":
         request.InstanceNames = [name]
     elif resource_type == "redis_instance":
@@ -205,13 +207,21 @@ def build_request(resource_type, models, name, vpc_id=None):
 def resolve_resource(client, models, resource_type, name, vpc_id=None):
     """Return one exact-match ID or raise a useful lookup error."""
     spec = RESOURCE_SPECS[resource_type]
-    response = getattr(client, spec[3])(build_request(resource_type, models, name, vpc_id))
-    values = response
-    for attribute in spec[4].split("."):
-        values = getattr(values, attribute, None)
-        if values is None:
+    matches = []
+    offset = 0
+    while True:
+        response = getattr(client, spec[3])(
+            build_request(resource_type, models, name, vpc_id, offset))
+        values = response
+        for attribute in spec[4].split("."):
+            values = getattr(values, attribute, None)
+            if values is None:
+                break
+        page = list(values or [])
+        matches.extend(item for item in page if getattr(item, spec[6], None) == name)
+        if len(page) < 100:
             break
-    matches = [item for item in (values or []) if getattr(item, spec[6], None) == name]
+        offset += len(page)
     if not matches:
         raise AnsibleError("No %s named %r was found" % (resource_type, name))
     if len(matches) > 1:

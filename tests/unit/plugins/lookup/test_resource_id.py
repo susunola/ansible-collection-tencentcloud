@@ -60,6 +60,7 @@ class Client(object):
 def test_vpc_request_uses_exact_name_filter():
     request = build_request("vpc", Models, "production")
     assert request.Limit == "100"
+    assert request.Offset == "0"
     assert request.Filters[0].Name == "vpc-name"
     assert request.Filters[0].Values == ["production"]
 
@@ -112,6 +113,24 @@ def test_resolve_resource_supports_nested_result_collections():
     ]))
     assert resolve_resource(
         Client(response), Models, "api_gateway_service", "orders-api") == "service-1"
+
+
+def test_resolve_resource_paginates_and_detects_cross_page_match():
+    first = [Object(RegistryId="tcr-%03d" % index, RegistryName="other-%03d" % index)
+             for index in range(100)]
+    second = [Object(RegistryId="tcr-target", RegistryName="production")]
+
+    class PagedClient(object):
+        def __init__(self):
+            self.offsets = []
+
+        def DescribeInstances(self, request):
+            self.offsets.append(request.Offset)
+            return Object(Registries=first if request.Offset == 0 else second)
+
+    client = PagedClient()
+    assert resolve_resource(client, Models, "tcr_instance", "production") == "tcr-target"
+    assert client.offsets == [0, 100]
 
 
 def test_sdk_error_message_keeps_code_and_request_id():

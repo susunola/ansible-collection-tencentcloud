@@ -8,3 +8,6 @@ minor_changes:
   - >-
     resource_id lookup - expand name resolution to Redis, MongoDB, API Gateway
     services, TCR instances, TEM environments and TEM applications.
+  - >-
+    resource_id lookup - paginate name searches and retain ambiguity checks
+    across page boundaries for large accounts.
