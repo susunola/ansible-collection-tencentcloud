@@ -1,0 +1,30 @@
+---
+- name: Reconcile KMS key
+  susunola.tencentcloud.kms_key:
+    region: "{{ tc_kms_keyring_region }}"
+    state: present
+    key_id: "{{ _tc_kms_key.key_id | default(omit, true) }}"
+    alias: "{{ _tc_kms_key.alias | default(omit, true) }}"
+    description: "{{ _tc_kms_key.description | default('') }}"
+    key_usage: "{{ _tc_kms_key.key_usage | default(omit) }}"
+    key_type: "{{ _tc_kms_key.key_type | default(omit) }}"
+    tags: "{{ _tc_kms_key.tags | default(omit) }}"
+    enabled: "{{ _tc_kms_key.enabled | default(true) }}"
+    deletion_window_days: "{{ _tc_kms_key.deletion_window_days | default(7) }}"
+  register: _tc_kms_key_result
+
+- name: Resolve KMS key ID
+  ansible.builtin.set_fact:
+    _tc_kms_key_id: >-
+      {{ _tc_kms_key.key_id | default('')
+         or (_tc_kms_key_result.key.KeyId | default('')) }}
+
+- name: Reconcile KMS key rotation
+  when:
+    - _tc_kms_key_id | length > 0
+    - _tc_kms_key.rotation is defined
+  susunola.tencentcloud.kms_key_rotation:
+    region: "{{ tc_kms_keyring_region }}"
+    key_id: "{{ _tc_kms_key_id }}"
+    enabled: "{{ _tc_kms_key.rotation.enabled | default(true) }}"
+    rotation_days: "{{ _tc_kms_key.rotation.rotation_days | default(365) }}"

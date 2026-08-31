@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **40**
+- Solution roles: **41**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -136,7 +136,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `iss` | discovery-only | 0 | 1 | — | — |
 | `ivld` | discovery-only | 0 | 1 | — | — |
 | `keewidb` | discovery-only | 0 | 1 | — | — |
-| `kms` | managed | 2 | 1 | — | `kms_key`, `kms_key_rotation` |
+| `kms` | solution | 2 | 1 | `tc_kms_keyring` | `kms_key`, `kms_key_rotation` |
 | `lcic` | discovery-only | 0 | 1 | — | — |
 | `lighthouse` | solution | 5 | 1 | `tc_lighthouse_stack` | `lighthouse_disk`, `lighthouse_firewall_rules`, `lighthouse_instance`, `lighthouse_key_pair`, `lighthouse_snapshot` |
 | `live` | discovery-only | 0 | 1 | — | — |

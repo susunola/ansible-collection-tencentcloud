@@ -1,0 +1,33 @@
+---
+- name: Validate KMS keyring inputs and deletion authorization
+  ansible.builtin.assert:
+    that:
+      - tc_kms_keyring_state in ['present', 'absent']
+      - tc_kms_keyring_region | length > 0
+      - tc_kms_keyring_state == 'present' or tc_kms_keyring_allow_deletion | bool
+    fail_msg: KMS keyring teardown requires explicit tc_kms_keyring_allow_deletion=true authorization.
+
+- name: Reconcile KMS keys and rotation
+  when: tc_kms_keyring_state == 'present'
+  ansible.builtin.include_tasks: key.yml
+  loop: "{{ tc_kms_keyring_keys }}"
+  loop_control:
+    loop_var: _tc_kms_key
+    label: "{{ _tc_kms_key.alias | default(_tc_kms_key.key_id | default('key')) }}"
+
+- name: Schedule KMS key deletion
+  when: tc_kms_keyring_state == 'absent'
+  susunola.tencentcloud.kms_key:
+    region: "{{ tc_kms_keyring_region }}"
+    state: absent
+    key_id: "{{ item.key_id | default(omit, true) }}"
+    alias: "{{ item.alias | default(omit, true) }}"
+    deletion_window_days: "{{ item.deletion_window_days | default(7) }}"
+    deletion_protection: false
+  loop: "{{ tc_kms_keyring_keys }}"
+
+- name: Publish KMS keyring result
+  when: tc_kms_keyring_state == 'present'
+  ansible.builtin.set_fact:
+    tc_kms_keyring_result:
+      managed_key_count: "{{ tc_kms_keyring_keys | length }}"

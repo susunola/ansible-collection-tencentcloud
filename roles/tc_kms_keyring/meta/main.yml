@@ -1,0 +1,7 @@
+---
+galaxy_info:
+  author: Tencent Cloud Ansible Collection Contributors
+  description: Govern Tencent Cloud KMS keys, rotation and guarded scheduled deletion
+  license: GPL-3.0-or-later
+  min_ansible_version: "2.16"
+dependencies: []

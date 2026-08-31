@@ -1,0 +1,6 @@
+---
+tc_kms_keyring_state: present
+tc_kms_keyring_region: ""
+tc_kms_keyring_allow_deletion: false
+# Key items follow kms_key options. Optional rotation uses {enabled, rotation_days}.
+tc_kms_keyring_keys: []

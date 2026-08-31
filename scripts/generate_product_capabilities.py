@@ -50,6 +50,7 @@ ROLE_SERVICES = {
     "tc_sqlserver_stack": "sqlserver",
     "tc_gwlb_service_chain": "gwlb",
     "tc_organization_governance": "organization",
+    "tc_kms_keyring": "kms",
     "tc_observability_baseline": "cls",
     "tc_object_storage_baseline": "cos",
     "tc_serverless_application": "scf",

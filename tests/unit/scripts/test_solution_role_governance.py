@@ -368,6 +368,13 @@ def test_organization_teardown_removes_access_before_members_and_nodes():
     assert "| reverse | list" in main
 
 
+def test_kms_keyring_requires_explicit_scheduled_deletion_authorization():
+    text = role_tasks("tc_kms_keyring")
+    assert "tc_kms_keyring_allow_deletion | bool" in text
+    assert "deletion_protection: false" in text
+    assert "Schedule KMS key deletion" in text
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
