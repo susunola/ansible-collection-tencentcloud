@@ -315,6 +315,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tdmq_rocketmq_topic` | Manage TDMQ RocketMQ topics |
 | `tdmq_subscription` | Manage Tencent Cloud TDMQ Pulsar subscriptions |
 | `tdmq_topic` | Manage Tencent Cloud TDMQ Pulsar topics |
+| `tdmysql_account` | Manage Tencent Cloud TDSQL MySQL accounts |
 | `tdmysql_db_instance` | Manage Tencent Cloud TDMysql instances |
 | `tem_application` | Manage Tencent Cloud TEM applications |
 | `tem_application_deployment` | Deploy Tencent Cloud TEM application versions |
@@ -570,6 +571,7 @@ Read-only `_info` modules (return `changed=false`):
 | `tdcpg_cluster_instance_info` | Gather information about Tencent Cloud TDCPG cluster instances |
 | `tdid_over_summary_info` | Gather information about Tencent Cloud TDID over summary |
 | `tdmq_amqp_cluster_info` | Gather information about Tencent Cloud TDMQ amqp clusters |
+| `tdmysql_account_info` | Gather Tencent Cloud TDSQL MySQL accounts |
 | `tdmysql_db_instance_info` | Gather information about Tencent Cloud TDMYSQL db instances |
 | `tem_application_info` | Gather information about Tencent Cloud TEM applications |
 | `teo_function_info` | Gather information about Tencent Cloud TEO functions |

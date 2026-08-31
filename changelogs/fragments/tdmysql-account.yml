@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``tdmysql_account`` and ``tdmysql_account_info`` with composite identity, async Flow waiting, global privileges, password rotation and guarded deletion.

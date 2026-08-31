@@ -1924,6 +1924,15 @@ modules:
   - DeleteTopics
   - DescribeTopics
   - ModifyTopic
+  tdmysql_account:
+  - CreateUsers
+  - DeleteUsers
+  - DescribeFlow
+  - ModifyUserPrivileges
+  - ResetUsersPassword
+  tdmysql_account_info:
+  - DescribeUserPrivileges
+  - DescribeUsers
   tdmysql_db_instance:
   - CancelIsolateDBInstances
   - CreateDBInstances

@@ -275,6 +275,8 @@ CORE_MODULES = {
     "tdcpg_cluster",
     "thpc_cluster",
     "tdmysql_db_instance",
+    "tdmysql_account",
+    "tdmysql_account_info",
     "dbdc_db_custom_cluster",
     "cdwch_instance",
     "cdwch_backup_config",
