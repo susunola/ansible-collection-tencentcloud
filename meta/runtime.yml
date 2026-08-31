@@ -474,9 +474,12 @@ action_groups:
     - tcb_http_service_route
     - tcb_static_store
     - tcbr_cloud_run_pod_info
+    - tcm_access_log
     - tcm_mesh
     - tcm_mesh_clusters
     - tcm_mesh_info
+    - tcm_prometheus
+    - tcm_tracing
     - tcr_instance
     - tcr_instance_info
     - tcr_namespace

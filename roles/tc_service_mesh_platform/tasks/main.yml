@@ -1,0 +1,89 @@
+---
+- name: Validate service mesh platform inputs
+  ansible.builtin.assert:
+    that:
+      - tc_service_mesh_platform_state in ['present', 'absent']
+      - tc_service_mesh_platform_mesh is mapping
+      - tc_service_mesh_platform_clusters is sequence
+      - tc_service_mesh_platform_access_log is mapping
+      - tc_service_mesh_platform_tracing is mapping
+      - tc_service_mesh_platform_prometheus is mapping
+      - tc_service_mesh_platform_mesh.mesh_id | default(tc_service_mesh_platform_mesh.name | default('')) | length > 0
+      - tc_service_mesh_platform_state == 'present' or tc_service_mesh_platform_allow_destroy | bool
+    fail_msg: Service Mesh requires mesh_id or name; destruction requires tc_service_mesh_platform_allow_destroy=true.
+
+- name: Reconcile service mesh
+  when: tc_service_mesh_platform_state == 'present'
+  susunola.tencentcloud.tcm_mesh:
+  args: "{{ tc_service_mesh_platform_mesh | combine({'state': 'present'}) }}"
+  register: _tc_service_mesh_platform_mesh
+
+- name: Capture service mesh ID
+  when: tc_service_mesh_platform_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_service_mesh_platform_mesh_id: "{{ _tc_service_mesh_platform_mesh.mesh.MeshId }}"
+
+- name: Reconcile linked service mesh clusters
+  when: tc_service_mesh_platform_state == 'present'
+  susunola.tencentcloud.tcm_mesh_clusters:
+    mesh_id: "{{ _tc_service_mesh_platform_mesh_id }}"
+    clusters: "{{ tc_service_mesh_platform_clusters }}"
+  register: _tc_service_mesh_platform_clusters
+
+- name: Reconcile service mesh access logging
+  when:
+    - tc_service_mesh_platform_state == 'present'
+    - tc_service_mesh_platform_access_log | length > 0
+  susunola.tencentcloud.tcm_access_log:
+  args: "{{ tc_service_mesh_platform_access_log | combine({'mesh_id': _tc_service_mesh_platform_mesh_id}) }}"
+  register: _tc_service_mesh_platform_access_log
+
+- name: Reconcile service mesh tracing
+  when:
+    - tc_service_mesh_platform_state == 'present'
+    - tc_service_mesh_platform_tracing | length > 0
+  susunola.tencentcloud.tcm_tracing:
+  args: "{{ tc_service_mesh_platform_tracing | combine({'mesh_id': _tc_service_mesh_platform_mesh_id}) }}"
+  register: _tc_service_mesh_platform_tracing
+
+- name: Reconcile service mesh Prometheus integration
+  when:
+    - tc_service_mesh_platform_state == 'present'
+    - tc_service_mesh_platform_prometheus | length > 0
+  susunola.tencentcloud.tcm_prometheus:
+  args: "{{ tc_service_mesh_platform_prometheus | combine({'mesh_id': _tc_service_mesh_platform_mesh_id, 'state': 'present'}) }}"
+  register: _tc_service_mesh_platform_prometheus
+
+- name: Publish service mesh platform outputs
+  when: tc_service_mesh_platform_state == 'present'
+  ansible.builtin.set_fact:
+    tc_service_mesh_platform_result:
+      mesh: "{{ _tc_service_mesh_platform_mesh.mesh }}"
+      clusters: "{{ _tc_service_mesh_platform_clusters.clusters }}"
+      access_log: "{{ _tc_service_mesh_platform_access_log.access_log | default({}) }}"
+      tracing: "{{ _tc_service_mesh_platform_tracing.tracing | default({}) }}"
+      prometheus: "{{ _tc_service_mesh_platform_prometheus.prometheus | default({}) }}"
+
+- name: Require mesh ID for deterministic teardown
+  when:
+    - tc_service_mesh_platform_state == 'absent'
+    - tc_service_mesh_platform_mesh.mesh_id | default('') | length == 0
+  ansible.builtin.fail:
+    msg: mesh.mesh_id is required for deterministic Service Mesh teardown.
+
+- name: Unlink Prometheus before service mesh teardown
+  when: tc_service_mesh_platform_state == 'absent'
+  susunola.tencentcloud.tcm_prometheus:
+    mesh_id: "{{ tc_service_mesh_platform_mesh.mesh_id }}"
+    state: absent
+
+- name: Unlink clusters before service mesh teardown
+  when: tc_service_mesh_platform_state == 'absent'
+  susunola.tencentcloud.tcm_mesh_clusters:
+    mesh_id: "{{ tc_service_mesh_platform_mesh.mesh_id }}"
+    clusters: []
+
+- name: Remove service mesh
+  when: tc_service_mesh_platform_state == 'absent'
+  susunola.tencentcloud.tcm_mesh:
+  args: "{{ tc_service_mesh_platform_mesh | combine({'state': 'absent'}) }}"

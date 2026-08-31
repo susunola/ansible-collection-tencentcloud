@@ -1,0 +1,7 @@
+---
+galaxy_info:
+  author: Tencent Cloud Ansible Collection Contributors
+  description: Provision a Tencent Cloud service mesh with clusters, telemetry and Prometheus
+  license: GPL-3.0-or-later
+  min_ansible_version: "2.16"
+dependencies: []

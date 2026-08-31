@@ -298,8 +298,11 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tcb_environment` | Manage Tencent CloudBase environments |
 | `tcb_http_service_route` | Manage Tencent CloudBase HTTP service domain routes |
 | `tcb_static_store` | Manage Tencent CloudBase static website hosting |
+| `tcm_access_log` | Manage Tencent Cloud Mesh access logging |
 | `tcm_mesh` | Manage Tencent Cloud Mesh instances |
 | `tcm_mesh_clusters` | Reconcile Tencent Cloud Mesh cluster links |
+| `tcm_prometheus` | Manage Tencent Cloud Mesh Prometheus integration |
+| `tcm_tracing` | Manage Tencent Cloud Mesh tracing |
 | `tcr_instance` | Manage Tencent Cloud TCR enterprise instances |
 | `tcr_namespace` | Manage Tencent Cloud TCR namespaces |
 | `tcr_replication_instance` | Manage Tencent Cloud TCR replication instances |

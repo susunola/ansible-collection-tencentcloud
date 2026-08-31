@@ -6,9 +6,9 @@ This matrix is generated from module SDK imports and role metadata. It is a
 navigation and gap-discovery aid, not a claim that every Tencent Cloud API is covered.
 
 - Products/services: **203**
-- Write modules: **375**
+- Write modules: **378**
 - Information modules: **235**
-- Solution roles: **60**
+- Solution roles: **61**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -182,7 +182,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `tcaplusdb` | managed | 1 | 1 | — | `tcaplusdb_cluster` |
 | `tcb` | solution | 4 | 1 | `tc_cloudbase_platform` | `tcb_auth_domain`, `tcb_environment`, `tcb_http_service_route`, `tcb_static_store` |
 | `tcbr` | discovery-only | 0 | 1 | — | — |
-| `tcm` | managed | 2 | 1 | — | `tcm_mesh`, `tcm_mesh_clusters` |
+| `tcm` | solution | 5 | 1 | `tc_service_mesh_platform` | `tcm_access_log`, `tcm_mesh`, `tcm_mesh_clusters`, `tcm_prometheus`, `tcm_tracing` |
 | `tcr` | solution | 5 | 1 | `tc_container_registry` | `tcr_instance`, `tcr_namespace`, `tcr_replication_instance`, `tcr_replication_rule`, `tcr_repository` |
 | `tcss` | discovery-only | 0 | 1 | — | — |
 | `tdai` | discovery-only | 0 | 1 | — | — |

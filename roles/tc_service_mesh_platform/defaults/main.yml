@@ -1,0 +1,8 @@
+---
+tc_service_mesh_platform_state: present
+tc_service_mesh_platform_mesh: {}
+tc_service_mesh_platform_clusters: []
+tc_service_mesh_platform_access_log: {}
+tc_service_mesh_platform_tracing: {}
+tc_service_mesh_platform_prometheus: {}
+tc_service_mesh_platform_allow_destroy: false

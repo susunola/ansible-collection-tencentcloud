@@ -1,0 +1,5 @@
+minor_changes:
+  - Add ``tcm_access_log`` for idempotent mesh access-log scope, format and destination management.
+  - Add ``tcm_tracing`` for idempotent mesh sampling and APM or Zipkin destination management.
+  - Add ``tcm_prometheus`` for secret-safe Prometheus integration lifecycle management.
+  - Add ``tc_service_mesh_platform`` to compose a mesh, exact cluster membership and telemetry integrations.

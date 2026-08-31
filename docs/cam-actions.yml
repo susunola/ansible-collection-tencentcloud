@@ -1844,6 +1844,9 @@ modules:
   - DestroyStaticStore
   tcbr_cloud_run_pod_info:
   - DescribeCloudRunPodList
+  tcm_access_log:
+  - DescribeAccessLogConfig
+  - ModifyAccessLogConfig
   tcm_mesh:
   - CreateMesh
   - DeleteMesh
@@ -1856,6 +1859,13 @@ modules:
   - UnlinkCluster
   tcm_mesh_info:
   - DescribeMeshList
+  tcm_prometheus:
+  - DescribeMesh
+  - LinkPrometheus
+  - UnlinkPrometheus
+  tcm_tracing:
+  - DescribeMesh
+  - ModifyTracingConfig
   tcr_instance:
   - CreateInstance
   - DeleteInstance
