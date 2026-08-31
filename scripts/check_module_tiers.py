@@ -280,6 +280,7 @@ CORE_MODULES = {
     "tse_gateway_route",
     "tse_gateway_consumer",
     "tse_gateway_canary_rule",
+    "tse_gateway_certificate",
     "tse_gateway_consumer_group",
     "tse_gateway_cors",
     "tse_gateway_ip_restriction",
