@@ -465,6 +465,7 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert main.index("susunola.tencentcloud.dlc_database") < main.index("include_tasks: work_group.yml")
     assert main.index("susunola.tencentcloud.dlc_database") < main.index("susunola.tencentcloud.dlc_script")
     assert main.index("susunola.tencentcloud.dlc_database") < main.index("susunola.tencentcloud.dlc_table")
+    assert main.index("susunola.tencentcloud.dlc_table:\n") < main.index("susunola.tencentcloud.dlc_table_partition:\n")
     assert main.index("include_tasks: user.yml") < main.index("include_tasks: work_group.yml")
     assert main.index("include_tasks: work_group.yml") < main.index("susunola.tencentcloud.dlc_data_mask_strategy")
     assert main.index("include_tasks: teardown_work_group.yml") < main.index("susunola.tencentcloud.dlc_data_engine")
@@ -473,7 +474,8 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert main.index("include_tasks: teardown_user.yml") < main.rindex("susunola.tencentcloud.dlc_database")
     assert main.rindex("susunola.tencentcloud.dlc_database") < main.index("susunola.tencentcloud.dlc_data_engine")
     assert main.rindex("susunola.tencentcloud.dlc_script") < main.rindex("susunola.tencentcloud.dlc_database")
-    assert main.rindex("susunola.tencentcloud.dlc_table") < main.rindex("susunola.tencentcloud.dlc_database")
+    assert main.rindex("susunola.tencentcloud.dlc_table:\n") < main.rindex("susunola.tencentcloud.dlc_database")
+    assert main.rindex("susunola.tencentcloud.dlc_table_partition:\n") < main.rindex("susunola.tencentcloud.dlc_table:\n")
     assert main.rindex("susunola.tencentcloud.dlc_database") < main.rindex("susunola.tencentcloud.dlc_engine_resource_group")
     assert main.rindex("susunola.tencentcloud.dlc_engine_resource_group") < main.index("susunola.tencentcloud.dlc_data_engine")
     assert main.rindex("susunola.tencentcloud.dlc_spark_job") < main.rindex("susunola.tencentcloud.dlc_engine_resource_group")
@@ -499,6 +501,7 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert "tc_dlc_access_governance_job_specs: []" in defaults
     assert "tc_dlc_access_governance_databases: []" in defaults
     assert "tc_dlc_access_governance_tables: []" in defaults
+    assert "tc_dlc_access_governance_table_partitions: []" in defaults
     assert "tc_dlc_access_governance_scripts: []" in defaults
     assert "tc_dlc_access_governance_users: []" in defaults
     assert "tc_dlc_access_governance_data_mask_strategies: []" in defaults

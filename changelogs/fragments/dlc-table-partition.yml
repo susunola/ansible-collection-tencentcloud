@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_table_partition`` for exact DMS partition lifecycle, mutable storage metadata and explicit underlying-data deletion semantics.

@@ -42,6 +42,7 @@
     _tc_dlc_spark_job_ids: {}
     _tc_dlc_database_names: []
     _tc_dlc_table_names: []
+    _tc_dlc_table_partition_identities: []
     _tc_dlc_script_ids: {}
     _tc_dlc_user_ids: []
     _tc_dlc_work_group_ids: {}
@@ -245,6 +246,21 @@
   ansible.builtin.set_fact:
     _tc_dlc_table_names: "{{ tc_dlc_access_governance_tables | map(attribute='name') | list }}"
 
+- name: Reconcile DLC table partitions after parent tables
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_table_partition:
+  args: "{{ _tc_dlc_table_partition | combine({'state': 'present'}) }}"
+  loop: "{{ tc_dlc_access_governance_table_partitions }}"
+  loop_control:
+    loop_var: _tc_dlc_table_partition
+    label: "{{ _tc_dlc_table_partition.database_name }}.{{ _tc_dlc_table_partition.table_name }}/{{ _tc_dlc_table_partition.values | join('/') }}"
+  register: _tc_dlc_table_partition_results
+
+- name: Record DLC table-partition identities
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dlc_table_partition_identities: "{{ _tc_dlc_table_partition_results.results | map(attribute='partition_identity') | list }}"
+
 - name: Reconcile DLC users before work-group membership
   when: tc_dlc_access_governance_state == 'present'
   ansible.builtin.include_tasks: user.yml
@@ -331,6 +347,17 @@
   loop_control:
     loop_var: _tc_dlc_script
     label: "{{ _tc_dlc_script.name }}"
+
+- name: Remove DLC table partitions before parent tables
+  when:
+    - tc_dlc_access_governance_state == 'absent'
+    - tc_dlc_access_governance_allow_destroy | bool
+  susunola.tencentcloud.dlc_table_partition:
+  args: "{{ _tc_dlc_table_partition | combine({'state': 'absent', 'allow_delete': true}) }}"
+  loop: "{{ tc_dlc_access_governance_table_partitions | reverse | list }}"
+  loop_control:
+    loop_var: _tc_dlc_table_partition
+    label: "{{ _tc_dlc_table_partition.database_name }}.{{ _tc_dlc_table_partition.table_name }}/{{ _tc_dlc_table_partition.values | join('/') }}"
 
 - name: Remove DLC tables before their databases
   when:
@@ -480,6 +507,7 @@
       spark_job_ids: "{{ _tc_dlc_spark_job_ids }}"
       database_names: "{{ _tc_dlc_database_names }}"
       table_names: "{{ _tc_dlc_table_names }}"
+      table_partition_identities: "{{ _tc_dlc_table_partition_identities }}"
       script_ids: "{{ _tc_dlc_script_ids }}"
       user_ids: "{{ _tc_dlc_user_ids }}"
       work_group_ids: "{{ _tc_dlc_work_group_ids }}"

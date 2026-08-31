@@ -885,6 +885,11 @@ modules:
   - DeleteTable
   - DescribeTable
   - DescribeTaskDetail
+  dlc_table_partition:
+  - AddDMSPartitions
+  - AlterDMSPartition
+  - DescribeDMSPartitions
+  - DropDMSPartitions
   dlc_task_info:
   - DescribeTaskList
   dlc_user:
