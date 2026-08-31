@@ -2036,6 +2036,10 @@ modules:
   - DescribeDatasets
   tione_dataset_info:
   - DescribeDatasets
+  tione_model_service_info:
+  - DescribeModelService
+  - DescribeModelServiceGroup
+  - DescribeModelServiceGroups
   tione_notebook:
   - CreateNotebook
   - DeleteNotebook

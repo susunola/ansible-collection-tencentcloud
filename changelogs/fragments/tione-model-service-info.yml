@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``tione_model_service_info`` with exact service-version, exact service-group and filtered bounded inventory modes.

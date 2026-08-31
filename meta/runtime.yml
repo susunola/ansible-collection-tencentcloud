@@ -521,6 +521,7 @@ action_groups:
     - tione_data_source_info
     - tione_dataset
     - tione_dataset_info
+    - tione_model_service_info
     - tione_notebook
     - tione_notebook_info
     - tione_training_model_version
