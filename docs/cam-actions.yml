@@ -2041,6 +2041,11 @@ modules:
   - DeleteModelService
   - DescribeModelService
   - ModifyModelService
+  tione_model_service_auth_token:
+  - CreateModelServiceAuthToken
+  - DeleteModelServiceAuthToken
+  - DescribeModelServiceGroup
+  - ModifyModelServiceAuthToken
   tione_model_service_diagnostics_info:
   - DescribeModelServiceCallInfo
   - DescribeModelServiceHotUpdated

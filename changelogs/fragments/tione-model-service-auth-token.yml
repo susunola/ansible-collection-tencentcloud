@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``tione_model_service_auth_token`` with stable identity, rate limits, idempotent confirmed rotation and secret-safe output.

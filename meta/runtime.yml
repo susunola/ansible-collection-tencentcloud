@@ -522,6 +522,7 @@ action_groups:
     - tione_dataset
     - tione_dataset_info
     - tione_model_service
+    - tione_model_service_auth_token
     - tione_model_service_diagnostics_info
     - tione_model_service_info
     - tione_model_service_state

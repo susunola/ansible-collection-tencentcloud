@@ -393,6 +393,7 @@ CORE_MODULES = {
     "tione_training_model_version",
     "tione_model_service_info",
     "tione_model_service",
+    "tione_model_service_auth_token",
     "tione_model_service_diagnostics_info",
     "tione_model_service_state",
     "tione_model_service_traffic",
