@@ -1,0 +1,25 @@
+---
+- name: Configure EdgeOne managed security rules
+  when: _tc_edgeone_scope.managed_rules is defined
+  susunola.tencentcloud.teo_security_managed_rules:
+  args: "{{ _tc_edgeone_scope.managed_rules | combine({'scope': _tc_edgeone_scope.scope, 'template_id': _tc_edgeone_scope.template_id | default(omit), 'host': _tc_edgeone_scope.host | default(omit), 'zone_id': _tc_edgeone_application_zone_id, 'region': tc_edgeone_application_region}) }}"
+
+- name: Configure EdgeOne custom security rules
+  when: _tc_edgeone_scope.custom_rules is defined
+  susunola.tencentcloud.teo_security_custom_rules:
+  args: "{{ _tc_edgeone_scope.custom_rules | combine({'scope': _tc_edgeone_scope.scope, 'template_id': _tc_edgeone_scope.template_id | default(omit), 'host': _tc_edgeone_scope.host | default(omit), 'zone_id': _tc_edgeone_application_zone_id, 'region': tc_edgeone_application_region}) }}"
+
+- name: Configure EdgeOne exception rules
+  when: _tc_edgeone_scope.exception_rules is defined
+  susunola.tencentcloud.teo_security_exception_rules:
+  args: "{{ _tc_edgeone_scope.exception_rules | combine({'scope': _tc_edgeone_scope.scope, 'template_id': _tc_edgeone_scope.template_id | default(omit), 'host': _tc_edgeone_scope.host | default(omit), 'zone_id': _tc_edgeone_application_zone_id, 'region': tc_edgeone_application_region}) }}"
+
+- name: Configure EdgeOne rate limiting rules
+  when: _tc_edgeone_scope.rate_limiting_rules is defined
+  susunola.tencentcloud.teo_security_rate_limiting_rules:
+  args: "{{ _tc_edgeone_scope.rate_limiting_rules | combine({'scope': _tc_edgeone_scope.scope, 'template_id': _tc_edgeone_scope.template_id | default(omit), 'host': _tc_edgeone_scope.host | default(omit), 'zone_id': _tc_edgeone_application_zone_id, 'region': tc_edgeone_application_region}) }}"
+
+- name: Configure EdgeOne Bot Lite
+  when: _tc_edgeone_scope.bot_lite is defined
+  susunola.tencentcloud.teo_security_bot_lite:
+  args: "{{ _tc_edgeone_scope.bot_lite | combine({'scope': _tc_edgeone_scope.scope, 'template_id': _tc_edgeone_scope.template_id | default(omit), 'host': _tc_edgeone_scope.host | default(omit), 'zone_id': _tc_edgeone_application_zone_id, 'region': tc_edgeone_application_region}) }}"

@@ -48,6 +48,7 @@ ROLE_SERVICES = {
     "tc_security_baseline": "cam",
     "tc_shared_file_storage": "cfs",
     "tc_tem_application": "tem",
+    "tc_edgeone_application": "teo",
     "tc_tke_platform": "tke",
     "tc_vpc_foundation": "vpc",
     "tc_waf_application": "waf",

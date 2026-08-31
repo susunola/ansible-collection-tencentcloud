@@ -1,0 +1,35 @@
+---
+- name: Reconcile EdgeOne web security template
+  susunola.tencentcloud.teo_web_security_template:
+    region: "{{ tc_edgeone_application_region }}"
+    state: present
+    zone_id: "{{ _tc_edgeone_application_zone_id }}"
+    template_id: "{{ _tc_edgeone_template.template_id | default(omit, true) }}"
+    name: "{{ _tc_edgeone_template.name | default(omit, true) }}"
+  register: _tc_edgeone_template_result
+
+- name: Resolve EdgeOne web security template ID
+  ansible.builtin.set_fact:
+    _tc_edgeone_template_id: >-
+      {{ _tc_edgeone_template.template_id | default('')
+         or (_tc_edgeone_template_result.security_template.TemplateId | default('')) }}
+
+- name: Configure EdgeOne template security scope
+  when: _tc_edgeone_template_id | length > 0
+  ansible.builtin.include_tasks: security_scope.yml
+  vars:
+    _tc_edgeone_scope: >-
+      {{ _tc_edgeone_template
+         | combine({'scope': 'template', 'template_id': _tc_edgeone_template_id}) }}
+
+- name: Reconcile EdgeOne security template bindings
+  when:
+    - _tc_edgeone_template_id | length > 0
+    - _tc_edgeone_template.domains is defined
+  susunola.tencentcloud.teo_security_template_binding:
+    region: "{{ tc_edgeone_application_region }}"
+    zone_id: "{{ _tc_edgeone_application_zone_id }}"
+    template_id: "{{ _tc_edgeone_template_id }}"
+    domains: "{{ _tc_edgeone_template.domains }}"
+    overwrite: "{{ _tc_edgeone_template.overwrite | default(true) }}"
+    unbind_policy: "{{ _tc_edgeone_template.unbind_policy | default('keep-policy') }}"

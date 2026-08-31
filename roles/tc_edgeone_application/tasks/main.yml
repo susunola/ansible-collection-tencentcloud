@@ -1,0 +1,150 @@
+---
+- name: Resolve existing EdgeOne zone ID for teardown
+  when:
+    - tc_edgeone_application_state == 'absent'
+    - tc_edgeone_application_zone_id | length == 0
+    - tc_edgeone_application_name | length > 0
+  ansible.builtin.set_fact:
+    tc_edgeone_application_zone_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_edgeone_application_name,
+                resource_type='edgeone_zone', region=tc_edgeone_application_region) }}
+
+- name: Validate EdgeOne application inputs
+  ansible.builtin.assert:
+    that:
+      - tc_edgeone_application_state in ['present', 'absent']
+      - tc_edgeone_application_region | length > 0
+      - tc_edgeone_application_zone_id | length > 0 or tc_edgeone_application_name | length > 0
+      - tc_edgeone_application_state == 'present' or tc_edgeone_application_zone_id | length > 0
+    fail_msg: EdgeOne requires an explicit region and zone identity; teardown requires a resolvable zone ID.
+
+- name: Provision EdgeOne zone
+  when: tc_edgeone_application_state == 'present'
+  susunola.tencentcloud.teo_zone:
+    region: "{{ tc_edgeone_application_region }}"
+    state: present
+    zone_id: "{{ tc_edgeone_application_zone_id | default(omit, true) }}"
+    name: "{{ tc_edgeone_application_name | default(omit, true) }}"
+    zone_type: "{{ tc_edgeone_application_zone_type }}"
+    area: "{{ tc_edgeone_application_area }}"
+    alias_name: "{{ tc_edgeone_application_alias_name | default(omit, true) }}"
+    plan_id: "{{ tc_edgeone_application_plan_id | default(omit, true) }}"
+    enabled: "{{ tc_edgeone_application_enabled }}"
+  register: _tc_edgeone_application_zone
+
+- name: Resolve EdgeOne zone ID
+  when: tc_edgeone_application_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_edgeone_application_zone_id: >-
+      {{ tc_edgeone_application_zone_id
+         or (_tc_edgeone_application_zone.zone.ZoneId | default('')) }}
+
+- name: Reconcile EdgeOne origin groups
+  when:
+    - tc_edgeone_application_state == 'present'
+    - _tc_edgeone_application_zone_id | length > 0
+  susunola.tencentcloud.teo_origin_group:
+  args: "{{ item | combine({'state': 'present', 'zone_id': _tc_edgeone_application_zone_id, 'region': tc_edgeone_application_region}) }}"
+  loop: "{{ tc_edgeone_application_origin_groups }}"
+  register: _tc_edgeone_application_origins
+
+- name: Reconcile EdgeOne acceleration domains
+  when:
+    - tc_edgeone_application_state == 'present'
+    - _tc_edgeone_application_zone_id | length > 0
+  susunola.tencentcloud.teo_acceleration_domain:
+  args: "{{ item | combine({'state': 'present', 'zone_id': _tc_edgeone_application_zone_id, 'region': tc_edgeone_application_region}) }}"
+  loop: "{{ tc_edgeone_application_acceleration_domains }}"
+  register: _tc_edgeone_application_domains
+
+- name: Reconcile EdgeOne DNS records
+  when:
+    - tc_edgeone_application_state == 'present'
+    - _tc_edgeone_application_zone_id | length > 0
+  susunola.tencentcloud.teo_dns_record:
+  args: "{{ item | combine({'state': 'present', 'zone_id': _tc_edgeone_application_zone_id, 'region': tc_edgeone_application_region}) }}"
+  loop: "{{ tc_edgeone_application_dns_records }}"
+  register: _tc_edgeone_application_dns
+
+- name: Reconcile EdgeOne security IP groups
+  when:
+    - tc_edgeone_application_state == 'present'
+    - _tc_edgeone_application_zone_id | length > 0
+  susunola.tencentcloud.teo_security_ip_group:
+  args: "{{ item | combine({'state': 'present', 'zone_id': _tc_edgeone_application_zone_id, 'region': tc_edgeone_application_region}) }}"
+  loop: "{{ tc_edgeone_application_ip_groups }}"
+
+- name: Reconcile EdgeOne web security templates
+  when:
+    - tc_edgeone_application_state == 'present'
+    - _tc_edgeone_application_zone_id | length > 0
+  ansible.builtin.include_tasks: security_template.yml
+  loop: "{{ tc_edgeone_application_security_templates }}"
+  loop_control:
+    loop_var: _tc_edgeone_template
+    label: "{{ _tc_edgeone_template.name | default(_tc_edgeone_template.template_id | default('template')) }}"
+
+- name: Reconcile EdgeOne zone and host security scopes
+  when:
+    - tc_edgeone_application_state == 'present'
+    - _tc_edgeone_application_zone_id | length > 0
+  ansible.builtin.include_tasks: security_scope.yml
+  loop: "{{ tc_edgeone_application_security_scopes }}"
+  loop_control:
+    loop_var: _tc_edgeone_scope
+    label: "{{ _tc_edgeone_scope.scope }}:{{ _tc_edgeone_scope.host | default('zone') }}"
+
+- name: Clear EdgeOne zone and host security scopes
+  when: tc_edgeone_application_state == 'absent'
+  ansible.builtin.include_tasks: teardown_security_scope.yml
+  loop: "{{ tc_edgeone_application_security_scopes }}"
+  loop_control:
+    loop_var: _tc_edgeone_scope
+
+- name: Unbind and remove EdgeOne web security templates
+  when: tc_edgeone_application_state == 'absent'
+  ansible.builtin.include_tasks: teardown_security_template.yml
+  loop: "{{ tc_edgeone_application_security_templates }}"
+  loop_control:
+    loop_var: _tc_edgeone_template
+
+- name: Remove EdgeOne security IP groups
+  when: tc_edgeone_application_state == 'absent'
+  susunola.tencentcloud.teo_security_ip_group:
+  args: "{{ item | combine({'state': 'absent', 'zone_id': tc_edgeone_application_zone_id, 'region': tc_edgeone_application_region}) }}"
+  loop: "{{ tc_edgeone_application_ip_groups }}"
+
+- name: Remove EdgeOne DNS records
+  when: tc_edgeone_application_state == 'absent'
+  susunola.tencentcloud.teo_dns_record:
+  args: "{{ item | combine({'state': 'absent', 'zone_id': tc_edgeone_application_zone_id, 'region': tc_edgeone_application_region}) }}"
+  loop: "{{ tc_edgeone_application_dns_records }}"
+
+- name: Remove EdgeOne acceleration domains
+  when: tc_edgeone_application_state == 'absent'
+  susunola.tencentcloud.teo_acceleration_domain:
+  args: "{{ item | combine({'state': 'absent', 'force': true, 'zone_id': tc_edgeone_application_zone_id, 'region': tc_edgeone_application_region}) }}"
+  loop: "{{ tc_edgeone_application_acceleration_domains }}"
+
+- name: Remove EdgeOne origin groups
+  when: tc_edgeone_application_state == 'absent'
+  susunola.tencentcloud.teo_origin_group:
+  args: "{{ item | combine({'state': 'absent', 'zone_id': tc_edgeone_application_zone_id, 'region': tc_edgeone_application_region}) }}"
+  loop: "{{ tc_edgeone_application_origin_groups }}"
+
+- name: Remove EdgeOne zone
+  when: tc_edgeone_application_state == 'absent'
+  susunola.tencentcloud.teo_zone:
+    region: "{{ tc_edgeone_application_region }}"
+    state: absent
+    zone_id: "{{ tc_edgeone_application_zone_id }}"
+
+- name: Publish EdgeOne application result
+  when: tc_edgeone_application_state == 'present'
+  ansible.builtin.set_fact:
+    tc_edgeone_application_result:
+      zone_id: "{{ _tc_edgeone_application_zone_id }}"
+      zone: "{{ _tc_edgeone_application_zone.zone | default({}) }}"
+      origins: "{{ _tc_edgeone_application_origins | default({}) }}"
+      domains: "{{ _tc_edgeone_application_domains | default({}) }}"
+      dns_records: "{{ _tc_edgeone_application_dns | default({}) }}"

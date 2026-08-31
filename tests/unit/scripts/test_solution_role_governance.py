@@ -253,6 +253,14 @@ def test_waf_teardown_removes_groups_and_rules_before_hosts():
     assert "enabled: false" in main
 
 
+def test_edgeone_teardown_clears_security_and_delivery_before_zone():
+    main = role_tasks("tc_edgeone_application")
+    template = (ROOT / "roles" / "tc_edgeone_application" / "tasks" / "teardown_security_template.yml").read_text(encoding="utf-8")
+    assert_order(template, "Clear EdgeOne template security policies", "Unbind EdgeOne security template domains", "Delete EdgeOne web security template")
+    assert_order(main, "Clear EdgeOne zone and host security scopes", "Unbind and remove EdgeOne web security templates", "Remove EdgeOne acceleration domains", "Remove EdgeOne origin groups", "Remove EdgeOne zone")
+    assert "template_id is required" in template
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -284,6 +292,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_block_storage": "resource_type='cbs_disk'",
         "tc_lighthouse_stack": "resource_type='lighthouse_instance'",
         "tc_prometheus_platform": "resource_type='prometheus_instance'",
+        "tc_edgeone_application": "resource_type='edgeone_zone'",
         "tc_rocketmq_platform": "resource_type='rocketmq_cluster'",
         "tc_rabbitmq_platform": "resource_type='rabbitmq_instance'",
         "tc_eventbridge_router": "resource_type='event_bus'",

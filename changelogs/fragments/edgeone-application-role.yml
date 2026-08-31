@@ -1,0 +1,6 @@
+---
+minor_changes:
+  - >-
+    solution roles - add ``tc_edgeone_application`` covering EdgeOne delivery,
+    DNS and all managed web-security policy modules with exact-name zone
+    adoption and dependency-safe teardown.

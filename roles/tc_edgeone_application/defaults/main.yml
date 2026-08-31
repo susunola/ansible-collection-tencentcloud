@@ -1,0 +1,19 @@
+---
+tc_edgeone_application_state: present
+tc_edgeone_application_region: ""
+tc_edgeone_application_zone_id: ""
+tc_edgeone_application_name: ""
+tc_edgeone_application_zone_type: partial
+tc_edgeone_application_area: overseas
+tc_edgeone_application_alias_name: ""
+tc_edgeone_application_plan_id: ""
+tc_edgeone_application_enabled: true
+
+tc_edgeone_application_origin_groups: []
+tc_edgeone_application_acceleration_domains: []
+tc_edgeone_application_dns_records: []
+tc_edgeone_application_ip_groups: []
+# Template items may contain domains and managed_rules/custom_rules/exception_rules/rate_limiting_rules/bot_lite.
+tc_edgeone_application_security_templates: []
+# Zone or host scope security items use the same five optional policy mappings.
+tc_edgeone_application_security_scopes: []

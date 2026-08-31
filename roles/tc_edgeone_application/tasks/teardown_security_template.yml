@@ -1,0 +1,28 @@
+---
+- name: Validate EdgeOne security template teardown identity
+  ansible.builtin.assert:
+    that:
+      - _tc_edgeone_template.template_id | default('') | length > 0
+    fail_msg: template_id is required to clear bindings and delete a security template.
+
+- name: Clear EdgeOne template security policies
+  ansible.builtin.include_tasks: teardown_security_scope.yml
+  vars:
+    _tc_edgeone_scope: >-
+      {{ _tc_edgeone_template
+         | combine({'scope': 'template', 'template_id': _tc_edgeone_template.template_id}) }}
+
+- name: Unbind EdgeOne security template domains
+  susunola.tencentcloud.teo_security_template_binding:
+    region: "{{ tc_edgeone_application_region }}"
+    zone_id: "{{ tc_edgeone_application_zone_id }}"
+    template_id: "{{ _tc_edgeone_template.template_id }}"
+    domains: []
+    unbind_policy: "{{ _tc_edgeone_template.unbind_policy | default('keep-policy') }}"
+
+- name: Delete EdgeOne web security template
+  susunola.tencentcloud.teo_web_security_template:
+    region: "{{ tc_edgeone_application_region }}"
+    state: absent
+    zone_id: "{{ tc_edgeone_application_zone_id }}"
+    template_id: "{{ _tc_edgeone_template.template_id }}"

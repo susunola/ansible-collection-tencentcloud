@@ -1,0 +1,52 @@
+---
+- name: Disable EdgeOne managed security rules
+  when: _tc_edgeone_scope.managed_rules is defined
+  susunola.tencentcloud.teo_security_managed_rules:
+    region: "{{ tc_edgeone_application_region }}"
+    zone_id: "{{ tc_edgeone_application_zone_id }}"
+    scope: "{{ _tc_edgeone_scope.scope }}"
+    template_id: "{{ _tc_edgeone_scope.template_id | default(omit, true) }}"
+    host: "{{ _tc_edgeone_scope.host | default(omit, true) }}"
+    enabled: false
+    groups: []
+
+- name: Clear EdgeOne custom security rules
+  when: _tc_edgeone_scope.custom_rules is defined
+  susunola.tencentcloud.teo_security_custom_rules:
+    region: "{{ tc_edgeone_application_region }}"
+    zone_id: "{{ tc_edgeone_application_zone_id }}"
+    scope: "{{ _tc_edgeone_scope.scope }}"
+    template_id: "{{ _tc_edgeone_scope.template_id | default(omit, true) }}"
+    host: "{{ _tc_edgeone_scope.host | default(omit, true) }}"
+    rules: []
+
+- name: Clear EdgeOne exception rules
+  when: _tc_edgeone_scope.exception_rules is defined
+  susunola.tencentcloud.teo_security_exception_rules:
+    region: "{{ tc_edgeone_application_region }}"
+    zone_id: "{{ tc_edgeone_application_zone_id }}"
+    scope: "{{ _tc_edgeone_scope.scope }}"
+    template_id: "{{ _tc_edgeone_scope.template_id | default(omit, true) }}"
+    host: "{{ _tc_edgeone_scope.host | default(omit, true) }}"
+    rules: []
+
+- name: Clear EdgeOne rate limiting rules
+  when: _tc_edgeone_scope.rate_limiting_rules is defined
+  susunola.tencentcloud.teo_security_rate_limiting_rules:
+    region: "{{ tc_edgeone_application_region }}"
+    zone_id: "{{ tc_edgeone_application_zone_id }}"
+    scope: "{{ _tc_edgeone_scope.scope }}"
+    template_id: "{{ _tc_edgeone_scope.template_id | default(omit, true) }}"
+    host: "{{ _tc_edgeone_scope.host | default(omit, true) }}"
+    rules: []
+
+- name: Disable EdgeOne Bot Lite
+  when: _tc_edgeone_scope.bot_lite is defined
+  susunola.tencentcloud.teo_security_bot_lite:
+    region: "{{ tc_edgeone_application_region }}"
+    zone_id: "{{ tc_edgeone_application_zone_id }}"
+    scope: "{{ _tc_edgeone_scope.scope }}"
+    template_id: "{{ _tc_edgeone_scope.template_id | default(omit, true) }}"
+    host: "{{ _tc_edgeone_scope.host | default(omit, true) }}"
+    captcha_page_enabled: false
+    ai_crawler_enabled: false
