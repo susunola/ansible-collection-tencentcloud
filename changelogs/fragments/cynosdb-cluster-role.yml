@@ -1,0 +1,5 @@
+minor_changes:
+  - >-
+    solution roles - add ``tc_cynosdb_cluster`` for cloud-native database
+    clusters, accounts, exact privilege sets and automatic backups with
+    exact-name adoption and two-stage isolation and purge semantics.

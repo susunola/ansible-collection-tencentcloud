@@ -1,0 +1,45 @@
+---
+- name: Provision CynosDB account
+  when: tc_cynosdb_cluster_state == 'present'
+  susunola.tencentcloud.cynosdb_account:
+    region: "{{ tc_cynosdb_cluster_region | default(omit, true) }}"
+    state: present
+    cluster_id: "{{ _tc_cynosdb_cluster_id }}"
+    account_name: "{{ _tc_cynosdb_account.account_name }}"
+    host: "{{ _tc_cynosdb_account.host | default('%') }}"
+    password: "{{ _tc_cynosdb_account.password | default(omit) }}"
+    rotate_password: "{{ _tc_cynosdb_account.rotate_password | default(false) }}"
+    description: "{{ _tc_cynosdb_account.description | default('') }}"
+    max_user_connections: "{{ _tc_cynosdb_account.max_user_connections | default(omit) }}"
+    password_rotation: "{{ _tc_cynosdb_account.password_rotation | default(omit) }}"
+
+- name: Reconcile CynosDB account privileges
+  when: tc_cynosdb_cluster_state == 'present'
+  susunola.tencentcloud.cynosdb_account_privilege:
+    region: "{{ tc_cynosdb_cluster_region | default(omit, true) }}"
+    cluster_id: "{{ _tc_cynosdb_cluster_id }}"
+    account_name: "{{ _tc_cynosdb_account.account_name }}"
+    host: "{{ _tc_cynosdb_account.host | default('%') }}"
+    global_privileges: "{{ _tc_cynosdb_account.global_privileges | default([]) }}"
+    database_privileges: "{{ _tc_cynosdb_account.database_privileges | default([]) }}"
+    table_privileges: "{{ _tc_cynosdb_account.table_privileges | default([]) }}"
+
+- name: Clear CynosDB account privileges
+  when: tc_cynosdb_cluster_state == 'absent'
+  susunola.tencentcloud.cynosdb_account_privilege:
+    region: "{{ tc_cynosdb_cluster_region | default(omit, true) }}"
+    cluster_id: "{{ tc_cynosdb_cluster_id }}"
+    account_name: "{{ _tc_cynosdb_account.account_name }}"
+    host: "{{ _tc_cynosdb_account.host | default('%') }}"
+    global_privileges: []
+    database_privileges: []
+    table_privileges: []
+
+- name: Remove CynosDB account
+  when: tc_cynosdb_cluster_state == 'absent'
+  susunola.tencentcloud.cynosdb_account:
+    region: "{{ tc_cynosdb_cluster_region | default(omit, true) }}"
+    state: absent
+    cluster_id: "{{ tc_cynosdb_cluster_id }}"
+    account_name: "{{ _tc_cynosdb_account.account_name }}"
+    host: "{{ _tc_cynosdb_account.host | default('%') }}"

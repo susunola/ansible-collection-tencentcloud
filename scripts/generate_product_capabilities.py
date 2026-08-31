@@ -23,6 +23,7 @@ ROLE_SERVICES = {
     "tc_container_registry": "tcr",
     "tc_kafka_platform": "ckafka",
     "tc_database_stack": "cdb",
+    "tc_cynosdb_cluster": "cynosdb",
     "tc_mongodb_stack": "mongodb",
     "tc_mariadb_stack": "mariadb",
     "tc_mqtt_broker": "mqtt",

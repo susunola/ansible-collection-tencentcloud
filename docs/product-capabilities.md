@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **19**
+- Solution roles: **20**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -87,7 +87,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `cvm` | solution | 10 | 2 | `tc_launch` | `cvm_chc`, `cvm_disaster_recover_group`, `cvm_disaster_recover_group_binding`, `cvm_hpc_cluster`, `cvm_image`, `cvm_instance`, `cvm_instance_action_timer`, `cvm_launch_template`, +2 more |
 | `cwp` | discovery-only | 0 | 1 | — | — |
 | `cws` | discovery-only | 0 | 1 | — | — |
-| `cynosdb` | resource-family | 4 | 1 | — | `cynosdb_account`, `cynosdb_account_privilege`, `cynosdb_backup_config`, `cynosdb_cluster` |
+| `cynosdb` | solution | 4 | 1 | `tc_cynosdb_cluster` | `cynosdb_account`, `cynosdb_account_privilege`, `cynosdb_backup_config`, `cynosdb_cluster` |
 | `dasb` | discovery-only | 0 | 1 | — | — |
 | `dataagent` | discovery-only | 0 | 1 | — | — |
 | `dayu` | discovery-only | 0 | 1 | — | — |

@@ -1,0 +1,30 @@
+---
+tc_cynosdb_cluster_state: present
+tc_cynosdb_cluster_region: ""
+tc_cynosdb_cluster_id: ""
+tc_cynosdb_cluster_name: ""
+tc_cynosdb_cluster_zone: ""
+tc_cynosdb_cluster_slave_zone: ""
+tc_cynosdb_cluster_vpc_id: ""
+tc_cynosdb_cluster_subnet_id: ""
+tc_cynosdb_cluster_db_type: MYSQL
+tc_cynosdb_cluster_db_version: ""
+tc_cynosdb_cluster_cynos_version: ""
+tc_cynosdb_cluster_cpu: null
+tc_cynosdb_cluster_memory: null
+tc_cynosdb_cluster_instance_count: 1
+tc_cynosdb_cluster_storage: null
+tc_cynosdb_cluster_admin_password: ""
+tc_cynosdb_cluster_port: 3306
+tc_cynosdb_cluster_pay_mode: 0
+tc_cynosdb_cluster_period_months: 1
+tc_cynosdb_cluster_auto_renew: false
+tc_cynosdb_cluster_security_group_ids: []
+tc_cynosdb_cluster_purge: false
+
+# Accounts may include global_privileges, database_privileges and table_privileges.
+tc_cynosdb_cluster_accounts: []
+tc_cynosdb_cluster_backup_enabled: true
+tc_cynosdb_cluster_backup_start: 10800
+tc_cynosdb_cluster_backup_end: 14400
+tc_cynosdb_cluster_backup_retention_seconds: 604800

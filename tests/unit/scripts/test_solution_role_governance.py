@@ -135,6 +135,14 @@ def test_mariadb_teardown_clears_privileges_before_accounts_and_instance():
     assert "purge: \"{{ tc_mariadb_stack_purge }}\"" in main
 
 
+def test_cynosdb_teardown_clears_privileges_before_accounts_and_cluster():
+    main = role_tasks("tc_cynosdb_cluster")
+    account = (ROOT / "roles" / "tc_cynosdb_cluster" / "tasks" / "account.yml").read_text(encoding="utf-8")
+    assert_order(account, "Clear CynosDB account privileges", "Remove CynosDB account")
+    assert main.index("Reconcile CynosDB accounts and privileges") < main.index("Isolate or purge CynosDB cluster")
+    assert "purge: \"{{ tc_cynosdb_cluster_purge }}\"" in main
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -161,6 +169,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_mqtt_broker": "resource_type='mqtt_instance'",
         "tc_postgresql_stack": "resource_type='postgresql_instance'",
         "tc_mariadb_stack": "resource_type='mariadb_instance'",
+        "tc_cynosdb_cluster": "resource_type='cynosdb_cluster'",
         "tc_container_registry": "resource_type='tcr_instance'",
         "tc_tem_application": "resource_type='tem_environment'",
         "tc_serverless_application": "resource_type='api_gateway_service'",
