@@ -108,6 +108,13 @@ def test_kafka_teardown_removes_access_and_data_children_before_instance():
     assert "deletion_protection: false" in text
 
 
+def test_alb_teardown_removes_listeners_and_backends_before_parents():
+    main = role_tasks("tc_alb_application_entry")
+    group = (ROOT / "roles" / "tc_alb_application_entry" / "tasks" / "target_group.yml").read_text(encoding="utf-8")
+    assert_order(group, "Remove ALB listeners before target group", "Remove ALB target group backends", "Remove ALB target group")
+    assert "deletion_protection: false" in main
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -130,6 +137,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_mongodb_stack": "resource_type='mongodb_instance'",
         "tc_shared_file_storage": "resource_type='cfs_file_system'",
         "tc_kafka_platform": "resource_type='ckafka_instance'",
+        "tc_alb_application_entry": "resource_type='alb_load_balancer'",
         "tc_container_registry": "resource_type='tcr_instance'",
         "tc_tem_application": "resource_type='tem_environment'",
         "tc_serverless_application": "resource_type='api_gateway_service'",

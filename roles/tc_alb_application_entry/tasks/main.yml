@@ -1,0 +1,68 @@
+---
+- name: Resolve existing ALB ID for teardown
+  when:
+    - tc_alb_application_entry_state == 'absent'
+    - tc_alb_application_entry_load_balancer_id | length == 0
+    - tc_alb_application_entry_name | length > 0
+  ansible.builtin.set_fact:
+    tc_alb_application_entry_load_balancer_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_alb_application_entry_name,
+                resource_type='alb_load_balancer', region=tc_alb_application_entry_region) }}
+
+- name: Validate ALB application entry inputs
+  ansible.builtin.assert:
+    that:
+      - tc_alb_application_entry_state in ['present', 'absent']
+      - tc_alb_application_entry_load_balancer_id | length > 0 or tc_alb_application_entry_name | length > 0
+      - tc_alb_application_entry_state == 'absent' or tc_alb_application_entry_load_balancer_id | length > 0 or tc_alb_application_entry_address_type | length > 0
+      - tc_alb_application_entry_state == 'absent' or tc_alb_application_entry_load_balancer_id | length > 0 or tc_alb_application_entry_vpc_id | length > 0
+      - tc_alb_application_entry_state == 'absent' or tc_alb_application_entry_load_balancer_id | length > 0 or tc_alb_application_entry_zone_mappings | length > 0
+      - tc_alb_application_entry_state == 'present' or tc_alb_application_entry_target_groups | selectattr('target_group_id', 'undefined') | list | length == 0
+    fail_msg: ALB creation requires address, VPC and zones; target_group_id is required for dependency-safe teardown.
+
+- name: Provision ALB load balancer
+  when: tc_alb_application_entry_state == 'present'
+  susunola.tencentcloud.alb_load_balancer:
+    region: "{{ tc_alb_application_entry_region | default(omit, true) }}"
+    state: present
+    load_balancer_id: "{{ tc_alb_application_entry_load_balancer_id | default(omit, true) }}"
+    name: "{{ tc_alb_application_entry_name | default(omit, true) }}"
+    address_type: "{{ tc_alb_application_entry_address_type | default(omit, true) }}"
+    vpc_id: "{{ tc_alb_application_entry_vpc_id | default(omit, true) }}"
+    zone_mappings: "{{ tc_alb_application_entry_zone_mappings | default(omit, true) }}"
+    ip_version: "{{ tc_alb_application_entry_ip_version }}"
+    charge_type: "{{ tc_alb_application_entry_charge_type }}"
+    bandwidth_package_id: "{{ tc_alb_application_entry_bandwidth_package_id | default(omit, true) }}"
+    internet_address_type: "{{ tc_alb_application_entry_internet_address_type }}"
+    deletion_protection: "{{ tc_alb_application_entry_deletion_protection }}"
+    tags: "{{ tc_alb_application_entry_tags }}"
+  register: _tc_alb_application_entry_load_balancer
+
+- name: Resolve ALB load balancer ID
+  when: tc_alb_application_entry_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_alb_application_entry_load_balancer_id: >-
+      {{ tc_alb_application_entry_load_balancer_id
+         or (_tc_alb_application_entry_load_balancer.load_balancer.LoadBalancerId | default('')) }}
+
+- name: Reconcile ALB target groups and listeners
+  ansible.builtin.include_tasks: target_group.yml
+  loop: "{{ tc_alb_application_entry_target_groups }}"
+  loop_control:
+    loop_var: _tc_alb_target_group
+    label: "{{ _tc_alb_target_group.name }}"
+
+- name: Remove ALB load balancer with protection authorization
+  when: tc_alb_application_entry_state == 'absent'
+  susunola.tencentcloud.alb_load_balancer:
+    region: "{{ tc_alb_application_entry_region | default(omit, true) }}"
+    state: absent
+    load_balancer_id: "{{ tc_alb_application_entry_load_balancer_id }}"
+    deletion_protection: false
+
+- name: Publish ALB application entry result
+  when: tc_alb_application_entry_state == 'present'
+  ansible.builtin.set_fact:
+    tc_alb_application_entry_result:
+      load_balancer_id: "{{ _tc_alb_application_entry_load_balancer_id }}"
+      load_balancer: "{{ _tc_alb_application_entry_load_balancer.load_balancer }}"

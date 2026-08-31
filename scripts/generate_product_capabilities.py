@@ -27,6 +27,7 @@ ROLE_SERVICES = {
     "tc_redis_stack": "redis",
     "tc_launch": "cvm",
     "tc_clb_http": "clb",
+    "tc_alb_application_entry": "alb",
     "tc_observability_baseline": "cls",
     "tc_object_storage_baseline": "cos",
     "tc_serverless_application": "scf",

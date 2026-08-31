@@ -1,0 +1,17 @@
+---
+tc_alb_application_entry_state: present
+tc_alb_application_entry_region: ""
+tc_alb_application_entry_load_balancer_id: ""
+tc_alb_application_entry_name: ""
+tc_alb_application_entry_address_type: ""
+tc_alb_application_entry_vpc_id: ""
+tc_alb_application_entry_zone_mappings: []
+tc_alb_application_entry_ip_version: IPv4
+tc_alb_application_entry_charge_type: POSTPAID_BY_HOUR
+tc_alb_application_entry_bandwidth_package_id: ""
+tc_alb_application_entry_internet_address_type: EIP
+tc_alb_application_entry_deletion_protection: true
+tc_alb_application_entry_tags: {}
+
+# Items contain target-group parameters plus targets and listeners lists.
+tc_alb_application_entry_target_groups: []

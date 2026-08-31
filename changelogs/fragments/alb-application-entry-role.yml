@@ -1,0 +1,5 @@
+minor_changes:
+  - >-
+    solution roles - add ``tc_alb_application_entry`` for ALB instances,
+    target groups, exact backend sets and listeners with automatic forwarding,
+    exact-name adoption and dependency-ordered teardown.
