@@ -67,7 +67,7 @@ RETURN = r'''instance: {description: Effective TSE registry-engine metadata., ty
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
+import time
 
 
 def _load():
@@ -107,8 +107,17 @@ def find(module, client, models, p):
         if (p.get("instance_id") and value.get("InstanceId") == p["instance_id"]) or (not p.get("instance_id") and value.get("Name") == p.get("name")): matches.append(value)
     if len(matches) > 1: module.fail_json(msg="Multiple TSE engines matched; specify instance_id")
     return matches[0] if matches else None
-def _wait(module, client, models, p, states):
-    wait_for_state(module, lambda: str((find(module, client, models, p) or {}).get("Status", "")).lower(), states, timeout=module.params["waiter_timeout"], delay=module.params["waiter_delay"])
+def _wait(module, client, models, p, states=None, expected=None, absent=False):
+    deadline = time.time() + p["waiter_timeout"]
+    while True:
+        value = find(module, client, models, p)
+        if absent and value is None: return None
+        status = str((value or {}).get("Status", "")).lower()
+        matches = expected is None or all((value or {}).get(key) == wanted for key, wanted in expected.items())
+        if not absent and value is not None and (not states or status in states) and matches: return value
+        if status in ("failed", "create_failed", "update_failed", "delete_failed"): module.fail_json(msg="TSE engine operation failed", instance=value)
+        if time.time() >= deadline: module.fail_json(msg="Timed out waiting for TSE engine convergence", instance=value, expected=expected)
+        time.sleep(p["waiter_delay"])
 
 
 def run_module():
@@ -120,14 +129,15 @@ def run_module():
         if p["state"] == "absent":
             if not current: module.exit_json(changed=False, instance=None)
             diff = maybe_diff(module, current, None)
-            if not module.check_mode: module.sdk_call(client.DeleteEngine, delete_request(models, current["InstanceId"]))
+            if not module.check_mode:
+                p["instance_id"] = current["InstanceId"]; module.sdk_call(client.DeleteEngine, delete_request(models, current["InstanceId"])); _wait(module, client, models, p, absent=True)
             module.exit_json(changed=True, **(diff or {}), instance=None)
         if not current:
             missing = [k for k in ("name", "engine_type", "engine_version", "product_version") if p.get(k) is None]
             if missing: module.fail_json(msg="creation parameters are required for a new TSE engine", missing=missing)
             if p["engine_type"] == "apollo" and not p.get("apollo_environments"): module.fail_json(msg="apollo_environments is required for an Apollo engine")
             target = {"Name": p["name"], "Type": p["engine_type"], "Edition": p["product_version"], "SpecId": p.get("resource_spec"), "Replica": p.get("node_count"), "VpcId": p.get("vpc_id"), "StorageType": p.get("storage_type"), "StorageCapacity": p.get("storage_capacity")}; diff = maybe_diff(module, None, target)
-            if not module.check_mode: p["instance_id"] = module.sdk_call(client.CreateEngine, create_request(models, p)).InstanceId; _wait(module, client, models, p, ["running"]); current = find(module, client, models, p)
+            if not module.check_mode: p["instance_id"] = module.sdk_call(client.CreateEngine, create_request(models, p)).InstanceId; current = _wait(module, client, models, p, ["running"])
             else: current = target
             changed = True
         else: changed, diff = False, None
@@ -135,7 +145,7 @@ def run_module():
         if drift: module.fail_json(msg="TSE engine identity, topology, network and storage are immutable", immutable_drift=drift)
         if p.get("internet_access") is not None and bool(current.get("EnableInternet")) != p["internet_access"]:
             changed = True; diff = maybe_diff(module, {"EnableInternet": current.get("EnableInternet")}, {"EnableInternet": p["internet_access"]})
-            if not module.check_mode: module.sdk_call(client.UpdateEngineInternetAccess, internet_request(models, current["InstanceId"], current.get("Type") or p["engine_type"], p["internet_access"])); p["instance_id"] = current["InstanceId"]; _wait(module, client, models, p, ["running"]); current = find(module, client, models, p)
+            if not module.check_mode: module.sdk_call(client.UpdateEngineInternetAccess, internet_request(models, current["InstanceId"], current.get("Type") or p["engine_type"], p["internet_access"])); p["instance_id"] = current["InstanceId"]; current = _wait(module, client, models, p, ["running"], {"EnableInternet":p["internet_access"]})
         module.exit_json(changed=changed, **(diff or {}), instance=current)
     except Exception as exc: module.fail_json(**sdk_error_payload(exc))
 
