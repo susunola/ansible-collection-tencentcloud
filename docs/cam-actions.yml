@@ -2415,6 +2415,11 @@ modules:
   - DeleteGovernanceAliases
   - DescribeGovernanceAliases
   - ModifyGovernanceAlias
+  tse_governance_instance:
+  - CreateGovernanceInstances
+  - DeleteGovernanceInstances
+  - DescribeGovernanceInstances
+  - ModifyGovernanceInstances
   tse_governance_lane_group:
   - CreateGovernanceLaneGroups
   - DeleteGovernanceLaneGroups

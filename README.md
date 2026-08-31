@@ -398,6 +398,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tse_gateway_waf_domains` | Manage Tencent Cloud TSE gateway WAF domains |
 | `tse_gateway_waf_protection` | Manage Tencent Cloud TSE gateway WAF protection |
 | `tse_governance_alias` | Manage a Tencent Cloud TSE governance service alias |
+| `tse_governance_instance` | Manage a Tencent Cloud TSE governance service instance |
 | `tse_governance_lane_group` | Manage a Tencent Cloud TSE governance lane group |
 | `tse_governance_namespace` | Manage a Tencent Cloud TSE governance namespace |
 | `tse_governance_service` | Manage a Tencent Cloud TSE governance service |

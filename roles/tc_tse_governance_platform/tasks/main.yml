@@ -6,6 +6,7 @@
       - tc_tse_governance_platform_engine is mapping
       - tc_tse_governance_platform_namespaces is sequence
       - tc_tse_governance_platform_services is sequence
+      - tc_tse_governance_platform_instances is sequence
       - tc_tse_governance_platform_aliases is sequence
       - tc_tse_governance_platform_lane_groups is sequence
       - tc_tse_governance_platform_config_groups is sequence
@@ -40,6 +41,14 @@
   loop: "{{ tc_tse_governance_platform_services }}"
   loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.name | default('unnamed') }}"}
   register: _tc_tse_governance_platform_services
+
+- name: Reconcile TSE governance service instances
+  when: tc_tse_governance_platform_state == 'present'
+  susunola.tencentcloud.tse_governance_instance:
+  args: "{{ item | combine({'instance_id': _tc_tse_governance_platform_instance_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_governance_platform_instances }}"
+  loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.service | default('?') }}/{{ item.host | default('?') }}:{{ item.port | default('?') }}"}
+  register: _tc_tse_governance_platform_instances
 
 - name: Reconcile TSE governance service aliases
   when: tc_tse_governance_platform_state == 'present'
@@ -80,6 +89,7 @@
       engine: "{{ _tc_tse_governance_platform_engine.instance }}"
       namespaces: "{{ _tc_tse_governance_platform_namespaces.results | default([]) | map(attribute='namespace') | list }}"
       services: "{{ _tc_tse_governance_platform_services.results | default([]) | map(attribute='service') | list }}"
+      instances: "{{ _tc_tse_governance_platform_instances.results | default([]) | map(attribute='governance_instance') | list }}"
       aliases: "{{ _tc_tse_governance_platform_aliases.results | default([]) | map(attribute='alias_info') | list }}"
       lane_groups: "{{ _tc_tse_governance_platform_lane_groups.results | default([]) | map(attribute='lane_group') | list }}"
       config_groups: "{{ _tc_tse_governance_platform_config_groups.results | default([]) | map(attribute='group') | list }}"
@@ -123,6 +133,19 @@
     state: absent
   loop: "{{ tc_tse_governance_platform_lane_groups | reverse | list }}"
   loop_control: {label: "{{ item.name | default(item.lane_group_id | default('unnamed')) }}"}
+
+- name: Remove TSE governance service instances
+  when: tc_tse_governance_platform_state == 'absent'
+  susunola.tencentcloud.tse_governance_instance:
+    instance_id: "{{ tc_tse_governance_platform_engine.instance_id }}"
+    governance_instance_id: "{{ item.governance_instance_id | default(omit) }}"
+    namespace: "{{ item.namespace }}"
+    service: "{{ item.service }}"
+    host: "{{ item.host }}"
+    port: "{{ item.port }}"
+    state: absent
+  loop: "{{ tc_tse_governance_platform_instances | reverse | list }}"
+  loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.service | default('?') }}/{{ item.host | default('?') }}:{{ item.port | default('?') }}"}
 
 - name: Remove TSE governance services
   when: tc_tse_governance_platform_state == 'absent'

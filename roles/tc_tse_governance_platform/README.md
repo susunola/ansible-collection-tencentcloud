@@ -19,6 +19,8 @@ explicit engine ID and removes dependent resources in reverse order.
           - name: production
         tc_tse_governance_platform_services:
           - {namespace: production, name: orders}
+        tc_tse_governance_platform_instances:
+          - {namespace: production, service: orders, host: 10.0.0.30, port: 8080, protocol: http, weight: 100}
         tc_tse_governance_platform_aliases:
           - {alias_namespace: shared, alias: orders-api, namespace: production, service: orders}
         tc_tse_governance_platform_lane_groups:

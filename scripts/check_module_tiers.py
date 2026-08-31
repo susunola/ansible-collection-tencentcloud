@@ -273,6 +273,7 @@ CORE_MODULES = {
     "tse_sre_instance",
     "tse_governance_namespace",
     "tse_governance_alias",
+    "tse_governance_instance",
     "tse_governance_lane_group",
     "tse_governance_service",
     "tse_config_file_group",
