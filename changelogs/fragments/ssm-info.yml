@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``ssm_secret_info``, ``ssm_secret_version_info`` and ``ssm_rotation_info`` with bounded metadata discovery and opt-in sensitive value retrieval.

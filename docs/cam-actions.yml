@@ -1726,6 +1726,9 @@ modules:
   ssm_rotation:
   - DescribeRotationDetail
   - UpdateRotationStatus
+  ssm_rotation_info:
+  - DescribeRotationDetail
+  - DescribeRotationHistory
   ssm_secret:
   - CreateSecret
   - DeleteSecret
@@ -1734,11 +1737,17 @@ modules:
   - EnableSecret
   - RestoreSecret
   - UpdateDescription
+  ssm_secret_info:
+  - DescribeSecret
+  - ListSecrets
   ssm_secret_version:
   - DeleteSecretVersion
   - GetSecretValue
   - ListSecretVersionIds
   - PutSecretValue
+  ssm_secret_version_info:
+  - GetSecretValue
+  - ListSecretVersionIds
   subnet:
   - AttachResourcesTag
   - CreateSubnet

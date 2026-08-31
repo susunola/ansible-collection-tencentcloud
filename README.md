@@ -562,6 +562,9 @@ Read-only `_info` modules (return `changed=false`):
 | `ssa_check_config_asset_info` | Gather information about Tencent Cloud SSA check config assets |
 | `ssl_certificate_info` | Gather information about Tencent Cloud SSL certificates |
 | `sslpod_domain_info` | Gather information about Tencent Cloud SSLPOD domains |
+| `ssm_rotation_info` | Gather Tencent Cloud Secrets Manager rotation state |
+| `ssm_secret_info` | Gather Tencent Cloud Secrets Manager metadata |
+| `ssm_secret_version_info` | Gather Tencent Cloud Secrets Manager versions |
 | `subnet_info` | Gather information about Tencent Cloud subnets |
 | `svp_saving_plan_coverage_info` | Gather information about Tencent Cloud SVP saving plan coverages |
 | `tat_command_info` | Gather information about Tencent Cloud TAT commands |

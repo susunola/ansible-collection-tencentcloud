@@ -447,8 +447,11 @@ action_groups:
     - sslpod_domain_info
     - ssm_parameter
     - ssm_rotation
+    - ssm_rotation_info
     - ssm_secret
+    - ssm_secret_info
     - ssm_secret_version
+    - ssm_secret_version_info
     - subnet
     - subnet_info
     - svp_saving_plan_coverage_info
