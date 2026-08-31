@@ -377,6 +377,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tse_config_file` | Manage a Tencent Cloud TSE configuration file |
 | `tse_config_file_group` | Manage a Tencent Cloud TSE configuration file group |
 | `tse_gateway_consumer` | Manage a Tencent Cloud TSE API gateway consumer |
+| `tse_gateway_public_network` | Manage a Tencent Cloud TSE gateway public network |
 | `tse_gateway_rate_limit` | Manage Tencent Cloud TSE service or route rate limiting |
 | `tse_gateway_route` | Manage a Tencent Cloud TSE gateway route |
 | `tse_gateway_service` | Manage a Tencent Cloud TSE gateway upstream service |

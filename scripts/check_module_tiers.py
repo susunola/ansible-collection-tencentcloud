@@ -280,6 +280,7 @@ CORE_MODULES = {
     "tse_gateway_route",
     "tse_gateway_consumer",
     "tse_gateway_rate_limit",
+    "tse_gateway_public_network",
     "vdb_instance",
     "tdcpg_cluster",
     "tdcpg_account",

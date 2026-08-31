@@ -586,6 +586,7 @@ action_groups:
     - tse_config_file
     - tse_config_file_group
     - tse_gateway_consumer
+    - tse_gateway_public_network
     - tse_gateway_rate_limit
     - tse_gateway_route
     - tse_gateway_service

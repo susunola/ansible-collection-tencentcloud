@@ -4,3 +4,4 @@ minor_changes:
   - Add ``tse_gateway_route`` for instance-unique HTTP and layer-4 route lifecycle management.
   - Add ``tc_tse_api_gateway`` to compose gateway, upstream service and route lifecycles.
   - Add ``tse_gateway_consumer`` and scope-aware ``tse_gateway_rate_limit`` governance modules.
+  - Add ``tse_gateway_public_network`` with asynchronous CLB lifecycle, immutable zone topology and exact access control.

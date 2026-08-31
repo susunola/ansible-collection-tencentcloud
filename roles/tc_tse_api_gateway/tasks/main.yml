@@ -8,6 +8,7 @@
       - tc_tse_api_gateway_routes is sequence
       - tc_tse_api_gateway_consumers is sequence
       - tc_tse_api_gateway_rate_limits is sequence
+      - tc_tse_api_gateway_public_networks is sequence
       - tc_tse_api_gateway_gateway.gateway_id | default(tc_tse_api_gateway_gateway.name | default('')) | length > 0
       - tc_tse_api_gateway_state == 'present' or tc_tse_api_gateway_allow_destroy | bool
     fail_msg: TSE API gateway requires gateway_id or name; destruction requires tc_tse_api_gateway_allow_destroy=true.
@@ -30,6 +31,14 @@
   loop: "{{ tc_tse_api_gateway_services }}"
   loop_control: {label: "{{ item.name | default('unnamed') }}"}
   register: _tc_tse_api_gateway_services
+
+- name: Reconcile TSE API gateway public networks
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_public_network:
+  args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_api_gateway_public_networks }}"
+  loop_control: {label: "{{ item.group_id | default('unnamed') }}"}
+  register: _tc_tse_api_gateway_public_networks_result
 
 - name: Initialize resolved TSE API gateway routes
   when: tc_tse_api_gateway_state == 'present'
@@ -83,6 +92,7 @@
       routes: "{{ _tc_tse_api_gateway_routes_result.results | default([]) | map(attribute='route') | list }}"
       consumers: "{{ _tc_tse_api_gateway_consumers_result.results | default([]) | map(attribute='consumer') | list }}"
       rate_limits: "{{ _tc_tse_api_gateway_rate_limits_result.results | default([]) | map(attribute='rate_limit') | list }}"
+      public_networks: "{{ _tc_tse_api_gateway_public_networks_result.results | default([]) | map(attribute='public_network') | list }}"
 
 - name: Require gateway ID for deterministic teardown
   when:
@@ -122,6 +132,17 @@
   susunola.tencentcloud.tse_gateway_service:
   args: "{{ item | combine({'gateway_id': tc_tse_api_gateway_gateway.gateway_id, 'state': 'absent', 'delete_routes': true}) }}"
   loop: "{{ tc_tse_api_gateway_services | reverse | list }}"
+
+- name: Remove TSE API gateway public networks
+  when: tc_tse_api_gateway_state == 'absent'
+  susunola.tencentcloud.tse_gateway_public_network:
+    gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
+    group_id: "{{ item.group_id }}"
+    network_id: "{{ item.network_id | default(omit) }}"
+    address_version: "{{ item.address_version | default('IPV4') }}"
+    vip: "{{ item.vip | default(omit) }}"
+    state: absent
+  loop: "{{ tc_tse_api_gateway_public_networks | reverse | list }}"
 
 - name: Remove TSE cloud-native API gateway
   when: tc_tse_api_gateway_state == 'absent'

@@ -2293,6 +2293,12 @@ modules:
   - DescribeCloudNativeAPIGatewayConsumer
   - DescribeCloudNativeAPIGatewayConsumerList
   - ModifyCloudNativeAPIGatewayConsumer
+  tse_gateway_public_network:
+  - CreateCloudNativeAPIGatewayPublicNetwork
+  - DeleteCloudNativeAPIGatewayPublicNetwork
+  - DescribePublicNetwork
+  - ModifyNetworkAccessStrategy
+  - ModifyNetworkBasicInfo
   tse_gateway_rate_limit:
   - CreateCloudNativeAPIGatewayRouteRateLimit
   - CreateCloudNativeAPIGatewayServiceRateLimit
