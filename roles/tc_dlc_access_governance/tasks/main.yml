@@ -11,10 +11,19 @@
             | list | length == tc_dlc_access_governance_work_groups | length)
     fail_msg: DLC access-governance teardown requires work_group_id for every declared group.
 
-- name: Initialize DLC work-group identity map
+- name: Initialize DLC managed-resource identity maps
   when: tc_dlc_access_governance_state == 'present'
   ansible.builtin.set_fact:
+    _tc_dlc_data_engine_ids: {}
     _tc_dlc_work_group_ids: {}
+
+- name: Reconcile DLC data engines before access policies
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.include_tasks: data_engine.yml
+  loop: "{{ tc_dlc_access_governance_data_engines }}"
+  loop_control:
+    loop_var: _tc_dlc_engine
+    label: "{{ _tc_dlc_engine.name }}"
 
 - name: Reconcile DLC work groups, members and policies
   when: tc_dlc_access_governance_state == 'present'
@@ -29,7 +38,7 @@
     - tc_dlc_access_governance_state == 'absent'
     - not tc_dlc_access_governance_allow_destroy | bool
   ansible.builtin.fail:
-    msg: Set tc_dlc_access_governance_allow_destroy=true to authorize policy, membership and work-group deletion.
+    msg: Set tc_dlc_access_governance_allow_destroy=true to authorize policy, membership, work-group and data-engine deletion.
 
 - name: Remove DLC policies, members and work groups
   when:
@@ -41,8 +50,20 @@
     loop_var: _tc_dlc_group
     label: "{{ _tc_dlc_group.work_group.work_group_id }}"
 
+- name: Remove DLC data engines after access policies and groups
+  when:
+    - tc_dlc_access_governance_state == 'absent'
+    - tc_dlc_access_governance_allow_destroy | bool
+  susunola.tencentcloud.dlc_data_engine:
+  args: "{{ _tc_dlc_engine | combine({'state': 'absent', 'allow_delete': true}) }}"
+  loop: "{{ tc_dlc_access_governance_data_engines | reverse | list }}"
+  loop_control:
+    loop_var: _tc_dlc_engine
+    label: "{{ _tc_dlc_engine.name }}"
+
 - name: Publish DLC access-governance result
   when: tc_dlc_access_governance_state == 'present'
   ansible.builtin.set_fact:
     tc_dlc_access_governance_result:
+      data_engine_ids: "{{ _tc_dlc_data_engine_ids }}"
       work_group_ids: "{{ _tc_dlc_work_group_ids }}"

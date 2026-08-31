@@ -1,0 +1,11 @@
+---
+- name: Reconcile DLC data engine
+  susunola.tencentcloud.dlc_data_engine:
+  args: "{{ _tc_dlc_engine | combine({'state': _tc_dlc_engine.state | default('present')}) }}"
+  register: _tc_dlc_engine_result
+
+- name: Record DLC data-engine identity
+  ansible.builtin.set_fact:
+    _tc_dlc_data_engine_ids: >-
+      {{ _tc_dlc_data_engine_ids
+         | combine({_tc_dlc_engine.name: _tc_dlc_engine_result.data_engine_id}) }}
