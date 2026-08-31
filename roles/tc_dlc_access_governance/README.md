@@ -49,13 +49,20 @@ ignored when comparing desired access, so repeated runs remain idempotent.
                 Table: orders
                 Operation: SELECT
                 PolicyType: TABLE
+        tc_dlc_access_governance_data_mask_strategies:
+          - name: mask-customer-phone
+            strategy_type: MASK_SHOW_LAST_4
+            description: Reveal only the final four digits
+            groups:
+              - {WorkGroupId: 10042, StrategyType: MASK_SHOW_LAST_4}
 ```
 
 The resulting endpoint IDs, engine IDs, database names and user IDs are published in
 `tc_dlc_access_governance_result.vpc_endpoint_ids` and
 `tc_dlc_access_governance_result.data_engine_ids` and
 `tc_dlc_access_governance_result.database_names` and
-`tc_dlc_access_governance_result.user_ids`.
+`tc_dlc_access_governance_result.user_ids`. Mask strategy IDs are available in
+`tc_dlc_access_governance_result.data_mask_strategy_ids`.
 
 Teardown requires `work_group_id` for every group, `endpoint_id` for every VPC
 connection and `tc_dlc_access_governance_allow_destroy: true`. It removes policies
@@ -67,3 +74,6 @@ non-empty database deletion additionally requires
 Direct-user policies are exact-set managed when `policies` is declared. During
 teardown the role removes direct policies before deleting each user. Work-group
 membership remains managed from each work group's `members` list.
+
+Masking strategies are created after their user and work-group subjects. Teardown
+requires an exact `strategy_id` and removes masking strategies before those subjects.

@@ -454,7 +454,9 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert main.index("include_tasks: data_engine.yml") < main.index("include_tasks: work_group.yml")
     assert main.index("susunola.tencentcloud.dlc_database") < main.index("include_tasks: work_group.yml")
     assert main.index("include_tasks: user.yml") < main.index("include_tasks: work_group.yml")
+    assert main.index("include_tasks: work_group.yml") < main.index("susunola.tencentcloud.dlc_data_mask_strategy")
     assert main.index("include_tasks: teardown_work_group.yml") < main.index("susunola.tencentcloud.dlc_data_engine")
+    assert main.rindex("susunola.tencentcloud.dlc_data_mask_strategy") < main.index("include_tasks: teardown_work_group.yml")
     assert main.index("include_tasks: teardown_work_group.yml") < main.index("include_tasks: teardown_user.yml")
     assert main.index("include_tasks: teardown_user.yml") < main.rindex("susunola.tencentcloud.dlc_database")
     assert main.rindex("susunola.tencentcloud.dlc_database") < main.index("susunola.tencentcloud.dlc_data_engine")
@@ -465,6 +467,7 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert "tc_dlc_access_governance_data_engines: []" in defaults
     assert "tc_dlc_access_governance_databases: []" in defaults
     assert "tc_dlc_access_governance_users: []" in defaults
+    assert "tc_dlc_access_governance_data_mask_strategies: []" in defaults
     teardown_user = (ROOT / "roles" / "tc_dlc_access_governance" / "tasks" / "teardown_user.yml").read_text(encoding="utf-8")
     assert_order(teardown_user, "Remove DLC direct-user policies before user", "Remove unbound DLC user")
 

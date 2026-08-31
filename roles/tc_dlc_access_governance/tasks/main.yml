@@ -20,7 +20,12 @@
             | map(attribute='user')
             | selectattr('user_id', 'defined')
             | list | length == tc_dlc_access_governance_users | length)
-    fail_msg: DLC teardown requires work_group_id, user_id and endpoint_id identities for declared resources.
+      - >-
+        tc_dlc_access_governance_state == 'present'
+        or (tc_dlc_access_governance_data_mask_strategies
+            | selectattr('strategy_id', 'defined')
+            | list | length == tc_dlc_access_governance_data_mask_strategies | length)
+    fail_msg: DLC teardown requires exact work_group_id, user_id, strategy_id and endpoint_id identities for declared resources.
 
 - name: Initialize DLC managed-resource identity maps
   when: tc_dlc_access_governance_state == 'present'
@@ -30,6 +35,7 @@
     _tc_dlc_database_names: []
     _tc_dlc_user_ids: []
     _tc_dlc_work_group_ids: {}
+    _tc_dlc_data_mask_strategy_ids: {}
 
 - name: Reconcile DLC VPC connections before compute engines
   when: tc_dlc_access_governance_state == 'present'
@@ -83,14 +89,42 @@
     loop_var: _tc_dlc_group
     label: "{{ _tc_dlc_group.work_group.name }}"
 
+- name: Reconcile DLC data masking after users and work groups
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_data_mask_strategy:
+  args: "{{ _tc_dlc_mask | combine({'state': 'present'}) }}"
+  loop: "{{ tc_dlc_access_governance_data_mask_strategies }}"
+  loop_control:
+    loop_var: _tc_dlc_mask
+    label: "{{ _tc_dlc_mask.name }}"
+  register: _tc_dlc_mask_results
+
+- name: Record DLC data-mask strategy identities
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dlc_data_mask_strategy_ids: >-
+      {{ dict((tc_dlc_access_governance_data_mask_strategies | map(attribute='name') | list)
+              | zip(_tc_dlc_mask_results.results | map(attribute='strategy_id') | list)) }}
+
 - name: Require explicit authorization before DLC governance teardown
   when:
     - tc_dlc_access_governance_state == 'absent'
     - not tc_dlc_access_governance_allow_destroy | bool
   ansible.builtin.fail:
-    msg: Set tc_dlc_access_governance_allow_destroy=true to authorize policy, membership, work-group and data-engine deletion.
+    msg: Set tc_dlc_access_governance_allow_destroy=true to authorize masking, policy, identity, database, engine and network deletion.
 
-- name: Remove DLC policies, members and work groups
+- name: Remove DLC data masking before referenced subjects
+  when:
+    - tc_dlc_access_governance_state == 'absent'
+    - tc_dlc_access_governance_allow_destroy | bool
+  susunola.tencentcloud.dlc_data_mask_strategy:
+  args: "{{ _tc_dlc_mask | combine({'state': 'absent', 'allow_delete': true}) }}"
+  loop: "{{ tc_dlc_access_governance_data_mask_strategies | reverse | list }}"
+  loop_control:
+    loop_var: _tc_dlc_mask
+    label: "{{ _tc_dlc_mask.strategy_id }}"
+
+- name: Remove DLC policies, members and work groups after masking strategies
   when:
     - tc_dlc_access_governance_state == 'absent'
     - tc_dlc_access_governance_allow_destroy | bool
@@ -152,3 +186,4 @@
       database_names: "{{ _tc_dlc_database_names }}"
       user_ids: "{{ _tc_dlc_user_ids }}"
       work_group_ids: "{{ _tc_dlc_work_group_ids }}"
+      data_mask_strategy_ids: "{{ _tc_dlc_data_mask_strategy_ids }}"
