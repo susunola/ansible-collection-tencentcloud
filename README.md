@@ -318,6 +318,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tdmysql_account` | Manage Tencent Cloud TDSQL MySQL accounts |
 | `tdmysql_account_privilege` | Manage scoped Tencent Cloud TDSQL MySQL account privileges |
 | `tdmysql_db_instance` | Manage Tencent Cloud TDMysql instances |
+| `tdmysql_parameter` | Manage Tencent Cloud TDSQL MySQL instance parameters |
 | `tem_application` | Manage Tencent Cloud TEM applications |
 | `tem_application_deployment` | Deploy Tencent Cloud TEM application versions |
 | `tem_application_service` | Manage Tencent Cloud TEM application access services |
@@ -575,6 +576,7 @@ Read-only `_info` modules (return `changed=false`):
 | `tdmysql_account_info` | Gather Tencent Cloud TDSQL MySQL accounts |
 | `tdmysql_database_object_info` | Gather Tencent Cloud TDSQL MySQL databases and objects |
 | `tdmysql_db_instance_info` | Gather information about Tencent Cloud TDMYSQL db instances |
+| `tdmysql_parameter_info` | Gather Tencent Cloud TDSQL MySQL instance parameters |
 | `tem_application_info` | Gather information about Tencent Cloud TEM applications |
 | `teo_function_info` | Gather information about Tencent Cloud TEO functions |
 | `thpc_cluster_info` | Gather information about Tencent Cloud THPC clusters |

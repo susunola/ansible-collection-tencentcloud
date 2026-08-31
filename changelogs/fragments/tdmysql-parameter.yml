@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``tdmysql_parameter`` and ``tdmysql_parameter_info`` with partial-map reconciliation, constraints, restart reporting and asynchronous task waiting.

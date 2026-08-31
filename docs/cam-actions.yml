@@ -1954,6 +1954,10 @@ modules:
   - UpgradeInstance
   tdmysql_db_instance_info:
   - DescribeDBInstances
+  tdmysql_parameter:
+  - DescribeDBParameters
+  - DescribeFlow
+  - ModifyDBParameters
   tem_application:
   - CreateApplication
   - DeleteApplication
