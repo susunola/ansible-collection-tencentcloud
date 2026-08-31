@@ -1,0 +1,7 @@
+---
+tc_cdwpg_analytics_platform_state: present
+tc_cdwpg_analytics_platform_instance: {}
+tc_cdwpg_analytics_platform_parameters: []
+tc_cdwpg_analytics_platform_hba_rules: []
+tc_cdwpg_analytics_platform_allow_empty_hba: false
+tc_cdwpg_analytics_platform_allow_destroy: false

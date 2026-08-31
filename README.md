@@ -60,6 +60,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cdwdoris_workload_group` | Manage Tencent Cloud CDW Doris workload groups |
 | `cdwpg_hba_config` | Manage Tencent Cloud CDW PostgreSQL HBA rules |
 | `cdwpg_instance` | Manage Tencent Cloud CDW PostgreSQL instances |
+| `cdwpg_parameter` | Manage a Tencent Cloud CDW PostgreSQL parameter |
 | `cfs_auto_snapshot_policy` | Manage Tencent Cloud CFS automatic snapshot policies |
 | `cfs_file_system` | Manage Tencent Cloud CFS file systems |
 | `cfs_permission_group` | Manage Tencent Cloud CFS permission groups |

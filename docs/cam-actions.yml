@@ -341,6 +341,9 @@ modules:
   - DescribeInstances
   - DestroyInstanceByApi
   - ModifyInstance
+  cdwpg_parameter:
+  - DescribeDBParams
+  - ModifyDBParameters
   cdz_cloud_dedicated_zone_host_info:
   - DescribeCloudDedicatedZoneHosts
   cetcd_etcd_instance_info:

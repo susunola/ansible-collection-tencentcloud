@@ -1,0 +1,60 @@
+---
+- name: Validate CDW PostgreSQL analytics platform inputs
+  ansible.builtin.assert:
+    that:
+      - tc_cdwpg_analytics_platform_state in ['present', 'absent']
+      - tc_cdwpg_analytics_platform_instance | length > 0
+      - tc_cdwpg_analytics_platform_state != 'absent' or tc_cdwpg_analytics_platform_instance.instance_id is defined
+    fail_msg: CDW PostgreSQL platform requires instance creation fields or an existing instance_id.
+
+- name: Reconcile CDW PostgreSQL instance
+  when: tc_cdwpg_analytics_platform_state == 'present'
+  susunola.tencentcloud.cdwpg_instance:
+  args: "{{ tc_cdwpg_analytics_platform_instance | combine({'state': 'present'}) }}"
+  register: _tc_cdwpg_platform_instance
+
+- name: Reconcile CDW PostgreSQL parameters
+  when:
+    - tc_cdwpg_analytics_platform_state == 'present'
+    - _tc_cdwpg_platform_instance.instance.InstanceId is defined or _tc_cdwpg_platform_instance.instance.InstanceID is defined
+    - tc_cdwpg_analytics_platform_hba_rules | length > 0 or tc_cdwpg_analytics_platform_allow_empty_hba | bool
+  susunola.tencentcloud.cdwpg_parameter:
+  args: "{{ _tc_cdwpg_parameter | combine({'instance_id': _tc_cdwpg_platform_instance.instance.InstanceId | default(_tc_cdwpg_platform_instance.instance.InstanceID)}) }}"
+  loop: "{{ tc_cdwpg_analytics_platform_parameters }}"
+  loop_control:
+    loop_var: _tc_cdwpg_parameter
+    label: "{{ _tc_cdwpg_parameter.node_type | default('?') }}/{{ _tc_cdwpg_parameter.name | default('unnamed') }}"
+  register: _tc_cdwpg_platform_parameters
+
+- name: Reconcile ordered CDW PostgreSQL HBA rules
+  when:
+    - tc_cdwpg_analytics_platform_state == 'present'
+    - _tc_cdwpg_platform_instance.instance.InstanceId is defined or _tc_cdwpg_platform_instance.instance.InstanceID is defined
+  susunola.tencentcloud.cdwpg_hba_config:
+    instance_id: "{{ _tc_cdwpg_platform_instance.instance.InstanceId | default(_tc_cdwpg_platform_instance.instance.InstanceID) }}"
+    rules: "{{ tc_cdwpg_analytics_platform_hba_rules }}"
+    allow_empty: "{{ tc_cdwpg_analytics_platform_allow_empty_hba }}"
+  register: _tc_cdwpg_platform_hba
+
+- name: Publish CDW PostgreSQL platform result
+  when: tc_cdwpg_analytics_platform_state == 'present'
+  ansible.builtin.set_fact:
+    tc_cdwpg_analytics_platform_result:
+      instance: "{{ _tc_cdwpg_platform_instance.instance }}"
+      parameters: "{{ _tc_cdwpg_platform_parameters.results | default([]) | map(attribute='parameter') | list }}"
+      restart_required: "{{ _tc_cdwpg_platform_parameters.results | default([]) | selectattr('restart_required', 'equalto', true) | list | length > 0 }}"
+      hba_rules: "{{ _tc_cdwpg_platform_hba.rules | default([]) }}"
+
+- name: Require explicit authorization before CDW PostgreSQL teardown
+  when:
+    - tc_cdwpg_analytics_platform_state == 'absent'
+    - not tc_cdwpg_analytics_platform_allow_destroy | bool
+  ansible.builtin.fail:
+    msg: Set tc_cdwpg_analytics_platform_allow_destroy=true to authorize CDW PostgreSQL instance destruction.
+
+- name: Destroy CDW PostgreSQL instance
+  when:
+    - tc_cdwpg_analytics_platform_state == 'absent'
+    - tc_cdwpg_analytics_platform_allow_destroy | bool
+  susunola.tencentcloud.cdwpg_instance:
+  args: "{{ tc_cdwpg_analytics_platform_instance | combine({'state': 'absent'}) }}"

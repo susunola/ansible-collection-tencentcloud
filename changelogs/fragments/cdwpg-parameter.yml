@@ -1,0 +1,3 @@
+minor_changes:
+  - Add idempotent CN and DN parameter management for CDW PostgreSQL, including default restoration and restart metadata.
+  - Add the tc_cdwpg_analytics_platform role for ordered instance, parameter and HBA lifecycle management.

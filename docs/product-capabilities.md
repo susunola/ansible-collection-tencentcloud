@@ -6,9 +6,9 @@ This matrix is generated from module SDK imports and role metadata. It is a
 navigation and gap-discovery aid, not a claim that every Tencent Cloud API is covered.
 
 - Products/services: **203**
-- Write modules: **318**
+- Write modules: **319**
 - Information modules: **210**
-- Solution roles: **51**
+- Solution roles: **52**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -57,7 +57,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `cds` | discovery-only | 0 | 1 | — | — |
 | `cdwch` | solution | 3 | 1 | `tc_clickhouse_platform` | `cdwch_backup_config`, `cdwch_instance`, `cdwch_parameter` |
 | `cdwdoris` | solution | 4 | 1 | `tc_doris_analytics_platform` | `cdwdoris_cooldown_policy`, `cdwdoris_instance`, `cdwdoris_user_workload_group`, `cdwdoris_workload_group` |
-| `cdwpg` | managed | 2 | 1 | — | `cdwpg_hba_config`, `cdwpg_instance` |
+| `cdwpg` | solution | 3 | 1 | `tc_cdwpg_analytics_platform` | `cdwpg_hba_config`, `cdwpg_instance`, `cdwpg_parameter` |
 | `cdz` | discovery-only | 0 | 1 | — | — |
 | `cetcd` | discovery-only | 0 | 1 | — | — |
 | `cfg` | discovery-only | 0 | 1 | — | — |

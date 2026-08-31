@@ -93,6 +93,7 @@ action_groups:
     - cdwpg_account_info
     - cdwpg_hba_config
     - cdwpg_instance
+    - cdwpg_parameter
     - cdz_cloud_dedicated_zone_host_info
     - cetcd_etcd_instance_info
     - cfg_action_library_info
