@@ -219,6 +219,7 @@ action_groups:
     - dcdb_instance_info
     - dcdb_security_config
     - dlc_data_engine
+    - dlc_data_mask_strategy
     - dlc_database
     - dlc_task_info
     - dlc_user

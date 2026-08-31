@@ -818,6 +818,11 @@ modules:
   - ModifyDataEngineDescription
   - SuspendResumeDataEngine
   - UpdateDataEngine
+  dlc_data_mask_strategy:
+  - CreateDataMaskStrategy
+  - DeleteDataMaskStrategy
+  - DescribeDataMaskStrategies
+  - UpdateDataMaskStrategy
   dlc_database:
   - CreateMetaDatabase
   - DeleteMetaDatabase

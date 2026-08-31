@@ -166,6 +166,7 @@ CORE_MODULES = {
     "dlc_work_group_policy",
     "dlc_data_engine",
     "dlc_database",
+    "dlc_data_mask_strategy",
     "dlc_user_vpc_connection",
     "dlc_user",
     "dlc_user_policy",
