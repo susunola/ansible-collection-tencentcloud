@@ -13,3 +13,4 @@ minor_changes:
   - Add read-backed ``tse_gateway_waf_protection`` and exact-set ``tse_gateway_waf_domains`` management.
   - Add read-backed, delta-based ``tse_gateway_model_api_group_auth`` reconciliation.
   - Add complete ``tse_gateway_model_service`` and ``tse_gateway_model_api`` lifecycles for AI gateway workloads.
+  - Resolve AI gateway secret keys and model services by name inside ``tc_tse_api_gateway``.

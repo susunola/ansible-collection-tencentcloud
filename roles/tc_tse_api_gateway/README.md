@@ -47,19 +47,19 @@ route creation. Guarded teardown removes routes and services before the gateway.
             resource_type: Consumer
         tc_tse_api_gateway_model_services:
           - name: openai-primary
+            secret_key_names: [mobile-api-key]
             config:
               ServiceType: LLMService
               ModelProvider: OpenAI
               ModelProtocol: OpenAI/v1
               ModelSelector: Specify
-              SecretKeyIds: [secret-key-xxxxxxxx]
               DefaultModel: gpt-4.1
         tc_tse_api_gateway_model_apis:
           - name: chat-completions
+            model_service_names: [openai-primary]
             config:
               SceneType: Chat
               RequestProtocol: OpenAI
-              ListModelServiceId: [model-service-xxxxxxxx]
               BasePath: /v1
         tc_tse_api_gateway_certificates:
           - name: public-api
@@ -90,3 +90,7 @@ route creation. Guarded teardown removes routes and services before the gateway.
             restriction_type: whiteList
             addresses: [10.0.0.0/8]
 ```
+
+`secret_key_names` and `model_service_names` are role-only convenience fields.
+They are resolved from resources created in the same role run. Direct
+`config.SecretKeyIds` and `config.ListModelServiceId` remain supported.

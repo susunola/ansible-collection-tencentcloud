@@ -120,19 +120,93 @@
   register: _tc_tse_api_gateway_secret_keys_result
   no_log: "{{ item.secret_value is defined or item.reveal_secret_value | default(false) | bool }}"
 
+- name: Initialize resolved TSE AI gateway model services
+  when: tc_tse_api_gateway_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_tse_api_gateway_resolved_model_services: []
+
+- name: Resolve TSE AI gateway model service secret key names
+  when: tc_tse_api_gateway_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_tse_api_gateway_resolved_model_services: >-
+      {{ _tc_tse_api_gateway_resolved_model_services + [
+        (item | dict2items | rejectattr('key', 'equalto', 'secret_key_names') | items2dict)
+        | combine(
+          {'config': (item.config | default({})) | combine({
+            'SecretKeyIds': _tc_tse_api_gateway_secret_keys_result.results
+            | selectattr('secret_key.Name', 'in', item.secret_key_names)
+            | map(attribute='secret_key.SecretKeyId') | list
+          })} if item.secret_key_names is defined else {}
+        )
+      ] }}
+  loop: "{{ tc_tse_api_gateway_model_services }}"
+  loop_control: {label: "{{ item.name | default('unnamed') }}"}
+
+- name: Validate TSE AI gateway model service secret key references
+  when:
+    - tc_tse_api_gateway_state == 'present'
+    - item.secret_key_names is defined
+  ansible.builtin.assert:
+    that:
+      - >-
+        item.secret_key_names | difference(
+          _tc_tse_api_gateway_secret_keys_result.results
+          | map(attribute='secret_key.Name') | list
+        ) | length == 0
+    fail_msg: "Model service {{ item.name | default('unnamed') }} references an unknown secret key name."
+  loop: "{{ tc_tse_api_gateway_model_services }}"
+  loop_control: {label: "{{ item.name | default('unnamed') }}"}
+
 - name: Reconcile TSE AI gateway model services
   when: tc_tse_api_gateway_state == 'present'
   susunola.tencentcloud.tse_gateway_model_service:
   args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
-  loop: "{{ tc_tse_api_gateway_model_services }}"
+  loop: "{{ _tc_tse_api_gateway_resolved_model_services }}"
   loop_control: {label: "{{ item.name | default('unnamed') }}"}
   register: _tc_tse_api_gateway_model_services_result
+
+- name: Initialize resolved TSE AI gateway Model APIs
+  when: tc_tse_api_gateway_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_tse_api_gateway_resolved_model_apis: []
+
+- name: Resolve TSE AI gateway Model API service names
+  when: tc_tse_api_gateway_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_tse_api_gateway_resolved_model_apis: >-
+      {{ _tc_tse_api_gateway_resolved_model_apis + [
+        (item | dict2items | rejectattr('key', 'equalto', 'model_service_names') | items2dict)
+        | combine(
+          {'config': (item.config | default({})) | combine({
+            'ListModelServiceId': _tc_tse_api_gateway_model_services_result.results
+            | selectattr('model_service.Name', 'in', item.model_service_names)
+            | map(attribute='model_service.Id') | list
+          })} if item.model_service_names is defined else {}
+        )
+      ] }}
+  loop: "{{ tc_tse_api_gateway_model_apis }}"
+  loop_control: {label: "{{ item.name | default('unnamed') }}"}
+
+- name: Validate TSE AI gateway Model API service references
+  when:
+    - tc_tse_api_gateway_state == 'present'
+    - item.model_service_names is defined
+  ansible.builtin.assert:
+    that:
+      - >-
+        item.model_service_names | difference(
+          _tc_tse_api_gateway_model_services_result.results
+          | map(attribute='model_service.Name') | list
+        ) | length == 0
+    fail_msg: "Model API {{ item.name | default('unnamed') }} references an unknown model service name."
+  loop: "{{ tc_tse_api_gateway_model_apis }}"
+  loop_control: {label: "{{ item.name | default('unnamed') }}"}
 
 - name: Reconcile TSE AI gateway Model APIs
   when: tc_tse_api_gateway_state == 'present'
   susunola.tencentcloud.tse_gateway_model_api:
   args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
-  loop: "{{ tc_tse_api_gateway_model_apis }}"
+  loop: "{{ _tc_tse_api_gateway_resolved_model_apis }}"
   loop_control: {label: "{{ item.name | default('unnamed') }}"}
   register: _tc_tse_api_gateway_model_apis_result
 
