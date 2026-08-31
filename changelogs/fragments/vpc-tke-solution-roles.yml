@@ -1,0 +1,7 @@
+minor_changes:
+  - >-
+    roles - add ``tc_vpc_foundation`` for VPCs, multi-zone subnets, NAT
+    gateways, route tables, security groups and exact-set rules.
+  - >-
+    roles - add ``tc_tke_platform`` for clusters, node pools, endpoints,
+    addons, authentication and audit delivery.

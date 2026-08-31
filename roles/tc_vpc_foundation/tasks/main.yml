@@ -1,0 +1,175 @@
+---
+- name: Validate VPC foundation inputs
+  ansible.builtin.assert:
+    that:
+      - tc_vpc_foundation_state in ['present', 'absent']
+      - tc_vpc_foundation_vpc_id | length > 0 or tc_vpc_foundation_name | length > 0
+      - tc_vpc_foundation_state == 'absent' or tc_vpc_foundation_vpc_id | length > 0 or tc_vpc_foundation_cidr_block | length > 0
+    fail_msg: A VPC ID or name is required; creating a VPC also requires cidr_block.
+
+- name: Provision VPC
+  when: tc_vpc_foundation_state == 'present'
+  susunola.tencentcloud.vpc:
+    region: "{{ tc_vpc_foundation_region | default(omit, true) }}"
+    state: present
+    vpc_id: "{{ tc_vpc_foundation_vpc_id | default(omit, true) }}"
+    name: "{{ tc_vpc_foundation_name | default(omit, true) }}"
+    cidr_block: "{{ tc_vpc_foundation_cidr_block | default(omit, true) }}"
+    dns_servers: "{{ tc_vpc_foundation_dns_servers | default(omit, true) }}"
+    domain_name: "{{ tc_vpc_foundation_domain_name | default(omit, true) }}"
+    tags: "{{ tc_vpc_foundation_tags }}"
+  register: _tc_vpc_foundation_vpc
+
+- name: Resolve VPC ID
+  when: tc_vpc_foundation_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_vpc_foundation_vpc_id: >-
+      {{ tc_vpc_foundation_vpc_id
+         or (_tc_vpc_foundation_vpc.vpc.VpcId | default('')) }}
+
+- name: Provision subnets
+  when:
+    - tc_vpc_foundation_state == 'present'
+    - _tc_vpc_foundation_vpc_id | length > 0
+  susunola.tencentcloud.subnet:
+    region: "{{ tc_vpc_foundation_region | default(omit, true) }}"
+    state: present
+    subnet_id: "{{ item.subnet_id | default(omit, true) }}"
+    vpc_id: "{{ _tc_vpc_foundation_vpc_id }}"
+    name: "{{ item.name }}"
+    cidr_block: "{{ item.cidr_block }}"
+    zone: "{{ item.zone }}"
+    enable_broadcast: "{{ item.enable_broadcast | default(omit) }}"
+    tags: "{{ item.tags | default(tc_vpc_foundation_tags) }}"
+  loop: "{{ tc_vpc_foundation_subnets }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: _tc_vpc_foundation_subnets
+
+- name: Provision NAT gateways
+  when:
+    - tc_vpc_foundation_state == 'present'
+    - _tc_vpc_foundation_vpc_id | length > 0
+  susunola.tencentcloud.nat_gateway:
+    region: "{{ tc_vpc_foundation_region | default(omit, true) }}"
+    state: present
+    nat_gateway_id: "{{ item.nat_gateway_id | default(omit, true) }}"
+    name: "{{ item.name }}"
+    vpc_id: "{{ _tc_vpc_foundation_vpc_id }}"
+    internet_max_bandwidth_out: "{{ item.internet_max_bandwidth_out | default(omit) }}"
+    max_concurrent_connection: "{{ item.max_concurrent_connection | default(omit) }}"
+    address_count: "{{ item.address_count | default(omit) }}"
+    public_ip_addresses: "{{ item.public_ip_addresses | default(omit) }}"
+    zone: "{{ item.zone | default(omit) }}"
+    deletion_protection_enabled: "{{ item.deletion_protection_enabled | default(false) }}"
+    tags: "{{ item.tags | default(tc_vpc_foundation_tags) }}"
+    waiter_timeout: "{{ tc_vpc_foundation_waiter_timeout }}"
+    waiter_delay: "{{ tc_vpc_foundation_waiter_delay }}"
+  loop: "{{ tc_vpc_foundation_nat_gateways }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: _tc_vpc_foundation_nat_gateways
+
+- name: Provision route tables
+  when:
+    - tc_vpc_foundation_state == 'present'
+    - _tc_vpc_foundation_vpc_id | length > 0
+  susunola.tencentcloud.route_table:
+    region: "{{ tc_vpc_foundation_region | default(omit, true) }}"
+    state: present
+    route_table_id: "{{ item.route_table_id | default(omit, true) }}"
+    name: "{{ item.name }}"
+    vpc_id: "{{ _tc_vpc_foundation_vpc_id }}"
+    routes: "{{ item.routes | default(omit) }}"
+    tags: "{{ item.tags | default(tc_vpc_foundation_tags) }}"
+  loop: "{{ tc_vpc_foundation_route_tables }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: _tc_vpc_foundation_route_tables
+
+- name: Provision security groups
+  when: tc_vpc_foundation_state == 'present'
+  susunola.tencentcloud.security_group:
+    region: "{{ tc_vpc_foundation_region | default(omit, true) }}"
+    state: present
+    security_group_id: "{{ item.security_group_id | default(omit, true) }}"
+    name: "{{ item.name }}"
+    description: "{{ item.description | default(omit) }}"
+    project_id: "{{ item.project_id | default(0) }}"
+    tags: "{{ item.tags | default(tc_vpc_foundation_tags) }}"
+  loop: "{{ tc_vpc_foundation_security_groups }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: _tc_vpc_foundation_security_groups
+
+- name: Reconcile security-group rules
+  when:
+    - tc_vpc_foundation_state == 'present'
+    - item.0.security_group_id | default(item.1.security_group.SecurityGroupId | default('')) | length > 0
+  susunola.tencentcloud.security_group_rule:
+    region: "{{ tc_vpc_foundation_region | default(omit, true) }}"
+    security_group_id: "{{ item.0.security_group_id | default(item.1.security_group.SecurityGroupId, true) }}"
+    rules: "{{ item.0.rules | default([]) }}"
+    purge: "{{ item.0.purge_rules | default(true) }}"
+  loop: "{{ tc_vpc_foundation_security_groups | zip(_tc_vpc_foundation_security_groups.results | default([])) }}"
+  loop_control:
+    label: "{{ item.0.name }}"
+
+- name: Remove route tables
+  when: tc_vpc_foundation_state == 'absent'
+  susunola.tencentcloud.route_table:
+    region: "{{ tc_vpc_foundation_region | default(omit, true) }}"
+    state: absent
+    route_table_id: "{{ item.route_table_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+    vpc_id: "{{ tc_vpc_foundation_vpc_id | default(omit, true) }}"
+  loop: "{{ tc_vpc_foundation_route_tables }}"
+
+- name: Remove NAT gateways
+  when: tc_vpc_foundation_state == 'absent'
+  susunola.tencentcloud.nat_gateway:
+    region: "{{ tc_vpc_foundation_region | default(omit, true) }}"
+    state: absent
+    nat_gateway_id: "{{ item.nat_gateway_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+    vpc_id: "{{ tc_vpc_foundation_vpc_id | default(omit, true) }}"
+    ignore_operation_risk: "{{ item.ignore_operation_risk | default(false) }}"
+  loop: "{{ tc_vpc_foundation_nat_gateways }}"
+
+- name: Remove subnets
+  when: tc_vpc_foundation_state == 'absent'
+  susunola.tencentcloud.subnet:
+    region: "{{ tc_vpc_foundation_region | default(omit, true) }}"
+    state: absent
+    subnet_id: "{{ item.subnet_id | default(omit, true) }}"
+    vpc_id: "{{ tc_vpc_foundation_vpc_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+  loop: "{{ tc_vpc_foundation_subnets }}"
+
+- name: Remove security groups
+  when: tc_vpc_foundation_state == 'absent'
+  susunola.tencentcloud.security_group:
+    region: "{{ tc_vpc_foundation_region | default(omit, true) }}"
+    state: absent
+    security_group_id: "{{ item.security_group_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+  loop: "{{ tc_vpc_foundation_security_groups }}"
+
+- name: Remove VPC
+  when: tc_vpc_foundation_state == 'absent'
+  susunola.tencentcloud.vpc:
+    region: "{{ tc_vpc_foundation_region | default(omit, true) }}"
+    state: absent
+    vpc_id: "{{ tc_vpc_foundation_vpc_id | default(omit, true) }}"
+    name: "{{ tc_vpc_foundation_name | default(omit, true) }}"
+
+- name: Publish VPC foundation result
+  when: tc_vpc_foundation_state == 'present'
+  ansible.builtin.set_fact:
+    tc_vpc_foundation_result:
+      vpc_id: "{{ _tc_vpc_foundation_vpc_id }}"
+      vpc: "{{ _tc_vpc_foundation_vpc.vpc }}"
+      subnets: "{{ _tc_vpc_foundation_subnets.results | default([]) }}"
+      nat_gateways: "{{ _tc_vpc_foundation_nat_gateways.results | default([]) }}"
+      route_tables: "{{ _tc_vpc_foundation_route_tables.results | default([]) }}"
+      security_groups: "{{ _tc_vpc_foundation_security_groups.results | default([]) }}"

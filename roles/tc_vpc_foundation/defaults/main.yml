@@ -1,0 +1,21 @@
+---
+tc_vpc_foundation_state: present
+tc_vpc_foundation_region: ""
+tc_vpc_foundation_vpc_id: ""
+tc_vpc_foundation_name: ""
+tc_vpc_foundation_cidr_block: ""
+tc_vpc_foundation_dns_servers: []
+tc_vpc_foundation_domain_name: ""
+tc_vpc_foundation_tags: {}
+
+# Items: {name, cidr_block, zone, subnet_id?, enable_broadcast?, tags?}
+tc_vpc_foundation_subnets: []
+# Items: {name, route_table_id?, routes?, tags?}
+tc_vpc_foundation_route_tables: []
+# Items: {name, nat_gateway_id?, internet_max_bandwidth_out?, address_count?, tags?}
+tc_vpc_foundation_nat_gateways: []
+# Items: {name, security_group_id?, description?, project_id?, tags?, rules?, purge_rules?}
+tc_vpc_foundation_security_groups: []
+
+tc_vpc_foundation_waiter_timeout: 300
+tc_vpc_foundation_waiter_delay: 5

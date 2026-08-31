@@ -559,6 +559,8 @@ for product-level write, discovery and reusable-role maturity.
 | `tc_launch` | Launch CVM instances with sensible defaults over `cvm_instance` (`exact_count` / `count_tag` supported) |
 | `tc_clb_http` | Create a CLB load balancer with HTTP listeners and backend targets in one call |
 | `tc_tem_application` | Provision a TEM environment, deploy an application version and reconcile access services |
+| `tc_vpc_foundation` | Build a VPC foundation with subnets, NAT gateways, routes and security controls |
+| `tc_tke_platform` | Provision a TKE cluster with node pools, endpoints, addons, authentication and audit delivery |
 
 ## Requirements
 

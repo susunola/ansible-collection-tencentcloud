@@ -8,7 +8,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 - Products/services: **203**
 - Write modules: **301**
 - Information modules: **210**
-- Solution roles: **3**
+- Solution roles: **5**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -197,7 +197,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `tiia` | discovery-only | 0 | 1 | — | — |
 | `tione` | discovery-only | 0 | 1 | — | — |
 | `tiw` | discovery-only | 0 | 1 | — | — |
-| `tke` | resource-family | 7 | 1 | — | `tke_addon`, `tke_backup_storage_location`, `tke_cluster`, `tke_cluster_audit`, `tke_cluster_authentication`, `tke_cluster_endpoint`, `tke_node_pool` |
+| `tke` | solution | 7 | 1 | `tc_tke_platform` | `tke_addon`, `tke_backup_storage_location`, `tke_cluster`, `tke_cluster_audit`, `tke_cluster_authentication`, `tke_cluster_endpoint`, `tke_node_pool` |
 | `tokenhub` | discovery-only | 0 | 1 | — | — |
 | `tourism` | discovery-only | 0 | 1 | — | — |
 | `trabbit` | resource-family | 6 | 1 | — | `trabbit_serverless_binding`, `trabbit_serverless_exchange`, `trabbit_serverless_permission`, `trabbit_serverless_queue`, `trabbit_serverless_user`, `trabbit_serverless_vhost` |
@@ -211,7 +211,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `vdb` | managed | 1 | 1 | — | `vdb_instance` |
 | `vm` | discovery-only | 0 | 1 | — | — |
 | `vod` | discovery-only | 0 | 1 | — | — |
-| `vpc` | resource-family | 23 | 7 | — | `ccn`, `ccn_attachment`, `customer_gateway`, `eip`, `havip`, `havip_association`, `nat_gateway`, `nat_gateway_rule`, +15 more |
+| `vpc` | solution | 23 | 7 | `tc_vpc_foundation` | `ccn`, `ccn_attachment`, `customer_gateway`, `eip`, `havip`, `havip_association`, `nat_gateway`, `nat_gateway_rule`, +15 more |
 | `waf` | resource-family | 13 | 1 | — | `waf_anti_info_leak_rule`, `waf_anti_tamper_rule`, `waf_area_ban_rule`, `waf_attack_white_rule`, `waf_auto_deny`, `waf_cc_rule`, `waf_custom_rule`, `waf_custom_white_rule`, +5 more |
 | `wav` | discovery-only | 0 | 1 | — | — |
 | `wedata` | discovery-only | 0 | 1 | — | — |

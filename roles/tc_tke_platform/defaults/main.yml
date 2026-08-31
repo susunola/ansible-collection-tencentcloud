@@ -1,0 +1,35 @@
+---
+tc_tke_platform_state: present
+tc_tke_platform_region: ""
+tc_tke_platform_cluster_id: ""
+tc_tke_platform_name: ""
+tc_tke_platform_vpc_id: ""
+tc_tke_platform_subnet_id: ""
+tc_tke_platform_cluster_version: ""
+tc_tke_platform_cluster_desc: ""
+tc_tke_platform_cluster_type: MANAGED_CLUSTER
+tc_tke_platform_cluster_cidr: ""
+tc_tke_platform_service_cidr: ""
+tc_tke_platform_max_node_pod_num: null
+tc_tke_platform_project_id: null
+tc_tke_platform_deletion_protection: true
+tc_tke_platform_instance_delete_mode: retain
+tc_tke_platform_tags: {}
+
+# Node-pool items follow tke_node_pool options.
+tc_tke_platform_node_pools: []
+# Endpoint items: {access, subnet_id?, domain?, security_group_id?, load_balancer_id?}
+tc_tke_platform_endpoints: []
+# Addon items: {name, version?, values?, values_file?, update_strategy?}
+tc_tke_platform_addons: []
+
+tc_tke_platform_authentication_enabled: false
+tc_tke_platform_service_accounts: {}
+tc_tke_platform_oidc: {}
+tc_tke_platform_audit_enabled: false
+tc_tke_platform_audit_logset_id: ""
+tc_tke_platform_audit_topic_id: ""
+tc_tke_platform_audit_topic_region: ""
+
+tc_tke_platform_waiter_timeout: 1800
+tc_tke_platform_waiter_delay: 10
