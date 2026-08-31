@@ -25,6 +25,11 @@ options:
   auto_suspend_time: {type: int, description: Idle minutes before automatic suspension.}
   max_concurrency: {type: int, description: Maximum concurrent tasks per cluster.}
   tolerable_queue_time: {type: int, description: Queue duration before elasticity may trigger.}
+  crontab_resume_suspend: {type: int, choices: [0, 1], description: Disable or enable the scheduled resume/suspend policy.}
+  crontab_resume_suspend_strategy: {type: dict, description: Complete SDK scheduled resume/suspend strategy.}
+  elastic_switch: {type: bool, description: Enable prepaid Spark-batch elasticity.}
+  elastic_limit: {type: int, description: Maximum prepaid Spark-batch elastic capacity.}
+  schedule_elasticity_conf: {type: dict, description: Complete SDK time-based elasticity configuration.}
   description: {type: str, description: Engine description, at most 250 characters.}
   cidr_block: {type: str, description: Creation-time VPC CIDR block.}
   engine_network_id: {type: str, description: Creation-time engine network ID.}
@@ -78,7 +83,9 @@ MUTABLE = {
     "size": "Size", "min_clusters": "MinClusters", "max_clusters": "MaxClusters",
     "auto_resume": "AutoResume", "auto_suspend": "AutoSuspend",
     "auto_suspend_time": "AutoSuspendTime", "max_concurrency": "MaxConcurrency",
-    "tolerable_queue_time": "TolerableQueueTime",
+    "tolerable_queue_time": "TolerableQueueTime", "crontab_resume_suspend": "CrontabResumeSuspend",
+    "crontab_resume_suspend_strategy": "CrontabResumeSuspendStrategy", "elastic_switch": "ElasticSwitch",
+    "elastic_limit": "ElasticLimit", "schedule_elasticity_conf": "ScheduleElasticityConf",
 }
 IMMUTABLE = {
     "engine_type": "EngineType", "cluster_type": "ClusterType", "mode": "Mode",
@@ -206,6 +213,8 @@ def run_module():
         "min_clusters": {"type": "int"}, "max_clusters": {"type": "int"}, "auto_resume": {"type": "bool"},
         "auto_suspend": {"type": "bool"}, "auto_suspend_time": {"type": "int"},
         "max_concurrency": {"type": "int"}, "tolerable_queue_time": {"type": "int"}, "description": {},
+        "crontab_resume_suspend": {"type": "int", "choices": [0, 1]}, "crontab_resume_suspend_strategy": {"type": "dict"},
+        "elastic_switch": {"type": "bool"}, "elastic_limit": {"type": "int"}, "schedule_elasticity_conf": {"type": "dict"},
         "cidr_block": {}, "engine_network_id": {}, "engine_exec_type": {"choices": ["SQL", "BATCH"]},
         "resource_type": {"choices": ["Standard_CU", "Memory_CU"]},
         "engine_generation": {"choices": ["Native", "SuperSQL"]}, "image_version_name": {}, "standby_cluster": {"type": "bool"},
@@ -219,6 +228,8 @@ def run_module():
     module = TencentCloudModule(argument_spec=spec, supports_check_mode=True); p = module.params
     if p.get("description") is not None and len(p["description"]) > 250: module.fail_json(msg="DLC data-engine description must not exceed 250 characters")
     if p.get("min_clusters") is not None and p.get("max_clusters") is not None and p["min_clusters"] > p["max_clusters"]: module.fail_json(msg="min_clusters must not exceed max_clusters")
+    if p.get("crontab_resume_suspend") == 1 and p.get("auto_suspend") is True: module.fail_json(msg="crontab_resume_suspend and auto_suspend cannot both be enabled")
+    if p.get("elastic_limit") is not None and p["elastic_limit"] < 0: module.fail_json(msg="elastic_limit must not be negative")
     module.require_sdk(); models, cm = _load(); client = module.create_client(cm.DlcClient, "dlc.tencentcloudapi.com")
     try:
         current = find(module, client, models, p["name"])
@@ -264,7 +275,7 @@ def run_module():
         if p.get("standby_cluster") is not None and current.get("StartStandbyCluster") != p["standby_cluster"]:
             if not p["allow_standby_switch"]: module.fail_json(msg="set allow_standby_switch=true to authorize changing the DLC standby cluster", standby_drift={"StartStandbyCluster": (current.get("StartStandbyCluster"), p["standby_cluster"])})
             changes["StartStandbyCluster"] = (current.get("StartStandbyCluster"), p["standby_cluster"])
-        for key in ("Size", "MinClusters", "MaxClusters"):
+        for key in ("Size", "MinClusters", "MaxClusters", "ElasticLimit"):
             if key in changes and changes[key][0] is not None and changes[key][1] < changes[key][0] and not p["allow_scale_down"]:
                 module.fail_json(msg="set allow_scale_down=true to authorize reducing DLC engine capacity", capacity_drift={key: changes[key]})
         if p.get("description") is not None and (current.get("Message") or "") != p["description"]: changes["Message"] = (current.get("Message") or "", p["description"])

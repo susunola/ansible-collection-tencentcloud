@@ -45,8 +45,11 @@ def test_create_maps_readable_contract():
 
 
 def test_update_only_maps_mutable_values():
-    request = update_request(Models, params())
+    value = params(); value.update({"crontab_resume_suspend": 1, "crontab_resume_suspend_strategy": {"ResumeTime": "08:00"}, "elastic_switch": True, "elastic_limit": 32, "schedule_elasticity_conf": {"Enabled": True}})
+    request = update_request(Models, value)
     assert request.DataEngineName == "spark-prod" and request.Size == 16 and request.MaxClusters == 3
+    assert request.CrontabResumeSuspend == 1 and request.ElasticLimit == 32
+    assert request.CrontabResumeSuspendStrategy == {"ResumeTime": "08:00"}
     assert not hasattr(request, "EngineType")
 
 

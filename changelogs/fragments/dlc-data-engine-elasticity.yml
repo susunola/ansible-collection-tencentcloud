@@ -1,0 +1,2 @@
+minor_changes:
+  - Extend ``dlc_data_engine`` with readable scheduled resume/suspend, prepaid elasticity and time-based elasticity configuration.
