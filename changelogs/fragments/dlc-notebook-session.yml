@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_notebook_session`` with strong session identity, terminal-history handling, immutable drift detection and guarded replacement or deletion.

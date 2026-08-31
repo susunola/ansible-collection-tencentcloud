@@ -873,6 +873,11 @@ modules:
   dlc_network_connection:
   - DescribeNetworkConnections
   - UpdateNetworkConnection
+  dlc_notebook_session:
+  - CreateNotebookSession
+  - DeleteNotebookSession
+  - DescribeNotebookSession
+  - DescribeNotebookSessions
   dlc_partition_queue:
   - CreatePartitionQueue
   - DeletePartitionQueue

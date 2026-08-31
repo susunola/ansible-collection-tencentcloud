@@ -159,6 +159,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `dlc_lab` | Manage Tencent Cloud DLC data laboratories |
 | `dlc_model_version` | Publish immutable Tencent Cloud DLC model versions |
 | `dlc_network_connection` | Reconcile Tencent Cloud DLC network-connection metadata |
+| `dlc_notebook_session` | Manage Tencent Cloud DLC Notebook sessions |
 | `dlc_partition_queue` | Manage Tencent Cloud DLC resource partition queues |
 | `dlc_ray_cluster` | Manage Tencent Cloud DLC Ray clusters |
 | `dlc_resource_config` | Manage Tencent Cloud DLC Ray and Spark resource templates |
