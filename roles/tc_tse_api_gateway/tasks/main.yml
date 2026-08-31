@@ -12,6 +12,8 @@
       - tc_tse_api_gateway_consumer_group_memberships is sequence
       - tc_tse_api_gateway_secret_keys is sequence
       - tc_tse_api_gateway_certificates is sequence
+      - tc_tse_api_gateway_waf_domains is sequence
+      - tc_tse_api_gateway_waf_protections is sequence
       - tc_tse_api_gateway_rate_limits is sequence
       - tc_tse_api_gateway_cors_policies is sequence
       - tc_tse_api_gateway_ip_restrictions is sequence
@@ -124,6 +126,25 @@
   register: _tc_tse_api_gateway_certificates_result
   no_log: "{{ item.private_key is defined }}"
 
+- name: Reconcile TSE API gateway WAF domains
+  when:
+    - tc_tse_api_gateway_state == 'present'
+    - tc_tse_api_gateway_waf_domains | length > 0
+  susunola.tencentcloud.tse_gateway_waf_domains:
+    gateway_id: "{{ _tc_tse_api_gateway_id }}"
+    domains: "{{ tc_tse_api_gateway_waf_domains }}"
+    purge_unlisted: true
+    state: present
+  register: _tc_tse_api_gateway_waf_domains_result
+
+- name: Reconcile TSE API gateway WAF protections
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_waf_protection:
+  args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id}) }}"
+  loop: "{{ tc_tse_api_gateway_waf_protections }}"
+  loop_control: {label: "{{ item.scope | default('unnamed') }}"}
+  register: _tc_tse_api_gateway_waf_protections_result
+
 - name: Reconcile TSE API gateway rate limits
   when: tc_tse_api_gateway_state == 'present'
   susunola.tencentcloud.tse_gateway_rate_limit:
@@ -161,6 +182,8 @@
       consumer_group_memberships: "{{ _tc_tse_api_gateway_consumer_group_memberships_result.results | default([]) | map(attribute='membership') | list }}"
       secret_keys: "{{ _tc_tse_api_gateway_secret_keys_result.results | default([]) | map(attribute='secret_key') | list }}"
       certificates: "{{ _tc_tse_api_gateway_certificates_result.results | default([]) | map(attribute='certificate_info') | list }}"
+      waf_domains: "{{ _tc_tse_api_gateway_waf_domains_result.waf_domains | default([]) }}"
+      waf_protections: "{{ _tc_tse_api_gateway_waf_protections_result.results | default([]) | map(attribute='waf_protection') | list }}"
       rate_limits: "{{ _tc_tse_api_gateway_rate_limits_result.results | default([]) | map(attribute='rate_limit') | list }}"
       cors_policies: "{{ _tc_tse_api_gateway_cors_result.results | default([]) | map(attribute='cors') | list }}"
       ip_restrictions: "{{ _tc_tse_api_gateway_ip_restrictions_result.results | default([]) | map(attribute='ip_restriction') | list }}"
@@ -228,6 +251,24 @@
     state: absent
   loop: "{{ tc_tse_api_gateway_secret_keys | reverse | list }}"
   no_log: true
+
+- name: Disable TSE API gateway WAF protections
+  when: tc_tse_api_gateway_state == 'absent'
+  susunola.tencentcloud.tse_gateway_waf_protection:
+    gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
+    scope: "{{ item.scope }}"
+    resource_ids: "{{ item.resource_ids | default(omit) }}"
+    enabled: false
+  loop: "{{ tc_tse_api_gateway_waf_protections | reverse | list }}"
+
+- name: Remove TSE API gateway WAF domains
+  when:
+    - tc_tse_api_gateway_state == 'absent'
+    - tc_tse_api_gateway_waf_domains | length > 0
+  susunola.tencentcloud.tse_gateway_waf_domains:
+    gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
+    domains: "{{ tc_tse_api_gateway_waf_domains }}"
+    state: absent
 
 - name: Remove TSE API gateway certificates
   when: tc_tse_api_gateway_state == 'absent'

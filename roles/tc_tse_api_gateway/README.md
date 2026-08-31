@@ -1,7 +1,7 @@
 # tc_tse_api_gateway
 
 Provisions a TSE cloud-native API gateway, upstream services, routes,
-consumers, consumer groups, credentials, TLS certificates, public networks with access control, and service- or route-scoped
+consumers, consumer groups, credentials, TLS certificates, WAF protection, public networks with access control, and service- or route-scoped
 rate limits, canary traffic rules, CORS and IP restrictions. Policy entries use concrete service or route IDs. Routes
 may reference `service_name`; the role resolves the created service ID before
 route creation. Guarded teardown removes routes and services before the gateway.
@@ -49,6 +49,10 @@ route creation. Guarded teardown removes routes and services before the gateway.
             bind_domains: [api.example.com]
             cert_type: SVR
             cert_usage: SERVER
+        tc_tse_api_gateway_waf_domains: [api.example.com]
+        tc_tse_api_gateway_waf_protections:
+          - {scope: Global, enabled: true}
+          - {scope: Route, resource_ids: [route-xxxxxxxx], enabled: true}
         tc_tse_api_gateway_canary_rules:
           - service_id: service-xxxxxxxx
             priority: 90

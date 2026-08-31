@@ -277,6 +277,8 @@ CORE_MODULES = {
     "tse_config_file",
     "tse_cloud_native_gateway",
     "tse_gateway_service",
+    "tse_gateway_waf_domains",
+    "tse_gateway_waf_protection",
     "tse_gateway_route",
     "tse_gateway_consumer",
     "tse_gateway_canary_rule",

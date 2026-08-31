@@ -10,3 +10,4 @@ minor_changes:
   - Add priority-addressed ``tse_gateway_canary_rule`` lifecycle management for standard and lane traffic rules.
   - Add guarded ``tse_gateway_certificate`` lifecycle management for native PEM and SSL-platform certificates with private-key redaction and reference-aware deletion.
   - Add read-backed, delta-based ``tse_gateway_consumer_group_membership`` reconciliation.
+  - Add read-backed ``tse_gateway_waf_protection`` and exact-set ``tse_gateway_waf_domains`` management.

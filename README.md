@@ -388,6 +388,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tse_gateway_route` | Manage a Tencent Cloud TSE gateway route |
 | `tse_gateway_secret_key` | Manage a Tencent Cloud TSE API gateway secret key |
 | `tse_gateway_service` | Manage a Tencent Cloud TSE gateway upstream service |
+| `tse_gateway_waf_domains` | Manage Tencent Cloud TSE gateway WAF domains |
+| `tse_gateway_waf_protection` | Manage Tencent Cloud TSE gateway WAF protection |
 | `tse_governance_namespace` | Manage a Tencent Cloud TSE governance namespace |
 | `tse_governance_service` | Manage a Tencent Cloud TSE governance service |
 | `tse_sre_instance` | Manage Tencent Cloud TSE service registry engines |

@@ -2355,6 +2355,14 @@ modules:
   - DescribeCloudNativeAPIGatewayServices
   - DescribeOneCloudNativeAPIGatewayService
   - ModifyCloudNativeAPIGatewayService
+  tse_gateway_waf_domains:
+  - CreateWafDomains
+  - DeleteWafDomains
+  - DescribeWafDomains
+  tse_gateway_waf_protection:
+  - CloseWafProtection
+  - DescribeWafProtection
+  - OpenWafProtection
   tse_governance_namespace:
   - CreateGovernanceNamespaces
   - DeleteGovernanceNamespaces
