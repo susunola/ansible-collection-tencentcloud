@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - Added the tc_cloud_firewall_policy role for reusable templates and internet, NAT, VPC and DNAT policy layers.

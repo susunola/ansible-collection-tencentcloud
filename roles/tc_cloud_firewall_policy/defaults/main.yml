@@ -1,0 +1,8 @@
+---
+tc_cloud_firewall_policy_state: present
+tc_cloud_firewall_policy_region: ""
+tc_cloud_firewall_policy_address_templates: []
+tc_cloud_firewall_policy_internet_rules: []
+tc_cloud_firewall_policy_nat_rules: []
+tc_cloud_firewall_policy_vpc_rules: []
+tc_cloud_firewall_policy_dnat_rules: []

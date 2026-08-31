@@ -1,0 +1,82 @@
+---
+- name: Validate Cloud Firewall policy inputs
+  ansible.builtin.assert:
+    that:
+      - tc_cloud_firewall_policy_state in ['present', 'absent']
+      - tc_cloud_firewall_policy_region | length > 0
+    fail_msg: Cloud Firewall policy requires a valid state and explicit region.
+
+- name: Reconcile Cloud Firewall address templates
+  when: tc_cloud_firewall_policy_state == 'present'
+  susunola.tencentcloud.cfw_address_template:
+  args: "{{ item | combine({'state': 'present', 'region': tc_cloud_firewall_policy_region}) }}"
+  loop: "{{ tc_cloud_firewall_policy_address_templates }}"
+  register: _tc_cfw_address_templates
+
+- name: Reconcile Cloud Firewall internet ACL rules
+  when: tc_cloud_firewall_policy_state == 'present'
+  susunola.tencentcloud.cfw_internet_acl_rule:
+  args: "{{ item | combine({'state': 'present', 'region': tc_cloud_firewall_policy_region}) }}"
+  loop: "{{ tc_cloud_firewall_policy_internet_rules }}"
+  register: _tc_cfw_internet_rules
+
+- name: Reconcile Cloud Firewall NAT ACL rules
+  when: tc_cloud_firewall_policy_state == 'present'
+  susunola.tencentcloud.cfw_nat_acl_rule:
+  args: "{{ item | combine({'state': 'present', 'region': tc_cloud_firewall_policy_region}) }}"
+  loop: "{{ tc_cloud_firewall_policy_nat_rules }}"
+  register: _tc_cfw_nat_rules
+
+- name: Reconcile Cloud Firewall VPC ACL rules
+  when: tc_cloud_firewall_policy_state == 'present'
+  susunola.tencentcloud.cfw_vpc_acl_rule:
+  args: "{{ item | combine({'state': 'present', 'region': tc_cloud_firewall_policy_region}) }}"
+  loop: "{{ tc_cloud_firewall_policy_vpc_rules }}"
+  register: _tc_cfw_vpc_rules
+
+- name: Reconcile Cloud Firewall NAT DNAT rules
+  when: tc_cloud_firewall_policy_state == 'present'
+  susunola.tencentcloud.cfw_nat_dnat_rule:
+  args: "{{ item | combine({'state': 'present', 'region': tc_cloud_firewall_policy_region}) }}"
+  loop: "{{ tc_cloud_firewall_policy_dnat_rules }}"
+  register: _tc_cfw_dnat_rules
+
+- name: Remove Cloud Firewall NAT DNAT rules
+  when: tc_cloud_firewall_policy_state == 'absent'
+  susunola.tencentcloud.cfw_nat_dnat_rule:
+  args: "{{ item | combine({'state': 'absent', 'region': tc_cloud_firewall_policy_region}) }}"
+  loop: "{{ tc_cloud_firewall_policy_dnat_rules }}"
+
+- name: Remove Cloud Firewall VPC ACL rules
+  when: tc_cloud_firewall_policy_state == 'absent'
+  susunola.tencentcloud.cfw_vpc_acl_rule:
+  args: "{{ item | combine({'state': 'absent', 'region': tc_cloud_firewall_policy_region}) }}"
+  loop: "{{ tc_cloud_firewall_policy_vpc_rules }}"
+
+- name: Remove Cloud Firewall NAT ACL rules
+  when: tc_cloud_firewall_policy_state == 'absent'
+  susunola.tencentcloud.cfw_nat_acl_rule:
+  args: "{{ item | combine({'state': 'absent', 'region': tc_cloud_firewall_policy_region}) }}"
+  loop: "{{ tc_cloud_firewall_policy_nat_rules }}"
+
+- name: Remove Cloud Firewall internet ACL rules
+  when: tc_cloud_firewall_policy_state == 'absent'
+  susunola.tencentcloud.cfw_internet_acl_rule:
+  args: "{{ item | combine({'state': 'absent', 'region': tc_cloud_firewall_policy_region}) }}"
+  loop: "{{ tc_cloud_firewall_policy_internet_rules }}"
+
+- name: Remove Cloud Firewall address templates
+  when: tc_cloud_firewall_policy_state == 'absent'
+  susunola.tencentcloud.cfw_address_template:
+  args: "{{ item | combine({'state': 'absent', 'region': tc_cloud_firewall_policy_region}) }}"
+  loop: "{{ tc_cloud_firewall_policy_address_templates }}"
+
+- name: Publish Cloud Firewall policy result
+  when: tc_cloud_firewall_policy_state == 'present'
+  ansible.builtin.set_fact:
+    tc_cloud_firewall_policy_result:
+      address_templates: "{{ _tc_cfw_address_templates | default({}) }}"
+      internet_rules: "{{ _tc_cfw_internet_rules | default({}) }}"
+      nat_rules: "{{ _tc_cfw_nat_rules | default({}) }}"
+      vpc_rules: "{{ _tc_cfw_vpc_rules | default({}) }}"
+      dnat_rules: "{{ _tc_cfw_dnat_rules | default({}) }}"

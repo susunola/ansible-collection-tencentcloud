@@ -299,6 +299,18 @@ def test_chdfs_teardown_disassociates_and_removes_children_before_file_system():
     )
 
 
+def test_cloud_firewall_removes_all_rule_layers_before_templates():
+    text = role_tasks("tc_cloud_firewall_policy")
+    assert_order(
+        text,
+        "Remove Cloud Firewall NAT DNAT rules",
+        "Remove Cloud Firewall VPC ACL rules",
+        "Remove Cloud Firewall NAT ACL rules",
+        "Remove Cloud Firewall internet ACL rules",
+        "Remove Cloud Firewall address templates",
+    )
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
