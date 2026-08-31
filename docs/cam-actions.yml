@@ -1324,6 +1324,7 @@ modules:
   - CreateJobConfig
   - DeleteJobConfigs
   - DescribeJobConfigs
+  - DescribeResources
   oceanus_job_savepoint:
   - DescribeJobSavepoint
   - TriggerJobSavepoint

@@ -1,0 +1,2 @@
+minor_changes:
+  - Resolve Oceanus job resource references by unique workspace name with automatic latest-version selection or explicit historical version pinning.

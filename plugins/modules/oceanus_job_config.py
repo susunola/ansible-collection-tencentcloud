@@ -19,6 +19,7 @@ options:
   default_parallelism: {type: int, description: Default job parallelism.}
   properties: {type: list, elements: dict, description: SDK Property list.}
   resource_refs: {type: list, elements: dict, description: ResourceRef list binding managed Oceanus resource IDs and immutable versions to this job version.}
+  resource_ref_names: {type: list, elements: dict, description: Resource references resolved by unique name inside the workspace; omitted Version selects the latest resource version.}
   auto_delete_oldest: {type: bool, default: false, description: Automatically delete the earliest deletable version at the service limit.}
   cos_bucket: {type: str, description: Job artifact COS bucket.}
   log_collect: {type: bool, description: Enable log collection.}
@@ -51,6 +52,8 @@ EXAMPLES = r'''
     default_parallelism: 4
     checkpoint_interval: 60
     auto_recover: true
+    resource_ref_names:
+      - {Name: orders-processor, Type: 1}
 '''
 RETURN = r'''job_config: {description: Effective configuration version., type: dict, returned: always}
 version: {description: Effective configuration version number., type: int, returned: when present}'''
@@ -69,6 +72,24 @@ def desired(p):
     return value
 def normalize_resource_refs(values):
     return sorted(({key:item.get(key) for key in ("ResourceId","Version","Type")} for item in values or []),key=lambda item:(item.get("Type",0),item.get("ResourceId","") or "",item.get("Version",-1)))
+def named_refs(resources,refs):
+    by_name={}
+    for resource in resources:
+        by_name.setdefault(resource.get("Name"),[]).append(resource)
+    result=[]
+    for ref in refs:
+        matches=by_name.get(ref["Name"],[])
+        if not matches: raise ValueError("Oceanus resource not found by name: %s" % ref["Name"])
+        if len(matches)>1: raise ValueError("Oceanus resource name is ambiguous: %s" % ref["Name"])
+        resource=matches[0]; result.append({"ResourceId":resource["ResourceId"],"Version":ref.get("Version") if ref.get("Version") is not None else resource["LatestResourceConfigVersion"],"Type":ref["Type"]})
+    return normalize_resource_refs(result)
+def resolve_named_refs(module,client,models,p):
+    offset=0; resources=[]
+    while True:
+        r=models.DescribeResourcesRequest(); r.WorkSpaceId,r.SystemResource,r.Offset,r.Limit=p["workspace_id"],0,offset,100
+        response=module.sdk_call(client.DescribeResources,r); page=response.ResourceSet or []; resources.extend(item._serialize(allow_none=True) for item in page); offset+=len(page)
+        if not page or offset>=int(response.TotalCount or 0): break
+    return named_refs(resources,p["resource_ref_names"])
 def describe(module,client,models,p,version=None):
     r=models.DescribeJobConfigsRequest(); r.JobId=p["job_id"]; r.WorkSpaceId=p["workspace_id"]; r.Offset,r.Limit=0,100
     if version is not None: r.JobConfigVersions=[version]
@@ -81,8 +102,10 @@ def create_request(models,p,target):
     payload.update({"JobId":p["job_id"],"WorkSpaceId":p["workspace_id"],"AutoDelete":1 if p["auto_delete_oldest"] else 0,"ConfigScope":p["config_scope"]}); r.from_json_string(json.dumps(payload)); return r
 def delete_request(models,p): r=models.DeleteJobConfigsRequest(); r.JobId=p["job_id"]; r.WorkSpaceId=p["workspace_id"]; r.JobConfigVersions=[p["version"]]; r.ConfigScope=p["config_scope"]; return r
 def run_module():
-    spec={"state":{"choices":["present","absent"],"default":"present"},"job_id":{"required":True},"workspace_id":{"required":True},"version":{"type":"int"},"entrypoint_class":{},"program_args":{},"remark":{},"default_parallelism":{"type":"int"},"properties":{"type":"list","elements":"dict"},"resource_refs":{"type":"list","elements":"dict","options":{"ResourceId":{"required":True},"Version":{"type":"int","required":True},"Type":{"type":"int","choices":[0,1,2,3,4],"required":True}}},"auto_delete_oldest":{"type":"bool","default":False},"cos_bucket":{},"log_collect":{"type":"bool"},"log_collect_type":{"type":"int","choices":[2,3]},"cls_logset_id":{},"cls_topic_id":{},"log_level":{},"auto_recover":{"type":"bool"},"checkpoint_retained":{"type":"int"},"checkpoint_timeout":{"type":"int"},"checkpoint_interval":{"type":"int"},"job_manager_cpu":{"type":"float"},"job_manager_memory":{"type":"float"},"task_manager_cpu":{"type":"float"},"task_manager_memory":{"type":"float"},"flink_version":{},"jdk_version":{},"config_scope":{"type":"int","choices":[0,1,2],"default":0},"allow_delete":{"type":"bool","default":False}}
-    module=TencentCloudModule(argument_spec=spec,required_if=[("state","absent",["version"])],supports_check_mode=True); p=module.params; module.require_sdk(); models,cm=_load(); client=module.create_client(cm.OceanusClient,"oceanus.tencentcloudapi.com")
+    ref_options={"ResourceId":{"required":True},"Version":{"type":"int","required":True},"Type":{"type":"int","choices":[0,1,2,3,4],"required":True}}
+    named_ref_options={"Name":{"required":True},"Version":{"type":"int"},"Type":{"type":"int","choices":[0,1,2,3,4],"required":True}}
+    spec={"state":{"choices":["present","absent"],"default":"present"},"job_id":{"required":True},"workspace_id":{"required":True},"version":{"type":"int"},"entrypoint_class":{},"program_args":{},"remark":{},"default_parallelism":{"type":"int"},"properties":{"type":"list","elements":"dict"},"resource_refs":{"type":"list","elements":"dict","options":ref_options},"resource_ref_names":{"type":"list","elements":"dict","options":named_ref_options},"auto_delete_oldest":{"type":"bool","default":False},"cos_bucket":{},"log_collect":{"type":"bool"},"log_collect_type":{"type":"int","choices":[2,3]},"cls_logset_id":{},"cls_topic_id":{},"log_level":{},"auto_recover":{"type":"bool"},"checkpoint_retained":{"type":"int"},"checkpoint_timeout":{"type":"int"},"checkpoint_interval":{"type":"int"},"job_manager_cpu":{"type":"float"},"job_manager_memory":{"type":"float"},"task_manager_cpu":{"type":"float"},"task_manager_memory":{"type":"float"},"flink_version":{},"jdk_version":{},"config_scope":{"type":"int","choices":[0,1,2],"default":0},"allow_delete":{"type":"bool","default":False}}
+    module=TencentCloudModule(argument_spec=spec,required_if=[("state","absent",["version"])],mutually_exclusive=[("resource_refs","resource_ref_names")],supports_check_mode=True); p=module.params; module.require_sdk(); models,cm=_load(); client=module.create_client(cm.OceanusClient,"oceanus.tencentcloudapi.com")
     try:
         if p["state"]=="absent":
             current=describe(module,client,models,p,p["version"])
@@ -91,6 +114,7 @@ def run_module():
             diff=maybe_diff(module,current,None)
             if not module.check_mode: module.sdk_call(client.DeleteJobConfigs,delete_request(models,p))
             module.exit_json(changed=True,**(diff or {}),job_config=None)
+        if p.get("resource_ref_names") is not None: p["resource_refs"]=resolve_named_refs(module,client,models,p)
         target=desired(p)
         if not target: module.fail_json(msg="at least one managed configuration field is required to publish an Oceanus job configuration")
         current=describe(module,client,models,p); before={key:(normalize_resource_refs(current.get(key)) if key=="ResourceRefDetails" else current.get(key)) for key in target} if current else None

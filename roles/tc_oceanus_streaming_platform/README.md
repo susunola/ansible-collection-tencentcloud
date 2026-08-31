@@ -48,6 +48,8 @@ Builds an Oceanus workspace, an optional dedicated Flink cluster, and its jobs. 
               flink_version: Flink-1.17
             config:
               program_args: SELECT * FROM orders
+              resource_ref_names:
+                - {Name: orders-processor, Type: 1}
               default_parallelism: 4
               checkpoint_interval: 60
               auto_recover: true
@@ -60,6 +62,6 @@ Folders are created before contained resources and jobs. Resources and their des
 
 An optional `savepoint` is triggered only after the job has converged to `running`. Its description acts as an idempotency key; change it for each intentional release checkpoint or set `force: true` for an explicitly repeated snapshot.
 
-Metadata tables require the dedicated cluster input and are reconciled before jobs. Oceanus exposes DDL lookup and update but no metadata-table deletion API, so workspace teardown remains the service-level cleanup boundary for these tables.
+Metadata tables require the dedicated cluster input and are reconciled before jobs. Oceanus exposes DDL lookup and update but no metadata-table deletion API, so workspace teardown remains the service-level cleanup boundary for these tables. Job configurations can use `resource_ref_names` to resolve a declared resource by unique workspace name and automatically bind its latest version; set `Version` to pin a historical artifact.
 
 Set `tc_oceanus_streaming_platform_allow_destroy: true` only for intentional teardown. CU scale-down also requires `allow_scale_down: true` in the cluster input.
