@@ -15,6 +15,7 @@
       - tc_tse_governance_platform_lane_groups is sequence
       - tc_tse_governance_platform_config_groups is sequence
       - tc_tse_governance_platform_config_files is sequence
+      - tc_tse_governance_platform_config_catalog_queries is sequence
       - tc_tse_governance_platform_config_releases is sequence
       - tc_tse_governance_platform_config_deployments is sequence
       - tc_tse_governance_platform_config_release_audits is sequence
@@ -127,6 +128,14 @@
   loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.group | default('?') }}/{{ item.name | default('unnamed') }}"}
   register: _tc_tse_governance_platform_config_files
 
+- name: Gather TSE configuration file catalogs
+  when: tc_tse_governance_platform_state == 'present'
+  susunola.tencentcloud.tse_config_file_catalog_info:
+  args: "{{ item | combine({'instance_id': _tc_tse_governance_platform_instance_id}) }}"
+  loop: "{{ tc_tse_governance_platform_config_catalog_queries }}"
+  loop_control: {label: "{{ item.namespace | default('*') }}/{{ item.group | default('*') }}"}
+  register: _tc_tse_governance_platform_config_catalogs
+
 - name: Reconcile TSE configuration releases
   when: tc_tse_governance_platform_state == 'present'
   susunola.tencentcloud.tse_config_file_release:
@@ -172,6 +181,7 @@
       lane_groups: "{{ _tc_tse_governance_platform_lane_groups.results | default([]) | map(attribute='lane_group') | list }}"
       config_groups: "{{ _tc_tse_governance_platform_config_groups.results | default([]) | map(attribute='group') | list }}"
       config_files: "{{ _tc_tse_governance_platform_config_files.results | default([]) | map(attribute='config_file') | list }}"
+      config_catalogs: "{{ _tc_tse_governance_platform_config_catalogs.results | default([]) }}"
       config_releases: "{{ _tc_tse_governance_platform_config_releases.results | default([]) | map(attribute='release') | list }}"
       config_deployments: "{{ _tc_tse_governance_platform_config_deployments.results | default([]) | map(attribute='deployment') | list }}"
       config_release_audits: "{{ _tc_tse_governance_platform_config_release_audits.results | default([]) }}"
