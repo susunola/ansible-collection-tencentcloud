@@ -820,9 +820,11 @@ modules:
   dlc_data_engine:
   - CreateDataEngine
   - DeleteDataEngine
+  - DescribeDataEngineImageVersions
   - DescribeDataEngines
   - ModifyDataEngineDescription
   - SuspendResumeDataEngine
+  - SwitchDataEngineImage
   - UpdateDataEngine
   dlc_data_engine_config:
   - DescribeDataEngines

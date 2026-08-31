@@ -9,7 +9,7 @@ module: dlc_data_engine
 short_description: Manage Tencent Cloud Data Lake Compute engines
 version_added: "0.14.0"
 description:
-  - Creates, updates, starts, suspends and deletes private DLC data engines.
+  - Creates, updates, starts, suspends, switches images and deletes private DLC data engines.
   - Engine identity, type, billing, network and generation are immutable after creation.
 options:
   state: {type: str, choices: [present, running, suspended, absent], default: present, description: Desired engine lifecycle state.}
@@ -31,7 +31,8 @@ options:
   engine_exec_type: {type: str, choices: [SQL, BATCH], description: Creation-time execution type.}
   resource_type: {type: str, choices: [Standard_CU, Memory_CU], description: Creation-time resource type.}
   engine_generation: {type: str, choices: [Native, SuperSQL], description: Creation-time engine generation.}
-  image_version_name: {type: str, description: Creation-time engine image name.}
+  image_version_name: {type: str, description: Desired engine image name, resolved to an online image version ID for existing engines.}
+  allow_image_switch: {type: bool, default: false, description: Explicitly authorize switching an existing engine image.}
   pay_mode: {type: int, choices: [0, 1], default: 0, description: Payment type used during creation.}
   allow_scale_down: {type: bool, default: false, description: Explicitly authorize reducing size or cluster bounds.}
   allow_delete: {type: bool, default: false, description: Explicitly authorize engine deletion.}
@@ -81,7 +82,7 @@ IMMUTABLE = {
     "engine_type": "EngineType", "cluster_type": "ClusterType", "mode": "Mode",
     "cidr_block": "CidrBlock", "engine_network_id": "EngineNetworkId",
     "engine_exec_type": "EngineExecType", "resource_type": "ResourceType",
-    "engine_generation": "EngineGeneration", "image_version_name": "ImageVersionName",
+    "engine_generation": "EngineGeneration",
 }
 
 
@@ -118,6 +119,7 @@ def create_request(models, p):
     }
     for source, target in {**MUTABLE, **IMMUTABLE}.items():
         if p.get(source) is not None: payload[target] = p[source]
+    if p.get("image_version_name") is not None: payload["ImageVersionName"] = p["image_version_name"]
     request = models.CreateDataEngineRequest(); request.from_json_string(json.dumps(payload)); return request
 
 
@@ -140,11 +142,32 @@ def delete_request(models, name):
     request = models.DeleteDataEngineRequest(); request.DataEngineNames = [name]; return request
 
 
+def image_versions_request(models, engine_type):
+    request = models.DescribeDataEngineImageVersionsRequest(); request.EngineType, request.Sort, request.Asc = engine_type, "UpdateTime", False; return request
+
+
+def resolve_image(module, client, models, current, name):
+    engine_type = current.get("EngineTypeDetail")
+    if not engine_type:
+        base = str(current.get("EngineType") or "").lower()
+        engine_type = "SparkBatch" if current.get("EngineExecType") == "BATCH" else ("SparkSQL" if base == "spark" else "PrestoSQL")
+    response = module.sdk_call(client.DescribeDataEngineImageVersions, image_versions_request(models, engine_type))
+    matches = [x for x in (response.ImageParentVersions or []) if x.ImageVersion == name and x.State == 2]
+    if not matches: module.fail_json(msg="online DLC data-engine image version was not found", image_version_name=name, engine_type=engine_type)
+    if len(matches) > 1: module.fail_json(msg="multiple online DLC data-engine images matched the exact version name", image_version_name=name, engine_type=engine_type)
+    return {"ImageVersionId": matches[0].ImageVersionId, "ImageVersionName": matches[0].ImageVersion}
+
+
+def image_switch_request(models, engine_id, image_id):
+    request = models.SwitchDataEngineImageRequest(); request.DataEngineId, request.NewImageVersionId = engine_id, image_id; return request
+
+
 def desired_view(p, current=None):
     result = dict(current or {})
     for source, target in MUTABLE.items():
         if p.get(source) is not None: result[target] = p[source]
     if p.get("description") is not None: result["Message"] = p["description"]
+    if p.get("image_version_name") is not None: result["ImageVersionName"] = p["image_version_name"]
     return result
 
 
@@ -180,7 +203,8 @@ def run_module():
         "resource_type": {"choices": ["Standard_CU", "Memory_CU"]},
         "engine_generation": {"choices": ["Native", "SuperSQL"]}, "image_version_name": {},
         "pay_mode": {"type": "int", "choices": [0, 1], "default": 0},
-        "allow_scale_down": {"type": "bool", "default": False}, "allow_delete": {"type": "bool", "default": False},
+        "allow_scale_down": {"type": "bool", "default": False}, "allow_image_switch": {"type": "bool", "default": False},
+        "allow_delete": {"type": "bool", "default": False},
         "wait": {"type": "bool", "default": True}, "waiter_delay": {"type": "int", "default": 10},
         "waiter_timeout": {"type": "int", "default": 1800},
     }
@@ -219,6 +243,12 @@ def run_module():
         immutable_drift = {target: (current.get(target), p[source]) for source, target in IMMUTABLE.items() if p.get(source) is not None and current.get(target) != p[source]}
         if immutable_drift: module.fail_json(msg="DLC data-engine identity, type, billing, network and generation fields are immutable", immutable_drift=immutable_drift)
         changes = drift(p, current)
+        image_target = None
+        if p.get("image_version_name") is not None and current.get("ImageVersionName") != p["image_version_name"]:
+            image_target = resolve_image(module, client, models, current, p["image_version_name"])
+            if not p["allow_image_switch"]: module.fail_json(msg="set allow_image_switch=true to authorize switching the DLC engine image", image_drift={"ImageVersionName": (current.get("ImageVersionName"), p["image_version_name"])}, image_target=image_target)
+            changes["ImageVersionName"] = (current.get("ImageVersionName"), image_target["ImageVersionName"])
+            changes["ImageVersionId"] = (current.get("ImageVersionId"), image_target["ImageVersionId"])
         for key in ("Size", "MinClusters", "MaxClusters"):
             if key in changes and changes[key][0] is not None and changes[key][1] < changes[key][0] and not p["allow_scale_down"]:
                 module.fail_json(msg="set allow_scale_down=true to authorize reducing DLC engine capacity", capacity_drift={key: changes[key]})
@@ -227,12 +257,15 @@ def run_module():
         state_change = target_state is not None and current.get("State") != target_state
         if not changes and not state_change: module.exit_json(changed=False, data_engine=current, data_engine_id=current.get("DataEngineId"))
         after = desired_view(p, current)
+        if image_target: after.update(image_target)
         if target_state is not None: after["State"] = target_state
         diff_value = maybe_diff(module, current, after)
         if not module.check_mode:
             mutable_changes = {k: v for k, v in changes.items() if k != "Message"}
+            mutable_changes = {k: v for k, v in mutable_changes.items() if k not in ("ImageVersionName", "ImageVersionId")}
             if mutable_changes: module.sdk_call(client.UpdateDataEngine, update_request(models, p))
             if "Message" in changes: module.sdk_call(client.ModifyDataEngineDescription, description_request(models, p["name"], p["description"]))
+            if image_target: module.sdk_call(client.SwitchDataEngineImage, image_switch_request(models, current["DataEngineId"], image_target["ImageVersionId"]))
             if changes and p["wait"]: wait_engine(module, client, models, p, "ready", {k: v[1] for k, v in changes.items()})
             current = find(module, client, models, p["name"])
             if state_change and current.get("State") != target_state:

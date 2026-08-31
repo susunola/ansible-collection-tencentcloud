@@ -1,0 +1,2 @@
+minor_changes:
+  - Resolve online DLC image versions by exact name and switch existing data-engine images through ``SwitchDataEngineImage`` with explicit authorization and read-back convergence.
