@@ -35,3 +35,4 @@ minor_changes:
   - Add paginated gateway service-to-route inventory with optional upstream target discovery.
   - Add public-IP-to-gateway reverse lookup for incident and inventory workflows.
   - Add declarative upstream target drain and restore with state readback and convergence waiting.
+  - Add shared TSE instance tag discovery and expose tags from both solution roles.

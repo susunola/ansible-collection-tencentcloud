@@ -43,6 +43,12 @@
   ansible.builtin.set_fact:
     _tc_tse_api_gateway_id: "{{ _tc_tse_api_gateway_gateway.gateway.GatewayId }}"
 
+- name: Discover TSE API gateway tags
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_instance_tag_info:
+    instance_id: "{{ _tc_tse_api_gateway_id }}"
+  register: _tc_tse_api_gateway_tags
+
 - name: Reconcile TSE API gateway server groups
   when: tc_tse_api_gateway_state == 'present'
   susunola.tencentcloud.tse_gateway_server_group:
@@ -508,6 +514,7 @@
   ansible.builtin.set_fact:
     tc_tse_api_gateway_result:
       gateway: "{{ _tc_tse_api_gateway_gateway.gateway }}"
+      tags: "{{ _tc_tse_api_gateway_tags.tags }}"
       runtime:
         network_config: "{{ _tc_tse_api_gateway_runtime.network_config }}"
         ports: "{{ _tc_tse_api_gateway_runtime.ports }}"

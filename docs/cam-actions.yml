@@ -2466,6 +2466,8 @@ modules:
   tse_governance_service_contract_info:
   - DescribeGovernanceServiceContractVersions
   - DescribeGovernanceServiceContracts
+  tse_instance_tag_info:
+  - DescribeInstanceTagInfos
   tse_sre_access_address_info:
   - DescribeSREInstanceAccessAddress
   tse_sre_instance:

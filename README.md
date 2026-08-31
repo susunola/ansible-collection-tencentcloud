@@ -656,6 +656,7 @@ Read-only `_info` modules (return `changed=false`):
 | `tse_gateway_runtime_info` | Gather Tencent Cloud TSE gateway runtime topology |
 | `tse_gateway_service_inventory_info` | Gather Tencent Cloud TSE gateway service and route inventory |
 | `tse_governance_service_contract_info` | Gather Tencent Cloud TSE governance service contracts |
+| `tse_instance_tag_info` | Gather Tencent Cloud TSE instance tag metadata |
 | `tse_sre_access_address_info` | Gather Tencent Cloud TSE registry-engine access addresses |
 | `tse_sre_instance_info` | Gather information about Tencent Cloud TSE sre instances |
 | `tse_sre_topology_info` | Gather Tencent Cloud TSE registry-engine topology |

@@ -38,6 +38,12 @@
   args: "{{ tc_tse_governance_platform_access_address_query | combine({'instance_id': _tc_tse_governance_platform_instance_id}) }}"
   register: _tc_tse_governance_platform_access_address
 
+- name: Discover TSE registry engine tags
+  when: tc_tse_governance_platform_state == 'present'
+  susunola.tencentcloud.tse_instance_tag_info:
+    instance_id: "{{ _tc_tse_governance_platform_instance_id }}"
+  register: _tc_tse_governance_platform_tags
+
 - name: Discover TSE registry engine topology
   when:
     - tc_tse_governance_platform_state == 'present'
@@ -142,6 +148,7 @@
     tc_tse_governance_platform_result:
       engine: "{{ _tc_tse_governance_platform_engine.instance }}"
       access_address: "{{ _tc_tse_governance_platform_access_address.access_address }}"
+      tags: "{{ _tc_tse_governance_platform_tags.tags }}"
       topology:
         replicas: "{{ _tc_tse_governance_platform_topology.replicas | default([]) }}"
         interfaces: "{{ _tc_tse_governance_platform_topology.interfaces | default([]) }}"
