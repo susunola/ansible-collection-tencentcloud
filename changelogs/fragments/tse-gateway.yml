@@ -14,3 +14,5 @@ minor_changes:
   - Add read-backed, delta-based ``tse_gateway_model_api_group_auth`` reconciliation.
   - Add complete ``tse_gateway_model_service`` and ``tse_gateway_model_api`` lifecycles for AI gateway workloads.
   - Resolve AI gateway secret keys and model services by name inside ``tc_tse_api_gateway``.
+  - Resolve consumers, consumer groups and Model APIs by name for role-managed membership and authorization relationships.
+  - Resolve relationship resource names inside membership and Model API authorization modules so name-based teardown is independently reliable.

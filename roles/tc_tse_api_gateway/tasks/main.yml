@@ -103,11 +103,61 @@
   loop_control: {label: "{{ item.name | default('unnamed') }}"}
   register: _tc_tse_api_gateway_consumer_groups_result
 
+- name: Validate TSE API gateway consumer group membership references
+  when: tc_tse_api_gateway_state == 'present'
+  ansible.builtin.assert:
+    that:
+      - item.consumer_group_id is defined or item.consumer_group_name is defined
+      - item.consumer_ids is defined or item.consumer_names is defined
+      - >-
+        item.consumer_group_name is not defined or
+        [item.consumer_group_name] | difference(
+          _tc_tse_api_gateway_consumer_groups_result.results
+          | map(attribute='consumer_group.Name') | list
+        ) | length == 0
+      - >-
+        item.consumer_names is not defined or
+        item.consumer_names | difference(
+          _tc_tse_api_gateway_consumers_result.results
+          | map(attribute='consumer.Name') | list
+        ) | length == 0
+    fail_msg: A consumer group membership references an unknown or incomplete consumer/group identity.
+  loop: "{{ tc_tse_api_gateway_consumer_group_memberships }}"
+  loop_control: {label: "{{ item.consumer_group_name | default(item.consumer_group_id | default('unnamed')) }}"}
+
+- name: Initialize resolved TSE API gateway consumer group memberships
+  when: tc_tse_api_gateway_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_tse_api_gateway_resolved_consumer_group_memberships: []
+
+- name: Resolve TSE API gateway consumer group membership names
+  when: tc_tse_api_gateway_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_tse_api_gateway_resolved_consumer_group_memberships: >-
+      {{ _tc_tse_api_gateway_resolved_consumer_group_memberships + [
+        (item | dict2items
+          | rejectattr('key', 'in', ['consumer_group_name', 'consumer_names']) | items2dict)
+        | combine({
+          'consumer_group_id': item.consumer_group_id
+            if item.consumer_group_id is defined else
+            (_tc_tse_api_gateway_consumer_groups_result.results
+              | selectattr('consumer_group.Name', 'equalto', item.consumer_group_name)
+              | map(attribute='consumer_group.ConsumerGroupId') | first),
+          'consumer_ids': item.consumer_ids
+            if item.consumer_ids is defined else
+            (_tc_tse_api_gateway_consumers_result.results
+              | selectattr('consumer.Name', 'in', item.consumer_names)
+              | map(attribute='consumer.ConsumerId') | list)
+        })
+      ] }}
+  loop: "{{ tc_tse_api_gateway_consumer_group_memberships }}"
+  loop_control: {label: "{{ item.consumer_group_name | default(item.consumer_group_id | default('unnamed')) }}"}
+
 - name: Reconcile TSE API gateway consumer group memberships
   when: tc_tse_api_gateway_state == 'present'
   susunola.tencentcloud.tse_gateway_consumer_group_membership:
   args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
-  loop: "{{ tc_tse_api_gateway_consumer_group_memberships }}"
+  loop: "{{ _tc_tse_api_gateway_resolved_consumer_group_memberships }}"
   loop_control: {label: "{{ item.consumer_group_id | default('unnamed') }}"}
   register: _tc_tse_api_gateway_consumer_group_memberships_result
 
@@ -210,11 +260,61 @@
   loop_control: {label: "{{ item.name | default('unnamed') }}"}
   register: _tc_tse_api_gateway_model_apis_result
 
+- name: Validate TSE API gateway Model API authorization references
+  when: tc_tse_api_gateway_state == 'present'
+  ansible.builtin.assert:
+    that:
+      - item.model_api_id is defined or item.model_api_name is defined
+      - item.consumer_group_ids is defined or item.consumer_group_names is defined
+      - >-
+        item.model_api_name is not defined or
+        [item.model_api_name] | difference(
+          _tc_tse_api_gateway_model_apis_result.results
+          | map(attribute='model_api.Name') | list
+        ) | length == 0
+      - >-
+        item.consumer_group_names is not defined or
+        item.consumer_group_names | difference(
+          _tc_tse_api_gateway_consumer_groups_result.results
+          | map(attribute='consumer_group.Name') | list
+        ) | length == 0
+    fail_msg: A Model API authorization references an unknown or incomplete Model API/group identity.
+  loop: "{{ tc_tse_api_gateway_model_api_group_auths }}"
+  loop_control: {label: "{{ item.model_api_name | default(item.model_api_id | default('unnamed')) }}"}
+
+- name: Initialize resolved TSE API gateway Model API group authorizations
+  when: tc_tse_api_gateway_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_tse_api_gateway_resolved_model_api_group_auths: []
+
+- name: Resolve TSE API gateway Model API authorization names
+  when: tc_tse_api_gateway_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_tse_api_gateway_resolved_model_api_group_auths: >-
+      {{ _tc_tse_api_gateway_resolved_model_api_group_auths + [
+        (item | dict2items
+          | rejectattr('key', 'in', ['model_api_name', 'consumer_group_names']) | items2dict)
+        | combine({
+          'model_api_id': item.model_api_id
+            if item.model_api_id is defined else
+            (_tc_tse_api_gateway_model_apis_result.results
+              | selectattr('model_api.Name', 'equalto', item.model_api_name)
+              | map(attribute='model_api.Id') | first),
+          'consumer_group_ids': item.consumer_group_ids
+            if item.consumer_group_ids is defined else
+            (_tc_tse_api_gateway_consumer_groups_result.results
+              | selectattr('consumer_group.Name', 'in', item.consumer_group_names)
+              | map(attribute='consumer_group.ConsumerGroupId') | list)
+        })
+      ] }}
+  loop: "{{ tc_tse_api_gateway_model_api_group_auths }}"
+  loop_control: {label: "{{ item.model_api_name | default(item.model_api_id | default('unnamed')) }}"}
+
 - name: Reconcile TSE API gateway Model API group authorizations
   when: tc_tse_api_gateway_state == 'present'
   susunola.tencentcloud.tse_gateway_model_api_group_auth:
   args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
-  loop: "{{ tc_tse_api_gateway_model_api_group_auths }}"
+  loop: "{{ _tc_tse_api_gateway_resolved_model_api_group_auths }}"
   loop_control: {label: "{{ item.model_api_id | default('unnamed') }}"}
   register: _tc_tse_api_gateway_model_api_group_auths_result
 
@@ -349,8 +449,10 @@
   when: tc_tse_api_gateway_state == 'absent'
   susunola.tencentcloud.tse_gateway_model_api_group_auth:
     gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
-    model_api_id: "{{ item.model_api_id }}"
-    consumer_group_ids: "{{ item.consumer_group_ids }}"
+    model_api_id: "{{ item.model_api_id | default(omit) }}"
+    model_api_name: "{{ item.model_api_name | default(omit) }}"
+    consumer_group_ids: "{{ item.consumer_group_ids | default(omit) }}"
+    consumer_group_names: "{{ item.consumer_group_names | default(omit) }}"
     state: absent
   loop: "{{ tc_tse_api_gateway_model_api_group_auths | reverse | list }}"
 
@@ -418,8 +520,10 @@
   when: tc_tse_api_gateway_state == 'absent'
   susunola.tencentcloud.tse_gateway_consumer_group_membership:
     gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
-    consumer_group_id: "{{ item.consumer_group_id }}"
-    consumer_ids: "{{ item.consumer_ids }}"
+    consumer_group_id: "{{ item.consumer_group_id | default(omit) }}"
+    consumer_group_name: "{{ item.consumer_group_name | default(omit) }}"
+    consumer_ids: "{{ item.consumer_ids | default(omit) }}"
+    consumer_names: "{{ item.consumer_names | default(omit) }}"
     state: absent
   loop: "{{ tc_tse_api_gateway_consumer_group_memberships | reverse | list }}"
 

@@ -35,11 +35,11 @@ route creation. Guarded teardown removes routes and services before the gateway.
         tc_tse_api_gateway_consumer_groups:
           - {name: trusted-clients, status: Enable}
         tc_tse_api_gateway_consumer_group_memberships:
-          - consumer_group_id: cg-xxxxxxxx
-            consumer_ids: [consumer-xxxxxxxx]
+          - consumer_group_name: trusted-clients
+            consumer_names: [mobile-application]
         tc_tse_api_gateway_model_api_group_auths:
-          - model_api_id: model-api-xxxxxxxx
-            consumer_group_ids: [cg-xxxxxxxx]
+          - model_api_name: chat-completions
+            consumer_group_names: [trusted-clients]
         tc_tse_api_gateway_secret_keys:
           - name: mobile-api-key
             secret_type: ApiKey
@@ -94,3 +94,5 @@ route creation. Guarded teardown removes routes and services before the gateway.
 `secret_key_names` and `model_service_names` are role-only convenience fields.
 They are resolved from resources created in the same role run. Direct
 `config.SecretKeyIds` and `config.ListModelServiceId` remain supported.
+Memberships and Model API authorizations similarly accept name-based references;
+their direct ID fields remain supported for externally managed resources.

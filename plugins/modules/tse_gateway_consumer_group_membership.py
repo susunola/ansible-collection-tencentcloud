@@ -11,8 +11,10 @@ description: Adds or removes up to ten consumers using consumer detail readback 
 options:
   state: {type: str, choices: [present, absent], default: present, description: Whether every listed consumer belongs to the group.}
   gateway_id: {type: str, required: true, description: Gateway ID.}
-  consumer_group_id: {type: str, required: true, description: Consumer group ID.}
-  consumer_ids: {type: list, elements: str, required: true, description: Unique consumer IDs, one through ten entries.}
+  consumer_group_id: {type: str, description: Consumer group ID.}
+  consumer_group_name: {type: str, description: Consumer group name resolved within the gateway.}
+  consumer_ids: {type: list, elements: str, description: Unique consumer IDs, one through ten entries.}
+  consumer_names: {type: list, elements: str, description: Unique consumer names resolved within the gateway.}
   retries: {type: int, default: 5, description: Transient API retry count.}
   user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
@@ -21,8 +23,8 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 EXAMPLES = r'''
 - susunola.tencentcloud.tse_gateway_consumer_group_membership:
     gateway_id: gateway-xxxxxxxx
-    consumer_group_id: cg-xxxxxxxx
-    consumer_ids: [consumer-a, consumer-b]
+    consumer_group_name: trusted-clients
+    consumer_names: [mobile-app, batch-worker]
 '''
 RETURN = r'''membership: {description: Requested group and effective member IDs., type: dict, returned: always}'''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
@@ -40,6 +42,30 @@ def mutation_request(cls,p,consumer_ids):
 def group_ids(value):
     groups=value.get("ConsumerGroups") or []
     return {item.get("ConsumerGroupId") for item in groups if item.get("ConsumerGroupId")}
+def resolve_ids(values,names,id_field):
+    mapping={item.get("Name"):item.get(id_field) for item in values if item.get("Name") and item.get(id_field)}
+    return [mapping[name] for name in names if name in mapping], [name for name in names if name not in mapping]
+def list_values(module,client,request_factory,api,result_field):
+    offset=0; values=[]
+    while True:
+        result=module.sdk_call(api,request_factory(offset)).Result; page=getattr(result,result_field) if result else []
+        values.extend(item._serialize(allow_none=True) for item in page or []); offset+=len(page or [])
+        if not result or offset>=int(result.TotalCount or 0): return values
+def resolve_names(module,client,models,p):
+    if not p.get("consumer_group_id"):
+        groups=list_values(module,client,lambda offset: _group_list_request(models,p,offset),client.DescribeCloudNativeAPIGatewayConsumerGroupList,"ConsumerGroups")
+        ids,missing=resolve_ids(groups,[p["consumer_group_name"]],"ConsumerGroupId")
+        if missing: module.fail_json(msg="TSE gateway consumer group name was not found",consumer_group_name=missing[0])
+        p["consumer_group_id"]=ids[0]
+    if not p.get("consumer_ids"):
+        consumers=list_values(module,client,lambda offset: _consumer_list_request(models,p,offset),client.DescribeCloudNativeAPIGatewayConsumerList,"Consumers")
+        ids,missing=resolve_ids(consumers,p["consumer_names"],"ConsumerId")
+        if missing: module.fail_json(msg="TSE gateway consumer names were not found",consumer_names=missing)
+        p["consumer_ids"]=ids
+def _group_list_request(models,p,offset):
+    r=models.DescribeCloudNativeAPIGatewayConsumerGroupListRequest(); r.GatewayId,r.Offset,r.Limit=p["gateway_id"],offset,20; return r
+def _consumer_list_request(models,p,offset):
+    r=models.DescribeCloudNativeAPIGatewayConsumerListRequest(); r.GatewayId,r.Offset,r.Limit=p["gateway_id"],offset,20; return r
 def inspect_members(module,client,models,p):
     present=[]
     for consumer_id in p["consumer_ids"]:
@@ -48,11 +74,13 @@ def inspect_members(module,client,models,p):
         if p["consumer_group_id"] in group_ids(result._serialize(allow_none=True)): present.append(consumer_id)
     return present
 def run_module():
-    module=TencentCloudModule(argument_spec={"state":{"choices":["present","absent"],"default":"present"},"gateway_id":{"required":True},"consumer_group_id":{"required":True},"consumer_ids":{"type":"list","elements":"str","required":True}},supports_check_mode=True); p=module.params
-    if not 1<=len(p["consumer_ids"])<=10: module.fail_json(msg="consumer_ids must contain between 1 and 10 entries")
-    if len(set(p["consumer_ids"]))!=len(p["consumer_ids"]): module.fail_json(msg="consumer_ids must not contain duplicates")
+    module=TencentCloudModule(argument_spec={"state":{"choices":["present","absent"],"default":"present"},"gateway_id":{"required":True},"consumer_group_id":{},"consumer_group_name":{},"consumer_ids":{"type":"list","elements":"str"},"consumer_names":{"type":"list","elements":"str"}},required_one_of=[("consumer_group_id","consumer_group_name"),("consumer_ids","consumer_names")],mutually_exclusive=[("consumer_group_id","consumer_group_name"),("consumer_ids","consumer_names")],supports_check_mode=True); p=module.params
+    supplied=p.get("consumer_ids") or p.get("consumer_names") or []
+    if not 1<=len(supplied)<=10: module.fail_json(msg="consumer_ids or consumer_names must contain between 1 and 10 entries")
+    if len(set(supplied))!=len(supplied): module.fail_json(msg="consumer_ids or consumer_names must not contain duplicates")
     module.require_sdk(); models,cm=_load(); client=module.create_client(cm.TseClient,"tse.tencentcloudapi.com")
     try:
+        resolve_names(module,client,models,p)
         before=inspect_members(module,client,models,p)
         affected=[item for item in p["consumer_ids"] if (item not in before if p["state"]=="present" else item in before)]
         target=p["consumer_ids"] if p["state"]=="present" else []
