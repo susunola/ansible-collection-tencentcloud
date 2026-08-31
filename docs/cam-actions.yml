@@ -883,6 +883,8 @@ modules:
   - DeleteNotebookSession
   - DescribeNotebookSession
   - DescribeNotebookSessions
+  dlc_notebook_session_info:
+  - DescribeNotebookSessions
   dlc_partition_queue:
   - CreatePartitionQueue
   - DeletePartitionQueue

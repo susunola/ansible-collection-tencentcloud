@@ -454,6 +454,7 @@ Read-only `_info` modules (return `changed=false`):
 | `dbs_backup_plan_info` | Gather information about Tencent Cloud DBS backup plans |
 | `dc_direct_connect_tunnel_info` | Gather information about Tencent Cloud DC direct connect tunnels |
 | `dcdb_instance_info` | Gather information about Tencent Cloud DCDB instances |
+| `dlc_notebook_session_info` | Gather Tencent Cloud DLC Notebook sessions |
 | `dlc_task_info` | Gather information about Tencent Cloud DLC tasks |
 | `dnspod_record_info` | Gather information about DNSPod records |
 | `domain_batch_operation_log_info` | Gather information about Tencent Cloud DOMAIN batch operation logs |
