@@ -2347,6 +2347,8 @@ modules:
   - CreateOrModifyCloudNativeAPIGatewayCORS
   - DeleteCloudNativeAPIGatewayCORS
   - DescribeCloudNativeAPIGatewayCORS
+  tse_gateway_ip_lookup_info:
+  - DescribeCloudNativeAPIGatewayInfoByIp
   tse_gateway_ip_restriction:
   - CreateOrModifyCloudNativeAPIGatewayIPRestriction
   - DeleteCloudNativeAPIGatewayIPRestriction

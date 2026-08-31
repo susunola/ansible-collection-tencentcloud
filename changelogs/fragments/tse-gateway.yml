@@ -33,3 +33,4 @@ minor_changes:
   - Add paginated governance service-contract and contract-version discovery.
   - Add atomic configuration file and release deployment with deterministic teardown.
   - Add paginated gateway service-to-route inventory with optional upstream target discovery.
+  - Add public-IP-to-gateway reverse lookup for incident and inventory workflows.
