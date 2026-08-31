@@ -6,6 +6,7 @@
       - tc_tse_governance_platform_engine is mapping
       - tc_tse_governance_platform_access_address_query is mapping
       - tc_tse_governance_platform_discover_topology is boolean
+      - tc_tse_governance_platform_discover_config_templates is boolean
       - tc_tse_governance_platform_namespaces is sequence
       - tc_tse_governance_platform_services is sequence
       - tc_tse_governance_platform_service_contract_queries is sequence
@@ -53,6 +54,14 @@
     instance_id: "{{ _tc_tse_governance_platform_instance_id }}"
     engine_type: "{{ tc_tse_governance_platform_engine.engine_type | lower }}"
   register: _tc_tse_governance_platform_topology
+
+- name: Discover TSE configuration file templates
+  when:
+    - tc_tse_governance_platform_state == 'present'
+    - tc_tse_governance_platform_discover_config_templates
+  susunola.tencentcloud.tse_config_file_template_info:
+    instance_id: "{{ _tc_tse_governance_platform_instance_id }}"
+  register: _tc_tse_governance_platform_config_templates
 
 - name: Reconcile TSE governance namespaces
   when: tc_tse_governance_platform_state == 'present'
@@ -154,6 +163,7 @@
         interfaces: "{{ _tc_tse_governance_platform_topology.interfaces | default([]) }}"
         replica_count: "{{ _tc_tse_governance_platform_topology.replica_count | default(0) }}"
         interface_count: "{{ _tc_tse_governance_platform_topology.interface_count | default(0) }}"
+      config_templates: "{{ _tc_tse_governance_platform_config_templates.templates | default([]) }}"
       namespaces: "{{ _tc_tse_governance_platform_namespaces.results | default([]) | map(attribute='namespace') | list }}"
       services: "{{ _tc_tse_governance_platform_services.results | default([]) | map(attribute='service') | list }}"
       service_contracts: "{{ _tc_tse_governance_platform_service_contracts.results | default([]) }}"

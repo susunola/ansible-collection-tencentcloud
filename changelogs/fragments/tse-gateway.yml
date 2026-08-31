@@ -38,3 +38,4 @@ minor_changes:
   - Add shared TSE instance tag discovery and expose tags from both solution roles.
   - Add credential-safe Konga console network reconciliation with access control and convergence waiting.
   - Use the certificate metadata API for name and domain changes so native private keys are only required for material rotation.
+  - Add configuration template discovery and expose templates from the governance platform role.

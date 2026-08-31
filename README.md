@@ -653,6 +653,7 @@ Read-only `_info` modules (return `changed=false`):
 | `trro_device_info` | Gather information about Tencent Cloud TRRO devices |
 | `trtc_call_info` | Gather information about Tencent Cloud TRTC calls |
 | `tse_config_file_release_info` | Gather Tencent Cloud TSE configuration release audit data |
+| `tse_config_file_template_info` | Gather Tencent Cloud TSE configuration file templates |
 | `tse_gateway_ip_lookup_info` | Resolve a Tencent Cloud TSE gateway from its public IP |
 | `tse_gateway_runtime_info` | Gather Tencent Cloud TSE gateway runtime topology |
 | `tse_gateway_service_inventory_info` | Gather Tencent Cloud TSE gateway service and route inventory |

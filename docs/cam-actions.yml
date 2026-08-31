@@ -2303,6 +2303,8 @@ modules:
   - DescribeConfigFileReleaseHistories
   - DescribeConfigFileReleaseVersions
   - DescribeConfigFileReleases
+  tse_config_file_template_info:
+  - DescribeAllConfigFileTemplates
   tse_gateway_autoscaler_binding:
   - BindAutoScalerResourceStrategyToGroups
   - DescribeAutoScalerResourceStrategies
