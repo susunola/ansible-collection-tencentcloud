@@ -2287,6 +2287,17 @@ modules:
   - DeleteConfigFileGroup
   - DescribeConfigFileGroups
   - ModifyConfigFileGroup
+  tse_gateway_route:
+  - CreateCloudNativeAPIGatewayRoute
+  - DeleteCloudNativeAPIGatewayRoute
+  - DescribeCloudNativeAPIGatewayRoutes
+  - ModifyCloudNativeAPIGatewayRoute
+  tse_gateway_service:
+  - CreateCloudNativeAPIGatewayService
+  - DeleteCloudNativeAPIGatewayService
+  - DescribeCloudNativeAPIGatewayServices
+  - DescribeOneCloudNativeAPIGatewayService
+  - ModifyCloudNativeAPIGatewayService
   tse_governance_namespace:
   - CreateGovernanceNamespaces
   - DeleteGovernanceNamespaces

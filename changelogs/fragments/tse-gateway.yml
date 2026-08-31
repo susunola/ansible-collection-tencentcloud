@@ -1,2 +1,5 @@
 minor_changes:
   - Add ``tse_cloud_native_gateway`` with topology drift protection, mutable policy reconciliation and guarded deletion.
+  - Add ``tse_gateway_service`` for declarative upstream service lifecycle management.
+  - Add ``tse_gateway_route`` for instance-unique HTTP and layer-4 route lifecycle management.
+  - Add ``tc_tse_api_gateway`` to compose gateway, upstream service and route lifecycles.

@@ -1,0 +1,91 @@
+---
+- name: Validate TSE API gateway inputs
+  ansible.builtin.assert:
+    that:
+      - tc_tse_api_gateway_state in ['present', 'absent']
+      - tc_tse_api_gateway_gateway is mapping
+      - tc_tse_api_gateway_services is sequence
+      - tc_tse_api_gateway_routes is sequence
+      - tc_tse_api_gateway_gateway.gateway_id | default(tc_tse_api_gateway_gateway.name | default('')) | length > 0
+      - tc_tse_api_gateway_state == 'present' or tc_tse_api_gateway_allow_destroy | bool
+    fail_msg: TSE API gateway requires gateway_id or name; destruction requires tc_tse_api_gateway_allow_destroy=true.
+
+- name: Reconcile TSE cloud-native API gateway
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_cloud_native_gateway:
+  args: "{{ tc_tse_api_gateway_gateway | combine({'state': 'present'}) }}"
+  register: _tc_tse_api_gateway_gateway
+
+- name: Capture TSE API gateway ID
+  when: tc_tse_api_gateway_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_tse_api_gateway_id: "{{ _tc_tse_api_gateway_gateway.gateway.GatewayId }}"
+
+- name: Reconcile TSE API gateway services
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_service:
+  args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
+  loop: "{{ tc_tse_api_gateway_services }}"
+  loop_control: {label: "{{ item.name | default('unnamed') }}"}
+  register: _tc_tse_api_gateway_services
+
+- name: Initialize resolved TSE API gateway routes
+  when: tc_tse_api_gateway_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_tse_api_gateway_resolved_routes: []
+
+- name: Resolve TSE API gateway route service IDs
+  when: tc_tse_api_gateway_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_tse_api_gateway_resolved_routes: >-
+      {{ _tc_tse_api_gateway_resolved_routes + [
+        (item | dict2items | rejectattr('key', 'equalto', 'service_name') | items2dict)
+        | combine({'service_id': item.service_id | default(
+          _tc_tse_api_gateway_services.results
+          | selectattr('service.Name', 'equalto', item.service_name | default(''))
+          | map(attribute='service.ID') | first)})
+      ] }}
+  loop: "{{ tc_tse_api_gateway_routes }}"
+  loop_control: {label: "{{ item.name | default('unnamed') }}"}
+
+- name: Reconcile TSE API gateway routes
+  when: tc_tse_api_gateway_state == 'present'
+  susunola.tencentcloud.tse_gateway_route:
+  args: "{{ item | combine({'gateway_id': _tc_tse_api_gateway_id, 'state': 'present'}) }}"
+  loop: "{{ _tc_tse_api_gateway_resolved_routes }}"
+  loop_control: {label: "{{ item.name | default('unnamed') }}"}
+  register: _tc_tse_api_gateway_routes_result
+
+- name: Publish TSE API gateway outputs
+  when: tc_tse_api_gateway_state == 'present'
+  ansible.builtin.set_fact:
+    tc_tse_api_gateway_result:
+      gateway: "{{ _tc_tse_api_gateway_gateway.gateway }}"
+      services: "{{ _tc_tse_api_gateway_services.results | default([]) | map(attribute='service') | list }}"
+      routes: "{{ _tc_tse_api_gateway_routes_result.results | default([]) | map(attribute='route') | list }}"
+
+- name: Require gateway ID for deterministic teardown
+  when:
+    - tc_tse_api_gateway_state == 'absent'
+    - tc_tse_api_gateway_gateway.gateway_id | default('') | length == 0
+  ansible.builtin.fail:
+    msg: gateway.gateway_id is required for deterministic TSE API gateway teardown.
+
+- name: Remove TSE API gateway routes
+  when: tc_tse_api_gateway_state == 'absent'
+  susunola.tencentcloud.tse_gateway_route:
+    gateway_id: "{{ tc_tse_api_gateway_gateway.gateway_id }}"
+    name: "{{ item.name }}"
+    state: absent
+  loop: "{{ tc_tse_api_gateway_routes | reverse | list }}"
+
+- name: Remove TSE API gateway services
+  when: tc_tse_api_gateway_state == 'absent'
+  susunola.tencentcloud.tse_gateway_service:
+  args: "{{ item | combine({'gateway_id': tc_tse_api_gateway_gateway.gateway_id, 'state': 'absent', 'delete_routes': true}) }}"
+  loop: "{{ tc_tse_api_gateway_services | reverse | list }}"
+
+- name: Remove TSE cloud-native API gateway
+  when: tc_tse_api_gateway_state == 'absent'
+  susunola.tencentcloud.tse_cloud_native_gateway:
+  args: "{{ tc_tse_api_gateway_gateway | combine({'state': 'absent'}) }}"
