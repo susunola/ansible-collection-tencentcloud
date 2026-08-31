@@ -1,0 +1,19 @@
+---
+- name: Reconcile CDN domain configuration
+  susunola.tencentcloud.cdn_domain:
+    region: "{{ tc_cdn_delivery_region }}"
+    state: present
+    domain: "{{ _tc_cdn_domain.domain }}"
+    service_type: "{{ _tc_cdn_domain.service_type }}"
+    origins: "{{ _tc_cdn_domain.origins }}"
+    origin_type: "{{ _tc_cdn_domain.origin_type }}"
+    origin_protocol: "{{ _tc_cdn_domain.origin_protocol | default(omit) }}"
+    backup_origins: "{{ _tc_cdn_domain.backup_origins | default(omit) }}"
+    project_id: "{{ _tc_cdn_domain.project_id | default(omit) }}"
+    area: "{{ _tc_cdn_domain.area | default(omit) }}"
+
+- name: Reconcile CDN domain serving state
+  susunola.tencentcloud.cdn_domain:
+    region: "{{ tc_cdn_delivery_region }}"
+    state: "{{ 'running' if _tc_cdn_domain.enabled | default(true) | bool else 'stopped' }}"
+    domain: "{{ _tc_cdn_domain.domain }}"

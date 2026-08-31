@@ -1,0 +1,7 @@
+---
+galaxy_info:
+  author: Tencent Cloud Ansible Collection Contributors
+  description: Operate CDN domains and real-time CLS access-log delivery
+  license: GPL-3.0-or-later
+  min_ansible_version: "2.16"
+dependencies: []

@@ -167,6 +167,7 @@ domain:
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
 
 
 def _load_cdn():
@@ -299,6 +300,16 @@ def _stop(module, client, models, domain):
     module.sdk_call(client.StopCdnDomain, request)
 
 
+def _wait_status(module, client, models, domain, expected):
+    return wait_for_state(
+        module,
+        lambda: (find_domain(module, client, models, domain) or {}).get("Status"),
+        [expected],
+        timeout=module.params["waiter_timeout"],
+        delay=module.params["waiter_delay"],
+    )
+
+
 def run_module():
     module = TencentCloudModule(
         argument_spec={
@@ -341,6 +352,9 @@ def run_module():
         diff = maybe_diff(module, current, None)
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), msg="Would delete CDN domain")
+        if current.get("Status") != "offline":
+            _stop(module, client, models, domain)
+            _wait_status(module, client, models, domain, "offline")
         _delete(module, client, models, domain)
         module.exit_json(changed=True, **(diff or {}), domain=None, msg="CDN domain deleted")
 

@@ -386,6 +386,15 @@ def test_direct_connect_removes_tunnels_before_guarded_physical_connection():
     assert "no_log:" in text
 
 
+def test_cdn_delivery_removes_log_topics_before_domains():
+    text = role_tasks("tc_cdn_delivery")
+    assert_order(
+        text,
+        "Remove CDN real-time CLS log topics",
+        "Stop and remove CDN domains",
+    )
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(

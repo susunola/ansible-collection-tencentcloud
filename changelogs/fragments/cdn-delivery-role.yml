@@ -1,0 +1,5 @@
+---
+minor_changes:
+  - Added the tc_cdn_delivery role for CDN domains, serving state and real-time CLS access-log delivery.
+bugfixes:
+  - Stop online CDN domains and wait for offline state before deleting them.

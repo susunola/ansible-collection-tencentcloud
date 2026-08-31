@@ -1,0 +1,48 @@
+---
+- name: Validate CDN delivery inputs
+  ansible.builtin.assert:
+    that:
+      - tc_cdn_delivery_state in ['present', 'absent']
+      - tc_cdn_delivery_region | length > 0
+    fail_msg: CDN delivery requires a valid state and explicit region.
+
+- name: Reconcile CDN domains and serving state
+  when: tc_cdn_delivery_state == 'present'
+  ansible.builtin.include_tasks: domain.yml
+  loop: "{{ tc_cdn_delivery_domains }}"
+  loop_control:
+    loop_var: _tc_cdn_domain
+    label: "{{ _tc_cdn_domain.domain }}"
+
+- name: Reconcile CDN real-time CLS log topics
+  when: tc_cdn_delivery_state == 'present'
+  susunola.tencentcloud.cdn_cls_log_topic:
+  args: "{{ item | combine({'state': 'present', 'region': tc_cdn_delivery_region}) }}"
+  loop: "{{ tc_cdn_delivery_log_topics }}"
+  register: _tc_cdn_log_topics
+
+- name: Remove CDN real-time CLS log topics
+  when: tc_cdn_delivery_state == 'absent'
+  susunola.tencentcloud.cdn_cls_log_topic:
+    region: "{{ tc_cdn_delivery_region }}"
+    state: absent
+    topic_id: "{{ item.topic_id | default(omit, true) }}"
+    topic_name: "{{ item.topic_name | default(omit, true) }}"
+    logset_id: "{{ item.logset_id | default(omit, true) }}"
+    channel: "{{ item.channel | default('cdn') }}"
+  loop: "{{ tc_cdn_delivery_log_topics }}"
+
+- name: Stop and remove CDN domains
+  when: tc_cdn_delivery_state == 'absent'
+  susunola.tencentcloud.cdn_domain:
+    region: "{{ tc_cdn_delivery_region }}"
+    state: absent
+    domain: "{{ item.domain }}"
+  loop: "{{ tc_cdn_delivery_domains }}"
+
+- name: Publish CDN delivery result
+  when: tc_cdn_delivery_state == 'present'
+  ansible.builtin.set_fact:
+    tc_cdn_delivery_result:
+      domain_count: "{{ tc_cdn_delivery_domains | length }}"
+      log_topics: "{{ _tc_cdn_log_topics | default({}) }}"

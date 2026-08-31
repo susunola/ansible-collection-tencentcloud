@@ -8,6 +8,7 @@ from ansible_collections.susunola.tencentcloud.plugins.modules.cdn_domain import
     _delete,
     _start,
     _stop,
+    _wait_status,
     build_add_request,
     build_describe_request,
     find_domain,
@@ -100,7 +101,8 @@ class FakeClient(object):
 
 class FakeModule(object):
     def __init__(self):
-        self.params = {"retries": 2}
+        self.params = {"retries": 2, "waiter_timeout": 1, "waiter_delay": 0}
+        self.check_mode = False
 
     def sdk_call(self, operation, request):
         return operation(request)
@@ -131,6 +133,21 @@ def test_find_domain_returns_none_when_absent():
     client = FakeClient(FakeResponse([]))
     module = FakeModule()
     assert find_domain(module, client, FakeModels, "cdn.example.com") is None
+
+
+def test_wait_status_polls_until_domain_is_offline():
+    class TransitionClient(FakeClient):
+        def __init__(self):
+            super(TransitionClient, self).__init__()
+            self.statuses = ["online", "offline"]
+
+        def DescribeDomains(self, request):
+            self.calls.append(request)
+            return FakeResponse([FakeDomain("cdn.example.com", self.statuses.pop(0))])
+
+    client = TransitionClient()
+    assert _wait_status(FakeModule(), client, FakeModels, "cdn.example.com", "offline") == "offline"
+    assert len(client.calls) == 2
 
 
 def test_build_add_request_sends_core_fields():

@@ -586,6 +586,7 @@ for product-level write, discovery and reusable-role maturity.
 | `tc_organization_governance` | Govern Organization nodes, members, identities and access policies |
 | `tc_kms_keyring` | Govern KMS keys, automatic rotation and guarded scheduled deletion |
 | `tc_direct_connect_fabric` | Provision or adopt Direct Connect circuits and private tunnels |
+| `tc_cdn_delivery` | Operate CDN domains, serving state and real-time CLS access logs |
 | `tc_observability_baseline` | Establish CLS indexed topics and Cloud Monitor alarm policies |
 | `tc_prometheus_platform` | Provision Managed Prometheus with collection agents, rules, alerts, notifications and Grafana bindings |
 | `tc_object_storage_baseline` | Establish a secure COS bucket with encryption, lifecycle, policy, logging and replication |

@@ -1,0 +1,7 @@
+---
+tc_cdn_delivery_state: present
+tc_cdn_delivery_region: ""
+# Domain items follow cdn_domain fields and may set enabled (default true).
+tc_cdn_delivery_domains: []
+# Topic items follow cdn_cls_log_topic fields.
+tc_cdn_delivery_log_topics: []
