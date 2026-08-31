@@ -1,0 +1,20 @@
+---
+- name: Reconcile DCDB account
+  susunola.tencentcloud.dcdb_account:
+  args: >-
+    {{ _tc_dcdb_account_spec
+       | dict2items
+       | rejectattr('key', 'equalto', 'privileges')
+       | items2dict
+       | combine({'state': 'present', 'instance_id': _tc_dcdb_stack_instance.instance.InstanceId}) }}
+
+- name: Reconcile DCDB account privilege scopes
+  susunola.tencentcloud.dcdb_account_privilege:
+  args: >-
+    {{ item | combine({
+         'state': 'present',
+         'instance_id': _tc_dcdb_stack_instance.instance.InstanceId,
+         'username': _tc_dcdb_account_spec.username,
+         'host': _tc_dcdb_account_spec.host | default('%')
+       }) }}
+  loop: "{{ _tc_dcdb_account_spec.privileges | default([]) }}"

@@ -1,0 +1,19 @@
+---
+- name: Clear DCDB account privilege scopes
+  susunola.tencentcloud.dcdb_account_privilege:
+    state: absent
+    instance_id: "{{ tc_dcdb_stack_instance.instance_id }}"
+    username: "{{ _tc_dcdb_account_spec.username }}"
+    host: "{{ _tc_dcdb_account_spec.host | default('%') }}"
+    database: "{{ item.database | default('*') }}"
+    object_type: "{{ item.object_type | default('*') }}"
+    object_name: "{{ item.object_name | default('*') }}"
+    column: "{{ item.column | default('*') }}"
+  loop: "{{ _tc_dcdb_account_spec.privileges | default([]) }}"
+
+- name: Remove DCDB account
+  susunola.tencentcloud.dcdb_account:
+    state: absent
+    instance_id: "{{ tc_dcdb_stack_instance.instance_id }}"
+    username: "{{ _tc_dcdb_account_spec.username }}"
+    host: "{{ _tc_dcdb_account_spec.host | default('%') }}"

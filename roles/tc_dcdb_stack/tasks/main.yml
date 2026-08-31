@@ -1,0 +1,62 @@
+---
+- name: Validate DCDB stack inputs
+  ansible.builtin.assert:
+    that:
+      - tc_dcdb_stack_state in ['present', 'absent']
+      - tc_dcdb_stack_instance | length > 0
+      - tc_dcdb_stack_state != 'absent' or tc_dcdb_stack_instance.instance_id is defined
+    fail_msg: DCDB stack requires instance creation fields or an existing instance identity.
+
+- name: Reconcile DCDB instance
+  when: tc_dcdb_stack_state == 'present'
+  susunola.tencentcloud.dcdb_instance:
+  args: "{{ tc_dcdb_stack_instance | combine({'state': 'present'}) }}"
+  register: _tc_dcdb_stack_instance
+
+- name: Reconcile DCDB automatic backup configuration
+  when:
+    - tc_dcdb_stack_state == 'present'
+    - tc_dcdb_stack_backup_config | length > 0
+    - _tc_dcdb_stack_instance.instance.InstanceId is defined
+  susunola.tencentcloud.dcdb_backup_config:
+  args: "{{ tc_dcdb_stack_backup_config | combine({'instance_id': _tc_dcdb_stack_instance.instance.InstanceId}) }}"
+  register: _tc_dcdb_stack_backup
+
+- name: Reconcile DCDB accounts and scoped privileges
+  when:
+    - tc_dcdb_stack_state == 'present'
+    - _tc_dcdb_stack_instance.instance.InstanceId is defined
+  ansible.builtin.include_tasks: account.yml
+  loop: "{{ tc_dcdb_stack_accounts }}"
+  loop_control:
+    loop_var: _tc_dcdb_account_spec
+
+- name: Publish DCDB stack result
+  when: tc_dcdb_stack_state == 'present'
+  ansible.builtin.set_fact:
+    tc_dcdb_stack_result:
+      instance: "{{ _tc_dcdb_stack_instance.instance }}"
+      backup_config: "{{ _tc_dcdb_stack_backup.backup_config | default({}) }}"
+
+- name: Require explicit authorization before DCDB teardown
+  when:
+    - tc_dcdb_stack_state == 'absent'
+    - not tc_dcdb_stack_allow_isolate | bool
+  ansible.builtin.fail:
+    msg: Set tc_dcdb_stack_allow_isolate=true to authorize account removal and DCDB instance isolation.
+
+- name: Remove DCDB account privileges and accounts
+  when:
+    - tc_dcdb_stack_state == 'absent'
+    - tc_dcdb_stack_allow_isolate | bool
+  ansible.builtin.include_tasks: teardown_account.yml
+  loop: "{{ tc_dcdb_stack_accounts }}"
+  loop_control:
+    loop_var: _tc_dcdb_account_spec
+
+- name: Isolate or purge DCDB instance
+  when:
+    - tc_dcdb_stack_state == 'absent'
+    - tc_dcdb_stack_allow_isolate | bool
+  susunola.tencentcloud.dcdb_instance:
+  args: "{{ tc_dcdb_stack_instance | combine({'state': 'absent', 'purge': tc_dcdb_stack_purge}) }}"

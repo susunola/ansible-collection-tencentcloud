@@ -753,6 +753,15 @@ modules:
   - ModifyDirectConnectTunnelAttribute
   dc_direct_connect_tunnel_info:
   - DescribeDirectConnectTunnels
+  dcdb_account:
+  - CreateAccount
+  - DeleteAccount
+  - DescribeAccounts
+  - ModifyAccountDescription
+  - ResetAccountPassword
+  dcdb_account_privilege:
+  - DescribeAccountPrivileges
+  - GrantAccountPrivileges
   dcdb_backup_config:
   - DescribeBackupConfigs
   - ModifyBackupConfigs

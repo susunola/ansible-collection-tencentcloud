@@ -135,6 +135,15 @@ def test_mariadb_teardown_clears_privileges_before_accounts_and_instance():
     assert "purge: \"{{ tc_mariadb_stack_purge }}\"" in main
 
 
+def test_dcdb_teardown_clears_privileges_before_accounts_and_instance():
+    main = role_tasks("tc_dcdb_stack")
+    account = (ROOT / "roles" / "tc_dcdb_stack" / "tasks" / "teardown_account.yml").read_text(encoding="utf-8")
+    assert_order(account, "Clear DCDB account privilege scopes", "Remove DCDB account")
+    assert main.index("Remove DCDB account privileges and accounts") < main.index("Isolate or purge DCDB instance")
+    assert "tc_dcdb_stack_instance.instance_id is defined" in main
+    assert "tc_dcdb_stack_allow_isolate" in main
+
+
 def test_cynosdb_teardown_clears_privileges_before_accounts_and_cluster():
     main = role_tasks("tc_cynosdb_cluster")
     account = (ROOT / "roles" / "tc_cynosdb_cluster" / "tasks" / "account.yml").read_text(encoding="utf-8")

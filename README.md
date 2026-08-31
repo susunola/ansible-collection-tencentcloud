@@ -135,6 +135,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `dbdc_db_custom_cluster` | Manage Tencent Cloud DB Custom clusters |
 | `dc_direct_connect` | Manage Tencent Cloud physical Direct Connect circuits |
 | `dc_direct_connect_tunnel` | Manage Tencent Cloud Direct Connect tunnels |
+| `dcdb_account` | Manage Tencent Cloud DCDB accounts |
+| `dcdb_account_privilege` | Manage scoped Tencent Cloud DCDB account privileges |
 | `dcdb_backup_config` | Manage Tencent Cloud DCDB automatic backup configuration |
 | `dcdb_instance` | Manage Tencent Cloud DCDB instances |
 | `dnspod_custom_line` | Manage DNSPod domain custom lines |

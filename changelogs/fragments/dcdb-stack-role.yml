@@ -1,0 +1,4 @@
+---
+minor_changes:
+  - Add DCDB account and exact scoped account privilege management.
+  - Add the tc_dcdb_stack role for instances, automatic backups, accounts and privileges.

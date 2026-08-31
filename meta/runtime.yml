@@ -205,6 +205,8 @@ action_groups:
     - dc_direct_connect
     - dc_direct_connect_tunnel
     - dc_direct_connect_tunnel_info
+    - dcdb_account
+    - dcdb_account_privilege
     - dcdb_backup_config
     - dcdb_instance
     - dcdb_instance_info

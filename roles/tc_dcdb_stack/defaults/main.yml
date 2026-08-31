@@ -1,0 +1,7 @@
+---
+tc_dcdb_stack_state: present
+tc_dcdb_stack_instance: {}
+tc_dcdb_stack_backup_config: {}
+tc_dcdb_stack_accounts: []
+tc_dcdb_stack_allow_isolate: false
+tc_dcdb_stack_purge: false
