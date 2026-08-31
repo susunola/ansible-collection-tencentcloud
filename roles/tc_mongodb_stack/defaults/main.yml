@@ -1,0 +1,33 @@
+---
+tc_mongodb_stack_state: present
+tc_mongodb_stack_region: ""
+tc_mongodb_stack_instance_id: ""
+tc_mongodb_stack_name: ""
+tc_mongodb_stack_memory: null
+tc_mongodb_stack_volume: null
+tc_mongodb_stack_version: ""
+tc_mongodb_stack_zone: ""
+tc_mongodb_stack_cluster_type: ""
+tc_mongodb_stack_node_num: null
+tc_mongodb_stack_replicate_set_num: null
+tc_mongodb_stack_password: ""
+tc_mongodb_stack_mongo_user_password: ""
+tc_mongodb_stack_vpc_id: ""
+tc_mongodb_stack_subnet_id: ""
+tc_mongodb_stack_project_id: null
+tc_mongodb_stack_period_months: null
+tc_mongodb_stack_auto_renew: null
+tc_mongodb_stack_security_groups: []
+tc_mongodb_stack_tags: {}
+
+# Items: {username, password?, rotate_password?, description?, roles: [{namespace, access}]}
+tc_mongodb_stack_accounts: []
+tc_mongodb_stack_backup_enabled: true
+tc_mongodb_stack_backup_method: 1
+tc_mongodb_stack_backup_hour: 2
+tc_mongodb_stack_backup_frequency_hours: 24
+tc_mongodb_stack_backup_active_weekdays: [0, 1, 2, 3, 4, 5, 6]
+tc_mongodb_stack_backup_retention_days: 7
+tc_mongodb_stack_oplog_retention_days: 7
+tc_mongodb_stack_backup_version: 1
+tc_mongodb_stack_backup_alert_threshold: 100

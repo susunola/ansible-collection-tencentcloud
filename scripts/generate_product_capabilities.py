@@ -22,6 +22,7 @@ SPECIAL_SERVICES = {
 ROLE_SERVICES = {
     "tc_container_registry": "tcr",
     "tc_database_stack": "cdb",
+    "tc_mongodb_stack": "mongodb",
     "tc_redis_stack": "redis",
     "tc_launch": "cvm",
     "tc_clb_http": "clb",

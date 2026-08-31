@@ -1,0 +1,5 @@
+minor_changes:
+  - >-
+    solution roles - add ``tc_mongodb_stack`` for MongoDB instances, exact
+    account roles, explicit password rotation and automatic backup policy,
+    including exact-name adoption and credential-aware child-first teardown.
