@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_model_artifact_info`` to inspect config.json, file trees and README metadata for an exact model UID and version with independent least-privilege selectors.

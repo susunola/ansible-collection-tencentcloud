@@ -878,6 +878,10 @@ modules:
   - ListLabs
   - ModifyLabPriority
   - UpdateLab
+  dlc_model_artifact_info:
+  - GetModelConfig
+  - GetModelFiles
+  - GetModelReadme
   dlc_model_version:
   - CreateModelVersion
   - ListModelVersions
