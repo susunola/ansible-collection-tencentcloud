@@ -4,5 +4,6 @@ tc_oceanus_streaming_platform_workspace: {}
 tc_oceanus_streaming_platform_cluster: {}
 tc_oceanus_streaming_platform_folders: []
 tc_oceanus_streaming_platform_resources: []
+tc_oceanus_streaming_platform_meta_tables: []
 tc_oceanus_streaming_platform_jobs: []
 tc_oceanus_streaming_platform_allow_destroy: false

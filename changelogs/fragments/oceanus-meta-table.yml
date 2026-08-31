@@ -1,0 +1,2 @@
+minor_changes:
+  - Add content-aware Oceanus metadata table creation and DDL updates with automatic Base64 encoding.

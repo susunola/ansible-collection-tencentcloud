@@ -6,6 +6,11 @@
       - tc_oceanus_streaming_platform_workspace | length > 0
       - tc_oceanus_streaming_platform_state != 'absent' or tc_oceanus_streaming_platform_workspace.workspace_id is defined
       - tc_oceanus_streaming_platform_state != 'absent' or tc_oceanus_streaming_platform_cluster | length == 0 or tc_oceanus_streaming_platform_cluster.cluster_id is defined
+      - >-
+        tc_oceanus_streaming_platform_meta_tables | length == 0
+        or tc_oceanus_streaming_platform_cluster | length > 0
+        or (tc_oceanus_streaming_platform_meta_tables | selectattr('cluster_id', 'defined') | list | length
+            == tc_oceanus_streaming_platform_meta_tables | length)
     fail_msg: Oceanus platform teardown requires existing workspace_id and cluster_id identities.
 
 - name: Reconcile Oceanus workspace
@@ -52,6 +57,24 @@
   loop_control:
     loop_var: _tc_oceanus_resource
     label: "{{ _tc_oceanus_resource.name | default((_tc_oceanus_resource.resource | default({})).name | default('unnamed')) }}"
+
+- name: Reconcile Oceanus metadata tables before jobs
+  when: tc_oceanus_streaming_platform_state == 'present'
+  susunola.tencentcloud.oceanus_meta_table:
+  args: >-
+    {{
+      _tc_oceanus_meta_table
+      | combine({'workspace_id': _tc_oceanus_workspace_id})
+      | combine(
+          {'cluster_id': _tc_oceanus_cluster_id}
+          if _tc_oceanus_cluster_id | length > 0
+          else {}
+        )
+    }}
+  loop: "{{ tc_oceanus_streaming_platform_meta_tables }}"
+  loop_control:
+    loop_var: _tc_oceanus_meta_table
+    label: "{{ _tc_oceanus_meta_table.database_name }}/{{ _tc_oceanus_meta_table.table_name }}"
 
 - name: Reconcile Oceanus jobs
   when: tc_oceanus_streaming_platform_state == 'present'

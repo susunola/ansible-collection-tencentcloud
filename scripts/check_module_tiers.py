@@ -229,6 +229,7 @@ CORE_MODULES = {
     "oceanus_cluster",
     "oceanus_job_config",
     "oceanus_job_savepoint",
+    "oceanus_meta_table",
     "oceanus_resource",
     "oceanus_resource_config",
     "tse_sre_instance",

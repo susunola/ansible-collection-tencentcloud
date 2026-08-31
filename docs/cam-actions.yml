@@ -1326,6 +1326,10 @@ modules:
   oceanus_job_savepoint:
   - DescribeJobSavepoint
   - TriggerJobSavepoint
+  oceanus_meta_table:
+  - CreateMetaTable
+  - GetMetaTable
+  - ModifyMetaTable
   oceanus_resource:
   - CreateResource
   - DeleteResources

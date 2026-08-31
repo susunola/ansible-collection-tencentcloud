@@ -32,6 +32,14 @@ Builds an Oceanus workspace, an optional dedicated Flink cluster, and its jobs. 
                 StorageType: 1
                 Param: {Bucket: flink-artifacts-1250000000, Path: jars/orders-1.1.jar, Region: ap-guangzhou}
               remark: desired-release
+        tc_oceanus_streaming_platform_meta_tables:
+          - table_name: orders
+            database_name: production
+            database_id: 12
+            flink_version: Flink-1.17
+            ddl: |
+              CREATE TABLE orders (id BIGINT, amount DECIMAL(18, 2))
+              WITH ('connector' = 'kafka')
         tc_oceanus_streaming_platform_jobs:
           - job:
               name: orders-stream
@@ -51,5 +59,7 @@ Builds an Oceanus workspace, an optional dedicated Flink cluster, and its jobs. 
 Folders are created before contained resources and jobs. Resources and their desired latest immutable artifact version are reconciled before jobs. Each structured job is reconciled in three phases: definition, immutable configuration publication, then runtime state using the new version. Flat job dictionaries remain supported when no configuration publication is needed. Teardown reverses the dependency order by deleting jobs, resources and then folders; nested folders should be declared parent-first because teardown reverses the list.
 
 An optional `savepoint` is triggered only after the job has converged to `running`. Its description acts as an idempotency key; change it for each intentional release checkpoint or set `force: true` for an explicitly repeated snapshot.
+
+Metadata tables require the dedicated cluster input and are reconciled before jobs. Oceanus exposes DDL lookup and update but no metadata-table deletion API, so workspace teardown remains the service-level cleanup boundary for these tables.
 
 Set `tc_oceanus_streaming_platform_allow_destroy: true` only for intentional teardown. CU scale-down also requires `allow_scale_down: true` in the cluster input.

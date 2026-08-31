@@ -354,6 +354,7 @@ action_groups:
     - oceanus_job
     - oceanus_job_config
     - oceanus_job_savepoint
+    - oceanus_meta_table
     - oceanus_resource
     - oceanus_resource_config
     - oceanus_workspace
