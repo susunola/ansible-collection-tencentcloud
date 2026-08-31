@@ -1,0 +1,138 @@
+---
+- name: Resolve existing Auto Scaling group ID for teardown
+  when:
+    - tc_autoscaling_group_state == 'absent'
+    - tc_autoscaling_group_id | length == 0
+    - tc_autoscaling_group_name | length > 0
+  ansible.builtin.set_fact:
+    tc_autoscaling_group_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_autoscaling_group_name,
+                resource_type='autoscaling_group', region=tc_autoscaling_group_region) }}
+
+- name: Validate Auto Scaling group inputs
+  ansible.builtin.assert:
+    that:
+      - tc_autoscaling_group_state in ['present', 'absent']
+      - tc_autoscaling_group_id | length > 0 or tc_autoscaling_group_name | length > 0
+      - tc_autoscaling_group_state == 'present' or tc_autoscaling_group_id | length > 0
+      - tc_autoscaling_group_state == 'absent' or tc_autoscaling_group_id | length > 0 or tc_autoscaling_group_launch_configuration_id | length > 0
+      - tc_autoscaling_group_state == 'absent' or tc_autoscaling_group_id | length > 0 or tc_autoscaling_group_vpc_id | length > 0
+      - tc_autoscaling_group_state == 'absent' or tc_autoscaling_group_id | length > 0 or tc_autoscaling_group_subnet_ids | length > 0
+      - 0 <= tc_autoscaling_group_min_size
+      - tc_autoscaling_group_min_size <= tc_autoscaling_group_desired_capacity
+      - tc_autoscaling_group_desired_capacity <= tc_autoscaling_group_max_size
+    fail_msg: Auto Scaling creation requires launch configuration, VPC, subnets and a valid capacity range; teardown requires a resolvable group ID.
+
+- name: Provision Auto Scaling group
+  when: tc_autoscaling_group_state == 'present'
+  susunola.tencentcloud.as_scaling_group:
+    region: "{{ tc_autoscaling_group_region | default(omit, true) }}"
+    state: present
+    scaling_group_id: "{{ tc_autoscaling_group_id | default(omit, true) }}"
+    name: "{{ tc_autoscaling_group_name | default(omit, true) }}"
+    launch_configuration_id: "{{ tc_autoscaling_group_launch_configuration_id }}"
+    vpc_id: "{{ tc_autoscaling_group_vpc_id }}"
+    subnet_ids: "{{ tc_autoscaling_group_subnet_ids }}"
+    min_size: "{{ tc_autoscaling_group_min_size }}"
+    max_size: "{{ tc_autoscaling_group_max_size }}"
+    desired_capacity: "{{ tc_autoscaling_group_desired_capacity }}"
+    default_cooldown: "{{ tc_autoscaling_group_default_cooldown }}"
+    termination_policy: "{{ tc_autoscaling_group_termination_policy }}"
+    retry_policy: "{{ tc_autoscaling_group_retry_policy }}"
+    subnet_policy: "{{ tc_autoscaling_group_subnet_policy }}"
+    health_check_type: "{{ tc_autoscaling_group_health_check_type }}"
+    capacity_rebalance: "{{ tc_autoscaling_group_capacity_rebalance }}"
+    project_id: "{{ tc_autoscaling_group_project_id }}"
+    waiter_delay: "{{ tc_autoscaling_group_waiter_delay }}"
+    waiter_timeout: "{{ tc_autoscaling_group_waiter_timeout }}"
+  register: _tc_autoscaling_group
+
+- name: Resolve Auto Scaling group ID
+  when: tc_autoscaling_group_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_autoscaling_group_id: >-
+      {{ tc_autoscaling_group_id
+         or (_tc_autoscaling_group.scaling_group.AutoScalingGroupId | default('')) }}
+
+- name: Reconcile Auto Scaling policies
+  when: tc_autoscaling_group_state == 'present'
+  susunola.tencentcloud.as_scaling_policy:
+    region: "{{ tc_autoscaling_group_region | default(omit, true) }}"
+    state: present
+    scaling_group_id: "{{ _tc_autoscaling_group_id }}"
+    policy_id: "{{ item.policy_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+    policy_type: "{{ item.policy_type | default('SIMPLE') }}"
+    adjustment_type: "{{ item.adjustment_type | default('CHANGE_IN_CAPACITY') }}"
+    adjustment_value: "{{ item.adjustment_value | default(1) }}"
+    cooldown: "{{ item.cooldown | default(300) }}"
+    predefined_metric_type: "{{ item.predefined_metric_type | default(omit, true) }}"
+    target_value: "{{ item.target_value | default(omit) }}"
+    estimated_instance_warmup: "{{ item.estimated_instance_warmup | default(300) }}"
+    disable_scale_in: "{{ item.disable_scale_in | default(false) }}"
+  loop: "{{ tc_autoscaling_group_policies }}"
+  loop_control:
+    label: "{{ item.name | default(item.policy_id | default('policy')) }}"
+  register: _tc_autoscaling_group_policies
+
+- name: Reconcile Auto Scaling scheduled actions
+  when: tc_autoscaling_group_state == 'present'
+  susunola.tencentcloud.as_scheduled_action:
+    region: "{{ tc_autoscaling_group_region | default(omit, true) }}"
+    state: present
+    scaling_group_id: "{{ _tc_autoscaling_group_id }}"
+    action_id: "{{ item.action_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+    min_size: "{{ item.min_size }}"
+    desired_capacity: "{{ item.desired_capacity }}"
+    max_size: "{{ item.max_size }}"
+    start_time: "{{ item.start_time }}"
+    end_time: "{{ item.end_time | default(omit, true) }}"
+    recurrence: "{{ item.recurrence | default(omit, true) }}"
+    disable_update_desired_capacity: "{{ item.disable_update_desired_capacity | default(false) }}"
+  loop: "{{ tc_autoscaling_group_scheduled_actions }}"
+  loop_control:
+    label: "{{ item.name | default(item.action_id | default('scheduled action')) }}"
+  register: _tc_autoscaling_group_scheduled_actions
+
+- name: Remove Auto Scaling scheduled actions
+  when: tc_autoscaling_group_state == 'absent'
+  susunola.tencentcloud.as_scheduled_action:
+    region: "{{ tc_autoscaling_group_region | default(omit, true) }}"
+    state: absent
+    scaling_group_id: "{{ tc_autoscaling_group_id }}"
+    action_id: "{{ item.action_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+  loop: "{{ tc_autoscaling_group_scheduled_actions }}"
+  loop_control:
+    label: "{{ item.name | default(item.action_id | default('scheduled action')) }}"
+
+- name: Remove Auto Scaling policies
+  when: tc_autoscaling_group_state == 'absent'
+  susunola.tencentcloud.as_scaling_policy:
+    region: "{{ tc_autoscaling_group_region | default(omit, true) }}"
+    state: absent
+    scaling_group_id: "{{ tc_autoscaling_group_id }}"
+    policy_id: "{{ item.policy_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+  loop: "{{ tc_autoscaling_group_policies }}"
+  loop_control:
+    label: "{{ item.name | default(item.policy_id | default('policy')) }}"
+
+- name: Remove Auto Scaling group
+  when: tc_autoscaling_group_state == 'absent'
+  susunola.tencentcloud.as_scaling_group:
+    region: "{{ tc_autoscaling_group_region | default(omit, true) }}"
+    state: absent
+    scaling_group_id: "{{ tc_autoscaling_group_id }}"
+    waiter_delay: "{{ tc_autoscaling_group_waiter_delay }}"
+    waiter_timeout: "{{ tc_autoscaling_group_waiter_timeout }}"
+
+- name: Publish Auto Scaling group result
+  when: tc_autoscaling_group_state == 'present'
+  ansible.builtin.set_fact:
+    tc_autoscaling_group_result:
+      scaling_group_id: "{{ _tc_autoscaling_group_id }}"
+      scaling_group: "{{ _tc_autoscaling_group.scaling_group }}"
+      policies: "{{ _tc_autoscaling_group_policies | default({}) }}"
+      scheduled_actions: "{{ _tc_autoscaling_group_scheduled_actions | default({}) }}"

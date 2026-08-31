@@ -1,0 +1,25 @@
+---
+tc_autoscaling_group_state: present
+tc_autoscaling_group_region: ""
+tc_autoscaling_group_id: ""
+tc_autoscaling_group_name: ""
+tc_autoscaling_group_launch_configuration_id: ""
+tc_autoscaling_group_vpc_id: ""
+tc_autoscaling_group_subnet_ids: []
+tc_autoscaling_group_min_size: 0
+tc_autoscaling_group_max_size: 0
+tc_autoscaling_group_desired_capacity: 0
+tc_autoscaling_group_default_cooldown: 300
+tc_autoscaling_group_termination_policy: OLDEST_INSTANCE
+tc_autoscaling_group_retry_policy: IMMEDIATE_RETRY
+tc_autoscaling_group_subnet_policy: PRIORITY
+tc_autoscaling_group_health_check_type: CVM
+tc_autoscaling_group_capacity_rebalance: false
+tc_autoscaling_group_project_id: 0
+
+# Policy items use as_scaling_policy parameters and require name (or policy_id).
+tc_autoscaling_group_policies: []
+# Scheduled-action items use as_scheduled_action parameters and require name (or action_id).
+tc_autoscaling_group_scheduled_actions: []
+tc_autoscaling_group_waiter_delay: 5
+tc_autoscaling_group_waiter_timeout: 300

@@ -1,0 +1,6 @@
+---
+minor_changes:
+  - >-
+    solution roles - add ``tc_autoscaling_group`` for exact-name adoption and
+    child-first management of Auto Scaling groups, scaling policies and
+    scheduled capacity actions, with a zero-capacity safe default.

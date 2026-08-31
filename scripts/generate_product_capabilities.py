@@ -20,6 +20,7 @@ SPECIAL_SERVICES = {
     "tag": "tag",
 }
 ROLE_SERVICES = {
+    "tc_autoscaling_group": "autoscaling",
     "tc_container_registry": "tcr",
     "tc_kafka_platform": "ckafka",
     "tc_database_stack": "cdb",
