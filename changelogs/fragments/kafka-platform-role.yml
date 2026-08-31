@@ -1,0 +1,5 @@
+minor_changes:
+  - >-
+    solution roles - add ``tc_kafka_platform`` for CKafka instances, access
+    routes, users, topics, ACL grants and ACL rules with exact-name adoption,
+    deletion-protection handling and child-first teardown.

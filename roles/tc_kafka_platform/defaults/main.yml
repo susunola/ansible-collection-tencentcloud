@@ -1,0 +1,38 @@
+---
+tc_kafka_platform_state: present
+tc_kafka_platform_region: ""
+tc_kafka_platform_instance_id: ""
+tc_kafka_platform_name: ""
+tc_kafka_platform_zones: []
+tc_kafka_platform_vpc_id: ""
+tc_kafka_platform_subnet_id: ""
+tc_kafka_platform_charge_type: POSTPAID_BY_HOUR
+tc_kafka_platform_period_months: 1
+tc_kafka_platform_auto_renew: false
+tc_kafka_platform_instance_type: null
+tc_kafka_platform_specification: ""
+tc_kafka_platform_version: ""
+tc_kafka_platform_disk_type: ""
+tc_kafka_platform_disk_size: null
+tc_kafka_platform_bandwidth: null
+tc_kafka_platform_partitions: null
+tc_kafka_platform_topic_count: null
+tc_kafka_platform_retention_minutes: null
+tc_kafka_platform_max_message_bytes: null
+tc_kafka_platform_retention_bytes: null
+tc_kafka_platform_unclean_leader_election: null
+tc_kafka_platform_deletion_protection: true
+tc_kafka_platform_tags: {}
+
+# Route items use ckafka_route parameters.
+tc_kafka_platform_routes: []
+# User items: {name, password?, rotate_password?, current_password?}
+tc_kafka_platform_users: []
+# Topic items use ckafka_topic parameters and require topic_name.
+tc_kafka_platform_topics: []
+# ACL items use ckafka_acl parameters.
+tc_kafka_platform_acls: []
+# ACL rule items use ckafka_acl_rule parameters.
+tc_kafka_platform_acl_rules: []
+tc_kafka_platform_waiter_timeout: 900
+tc_kafka_platform_waiter_delay: 10

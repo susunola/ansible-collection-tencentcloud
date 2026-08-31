@@ -21,6 +21,7 @@ SPECIAL_SERVICES = {
 }
 ROLE_SERVICES = {
     "tc_container_registry": "tcr",
+    "tc_kafka_platform": "ckafka",
     "tc_database_stack": "cdb",
     "tc_mongodb_stack": "mongodb",
     "tc_redis_stack": "redis",

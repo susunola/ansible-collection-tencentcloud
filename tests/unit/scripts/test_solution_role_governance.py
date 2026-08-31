@@ -93,6 +93,21 @@ def test_shared_file_storage_teardown_unbinds_policy_before_parent_resources():
     assert "force_delete: true" in text
 
 
+def test_kafka_teardown_removes_access_and_data_children_before_instance():
+    text = role_tasks("tc_kafka_platform")
+    assert_order(
+        text,
+        "Remove CKafka ACL rules",
+        "Remove CKafka ACL entries",
+        "Remove CKafka topics",
+        "Remove CKafka users",
+        "Remove CKafka access routes",
+        "Disable CKafka deletion protection before teardown",
+        "Remove CKafka instance",
+    )
+    assert "deletion_protection: false" in text
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -114,6 +129,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_redis_stack": "resource_type='redis_instance'",
         "tc_mongodb_stack": "resource_type='mongodb_instance'",
         "tc_shared_file_storage": "resource_type='cfs_file_system'",
+        "tc_kafka_platform": "resource_type='ckafka_instance'",
         "tc_container_registry": "resource_type='tcr_instance'",
         "tc_tem_application": "resource_type='tem_environment'",
         "tc_serverless_application": "resource_type='api_gateway_service'",

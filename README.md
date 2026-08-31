@@ -571,6 +571,7 @@ for product-level write, discovery and reusable-role maturity.
 | `tc_shared_file_storage` | Provision CFS with permission groups, client rules and automatic snapshot retention |
 | `tc_security_baseline` | Establish CAM, CloudAudit and Config compliance controls |
 | `tc_container_registry` | Provision TCR namespaces, repositories, vulnerability controls and replication |
+| `tc_kafka_platform` | Provision CKafka instances, routes, users, topics and exact ACL controls |
 
 ## Requirements
 
