@@ -25,7 +25,7 @@ options:
     description: Resource family to query.
     type: str
     required: true
-    choices: [vpc, subnet, security_group, cvm_instance, lighthouse_instance, autoscaling_group, cbs_disk, clb_load_balancer, alb_load_balancer, gwlb_load_balancer, gwlb_target_group, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, sqlserver_instance, cynosdb_cluster, redis_instance, mongodb_instance, elasticsearch_instance, cfs_file_system, chdfs_file_system, chdfs_access_group, chdfs_mount_point, goosefs_file_system, direct_connect, direct_connect_tunnel, ckafka_instance, mqtt_instance, rocketmq_cluster, rabbitmq_instance, prometheus_instance, edgeone_zone, event_bus, api_gateway_service, tcr_instance, tem_environment, tem_application, organization_member]
+    choices: [vpc, subnet, security_group, cvm_instance, lighthouse_instance, autoscaling_group, cbs_disk, clb_load_balancer, alb_load_balancer, gwlb_load_balancer, gwlb_target_group, tke_cluster, cdb_instance, postgresql_instance, mariadb_instance, sqlserver_instance, cynosdb_cluster, redis_instance, mongodb_instance, elasticsearch_instance, cfs_file_system, chdfs_file_system, chdfs_access_group, chdfs_mount_point, goosefs_file_system, direct_connect, direct_connect_tunnel, ckafka_instance, mqtt_instance, rocketmq_cluster, rabbitmq_instance, prometheus_instance, edgeone_zone, event_bus, api_gateway_service, tcr_instance, tem_environment, tem_application, organization_member, dts_migration_job]
   vpc_id:
     description: Optional VPC scope for subnet and CLB lookups.
     type: str
@@ -165,6 +165,7 @@ RESOURCE_SPECS = {
     "tem_environment": ("tem.v20210701", "TemClient", "tem.tencentcloudapi.com", "DescribeEnvironments", "Result.Records", "EnvironmentId", "EnvironmentName"),
     "tem_application": ("tem.v20210701", "TemClient", "tem.tencentcloudapi.com", "DescribeApplications", "Result.Records", "ApplicationId", "ApplicationName"),
     "organization_member": ("organization.v20210331", "OrganizationClient", "organization.tencentcloudapi.com", "DescribeOrganizationMembers", "Items", "MemberUin", "Name"),
+    "dts_migration_job": ("dts.v20211206", "DtsClient", "dts.tencentcloudapi.com", "DescribeMigrationJobs", "JobList", "JobId", "JobName"),
 }
 
 
@@ -210,6 +211,7 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         "tem_environment": "DescribeEnvironmentsRequest",
         "tem_application": "DescribeApplicationsRequest",
         "organization_member": "DescribeOrganizationMembersRequest",
+        "dts_migration_job": "DescribeMigrationJobsRequest",
     }
     request = getattr(models, request_names[resource_type])()
     if resource_type == "chdfs_file_system":
@@ -290,6 +292,8 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0, page_token
         pass
     elif resource_type == "organization_member":
         pass
+    elif resource_type == "dts_migration_job":
+        request.JobName = name
     elif resource_type == "autoscaling_group":
         api_filter = models.Filter()
         api_filter.Name, api_filter.Values = "auto-scaling-group-name", [name]

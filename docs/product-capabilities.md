@@ -6,9 +6,9 @@ This matrix is generated from module SDK imports and role metadata. It is a
 navigation and gap-discovery aid, not a claim that every Tencent Cloud API is covered.
 
 - Products/services: **203**
-- Write modules: **301**
+- Write modules: **304**
 - Information modules: **210**
-- Solution roles: **45**
+- Solution roles: **46**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
 operations; `resource-family` has at least three write modules plus discovery;
@@ -100,7 +100,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `dnspod` | solution | 4 | 1 | `tc_dns_zone` | `dnspod_custom_line`, `dnspod_domain`, `dnspod_line_group`, `dnspod_record` |
 | `domain` | discovery-only | 0 | 1 | — | — |
 | `dsgc` | discovery-only | 0 | 1 | — | — |
-| `dts` | managed | 2 | 1 | — | `dts_consumer_group`, `dts_migration_job` |
+| `dts` | solution | 5 | 1 | `tc_dts_migration` | `dts_consumer_group`, `dts_migration_action`, `dts_migration_check`, `dts_migration_job`, `dts_migration_job_config` |
 | `eb` | solution | 4 | 1 | `tc_eventbridge_router` | `eb_connection`, `eb_event_bus`, `eb_rule`, `eb_target` |
 | `ecdn` | discovery-only | 0 | 1 | — | — |
 | `ecm` | discovery-only | 0 | 1 | — | — |

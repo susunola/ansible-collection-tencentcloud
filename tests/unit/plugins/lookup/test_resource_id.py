@@ -50,6 +50,7 @@ class Models(object):
     DescribeEnvironmentsRequest = Request
     DescribeApplicationsRequest = Request
     DescribeOrganizationMembersRequest = Request
+    DescribeMigrationJobsRequest = Request
     DescribeCfsFileSystemsRequest = Request
     DescribeFileSystemsRequest = Request
     DescribeAccessGroupsRequest = Request
@@ -254,6 +255,20 @@ def test_organization_member_request_scans_with_numeric_pagination():
     request = build_request("organization_member", Models, "production", offset=100)
     assert request.Offset == 100
     assert request.Limit == 100
+
+
+def test_dts_migration_job_request_uses_job_name():
+    request = build_request("dts_migration_job", Models, "orders-migration", offset=100)
+    assert request.JobName == "orders-migration"
+    assert (request.Offset, request.Limit) == (100, 100)
+
+
+def test_resolve_dts_migration_job_requires_exact_name():
+    response = Object(JobList=[
+        Object(JobId="dts-old", JobName="orders-migration-old"),
+        Object(JobId="dts-1", JobName="orders-migration"),
+    ])
+    assert resolve_resource(Client(response), Models, "dts_migration_job", "orders-migration") == "dts-1"
 
 
 def test_direct_connect_requests_scan_with_numeric_pagination():

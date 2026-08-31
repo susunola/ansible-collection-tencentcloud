@@ -141,7 +141,10 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `dnspod_line_group` | Manage DNSPod custom line groups |
 | `dnspod_record` | Manage Tencent Cloud DNSPod DNS records |
 | `dts_consumer_group` | Manage Tencent Cloud DTS consumer groups |
+| `dts_migration_action` | Control a Tencent Cloud DTS migration job |
+| `dts_migration_check` | Run and wait for a Tencent Cloud DTS migration check |
 | `dts_migration_job` | Manage Tencent Cloud DTS migration jobs |
+| `dts_migration_job_config` | Configure a Tencent Cloud DTS migration job |
 | `eb_connection` | Manage Tencent Cloud EventBridge connections |
 | `eb_event_bus` | Manage Tencent Cloud EventBridge event buses |
 | `eb_rule` | Manage Tencent Cloud EventBridge rules |

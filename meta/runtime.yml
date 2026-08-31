@@ -216,7 +216,10 @@ action_groups:
     - domain_batch_operation_log_info
     - dsgc_dspa_assessment_risk_info
     - dts_consumer_group
+    - dts_migration_action
+    - dts_migration_check
     - dts_migration_job
+    - dts_migration_job_config
     - dts_subscribe_job_info
     - eb_connection
     - eb_event_bus

@@ -1,0 +1,5 @@
+---
+minor_changes:
+  - Add idempotent DTS migration configuration, preflight-check and lifecycle-action modules.
+  - Add the tc_dts_migration role for guarded purchase, configuration, validation and optional startup.
+  - Add dts_migration_job name resolution to the resource_id lookup.
