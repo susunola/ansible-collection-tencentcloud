@@ -753,6 +753,9 @@ modules:
   - ModifyDirectConnectTunnelAttribute
   dc_direct_connect_tunnel_info:
   - DescribeDirectConnectTunnels
+  dcdb_backup_config:
+  - DescribeBackupConfigs
+  - ModifyBackupConfigs
   dcdb_instance:
   - CreateDCDBInstance
   - CreateHourDCDBInstance
