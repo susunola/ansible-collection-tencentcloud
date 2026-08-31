@@ -2023,6 +2023,10 @@ modules:
   - ListJobs
   tiia_group_info:
   - DescribeGroups
+  tione_dataset:
+  - CreateDataset
+  - DeleteDataset
+  - DescribeDatasets
   tione_dataset_info:
   - DescribeDatasets
   tiw_running_task_info:

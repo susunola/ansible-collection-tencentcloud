@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``tione_dataset`` with immutable-drift reporting, stable-ID guarded deletion, nested dataset sources and creation/deletion visibility waiting.
