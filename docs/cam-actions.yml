@@ -306,6 +306,9 @@ modules:
   - ResizeDisk
   - ScaleOutInstance
   - ScaleUpInstance
+  cdwch_parameter:
+  - DescribeInstanceKeyValConfigs
+  - ModifyInstanceKeyValConfigs
   cdwdoris_cluster_configs_history_info:
   - DescribeClusterConfigsHistory
   cdwdoris_cooldown_policy:

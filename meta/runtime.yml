@@ -84,6 +84,7 @@ action_groups:
     - cdwch_backup_config
     - cdwch_cn_instance_info
     - cdwch_instance
+    - cdwch_parameter
     - cdwdoris_cluster_configs_history_info
     - cdwdoris_cooldown_policy
     - cdwdoris_instance

@@ -53,6 +53,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cdn_domain` | Manage Tencent Cloud CDN domains |
 | `cdwch_backup_config` | Manage Tencent Cloud CDW ClickHouse backup configuration |
 | `cdwch_instance` | Manage Tencent Cloud TCHouse-C instances |
+| `cdwch_parameter` | Manage a Tencent Cloud CDW ClickHouse instance parameter |
 | `cdwdoris_cooldown_policy` | Manage a Tencent Cloud CDW Doris cooldown policy |
 | `cdwdoris_instance` | Manage Tencent Cloud CDW Doris instances |
 | `cdwdoris_user_workload_group` | Bind a Tencent Cloud CDW Doris user to a workload group |

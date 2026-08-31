@@ -1,0 +1,67 @@
+---
+- name: Validate ClickHouse platform inputs
+  ansible.builtin.assert:
+    that:
+      - tc_clickhouse_platform_state in ['present', 'absent']
+      - tc_clickhouse_platform_instance | length > 0
+      - tc_clickhouse_platform_state != 'absent' or tc_clickhouse_platform_instance.instance_id is defined
+    fail_msg: ClickHouse platform requires instance creation fields or an existing instance_id.
+
+- name: Reconcile ClickHouse instance
+  when: tc_clickhouse_platform_state == 'present'
+  susunola.tencentcloud.cdwch_instance:
+  args: "{{ tc_clickhouse_platform_instance | combine({'state': 'present'}) }}"
+  register: _tc_clickhouse_platform_instance
+
+- name: Reconcile ClickHouse parameters
+  when:
+    - tc_clickhouse_platform_state == 'present'
+    - _tc_clickhouse_platform_instance.instance.InstanceId is defined
+  susunola.tencentcloud.cdwch_parameter:
+  args: "{{ _tc_clickhouse_parameter | combine({'state': 'present', 'instance_id': _tc_clickhouse_platform_instance.instance.InstanceId}) }}"
+  loop: "{{ tc_clickhouse_platform_parameters }}"
+  loop_control:
+    loop_var: _tc_clickhouse_parameter
+    label: "{{ _tc_clickhouse_parameter.name | default('unnamed') }}"
+  register: _tc_clickhouse_platform_parameters
+
+- name: Reconcile ClickHouse backup configuration
+  when:
+    - tc_clickhouse_platform_state == 'present'
+    - tc_clickhouse_platform_backup_config | length > 0
+    - _tc_clickhouse_platform_instance.instance.InstanceId is defined
+  susunola.tencentcloud.cdwch_backup_config:
+  args: "{{ tc_clickhouse_platform_backup_config | combine({'instance_id': _tc_clickhouse_platform_instance.instance.InstanceId}) }}"
+  register: _tc_clickhouse_platform_backup
+
+- name: Publish ClickHouse platform result
+  when: tc_clickhouse_platform_state == 'present'
+  ansible.builtin.set_fact:
+    tc_clickhouse_platform_result:
+      instance: "{{ _tc_clickhouse_platform_instance.instance }}"
+      parameters: "{{ _tc_clickhouse_platform_parameters.results | default([]) | map(attribute='parameter') | list }}"
+      restart_required: "{{ _tc_clickhouse_platform_parameters.results | default([]) | selectattr('restart_required', 'equalto', true) | list | length > 0 }}"
+      backup_config: "{{ _tc_clickhouse_platform_backup.backup_config | default({}) }}"
+
+- name: Require explicit authorization before ClickHouse teardown
+  when:
+    - tc_clickhouse_platform_state == 'absent'
+    - not tc_clickhouse_platform_allow_destroy | bool
+  ansible.builtin.fail:
+    msg: Set tc_clickhouse_platform_allow_destroy=true to authorize backup shutdown and ClickHouse instance destruction.
+
+- name: Disable ClickHouse backup before teardown
+  when:
+    - tc_clickhouse_platform_state == 'absent'
+    - tc_clickhouse_platform_allow_destroy | bool
+    - tc_clickhouse_platform_backup_config | length > 0
+  susunola.tencentcloud.cdwch_backup_config:
+    instance_id: "{{ tc_clickhouse_platform_instance.instance_id }}"
+    enabled: false
+
+- name: Destroy ClickHouse instance
+  when:
+    - tc_clickhouse_platform_state == 'absent'
+    - tc_clickhouse_platform_allow_destroy | bool
+  susunola.tencentcloud.cdwch_instance:
+  args: "{{ tc_clickhouse_platform_instance | combine({'state': 'absent'}) }}"

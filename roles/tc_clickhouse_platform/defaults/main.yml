@@ -1,0 +1,6 @@
+---
+tc_clickhouse_platform_state: present
+tc_clickhouse_platform_instance: {}
+tc_clickhouse_platform_parameters: []
+tc_clickhouse_platform_backup_config: {}
+tc_clickhouse_platform_allow_destroy: false
