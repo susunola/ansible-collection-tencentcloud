@@ -1,0 +1,6 @@
+---
+tc_doris_analytics_platform_state: present
+tc_doris_analytics_platform_instance: {}
+tc_doris_analytics_platform_workload_groups: []
+tc_doris_analytics_platform_workload_groups_enabled: true
+tc_doris_analytics_platform_allow_destroy: false

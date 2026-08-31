@@ -310,6 +310,12 @@ modules:
   - DescribeInstances
   - DestroyInstance
   - ModifyInstance
+  cdwdoris_workload_group:
+  - CreateWorkloadGroup
+  - DeleteWorkloadGroup
+  - DescribeWorkloadGroup
+  - ModifyWorkloadGroup
+  - ModifyWorkloadGroupStatus
   cdwpg_account_info:
   - DescribeAccounts
   cdwpg_instance:

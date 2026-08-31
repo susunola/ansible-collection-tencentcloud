@@ -1,0 +1,58 @@
+---
+- name: Validate Doris analytics platform inputs
+  ansible.builtin.assert:
+    that:
+      - tc_doris_analytics_platform_state in ['present', 'absent']
+      - tc_doris_analytics_platform_instance | length > 0
+      - tc_doris_analytics_platform_state != 'absent' or tc_doris_analytics_platform_instance.instance_id is defined
+    fail_msg: Doris analytics platform requires instance creation fields or an existing instance_id.
+
+- name: Reconcile Doris instance
+  when: tc_doris_analytics_platform_state == 'present'
+  susunola.tencentcloud.cdwdoris_instance:
+  args: "{{ tc_doris_analytics_platform_instance | combine({'state': 'present'}) }}"
+  register: _tc_doris_platform_instance
+
+- name: Reconcile Doris workload groups
+  when:
+    - tc_doris_analytics_platform_state == 'present'
+    - _tc_doris_platform_instance.instance.InstanceId is defined
+  susunola.tencentcloud.cdwdoris_workload_group:
+  args: "{{ _tc_doris_workload_group | combine({'state': 'present', 'instance_id': _tc_doris_platform_instance.instance.InstanceId, 'workload_groups_enabled': tc_doris_analytics_platform_workload_groups_enabled}) }}"
+  loop: "{{ tc_doris_analytics_platform_workload_groups }}"
+  loop_control:
+    loop_var: _tc_doris_workload_group
+    label: "{{ _tc_doris_workload_group.name | default('unnamed') }}"
+  register: _tc_doris_platform_workload_groups
+
+- name: Publish Doris analytics platform result
+  when: tc_doris_analytics_platform_state == 'present'
+  ansible.builtin.set_fact:
+    tc_doris_analytics_platform_result:
+      instance: "{{ _tc_doris_platform_instance.instance }}"
+      workload_groups: "{{ _tc_doris_platform_workload_groups.results | default([]) | map(attribute='workload_group') | list }}"
+
+- name: Require explicit authorization before Doris platform teardown
+  when:
+    - tc_doris_analytics_platform_state == 'absent'
+    - not tc_doris_analytics_platform_allow_destroy | bool
+  ansible.builtin.fail:
+    msg: Set tc_doris_analytics_platform_allow_destroy=true to authorize workload-group removal and instance destruction.
+
+- name: Remove Doris workload groups before the instance
+  when:
+    - tc_doris_analytics_platform_state == 'absent'
+    - tc_doris_analytics_platform_allow_destroy | bool
+  susunola.tencentcloud.cdwdoris_workload_group:
+  args: "{{ _tc_doris_workload_group | combine({'state': 'absent', 'instance_id': tc_doris_analytics_platform_instance.instance_id}) }}"
+  loop: "{{ tc_doris_analytics_platform_workload_groups }}"
+  loop_control:
+    loop_var: _tc_doris_workload_group
+    label: "{{ _tc_doris_workload_group.name | default('unnamed') }}"
+
+- name: Destroy Doris instance
+  when:
+    - tc_doris_analytics_platform_state == 'absent'
+    - tc_doris_analytics_platform_allow_destroy | bool
+  susunola.tencentcloud.cdwdoris_instance:
+  args: "{{ tc_doris_analytics_platform_instance | combine({'state': 'absent'}) }}"

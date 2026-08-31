@@ -53,6 +53,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cdn_domain` | Manage Tencent Cloud CDN domains |
 | `cdwch_instance` | Manage Tencent Cloud TCHouse-C instances |
 | `cdwdoris_instance` | Manage Tencent Cloud CDW Doris instances |
+| `cdwdoris_workload_group` | Manage Tencent Cloud CDW Doris workload groups |
 | `cdwpg_instance` | Manage Tencent Cloud CDW PostgreSQL instances |
 | `cfs_auto_snapshot_policy` | Manage Tencent Cloud CFS automatic snapshot policies |
 | `cfs_file_system` | Manage Tencent Cloud CFS file systems |
