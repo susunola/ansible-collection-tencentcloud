@@ -1,0 +1,2 @@
+minor_changes:
+  - Add bounded, offset-paginated ``dlc_notebook_session_log_info`` for Notebook operational diagnostics.

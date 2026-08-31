@@ -885,6 +885,8 @@ modules:
   - DescribeNotebookSessions
   dlc_notebook_session_info:
   - DescribeNotebookSessions
+  dlc_notebook_session_log_info:
+  - DescribeNotebookSessionLog
   dlc_notebook_statement_info:
   - DescribeNotebookSessionStatement
   - DescribeNotebookSessionStatementSqlResult

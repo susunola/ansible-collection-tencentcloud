@@ -232,6 +232,7 @@ action_groups:
     - dlc_network_connection
     - dlc_notebook_session
     - dlc_notebook_session_info
+    - dlc_notebook_session_log_info
     - dlc_notebook_statement_info
     - dlc_partition_queue
     - dlc_ray_cluster
