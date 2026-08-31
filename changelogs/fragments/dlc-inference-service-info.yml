@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_inference_service_info`` with bounded pagination, time bounds, stable API filters and ordered multi-field sorting.

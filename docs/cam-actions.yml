@@ -860,6 +860,8 @@ modules:
   - ListInferenceServices
   - RestartInferenceService
   - StopInferenceService
+  dlc_inference_service_info:
+  - ListInferenceServices
   dlc_job_spec:
   - CreateJobSpec
   - DeleteJobSpec
