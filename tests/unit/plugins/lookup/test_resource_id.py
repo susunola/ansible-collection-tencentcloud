@@ -40,6 +40,9 @@ class Models(object):
     DescribeLoadBalancersRequest = Request
     DescribeClustersRequest = Request
     DescribeDBInstancesRequest = Request
+    DescribeServicesStatusRequest = Request
+    DescribeEnvironmentsRequest = Request
+    DescribeApplicationsRequest = Request
 
 
 class Client(object):
@@ -74,6 +77,16 @@ def test_cdb_request_uses_instance_names():
     assert request.InstanceNames == ["orders"]
 
 
+def test_tem_and_api_gateway_requests_use_product_specific_filters():
+    environment = build_request("tem_environment", Models, "production")
+    assert environment.SourceChannel == 0
+    application = build_request("tem_application", Models, "orders")
+    assert application.Keyword == "orders"
+    service = build_request("api_gateway_service", Models, "orders-api")
+    assert service.Filters[0].Name == "ServiceName"
+    assert service.Filters[0].Values == ["orders-api"]
+
+
 def test_resolve_resource_returns_exact_match_only():
     response = Object(VpcSet=[
         Object(VpcId="vpc-fuzzy", VpcName="production-old"),
@@ -91,6 +104,14 @@ def test_resolve_resource_rejects_absent_and_ambiguous_names():
     ])
     with pytest.raises(AnsibleError, match="Multiple vpc"):
         resolve_resource(Client(response), Models, "vpc", "duplicate")
+
+
+def test_resolve_resource_supports_nested_result_collections():
+    response = Object(Result=Object(ServiceSet=[
+        Object(ServiceId="service-1", ServiceName="orders-api"),
+    ]))
+    assert resolve_resource(
+        Client(response), Models, "api_gateway_service", "orders-api") == "service-1"
 
 
 def test_sdk_error_message_keeps_code_and_request_id():

@@ -6,3 +6,7 @@ minor_changes:
   - >-
     solution-role governance - add source contracts that enforce child-first
     teardown ordering for stateful and externally reachable resources.
+  - >-
+    solution roles - resolve exact parent names through ``resource_id`` before
+    validating and executing teardown for VPC, TKE, CDB, TCR, TEM and API
+    Gateway compositions.

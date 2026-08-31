@@ -64,3 +64,18 @@ def test_container_registry_disables_protection_and_removes_children_first():
         "Remove TCR instance",
     )
     assert "tc_container_registry_id | length > 0" in text
+
+
+def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
+    expectations = {
+        "tc_vpc_foundation": "resource_type='vpc'",
+        "tc_tke_platform": "resource_type='tke_cluster'",
+        "tc_database_stack": "resource_type='cdb_instance'",
+        "tc_container_registry": "resource_type='tcr_instance'",
+        "tc_tem_application": "resource_type='tem_environment'",
+        "tc_serverless_application": "resource_type='api_gateway_service'",
+    }
+    for role, lookup_type in expectations.items():
+        text = role_tasks(role)
+        assert lookup_type in text
+        assert text.index("resource_type=") < text.index("- name: Validate")

@@ -1,4 +1,14 @@
 ---
+- name: Resolve existing TCR registry ID for teardown
+  when:
+    - tc_container_registry_state == 'absent'
+    - tc_container_registry_id | length == 0
+    - tc_container_registry_name | length > 0
+  ansible.builtin.set_fact:
+    tc_container_registry_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_container_registry_name,
+                resource_type='tcr_instance', region=tc_container_registry_region) }}
+
 - name: Validate container registry inputs
   ansible.builtin.assert:
     that:

@@ -15,8 +15,8 @@ version_added: "0.14.0"
 description:
   - Resolves exact resource names through Tencent Cloud read APIs.
   - Returns one ID per lookup term and fails when a name is absent or ambiguous.
-  - Supports VPCs, subnets, security groups, CVM instances, CLB load balancers,
-    TKE clusters and TencentDB for MySQL instances.
+  - Supports core network, compute, load-balancing, Kubernetes, database,
+    API Gateway, container-registry and TEM application resources.
 options:
   _terms:
     description: Exact resource names to resolve.
@@ -25,7 +25,7 @@ options:
     description: Resource family to query.
     type: str
     required: true
-    choices: [vpc, subnet, security_group, cvm_instance, clb_load_balancer, tke_cluster, cdb_instance]
+    choices: [vpc, subnet, security_group, cvm_instance, clb_load_balancer, tke_cluster, cdb_instance, redis_instance, mongodb_instance, api_gateway_service, tcr_instance, tem_environment, tem_application]
   vpc_id:
     description: Optional VPC scope for subnet and CLB lookups.
     type: str
@@ -130,6 +130,12 @@ RESOURCE_SPECS = {
     "clb_load_balancer": ("clb.v20180317", "ClbClient", "clb.tencentcloudapi.com", "DescribeLoadBalancers", "LoadBalancerSet", "LoadBalancerId", "LoadBalancerName"),
     "tke_cluster": ("tke.v20180525", "TkeClient", "tke.tencentcloudapi.com", "DescribeClusters", "Clusters", "ClusterId", "ClusterName"),
     "cdb_instance": ("cdb.v20170320", "CdbClient", "cdb.tencentcloudapi.com", "DescribeDBInstances", "Items", "InstanceId", "InstanceName"),
+    "redis_instance": ("redis.v20180412", "RedisClient", "redis.tencentcloudapi.com", "DescribeInstances", "InstanceSet", "InstanceId", "InstanceName"),
+    "mongodb_instance": ("mongodb.v20190725", "MongodbClient", "mongodb.tencentcloudapi.com", "DescribeDBInstances", "InstanceDetails", "InstanceId", "InstanceName"),
+    "api_gateway_service": ("apigateway.v20180808", "ApigatewayClient", "apigateway.tencentcloudapi.com", "DescribeServicesStatus", "Result.ServiceSet", "ServiceId", "ServiceName"),
+    "tcr_instance": ("tcr.v20190924", "TcrClient", "tcr.tencentcloudapi.com", "DescribeInstances", "Registries", "RegistryId", "RegistryName"),
+    "tem_environment": ("tem.v20210701", "TemClient", "tem.tencentcloudapi.com", "DescribeEnvironments", "Result.Records", "EnvironmentId", "EnvironmentName"),
+    "tem_application": ("tem.v20210701", "TemClient", "tem.tencentcloudapi.com", "DescribeApplications", "Result.Records", "ApplicationId", "ApplicationName"),
 }
 
 
@@ -143,6 +149,12 @@ def build_request(resource_type, models, name, vpc_id=None):
         "clb_load_balancer": "DescribeLoadBalancersRequest",
         "tke_cluster": "DescribeClustersRequest",
         "cdb_instance": "DescribeDBInstancesRequest",
+        "redis_instance": "DescribeInstancesRequest",
+        "mongodb_instance": "DescribeDBInstancesRequest",
+        "api_gateway_service": "DescribeServicesStatusRequest",
+        "tcr_instance": "DescribeInstancesRequest",
+        "tem_environment": "DescribeEnvironmentsRequest",
+        "tem_application": "DescribeApplicationsRequest",
     }
     request = getattr(models, request_names[resource_type])()
     if resource_type in ("vpc", "subnet", "security_group"):
@@ -151,6 +163,21 @@ def build_request(resource_type, models, name, vpc_id=None):
         request.Limit = 100
     if resource_type == "cdb_instance":
         request.InstanceNames = [name]
+    elif resource_type == "redis_instance":
+        request.InstanceName = name
+    elif resource_type == "mongodb_instance":
+        request.SearchKey = name
+    elif resource_type == "api_gateway_service":
+        api_filter = models.Filter()
+        api_filter.Name, api_filter.Values = "ServiceName", [name]
+        request.Filters = [api_filter]
+    elif resource_type == "tem_environment":
+        request.SourceChannel = 0
+    elif resource_type == "tem_application":
+        request.Keyword = name
+        request.SourceChannel = 0
+    elif resource_type == "tcr_instance":
+        pass
     elif resource_type == "clb_load_balancer":
         request.LoadBalancerName = name
         if vpc_id:
@@ -179,7 +206,12 @@ def resolve_resource(client, models, resource_type, name, vpc_id=None):
     """Return one exact-match ID or raise a useful lookup error."""
     spec = RESOURCE_SPECS[resource_type]
     response = getattr(client, spec[3])(build_request(resource_type, models, name, vpc_id))
-    matches = [item for item in (getattr(response, spec[4], None) or []) if getattr(item, spec[6], None) == name]
+    values = response
+    for attribute in spec[4].split("."):
+        values = getattr(values, attribute, None)
+        if values is None:
+            break
+    matches = [item for item in (values or []) if getattr(item, spec[6], None) == name]
     if not matches:
         raise AnsibleError("No %s named %r was found" % (resource_type, name))
     if len(matches) > 1:

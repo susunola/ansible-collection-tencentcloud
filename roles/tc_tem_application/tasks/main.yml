@@ -1,4 +1,24 @@
 ---
+- name: Resolve existing TEM environment ID for teardown
+  when:
+    - tc_tem_application_state == 'absent'
+    - tc_tem_application_environment_id | length == 0
+    - tc_tem_application_environment_name | length > 0
+  ansible.builtin.set_fact:
+    tc_tem_application_environment_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_tem_application_environment_name,
+                resource_type='tem_environment', region=tc_tem_application_region) }}
+
+- name: Resolve existing TEM application ID for teardown
+  when:
+    - tc_tem_application_state == 'absent'
+    - tc_tem_application_id | length == 0
+    - tc_tem_application_name | length > 0
+  ansible.builtin.set_fact:
+    tc_tem_application_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_tem_application_name,
+                resource_type='tem_application', region=tc_tem_application_region) }}
+
 - name: Validate TEM application role inputs
   ansible.builtin.assert:
     that:

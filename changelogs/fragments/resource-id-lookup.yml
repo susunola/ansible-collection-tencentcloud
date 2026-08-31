@@ -5,3 +5,6 @@ minor_changes:
   - >-
     resource_id lookup - add STS AssumeRole, endpoint override, request timeout
     and SDK client-identifier options consistent with resource modules.
+  - >-
+    resource_id lookup - expand name resolution to Redis, MongoDB, API Gateway
+    services, TCR instances, TEM environments and TEM applications.

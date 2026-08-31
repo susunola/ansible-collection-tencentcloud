@@ -1,4 +1,15 @@
 ---
+- name: Resolve existing API Gateway service ID for teardown
+  when:
+    - tc_serverless_application_state == 'absent'
+    - tc_serverless_application_api_gateway_enabled
+    - tc_serverless_application_api_service_id | length == 0
+    - tc_serverless_application_api_service_name | length > 0
+  ansible.builtin.set_fact:
+    tc_serverless_application_api_service_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_serverless_application_api_service_name,
+                resource_type='api_gateway_service', region=tc_serverless_application_region) }}
+
 - name: Validate serverless application inputs
   ansible.builtin.assert:
     that:

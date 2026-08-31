@@ -1,4 +1,14 @@
 ---
+- name: Resolve existing TKE cluster ID for teardown
+  when:
+    - tc_tke_platform_state == 'absent'
+    - tc_tke_platform_cluster_id | length == 0
+    - tc_tke_platform_name | length > 0
+  ansible.builtin.set_fact:
+    tc_tke_platform_cluster_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_tke_platform_name,
+                resource_type='tke_cluster', region=tc_tke_platform_region) }}
+
 - name: Validate TKE platform inputs
   ansible.builtin.assert:
     that:

@@ -1,4 +1,14 @@
 ---
+- name: Resolve existing VPC ID for teardown
+  when:
+    - tc_vpc_foundation_state == 'absent'
+    - tc_vpc_foundation_vpc_id | length == 0
+    - tc_vpc_foundation_name | length > 0
+  ansible.builtin.set_fact:
+    tc_vpc_foundation_vpc_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_vpc_foundation_name,
+                resource_type='vpc', region=tc_vpc_foundation_region) }}
+
 - name: Validate VPC foundation inputs
   ansible.builtin.assert:
     that:

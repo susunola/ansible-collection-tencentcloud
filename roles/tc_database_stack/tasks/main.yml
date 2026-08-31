@@ -1,4 +1,14 @@
 ---
+- name: Resolve existing CDB instance ID for teardown
+  when:
+    - tc_database_stack_state == 'absent'
+    - tc_database_stack_instance_id | length == 0
+    - tc_database_stack_name | length > 0
+  ansible.builtin.set_fact:
+    tc_database_stack_instance_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_database_stack_name,
+                resource_type='cdb_instance', region=tc_database_stack_region) }}
+
 - name: Validate database stack inputs
   ansible.builtin.assert:
     that:
