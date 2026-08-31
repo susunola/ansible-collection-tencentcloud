@@ -870,6 +870,10 @@ modules:
   - ListRayClusters
   - ListResourceConfigs
   - UpdateResourceConfig
+  dlc_script:
+  - CreateScript
+  - DeleteScript
+  - DescribeScripts
   dlc_spark_job:
   - CreateSparkApp
   - DeleteSparkApp

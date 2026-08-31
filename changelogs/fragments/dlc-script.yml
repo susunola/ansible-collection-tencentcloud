@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_script`` for saved SQL lifecycle with base64-safe comparison and explicitly guarded replacement when immutable content drifts.

@@ -228,6 +228,7 @@ action_groups:
     - dlc_partition_queue
     - dlc_ray_cluster
     - dlc_resource_config
+    - dlc_script
     - dlc_spark_job
     - dlc_task_info
     - dlc_user

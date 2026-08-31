@@ -41,6 +41,7 @@
     _tc_dlc_lab_ids: {}
     _tc_dlc_spark_job_ids: {}
     _tc_dlc_database_names: []
+    _tc_dlc_script_ids: {}
     _tc_dlc_user_ids: []
     _tc_dlc_work_group_ids: {}
     _tc_dlc_data_mask_strategy_ids: {}
@@ -212,6 +213,23 @@
   ansible.builtin.set_fact:
     _tc_dlc_database_names: "{{ tc_dlc_access_governance_databases | map(attribute='name') | list }}"
 
+- name: Reconcile DLC saved scripts after databases
+  when: tc_dlc_access_governance_state == 'present'
+  susunola.tencentcloud.dlc_script:
+  args: "{{ _tc_dlc_script | combine({'state': 'present'}) }}"
+  loop: "{{ tc_dlc_access_governance_scripts }}"
+  loop_control:
+    loop_var: _tc_dlc_script
+    label: "{{ _tc_dlc_script.name }}"
+  register: _tc_dlc_script_results
+
+- name: Record DLC saved-script identities
+  when: tc_dlc_access_governance_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_dlc_script_ids: >-
+      {{ dict((tc_dlc_access_governance_scripts | map(attribute='name') | list)
+              | zip(_tc_dlc_script_results.results | map(attribute='script_id') | list)) }}
+
 - name: Reconcile DLC users before work-group membership
   when: tc_dlc_access_governance_state == 'present'
   ansible.builtin.include_tasks: user.yml
@@ -287,6 +305,17 @@
   loop_control:
     loop_var: _tc_dlc_user
     label: "{{ _tc_dlc_user.user.user_id }}"
+
+- name: Remove DLC saved scripts before their databases
+  when:
+    - tc_dlc_access_governance_state == 'absent'
+    - tc_dlc_access_governance_allow_destroy | bool
+  susunola.tencentcloud.dlc_script:
+  args: "{{ _tc_dlc_script | combine({'state': 'absent', 'allow_delete': true}) }}"
+  loop: "{{ tc_dlc_access_governance_scripts | reverse | list }}"
+  loop_control:
+    loop_var: _tc_dlc_script
+    label: "{{ _tc_dlc_script.name }}"
 
 - name: Remove DLC databases after users and access policies
   when:
@@ -424,6 +453,7 @@
       lab_ids: "{{ _tc_dlc_lab_ids }}"
       spark_job_ids: "{{ _tc_dlc_spark_job_ids }}"
       database_names: "{{ _tc_dlc_database_names }}"
+      script_ids: "{{ _tc_dlc_script_ids }}"
       user_ids: "{{ _tc_dlc_user_ids }}"
       work_group_ids: "{{ _tc_dlc_work_group_ids }}"
       data_mask_strategy_ids: "{{ _tc_dlc_data_mask_strategy_ids }}"
