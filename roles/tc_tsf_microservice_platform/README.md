@@ -23,4 +23,6 @@ Destruction requires an explicit safety opt-in.
             microservice_type: N
             description: Order service
             framework_type: SpringCloud
+        tc_tsf_microservice_platform_microservices:
+          - {namespace_id: namespace-xxxxxxxx, name: orders, description: Order service}
 ```

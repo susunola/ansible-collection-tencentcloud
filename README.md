@@ -410,6 +410,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tse_sre_instance` | Manage Tencent Cloud TSE service registry engines |
 | `tsf_application` | Manage a Tencent Cloud TSF application |
 | `tsf_cluster` | Manage a Tencent Cloud TSF cluster |
+| `tsf_microservice` | Manage a Tencent Cloud TSF microservice |
 | `tsf_namespace` | Manage a Tencent Cloud TSF namespace |
 | `vdb_instance` | Manage Tencent Cloud VectorDB instances |
 | `vpc` | Manage Tencent Cloud VPCs |

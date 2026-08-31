@@ -631,6 +631,7 @@ action_groups:
     - tsf_application
     - tsf_application_info
     - tsf_cluster
+    - tsf_microservice
     - tsf_namespace
     - vcube_resource_info
     - vdb_instance

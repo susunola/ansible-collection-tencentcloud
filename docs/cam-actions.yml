@@ -2506,6 +2506,11 @@ modules:
   - DeleteCluster
   - DescribeClusters
   - ModifyCluster
+  tsf_microservice:
+  - CreateMicroserviceWithDetailResp
+  - DeleteMicroservice
+  - DescribeMicroservices
+  - ModifyMicroservice
   tsf_namespace:
   - CreateNamespace
   - DeleteNamespace
