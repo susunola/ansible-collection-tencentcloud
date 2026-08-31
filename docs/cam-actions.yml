@@ -879,6 +879,8 @@ modules:
   dlc_model_version:
   - CreateModelVersion
   - ListModelVersions
+  dlc_model_version_info:
+  - ListModelVersions
   dlc_network_connection:
   - DescribeNetworkConnections
   - UpdateNetworkConnection

@@ -456,6 +456,7 @@ Read-only `_info` modules (return `changed=false`):
 | `dcdb_instance_info` | Gather information about Tencent Cloud DCDB instances |
 | `dlc_inference_model_info` | Gather Tencent Cloud DLC inference models |
 | `dlc_inference_service_info` | Gather Tencent Cloud DLC inference services |
+| `dlc_model_version_info` | Gather versions of a Tencent Cloud DLC inference model |
 | `dlc_notebook_session_info` | Gather Tencent Cloud DLC Notebook sessions |
 | `dlc_notebook_session_log_info` | Gather Tencent Cloud DLC Notebook session logs |
 | `dlc_notebook_statement_info` | Gather a Tencent Cloud DLC Notebook statement and SQL results |

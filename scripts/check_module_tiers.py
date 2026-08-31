@@ -185,6 +185,7 @@ CORE_MODULES = {
     "dlc_inference_service",
     "dlc_inference_service_info",
     "dlc_model_version",
+    "dlc_model_version_info",
     "dlc_script",
     "dlc_store_location",
     "dlc_table",

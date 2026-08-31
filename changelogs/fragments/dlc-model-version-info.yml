@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``dlc_model_version_info`` with strong parent-model scoping, time bounds, stable filters, ordered sorting and bounded pagination.
