@@ -1,0 +1,97 @@
+---
+- name: Resolve existing EventBridge event bus ID for teardown
+  when:
+    - tc_eventbridge_router_state == 'absent'
+    - tc_eventbridge_router_event_bus_id | length == 0
+    - tc_eventbridge_router_name | length > 0
+  ansible.builtin.set_fact:
+    tc_eventbridge_router_event_bus_id: >-
+      {{ lookup('susunola.tencentcloud.resource_id', tc_eventbridge_router_name,
+                resource_type='event_bus', region=tc_eventbridge_router_region) }}
+
+- name: Validate EventBridge router inputs
+  ansible.builtin.assert:
+    that:
+      - tc_eventbridge_router_state in ['present', 'absent']
+      - tc_eventbridge_router_event_bus_id | length > 0 or tc_eventbridge_router_name | length > 0
+      - tc_eventbridge_router_state == 'present' or tc_eventbridge_router_event_bus_id | length > 0
+    fail_msg: EventBridge requires an event-bus name or ID; teardown requires a resolvable ID.
+
+- name: Provision EventBridge event bus
+  when: tc_eventbridge_router_state == 'present'
+  susunola.tencentcloud.eb_event_bus:
+    region: "{{ tc_eventbridge_router_region | default(omit, true) }}"
+    state: present
+    event_bus_id: "{{ tc_eventbridge_router_event_bus_id | default(omit, true) }}"
+    name: "{{ tc_eventbridge_router_name | default(omit, true) }}"
+    description: "{{ tc_eventbridge_router_description }}"
+    save_days: "{{ tc_eventbridge_router_save_days | default(omit) }}"
+    enable_store: "{{ tc_eventbridge_router_enable_store | default(omit) }}"
+  register: _tc_eventbridge_router_bus
+
+- name: Resolve EventBridge event bus ID
+  when: tc_eventbridge_router_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_eventbridge_router_event_bus_id: >-
+      {{ tc_eventbridge_router_event_bus_id
+         or (_tc_eventbridge_router_bus.event_bus.EventBusId | default('')) }}
+
+- name: Reconcile EventBridge connections
+  when: tc_eventbridge_router_state == 'present'
+  susunola.tencentcloud.eb_connection:
+    region: "{{ tc_eventbridge_router_region | default(omit, true) }}"
+    state: present
+    event_bus_id: "{{ _tc_eventbridge_router_event_bus_id }}"
+    connection_id: "{{ item.connection_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+    connection_type: "{{ item.connection_type | default(omit, true) }}"
+    connection_description: "{{ item.connection_description | default(omit) }}"
+    enabled: "{{ item.enabled | default(true) }}"
+    description: "{{ item.description | default('') }}"
+  loop: "{{ tc_eventbridge_router_connections }}"
+  loop_control:
+    label: "{{ item.name | default(item.connection_id | default('connection')) }}"
+  register: _tc_eventbridge_router_connections
+
+- name: Reconcile EventBridge rules and targets
+  when: tc_eventbridge_router_state == 'present'
+  ansible.builtin.include_tasks: rule.yml
+  loop: "{{ tc_eventbridge_router_rules }}"
+  loop_control:
+    loop_var: _tc_eventbridge_rule
+    label: "{{ _tc_eventbridge_rule.name | default(_tc_eventbridge_rule.rule_id | default('rule')) }}"
+
+- name: Remove EventBridge rule targets and rules
+  when: tc_eventbridge_router_state == 'absent'
+  ansible.builtin.include_tasks: teardown_rule.yml
+  loop: "{{ tc_eventbridge_router_rules }}"
+  loop_control:
+    loop_var: _tc_eventbridge_rule
+    label: "{{ _tc_eventbridge_rule.name | default(_tc_eventbridge_rule.rule_id | default('rule')) }}"
+
+- name: Remove EventBridge connections
+  when: tc_eventbridge_router_state == 'absent'
+  susunola.tencentcloud.eb_connection:
+    region: "{{ tc_eventbridge_router_region | default(omit, true) }}"
+    state: absent
+    event_bus_id: "{{ tc_eventbridge_router_event_bus_id }}"
+    connection_id: "{{ item.connection_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+  loop: "{{ tc_eventbridge_router_connections }}"
+  loop_control:
+    label: "{{ item.name | default(item.connection_id | default('connection')) }}"
+
+- name: Remove EventBridge event bus
+  when: tc_eventbridge_router_state == 'absent'
+  susunola.tencentcloud.eb_event_bus:
+    region: "{{ tc_eventbridge_router_region | default(omit, true) }}"
+    state: absent
+    event_bus_id: "{{ tc_eventbridge_router_event_bus_id }}"
+
+- name: Publish EventBridge router result
+  when: tc_eventbridge_router_state == 'present'
+  ansible.builtin.set_fact:
+    tc_eventbridge_router_result:
+      event_bus_id: "{{ _tc_eventbridge_router_event_bus_id }}"
+      event_bus: "{{ _tc_eventbridge_router_bus.event_bus }}"
+      connections: "{{ _tc_eventbridge_router_connections | default({}) }}"

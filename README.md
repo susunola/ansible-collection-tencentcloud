@@ -566,6 +566,7 @@ for product-level write, discovery and reusable-role maturity.
 | `tc_tke_platform` | Provision a TKE cluster with node pools, endpoints, addons, authentication and audit delivery |
 | `tc_database_stack` | Provision TencentDB for MySQL with databases, accounts, privileges and backup retention |
 | `tc_cynosdb_cluster` | Provision CynosDB clusters, accounts, exact privileges and automatic backups |
+| `tc_eventbridge_router` | Provision EventBridge buses, source connections, routing rules and targets |
 | `tc_redis_stack` | Provision TencentDB for Redis with accounts, automatic backups and parameter templates |
 | `tc_mongodb_stack` | Provision TencentDB for MongoDB with accounts, exact database roles and automatic backups |
 | `tc_mariadb_stack` | Provision MariaDB instances, accounts, scoped privileges and automatic backups |

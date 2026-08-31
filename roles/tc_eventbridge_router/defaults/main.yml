@@ -1,0 +1,14 @@
+---
+tc_eventbridge_router_state: present
+tc_eventbridge_router_region: ""
+tc_eventbridge_router_event_bus_id: ""
+tc_eventbridge_router_name: ""
+tc_eventbridge_router_description: ""
+tc_eventbridge_router_save_days: null
+tc_eventbridge_router_enable_store: null
+
+# Connection items use eb_connection parameters.
+tc_eventbridge_router_connections: []
+# Rule items use eb_rule parameters and may contain a targets list of eb_target parameters.
+# Teardown of targets requires rule_id on the containing rule item.
+tc_eventbridge_router_rules: []

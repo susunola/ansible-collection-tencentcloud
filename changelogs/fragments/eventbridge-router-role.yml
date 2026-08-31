@@ -1,0 +1,6 @@
+---
+minor_changes:
+  - >-
+    solution roles - add ``tc_eventbridge_router`` for exact-name event-bus
+    adoption and child-first orchestration of source connections, routing rules
+    and delivery targets.

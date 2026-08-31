@@ -156,6 +156,14 @@ def test_autoscaling_teardown_removes_children_before_group():
     ).read_text(encoding="utf-8")
 
 
+def test_eventbridge_teardown_removes_targets_before_rules_and_bus():
+    main = role_tasks("tc_eventbridge_router")
+    rule = (ROOT / "roles" / "tc_eventbridge_router" / "tasks" / "teardown_rule.yml").read_text(encoding="utf-8")
+    assert_order(rule, "Remove EventBridge rule targets", "Remove EventBridge rule")
+    assert_order(main, "Remove EventBridge rule targets and rules", "Remove EventBridge connections", "Remove EventBridge event bus")
+    assert "rule_id is required" in rule
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -184,6 +192,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_mariadb_stack": "resource_type='mariadb_instance'",
         "tc_cynosdb_cluster": "resource_type='cynosdb_cluster'",
         "tc_autoscaling_group": "resource_type='autoscaling_group'",
+        "tc_eventbridge_router": "resource_type='event_bus'",
         "tc_container_registry": "resource_type='tcr_instance'",
         "tc_tem_application": "resource_type='tem_environment'",
         "tc_serverless_application": "resource_type='api_gateway_service'",
