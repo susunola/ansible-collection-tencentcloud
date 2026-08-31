@@ -551,6 +551,7 @@ for product-level write, discovery and reusable-role maturity.
 | `cmq_queue` | event_source | Long-poll a CMQ queue and stream messages (Event-Driven Ansible) |
 | `sts_caller_identity` | lookup | Return the current caller identity (Uin, AccountId, Arn) |
 | `ssm_parameter` | lookup | Read secrets from Tencent Cloud Secrets Manager (SSM) |
+| `resource_id` | lookup | Resolve exact VPC, subnet, security-group, CVM, CLB, TKE and CDB names to stable IDs |
 
 ## Included roles
 
