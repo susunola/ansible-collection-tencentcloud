@@ -1,0 +1,5 @@
+minor_changes:
+  - Add ``tdcpg_account`` for account description governance and explicit password rotation.
+  - Add ``tdcpg_endpoint_wan`` for convergent public endpoint access management.
+  - Add ``tdcpg_instance_state`` for guarded instance isolation, recovery and restart workflows.
+  - Add ``tc_tdcpg_platform`` to compose cluster provisioning with account and endpoint governance.

@@ -1896,6 +1896,10 @@ modules:
   - DescribeAbnormalProcessEvents
   tdai_agent_duty_task_info:
   - DescribeAgentDutyTasks
+  tdcpg_account:
+  - DescribeAccounts
+  - ModifyAccountDescription
+  - ResetAccountPassword
   tdcpg_cluster:
   - CreateCluster
   - CreateClusterInstances
@@ -1909,6 +1913,14 @@ modules:
   - ModifyClustersAutoRenewFlag
   tdcpg_cluster_instance_info:
   - DescribeClusterInstances
+  tdcpg_endpoint_wan:
+  - DescribeClusterEndpoints
+  - ModifyClusterEndpointWanStatus
+  tdcpg_instance_state:
+  - DescribeClusterInstances
+  - IsolateClusterInstances
+  - RecoverClusterInstances
+  - RestartClusterInstances
   tdid_over_summary_info:
   - GetOverSummary
   tdmq_amqp_cluster_info:

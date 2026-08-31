@@ -1,0 +1,6 @@
+---
+tc_tdcpg_platform_state: present
+tc_tdcpg_platform_cluster: {}
+tc_tdcpg_platform_accounts: []
+tc_tdcpg_platform_endpoint_wan: []
+tc_tdcpg_platform_allow_destroy: false

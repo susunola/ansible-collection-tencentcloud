@@ -1,0 +1,60 @@
+---
+- name: Validate TDSQL-C PostgreSQL platform inputs
+  ansible.builtin.assert:
+    that:
+      - tc_tdcpg_platform_state in ['present', 'absent']
+      - tc_tdcpg_platform_cluster is mapping
+      - tc_tdcpg_platform_accounts is sequence
+      - tc_tdcpg_platform_endpoint_wan is sequence
+      - tc_tdcpg_platform_cluster.cluster_id | default(tc_tdcpg_platform_cluster.name | default('')) | length > 0
+      - tc_tdcpg_platform_state == 'present' or tc_tdcpg_platform_allow_destroy | bool
+    fail_msg: TDSQL-C PostgreSQL requires cluster_id or name; destruction requires tc_tdcpg_platform_allow_destroy=true.
+
+- name: Reconcile TDSQL-C PostgreSQL cluster
+  when: tc_tdcpg_platform_state == 'present'
+  susunola.tencentcloud.tdcpg_cluster:
+  args: "{{ tc_tdcpg_platform_cluster | combine({'state': 'present'}) }}"
+  register: _tc_tdcpg_platform_cluster
+
+- name: Capture TDSQL-C PostgreSQL cluster ID
+  when: tc_tdcpg_platform_state == 'present'
+  ansible.builtin.set_fact:
+    _tc_tdcpg_platform_cluster_id: "{{ _tc_tdcpg_platform_cluster.cluster.ClusterId }}"
+
+- name: Reconcile TDSQL-C PostgreSQL accounts
+  when: tc_tdcpg_platform_state == 'present'
+  susunola.tencentcloud.tdcpg_account:
+  args: "{{ item | combine({'cluster_id': _tc_tdcpg_platform_cluster_id}) }}"
+  loop: "{{ tc_tdcpg_platform_accounts }}"
+  loop_control:
+    label: "{{ item.account_name | default('unnamed') }}"
+  register: _tc_tdcpg_platform_accounts
+
+- name: Reconcile TDSQL-C PostgreSQL endpoint public access
+  when: tc_tdcpg_platform_state == 'present'
+  susunola.tencentcloud.tdcpg_endpoint_wan:
+  args: "{{ item | combine({'cluster_id': _tc_tdcpg_platform_cluster_id}) }}"
+  loop: "{{ tc_tdcpg_platform_endpoint_wan }}"
+  loop_control:
+    label: "{{ item.endpoint_id | default('unnamed') }}"
+  register: _tc_tdcpg_platform_endpoints
+
+- name: Publish TDSQL-C PostgreSQL platform outputs
+  when: tc_tdcpg_platform_state == 'present'
+  ansible.builtin.set_fact:
+    tc_tdcpg_platform_result:
+      cluster: "{{ _tc_tdcpg_platform_cluster.cluster }}"
+      accounts: "{{ _tc_tdcpg_platform_accounts.results | default([]) | map(attribute='account') | list }}"
+      endpoints: "{{ _tc_tdcpg_platform_endpoints.results | default([]) | map(attribute='endpoint') | list }}"
+
+- name: Require cluster ID for deterministic teardown
+  when:
+    - tc_tdcpg_platform_state == 'absent'
+    - tc_tdcpg_platform_cluster.cluster_id | default('') | length == 0
+  ansible.builtin.fail:
+    msg: cluster.cluster_id is required for deterministic TDSQL-C PostgreSQL teardown.
+
+- name: Isolate or purge TDSQL-C PostgreSQL cluster
+  when: tc_tdcpg_platform_state == 'absent'
+  susunola.tencentcloud.tdcpg_cluster:
+  args: "{{ tc_tdcpg_platform_cluster | combine({'state': 'absent'}) }}"
