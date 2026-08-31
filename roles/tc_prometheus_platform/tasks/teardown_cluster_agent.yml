@@ -1,0 +1,25 @@
+---
+- name: Validate Prometheus scrape-job teardown identity
+  when: _tc_prometheus_agent.scrape_jobs | default([]) | length > 0
+  ansible.builtin.assert:
+    that:
+      - _tc_prometheus_agent.agent_id | default('') | length > 0
+    fail_msg: agent_id is required to remove declared scrape_jobs.
+
+- name: Remove Prometheus scrape jobs
+  susunola.tencentcloud.monitor_prometheus_scrape_job:
+    region: "{{ tc_prometheus_platform_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_prometheus_platform_instance_id }}"
+    agent_id: "{{ _tc_prometheus_agent.agent_id }}"
+    job_id: "{{ item.job_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+  loop: "{{ _tc_prometheus_agent.scrape_jobs | default([]) }}"
+
+- name: Remove Prometheus cluster agent
+  susunola.tencentcloud.monitor_prometheus_cluster_agent:
+    region: "{{ tc_prometheus_platform_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_prometheus_platform_instance_id }}"
+    cluster_id: "{{ _tc_prometheus_agent.cluster_id }}"
+    cluster_type: "{{ _tc_prometheus_agent.cluster_type | default('tke') }}"

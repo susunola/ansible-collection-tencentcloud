@@ -1,0 +1,27 @@
+---
+- name: Validate Prometheus scrape-job agent identity
+  when: _tc_prometheus_agent.scrape_jobs | default([]) | length > 0
+  ansible.builtin.assert:
+    that:
+      - _tc_prometheus_agent.agent_id | default('') | length > 0
+    fail_msg: agent_id is required when a cluster agent declares scrape_jobs.
+
+- name: Reconcile Prometheus cluster agent
+  susunola.tencentcloud.monitor_prometheus_cluster_agent:
+    state: present
+    instance_id: "{{ _tc_prometheus_platform_instance_id }}"
+    cluster_id: "{{ _tc_prometheus_agent.cluster_id }}"
+    cluster_type: "{{ _tc_prometheus_agent.cluster_type | default('tke') }}"
+    region: "{{ _tc_prometheus_agent.region | default(tc_prometheus_platform_region, true) }}"
+    agent: "{{ _tc_prometheus_agent.agent | default({}) }}"
+
+- name: Reconcile Prometheus scrape jobs
+  susunola.tencentcloud.monitor_prometheus_scrape_job:
+    region: "{{ tc_prometheus_platform_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ _tc_prometheus_platform_instance_id }}"
+    agent_id: "{{ _tc_prometheus_agent.agent_id }}"
+    job_id: "{{ item.job_id | default(omit, true) }}"
+    name: "{{ item.name | default(omit, true) }}"
+    config: "{{ item.config }}"
+  loop: "{{ _tc_prometheus_agent.scrape_jobs | default([]) }}"

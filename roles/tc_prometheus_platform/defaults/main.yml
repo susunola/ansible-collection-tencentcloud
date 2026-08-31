@@ -1,0 +1,21 @@
+---
+tc_prometheus_platform_state: present
+tc_prometheus_platform_region: ""
+tc_prometheus_platform_instance_id: ""
+tc_prometheus_platform_name: ""
+tc_prometheus_platform_vpc_id: ""
+tc_prometheus_platform_subnet_id: ""
+tc_prometheus_platform_zone: ""
+tc_prometheus_platform_retention_days: 15
+tc_prometheus_platform_grafana_instance_id: ""
+tc_prometheus_platform_tags: {}
+tc_prometheus_platform_instance_attributes: {}
+
+# Set to SDK-compatible mappings to manage these singleton configurations.
+tc_prometheus_platform_alertmanager_config: null
+tc_prometheus_platform_global_notification: null
+tc_prometheus_platform_grafana_bindings: []
+tc_prometheus_platform_record_rules: []
+tc_prometheus_platform_alert_groups: []
+# Agent items may contain scrape_jobs; agent_id is required when scrape_jobs are declared.
+tc_prometheus_platform_cluster_agents: []

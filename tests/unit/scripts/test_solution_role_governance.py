@@ -236,6 +236,14 @@ def test_rabbitmq_serverless_teardown_removes_bindings_before_resources():
     assert "existing instance ID" in main
 
 
+def test_prometheus_teardown_removes_jobs_and_children_before_instance():
+    main = role_tasks("tc_prometheus_platform")
+    agent = (ROOT / "roles" / "tc_prometheus_platform" / "tasks" / "teardown_cluster_agent.yml").read_text(encoding="utf-8")
+    assert_order(agent, "Remove Prometheus scrape jobs", "Remove Prometheus cluster agent")
+    assert_order(main, "Remove Prometheus scrape jobs and cluster agents", "Remove Prometheus alert groups", "Remove Prometheus recording rules", "Unbind Prometheus Grafana instances", "Remove Managed Prometheus instance")
+    assert "agent_id is required" in agent
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(
@@ -266,6 +274,7 @@ def test_solution_roles_resolve_parent_ids_before_validation_and_teardown():
         "tc_autoscaling_group": "resource_type='autoscaling_group'",
         "tc_block_storage": "resource_type='cbs_disk'",
         "tc_lighthouse_stack": "resource_type='lighthouse_instance'",
+        "tc_prometheus_platform": "resource_type='prometheus_instance'",
         "tc_rocketmq_platform": "resource_type='rocketmq_cluster'",
         "tc_rabbitmq_platform": "resource_type='rabbitmq_instance'",
         "tc_eventbridge_router": "resource_type='event_bus'",

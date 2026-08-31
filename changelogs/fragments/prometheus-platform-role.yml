@@ -1,0 +1,6 @@
+---
+minor_changes:
+  - >-
+    solution roles - add ``tc_prometheus_platform`` for exact-name Managed
+    Prometheus adoption, cluster agents, scrape jobs, rules, alerts,
+    notifications and Grafana bindings with dependency-safe teardown.

@@ -34,6 +34,7 @@ ROLE_SERVICES = {
     "tc_mariadb_stack": "mariadb",
     "tc_mqtt_broker": "mqtt",
     "tc_postgresql_stack": "postgres",
+    "tc_prometheus_platform": "monitor",
     "tc_rabbitmq_platform": "tdmq",
     "tc_rabbitmq_serverless": "trabbit",
     "tc_redis_stack": "redis",
