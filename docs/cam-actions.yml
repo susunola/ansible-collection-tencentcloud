@@ -857,6 +857,9 @@ modules:
   - DeleteLab
   - ListLabs
   - UpdateLab
+  dlc_model_version:
+  - CreateModelVersion
+  - ListModelVersions
   dlc_partition_queue:
   - CreatePartitionQueue
   - DeletePartitionQueue

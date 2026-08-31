@@ -463,6 +463,7 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert main.index("susunola.tencentcloud.dlc_resource_config") < main.index("susunola.tencentcloud.dlc_ray_cluster")
     assert main.index("susunola.tencentcloud.dlc_ray_cluster") < main.index("susunola.tencentcloud.dlc_job_spec")
     assert "susunola.tencentcloud.dlc_inference_model" in main
+    assert main.index("susunola.tencentcloud.dlc_inference_model") < main.index("susunola.tencentcloud.dlc_model_version")
     assert main.index("susunola.tencentcloud.dlc_database") < main.index("include_tasks: work_group.yml")
     assert main.index("susunola.tencentcloud.dlc_database") < main.index("susunola.tencentcloud.dlc_script")
     assert main.index("susunola.tencentcloud.dlc_database") < main.index("susunola.tencentcloud.dlc_table")
@@ -501,7 +502,9 @@ def test_dlc_governance_orders_engines_around_access_resources():
     assert "tc_dlc_access_governance_ray_clusters: []" in defaults
     assert "tc_dlc_access_governance_job_specs: []" in defaults
     assert "tc_dlc_access_governance_inference_models: []" in defaults
+    assert "tc_dlc_access_governance_model_versions: []" in defaults
     assert "tc_dlc_access_governance_inference_models | length == 0" in main
+    assert "tc_dlc_access_governance_model_versions | length == 0" in main
     assert "tc_dlc_access_governance_databases: []" in defaults
     assert "tc_dlc_access_governance_tables: []" in defaults
     assert "tc_dlc_access_governance_table_partitions: []" in defaults
