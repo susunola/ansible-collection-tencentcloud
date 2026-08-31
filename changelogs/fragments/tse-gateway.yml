@@ -29,3 +29,4 @@ minor_changes:
   - Add TSE registry-engine access endpoint discovery and expose it from the governance platform role.
   - Add paginated Nacos and ZooKeeper replica and server-interface topology discovery.
   - Add aggregated gateway network, port, public-address and node runtime discovery.
+  - Add configuration release, immutable version and publication-history audit discovery.

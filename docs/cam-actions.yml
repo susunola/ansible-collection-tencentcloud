@@ -2293,6 +2293,10 @@ modules:
   - DescribeConfigFileRelease
   - PublishConfigFiles
   - RollbackConfigFileReleases
+  tse_config_file_release_info:
+  - DescribeConfigFileReleaseHistories
+  - DescribeConfigFileReleaseVersions
+  - DescribeConfigFileReleases
   tse_gateway_autoscaler_binding:
   - BindAutoScalerResourceStrategyToGroups
   - DescribeAutoScalerResourceStrategies

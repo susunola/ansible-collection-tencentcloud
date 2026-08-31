@@ -274,6 +274,7 @@ CORE_MODULES = {
     "tse_sre_access_address_info",
     "tse_sre_topology_info",
     "tse_gateway_runtime_info",
+    "tse_config_file_release_info",
     "tse_governance_namespace",
     "tse_governance_alias",
     "tse_governance_instance",

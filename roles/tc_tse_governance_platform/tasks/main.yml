@@ -14,6 +14,7 @@
       - tc_tse_governance_platform_config_groups is sequence
       - tc_tse_governance_platform_config_files is sequence
       - tc_tse_governance_platform_config_releases is sequence
+      - tc_tse_governance_platform_config_release_audits is sequence
       - tc_tse_governance_platform_engine.instance_id | default(tc_tse_governance_platform_engine.name | default('')) | length > 0
       - tc_tse_governance_platform_state == 'present' or tc_tse_governance_platform_allow_destroy | bool
     fail_msg: TSE governance requires instance_id or name; destruction requires tc_tse_governance_platform_allow_destroy=true.
@@ -109,6 +110,14 @@
   loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.group | default('?') }}/{{ item.name | default('?') }}@{{ item.release_name | default('unnamed') }}"}
   register: _tc_tse_governance_platform_config_releases
 
+- name: Gather TSE configuration release audit data
+  when: tc_tse_governance_platform_state == 'present'
+  susunola.tencentcloud.tse_config_file_release_info:
+  args: "{{ item | combine({'instance_id': _tc_tse_governance_platform_instance_id}) }}"
+  loop: "{{ tc_tse_governance_platform_config_release_audits }}"
+  loop_control: {label: "{{ item.namespace | default('?') }}/{{ item.group | default('?') }}/{{ item.name | default('unnamed') }}"}
+  register: _tc_tse_governance_platform_config_release_audits
+
 - name: Publish TSE governance platform outputs
   when: tc_tse_governance_platform_state == 'present'
   ansible.builtin.set_fact:
@@ -128,6 +137,7 @@
       config_groups: "{{ _tc_tse_governance_platform_config_groups.results | default([]) | map(attribute='group') | list }}"
       config_files: "{{ _tc_tse_governance_platform_config_files.results | default([]) | map(attribute='config_file') | list }}"
       config_releases: "{{ _tc_tse_governance_platform_config_releases.results | default([]) | map(attribute='release') | list }}"
+      config_release_audits: "{{ _tc_tse_governance_platform_config_release_audits.results | default([]) }}"
 
 - name: Require engine ID for deterministic teardown
   when:

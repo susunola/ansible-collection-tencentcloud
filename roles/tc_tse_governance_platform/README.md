@@ -46,4 +46,6 @@ explicit engine ID and removes dependent resources in reverse order.
             release_name: production
             format: YAML
             content: "server:\n  port: 8080\n"
+        tc_tse_governance_platform_config_release_audits:
+          - {namespace: production, group: application, name: orders.yaml}
 ```
