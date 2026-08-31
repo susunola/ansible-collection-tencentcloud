@@ -1933,6 +1933,12 @@ modules:
   tdmysql_account_info:
   - DescribeUserPrivileges
   - DescribeUsers
+  tdmysql_account_privilege:
+  - DescribeUserPrivileges
+  - ModifyUserPrivileges
+  tdmysql_database_object_info:
+  - DescribeDatabaseObjects
+  - DescribeDatabases
   tdmysql_db_instance:
   - CancelIsolateDBInstances
   - CreateDBInstances

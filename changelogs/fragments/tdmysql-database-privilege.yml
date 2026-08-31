@@ -1,0 +1,2 @@
+minor_changes:
+  - Add ``tdmysql_database_object_info`` and ``tdmysql_account_privilege`` for bounded object discovery and exact global, database or table privilege reconciliation.

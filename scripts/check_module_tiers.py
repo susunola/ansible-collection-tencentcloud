@@ -277,6 +277,8 @@ CORE_MODULES = {
     "tdmysql_db_instance",
     "tdmysql_account",
     "tdmysql_account_info",
+    "tdmysql_account_privilege",
+    "tdmysql_database_object_info",
     "dbdc_db_custom_cluster",
     "cdwch_instance",
     "cdwch_backup_config",
