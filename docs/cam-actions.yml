@@ -2040,6 +2040,10 @@ modules:
   - DescribeModelService
   - DescribeModelServiceGroup
   - DescribeModelServiceGroups
+  tione_model_service_state:
+  - DeleteModelService
+  - DescribeModelService
+  - ModifyModelService
   tione_notebook:
   - CreateNotebook
   - DeleteNotebook

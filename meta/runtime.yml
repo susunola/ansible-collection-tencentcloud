@@ -522,6 +522,7 @@ action_groups:
     - tione_dataset
     - tione_dataset_info
     - tione_model_service_info
+    - tione_model_service_state
     - tione_notebook
     - tione_notebook_info
     - tione_training_model_version

@@ -6,7 +6,7 @@ This matrix is generated from module SDK imports and role metadata. It is a
 navigation and gap-discovery aid, not a claim that every Tencent Cloud API is covered.
 
 - Products/services: **203**
-- Write modules: **359**
+- Write modules: **360**
 - Information modules: **225**
 - Solution roles: **54**
 
@@ -195,7 +195,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `thpc` | managed | 1 | 1 | — | `thpc_cluster` |
 | `tia` | discovery-only | 0 | 1 | — | — |
 | `tiia` | discovery-only | 0 | 1 | — | — |
-| `tione` | resource-family | 5 | 6 | — | `tione_data_source`, `tione_dataset`, `tione_notebook`, `tione_training_model_version`, `tione_training_task` |
+| `tione` | resource-family | 6 | 6 | — | `tione_data_source`, `tione_dataset`, `tione_model_service_state`, `tione_notebook`, `tione_training_model_version`, `tione_training_task` |
 | `tiw` | discovery-only | 0 | 1 | — | — |
 | `tke` | solution | 7 | 1 | `tc_tke_platform` | `tke_addon`, `tke_backup_storage_location`, `tke_cluster`, `tke_cluster_audit`, `tke_cluster_authentication`, `tke_cluster_endpoint`, `tke_node_pool` |
 | `tokenhub` | discovery-only | 0 | 1 | — | — |
