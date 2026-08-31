@@ -1,14 +1,20 @@
 # tc_dlc_access_governance
 
-Creates DLC compute engines before their work groups, then exactly reconciles
-members and authorization policies. Server-generated policy metadata is ignored
-when comparing desired access, so repeated runs remain idempotent.
+Connects DLC engine networks to VPC endpoints, creates compute engines, then
+exactly reconciles work-group members and authorization policies. Server-generated
+policy metadata is ignored when comparing desired access, so repeated runs remain
+idempotent.
 
 ```yaml
 - hosts: localhost
   roles:
     - role: susunola.tencentcloud.tc_dlc_access_governance
       vars:
+        tc_dlc_access_governance_vpc_connections:
+          - engine_network_id: engine-network-xxxxxxxx
+            endpoint_name: analytics-endpoint
+            vpc_id: vpc-xxxxxxxx
+            subnet_id: subnet-xxxxxxxx
         tc_dlc_access_governance_data_engines:
           - name: production-spark
             engine_type: spark
@@ -32,9 +38,10 @@ when comparing desired access, so repeated runs remain idempotent.
                 PolicyType: TABLE
 ```
 
-The resulting engine IDs are published in
-`tc_dlc_access_governance_result.data_engine_ids` for later engine-scoped grants.
+The resulting endpoint and engine IDs are published in
+`tc_dlc_access_governance_result.vpc_endpoint_ids` and
+`tc_dlc_access_governance_result.data_engine_ids`.
 
-Teardown requires `work_group_id` for every group and
-`tc_dlc_access_governance_allow_destroy: true`. It removes policies and members,
-deletes empty work groups, and only then deletes compute engines.
+Teardown requires `work_group_id` for every group, `endpoint_id` for every VPC
+connection and `tc_dlc_access_governance_allow_destroy: true`. It removes policies
+and members, deletes empty work groups and engines, and removes VPC endpoints last.

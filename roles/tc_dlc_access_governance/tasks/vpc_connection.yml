@@ -1,0 +1,11 @@
+---
+- name: Reconcile DLC VPC connection
+  susunola.tencentcloud.dlc_user_vpc_connection:
+  args: "{{ _tc_dlc_connection | combine({'state': 'present'}) }}"
+  register: _tc_dlc_connection_result
+
+- name: Record DLC VPC endpoint identity
+  ansible.builtin.set_fact:
+    _tc_dlc_vpc_endpoint_ids: >-
+      {{ _tc_dlc_vpc_endpoint_ids
+         | combine({_tc_dlc_connection.endpoint_name: _tc_dlc_connection_result.endpoint_id}) }}
