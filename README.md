@@ -567,6 +567,7 @@ for product-level write, discovery and reusable-role maturity.
 | `tc_mongodb_stack` | Provision TencentDB for MongoDB with accounts, exact database roles and automatic backups |
 | `tc_serverless_application` | Deploy an SCF function with aliases, triggers and optional API Gateway exposure |
 | `tc_observability_baseline` | Establish CLS indexed topics and Cloud Monitor alarm policies |
+| `tc_object_storage_baseline` | Establish a secure COS bucket with encryption, lifecycle, policy, logging and replication |
 | `tc_security_baseline` | Establish CAM, CloudAudit and Config compliance controls |
 | `tc_container_registry` | Provision TCR namespaces, repositories, vulnerability controls and replication |
 

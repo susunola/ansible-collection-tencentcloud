@@ -65,6 +65,22 @@ def test_observability_teardown_removes_topics_before_logset():
     assert "tc_observability_baseline_logset_id | length > 0" in text
 
 
+def test_object_storage_teardown_removes_reversible_configuration_before_bucket():
+    text = role_tasks("tc_object_storage_baseline")
+    assert_order(
+        text,
+        "Remove COS replication configuration",
+        "Remove COS website configuration",
+        "Remove COS access logging",
+        "Remove COS bucket policy",
+        "Remove COS default encryption",
+        "Remove empty COS bucket",
+    )
+    teardown = text[text.index("- name: Remove COS replication configuration"):]
+    assert "cos_bucket_object_lock" not in teardown
+    assert "cos_bucket_intelligent_tiering" not in teardown
+
+
 def test_container_registry_disables_protection_and_removes_children_first():
     text = role_tasks("tc_container_registry")
     assert_order(

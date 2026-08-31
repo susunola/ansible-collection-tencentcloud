@@ -27,6 +27,7 @@ ROLE_SERVICES = {
     "tc_launch": "cvm",
     "tc_clb_http": "clb",
     "tc_observability_baseline": "cls",
+    "tc_object_storage_baseline": "cos",
     "tc_serverless_application": "scf",
     "tc_security_baseline": "cam",
     "tc_tem_application": "tem",

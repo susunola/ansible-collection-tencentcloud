@@ -1,0 +1,183 @@
+---
+- name: Validate object storage baseline inputs
+  ansible.builtin.assert:
+    that:
+      - tc_object_storage_baseline_state in ['present', 'absent']
+      - tc_object_storage_baseline_name | length > 0
+      - not tc_object_storage_baseline_logging.enabled or tc_object_storage_baseline_logging.target_bucket | length > 0
+      - not tc_object_storage_baseline_replication.enabled or tc_object_storage_baseline_replication.role | length > 0
+      - not tc_object_storage_baseline_object_lock.enabled or tc_object_storage_baseline_object_lock.retention_mode | length > 0
+    fail_msg: Bucket name and all enabled feature dependencies are required.
+
+- name: Provision COS bucket
+  when: tc_object_storage_baseline_state == 'present'
+  susunola.tencentcloud.cos_bucket:
+    region: "{{ tc_object_storage_baseline_region | default(omit, true) }}"
+    state: present
+    name: "{{ tc_object_storage_baseline_name }}"
+    appid: "{{ tc_object_storage_baseline_appid | default(omit, true) }}"
+    acl: "{{ tc_object_storage_baseline_acl }}"
+    versioning: "{{ tc_object_storage_baseline_versioning | default(omit) }}"
+    cors: "{{ tc_object_storage_baseline_cors | default(omit) }}"
+    lifecycle: "{{ tc_object_storage_baseline_lifecycle | default(omit) }}"
+    tags: "{{ tc_object_storage_baseline_tags }}"
+  register: _tc_object_storage_baseline_bucket
+
+- name: Configure COS default encryption
+  when:
+    - tc_object_storage_baseline_state == 'present'
+    - tc_object_storage_baseline_encryption_enabled
+  susunola.tencentcloud.cos_bucket_encryption:
+    region: "{{ tc_object_storage_baseline_region | default(omit, true) }}"
+    state: present
+    name: "{{ tc_object_storage_baseline_name }}"
+    appid: "{{ tc_object_storage_baseline_appid | default(omit, true) }}"
+    rules: "{{ tc_object_storage_baseline_encryption_rules }}"
+  register: _tc_object_storage_baseline_encryption
+
+- name: Configure COS bucket policy
+  when:
+    - tc_object_storage_baseline_state == 'present'
+    - tc_object_storage_baseline_policy is not none
+  susunola.tencentcloud.cos_bucket_policy:
+    region: "{{ tc_object_storage_baseline_region | default(omit, true) }}"
+    state: present
+    name: "{{ tc_object_storage_baseline_name }}"
+    appid: "{{ tc_object_storage_baseline_appid | default(omit, true) }}"
+    policy: "{{ tc_object_storage_baseline_policy }}"
+
+- name: Configure COS access logging
+  when:
+    - tc_object_storage_baseline_state == 'present'
+    - tc_object_storage_baseline_logging.enabled
+  susunola.tencentcloud.cos_bucket_logging:
+    region: "{{ tc_object_storage_baseline_region | default(omit, true) }}"
+    state: present
+    name: "{{ tc_object_storage_baseline_name }}"
+    appid: "{{ tc_object_storage_baseline_appid | default(omit, true) }}"
+    target_bucket: "{{ tc_object_storage_baseline_logging.target_bucket }}"
+    target_prefix: "{{ tc_object_storage_baseline_logging.target_prefix | default('') }}"
+
+- name: Configure COS static website
+  when:
+    - tc_object_storage_baseline_state == 'present'
+    - tc_object_storage_baseline_website is not none
+  susunola.tencentcloud.cos_bucket_website:
+    region: "{{ tc_object_storage_baseline_region | default(omit, true) }}"
+    state: present
+    name: "{{ tc_object_storage_baseline_name }}"
+    appid: "{{ tc_object_storage_baseline_appid | default(omit, true) }}"
+    configuration: "{{ tc_object_storage_baseline_website }}"
+
+- name: Configure COS cross-region replication
+  when:
+    - tc_object_storage_baseline_state == 'present'
+    - tc_object_storage_baseline_replication.enabled
+  susunola.tencentcloud.cos_bucket_replication:
+    region: "{{ tc_object_storage_baseline_region | default(omit, true) }}"
+    state: present
+    name: "{{ tc_object_storage_baseline_name }}"
+    appid: "{{ tc_object_storage_baseline_appid | default(omit, true) }}"
+    role: "{{ tc_object_storage_baseline_replication.role }}"
+    rules: "{{ tc_object_storage_baseline_replication.rules }}"
+
+- name: Configure COS hotlink protection
+  when:
+    - tc_object_storage_baseline_state == 'present'
+    - tc_object_storage_baseline_referer.enabled
+  susunola.tencentcloud.cos_bucket_referer:
+    region: "{{ tc_object_storage_baseline_region | default(omit, true) }}"
+    state: present
+    name: "{{ tc_object_storage_baseline_name }}"
+    appid: "{{ tc_object_storage_baseline_appid | default(omit, true) }}"
+    referer_type: "{{ tc_object_storage_baseline_referer.type }}"
+    allow_empty: "{{ tc_object_storage_baseline_referer.allow_empty }}"
+    domains: "{{ tc_object_storage_baseline_referer.domains }}"
+
+- name: Enable COS object lock
+  when:
+    - tc_object_storage_baseline_state == 'present'
+    - tc_object_storage_baseline_object_lock.enabled
+  susunola.tencentcloud.cos_bucket_object_lock:
+    region: "{{ tc_object_storage_baseline_region | default(omit, true) }}"
+    state: present
+    name: "{{ tc_object_storage_baseline_name }}"
+    appid: "{{ tc_object_storage_baseline_appid | default(omit, true) }}"
+    retention_mode: "{{ tc_object_storage_baseline_object_lock.retention_mode }}"
+    retention_days: "{{ tc_object_storage_baseline_object_lock.retention_days | default(omit) }}"
+    retention_years: "{{ tc_object_storage_baseline_object_lock.retention_years | default(omit) }}"
+
+- name: Enable COS intelligent tiering
+  when:
+    - tc_object_storage_baseline_state == 'present'
+    - tc_object_storage_baseline_intelligent_tiering.enabled
+  susunola.tencentcloud.cos_bucket_intelligent_tiering:
+    region: "{{ tc_object_storage_baseline_region | default(omit, true) }}"
+    state: present
+    name: "{{ tc_object_storage_baseline_name }}"
+    appid: "{{ tc_object_storage_baseline_appid | default(omit, true) }}"
+    transition_days: "{{ tc_object_storage_baseline_intelligent_tiering.transition_days }}"
+    request_frequent: "{{ tc_object_storage_baseline_intelligent_tiering.request_frequent }}"
+
+- name: Remove COS replication configuration
+  when: tc_object_storage_baseline_state == 'absent'
+  susunola.tencentcloud.cos_bucket_replication:
+    region: "{{ tc_object_storage_baseline_region | default(omit, true) }}"
+    state: absent
+    name: "{{ tc_object_storage_baseline_name }}"
+    appid: "{{ tc_object_storage_baseline_appid | default(omit, true) }}"
+
+- name: Remove COS website configuration
+  when: tc_object_storage_baseline_state == 'absent'
+  susunola.tencentcloud.cos_bucket_website:
+    region: "{{ tc_object_storage_baseline_region | default(omit, true) }}"
+    state: absent
+    name: "{{ tc_object_storage_baseline_name }}"
+    appid: "{{ tc_object_storage_baseline_appid | default(omit, true) }}"
+
+- name: Remove COS access logging
+  when: tc_object_storage_baseline_state == 'absent'
+  susunola.tencentcloud.cos_bucket_logging:
+    region: "{{ tc_object_storage_baseline_region | default(omit, true) }}"
+    state: absent
+    name: "{{ tc_object_storage_baseline_name }}"
+    appid: "{{ tc_object_storage_baseline_appid | default(omit, true) }}"
+
+- name: Remove COS hotlink protection
+  when: tc_object_storage_baseline_state == 'absent'
+  susunola.tencentcloud.cos_bucket_referer:
+    region: "{{ tc_object_storage_baseline_region | default(omit, true) }}"
+    state: absent
+    name: "{{ tc_object_storage_baseline_name }}"
+    appid: "{{ tc_object_storage_baseline_appid | default(omit, true) }}"
+
+- name: Remove COS bucket policy
+  when: tc_object_storage_baseline_state == 'absent'
+  susunola.tencentcloud.cos_bucket_policy:
+    region: "{{ tc_object_storage_baseline_region | default(omit, true) }}"
+    state: absent
+    name: "{{ tc_object_storage_baseline_name }}"
+    appid: "{{ tc_object_storage_baseline_appid | default(omit, true) }}"
+
+- name: Remove COS default encryption
+  when: tc_object_storage_baseline_state == 'absent'
+  susunola.tencentcloud.cos_bucket_encryption:
+    region: "{{ tc_object_storage_baseline_region | default(omit, true) }}"
+    state: absent
+    name: "{{ tc_object_storage_baseline_name }}"
+    appid: "{{ tc_object_storage_baseline_appid | default(omit, true) }}"
+
+- name: Remove empty COS bucket
+  when: tc_object_storage_baseline_state == 'absent'
+  susunola.tencentcloud.cos_bucket:
+    region: "{{ tc_object_storage_baseline_region | default(omit, true) }}"
+    state: absent
+    name: "{{ tc_object_storage_baseline_name }}"
+    appid: "{{ tc_object_storage_baseline_appid | default(omit, true) }}"
+
+- name: Publish object storage baseline result
+  when: tc_object_storage_baseline_state == 'present'
+  ansible.builtin.set_fact:
+    tc_object_storage_baseline_result:
+      bucket: "{{ _tc_object_storage_baseline_bucket }}"
+      encryption: "{{ _tc_object_storage_baseline_encryption | default({}) }}"

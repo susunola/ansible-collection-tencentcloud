@@ -1,0 +1,41 @@
+---
+tc_object_storage_baseline_state: present
+tc_object_storage_baseline_region: ""
+tc_object_storage_baseline_name: ""
+tc_object_storage_baseline_appid: ""
+tc_object_storage_baseline_acl: private
+tc_object_storage_baseline_versioning: null
+tc_object_storage_baseline_cors: null
+tc_object_storage_baseline_lifecycle: null
+tc_object_storage_baseline_tags: {}
+
+tc_object_storage_baseline_encryption_enabled: true
+tc_object_storage_baseline_encryption_rules:
+  - ApplyServerSideEncryptionByDefault:
+      SSEAlgorithm: AES256
+tc_object_storage_baseline_policy: null
+tc_object_storage_baseline_logging:
+  enabled: false
+  target_bucket: ""
+  target_prefix: ""
+tc_object_storage_baseline_website: null
+tc_object_storage_baseline_replication:
+  enabled: false
+  role: ""
+  rules: []
+tc_object_storage_baseline_referer:
+  enabled: false
+  type: White-List
+  allow_empty: true
+  domains: []
+
+# These COS features cannot be disabled after enablement and are opt-in.
+tc_object_storage_baseline_object_lock:
+  enabled: false
+  retention_mode: ""
+  retention_days: null
+  retention_years: null
+tc_object_storage_baseline_intelligent_tiering:
+  enabled: false
+  transition_days: 30
+  request_frequent: 1

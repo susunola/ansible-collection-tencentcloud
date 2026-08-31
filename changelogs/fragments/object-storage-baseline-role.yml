@@ -1,0 +1,5 @@
+minor_changes:
+  - >-
+    solution roles - add ``tc_object_storage_baseline`` for secure COS bucket
+    composition across encryption, lifecycle, access, logging, replication and
+    irreversible retention features, with configuration-first safe teardown.
