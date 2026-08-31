@@ -25,7 +25,7 @@ options:
     description: Resource family to query.
     type: str
     required: true
-    choices: [vpc, subnet, security_group, cvm_instance, clb_load_balancer, tke_cluster, cdb_instance, redis_instance, mongodb_instance, api_gateway_service, tcr_instance, tem_environment, tem_application]
+    choices: [vpc, subnet, security_group, cvm_instance, clb_load_balancer, tke_cluster, cdb_instance, redis_instance, mongodb_instance, cfs_file_system, api_gateway_service, tcr_instance, tem_environment, tem_application]
   vpc_id:
     description: Optional VPC scope for subnet and CLB lookups.
     type: str
@@ -132,6 +132,7 @@ RESOURCE_SPECS = {
     "cdb_instance": ("cdb.v20170320", "CdbClient", "cdb.tencentcloudapi.com", "DescribeDBInstances", "Items", "InstanceId", "InstanceName"),
     "redis_instance": ("redis.v20180412", "RedisClient", "redis.tencentcloudapi.com", "DescribeInstances", "InstanceSet", "InstanceId", "InstanceName"),
     "mongodb_instance": ("mongodb.v20190725", "MongodbClient", "mongodb.tencentcloudapi.com", "DescribeDBInstances", "InstanceDetails", "InstanceId", "InstanceName"),
+    "cfs_file_system": ("cfs.v20190719", "CfsClient", "cfs.tencentcloudapi.com", "DescribeCfsFileSystems", "FileSystems", "FileSystemId", "Name"),
     "api_gateway_service": ("apigateway.v20180808", "ApigatewayClient", "apigateway.tencentcloudapi.com", "DescribeServicesStatus", "Result.ServiceSet", "ServiceId", "ServiceName"),
     "tcr_instance": ("tcr.v20190924", "TcrClient", "tcr.tencentcloudapi.com", "DescribeInstances", "Registries", "RegistryId", "RegistryName"),
     "tem_environment": ("tem.v20210701", "TemClient", "tem.tencentcloudapi.com", "DescribeEnvironments", "Result.Records", "EnvironmentId", "EnvironmentName"),
@@ -151,6 +152,7 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0):
         "cdb_instance": "DescribeDBInstancesRequest",
         "redis_instance": "DescribeInstancesRequest",
         "mongodb_instance": "DescribeDBInstancesRequest",
+        "cfs_file_system": "DescribeCfsFileSystemsRequest",
         "api_gateway_service": "DescribeServicesStatusRequest",
         "tcr_instance": "DescribeInstancesRequest",
         "tem_environment": "DescribeEnvironmentsRequest",
@@ -169,6 +171,8 @@ def build_request(resource_type, models, name, vpc_id=None, offset=0):
         request.InstanceName = name
     elif resource_type == "mongodb_instance":
         request.SearchKey = name
+    elif resource_type == "cfs_file_system":
+        pass
     elif resource_type == "api_gateway_service":
         api_filter = models.Filter()
         api_filter.Name, api_filter.Values = "ServiceName", [name]

@@ -43,6 +43,7 @@ class Models(object):
     DescribeServicesStatusRequest = Request
     DescribeEnvironmentsRequest = Request
     DescribeApplicationsRequest = Request
+    DescribeCfsFileSystemsRequest = Request
 
 
 class Client(object):
@@ -76,6 +77,12 @@ def test_subnet_request_scopes_to_vpc():
 def test_cdb_request_uses_instance_names():
     request = build_request("cdb_instance", Models, "orders")
     assert request.InstanceNames == ["orders"]
+
+
+def test_cfs_request_scans_names_with_numeric_pagination():
+    request = build_request("cfs_file_system", Models, "shared-data", offset=100)
+    assert request.Limit == 100
+    assert request.Offset == 100
 
 
 def test_tem_and_api_gateway_requests_use_product_specific_filters():
