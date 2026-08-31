@@ -1,5 +1,5 @@
 import base64
-from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_table import delete_request, generate_request, has_data, immutable_drift, normalize, task_request, task_status_request
+from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_table import comment_drift, comment_request, delete_request, generate_request, has_data, immutable_drift, normalize, task_request, task_status_request
 
 
 class Model:
@@ -9,7 +9,7 @@ class Model:
 
 
 class Models:
-    CreateTableRequest = DeleteTableRequest = CreateTasksRequest = DescribeTaskDetailRequest = Model
+    CreateTableRequest = DeleteTableRequest = AlterTableCommentRequest = CreateTasksRequest = DescribeTaskDetailRequest = Model
     TableInfo = TableBaseInfo = TasksInfo = Model
 
 
@@ -28,6 +28,14 @@ def test_generate_and_submit_requests_preserve_schema_and_encode_sql():
 def test_normalization_drift_and_guards():
     p = params(); current = normalize({"TableBaseInfo": {"DatabaseName": "analytics", "TableName": "sales", "DatasourceConnectionName": "DataLakeCatalog", "TableComment": "daily", "Type": "table", "TableFormat": "iceberg", "PrimaryKeys": ["id"]}, "Columns": [{"Name": "id", "Type": "BIGINT", "Nullable": "false", "Position": 0}], "Partitions": [], "Location": "cosn://bucket/sales", "InputFormatShort": "parquet", "RecordCount": 2})
     assert immutable_drift(p, current) == {}
+    assert comment_drift(p, current) == {}
     assert has_data(current) is True
     assert delete_request(Models, p).TableBaseInfo.TableName == "sales"
     assert task_status_request(Models, "task-1").TaskInstanceId == "task-1"
+
+
+def test_table_comment_has_a_non_destructive_update_request():
+    p = params(); p["comment"] = "updated"
+    request = comment_request(Models, p)
+    assert request.TableBaseInfo.TableComment == "updated"
+    assert comment_drift(p, {"TableBaseInfo": {"TableComment": "old"}}) == {"TableComment": ("old", "updated")}

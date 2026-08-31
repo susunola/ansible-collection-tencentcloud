@@ -1,0 +1,2 @@
+bugfixes:
+  - Update ``dlc_table`` comments in place through ``AlterTableComment`` instead of requiring destructive table replacement.

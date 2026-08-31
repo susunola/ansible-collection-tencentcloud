@@ -10,7 +10,7 @@ short_description: Manage Tencent Cloud DLC metadata tables
 version_added: "0.14.0"
 description:
   - Generates table DDL with DLC, submits it as an SQL task and verifies the resulting table through the catalog.
-  - Table schemas are immutable in the available API and require explicitly authorized replacement when they drift.
+  - Table comments are updated in place; immutable schema and storage drift requires explicitly authorized replacement.
 options:
   state: {type: str, choices: [present, absent], default: present, description: Desired table state.}
   name: {type: str, required: true, description: Exact table name.}
@@ -168,10 +168,16 @@ def immutable_drift(p, current):
     target, changes = desired(p, current), {}
     for source, key in (("columns", "Columns"), ("partitions", "Partitions"), ("location", "Location")):
         if p.get(source) is not None and current.get(key) != target.get(key): changes[key] = (current.get(key), target.get(key))
-    for source, key in (("comment", "TableComment"), ("table_type", "Type"), ("table_format", "TableFormat"), ("primary_keys", "PrimaryKeys")):
+    for source, key in (("table_type", "Type"), ("table_format", "TableFormat"), ("primary_keys", "PrimaryKeys")):
         if p.get(source) is not None and current["TableBaseInfo"].get(key) != target["TableBaseInfo"].get(key): changes[key] = (current["TableBaseInfo"].get(key), target["TableBaseInfo"].get(key))
     if p.get("data_format") is not None and str(current.get("InputFormatShort") or "").upper() != p["data_format"].upper(): changes["InputFormatShort"] = (current.get("InputFormatShort"), p["data_format"].upper())
     return changes
+
+
+def comment_drift(p, current):
+    if p.get("comment") is None: return {}
+    old = current.get("TableBaseInfo", {}).get("TableComment")
+    return {} if old == p["comment"] else {"TableComment": (old, p["comment"])}
 
 
 def generate_request(models, p):
@@ -208,12 +214,25 @@ def delete_request(models, p):
     request = models.DeleteTableRequest(); request.TableBaseInfo = _model(models.TableBaseInfo, {"DatabaseName": p["database_name"], "TableName": p["name"], "DatasourceConnectionName": p["datasource_connection_name"]}); return request
 
 
+def comment_request(models, p):
+    request = models.AlterTableCommentRequest()
+    request.TableBaseInfo = _model(models.TableBaseInfo, {"DatabaseName": p["database_name"], "TableName": p["name"], "DatasourceConnectionName": p["datasource_connection_name"], "TableComment": p["comment"]})
+    return request
+
+
 def has_data(current): return int(current.get("StorageSize") or 0) > 0 or int(current.get("RecordCount") or 0) > 0
 
 
 def wait_table(module, client, models, p, present):
     def poll(): return "present" if find(module, client, models, p) else "absent"
     wait_for_state(module, poll, ["present" if present else "absent"], timeout=p["waiter_timeout"], delay=p["waiter_delay"])
+
+
+def wait_comment(module, client, models, p):
+    def poll():
+        current = find(module, client, models, p)
+        return "ready" if current and current.get("TableBaseInfo", {}).get("TableComment") == p["comment"] else "pending"
+    wait_for_state(module, poll, ["ready"], timeout=p["waiter_timeout"], delay=p["waiter_delay"])
 
 
 def create(module, client, models, p):
@@ -260,7 +279,15 @@ def run_module():
                 task_ids = create(module, client, models, p); current = find(module, client, models, p)
             module.exit_json(changed=True, **(diff_value or {}), table=current if not module.check_mode else target, task_ids=task_ids)
         changes = immutable_drift(p, current)
-        if not changes: module.exit_json(changed=False, table=current, task_ids=[])
+        mutable = comment_drift(p, current)
+        if not changes and not mutable: module.exit_json(changed=False, table=current, task_ids=[])
+        if not changes and mutable:
+            after, diff_value = desired(p, current), maybe_diff(module, current, desired(p, current))
+            if not module.check_mode:
+                module.sdk_call(client.AlterTableComment, comment_request(models, p))
+                if p["wait"]: wait_comment(module, client, models, p)
+                current = find(module, client, models, p)
+            module.exit_json(changed=True, **(diff_value or {}), table=current if not module.check_mode else after, task_ids=[])
         if not p["allow_replace"]: module.fail_json(msg="DLC table schema is immutable; set allow_replace=true to authorize replacement", table=current, immutable_drift=changes)
         if has_data(current) and not p["allow_delete_data"]: module.fail_json(msg="DLC table contains data; set allow_delete_data=true to authorize replacement", table=current)
         if not p.get("columns"): module.fail_json(msg="columns are required when replacing a DLC table")

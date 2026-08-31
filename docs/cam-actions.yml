@@ -898,6 +898,7 @@ modules:
   - DescribeStoreLocation
   - ModifyAdvancedStoreLocation
   dlc_table:
+  - AlterTableComment
   - CreateTable
   - CreateTasks
   - DeleteTable
