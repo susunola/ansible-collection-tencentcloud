@@ -379,6 +379,8 @@ action_groups:
     - ses_black_email_address_info
     - smh_library_info
     - sms_sign_info
+    - sms_signature
+    - sms_template
     - sqlserver_account
     - sqlserver_backup_config
     - sqlserver_instance

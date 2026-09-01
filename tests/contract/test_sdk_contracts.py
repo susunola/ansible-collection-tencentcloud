@@ -315,6 +315,12 @@ UNEXERCISED_BUILDERS = {
     ("dnspod_domain", "run_module"): "inline lifecycle requests are covered by unit tests",
     ("postgresql_parameter_template", "run_module"): "inline lifecycle requests are covered by unit tests",
     ("redis_parameter_template", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("cvm_image_share", "run_module"): "inline ModifyImageSharePermissionRequest (SHARE/CANCEL) is covered by unit tests",
+    ("cvm_instance_security_group", "run_module"): "inline Associate/DisassociateSecurityGroupsRequests are covered by unit tests",
+    ("tke_cluster_autoscaler", "run_module"): "inline ModifyClusterAsGroupOptionAttributeRequest is covered by unit tests",
+    ("tke_cluster_upgrade", "run_module"): "inline UpdateClusterVersionRequest is covered by unit tests",
+    ("sms_signature", "run_module"): "inline AddSmsSign/DeleteSmsSign requests are covered by unit tests",
+    ("sms_template", "run_module"): "inline AddSmsTemplate/DeleteSmsTemplate requests are covered by unit tests",
 }
 
 # Write-module request builders exercised by the ``test_<module>`` functions
@@ -367,6 +373,8 @@ WRITE_MODULE_BUILDERS = {
     "cvm_launch_template_version": ["create_request", "default_request", "delete_request", "describe_request"],
     "cvm_hpc_cluster": ["create_request", "delete_request", "describe_request", "update_request"],
     "cvm_instance_action_timer": ["create_request", "delete_request", "describe_request"],
+    "cvm_image_share": ["find_shared_accounts"],
+    "cvm_instance_security_group": ["find_instance"],
     "cdb_account": ["create", "describe"],
     "cdb_account_privilege": ["describe_request", "modify_request"],
     "cdb_audit_config": ["describe_request", "modify_request"],
@@ -419,6 +427,8 @@ WRITE_MODULE_BUILDERS = {
     "waf_protect_group": ["create_request", "delete_request", "describe_request", "update_request"],
     "cls_shipper": ["create_request", "delete_request", "describe_request", "update_request"],
     "tke_backup_storage_location": ["create_request", "delete_request", "describe_request"],
+    "tke_cluster_autoscaler": ["current_options"],
+    "tke_cluster_upgrade": ["find_cluster"],
     "cam_saml_provider": ["create_request", "delete_request", "get_request", "update_request"],
     "cam_oidc_provider": ["create_request", "delete_request", "describe_request", "update_request"],
     "dnspod_custom_line": ["create_request", "delete_request", "describe_request", "update_request"],
@@ -446,6 +456,8 @@ WRITE_MODULE_BUILDERS = {
     "cbs_auto_snapshot_policy": ["bind_request", "create_request", "delete_request", "describe_request", "unbind_request", "update_request"],
     "cbs_snapshot_share": ["describe_request", "modify_request"],
     "ssm_secret_version": ["create_request", "delete_request", "get_request", "list_request"],
+    "sms_signature": ["find_sign"],
+    "sms_template": ["find_template"],
     "ssm_secret": ["create_request", "delete_request", "describe_request", "description_request", "restore_request", "state_request"],
     "ssm_rotation": ["describe_request", "update_request"],
     "tat_invoker": ["create_request", "delete_request", "describe_request", "enable_request", "update_request"],
@@ -7966,4 +7978,202 @@ def test_teo_security_bot_lite():
     errors = []
     errors.extend(audit_request(module.describe_request(models, p), "TEO Bot lite describe"))
     errors.extend(audit_request(module.update_request(models, p), "TEO Bot lite update"))
+    assert errors == []
+
+
+def test_cos_object():
+    module = _import_plugin("cos_object")
+    errors = []
+    assert module.etag_value('"abc123"') == "abc123"
+    assert module.etag_value(None) is None
+    assert module.md5_of_bytes(b"hello") == "5d41402abc4b2a76b9719d911017c592"
+    assert module.normalize_metadata({"b": "2", "a": "1"}) == {"x-cos-meta-a": "1", "x-cos-meta-b": "2"}
+
+    class _Head(object):
+        def head_object(self, **kwargs):
+            return {
+                "ETag": '"abc123"',
+                "Content-Length": "5",
+                "StorageClass": "STANDARD_IA",
+                "Metadata": {"x-cos-meta-env": "prod", "x-other": "ignored"},
+            }
+
+    info = module.describe_object(_Head(), "bucket-1250000000", "dir/file.txt")
+    assert info["key"] == "dir/file.txt"
+    assert info["etag"] == "abc123"
+    assert info["content_length"] == 5
+    assert info["storage_class"] == "STANDARD_IA"
+    assert info["metadata"] == {"x-cos-meta-env": "prod"}
+    assert errors == []
+
+    recorded = {}
+
+    class _Put(object):
+        def put_object(self, **kwargs):
+            recorded.update(kwargs)
+
+    module.upload_body(_Put(), "bucket-1250000000", "dir/file.txt", b"data", {"x-cos-meta-env": "prod"}, "STANDARD")
+    assert recorded["Key"] == "dir/file.txt"
+    assert recorded["StorageClass"] == "STANDARD"
+
+    class _Body(object):
+        def __init__(self, payload):
+            self._payload = payload
+            self._offset = 0
+
+        def read(self, size=None):
+            if self._offset >= len(self._payload):
+                return b""
+            chunk = self._payload[self._offset:self._offset + (size or len(self._payload))]
+            self._offset += len(chunk)
+            return chunk
+
+    class _Get(object):
+        def get_object(self, **kwargs):
+            return {"Body": _Body(b"hello")}
+
+    module.download_object(_Get(), "bucket-1250000000", "dir/file.txt", "/tmp/cos-object-contract.bin")
+    with open("/tmp/cos-object-contract.bin", "rb") as handle:
+        assert handle.read() == b"hello"
+    import os
+    os.unlink("/tmp/cos-object-contract.bin")
+
+
+def test_cos_object_sync():
+    module = _import_plugin("cos_object_sync")
+    import os
+    import tempfile
+    errors = []
+    assert module.relkey("/src", "/src/a/b.txt") == "a/b.txt"
+    with tempfile.TemporaryDirectory() as tmp:
+        src = os.path.join(tmp, "src")
+        os.makedirs(os.path.join(src, "sub"))
+        with open(os.path.join(src, "top.txt"), "wb") as handle:
+            handle.write(b"top")
+        with open(os.path.join(src, "sub", "nested.txt"), "wb") as handle:
+            handle.write(b"nested")
+        files = module.walk_local(src)
+        assert sorted(files) == ["sub/nested.txt", "top.txt"]
+        assert module.cos_object_md5(os.path.join(src, "top.txt")) == "b28354b543375bfa94dabaeda722927f"
+    assert errors == []
+
+
+def test_cvm_image_share():
+    module = _import_plugin("cvm_image_share")
+    models = _models("cvm.v20170312")
+    fake = _RecordingModule()
+    client = SimpleNamespace(DescribeImageSharePermission=lambda request: SimpleNamespace(
+        SharePermissionSet=[SimpleNamespace(AccountId="2000002"), SimpleNamespace(Account="1000001")],
+    ))
+    accounts = module.find_shared_accounts(fake, client, models, "img-xxxxxxxx")
+    errors = []
+    errors.extend(audit_recorded(fake, "cvm_image_share describe"))
+    assert accounts == ["1000001", "2000002"]
+    share = models.ModifyImageSharePermissionRequest()
+    share.ImageId = "img-xxxxxxxx"
+    share.AccountIds = ["1000001"]
+    share.Permission = "SHARE"
+    errors.extend(audit_request(share, "cvm_image_share share"))
+    cancel = models.ModifyImageSharePermissionRequest()
+    cancel.ImageId = "img-xxxxxxxx"
+    cancel.AccountIds = ["1000001"]
+    cancel.Permission = "CANCEL"
+    errors.extend(audit_request(cancel, "cvm_image_share cancel"))
+    assert errors == []
+
+
+def test_cvm_instance_security_group():
+    module = _import_plugin("cvm_instance_security_group")
+    models = _models("cvm.v20170312")
+    fake = _RecordingModule()
+    client = _StubClient()
+    result = module.find_instance(fake, client, models, "ins-xxxxxxxx")
+    errors = []
+    errors.extend(audit_recorded(fake, "cvm_instance_security_group describe"))
+    assert result is None
+    bind = models.AssociateSecurityGroupsRequest()
+    bind.InstanceIds = ["ins-xxxxxxxx"]
+    bind.SecurityGroupIds = ["sg-xxxxxxxx"]
+    errors.extend(audit_request(bind, "cvm_instance_security_group associate"))
+    unbind = models.DisassociateSecurityGroupsRequest()
+    unbind.InstanceIds = ["ins-xxxxxxxx"]
+    unbind.SecurityGroupIds = ["sg-xxxxxxxx"]
+    errors.extend(audit_request(unbind, "cvm_instance_security_group disassociate"))
+    assert errors == []
+
+
+def test_tke_cluster_upgrade():
+    module = _import_plugin("tke_cluster_upgrade")
+    models = _models("tke.v20180525")
+    fake = _RecordingModule()
+    client = _StubClient()
+    result = module.find_cluster(fake, client, models, "cls-xxxxxxxx")
+    errors = []
+    errors.extend(audit_recorded(fake, "tke_cluster_upgrade describe"))
+    assert result is None
+    update = models.UpdateClusterVersionRequest()
+    update.ClusterId = "cls-xxxxxxxx"
+    update.DstVersion = "1.28.5"
+    update.MaxNotReadyPercent = 10.0
+    update.SkipPreCheck = False
+    errors.extend(audit_request(update, "tke_cluster_upgrade update"))
+    assert errors == []
+
+
+def test_tke_cluster_autoscaler():
+    module = _import_plugin("tke_cluster_autoscaler")
+    models = _models("tke.v20180525")
+    fake = _RecordingModule()
+    client = _StubClient()
+    options = module.current_options(fake, client, models, "cls-xxxxxxxx")
+    errors = []
+    errors.extend(audit_recorded(fake, "tke_cluster_autoscaler describe"))
+    assert options == {}
+    modify = models.ModifyClusterAsGroupOptionAttributeRequest()
+    modify.ClusterId = "cls-xxxxxxxx"
+    errors.extend(audit_request(modify, "tke_cluster_autoscaler modify"))
+    assert errors == []
+
+
+def test_sms_signature():
+    module = _import_plugin("sms_signature")
+    models = _models("sms.v20210111")
+    fake = _RecordingModule()
+    client = _StubClient()
+    result = module.find_sign(fake, client, models, "Tencent Cloud", False)
+    errors = []
+    errors.extend(audit_recorded(fake, "sms_signature describe"))
+    assert result is None
+    create = models.AddSmsSignRequest()
+    create.SignName = "Tencent Cloud"
+    create.SignType = 0
+    create.DocumentType = 0
+    create.International = 0
+    create.SignPurpose = 0
+    create.ProofImage = "aGVsbG8="
+    errors.extend(audit_request(create, "sms_signature create"))
+    delete = models.DeleteSmsSignRequest()
+    delete.SignId = 1110
+    errors.extend(audit_request(delete, "sms_signature delete"))
+    assert errors == []
+
+
+def test_sms_template():
+    module = _import_plugin("sms_template")
+    models = _models("sms.v20210111")
+    fake = _RecordingModule()
+    client = _StubClient()
+    result = module.find_template(fake, client, models, "Login verification code", False)
+    errors = []
+    errors.extend(audit_recorded(fake, "sms_template describe"))
+    assert result is None
+    create = models.AddSmsTemplateRequest()
+    create.TemplateName = "Login verification code"
+    create.TemplateContent = "Your verification code is {1}."
+    create.SmsType = 0
+    create.International = 0
+    errors.extend(audit_request(create, "sms_template create"))
+    delete = models.DeleteSmsTemplateRequest()
+    delete.TemplateId = 1110
+    errors.extend(audit_request(delete, "sms_template delete"))
     assert errors == []

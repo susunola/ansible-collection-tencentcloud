@@ -1,0 +1,3 @@
+minor_changes:
+  - "Add ``sms_signature`` to manage Tencent Cloud SMS signatures (签名) via ``AddSmsSign``/``DeleteSmsSign``/``DescribeSmsSignList``. Signature applications are review-based: content fields are sent only at creation, and a signature whose review failed (status code -1) is treated as absent so re-running the task resubmits. Supports check mode and diff."
+  - "Add ``sms_template`` to manage Tencent Cloud SMS templates (短信模板) via ``AddSmsTemplate``/``DeleteSmsTemplate``/``DescribeSmsTemplateList``. Template applications are review-based: content fields are sent only at creation, and a template whose review failed (status code -1) is treated as absent so re-running the task resubmits. Supports check mode and diff."

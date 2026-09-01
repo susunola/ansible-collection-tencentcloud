@@ -267,6 +267,8 @@ CORE_MODULES = {
     "scf_version",
     "security_group",
     "security_group_rule",
+    "sms_signature",
+    "sms_template",
     "ssl_certificate",
     "ssm_parameter",
     "ssm_secret_version",

@@ -228,6 +228,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `scf_version` | Manage Tencent Cloud SCF function versions |
 | `security_group` | Manage Tencent Cloud security groups |
 | `security_group_rule` | Manage Tencent Cloud security group rules |
+| `sms_signature` | Manage Tencent Cloud SMS signatures |
+| `sms_template` | Manage Tencent Cloud SMS templates |
 | `sqlserver_account` | Manage TencentDB for SQL Server accounts |
 | `sqlserver_backup_config` | Manage TencentDB for SQL Server backup configuration |
 | `sqlserver_instance` | Manage TencentDB for SQL Server instances |
