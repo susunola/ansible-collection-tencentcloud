@@ -220,5 +220,57 @@
     lifecycle for ENI, NAT, CCN and direct-connect resources, CLS topic
     delivery, mutable metadata and enabled state with convergence polling.
 
+## Next (0.14+)
+
+The write-module surface is dense across the core Tencent Cloud product
+lines. The next phase shifts from breadth to three tracks: closing the
+remaining high-value object-level and product gaps, deepening the platform
+plugins around the module set, and hardening governance for a path toward
+the official `ansible-collections` organisation.
+
+46. Object-level COS operations. **Done** — `cos_object` manages upload
+    (from `src` or inline `content`), download to `dest` and deletion, with
+    ETag-based change detection, metadata and storage-class drift
+    reconciliation, check mode and diff output.
+47. COS object inventory and sync: `cos_object_info` (list/filter objects in
+    a bucket with prefix and marker pagination) and `cos_object_sync`
+    (mirror a local tree into a bucket prefix, delete extraneous keys) to
+    complete the object story started by `cos_object`. **Done** — both
+    modules shipped with ETag/MD5 change detection, check mode and full
+    unit coverage (44 cos_object tests green on pytest and ansible-test).
+48. Compute closure: `cvm_instance` security-group binding
+    (`AssociateSecurityGroups`/`DisassociateSecurityGroups` — the CVM SDK
+    has no `ModifyInstancesSecurityGroups` request) and image sharing
+    (`ModifyImageSharePermission`), the two most-requested CVM gaps.
+    **Done** — `cvm_instance_security_group` reconciles the instance's
+    bound set exactly (state=present) or unbinds given groups
+    (state=absent), enforcing the five-group limit; `cvm_image_share`
+    shares/revokes image access per root account ID with SHARE/CANCEL.
+    Both ship check mode + diff and 23 unit tests green on pytest and
+    ansible-test.
+49. Container closure: `tke_cluster` upgrade (`UpgradeCluster`) and
+    auto-scaling (`CreateClusterAutoscaler`) so cluster lifecycle is fully
+    declarative. **Planned**
+50. New product lines with zero write coverage today: `eks_*` (Elastic
+    Kubernetes Service), `sms_*` (signature/template/package), and `vod_*`
+    (media management) as the first candidates. **Planned**
+51. Inventory expansion: `tencentcloud_cos` (bucket + object listing) and
+    `tencentcloud_tke` (cluster + node pool) dynamic inventory plugins.
+    **Planned**
+52. EDA event sources: COS bucket event notifications and TKE cluster
+    events as `event_source` plugins, extending the `cls_topic`/`cmq_queue`
+    pattern. **Planned**
+53. Role library: `tc_web_stack` (CVM + CLB + CDB + Redis in one call),
+    `tc_tke_cluster` (managed cluster + node pool + addons) and
+    `tc_disaster_recovery` (cross-region replica) roles. **Planned**
+54. Generator upgrade: extend `scripts/generate_info_modules.py` to emit
+    resource-module skeletons (argument spec + request builder) from SDK
+    metadata so new write modules start from generated scaffolding instead
+    of a blank file. **Planned**
+55. Official adoption: open the review process with `ansible-collections`
+    (namespace, `meta/runtime.yml` compatibility, `ansible-test` full
+    matrix) and track it in a dedicated issue. **Planned**
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
+

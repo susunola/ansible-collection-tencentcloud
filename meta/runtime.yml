@@ -172,6 +172,9 @@ action_groups:
     - cos_bucket_replication
     - cos_bucket_response_control
     - cos_bucket_website
+    - cos_object
+    - cos_object_info
+    - cos_object_sync
     - cpdp_merchant_info_for_management_info
     - csip_asset_process_info
     - ctem_api_sec_info
@@ -182,9 +185,11 @@ action_groups:
     - cvm_disaster_recover_group_binding
     - cvm_hpc_cluster
     - cvm_image
+    - cvm_image_share
     - cvm_instance
     - cvm_instance_action_timer
     - cvm_instance_info
+    - cvm_instance_security_group
     - cvm_launch_template
     - cvm_launch_template_version
     - cwp_machine_info

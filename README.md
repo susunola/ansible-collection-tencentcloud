@@ -117,14 +117,18 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `cos_bucket_replication` | Manage Tencent Cloud COS bucket replication |
 | `cos_bucket_response_control` | Manage Tencent Cloud COS response-header controls |
 | `cos_bucket_website` | Manage Tencent Cloud COS static website configuration |
+| `cos_object` | Manage Tencent Cloud COS objects |
+| `cos_object_sync` | Mirror a local directory tree into a Tencent Cloud COS bucket |
 | `customer_gateway` | Manage Tencent Cloud VPN customer gateways |
 | `cvm_chc` | Manage Tencent Cloud CHC physical server network configuration |
 | `cvm_disaster_recover_group` | Manage Tencent Cloud CVM placement groups |
 | `cvm_disaster_recover_group_binding` | Bind a Tencent Cloud CVM instance to a placement group |
 | `cvm_hpc_cluster` | Manage Tencent Cloud CVM high-performance clusters |
 | `cvm_image` | Manage Tencent Cloud CVM custom images |
+| `cvm_image_share` | Manage Tencent Cloud CVM image sharing permissions |
 | `cvm_instance` | Manage Tencent Cloud CVM instances |
 | `cvm_instance_action_timer` | Manage Tencent Cloud CVM instance action timers |
+| `cvm_instance_security_group` | Manage the security groups bound to a Tencent Cloud CVM instance |
 | `cvm_launch_template` | Manage Tencent Cloud CVM launch templates |
 | `cvm_launch_template_version` | Manage Tencent Cloud CVM launch-template versions |
 | `cynosdb_account` | Manage Tencent Cloud CynosDB accounts |
@@ -385,6 +389,7 @@ Read-only `_info` modules (return `changed=false`):
 | `config_aggregate_compliance_pack_info` | Gather information about Tencent Cloud CONFIG aggregate compliance packs |
 | `controlcenter_account_factory_baseline_item_info` | Gather information about Tencent Cloud CONTROLCENTER account factory baseline items |
 | `cos_bucket_info` | Gather information about Tencent Cloud COS buckets |
+| `cos_object_info` | Gather information about Tencent Cloud COS objects |
 | `cpdp_merchant_info_for_management_info` | Gather information about Tencent Cloud CPDP merchant info for managements |
 | `csip_asset_process_info` | Gather information about Tencent Cloud CSIP asset processes |
 | `ctem_api_sec_info` | Gather information about Tencent Cloud CTEM api secs |

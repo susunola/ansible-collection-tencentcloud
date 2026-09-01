@@ -248,6 +248,54 @@ def list_buckets(client, region=None):
     ]
 
 
+def list_objects(client, bucket, prefix=None, marker=None, max_keys=1000):
+    """Return one page of objects in a bucket as plain dicts.
+
+    COS object keys live under the bucket name; ``prefix`` filters the key
+    namespace, ``marker`` resumes a truncated listing and ``max_keys`` caps
+    the page size (COS hard limit is 1000). Each returned object carries
+    ``key``, ``etag``, ``size``, ``last_modified`` and ``storage_class``;
+    the listing does not include per-object metadata (that needs a HEAD).
+    """
+    kwargs = {"Bucket": bucket, "MaxKeys": int(max_keys)}
+    if prefix:
+        kwargs["Prefix"] = prefix
+    if marker:
+        kwargs["Marker"] = marker
+    result = client.list_objects(**kwargs) or {}
+    contents = (result.get("Contents") or []) or []
+    objects = [
+        {
+            "key": item.get("Key"),
+            "etag": (item.get("ETag") or "").strip('"'),
+            "size": item.get("Size"),
+            "last_modified": item.get("LastModified"),
+            "storage_class": item.get("StorageClass", "STANDARD"),
+        }
+        for item in contents
+    ]
+    return {
+        "objects": objects,
+        "is_truncated": str(result.get("IsTruncated", "false")).lower() == "true",
+        "next_marker": result.get("NextMarker"),
+        "key_count": len(objects),
+    }
+
+
+def iter_objects(client, bucket, prefix=None):
+    """Yield every object in a bucket (or under ``prefix``), paging as needed."""
+    marker = None
+    while True:
+        page = list_objects(client, bucket, prefix=prefix, marker=marker)
+        for item in page["objects"]:
+            yield item
+        if not page["is_truncated"]:
+            return
+        marker = page["next_marker"] or (page["objects"][-1]["key"] if page["objects"] else None)
+        if marker is None:
+            return
+
+
 def cors_rules_desired(rules):
     """Canonical form of user-supplied CORS rules.
 
