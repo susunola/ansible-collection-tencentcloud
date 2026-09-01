@@ -314,6 +314,8 @@ CORE_MODULES = {
     "tke_cluster_authentication",
     "tke_cluster_audit",
     "tke_backup_storage_location",
+    "tke_cluster_autoscaler",
+    "tke_cluster_upgrade",
     "tcaplusdb_cluster",
     "tcb_environment",
     "tcb_http_service_route",

@@ -466,8 +466,10 @@ action_groups:
     - tke_cluster
     - tke_cluster_audit
     - tke_cluster_authentication
+    - tke_cluster_autoscaler
     - tke_cluster_endpoint
     - tke_cluster_info
+    - tke_cluster_upgrade
     - tke_node_pool
     - tokenhub_model_info
     - tourism_draw_resource_info

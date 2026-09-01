@@ -248,9 +248,18 @@ the official `ansible-collections` organisation.
     shares/revokes image access per root account ID with SHARE/CANCEL.
     Both ship check mode + diff and 23 unit tests green on pytest and
     ansible-test.
-49. Container closure: `tke_cluster` upgrade (`UpgradeCluster`) and
-    auto-scaling (`CreateClusterAutoscaler`) so cluster lifecycle is fully
-    declarative. **Planned**
+49. Container closure: `tke_cluster` upgrade and auto-scaling so cluster
+    lifecycle is fully declarative. The TKE SDK has no `UpgradeCluster` or
+    `CreateClusterAutoscaler`; the real APIs are `UpdateClusterVersion`
+    and `ModifyClusterAsGroupOptionAttribute`/`DescribeClusterAsGroupOption`
+    (as-groups are now node pools). **Done** — `tke_cluster_upgrade`
+    reconciles the running Kubernetes version (idempotent against
+    `DescribeClusters`, submits `UpdateClusterVersion` with
+    max_not_ready_percent/skip_pre_check); `tke_cluster_autoscaler`
+    reconciles the cluster-level CA options (scale-down toggles, expander
+    algorithm, idle thresholds, unready-node guardrails), writing only the
+    provided fields. Both ship check mode + diff and 15 unit tests green
+    on pytest and ansible-test.
 50. New product lines with zero write coverage today: `eks_*` (Elastic
     Kubernetes Service), `sms_*` (signature/template/package), and `vod_*`
     (media management) as the first candidates. **Planned**

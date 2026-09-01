@@ -289,7 +289,9 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tke_cluster` | Manage Tencent Cloud TKE clusters |
 | `tke_cluster_audit` | Manage Tencent Cloud TKE cluster audit logging |
 | `tke_cluster_authentication` | Manage Tencent Cloud TKE cluster authentication options |
+| `tke_cluster_autoscaler` | Manage the cluster autoscaler options of a Tencent Cloud TKE cluster |
 | `tke_cluster_endpoint` | Manage Tencent Cloud TKE cluster access endpoints |
+| `tke_cluster_upgrade` | Upgrade the Kubernetes version of a Tencent Cloud TKE cluster |
 | `tke_node_pool` | Manage Tencent Cloud TKE cluster node pools |
 | `trabbit_serverless_binding` | Manage Tencent Cloud RabbitMQ Serverless bindings |
 | `trabbit_serverless_exchange` | Manage Tencent Cloud RabbitMQ Serverless exchanges |

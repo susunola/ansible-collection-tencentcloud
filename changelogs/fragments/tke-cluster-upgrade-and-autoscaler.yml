@@ -1,0 +1,3 @@
+minor_changes:
+  - "Add ``tke_cluster_upgrade`` to upgrade the Kubernetes version of an existing TKE cluster via ``UpdateClusterVersion``. Idempotent against the running version reported by ``DescribeClusters``; supports check mode and diff, and accepts ``max_not_ready_percent`` and ``skip_pre_check``."
+  - "Add ``tke_cluster_autoscaler`` to reconcile the cluster-level autoscaler options of a TKE cluster via ``DescribeClusterAsGroupOption``/``ModifyClusterAsGroupOptionAttribute``. Only explicitly provided options are compared and written (scale-down toggles, expander algorithm, idle thresholds, unready-node guardrails); supports check mode and diff."
