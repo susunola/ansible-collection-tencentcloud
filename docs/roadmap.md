@@ -404,7 +404,12 @@ the official `ansible-collections` organisation.
     helper-only test file for `lighthouse_instance` into the full
     run-path + helper harness (97.7%, 169/173, up from 48.0%) — 47
     tests, full suite 3313 green, total coverage 60.03% -> 60.25%
-    (gate 55 margin +5.25pp). **Planned**:
+    (gate 55 margin +5.25pp). **In progress — batch 7 (2026-09-02)**:
+    added a full harness test file for `lighthouse_firewall_rules`
+    (94.7%, 72/76, up from 43.4%; the 4 misses are the lazy-import and
+    entrypoint lines) — 18 tests incl. pagination and remove-then-add
+    reconcile, full suite 3331 green, total coverage 60.25% -> 60.35%
+    (gate 55 margin +5.35pp). **Planned**:
     continue with the next highest-miss write modules per the per-file
     report, raising the
     floor back towards 70; each batch must keep the gate green.
