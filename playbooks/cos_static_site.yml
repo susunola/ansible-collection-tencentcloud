@@ -1,0 +1,46 @@
+---
+- name: Host a static site on COS
+  hosts: localhost
+  gather_facts: false
+  vars:
+    site_bucket: my-static-site
+    site_dir: "{{ playbook_dir }}/site"
+    site_files:
+      - index.html
+      - error.html
+      - assets/style.css
+  tasks:
+    - name: Create the site bucket
+      susunola.tencentcloud.cos_bucket:
+        region: "{{ tencentcloud_region | default('ap-guangzhou') }}"
+        name: "{{ site_bucket }}"
+        acl: public-read
+
+    - name: Turn on static website hosting
+      susunola.tencentcloud.cos_bucket_website:
+        region: "{{ tencentcloud_region | default('ap-guangzhou') }}"
+        name: "{{ site_bucket }}"
+        configuration:
+          IndexDocument: {Suffix: index.html}
+          ErrorDocument: {Key: error.html}
+
+    - name: Upload the site files (idempotent, skipped when unchanged)
+      susunola.tencentcloud.cos_object:
+        region: "{{ tencentcloud_region | default('ap-guangzhou') }}"
+        bucket: "{{ site_bucket }}"
+        key: "{{ item }}"
+        src: "{{ site_dir }}/{{ item }}"
+      loop: "{{ site_files }}"
+
+    - name: Mint a short-lived pre-signed upload URL
+      susunola.tencentcloud.cos_object:
+        region: "{{ tencentcloud_region | default('ap-guangzhou') }}"
+        bucket: "{{ site_bucket }}"
+        key: uploads/new-asset.zip
+        mode: presign
+        expires: 600
+      register: presigned
+
+    - name: Show the pre-signed URL
+      ansible.builtin.debug:
+        var: presigned.url

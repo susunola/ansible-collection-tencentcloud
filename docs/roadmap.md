@@ -219,6 +219,23 @@
 45. VPC traffic observability. **Done** — `vpc_flow_log` manages flow-log
     lifecycle for ENI, NAT, CCN and direct-connect resources, CLS topic
     delivery, mutable metadata and enabled state with convergence polling.
+46. Capability completion batch (0.14.0). **Done** —
+    `tke_cluster_kubeconfig` fetches a cluster's intranet or extranet
+    kubeconfig via `DescribeClusterKubeconfig`, either returning it in the
+    task result or writing it to `dest` with 0600 permissions and
+    content-hash idempotency (the diff carries SHA-256 hashes, never the
+    credentials). `cos_object` brings object-level COS operations on the
+    `qcloud_cos` SDK: idempotent upload (size + ETag/MD5 comparison) and
+    delete via `state=present`/`absent`, download via `mode=download`
+    (mirroring the `mode` convention of `amazon.aws.s3_object`), and
+    `mode=presign` pre-signed PUT URLs. Five
+    generated `_info` modules close the read side of existing write
+    modules: `vpn_connection_info`, `customer_gateway_info`, `ccn_info`,
+    `cbs_snapshot_info` and `cfs_snapshot_info` (the last one exposes
+    `file_system_id`/`snapshot_id` as optional extra params because the
+    API takes single strings, not ID lists). New scenario playbooks
+    `tke_kubeconfig.yml` and `cos_static_site.yml` demonstrate both
+    modules.
 
 ## Next (0.14+)
 

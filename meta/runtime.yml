@@ -1,5 +1,5 @@
 ---
-requires_ansible: ">=2.19.0"
+requires_ansible: ">=2.16.0"
 action_groups:
   all:
     - acp_scan_task_info
@@ -65,10 +65,12 @@ action_groups:
     - cbs_disk_backup
     - cbs_disk_info
     - cbs_snapshot
+    - cbs_snapshot_info
     - cbs_snapshot_share
     - ccc_extension_info
     - ccn
     - ccn_attachment
+    - ccn_info
     - cdb_account
     - cdb_account_info
     - cdb_account_privilege
@@ -102,6 +104,7 @@ action_groups:
     - cfs_permission_rule
     - cfs_permission_rule_info
     - cfs_snapshot
+    - cfs_snapshot_info
     - cfw_address_template
     - cfw_cluster_nat_ccn_fw_switch_info
     - cfw_internet_acl_rule
@@ -186,23 +189,20 @@ action_groups:
     - cos_bucket_response_control
     - cos_bucket_website
     - cos_object
-    - cos_object_info
-    - cos_object_sync
     - cpdp_merchant_info_for_management_info
     - csip_asset_process_info
     - ctem_api_sec_info
     - ctsdb_cluster_info
     - customer_gateway
+    - customer_gateway_info
     - cvm_chc
     - cvm_disaster_recover_group
     - cvm_disaster_recover_group_binding
     - cvm_hpc_cluster
     - cvm_image
-    - cvm_image_share
     - cvm_instance
     - cvm_instance_action_timer
     - cvm_instance_info
-    - cvm_instance_security_group
     - cvm_launch_template
     - cvm_launch_template_version
     - cwp_machine_info
@@ -249,8 +249,6 @@ action_groups:
     - eip
     - eip_info
     - eis_runtime_deployed_instances_mc_info
-    - eks_cluster
-    - eks_container_instance
     - elasticsearch_index
     - elasticsearch_instance
     - elasticsearch_snapshot
@@ -403,8 +401,6 @@ action_groups:
     - ses_black_email_address_info
     - smh_library_info
     - sms_sign_info
-    - sms_signature
-    - sms_template
     - sqlserver_account
     - sqlserver_account_info
     - sqlserver_backup_config
@@ -494,10 +490,9 @@ action_groups:
     - tke_cluster
     - tke_cluster_audit
     - tke_cluster_authentication
-    - tke_cluster_autoscaler
     - tke_cluster_endpoint
     - tke_cluster_info
-    - tke_cluster_upgrade
+    - tke_cluster_kubeconfig
     - tke_node_pool
     - tokenhub_model_info
     - tourism_draw_resource_info
@@ -519,15 +514,14 @@ action_groups:
     - vdb_instance
     - vdb_instance_info
     - vm_task_info
-    - vod_class
     - vod_incremental_migration_strategy_info
-    - vod_sub_app
     - vpc
     - vpc_address_template
     - vpc_address_template_group
     - vpc_flow_log
     - vpc_info
     - vpn_connection
+    - vpn_connection_info
     - vpn_gateway
     - vpn_gateway_info
     - waf_anti_info_leak_rule

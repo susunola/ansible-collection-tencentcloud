@@ -253,6 +253,42 @@ SPECS = [
 """,
     },
     {
+        "module": "cbs_snapshot_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.cbs.v20170312",
+        "client_module": "cbs_client",
+        "client_class": "CbsClient",
+        "sdk_package": "tencentcloud-sdk-python-cbs",
+        "endpoint": "cbs.tencentcloudapi.com",
+        "action": "DescribeSnapshots",
+        "request_class": "DescribeSnapshotsRequest",
+        "ids": {
+            "param": "snapshot_ids",
+            "field": "SnapshotIds",
+            "doc": "Snapshot IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "CBS API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "SnapshotSet",
+        "response_total": "TotalCount",
+        "result_key": "snapshots",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud CBS snapshots",
+        "description": "Returns CBS (Cloud Block Storage) disk snapshots visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching CBS snapshots.",
+        "return_total_doc": "Number of snapshots reported by the API.",
+        "examples": """\
+- name: List all CBS snapshots
+  susunola.tencentcloud.cbs_snapshot_info:
+    region: ap-guangzhou
+
+- name: Find snapshots by ID
+  susunola.tencentcloud.cbs_snapshot_info:
+    region: ap-guangzhou
+    snapshot_ids: [snap-xxxxxxxx]
+""",
+    },
+    {
         "module": "redis_instance_info",
         "version_added": LEGACY_VERSION_ADDED,
         "service_package": "tencentcloud.redis.v20180412",
@@ -501,6 +537,52 @@ SPECS = [
 
 - name: Describe a single file system
   susunola.tencentcloud.cfs_file_system_info:
+    region: ap-guangzhou
+    file_system_id: cfs-xxxxxxxx
+""",
+    },
+    {
+        "module": "cfs_snapshot_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.cfs.v20190719",
+        "client_module": "cfs_client",
+        "client_class": "CfsClient",
+        "sdk_package": "tencentcloud-sdk-python-cfs",
+        "endpoint": "cfs.tencentcloudapi.com",
+        "action": "DescribeCfsSnapshots",
+        "request_class": "DescribeCfsSnapshotsRequest",
+        # The API takes single FileSystemId/SnapshotId strings, not ID lists.
+        "ids": None,
+        "filters": {"doc": "CFS API filter names mapped to lists of values."},
+        "extra_params": [
+            {
+                "name": "file_system_id",
+                "field": "FileSystemId",
+                "type": "str",
+                "doc": "Return only snapshots of this file system.",
+            },
+            {
+                "name": "snapshot_id",
+                "field": "SnapshotId",
+                "type": "str",
+                "doc": "Return only the snapshot with this ID.",
+            },
+        ],
+        "response_items": "Snapshots",
+        "response_total": "TotalCount",
+        "result_key": "snapshots",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud CFS snapshots",
+        "description": "Returns CFS (Cloud File Storage) snapshots visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching CFS snapshots.",
+        "return_total_doc": "Number of snapshots reported by the API.",
+        "examples": """\
+- name: List all CFS snapshots
+  susunola.tencentcloud.cfs_snapshot_info:
+    region: ap-guangzhou
+
+- name: List snapshots of one file system
+  susunola.tencentcloud.cfs_snapshot_info:
     region: ap-guangzhou
     file_system_id: cfs-xxxxxxxx
 """,
@@ -901,6 +983,116 @@ SPECS = [
   susunola.tencentcloud.vpn_gateway_info:
     region: ap-guangzhou
     vpn_gateway_ids: [vpngw-xxxxxxxx]
+""",
+    },
+    {
+        "module": "vpn_connection_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeVpnConnections",
+        "request_class": "DescribeVpnConnectionsRequest",
+        "ids": {
+            "param": "vpn_connection_ids",
+            "field": "VpnConnectionIds",
+            "doc": "VPN connection IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "VpnConnectionSet",
+        "response_total": "TotalCount",
+        "result_key": "vpn_connections",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud VPN connections",
+        "description": "Returns VPN connections visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching VPN connections.",
+        "return_total_doc": "Number of VPN connections reported by the API.",
+        "examples": """\
+- name: List all VPN connections
+  susunola.tencentcloud.vpn_connection_info:
+    region: ap-guangzhou
+
+- name: Find VPN connections by ID
+  susunola.tencentcloud.vpn_connection_info:
+    region: ap-guangzhou
+    vpn_connection_ids: [vpnx-xxxxxxxx]
+""",
+    },
+    {
+        "module": "customer_gateway_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeCustomerGateways",
+        "request_class": "DescribeCustomerGatewaysRequest",
+        "ids": {
+            "param": "customer_gateway_ids",
+            "field": "CustomerGatewayIds",
+            "doc": "Customer gateway IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "CustomerGatewaySet",
+        "response_total": "TotalCount",
+        "result_key": "customer_gateways",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud customer gateways",
+        "description": "Returns customer gateways visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching customer gateways.",
+        "return_total_doc": "Number of customer gateways reported by the API.",
+        "examples": """\
+- name: List all customer gateways
+  susunola.tencentcloud.customer_gateway_info:
+    region: ap-guangzhou
+
+- name: Find customer gateways by ID
+  susunola.tencentcloud.customer_gateway_info:
+    region: ap-guangzhou
+    customer_gateway_ids: [cgw-xxxxxxxx]
+""",
+    },
+    {
+        "module": "ccn_info",
+        "version_added": "0.14.0",
+        # CCN is addressed through the VPC API; there is no tencentcloud.ccn
+        # SDK package.
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeCcns",
+        "request_class": "DescribeCcnsRequest",
+        "ids": {
+            "param": "ccn_ids",
+            "field": "CcnIds",
+            "doc": "CCN instance IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "CcnSet",
+        "response_total": "TotalCount",
+        "result_key": "ccns",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud CCN instances",
+        "description": "Returns CCN (Cloud Connect Network) instances visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching CCN instances.",
+        "return_total_doc": "Number of CCN instances reported by the API.",
+        "examples": """\
+- name: List all CCN instances
+  susunola.tencentcloud.ccn_info:
+    region: ap-guangzhou
+
+- name: Find CCN instances by ID
+  susunola.tencentcloud.ccn_info:
+    region: ap-guangzhou
+    ccn_ids: [ccn-xxxxxxxx]
 """,
     },
     {

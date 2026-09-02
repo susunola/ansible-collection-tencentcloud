@@ -284,6 +284,7 @@ NO_API3_CONTRACT = {
     "cos_bucket_domain_certificate": (
         "cos_bucket_domain_certificate uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit"
     ),
+    "cos_object": "cos_object uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
 }
 
 # Individual builders that exist but cannot be exercised by the contract
@@ -832,6 +833,7 @@ WRITE_MODULE_BUILDERS = {
         "_update",
         "build_describe_request",
     ],
+    "tke_cluster_kubeconfig": ["build_request"],
     "tke_node_pool": [
         "_delete",
         "_update",
@@ -2589,6 +2591,15 @@ def test_tke_cluster():
     module._set_deletion_protection(fake, client, models, "cls-xxxxxxxx", False)
     module._delete(fake, client, models, "cls-xxxxxxxx", "terminate")
     errors.extend(audit_recorded(fake, "tke_cluster"))
+    assert errors == []
+
+
+def test_tke_cluster_kubeconfig():
+    module = _import_plugin("tke_cluster_kubeconfig")
+    models = _models("tke.v20180525")
+    errors = []
+    errors.extend(audit_request(module.build_request(models, "cls-xxxxxxxx", False), "kubeconfig intranet"))
+    errors.extend(audit_request(module.build_request(models, "cls-xxxxxxxx", True), "kubeconfig extranet"))
     assert errors == []
 
 
