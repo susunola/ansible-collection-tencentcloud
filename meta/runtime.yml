@@ -234,6 +234,8 @@ action_groups:
     - eip
     - eip_info
     - eis_runtime_deployed_instances_mc_info
+    - eks_cluster
+    - eks_container_instance
     - elasticsearch_index
     - elasticsearch_instance
     - elasticsearch_snapshot
@@ -493,7 +495,9 @@ action_groups:
     - vdb_instance
     - vdb_instance_info
     - vm_task_info
+    - vod_class
     - vod_incremental_migration_strategy_info
+    - vod_sub_app
     - vpc
     - vpc_address_template
     - vpc_address_template_group

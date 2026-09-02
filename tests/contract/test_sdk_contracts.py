@@ -321,6 +321,10 @@ UNEXERCISED_BUILDERS = {
     ("tke_cluster_upgrade", "run_module"): "inline UpdateClusterVersionRequest is covered by unit tests",
     ("sms_signature", "run_module"): "inline AddSmsSign/DeleteSmsSign requests are covered by unit tests",
     ("sms_template", "run_module"): "inline AddSmsTemplate/DeleteSmsTemplate requests are covered by unit tests",
+    ("eks_cluster", "run_module"): "inline Create/Update/DeleteEKSCluster requests are covered by unit tests",
+    ("eks_container_instance", "run_module"): "inline Create/Update/DeleteEKSContainerInstance(s) requests are covered by unit tests",
+    ("vod_class", "run_module"): "inline CreateClass/DeleteClass requests are covered by unit tests",
+    ("vod_sub_app", "run_module"): "inline CreateSubAppId/ModifySubAppIdInfo/ModifySubAppIdStatus requests are covered by unit tests",
 }
 
 # Write-module request builders exercised by the ``test_<module>`` functions
@@ -458,6 +462,10 @@ WRITE_MODULE_BUILDERS = {
     "ssm_secret_version": ["create_request", "delete_request", "get_request", "list_request"],
     "sms_signature": ["find_sign"],
     "sms_template": ["find_template"],
+    "eks_cluster": ["find_cluster"],
+    "eks_container_instance": ["find_eks_ci"],
+    "vod_class": ["find_class"],
+    "vod_sub_app": ["find_sub_app"],
     "ssm_secret": ["create_request", "delete_request", "describe_request", "description_request", "restore_request", "state_request"],
     "ssm_rotation": ["describe_request", "update_request"],
     "tat_invoker": ["create_request", "delete_request", "describe_request", "enable_request", "update_request"],
@@ -8176,4 +8184,99 @@ def test_sms_template():
     delete = models.DeleteSmsTemplateRequest()
     delete.TemplateId = 1110
     errors.extend(audit_request(delete, "sms_template delete"))
+    assert errors == []
+
+
+def test_eks_cluster():
+    module = _import_plugin("eks_cluster")
+    models = _models("tke.v20180525")
+    fake = _RecordingModule()
+    client = _StubClient()
+    result = module.find_cluster(fake, client, models, "eks-prod")
+    errors = []
+    errors.extend(audit_recorded(fake, "eks_cluster describe"))
+    assert result is None
+    create = models.CreateEKSClusterRequest()
+    create.ClusterName = "eks-prod"
+    create.VpcId = "vpc-abcdef"
+    create.SubnetIds = ["subnet-1111"]
+    errors.extend(audit_request(create, "eks_cluster create"))
+    update = models.UpdateEKSClusterRequest()
+    update.ClusterId = "eks-1111"
+    update.ClusterDesc = "prod cluster"
+    errors.extend(audit_request(update, "eks_cluster update"))
+    delete = models.DeleteEKSClusterRequest()
+    delete.ClusterId = "eks-1111"
+    errors.extend(audit_request(delete, "eks_cluster delete"))
+    assert errors == []
+
+
+def test_eks_container_instance():
+    module = _import_plugin("eks_container_instance")
+    models = _models("tke.v20180525")
+    fake = _RecordingModule()
+    client = _StubClient()
+    result = module.find_eks_ci(fake, client, models, "ci-prod")
+    errors = []
+    errors.extend(audit_recorded(fake, "eks_container_instance describe"))
+    assert result is None
+    create = models.CreateEKSContainerInstancesRequest()
+    create.EksCiName = "ci-prod"
+    create.VpcId = "vpc-abcdef"
+    create.SubnetId = "subnet-1111"
+    create.Cpu = 2.0
+    create.Memory = 4.0
+    create.RestartPolicy = "Always"
+    errors.extend(audit_request(create, "eks_container_instance create"))
+    update = models.UpdateEKSContainerInstanceRequest()
+    update.EksCiId = "eksci-1111"
+    update.RestartPolicy = "OnFailure"
+    errors.extend(audit_request(update, "eks_container_instance update"))
+    delete = models.DeleteEKSContainerInstancesRequest()
+    delete.EksCiIds = ["eksci-1111"]
+    delete.ReleaseAutoCreatedEip = True
+    errors.extend(audit_request(delete, "eks_container_instance delete"))
+    assert errors == []
+
+
+def test_vod_class():
+    module = _import_plugin("vod_class")
+    models = _models("vod.v20180717")
+    fake = _RecordingModule()
+    client = _StubClient()
+    result = module.find_class(fake, client, models, "movies", -1, None)
+    errors = []
+    errors.extend(audit_recorded(fake, "vod_class describe"))
+    assert result is None
+    create = models.CreateClassRequest()
+    create.ClassName = "movies"
+    create.ParentId = -1
+    errors.extend(audit_request(create, "vod_class create"))
+    delete = models.DeleteClassRequest()
+    delete.ClassId = 1234
+    errors.extend(audit_request(delete, "vod_class delete"))
+    assert errors == []
+
+
+def test_vod_sub_app():
+    module = _import_plugin("vod_sub_app")
+    models = _models("vod.v20180717")
+    fake = _RecordingModule()
+    client = _StubClient()
+    result = module.find_sub_app(fake, client, models, "media-prod")
+    errors = []
+    errors.extend(audit_recorded(fake, "vod_sub_app describe"))
+    assert result is None
+    create = models.CreateSubAppIdRequest()
+    create.Name = "media-prod"
+    create.Description = "production media processing"
+    errors.extend(audit_request(create, "vod_sub_app create"))
+    modify_info = models.ModifySubAppIdInfoRequest()
+    modify_info.SubAppId = 1400000000
+    modify_info.Description = "updated description"
+    errors.extend(audit_request(modify_info, "vod_sub_app modify info"))
+    modify_status = models.ModifySubAppIdStatusRequest()
+    modify_status.SubAppId = 1400000000
+    modify_status.Status = "Destroyed"
+    errors.extend(audit_request(modify_status, "vod_sub_app modify status"))
     assert errors == []

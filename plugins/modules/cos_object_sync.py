@@ -246,7 +246,7 @@ def run_module():
             module.exit_json(
                 changed=changed,
                 summary=summary,
-                uploaded=[k for k, _ in to_upload],
+                uploaded=[k for k, _rel in to_upload],
                 deleted=to_delete,
                 msg="Would upload {0}, delete {1}".format(len(to_upload), len(to_delete)),
             )

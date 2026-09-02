@@ -287,8 +287,7 @@ def iter_objects(client, bucket, prefix=None):
     marker = None
     while True:
         page = list_objects(client, bucket, prefix=prefix, marker=marker)
-        for item in page["objects"]:
-            yield item
+        yield from page["objects"]
         if not page["is_truncated"]:
             return
         marker = page["next_marker"] or (page["objects"][-1]["key"] if page["objects"] else None)

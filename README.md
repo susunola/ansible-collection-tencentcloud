@@ -151,6 +151,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `eb_rule` | Manage Tencent Cloud EventBridge rules |
 | `eb_target` | Manage Tencent Cloud EventBridge rule targets |
 | `eip` | Manage Tencent Cloud elastic IP addresses (EIP) |
+| `eks_cluster` | Manage Tencent Cloud EKS clusters |
+| `eks_container_instance` | Manage Tencent Cloud EKS container instances |
 | `elasticsearch_index` | Manage indexes in Tencent Cloud Elasticsearch Service |
 | `elasticsearch_instance` | Manage Tencent Cloud Elasticsearch clusters |
 | `elasticsearch_snapshot` | Manage Tencent Cloud Elasticsearch cluster snapshots |
@@ -303,6 +305,8 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `trabbit_serverless_vhost` | Manage Tencent Cloud RabbitMQ Serverless virtual hosts |
 | `tse_sre_instance` | Manage Tencent Cloud TSE service registry engines |
 | `vdb_instance` | Manage Tencent Cloud VectorDB instances |
+| `vod_class` | Manage Tencent Cloud VOD media classes |
+| `vod_sub_app` | Manage Tencent Cloud VOD sub-applications |
 | `vpc` | Manage Tencent Cloud VPCs |
 | `vpc_address_template` | Manage Tencent Cloud VPC address templates |
 | `vpc_address_template_group` | Manage Tencent Cloud VPC address-template groups |

@@ -262,13 +262,27 @@ the official `ansible-collections` organisation.
     on pytest and ansible-test.
 50. New product lines with zero write coverage today: `eks_*` (Elastic
     Kubernetes Service), `sms_*` (signature/template/package), and `vod_*`
-    (media management) as the first candidates. **In progress** — the
-    `sms_*` line shipped first: `sms_signature` and `sms_template` manage
+    (media management) as the first candidates. **Done** — the `sms_*`
+    line shipped first: `sms_signature` and `sms_template` manage
     the review-based signature/template lifecycle
     (`AddSmsSign`/`DeleteSmsSign`, `AddSmsTemplate`/`DeleteSmsTemplate`)
     with name-keyed idempotency; a failed review (status code -1) is
     treated as absent so re-running resubmits, and both support check mode
-    + diff (27 unit tests green). `eks_*` and `vod_*` remain.
+    + diff (27 unit tests green). The `eks_*` line followed:
+    `eks_cluster` and `eks_container_instance` manage the cluster and
+    container-instance lifecycle (create/update/delete through the
+    `CreateEKSCluster`/`UpdateEKSCluster`/`DeleteEKSCluster` and
+    `CreateEKSContainerInstances`/`UpdateEKSContainerInstance`/
+    `DeleteEKSContainerInstances` APIs) with name-keyed idempotency,
+    check mode + diff, and nested container/volume/credential model
+    builders (26 unit tests green). The `vod_*` line completed the item:
+    `vod_class` and `vod_sub_app` manage media categories and
+    sub-applications (create/update/delete via `CreateClass`/`DeleteClass`,
+    `CreateSubAppId`/`ModifySubAppIdInfo`/`ModifySubAppIdStatus`, with
+    sub-application deletion expressed as the `Destroyed` status since the
+    platform exposes no delete API), name-keyed idempotency, check mode +
+    diff (24 unit tests green). All three lines are registered in the
+    module tiers (325 core + 199 generated).
 51. Inventory expansion: `tencentcloud_cos` (bucket + object listing) and
     `tencentcloud_tke` (cluster + node pool) dynamic inventory plugins.
     **Planned**
