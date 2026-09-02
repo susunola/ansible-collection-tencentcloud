@@ -463,7 +463,11 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
 - **G1b unit breadth** (222/313 write modules have no unit test file; write
   statement cov ~51% vs 70% target): in flight via #57 batches; lever-1
   skeleton generator shipped (batch 12, P0-01), generator-assisted batches
-  follow from the next highest-miss modules.
+  follow from the next highest-miss modules. Batch 13 (2026-09-02, first
+  generator-assisted batch): `eks_container_instance` (20 tests, 97%),
+  `tke_node_pool` (31 tests, 98%), `network_interface` (27 tests, 97%),
+  `ssm_parameter` (24 tests, 95%) — 102 hermetic tests, 0.3-0.6s per module
+  with no SDK installed.
 - **G2 ecosystem trust** (downloads 0 vs 11.8M–90.5M): inclusion #89
   awaiting reviewer; only active lever is reviewing another queued
   collection to raise our priority.
