@@ -56,6 +56,12 @@ jobs:
           python scripts/check_sdk_drift.py --check
       - name: Generated modules are up to date
         run: python scripts/generate_info_modules.py --check
+      # RESOURCE_SPECS entries are verified against the installed SDK and
+      # missing scaffolds are flagged (write-once: existing module files are
+      # never overwritten). Add a write module by extending RESOURCE_SPECS
+      # and scaffolding it with --resource <module>.
+      - name: Resource scaffolds match the SDK
+        run: python scripts/generate_info_modules.py --resources --check
       - name: Module registries are up to date
         run: python scripts/sync_registry.py --check
       - name: Module tiers are consistent
