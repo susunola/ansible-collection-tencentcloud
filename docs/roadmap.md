@@ -414,7 +414,13 @@ the official `ansible-collections` organisation.
     136/143, up from 33.6%) — 38 tests incl. the create/attach/detach/
     terminate/replace flows and a patched-clock waiter-timeout path —
     full suite 3369 green, total coverage 60.35% -> 60.58% (gate 55
-    margin +5.58pp). **Planned**:
+    margin +5.58pp). **In progress — batch 9 (2026-09-02)**: added a
+    full harness test file for `lighthouse_key_pair` (96.4%, 108/112,
+    up from 37.5%; the 4 misses are the lazy-import and entrypoint
+    lines) — 36 tests incl. pagination past 100, force-replace
+    re-import ordering and association add/remove/switch — full suite
+    3405 green, total coverage 60.58% -> 60.75% (gate 55 margin
+    +5.75pp). **Planned**:
     continue with the next highest-miss write modules per the per-file
     report, raising the
     floor back towards 70; each batch must keep the gate green.
