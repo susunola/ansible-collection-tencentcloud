@@ -329,7 +329,18 @@ the official `ansible-collections` organisation.
 54. Generator upgrade: extend `scripts/generate_info_modules.py` to emit
     resource-module skeletons (argument spec + request builder) from SDK
     metadata so new write modules start from generated scaffolding instead
-    of a blank file. **Planned**
+    of a blank file. Done: a curated `RESOURCE_SPECS` table names the
+    module, service package, identity options and create/update/delete +
+    identify actions; `--resource <module>` introspects the SDK request
+    models (via `:rtype:` hints) and renders the full module boilerplate —
+    DOCUMENTATION/EXAMPLES/RETURN, lazy `_load_*`, per-action request
+    builders, identify/`find_<resource>` helpers, check-mode `run_module`
+    with a drift TODO — into `plugins/modules/<module>.py`. Scaffolding is
+    write-once (existing files are never overwritten) and `--resources
+    --check` verifies every spec against the installed SDK in CI. The
+    reference entry mirrors the hand-written `scf_alias` module; SDK
+    descriptions are embedded verbatim for the developer to curate.
+    **Done**
 55. Official adoption: open the review process with `ansible-collections`
     (namespace, `meta/runtime.yml` compatibility, `ansible-test` full
     matrix) and track it in a dedicated issue. **Planned**

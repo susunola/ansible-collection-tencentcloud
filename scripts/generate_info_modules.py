@@ -21,12 +21,21 @@ For every spec that fits the simple offset/limit or page-number shape the
 generator also emits a unit test file (``tests/unit/plugins/modules/
 test_<module>.py``); test files without the generated marker are considered
 hand-finished and are never rewritten.
+
+Write modules cannot be generated end-to-end (idempotency, drift
+comparison and required-field constraints are per-resource decisions the
+SDK models do not encode), so the generator also scaffolds them: given a
+curated ``RESOURCE_SPECS`` entry it introspects the SDK request models and
+renders the module boilerplate -- argument spec and request builders --
+for the developer to finish. Run ``--resource <module>`` to scaffold;
+scaffolding is write-once and never touches an existing module file.
 """
 
 from __future__ import annotations
 
 import argparse
 import importlib.util
+import re
 import sys
 from pathlib import Path
 
@@ -3009,13 +3018,750 @@ def validate_specs(specs):
     return problems
 
 
+# ---------------------------------------------------------------------------
+# Resource-module skeleton generation (--resource / --resources)
+#
+# SPECS above renders complete read-only modules. Write modules cannot be
+# generated end-to-end: idempotency semantics, drift comparison and API
+# constraints (required fields, enums, defaults) are per-resource decisions
+# that the SDK request models do not encode. Instead the generator scaffolds
+# the boilerplate -- the argument spec and request builders, both derived by
+# introspecting the SDK request models -- so a new write module starts from
+# a structured file rather than a blank one.
+#
+# RESOURCE_SPECS entries describe the action set of one resource module:
+#
+#   module / version_added / short_description / label (noun for messages)
+#   resource (snake noun used for find_<resource> helpers) / result_key
+#   service_package / client_module / client_class / sdk_package / endpoint
+#   identity   option names copied onto every request (module-required)
+#   no_log     option names that must never be logged (secrets)
+#   actions    create/update/delete: {action, request_class} SDK calls
+#   identify   {action, request_class} single-object read used to detect
+#              existence and current state (may raise "not found")
+#
+# The argument spec is the union of the request-model fields across every
+# action; types come from the model docstring ``:rtype:`` hints. The SDK
+# carries no required markers, so only the identity options are marked
+# required and the rendered run_module leaves an explicit TODO where the
+# developer confirms the remaining constraints against the API docs.
+#
+# Scaffolding is write-once: an existing module file is never overwritten
+# (hand-finished modules such as scf_alias keep their logic); re-running
+# the generator only reports the file. CI verifies every RESOURCE_SPECS
+# entry against the installed SDK with --resources --check.
+# ---------------------------------------------------------------------------
+
+RESOURCE_SKEL_MARKER = (
+    "# Generated skeleton by scripts/generate_info_modules.py --resource. "
+    "The file is never overwritten once it exists; finish it by hand."
+)
+RESOURCE_VERSION_ADDED = "0.14.0"
+RESOURCE_AUTHOR = "Tencent Cloud Ansible Collection Contributors (@susunola)"
+
+RESOURCE_SPECS = [
+    {
+        # Reference entry mirroring the conventions of the hand-written
+        # scf_alias module (plugins/modules/scf_alias.py). New write modules
+        # add their own entry here and scaffold it with
+        # --resource <module>; the generated file is a starting point.
+        "module": "scf_alias",
+        "version_added": RESOURCE_VERSION_ADDED,
+        "short_description": "Manage Tencent Cloud SCF function aliases",
+        "label": "SCF alias",
+        "resource": "alias",
+        "result_key": "alias",
+        "service_package": "tencentcloud.scf.v20180416",
+        "client_module": "scf_client",
+        "client_class": "ScfClient",
+        "sdk_package": "tencentcloud-sdk-python-scf",
+        "endpoint": "scf.tencentcloudapi.com",
+        "identity": ["function_name", "name"],
+        "no_log": [],
+        "actions": {
+            "create": {"action": "CreateAlias", "request_class": "CreateAliasRequest"},
+            "update": {"action": "UpdateAlias", "request_class": "UpdateAliasRequest"},
+            "delete": {"action": "DeleteAlias", "request_class": "DeleteAliasRequest"},
+        },
+        "identify": {"action": "GetAlias", "request_class": "GetAliasRequest"},
+    },
+]
+
+_RTYPE_RE = re.compile(r":rtype:\s*(?P<rtype>[^\n]+)")
+_NESTED_MODEL_RE = re.compile(
+    r":class:`tencentcloud\.\w+\.\w+\.models\.(?P<cls>\w+)`")
+_SCALAR_OPTION_TYPES = {"str": "str", "int": "int", "float": "float",
+                        "bool": "bool", "boolean": "bool"}
+_ACTION_KEYS = ("create", "update", "delete")
+_RESERVED_OPTION_NAMES = frozenset((
+    "state", "region", "endpoint", "timeout", "retries", "waiter_timeout",
+    "waiter_delay", "user_agent", "secret_id", "secret_key", "token",
+    "role_arn", "role_session_name", "role_session_duration", "profile"))
+
+
+def _camel_to_snake(name):
+    """Convert a PascalCase SDK field name to a snake_case Ansible option."""
+    stepped = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", "_", name)
+    return re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", "_", stepped).lower()
+
+
+def _option_shape(rtype):
+    """Map an SDK ``:rtype:`` hint to (option type, elements).
+
+    ``elements`` is only set when the option is a list (the option type is
+    then ``list``). Nested API objects become ``dict`` -- modelling their
+    sub-options is a per-resource decision left to the developer -- and
+    anything unrecognised falls back to ``str``.
+    """
+    elements = None
+    value = rtype.strip()
+    if value.startswith("list of "):
+        value = value[len("list of "):].strip()
+        elements = True
+    if value in _SCALAR_OPTION_TYPES:
+        element_type = _SCALAR_OPTION_TYPES[value]
+    elif value.startswith(":class:") or value in ("dict", "object", "any"):
+        element_type = "dict"
+    else:
+        element_type = "str"
+    if elements:
+        return "list", element_type
+    return element_type, None
+
+
+def _request_fields(models_mod, request_class):
+    """Return ordered field metadata for *request_class*.
+
+    Every entry is a dict with ``field`` (SDK attribute), ``name`` (the
+    snake_case option), ``type``/``elements`` (Ansible shape) and ``doc``
+    (the first line of the model docstring). Request models carry no
+    required markers, so requiredness is never inferred.
+    """
+    cls = getattr(models_mod, request_class, None)
+    if cls is None:
+        raise ValueError("%s has no request class %s"
+                         % (getattr(models_mod, "__name__", "models"),
+                            request_class))
+    fields = []
+    for field, attr in vars(cls).items():
+        if not isinstance(attr, property):
+            continue
+        doc = attr.fget.__doc__ or ""
+        match = _RTYPE_RE.search(doc)
+        rtype = match.group("rtype").strip() if match else ""
+        option_type, elements = _option_shape(rtype)
+        first_line = next(
+            (line.strip() for line in doc.splitlines() if line.strip()), "")
+        fields.append({
+            "field": field,
+            "name": _camel_to_snake(field),
+            "type": option_type,
+            "elements": elements,
+            "doc": first_line,
+        })
+    return fields
+
+
+def collect_resource_fields(spec):
+    """Introspect every request model named by *spec* against the SDK.
+
+    Returns {action_key: [field, ...]} for create/update/delete/identify
+    and verifies that each identity option maps to a field of the create,
+    delete and identify requests (update may address the resource by a
+    server-assigned id and is not required to carry every identity option).
+    Raises ValueError when a request class is missing or an identity option
+    cannot be supplied.
+    """
+    import importlib
+    try:
+        models_mod = importlib.import_module("%s.models" % spec["service_package"])
+    except ImportError as exc:
+        raise ValueError(
+            "cannot import %s.models (install %s and retry): %s"
+            % (spec["service_package"], spec["sdk_package"], exc))
+    collected = {}
+    for key in _ACTION_KEYS:
+        cfg = spec.get("actions", {}).get(key)
+        if key == "update" and not cfg:
+            collected[key] = []
+            continue
+        if not (cfg and cfg.get("request_class")):
+            raise ValueError("spec for %s needs an actions.%s request_class"
+                             % (spec["module"], key))
+        collected[key] = _request_fields(models_mod, cfg["request_class"])
+    identify = spec.get("identify") or {}
+    if not identify.get("request_class"):
+        raise ValueError("spec for %s needs an identify request_class"
+                         % spec["module"])
+    collected["identify"] = _request_fields(models_mod, identify["request_class"])
+    identity_names = set(spec.get("identity", ()))
+    declared = {field["name"] for key in ("create", "delete", "identify")
+                for field in collected.get(key, [])}
+    for option in sorted(identity_names):
+        if option not in declared:
+            raise ValueError(
+                "identity option %r of %s is not a field of the create, "
+                "delete or identify requests" % (option, spec["module"]))
+    return collected
+
+
+def _option_field_by_action(spec, collected, option):
+    """Return {action_key: field_name} for every request carrying *option*."""
+    mapping = {}
+    for key in _ACTION_KEYS + ("identify",):
+        if key == "update" and not spec.get("actions", {}).get("update"):
+            continue
+        for field in collected.get(key, []):
+            if field["name"] == option:
+                mapping[key] = field["field"]
+                break
+    return mapping
+
+
+def _resource_option_order(spec, collected):
+    """Order module options: identity options first (in spec order), then
+    every remaining field in the order the requests declare them."""
+    order = []
+    seen = set()
+
+    def _extend(fields):
+        for field in fields:
+            name = field["name"]
+            if name not in seen:
+                seen.add(name)
+                order.append(name)
+
+    for key in _ACTION_KEYS:
+        _extend(collected.get(key, []))
+    _extend(collected.get("identify", []))
+    identity = [name for name in spec["identity"] if name in seen]
+    return identity + [name for name in order if name not in identity]
+
+
+def _field_entry(collected, option):
+    """Return the first field metadata dict rendered for *option*."""
+    for key, fields in collected.items():
+        for field in fields:
+            if field["name"] == option:
+                return field
+    raise KeyError(option)
+
+
+def _service_label(service_package):
+    """Shorten tencentcloud.scf.v20180416 to scf.v20180416 for docs."""
+    return ".".join(service_package.split(".")[1:])
+
+
+def _client_suffix(spec):
+    """Derive the lazy-import suffix from the client module (scf_client)."""
+    return spec["client_module"].rsplit("_client", 1)[0] or spec["client_module"]
+
+
+def _first_request_ref(spec, collected, option):
+    """Render the V(Request.Field) provenance for an option description.
+
+    The first request that declares the option (create preferred) is cited;
+    hand-written modules use the same style to say where a value is written.
+    """
+    for key in _ACTION_KEYS + ("identify",):
+        if key == "update" and not spec.get("actions", {}).get("update"):
+            continue
+        for field in collected.get(key, []):
+            if field["name"] != option:
+                continue
+            if key == "identify":
+                request_class = spec["identify"]["request_class"]
+            else:
+                request_class = spec["actions"][key]["request_class"]
+            return "V(%s.%s)" % (request_class, field["field"])
+    return ""
+
+
+def _resource_argument_spec_lines(spec, collected, option_order):
+    """Render the argument_spec entries (12-space indent, no outer braces)."""
+    identity = set(spec["identity"])
+    no_log = set(spec.get("no_log", ()))
+    lines = []
+    lines.append(
+        '            "state": {"type": "str", '
+        '"choices": ["present", "absent"], "default": "present"},')
+    for option in option_order:
+        field = _field_entry(collected, option)
+        if field["type"] == "dict":
+            lines.append(
+                "            # %s maps to a nested API object; model its "
+                "sub-options with an\n"
+                "            # \"options\" block or drop the option when the "
+                "module must not expose it."
+                % option)
+        entry = '{"type": "%s"' % field["type"]
+        if field["elements"]:
+            entry += ', "elements": "%s"' % field["elements"]
+        if option in identity:
+            entry += ', "required": True'
+        if option in no_log:
+            entry += ', "no_log": True'
+        lines.append('            "%s": %s},' % (option, entry))
+    return "\n".join(lines)
+
+
+def _resource_builder_source(spec, collected, action_key):
+    """Render one build_<key>_request function (create/update/delete)."""
+    if action_key == "update" and not spec.get("actions", {}).get("update"):
+        return ""
+    request_class = spec["actions"][action_key]["request_class"]
+    identity = set(spec["identity"])
+    lines = ["def build_%s_request(models, params):" % action_key,
+             "    request = models.%s()" % request_class]
+    for field in collected[action_key]:
+        name = field["name"]
+        if name in identity:
+            lines.append('    request.%s = params["%s"]' % (field["field"], name))
+        else:
+            lines.append('    if params["%s"] is not None:' % name)
+            lines.append('        request.%s = params["%s"]'
+                         % (field["field"], name))
+    lines.append("    return request")
+    return "\n".join(lines)
+
+
+def _resource_identify_source(spec, collected, resource):
+    """Render build_identify_request + find_<resource>."""
+    request_class = spec["identify"]["request_class"]
+    action = spec["identify"]["action"]
+    lines = ["def build_identify_request(models, params):",
+             "    request = models.%s()" % request_class]
+    for field in collected["identify"]:
+        name = field["name"]
+        if name in spec["identity"]:
+            lines.append('    request.%s = params["%s"]' % (field["field"], name))
+    lines.append("    return request")
+    lines += ["", "", "def find_%s(module, client, models, params):" % resource,
+              "    \"\"\"Return the matching %s dict, or None when the API reports not found." % resource,
+              "",
+              "    Uses V(%s), which returns the object directly; adapt this" % action,
+              "    function when the read action wraps the object or needs",
+              "    client-side matching.",
+              "    \"\"\"",
+              "    request = build_identify_request(models, params)",
+              "    response = module.sdk_call(client.%s, request)" % action,
+              "    return response._serialize(allow_none=True)"]
+    return "\n".join(lines)
+
+
+def _resource_documentation(spec, collected, option_order):
+    """Render the DOCUMENTATION body (without the surrounding r''' block)."""
+    identity = set(spec["identity"])
+    no_log = set(spec.get("no_log", ()))
+    options = ["  state:",
+               "    description:",
+               "      - C(present) creates the %s when it does not exist and updates it to match the task." % spec["label"].lower(),
+               "      - C(absent) deletes the %s when it exists." % spec["label"].lower(),
+               "    type: str",
+               "    choices: [present, absent]",
+               "    default: present"]
+    for option in option_order:
+        field = _field_entry(collected, option)
+        ref = _first_request_ref(spec, collected, option)
+        suffix = ", written to %s." % ref if ref else "."
+        options.append("  %s:" % option)
+        options.append("    description:")
+        options.append("      - %s%s" % (field["doc"] or "No SDK description.", suffix))
+        options.append("    type: %s" % field["type"])
+        if field["elements"]:
+            options.append("    elements: %s" % field["elements"])
+        if option in identity:
+            options.append("    required: true")
+        if option in no_log:
+            options.append("    no_log: true")
+    # base_argument_spec() adds retries/waiter_*/user_agent on top of the
+    # documented fragment; the exemplar modules document them inline so
+    # validate-modules sees every accepted option documented.
+    options += [
+        "  retries:",
+        "    description: Number of retries for transient SDK failures.",
+        "    type: int",
+        "    default: 5",
+        "  waiter_delay:",
+        "    description: Seconds to wait between state-polling attempts.",
+        "    type: int",
+        "    default: 5",
+        "  waiter_timeout:",
+        "    description: Overall timeout in seconds for state polling.",
+        "    type: int",
+        "    default: 120",
+        "  user_agent:",
+        "    description:",
+        "      - Value appended to the SDK User-Agent header so API usage can",
+        "        be attributed to this collection.",
+        "    type: str",
+        "    default: ansible-collection.susunola.tencentcloud",
+    ]
+    identity_joined = ", ".join("O(%s)" % option for option in spec["identity"])
+    notes = [
+        "notes:",
+        "  - Requires the C(%s) package on the controller." % spec["sdk_package"],
+        "  - SDK field descriptions are embedded verbatim in this scaffold.",
+        "    Confirm which options the API really requires (the SDK request",
+        "    models carry no required markers), add choices and nested options",
+        "    blocks where the API needs them, and implement the drift/update",
+        "    section of run_module before releasing the module.",
+        "  - The resource is addressed by %s." % identity_joined,
+    ]
+    return "\n".join(
+        ["---",
+         "module: %s" % spec["module"],
+         "short_description: %s" % spec["short_description"],
+         'version_added: "%s"' % spec.get("version_added", RESOURCE_VERSION_ADDED),
+         "description:",
+         "  - %s through the C(%s) API." % (spec["short_description"],
+                                            _service_label(spec["service_package"])),
+         "  - Supports check mode; no API write happens in check mode, only reads.",
+         "options:"] + options + notes +
+        ["extends_documentation_fragment: susunola.tencentcloud.tencentcloud",
+         "author: %s" % RESOURCE_AUTHOR])
+
+
+def render_resource_skeleton(spec, collected):
+    """Render the scaffold source for the write module described by *spec*.
+
+    *collected* is the output of collect_resource_fields(): per-action
+    field metadata introspected from the SDK request models.
+    """
+    option_order = _resource_option_order(spec, collected)
+    resource = spec["resource"]
+    result_key = spec["result_key"]
+    label = spec["label"]
+    endpoint = spec["endpoint"]
+    suffix = _client_suffix(spec)
+    client_ref = "%s.%s" % (spec["client_module"], spec["client_class"])
+    identify_action = spec["identify"]["action"]
+    builder_block = "\n\n\n".join(block for block in (
+        _resource_builder_source(spec, collected, "create"),
+        _resource_builder_source(spec, collected, "update"),
+        _resource_builder_source(spec, collected, "delete"),
+        _resource_identify_source(spec, collected, resource)) if block)
+    action_wrappers = []
+    for action_key in _ACTION_KEYS:
+        if action_key == "update" and not spec.get("actions", {}).get("update"):
+            continue
+        action = spec["actions"][action_key]["action"]
+        action_wrappers.append(
+            "def _%s(module, client, models, params):\n"
+            "    request = build_%s_request(models, params)\n"
+            "    module.sdk_call(client.%s, request)" % (action_key, action_key, action))
+    wrappers_block = "\n\n\n".join(action_wrappers)
+    argument_lines = _resource_argument_spec_lines(spec, collected, option_order)
+    documentation = _resource_documentation(spec, collected, option_order)
+    examples_block = "\n".join(example_lines
+                               for example_lines in _resource_examples(spec, label))
+
+    return f"""\
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+{RESOURCE_SKEL_MARKER}
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
+DOCUMENTATION = r'''
+{documentation}
+'''
+
+EXAMPLES = r'''
+{examples_block}
+'''
+
+RETURN = r'''
+{result_key}:
+  description: The {label} as reported by V({identify_action}) after the operation.
+  returned: success
+  type: dict
+  sample: {{}}
+'''
+
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+
+
+def _load_{suffix}():
+    from {spec['service_package']} import models, {spec['client_module']}
+    return models, {spec['client_module']}
+
+
+{builder_block}
+
+
+{wrappers_block}
+
+
+def run_module():
+    module = TencentCloudModule(
+        argument_spec={{
+{argument_lines}
+        }},
+        supports_check_mode=True,
+    )
+    module.require_sdk()
+
+    state = module.params["state"]
+    models, {spec['client_module']} = _load_{suffix}()
+    client = module.create_client({client_ref}, "{endpoint}")
+
+    try:
+        current = find_{resource}(module, client, models, module.params)
+    except Exception as exc:
+        if _is_not_found(exc):
+            current = None
+        else:
+            module.fail_json(
+                msg="Tencent Cloud API request failed",
+                error=str(exc),
+                error_code=getattr(exc, "get_code", lambda: None)(),
+                request_id=getattr(exc, "get_request_id", lambda: None)(),
+            )
+
+    if state == "absent":
+        if current is None:
+            module.exit_json(changed=False, msg="{label} already absent")
+        diff = maybe_diff(module, current, None)
+        if module.check_mode:
+            module.exit_json(changed=True, **(diff or {{}}), msg="Would delete {label}")
+        _delete(module, client, models, module.params)
+        module.exit_json(changed=True, **(diff or {{}}), {result_key}=None,
+                         msg="{label} deleted")
+
+    # state == present
+    if current is None:
+        if module.check_mode:
+            module.exit_json(changed=True, msg="Would create {label}")
+        _create(module, client, models, module.params)
+        current = find_{resource}(module, client, models, module.params)
+        module.exit_json(changed=True, {result_key}=current, msg="{label} created")
+
+    # TODO(resource): detect drift between module.params and `current` and
+    # call _update() when the resource differs. Which fields to compare,
+    # whether the API accepts partial updates and which attributes are
+    # read-only vary per service; until this section is implemented the
+    # module reports an existing resource as up to date.
+    module.exit_json(changed=False, {result_key}=current, msg="{label} is up to date")
+
+
+def _is_not_found(exc):
+    \"\"\"Return True when the SDK reports the resource does not exist.\"\"\"
+    from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found
+    return is_not_found(exc)
+
+
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+
+def _resource_examples(spec, label):
+    """Render the EXAMPLES body: create/absent playbook snippets."""
+    lines = []
+    for state, title in (("present", "Create"), ("absent", "Delete")):
+        lines.append("- name: %s the %s" % (title, label))
+        lines.append("  susunola.tencentcloud.%s:" % spec["module"])
+        lines.append("    region: ap-guangzhou")
+        lines.append("    state: %s" % state)
+        for option in spec["identity"][:2]:
+            lines.append('    %s: "example"' % option)
+    return lines
+
+
+def validate_resource_specs(specs):
+    """Return a list of structural problems across *specs* (empty means ok).
+
+    Mirrors validate_specs() for the curated RESOURCE_SPECS table: catches
+    missing keys, unknown action shapes and identity options colliding with
+    the shared argument spec before the SDK is ever introspected. Identity
+    coverage against the actual request models is verified later by
+    collect_resource_fields().
+    """
+    problems = []
+    seen = set()
+    info_modules = {spec["module"] for spec in SPECS}
+    for index, spec in enumerate(specs):
+        location = "resource_specs[%d] %r" % (index, spec.get("module"))
+        module = spec.get("module")
+        if not module or not isinstance(module, str):
+            problems.append("%s: missing string 'module'" % location)
+            continue
+        if module.endswith("_info"):
+            problems.append(
+                "%s: resource modules do not end in _info" % location)
+        if module in seen:
+            problems.append("%s: duplicate resource spec" % location)
+        seen.add(module)
+        if module in info_modules:
+            problems.append(
+                "%s: collides with an existing _info module" % location)
+        for key in ("short_description", "label", "resource", "result_key",
+                    "service_package", "client_module", "client_class",
+                    "sdk_package", "endpoint", "identity", "actions",
+                    "identify"):
+            if not spec.get(key):
+                problems.append("%s: missing required key %r"
+                                % (location, key))
+        for verb in ("create", "delete"):
+            cfg = (spec.get("actions") or {}).get(verb)
+            if not (cfg and cfg.get("action") and cfg.get("request_class")):
+                problems.append(
+                    "%s: actions.%s needs action and request_class"
+                    % (location, verb))
+        update = (spec.get("actions") or {}).get("update")
+        if update is not None and not (
+                update.get("action") and update.get("request_class")):
+            problems.append(
+                "%s: actions.update needs action and request_class"
+                % location)
+        identify = spec.get("identify")
+        if not (identify and identify.get("action")
+                and identify.get("request_class")):
+            problems.append(
+                "%s: identify needs action and request_class" % location)
+        for key in ("resource", "result_key"):
+            if not re.match(r"^[a-z][a-z0-9_]*$", spec.get(key, "")):
+                problems.append(
+                    "%s: %s must be a snake_case identifier" % (location, key))
+        identity = spec.get("identity")
+        if not identity or not isinstance(identity, list):
+            problems.append(
+                "%s: identity must be a non-empty list of options" % location)
+            identity = []
+        for option in identity:
+            if option in _RESERVED_OPTION_NAMES:
+                problems.append(
+                    "%s: identity option %r collides with the shared "
+                    "argument spec" % (location, option))
+            if not isinstance(option, str) or not option:
+                problems.append(
+                    "%s: identity entries must be non-empty strings"
+                    % location)
+        no_log = spec.get("no_log", [])
+        if not isinstance(no_log, list):
+            problems.append("%s: no_log must be a list of options" % location)
+        else:
+            for option in no_log:
+                if not isinstance(option, str) or not option:
+                    problems.append(
+                        "%s: no_log entries must be non-empty strings"
+                        % location)
+    return problems
+
+
+def _verify_resource_spec(spec):
+    """Introspect the SDK models for *spec*; return problems (empty is ok).
+
+    Raises nothing: SDK import failures and request-model mismatches are
+    returned as problems so callers decide how strict to be.
+    """
+    try:
+        collect_resource_fields(spec)
+    except ValueError as exc:
+        return [str(exc)]
+    return []
+
+
+def _resource_main(args, out=None, err=None):
+    out = out or sys.stdout
+    err = err or sys.stderr
+    if args.resource:
+        selected = [spec for spec in RESOURCE_SPECS
+                    if spec["module"] == args.resource]
+        if not selected:
+            print("no RESOURCE_SPECS entry for module %r" % args.resource,
+                  file=err)
+            return 1
+    else:
+        selected = list(RESOURCE_SPECS)
+
+    problems = validate_resource_specs(selected)
+    if problems:
+        print("invalid resource specs:", file=err)
+        for problem in problems:
+            print("  - %s" % problem, file=err)
+        return 1
+
+    if args.print and not args.resource:
+        print("--print applies to a single --resource", file=err)
+        return 1
+
+    stale = []
+    for spec in selected:
+        path = MODULES_DIR / ("%s.py" % spec["module"])
+        exists = path.exists()
+        if args.print:
+            problems = _verify_resource_spec(spec)
+            if problems:
+                for problem in problems:
+                    print("  - %s" % problem, file=err)
+                return 1
+            collected = collect_resource_fields(spec)
+            out.write(render_resource_skeleton(spec, collected))
+            continue
+        if exists:
+            if args.check:
+                problems = _verify_resource_spec(spec)
+                if problems:
+                    print("spec %s no longer matches the installed SDK:"
+                          % spec["module"], file=err)
+                    for problem in problems:
+                        print("  - %s" % problem, file=err)
+                    return 1
+            print("exists: %s (skeleton is write-once; not overwritten)"
+                  % path, file=out)
+            continue
+        if args.check:
+            stale.append(path.name)
+            continue
+        problems = _verify_resource_spec(spec)
+        if problems:
+            print("cannot scaffold %s:" % spec["module"], file=err)
+            for problem in problems:
+                print("  - %s" % problem, file=err)
+            return 1
+        collected = collect_resource_fields(spec)
+        path.write_text(render_resource_skeleton(spec, collected))
+        print("wrote skeleton: %s" % path, file=out)
+
+    if args.check and stale:
+        print("missing scaffolds: " + ", ".join(stale), file=err)
+        print("scaffold them with --resource <module>", file=err)
+        return 1
+    return 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--check", action="store_true",
         help="do not write files; fail if a generated module is missing or stale",
     )
+    parser.add_argument(
+        "--resource", metavar="MODULE", default=None,
+        help="scaffold the RESOURCE_SPECS entry named MODULE (write-once)",
+    )
+    parser.add_argument(
+        "--resources", action="store_true",
+        help="scaffold or verify every RESOURCE_SPECS entry",
+    )
+    parser.add_argument(
+        "--print", action="store_true",
+        help="with --resource: print the rendered skeleton instead of writing",
+    )
     args = parser.parse_args(argv)
+
+    if args.resource or args.resources:
+        return _resource_main(args)
 
     problems = validate_specs(SPECS)
     if problems:
