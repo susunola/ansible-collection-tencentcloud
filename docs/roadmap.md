@@ -351,9 +351,9 @@ the official `ansible-collections` organisation.
     https://github.com/susunola/ansible-collection-tencentcloud/issues/8
     with a full requirement scorecard. Done so far: 1.0.0 released
     (unblocks the >= 1.0.0 rule), weekly ansible-core devel CI in place,
-    `requires_ansible` floor moved onto maintained cores (2.19+). The
-    remaining step is the formal inclusion request once 1.0.0 is on
-    Galaxy (W4 in the issue).
+    `requires_ansible` floor moved onto maintained cores (2.19+). 1.0.0
+    is published on Galaxy (2026-09-02, `highest_version` 1.0.0); the
+    remaining step is the formal inclusion request (W4 in the issue).
 56. 1.0.0 release readiness (unblocks #55 W1): plan the 0.x -> 1.0.0
     release — lock the `requires_ansible` floor onto currently maintained
     cores (2.19/2.20/2.21; 2.16 core reached EOL 2025-07), set the Python
@@ -368,7 +368,8 @@ the official `ansible-collections` organisation.
     found no `deprecated`/`removed_in` markers across 524 modules). 0.x
     tags were NOT back-filled: the tag-triggered release workflow makes
     back-tagging historical commits unsafe; tags start at v1.0.0
-    (release.yml already verifies tag == galaxy.yml version).
+    (release.yml already verifies tag == galaxy.yml version). Published
+    to Galaxy as 1.0.0 (2026-09-02, release run 33605335645).
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
