@@ -481,7 +481,10 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
   green. Batch 17 (2026-09-03): `cfw_nat_acl_rule` (32 tests, 97%),
   `waf_cc_rule` (34 tests, 96%), `sqlserver_account` (37 tests, 97%),
   `cfs_auto_snapshot_policy` (40 tests, 96%) — 143 hermetic tests; full
-  module + scripts suite 2864 green.
+  module + scripts suite 2864 green. Batch 18 (2026-09-03): `cfw_vpc_acl_rule`
+  (34 tests, 96%), `mqtt_instance` (29 tests, 96%), `teo_origin_group` (35
+  tests, 97%), `cbs_auto_snapshot_policy` (45 tests, 97%) — 143 hermetic
+  tests; full module + scripts suite 3007 green.
 - **G2 ecosystem trust** (downloads 0 vs 11.8M–90.5M): inclusion #89
   awaiting reviewer; only active lever is reviewing another queued
   collection to raise our priority.
