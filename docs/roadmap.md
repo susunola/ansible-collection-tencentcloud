@@ -298,7 +298,17 @@ the official `ansible-collections` organisation.
     suite).
 52. EDA event sources: COS bucket event notifications and TKE cluster
     events as `event_source` plugins, extending the `cls_topic`/`cmq_queue`
-    pattern. **Planned**
+    pattern. **Done** — `cos_bucket` polls a bucket's object listing and
+    yields each new or changed object as an `ObjectCreated` event (the
+    polling equivalent of a bucket event notification), with prefix
+    filtering, an optional `max_objects` cap for very large buckets and
+    baseline-first-poll behaviour (set `initial` to also emit pre-existing
+    objects); `tke_cluster` polls `DescribeClusterStatus` and yields a
+    `ClusterStateChanged` event on any cluster-state/instance-state
+    transition (attaching the previous state and node counts) plus a
+    `ClusterDeleted` event when a cluster disappears. Both support
+    env-var credential fallback and standalone CLI mode, and ship 25 unit
+    tests green on pytest and ansible-test.
 53. Role library: `tc_web_stack` (CVM + CLB + CDB + Redis in one call),
     `tc_tke_cluster` (managed cluster + node pool + addons) and
     `tc_disaster_recovery` (cross-region replica) roles. **Planned**
