@@ -270,7 +270,7 @@ def test_create_reports_changed(client):
     result = run(kms_key.run_module)
     assert result["changed"] is True
     assert result["key"]["KeyId"] == "kms-new0001"
-    assert any(name == "CreateKey" for name, _ in client.calls)
+    assert any(name == "CreateKey" for name, request in client.calls)
 
 
 def test_second_run_is_idempotent(client):
@@ -278,7 +278,7 @@ def test_second_run_is_idempotent(client):
     module_args(state="present", alias="app-key", description="app key", rotation_enabled=True)
     result = run(kms_key.run_module)
     assert result["changed"] is False
-    assert not any(name in ("CreateKey", "UpdateKeyDescription") for name, _ in client.calls)
+    assert not any(name in ("CreateKey", "UpdateKeyDescription") for name, request in client.calls)
 
 
 def test_absent_schedules_deletion(client):
@@ -286,7 +286,7 @@ def test_absent_schedules_deletion(client):
     module_args(state="absent", alias="app-key")
     result = run(kms_key.run_module)
     assert result["changed"] is True
-    assert any(name == "ScheduleKeyDeletion" for name, _ in client.calls)
+    assert any(name == "ScheduleKeyDeletion" for name, request in client.calls)
     assert client.keys[0]["KeyState"] == "PendingDelete"
 
 
@@ -307,7 +307,7 @@ def test_check_mode_create_makes_no_writes(client):
     module_args(state="present", alias="app-key", _ansible_check_mode=True)
     result = run(kms_key.run_module)
     assert result["changed"] is True
-    assert not any(name not in ("DescribeKey", "ListKeyDetail") for name, _ in client.calls)
+    assert not any(name not in ("DescribeKey", "ListKeyDetail") for name, request in client.calls)
 
 
 def test_present_requires_alias_or_key_id(client):
@@ -334,7 +334,7 @@ def test_update_description_reports_changed(client):
     module_args(state="present", alias="app-key", description="renamed")
     result = run(kms_key.run_module)
     assert result["changed"] is True
-    assert any(name == "UpdateKeyDescription" for name, _ in client.calls)
+    assert any(name == "UpdateKeyDescription" for name, request in client.calls)
 
 
 def test_update_enabled_state_toggles_key(client):
@@ -342,7 +342,7 @@ def test_update_enabled_state_toggles_key(client):
     module_args(state="present", alias="app-key", enabled=False)
     result = run(kms_key.run_module)
     assert result["changed"] is True
-    assert any(name == "DisableKey" for name, _ in client.calls)
+    assert any(name == "DisableKey" for name, request in client.calls)
     assert client.keys[0]["KeyState"] == "Disabled"
 
 
@@ -351,5 +351,5 @@ def test_cancel_pending_deletion_when_present_again(client):
     module_args(state="present", alias="app-key")
     result = run(kms_key.run_module)
     assert result["changed"] is True
-    assert any(name == "CancelKeyDeletion" for name, _ in client.calls)
+    assert any(name == "CancelKeyDeletion" for name, request in client.calls)
     assert client.keys[0]["KeyState"] == "Enabled"

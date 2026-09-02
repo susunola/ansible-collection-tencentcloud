@@ -226,7 +226,7 @@ def test_install_reports_changed(client):
     result = run(tke_addon.run_module)
     assert result["changed"] is True
     assert result["addon"]["AddonName"] == "cbs"
-    assert any(name == "InstallAddon" for name, _ in client.calls)
+    assert any(name == "InstallAddon" for name, request in client.calls)
 
 
 def test_install_requires_version(client):
@@ -241,7 +241,7 @@ def test_second_run_is_idempotent(client):
                 values={"replicaCount": 2})
     result = run(tke_addon.run_module)
     assert result["changed"] is False
-    assert not any(name in ("InstallAddon", "UpdateAddon") for name, _ in client.calls)
+    assert not any(name in ("InstallAddon", "UpdateAddon") for name, request in client.calls)
 
 
 def test_values_drift_triggers_update(client):
@@ -250,7 +250,7 @@ def test_values_drift_triggers_update(client):
                 values={"replicaCount": 3})
     result = run(tke_addon.run_module)
     assert result["changed"] is True
-    assert any(name == "UpdateAddon" for name, _ in client.calls)
+    assert any(name == "UpdateAddon" for name, request in client.calls)
 
 
 def test_version_downgrade_blocked_without_flag(client):
@@ -266,7 +266,7 @@ def test_version_downgrade_allowed_with_flag(client):
                 allow_downgrade=True)
     result = run(tke_addon.run_module)
     assert result["changed"] is True
-    assert any(name == "UpdateAddon" for name, _ in client.calls)
+    assert any(name == "UpdateAddon" for name, request in client.calls)
 
 
 def test_check_mode_install_makes_no_writes(client):
@@ -274,7 +274,7 @@ def test_check_mode_install_makes_no_writes(client):
                 values={"replicaCount": 2}, _ansible_check_mode=True)
     result = run(tke_addon.run_module)
     assert result["changed"] is True
-    assert not any(n in ("InstallAddon", "UpdateAddon", "DeleteAddon") for n, _ in client.calls)
+    assert not any(n in ("InstallAddon", "UpdateAddon", "DeleteAddon") for n, request in client.calls)
 
 
 def test_absent_deletes_existing_addon(client):
@@ -282,7 +282,7 @@ def test_absent_deletes_existing_addon(client):
     module_args(state="absent", cluster_id="cls-1", name="cbs")
     result = run(tke_addon.run_module)
     assert result["changed"] is True
-    assert any(name == "DeleteAddon" for name, _ in client.calls)
+    assert any(name == "DeleteAddon" for name, request in client.calls)
     assert client.addons == []
 
 
