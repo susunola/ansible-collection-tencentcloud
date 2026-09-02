@@ -400,9 +400,13 @@ the official `ansible-collections` organisation.
     helper-only test file for `cdn_domain` into the full run-path +
     helper harness (97.7%, 172/176, up from 50.6%) — 36 tests, full
     suite 3279 green, total coverage 59.81% -> 60.03% (gate 55 margin
-    +5.03pp). **Planned**:
-    continue with the next highest-miss write modules (lighthouse_instance
-    48.0%, next after that per the per-file report), raising the
+    +5.03pp). **In progress — batch 6 (2026-09-02)**: rewrote the
+    helper-only test file for `lighthouse_instance` into the full
+    run-path + helper harness (97.7%, 169/173, up from 48.0%) — 47
+    tests, full suite 3313 green, total coverage 60.03% -> 60.25%
+    (gate 55 margin +5.25pp). **Planned**:
+    continue with the next highest-miss write modules per the per-file
+    report, raising the
     floor back towards 70; each batch must keep the gate green.
 
 Resource modules must be idempotent, support check mode, expose API request
