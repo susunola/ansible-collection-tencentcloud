@@ -426,7 +426,11 @@ the official `ansible-collections` organisation.
     32 tests incl. the create/rename/delete/wait flows, a multi-poll
     NORMAL transition and patched-clock timeout/FAILED paths — full
     suite 3437 green, total coverage 60.75% -> 60.89% (gate 55 margin
-    +5.89pp). **Planned**:
+    +5.89pp). **In progress — batch 11 (2026-09-02)**: rewrote the
+    helper-only test file for `ccn_attachment` into the full run-path +
+    helper harness (96%, 87/91, up from a 13-line smoke test) — 22 tests
+    incl. attach/detach/update-description flows, re-attach no-change and
+    patched-clock timeout paths — full suite green. **Planned**:
     continue with the next highest-miss write modules per the per-file
     report, raising the
     floor back towards 70; each batch must keep the gate green.
