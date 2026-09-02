@@ -343,7 +343,26 @@ the official `ansible-collections` organisation.
     **Done**
 55. Official adoption: open the review process with `ansible-collections`
     (namespace, `meta/runtime.yml` compatibility, `ansible-test` full
-    matrix) and track it in a dedicated issue. **Planned**
+    matrix) and track it in a dedicated issue. **In progress** — route
+    decision (2026-09): inclusion in the `ansible` community package via
+    the ansible-inclusion review; the repo stays `susunola.tencentcloud`
+    (no namespace change, no move to the `ansible-collections` org).
+    Tracked in
+    https://github.com/susunola/ansible-collection-tencentcloud/issues/8
+    with a full requirement scorecard. Scorecard PASSes on galaxy.yml/
+    README/CoC/contributing/changelog/`requires_ansible`/EOL-core sanity;
+    three FAILs are the actual work: version must be >= 1.0.0 (see #56),
+    weekly sanity/units against ansible-core `devel` or `milestone`
+    (2026-03 requirement; `.github/workflows/devel.yml` drafted), and a
+    git tag per release matching the Galaxy version (repo currently has
+    no tags). The formal inclusion request is deferred until >= 1.0.0 is
+    on Galaxy (W4 in the issue).
+56. 1.0.0 release readiness (unblocks #55 W1): plan the 0.x -> 1.0.0
+    release — lock the `requires_ansible` floor onto currently maintained
+    cores (2.19/2.20/2.21; 2.16 core reached EOL 2025-07), set the Python
+    floor, fold deprecations, audit removal candidates, back-tag releases
+    (`v0.13.0`, ...) so tag == Galaxy version, and make tagging part of
+    the release workflow. **Planned**
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
