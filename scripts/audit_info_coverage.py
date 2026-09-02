@@ -40,69 +40,35 @@ MODULES_DIR = REPO_ROOT / "plugins" / "modules"
 # Only list a mapping after verifying the covering module's response really
 # contains the resource; a wrong mapping is worse than an honest gap.
 KNOWN_COVERAGE = {
-    "cos_object_sync": (
-        ["cos_object_info"],
-        "cos_object_info lists and filters the objects of a bucket, which is "
-        "the read side a sync reconciles against",
+    "clb_rule": (
+        ["clb_listener_info"],
+        "DescribeListeners returns L7 listeners with their Rules inline",
     ),
-    "cvm_instance_security_group": (
-        ["cvm_instance_info"],
-        "DescribeInstances returns SecurityGroupIds per instance",
+    "nat_gateway_rule": (
+        ["nat_gateway_dnat_rule_info", "nat_gateway_snat_rule_info"],
+        "the write module reconciles the DNAT and SNAT rule sets; the two "
+        "generated modules read them via DescribeNatGateway*NatRules",
     ),
-    "tke_cluster_upgrade": (
-        ["tke_cluster_info"],
-        "DescribeClusters returns the current ClusterVersion per cluster",
+    "havip_association": (
+        ["havip_info"],
+        "DescribeHaVips returns the HaVipAssociationSet with bound CVM/ENI per HAVIP",
     ),
 }
 
 # Write modules that are themselves the read surface, or whose resource has
 # no list API at all; keyed by module name with the reason as value.
-KNOWN_NO_LIST_API = {}
+KNOWN_NO_LIST_API = {
+    "tke_cluster_kubeconfig": (
+        "kubeconfig is a per-cluster credential fetch (DescribeClusterKubeconfig "
+        "requires a ClusterId); the module itself is the read surface"
+    ),
+}
 
 # Coverage backlog: write modules whose read surface is not wired up yet.
 # Each name here is a known gap, reported by the audit and accepted by
 # --check; close a gap by adding a SPECS entry (preferred) or a curated
 # KNOWN_COVERAGE mapping, and remove the name from this set.
 KNOWN_GAPS = {
-    # Covered by feat/kubeconfig-cos-object-info-batch (landing separately):
-    # their generated _info modules exist on that branch; the entries below
-    # keep --check green here and must be dropped when that branch merges.
-    "alb_listener",
-    "alb_load_balancer",
-    "alb_target_group",
-    "alb_target_group_targets",
-    "cam_policy_attachment",
-    "cbs_snapshot",
-    "ccn",
-    "cfs_snapshot",
-    "clb_listener",
-    "clb_listener_target",
-    "clb_rule",
-    "clb_target_group",
-    "customer_gateway",
-    "cvm_image_share",
-    "eks_cluster",
-    "eks_container_instance",
-    "havip",
-    "havip_association",
-    "nat_gateway_rule",
-    "network_acl",
-    "network_interface",
-    "peering_connection",
-    "scf_alias",
-    "scf_trigger",
-    "scf_version",
-    "security_group_rule",
-    "sms_signature",
-    "sms_template",
-    "tag",
-    "tke_cluster_autoscaler",
-    "tke_node_pool",
-    "vod_class",
-    "vod_sub_app",
-    "vpc_address_template",
-    "vpc_address_template_group",
-    "vpn_connection",
     "api_gateway_api",
     "api_gateway_api_key",
     "api_gateway_service",
@@ -116,17 +82,23 @@ KNOWN_GAPS = {
     "cam_group_membership",
     "cam_oidc_provider",
     "cam_saml_provider",
+    "cbs_auto_snapshot_policy",
     "cbs_disk_backup",
     "cbs_snapshot_share",
     "ccn_attachment",
+    "cdb_account",
     "cdb_account_privilege",
     "cdb_audit_config",
+    "cdb_backup_config",
+    "cdb_database",
     "cdb_parameter_template",
     "cdn_cls_log_topic",
     "cdwch_instance",
     "cdwdoris_instance",
     "cdwpg_instance",
     "cfs_auto_snapshot_policy",
+    "cfs_permission_group",
+    "cfs_permission_rule",
     "cfw_address_template",
     "cfw_internet_acl_rule",
     "cfw_nat_acl_rule",
@@ -142,9 +114,16 @@ KNOWN_GAPS = {
     "ckafka_datahub_task",
     "ckafka_datahub_topic",
     "ckafka_route",
+    "ckafka_topic",
+    "ckafka_user",
     "cloudaudit_audit",
     "cloudaudit_track",
+    "cls_config",
     "cls_config_machine_group_binding",
+    "cls_index",
+    "cls_logset",
+    "cls_machine_group",
+    "cls_shipper",
     "cmq_subscription",
     "cmq_topic",
     "config_aggregate_delivery",
@@ -168,6 +147,7 @@ KNOWN_GAPS = {
     "cos_bucket_replication",
     "cos_bucket_response_control",
     "cos_bucket_website",
+    "cos_object",
     "cvm_chc",
     "cvm_disaster_recover_group",
     "cvm_disaster_recover_group_binding",
@@ -176,9 +156,11 @@ KNOWN_GAPS = {
     "cvm_instance_action_timer",
     "cvm_launch_template",
     "cvm_launch_template_version",
+    "cynosdb_account",
     "cynosdb_account_privilege",
     "cynosdb_backup_config",
     "dbbrain_sql_filter",
+    "dc_direct_connect",
     "dnspod_custom_line",
     "dnspod_domain",
     "dnspod_line_group",
@@ -196,14 +178,18 @@ KNOWN_GAPS = {
     "gwlb_target_group",
     "gwlb_target_group_association",
     "gwlb_target_group_instances",
+    "kms_key_rotation",
     "lighthouse_disk",
     "lighthouse_firewall_rules",
     "lighthouse_key_pair",
     "lighthouse_snapshot",
+    "mariadb_account",
     "mariadb_account_privilege",
     "mariadb_backup_config",
+    "mongodb_account",
     "mongodb_backup_config",
     "monitor_alarm_policy_notice",
+    "monitor_grafana_instance",
     "monitor_grafana_integration",
     "monitor_grafana_internet",
     "monitor_grafana_notification_channel",
@@ -213,6 +199,7 @@ KNOWN_GAPS = {
     "monitor_prometheus_cluster_agent",
     "monitor_prometheus_global_notification",
     "monitor_prometheus_grafana_binding",
+    "monitor_prometheus_instance",
     "monitor_prometheus_record_rule",
     "monitor_prometheus_scrape_job",
     "mqtt_authorization_policy",
@@ -224,6 +211,7 @@ KNOWN_GAPS = {
     "organization_member_identity",
     "organization_member_policy",
     "organization_node",
+    "postgresql_account",
     "postgresql_backup_plan",
     "postgresql_instance",
     "postgresql_parameter_template",
@@ -231,11 +219,14 @@ KNOWN_GAPS = {
     "private_dns_zone",
     "privatelink_endpoint",
     "privatelink_endpoint_service",
+    "redis_account",
     "redis_backup_config",
     "redis_parameter_template",
+    "sqlserver_account",
     "sqlserver_backup_config",
     "ssm_parameter",
     "ssm_rotation",
+    "ssm_secret",
     "ssm_secret_version",
     "tat_invoker",
     "tcb_environment",

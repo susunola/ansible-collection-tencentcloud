@@ -107,3 +107,22 @@ def test_missing_specs_file_fails(drift, monkeypatch, tmp_path):
                            content=None, name="does_not_exist.py")
     assert rc == 1
     assert "SDK drift check failed" in err.getvalue()
+
+
+def test_print_stamp(drift, tmp_path):
+    specs_path = tmp_path / "info_specs_auto.py"
+    specs_path.write_text(STAMPED_FILE, encoding="utf-8")
+    out, err = io.StringIO(), io.StringIO()
+    rc = drift.main(["--print-stamp", "--specs", str(specs_path)], out=out, err=err)
+    assert rc == 0
+    assert out.getvalue().strip() == "3.1.113"
+    assert err.getvalue() == ""
+
+
+def test_print_stamp_missing_file_fails(drift, tmp_path):
+    out, err = io.StringIO(), io.StringIO()
+    rc = drift.main(["--print-stamp", "--specs", str(tmp_path / "nope.py")],
+                    out=out, err=err)
+    assert rc == 1
+    assert "SDK drift check failed" in err.getvalue()
+

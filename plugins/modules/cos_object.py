@@ -24,7 +24,7 @@ options:
   state:
     description:
       - C(present) uploads the local file O(src) to the object O(key)
-        (O(mode=sync)) or mints a pre-signed upload URL (O(mode=presign)).
+        (O(mode=sync)) or mints a pre-signed URL (O(mode=presign)).
       - C(absent) deletes the object O(key) when it exists; C(absent) only
         supports the default O(mode=sync).
     type: str
@@ -66,14 +66,24 @@ options:
       - C(download) downloads the object O(key) to the local file O(dest),
         regardless of O(state); mirrors the C(mode) convention of
         M(amazon.aws.s3_object).
-      - C(presign) generates a pre-signed C(PUT) (upload) URL for the object
-        instead of transferring anything; the URL is returned as C(url), no
-        bucket resource is changed and the task reports C(changed=false).
+      - C(presign) generates a pre-signed URL for the object (method selected
+        by O(method)) instead of transferring anything; the URL is returned
+        as C(url), no bucket resource is changed and the task reports
+        C(changed=false).
       - O(state=absent) only supports the default C(sync) mode; combining it
         with C(download) or C(presign) fails the task.
     type: str
     choices: [sync, presign, download]
     default: sync
+  method:
+    description:
+      - HTTP method the pre-signed URL is signed for when O(mode=presign);
+        C(GET) mints a download URL, C(PUT) an upload URL.
+      - Only meaningful with O(mode=presign); passing a non-default value
+        with any other mode fails the task.
+    type: str
+    choices: [GET, PUT]
+    default: PUT
   expires:
     description:
       - Validity of the pre-signed URL in seconds when O(mode=presign).
@@ -147,6 +157,17 @@ EXAMPLES = r'''
     mode: presign
     expires: 600
   register: presigned
+
+- name: Generate a pre-signed download URL
+  susunola.tencentcloud.cos_object:
+    region: ap-guangzhou
+    bucket: mybucket
+    appid: "1300000000"
+    key: site/index.html
+    mode: presign
+    method: GET
+    expires: 600
+  register: download_url
 '''
 
 RETURN = r'''
@@ -166,7 +187,7 @@ dest:
   type: str
   sample: /home/user/downloads/index.html
 url:
-  description: The pre-signed PUT URL, signed with the module credentials.
+  description: The pre-signed URL, signed with the module credentials.
   returned: when O(mode=presign)
   type: str
   sample: https://mybucket-1300000000.cos.ap-guangzhou.myqcloud.com/site/index.html?q-sign-algorithm=sha1&...
@@ -242,6 +263,7 @@ def run_module():
             "src": {"type": "path"},
             "dest": {"type": "path"},
             "mode": {"type": "str", "choices": ["sync", "presign", "download"], "default": "sync"},
+            "method": {"type": "str", "choices": ["GET", "PUT"], "default": "PUT"},
             "expires": {"type": "int", "default": 3600},
         },
         supports_check_mode=True,
@@ -254,9 +276,12 @@ def run_module():
     src = module.params["src"]
     dest = module.params["dest"]
     mode = module.params["mode"]
+    method = module.params["method"]
 
     if state == "absent" and mode != "sync":
         module.fail_json(msg="state=absent only supports the default mode=sync")
+    if method != "PUT" and mode != "presign":
+        module.fail_json(msg="method only applies to mode=presign")
 
     appid = cos.resolve_appid(module)
     full_name = cos.bucket_full_name(bucket, appid)
@@ -267,7 +292,7 @@ def run_module():
     try:
         if mode == "presign":
             url = client.get_presigned_url(
-                Bucket=full_name, Key=key, Method="PUT",
+                Bucket=full_name, Key=key, Method=method,
                 Expired=module.params["expires"],
             )
             module.exit_json(changed=False, **result, url=url, msg="Pre-signed URL generated")

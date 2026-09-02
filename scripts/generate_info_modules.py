@@ -2253,6 +2253,903 @@ SPECS = [
 
 """,
     },
+    # -----------------------------------------------------------------
+    # Coverage batch 6 (1.1.0): read sides of existing write modules.
+    # -----------------------------------------------------------------
+    # Adopted from SPECS_AUTO unchanged (the curated alb_* entries below
+    # would otherwise mark the whole alb product as covered and discovery
+    # would drop this spec, orphaning the generated module).
+    {
+        "module": "alb_security_policy_info",
+        "version_added": "0.9.0",
+        "service_package": "tencentcloud.alb.v20251030",
+        "client_module": "alb_client",
+        "client_class": "AlbClient",
+        "sdk_package": "tencentcloud-sdk-python-alb",
+        "endpoint": "alb.tencentcloudapi.com",
+        "action": "DescribeSecurityPolicies",
+        "request_class": "DescribeSecurityPoliciesRequest",
+        "ids": {
+            "param": "security_policy_ids",
+            "field": "SecurityPolicyIds",
+            "doc": "Security policy IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "ALB API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "SecurityPolicies",
+        "response_total": "TotalCount",
+        "result_key": "security_policies",
+        "pagination_type": "token",
+        "list_over_field": None,
+        "short_description": "Gather information about Tencent Cloud ALB security policies",
+        "description": "Returns ALB security policies visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching ALB security policies.",
+        "return_total_doc": "Number of security policies reported by the API.",
+        "examples": """\
+- name: List all security policies
+  susunola.tencentcloud.alb_security_policy_info:
+    region: ap-guangzhou
+
+- name: Find security policies by ID
+  susunola.tencentcloud.alb_security_policy_info:
+    region: ap-guangzhou
+    security_policy_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        "module": "alb_load_balancer_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.alb.v20251030",
+        "client_module": "alb_client",
+        "client_class": "AlbClient",
+        "sdk_package": "tencentcloud-sdk-python-alb",
+        "endpoint": "alb.tencentcloudapi.com",
+        "action": "DescribeLoadBalancers",
+        "request_class": "DescribeLoadBalancersRequest",
+        "ids": None,
+        "filters": {"doc": "ALB API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "LoadBalancers",
+        "response_total": "TotalCount",
+        "result_key": "load_balancers",
+        "pagination_type": "token",
+        "short_description": "Gather information about Tencent Cloud ALB instances",
+        "description": "Returns ALB (Application Load Balancer) instances visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching ALB instances.",
+        "return_total_doc": "Number of load balancers reported by the API.",
+        "examples": """\
+- name: List all ALB instances
+  susunola.tencentcloud.alb_load_balancer_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        "module": "alb_listener_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.alb.v20251030",
+        "client_module": "alb_client",
+        "client_class": "AlbClient",
+        "sdk_package": "tencentcloud-sdk-python-alb",
+        "endpoint": "alb.tencentcloudapi.com",
+        "action": "DescribeListeners",
+        "request_class": "DescribeListenersRequest",
+        "ids": None,
+        "filters": {"doc": "ALB API filter names mapped to lists of values."},
+        "extra_params": [
+            {
+                "name": "load_balancer_id",
+                "field": "LoadBalancerId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the ALB instance whose listeners are returned.",
+            },
+            {
+                "name": "listener_ids",
+                "field": "ListenerIds",
+                "type": "list",
+                "elements": "str",
+                "doc": "Return only these listener IDs.",
+            },
+        ],
+        "response_items": "Listeners",
+        "response_total": "TotalCount",
+        "result_key": "listeners",
+        "pagination_type": "token",
+        "short_description": "Gather information about Tencent Cloud ALB listeners",
+        "description": "Returns the listeners of an ALB instance.",
+        "return_items_doc": "Matching ALB listeners.",
+        "return_total_doc": "Number of listeners reported by the API.",
+        "examples": """\
+- name: List the listeners of an ALB instance
+  susunola.tencentcloud.alb_listener_info:
+    region: ap-guangzhou
+    load_balancer_id: lbl-xxxxxxxx
+""",
+    },
+    {
+        "module": "alb_target_group_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.alb.v20251030",
+        "client_module": "alb_client",
+        "client_class": "AlbClient",
+        "sdk_package": "tencentcloud-sdk-python-alb",
+        "endpoint": "alb.tencentcloudapi.com",
+        "action": "DescribeTargetGroups",
+        "request_class": "DescribeTargetGroupsRequest",
+        "ids": {
+            "param": "target_group_ids",
+            "field": "TargetGroupIds",
+            "doc": "Target group IDs to return.",
+        },
+        "filters": {"doc": "ALB API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "TargetGroups",
+        "response_total": "TotalCount",
+        "result_key": "target_groups",
+        "pagination_type": "token",
+        "short_description": "Gather information about Tencent Cloud ALB target groups",
+        "description": "Returns ALB target groups visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching ALB target groups.",
+        "return_total_doc": "Number of target groups reported by the API.",
+        "examples": """\
+- name: List all ALB target groups
+  susunola.tencentcloud.alb_target_group_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        "module": "alb_target_group_targets_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.alb.v20251030",
+        "client_module": "alb_client",
+        "client_class": "AlbClient",
+        "sdk_package": "tencentcloud-sdk-python-alb",
+        "endpoint": "alb.tencentcloudapi.com",
+        "action": "DescribeTargetGroupTargets",
+        "request_class": "DescribeTargetGroupTargetsRequest",
+        "ids": None,
+        "filters": {"doc": "ALB API filter names mapped to lists of values."},
+        "extra_params": [
+            {
+                "name": "target_group_id",
+                "field": "TargetGroupId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the target group whose targets are returned.",
+            },
+        ],
+        "response_items": "Targets",
+        "response_total": "TotalCount",
+        "result_key": "targets",
+        "pagination_type": "token",
+        "short_description": "Gather information about Tencent Cloud ALB target group targets",
+        "description": "Returns the backend targets of an ALB target group.",
+        "return_items_doc": "Matching target group targets.",
+        "return_total_doc": "Number of targets reported by the API.",
+        "examples": """\
+- name: List the targets of an ALB target group
+  susunola.tencentcloud.alb_target_group_targets_info:
+    region: ap-guangzhou
+    target_group_id: lbtg-xxxxxxxx
+""",
+    },
+    {
+        "module": "network_interface_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeNetworkInterfaces",
+        "request_class": "DescribeNetworkInterfacesRequest",
+        "ids": {
+            "param": "network_interface_ids",
+            "field": "NetworkInterfaceIds",
+            "doc": "ENI IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "NetworkInterfaceSet",
+        "response_total": "TotalCount",
+        "result_key": "network_interfaces",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud elastic network interfaces",
+        "description": "Returns elastic network interfaces (ENIs) visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching network interfaces.",
+        "return_total_doc": "Number of network interfaces reported by the API.",
+        "examples": """\
+- name: List all network interfaces
+  susunola.tencentcloud.network_interface_info:
+    region: ap-guangzhou
+
+- name: Find network interfaces by ID
+  susunola.tencentcloud.network_interface_info:
+    region: ap-guangzhou
+    network_interface_ids: [eni-xxxxxxxx]
+""",
+    },
+    {
+        "module": "tke_node_pool_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.tke.v20180525",
+        "client_module": "tke_client",
+        "client_class": "TkeClient",
+        "sdk_package": "tencentcloud-sdk-python-tke",
+        "endpoint": "tke.tencentcloudapi.com",
+        "action": "DescribeClusterNodePools",
+        "request_class": "DescribeClusterNodePoolsRequest",
+        "ids": None,
+        "filters": {"doc": "TKE API filter names mapped to lists of values."},
+        "extra_params": [
+            {
+                "name": "cluster_id",
+                "field": "ClusterId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the TKE cluster whose node pools are returned.",
+            },
+        ],
+        "response_items": "NodePoolSet",
+        "response_total": None,
+        "result_key": "node_pools",
+        # The request has no Offset/Limit; the API returns the full list.
+        "pagination_type": "list",
+        "short_description": "Gather information about Tencent Cloud TKE node pools",
+        "description": "Returns the node pools of a TKE cluster.",
+        "return_items_doc": "Node pools of the cluster.",
+        "return_total_doc": "Number of node pools returned (the API reports no pageable total).",
+        "examples": """\
+- name: List the node pools of a cluster
+  susunola.tencentcloud.tke_node_pool_info:
+    region: ap-guangzhou
+    cluster_id: cls-xxxxxxxx
+""",
+    },
+    {
+        "module": "scf_alias_info",
+        "string_pagination": True,  # Offset/Limit are declared str in this API
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.scf.v20180416",
+        "client_module": "scf_client",
+        "client_class": "ScfClient",
+        "sdk_package": "tencentcloud-sdk-python-scf",
+        "endpoint": "scf.tencentcloudapi.com",
+        "action": "ListAliases",
+        "request_class": "ListAliasesRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "function_name",
+                "field": "FunctionName",
+                "type": "str",
+                "required": True,
+                "doc": "Name of the function whose aliases are returned.",
+            },
+            {
+                "name": "namespace",
+                "field": "Namespace",
+                "type": "str",
+                "doc": "Namespace of the function; defaults to C(default) on the API side.",
+            },
+            {
+                "name": "function_version",
+                "field": "FunctionVersion",
+                "type": "str",
+                "doc": "Return only aliases pointing at this function version.",
+            },
+        ],
+        "response_items": "Aliases",
+        "response_total": "TotalCount",
+        "result_key": "aliases",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud SCF function aliases",
+        "description": "Returns the aliases of an SCF function.",
+        "return_items_doc": "Matching function aliases.",
+        "return_total_doc": "Number of aliases reported by the API.",
+        "examples": """\
+- name: List the aliases of a function
+  susunola.tencentcloud.scf_alias_info:
+    region: ap-guangzhou
+    function_name: my-function
+""",
+    },
+    {
+        "module": "scf_version_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.scf.v20180416",
+        "client_module": "scf_client",
+        "client_class": "ScfClient",
+        "sdk_package": "tencentcloud-sdk-python-scf",
+        "endpoint": "scf.tencentcloudapi.com",
+        "action": "ListVersionByFunction",
+        "request_class": "ListVersionByFunctionRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "function_name",
+                "field": "FunctionName",
+                "type": "str",
+                "required": True,
+                "doc": "Name of the function whose versions are returned.",
+            },
+            {
+                "name": "namespace",
+                "field": "Namespace",
+                "type": "str",
+                "doc": "Namespace of the function; defaults to C(default) on the API side.",
+            },
+        ],
+        "response_items": "Versions",
+        "response_total": "TotalCount",
+        "result_key": "versions",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud SCF function versions",
+        "description": "Returns the published versions of an SCF function.",
+        "return_items_doc": "Matching function versions.",
+        "return_total_doc": "Number of versions reported by the API.",
+        "examples": """\
+- name: List the published versions of a function
+  susunola.tencentcloud.scf_version_info:
+    region: ap-guangzhou
+    function_name: my-function
+""",
+    },
+    {
+        "module": "scf_trigger_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.scf.v20180416",
+        "client_module": "scf_client",
+        "client_class": "ScfClient",
+        "sdk_package": "tencentcloud-sdk-python-scf",
+        "endpoint": "scf.tencentcloudapi.com",
+        "action": "ListTriggers",
+        "request_class": "ListTriggersRequest",
+        "ids": None,
+        "filters": {"doc": "SCF API filter names mapped to lists of values."},
+        "extra_params": [
+            {
+                "name": "function_name",
+                "field": "FunctionName",
+                "type": "str",
+                "required": True,
+                "doc": "Name of the function whose triggers are returned.",
+            },
+            {
+                "name": "namespace",
+                "field": "Namespace",
+                "type": "str",
+                "doc": "Namespace of the function; defaults to C(default) on the API side.",
+            },
+        ],
+        "response_items": "Triggers",
+        "response_total": "TotalCount",
+        "result_key": "triggers",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud SCF function triggers",
+        "description": "Returns the triggers of an SCF function.",
+        "return_items_doc": "Matching function triggers.",
+        "return_total_doc": "Number of triggers reported by the API.",
+        "examples": """\
+- name: List the triggers of a function
+  susunola.tencentcloud.scf_trigger_info:
+    region: ap-guangzhou
+    function_name: my-function
+""",
+    },
+    {
+        "module": "clb_listener_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.clb.v20180317",
+        "client_module": "clb_client",
+        "client_class": "ClbClient",
+        "sdk_package": "tencentcloud-sdk-python-clb",
+        "endpoint": "clb.tencentcloudapi.com",
+        "action": "DescribeListeners",
+        "request_class": "DescribeListenersRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "load_balancer_id",
+                "field": "LoadBalancerId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the CLB instance whose listeners are returned.",
+            },
+            {
+                "name": "listener_ids",
+                "field": "ListenerIds",
+                "type": "list",
+                "elements": "str",
+                "doc": "Return only these listener IDs.",
+            },
+            {
+                "name": "protocol",
+                "field": "Protocol",
+                "type": "str",
+                "doc": "Return only listeners of this protocol, for example C(TCP) or C(HTTPS).",
+            },
+            {
+                "name": "port",
+                "field": "Port",
+                "type": "int",
+                "doc": "Return only listeners on this port.",
+            },
+        ],
+        "response_items": "Listeners",
+        "response_total": None,
+        "result_key": "listeners",
+        # The request has no Offset/Limit; the API returns the full list.
+        "pagination_type": "list",
+        "short_description": "Gather information about Tencent Cloud CLB listeners",
+        "description": "Returns the listeners of a CLB instance, including the rules of L7 listeners.",
+        "return_items_doc": "Matching CLB listeners.",
+        "return_total_doc": "Number of listeners returned (the API reports no pageable total).",
+        "examples": """\
+- name: List the listeners of a load balancer
+  susunola.tencentcloud.clb_listener_info:
+    region: ap-guangzhou
+    load_balancer_id: lb-xxxxxxxx
+""",
+    },
+    {
+        "module": "clb_listener_target_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.clb.v20180317",
+        "client_module": "clb_client",
+        "client_class": "ClbClient",
+        "sdk_package": "tencentcloud-sdk-python-clb",
+        "endpoint": "clb.tencentcloudapi.com",
+        "action": "DescribeTargets",
+        "request_class": "DescribeTargetsRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "load_balancer_id",
+                "field": "LoadBalancerId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the CLB instance whose listener targets are returned.",
+            },
+            {
+                "name": "listener_ids",
+                "field": "ListenerIds",
+                "type": "list",
+                "elements": "str",
+                "doc": "Return targets of only these listener IDs.",
+            },
+            {
+                "name": "protocol",
+                "field": "Protocol",
+                "type": "str",
+                "doc": "Return targets of listeners of this protocol.",
+            },
+            {
+                "name": "port",
+                "field": "Port",
+                "type": "int",
+                "doc": "Return targets of listeners on this port.",
+            },
+        ],
+        # DescribeTargets returns the listeners, each carrying its Targets.
+        "response_items": "Listeners",
+        "response_total": None,
+        "result_key": "listeners",
+        "pagination_type": "list",
+        "short_description": "Gather information about Tencent Cloud CLB listener targets",
+        "description": "Returns the backend targets bound to the listeners of a CLB instance.",
+        "return_items_doc": "Listeners with their bound backend targets.",
+        "return_total_doc": "Number of listeners returned (the API reports no pageable total).",
+        "examples": """\
+- name: List the backend targets of a load balancer
+  susunola.tencentcloud.clb_listener_target_info:
+    region: ap-guangzhou
+    load_balancer_id: lb-xxxxxxxx
+""",
+    },
+    {
+        "module": "clb_target_group_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.clb.v20180317",
+        "client_module": "clb_client",
+        "client_class": "ClbClient",
+        "sdk_package": "tencentcloud-sdk-python-clb",
+        "endpoint": "clb.tencentcloudapi.com",
+        "action": "DescribeTargetGroupList",
+        "request_class": "DescribeTargetGroupListRequest",
+        "ids": {
+            "param": "target_group_ids",
+            "field": "TargetGroupIds",
+            "doc": "Target group IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "CLB API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "TargetGroupSet",
+        "response_total": "TotalCount",
+        "result_key": "target_groups",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud CLB target groups",
+        "description": "Returns CLB target groups visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching CLB target groups.",
+        "return_total_doc": "Number of target groups reported by the API.",
+        "examples": """\
+- name: List all CLB target groups
+  susunola.tencentcloud.clb_target_group_info:
+    region: ap-guangzhou
+
+- name: Find target groups by ID
+  susunola.tencentcloud.clb_target_group_info:
+    region: ap-guangzhou
+    target_group_ids: [lbtg-xxxxxxxx]
+""",
+    },
+    {
+        "module": "cam_policy_attachment_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.cam.v20190116",
+        "client_module": "cam_client",
+        "client_class": "CamClient",
+        "sdk_package": "tencentcloud-sdk-python-cam",
+        "endpoint": "cam.tencentcloudapi.com",
+        "action": "ListEntitiesForPolicy",
+        "request_class": "ListEntitiesForPolicyRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "policy_id",
+                "field": "PolicyId",
+                "type": "int",
+                "required": True,
+                "doc": "ID of the policy whose attached entities are returned.",
+            },
+            {
+                "name": "entity_filter",
+                "field": "EntityFilter",
+                "type": "str",
+                "choices": ["All", "User", "Group", "Role"],
+                "doc": "Return only attachments of this entity type; defaults to C(All) on the API side.",
+            },
+        ],
+        "response_items": "List",
+        "response_total": "TotalNum",
+        "result_key": "entities",
+        # CAM paginates with 1-based Page/Rp.
+        "pagination_type": "page",
+        "page_number_field": "Page",
+        "page_size_field": "Rp",
+        "short_description": "Gather information about Tencent Cloud CAM policy attachments",
+        "description": "Returns the users, groups and roles a CAM policy is attached to.",
+        "return_items_doc": "Entities the policy is attached to.",
+        "return_total_doc": "Number of attached entities reported by the API.",
+        "examples": """\
+- name: List what a policy is attached to
+  susunola.tencentcloud.cam_policy_attachment_info:
+    region: ap-guangzhou
+    policy_id: 12345678
+""",
+    },
+    {
+        "module": "nat_gateway_dnat_rule_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeNatGatewayDestinationIpPortTranslationNatRules",
+        "request_class": "DescribeNatGatewayDestinationIpPortTranslationNatRulesRequest",
+        "ids": {
+            "param": "nat_gateway_ids",
+            "field": "NatGatewayIds",
+            "doc": "NAT gateway IDs whose DNAT rules are returned. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "NatGatewayDestinationIpPortTranslationNatRuleSet",
+        "response_total": "TotalCount",
+        "result_key": "dnat_rules",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud NAT gateway DNAT rules",
+        "description": "Returns the DNAT (port forwarding) rules of NAT gateways.",
+        "return_items_doc": "Matching DNAT rules.",
+        "return_total_doc": "Number of DNAT rules reported by the API.",
+        "examples": """\
+- name: List the DNAT rules of a NAT gateway
+  susunola.tencentcloud.nat_gateway_dnat_rule_info:
+    region: ap-guangzhou
+    nat_gateway_ids: [nat-xxxxxxxx]
+""",
+    },
+    {
+        "module": "nat_gateway_snat_rule_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeNatGatewaySourceIpTranslationNatRules",
+        "request_class": "DescribeNatGatewaySourceIpTranslationNatRulesRequest",
+        "ids": None,
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [
+            {
+                "name": "nat_gateway_id",
+                "field": "NatGatewayId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the NAT gateway whose SNAT rules are returned.",
+            },
+        ],
+        "response_items": "SourceIpTranslationNatRuleSet",
+        "response_total": "TotalCount",
+        "result_key": "snat_rules",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud NAT gateway SNAT rules",
+        "description": "Returns the SNAT rules of a NAT gateway.",
+        "return_items_doc": "Matching SNAT rules.",
+        "return_total_doc": "Number of SNAT rules reported by the API.",
+        "examples": """\
+- name: List the SNAT rules of a NAT gateway
+  susunola.tencentcloud.nat_gateway_snat_rule_info:
+    region: ap-guangzhou
+    nat_gateway_id: nat-xxxxxxxx
+""",
+    },
+    {
+        "module": "havip_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeHaVips",
+        "request_class": "DescribeHaVipsRequest",
+        "ids": {
+            "param": "havip_ids",
+            "field": "HaVipIds",
+            "doc": "HAVIP IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "HaVipSet",
+        "response_total": "TotalCount",
+        "result_key": "havips",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud HAVIPs",
+        "description": "Returns high-availability virtual IPs visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching HAVIPs.",
+        "return_total_doc": "Number of HAVIPs reported by the API.",
+        "examples": """\
+- name: List all HAVIPs
+  susunola.tencentcloud.havip_info:
+    region: ap-guangzhou
+
+- name: Find HAVIPs by ID
+  susunola.tencentcloud.havip_info:
+    region: ap-guangzhou
+    havip_ids: [havip-xxxxxxxx]
+""",
+    },
+    {
+        "module": "network_acl_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeNetworkAcls",
+        "request_class": "DescribeNetworkAclsRequest",
+        "ids": {
+            "param": "network_acl_ids",
+            "field": "NetworkAclIds",
+            "doc": "Network ACL IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "NetworkAclSet",
+        "response_total": "TotalCount",
+        "result_key": "network_acls",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud network ACLs",
+        "description": "Returns network ACLs visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching network ACLs.",
+        "return_total_doc": "Number of network ACLs reported by the API.",
+        "examples": """\
+- name: List all network ACLs
+  susunola.tencentcloud.network_acl_info:
+    region: ap-guangzhou
+
+- name: Find network ACLs by ID
+  susunola.tencentcloud.network_acl_info:
+    region: ap-guangzhou
+    network_acl_ids: [acl-xxxxxxxx]
+""",
+    },
+    {
+        "module": "peering_connection_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeVpcPeeringConnections",
+        "request_class": "DescribeVpcPeeringConnectionsRequest",
+        "ids": {
+            "param": "peering_connection_ids",
+            "field": "PeeringConnectionIds",
+            "doc": "Peering connection IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "PeerConnectionSet",
+        "response_total": "TotalCount",
+        "result_key": "peering_connections",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud VPC peering connections",
+        "description": "Returns VPC peering connections visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching peering connections.",
+        "return_total_doc": "Number of peering connections reported by the API.",
+        "examples": """\
+- name: List all peering connections
+  susunola.tencentcloud.peering_connection_info:
+    region: ap-guangzhou
+
+- name: Find peering connections by ID
+  susunola.tencentcloud.peering_connection_info:
+    region: ap-guangzhou
+    peering_connection_ids: [pcx-xxxxxxxx]
+""",
+    },
+    {
+        "module": "vpc_address_template_info",
+        "string_pagination": True,  # Offset/Limit are declared str in this API
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeAddressTemplates",
+        "request_class": "DescribeAddressTemplatesRequest",
+        "ids": None,
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "AddressTemplateSet",
+        "response_total": "TotalCount",
+        "result_key": "address_templates",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud VPC address templates",
+        "description": "Returns IP address templates visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching address templates.",
+        "return_total_doc": "Number of address templates reported by the API.",
+        "examples": """\
+- name: List all address templates
+  susunola.tencentcloud.vpc_address_template_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        "module": "vpc_address_template_group_info",
+        "string_pagination": True,  # Offset/Limit are declared str in this API
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeAddressTemplateGroups",
+        "request_class": "DescribeAddressTemplateGroupsRequest",
+        "ids": None,
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "AddressTemplateGroupSet",
+        "response_total": "TotalCount",
+        "result_key": "address_template_groups",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud VPC address template groups",
+        "description": "Returns IP address template groups visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching address template groups.",
+        "return_total_doc": "Number of address template groups reported by the API.",
+        "examples": """\
+- name: List all address template groups
+  susunola.tencentcloud.vpc_address_template_group_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        "module": "security_group_rule_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeSecurityGroupPolicies",
+        "request_class": "DescribeSecurityGroupPoliciesRequest",
+        "ids": None,
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [
+            {
+                "name": "security_group_id",
+                "field": "SecurityGroupId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the security group whose rules are returned.",
+            },
+        ],
+        "response_items": None,
+        "response_total": None,
+        "result_key": "policies",
+        # The API returns a single SecurityGroupPolicySet object with the
+        # Ingress and Egress rule lists inside.
+        "pagination_type": "none",
+        "short_description": "Gather information about Tencent Cloud security group rules",
+        "description": "Returns the ingress and egress rule set of a security group.",
+        "return_items_doc": "Security group policy set with Ingress and Egress rule lists.",
+        "return_total_doc": "",
+        "examples": """\
+- name: List the rules of a security group
+  susunola.tencentcloud.security_group_rule_info:
+    region: ap-guangzhou
+    security_group_id: sg-xxxxxxxx
+""",
+    },
+    {
+        "module": "tag_info",
+        "version_added": "0.14.0",
+        "service_package": "tencentcloud.tag.v20180813",
+        "client_module": "tag_client",
+        "client_class": "TagClient",
+        "sdk_package": "tencentcloud-sdk-python-tag",
+        "endpoint": "tag.tencentcloudapi.com",
+        "action": "DescribeTags",
+        "request_class": "DescribeTagsRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "tag_key",
+                "field": "TagKey",
+                "type": "str",
+                # A tag key name, not a credential.
+                "no_log": False,
+                "doc": "Return only the tag with this key.",
+            },
+            {
+                "name": "tag_value",
+                "field": "TagValue",
+                "type": "str",
+                "doc": "Return only tags with this value.",
+            },
+        ],
+        "response_items": "Tags",
+        "response_total": "TotalCount",
+        "result_key": "tags",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud tags",
+        "description": "Returns the tags defined in the Tencent Cloud tag service.",
+        "return_items_doc": "Matching tags.",
+        "return_total_doc": "Number of tags reported by the API.",
+        "examples": """\
+- name: List all tags
+  susunola.tencentcloud.tag_info:
+    region: ap-guangzhou
+
+- name: Find a tag by key
+  susunola.tencentcloud.tag_info:
+    region: ap-guangzhou
+    tag_key: env
+""",
+    },
 ]
 
 

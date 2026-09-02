@@ -1,0 +1,2 @@
+minor_changes:
+  - "cos_object - add the ``method`` option (``GET``/``PUT``, default ``PUT``) selecting the HTTP method a pre-signed URL is signed for when ``mode=presign``; a non-default ``method`` with any other mode fails the task explicitly."

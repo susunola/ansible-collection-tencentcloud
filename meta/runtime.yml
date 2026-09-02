@@ -7,10 +7,14 @@ action_groups:
     - advisor_strategy_info
     - ags_sandbox_instance_info
     - alb_listener
+    - alb_listener_info
     - alb_load_balancer
+    - alb_load_balancer_info
     - alb_security_policy_info
     - alb_target_group
+    - alb_target_group_info
     - alb_target_group_targets
+    - alb_target_group_targets_info
     - ame_ktv_robot_info
     - ams_task_info
     - anicloud_resource_info
@@ -51,6 +55,7 @@ action_groups:
     - cam_oidc_provider
     - cam_policy
     - cam_policy_attachment
+    - cam_policy_attachment_info
     - cam_policy_info
     - cam_role
     - cam_role_info
@@ -132,11 +137,14 @@ action_groups:
     - ckafka_user
     - ckafka_user_info
     - clb_listener
+    - clb_listener_info
     - clb_listener_target
+    - clb_listener_target_info
     - clb_load_balancer
     - clb_load_balancer_info
     - clb_rule
     - clb_target_group
+    - clb_target_group_info
     - cloudaudit_audit
     - cloudaudit_event_info
     - cloudaudit_track
@@ -278,6 +286,7 @@ action_groups:
     - hasim_link_info
     - havip
     - havip_association
+    - havip_info
     - hunyuan_glossary_info
     - iai_group_info
     - iap_login_session_duration_info
@@ -351,10 +360,14 @@ action_groups:
     - ms_shield_instance_info
     - msp_migration_project_info
     - nat_gateway
+    - nat_gateway_dnat_rule_info
     - nat_gateway_info
     - nat_gateway_rule
+    - nat_gateway_snat_rule_info
     - network_acl
+    - network_acl_info
     - network_interface
+    - network_interface_info
     - oceanus_cluster_info
     - oceanus_job
     - oceanus_workspace
@@ -366,6 +379,7 @@ action_groups:
     - organization_node
     - partners_agent_deals_by_cache_info
     - peering_connection
+    - peering_connection_info
     - portal_document_info
     - postgres_instance_info
     - postgresql_account
@@ -390,13 +404,17 @@ action_groups:
     - route_table_info
     - rum_project_info
     - scf_alias
+    - scf_alias_info
     - scf_function
     - scf_function_info
     - scf_trigger
+    - scf_trigger_info
     - scf_version
+    - scf_version_info
     - security_group
     - security_group_info
     - security_group_rule
+    - security_group_rule_info
     - securitylake_security_alarm_table_info
     - ses_black_email_address_info
     - smh_library_info
@@ -419,6 +437,7 @@ action_groups:
     - subnet_info
     - svp_saving_plan_coverage_info
     - tag
+    - tag_info
     - tat_command
     - tat_command_info
     - tat_invoker
@@ -494,6 +513,7 @@ action_groups:
     - tke_cluster_info
     - tke_cluster_kubeconfig
     - tke_node_pool
+    - tke_node_pool_info
     - tokenhub_model_info
     - tourism_draw_resource_info
     - trabbit_rabbit_mq_serverless_instance_info
@@ -518,6 +538,8 @@ action_groups:
     - vpc
     - vpc_address_template
     - vpc_address_template_group
+    - vpc_address_template_group_info
+    - vpc_address_template_info
     - vpc_flow_log
     - vpc_info
     - vpn_connection
@@ -546,7 +568,16 @@ action_groups:
     - yunjing_account_statistic_info
 
 # Deprecation process: modules and plugins are deprecated by adding a
-# plugin_routing.deprecation entry for them (with removal_in and
+# plugin_routing.deprecation entry for them (with removal_version and
 # warning_text). A deprecated plugin stays available for at least one
 # major release before it is removed in a later major release.
+# See docs/deprecation-policy.md for the full policy and the matching
+# DOCUMENTATION/changelog changes. Template for the first real entry:
+#
+# plugin_routing:
+#   modules:
+#     old_module_name:
+#       deprecation:
+#         removal_version: 2.0.0
+#         warning_text: Use susunola.tencentcloud.new_module_name instead.
 plugin_routing: {}

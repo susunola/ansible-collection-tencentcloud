@@ -44,13 +44,15 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install "ansible-core==${{ matrix.ansible-core }}" pytest pytest-xdist yamllint ruff
       # The committed _info specs are generated against a specific SDK
-      # release. This sentinel installs the SDK the environment would
-      # resolve and fails when it drifts from the GENERATED_SDK_VERSION
-      # stamp, so stale specs are regenerated deliberately (and reviewed)
-      # instead of shipping silently.
+      # release. requirements.txt allows the SDK as a compatibility range
+      # for users, so this sentinel first installs the range, then re-pins
+      # the SDK to the GENERATED_SDK_VERSION stamp, and fails when the
+      # stamp and the pinned install drift. Stale specs are regenerated
+      # deliberately (and reviewed) instead of shipping silently.
       - name: SDK drift sentinel
         run: |
           python -m pip install -r requirements.txt
+          python -m pip install "tencentcloud-sdk-python==$(python scripts/check_sdk_drift.py --print-stamp)"
           python scripts/check_sdk_drift.py --check
       - name: Generated modules are up to date
         run: python scripts/generate_info_modules.py --check
@@ -113,6 +115,7 @@ jobs:
       - name: SDK contract tests
         run: |
           python -m pip install -r requirements.txt pytest-cov
+          python -m pip install "tencentcloud-sdk-python==$(python scripts/check_sdk_drift.py --print-stamp)"
           PYTHONPATH="${{ github.workspace }}" python -m pytest tests/contract tests/unit/plugins/module_utils tests/unit/plugins/modules -q \
             --cov=plugins/module_utils --cov=plugins/modules \
             --cov-report=term-missing --cov-report=xml:${GITHUB_WORKSPACE}/coverage.xml \

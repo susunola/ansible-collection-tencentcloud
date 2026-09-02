@@ -210,6 +210,25 @@ def test_absent_rejects_download_mode(client):
         assert "mode=sync" in exc.args[0]["msg"]
 
 
+def test_presign_get_method_returns_download_url(client):
+    module_args(bucket="mybucket", appid=APPID, key="k", mode="presign", method="GET")
+    result = run(cos_object.run_module)
+    assert result["changed"] is False
+    assert "method=GET" in result["url"]
+    client.upload_file.assert_not_called()
+    client.delete_object.assert_not_called()
+
+
+def test_method_rejected_outside_presign(client, src):
+    module_args(bucket="mybucket", appid=APPID, key="k", src=src, method="GET")
+    try:
+        run(cos_object.run_module)
+        raise AssertionError("expected AnsibleFailJson")
+    except AnsibleFailJson as exc:
+        assert "method only applies to mode=presign" in exc.args[0]["msg"]
+    client.upload_file.assert_not_called()
+
+
 def test_check_mode_upload_makes_no_writes(client, src):
     module_args(bucket="mybucket", appid=APPID, key="k", src=src, _ansible_check_mode=True)
     result = run(cos_object.run_module)

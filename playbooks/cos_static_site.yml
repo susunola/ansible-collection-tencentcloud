@@ -41,6 +41,18 @@
         expires: 600
       register: presigned
 
-    - name: Show the pre-signed URL
+    - name: Mint a short-lived pre-signed download URL for the index page
+      susunola.tencentcloud.cos_object:
+        region: "{{ tencentcloud_region | default('ap-guangzhou') }}"
+        bucket: "{{ site_bucket }}"
+        key: index.html
+        mode: presign
+        method: GET
+        expires: 600
+      register: presigned_get
+
+    - name: Show the pre-signed URLs
       ansible.builtin.debug:
-        var: presigned.url
+        msg:
+          upload: "{{ presigned.url }}"
+          download: "{{ presigned_get.url }}"
