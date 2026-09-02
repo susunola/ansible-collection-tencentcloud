@@ -6,7 +6,8 @@ rot silently when a module is added or removed:
 
 * ``meta/runtime.yml`` -- the ``action_groups.all`` list that powers
   ``module_defaults: group/susunola.tencentcloud.all``;
-* ``README.md`` -- the resource-module table and the ``_info`` module table.
+* ``README.md`` -- the resource-module table and the ``_info`` module table;
+* ``galaxy.yml`` -- the module count embedded in the ``description``.
 
 Run without arguments to rewrite the managed regions in place; run with
 ``--check`` (used in CI) to exit 1 when any registry is stale. Everything
@@ -33,6 +34,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 MODULES_DIR = REPO_ROOT / "plugins" / "modules"
 RUNTIME_YML = REPO_ROOT / "meta" / "runtime.yml"
 README_MD = REPO_ROOT / "README.md"
+GALAXY_YML = REPO_ROOT / "galaxy.yml"
 
 TABLE_HEADER = "| Module | Purpose |"
 TABLE_SEPARATOR = "| --- | --- |"
@@ -119,6 +121,25 @@ def render_readme(text, write_rows, info_rows):
     return "".join(lines)
 
 
+def render_galaxy_yml(text, module_names):
+    """Return *text* with the module count in ``description`` refreshed.
+
+    The description embeds a count (e.g. "524 modules (resource modules plus
+    _info facts modules) cover ..."). The count is the only generated part;
+    the surrounding wording stays hand-written. A stale count is an easy
+    slip (every description edit after a module batch lands), so this script
+    keeps it derived like the README and runtime.yml registries.
+    """
+    match = re.search(
+        r"(?P<prefix>description: \".*?)(?P<count>\d+) modules", text, re.S)
+    if not match:
+        raise ValueError("galaxy.yml: no '<n> modules' count in description")
+    count = "%d modules" % len(module_names)
+    if match.group("count") != str(len(module_names)):
+        return text[:match.start("count")] + count + text[match.end("count"):]
+    return text
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -141,6 +162,8 @@ def main(argv=None):
             RUNTIME_YML.read_text(encoding="utf-8"), module_names)),
         (README_MD, render_readme(
             README_MD.read_text(encoding="utf-8"), write_rows, info_rows)),
+        (GALAXY_YML, render_galaxy_yml(
+            GALAXY_YML.read_text(encoding="utf-8"), module_names)),
     ]
 
     stale = []

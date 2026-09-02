@@ -4,8 +4,10 @@
 [![Ansible Galaxy](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgalaxy.ansible.com%2Fapi%2Fv3%2Fcollections%2Fsusunola%2Ftencentcloud%2F&query=highest_version.version&label=Ansible%20Galaxy&color=blue)](https://galaxy.ansible.com/susunola/tencentcloud)
 
 `susunola.tencentcloud` provides Ansible modules and plugins for managing Tencent
-Cloud resources. It is developed as a community collection targeting inclusion
-in the `ansible-collections` GitHub organization.
+Cloud resources. It is developed as a community collection and is being
+reviewed for inclusion in the `ansible` community package (tracked in
+[issue #8](https://github.com/susunola/ansible-collection-tencentcloud/issues/8));
+the repository stays under the `susunola` namespace.
 
 ## Included modules
 
