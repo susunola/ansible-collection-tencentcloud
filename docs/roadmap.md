@@ -433,7 +433,12 @@ the official `ansible-collections` organisation.
     patched-clock timeout paths — full suite green. **Planned**:
     continue with the next highest-miss write modules per the per-file
     report, raising the
-    floor back towards 70; each batch must keep the gate green.
+    floor back towards 70; each batch must keep the gate green. Scaling
+    plan (structural scan of the 222 untested write modules + batching
+    proposal): docs/coverage-batching.md — 175 of the 222 share the same
+    helper skeleton, so a test-skeleton generator (lever 1) is the
+    recommended path to close the ~+4,000-statement gap in ~10-15 batches
+    instead of ~180.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
