@@ -659,6 +659,9 @@ modules:
   - DeleteImages
   - DescribeImages
   - ModifyImageAttribute
+  cvm_image_share:
+  - DescribeImageSharePermission
+  - ModifyImageSharePermission
   cvm_instance:
   - AttachResourcesTag
   - DescribeInstances
@@ -677,6 +680,10 @@ modules:
   - ImportInstancesActionTimer
   cvm_instance_info:
   - DescribeInstances
+  cvm_instance_security_group:
+  - AssociateSecurityGroups
+  - DescribeInstances
+  - DisassociateSecurityGroups
   cvm_launch_template:
   - CreateLaunchTemplate
   - DeleteLaunchTemplate
@@ -853,6 +860,16 @@ modules:
   - DescribeAddresses
   eis_runtime_deployed_instances_mc_info:
   - ListRuntimeDeployedInstancesMC
+  eks_cluster:
+  - CreateEKSCluster
+  - DeleteEKSCluster
+  - DescribeEKSClusters
+  - UpdateEKSCluster
+  eks_container_instance:
+  - CreateEKSContainerInstances
+  - DeleteEKSContainerInstances
+  - DescribeEKSContainerInstances
+  - UpdateEKSContainerInstance
   elasticsearch_index:
   - CreateIndex
   - DeleteIndex
@@ -1400,6 +1417,14 @@ modules:
   - DescribeLibraries
   sms_sign_info:
   - DescribeSmsSignList
+  sms_signature:
+  - AddSmsSign
+  - DeleteSmsSign
+  - DescribeSmsSignList
+  sms_template:
+  - AddSmsTemplate
+  - DeleteSmsTemplate
+  - DescribeSmsTemplateList
   sqlserver_account:
   - CreateAccount
   - DeleteAccount
@@ -1761,12 +1786,18 @@ modules:
   tke_cluster_authentication:
   - DescribeClusterAuthenticationOptions
   - ModifyClusterAuthenticationOptions
+  tke_cluster_autoscaler:
+  - DescribeClusterAsGroupOption
+  - ModifyClusterAsGroupOptionAttribute
   tke_cluster_endpoint:
   - CreateClusterEndpoint
   - DeleteClusterEndpoint
   - DescribeClusterEndpoints
   tke_cluster_info:
   - DescribeClusters
+  tke_cluster_upgrade:
+  - DescribeClusters
+  - UpdateClusterVersion
   tke_node_pool:
   - CreateClusterNodePool
   - DeleteClusterNodePool
@@ -1840,8 +1871,17 @@ modules:
   - DescribeInstances
   vm_task_info:
   - DescribeTasks
+  vod_class:
+  - CreateClass
+  - DeleteClass
+  - DescribeAllClass
   vod_incremental_migration_strategy_info:
   - DescribeIncrementalMigrationStrategyInfos
+  vod_sub_app:
+  - CreateSubAppId
+  - DescribeSubAppIds
+  - ModifySubAppIdInfo
+  - ModifySubAppIdStatus
   vpc:
   - AttachResourcesTag
   - CreateVpc
