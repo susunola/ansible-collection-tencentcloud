@@ -392,9 +392,13 @@ the official `ansible-collections` organisation.
     margin +4.29pp). **In progress — batch 3 (2026-09-02)**: added
     run-path + helper unit tests for `dbdc_db_custom_cluster` (97.6%,
     207/212, up from 45.8%) — 44 new tests, full suite 3200 green, total
-    coverage 59.29% -> 59.57% (gate 55 margin +4.57pp). **Planned**:
-    continue with the next highest-miss write modules (cdwch_instance
-    43.8%, cdn_domain 50.6%, lighthouse_instance 48.0%), raising the
+    coverage 59.29% -> 59.57% (gate 55 margin +4.57pp). **In progress —
+    batch 4 (2026-09-02)**: added run-path + helper unit tests for
+    `cdwch_instance` (97.7%, 172/176, up from 43.8%) — 53 new tests, full
+    suite 3253 green, total coverage 59.57% -> 59.81% (gate 55 margin
+    +4.81pp). **Planned**:
+    continue with the next highest-miss write modules (cdn_domain
+    50.6%, lighthouse_instance 48.0%), raising the
     floor back towards 70; each batch must keep the gate green.
 
 Resource modules must be idempotent, support check mode, expose API request
