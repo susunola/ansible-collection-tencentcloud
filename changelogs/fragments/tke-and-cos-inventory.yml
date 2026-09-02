@@ -1,0 +1,3 @@
+minor_changes:
+  - tencentcloud_cos - new dynamic inventory plugin listing COS buckets (and optionally their objects) as hosts, keyed by bucket name, with region/prefix filters and constructed/cache support.
+  - tencentcloud_tke - new dynamic inventory plugin exposing TKE cluster nodes as hosts (worker pool by default), walking clusters and node pools per region with cluster/node-pool host variables.

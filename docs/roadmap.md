@@ -285,7 +285,17 @@ the official `ansible-collections` organisation.
     module tiers (325 core + 199 generated).
 51. Inventory expansion: `tencentcloud_cos` (bucket + object listing) and
     `tencentcloud_tke` (cluster + node pool) dynamic inventory plugins.
-    **Planned**
+    **Done** — `tencentcloud_cos` lists the account's buckets account-wide
+    through GetService (hosts keyed by the globally unique bucket name),
+    with region/name-prefix filters and an optional per-bucket object
+    listing capped by `max_objects`; `tencentcloud_tke` walks each region's
+    clusters and their node pools and exposes the nodes whose
+    `InstanceRole` is in `instance_roles` (worker pool by default) as
+    hosts, attaching `ClusterId`/`ClusterName`/`ClusterStatus`/
+    `NodePoolId`/`NodePoolName` host variables. Both support the
+    `constructed` and `inventory_cache` fragments, profile credential
+    fallback, and ship unit tests (38 new, 91 total in the inventory
+    suite).
 52. EDA event sources: COS bucket event notifications and TKE cluster
     events as `event_source` plugins, extending the `cls_topic`/`cmq_queue`
     pattern. **Planned**
