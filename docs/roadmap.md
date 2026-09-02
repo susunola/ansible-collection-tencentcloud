@@ -352,8 +352,12 @@ the official `ansible-collections` organisation.
     with a full requirement scorecard. Done so far: 1.0.0 released
     (unblocks the >= 1.0.0 rule), weekly ansible-core devel CI in place,
     `requires_ansible` floor moved onto maintained cores (2.19+). 1.0.0
-    is published on Galaxy (2026-09-02, `highest_version` 1.0.0); the
-    remaining step is the formal inclusion request (W4 in the issue).
+    is published on Galaxy (2026-09-02, `highest_version` 1.0.0). The
+    formal inclusion request was posted (2026-09-02) as
+    https://github.com/ansible-collections/ansible-inclusion/discussions/89
+    ("New collection inclusion request: susunola.tencentcloud", category
+    new collection reviews); remaining step is iterating on review
+    feedback (W4 in the issue).
 56. 1.0.0 release readiness (unblocks #55 W1): plan the 0.x -> 1.0.0
     release — lock the `requires_ansible` floor onto currently maintained
     cores (2.19/2.20/2.21; 2.16 core reached EOL 2025-07), set the Python
