@@ -460,7 +460,7 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
   ckafka_instance, cbs_disk, eip, nat_gateway, subnet) have ZERO integration
   targets — needs its own plan (not #57, which is the unit-coverage drive,
   tracked separately as G1b); flagship-first skeleton next.
-- **G1b unit breadth** (210/313 write modules have no unit test file; write
+- **G1b unit breadth** (206/313 write modules have no unit test file; write
   statement cov ~51% vs 70% target): in flight via #57 batches; lever-1
   skeleton generator shipped (batch 12, P0-01), generator-assisted batches
   follow from the next highest-miss modules. Batch 13 (2026-09-02, first
@@ -474,7 +474,11 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
   Batch 15 (2026-09-02): `alb_listener` (36 tests, 98%), 
   `trabbit_serverless_queue` (28 tests, 96%), `dc_direct_connect` (30 tests,
   96%), `cls_shipper` (29 tests, 96%) — 123 hermetic tests (Group B largest
-  untested cleared); full module + scripts suite 2572 green.
+  untested cleared); full module + scripts suite 2572 green. Batch 16
+  (2026-09-03): `alb_load_balancer` (34 tests, 97%), `ckafka_datahub_connection`
+  (42 tests, 97%), `cfw_internet_acl_rule` (32 tests, 97%), `tat_invoker`
+  (41 tests, 97%) — 149 hermetic tests; full module + scripts suite 2721
+  green.
 - **G2 ecosystem trust** (downloads 0 vs 11.8M–90.5M): inclusion #89
   awaiting reviewer; only active lever is reviewing another queued
   collection to raise our priority.

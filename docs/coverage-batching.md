@@ -3,22 +3,25 @@
 How to raise the CI coverage gate (55%) back towards 70% without writing
 ~200 module test files one by one at the current per-batch pace.
 
-## Current state (measured 2026-09-02, after batch 15)
+## Current state (measured 2026-09-03, after batch 16)
 
 - Gate: `--cov-fail-under=55`, baseline total ~60.9% after batches 1-11.
-- 313 write modules, 210 of them have **no** unit test file (batch 13 added
+- 313 write modules, 206 of them have **no** unit test file (batch 13 added
   `eks_container_instance`, `tke_node_pool`, `network_interface`,
   `ssm_parameter` — 102 tests, 93-98% each; batch 14 added
   `dc_direct_connect_tunnel`, `config_compliance_pack`, `cdn_cls_log_topic`,
   `ckafka_datahub_task` — 135 tests, 96-97% each; batch 15 cleared the
   largest untested Group B files: `alb_listener` (36 tests, 98%),
   `trabbit_serverless_queue` (28 tests, 96%), `dc_direct_connect` (30
-  tests, 96%), `cls_shipper` (29 tests, 96%) — 123 tests).
+  tests, 96%), `cls_shipper` (29 tests, 96%) — 123 tests; batch 16 added
+  `alb_load_balancer` (34 tests, 97%), `ckafka_datahub_connection` (42
+  tests, 97%), `cfw_internet_acl_rule` (32 tests, 97%), `tat_invoker` (41
+  tests, 97%) — 149 tests).
 - Target 70% needs roughly +4,000 covered statements. The untested write
   modules are the entire gap (module_utils at 92%, `_info` at ~86% are
   already near their ceiling).
 
-## The untested 222 are not one population
+## The untested modules are not one population
 
 Structural scan (top-level `def`s) splits them into three groups:
 
