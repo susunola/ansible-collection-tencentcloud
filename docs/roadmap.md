@@ -370,6 +370,17 @@ the official `ansible-collections` organisation.
     back-tagging historical commits unsafe; tags start at v1.0.0
     (release.yml already verifies tag == galaxy.yml version). Published
     to Galaxy as 1.0.0 (2026-09-02, release run 33605335645).
+57. Write-module unit-test coverage drive (CI gate): the SDK contract
+    coverage gate (`--cov-fail-under`) was born red at 70 — introduced
+    2026-08-31 in `01fd38e` after the batch module-generation run pushed
+    the write-module count to 313, of which only 63 have unit tests.
+    Measured baseline 2026-09-02: 58.6% total (module_utils 92.5%,
+    `_info` modules 85.7%, write modules 51.4%; 11,710 of the 16,097
+    missed statements come from the 249 untested write modules). The
+    gate is recalibrated to 55 (just under baseline, still catches
+    regressions). **Planned**: add harness run-path unit tests to the
+    highest-miss write modules in batches, raising the floor back
+    towards 70; each batch must keep the gate green.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
