@@ -389,10 +389,13 @@ the official `ansible-collections` organisation.
     batch 2 (2026-09-02)**: added run-path + helper unit tests for
     `tdmysql_db_instance` (95.8%, 204/213, up from 43.7%) — 42 new tests,
     full suite 3156 green, total coverage 59.00% -> 59.29% (gate 55
-    margin +4.29pp). **Planned**: continue with the next highest-miss
-    write modules (dbdc_db_custom_cluster 45.8%, cdwch_instance 43.8%,
-    cdn_domain 50.6%, lighthouse_instance 48.0%), raising the floor back
-    towards 70; each batch must keep the gate green.
+    margin +4.29pp). **In progress — batch 3 (2026-09-02)**: added
+    run-path + helper unit tests for `dbdc_db_custom_cluster` (97.6%,
+    207/212, up from 45.8%) — 44 new tests, full suite 3200 green, total
+    coverage 59.29% -> 59.57% (gate 55 margin +4.57pp). **Planned**:
+    continue with the next highest-miss write modules (cdwch_instance
+    43.8%, cdn_domain 50.6%, lighthouse_instance 48.0%), raising the
+    floor back towards 70; each batch must keep the gate green.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
