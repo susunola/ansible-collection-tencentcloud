@@ -33,8 +33,23 @@ all of A+B.
 
 ### 1. A test-skeleton generator (biggest win, low risk)
 
-Extend `scripts/generate_info_modules.py` (or a sibling script) with a
-`--module-test <module>` mode that statically reads one write module and
+**Status (2026-09-02): shipped as `scripts/generate_module_test_skeleton.py`
+(P0-01) with 19 hermetic unit tests.** It works as proposed below, with two
+deliberate divergences: (a) `find*`/`wait*`/misc-helper stubs are
+non-executing `xfail` placeholders annotated with the module line range they
+should exercise — an unfinished fake store is not guaranteed to crash
+gracefully (api_gateway's `find` crashes on the stub response shape, and a
+`wait*` on a never-converging store would sleep for the full timeout), so
+stubs fail fast until a human wires the store; and (b) fake-client write ops
+carry a TODO instead of a generic store mutation, because the store shape is
+resource-specific. Verified emissions on `api_gateway_api_key` (7 passed +
+5 xfail, 0.35s) and `cam_user` (2 passed + 9 xfail, two-loader path) run
+green and hermetic with no SDK installed. Run
+`python scripts/generate_module_test_skeleton.py --module-test <module>`
+then finish the xfail stubs; delete the MARKER line so regeneration and CI
+`--check` leave the file alone.
+
+The generator statically reads one write module and
 emits a complete, runnable harness test file:
 
 - imports + `module_args`/`run`/`AnsibleFailJson`/`FakeModels`/

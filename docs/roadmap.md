@@ -430,15 +430,23 @@ the official `ansible-collections` organisation.
     helper-only test file for `ccn_attachment` into the full run-path +
     helper harness (96%, 87/91, up from a 13-line smoke test) — 22 tests
     incl. attach/detach/update-description flows, re-attach no-change and
-    patched-clock timeout paths — full suite green. **Planned**:
+    patched-clock timeout paths — full suite green. **In progress — batch
+    12 (2026-09-02)**: shipped the lever-1 test-skeleton generator (P0-01)
+    as `scripts/generate_module_test_skeleton.py`, with 19 hermetic unit
+    tests in `tests/unit/scripts/test_generate_module_test_skeleton.py`;
+    emitted skeletons verified hermetic and green out of the box on
+    `api_gateway_api_key` (7 passed + 5 xfail in 0.35s) and `cam_user`
+    (2 passed + 9 xfail, exercises the two-loader path) in the unit
+    layout. **Planned**:
     continue with the next highest-miss write modules per the per-file
     report, raising the
     floor back towards 70; each batch must keep the gate green. Scaling
     plan (structural scan of the 222 untested write modules + batching
     proposal): docs/coverage-batching.md — 175 of the 222 share the same
-    helper skeleton, so a test-skeleton generator (lever 1) is the
-    recommended path to close the ~+4,000-statement gap in ~10-15 batches
-    instead of ~180.
+    helper skeleton, so the test-skeleton generator (lever 1, shipped in
+    batch 12 as `scripts/generate_module_test_skeleton.py`) is expected to
+    close the ~+4,000-statement gap in ~10-15 generator-assisted batches
+    instead of ~180 hand-written files.
 
 ## 58. Industry benchmark gap closure (2026-09-02)
 
@@ -454,7 +462,8 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
   tracked separately as G1b); flagship-first skeleton next.
 - **G1b unit breadth** (222/313 write modules have no unit test file; write
   statement cov ~51% vs 70% target): in flight via #57 batches; lever-1
-  skeleton generator next.
+  skeleton generator shipped (batch 12, P0-01), generator-assisted batches
+  follow from the next highest-miss modules.
 - **G2 ecosystem trust** (downloads 0 vs 11.8M–90.5M): inclusion #89
   awaiting reviewer; only active lever is reviewing another queued
   collection to raise our priority.
