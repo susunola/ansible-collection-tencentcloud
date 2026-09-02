@@ -460,7 +460,7 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
   ckafka_instance, cbs_disk, eip, nat_gateway, subnet) have ZERO integration
   targets — needs its own plan (not #57, which is the unit-coverage drive,
   tracked separately as G1b); flagship-first skeleton next.
-- **G1b unit breadth** (202/313 write modules have no unit test file; write
+- **G1b unit breadth** (194/313 write modules have no unit test file; write
   statement cov ~51% vs 70% target): in flight via #57 batches; lever-1
   skeleton generator shipped (batch 12, P0-01), generator-assisted batches
   follow from the next highest-miss modules. Batch 13 (2026-09-02, first
@@ -484,7 +484,10 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
   module + scripts suite 2864 green. Batch 18 (2026-09-03): `cfw_vpc_acl_rule`
   (34 tests, 96%), `mqtt_instance` (29 tests, 96%), `teo_origin_group` (35
   tests, 97%), `cbs_auto_snapshot_policy` (45 tests, 97%) — 143 hermetic
-  tests; full module + scripts suite 3007 green.
+  tests; full module + scripts suite 3007 green. Batch 19 (2026-09-03):
+  `sms_signature` (19 tests, 95%), `tcr_namespace` (23 tests, 96%),
+  `vod_sub_app` (18 tests, 96%), `eks_cluster` (16 tests, 95%) — 76 hermetic
+  tests; full module + scripts suite 3083 green.
 - **G2 ecosystem trust** (downloads 0 vs 11.8M–90.5M): inclusion #89
   awaiting reviewer; only active lever is reviewing another queued
   collection to raise our priority.
