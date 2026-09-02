@@ -420,7 +420,13 @@ the official `ansible-collections` organisation.
     lines) — 36 tests incl. pagination past 100, force-replace
     re-import ordering and association add/remove/switch — full suite
     3405 green, total coverage 60.58% -> 60.75% (gate 55 margin
-    +5.75pp). **Planned**:
+    +5.75pp). **In progress — batch 10 (2026-09-02)**: added a full
+    harness test file for `lighthouse_snapshot` (96.0%, 96/100, up from
+    40.0%; the 4 misses are the lazy-import and entrypoint lines) —
+    32 tests incl. the create/rename/delete/wait flows, a multi-poll
+    NORMAL transition and patched-clock timeout/FAILED paths — full
+    suite 3437 green, total coverage 60.75% -> 60.89% (gate 55 margin
+    +5.89pp). **Planned**:
     continue with the next highest-miss write modules per the per-file
     report, raising the
     floor back towards 70; each batch must keep the gate green.
