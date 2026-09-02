@@ -440,6 +440,30 @@ the official `ansible-collections` organisation.
     recommended path to close the ~+4,000-statement gap in ~10-15 batches
     instead of ~180.
 
+## 58. Industry benchmark gap closure (2026-09-02)
+
+Compared against amazon.aws / azure.azcollection / google.cloud (Galaxy
+published tarballs, real counts) — see `docs/capability-map.html` INDUSTRY
+BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
+
+- **G1 integration depth** (21 targets/62 yml vs amazon 160/690, google
+  115/468): 13 flagship write modules (cvm_instance, vpc, cdb_instance,
+  redis_instance, tke_cluster, clb_load_balancer, cos_object, scf_function,
+  ckafka_instance, cbs_disk, eip, nat_gateway, subnet) have ZERO integration
+  targets — needs its own plan (not #57, which is the unit-coverage drive,
+  tracked separately as G1b); flagship-first skeleton next.
+- **G1b unit breadth** (222/313 write modules have no unit test file; write
+  statement cov ~51% vs 70% target): in flight via #57 batches; lever-1
+  skeleton generator next.
+- **G2 ecosystem trust** (downloads 0 vs 11.8M–90.5M): inclusion #89
+  awaiting reviewer; only active lever is reviewing another queued
+  collection to raise our priority.
+- **G3 ansible-core floor** (>=2.19 vs >=2.16/2.17): deliberately NOT
+  chased — 2.16–2.18 are EOL (2025-07/11, 2026-05); the others' floors
+  are legacy declarations. Capability-map wording corrected to say so.
+- **G4 maintainer resources** (solo vs vendor teams): mitigations only —
+  co-maintainer path in CONTRIBUTING.md, recruit after inclusion passes.
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
 
