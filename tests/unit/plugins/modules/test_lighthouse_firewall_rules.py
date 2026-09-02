@@ -259,8 +259,9 @@ def test_check_mode_remove_makes_no_writes(client):
     module_args(instance_id="lhins-1", rules=[RULE_A], _ansible_check_mode=True)
     result = run(fw.run_module)
     assert result["changed"] is True
-    # build_diff strips empty values from both sides of the diff.
+
     def stripped(rules):
+        # build_diff strips empty values from both sides of the diff.
         return [{key: value for key, value in rule.items() if value}
                 for rule in fw.normalize_rules(rules)]
     assert result["diff"]["before"] == stripped([RULE_A, RULE_B])
