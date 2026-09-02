@@ -311,7 +311,21 @@ the official `ansible-collections` organisation.
     tests green on pytest and ansible-test.
 53. Role library: `tc_web_stack` (CVM + CLB + CDB + Redis in one call),
     `tc_tke_cluster` (managed cluster + node pool + addons) and
-    `tc_disaster_recovery` (cross-region replica) roles. **Planned**
+    `tc_disaster_recovery` (cross-region replica) roles. **Done** —
+    `tc_web_stack` provisions a CVM pool, a MySQL CDB and a Redis cache
+    fronted by a CLB with an HTTP listener, auto-registering the created
+    instances as backends (explicit target list or per-component enable
+    flags, teardown in reverse order); `tc_tke_cluster` reconciles a managed
+    cluster plus the `tc_tke_cluster_node_pools`/`tc_tke_cluster_addons`
+    lists idempotently (teardown: addons -> node pools -> cluster);
+    `tc_disaster_recovery` prepares cross-region DR artifacts — a golden CVM
+    image from a source instance, COS bucket replication to the DR region
+    and an optional standby CLB in the DR region. All roles follow the
+    existing `tc_launch`/`tc_clb_http` conventions (tc_-prefixed defaults,
+    `default(omit)` option passthrough, skip when identity vars are empty),
+    validated by role YAML/argspec cross-checks, `ansible-playbook
+    --syntax-check` on a provision+teardown playbook, and green
+    ruff/ansible-test sanity/units.
 54. Generator upgrade: extend `scripts/generate_info_modules.py` to emit
     resource-module skeletons (argument spec + request builder) from SDK
     metadata so new write modules start from generated scaffolding instead
