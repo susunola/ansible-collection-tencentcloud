@@ -571,11 +571,11 @@ run with `--check` to verify they are up to date). The module tables and the
 
 ## Requirements
 
-- ansible-core 2.16 or newer
-- Python 3.10 or newer
-- `tencentcloud-sdk-python` 3.0.1000 or newer
-- `tencentcloud-sdk-python-tag` 3.0.1000 or newer (only for tag reconciliation)
-- `tencentcloud-sdk-python-tat` 3.0.1000 or newer (only for the `tat` connection plugin)
+- ansible-core 2.19 or newer
+- Python 3.11 or newer
+- `tencentcloud-sdk-python` 3.1.164 or newer
+- `tencentcloud-sdk-python-tag` 3.1.164 or newer (only for tag reconciliation)
+- `tencentcloud-sdk-python-tat` 3.1.164 or newer (only for the `tat` connection plugin)
 - `cos-python-sdk-v5` 1.9.0 or newer (only for the `cos_*` modules)
 
 Install from Ansible Galaxy:

@@ -349,20 +349,26 @@ the official `ansible-collections` organisation.
     (no namespace change, no move to the `ansible-collections` org).
     Tracked in
     https://github.com/susunola/ansible-collection-tencentcloud/issues/8
-    with a full requirement scorecard. Scorecard PASSes on galaxy.yml/
-    README/CoC/contributing/changelog/`requires_ansible`/EOL-core sanity;
-    three FAILs are the actual work: version must be >= 1.0.0 (see #56),
-    weekly sanity/units against ansible-core `devel` or `milestone`
-    (2026-03 requirement; `.github/workflows/devel.yml` drafted), and a
-    git tag per release matching the Galaxy version (repo currently has
-    no tags). The formal inclusion request is deferred until >= 1.0.0 is
-    on Galaxy (W4 in the issue).
+    with a full requirement scorecard. Done so far: 1.0.0 released
+    (unblocks the >= 1.0.0 rule), weekly ansible-core devel CI in place,
+    `requires_ansible` floor moved onto maintained cores (2.19+). The
+    remaining step is the formal inclusion request once 1.0.0 is on
+    Galaxy (W4 in the issue).
 56. 1.0.0 release readiness (unblocks #55 W1): plan the 0.x -> 1.0.0
     release — lock the `requires_ansible` floor onto currently maintained
     cores (2.19/2.20/2.21; 2.16 core reached EOL 2025-07), set the Python
     floor, fold deprecations, audit removal candidates, back-tag releases
     (`v0.13.0`, ...) so tag == Galaxy version, and make tagging part of
-    the release workflow. **Planned**
+    the release workflow. **Done**: released as 1.0.0 (tag `v1.0.0`) —
+    `meta/runtime.yml` requires_ansible >= 2.19.0, CI matrix trimmed from
+    2.16-2.21 to 2.19/2.20/2.21 (python 3.11/3.12/3.13), release workflow
+    pinned to ansible-core 2.19, README requirements aligned (ansible-core
+    2.19+ / Python 3.11+ / SDK 3.1.164+), SECURITY.md supported-version
+    table refreshed to 1.0.x. Zero modules deprecated or removed (audit
+    found no `deprecated`/`removed_in` markers across 524 modules). 0.x
+    tags were NOT back-filled: the tag-triggered release workflow makes
+    back-tagging historical commits unsafe; tags start at v1.0.0
+    (release.yml already verifies tag == galaxy.yml version).
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
