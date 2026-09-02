@@ -1,2 +1,0 @@
-minor_changes:
-  - "Add idempotent TencentDB for MySQL and Redis automatic backup configuration modules."

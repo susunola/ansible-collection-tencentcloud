@@ -1,8 +1,0 @@
-bugfixes:
-  - "cvm_disaster_recover_group - drop the ``strategy`` and ``partition_count`` options; the CVM placement-group API declares neither on ``CreateDisasterRecoverGroupRequest`` nor on the ``DisasterRecoverGroup`` response, so both values were silently discarded and could never converge."
-  - "cvm_disaster_recover_group_binding - send the singular ``DisasterRecoverGroupId`` string expected by ``ModifyInstancesDisasterRecoverGroupRequest`` instead of a ``DisasterRecoverGroupIds`` list, and drop the ``partition_number`` option that the API does not declare; binding requests previously carried no group at all."
-  - "postgresql_instance - declare ``waiter_delay`` and ``waiter_timeout`` in the argument spec so the documented 10 second and 900 second defaults are the ones actually applied, and quote the ``storage`` and ``auto_renew`` descriptions so their embedded commas no longer break the option documentation."
-  - "waf_custom_white_rule - mark ``bypass_modules`` as ``no_log=False``; it carries WAF module names, not a secret."
-
-minor_changes:
-  - "Reformat the generated module and contract-test sources so every file satisfies the ``pep8`` sanity test, clearing 5660 ``E701``/``E702``/``E703`` and 1367 ``E501`` violations that had been failing CI on every push."

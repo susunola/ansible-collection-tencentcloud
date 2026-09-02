@@ -1,3 +1,0 @@
-minor_changes:
-  - "Add Managed Grafana internet-access and complete IP-whitelist configuration modules."
-  - "Add Grafana notification channels plus Prometheus global notification and Alertmanager singleton configuration modules."
