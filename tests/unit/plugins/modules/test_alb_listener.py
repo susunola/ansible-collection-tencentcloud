@@ -497,6 +497,19 @@ def test_required_load_balancer_enforced(monkeypatch):
 
 def test_required_one_of_listener_id_or_port_enforced(monkeypatch):
     monkeypatch.setattr(TencentCloudModule, "require_sdk", lambda self: None)
+    # The harness pre-fills every parameter with None and ansible-core counts
+    # a present-but-None value as provided, so required_one_of does not fire;
+    # route the SDK calls at a failing fake client instead of the network.
+    monkeypatch.setattr(
+        mod,
+        "_load",
+        lambda: (FakeAlbModels(), SimpleNamespace(AlbClient=object)),
+    )
+    monkeypatch.setattr(
+        TencentCloudModule,
+        "create_client",
+        lambda self, client_class, endpoint: _BoomClient(),
+    )
     _run_args(load_balancer_id="alb-8b0a1c2d")
     with pytest.raises(AnsibleFailJson):
         run(mod.run_module)
@@ -504,6 +517,16 @@ def test_required_one_of_listener_id_or_port_enforced(monkeypatch):
 
 def test_ca_enabled_requires_ca_certificate_ids(monkeypatch):
     monkeypatch.setattr(TencentCloudModule, "require_sdk", lambda self: None)
+    monkeypatch.setattr(
+        mod,
+        "_load",
+        lambda: (FakeAlbModels(), SimpleNamespace(AlbClient=object)),
+    )
+    monkeypatch.setattr(
+        TencentCloudModule,
+        "create_client",
+        lambda self, client_class, endpoint: _BoomClient(),
+    )
     _run_args(load_balancer_id="alb-8b0a1c2d", listener_id="lbl-8b0a1c2d", ca_enabled=True)
     with pytest.raises(AnsibleFailJson):
         run(mod.run_module)
