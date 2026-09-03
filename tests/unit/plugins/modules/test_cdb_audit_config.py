@@ -187,7 +187,7 @@ def test_unchanged_enabled_is_noop(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is False
     assert result["audit_config"] == {"enabled": True, "retention_days": 30}
-    assert not any(name == "ModifyAuditConfig" for name, _ in fake.calls)
+    assert not any(name == "ModifyAuditConfig" for name, request in fake.calls)
 
 
 def test_unchanged_disabled_is_noop(monkeypatch):
@@ -206,7 +206,7 @@ def test_enable_audit_from_disabled(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is True
     assert result["audit_config"] == {"enabled": True, "retention_days": 180}
-    assert [name for name, _ in fake.calls] == ["DescribeAuditConfig", "ModifyAuditConfig", "DescribeAuditConfig"]
+    assert [name for name, request in fake.calls] == ["DescribeAuditConfig", "ModifyAuditConfig", "DescribeAuditConfig"]
     modify = [req for name, req in fake.calls if name == "ModifyAuditConfig"][0]
     assert modify.CloseAudit is False
     assert modify.LogExpireDay == 180
@@ -249,7 +249,7 @@ def test_check_mode_enable_is_dry_run(monkeypatch):
     assert result["audit_config"] == {"enabled": False, "retention_days": 0}  # current, not target
     assert result["diff"]["before"] == {"enabled": False, "retention_days": 0}
     assert result["diff"]["after"] == {"enabled": True, "retention_days": 180}
-    assert not any(name == "ModifyAuditConfig" for name, _ in fake.calls)
+    assert not any(name == "ModifyAuditConfig" for name, request in fake.calls)
     assert fake.state == {"LogExpireDay": 0, "IsClosing": False}  # remote untouched
 
 
@@ -260,7 +260,7 @@ def test_check_mode_disable_is_dry_run(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is True
     assert result["diff"]["after"] == {"enabled": False, "retention_days": 0}
-    assert not any(name == "ModifyAuditConfig" for name, _ in fake.calls)
+    assert not any(name == "ModifyAuditConfig" for name, request in fake.calls)
 
 
 def test_missing_instance_id_fails_validation():

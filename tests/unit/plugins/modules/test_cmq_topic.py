@@ -238,7 +238,7 @@ def test_absent_not_found_is_noop(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is False
     assert result["topic"] is None
-    assert not any(name == "DeleteCmqTopic" for name, _ in fake.calls)
+    assert not any(name == "DeleteCmqTopic" for name, request in fake.calls)
 
 
 def test_absent_deletes_topic(monkeypatch):
@@ -262,7 +262,7 @@ def test_absent_check_mode_is_dry_run(monkeypatch):
     assert result["topic"]["TopicId"] == "cmq-1"  # current kept for preview
     assert result["diff"]["before"]["TopicName"] == "order-events"
     assert result["diff"]["after"] is None
-    assert not any(name == "DeleteCmqTopic" for name, _ in fake.calls)
+    assert not any(name == "DeleteCmqTopic" for name, request in fake.calls)
     assert len(fake.topics) == 1  # remote untouched
 
 
@@ -274,7 +274,7 @@ def test_present_creates_topic_and_refinds(monkeypatch):
     assert result["changed"] is True
     assert result["topic"]["TopicId"] == "cmq-1"
     assert result["topic"]["TopicName"] == "order-events"
-    assert [name for name, _ in fake.calls] == ["DescribeCmqTopics", "CreateCmqTopic", "DescribeCmqTopics"]
+    assert [name for name, request in fake.calls] == ["DescribeCmqTopics", "CreateCmqTopic", "DescribeCmqTopics"]
     create = [req for name, req in fake.calls if name == "CreateCmqTopic"][0]
     assert create.TopicName == "order-events"
     assert create.MaxMsgSize == 65536
@@ -310,7 +310,7 @@ def test_present_check_mode_create_is_dry_run(monkeypatch):
         "FilterType": 1,
         "Trace": False,
     }
-    assert not any(name == "CreateCmqTopic" for name, _ in fake.calls)
+    assert not any(name == "CreateCmqTopic" for name, request in fake.calls)
 
 
 def test_present_unchanged_is_noop(monkeypatch):
@@ -320,7 +320,7 @@ def test_present_unchanged_is_noop(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is False
     assert result["topic"]["TopicId"] == "cmq-1"
-    assert not any(name in ("CreateCmqTopic", "ModifyCmqTopicAttribute") for name, _ in fake.calls)
+    assert not any(name in ("CreateCmqTopic", "ModifyCmqTopicAttribute") for name, request in fake.calls)
 
 
 def test_present_retention_drift_modifies(monkeypatch):
@@ -330,7 +330,7 @@ def test_present_retention_drift_modifies(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is True
     assert result["topic"]["MsgRetentionSeconds"] == 86400  # re-find after modify
-    assert [name for name, _ in fake.calls] == ["DescribeCmqTopics", "ModifyCmqTopicAttribute", "DescribeCmqTopics"]
+    assert [name for name, request in fake.calls] == ["DescribeCmqTopics", "ModifyCmqTopicAttribute", "DescribeCmqTopics"]
     modify = [req for name, req in fake.calls if name == "ModifyCmqTopicAttribute"][0]
     assert modify.TopicName == "order-events"
     assert modify.MsgRetentionSeconds == 86400
@@ -366,7 +366,7 @@ def test_present_check_mode_update_is_dry_run(monkeypatch):
     assert result["topic"]["MsgRetentionSeconds"] == 3600  # pre-update current
     assert result["diff"]["before"]["MsgRetentionSeconds"] == 3600
     assert result["diff"]["after"]["MsgRetentionSeconds"] == 86400
-    assert not any(name == "ModifyCmqTopicAttribute" for name, _ in fake.calls)
+    assert not any(name == "ModifyCmqTopicAttribute" for name, request in fake.calls)
 
 
 def test_present_filter_type_drift_fails_immutable(monkeypatch):
@@ -379,7 +379,7 @@ def test_present_filter_type_drift_fails_immutable(monkeypatch):
     assert payload["msg"] == "Immutable fields cannot be changed on an existing CMQ topic"
     assert payload["immutable_changes"] == {"FilterType": {"before": 2, "after": 1}}
     assert payload["replacement_required"] is True
-    assert not any(name == "ModifyCmqTopicAttribute" for name, _ in fake.calls)
+    assert not any(name == "ModifyCmqTopicAttribute" for name, request in fake.calls)
 
 
 def test_present_filter_type_drift_fails_even_in_check_mode(monkeypatch):

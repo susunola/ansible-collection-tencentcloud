@@ -175,7 +175,7 @@ def test_find_matches_on_first_page():
     fake = FakeCdbClient([_database("orders"), _database("reports")])
     found = mod.find(FakeModule(), fake, FakeModels(), _params())
     assert found == {"DatabaseName": "orders", "CharacterSet": "utf8mb4"}
-    assert [name for name, _ in fake.calls] == ["DescribeDatabases"]
+    assert [name for name, request in fake.calls] == ["DescribeDatabases"]
 
 
 def test_find_pages_until_match():
@@ -211,7 +211,7 @@ def test_absent_not_found_is_noop(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is False
     assert result["database"] is None
-    assert not any(name == "DeleteDatabase" for name, _ in fake.calls)
+    assert not any(name == "DeleteDatabase" for name, request in fake.calls)
 
 
 def test_absent_deletes_database(monkeypatch):
@@ -236,7 +236,7 @@ def test_absent_check_mode_is_dry_run(monkeypatch):
     assert result["database"] == {"DatabaseName": "orders", "CharacterSet": "utf8mb4"}  # current kept
     assert result["diff"]["before"] == {"DatabaseName": "orders", "CharacterSet": "utf8mb4"}
     assert result["diff"]["after"] is None
-    assert not any(name == "DeleteDatabase" for name, _ in fake.calls)
+    assert not any(name == "DeleteDatabase" for name, request in fake.calls)
     assert len(fake.databases) == 1  # remote untouched
 
 
@@ -247,7 +247,7 @@ def test_present_creates_database_and_refinds(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is True
     assert result["database"] == {"DatabaseName": "orders", "CharacterSet": "utf8mb4"}
-    assert [name for name, _ in fake.calls] == ["DescribeDatabases", "CreateDatabase", "DescribeDatabases"]
+    assert [name for name, request in fake.calls] == ["DescribeDatabases", "CreateDatabase", "DescribeDatabases"]
     create = [req for name, req in fake.calls if name == "CreateDatabase"][0]
     assert create.InstanceId == "cdb-abc123"
     assert create.DBName == "orders"
@@ -274,7 +274,7 @@ def test_present_check_mode_create_is_dry_run(monkeypatch):
     assert result["database"] is None
     assert result["diff"]["before"] is None
     assert result["diff"]["after"] == {"DatabaseName": "orders", "CharacterSet": "utf8mb4"}
-    assert not any(name == "CreateDatabase" for name, _ in fake.calls)
+    assert not any(name == "CreateDatabase" for name, request in fake.calls)
 
 
 def test_present_unchanged_is_noop(monkeypatch):
@@ -284,7 +284,7 @@ def test_present_unchanged_is_noop(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is False
     assert result["database"] == {"DatabaseName": "orders", "CharacterSet": "utf8mb4"}
-    assert not any(name == "CreateDatabase" for name, _ in fake.calls)
+    assert not any(name == "CreateDatabase" for name, request in fake.calls)
 
 
 def test_present_character_set_drift_fails_immutable(monkeypatch):
@@ -297,7 +297,7 @@ def test_present_character_set_drift_fails_immutable(monkeypatch):
     assert payload["msg"] == "Immutable fields cannot be changed on an existing CDB database"
     assert payload["immutable_changes"] == {"CharacterSet": {"before": "utf8", "after": "utf8mb4"}}
     assert payload["replacement_required"] is True
-    assert not any(name == "CreateDatabase" for name, _ in fake.calls)
+    assert not any(name == "CreateDatabase" for name, request in fake.calls)
 
 
 def test_present_character_set_drift_fails_even_in_check_mode(monkeypatch):

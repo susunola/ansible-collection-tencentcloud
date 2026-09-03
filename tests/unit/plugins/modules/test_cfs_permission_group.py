@@ -249,7 +249,7 @@ def test_present_creates_group_and_refinds(monkeypatch):
     assert result["permission_group"]["PGroupId"] == "pgroup-1"
     assert result["permission_group"]["Name"] == "prod-clients"
     assert result["permission_group"]["DescInfo"] == "prod subnets"
-    assert [name for name, _ in fake.calls] == ["DescribeCfsPGroups", "CreateCfsPGroup", "DescribeCfsPGroups"]
+    assert [name for name, request in fake.calls] == ["DescribeCfsPGroups", "CreateCfsPGroup", "DescribeCfsPGroups"]
     create = [req for name, req in fake.calls if name == "CreateCfsPGroup"][0]
     assert create.Name == "prod-clients"
     assert create.DescInfo == "prod subnets"
@@ -265,7 +265,7 @@ def test_present_check_mode_create_is_dry_run(monkeypatch):
     assert result["diff"]["before"] is None
     # empty-string DescInfo is stripped by the diff normalizer
     assert result["diff"]["after"] == {"Name": "prod-clients"}
-    assert not any(name == "CreateCfsPGroup" for name, _ in fake.calls)
+    assert not any(name == "CreateCfsPGroup" for name, request in fake.calls)
 
 
 def test_present_unchanged_is_noop(monkeypatch):
@@ -275,7 +275,7 @@ def test_present_unchanged_is_noop(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is False
     assert result["permission_group"]["PGroupId"] == "pgroup-1"
-    assert not any(name in ("CreateCfsPGroup", "UpdateCfsPGroup") for name, _ in fake.calls)
+    assert not any(name in ("CreateCfsPGroup", "UpdateCfsPGroup") for name, request in fake.calls)
 
 
 def test_present_updates_name_by_id(monkeypatch):
@@ -310,7 +310,7 @@ def test_present_check_mode_update_is_dry_run(monkeypatch):
     assert result["permission_group"]["Name"] == "old-name"  # pre-update current
     assert result["diff"]["before"] == {"Name": "old-name", "DescInfo": "desc"}
     assert result["diff"]["after"] == {"Name": "new-name"}  # empty DescInfo stripped
-    assert not any(name == "UpdateCfsPGroup" for name, _ in fake.calls)
+    assert not any(name == "UpdateCfsPGroup" for name, request in fake.calls)
 
 
 def test_absent_deletes_by_id(monkeypatch):
@@ -345,7 +345,7 @@ def test_absent_check_mode_is_dry_run(monkeypatch):
     assert result["permission_group"]["PGroupId"] == "pgroup-1"  # current kept for preview
     assert result["diff"]["before"] == {"Name": "prod-clients", "DescInfo": "desc"}
     assert result["diff"]["after"] is None
-    assert not any(name == "DeleteCfsPGroup" for name, _ in fake.calls)
+    assert not any(name == "DeleteCfsPGroup" for name, request in fake.calls)
     assert len(fake.groups) == 1  # remote untouched
 
 
@@ -356,7 +356,7 @@ def test_absent_not_found_is_noop(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is False
     assert result["permission_group"] is None
-    assert not any(name == "DeleteCfsPGroup" for name, _ in fake.calls)
+    assert not any(name == "DeleteCfsPGroup" for name, request in fake.calls)
 
 
 def test_sdk_error_is_reported(monkeypatch):

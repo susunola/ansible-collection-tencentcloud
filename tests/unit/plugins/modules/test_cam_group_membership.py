@@ -205,7 +205,7 @@ def test_is_member_true_when_group_present():
     fake = FakeCamClient({(100000000001, None): [111, 12345]})
     module = FakeModule(_find_params())
     assert mod.is_member(module, fake, FakeModels(), module.params) is True
-    assert [name for name, _ in fake.calls] == ["ListGroupsForUser"]
+    assert [name for name, request in fake.calls] == ["ListGroupsForUser"]
 
 
 def test_is_member_coerces_string_group_id():
@@ -277,7 +277,7 @@ def test_present_already_member_is_noop(monkeypatch):
     assert result["changed"] is False
     assert result["msg"] == "CAM group membership is up to date"
     assert result["membership"]["present"] is True
-    assert not any(name.startswith("Add") or name.startswith("Remove") for name, _ in fake.calls)
+    assert not any(name.startswith("Add") or name.startswith("Remove") for name, request in fake.calls)
 
 
 def test_absent_non_member_is_noop(monkeypatch):
@@ -299,7 +299,7 @@ def test_present_adds_member(monkeypatch):
     assert result["membership"]["present"] is True
     assert result["membership"]["group_id"] == 12345
     assert "diff" not in result  # no diff outside check mode
-    assert any(name == "AddUserToGroup" for name, _ in fake.calls)
+    assert any(name == "AddUserToGroup" for name, request in fake.calls)
     add = [req for name, req in fake.calls if name == "AddUserToGroup"][0]
     assert add.Info[0].GroupId == 12345
     assert add.Info[0].Uin == 100000000001
@@ -312,7 +312,7 @@ def test_absent_removes_member(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is True
     assert result["membership"]["present"] is False
-    assert any(name == "RemoveUserFromGroup" for name, _ in fake.calls)
+    assert any(name == "RemoveUserFromGroup" for name, request in fake.calls)
     remove = [req for name, req in fake.calls if name == "RemoveUserFromGroup"][0]
     assert remove.Info[0].GroupId == 12345
 
@@ -327,7 +327,7 @@ def test_check_mode_add_is_dry_run(monkeypatch):
     assert result["membership"]["present"] is False  # current state, not target
     assert result["diff"]["before"]["present"] is False
     assert result["diff"]["after"]["present"] is True
-    assert not any(name.startswith("Add") or name.startswith("Remove") for name, _ in fake.calls)
+    assert not any(name.startswith("Add") or name.startswith("Remove") for name, request in fake.calls)
 
 
 def test_check_mode_remove_is_dry_run(monkeypatch):
@@ -337,7 +337,7 @@ def test_check_mode_remove_is_dry_run(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is True
     assert result["diff"]["after"]["present"] is False
-    assert not any(name.startswith("Add") or name.startswith("Remove") for name, _ in fake.calls)
+    assert not any(name.startswith("Add") or name.startswith("Remove") for name, request in fake.calls)
 
 
 def test_wait_times_out_when_mutation_never_applies(monkeypatch):
@@ -350,7 +350,7 @@ def test_wait_times_out_when_mutation_never_applies(monkeypatch):
     assert payload["msg"] == "Timed out waiting for CAM group membership"
     assert payload["expected"] is True
     assert payload["current"] is False
-    assert any(name == "AddUserToGroup" for name, _ in fake.calls)
+    assert any(name == "AddUserToGroup" for name, request in fake.calls)
 
 
 def test_sdk_error_is_reported(monkeypatch):

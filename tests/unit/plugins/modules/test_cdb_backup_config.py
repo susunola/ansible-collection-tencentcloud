@@ -176,8 +176,8 @@ def test_unchanged_config_is_noop(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is False
     assert result["backup_config"]["BackupExpireDays"] == 30
-    assert [name for name, _ in fake.calls] == ["DescribeBackupConfig"]
-    assert not any(name == "ModifyBackupConfig" for name, _ in fake.calls)
+    assert [name for name, request in fake.calls] == ["DescribeBackupConfig"]
+    assert not any(name == "ModifyBackupConfig" for name, request in fake.calls)
 
 
 def test_expire_days_drift_modifies(monkeypatch):
@@ -187,7 +187,7 @@ def test_expire_days_drift_modifies(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is True
     assert result["backup_config"]["BackupExpireDays"] == 30  # wanted reported
-    assert [name for name, _ in fake.calls] == ["DescribeBackupConfig", "ModifyBackupConfig"]
+    assert [name for name, request in fake.calls] == ["DescribeBackupConfig", "ModifyBackupConfig"]
     modify = [req for name, req in fake.calls if name == "ModifyBackupConfig"][0]
     assert modify.ExpireDays == 30
 
@@ -241,7 +241,7 @@ def test_check_mode_drift_is_dry_run(monkeypatch):
     assert result["backup_config"]["BackupExpireDays"] == 30  # wanted reported even in check mode
     assert result["diff"]["before"]["BackupExpireDays"] == 7
     assert result["diff"]["after"]["BackupExpireDays"] == 30
-    assert not any(name == "ModifyBackupConfig" for name, _ in fake.calls)
+    assert not any(name == "ModifyBackupConfig" for name, request in fake.calls)
 
 
 def test_invalid_backup_method_choice_fails_validation(monkeypatch):

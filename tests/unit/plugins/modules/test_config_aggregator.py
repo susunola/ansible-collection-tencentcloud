@@ -221,7 +221,7 @@ def test_find_matches_by_name_and_describes(monkeypatch):
     assert found["Name"] == "agg-main"
     assert found["Status"] == "Active"  # describe-only enrichment
     assert "RequestId" not in found  # popped from the describe payload
-    assert [name for name, _ in fake.calls] == ["ListAggregators", "DescribeAggregator"]
+    assert [name for name, request in fake.calls] == ["ListAggregators", "DescribeAggregator"]
     describe = [req for name, req in fake.calls if name == "DescribeAggregator"][0]
     assert describe.AccountGroupId == "agg-1"
 
@@ -289,7 +289,7 @@ def test_present_creates_aggregator_and_refinds(monkeypatch):
     assert result["aggregator"]["Type"] == "CUSTOM"
     assert result["aggregator"]["Status"] == "Active"  # describe enrichment after re-find
     assert "RequestId" not in result["aggregator"]
-    assert [name for name, _ in fake.calls] == [
+    assert [name for name, request in fake.calls] == [
         "ListAggregators",
         "CreateAggregator",
         "ListAggregators",
@@ -322,7 +322,7 @@ def test_present_check_mode_create_is_dry_run(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is True
     assert result["aggregator"] is None  # nothing created or re-fetched
-    assert [name for name, _ in fake.calls] == ["ListAggregators"]
+    assert [name for name, request in fake.calls] == ["ListAggregators"]
     assert result["diff"]["before"] is None
     assert result["diff"]["after"] == {
         "Name": "agg-main",
@@ -339,7 +339,7 @@ def test_present_exists_unchanged_is_noop(monkeypatch):
     assert result["changed"] is False
     assert result["aggregator"]["AccountGroupId"] == "agg-1"
     assert result["aggregator"]["Status"] == "Active"
-    assert not any(name == "CreateAggregator" for name, _ in fake.calls)
+    assert not any(name == "CreateAggregator" for name, request in fake.calls)
 
 
 def test_noop_ignores_account_order(monkeypatch):

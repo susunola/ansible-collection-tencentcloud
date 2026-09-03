@@ -234,7 +234,7 @@ def test_present_creates_group_and_refinds(monkeypatch):
     assert result["group"]["GroupId"] == 1000001
     assert result["group"]["GroupName"] == "platform-engineers"
     assert result["group"]["Remark"] == "Platform engineering team"
-    assert [name for name, _ in fake.calls] == ["ListGroups", "CreateGroup", "ListGroups"]
+    assert [name for name, request in fake.calls] == ["ListGroups", "CreateGroup", "ListGroups"]
     create = [req for name, req in fake.calls if name == "CreateGroup"][0]
     assert create.GroupName == "platform-engineers"
     assert create.Remark == "Platform engineering team"
@@ -253,7 +253,7 @@ def test_present_check_mode_create_is_dry_run(monkeypatch):
     assert result["diff"]["before"] is None
     # empty-string remark is stripped by the diff normalizer
     assert result["diff"]["after"] == {"GroupName": "platform-engineers"}
-    assert not any(name == "CreateGroup" for name, _ in fake.calls)
+    assert not any(name == "CreateGroup" for name, request in fake.calls)
 
 
 def test_present_unchanged_is_noop(monkeypatch):
@@ -263,7 +263,7 @@ def test_present_unchanged_is_noop(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is False
     assert result["group"]["GroupId"] == 5
-    assert not any(name in ("CreateGroup", "UpdateGroup") for name, _ in fake.calls)
+    assert not any(name in ("CreateGroup", "UpdateGroup") for name, request in fake.calls)
 
 
 def test_present_renames_group_by_id(monkeypatch):
@@ -300,7 +300,7 @@ def test_present_check_mode_update_is_dry_run(monkeypatch):
     assert result["group"]["GroupName"] == "old-name"  # pre-update current
     assert result["diff"]["before"] == {"GroupName": "old-name", "Remark": "old remark"}
     assert result["diff"]["after"] == {"GroupName": "new-name"}
-    assert not any(name == "UpdateGroup" for name, _ in fake.calls)
+    assert not any(name == "UpdateGroup" for name, request in fake.calls)
 
 
 def test_absent_deletes_by_id(monkeypatch):
@@ -334,7 +334,7 @@ def test_absent_check_mode_is_dry_run(monkeypatch):
     assert result["group"]["GroupId"] == 5  # current kept for preview
     assert result["diff"]["before"] == {"GroupId": 5, "GroupName": "platform-engineers", "Remark": "remark"}
     assert result["diff"]["after"] is None
-    assert not any(name == "DeleteGroup" for name, _ in fake.calls)
+    assert not any(name == "DeleteGroup" for name, request in fake.calls)
     assert len(fake.groups) == 1  # remote untouched
 
 
@@ -345,7 +345,7 @@ def test_absent_not_found_is_noop(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is False
     assert result["group"] is None
-    assert not any(name == "DeleteGroup" for name, _ in fake.calls)
+    assert not any(name == "DeleteGroup" for name, request in fake.calls)
 
 
 def test_sdk_error_is_reported(monkeypatch):
