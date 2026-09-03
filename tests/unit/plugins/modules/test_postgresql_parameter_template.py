@@ -213,7 +213,7 @@ def test_entries_sorted_and_string_cast():
         ("max_connections", "1000"),
         ("work_mem", "4096"),
     ]
-    assert type(entries[0].Name) is str and type(entries[0].ExpectedValue) is str
+    assert isinstance(entries[0].Name, str) and isinstance(entries[0].ExpectedValue, str)
 
 
 def test_normalize_filters_parameter_names():
