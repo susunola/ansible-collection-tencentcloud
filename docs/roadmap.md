@@ -460,8 +460,8 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
   ckafka_instance, cbs_disk, eip, nat_gateway, subnet) have ZERO integration
   targets — needs its own plan (not #57, which is the unit-coverage drive,
   tracked separately as G1b); flagship-first skeleton next.
-- **G1b unit breadth** (172/313 write modules have no unit test file — file-scan
-  count; batch-29 closeout reconciled the documented figure to the
+- **G1b unit breadth** (168/313 write modules have no unit test file — file-scan
+  count; the batch-29 closeout reconciled the documented figure to the
   authoritative file-scan baseline, correcting an +11 legacy over-credit from
   content-credited multi-module test files that do not sit at
   `test_<module>.py`; write
@@ -530,7 +530,10 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
   tests, 96%), `as_scaling_policy` (24 tests, 95%), `tdmq_namespace` (27
   tests, 95%), `postgresql_parameter_template` (24 tests, 95%) — 107
   hermetic tests; full module + scripts suite 4250 green, total coverage
-  80.14%.
+  80.14%. Batch 30 (2026-09-03): `sms_template` (19 tests, 95%), `scf_alias`
+  (18 tests, 96%), `cvm_instance_security_group` (18 tests, 95%),
+  `scf_version` (18 tests, 95%) — 73 hermetic tests; full module + scripts
+  suite 4323 green, total coverage 80.17%.
 - **G2 ecosystem trust** (downloads 0 vs 11.8M–90.5M): inclusion #89
   awaiting reviewer; only active lever is reviewing another queued
   collection to raise our priority.

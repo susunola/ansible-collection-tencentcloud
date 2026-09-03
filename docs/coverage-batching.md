@@ -3,10 +3,10 @@
 How to raise the CI coverage gate (55%) back towards 70% without writing
 ~200 module test files one by one at the current per-batch pace.
 
-## Current state (measured 2026-09-03, after batch 29)
+## Current state (measured 2026-09-03, after batch 30)
 
 - Gate: `--cov-fail-under=55`, baseline total ~60.9% after batches 1-11.
-- 313 write modules, 172 of them have **no** unit test file (file-scan
+- 313 write modules, 168 of them have **no** unit test file (file-scan
   count — batch-29 closeout reconciled the documented figure to the
   authoritative file-scan baseline, correcting an +11 legacy over-credit
   from content-credited multi-module test files such as
@@ -54,7 +54,9 @@ How to raise the CI coverage gate (55%) back towards 70% without writing
   (23 tests, 96%), `eb_target` (25 tests, 96%) — 102 tests; batch 29 added
   `gwlb_load_balancer` (32 tests, 96%), `as_scaling_policy` (24 tests, 95%),
   `tdmq_namespace` (27 tests, 95%), `postgresql_parameter_template` (24
-  tests, 95%) — 107 tests).
+  tests, 95%) — 107 tests; batch 30 added `sms_template` (19 tests, 95%),
+  `scf_alias` (18 tests, 96%), `cvm_instance_security_group` (18 tests,
+  95%), `scf_version` (18 tests, 95%) — 73 tests).
 - Target 70% needs roughly +4,000 covered statements. The untested write
   modules are the entire gap (module_utils at 92%, `_info` at ~86% are
   already near their ceiling).
