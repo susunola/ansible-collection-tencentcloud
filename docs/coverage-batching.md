@@ -3,10 +3,10 @@
 How to raise the CI coverage gate (55%) back towards 70% without writing
 ~200 module test files one by one at the current per-batch pace.
 
-## Current state (measured 2026-09-03, after batch 25)
+## Current state (measured 2026-09-03, after batch 26)
 
 - Gate: `--cov-fail-under=55`, baseline total ~60.9% after batches 1-11.
-- 313 write modules, 170 of them have **no** unit test file (batch 13 added
+- 313 write modules, 166 of them have **no** unit test file (batch 13 added
   `eks_container_instance`, `tke_node_pool`, `network_interface`,
   `ssm_parameter` — 102 tests, 93-98% each; batch 14 added
   `dc_direct_connect_tunnel`, `config_compliance_pack`, `cdn_cls_log_topic`,
@@ -38,7 +38,10 @@ How to raise the CI coverage gate (55%) back towards 70% without writing
   `config_alarm_policy` (31 tests, 96%), `teo_zone` (32 tests, 96%) — 132
   tests; batch 25 added `waf_custom_rule` (29 tests, 95%),
   `cls_machine_group` (29 tests, 96%), `cloudaudit_audit` (32 tests, 96%),
-  `elasticsearch_snapshot` (27 tests, 94%) — 117 tests).
+  `elasticsearch_snapshot` (27 tests, 94%) — 117 tests; batch 26 added
+  `teo_security_managed_rules` (36 tests, 96%), `teo_security_exception_rules`
+  (32 tests, 96%), `teo_security_rate_limiting_rules` (45 tests, 96%),
+  `teo_security_custom_rules` (27 tests, 96%) — 140 tests).
 - Target 70% needs roughly +4,000 covered statements. The untested write
   modules are the entire gap (module_utils at 92%, `_info` at ~86% are
   already near their ceiling).
