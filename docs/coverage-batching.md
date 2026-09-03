@@ -3,10 +3,10 @@
 How to raise the CI coverage gate (55%) back towards 70% without writing
 ~200 module test files one by one at the current per-batch pace.
 
-## Current state (measured 2026-09-03, after batch 37)
+## Current state (measured 2026-09-03, after batch 38)
 
 - Gate: `--cov-fail-under=55`, baseline total ~60.9% after batches 1-11.
-- 313 write modules, 140 of them have **no** unit test file (file-scan
+- 313 write modules, 136 of them have **no** unit test file (file-scan
   count — batch-29 closeout reconciled the documented figure to the
   authoritative file-scan baseline, correcting an +11 legacy over-credit
   from content-credited multi-module test files such as
@@ -74,7 +74,9 @@ How to raise the CI coverage gate (55%) back towards 70% without writing
   (23 tests, 95%), `cdb_parameter_template` (26 tests, 96%) — 121 tests;
   batch 37 added `tdmq_rocketmq_group` (30 tests, 96%), `cdb_account` (31
   tests, 97%), `trabbit_serverless_user` (32 tests, 96%), `cvm_image_share`
-  (19 tests, 95%) — 112 tests).
+  (19 tests, 95%) — 112 tests; batch 38 added `config_aggregator` (28 tests,
+  96%), `cdb_audit_config` (20 tests, 98%), `cam_group_membership` (22 tests,
+  97%), `cfs_permission_group` (25 tests, 99%) — 95 tests).
 - Target 70% needs roughly +4,000 covered statements. The untested write
   modules are the entire gap (module_utils at 92%, `_info` at ~86% are
   already near their ceiling).
