@@ -104,19 +104,21 @@ jobs:
       # module count to 313, of which only 63 have unit tests. Coverage
       # sits around 58-59% (module_utils 92%, _info modules 86%, write
       # modules 51%); the 70% floor has never passed since introduction.
-      # 55 is set just under the measured baseline so the gate is green
-      # while still catching regressions; raising it back towards 70 is
-      # tracked in docs/roadmap.md (write-module unit-test coverage
-      # drive).
+      # 55 was set just under that measured baseline so the gate went green
+      # while still catching regressions. The #57 write-module unit-test
+      # drive has since raised the measured total to 74% (2026-09-04),
+      # so the gate moves to 72 (measured minus two points of headroom);
+      # closing the remaining gap is tracked in docs/roadmap.md (write-
+      # module unit-test coverage drive).
       - name: SDK contract tests
         run: |
           python -m pip install -r requirements.txt pytest-cov
           PYTHONPATH="${{ github.workspace }}" python -m pytest tests/contract tests/unit/plugins/module_utils tests/unit/plugins/modules -q \
             --cov=plugins/module_utils --cov=plugins/modules \
             --cov-report=term-missing --cov-report=xml:${GITHUB_WORKSPACE}/coverage.xml \
-            --cov-report=html:${GITHUB_WORKSPACE}/coverage-html --cov-fail-under=55
+            --cov-report=html:${GITHUB_WORKSPACE}/coverage-html --cov-fail-under=72
       # Coverage is reported as an artifact so the numbers behind the
-      # 55% gate are inspectable (XML for tooling, HTML for humans),
+      # 72% gate are inspectable (XML for tooling, HTML for humans),
       # even when the run fails the threshold. upload-artifact resolves
       # paths against GITHUB_WORKSPACE (not the job working-directory),
       # so the reports are written there by the step above.

@@ -1,7 +1,9 @@
 # Coverage configuration for the SDK contract test gate.
 #
 # The CI "SDK contract tests" step (see .github/workflows/ci.yml) measures
-# plugins/module_utils + plugins/modules with --cov-fail-under=55. COS is
+# plugins/module_utils + plugins/modules with --cov-fail-under=72
+# (measured total 74% on 2026-09-04; the gate keeps two points of
+# headroom). COS is
 # not an API 3.0 service: it speaks the qcloud_cos SDK, which has no
 # declarative request models to audit, so the cos_bucket modules are
 # excluded from the API 3.0 contract scope by design (see the "Not covered,
