@@ -460,7 +460,7 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
   ckafka_instance, cbs_disk, eip, nat_gateway, subnet) have ZERO integration
   targets — needs its own plan (not #57, which is the unit-coverage drive,
   tracked separately as G1b); flagship-first skeleton next.
-- **G1b unit breadth** (169/313 write modules have no unit test file — file-scan
+- **G1b unit breadth** (165/313 write modules have no unit test file — file-scan
   count, reconciles a +7 over-credit vs the earlier figure; write
   statement cov ~51% vs 70% target): in flight via #57 batches; lever-1
   skeleton generator shipped (batch 12, P0-01), generator-assisted batches
@@ -519,7 +519,11 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
   (2026-09-03): `cdb_account_privilege` (18 tests, 95%), `tcr_repository`
   (21 tests, 95%), `cynosdb_account_privilege` (17 tests, 95%),
   `tcb_environment` (27 tests, 96%) — 83 hermetic tests; full module +
-  scripts suite 4041 green, total coverage 79.79%.
+  scripts suite 4041 green, total coverage 79.79%. Batch 28 (2026-09-03):
+  `cvm_launch_template_version` (28 tests, 96%), `trabbit_serverless_exchange`
+  (26 tests, 95%), `tcr_replication_rule` (23 tests, 96%), `eb_target` (25
+  tests, 96%) — 102 hermetic tests; full module + scripts suite 4143 green,
+  total coverage 79.93%.
 - **G2 ecosystem trust** (downloads 0 vs 11.8M–90.5M): inclusion #89
   awaiting reviewer; only active lever is reviewing another queued
   collection to raise our priority.
