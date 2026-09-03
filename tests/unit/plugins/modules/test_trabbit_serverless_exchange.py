@@ -207,7 +207,15 @@ def test_create_request_defaults():
 def test_create_request_maps_explicit_values():
     request = mod.create_request(
         FakeModels(),
-        _params(exchange_type="x-delayed-message", remark="orders-fanout", durable=False, auto_delete=True, internal=True, alternate_exchange="dlx", delayed_exchange_type="topic"),
+        _params(
+            exchange_type="x-delayed-message",
+            remark="orders-fanout",
+            durable=False,
+            auto_delete=True,
+            internal=True,
+            alternate_exchange="dlx",
+            delayed_exchange_type="topic",
+        ),
     )
     assert request.ExchangeType == "x-delayed-message"
     assert request.Remark == "orders-fanout"
