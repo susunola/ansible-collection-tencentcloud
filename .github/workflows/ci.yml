@@ -64,6 +64,10 @@ jobs:
         run: python scripts/sync_registry.py --check
       - name: Module tiers are consistent
         run: python scripts/check_module_tiers.py --check
+      # Every write module needs a readable query surface: a matching _info
+      # module, a curated KNOWN_COVERAGE mapping, or a documented gap.
+      - name: Write modules have a read surface
+        run: python scripts/audit_info_coverage.py --check
       - name: CAM action manifest is up to date
         run: python scripts/generate_cam_actions.py --check
       - name: Integration coverage registry is valid
