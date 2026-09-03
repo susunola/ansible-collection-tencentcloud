@@ -251,7 +251,8 @@ def test_desired_coerces_booleans_to_int():
 
 
 def test_desired_includes_optional_fields_when_set():
-    target = mod.desired(_params(cmq_notify=True, cmq_region="ap-shanghai", cmq_queue_name="queue-audit", kms_encryption=True, kms_region="ap-shanghai", key_id="key-abc"))
+    target = mod.desired(_params(cmq_notify=True, cmq_region="ap-shanghai", cmq_queue_name="queue-audit",
+                                 kms_encryption=True, kms_region="ap-shanghai", key_id="key-abc"))
     assert target["CmqRegion"] == "ap-shanghai"
     assert target["CmqQueueName"] == "queue-audit"
     assert target["KmsRegion"] == "ap-shanghai"

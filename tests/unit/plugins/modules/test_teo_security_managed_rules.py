@@ -486,7 +486,8 @@ def test_present_group_drift_replaces_groups(monkeypatch):
 def test_present_scan_drift_updates_protection(monkeypatch):
     fake = FakeTeoClient(_managed())
     _make_module(monkeypatch, fake)
-    scan = {"enabled": True, "action": "Monitor", "count_by": "http.request.xff_header_ip", "block_threshold": 500, "counting_period": 300, "action_duration": 3600}
+    scan = {"enabled": True, "action": "Monitor", "count_by": "http.request.xff_header_ip", "block_threshold": 500,
+            "counting_period": 300, "action_duration": 3600}
     _run_args(frequent_scanning=scan)
     result = run(mod.run_module)
     assert result["changed"] is True

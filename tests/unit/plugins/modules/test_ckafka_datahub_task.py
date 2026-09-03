@@ -223,7 +223,7 @@ class FakeCkafkaClient(object):
         return SimpleNamespace(RequestId="req-fake")
 
     def written(self):
-        return [name for name, _ in self.calls if name in WRITE_OPS]
+        return [name for name, request in self.calls if name in WRITE_OPS]
 
 
 def _patch_env(monkeypatch, fake):
@@ -433,7 +433,7 @@ def test_find_by_task_id():
     module = FakeModule()
     found = mod.find(module, fake, FakeCkafkaModels(), _params(task_id="task-8b0a1c2d"))
     assert found["TaskId"] == "task-8b0a1c2d"
-    assert [name for name, _ in fake.calls] == ["DescribeDatahubTask"]
+    assert [name for name, request in fake.calls] == ["DescribeDatahubTask"]
 
 
 def test_find_by_name_and_type():
@@ -441,7 +441,7 @@ def test_find_by_name_and_type():
     module = FakeModule()
     found = mod.find(module, fake, FakeCkafkaModels(), _params())
     assert found["TaskId"] == "task-8b0a1c2d"
-    assert [name for name, _ in fake.calls] == ["DescribeDatahubTasks", "DescribeDatahubTask"]
+    assert [name for name, request in fake.calls] == ["DescribeDatahubTasks", "DescribeDatahubTask"]
 
 
 def test_find_ignores_other_name_or_type():

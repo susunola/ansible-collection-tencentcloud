@@ -228,8 +228,9 @@ def test_records_builder_empty():
 
 
 def test_create_request_fields():
-    request = mod.create_request(FakeModels(), _params(name="app-origins", group_type="HTTP", host_header="origin.example.com",
-                                                        records=[_record("192.0.2.10", weight=70)]))
+    request = mod.create_request(FakeModels(),
+                                 _params(name="app-origins", group_type="HTTP", host_header="origin.example.com",
+                                         records=[_record("192.0.2.10", weight=70)]))
     assert request.ZoneId == "zone-edge1"
     assert request.Name == "app-origins"
     assert request.Type == "HTTP"

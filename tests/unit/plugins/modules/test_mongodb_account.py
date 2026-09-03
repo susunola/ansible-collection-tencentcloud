@@ -166,7 +166,9 @@ class _BoomClient(object):
 
 
 def test_auth_roles_maps_access_to_mask():
-    items = mod.auth_roles(FakeModels(), [{"namespace": "a", "access": "read"}, {"namespace": "b", "access": "read_write"}, {"namespace": "c", "access": "none"}])
+    items = mod.auth_roles(FakeModels(), [{"namespace": "a", "access": "read"},
+                                          {"namespace": "b", "access": "read_write"},
+                                          {"namespace": "c", "access": "none"}])
     masks = {i.NameSpace: i.Mask for i in items}
     assert masks == {"a": 1, "b": 3, "c": 0}
 

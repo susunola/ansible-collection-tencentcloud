@@ -204,7 +204,7 @@ class FakeConfigClient(object):
         return SimpleNamespace(RequestId="req-fake")
 
     def written(self):
-        return [name for name, _ in self.calls if name in WRITE_OPS]
+        return [name for name, request in self.calls if name in WRITE_OPS]
 
 
 def _patch_env(monkeypatch, fake):
@@ -383,7 +383,7 @@ def test_find_pack_by_id():
     assert found["CompliancePackName"] == "production-security"
     assert found["Status"] == "ACTIVE"
     assert "RequestId" not in found
-    assert [name for name, _ in fake.calls] == ["ListCompliancePacks", "DescribeCompliancePack"]
+    assert [name for name, request in fake.calls] == ["ListCompliancePacks", "DescribeCompliancePack"]
 
 
 def test_find_pack_by_name():
@@ -398,7 +398,7 @@ def test_find_pack_returns_none_when_absent():
     module = FakeModule()
     found = mod.find_pack(module, fake, FakeModels(), _params(name="missing"))
     assert found is None
-    assert [name for name, _ in fake.calls] == ["ListCompliancePacks"]
+    assert [name for name, request in fake.calls] == ["ListCompliancePacks"]
 
 
 def test_find_pack_fails_on_multiple_matches():

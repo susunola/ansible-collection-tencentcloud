@@ -210,7 +210,7 @@ class FakeCdnClient(object):
         return SimpleNamespace(RequestId="req-fake")
 
     def written(self):
-        return [name for name, _ in self.calls if name in WRITE_OPS]
+        return [name for name, request in self.calls if name in WRITE_OPS]
 
 
 def _patch_env(monkeypatch, fake):
@@ -371,7 +371,7 @@ def test_find_topic_none_when_absent():
     module = FakeModule()
     found = mod.find_topic(module, fake, FakeModels(), _params(topic_name="missing"))
     assert found is None
-    assert [name for name, _ in fake.calls] == ["ListClsLogTopics"]
+    assert [name for name, request in fake.calls] == ["ListClsLogTopics"]
 
 
 def test_find_topic_logset_filter_disambiguates():

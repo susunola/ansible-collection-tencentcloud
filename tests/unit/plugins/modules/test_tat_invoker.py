@@ -588,7 +588,7 @@ def test_check_mode_update_is_dry_run(monkeypatch):
     # No write happened, so the reported invoker is the pre-change state.
     assert result["invoker"]["Name"] == "nightly-maintenance"
     assert not any(n.startswith("Modify") or n.startswith("Enable") or n.startswith("Disable")
-                   for n, _ in fake.calls)
+                   for n, request in fake.calls)
 
 
 def test_absent_removes_invoker(monkeypatch):

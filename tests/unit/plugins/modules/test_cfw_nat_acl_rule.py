@@ -207,9 +207,10 @@ def test_describe_request_fields():
 
 
 def test_rule_builder_maps_encodings():
-    rule = mod._rule(FakeModels(), _params(source_type="domain", destination_type="ip_template",
-                                                source="example.com", destination="tpl-abc",
-                                                action="block", direction="inbound", enabled=False))
+    rule = mod._rule(FakeModels(),
+                     _params(source_type="domain", destination_type="ip_template",
+                             source="example.com", destination="tpl-abc",
+                             action="block", direction="inbound", enabled=False))
     assert rule.SourceType == "domain"
     assert rule.TargetType == "template"
     assert rule.RuleAction == "drop"

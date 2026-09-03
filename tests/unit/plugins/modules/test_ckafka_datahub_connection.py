@@ -368,11 +368,11 @@ def test_detail_not_found_returns_none(monkeypatch):
 def test_detail_propagates_non_not_found_errors(monkeypatch):
     fake = FakeCkafkaClient()
     _make_module(monkeypatch, fake)
-    monkeypatch.setattr(
-        fake,
-        "DescribeConnectResource",
-        lambda request: (_ for _ in ()).throw(RuntimeError("backend exploded")),
-    )
+
+    def explode(request):
+        raise RuntimeError("backend exploded")
+
+    monkeypatch.setattr(fake, "DescribeConnectResource", explode)
     module = FakeModule(_params(resource_id="cc-x"))
     with pytest.raises(RuntimeError, match="backend exploded"):
         mod.detail(module, fake, FakeCkafkaModels(), "cc-x")
@@ -626,7 +626,7 @@ def test_present_immutable_type_change_with_resource_id_fails(monkeypatch):
     payload = exc.value.args[0]
     assert "Immutable fields cannot be changed" in payload["msg"]
     assert payload["immutable_changes"]["Type"] == {"before": "KAFKA", "after": "MYSQL"}
-    assert not any(n.startswith("Modify") for n, _ in fake.calls)
+    assert not any(n.startswith("Modify") for n, request in fake.calls)
 
 
 def test_present_resource_id_not_found_fails(monkeypatch):
@@ -676,7 +676,7 @@ def test_check_mode_update_is_dry_run(monkeypatch):
     assert result["changed"] is True
     # No write happened, so the reported connection is the pre-change state.
     assert result["connection"]["Description"] == ""
-    assert not any(n.startswith("Modify") for n, _ in fake.calls)
+    assert not any(n.startswith("Modify") for n, request in fake.calls)
 
 
 def test_absent_removes_connection(monkeypatch):

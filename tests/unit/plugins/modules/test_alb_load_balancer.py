@@ -493,7 +493,7 @@ def test_present_immutable_vpc_change_fails(monkeypatch):
     payload = exc.value.args[0]
     assert "Immutable fields cannot be changed" in payload["msg"]
     assert payload["immutable_changes"]["VpcId"] == {"before": "vpc-8b0a1c2d", "after": "vpc-other"}
-    assert not any(n.startswith("Modify") for n, _ in fake.calls)
+    assert not any(n.startswith("Modify") for n, request in fake.calls)
 
 
 def test_present_multiple_matches_fails(monkeypatch):
@@ -533,7 +533,7 @@ def test_check_mode_update_is_dry_run(monkeypatch):
     assert result["changed"] is True
     # No write happened, so the reported ALB is the pre-change state.
     assert result["load_balancer"]["AddressType"] == "Internet"
-    assert not any(n.startswith("Modify") for n, _ in fake.calls)
+    assert not any(n.startswith("Modify") for n, request in fake.calls)
 
 
 def test_absent_removes_unprotected(monkeypatch):
@@ -591,5 +591,5 @@ def test_absent_check_mode_is_dry_run(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is True
     assert result["load_balancer"] is None
-    assert not any(n.startswith("Delete") for n, _ in fake.calls)
+    assert not any(n.startswith("Delete") for n, request in fake.calls)
     assert len(fake.albs) == 1
