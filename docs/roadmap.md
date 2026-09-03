@@ -548,6 +548,10 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
   `monitor_prometheus_instance` (26 tests, 97%), `monitor_prometheus_alert_group`
   (27 tests, 96%), `as_scheduled_action` (26 tests, 96%) — 103 hermetic
   tests; full module + scripts suite 4738 green, total coverage 80.91%.
+  Batch 35 (2026-09-03): `teo_security_ip_group` (28 tests, 97%),
+  `postgresql_backup_plan` (28 tests, 96%), `cvm_disaster_recover_group` (34
+  tests, 97%), `cls_config` (28 tests, 96%) — 118 hermetic tests; full
+  module + scripts suite 4856 green, total coverage 81.11%.
 - **G2 ecosystem trust** (downloads 0 vs 11.8M–90.5M): inclusion #89
   awaiting reviewer; only active lever is reviewing another queued
   collection to raise our priority.

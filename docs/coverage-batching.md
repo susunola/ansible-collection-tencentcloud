@@ -6,7 +6,7 @@ How to raise the CI coverage gate (55%) back towards 70% without writing
 ## Current state (measured 2026-09-03, after batch 34)
 
 - Gate: `--cov-fail-under=55`, baseline total ~60.9% after batches 1-11.
-- 313 write modules, 152 of them have **no** unit test file (file-scan
+- 313 write modules, 148 of them have **no** unit test file (file-scan
   count — batch-29 closeout reconciled the documented figure to the
   authoritative file-scan baseline, correcting an +11 legacy over-credit
   from content-credited multi-module test files such as
