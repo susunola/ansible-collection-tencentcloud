@@ -3,10 +3,10 @@
 How to raise the CI coverage gate (55%) back towards 70% without writing
 ~200 module test files one by one at the current per-batch pace.
 
-## Current state (measured 2026-09-03, after batch 34)
+## Current state (measured 2026-09-03, after batch 36)
 
 - Gate: `--cov-fail-under=55`, baseline total ~60.9% after batches 1-11.
-- 313 write modules, 148 of them have **no** unit test file (file-scan
+- 313 write modules, 144 of them have **no** unit test file (file-scan
   count — batch-29 closeout reconciled the documented figure to the
   authoritative file-scan baseline, correcting an +11 legacy over-credit
   from content-credited multi-module test files such as
@@ -66,7 +66,12 @@ How to raise the CI coverage gate (55%) back towards 70% without writing
   `organization_member` (28 tests, 96%), `tdmq_rabbitmq_user` (30 tests,
   96%) — 109 tests; batch 34 added `scf_trigger` (24 tests, 96%),
   `monitor_prometheus_instance` (26 tests, 97%), `monitor_prometheus_alert_group`
-  (27 tests, 96%), `as_scheduled_action` (26 tests, 96%) — 103 tests).
+  (27 tests, 96%), `as_scheduled_action` (26 tests, 96%) — 103 tests; batch
+  35 added `teo_security_ip_group` (28 tests, 97%), `postgresql_backup_plan`
+  (28 tests, 96%), `cvm_disaster_recover_group` (34 tests, 97%),
+  `cls_config` (28 tests, 96%) — 118 tests; batch 36 added `havip` (39
+  tests, 97%), `cam_policy_attachment` (33 tests, 96%), `cmq_subscription`
+  (23 tests, 95%), `cdb_parameter_template` (26 tests, 96%) — 121 tests).
 - Target 70% needs roughly +4,000 covered statements. The untested write
   modules are the entire gap (module_utils at 92%, `_info` at ~86% are
   already near their ceiling).
