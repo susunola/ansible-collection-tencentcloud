@@ -11,7 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: havip_info
 short_description: Gather information about Tencent Cloud HAVIPs
-version_added: "0.14.0"
+version_added: "1.1.0"
 description: Returns high-availability virtual IPs visible in a Tencent Cloud region.
 options:
   havip_ids:

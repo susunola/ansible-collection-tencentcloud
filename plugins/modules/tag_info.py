@@ -11,7 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: tag_info
 short_description: Gather information about Tencent Cloud tags
-version_added: "0.14.0"
+version_added: "1.1.0"
 description: Returns the tags defined in the Tencent Cloud tag service.
 options:
   tag_key:

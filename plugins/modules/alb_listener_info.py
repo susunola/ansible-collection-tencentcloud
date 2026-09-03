@@ -11,7 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: alb_listener_info
 short_description: Gather information about Tencent Cloud ALB listeners
-version_added: "0.14.0"
+version_added: "1.1.0"
 description: Returns the listeners of an ALB instance.
 options:
   load_balancer_id:

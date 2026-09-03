@@ -9,20 +9,13 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 ---
-module: scf_alias_info
-short_description: Gather information about Tencent Cloud SCF function aliases
+module: vod_sub_app_info
+short_description: Gather information about Tencent Cloud VOD subapplications
 version_added: "1.1.0"
-description: Returns the aliases of an SCF function.
+description: Returns the VOD subapplications of the account.
 options:
-  function_name:
-    description: Name of the function whose aliases are returned.
-    type: str
-    required: true
-  namespace:
-    description: Namespace of the function; defaults to C(default) on the API side.
-    type: str
-  function_version:
-    description: Return only aliases pointing at this function version.
+  name:
+    description: Return only subapplications whose name contains this string.
     type: str
   page_size:
     description: Number of results requested per API call.
@@ -33,20 +26,19 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List the aliases of a function
-  susunola.tencentcloud.scf_alias_info:
+- name: List all VOD subapplications
+  susunola.tencentcloud.vod_sub_app_info:
     region: ap-guangzhou
-    function_name: my-function
 '''
 
 RETURN = r'''
-aliases:
-  description: Matching function aliases.
+sub_apps:
+  description: Matching VOD subapplications.
   returned: always
   type: list
   elements: dict
 total_count:
-  description: Number of aliases reported by the API.
+  description: Number of subapplications reported by the API.
   returned: always
   type: int
 request_id:
@@ -63,24 +55,19 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, function_name, namespace, function_version, offset, limit):
-    request = models.ListAliasesRequest()
-    request.Offset = str(offset)
-    request.Limit = str(limit)
-    request.FunctionName = function_name
-    if namespace is not None:
-        request.Namespace = namespace
-    if function_version is not None:
-        request.FunctionVersion = function_version
+def build_request(models, name, offset, limit):
+    request = models.DescribeSubAppIdsRequest()
+    request.Offset = offset
+    request.Limit = limit
+    if name is not None:
+        request.Name = name
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
-        "function_name": {"type": "str", "required": True},
-        "namespace": {"type": "str"},
-        "function_version": {"type": "str"},
+        "name": {"type": "str"},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -88,30 +75,24 @@ def run_module():
         supports_check_mode=True,
     )
     try:
-        from tencentcloud.scf.v20180416 import models, scf_client
+        from tencentcloud.vod.v20180717 import models, vod_client
     except ImportError:
-        module.fail_json(msg="The tencentcloud-sdk-python-scf package is required.")
+        module.fail_json(msg="The tencentcloud-sdk-python-vod package is required.")
 
-    client = scf_client.ScfClient(
+    client = vod_client.VodClient(
         create_credential(module), module.params["region"],
-        create_client_profile(module, "scf.tencentcloudapi.com"),
+        create_client_profile(module, "vod.tencentcloudapi.com"),
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(
-            models,
-            module.params["function_name"],
-            module.params["namespace"],
-            module.params["function_version"],
-            offset,
-            limit),
-        lambda request: sdk_call(module, client.ListAliases, request),
-        lambda response: response.Aliases,
+        lambda offset, limit: build_request(models, module.params["name"], offset, limit),
+        lambda request: sdk_call(module, client.DescribeSubAppIds, request),
+        lambda response: response.SubAppIdInfoSet,
         lambda response: response.TotalCount,
     )
     item_set, total_count = paginator.fetch_all()
-    aliases = [serialize_sdk_object(item) for item in item_set]
-    module.exit_json(changed=False, aliases=aliases,
+    sub_apps = [serialize_sdk_object(item) for item in item_set]
+    module.exit_json(changed=False, sub_apps=sub_apps,
                      total_count=total_count, request_id=paginator.request_id)
 
 

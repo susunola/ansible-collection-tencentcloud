@@ -11,7 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: nat_gateway_snat_rule_info
 short_description: Gather information about Tencent Cloud NAT gateway SNAT rules
-version_added: "0.14.0"
+version_added: "1.1.0"
 description: Returns the SNAT rules of a NAT gateway.
 options:
   nat_gateway_id:

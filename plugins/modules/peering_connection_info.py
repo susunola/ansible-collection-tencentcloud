@@ -11,7 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: peering_connection_info
 short_description: Gather information about Tencent Cloud VPC peering connections
-version_added: "0.14.0"
+version_added: "1.1.0"
 description: Returns VPC peering connections visible in a Tencent Cloud region.
 options:
   peering_connection_ids:

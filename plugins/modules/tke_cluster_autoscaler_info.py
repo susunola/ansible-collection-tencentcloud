@@ -9,42 +9,33 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 ---
-module: tke_node_pool_info
-short_description: Gather information about Tencent Cloud TKE node pools
+module: tke_cluster_autoscaler_info
+short_description: Gather information about Tencent Cloud TKE cluster autoscaler options
 version_added: "1.1.0"
-description: Returns the node pools of a TKE cluster.
+description: Returns the cluster-autoscaler configuration of a TKE cluster.
 options:
   cluster_id:
-    description: ID of the TKE cluster whose node pools are returned.
+    description: ID of the TKE cluster whose autoscaler options are returned.
     type: str
     required: true
-  filters:
-    description: TKE API filter names mapped to lists of values.
-    type: dict
-    default: {}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List the node pools of a cluster
-  susunola.tencentcloud.tke_node_pool_info:
+- name: Show the autoscaler options of a cluster
+  susunola.tencentcloud.tke_cluster_autoscaler_info:
     region: ap-guangzhou
     cluster_id: cls-xxxxxxxx
 '''
 
 RETURN = r'''
-node_pools:
-  description: Node pools of the cluster.
+autoscaler_option:
+  description: The cluster autoscaler option object.
   returned: always
-  type: list
-  elements: dict
-total_count:
-  description: Number of node pools returned (the API reports no pageable total).
-  returned: always
-  type: int
+  type: dict
 request_id:
-  description: Request ID of the last API call, for cross-referencing cloud audit logs.
+  description: Request ID of the API call, for cross-referencing cloud audit logs.
   returned: always
   type: str
 '''
@@ -56,18 +47,11 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, cluster_id, filters, offset, limit):
-    # DescribeClusterNodePools returns the full list in one call and is not
+def build_request(models, cluster_id, offset, limit):
+    # DescribeClusterAsGroupOption takes no request arguments and is not
     # paginated; offset and limit are accepted for signature uniformity.
-    request = models.DescribeClusterNodePoolsRequest()
+    request = models.DescribeClusterAsGroupOptionRequest()
     request.ClusterId = cluster_id
-    if filters:
-        request.Filters = []
-        for name, values in sorted(filters.items()):
-            api_filter = models.Filter()
-            api_filter.Name = name
-            api_filter.Values = values if isinstance(values, list) else [values]
-            request.Filters.append(api_filter)
     return request
 
 
@@ -75,7 +59,6 @@ def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
         "cluster_id": {"type": "str", "required": True},
-        "filters": {"type": "dict", "default": {}},
     })
     module = AnsibleModule(
         argument_spec=argument_spec,
@@ -90,12 +73,12 @@ def run_module():
         create_credential(module), module.params["region"],
         create_client_profile(module, "tke.tencentcloudapi.com"),
     )
-    request = build_request(models, module.params["cluster_id"], module.params["filters"], 0, 0)
-    response = sdk_call(module, client.DescribeClusterNodePools, request)
-    items = response.NodePoolSet or []
-    node_pools = [serialize_sdk_object(item) for item in items]
-    module.exit_json(changed=False, node_pools=node_pools,
-                     total_count=len(node_pools), request_id=response.RequestId)
+    request = build_request(models, module.params["cluster_id"], 0, 0)
+    response = sdk_call(module, client.DescribeClusterAsGroupOption, request)
+    autoscaler_option = serialize_sdk_object(response)
+    autoscaler_option.pop("RequestId", None)
+    module.exit_json(changed=False, autoscaler_option=autoscaler_option,
+                     request_id=response.RequestId)
 
 
 def main():

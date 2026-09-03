@@ -53,6 +53,19 @@ KNOWN_COVERAGE = {
         ["havip_info"],
         "DescribeHaVips returns the HaVipAssociationSet with bound CVM/ENI per HAVIP",
     ),
+    "cos_object_sync": (
+        ["cos_object_info"],
+        "cos_object_info lists and filters the objects of a bucket, which is "
+        "the read side a sync reconciles against",
+    ),
+    "cvm_instance_security_group": (
+        ["cvm_instance_info"],
+        "DescribeInstances returns SecurityGroupIds per instance",
+    ),
+    "tke_cluster_upgrade": (
+        ["tke_cluster_info"],
+        "DescribeClusters returns the current ClusterVersion per cluster",
+    ),
 }
 
 # Write modules that are themselves the read surface, or whose resource has
@@ -147,7 +160,6 @@ KNOWN_GAPS = {
     "cos_bucket_replication",
     "cos_bucket_response_control",
     "cos_bucket_website",
-    "cos_object",
     "cvm_chc",
     "cvm_disaster_recover_group",
     "cvm_disaster_recover_group_binding",

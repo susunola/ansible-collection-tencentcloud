@@ -11,7 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: customer_gateway_info
 short_description: Gather information about Tencent Cloud customer gateways
-version_added: "0.14.0"
+version_added: "1.1.0"
 description: Returns customer gateways visible in a Tencent Cloud region.
 options:
   customer_gateway_ids:

@@ -11,7 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: network_acl_info
 short_description: Gather information about Tencent Cloud network ACLs
-version_added: "0.14.0"
+version_added: "1.1.0"
 description: Returns network ACLs visible in a Tencent Cloud region.
 options:
   network_acl_ids:

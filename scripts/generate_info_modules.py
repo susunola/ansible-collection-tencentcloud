@@ -254,7 +254,7 @@ SPECS = [
     },
     {
         "module": "cbs_snapshot_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.cbs.v20170312",
         "client_module": "cbs_client",
         "client_class": "CbsClient",
@@ -543,7 +543,7 @@ SPECS = [
     },
     {
         "module": "cfs_snapshot_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.cfs.v20190719",
         "client_module": "cfs_client",
         "client_class": "CfsClient",
@@ -987,7 +987,7 @@ SPECS = [
     },
     {
         "module": "vpn_connection_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.vpc.v20170312",
         "client_module": "vpc_client",
         "client_class": "VpcClient",
@@ -1023,7 +1023,7 @@ SPECS = [
     },
     {
         "module": "customer_gateway_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.vpc.v20170312",
         "client_module": "vpc_client",
         "client_class": "VpcClient",
@@ -1059,7 +1059,7 @@ SPECS = [
     },
     {
         "module": "ccn_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         # CCN is addressed through the VPC API; there is no tencentcloud.ccn
         # SDK package.
         "service_package": "tencentcloud.vpc.v20170312",
@@ -2298,7 +2298,7 @@ SPECS = [
     },
     {
         "module": "alb_load_balancer_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.alb.v20251030",
         "client_module": "alb_client",
         "client_class": "AlbClient",
@@ -2325,7 +2325,7 @@ SPECS = [
     },
     {
         "module": "alb_listener_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.alb.v20251030",
         "client_module": "alb_client",
         "client_class": "AlbClient",
@@ -2368,7 +2368,7 @@ SPECS = [
     },
     {
         "module": "alb_target_group_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.alb.v20251030",
         "client_module": "alb_client",
         "client_class": "AlbClient",
@@ -2399,7 +2399,7 @@ SPECS = [
     },
     {
         "module": "alb_target_group_targets_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.alb.v20251030",
         "client_module": "alb_client",
         "client_class": "AlbClient",
@@ -2435,7 +2435,7 @@ SPECS = [
     },
     {
         "module": "network_interface_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.vpc.v20170312",
         "client_module": "vpc_client",
         "client_class": "VpcClient",
@@ -2471,7 +2471,7 @@ SPECS = [
     },
     {
         "module": "tke_node_pool_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.tke.v20180525",
         "client_module": "tke_client",
         "client_class": "TkeClient",
@@ -2509,7 +2509,7 @@ SPECS = [
     {
         "module": "scf_alias_info",
         "string_pagination": True,  # Offset/Limit are declared str in this API
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.scf.v20180416",
         "client_module": "scf_client",
         "client_class": "ScfClient",
@@ -2557,7 +2557,7 @@ SPECS = [
     },
     {
         "module": "scf_version_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.scf.v20180416",
         "client_module": "scf_client",
         "client_class": "ScfClient",
@@ -2599,7 +2599,7 @@ SPECS = [
     },
     {
         "module": "scf_trigger_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.scf.v20180416",
         "client_module": "scf_client",
         "client_class": "ScfClient",
@@ -2641,7 +2641,7 @@ SPECS = [
     },
     {
         "module": "clb_listener_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.clb.v20180317",
         "client_module": "clb_client",
         "client_class": "ClbClient",
@@ -2697,7 +2697,7 @@ SPECS = [
     },
     {
         "module": "clb_listener_target_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.clb.v20180317",
         "client_module": "clb_client",
         "client_class": "ClbClient",
@@ -2753,7 +2753,7 @@ SPECS = [
     },
     {
         "module": "clb_target_group_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.clb.v20180317",
         "client_module": "clb_client",
         "client_class": "ClbClient",
@@ -2789,7 +2789,7 @@ SPECS = [
     },
     {
         "module": "cam_policy_attachment_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.cam.v20190116",
         "client_module": "cam_client",
         "client_class": "CamClient",
@@ -2835,7 +2835,7 @@ SPECS = [
     },
     {
         "module": "nat_gateway_dnat_rule_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.vpc.v20170312",
         "client_module": "vpc_client",
         "client_class": "VpcClient",
@@ -2867,7 +2867,7 @@ SPECS = [
     },
     {
         "module": "nat_gateway_snat_rule_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.vpc.v20170312",
         "client_module": "vpc_client",
         "client_class": "VpcClient",
@@ -2903,7 +2903,7 @@ SPECS = [
     },
     {
         "module": "havip_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.vpc.v20170312",
         "client_module": "vpc_client",
         "client_class": "VpcClient",
@@ -2939,7 +2939,7 @@ SPECS = [
     },
     {
         "module": "network_acl_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.vpc.v20170312",
         "client_module": "vpc_client",
         "client_class": "VpcClient",
@@ -2975,7 +2975,7 @@ SPECS = [
     },
     {
         "module": "peering_connection_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.vpc.v20170312",
         "client_module": "vpc_client",
         "client_class": "VpcClient",
@@ -3012,7 +3012,7 @@ SPECS = [
     {
         "module": "vpc_address_template_info",
         "string_pagination": True,  # Offset/Limit are declared str in this API
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.vpc.v20170312",
         "client_module": "vpc_client",
         "client_class": "VpcClient",
@@ -3040,7 +3040,7 @@ SPECS = [
     {
         "module": "vpc_address_template_group_info",
         "string_pagination": True,  # Offset/Limit are declared str in this API
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.vpc.v20170312",
         "client_module": "vpc_client",
         "client_class": "VpcClient",
@@ -3067,7 +3067,7 @@ SPECS = [
     },
     {
         "module": "security_group_rule_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.vpc.v20170312",
         "client_module": "vpc_client",
         "client_class": "VpcClient",
@@ -3105,7 +3105,7 @@ SPECS = [
     },
     {
         "module": "tag_info",
-        "version_added": "0.14.0",
+        "version_added": "1.1.0",
         "service_package": "tencentcloud.tag.v20180813",
         "client_module": "tag_client",
         "client_class": "TagClient",
@@ -3148,6 +3148,308 @@ SPECS = [
   susunola.tencentcloud.tag_info:
     region: ap-guangzhou
     tag_key: env
+""",
+    },
+    # Read sides of the 1.0.0 write modules (audit batch, 1.1.0).
+    {
+        "module": "eks_cluster_info",
+        "version_added": "1.1.0",
+        # EKS lives in the TKE SDK package.
+        "service_package": "tencentcloud.tke.v20180525",
+        "client_module": "tke_client",
+        "client_class": "TkeClient",
+        "sdk_package": "tencentcloud-sdk-python-tke",
+        "endpoint": "tke.tencentcloudapi.com",
+        "action": "DescribeEKSClusters",
+        "request_class": "DescribeEKSClustersRequest",
+        "ids": {
+            "param": "cluster_ids",
+            "field": "ClusterIds",
+            "doc": "EKS cluster IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "TKE API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "Clusters",
+        "response_total": "TotalCount",
+        "result_key": "clusters",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud EKS clusters",
+        "description": "Returns EKS (Elastic Kubernetes Service) clusters visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching EKS clusters.",
+        "return_total_doc": "Number of clusters reported by the API.",
+        "examples": """\
+- name: List all EKS clusters
+  susunola.tencentcloud.eks_cluster_info:
+    region: ap-guangzhou
+
+- name: Find EKS clusters by ID
+  susunola.tencentcloud.eks_cluster_info:
+    region: ap-guangzhou
+    cluster_ids: [cls-xxxxxxxx]
+""",
+    },
+    {
+        "module": "eks_container_instance_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.tke.v20180525",
+        "client_module": "tke_client",
+        "client_class": "TkeClient",
+        "sdk_package": "tencentcloud-sdk-python-tke",
+        "endpoint": "tke.tencentcloudapi.com",
+        "action": "DescribeEKSContainerInstances",
+        "request_class": "DescribeEKSContainerInstancesRequest",
+        "ids": {
+            "param": "eks_ci_ids",
+            "field": "EksCiIds",
+            "doc": "EKS container instance IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "TKE API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "EksCis",
+        "response_total": "TotalCount",
+        "result_key": "container_instances",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud EKS container instances",
+        "description": "Returns EKS container instances (EksCi) visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching EKS container instances.",
+        "return_total_doc": "Number of container instances reported by the API.",
+        "examples": """\
+- name: List all EKS container instances
+  susunola.tencentcloud.eks_container_instance_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        "module": "sms_signature_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.sms.v20210111",
+        "client_module": "sms_client",
+        "client_class": "SmsClient",
+        "sdk_package": "tencentcloud-sdk-python-sms",
+        "endpoint": "sms.tencentcloudapi.com",
+        "action": "DescribeSmsSignList",
+        "request_class": "DescribeSmsSignListRequest",
+        # SignIdSet is a list of int, which the ids option (typed list of str)
+        # cannot express; exposed as an extra param.
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "sign_ids",
+                "field": "SignIdSet",
+                "type": "list",
+                "elements": "int",
+                "doc": "Signature IDs to return.",
+            },
+            {
+                "name": "international",
+                "field": "International",
+                "type": "int",
+                "required": True,
+                "doc": "C(0) for mainland-China signatures, C(1) for international/HK/MO/TW signatures (required by the API).",
+            },
+        ],
+        "response_items": "DescribeSignListStatusSet",
+        "response_total": None,
+        "result_key": "signatures",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud SMS signatures",
+        "description": "Returns SMS signatures of the account.",
+        "return_items_doc": "Matching SMS signatures.",
+        "return_total_doc": "Number of signatures returned (the API reports no total count).",
+        "examples": """\
+- name: List mainland-China SMS signatures
+  susunola.tencentcloud.sms_signature_info:
+    region: ap-guangzhou
+    international: 0
+""",
+    },
+    {
+        "module": "sms_template_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.sms.v20210111",
+        "client_module": "sms_client",
+        "client_class": "SmsClient",
+        "sdk_package": "tencentcloud-sdk-python-sms",
+        "endpoint": "sms.tencentcloudapi.com",
+        "action": "DescribeSmsTemplateList",
+        "request_class": "DescribeSmsTemplateListRequest",
+        # TemplateIdSet is a list of int, which the ids option (typed list of str)
+        # cannot express; exposed as an extra param.
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "template_ids",
+                "field": "TemplateIdSet",
+                "type": "list",
+                "elements": "int",
+                "doc": "Template IDs to return.",
+            },
+            {
+                "name": "international",
+                "field": "International",
+                "type": "int",
+                "required": True,
+                "doc": "C(0) for mainland-China templates, C(1) for international/HK/MO/TW templates (required by the API).",
+            },
+        ],
+        "response_items": "DescribeTemplateStatusSet",
+        "response_total": None,
+        "result_key": "templates",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud SMS templates",
+        "description": "Returns SMS body templates of the account.",
+        "return_items_doc": "Matching SMS templates.",
+        "return_total_doc": "Number of templates returned (the API reports no total count).",
+        "examples": """\
+- name: List mainland-China SMS templates
+  susunola.tencentcloud.sms_template_info:
+    region: ap-guangzhou
+    international: 0
+""",
+    },
+    {
+        "module": "vod_class_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.vod.v20180717",
+        "client_module": "vod_client",
+        "client_class": "VodClient",
+        "sdk_package": "tencentcloud-sdk-python-vod",
+        "endpoint": "vod.tencentcloudapi.com",
+        "action": "DescribeAllClass",
+        "request_class": "DescribeAllClassRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "sub_app_id",
+                "field": "SubAppId",
+                "type": "int",
+                "required": True,
+                "doc": "VOD subapplication ID (required by the API for all customers since 2023-12-25).",
+            },
+        ],
+        "response_items": "ClassInfoSet",
+        "response_total": None,
+        "result_key": "classes",
+        "pagination_type": "list",
+        "short_description": "Gather information about Tencent Cloud VOD classes",
+        "description": "Returns the full category (class) tree of a VOD subapplication.",
+        "return_items_doc": "Top-level classes with nested children.",
+        "return_total_doc": "Number of top-level classes returned (the API reports no total count).",
+        "examples": """\
+- name: List the class tree of a VOD subapplication
+  susunola.tencentcloud.vod_class_info:
+    region: ap-guangzhou
+    sub_app_id: 1300000000
+""",
+    },
+    {
+        "module": "vod_sub_app_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.vod.v20180717",
+        "client_module": "vod_client",
+        "client_class": "VodClient",
+        "sdk_package": "tencentcloud-sdk-python-vod",
+        "endpoint": "vod.tencentcloudapi.com",
+        "action": "DescribeSubAppIds",
+        "request_class": "DescribeSubAppIdsRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "name",
+                "field": "Name",
+                "type": "str",
+                "doc": "Return only subapplications whose name contains this string.",
+            },
+        ],
+        "response_items": "SubAppIdInfoSet",
+        "response_total": "TotalCount",
+        "result_key": "sub_apps",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud VOD subapplications",
+        "description": "Returns the VOD subapplications of the account.",
+        "return_items_doc": "Matching VOD subapplications.",
+        "return_total_doc": "Number of subapplications reported by the API.",
+        "examples": """\
+- name: List all VOD subapplications
+  susunola.tencentcloud.vod_sub_app_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        "module": "tke_cluster_autoscaler_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.tke.v20180525",
+        "client_module": "tke_client",
+        "client_class": "TkeClient",
+        "sdk_package": "tencentcloud-sdk-python-tke",
+        "endpoint": "tke.tencentcloudapi.com",
+        "action": "DescribeClusterAsGroupOption",
+        "request_class": "DescribeClusterAsGroupOptionRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "cluster_id",
+                "field": "ClusterId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the TKE cluster whose autoscaler options are returned.",
+            },
+        ],
+        # The API returns a single ClusterAsGroupOption object.
+        "response_items": None,
+        "response_total": None,
+        "result_key": "autoscaler_option",
+        "pagination_type": "none",
+        "short_description": "Gather information about Tencent Cloud TKE cluster autoscaler options",
+        "description": "Returns the cluster-autoscaler configuration of a TKE cluster.",
+        "return_items_doc": "The cluster autoscaler option object.",
+        "return_total_doc": "",
+        "examples": """\
+- name: Show the autoscaler options of a cluster
+  susunola.tencentcloud.tke_cluster_autoscaler_info:
+    region: ap-guangzhou
+    cluster_id: cls-xxxxxxxx
+""",
+    },
+    {
+        "module": "cvm_image_share_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.cvm.v20170312",
+        "client_module": "cvm_client",
+        "client_class": "CvmClient",
+        "sdk_package": "tencentcloud-sdk-python-cvm",
+        "endpoint": "cvm.tencentcloudapi.com",
+        "action": "DescribeImageSharePermission",
+        "request_class": "DescribeImageSharePermissionRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "image_id",
+                "field": "ImageId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the image whose share permissions are returned.",
+            },
+        ],
+        "response_items": "SharePermissionSet",
+        "response_total": None,
+        "result_key": "share_permissions",
+        "pagination_type": "list",
+        "short_description": "Gather information about Tencent Cloud CVM image share permissions",
+        "description": "Returns the accounts an image is shared with.",
+        "return_items_doc": "Share permission entries of the image.",
+        "return_total_doc": "Number of share permissions returned (the API reports no total count).",
+        "examples": """\
+- name: List the accounts an image is shared with
+  susunola.tencentcloud.cvm_image_share_info:
+    region: ap-guangzhou
+    image_id: img-xxxxxxxx
 """,
     },
 ]

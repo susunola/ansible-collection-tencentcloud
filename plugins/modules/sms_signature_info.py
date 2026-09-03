@@ -9,21 +9,19 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 ---
-module: scf_alias_info
-short_description: Gather information about Tencent Cloud SCF function aliases
+module: sms_signature_info
+short_description: Gather information about Tencent Cloud SMS signatures
 version_added: "1.1.0"
-description: Returns the aliases of an SCF function.
+description: Returns SMS signatures of the account.
 options:
-  function_name:
-    description: Name of the function whose aliases are returned.
-    type: str
+  sign_ids:
+    description: Signature IDs to return.
+    type: list
+    elements: int
+  international:
+    description: C(0) for mainland-China signatures, C(1) for international/HK/MO/TW signatures (required by the API).
+    type: int
     required: true
-  namespace:
-    description: Namespace of the function; defaults to C(default) on the API side.
-    type: str
-  function_version:
-    description: Return only aliases pointing at this function version.
-    type: str
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -33,20 +31,20 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List the aliases of a function
-  susunola.tencentcloud.scf_alias_info:
+- name: List mainland-China SMS signatures
+  susunola.tencentcloud.sms_signature_info:
     region: ap-guangzhou
-    function_name: my-function
+    international: 0
 '''
 
 RETURN = r'''
-aliases:
-  description: Matching function aliases.
+signatures:
+  description: Matching SMS signatures.
   returned: always
   type: list
   elements: dict
 total_count:
-  description: Number of aliases reported by the API.
+  description: Number of signatures returned (the API reports no total count).
   returned: always
   type: int
 request_id:
@@ -63,24 +61,21 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, function_name, namespace, function_version, offset, limit):
-    request = models.ListAliasesRequest()
-    request.Offset = str(offset)
-    request.Limit = str(limit)
-    request.FunctionName = function_name
-    if namespace is not None:
-        request.Namespace = namespace
-    if function_version is not None:
-        request.FunctionVersion = function_version
+def build_request(models, sign_ids, international, offset, limit):
+    request = models.DescribeSmsSignListRequest()
+    request.Offset = offset
+    request.Limit = limit
+    if sign_ids is not None:
+        request.SignIdSet = sign_ids
+    request.International = international
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
-        "function_name": {"type": "str", "required": True},
-        "namespace": {"type": "str"},
-        "function_version": {"type": "str"},
+        "sign_ids": {"type": "list", "elements": "int"},
+        "international": {"type": "int", "required": True},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -88,30 +83,29 @@ def run_module():
         supports_check_mode=True,
     )
     try:
-        from tencentcloud.scf.v20180416 import models, scf_client
+        from tencentcloud.sms.v20210111 import models, sms_client
     except ImportError:
-        module.fail_json(msg="The tencentcloud-sdk-python-scf package is required.")
+        module.fail_json(msg="The tencentcloud-sdk-python-sms package is required.")
 
-    client = scf_client.ScfClient(
+    client = sms_client.SmsClient(
         create_credential(module), module.params["region"],
-        create_client_profile(module, "scf.tencentcloudapi.com"),
+        create_client_profile(module, "sms.tencentcloudapi.com"),
     )
     paginator = Paginator(
         module.params["page_size"],
         lambda offset, limit: build_request(
             models,
-            module.params["function_name"],
-            module.params["namespace"],
-            module.params["function_version"],
+            module.params["sign_ids"],
+            module.params["international"],
             offset,
             limit),
-        lambda request: sdk_call(module, client.ListAliases, request),
-        lambda response: response.Aliases,
-        lambda response: response.TotalCount,
+        lambda request: sdk_call(module, client.DescribeSmsSignList, request),
+        lambda response: response.DescribeSignListStatusSet,
+        lambda response: None,
     )
     item_set, total_count = paginator.fetch_all()
-    aliases = [serialize_sdk_object(item) for item in item_set]
-    module.exit_json(changed=False, aliases=aliases,
+    signatures = [serialize_sdk_object(item) for item in item_set]
+    module.exit_json(changed=False, signatures=signatures,
                      total_count=total_count, request_id=paginator.request_id)
 
 

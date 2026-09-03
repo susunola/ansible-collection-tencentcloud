@@ -28,7 +28,7 @@
       susunola.tencentcloud.cos_object:
         region: "{{ tencentcloud_region | default('ap-guangzhou') }}"
         bucket: "{{ site_bucket }}"
-        key: "{{ item }}"
+        object: "{{ item }}"
         src: "{{ site_dir }}/{{ item }}"
       loop: "{{ site_files }}"
 
@@ -36,17 +36,18 @@
       susunola.tencentcloud.cos_object:
         region: "{{ tencentcloud_region | default('ap-guangzhou') }}"
         bucket: "{{ site_bucket }}"
-        key: uploads/new-asset.zip
-        mode: presign
+        object: uploads/new-asset.zip
+        presign: true
+        method: PUT
         expires: 600
-      register: presigned
+      register: presigned_put
 
     - name: Mint a short-lived pre-signed download URL for the index page
       susunola.tencentcloud.cos_object:
         region: "{{ tencentcloud_region | default('ap-guangzhou') }}"
         bucket: "{{ site_bucket }}"
-        key: index.html
-        mode: presign
+        object: index.html
+        presign: true
         method: GET
         expires: 600
       register: presigned_get
@@ -54,5 +55,5 @@
     - name: Show the pre-signed URLs
       ansible.builtin.debug:
         msg:
-          upload: "{{ presigned.url }}"
+          upload: "{{ presigned_put.url }}"
           download: "{{ presigned_get.url }}"

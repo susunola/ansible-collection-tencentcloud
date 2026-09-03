@@ -11,7 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: alb_load_balancer_info
 short_description: Gather information about Tencent Cloud ALB instances
-version_added: "0.14.0"
+version_added: "1.1.0"
 description: Returns ALB (Application Load Balancer) instances visible in a Tencent Cloud region.
 options:
   filters:

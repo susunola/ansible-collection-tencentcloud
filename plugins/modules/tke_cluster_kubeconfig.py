@@ -10,7 +10,7 @@ DOCUMENTATION = r'''
 ---
 module: tke_cluster_kubeconfig
 short_description: Fetch the kubeconfig of a Tencent Cloud TKE cluster
-version_added: "0.14.0"
+version_added: "1.1.0"
 description:
   - Fetch the kubeconfig of a TKE (Tencent Kubernetes Engine) cluster via
     the C(DescribeClusterKubeconfig) API.

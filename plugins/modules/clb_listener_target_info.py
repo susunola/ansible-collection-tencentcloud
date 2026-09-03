@@ -11,7 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: clb_listener_target_info
 short_description: Gather information about Tencent Cloud CLB listener targets
-version_added: "0.14.0"
+version_added: "1.1.0"
 description: Returns the backend targets bound to the listeners of a CLB instance.
 options:
   load_balancer_id:

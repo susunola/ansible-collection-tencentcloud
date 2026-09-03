@@ -9,21 +9,19 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 ---
-module: scf_alias_info
-short_description: Gather information about Tencent Cloud SCF function aliases
+module: eks_cluster_info
+short_description: Gather information about Tencent Cloud EKS clusters
 version_added: "1.1.0"
-description: Returns the aliases of an SCF function.
+description: Returns EKS (Elastic Kubernetes Service) clusters visible in a Tencent Cloud region.
 options:
-  function_name:
-    description: Name of the function whose aliases are returned.
-    type: str
-    required: true
-  namespace:
-    description: Namespace of the function; defaults to C(default) on the API side.
-    type: str
-  function_version:
-    description: Return only aliases pointing at this function version.
-    type: str
+  cluster_ids:
+    description: EKS cluster IDs to return. Mutually exclusive with O(filters).
+    type: list
+    elements: str
+  filters:
+    description: TKE API filter names mapped to lists of values.
+    type: dict
+    default: {}
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -33,20 +31,24 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List the aliases of a function
-  susunola.tencentcloud.scf_alias_info:
+- name: List all EKS clusters
+  susunola.tencentcloud.eks_cluster_info:
     region: ap-guangzhou
-    function_name: my-function
+
+- name: Find EKS clusters by ID
+  susunola.tencentcloud.eks_cluster_info:
+    region: ap-guangzhou
+    cluster_ids: [cls-xxxxxxxx]
 '''
 
 RETURN = r'''
-aliases:
-  description: Matching function aliases.
+clusters:
+  description: Matching EKS clusters.
   returned: always
   type: list
   elements: dict
 total_count:
-  description: Number of aliases reported by the API.
+  description: Number of clusters reported by the API.
   returned: always
   type: int
 request_id:
@@ -63,55 +65,58 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, function_name, namespace, function_version, offset, limit):
-    request = models.ListAliasesRequest()
-    request.Offset = str(offset)
-    request.Limit = str(limit)
-    request.FunctionName = function_name
-    if namespace is not None:
-        request.Namespace = namespace
-    if function_version is not None:
-        request.FunctionVersion = function_version
+def build_request(models, cluster_ids, filters, offset, limit):
+    request = models.DescribeEKSClustersRequest()
+    request.Offset = offset
+    request.Limit = limit
+    if cluster_ids:
+        request.ClusterIds = cluster_ids
+    if filters:
+        request.Filters = []
+        for name, values in sorted(filters.items()):
+            api_filter = models.Filter()
+            api_filter.Name = name
+            api_filter.Values = values if isinstance(values, list) else [values]
+            request.Filters.append(api_filter)
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
-        "function_name": {"type": "str", "required": True},
-        "namespace": {"type": "str"},
-        "function_version": {"type": "str"},
+        "cluster_ids": {"type": "list", "elements": "str"},
+        "filters": {"type": "dict", "default": {}},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
         argument_spec=argument_spec,
+        mutually_exclusive=[("cluster_ids", "filters")],
         supports_check_mode=True,
     )
     try:
-        from tencentcloud.scf.v20180416 import models, scf_client
+        from tencentcloud.tke.v20180525 import models, tke_client
     except ImportError:
-        module.fail_json(msg="The tencentcloud-sdk-python-scf package is required.")
+        module.fail_json(msg="The tencentcloud-sdk-python-tke package is required.")
 
-    client = scf_client.ScfClient(
+    client = tke_client.TkeClient(
         create_credential(module), module.params["region"],
-        create_client_profile(module, "scf.tencentcloudapi.com"),
+        create_client_profile(module, "tke.tencentcloudapi.com"),
     )
     paginator = Paginator(
         module.params["page_size"],
         lambda offset, limit: build_request(
             models,
-            module.params["function_name"],
-            module.params["namespace"],
-            module.params["function_version"],
+            module.params["cluster_ids"],
+            module.params["filters"],
             offset,
             limit),
-        lambda request: sdk_call(module, client.ListAliases, request),
-        lambda response: response.Aliases,
+        lambda request: sdk_call(module, client.DescribeEKSClusters, request),
+        lambda response: response.Clusters,
         lambda response: response.TotalCount,
     )
     item_set, total_count = paginator.fetch_all()
-    aliases = [serialize_sdk_object(item) for item in item_set]
-    module.exit_json(changed=False, aliases=aliases,
+    clusters = [serialize_sdk_object(item) for item in item_set]
+    module.exit_json(changed=False, clusters=clusters,
                      total_count=total_count, request_id=paginator.request_id)
 
 

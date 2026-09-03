@@ -1,2 +1,2 @@
 minor_changes:
-  - "cos_object - add the ``method`` option (``GET``/``PUT``, default ``PUT``) selecting the HTTP method a pre-signed URL is signed for when ``mode=presign``; a non-default ``method`` with any other mode fails the task explicitly."
+  - "cos_object - add pre-signed URL support: ``presign=true`` returns a URL signed for the ``method`` option (``GET`` download or ``PUT`` upload, validity bounded by ``expires``) without touching the bucket and reports ``changed=false``; a non-default ``method`` without ``presign`` fails the task explicitly."

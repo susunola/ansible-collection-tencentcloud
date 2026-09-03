@@ -11,7 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: alb_target_group_info
 short_description: Gather information about Tencent Cloud ALB target groups
-version_added: "0.14.0"
+version_added: "1.1.0"
 description: Returns ALB target groups visible in a Tencent Cloud region.
 options:
   target_group_ids:

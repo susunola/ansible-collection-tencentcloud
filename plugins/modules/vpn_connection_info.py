@@ -11,7 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: vpn_connection_info
 short_description: Gather information about Tencent Cloud VPN connections
-version_added: "0.14.0"
+version_added: "1.1.0"
 description: Returns VPN connections visible in a Tencent Cloud region.
 options:
   vpn_connection_ids:

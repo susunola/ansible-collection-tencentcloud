@@ -11,7 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: security_group_rule_info
 short_description: Gather information about Tencent Cloud security group rules
-version_added: "0.14.0"
+version_added: "1.1.0"
 description: Returns the ingress and egress rule set of a security group.
 options:
   security_group_id:

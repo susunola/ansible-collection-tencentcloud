@@ -11,7 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: nat_gateway_dnat_rule_info
 short_description: Gather information about Tencent Cloud NAT gateway DNAT rules
-version_added: "0.14.0"
+version_added: "1.1.0"
 description: Returns the DNAT (port forwarding) rules of NAT gateways.
 options:
   nat_gateway_ids:

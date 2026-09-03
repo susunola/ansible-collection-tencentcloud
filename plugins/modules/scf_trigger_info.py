@@ -11,7 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: scf_trigger_info
 short_description: Gather information about Tencent Cloud SCF function triggers
-version_added: "0.14.0"
+version_added: "1.1.0"
 description: Returns the triggers of an SCF function.
 options:
   function_name:

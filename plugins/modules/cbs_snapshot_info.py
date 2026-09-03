@@ -11,7 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: cbs_snapshot_info
 short_description: Gather information about Tencent Cloud CBS snapshots
-version_added: "0.14.0"
+version_added: "1.1.0"
 description: Returns CBS (Cloud Block Storage) disk snapshots visible in a Tencent Cloud region.
 options:
   snapshot_ids:

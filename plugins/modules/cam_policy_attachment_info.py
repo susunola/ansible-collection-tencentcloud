@@ -11,7 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: cam_policy_attachment_info
 short_description: Gather information about Tencent Cloud CAM policy attachments
-version_added: "0.14.0"
+version_added: "1.1.0"
 description: Returns the users, groups and roles a CAM policy is attached to.
 options:
   policy_id:

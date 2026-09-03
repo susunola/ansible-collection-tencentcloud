@@ -125,4 +125,3 @@ def test_print_stamp_missing_file_fails(drift, tmp_path):
                     out=out, err=err)
     assert rc == 1
     assert "SDK drift check failed" in err.getvalue()
-

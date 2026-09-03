@@ -219,52 +219,6 @@
 45. VPC traffic observability. **Done** — `vpc_flow_log` manages flow-log
     lifecycle for ENI, NAT, CCN and direct-connect resources, CLS topic
     delivery, mutable metadata and enabled state with convergence polling.
-46. Capability completion batch (0.14.0). **Done** —
-    `tke_cluster_kubeconfig` fetches a cluster's intranet or extranet
-    kubeconfig via `DescribeClusterKubeconfig`, either returning it in the
-    task result or writing it to `dest` with 0600 permissions and
-    content-hash idempotency (the diff carries SHA-256 hashes, never the
-    credentials). `cos_object` brings object-level COS operations on the
-    `qcloud_cos` SDK: idempotent upload (size + ETag/MD5 comparison) and
-    delete via `state=present`/`absent`, download via `mode=download`
-    (mirroring the `mode` convention of `amazon.aws.s3_object`), and
-    `mode=presign` pre-signed URLs whose HTTP method is selected by the
-    `method` option (`GET` download URLs or `PUT` upload URLs). Five
-    generated `_info` modules close the read side of existing write
-    modules: `vpn_connection_info`, `customer_gateway_info`, `ccn_info`,
-    `cbs_snapshot_info` and `cfs_snapshot_info` (the last one exposes
-    `file_system_id`/`snapshot_id` as optional extra params because the
-    API takes single strings, not ID lists). New scenario playbooks
-    `tke_kubeconfig.yml` and `cos_static_site.yml` demonstrate both
-    modules.
-47. Read/write symmetry audit (0.14.0). **Done** —
-    `scripts/audit_info_coverage.py` audits that every write module has a
-    readable query surface (`X_info`, a curated `KNOWN_COVERAGE` mapping, or
-    a documented `KNOWN_GAPS`/`KNOWN_NO_LIST_API` entry) and gates CI with
-    `--check`. Twenty-two write modules gained real read modules this batch
-    (18 new generated `_info` modules, including the four token-paginated
-    `alb.v20251030` list APIs); the generator's `list` pagination mode
-    learned to pass `extra_params` into `build_request` (previously a broken
-    call) and `elements`/`choices` into the argument spec. The remaining 224
-    write modules are recorded as an explicit backlog (223) or documented
-    no-list-API entries (1).
-48. SDK compatibility range (0.14.0). **Done** — `requirements.txt` now
-    allows `tencentcloud-sdk-python>=3.1.164,<4.0.0`; CI re-pins to the
-    `GENERATED_SDK_VERSION` stamp (via `check_sdk_drift.py --print-stamp`)
-    before the drift sentinel and contract tests, so generated artifacts are
-    verified against the exact SDK that produced them while user installs
-    float within the range. Verified that discovery against the newest
-    release (3.1.166) reproduces the committed specs byte-identically.
-49. Deprecation policy (0.14.0). **Done** — no module warranted a real
-    deprecation (no legacy names or superseded capabilities in the tree),
-    so instead of inventing one, `docs/deprecation-policy.md` now documents
-    the lifecycle (one major release of warning) with the `runtime.yml`
-    `plugin_routing`, `DOCUMENTATION.deprecated` and changelog fragment
-    recipes, and `meta/runtime.yml` keeps a commented template skeleton.
-50. Scenario coverage (0.14.0). **Done** — `playbooks/three_tier_web.yml`
-    assembles a VPC + subnet + security group + `exact_count` CVM pool +
-    CLB listener/targets three-tier web stack, and `docs/scenarios.md`
-    indexes all five scenario playbooks with prerequisites and cost notes.
 
 ## Next (0.14+)
 
@@ -493,6 +447,51 @@ the official `ansible-collections` organisation.
     batch 12 as `scripts/generate_module_test_skeleton.py`) is expected to
     close the ~+4,000-statement gap in ~10-15 generator-assisted batches
     instead of ~180 hand-written files.
+58. Capability completion batch (1.1.0). **Done** —
+    `tke_cluster_kubeconfig` fetches a cluster's intranet or extranet
+    kubeconfig via `DescribeClusterKubeconfig`, either returning it in the
+    task result or writing it to `dest` with 0600 permissions and
+    content-hash idempotency (the diff carries SHA-256 hashes, never the
+    credentials). `cos_object` (shipped in 1.0.0) gains pre-signed URL
+    support: `presign=true` returns a URL signed for the `method` option
+    (`GET` download or `PUT` upload, `expires` bounded), changing nothing
+    and reporting `changed=false`. Five generated `_info` modules close
+    the read side of existing write modules: `vpn_connection_info`,
+    `customer_gateway_info`, `ccn_info`, `cbs_snapshot_info` and
+    `cfs_snapshot_info` (the last one exposes
+    `file_system_id`/`snapshot_id` as optional extra params because the
+    API takes single strings, not ID lists). New scenario playbooks
+    `tke_kubeconfig.yml` and `cos_static_site.yml` demonstrate both
+    modules.
+59. Read/write symmetry audit (1.1.0). **Done** —
+    `scripts/audit_info_coverage.py` audits that every write module has a
+    readable query surface (`X_info`, a curated `KNOWN_COVERAGE` mapping, or
+    a documented `KNOWN_GAPS`/`KNOWN_NO_LIST_API` entry) and gates CI with
+    `--check`. Twenty-two write modules gained real read modules this batch
+    (18 new generated `_info` modules, including the four token-paginated
+    `alb.v20251030` list APIs); the generator's `list` pagination mode
+    learned to pass `extra_params` into `build_request` (previously a broken
+    call) and `elements`/`choices` into the argument spec, and a
+    `string_pagination` spec flag covers APIs whose Offset/Limit are
+    declared as strings. The remaining write modules without a read surface
+    are recorded as an explicit backlog or documented no-list-API entries.
+60. SDK compatibility range (1.1.0). **Done** — `requirements.txt` now
+    allows `tencentcloud-sdk-python>=3.1.164,<4.0.0`; CI re-pins to the
+    `GENERATED_SDK_VERSION` stamp (via `check_sdk_drift.py --print-stamp`)
+    before the drift sentinel and contract tests, so generated artifacts are
+    verified against the exact SDK that produced them while user installs
+    float within the range. Verified that discovery against the newest
+    release (3.1.166) reproduces the committed specs byte-identically.
+61. Deprecation policy (1.1.0). **Done** — no module warranted a real
+    deprecation (no legacy names or superseded capabilities in the tree),
+    so instead of inventing one, `docs/deprecation-policy.md` now documents
+    the lifecycle (one major release of warning) with the `runtime.yml`
+    `plugin_routing`, `DOCUMENTATION.deprecated` and changelog fragment
+    recipes, and `meta/runtime.yml` keeps a commented template skeleton.
+62. Scenario coverage (1.1.0). **Done** — `playbooks/three_tier_web.yml`
+    assembles a VPC + subnet + security group + `exact_count` CVM pool +
+    CLB listener/targets three-tier web stack, and `docs/scenarios.md`
+    indexes all five scenario playbooks with prerequisites and cost notes.
 
 ## 58. Industry benchmark gap closure (2026-09-02)
 

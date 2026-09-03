@@ -11,7 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: clb_listener_info
 short_description: Gather information about Tencent Cloud CLB listeners
-version_added: "0.14.0"
+version_added: "1.1.0"
 description: Returns the listeners of a CLB instance, including the rules of L7 listeners.
 options:
   load_balancer_id:
