@@ -460,7 +460,7 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
   ckafka_instance, cbs_disk, eip, nat_gateway, subnet) have ZERO integration
   targets — needs its own plan (not #57, which is the unit-coverage drive,
   tracked separately as G1b); flagship-first skeleton next.
-- **G1b unit breadth** (136/313 write modules have no unit test file — file-scan
+- **G1b unit breadth** (132/313 write modules have no unit test file — file-scan
   count; the batch-29 closeout reconciled the documented figure to the
   authoritative file-scan baseline, correcting an +11 legacy over-credit from
   content-credited multi-module test files that do not sit at
@@ -562,7 +562,10 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
   (2026-09-03): `config_aggregator` (28 tests, 96%), `cdb_audit_config` (20
   tests, 98%), `cam_group_membership` (22 tests, 97%), `cfs_permission_group`
   (25 tests, 99%) — 95 hermetic tests; full module + scripts suite 5184
-  green, total coverage 81.66%.
+  green, total coverage 81.66%. Batch 39 (2026-09-03): `cmq_topic` (24 tests,
+  99%), `cdb_database` (20 tests, 99%), `cam_group` (21 tests, 99%),
+  `cdb_backup_config` (15 tests, 98%) — 80 hermetic tests; full module +
+  scripts suite 5264 green, total coverage 81.80%.
 - **G2 ecosystem trust** (downloads 0 vs 11.8M–90.5M): inclusion #89
   awaiting reviewer; only active lever is reviewing another queued
   collection to raise our priority.
