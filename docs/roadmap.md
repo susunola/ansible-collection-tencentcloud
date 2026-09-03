@@ -460,7 +460,8 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
   ckafka_instance, cbs_disk, eip, nat_gateway, subnet) have ZERO integration
   targets — needs its own plan (not #57, which is the unit-coverage drive,
   tracked separately as G1b); flagship-first skeleton next.
-- **G1b unit breadth** (166/313 write modules have no unit test file; write
+- **G1b unit breadth** (169/313 write modules have no unit test file — file-scan
+  count, reconciles a +7 over-credit vs the earlier figure; write
   statement cov ~51% vs 70% target): in flight via #57 batches; lever-1
   skeleton generator shipped (batch 12, P0-01), generator-assisted batches
   follow from the next highest-miss modules. Batch 13 (2026-09-02, first
@@ -514,7 +515,11 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
   `teo_security_exception_rules` (32 tests, 96%),
   `teo_security_rate_limiting_rules` (45 tests, 96%),
   `teo_security_custom_rules` (27 tests, 96%) — 140 hermetic tests; full
-  module + scripts suite 3958 green, total coverage 79.43%.
+  module + scripts suite 3958 green, total coverage 79.43%. Batch 27
+  (2026-09-03): `cdb_account_privilege` (18 tests, 95%), `tcr_repository`
+  (21 tests, 95%), `cynosdb_account_privilege` (17 tests, 95%),
+  `tcb_environment` (27 tests, 96%) — 83 hermetic tests; full module +
+  scripts suite 4041 green, total coverage 79.79%.
 - **G2 ecosystem trust** (downloads 0 vs 11.8M–90.5M): inclusion #89
   awaiting reviewer; only active lever is reviewing another queued
   collection to raise our priority.
