@@ -3,10 +3,10 @@
 How to raise the CI coverage gate (55%) back towards 70% without writing
 ~200 module test files one by one at the current per-batch pace.
 
-## Current state (measured 2026-09-03, after batch 33)
+## Current state (measured 2026-09-03, after batch 34)
 
 - Gate: `--cov-fail-under=55`, baseline total ~60.9% after batches 1-11.
-- 313 write modules, 156 of them have **no** unit test file (file-scan
+- 313 write modules, 152 of them have **no** unit test file (file-scan
   count — batch-29 closeout reconciled the documented figure to the
   authoritative file-scan baseline, correcting an +11 legacy over-credit
   from content-credited multi-module test files such as
@@ -64,7 +64,9 @@ How to raise the CI coverage gate (55%) back towards 70% without writing
   96%), `ckafka_route` (25 tests, 95%) — 102 tests; batch 33 added
   `vod_class` (18 tests, 95%), `cvm_hpc_cluster` (33 tests, 97%),
   `organization_member` (28 tests, 96%), `tdmq_rabbitmq_user` (30 tests,
-  96%) — 109 tests).
+  96%) — 109 tests; batch 34 added `scf_trigger` (24 tests, 96%),
+  `monitor_prometheus_instance` (26 tests, 97%), `monitor_prometheus_alert_group`
+  (27 tests, 96%), `as_scheduled_action` (26 tests, 96%) — 103 tests).
 - Target 70% needs roughly +4,000 covered statements. The untested write
   modules are the entire gap (module_utils at 92%, `_info` at ~86% are
   already near their ceiling).
