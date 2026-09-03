@@ -460,7 +460,7 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
   ckafka_instance, cbs_disk, eip, nat_gateway, subnet) have ZERO integration
   targets — needs its own plan (not #57, which is the unit-coverage drive,
   tracked separately as G1b); flagship-first skeleton next.
-- **G1b unit breadth** (182/313 write modules have no unit test file; write
+- **G1b unit breadth** (178/313 write modules have no unit test file; write
   statement cov ~51% vs 70% target): in flight via #57 batches; lever-1
   skeleton generator shipped (batch 12, P0-01), generator-assisted batches
   follow from the next highest-miss modules. Batch 13 (2026-09-02, first
@@ -494,7 +494,14 @@ BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
   21 (2026-09-03): `mqtt_authorization_policy` (25 tests, 95%),
   `tcm_mesh` (33 tests, 95%), `gwlb_target_group` (34 tests, 96%),
   `ssm_secret` (34 tests, 96%) — 126 hermetic tests; full module + scripts
-  suite 3335 green.
+  suite 3335 green. Batch 22 (2026-09-03): `ckafka_acl_rule` (29 tests,
+  96%), `tem_environment` (29 tests, 96%), `tem_application` (29 tests,
+  96%), `api_gateway_api` (32 tests, 95%) — 119 hermetic tests; full module
+  + scripts suite 3454 green, total coverage 78.37%. Batch 23
+  (2026-09-03): `waf_custom_white_rule` (31 tests, 96%),
+  `goosefs_file_system` (26 tests, 96%), `mongodb_account` (28 tests,
+  96%), `waf_anti_info_leak_rule` (28 tests, 96%) — 113 hermetic tests;
+  full module + scripts suite 3567 green, total coverage 78.66%.
 - **G2 ecosystem trust** (downloads 0 vs 11.8M–90.5M): inclusion #89
   awaiting reviewer; only active lever is reviewing another queued
   collection to raise our priority.
