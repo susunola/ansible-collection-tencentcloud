@@ -3,11 +3,15 @@
 How to raise the CI coverage gate (55%) back towards 70% without writing
 ~200 module test files one by one at the current per-batch pace.
 
-## Current state (measured 2026-09-03, after batch 28)
+## Current state (measured 2026-09-03, after batch 29)
 
 - Gate: `--cov-fail-under=55`, baseline total ~60.9% after batches 1-11.
-- 313 write modules, 165 of them have **no** unit test file (file-scan
-  count, reconciles a +7 over-credit vs the earlier figure; batch 13 added
+- 313 write modules, 172 of them have **no** unit test file (file-scan
+  count — batch-29 closeout reconciled the documented figure to the
+  authoritative file-scan baseline, correcting an +11 legacy over-credit
+  from content-credited multi-module test files such as
+  `module_cls_topic.py` / `p1_resource_modules.py` that do not sit at
+  `test_<module>.py`; batch 13 added
   `eks_container_instance`, `tke_node_pool`, `network_interface`,
   `ssm_parameter` — 102 tests, 93-98% each; batch 14 added
   `dc_direct_connect_tunnel`, `config_compliance_pack`, `cdn_cls_log_topic`,
@@ -47,7 +51,10 @@ How to raise the CI coverage gate (55%) back towards 70% without writing
   `cynosdb_account_privilege` (17 tests, 95%), `tcb_environment` (27 tests,
   96%) — 83 tests; batch 28 added `cvm_launch_template_version` (28 tests,
   96%), `trabbit_serverless_exchange` (26 tests, 95%), `tcr_replication_rule`
-  (23 tests, 96%), `eb_target` (25 tests, 96%) — 102 tests).
+  (23 tests, 96%), `eb_target` (25 tests, 96%) — 102 tests; batch 29 added
+  `gwlb_load_balancer` (32 tests, 96%), `as_scaling_policy` (24 tests, 95%),
+  `tdmq_namespace` (27 tests, 95%), `postgresql_parameter_template` (24
+  tests, 95%) — 107 tests).
 - Target 70% needs roughly +4,000 covered statements. The untested write
   modules are the entire gap (module_utils at 92%, `_info` at ~86% are
   already near their ceiling).
