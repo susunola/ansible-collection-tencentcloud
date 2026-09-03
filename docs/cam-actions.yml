@@ -202,6 +202,8 @@ modules:
   - DescribeAutoSnapshotPolicies
   - ModifyAutoSnapshotPolicyAttribute
   - UnbindAutoSnapshotPolicy
+  cbs_auto_snapshot_policy_info:
+  - DescribeAutoSnapshotPolicies
   cbs_disk:
   - AttachDisks
   - CreateDisks
@@ -242,6 +244,8 @@ modules:
   - ModifyAccountDescription
   - ModifyAccountMaxUserConnections
   - ModifyAccountPassword
+  cdb_account_info:
+  - DescribeAccounts
   cdb_account_privilege:
   - DescribeAccountPrivileges
   - ModifyAccountPrivileges
@@ -251,9 +255,13 @@ modules:
   cdb_backup_config:
   - DescribeBackupConfig
   - ModifyBackupConfig
+  cdb_backup_config_info:
+  - DescribeBackupConfig
   cdb_database:
   - CreateDatabase
   - DeleteDatabase
+  - DescribeDatabases
+  cdb_database_info:
   - DescribeDatabases
   cdb_instance:
   - CreateDBInstance
@@ -344,11 +352,15 @@ modules:
   - DeleteCfsPGroup
   - DescribeCfsPGroups
   - UpdateCfsPGroup
+  cfs_permission_group_info:
+  - DescribeCfsPGroups
   cfs_permission_rule:
   - CreateCfsRule
   - DeleteCfsRule
   - DescribeCfsRules
   - UpdateCfsRule
+  cfs_permission_rule_info:
+  - DescribeCfsRules
   cfs_snapshot:
   - CreateCfsSnapshot
   - DeleteCfsSnapshot
@@ -461,11 +473,15 @@ modules:
   - DescribeTopic
   - DescribeTopicAttributes
   - ModifyTopicAttributes
+  ckafka_topic_info:
+  - DescribeTopic
   ckafka_user:
   - CreateUser
   - DeleteUser
   - DescribeUser
   - ModifyPassword
+  ckafka_user_info:
+  - DescribeUser
   clb_listener:
   - CreateListener
   - DeleteListener
@@ -524,6 +540,8 @@ modules:
   - DeleteConfig
   - DescribeConfigs
   - ModifyConfig
+  cls_config_info:
+  - DescribeConfigs
   cls_config_machine_group_binding:
   - ApplyConfigToMachineGroup
   - DeleteConfigFromMachineGroup
@@ -533,21 +551,29 @@ modules:
   - DeleteIndex
   - DescribeIndex
   - ModifyIndex
+  cls_index_info:
+  - DescribeIndex
   cls_logset:
   - CreateLogset
   - DeleteLogset
   - DescribeLogsets
   - ModifyLogset
+  cls_logset_info:
+  - DescribeLogsets
   cls_machine_group:
   - CreateMachineGroup
   - DeleteMachineGroup
   - DescribeMachineGroups
   - ModifyMachineGroup
+  cls_machine_group_info:
+  - DescribeMachineGroups
   cls_shipper:
   - CreateShipper
   - DeleteShipper
   - DescribeShippers
   - ModifyShipper
+  cls_shipper_info:
+  - DescribeShippers
   cls_topic:
   - CreateTopic
   - DeleteTopic
@@ -704,6 +730,8 @@ modules:
   - DescribeAccounts
   - ModifyAccountDescription
   - ResetAccountPassword
+  cynosdb_account_info:
+  - DescribeAccounts
   cynosdb_account_privilege:
   - DescribeAccountAllGrantPrivileges
   - ModifyAccountPrivileges
@@ -753,6 +781,8 @@ modules:
   - DeleteDirectConnect
   - DescribeDirectConnects
   - ModifyDirectConnectAttribute
+  dc_direct_connect_info:
+  - DescribeDirectConnects
   dc_direct_connect_tunnel:
   - CreateDirectConnectTunnel
   - DeleteDirectConnectTunnel
@@ -1021,6 +1051,8 @@ modules:
   - DisableKeyRotation
   - EnableKeyRotation
   - GetKeyRotationStatus
+  kms_key_rotation_info:
+  - GetKeyRotationStatus
   lcic_answer_info:
   - DescribeAnswerList
   lighthouse_disk:
@@ -1070,6 +1102,8 @@ modules:
   - DescribeAccounts
   - ModifyAccountDescription
   - ResetAccountPassword
+  mariadb_account_info:
+  - DescribeAccounts
   mariadb_account_privilege:
   - DescribeAccountPrivileges
   - GrantAccountPrivileges
@@ -1101,6 +1135,8 @@ modules:
   - DescribeAccountUsers
   - ResetDBInstancePassword
   - SetAccountUserPrivilege
+  mongodb_account_info:
+  - DescribeAccountUsers
   mongodb_backup_config:
   - DescribeBackupRules
   - SetBackupRules
@@ -1129,6 +1165,8 @@ modules:
   - DeleteGrafanaInstance
   - DescribeGrafanaInstances
   - ModifyGrafanaInstance
+  monitor_grafana_instance_info:
+  - DescribeGrafanaInstances
   monitor_grafana_integration:
   - CreateGrafanaIntegration
   - DeleteGrafanaIntegration
@@ -1169,6 +1207,8 @@ modules:
   - DescribePrometheusInstances
   - ModifyPrometheusInstanceAttributes
   - TerminatePrometheusInstances
+  monitor_prometheus_instance_info:
+  - DescribePrometheusInstancesOverview
   monitor_prometheus_record_rule:
   - CreatePrometheusRecordRuleYaml
   - DeletePrometheusRecordRuleYaml
@@ -1292,6 +1332,8 @@ modules:
   - DescribeAccounts
   - ModifyAccountRemark
   - ResetAccountPassword
+  postgresql_account_info:
+  - DescribeAccounts
   postgresql_backup_plan:
   - CreateBackupPlan
   - DeleteBackupPlan
@@ -1342,6 +1384,8 @@ modules:
   - DeleteInstanceAccount
   - DescribeInstanceAccount
   - ModifyInstanceAccount
+  redis_account_info:
+  - DescribeInstanceAccount
   redis_backup_config:
   - DescribeAutoBackupConfig
   - ModifyAutoBackupConfig
@@ -1432,6 +1476,8 @@ modules:
   - ModifyAccountPrivilege
   - ModifyAccountRemark
   - ResetAccountPassword
+  sqlserver_account_info:
+  - DescribeAccounts
   sqlserver_backup_config:
   - DescribeDBInstances
   - ModifyBackupStrategy
@@ -1472,6 +1518,8 @@ modules:
   - EnableSecret
   - RestoreSecret
   - UpdateDescription
+  ssm_secret_info:
+  - ListSecrets
   ssm_secret_version:
   - DeleteSecretVersion
   - GetSecretValue
