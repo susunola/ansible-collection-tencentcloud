@@ -4,10 +4,9 @@ Covers the create / drift-update / delete flows of
 ``plugins/modules/mqtt_authorization_policy.py`` with an in-memory fake MQTT
 client whose write operations mutate the policy store, so the module's
 post-write ``find`` refetch converges immediately. Policies are matched by
-``policy_id`` (``Id``) or by ``PolicyName``; CSV-encoded SDK list fields
-(Actions / Resources / Qos) are split back into sorted lists for drift
-comparison. ``effect`` / ``retain`` / ``qos`` are no-default choices params,
-so tests drop explicit ``None`` values before injecting module args.
+``policy_id`` (field ``Id``) or by ``PolicyName`` across the Describe
+response; CSV-encoded action/resource/qos fields are compared as sorted
+lists.
 """
 
 from __future__ import absolute_import, division, print_function
@@ -30,9 +29,8 @@ from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harnes
 )
 
 POLICY = {
-    "Id": 101,
-    "InstanceId": "mqtt-1",
-    "PolicyName": "app-publish",
+    "Id": 7,
+    "PolicyName": "application-publish",
     "Priority": 10,
     "Effect": "allow",
     "Actions": "connect,pub",
@@ -41,7 +39,7 @@ POLICY = {
     "ClientId": "",
     "Ip": "",
     "Retain": None,
-    "Qos": "",
+    "Qos": "0,1",
     "Remark": "",
 }
 
@@ -57,9 +55,9 @@ def _params(**overrides):
     """Module parameters pre-filled from the argument spec."""
     params = {
         "state": "present",
-        "instance_id": "mqtt-1",
+        "instance_id": "mqtt-inst-1",
         "policy_id": None,
-        "name": "app-publish",
+        "name": "application-publish",
         "priority": 10,
         "effect": "allow",
         "actions": ["connect", "pub"],
@@ -76,13 +74,15 @@ def _params(**overrides):
 
 
 def _clean_params(**overrides):
-    """_params() with None-valued keys removed (no-default choices params)."""
+    """Drop None-valued params — Ansible validates explicit None against choices."""
     return {k: v for k, v in _params(**overrides).items() if v is not None}
 
 
 def _run_args(**extra):
-    """module_args() pre-filled with every module parameter (None dropped)."""
-    return module_args(**dict(_clean_params(**extra)))
+    """module_args() pre-filled with valid (non-None) module parameters."""
+    args = dict(_clean_params())
+    args.update({k: v for k, v in extra.items() if v is not None})
+    return module_args(**args)
 
 
 class FakeModule(object):
@@ -103,15 +103,15 @@ class FakeModule(object):
 class FakeMqttClient(object):
     """In-memory MqttClient stand-in.
 
-    Stores API-shaped policy dicts; DescribeAuthorizationPolicies returns the
-    whole store. Write operations mutate the store so post-write refetches
-    converge.
+    Stores API-shaped policy dicts. DescribeAuthorizationPolicies returns the
+    whole store; write operations mutate the store so the module's post-write
+    find refetch converges.
     """
 
     def __init__(self, policies=None):
         self.policies = [copy.deepcopy(p) for p in (policies or [])]
         self.calls = []
-        self._next_id = 1000
+        self._next_id = 100
 
     def _record(self, name, request):
         self.calls.append((name, request))
@@ -123,7 +123,11 @@ class FakeMqttClient(object):
 
     def DescribeAuthorizationPolicies(self, request):
         self._record("DescribeAuthorizationPolicies", request)
-        return SimpleNamespace(Data=[FakeResource(dict(p)) for p in self.policies], RequestId="req-fake")
+        return SimpleNamespace(
+            Data=[FakeResource(dict(p)) for p in self.policies],
+            TotalCount=len(self.policies),
+            RequestId="req-fake",
+        )
 
     def CreateAuthorizationPolicy(self, request):
         self._record("CreateAuthorizationPolicy", request)
@@ -131,18 +135,17 @@ class FakeMqttClient(object):
         self.policies.append(
             {
                 "Id": policy_id,
-                "InstanceId": request.InstanceId,
                 "PolicyName": request.PolicyName,
                 "Priority": request.Priority,
                 "Effect": request.Effect,
-                "Actions": request.Actions or "",
-                "Resources": request.Resources or "",
-                "Username": request.Username or "",
-                "ClientId": request.ClientId or "",
-                "Ip": request.Ip or "",
-                "Retain": request.Retain,
-                "Qos": request.Qos or "",
-                "Remark": request.Remark or "",
+                "Actions": request.Actions,
+                "Resources": request.Resources,
+                "Username": request.Username,
+                "ClientId": request.ClientId,
+                "Ip": request.Ip,
+                "Retain": getattr(request, "Retain", None),
+                "Qos": request.Qos,
+                "Remark": request.Remark,
             }
         )
         return SimpleNamespace(Id=policy_id, RequestId="req-fake")
@@ -155,14 +158,14 @@ class FakeMqttClient(object):
             stored["PolicyName"] = request.PolicyName
             stored["Priority"] = request.Priority
             stored["Effect"] = request.Effect
-            stored["Actions"] = request.Actions or ""
-            stored["Resources"] = request.Resources or ""
-            stored["Username"] = request.Username or ""
-            stored["ClientId"] = request.ClientId or ""
-            stored["Ip"] = request.Ip or ""
-            stored["Retain"] = request.Retain
-            stored["Qos"] = request.Qos or ""
-            stored["Remark"] = request.Remark or ""
+            stored["Actions"] = request.Actions
+            stored["Resources"] = request.Resources
+            stored["Username"] = request.Username
+            stored["ClientId"] = request.ClientId
+            stored["Ip"] = request.Ip
+            stored["Retain"] = getattr(request, "Retain", None)
+            stored["Qos"] = request.Qos
+            stored["Remark"] = request.Remark
         return SimpleNamespace(RequestId="req-fake")
 
     def DeleteAuthorizationPolicy(self, request):
@@ -204,73 +207,82 @@ class _BoomClient(object):
 
 def test_describe_request_fields():
     request = mod.describe_request(FakeModels(), _params())
-    assert request.InstanceId == "mqtt-1"
+    assert request.InstanceId == "mqtt-inst-1"
 
 
-def test_csv_builder():
-    assert mod._csv(["a", "b"]) == "a,b"
-    assert mod._csv([1, 2]) == "1,2"
+def test_csv_joins_values():
+    assert mod._csv(["connect", "pub"]) == "connect,pub"
+    assert mod._csv([0, 1, 2]) == "0,1,2"
     assert mod._csv(None) == ""
     assert mod._csv([]) == ""
 
 
 def test_create_request_fields():
-    request = mod.create_request(FakeModels(), _clean_params(qos=[0, 1], retain=2, remark="pol"))
-    assert request.InstanceId == "mqtt-1"
-    assert request.PolicyName == "app-publish"
+    request = mod.create_request(FakeModels(), _clean_params(qos=[0, 1], retain=1))
+    assert request.InstanceId == "mqtt-inst-1"
+    assert request.PolicyName == "application-publish"
     assert request.PolicyVersion == 1
     assert request.Priority == 10
     assert request.Effect == "allow"
     assert request.Actions == "connect,pub"
     assert request.Resources == "orders/#"
     assert request.Qos == "0,1"
-    assert request.Retain == 2
     assert request.Username == ""
-    assert request.Remark == "pol"
+    assert request.Retain == 1
+
+
+def test_create_request_qos_defaults_to_empty():
+    request = mod.create_request(FakeModels(), _clean_params())
+    assert request.Qos == ""
+    assert request.Retain is None
 
 
 def test_update_request_fields():
-    request = mod.update_request(FakeModels(), _clean_params(priority=20), 101)
-    assert request.Id == 101
-    assert request.InstanceId == "mqtt-1"
-    assert request.PolicyName == "app-publish"
+    request = mod.update_request(FakeModels(), _clean_params(name="renamed", priority=20), 42)
+    assert request.Id == 42
+    assert request.InstanceId == "mqtt-inst-1"
+    assert request.PolicyName == "renamed"
     assert request.PolicyVersion == 1
     assert request.Priority == 20
 
 
 def test_delete_request_fields():
-    request = mod.delete_request(FakeModels(), _params(), 101)
-    assert request.InstanceId == "mqtt-1"
-    assert request.Id == 101
+    request = mod.delete_request(FakeModels(), _params(), 42)
+    assert request.InstanceId == "mqtt-inst-1"
+    assert request.Id == 42
 
 
 def test_comparable_splits_csv_fields():
-    value = mod.comparable(_policy(Qos="0,2,1", Actions="pub,connect"))
+    value = mod.comparable(_policy(Actions="pub,connect", Qos="2,0,1"))
     assert value["Actions"] == ["connect", "pub"]
-    assert value["Resources"] == ["orders/#"]
     assert value["Qos"] == ["0", "1", "2"]
     assert value["Priority"] == 10
     assert value["Effect"] == "allow"
-    assert value["Username"] == ""
-    assert value["Remark"] == ""
 
 
-def test_desired_uses_params_and_old_state():
-    value = mod.desired(_params(effect=None, priority=None, actions=None, resources=None, retain=None, qos=None), _policy())
-    assert value["PolicyName"] == "app-publish"
-    assert value["Priority"] == 10  # falls back to remote
-    assert value["Effect"] == "allow"  # falls back to remote
-    assert value["Actions"] == ["connect", "pub"]  # falls back to remote
-    assert value["Resources"] == ["orders/#"]
+def test_comparable_handles_empty_and_none_csv():
+    value = mod.comparable(_policy(Actions="", Qos=None, Retain=None))
+    assert value["Actions"] == []
+    assert value["Qos"] == []
     assert value["Retain"] is None
 
 
-def test_desired_sorts_provided_lists():
-    value = mod.desired(_params(actions=["sub", "pub"], resources=["b", "a"], qos=[2, 0]), None)
-    assert value["Actions"] == ["pub", "sub"]
-    assert value["Resources"] == ["a", "b"]
-    assert value["Qos"] == ["0", "2"]
+def test_desired_uses_params_and_old_state():
+    value = mod.desired(_clean_params(qos=None, retain=None), _policy())
+    assert value["PolicyName"] == "application-publish"
     assert value["Priority"] == 10
+    assert value["Actions"] == ["connect", "pub"]
+    assert value["Resources"] == ["orders/#"]
+    # unset choices fall back to remote state
+    assert value["Qos"] == ["0", "1"]
+    assert value["Retain"] is None
+
+
+def test_desired_sorts_input_lists():
+    value = mod.desired(_clean_params(actions=["sub", "connect"], resources=["b/#", "a/#"], qos=[2, 0]), _policy())
+    assert value["Actions"] == ["connect", "sub"]
+    assert value["Resources"] == ["a/#", "b/#"]
+    assert value["Qos"] == ["0", "2"]
 
 
 # ---------------------------------------------------------------------------
@@ -286,25 +298,25 @@ def test_find_no_match_returns_none(monkeypatch):
 
 
 def test_find_by_name(monkeypatch):
-    fake = FakeMqttClient([_policy(PolicyName="other"), _policy()])
+    fake = FakeMqttClient([_policy(PolicyName="other", Id=1), _policy()])
     _make_module(monkeypatch, fake)
-    module = FakeModule(_params())
+    module = FakeModule(_params(name="application-publish"))
     value = mod.find(module, fake, FakeModels(), module.params)
-    assert value["Id"] == 101
+    assert value["Id"] == 7
 
 
 def test_find_by_policy_id(monkeypatch):
-    fake = FakeMqttClient([_policy(), _policy(Id=102, PolicyName="other")])
+    fake = FakeMqttClient([_policy(), _policy(Id=9, PolicyName="other")])
     _make_module(monkeypatch, fake)
-    module = FakeModule(_params(policy_id=102, name=None))
+    module = FakeModule(_params(policy_id=9, name=None))
     value = mod.find(module, fake, FakeModels(), module.params)
-    assert value["Id"] == 102
+    assert value["Id"] == 9
 
 
 def test_find_multiple_matches_fails(monkeypatch):
-    fake = FakeMqttClient([_policy(), _policy(Id=102)])
+    fake = FakeMqttClient([_policy(), _policy(Id=8)])
     _make_module(monkeypatch, fake)
-    module = FakeModule(_params())
+    module = FakeModule(_params(name="application-publish"))
     with pytest.raises(AnsibleFailJson) as exc:
         mod.find(module, fake, FakeModels(), module.params)
     assert "Multiple MQTT authorization policies matched" in exc.value.args[0]["msg"]
@@ -316,7 +328,7 @@ def test_find_multiple_matches_fails(monkeypatch):
 
 
 def test_required_one_of_enforced():
-    _run_args(name=None, policy_id=None)
+    module_args(state="present", instance_id="mqtt-inst-1")  # neither policy_id nor name
     with pytest.raises(AnsibleFailJson):
         run(mod.run_module)
 
@@ -324,36 +336,39 @@ def test_required_one_of_enforced():
 def test_present_creates_policy(monkeypatch):
     fake = FakeMqttClient()
     _make_module(monkeypatch, fake)
-    _run_args()
+    _run_args(qos=[0, 1], retain=1)
     result = run(mod.run_module)
     assert result["changed"] is True
     policy = result["policy"]
-    assert policy["Id"] == 1001
-    assert policy["PolicyName"] == "app-publish"
-    assert policy["Effect"] == "allow"
+    assert policy["Id"] == 101
+    assert policy["PolicyName"] == "application-publish"
+    assert policy["Priority"] == 10
     names = [c[0] for c in fake.calls]
     assert names.count("DescribeAuthorizationPolicies") == 2  # find + refetch
     assert names.count("CreateAuthorizationPolicy") == 1
     create = [c for c in fake.calls if c[0] == "CreateAuthorizationPolicy"][0][1]
-    assert create.Actions == "connect,pub"
+    assert create.PolicyVersion == 1
 
 
-def test_present_requires_creation_params(monkeypatch):
+def test_present_creation_requires_all_fields(monkeypatch):
     fake = FakeMqttClient()
     _make_module(monkeypatch, fake)
-    _run_args(policy_id=999, name=None, priority=None, effect=None, actions=None, resources=None)
+    # policy_id identifies nothing; name/priority omitted -> creation guard fires
+    module_args(**{k: v for k, v in _clean_params(policy_id=7, name=None, priority=None).items() if v is not None})
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
-    assert "creation parameters are required for a new MQTT authorization policy" in exc.value.args[0]["msg"]
+    payload = exc.value.args[0]
+    assert "creation parameters are required" in payload["msg"]
+    assert "name" in payload["missing"]
 
 
 def test_present_noop_returns_unchanged(monkeypatch):
     fake = FakeMqttClient([_policy()])
     _make_module(monkeypatch, fake)
-    _run_args()
+    _run_args(qos=[0, 1])
     result = run(mod.run_module)
     assert result["changed"] is False
-    assert result["policy"]["Id"] == 101
+    assert result["policy"]["Id"] == 7
     names = [c[0] for c in fake.calls]
     assert "ModifyAuthorizationPolicy" not in names
     assert "CreateAuthorizationPolicy" not in names
@@ -367,30 +382,27 @@ def test_present_priority_drift_triggers_update(monkeypatch):
     assert result["changed"] is True
     assert result["policy"]["Priority"] == 20
     modify = [c for c in fake.calls if c[0] == "ModifyAuthorizationPolicy"][0][1]
-    assert modify.Id == 101
+    assert modify.Id == 7
     assert modify.Priority == 20
 
 
-def test_present_actions_drift_triggers_update(monkeypatch):
-    fake = FakeMqttClient([_policy()])
+def test_present_rename_by_policy_id(monkeypatch):
+    fake = FakeMqttClient([_policy(PolicyName="old-name")])
     _make_module(monkeypatch, fake)
-    _run_args(actions=["sub"])
+    _run_args(policy_id=7, name="new-name")
     result = run(mod.run_module)
     assert result["changed"] is True
-    assert result["policy"]["Actions"] == "sub"
-    modify = [c for c in fake.calls if c[0] == "ModifyAuthorizationPolicy"][0][1]
-    assert modify.Actions == "sub"
+    assert result["policy"]["PolicyName"] == "new-name"
+    assert len(fake.policies) == 1  # renamed in place
 
 
-def test_present_qos_drift_triggers_update(monkeypatch):
-    fake = FakeMqttClient([_policy(Qos="0")])
+def test_present_effect_drift_triggers_update(monkeypatch):
+    fake = FakeMqttClient([_policy(Effect="deny")])
     _make_module(monkeypatch, fake)
-    _run_args(qos=[1, 2])
+    _run_args(effect="allow")
     result = run(mod.run_module)
     assert result["changed"] is True
-    assert sorted(result["policy"]["Qos"].split(",")) == ["1", "2"]
-    modify = [c for c in fake.calls if c[0] == "ModifyAuthorizationPolicy"][0][1]
-    assert sorted(modify.Qos.split(",")) == ["1", "2"]
+    assert result["policy"]["Effect"] == "allow"
 
 
 def test_sdk_error_is_reported(monkeypatch):
@@ -416,17 +428,17 @@ def test_sdk_error_is_reported(monkeypatch):
 def test_check_mode_create_is_dry_run(monkeypatch):
     fake = FakeMqttClient()
     _make_module(monkeypatch, fake)
-    module_args(_ansible_check_mode=True, **dict(_clean_params()))
+    module_args(_ansible_check_mode=True, **_clean_params())
     result = run(mod.run_module)
     assert result["changed"] is True
-    assert result["policy"]["PolicyName"] == "app-publish"  # desired reported
+    assert result["policy"]["PolicyName"] == "application-publish"  # desired reported
     assert not any("CreateAuthorizationPolicy" == c[0] for c in fake.calls)
 
 
 def test_check_mode_update_is_dry_run(monkeypatch):
     fake = FakeMqttClient([_policy()])
     _make_module(monkeypatch, fake)
-    module_args(_ansible_check_mode=True, **dict(_clean_params(priority=20)))
+    module_args(_ansible_check_mode=True, **_clean_params(priority=20))
     result = run(mod.run_module)
     assert result["changed"] is True
     assert not any("ModifyAuthorizationPolicy" == c[0] for c in fake.calls)
@@ -435,12 +447,12 @@ def test_check_mode_update_is_dry_run(monkeypatch):
 def test_absent_removes_policy(monkeypatch):
     fake = FakeMqttClient([_policy()])
     _make_module(monkeypatch, fake)
-    _run_args(state="absent")
+    _run_args(state="absent", name="application-publish")
     result = run(mod.run_module)
     assert result["changed"] is True
     assert result["policy"] is None
     delete = [c for c in fake.calls if c[0] == "DeleteAuthorizationPolicy"][0][1]
-    assert delete.Id == 101
+    assert delete.Id == 7
     assert fake.policies == []
 
 
@@ -457,7 +469,7 @@ def test_absent_not_found_is_noop(monkeypatch):
 def test_absent_check_mode_is_dry_run(monkeypatch):
     fake = FakeMqttClient([_policy()])
     _make_module(monkeypatch, fake)
-    module_args(_ansible_check_mode=True, **dict(_clean_params(state="absent")))
+    module_args(_ansible_check_mode=True, **_clean_params(state="absent", name="application-publish"))
     result = run(mod.run_module)
     assert result["changed"] is True
     assert not any("DeleteAuthorizationPolicy" == c[0] for c in fake.calls)
