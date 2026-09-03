@@ -471,7 +471,10 @@ def test_present_missing_creation_params_fails(monkeypatch):
         run(mod.run_module)
     payload = exc.value.args[0]
     assert payload["msg"] == "creation parameters are required for a new CKafka instance"
-    assert payload["missing"] == ["zones", "vpc_id", "subnet_id", "instance_type", "specification", "kafka_version", "disk_type", "disk_size", "bandwidth", "partitions", "retention_minutes"]
+    assert payload["missing"] == [
+        "zones", "vpc_id", "subnet_id", "instance_type", "specification", "kafka_version",
+        "disk_type", "disk_size", "bandwidth", "partitions", "retention_minutes",
+    ]
     assert not any(name.startswith("Create") for name, request in fake.calls)
 
 

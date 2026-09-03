@@ -291,7 +291,12 @@ def test_create_request_full_payload():
 
 
 def test_create_request_optionals_stay_none_when_unset():
-    params = {k: _CREATE_ARGS[k] for k in ("name", "zone", "vpc_id", "subnet_id", "product_type", "instance_type", "mode", "network_type", "engine_name", "engine_version", "cpu", "memory", "disk_size", "pay_period", "auto_renew", "pay_mode")}
+    keys = (
+        "name", "zone", "vpc_id", "subnet_id", "product_type", "instance_type", "mode",
+        "network_type", "engine_name", "engine_version", "cpu", "memory", "disk_size",
+        "pay_period", "auto_renew", "pay_mode",
+    )
+    params = {k: _CREATE_ARGS[k] for k in keys}
     request = mod.create_request(FakeModels(), params)
     assert request.SecurityGroupIds is None
     assert request.SlaveZones is None
