@@ -363,7 +363,7 @@ def test_absent_noop_when_already_empty(monkeypatch):
 def test_check_mode_change_reports_diff_without_write(monkeypatch):
     fake = FakeCdbClient()
     _make_module(monkeypatch, fake)
-    module_args(_ansible_check_mode=True, **dict(_params(), **FULL_PARAMS))
+    _run_args(_ansible_check_mode=True, **FULL_PARAMS)
     result = run(mod.run_module)
     assert result["changed"] is True
     # empty containers are stripped from diff payloads by comparison._normalize
@@ -380,7 +380,7 @@ def test_check_mode_change_reports_diff_without_write(monkeypatch):
 def test_check_mode_noop_still_reports_changed_false(monkeypatch):
     fake = FakeCdbClient(FULL_STATE)
     _make_module(monkeypatch, fake)
-    module_args(_ansible_check_mode=True, **dict(_params(), **FULL_PARAMS))
+    _run_args(_ansible_check_mode=True, **FULL_PARAMS)
     result = run(mod.run_module)
     assert result["changed"] is False
 

@@ -300,7 +300,7 @@ def test_drift_grants_additional_database(monkeypatch):
 def test_check_mode_change_reports_diff_without_write(monkeypatch):
     fake = FakeCynosdbClient()
     _make_module(monkeypatch, fake)
-    module_args(_ansible_check_mode=True, **dict(_params(), **FULL_PARAMS))
+    _run_args(_ansible_check_mode=True, **FULL_PARAMS)
     result = run(mod.run_module)
     assert result["changed"] is True
     # empty containers are stripped from diff payloads by comparison._normalize
