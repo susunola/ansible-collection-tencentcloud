@@ -3,10 +3,10 @@
 How to raise the CI coverage gate (55%) back towards 70% without writing
 ~200 module test files one by one at the current per-batch pace.
 
-## Current state (measured 2026-09-03, after batch 31)
+## Current state (measured 2026-09-03, after batch 32)
 
 - Gate: `--cov-fail-under=55`, baseline total ~60.9% after batches 1-11.
-- 313 write modules, 164 of them have **no** unit test file (file-scan
+- 313 write modules, 160 of them have **no** unit test file (file-scan
   count — batch-29 closeout reconciled the documented figure to the
   authoritative file-scan baseline, correcting an +11 legacy over-credit
   from content-credited multi-module test files such as
@@ -59,7 +59,9 @@ How to raise the CI coverage gate (55%) back towards 70% without writing
   95%), `scf_version` (18 tests, 95%) — 73 tests; batch 31 added
   `chdfs_file_system` (27 tests, 96%), `cfw_nat_dnat_rule` (22 tests, 95%),
   `mariadb_account` (26 tests, 95%), `goosefs_fileset` (26 tests, 95%) —
-  101 tests).
+  101 tests; batch 32 added `eb_connection` (28 tests, 97%),
+  `cvm_launch_template` (27 tests, 96%), `dts_migration_job` (22 tests,
+  96%), `ckafka_route` (25 tests, 95%) — 102 tests).
 - Target 70% needs roughly +4,000 covered statements. The untested write
   modules are the entire gap (module_utils at 92%, `_info` at ~86% are
   already near their ceiling).
