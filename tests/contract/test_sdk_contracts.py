@@ -1254,6 +1254,9 @@ def _param_sample(param):
     """
     if param.get("struct"):
         return {sub["key"]: "sample" for sub in param["struct"]}
+    if param["type"] == "list" and param.get("elements") == "int":
+        # e.g. sms SignIdSet/TemplateIdSet are lists of int IDs.
+        return [1]
     return _SAMPLE_VALUES[param["type"]]
 
 

@@ -60,6 +60,7 @@ action_groups:
     - captcha_user_all_app_id_info
     - cat_probe_task_info
     - cbs_auto_snapshot_policy
+    - cbs_auto_snapshot_policy_info
     - cbs_disk
     - cbs_disk_backup
     - cbs_disk_info
@@ -69,10 +70,13 @@ action_groups:
     - ccn
     - ccn_attachment
     - cdb_account
+    - cdb_account_info
     - cdb_account_privilege
     - cdb_audit_config
     - cdb_backup_config
+    - cdb_backup_config_info
     - cdb_database
+    - cdb_database_info
     - cdb_instance
     - cdb_instance_info
     - cdb_parameter_template
@@ -94,7 +98,9 @@ action_groups:
     - cfs_file_system
     - cfs_file_system_info
     - cfs_permission_group
+    - cfs_permission_group_info
     - cfs_permission_rule
+    - cfs_permission_rule_info
     - cfs_snapshot
     - cfw_address_template
     - cfw_cluster_nat_ccn_fw_switch_info
@@ -119,7 +125,9 @@ action_groups:
     - ckafka_instance_info
     - ckafka_route
     - ckafka_topic
+    - ckafka_topic_info
     - ckafka_user
+    - ckafka_user_info
     - clb_listener
     - clb_listener_target
     - clb_load_balancer
@@ -133,11 +141,16 @@ action_groups:
     - cloudrc_resource_info
     - cloudstudio_image_info
     - cls_config
+    - cls_config_info
     - cls_config_machine_group_binding
     - cls_index
+    - cls_index_info
     - cls_logset
+    - cls_logset_info
     - cls_machine_group
+    - cls_machine_group_info
     - cls_shipper
+    - cls_shipper_info
     - cls_topic
     - cls_topic_info
     - cme_platform_info
@@ -195,6 +208,7 @@ action_groups:
     - cwp_machine_info
     - cws_monitor_info
     - cynosdb_account
+    - cynosdb_account_info
     - cynosdb_account_privilege
     - cynosdb_backup_config
     - cynosdb_cluster
@@ -208,6 +222,7 @@ action_groups:
     - dbdc_db_custom_cluster_info
     - dbs_backup_plan_info
     - dc_direct_connect
+    - dc_direct_connect_info
     - dc_direct_connect_tunnel
     - dc_direct_connect_tunnel_info
     - dcdb_instance
@@ -284,6 +299,7 @@ action_groups:
     - kms_key
     - kms_key_info
     - kms_key_rotation
+    - kms_key_rotation_info
     - lcic_answer_info
     - lighthouse_disk
     - lighthouse_firewall_rules
@@ -297,6 +313,7 @@ action_groups:
     - lowcode_knowledge_set_info
     - mall_draw_resource_info
     - mariadb_account
+    - mariadb_account_info
     - mariadb_account_privilege
     - mariadb_backup_config
     - mariadb_instance
@@ -305,6 +322,7 @@ action_groups:
     - mmps_resource_usage_info
     - mna_access_region_info
     - mongodb_account
+    - mongodb_account_info
     - mongodb_backup_config
     - mongodb_instance
     - mongodb_instance_info
@@ -312,6 +330,7 @@ action_groups:
     - monitor_alarm_policy_info
     - monitor_alarm_policy_notice
     - monitor_grafana_instance
+    - monitor_grafana_instance_info
     - monitor_grafana_integration
     - monitor_grafana_internet
     - monitor_grafana_notification_channel
@@ -322,6 +341,7 @@ action_groups:
     - monitor_prometheus_global_notification
     - monitor_prometheus_grafana_binding
     - monitor_prometheus_instance
+    - monitor_prometheus_instance_info
     - monitor_prometheus_record_rule
     - monitor_prometheus_scrape_job
     - mps_person_sample_info
@@ -351,6 +371,7 @@ action_groups:
     - portal_document_info
     - postgres_instance_info
     - postgresql_account
+    - postgresql_account_info
     - postgresql_backup_plan
     - postgresql_instance
     - postgresql_parameter_template
@@ -361,6 +382,7 @@ action_groups:
     - privatelink_endpoint_service
     - pts_cron_job_info
     - redis_account
+    - redis_account_info
     - redis_backup_config
     - redis_instance
     - redis_instance_info
@@ -384,6 +406,7 @@ action_groups:
     - sms_signature
     - sms_template
     - sqlserver_account
+    - sqlserver_account_info
     - sqlserver_backup_config
     - sqlserver_instance
     - sqlserver_instance_info
@@ -394,6 +417,7 @@ action_groups:
     - ssm_parameter
     - ssm_rotation
     - ssm_secret
+    - ssm_secret_info
     - ssm_secret_version
     - subnet
     - subnet_info

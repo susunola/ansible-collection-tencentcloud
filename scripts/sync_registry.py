@@ -134,8 +134,8 @@ def render_galaxy_yml(text, module_names):
         r"(?P<prefix>description: \".*?)(?P<count>\d+) modules", text, re.S)
     if not match:
         raise ValueError("galaxy.yml: no '<n> modules' count in description")
-    count = "%d modules" % len(module_names)
-    if match.group("count") != str(len(module_names)):
+    count = str(len(module_names))
+    if match.group("count") != count:
         return text[:match.start("count")] + count + text[match.end("count"):]
     return text
 
