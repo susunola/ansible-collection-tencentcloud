@@ -198,7 +198,7 @@ class _BoomClient(object):
 
 
 def _call_names(fake):
-    return [name for name, _ in fake.calls]
+    return [name for name, request in fake.calls]
 
 
 # ---------------------------------------------------------------------------
@@ -422,7 +422,7 @@ def test_absent_not_found_is_noop(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is False
     assert result["cluster"] is None
-    assert not any(name.startswith("Terminate") for name, _ in fake.calls)
+    assert not any(name.startswith("Terminate") for name, request in fake.calls)
 
 
 def test_absent_terminates_and_waits_gone(monkeypatch):
@@ -468,7 +468,7 @@ def test_absent_check_mode_is_dry_run(monkeypatch):
     assert result["cluster"]["ClusterId"] == "emr-1"  # pre-termination snapshot
     assert result["diff"]["before"]["ClusterId"] == "emr-1"
     assert result["diff"]["after"] is None
-    assert not any(name.startswith("Terminate") for name, _ in fake.calls)
+    assert not any(name.startswith("Terminate") for name, request in fake.calls)
     assert len(fake.instances) == 1  # remote untouched
 
 
@@ -486,7 +486,7 @@ def test_present_missing_creation_params_fails(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "creation parameters are required for an EMR cluster"
     assert payload["missing"] == ["product_version", "charge_type", "login_settings", "scene_software_config", "zone_resource_configurations"]
-    assert not any(name.startswith("Create") for name, _ in fake.calls)
+    assert not any(name.startswith("Create") for name, request in fake.calls)
 
 
 def test_present_creates_cluster_and_waits(monkeypatch):
@@ -567,7 +567,7 @@ def test_present_unchanged_is_noop(monkeypatch):
     assert result["changed"] is False
     assert result["cluster"]["ClusterId"] == "emr-1"
     assert _call_names(fake) == ["DescribeInstances"]
-    assert not any(name.startswith("Modify") for name, _ in fake.calls)
+    assert not any(name.startswith("Modify") for name, request in fake.calls)
 
 
 def test_present_name_matching_current_is_noop(monkeypatch):

@@ -193,7 +193,7 @@ class _BoomClient(object):
 
 
 def _call_names(fake):
-    return [name for name, _ in fake.calls]
+    return [name for name, request in fake.calls]
 
 
 # ---------------------------------------------------------------------------
@@ -359,7 +359,7 @@ def test_find_matches_by_cluster_id_single_page():
     fake = FakeThpcClient([_cluster(), _cluster("hpc-2", "other")])
     found = mod.find(FakeModule(), fake, FakeModels(), {"cluster_id": "hpc-2"})
     assert found["ClusterId"] == "hpc-2"
-    assert [req.Offset for req in (r for _, r in fake.calls)] == [0]
+    assert [req.Offset for req in (r for request, r in fake.calls)] == [0]
 
 
 def test_find_id_mode_stops_after_first_page():
@@ -374,13 +374,13 @@ def test_find_pages_until_name_matches():
     fake = FakeThpcClient([_cluster("hpc-1", "a"), _cluster("hpc-2", "b")], page_size=1)
     found = mod.find(FakeModule(), fake, FakeModels(), {"name": "b"})
     assert found["ClusterId"] == "hpc-2"
-    assert [req.Offset for _, req in fake.calls] == [0, 1]
+    assert [req.Offset for request, req in fake.calls] == [0, 1]
 
 
 def test_find_name_no_match_exhausts_pages():
     fake = FakeThpcClient([_cluster("hpc-1", "a"), _cluster("hpc-2", "b")], page_size=1)
     assert mod.find(FakeModule(), fake, FakeModels(), {"name": "zzz"}) is None
-    assert [req.Offset for _, req in fake.calls] == [0, 1]
+    assert [req.Offset for request, req in fake.calls] == [0, 1]
 
 
 def test_find_empty_response_returns_none():
@@ -438,7 +438,7 @@ def test_absent_not_found_is_noop(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is False
     assert result["cluster"] is None
-    assert not any(name == "DeleteCluster" for name, _ in fake.calls)
+    assert not any(name == "DeleteCluster" for name, request in fake.calls)
 
 
 def test_absent_deletes_unprotected_cluster(monkeypatch):
@@ -463,7 +463,7 @@ def test_absent_protected_requires_explicit_false(monkeypatch):
         run(mod.run_module)
     payload = exc.value.args[0]
     assert payload["msg"] == "THPC cluster deletion protection is enabled; set deletion_protection=false to authorize disabling it before deletion"
-    assert not any(name in ("DeleteCluster", "ModifyClusterDeletionProtection") for name, _ in fake.calls)
+    assert not any(name in ("DeleteCluster", "ModifyClusterDeletionProtection") for name, request in fake.calls)
 
 
 def test_absent_protected_with_false_disables_then_deletes(monkeypatch):
@@ -489,7 +489,7 @@ def test_absent_check_mode_is_dry_run(monkeypatch):
     assert result["cluster"] is None
     assert result["diff"]["before"]["ClusterId"] == "hpc-1"
     assert result["diff"]["after"] is None
-    assert not any(name in ("DeleteCluster", "ModifyClusterDeletionProtection") for name, _ in fake.calls)
+    assert not any(name in ("DeleteCluster", "ModifyClusterDeletionProtection") for name, request in fake.calls)
     assert len(fake.clusters) == 1  # remote untouched
 
 
@@ -507,7 +507,7 @@ def test_present_missing_creation_params_fails(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "creation parameters are required for a new THPC cluster"
     assert payload["missing"] == ["zone", "manager_node", "compute_node", "image_id", "vpc_id", "subnet_id"]
-    assert not any(name == "CreateCluster" for name, _ in fake.calls)
+    assert not any(name == "CreateCluster" for name, request in fake.calls)
 
 
 def test_present_creates_cluster_and_refinds(monkeypatch):
@@ -557,7 +557,7 @@ def test_present_create_without_deletion_protection(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is True
     assert result["cluster"]["DeletionProtection"] == "OFF"
-    assert not any(name == "ModifyClusterDeletionProtection" for name, _ in fake.calls)
+    assert not any(name == "ModifyClusterDeletionProtection" for name, request in fake.calls)
     # find, create, RUNNING wait poll, re-find (no protection enable step)
     assert _call_names(fake) == ["DescribeClusters", "CreateCluster", "DescribeClusters", "DescribeClusters"]
 
@@ -601,7 +601,7 @@ def test_present_cluster_name_drift_fails_immutable(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "THPC cluster topology fields are immutable"
     assert payload["immutable_drift"] == {"ClusterName": ("prod-hpc", "renamed")}
-    assert not any(name != "DescribeClusters" for name, _ in fake.calls)
+    assert not any(name != "DescribeClusters" for name, request in fake.calls)
 
 
 def test_present_zone_drift_reads_placement(monkeypatch):
@@ -658,7 +658,7 @@ def test_present_protection_already_desired_is_noop(monkeypatch):
     module_args(cluster_id="hpc-1", deletion_protection=True)
     result = run(mod.run_module)
     assert result["changed"] is False
-    assert not any(name == "ModifyClusterDeletionProtection" for name, _ in fake.calls)
+    assert not any(name == "ModifyClusterDeletionProtection" for name, request in fake.calls)
 
 
 def test_present_enables_deletion_protection(monkeypatch):
@@ -694,7 +694,7 @@ def test_present_check_mode_protection_is_dry_run(monkeypatch):
     assert result["cluster"]["DeletionProtection"] == "OFF"  # pre-change snapshot
     assert result["diff"]["before"] == {"DeletionProtection": False}
     assert result["diff"]["after"] == {"DeletionProtection": True}
-    assert not any(name == "ModifyClusterDeletionProtection" for name, _ in fake.calls)
+    assert not any(name == "ModifyClusterDeletionProtection" for name, request in fake.calls)
 
 
 # ---------------------------------------------------------------------------

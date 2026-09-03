@@ -221,7 +221,7 @@ class _BoomClient(object):
 
 
 def _call_names(fake):
-    return [name for name, _ in fake.calls]
+    return [name for name, request in fake.calls]
 
 
 # ---------------------------------------------------------------------------
@@ -365,7 +365,7 @@ def test_find_matches_by_name_then_fetches_attributes():
     fake = FakeCkafkaClient([_instance(), _instance("ckafka-2", "other")])
     found = mod.find(FakeModule(), fake, FakeModels(), {"name": "other"})
     assert found["InstanceId"] == "ckafka-2"
-    assert [name for name, _ in fake.calls] == ["DescribeInstancesDetail", "DescribeInstanceAttributes"]
+    assert [name for name, request in fake.calls] == ["DescribeInstancesDetail", "DescribeInstanceAttributes"]
     attributes = [req for name, req in fake.calls if name == "DescribeInstanceAttributes"][0]
     assert attributes.InstanceId == "ckafka-2"
 
@@ -380,7 +380,7 @@ def test_find_matches_by_instance_id():
 def test_find_no_match_returns_none_with_single_call():
     fake = FakeCkafkaClient([_instance()])
     assert mod.find(FakeModule(), fake, FakeModels(), {"name": "missing"}) is None
-    assert [name for name, _ in fake.calls] == ["DescribeInstancesDetail"]
+    assert [name for name, request in fake.calls] == ["DescribeInstancesDetail"]
 
 
 def test_find_multiple_name_matches_fail():
@@ -418,7 +418,7 @@ def test_absent_not_found_is_noop(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is False
     assert result["instance"] is None
-    assert not any(name.startswith("Delete") for name, _ in fake.calls)
+    assert not any(name.startswith("Delete") for name, request in fake.calls)
 
 
 def test_absent_prepaid_uses_delete_pre(monkeypatch):
@@ -454,7 +454,7 @@ def test_absent_check_mode_is_dry_run(monkeypatch):
     assert result["instance"] is None
     assert result["diff"]["before"]["InstanceId"] == "ckafka-1"
     assert result["diff"]["after"] is None
-    assert not any(name.startswith("Delete") for name, _ in fake.calls)
+    assert not any(name.startswith("Delete") for name, request in fake.calls)
     assert len(fake.instances) == 1  # remote untouched
 
 
@@ -472,7 +472,7 @@ def test_present_missing_creation_params_fails(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "creation parameters are required for a new CKafka instance"
     assert payload["missing"] == ["zones", "vpc_id", "subnet_id", "instance_type", "specification", "kafka_version", "disk_type", "disk_size", "bandwidth", "partitions", "retention_minutes"]
-    assert not any(name.startswith("Create") for name, _ in fake.calls)
+    assert not any(name.startswith("Create") for name, request in fake.calls)
 
 
 def test_present_creates_prepaid_instance_and_refinds(monkeypatch):
@@ -514,7 +514,7 @@ def test_present_creates_prepaid_instance_and_refinds(monkeypatch):
 
 
 def test_present_creates_postpaid_instance(monkeypatch):
-    args = dict(_CREATE_ARGS, charge_type="POSTPAID_BY_HOUR")
+    args = {**_CREATE_ARGS, "charge_type": "POSTPAID_BY_HOUR"}
     fake = FakeCkafkaClient()
     _make_module(monkeypatch, fake)
     module_args(**args)
@@ -574,7 +574,7 @@ def test_present_vpc_and_version_drift_fails_immutable(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "CKafka placement and Kafka version are immutable"
     assert payload["immutable_drift"] == {"VpcId": ("vpc-1", "vpc-9"), "Version": ("2.8.1", "3.2.0")}
-    assert not any(name.startswith("Modify") for name, _ in fake.calls)
+    assert not any(name.startswith("Modify") for name, request in fake.calls)
 
 
 def test_present_immutable_drift_fails_even_in_check_mode(monkeypatch):
@@ -599,7 +599,7 @@ def test_present_unchanged_is_noop(monkeypatch):
     assert result["changed"] is False
     assert result["instance"]["InstanceId"] == "ckafka-1"
     assert _call_names(fake) == ["DescribeInstancesDetail", "DescribeInstanceAttributes"]
-    assert not any(name.startswith("Modify") for name, _ in fake.calls)
+    assert not any(name.startswith("Modify") for name, request in fake.calls)
 
 
 def test_present_rename_modifies_attributes(monkeypatch):
@@ -621,7 +621,7 @@ def test_present_rename_modifies_attributes(monkeypatch):
     modify = [req for name, req in fake.calls if name == "ModifyInstanceAttributes"][0]
     assert modify.InstanceId == "ckafka-1"
     assert modify.InstanceName == "renamed-kafka"
-    assert not any(name == "ModifyInstancePre" for name, _ in fake.calls)
+    assert not any(name == "ModifyInstancePre" for name, request in fake.calls)
 
 
 def test_present_retention_drift_modifies_attributes(monkeypatch):
@@ -661,7 +661,7 @@ def test_present_capacity_drift_resizes_prepaid(monkeypatch):
     assert resize.InstanceId == "ckafka-1"
     assert resize.DiskSize == 600
     assert resize.BandWidth == 60
-    assert not any(name == "ModifyInstanceAttributes" for name, _ in fake.calls)
+    assert not any(name == "ModifyInstanceAttributes" for name, request in fake.calls)
 
 
 def test_present_postpaid_capacity_drift_fails(monkeypatch):
@@ -672,7 +672,7 @@ def test_present_postpaid_capacity_drift_fails(monkeypatch):
         run(mod.run_module)
     payload = exc.value.args[0]
     assert payload["msg"] == "CKafka capacity modification is only exposed by the SDK for prepaid instances"
-    assert not any(name == "ModifyInstancePre" for name, _ in fake.calls)
+    assert not any(name == "ModifyInstancePre" for name, request in fake.calls)
 
 
 def test_present_combined_attribute_and_capacity_drift(monkeypatch):
@@ -708,7 +708,7 @@ def test_present_check_mode_drift_is_dry_run(monkeypatch):
     assert result["instance"]["DiskSize"] == 500  # pre-change snapshot
     assert result["diff"]["before"]["DiskSize"] == 500
     assert result["diff"]["after"]["DiskSize"] == 600
-    assert not any(name.startswith("Modify") for name, _ in fake.calls)
+    assert not any(name.startswith("Modify") for name, request in fake.calls)
     assert fake.instances[0]["DiskSize"] == 500  # remote untouched
 
 

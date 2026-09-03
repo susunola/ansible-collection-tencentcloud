@@ -217,7 +217,7 @@ class _BoomClient(object):
 
 
 def _call_names(fake):
-    return [name for name, _ in fake.calls]
+    return [name for name, request in fake.calls]
 
 
 # ---------------------------------------------------------------------------
@@ -458,7 +458,7 @@ def test_absent_purge_requires_isolated(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "purge requires an already isolated VectorDB instance"
     assert payload["current_status"] == "running"
-    assert not any(name == "DestroyInstances" for name, _ in fake.calls)
+    assert not any(name == "DestroyInstances" for name, request in fake.calls)
 
 
 def test_absent_already_isolated_is_noop(monkeypatch):
@@ -478,7 +478,7 @@ def test_absent_isolating_instance_is_noop(monkeypatch):
     result = run(mod.run_module)
     assert result["changed"] is False
     assert result["instance"]["Status"] == "isolating"
-    assert not any(name == "IsolateInstance" for name, _ in fake.calls)
+    assert not any(name == "IsolateInstance" for name, request in fake.calls)
 
 
 def test_absent_isolated_with_purge_destroys(monkeypatch):
@@ -503,7 +503,7 @@ def test_absent_check_mode_isolate_is_dry_run(monkeypatch):
     assert result["instance"]["Status"] == "running"  # current kept for preview
     assert result["diff"]["before"]["Status"] == "running"
     assert result["diff"]["after"] is None
-    assert not any(name == "IsolateInstance" for name, _ in fake.calls)
+    assert not any(name == "IsolateInstance" for name, request in fake.calls)
     assert fake.instances[0]["Status"] == "running"  # remote untouched
 
 
@@ -516,7 +516,7 @@ def test_absent_check_mode_purge_is_dry_run(monkeypatch):
     assert result["instance"] is None
     assert result["diff"]["before"]["InstanceId"] == "vdb-1"
     assert result["diff"]["after"] is None
-    assert not any(name == "DestroyInstances" for name, _ in fake.calls)
+    assert not any(name == "DestroyInstances" for name, request in fake.calls)
     assert len(fake.instances) == 1  # remote untouched
 
 
@@ -547,7 +547,7 @@ def test_present_missing_creation_params_fails(monkeypatch):
         "memory",
         "disk_size",
     ]
-    assert not any(name == "CreateInstance" for name, _ in fake.calls)
+    assert not any(name == "CreateInstance" for name, request in fake.calls)
 
 
 def test_present_creates_instance_and_refinds(monkeypatch):
@@ -624,7 +624,7 @@ def test_present_isolated_requires_recover(monkeypatch):
         run(mod.run_module)
     payload = exc.value.args[0]
     assert payload["msg"] == "set recover=true to recover an isolated VectorDB instance"
-    assert not any(name == "RecoverInstance" for name, _ in fake.calls)
+    assert not any(name == "RecoverInstance" for name, request in fake.calls)
 
 
 def test_present_isolated_recovers_and_refinds(monkeypatch):
@@ -649,7 +649,7 @@ def test_present_isolated_check_mode_recover_is_dry_run(monkeypatch):
     assert result["instance"]["Status"] == "isolated"  # pre-recover snapshot
     assert result["diff"]["before"] == {"Status": "isolated"}
     assert result["diff"]["after"] == {"Status": "running"}
-    assert not any(name == "RecoverInstance" for name, _ in fake.calls)
+    assert not any(name == "RecoverInstance" for name, request in fake.calls)
 
 
 # ---------------------------------------------------------------------------
@@ -669,7 +669,7 @@ def test_present_identity_drift_fails_immutable(monkeypatch):
         "Name": ("prod-vdb", "renamed"),
         "Zone": ("ap-guangzhou-3", "ap-guangzhou-9"),
     }
-    assert not any(name != "DescribeInstances" for name, _ in fake.calls)
+    assert not any(name != "DescribeInstances" for name, request in fake.calls)
 
 
 def test_present_network_drift_fails_immutable(monkeypatch):
@@ -683,7 +683,7 @@ def test_present_network_drift_fails_immutable(monkeypatch):
     assert payload["immutable_drift"] == {
         "Network": ([("vpc-1", "subnet-1")], ("vpc-9", "subnet-9"))
     }
-    assert not any(name != "DescribeInstances" for name, _ in fake.calls)
+    assert not any(name != "DescribeInstances" for name, request in fake.calls)
 
 
 def test_present_identity_drift_fails_even_in_check_mode(monkeypatch):
@@ -735,7 +735,7 @@ def test_present_scale_up_real(monkeypatch):
     assert up.Memory == 16
     assert up.StorageSize == 500
     assert up.RunNow is False  # run_now=False propagated
-    assert not any(name == "ScaleOutInstance" for name, _ in fake.calls)
+    assert not any(name == "ScaleOutInstance" for name, request in fake.calls)
 
 
 def test_present_scale_out_real(monkeypatch):
@@ -749,7 +749,7 @@ def test_present_scale_out_real(monkeypatch):
     assert out.InstanceId == "vdb-1"
     assert out.ReplicaNum == 5
     assert out.RunNow is True  # default run_now
-    assert not any(name == "ScaleUpInstance" for name, _ in fake.calls)
+    assert not any(name == "ScaleUpInstance" for name, request in fake.calls)
 
 
 def test_present_security_group_drift_modifies(monkeypatch):
@@ -762,7 +762,7 @@ def test_present_security_group_drift_modifies(monkeypatch):
     modify = [req for name, req in fake.calls if name == "ModifyDBInstanceSecurityGroups"][0]
     assert modify.InstanceIds == ["vdb-1"]
     assert modify.SecurityGroupIds == ["sg-1", "sg-2"]  # sorted before sending
-    assert not any(name in ("ScaleUpInstance", "ScaleOutInstance") for name, _ in fake.calls)
+    assert not any(name in ("ScaleUpInstance", "ScaleOutInstance") for name, request in fake.calls)
 
 
 def test_present_combined_scale_applies_all_mutations(monkeypatch):
@@ -813,7 +813,7 @@ def test_present_cannot_reduce_cpu(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "VectorDB compute, storage and replicas cannot be reduced"
     assert payload["field"] == "Cpu"
-    assert not any(name != "DescribeInstances" for name, _ in fake.calls)
+    assert not any(name != "DescribeInstances" for name, request in fake.calls)
 
 
 def test_present_cannot_reduce_replicas(monkeypatch):
