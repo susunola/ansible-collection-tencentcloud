@@ -3,10 +3,10 @@
 How to raise the CI coverage gate (55%) back towards 70% without writing
 ~200 module test files one by one at the current per-batch pace.
 
-## Current state (measured 2026-09-03, after batch 21)
+## Current state (measured 2026-09-03, after batch 22)
 
 - Gate: `--cov-fail-under=55`, baseline total ~60.9% after batches 1-11.
-- 313 write modules, 186 of them have **no** unit test file (batch 13 added
+- 313 write modules, 182 of them have **no** unit test file (batch 13 added
   `eks_container_instance`, `tke_node_pool`, `network_interface`,
   `ssm_parameter` — 102 tests, 93-98% each; batch 14 added
   `dc_direct_connect_tunnel`, `config_compliance_pack`, `cdn_cls_log_topic`,
@@ -28,7 +28,9 @@ How to raise the CI coverage gate (55%) back towards 70% without writing
   (32 tests, 96%), `private_dns_zone` (37 tests, 93%) — 126 tests; batch 21
   added `mqtt_authorization_policy` (25 tests, 95%), `tcm_mesh` (33 tests,
   95%), `gwlb_target_group` (34 tests, 96%), `ssm_secret` (34 tests, 96%) —
-  126 tests).
+  126 tests; batch 22 added `ckafka_acl_rule` (29 tests, 96%),
+  `tem_environment` (29 tests, 96%), `tem_application` (29 tests, 96%),
+  `api_gateway_api` (32 tests, 95%) — 119 tests).
 - Target 70% needs roughly +4,000 covered statements. The untested write
   modules are the entire gap (module_utils at 92%, `_info` at ~86% are
   already near their ceiling).
