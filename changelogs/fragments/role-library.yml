@@ -1,4 +1,0 @@
-minor_changes:
-  - tc_web_stack - new role that provisions a complete Tencent Cloud web stack in one call: a CVM instance pool, a MySQL CDB instance and a Redis cache fronted by a CLB with an HTTP listener, automatically registering the created CVM instances as CLB backends (explicit target list or per-component enable flags supported, teardown in reverse order).
-  - tc_tke_cluster - new role that provisions a managed TKE cluster with node pools and addons in one call, reconciling the tc_tke_cluster_node_pools and tc_tke_cluster_addons lists idempotently and tearing down in reverse order (addons -> node pools -> cluster).
-  - tc_disaster_recovery - new role that prepares cross-region disaster recovery artifacts: a golden CVM image of a source instance in the primary region, COS bucket replication to the DR region, and an optional standby CLB pre-wired in the DR region as the failover entry point.

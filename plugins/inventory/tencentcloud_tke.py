@@ -126,6 +126,14 @@ try:
     HAS_TENCENTCLOUD_SDK = True
 except ImportError:
     HAS_TENCENTCLOUD_SDK = False
+    # Bind the names so module-level helpers can be unit-tested without the
+    # SDK installed: parse() gates real runs on HAS_TENCENTCLOUD_SDK, but the
+    # fetch_* helpers accept a models argument and are exercised directly.
+    tc_credential = None
+    ClientProfile = None
+    HttpProfile = None
+    tke_models = None
+    tke_client = None
 
 
 SDK_IMP_ERR = "The tencentcloud-sdk-python-tke package is required on the Ansible controller."

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="FhTk0YZk7PxPlZti07xPVe">
+<head data-page-node-id="mZoXC0axaIHY1f4yVjU710">
+<meta charset="UTF-8" data-page-node-id="MHlAbj70JvWt9XVr2FGu6R">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="f86saiR4EBqPDonb1rUsBr">
+<title>susunola.tencentcloud 全景能力图 · v1.0.0</title>
+<style>
+  :root{
+    --bg:#0f1420;
+    --panel:#161d2e;
+    --panel2:#1c2438;
+    --line:#26304a;
+    --text:#e8edf7;
+    --muted:#8b97b0;
+    --dim:#5d6a85;
+    --accent:#3b82f6;
+    --accent2:#60a5fa;
+    --blue:#3b82f6;
+    --cyan:#22d3ee;
+    --violet:#8b5cf6;
+    --amber:#f59e0b;
+    --emerald:#34d399;
+    --rose:#fb7185;
+    --write:#3b82f6;
+    --info:#64748b;
+    --radius:14px;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:
+      radial-gradient(1200px 500px at 80% -10%, rgba(59,130,246,.14), transparent 60%),
+      radial-gradient(900px 400px at -10% 20%, rgba(139,92,246,.10), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    padding:40px 28px 56px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1280px;margin:0 auto}
+
+  /* ===== Header ===== */
+  .head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:8px}
+  .brand{display:flex;align-items:center;gap:14px}
+  .logo{
+    width:52px;height:52px;border-radius:13px;flex:none;
+    background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+    display:grid;place-items:center;font-weight:800;font-size:21px;color:#fff;
+    box-shadow:0 8px 24px rgba(59,130,246,.35);
+  }
+  .brand h1{font-size:24px;font-weight:700;letter-spacing:.2px}
+  .brand h1 .mono{font-family:var(--mono);color:var(--accent2);font-weight:600}
+  .brand .sub{color:var(--muted);font-size:13px;margin-top:4px}
+  .badge-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .pill{
+    font-size:11.5px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);
+    color:var(--muted);background:rgba(255,255,255,.02);white-space:nowrap;
+  }
+  .pill b{color:var(--text);font-weight:600}
+  .ver{text-align:right}
+  .ver .tag{
+    font-family:var(--mono);font-size:13px;color:var(--accent2);
+    border:1px solid rgba(59,130,246,.4);background:rgba(59,130,246,.08);
+    padding:5px 12px;border-radius:8px;display:inline-block;margin-bottom:10px;
+  }
+  .ver .meta{font-size:12px;color:var(--dim);line-height:1.7}
+
+  /* ===== KPI ===== */
+  .kpi{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:26px 0 14px;
+  }
+  .kpi .cell{
+    background:linear-gradient(180deg,var(--panel),rgba(22,29,46,.6));
+    border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;
+    position:relative;overflow:hidden;
+  }
+  .kpi .cell::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:var(--accent);
+  }
+  .kpi .cell:nth-child(2)::before{background:var(--violet)}
+  .kpi .cell:nth-child(3)::before{background:var(--cyan)}
+  .kpi .cell:nth-child(4)::before{background:var(--amber)}
+  .kpi .cell:nth-child(5)::before{background:var(--emerald)}
+  .kpi .num{font-size:30px;font-weight:800;font-family:var(--mono);letter-spacing:-1px}
+  .kpi .num .u{font-size:15px;color:var(--muted);font-weight:600;margin-left:2px;font-family:inherit}
+  .kpi .lbl{font-size:12.5px;color:var(--muted);margin-top:5px}
+  .kpi .lbl b{color:var(--text)}
+
+  /* ===== Legend ===== */
+  .legend{
+    display:flex;align-items:center;gap:18px;margin:4px 2px 14px;
+    font-size:12.5px;color:var(--muted);flex-wrap:wrap;
+  }
+  .legend .sw{display:inline-flex;align-items:center;gap:7px}
+  .dotw{width:12px;height:12px;border-radius:3px;background:var(--write);display:inline-block}
+  .doti{width:12px;height:12px;border-radius:3px;background:var(--info);display:inline-block}
+  .legend b{color:var(--text)}
+  .hint{margin-left:auto;color:var(--dim);font-size:12px}
+
+  /* ===== Grid ===== */
+  .grid{
+    display:grid;grid-template-columns:repeat(12,1fr);gap:14px;
+  }
+  .d0{grid-column:span 4}
+  .d1{grid-column:span 4}
+  .d2{grid-column:span 4}
+  .d3{grid-column:span 3}
+  .d4{grid-column:span 3}
+  .d5{grid-column:span 3}
+  .d6{grid-column:span 3}
+  .d7{grid-column:span 4}
+  .d8{grid-column:span 4}
+  .d9{grid-column:span 4}
+  .d10{grid-column:span 12}
+
+  .card{
+    background:linear-gradient(180deg,var(--panel),rgba(22,29,46,.55));
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 18px 14px;display:flex;flex-direction:column;gap:12px;
+    transition:border-color .2s, transform .2s;
+  }
+  .card:hover{border-color:#34405f}
+  .card .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .card .icon{
+    width:34px;height:34px;border-radius:9px;flex:none;
+    display:grid;place-items:center;font-size:16px;
+    background:rgba(255,255,255,.05);border:1px solid var(--line);
+  }
+  .card h3{font-size:15px;font-weight:700}
+  .card .tot{font-family:var(--mono);font-size:24px;font-weight:800}
+  .card .tot small{font-size:11px;color:var(--dim);font-weight:500;font-family:inherit}
+  .split{font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+  .split .w{color:var(--accent2)}
+  .split .i{color:#94a3b8}
+
+  .bar{height:7px;border-radius:99px;background:#0b101c;overflow:hidden;display:flex;border:1px solid #202a42}
+  .bar .w{background:linear-gradient(90deg,#2563eb,#60a5fa)}
+  .bar .i{background:#3d4a63}
+
+  .prods{display:flex;flex-wrap:wrap;gap:5px;margin-top:auto}
+  .prod{
+    font-size:10.5px;font-family:var(--mono);color:var(--muted);
+    border:1px solid var(--line);background:rgba(255,255,255,.025);
+    padding:2px 7px;border-radius:5px;letter-spacing:.3px;
+  }
+  .prod.w{border-color:rgba(59,130,246,.35);color:#9dbdf5;background:rgba(59,130,246,.07)}
+  .prod.mut{opacity:.55}
+
+  /* long-tail strip */
+  .tail .bar .w{display:none}
+  .tailhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .tailhead h3{margin-right:auto}
+  .tailnums{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .tailnums b{color:var(--accent2)}
+
+  /* ===== bottom quality strip ===== */
+  .foot{
+    margin-top:22px;display:grid;grid-template-columns:repeat(6,1fr);gap:14px;
+  }
+  .q{
+    background:rgba(22,29,46,.6);border:1px solid var(--line);border-radius:12px;
+    padding:13px 15px;display:flex;gap:10px;align-items:flex-start;
+  }
+  .q .ic{font-size:15px;line-height:1.3}
+  .q .t{font-size:12px;font-weight:600;color:var(--text)}
+  .q .d{font-size:10.5px;color:var(--dim);margin-top:2px;line-height:1.45}
+  .q .ok{margin-left:auto;color:var(--emerald);font-size:13px}
+
+  .source{
+    margin-top:18px;font-size:11px;color:var(--dim);text-align:center;
+    font-family:var(--mono);letter-spacing:.2px;
+  }
+  @media (max-width:1100px){
+    .kpi{grid-template-columns:repeat(3,1fr)}
+    .foot{grid-template-columns:repeat(3,1fr)}
+    .d0,.d1,.d2,.d3,.d4,.d5,.d6,.d7,.d8,.d9{grid-column:span 6}
+  }
+  @media (max-width:640px){
+    .kpi{grid-template-columns:repeat(2,1fr)}
+    .foot{grid-template-columns:repeat(2,1fr)}
+    .d0,.d1,.d2,.d3,.d4,.d5,.d6,.d7,.d8,.d9,.d10{grid-column:span 12}
+    .ver{display:none}
+  }
+
+  /* ===== Industry Benchmark ===== */
+  .bench{margin-top:40px;border-top:1px solid rgba(38,48,74,.6);padding-top:26px}
+  .bench-h{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:6px}
+  .bench-h .eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:1.8px;text-transform:uppercase;color:var(--accent2);margin-bottom:7px}
+  .bench-h h2{font-size:19px;font-weight:700;letter-spacing:.2px}
+  .bench-h .sub{font-size:11.5px;color:var(--dim);margin-top:5px;line-height:1.6}
+  .cmpwrap{overflow-x:auto;margin-top:16px;border:1px solid var(--line);border-radius:var(--radius);background:rgba(16,20,32,.5)}
+  table.cmp{width:100%;border-collapse:collapse;min-width:880px;font-size:12.5px}
+  table.cmp th,table.cmp td{padding:10px 14px;text-align:right;border-top:1px solid rgba(38,48,74,.5);white-space:nowrap}
+  table.cmp thead th{font-weight:600;font-size:12px;border-top:none;background:rgba(0,0,0,.18)}
+  table.cmp th.dim,table.cmp td.dim{text-align:left;color:var(--muted);font-size:11.5px;background:rgba(0,0,0,.12);width:170px}
+  table.cmp thead th.dim{background:rgba(0,0,0,.18)}
+  table.cmp td.dim.sub{padding-left:26px;font-size:11px}
+  table.cmp td.num{font-family:var(--mono)}
+  table.cmp td.big{font-weight:700}
+  .col-name{display:flex;flex-direction:column;gap:2px;align-items:flex-end}
+  .col-name .nm{font-weight:700;font-size:12.5px}
+  .col-name .v{font-family:var(--mono);font-size:10px;color:var(--dim);font-weight:400}
+  th.ours{background:linear-gradient(180deg,rgba(59,130,246,.22),rgba(59,130,246,.10))!important;box-shadow:inset 0 0 0 1px rgba(59,130,246,.35)}
+  th.ours .nm{color:#cfe0ff}
+  td.ours{background:rgba(59,130,246,.06);color:#cfe0ff}
+  td.ours .num{color:var(--accent2);font-weight:700}
+  .cmp-note{margin-top:8px;font-size:10.5px;color:var(--dim);line-height:1.7;padding:0 2px}
+  .cmp-note b{color:var(--muted);font-weight:600}
+  .barblock{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  .barset{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:rgba(22,29,46,.4)}
+  .barset .bt{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:12px;letter-spacing:.4px}
+  .barset .bt b{color:var(--text)}
+  .brow{display:grid;grid-template-columns:168px 1fr 54px;gap:10px;align-items:center;margin-bottom:9px}
+  .brow:last-child{margin-bottom:0}
+  .brow .bn{font-size:11px;color:var(--muted);font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .brow .btrack{height:12px;border-radius:6px;background:rgba(0,0,0,.35);border:1px solid #202a42;overflow:hidden}
+  .brow .bfill{height:100%;border-radius:6px}
+  .brow .bv{font-family:var(--mono);font-size:11.5px;text-align:right;color:var(--text)}
+  .gap{display:grid;grid-template-columns:1fr 1.15fr;gap:14px;margin-top:14px}
+  .gcard{border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;background:linear-gradient(180deg,var(--panel),rgba(22,29,46,.5))}
+  .gcard.lead{border-color:rgba(52,211,153,.35)}
+  .gcard.lag{border-color:rgba(251,113,133,.3)}
+  .gcard .gt{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;margin-bottom:10px}
+  .gcard.lead .gt{color:#7ee2b8}
+  .gcard.lag .gt{color:#fda4af}
+  .gcard ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .gcard li{font-size:12px;color:var(--muted);line-height:1.55;display:flex;gap:8px}
+  .gcard li b{color:var(--text);font-weight:600}
+  .gcard li::before{content:"›";color:var(--dim);flex:none}
+  @media (max-width:1100px){.barblock{grid-template-columns:1fr}.gap{grid-template-columns:1fr}}
+</style>
+</head>
+<body data-page-node-id="AMoZgi6Ldg4YOd4IHH4upT">
+<div class="wrap" data-page-node-id="rNUTGnrRn25yEErNQUmnLn">
+
+  <!-- ================= HEADER ================= -->
+  <div class="head" data-page-node-id="XOyuWJERx1XOBjV0XwD3Eq">
+    <div class="brand" data-page-node-id="7Epb6AiN6kDoKdiynzRHwd">
+      <div class="logo" data-page-node-id="2Qib7oeOhE0hPs3TQBVByJ">TC</div>
+      <div data-page-node-id="qhARfuD6gGC9zkiFQULhY4">
+        <h1 data-page-node-id="EOW2L3R24dWXDVwcfJtIp2">susunola.<span class="mono" data-page-node-id="JupGiZovZ9GRb0GG9Dfa7A">tencentcloud</span> 全景能力图</h1>
+        <div class="sub" data-page-node-id="qP15FoCbCfIFziB5b4iPqg">Ansible Collection · 腾讯云资源全生命周期管理与只读发现 · Capability Map</div>
+        <div class="badge-row" data-page-node-id="Dac60d9fWyaUAqSGkP3BFZ">
+          <span class="pill" data-page-node-id="IJh2ACdxq7rNJl2gjTzaGA">Galaxy <b data-page-node-id="hMUQEHEhzXKwLqpNMdlA4O">v1.0.0</b></span>
+          <span class="pill" data-page-node-id="HJvNc3V64hHLoAqK2Vgwx6">ansible-core <b data-page-node-id="hUEl5t0Ago223BZqaxv6z0">2.19 / 2.20 / 2.21</b></span>
+          <span class="pill" data-page-node-id="FnEKN7nYzxLzwiVH1u8J5M">License <b data-page-node-id="ELCxwTyaC5za9JP6OXz5cy">GPL-3.0-or-later</b></span>
+          <span class="pill" data-page-node-id="roi2b0tXWpPzhpXsO80Bpx">CI <b data-page-node-id="NmGD3smMbzx7I6O3wD6zJH">daily + PR</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="ver" data-page-node-id="bgSWxs3Dun0taO4FZz6jUu">
+      <div class="tag" data-page-node-id="XsWMOXTxSwDbVpANOPMGFM">v1.0.0 · 2026-09-02</div>
+      <div class="meta" data-page-node-id="igdCvcQRAAEbXMSAEiRvAf">数据源：README 模块索引<br data-page-node-id="WkhBmNi8GobJ2QkOFlJxVa">sync_registry.py 同步</div>
+    </div>
+  </div>
+
+  <!-- ================= KPI ================= -->
+  <div class="kpi" data-page-node-id="uwaWukXsHRwkd87U4GsCmo">
+    <div class="cell" data-page-node-id="Fj87mYbHOU0bvAb79j7HLb"><div class="num" data-page-node-id="zO7UPetgVn7SkRvnWqXEGT">524</div><div class="lbl" data-page-node-id="ZwV6scOjx4ysuQBQ47eSc2"><b data-page-node-id="X7A1tYdnKm1zjAIMcEQ9pd">模块总数</b> · plugins/modules</div></div>
+    <div class="cell" data-page-node-id="E4qUCAQtsBGqhlpVz6gJPb"><div class="num" data-page-node-id="j6j8opkDxL5KPNICWBDtx9">313</div><div class="lbl" data-page-node-id="oZxOZcViQ3ZZdGXUxC7MRe"><b data-page-node-id="CdvAx7SmYLbVrurWrjT12v">资源管理模块</b> · idempotent write</div></div>
+    <div class="cell" data-page-node-id="x2821RBoh44zHSVecjHmDy"><div class="num" data-page-node-id="ZOYaeGO7anBJzbZW2Il0NA">211</div><div class="lbl" data-page-node-id="JfeQMbQDgQrGlsVdr1DuMy"><b data-page-node-id="OF8ocjkQsVXloXvPykTA35">只读发现模块</b> · *_info</div></div>
+    <div class="cell" data-page-node-id="h2mON98cYFHorWI2UwC2Om"><div class="num" data-page-node-id="Fv5qImyHT22ggidRz19zmX">225</div><div class="lbl" data-page-node-id="9k8e4izUd9zjHV4mn8qxsG"><b data-page-node-id="sF4GHKFCXWA6NPUaiUrdY2">覆盖腾讯云产品</b> · 87 个含写操作</div></div>
+    <div class="cell" data-page-node-id="GwfjYggRp4GLOAFkOQiCHR"><div class="num" data-page-node-id="hOcjiPujgWdSAT8LmLgnlO">2531</div><div class="lbl" data-page-node-id="PIyqLXHYKIG1wthLg5MECn"><b data-page-node-id="PxUFpHfLBCYicIv3t1iSIA">单元测试函数</b> · 345 个测试文件（含 module_utils / 插件层）</div></div>
+  </div>
+
+  <div class="legend" data-page-node-id="H6nREBM2a1GwelpEelKb4s">
+    <span class="sw" data-page-node-id="UpxRS3cDzRZLvxlWzukdxK"><span class="dotw" data-page-node-id="C4LWGoczf7vDduWntBcEaQ"></span> 写操作模块（present / absent，幂等 + check mode）</span>
+    <span class="sw" data-page-node-id="SVW5h4mHPVFgtfkE7t78US"><span class="doti" data-page-node-id="lrMWmldfQDykbhosvRwVXV"></span> 只读 _info 模块（发现 / 查询）</span>
+    <span class="hint" data-page-node-id="FM0Po9pbtjETNRHB8y1wht">数字 = 该产品下的模块数 · 浅色 chip = 仅只读</span>
+  </div>
+
+  <!-- ================= GRID ================= -->
+  <div class="grid" id="grid" data-page-node-id="2Uqt6b2NqGGxY1qb5cgeOE"></div>
+
+  <!-- ================= QUALITY ================= -->
+  <div class="foot" data-page-node-id="mkGUGVd3FslwVHNZvQQOBj">
+    <div class="q" data-page-node-id="Md4IxrfTatld6kj3orwRX6"><div class="ic" data-page-node-id="KWEGsGTdhnjgkhXPh73cOL">✅</div><div data-page-node-id="TbDbMB7cHF0eNZH6o44feI"><div class="t" data-page-node-id="MguMPDGs7MJEyI7uq3hCor">幂等性</div><div class="d" data-page-node-id="V0pDb3foKHtr57CVKhleyh">二次运行 changed=false；check mode 不发写请求</div></div><div class="ok" data-page-node-id="laVCVZPRtzW6GDPnlTnV9k">✓</div></div>
+    <div class="q" data-page-node-id="RyGew9MeWulbRjA0yUY0yW"><div class="ic" data-page-node-id="4cVCIcohdkz47qCGVCfe5B">🧪</div><div data-page-node-id="WJknogKCslxMaVPi6qSaRq"><div class="t" data-page-node-id="Xh6J0UYTsUFe5YibCEzDST">单元 + 契约测试</div><div class="d" data-page-node-id="5iGsSmAb3bb24bybIVQ5ZH">逐模块 unit tests + 真实 SDK 请求模型 contract tests</div></div><div class="ok" data-page-node-id="ViTQDfKifqZ5bQoto84BxZ">✓</div></div>
+    <div class="q" data-page-node-id="FDFZSjD1nmo6UqUFLZIedw"><div class="ic" data-page-node-id="hqgRYOZHXFKHb7LlS15cVr">🩺</div><div data-page-node-id="PTtfiZ7KWYomkschMfFVcu"><div class="t" data-page-node-id="T7KkD0ljJZ7LsQ9gl2HE3C">ansible-test sanity</div><div class="d" data-page-node-id="1Pf55JzJYEoCJfAd0d2EOM">2.19/2.20/2.21 矩阵全绿，零 ignore 豁免</div></div><div class="ok" data-page-node-id="VVW4CHUGTMkOHyOINkbgE9">✓</div></div>
+    <div class="q" data-page-node-id="6fQ2vtI5KImlKPoCv3yHRb"><div class="ic" data-page-node-id="2AEnTkCplSOgDl1mhKwCzP">📦</div><div data-page-node-id="wE3MT0wk5D6tTmGua1cDDc"><div class="t" data-page-node-id="DlTAj3Lk9cHeQ0HG5BgJ0X">生成式治理</div><div class="d" data-page-node-id="P3WF8xPPAxnqxYfSl7pSMX">199 个 generated 模块由 spec 生成，禁止手改</div></div><div class="ok" data-page-node-id="84EDqt2vcHAcz1Jw6YqAsI">✓</div></div>
+    <div class="q" data-page-node-id="yOxDb8lxohhsna5La40Qer"><div class="ic" data-page-node-id="o0edsXbN1UHXnSsXpLZCGK">🔍</div><div data-page-node-id="7UqqaECCLRhMygco8GNgYv"><div class="t" data-page-node-id="VeDqkRvoESEvnAQfjdQdqV">变更审计</div><div class="d" data-page-node-id="hdMWU9LMoXBig9O0CQuCPv">tc_api_calls 返回 + tencentcloud_resource_actions 回调</div></div><div class="ok" data-page-node-id="7yJ9Y7xD10w87WmmDtNghD">✓</div></div>
+    <div class="q" data-page-node-id="qTFTFRbE3dxWzWRFVoANS0"><div class="ic" data-page-node-id="JzacAvjwCBt593qW5t7XpP">🧰</div><div data-page-node-id="SvAl1VnDiUc7w6j1HbKnSe"><div class="t" data-page-node-id="rSnB8KK9wsCOLo2EC8orhm">扩展插件</div><div class="d" data-page-node-id="En4z6EBpR1Cz3Yx1DaeKqU">5 inventory + 2 lookup + 1 connection + 1 callback</div></div><div class="ok" data-page-node-id="uu0wk9AtY1Xw5ljQjn03x7">✓</div></div>
+  </div>
+
+  <!-- ================= INDUSTRY BENCHMARK ================= -->
+  <div class="bench" data-page-node-id="F5rOTFRbiaCNRvMeNTQ2Cq">
+    <div class="bench-h" data-page-node-id="FVd80z6xhGrcLR8SjCVZpm">
+      <div data-page-node-id="OFsW8lq77BbTIzuAVawJia">
+        <div class="eyebrow" data-page-node-id="KlhAQEc1ns6y69hT08YEEJ">Industry Benchmark</div>
+        <h2 data-page-node-id="nVPa6kRaCfFBSeecbeXKDR">与行业顶尖 Collection 的差距</h2>
+        <div class="sub" data-page-node-id="HkwaBgtBJGRf377Mqh3KU1">口径：Galaxy 已发布产物（tar.gz）实拉统计，2026-09-02 · amazon.aws 11.4.0 / azure.azcollection 4.0.0 / google.cloud 1.14.0</div>
+      </div>
+    </div>
+
+    <div class="cmpwrap" data-page-node-id="hbDNwimB2QhDZGMaTtJidI">
+    <table class="cmp" data-page-node-id="cDbOKDzejxpC3vECMX1UhE">
+      <thead data-page-node-id="CUlLabyUFP6GTQzAqkOUXK">
+        <tr data-page-node-id="shhKdCG5VpTeSigTLdFMIQ">
+          <th class="dim" data-page-node-id="9q8CGRKwgc0GLOEI6Sengz">维度</th>
+          <th class="ours" data-page-node-id="drPmd3s7buv4bChWHydsEA"><div class="col-name" data-page-node-id="0Vzl1ClxSNKPe4E4HF2QR5"><span class="nm" data-page-node-id="xrvOstuYcJq5glrkePZGWo">susunola.tencentcloud</span><span class="v" data-page-node-id="tF6f28Nts7XjDgr7a7LFMB">v1.0.0 · 本仓库</span></div></th>
+          <th data-page-node-id="D1GBDyJFArSbEHVr0fMJhS"><div class="col-name" data-page-node-id="6eKUJUJ6ydw3e0XCyBP9uP"><span class="nm" data-page-node-id="cH3Cqp3uyySnmFb3NQkyWV">amazon.aws</span><span class="v" data-page-node-id="S2VI9SuZlfvuH3ZrVUSHQK">v11.4.0 · AWS 官方</span></div></th>
+          <th data-page-node-id="lX7umdDqee7GB4mq9E9a0e"><div class="col-name" data-page-node-id="FffHzNWKKrye0FQ23Q3K3n"><span class="nm" data-page-node-id="nEoX9f14WY3GxInAYT2sCV">azure.azcollection</span><span class="v" data-page-node-id="2XMmKsIrxw9gzPO0ufHPF2">v4.0.0 · Microsoft 官方</span></div></th>
+          <th data-page-node-id="SdcvzVlYDXyAjmJWVLdwad"><div class="col-name" data-page-node-id="M6A2KXXtsNWoq8RR3FZWdO"><span class="nm" data-page-node-id="vKgbPCzTe4A8AwFktLsgPP">google.cloud</span><span class="v" data-page-node-id="nLrYklcT9CsTGUETrLsT0Y">v1.14.0 · Google 官方</span></div></th>
+        </tr>
+      </thead>
+      <tbody data-page-node-id="wFRONek1JcbMsQnj4C01MI">
+        <tr data-page-node-id="F1gyJluxDNuIKjKJOLAqiv">
+          <td class="dim" data-page-node-id="318n4Ec0MjBUUISpywsVno">模块总数</td>
+          <td class="ours num big" data-page-node-id="brJ1E5DauCZJZZlTWMMWtp">524</td>
+          <td class="num" data-page-node-id="VO731dPJMZEDPvuHJTDY6w">141</td>
+          <td class="num" data-page-node-id="l3BT6D15ib3nKPQ0fho336">426</td>
+          <td class="num" data-page-node-id="emiOEOa5McNJxtO7W2DuCt">194</td>
+        </tr>
+        <tr data-page-node-id="BnguPwPAvMqwTpAvh3TUt8">
+          <td class="dim sub" data-page-node-id="wLUMSDl7dzBJBZLAfGGYiW">· 幂等 write 模块</td>
+          <td class="ours num" data-page-node-id="gWzrBD4g1W9mJpl2jqIHo6"><span class="num" data-page-node-id="pnhFJT6CSRBbiJUWw48CE0">313</span></td>
+          <td class="num" data-page-node-id="LoMSmNsG9hQYqvtd9rjlo9">74</td>
+          <td class="num" data-page-node-id="fMZMNd93zB2Xjb7LxRFzXg">212</td>
+          <td class="num" data-page-node-id="Rgks3RG5Mp06P4Wc3yJ0ct">115</td>
+        </tr>
+        <tr data-page-node-id="CZ8RlKYzc78jo5SkSE6aVA">
+          <td class="dim sub" data-page-node-id="TvyRscBU8Z7IGHDVAK6qKM">· 只读 *_info 模块</td>
+          <td class="ours num" data-page-node-id="UCDVwqKvJQaasxyMoi4Jza"><span class="num" data-page-node-id="k2CFFwcZtyw4SJxgdkcGq5">211</span></td>
+          <td class="num" data-page-node-id="a4T30imZb7VmHY85Hpth1E">67</td>
+          <td class="num" data-page-node-id="dgvpFkNlrX1wF4HJA3EdIF">214</td>
+          <td class="num" data-page-node-id="D1IkitLcAT6cpiG6zjohym">79</td>
+        </tr>
+        <tr data-page-node-id="tGkIWv3HThpFYoCAuelW94">
+          <td class="dim" data-page-node-id="3CfHW75RIuO5PnCqBxzuVD">ansible-core 要求</td>
+          <td class="ours num" data-page-node-id="zqo1KvGkDY1KAUGNi7JqLo"><span class="num" data-page-node-id="nl7WACFwtyAwIof3JZ7P6S">≥ 2.19</span></td>
+          <td class="num" data-page-node-id="yCC3bMTiFIFkMqp8RAr0l0">≥ 2.17</td>
+          <td class="num" data-page-node-id="GBKtTMdyx8vr0DZ2U5XrJH">≥ 2.16</td>
+          <td class="num" data-page-node-id="MNArqQpDNnMpN9Hs86IgCn">≥ 2.16</td>
+        </tr>
+        <tr data-page-node-id="XlCq5C9BzduZDEvlEN4YxS">
+          <td class="dim" data-page-node-id="PRCa0kIyC3Hq4E1m8Ouazv">Galaxy 累计下载</td>
+          <td class="ours num" data-page-node-id="Oc9o8SJLHOALzsEFGVjVIp"><span class="num" data-page-node-id="VM9L0SCYbEVElHCM6xUNps">首发 · 0</span></td>
+          <td class="num" data-page-node-id="fRmYDoQalDiXRZ5DHBvI38">90.5 M</td>
+          <td class="num" data-page-node-id="VKaHARgfYU1DPw8QQx3rCD">17.0 M</td>
+          <td class="num" data-page-node-id="S111IKY4oWqkBOORZO5XhE">11.8 M</td>
+        </tr>
+        <tr data-page-node-id="zDUR93QGGf3gxf0EeTIM6a">
+          <td class="dim" data-page-node-id="GYGV7JBeK2zP8Xny5Fo802">集成测试 target 数</td>
+          <td class="ours num" data-page-node-id="xZk5DuEeL3oyr8ORs4MXEI"><span class="num" data-page-node-id="JEFF7tVoLVhoz3Ss5IjIcd">21</span></td>
+          <td class="num" data-page-node-id="3CqI1Z0KXEHOi5q4WCBcDi">160</td>
+          <td class="num" data-page-node-id="eZmY8QOX96xTldObiMfvzW">— *</td>
+          <td class="num" data-page-node-id="fAFOPxdv6H0GECfQ7oW8Wb">115</td>
+        </tr>
+        <tr data-page-node-id="zw3PS2YBi8EEmCLTQLDIiY">
+          <td class="dim sub" data-page-node-id="P7qfeKCbTihdhgsWEuRzkt">· 对应 yml 用例数</td>
+          <td class="ours num" data-page-node-id="ottDfCAXOb0BGsrKatgOys"><span class="num" data-page-node-id="gDiwPPN4Q5sWnJ4kTkP2ji">62</span></td>
+          <td class="num" data-page-node-id="pOT9u3DL5Ip7B3Ev9Bf65k">690</td>
+          <td class="num" data-page-node-id="1dDsgmVpFoUXBtoSEkPbI2">— *</td>
+          <td class="num" data-page-node-id="dZBNspz4YYQfQ3rfBPcOuK">468</td>
+        </tr>
+        <tr data-page-node-id="cPQUI0Gb6WEkXoU0DJx6FU">
+          <td class="dim" data-page-node-id="cw11EB8IowXCfqvUb4JHA4">维护模式</td>
+          <td class="ours" data-page-node-id="vl4XfysAa9833JtJZsNzPr">个人 + 生成式治理</td>
+          <td data-page-node-id="vlLL46e9zWzcE7HGP1aWdm">AWS + Red Hat</td>
+          <td data-page-node-id="bFrD00dqBQCa8lJ90inQhH">Microsoft + 社区</td>
+          <td data-page-node-id="Vfk1thGwZ7yQvTY02A4ICz">Google</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="cmp-note" data-page-node-id="kEg3bER4wOWDmxTNnCDyvM">* azure.azcollection 发布产物不携带 integration / unit 目录（源码仓库中有），无法从 Galaxy 产物统计。<b data-page-node-id="2blHbtum3thUqKWK31Cu6z">口径提示</b>：① amazon.aws 大量通用模块已迁往 community.aws / amazon.aws.aws_*，本表仅计 amazon.aws 本体；② google.cloud 产物仅携带 1 个 unit 测试文件（unit 测试同样被剥离，源仓库有完整测试），故其 unit 测试数以源码仓库为准更公平；③ 集成测试按 target 数对比（21 vs 160 vs 115），yml 数只作参考 —— 各家 target 内 yml 组织密度不同，直接用 yml 总数对比会把本库 62 yml（61 target + 1 coverage.yml）与 amazon 690 yml 的差距放大 ~11x；④ 模块数多≠质量高，下方按维度看真实差距。</div>
+
+    <div class="barblock" data-page-node-id="avfLFY3CKbxclTC5YJLtBO">
+      <div class="barset" data-page-node-id="2ZQzTC84qA5sIuI3FSuimk">
+        <div class="bt" data-page-node-id="nVdyKWJGfdUdaR6zbFOvMG">模块总数对比（含 write + _info）</div>
+        <div class="brow" data-page-node-id="MdTGvlvZ46I0KE2u2Fk1qz"><div class="bn" data-page-node-id="sZLLyzfrGPpMUU8QuwOwQv">susunola.tencentcloud</div><div class="btrack" data-page-node-id="cZKEcRuQ1bDZx1alWEICp7"><div class="bfill" style="width:100%;background:linear-gradient(90deg,#2563eb,#60a5fa)" data-page-node-id="n0DUaCmiS6K44TWXUtyxR9"></div></div><div class="bv" data-page-node-id="LHMKn7WoklaBCodRfQcwAU">524</div></div>
+        <div class="brow" data-page-node-id="FylJbAisnAIMEE3c4mOgYC"><div class="bn" data-page-node-id="ravGGXL691lIsggcGYRvLR">azure.azcollection</div><div class="btrack" data-page-node-id="vKtcGDnwRGtfwZHRzsPvjP"><div class="bfill" style="width:81%;background:linear-gradient(90deg,#7c3aed,#a78bfa)" data-page-node-id="r8WxYkDXiZDTimsUbZQ7mC"></div></div><div class="bv" data-page-node-id="2cz5bcmHEraUSrSCMAwWiA">426</div></div>
+        <div class="brow" data-page-node-id="DBTxE86FC4FSXb21pRkdSJ"><div class="bn" data-page-node-id="rXItpmoLzwYmRELvmOAcXG">google.cloud</div><div class="btrack" data-page-node-id="NKJCM5bdQjTHlpvGX5YKn2"><div class="bfill" style="width:37%;background:linear-gradient(90deg,#0d9488,#2dd4bf)" data-page-node-id="db5W4IEPIL8qRf9DfAKjKx"></div></div><div class="bv" data-page-node-id="15DoJKQ6U6DcibRVC6Mh4L">194</div></div>
+        <div class="brow" data-page-node-id="r98UtYlSAzwEcTjxNnpQ7H"><div class="bn" data-page-node-id="twr1GqeZgRVBd5s8LnQP8a">amazon.aws</div><div class="btrack" data-page-node-id="D7182GTxTIG5CJSxLMcehP"><div class="bfill" style="width:27%;background:linear-gradient(90deg,#b45309,#f59e0b)" data-page-node-id="MEMESItSs9UBC550hQuLAr"></div></div><div class="bv" data-page-node-id="43M3CqZFFBASztH2Jl2cwu">141</div></div>
+      </div>
+      <div class="barset" data-page-node-id="el2L5XbW5jchhWSplPbiWF">
+        <div class="bt" data-page-node-id="lVv17VUnfEwxr6vnQjcbV1">幂等 write 模块对比（可增删改的核心面）</div>
+        <div class="brow" data-page-node-id="2tiXsL4kZx7orNr3hQkNbZ"><div class="bn" data-page-node-id="QWZwFX6SG4wyty9t2vMHcg">susunola.tencentcloud</div><div class="btrack" data-page-node-id="vlxAD3cksZ5My04P3ns7h8"><div class="bfill" style="width:100%;background:linear-gradient(90deg,#2563eb,#60a5fa)" data-page-node-id="ktYtCfTwoduClMrsXKNzda"></div></div><div class="bv" data-page-node-id="VGbvuTb8Srghy7q57AZHHq">313</div></div>
+        <div class="brow" data-page-node-id="UVfqBiTzqDqBelrs2lSnbD"><div class="bn" data-page-node-id="QM0f3UHQlRpX1AqE5j0cPY">azure.azcollection</div><div class="btrack" data-page-node-id="4QPDOgFWg5S7B9XICRLt3G"><div class="bfill" style="width:68%;background:linear-gradient(90deg,#7c3aed,#a78bfa)" data-page-node-id="xho6iwnnzPbCqEMehQoTCz"></div></div><div class="bv" data-page-node-id="7FhYruoiI0hcZ7zTeKkHwf">212</div></div>
+        <div class="brow" data-page-node-id="YbpFFA2CGNIJRxzTHr7V1O"><div class="bn" data-page-node-id="zjblMsNOVVUgFf1uzdbRTv">google.cloud</div><div class="btrack" data-page-node-id="lMBSM8vEy5W7lQ1in8NGCW"><div class="bfill" style="width:37%;background:linear-gradient(90deg,#0d9488,#2dd4bf)" data-page-node-id="YYLqiPooMI7EzgCWpx48dR"></div></div><div class="bv" data-page-node-id="s9kK8UIf392sMBP4gnV9y8">115</div></div>
+        <div class="brow" data-page-node-id="LQGCFPhCzEBu0VMrmOumAa"><div class="bn" data-page-node-id="wzCuJaPBBj1Eb9j0BNqmuj">amazon.aws</div><div class="btrack" data-page-node-id="o75GRqddhbSpooZeOoHYQR"><div class="bfill" style="width:24%;background:linear-gradient(90deg,#b45309,#f59e0b)" data-page-node-id="fjY9BNN1EYzuwlJUjISIfD"></div></div><div class="bv" data-page-node-id="MCej9dnp3zvtuRq6zoCwmJ">74</div></div>
+      </div>
+    </div>
+
+    <div class="gap" data-page-node-id="hqKexVOFqqhTWlSZCFvsLC">
+      <div class="gcard lead" data-page-node-id="FxP3TfmuUYXlXlA4q7l2AM">
+        <div class="gt" data-page-node-id="317JymQVWCgZsYhnhGr0dG">▲ 领先项（实测数据）</div>
+        <ul data-page-node-id="as2Dlv2kuiLUVNVBOvgW3Q">
+          <li data-page-node-id="jKwd8CRK1KDNC6xADD9OBk"><b data-page-node-id="sxGs9NlZYBbsT3pYOxCCVw">覆盖面第一梯队</b>：模块总数 524、幂等 write 313，均高于三家官方云 Collection（含全腾讯云 2000+ API 的长尾只读覆盖）。</li>
+          <li data-page-node-id="4j9qKpCpBKHVtvKHzRssb6"><b data-page-node-id="BGzCpRPNBWtTpx4OT0Wg6i">生成式治理</b>：199 个模块由 spec 生成、禁止手改，幂等 + check mode 全量内置；三类官方库大量模块为半手写维护。</li>
+          <li data-page-node-id="1f0rxBF31Wh1st6uCt4VQr"><b data-page-node-id="sGOXLVE4LLBB0OMGbT4HZW">质量门槛</b>：unit + contract 双测试、sanity 2.19/2.20/2.21 全绿、零 ignore 豁免，测试密度高于多数官方模块。</li>
+        </ul>
+      </div>
+      <div class="gcard lag" data-page-node-id="3mStsnY0uMQ1S0i6tmGFT5">
+        <div class="gt" data-page-node-id="SqWDl9o0AFRlTAsfcvzPAi">▼ 差距项（需追赶）</div>
+        <ul data-page-node-id="XgIrzE4skCbh0ZxfY8Ipmh">
+          <li data-page-node-id="DsZKEUZVlftNiNeBgvFa6a"><b data-page-node-id="VCPk6kh2oqx3lg4W0qx7sH">生态与信任</b>：Galaxy 下载 0 vs 11.8M–90.5M；需持续 release、inclusion 申请（#89 进行中）与社区口碑积累。</li>
+          <li data-page-node-id="2akOQHDEgqYnaFfoFwkq2N"><b data-page-node-id="3nHwhKuj1BtKY5qWKnOjGp">集成测试深度</b>：21 targets（62 yml）vs amazon 160（690）/ google 115（468）；13 个旗舰模块（cvm_instance / vpc / cdb_instance / redis_instance / tke_cluster / clb_load_balancer / cos_object / scf_function / ckafka_instance / cbs_disk / eip / nat_gateway / subnet）尚无集成 target。</li>
+          <li data-page-node-id="GVIG2FbCyrw3XB3Xn3j5OI"><b data-page-node-id="bkn88VtBEC88giLq0eiHBe">单元测试广度有虚点</b>：有专属单测文件的模块仅 271/524（312 个模块测试文件），write 模块 222/313 无单测（coverage-batching 扫描，175 个共享同一 helper 骨架）—— 语句覆盖率 60.9% 由 info 深测与少数 write 深测拉高，广度分布不均。</li>
+          <li data-page-node-id="fSbjxYmwNYUCs4SBCpgkZO"><b data-page-node-id="30RylByGBgYWv3mxIeK6G5">ansible-core 门槛</b>：≥2.19 起步（2.16–2.18 已 EOL；三家 ≥2.16/≥2.17 为历史声明，实际 CI 只测最新版）—— 主动对齐演进，换取旧控制节点用户覆盖的部分代价。</li>
+          <li data-page-node-id="F0fplhYYuDvmVG0lb8D7EH"><b data-page-node-id="aC8JgFfzR82VUgmtrcC6w5">维护资源</b>：个人维护（贡献 / 加入路径见 CONTRIBUTING.md）vs 厂商 + Red Hat/社区全职团队；issue 响应与版本节奏是长期风险。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="source" data-page-node-id="4BKGdnu2eK5Bhl42ovPpCF">susunola.ansible-collection-tencentcloud · 由仓库模块清单实时生成 · data: 2026-09-02</div>
+</div>
+
+<script>
+const DOMAINS = [{"name": "Compute & HPC", "products": [{"name": "CVM", "write": 11, "info": 1}, {"name": "LIGHTHOUSE", "write": 5, "info": 1}, {"name": "AS_SCALING", "write": 2, "info": 1}, {"name": "TAT", "write": 2, "info": 1}, {"name": "KEY_PAIR", "write": 1, "info": 1}, {"name": "THPC", "write": 1, "info": 1}, {"name": "AS_SCHEDULED", "write": 1, "info": 0}, {"name": "BATCH", "write": 0, "info": 1}, {"name": "CDC", "write": 0, "info": 1}, {"name": "CHC", "write": 0, "info": 1}, {"name": "ECM", "write": 0, "info": 1}, {"name": "HAI", "write": 0, "info": 1}], "write": 23, "info": 11}, {"name": "Container & Serverless", "products": [{"name": "TKE", "write": 9, "info": 1}, {"name": "TCR", "write": 5, "info": 1}, {"name": "TEM", "write": 4, "info": 1}, {"name": "EKS_CLUSTER", "write": 1, "info": 0}, {"name": "EKS_CONTAINER", "write": 1, "info": 0}, {"name": "LKE", "write": 0, "info": 1}], "write": 20, "info": 4}, {"name": "Network & Delivery", "products": [{"name": "TEO", "write": 12, "info": 1}, {"name": "CLB", "write": 5, "info": 1}, {"name": "ALB", "write": 4, "info": 1}, {"name": "GWLB", "write": 4, "info": 1}, {"name": "VPC", "write": 4, "info": 1}, {"name": "CDN", "write": 2, "info": 1}, {"name": "DC", "write": 2, "info": 1}, {"name": "NAT_GATEWAY", "write": 2, "info": 1}, {"name": "SECURITY_GROUP", "write": 2, "info": 1}, {"name": "CCN", "write": 2, "info": 0}, {"name": "EIP", "write": 1, "info": 1}, {"name": "GAAP", "write": 1, "info": 1}, {"name": "HAVIP", "write": 2, "info": 0}, {"name": "PRIVATE_DNS", "write": 2, "info": 0}, {"name": "PRIVATELINK", "write": 2, "info": 0}, {"name": "ROUTE_TABLE", "write": 1, "info": 1}, {"name": "SUBNET", "write": 1, "info": 1}, {"name": "VPN_GATEWAY", "write": 1, "info": 1}, {"name": "CUSTOMER_GATEWAY", "write": 1, "info": 0}, {"name": "NETWORK_ACL", "write": 1, "info": 0}, {"name": "NETWORK_INTERFACE", "write": 1, "info": 0}, {"name": "PEERING_CONNECTION", "write": 1, "info": 0}, {"name": "ECDN", "write": 0, "info": 1}, {"name": "VPN", "write": 1, "info": 0}], "write": 55, "info": 15}, {"name": "Storage & Data", "products": [{"name": "COS", "write": 16, "info": 2}, {"name": "CBS", "write": 5, "info": 1}, {"name": "CFS", "write": 5, "info": 1}, {"name": "CHDFS", "write": 5, "info": 1}, {"name": "GOOSEFS", "write": 2, "info": 1}, {"name": "SMH", "write": 0, "info": 1}], "write": 33, "info": 7}, {"name": "Database & DW", "products": [{"name": "CKAFKA", "write": 9, "info": 1}, {"name": "CDB", "write": 7, "info": 1}, {"name": "CYNOSDB", "write": 4, "info": 1}, {"name": "MARIADB", "write": 4, "info": 1}, {"name": "REDIS", "write": 4, "info": 1}, {"name": "MONGODB", "write": 3, "info": 1}, {"name": "POSTGRESQL", "write": 4, "info": 0}, {"name": "SQLSERVER", "write": 3, "info": 1}, {"name": "DTS", "write": 2, "info": 1}, {"name": "ELASTICSEARCH", "write": 3, "info": 0}, {"name": "CDWCH", "write": 1, "info": 1}, {"name": "CDWDORIS", "write": 1, "info": 1}, {"name": "CDWPG", "write": 1, "info": 1}, {"name": "DBBRAIN", "write": 1, "info": 1}, {"name": "DBDC", "write": 1, "info": 1}, {"name": "DCDB", "write": 1, "info": 1}, {"name": "TCAPLUSDB", "write": 1, "info": 1}, {"name": "TDCPG", "write": 1, "info": 1}, {"name": "TDMYSQL", "write": 1, "info": 1}, {"name": "VDB", "write": 1, "info": 1}, {"name": "DBS", "write": 0, "info": 1}, {"name": "KEEWIDB", "write": 0, "info": 1}, {"name": "MEMCACHED", "write": 0, "info": 1}, {"name": "POSTGRES", "write": 0, "info": 1}], "write": 53, "info": 22}, {"name": "Messaging & Integration", "products": [{"name": "TDMQ", "write": 15, "info": 1}, {"name": "CLS", "write": 7, "info": 1}, {"name": "API_GATEWAY", "write": 7, "info": 0}, {"name": "TRABBIT", "write": 6, "info": 1}, {"name": "EB", "write": 4, "info": 1}, {"name": "MQTT", "write": 4, "info": 1}, {"name": "SCF", "write": 4, "info": 1}, {"name": "CMQ", "write": 3, "info": 1}, {"name": "SSM", "write": 4, "info": 0}, {"name": "TCB", "write": 2, "info": 1}, {"name": "TSE", "write": 1, "info": 1}, {"name": "TAG", "write": 1, "info": 0}, {"name": "CETCD", "write": 0, "info": 1}, {"name": "TCBR", "write": 0, "info": 1}, {"name": "TROCKET", "write": 0, "info": 1}, {"name": "TSF", "write": 0, "info": 1}], "write": 58, "info": 13}, {"name": "Security & Identity", "products": [{"name": "WAF", "write": 13, "info": 1}, {"name": "CAM", "write": 8, "info": 3}, {"name": "CFW", "write": 5, "info": 1}, {"name": "CLOUDAUDIT", "write": 2, "info": 1}, {"name": "KMS", "write": 2, "info": 1}, {"name": "TCM", "write": 2, "info": 1}, {"name": "SSL", "write": 1, "info": 1}, {"name": "ANTIDDOS", "write": 0, "info": 1}, {"name": "BH", "write": 0, "info": 1}, {"name": "CSIP", "write": 0, "info": 1}, {"name": "CWP", "write": 0, "info": 1}, {"name": "CWS", "write": 0, "info": 1}, {"name": "DASB", "write": 0, "info": 1}, {"name": "DAYU", "write": 0, "info": 1}, {"name": "DSGC", "write": 0, "info": 1}, {"name": "FWM", "write": 0, "info": 1}, {"name": "IAP", "write": 0, "info": 1}, {"name": "IOA", "write": 0, "info": 1}, {"name": "SECURITYLAKE", "write": 0, "info": 1}, {"name": "TCSS", "write": 0, "info": 1}, {"name": "YUNJING", "write": 0, "info": 1}], "write": 33, "info": 23}, {"name": "Data & AI", "products": [{"name": "OCEANUS", "write": 2, "info": 1}, {"name": "EMR", "write": 1, "info": 1}, {"name": "ASR", "write": 0, "info": 1}, {"name": "BI", "write": 0, "info": 1}, {"name": "CIAM", "write": 0, "info": 1}, {"name": "CTSDB", "write": 0, "info": 1}, {"name": "DLC", "write": 0, "info": 1}, {"name": "FACEFUSION", "write": 0, "info": 1}, {"name": "FACEID", "write": 0, "info": 1}, {"name": "HUNYUAN", "write": 0, "info": 1}, {"name": "IAI", "write": 0, "info": 1}, {"name": "LKEAP", "write": 0, "info": 1}, {"name": "LOWCODE", "write": 0, "info": 1}, {"name": "OMICS", "write": 0, "info": 1}, {"name": "TDAI", "write": 0, "info": 1}, {"name": "TDID", "write": 0, "info": 1}, {"name": "TIA", "write": 0, "info": 1}, {"name": "TIIA", "write": 0, "info": 1}, {"name": "TIONE", "write": 0, "info": 1}, {"name": "WEDATA", "write": 0, "info": 1}], "write": 3, "info": 20}, {"name": "OPS & Governance", "products": [{"name": "MONITOR", "write": 15, "info": 1}, {"name": "CONFIG", "write": 8, "info": 1}, {"name": "ORGANIZATION", "write": 4, "info": 1}, {"name": "ADVISOR", "write": 0, "info": 1}, {"name": "APM", "write": 0, "info": 1}, {"name": "BILLING", "write": 0, "info": 1}, {"name": "BSCA", "write": 0, "info": 1}, {"name": "CAT", "write": 0, "info": 1}, {"name": "CONTROLCENTER", "write": 0, "info": 1}, {"name": "PTS", "write": 0, "info": 1}, {"name": "REGION", "write": 0, "info": 1}, {"name": "RUM", "write": 0, "info": 1}], "write": 27, "info": 12}, {"name": "Media & Communication", "products": [{"name": "DNSPOD", "write": 4, "info": 1}, {"name": "SMS", "write": 2, "info": 1}, {"name": "VOD", "write": 2, "info": 1}, {"name": "CME", "write": 0, "info": 1}, {"name": "DOMAIN", "write": 0, "info": 1}, {"name": "GME", "write": 0, "info": 1}, {"name": "LIVE", "write": 0, "info": 1}, {"name": "MALL", "write": 0, "info": 1}, {"name": "MPS", "write": 0, "info": 1}, {"name": "PARTNERS", "write": 0, "info": 1}, {"name": "PORTAL", "write": 0, "info": 1}, {"name": "SES", "write": 0, "info": 1}, {"name": "TOURISM", "write": 0, "info": 1}, {"name": "TRTC", "write": 0, "info": 1}, {"name": "WAV", "write": 0, "info": 1}, {"name": "WEILINGWITH", "write": 0, "info": 1}, {"name": "YINSUDA", "write": 0, "info": 1}], "write": 8, "info": 17}, {"name": "Long-tail (read-only)", "products": [{"name": "ACP", "write": 0, "info": 1}, {"name": "ADP", "write": 0, "info": 1}, {"name": "AGS", "write": 0, "info": 1}, {"name": "AME", "write": 0, "info": 1}, {"name": "AMS", "write": 0, "info": 1}, {"name": "ANICLOUD", "write": 0, "info": 1}, {"name": "APE", "write": 0, "info": 1}, {"name": "API", "write": 0, "info": 1}, {"name": "APIGATEWAY", "write": 0, "info": 1}, {"name": "APIS", "write": 0, "info": 1}, {"name": "ASW", "write": 0, "info": 1}, {"name": "BA", "write": 0, "info": 1}, {"name": "BDRC", "write": 0, "info": 1}, {"name": "BIZLIVE", "write": 0, "info": 1}, {"name": "BM", "write": 0, "info": 1}, {"name": "BMA", "write": 0, "info": 1}, {"name": "BMEIP", "write": 0, "info": 1}, {"name": "BMLB", "write": 0, "info": 1}, {"name": "BMVPC", "write": 0, "info": 1}, {"name": "CAPTCHA", "write": 0, "info": 1}, {"name": "CCC", "write": 0, "info": 1}, {"name": "CDS", "write": 0, "info": 1}, {"name": "CDZ", "write": 0, "info": 1}, {"name": "CFG", "write": 0, "info": 1}, {"name": "CLOUDHSM", "write": 0, "info": 1}, {"name": "CLOUDRC", "write": 0, "info": 1}, {"name": "CLOUDSTUDIO", "write": 0, "info": 1}, {"name": "CMS", "write": 0, "info": 1}, {"name": "CNGW", "write": 0, "info": 1}, {"name": "CPDP", "write": 0, "info": 1}, {"name": "CTEM", "write": 0, "info": 1}, {"name": "DATAAGENT", "write": 0, "info": 1}, {"name": "EIAM", "write": 0, "info": 1}, {"name": "EIS", "write": 0, "info": 1}, {"name": "ES", "write": 0, "info": 1}, {"name": "ESS", "write": 0, "info": 1}, {"name": "ESSBASIC", "write": 0, "info": 1}, {"name": "FMU", "write": 0, "info": 1}, {"name": "GA2", "write": 0, "info": 1}, {"name": "GS", "write": 0, "info": 1}, {"name": "HASIM", "write": 0, "info": 1}, {"name": "IC", "write": 0, "info": 1}, {"name": "IGTM", "write": 0, "info": 1}, {"name": "IOT", "write": 0, "info": 1}, {"name": "IOTCLOUD", "write": 0, "info": 1}, {"name": "IOTEXPLORER", "write": 0, "info": 1}, {"name": "IOTVIDEO", "write": 0, "info": 1}, {"name": "IOTVIDEOINDUSTRY", "write": 0, "info": 1}, {"name": "ISS", "write": 0, "info": 1}, {"name": "IVLD", "write": 0, "info": 1}, {"name": "LCIC", "write": 0, "info": 1}, {"name": "MMPS", "write": 0, "info": 1}, {"name": "MNA", "write": 0, "info": 1}, {"name": "MS", "write": 0, "info": 1}, {"name": "MSP", "write": 0, "info": 1}, {"name": "PRIVATEDNS", "write": 0, "info": 1}, {"name": "SSA", "write": 0, "info": 1}, {"name": "SSLPOD", "write": 0, "info": 1}, {"name": "SVP", "write": 0, "info": 1}, {"name": "TBAAS", "write": 0, "info": 1}, {"name": "TIW", "write": 0, "info": 1}, {"name": "TOKENHUB", "write": 0, "info": 1}, {"name": "TRP", "write": 0, "info": 1}, {"name": "TRRO", "write": 0, "info": 1}, {"name": "VCUBE", "write": 0, "info": 1}, {"name": "VM", "write": 0, "info": 1}, {"name": "WSS", "write": 0, "info": 1}], "write": 0, "info": 67}]
+
+const ICONS = {
+  "Compute & HPC":"🖥️","Container & Serverless":"🐳","Network & Delivery":"🌐","Storage & Data":"💾",
+  "Database & DW":"🗄️","Messaging & Integration":"📨","Security & Identity":"🛡️","Data & AI":"🤖",
+  "OPS & Governance":"📊","Media & Communication":"🎬","Long-tail (read-only)":"🧩"
+};
+const DOMAIN_CLASS = ["d0","d1","d2","d3","d4","d5","d6","d7","d8","d9","d10"];
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+
+function renderCard(d, idx){
+  const tot = d.write + d.info;
+  const wpct = tot ? Math.round(d.write/tot*100) : 0;
+  const isTail = d.products.length > 40;
+  const prods = isTail
+    ? d.products.slice(0,0) // no chips for long tail
+    : d.products;
+  const chips = prods.map(p=>{
+    const cls = p.write ? "w" : "mut";
+    const label = p.name.toLowerCase();
+    return `<span class="prod ${cls}" title="${esc(label)} (write ${p.write}, info ${p.info})">${esc(p.name)}</span>`;
+  }).join("");
+
+  let body;
+  if(isTail){
+    const wc = d.products.filter(p=>p.write>0).length;
+    body = `
+      <div class="tailhead">
+        <h3>${esc(d.name)}</h3>
+        <span class="tailnums">${d.products.length} 个产品 · <b>${d.info}</b> 只读模块</span>
+      </div>
+      <div class="bar"><div class="i" style="width:100%"></div></div>
+      <div style="font-size:11.5px;color:var(--muted);line-height:1.6">
+        长尾覆盖：每个腾讯云产品各生成 1 个 <span style="font-family:var(--mono);color:#94a3b8">*_info</span>
+        只读模块（由 SDK introspection 自动发现并生成），使全量产品清单可被 Ansible 发现与编排。
+      </div>`;
+  } else {
+    body = `
+      <div class="top">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="icon">${ICONS[d.name]||"📦"}</div>
+          <h3>${esc(d.name)}</h3>
+        </div>
+        <div class="tot">${tot}<small> 模块</small></div>
+      </div>
+      <div class="split"><span class="w">${d.write} write</span> · <span class="i">${d.info} info</span></div>
+      <div class="bar">
+        <div class="w" style="width:${wpct}%"></div>
+        ${d.info?`<div class="i" style="width:${100-wpct}%"></div>`:""}
+      </div>
+      <div class="prods">${chips||'<span class="prod mut">—</span>'}</div>`;
+  }
+  return `<div class="card ${isTail?'tail':''} ${DOMAIN_CLASS[idx]}">${body}</div>`;
+}
+
+document.getElementById("grid").innerHTML = DOMAINS.map(renderCard).join("");
+</script>
+</body>
+</html>

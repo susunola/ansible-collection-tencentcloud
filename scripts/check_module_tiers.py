@@ -314,6 +314,7 @@ CORE_MODULES = {
     "tcr_replication_rule",
     "tke_addon",
     "tke_cluster",
+    "tke_cluster_kubeconfig",
     "tke_cluster_endpoint",
     "tke_cluster_authentication",
     "tke_cluster_audit",

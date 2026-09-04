@@ -1,2 +1,0 @@
-minor_changes:
-  - "Add ``cos_object`` for idempotent COS object upload, download and deletion, with ETag-based change detection, metadata and storage-class drift reconciliation, check mode and diff output."

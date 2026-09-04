@@ -1,3 +1,0 @@
-minor_changes:
-  - eks_cluster - new module to manage Tencent Cloud EKS clusters (create/update/delete, idempotent by name).
-  - eks_container_instance - new module to manage Tencent Cloud EKS container instances (create/update/delete, idempotent by name).

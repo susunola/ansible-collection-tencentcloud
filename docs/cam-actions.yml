@@ -14,6 +14,8 @@ modules:
   - DescribeListenerDetail
   - DescribeListeners
   - ModifyListenerAttributes
+  alb_listener_info:
+  - DescribeListeners
   alb_load_balancer:
   - CreateLoadBalancer
   - DeleteLoadBalancers
@@ -21,6 +23,8 @@ modules:
   - DescribeLoadBalancers
   - ModifyLoadBalancerAddressType
   - ModifyLoadBalancerAttributes
+  alb_load_balancer_info:
+  - DescribeLoadBalancers
   alb_security_policy_info:
   - DescribeSecurityPolicies
   alb_target_group:
@@ -28,11 +32,15 @@ modules:
   - DeleteTargetGroups
   - DescribeTargetGroups
   - ModifyTargetGroupAttributes
+  alb_target_group_info:
+  - DescribeTargetGroups
   alb_target_group_targets:
   - AddTargetsToTargetGroup
   - DescribeTargetGroupTargets
   - ModifyTargetsInTargetGroup
   - RemoveTargetsFromTargetGroup
+  alb_target_group_targets_info:
+  - DescribeTargetGroupTargets
   ame_ktv_robot_info:
   - DescribeKTVRobots
   ams_task_info:
@@ -163,6 +171,8 @@ modules:
   - DetachGroupPolicy
   - DetachRolePolicy
   - DetachUserPolicy
+  cam_policy_attachment_info:
+  - ListEntitiesForPolicy
   cam_policy_info:
   - GetPolicy
   - ListPolicies
@@ -202,6 +212,8 @@ modules:
   - DescribeAutoSnapshotPolicies
   - ModifyAutoSnapshotPolicyAttribute
   - UnbindAutoSnapshotPolicy
+  cbs_auto_snapshot_policy_info:
+  - DescribeAutoSnapshotPolicies
   cbs_disk:
   - AttachDisks
   - CreateDisks
@@ -220,6 +232,8 @@ modules:
   - CreateSnapshot
   - DeleteSnapshots
   - DescribeSnapshots
+  cbs_snapshot_info:
+  - DescribeSnapshots
   cbs_snapshot_share:
   - DescribeSnapshotSharePermission
   - ModifySnapshotsSharePermission
@@ -235,6 +249,8 @@ modules:
   - DescribeCcnAttachedInstances
   - DetachCcnInstances
   - ModifyCcnAttachedInstancesAttribute
+  ccn_info:
+  - DescribeCcns
   cdb_account:
   - CreateAccounts
   - DeleteAccounts
@@ -242,6 +258,8 @@ modules:
   - ModifyAccountDescription
   - ModifyAccountMaxUserConnections
   - ModifyAccountPassword
+  cdb_account_info:
+  - DescribeAccounts
   cdb_account_privilege:
   - DescribeAccountPrivileges
   - ModifyAccountPrivileges
@@ -251,9 +269,13 @@ modules:
   cdb_backup_config:
   - DescribeBackupConfig
   - ModifyBackupConfig
+  cdb_backup_config_info:
+  - DescribeBackupConfig
   cdb_database:
   - CreateDatabase
   - DeleteDatabase
+  - DescribeDatabases
+  cdb_database_info:
   - DescribeDatabases
   cdb_instance:
   - CreateDBInstance
@@ -344,16 +366,22 @@ modules:
   - DeleteCfsPGroup
   - DescribeCfsPGroups
   - UpdateCfsPGroup
+  cfs_permission_group_info:
+  - DescribeCfsPGroups
   cfs_permission_rule:
   - CreateCfsRule
   - DeleteCfsRule
   - DescribeCfsRules
   - UpdateCfsRule
+  cfs_permission_rule_info:
+  - DescribeCfsRules
   cfs_snapshot:
   - CreateCfsSnapshot
   - DeleteCfsSnapshot
   - DescribeCfsSnapshots
   - UpdateCfsSnapshotAttribute
+  cfs_snapshot_info:
+  - DescribeCfsSnapshots
   cfw_address_template:
   - CreateAddressTemplate
   - DeleteAddressTemplate
@@ -461,22 +489,30 @@ modules:
   - DescribeTopic
   - DescribeTopicAttributes
   - ModifyTopicAttributes
+  ckafka_topic_info:
+  - DescribeTopic
   ckafka_user:
   - CreateUser
   - DeleteUser
   - DescribeUser
   - ModifyPassword
+  ckafka_user_info:
+  - DescribeUser
   clb_listener:
   - CreateListener
   - DeleteListener
   - DescribeListeners
   - DescribeTaskStatus
   - ModifyListener
+  clb_listener_info:
+  - DescribeListeners
   clb_listener_target:
   - DeregisterTargets
   - DescribeTargets
   - DescribeTaskStatus
   - RegisterTargets
+  clb_listener_target_info:
+  - DescribeTargets
   clb_load_balancer:
   - AttachResourcesTag
   - CreateLoadBalancer
@@ -500,6 +536,8 @@ modules:
   - DescribeTargetGroups
   - ModifyTargetGroupAttribute
   - RegisterTargetGroupInstances
+  clb_target_group_info:
+  - DescribeTargetGroupList
   cloudaudit_audit:
   - DescribeAudit
   - StartLogging
@@ -524,6 +562,8 @@ modules:
   - DeleteConfig
   - DescribeConfigs
   - ModifyConfig
+  cls_config_info:
+  - DescribeConfigs
   cls_config_machine_group_binding:
   - ApplyConfigToMachineGroup
   - DeleteConfigFromMachineGroup
@@ -533,21 +573,29 @@ modules:
   - DeleteIndex
   - DescribeIndex
   - ModifyIndex
+  cls_index_info:
+  - DescribeIndex
   cls_logset:
   - CreateLogset
   - DeleteLogset
   - DescribeLogsets
   - ModifyLogset
+  cls_logset_info:
+  - DescribeLogsets
   cls_machine_group:
   - CreateMachineGroup
   - DeleteMachineGroup
   - DescribeMachineGroups
   - ModifyMachineGroup
+  cls_machine_group_info:
+  - DescribeMachineGroups
   cls_shipper:
   - CreateShipper
   - DeleteShipper
   - DescribeShippers
   - ModifyShipper
+  cls_shipper_info:
+  - DescribeShippers
   cls_topic:
   - CreateTopic
   - DeleteTopic
@@ -633,6 +681,8 @@ modules:
   - DeleteCustomerGateway
   - DescribeCustomerGateways
   - ModifyCustomerGatewayAttribute
+  customer_gateway_info:
+  - DescribeCustomerGateways
   cvm_chc:
   - ConfigureChcAssistVpc
   - DescribeChcHosts
@@ -662,6 +712,8 @@ modules:
   cvm_image_share:
   - DescribeImageSharePermission
   - ModifyImageSharePermission
+  cvm_image_share_info:
+  - DescribeImageSharePermission
   cvm_instance:
   - AttachResourcesTag
   - DescribeInstances
@@ -704,6 +756,8 @@ modules:
   - DescribeAccounts
   - ModifyAccountDescription
   - ResetAccountPassword
+  cynosdb_account_info:
+  - DescribeAccounts
   cynosdb_account_privilege:
   - DescribeAccountAllGrantPrivileges
   - ModifyAccountPrivileges
@@ -753,6 +807,8 @@ modules:
   - DeleteDirectConnect
   - DescribeDirectConnects
   - ModifyDirectConnectAttribute
+  dc_direct_connect_info:
+  - DescribeDirectConnects
   dc_direct_connect_tunnel:
   - CreateDirectConnectTunnel
   - DeleteDirectConnectTunnel
@@ -865,11 +921,15 @@ modules:
   - DeleteEKSCluster
   - DescribeEKSClusters
   - UpdateEKSCluster
+  eks_cluster_info:
+  - DescribeEKSClusters
   eks_container_instance:
   - CreateEKSContainerInstances
   - DeleteEKSContainerInstances
   - DescribeEKSContainerInstances
   - UpdateEKSContainerInstance
+  eks_container_instance_info:
+  - DescribeEKSContainerInstances
   elasticsearch_index:
   - CreateIndex
   - DeleteIndex
@@ -966,6 +1026,8 @@ modules:
   - AssociateHaVipInstance
   - DescribeHaVips
   - DisassociateHaVipInstance
+  havip_info:
+  - DescribeHaVips
   hunyuan_glossary_info:
   - ListGlossary
   iai_group_info:
@@ -1021,6 +1083,8 @@ modules:
   - DisableKeyRotation
   - EnableKeyRotation
   - GetKeyRotationStatus
+  kms_key_rotation_info:
+  - GetKeyRotationStatus
   lcic_answer_info:
   - DescribeAnswerList
   lighthouse_disk:
@@ -1070,6 +1134,8 @@ modules:
   - DescribeAccounts
   - ModifyAccountDescription
   - ResetAccountPassword
+  mariadb_account_info:
+  - DescribeAccounts
   mariadb_account_privilege:
   - DescribeAccountPrivileges
   - GrantAccountPrivileges
@@ -1101,6 +1167,8 @@ modules:
   - DescribeAccountUsers
   - ResetDBInstancePassword
   - SetAccountUserPrivilege
+  mongodb_account_info:
+  - DescribeAccountUsers
   mongodb_backup_config:
   - DescribeBackupRules
   - SetBackupRules
@@ -1129,6 +1197,8 @@ modules:
   - DeleteGrafanaInstance
   - DescribeGrafanaInstances
   - ModifyGrafanaInstance
+  monitor_grafana_instance_info:
+  - DescribeGrafanaInstances
   monitor_grafana_integration:
   - CreateGrafanaIntegration
   - DeleteGrafanaIntegration
@@ -1169,6 +1239,8 @@ modules:
   - DescribePrometheusInstances
   - ModifyPrometheusInstanceAttributes
   - TerminatePrometheusInstances
+  monitor_prometheus_instance_info:
+  - DescribePrometheusInstancesOverview
   monitor_prometheus_record_rule:
   - CreatePrometheusRecordRuleYaml
   - DeletePrometheusRecordRuleYaml
@@ -1213,6 +1285,8 @@ modules:
   - DeleteNatGateway
   - DescribeNatGateways
   - ModifyNatGatewayAttribute
+  nat_gateway_dnat_rule_info:
+  - DescribeNatGatewayDestinationIpPortTranslationNatRules
   nat_gateway_info:
   - DescribeNatGateways
   nat_gateway_rule:
@@ -1223,6 +1297,8 @@ modules:
   - DescribeNatGatewayDestinationIpPortTranslationNatRules
   - DescribeNatGatewaySourceIpTranslationNatRules
   - DescribeNatGateways
+  nat_gateway_snat_rule_info:
+  - DescribeNatGatewaySourceIpTranslationNatRules
   network_acl:
   - AssociateNetworkAclSubnets
   - CreateNetworkAcl
@@ -1231,11 +1307,15 @@ modules:
   - DisassociateNetworkAclSubnets
   - ModifyNetworkAclAttribute
   - ModifyNetworkAclEntries
+  network_acl_info:
+  - DescribeNetworkAcls
   network_interface:
   - CreateNetworkInterface
   - DeleteNetworkInterface
   - DescribeNetworkInterfaces
   - ModifyNetworkInterfaceAttribute
+  network_interface_info:
+  - DescribeNetworkInterfaces
   oceanus_cluster_info:
   - DescribeClusters
   oceanus_job:
@@ -1282,6 +1362,8 @@ modules:
   - DeleteVpcPeeringConnection
   - DescribeVpcPeeringConnections
   - ModifyVpcPeeringConnection
+  peering_connection_info:
+  - DescribeVpcPeeringConnections
   portal_document_info:
   - SearchDocuments
   postgres_instance_info:
@@ -1292,6 +1374,8 @@ modules:
   - DescribeAccounts
   - ModifyAccountRemark
   - ResetAccountPassword
+  postgresql_account_info:
+  - DescribeAccounts
   postgresql_backup_plan:
   - CreateBackupPlan
   - DeleteBackupPlan
@@ -1342,6 +1426,8 @@ modules:
   - DeleteInstanceAccount
   - DescribeInstanceAccount
   - ModifyInstanceAccount
+  redis_account_info:
+  - DescribeInstanceAccount
   redis_backup_config:
   - DescribeAutoBackupConfig
   - ModifyAutoBackupConfig
@@ -1379,6 +1465,8 @@ modules:
   - DeleteAlias
   - GetAlias
   - UpdateAlias
+  scf_alias_info:
+  - ListAliases
   scf_function:
   - CreateFunction
   - DeleteFunction
@@ -1392,10 +1480,14 @@ modules:
   - DeleteTrigger
   - ListTriggers
   - UpdateTriggerStatus
+  scf_trigger_info:
+  - ListTriggers
   scf_version:
   - DeleteFunctionVersion
   - ListVersionByFunction
   - PublishVersion
+  scf_version_info:
+  - ListVersionByFunction
   security_group:
   - AttachResourcesTag
   - CreateSecurityGroup
@@ -1409,6 +1501,8 @@ modules:
   - CreateSecurityGroupPolicies
   - DeleteSecurityGroupPolicies
   - DescribeSecurityGroupPolicies
+  security_group_rule_info:
+  - DescribeSecurityGroupPolicies
   securitylake_security_alarm_table_info:
   - DescribeSecurityAlarmTableList
   ses_black_email_address_info:
@@ -1421,9 +1515,13 @@ modules:
   - AddSmsSign
   - DeleteSmsSign
   - DescribeSmsSignList
+  sms_signature_info:
+  - DescribeSmsSignList
   sms_template:
   - AddSmsTemplate
   - DeleteSmsTemplate
+  - DescribeSmsTemplateList
+  sms_template_info:
   - DescribeSmsTemplateList
   sqlserver_account:
   - CreateAccount
@@ -1432,6 +1530,8 @@ modules:
   - ModifyAccountPrivilege
   - ModifyAccountRemark
   - ResetAccountPassword
+  sqlserver_account_info:
+  - DescribeAccounts
   sqlserver_backup_config:
   - DescribeDBInstances
   - ModifyBackupStrategy
@@ -1472,6 +1572,8 @@ modules:
   - EnableSecret
   - RestoreSecret
   - UpdateDescription
+  ssm_secret_info:
+  - ListSecrets
   ssm_secret_version:
   - DeleteSecretVersion
   - GetSecretValue
@@ -1493,6 +1595,8 @@ modules:
   - DescribeResourcesByTags
   - DetachResourcesTag
   - ModifyResourcesTagValue
+  tag_info:
+  - DescribeTags
   tat_command:
   - CreateCommand
   - DeleteCommand
@@ -1789,12 +1893,16 @@ modules:
   tke_cluster_autoscaler:
   - DescribeClusterAsGroupOption
   - ModifyClusterAsGroupOptionAttribute
+  tke_cluster_autoscaler_info:
+  - DescribeClusterAsGroupOption
   tke_cluster_endpoint:
   - CreateClusterEndpoint
   - DeleteClusterEndpoint
   - DescribeClusterEndpoints
   tke_cluster_info:
   - DescribeClusters
+  tke_cluster_kubeconfig:
+  - DescribeClusterKubeconfig
   tke_cluster_upgrade:
   - DescribeClusters
   - UpdateClusterVersion
@@ -1803,6 +1911,8 @@ modules:
   - DeleteClusterNodePool
   - DescribeClusterNodePools
   - ModifyClusterNodePool
+  tke_node_pool_info:
+  - DescribeClusterNodePools
   tokenhub_model_info:
   - DescribeModelList
   tourism_draw_resource_info:
@@ -1875,6 +1985,8 @@ modules:
   - CreateClass
   - DeleteClass
   - DescribeAllClass
+  vod_class_info:
+  - DescribeAllClass
   vod_incremental_migration_strategy_info:
   - DescribeIncrementalMigrationStrategyInfos
   vod_sub_app:
@@ -1882,6 +1994,8 @@ modules:
   - DescribeSubAppIds
   - ModifySubAppIdInfo
   - ModifySubAppIdStatus
+  vod_sub_app_info:
+  - DescribeSubAppIds
   vpc:
   - AttachResourcesTag
   - CreateVpc
@@ -1899,6 +2013,10 @@ modules:
   - DeleteAddressTemplateGroup
   - DescribeAddressTemplateGroups
   - ModifyAddressTemplateGroupAttribute
+  vpc_address_template_group_info:
+  - DescribeAddressTemplateGroups
+  vpc_address_template_info:
+  - DescribeAddressTemplates
   vpc_flow_log:
   - CreateFlowLog
   - DeleteFlowLog
@@ -1913,6 +2031,8 @@ modules:
   - DeleteVpnConnection
   - DescribeVpnConnections
   - ModifyVpnConnectionAttribute
+  vpn_connection_info:
+  - DescribeVpnConnections
   vpn_gateway:
   - CreateVpnGateway
   - DeleteVpnGateway

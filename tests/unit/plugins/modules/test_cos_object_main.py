@@ -320,3 +320,44 @@ def test_normalize_metadata_prefixes_keys():
         "x-cos-meta-Owner": "ops",
         "x-cos-meta-Team": "x",
     }
+
+
+def test_presign_get_returns_url_without_writes(client):
+    client.get_presigned_url = MagicMock(
+        return_value="https://{0}.cos.ap-guangzhou.myqcloud.com/{1}?signed".format(FULL_NAME, KEY)
+    )
+    module_args(state="present", bucket="mybucket", appid=APPID, object=KEY,
+                presign=True, expires=600)
+    result = run(cos_object.run_module)
+    assert result["changed"] is False
+    assert "signed" in result["url"]
+    client.get_presigned_url.assert_called_once_with(
+        Bucket=FULL_NAME, Key=KEY, Method="GET", Expired=600,
+    )
+    client.put_object.assert_not_called()
+    client.delete_object.assert_not_called()
+
+
+def test_presign_put_method(client):
+    client.get_presigned_url = MagicMock(return_value="https://example/upload")
+    module_args(state="present", bucket="mybucket", appid=APPID, object=KEY,
+                presign=True, method="PUT")
+    result = run(cos_object.run_module)
+    assert result["changed"] is False
+    assert client.get_presigned_url.call_args.kwargs["Method"] == "PUT"
+
+
+def test_presign_rejected_when_absent(client):
+    module_args(state="absent", bucket="mybucket", appid=APPID, object=KEY, presign=True)
+    with pytest.raises(AnsibleFailJson) as excinfo:
+        run(cos_object.run_module)
+    assert "state=present" in excinfo.value.args[0]["msg"]
+
+
+def test_method_rejected_without_presign(client):
+    module_args(state="present", bucket="mybucket", appid=APPID, object=KEY,
+                content="hi", method="PUT")
+    with pytest.raises(AnsibleFailJson) as excinfo:
+        run(cos_object.run_module)
+    assert "presign" in excinfo.value.args[0]["msg"]
+    client.put_object.assert_not_called()

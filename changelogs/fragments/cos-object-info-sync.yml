@@ -1,3 +1,0 @@
-minor_changes:
-  - "Add ``cos_object_info`` to list and filter objects in a COS bucket, with prefix, marker and max_keys pagination."
-  - "Add ``cos_object_sync`` to mirror a local directory tree into a COS bucket prefix, uploading new or changed files via MD5/ETag comparison and optionally deleting extraneous remote objects."
