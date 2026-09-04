@@ -1,0 +1,59 @@
+---
+- name: Read TKE addon integration inputs
+  ansible.builtin.set_fact:
+    tke_cluster_id: "{{ lookup('env', 'TENCENTCLOUD_TKE_CLUSTER_ID') | default('', true) }}"
+    tke_addon_name: "{{ lookup('env', 'TENCENTCLOUD_TKE_ADDON_NAME') | default('', true) }}"
+    tke_addon_version: "{{ lookup('env', 'TENCENTCLOUD_TKE_ADDON_VERSION') | default('', true) }}"
+
+- name: Explain skipped TKE addon integration
+  ansible.builtin.debug:
+    msg: Set TENCENTCLOUD_TKE_CLUSTER_ID, TENCENTCLOUD_TKE_ADDON_NAME and TENCENTCLOUD_TKE_ADDON_VERSION to run this target.
+  when: not (tke_cluster_id and tke_addon_name and tke_addon_version)
+
+- name: TKE addon end-to-end
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  when: tke_cluster_id and tke_addon_name and tke_addon_version
+  block:
+    - name: Install addon
+      susunola.tencentcloud.tke_addon:
+        cluster_id: "{{ tke_cluster_id }}"
+        name: "{{ tke_addon_name }}"
+        version: "{{ tke_addon_version }}"
+        values: {}
+      register: installed
+
+    - name: Reconcile addon again
+      susunola.tencentcloud.tke_addon:
+        cluster_id: "{{ tke_cluster_id }}"
+        name: "{{ tke_addon_name }}"
+        version: "{{ tke_addon_version }}"
+        values: {}
+      register: second
+
+    - name: Verify idempotency
+      ansible.builtin.assert:
+        that:
+          - installed.addon.Phase == 'Succeeded'
+          - second is not changed
+
+    - name: Check deletion without writing
+      susunola.tencentcloud.tke_addon:
+        state: absent
+        cluster_id: "{{ tke_cluster_id }}"
+        name: "{{ tke_addon_name }}"
+      check_mode: true
+      register: checked
+
+    - name: Verify check mode
+      ansible.builtin.assert:
+        that: checked is changed
+
+  always:
+    - name: Remove integration addon
+      susunola.tencentcloud.tke_addon:
+        state: absent
+        cluster_id: "{{ tke_cluster_id }}"
+        name: "{{ tke_addon_name }}"
+      ignore_errors: true

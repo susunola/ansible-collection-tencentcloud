@@ -19,6 +19,7 @@ class FakeRequest(object):
 
 class FakeModels(object):
     DescribeTopicRequest = FakeRequest
+    DescribeTopicAttributesRequest = FakeRequest
     CreateTopicRequest = FakeRequest
     CreatePartitionRequest = FakeRequest
     ModifyTopicAttributesRequest = FakeRequest
@@ -48,7 +49,7 @@ class FakeTopic(object):
 
 
 class FakeResponse(object):
-    def __init__(self, topics=None):
+    def __init__(self, topics=None, result=None):
         self.Result = topics
 
 
@@ -63,6 +64,12 @@ class FakeClient(object):
         if self.exc:
             raise self.exc
         return self.response
+
+    def DescribeTopicAttributes(self, request):
+        self.calls.append(request)
+        response = FakeResponse()
+        response.Result = None
+        return response
 
     def CreateTopic(self, request):
         self.calls.append(request)
@@ -103,8 +110,8 @@ def test_find_topic_matches_by_name():
     topic = find_topic(module, client, FakeModels, "ckafka-1", "order-events")
     assert topic["TopicName"] == "order-events"
     assert topic["PartitionNum"] == 3
-    assert len(client.calls) == 1
-    assert client.calls[-1].SearchWord == "order-events"
+    assert len(client.calls) == 2
+    assert client.calls[0].SearchWord == "order-events"
 
 
 def test_find_topic_returns_none_when_missing():
@@ -132,6 +139,11 @@ def test_create_sends_all_provided_fields():
         "clean_up_policy": "delete",
         "note": "orders",
         "max_message_bytes": 1048576,
+        "min_insync_replicas": 2,
+        "unclean_leader_election": False,
+        "producer_quota_mb": 20,
+        "consumer_quota_mb": 30,
+        "message_timestamp_type": "LogAppendTime",
     })
     request = client.calls[-1]
     assert request.InstanceId == "ckafka-1"
@@ -143,6 +155,9 @@ def test_create_sends_all_provided_fields():
     assert request.CleanUpPolicy == "delete"
     assert request.Note == "orders"
     assert request.MaxMessageBytes == 1048576
+    assert request.MinInsyncReplicas == 2
+    assert request.UncleanLeaderElectionEnable == 0
+    assert request.LogMsgTimestampType == "LogAppendTime"
 
 
 def test_create_omits_optional_fields():

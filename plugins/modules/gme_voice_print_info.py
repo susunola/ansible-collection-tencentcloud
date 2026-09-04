@@ -14,6 +14,10 @@ short_description: Gather information about Tencent Cloud GME voice prints
 version_added: "0.9.0"
 description: Returns GME voice prints visible in a Tencent Cloud region.
 options:
+  describe_mode:
+    description: Query mode (0 queries a specific voice print with voice_print_ids, 1 lists voice prints by page).
+    type: int
+    required: true
   voice_print_ids:
     description: Voice print IDs to return.
     type: list
@@ -27,14 +31,10 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all voice prints
+- name: List voice prints
   susunola.tencentcloud.gme_voice_print_info:
     region: ap-guangzhou
-
-- name: Find voice prints by ID
-  susunola.tencentcloud.gme_voice_print_info:
-    region: ap-guangzhou
-    voice_print_ids: [x-xxxxxxxx]
+    describe_mode: 1
 '''
 
 RETURN = r'''
@@ -61,10 +61,11 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, voice_print_ids, offset, limit):
+def build_request(models, describe_mode, voice_print_ids, offset, limit):
     request = models.DescribeVoicePrintRequest()
     request.PageIndex = offset // limit + 1
     request.PageSize = limit
+    request.DescribeMode = describe_mode
     if voice_print_ids:
         request.VoicePrintIdList = voice_print_ids
     return request
@@ -73,6 +74,7 @@ def build_request(models, voice_print_ids, offset, limit):
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "describe_mode": {"type": "int", "required": True},
         "voice_print_ids": {"type": "list", "elements": "str"},
         "page_size": {"type": "int", "default": 100},
     })
@@ -91,7 +93,12 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, module.params["voice_print_ids"], offset, limit),
+        lambda offset, limit: build_request(
+            models,
+            module.params["describe_mode"],
+            module.params["voice_print_ids"],
+            offset,
+            limit),
         lambda request: sdk_call(module, client.DescribeVoicePrint, request),
         lambda response: response.Data,
         lambda response: response.TotalCount,

@@ -7,6 +7,12 @@
 __pycache__/
 tests/output/
 .ansible/
+.coverage
+.coverage.*
+
+# coverage report artifacts (uploaded by CI, not committed)
+coverage.xml
+coverage-html/
 
 # ansible-test generated inventory
 tests/integration/inventory

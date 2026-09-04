@@ -16,17 +16,18 @@ class FakeRequest:
 
 
 class FakeModels:
+    UserInfo = FakeRequest
     DescribeFileUrlsRequest = FakeRequest
 
 
 def test_build_request_sets_pagination():
-    request = ess_file_url_info.build_request(FakeModels, None, 200, 100)
+    request = ess_file_url_info.build_request(FakeModels, {"user_id": "sample"}, "sample", None, 200, 100)
     assert request.Offset == 200
     assert request.Limit == 100
 
 
 def test_build_request_maps_ids():
-    request = ess_file_url_info.build_request(FakeModels, ["x-1"], 0, 100)
+    request = ess_file_url_info.build_request(FakeModels, {"user_id": "sample"}, "sample", ["x-1"], 0, 100)
     assert request.BusinessIds == ["x-1"]
 
 
@@ -107,7 +108,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                file_url_ids=None, page_size=2)
+                operator={"user_id": "sample"}, business_type="sample", file_url_ids=None, page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["file_urls"]] == ["a", "b", "c"]
@@ -139,6 +140,8 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
     # page_size (and ids/filters when declared) before the API call fails.
     fake = FakeModule({
         "region": "ap-guangzhou",
+        "operator": {"user_id": "sample"},
+        "business_type": "sample",
         "file_url_ids": None,
         "page_size": 2,
     })

@@ -21,12 +21,21 @@ For every spec that fits the simple offset/limit or page-number shape the
 generator also emits a unit test file (``tests/unit/plugins/modules/
 test_<module>.py``); test files without the generated marker are considered
 hand-finished and are never rewritten.
+
+Write modules cannot be generated end-to-end (idempotency, drift
+comparison and required-field constraints are per-resource decisions the
+SDK models do not encode), so the generator also scaffolds them: given a
+curated ``RESOURCE_SPECS`` entry it introspects the SDK request models and
+renders the module boilerplate -- argument spec and request builders --
+for the developer to finish. Run ``--resource <module>`` to scaffold;
+scaffolding is write-once and never touches an existing module file.
 """
 
 from __future__ import annotations
 
 import argparse
 import importlib.util
+import re
 import sys
 from pathlib import Path
 
@@ -241,6 +250,42 @@ SPECS = [
   susunola.tencentcloud.cbs_disk_info:
     region: ap-guangzhou
     disk_ids: [disk-xxxxxxxx]
+""",
+    },
+    {
+        "module": "cbs_snapshot_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.cbs.v20170312",
+        "client_module": "cbs_client",
+        "client_class": "CbsClient",
+        "sdk_package": "tencentcloud-sdk-python-cbs",
+        "endpoint": "cbs.tencentcloudapi.com",
+        "action": "DescribeSnapshots",
+        "request_class": "DescribeSnapshotsRequest",
+        "ids": {
+            "param": "snapshot_ids",
+            "field": "SnapshotIds",
+            "doc": "Snapshot IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "CBS API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "SnapshotSet",
+        "response_total": "TotalCount",
+        "result_key": "snapshots",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud CBS snapshots",
+        "description": "Returns CBS (Cloud Block Storage) disk snapshots visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching CBS snapshots.",
+        "return_total_doc": "Number of snapshots reported by the API.",
+        "examples": """\
+- name: List all CBS snapshots
+  susunola.tencentcloud.cbs_snapshot_info:
+    region: ap-guangzhou
+
+- name: Find snapshots by ID
+  susunola.tencentcloud.cbs_snapshot_info:
+    region: ap-guangzhou
+    snapshot_ids: [snap-xxxxxxxx]
 """,
     },
     {
@@ -492,6 +537,52 @@ SPECS = [
 
 - name: Describe a single file system
   susunola.tencentcloud.cfs_file_system_info:
+    region: ap-guangzhou
+    file_system_id: cfs-xxxxxxxx
+""",
+    },
+    {
+        "module": "cfs_snapshot_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.cfs.v20190719",
+        "client_module": "cfs_client",
+        "client_class": "CfsClient",
+        "sdk_package": "tencentcloud-sdk-python-cfs",
+        "endpoint": "cfs.tencentcloudapi.com",
+        "action": "DescribeCfsSnapshots",
+        "request_class": "DescribeCfsSnapshotsRequest",
+        # The API takes single FileSystemId/SnapshotId strings, not ID lists.
+        "ids": None,
+        "filters": {"doc": "CFS API filter names mapped to lists of values."},
+        "extra_params": [
+            {
+                "name": "file_system_id",
+                "field": "FileSystemId",
+                "type": "str",
+                "doc": "Return only snapshots of this file system.",
+            },
+            {
+                "name": "snapshot_id",
+                "field": "SnapshotId",
+                "type": "str",
+                "doc": "Return only the snapshot with this ID.",
+            },
+        ],
+        "response_items": "Snapshots",
+        "response_total": "TotalCount",
+        "result_key": "snapshots",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud CFS snapshots",
+        "description": "Returns CFS (Cloud File Storage) snapshots visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching CFS snapshots.",
+        "return_total_doc": "Number of snapshots reported by the API.",
+        "examples": """\
+- name: List all CFS snapshots
+  susunola.tencentcloud.cfs_snapshot_info:
+    region: ap-guangzhou
+
+- name: List snapshots of one file system
+  susunola.tencentcloud.cfs_snapshot_info:
     region: ap-guangzhou
     file_system_id: cfs-xxxxxxxx
 """,
@@ -892,6 +983,116 @@ SPECS = [
   susunola.tencentcloud.vpn_gateway_info:
     region: ap-guangzhou
     vpn_gateway_ids: [vpngw-xxxxxxxx]
+""",
+    },
+    {
+        "module": "vpn_connection_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeVpnConnections",
+        "request_class": "DescribeVpnConnectionsRequest",
+        "ids": {
+            "param": "vpn_connection_ids",
+            "field": "VpnConnectionIds",
+            "doc": "VPN connection IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "VpnConnectionSet",
+        "response_total": "TotalCount",
+        "result_key": "vpn_connections",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud VPN connections",
+        "description": "Returns VPN connections visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching VPN connections.",
+        "return_total_doc": "Number of VPN connections reported by the API.",
+        "examples": """\
+- name: List all VPN connections
+  susunola.tencentcloud.vpn_connection_info:
+    region: ap-guangzhou
+
+- name: Find VPN connections by ID
+  susunola.tencentcloud.vpn_connection_info:
+    region: ap-guangzhou
+    vpn_connection_ids: [vpnx-xxxxxxxx]
+""",
+    },
+    {
+        "module": "customer_gateway_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeCustomerGateways",
+        "request_class": "DescribeCustomerGatewaysRequest",
+        "ids": {
+            "param": "customer_gateway_ids",
+            "field": "CustomerGatewayIds",
+            "doc": "Customer gateway IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "CustomerGatewaySet",
+        "response_total": "TotalCount",
+        "result_key": "customer_gateways",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud customer gateways",
+        "description": "Returns customer gateways visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching customer gateways.",
+        "return_total_doc": "Number of customer gateways reported by the API.",
+        "examples": """\
+- name: List all customer gateways
+  susunola.tencentcloud.customer_gateway_info:
+    region: ap-guangzhou
+
+- name: Find customer gateways by ID
+  susunola.tencentcloud.customer_gateway_info:
+    region: ap-guangzhou
+    customer_gateway_ids: [cgw-xxxxxxxx]
+""",
+    },
+    {
+        "module": "ccn_info",
+        "version_added": "1.1.0",
+        # CCN is addressed through the VPC API; there is no tencentcloud.ccn
+        # SDK package.
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeCcns",
+        "request_class": "DescribeCcnsRequest",
+        "ids": {
+            "param": "ccn_ids",
+            "field": "CcnIds",
+            "doc": "CCN instance IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "CcnSet",
+        "response_total": "TotalCount",
+        "result_key": "ccns",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud CCN instances",
+        "description": "Returns CCN (Cloud Connect Network) instances visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching CCN instances.",
+        "return_total_doc": "Number of CCN instances reported by the API.",
+        "examples": """\
+- name: List all CCN instances
+  susunola.tencentcloud.ccn_info:
+    region: ap-guangzhou
+
+- name: Find CCN instances by ID
+  susunola.tencentcloud.ccn_info:
+    region: ap-guangzhou
+    ccn_ids: [ccn-xxxxxxxx]
 """,
     },
     {
@@ -1299,6 +1500,1958 @@ SPECS = [
     region: ap-guangzhou
 """,
     },
+    # -----------------------------------------------------------------
+    # Coverage batch 7 (1.1.0): KNOWN_GAPS first batch — read sides of
+    # database, logging, network, storage and observability write modules.
+    # -----------------------------------------------------------------
+    {
+        'module': 'cdb_account_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.cdb.v20170320',
+        'client_module': 'cdb_client',
+        'client_class': 'CdbClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdb',
+        'endpoint': 'cdb.tencentcloudapi.com',
+        'action': 'DescribeAccounts',
+        'request_class': 'DescribeAccountsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {'name': 'instance_id', 'field': 'InstanceId', 'type': 'str', 'required': True, 'doc': 'ID of the CDB instance whose accounts are returned.'},
+        ],
+        'response_items': 'Items',
+        'response_total': 'TotalCount',
+        'result_key': 'accounts',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CDB accounts',
+        'description': 'Returns the accounts of a TencentDB for MySQL (CDB) instance.',
+        'return_items_doc': 'Accounts of the instance.',
+        'return_total_doc': 'Number of accounts reported by the API.',
+        "examples": """\
+- name: List the accounts of a CDB instance
+  susunola.tencentcloud.cdb_account_info:
+    region: ap-guangzhou
+    instance_id: "cdb-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'cdb_database_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.cdb.v20170320',
+        'client_module': 'cdb_client',
+        'client_class': 'CdbClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdb',
+        'endpoint': 'cdb.tencentcloudapi.com',
+        'action': 'DescribeDatabases',
+        'request_class': 'DescribeDatabasesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {'name': 'instance_id', 'field': 'InstanceId', 'type': 'str', 'required': True, 'doc': 'ID of the CDB instance whose databases are returned.'},
+        ],
+        'response_items': 'Items',
+        'response_total': 'TotalCount',
+        'result_key': 'databases',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CDB databases',
+        'description': 'Returns the databases of a TencentDB for MySQL (CDB) instance.',
+        'return_items_doc': 'Databases of the instance.',
+        'return_total_doc': 'Number of databases reported by the API.',
+        "examples": """\
+- name: List the databases of a CDB instance
+  susunola.tencentcloud.cdb_database_info:
+    region: ap-guangzhou
+    instance_id: "cdb-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'cdb_backup_config_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.cdb.v20170320',
+        'client_module': 'cdb_client',
+        'client_class': 'CdbClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdb',
+        'endpoint': 'cdb.tencentcloudapi.com',
+        'action': 'DescribeBackupConfig',
+        'request_class': 'DescribeBackupConfigRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': True,
+                'doc': 'ID of the CDB instance whose backup configuration is returned.',
+            },
+        ],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'backup_config',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about Tencent Cloud CDB backup configuration',
+        'description': 'Returns the backup configuration of a TencentDB for MySQL (CDB) instance.',
+        'return_items_doc': 'The backup configuration of the instance.',
+        'return_total_doc': '',
+        "examples": """\
+- name: Show the backup configuration of a CDB instance
+  susunola.tencentcloud.cdb_backup_config_info:
+    region: ap-guangzhou
+    instance_id: "cdb-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'mariadb_account_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.mariadb.v20170312',
+        'client_module': 'mariadb_client',
+        'client_class': 'MariadbClient',
+        'sdk_package': 'tencentcloud-sdk-python-mariadb',
+        'endpoint': 'mariadb.tencentcloudapi.com',
+        'action': 'DescribeAccounts',
+        'request_class': 'DescribeAccountsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {'name': 'instance_id', 'field': 'InstanceId', 'type': 'str', 'required': True, 'doc': 'ID of the MariaDB instance whose accounts are returned.'},
+        ],
+        'response_items': 'Users',
+        'response_total': None,
+        'result_key': 'accounts',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud MariaDB accounts',
+        'description': 'Returns the accounts of a TencentDB for MariaDB instance.',
+        'return_items_doc': 'Accounts of the instance.',
+        'return_total_doc': 'Number of accounts returned (the API reports no pageable total).',
+        "examples": """\
+- name: List the accounts of a MariaDB instance
+  susunola.tencentcloud.mariadb_account_info:
+    region: ap-guangzhou
+    instance_id: "tdsql-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'mongodb_account_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.mongodb.v20190725',
+        'client_module': 'mongodb_client',
+        'client_class': 'MongodbClient',
+        'sdk_package': 'tencentcloud-sdk-python-mongodb',
+        'endpoint': 'mongodb.tencentcloudapi.com',
+        'action': 'DescribeAccountUsers',
+        'request_class': 'DescribeAccountUsersRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {'name': 'instance_id', 'field': 'InstanceId', 'type': 'str', 'required': True, 'doc': 'ID of the MongoDB instance whose accounts are returned.'},
+        ],
+        'response_items': 'Users',
+        'response_total': None,
+        'result_key': 'accounts',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud MongoDB accounts',
+        'description': 'Returns the accounts of a TencentDB for MongoDB instance.',
+        'return_items_doc': 'Accounts of the instance.',
+        'return_total_doc': 'Number of accounts returned (the API reports no pageable total).',
+        "examples": """\
+- name: List the accounts of a MongoDB instance
+  susunola.tencentcloud.mongodb_account_info:
+    region: ap-guangzhou
+    instance_id: "cmgo-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'sqlserver_account_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.sqlserver.v20180328',
+        'client_module': 'sqlserver_client',
+        'client_class': 'SqlserverClient',
+        'sdk_package': 'tencentcloud-sdk-python-sqlserver',
+        'endpoint': 'sqlserver.tencentcloudapi.com',
+        'action': 'DescribeAccounts',
+        'request_class': 'DescribeAccountsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': True,
+                'doc': 'ID of the SQL Server instance whose accounts are returned.',
+            },
+        ],
+        'response_items': 'Accounts',
+        'response_total': 'TotalCount',
+        'result_key': 'accounts',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud SQL Server accounts',
+        'description': 'Returns the accounts of a TencentDB for SQL Server instance.',
+        'return_items_doc': 'Accounts of the instance.',
+        'return_total_doc': 'Number of accounts reported by the API.',
+        "examples": """\
+- name: List the accounts of a SQL Server instance
+  susunola.tencentcloud.sqlserver_account_info:
+    region: ap-guangzhou
+    instance_id: "mssql-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'postgresql_account_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.postgres.v20170312',
+        'client_module': 'postgres_client',
+        'client_class': 'PostgresClient',
+        'sdk_package': 'tencentcloud-sdk-python-postgres',
+        'endpoint': 'postgres.tencentcloudapi.com',
+        'action': 'DescribeAccounts',
+        'request_class': 'DescribeAccountsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'db_instance_id',
+                'field': 'DBInstanceId',
+                'type': 'str',
+                'required': True,
+                'doc': 'ID of the PostgreSQL instance whose accounts are returned.',
+            },
+        ],
+        'response_items': 'Details',
+        'response_total': 'TotalCount',
+        'result_key': 'accounts',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud PostgreSQL accounts',
+        'description': 'Returns the accounts of a TencentDB for PostgreSQL instance.',
+        'return_items_doc': 'Accounts of the instance.',
+        'return_total_doc': 'Number of accounts reported by the API.',
+        "examples": """\
+- name: List the accounts of a PostgreSQL instance
+  susunola.tencentcloud.postgresql_account_info:
+    region: ap-guangzhou
+    db_instance_id: "postgres-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'cynosdb_account_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.cynosdb.v20190107',
+        'client_module': 'cynosdb_client',
+        'client_class': 'CynosdbClient',
+        'sdk_package': 'tencentcloud-sdk-python-cynosdb',
+        'endpoint': 'cynosdb.tencentcloudapi.com',
+        'action': 'DescribeAccounts',
+        'request_class': 'DescribeAccountsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {'name': 'cluster_id', 'field': 'ClusterId', 'type': 'str', 'required': True, 'doc': 'ID of the CynosDB cluster whose accounts are returned.'},
+        ],
+        'response_items': 'AccountSet',
+        'response_total': 'TotalCount',
+        'result_key': 'accounts',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CynosDB accounts',
+        'description': 'Returns the accounts of a CynosDB cluster.',
+        'return_items_doc': 'Accounts of the cluster.',
+        'return_total_doc': 'Number of accounts reported by the API.',
+        "examples": """\
+- name: List the accounts of a CynosDB cluster
+  susunola.tencentcloud.cynosdb_account_info:
+    region: ap-guangzhou
+    cluster_id: "cynosdbmysql-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'redis_account_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.redis.v20180412',
+        'client_module': 'redis_client',
+        'client_class': 'RedisClient',
+        'sdk_package': 'tencentcloud-sdk-python-redis',
+        'endpoint': 'redis.tencentcloudapi.com',
+        'action': 'DescribeInstanceAccount',
+        'request_class': 'DescribeInstanceAccountRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {'name': 'instance_id', 'field': 'InstanceId', 'type': 'str', 'required': True, 'doc': 'ID of the Redis instance whose accounts are returned.'},
+        ],
+        'response_items': 'Accounts',
+        'response_total': 'TotalCount',
+        'result_key': 'accounts',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud Redis accounts',
+        'description': 'Returns the accounts of a TencentDB for Redis instance.',
+        'return_items_doc': 'Accounts of the instance.',
+        'return_total_doc': 'Number of accounts reported by the API.',
+        "examples": """\
+- name: List the accounts of a Redis instance
+  susunola.tencentcloud.redis_account_info:
+    region: ap-guangzhou
+    instance_id: "crs-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'kms_key_rotation_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.kms.v20190118',
+        'client_module': 'kms_client',
+        'client_class': 'KmsClient',
+        'sdk_package': 'tencentcloud-sdk-python-kms',
+        'endpoint': 'kms.tencentcloudapi.com',
+        'action': 'GetKeyRotationStatus',
+        'request_class': 'GetKeyRotationStatusRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [{'name': 'key_id', 'field': 'KeyId', 'type': 'str', 'required': True, 'doc': 'ID of the KMS key whose rotation status is returned.'}],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'rotation',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about Tencent Cloud KMS key rotation status',
+        'description': 'Returns whether automatic key rotation is enabled for a KMS key.',
+        'return_items_doc': 'The key rotation status.',
+        'return_total_doc': '',
+        "examples": """\
+- name: Show the rotation status of a KMS key
+  susunola.tencentcloud.kms_key_rotation_info:
+    region: ap-guangzhou
+    key_id: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'dc_direct_connect_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.dc.v20180410',
+        'client_module': 'dc_client',
+        'client_class': 'DcClient',
+        'sdk_package': 'tencentcloud-sdk-python-dc',
+        'endpoint': 'dc.tencentcloudapi.com',
+        'action': 'DescribeDirectConnects',
+        'request_class': 'DescribeDirectConnectsRequest',
+        'ids': {'param': 'direct_connect_ids', 'field': 'DirectConnectIds', 'doc': 'Direct connect IDs to return. Mutually exclusive with O(filters).'},
+        'filters': {'doc': 'DC API filter names mapped to lists of values.'},
+        'extra_params': [],
+        'response_items': 'DirectConnectSet',
+        'response_total': 'TotalCount',
+        'result_key': 'direct_connects',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud direct connect connections',
+        'description': 'Returns Direct Connect connections visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching direct connect connections.',
+        'return_total_doc': 'Number of connections reported by the API.',
+        "examples": """\
+- name: List all direct connect connections
+  susunola.tencentcloud.dc_direct_connect_info:
+    region: ap-guangzhou
+
+- name: Find connections by ID
+  susunola.tencentcloud.dc_direct_connect_info:
+    region: ap-guangzhou
+    direct_connect_ids: [dc-xxxxxxxx]
+
+""",
+    },
+    {
+        'module': 'cls_logset_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.cls.v20201016',
+        'client_module': 'cls_client',
+        'client_class': 'ClsClient',
+        'sdk_package': 'tencentcloud-sdk-python-cls',
+        'endpoint': 'cls.tencentcloudapi.com',
+        'action': 'DescribeLogsets',
+        'request_class': 'DescribeLogsetsRequest',
+        'ids': None,
+        'filters': {'doc': 'CLS API filter names mapped to lists of values.', 'name_field': 'Key'},
+        'extra_params': [],
+        'response_items': 'Logsets',
+        'response_total': 'TotalCount',
+        'result_key': 'logsets',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CLS logsets',
+        'description': 'Returns CLS (Cloud Log Service) logsets visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching logsets.',
+        'return_total_doc': 'Number of logsets reported by the API.',
+        "examples": """\
+- name: List all CLS logsets
+  susunola.tencentcloud.cls_logset_info:
+    region: ap-guangzhou
+
+""",
+    },
+    {
+        'module': 'cls_machine_group_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.cls.v20201016',
+        'client_module': 'cls_client',
+        'client_class': 'ClsClient',
+        'sdk_package': 'tencentcloud-sdk-python-cls',
+        'endpoint': 'cls.tencentcloudapi.com',
+        'action': 'DescribeMachineGroups',
+        'request_class': 'DescribeMachineGroupsRequest',
+        'ids': None,
+        'filters': {'doc': 'CLS API filter names mapped to lists of values.', 'name_field': 'Key'},
+        'extra_params': [],
+        'response_items': 'MachineGroups',
+        'response_total': 'TotalCount',
+        'result_key': 'machine_groups',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CLS machine groups',
+        'description': 'Returns CLS machine groups visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching machine groups.',
+        'return_total_doc': 'Number of machine groups reported by the API.',
+        "examples": """\
+- name: List all CLS machine groups
+  susunola.tencentcloud.cls_machine_group_info:
+    region: ap-guangzhou
+
+""",
+    },
+    {
+        'module': 'cls_config_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.cls.v20201016',
+        'client_module': 'cls_client',
+        'client_class': 'ClsClient',
+        'sdk_package': 'tencentcloud-sdk-python-cls',
+        'endpoint': 'cls.tencentcloudapi.com',
+        'action': 'DescribeConfigs',
+        'request_class': 'DescribeConfigsRequest',
+        'ids': None,
+        'filters': {'doc': 'CLS API filter names mapped to lists of values.', 'name_field': 'Key'},
+        'extra_params': [],
+        'response_items': 'Configs',
+        'response_total': 'TotalCount',
+        'result_key': 'configs',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CLS collection configurations',
+        'description': 'Returns CLS LogListener collection configurations visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching collection configurations.',
+        'return_total_doc': 'Number of configurations reported by the API.',
+        "examples": """\
+- name: List all CLS collection configurations
+  susunola.tencentcloud.cls_config_info:
+    region: ap-guangzhou
+
+""",
+    },
+    {
+        'module': 'cls_shipper_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.cls.v20201016',
+        'client_module': 'cls_client',
+        'client_class': 'ClsClient',
+        'sdk_package': 'tencentcloud-sdk-python-cls',
+        'endpoint': 'cls.tencentcloudapi.com',
+        'action': 'DescribeShippers',
+        'request_class': 'DescribeShippersRequest',
+        'ids': None,
+        'filters': {'doc': 'CLS API filter names mapped to lists of values.', 'name_field': 'Key'},
+        'extra_params': [],
+        'response_items': 'Shippers',
+        'response_total': 'TotalCount',
+        'result_key': 'shippers',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CLS shippers',
+        'description': 'Returns CLS COS shipper tasks visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching shipper tasks.',
+        'return_total_doc': 'Number of shippers reported by the API.',
+        "examples": """\
+- name: List all CLS shippers
+  susunola.tencentcloud.cls_shipper_info:
+    region: ap-guangzhou
+
+""",
+    },
+    {
+        'module': 'cls_index_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.cls.v20201016',
+        'client_module': 'cls_client',
+        'client_class': 'ClsClient',
+        'sdk_package': 'tencentcloud-sdk-python-cls',
+        'endpoint': 'cls.tencentcloudapi.com',
+        'action': 'DescribeIndex',
+        'request_class': 'DescribeIndexRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {'name': 'topic_id', 'field': 'TopicId', 'type': 'str', 'required': True, 'doc': 'ID of the CLS log topic whose index configuration is returned.'},
+        ],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'index',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about a Tencent Cloud CLS topic index',
+        'description': 'Returns the index configuration of a CLS log topic.',
+        'return_items_doc': 'The index configuration of the topic.',
+        'return_total_doc': '',
+        "examples": """\
+- name: Show the index configuration of a CLS topic
+  susunola.tencentcloud.cls_index_info:
+    region: ap-guangzhou
+    topic_id: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'monitor_prometheus_instance_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.monitor.v20180724',
+        'client_module': 'monitor_client',
+        'client_class': 'MonitorClient',
+        'sdk_package': 'tencentcloud-sdk-python-monitor',
+        'endpoint': 'monitor.tencentcloudapi.com',
+        'action': 'DescribePrometheusInstancesOverview',
+        'request_class': 'DescribePrometheusInstancesOverviewRequest',
+        'ids': None,
+        'filters': {'doc': 'MONITOR API filter names mapped to lists of values.'},
+        'extra_params': [],
+        'response_items': 'Instances',
+        'response_total': 'Total',
+        'result_key': 'instances',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud Managed Service for Prometheus instances',
+        'description': 'Returns Managed Prometheus instances visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching Prometheus instances.',
+        'return_total_doc': 'Number of instances reported by the API.',
+        "examples": """\
+- name: List all Prometheus instances
+  susunola.tencentcloud.monitor_prometheus_instance_info:
+    region: ap-guangzhou
+
+""",
+    },
+    {
+        'module': 'monitor_grafana_instance_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.monitor.v20180724',
+        'client_module': 'monitor_client',
+        'client_class': 'MonitorClient',
+        'sdk_package': 'tencentcloud-sdk-python-monitor',
+        'endpoint': 'monitor.tencentcloudapi.com',
+        'action': 'DescribeGrafanaInstances',
+        'request_class': 'DescribeGrafanaInstancesRequest',
+        'ids': {'param': 'instance_ids', 'field': 'InstanceIds', 'doc': 'Grafana instance IDs to return.'},
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'InstanceSet',
+        'response_total': 'TotalCount',
+        'result_key': 'instances',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud Grafana instances',
+        'description': 'Returns Grafana instances visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching Grafana instances.',
+        'return_total_doc': 'Number of instances reported by the API.',
+        "examples": """\
+- name: List all Grafana instances
+  susunola.tencentcloud.monitor_grafana_instance_info:
+    region: ap-guangzhou
+
+- name: Find Grafana instances by ID
+  susunola.tencentcloud.monitor_grafana_instance_info:
+    region: ap-guangzhou
+    instance_ids: [grafana-xxxxxxxx]
+
+""",
+    },
+    {
+        'module': 'ckafka_topic_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.ckafka.v20190819',
+        'client_module': 'ckafka_client',
+        'client_class': 'CkafkaClient',
+        'sdk_package': 'tencentcloud-sdk-python-ckafka',
+        'endpoint': 'ckafka.tencentcloudapi.com',
+        'action': 'DescribeTopic',
+        'request_class': 'DescribeTopicRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {'name': 'instance_id', 'field': 'InstanceId', 'type': 'str', 'required': True, 'doc': 'ID of the CKafka instance whose topics are returned.'},
+        ],
+        'response_items': 'Result.TopicList',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'topics',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CKafka topics',
+        'description': 'Returns the topics of a CKafka instance.',
+        'return_items_doc': 'Topics of the instance.',
+        'return_total_doc': 'Number of topics reported by the API.',
+        "examples": """\
+- name: List the topics of a CKafka instance
+  susunola.tencentcloud.ckafka_topic_info:
+    region: ap-guangzhou
+    instance_id: "ckafka-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'ckafka_user_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.ckafka.v20190819',
+        'client_module': 'ckafka_client',
+        'client_class': 'CkafkaClient',
+        'sdk_package': 'tencentcloud-sdk-python-ckafka',
+        'endpoint': 'ckafka.tencentcloudapi.com',
+        'action': 'DescribeUser',
+        'request_class': 'DescribeUserRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {'name': 'instance_id', 'field': 'InstanceId', 'type': 'str', 'required': True, 'doc': 'ID of the CKafka instance whose users are returned.'},
+        ],
+        'response_items': 'Result.Users',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'users',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CKafka users',
+        'description': 'Returns the users of a CKafka instance.',
+        'return_items_doc': 'Users of the instance.',
+        'return_total_doc': 'Number of users reported by the API.',
+        "examples": """\
+- name: List the users of a CKafka instance
+  susunola.tencentcloud.ckafka_user_info:
+    region: ap-guangzhou
+    instance_id: "ckafka-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'cbs_auto_snapshot_policy_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.cbs.v20170312',
+        'client_module': 'cbs_client',
+        'client_class': 'CbsClient',
+        'sdk_package': 'tencentcloud-sdk-python-cbs',
+        'endpoint': 'cbs.tencentcloudapi.com',
+        'action': 'DescribeAutoSnapshotPolicies',
+        'request_class': 'DescribeAutoSnapshotPoliciesRequest',
+        'ids': {
+            'param': 'auto_snapshot_policy_ids',
+            'field': 'AutoSnapshotPolicyIds',
+            'doc': 'Automatic snapshot policy IDs to return. Mutually exclusive with O(filters).',
+        },
+        'filters': {'doc': 'CBS API filter names mapped to lists of values.'},
+        'extra_params': [],
+        'response_items': 'AutoSnapshotPolicySet',
+        'response_total': 'TotalCount',
+        'result_key': 'auto_snapshot_policies',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CBS automatic snapshot policies',
+        'description': 'Returns CBS automatic snapshot policies visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching automatic snapshot policies.',
+        'return_total_doc': 'Number of policies reported by the API.',
+        "examples": """\
+- name: List all automatic snapshot policies
+  susunola.tencentcloud.cbs_auto_snapshot_policy_info:
+    region: ap-guangzhou
+
+- name: Find policies by ID
+  susunola.tencentcloud.cbs_auto_snapshot_policy_info:
+    region: ap-guangzhou
+    auto_snapshot_policy_ids: [asp-xxxxxxxx]
+
+""",
+    },
+    {
+        'module': 'cfs_permission_group_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.cfs.v20190719',
+        'client_module': 'cfs_client',
+        'client_class': 'CfsClient',
+        'sdk_package': 'tencentcloud-sdk-python-cfs',
+        'endpoint': 'cfs.tencentcloudapi.com',
+        'action': 'DescribeCfsPGroups',
+        'request_class': 'DescribeCfsPGroupsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'PGroupList',
+        'response_total': None,
+        'result_key': 'permission_groups',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CFS permission groups',
+        'description': 'Returns the CFS permission groups of the account.',
+        'return_items_doc': 'Permission groups.',
+        'return_total_doc': 'Number of permission groups returned (the API reports no pageable total).',
+        "examples": """\
+- name: List all CFS permission groups
+  susunola.tencentcloud.cfs_permission_group_info:
+    region: ap-guangzhou
+
+""",
+    },
+    {
+        'module': 'cfs_permission_rule_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.cfs.v20190719',
+        'client_module': 'cfs_client',
+        'client_class': 'CfsClient',
+        'sdk_package': 'tencentcloud-sdk-python-cfs',
+        'endpoint': 'cfs.tencentcloudapi.com',
+        'action': 'DescribeCfsRules',
+        'request_class': 'DescribeCfsRulesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {'name': 'pgroup_id', 'field': 'PGroupId', 'type': 'str', 'required': True, 'doc': 'ID of the CFS permission group whose rules are returned.'},
+        ],
+        'response_items': 'RuleList',
+        'response_total': None,
+        'result_key': 'rules',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CFS permission group rules',
+        'description': 'Returns the rules of a CFS permission group.',
+        'return_items_doc': 'Rules of the permission group.',
+        'return_total_doc': 'Number of rules returned (the API reports no pageable total).',
+        "examples": """\
+- name: List the rules of a CFS permission group
+  susunola.tencentcloud.cfs_permission_rule_info:
+    region: ap-guangzhou
+    pgroup_id: "pgroup-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'ssm_secret_info',
+        'version_added': '1.1.0',
+        'service_package': 'tencentcloud.ssm.v20190923',
+        'client_module': 'ssm_client',
+        'client_class': 'SsmClient',
+        'sdk_package': 'tencentcloud-sdk-python-ssm',
+        'endpoint': 'ssm.tencentcloudapi.com',
+        'action': 'ListSecrets',
+        'request_class': 'ListSecretsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'SecretMetadatas',
+        'response_total': 'TotalCount',
+        'result_key': 'secrets',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud Secrets Manager secrets',
+        'description': 'Returns Secrets Manager (SSM) secrets visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching secrets.',
+        'return_total_doc': 'Number of secrets reported by the API.',
+        "examples": """\
+- name: List all secrets
+  susunola.tencentcloud.ssm_secret_info:
+    region: ap-guangzhou
+
+""",
+    },
+    # -----------------------------------------------------------------
+    # Coverage batch 6 (1.1.0): read sides of existing write modules.
+    # -----------------------------------------------------------------
+    # Adopted from SPECS_AUTO unchanged (the curated alb_* entries below
+    # would otherwise mark the whole alb product as covered and discovery
+    # would drop this spec, orphaning the generated module).
+    {
+        "module": "alb_security_policy_info",
+        "version_added": "0.9.0",
+        "service_package": "tencentcloud.alb.v20251030",
+        "client_module": "alb_client",
+        "client_class": "AlbClient",
+        "sdk_package": "tencentcloud-sdk-python-alb",
+        "endpoint": "alb.tencentcloudapi.com",
+        "action": "DescribeSecurityPolicies",
+        "request_class": "DescribeSecurityPoliciesRequest",
+        "ids": {
+            "param": "security_policy_ids",
+            "field": "SecurityPolicyIds",
+            "doc": "Security policy IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "ALB API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "SecurityPolicies",
+        "response_total": "TotalCount",
+        "result_key": "security_policies",
+        "pagination_type": "token",
+        "list_over_field": None,
+        "short_description": "Gather information about Tencent Cloud ALB security policies",
+        "description": "Returns ALB security policies visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching ALB security policies.",
+        "return_total_doc": "Number of security policies reported by the API.",
+        "examples": """\
+- name: List all security policies
+  susunola.tencentcloud.alb_security_policy_info:
+    region: ap-guangzhou
+
+- name: Find security policies by ID
+  susunola.tencentcloud.alb_security_policy_info:
+    region: ap-guangzhou
+    security_policy_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        "module": "alb_load_balancer_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.alb.v20251030",
+        "client_module": "alb_client",
+        "client_class": "AlbClient",
+        "sdk_package": "tencentcloud-sdk-python-alb",
+        "endpoint": "alb.tencentcloudapi.com",
+        "action": "DescribeLoadBalancers",
+        "request_class": "DescribeLoadBalancersRequest",
+        "ids": None,
+        "filters": {"doc": "ALB API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "LoadBalancers",
+        "response_total": "TotalCount",
+        "result_key": "load_balancers",
+        "pagination_type": "token",
+        "short_description": "Gather information about Tencent Cloud ALB instances",
+        "description": "Returns ALB (Application Load Balancer) instances visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching ALB instances.",
+        "return_total_doc": "Number of load balancers reported by the API.",
+        "examples": """\
+- name: List all ALB instances
+  susunola.tencentcloud.alb_load_balancer_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        "module": "alb_listener_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.alb.v20251030",
+        "client_module": "alb_client",
+        "client_class": "AlbClient",
+        "sdk_package": "tencentcloud-sdk-python-alb",
+        "endpoint": "alb.tencentcloudapi.com",
+        "action": "DescribeListeners",
+        "request_class": "DescribeListenersRequest",
+        "ids": None,
+        "filters": {"doc": "ALB API filter names mapped to lists of values."},
+        "extra_params": [
+            {
+                "name": "load_balancer_id",
+                "field": "LoadBalancerId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the ALB instance whose listeners are returned.",
+            },
+            {
+                "name": "listener_ids",
+                "field": "ListenerIds",
+                "type": "list",
+                "elements": "str",
+                "doc": "Return only these listener IDs.",
+            },
+        ],
+        "response_items": "Listeners",
+        "response_total": "TotalCount",
+        "result_key": "listeners",
+        "pagination_type": "token",
+        "short_description": "Gather information about Tencent Cloud ALB listeners",
+        "description": "Returns the listeners of an ALB instance.",
+        "return_items_doc": "Matching ALB listeners.",
+        "return_total_doc": "Number of listeners reported by the API.",
+        "examples": """\
+- name: List the listeners of an ALB instance
+  susunola.tencentcloud.alb_listener_info:
+    region: ap-guangzhou
+    load_balancer_id: lbl-xxxxxxxx
+""",
+    },
+    {
+        "module": "alb_target_group_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.alb.v20251030",
+        "client_module": "alb_client",
+        "client_class": "AlbClient",
+        "sdk_package": "tencentcloud-sdk-python-alb",
+        "endpoint": "alb.tencentcloudapi.com",
+        "action": "DescribeTargetGroups",
+        "request_class": "DescribeTargetGroupsRequest",
+        "ids": {
+            "param": "target_group_ids",
+            "field": "TargetGroupIds",
+            "doc": "Target group IDs to return.",
+        },
+        "filters": {"doc": "ALB API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "TargetGroups",
+        "response_total": "TotalCount",
+        "result_key": "target_groups",
+        "pagination_type": "token",
+        "short_description": "Gather information about Tencent Cloud ALB target groups",
+        "description": "Returns ALB target groups visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching ALB target groups.",
+        "return_total_doc": "Number of target groups reported by the API.",
+        "examples": """\
+- name: List all ALB target groups
+  susunola.tencentcloud.alb_target_group_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        "module": "alb_target_group_targets_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.alb.v20251030",
+        "client_module": "alb_client",
+        "client_class": "AlbClient",
+        "sdk_package": "tencentcloud-sdk-python-alb",
+        "endpoint": "alb.tencentcloudapi.com",
+        "action": "DescribeTargetGroupTargets",
+        "request_class": "DescribeTargetGroupTargetsRequest",
+        "ids": None,
+        "filters": {"doc": "ALB API filter names mapped to lists of values."},
+        "extra_params": [
+            {
+                "name": "target_group_id",
+                "field": "TargetGroupId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the target group whose targets are returned.",
+            },
+        ],
+        "response_items": "Targets",
+        "response_total": "TotalCount",
+        "result_key": "targets",
+        "pagination_type": "token",
+        "short_description": "Gather information about Tencent Cloud ALB target group targets",
+        "description": "Returns the backend targets of an ALB target group.",
+        "return_items_doc": "Matching target group targets.",
+        "return_total_doc": "Number of targets reported by the API.",
+        "examples": """\
+- name: List the targets of an ALB target group
+  susunola.tencentcloud.alb_target_group_targets_info:
+    region: ap-guangzhou
+    target_group_id: lbtg-xxxxxxxx
+""",
+    },
+    {
+        "module": "network_interface_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeNetworkInterfaces",
+        "request_class": "DescribeNetworkInterfacesRequest",
+        "ids": {
+            "param": "network_interface_ids",
+            "field": "NetworkInterfaceIds",
+            "doc": "ENI IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "NetworkInterfaceSet",
+        "response_total": "TotalCount",
+        "result_key": "network_interfaces",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud elastic network interfaces",
+        "description": "Returns elastic network interfaces (ENIs) visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching network interfaces.",
+        "return_total_doc": "Number of network interfaces reported by the API.",
+        "examples": """\
+- name: List all network interfaces
+  susunola.tencentcloud.network_interface_info:
+    region: ap-guangzhou
+
+- name: Find network interfaces by ID
+  susunola.tencentcloud.network_interface_info:
+    region: ap-guangzhou
+    network_interface_ids: [eni-xxxxxxxx]
+""",
+    },
+    {
+        "module": "tke_node_pool_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.tke.v20180525",
+        "client_module": "tke_client",
+        "client_class": "TkeClient",
+        "sdk_package": "tencentcloud-sdk-python-tke",
+        "endpoint": "tke.tencentcloudapi.com",
+        "action": "DescribeClusterNodePools",
+        "request_class": "DescribeClusterNodePoolsRequest",
+        "ids": None,
+        "filters": {"doc": "TKE API filter names mapped to lists of values."},
+        "extra_params": [
+            {
+                "name": "cluster_id",
+                "field": "ClusterId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the TKE cluster whose node pools are returned.",
+            },
+        ],
+        "response_items": "NodePoolSet",
+        "response_total": None,
+        "result_key": "node_pools",
+        # The request has no Offset/Limit; the API returns the full list.
+        "pagination_type": "list",
+        "short_description": "Gather information about Tencent Cloud TKE node pools",
+        "description": "Returns the node pools of a TKE cluster.",
+        "return_items_doc": "Node pools of the cluster.",
+        "return_total_doc": "Number of node pools returned (the API reports no pageable total).",
+        "examples": """\
+- name: List the node pools of a cluster
+  susunola.tencentcloud.tke_node_pool_info:
+    region: ap-guangzhou
+    cluster_id: cls-xxxxxxxx
+""",
+    },
+    {
+        "module": "scf_alias_info",
+        "string_pagination": True,  # Offset/Limit are declared str in this API
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.scf.v20180416",
+        "client_module": "scf_client",
+        "client_class": "ScfClient",
+        "sdk_package": "tencentcloud-sdk-python-scf",
+        "endpoint": "scf.tencentcloudapi.com",
+        "action": "ListAliases",
+        "request_class": "ListAliasesRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "function_name",
+                "field": "FunctionName",
+                "type": "str",
+                "required": True,
+                "doc": "Name of the function whose aliases are returned.",
+            },
+            {
+                "name": "namespace",
+                "field": "Namespace",
+                "type": "str",
+                "doc": "Namespace of the function; defaults to C(default) on the API side.",
+            },
+            {
+                "name": "function_version",
+                "field": "FunctionVersion",
+                "type": "str",
+                "doc": "Return only aliases pointing at this function version.",
+            },
+        ],
+        "response_items": "Aliases",
+        "response_total": "TotalCount",
+        "result_key": "aliases",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud SCF function aliases",
+        "description": "Returns the aliases of an SCF function.",
+        "return_items_doc": "Matching function aliases.",
+        "return_total_doc": "Number of aliases reported by the API.",
+        "examples": """\
+- name: List the aliases of a function
+  susunola.tencentcloud.scf_alias_info:
+    region: ap-guangzhou
+    function_name: my-function
+""",
+    },
+    {
+        "module": "scf_version_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.scf.v20180416",
+        "client_module": "scf_client",
+        "client_class": "ScfClient",
+        "sdk_package": "tencentcloud-sdk-python-scf",
+        "endpoint": "scf.tencentcloudapi.com",
+        "action": "ListVersionByFunction",
+        "request_class": "ListVersionByFunctionRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "function_name",
+                "field": "FunctionName",
+                "type": "str",
+                "required": True,
+                "doc": "Name of the function whose versions are returned.",
+            },
+            {
+                "name": "namespace",
+                "field": "Namespace",
+                "type": "str",
+                "doc": "Namespace of the function; defaults to C(default) on the API side.",
+            },
+        ],
+        "response_items": "Versions",
+        "response_total": "TotalCount",
+        "result_key": "versions",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud SCF function versions",
+        "description": "Returns the published versions of an SCF function.",
+        "return_items_doc": "Matching function versions.",
+        "return_total_doc": "Number of versions reported by the API.",
+        "examples": """\
+- name: List the published versions of a function
+  susunola.tencentcloud.scf_version_info:
+    region: ap-guangzhou
+    function_name: my-function
+""",
+    },
+    {
+        "module": "scf_trigger_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.scf.v20180416",
+        "client_module": "scf_client",
+        "client_class": "ScfClient",
+        "sdk_package": "tencentcloud-sdk-python-scf",
+        "endpoint": "scf.tencentcloudapi.com",
+        "action": "ListTriggers",
+        "request_class": "ListTriggersRequest",
+        "ids": None,
+        "filters": {"doc": "SCF API filter names mapped to lists of values."},
+        "extra_params": [
+            {
+                "name": "function_name",
+                "field": "FunctionName",
+                "type": "str",
+                "required": True,
+                "doc": "Name of the function whose triggers are returned.",
+            },
+            {
+                "name": "namespace",
+                "field": "Namespace",
+                "type": "str",
+                "doc": "Namespace of the function; defaults to C(default) on the API side.",
+            },
+        ],
+        "response_items": "Triggers",
+        "response_total": "TotalCount",
+        "result_key": "triggers",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud SCF function triggers",
+        "description": "Returns the triggers of an SCF function.",
+        "return_items_doc": "Matching function triggers.",
+        "return_total_doc": "Number of triggers reported by the API.",
+        "examples": """\
+- name: List the triggers of a function
+  susunola.tencentcloud.scf_trigger_info:
+    region: ap-guangzhou
+    function_name: my-function
+""",
+    },
+    {
+        "module": "clb_listener_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.clb.v20180317",
+        "client_module": "clb_client",
+        "client_class": "ClbClient",
+        "sdk_package": "tencentcloud-sdk-python-clb",
+        "endpoint": "clb.tencentcloudapi.com",
+        "action": "DescribeListeners",
+        "request_class": "DescribeListenersRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "load_balancer_id",
+                "field": "LoadBalancerId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the CLB instance whose listeners are returned.",
+            },
+            {
+                "name": "listener_ids",
+                "field": "ListenerIds",
+                "type": "list",
+                "elements": "str",
+                "doc": "Return only these listener IDs.",
+            },
+            {
+                "name": "protocol",
+                "field": "Protocol",
+                "type": "str",
+                "doc": "Return only listeners of this protocol, for example C(TCP) or C(HTTPS).",
+            },
+            {
+                "name": "port",
+                "field": "Port",
+                "type": "int",
+                "doc": "Return only listeners on this port.",
+            },
+        ],
+        "response_items": "Listeners",
+        "response_total": None,
+        "result_key": "listeners",
+        # The request has no Offset/Limit; the API returns the full list.
+        "pagination_type": "list",
+        "short_description": "Gather information about Tencent Cloud CLB listeners",
+        "description": "Returns the listeners of a CLB instance, including the rules of L7 listeners.",
+        "return_items_doc": "Matching CLB listeners.",
+        "return_total_doc": "Number of listeners returned (the API reports no pageable total).",
+        "examples": """\
+- name: List the listeners of a load balancer
+  susunola.tencentcloud.clb_listener_info:
+    region: ap-guangzhou
+    load_balancer_id: lb-xxxxxxxx
+""",
+    },
+    {
+        "module": "clb_listener_target_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.clb.v20180317",
+        "client_module": "clb_client",
+        "client_class": "ClbClient",
+        "sdk_package": "tencentcloud-sdk-python-clb",
+        "endpoint": "clb.tencentcloudapi.com",
+        "action": "DescribeTargets",
+        "request_class": "DescribeTargetsRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "load_balancer_id",
+                "field": "LoadBalancerId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the CLB instance whose listener targets are returned.",
+            },
+            {
+                "name": "listener_ids",
+                "field": "ListenerIds",
+                "type": "list",
+                "elements": "str",
+                "doc": "Return targets of only these listener IDs.",
+            },
+            {
+                "name": "protocol",
+                "field": "Protocol",
+                "type": "str",
+                "doc": "Return targets of listeners of this protocol.",
+            },
+            {
+                "name": "port",
+                "field": "Port",
+                "type": "int",
+                "doc": "Return targets of listeners on this port.",
+            },
+        ],
+        # DescribeTargets returns the listeners, each carrying its Targets.
+        "response_items": "Listeners",
+        "response_total": None,
+        "result_key": "listeners",
+        "pagination_type": "list",
+        "short_description": "Gather information about Tencent Cloud CLB listener targets",
+        "description": "Returns the backend targets bound to the listeners of a CLB instance.",
+        "return_items_doc": "Listeners with their bound backend targets.",
+        "return_total_doc": "Number of listeners returned (the API reports no pageable total).",
+        "examples": """\
+- name: List the backend targets of a load balancer
+  susunola.tencentcloud.clb_listener_target_info:
+    region: ap-guangzhou
+    load_balancer_id: lb-xxxxxxxx
+""",
+    },
+    {
+        "module": "clb_target_group_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.clb.v20180317",
+        "client_module": "clb_client",
+        "client_class": "ClbClient",
+        "sdk_package": "tencentcloud-sdk-python-clb",
+        "endpoint": "clb.tencentcloudapi.com",
+        "action": "DescribeTargetGroupList",
+        "request_class": "DescribeTargetGroupListRequest",
+        "ids": {
+            "param": "target_group_ids",
+            "field": "TargetGroupIds",
+            "doc": "Target group IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "CLB API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "TargetGroupSet",
+        "response_total": "TotalCount",
+        "result_key": "target_groups",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud CLB target groups",
+        "description": "Returns CLB target groups visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching CLB target groups.",
+        "return_total_doc": "Number of target groups reported by the API.",
+        "examples": """\
+- name: List all CLB target groups
+  susunola.tencentcloud.clb_target_group_info:
+    region: ap-guangzhou
+
+- name: Find target groups by ID
+  susunola.tencentcloud.clb_target_group_info:
+    region: ap-guangzhou
+    target_group_ids: [lbtg-xxxxxxxx]
+""",
+    },
+    {
+        "module": "cam_policy_attachment_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.cam.v20190116",
+        "client_module": "cam_client",
+        "client_class": "CamClient",
+        "sdk_package": "tencentcloud-sdk-python-cam",
+        "endpoint": "cam.tencentcloudapi.com",
+        "action": "ListEntitiesForPolicy",
+        "request_class": "ListEntitiesForPolicyRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "policy_id",
+                "field": "PolicyId",
+                "type": "int",
+                "required": True,
+                "doc": "ID of the policy whose attached entities are returned.",
+            },
+            {
+                "name": "entity_filter",
+                "field": "EntityFilter",
+                "type": "str",
+                "choices": ["All", "User", "Group", "Role"],
+                "doc": "Return only attachments of this entity type; defaults to C(All) on the API side.",
+            },
+        ],
+        "response_items": "List",
+        "response_total": "TotalNum",
+        "result_key": "entities",
+        # CAM paginates with 1-based Page/Rp.
+        "pagination_type": "page",
+        "page_number_field": "Page",
+        "page_size_field": "Rp",
+        "short_description": "Gather information about Tencent Cloud CAM policy attachments",
+        "description": "Returns the users, groups and roles a CAM policy is attached to.",
+        "return_items_doc": "Entities the policy is attached to.",
+        "return_total_doc": "Number of attached entities reported by the API.",
+        "examples": """\
+- name: List what a policy is attached to
+  susunola.tencentcloud.cam_policy_attachment_info:
+    region: ap-guangzhou
+    policy_id: 12345678
+""",
+    },
+    {
+        "module": "nat_gateway_dnat_rule_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeNatGatewayDestinationIpPortTranslationNatRules",
+        "request_class": "DescribeNatGatewayDestinationIpPortTranslationNatRulesRequest",
+        "ids": {
+            "param": "nat_gateway_ids",
+            "field": "NatGatewayIds",
+            "doc": "NAT gateway IDs whose DNAT rules are returned. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "NatGatewayDestinationIpPortTranslationNatRuleSet",
+        "response_total": "TotalCount",
+        "result_key": "dnat_rules",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud NAT gateway DNAT rules",
+        "description": "Returns the DNAT (port forwarding) rules of NAT gateways.",
+        "return_items_doc": "Matching DNAT rules.",
+        "return_total_doc": "Number of DNAT rules reported by the API.",
+        "examples": """\
+- name: List the DNAT rules of a NAT gateway
+  susunola.tencentcloud.nat_gateway_dnat_rule_info:
+    region: ap-guangzhou
+    nat_gateway_ids: [nat-xxxxxxxx]
+""",
+    },
+    {
+        "module": "nat_gateway_snat_rule_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeNatGatewaySourceIpTranslationNatRules",
+        "request_class": "DescribeNatGatewaySourceIpTranslationNatRulesRequest",
+        "ids": None,
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [
+            {
+                "name": "nat_gateway_id",
+                "field": "NatGatewayId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the NAT gateway whose SNAT rules are returned.",
+            },
+        ],
+        "response_items": "SourceIpTranslationNatRuleSet",
+        "response_total": "TotalCount",
+        "result_key": "snat_rules",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud NAT gateway SNAT rules",
+        "description": "Returns the SNAT rules of a NAT gateway.",
+        "return_items_doc": "Matching SNAT rules.",
+        "return_total_doc": "Number of SNAT rules reported by the API.",
+        "examples": """\
+- name: List the SNAT rules of a NAT gateway
+  susunola.tencentcloud.nat_gateway_snat_rule_info:
+    region: ap-guangzhou
+    nat_gateway_id: nat-xxxxxxxx
+""",
+    },
+    {
+        "module": "havip_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeHaVips",
+        "request_class": "DescribeHaVipsRequest",
+        "ids": {
+            "param": "havip_ids",
+            "field": "HaVipIds",
+            "doc": "HAVIP IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "HaVipSet",
+        "response_total": "TotalCount",
+        "result_key": "havips",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud HAVIPs",
+        "description": "Returns high-availability virtual IPs visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching HAVIPs.",
+        "return_total_doc": "Number of HAVIPs reported by the API.",
+        "examples": """\
+- name: List all HAVIPs
+  susunola.tencentcloud.havip_info:
+    region: ap-guangzhou
+
+- name: Find HAVIPs by ID
+  susunola.tencentcloud.havip_info:
+    region: ap-guangzhou
+    havip_ids: [havip-xxxxxxxx]
+""",
+    },
+    {
+        "module": "network_acl_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeNetworkAcls",
+        "request_class": "DescribeNetworkAclsRequest",
+        "ids": {
+            "param": "network_acl_ids",
+            "field": "NetworkAclIds",
+            "doc": "Network ACL IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "NetworkAclSet",
+        "response_total": "TotalCount",
+        "result_key": "network_acls",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud network ACLs",
+        "description": "Returns network ACLs visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching network ACLs.",
+        "return_total_doc": "Number of network ACLs reported by the API.",
+        "examples": """\
+- name: List all network ACLs
+  susunola.tencentcloud.network_acl_info:
+    region: ap-guangzhou
+
+- name: Find network ACLs by ID
+  susunola.tencentcloud.network_acl_info:
+    region: ap-guangzhou
+    network_acl_ids: [acl-xxxxxxxx]
+""",
+    },
+    {
+        "module": "peering_connection_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeVpcPeeringConnections",
+        "request_class": "DescribeVpcPeeringConnectionsRequest",
+        "ids": {
+            "param": "peering_connection_ids",
+            "field": "PeeringConnectionIds",
+            "doc": "Peering connection IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "PeerConnectionSet",
+        "response_total": "TotalCount",
+        "result_key": "peering_connections",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud VPC peering connections",
+        "description": "Returns VPC peering connections visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching peering connections.",
+        "return_total_doc": "Number of peering connections reported by the API.",
+        "examples": """\
+- name: List all peering connections
+  susunola.tencentcloud.peering_connection_info:
+    region: ap-guangzhou
+
+- name: Find peering connections by ID
+  susunola.tencentcloud.peering_connection_info:
+    region: ap-guangzhou
+    peering_connection_ids: [pcx-xxxxxxxx]
+""",
+    },
+    {
+        "module": "vpc_address_template_info",
+        "string_pagination": True,  # Offset/Limit are declared str in this API
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeAddressTemplates",
+        "request_class": "DescribeAddressTemplatesRequest",
+        "ids": None,
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "AddressTemplateSet",
+        "response_total": "TotalCount",
+        "result_key": "address_templates",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud VPC address templates",
+        "description": "Returns IP address templates visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching address templates.",
+        "return_total_doc": "Number of address templates reported by the API.",
+        "examples": """\
+- name: List all address templates
+  susunola.tencentcloud.vpc_address_template_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        "module": "vpc_address_template_group_info",
+        "string_pagination": True,  # Offset/Limit are declared str in this API
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeAddressTemplateGroups",
+        "request_class": "DescribeAddressTemplateGroupsRequest",
+        "ids": None,
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "AddressTemplateGroupSet",
+        "response_total": "TotalCount",
+        "result_key": "address_template_groups",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud VPC address template groups",
+        "description": "Returns IP address template groups visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching address template groups.",
+        "return_total_doc": "Number of address template groups reported by the API.",
+        "examples": """\
+- name: List all address template groups
+  susunola.tencentcloud.vpc_address_template_group_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        "module": "security_group_rule_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.vpc.v20170312",
+        "client_module": "vpc_client",
+        "client_class": "VpcClient",
+        "sdk_package": "tencentcloud-sdk-python-vpc",
+        "endpoint": "vpc.tencentcloudapi.com",
+        "action": "DescribeSecurityGroupPolicies",
+        "request_class": "DescribeSecurityGroupPoliciesRequest",
+        "ids": None,
+        "filters": {"doc": "VPC API filter names mapped to lists of values."},
+        "extra_params": [
+            {
+                "name": "security_group_id",
+                "field": "SecurityGroupId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the security group whose rules are returned.",
+            },
+        ],
+        "response_items": None,
+        "response_total": None,
+        "result_key": "policies",
+        # The API returns a single SecurityGroupPolicySet object with the
+        # Ingress and Egress rule lists inside.
+        "pagination_type": "none",
+        "short_description": "Gather information about Tencent Cloud security group rules",
+        "description": "Returns the ingress and egress rule set of a security group.",
+        "return_items_doc": "Security group policy set with Ingress and Egress rule lists.",
+        "return_total_doc": "",
+        "examples": """\
+- name: List the rules of a security group
+  susunola.tencentcloud.security_group_rule_info:
+    region: ap-guangzhou
+    security_group_id: sg-xxxxxxxx
+""",
+    },
+    {
+        "module": "tag_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.tag.v20180813",
+        "client_module": "tag_client",
+        "client_class": "TagClient",
+        "sdk_package": "tencentcloud-sdk-python-tag",
+        "endpoint": "tag.tencentcloudapi.com",
+        "action": "DescribeTags",
+        "request_class": "DescribeTagsRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "tag_key",
+                "field": "TagKey",
+                "type": "str",
+                # A tag key name, not a credential.
+                "no_log": False,
+                "doc": "Return only the tag with this key.",
+            },
+            {
+                "name": "tag_value",
+                "field": "TagValue",
+                "type": "str",
+                "doc": "Return only tags with this value.",
+            },
+        ],
+        "response_items": "Tags",
+        "response_total": "TotalCount",
+        "result_key": "tags",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud tags",
+        "description": "Returns the tags defined in the Tencent Cloud tag service.",
+        "return_items_doc": "Matching tags.",
+        "return_total_doc": "Number of tags reported by the API.",
+        "examples": """\
+- name: List all tags
+  susunola.tencentcloud.tag_info:
+    region: ap-guangzhou
+
+- name: Find a tag by key
+  susunola.tencentcloud.tag_info:
+    region: ap-guangzhou
+    tag_key: env
+""",
+    },
+    # Read sides of the 1.0.0 write modules (audit batch, 1.1.0).
+    {
+        "module": "eks_cluster_info",
+        "version_added": "1.1.0",
+        # EKS lives in the TKE SDK package.
+        "service_package": "tencentcloud.tke.v20180525",
+        "client_module": "tke_client",
+        "client_class": "TkeClient",
+        "sdk_package": "tencentcloud-sdk-python-tke",
+        "endpoint": "tke.tencentcloudapi.com",
+        "action": "DescribeEKSClusters",
+        "request_class": "DescribeEKSClustersRequest",
+        "ids": {
+            "param": "cluster_ids",
+            "field": "ClusterIds",
+            "doc": "EKS cluster IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "TKE API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "Clusters",
+        "response_total": "TotalCount",
+        "result_key": "clusters",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud EKS clusters",
+        "description": "Returns EKS (Elastic Kubernetes Service) clusters visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching EKS clusters.",
+        "return_total_doc": "Number of clusters reported by the API.",
+        "examples": """\
+- name: List all EKS clusters
+  susunola.tencentcloud.eks_cluster_info:
+    region: ap-guangzhou
+
+- name: Find EKS clusters by ID
+  susunola.tencentcloud.eks_cluster_info:
+    region: ap-guangzhou
+    cluster_ids: [cls-xxxxxxxx]
+""",
+    },
+    {
+        "module": "eks_container_instance_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.tke.v20180525",
+        "client_module": "tke_client",
+        "client_class": "TkeClient",
+        "sdk_package": "tencentcloud-sdk-python-tke",
+        "endpoint": "tke.tencentcloudapi.com",
+        "action": "DescribeEKSContainerInstances",
+        "request_class": "DescribeEKSContainerInstancesRequest",
+        "ids": {
+            "param": "eks_ci_ids",
+            "field": "EksCiIds",
+            "doc": "EKS container instance IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "TKE API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "EksCis",
+        "response_total": "TotalCount",
+        "result_key": "container_instances",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud EKS container instances",
+        "description": "Returns EKS container instances (EksCi) visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching EKS container instances.",
+        "return_total_doc": "Number of container instances reported by the API.",
+        "examples": """\
+- name: List all EKS container instances
+  susunola.tencentcloud.eks_container_instance_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        "module": "sms_signature_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.sms.v20210111",
+        "client_module": "sms_client",
+        "client_class": "SmsClient",
+        "sdk_package": "tencentcloud-sdk-python-sms",
+        "endpoint": "sms.tencentcloudapi.com",
+        "action": "DescribeSmsSignList",
+        "request_class": "DescribeSmsSignListRequest",
+        # SignIdSet is a list of int, which the ids option (typed list of str)
+        # cannot express; exposed as an extra param.
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "sign_ids",
+                "field": "SignIdSet",
+                "type": "list",
+                "elements": "int",
+                "doc": "Signature IDs to return.",
+            },
+            {
+                "name": "international",
+                "field": "International",
+                "type": "int",
+                "required": True,
+                "doc": "C(0) for mainland-China signatures, C(1) for international/HK/MO/TW signatures (required by the API).",
+            },
+        ],
+        "response_items": "DescribeSignListStatusSet",
+        "response_total": None,
+        "result_key": "signatures",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud SMS signatures",
+        "description": "Returns SMS signatures of the account.",
+        "return_items_doc": "Matching SMS signatures.",
+        "return_total_doc": "Number of signatures returned (the API reports no total count).",
+        "examples": """\
+- name: List mainland-China SMS signatures
+  susunola.tencentcloud.sms_signature_info:
+    region: ap-guangzhou
+    international: 0
+""",
+    },
+    {
+        "module": "sms_template_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.sms.v20210111",
+        "client_module": "sms_client",
+        "client_class": "SmsClient",
+        "sdk_package": "tencentcloud-sdk-python-sms",
+        "endpoint": "sms.tencentcloudapi.com",
+        "action": "DescribeSmsTemplateList",
+        "request_class": "DescribeSmsTemplateListRequest",
+        # TemplateIdSet is a list of int, which the ids option (typed list of str)
+        # cannot express; exposed as an extra param.
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "template_ids",
+                "field": "TemplateIdSet",
+                "type": "list",
+                "elements": "int",
+                "doc": "Template IDs to return.",
+            },
+            {
+                "name": "international",
+                "field": "International",
+                "type": "int",
+                "required": True,
+                "doc": "C(0) for mainland-China templates, C(1) for international/HK/MO/TW templates (required by the API).",
+            },
+        ],
+        "response_items": "DescribeTemplateStatusSet",
+        "response_total": None,
+        "result_key": "templates",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud SMS templates",
+        "description": "Returns SMS body templates of the account.",
+        "return_items_doc": "Matching SMS templates.",
+        "return_total_doc": "Number of templates returned (the API reports no total count).",
+        "examples": """\
+- name: List mainland-China SMS templates
+  susunola.tencentcloud.sms_template_info:
+    region: ap-guangzhou
+    international: 0
+""",
+    },
+    {
+        "module": "vod_class_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.vod.v20180717",
+        "client_module": "vod_client",
+        "client_class": "VodClient",
+        "sdk_package": "tencentcloud-sdk-python-vod",
+        "endpoint": "vod.tencentcloudapi.com",
+        "action": "DescribeAllClass",
+        "request_class": "DescribeAllClassRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "sub_app_id",
+                "field": "SubAppId",
+                "type": "int",
+                "required": True,
+                "doc": "VOD subapplication ID (required by the API for all customers since 2023-12-25).",
+            },
+        ],
+        "response_items": "ClassInfoSet",
+        "response_total": None,
+        "result_key": "classes",
+        "pagination_type": "list",
+        "short_description": "Gather information about Tencent Cloud VOD classes",
+        "description": "Returns the full category (class) tree of a VOD subapplication.",
+        "return_items_doc": "Top-level classes with nested children.",
+        "return_total_doc": "Number of top-level classes returned (the API reports no total count).",
+        "examples": """\
+- name: List the class tree of a VOD subapplication
+  susunola.tencentcloud.vod_class_info:
+    region: ap-guangzhou
+    sub_app_id: 1300000000
+""",
+    },
+    {
+        "module": "vod_sub_app_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.vod.v20180717",
+        "client_module": "vod_client",
+        "client_class": "VodClient",
+        "sdk_package": "tencentcloud-sdk-python-vod",
+        "endpoint": "vod.tencentcloudapi.com",
+        "action": "DescribeSubAppIds",
+        "request_class": "DescribeSubAppIdsRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "name",
+                "field": "Name",
+                "type": "str",
+                "doc": "Return only subapplications whose name contains this string.",
+            },
+        ],
+        "response_items": "SubAppIdInfoSet",
+        "response_total": "TotalCount",
+        "result_key": "sub_apps",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud VOD subapplications",
+        "description": "Returns the VOD subapplications of the account.",
+        "return_items_doc": "Matching VOD subapplications.",
+        "return_total_doc": "Number of subapplications reported by the API.",
+        "examples": """\
+- name: List all VOD subapplications
+  susunola.tencentcloud.vod_sub_app_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        "module": "tke_cluster_autoscaler_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.tke.v20180525",
+        "client_module": "tke_client",
+        "client_class": "TkeClient",
+        "sdk_package": "tencentcloud-sdk-python-tke",
+        "endpoint": "tke.tencentcloudapi.com",
+        "action": "DescribeClusterAsGroupOption",
+        "request_class": "DescribeClusterAsGroupOptionRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "cluster_id",
+                "field": "ClusterId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the TKE cluster whose autoscaler options are returned.",
+            },
+        ],
+        # The API returns a single ClusterAsGroupOption object.
+        "response_items": None,
+        "response_total": None,
+        "result_key": "autoscaler_option",
+        "pagination_type": "none",
+        "short_description": "Gather information about Tencent Cloud TKE cluster autoscaler options",
+        "description": "Returns the cluster-autoscaler configuration of a TKE cluster.",
+        "return_items_doc": "The cluster autoscaler option object.",
+        "return_total_doc": "",
+        "examples": """\
+- name: Show the autoscaler options of a cluster
+  susunola.tencentcloud.tke_cluster_autoscaler_info:
+    region: ap-guangzhou
+    cluster_id: cls-xxxxxxxx
+""",
+    },
+    {
+        "module": "cvm_image_share_info",
+        "version_added": "1.1.0",
+        "service_package": "tencentcloud.cvm.v20170312",
+        "client_module": "cvm_client",
+        "client_class": "CvmClient",
+        "sdk_package": "tencentcloud-sdk-python-cvm",
+        "endpoint": "cvm.tencentcloudapi.com",
+        "action": "DescribeImageSharePermission",
+        "request_class": "DescribeImageSharePermissionRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "image_id",
+                "field": "ImageId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the image whose share permissions are returned.",
+            },
+        ],
+        "response_items": "SharePermissionSet",
+        "response_total": None,
+        "result_key": "share_permissions",
+        "pagination_type": "list",
+        "short_description": "Gather information about Tencent Cloud CVM image share permissions",
+        "description": "Returns the accounts an image is shared with.",
+        "return_items_doc": "Share permission entries of the image.",
+        "return_total_doc": "Number of share permissions returned (the API reports no total count).",
+        "examples": """\
+- name: List the accounts an image is shared with
+  susunola.tencentcloud.cvm_image_share_info:
+    region: ap-guangzhou
+    image_id: img-xxxxxxxx
+""",
+    },
 ]
 
 
@@ -1370,6 +3523,8 @@ REQUIRED_PARAM_OVERRIDES = {
             {"name": "sdk_app_id", "field": "SdkAppId", "type": "int", "required": True,
              "doc": "CCC application ID (required by the API)."},
         ],
+        # ccc numbers pages from 0 (DescribeExtensions docstring).
+        "page_number_base": 0,
     },
     "apm_general_span_info": {
         "extra_params": [
@@ -1512,6 +3667,89 @@ REQUIRED_PARAM_OVERRIDES = {
                      "doc": "Sub-enterprise operator (employee) open ID."},
                 ],
             },
+        ],
+    },
+    "trtc_call_info": {
+        "extra_params": [
+            {"name": "comm_id", "field": "CommId", "type": "str", "required": True,
+             "doc": "Call ID in the form SdkAppId_RoomId_CreateTime, e.g. "
+                    "1400xxxxxx_218695_1590065777 (required by the API)."},
+            {"name": "sdk_app_id", "field": "SdkAppId", "type": "int", "required": True,
+             "doc": "TRTC application ID."},
+            {"name": "start_time", "field": "StartTime", "type": "int", "required": True,
+             "doc": "Start of the query window, a Unix timestamp in seconds."},
+            {"name": "end_time", "field": "EndTime", "type": "int", "required": True,
+             "doc": "End of the query window, a Unix timestamp in seconds."},
+        ],
+        # trtc numbers pages from 0 (DescribeCallDetailInfo docstring).
+        "page_number_base": 0,
+    },
+    "ess_file_url_info": {
+        "extra_params": [
+            {
+                "name": "operator", "field": "Operator", "type": "dict", "required": True,
+                "model": "UserInfo",
+                "doc": "Operator (employee) who performs the operation; the employee "
+                       "must have permission on the requested file resources.",
+                "struct": [
+                    {"key": "user_id", "field": "UserId", "type": "str", "required": True,
+                     "doc": "User ID of the operator in ESS."},
+                ],
+            },
+            {"name": "business_type", "field": "BusinessType", "type": "str", "required": True,
+             "doc": "Business type of the files (FLOW, TEMPLATE, DOCUMENT, SEAL, "
+                    "DIGITFILE or ARCHIVE)."},
+        ],
+    },
+    "tiw_running_task_info": {
+        "extra_params": [
+            {"name": "sdk_app_id", "field": "SdkAppID", "type": "int", "required": True,
+             "doc": "TIW whiteboard application ID."},
+            {"name": "task_type", "field": "TaskType", "type": "str", "required": True,
+             "doc": "Task type to list (TranscodeH5, TranscodeJPG, WhiteboardPush "
+                    "or OnlineRecord)."},
+        ],
+    },
+    "weilingwith_element_profile_page_info": {
+        "extra_params": [
+            {"name": "workspace_id", "field": "WorkspaceId", "type": "str", "required": True,
+             "doc": "Project space ID."},
+            {"name": "application_token", "field": "ApplicationToken", "type": "str",
+             "required": True, "no_log": True,
+             "doc": "Application token issued for the workspace."},
+            {"name": "building_id", "field": "BuildingId", "type": "str", "required": True,
+             "doc": "Building ID."},
+        ],
+    },
+    "bsca_kb_component_info": {
+        "extra_params": [
+            {"name": "query", "field": "Query", "type": "str", "required": True,
+             "doc": "Component name to search for (required by the API)."},
+        ],
+        # bsca numbers pages from 0 (SearchKBComponent docstring).
+        "page_number_base": 0,
+    },
+    "svp_saving_plan_coverage_info": {
+        "extra_params": [
+            {"name": "start_date", "field": "StartDate", "type": "str", "required": True,
+             "doc": "Coverage start date in yyyy-MM-dd format."},
+            {"name": "end_date", "field": "EndDate", "type": "str", "required": True,
+             "doc": "Coverage end date in yyyy-MM-dd format."},
+        ],
+    },
+    "ses_black_email_address_info": {
+        "extra_params": [
+            {"name": "start_date", "field": "StartDate", "type": "str", "required": True,
+             "doc": "Start date in YYYY-MM-DD format (required by the API)."},
+            {"name": "end_date", "field": "EndDate", "type": "str", "required": True,
+             "doc": "End date in YYYY-MM-DD format (required by the API)."},
+        ],
+    },
+    "gme_voice_print_info": {
+        "extra_params": [
+            {"name": "describe_mode", "field": "DescribeMode", "type": "int", "required": True,
+             "doc": "Query mode (0 queries a specific voice print with "
+                    "voice_print_ids, 1 lists voice prints by page)."},
         ],
     },
 }
@@ -1658,6 +3896,66 @@ REQUIRED_EXAMPLE_OVERRIDES = {
       proxy_organization_open_id: org_xxxxxxxx
       proxy_operator_open_id: op_xxxxxxxx
 """,
+    "trtc_call_info": """\
+- name: List call details
+  susunola.tencentcloud.trtc_call_info:
+    region: ap-guangzhou
+    comm_id: 1400000000_218695_1590065777
+    sdk_app_id: 1400000000
+    start_time: 1700000000
+    end_time: 1700003600
+""",
+    "ess_file_url_info": """\
+- name: Get download URLs of flow files
+  susunola.tencentcloud.ess_file_url_info:
+    region: ap-guangzhou
+    operator:
+      user_id: yDRSRUUgygj6qnwfUuO4zjEwc193c2hH
+    business_type: FLOW
+    file_url_ids:
+      - yDwFkUUckpstzjhfUugNAWf1KibXqS26
+""",
+    "tiw_running_task_info": """\
+- name: List running tasks of a whiteboard app
+  susunola.tencentcloud.tiw_running_task_info:
+    region: ap-guangzhou
+    sdk_app_id: 1400000001
+    task_type: WhiteboardPush
+""",
+    "weilingwith_element_profile_page_info": """\
+- name: List element profiles of a building
+  susunola.tencentcloud.weilingwith_element_profile_page_info:
+    region: ap-guangzhou
+    workspace_id: "1016"
+    application_token: ZRCJHdnhqEUEqO1vyskCgWimPucHhREV
+    building_id: 956bd069-c802-4bbb-b325-18d30d7bcd3c
+""",
+    "bsca_kb_component_info": """\
+- name: Search knowledge base components
+  susunola.tencentcloud.bsca_kb_component_info:
+    region: ap-guangzhou
+    query: openssl
+""",
+    "svp_saving_plan_coverage_info": """\
+- name: List saving plan coverage
+  susunola.tencentcloud.svp_saving_plan_coverage_info:
+    region: ap-guangzhou
+    start_date: "2024-01-01"
+    end_date: "2024-01-31"
+""",
+    "ses_black_email_address_info": """\
+- name: List black email addresses in a date range
+  susunola.tencentcloud.ses_black_email_address_info:
+    region: ap-singapore
+    start_date: "2026-01-01"
+    end_date: "2026-01-31"
+""",
+    "gme_voice_print_info": """\
+- name: List voice prints
+  susunola.tencentcloud.gme_voice_print_info:
+    region: ap-guangzhou
+    describe_mode: 1
+""",
 }
 
 
@@ -1672,6 +3970,9 @@ def _apply_required_overrides(spec):
         return
     if "ids" in overrides:
         spec["ids"] = overrides["ids"]
+    for key in ("page_number_base", "page_number_field", "pagination_type"):
+        if key in overrides:
+            spec[key] = overrides[key]
     for ep in overrides.get("extra_params", []):
         existing = [p for p in spec.get("extra_params", [])
                     if p.get("field") == ep["field"]]
@@ -1769,6 +4070,11 @@ def _documentation(spec):
             f"    description: {param['doc']}",
             f"    type: {param['type']}",
         ]
+        if param.get("elements"):
+            option_lines.append(f"    elements: {param['elements']}")
+        if param.get("choices"):
+            choices = ", ".join(str(c) for c in param["choices"])
+            option_lines.append(f"    choices: [{choices}]")
         if param.get("required"):
             option_lines.append("    required: true")
         if "default" in param:
@@ -1880,8 +4186,14 @@ def build_describe_request(models, {ids['param']}):
     ]
     if pagination == "page":
         page_number_field = spec.get("page_number_field", "PageNumber")
+        # A few APIs (e.g. trtc) number pages from 0; offset // limit is the
+        # correct 0-based page when page_number_base is 0.
+        if spec.get("page_number_base", 1) == 0:
+            page_number_expr = "offset // limit"
+        else:
+            page_number_expr = "offset // limit + 1"
         lines += [
-            f"    request.{page_number_field} = offset // limit + 1",
+            f"    request.{page_number_field} = {page_number_expr}",
             f"    request.{_page_size_field(spec)} = limit",
         ]
     elif pagination == "token":
@@ -1896,10 +4208,19 @@ def build_describe_request(models, {ids['param']}):
                        "    # paginated; offset and limit are accepted for signature uniformity.")
         lines.insert(1, comment)
     else:
-        lines += [
-            "    request.Offset = offset",
-            f"    request.{_page_size_field(spec)} = limit",
-        ]
+        if spec.get("string_pagination"):
+            # A few APIs (scf ListAliases, vpc Describe*Template*) declare
+            # Offset/Limit as strings; assigning ints would be silently
+            # mangled by _serialize.
+            lines += [
+                "    request.Offset = str(offset)",
+                f"    request.{_page_size_field(spec)} = str(limit)",
+            ]
+        else:
+            lines += [
+                "    request.Offset = offset",
+                f"    request.{_page_size_field(spec)} = limit",
+            ]
     for param in spec["extra_params"]:
         if param.get("struct"):
             # dict parameter rendered as an SDK model object (e.g. Agent).
@@ -1999,6 +4320,11 @@ def _argument_spec_lines(spec):
             argument_lines.append(f'        "{param["name"]}": {entry}\n        }},')
             continue
         entry = f'{{"type": "{param["type"]}"'
+        if param.get("elements"):
+            entry += f', "elements": "{param["elements"]}"'
+        if param.get("choices"):
+            choices = ", ".join(f'"{c}"' if isinstance(c, str) else str(c) for c in param["choices"])
+            entry += f", \"choices\": [{choices}]"
         if param.get("required"):
             entry += ', "required": True'
         if "default" in param:
@@ -2010,6 +4336,12 @@ def _argument_spec_lines(spec):
             else:
                 rendered = f'"{default}"'
             entry += f", \"default\": {rendered}"
+        if param.get("no_log"):
+            entry += ', "no_log": True'
+        elif param.get("no_log") is False:
+            # Explicitly not a secret (e.g. a tag *key* name); documents the
+            # intent and silences validate-modules' no-log-needed heuristic.
+            entry += ', "no_log": False'
         entry += "}"
         argument_lines.append(f'        "{param["name"]}": {entry},')
     if spec["ids"]:
@@ -2124,6 +4456,14 @@ def _run_module_list_source(spec):
         update = f"argument_spec.update({{\n{argument_lines}\n    }})"
     else:
         update = "argument_spec.update({})"
+    build_args = ["models"]
+    build_args += [f'module.params["{param["name"]}"]' for param in spec["extra_params"]]
+    if spec["ids"]:
+        build_args.append(f'module.params["{spec["ids"]["param"]}"]')
+    if spec["filters"]:
+        build_args.append('module.params["filters"]')
+    build_args += ["0", "0"]
+    build_call = f"build_request({', '.join(build_args)})"
     return f"""\
 def run_module():
     argument_spec = tencentcloud_argument_spec()
@@ -2132,7 +4472,7 @@ def run_module():
         argument_spec=argument_spec,
         supports_check_mode=True,
     )
-{_client_setup_source(spec)}    request = build_request(models, 0, 0)
+{_client_setup_source(spec)}    request = {build_call}
     response = sdk_call(module, client.{spec['action']}, request)
     items = {items_expr} or []
     {spec['result_key']} = [serialize_sdk_object(item) for item in items]
@@ -2157,7 +4497,9 @@ def _run_module_none_source(spec):
     build_args += ["0", "0"]
     build_call = "build_request(" + ", ".join(build_args) + ")"
     if len(build_call) > 79:
-        build_call = "build_request(\n            " + ",\n            ".join(build_args) + ")"
+        # 8-space continuation: the call sits in a 4-indent statement and
+        # 12 spaces would trip E126 (over-indented for hanging indent).
+        build_call = "build_request(\n        " + ",\n        ".join(build_args) + ")"
     return f"""\
 def run_module():
     argument_spec = tencentcloud_argument_spec()
@@ -2300,7 +4642,7 @@ def is_simple_spec(spec):
     if pagination not in ("int", "page") or spec.get("ids_action"):
         return False
     for param in spec.get("extra_params", []):
-        if param["type"] not in ("str", "int", "bool", "dict"):
+        if param["type"] not in ("str", "int", "bool", "dict", "list"):
             return False
         if param.get("struct"):
             for sub in param["struct"]:
@@ -2331,10 +4673,42 @@ def _fake_response_fields(spec):
     return "\n".join(lines)
 
 
+def _sample_literal(param):
+    """Python literal exercising an extra param in generated unit tests."""
+    if param["type"] == "int":
+        return "1"
+    if param["type"] == "bool":
+        return "True"
+    if param["type"] == "list":
+        return '["sample"]'
+    return '"sample"'
+
+
 def render_list_test(spec):
     """Render the unit test file for an unpaginated list spec."""
     module = spec["module"]
     product = spec["service_package"].split(".")[1]
+    run_kwargs = "".join(
+        ", %s=%s" % (param["name"], _sample_literal(param))
+        for param in spec["extra_params"]
+    )
+    init_kwargs = "".join(
+        ', "%s": %s' % (param["name"], _sample_literal(param))
+        for param in spec["extra_params"]
+    )
+    if spec["filters"]:
+        run_kwargs += ", filters={}"
+        init_kwargs += ', "filters": {}'
+    fake_filter = ""
+    if spec["filters"]:
+        fake_filter = '''
+
+class FakeFilter:
+    pass
+'''
+    fake_models = f'    {spec["request_class"]} = FakeRequest'
+    if spec["filters"]:
+        fake_models = f'    {spec["filters"].get("model", "Filter")} = FakeFilter\n' + fake_models
     return f'''\
 {MARKER}
 from __future__ import absolute_import, division, print_function
@@ -2351,10 +4725,10 @@ from ansible_collections.susunola.tencentcloud.plugins.modules import {module}
 
 class FakeRequest:
     pass
-
+{fake_filter}
 
 class FakeModels:
-    {spec["request_class"]} = FakeRequest
+{fake_models}
 
 
 class FakeItem:
@@ -2429,7 +4803,7 @@ def _run(monkeypatch, client, **params):
 
 def test_run_module_returns_full_list(monkeypatch):
     client = FakeClient([FakeResponse([FakeItem("a"), FakeItem("b")])])
-    fake = _run(monkeypatch, client, region="ap-guangzhou")
+    fake = _run(monkeypatch, client, region="ap-guangzhou"{run_kwargs})
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["{spec['result_key']}"]] == ["a", "b"]
@@ -2457,7 +4831,7 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
             )
 
     _inject_sdk(monkeypatch, FailingClient())
-    fake = FakeModule({{"region": "ap-guangzhou"}})
+    fake = FakeModule({{"region": "ap-guangzhou"{init_kwargs}}})
     monkeypatch.setattr({module}, "AnsibleModule", lambda **kwargs: fake)
     monkeypatch.setattr({module}, "create_credential", lambda module: object())
     monkeypatch.setattr({module}, "create_client_profile", lambda module, endpoint: object())
@@ -2496,17 +4870,13 @@ class FakeFilter:
         argument call; positional build_call lines stay short to satisfy
         pep8's 160-column limit.
         """
-        if param["type"] == "int":
-            return "1"
-        if param["type"] == "bool":
-            return "True"
         if param.get("struct"):
             keys = [sub["key"] for sub in param["struct"]]
             if not full:
                 keys = keys[:1]
             kvs = ", ".join('"%s": "sample"' % key for key in keys)
             return "{%s}" % kvs
-        return '"sample"'
+        return _sample_literal(param)
 
     extra_samples = [sample_expr(param) for param in spec["extra_params"]]
     fake_models = f'    {spec["request_class"]} = FakeRequest'
@@ -2532,14 +4902,26 @@ class FakeFilter:
 
     if page:
         page_number_field = spec.get("page_number_field", "PageNumber")
-        pagination_asserts = (f"    assert request.{page_number_field} == 3\n"
-                              f"    assert request.{_page_size_field(spec)} == 100")
-        page_numbers = "[1, 2]"
+        base = spec.get("page_number_base", 1)
+        if base == 0:
+            # 0-based pages: offset 200 / limit 100 -> page 2, loop visits 0,1.
+            pagination_asserts = (f"    assert request.{page_number_field} == 2\n"
+                                  f"    assert request.{_page_size_field(spec)} == 100")
+            page_numbers = "[0, 1]"
+        else:
+            pagination_asserts = (f"    assert request.{page_number_field} == 3\n"
+                                  f"    assert request.{_page_size_field(spec)} == 100")
+            page_numbers = "[1, 2]"
         page_field = page_number_field
     else:
-        pagination_asserts = ("    assert request.Offset == 200\n"
-                              f"    assert request.{_page_size_field(spec)} == 100")
-        page_numbers = "[0, 2]"
+        if spec.get("string_pagination"):
+            pagination_asserts = ('    assert request.Offset == "200"\n'
+                                  f'    assert request.{_page_size_field(spec)} == "100"')
+            page_numbers = '["0", "2"]'
+        else:
+            pagination_asserts = ("    assert request.Offset == 200\n"
+                                  f"    assert request.{_page_size_field(spec)} == 100")
+            page_numbers = "[0, 2]"
         page_field = "Offset"
 
     ids_test = ""
@@ -2846,13 +5228,750 @@ def validate_specs(specs):
     return problems
 
 
+# ---------------------------------------------------------------------------
+# Resource-module skeleton generation (--resource / --resources)
+#
+# SPECS above renders complete read-only modules. Write modules cannot be
+# generated end-to-end: idempotency semantics, drift comparison and API
+# constraints (required fields, enums, defaults) are per-resource decisions
+# that the SDK request models do not encode. Instead the generator scaffolds
+# the boilerplate -- the argument spec and request builders, both derived by
+# introspecting the SDK request models -- so a new write module starts from
+# a structured file rather than a blank one.
+#
+# RESOURCE_SPECS entries describe the action set of one resource module:
+#
+#   module / version_added / short_description / label (noun for messages)
+#   resource (snake noun used for find_<resource> helpers) / result_key
+#   service_package / client_module / client_class / sdk_package / endpoint
+#   identity   option names copied onto every request (module-required)
+#   no_log     option names that must never be logged (secrets)
+#   actions    create/update/delete: {action, request_class} SDK calls
+#   identify   {action, request_class} single-object read used to detect
+#              existence and current state (may raise "not found")
+#
+# The argument spec is the union of the request-model fields across every
+# action; types come from the model docstring ``:rtype:`` hints. The SDK
+# carries no required markers, so only the identity options are marked
+# required and the rendered run_module leaves an explicit TODO where the
+# developer confirms the remaining constraints against the API docs.
+#
+# Scaffolding is write-once: an existing module file is never overwritten
+# (hand-finished modules such as scf_alias keep their logic); re-running
+# the generator only reports the file. CI verifies every RESOURCE_SPECS
+# entry against the installed SDK with --resources --check.
+# ---------------------------------------------------------------------------
+
+RESOURCE_SKEL_MARKER = (
+    "# Generated skeleton by scripts/generate_info_modules.py --resource. "
+    "The file is never overwritten once it exists; finish it by hand."
+)
+RESOURCE_VERSION_ADDED = "0.14.0"
+RESOURCE_AUTHOR = "Tencent Cloud Ansible Collection Contributors (@susunola)"
+
+RESOURCE_SPECS = [
+    {
+        # Reference entry mirroring the conventions of the hand-written
+        # scf_alias module (plugins/modules/scf_alias.py). New write modules
+        # add their own entry here and scaffold it with
+        # --resource <module>; the generated file is a starting point.
+        "module": "scf_alias",
+        "version_added": RESOURCE_VERSION_ADDED,
+        "short_description": "Manage Tencent Cloud SCF function aliases",
+        "label": "SCF alias",
+        "resource": "alias",
+        "result_key": "alias",
+        "service_package": "tencentcloud.scf.v20180416",
+        "client_module": "scf_client",
+        "client_class": "ScfClient",
+        "sdk_package": "tencentcloud-sdk-python-scf",
+        "endpoint": "scf.tencentcloudapi.com",
+        "identity": ["function_name", "name"],
+        "no_log": [],
+        "actions": {
+            "create": {"action": "CreateAlias", "request_class": "CreateAliasRequest"},
+            "update": {"action": "UpdateAlias", "request_class": "UpdateAliasRequest"},
+            "delete": {"action": "DeleteAlias", "request_class": "DeleteAliasRequest"},
+        },
+        "identify": {"action": "GetAlias", "request_class": "GetAliasRequest"},
+    },
+]
+
+_RTYPE_RE = re.compile(r":rtype:\s*(?P<rtype>[^\n]+)")
+_NESTED_MODEL_RE = re.compile(
+    r":class:`tencentcloud\.\w+\.\w+\.models\.(?P<cls>\w+)`")
+_SCALAR_OPTION_TYPES = {"str": "str", "int": "int", "float": "float",
+                        "bool": "bool", "boolean": "bool"}
+_ACTION_KEYS = ("create", "update", "delete")
+_RESERVED_OPTION_NAMES = frozenset((
+    "state", "region", "endpoint", "timeout", "retries", "waiter_timeout",
+    "waiter_delay", "user_agent", "secret_id", "secret_key", "token",
+    "role_arn", "role_session_name", "role_session_duration", "profile"))
+
+
+def _camel_to_snake(name):
+    """Convert a PascalCase SDK field name to a snake_case Ansible option."""
+    stepped = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", "_", name)
+    return re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", "_", stepped).lower()
+
+
+def _option_shape(rtype):
+    """Map an SDK ``:rtype:`` hint to (option type, elements).
+
+    ``elements`` is only set when the option is a list (the option type is
+    then ``list``). Nested API objects become ``dict`` -- modelling their
+    sub-options is a per-resource decision left to the developer -- and
+    anything unrecognised falls back to ``str``.
+    """
+    elements = None
+    value = rtype.strip()
+    if value.startswith("list of "):
+        value = value[len("list of "):].strip()
+        elements = True
+    if value in _SCALAR_OPTION_TYPES:
+        element_type = _SCALAR_OPTION_TYPES[value]
+    elif value.startswith(":class:") or value in ("dict", "object", "any"):
+        element_type = "dict"
+    else:
+        element_type = "str"
+    if elements:
+        return "list", element_type
+    return element_type, None
+
+
+def _request_fields(models_mod, request_class):
+    """Return ordered field metadata for *request_class*.
+
+    Every entry is a dict with ``field`` (SDK attribute), ``name`` (the
+    snake_case option), ``type``/``elements`` (Ansible shape) and ``doc``
+    (the first line of the model docstring). Request models carry no
+    required markers, so requiredness is never inferred.
+    """
+    cls = getattr(models_mod, request_class, None)
+    if cls is None:
+        raise ValueError("%s has no request class %s"
+                         % (getattr(models_mod, "__name__", "models"),
+                            request_class))
+    fields = []
+    for field, attr in vars(cls).items():
+        if not isinstance(attr, property):
+            continue
+        doc = attr.fget.__doc__ or ""
+        match = _RTYPE_RE.search(doc)
+        rtype = match.group("rtype").strip() if match else ""
+        option_type, elements = _option_shape(rtype)
+        first_line = next(
+            (line.strip() for line in doc.splitlines() if line.strip()), "")
+        fields.append({
+            "field": field,
+            "name": _camel_to_snake(field),
+            "type": option_type,
+            "elements": elements,
+            "doc": first_line,
+        })
+    return fields
+
+
+def collect_resource_fields(spec):
+    """Introspect every request model named by *spec* against the SDK.
+
+    Returns {action_key: [field, ...]} for create/update/delete/identify
+    and verifies that each identity option maps to a field of the create,
+    delete and identify requests (update may address the resource by a
+    server-assigned id and is not required to carry every identity option).
+    Raises ValueError when a request class is missing or an identity option
+    cannot be supplied.
+    """
+    import importlib
+    try:
+        models_mod = importlib.import_module("%s.models" % spec["service_package"])
+    except ImportError as exc:
+        raise ValueError(
+            "cannot import %s.models (install %s and retry): %s"
+            % (spec["service_package"], spec["sdk_package"], exc))
+    collected = {}
+    for key in _ACTION_KEYS:
+        cfg = spec.get("actions", {}).get(key)
+        if key == "update" and not cfg:
+            collected[key] = []
+            continue
+        if not (cfg and cfg.get("request_class")):
+            raise ValueError("spec for %s needs an actions.%s request_class"
+                             % (spec["module"], key))
+        collected[key] = _request_fields(models_mod, cfg["request_class"])
+    identify = spec.get("identify") or {}
+    if not identify.get("request_class"):
+        raise ValueError("spec for %s needs an identify request_class"
+                         % spec["module"])
+    collected["identify"] = _request_fields(models_mod, identify["request_class"])
+    identity_names = set(spec.get("identity", ()))
+    declared = {field["name"] for key in ("create", "delete", "identify")
+                for field in collected.get(key, [])}
+    for option in sorted(identity_names):
+        if option not in declared:
+            raise ValueError(
+                "identity option %r of %s is not a field of the create, "
+                "delete or identify requests" % (option, spec["module"]))
+    return collected
+
+
+def _option_field_by_action(spec, collected, option):
+    """Return {action_key: field_name} for every request carrying *option*."""
+    mapping = {}
+    for key in _ACTION_KEYS + ("identify",):
+        if key == "update" and not spec.get("actions", {}).get("update"):
+            continue
+        for field in collected.get(key, []):
+            if field["name"] == option:
+                mapping[key] = field["field"]
+                break
+    return mapping
+
+
+def _resource_option_order(spec, collected):
+    """Order module options: identity options first (in spec order), then
+    every remaining field in the order the requests declare them."""
+    order = []
+    seen = set()
+
+    def _extend(fields):
+        for field in fields:
+            name = field["name"]
+            if name not in seen:
+                seen.add(name)
+                order.append(name)
+
+    for key in _ACTION_KEYS:
+        _extend(collected.get(key, []))
+    _extend(collected.get("identify", []))
+    identity = [name for name in spec["identity"] if name in seen]
+    return identity + [name for name in order if name not in identity]
+
+
+def _field_entry(collected, option):
+    """Return the first field metadata dict rendered for *option*."""
+    for key, fields in collected.items():
+        for field in fields:
+            if field["name"] == option:
+                return field
+    raise KeyError(option)
+
+
+def _service_label(service_package):
+    """Shorten tencentcloud.scf.v20180416 to scf.v20180416 for docs."""
+    return ".".join(service_package.split(".")[1:])
+
+
+def _client_suffix(spec):
+    """Derive the lazy-import suffix from the client module (scf_client)."""
+    return spec["client_module"].rsplit("_client", 1)[0] or spec["client_module"]
+
+
+def _first_request_ref(spec, collected, option):
+    """Render the V(Request.Field) provenance for an option description.
+
+    The first request that declares the option (create preferred) is cited;
+    hand-written modules use the same style to say where a value is written.
+    """
+    for key in _ACTION_KEYS + ("identify",):
+        if key == "update" and not spec.get("actions", {}).get("update"):
+            continue
+        for field in collected.get(key, []):
+            if field["name"] != option:
+                continue
+            if key == "identify":
+                request_class = spec["identify"]["request_class"]
+            else:
+                request_class = spec["actions"][key]["request_class"]
+            return "V(%s.%s)" % (request_class, field["field"])
+    return ""
+
+
+def _resource_argument_spec_lines(spec, collected, option_order):
+    """Render the argument_spec entries (12-space indent, no outer braces)."""
+    identity = set(spec["identity"])
+    no_log = set(spec.get("no_log", ()))
+    lines = []
+    lines.append(
+        '            "state": {"type": "str", '
+        '"choices": ["present", "absent"], "default": "present"},')
+    for option in option_order:
+        field = _field_entry(collected, option)
+        if field["type"] == "dict":
+            lines.append(
+                "            # %s maps to a nested API object; model its "
+                "sub-options with an\n"
+                "            # \"options\" block or drop the option when the "
+                "module must not expose it."
+                % option)
+        entry = '{"type": "%s"' % field["type"]
+        if field["elements"]:
+            entry += ', "elements": "%s"' % field["elements"]
+        if option in identity:
+            entry += ', "required": True'
+        if option in no_log:
+            entry += ', "no_log": True'
+        lines.append('            "%s": %s},' % (option, entry))
+    return "\n".join(lines)
+
+
+def _resource_builder_source(spec, collected, action_key):
+    """Render one build_<key>_request function (create/update/delete)."""
+    if action_key == "update" and not spec.get("actions", {}).get("update"):
+        return ""
+    request_class = spec["actions"][action_key]["request_class"]
+    identity = set(spec["identity"])
+    lines = ["def build_%s_request(models, params):" % action_key,
+             "    request = models.%s()" % request_class]
+    for field in collected[action_key]:
+        name = field["name"]
+        if name in identity:
+            lines.append('    request.%s = params["%s"]' % (field["field"], name))
+        else:
+            lines.append('    if params["%s"] is not None:' % name)
+            lines.append('        request.%s = params["%s"]'
+                         % (field["field"], name))
+    lines.append("    return request")
+    return "\n".join(lines)
+
+
+def _resource_identify_source(spec, collected, resource):
+    """Render build_identify_request + find_<resource>."""
+    request_class = spec["identify"]["request_class"]
+    action = spec["identify"]["action"]
+    lines = ["def build_identify_request(models, params):",
+             "    request = models.%s()" % request_class]
+    for field in collected["identify"]:
+        name = field["name"]
+        if name in spec["identity"]:
+            lines.append('    request.%s = params["%s"]' % (field["field"], name))
+    lines.append("    return request")
+    lines += ["", "", "def find_%s(module, client, models, params):" % resource,
+              "    \"\"\"Return the matching %s dict, or None when the API reports not found." % resource,
+              "",
+              "    Uses V(%s), which returns the object directly; adapt this" % action,
+              "    function when the read action wraps the object or needs",
+              "    client-side matching.",
+              "    \"\"\"",
+              "    request = build_identify_request(models, params)",
+              "    response = module.sdk_call(client.%s, request)" % action,
+              "    return response._serialize(allow_none=True)"]
+    return "\n".join(lines)
+
+
+def _resource_documentation(spec, collected, option_order):
+    """Render the DOCUMENTATION body (without the surrounding r''' block)."""
+    identity = set(spec["identity"])
+    no_log = set(spec.get("no_log", ()))
+    options = ["  state:",
+               "    description:",
+               "      - C(present) creates the %s when it does not exist and updates it to match the task." % spec["label"].lower(),
+               "      - C(absent) deletes the %s when it exists." % spec["label"].lower(),
+               "    type: str",
+               "    choices: [present, absent]",
+               "    default: present"]
+    for option in option_order:
+        field = _field_entry(collected, option)
+        ref = _first_request_ref(spec, collected, option)
+        suffix = ", written to %s." % ref if ref else "."
+        options.append("  %s:" % option)
+        options.append("    description:")
+        options.append("      - %s%s" % (field["doc"] or "No SDK description.", suffix))
+        options.append("    type: %s" % field["type"])
+        if field["elements"]:
+            options.append("    elements: %s" % field["elements"])
+        if option in identity:
+            options.append("    required: true")
+        if option in no_log:
+            options.append("    no_log: true")
+    # base_argument_spec() adds retries/waiter_*/user_agent on top of the
+    # documented fragment; the exemplar modules document them inline so
+    # validate-modules sees every accepted option documented.
+    options += [
+        "  retries:",
+        "    description: Number of retries for transient SDK failures.",
+        "    type: int",
+        "    default: 5",
+        "  waiter_delay:",
+        "    description: Seconds to wait between state-polling attempts.",
+        "    type: int",
+        "    default: 5",
+        "  waiter_timeout:",
+        "    description: Overall timeout in seconds for state polling.",
+        "    type: int",
+        "    default: 120",
+        "  user_agent:",
+        "    description:",
+        "      - Value appended to the SDK User-Agent header so API usage can",
+        "        be attributed to this collection.",
+        "    type: str",
+        "    default: ansible-collection.susunola.tencentcloud",
+    ]
+    identity_joined = ", ".join("O(%s)" % option for option in spec["identity"])
+    notes = [
+        "notes:",
+        "  - Requires the C(%s) package on the controller." % spec["sdk_package"],
+        "  - SDK field descriptions are embedded verbatim in this scaffold.",
+        "    Confirm which options the API really requires (the SDK request",
+        "    models carry no required markers), add choices and nested options",
+        "    blocks where the API needs them, and implement the drift/update",
+        "    section of run_module before releasing the module.",
+        "  - The resource is addressed by %s." % identity_joined,
+    ]
+    return "\n".join(
+        ["---",
+         "module: %s" % spec["module"],
+         "short_description: %s" % spec["short_description"],
+         'version_added: "%s"' % spec.get("version_added", RESOURCE_VERSION_ADDED),
+         "description:",
+         "  - %s through the C(%s) API." % (spec["short_description"],
+                                            _service_label(spec["service_package"])),
+         "  - Supports check mode; no API write happens in check mode, only reads.",
+         "options:"] + options + notes +
+        ["extends_documentation_fragment: susunola.tencentcloud.tencentcloud",
+         "author: %s" % RESOURCE_AUTHOR])
+
+
+def render_resource_skeleton(spec, collected):
+    """Render the scaffold source for the write module described by *spec*.
+
+    *collected* is the output of collect_resource_fields(): per-action
+    field metadata introspected from the SDK request models.
+    """
+    option_order = _resource_option_order(spec, collected)
+    resource = spec["resource"]
+    result_key = spec["result_key"]
+    label = spec["label"]
+    endpoint = spec["endpoint"]
+    suffix = _client_suffix(spec)
+    client_ref = "%s.%s" % (spec["client_module"], spec["client_class"])
+    identify_action = spec["identify"]["action"]
+    builder_block = "\n\n\n".join(block for block in (
+        _resource_builder_source(spec, collected, "create"),
+        _resource_builder_source(spec, collected, "update"),
+        _resource_builder_source(spec, collected, "delete"),
+        _resource_identify_source(spec, collected, resource)) if block)
+    action_wrappers = []
+    for action_key in _ACTION_KEYS:
+        if action_key == "update" and not spec.get("actions", {}).get("update"):
+            continue
+        action = spec["actions"][action_key]["action"]
+        action_wrappers.append(
+            "def _%s(module, client, models, params):\n"
+            "    request = build_%s_request(models, params)\n"
+            "    module.sdk_call(client.%s, request)" % (action_key, action_key, action))
+    wrappers_block = "\n\n\n".join(action_wrappers)
+    argument_lines = _resource_argument_spec_lines(spec, collected, option_order)
+    documentation = _resource_documentation(spec, collected, option_order)
+    examples_block = "\n".join(example_lines
+                               for example_lines in _resource_examples(spec, label))
+
+    return f"""\
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+{RESOURCE_SKEL_MARKER}
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
+DOCUMENTATION = r'''
+{documentation}
+'''
+
+EXAMPLES = r'''
+{examples_block}
+'''
+
+RETURN = r'''
+{result_key}:
+  description: The {label} as reported by V({identify_action}) after the operation.
+  returned: success
+  type: dict
+  sample: {{}}
+'''
+
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+
+
+def _load_{suffix}():
+    from {spec['service_package']} import models, {spec['client_module']}
+    return models, {spec['client_module']}
+
+
+{builder_block}
+
+
+{wrappers_block}
+
+
+def run_module():
+    module = TencentCloudModule(
+        argument_spec={{
+{argument_lines}
+        }},
+        supports_check_mode=True,
+    )
+    module.require_sdk()
+
+    state = module.params["state"]
+    models, {spec['client_module']} = _load_{suffix}()
+    client = module.create_client({client_ref}, "{endpoint}")
+
+    try:
+        current = find_{resource}(module, client, models, module.params)
+    except Exception as exc:
+        if _is_not_found(exc):
+            current = None
+        else:
+            module.fail_json(
+                msg="Tencent Cloud API request failed",
+                error=str(exc),
+                error_code=getattr(exc, "get_code", lambda: None)(),
+                request_id=getattr(exc, "get_request_id", lambda: None)(),
+            )
+
+    if state == "absent":
+        if current is None:
+            module.exit_json(changed=False, msg="{label} already absent")
+        diff = maybe_diff(module, current, None)
+        if module.check_mode:
+            module.exit_json(changed=True, **(diff or {{}}), msg="Would delete {label}")
+        _delete(module, client, models, module.params)
+        module.exit_json(changed=True, **(diff or {{}}), {result_key}=None,
+                         msg="{label} deleted")
+
+    # state == present
+    if current is None:
+        if module.check_mode:
+            module.exit_json(changed=True, msg="Would create {label}")
+        _create(module, client, models, module.params)
+        current = find_{resource}(module, client, models, module.params)
+        module.exit_json(changed=True, {result_key}=current, msg="{label} created")
+
+    # TODO(resource): detect drift between module.params and `current` and
+    # call _update() when the resource differs. Which fields to compare,
+    # whether the API accepts partial updates and which attributes are
+    # read-only vary per service; until this section is implemented the
+    # module reports an existing resource as up to date.
+    module.exit_json(changed=False, {result_key}=current, msg="{label} is up to date")
+
+
+def _is_not_found(exc):
+    \"\"\"Return True when the SDK reports the resource does not exist.\"\"\"
+    from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found
+    return is_not_found(exc)
+
+
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+
+def _resource_examples(spec, label):
+    """Render the EXAMPLES body: create/absent playbook snippets."""
+    lines = []
+    for state, title in (("present", "Create"), ("absent", "Delete")):
+        lines.append("- name: %s the %s" % (title, label))
+        lines.append("  susunola.tencentcloud.%s:" % spec["module"])
+        lines.append("    region: ap-guangzhou")
+        lines.append("    state: %s" % state)
+        for option in spec["identity"][:2]:
+            lines.append('    %s: "example"' % option)
+    return lines
+
+
+def validate_resource_specs(specs):
+    """Return a list of structural problems across *specs* (empty means ok).
+
+    Mirrors validate_specs() for the curated RESOURCE_SPECS table: catches
+    missing keys, unknown action shapes and identity options colliding with
+    the shared argument spec before the SDK is ever introspected. Identity
+    coverage against the actual request models is verified later by
+    collect_resource_fields().
+    """
+    problems = []
+    seen = set()
+    info_modules = {spec["module"] for spec in SPECS}
+    for index, spec in enumerate(specs):
+        location = "resource_specs[%d] %r" % (index, spec.get("module"))
+        module = spec.get("module")
+        if not module or not isinstance(module, str):
+            problems.append("%s: missing string 'module'" % location)
+            continue
+        if module.endswith("_info"):
+            problems.append(
+                "%s: resource modules do not end in _info" % location)
+        if module in seen:
+            problems.append("%s: duplicate resource spec" % location)
+        seen.add(module)
+        if module in info_modules:
+            problems.append(
+                "%s: collides with an existing _info module" % location)
+        for key in ("short_description", "label", "resource", "result_key",
+                    "service_package", "client_module", "client_class",
+                    "sdk_package", "endpoint", "identity", "actions",
+                    "identify"):
+            if not spec.get(key):
+                problems.append("%s: missing required key %r"
+                                % (location, key))
+        for verb in ("create", "delete"):
+            cfg = (spec.get("actions") or {}).get(verb)
+            if not (cfg and cfg.get("action") and cfg.get("request_class")):
+                problems.append(
+                    "%s: actions.%s needs action and request_class"
+                    % (location, verb))
+        update = (spec.get("actions") or {}).get("update")
+        if update is not None and not (
+                update.get("action") and update.get("request_class")):
+            problems.append(
+                "%s: actions.update needs action and request_class"
+                % location)
+        identify = spec.get("identify")
+        if not (identify and identify.get("action")
+                and identify.get("request_class")):
+            problems.append(
+                "%s: identify needs action and request_class" % location)
+        for key in ("resource", "result_key"):
+            if not re.match(r"^[a-z][a-z0-9_]*$", spec.get(key, "")):
+                problems.append(
+                    "%s: %s must be a snake_case identifier" % (location, key))
+        identity = spec.get("identity")
+        if not identity or not isinstance(identity, list):
+            problems.append(
+                "%s: identity must be a non-empty list of options" % location)
+            identity = []
+        for option in identity:
+            if option in _RESERVED_OPTION_NAMES:
+                problems.append(
+                    "%s: identity option %r collides with the shared "
+                    "argument spec" % (location, option))
+            if not isinstance(option, str) or not option:
+                problems.append(
+                    "%s: identity entries must be non-empty strings"
+                    % location)
+        no_log = spec.get("no_log", [])
+        if not isinstance(no_log, list):
+            problems.append("%s: no_log must be a list of options" % location)
+        else:
+            for option in no_log:
+                if not isinstance(option, str) or not option:
+                    problems.append(
+                        "%s: no_log entries must be non-empty strings"
+                        % location)
+    return problems
+
+
+def _verify_resource_spec(spec):
+    """Introspect the SDK models for *spec*; return problems (empty is ok).
+
+    Raises nothing: SDK import failures and request-model mismatches are
+    returned as problems so callers decide how strict to be.
+    """
+    try:
+        collect_resource_fields(spec)
+    except ValueError as exc:
+        return [str(exc)]
+    return []
+
+
+def _resource_main(args, out=None, err=None):
+    out = out or sys.stdout
+    err = err or sys.stderr
+    if args.resource:
+        selected = [spec for spec in RESOURCE_SPECS
+                    if spec["module"] == args.resource]
+        if not selected:
+            print("no RESOURCE_SPECS entry for module %r" % args.resource,
+                  file=err)
+            return 1
+    else:
+        selected = list(RESOURCE_SPECS)
+
+    problems = validate_resource_specs(selected)
+    if problems:
+        print("invalid resource specs:", file=err)
+        for problem in problems:
+            print("  - %s" % problem, file=err)
+        return 1
+
+    if args.print and not args.resource:
+        print("--print applies to a single --resource", file=err)
+        return 1
+
+    stale = []
+    for spec in selected:
+        path = MODULES_DIR / ("%s.py" % spec["module"])
+        exists = path.exists()
+        if args.print:
+            problems = _verify_resource_spec(spec)
+            if problems:
+                for problem in problems:
+                    print("  - %s" % problem, file=err)
+                return 1
+            collected = collect_resource_fields(spec)
+            out.write(render_resource_skeleton(spec, collected))
+            continue
+        if exists:
+            if args.check:
+                problems = _verify_resource_spec(spec)
+                if problems:
+                    print("spec %s no longer matches the installed SDK:"
+                          % spec["module"], file=err)
+                    for problem in problems:
+                        print("  - %s" % problem, file=err)
+                    return 1
+            print("exists: %s (skeleton is write-once; not overwritten)"
+                  % path, file=out)
+            continue
+        if args.check:
+            stale.append(path.name)
+            continue
+        problems = _verify_resource_spec(spec)
+        if problems:
+            print("cannot scaffold %s:" % spec["module"], file=err)
+            for problem in problems:
+                print("  - %s" % problem, file=err)
+            return 1
+        collected = collect_resource_fields(spec)
+        path.write_text(render_resource_skeleton(spec, collected))
+        print("wrote skeleton: %s" % path, file=out)
+
+    if args.check and stale:
+        print("missing scaffolds: " + ", ".join(stale), file=err)
+        print("scaffold them with --resource <module>", file=err)
+        return 1
+    return 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--check", action="store_true",
         help="do not write files; fail if a generated module is missing or stale",
     )
+    parser.add_argument(
+        "--resource", metavar="MODULE", default=None,
+        help="scaffold the RESOURCE_SPECS entry named MODULE (write-once)",
+    )
+    parser.add_argument(
+        "--resources", action="store_true",
+        help="scaffold or verify every RESOURCE_SPECS entry",
+    )
+    parser.add_argument(
+        "--print", action="store_true",
+        help="with --resource: print the rendered skeleton instead of writing",
+    )
     args = parser.parse_args(argv)
+
+    if args.resource or args.resources:
+        return _resource_main(args)
 
     problems = validate_specs(SPECS)
     if problems:

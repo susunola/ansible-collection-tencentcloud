@@ -20,13 +20,13 @@ class FakeModels:
 
 
 def test_build_request_sets_pagination():
-    request = gme_voice_print_info.build_request(FakeModels, None, 200, 100)
+    request = gme_voice_print_info.build_request(FakeModels, 1, None, 200, 100)
     assert request.PageIndex == 3
     assert request.PageSize == 100
 
 
 def test_build_request_maps_ids():
-    request = gme_voice_print_info.build_request(FakeModels, ["x-1"], 0, 100)
+    request = gme_voice_print_info.build_request(FakeModels, 1, ["x-1"], 0, 100)
     assert request.VoicePrintIdList == ["x-1"]
 
 
@@ -107,7 +107,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                voice_print_ids=None, page_size=2)
+                describe_mode=1, voice_print_ids=None, page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["voice_prints"]] == ["a", "b", "c"]
@@ -139,6 +139,7 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
     # page_size (and ids/filters when declared) before the API call fails.
     fake = FakeModule({
         "region": "ap-guangzhou",
+        "describe_mode": 1,
         "voice_print_ids": None,
         "page_size": 2,
     })

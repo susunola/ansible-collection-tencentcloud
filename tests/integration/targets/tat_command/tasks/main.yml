@@ -1,0 +1,61 @@
+---
+- name: TAT command real-cloud lifecycle
+  vars:
+    run_id: "{{ lookup('env', 'GITHUB_RUN_ID') | default(99999999 | random, true) }}"
+    command_name: "ansible-tat-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  block:
+    - name: Predict command creation
+      susunola.tencentcloud.tat_command:
+        name: "{{ command_name }}"
+        content: "echo integration"
+      check_mode: true
+      register: predicted
+    - name: Create command
+      susunola.tencentcloud.tat_command:
+        name: "{{ command_name }}"
+        content: "echo integration"
+      register: created
+    - name: Reconcile command
+      susunola.tencentcloud.tat_command:
+        command_id: "{{ created.command.CommandId }}"
+        name: "{{ command_name }}"
+        content: "echo integration"
+      register: same
+    - name: Update command
+      susunola.tencentcloud.tat_command:
+        command_id: "{{ created.command.CommandId }}"
+        name: "{{ command_name }}"
+        content: "echo integration-updated"
+      register: updated
+    - name: Verify TAT contract
+      ansible.builtin.assert:
+        that:
+          - predicted is changed
+          - created is changed
+          - same is not changed
+          - updated is changed
+    - name: Delete command
+      susunola.tencentcloud.tat_command:
+        state: absent
+        command_id: "{{ created.command.CommandId }}"
+      register: deleted
+    - name: Delete command again
+      susunola.tencentcloud.tat_command:
+        state: absent
+        command_id: "{{ created.command.CommandId }}"
+      register: deleted_again
+    - name: Verify TAT deletion
+      ansible.builtin.assert:
+        that:
+          - deleted is changed
+          - deleted_again is not changed
+  always:
+    - name: Clean up command
+      susunola.tencentcloud.tat_command:
+        state: absent
+        command_id: "{{ created.command.CommandId | default(omit) }}"
+        name: "{{ command_name }}"
+      ignore_errors: true

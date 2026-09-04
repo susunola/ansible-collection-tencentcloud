@@ -14,6 +14,18 @@ short_description: Gather information about Tencent Cloud WEILINGWITH element pr
 version_added: "0.8.0"
 description: Returns WEILINGWITH element profile pages visible in a Tencent Cloud region.
 options:
+  workspace_id:
+    description: Project space ID.
+    type: str
+    required: true
+  application_token:
+    description: Application token issued for the workspace.
+    type: str
+    required: true
+  building_id:
+    description: Building ID.
+    type: str
+    required: true
   element_profile_page_ids:
     description: Element profile page IDs to return.
     type: list
@@ -27,14 +39,12 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all element profile pages
+- name: List element profiles of a building
   susunola.tencentcloud.weilingwith_element_profile_page_info:
     region: ap-guangzhou
-
-- name: Find element profile pages by ID
-  susunola.tencentcloud.weilingwith_element_profile_page_info:
-    region: ap-guangzhou
-    element_profile_page_ids: [x-xxxxxxxx]
+    workspace_id: "1016"
+    application_token: ZRCJHdnhqEUEqO1vyskCgWimPucHhREV
+    building_id: 956bd069-c802-4bbb-b325-18d30d7bcd3c
 '''
 
 RETURN = r'''
@@ -61,10 +71,13 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, element_profile_page_ids, offset, limit):
+def build_request(models, workspace_id, application_token, building_id, element_profile_page_ids, offset, limit):
     request = models.DescribeElementProfilePageRequest()
     request.PageNumber = offset // limit + 1
     request.PageSize = limit
+    request.WorkspaceId = workspace_id
+    request.ApplicationToken = application_token
+    request.BuildingId = building_id
     if element_profile_page_ids:
         request.ParentElementIds = element_profile_page_ids
     return request
@@ -73,6 +86,9 @@ def build_request(models, element_profile_page_ids, offset, limit):
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "workspace_id": {"type": "str", "required": True},
+        "application_token": {"type": "str", "required": True, "no_log": True},
+        "building_id": {"type": "str", "required": True},
         "element_profile_page_ids": {"type": "list", "elements": "str"},
         "page_size": {"type": "int", "default": 100},
     })
@@ -91,7 +107,14 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, module.params["element_profile_page_ids"], offset, limit),
+        lambda offset, limit: build_request(
+            models,
+            module.params["workspace_id"],
+            module.params["application_token"],
+            module.params["building_id"],
+            module.params["element_profile_page_ids"],
+            offset,
+            limit),
         lambda request: sdk_call(module, client.DescribeElementProfilePage, request),
         lambda response: response.Result.List if response.Result is not None else None,
         lambda response: response.Result.TotalCount if response.Result is not None else None,

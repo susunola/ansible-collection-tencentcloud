@@ -41,6 +41,15 @@ def test_build_diff_strips_empty_values():
     assert diff["after"] == {"a": "x"}
 
 
+def test_build_diff_normalizes_nested_lists():
+    diff = build_diff(
+        {"rules": ["a", "", None, [], {"port": 80}]},
+        {"rules": ["a", {"port": 80}]},
+    )
+    assert diff["before"]["rules"] == ["a", {"port": 80}]
+    assert diff["after"]["rules"] == ["a", {"port": 80}]
+
+
 def test_changed_detects_difference():
     assert changed({"name": "old"}, {"name": "new"})
     assert not changed({"name": "same"}, {"name": "same"})

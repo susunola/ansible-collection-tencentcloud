@@ -184,6 +184,7 @@ import hashlib
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found
 
 
 def _load_scf():
@@ -207,8 +208,7 @@ def find_function(module, client, models, function_name, namespace):
         request.Namespace = namespace
         response = module.sdk_call(client.GetFunction, request)
     except Exception as exc:
-        code = getattr(exc, "get_code", lambda: None)()
-        if code and ("NotFound" in str(code) or code == "ResourceNotFound.FunctionName"):
+        if is_not_found(exc):
             return None
         raise
     return response._serialize(allow_none=True)

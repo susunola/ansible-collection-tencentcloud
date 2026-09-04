@@ -49,6 +49,16 @@ def test_tags_from_sdk_empty_and_none():
     assert tagging.tags_from_sdk([]) == {}
 
 
+def test_tags_from_sdk_accepts_dict_items():
+    """Serialized dicts (not SDK objects) must be accepted too."""
+    sdk = [
+        {"Key": "env", "Value": "prod"},
+        {"Key": "", "Value": "empty-key"},
+        {"Value": "no-key"},
+    ]
+    assert tagging.tags_from_sdk(sdk) == {"env": "prod"}
+
+
 def test_build_sdk_tags():
     sdk_tags = tagging.build_sdk_tags(FakeModels, {"a": "1", "b": "2"})
     assert [(t.Key, t.Value) for t in sdk_tags] == [("a", "1"), ("b", "2")]

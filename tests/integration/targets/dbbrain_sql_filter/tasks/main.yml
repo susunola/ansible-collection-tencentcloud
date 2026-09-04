@@ -1,0 +1,52 @@
+---
+- name: Read DBbrain integration inputs
+  ansible.builtin.set_fact:
+    dbbrain_instance_id: "{{ lookup('env', 'TENCENTCLOUD_DBBRAIN_INSTANCE_ID') | default('', true) }}"
+    dbbrain_session_token: "{{ lookup('env', 'TENCENTCLOUD_DBBRAIN_SESSION_TOKEN') | default('', true) }}"
+
+- name: Explain skipped DBbrain integration
+  ansible.builtin.debug:
+    msg: Set TENCENTCLOUD_DBBRAIN_INSTANCE_ID and TENCENTCLOUD_DBBRAIN_SESSION_TOKEN to run this high-impact target.
+  when: not (dbbrain_instance_id and dbbrain_session_token)
+
+- name: DBbrain SQL filter lifecycle
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  when: dbbrain_instance_id and dbbrain_session_token
+  block:
+    - name: Create SQL filter
+      susunola.tencentcloud.dbbrain_sql_filter:
+        instance_id: "{{ dbbrain_instance_id }}"
+        sql_type: SELECT
+        filter_key: ansible_e2e_marker
+        max_concurrency: 1
+        duration: 600
+        session_token: "{{ dbbrain_session_token }}"
+      register: created
+
+    - name: Reconcile SQL filter
+      susunola.tencentcloud.dbbrain_sql_filter:
+        instance_id: "{{ dbbrain_instance_id }}"
+        sql_type: SELECT
+        filter_key: ansible_e2e_marker
+        max_concurrency: 1
+        duration: 600
+        session_token: "{{ dbbrain_session_token }}"
+      register: reconciled
+
+    - name: Verify SQL filter idempotency
+      ansible.builtin.assert:
+        that:
+          - created is changed
+          - reconciled is not changed
+  always:
+    - name: Terminate SQL filter
+      susunola.tencentcloud.dbbrain_sql_filter:
+        state: absent
+        instance_id: "{{ dbbrain_instance_id }}"
+        sql_type: SELECT
+        filter_key: ansible_e2e_marker
+        max_concurrency: 1
+        session_token: "{{ dbbrain_session_token }}"
+      ignore_errors: true

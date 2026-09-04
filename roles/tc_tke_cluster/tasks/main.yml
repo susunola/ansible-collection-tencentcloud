@@ -1,0 +1,8 @@
+---
+- name: Include teardown tasks (reverse order)
+  ansible.builtin.include_tasks: teardown.yml
+  when: tc_tke_cluster_state == 'absent'
+
+- name: Include provision tasks (forward order)
+  ansible.builtin.include_tasks: provision.yml
+  when: tc_tke_cluster_state != 'absent'

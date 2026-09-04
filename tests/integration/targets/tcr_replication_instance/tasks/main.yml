@@ -1,0 +1,47 @@
+---
+- name: Read TCR replication integration inputs
+  ansible.builtin.set_fact:
+    tcr_registry_id: "{{ lookup('env', 'TENCENTCLOUD_TCR_REGISTRY_ID') | default('', true) }}"
+    tcr_replication_region_id: "{{ lookup('env', 'TENCENTCLOUD_TCR_REPLICATION_REGION_ID') | default('', true) }}"
+    tcr_replication_region_name: "{{ lookup('env', 'TENCENTCLOUD_TCR_REPLICATION_REGION_NAME') | default('', true) }}"
+
+- name: Explain skipped TCR integration
+  ansible.builtin.debug:
+    msg: Set the TENCENTCLOUD_TCR_REGISTRY_ID and replication region variables to run this billable target.
+  when: not (tcr_registry_id and tcr_replication_region_id and tcr_replication_region_name)
+
+- name: TCR replication instance lifecycle
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  when: tcr_registry_id and tcr_replication_region_id and tcr_replication_region_name
+  block:
+    - name: Create replication instance
+      susunola.tencentcloud.tcr_replication_instance:
+        registry_id: "{{ tcr_registry_id }}"
+        replication_region_id: "{{ tcr_replication_region_id | int }}"
+        replication_region_name: "{{ tcr_replication_region_name }}"
+        waiter_timeout: 1800
+      register: created
+
+    - name: Reconcile replication instance
+      susunola.tencentcloud.tcr_replication_instance:
+        registry_id: "{{ tcr_registry_id }}"
+        replication_region_id: "{{ tcr_replication_region_id | int }}"
+        replication_region_name: "{{ tcr_replication_region_name }}"
+      register: reconciled
+
+    - name: Verify replication idempotency
+      ansible.builtin.assert:
+        that:
+          - created is changed
+          - reconciled is not changed
+  always:
+    - name: Delete replication instance
+      susunola.tencentcloud.tcr_replication_instance:
+        state: absent
+        registry_id: "{{ tcr_registry_id }}"
+        replication_region_id: "{{ tcr_replication_region_id | int }}"
+        replication_region_name: "{{ tcr_replication_region_name }}"
+        waiter_timeout: 1800
+      ignore_errors: true

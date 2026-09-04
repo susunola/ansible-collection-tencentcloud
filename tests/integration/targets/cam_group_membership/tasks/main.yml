@@ -1,0 +1,51 @@
+---
+- name: Read CAM membership integration inputs
+  ansible.builtin.set_fact:
+    cam_group_id: "{{ lookup('env', 'TENCENTCLOUD_CAM_GROUP_ID') | default('', true) }}"
+    cam_sub_uin: "{{ lookup('env', 'TENCENTCLOUD_CAM_SUB_UIN') | default('', true) }}"
+
+- name: Explain skipped CAM membership integration
+  ansible.builtin.debug:
+    msg: Set TENCENTCLOUD_CAM_GROUP_ID and TENCENTCLOUD_CAM_SUB_UIN to run this target.
+  when: not (cam_group_id and cam_sub_uin)
+
+- name: CAM group membership end-to-end
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  when: cam_group_id and cam_sub_uin
+  block:
+    - name: Add user to group
+      susunola.tencentcloud.cam_group_membership:
+        group_id: "{{ cam_group_id | int }}"
+        sub_uin: "{{ cam_sub_uin | int }}"
+      register: added
+
+    - name: Reconcile membership again
+      susunola.tencentcloud.cam_group_membership:
+        group_id: "{{ cam_group_id | int }}"
+        sub_uin: "{{ cam_sub_uin | int }}"
+      register: second
+
+    - name: Check removal
+      susunola.tencentcloud.cam_group_membership:
+        state: absent
+        group_id: "{{ cam_group_id | int }}"
+        sub_uin: "{{ cam_sub_uin | int }}"
+      check_mode: true
+      register: checked
+
+    - name: Verify membership lifecycle
+      ansible.builtin.assert:
+        that:
+          - added is changed
+          - second is not changed
+          - checked is changed
+
+  always:
+    - name: Remove user from group
+      susunola.tencentcloud.cam_group_membership:
+        state: absent
+        group_id: "{{ cam_group_id | int }}"
+        sub_uin: "{{ cam_sub_uin | int }}"
+      ignore_errors: true

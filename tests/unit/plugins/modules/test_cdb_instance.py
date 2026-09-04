@@ -3,12 +3,21 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
+import pytest
+
 from ansible_collections.susunola.tencentcloud.plugins.modules.cdb_instance import (
     build_describe_request,
+    build_restart_request,
+    build_task_status_request,
+    build_upgrade_request,
     find_instance,
     _create,
     _rename,
     _delete,
+    _restart,
+    _upgrade,
+    _wait_delivered,
+    _wait_status,
 )
 
 
@@ -27,14 +36,18 @@ class FakeModels(object):
     CreateDBInstanceRequest = FakeRequest
     ModifyDBInstanceNameRequest = FakeRequest
     IsolateDBInstanceRequest = FakeRequest
+    RestartDBInstancesRequest = FakeRequest
+    UpgradeDBInstanceRequest = FakeRequest
+    DescribeAsyncRequestInfoRequest = FakeRequest
     TagInfoUnit = FakeTagInfoUnit
 
 
 class FakeInstance(object):
-    def __init__(self, instance_id, name):
+    def __init__(self, instance_id, name, status=1, task_status=0):
         self.InstanceId = instance_id
         self.InstanceName = name
-        self.Status = 1
+        self.Status = status
+        self.TaskStatus = task_status
         self.Memory = 8000
         self.Volume = 100
         self.EngineVersion = "8.0"
@@ -44,6 +57,7 @@ class FakeInstance(object):
             "InstanceId": self.InstanceId,
             "InstanceName": self.InstanceName,
             "Status": self.Status,
+            "TaskStatus": self.TaskStatus,
             "Memory": self.Memory,
             "Volume": self.Volume,
             "EngineVersion": self.EngineVersion,
@@ -60,17 +74,34 @@ class FakeCreateResponse(object):
         self.InstanceIds = instance_ids
 
 
+class FakeRestartResponse(object):
+    def __init__(self, async_request_id):
+        self.AsyncRequestId = async_request_id
+
+
+class FakeTaskResponse(object):
+    def __init__(self, status, info=None):
+        self.Status = status
+        self.Info = info
+
+
 class FakeClient(object):
     def __init__(self, describe_response=None, create_response=None, exc=None):
         self.describe_response = describe_response
+        self.describe_pages = []
         self.create_response = create_response
         self.exc = exc
+        self.restart_response = None
+        self.upgrade_response = None
+        self.task_responses = []
         self.calls = []
 
     def DescribeDBInstances(self, request):
         self.calls.append(("DescribeDBInstances", request))
         if self.exc:
             raise self.exc
+        if self.describe_pages:
+            return FakeDescribeResponse(self.describe_pages.pop(0))
         return self.describe_response
 
     def CreateDBInstance(self, request):
@@ -83,13 +114,32 @@ class FakeClient(object):
     def IsolateDBInstance(self, request):
         self.calls.append(("IsolateDBInstance", request))
 
+    def RestartDBInstances(self, request):
+        self.calls.append(("RestartDBInstances", request))
+        return self.restart_response
+
+    def UpgradeDBInstance(self, request):
+        self.calls.append(("UpgradeDBInstance", request))
+        return self.upgrade_response
+
+    def DescribeAsyncRequestInfo(self, request):
+        self.calls.append(("DescribeAsyncRequestInfo", request))
+        return self.task_responses.pop(0)
+
 
 class FakeModule(object):
     def __init__(self):
-        self.params = {"retries": 2}
+        self.params = {"retries": 2, "waiter_timeout": 10, "waiter_delay": 1}
+        self.check_mode = False
 
     def sdk_call(self, operation, request):
         return operation(request)
+
+    def fail_json(self, *args, **kwargs):
+        if args:
+            kwargs["msg"] = args[0]
+        kwargs["failed"] = True
+        raise SystemExit(kwargs)
 
 
 def test_build_describe_request_by_id():
@@ -209,3 +259,163 @@ def test_delete_isolates_instance():
     _delete(module, client, FakeModels, "cdb-1")
     assert [c[0] for c in client.calls] == ["IsolateDBInstance"]
     assert client.calls[-1][1].InstanceId == "cdb-1"
+
+
+def test_build_restart_request_sends_instance_ids_array():
+    request = build_restart_request(FakeModels, "cdb-1")
+    assert request.InstanceIds == ["cdb-1"]
+
+
+def test_build_task_status_request_sends_async_request_id():
+    request = build_task_status_request(FakeModels, "task-1")
+    assert request.AsyncRequestId == "task-1"
+
+
+def test_restart_polls_async_task_until_success():
+    client = FakeClient()
+    client.restart_response = FakeRestartResponse("task-1")
+    client.task_responses = [
+        FakeTaskResponse("RUNNING"),
+        FakeTaskResponse("INITIAL"),
+        FakeTaskResponse("SUCCESS", "restart ok"),
+    ]
+    module = FakeModule()
+    _restart(module, client, FakeModels, "cdb-1")
+    names = [c[0] for c in client.calls]
+    assert names == [
+        "RestartDBInstances",
+        "DescribeAsyncRequestInfo",
+        "DescribeAsyncRequestInfo",
+        "DescribeAsyncRequestInfo",
+    ]
+    assert client.calls[0][1].InstanceIds == ["cdb-1"]
+    assert all(
+        request.AsyncRequestId == "task-1"
+        for name, request in client.calls[1:]
+    )
+
+
+def test_restart_fails_fast_on_task_failure():
+    client = FakeClient()
+    client.restart_response = FakeRestartResponse("task-1")
+    client.task_responses = [FakeTaskResponse("FAILED", "restart rejected")]
+    module = FakeModule()
+    with pytest.raises(SystemExit) as excinfo:
+        _restart(module, client, FakeModels, "cdb-1")
+    assert "restart rejected" in excinfo.value.args[0]["msg"]
+    assert [c[0] for c in client.calls] == ["RestartDBInstances", "DescribeAsyncRequestInfo"]
+
+
+def test_restart_fails_when_no_async_request_id():
+    client = FakeClient()
+    client.restart_response = FakeRestartResponse(None)
+    module = FakeModule()
+    with pytest.raises(SystemExit) as excinfo:
+        _restart(module, client, FakeModels, "cdb-1")
+    assert "no AsyncRequestId" in excinfo.value.args[0]["msg"]
+    assert [c[0] for c in client.calls] == ["RestartDBInstances"]
+
+
+def test_build_upgrade_request_sends_id_memory_volume():
+    request = build_upgrade_request(FakeModels, "cdb-1", 16000, 200)
+    assert request.InstanceId == "cdb-1"
+    assert request.Memory == 16000
+    assert request.Volume == 200
+
+
+def test_upgrade_polls_async_task_until_success():
+    client = FakeClient()
+    client.upgrade_response = FakeRestartResponse("task-9")
+    client.task_responses = [
+        FakeTaskResponse("RUNNING"),
+        FakeTaskResponse("SUCCESS", "spec change ok"),
+    ]
+    module = FakeModule()
+    _upgrade(module, client, FakeModels, "cdb-1", 16000, 200)
+    names = [c[0] for c in client.calls]
+    assert names == [
+        "UpgradeDBInstance",
+        "DescribeAsyncRequestInfo",
+        "DescribeAsyncRequestInfo",
+    ]
+    request = client.calls[0][1]
+    assert request.InstanceId == "cdb-1"
+    assert request.Memory == 16000
+    assert request.Volume == 200
+    assert all(
+        task.AsyncRequestId == "task-9"
+        for name, task in client.calls[1:]
+    )
+
+
+def test_upgrade_fails_fast_on_task_failure():
+    client = FakeClient()
+    client.upgrade_response = FakeRestartResponse("task-9")
+    client.task_responses = [FakeTaskResponse("FAILED", "spec rejected")]
+    module = FakeModule()
+    with pytest.raises(SystemExit) as excinfo:
+        _upgrade(module, client, FakeModels, "cdb-1", 16000, 200)
+    assert "spec rejected" in excinfo.value.args[0]["msg"]
+    assert [c[0] for c in client.calls] == ["UpgradeDBInstance", "DescribeAsyncRequestInfo"]
+
+
+def test_upgrade_fails_when_no_async_request_id():
+    client = FakeClient()
+    client.upgrade_response = FakeRestartResponse(None)
+    module = FakeModule()
+    with pytest.raises(SystemExit) as excinfo:
+        _upgrade(module, client, FakeModels, "cdb-1", 16000, 200)
+    assert "no AsyncRequestId" in excinfo.value.args[0]["msg"]
+    assert [c[0] for c in client.calls] == ["UpgradeDBInstance"]
+
+
+def _wait_module(timeout=10, delay=1):
+    module = FakeModule()
+    module.params = {"retries": 2, "waiter_timeout": timeout, "waiter_delay": delay}
+    return module
+
+
+def test_wait_delivered_polls_until_status_1_task_0():
+    client = FakeClient()
+    client.describe_pages = [
+        [FakeInstance("cdb-1", "prod-mysql", status=0, task_status=10)],
+        [FakeInstance("cdb-1", "prod-mysql", status=1, task_status=12)],
+        [FakeInstance("cdb-1", "prod-mysql", status=1, task_status=0)],
+    ]
+    module = _wait_module(timeout=10, delay=0.01)
+    assert _wait_delivered(module, client, FakeModels, "cdb-1") == (1, 0)
+    assert len(client.calls) == 3
+
+
+def test_wait_delivered_keeps_polling_while_instance_not_visible():
+    client = FakeClient()
+    client.describe_pages = [
+        [],
+        [FakeInstance("cdb-1", "prod-mysql", status=0, task_status=2)],
+        [FakeInstance("cdb-1", "prod-mysql", status=1, task_status=0)],
+    ]
+    module = _wait_module(timeout=10, delay=0.01)
+    assert _wait_delivered(module, client, FakeModels, "cdb-1") == (1, 0)
+    assert len(client.calls) == 3
+
+
+def test_wait_delivered_times_out_on_stuck_creation():
+    client = FakeClient()
+    client.describe_pages = [[FakeInstance("cdb-1", "prod-mysql", status=0, task_status=2)]] * 20
+    module = _wait_module(timeout=0.15, delay=0.05)
+    with pytest.raises(SystemExit) as excinfo:
+        _wait_delivered(module, client, FakeModels, "cdb-1")
+    assert "Timed out waiting for resource state" in excinfo.value.args[0]["msg"]
+    assert excinfo.value.args[0]["expected_states"] == [(1, 0)]
+
+
+def test_wait_status_waits_for_isolated():
+    client = FakeClient()
+    client.describe_pages = [
+        [FakeInstance("cdb-1", "prod-mysql", status=1)],
+        [FakeInstance("cdb-1", "prod-mysql", status=4)],
+        [FakeInstance("cdb-1", "prod-mysql", status=5)],
+    ]
+    module = _wait_module(timeout=10, delay=0.01)
+    assert _wait_status(module, client, FakeModels, "cdb-1", [5]) == 5
+    assert len(client.calls) == 3

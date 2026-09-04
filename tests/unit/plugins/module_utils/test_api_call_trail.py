@@ -128,3 +128,20 @@ def test_no_calls_means_no_trail_key():
         except AnsibleExitJson:
             pass
     assert "tc_api_calls" not in result
+
+
+def test_delegate_methods_forward_to_client(monkeypatch):
+    from ansible_collections.susunola.tencentcloud.plugins.module_utils import client as client_mod
+
+    module = _make_module()
+    seen = {}
+    monkeypatch.setattr(client_mod, "require_sdk", lambda m: seen.setdefault("require_sdk", True))
+    sentinel_cred = object()
+    monkeypatch.setattr(client_mod, "create_credential", lambda m: sentinel_cred)
+    sentinel_client = object()
+    monkeypatch.setattr(client_mod, "create_client", lambda m, cls, endpoint: sentinel_client)
+
+    module.require_sdk()
+    assert module.create_credential() is sentinel_cred
+    assert module.create_client("VpcClient", "vpc.tencentcloudapi.com") is sentinel_client
+    assert seen.get("require_sdk") is True

@@ -63,7 +63,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 
 def build_request(models, sdk_app_id, extension_ids, offset, limit):
     request = models.DescribeExtensionsRequest()
-    request.PageNumber = offset // limit + 1
+    request.PageNumber = offset // limit
     request.PageSize = limit
     request.SdkAppId = sdk_app_id
     if extension_ids:

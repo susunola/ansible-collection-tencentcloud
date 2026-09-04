@@ -76,6 +76,7 @@ _DEFAULT_RE = re.compile(
     r"^(-?\d+(?:\.\d+)?|True|False|None|\[.*\]|['\"].*['\"])$"
 )
 
+
 # Fields the module can set through its ids/filters/extra_params options.
 def _covered_fields(spec):
     covered = set(PAGINATION_FIELDS.get(spec.get("pagination_type", "int"), set()))
@@ -120,7 +121,7 @@ def _docstring_fields(request_class):
         fields[name] = False
     param_lines = [(m.group(1), m.group(2).strip())
                    for m in _NEW_PARAM_RE.finditer(doc)]
-    if not any(_DEFAULT_RE.match(desc) for _, desc in param_lines):
+    if not any(_DEFAULT_RE.match(desc) for _field_name, desc in param_lines):
         # Format A: no default literals, requiredness not encoded. Keep only
         # fields pinned by an old-style marker.
         return fields

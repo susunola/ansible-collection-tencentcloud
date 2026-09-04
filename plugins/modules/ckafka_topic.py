@@ -76,6 +76,11 @@ options:
       - Maximum message size in bytes, written to
         V(CreateTopicRequest.MaxMessageBytes).
     type: int
+  min_insync_replicas: {description: Minimum in-sync replicas., type: int}
+  unclean_leader_election: {description: Allow an out-of-sync replica to become leader., type: bool}
+  producer_quota_mb: {description: Producer quota in MB/s; -1 means unlimited., type: int}
+  consumer_quota_mb: {description: Consumer quota in MB/s; -1 means unlimited., type: int}
+  message_timestamp_type: {description: Timestamp stored with messages., type: str, choices: [CreateTime, LogAppendTime]}
   tags:
     description:
       - Tags to apply to the topic as a dict, for example I(env=prod).
@@ -157,6 +162,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison i
 
 def _load_ckafka():
     from tencentcloud.ckafka.v20190819 import models, ckafka_client
+
     return models, ckafka_client
 
 
@@ -172,9 +178,15 @@ def find_topic(module, client, models, instance_id, topic_name):
     request.Offset = 0
     request.SearchWord = topic_name
     response = module.sdk_call(client.DescribeTopic, request)
-    for item in (response.Result or []):
+    for item in response.Result or []:
         if getattr(item, "TopicName", None) == topic_name:
-            return item._serialize(allow_none=True)
+            current = item._serialize(allow_none=True)
+            detail = models.DescribeTopicAttributesRequest()
+            detail.InstanceId, detail.TopicName = instance_id, topic_name
+            attributes = module.sdk_call(client.DescribeTopicAttributes, detail).Result
+            if attributes:
+                current.update(attributes._serialize(allow_none=True))
+            return current
     return None
 
 
@@ -194,28 +206,29 @@ def _create(module, client, models, params):
         request.Note = params["note"]
     if params["max_message_bytes"] is not None:
         request.MaxMessageBytes = params["max_message_bytes"]
+    if params.get("min_insync_replicas") is not None:
+        request.MinInsyncReplicas = params["min_insync_replicas"]
+    if params.get("unclean_leader_election") is not None:
+        request.UncleanLeaderElectionEnable = int(params["unclean_leader_election"])
+    if params.get("message_timestamp_type") is not None:
+        request.LogMsgTimestampType = params["message_timestamp_type"]
     return module.sdk_call(client.CreateTopic, request)
 
 
-def _validate_partition_scale(module, topic_name, current_partition_num,
-                              desired_partition_num):
+def _validate_partition_scale(module, topic_name, current_partition_num, desired_partition_num):
     """Fail when a partition change would require shrinking the topic.
 
     CKafka partitions can only be added, never removed.
     """
     if desired_partition_num < current_partition_num:
         module.fail_json(
-            msg="CKafka cannot reduce partitions: topic %s currently has %d, "
-                "requested %d" % (topic_name, current_partition_num,
-                                  desired_partition_num),
+            msg="CKafka cannot reduce partitions: topic %s currently has %d, requested %d" % (topic_name, current_partition_num, desired_partition_num),
         )
 
 
-def _scale_partitions(module, client, models, instance_id, topic_name,
-                      current_partition_num, desired_partition_num):
+def _scale_partitions(module, client, models, instance_id, topic_name, current_partition_num, desired_partition_num):
     """Scale a topic up to *desired_partition_num* via CreatePartition."""
-    _validate_partition_scale(module, topic_name, current_partition_num,
-                              desired_partition_num)
+    _validate_partition_scale(module, topic_name, current_partition_num, desired_partition_num)
     if desired_partition_num == current_partition_num:
         return
     request = models.CreatePartitionRequest()
@@ -241,6 +254,16 @@ def _update(module, client, models, instance_id, topic_name, current_partition_n
         request.Note = params["note"]
     if params["max_message_bytes"] is not None:
         request.MaxMessageBytes = params["max_message_bytes"]
+    if params.get("min_insync_replicas") is not None:
+        request.MinInsyncReplicas = params["min_insync_replicas"]
+    if params.get("unclean_leader_election") is not None:
+        request.UncleanLeaderElectionEnable = int(params["unclean_leader_election"])
+    if params.get("producer_quota_mb") is not None:
+        request.QuotaProducerByteRate = params["producer_quota_mb"]
+    if params.get("consumer_quota_mb") is not None:
+        request.QuotaConsumerByteRate = params["consumer_quota_mb"]
+    if params.get("message_timestamp_type") is not None:
+        request.LogMsgTimestampType = params["message_timestamp_type"]
     module.sdk_call(client.ModifyTopicAttributes, request)
 
 
@@ -264,6 +287,11 @@ def run_module():
             "clean_up_policy": {"type": "str", "choices": ["delete", "compact"]},
             "note": {"type": "str"},
             "max_message_bytes": {"type": "int"},
+            "min_insync_replicas": {"type": "int"},
+            "unclean_leader_election": {"type": "bool"},
+            "producer_quota_mb": {"type": "int"},
+            "consumer_quota_mb": {"type": "int"},
+            "message_timestamp_type": {"type": "str", "choices": ["CreateTime", "LogAppendTime"]},
             "tags": {"type": "dict", "default": {}},
         },
         supports_check_mode=True,
@@ -307,6 +335,8 @@ def run_module():
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), msg="Would create topic")
         _create(module, client, models, module.params)
+        if module.params["producer_quota_mb"] is not None or module.params["consumer_quota_mb"] is not None:
+            _update(module, client, models, instance_id, topic_name, module.params["partition_num"], module.params)
         created = find_topic(module, client, models, instance_id, topic_name)
         module.exit_json(changed=True, **(diff or {}), topic=created, msg="Topic created")
 
@@ -332,26 +362,39 @@ def run_module():
     max_message_bytes = module.params["max_message_bytes"]
     if max_message_bytes is not None and current.get("MaxMessageBytes") != max_message_bytes:
         changes.append("max_message_bytes")
+    for parameter, field in (
+        ("min_insync_replicas", "MinInsyncReplicas"),
+        ("producer_quota_mb", "QuotaProducerByteRate"),
+        ("consumer_quota_mb", "QuotaConsumerByteRate"),
+        ("message_timestamp_type", "LogMsgTimestampType"),
+    ):
+        value = module.params[parameter]
+        if value is not None and current.get(field) != value:
+            changes.append(parameter)
+    unclean = module.params["unclean_leader_election"]
+    if unclean is not None and current.get("UncleanLeaderElectionEnable") != int(unclean):
+        changes.append("unclean_leader_election")
 
     if not changes:
         module.exit_json(changed=False, topic=current, msg="Topic is up to date")
 
-    diff = maybe_diff(module, current, {
-        "PartitionNum": partition_num if partition_num is not None else current.get("PartitionNum"),
-        "ReplicaNum": replica_num if replica_num is not None else current.get("ReplicaNum"),
-        "Note": note if note is not None else current.get("Note"),
-    })
+    diff = maybe_diff(
+        module,
+        current,
+        {
+            "PartitionNum": partition_num if partition_num is not None else current.get("PartitionNum"),
+            "ReplicaNum": replica_num if replica_num is not None else current.get("ReplicaNum"),
+            "Note": note if note is not None else current.get("Note"),
+        },
+    )
     if partition_num is not None and partition_num != current.get("PartitionNum"):
-        _validate_partition_scale(module, topic_name, current.get("PartitionNum"),
-                                  partition_num)
+        _validate_partition_scale(module, topic_name, current.get("PartitionNum"), partition_num)
     if module.check_mode:
         module.exit_json(changed=True, **(diff or {}), msg="Would update topic")
 
     if partition_num is not None and partition_num != current.get("PartitionNum"):
-        _scale_partitions(module, client, models, instance_id, topic_name,
-                          current.get("PartitionNum"), partition_num)
-    _update(module, client, models, instance_id, topic_name,
-            current.get("PartitionNum"), module.params)
+        _scale_partitions(module, client, models, instance_id, topic_name, current.get("PartitionNum"), partition_num)
+    _update(module, client, models, instance_id, topic_name, current.get("PartitionNum"), module.params)
     updated = find_topic(module, client, models, instance_id, topic_name)
     module.exit_json(changed=True, **(diff or {}), topic=updated, msg="Topic updated")
 

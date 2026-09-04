@@ -1,0 +1,2 @@
+minor_changes:
+  - "requirements.txt - tencentcloud-sdk-python is now a compatibility range (>=3.1.164,<4.0.0) instead of an exact pin; generated _info specs remain vouched for the GENERATED_SDK_VERSION stamp, and CI re-pins the SDK to the stamp (via the new ``check_sdk_drift.py --print-stamp``) before the drift sentinel and contract tests."

@@ -1,0 +1,99 @@
+---
+- name: Read Private DNS integration inputs
+  ansible.builtin.set_fact:
+    private_dns_vpc_id: "{{ lookup('env', 'TENCENTCLOUD_PRIVATE_DNS_VPC_ID') | default('', true) }}"
+
+- name: Explain skipped Private DNS integration
+  ansible.builtin.debug:
+    msg: Set TENCENTCLOUD_PRIVATE_DNS_VPC_ID to run the Private DNS integration target.
+  when: not private_dns_vpc_id
+
+- name: Private DNS zone and record end-to-end
+  vars:
+    test_domain: "ansible-{{ 99999999 | random }}.internal"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  when: private_dns_vpc_id
+  block:
+    - name: Create private zone
+      susunola.tencentcloud.private_dns_zone:
+        domain: "{{ test_domain }}"
+        remark: CI integration test
+        vpcs:
+          - region: "{{ tencentcloud_region }}"
+            vpc_id: "{{ private_dns_vpc_id }}"
+      register: zone_create
+
+    - name: Reconcile private zone again
+      susunola.tencentcloud.private_dns_zone:
+        domain: "{{ test_domain }}"
+        remark: CI integration test
+        vpcs:
+          - region: "{{ tencentcloud_region }}"
+            vpc_id: "{{ private_dns_vpc_id }}"
+      register: zone_second
+
+    - name: Create private record
+      susunola.tencentcloud.private_dns_record:
+        zone_id: "{{ zone_create.zone.ZoneId }}"
+        subdomain: api
+        record_type: A
+        value: 10.0.0.8
+        ttl: 300
+      register: record_create
+
+    - name: Reconcile private record again
+      susunola.tencentcloud.private_dns_record:
+        zone_id: "{{ zone_create.zone.ZoneId }}"
+        subdomain: api
+        record_type: A
+        value: 10.0.0.8
+        ttl: 300
+      register: record_second
+
+    - name: Update private record
+      susunola.tencentcloud.private_dns_record:
+        zone_id: "{{ zone_create.zone.ZoneId }}"
+        record_id: "{{ record_create.record.RecordId }}"
+        subdomain: api
+        record_type: A
+        value: 10.0.0.9
+        ttl: 600
+      register: record_update
+
+    - name: Check record deletion
+      susunola.tencentcloud.private_dns_record:
+        state: absent
+        zone_id: "{{ zone_create.zone.ZoneId }}"
+        record_id: "{{ record_create.record.RecordId }}"
+      check_mode: true
+      register: record_check
+
+    - name: Verify Private DNS lifecycle
+      ansible.builtin.assert:
+        that:
+          - zone_create is changed
+          - zone_second is not changed
+          - record_create is changed
+          - record_second is not changed
+          - record_update.record.RecordValue == '10.0.0.9'
+          - record_check is changed
+
+  always:
+    - name: Remove test record
+      susunola.tencentcloud.private_dns_record:
+        state: absent
+        zone_id: "{{ zone_create.zone.ZoneId }}"
+        record_id: "{{ record_create.record.RecordId | default(omit) }}"
+        subdomain: api
+        record_type: A
+      when: zone_create is defined and zone_create.zone is defined
+      ignore_errors: true
+
+    - name: Remove test zone
+      susunola.tencentcloud.private_dns_zone:
+        state: absent
+        zone_id: "{{ zone_create.zone.ZoneId }}"
+      when: zone_create is defined and zone_create.zone is defined
+      ignore_errors: true

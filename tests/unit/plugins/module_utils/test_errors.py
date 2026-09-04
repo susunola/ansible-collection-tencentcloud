@@ -58,3 +58,17 @@ def test_is_idempotent_success_matches_not_found():
 
 def test_is_not_found_non_sdk_exception():
     assert not errors.is_not_found(ValueError("boom"))
+
+
+def test_is_retryable_treats_rate_limited_as_retryable():
+    assert errors.is_retryable(FakeExc("RequestLimitExceeded"))
+    assert errors.is_retryable(FakeExc("LimitExceeded.Instances"))
+
+
+def test_is_retryable_false_for_non_transient():
+    assert not errors.is_retryable(FakeExc("InvalidParameterValue"))
+
+
+def test_is_rate_limited_only_matches_throttle_prefixes():
+    assert not errors.is_rate_limited(FakeExc("InternalError"))
+    assert not errors.is_rate_limited(FakeExc("ResourceNotFound"))

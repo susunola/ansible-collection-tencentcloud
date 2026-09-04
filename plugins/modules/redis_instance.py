@@ -24,9 +24,13 @@ options:
   state:
     description:
       - C(present) creates the instance when it does not exist and renames
-        it when O(name) differs.
+        it when O(name) differs. After creation the module waits for the
+        instance to reach Status 2 (running) before returning, bounded by
+        O(waiter_timeout).
       - C(absent) destroys the instance (postpaid instances immediately,
-        prepaid instances via the prepaid destroy flow).
+        prepaid instances via the prepaid destroy flow). The module waits
+        for the instance to reach Status -3 (pending recycle) or disappear
+        from the describe API before returning, bounded by O(waiter_timeout).
     type: str
     choices: [present, absent]
     default: present
@@ -126,9 +130,15 @@ options:
     type: int
     default: 5
   waiter_timeout:
-    description: Overall timeout in seconds for state polling.
+    description:
+      - Overall timeout in seconds for lifecycle state polling; it bounds
+        creation delivery (Status 2, running) and destruction (Status -3,
+        pending recycle).
+      - Database creation takes several minutes, so the default is 900
+        seconds; lower it when the playbook only renames an existing
+        instance.
     type: int
-    default: 120
+    default: 900
   user_agent:
     description:
       - Value appended to the SDK User-Agent header so API usage can be
@@ -139,6 +149,9 @@ notes:
   - Requires the C(tencentcloud-sdk-python-redis) package on the controller.
   - Redis instances are billed while present; destroy them as soon as they
     are no longer needed to avoid unnecessary charges.
+  - Creation takes several minutes; after the creation order is accepted
+    the module waits for the instance to reach Status 2 (running) before
+    returning.
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
@@ -185,6 +198,7 @@ instance:
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
 
 
 def _load_redis():
@@ -271,6 +285,32 @@ def _destroy(module, client, models, instance_id, billing_mode):
     module.sdk_call(client.DestroyPrepaidInstance if billing_mode == "PREPAID" else client.DestroyPostpaidInstance, request)
 
 
+def _status_poll(module, client, models, instance_id, gone_terminal=None):
+    """Poll returning the instance Status; ``gone_terminal`` when missing.
+
+    The destroy path can end with the instance disappearing from the
+    describe API once recycling completes; ``gone_terminal`` reports a
+    missing instance as that terminal status instead of polling forever.
+    """
+    def poll():
+        current = find_instance(module, client, models, instance_id, None)
+        if current is None:
+            return gone_terminal
+        return current.get("Status")
+    return poll
+
+
+def _wait_status(module, client, models, instance_id, desired_states, gone_terminal=None):
+    """Wait until the instance Status is one of ``desired_states``."""
+    return wait_for_state(
+        module,
+        _status_poll(module, client, models, instance_id, gone_terminal),
+        desired_states,
+        timeout=module.params["waiter_timeout"],
+        delay=module.params["waiter_delay"],
+    )
+
+
 def run_module():
     module = TencentCloudModule(
         argument_spec={
@@ -289,6 +329,7 @@ def run_module():
             "project_id": {"type": "int"},
             "security_group_id_list": {"type": "list", "elements": "str"},
             "tags": {"type": "dict", "default": {}},
+            "waiter_timeout": {"type": "int", "default": 900},
         },
         supports_check_mode=True,
     )
@@ -322,7 +363,9 @@ def run_module():
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), msg="Would destroy Redis instance")
         _destroy(module, client, models, target_id, current.get("BillingMode") or "POSTPAID")
-        module.exit_json(changed=True, **(diff or {}), instance=None, msg="Redis instance destroyed")
+        _wait_status(module, client, models, target_id, [-3], gone_terminal=-3)
+        destroyed = find_instance(module, client, models, target_id, None)
+        module.exit_json(changed=True, **(diff or {}), instance=destroyed, msg="Redis instance destroyed")
 
     # state == present
     if current is None:
@@ -339,6 +382,7 @@ def run_module():
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), msg="Would create Redis instance")
         created_id = _create(module, client, models, module.params)
+        _wait_status(module, client, models, created_id, [2])
         current = find_instance(module, client, models, created_id, None)
         module.exit_json(changed=True, **(diff or {}), instance=current, msg="Redis instance created")
 

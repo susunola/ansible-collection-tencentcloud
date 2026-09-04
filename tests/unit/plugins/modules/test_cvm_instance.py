@@ -4,6 +4,9 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 from ansible_collections.susunola.tencentcloud.plugins.modules.cvm_instance import (
     _InstanceGone,
+    _reboot,
+    _reset_password,
+    _reset_type,
     build_describe_request,
     build_run_request,
     find_instance,
@@ -37,6 +40,9 @@ class FakeModels(object):
     LoginSettings = FakeRequest
     DescribeInstancesRequest = FakeRequest
     RunInstancesRequest = FakeRequest
+    RebootInstancesRequest = FakeRequest
+    ResetInstancesPasswordRequest = FakeRequest
+    ResetInstancesTypeRequest = FakeRequest
 
 
 class FakeInstance(object):
@@ -69,6 +75,15 @@ class FakeClient(object):
         if self.exc:
             raise self.exc
         return self.response
+
+    def RebootInstances(self, request):
+        self.calls.append(request)
+
+    def ResetInstancesPassword(self, request):
+        self.calls.append(request)
+
+    def ResetInstancesType(self, request):
+        self.calls.append(request)
 
 
 class FakeModule(object):
@@ -206,8 +221,7 @@ def test_immutable_drift_none():
         "InstanceType": "S5.MEDIUM2",
         "VirtualPrivateCloud": {"VpcId": "vpc-1", "SubnetId": "subnet-1"},
     }
-    assert immutable_drift(current, image_id="img-1", instance_type="S5.MEDIUM2",
-                           vpc_id="vpc-1", subnet_id="subnet-1") == []
+    assert immutable_drift(current, image_id="img-1", vpc_id="vpc-1", subnet_id="subnet-1") == []
 
 
 def test_immutable_drift_detects_changes():
@@ -217,9 +231,41 @@ def test_immutable_drift_detects_changes():
         "VirtualPrivateCloud": {"VpcId": "vpc-1", "SubnetId": "subnet-1"},
     }
     assert immutable_drift(current, image_id="img-2") == ["image_id"]
-    assert immutable_drift(current, instance_type="S5.LARGE4") == ["instance_type"]
     assert immutable_drift(current, vpc_id="vpc-2") == ["vpc_id"]
     assert immutable_drift(current, subnet_id="subnet-2") == ["subnet_id"]
+
+
+def test_immutable_drift_ignores_instance_type():
+    # The instance model is resized through ResetInstancesType on a stopped
+    # instance, so it must never be reported as immutable.
+    current = {"ImageId": "img-1", "InstanceType": "S5.MEDIUM2"}
+    assert immutable_drift(current) == []
+
+
+def test_reboot_sends_instance_ids():
+    client = FakeClient()
+    module = FakeModule()
+    _reboot(module, client, FakeModels, "ins-123")
+    assert len(client.calls) == 1
+    assert client.calls[0].InstanceIds == ["ins-123"]
+
+
+def test_reset_password_sends_ids_and_password():
+    client = FakeClient()
+    module = FakeModule()
+    _reset_password(module, client, FakeModels, "ins-123", "Sup3rSecret!")
+    assert len(client.calls) == 1
+    assert client.calls[0].InstanceIds == ["ins-123"]
+    assert client.calls[0].Password == "Sup3rSecret!"
+
+
+def test_reset_type_sends_ids_and_new_model():
+    client = FakeClient()
+    module = FakeModule()
+    _reset_type(module, client, FakeModels, "ins-123", "S5.LARGE4")
+    assert len(client.calls) == 1
+    assert client.calls[0].InstanceIds == ["ins-123"]
+    assert client.calls[0].InstanceType == "S5.LARGE4"
 
 
 def test_immutable_drift_ignores_unset_params():
@@ -344,6 +390,8 @@ def _scale_params(**overrides):
         "password": None,
         "key_ids": None,
         "tags": {"role": "web"},
+        "zones": None,
+        "subnet_ids": None,
         "dry_run": False,
     }
     params.update(overrides)
@@ -484,6 +532,74 @@ def test_exact_count_creates_shortfall():
     assert payload["count"] == 3
     assert len(client.run_requests) == 1
     assert client.run_requests[0].InstanceCount == 2
+
+
+def test_spread_counts_splits_evenly_with_remainder():
+    assert cvm_instance._spread_counts(5, ["az-a", "az-b"]) == [3, 2]
+    assert cvm_instance._spread_counts(4, ["az-a", "az-b"]) == [2, 2]
+    assert cvm_instance._spread_counts(1, ["az-a", "az-b", "az-c"]) == [1, 0, 0]
+
+
+def test_run_request_sets_placement_zone():
+    request = build_run_request(FakeScalingModels, _scale_params(zone="ap-guangzhou-3"))
+    assert request.Placement.Zone == "ap-guangzhou-3"
+
+
+def test_run_request_omits_placement_zone_by_default():
+    request = build_run_request(FakeScalingModels, _scale_params())
+    assert not hasattr(request.Placement, "Zone")
+
+
+def test_exact_count_zones_requires_exact_count():
+    set_module_args(module_args(zones=["ap-guangzhou-3", "ap-guangzhou-4"]))
+    with pytest.raises(AnsibleFailJson) as exc:
+        _run_validation(None)
+    assert "zones only applies" in exc.value.args[0]["msg"]
+
+
+def test_subnet_ids_requires_zones():
+    set_module_args(module_args(exact_count=3, count_tag={"role": "web"}, subnet_ids=["subnet-3"]))
+    with pytest.raises(AnsibleFailJson) as exc:
+        _run_validation(None)
+    assert "subnet_ids requires zones" in exc.value.args[0]["msg"]
+
+
+def test_exact_count_spreads_shortfall_across_zones():
+    client = FakeScalingClient([_scaling_resource("ins-a")])
+    module = FakeScalingModule(client)
+    with pytest.raises(AnsibleExitJson) as exc:
+        cvm_instance._manage_exact_count(
+            module, client, FakeScalingModels,
+            _scale_params(exact_count=6, zones=["ap-guangzhou-3", "ap-guangzhou-4"],
+                          subnet_ids=["subnet-3", "subnet-4"]))
+    payload = exc.value.args[0]
+    assert payload["changed"] is True
+    assert payload["count"] == 6
+    # 5 shortfall over 2 zones -> [3, 2], one RunInstances call per zone.
+    assert len(client.run_requests) == 2
+    first, second = client.run_requests
+    assert first.InstanceCount == 3
+    assert first.Placement.Zone == "ap-guangzhou-3"
+    assert first.VirtualPrivateCloud.SubnetId == "subnet-3"
+    assert second.InstanceCount == 2
+    assert second.Placement.Zone == "ap-guangzhou-4"
+    assert second.VirtualPrivateCloud.SubnetId == "subnet-4"
+
+
+def test_exact_count_skips_zero_share_zones():
+    client = FakeScalingClient([])
+    module = FakeScalingModule(client)
+    with pytest.raises(AnsibleExitJson) as exc:
+        cvm_instance._manage_exact_count(
+            module, client, FakeScalingModels,
+            _scale_params(exact_count=1, zones=["ap-guangzhou-3", "ap-guangzhou-4", "ap-guangzhou-5"]))
+    payload = exc.value.args[0]
+    assert payload["changed"] is True
+    assert payload["count"] == 1
+    # 1 over 3 zones -> [1, 0, 0]; only the first zone gets a call.
+    assert len(client.run_requests) == 1
+    assert client.run_requests[0].InstanceCount == 1
+    assert client.run_requests[0].Placement.Zone == "ap-guangzhou-3"
 
 
 def test_exact_count_terminates_oldest_first():

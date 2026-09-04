@@ -1,0 +1,76 @@
+---
+- name: CMQ queue real-cloud lifecycle
+  vars:
+    run_id: "{{ lookup('env', 'GITHUB_RUN_ID') | default(99999999 | random, true) }}"
+    queue_name: "ansible-cmq-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  block:
+    - name: Predict queue creation
+      susunola.tencentcloud.cmq_queue:
+        queue_name: "{{ queue_name }}"
+        polling_wait_seconds: 5
+      check_mode: true
+      register: check_create
+
+    - name: Create queue
+      susunola.tencentcloud.cmq_queue:
+        queue_name: "{{ queue_name }}"
+        polling_wait_seconds: 5
+      register: created
+
+    - name: Reconcile queue without changes
+      susunola.tencentcloud.cmq_queue:
+        queue_name: "{{ queue_name }}"
+        polling_wait_seconds: 5
+      register: reconciled
+
+    - name: Update mutable queue settings
+      susunola.tencentcloud.cmq_queue:
+        queue_name: "{{ queue_name }}"
+        polling_wait_seconds: 10
+        visibility_timeout: 60
+      register: updated
+
+    - name: Verify create and idempotency contract
+      ansible.builtin.assert:
+        that:
+          - check_create is changed
+          - created is changed
+          - created.queue.QueueName == queue_name
+          - reconciled is not changed
+          - updated is changed
+          - updated.queue.PollingWaitSeconds == 10
+
+    - name: Predict queue deletion
+      susunola.tencentcloud.cmq_queue:
+        state: absent
+        queue_name: "{{ queue_name }}"
+      check_mode: true
+      register: check_delete
+
+    - name: Delete queue
+      susunola.tencentcloud.cmq_queue:
+        state: absent
+        queue_name: "{{ queue_name }}"
+      register: deleted
+
+    - name: Delete queue again
+      susunola.tencentcloud.cmq_queue:
+        state: absent
+        queue_name: "{{ queue_name }}"
+      register: deleted_again
+
+    - name: Verify deletion contract
+      ansible.builtin.assert:
+        that:
+          - check_delete is changed
+          - deleted is changed
+          - deleted_again is not changed
+  always:
+    - name: Clean up CMQ queue
+      susunola.tencentcloud.cmq_queue:
+        state: absent
+        queue_name: "{{ queue_name }}"
+      ignore_errors: true

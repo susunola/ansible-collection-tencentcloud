@@ -14,6 +14,10 @@ short_description: Gather information about Tencent Cloud BSCA kb components
 version_added: "0.9.0"
 description: Returns BSCA kb components visible in a Tencent Cloud region.
 options:
+  query:
+    description: Component name to search for (required by the API).
+    type: str
+    required: true
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -23,9 +27,10 @@ author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all kb components
+- name: Search knowledge base components
   susunola.tencentcloud.bsca_kb_component_info:
     region: ap-guangzhou
+    query: openssl
 '''
 
 RETURN = r'''
@@ -52,16 +57,18 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, offset, limit):
+def build_request(models, query, offset, limit):
     request = models.SearchKBComponentRequest()
-    request.PageNumber = offset // limit + 1
+    request.PageNumber = offset // limit
     request.PageSize = limit
+    request.Query = query
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "query": {"type": "str", "required": True},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -79,7 +86,7 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, offset, limit),
+        lambda offset, limit: build_request(models, module.params["query"], offset, limit),
         lambda request: sdk_call(module, client.SearchKBComponent, request),
         lambda response: response.ComponentList,
         lambda response: response.Total,

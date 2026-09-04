@@ -1,0 +1,67 @@
+---
+- name: CLS logset and topic real-cloud lifecycle
+  vars:
+    run_id: "{{ lookup('env', 'GITHUB_RUN_ID') | default(99999999 | random, true) }}"
+    logset_name: "ansible-cls-it-{{ run_id }}"
+    topic_name: "ansible-topic-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  block:
+    - name: Predict logset creation
+      susunola.tencentcloud.cls_logset:
+        name: "{{ logset_name }}"
+      check_mode: true
+      register: logset_check
+    - name: Create logset
+      susunola.tencentcloud.cls_logset:
+        name: "{{ logset_name }}"
+      register: logset
+    - name: Reconcile logset
+      susunola.tencentcloud.cls_logset:
+        logset_id: "{{ logset.logset.LogsetId }}"
+        name: "{{ logset_name }}"
+      register: logset_same
+    - name: Create topic
+      susunola.tencentcloud.cls_topic:
+        logset_id: "{{ logset.logset.LogsetId }}"
+        name: "{{ topic_name }}"
+        period: 7
+      register: topic
+    - name: Reconcile topic
+      susunola.tencentcloud.cls_topic:
+        topic_id: "{{ topic.topic.TopicId }}"
+        logset_id: "{{ logset.logset.LogsetId }}"
+        name: "{{ topic_name }}"
+        period: 7
+      register: topic_same
+    - name: Update topic
+      susunola.tencentcloud.cls_topic:
+        topic_id: "{{ topic.topic.TopicId }}"
+        logset_id: "{{ logset.logset.LogsetId }}"
+        name: "{{ topic_name }}"
+        period: 8
+      register: topic_update
+    - name: Verify CLS contract
+      ansible.builtin.assert:
+        that:
+          - logset_check is changed
+          - logset is changed
+          - logset_same is not changed
+          - topic is changed
+          - topic_same is not changed
+          - topic_update is changed
+  always:
+    - name: Clean up topic
+      susunola.tencentcloud.cls_topic:
+        state: absent
+        topic_id: "{{ topic.topic.TopicId | default(omit) }}"
+        logset_id: "{{ logset.logset.LogsetId | default('cleanup') }}"
+        name: "{{ topic_name }}"
+      ignore_errors: true
+    - name: Clean up logset
+      susunola.tencentcloud.cls_logset:
+        state: absent
+        logset_id: "{{ logset.logset.LogsetId | default(omit) }}"
+        name: "{{ logset_name }}"
+      ignore_errors: true
