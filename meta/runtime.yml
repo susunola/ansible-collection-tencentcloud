@@ -1,5 +1,5 @@
 ---
-requires_ansible: ">=2.19.0"
+requires_ansible: ">=2.16.0"
 action_groups:
   all:
     - acp_scan_task_info
@@ -7,10 +7,14 @@ action_groups:
     - advisor_strategy_info
     - ags_sandbox_instance_info
     - alb_listener
+    - alb_listener_info
     - alb_load_balancer
+    - alb_load_balancer_info
     - alb_security_policy_info
     - alb_target_group
+    - alb_target_group_info
     - alb_target_group_targets
+    - alb_target_group_targets_info
     - ame_ktv_robot_info
     - ams_task_info
     - anicloud_resource_info
@@ -51,6 +55,7 @@ action_groups:
     - cam_oidc_provider
     - cam_policy
     - cam_policy_attachment
+    - cam_policy_attachment_info
     - cam_policy_info
     - cam_role
     - cam_role_info
@@ -60,19 +65,25 @@ action_groups:
     - captcha_user_all_app_id_info
     - cat_probe_task_info
     - cbs_auto_snapshot_policy
+    - cbs_auto_snapshot_policy_info
     - cbs_disk
     - cbs_disk_backup
     - cbs_disk_info
     - cbs_snapshot
+    - cbs_snapshot_info
     - cbs_snapshot_share
     - ccc_extension_info
     - ccn
     - ccn_attachment
+    - ccn_info
     - cdb_account
+    - cdb_account_info
     - cdb_account_privilege
     - cdb_audit_config
     - cdb_backup_config
+    - cdb_backup_config_info
     - cdb_database
+    - cdb_database_info
     - cdb_instance
     - cdb_instance_info
     - cdb_parameter_template
@@ -94,8 +105,11 @@ action_groups:
     - cfs_file_system
     - cfs_file_system_info
     - cfs_permission_group
+    - cfs_permission_group_info
     - cfs_permission_rule
+    - cfs_permission_rule_info
     - cfs_snapshot
+    - cfs_snapshot_info
     - cfw_address_template
     - cfw_cluster_nat_ccn_fw_switch_info
     - cfw_internet_acl_rule
@@ -119,13 +133,18 @@ action_groups:
     - ckafka_instance_info
     - ckafka_route
     - ckafka_topic
+    - ckafka_topic_info
     - ckafka_user
+    - ckafka_user_info
     - clb_listener
+    - clb_listener_info
     - clb_listener_target
+    - clb_listener_target_info
     - clb_load_balancer
     - clb_load_balancer_info
     - clb_rule
     - clb_target_group
+    - clb_target_group_info
     - cloudaudit_audit
     - cloudaudit_event_info
     - cloudaudit_track
@@ -133,11 +152,16 @@ action_groups:
     - cloudrc_resource_info
     - cloudstudio_image_info
     - cls_config
+    - cls_config_info
     - cls_config_machine_group_binding
     - cls_index
+    - cls_index_info
     - cls_logset
+    - cls_logset_info
     - cls_machine_group
+    - cls_machine_group_info
     - cls_shipper
+    - cls_shipper_info
     - cls_topic
     - cls_topic_info
     - cme_platform_info
@@ -180,12 +204,14 @@ action_groups:
     - ctem_api_sec_info
     - ctsdb_cluster_info
     - customer_gateway
+    - customer_gateway_info
     - cvm_chc
     - cvm_disaster_recover_group
     - cvm_disaster_recover_group_binding
     - cvm_hpc_cluster
     - cvm_image
     - cvm_image_share
+    - cvm_image_share_info
     - cvm_instance
     - cvm_instance_action_timer
     - cvm_instance_info
@@ -195,6 +221,7 @@ action_groups:
     - cwp_machine_info
     - cws_monitor_info
     - cynosdb_account
+    - cynosdb_account_info
     - cynosdb_account_privilege
     - cynosdb_backup_config
     - cynosdb_cluster
@@ -208,6 +235,7 @@ action_groups:
     - dbdc_db_custom_cluster_info
     - dbs_backup_plan_info
     - dc_direct_connect
+    - dc_direct_connect_info
     - dc_direct_connect_tunnel
     - dc_direct_connect_tunnel_info
     - dcdb_instance
@@ -235,7 +263,9 @@ action_groups:
     - eip_info
     - eis_runtime_deployed_instances_mc_info
     - eks_cluster
+    - eks_cluster_info
     - eks_container_instance
+    - eks_container_instance_info
     - elasticsearch_index
     - elasticsearch_instance
     - elasticsearch_snapshot
@@ -265,6 +295,7 @@ action_groups:
     - hasim_link_info
     - havip
     - havip_association
+    - havip_info
     - hunyuan_glossary_info
     - iai_group_info
     - iap_login_session_duration_info
@@ -284,6 +315,7 @@ action_groups:
     - kms_key
     - kms_key_info
     - kms_key_rotation
+    - kms_key_rotation_info
     - lcic_answer_info
     - lighthouse_disk
     - lighthouse_firewall_rules
@@ -297,6 +329,7 @@ action_groups:
     - lowcode_knowledge_set_info
     - mall_draw_resource_info
     - mariadb_account
+    - mariadb_account_info
     - mariadb_account_privilege
     - mariadb_backup_config
     - mariadb_instance
@@ -305,6 +338,7 @@ action_groups:
     - mmps_resource_usage_info
     - mna_access_region_info
     - mongodb_account
+    - mongodb_account_info
     - mongodb_backup_config
     - mongodb_instance
     - mongodb_instance_info
@@ -312,6 +346,7 @@ action_groups:
     - monitor_alarm_policy_info
     - monitor_alarm_policy_notice
     - monitor_grafana_instance
+    - monitor_grafana_instance_info
     - monitor_grafana_integration
     - monitor_grafana_internet
     - monitor_grafana_notification_channel
@@ -322,6 +357,7 @@ action_groups:
     - monitor_prometheus_global_notification
     - monitor_prometheus_grafana_binding
     - monitor_prometheus_instance
+    - monitor_prometheus_instance_info
     - monitor_prometheus_record_rule
     - monitor_prometheus_scrape_job
     - mps_person_sample_info
@@ -333,10 +369,14 @@ action_groups:
     - ms_shield_instance_info
     - msp_migration_project_info
     - nat_gateway
+    - nat_gateway_dnat_rule_info
     - nat_gateway_info
     - nat_gateway_rule
+    - nat_gateway_snat_rule_info
     - network_acl
+    - network_acl_info
     - network_interface
+    - network_interface_info
     - oceanus_cluster_info
     - oceanus_job
     - oceanus_workspace
@@ -348,9 +388,11 @@ action_groups:
     - organization_node
     - partners_agent_deals_by_cache_info
     - peering_connection
+    - peering_connection_info
     - portal_document_info
     - postgres_instance_info
     - postgresql_account
+    - postgresql_account_info
     - postgresql_backup_plan
     - postgresql_instance
     - postgresql_parameter_template
@@ -361,6 +403,7 @@ action_groups:
     - privatelink_endpoint_service
     - pts_cron_job_info
     - redis_account
+    - redis_account_info
     - redis_backup_config
     - redis_instance
     - redis_instance_info
@@ -370,20 +413,27 @@ action_groups:
     - route_table_info
     - rum_project_info
     - scf_alias
+    - scf_alias_info
     - scf_function
     - scf_function_info
     - scf_trigger
+    - scf_trigger_info
     - scf_version
+    - scf_version_info
     - security_group
     - security_group_info
     - security_group_rule
+    - security_group_rule_info
     - securitylake_security_alarm_table_info
     - ses_black_email_address_info
     - smh_library_info
     - sms_sign_info
     - sms_signature
+    - sms_signature_info
     - sms_template
+    - sms_template_info
     - sqlserver_account
+    - sqlserver_account_info
     - sqlserver_backup_config
     - sqlserver_instance
     - sqlserver_instance_info
@@ -394,11 +444,13 @@ action_groups:
     - ssm_parameter
     - ssm_rotation
     - ssm_secret
+    - ssm_secret_info
     - ssm_secret_version
     - subnet
     - subnet_info
     - svp_saving_plan_coverage_info
     - tag
+    - tag_info
     - tat_command
     - tat_command_info
     - tat_invoker
@@ -471,10 +523,13 @@ action_groups:
     - tke_cluster_audit
     - tke_cluster_authentication
     - tke_cluster_autoscaler
+    - tke_cluster_autoscaler_info
     - tke_cluster_endpoint
     - tke_cluster_info
+    - tke_cluster_kubeconfig
     - tke_cluster_upgrade
     - tke_node_pool
+    - tke_node_pool_info
     - tokenhub_model_info
     - tourism_draw_resource_info
     - trabbit_rabbit_mq_serverless_instance_info
@@ -496,14 +551,19 @@ action_groups:
     - vdb_instance_info
     - vm_task_info
     - vod_class
+    - vod_class_info
     - vod_incremental_migration_strategy_info
     - vod_sub_app
+    - vod_sub_app_info
     - vpc
     - vpc_address_template
     - vpc_address_template_group
+    - vpc_address_template_group_info
+    - vpc_address_template_info
     - vpc_flow_log
     - vpc_info
     - vpn_connection
+    - vpn_connection_info
     - vpn_gateway
     - vpn_gateway_info
     - waf_anti_info_leak_rule
@@ -528,7 +588,16 @@ action_groups:
     - yunjing_account_statistic_info
 
 # Deprecation process: modules and plugins are deprecated by adding a
-# plugin_routing.deprecation entry for them (with removal_in and
+# plugin_routing.deprecation entry for them (with removal_version and
 # warning_text). A deprecated plugin stays available for at least one
 # major release before it is removed in a later major release.
+# See docs/deprecation-policy.md for the full policy and the matching
+# DOCUMENTATION/changelog changes. Template for the first real entry:
+#
+# plugin_routing:
+#   modules:
+#     old_module_name:
+#       deprecation:
+#         removal_version: 2.0.0
+#         warning_text: Use susunola.tencentcloud.new_module_name instead.
 plugin_routing: {}

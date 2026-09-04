@@ -351,9 +351,13 @@ the official `ansible-collections` organisation.
     https://github.com/susunola/ansible-collection-tencentcloud/issues/8
     with a full requirement scorecard. Done so far: 1.0.0 released
     (unblocks the >= 1.0.0 rule), weekly ansible-core devel CI in place,
-    `requires_ansible` floor moved onto maintained cores (2.19+). The
-    remaining step is the formal inclusion request once 1.0.0 is on
-    Galaxy (W4 in the issue).
+    `requires_ansible` floor moved onto maintained cores (2.19+). 1.0.0
+    is published on Galaxy (2026-09-02, `highest_version` 1.0.0). The
+    formal inclusion request was posted (2026-09-02) as
+    https://github.com/ansible-collections/ansible-inclusion/discussions/89
+    ("New collection inclusion request: susunola.tencentcloud", category
+    new collection reviews); remaining step is iterating on review
+    feedback (W4 in the issue).
 56. 1.0.0 release readiness (unblocks #55 W1): plan the 0.x -> 1.0.0
     release — lock the `requires_ansible` floor onto currently maintained
     cores (2.19/2.20/2.21; 2.16 core reached EOL 2025-07), set the Python
@@ -368,7 +372,258 @@ the official `ansible-collections` organisation.
     found no `deprecated`/`removed_in` markers across 524 modules). 0.x
     tags were NOT back-filled: the tag-triggered release workflow makes
     back-tagging historical commits unsafe; tags start at v1.0.0
-    (release.yml already verifies tag == galaxy.yml version).
+    (release.yml already verifies tag == galaxy.yml version). Published
+    to Galaxy as 1.0.0 (2026-09-02, release run 33605335645).
+57. Write-module unit-test coverage drive (CI gate): the SDK contract
+    coverage gate (`--cov-fail-under`) was born red at 70 — introduced
+    2026-08-31 in `01fd38e` after the batch module-generation run pushed
+    the write-module count to 313, of which only 63 have unit tests.
+    Measured baseline 2026-09-02: 58.6% total (module_utils 92.5%,
+    `_info` modules 85.7%, write modules 51.4%; 11,710 of the 16,097
+    missed statements come from the 249 untested write modules). The
+    gate is recalibrated to 55 (just under baseline, still catches
+    regressions). **In progress — batch 1 (2026-09-02)**: added
+    run-path + helper unit tests for `kms_key` (87.3%, 172/197) and
+    `tke_addon` (86.0%, 154/179) — 47 new tests, full suite 3114 green,
+    total coverage 58.6% -> 59.00% (gate 55 margin +4pp). **In progress —
+    batch 2 (2026-09-02)**: added run-path + helper unit tests for
+    `tdmysql_db_instance` (95.8%, 204/213, up from 43.7%) — 42 new tests,
+    full suite 3156 green, total coverage 59.00% -> 59.29% (gate 55
+    margin +4.29pp). **In progress — batch 3 (2026-09-02)**: added
+    run-path + helper unit tests for `dbdc_db_custom_cluster` (97.6%,
+    207/212, up from 45.8%) — 44 new tests, full suite 3200 green, total
+    coverage 59.29% -> 59.57% (gate 55 margin +4.57pp). **In progress —
+    batch 4 (2026-09-02)**: added run-path + helper unit tests for
+    `cdwch_instance` (97.7%, 172/176, up from 43.8%) — 53 new tests, full
+    suite 3253 green, total coverage 59.57% -> 59.81% (gate 55 margin
+    +4.81pp). **In progress — batch 5 (2026-09-02)**: rewrote the
+    helper-only test file for `cdn_domain` into the full run-path +
+    helper harness (97.7%, 172/176, up from 50.6%) — 36 tests, full
+    suite 3279 green, total coverage 59.81% -> 60.03% (gate 55 margin
+    +5.03pp). **In progress — batch 6 (2026-09-02)**: rewrote the
+    helper-only test file for `lighthouse_instance` into the full
+    run-path + helper harness (97.7%, 169/173, up from 48.0%) — 47
+    tests, full suite 3313 green, total coverage 60.03% -> 60.25%
+    (gate 55 margin +5.25pp). **In progress — batch 7 (2026-09-02)**:
+    added a full harness test file for `lighthouse_firewall_rules`
+    (94.7%, 72/76, up from 43.4%; the 4 misses are the lazy-import and
+    entrypoint lines) — 18 tests incl. pagination and remove-then-add
+    reconcile, full suite 3331 green, total coverage 60.25% -> 60.35%
+    (gate 55 margin +5.35pp). **In progress — batch 8 (2026-09-02)**:
+    added a full harness test file for `lighthouse_disk` (95.1%,
+    136/143, up from 33.6%) — 38 tests incl. the create/attach/detach/
+    terminate/replace flows and a patched-clock waiter-timeout path —
+    full suite 3369 green, total coverage 60.35% -> 60.58% (gate 55
+    margin +5.58pp). **In progress — batch 9 (2026-09-02)**: added a
+    full harness test file for `lighthouse_key_pair` (96.4%, 108/112,
+    up from 37.5%; the 4 misses are the lazy-import and entrypoint
+    lines) — 36 tests incl. pagination past 100, force-replace
+    re-import ordering and association add/remove/switch — full suite
+    3405 green, total coverage 60.58% -> 60.75% (gate 55 margin
+    +5.75pp). **In progress — batch 10 (2026-09-02)**: added a full
+    harness test file for `lighthouse_snapshot` (96.0%, 96/100, up from
+    40.0%; the 4 misses are the lazy-import and entrypoint lines) —
+    32 tests incl. the create/rename/delete/wait flows, a multi-poll
+    NORMAL transition and patched-clock timeout/FAILED paths — full
+    suite 3437 green, total coverage 60.75% -> 60.89% (gate 55 margin
+    +5.89pp). **In progress — batch 11 (2026-09-02)**: rewrote the
+    helper-only test file for `ccn_attachment` into the full run-path +
+    helper harness (96%, 87/91, up from a 13-line smoke test) — 22 tests
+    incl. attach/detach/update-description flows, re-attach no-change and
+    patched-clock timeout paths — full suite green. **In progress — batch
+    12 (2026-09-02)**: shipped the lever-1 test-skeleton generator (P0-01)
+    as `scripts/generate_module_test_skeleton.py`, with 19 hermetic unit
+    tests in `tests/unit/scripts/test_generate_module_test_skeleton.py`;
+    emitted skeletons verified hermetic and green out of the box on
+    `api_gateway_api_key` (7 passed + 5 xfail in 0.35s) and `cam_user`
+    (2 passed + 9 xfail, exercises the two-loader path) in the unit
+    layout. **Planned**:
+    continue with the next highest-miss write modules per the per-file
+    report, raising the
+    floor back towards 70; each batch must keep the gate green. Scaling
+    plan (structural scan of the 222 untested write modules + batching
+    proposal): docs/coverage-batching.md — 175 of the 222 share the same
+    helper skeleton, so the test-skeleton generator (lever 1, shipped in
+    batch 12 as `scripts/generate_module_test_skeleton.py`) is expected to
+    close the ~+4,000-statement gap in ~10-15 generator-assisted batches
+    instead of ~180 hand-written files.
+58. Capability completion batch (1.1.0). **Done** —
+    `tke_cluster_kubeconfig` fetches a cluster's intranet or extranet
+    kubeconfig via `DescribeClusterKubeconfig`, either returning it in the
+    task result or writing it to `dest` with 0600 permissions and
+    content-hash idempotency (the diff carries SHA-256 hashes, never the
+    credentials). `cos_object` (shipped in 1.0.0) gains pre-signed URL
+    support: `presign=true` returns a URL signed for the `method` option
+    (`GET` download or `PUT` upload, `expires` bounded), changing nothing
+    and reporting `changed=false`. Five generated `_info` modules close
+    the read side of existing write modules: `vpn_connection_info`,
+    `customer_gateway_info`, `ccn_info`, `cbs_snapshot_info` and
+    `cfs_snapshot_info` (the last one exposes
+    `file_system_id`/`snapshot_id` as optional extra params because the
+    API takes single strings, not ID lists). New scenario playbooks
+    `tke_kubeconfig.yml` and `cos_static_site.yml` demonstrate both
+    modules.
+59. Read/write symmetry audit (1.1.0). **Done** —
+    `scripts/audit_info_coverage.py` audits that every write module has a
+    readable query surface (`X_info`, a curated `KNOWN_COVERAGE` mapping, or
+    a documented `KNOWN_GAPS`/`KNOWN_NO_LIST_API` entry) and gates CI with
+    `--check`. Twenty-two write modules gained real read modules this batch
+    (18 new generated `_info` modules, including the four token-paginated
+    `alb.v20251030` list APIs); the generator's `list` pagination mode
+    learned to pass `extra_params` into `build_request` (previously a broken
+    call) and `elements`/`choices` into the argument spec, and a
+    `string_pagination` spec flag covers APIs whose Offset/Limit are
+    declared as strings. The remaining write modules without a read surface
+    are recorded as an explicit backlog or documented no-list-API entries.
+60. SDK compatibility range (1.1.0). **Done** — `requirements.txt` now
+    allows `tencentcloud-sdk-python>=3.1.164,<4.0.0`; CI re-pins to the
+    `GENERATED_SDK_VERSION` stamp (via `check_sdk_drift.py --print-stamp`)
+    before the drift sentinel and contract tests, so generated artifacts are
+    verified against the exact SDK that produced them while user installs
+    float within the range. Verified that discovery against the newest
+    release (3.1.166) reproduces the committed specs byte-identically.
+61. Deprecation policy (1.1.0). **Done** — no module warranted a real
+    deprecation (no legacy names or superseded capabilities in the tree),
+    so instead of inventing one, `docs/deprecation-policy.md` now documents
+    the lifecycle (one major release of warning) with the `runtime.yml`
+    `plugin_routing`, `DOCUMENTATION.deprecated` and changelog fragment
+    recipes, and `meta/runtime.yml` keeps a commented template skeleton.
+62. Scenario coverage (1.1.0). **Done** — `playbooks/three_tier_web.yml`
+    assembles a VPC + subnet + security group + `exact_count` CVM pool +
+    CLB listener/targets three-tier web stack, and `docs/scenarios.md`
+    indexes all five scenario playbooks with prerequisites and cost notes.
+
+## 58. Industry benchmark gap closure (2026-09-02)
+
+Compared against amazon.aws / azure.azcollection / google.cloud (Galaxy
+published tarballs, real counts) — see `docs/capability-map.html` INDUSTRY
+BENCHMARK section and the actionable plan in `docs/gap-closure.md`:
+
+- **G1 integration depth** (21 targets/62 yml vs amazon 160/690, google
+  115/468): 13 flagship write modules (cvm_instance, vpc, cdb_instance,
+  redis_instance, tke_cluster, clb_load_balancer, cos_object, scf_function,
+  ckafka_instance, cbs_disk, eip, nat_gateway, subnet) have ZERO integration
+  targets — needs its own plan (not #57, which is the unit-coverage drive,
+  tracked separately as G1b); flagship-first skeleton next.
+- **G1b unit breadth** (128/313 write modules have no unit test file — file-scan
+  count; the batch-29 closeout reconciled the documented figure to the
+  authoritative file-scan baseline, correcting an +11 legacy over-credit from
+  content-credited multi-module test files that do not sit at
+  `test_<module>.py`; write
+  statement cov ~51% vs 70% target): in flight via #57 batches; lever-1
+  skeleton generator shipped (batch 12, P0-01), generator-assisted batches
+  follow from the next highest-miss modules. Batch 13 (2026-09-02, first
+  generator-assisted batch): `eks_container_instance` (20 tests, 97%),
+  `tke_node_pool` (31 tests, 98%), `network_interface` (27 tests, 97%),
+  `ssm_parameter` (24 tests, 95%) — 102 hermetic tests, 0.3-0.6s per module
+  with no SDK installed. Batch 14 (2026-09-02): `dc_direct_connect_tunnel`
+  (36 tests, 97%), `config_compliance_pack` (28 tests, 97%),
+  `cdn_cls_log_topic` (33 tests, 97%), `ckafka_datahub_task` (38 tests,
+  96%) — 135 hermetic tests; full module + scripts suite 2449 green.
+  Batch 15 (2026-09-02): `alb_listener` (36 tests, 98%), 
+  `trabbit_serverless_queue` (28 tests, 96%), `dc_direct_connect` (30 tests,
+  96%), `cls_shipper` (29 tests, 96%) — 123 hermetic tests (Group B largest
+  untested cleared); full module + scripts suite 2572 green. Batch 16
+  (2026-09-03): `alb_load_balancer` (34 tests, 97%), `ckafka_datahub_connection`
+  (42 tests, 97%), `cfw_internet_acl_rule` (32 tests, 97%), `tat_invoker`
+  (41 tests, 97%) — 149 hermetic tests; full module + scripts suite 2721
+  green. Batch 17 (2026-09-03): `cfw_nat_acl_rule` (32 tests, 97%),
+  `waf_cc_rule` (34 tests, 96%), `sqlserver_account` (37 tests, 97%),
+  `cfs_auto_snapshot_policy` (40 tests, 96%) — 143 hermetic tests; full
+  module + scripts suite 2864 green. Batch 18 (2026-09-03): `cfw_vpc_acl_rule`
+  (34 tests, 96%), `mqtt_instance` (29 tests, 96%), `teo_origin_group` (35
+  tests, 97%), `cbs_auto_snapshot_policy` (45 tests, 97%) — 143 hermetic
+  tests; full module + scripts suite 3007 green. Batch 19 (2026-09-03):
+  `sms_signature` (19 tests, 95%), `tcr_namespace` (23 tests, 96%),
+  `vod_sub_app` (18 tests, 96%), `eks_cluster` (16 tests, 95%) — 76 hermetic
+  tests; full module + scripts suite 3083 green. Batch 20 (2026-09-03):
+  `cls_topic` (27 tests, 95%), `alb_target_group` (30 tests, 96%),
+  `teo_acceleration_domain` (32 tests, 96%), `private_dns_zone` (37 tests,
+  93%) — 126 hermetic tests; full module + scripts suite 3209 green. Batch
+  21 (2026-09-03): `mqtt_authorization_policy` (25 tests, 95%),
+  `tcm_mesh` (33 tests, 95%), `gwlb_target_group` (34 tests, 96%),
+  `ssm_secret` (34 tests, 96%) — 126 hermetic tests; full module + scripts
+  suite 3335 green. Batch 22 (2026-09-03): `ckafka_acl_rule` (29 tests,
+  96%), `tem_environment` (29 tests, 96%), `tem_application` (29 tests,
+  96%), `api_gateway_api` (32 tests, 95%) — 119 hermetic tests; full module
+  + scripts suite 3454 green, total coverage 78.37%. Batch 23
+  (2026-09-03): `waf_custom_white_rule` (31 tests, 96%),
+  `goosefs_file_system` (26 tests, 96%), `mongodb_account` (28 tests,
+  96%), `waf_anti_info_leak_rule` (28 tests, 96%) — 113 hermetic tests;
+  full module + scripts suite 3567 green, total coverage 78.66%. Batch 24
+  (2026-09-03): `waf_attack_white_rule` (34 tests, 96%),
+  `waf_owasp_white_rule` (35 tests, 96%), `config_alarm_policy` (31 tests,
+  96%), `teo_zone` (32 tests, 96%) — 132 hermetic tests; full module +
+  scripts suite 3699 green, total coverage 78.93%. Batch 25
+  (2026-09-03): `waf_custom_rule` (29 tests, 95%), `cls_machine_group`
+  (29 tests, 96%), `cloudaudit_audit` (32 tests, 96%),
+  `elasticsearch_snapshot` (27 tests, 94%) — 117 hermetic tests; full
+  module + scripts suite 3818 green, total coverage 79.15%. Batch 26
+  (2026-09-03): `teo_security_managed_rules` (36 tests, 96%),
+  `teo_security_exception_rules` (32 tests, 96%),
+  `teo_security_rate_limiting_rules` (45 tests, 96%),
+  `teo_security_custom_rules` (27 tests, 96%) — 140 hermetic tests; full
+  module + scripts suite 3958 green, total coverage 79.43%. Batch 27
+  (2026-09-03): `cdb_account_privilege` (18 tests, 95%), `tcr_repository`
+  (21 tests, 95%), `cynosdb_account_privilege` (17 tests, 95%),
+  `tcb_environment` (27 tests, 96%) — 83 hermetic tests; full module +
+  scripts suite 4041 green, total coverage 79.79%. Batch 28 (2026-09-03):
+  `cvm_launch_template_version` (28 tests, 96%), `trabbit_serverless_exchange`
+  (26 tests, 95%), `tcr_replication_rule` (23 tests, 96%), `eb_target` (25
+  tests, 96%) — 102 hermetic tests; full module + scripts suite 4143 green,
+  total coverage 79.93%. Batch 29 (2026-09-03): `gwlb_load_balancer` (32
+  tests, 96%), `as_scaling_policy` (24 tests, 95%), `tdmq_namespace` (27
+  tests, 95%), `postgresql_parameter_template` (24 tests, 95%) — 107
+  hermetic tests; full module + scripts suite 4250 green, total coverage
+  80.14%. Batch 30 (2026-09-03): `sms_template` (19 tests, 95%), `scf_alias`
+  (18 tests, 96%), `cvm_instance_security_group` (18 tests, 95%),
+  `scf_version` (18 tests, 95%) — 73 hermetic tests; full module + scripts
+  suite 4323 green, total coverage 80.17%. Batch 31 (2026-09-03):
+  `chdfs_file_system` (27 tests, 96%), `cfw_nat_dnat_rule` (22 tests, 95%),
+  `mariadb_account` (26 tests, 95%), `goosefs_fileset` (26 tests, 95%) —
+  101 hermetic tests; full module + scripts suite 4424 green, total coverage
+  80.37%. Batch 32 (2026-09-03): `eb_connection` (28 tests, 97%),
+  `cvm_launch_template` (27 tests, 96%), `dts_migration_job` (22 tests,
+  96%), `ckafka_route` (25 tests, 95%) — 102 hermetic tests; full module +
+  scripts suite 4526 green, total coverage 80.57%. Batch 33 (2026-09-03):
+  `vod_class` (18 tests, 95%), `cvm_hpc_cluster` (33 tests, 97%),
+  `organization_member` (28 tests, 96%), `tdmq_rabbitmq_user` (30 tests,
+  96%) — 109 hermetic tests; full module + scripts suite 4635 green, total
+  coverage 80.73%. Batch 34 (2026-09-03): `scf_trigger` (24 tests, 96%),
+  `monitor_prometheus_instance` (26 tests, 97%), `monitor_prometheus_alert_group`
+  (27 tests, 96%), `as_scheduled_action` (26 tests, 96%) — 103 hermetic
+  tests; full module + scripts suite 4738 green, total coverage 80.91%.
+  Batch 35 (2026-09-03): `teo_security_ip_group` (28 tests, 97%),
+  `postgresql_backup_plan` (28 tests, 96%), `cvm_disaster_recover_group` (34
+  tests, 97%), `cls_config` (28 tests, 96%) — 118 hermetic tests; full
+  module + scripts suite 4856 green, total coverage 81.11%. Batch 36
+  (2026-09-03): `havip` (39 tests, 97%), `cam_policy_attachment` (33 tests,
+  96%), `cmq_subscription` (23 tests, 95%), `cdb_parameter_template` (26
+  tests, 96%) — 121 hermetic tests; full module + scripts suite 4977 green,
+  total coverage 81.34%. Batch 37 (2026-09-03): `tdmq_rocketmq_group` (30
+  tests, 96%), `cdb_account` (31 tests, 97%), `trabbit_serverless_user` (32
+  tests, 96%), `cvm_image_share` (19 tests, 95%) — 112 hermetic tests; full
+  module + scripts suite 5089 green, total coverage 81.48%. Batch 38
+  (2026-09-03): `config_aggregator` (28 tests, 96%), `cdb_audit_config` (20
+  tests, 98%), `cam_group_membership` (22 tests, 97%), `cfs_permission_group`
+  (25 tests, 99%) — 95 hermetic tests; full module + scripts suite 5184
+  green, total coverage 81.66%. Batch 39 (2026-09-03): `cmq_topic` (24 tests,
+  99%), `cdb_database` (20 tests, 99%), `cam_group` (21 tests, 99%),
+  `cdb_backup_config` (15 tests, 98%) — 80 hermetic tests; full module +
+  scripts suite 5264 green, total coverage 81.80%. Batch 40 (2026-09-03):
+  `vdb_instance` (48 tests, 99%), `thpc_cluster` (40 tests, 99%),
+  `ckafka_instance` (38 tests, 99%), `emr_cluster` (38 tests, 99%) — 164
+  hermetic tests (first Group A waiter giants cleared with the real-`_load`
+  wrapper and `_deserialize`/`from_json_string` harness hooks); full module +
+  scripts suite 5428 green, total coverage 82.16%.
+- **G2 ecosystem trust** (downloads 0 vs 11.8M–90.5M): inclusion #89
+  awaiting reviewer; only active lever is reviewing another queued
+  collection to raise our priority.
+- **G3 ansible-core floor** (>=2.19 vs >=2.16/2.17): deliberately NOT
+  chased — 2.16–2.18 are EOL (2025-07/11, 2026-05); the others' floors
+  are legacy declarations. Capability-map wording corrected to say so.
+- **G4 maintainer resources** (solo vs vendor teams): mitigations only —
+  co-maintainer path in CONTRIBUTING.md, recruit after inclusion passes.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

@@ -1,8 +1,188 @@
-================================
-Tencent Cloud 0.13 Release Notes
-================================
+===============================
+Tencent Cloud 1.0 Release Notes
+===============================
 
 .. contents:: Topics
+
+v1.0.0
+======
+
+Major Changes
+-------------
+
+- First stable release (1.0.0). The module and plugin API surface is now covered by semantic versioning: breaking changes will only land in future major releases.
+
+Minor Changes
+-------------
+
+- Add ALB instance and listener lifecycle with deletion protection, address conversion, TLS settings, and target-group default actions.
+- Add ALB target group lifecycle and exact-set backend target reconciliation.
+- Add API Gateway API key and usage-plan key binding modules, COS bucket policy management, and TKE cluster endpoint management.
+- Add API Gateway service release, usage plan, and usage plan environment binding modules to complete the publish and traffic-governance resource family.
+- Add CAM SAML and OIDC identity provider lifecycle management.
+- Add CBS automatic snapshot policy lifecycle with exact-set cloud-disk bindings.
+- Add CBS cloud-disk backup point lifecycle with NORMAL-state convergence and safe replacement.
+- Add CDB and Redis account lifecycle plus PostgreSQL backup-plan modules.
+- Add CDB audit enablement, retention and closure configuration.
+- Add CDB database lifecycle management with immutable character-set protection.
+- Add CDN real-time CLS log topic lifecycle with exact-set domain and area bindings.
+- Add CDW Doris and CDW PostgreSQL instance creation, rename, convergence waiting and destruction lifecycle.
+- Add CFS manual snapshots and automatic snapshot policies with exact-set file-system bindings.
+- Add CFS permission group and client permission rule lifecycle management.
+- Add CHDFS file systems, mount points, access groups, exact access rules and mount bindings.
+- Add CKafka Datahub source and sink task lifecycle, capacity tuning, pause and resume management.
+- Add CKafka VPC, public and internal access-route lifecycle management.
+- Add CKafka prefixed and preset ACL rule lifecycle management.
+- Add CKafka user lifecycle and explicit password rotation.
+- Add CLS collection configuration and machine-group binding modules to complete the LogListener collection path.
+- Add CLS continuous COS shipper lifecycle management.
+- Add COS bucket replication plus TKE cluster authentication and audit logging modules.
+- Add COS intelligent-tiering, origin-rule and response-control configuration management.
+- Add COS object-lock enablement and default governance or compliance retention management with irreversible-state protection.
+- Add COS scheduled inventory, hotlink protection, and custom-domain resource modules.
+- Add COS static website, default encryption, and access logging resource modules.
+- Add CVM HPC cluster lifecycle and declarative per-instance scheduled termination timers.
+- Add CVM launch-template lifecycle, immutable configuration versions and safe default-version promotion.
+- Add CVM spread and partition placement groups plus per-instance placement bindings.
+- Add Cloud Firewall NAT DNAT forwarding rule lifecycle with in-place private-target updates.
+- Add Cloud Firewall NAT access-control rule lifecycle with ordering, scope and parameter-template support.
+- Add Cloud Firewall inter-VPC ACL lifecycle with edge scope, IPv6 and application-protocol support.
+- Add Cloud Firewall internet-border ACL rule lifecycle with templates, ordering and enable-state management.
+- Add CloudBase environment and HTTP service route lifecycle management.
+- Add Config account aggregator creation with explicit immutable membership semantics.
+- Add Config change and resource-inventory delivery management for COS and CLS targets.
+- Add Config compliance pack lifecycle with exact rule membership, input parameters and activation state.
+- Add Config non-compliance alarm policy lifecycle with account scopes, risk levels and notification schedules.
+- Add Config recorder lifecycle with exact monitored resource-type convergence.
+- Add Config rule remediation lifecycle for manual and automatic corrective actions.
+- Add CynosDB cluster lifecycle with storage, secondary-zone and kernel upgrades.
+- Add DB Custom cluster lifecycle with exact node membership, tags and guarded multi-stage destruction.
+- Add DNSPod custom line and exact-set line group lifecycle management.
+- Add EMR cluster creation, rename, convergence waiting and termination lifecycle.
+- Add EdgeOne CAPTCHA page and AI crawler detection lifecycle across all security policy scopes.
+- Add EdgeOne acceleration-domain lifecycle with origin, protocol, port, IPv6 and online-state convergence.
+- Add EdgeOne managed WAF lifecycle with group overrides, automatic updates and high-frequency scanning protection.
+- Add EdgeOne origin-group lifecycle with exact origin-record and weight convergence.
+- Add EdgeOne security IP-group lifecycle with complete large-set IP and CIDR convergence.
+- Add EdgeOne web security template lifecycle while preserving independently managed policy rules.
+- Add EdgeOne zone lifecycle with access-mode configuration and pause-state convergence.
+- Add Elasticsearch cluster snapshot lifecycle with explicit safe replacement.
+- Add Elasticsearch index lifecycle with service-added metadata tolerance.
+- Add EventBridge event bus, rule, target, and connection lifecycle management with explicit immutable delivery and source configuration.
+- Add GooseFS file system lifecycle with expansion-only capacity management and fileset quota lifecycle.
+- Add Grafana notification channels plus Prometheus global notification and Alertmanager singleton configuration modules.
+- Add Lighthouse data disk lifecycle with rename, attachment convergence and guarded replacement.
+- Add Lighthouse instance snapshot lifecycle with rename and NORMAL-state convergence.
+- Add MQTT instance, topic, secret-safe user, and authorization policy lifecycle management.
+- Add Managed Grafana internet-access and complete IP-whitelist configuration modules.
+- Add Managed Prometheus instance and cluster-agent modules plus Grafana instance, integration, and binding modules.
+- Add Managed Prometheus scrape-job, recording-rule, and alert-group lifecycle modules.
+- Add MariaDB account creation, description update, password rotation and deletion.
+- Add MariaDB automatic backup retention, window, weekday and archive configuration.
+- Add MongoDB account creation, role reconciliation, password rotation and deletion.
+- Add MongoDB automatic backup schedule, method, retention and alert configuration.
+- Add Oceanus job lifecycle with start, stop, pause and resume controls.
+- Add Oceanus workspace lifecycle as the ownership boundary for jobs and resources.
+- Add PostgreSQL instance creation, resize, rename, renewal, isolation and guarded permanent destruction.
+- Add RabbitMQ Serverless exchange, queue and binding lifecycle management.
+- Add RabbitMQ Serverless virtual-host, user and permission lifecycle management.
+- Add SQL Server account, database privilege, remark and password lifecycle management.
+- Add SQL Server instance lifecycle with specification and high-availability controls.
+- Add SSM explicit secret-version lifecycle and automatic rotation configuration.
+- Add TCHouse-C instance lifecycle with observable node, specification and disk convergence.
+- Add TDMQ Pulsar namespace retention and subscription-policy lifecycle management.
+- Add TDMQ Pulsar namespace role permission lifecycle management.
+- Add TDMQ RabbitMQ dedicated-instance lifecycle with topology and deletion-protection controls.
+- Add TDMQ RabbitMQ queue and exchange binding lifecycle management.
+- Add TDMQ RabbitMQ user lifecycle, limits, CAM authentication and password rotation.
+- Add TDMQ RabbitMQ virtual host configure, write and read permission lifecycle.
+- Add TDMQ RabbitMQ virtual host lifecycle and tracing configuration.
+- Add TDMysql instance lifecycle with expansion, specification upgrades, recovery and security-group reconciliation.
+- Add TDSQL-C PostgreSQL cluster lifecycle with instance topology and specification reconciliation.
+- Add TEM application, environment, access service and declarative deployment resources.
+- Add THPC cluster lifecycle with complete node topology and explicit deletion-protection control.
+- Add TKE backup storage location lifecycle with explicit safe replacement.
+- Add TSE service-registry engine lifecycle with Apollo topology and client internet access.
+- Add TcaplusDB cluster lifecycle with storage and proxy topology plus password rotation.
+- Add Tencent Cloud Mesh instance lifecycle and exact cluster-link reconciliation.
+- Add VPC HAVIP lifecycle and exact CVM or ENI drift-scope associations.
+- Add VectorDB instance lifecycle with vertical scaling, replica expansion and security groups.
+- Add WAF CC rate-protection rule lifecycle with canonical advanced-condition comparison.
+- Add WAF OWASP allowlists, automatic attack-source denial and threat-intelligence blocking management.
+- Add WAF anti-tamper URL lifecycle, precision allowlist rules and geographic blocking management.
+- Add WAF attack-signature allow-rule lifecycle with exact-set signature and condition reconciliation.
+- Add WAF protected-host and custom-rule lifecycle modules.
+- Add WAF sensitive-information leakage rule lifecycle with immutable URI protection.
+- Add ``cos_object_info`` to list and filter objects in a COS bucket, with prefix, marker and max_keys pagination.
+- Add ``cos_object_sync`` to mirror a local directory tree into a COS bucket prefix, uploading new or changed files via MD5/ETag comparison and optionally deleting extraneous remote objects.
+- Add ``cos_object`` for idempotent COS object upload, download and deletion, with ETag-based change detection, metadata and storage-class drift reconciliation, check mode and diff output.
+- Add ``cvm_image_share`` to manage CVM image sharing permissions. With ``state=present`` it shares an image to the given account IDs via ``ModifyImageSharePermission`` (Permission=SHARE); with ``state=absent`` it revokes sharing (Permission=CANCEL). Reads current shares with ``DescribeImageSharePermission``, deduplicates and sorts account IDs, supports check mode and diff.
+- Add ``cvm_instance_security_group`` to reconcile the set of security groups bound to a CVM instance. With ``state=present`` it binds missing groups and unbinds extra ones to converge on exactly the desired set; with ``state=absent`` it unbinds the given groups. Uses ``AssociateSecurityGroups``/``DisassociateSecurityGroups`` (one call per group), enforces the five-group platform limit, supports check mode and diff.
+- Add ``sms_signature`` to manage Tencent Cloud SMS signatures (签名) via ``AddSmsSign``/``DeleteSmsSign``/``DescribeSmsSignList``. Signature applications are review-based: content fields are sent only at creation, and a signature whose review failed (status code -1) is treated as absent so re-running the task resubmits. Supports check mode and diff.
+- Add ``sms_template`` to manage Tencent Cloud SMS templates (短信模板) via ``AddSmsTemplate``/``DeleteSmsTemplate``/``DescribeSmsTemplateList``. Template applications are review-based: content fields are sent only at creation, and a template whose review failed (status code -1) is treated as absent so re-running the task resubmits. Supports check mode and diff.
+- Add ``tke_cluster_autoscaler`` to reconcile the cluster-level autoscaler options of a TKE cluster via ``DescribeClusterAsGroupOption``/``ModifyClusterAsGroupOptionAttribute``. Only explicitly provided options are compared and written (scale-down toggles, expander algorithm, idle thresholds, unready-node guardrails); supports check mode and diff.
+- Add ``tke_cluster_upgrade`` to upgrade the Kubernetes version of an existing TKE cluster via ``UpdateClusterVersion``. Idempotent against the running version reported by ``DescribeClusters``; supports check mode and diff, and accepts ``max_not_ready_percent`` and ``skip_pre_check``.
+- Add account-level CloudAudit COS delivery, CMQ notification, KMS encryption and logging-state management.
+- Add complete GWLB lifecycle coverage for load balancers, target groups, associations, and exact-set backend instances.
+- Add complete SSM custom-secret lifecycle with initial material, enablement, recovery and scheduled deletion.
+- Add cross-account aggregate Config delivery management for COS and CLS targets.
+- Add declarative CDB account privileges and organization member identity reconciliation.
+- Add declarative scoped MariaDB account privilege reconciliation.
+- Add exact EdgeOne L7 custom security rule reconciliation across zone, template and host scopes.
+- Add exact EdgeOne precise rate-limiting rules with composite counters, block/throttle modes and enforcement actions.
+- Add exact EdgeOne web security exception rules for modules, managed rules, rule groups and request fields.
+- Add exact EdgeOne web security template domain-binding reconciliation with explicit unbind policy.
+- Add exact-set CBS snapshot sharing permission management.
+- Add exact-set CynosDB global, database and table account privilege management.
+- Add exact-set Lighthouse instance firewall rule management with version-aware writes.
+- Add exact-set TDMQ RocketMQ namespace role permission management.
+- Add exact-set WAF protection object group lifecycle management.
+- Add idempotent COS custom-domain certificate binding by Tencent Cloud SSL certificate ID.
+- Add idempotent CynosDB backup window and retention management.
+- Add idempotent SQL Server regular backup strategy management.
+- Add idempotent TDMQ RocketMQ namespace lifecycle management.
+- Add idempotent TDMQ RocketMQ topic and consumer group lifecycle management.
+- Add idempotent TencentDB for MySQL and Redis automatic backup configuration modules.
+- Add imported Lighthouse SSH key pair lifecycle with exact-set instance associations.
+- Add multi-engine CKafka Datahub connection lifecycle management with recursive credential scrubbing.
+- Add organization member access policy lifecycle management.
+- Add organization member creation, update, node movement and deletion lifecycle.
+- Add physical Direct Connect and secret-safe Direct Connect tunnel lifecycle management.
+- Add prepaid and postpaid CKafka instance lifecycle with runtime controls and prepaid capacity changes.
+- Add prepaid and postpaid DCDB instance lifecycle with shard expansion and specification upgrades.
+- Add prepaid and postpaid MariaDB instance lifecycle with deployment and specification changes.
+- Add reusable VPC address templates and exact address-template group membership.
+- Add scheduled TAT invoker lifecycle with secret-safe parameter comparison and enablement control.
+- Add secret-safe CKafka Datahub elastic topic lifecycle management.
+- Add secret-safe TDMQ RocketMQ role lifecycle management.
+- Add standard TDMQ RocketMQ cluster lifecycle management with secret-safe output.
+- Reconcile mutable CDN origin, service, project and acceleration-area configuration on existing domains.
+- Reformat the generated module and contract-test sources so every file satisfies the ``pep8`` sanity test, clearing 5660 ``E701``/``E702``/``E703`` and 1367 ``E501`` violations that had been failing CI on every push.
+- cos_bucket - new event_source plugin for Event-Driven Ansible that polls a COS bucket's object listing and yields each new or changed object as an event, the polling equivalent of a bucket event notification (prefix filter, optional max_objects cap, baseline first poll).
+- eks_cluster - new module to manage Tencent Cloud EKS clusters (create/update/delete, idempotent by name).
+- eks_container_instance - new module to manage Tencent Cloud EKS container instances (create/update/delete, idempotent by name).
+- generate_info_modules.py - extend the generator to scaffold resource (write) modules from a curated RESOURCE_SPECS table. ``--resource <module>`` introspects the SDK request models named in the spec and renders the module boilerplate (argument spec, request builders, identify/find helpers, check-mode run_module with a drift TODO) into plugins/modules/<module>.py. Scaffolding is write-once - existing module files are never overwritten - so scaffolded modules can be finished by hand and stay stable across generator runs. ``--resources --check`` verifies every RESOURCE_SPECS entry against the installed SDK and reports missing scaffolds (wired into CI). scf_alias is the reference entry; new write modules add their own spec and scaffold from it.
+- tc_disaster_recovery - new role that prepares cross-region disaster recovery artifacts: a golden CVM image of a source instance in the primary region, COS bucket replication to the DR region, and an optional standby CLB pre-wired in the DR region as the failover entry point.
+- tc_tke_cluster - new role that provisions a managed TKE cluster with node pools and addons in one call, reconciling the tc_tke_cluster_node_pools and tc_tke_cluster_addons lists idempotently and tearing down in reverse order (addons -> node pools -> cluster).
+- tc_web_stack - new role that provisions a complete Tencent Cloud web stack in one call: a CVM instance pool, a MySQL CDB instance and a Redis cache fronted by a CLB with an HTTP listener, automatically registering the created CVM instances as CLB backends (explicit target list or per-component enable flags supported, teardown in reverse order).
+- tencentcloud_cos - new dynamic inventory plugin listing COS buckets (and optionally their objects) as hosts, keyed by bucket name, with region/prefix filters and constructed/cache support.
+- tencentcloud_tke - new dynamic inventory plugin exposing TKE cluster nodes as hosts (worker pool by default), walking clusters and node pools per region with cluster/node-pool host variables.
+- tke_cluster - new event_source plugin for Event-Driven Ansible that polls TKE cluster status via DescribeClusterStatus and yields cluster state-change events (with previous state and node counts) plus cluster-deleted events.
+- vod_class - new module to manage Tencent Cloud VOD media categories (create/delete, idempotent by name and parent).
+- vod_sub_app - new module to manage Tencent Cloud VOD sub-applications (create/update/delete, idempotent by name; delete uses the Destroyed status since no delete API exists).
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- susunola.tencentcloud now requires ansible-core 2.19 or newer (meta/runtime.yml requires_ansible >= 2.19.0). ansible-core 2.16, 2.17 and 2.18 reached end-of-life (2025-07, 2025-11 and 2026-05) and are no longer tested. Controllers must run Python 3.11 or newer. Upgrade ansible-core before upgrading the collection.
+
+Bugfixes
+--------
+
+- cvm_disaster_recover_group - drop the ``strategy`` and ``partition_count`` options; the CVM placement-group API declares neither on ``CreateDisasterRecoverGroupRequest`` nor on the ``DisasterRecoverGroup`` response, so both values were silently discarded and could never converge.
+- cvm_disaster_recover_group_binding - send the singular ``DisasterRecoverGroupId`` string expected by ``ModifyInstancesDisasterRecoverGroupRequest`` instead of a ``DisasterRecoverGroupIds`` list, and drop the ``partition_number`` option that the API does not declare; binding requests previously carried no group at all.
+- postgresql_instance - declare ``waiter_delay`` and ``waiter_timeout`` in the argument spec so the documented 10 second and 900 second defaults are the ones actually applied, and quote the ``storage`` and ``auto_renew`` descriptions so their embedded commas no longer break the option documentation.
+- waf_custom_white_rule - mark ``bypass_modules`` as ``no_log=False``; it carries WAF module names, not a secret.
 
 v0.13.0
 =======

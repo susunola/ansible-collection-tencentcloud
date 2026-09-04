@@ -1,11 +1,13 @@
-# The _info module specs in scripts/info_specs_auto.py are regenerated
-# against a specific SDK release; scripts/check_sdk_drift.py compares CI's
-# installed tencentcloud-sdk-python to the GENERATED_SDK_VERSION stamp and
-# fails on drift. The SDK is therefore pinned exactly so CI installs the
-# same version the specs and contract tests were produced against.
-# After upgrading any constraint, run scripts/discover_info_specs.py and
+# The SDK is a compatibility range for users; the generated _info specs in
+# scripts/info_specs_auto.py are only vouched for the SDK release recorded
+# in their GENERATED_SDK_VERSION stamp. CI therefore re-pins the SDK to the
+# stamp before running scripts/check_sdk_drift.py --check and the contract
+# tests (the stamp is printed by `scripts/check_sdk_drift.py --print-stamp`),
+# so generated artifacts are always verified against the exact SDK they were
+# produced with while user installs float within the range.
+# After upgrading the range, run scripts/discover_info_specs.py and
 # scripts/generate_info_modules.py and commit the regeneration together
 # with the bump.
-tencentcloud-sdk-python==3.1.164
+tencentcloud-sdk-python>=3.1.166,<4.0.0
 # COS is not API 3.0: the cos_* modules use the separate qcloud_cos SDK.
 cos-python-sdk-v5>=1.9.0
