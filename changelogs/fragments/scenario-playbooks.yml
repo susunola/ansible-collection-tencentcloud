@@ -1,2 +1,0 @@
-minor_changes:
-  - "Add the three_tier_web scenario playbook (VPC + subnet + security group + exact_count CVM pool + CLB with listener and registered targets) and docs/scenarios.md indexing all five scenario playbooks with prerequisites and cost notes; README links to the scenario index."

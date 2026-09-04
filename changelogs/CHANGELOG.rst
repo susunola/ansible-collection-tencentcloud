@@ -1,8 +1,96 @@
 ===============================
-Tencent Cloud 1.0 Release Notes
+Tencent Cloud 1.1 Release Notes
 ===============================
 
 .. contents:: Topics
+
+v1.1.0
+======
+
+Minor Changes
+-------------
+
+- Add docs/deprecation-policy.md documenting the deprecation/removal lifecycle (one major release of warning), the runtime.yml plugin_routing entry shape, the DOCUMENTATION deprecated block and the changelog fragment format; meta/runtime.yml keeps a commented plugin_routing template skeleton. No module is deprecated in this release - no real candidates exist.
+- Add generated vpn_connection_info, customer_gateway_info, ccn_info, cbs_snapshot_info and cfs_snapshot_info discovery modules closing the read side of the existing write modules.
+- Add scripts/audit_info_coverage.py: audits that every write module has a readable query surface (matching _info module, curated KNOWN_COVERAGE mapping, or documented KNOWN_GAPS entry) and gates CI with --check.
+- Add the three_tier_web scenario playbook (VPC + subnet + security group + exact_count CVM pool + CLB with listener and registered targets) and docs/scenarios.md indexing all five scenario playbooks with prerequisites and cost notes; README links to the scenario index.
+- Add tke_cluster_kubeconfig module fetching a TKE cluster's intranet or extranet kubeconfig via DescribeClusterKubeconfig, returning it in the task result or writing it to dest with 0600 permissions and content-hash idempotency.
+- Add tke_kubeconfig and cos_static_site scenario playbooks.
+- Close the read side of thirty more write modules with new generated _info modules: network_interface_info, security_group_rule_info, tke_node_pool_info, scf_alias_info, scf_version_info, scf_trigger_info, clb_listener_info, clb_listener_target_info, clb_target_group_info, cam_policy_attachment_info, nat_gateway_dnat_rule_info, nat_gateway_snat_rule_info, tag_info, havip_info, network_acl_info, peering_connection_info, vpc_address_template_info, vpc_address_template_group_info, the ALB API (alb.v20251030) modules alb_load_balancer_info, alb_listener_info, alb_target_group_info and alb_target_group_targets_info, plus eks_cluster_info, eks_container_instance_info, sms_signature_info, sms_template_info, vod_class_info, vod_sub_app_info, tke_cluster_autoscaler_info and cvm_image_share_info for the 1.0.0 write modules.
+- Close the read side of twenty-four write modules with new generated _info modules: cdb_account_info, cdb_database_info, cdb_backup_config_info, mariadb_account_info, mongodb_account_info, sqlserver_account_info, postgresql_account_info, cynosdb_account_info, redis_account_info, kms_key_rotation_info, dc_direct_connect_info, cls_logset_info, cls_machine_group_info, cls_config_info, cls_shipper_info, cls_index_info, monitor_prometheus_instance_info, monitor_grafana_instance_info, ckafka_topic_info, ckafka_user_info, cbs_auto_snapshot_policy_info, cfs_permission_group_info, cfs_permission_rule_info and ssm_secret_info.
+- Raise the SDK contract coverage gate from 55 to 72 after the write-module unit-test drive lifted the measured total to 74 percent (gate keeps two points of headroom).
+- cos_object - add pre-signed URL support: ``presign=true`` returns a URL signed for the ``method`` option (``GET`` download or ``PUT`` upload, validity bounded by ``expires``) without touching the bucket and reports ``changed=false``; a non-default ``method`` without ``presign`` fails the task explicitly.
+- requirements.txt - tencentcloud-sdk-python is now a compatibility range (>=3.1.164,<4.0.0) instead of an exact pin; generated _info specs remain vouched for the GENERATED_SDK_VERSION stamp, and CI re-pins the SDK to the stamp (via the new ``check_sdk_drift.py --print-stamp``) before the drift sentinel and contract tests.
+
+Bugfixes
+--------
+
+- generate_info_modules.py - the list pagination mode now passes extra_params/ids/filters to build_request (previously rendered a broken build_request(models, 0, 0) call for any list spec with extra params), extra_params support elements and choices in the argument spec and documentation, generated list-mode tests inject sample values for extra params, a string_pagination spec flag covers APIs whose Offset/Limit are declared as strings, and the none pagination mode no longer emits E126-tripping continuation indents.
+- sync_registry.py - render_galaxy_yml no longer duplicates the word ``modules`` when refreshing the module count in the galaxy.yml description, and its unit test no longer rewrites the real galaxy.yml from the fake-repo fixture.
+
+New Modules
+-----------
+
+- alb_listener_info - Gather information about Tencent Cloud ALB listeners
+- alb_load_balancer_info - Gather information about Tencent Cloud ALB instances
+- alb_target_group_info - Gather information about Tencent Cloud ALB target groups
+- alb_target_group_targets_info - Gather information about Tencent Cloud ALB target group targets
+- cam_policy_attachment_info - Gather information about Tencent Cloud CAM policy attachments
+- cbs_auto_snapshot_policy_info - Gather information about Tencent Cloud CBS automatic snapshot policies
+- cbs_snapshot_info - Gather information about Tencent Cloud CBS snapshots
+- ccn_info - Gather information about Tencent Cloud CCN instances
+- cdb_account_info - Gather information about Tencent Cloud CDB accounts
+- cdb_backup_config_info - Gather information about Tencent Cloud CDB backup configuration
+- cdb_database_info - Gather information about Tencent Cloud CDB databases
+- cfs_permission_group_info - Gather information about Tencent Cloud CFS permission groups
+- cfs_permission_rule_info - Gather information about Tencent Cloud CFS permission group rules
+- cfs_snapshot_info - Gather information about Tencent Cloud CFS snapshots
+- ckafka_topic_info - Gather information about Tencent Cloud CKafka topics
+- ckafka_user_info - Gather information about Tencent Cloud CKafka users
+- clb_listener_info - Gather information about Tencent Cloud CLB listeners
+- clb_listener_target_info - Gather information about Tencent Cloud CLB listener targets
+- clb_target_group_info - Gather information about Tencent Cloud CLB target groups
+- cls_config_info - Gather information about Tencent Cloud CLS collection configurations
+- cls_index_info - Gather information about a Tencent Cloud CLS topic index
+- cls_logset_info - Gather information about Tencent Cloud CLS logsets
+- cls_machine_group_info - Gather information about Tencent Cloud CLS machine groups
+- cls_shipper_info - Gather information about Tencent Cloud CLS shippers
+- customer_gateway_info - Gather information about Tencent Cloud customer gateways
+- cvm_image_share_info - Gather information about Tencent Cloud CVM image share permissions
+- cynosdb_account_info - Gather information about Tencent Cloud CynosDB accounts
+- dc_direct_connect_info - Gather information about Tencent Cloud direct connect connections
+- eks_cluster_info - Gather information about Tencent Cloud EKS clusters
+- eks_container_instance_info - Gather information about Tencent Cloud EKS container instances
+- havip_info - Gather information about Tencent Cloud HAVIPs
+- kms_key_rotation_info - Gather information about Tencent Cloud KMS key rotation status
+- mariadb_account_info - Gather information about Tencent Cloud MariaDB accounts
+- mongodb_account_info - Gather information about Tencent Cloud MongoDB accounts
+- monitor_grafana_instance_info - Gather information about Tencent Cloud Grafana instances
+- monitor_prometheus_instance_info - Gather information about Tencent Cloud Managed Service for Prometheus instances
+- nat_gateway_dnat_rule_info - Gather information about Tencent Cloud NAT gateway DNAT rules
+- nat_gateway_snat_rule_info - Gather information about Tencent Cloud NAT gateway SNAT rules
+- network_acl_info - Gather information about Tencent Cloud network ACLs
+- network_interface_info - Gather information about Tencent Cloud elastic network interfaces
+- peering_connection_info - Gather information about Tencent Cloud VPC peering connections
+- postgresql_account_info - Gather information about Tencent Cloud PostgreSQL accounts
+- redis_account_info - Gather information about Tencent Cloud Redis accounts
+- scf_alias_info - Gather information about Tencent Cloud SCF function aliases
+- scf_trigger_info - Gather information about Tencent Cloud SCF function triggers
+- scf_version_info - Gather information about Tencent Cloud SCF function versions
+- security_group_rule_info - Gather information about Tencent Cloud security group rules
+- sms_signature_info - Gather information about Tencent Cloud SMS signatures
+- sms_template_info - Gather information about Tencent Cloud SMS templates
+- sqlserver_account_info - Gather information about Tencent Cloud SQL Server accounts
+- ssm_secret_info - Gather information about Tencent Cloud Secrets Manager secrets
+- tag_info - Gather information about Tencent Cloud tags
+- tke_cluster_autoscaler_info - Gather information about Tencent Cloud TKE cluster autoscaler options
+- tke_cluster_kubeconfig - Fetch the kubeconfig of a Tencent Cloud TKE cluster
+- tke_node_pool_info - Gather information about Tencent Cloud TKE node pools
+- vod_class_info - Gather information about Tencent Cloud VOD classes
+- vod_sub_app_info - Gather information about Tencent Cloud VOD subapplications
+- vpc_address_template_group_info - Gather information about Tencent Cloud VPC address template groups
+- vpc_address_template_info - Gather information about Tencent Cloud VPC address templates
+- vpn_connection_info - Gather information about Tencent Cloud VPN connections
 
 v1.0.0
 ======

@@ -1,2 +1,0 @@
-minor_changes:
-  - "Add docs/deprecation-policy.md documenting the deprecation/removal lifecycle (one major release of warning), the runtime.yml plugin_routing entry shape, the DOCUMENTATION deprecated block and the changelog fragment format; meta/runtime.yml keeps a commented plugin_routing template skeleton. No module is deprecated in this release - no real candidates exist."

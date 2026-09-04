@@ -73,11 +73,21 @@ plugins:
       name: alb_listener
       namespace: ''
       version_added: 0.14.0
+    alb_listener_info:
+      description: Gather information about Tencent Cloud ALB listeners
+      name: alb_listener_info
+      namespace: ''
+      version_added: 1.1.0
     alb_load_balancer:
       description: Manage Tencent Cloud Application Load Balancers
       name: alb_load_balancer
       namespace: ''
       version_added: 0.14.0
+    alb_load_balancer_info:
+      description: Gather information about Tencent Cloud ALB instances
+      name: alb_load_balancer_info
+      namespace: ''
+      version_added: 1.1.0
     alb_security_policy_info:
       description: Gather information about Tencent Cloud ALB security policies
       name: alb_security_policy_info
@@ -88,11 +98,21 @@ plugins:
       name: alb_target_group
       namespace: ''
       version_added: 0.14.0
+    alb_target_group_info:
+      description: Gather information about Tencent Cloud ALB target groups
+      name: alb_target_group_info
+      namespace: ''
+      version_added: 1.1.0
     alb_target_group_targets:
       description: Reconcile Tencent Cloud ALB target group backends
       name: alb_target_group_targets
       namespace: ''
       version_added: 0.14.0
+    alb_target_group_targets_info:
+      description: Gather information about Tencent Cloud ALB target group targets
+      name: alb_target_group_targets_info
+      namespace: ''
+      version_added: 1.1.0
     ame_ktv_robot_info:
       description: Gather information about Tencent Cloud AME ktv robots
       name: ame_ktv_robot_info
@@ -293,6 +313,11 @@ plugins:
       name: cam_policy_attachment
       namespace: ''
       version_added: 0.13.0
+    cam_policy_attachment_info:
+      description: Gather information about Tencent Cloud CAM policy attachments
+      name: cam_policy_attachment_info
+      namespace: ''
+      version_added: 1.1.0
     cam_policy_info:
       description: Gather information about Tencent Cloud CAM policies
       name: cam_policy_info
@@ -338,6 +363,11 @@ plugins:
       name: cbs_auto_snapshot_policy
       namespace: ''
       version_added: 0.14.0
+    cbs_auto_snapshot_policy_info:
+      description: Gather information about Tencent Cloud CBS automatic snapshot policies
+      name: cbs_auto_snapshot_policy_info
+      namespace: ''
+      version_added: 1.1.0
     cbs_disk:
       description: Manage Tencent Cloud CBS cloud disks
       name: cbs_disk
@@ -358,6 +388,11 @@ plugins:
       name: cbs_snapshot
       namespace: ''
       version_added: 0.14.0
+    cbs_snapshot_info:
+      description: Gather information about Tencent Cloud CBS snapshots
+      name: cbs_snapshot_info
+      namespace: ''
+      version_added: 1.1.0
     cbs_snapshot_share:
       description: Manage Tencent Cloud CBS snapshot sharing permissions
       name: cbs_snapshot_share
@@ -378,11 +413,21 @@ plugins:
       name: ccn_attachment
       namespace: ''
       version_added: 0.14.0
+    ccn_info:
+      description: Gather information about Tencent Cloud CCN instances
+      name: ccn_info
+      namespace: ''
+      version_added: 1.1.0
     cdb_account:
       description: Manage TencentDB for MySQL accounts
       name: cdb_account
       namespace: ''
       version_added: 0.14.0
+    cdb_account_info:
+      description: Gather information about Tencent Cloud CDB accounts
+      name: cdb_account_info
+      namespace: ''
+      version_added: 1.1.0
     cdb_account_privilege:
       description: Manage TencentDB for MySQL account privileges
       name: cdb_account_privilege
@@ -398,11 +443,21 @@ plugins:
       name: cdb_backup_config
       namespace: ''
       version_added: 0.14.0
+    cdb_backup_config_info:
+      description: Gather information about Tencent Cloud CDB backup configuration
+      name: cdb_backup_config_info
+      namespace: ''
+      version_added: 1.1.0
     cdb_database:
       description: Manage databases in TencentDB for MySQL
       name: cdb_database
       namespace: ''
       version_added: 0.14.0
+    cdb_database_info:
+      description: Gather information about Tencent Cloud CDB databases
+      name: cdb_database_info
+      namespace: ''
+      version_added: 1.1.0
     cdb_instance:
       description: Manage Tencent Cloud CDB MySQL instances
       name: cdb_instance
@@ -510,16 +565,31 @@ plugins:
       name: cfs_permission_group
       namespace: ''
       version_added: 0.14.0
+    cfs_permission_group_info:
+      description: Gather information about Tencent Cloud CFS permission groups
+      name: cfs_permission_group_info
+      namespace: ''
+      version_added: 1.1.0
     cfs_permission_rule:
       description: Manage Tencent Cloud CFS permission rules
       name: cfs_permission_rule
       namespace: ''
       version_added: 0.14.0
+    cfs_permission_rule_info:
+      description: Gather information about Tencent Cloud CFS permission group rules
+      name: cfs_permission_rule_info
+      namespace: ''
+      version_added: 1.1.0
     cfs_snapshot:
       description: Manage Tencent Cloud CFS snapshots
       name: cfs_snapshot
       namespace: ''
       version_added: 0.14.0
+    cfs_snapshot_info:
+      description: Gather information about Tencent Cloud CFS snapshots
+      name: cfs_snapshot_info
+      namespace: ''
+      version_added: 1.1.0
     cfw_address_template:
       description: Manage Tencent Cloud Cloud Firewall address templates
       name: cfw_address_template
@@ -635,21 +705,41 @@ plugins:
       name: ckafka_topic
       namespace: ''
       version_added: 0.12.0
+    ckafka_topic_info:
+      description: Gather information about Tencent Cloud CKafka topics
+      name: ckafka_topic_info
+      namespace: ''
+      version_added: 1.1.0
     ckafka_user:
       description: Manage Tencent Cloud CKafka users
       name: ckafka_user
       namespace: ''
       version_added: 0.14.0
+    ckafka_user_info:
+      description: Gather information about Tencent Cloud CKafka users
+      name: ckafka_user_info
+      namespace: ''
+      version_added: 1.1.0
     clb_listener:
       description: Manage listeners on Tencent Cloud CLB load balancers
       name: clb_listener
       namespace: ''
       version_added: 0.10.0
+    clb_listener_info:
+      description: Gather information about Tencent Cloud CLB listeners
+      name: clb_listener_info
+      namespace: ''
+      version_added: 1.1.0
     clb_listener_target:
       description: Manage backend targets of Tencent Cloud CLB listeners
       name: clb_listener_target
       namespace: ''
       version_added: 0.10.0
+    clb_listener_target_info:
+      description: Gather information about Tencent Cloud CLB listener targets
+      name: clb_listener_target_info
+      namespace: ''
+      version_added: 1.1.0
     clb_load_balancer:
       description: Manage Tencent Cloud CLB load balancers
       name: clb_load_balancer
@@ -670,6 +760,11 @@ plugins:
       name: clb_target_group
       namespace: ''
       version_added: 0.14.0
+    clb_target_group_info:
+      description: Gather information about Tencent Cloud CLB target groups
+      name: clb_target_group_info
+      namespace: ''
+      version_added: 1.1.0
     cloudaudit_audit:
       description: Manage Tencent Cloud account-level CloudAudit delivery
       name: cloudaudit_audit
@@ -705,6 +800,11 @@ plugins:
       name: cls_config
       namespace: ''
       version_added: 0.14.0
+    cls_config_info:
+      description: Gather information about Tencent Cloud CLS collection configurations
+      name: cls_config_info
+      namespace: ''
+      version_added: 1.1.0
     cls_config_machine_group_binding:
       description: Bind CLS collection configurations to machine groups
       name: cls_config_machine_group_binding
@@ -715,21 +815,41 @@ plugins:
       name: cls_index
       namespace: ''
       version_added: 0.14.0
+    cls_index_info:
+      description: Gather information about a Tencent Cloud CLS topic index
+      name: cls_index_info
+      namespace: ''
+      version_added: 1.1.0
     cls_logset:
       description: Manage Tencent Cloud CLS logsets
       name: cls_logset
       namespace: ''
       version_added: 0.14.0
+    cls_logset_info:
+      description: Gather information about Tencent Cloud CLS logsets
+      name: cls_logset_info
+      namespace: ''
+      version_added: 1.1.0
     cls_machine_group:
       description: Manage Tencent Cloud CLS machine groups
       name: cls_machine_group
       namespace: ''
       version_added: 0.14.0
+    cls_machine_group_info:
+      description: Gather information about Tencent Cloud CLS machine groups
+      name: cls_machine_group_info
+      namespace: ''
+      version_added: 1.1.0
     cls_shipper:
       description: Manage Tencent Cloud CLS delivery tasks to COS
       name: cls_shipper
       namespace: ''
       version_added: 0.14.0
+    cls_shipper_info:
+      description: Gather information about Tencent Cloud CLS shippers
+      name: cls_shipper_info
+      namespace: ''
+      version_added: 1.1.0
     cls_topic:
       description: Manage Tencent Cloud CLS topics
       name: cls_topic
@@ -943,6 +1063,11 @@ plugins:
       name: customer_gateway
       namespace: ''
       version_added: 0.14.0
+    customer_gateway_info:
+      description: Gather information about Tencent Cloud customer gateways
+      name: customer_gateway_info
+      namespace: ''
+      version_added: 1.1.0
     cvm_chc:
       description: Manage Tencent Cloud CHC physical server network configuration
       name: cvm_chc
@@ -973,6 +1098,11 @@ plugins:
       name: cvm_image_share
       namespace: ''
       version_added: 0.14.0
+    cvm_image_share_info:
+      description: Gather information about Tencent Cloud CVM image share permissions
+      name: cvm_image_share_info
+      namespace: ''
+      version_added: 1.1.0
     cvm_instance:
       description: Manage Tencent Cloud CVM instances
       name: cvm_instance
@@ -1018,6 +1148,11 @@ plugins:
       name: cynosdb_account
       namespace: ''
       version_added: 0.14.0
+    cynosdb_account_info:
+      description: Gather information about Tencent Cloud CynosDB accounts
+      name: cynosdb_account_info
+      namespace: ''
+      version_added: 1.1.0
     cynosdb_account_privilege:
       description: Manage Tencent Cloud CynosDB account privileges
       name: cynosdb_account_privilege
@@ -1083,6 +1218,11 @@ plugins:
       name: dc_direct_connect
       namespace: ''
       version_added: 0.14.0
+    dc_direct_connect_info:
+      description: Gather information about Tencent Cloud direct connect connections
+      name: dc_direct_connect_info
+      namespace: ''
+      version_added: 1.1.0
     dc_direct_connect_tunnel:
       description: Manage Tencent Cloud Direct Connect tunnels
       name: dc_direct_connect_tunnel
@@ -1219,11 +1359,21 @@ plugins:
       name: eks_cluster
       namespace: ''
       version_added: 0.14.0
+    eks_cluster_info:
+      description: Gather information about Tencent Cloud EKS clusters
+      name: eks_cluster_info
+      namespace: ''
+      version_added: 1.1.0
     eks_container_instance:
       description: Manage Tencent Cloud EKS container instances
       name: eks_container_instance
       namespace: ''
       version_added: 0.14.0
+    eks_container_instance_info:
+      description: Gather information about Tencent Cloud EKS container instances
+      name: eks_container_instance_info
+      namespace: ''
+      version_added: 1.1.0
     elasticsearch_index:
       description: Manage indexes in Tencent Cloud Elasticsearch Service
       name: elasticsearch_index
@@ -1369,6 +1519,11 @@ plugins:
       name: havip_association
       namespace: ''
       version_added: 0.14.0
+    havip_info:
+      description: Gather information about Tencent Cloud HAVIPs
+      name: havip_info
+      namespace: ''
+      version_added: 1.1.0
     hunyuan_glossary_info:
       description: Gather information about Tencent Cloud HUNYUAN glossaries
       name: hunyuan_glossary_info
@@ -1464,6 +1619,11 @@ plugins:
       name: kms_key_rotation
       namespace: ''
       version_added: 0.13.0
+    kms_key_rotation_info:
+      description: Gather information about Tencent Cloud KMS key rotation status
+      name: kms_key_rotation_info
+      namespace: ''
+      version_added: 1.1.0
     lcic_answer_info:
       description: Gather information about Tencent Cloud LCIC answers
       name: lcic_answer_info
@@ -1529,6 +1689,11 @@ plugins:
       name: mariadb_account
       namespace: ''
       version_added: 0.14.0
+    mariadb_account_info:
+      description: Gather information about Tencent Cloud MariaDB accounts
+      name: mariadb_account_info
+      namespace: ''
+      version_added: 1.1.0
     mariadb_account_privilege:
       description: Manage a scoped TencentDB for MariaDB account privilege set
       name: mariadb_account_privilege
@@ -1569,6 +1734,11 @@ plugins:
       name: mongodb_account
       namespace: ''
       version_added: 0.14.0
+    mongodb_account_info:
+      description: Gather information about Tencent Cloud MongoDB accounts
+      name: mongodb_account_info
+      namespace: ''
+      version_added: 1.1.0
     mongodb_backup_config:
       description: Manage TencentDB for MongoDB automatic backup rules
       name: mongodb_backup_config
@@ -1604,6 +1774,11 @@ plugins:
       name: monitor_grafana_instance
       namespace: ''
       version_added: 0.14.0
+    monitor_grafana_instance_info:
+      description: Gather information about Tencent Cloud Grafana instances
+      name: monitor_grafana_instance_info
+      namespace: ''
+      version_added: 1.1.0
     monitor_grafana_integration:
       description: Manage Tencent Cloud Managed Grafana integrations
       name: monitor_grafana_integration
@@ -1654,6 +1829,12 @@ plugins:
       name: monitor_prometheus_instance
       namespace: ''
       version_added: 0.14.0
+    monitor_prometheus_instance_info:
+      description: Gather information about Tencent Cloud Managed Service for Prometheus
+        instances
+      name: monitor_prometheus_instance_info
+      namespace: ''
+      version_added: 1.1.0
     monitor_prometheus_record_rule:
       description: Manage Tencent Cloud Managed Prometheus recording rules
       name: monitor_prometheus_record_rule
@@ -1709,6 +1890,11 @@ plugins:
       name: nat_gateway
       namespace: ''
       version_added: 0.12.0
+    nat_gateway_dnat_rule_info:
+      description: Gather information about Tencent Cloud NAT gateway DNAT rules
+      name: nat_gateway_dnat_rule_info
+      namespace: ''
+      version_added: 1.1.0
     nat_gateway_info:
       description: Gather information about Tencent Cloud NAT gateways
       name: nat_gateway_info
@@ -1719,16 +1905,31 @@ plugins:
       name: nat_gateway_rule
       namespace: ''
       version_added: 0.14.0
+    nat_gateway_snat_rule_info:
+      description: Gather information about Tencent Cloud NAT gateway SNAT rules
+      name: nat_gateway_snat_rule_info
+      namespace: ''
+      version_added: 1.1.0
     network_acl:
       description: Manage Tencent Cloud VPC network ACLs
       name: network_acl
       namespace: ''
       version_added: 0.14.0
+    network_acl_info:
+      description: Gather information about Tencent Cloud network ACLs
+      name: network_acl_info
+      namespace: ''
+      version_added: 1.1.0
     network_interface:
       description: Manage Tencent Cloud elastic network interfaces
       name: network_interface
       namespace: ''
       version_added: 0.13.0
+    network_interface_info:
+      description: Gather information about Tencent Cloud elastic network interfaces
+      name: network_interface_info
+      namespace: ''
+      version_added: 1.1.0
     oceanus_cluster_info:
       description: Gather information about Tencent Cloud OCEANUS clusters
       name: oceanus_cluster_info
@@ -1785,6 +1986,11 @@ plugins:
       name: peering_connection
       namespace: ''
       version_added: 0.12.0
+    peering_connection_info:
+      description: Gather information about Tencent Cloud VPC peering connections
+      name: peering_connection_info
+      namespace: ''
+      version_added: 1.1.0
     portal_document_info:
       description: Gather information about Tencent Cloud PORTAL documents
       name: portal_document_info
@@ -1800,6 +2006,11 @@ plugins:
       name: postgresql_account
       namespace: ''
       version_added: 0.14.0
+    postgresql_account_info:
+      description: Gather information about Tencent Cloud PostgreSQL accounts
+      name: postgresql_account_info
+      namespace: ''
+      version_added: 1.1.0
     postgresql_backup_plan:
       description: Manage TencentDB for PostgreSQL backup plans
       name: postgresql_backup_plan
@@ -1850,6 +2061,11 @@ plugins:
       name: redis_account
       namespace: ''
       version_added: 0.14.0
+    redis_account_info:
+      description: Gather information about Tencent Cloud Redis accounts
+      name: redis_account_info
+      namespace: ''
+      version_added: 1.1.0
     redis_backup_config:
       description: Manage TencentDB for Redis automatic backup configuration
       name: redis_backup_config
@@ -1895,6 +2111,11 @@ plugins:
       name: scf_alias
       namespace: ''
       version_added: 0.13.0
+    scf_alias_info:
+      description: Gather information about Tencent Cloud SCF function aliases
+      name: scf_alias_info
+      namespace: ''
+      version_added: 1.1.0
     scf_function:
       description: Manage Tencent Cloud SCF functions
       name: scf_function
@@ -1910,11 +2131,21 @@ plugins:
       name: scf_trigger
       namespace: ''
       version_added: 0.14.0
+    scf_trigger_info:
+      description: Gather information about Tencent Cloud SCF function triggers
+      name: scf_trigger_info
+      namespace: ''
+      version_added: 1.1.0
     scf_version:
       description: Manage Tencent Cloud SCF function versions
       name: scf_version
       namespace: ''
       version_added: 0.13.0
+    scf_version_info:
+      description: Gather information about Tencent Cloud SCF function versions
+      name: scf_version_info
+      namespace: ''
+      version_added: 1.1.0
     security_group:
       description: Manage Tencent Cloud security groups
       name: security_group
@@ -1930,6 +2161,11 @@ plugins:
       name: security_group_rule
       namespace: ''
       version_added: 0.4.0
+    security_group_rule_info:
+      description: Gather information about Tencent Cloud security group rules
+      name: security_group_rule_info
+      namespace: ''
+      version_added: 1.1.0
     securitylake_security_alarm_table_info:
       description: Gather information about Tencent Cloud SECURITYLAKE security alarm
         tables
@@ -1956,16 +2192,31 @@ plugins:
       name: sms_signature
       namespace: ''
       version_added: 0.14.0
+    sms_signature_info:
+      description: Gather information about Tencent Cloud SMS signatures
+      name: sms_signature_info
+      namespace: ''
+      version_added: 1.1.0
     sms_template:
       description: Manage Tencent Cloud SMS templates
       name: sms_template
       namespace: ''
       version_added: 0.14.0
+    sms_template_info:
+      description: Gather information about Tencent Cloud SMS templates
+      name: sms_template_info
+      namespace: ''
+      version_added: 1.1.0
     sqlserver_account:
       description: Manage TencentDB for SQL Server accounts
       name: sqlserver_account
       namespace: ''
       version_added: 0.14.0
+    sqlserver_account_info:
+      description: Gather information about Tencent Cloud SQL Server accounts
+      name: sqlserver_account_info
+      namespace: ''
+      version_added: 1.1.0
     sqlserver_backup_config:
       description: Manage TencentDB for SQL Server backup configuration
       name: sqlserver_backup_config
@@ -2016,6 +2267,11 @@ plugins:
       name: ssm_secret
       namespace: ''
       version_added: 0.14.0
+    ssm_secret_info:
+      description: Gather information about Tencent Cloud Secrets Manager secrets
+      name: ssm_secret_info
+      namespace: ''
+      version_added: 1.1.0
     ssm_secret_version:
       description: Manage Tencent Cloud SSM secret versions
       name: ssm_secret_version
@@ -2041,6 +2297,11 @@ plugins:
       name: tag
       namespace: ''
       version_added: 0.12.0
+    tag_info:
+      description: Gather information about Tencent Cloud tags
+      name: tag_info
+      namespace: ''
+      version_added: 1.1.0
     tat_command:
       description: Manage Tencent Cloud TAT commands
       name: tat_command
@@ -2401,6 +2662,11 @@ plugins:
       name: tke_cluster_autoscaler
       namespace: ''
       version_added: 0.14.0
+    tke_cluster_autoscaler_info:
+      description: Gather information about Tencent Cloud TKE cluster autoscaler options
+      name: tke_cluster_autoscaler_info
+      namespace: ''
+      version_added: 1.1.0
     tke_cluster_endpoint:
       description: Manage Tencent Cloud TKE cluster access endpoints
       name: tke_cluster_endpoint
@@ -2411,6 +2677,11 @@ plugins:
       name: tke_cluster_info
       namespace: ''
       version_added: 0.4.0
+    tke_cluster_kubeconfig:
+      description: Fetch the kubeconfig of a Tencent Cloud TKE cluster
+      name: tke_cluster_kubeconfig
+      namespace: ''
+      version_added: 1.1.0
     tke_cluster_upgrade:
       description: Upgrade the Kubernetes version of a Tencent Cloud TKE cluster
       name: tke_cluster_upgrade
@@ -2421,6 +2692,11 @@ plugins:
       name: tke_node_pool
       namespace: ''
       version_added: 0.13.0
+    tke_node_pool_info:
+      description: Gather information about Tencent Cloud TKE node pools
+      name: tke_node_pool_info
+      namespace: ''
+      version_added: 1.1.0
     tokenhub_model_info:
       description: Gather information about Tencent Cloud TOKENHUB models
       name: tokenhub_model_info
@@ -2527,6 +2803,11 @@ plugins:
       name: vod_class
       namespace: ''
       version_added: 0.14.0
+    vod_class_info:
+      description: Gather information about Tencent Cloud VOD classes
+      name: vod_class_info
+      namespace: ''
+      version_added: 1.1.0
     vod_incremental_migration_strategy_info:
       description: Gather information about Tencent Cloud VOD incremental migration
         strategies
@@ -2538,6 +2819,11 @@ plugins:
       name: vod_sub_app
       namespace: ''
       version_added: 0.14.0
+    vod_sub_app_info:
+      description: Gather information about Tencent Cloud VOD subapplications
+      name: vod_sub_app_info
+      namespace: ''
+      version_added: 1.1.0
     vpc:
       description: Manage Tencent Cloud VPCs
       name: vpc
@@ -2553,6 +2839,16 @@ plugins:
       name: vpc_address_template_group
       namespace: ''
       version_added: 0.14.0
+    vpc_address_template_group_info:
+      description: Gather information about Tencent Cloud VPC address template groups
+      name: vpc_address_template_group_info
+      namespace: ''
+      version_added: 1.1.0
+    vpc_address_template_info:
+      description: Gather information about Tencent Cloud VPC address templates
+      name: vpc_address_template_info
+      namespace: ''
+      version_added: 1.1.0
     vpc_flow_log:
       description: Manage Tencent Cloud VPC flow logs
       name: vpc_flow_log
@@ -2568,6 +2864,11 @@ plugins:
       name: vpn_connection
       namespace: ''
       version_added: 0.14.0
+    vpn_connection_info:
+      description: Gather information about Tencent Cloud VPN connections
+      name: vpn_connection_info
+      namespace: ''
+      version_added: 1.1.0
     vpn_gateway:
       description: Manage Tencent Cloud VPN gateways
       name: vpn_gateway
@@ -2684,4 +2985,4 @@ plugins:
   strategy: {}
   test: {}
   vars: {}
-version: 1.0.0
+version: 1.1.0
