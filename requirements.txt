@@ -10,4 +10,4 @@
 # with the bump.
 tencentcloud-sdk-python>=3.1.166,<4.0.0
 # COS is not API 3.0: the cos_* modules use the separate qcloud_cos SDK.
-cos-python-sdk-v5>=1.9.0
+cos-python-sdk-v5>=1.9.44
