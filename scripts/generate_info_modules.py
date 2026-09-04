@@ -1501,6 +1501,763 @@ SPECS = [
 """,
     },
     # -----------------------------------------------------------------
+    # Coverage batch 8 (1.2.0): KNOWN_GAPS second batch — IAM, database
+    # config surfaces, compute, networking, API Gateway and CLS.
+    # -----------------------------------------------------------------
+    {
+        'module': 'cam_group_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.cam.v20190116',
+        'client_module': 'cam_client',
+        'client_class': 'CamClient',
+        'sdk_package': 'tencentcloud-sdk-python-cam',
+        'endpoint': 'cam.tencentcloudapi.com',
+        'action': 'ListGroups',
+        'request_class': 'ListGroupsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'keyword', 'field': 'Keyword', 'type': 'str',
+                # A name filter, not a credential.
+                'no_log': False,
+                'doc': 'Return only groups whose name contains this keyword.',
+            },
+        ],
+        'response_items': 'GroupInfo',
+        'response_total': 'TotalNum',
+        'result_key': 'groups',
+        'pagination_type': 'page',
+        'short_description': 'Gather information about Tencent Cloud CAM groups',
+        'description': 'Returns CAM user groups of the account.',
+        'return_items_doc': 'Matching CAM groups.',
+        'return_total_doc': 'Number of groups reported by the API.',
+        "examples": """\
+- name: List all CAM groups
+  susunola.tencentcloud.cam_group_info:
+    region: ap-guangzhou
+
+- name: Find groups by keyword
+  susunola.tencentcloud.cam_group_info:
+    region: ap-guangzhou
+    keyword: platform
+
+""",
+        'page_number_field': 'Page',
+        'page_size_field': 'Rp',
+    },
+    {
+        'module': 'cam_group_membership_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.cam.v20190116',
+        'client_module': 'cam_client',
+        'client_class': 'CamClient',
+        'sdk_package': 'tencentcloud-sdk-python-cam',
+        'endpoint': 'cam.tencentcloudapi.com',
+        'action': 'ListGroupsForUser',
+        'request_class': 'ListGroupsForUserRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [{'name': 'uid', 'field': 'Uid', 'type': 'int', 'required': True, 'doc': 'UID of the sub-user whose group memberships are returned.'}],
+        'response_items': 'GroupInfo',
+        'response_total': 'TotalNum',
+        'result_key': 'groups',
+        'pagination_type': 'page',
+        'short_description': 'Gather information about Tencent Cloud CAM group memberships of a user',
+        'description': 'Returns the CAM groups a sub-user belongs to.',
+        'return_items_doc': 'Groups the user belongs to.',
+        'return_total_doc': 'Number of groups reported by the API.',
+        "examples": """\
+- name: List the groups of a sub-user
+  susunola.tencentcloud.cam_group_membership_info:
+    region: ap-guangzhou
+    uid: 1000000001
+
+""",
+        'page_number_field': 'Page',
+        'page_size_field': 'Rp',
+    },
+    {
+        'module': 'cam_saml_provider_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.cam.v20190116',
+        'client_module': 'cam_client',
+        'client_class': 'CamClient',
+        'sdk_package': 'tencentcloud-sdk-python-cam',
+        'endpoint': 'cam.tencentcloudapi.com',
+        'action': 'ListSAMLProviders',
+        'request_class': 'ListSAMLProvidersRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'SAMLProviderSet',
+        'response_total': None,
+        'result_key': 'saml_providers',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CAM SAML identity providers',
+        'description': 'Returns the SAML identity providers of the account.',
+        'return_items_doc': 'SAML identity providers.',
+        'return_total_doc': 'Number of providers returned (the API reports no pageable total).',
+        "examples": """\
+- name: List all SAML identity providers
+  susunola.tencentcloud.cam_saml_provider_info:
+    region: ap-guangzhou
+
+""",
+    },
+    {
+        'module': 'cam_oidc_provider_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.cam.v20190116',
+        'client_module': 'cam_client',
+        'client_class': 'CamClient',
+        'sdk_package': 'tencentcloud-sdk-python-cam',
+        'endpoint': 'cam.tencentcloudapi.com',
+        'action': 'DescribeOIDCConfig',
+        'request_class': 'DescribeOIDCConfigRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [{'name': 'name', 'field': 'Name', 'type': 'str', 'required': True, 'doc': 'Name of the OIDC identity provider.'}],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'oidc_provider',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about a Tencent Cloud CAM OIDC identity provider',
+        'description': 'Returns the configuration of an OIDC identity provider.',
+        'return_items_doc': 'The OIDC provider configuration.',
+        'return_total_doc': '',
+        "examples": """\
+- name: Show an OIDC identity provider
+  susunola.tencentcloud.cam_oidc_provider_info:
+    region: ap-guangzhou
+    name: "my-oidc"
+
+""",
+    },
+    {
+        'module': 'cdb_parameter_template_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.cdb.v20170320',
+        'client_module': 'cdb_client',
+        'client_class': 'CdbClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdb',
+        'endpoint': 'cdb.tencentcloudapi.com',
+        'action': 'DescribeParamTemplates',
+        'request_class': 'DescribeParamTemplatesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Items',
+        'response_total': None,
+        'result_key': 'parameter_templates',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CDB parameter templates',
+        'description': 'Returns CDB parameter templates visible in a Tencent Cloud region.',
+        'return_items_doc': 'Parameter templates.',
+        'return_total_doc': 'Number of templates returned (the API reports no pageable total).',
+        "examples": """\
+- name: List all CDB parameter templates
+  susunola.tencentcloud.cdb_parameter_template_info:
+    region: ap-guangzhou
+
+""",
+    },
+    {
+        'module': 'cdb_audit_config_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.cdb.v20170320',
+        'client_module': 'cdb_client',
+        'client_class': 'CdbClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdb',
+        'endpoint': 'cdb.tencentcloudapi.com',
+        'action': 'DescribeAuditConfig',
+        'request_class': 'DescribeAuditConfigRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [{'name': 'instance_id', 'field': 'InstanceId', 'type': 'str', 'required': True, 'doc': 'ID of the CDB instance whose audit configuration is returned.'}],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'audit_config',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about a Tencent Cloud CDB audit configuration',
+        'description': 'Returns the audit configuration of a CDB instance.',
+        'return_items_doc': 'The audit configuration of the instance.',
+        'return_total_doc': '',
+        "examples": """\
+- name: Show the audit configuration of a CDB instance
+  susunola.tencentcloud.cdb_audit_config_info:
+    region: ap-guangzhou
+    instance_id: "cdb-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'cdb_account_privilege_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.cdb.v20170320',
+        'client_module': 'cdb_client',
+        'client_class': 'CdbClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdb',
+        'endpoint': 'cdb.tencentcloudapi.com',
+        'action': 'DescribeAccountPrivileges',
+        'request_class': 'DescribeAccountPrivilegesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [{'name': 'instance_id', 'field': 'InstanceId', 'type': 'str', 'required': True, 'doc': 'ID of the CDB instance.'}, {'name': 'user', 'field': 'User', 'type': 'str', 'required': True, 'doc': 'Account name whose privileges are returned.'}, {'name': 'host', 'field': 'Host', 'type': 'str', 'required': True, 'doc': 'Account host, for example C(%) or C(10.0.0.%).'}],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'privileges',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about Tencent Cloud CDB account privileges',
+        'description': 'Returns the privileges of an account on a CDB instance.',
+        'return_items_doc': 'The account privileges (global, database, table and column level).',
+        'return_total_doc': '',
+        "examples": """\
+- name: Show the privileges of a CDB account
+  susunola.tencentcloud.cdb_account_privilege_info:
+    region: ap-guangzhou
+    instance_id: "cdb-xxxxxxxx"
+    user: "app"
+    host: "%"
+
+""",
+    },
+    {
+        'module': 'mongodb_backup_config_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.mongodb.v20190725',
+        'client_module': 'mongodb_client',
+        'client_class': 'MongodbClient',
+        'sdk_package': 'tencentcloud-sdk-python-mongodb',
+        'endpoint': 'mongodb.tencentcloudapi.com',
+        'action': 'DescribeBackupRules',
+        'request_class': 'DescribeBackupRulesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [{'name': 'instance_id', 'field': 'InstanceId', 'type': 'str', 'required': True, 'doc': 'ID of the MongoDB instance whose backup rules are returned.'}],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'backup_config',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about a Tencent Cloud MongoDB backup configuration',
+        'description': 'Returns the automatic backup rules of a MongoDB instance.',
+        'return_items_doc': 'The backup rules of the instance.',
+        'return_total_doc': '',
+        "examples": """\
+- name: Show the backup rules of a MongoDB instance
+  susunola.tencentcloud.mongodb_backup_config_info:
+    region: ap-guangzhou
+    instance_id: "cmgo-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'postgresql_backup_plan_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.postgres.v20170312',
+        'client_module': 'postgres_client',
+        'client_class': 'PostgresClient',
+        'sdk_package': 'tencentcloud-sdk-python-postgres',
+        'endpoint': 'postgres.tencentcloudapi.com',
+        'action': 'DescribeBackupPlans',
+        'request_class': 'DescribeBackupPlansRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [{'name': 'db_instance_id', 'field': 'DBInstanceId', 'type': 'str', 'required': True, 'doc': 'ID of the PostgreSQL instance whose backup plans are returned.'}],
+        'response_items': 'Plans',
+        'response_total': None,
+        'result_key': 'backup_plans',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud PostgreSQL backup plans',
+        'description': 'Returns the backup plans of a PostgreSQL instance.',
+        'return_items_doc': 'Backup plans of the instance.',
+        'return_total_doc': 'Number of plans returned (the API reports no pageable total).',
+        "examples": """\
+- name: List the backup plans of a PostgreSQL instance
+  susunola.tencentcloud.postgresql_backup_plan_info:
+    region: ap-guangzhou
+    db_instance_id: "postgres-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'redis_backup_config_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.redis.v20180412',
+        'client_module': 'redis_client',
+        'client_class': 'RedisClient',
+        'sdk_package': 'tencentcloud-sdk-python-redis',
+        'endpoint': 'redis.tencentcloudapi.com',
+        'action': 'DescribeAutoBackupConfig',
+        'request_class': 'DescribeAutoBackupConfigRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [{'name': 'instance_id', 'field': 'InstanceId', 'type': 'str', 'required': True, 'doc': 'ID of the Redis instance whose backup configuration is returned.'}],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'backup_config',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about a Tencent Cloud Redis backup configuration',
+        'description': 'Returns the automatic backup configuration of a Redis instance.',
+        'return_items_doc': 'The backup configuration of the instance.',
+        'return_total_doc': '',
+        "examples": """\
+- name: Show the backup configuration of a Redis instance
+  susunola.tencentcloud.redis_backup_config_info:
+    region: ap-guangzhou
+    instance_id: "crs-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'cynosdb_backup_config_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.cynosdb.v20190107',
+        'client_module': 'cynosdb_client',
+        'client_class': 'CynosdbClient',
+        'sdk_package': 'tencentcloud-sdk-python-cynosdb',
+        'endpoint': 'cynosdb.tencentcloudapi.com',
+        'action': 'DescribeBackupConfig',
+        'request_class': 'DescribeBackupConfigRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [{'name': 'cluster_id', 'field': 'ClusterId', 'type': 'str', 'required': True, 'doc': 'ID of the CynosDB cluster whose backup configuration is returned.'}],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'backup_config',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about a Tencent Cloud CynosDB backup configuration',
+        'description': 'Returns the backup configuration of a CynosDB cluster.',
+        'return_items_doc': 'The backup configuration of the cluster.',
+        'return_total_doc': '',
+        "examples": """\
+- name: Show the backup configuration of a CynosDB cluster
+  susunola.tencentcloud.cynosdb_backup_config_info:
+    region: ap-guangzhou
+    cluster_id: "cynosdbmysql-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'mariadb_backup_config_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.mariadb.v20170312',
+        'client_module': 'mariadb_client',
+        'client_class': 'MariadbClient',
+        'sdk_package': 'tencentcloud-sdk-python-mariadb',
+        'endpoint': 'mariadb.tencentcloudapi.com',
+        'action': 'DescribeBackupConfigs',
+        'request_class': 'DescribeBackupConfigsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [{'name': 'instance_id', 'field': 'InstanceId', 'type': 'str', 'required': True, 'doc': 'ID of the MariaDB instance whose backup configuration is returned.'}],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'backup_config',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about a Tencent Cloud MariaDB backup configuration',
+        'description': 'Returns the backup configuration of a MariaDB instance.',
+        'return_items_doc': 'The backup configuration of the instance.',
+        'return_total_doc': '',
+        "examples": """\
+- name: Show the backup configuration of a MariaDB instance
+  susunola.tencentcloud.mariadb_backup_config_info:
+    region: ap-guangzhou
+    instance_id: "tdsql-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'redis_parameter_template_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.redis.v20180412',
+        'client_module': 'redis_client',
+        'client_class': 'RedisClient',
+        'sdk_package': 'tencentcloud-sdk-python-redis',
+        'endpoint': 'redis.tencentcloudapi.com',
+        'action': 'DescribeParamTemplates',
+        'request_class': 'DescribeParamTemplatesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Items',
+        'response_total': 'TotalCount',
+        'result_key': 'parameter_templates',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud Redis parameter templates',
+        'description': 'Returns Redis parameter templates visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching parameter templates.',
+        'return_total_doc': 'Number of templates reported by the API.',
+        "examples": """\
+- name: List all Redis parameter templates
+  susunola.tencentcloud.redis_parameter_template_info:
+    region: ap-guangzhou
+
+""",
+    },
+    {
+        'module': 'postgresql_parameter_template_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.postgres.v20170312',
+        'client_module': 'postgres_client',
+        'client_class': 'PostgresClient',
+        'sdk_package': 'tencentcloud-sdk-python-postgres',
+        'endpoint': 'postgres.tencentcloudapi.com',
+        'action': 'DescribeParameterTemplates',
+        'request_class': 'DescribeParameterTemplatesRequest',
+        'ids': None,
+        'filters': {'doc': 'POSTGRES API filter names mapped to lists of values.'},
+        'extra_params': [],
+        'response_items': 'ParameterTemplateSet',
+        'response_total': 'TotalCount',
+        'result_key': 'parameter_templates',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud PostgreSQL parameter templates',
+        'description': 'Returns PostgreSQL parameter templates visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching parameter templates.',
+        'return_total_doc': 'Number of templates reported by the API.',
+        "examples": """\
+- name: List all PostgreSQL parameter templates
+  susunola.tencentcloud.postgresql_parameter_template_info:
+    region: ap-guangzhou
+
+""",
+    },
+    {
+        'module': 'cvm_launch_template_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.cvm.v20170312',
+        'client_module': 'cvm_client',
+        'client_class': 'CvmClient',
+        'sdk_package': 'tencentcloud-sdk-python-cvm',
+        'endpoint': 'cvm.tencentcloudapi.com',
+        'action': 'DescribeLaunchTemplates',
+        'request_class': 'DescribeLaunchTemplatesRequest',
+        'ids': {'param': 'launch_template_ids', 'field': 'LaunchTemplateIds', 'doc': 'Launch template IDs to return. Mutually exclusive with O(filters).'},
+        'filters': {'doc': 'CVM API filter names mapped to lists of values.'},
+        'extra_params': [],
+        'response_items': 'LaunchTemplateSet',
+        'response_total': 'TotalCount',
+        'result_key': 'launch_templates',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CVM launch templates',
+        'description': 'Returns CVM launch templates visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching launch templates.',
+        'return_total_doc': 'Number of launch templates reported by the API.',
+        "examples": """\
+- name: List all launch templates
+  susunola.tencentcloud.cvm_launch_template_info:
+    region: ap-guangzhou
+
+- name: Find launch templates by ID
+  susunola.tencentcloud.cvm_launch_template_info:
+    region: ap-guangzhou
+    launch_template_ids: [lt-xxxxxxxx]
+
+""",
+    },
+    {
+        'module': 'cvm_launch_template_version_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.cvm.v20170312',
+        'client_module': 'cvm_client',
+        'client_class': 'CvmClient',
+        'sdk_package': 'tencentcloud-sdk-python-cvm',
+        'endpoint': 'cvm.tencentcloudapi.com',
+        'action': 'DescribeLaunchTemplateVersions',
+        'request_class': 'DescribeLaunchTemplateVersionsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [{'name': 'launch_template_id', 'field': 'LaunchTemplateId', 'type': 'str', 'required': True, 'doc': 'ID of the launch template whose versions are returned.'}],
+        'response_items': 'LaunchTemplateVersionSet',
+        'response_total': 'TotalCount',
+        'result_key': 'launch_template_versions',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CVM launch template versions',
+        'description': 'Returns the versions of a CVM launch template.',
+        'return_items_doc': 'Versions of the launch template.',
+        'return_total_doc': 'Number of versions reported by the API.',
+        "examples": """\
+- name: List the versions of a launch template
+  susunola.tencentcloud.cvm_launch_template_version_info:
+    region: ap-guangzhou
+    launch_template_id: "lt-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'cvm_disaster_recover_group_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.cvm.v20170312',
+        'client_module': 'cvm_client',
+        'client_class': 'CvmClient',
+        'sdk_package': 'tencentcloud-sdk-python-cvm',
+        'endpoint': 'cvm.tencentcloudapi.com',
+        'action': 'DescribeDisasterRecoverGroups',
+        'request_class': 'DescribeDisasterRecoverGroupsRequest',
+        'ids': {'param': 'disaster_recover_group_ids', 'field': 'DisasterRecoverGroupIds', 'doc': 'Placement group IDs to return. Mutually exclusive with O(filters).'},
+        'filters': {'doc': 'CVM API filter names mapped to lists of values.'},
+        'extra_params': [],
+        'response_items': 'DisasterRecoverGroupSet',
+        'response_total': 'TotalCount',
+        'result_key': 'disaster_recover_groups',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CVM placement groups',
+        'description': 'Returns CVM disaster recover (placement) groups visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching placement groups.',
+        'return_total_doc': 'Number of placement groups reported by the API.',
+        "examples": """\
+- name: List all placement groups
+  susunola.tencentcloud.cvm_disaster_recover_group_info:
+    region: ap-guangzhou
+
+- name: Find placement groups by ID
+  susunola.tencentcloud.cvm_disaster_recover_group_info:
+    region: ap-guangzhou
+    disaster_recover_group_ids: [ps-xxxxxxxx]
+
+""",
+    },
+    {
+        'module': 'cvm_hpc_cluster_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.cvm.v20170312',
+        'client_module': 'cvm_client',
+        'client_class': 'CvmClient',
+        'sdk_package': 'tencentcloud-sdk-python-cvm',
+        'endpoint': 'cvm.tencentcloudapi.com',
+        'action': 'DescribeHpcClusters',
+        'request_class': 'DescribeHpcClustersRequest',
+        'ids': {'param': 'hpc_cluster_ids', 'field': 'HpcClusterIds', 'doc': 'HPC cluster IDs to return. Mutually exclusive with O(filters).'},
+        'filters': {'doc': 'CVM API filter names mapped to lists of values.'},
+        'extra_params': [],
+        'response_items': 'HpcClusterSet',
+        'response_total': 'TotalCount',
+        'result_key': 'hpc_clusters',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CVM HPC clusters',
+        'description': 'Returns CVM HPC clusters visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching HPC clusters.',
+        'return_total_doc': 'Number of HPC clusters reported by the API.',
+        "examples": """\
+- name: List all HPC clusters
+  susunola.tencentcloud.cvm_hpc_cluster_info:
+    region: ap-guangzhou
+
+- name: Find HPC clusters by ID
+  susunola.tencentcloud.cvm_hpc_cluster_info:
+    region: ap-guangzhou
+    hpc_cluster_ids: [hpc-xxxxxxxx]
+
+""",
+    },
+    {
+        'module': 'cvm_image_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.cvm.v20170312',
+        'client_module': 'cvm_client',
+        'client_class': 'CvmClient',
+        'sdk_package': 'tencentcloud-sdk-python-cvm',
+        'endpoint': 'cvm.tencentcloudapi.com',
+        'action': 'DescribeImages',
+        'request_class': 'DescribeImagesRequest',
+        'ids': {'param': 'image_ids', 'field': 'ImageIds', 'doc': 'Image IDs to return. Mutually exclusive with O(filters).'},
+        'filters': {'doc': 'CVM API filter names mapped to lists of values.'},
+        'extra_params': [],
+        'response_items': 'ImageSet',
+        'response_total': 'TotalCount',
+        'result_key': 'images',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CVM images',
+        'description': 'Returns CVM images visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching images.',
+        'return_total_doc': 'Number of images reported by the API.',
+        "examples": """\
+- name: List private images
+  susunola.tencentcloud.cvm_image_info:
+    region: ap-guangzhou
+    filters:
+      image-type: [PRIVATE_IMAGE]
+
+- name: Find images by ID
+  susunola.tencentcloud.cvm_image_info:
+    region: ap-guangzhou
+    image_ids: [img-xxxxxxxx]
+
+""",
+    },
+    {
+        'module': 'ccn_attachment_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.vpc.v20170312',
+        'client_module': 'vpc_client',
+        'client_class': 'VpcClient',
+        'sdk_package': 'tencentcloud-sdk-python-vpc',
+        'endpoint': 'vpc.tencentcloudapi.com',
+        'action': 'DescribeCcnAttachedInstances',
+        'request_class': 'DescribeCcnAttachedInstancesRequest',
+        'ids': None,
+        'filters': {'doc': 'VPC API filter names mapped to lists of values.'},
+        'extra_params': [{'name': 'ccn_id', 'field': 'CcnId', 'type': 'str', 'required': True, 'doc': 'ID of the CCN instance whose attachments are returned.'}],
+        'response_items': 'InstanceSet',
+        'response_total': 'TotalCount',
+        'result_key': 'attachments',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CCN attachments',
+        'description': 'Returns the instances attached to a CCN instance.',
+        'return_items_doc': 'Attachments of the CCN instance.',
+        'return_total_doc': 'Number of attachments reported by the API.',
+        "examples": """\
+- name: List the attachments of a CCN instance
+  susunola.tencentcloud.ccn_attachment_info:
+    region: ap-guangzhou
+    ccn_id: "ccn-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'vpc_flow_log_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.vpc.v20170312',
+        'client_module': 'vpc_client',
+        'client_class': 'VpcClient',
+        'sdk_package': 'tencentcloud-sdk-python-vpc',
+        'endpoint': 'vpc.tencentcloudapi.com',
+        'action': 'DescribeFlowLogs',
+        'request_class': 'DescribeFlowLogsRequest',
+        'ids': None,
+        'filters': {'doc': 'VPC API filter names mapped to lists of values.'},
+        'extra_params': [],
+        'response_items': 'FlowLog',
+        'response_total': 'TotalNum',
+        'result_key': 'flow_logs',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud VPC flow logs',
+        'description': 'Returns VPC flow logs visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching flow logs.',
+        'return_total_doc': 'Number of flow logs reported by the API.',
+        "examples": """\
+- name: List all flow logs
+  susunola.tencentcloud.vpc_flow_log_info:
+    region: ap-guangzhou
+
+""",
+    },
+    {
+        'module': 'api_gateway_service_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.apigateway.v20180808',
+        'client_module': 'apigateway_client',
+        'client_class': 'ApigatewayClient',
+        'sdk_package': 'tencentcloud-sdk-python-apigateway',
+        'endpoint': 'apigateway.tencentcloudapi.com',
+        'action': 'DescribeServicesStatus',
+        'request_class': 'DescribeServicesStatusRequest',
+        'ids': None,
+        'filters': {'doc': 'APIGATEWAY API filter names mapped to lists of values.'},
+        'extra_params': [],
+        'response_items': 'Result.ServiceSet',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'services',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud API Gateway services',
+        'description': 'Returns API Gateway services visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching API Gateway services.',
+        'return_total_doc': 'Number of services reported by the API.',
+        "examples": """\
+- name: List all API Gateway services
+  susunola.tencentcloud.api_gateway_service_info:
+    region: ap-guangzhou
+
+""",
+    },
+    {
+        'module': 'api_gateway_api_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.apigateway.v20180808',
+        'client_module': 'apigateway_client',
+        'client_class': 'ApigatewayClient',
+        'sdk_package': 'tencentcloud-sdk-python-apigateway',
+        'endpoint': 'apigateway.tencentcloudapi.com',
+        'action': 'DescribeApisStatus',
+        'request_class': 'DescribeApisStatusRequest',
+        'ids': None,
+        'filters': {'doc': 'APIGATEWAY API filter names mapped to lists of values.'},
+        'extra_params': [{'name': 'service_id', 'field': 'ServiceId', 'type': 'str', 'required': True, 'doc': 'ID of the API Gateway service whose APIs are returned.'}],
+        'response_items': 'Result.ApiIdStatusSet',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'apis',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud API Gateway APIs',
+        'description': 'Returns the APIs of an API Gateway service.',
+        'return_items_doc': 'APIs of the service.',
+        'return_total_doc': 'Number of APIs reported by the API.',
+        "examples": """\
+- name: List the APIs of a service
+  susunola.tencentcloud.api_gateway_api_info:
+    region: ap-guangzhou
+    service_id: "service-xxxxxxxx"
+
+""",
+    },
+    {
+        'module': 'cfs_auto_snapshot_policy_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.cfs.v20190719',
+        'client_module': 'cfs_client',
+        'client_class': 'CfsClient',
+        'sdk_package': 'tencentcloud-sdk-python-cfs',
+        'endpoint': 'cfs.tencentcloudapi.com',
+        'action': 'DescribeAutoSnapshotPolicies',
+        'request_class': 'DescribeAutoSnapshotPoliciesRequest',
+        'ids': None,
+        'filters': {'doc': 'CFS API filter names mapped to lists of values.'},
+        'extra_params': [],
+        'response_items': 'AutoSnapshotPolicies',
+        'response_total': 'TotalCount',
+        'result_key': 'auto_snapshot_policies',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CFS automatic snapshot policies',
+        'description': 'Returns CFS automatic snapshot policies visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching automatic snapshot policies.',
+        'return_total_doc': 'Number of policies reported by the API.',
+        "examples": """\
+- name: List all CFS automatic snapshot policies
+  susunola.tencentcloud.cfs_auto_snapshot_policy_info:
+    region: ap-guangzhou
+
+""",
+    },
+    {
+        'module': 'cls_config_machine_group_binding_info',
+        'version_added': '1.2.0',
+        'service_package': 'tencentcloud.cls.v20201016',
+        'client_module': 'cls_client',
+        'client_class': 'ClsClient',
+        'sdk_package': 'tencentcloud-sdk-python-cls',
+        'endpoint': 'cls.tencentcloudapi.com',
+        'action': 'DescribeMachineGroupConfigs',
+        'request_class': 'DescribeMachineGroupConfigsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [{'name': 'group_id', 'field': 'GroupId', 'type': 'str', 'required': True, 'doc': 'ID of the CLS machine group whose bound configs are returned.'}],
+        'response_items': 'Configs',
+        'response_total': None,
+        'result_key': 'bindings',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CLS machine group config bindings',
+        'description': 'Returns the collection configurations bound to a CLS machine group.',
+        'return_items_doc': 'Configurations bound to the machine group.',
+        'return_total_doc': 'Number of bindings returned (the API reports no pageable total).',
+        "examples": """\
+- name: List the configs bound to a machine group
+  susunola.tencentcloud.cls_config_machine_group_binding_info:
+    region: ap-guangzhou
+    group_id: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+""",
+    },
+    # -----------------------------------------------------------------
     # Coverage batch 7 (1.1.0): KNOWN_GAPS first batch — read sides of
     # database, logging, network, storage and observability write modules.
     # -----------------------------------------------------------------
