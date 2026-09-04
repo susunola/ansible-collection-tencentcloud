@@ -240,7 +240,7 @@ def test_present_creates_group_and_refinds(monkeypatch):
     assert create.Remark == "Platform engineering team"
     refind = [req for name, req in fake.calls if name == "ListGroups"][-1]
     # re-find by id sends no keyword hint; real SDK models pre-set fields to None
-    assert refind.Keyword is None
+    assert getattr(refind, "Keyword", None) is None
 
 
 def test_present_check_mode_create_is_dry_run(monkeypatch):

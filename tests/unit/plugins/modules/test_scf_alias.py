@@ -241,7 +241,8 @@ def test_create_update_delete_issue_requests(monkeypatch):
 # ---------------------------------------------------------------------------
 
 
-def test_function_version_required_for_every_state():
+def test_function_version_required_for_every_state(monkeypatch):
+    monkeypatch.setattr(TencentCloudModule, "require_sdk", lambda self: None)
     module_args(state="absent", function_name="my-func", name="prod")
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)

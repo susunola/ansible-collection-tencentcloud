@@ -171,14 +171,16 @@ def test_find_instance_no_groups_returns_empty_list(monkeypatch):
 # ---------------------------------------------------------------------------
 
 
-def test_empty_security_group_ids_fails():
+def test_empty_security_group_ids_fails(monkeypatch):
+    monkeypatch.setattr(TencentCloudModule, "require_sdk", lambda self: None)
     _run_args(security_group_ids=[])
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
     assert "security_group_ids must not be empty" in exc.value.args[0]["msg"]
 
 
-def test_more_than_five_groups_fails_when_present():
+def test_more_than_five_groups_fails_when_present(monkeypatch):
+    monkeypatch.setattr(TencentCloudModule, "require_sdk", lambda self: None)
     _run_args(security_group_ids=["sg-%d" % i for i in range(6)])
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)

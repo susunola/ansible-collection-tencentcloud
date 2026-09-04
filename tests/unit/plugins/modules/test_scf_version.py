@@ -243,14 +243,16 @@ def test_delete_force_delete_flag_set_when_requested():
 # ---------------------------------------------------------------------------
 
 
-def test_latest_version_is_rejected():
+def test_latest_version_is_rejected(monkeypatch):
+    monkeypatch.setattr(TencentCloudModule, "require_sdk", lambda self: None)
     _run_args(version="$LATEST")
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
     assert "cannot be managed" in exc.value.args[0]["msg"]
 
 
-def test_default_version_is_rejected():
+def test_default_version_is_rejected(monkeypatch):
+    monkeypatch.setattr(TencentCloudModule, "require_sdk", lambda self: None)
     _run_args(version="default")
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
