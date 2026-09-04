@@ -1,2 +1,0 @@
-minor_changes:
-  - Add waf_ip_access_control for idempotent IP allowlist and blocklist rules.

@@ -1,3 +1,7 @@
+from __future__ import (absolute_import, division, print_function)
+
+__metaclass__ = type
+
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import sanitize_error
 
 

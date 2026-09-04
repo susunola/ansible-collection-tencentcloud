@@ -1,7 +1,0 @@
-minor_changes:
-  - >-
-    Add ``private_dns_zone`` for private-zone lifecycle, VPC associations and
-    creation tags.
-  - >-
-    Add ``private_dns_record`` for idempotent private DNS record create,
-    update and delete operations.

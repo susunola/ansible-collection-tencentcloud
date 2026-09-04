@@ -1,0 +1,39 @@
+---
+# Teardown runs in reverse provision order: addons first, then node pools
+# (respecting each pool's keep_instance), then the cluster itself.
+- name: Remove the addons
+  susunola.tencentcloud.tke_addon:
+    region: "{{ tc_tke_cluster_region | default(omit) }}"
+    state: absent
+    cluster_id: "{{ tc_tke_cluster_id }}"
+    name: "{{ item.name }}"
+    waiter_timeout: "{{ tc_tke_cluster_waiter_timeout }}"
+    waiter_delay: "{{ tc_tke_cluster_waiter_delay }}"
+  loop: "{{ tc_tke_cluster_addons }}"
+  when:
+    - tc_tke_cluster_id
+    - tc_tke_cluster_addons | length > 0
+
+- name: Remove the node pools
+  susunola.tencentcloud.tke_node_pool:
+    region: "{{ tc_tke_cluster_region | default(omit) }}"
+    state: absent
+    cluster_id: "{{ tc_tke_cluster_id }}"
+    name: "{{ item.name }}"
+    keep_instance: "{{ item.keep_instance | default(false, true) }}"
+    waiter_timeout: "{{ tc_tke_cluster_waiter_timeout }}"
+    waiter_delay: "{{ tc_tke_cluster_waiter_delay }}"
+  loop: "{{ tc_tke_cluster_node_pools }}"
+  when:
+    - tc_tke_cluster_id
+    - tc_tke_cluster_node_pools | length > 0
+
+- name: Remove the TKE cluster
+  susunola.tencentcloud.tke_cluster:
+    region: "{{ tc_tke_cluster_region | default(omit) }}"
+    state: absent
+    cluster_id: "{{ tc_tke_cluster_id | default(omit, true) }}"
+    name: "{{ tc_tke_cluster_name | default(omit, true) }}"
+    waiter_timeout: "{{ tc_tke_cluster_waiter_timeout }}"
+    waiter_delay: "{{ tc_tke_cluster_waiter_delay }}"
+  when: tc_tke_cluster_id or tc_tke_cluster_name

@@ -1,4 +1,0 @@
-minor_changes:
-  - >-
-    Add network_acl for ACL lifecycle, exact ingress/egress rules and exact
-    subnet association reconciliation.

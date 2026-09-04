@@ -1,9 +1,12 @@
 name: Integration
 on:
-  push:
-    branches: [main]
+  # Integration runs create billable cloud resources, so they are
+  # opt-in: manual (workflow_dispatch) plus one weekly scheduled run
+  # (Saturdays 02:00 UTC, offset from the Monday devel run). Merge-time
+  # runs were dropped - sanity/units on every push already gate merges,
+  # and a daily billable run added cost without catching more regressions.
   schedule:
-    - cron: "0 2 * * *"
+    - cron: "0 2 * * 6"
   workflow_dispatch:
     inputs:
       targets:

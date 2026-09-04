@@ -1,2 +1,0 @@
-bugfixes:
-  - Wait for DBbrain SQL filters and TCR replication instances to reach their terminal desired state.

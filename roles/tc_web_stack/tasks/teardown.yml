@@ -1,0 +1,63 @@
+---
+# Teardown runs in reverse provision order. Deleting the listener implicitly
+# deregisters all of its backends, so no separate target task is needed.
+- name: Remove the HTTP listener (backends are deregistered with it)
+  susunola.tencentcloud.clb_listener:
+    region: "{{ tc_web_stack_region | default(omit) }}"
+    state: absent
+    load_balancer_id: "{{ tc_web_stack_lb_id }}"
+    port: "{{ tc_web_stack_listener_port }}"
+    protocol: HTTP
+    waiter_timeout: "{{ tc_web_stack_waiter_timeout }}"
+    waiter_delay: "{{ tc_web_stack_waiter_delay }}"
+  when:
+    - tc_web_stack_enable_clb
+    - tc_web_stack_lb_id
+
+- name: Remove the CLB load balancer
+  susunola.tencentcloud.clb_load_balancer:
+    region: "{{ tc_web_stack_region | default(omit) }}"
+    state: absent
+    load_balancer_id: "{{ tc_web_stack_lb_id | default(omit, true) }}"
+    name: "{{ tc_web_stack_lb_name | default(omit, true) }}"
+    waiter_timeout: "{{ tc_web_stack_waiter_timeout }}"
+    waiter_delay: "{{ tc_web_stack_waiter_delay }}"
+  when:
+    - tc_web_stack_enable_clb
+    - tc_web_stack_lb_id or tc_web_stack_lb_name
+
+- name: Remove the Redis cache instance
+  susunola.tencentcloud.redis_instance:
+    region: "{{ tc_web_stack_region | default(omit) }}"
+    state: absent
+    instance_id: "{{ tc_web_stack_redis_instance_id | default(omit, true) }}"
+    name: "{{ tc_web_stack_redis_name | default(omit, true) }}"
+    waiter_timeout: "{{ tc_web_stack_waiter_timeout }}"
+    waiter_delay: "{{ tc_web_stack_waiter_delay }}"
+  when:
+    - tc_web_stack_enable_redis
+    - tc_web_stack_redis_instance_id or tc_web_stack_redis_name
+
+- name: Remove the MySQL CDB instance
+  susunola.tencentcloud.cdb_instance:
+    region: "{{ tc_web_stack_region | default(omit) }}"
+    state: absent
+    instance_id: "{{ tc_web_stack_cdb_instance_id | default(omit, true) }}"
+    name: "{{ tc_web_stack_cdb_name | default(omit, true) }}"
+    waiter_timeout: "{{ tc_web_stack_waiter_timeout }}"
+    waiter_delay: "{{ tc_web_stack_waiter_delay }}"
+  when:
+    - tc_web_stack_enable_cdb
+    - tc_web_stack_cdb_instance_id or tc_web_stack_cdb_name
+
+- name: Remove the CVM web instances
+  susunola.tencentcloud.cvm_instance:
+    region: "{{ tc_web_stack_region | default(omit) }}"
+    state: absent
+    instance_id: "{{ tc_web_stack_instance_id | default(omit, true) }}"
+    instance_name: "{{ tc_web_stack_instance_name | default(omit, true) }}"
+    waiter_timeout: "{{ tc_web_stack_waiter_timeout }}"
+    waiter_delay: "{{ tc_web_stack_waiter_delay }}"
+  when:
+    - tc_web_stack_enable_cvm
+    - tc_web_stack_instance_id or tc_web_stack_instance_name

@@ -1,8 +1,0 @@
----
-minor_changes:
-  - scripts/check_hidden_required_params.py now runs as a CI gate
-    (``--check``) alongside the SDK drift sentinel, failing the build when a
-    generated ``*_info`` spec hides a required request field of its SDK
-    model. Unit coverage for the docstring heuristics, pagination coverage
-    logic and the gate's exit behaviour was added under
-    ``tests/unit/scripts/``.

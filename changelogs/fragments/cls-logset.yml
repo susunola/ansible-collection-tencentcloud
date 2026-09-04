@@ -1,2 +1,0 @@
-minor_changes:
-  - Add cls_logset for idempotent CLS logset lifecycle, naming and exact tags.

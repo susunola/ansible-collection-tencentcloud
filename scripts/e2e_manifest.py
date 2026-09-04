@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Record and audit resources created by real-cloud integration tests."""
 
 from __future__ import annotations

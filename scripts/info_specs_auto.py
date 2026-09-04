@@ -9,7 +9,7 @@ types) exactly like the curated SPECS in generate_info_modules.py.
 discovered against; scripts/check_sdk_drift.py pins CI to it.
 """
 
-GENERATED_SDK_VERSION = '3.1.113'
+GENERATED_SDK_VERSION = '3.1.164'
 
 
 SPECS_AUTO = [
@@ -131,45 +131,6 @@ SPECS_AUTO = [
   susunola.tencentcloud.ags_sandbox_instance_info:
     region: ap-guangzhou
     sandbox_instance_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'alb_security_policy_info',
-        'version_added': '0.9.0',
-        'service_package': 'tencentcloud.alb.v20251030',
-        'client_module': 'alb_client',
-        'client_class': 'AlbClient',
-        'sdk_package': 'tencentcloud-sdk-python-alb',
-        'endpoint': 'alb.tencentcloudapi.com',
-        'action': 'DescribeSecurityPolicies',
-        'request_class': 'DescribeSecurityPoliciesRequest',
-        'ids': {
-            'param': 'security_policy_ids',
-            'field': 'SecurityPolicyIds',
-            'doc': 'Security policy IDs to return. Mutually exclusive with O(filters).',
-        },
-        'filters': {
-            'doc': 'ALB API filter names mapped to lists of values.',
-        },
-        'extra_params': [],
-        'response_items': 'SecurityPolicies',
-        'response_total': 'TotalCount',
-        'result_key': 'security_policies',
-        'pagination_type': 'token',
-        'list_over_field': None,
-        'short_description': 'Gather information about Tencent Cloud ALB security policies',
-        'description': 'Returns ALB security policies visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching ALB security policies.',
-        'return_total_doc': 'Number of security policies reported by the API.',
-        'examples': """\
-- name: List all security policies
-  susunola.tencentcloud.alb_security_policy_info:
-    region: ap-guangzhou
-
-- name: Find security policies by ID
-  susunola.tencentcloud.alb_security_policy_info:
-    region: ap-guangzhou
-    security_policy_ids: [x-xxxxxxxx]
 """,
     },
     {

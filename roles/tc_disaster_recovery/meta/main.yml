@@ -1,0 +1,28 @@
+---
+galaxy_info:
+  role_name: tc_disaster_recovery
+  namespace: susunola
+  author: Tencent Cloud Ansible Collection Contributors (@susunola)
+  description: Prepare cross-region disaster recovery artifacts (golden CVM image, COS replication and a standby CLB)
+  company: Tencent Cloud
+  license: GPL-3.0-or-later
+  min_ansible_version: "2.16"
+  platforms:
+    - name: Generic
+      versions:
+        - all
+    - name: macOS
+      versions:
+        - all
+    - name: Windows
+      versions:
+        - all
+  galaxy_tags:
+    - tencentcloud
+    - disasterrecovery
+    - cvm
+    - cos
+    - clb
+    - dr
+    - cloud
+dependencies: []

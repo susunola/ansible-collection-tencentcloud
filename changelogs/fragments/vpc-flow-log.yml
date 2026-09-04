@@ -1,4 +1,0 @@
-minor_changes:
-  - >-
-    Add vpc_flow_log for flow-log lifecycle, CLS topic delivery, mutable
-    metadata and enable/disable state management.

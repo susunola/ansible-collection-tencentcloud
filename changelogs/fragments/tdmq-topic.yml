@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``tdmq_topic`` for idempotent TDMQ Pulsar topic lifecycle management.
