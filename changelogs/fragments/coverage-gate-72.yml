@@ -1,0 +1,2 @@
+minor_changes:
+  - "Raise the SDK contract coverage gate from 55 to 72 after the write-module unit-test drive lifted the measured total to 74 percent (gate keeps two points of headroom)."

@@ -87,6 +87,28 @@ options:
         C(INTELLIGENT_TIERING) or C(ARCHIVE). Applied on upload.
     type: str
     default: STANDARD
+  presign:
+    description:
+      - When C(true), do not transfer anything; instead return a pre-signed
+        URL for the object as C(url), signed for the HTTP O(method).
+        Nothing is read or written in the bucket and the task reports
+        C(changed=false).
+      - Only valid with O(state=present).
+    type: bool
+    default: false
+  method:
+    description:
+      - HTTP method the pre-signed URL is signed for when O(presign=true);
+        C(GET) mints a download URL, C(PUT) an upload URL.
+      - Passing a non-default value with O(presign=false) fails the task.
+    type: str
+    choices: [GET, PUT]
+    default: GET
+  expires:
+    description:
+      - Validity of the pre-signed URL in seconds when O(presign=true).
+    type: int
+    default: 3600
   retries:
     description:
       - Maximum number of retry attempts for throttled or transient API
@@ -155,6 +177,29 @@ EXAMPLES = r'''
     bucket: mybucket
     appid: "1300000000"
     object: images/logo.png
+
+- name: Mint a short-lived pre-signed download URL
+  susunola.tencentcloud.cos_object:
+    region: ap-guangzhou
+    state: present
+    bucket: mybucket
+    appid: "1300000000"
+    object: reports/daily.csv
+    presign: true
+    method: GET
+    expires: 600
+  register: presigned
+
+- name: Mint a short-lived pre-signed upload URL
+  susunola.tencentcloud.cos_object:
+    region: ap-guangzhou
+    state: present
+    bucket: mybucket
+    appid: "1300000000"
+    object: uploads/new-asset.zip
+    presign: true
+    method: PUT
+  register: upload_url
 '''
 
 RETURN = r'''
@@ -170,6 +215,11 @@ object:
     storage_class: STANDARD
     metadata:
       x-cos-meta-owner: platform
+url:
+  description: The pre-signed URL, signed with the module credentials.
+  returned: when O(presign=true)
+  type: str
+  sample: https://mybucket-1300000000.cos.ap-guangzhou.myqcloud.com/images/logo.png?q-sign-algorithm=sha1&...
 '''
 
 import hashlib
@@ -267,6 +317,9 @@ def run_module():
             "force": {"type": "bool", "default": False},
             "metadata": {"type": "dict", "default": {}},
             "storage_class": {"type": "str", "default": "STANDARD"},
+            "presign": {"type": "bool", "default": False},
+            "method": {"type": "str", "choices": ["GET", "PUT"], "default": "GET"},
+            "expires": {"type": "int", "default": 3600},
         },
         supports_check_mode=True,
         mutually_exclusive=[("src", "content")],
@@ -280,14 +333,28 @@ def run_module():
     content = module.params["content"]
     dest = module.params["dest"]
     force = module.params["force"]
+    presign = module.params["presign"]
+    method = module.params["method"]
     metadata = normalize_metadata(module.params["metadata"])
     storage_class = module.params["storage_class"]
+
+    if state == "absent" and presign:
+        module.fail_json(msg="presign is only valid with state=present")
+    if method != "GET" and not presign:
+        module.fail_json(msg="method only applies when presign=true")
 
     appid = cos.resolve_appid(module)
     bucket = cos.bucket_full_name(bucket_short, appid)
     client = cos.create_cos_client(module)
 
     try:
+        if presign:
+            url = client.get_presigned_url(
+                Bucket=bucket, Key=key, Method=method,
+                Expired=module.params["expires"],
+            )
+            module.exit_json(changed=False, url=url, msg="Pre-signed URL generated")
+
         current = describe_object(client, bucket, key)
 
         if state == "absent":

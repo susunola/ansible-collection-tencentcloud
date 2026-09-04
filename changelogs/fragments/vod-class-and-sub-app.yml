@@ -1,3 +1,0 @@
-minor_changes:
-  - vod_class - new module to manage Tencent Cloud VOD media categories (create/delete, idempotent by name and parent).
-  - vod_sub_app - new module to manage Tencent Cloud VOD sub-applications (create/update/delete, idempotent by name; delete uses the Destroyed status since no delete API exists).

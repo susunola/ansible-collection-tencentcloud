@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>susunola.tencentcloud 全景对比 · 优势 / 劣势 / 30 件急事</title>
+<style>
+  :root{
+    --bg:#0f1420;
+    --panel:#161d2e;
+    --panel2:#1c2438;
+    --line:#26304a;
+    --text:#e8edf7;
+    --muted:#8b97b0;
+    --dim:#5d6a85;
+    --accent:#3b82f6;
+    --accent2:#60a5fa;
+    --blue:#3b82f6;
+    --cyan:#22d3ee;
+    --violet:#8b5cf6;
+    --amber:#f59e0b;
+    --emerald:#34d399;
+    --rose:#fb7185;
+    --radius:14px;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:
+      radial-gradient(1200px 500px at 80% -10%, rgba(59,130,246,.14), transparent 60%),
+      radial-gradient(900px 400px at -10% 20%, rgba(139,92,246,.10), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    padding:40px 28px 56px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1280px;margin:0 auto}
+
+  /* ===== Header ===== */
+  .head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:8px}
+  .brand{display:flex;align-items:center;gap:14px}
+  .logo{
+    width:52px;height:52px;border-radius:13px;flex:none;
+    background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+    display:grid;place-items:center;font-weight:800;font-size:21px;color:#fff;
+    box-shadow:0 8px 24px rgba(59,130,246,.35);
+  }
+  .brand h1{font-size:24px;font-weight:700;letter-spacing:.2px}
+  .brand h1 .mono{font-family:var(--mono);color:var(--accent2);font-weight:600}
+  .brand .sub{color:var(--muted);font-size:13px;margin-top:4px}
+  .badge-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .pill{
+    font-size:11.5px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);
+    color:var(--muted);background:rgba(255,255,255,.02);white-space:nowrap;
+  }
+  .pill b{color:var(--text);font-weight:600}
+  .ver{text-align:right}
+  .ver .tag{
+    font-family:var(--mono);font-size:13px;color:var(--accent2);
+    border:1px solid rgba(59,130,246,.4);background:rgba(59,130,246,.08);
+    padding:5px 12px;border-radius:8px;display:inline-block;margin-bottom:10px;
+  }
+  .ver .meta{font-size:12px;color:var(--dim);line-height:1.7}
+
+  /* ===== Section ===== */
+  section{margin-top:38px}
+  .sec-h{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:14px}
+  .sec-h .eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:1.8px;text-transform:uppercase;color:var(--accent2);margin-bottom:7px}
+  .sec-h h2{font-size:19px;font-weight:700;letter-spacing:.2px}
+  .sec-h .sub{font-size:11.5px;color:var(--dim);margin-top:5px;line-height:1.6}
+
+  /* ===== KPI ===== */
+  .kpi{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+  .kpi .cell{
+    background:linear-gradient(180deg,var(--panel),rgba(22,29,46,.6));
+    border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;
+    position:relative;overflow:hidden;
+  }
+  .kpi .cell::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+  .kpi .cell:nth-child(2)::before{background:var(--violet)}
+  .kpi .cell:nth-child(3)::before{background:var(--cyan)}
+  .kpi .cell:nth-child(4)::before{background:var(--amber)}
+  .kpi .cell:nth-child(5)::before{background:var(--emerald)}
+  .kpi .cell:nth-child(6)::before{background:var(--rose)}
+  .kpi .num{font-size:26px;font-weight:800;font-family:var(--mono);letter-spacing:-1px}
+  .kpi .lbl{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.5}
+  .kpi .lbl b{color:var(--text)}
+  .kpi .hot .num{color:var(--emerald)}
+  .kpi .warn .num{color:var(--rose)}
+
+  /* ===== Radar layout ===== */
+  .radar-grid{display:grid;grid-template-columns:620px 1fr;gap:22px;align-items:start}
+  .radar-card{border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,var(--panel),rgba(22,29,46,.5));padding:16px 18px}
+  .radar-card .rt{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:10px;letter-spacing:.4px}
+  .radar-card svg{width:100%;height:auto;display:block}
+  .legend{display:flex;flex-direction:column;gap:8px;margin-top:12px;font-size:12px;color:var(--muted)}
+  .legend .li{display:flex;align-items:center;gap:8px}
+  .legend .sw{width:14px;height:14px;border-radius:4px;flex:none}
+  .legend b{color:var(--text);font-family:var(--mono)}
+  .legend .note{font-size:10.5px;color:var(--dim);line-height:1.6;margin-top:6px}
+  .legend .note b{color:var(--muted);font-family:inherit}
+
+  /* ===== Verdict cards ===== */
+  .verdict{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .vc{border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;background:linear-gradient(180deg,var(--panel),rgba(22,29,46,.5))}
+  .vc.good{border-color:rgba(52,211,153,.35)}
+  .vc.bad{border-color:rgba(251,113,133,.32)}
+  .vc .vt{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:700;margin-bottom:12px}
+  .vc.good .vt{color:#7ee2b8}
+  .vc.bad .vt{color:#fda4af}
+  .vc ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+  .vc li{font-size:12.5px;color:var(--muted);line-height:1.6}
+  .vc li b{color:var(--text)}
+  .vc li .tag{display:inline-block;font-family:var(--mono);font-size:10px;padding:1px 7px;border-radius:5px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--accent2);margin-right:4px;vertical-align:1px}
+  .hard-truth{
+    margin-top:14px;border:1px solid rgba(251,113,133,.45);border-radius:12px;
+    background:linear-gradient(90deg,rgba(251,113,133,.08),rgba(251,113,133,.02));
+    padding:13px 18px;font-size:12.5px;color:var(--muted);line-height:1.7;
+  }
+  .hard-truth .ht-t{color:#fda4af;font-weight:700;margin-right:6px}
+  .hard-truth b{color:var(--text)}
+
+  /* ===== 30 items table ===== */
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:rgba(16,20,32,.5)}
+  table.t30{width:100%;border-collapse:collapse;min-width:900px;font-size:12.5px}
+  table.t30 th,table.t30 td{padding:9px 13px;border-top:1px solid rgba(38,48,74,.55);text-align:left;vertical-align:top}
+  table.t30 thead th{font-size:11px;font-weight:600;color:var(--muted);border-top:none;background:rgba(0,0,0,.18);white-space:nowrap}
+  table.t30 td.no{font-family:var(--mono);color:var(--dim);white-space:nowrap}
+  table.t30 td.item b{color:var(--text);font-weight:600}
+  table.t30 td.item .why{display:block;color:var(--dim);font-size:11.5px;margin-top:3px;line-height:1.5}
+  .grp-p0 td{background:rgba(59,130,246,.05)}
+  .grp-p1 td{background:rgba(139,92,246,.04)}
+  .grp-p2 td{background:rgba(22,29,46,.35)}
+  .chip{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap}
+  .chip.p0{background:rgba(251,113,133,.14);color:#fda4af;border:1px solid rgba(251,113,133,.4)}
+  .chip.p1{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.35)}
+  .chip.p2{background:rgba(52,211,153,.1);color:#6ee7b7;border:1px solid rgba(52,211,153,.3)}
+  .chip.cost{background:rgba(148,163,184,.1);color:#94a3b8;border:1px solid rgba(148,163,184,.25)}
+  .grpbar{display:flex;gap:8px;align-items:center;margin:10px 2px 0}
+  .grpbar .g{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+  .grpbar .dot{width:10px;height:10px;border-radius:3px}
+
+  .foot{
+    margin-top:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+  }
+  .m{
+    background:rgba(22,29,46,.5);border:1px solid var(--line);border-radius:12px;padding:13px 15px;
+  }
+  .m .t{font-size:11px;font-weight:700;color:var(--text);margin-bottom:5px}
+  .m .d{font-size:11px;color:var(--dim);line-height:1.6}
+  .source{margin-top:20px;font-size:11px;color:var(--dim);text-align:center;font-family:var(--mono);letter-spacing:.2px}
+
+  @media (max-width:1180px){
+    .kpi{grid-template-columns:repeat(3,1fr)}
+    .radar-grid{grid-template-columns:1fr}
+    .verdict{grid-template-columns:1fr}
+    .foot{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:640px){
+    .kpi{grid-template-columns:repeat(2,1fr)}
+    .foot{grid-template-columns:1fr}
+    .ver{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ================= HEADER ================= -->
+  <div class="head">
+    <div class="brand">
+      <div class="logo">TC</div>
+      <div>
+        <h1>susunola.<span class="mono">tencentcloud</span> 全景对比</h1>
+        <div class="sub">Full-picture benchmark · 优势与劣势 · 30 件急切可补事项（与 amazon.aws / azure.azcollection / google.cloud 对照）</div>
+        <div class="badge-row">
+          <span class="pill">Galaxy <b>v1.0.0</b></span>
+          <span class="pill">ansible-core <b>2.19+</b></span>
+          <span class="pill">sanity <b>零 ignore</b></span>
+          <span class="pill">覆盖 <b>225 产品</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="ver">
+      <div class="tag">全景对比 · 2026-09-02</div>
+      <div class="meta">数据源：Galaxy 发布产物（tar.gz）实拉统计<br>amazon.aws 11.4.0 / azure 4.0.0 / google.cloud 1.14.0</div>
+    </div>
+  </div>
+
+  <!-- ================= KPI ================= -->
+  <div class="kpi" style="margin-top:26px">
+    <div class="cell"><div class="num">524</div><div class="lbl"><b>模块总数</b> · 313 write + 211 _info</div></div>
+    <div class="cell"><div class="num">225</div><div class="lbl"><b>覆盖产品</b> · 87 个含写操作</div></div>
+    <div class="cell"><div class="num">345</div><div class="lbl"><b>单元测试文件</b> · 2531 个测试函数</div></div>
+    <div class="cell warn"><div class="num">21</div><div class="lbl"><b>集成测试 targets</b> · 旗舰 13 模块为 0</div></div>
+    <div class="cell warn"><div class="num">222</div><div class="lbl"><b>write 模块无单测</b> · 覆盖率 60.9%（目标 70）</div></div>
+    <div class="cell warn"><div class="num">0</div><div class="lbl"><b>Galaxy 下载</b> · 首发，inclusion #89 评审中</div></div>
+  </div>
+
+  <!-- ================= RADAR ================= -->
+  <section>
+    <div class="sec-h">
+      <div>
+        <div class="eyebrow">Radar · 六维归一</div>
+        <h2>六维能力全景（各维取四家中最大值为满格）</h2>
+        <div class="sub">维度：模块广度 / write 深度 / info 发现 / 单测文件（产物口径） / 集成 targets / 插件 + roles。注：azure 产物剥离全部测试、google 产物仅留 1 个单测文件（源仓库均有完整测试），其对应点以近 0 呈现但<u style="color:var(--muted)">不代表源码水平</u>。</div>
+      </div>
+    </div>
+    <div class="radar-grid">
+      <div class="radar-card">
+        <div class="rt">六维对比 · 各轴满值 = 四家中最大值</div>
+        <svg viewBox="0 0 720 640" xmlns="http://www.w3.org/2000/svg" font-family="SF Mono,ui-monospace,Menlo,Consolas,monospace">
+          <!-- grid rings -->
+          <circle cx="360" cy="320" r="53.75" fill="none" stroke="#26304a" stroke-width="1"/>
+          <circle cx="360" cy="320" r="107.5" fill="none" stroke="#26304a" stroke-width="1"/>
+          <circle cx="360" cy="320" r="161.25" fill="none" stroke="#26304a" stroke-width="1"/>
+          <circle cx="360" cy="320" r="215" fill="none" stroke="#34405f" stroke-width="1.2"/>
+          <!-- spokes -->
+          <line x1="360" y1="320" x2="360" y2="105" stroke="#202a42" stroke-width="1"/>
+          <line x1="360" y1="320" x2="546" y2="212" stroke="#202a42" stroke-width="1"/>
+          <line x1="360" y1="320" x2="546" y2="428" stroke="#202a42" stroke-width="1"/>
+          <line x1="360" y1="320" x2="360" y2="535" stroke="#202a42" stroke-width="1"/>
+          <line x1="360" y1="320" x2="174" y2="428" stroke="#202a42" stroke-width="1"/>
+          <line x1="360" y1="320" x2="174" y2="212" stroke="#202a42" stroke-width="1"/>
+          <!-- polygons: susunola / amazon / google / azure -->
+          <polygon points="360.0,105.0 546.2,212.5 543.6,426.0 360.0,535.0 335.6,334.1 173.8,212.5" fill="rgba(59,130,246,.16)" stroke="#3b82f6" stroke-width="2.2"/>
+          <polygon points="360.0,262.1 404.0,294.6 418.3,353.7 360.0,409.7 173.8,427.5 256.6,260.3" fill="rgba(245,158,11,.07)" stroke="#f59e0b" stroke-width="1.5"/>
+          <polygon points="360.0,240.4 428.4,280.5 428.7,359.7 360.0,320.6 226.2,397.3 308.3,290.1" fill="rgba(34,211,238,.06)" stroke="#22d3ee" stroke-width="1.5"/>
+          <polygon points="360.0,145.2 486.1,247.2 546.2,427.5 360.0,320.0 360.0,320.0 308.3,290.1" fill="rgba(139,92,246,.05)" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="5 3"/>
+          <!-- axis labels (main + values, legend order: susunola / amazon / google / azure) -->
+          <text x="360" y="26" text-anchor="middle" font-size="13.5" fill="#c3cde0">模块广度</text>
+          <text x="360" y="42" text-anchor="middle" font-size="10.5" fill="#5d6a85">524 / 141 / 194 / 426</text>
+          <text x="611" y="172" text-anchor="start" font-size="13.5" fill="#c3cde0">write 深度</text>
+          <text x="611" y="188" text-anchor="start" font-size="10.5" fill="#5d6a85">313 / 74 / 115 / 212</text>
+          <text x="611" y="452" text-anchor="start" font-size="13.5" fill="#c3cde0">info 发现</text>
+          <text x="611" y="468" text-anchor="start" font-size="10.5" fill="#5d6a85">211 / 67 / 79 / 214</text>
+          <text x="360" y="598" text-anchor="middle" font-size="13.5" fill="#c3cde0">单测文件 *</text>
+          <text x="360" y="614" text-anchor="middle" font-size="10.5" fill="#5d6a85">345 / 144 / 1 / 0</text>
+          <text x="109" y="452" text-anchor="end" font-size="13.5" fill="#c3cde0">集成 targets</text>
+          <text x="109" y="468" text-anchor="end" font-size="10.5" fill="#5d6a85">21 / 160 / 115 / 0</text>
+          <text x="109" y="172" text-anchor="end" font-size="13.5" fill="#c3cde0">插件 + roles</text>
+          <text x="109" y="188" text-anchor="end" font-size="10.5" fill="#5d6a85">18 / 10 / 5 / 5</text>
+        </svg>
+        <div class="legend">
+          <div class="li"><span class="sw" style="background:#3b82f6"></span><b>susunola.tencentcloud</b> v1.0.0 · 本库</div>
+          <div class="li"><span class="sw" style="background:#f59e0b"></span><b>amazon.aws</b> v11.4.0</div>
+          <div class="li"><span class="sw" style="background:#22d3ee"></span><b>google.cloud</b> v1.14.0</div>
+          <div class="li"><span class="sw" style="background:#8b5cf6;opacity:.8"></span><b>azure.azcollection</b> v4.0.0（虚线 = 测试轴为产物剥离值）</div>
+          <div class="note"><b>读数</b>：六边形越外越大。本库在模块广度 / write 深度 / info 发现 / 单测文件 / 插件+roles 五轴基本满格；<b>集成 targets 轴明显内凹（21 vs amazon 160）</b>——这是全景中唯一的结构性短板，也是 30 件事里 P0 的主战场。</div>
+        </div>
+      </div>
+      <div class="radar-card">
+        <div class="rt">轴归一说明</div>
+        <div class="legend" style="margin-top:4px">
+          <div class="li" style="align-items:flex-start"><span class="sw" style="background:#3b82f6;margin-top:2px"></span><span><b>模块广度 / write 深度 / info 发现</b>：<br>三家官方库的模块已按「通用模块外迁」（amazon→community.aws / aws_*）收窄过口径，仍以 Galaxy 产物实数为准。</span></div>
+          <div class="li" style="align-items:flex-start"><span class="sw" style="background:#f59e0b;margin-top:2px"></span><span><b>单测文件（产物口径）</b>：<br>amazon 产物带 144 个单测文件；azure 产物剥离全部 tests/、google 产物仅留 1 个 —— 这两家在源码仓库的测试规模远大于产物所见，对比时只看趋势、勿当作源码差距。</span></div>
+          <div class="li" style="align-items:flex-start"><span class="sw" style="background:#22d3ee;margin-top:2px"></span><span><b>插件 + roles</b>：<br>本库 5 roles（三家官方 0）+ 13 个非模块插件文件（inventory 5 / lookup 2 / connection 1 / callback 1 / event_source 4）；amazon 10 个（action 1 / callback 1 / connection 1 / inventory 2 / lookup 5）。</span></div>
+          <div class="li" style="align-items:flex-start"><span class="sw" style="background:#8b5cf6;margin-top:2px"></span><span><b>读图局限</b>：六维归一只能覆盖「有产物可比的量」；<u style="color:var(--muted)">幂等质量、生成式治理、零 ignore 这类「质」的领先与「生态下载 0」这类差距不进雷达</u>，见下方结论卡。</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= VERDICT ================= -->
+  <section>
+    <div class="sec-h">
+      <div>
+        <div class="eyebrow">Verdict</div>
+        <h2>对比友商：优势与劣势</h2>
+        <div class="sub">全部结论基于 Galaxy 产物实测数据（2026-09-02 实拉，非估算）。</div>
+      </div>
+    </div>
+    <div class="verdict">
+      <div class="vc good">
+        <div class="vt">▲ 领先项（实测）</div>
+        <ul>
+          <li><span class="tag">覆盖面</span><b>模块总数 524、幂等 write 313，均列四家第一</b>（azure 426/212 次之）。长尾只读 67 个产品 *_info 由 SDK introspection 自动生成，是三家官方库没有的「全产品可发现」能力。</li>
+          <li><span class="tag">质量治理</span><b>生成式治理</b>：200 个 generated 模块由 spec 生成、禁止手改；幂等 + check mode 全量内置。<b>sanity 全绿且零 ignore 豁免</b>（amazon 有 ignore-2.16..2.22.txt 豁免表）。</li>
+          <li><span class="tag">单测密度</span>345 个单测文件 / 2531 个测试函数；深度 harness 覆盖 run-path + helper + pagination + waiter 时钟路径（批次 1-11 已验证单模块 87-98% 行覆盖）。</li>
+          <li><span class="tag">组合能力</span><b>5 个组合 roles</b>（launch / clb_http / web_stack / tke_cluster / disaster_recovery）vs 三家官方 0 个；一次调用编排多资源 + 逆序 teardown。</li>
+          <li><span class="tag">演进对齐</span>ansible-core 门槛 ≥2.19（2.16-2.18 已 EOL），CI 矩阵 2.19/2.20/2.21 + 每周 devel —— 主动对齐演进而非历史声明。</li>
+        </ul>
+      </div>
+      <div class="vc bad">
+        <div class="vt">▼ 差距项（需追赶）</div>
+        <ul>
+          <li><span class="tag">集成测试</span><b>21 targets vs amazon 160 / google 115</b>（azure 产物无）。且 13 个旗舰模块（cvm_instance / vpc / cdb_instance / redis_instance / tke_cluster / clb_load_balancer / cos_object / scf_function / ckafka_instance / cbs_disk / eip / nat_gateway / subnet）<b>零集成覆盖</b> —— 旗舰面在真实环境从未被验证。</li>
+          <li><span class="tag">单测广度</span><b>313 个 write 模块中 222 个没有专属单测文件</b>（coverage-batching 结构扫描）；覆盖率 60.9% 靠少数深测模块拉高，广度分布不均。</li>
+          <li><span class="tag">结构补课</span>缺 <b>plugin_utils / action / filter / docsite / extensions.yml</b> 等目录与元数据；doc_fragments 仅 1 个（amazon 5 个）；module_utils 12 个（amazon 42）。文档站点、依赖声明等「官方库标配」尚未建立。</li>
+          <li><span class="tag">生态信任</span>Galaxy 下载 0 vs 11.8M-90.5M；inclusion #89 尚在评审，<b>暂无第三方采用证据</b>。</li>
+          <li><span class="tag">维护资源</span>个人维护 vs 厂商 + Red Hat/社区团队；issue 响应与版本节奏是长期风险（缓解：生成式治理 + 自动化 CI 已把人均负担压低）。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="hard-truth">
+      <span class="ht-t">⚠ 两条硬真相（自审结论，非客套）：</span>
+      ① <b>「模块多」不等于「可信」</b> —— 旗舰模块从未在真实腾讯云环境跑过集成测试，这是向外宣称「企业级」前必须先补的信用账；
+      ② <b>单测「广度虚胖」</b> —— 222 个 write 模块零单测，覆盖率 60.9% 由少数深测模块撑起；在补齐前，覆盖率数字对外要保守表述。
+    </div>
+  </section>
+
+  <!-- ================= 30 ITEMS ================= -->
+  <section>
+    <div class="sec-h">
+      <div>
+        <div class="eyebrow">Urgent · 30</div>
+        <h2>目前急切可补齐的 30 件事</h2>
+        <div class="sub">按「先证明旗舰可信 → 再补结构 → 后建生态」排序；每批不破坏 coverage gate 55 与 sanity 矩阵。</div>
+      </div>
+      <div class="grpbar">
+        <span class="g"><span class="dot" style="background:rgba(251,113,133,.8)"></span>P0 测试可信度 ×12</span>
+        <span class="g"><span class="dot" style="background:rgba(245,158,11,.8)"></span>P1 结构补课 ×10</span>
+        <span class="g"><span class="dot" style="background:rgba(52,211,153,.8)"></span>P2 治理 / 生态 ×8</span>
+      </div>
+    </div>
+    <div class="tblwrap">
+    <table class="t30">
+      <thead>
+        <tr><th style="width:44px">#</th><th style="width:80px">优先级</th><th>事项（动作）</th><th style="width:330px">为什么急切 / 验收</th><th style="width:76px">成本</th></tr>
+      </thead>
+      <tbody>
+        <tr class="grp-p0"><td class="no">P0-01</td><td><span class="chip p0">P0</span></td>
+          <td class="item"><b>实现 --module-test 骨架生成器</b><span class="why">coverage-batching lever 1：静态读 write 模块，产出可跑 harness（imports + fake client + 每 state 分支测试 stub），断言人工写</span></td>
+          <td class="item"><span class="why">175/222 模块共享同一 helper 骨架，单模块 1-2h → 20-40min；是把「222 个零单测」从 ~180 批压到 ~15 批的唯一杠杆。验收：1 个参考生成测试过 sanity + units。</span></td><td><span class="chip cost">S-M</span></td></tr>
+        <tr class="grp-p0"><td class="no">P0-02</td><td><span class="chip p0">P0</span></td>
+          <td class="item"><b>batch 12+：按 per-file miss 从高到低补 write 单测</b><span class="why">骨架生成后持续每周 1-2 批；每组 B 纯 CRUD 先行、组 A waiter 复用 patched-clock 模式</span></td>
+          <td class="item"><span class="why">每批语句覆盖 +0.1~0.3pp。验收：write 模块语句覆盖从 ~51% 向 70% 基线推进，gate 55 全程不破。</span></td><td><span class="chip cost">M</span></td></tr>
+        <tr class="grp-p0"><td class="no">P0-03</td><td><span class="chip p0">P0</span></td>
+          <td class="item"><b>cvm_instance 首个集成 target</b><span class="why">在 tests/integration/targets/ 建 layout 模板（provision → assert → cleanup），复用 amazon 的 target 组织规范</span></td>
+          <td class="item"><span class="why">旗舰模块真实环境验证从 0 到 1，为其余 12 个旗舰立样板。验收：cvm_instance create/read/delete 全流程集成用例可跑。</span></td><td><span class="chip cost">M</span></td></tr>
+        <tr class="grp-p0"><td class="no">P0-04</td><td><span class="chip p0">P0</span></td>
+          <td class="item"><b>再补 4 个旗舰集成 target</b><span class="why">vpc / subnet（网络基础面）、cdb_instance（数据库）、tke_cluster（容器）</span></td>
+          <td class="item"><span class="why">旗舰零集成从 13 个降到 8 个；网络 + 数据库 + 容器是客户最常用的三条线。验收：21 → 25+ targets。</span></td><td><span class="chip cost">L</span></td></tr>
+        <tr class="grp-p0"><td class="no">P0-05</td><td><span class="chip p0">P0</span></td>
+          <td class="item"><b>定义集成测试可信执行环境</b><span class="why">真实腾讯云账号 + 资源自动清理策略，或 ansible-test cloud 插件化接入；CI 定时跑而非 PR 阻塞</span></td>
+          <td class="item"><span class="why">没有可信环境，target 只是摆设。验收：文档写明凭据注入、清理兜底（防资源泄漏扣费）、失败告警。</span></td><td><span class="chip cost">M</span></td></tr>
+        <tr class="grp-p0"><td class="no">P0-06</td><td><span class="chip p0">P0</span></td>
+          <td class="item"><b>补齐 contract tests 对生成模块的覆盖</b><span class="why">每个 SDK 请求模型逐字段比对真实返回值结构；新增 SDK 方法自动检测</span></td>
+          <td class="item"><span class="why">生成式治理的短板在「SDK 升级悄悄破坏请求形状」——contract 测试是护栏。验收：200 generated 模块全部有契约用例。</span></td><td><span class="chip cost">L</span></td></tr>
+        <tr class="grp-p0"><td class="no">P0-07</td><td><span class="chip p0">P0</span></td>
+          <td class="item"><b>单测文件质量审计：40 个 &lt;80 行浅测试升级</b><span class="why">35 个模块测试文件 &lt;50 行（多为冒烟），逐个升级为全 harness 或并入同族文件</span></td>
+          <td class="item"><span class="why">浅测试制造「有测试」假象，正是硬真相 ② 的来源。验收：&lt;80 行模块测试文件归零。</span></td><td><span class="chip cost">M</span></td></tr>
+        <tr class="grp-p0"><td class="no">P0-08</td><td><span class="chip p0">P0</span></td>
+          <td class="item"><b>coverage gate 55 → 60（稳态后）</b><span class="why">在连续 2-3 批全绿、margin ≥ +5pp 的稳态 commit 上单独抬升，不与 batch 同 commit</span></td>
+          <td class="item"><span class="why">gate 是唯一防回退的硬约束；现在 margin +5.89pp，抬到 60 后仍留 margin。验收：抬升 commit 全绿。</span></td><td><span class="chip cost">S</span></td></tr>
+        <tr class="grp-p0"><td class="no">P0-09</td><td><span class="chip p0">P0</span></td>
+          <td class="item"><b>每批 commit 前跑全量 sanity + units + 语法检查</b><span class="why">延续批次 1-11 的守门纪律：ruff → ansible-test sanity → 全量 units → syntax-check</span></td>
+          <td class="item"><span class="why">测试驱动一旦红了就失去信号价值（born-red 已否决）。验收：每批 CI 全绿再 push。</span></td><td><span class="chip cost">S</span></td></tr>
+        <tr class="grp-p0"><td class="no">P0-10</td><td><span class="chip p0">P0</span></td>
+          <td class="item"><b>CI 增加 per-file coverage miss 榜单产物</b><span class="why">让「下一批写哪个模块」由数据决定而非手感；把 miss 报告发布为 CI artifact</span></td>
+          <td class="item"><span class="why">batch 三明治（先 helper-only → 再补 run-path）依赖这份榜单。验收：每次 batch 前能拿到 top-20 miss 文件。</span></td><td><span class="chip cost">S</span></td></tr>
+        <tr class="grp-p0"><td class="no">P0-11</td><td><span class="chip p0">P0</span></td>
+          <td class="item"><b>为 5 个组合 roles 补单元/冒烟测试</b><span class="why">roles 目前只有 syntax-check 守护；task 级逻辑（enable 开关、teardown 逆序）无测试</span></td>
+          <td class="item"><span class="why">roles 是差异化卖点，也是最容易在重构时悄悄坏的部分。验收：每 role 至少 3 个 task 级断言用例。</span></td><td><span class="chip cost">M</span></td></tr>
+        <tr class="grp-p0"><td class="no">P0-12</td><td><span class="chip p0">P0</span></td>
+          <td class="item"><b>修正 capability-map / gap-closure / roadmap 的 benchmark 数据口径</b><span class="why">google 集成 504→468 yml/115 targets、集成行改按 target 数对比、KPI 225 产品/87 write、G1 不再误挂 #57</span></td>
+          <td class="item"><span class="why">对外展示的对比表不能带已知数据错误（504 是全仓含单测的 yml 数；yml 对比会放大 ~11x）。验收：三份文档数据与 tarball 实测一致。</span></td><td><span class="chip cost">S</span></td></tr>
+
+        <tr class="grp-p1"><td class="no">P1-01</td><td><span class="chip p1">P1</span></td>
+          <td class="item"><b>新增 plugins/plugin_utils 共享库</b><span class="why">把 module_utils 中与模块无关的公共逻辑（认证、region 归一、分页）上移；对齐 amazon plugin_utils 14 文件的结构</span></td>
+          <td class="item"><span class="why">官方库标配；为未来 action/filter 插件提供公共底座。验收：plugin_utils 首个文件 + 迁移 1-2 个公共函数。</span></td><td><span class="chip cost">M</span></td></tr>
+        <tr class="grp-p1"><td class="no">P1-02</td><td><span class="chip p1">P1</span></td>
+          <td class="item"><b>新增首个 action 插件</b><span class="why">如 tc_wait（等待资源就绪的跨模块操作）或 run_instances 语义扩展；对齐 amazon action/ 目录</span></td>
+          <td class="item"><span class="why">action 是「模块做不到的流程控制」入口，社区常见需求。验收：1 个 action + sanity + 单测。</span></td><td><span class="chip cost">M</span></td></tr>
+        <tr class="grp-p1"><td class="no">P1-03</td><td><span class="chip p1">P1</span></td>
+          <td class="item"><b>新增 filter 插件（首个）</b><span class="why">如 tc_tag_merge / tc_instance_name 归一；google 有 1 个 filter，amazon/azure 无</span></td>
+          <td class="item"><span class="why">jinja 过滤器让 playbook 表达更顺；低成本差异化。验收：1 个 filter + 文档 + 单测。</span></td><td><span class="chip cost">S-M</span></td></tr>
+        <tr class="grp-p1"><td class="no">P1-04</td><td><span class="chip p1">P1</span></td>
+          <td class="item"><b>引入 docsite 文档构建</b><span class="why">antsibull-docs 生成 ansible-doc 风格的 HTML 站点，作为 docs.pages 发布源</span></td>
+          <td class="item"><span class="why">524 模块的 DOCUMENTATION 目前只在 README 索引可见；可搜索文档是采用门槛。验收：本地构建出站点的 docs 目录。</span></td><td><span class="chip cost">M</span></td></tr>
+        <tr class="grp-p1"><td class="no">P1-05</td><td><span class="chip p1">P1</span></td>
+          <td class="item"><b>补齐 extensions.yml 元数据</b><span class="why">声明 collection 提供的插件路由/依赖；amazon/azure 均有、本库缺失</span></td>
+          <td class="item"><span class="why">ansible-navigator / 执行环境 / Galaxy 页面展示依赖它。验收：extensions.yml 通过 ansible-community 校验。</span></td><td><span class="chip cost">S</span></td></tr>
+        <tr class="grp-p1"><td class="no">P1-06</td><td><span class="chip p1">P1</span></td>
+          <td class="item"><b>doc_fragments 从 1 拆到 5+</b><span class="why">公共参数（认证、region、waiter、retry）抽成 fragment，各模块文档引用而非复制</span></td>
+          <td class="item"><span class="why">与 amazon doc_fragments 5 个对齐；文档单一事实来源。验收：常用参数迁移到 fragment 且 validate-modules 全绿。</span></td><td><span class="chip cost">M</span></td></tr>
+        <tr class="grp-p1"><td class="no">P1-07</td><td><span class="chip p1">P1</span></td>
+          <td class="item"><b>module_utils 按职责重组（12 → 分组）</b><span class="why">base/client/errors 已清晰，补 comparison/lifecycle 分组注释与边界文档</span></td>
+          <td class="item"><span class="why">12 个文件承载全部生成逻辑，边界不清会让新模块生成器难维护。验收：module_utils README + 依赖方向图。</span></td><td><span class="chip cost">S-M</span></td></tr>
+        <tr class="grp-p1"><td class="no">P1-08</td><td><span class="chip p1">P1</span></td>
+          <td class="item"><b>event_source 插件补文档 + 单测</b><span class="why">4 个 event_source（cmq/cls/cos/tke）目前无 docsite 入口，单测覆盖浅</span></td>
+          <td class="item"><span class="why">EDA 场景是腾讯云差异化（三家官方均无 event_source 目录形态）。验收：每插件 DOCUMENTATION + 至少 3 个用例。</span></td><td><span class="chip cost">M</span></td></tr>
+        <tr class="grp-p1"><td class="no">P1-09</td><td><span class="chip p1">P1</span></td>
+          <td class="item"><b>README 模块索引加 FQCN 与示例链接</b><span class="why">每模块一行：FQCN、1 句用途、example 锚点；sync_registry.py 继续保证不漂移</span></td>
+          <td class="item"><span class="why">225 产品 524 模块的发现成本是新人第一道坎。验收：README 可直接被 Galaxy 页面友好展示。</span></td><td><span class="chip cost">S</span></td></tr>
+        <tr class="grp-p1"><td class="no">P1-10</td><td><span class="chip p1">P1</span></td>
+          <td class="item"><b>补 docs/examples 端到端 playbook 集</b><span class="why">旗舰场景（建站、K8s、DR）各一个可跑 playbook，roles 用法 + 模块混排示范</span></td>
+          <td class="item"><span class="why">「拿来就能跑」比任何 marketing 都有说服力。验收：5 个 example 全部 syntax-check 通过。</span></td><td><span class="chip cost">M</span></td></tr>
+
+        <tr class="grp-p2"><td class="no">P2-01</td><td><span class="chip p2">P2</span></td>
+          <td class="item"><b>G2-a：按官方流程评审 1 个排队中的他人 collection</b><span class="why">inclusion README step 1：先评审别人可提升自身优先级</span></td>
+          <td class="item"><span class="why">#89 已静置数日，这是唯一主动杠杆。验收：在官方队列提交 1 份评审，2026-09-09 前。</span></td><td><span class="chip cost">M</span></td></tr>
+        <tr class="grp-p2"><td class="no">P2-02</td><td><span class="chip p2">P2</span></td>
+          <td class="item"><b>每周五检查 #89 评审反馈并回复</b><span class="why">评审者开始 review 后 24h 内响应，避免冷却</span></td>
+          <td class="item"><span class="why">inclusion 通过 = Galaxy 推荐位 + 社区信任起点。验收：讨论串有实质往来。</span></td><td><span class="chip cost">S</span></td></tr>
+        <tr class="grp-p2"><td class="no">P2-03</td><td><span class="chip p2">P2</span></td>
+          <td class="item"><b>CONTRIBUTING.md 补 co-maintainer 加入路径</b><span class="why">明确权限边界（模块命名 / CI 闸门 / release 权）、期望投入、加入步骤</span></td>
+          <td class="item"><span class="why">单人维护是 G4 结构性风险，加入路径是解药第一步。验收：2026-09-30 前合入。</span></td><td><span class="chip cost">S</span></td></tr>
+        <tr class="grp-p2"><td class="no">P2-04</td><td><span class="chip p2">P2</span></td>
+          <td class="item"><b>release 流程自动化（tag → Galaxy publish → changelog）</b><span class="why">release.yml 已在跑测试，补发布段：自动打 tag、build、galaxy publish、changelog 生成</span></td>
+          <td class="item"><span class="why">稳定小步发布是下载/信任积累的基础节奏。验收：一次手工触发完成全链路发布。</span></td><td><span class="chip cost">M</span></td></tr>
+        <tr class="grp-p2"><td class="no">P2-05</td><td><span class="chip p2">P2</span></td>
+          <td class="item"><b>建立 issue/PR 响应 SLA 与模板</b><span class="why">首响 &lt;48h 的记录口径；bug/feature/question 模板已建，补 triage 标签流</span></td>
+          <td class="item"><span class="why">社区信任的第二来源是「有人理」。验收：可记录的 SLA + 标签流落地。</span></td><td><span class="chip cost">S</span></td></tr>
+        <tr class="grp-p2"><td class="no">P2-06</td><td><span class="chip p2">P2</span></td>
+          <td class="item"><b>生成 1 页采用案例 / demo 视频</b><span class="why">用 example playbook 录屏 3-5 分钟：建 CVM+CLB+CDB 全流程</span></td>
+          <td class="item"><span class="why">下载 0 → 首批用户需要「看见它跑起来」。验收：demo 页上线并链入 README。</span></td><td><span class="chip cost">M</span></td></tr>
+        <tr class="grp-p2"><td class="no">P2-07</td><td><span class="chip p2">P2</span></td>
+          <td class="item"><b>给 changelog.yaml 补全版本映射与 porting guide</b><span class="why">v1.0.0 起每 release 的 breaking/porting 记录，changelog 已存在、补叙述性 guide</span></td>
+          <td class="item"><span class="why">采用方升级依赖它；也是 inclusion checklist 项目。验收：docs/porting_guide 页面。</span></td><td><span class="chip cost">S</span></td></tr>
+        <tr class="grp-p2"><td class="no">P2-08</td><td><span class="chip p2">P2</span></td>
+          <td class="item"><b>iWiki / 内部社区发一篇「用 Ansible 管腾讯云」实践文</b><span class="why">把 panorama + capability-map 提炼成团队可读的落地文章（内部渠道先行）</span></td>
+          <td class="item"><span class="why">先从内部团队积累首批真实用户与反馈，再外溢社区。验收：文章发布并收集 ≥3 条反馈。</span></td><td><span class="chip cost">S</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- ================= METHOD ================= -->
+  <section>
+    <div class="sec-h">
+      <div>
+        <div class="eyebrow">Method</div>
+        <h2>口径与方法</h2>
+        <div class="sub">所有数字可复现：Galaxy API v3 下载计数 + 发布产物 tar.gz 解包实拉。</div>
+      </div>
+    </div>
+    <div class="foot">
+      <div class="m"><div class="t">1 · 数据来源</div><div class="d">Galaxy API v3 download_count（amazon 90,450,498 / azure 16,978,442 / google 11,832,702）+ 各家 tar.gz 解包统计模块 / 测试 / 目录结构。</div></div>
+      <div class="m"><div class="t">2 · 模块计数法</div><div class="d">总数 = modules/ 下全部 .py；info = *_info.py；write = 总数 − info。azure 官方 426 计数与 Galaxy 页一致。</div></div>
+      <div class="m"><div class="t">3 · 测试口径</div><div class="d">单测 = unit 目录 test_*.py 文件数；集成 = integration targets 目录数 + yml 数。azure 产物剥离 tests/、google 产物仅 1 个单测文件 —— 已在图中标注，勿当源码水平。</div></div>
+      <div class="m"><div class="t">4 · 已知修正</div><div class="d">google 集成 504→468（504 是全仓含单测 yml）；集成对比改 target 口径（yml 密度各家不同，直接比 yml 放大 ~11x）；本库 KPI 225 产品 / 87 write。</div></div>
+    </div>
+  </section>
+
+  <div class="source">susunola.ansible-collection-tencentcloud · docs/panorama.html · data 2026-09-02 · 与本页配套：docs/capability-map.html（能力图 + INDUSTRY BENCHMARK）· docs/gap-closure.md（追差计划）· docs/roadmap.md #58</div>
+</div>
+</body>
+</html>

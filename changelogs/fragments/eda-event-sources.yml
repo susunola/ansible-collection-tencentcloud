@@ -1,3 +1,0 @@
-minor_changes:
-  - cos_bucket - new event_source plugin for Event-Driven Ansible that polls a COS bucket's object listing and yields each new or changed object as an event, the polling equivalent of a bucket event notification (prefix filter, optional max_objects cap, baseline first poll).
-  - tke_cluster - new event_source plugin for Event-Driven Ansible that polls TKE cluster status via DescribeClusterStatus and yields cluster state-change events (with previous state and node counts) plus cluster-deleted events.
