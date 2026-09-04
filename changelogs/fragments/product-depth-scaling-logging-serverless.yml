@@ -1,7 +1,0 @@
-minor_changes:
-  - Add Auto Scaling simple and target-tracking policy lifecycle management.
-  - Add Auto Scaling scheduled capacity action lifecycle management.
-  - Add CLS full-text index and LogListener machine-group management.
-  - Add SCF trigger lifecycle, status control and explicit safe replacement.
-bugfixes:
-  - Complete inherited retry/waiter documentation and GPL headers for the recent product-depth modules so strict Ansible validation succeeds.

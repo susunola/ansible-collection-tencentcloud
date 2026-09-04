@@ -1,4 +1,0 @@
-minor_changes:
-  - Add TDMQ Pulsar subscription lifecycle management.
-  - Add DTS migration job purchase, rename, resize and destroy operations.
-  - Add TCR Enterprise replication rule lifecycle management with filters and overwrite/deletion controls.

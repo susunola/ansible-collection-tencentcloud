@@ -3,6 +3,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import importlib.util
+import re
 from pathlib import Path
 
 import pytest
@@ -423,3 +424,433 @@ def test_validate_real_combined_specs_pass(generator):
     # The full curated + auto SPECS list must validate cleanly; CI runs
     # generate_info_modules.py --check which rejects any violation.
     assert generator.validate_specs(generator.SPECS) == []
+
+
+# ---------------------------------------------------------------------------
+# Resource-skeleton emitter (roadmap #54)
+# ---------------------------------------------------------------------------
+
+def _resource_spec(overrides=None):
+    spec = {
+        "module": "example_thing",
+        "version_added": "0.14.0",
+        "short_description": "Manage example things",
+        "label": "Example thing",
+        "resource": "thing",
+        "result_key": "thing",
+        "service_package": "tencentcloud.example.v20180101",
+        "client_module": "example_client",
+        "client_class": "ExampleClient",
+        "sdk_package": "tencentcloud-sdk-python-example",
+        "endpoint": "example.tencentcloudapi.com",
+        "identity": ["thing_id"],
+        "no_log": [],
+        "actions": {
+            "create": {"action": "CreateThing", "request_class": "CreateThingRequest"},
+            "update": {"action": "UpdateThing", "request_class": "UpdateThingRequest"},
+            "delete": {"action": "DeleteThing", "request_class": "DeleteThingRequest"},
+        },
+        "identify": {"action": "GetThing", "request_class": "GetThingRequest"},
+    }
+    if overrides:
+        spec.update(overrides)
+    return spec
+
+
+def _sdk_prop(rtype, doc):
+    """Mimic an SDK request-model @property descriptor.
+
+    Real models expose request fields as class-level properties whose
+    ``fget.__doc__`` carries the Chinese description plus a ``:rtype:``
+    hint; the generator reads exactly those two things.
+    """
+    def fget(self):
+        return None
+    fget.__doc__ = "%s\n:rtype: %s" % (doc, rtype)
+    return property(fget)
+
+
+def _make_request_class(models_mod, name, fields):
+    props = {}
+    for field, (rtype, doc) in fields.items():
+        props[field] = _sdk_prop(rtype, doc)
+    setattr(models_mod, name, type(name, (), props))
+
+
+def _install_fake_sdk(monkeypatch, generator, with_secret=True):
+    """Serve fake request models from the generator's import hook.
+
+    Hermetic: no tencentcloud SDK is imported; importlib.import_module is
+    patched so %s.models lookups for the fake service package resolve to
+    locally built request classes carrying :rtype: hints.
+    """
+    import importlib as importlib_mod
+    import types
+    models = types.ModuleType("tencentcloud.example.v20180101.models")
+    create_fields = {
+        "ThingId": ("str", "ID of the thing"),
+        "Name": ("str", "Display name"),
+        "Count": ("int", "Number of replicas"),
+        "Tags": ("list of str", "Tag keys"),
+        "Config": (":class:`tencentcloud.example.v20180101.models.Config`", "Runtime config"),
+    }
+    if with_secret:
+        create_fields["Secret"] = ("str", "Secret token")
+    update_fields = dict(create_fields)
+    _make_request_class(models, "CreateThingRequest", create_fields)
+    _make_request_class(models, "UpdateThingRequest", update_fields)
+    _make_request_class(models, "DeleteThingRequest", {"ThingId": ("str", "ID of the thing")})
+    _make_request_class(models, "GetThingRequest", {"ThingId": ("str", "ID of the thing")})
+
+    real_import = importlib_mod.import_module
+
+    def _patched(name, *args, **kwargs):
+        if name == "tencentcloud.example.v20180101.models":
+            return models
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(importlib_mod, "import_module", _patched)
+    return models
+
+
+def test_resource_camel_to_snake(generator):
+    mapping = {
+        "FunctionName": "function_name",
+        "RoutingConfig": "routing_config",
+        "FunctionVersion": "function_version",
+        "Description": "description",
+        "Namespace": "namespace",
+        "Name": "name",
+        "URL": "url",
+        "DBInstanceId": "db_instance_id",
+    }
+    for camel, snake in mapping.items():
+        assert generator._camel_to_snake(camel) == snake, camel
+
+
+def test_resource_option_shape_mapping(generator):
+    # (rtype hint) -> (option type, elements); elements only for lists.
+    assert generator._option_shape("str") == ("str", None)
+    assert generator._option_shape("int") == ("int", None)
+    assert generator._option_shape("float") == ("float", None)
+    assert generator._option_shape("bool") == ("bool", None)
+    assert generator._option_shape("boolean") == ("bool", None)
+    assert generator._option_shape("dict") == ("dict", None)
+    assert generator._option_shape(
+        ":class:`tencentcloud.scf.v20180416.models.RoutingConfig`") == ("dict", None)
+    # list of scalar -> type list, scalar elements
+    assert generator._option_shape("list of str") == ("list", "str")
+    assert generator._option_shape("list of int") == ("list", "int")
+    # list of nested model -> type list, dict elements
+    assert generator._option_shape(
+        "list of :class:`tencentcloud.cam.v20190116.models.SubUser`") == ("list", "dict")
+    # unrecognised and missing hints fall back to str
+    assert generator._option_shape("") == ("str", None)
+    assert generator._option_shape("mystery-type") == ("str", None)
+
+
+def test_validate_resource_spec_ok(generator):
+    assert generator.validate_resource_specs([_resource_spec()]) == []
+    # the curated reference entry validates too
+    assert generator.validate_resource_specs(generator.RESOURCE_SPECS) == []
+
+
+def test_validate_resource_spec_missing_module(generator):
+    problems = generator.validate_resource_specs([_resource_spec({"module": None})])
+    assert any("missing string 'module'" in problem for problem in problems)
+
+
+def test_validate_resource_spec_info_suffix_rejected(generator):
+    problems = generator.validate_resource_specs([_resource_spec({"module": "example_thing_info"})])
+    assert any("do not end in _info" in problem for problem in problems)
+
+
+def test_validate_resource_spec_duplicate(generator):
+    problems = generator.validate_resource_specs([_resource_spec(), _resource_spec()])
+    assert any("duplicate resource spec" in problem for problem in problems)
+
+
+def test_validate_resource_spec_collides_with_info_module(generator, monkeypatch):
+    # An info module named example_thing would shadow the write module.
+    monkeypatch.setattr(generator, "SPECS", [{"module": "example_thing"}])
+    problems = generator.validate_resource_specs([_resource_spec()])
+    assert any("collides with an existing _info module" in problem for problem in problems)
+
+
+def test_validate_resource_spec_missing_keys(generator):
+    spec = _resource_spec({"identity": None, "endpoint": None})
+    problems = generator.validate_resource_specs([spec])
+    assert any("missing required key 'identity'" in problem for problem in problems)
+    assert any("missing required key 'endpoint'" in problem for problem in problems)
+
+
+def test_validate_resource_spec_action_shapes(generator):
+    spec = _resource_spec()
+    spec["actions"]["create"] = {}
+    problems = generator.validate_resource_specs([spec])
+    assert any("actions.create needs action and request_class" in problem
+               for problem in problems)
+    # update is optional but must be complete when present
+    spec = _resource_spec()
+    spec["actions"]["update"] = {"action": "UpdateThing"}
+    problems = generator.validate_resource_specs([spec])
+    assert any("actions.update needs action and request_class" in problem
+               for problem in problems)
+    # delete is mandatory
+    spec = _resource_spec()
+    del spec["actions"]["delete"]
+    problems = generator.validate_resource_specs([spec])
+    assert any("actions.delete needs action and request_class" in problem
+               for problem in problems)
+    # identify is mandatory
+    spec = _resource_spec({"identify": {}})
+    problems = generator.validate_resource_specs([spec])
+    assert any("identify needs action and request_class" in problem
+               for problem in problems)
+
+
+def test_validate_resource_spec_identity_rules(generator):
+    # identity must be a non-empty list and not collide with shared args
+    spec = _resource_spec({"identity": []})
+    problems = generator.validate_resource_specs([spec])
+    assert any("identity must be a non-empty list" in problem for problem in problems)
+
+    spec = _resource_spec({"identity": ["region"]})
+    problems = generator.validate_resource_specs([spec])
+    assert any("collides with the shared argument spec" in problem
+               for problem in problems)
+
+    # result_key must be snake_case
+    spec = _resource_spec({"result_key": "ThingResult"})
+    problems = generator.validate_resource_specs([spec])
+    assert any("result_key must be a snake_case identifier" in problem
+               for problem in problems)
+
+
+def test_validate_resource_spec_no_log_shape(generator):
+    spec = _resource_spec({"no_log": "secret"})
+    problems = generator.validate_resource_specs([spec])
+    assert any("no_log must be a list" in problem for problem in problems)
+
+
+def test_resource_collect_fields_metadata(generator, monkeypatch):
+    _install_fake_sdk(monkeypatch, generator)
+    collected = generator.collect_resource_fields(_resource_spec())
+    assert sorted(collected) == ["create", "delete", "identify", "update"]
+    names = [field["name"] for field in collected["create"]]
+    assert names == ["thing_id", "name", "count", "tags", "config", "secret"]
+    # type mapping: list of str -> type list/elements str; nested -> dict
+    by_name = {field["name"]: field for field in collected["create"]}
+    assert by_name["thing_id"]["type"] == "str"
+    assert by_name["count"]["type"] == "int"
+    assert by_name["tags"]["type"] == "list" and by_name["tags"]["elements"] == "str"
+    assert by_name["config"]["type"] == "dict"
+    assert by_name["secret"]["doc"] == "Secret token"
+    # identify request only carries the identity field
+    assert [field["name"] for field in collected["identify"]] == ["thing_id"]
+
+
+def test_resource_collect_missing_request_class(generator, monkeypatch):
+    _install_fake_sdk(monkeypatch, generator)
+    spec = _resource_spec()
+    spec["actions"]["create"]["request_class"] = "CreateMissingRequest"
+    with pytest.raises(ValueError) as exc:
+        generator.collect_resource_fields(spec)
+    assert "has no request class CreateMissingRequest" in str(exc.value)
+
+
+def test_resource_collect_identity_not_declared(generator, monkeypatch):
+    _install_fake_sdk(monkeypatch, generator)
+    spec = _resource_spec({"identity": ["missing_id"]})
+    with pytest.raises(ValueError) as exc:
+        generator.collect_resource_fields(spec)
+    assert "identity option 'missing_id'" in str(exc.value)
+
+
+def test_resource_collect_missing_sdk_package(generator):
+    # A service package that is not installed (and not faked) surfaces the
+    # install hint instead of crashing.
+    spec = _resource_spec()
+    spec["service_package"] = "tencentcloud.no_such_service.v99999999"
+    with pytest.raises(ValueError) as exc:
+        generator.collect_resource_fields(spec)
+    assert "install tencentcloud-sdk-python-example and retry" in str(exc.value)
+
+
+def _resource_doc_blocks(rendered):
+    blocks = {}
+    for name in ("DOCUMENTATION", "EXAMPLES", "RETURN"):
+        marker = "%s = r'''" % name
+        start = rendered.index(marker) + len(marker)
+        end = rendered.index("'''", start)
+        blocks[name] = rendered[start:end]
+    return blocks
+
+
+def _resource_arg_keys(rendered):
+    region = rendered.split("argument_spec={", 1)[1].split("supports_check_mode", 1)[0]
+    return set(re.findall(r'^\s{12}"([a-z_]+)":', region, re.M))
+
+
+def _resource_builder_params(rendered):
+    """All params["x"] reads inside the build_*_request helpers only."""
+    region = rendered.split("def build_create_request", 1)[1]
+    region = region.split("def run_module", 1)[0]
+    return set(re.findall(r'params\["([a-z_]+)"\]', region))
+
+
+def test_resource_skeleton_renders_consistent_module(generator, monkeypatch):
+    """The skeleton is internally consistent: DOCUMENTATION options,
+    argument_spec keys and builder params all agree, and identity options
+    are required + written unconditionally while the rest are guarded."""
+    _install_fake_sdk(monkeypatch, generator)
+    spec = _resource_spec({"no_log": ["secret"]})
+    collected = generator.collect_resource_fields(spec)
+    rendered = generator.render_resource_skeleton(spec, collected)
+
+    blocks = _resource_doc_blocks(rendered)
+    doc = yaml.safe_load(blocks["DOCUMENTATION"])
+    assert yaml.safe_load(blocks["EXAMPLES"])
+    returned = yaml.safe_load(blocks["RETURN"])
+    assert "thing" in returned
+
+    local_options = {"state", "thing_id", "name", "count", "tags", "config", "secret"}
+    # shared params from base_argument_spec() are documented (validate-modules)
+    documented = set(doc["options"])
+    assert documented == local_options | {"retries", "waiter_delay", "waiter_timeout", "user_agent"}
+    assert _resource_arg_keys(rendered) == local_options
+    # builders read exactly the resource options (state is a run_module concern)
+    assert _resource_builder_params(rendered) == local_options - {"state"}
+
+    # identity: required in docs + argspec, written unconditionally in builders
+    assert doc["options"]["thing_id"]["required"] is True
+    assert '"thing_id": {"type": "str", "required": True}' in rendered
+    assert '    request.ThingId = params["thing_id"]' in rendered
+    assert 'if params["thing_id"] is not None' not in rendered
+    # optional fields are guarded in builders
+    assert '    if params["name"] is not None:\n        request.Name = params["name"]' in rendered
+    # nested dict option carries the modelling comment, list carries elements
+    assert "# config maps to a nested API object" in rendered
+    assert '"config": {"type": "dict"}' in rendered
+    assert '"tags": {"type": "list", "elements": "str"}' in rendered
+    assert "    elements: str" in blocks["DOCUMENTATION"]
+    # no_log option is marked in both places
+    assert '"secret": {"type": "str", "no_log": True}' in rendered
+    assert "    no_log: true" in blocks["DOCUMENTATION"]
+    # shared-parameter defaults match module_utils/base.py
+    assert doc["options"]["retries"]["default"] == 5
+    assert doc["options"]["user_agent"]["default"] == "ansible-collection.susunola.tencentcloud"
+
+    # wiring: lazy loader, action wrappers, identify/find, run_module paths
+    for needle in (
+        "def _load_example():", "def build_create_request(models, params):",
+        "def build_update_request(models, params):", "def build_delete_request(models, params):",
+        "def build_identify_request(models, params):", "def find_thing(module, client, models, params):",
+        "def _create(module, client, models, params):", "def _update(module, client, models, params):",
+        "def _delete(module, client, models, params):", "module.sdk_call(client.CreateThing, request)",
+        "module.sdk_call(client.GetThing, request)",
+        'client = module.create_client(example_client.ExampleClient, "example.tencentcloudapi.com")',
+        "supports_check_mode=True", "# TODO(resource)",
+    ):
+        assert needle in rendered, needle
+    # state absent/present branches + check mode
+    assert 'module.exit_json(changed=False, msg="Example thing already absent")' in rendered
+    assert "Would delete Example thing" in rendered
+    assert "Would create Example thing" in rendered
+    assert 'module.exit_json(changed=False, thing=current, msg="Example thing is up to date")' in rendered
+    # valid python
+    compile(rendered, "example_thing.py", "exec")
+
+
+def test_resource_skeleton_without_update_action(generator, monkeypatch):
+    """Optional update is absent from a spec -> no update builder/wrapper."""
+    _install_fake_sdk(monkeypatch, generator)
+    spec = _resource_spec()
+    del spec["actions"]["update"]
+    assert generator.validate_resource_specs([spec]) == []
+    collected = generator.collect_resource_fields(spec)
+    assert collected["update"] == []
+    rendered = generator.render_resource_skeleton(spec, collected)
+    assert "build_update_request" not in rendered
+    assert "def _update(" not in rendered
+    assert "UpdateThing" not in rendered
+    assert "def build_create_request" in rendered
+    assert "def build_delete_request" in rendered
+    assert "def find_thing" in rendered
+    compile(rendered, "no_update.py", "exec")
+
+
+@pytest.fixture
+def scratch_dir():
+    """Writable temp dir for write-once tests.
+
+    pytest's tmp_path/tmpdir fixtures create their base dir through the
+    host file broker which is unavailable in some sandboxes; a plain
+    tempfile.mkdtemp works everywhere (contract tests use the same trick).
+    """
+    import shutil
+    import tempfile
+    path = Path(tempfile.mkdtemp(prefix="gen-skel-"))
+    yield path
+    shutil.rmtree(path, ignore_errors=True)
+
+
+def test_resource_main_write_once_and_check(monkeypatch, generator, scratch_dir):
+    """_resource_main scaffolds a missing module, never overwrites an
+    existing file and verifies existing files against the SDK in --check."""
+    import io
+    _install_fake_sdk(monkeypatch, generator)
+    monkeypatch.setattr(generator, "MODULES_DIR", scratch_dir)
+    # replace, not prepend: the real scf_alias entry must not be verified
+    # against the (uninstalled) real SDK inside these hermetic tests
+    monkeypatch.setattr(generator, "RESOURCE_SPECS", [_resource_spec()])
+
+    class Args:
+        def __init__(self, resource, do_print=False, do_check=False):
+            self.resource = resource
+            self.print = do_print
+            self.check = do_check
+
+    out, err = io.StringIO(), io.StringIO()
+    assert generator._resource_main(Args("example_thing"), out, err) == 0
+    target = scratch_dir / "example_thing.py"
+    assert target.exists()
+    assert "wrote skeleton:" in out.getvalue()
+    first = target.read_text()
+
+    # write-once: a second run leaves the finished file untouched
+    out, err = io.StringIO(), io.StringIO()
+    assert generator._resource_main(Args("example_thing"), out, err) == 0
+    assert "exists:" in out.getvalue()
+    assert target.read_text() == first
+
+    # --check passes for an existing verified spec
+    out, err = io.StringIO(), io.StringIO()
+    assert generator._resource_main(Args("example_thing", do_check=True), out, err) == 0
+    # unknown module name is reported on stderr with exit code 1
+    out, err = io.StringIO(), io.StringIO()
+    assert generator._resource_main(Args("no_such_module"), out, err) == 1
+    assert "no RESOURCE_SPECS entry" in err.getvalue()
+
+
+def test_resource_main_print_renders_without_writing(monkeypatch, generator, scratch_dir):
+    import io
+    _install_fake_sdk(monkeypatch, generator)
+    monkeypatch.setattr(generator, "MODULES_DIR", scratch_dir)
+    monkeypatch.setattr(generator, "RESOURCE_SPECS", [_resource_spec()])
+    out, err = io.StringIO(), io.StringIO()
+    args = type("Args", (), {"resource": "example_thing", "print": True, "check": False})()
+    assert generator._resource_main(args, out, err) == 0
+    assert "def run_module():" in out.getvalue()
+    assert not (scratch_dir / "example_thing.py").exists()
+
+
+def test_resource_main_check_flags_missing_scaffold(monkeypatch, generator, scratch_dir):
+    import io
+    _install_fake_sdk(monkeypatch, generator)
+    monkeypatch.setattr(generator, "MODULES_DIR", scratch_dir)
+    monkeypatch.setattr(generator, "RESOURCE_SPECS", [_resource_spec()])
+    out, err = io.StringIO(), io.StringIO()
+    args = type("Args", (), {"resource": None, "print": False, "check": True})()
+    assert generator._resource_main(args, out, err) == 1
+    assert "missing scaffolds: example_thing.py" in err.getvalue()

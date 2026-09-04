@@ -1,10 +1,10 @@
 namespace: susunola
 name: tencentcloud
-version: 0.12.0
+version: 1.0.0
 readme: README.md
 authors:
   - Tencent Cloud Ansible Collection Contributors (@susunola)
-description: Ansible modules and plugins for managing Tencent Cloud resources.
+description: "Ansible modules and plugins for automating Tencent Cloud (QCloud) resources through Tencent Cloud API 3.0. 584 modules (resource modules plus _info facts modules) cover compute (CVM, Lighthouse, TKE), network (VPC, CLB, security groups), storage (COS, CBS), database (TencentDB, Redis, MongoDB), security and middleware services, with inventory, lookup and connection plugins and deployment roles."
 license:
   - GPL-3.0-or-later
 tags: [cloud, tencentcloud, infrastructure, security, networking, compute, cvm, vpc]

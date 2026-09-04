@@ -1,0 +1,43 @@
+# Weekly check against the ansible-core development branch.
+#
+# Collection inclusion requirements mandate running ansible-test sanity
+# (and units) against the `devel` or `milestone` branch of ansible-core
+# at least once per week, so new lint rules and compatibility breaks are
+# caught before they hit a release. See
+# https://docs.ansible.com/ansible/latest/community/collection_contributors/collection_requirements.html
+#
+# The job is intentionally isolated from ci.yml: devel moves daily and
+# may fail on upstream churn, so its signal should not gate PRs or the
+# pinned-release matrix. Failures here are early warnings for the next
+# release, not release blockers.
+name: ansible-core devel
+
+on:
+  schedule:
+    # Weekly, Monday 02:00 UTC (requirement: at least once per week).
+    - cron: "0 2 * * 1"
+  workflow_dispatch:
+
+jobs:
+  sanity:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ansible_collections/susunola/tencentcloud
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: ansible_collections/susunola/tencentcloud
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install ansible-core from the devel branch
+        run: |
+          python -m pip install --upgrade pip
+          git clone --depth=1 --branch devel https://github.com/ansible/ansible.git ansible-core-devel
+          python -m pip install ./ansible-core-devel
+          ansible --version
+      - name: Sanity tests against ansible-core devel
+        run: ansible-test sanity --color --python 3.13
+      - name: Unit tests against ansible-core devel
+        run: ansible-test units --color --python 3.13

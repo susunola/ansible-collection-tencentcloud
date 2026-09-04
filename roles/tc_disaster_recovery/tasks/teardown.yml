@@ -1,0 +1,52 @@
+---
+# Teardown runs in reverse provision order: standby CLB first, then the
+# replication configuration, then the golden image.
+- name: Remove the standby listener in the DR region
+  susunola.tencentcloud.clb_listener:
+    region: "{{ tc_dr_dr_region | default(omit) }}"
+    state: absent
+    load_balancer_id: "{{ tc_dr_clb_id }}"
+    port: "{{ tc_dr_listener_port }}"
+    protocol: "{{ tc_dr_listener_protocol }}"
+    waiter_timeout: "{{ tc_dr_waiter_timeout }}"
+    waiter_delay: "{{ tc_dr_waiter_delay }}"
+  when:
+    - tc_dr_enable_clb
+    - tc_dr_clb_id
+
+- name: Remove the standby CLB in the DR region
+  susunola.tencentcloud.clb_load_balancer:
+    region: "{{ tc_dr_dr_region | default(omit) }}"
+    state: absent
+    load_balancer_id: "{{ tc_dr_clb_id | default(omit, true) }}"
+    name: "{{ tc_dr_clb_name | default(omit, true) }}"
+    waiter_timeout: "{{ tc_dr_waiter_timeout }}"
+    waiter_delay: "{{ tc_dr_waiter_delay }}"
+  when:
+    - tc_dr_enable_clb
+    - tc_dr_clb_id or tc_dr_clb_name
+
+- name: Remove the COS bucket replication configuration
+  susunola.tencentcloud.cos_bucket_replication:
+    region: "{{ tc_dr_region | default(omit) }}"
+    state: absent
+    name: "{{ tc_dr_bucket_name }}"
+    appid: "{{ tc_dr_bucket_appid | default(omit, true) }}"
+    waiter_timeout: "{{ tc_dr_waiter_timeout }}"
+    waiter_delay: "{{ tc_dr_waiter_delay }}"
+  when:
+    - tc_dr_enable_cos
+    - tc_dr_bucket_name
+
+- name: Remove the golden image
+  susunola.tencentcloud.cvm_image:
+    region: "{{ tc_dr_region | default(omit) }}"
+    state: absent
+    image_id: "{{ tc_dr_image_id | default(omit, true) }}"
+    image_name: "{{ tc_dr_image_name | default(omit, true) }}"
+    delete_binded_snap: "{{ tc_dr_image_delete_binded_snap | default(omit, true) }}"
+    waiter_timeout: "{{ tc_dr_waiter_timeout }}"
+    waiter_delay: "{{ tc_dr_waiter_delay }}"
+  when:
+    - tc_dr_enable_image
+    - tc_dr_image_id or tc_dr_image_name
