@@ -62,7 +62,7 @@ jobs:
       - name: Build collection
         run: ansible-galaxy collection build
       - name: Upload collection tarball
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: collection-tarball
           path: ansible_collections/susunola/tencentcloud/susunola-tencentcloud-*.tar.gz
