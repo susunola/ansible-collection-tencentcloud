@@ -5,7 +5,7 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: api_gateway_usage_plan
 short_description: Manage Tencent Cloud API Gateway usage plans
@@ -24,14 +24,14 @@ options:
   user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.api_gateway_usage_plan:
     name: production-clients
     qps: 100
     max_request_num: 1000000
-'''
-RETURN = r'''usage_plan: {description: Usage plan metadata., type: dict, returned: always}'''
+"""
+RETURN = r"""usage_plan: {description: Usage plan metadata., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -41,6 +41,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.apigateway.v20180808 import apigateway_client, models
+
     return models, apigateway_client
 
 
@@ -106,15 +107,27 @@ def desired(p):
 
 
 def comparable(value):
-    return {"UsagePlanName": value.get("UsagePlanName"), "UsagePlanDesc": value.get("UsagePlanDesc") or "", "MaxRequestNumPreSec": int(value.get("MaxRequestNumPreSec", -1)), "MaxRequestNum": int(value.get("MaxRequestNum", -1))}
+    return {
+        "UsagePlanName": value.get("UsagePlanName"),
+        "UsagePlanDesc": value.get("UsagePlanDesc") or "",
+        "MaxRequestNumPreSec": int(value.get("MaxRequestNumPreSec", -1)),
+        "MaxRequestNum": int(value.get("MaxRequestNum", -1)),
+    }
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={
-        "state": {"choices": ["present", "absent"], "default": "present"},
-        "usage_plan_id": {}, "name": {}, "description": {"default": ""},
-        "qps": {"type": "int", "default": -1}, "max_request_num": {"type": "int", "default": -1},
-    }, required_one_of=[("usage_plan_id", "name")], supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "usage_plan_id": {},
+            "name": {},
+            "description": {"default": ""},
+            "qps": {"type": "int", "default": -1},
+            "max_request_num": {"type": "int", "default": -1},
+        },
+        required_one_of=[("usage_plan_id", "name")],
+        supports_check_mode=True,
+    )
     p = module.params
     if p["state"] == "present" and not p["name"]:
         module.fail_json(msg="name is required when state=present")

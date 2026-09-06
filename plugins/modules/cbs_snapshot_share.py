@@ -3,8 +3,9 @@
 # Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: cbs_snapshot_share
 short_description: Manage Tencent Cloud CBS snapshot sharing permissions
@@ -19,8 +20,8 @@ options:
   user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.cbs_snapshot_share:
     snapshot_id: snap-xxxxxxxx
     account_ids: ['100001122000', '100001133000']
@@ -29,8 +30,8 @@ EXAMPLES = r'''
   susunola.tencentcloud.cbs_snapshot_share:
     snapshot_id: snap-xxxxxxxx
     account_ids: []
-'''
-RETURN = r'''share_permissions: {description: Effective sorted recipient account IDs., type: list, elements: str, returned: always}'''
+"""
+RETURN = r"""share_permissions: {description: Effective sorted recipient account IDs., type: list, elements: str, returned: always}"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
@@ -38,30 +39,57 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.cbs.v20170312 import models, cbs_client
+
     return models, cbs_client
+
+
 def describe_request(models, snapshot_id):
-    request = models.DescribeSnapshotSharePermissionRequest(); request.SnapshotId = snapshot_id; return request
+    request = models.DescribeSnapshotSharePermissionRequest()
+    request.SnapshotId = snapshot_id
+    return request
+
+
 def modify_request(models, snapshot_id, account_ids, permission):
-    request = models.ModifySnapshotsSharePermissionRequest(); request.SnapshotIds, request.AccountIds, request.Permission = [snapshot_id], sorted(account_ids), permission; return request
+    request = models.ModifySnapshotsSharePermissionRequest()
+    request.SnapshotIds, request.AccountIds, request.Permission = [snapshot_id], sorted(account_ids), permission
+    return request
+
+
 def describe(module, client, models, snapshot_id):
     response = module.sdk_call(client.DescribeSnapshotSharePermission, describe_request(models, snapshot_id))
     return sorted(item.AccountId for item in (response.SharePermissionSet or []) if item.AccountId)
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"snapshot_id": {"required": True}, "account_ids": {"type": "list", "elements": "str", "default": []}}, supports_check_mode=True)
-    p = module.params; module.require_sdk(); models, cm = _load(); client = module.create_client(cm.CbsClient, "cbs.tencentcloudapi.com")
+    module = TencentCloudModule(
+        argument_spec={"snapshot_id": {"required": True}, "account_ids": {"type": "list", "elements": "str", "default": []}}, supports_check_mode=True
+    )
+    p = module.params
+    module.require_sdk()
+    models, cm = _load()
+    client = module.create_client(cm.CbsClient, "cbs.tencentcloudapi.com")
     try:
-        current = describe(module, client, models, p["snapshot_id"]); target = sorted(set(p["account_ids"])); add = sorted(set(target) - set(current)); remove = sorted(set(current) - set(target))
-        if not add and not remove: module.exit_json(changed=False, share_permissions=current)
+        current = describe(module, client, models, p["snapshot_id"])
+        target = sorted(set(p["account_ids"]))
+        add = sorted(set(target) - set(current))
+        remove = sorted(set(current) - set(target))
+        if not add and not remove:
+            module.exit_json(changed=False, share_permissions=current)
         diff = maybe_diff(module, current, target)
         if not module.check_mode:
-            if remove: module.sdk_call(client.ModifySnapshotsSharePermission, modify_request(models, p["snapshot_id"], remove, "CANCEL"))
-            if add: module.sdk_call(client.ModifySnapshotsSharePermission, modify_request(models, p["snapshot_id"], add, "SHARE"))
+            if remove:
+                module.sdk_call(client.ModifySnapshotsSharePermission, modify_request(models, p["snapshot_id"], remove, "CANCEL"))
+            if add:
+                module.sdk_call(client.ModifySnapshotsSharePermission, modify_request(models, p["snapshot_id"], add, "SHARE"))
             current = describe(module, client, models, p["snapshot_id"])
         module.exit_json(changed=True, **(diff or {}), share_permissions=current if not module.check_mode else target)
-    except Exception as exc: module.fail_json(**sdk_error_payload(exc))
+    except Exception as exc:
+        module.fail_json(**sdk_error_payload(exc))
 
 
-def main(): run_module()
-if __name__ == "__main__": main()
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()

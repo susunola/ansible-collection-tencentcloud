@@ -5,7 +5,7 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: tdmq_rocketmq_permission
 short_description: Manage TDMQ RocketMQ namespace role permissions
@@ -23,15 +23,15 @@ options:
   user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.tdmq_rocketmq_permission:
     cluster_id: rocketmq-xxxxxxxx
     namespace: production
     role_name: order-service
     permissions: [produce, consume]
-'''
-RETURN = r'''permission: {description: RocketMQ namespace role permission metadata., type: dict, returned: always}'''
+"""
+RETURN = r"""permission: {description: RocketMQ namespace role permission metadata., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -40,6 +40,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.tdmq.v20200217 import models, tdmq_client
+
     return models, tdmq_client
 
 
@@ -51,13 +52,23 @@ def describe_request(models, p, offset=0):
 
 def create_request(models, p):
     request = models.CreateRocketMQEnvironmentRoleRequest()
-    request.EnvironmentId, request.RoleName, request.Permissions, request.ClusterId = p["namespace"], p["role_name"], sorted(set(p["permissions"])), p["cluster_id"]
+    request.EnvironmentId, request.RoleName, request.Permissions, request.ClusterId = (
+        p["namespace"],
+        p["role_name"],
+        sorted(set(p["permissions"])),
+        p["cluster_id"],
+    )
     return request
 
 
 def update_request(models, p):
     request = models.ModifyRocketMQEnvironmentRoleRequest()
-    request.EnvironmentId, request.RoleName, request.Permissions, request.ClusterId = p["namespace"], p["role_name"], sorted(set(p["permissions"])), p["cluster_id"]
+    request.EnvironmentId, request.RoleName, request.Permissions, request.ClusterId = (
+        p["namespace"],
+        p["role_name"],
+        sorted(set(p["permissions"])),
+        p["cluster_id"],
+    )
     return request
 
 
@@ -70,12 +81,15 @@ def delete_request(models, p):
 def find(module, client, models, p):
     offset = 0
     while True:
-        response = module.sdk_call(client.DescribeRocketMQEnvironmentRoles, describe_request(models, p, offset)); items = list(response.EnvironmentRoleSets or [])
+        response = module.sdk_call(client.DescribeRocketMQEnvironmentRoles, describe_request(models, p, offset))
+        items = list(response.EnvironmentRoleSets or [])
         for item in items:
             value = item._serialize(allow_none=True)
-            if value.get("RoleName") == p["role_name"] and value.get("EnvironmentId") == p["namespace"]: return value
+            if value.get("RoleName") == p["role_name"] and value.get("EnvironmentId") == p["namespace"]:
+                return value
         offset += len(items)
-        if not items or offset >= int(response.TotalCount or 0): return None
+        if not items or offset >= int(response.TotalCount or 0):
+            return None
 
 
 def comparable(value):
@@ -87,25 +101,45 @@ def desired(p):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"choices": ["present", "absent"], "default": "present"}, "cluster_id": {"required": True}, "namespace": {"required": True}, "role_name": {"required": True}, "permissions": {"type": "list", "elements": "str", "choices": ["produce", "consume"], "default": ["produce", "consume"]}}, supports_check_mode=True)
-    p = module.params; module.require_sdk(); models, cm = _load(); client = module.create_client(cm.TdmqClient, "tdmq.tencentcloudapi.com")
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "cluster_id": {"required": True},
+            "namespace": {"required": True},
+            "role_name": {"required": True},
+            "permissions": {"type": "list", "elements": "str", "choices": ["produce", "consume"], "default": ["produce", "consume"]},
+        },
+        supports_check_mode=True,
+    )
+    p = module.params
+    module.require_sdk()
+    models, cm = _load()
+    client = module.create_client(cm.TdmqClient, "tdmq.tencentcloudapi.com")
     try:
         current = find(module, client, models, p)
         if p["state"] == "absent":
-            if not current: module.exit_json(changed=False, permission=None)
+            if not current:
+                module.exit_json(changed=False, permission=None)
             diff = maybe_diff(module, current, None)
-            if not module.check_mode: module.sdk_call(client.DeleteRocketMQEnvironmentRoles, delete_request(models, p))
+            if not module.check_mode:
+                module.sdk_call(client.DeleteRocketMQEnvironmentRoles, delete_request(models, p))
             module.exit_json(changed=True, **(diff or {}), permission=current if module.check_mode else None)
         target, before = desired(p), comparable(current) if current else None
-        if before == target: module.exit_json(changed=False, permission=current)
+        if before == target:
+            module.exit_json(changed=False, permission=current)
         diff = maybe_diff(module, before, target)
         if not module.check_mode:
             method = client.ModifyRocketMQEnvironmentRole if current else client.CreateRocketMQEnvironmentRole
-            module.sdk_call(method, update_request(models, p) if current else create_request(models, p)); current = find(module, client, models, p)
+            module.sdk_call(method, update_request(models, p) if current else create_request(models, p))
+            current = find(module, client, models, p)
         module.exit_json(changed=True, **(diff or {}), permission=current)
     except Exception as exc:
         module.fail_json(**sdk_error_payload(exc))
 
 
-def main(): run_module()
-if __name__ == "__main__": main()
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,97 @@
+---
+# Master lifecycle: present provisions the whole stack (CVM -> CDB -> Redis ->
+# CLB -> listener -> backends), absent tears it down in reverse order
+# (listener -> CLB -> Redis -> CDB -> CVM). Backend deregistration happens
+# implicitly when the listener is deleted.
+tc_web_stack_state: present
+
+# ---- CVM web tier -----------------------------------------------------
+# One of instance_id / instance_name / exact_count must resolve for the
+# CVM task to run; leave all empty to skip the web tier.
+tc_web_stack_enable_cvm: true
+tc_web_stack_instance_id: ""
+tc_web_stack_instance_name: ""
+tc_web_stack_image_id: ""
+tc_web_stack_instance_type: ""
+tc_web_stack_vpc_id: ""
+tc_web_stack_subnet_id: ""
+tc_web_stack_security_group_ids: []
+tc_web_stack_hostname: ""
+tc_web_stack_password: ""
+tc_web_stack_key_ids: []
+tc_web_stack_tags: {}
+# Optional exact-count pool: bring the number of instances carrying
+# tc_web_stack_count_tag to tc_web_stack_exact_count. To drain a pool,
+# run with state=present and exact_count=0 first, then state=absent.
+tc_web_stack_exact_count: null
+tc_web_stack_count_tag: {}
+
+# ---- MySQL (CDB) ------------------------------------------------------
+# instance_id or name must be set for the CDB task to run.
+tc_web_stack_enable_cdb: true
+tc_web_stack_cdb_instance_id: ""
+tc_web_stack_cdb_name: ""
+tc_web_stack_cdb_zone: ""
+tc_web_stack_cdb_engine_version: "8.0"
+tc_web_stack_cdb_memory: 1000
+tc_web_stack_cdb_volume: 50
+tc_web_stack_cdb_password: ""
+tc_web_stack_cdb_vpc_id: ""
+tc_web_stack_cdb_subnet_id: ""
+tc_web_stack_cdb_tags: {}
+
+# ---- Redis ------------------------------------------------------------
+# instance_id or name must be set for the Redis task to run.
+tc_web_stack_enable_redis: true
+tc_web_stack_redis_instance_id: ""
+tc_web_stack_redis_name: ""
+tc_web_stack_redis_zone_name: ""
+tc_web_stack_redis_type_id: 2
+tc_web_stack_redis_mem_size: 4096
+tc_web_stack_redis_vpc_id: ""
+tc_web_stack_redis_subnet_id: ""
+tc_web_stack_redis_password: ""
+tc_web_stack_redis_no_auth: false
+tc_web_stack_redis_tags: {}
+
+# ---- CLB --------------------------------------------------------------
+# load_balancer_id or name must be set for the CLB task to run.
+tc_web_stack_enable_clb: true
+tc_web_stack_lb_id: ""
+tc_web_stack_lb_name: ""
+tc_web_stack_lb_type: OPEN
+tc_web_stack_lb_vpc_id: ""
+tc_web_stack_lb_subnet_id: ""
+tc_web_stack_lb_tags: {}
+
+# HTTP listener
+tc_web_stack_listener_port: 80
+tc_web_stack_listener_name: ""
+tc_web_stack_scheduler: WRR
+tc_web_stack_session_expire_time: 0
+tc_web_stack_health_check:
+  health_switch: true
+  interval_time: 5
+  health_num: 3
+  un_health_num: 3
+  time_out: 2
+  check_type: HTTP
+  http_check_path: /healthz
+  http_check_domain: ""
+  http_check_method: HEAD
+  http_code: 31
+  http_version: HTTP/1.1
+
+# Backend targets: explicit list of {instance_id|eni_ip, port, weight}.
+# When empty and tc_web_stack_register_backends is true, the targets are
+# derived automatically from the created CVM pool (tc_web_stack_web_port on
+# each instance). purge=true keeps only the listed targets on the listener.
+tc_web_stack_targets: []
+tc_web_stack_register_backends: true
+tc_web_stack_web_port: 8080
+tc_web_stack_target_weight: 10
+tc_web_stack_purge: true
+
+# Waiter tuning (shared by every component module)
+tc_web_stack_waiter_timeout: 300
+tc_web_stack_waiter_delay: 5

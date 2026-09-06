@@ -5,7 +5,7 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: tdmq_rabbitmq_vhost
 short_description: Manage TDMQ RabbitMQ virtual hosts
@@ -24,15 +24,15 @@ options:
   user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.tdmq_rabbitmq_vhost:
     instance_id: amqp-xxxxxxxx
     name: production
     description: Production workloads
     trace_enabled: true
-'''
-RETURN = r'''virtual_host: {description: RabbitMQ virtual host metadata., type: dict, returned: always}'''
+"""
+RETURN = r"""virtual_host: {description: RabbitMQ virtual host metadata., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -41,40 +41,57 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.tdmq.v20200217 import models, tdmq_client
+
     return models, tdmq_client
 
 
 def describe_request(models, p, offset=0):
-    request = models.DescribeRabbitMQVirtualHostRequest(); request.InstanceId, request.VirtualHost, request.Offset, request.Limit = p["instance_id"], p["name"], offset, 100; return request
+    request = models.DescribeRabbitMQVirtualHostRequest()
+    request.InstanceId, request.VirtualHost, request.Offset, request.Limit = p["instance_id"], p["name"], offset, 100
+    return request
 
 
 def create_request(models, p):
-    request = models.CreateRabbitMQVirtualHostRequest(); request.InstanceId, request.VirtualHost = p["instance_id"], p["name"]
-    request.Description, request.TraceFlag, request.MirrorQueuePolicyFlag = p["description"], p["trace_enabled"], p["mirror_queue_policy"]; return request
+    request = models.CreateRabbitMQVirtualHostRequest()
+    request.InstanceId, request.VirtualHost = p["instance_id"], p["name"]
+    request.Description, request.TraceFlag, request.MirrorQueuePolicyFlag = p["description"], p["trace_enabled"], p["mirror_queue_policy"]
+    return request
 
 
 def update_request(models, p):
-    request = models.ModifyRabbitMQVirtualHostRequest(); request.InstanceId, request.VirtualHost = p["instance_id"], p["name"]
-    request.Description, request.TraceFlag = p["description"], p["trace_enabled"]; return request
+    request = models.ModifyRabbitMQVirtualHostRequest()
+    request.InstanceId, request.VirtualHost = p["instance_id"], p["name"]
+    request.Description, request.TraceFlag = p["description"], p["trace_enabled"]
+    return request
 
 
 def delete_request(models, p):
-    request = models.DeleteRabbitMQVirtualHostRequest(); request.InstanceId, request.VirtualHost = p["instance_id"], p["name"]; return request
+    request = models.DeleteRabbitMQVirtualHostRequest()
+    request.InstanceId, request.VirtualHost = p["instance_id"], p["name"]
+    return request
 
 
 def find(module, client, models, p):
     offset = 0
     while True:
-        response = module.sdk_call(client.DescribeRabbitMQVirtualHost, describe_request(models, p, offset)); items = list(response.VirtualHostList or [])
+        response = module.sdk_call(client.DescribeRabbitMQVirtualHost, describe_request(models, p, offset))
+        items = list(response.VirtualHostList or [])
         for item in items:
             value = item._serialize(allow_none=True)
-            if value.get("VirtualHost") == p["name"]: return value
+            if value.get("VirtualHost") == p["name"]:
+                return value
         offset += len(items)
-        if not items or offset >= int(response.TotalCount or 0): return None
+        if not items or offset >= int(response.TotalCount or 0):
+            return None
 
 
 def comparable(value):
-    return {"VirtualHost": value.get("VirtualHost"), "Description": value.get("Description") or "", "TraceFlag": bool(value.get("TraceFlag")), "MirrorQueuePolicyFlag": bool(value.get("MirrorQueuePolicyFlag"))}
+    return {
+        "VirtualHost": value.get("VirtualHost"),
+        "Description": value.get("Description") or "",
+        "TraceFlag": bool(value.get("TraceFlag")),
+        "MirrorQueuePolicyFlag": bool(value.get("MirrorQueuePolicyFlag")),
+    }
 
 
 def desired(p):
@@ -82,25 +99,50 @@ def desired(p):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"choices": ["present", "absent"], "default": "present"}, "instance_id": {"required": True}, "name": {"required": True}, "description": {"default": ""}, "trace_enabled": {"type": "bool", "default": False}, "mirror_queue_policy": {"type": "bool", "default": True}}, supports_check_mode=True)
-    p = module.params; module.require_sdk(); models, cm = _load(); client = module.create_client(cm.TdmqClient, "tdmq.tencentcloudapi.com")
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "instance_id": {"required": True},
+            "name": {"required": True},
+            "description": {"default": ""},
+            "trace_enabled": {"type": "bool", "default": False},
+            "mirror_queue_policy": {"type": "bool", "default": True},
+        },
+        supports_check_mode=True,
+    )
+    p = module.params
+    module.require_sdk()
+    models, cm = _load()
+    client = module.create_client(cm.TdmqClient, "tdmq.tencentcloudapi.com")
     try:
         current = find(module, client, models, p)
         if p["state"] == "absent":
-            if not current: module.exit_json(changed=False, virtual_host=None)
+            if not current:
+                module.exit_json(changed=False, virtual_host=None)
             diff = maybe_diff(module, current, None)
-            if not module.check_mode: module.sdk_call(client.DeleteRabbitMQVirtualHost, delete_request(models, p))
+            if not module.check_mode:
+                module.sdk_call(client.DeleteRabbitMQVirtualHost, delete_request(models, p))
             module.exit_json(changed=True, **(diff or {}), virtual_host=current if module.check_mode else None)
         target, before = desired(p), comparable(current) if current else None
-        if before == target: module.exit_json(changed=False, virtual_host=current)
+        if before == target:
+            module.exit_json(changed=False, virtual_host=current)
         diff = maybe_diff(module, before, target)
-        if current: require_immutable_unchanged(module, before, target, ("MirrorQueuePolicyFlag",), "RabbitMQ virtual host")
+        if current:
+            require_immutable_unchanged(module, before, target, ("MirrorQueuePolicyFlag",), "RabbitMQ virtual host")
         if not module.check_mode:
-            module.sdk_call(client.ModifyRabbitMQVirtualHost if current else client.CreateRabbitMQVirtualHost, update_request(models, p) if current else create_request(models, p)); current = find(module, client, models, p)
+            module.sdk_call(
+                client.ModifyRabbitMQVirtualHost if current else client.CreateRabbitMQVirtualHost,
+                update_request(models, p) if current else create_request(models, p),
+            )
+            current = find(module, client, models, p)
         module.exit_json(changed=True, **(diff or {}), virtual_host=current)
     except Exception as exc:
         module.fail_json(**sdk_error_payload(exc))
 
 
-def main(): run_module()
-if __name__ == "__main__": main()
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()

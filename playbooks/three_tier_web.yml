@@ -1,0 +1,119 @@
+---
+# Three-tier web architecture on Tencent Cloud:
+# VPC + subnet + security group (+ rules) -> CVM web pool (exact_count)
+# -> public CLB load balancer + HTTP listener + registered targets.
+#
+# Prerequisites: credentials via TENCENTCLOUD_* env vars, an image ID valid
+# in the target region, and enough CVM/CLB quota. Everything here bills by
+# the hour; destroy with the same playbook flipped to state=absent.
+- name: Three-tier web architecture
+  hosts: localhost
+  gather_facts: false
+  vars:
+    region: "{{ tencentcloud_region | default('ap-guangzhou') }}"
+    vpc_cidr: 10.0.0.0/16
+    web_image_id: img-xxxxxxxx
+    web_instance_type: S5.MEDIUM2
+  tasks:
+    # -- Stage 1: network foundation --------------------------------------
+    - name: Create the VPC
+      susunola.tencentcloud.vpc:
+        region: "{{ region }}"
+        state: present
+        name: web-vpc
+        cidr_block: "{{ vpc_cidr }}"
+      register: vpc_result
+
+    - name: Create the web subnet
+      susunola.tencentcloud.subnet:
+        region: "{{ region }}"
+        state: present
+        vpc_id: "{{ vpc_result.vpc.VpcId }}"
+        name: web-subnet
+        cidr_block: 10.0.1.0/24
+        zone: "{{ region }}-3"
+      register: subnet_result
+
+    - name: Create the web security group
+      susunola.tencentcloud.security_group:
+        region: "{{ region }}"
+        state: present
+        name: web-sg
+        description: Web tier security group
+      register: sg_result
+
+    - name: Allow HTTP/HTTPS ingress from anywhere
+      susunola.tencentcloud.security_group_rule:
+        region: "{{ region }}"
+        security_group_id: "{{ sg_result.security_group.SecurityGroupId }}"
+        rules:
+          - direction: ingress
+            protocol: TCP
+            port: "80"
+            cidr_block: 0.0.0.0/0
+            action: accept
+            description: HTTP from the internet
+          - direction: ingress
+            protocol: TCP
+            port: "443"
+            cidr_block: 0.0.0.0/0
+            action: accept
+            description: HTTPS from the internet
+
+    # -- Stage 2: compute pool ---------------------------------------------
+    - name: Scale the web pool to exactly two instances
+      susunola.tencentcloud.cvm_instance:
+        region: "{{ region }}"
+        state: present
+        exact_count: 2
+        count_tag:
+          role: web
+        instance_name: web
+        image_id: "{{ web_image_id }}"
+        instance_type: "{{ web_instance_type }}"
+        vpc_id: "{{ vpc_result.vpc.VpcId }}"
+        subnet_id: "{{ subnet_result.subnet.SubnetId }}"
+        security_group_ids: ["{{ sg_result.security_group.SecurityGroupId }}"]
+        password: "{{ web_instance_password }}"
+        tags:
+          role: web
+      register: web_pool
+      no_log: true
+
+    # -- Stage 3: load balancing -------------------------------------------
+    - name: Create the public load balancer
+      susunola.tencentcloud.clb_load_balancer:
+        region: "{{ region }}"
+        state: present
+        name: web-lb
+        vpc_id: "{{ vpc_result.vpc.VpcId }}"
+        internet_charge_type: TRAFFIC_POSTPAID_BY_HOUR
+        internet_max_bandwidth_out: 10
+      register: lb_result
+
+    - name: Create the HTTP listener
+      susunola.tencentcloud.clb_listener:
+        region: "{{ region }}"
+        state: present
+        load_balancer_id: "{{ lb_result.load_balancer.LoadBalancerId }}"
+        port: 80
+        protocol: HTTP
+        name: web-http
+      register: listener_result
+
+    - name: Build the target list from the web pool
+      ansible.builtin.set_fact:
+        web_targets: "{{ web_targets | default([]) + [{'instance_id': item.InstanceId, 'port': 80}] }}"
+      loop: "{{ web_pool.instances }}"
+
+    - name: Register the web pool as listener targets
+      susunola.tencentcloud.clb_listener_target:
+        region: "{{ region }}"
+        state: present
+        load_balancer_id: "{{ lb_result.load_balancer.LoadBalancerId }}"
+        listener_id: "{{ listener_result.listener.ListenerId }}"
+        targets: "{{ web_targets }}"
+
+    - name: Show the load balancer VIPs
+      ansible.builtin.debug:
+        var: lb_result.load_balancer.LoadBalancerVips

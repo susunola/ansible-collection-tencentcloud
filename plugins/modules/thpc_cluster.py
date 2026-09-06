@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: thpc_cluster
 short_description: Manage Tencent Cloud THPC clusters
@@ -49,9 +49,9 @@ options:
   user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: Create a SLURM cluster
   susunola.tencentcloud.thpc_cluster:
     name: production-hpc
@@ -75,14 +75,14 @@ EXAMPLES = r'''
     cluster_id: x-xxxxxxxx
     state: absent
     deletion_protection: false
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 cluster:
   description: Effective THPC cluster overview.
   type: dict
   returned: always
-'''
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -92,6 +92,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters impo
 
 def _load():
     from tencentcloud.thpc.v20230321 import models, thpc_client
+
     return models, thpc_client
 
 
@@ -192,21 +193,37 @@ def _wait(module, client, models, p, states):
         if status == "INIT_FAILED":
             module.fail_json(msg="THPC cluster initialization failed", cluster=current)
         return status
+
     return wait_for_state(module, poll, states, timeout=module.params["waiter_timeout"], delay=module.params["waiter_delay"])
 
 
 def run_module():
     spec = {
-        "state": {"choices": ["present", "absent"], "default": "present"}, "cluster_id": {}, "name": {}, "zone": {},
-        "manager_node": {"type": "dict"}, "manager_node_count": {"type": "int"},
-        "compute_node": {"type": "dict"}, "compute_node_count": {"type": "int"},
-        "login_node": {"type": "dict"}, "login_node_count": {"type": "int"},
-        "scheduler_type": {"choices": ["SLURM"]}, "scheduler_version": {},
-        "image_id": {}, "vpc_id": {}, "subnet_id": {}, "login_password": {"no_log": True},
-        "login_key_ids": {"type": "list", "elements": "str", "no_log": False}, "security_group_ids": {"type": "list", "elements": "str"},
-        "client_token": {"no_log": True}, "account_type": {}, "storage_option": {"type": "dict"},
-        "tags": {"type": "dict"}, "auto_scaling_type": {},
-        "init_node_scripts": {"type": "list", "elements": "dict"}, "hpc_cluster_id": {},
+        "state": {"choices": ["present", "absent"], "default": "present"},
+        "cluster_id": {},
+        "name": {},
+        "zone": {},
+        "manager_node": {"type": "dict"},
+        "manager_node_count": {"type": "int"},
+        "compute_node": {"type": "dict"},
+        "compute_node_count": {"type": "int"},
+        "login_node": {"type": "dict"},
+        "login_node_count": {"type": "int"},
+        "scheduler_type": {"choices": ["SLURM"]},
+        "scheduler_version": {},
+        "image_id": {},
+        "vpc_id": {},
+        "subnet_id": {},
+        "login_password": {"no_log": True},
+        "login_key_ids": {"type": "list", "elements": "str", "no_log": False},
+        "security_group_ids": {"type": "list", "elements": "str"},
+        "client_token": {"no_log": True},
+        "account_type": {},
+        "storage_option": {"type": "dict"},
+        "tags": {"type": "dict"},
+        "auto_scaling_type": {},
+        "init_node_scripts": {"type": "list", "elements": "dict"},
+        "hpc_cluster_id": {},
         "deletion_protection": {"type": "bool"},
     }
     module = TencentCloudModule(argument_spec=spec, required_one_of=[("cluster_id", "name")], supports_check_mode=True)
@@ -236,7 +253,18 @@ def run_module():
             missing = [key for key in ("name", "zone", "manager_node", "compute_node", "image_id", "vpc_id", "subnet_id") if p.get(key) is None]
             if missing:
                 module.fail_json(msg="creation parameters are required for a new THPC cluster", missing=missing)
-            target = {"ClusterName": p["name"], "Placement": {"Zone": p["zone"]}, "SchedulerType": p.get("scheduler_type") or "SLURM", "SchedulerVersion": p.get("scheduler_version") or "latest", "ManagerNodeCount": p.get("manager_node_count") if p.get("manager_node_count") is not None else 1, "ComputeNodeCount": p.get("compute_node_count") if p.get("compute_node_count") is not None else 0, "LoginNodeCount": p.get("login_node_count") if p.get("login_node_count") is not None else 0, "VpcId": p["vpc_id"], "AutoScalingType": p.get("auto_scaling_type") or "THPC_AS", "DeletionProtection": "ON" if p.get("deletion_protection") else "OFF"}
+            target = {
+                "ClusterName": p["name"],
+                "Placement": {"Zone": p["zone"]},
+                "SchedulerType": p.get("scheduler_type") or "SLURM",
+                "SchedulerVersion": p.get("scheduler_version") or "latest",
+                "ManagerNodeCount": p.get("manager_node_count") if p.get("manager_node_count") is not None else 1,
+                "ComputeNodeCount": p.get("compute_node_count") if p.get("compute_node_count") is not None else 0,
+                "LoginNodeCount": p.get("login_node_count") if p.get("login_node_count") is not None else 0,
+                "VpcId": p["vpc_id"],
+                "AutoScalingType": p.get("auto_scaling_type") or "THPC_AS",
+                "DeletionProtection": "ON" if p.get("deletion_protection") else "OFF",
+            }
             diff = maybe_diff(module, None, target)
             if not module.check_mode:
                 p["cluster_id"] = module.sdk_call(client.CreateCluster, create_request(models, p)).ClusterId
@@ -248,10 +276,15 @@ def run_module():
 
         placement = current.get("Placement") or {}
         immutable = {
-            "ClusterName": p.get("name"), "Zone": p.get("zone"), "SchedulerType": p.get("scheduler_type"),
-            "SchedulerVersion": p.get("scheduler_version"), "ManagerNodeCount": p.get("manager_node_count"),
-            "ComputeNodeCount": p.get("compute_node_count"), "LoginNodeCount": p.get("login_node_count"),
-            "VpcId": p.get("vpc_id"), "AutoScalingType": p.get("auto_scaling_type"),
+            "ClusterName": p.get("name"),
+            "Zone": p.get("zone"),
+            "SchedulerType": p.get("scheduler_type"),
+            "SchedulerVersion": p.get("scheduler_version"),
+            "ManagerNodeCount": p.get("manager_node_count"),
+            "ComputeNodeCount": p.get("compute_node_count"),
+            "LoginNodeCount": p.get("login_node_count"),
+            "VpcId": p.get("vpc_id"),
+            "AutoScalingType": p.get("auto_scaling_type"),
         }
         observed = dict(current)
         observed["Zone"] = placement.get("Zone")

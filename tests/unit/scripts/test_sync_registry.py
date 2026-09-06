@@ -74,6 +74,13 @@ Hand-written note about generated modules.
 | `tencentcloud_cvm` | inventory | old plugin row |
 """
 
+GALAXY_YML = """\
+namespace: susunola
+name: tencentcloud
+version: 1.0.0
+description: "Demo collection. 3 modules (resource modules plus _info facts modules) cover things."
+"""
+
 
 def _write_module(modules_dir, name, desc=None):
     modules_dir.mkdir(parents=True, exist_ok=True)
@@ -92,7 +99,9 @@ def _fake_repo(tmp_path):
     runtime.write_text(RUNTIME_YML, encoding="utf-8")
     readme = tmp_path / "README.md"
     readme.write_text(README_MD, encoding="utf-8")
-    return modules_dir, runtime, readme
+    galaxy = tmp_path / "galaxy.yml"
+    galaxy.write_text(GALAXY_YML, encoding="utf-8")
+    return modules_dir, runtime, readme, galaxy
 
 
 def test_script_path_exists():
@@ -159,10 +168,11 @@ def test_render_readme_requires_two_module_tables(sync):
 
 
 def test_main_writes_then_check_passes(sync, tmp_path, monkeypatch, capsys):
-    modules_dir, runtime, readme = _fake_repo(tmp_path)
+    modules_dir, runtime, readme, galaxy = _fake_repo(tmp_path)
     monkeypatch.setattr(sync, "MODULES_DIR", modules_dir)
     monkeypatch.setattr(sync, "RUNTIME_YML", runtime)
     monkeypatch.setattr(sync, "README_MD", readme)
+    monkeypatch.setattr(sync, "GALAXY_YML", galaxy)
 
     assert sync.main(["--check"]) == 1
     assert sync.main([]) == 0
@@ -174,6 +184,9 @@ def test_main_writes_then_check_passes(sync, tmp_path, monkeypatch, capsys):
     readme_text = readme.read_text(encoding="utf-8")
     assert "| `subnet` | Manage subnet |" in readme_text
     assert "Hand-written note about generated modules." in readme_text
+    # The fake repo has 3 modules; the count in the galaxy description is
+    # rewritten in place, without duplicating the "modules" wording.
+    assert "3 modules (resource modules" in galaxy.read_text(encoding="utf-8")
 
     # A newly added module makes every registry stale again.
     _write_module(modules_dir, "eip")
@@ -181,6 +194,13 @@ def test_main_writes_then_check_passes(sync, tmp_path, monkeypatch, capsys):
     assert "stale registries" in capsys.readouterr().err
     assert sync.main([]) == 0
     assert "    - eip\n" in runtime.read_text(encoding="utf-8")
+    assert "4 modules (resource modules" in galaxy.read_text(encoding="utf-8")
+
+
+def test_render_galaxy_yml_rewrites_count_without_duplication(sync):
+    rendered = sync.render_galaxy_yml(GALAXY_YML, ["a", "b"])
+    assert "2 modules (resource modules" in rendered
+    assert "modules modules" not in rendered
 
 
 def test_real_registries_are_up_to_date(sync):

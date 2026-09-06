@@ -1,9 +1,12 @@
 name: Integration
 on:
-  push:
-    branches: [main]
+  # Integration runs create billable cloud resources, so they are
+  # opt-in: manual (workflow_dispatch) plus one weekly scheduled run
+  # (Saturdays 02:00 UTC, offset from the Monday devel run). Merge-time
+  # runs were dropped - sanity/units on every push already gate merges,
+  # and a daily billable run added cost without catching more regressions.
   schedule:
-    - cron: "0 2 * * *"
+    - cron: "0 2 * * 6"
   workflow_dispatch:
     inputs:
       targets:
@@ -31,10 +34,10 @@ jobs:
       run:
         working-directory: ansible_collections/susunola/tencentcloud
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           path: ansible_collections/susunola/tencentcloud
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - name: Check Tencent Cloud credentials
@@ -92,7 +95,7 @@ jobs:
           ansible-test coverage report --python 3.12
       - name: Upload integration coverage report
         if: always() && steps.creds.outputs.available == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: integration-coverage
           path: ansible_collections/susunola/tencentcloud/tests/output/report/
@@ -114,7 +117,7 @@ jobs:
         run: python scripts/resource_reaper.py --fail-on-expired
       - name: Upload E2E resource manifests
         if: always() && steps.creds.outputs.available == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-resource-manifests
           path: |

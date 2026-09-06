@@ -5,7 +5,7 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: mariadb_account_privilege
 short_description: Manage a scoped TencentDB for MariaDB account privilege set
@@ -29,8 +29,8 @@ options:
   user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.mariadb_account_privilege:
     instance_id: tdsql-xxxxxxxx
     username: app
@@ -38,8 +38,8 @@ EXAMPLES = r'''
     object_type: table
     object_name: events
     privileges: [SELECT, INSERT, UPDATE]
-'''
-RETURN = r'''privileges: {description: Resulting normalized privilege names., type: list, elements: str, returned: always}'''
+"""
+RETURN = r"""privileges: {description: Resulting normalized privilege names., type: list, elements: str, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -48,6 +48,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.mariadb.v20170312 import mariadb_client, models
+
     return models, mariadb_client
 
 
@@ -62,20 +63,42 @@ def describe_request(models, p):
 
 
 def grant_request(models, p, privileges):
-    request = _scope(models.GrantAccountPrivilegesRequest(), p); request.Privileges = sorted(set(privileges)); return request
+    request = _scope(models.GrantAccountPrivilegesRequest(), p)
+    request.Privileges = sorted(set(privileges))
+    return request
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"choices": ["present", "absent"], "default": "present"}, "instance_id": {"required": True}, "username": {"required": True}, "host": {"default": "%"}, "database": {"default": "*"}, "object_type": {"choices": ["*", "table", "view", "proc", "func"], "default": "*"}, "object_name": {"default": "*"}, "column": {"default": "*"}, "privileges": {"type": "list", "elements": "str", "default": []}}, supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "instance_id": {"required": True},
+            "username": {"required": True},
+            "host": {"default": "%"},
+            "database": {"default": "*"},
+            "object_type": {"choices": ["*", "table", "view", "proc", "func"], "default": "*"},
+            "object_name": {"default": "*"},
+            "column": {"default": "*"},
+            "privileges": {"type": "list", "elements": "str", "default": []},
+        },
+        supports_check_mode=True,
+    )
     p = module.params
-    if p["database"] == "*" and any(p[x] != "*" for x in ("object_type", "object_name", "column")): module.fail_json(msg="global scope requires object_type, object_name and column to be '*'")
-    if p["object_type"] == "*" and (p["object_name"] != "*" or p["column"] != "*"): module.fail_json(msg="database scope requires object_name and column to be '*'")
-    if p["object_type"] != "table" and p["column"] != "*": module.fail_json(msg="column can only be set for table scopes")
-    module.require_sdk(); models, cm = _load(); client = module.create_client(cm.MariadbClient, "mariadb.tencentcloudapi.com")
+    if p["database"] == "*" and any(p[x] != "*" for x in ("object_type", "object_name", "column")):
+        module.fail_json(msg="global scope requires object_type, object_name and column to be '*'")
+    if p["object_type"] == "*" and (p["object_name"] != "*" or p["column"] != "*"):
+        module.fail_json(msg="database scope requires object_name and column to be '*'")
+    if p["object_type"] != "table" and p["column"] != "*":
+        module.fail_json(msg="column can only be set for table scopes")
+    module.require_sdk()
+    models, cm = _load()
+    client = module.create_client(cm.MariadbClient, "mariadb.tencentcloudapi.com")
     try:
-        response = module.sdk_call(client.DescribeAccountPrivileges, describe_request(models, p)); current = sorted(set(response.Privileges or []))
+        response = module.sdk_call(client.DescribeAccountPrivileges, describe_request(models, p))
+        current = sorted(set(response.Privileges or []))
         target = sorted(set(p["privileges"])) if p["state"] == "present" else []
-        if current == target: module.exit_json(changed=False, privileges=current)
+        if current == target:
+            module.exit_json(changed=False, privileges=current)
         diff = maybe_diff(module, current, target)
         if not module.check_mode:
             module.sdk_call(client.GrantAccountPrivileges, grant_request(models, p, target))
@@ -85,5 +108,9 @@ def run_module():
         module.fail_json(**sdk_error_payload(exc))
 
 
-def main(): run_module()
-if __name__ == "__main__": main()
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()

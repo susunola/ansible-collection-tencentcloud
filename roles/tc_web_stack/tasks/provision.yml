@@ -1,0 +1,160 @@
+---
+- name: Manage the CVM web instances
+  susunola.tencentcloud.cvm_instance:
+    region: "{{ tc_web_stack_region | default(omit) }}"
+    state: present
+    instance_id: "{{ tc_web_stack_instance_id | default(omit, true) }}"
+    instance_name: "{{ tc_web_stack_instance_name | default(omit, true) }}"
+    image_id: "{{ tc_web_stack_image_id | default(omit, true) }}"
+    instance_type: "{{ tc_web_stack_instance_type | default(omit, true) }}"
+    vpc_id: "{{ tc_web_stack_vpc_id | default(omit, true) }}"
+    subnet_id: "{{ tc_web_stack_subnet_id | default(omit, true) }}"
+    security_group_ids: "{{ tc_web_stack_security_group_ids | default(omit, true) }}"
+    hostname: "{{ tc_web_stack_hostname | default(omit, true) }}"
+    password: "{{ tc_web_stack_password | default(omit, true) }}"
+    key_ids: "{{ tc_web_stack_key_ids | default(omit, true) }}"
+    tags: "{{ tc_web_stack_tags | default({}, true) }}"
+    exact_count: "{{ tc_web_stack_exact_count | default(omit, true) }}"
+    count_tag: "{{ tc_web_stack_count_tag | default(omit, true) }}"
+    waiter_timeout: "{{ tc_web_stack_waiter_timeout }}"
+    waiter_delay: "{{ tc_web_stack_waiter_delay }}"
+  register: tc_web_stack_cvm
+  when:
+    - tc_web_stack_enable_cvm
+    - tc_web_stack_instance_id or tc_web_stack_instance_name or tc_web_stack_exact_count
+
+- name: Manage the MySQL CDB instance
+  susunola.tencentcloud.cdb_instance:
+    region: "{{ tc_web_stack_region | default(omit) }}"
+    state: present
+    instance_id: "{{ tc_web_stack_cdb_instance_id | default(omit, true) }}"
+    name: "{{ tc_web_stack_cdb_name | default(omit, true) }}"
+    zone: "{{ tc_web_stack_cdb_zone | default(omit, true) }}"
+    engine_version: "{{ tc_web_stack_cdb_engine_version | default(omit, true) }}"
+    memory: "{{ tc_web_stack_cdb_memory | default(omit, true) }}"
+    volume: "{{ tc_web_stack_cdb_volume | default(omit, true) }}"
+    password: "{{ tc_web_stack_cdb_password | default(omit, true) }}"
+    vpc_id: "{{ tc_web_stack_cdb_vpc_id | default(omit, true) }}"
+    subnet_id: "{{ tc_web_stack_cdb_subnet_id | default(omit, true) }}"
+    tags: "{{ tc_web_stack_cdb_tags | default({}, true) }}"
+    waiter_timeout: "{{ tc_web_stack_waiter_timeout }}"
+    waiter_delay: "{{ tc_web_stack_waiter_delay }}"
+  register: tc_web_stack_cdb
+  when:
+    - tc_web_stack_enable_cdb
+    - tc_web_stack_cdb_instance_id or tc_web_stack_cdb_name
+
+- name: Manage the Redis cache instance
+  susunola.tencentcloud.redis_instance:
+    region: "{{ tc_web_stack_region | default(omit) }}"
+    state: present
+    instance_id: "{{ tc_web_stack_redis_instance_id | default(omit, true) }}"
+    name: "{{ tc_web_stack_redis_name | default(omit, true) }}"
+    zone_name: "{{ tc_web_stack_redis_zone_name | default(omit, true) }}"
+    type_id: "{{ tc_web_stack_redis_type_id | default(omit, true) }}"
+    mem_size: "{{ tc_web_stack_redis_mem_size | default(omit, true) }}"
+    vpc_id: "{{ tc_web_stack_redis_vpc_id | default(omit, true) }}"
+    subnet_id: "{{ tc_web_stack_redis_subnet_id | default(omit, true) }}"
+    password: "{{ tc_web_stack_redis_password | default(omit, true) }}"
+    no_auth: "{{ tc_web_stack_redis_no_auth | default(omit, true) }}"
+    tags: "{{ tc_web_stack_redis_tags | default({}, true) }}"
+    waiter_timeout: "{{ tc_web_stack_waiter_timeout }}"
+    waiter_delay: "{{ tc_web_stack_waiter_delay }}"
+  register: tc_web_stack_redis
+  when:
+    - tc_web_stack_enable_redis
+    - tc_web_stack_redis_instance_id or tc_web_stack_redis_name
+
+- name: Provision the CLB load balancer
+  susunola.tencentcloud.clb_load_balancer:
+    region: "{{ tc_web_stack_region | default(omit) }}"
+    state: present
+    load_balancer_id: "{{ tc_web_stack_lb_id | default(omit, true) }}"
+    name: "{{ tc_web_stack_lb_name | default(omit, true) }}"
+    load_balancer_type: "{{ tc_web_stack_lb_type }}"
+    vpc_id: "{{ tc_web_stack_lb_vpc_id | default(omit, true) }}"
+    subnet_id: "{{ tc_web_stack_lb_subnet_id | default(omit, true) }}"
+    tags: "{{ tc_web_stack_lb_tags | default({}, true) }}"
+    waiter_timeout: "{{ tc_web_stack_waiter_timeout }}"
+    waiter_delay: "{{ tc_web_stack_waiter_delay }}"
+  register: tc_web_stack_lb
+  when:
+    - tc_web_stack_enable_clb
+    - tc_web_stack_lb_id or tc_web_stack_lb_name
+
+- name: Create the HTTP listener
+  susunola.tencentcloud.clb_listener:
+    region: "{{ tc_web_stack_region | default(omit) }}"
+    state: present
+    load_balancer_id: "{{ tc_web_stack_lb.load_balancer.LoadBalancerId }}"
+    protocol: HTTP
+    port: "{{ tc_web_stack_listener_port }}"
+    name: "{{ tc_web_stack_listener_name | default(tc_web_stack_lb_name ~ '-http', true) }}"
+    scheduler: "{{ tc_web_stack_scheduler }}"
+    session_expire_time: "{{ tc_web_stack_session_expire_time }}"
+    health_check: "{{ tc_web_stack_health_check }}"
+    waiter_timeout: "{{ tc_web_stack_waiter_timeout }}"
+    waiter_delay: "{{ tc_web_stack_waiter_delay }}"
+  register: tc_web_stack_listener
+  when:
+    - tc_web_stack_enable_clb
+    - tc_web_stack_lb is defined
+    - tc_web_stack_lb.load_balancer is defined
+
+- name: Normalize the created instance list
+  ansible.builtin.set_fact:
+    tc_web_stack_instance_list: >-
+      {{ tc_web_stack_cvm.instances if tc_web_stack_cvm.instances is defined
+         else ([tc_web_stack_cvm.instance] | select('ne', none) | list) }}
+  when:
+    - tc_web_stack_enable_cvm
+    - tc_web_stack_register_backends
+    - tc_web_stack_targets | length == 0
+    - tc_web_stack_cvm is defined
+
+- name: Derive backend targets from the web instances
+  ansible.builtin.set_fact:
+    tc_web_stack_auto_targets: >-
+      {{ tc_web_stack_auto_targets | default([]) +
+         [{'instance_id': item.InstanceId, 'port': tc_web_stack_web_port,
+           'weight': tc_web_stack_target_weight}] }}
+  loop: "{{ tc_web_stack_instance_list | default([]) }}"
+  when:
+    - tc_web_stack_enable_cvm
+    - tc_web_stack_register_backends
+    - tc_web_stack_targets | length == 0
+    - tc_web_stack_instance_list is defined
+
+- name: Resolve the effective backend target set
+  ansible.builtin.set_fact:
+    tc_web_stack_effective_targets: >-
+      {{ tc_web_stack_targets if tc_web_stack_targets | length > 0
+         else tc_web_stack_auto_targets | default([]) }}
+  when: tc_web_stack_enable_clb
+
+- name: Reconcile the backend target set
+  susunola.tencentcloud.clb_listener_target:
+    region: "{{ tc_web_stack_region | default(omit) }}"
+    state: present
+    load_balancer_id: "{{ tc_web_stack_lb.load_balancer.LoadBalancerId }}"
+    listener_id: "{{ tc_web_stack_listener.listener.ListenerId }}"
+    targets: "{{ tc_web_stack_effective_targets | default([]) }}"
+    purge: "{{ tc_web_stack_purge }}"
+    waiter_timeout: "{{ tc_web_stack_waiter_timeout }}"
+    waiter_delay: "{{ tc_web_stack_waiter_delay }}"
+  register: tc_web_stack_targets_result
+  when:
+    - tc_web_stack_enable_clb
+    - tc_web_stack_effective_targets is defined
+    - tc_web_stack_effective_targets | length > 0
+
+- name: Report the web stack
+  ansible.builtin.debug:
+    msg:
+      - "state={{ tc_web_stack_state }}"
+      - "cvm_changed={{ tc_web_stack_cvm.changed | default(false) }}"
+      - "cdb_instance={{ (tc_web_stack_cdb.instance | default({}, true)).InstanceId | default('skipped', true) }}"
+      - "redis_instance={{ (tc_web_stack_redis.instance | default({}, true)).InstanceId | default('skipped', true) }}"
+      - "lb={{ (tc_web_stack_lb.load_balancer | default({}, true)).LoadBalancerId | default('skipped', true) }}"
+      - "vip={{ tc_web_stack_lb.load_balancer.LoadBalancerVips | default([], true) }}"
+      - "targets_changed={{ tc_web_stack_targets_result.changed | default(false) }}"

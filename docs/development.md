@@ -73,6 +73,26 @@
 - The generator is re-runnable and idempotent. CI runs it with `--check`
   (`.github/workflows/ci.yml`) and fails on stale generated modules, so
   re-run it before committing spec changes.
+- Resource (write) modules are scaffolded, not generated end-to-end:
+  idempotency, drift comparison and required-field constraints are
+  per-resource decisions the SDK request models do not encode. Add a
+  curated `RESOURCE_SPECS` entry (module, service package, identity
+  options, create/update/delete + identify actions) and run
+  `python scripts/generate_info_modules.py --resource <module>` to render
+  the module boilerplate — argument spec and request builders introspected
+  from the SDK models — into `plugins/modules/<module>.py`.
+- Scaffolding is write-once: an existing module file is never overwritten,
+  so a scaffolded module can be finished by hand and stays stable across
+  generator runs. `--resources --check` verifies every `RESOURCE_SPECS`
+  entry against the installed SDK (CI) and reports missing scaffolds;
+  `--print` shows the render without writing.
+- The generated `DOCUMENTATION` mirrors the hand-written module conventions:
+  identity options are `required: true` and written unconditionally to the
+  request, optional fields are guarded with `if params[...] is not None`,
+  nested API objects map to `type: dict` with a comment asking the
+  developer to model their sub-options, and the shared
+  `retries`/`waiter_*`/`user_agent` parameters are documented so
+  validate-modules accepts the module.
 
 ## Non-API-3.0 services
 

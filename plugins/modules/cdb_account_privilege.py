@@ -5,7 +5,7 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: cdb_account_privilege
 short_description: Manage TencentDB for MySQL account privileges
@@ -52,8 +52,8 @@ options:
   user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.cdb_account_privilege:
     instance_id: cdb-xxxxxxxx
     username: app
@@ -61,8 +61,8 @@ EXAMPLES = r'''
     database_privileges:
       - database: orders
         privileges: [SELECT, INSERT, UPDATE]
-'''
-RETURN = r'''privileges: {description: Normalized account privilege set., type: dict, returned: always}'''
+"""
+RETURN = r"""privileges: {description: Normalized account privilege set., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -71,6 +71,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.cdb.v20170320 import cdb_client, models
+
     return models, cdb_client
 
 
@@ -84,25 +85,37 @@ def _objects(models, class_name, values, keys):
     result = []
     for value in values:
         item = getattr(models, class_name)()
-        for source, target in keys: setattr(item, target, sorted(value[source]) if source == "privileges" else value[source])
+        for source, target in keys:
+            setattr(item, target, sorted(value[source]) if source == "privileges" else value[source])
         result.append(item)
     return result
 
 
 def modify_request(models, p, wanted):
-    request = models.ModifyAccountPrivilegesRequest(); request.InstanceId = p["instance_id"]
-    account = models.Account(); account.User, account.Host = p["username"], p["host"]; request.Accounts = [account]
+    request = models.ModifyAccountPrivilegesRequest()
+    request.InstanceId = p["instance_id"]
+    account = models.Account()
+    account.User, account.Host = p["username"], p["host"]
+    request.Accounts = [account]
     request.GlobalPrivileges = wanted["GlobalPrivileges"]
     request.DatabasePrivileges = _objects(models, "DatabasePrivilege", wanted["DatabasePrivileges"], (("database", "Database"), ("privileges", "Privileges")))
-    request.TablePrivileges = _objects(models, "TablePrivilege", wanted["TablePrivileges"], (("database", "Database"), ("table", "Table"), ("privileges", "Privileges")))
-    request.ColumnPrivileges = _objects(models, "ColumnPrivilege", wanted["ColumnPrivileges"], (("database", "Database"), ("table", "Table"), ("column", "Column"), ("privileges", "Privileges")))
+    request.TablePrivileges = _objects(
+        models, "TablePrivilege", wanted["TablePrivileges"], (("database", "Database"), ("table", "Table"), ("privileges", "Privileges"))
+    )
+    request.ColumnPrivileges = _objects(
+        models,
+        "ColumnPrivilege",
+        wanted["ColumnPrivileges"],
+        (("database", "Database"), ("table", "Table"), ("column", "Column"), ("privileges", "Privileges")),
+    )
     return request
 
 
 def _normalize_items(values, identity):
     result = []
     for value in values or []:
-        if hasattr(value, "_serialize"): value = value._serialize(allow_none=True)
+        if hasattr(value, "_serialize"):
+            value = value._serialize(allow_none=True)
         item = {name.lower(): value.get(name) for name in identity}
         item["privileges"] = sorted(value.get("Privileges") or [])
         result.append(item)
@@ -119,7 +132,16 @@ def normalize(value):
 
 
 def desired(p):
-    return normalize({"GlobalPrivileges": p["global_privileges"], "DatabasePrivileges": [{"Database": x["database"], "Privileges": x["privileges"]} for x in p["database_privileges"]], "TablePrivileges": [{"Database": x["database"], "Table": x["table"], "Privileges": x["privileges"]} for x in p["table_privileges"]], "ColumnPrivileges": [{"Database": x["database"], "Table": x["table"], "Column": x["column"], "Privileges": x["privileges"]} for x in p["column_privileges"]]})
+    return normalize(
+        {
+            "GlobalPrivileges": p["global_privileges"],
+            "DatabasePrivileges": [{"Database": x["database"], "Privileges": x["privileges"]} for x in p["database_privileges"]],
+            "TablePrivileges": [{"Database": x["database"], "Table": x["table"], "Privileges": x["privileges"]} for x in p["table_privileges"]],
+            "ColumnPrivileges": [
+                {"Database": x["database"], "Table": x["table"], "Column": x["column"], "Privileges": x["privileges"]} for x in p["column_privileges"]
+            ],
+        }
+    )
 
 
 def fetch(module, client, models, p):
@@ -129,24 +151,52 @@ def fetch(module, client, models, p):
 
 def run_module():
     privilege = {"type": "list", "elements": "str", "required": True}
-    module = TencentCloudModule(argument_spec={
-        "state": {"choices": ["present", "absent"], "default": "present"}, "instance_id": {"required": True}, "username": {"required": True}, "host": {"default": "%"},
-        "global_privileges": {"type": "list", "elements": "str", "default": []},
-        "database_privileges": {"type": "list", "elements": "dict", "default": [], "options": {"database": {"required": True}, "privileges": privilege}},
-        "table_privileges": {"type": "list", "elements": "dict", "default": [], "options": {"database": {"required": True}, "table": {"required": True}, "privileges": privilege}},
-        "column_privileges": {"type": "list", "elements": "dict", "default": [], "options": {"database": {"required": True}, "table": {"required": True}, "column": {"required": True}, "privileges": privilege}},
-    }, supports_check_mode=True)
-    p = module.params; module.require_sdk(); models, cm = _load(); client = module.create_client(cm.CdbClient, "cdb.tencentcloudapi.com")
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "instance_id": {"required": True},
+            "username": {"required": True},
+            "host": {"default": "%"},
+            "global_privileges": {"type": "list", "elements": "str", "default": []},
+            "database_privileges": {"type": "list", "elements": "dict", "default": [], "options": {"database": {"required": True}, "privileges": privilege}},
+            "table_privileges": {
+                "type": "list",
+                "elements": "dict",
+                "default": [],
+                "options": {"database": {"required": True}, "table": {"required": True}, "privileges": privilege},
+            },
+            "column_privileges": {
+                "type": "list",
+                "elements": "dict",
+                "default": [],
+                "options": {"database": {"required": True}, "table": {"required": True}, "column": {"required": True}, "privileges": privilege},
+            },
+        },
+        supports_check_mode=True,
+    )
+    p = module.params
+    module.require_sdk()
+    models, cm = _load()
+    client = module.create_client(cm.CdbClient, "cdb.tencentcloudapi.com")
     try:
-        current = fetch(module, client, models, p); target = desired(p) if p["state"] == "present" else desired(dict(p, global_privileges=[], database_privileges=[], table_privileges=[], column_privileges=[]))
-        if current == target: module.exit_json(changed=False, privileges=current)
+        current = fetch(module, client, models, p)
+        target = (
+            desired(p) if p["state"] == "present" else desired(dict(p, global_privileges=[], database_privileges=[], table_privileges=[], column_privileges=[]))
+        )
+        if current == target:
+            module.exit_json(changed=False, privileges=current)
         diff = maybe_diff(module, current, target)
         if not module.check_mode:
-            module.sdk_call(client.ModifyAccountPrivileges, modify_request(models, p, target)); current = fetch(module, client, models, p)
+            module.sdk_call(client.ModifyAccountPrivileges, modify_request(models, p, target))
+            current = fetch(module, client, models, p)
         module.exit_json(changed=True, **(diff or {}), privileges=current)
     except Exception as exc:
         module.fail_json(**sdk_error_payload(exc))
 
 
-def main(): run_module()
-if __name__ == "__main__": main()
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()

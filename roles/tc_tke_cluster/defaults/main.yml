@@ -1,0 +1,54 @@
+---
+# Master lifecycle: present provisions cluster -> node pools -> addons,
+# absent tears down in reverse order (addons -> node pools -> cluster).
+# Teardown needs tc_tke_cluster_id because node pools and addons are
+# addressed by cluster.
+tc_tke_cluster_state: present
+
+# ---- Cluster ----------------------------------------------------------
+# cluster_id or name must be set for the cluster task to run.
+tc_tke_cluster_id: ""
+tc_tke_cluster_name: ""
+tc_tke_cluster_vpc_id: ""
+tc_tke_cluster_subnet_id: ""
+tc_tke_cluster_version: ""
+tc_tke_cluster_desc: ""
+tc_tke_cluster_project_id: 0
+tc_tke_cluster_type: MANAGED_CLUSTER
+tc_tke_cluster_cidr: ""
+tc_tke_cluster_service_cidr: ""
+tc_tke_cluster_max_node_pod_num: 0
+tc_tke_cluster_deletion_protection: false
+tc_tke_cluster_instance_delete_mode: ""
+tc_tke_cluster_tags: {}
+
+# ---- Node pools -------------------------------------------------------
+# Each entry maps the tke_node_pool options, for example:
+#   - name: workers
+#     launch_configuration_json: '{"InstanceType":"S5.MEDIUM2","ImageId":"img-xxxx"}'
+#     autoscaling_group_json: '{"MinSize":2,"MaxSize":10,"DesiredCapacity":2}'
+#     enable_autoscale: true
+#     max_nodes_num: 10
+#     min_nodes_num: 2
+#     labels: {app: workers}
+#     taints: []
+#     node_pool_os: tlinux2.4
+#     deletion_protection: true
+#     keep_instance: false
+# When empty, no node pool is managed.
+tc_tke_cluster_node_pools: []
+
+# ---- Addons -----------------------------------------------------------
+# Each entry maps the tke_addon options, for example:
+#   - name: cbs
+#     version: 1.4.0
+#     values: {replicaCount: 2}
+#     update_strategy: merge
+#     api_dry_run: true
+#     allow_downgrade: false
+# When empty, no addon is managed.
+tc_tke_cluster_addons: []
+
+# Waiter tuning (cluster creation can take several minutes)
+tc_tke_cluster_waiter_timeout: 600
+tc_tke_cluster_waiter_delay: 5

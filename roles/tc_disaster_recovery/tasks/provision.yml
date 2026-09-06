@@ -1,0 +1,97 @@
+---
+- name: Create or update the golden image from the source instance
+  susunola.tencentcloud.cvm_image:
+    region: "{{ tc_dr_region | default(omit) }}"
+    state: present
+    image_id: "{{ tc_dr_image_id | default(omit, true) }}"
+    image_name: "{{ tc_dr_image_name | default(omit, true) }}"
+    instance_id: "{{ tc_dr_image_instance_id | default(omit, true) }}"
+    image_description: "{{ tc_dr_image_description | default(omit, true) }}"
+    force_poweroff: "{{ tc_dr_image_force_poweroff | default(omit, true) }}"
+    sysprep: "{{ tc_dr_image_sysprep | default(omit, true) }}"
+    delete_binded_snap: "{{ tc_dr_image_delete_binded_snap | default(omit, true) }}"
+    waiter_timeout: "{{ tc_dr_waiter_timeout }}"
+    waiter_delay: "{{ tc_dr_waiter_delay }}"
+  register: tc_dr_image
+  when:
+    - tc_dr_enable_image
+    - tc_dr_image_instance_id or tc_dr_image_id
+
+- name: Configure COS cross-region bucket replication
+  susunola.tencentcloud.cos_bucket_replication:
+    region: "{{ tc_dr_region | default(omit) }}"
+    state: present
+    name: "{{ tc_dr_bucket_name }}"
+    appid: "{{ tc_dr_bucket_appid | default(omit, true) }}"
+    role: "{{ tc_dr_replication_role }}"
+    rules: "{{ tc_dr_replication_rules }}"
+    waiter_timeout: "{{ tc_dr_waiter_timeout }}"
+    waiter_delay: "{{ tc_dr_waiter_delay }}"
+  register: tc_dr_replication
+  when:
+    - tc_dr_enable_cos
+    - tc_dr_bucket_name
+    - tc_dr_replication_rules | length > 0
+
+- name: Create the standby CLB in the DR region
+  susunola.tencentcloud.clb_load_balancer:
+    region: "{{ tc_dr_dr_region | default(omit) }}"
+    state: present
+    load_balancer_id: "{{ tc_dr_clb_id | default(omit, true) }}"
+    name: "{{ tc_dr_clb_name | default(omit, true) }}"
+    load_balancer_type: "{{ tc_dr_clb_type }}"
+    vpc_id: "{{ tc_dr_clb_vpc_id | default(omit, true) }}"
+    subnet_id: "{{ tc_dr_clb_subnet_id | default(omit, true) }}"
+    tags: "{{ tc_dr_clb_tags | default({}, true) }}"
+    waiter_timeout: "{{ tc_dr_waiter_timeout }}"
+    waiter_delay: "{{ tc_dr_waiter_delay }}"
+  register: tc_dr_clb
+  when:
+    - tc_dr_enable_clb
+    - tc_dr_clb_id or tc_dr_clb_name
+
+- name: Create the standby listener in the DR region
+  susunola.tencentcloud.clb_listener:
+    region: "{{ tc_dr_dr_region | default(omit) }}"
+    state: present
+    load_balancer_id: "{{ tc_dr_clb.load_balancer.LoadBalancerId }}"
+    protocol: "{{ tc_dr_listener_protocol }}"
+    port: "{{ tc_dr_listener_port }}"
+    name: "{{ tc_dr_listener_name | default(tc_dr_clb_name ~ '-standby', true) }}"
+    scheduler: "{{ tc_dr_scheduler }}"
+    session_expire_time: "{{ tc_dr_session_expire_time }}"
+    health_check: "{{ tc_dr_health_check }}"
+    waiter_timeout: "{{ tc_dr_waiter_timeout }}"
+    waiter_delay: "{{ tc_dr_waiter_delay }}"
+  register: tc_dr_listener
+  when:
+    - tc_dr_enable_clb
+    - tc_dr_clb is defined
+    - tc_dr_clb.load_balancer is defined
+
+- name: Reconcile the standby backend target set
+  susunola.tencentcloud.clb_listener_target:
+    region: "{{ tc_dr_dr_region | default(omit) }}"
+    state: present
+    load_balancer_id: "{{ tc_dr_clb.load_balancer.LoadBalancerId }}"
+    listener_id: "{{ tc_dr_listener.listener.ListenerId }}"
+    targets: "{{ tc_dr_targets }}"
+    purge: "{{ tc_dr_purge }}"
+    waiter_timeout: "{{ tc_dr_waiter_timeout }}"
+    waiter_delay: "{{ tc_dr_waiter_delay }}"
+  register: tc_dr_targets_result
+  when:
+    - tc_dr_enable_clb
+    - tc_dr_listener is defined
+    - tc_dr_listener.listener is defined
+    - tc_dr_targets | length > 0
+
+- name: Report the DR artifacts
+  ansible.builtin.debug:
+    msg:
+      - "state={{ tc_dr_state }}"
+      - "image={{ (tc_dr_image.image | default({}, true)).ImageId | default('skipped', true) }}"
+      - "replication={{ tc_dr_replication.replication | default('skipped', true) }}"
+      - "dr_lb={{ (tc_dr_clb.load_balancer | default({}, true)).LoadBalancerId | default('skipped', true) }}"
+      - "dr_vip={{ tc_dr_clb.load_balancer.LoadBalancerVips | default([], true) }}"
+      - "targets_changed={{ tc_dr_targets_result.changed | default(false) }}"

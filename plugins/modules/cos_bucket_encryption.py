@@ -3,8 +3,9 @@
 # Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: cos_bucket_encryption
 short_description: Manage Tencent Cloud COS default bucket encryption
@@ -21,48 +22,72 @@ options:
   user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.cos_bucket_encryption:
     name: application-data
     rules:
       - ApplyServerSideEncryptionByDefault: {SSEAlgorithm: AES256}
-'''
-RETURN = r'''encryption: {description: Effective encryption configuration., type: dict, returned: always}'''
+"""
+RETURN = r"""encryption: {description: Effective encryption configuration., type: dict, returned: always}"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 
 
 def normalize(value):
-    if not value: return None
+    if not value:
+        return None
     root = value.get("ServerSideEncryptionConfiguration", value)
     return {"Rule": root.get("Rule") or []}
 
 
 def get_encryption(client, bucket):
-    try: return normalize(client.get_bucket_encryption(Bucket=bucket))
+    try:
+        return normalize(client.get_bucket_encryption(Bucket=bucket))
     except Exception as exc:
-        if cos.is_not_found(exc): return None
+        if cos.is_not_found(exc):
+            return None
         raise
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"choices": ["present", "absent"], "default": "present"}, "name": {"required": True}, "appid": {}, "rules": {"type": "list", "elements": "dict"}}, required_if=[("state", "present", ["rules"])], supports_check_mode=True)
-    cos.require_cos_sdk(module); bucket = cos.bucket_full_name(module.params["name"], cos.resolve_appid(module)); client = cos.create_cos_client(module)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "name": {"required": True},
+            "appid": {},
+            "rules": {"type": "list", "elements": "dict"},
+        },
+        required_if=[("state", "present", ["rules"])],
+        supports_check_mode=True,
+    )
+    cos.require_cos_sdk(module)
+    bucket = cos.bucket_full_name(module.params["name"], cos.resolve_appid(module))
+    client = cos.create_cos_client(module)
     try:
-        current = get_encryption(client, bucket); target = normalize({"Rule": module.params.get("rules") or []})
+        current = get_encryption(client, bucket)
+        target = normalize({"Rule": module.params.get("rules") or []})
         if module.params["state"] == "absent":
-            if current is None: module.exit_json(changed=False, encryption=None)
+            if current is None:
+                module.exit_json(changed=False, encryption=None)
             diff = maybe_diff(module, current, None)
-            if not module.check_mode: client.delete_bucket_encryption(Bucket=bucket)
+            if not module.check_mode:
+                client.delete_bucket_encryption(Bucket=bucket)
             module.exit_json(changed=True, **(diff or {}), encryption=current if module.check_mode else None)
-        if current == target: module.exit_json(changed=False, encryption=current)
+        if current == target:
+            module.exit_json(changed=False, encryption=current)
         diff = maybe_diff(module, current, target)
-        if not module.check_mode: client.put_bucket_encryption(Bucket=bucket, ServerSideEncryptionConfiguration=target)
+        if not module.check_mode:
+            client.put_bucket_encryption(Bucket=bucket, ServerSideEncryptionConfiguration=target)
         module.exit_json(changed=True, **(diff or {}), encryption=target)
-    except Exception as exc: cos.fail_on_cos_error(module, exc)
+    except Exception as exc:
+        cos.fail_on_cos_error(module, exc)
 
 
-def main(): run_module()
-if __name__ == "__main__": main()
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()

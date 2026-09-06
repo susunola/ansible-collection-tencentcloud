@@ -1,0 +1,76 @@
+---
+- name: Manage the TKE cluster
+  susunola.tencentcloud.tke_cluster:
+    region: "{{ tc_tke_cluster_region | default(omit) }}"
+    state: present
+    cluster_id: "{{ tc_tke_cluster_id | default(omit, true) }}"
+    name: "{{ tc_tke_cluster_name | default(omit, true) }}"
+    vpc_id: "{{ tc_tke_cluster_vpc_id | default(omit, true) }}"
+    subnet_id: "{{ tc_tke_cluster_subnet_id | default(omit, true) }}"
+    cluster_version: "{{ tc_tke_cluster_version | default(omit, true) }}"
+    cluster_desc: "{{ tc_tke_cluster_desc | default(omit, true) }}"
+    project_id: "{{ tc_tke_cluster_project_id | default(omit, true) }}"
+    cluster_type: "{{ tc_tke_cluster_type | default(omit, true) }}"
+    cluster_cidr: "{{ tc_tke_cluster_cidr | default(omit, true) }}"
+    service_cidr: "{{ tc_tke_cluster_service_cidr | default(omit, true) }}"
+    max_node_pod_num: "{{ tc_tke_cluster_max_node_pod_num | default(omit, true) }}"
+    deletion_protection: "{{ tc_tke_cluster_deletion_protection | default(omit, true) }}"
+    instance_delete_mode: "{{ tc_tke_cluster_instance_delete_mode | default(omit, true) }}"
+    tags: "{{ tc_tke_cluster_tags | default({}, true) }}"
+    waiter_timeout: "{{ tc_tke_cluster_waiter_timeout }}"
+    waiter_delay: "{{ tc_tke_cluster_waiter_delay }}"
+  register: tc_tke_cluster_result
+  when: tc_tke_cluster_id or tc_tke_cluster_name
+
+- name: Manage the node pools
+  susunola.tencentcloud.tke_node_pool:
+    region: "{{ tc_tke_cluster_region | default(omit) }}"
+    state: present
+    cluster_id: "{{ tc_tke_cluster_result.cluster.ClusterId }}"
+    name: "{{ item.name }}"
+    launch_configuration_json: "{{ item.launch_configuration_json | default(omit, true) }}"
+    autoscaling_group_json: "{{ item.autoscaling_group_json | default(omit, true) }}"
+    enable_autoscale: "{{ item.enable_autoscale | default(omit, true) }}"
+    max_nodes_num: "{{ item.max_nodes_num | default(omit, true) }}"
+    min_nodes_num: "{{ item.min_nodes_num | default(omit, true) }}"
+    labels: "{{ item.labels | default(omit, true) }}"
+    taints: "{{ item.taints | default(omit, true) }}"
+    node_pool_os: "{{ item.node_pool_os | default(omit, true) }}"
+    deletion_protection: "{{ item.deletion_protection | default(omit, true) }}"
+    keep_instance: "{{ item.keep_instance | default(omit, true) }}"
+    tags: "{{ item.tags | default({}, true) }}"
+    waiter_timeout: "{{ tc_tke_cluster_waiter_timeout }}"
+    waiter_delay: "{{ tc_tke_cluster_waiter_delay }}"
+  loop: "{{ tc_tke_cluster_node_pools }}"
+  register: tc_tke_cluster_pools_result
+  when:
+    - tc_tke_cluster_result.cluster is defined
+    - tc_tke_cluster_node_pools | length > 0
+
+- name: Manage the addons
+  susunola.tencentcloud.tke_addon:
+    region: "{{ tc_tke_cluster_region | default(omit) }}"
+    state: present
+    cluster_id: "{{ tc_tke_cluster_result.cluster.ClusterId }}"
+    name: "{{ item.name }}"
+    version: "{{ item.version | default(omit, true) }}"
+    values: "{{ item.values | default(omit, true) }}"
+    values_file: "{{ item.values_file | default(omit, true) }}"
+    values_format: "{{ item.values_format | default(omit, true) }}"
+    update_strategy: "{{ item.update_strategy | default(omit, true) }}"
+    api_dry_run: "{{ item.api_dry_run | default(omit, true) }}"
+    allow_downgrade: "{{ item.allow_downgrade | default(omit, true) }}"
+    waiter_timeout: "{{ tc_tke_cluster_waiter_timeout }}"
+    waiter_delay: "{{ tc_tke_cluster_waiter_delay }}"
+  loop: "{{ tc_tke_cluster_addons }}"
+  when:
+    - tc_tke_cluster_result.cluster is defined
+    - tc_tke_cluster_addons | length > 0
+
+- name: Report the cluster
+  ansible.builtin.debug:
+    msg:
+      - "cluster={{ (tc_tke_cluster_result.cluster | default({}, true)).ClusterId | default('skipped', true) }}"
+      - "status={{ (tc_tke_cluster_result.cluster | default({}, true)).ClusterStatus | default('skipped', true) }}"
+      - "pools_managed={{ tc_tke_cluster_pools_result.results | default([], true) | length }}"
+      - "addons={{ tc_tke_cluster_addons | map(attribute='name') | list }}"

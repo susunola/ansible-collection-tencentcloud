@@ -5,7 +5,7 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: tdmq_rocketmq_namespace
 short_description: Manage TDMQ RocketMQ namespaces
@@ -22,14 +22,14 @@ options:
   user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.tdmq_rocketmq_namespace:
     cluster_id: rocketmq-xxxxxxxx
     name: production
     remark: Production workloads
-'''
-RETURN = r'''namespace: {description: RocketMQ namespace metadata., type: dict, returned: always}'''
+"""
+RETURN = r"""namespace: {description: RocketMQ namespace metadata., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -38,6 +38,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.tdmq.v20200217 import models, tdmq_client
+
     return models, tdmq_client
 
 
@@ -88,25 +89,44 @@ def desired(p):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={"state": {"choices": ["present", "absent"], "default": "present"}, "cluster_id": {"required": True}, "name": {"required": True}, "remark": {"default": ""}}, supports_check_mode=True)
-    p = module.params; module.require_sdk(); models, cm = _load(); client = module.create_client(cm.TdmqClient, "tdmq.tencentcloudapi.com")
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "cluster_id": {"required": True},
+            "name": {"required": True},
+            "remark": {"default": ""},
+        },
+        supports_check_mode=True,
+    )
+    p = module.params
+    module.require_sdk()
+    models, cm = _load()
+    client = module.create_client(cm.TdmqClient, "tdmq.tencentcloudapi.com")
     try:
         current = find(module, client, models, p)
         if p["state"] == "absent":
-            if not current: module.exit_json(changed=False, namespace=None)
+            if not current:
+                module.exit_json(changed=False, namespace=None)
             diff = maybe_diff(module, current, None)
-            if not module.check_mode: module.sdk_call(client.DeleteRocketMQNamespace, delete_request(models, p))
+            if not module.check_mode:
+                module.sdk_call(client.DeleteRocketMQNamespace, delete_request(models, p))
             module.exit_json(changed=True, **(diff or {}), namespace=current if module.check_mode else None)
         target, before = desired(p), comparable(current) if current else None
-        if before == target: module.exit_json(changed=False, namespace=current)
+        if before == target:
+            module.exit_json(changed=False, namespace=current)
         diff = maybe_diff(module, before, target)
         if not module.check_mode:
             method = client.ModifyRocketMQNamespace if current else client.CreateRocketMQNamespace
-            module.sdk_call(method, update_request(models, p) if current else create_request(models, p)); current = find(module, client, models, p)
+            module.sdk_call(method, update_request(models, p) if current else create_request(models, p))
+            current = find(module, client, models, p)
         module.exit_json(changed=True, **(diff or {}), namespace=current)
     except Exception as exc:
         module.fail_json(**sdk_error_payload(exc))
 
 
-def main(): run_module()
-if __name__ == "__main__": main()
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()

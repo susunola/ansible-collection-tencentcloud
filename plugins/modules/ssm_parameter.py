@@ -264,7 +264,7 @@ def run_module():
             "secret_binary": {"type": "str", "no_log": True},
             "description": {"type": "str"},
             "secret_type": {"type": "int", "default": 0},
-            "encrypt_type": {"type": "int", "choices": [0, 1]},
+            "encrypt_type": {"type": "int"},
             "kms_key_id": {"type": "str"},
             "tags": {"type": "dict", "default": {}},
             "delete_mode": {"type": "str", "choices": ["soft", "immediate"], "default": "soft"},
@@ -281,6 +281,8 @@ def run_module():
 
     if secret_string is not None and secret_binary is not None:
         module.fail_json(msg="secret_string and secret_binary are mutually exclusive")
+    if module.params["encrypt_type"] is not None and module.params["encrypt_type"] not in (0, 1):
+        module.fail_json(msg="encrypt_type must be 0 or 1")
     if not 0 <= module.params["recovery_window_in_days"] <= 30:
         module.fail_json(msg="recovery_window_in_days must be between 0 and 30")
 
