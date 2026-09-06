@@ -55,7 +55,14 @@ def test_write_modules_use_diagnostic_error_envelopes():
         if path.stem.endswith("_info"):
             continue
         text = path.read_text(encoding="utf-8")
-        api3_helper = "sdk_error_payload(exc)" in text or "fail_sdk_error(exc)" in text
+        api3_helper = any(
+            helper in text
+            for helper in (
+                "sdk_error_payload(exc)",
+                "fail_sdk_error(exc)",
+                "fail_from_sdk_error(",
+            )
+        )
         api3_inline = all(fragment in text for fragment in (
             'error=str(exc)',
             'get_code", lambda: None',
