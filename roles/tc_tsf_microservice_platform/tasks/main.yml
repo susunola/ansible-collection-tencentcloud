@@ -8,6 +8,7 @@
       - tc_tsf_microservice_platform_namespaces is sequence
       - tc_tsf_microservice_platform_applications is sequence
       - tc_tsf_microservice_platform_application_configs is sequence
+      - tc_tsf_microservice_platform_application_config_releases is sequence
       - tc_tsf_microservice_platform_microservices is sequence
       - tc_tsf_microservice_platform_vm_deployment_groups is sequence
       - tc_tsf_microservice_platform_container_deployment_groups is sequence
@@ -80,6 +81,14 @@
   loop_control: {label: "{{ item.name | default(item.group_id | default('unnamed')) }}"}
   register: _tc_tsf_microservice_platform_container_deployment_groups
 
+- name: Reconcile TSF application configuration releases
+  when: tc_tsf_microservice_platform_state == 'present'
+  susunola.tencentcloud.tsf_application_config_release:
+  args: "{{ item | combine({'state': 'present'}) }}"
+  loop: "{{ tc_tsf_microservice_platform_application_config_releases }}"
+  loop_control: {label: "{{ item.config_id }}/{{ item.group_id }}"}
+  register: _tc_tsf_microservice_platform_application_config_releases
+
 - name: Reconcile TSF traffic lanes
   when: tc_tsf_microservice_platform_state == 'present'
   susunola.tencentcloud.tsf_lane:
@@ -105,6 +114,7 @@
       namespaces: "{{ _tc_tsf_microservice_platform_namespaces.results | default([]) | map(attribute='namespace') | list }}"
       applications: "{{ _tc_tsf_microservice_platform_applications.results | default([]) | map(attribute='application') | list }}"
       application_configs: "{{ _tc_tsf_microservice_platform_application_configs.results | default([]) | map(attribute='config') | list }}"
+      application_config_releases: "{{ _tc_tsf_microservice_platform_application_config_releases.results | default([]) | map(attribute='release') | list }}"
       microservices: "{{ _tc_tsf_microservice_platform_microservices.results | default([]) | map(attribute='microservice') | list }}"
       vm_deployment_groups: "{{ _tc_tsf_microservice_platform_vm_deployment_groups.results | default([]) | map(attribute='deployment_group') | list }}"
       container_deployment_groups: "{{ _tc_tsf_microservice_platform_container_deployment_groups.results | default([]) | map(attribute='deployment_group') | list }}"
@@ -120,6 +130,15 @@
     state: absent
   loop: "{{ tc_tsf_microservice_platform_lane_rules | reverse | list }}"
   loop_control: {label: "{{ item.name | default(item.rule_id | default('unnamed')) }}"}
+
+- name: Revoke TSF application configuration releases
+  when: tc_tsf_microservice_platform_state == 'absent'
+  susunola.tencentcloud.tsf_application_config_release:
+    config_id: "{{ item.config_id }}"
+    group_id: "{{ item.group_id }}"
+    state: absent
+  loop: "{{ tc_tsf_microservice_platform_application_config_releases | reverse | list }}"
+  loop_control: {label: "{{ item.config_id }}/{{ item.group_id }}"}
 
 - name: Remove TSF traffic lanes
   when: tc_tsf_microservice_platform_state == 'absent'

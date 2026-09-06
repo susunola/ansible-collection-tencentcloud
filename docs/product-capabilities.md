@@ -6,7 +6,7 @@ This matrix is generated from module SDK imports and role metadata. It is a
 navigation and gap-discovery aid, not a claim that every Tencent Cloud API is covered.
 
 - Products/services: **204**
-- Write modules: **425**
+- Write modules: **426**
 - Information modules: **245**
 - Solution roles: **65**
 
@@ -207,7 +207,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `trro` | discovery-only | 0 | 1 | — | — |
 | `trtc` | discovery-only | 0 | 1 | — | — |
 | `tse` | solution | 35 | 11 | `tc_tse_api_gateway`, `tc_tse_governance_platform` | `tse_cloud_native_gateway`, `tse_config_file`, `tse_config_file_deployment`, `tse_config_file_group`, `tse_config_file_release`, `tse_gateway_autoscaler_binding`, `tse_gateway_autoscaler_strategy`, `tse_gateway_canary_rule`, +27 more |
-| `tsf` | resource-family | 10 | 1 | — | `tsf_application`, `tsf_application_config`, `tsf_cluster`, `tsf_container_deployment_group`, `tsf_lane`, `tsf_lane_rule`, `tsf_microservice`, `tsf_namespace`, +2 more |
+| `tsf` | resource-family | 11 | 1 | — | `tsf_application`, `tsf_application_config`, `tsf_application_config_release`, `tsf_cluster`, `tsf_container_deployment_group`, `tsf_lane`, `tsf_lane_rule`, `tsf_microservice`, +3 more |
 | `vcube` | discovery-only | 0 | 1 | — | — |
 | `vdb` | managed | 1 | 1 | — | `vdb_instance` |
 | `vm` | discovery-only | 0 | 1 | — | — |

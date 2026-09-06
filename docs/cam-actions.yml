@@ -2504,6 +2504,10 @@ modules:
   - DeleteConfig
   - DescribeConfig
   - DescribeConfigs
+  tsf_application_config_release:
+  - DescribeConfigReleases
+  - ReleaseConfig
+  - RevocationConfig
   tsf_application_info:
   - DescribeApplications
   tsf_cluster:
