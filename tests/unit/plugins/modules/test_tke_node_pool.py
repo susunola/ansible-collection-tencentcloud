@@ -493,6 +493,8 @@ def test_sdk_error_on_describe_is_reported(client):
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
     payload = exc.value.args[0]
-    assert payload["msg"] == "Tencent Cloud API request failed"
+    assert payload["msg"] == "Tencent Cloud API request failed during DescribeClusterNodePools"
+    assert payload["operation"] == "DescribeClusterNodePools"
+    assert payload["error_kind"] == "other"
     assert payload["error"] == "tke api exploded"
     assert payload["error_code"] is None

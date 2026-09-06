@@ -120,6 +120,7 @@ from ansible.module_utils.common.text.converters import to_bytes
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 
 
 def _load_tke():
@@ -196,12 +197,7 @@ def run_module():
     try:
         kubeconfig = fetch_kubeconfig(module, client, models, cluster_id, is_extranet)
     except Exception as exc:
-        module.fail_json(
-            msg="Tencent Cloud API request failed",
-            error=str(exc),
-            error_code=getattr(exc, "get_code", lambda: None)(),
-            request_id=getattr(exc, "get_request_id", lambda: None)(),
-        )
+        fail_from_sdk_error(module, exc, "DescribeClusterKubeconfig")
 
     result = {"changed": False, "cluster_id": cluster_id, "is_extranet": is_extranet}
 
