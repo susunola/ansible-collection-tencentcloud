@@ -2499,6 +2499,11 @@ modules:
   - DescribeApplication
   - DescribeApplications
   - ModifyApplication
+  tsf_application_config:
+  - CreateConfig
+  - DeleteConfig
+  - DescribeConfig
+  - DescribeConfigs
   tsf_application_info:
   - DescribeApplications
   tsf_cluster:

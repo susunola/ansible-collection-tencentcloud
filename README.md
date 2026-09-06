@@ -409,6 +409,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tse_governance_service` | Manage a Tencent Cloud TSE governance service |
 | `tse_sre_instance` | Manage Tencent Cloud TSE service registry engines |
 | `tsf_application` | Manage a Tencent Cloud TSF application |
+| `tsf_application_config` | Manage a versioned Tencent Cloud TSF application configuration |
 | `tsf_cluster` | Manage a Tencent Cloud TSF cluster |
 | `tsf_container_deployment_group` | Manage a Tencent Cloud TSF container deployment group |
 | `tsf_lane` | Manage a Tencent Cloud TSF traffic lane |

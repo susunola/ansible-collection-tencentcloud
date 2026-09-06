@@ -25,6 +25,8 @@ Destruction requires an explicit safety opt-in.
             microservice_type: N
             description: Order service
             framework_type: SpringCloud
+        tc_tsf_microservice_platform_application_configs:
+          - {application_id: application-xxxxxxxx, name: orders-settings, version: v1, value: 'features: {checkout: true}'}
         tc_tsf_microservice_platform_microservices:
           - {namespace_id: namespace-xxxxxxxx, name: orders, description: Order service}
         tc_tsf_microservice_platform_vm_deployment_groups:
