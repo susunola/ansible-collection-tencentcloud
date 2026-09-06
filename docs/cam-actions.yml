@@ -2506,6 +2506,13 @@ modules:
   - DeleteCluster
   - DescribeClusters
   - ModifyCluster
+  tsf_container_deployment_group:
+  - CreateContainGroup
+  - DeleteContainerGroup
+  - DescribeContainerGroupDetail
+  - DescribeContainerGroups
+  - ModifyContainerGroup
+  - ModifyContainerReplicas
   tsf_microservice:
   - CreateMicroserviceWithDetailResp
   - DeleteMicroservice

@@ -8,6 +8,7 @@
       - tc_tsf_microservice_platform_applications is sequence
       - tc_tsf_microservice_platform_microservices is sequence
       - tc_tsf_microservice_platform_vm_deployment_groups is sequence
+      - tc_tsf_microservice_platform_container_deployment_groups is sequence
       - tc_tsf_microservice_platform_state == 'present' or tc_tsf_microservice_platform_allow_destroy | bool
     fail_msg: TSF platform destruction requires tc_tsf_microservice_platform_allow_destroy=true.
 
@@ -51,6 +52,14 @@
   loop_control: {label: "{{ item.name | default(item.group_id | default('unnamed')) }}"}
   register: _tc_tsf_microservice_platform_vm_deployment_groups
 
+- name: Reconcile TSF container deployment groups
+  when: tc_tsf_microservice_platform_state == 'present'
+  susunola.tencentcloud.tsf_container_deployment_group:
+  args: "{{ item | combine({'state': 'present'}) }}"
+  loop: "{{ tc_tsf_microservice_platform_container_deployment_groups }}"
+  loop_control: {label: "{{ item.name | default(item.group_id | default('unnamed')) }}"}
+  register: _tc_tsf_microservice_platform_container_deployment_groups
+
 - name: Publish TSF microservice platform outputs
   when: tc_tsf_microservice_platform_state == 'present'
   ansible.builtin.set_fact:
@@ -60,6 +69,19 @@
       applications: "{{ _tc_tsf_microservice_platform_applications.results | default([]) | map(attribute='application') | list }}"
       microservices: "{{ _tc_tsf_microservice_platform_microservices.results | default([]) | map(attribute='microservice') | list }}"
       vm_deployment_groups: "{{ _tc_tsf_microservice_platform_vm_deployment_groups.results | default([]) | map(attribute='deployment_group') | list }}"
+      container_deployment_groups: "{{ _tc_tsf_microservice_platform_container_deployment_groups.results | default([]) | map(attribute='deployment_group') | list }}"
+
+- name: Remove TSF container deployment groups
+  when: tc_tsf_microservice_platform_state == 'absent'
+  susunola.tencentcloud.tsf_container_deployment_group:
+    group_id: "{{ item.group_id | default(omit) }}"
+    name: "{{ item.name }}"
+    application_id: "{{ item.application_id }}"
+    namespace_id: "{{ item.namespace_id }}"
+    cluster_id: "{{ item.cluster_id }}"
+    state: absent
+  loop: "{{ tc_tsf_microservice_platform_container_deployment_groups | reverse | list }}"
+  loop_control: {label: "{{ item.name | default(item.group_id | default('unnamed')) }}"}
 
 - name: Remove TSF VM deployment groups
   when: tc_tsf_microservice_platform_state == 'absent'
