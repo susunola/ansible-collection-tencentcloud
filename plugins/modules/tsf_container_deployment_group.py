@@ -17,26 +17,26 @@ options:
   namespace_id: {type: str, required: true, description: Owning namespace ID.}
   cluster_id: {type: str, required: true, description: Owning container cluster ID.}
   replicas: {type: int, description: Desired replica count; required when state is present.}
-  cpu_request: {type: str, description: Requested application CPU cores, immutable after creation.}
-  cpu_limit: {type: str, description: Application CPU limit, immutable after creation.}
-  memory_request: {type: str, description: Requested application memory in MiB, immutable after creation.}
-  memory_limit: {type: str, description: Application memory limit in MiB, immutable after creation.}
-  access_type: {type: int, choices: [0, 1, 2], default: 1, description: Service access type; public, cluster internal or NodePort.}
+  cpu_request: {type: str, description: "Requested application CPU cores, immutable after creation."}
+  cpu_limit: {type: str, description: "Application CPU limit, immutable after creation."}
+  memory_request: {type: str, description: "Requested application memory in MiB, immutable after creation."}
+  memory_limit: {type: str, description: "Application memory limit in MiB, immutable after creation."}
+  access_type: {type: int, choices: [0, 1, 2], default: 1, description: "Service access type; public, cluster internal or NodePort."}
   protocol_ports:
     type: list
     elements: dict
     description: Exact service port definitions.
     suboptions:
-      protocol: {type: str, choices: [TCP, UDP], required: true}
-      port: {type: int, required: true}
-      target_port: {type: int, required: true}
-      node_port: {type: int}
-      name: {type: str}
+      protocol: {type: str, choices: [TCP, UDP], required: true, description: Transport protocol.}
+      port: {type: int, required: true, description: Service port exposed by the deployment group.}
+      target_port: {type: int, required: true, description: Container port receiving service traffic.}
+      node_port: {type: int, description: Node port used when access_type selects NodePort.}
+      name: {type: str, description: Optional service port name.}
   update_type: {type: int, choices: [0, 1], default: 0, description: Fast or rolling update strategy.}
   update_interval: {type: int, description: Rolling update interval in seconds.}
   subnet_id: {type: str, description: Service subnet ID.}
   alias: {type: str, description: Deployment group remark.}
-  resource_type: {type: str, choices: [DEF], default: DEF, description: Resource type, immutable after creation.}
+  resource_type: {type: str, choices: [DEF], default: DEF, description: "Resource type, immutable after creation."}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
