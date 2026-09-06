@@ -27,6 +27,8 @@ Destruction requires an explicit safety opt-in.
             framework_type: SpringCloud
         tc_tsf_microservice_platform_application_configs:
           - {application_id: application-xxxxxxxx, name: orders-settings, version: v1, value: 'features: {checkout: true}'}
+        tc_tsf_microservice_platform_public_configs:
+          - {name: shared-observability, version: v1, value: 'logging: {level: INFO}'}
         tc_tsf_microservice_platform_application_config_releases:
           - {config_id: config-xxxxxxxx, group_id: group-xxxxxxxx, release_description: Production settings}
         tc_tsf_microservice_platform_microservices:

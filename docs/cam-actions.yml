@@ -2542,6 +2542,11 @@ modules:
   - DeleteNamespace
   - DescribeSimpleNamespaces
   - ModifyNamespace
+  tsf_public_config:
+  - CreatePublicConfig
+  - DeletePublicConfig
+  - DescribePublicConfig
+  - DescribePublicConfigs
   tsf_repository:
   - CreateRepository
   - DeleteRepository

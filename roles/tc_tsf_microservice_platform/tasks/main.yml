@@ -9,6 +9,7 @@
       - tc_tsf_microservice_platform_applications is sequence
       - tc_tsf_microservice_platform_application_configs is sequence
       - tc_tsf_microservice_platform_application_config_releases is sequence
+      - tc_tsf_microservice_platform_public_configs is sequence
       - tc_tsf_microservice_platform_microservices is sequence
       - tc_tsf_microservice_platform_vm_deployment_groups is sequence
       - tc_tsf_microservice_platform_container_deployment_groups is sequence
@@ -56,6 +57,14 @@
   loop: "{{ tc_tsf_microservice_platform_application_configs }}"
   loop_control: {label: "{{ item.name | default(item.config_id | default('unnamed')) }}/{{ item.version | default('?') }}"}
   register: _tc_tsf_microservice_platform_application_configs
+
+- name: Reconcile TSF public configuration versions
+  when: tc_tsf_microservice_platform_state == 'present'
+  susunola.tencentcloud.tsf_public_config:
+  args: "{{ item | combine({'state': 'present'}) }}"
+  loop: "{{ tc_tsf_microservice_platform_public_configs }}"
+  loop_control: {label: "{{ item.name | default(item.config_id | default('unnamed')) }}/{{ item.version | default('?') }}"}
+  register: _tc_tsf_microservice_platform_public_configs
 
 - name: Reconcile TSF microservices
   when: tc_tsf_microservice_platform_state == 'present'
@@ -115,6 +124,7 @@
       applications: "{{ _tc_tsf_microservice_platform_applications.results | default([]) | map(attribute='application') | list }}"
       application_configs: "{{ _tc_tsf_microservice_platform_application_configs.results | default([]) | map(attribute='config') | list }}"
       application_config_releases: "{{ _tc_tsf_microservice_platform_application_config_releases.results | default([]) | map(attribute='release') | list }}"
+      public_configs: "{{ _tc_tsf_microservice_platform_public_configs.results | default([]) | map(attribute='config') | list }}"
       microservices: "{{ _tc_tsf_microservice_platform_microservices.results | default([]) | map(attribute='microservice') | list }}"
       vm_deployment_groups: "{{ _tc_tsf_microservice_platform_vm_deployment_groups.results | default([]) | map(attribute='deployment_group') | list }}"
       container_deployment_groups: "{{ _tc_tsf_microservice_platform_container_deployment_groups.results | default([]) | map(attribute='deployment_group') | list }}"
@@ -192,6 +202,16 @@
     version: "{{ item.version }}"
     state: absent
   loop: "{{ tc_tsf_microservice_platform_application_configs | reverse | list }}"
+  loop_control: {label: "{{ item.name | default(item.config_id | default('unnamed')) }}/{{ item.version | default('?') }}"}
+
+- name: Remove TSF public configuration versions
+  when: tc_tsf_microservice_platform_state == 'absent'
+  susunola.tencentcloud.tsf_public_config:
+    config_id: "{{ item.config_id | default(omit) }}"
+    name: "{{ item.name }}"
+    version: "{{ item.version }}"
+    state: absent
+  loop: "{{ tc_tsf_microservice_platform_public_configs | reverse | list }}"
   loop_control: {label: "{{ item.name | default(item.config_id | default('unnamed')) }}/{{ item.version | default('?') }}"}
 
 - name: Remove TSF applications

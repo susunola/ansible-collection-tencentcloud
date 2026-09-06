@@ -638,6 +638,7 @@ action_groups:
     - tsf_lane_rule
     - tsf_microservice
     - tsf_namespace
+    - tsf_public_config
     - tsf_repository
     - tsf_vm_deployment_group
     - vcube_resource_info
