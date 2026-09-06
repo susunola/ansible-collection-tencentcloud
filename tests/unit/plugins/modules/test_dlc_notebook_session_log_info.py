@@ -1,8 +1,12 @@
 from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_notebook_session_log_info import build_request, read
 
 
-class Object: pass
-class Models: DescribeNotebookSessionLogRequest = Object
+class Object:
+    pass
+
+
+class Models:
+    DescribeNotebookSessionLogRequest = Object
 
 
 def test_log_request_uses_exact_session_and_offset():
@@ -11,16 +15,22 @@ def test_log_request_uses_exact_session_and_offset():
 
 
 class Response:
-    def __init__(self, logs, request_id): self.Logs, self.RequestId = logs, request_id
+    def __init__(self, logs, request_id):
+        self.Logs, self.RequestId = logs, request_id
 
 
 class Client:
-    def __init__(self, responses): self.responses, self.offsets = responses, []
-    def DescribeNotebookSessionLog(self, request): self.offsets.append(request.Offset); return self.responses.pop(0)
+    def __init__(self, responses):
+        self.responses, self.offsets = responses, []
+
+    def DescribeNotebookSessionLog(self, request):
+        self.offsets.append(request.Offset)
+        return self.responses.pop(0)
 
 
 class Module:
-    def sdk_call(self, fn, request): return fn(request)
+    def sdk_call(self, fn, request):
+        return fn(request)
 
 
 def test_log_read_stops_on_short_page():

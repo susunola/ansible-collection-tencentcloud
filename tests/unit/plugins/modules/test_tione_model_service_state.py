@@ -1,10 +1,18 @@
 from ansible_collections.susunola.tencentcloud.plugins.modules.tione_model_service_state import (
-    action_request, detail_request, get, service_status, wait_service,
+    action_request,
+    detail_request,
+    get,
+    service_status,
+    wait_service,
 )
 
 
-class Object: pass
-class Models: DescribeModelServiceRequest = ModifyModelServiceRequest = DeleteModelServiceRequest = Object
+class Object:
+    pass
+
+
+class Models:
+    DescribeModelServiceRequest = ModifyModelServiceRequest = DeleteModelServiceRequest = Object
 
 
 def params():
@@ -24,17 +32,34 @@ def test_service_status_normalizes_api_spelling():
 
 
 class Value:
-    def __init__(self, status): self.Status = status
-    def _serialize(self, allow_none=True): return {"Status": self.Status, "ServiceId": "ms-1"}
+    def __init__(self, status):
+        self.Status = status
+
+    def _serialize(self, allow_none=True):
+        return {"Status": self.Status, "ServiceId": "ms-1"}
+
+
 class Response:
-    def __init__(self, value): self.Service = value
+    def __init__(self, value):
+        self.Service = value
+
+
 class Client:
-    def __init__(self, statuses): self.statuses = list(statuses)
-    def DescribeModelService(self, request): return Response(Value(self.statuses.pop(0)))
+    def __init__(self, statuses):
+        self.statuses = list(statuses)
+
+    def DescribeModelService(self, request):
+        return Response(Value(self.statuses.pop(0)))
+
+
 class Module:
     check_mode = False
-    def sdk_call(self, fn, request): return fn(request)
-    def fail_json(self, **kwargs): raise RuntimeError(kwargs["msg"])
+
+    def sdk_call(self, fn, request):
+        return fn(request)
+
+    def fail_json(self, **kwargs):
+        raise RuntimeError(kwargs["msg"])
 
 
 def test_get_serializes_service_detail():
@@ -47,6 +72,9 @@ def test_wait_service_accepts_normal_after_transition(monkeypatch):
 
 
 def test_wait_service_rejects_failed_terminal_state():
-    try: wait_service(Module(), Client(["Abnormal"]), Models, params(), ["normal"])
-    except RuntimeError as exc: assert "failed state" in str(exc)
-    else: raise AssertionError("failed state was accepted")
+    try:
+        wait_service(Module(), Client(["Abnormal"]), Models, params(), ["normal"])
+    except RuntimeError as exc:
+        assert "failed state" in str(exc)
+    else:
+        raise AssertionError("failed state was accepted")

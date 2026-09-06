@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: dlc_spark_job
 short_description: Manage Tencent Cloud DLC Spark job definitions
@@ -46,8 +47,8 @@ options:
   user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.dlc_spark_job:
     name: daily-customer-etl
     app_type: 1
@@ -65,8 +66,8 @@ EXAMPLES = r'''
     name: daily-customer-etl
     state: absent
     allow_delete: true
-'''
-RETURN = r'''
+"""
+RETURN = r"""
 spark_job:
   description: Effective Spark job-definition metadata.
   type: dict
@@ -75,7 +76,7 @@ spark_job_id:
   description: Spark job-definition ID.
   type: str
   returned: when present
-'''
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -83,16 +84,27 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
 
 FIELDS = {
-    "app_type": ("AppType", "JobType"), "data_engine": ("DataEngine", "DataEngine"),
-    "app_file": ("AppFile", "JobFile"), "role_arn": ("RoleArn", "RoleArn"),
-    "driver_size": ("AppDriverSize", "JobDriverSize"), "executor_size": ("AppExecutorSize", "JobExecutorSize"),
-    "executor_nums": ("AppExecutorNums", "JobExecutorNums"), "executor_max_nums": ("AppExecutorMaxNumbers", "JobExecutorMaxNumbers"),
-    "main_class": ("MainClass", "MainClass"), "app_conf": ("AppConf", "JobConf"), "cmd_args": ("CmdArgs", "CmdArgs"),
-    "max_retries": ("MaxRetries", "JobMaxAttempts"), "data_source": ("DataSource", "DataSource"),
-    "jars": ("AppJars", "JobJars"), "files": ("AppFiles", "JobFiles"),
-    "python_files": ("AppPythonFiles", "JobPythonFiles"), "archives": ("AppArchives", "JobArchives"),
-    "spark_image": ("SparkImage", "SparkImage"), "spark_image_version": ("SparkImageVersion", "SparkImageVersion"),
-    "session_id": ("SessionId", "SessionId"), "session_started": ("IsSessionStarted", "IsSessionStarted"),
+    "app_type": ("AppType", "JobType"),
+    "data_engine": ("DataEngine", "DataEngine"),
+    "app_file": ("AppFile", "JobFile"),
+    "role_arn": ("RoleArn", "RoleArn"),
+    "driver_size": ("AppDriverSize", "JobDriverSize"),
+    "executor_size": ("AppExecutorSize", "JobExecutorSize"),
+    "executor_nums": ("AppExecutorNums", "JobExecutorNums"),
+    "executor_max_nums": ("AppExecutorMaxNumbers", "JobExecutorMaxNumbers"),
+    "main_class": ("MainClass", "MainClass"),
+    "app_conf": ("AppConf", "JobConf"),
+    "cmd_args": ("CmdArgs", "CmdArgs"),
+    "max_retries": ("MaxRetries", "JobMaxAttempts"),
+    "data_source": ("DataSource", "DataSource"),
+    "jars": ("AppJars", "JobJars"),
+    "files": ("AppFiles", "JobFiles"),
+    "python_files": ("AppPythonFiles", "JobPythonFiles"),
+    "archives": ("AppArchives", "JobArchives"),
+    "spark_image": ("SparkImage", "SparkImage"),
+    "spark_image_version": ("SparkImageVersion", "SparkImageVersion"),
+    "session_id": ("SessionId", "SessionId"),
+    "session_started": ("IsSessionStarted", "IsSessionStarted"),
     "inherit_engine_config": ("IsInherit", "IsInherit"),
 }
 SOURCE_FIELDS = {"jars": "IsLocalJars", "files": "IsLocalFiles", "python_files": "IsLocalPythonFiles", "archives": "IsLocalArchives"}
@@ -100,6 +112,7 @@ SOURCE_FIELDS = {"jars": "IsLocalJars", "files": "IsLocalFiles", "python_files":
 
 def _load():
     from tencentcloud.dlc.v20210125 import models, dlc_client
+
     return models, dlc_client
 
 
@@ -136,17 +149,21 @@ def request_payload(p, job_id=None):
 
 def make_request(models, p, update=False, job_id=None):
     import json
+
     request = models.ModifySparkAppRequest() if update else models.CreateSparkAppRequest()
     request.from_json_string(json.dumps(request_payload(p, job_id)))
     return request
 
 
 def delete_request(models, name):
-    request = models.DeleteSparkAppRequest(); request.AppName = name; return request
+    request = models.DeleteSparkAppRequest()
+    request.AppName = name
+    return request
 
 
 def desired(p, current=None):
-    result = dict(current or {}); result["JobName"] = p["name"]
+    result = dict(current or {})
+    result["JobName"] = p["name"]
     for source, (_, target) in FIELDS.items():
         if p.get(source) is not None:
             result[target] = int(p[source]) if source == "inherit_engine_config" else p[source]
@@ -180,25 +197,50 @@ def wait_job(module, client, models, p, job_id=None, absent=False, expected=None
         if expected and any(current.get(k) != v for k, v in expected.items()):
             return "pending"
         return "ready"
+
     wait_for_state(module, poll, ["absent" if absent else "ready"], timeout=p["waiter_timeout"], delay=p["waiter_delay"])
 
 
 def run_module():
     spec = {
-        "state": {"choices": ["present", "absent"], "default": "present"}, "name": {"required": True},
-        "app_type": {"type": "int", "choices": [1, 2]}, "data_engine": {}, "app_file": {}, "role_arn": {"type": "int"},
-        "driver_size": {"choices": ["small", "medium", "large", "xlarge"]}, "executor_size": {"choices": ["small", "medium", "large", "xlarge"]},
-        "executor_nums": {"type": "int"}, "executor_max_nums": {"type": "int"}, "main_class": {}, "app_conf": {}, "cmd_args": {},
-        "max_retries": {"type": "int"}, "data_source": {}, "package_source": {"choices": ["cos", "lakefs"]},
-        "jars": {}, "files": {}, "python_files": {}, "archives": {}, "spark_image": {}, "spark_image_version": {},
-        "inherit_engine_config": {"type": "bool"}, "session_id": {}, "session_started": {"type": "bool"},
-        "allow_delete": {"type": "bool", "default": False}, "allow_delete_running": {"type": "bool", "default": False},
-        "wait": {"type": "bool", "default": True}, "waiter_delay": {"type": "int", "default": 5}, "waiter_timeout": {"type": "int", "default": 300},
+        "state": {"choices": ["present", "absent"], "default": "present"},
+        "name": {"required": True},
+        "app_type": {"type": "int", "choices": [1, 2]},
+        "data_engine": {},
+        "app_file": {},
+        "role_arn": {"type": "int"},
+        "driver_size": {"choices": ["small", "medium", "large", "xlarge"]},
+        "executor_size": {"choices": ["small", "medium", "large", "xlarge"]},
+        "executor_nums": {"type": "int"},
+        "executor_max_nums": {"type": "int"},
+        "main_class": {},
+        "app_conf": {},
+        "cmd_args": {},
+        "max_retries": {"type": "int"},
+        "data_source": {},
+        "package_source": {"choices": ["cos", "lakefs"]},
+        "jars": {},
+        "files": {},
+        "python_files": {},
+        "archives": {},
+        "spark_image": {},
+        "spark_image_version": {},
+        "inherit_engine_config": {"type": "bool"},
+        "session_id": {},
+        "session_started": {"type": "bool"},
+        "allow_delete": {"type": "bool", "default": False},
+        "allow_delete_running": {"type": "bool", "default": False},
+        "wait": {"type": "bool", "default": True},
+        "waiter_delay": {"type": "int", "default": 5},
+        "waiter_timeout": {"type": "int", "default": 300},
     }
-    module = TencentCloudModule(argument_spec=spec, supports_check_mode=True); p = module.params
+    module = TencentCloudModule(argument_spec=spec, supports_check_mode=True)
+    p = module.params
     if p.get("executor_nums") is not None and p.get("executor_max_nums") is not None and p["executor_nums"] > p["executor_max_nums"]:
         module.fail_json(msg="executor_nums must not exceed executor_max_nums")
-    module.require_sdk(); models, cm = _load(); client = module.create_client(cm.DlcClient, "dlc.tencentcloudapi.com")
+    module.require_sdk()
+    models, cm = _load()
+    client = module.create_client(cm.DlcClient, "dlc.tencentcloudapi.com")
     try:
         current = find(module, client, models, p["name"])
         if p["state"] == "absent":
@@ -207,7 +249,9 @@ def run_module():
             if not p["allow_delete"]:
                 module.fail_json(msg="set allow_delete=true to authorize deleting the DLC Spark job definition", spark_job=current)
             if int(current.get("TaskNum") or 0) > 0 and not p["allow_delete_running"]:
-                module.fail_json(msg="set allow_delete_running=true to delete a Spark job definition with active tasks", active_tasks=current["TaskNum"], spark_job=current)
+                module.fail_json(
+                    msg="set allow_delete_running=true to delete a Spark job definition with active tasks", active_tasks=current["TaskNum"], spark_job=current
+                )
             diff_value = maybe_diff(module, current, None)
             if not module.check_mode:
                 module.sdk_call(client.DeleteSparkApp, delete_request(models, p["name"]))
@@ -219,13 +263,16 @@ def run_module():
             missing = [key for key in required if p.get(key) is None]
             if missing:
                 module.fail_json(msg="creation parameters are required for a DLC Spark job definition", missing=missing)
-            after, diff_value = desired(p), maybe_diff(module, None, desired(p)); job_id = None
+            after, diff_value = desired(p), maybe_diff(module, None, desired(p))
+            job_id = None
             if not module.check_mode:
                 job_id = module.sdk_call(client.CreateSparkApp, make_request(models, p)).SparkAppId
                 if p["wait"]:
                     wait_job(module, client, models, p, job_id=job_id, expected={k: v for k, v in after.items() if k != "JobName"})
                 current = find(module, client, models, job_id=job_id)
-            module.exit_json(changed=True, **(diff_value or {}), spark_job=current if not module.check_mode else after, spark_job_id=(current or {}).get("JobId") or job_id)
+            module.exit_json(
+                changed=True, **(diff_value or {}), spark_job=current if not module.check_mode else after, spark_job_id=(current or {}).get("JobId") or job_id
+            )
         changes = drift(p, current)
         if not changes:
             module.exit_json(changed=False, spark_job=current, spark_job_id=current.get("JobId"))

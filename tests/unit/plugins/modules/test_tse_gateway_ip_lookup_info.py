@@ -1,8 +1,12 @@
 from ansible_collections.susunola.tencentcloud.plugins.modules.tse_gateway_ip_lookup_info import request
 
 
-class Value(object): pass
-class Models(object): DescribeCloudNativeAPIGatewayInfoByIpRequest = Value
+class Value(object):
+    pass
+
+
+class Models(object):
+    DescribeCloudNativeAPIGatewayInfoByIpRequest = Value
 
 
 def test_ip_lookup_request_maps_public_ip():

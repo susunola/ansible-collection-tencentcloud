@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: dlc_inference_engine_info
 short_description: Gather Tencent Cloud DLC inference engines
@@ -28,20 +29,20 @@ options:
   user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.dlc_inference_engine_info:
     filters:
       enabled: "true"
     sort_fields:
       - {field: Name, order: ASC}
-'''
-RETURN = r'''
+"""
+RETURN = r"""
 engines: {description: Matching DLC inference engines and capability declarations., type: list, elements: dict, returned: always}
 total_count: {description: Number of engines reported by the API., type: int, returned: always}
 truncated: {description: Whether max_pages stopped pagination., type: bool, returned: always}
 request_id: {description: Request ID from the final page., type: str, returned: always}
-'''
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
@@ -49,23 +50,27 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.dlc.v20210125 import models, dlc_client
+
     return models, dlc_client
 
 
 def build_request(models, p, page):
-    request = models.ListInferenceEnginesRequest(); request.Page, request.PageSize = page, p["page_size"]
+    request = models.ListInferenceEnginesRequest()
+    request.Page, request.PageSize = page, p["page_size"]
     for source, target in (("start_time", "StartTime"), ("end_time", "EndTime")):
         if p.get(source) is not None:
             setattr(request, target, p[source])
     if p["filters"]:
         request.Filters = []
         for name, values in sorted(p["filters"].items()):
-            item = models.Filter(); item.Name, item.Values = name, values if isinstance(values, list) else [values]
+            item = models.Filter()
+            item.Name, item.Values = name, values if isinstance(values, list) else [values]
             request.Filters.append(item)
     if p.get("sort_fields"):
         request.SortFields = []
         for value in p["sort_fields"]:
-            item = models.SortField(); item.Field, item.Order = value["field"], value["order"]
+            item = models.SortField()
+            item.Field, item.Order = value["field"], value["order"]
             request.SortFields.append(item)
     return request
 
@@ -73,7 +78,8 @@ def build_request(models, p, page):
 def read(module, client, models, p):
     values, total, request_id, truncated = [], 0, None, False
     for page in range(1, p["max_pages"] + 1):
-        response = module.sdk_call(client.ListInferenceEngines, build_request(models, p, page)); items = response.Items or []
+        response = module.sdk_call(client.ListInferenceEngines, build_request(models, p, page))
+        items = response.Items or []
         values.extend(item._serialize(allow_none=True) for item in items)
         total, request_id = int(response.Total or 0), response.RequestId
         if page >= int(response.TotalPages or 0) or not items:
@@ -86,18 +92,24 @@ def read(module, client, models, p):
 def run_module():
     sort = {"field": {"required": True}, "order": {"choices": ["ASC", "DESC"], "default": "ASC"}}
     spec = {
-        "start_time": {"type": "int"}, "end_time": {"type": "int"}, "filters": {"type": "dict", "default": {}},
-        "sort_fields": {"type": "list", "elements": "dict", "options": sort}, "page_size": {"type": "int", "default": 200},
+        "start_time": {"type": "int"},
+        "end_time": {"type": "int"},
+        "filters": {"type": "dict", "default": {}},
+        "sort_fields": {"type": "list", "elements": "dict", "options": sort},
+        "page_size": {"type": "int", "default": 200},
         "max_pages": {"type": "int", "default": 1000},
     }
-    module = TencentCloudModule(argument_spec=spec, supports_check_mode=True); p = module.params
+    module = TencentCloudModule(argument_spec=spec, supports_check_mode=True)
+    p = module.params
     if not 1 <= p["page_size"] <= 200:
         module.fail_json(msg="page_size must be between 1 and 200")
     if not 1 <= p["max_pages"] <= 1000:
         module.fail_json(msg="max_pages must be between 1 and 1000")
     if p.get("start_time") is not None and p.get("end_time") is not None and p["start_time"] > p["end_time"]:
         module.fail_json(msg="start_time must not exceed end_time")
-    module.require_sdk(); models, cm = _load(); client = module.create_client(cm.DlcClient, "dlc.tencentcloudapi.com")
+    module.require_sdk()
+    models, cm = _load()
+    client = module.create_client(cm.DlcClient, "dlc.tencentcloudapi.com")
     try:
         values, total, truncated, request_id = read(module, client, models, p)
         module.exit_json(changed=False, engines=values, total_count=total, truncated=truncated, request_id=request_id)

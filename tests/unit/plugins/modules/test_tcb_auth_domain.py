@@ -1,7 +1,10 @@
 from ansible_collections.susunola.tencentcloud.plugins.modules.tcb_auth_domain import create_request, delete_request, describe_request
 
 
-class Value(object): pass
+class Value(object):
+    pass
+
+
 class Models(object):
     DescribeAuthDomainsRequest = Value
     CreateAuthDomainRequest = Value

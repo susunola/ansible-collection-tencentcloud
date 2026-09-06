@@ -4,14 +4,22 @@ from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_udf_policy im
 class Model:
     def from_json_string(self, value):
         import json
-        for key, item in json.loads(value).items(): setattr(self, key, item)
+
+        for key, item in json.loads(value).items():
+            setattr(self, key, item)
 
 
 class Models:
     DescribeUDFPolicyRequest = UpdateUDFPolicyRequest = UDFPolicyInfo = Model
 
 
-def params(): return {"name": "normalize_email", "database_name": "analytics", "catalog_name": "DataLakeCatalog", "policy_infos": [{"accesses": ["select", "select"], "users": ["u2", "u1"], "groups": ["g1"]}]}
+def params():
+    return {
+        "name": "normalize_email",
+        "database_name": "analytics",
+        "catalog_name": "DataLakeCatalog",
+        "policy_infos": [{"accesses": ["select", "select"], "users": ["u2", "u1"], "groups": ["g1"]}],
+    }
 
 
 def test_policy_normalization_is_set_semantic():
@@ -22,6 +30,8 @@ def test_policy_normalization_is_set_semantic():
 
 
 def test_describe_and_update_requests_preserve_exact_udf_identity():
-    p = params(); describe = describe_request(Models, p); update = update_request(Models, p)
+    p = params()
+    describe = describe_request(Models, p)
+    update = update_request(Models, p)
     assert describe.Name == "normalize_email" and describe.DatabaseName == "analytics" and describe.CatalogName == "DataLakeCatalog"
     assert update.UDFPolicyInfos[0].Users == ["u1", "u2"]

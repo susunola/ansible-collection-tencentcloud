@@ -1,10 +1,20 @@
-from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_database import create_request, delete_request, describe_request, immutable_drift, table_count_request
+from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_database import (
+    create_request,
+    delete_request,
+    describe_request,
+    immutable_drift,
+    table_count_request,
+)
 
 
 class Object:
     def from_json_string(self, value):
         import json
-        for key, item in json.loads(value).items(): setattr(self, key, item)
+
+        for key, item in json.loads(value).items():
+            setattr(self, key, item)
+
+
 class Models:
     DescribeDatabaseRequest = Object
     DescribeTablesRequest = Object
@@ -15,7 +25,14 @@ class Models:
     SmartPolicy = Object
 
 
-def params(): return {"name": "analytics", "datasource_connection_name": "DataLakeCatalog", "comment": "curated", "govern_policy": {"RuleType": "STANDARD"}, "smart_policy": None}
+def params():
+    return {
+        "name": "analytics",
+        "datasource_connection_name": "DataLakeCatalog",
+        "comment": "curated",
+        "govern_policy": {"RuleType": "STANDARD"},
+        "smart_policy": None,
+    }
 
 
 def test_requests_keep_catalog_identity_consistent():

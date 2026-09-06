@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: tsf_application_config
 short_description: Manage a versioned Tencent Cloud TSF application configuration
@@ -19,8 +20,8 @@ options:
   version_description: {type: str, description: Configuration version description.}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.tsf_application_config:
     application_id: application-xxxxxxxx
     name: orders-settings
@@ -28,8 +29,8 @@ EXAMPLES = r'''
     value: |-
       features:
         checkout: true
-'''
-RETURN = r'''config: {description: Effective TSF application configuration version., type: dict, returned: always}'''
+"""
+RETURN = r"""config: {description: Effective TSF application configuration version., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -38,18 +39,26 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.tsf.v20180326 import models, tsf_client
+
     return models, tsf_client
 
 
 def desired(params):
-    mapping = {"application_id": "ApplicationId", "name": "ConfigName", "version": "ConfigVersion", "value": "ConfigValue", "version_description": "ConfigVersionDesc"}
+    mapping = {
+        "application_id": "ApplicationId",
+        "name": "ConfigName",
+        "version": "ConfigVersion",
+        "value": "ConfigValue",
+        "version_description": "ConfigVersionDesc",
+    }
     target = {dest: params[source] for source, dest in mapping.items() if params.get(source) is not None}
     target["ConfigType"] = "application"
     return target
 
 
 def detail(module, client, models, config_id):
-    request = models.DescribeConfigRequest(); request.ConfigId = config_id
+    request = models.DescribeConfigRequest()
+    request.ConfigId = config_id
     value = module.sdk_call(client.DescribeConfig, request).Result
     return value._serialize(allow_none=True) if value else None
 
@@ -57,12 +66,17 @@ def detail(module, client, models, config_id):
 def find(module, client, models, params):
     if params.get("config_id"):
         return detail(module, client, models, params["config_id"])
-    request = models.DescribeConfigsRequest(); request.ApplicationId = params["application_id"]
+    request = models.DescribeConfigsRequest()
+    request.ApplicationId = params["application_id"]
     request.ConfigName, request.ConfigVersion = params["name"], params["version"]
     request.Offset, request.Limit = 0, 100
     result = module.sdk_call(client.DescribeConfigs, request).Result
     values = (result.Content if result else None) or []
-    matches = [item for item in values if item.ApplicationId == params["application_id"] and item.ConfigName == params["name"] and item.ConfigVersion == params["version"]]
+    matches = [
+        item
+        for item in values
+        if item.ApplicationId == params["application_id"] and item.ConfigName == params["name"] and item.ConfigVersion == params["version"]
+    ]
     if len(matches) > 1:
         module.fail_json(msg="Multiple TSF application configuration versions matched", name=params["name"], version=params["version"])
     return detail(module, client, models, matches[0].ConfigId) if matches else None
@@ -74,12 +88,21 @@ def checked(module, response, action):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={
-        "state": {"choices": ["present", "absent"], "default": "present"}, "config_id": {},
-        "application_id": {"required": True}, "name": {"required": True}, "version": {"required": True},
-        "value": {}, "version_description": {},
-    }, supports_check_mode=True)
-    params = module.params; module.require_sdk(); models, client_module = _load()
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "config_id": {},
+            "application_id": {"required": True},
+            "name": {"required": True},
+            "version": {"required": True},
+            "value": {},
+            "version_description": {},
+        },
+        supports_check_mode=True,
+    )
+    params = module.params
+    module.require_sdk()
+    models, client_module = _load()
     client = module.create_client(client_module.TsfClient, "tsf.tencentcloudapi.com")
     try:
         current = find(module, client, models, params)
@@ -88,7 +111,8 @@ def run_module():
                 module.exit_json(changed=False, config=None)
             diff = maybe_diff(module, current, None)
             if not module.check_mode:
-                request = models.DeleteConfigRequest(); request.ConfigId = current["ConfigId"]
+                request = models.DeleteConfigRequest()
+                request.ConfigId = current["ConfigId"]
                 checked(module, module.sdk_call(client.DeleteConfig, request), "deletion")
             module.exit_json(changed=True, **(diff or {}), config=None)
         target = desired(params)
@@ -100,7 +124,8 @@ def run_module():
         diff = maybe_diff(module, None, target)
         if not module.check_mode:
             request = models.CreateConfigRequest()
-            for key, value in target.items(): setattr(request, key, value)
+            for key, value in target.items():
+                setattr(request, key, value)
             request.EncodeWithBase64 = False
             checked(module, module.sdk_call(client.CreateConfig, request), "creation")
             current = find(module, client, models, params)

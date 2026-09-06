@@ -1,11 +1,19 @@
 from ansible_collections.susunola.tencentcloud.plugins.modules.tse_governance_host_retirement import (
-    batches, delete_request, describe_request,
+    batches,
+    delete_request,
+    describe_request,
 )
 
 
-class Request(object): pass
+class Request(object):
+    pass
+
+
 class Instance(object):
-    def from_json_string(self, value): self.json = value
+    def from_json_string(self, value):
+        self.json = value
+
+
 class Models(object):
     DescribeGovernanceInstancesRequest = Request
     DeleteGovernanceInstancesByHostRequest = Request

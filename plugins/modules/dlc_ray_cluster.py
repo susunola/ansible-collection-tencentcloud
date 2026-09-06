@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: dlc_ray_cluster
 short_description: Manage Tencent Cloud DLC Ray clusters
@@ -41,8 +42,8 @@ options:
   user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.dlc_ray_cluster:
     name: analytics-ray
     resource_partition_id: rp-xxxxxxxx
@@ -58,8 +59,8 @@ EXAMPLES = r'''
     name: analytics-ray
     state: absent
     allow_delete: true
-'''
-RETURN = r'''
+"""
+RETURN = r"""
 ray_cluster:
   description: Effective DLC Ray cluster metadata.
   type: dict
@@ -68,7 +69,7 @@ ray_cluster_id:
   description: DLC Ray cluster ID.
   type: str
   returned: when present
-'''
+"""
 
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
@@ -77,27 +78,42 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
 
 FIELDS = {
-    "description": "Description", "group_id": "GroupId", "resource_partition_id": "ResourcePartitionId",
-    "queue": "Queue", "image": "Image", "image_pull_policy": "ImagePullPolicy", "image_pull_type": "ImagePullType",
-    "resource_config": "ResourceConfig", "resource_config_id": "ResourceConfigId", "catalog": "Catalog",
-    "advanced_options": "AdvancedOptions", "priority": "Priority", "tags": "Tags",
+    "description": "Description",
+    "group_id": "GroupId",
+    "resource_partition_id": "ResourcePartitionId",
+    "queue": "Queue",
+    "image": "Image",
+    "image_pull_policy": "ImagePullPolicy",
+    "image_pull_type": "ImagePullType",
+    "resource_config": "ResourceConfig",
+    "resource_config_id": "ResourceConfigId",
+    "catalog": "Catalog",
+    "advanced_options": "AdvancedOptions",
+    "priority": "Priority",
+    "tags": "Tags",
 }
 JSON_FIELDS = {"resource_config", "catalog", "advanced_options"}
 
 
 def _load():
     from tencentcloud.dlc.v20210125 import models, dlc_client
+
     return models, dlc_client
 
 
 def list_request(models, page=1):
-    request = models.ListRayClustersRequest(); request.Page, request.PageSize = page, 200; return request
+    request = models.ListRayClustersRequest()
+    request.Page, request.PageSize = page, 200
+    return request
 
 
 def _canonical(value):
-    if value is None: return None
-    try: return json.dumps(json.loads(value), sort_keys=True, separators=(",", ":"), ensure_ascii=False)
-    except (TypeError, ValueError): return value
+    if value is None:
+        return None
+    try:
+        return json.dumps(json.loads(value), sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    except (TypeError, ValueError):
+        return value
 
 
 def _tags(value):
@@ -108,28 +124,35 @@ def _tags(value):
 
 
 def normalize(value):
-    result = dict(value or {}); result["Tags"] = _tags(result.get("Tags"))
+    result = dict(value or {})
+    result["Tags"] = _tags(result.get("Tags"))
     for key in ("ResourceConfig", "Catalog", "AdvancedOptions"):
-        if key in result: result[key] = _canonical(result[key])
+        if key in result:
+            result[key] = _canonical(result[key])
     return result
 
 
 def find(module, client, models, name):
     page, matches = 1, []
     while True:
-        response = module.sdk_call(client.ListRayClusters, list_request(models, page)); items = response.Items or []
+        response = module.sdk_call(client.ListRayClusters, list_request(models, page))
+        items = response.Items or []
         matches.extend(x._serialize(allow_none=True) for x in items if x.Name == name and x.Type in (None, "CLUSTER"))
-        if not items or page >= int(response.TotalPages or 1): break
+        if not items or page >= int(response.TotalPages or 1):
+            break
         page += 1
-    if len(matches) > 1: module.fail_json(msg="Multiple DLC Ray clusters matched the exact name", name=name)
+    if len(matches) > 1:
+        module.fail_json(msg="Multiple DLC Ray clusters matched the exact name", name=name)
     return normalize(matches[0]) if matches else None
 
 
 def payload(p, cluster_id=None, update=False):
     result = {"Name": p["name"]}
-    if cluster_id: result["Id"] = cluster_id
+    if cluster_id:
+        result["Id"] = cluster_id
     for source, target in FIELDS.items():
-        if update and source == "priority": continue
+        if update and source == "priority":
+            continue
         if p.get(source) is not None:
             value = _tags(p[source]) if source == "tags" else (_canonical(p[source]) if source in JSON_FIELDS else p[source])
             result[target] = value
@@ -138,19 +161,25 @@ def payload(p, cluster_id=None, update=False):
 
 def make_request(models, p, update=False, cluster_id=None):
     request = models.UpdateRayClusterRequest() if update else models.CreateRayClusterRequest()
-    request.from_json_string(json.dumps(payload(p, cluster_id, update))); return request
+    request.from_json_string(json.dumps(payload(p, cluster_id, update)))
+    return request
 
 
 def delete_request(models, cluster_id):
-    request = models.DeleteRayClusterRequest(); request.Id = cluster_id; return request
+    request = models.DeleteRayClusterRequest()
+    request.Id = cluster_id
+    return request
 
 
 def priority_request(models, cluster_id, priority):
-    request = models.ModifyClusterPriorityRequest(); request.Id, request.Priority = cluster_id, priority; return request
+    request = models.ModifyClusterPriorityRequest()
+    request.Id, request.Priority = cluster_id, priority
+    return request
 
 
 def desired(p, current=None):
-    result = dict(current or {}); result["Name"] = p["name"]
+    result = dict(current or {})
+    result["Name"] = p["name"]
     for source, target in FIELDS.items():
         if p.get(source) is not None:
             result[target] = _tags(p[source]) if source == "tags" else (_canonical(p[source]) if source in JSON_FIELDS else p[source])
@@ -160,74 +189,120 @@ def desired(p, current=None):
 def drift(p, current):
     target, changes = desired(p, current), {}
     for source, key in FIELDS.items():
-        if p.get(source) is not None and current.get(key) != target.get(key): changes[key] = (current.get(key), target.get(key))
+        if p.get(source) is not None and current.get(key) != target.get(key):
+            changes[key] = (current.get(key), target.get(key))
     return changes
 
 
 def wait_cluster(module, client, models, p, absent=False, expected=None):
     def poll():
         current = find(module, client, models, p["name"])
-        if absent: return "absent" if current is None else "pending"
-        if current is None: return "absent"
+        if absent:
+            return "absent" if current is None else "pending"
+        if current is None:
+            return "absent"
         status = str(current.get("Status") or "").upper()
-        if "FAIL" in status or "ERROR" in status: module.fail_json(msg="DLC Ray cluster entered a failed state", ray_cluster=current)
-        if expected and any(current.get(k) != v for k, v in expected.items()): return "pending"
+        if "FAIL" in status or "ERROR" in status:
+            module.fail_json(msg="DLC Ray cluster entered a failed state", ray_cluster=current)
+        if expected and any(current.get(k) != v for k, v in expected.items()):
+            return "pending"
         return "ready"
+
     wait_for_state(module, poll, ["absent" if absent else "ready"], timeout=p["waiter_timeout"], delay=p["waiter_delay"])
 
 
 def run_module():
     tag_options = {"key": {"required": True}, "value": {"required": True}}
     spec = {
-        "state": {"choices": ["present", "absent"], "default": "present"}, "name": {"required": True}, "description": {}, "group_id": {},
-        "resource_partition_id": {}, "queue": {}, "image": {}, "image_pull_policy": {"choices": ["Always", "IfNotPresent", "Never"]},
-        "image_pull_type": {"choices": ["BuiltIn", "Custom", "CustomCcr"]}, "resource_config": {}, "resource_config_id": {},
-        "catalog": {}, "advanced_options": {}, "priority": {"type": "int"},
-        "tags": {"type": "list", "elements": "dict", "options": tag_options}, "allow_delete": {"type": "bool", "default": False},
-        "wait": {"type": "bool", "default": True}, "waiter_delay": {"type": "int", "default": 10}, "waiter_timeout": {"type": "int", "default": 1800},
+        "state": {"choices": ["present", "absent"], "default": "present"},
+        "name": {"required": True},
+        "description": {},
+        "group_id": {},
+        "resource_partition_id": {},
+        "queue": {},
+        "image": {},
+        "image_pull_policy": {"choices": ["Always", "IfNotPresent", "Never"]},
+        "image_pull_type": {"choices": ["BuiltIn", "Custom", "CustomCcr"]},
+        "resource_config": {},
+        "resource_config_id": {},
+        "catalog": {},
+        "advanced_options": {},
+        "priority": {"type": "int"},
+        "tags": {"type": "list", "elements": "dict", "options": tag_options},
+        "allow_delete": {"type": "bool", "default": False},
+        "wait": {"type": "bool", "default": True},
+        "waiter_delay": {"type": "int", "default": 10},
+        "waiter_timeout": {"type": "int", "default": 1800},
     }
-    module = TencentCloudModule(argument_spec=spec, supports_check_mode=True); p = module.params
-    if p.get("priority") is not None and not 1 <= p["priority"] <= 9: module.fail_json(msg="priority must be between 1 and 9")
-    if p.get("resource_config") is not None and p.get("resource_config_id") is not None: module.fail_json(msg="resource_config and resource_config_id are mutually exclusive")
+    module = TencentCloudModule(argument_spec=spec, supports_check_mode=True)
+    p = module.params
+    if p.get("priority") is not None and not 1 <= p["priority"] <= 9:
+        module.fail_json(msg="priority must be between 1 and 9")
+    if p.get("resource_config") is not None and p.get("resource_config_id") is not None:
+        module.fail_json(msg="resource_config and resource_config_id are mutually exclusive")
     for key in JSON_FIELDS:
         if p.get(key) is not None:
-            try: json.loads(p[key])
-            except (TypeError, ValueError): module.fail_json(msg="%s must be valid JSON" % key)
-    module.require_sdk(); models, cm = _load(); client = module.create_client(cm.DlcClient, "dlc.tencentcloudapi.com")
+            try:
+                json.loads(p[key])
+            except (TypeError, ValueError):
+                module.fail_json(msg="%s must be valid JSON" % key)
+    module.require_sdk()
+    models, cm = _load()
+    client = module.create_client(cm.DlcClient, "dlc.tencentcloudapi.com")
     try:
         current = find(module, client, models, p["name"])
         if p["state"] == "absent":
-            if not current: module.exit_json(changed=False, ray_cluster=None, ray_cluster_id=None)
-            if not p["allow_delete"]: module.fail_json(msg="set allow_delete=true to authorize deleting the DLC Ray cluster", ray_cluster=current)
+            if not current:
+                module.exit_json(changed=False, ray_cluster=None, ray_cluster_id=None)
+            if not p["allow_delete"]:
+                module.fail_json(msg="set allow_delete=true to authorize deleting the DLC Ray cluster", ray_cluster=current)
             diff_value = maybe_diff(module, current, None)
             if not module.check_mode:
                 module.sdk_call(client.DeleteRayCluster, delete_request(models, current["Id"]))
-                if p["wait"]: wait_cluster(module, client, models, p, absent=True)
+                if p["wait"]:
+                    wait_cluster(module, client, models, p, absent=True)
             module.exit_json(changed=True, **(diff_value or {}), ray_cluster=None, ray_cluster_id=None)
         if not current:
             required = ("resource_partition_id", "queue", "image", "image_pull_type")
             missing = [key for key in required if not p.get(key)]
-            if not p.get("resource_config") and not p.get("resource_config_id"): missing.append("resource_config or resource_config_id")
-            if missing: module.fail_json(msg="creation parameters are required for a DLC Ray cluster", missing=missing)
-            after, diff_value = desired(p), maybe_diff(module, None, desired(p)); cluster_id = None
+            if not p.get("resource_config") and not p.get("resource_config_id"):
+                missing.append("resource_config or resource_config_id")
+            if missing:
+                module.fail_json(msg="creation parameters are required for a DLC Ray cluster", missing=missing)
+            after, diff_value = desired(p), maybe_diff(module, None, desired(p))
+            cluster_id = None
             if not module.check_mode:
                 cluster_id = module.sdk_call(client.CreateRayCluster, make_request(models, p)).Id
-                if p["wait"]: wait_cluster(module, client, models, p, expected={k: v for k, v in after.items() if k != "Name"})
+                if p["wait"]:
+                    wait_cluster(module, client, models, p, expected={k: v for k, v in after.items() if k != "Name"})
                 current = find(module, client, models, p["name"])
-            module.exit_json(changed=True, **(diff_value or {}), ray_cluster=current if not module.check_mode else after, ray_cluster_id=(current or {}).get("Id") or cluster_id)
+            module.exit_json(
+                changed=True,
+                **(diff_value or {}),
+                ray_cluster=current if not module.check_mode else after,
+                ray_cluster_id=(current or {}).get("Id") or cluster_id,
+            )
         changes = drift(p, current)
-        if not changes: module.exit_json(changed=False, ray_cluster=current, ray_cluster_id=current.get("Id"))
+        if not changes:
+            module.exit_json(changed=False, ray_cluster=current, ray_cluster_id=current.get("Id"))
         after, diff_value = desired(p, current), maybe_diff(module, current, desired(p, current))
         if not module.check_mode:
             regular_changes = {key: value for key, value in changes.items() if key != "Priority"}
-            if regular_changes: module.sdk_call(client.UpdateRayCluster, make_request(models, p, update=True, cluster_id=current["Id"]))
-            if "Priority" in changes: module.sdk_call(client.ModifyClusterPriority, priority_request(models, current["Id"], p["priority"]))
-            if p["wait"]: wait_cluster(module, client, models, p, expected={k: v[1] for k, v in changes.items()})
+            if regular_changes:
+                module.sdk_call(client.UpdateRayCluster, make_request(models, p, update=True, cluster_id=current["Id"]))
+            if "Priority" in changes:
+                module.sdk_call(client.ModifyClusterPriority, priority_request(models, current["Id"], p["priority"]))
+            if p["wait"]:
+                wait_cluster(module, client, models, p, expected={k: v[1] for k, v in changes.items()})
             current = find(module, client, models, p["name"])
         module.exit_json(changed=True, **(diff_value or {}), ray_cluster=current if not module.check_mode else after, ray_cluster_id=current.get("Id"))
     except Exception as exc:
         module.fail_json(**sdk_error_payload(exc))
 
 
-def main(): run_module()
-if __name__ == "__main__": main()
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,7 +1,10 @@
 from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_network_connection import describe_request, update_request
 
 
-class Object: pass
+class Object:
+    pass
+
+
 class Models:
     DescribeNetworkConnectionsRequest = UpdateNetworkConnectionRequest = Object
 

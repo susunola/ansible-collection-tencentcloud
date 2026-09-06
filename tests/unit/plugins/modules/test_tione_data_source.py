@@ -2,13 +2,25 @@ from ansible_collections.susunola.tencentcloud.plugins.modules.tione_data_source
 
 
 class Object:
-    def from_json_string(self, value): self.value = value
+    def from_json_string(self, value):
+        self.value = value
+
+
 class Models:
     CreateDataSourceRequest = DeleteDataSourceRequest = DescribeDataSourceRequest = DescribeDataSourcesRequest = Filter = MountConfigureInfo = Tag = Object
 
 
 def params():
-    return {"name": "training", "data_source_id": None, "project_id": "p1", "source_type": "CFS", "permission": "RW", "storage_id": "cfs-1", "mount_config": {"WorkDir": "/train"}, "tags": [{"TagKey": "env", "TagValue": "prod"}]}
+    return {
+        "name": "training",
+        "data_source_id": None,
+        "project_id": "p1",
+        "source_type": "CFS",
+        "permission": "RW",
+        "storage_id": "cfs-1",
+        "mount_config": {"WorkDir": "/train"},
+        "tags": [{"TagKey": "env", "TagValue": "prod"}],
+    }
 
 
 def test_create_maps_storage_mount_and_tags():
@@ -18,22 +30,40 @@ def test_create_maps_storage_mount_and_tags():
 
 
 def test_delete_uses_stable_id_and_workspace():
-    p = params(); p["data_source_id"] = "ds-1"
+    p = params()
+    p["data_source_id"] = "ds-1"
     request = delete_request(Models, p)
     assert request.Id == "ds-1" and request.TiProjectId == "p1"
 
 
 class Item:
-    def __init__(self, value): self.value = value; self.Name = value.get("Name")
-    def _serialize(self, allow_none=True): return dict(self.value)
+    def __init__(self, value):
+        self.value = value
+        self.Name = value.get("Name")
+
+    def _serialize(self, allow_none=True):
+        return dict(self.value)
+
+
 class Response:
-    def __init__(self, values, total): self.DataSourceInfos, self.TotalCount = [Item(x) for x in values], total
+    def __init__(self, values, total):
+        self.DataSourceInfos, self.TotalCount = [Item(x) for x in values], total
+
+
 class Client:
-    def __init__(self): self.responses = [Response([{"Id": "ds-1", "Name": "training"}], 1)]
-    def DescribeDataSources(self, request): return self.responses.pop(0)
+    def __init__(self):
+        self.responses = [Response([{"Id": "ds-1", "Name": "training"}], 1)]
+
+    def DescribeDataSources(self, request):
+        return self.responses.pop(0)
+
+
 class Module:
-    def sdk_call(self, fn, request): return fn(request)
-    def fail_json(self, **kwargs): raise AssertionError(kwargs)
+    def sdk_call(self, fn, request):
+        return fn(request)
+
+    def fail_json(self, **kwargs):
+        raise AssertionError(kwargs)
 
 
 def test_find_by_name_is_exact_and_paginated():
@@ -42,6 +72,14 @@ def test_find_by_name_is_exact_and_paginated():
 
 
 def test_conflict_normalizes_tag_order():
-    p = params(); p["tags"] = [{"TagKey": "b", "TagValue": "2"}, {"TagKey": "a", "TagValue": "1"}]
-    current = {"Name": "training", "Type": "CFS", "Permission": "RW", "StorageId": "cfs-1", "MountConfigure": {"WorkDir": "/train"}, "Tags": list(reversed(p["tags"]))}
+    p = params()
+    p["tags"] = [{"TagKey": "b", "TagValue": "2"}, {"TagKey": "a", "TagValue": "1"}]
+    current = {
+        "Name": "training",
+        "Type": "CFS",
+        "Permission": "RW",
+        "StorageId": "cfs-1",
+        "MountConfigure": {"WorkDir": "/train"},
+        "Tags": list(reversed(p["tags"])),
+    }
     assert conflict(p, current) == {}

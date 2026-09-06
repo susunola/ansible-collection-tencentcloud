@@ -1,12 +1,23 @@
 from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_inference_engine_info import build_request, read
 
 
-class Object: pass
-class Models: ListInferenceEnginesRequest = Filter = SortField = Object
+class Object:
+    pass
+
+
+class Models:
+    ListInferenceEnginesRequest = Filter = SortField = Object
 
 
 def params():
-    return {"start_time": 10, "end_time": 20, "filters": {"model_type": ["LLM"], "enabled": "true"}, "sort_fields": [{"field": "Name", "order": "ASC"}], "page_size": 2, "max_pages": 5}
+    return {
+        "start_time": 10,
+        "end_time": 20,
+        "filters": {"model_type": ["LLM"], "enabled": "true"},
+        "sort_fields": [{"field": "Name", "order": "ASC"}],
+        "page_size": 2,
+        "max_pages": 5,
+    }
 
 
 def test_request_maps_runtime_discovery_controls_stably():
@@ -17,15 +28,29 @@ def test_request_maps_runtime_discovery_controls_stably():
 
 
 class Item:
-    def __init__(self, engine_id): self.engine_id = engine_id
-    def _serialize(self, allow_none=True): return {"EngineId": self.engine_id}
+    def __init__(self, engine_id):
+        self.engine_id = engine_id
+
+    def _serialize(self, allow_none=True):
+        return {"EngineId": self.engine_id}
+
+
 class Response:
-    def __init__(self, values, pages, total, request_id): self.Items, self.TotalPages, self.Total, self.RequestId = [Item(x) for x in values], pages, total, request_id
+    def __init__(self, values, pages, total, request_id):
+        self.Items, self.TotalPages, self.Total, self.RequestId = [Item(x) for x in values], pages, total, request_id
+
+
 class Client:
-    def __init__(self): self.responses = [Response(["e1", "e2"], 2, 3, "r1"), Response(["e3"], 2, 3, "r2")]
-    def ListInferenceEngines(self, request): return self.responses.pop(0)
+    def __init__(self):
+        self.responses = [Response(["e1", "e2"], 2, 3, "r1"), Response(["e3"], 2, 3, "r2")]
+
+    def ListInferenceEngines(self, request):
+        return self.responses.pop(0)
+
+
 class Module:
-    def sdk_call(self, fn, request): return fn(request)
+    def sdk_call(self, fn, request):
+        return fn(request)
 
 
 def test_read_follows_all_engine_pages():
@@ -35,7 +60,8 @@ def test_read_follows_all_engine_pages():
 
 
 def test_read_reports_page_budget_truncation():
-    p = params(); p["max_pages"] = 1
+    p = params()
+    p["max_pages"] = 1
     values, total, truncated, request_id = read(Module(), Client(), Models, p)
     assert values == [{"EngineId": "e1"}, {"EngineId": "e2"}]
     assert total == 3 and truncated is True and request_id == "r1"

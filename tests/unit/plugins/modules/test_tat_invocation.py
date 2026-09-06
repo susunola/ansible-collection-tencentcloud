@@ -1,7 +1,10 @@
 from ansible_collections.susunola.tencentcloud.plugins.modules.tat_invocation import cancel_request, invoke_request, tasks_request
 
 
-class Value(object): pass
+class Value(object):
+    pass
+
+
 class Models(object):
     InvokeCommandRequest = Value
     CancelInvocationRequest = Value
@@ -10,7 +13,19 @@ class Models(object):
 
 
 def test_invoke_request_is_canonical_and_deduplicates_targets():
-    value = invoke_request(Models, {"command_id": "cmd-1", "instance_ids": ["ins-2", "ins-1", "ins-1"], "parameters": {"z": 2, "a": 1}, "username": "deploy", "working_directory": None, "timeout": 60, "output_cos_bucket_url": None, "output_cos_key_prefix": None})
+    value = invoke_request(
+        Models,
+        {
+            "command_id": "cmd-1",
+            "instance_ids": ["ins-2", "ins-1", "ins-1"],
+            "parameters": {"z": 2, "a": 1},
+            "username": "deploy",
+            "working_directory": None,
+            "timeout": 60,
+            "output_cos_bucket_url": None,
+            "output_cos_key_prefix": None,
+        },
+    )
     assert value.InstanceIds == ["ins-1", "ins-2"]
     assert value.Parameters == '{"a":"1","z":"2"}'
     assert value.Username == "deploy"

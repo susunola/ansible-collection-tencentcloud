@@ -1,12 +1,16 @@
 from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_notebook_statement_info import read_results, result_request, statement_request
 
 
-class Object: pass
+class Object:
+    pass
+
+
 class Models:
     DescribeNotebookSessionStatementRequest = DescribeNotebookSessionStatementSqlResultRequest = Object
 
 
-def params(): return {"max_results": 500, "batch_id": "batch-1", "data_field_cut_length": 2048}
+def params():
+    return {"max_results": 500, "batch_id": "batch-1", "data_field_cut_length": 2048}
 
 
 def test_statement_and_result_requests_keep_strong_identity():
@@ -18,8 +22,11 @@ def test_statement_and_result_requests_keep_strong_identity():
 
 
 class Column:
-    def __init__(self, name): self.name = name
-    def _serialize(self, allow_none=True): return {"Name": self.name}
+    def __init__(self, name):
+        self.name = name
+
+    def _serialize(self, allow_none=True):
+        return {"Name": self.name}
 
 
 class Response:
@@ -29,16 +36,25 @@ class Response:
 
 
 class Client:
-    def __init__(self): self.responses = [Response("n2", "page-1"), Response(None, "page-2")]; self.tokens = []
-    def DescribeNotebookSessionStatementSqlResult(self, request): self.tokens.append(getattr(request, "NextToken", None)); return self.responses.pop(0)
+    def __init__(self):
+        self.responses = [Response("n2", "page-1"), Response(None, "page-2")]
+        self.tokens = []
+
+    def DescribeNotebookSessionStatementSqlResult(self, request):
+        self.tokens.append(getattr(request, "NextToken", None))
+        return self.responses.pop(0)
 
 
 class Module:
-    def sdk_call(self, fn, request): return fn(request)
-    def fail_json(self, **kwargs): raise AssertionError(kwargs)
+    def sdk_call(self, fn, request):
+        return fn(request)
+
+    def fail_json(self, **kwargs):
+        raise AssertionError(kwargs)
 
 
 def test_sql_results_preserve_pages_and_follow_tokens():
-    client = Client(); pages = read_results(Module(), client, Models, "task-1", params())
+    client = Client()
+    pages = read_results(Module(), client, Models, "task-1", params())
     assert [x["ResultSet"] for x in pages] == ["page-1", "page-2"]
     assert pages[0]["ResultSchema"] == [{"Name": "id"}] and client.tokens == [None, "n2"]

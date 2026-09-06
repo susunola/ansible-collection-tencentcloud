@@ -1,8 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: dlc_user_vpc_connection
 short_description: Connect DLC engine networks to Tencent Cloud VPCs
@@ -26,8 +27,8 @@ options:
   user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.dlc_user_vpc_connection:
     engine_network_id: engine-network-xxxxxxxx
     endpoint_name: analytics-endpoint
@@ -39,9 +40,9 @@ EXAMPLES = r'''
     endpoint_id: vpce-xxxxxxxx
     state: absent
     allow_delete: true
-'''
-RETURN = r'''connection: {description: Effective DLC user VPC connection metadata., type: dict, returned: always}
-endpoint_id: {description: DLC user VPC endpoint ID., type: str, returned: when present}'''
+"""
+RETURN = r"""connection: {description: Effective DLC user VPC connection metadata., type: dict, returned: always}
+endpoint_id: {description: DLC user VPC endpoint ID., type: str, returned: when present}"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
@@ -50,21 +51,27 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters impo
 
 def _load():
     from tencentcloud.dlc.v20210125 import models, dlc_client
+
     return models, dlc_client
 
 
 def describe_request(models, engine_network_id, endpoint_id=None):
-    request = models.DescribeUserVpcConnectionRequest(); request.EngineNetworkId = engine_network_id
-    if endpoint_id: request.UserVpcEndpointIds = [endpoint_id]
+    request = models.DescribeUserVpcConnectionRequest()
+    request.EngineNetworkId = engine_network_id
+    if endpoint_id:
+        request.UserVpcEndpointIds = [endpoint_id]
     return request
 
 
 def find(module, client, models, p):
     response = module.sdk_call(client.DescribeUserVpcConnection, describe_request(models, p["engine_network_id"], p.get("endpoint_id")))
     values = [x._serialize(allow_none=True) for x in response.UserVpcConnectionInfos or []]
-    if p.get("endpoint_id"): matches = [x for x in values if x.get("UserVpcEndpointId") == p["endpoint_id"]]
-    else: matches = [x for x in values if x.get("UserVpcEndpointName") == p.get("endpoint_name")]
-    if len(matches) > 1: module.fail_json(msg="Multiple DLC VPC connections matched; specify endpoint_id")
+    if p.get("endpoint_id"):
+        matches = [x for x in values if x.get("UserVpcEndpointId") == p["endpoint_id"]]
+    else:
+        matches = [x for x in values if x.get("UserVpcEndpointName") == p.get("endpoint_name")]
+    if len(matches) > 1:
+        module.fail_json(msg="Multiple DLC VPC connections matched; specify endpoint_id")
     return matches[0] if matches else None
 
 
@@ -83,49 +90,71 @@ def delete_request(models, engine_network_id, endpoint_id):
 
 
 def wait_connection(module, client, models, p, present):
-    def poll(): return "present" if find(module, client, models, p) else "absent"
+    def poll():
+        return "present" if find(module, client, models, p) else "absent"
+
     wait_for_state(module, poll, ["present" if present else "absent"], timeout=p["waiter_timeout"], delay=p["waiter_delay"])
 
 
 def run_module():
     spec = {
         "state": {"choices": ["present", "absent"], "default": "present"},
-        "engine_network_id": {"required": True}, "endpoint_id": {}, "endpoint_name": {},
-        "vpc_id": {}, "subnet_id": {}, "endpoint_vip": {},
-        "allow_delete": {"type": "bool", "default": False}, "wait": {"type": "bool", "default": True},
-        "waiter_delay": {"type": "int", "default": 5}, "waiter_timeout": {"type": "int", "default": 300},
+        "engine_network_id": {"required": True},
+        "endpoint_id": {},
+        "endpoint_name": {},
+        "vpc_id": {},
+        "subnet_id": {},
+        "endpoint_vip": {},
+        "allow_delete": {"type": "bool", "default": False},
+        "wait": {"type": "bool", "default": True},
+        "waiter_delay": {"type": "int", "default": 5},
+        "waiter_timeout": {"type": "int", "default": 300},
     }
     module = TencentCloudModule(argument_spec=spec, required_one_of=[("endpoint_id", "endpoint_name")], supports_check_mode=True)
-    p = module.params; module.require_sdk(); models, cm = _load(); client = module.create_client(cm.DlcClient, "dlc.tencentcloudapi.com")
+    p = module.params
+    module.require_sdk()
+    models, cm = _load()
+    client = module.create_client(cm.DlcClient, "dlc.tencentcloudapi.com")
     try:
         current = find(module, client, models, p)
         if p["state"] == "absent":
-            if not current: module.exit_json(changed=False, connection=None, endpoint_id=None)
-            if not p["allow_delete"]: module.fail_json(msg="set allow_delete=true to authorize deleting the DLC VPC connection", connection=current)
+            if not current:
+                module.exit_json(changed=False, connection=None, endpoint_id=None)
+            if not p["allow_delete"]:
+                module.fail_json(msg="set allow_delete=true to authorize deleting the DLC VPC connection", connection=current)
             diff_value = maybe_diff(module, current, None)
             if not module.check_mode:
                 p["endpoint_id"] = current["UserVpcEndpointId"]
                 module.sdk_call(client.DeleteUserVpcConnection, delete_request(models, p["engine_network_id"], p["endpoint_id"]))
-                if p["wait"]: wait_connection(module, client, models, p, False)
+                if p["wait"]:
+                    wait_connection(module, client, models, p, False)
             module.exit_json(changed=True, **(diff_value or {}), connection=None, endpoint_id=None)
         if not current:
             missing = [key for key in ("endpoint_name", "vpc_id", "subnet_id") if not p.get(key)]
-            if missing: module.fail_json(msg="creation parameters are required for a DLC VPC connection", missing=missing)
+            if missing:
+                module.fail_json(msg="creation parameters are required for a DLC VPC connection", missing=missing)
             target = {"EngineNetworkId": p["engine_network_id"], "UserVpcId": p["vpc_id"], "UserVpcEndpointName": p["endpoint_name"]}
             diff_value = maybe_diff(module, None, target)
             endpoint_id = None
             if not module.check_mode:
                 endpoint_id = module.sdk_call(client.CreateUserVpcConnection, create_request(models, p)).UserVpcEndpointId
                 p["endpoint_id"] = endpoint_id
-                if p["wait"]: wait_connection(module, client, models, p, True)
+                if p["wait"]:
+                    wait_connection(module, client, models, p, True)
                 current = find(module, client, models, p)
             module.exit_json(changed=True, **(diff_value or {}), connection=current if not module.check_mode else target, endpoint_id=endpoint_id)
         immutable = {"EngineNetworkId": p["engine_network_id"], "UserVpcId": p.get("vpc_id"), "UserVpcEndpointName": p.get("endpoint_name")}
         drift = {key: (current.get(key), value) for key, value in immutable.items() if value is not None and current.get(key) != value}
-        if drift: module.fail_json(msg="DLC VPC connection identity is immutable", immutable_drift=drift)
+        if drift:
+            module.fail_json(msg="DLC VPC connection identity is immutable", immutable_drift=drift)
         module.exit_json(changed=False, connection=current, endpoint_id=current.get("UserVpcEndpointId"))
-    except Exception as exc: module.fail_json(**sdk_error_payload(exc))
+    except Exception as exc:
+        module.fail_json(**sdk_error_payload(exc))
 
 
-def main(): run_module()
-if __name__ == "__main__": main()
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()

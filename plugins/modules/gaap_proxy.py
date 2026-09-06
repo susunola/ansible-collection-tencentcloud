@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: gaap_proxy
 short_description: Manage Tencent Cloud GAAP proxies
@@ -128,9 +128,9 @@ notes:
   - O(state=absent) destroys the proxy; this cannot be undone.
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: Create a 20 Mbps GAAP proxy
   susunola.tencentcloud.gaap_proxy:
     region: ap-guangzhou
@@ -158,9 +158,9 @@ EXAMPLES = r'''
     region: ap-guangzhou
     state: absent
     name: prod-gaap
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 proxy:
   description: The proxy as reported by V(DescribeProxies) after the
     operation.
@@ -174,7 +174,7 @@ proxy:
     RealServerRegion: ap-hongkong
     Bandwidth: 20
     Concurrent: 2
-'''
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -183,6 +183,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters impo
 
 def _load_gaap():
     from tencentcloud.gaap.v20180529 import models, gaap_client
+
     return models, gaap_client
 
 
@@ -210,13 +211,17 @@ def find_proxy(module, client, models, proxy_id, name):
     offset, matches = 0, []
     while True:
         request = build_describe_request(models, proxy_id, name, offset)
-        response = module.sdk_call(client.DescribeProxies, request); page = response.ProxySet or []
+        response = module.sdk_call(client.DescribeProxies, request)
+        page = response.ProxySet or []
         for proxy in page:
             current = _serialize(proxy)
-            if (proxy_id and current.get("ProxyId") == proxy_id) or (not proxy_id and current.get("ProxyName") == name): matches.append(current)
+            if (proxy_id and current.get("ProxyId") == proxy_id) or (not proxy_id and current.get("ProxyName") == name):
+                matches.append(current)
         offset += len(page)
-        if proxy_id or not page or offset >= int(getattr(response, "TotalCount", 0) or 0): break
-    if len(matches) > 1: module.fail_json(msg="Multiple GAAP proxies have the requested name; specify proxy_id", name=name)
+        if proxy_id or not page or offset >= int(getattr(response, "TotalCount", 0) or 0):
+            break
+    if len(matches) > 1:
+        module.fail_json(msg="Multiple GAAP proxies have the requested name; specify proxy_id", name=name)
     return matches[0] if matches else None
 
 
@@ -279,6 +284,7 @@ def wait_proxy(module, client, models, proxy_id, desired):
     def poll():
         current = find_proxy(module, client, models, proxy_id, None)
         return normalized_status((current or {}).get("Status"))
+
     wait_for_state(module, poll, set(desired), timeout=module.params["waiter_timeout"], delay=module.params["waiter_delay"])
     return find_proxy(module, client, models, proxy_id, None)
 

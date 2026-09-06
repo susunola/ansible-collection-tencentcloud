@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: dlc_cluster_group
 short_description: Manage Tencent Cloud DLC compute cluster groups
@@ -25,8 +26,8 @@ options:
   user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.dlc_cluster_group:
     name: shared-ray-compute
     description: Shared managed compute group
@@ -36,8 +37,8 @@ EXAMPLES = r'''
     name: shared-ray-compute
     state: absent
     allow_delete: true
-'''
-RETURN = r'''
+"""
+RETURN = r"""
 cluster_group:
   description: Effective DLC cluster-group metadata.
   type: dict
@@ -50,7 +51,7 @@ active_clusters:
   description: Active cluster count and samples observed before deletion.
   type: dict
   returned: when deletion is considered
-'''
+"""
 
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
@@ -61,6 +62,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters impo
 
 def _load():
     from tencentcloud.dlc.v20210125 import models, dlc_client
+
     return models, dlc_client
 
 
@@ -161,15 +163,21 @@ def wait_group(module, client, models, p, absent=False, expected=None):
         if expected and any(current.get(key) != value for key, value in expected.items()):
             return "pending"
         return "ready"
+
     wait_for_state(module, poll, ["absent" if absent else "ready"], timeout=p["waiter_timeout"], delay=p["waiter_delay"])
 
 
 def run_module():
     spec = {
-        "state": {"choices": ["present", "absent"], "default": "present"}, "name": {"required": True},
-        "description": {}, "config": {}, "allow_delete": {"type": "bool", "default": False},
-        "force_detach": {"type": "bool", "default": False}, "wait": {"type": "bool", "default": True},
-        "waiter_delay": {"type": "int", "default": 5}, "waiter_timeout": {"type": "int", "default": 300},
+        "state": {"choices": ["present", "absent"], "default": "present"},
+        "name": {"required": True},
+        "description": {},
+        "config": {},
+        "allow_delete": {"type": "bool", "default": False},
+        "force_detach": {"type": "bool", "default": False},
+        "wait": {"type": "bool", "default": True},
+        "waiter_delay": {"type": "int", "default": 5},
+        "waiter_timeout": {"type": "int", "default": 300},
     }
     module = TencentCloudModule(argument_spec=spec, supports_check_mode=True)
     p = module.params
@@ -178,7 +186,9 @@ def run_module():
             json.loads(p["config"])
         except (TypeError, ValueError):
             module.fail_json(msg="config must be valid JSON")
-    module.require_sdk(); models, cm = _load(); client = module.create_client(cm.DlcClient, "dlc.tencentcloudapi.com")
+    module.require_sdk()
+    models, cm = _load()
+    client = module.create_client(cm.DlcClient, "dlc.tencentcloudapi.com")
     try:
         current = find(module, client, models, p["name"])
         if p["state"] == "absent":
@@ -188,7 +198,9 @@ def run_module():
                 module.fail_json(msg="set allow_delete=true to authorize deleting the DLC cluster group", cluster_group=current)
             refs = active_clusters(module, client, models, current["Id"])
             if refs["count"] and not p["force_detach"]:
-                module.fail_json(msg="DLC cluster group still has active clusters; set force_detach=true to detach them", cluster_group=current, active_clusters=refs)
+                module.fail_json(
+                    msg="DLC cluster group still has active clusters; set force_detach=true to detach them", cluster_group=current, active_clusters=refs
+                )
             diff_value = maybe_diff(module, current, None)
             if not module.check_mode:
                 module.sdk_call(client.DeleteClusterGroup, delete_request(models, current["Id"], p["force_detach"]))
@@ -202,7 +214,12 @@ def run_module():
                 if p["wait"]:
                     wait_group(module, client, models, p, expected={k: v for k, v in after.items() if k != "Name"})
                 current = find(module, client, models, p["name"])
-            module.exit_json(changed=True, **(diff_value or {}), cluster_group=current if not module.check_mode else after, cluster_group_id=(current or {}).get("Id") or group_id)
+            module.exit_json(
+                changed=True,
+                **(diff_value or {}),
+                cluster_group=current if not module.check_mode else after,
+                cluster_group_id=(current or {}).get("Id") or group_id,
+            )
         changes = drift(p, current)
         if not changes:
             module.exit_json(changed=False, cluster_group=current, cluster_group_id=current.get("Id"))

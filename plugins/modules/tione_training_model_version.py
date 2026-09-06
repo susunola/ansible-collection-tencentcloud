@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: tione_training_model_version
 short_description: Manage versions of an existing Tencent Cloud TIONE training model
@@ -47,8 +48,8 @@ options:
   user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.tione_training_model_version:
     model_id: model-xxxxxxxx
     version: v2
@@ -65,12 +66,12 @@ EXAMPLES = r'''
     version_id: modelversion-xxxxxxxx
     allow_delete: true
     delete_cos: false
-'''
-RETURN = r'''
+"""
+RETURN = r"""
 model_version: {description: Effective TIONE training-model version., type: dict, returned: always}
 model_id: {description: Stable parent model ID., type: str, returned: when available}
 version_id: {description: Stable model-version ID., type: str, returned: when available}
-'''
+"""
 
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
@@ -80,136 +81,224 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
 
 FIELDS = {
-    "version": ("TrainingModelVersion", None), "reasoning_environment_source": ("ReasoningEnvironmentSource", None),
-    "training_job_name": ("TrainingJobName", None), "training_model_cos_path": ("TrainingModelCosPath", "CosPathInfo"),
-    "algorithm_framework": ("AlgorithmFramework", None), "reasoning_environment": ("ReasoningEnvironment", None),
-    "training_model_index": ("TrainingModelIndex", None), "reasoning_image_info": ("ReasoningImageInfo", "ImageInfo"),
-    "training_job_id": ("TrainingJobId", None), "model_output_path": ("ModelOutputPath", "CosPathInfo"),
-    "training_model_source": ("TrainingModelSource", None), "training_preference": ("TrainingPreference", None),
-    "training_job_version": ("TrainingJobVersion", None), "model_format": ("ModelFormat", None),
-    "reasoning_environment_id": ("ReasoningEnvironmentId", None), "auto_clean": ("AutoClean", None),
-    "max_reserved_models": ("MaxReservedModels", None), "model_clean_period": ("ModelCleanPeriod", None), "is_qat": ("IsQAT", None),
+    "version": ("TrainingModelVersion", None),
+    "reasoning_environment_source": ("ReasoningEnvironmentSource", None),
+    "training_job_name": ("TrainingJobName", None),
+    "training_model_cos_path": ("TrainingModelCosPath", "CosPathInfo"),
+    "algorithm_framework": ("AlgorithmFramework", None),
+    "reasoning_environment": ("ReasoningEnvironment", None),
+    "training_model_index": ("TrainingModelIndex", None),
+    "reasoning_image_info": ("ReasoningImageInfo", "ImageInfo"),
+    "training_job_id": ("TrainingJobId", None),
+    "model_output_path": ("ModelOutputPath", "CosPathInfo"),
+    "training_model_source": ("TrainingModelSource", None),
+    "training_preference": ("TrainingPreference", None),
+    "training_job_version": ("TrainingJobVersion", None),
+    "model_format": ("ModelFormat", None),
+    "reasoning_environment_id": ("ReasoningEnvironmentId", None),
+    "auto_clean": ("AutoClean", None),
+    "max_reserved_models": ("MaxReservedModels", None),
+    "model_clean_period": ("ModelCleanPeriod", None),
+    "is_qat": ("IsQAT", None),
 }
 
 
 def _load():
     from tencentcloud.tione.v20211111 import models, tione_client
+
     return models, tione_client
 
 
-def _model(cls, value): item = cls(); item.from_json_string(json.dumps(value)); return item
+def _model(cls, value):
+    item = cls()
+    item.from_json_string(json.dumps(value))
+    return item
 
 
 def detail_request(models, version_id):
-    request = models.DescribeTrainingModelVersionRequest(); request.TrainingModelVersionId = version_id; return request
+    request = models.DescribeTrainingModelVersionRequest()
+    request.TrainingModelVersionId = version_id
+    return request
 
 
 def get(module, client, models, version_id):
-    try: response = module.sdk_call(client.DescribeTrainingModelVersion, detail_request(models, version_id))
+    try:
+        response = module.sdk_call(client.DescribeTrainingModelVersion, detail_request(models, version_id))
     except Exception as exc:
-        if is_not_found(exc): return None
+        if is_not_found(exc):
+            return None
         raise
     return response.TrainingModelVersion._serialize(allow_none=True) if response.TrainingModelVersion else None
 
 
 def list_request(models, model_id):
-    request = models.DescribeTrainingModelVersionsRequest(); request.TrainingModelId = model_id; return request
+    request = models.DescribeTrainingModelVersionsRequest()
+    request.TrainingModelId = model_id
+    return request
 
 
 def find(module, client, models, p):
-    if p.get("version_id"): return get(module, client, models, p["version_id"])
-    response = module.sdk_call(client.DescribeTrainingModelVersions, list_request(models, p["model_id"])); matches = []
+    if p.get("version_id"):
+        return get(module, client, models, p["version_id"])
+    response = module.sdk_call(client.DescribeTrainingModelVersions, list_request(models, p["model_id"]))
+    matches = []
     for item in response.TrainingModelVersions or []:
-        if item.TrainingModelVersion == p["version"]: matches.append(item._serialize(allow_none=True))
-    if len(matches) > 1: module.fail_json(msg="Multiple TIONE model versions matched the exact label within one parent", model_id=p["model_id"], version=p["version"])
+        if item.TrainingModelVersion == p["version"]:
+            matches.append(item._serialize(allow_none=True))
+    if len(matches) > 1:
+        module.fail_json(msg="Multiple TIONE model versions matched the exact label within one parent", model_id=p["model_id"], version=p["version"])
     return matches[0] if matches else None
 
 
 def desired(p, current=None):
     result = dict(current or {})
     for source, (key, _) in FIELDS.items():
-        if p.get(source) is not None: result[key] = p[source]
-    if p.get("model_version_type") is not None: result["VersionType"] = p["model_version_type"]
+        if p.get(source) is not None:
+            result[key] = p[source]
+    if p.get("model_version_type") is not None:
+        result["VersionType"] = p["model_version_type"]
     return result
 
 
 def conflicts(p, current):
     target, changes = desired(p, current), {}
     for source, (key, _) in FIELDS.items():
-        if p.get(source) is not None and key in current and current.get(key) != target.get(key): changes[key] = (current.get(key), target.get(key))
-    if p.get("model_version_type") is not None and current.get("VersionType") != p["model_version_type"]: changes["VersionType"] = (current.get("VersionType"), p["model_version_type"])
+        if p.get(source) is not None and key in current and current.get(key) != target.get(key):
+            changes[key] = (current.get(key), target.get(key))
+    if p.get("model_version_type") is not None and current.get("VersionType") != p["model_version_type"]:
+        changes["VersionType"] = (current.get("VersionType"), p["model_version_type"])
     return changes
 
 
 def create_request(models, p):
-    request = models.CreateTrainingModelRequest(); request.ImportMethod, request.TrainingModelId = p["import_method"], p["model_id"]
+    request = models.CreateTrainingModelRequest()
+    request.ImportMethod, request.TrainingModelId = p["import_method"], p["model_id"]
     request.ModelVersionType = p["model_version_type"]
-    if p.get("model_move_mode") is not None: request.ModelMoveMode = p["model_move_mode"]
+    if p.get("model_move_mode") is not None:
+        request.ModelMoveMode = p["model_move_mode"]
     for source, (key, cls_name) in FIELDS.items():
         value = p.get(source)
-        if value is None: continue
-        if cls_name: value = _model(getattr(models, cls_name), value)
+        if value is None:
+            continue
+        if cls_name:
+            value = _model(getattr(models, cls_name), value)
         setattr(request, key, value)
     return request
 
 
 def delete_request(models, p):
-    request = models.DeleteTrainingModelVersionRequest(); request.TrainingModelVersionId, request.EnableDeleteCos = p["version_id"], p["delete_cos"]; return request
+    request = models.DeleteTrainingModelVersionRequest()
+    request.TrainingModelVersionId, request.EnableDeleteCos = p["version_id"], p["delete_cos"]
+    return request
 
 
 def wait_version(module, client, models, p, present):
     def poll():
         current = get(module, client, models, p["version_id"])
-        if current is None: return "absent"
+        if current is None:
+            return "absent"
         actual = str(current.get("TrainingModelStatus") or "").lower()
-        if actual == "status_failed": module.fail_json(msg="TIONE model-version import failed", model_version=current)
+        if actual == "status_failed":
+            module.fail_json(msg="TIONE model-version import failed", model_version=current)
         return actual
+
     wait_for_state(module, poll, ["status_success"] if present else ["absent"], timeout=p["waiter_timeout"], delay=p["waiter_delay"])
 
 
 def run_module():
-    spec = {"state": {"choices": ["present", "absent"], "default": "present"}, "model_id": {}, "version_id": {}, "version": {}, "import_method": {"choices": ["VERSION", "EXIST"], "default": "VERSION"}}
-    for source in FIELDS: spec[source] = {}
-    spec.update({
-        "reasoning_environment_source": {"choices": ["SYSTEM", "CUSTOM"]}, "training_model_cos_path": {"type": "dict"},
-        "reasoning_image_info": {"type": "dict"}, "model_output_path": {"type": "dict"}, "training_model_source": {"choices": ["JOB", "COS"]},
-        "model_move_mode": {"choices": ["CUT", "COPY"]}, "model_version_type": {"choices": ["NORMAL", "ACCELERATE"], "default": "NORMAL"},
-        "auto_clean": {"choices": ["true", "false"]}, "max_reserved_models": {"type": "int"}, "model_clean_period": {"type": "int"},
-        "is_qat": {"type": "bool"}, "delete_cos": {"type": "bool", "default": False}, "allow_delete": {"type": "bool", "default": False},
-        "wait": {"type": "bool", "default": True}, "waiter_delay": {"type": "int", "default": 10}, "waiter_timeout": {"type": "int", "default": 1800},
-    })
-    module = TencentCloudModule(argument_spec=spec, supports_check_mode=True); p = module.params
-    if p["state"] == "present" and not p.get("model_id"): module.fail_json(msg="model_id is required to manage a model version")
-    if p["state"] == "present" and not (p.get("version") or p.get("version_id")): module.fail_json(msg="version or version_id is required")
-    if p["state"] == "absent" and not p.get("version_id"): module.fail_json(msg="version_id is required for safe model-version deletion")
-    if p.get("max_reserved_models") is not None and not 1 <= p["max_reserved_models"] <= 24: module.fail_json(msg="max_reserved_models must be between 1 and 24")
-    if p.get("model_clean_period") is not None and not 1 <= p["model_clean_period"] <= 1440: module.fail_json(msg="model_clean_period must be between 1 and 1440")
-    module.require_sdk(); models, cm = _load(); client = module.create_client(cm.TioneClient, "tione.tencentcloudapi.com")
+    spec = {
+        "state": {"choices": ["present", "absent"], "default": "present"},
+        "model_id": {},
+        "version_id": {},
+        "version": {},
+        "import_method": {"choices": ["VERSION", "EXIST"], "default": "VERSION"},
+    }
+    for source in FIELDS:
+        spec[source] = {}
+    spec.update(
+        {
+            "reasoning_environment_source": {"choices": ["SYSTEM", "CUSTOM"]},
+            "training_model_cos_path": {"type": "dict"},
+            "reasoning_image_info": {"type": "dict"},
+            "model_output_path": {"type": "dict"},
+            "training_model_source": {"choices": ["JOB", "COS"]},
+            "model_move_mode": {"choices": ["CUT", "COPY"]},
+            "model_version_type": {"choices": ["NORMAL", "ACCELERATE"], "default": "NORMAL"},
+            "auto_clean": {"choices": ["true", "false"]},
+            "max_reserved_models": {"type": "int"},
+            "model_clean_period": {"type": "int"},
+            "is_qat": {"type": "bool"},
+            "delete_cos": {"type": "bool", "default": False},
+            "allow_delete": {"type": "bool", "default": False},
+            "wait": {"type": "bool", "default": True},
+            "waiter_delay": {"type": "int", "default": 10},
+            "waiter_timeout": {"type": "int", "default": 1800},
+        }
+    )
+    module = TencentCloudModule(argument_spec=spec, supports_check_mode=True)
+    p = module.params
+    if p["state"] == "present" and not p.get("model_id"):
+        module.fail_json(msg="model_id is required to manage a model version")
+    if p["state"] == "present" and not (p.get("version") or p.get("version_id")):
+        module.fail_json(msg="version or version_id is required")
+    if p["state"] == "absent" and not p.get("version_id"):
+        module.fail_json(msg="version_id is required for safe model-version deletion")
+    if p.get("max_reserved_models") is not None and not 1 <= p["max_reserved_models"] <= 24:
+        module.fail_json(msg="max_reserved_models must be between 1 and 24")
+    if p.get("model_clean_period") is not None and not 1 <= p["model_clean_period"] <= 1440:
+        module.fail_json(msg="model_clean_period must be between 1 and 1440")
+    module.require_sdk()
+    models, cm = _load()
+    client = module.create_client(cm.TioneClient, "tione.tencentcloudapi.com")
     try:
         current = find(module, client, models, p)
         if p["state"] == "absent":
-            if not current: module.exit_json(changed=False, model_version=None, model_id=None, version_id=p["version_id"])
-            if not p["allow_delete"]: module.fail_json(msg="allow_delete=true is required to delete a TIONE model version", model_version=current)
+            if not current:
+                module.exit_json(changed=False, model_version=None, model_id=None, version_id=p["version_id"])
+            if not p["allow_delete"]:
+                module.fail_json(msg="allow_delete=true is required to delete a TIONE model version", model_version=current)
             diff_value = maybe_diff(module, current, None)
             if not module.check_mode:
                 module.sdk_call(client.DeleteTrainingModelVersion, delete_request(models, p))
-                if p["wait"]: wait_version(module, client, models, p, False)
+                if p["wait"]:
+                    wait_version(module, client, models, p, False)
             module.exit_json(changed=True, **(diff_value or {}), model_version=None, model_id=current.get("TrainingModelId"), version_id=p["version_id"])
         if current:
             changes = conflicts(p, current)
-            if changes: module.fail_json(msg="TIONE model versions are immutable and the existing version has conflicting metadata", model_version=current, immutable_drift=changes)
+            if changes:
+                module.fail_json(
+                    msg="TIONE model versions are immutable and the existing version has conflicting metadata", model_version=current, immutable_drift=changes
+                )
             actual = str(current.get("TrainingModelStatus") or "").lower()
-            if actual == "status_failed": module.fail_json(msg="TIONE model version is in a failed import state", model_version=current)
-            module.exit_json(changed=False, model_version=current, model_id=current.get("TrainingModelId") or p["model_id"], version_id=current.get("TrainingModelVersionId"))
-        if p.get("version_id"): module.fail_json(msg="the requested model version ID does not exist; omit it to create by label", version_id=p["version_id"])
+            if actual == "status_failed":
+                module.fail_json(msg="TIONE model version is in a failed import state", model_version=current)
+            module.exit_json(
+                changed=False, model_version=current, model_id=current.get("TrainingModelId") or p["model_id"], version_id=current.get("TrainingModelVersionId")
+            )
+        if p.get("version_id"):
+            module.fail_json(msg="the requested model version ID does not exist; omit it to create by label", version_id=p["version_id"])
         target, diff_value, version_id = desired(p), maybe_diff(module, None, desired(p)), None
         if not module.check_mode:
-            response = module.sdk_call(client.CreateTrainingModel, create_request(models, p)); version_id = response.TrainingModelVersionId; p = dict(p, version_id=version_id)
-            if p["wait"]: wait_version(module, client, models, p, True)
+            response = module.sdk_call(client.CreateTrainingModel, create_request(models, p))
+            version_id = response.TrainingModelVersionId
+            p = dict(p, version_id=version_id)
+            if p["wait"]:
+                wait_version(module, client, models, p, True)
             current = get(module, client, models, version_id)
-        module.exit_json(changed=True, **(diff_value or {}), model_version=current if not module.check_mode else target, model_id=(current or {}).get("TrainingModelId") or p["model_id"], version_id=(current or {}).get("TrainingModelVersionId") or version_id)
-    except Exception as exc: module.fail_json(**sdk_error_payload(exc))
+        module.exit_json(
+            changed=True,
+            **(diff_value or {}),
+            model_version=current if not module.check_mode else target,
+            model_id=(current or {}).get("TrainingModelId") or p["model_id"],
+            version_id=(current or {}).get("TrainingModelVersionId") or version_id,
+        )
+    except Exception as exc:
+        module.fail_json(**sdk_error_payload(exc))
 
 
-def main(): run_module()
-if __name__ == "__main__": main()
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()

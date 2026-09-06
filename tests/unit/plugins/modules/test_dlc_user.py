@@ -4,7 +4,11 @@ from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_user import c
 class Object:
     def from_json_string(self, value):
         import json
-        for key, item in json.loads(value).items(): setattr(self, key, item)
+
+        for key, item in json.loads(value).items():
+            setattr(self, key, item)
+
+
 class Models:
     DescribeUsersRequest = Object
     CreateUserRequest = Object
@@ -13,7 +17,17 @@ class Models:
     DeleteUserRequest = Object
 
 
-def params(): return {"user_id": "10001", "description": "analytics", "user_type": "COMMON", "alias": "analyst", "principal_type": "UserAccount", "account_source": "TencentAccount", "initial_policies": None, "initial_work_group_ids": [42]}
+def params():
+    return {
+        "user_id": "10001",
+        "description": "analytics",
+        "user_type": "COMMON",
+        "alias": "analyst",
+        "principal_type": "UserAccount",
+        "account_source": "TencentAccount",
+        "initial_policies": None,
+        "initial_work_group_ids": [42],
+    }
 
 
 def test_describe_uses_exact_identity_and_pagination():

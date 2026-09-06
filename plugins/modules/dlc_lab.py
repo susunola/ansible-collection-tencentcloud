@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: dlc_lab
 short_description: Manage Tencent Cloud DLC data laboratories
@@ -48,8 +49,8 @@ options:
   user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.dlc_lab:
     name: analytics-notebook
     resource_partition_id: rp-xxxxxxxx
@@ -66,8 +67,8 @@ EXAMPLES = r'''
     name: analytics-notebook
     state: absent
     allow_delete: true
-'''
-RETURN = r'''
+"""
+RETURN = r"""
 lab:
   description: Effective DLC laboratory metadata.
   type: dict
@@ -76,7 +77,7 @@ lab_id:
   description: DLC laboratory ID.
   type: str
   returned: when present
-'''
+"""
 
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
@@ -85,22 +86,37 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
 
 MUTABLE = {
-    "resource_partition_id": "ResourcePartitionId", "queue": "Queue", "lab_image": "LabImage", "image": "Image",
-    "description": "Description", "image_pull_policy": "ImagePullPolicy", "lab_image_pull_policy": "LabImagePullPolicy",
-    "image_pull_type": "ImagePullType", "lab_image_pull_type": "LabImagePullType", "resource_config_id": "ResourceConfigId",
-    "group_id": "GroupId", "priority": "Priority", "enable_token": "EnableToken", "example_id": "ExampleId",
-    "code_archive_url": "CodeArchiveUrl", "tags": "Tags", "persistent_work_dir": "PersistentWorkDir",
+    "resource_partition_id": "ResourcePartitionId",
+    "queue": "Queue",
+    "lab_image": "LabImage",
+    "image": "Image",
+    "description": "Description",
+    "image_pull_policy": "ImagePullPolicy",
+    "lab_image_pull_policy": "LabImagePullPolicy",
+    "image_pull_type": "ImagePullType",
+    "lab_image_pull_type": "LabImagePullType",
+    "resource_config_id": "ResourceConfigId",
+    "group_id": "GroupId",
+    "priority": "Priority",
+    "enable_token": "EnableToken",
+    "example_id": "ExampleId",
+    "code_archive_url": "CodeArchiveUrl",
+    "tags": "Tags",
+    "persistent_work_dir": "PersistentWorkDir",
 }
 IMMUTABLE = {"resource_config": "ResourceConfig", "catalog": "Catalog", "advanced_options": "AdvancedOptions"}
 
 
 def _load():
     from tencentcloud.dlc.v20210125 import models, dlc_client
+
     return models, dlc_client
 
 
 def list_request(models, page=1):
-    request = models.ListLabsRequest(); request.Page, request.PageSize = page, 200; return request
+    request = models.ListLabsRequest()
+    request.Page, request.PageSize = page, 200
+    return request
 
 
 def find(module, client, models, name):
@@ -131,7 +147,8 @@ def _canonical(value):
 def _tags(value):
     result = []
     for item in value or []:
-        key = item.get("TagKey", item.get("key")); val = item.get("TagValue", item.get("value"))
+        key = item.get("TagKey", item.get("key"))
+        val = item.get("TagValue", item.get("value"))
         result.append({"TagKey": key, "TagValue": val})
     return sorted(result, key=lambda x: (x["TagKey"], x["TagValue"]))
 
@@ -161,24 +178,32 @@ def request_payload(p, update=False):
 
 def make_request(models, p, update=False):
     request = models.UpdateLabRequest() if update else models.CreateLabRequest()
-    request.from_json_string(json.dumps(request_payload(p, update))); return request
+    request.from_json_string(json.dumps(request_payload(p, update)))
+    return request
 
 
 def delete_request(models, lab_id):
-    request = models.DeleteLabRequest(); request.Id = lab_id; return request
+    request = models.DeleteLabRequest()
+    request.Id = lab_id
+    return request
 
 
 def priority_request(models, lab_id, priority):
-    request = models.ModifyLabPriorityRequest(); request.Id, request.Priority = lab_id, priority; return request
+    request = models.ModifyLabPriorityRequest()
+    request.Id, request.Priority = lab_id, priority
+    return request
 
 
 def desired(p, current=None):
-    result = dict(current or {}); result["Name"] = p["name"]
+    result = dict(current or {})
+    result["Name"] = p["name"]
     for source, target in {**MUTABLE, **IMMUTABLE}.items():
         if p.get(source) is not None:
             value = p[source]
-            if source == "tags": value = _tags(value)
-            if source in IMMUTABLE: value = _canonical(value)
+            if source == "tags":
+                value = _tags(value)
+            if source in IMMUTABLE:
+                value = _canonical(value)
             result[target] = value
     return result
 
@@ -204,68 +229,105 @@ def wait_lab(module, client, models, p, absent=False, expected=None):
         if expected and any(current.get(k) != v for k, v in expected.items()):
             return "pending"
         return "ready"
+
     wait_for_state(module, poll, ["absent" if absent else "ready"], timeout=p["waiter_timeout"], delay=p["waiter_delay"])
 
 
 def run_module():
     tag_options = {"key": {"required": True}, "value": {"required": True}}
     spec = {
-        "state": {"choices": ["present", "absent"], "default": "present"}, "name": {"required": True},
-        "resource_partition_id": {}, "queue": {}, "lab_image": {}, "image": {}, "description": {},
+        "state": {"choices": ["present", "absent"], "default": "present"},
+        "name": {"required": True},
+        "resource_partition_id": {},
+        "queue": {},
+        "lab_image": {},
+        "image": {},
+        "description": {},
         "image_pull_policy": {"choices": ["Always", "IfNotPresent", "Never"]},
         "lab_image_pull_policy": {"choices": ["Always", "IfNotPresent", "Never"]},
         "image_pull_type": {"choices": ["BuiltIn", "Custom", "CustomCcr"]},
         "lab_image_pull_type": {"choices": ["BuiltIn", "Custom", "CustomCcr"]},
-        "resource_config_id": {}, "group_id": {}, "priority": {"type": "int"}, "enable_token": {"type": "bool"},
-        "example_id": {}, "code_archive_url": {}, "tags": {"type": "list", "elements": "dict", "options": tag_options},
-        "persistent_work_dir": {"type": "dict"}, "resource_config": {}, "catalog": {}, "advanced_options": {},
-        "allow_delete": {"type": "bool", "default": False}, "wait": {"type": "bool", "default": True},
-        "waiter_delay": {"type": "int", "default": 10}, "waiter_timeout": {"type": "int", "default": 1800},
+        "resource_config_id": {},
+        "group_id": {},
+        "priority": {"type": "int"},
+        "enable_token": {"type": "bool"},
+        "example_id": {},
+        "code_archive_url": {},
+        "tags": {"type": "list", "elements": "dict", "options": tag_options},
+        "persistent_work_dir": {"type": "dict"},
+        "resource_config": {},
+        "catalog": {},
+        "advanced_options": {},
+        "allow_delete": {"type": "bool", "default": False},
+        "wait": {"type": "bool", "default": True},
+        "waiter_delay": {"type": "int", "default": 10},
+        "waiter_timeout": {"type": "int", "default": 1800},
     }
-    module = TencentCloudModule(argument_spec=spec, supports_check_mode=True); p = module.params
+    module = TencentCloudModule(argument_spec=spec, supports_check_mode=True)
+    p = module.params
     if p.get("priority") is not None and not 1 <= p["priority"] <= 9:
         module.fail_json(msg="priority must be between 1 and 9")
     for key in IMMUTABLE:
         if p.get(key) is not None:
-            try: json.loads(p[key])
-            except (TypeError, ValueError): module.fail_json(msg="%s must be valid JSON" % key)
-    module.require_sdk(); models, cm = _load(); client = module.create_client(cm.DlcClient, "dlc.tencentcloudapi.com")
+            try:
+                json.loads(p[key])
+            except (TypeError, ValueError):
+                module.fail_json(msg="%s must be valid JSON" % key)
+    module.require_sdk()
+    models, cm = _load()
+    client = module.create_client(cm.DlcClient, "dlc.tencentcloudapi.com")
     try:
         current = find(module, client, models, p["name"])
         if p["state"] == "absent":
-            if not current: module.exit_json(changed=False, lab=None, lab_id=None)
-            if not p["allow_delete"]: module.fail_json(msg="set allow_delete=true to authorize deleting the DLC laboratory", lab=current)
+            if not current:
+                module.exit_json(changed=False, lab=None, lab_id=None)
+            if not p["allow_delete"]:
+                module.fail_json(msg="set allow_delete=true to authorize deleting the DLC laboratory", lab=current)
             diff_value = maybe_diff(module, current, None)
             if not module.check_mode:
                 module.sdk_call(client.DeleteLab, delete_request(models, current["Id"]))
-                if p["wait"]: wait_lab(module, client, models, p, absent=True)
+                if p["wait"]:
+                    wait_lab(module, client, models, p, absent=True)
             module.exit_json(changed=True, **(diff_value or {}), lab=None, lab_id=None)
         if not current:
             required = ("resource_partition_id", "queue", "lab_image")
             missing = [key for key in required if not p.get(key)]
-            if missing: module.fail_json(msg="creation parameters are required for a DLC laboratory", missing=missing)
+            if missing:
+                module.fail_json(msg="creation parameters are required for a DLC laboratory", missing=missing)
             after, diff_value = desired(p), maybe_diff(module, None, desired(p))
             if not module.check_mode:
-                response = module.sdk_call(client.CreateLab, make_request(models, p)); lab_id = response.Id
-                if p["wait"]: wait_lab(module, client, models, p, expected={k: v for k, v in after.items() if k != "Name"})
+                response = module.sdk_call(client.CreateLab, make_request(models, p))
+                lab_id = response.Id
+                if p["wait"]:
+                    wait_lab(module, client, models, p, expected={k: v for k, v in after.items() if k != "Name"})
                 current = find(module, client, models, p["name"])
-            else: lab_id = None
+            else:
+                lab_id = None
             module.exit_json(changed=True, **(diff_value or {}), lab=current if not module.check_mode else after, lab_id=(current or {}).get("Id") or lab_id)
         immutable_drift = drift(p, current, IMMUTABLE)
-        if immutable_drift: module.fail_json(msg="DLC laboratory resource configuration, catalog and advanced options are immutable", immutable_drift=immutable_drift)
+        if immutable_drift:
+            module.fail_json(msg="DLC laboratory resource configuration, catalog and advanced options are immutable", immutable_drift=immutable_drift)
         changes = drift(p, current, MUTABLE)
-        if not changes: module.exit_json(changed=False, lab=current, lab_id=current.get("Id"))
+        if not changes:
+            module.exit_json(changed=False, lab=current, lab_id=current.get("Id"))
         after, diff_value = desired(p, current), maybe_diff(module, current, desired(p, current))
         if not module.check_mode:
             regular_changes = {key: value for key, value in changes.items() if key != "Priority"}
-            if regular_changes: module.sdk_call(client.UpdateLab, make_request(models, p, update=True))
-            if "Priority" in changes: module.sdk_call(client.ModifyLabPriority, priority_request(models, current["Id"], p["priority"]))
-            if p["wait"]: wait_lab(module, client, models, p, expected={k: v[1] for k, v in changes.items()})
+            if regular_changes:
+                module.sdk_call(client.UpdateLab, make_request(models, p, update=True))
+            if "Priority" in changes:
+                module.sdk_call(client.ModifyLabPriority, priority_request(models, current["Id"], p["priority"]))
+            if p["wait"]:
+                wait_lab(module, client, models, p, expected={k: v[1] for k, v in changes.items()})
             current = find(module, client, models, p["name"])
         module.exit_json(changed=True, **(diff_value or {}), lab=current if not module.check_mode else after, lab_id=current.get("Id"))
     except Exception as exc:
         module.fail_json(**sdk_error_payload(exc))
 
 
-def main(): run_module()
-if __name__ == "__main__": main()
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()

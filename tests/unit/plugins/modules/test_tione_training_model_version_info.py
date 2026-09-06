@@ -1,8 +1,12 @@
 from ansible_collections.susunola.tencentcloud.plugins.modules.tione_training_model_version_info import detail_request, list_request
 
 
-class Object: pass
-class Models: DescribeTrainingModelVersionRequest = DescribeTrainingModelVersionsRequest = Filter = Object
+class Object:
+    pass
+
+
+class Models:
+    DescribeTrainingModelVersionRequest = DescribeTrainingModelVersionsRequest = Filter = Object
 
 
 def test_detail_request_uses_stable_version_id():

@@ -1,10 +1,19 @@
-from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_job_spec import delete_request, drift, list_request, make_request, normalize, priority_request
+from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_job_spec import (
+    delete_request,
+    drift,
+    list_request,
+    make_request,
+    normalize,
+    priority_request,
+)
 
 
 class Request:
     def from_json_string(self, value):
         import json
-        for key, item in json.loads(value).items(): setattr(self, key, item)
+
+        for key, item in json.loads(value).items():
+            setattr(self, key, item)
 
 
 class Models:

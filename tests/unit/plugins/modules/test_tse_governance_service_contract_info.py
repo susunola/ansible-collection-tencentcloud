@@ -1,16 +1,29 @@
 from ansible_collections.susunola.tencentcloud.plugins.modules.tse_governance_service_contract_info import (
-    contract_request, fetch_contracts, version_request,
+    contract_request,
+    fetch_contracts,
+    version_request,
 )
 
 
-class Request(object): pass
+class Request(object):
+    pass
+
+
 class Models(object):
     DescribeGovernanceServiceContractsRequest = Request
     DescribeGovernanceServiceContractVersionsRequest = Request
 
 
-PARAMS = {"instance_id": "ins-1", "namespace": "prod", "service": "orders", "name": "openapi",
-          "contract_version": "v2", "protocol": "http", "brief": False, "page_size": 2}
+PARAMS = {
+    "instance_id": "ins-1",
+    "namespace": "prod",
+    "service": "orders",
+    "name": "openapi",
+    "contract_version": "v2",
+    "protocol": "http",
+    "brief": False,
+    "page_size": 2,
+}
 
 
 def test_contract_requests_map_service_and_filters():
@@ -21,8 +34,11 @@ def test_contract_requests_map_service_and_filters():
 
 
 class Item(object):
-    def __init__(self, value): self.value = value
-    def _serialize(self, allow_none=False): return {"Value": self.value}
+    def __init__(self, value):
+        self.value = value
+
+    def _serialize(self, allow_none=False):
+        return {"Value": self.value}
 
 
 class Response(object):
@@ -31,14 +47,17 @@ class Response(object):
 
 
 class Client(object):
-    def __init__(self): self.offsets = []
+    def __init__(self):
+        self.offsets = []
+
     def DescribeGovernanceServiceContracts(self, request):
         self.offsets.append(request.Offset)
         return Response([1, 2] if request.Offset == 0 else [3], 3, "request-%s" % request.Offset)
 
 
 class Module(object):
-    def sdk_call(self, operation, request): return operation(request)
+    def sdk_call(self, operation, request):
+        return operation(request)
 
 
 def test_fetch_contracts_paginates():

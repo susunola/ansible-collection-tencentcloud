@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: tsf_namespace
 short_description: Manage a Tencent Cloud TSF namespace
@@ -21,16 +22,16 @@ options:
   create_k8s_namespace: {type: bool, description: Create the corresponding Kubernetes namespace.}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - name: Manage a production namespace
   susunola.tencentcloud.tsf_namespace:
     name: production
     cluster_id: cluster-xxxxxxxx
     resource_type: DEF
     high_availability: true
-'''
-RETURN = r'''namespace: {description: Effective namespace metadata., type: dict, returned: always}'''
+"""
+RETURN = r"""namespace: {description: Effective namespace metadata., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -39,6 +40,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.tsf.v20180326 import models, tsf_client
+
     return models, tsf_client
 
 
@@ -57,8 +59,11 @@ def find(module, client, models, params):
     if params.get("namespace_id"):
         matches = [item for item in items if item["NamespaceId"] == params["namespace_id"]]
     else:
-        matches = [item for item in items if item["NamespaceName"] == params["name"] and
-                   (not params.get("cluster_id") or item.get("ClusterId") == params["cluster_id"])]
+        matches = [
+            item
+            for item in items
+            if item["NamespaceName"] == params["name"] and (not params.get("cluster_id") or item.get("ClusterId") == params["cluster_id"])
+        ]
     if len(matches) > 1:
         module.fail_json(msg="Multiple TSF namespaces matched", name=params["name"], cluster_id=params.get("cluster_id"))
     return matches[0] if matches else None
@@ -66,8 +71,13 @@ def find(module, client, models, params):
 
 def desired(params):
     target = {"NamespaceName": params["name"]}
-    mapping = {"cluster_id": "ClusterId", "description": "NamespaceDesc", "resource_type": "NamespaceResourceType",
-               "namespace_type": "NamespaceType", "create_k8s_namespace": "CreateK8sNamespaceFlag"}
+    mapping = {
+        "cluster_id": "ClusterId",
+        "description": "NamespaceDesc",
+        "resource_type": "NamespaceResourceType",
+        "namespace_type": "NamespaceType",
+        "create_k8s_namespace": "CreateK8sNamespaceFlag",
+    }
     for source, key in mapping.items():
         if params.get(source) is not None:
             target[key] = params[source]
@@ -81,13 +91,20 @@ def comparable(current, target):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={
-        "state": {"choices": ["present", "absent"], "default": "present"},
-        "namespace_id": {}, "name": {"required": True}, "cluster_id": {}, "description": {},
-        "resource_type": {"choices": ["DEF", "GW"]},
-        "namespace_type": {"choices": ["DEF", "GLOBAL"], "default": "DEF"},
-        "high_availability": {"type": "bool"}, "create_k8s_namespace": {"type": "bool"},
-    }, supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "namespace_id": {},
+            "name": {"required": True},
+            "cluster_id": {},
+            "description": {},
+            "resource_type": {"choices": ["DEF", "GW"]},
+            "namespace_type": {"choices": ["DEF", "GLOBAL"], "default": "DEF"},
+            "high_availability": {"type": "bool"},
+            "create_k8s_namespace": {"type": "bool"},
+        },
+        supports_check_mode=True,
+    )
     params = module.params
     module.require_sdk()
     models, client_module = _load()
@@ -109,8 +126,7 @@ def run_module():
         if not current and params["namespace_type"] != "GLOBAL" and not params.get("cluster_id"):
             module.fail_json(msg="cluster_id is required when creating a non-global TSF namespace")
         if current:
-            require_immutable_unchanged(module, current, target,
-                                        ["ClusterId", "NamespaceResourceType", "NamespaceType"], "TSF namespace")
+            require_immutable_unchanged(module, current, target, ["ClusterId", "NamespaceResourceType", "NamespaceType"], "TSF namespace")
         compare_target = {key: value for key, value in target.items() if key != "CreateK8sNamespaceFlag"}
         if current and comparable(current, target) == compare_target:
             module.exit_json(changed=False, namespace=current)
@@ -138,5 +154,9 @@ def run_module():
         module.fail_json(**sdk_error_payload(exc))
 
 
-def main(): run_module()
-if __name__ == "__main__": main()
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: dlc_model_artifact_info
 short_description: Inspect Tencent Cloud DLC model-version artifacts
@@ -21,8 +22,8 @@ options:
   user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.dlc_model_artifact_info:
     model_uid: model-bge-managed
     model_version: v2
@@ -31,13 +32,13 @@ EXAMPLES = r'''
     model_uid: model-xgboost-risk
     model_version: production
     include_readme: false
-'''
-RETURN = r'''
+"""
+RETURN = r"""
 config: {description: Model config response, including raw ConfigJson and parsed Config when valid JSON., type: dict, returned: when include_config}
 files: {description: Model file-tree response., type: dict, returned: when include_files}
 readme: {description: Model README and descriptive metadata., type: dict, returned: when include_readme}
 request_ids: {description: Request IDs keyed by requested artifact., type: dict, returned: always}
-'''
+"""
 
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
@@ -46,11 +47,13 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.dlc.v20210125 import models, dlc_client
+
     return models, dlc_client
 
 
 def build_request(cls, p):
-    request = cls(); request.ModelUid, request.ModelVersion = p["model_uid"], p["model_version"]
+    request = cls()
+    request.ModelUid, request.ModelVersion = p["model_uid"], p["model_version"]
     return request
 
 
@@ -81,14 +84,19 @@ def read(module, client, models, p):
 
 def run_module():
     spec = {
-        "model_uid": {"required": True}, "model_version": {"required": True},
-        "include_config": {"type": "bool", "default": True}, "include_files": {"type": "bool", "default": True},
+        "model_uid": {"required": True},
+        "model_version": {"required": True},
+        "include_config": {"type": "bool", "default": True},
+        "include_files": {"type": "bool", "default": True},
         "include_readme": {"type": "bool", "default": True},
     }
-    module = TencentCloudModule(argument_spec=spec, supports_check_mode=True); p = module.params
+    module = TencentCloudModule(argument_spec=spec, supports_check_mode=True)
+    p = module.params
     if not any(p[key] for key in ("include_config", "include_files", "include_readme")):
         module.fail_json(msg="at least one model artifact must be selected")
-    module.require_sdk(); models, cm = _load(); client = module.create_client(cm.DlcClient, "dlc.tencentcloudapi.com")
+    module.require_sdk()
+    models, cm = _load()
+    client = module.create_client(cm.DlcClient, "dlc.tencentcloudapi.com")
     try:
         result, request_ids = read(module, client, models, p)
         module.exit_json(changed=False, request_ids=request_ids, **result)

@@ -1,10 +1,23 @@
-from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_resource_config import delete_request, drift, list_request, make_request, node, normalize, scale_down, workers
+from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_resource_config import (
+    delete_request,
+    drift,
+    list_request,
+    make_request,
+    node,
+    normalize,
+    scale_down,
+    workers,
+)
 
 
 class Object:
     def from_json_string(self, value):
         import json
-        for key, item in json.loads(value).items(): setattr(self, key, item)
+
+        for key, item in json.loads(value).items():
+            setattr(self, key, item)
+
+
 class Models:
     ListResourceConfigsRequest = Object
     ListRayClustersRequest = Object
@@ -14,10 +27,16 @@ class Models:
 
 
 def params():
-    return {"name": "ray-small", "template_type": "Ray", "description": "shared",
-            "head": {"name": "head", "pod_cpu": 4, "pod_mem": 16, "pod_num": 1, "envs": [{"name": "B", "value": "2"}, {"name": "A", "value": "1"}]},
-            "workers": [{"name": "worker-b", "pod_cpu": 4, "min_pod_num": 1, "max_pod_num": 8},
-                        {"name": "worker-a", "pod_cpu": 2, "min_pod_num": 1, "max_pod_num": 4}]}
+    return {
+        "name": "ray-small",
+        "template_type": "Ray",
+        "description": "shared",
+        "head": {"name": "head", "pod_cpu": 4, "pod_mem": 16, "pod_num": 1, "envs": [{"name": "B", "value": "2"}, {"name": "A", "value": "1"}]},
+        "workers": [
+            {"name": "worker-b", "pod_cpu": 4, "min_pod_num": 1, "max_pod_num": 8},
+            {"name": "worker-a", "pod_cpu": 2, "min_pod_num": 1, "max_pod_num": 4},
+        ],
+    }
 
 
 def test_list_request_is_paginated_for_both_resource_types():
@@ -40,7 +59,8 @@ def test_normalized_readback_is_idempotent():
 
 
 def test_scale_down_detects_reduced_or_removed_workers():
-    old = workers(params()["workers"]); lower = workers([params()["workers"][0]])
+    old = workers(params()["workers"])
+    lower = workers([params()["workers"][0]])
     assert scale_down(node(params()["head"]), node(params()["head"]), old, lower) is True
     assert scale_down({"PodCpu": 4}, {"PodCpu": 2}, [], []) is True
 

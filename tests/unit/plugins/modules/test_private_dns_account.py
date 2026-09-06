@@ -1,7 +1,10 @@
 from ansible_collections.susunola.tencentcloud.plugins.modules.private_dns_account import account_object, list_request, mutation_request
 
 
-class Value(object): pass
+class Value(object):
+    pass
+
+
 class Models(object):
     PrivateDNSAccount = Value
     CreatePrivateDNSAccountRequest = Value

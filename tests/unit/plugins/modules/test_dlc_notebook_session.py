@@ -1,12 +1,20 @@
 from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_notebook_session import (
-    create_request, delete_request, describe_request, desired, immutable_drift, list_request, normalize,
+    create_request,
+    delete_request,
+    describe_request,
+    desired,
+    immutable_drift,
+    list_request,
+    normalize,
 )
 
 
 class Object:
     def from_json_string(self, value):
         import json
-        for key, item in json.loads(value).items(): setattr(self, key, item)
+
+        for key, item in json.loads(value).items():
+            setattr(self, key, item)
 
 
 class Models:
@@ -14,10 +22,22 @@ class Models:
 
 
 def params():
-    return {"name": "analyst", "kind": "pyspark", "data_engine_name": "spark-prod", "dependent_files": ["cosn://b/z", "cosn://b/a"],
-            "dependent_jars": None, "dependent_python": None, "archives": None, "driver_size": "medium", "executor_size": "large",
-            "executor_numbers": 2, "executor_max_numbers": 8, "arguments": [{"key": "z", "value": "2"}, {"key": "a", "value": "1"}],
-            "proxy_user": "root", "timeout": 7200}
+    return {
+        "name": "analyst",
+        "kind": "pyspark",
+        "data_engine_name": "spark-prod",
+        "dependent_files": ["cosn://b/z", "cosn://b/a"],
+        "dependent_jars": None,
+        "dependent_python": None,
+        "archives": None,
+        "driver_size": "medium",
+        "executor_size": "large",
+        "executor_numbers": 2,
+        "executor_max_numbers": 8,
+        "arguments": [{"key": "z", "value": "2"}, {"key": "a", "value": "1"}],
+        "proxy_user": "root",
+        "timeout": 7200,
+    }
 
 
 def test_identity_requests_are_exact_and_paginated():
@@ -36,8 +56,11 @@ def test_create_maps_and_normalizes_immutable_contract():
 
 
 def test_normalize_and_drift_ignore_list_order():
-    p = params(); current = desired(p); current.update({"SessionId": "session-1", "State": "idle"})
-    current["ProgramDependentFiles"].reverse(); current["Arguments"].reverse()
+    p = params()
+    current = desired(p)
+    current.update({"SessionId": "session-1", "State": "idle"})
+    current["ProgramDependentFiles"].reverse()
+    current["Arguments"].reverse()
     normalized = normalize(current)
     assert immutable_drift(p, normalized) == {}
     p["driver_size"] = "xlarge"

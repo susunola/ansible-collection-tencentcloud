@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: tsf_application
 short_description: Manage a Tencent Cloud TSF application
@@ -26,8 +27,8 @@ options:
   sync_delete_image_repository: {type: bool, default: false, description: Delete the associated image repository when removing the application.}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - name: Manage a container application
   susunola.tencentcloud.tsf_application:
     name: orders
@@ -35,8 +36,8 @@ EXAMPLES = r'''
     microservice_type: N
     description: Order service
     framework_type: SpringCloud
-'''
-RETURN = r'''application: {description: Effective application metadata., type: dict, returned: always}'''
+"""
+RETURN = r"""application: {description: Effective application metadata., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -45,6 +46,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.tsf.v20180326 import models, tsf_client
+
     return models, tsf_client
 
 
@@ -68,10 +70,14 @@ def find(module, client, models, params):
 
 def desired(params):
     mapping = {
-        "name": "ApplicationName", "application_type": "ApplicationType",
-        "microservice_type": "MicroserviceType", "description": "ApplicationDesc",
-        "remark_name": "ApplicationRemarkName", "runtime_type": "ApplicationRuntimeType",
-        "program_language": "ProgramLanguage", "framework_type": "FrameworkType",
+        "name": "ApplicationName",
+        "application_type": "ApplicationType",
+        "microservice_type": "MicroserviceType",
+        "description": "ApplicationDesc",
+        "remark_name": "ApplicationRemarkName",
+        "runtime_type": "ApplicationRuntimeType",
+        "program_language": "ProgramLanguage",
+        "framework_type": "FrameworkType",
         "apm_instance_id": "ApmInstanceId",
         "ignore_create_image_repository": "IgnoreCreateImageRepository",
         "create_same_name_image_repository": "CreateSameNameImageRepository",
@@ -84,18 +90,25 @@ def comparable(current, target):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={
-        "state": {"choices": ["present", "absent"], "default": "present"},
-        "application_id": {}, "name": {"required": True},
-        "application_type": {"choices": ["V", "C", "S"]},
-        "microservice_type": {"choices": ["N", "M", "G", "NATIVE", "RAW"]},
-        "description": {}, "remark_name": {}, "runtime_type": {},
-        "program_language": {"choices": ["Java", "C/C++", "Python", "Go", "Other"]},
-        "framework_type": {"choices": ["SpringCloud", "Dubbo", "Go-GRPC", "Other"]},
-        "apm_instance_id": {}, "ignore_create_image_repository": {"type": "bool"},
-        "create_same_name_image_repository": {"type": "bool"},
-        "sync_delete_image_repository": {"type": "bool", "default": False},
-    }, supports_check_mode=True)
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "application_id": {},
+            "name": {"required": True},
+            "application_type": {"choices": ["V", "C", "S"]},
+            "microservice_type": {"choices": ["N", "M", "G", "NATIVE", "RAW"]},
+            "description": {},
+            "remark_name": {},
+            "runtime_type": {},
+            "program_language": {"choices": ["Java", "C/C++", "Python", "Go", "Other"]},
+            "framework_type": {"choices": ["SpringCloud", "Dubbo", "Go-GRPC", "Other"]},
+            "apm_instance_id": {},
+            "ignore_create_image_repository": {"type": "bool"},
+            "create_same_name_image_repository": {"type": "bool"},
+            "sync_delete_image_repository": {"type": "bool", "default": False},
+        },
+        supports_check_mode=True,
+    )
     params = module.params
     module.require_sdk()
     models, client_module = _load()
@@ -116,10 +129,20 @@ def run_module():
         if not current and (not params.get("application_type") or not params.get("microservice_type")):
             module.fail_json(msg="application_type and microservice_type are required when creating a TSF application")
         if current:
-            require_immutable_unchanged(module, current, target,
-                                        ["ApplicationType", "ApplicationRuntimeType", "ProgramLanguage",
-                                         "ApmInstanceId", "IgnoreCreateImageRepository",
-                                         "CreateSameNameImageRepository"], "TSF application")
+            require_immutable_unchanged(
+                module,
+                current,
+                target,
+                [
+                    "ApplicationType",
+                    "ApplicationRuntimeType",
+                    "ProgramLanguage",
+                    "ApmInstanceId",
+                    "IgnoreCreateImageRepository",
+                    "CreateSameNameImageRepository",
+                ],
+                "TSF application",
+            )
         if current and comparable(current, target) == target:
             module.exit_json(changed=False, application=current)
         diff = maybe_diff(module, comparable(current, target) if current else None, target)
@@ -147,5 +170,9 @@ def run_module():
         module.fail_json(**sdk_error_payload(exc))
 
 
-def main(): run_module()
-if __name__ == "__main__": main()
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()

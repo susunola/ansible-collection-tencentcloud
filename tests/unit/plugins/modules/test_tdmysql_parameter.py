@@ -1,8 +1,18 @@
-from ansible_collections.susunola.tencentcloud.plugins.modules.tdmysql_parameter import describe_request, flow_request, modify_request, read_parameters, selected
+from ansible_collections.susunola.tencentcloud.plugins.modules.tdmysql_parameter import (
+    describe_request,
+    flow_request,
+    modify_request,
+    read_parameters,
+    selected,
+)
 
 
-class Object: pass
-class Models: DescribeDBParametersRequest = DescribeFlowRequest = ModifyDBParametersRequest = DBParamValue = Object
+class Object:
+    pass
+
+
+class Models:
+    DescribeDBParametersRequest = DescribeFlowRequest = ModifyDBParametersRequest = DBParamValue = Object
 
 
 def test_requests_map_instance_task_and_sorted_values():
@@ -12,14 +22,25 @@ def test_requests_map_instance_task_and_sorted_values():
 
 
 class Item:
-    def __init__(self, name, value): self.Param, self.value = name, value
-    def _serialize(self, allow_none=True): return {"Param": self.Param, "Value": self.value, "NeedRestart": False}
+    def __init__(self, name, value):
+        self.Param, self.value = name, value
+
+    def _serialize(self, allow_none=True):
+        return {"Param": self.Param, "Value": self.value, "NeedRestart": False}
+
+
 class Response:
     Params = [Item("b", "2"), Item("a", "1")]
+
+
 class Client:
-    def DescribeDBParameters(self, request): return Response()
+    def DescribeDBParameters(self, request):
+        return Response()
+
+
 class Module:
-    def sdk_call(self, fn, request): return fn(request)
+    def sdk_call(self, fn, request):
+        return fn(request)
 
 
 def test_read_and_select_parameters_are_name_keyed_and_stable():

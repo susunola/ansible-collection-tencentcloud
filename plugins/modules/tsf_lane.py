@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: tsf_lane
 short_description: Manage a Tencent Cloud TSF traffic lane
@@ -23,16 +24,16 @@ options:
       entrance: {type: bool, default: false, description: Whether this is the lane entrance group.}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.tsf_lane:
     name: checkout-canary
     remark: Canary request path
     deployment_groups:
       - {group_id: group-xxxxxxxx, entrance: true}
       - {group_id: group-yyyyyyyy}
-'''
-RETURN = r'''lane: {description: Effective TSF lane metadata., type: dict, returned: always}'''
+"""
+RETURN = r"""lane: {description: Effective TSF lane metadata., type: dict, returned: always}"""
 
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
@@ -42,6 +43,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.tsf.v20180326 import models, tsf_client
+
     return models, tsf_client
 
 
@@ -63,10 +65,7 @@ def desired(params):
     if params.get("remark") is not None:
         target["Remark"] = params["remark"]
     if params.get("deployment_groups") is not None:
-        target["LaneGroupList"] = normalize_groups([
-            {"GroupId": item["group_id"], "Entrance": item["entrance"]}
-            for item in params["deployment_groups"]
-        ])
+        target["LaneGroupList"] = normalize_groups([{"GroupId": item["group_id"], "Entrance": item["entrance"]} for item in params["deployment_groups"]])
     return target
 
 
@@ -86,7 +85,11 @@ def find(module, client, models, params):
         request.SearchWord = params["name"]
     result = module.sdk_call(client.DescribeLanes, request).Result
     values = (result.Content if result else None) or []
-    matches = [item for item in values if item.LaneId == params.get("lane_id")] if params.get("lane_id") else [item for item in values if item.LaneName == params["name"]]
+    matches = (
+        [item for item in values if item.LaneId == params.get("lane_id")]
+        if params.get("lane_id")
+        else [item for item in values if item.LaneName == params["name"]]
+    )
     if len(matches) > 1:
         module.fail_json(msg="Multiple TSF lanes matched the exact name", name=params["name"])
     return _serialize(matches[0]) if matches else None
@@ -105,10 +108,17 @@ def run_module():
     module = TencentCloudModule(
         argument_spec={
             "state": {"choices": ["present", "absent"], "default": "present"},
-            "lane_id": {}, "name": {"required": True}, "remark": {},
-            "deployment_groups": {"type": "list", "elements": "dict", "options": {
-                "group_id": {"required": True}, "entrance": {"type": "bool", "default": False},
-            }},
+            "lane_id": {},
+            "name": {"required": True},
+            "remark": {},
+            "deployment_groups": {
+                "type": "list",
+                "elements": "dict",
+                "options": {
+                    "group_id": {"required": True},
+                    "entrance": {"type": "bool", "default": False},
+                },
+            },
         },
         supports_check_mode=True,
     )
@@ -123,7 +133,8 @@ def run_module():
                 module.exit_json(changed=False, lane=None)
             diff = maybe_diff(module, current, None)
             if not module.check_mode:
-                request = models.DeleteLaneRequest(); request.LaneId = current["LaneId"]
+                request = models.DeleteLaneRequest()
+                request.LaneId = current["LaneId"]
                 response = module.sdk_call(client.DeleteLane, request)
                 if response.Result is False:
                     module.fail_json(msg="Tencent Cloud rejected the TSF lane deletion", request_id=response.RequestId)
@@ -139,14 +150,16 @@ def run_module():
         diff = maybe_diff(module, comparable(current, target) if current else None, target)
         if not module.check_mode:
             if current:
-                request = models.ModifyLaneRequest(); request.LaneId = current["LaneId"]
+                request = models.ModifyLaneRequest()
+                request.LaneId = current["LaneId"]
                 request.LaneName, request.Remark = target["LaneName"], target.get("Remark")
                 response = module.sdk_call(client.ModifyLane, request)
                 if response.Result is False:
                     module.fail_json(msg="Tencent Cloud rejected the TSF lane update", request_id=response.RequestId)
                 params["lane_id"] = current["LaneId"]
             else:
-                request = models.CreateLaneRequest(); request.LaneName, request.Remark = target["LaneName"], target.get("Remark")
+                request = models.CreateLaneRequest()
+                request.LaneName, request.Remark = target["LaneName"], target.get("Remark")
                 request.LaneGroupList = group_models(models, params["deployment_groups"])
                 params["lane_id"] = module.sdk_call(client.CreateLane, request).Result
             current = find(module, client, models, params)

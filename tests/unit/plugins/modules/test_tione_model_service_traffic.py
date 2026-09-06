@@ -1,12 +1,23 @@
-from ansible_collections.susunola.tencentcloud.plugins.modules.tione_model_service_traffic import authorization_request, current_weights, normalized_weights, validate_weights, weights_request
+from ansible_collections.susunola.tencentcloud.plugins.modules.tione_model_service_traffic import (
+    authorization_request,
+    current_weights,
+    normalized_weights,
+    validate_weights,
+    weights_request,
+)
 
 
 class Object:
-    def from_json_string(self, value): self.value = value
-class Models: ModifyModelServiceAuthorizationRequest = ModifyServiceGroupWeightsRequest = WeightEntry = Object
+    def from_json_string(self, value):
+        self.value = value
 
 
-def params(): return {"service_group_id": "g1", "authorization_enable": True, "weights": [{"ServiceId": "s2", "Weight": 10}, {"ServiceId": "s1", "Weight": 90}]}
+class Models:
+    ModifyModelServiceAuthorizationRequest = ModifyServiceGroupWeightsRequest = WeightEntry = Object
+
+
+def params():
+    return {"service_group_id": "g1", "authorization_enable": True, "weights": [{"ServiceId": "s2", "Weight": 10}, {"ServiceId": "s1", "Weight": 90}]}
 
 
 def test_requests_map_authorization_and_sorted_weights():
@@ -21,14 +32,19 @@ def test_current_weights_ignores_unrelated_service_fields():
 
 
 class Module:
-    def fail_json(self, **kwargs): raise ValueError(kwargs["msg"])
+    def fail_json(self, **kwargs):
+        raise ValueError(kwargs["msg"])
 
 
-def test_validate_weights_accepts_exact_distribution(): validate_weights(Module(), params()["weights"])
+def test_validate_weights_accepts_exact_distribution():
+    validate_weights(Module(), params()["weights"])
 
 
 def test_validate_weights_rejects_invalid_totals_and_duplicate_ids():
     for value in ([{"ServiceId": "s1", "Weight": 99}], [{"ServiceId": "s1", "Weight": 50}, {"ServiceId": "s1", "Weight": 50}]):
-        try: validate_weights(Module(), value)
-        except ValueError: pass
-        else: raise AssertionError("invalid traffic distribution was accepted")
+        try:
+            validate_weights(Module(), value)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("invalid traffic distribution was accepted")

@@ -2,14 +2,28 @@ from ansible_collections.susunola.tencentcloud.plugins.modules.tione_model_servi
 
 
 class Object:
-    def from_json_string(self, value): self.value = value
+    def from_json_string(self, value):
+        self.value = value
+
+
 class Models:
-    CreateModelServiceRequest = ModifyModelServiceRequest = ModelInfo = ImageInfo = EnvVar = ResourceInfo = HorizontalPodAutoscaler = LogConfig = Tag = CronScaleJob = ScheduledAction = VolumeMount = ServiceLimit = ServiceEIP = HealthProbe = RollingUpdate = ResourceSupplyAttribute = Object
+    CreateModelServiceRequest = ModifyModelServiceRequest = ModelInfo = ImageInfo = EnvVar = ResourceInfo = HorizontalPodAutoscaler = LogConfig = Tag = (
+        CronScaleJob
+    ) = ScheduledAction = VolumeMount = ServiceLimit = ServiceEIP = HealthProbe = RollingUpdate = ResourceSupplyAttribute = Object
 
 
 def params():
-    result = {key: None for key in __import__('ansible_collections.susunola.tencentcloud.plugins.modules.tione_model_service', fromlist=['FIELDS']).FIELDS}
-    result.update(project_id="p1", service_id="s1", service_group_id="g1", charge_type="POSTPAID_BY_HOUR", image_info={"ImageType": "TCR"}, replicas=2, tags=[{"TagKey": "env", "TagValue": "prod"}], service_description="v2")
+    result = {key: None for key in __import__("ansible_collections.susunola.tencentcloud.plugins.modules.tione_model_service", fromlist=["FIELDS"]).FIELDS}
+    result.update(
+        project_id="p1",
+        service_id="s1",
+        service_group_id="g1",
+        charge_type="POSTPAID_BY_HOUR",
+        image_info={"ImageType": "TCR"},
+        replicas=2,
+        tags=[{"TagKey": "env", "TagValue": "prod"}],
+        service_description="v2",
+    )
     return result
 
 
@@ -31,6 +45,7 @@ def test_modify_request_excludes_create_only_fields():
 
 
 def test_drift_separates_mutable_and_create_only_fields():
-    p = params(); current = {"ChargeType": "PREPAID", "Replicas": 1, "ServiceDescription": "v1", "ImageInfo": {"ImageType": "TCR"}, "Tags": p["tags"]}
+    p = params()
+    current = {"ChargeType": "PREPAID", "Replicas": 1, "ServiceDescription": "v1", "ImageInfo": {"ImageType": "TCR"}, "Tags": p["tags"]}
     mutable, immutable = drift(p, current)
     assert set(mutable) == {"Replicas", "ServiceDescription"} and set(immutable) == {"ChargeType"}

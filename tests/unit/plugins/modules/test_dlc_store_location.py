@@ -1,13 +1,17 @@
 from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_store_location import advanced_drift, create_request, desired, modify_request
 
 
-class Request: pass
+class Request:
+    pass
+
+
 class Models:
     CreateStoreLocationRequest = ModifyAdvancedStoreLocationRequest = Request
 
 
 def test_base_and_advanced_requests_are_explicit():
-    create = create_request(Models, "cosn://results/"); modify = modify_request(Models, True, "cosn://advanced/")
+    create = create_request(Models, "cosn://results/")
+    modify = modify_request(Models, True, "cosn://advanced/")
     assert create.StoreLocation == "cosn://results/"
     assert modify.Enable == 1 and modify.StoreLocation == "cosn://advanced/"
 

@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: tsf_application_config_release
 short_description: Manage a Tencent Cloud TSF application configuration release
@@ -16,14 +17,14 @@ options:
   release_description: {type: str, description: Release description.}
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
-'''
-EXAMPLES = r'''
+"""
+EXAMPLES = r"""
 - susunola.tencentcloud.tsf_application_config_release:
     config_id: config-xxxxxxxx
     group_id: group-xxxxxxxx
     release_description: Production settings
-'''
-RETURN = r'''release: {description: Effective TSF configuration release metadata., type: dict, returned: always}'''
+"""
+RETURN = r"""release: {description: Effective TSF configuration release metadata., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -32,6 +33,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle im
 
 def _load():
     from tencentcloud.tsf.v20180326 import models, tsf_client
+
     return models, tsf_client
 
 
@@ -43,7 +45,8 @@ def desired(params):
 
 
 def find(module, client, models, params):
-    request = models.DescribeConfigReleasesRequest(); request.ConfigId, request.GroupId = params["config_id"], params["group_id"]
+    request = models.DescribeConfigReleasesRequest()
+    request.ConfigId, request.GroupId = params["config_id"], params["group_id"]
     request.Offset, request.Limit = 0, 100
     result = module.sdk_call(client.DescribeConfigReleases, request).Result
     values = (result.Content if result else None) or []
@@ -59,11 +62,18 @@ def checked(module, response, action):
 
 
 def run_module():
-    module = TencentCloudModule(argument_spec={
-        "state": {"choices": ["present", "absent"], "default": "present"},
-        "config_id": {"required": True}, "group_id": {"required": True}, "release_description": {},
-    }, supports_check_mode=True)
-    params = module.params; module.require_sdk(); models, client_module = _load()
+    module = TencentCloudModule(
+        argument_spec={
+            "state": {"choices": ["present", "absent"], "default": "present"},
+            "config_id": {"required": True},
+            "group_id": {"required": True},
+            "release_description": {},
+        },
+        supports_check_mode=True,
+    )
+    params = module.params
+    module.require_sdk()
+    models, client_module = _load()
     client = module.create_client(client_module.TsfClient, "tsf.tencentcloudapi.com")
     try:
         current = find(module, client, models, params)
@@ -72,7 +82,8 @@ def run_module():
                 module.exit_json(changed=False, release=None)
             diff = maybe_diff(module, current, None)
             if not module.check_mode:
-                request = models.RevocationConfigRequest(); request.ConfigReleaseId = current["ConfigReleaseId"]
+                request = models.RevocationConfigRequest()
+                request.ConfigReleaseId = current["ConfigReleaseId"]
                 checked(module, module.sdk_call(client.RevocationConfig, request), "release revocation")
             module.exit_json(changed=True, **(diff or {}), release=None)
         target = desired(params)
@@ -81,7 +92,8 @@ def run_module():
             module.exit_json(changed=False, release=current)
         diff = maybe_diff(module, None, target)
         if not module.check_mode:
-            request = models.ReleaseConfigRequest(); request.ConfigId, request.GroupId = params["config_id"], params["group_id"]
+            request = models.ReleaseConfigRequest()
+            request.ConfigId, request.GroupId = params["config_id"], params["group_id"]
             request.ReleaseDesc = params.get("release_description")
             checked(module, module.sdk_call(client.ReleaseConfig, request), "release")
             current = find(module, client, models, params)

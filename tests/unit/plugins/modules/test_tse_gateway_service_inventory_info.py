@@ -1,10 +1,19 @@
 from ansible_collections.susunola.tencentcloud.plugins.modules.tse_gateway_service_inventory_info import (
-    fetch_inventory, inventory_request, service_name, upstream_request,
+    fetch_inventory,
+    inventory_request,
+    service_name,
+    upstream_request,
 )
 
 
-class Request(object): pass
-class Filter(object): pass
+class Request(object):
+    pass
+
+
+class Filter(object):
+    pass
+
+
 class Models(object):
     DescribeCNGWServicesWithRoutesRequest = Request
     DescribeCloudNativeAPIGatewayUpstreamRequest = Request
@@ -23,27 +32,35 @@ def test_inventory_and_upstream_request_mapping():
 
 
 class Item(object):
-    def __init__(self, value): self.value = value
-    def _serialize(self, allow_none=False): return {"Name": self.value}
+    def __init__(self, value):
+        self.value = value
+
+    def _serialize(self, allow_none=False):
+        return {"Name": self.value}
 
 
 class Result(object):
-    def __init__(self, values, total): self.ServiceList, self.TotalCount = [Item(v) for v in values], total
+    def __init__(self, values, total):
+        self.ServiceList, self.TotalCount = [Item(v) for v in values], total
 
 
 class Response(object):
-    def __init__(self, values, total, request_id): self.Result, self.RequestId = Result(values, total), request_id
+    def __init__(self, values, total, request_id):
+        self.Result, self.RequestId = Result(values, total), request_id
 
 
 class Client(object):
-    def __init__(self): self.offsets = []
+    def __init__(self):
+        self.offsets = []
+
     def DescribeCNGWServicesWithRoutes(self, request):
         self.offsets.append(request.Offset)
         return Response(["one", "two"] if request.Offset == 0 else ["three"], 3, "request-%s" % request.Offset)
 
 
 class Module(object):
-    def sdk_call(self, operation, request): return operation(request)
+    def sdk_call(self, operation, request):
+        return operation(request)
 
 
 def test_fetch_inventory_paginates_and_extracts_names():
