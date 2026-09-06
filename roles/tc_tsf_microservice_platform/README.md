@@ -29,4 +29,8 @@ Destruction requires an explicit safety opt-in.
           - {name: orders-vm, application_id: application-xxxxxxxx, namespace_id: namespace-xxxxxxxx, cluster_id: cluster-xxxxxxxx}
         tc_tsf_microservice_platform_container_deployment_groups:
           - {name: orders-container, application_id: application-xxxxxxxx, namespace_id: namespace-xxxxxxxx, cluster_id: cluster-xxxxxxxx, replicas: 3}
+        tc_tsf_microservice_platform_lanes:
+          - name: orders-canary
+            deployment_groups:
+              - {group_id: group-xxxxxxxx, entrance: true}
 ```

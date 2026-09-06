@@ -2513,6 +2513,11 @@ modules:
   - DescribeContainerGroups
   - ModifyContainerGroup
   - ModifyContainerReplicas
+  tsf_lane:
+  - CreateLane
+  - DeleteLane
+  - DescribeLanes
+  - ModifyLane
   tsf_microservice:
   - CreateMicroserviceWithDetailResp
   - DeleteMicroservice

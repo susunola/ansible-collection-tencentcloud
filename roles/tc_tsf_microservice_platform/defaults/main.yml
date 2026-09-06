@@ -6,4 +6,5 @@ tc_tsf_microservice_platform_applications: []
 tc_tsf_microservice_platform_microservices: []
 tc_tsf_microservice_platform_vm_deployment_groups: []
 tc_tsf_microservice_platform_container_deployment_groups: []
+tc_tsf_microservice_platform_lanes: []
 tc_tsf_microservice_platform_allow_destroy: false
