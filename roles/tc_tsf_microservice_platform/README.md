@@ -33,4 +33,9 @@ Destruction requires an explicit safety opt-in.
           - name: orders-canary
             deployment_groups:
               - {group_id: group-xxxxxxxx, entrance: true}
+        tc_tsf_microservice_platform_lane_rules:
+          - name: orders-canary-header
+            lane_id: lane-xxxxxxxx
+            tags:
+              - {name: x-canary, operator: EQUAL, value: 'true'}
 ```

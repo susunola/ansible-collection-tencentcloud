@@ -412,6 +412,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tsf_cluster` | Manage a Tencent Cloud TSF cluster |
 | `tsf_container_deployment_group` | Manage a Tencent Cloud TSF container deployment group |
 | `tsf_lane` | Manage a Tencent Cloud TSF traffic lane |
+| `tsf_lane_rule` | Manage a Tencent Cloud TSF traffic lane rule |
 | `tsf_microservice` | Manage a Tencent Cloud TSF microservice |
 | `tsf_namespace` | Manage a Tencent Cloud TSF namespace |
 | `tsf_vm_deployment_group` | Manage a Tencent Cloud TSF virtual-machine deployment group |

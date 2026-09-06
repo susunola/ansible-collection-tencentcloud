@@ -2518,6 +2518,11 @@ modules:
   - DeleteLane
   - DescribeLanes
   - ModifyLane
+  tsf_lane_rule:
+  - CreateLaneRule
+  - DeleteLaneRule
+  - DescribeLaneRules
+  - ModifyLaneRule
   tsf_microservice:
   - CreateMicroserviceWithDetailResp
   - DeleteMicroservice

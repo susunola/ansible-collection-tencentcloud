@@ -287,7 +287,7 @@ CORE_MODULES = {
     "tse_governance_host_retirement",
     "tsf_application",
     "tsf_cluster",
-    "tsf_container_deployment_group", "tsf_lane",
+    "tsf_container_deployment_group", "tsf_lane", "tsf_lane_rule",
     "tsf_microservice",
     "tsf_namespace",
     "tsf_vm_deployment_group",
