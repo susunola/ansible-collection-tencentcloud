@@ -1,0 +1,21 @@
+minor_changes:
+  - >-
+    module_utils - add ``resolver``, a shared resource reference resolver.
+    Tencent Cloud list filters match fuzzily (``vpc-name`` is a substring
+    match), so an ID, a name or a tag set is now re-checked client-side:
+    an exact name wins, a single fuzzy candidate is accepted, and two or
+    more candidates fail with ``ambiguous=true`` and the candidate list
+    instead of silently managing whichever row the API listed first.
+  - >-
+    module_utils - ``lifecycle`` now owns the shared lifecycle semantics:
+    ``error_envelope``/``fail_from_sdk_error`` emit one redacted failure
+    envelope with an ``error_kind``, ``missing_as_none`` normalises the
+    dozen "not found" spellings, ``delete_resource`` treats an
+    already-absent resource as unchanged, ``soft_delete`` encodes the
+    isolate-then-purge convention, and ``plan_changes`` computes the
+    change set once for both check mode and the real run.
+  - >-
+    vpc, subnet, security_group, route_table, eip, nat_gateway and
+    cvm_instance - resolve through ``resolver.resolve_one`` and report
+    failures and deletes through ``lifecycle`` instead of hand-rolled
+    first-match lookups.

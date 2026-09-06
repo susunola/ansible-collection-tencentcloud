@@ -43,6 +43,39 @@
 - Unpack with `or {}` so the `diff` key is absent entirely when unwanted:
   `module.exit_json(changed=True, **(maybe_diff(module, before, after) or {}))`.
 
+## Resource resolution
+
+- Look a resource up through `resolver.resolve_one` from
+  `plugins/module_utils/resolver.py`, never by taking `XxxSet[0]`. Tencent
+  Cloud list filters are substring matches, so `vpc-name=prod` also returns
+  `prod-old`; a resolver result is always re-checked client-side.
+- The contract: an ID is authoritative (a rename task still finds the
+  resource), an exact name wins over a fuzzy one, a single fuzzy candidate
+  is accepted for backwards compatibility, and two or more candidates fail
+  with `ambiguous=true` plus the candidate list. No selector at all returns
+  `None` — it is never a wildcard listing.
+- Write the lookup as a `describe(filters)` callable and pass the
+  server-side filter names (`name_filters`, `id_filters`) separately;
+  `resolver.attach_filters` keeps any scope filter the module already set
+  (for example a subnet lookup's `vpc-id`).
+
+## Lifecycle semantics
+
+- Report SDK failures with `lifecycle.fail_from_sdk_error(module, exc,
+  "Operation")` so every module emits the same envelope (`msg`, `error`,
+  `error_code`, `error_kind`, `request_id`, `operation`) with credentials
+  redacted.
+- Lookups that may legitimately find nothing wrap in
+  `lifecycle.missing_as_none`; deletes use `lifecycle.delete_resource`, which
+  treats an already-absent resource as unchanged instead of an error.
+  Resources with a recycle bin (CDB, Redis, MongoDB, CVM) use
+  `lifecycle.soft_delete(isolate, purge, force=...)`.
+- Compute the change set once with `lifecycle.plan_changes(current, desired)`
+  and reuse it for both the check-mode preview and the real run. `None` in
+  `desired` means "this task does not manage the field".
+- Immutable drift fails through `lifecycle.require_immutable_unchanged`;
+  async work is polled by `plugins/module_utils/waiters.py`.
+
 ## Unit tests
 
 - New write modules must have run_module-level main-path tests using the

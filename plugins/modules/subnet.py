@@ -153,9 +153,8 @@ subnet:
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
-    is_idempotent_success,
-)
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import lifecycle
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tagging import (
     build_sdk_tags,
     compare_tags,
@@ -195,18 +194,25 @@ def build_describe_request(models, subnet_id, vpc_id, name):
     return request
 
 
-def _first(collection):
-    return collection[0] if collection else None
-
-
 def find_subnet(module, client, models, subnet_id, vpc_id, name):
-    """Return the matching subnet dict or None."""
-    request = build_describe_request(models, subnet_id, vpc_id, name)
-    response = module.sdk_call(client.DescribeSubnets, request)
-    subnet = _first(response.SubnetSet or [])
-    if subnet is None:
-        return None
-    return subnet._serialize(allow_none=True)
+    """Return the matching subnet dict or None.
+
+    The ``subnet-name`` filter is a substring match, so the shared resolver
+    re-checks every row client-side instead of trusting the first one the API
+    returned; two or more candidates fail rather than resolving silently.
+    """
+    def describe(filters):
+        request = build_describe_request(models, subnet_id, vpc_id, name)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeSubnets, request)
+        return resolver.records(response.SubnetSet)
+
+    return resolver.resolve_one(
+        module, describe, resource="subnet",
+        id_value=subnet_id, name_value=name,
+        id_keys=("SubnetId",), name_keys=("SubnetName",),
+        name_filters=("subnet-name",),
+    )
 
 
 def _update(module, client, models, subnet_id, name, enable_broadcast):
@@ -302,12 +308,7 @@ def run_module():
     try:
         current = find_subnet(module, client, models, subnet_id, vpc_id, name)
     except Exception as exc:
-        module.fail_json(
-            msg="Tencent Cloud API request failed",
-            error=str(exc),
-            error_code=getattr(exc, "get_code", lambda: None)(),
-            request_id=getattr(exc, "get_request_id", lambda: None)(),
-        )
+        lifecycle.fail_from_sdk_error(module, exc, "DescribeSubnets")
 
     if state == "absent":
         if current is None:
@@ -316,12 +317,15 @@ def run_module():
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), msg="Would delete subnet")
         try:
-            _delete(module, client, models, current["SubnetId"])
+            deleted = lifecycle.delete_resource(
+                lambda: _delete(module, client, models, current["SubnetId"]), resource="subnet"
+            )
         except Exception as exc:
-            if is_idempotent_success(exc):
-                module.exit_json(changed=True, **(diff or {}), msg="Subnet deleted")
-            raise
-        module.exit_json(changed=True, **(diff or {}), subnet=None, msg="Subnet deleted")
+            lifecycle.fail_from_sdk_error(module, exc, "DeleteSubnet")
+        module.exit_json(
+            changed=deleted, **(diff or {}), subnet=None,
+            msg="Subnet deleted" if deleted else "Subnet already absent",
+        )
 
     # state == present
     if current is None:
@@ -356,11 +360,11 @@ def run_module():
     if zone and zone != current.get("Zone"):
         module.warn("zone is immutable after creation; ignoring %s" % zone)
 
-    changes = []
-    if current_name != name:
-        changes.append("name")
-    if enable_broadcast is not None and bool(current_broadcast) != enable_broadcast:
-        changes.append("enable_broadcast")
+    # ``None`` means the task does not manage that attribute.
+    changes = lifecycle.plan_changes(
+        {"name": current_name, "enable_broadcast": bool(current_broadcast)},
+        {"name": name, "enable_broadcast": enable_broadcast},
+    )
     tags_equal, to_add, to_remove = compare_tags(tags, current_tags)
     if not tags_equal:
         changes.append("tags")

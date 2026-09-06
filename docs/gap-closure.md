@@ -98,6 +98,30 @@ scf_function、ckafka_instance、cbs_disk、eip、nat_gateway）全部无集成 
 
 **验收**：issue 首响 < 48h 的可记录 SLA；至少 1 名外部 contributor 合入 PR。
 
+## G5 引用解析与生命周期语义 — ✅ 已闭合（panorama P0-01 / P0-02）
+
+> 依据：`docs/panorama.html`（2026-09-07 基线 `3c868f8`）。八项决定性差距里，
+> panorama 自己点明"可以一次性补齐的是框架和约束"，其中两条为 P0：
+> P0-01 统一资源引用 resolver、P0-02 统一生命周期与错误语义。
+
+**为什么是 P0**：腾讯云 list 过滤是**子串匹配**（`vpc-name=prod` 会同时命中
+`prod-old` / `prod-eu`），而 103 个 `find_*` 里绝大多数直接取 `XxxSet[0]`。
+一条 `name: prod` 的 task 实际管到的是 API 恰好先返回的那一个，改名或删错资源
+既可能发生也看不见。生命周期语义同理：not-found / 不可变漂移 / 异步等待 /
+软删除 / check-diff 每个模块各写一份，靠复制保持一致，已经出现分歧。
+
+**已交付**：
+
+| 交付 | 内容 | 状态 |
+|---|---|---|
+| `module_utils/resolver.py` | 统一引用解析：ID 优先、精确名优于模糊名、唯一模糊候选接受、≥2 候选失败（C(ambiguous=true) + 候选清单）、无选择器返回 None（绝不静默通配）、支持 tag 与 register 变量 dict | ✅ |
+| `module_utils/lifecycle.py` | 统一生命周期：C(error_envelope)/C(fail_from_sdk_error)（含脱敏与 C(error_kind)）、C(missing_as_none)、C(delete_resource)、C(soft_delete)（隔离→清除两阶段）、C(plan_changes)、C(require_state) | ✅ |
+| 首批消费模块 | `vpc`、`subnet`、`security_group`、`route_table`、`eip`、`nat_gateway`、`cvm_instance` | ✅ |
+
+**剩余**：resolver/lifecycle 只覆盖了 7 个模块；其余 ~40 个 `find_*` 仍是
+first-match。按 panorama 推荐顺序（VPC → TKE → 负载均衡 → 数据库）逐族推进，
+每完成一个资源族同步升级对应角色与 info 面。
+
 ## 待批准执行清单
 
 1. G1-a 集成 target 骨架（旗舰 cvm_instance 起步，2026-09-16 前，需确认执行环境策略：容器化 mock vs 真实账号）

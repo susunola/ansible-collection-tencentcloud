@@ -219,6 +219,20 @@
 45. VPC traffic observability. **Done** — `vpc_flow_log` manages flow-log
     lifecycle for ENI, NAT, CCN and direct-connect resources, CLS topic
     delivery, mutable metadata and enabled state with convergence polling.
+46. Unified resource resolver and lifecycle layer. **Done** — two
+    `module_utils` modules close the two P0 items of
+    [panorama.html](panorama.html). `resolver` is the single
+    resource-reference contract: Tencent Cloud list filters match fuzzily,
+    so an ID, a name or a tag set is re-checked client-side — an exact name
+    wins, a lone fuzzy candidate is accepted, and two or more candidates
+    fail with `ambiguous=true` plus the candidate list instead of silently
+    managing `XxxSet[0]`. `lifecycle` owns what every module used to
+    hand-roll: one redacted failure envelope with an `error_kind`,
+    `missing_as_none` for the dozen "not found" spellings,
+    `delete_resource` (already-absent reports unchanged), `soft_delete`
+    (isolate then purge) and `plan_changes` (one change set for check mode
+    and the real run). `vpc`, `subnet`, `security_group`, `route_table`,
+    `eip`, `nat_gateway` and `cvm_instance` are the first consumers.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

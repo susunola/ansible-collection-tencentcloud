@@ -65,6 +65,9 @@ class FakeModule(object):
     def __init__(self):
         self.params = {"retries": 2}
 
+    def fail_json(self, **kwargs):
+        raise AssertionError(kwargs)
+
     def sdk_call(self, operation, request):
         return operation(request)
 
@@ -118,6 +121,30 @@ def test_find_vpc_handles_none_set():
     client = FakeClient(FakeResponse(None))
     module = FakeModule()
     assert find_vpc(module, client, FakeModels, "prod", None) is None
+
+
+def test_find_vpc_fails_instead_of_guessing_when_name_is_ambiguous():
+    # Two VPCs whose names both contain "prod": this used to resolve to
+    # whichever one the API listed first.
+    vpcs = [FakeVpc("vpc-1", "prod-a"), FakeVpc("vpc-2", "prod-b")]
+    client = FakeClient(FakeResponse(vpcs))
+    module = FakeModule()
+    try:
+        find_vpc(module, client, FakeModels, "prod", None)
+    except AssertionError as exc:
+        assert exc.args[0]["ambiguous"] is True
+        assert exc.args[0]["match_count"] == 2
+    else:
+        raise AssertionError("expected an ambiguity failure")
+
+
+def test_find_vpc_by_id_ignores_unrelated_rows():
+    # The fuzzy name filter can return rows that are not the requested VPC;
+    # an explicit id must still win.
+    vpcs = [FakeVpc("vpc-other", "prod"), FakeVpc("vpc-1", "prod-1")]
+    client = FakeClient(FakeResponse(vpcs))
+    module = FakeModule()
+    assert find_vpc(module, client, FakeModels, None, "vpc-1")["VpcId"] == "vpc-1"
 
 
 def test_find_vpc_surfaces_sdk_exceptions():

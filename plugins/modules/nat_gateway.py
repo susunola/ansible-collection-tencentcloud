@@ -162,6 +162,8 @@ nat_gateway:
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import lifecycle
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 
 
@@ -193,18 +195,26 @@ def build_describe_request(models, nat_gateway_id, name, vpc_id):
     return request
 
 
-def _first(collection):
-    return collection[0] if collection else None
-
-
 def find_gateway(module, client, models, nat_gateway_id, name, vpc_id):
-    """Return the matching NAT gateway dict or None."""
-    request = build_describe_request(models, nat_gateway_id, name, vpc_id)
-    response = module.sdk_call(client.DescribeNatGateways, request)
-    gateway = _first(response.NatGatewaySet or [])
-    if gateway is None:
-        return None
-    return gateway._serialize(allow_none=True)
+    """Return the matching NAT gateway dict or None.
+
+    The ``nat-gateway-name`` filter is a substring match, so the shared
+    resolver re-checks every row client-side instead of trusting the first
+    one the API returned; two or more candidates fail rather than resolving
+    silently.
+    """
+    def describe(filters):
+        request = build_describe_request(models, nat_gateway_id, name, vpc_id)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeNatGateways, request)
+        return resolver.records(response.NatGatewaySet)
+
+    return resolver.resolve_one(
+        module, describe, resource="NAT gateway",
+        id_value=nat_gateway_id, name_value=name,
+        id_keys=("NatGatewayId",), name_keys=("NatGatewayName",),
+        name_filters=("nat-gateway-name",),
+    )
 
 
 def _create(module, client, models, params):
@@ -283,12 +293,7 @@ def run_module():
     try:
         current = find_gateway(module, client, models, nat_gateway_id, name, vpc_id)
     except Exception as exc:
-        module.fail_json(
-            msg="Tencent Cloud API request failed",
-            error=str(exc),
-            error_code=getattr(exc, "get_code", lambda: None)(),
-            request_id=getattr(exc, "get_request_id", lambda: None)(),
-        )
+        lifecycle.fail_from_sdk_error(module, exc, "DescribeNatGateways")
 
     if state == "absent":
         if current is None:
@@ -299,8 +304,17 @@ def run_module():
             module.exit_json(changed=True, **(diff or {}), msg="Would delete NAT gateway")
         if current.get("DeletionProtectionEnabled"):
             _set_deletion_protection(module, client, models, target_id, False)
-        _delete(module, client, models, target_id, module.params["ignore_operation_risk"])
-        module.exit_json(changed=True, **(diff or {}), nat_gateway=None, msg="NAT gateway deleted")
+        try:
+            deleted = lifecycle.delete_resource(
+                lambda: _delete(module, client, models, target_id, module.params["ignore_operation_risk"]),
+                resource="NAT gateway",
+            )
+        except Exception as exc:
+            lifecycle.fail_from_sdk_error(module, exc, "DeleteNatGateway")
+        module.exit_json(
+            changed=deleted, **(diff or {}), nat_gateway=None,
+            msg="NAT gateway deleted" if deleted else "NAT gateway already absent",
+        )
 
     # state == present
     if current is None:
@@ -322,15 +336,21 @@ def run_module():
         module.exit_json(changed=True, **(diff or {}), nat_gateway=created, msg="NAT gateway created")
 
     target_id = current["NatGatewayId"]
-    changes = []
-    if name and current.get("NatGatewayName") != name:
-        changes.append("name")
     bandwidth = module.params["internet_max_bandwidth_out"]
-    if bandwidth is not None and current.get("InternetMaxBandwidthOut") != bandwidth:
-        changes.append("bandwidth")
     protection = module.params["deletion_protection_enabled"]
-    if protection != bool(current.get("DeletionProtectionEnabled")):
-        changes.append("deletion_protection")
+    # ``None`` means the task does not manage that attribute.
+    changes = lifecycle.plan_changes(
+        {
+            "name": current.get("NatGatewayName"),
+            "bandwidth": current.get("InternetMaxBandwidthOut"),
+            "deletion_protection": bool(current.get("DeletionProtectionEnabled")),
+        },
+        {
+            "name": name or None,
+            "bandwidth": bandwidth,
+            "deletion_protection": protection,
+        },
+    )
 
     if not changes:
         module.exit_json(changed=False, nat_gateway=current, msg="NAT gateway is up to date")

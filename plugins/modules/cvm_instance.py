@@ -378,8 +378,15 @@ instance:
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
-    is_idempotent_success,
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import (
+    delete_resource,
+    fail_from_sdk_error,
+    plan_changes,
+)
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.resolver import (
+    attach_filters,
+    records,
+    resolve_one,
 )
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tagging import (
     build_sdk_tags,
@@ -482,18 +489,28 @@ def build_run_request(models, params):
     return request
 
 
-def _first(collection):
-    return collection[0] if collection else None
-
-
 def find_instance(module, client, models, instance_id, instance_name):
-    """Return the matching instance dict or None."""
-    request = build_describe_request(models, instance_id, instance_name)
-    response = module.sdk_call(client.DescribeInstances, request)
-    instance = _first(response.InstanceSet or [])
-    if instance is None:
-        return None
-    return instance._serialize(allow_none=True)
+    """Return the matching instance dict or None.
+
+    ``instance-name`` is a substring filter server-side, so a task asking for
+    O(instance_name=web) also sees B(web-01) and B(web-02). The candidate set
+    is therefore re-checked client-side by the shared resolver: an exact name
+    wins, a lone fuzzy candidate is accepted, and two or more candidates fail
+    with C(ambiguous=true) instead of silently managing whichever row the API
+    listed first.
+    """
+    def describe(filters):
+        request = build_describe_request(models, instance_id, instance_name)
+        attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeInstances, request)
+        return records(response.InstanceSet)
+
+    return resolve_one(
+        module, describe, resource="instance",
+        id_value=instance_id, name_value=instance_name,
+        id_keys=("InstanceId",), name_keys=("InstanceName",),
+        name_filters=("instance-name",),
+    )
 
 
 def find_instances_by_tags(module, client, models, count_tag):
@@ -862,12 +879,7 @@ def run_module():
             return _manage_exact_count(module, client, models, module.params)
         current = find_instance(module, client, models, instance_id, instance_name)
     except Exception as exc:
-        module.fail_json(
-            msg="Tencent Cloud API request failed",
-            error=str(exc),
-            error_code=getattr(exc, "get_code", lambda: None)(),
-            request_id=getattr(exc, "get_request_id", lambda: None)(),
-        )
+        fail_from_sdk_error(module, exc)
 
     if state == "absent":
         if current is None:
@@ -877,12 +889,18 @@ def run_module():
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), msg="Would terminate instance")
         try:
-            _delete(module, client, models, target_id)
-            _wait_gone(module, client, models, target_id)
+            # TerminateInstances on an instance that is already gone is not an
+            # error - it is the desired end state.
+            terminated = delete_resource(
+                lambda: _delete(module, client, models, target_id), resource="instance",
+            )
         except Exception as exc:
-            if is_idempotent_success(exc):
-                module.exit_json(changed=True, **(diff or {}), msg="Instance terminated")
-            raise
+            fail_from_sdk_error(module, exc, "TerminateInstances")
+        if terminated:
+            try:
+                _wait_gone(module, client, models, target_id)
+            except Exception as exc:
+                fail_from_sdk_error(module, exc, "DescribeInstances")
         module.exit_json(changed=True, **(diff or {}), instance=None, msg="Instance terminated")
 
     if state in ("running", "stopped"):
@@ -989,12 +1007,22 @@ def run_module():
             instance=current,
         )
 
-    changes = []
-    if instance_name and current.get("InstanceName") != instance_name:
-        changes.append("instance_name")
     current_sg_ids = current.get("SecurityGroupIds") or []
-    if security_group_ids is not None and sorted(security_group_ids) != sorted(current_sg_ids):
-        changes.append("security_group_ids")
+    # None in the desired mapping means "this task does not manage the
+    # field", which is what keeps an omitted argument from being reported
+    # as a change.
+    changes = plan_changes(
+        {
+            "instance_name": current.get("InstanceName"),
+            "security_group_ids": sorted(current_sg_ids),
+        },
+        {
+            "instance_name": instance_name,
+            "security_group_ids": (
+                sorted(security_group_ids) if security_group_ids is not None else None
+            ),
+        },
+    )
     tags_equal, to_add, to_remove = compare_tags(tags, current.get("Tags") or [])
     if not tags_equal:
         changes.append("tags")

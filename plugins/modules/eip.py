@@ -162,9 +162,8 @@ eip:
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
-    is_idempotent_success,
-)
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import lifecycle
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tagging import (
     build_sdk_tags,
     compare_tags,
@@ -204,13 +203,30 @@ def _first(collection):
 
 
 def find_address(module, client, models, eip_id, address_ip, name):
-    """Return the matching address dict or None."""
-    request = build_describe_request(models, eip_id, address_ip, name)
-    response = module.sdk_call(client.DescribeAddresses, request)
-    address = _first(response.AddressSet or [])
-    if address is None:
-        return None
-    return address._serialize(allow_none=True)
+    """Return the matching address dict or None.
+
+    The address name filter matches fuzzily, so the shared resolver re-checks
+    every row client-side instead of trusting the first one the API returned.
+    ``address_ip`` is a third identity (an EIP is routinely addressed by its
+    public address) and is matched exactly.
+    """
+    def describe(filters):
+        request = build_describe_request(models, eip_id, address_ip, name)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeAddresses, request)
+        return resolver.records(response.AddressSet)
+
+    def matches_address_ip(record):
+        return str(resolver.value_of(record, ("AddressIp",)) or "") == address_ip
+
+    extra_match = matches_address_ip if address_ip else None
+
+    return resolver.resolve_one(
+        module, describe, resource="address",
+        id_value=eip_id, name_value=name,
+        id_keys=("AddressId",), name_keys=("AddressName",),
+        name_filters=("address-name",), extra_match=extra_match,
+    )
 
 
 def _associate(module, client, models, address_id, instance_id):
@@ -352,12 +368,7 @@ def run_module():
     try:
         current = find_address(module, client, models, eip_id, address_ip, name)
     except Exception as exc:
-        module.fail_json(
-            msg="Tencent Cloud API request failed",
-            error=str(exc),
-            error_code=getattr(exc, "get_code", lambda: None)(),
-            request_id=getattr(exc, "get_request_id", lambda: None)(),
-        )
+        lifecycle.fail_from_sdk_error(module, exc, "DescribeAddresses")
 
     if state == "absent":
         if current is None:
@@ -367,12 +378,16 @@ def run_module():
             module.exit_json(changed=True, **(diff or {}), msg="Would release address")
         bound = bool(current.get("InstanceId"))
         try:
-            _delete(module, client, models, current["AddressId"], bound)
+            deleted = lifecycle.delete_resource(
+                lambda: _delete(module, client, models, current["AddressId"], bound),
+                resource="address",
+            )
         except Exception as exc:
-            if is_idempotent_success(exc):
-                module.exit_json(changed=True, **(diff or {}), msg="Address released")
-            raise
-        module.exit_json(changed=True, **(diff or {}), eip=None, msg="Address released")
+            lifecycle.fail_from_sdk_error(module, exc, "ReleaseAddresses")
+        module.exit_json(
+            changed=deleted, **(diff or {}), eip=None,
+            msg="Address released" if deleted else "Address already absent",
+        )
 
     # state == present
     desired = {
@@ -401,24 +416,24 @@ def run_module():
     current_bandwidth = current.get("Bandwidth")
     current_charge_type = current.get("InternetChargeType")
 
-    changes = []
-    if name is not None and name != (current_name or ""):
-        changes.append("name")
+    # ``None`` means the task does not manage that attribute.
+    changes = lifecycle.plan_changes(
+        {
+            "name": current_name or "",
+            "bandwidth": current_bandwidth,
+            "charge_type": current_charge_type,
+            "association": current_instance,
+        },
+        {
+            "name": name,
+            "bandwidth": internet_max_bandwidth_out,
+            "charge_type": internet_charge_type,
+            "association": (instance_id or "") if instance_id is not None else None,
+        },
+    )
     tags_equal, to_add, to_remove = compare_tags(tags, current_tags)
     if not tags_equal:
         changes.append("tags")
-    if instance_id is not None and (instance_id or "") != current_instance:
-        changes.append("association")
-    if (
-        internet_max_bandwidth_out is not None
-        and current_bandwidth != internet_max_bandwidth_out
-    ):
-        changes.append("bandwidth")
-    if (
-        internet_charge_type is not None
-        and current_charge_type != internet_charge_type
-    ):
-        changes.append("charge_type")
 
     if not changes:
         module.exit_json(changed=False, eip=current, msg="Address is up to date")

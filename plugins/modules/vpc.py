@@ -92,6 +92,10 @@ notes:
   - Tag reconciliation additionally requires C(tencentcloud-sdk-python-tag).
   - The primary CIDR block cannot be changed after creation; passing a
     different O(cidr_block) for an existing VPC is a no-op.
+  - The C(vpc-name) API filter is a substring match, so the response is
+    re-checked client-side. An exact name match wins, a lone fuzzy candidate
+    is accepted, and two or more candidates fail rather than silently
+    picking whichever VPC the API listed first. Pass O(vpc_id) to be exact.
   - Uses the C(vpc.tencentcloudapi.com) endpoint by default.
 extends_documentation_fragment: susunola.tencentcloud.tencentcloud
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
@@ -144,9 +148,8 @@ vpc:
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
-    is_idempotent_success,
-)
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import lifecycle
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tagging import (
     build_sdk_tags,
     compare_tags,
@@ -180,21 +183,23 @@ def build_describe_request(models, name, vpc_id):
 def find_vpc(module, client, models, name, vpc_id):
     """Return the matching VPC dict or None.
 
-    The ``vpc-name`` filter matches fuzzily, so an exact name match is
-    preferred over the first entry of the result set.
+    The ``vpc-name`` filter matches fuzzily, so the shared resolver re-checks
+    every row client-side: an exact name match wins, a lone fuzzy candidate is
+    accepted, and two or more candidates fail instead of silently picking
+    whichever VPC the API happened to list first.
     """
-    request = build_describe_request(models, name, vpc_id)
-    response = module.sdk_call(client.DescribeVpcs, request)
-    vpcs = response.VpcSet or []
-    if not vpcs:
-        return None
-    match = vpcs[0]
-    if name and not vpc_id:
-        for vpc in vpcs:
-            if getattr(vpc, "VpcName", None) == name:
-                match = vpc
-                break
-    return match._serialize(allow_none=True)
+    def describe(filters):
+        request = build_describe_request(models, name, vpc_id)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeVpcs, request)
+        return resolver.records(response.VpcSet)
+
+    return resolver.resolve_one(
+        module, describe, resource="VPC",
+        id_value=vpc_id, name_value=name,
+        id_keys=("VpcId",), name_keys=("VpcName",),
+        name_filters=("vpc-name",),
+    )
 
 
 def _update_attributes(module, client, models, vpc_id, name, dns_servers, domain_name):
@@ -285,12 +290,7 @@ def run_module():
     try:
         current = find_vpc(module, client, models, name, vpc_id)
     except Exception as exc:
-        module.fail_json(
-            msg="Tencent Cloud API request failed",
-            error=str(exc),
-            error_code=getattr(exc, "get_code", lambda: None)(),
-            request_id=getattr(exc, "get_request_id", lambda: None)(),
-        )
+        lifecycle.fail_from_sdk_error(module, exc, "DescribeVpcs")
 
     if state == "absent":
         if current is None:
@@ -299,12 +299,15 @@ def run_module():
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), msg="Would delete VPC")
         try:
-            _delete(module, client, models, current["VpcId"])
+            deleted = lifecycle.delete_resource(
+                lambda: _delete(module, client, models, current["VpcId"]), resource="VPC"
+            )
         except Exception as exc:
-            if is_idempotent_success(exc):
-                module.exit_json(changed=True, **(diff or {}), msg="VPC deleted")
-            raise
-        module.exit_json(changed=True, **(diff or {}), vpc=None, msg="VPC deleted")
+            lifecycle.fail_from_sdk_error(module, exc, "DeleteVpc")
+        module.exit_json(
+            changed=deleted, **(diff or {}), vpc=None,
+            msg="VPC deleted" if deleted else "VPC already absent",
+        )
 
     # state == present
     desired = {"name": name, "dns_servers": dns_servers, "domain_name": domain_name, "tags": tags}
@@ -327,13 +330,12 @@ def run_module():
     # The primary CIDR block is immutable; report it as-is in the diff.
     desired["cidr_block"] = current.get("CidrBlock")
 
-    changes = []
-    if current_name != name:
-        changes.append("name")
-    if dns_servers is not None and list(dns_servers) != list(current_dns):
-        changes.append("dns_servers")
-    if domain_name is not None and domain_name != current_domain:
-        changes.append("domain_name")
+    # ``None`` means the task does not manage that attribute, so it is left
+    # out of the change set even though ModifyVpcAttribute rewrites it.
+    changes = lifecycle.plan_changes(
+        {"name": current_name, "dns_servers": list(current_dns), "domain_name": current_domain},
+        {"name": name, "dns_servers": dns_servers, "domain_name": domain_name},
+    )
     tags_equal, to_add, to_remove = compare_tags(tags, current_tags)
     if not tags_equal:
         changes.append("tags")

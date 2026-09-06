@@ -184,9 +184,8 @@ route_table:
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
-    is_idempotent_success,
-)
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import lifecycle
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tagging import (
     build_sdk_tags,
     compare_tags,
@@ -225,18 +224,26 @@ def build_describe_request(models, route_table_id, vpc_id, name):
     return request
 
 
-def _first(collection):
-    return collection[0] if collection else None
-
-
 def find_route_table(module, client, models, route_table_id, vpc_id, name):
-    """Return the matching route table dict or None."""
-    request = build_describe_request(models, route_table_id, vpc_id, name)
-    response = module.sdk_call(client.DescribeRouteTables, request)
-    table = _first(response.RouteTableSet or [])
-    if table is None:
-        return None
-    return table._serialize(allow_none=True)
+    """Return the matching route table dict or None.
+
+    The ``route-table-name`` filter is a substring match, so the shared
+    resolver re-checks every row client-side instead of trusting the first
+    one the API returned; two or more candidates fail rather than resolving
+    silently.
+    """
+    def describe(filters):
+        request = build_describe_request(models, route_table_id, vpc_id, name)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeRouteTables, request)
+        return resolver.records(response.RouteTableSet)
+
+    return resolver.resolve_one(
+        module, describe, resource="route table",
+        id_value=route_table_id, name_value=name,
+        id_keys=("RouteTableId",), name_keys=("RouteTableName",),
+        name_filters=("route-table-name",),
+    )
 
 
 def diff_routes(desired_routes, current_route_set):
@@ -405,12 +412,7 @@ def run_module():
     try:
         current = find_route_table(module, client, models, route_table_id, vpc_id, name)
     except Exception as exc:
-        module.fail_json(
-            msg="Tencent Cloud API request failed",
-            error=str(exc),
-            error_code=getattr(exc, "get_code", lambda: None)(),
-            request_id=getattr(exc, "get_request_id", lambda: None)(),
-        )
+        lifecycle.fail_from_sdk_error(module, exc, "DescribeRouteTables")
 
     if state == "absent":
         if current is None:
@@ -419,12 +421,16 @@ def run_module():
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), msg="Would delete route table")
         try:
-            _delete(module, client, models, current["RouteTableId"])
+            deleted = lifecycle.delete_resource(
+                lambda: _delete(module, client, models, current["RouteTableId"]),
+                resource="route table",
+            )
         except Exception as exc:
-            if is_idempotent_success(exc):
-                module.exit_json(changed=True, **(diff or {}), msg="Route table deleted")
-            raise
-        module.exit_json(changed=True, **(diff or {}), route_table=None, msg="Route table deleted")
+            lifecycle.fail_from_sdk_error(module, exc, "DeleteRouteTable")
+        module.exit_json(
+            changed=deleted, **(diff or {}), route_table=None,
+            msg="Route table deleted" if deleted else "Route table already absent",
+        )
 
     # state == present
     desired = {"name": name, "routes": routes, "tags": tags}
@@ -446,9 +452,7 @@ def run_module():
     current_tags = current.get("TagSet") or []
     current_routes = current.get("RouteSet") or []
 
-    changes = []
-    if current_name != name:
-        changes.append("name")
+    changes = lifecycle.plan_changes({"name": current_name}, {"name": name})
     tags_equal, to_add_tags, to_remove_tags = compare_tags(tags, current_tags)
     if not tags_equal:
         changes.append("tags")

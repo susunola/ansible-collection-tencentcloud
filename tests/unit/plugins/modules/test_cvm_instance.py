@@ -90,6 +90,9 @@ class FakeModule(object):
     def __init__(self):
         self.params = {"retries": 2}
 
+    def fail_json(self, **kwargs):
+        raise AssertionError(kwargs)
+
     def sdk_call(self, operation, request):
         return operation(request)
 
@@ -136,6 +139,43 @@ def test_find_instance_returns_first_match():
     instance = find_instance(module, client, FakeModels, None, "web-01")
     assert instance["InstanceId"] == "ins-1"
     assert len(client.calls) == 1
+
+
+def test_find_instance_prefers_exact_name_match():
+    # "instance-name" is a substring filter: an exact match must win.
+    instances = [FakeInstance("ins-1", "web-01"), FakeInstance("ins-2", "web")]
+    client = FakeClient(FakeResponse(instances))
+    module = FakeModule()
+    assert find_instance(module, client, FakeModels, None, "web")["InstanceId"] == "ins-2"
+
+
+def test_find_instance_by_id_ignores_unrelated_rows():
+    instances = [FakeInstance("ins-1", "web-01"), FakeInstance("ins-2", "web-02")]
+    client = FakeClient(FakeResponse(instances))
+    module = FakeModule()
+    assert find_instance(module, client, FakeModels, "ins-2", None)["InstanceId"] == "ins-2"
+
+
+def test_find_instance_by_id_wins_over_a_renamed_instance():
+    # A rename task must still find the instance by its ID.
+    client = FakeClient(FakeResponse([FakeInstance("ins-1", "new-name")]))
+    module = FakeModule()
+    instance = find_instance(module, client, FakeModels, "ins-1", "old-name")
+    assert instance["InstanceId"] == "ins-1"
+
+
+def test_find_instance_fails_instead_of_guessing_when_name_is_ambiguous():
+    instances = [FakeInstance("ins-1", "web-01"), FakeInstance("ins-2", "web-02")]
+    client = FakeClient(FakeResponse(instances))
+    module = FakeModule()
+    try:
+        find_instance(module, client, FakeModels, None, "web")
+    except AssertionError as exc:
+        assert exc.args[0]["ambiguous"] is True
+        assert exc.args[0]["match_count"] == 2
+        assert exc.args[0]["resource"] == "instance"
+    else:
+        raise AssertionError("expected an ambiguity failure")
 
 
 def test_find_instance_returns_none_when_absent():
