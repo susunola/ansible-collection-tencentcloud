@@ -2533,6 +2533,12 @@ modules:
   - DeleteNamespace
   - DescribeSimpleNamespaces
   - ModifyNamespace
+  tsf_repository:
+  - CreateRepository
+  - DeleteRepository
+  - DescribeRepositories
+  - DescribeRepository
+  - UpdateRepository
   tsf_vm_deployment_group:
   - CreateGroup
   - DeleteGroup

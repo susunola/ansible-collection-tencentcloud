@@ -1,6 +1,7 @@
 ---
 tc_tsf_microservice_platform_state: present
 tc_tsf_microservice_platform_clusters: []
+tc_tsf_microservice_platform_repositories: []
 tc_tsf_microservice_platform_namespaces: []
 tc_tsf_microservice_platform_applications: []
 tc_tsf_microservice_platform_microservices: []

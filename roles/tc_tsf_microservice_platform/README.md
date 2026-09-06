@@ -12,6 +12,8 @@ Destruction requires an explicit safety opt-in.
       vars:
         tc_tsf_microservice_platform_clusters:
           - {name: production, cluster_type: C, vpc_id: vpc-xxxxxxxx, subnet_id: subnet-xxxxxxxx}
+        tc_tsf_microservice_platform_repositories:
+          - {name: production-packages, repository_type: private, bucket_name: tsf-packages-1250000000, bucket_region: ap-guangzhou}
         tc_tsf_microservice_platform_namespaces:
           - name: production
             cluster_id: cluster-xxxxxxxx

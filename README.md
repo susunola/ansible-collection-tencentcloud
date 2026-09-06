@@ -415,6 +415,7 @@ Resource modules (idempotent, `state: present|absent`, check mode and diff):
 | `tsf_lane_rule` | Manage a Tencent Cloud TSF traffic lane rule |
 | `tsf_microservice` | Manage a Tencent Cloud TSF microservice |
 | `tsf_namespace` | Manage a Tencent Cloud TSF namespace |
+| `tsf_repository` | Manage a Tencent Cloud TSF package repository |
 | `tsf_vm_deployment_group` | Manage a Tencent Cloud TSF virtual-machine deployment group |
 | `vdb_instance` | Manage Tencent Cloud VectorDB instances |
 | `vpc` | Manage Tencent Cloud VPCs |

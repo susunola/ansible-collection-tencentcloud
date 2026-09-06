@@ -4,6 +4,7 @@
     that:
       - tc_tsf_microservice_platform_state in ['present', 'absent']
       - tc_tsf_microservice_platform_clusters is sequence
+      - tc_tsf_microservice_platform_repositories is sequence
       - tc_tsf_microservice_platform_namespaces is sequence
       - tc_tsf_microservice_platform_applications is sequence
       - tc_tsf_microservice_platform_microservices is sequence
@@ -21,6 +22,14 @@
   loop: "{{ tc_tsf_microservice_platform_clusters }}"
   loop_control: {label: "{{ item.name | default(item.cluster_id | default('unnamed')) }}"}
   register: _tc_tsf_microservice_platform_clusters
+
+- name: Reconcile TSF package repositories
+  when: tc_tsf_microservice_platform_state == 'present'
+  susunola.tencentcloud.tsf_repository:
+  args: "{{ item | combine({'state': 'present'}) }}"
+  loop: "{{ tc_tsf_microservice_platform_repositories }}"
+  loop_control: {label: "{{ item.name | default(item.repository_id | default('unnamed')) }}"}
+  register: _tc_tsf_microservice_platform_repositories
 
 - name: Reconcile TSF namespaces
   when: tc_tsf_microservice_platform_state == 'present'
@@ -83,6 +92,7 @@
   ansible.builtin.set_fact:
     tc_tsf_microservice_platform_result:
       clusters: "{{ _tc_tsf_microservice_platform_clusters.results | default([]) | map(attribute='cluster') | list }}"
+      repositories: "{{ _tc_tsf_microservice_platform_repositories.results | default([]) | map(attribute='repository') | list }}"
       namespaces: "{{ _tc_tsf_microservice_platform_namespaces.results | default([]) | map(attribute='namespace') | list }}"
       applications: "{{ _tc_tsf_microservice_platform_applications.results | default([]) | map(attribute='application') | list }}"
       microservices: "{{ _tc_tsf_microservice_platform_microservices.results | default([]) | map(attribute='microservice') | list }}"
@@ -173,3 +183,13 @@
     state: absent
   loop: "{{ tc_tsf_microservice_platform_clusters | reverse | list }}"
   loop_control: {label: "{{ item.name | default(item.cluster_id | default('unnamed')) }}"}
+
+- name: Remove TSF package repositories
+  when: tc_tsf_microservice_platform_state == 'absent'
+  susunola.tencentcloud.tsf_repository:
+    repository_id: "{{ item.repository_id | default(omit) }}"
+    name: "{{ item.name }}"
+    repository_type: "{{ item.repository_type }}"
+    state: absent
+  loop: "{{ tc_tsf_microservice_platform_repositories | reverse | list }}"
+  loop_control: {label: "{{ item.name | default(item.repository_id | default('unnamed')) }}"}
