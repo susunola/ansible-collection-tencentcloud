@@ -243,9 +243,16 @@
     lookups (customer gateway, network ACL, flow log, VPN connection) and the
     product-specific scopes an ID or a name does not cover (an ENI's
     `SubnetId`, a tunnel's `DirectConnectId`). Each family now has one
-    contract test — `tests/unit/plugins/modules/test_vpc_family_resolution.py`
+    contract test — `tests/unit/plugins/modules/test_resource_family_resolution.py`
     — asserting exact-name-wins, lone-fuzzy-accepted, ambiguous-fails and
     id-ignores-noise across all ten lookup entry points.
+48. TKE resource family rollout. **Done** — `tke_cluster`, `tke_node_pool`
+    and `tke_cluster_upgrade` join the same contract. `tke_cluster` looked a
+    cluster up by ID with `Clusters[0]` and never re-checked it;
+    `tke_cluster_upgrade` did the same before submitting a version upgrade,
+    which is the wrong place to trust the API's row order. Node pools have no
+    server-side name filter at all, so every pool of the cluster is now
+    listed and resolved client-side.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

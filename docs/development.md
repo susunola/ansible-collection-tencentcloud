@@ -65,8 +65,8 @@
 - Paginated `Describe*` calls collect every page inside `describe` and return
   the full list; the resolver does the matching.
 - Every lookup in a resource family is pinned by one contract test — see
-  `tests/unit/plugins/modules/test_vpc_family_resolution.py`. Adding a module
-  to the family means adding it to that table, not writing a new set of
+  `tests/unit/plugins/modules/test_resource_family_resolution.py`. Adding a
+  module to a family means adding it to that table, not writing a new set of
   near-duplicate tests.
 
 ## Lifecycle semantics

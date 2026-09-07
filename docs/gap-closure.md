@@ -118,7 +118,8 @@ scf_function、ckafka_instance、cbs_disk、eip、nat_gateway）全部无集成 
 | `module_utils/lifecycle.py` | 统一生命周期：C(error_envelope)/C(fail_from_sdk_error)（含脱敏与 C(error_kind)）、C(missing_as_none)、C(delete_resource)、C(soft_delete)（隔离→清除两阶段）、C(plan_changes)、C(require_state) | ✅ |
 | 首批消费模块 | `vpc`、`subnet`、`security_group`、`route_table`、`eip`、`nat_gateway`、`cvm_instance` | ✅ |
 | VPC 资源族 | `vpn_gateway`、`vpn_connection`、`peering_connection`、`network_interface`、`network_acl`、`vpc_flow_log`、`nat_gateway_rule`、`customer_gateway`、`dc_direct_connect`、`dc_direct_connect_tunnel` | ✅ |
-| 资源族回归测试 | `tests/unit/plugins/modules/test_vpc_family_resolution.py` 对上表全部 10 个查找入口断言同一契约（精确名优先 / 唯一模糊候选接受 / ≥2 候选 C(ambiguous) / ID 忽略噪声行） | ✅ |
+| 资源族回归测试 | `tests/unit/plugins/modules/test_resource_family_resolution.py` 对全部查找入口断言同一契约（精确名优先 / 唯一模糊候选接受 / ≥2 候选 C(ambiguous) / ID 忽略噪声行） | ✅ |
+| TKE 资源族 | `tke_cluster`、`tke_node_pool`、`tke_cluster_upgrade` | ✅ |
 
 **剩余**：resolver/lifecycle 已覆盖 VPC 资源族；其余 ~30 个 `find_*` 仍是
 first-match。按 panorama 推荐顺序（VPC → TKE → 负载均衡 → 数据库）逐族推进，

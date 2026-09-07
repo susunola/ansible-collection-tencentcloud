@@ -106,6 +106,7 @@ changed:
   type: bool
 '''
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
@@ -117,14 +118,23 @@ def _load_tke():
 
 
 def find_cluster(module, client, models, cluster_id):
-    """Return the serialized cluster dict or None."""
-    request = models.DescribeClustersRequest()
-    request.ClusterIds = [cluster_id]
-    response = module.sdk_call(client.DescribeClusters, request)
-    cluster = (response.Clusters or [None])[0]
-    if cluster is None:
-        return None
-    return cluster._serialize(allow_none=True)
+    """Return the serialized cluster dict or None.
+
+    The ID is re-checked client-side instead of taking ``Clusters[0]``, so a
+    request that comes back with an unrelated first row no longer upgrades
+    the wrong cluster.
+    """
+    def describe(filters):
+        request = models.DescribeClustersRequest()
+        request.ClusterIds = [cluster_id]
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeClusters, request)
+        return resolver.records(response.Clusters)
+
+    return resolver.resolve_one(
+        module, describe, resource="TKE cluster",
+        id_value=cluster_id, id_keys=("ClusterId",),
+    )
 
 
 def run_module():

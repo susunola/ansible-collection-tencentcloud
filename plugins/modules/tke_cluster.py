@@ -187,6 +187,7 @@ cluster:
     ClusterVersion: "1.28"
 '''
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 
@@ -209,22 +210,27 @@ def build_describe_request(models, cluster_id, name):
     return request
 
 
-def _first(collection):
-    return collection[0] if collection else None
-
-
 def find_cluster(module, client, models, cluster_id, name):
-    """Return the matching cluster dict or None."""
-    request = build_describe_request(models, cluster_id, name)
-    response = module.sdk_call(client.DescribeClusters, request)
-    if cluster_id:
-        cluster = _first(response.Clusters or [])
-        return cluster._serialize(allow_none=True) if cluster is not None else None
-    for cluster in response.Clusters or []:
-        current = cluster._serialize(allow_none=True)
-        if current.get("ClusterName") == name:
-            return current
-    return None
+    """Return the matching cluster dict or None.
+
+    ``cluster-name`` is a substring filter, so the candidate set is
+    re-checked client-side by the shared resolver: an exact name wins, a lone
+    fuzzy candidate is accepted, and two or more candidates fail with
+    C(ambiguous=true) plus the candidate list instead of the old
+    ``Clusters[0]`` pick.
+    """
+    def describe(filters):
+        request = build_describe_request(models, cluster_id, name)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeClusters, request)
+        return resolver.records(response.Clusters)
+
+    return resolver.resolve_one(
+        module, describe, resource="TKE cluster",
+        id_value=cluster_id, name_value=name,
+        id_keys=("ClusterId",), name_keys=("ClusterName",),
+        name_filters=("cluster-name",),
+    )
 
 
 def _create(module, client, models, params):

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Shared resolution semantics for the VPC resource family.
+"""Shared resolution semantics across the rolled-out resource families.
 
-Every ``find_*`` helper in this family used to hand back
+Every ``find_*`` helper listed in ``SPECS`` used to hand back
 ``response.XxxSet[0]`` after a **fuzzy** server-side name filter, so a task
 that said ``name: prod`` could silently manage ``prod-old``. These tests pin
 the contract the shared resolver now gives every one of them:
@@ -25,6 +25,9 @@ from ansible_collections.susunola.tencentcloud.plugins.modules import (
     network_acl,
     network_interface,
     peering_connection,
+    tke_cluster,
+    tke_cluster_upgrade,
+    tke_node_pool,
     vpc_flow_log,
     vpn_connection,
     vpn_gateway,
@@ -88,7 +91,7 @@ class Spec(object):
     """One member of the VPC family, wired up for the shared assertions."""
 
     def __init__(self, key, find, method, set_name, request_name, id_field, name_field,
-                 call, by_name=True, total_attr="TotalCount"):
+                 call, by_name=True, by_id=True, total_attr="TotalCount"):
         self.key = key
         self.find = find
         self.method = method
@@ -98,6 +101,7 @@ class Spec(object):
         self.name_field = name_field
         self.call = call
         self.by_name = by_name
+        self.by_id = by_id
         self.total_attr = total_attr
 
     @property
@@ -171,6 +175,23 @@ SPECS = [
         lambda find, module, client, models, id_value, name_value: find(
             module, client, models, {"tunnel_id": id_value, "name": name_value}),
     ),
+    Spec(
+        "tke_cluster", tke_cluster.find_cluster, "DescribeClusters", "Clusters",
+        "DescribeClustersRequest", "ClusterId", "ClusterName",
+        lambda find, module, client, models, id_value, name_value: find(module, client, models, id_value, name_value),
+    ),
+    Spec(
+        "tke_node_pool", tke_node_pool.find_node_pool, "DescribeClusterNodePools", "NodePoolSet",
+        "DescribeClusterNodePoolsRequest", "NodePoolId", "Name",
+        lambda find, module, client, models, id_value, name_value: find(module, client, models, "cls-1", name_value),
+        by_id=False,
+    ),
+    Spec(
+        "tke_cluster_upgrade", tke_cluster_upgrade.find_cluster, "DescribeClusters", "Clusters",
+        "DescribeClustersRequest", "ClusterId", "ClusterName",
+        lambda find, module, client, models, id_value, name_value: find(module, client, models, id_value),
+        by_name=False,
+    ),
 ]
 
 SPEC_IDS = [spec.key for spec in SPECS]
@@ -208,6 +229,8 @@ def test_ambiguous_name_fails_with_candidates(spec):
 
 @pytest.mark.parametrize("spec", SPECS, ids=SPEC_IDS)
 def test_id_lookup_ignores_unrelated_rows(spec):
+    if not spec.by_id:
+        pytest.skip("lookup is by name only")
     records = [spec.record("x-1", "prod"), spec.record("x-2", "prod-2")]
     found = spec.resolve(records, id_value="x-2")
     assert found[spec.id_field] == "x-2"
@@ -215,6 +238,8 @@ def test_id_lookup_ignores_unrelated_rows(spec):
 
 @pytest.mark.parametrize("spec", SPECS, ids=SPEC_IDS)
 def test_unknown_id_returns_none(spec):
+    if not spec.by_id:
+        pytest.skip("lookup is by name only")
     assert spec.resolve([spec.record("x-1", "prod")], id_value="x-9") is None
 
 
