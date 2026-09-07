@@ -62,6 +62,12 @@ KNOWN_COVERAGE = {
         ["cvm_instance_info"],
         "DescribeInstances returns SecurityGroupIds per instance",
     ),
+    "postgresql_instance": (
+        ["postgres_instance_info"],
+        "postgres_instance_info (generated) reads TencentDB for PostgreSQL "
+        "instances via DescribeDBInstances, the same list surface the write "
+        "module reconciles against",
+    ),
     "tke_cluster_upgrade": (
         ["tke_cluster_info"],
         "DescribeClusters returns the current ClusterVersion per cluster",
@@ -258,7 +264,6 @@ KNOWN_GAPS = {
     "eb_rule",
     "eb_target",
     "elasticsearch_index",
-    "elasticsearch_instance",
     "elasticsearch_snapshot",
     "emr_cluster",
     "goosefs_fileset",
@@ -292,7 +297,6 @@ KNOWN_GAPS = {
     "organization_member_identity",
     "organization_member_policy",
     "organization_node",
-    "postgresql_instance",
     "private_dns_record",
     "private_dns_zone",
     "privatelink_endpoint",
@@ -307,7 +311,6 @@ KNOWN_GAPS = {
     "tcr_replication_instance",
     "tcr_replication_rule",
     "tcr_repository",
-    "tdcpg_cluster",
     "tdmq_namespace",
     "tdmq_namespace_role",
     "tdmq_rabbitmq_binding",

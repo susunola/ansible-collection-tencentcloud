@@ -4251,6 +4251,77 @@ SPECS = [
     image_id: img-xxxxxxxx
 """,
     },
+    # -----------------------------------------------------------------
+    # Coverage batch 7 (1.1.x): read sides of the database resource
+    # family rollout. DescribeInstances (ES) and DescribeClusters
+    # (TDCPG) are the read surfaces the write modules reconcile against.
+    # -----------------------------------------------------------------
+    {
+        "module": "elasticsearch_instance_info",
+        "version_added": LEGACY_VERSION_ADDED,
+        "service_package": "tencentcloud.es.v20180416",
+        "client_module": "es_client",
+        "client_class": "EsClient",
+        "sdk_package": "tencentcloud-sdk-python-es",
+        "endpoint": "es.tencentcloudapi.com",
+        "action": "DescribeInstances",
+        "request_class": "DescribeInstancesRequest",
+        "ids": {
+            "param": "instance_ids",
+            "field": "InstanceIds",
+            "doc": "Instance IDs to return.",
+        },
+        "filters": None,  # DescribeInstances has no Filters field.
+        "extra_params": [],
+        "response_items": "InstanceList",
+        "response_total": "TotalCount",
+        "result_key": "instances",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud Elasticsearch instances",
+        "description": "Returns Elasticsearch Service instances visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching Elasticsearch Service instances.",
+        "return_total_doc": "Number of instances reported by the API.",
+        "examples": """\
+- name: List all Elasticsearch Service instances
+  susunola.tencentcloud.elasticsearch_instance_info:
+    region: ap-guangzhou
+
+- name: Find instances by ID
+  susunola.tencentcloud.elasticsearch_instance_info:
+    region: ap-guangzhou
+    instance_ids: [es-xxxxxxxx]
+""",
+    },
+    {
+        "module": "tdcpg_cluster_info",
+        "version_added": LEGACY_VERSION_ADDED,
+        "service_package": "tencentcloud.tdcpg.v20211118",
+        "client_module": "tdcpg_client",
+        "client_class": "TdcpgClient",
+        "sdk_package": "tencentcloud-sdk-python-tdcpg",
+        "endpoint": "tdcpg.tencentcloudapi.com",
+        "action": "DescribeClusters",
+        "request_class": "DescribeClustersRequest",
+        "ids": None,  # DescribeClusters filters by ID through Filters only.
+        "filters": {
+            "doc": "TDCPG API filter names (for example ClusterName) mapped to "
+                   "lists of values.",
+        },
+        "extra_params": [],
+        "response_items": "ClusterSet",
+        "response_total": "TotalCount",
+        "result_key": "clusters",
+        "pagination_type": "page",
+        "short_description": "Gather information about Tencent Cloud TDCPG clusters",
+        "description": "Returns TDSQL-C for PostgreSQL clusters visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching TDCPG clusters.",
+        "return_total_doc": "Number of clusters reported by the API.",
+        "examples": """\
+- name: List all TDCPG clusters
+  susunola.tencentcloud.tdcpg_cluster_info:
+    region: ap-guangzhou
+""",
+    },
 ]
 
 

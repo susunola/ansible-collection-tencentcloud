@@ -272,6 +272,17 @@
     every page before resolving, so a match beyond the first 100 rows is no
     longer invisible; its ambiguity failure carries the candidate list
     instead of the flat "specify instance_id" message.
+51. Database resource family read surface. **Done** — the three flagship
+    write modules that still lacked a read surface now have one, closing the
+    panorama's "write + info 成对" gap for the whole family.
+    `elasticsearch_instance_info` (DescribeInstances / `InstanceList`) and
+    `tdcpg_cluster_info` (DescribeClusters / `ClusterSet`) are added as
+    curated generator specs after introspecting the SDK request/response
+    shapes; `postgresql_instance` is mapped in the coverage audit to the
+    existing generated `postgres_instance_info` (DescribeDBInstances is the
+    same list surface the write module reconciles against — the historical
+    `postgres` vs `postgresql` naming split is why the audit never paired
+    them). Info-coverage audit: covered 153→155, mapped 6→7, gap 281→278.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

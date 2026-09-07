@@ -1,0 +1,14 @@
+minor_changes:
+  - >-
+    elasticsearch_instance_info - new module that gathers Elasticsearch
+    Service instances via DescribeInstances (InstanceList), closing the
+    flagship write module's read-surface gap.
+  - >-
+    tdcpg_cluster_info - new module that gathers TDSQL-C for PostgreSQL
+    clusters via DescribeClusters (ClusterSet), closing the flagship write
+    module's read-surface gap.
+  - >-
+    postgresql_instance - the info-coverage audit now maps the write module
+    to the existing generated postgres_instance_info (DescribeDBInstances is
+    the list surface the write module reconciles against); the historical
+    postgres vs postgresql naming split had kept the pair unregistered.

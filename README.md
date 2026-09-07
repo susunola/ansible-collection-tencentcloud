@@ -637,6 +637,7 @@ Read-only `_info` modules (return `changed=false`):
 | `eis_runtime_deployed_instances_mc_info` | Gather information about Tencent Cloud EIS runtime deployed instances mcs |
 | `eks_cluster_info` | Gather information about Tencent Cloud EKS clusters |
 | `eks_container_instance_info` | Gather information about Tencent Cloud EKS container instances |
+| `elasticsearch_instance_info` | Gather information about Tencent Cloud Elasticsearch instances |
 | `emr_node_data_disk_info` | Gather information about Tencent Cloud EMR node data disks |
 | `es_cluster_info` | Gather information about Tencent Cloud Elasticsearch clusters |
 | `ess_file_url_info` | Gather information about Tencent Cloud ESS file urls |
@@ -752,6 +753,7 @@ Read-only `_info` modules (return `changed=false`):
 | `tcr_instance_info` | Gather information about Tencent Cloud TCR registries |
 | `tcss_abnormal_process_event_info` | Gather information about Tencent Cloud TCSS abnormal process events |
 | `tdai_agent_duty_task_info` | Gather information about Tencent Cloud TDAI agent duty tasks |
+| `tdcpg_cluster_info` | Gather information about Tencent Cloud TDCPG clusters |
 | `tdcpg_cluster_instance_info` | Gather information about Tencent Cloud TDCPG cluster instances |
 | `tdid_over_summary_info` | Gather information about Tencent Cloud TDID over summary |
 | `tdmq_amqp_cluster_info` | Gather information about Tencent Cloud TDMQ amqp clusters |

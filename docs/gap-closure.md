@@ -122,6 +122,7 @@ scf_function、ckafka_instance、cbs_disk、eip、nat_gateway）全部无集成 
 | TKE 资源族 | `tke_cluster`、`tke_node_pool`、`tke_cluster_upgrade` | ✅ |
 | 负载均衡资源族 | `clb_load_balancer`、`clb_target_group`、`clb_listener`、`clb_rule` | ✅ |
 | 数据库资源族 | `cdb_instance`、`redis_instance`、`mongodb_instance`、`elasticsearch_instance`、`sqlserver_instance`、`mariadb_instance`、`dcdb_instance`、`postgresql_instance`、`cynosdb_cluster`、`tdcpg_cluster`、`tdmysql_db_instance` | ✅ |
+| 数据库资源族读面 | `elasticsearch_instance_info`、`tdcpg_cluster_info` 生成补齐；`postgresql_instance` 映射至既有 `postgres_instance_info`（read 覆盖 153→155 / mapped 6→7 / gap 281→278） | ✅ |
 
 **剩余**：resolver/lifecycle 已覆盖 VPC / TKE / 负载均衡 / 数据库四个旗舰资源族。
 其余 ~20 个 `find_*` 仍是 first-match（TSF、TSE、DLC、TIONE、WAF、Oceanus、

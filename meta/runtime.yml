@@ -338,6 +338,7 @@ action_groups:
     - eks_container_instance_info
     - elasticsearch_index
     - elasticsearch_instance
+    - elasticsearch_instance_info
     - elasticsearch_snapshot
     - emr_auto_scale_strategy
     - emr_cluster
@@ -574,6 +575,7 @@ action_groups:
     - tdai_agent_duty_task_info
     - tdcpg_account
     - tdcpg_cluster
+    - tdcpg_cluster_info
     - tdcpg_cluster_instance_info
     - tdcpg_endpoint_wan
     - tdcpg_instance_state
