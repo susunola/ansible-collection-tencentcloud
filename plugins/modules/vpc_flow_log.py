@@ -54,6 +54,7 @@ import time
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 
 
 def _load_vpc():
@@ -110,17 +111,29 @@ def build_delete_request(models, vpc_id, flow_log_id):
 
 
 def find_flow_log(module, client, models, vpc_id, flow_log_id, name):
-    offset, matches = 0, []
-    while True:
-        response = module.sdk_call(client.DescribeFlowLogs, build_describe_request(models, vpc_id, flow_log_id, name, offset))
-        items = list(getattr(response, "FlowLog", None) or getattr(response, "FlowLogSet", None) or [])
-        matches.extend(item._serialize(allow_none=True) for item in items)
-        offset += len(items)
-        if flow_log_id or not items or offset >= int(getattr(response, "TotalNum", 0) or 0):
-            break
-    if len(matches) > 1:
-        module.fail_json(msg="Multiple flow logs match; specify flow_log_id")
-    return matches[0] if matches else None
+    """Return the matching flow log dict or None.
+
+    Every page is collected and re-checked client-side by the shared
+    resolver: an exact name wins, a lone fuzzy candidate is accepted, and two
+    or more candidates fail with C(ambiguous=true) plus the candidate list.
+    """
+    def describe(filters):
+        matches, offset = [], 0
+        while True:
+            request = build_describe_request(models, vpc_id, flow_log_id, name, offset)
+            response = module.sdk_call(client.DescribeFlowLogs, request)
+            items = list(getattr(response, "FlowLog", None) or getattr(response, "FlowLogSet", None) or [])
+            matches.extend(item._serialize(allow_none=True) for item in items)
+            offset += len(items)
+            if flow_log_id or not items or offset >= int(getattr(response, "TotalNum", 0) or 0):
+                break
+        return matches
+
+    return resolver.resolve_one(
+        module, describe, resource="flow log",
+        id_value=flow_log_id, name_value=name,
+        id_keys=("FlowLogId",), name_keys=("FlowLogName",),
+    )
 
 
 def wait_for_flow_log(module, client, models, vpc_id, flow_log_id, enabled=None, absent=False):

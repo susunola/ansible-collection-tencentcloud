@@ -233,6 +233,19 @@
     (isolate then purge) and `plan_changes` (one change set for check mode
     and the real run). `vpc`, `subnet`, `security_group`, `route_table`,
     `eip`, `nat_gateway` and `cvm_instance` are the first consumers.
+47. VPC resource family rollout. **Done** — the resolver is rolled out to the
+    rest of the VPC family: `vpn_gateway`, `vpn_connection`,
+    `peering_connection`, `network_interface`, `network_acl`, `vpc_flow_log`,
+    `nat_gateway_rule`, `customer_gateway`, `dc_direct_connect` and
+    `dc_direct_connect_tunnel`. Every one of them used to take `XxxSet[0]`
+    after a substring name filter, so `name: prod` could manage `prod-old`;
+    the shared contract now applies to all ten, including the paginated
+    lookups (customer gateway, network ACL, flow log, VPN connection) and the
+    product-specific scopes an ID or a name does not cover (an ENI's
+    `SubnetId`, a tunnel's `DirectConnectId`). Each family now has one
+    contract test — `tests/unit/plugins/modules/test_vpc_family_resolution.py`
+    — asserting exact-name-wins, lone-fuzzy-accepted, ambiguous-fails and
+    id-ignores-noise across all ten lookup entry points.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

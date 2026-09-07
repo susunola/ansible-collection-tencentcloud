@@ -53,6 +53,7 @@ import time
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 
 
 def _load_vpc():
@@ -107,20 +108,33 @@ def _serialize(value):
 
 
 def find_gateway(module, client, models, gateway_id, name):
-    offset, matches = 0, []
-    while True:
-        response = module.sdk_call(
-            client.DescribeCustomerGateways,
-            build_describe_request(models, gateway_id, name, offset),
-        )
-        items = list(getattr(response, "CustomerGatewaySet", None) or [])
-        matches.extend(_serialize(item) for item in items)
-        offset += len(items)
-        if gateway_id or not items or offset >= int(getattr(response, "TotalCount", 0) or 0):
-            break
-    if len(matches) > 1:
-        module.fail_json(msg="Multiple customer gateways have the requested name", name=name)
-    return matches[0] if matches else None
+    """Return the matching customer gateway dict or None.
+
+    ``customer-gateway-name`` is a substring filter and the result set is
+    paginated, so every page is collected and then re-checked client-side by
+    the shared resolver: an exact name wins, a lone fuzzy candidate is
+    accepted, and two or more candidates fail with C(ambiguous=true) plus the
+    candidate list.
+    """
+    def describe(filters):
+        matches, offset = [], 0
+        while True:
+            request = build_describe_request(models, gateway_id, name, offset)
+            resolver.attach_filters(request, models, filters)
+            response = module.sdk_call(client.DescribeCustomerGateways, request)
+            items = list(getattr(response, "CustomerGatewaySet", None) or [])
+            matches.extend(_serialize(item) for item in items)
+            offset += len(items)
+            if gateway_id or not items or offset >= int(getattr(response, "TotalCount", 0) or 0):
+                break
+        return matches
+
+    return resolver.resolve_one(
+        module, describe, resource="customer gateway",
+        id_value=gateway_id, name_value=name,
+        id_keys=("CustomerGatewayId",), name_keys=("CustomerGatewayName",),
+        name_filters=("customer-gateway-name",),
+    )
 
 
 def wait_for_gateway(module, client, models, gateway_id, desired=None, absent=False):

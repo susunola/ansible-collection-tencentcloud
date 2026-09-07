@@ -70,6 +70,7 @@ network_acl: {description: Network ACL metadata., type: dict, returned: always}
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 
 
 def _load_vpc():
@@ -142,17 +143,33 @@ def _dict(value):
 
 
 def find_acl(module, client, models, acl_id, name, vpc_id):
-    offset, matches = 0, []
-    while True:
-        response = module.sdk_call(client.DescribeNetworkAcls, build_describe_request(models, acl_id, name, vpc_id, offset))
-        items = list(getattr(response, "NetworkAclSet", None) or [])
-        matches.extend(_dict(item) for item in items)
-        offset += len(items)
-        if acl_id or not items or offset >= int(getattr(response, "TotalCount", 0) or 0):
-            break
-    if len(matches) > 1:
-        module.fail_json(msg="Multiple network ACLs match; specify network_acl_id")
-    return matches[0] if matches else None
+    """Return the matching ACL dict or None.
+
+    ``network-acl-name`` is a substring filter and the result set is
+    paginated, so every page is collected and re-checked client-side: an
+    exact name wins, a lone fuzzy candidate is accepted, and two or more
+    candidates fail with C(ambiguous=true) plus the candidate list instead of
+    the old flat "specify network_acl_id" message with no candidates.
+    """
+    def describe(filters):
+        matches, offset = [], 0
+        while True:
+            request = build_describe_request(models, acl_id, name, vpc_id, offset)
+            resolver.attach_filters(request, models, filters)
+            response = module.sdk_call(client.DescribeNetworkAcls, request)
+            items = list(getattr(response, "NetworkAclSet", None) or [])
+            matches.extend(_dict(item) for item in items)
+            offset += len(items)
+            if acl_id or not items or offset >= int(getattr(response, "TotalCount", 0) or 0):
+                break
+        return matches
+
+    return resolver.resolve_one(
+        module, describe, resource="network ACL",
+        id_value=acl_id, name_value=name,
+        id_keys=("NetworkAclId",), name_keys=("NetworkAclName",),
+        name_filters=("network-acl-name",),
+    )
 
 
 def _rules(values):

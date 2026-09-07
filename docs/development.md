@@ -58,6 +58,16 @@
   server-side filter names (`name_filters`, `id_filters`) separately;
   `resolver.attach_filters` keeps any scope filter the module already set
   (for example a subnet lookup's `vpc-id`).
+- Product-specific identity that is not an ID, a name or a tag goes through
+  `extra_match` (an ENI's `SubnetId`, a Direct Connect tunnel's
+  `DirectConnectId`). Pass it only when the task actually supplied that
+  scope, otherwise a lookup with no selector would match everything.
+- Paginated `Describe*` calls collect every page inside `describe` and return
+  the full list; the resolver does the matching.
+- Every lookup in a resource family is pinned by one contract test — see
+  `tests/unit/plugins/modules/test_vpc_family_resolution.py`. Adding a module
+  to the family means adding it to that table, not writing a new set of
+  near-duplicate tests.
 
 ## Lifecycle semantics
 

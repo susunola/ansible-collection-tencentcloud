@@ -56,6 +56,7 @@ EXAMPLES = r"""
 RETURN = r"""direct_connect: {description: Effective physical Direct Connect metadata., type: dict, returned: always}"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import require_immutable_unchanged, sdk_error_payload
 
 
@@ -120,17 +121,21 @@ def delete_request(models, direct_connect_id):
 
 
 def find(module, client, models, p):
-    response = module.sdk_call(client.DescribeDirectConnects, describe_request(models, p))
-    matches = []
-    for item in response.DirectConnectSet or []:
-        value = item._serialize(allow_none=True)
-        if (p.get("direct_connect_id") and value.get("DirectConnectId") == p["direct_connect_id"]) or (
-            not p.get("direct_connect_id") and value.get("DirectConnectName") == p.get("name")
-        ):
-            matches.append(value)
-    if len(matches) > 1:
-        module.fail_json(msg="Multiple physical connections matched; specify direct_connect_id")
-    return matches[0] if matches else None
+    """Return the matching physical connection dict or None.
+
+    The match is re-checked client-side by the shared resolver so two
+    candidates fail with C(ambiguous=true) plus the candidate list instead of
+    a flat message with nothing to choose from.
+    """
+    def describe(filters):
+        response = module.sdk_call(client.DescribeDirectConnects, describe_request(models, p))
+        return resolver.records(response.DirectConnectSet)
+
+    return resolver.resolve_one(
+        module, describe, resource="Direct Connect connection",
+        id_value=p.get("direct_connect_id"), name_value=p.get("name"),
+        id_keys=("DirectConnectId",), name_keys=("DirectConnectName",),
+    )
 
 
 FIELDS = {

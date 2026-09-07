@@ -166,6 +166,7 @@ peering_connection:
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 
 
 def _load_vpc():
@@ -196,18 +197,26 @@ def build_describe_request(models, peering_connection_id, name, source_vpc_id):
     return request
 
 
-def _first(collection):
-    return collection[0] if collection else None
-
-
 def find_connection(module, client, models, peering_connection_id, name, source_vpc_id):
-    """Return the matching peering connection dict or None."""
-    request = build_describe_request(models, peering_connection_id, name, source_vpc_id)
-    response = module.sdk_call(client.DescribeVpcPeeringConnections, request)
-    connection = _first(response.PeerConnectionSet or [])
-    if connection is None:
-        return None
-    return connection._serialize(allow_none=True)
+    """Return the matching peering connection dict or None.
+
+    ``peering-connection-name`` is a substring filter, so the candidate set
+    is re-checked client-side: an exact name wins over a fuzzy one, and two
+    or more candidates fail with C(ambiguous=true) instead of silently
+    managing the first connection the API returned.
+    """
+    def describe(filters):
+        request = build_describe_request(models, peering_connection_id, name, source_vpc_id)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeVpcPeeringConnections, request)
+        return resolver.records(response.PeerConnectionSet)
+
+    return resolver.resolve_one(
+        module, describe, resource="peering connection",
+        id_value=peering_connection_id, name_value=name,
+        id_keys=("PeeringConnectionId",), name_keys=("PeeringConnectionName",),
+        name_filters=("peering-connection-name",),
+    )
 
 
 def _create(module, client, models, params):

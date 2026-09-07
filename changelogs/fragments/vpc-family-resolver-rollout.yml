@@ -1,0 +1,13 @@
+minor_changes:
+  - >-
+    vpn_gateway, vpn_connection, peering_connection, network_interface,
+    network_acl, vpc_flow_log, nat_gateway_rule, customer_gateway,
+    dc_direct_connect and dc_direct_connect_tunnel - resolve through
+    ``resolver.resolve_one`` instead of hand-rolled first-match lookups.
+    Each of these took ``XxxSet[0]`` after a substring name filter, so
+    ``name: prod`` could manage ``prod-old``; the shared contract now
+    applies to all of them (an exact name wins, a lone fuzzy candidate is
+    accepted, two or more candidates fail with ``ambiguous=true`` and the
+    candidate list), including the paginated lookups and the
+    product-specific scopes (an ENI's ``SubnetId``, a tunnel's
+    ``DirectConnectId``).

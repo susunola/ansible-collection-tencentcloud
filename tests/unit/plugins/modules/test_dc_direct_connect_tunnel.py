@@ -469,7 +469,10 @@ def test_find_multiple_matches_fails(monkeypatch):
     module = FakeModule(params=_params())
     with pytest.raises(AnsibleFailJson) as exc:
         mod.find(module, fake, FakeBgpModels(), _params(name="dup"))
-    assert "Multiple Direct Connect tunnels matched" in exc.value.args[0]["msg"]
+    payload = exc.value.args[0]
+    assert payload["ambiguous"] is True
+    assert payload["match_count"] == 2
+    assert {item["id"] for item in payload["matches"]} == {"dcx-1", "dcx-2"}
 
 
 # ---------------------------------------------------------------------------

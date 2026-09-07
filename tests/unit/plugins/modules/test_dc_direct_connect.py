@@ -298,7 +298,10 @@ def test_find_multiple_matches_fails(monkeypatch):
     module = FakeModule(_params(name="dup"))
     with pytest.raises(AnsibleFailJson) as exc:
         mod.find(module, fake, FakeModels(), module.params)
-    assert "Multiple physical connections matched" in exc.value.args[0]["msg"]
+    payload = exc.value.args[0]
+    assert payload["ambiguous"] is True
+    assert payload["match_count"] == 2
+    assert {item["id"] for item in payload["matches"]} == {"dc-1", "dc-2"}
 
 
 def test_comparable_picks_fields():
@@ -473,7 +476,9 @@ def test_present_multiple_matches_fails(monkeypatch):
     module_args(state="present", name="dup")
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
-    assert "Multiple physical connections matched" in exc.value.args[0]["msg"]
+    payload = exc.value.args[0]
+    assert payload["ambiguous"] is True
+    assert payload["match_count"] == 2
 
 
 def test_check_mode_create_is_dry_run(monkeypatch):
