@@ -72,6 +72,11 @@ KNOWN_COVERAGE = {
         ["tke_cluster_info"],
         "DescribeClusters returns the current ClusterVersion per cluster",
     ),
+    "cvm_disaster_recover_group_binding": (
+        ["cvm_disaster_recover_group_info"],
+        "DescribeDisasterRecoverGroups returns the InstanceIds bound to each "
+        "placement group, the exact set the write module reconciles",
+    ),
 }
 
 # Write modules that are themselves the read surface, or whose resource has
@@ -250,9 +255,6 @@ KNOWN_GAPS = {
     "cos_bucket_replication",
     "cos_bucket_response_control",
     "cos_bucket_website",
-    "cvm_chc",
-    "cvm_disaster_recover_group_binding",
-    "cvm_instance_action_timer",
     "cynosdb_account_privilege",
     "dbbrain_sql_filter",
     "dnspod_custom_line",

@@ -291,6 +291,17 @@
     `lighthouse_snapshot_info` (DescribeSnapshots / `SnapshotSet`), all added as
     curated generator specs after introspecting the SDK request/response shapes.
     Info-coverage audit: covered 155→159, gap 278→274.
+53. CVM residual-family read surface. **Done** — the remaining flagship CVM
+    write modules that lacked a read surface now have one:
+    `cvm_chc_info` (DescribeChcHosts / `ChcHostSet`, reading the CHC host
+    network-configuration surface the write module manages) and
+    `cvm_instance_action_timer_info` (DescribeInstancesActionTimer /
+    `ActionTimers`, unpaginated list surface with optional `instance_ids` /
+    `action_timer_ids` filters); `cvm_disaster_recover_group_binding` is
+    mapped in the coverage audit to the existing `cvm_disaster_recover_group_info`
+    (DescribeDisasterRecoverGroups returns the `InstanceIds` bound per group,
+    the exact set the write module reconciles). Info-coverage audit:
+    covered 159→161, mapped 7→8, gap 274→271.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

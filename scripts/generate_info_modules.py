@@ -4468,6 +4468,93 @@ SPECS = [
     snapshot_ids: [lhins-xxxxxxxx]
 """,
     },
+    {
+        "module": "cvm_chc_info",
+        "version_added": LEGACY_VERSION_ADDED,
+        "service_package": "tencentcloud.cvm.v20170312",
+        "client_module": "cvm_client",
+        "client_class": "CvmClient",
+        "sdk_package": "tencentcloud-sdk-python-cvm",
+        "endpoint": "cvm.tencentcloudapi.com",
+        "action": "DescribeChcHosts",
+        "request_class": "DescribeChcHostsRequest",
+        "ids": {
+            "param": "chc_ids",
+            "field": "ChcIds",
+            "doc": "CHC host IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "CVM API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "ChcHostSet",
+        "response_total": "TotalCount",
+        "result_key": "chc_hosts",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud CHC host network configuration",
+        "description": "Returns CHC (Cloud Hardware Security Module) physical servers visible in "
+                   "a Tencent Cloud region, including their VPC attachment state.",
+        "return_items_doc": "Matching CHC hosts.",
+        "return_total_doc": "Number of CHC hosts reported by the API.",
+        "examples": """\
+- name: List all CHC hosts
+  susunola.tencentcloud.cvm_chc_info:
+    region: ap-guangzhou
+
+- name: Find CHC hosts by ID
+  susunola.tencentcloud.cvm_chc_info:
+    region: ap-guangzhou
+    chc_ids: [chc-xxxxxxxx]
+""",
+    },
+    {
+        "module": "cvm_instance_action_timer_info",
+        "version_added": LEGACY_VERSION_ADDED,
+        "service_package": "tencentcloud.cvm.v20170312",
+        "client_module": "cvm_client",
+        "client_class": "CvmClient",
+        "sdk_package": "tencentcloud-sdk-python-cvm",
+        "endpoint": "cvm.tencentcloudapi.com",
+        "action": "DescribeInstancesActionTimer",
+        "request_class": "DescribeInstancesActionTimerRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "instance_ids",
+                "field": "InstanceIds",
+                "type": "list",
+                "elements": "str",
+                "doc": "Return only the action timers of these CVM instances.",
+            },
+            {
+                "name": "action_timer_ids",
+                "field": "ActionTimerIds",
+                "type": "list",
+                "elements": "str",
+                "doc": "Return only these action-timer IDs.",
+            },
+        ],
+        # DescribeInstancesActionTimer returns the full timer list in one
+        # call (no Offset/Limit) and reports no total count.
+        "response_items": "ActionTimers",
+        "response_total": None,
+        "result_key": "action_timers",
+        "pagination_type": "list",
+        "short_description": "Gather information about Tencent Cloud CVM instance action timers",
+        "description": "Returns the scheduled action timers of CVM instances visible in a "
+                   "Tencent Cloud region.",
+        "return_items_doc": "Matching action timers.",
+        "return_total_doc": "Number of action timers returned (the API reports no pageable total).",
+        "examples": """\
+- name: List all instance action timers
+  susunola.tencentcloud.cvm_instance_action_timer_info:
+    region: ap-guangzhou
+
+- name: Find the action timers of one instance
+  susunola.tencentcloud.cvm_instance_action_timer_info:
+    region: ap-guangzhou
+    instance_ids: [ins-xxxxxxxx]
+""",
+    },
 ]
 
 

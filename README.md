@@ -593,10 +593,12 @@ Read-only `_info` modules (return `changed=false`):
 | `ctem_api_sec_info` | Gather information about Tencent Cloud CTEM api secs |
 | `ctsdb_cluster_info` | Gather information about Tencent Cloud CTSDB clusters |
 | `customer_gateway_info` | Gather information about Tencent Cloud customer gateways |
+| `cvm_chc_info` | Gather information about Tencent Cloud CHC host network configuration |
 | `cvm_disaster_recover_group_info` | Gather information about Tencent Cloud CVM placement groups |
 | `cvm_hpc_cluster_info` | Gather information about Tencent Cloud CVM HPC clusters |
 | `cvm_image_info` | Gather information about Tencent Cloud CVM images |
 | `cvm_image_share_info` | Gather information about Tencent Cloud CVM image share permissions |
+| `cvm_instance_action_timer_info` | Gather information about Tencent Cloud CVM instance action timers |
 | `cvm_instance_info` | Gather information about Tencent Cloud CVM instances |
 | `cvm_launch_template_info` | Gather information about Tencent Cloud CVM launch templates |
 | `cvm_launch_template_version_info` | Gather information about Tencent Cloud CVM launch template versions |

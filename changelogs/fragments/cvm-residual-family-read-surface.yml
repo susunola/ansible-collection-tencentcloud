@@ -1,0 +1,14 @@
+minor_changes:
+  - >-
+    cvm_chc_info - new module that gathers CHC host network configuration via
+    DescribeChcHosts (ChcHostSet), closing the flagship write module's
+    read-surface gap.
+  - >-
+    cvm_instance_action_timer_info - new module that gathers CVM instance
+    action timers via DescribeInstancesActionTimer (ActionTimers), closing
+    the flagship write module's read-surface gap.
+  - >-
+    cvm_disaster_recover_group_binding - the info-coverage audit now maps the
+    write module to the existing generated cvm_disaster_recover_group_info
+    (DescribeDisasterRecoverGroups returns the InstanceIds bound to each
+    placement group, the exact set the write module reconciles).
