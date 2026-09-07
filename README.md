@@ -673,7 +673,11 @@ Read-only `_info` modules (return `changed=false`):
 | `kms_key_info` | Gather information about Tencent Cloud KMS keys |
 | `kms_key_rotation_info` | Gather information about Tencent Cloud KMS key rotation status |
 | `lcic_answer_info` | Gather information about Tencent Cloud LCIC answers |
+| `lighthouse_disk_info` | Gather information about Tencent Cloud Lighthouse disks |
+| `lighthouse_firewall_rules_info` | Gather information about Tencent Cloud Lighthouse firewall rules |
 | `lighthouse_instance_info` | Gather information about Tencent Cloud Lighthouse instances |
+| `lighthouse_key_pair_info` | Gather information about Tencent Cloud Lighthouse key pairs |
+| `lighthouse_snapshot_info` | Gather information about Tencent Cloud Lighthouse snapshots |
 | `live_audit_keyword_info` | Gather information about Tencent Cloud LIVE audit keywords |
 | `lke_app_knowledge_info` | Gather information about Tencent Cloud LKE app knowledges |
 | `lkeap_character_usage_info` | Gather information about Tencent Cloud LKEAP character usage |

@@ -1,0 +1,17 @@
+minor_changes:
+  - >-
+    lighthouse_disk_info - new module that gathers Lighthouse disks via
+    DescribeDisks (DiskSet), closing the flagship write module's
+    read-surface gap.
+  - >-
+    lighthouse_firewall_rules_info - new module that gathers the firewall
+    rules of one Lighthouse instance via DescribeFirewallRules
+    (FirewallRuleSet), closing the flagship write module's read-surface gap.
+  - >-
+    lighthouse_key_pair_info - new module that gathers Lighthouse key pairs
+    via DescribeKeyPairs (KeyPairSet), closing the flagship write module's
+    read-surface gap.
+  - >-
+    lighthouse_snapshot_info - new module that gathers Lighthouse snapshots
+    via DescribeSnapshots (SnapshotSet), closing the flagship write module's
+    read-surface gap.

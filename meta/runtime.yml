@@ -393,11 +393,15 @@ action_groups:
     - kms_key_rotation_info
     - lcic_answer_info
     - lighthouse_disk
+    - lighthouse_disk_info
     - lighthouse_firewall_rules
+    - lighthouse_firewall_rules_info
     - lighthouse_instance
     - lighthouse_instance_info
     - lighthouse_key_pair
+    - lighthouse_key_pair_info
     - lighthouse_snapshot
+    - lighthouse_snapshot_info
     - live_audit_keyword_info
     - lke_app_knowledge_info
     - lkeap_character_usage_info

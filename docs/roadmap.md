@@ -283,6 +283,14 @@
     same list surface the write module reconciles against — the historical
     `postgres` vs `postgresql` naming split is why the audit never paired
     them). Info-coverage audit: covered 153→155, mapped 6→7, gap 281→278.
+52. Lighthouse resource family read surface. **Done** — the four flagship
+    Lighthouse write modules that still lacked a read surface now have one:
+    `lighthouse_disk_info` (DescribeDisks / `DiskSet`), `lighthouse_firewall_rules_info`
+    (DescribeFirewallRules / `FirewallRuleSet`, scoped by the required
+    `instance_id`), `lighthouse_key_pair_info` (DescribeKeyPairs / `KeyPairSet`) and
+    `lighthouse_snapshot_info` (DescribeSnapshots / `SnapshotSet`), all added as
+    curated generator specs after introspecting the SDK request/response shapes.
+    Info-coverage audit: covered 155→159, gap 278→274.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

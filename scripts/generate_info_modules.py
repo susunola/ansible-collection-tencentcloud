@@ -4322,6 +4322,152 @@ SPECS = [
     region: ap-guangzhou
 """,
     },
+    {
+        "module": "lighthouse_disk_info",
+        "version_added": LEGACY_VERSION_ADDED,
+        "service_package": "tencentcloud.lighthouse.v20200324",
+        "client_module": "lighthouse_client",
+        "client_class": "LighthouseClient",
+        "sdk_package": "tencentcloud-sdk-python-lighthouse",
+        "endpoint": "lighthouse.tencentcloudapi.com",
+        "action": "DescribeDisks",
+        "request_class": "DescribeDisksRequest",
+        "ids": {
+            "param": "disk_ids",
+            "field": "DiskIds",
+            "doc": "Disk IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "Lighthouse API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "DiskSet",
+        "response_total": "TotalCount",
+        "result_key": "disks",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud Lighthouse disks",
+        "description": "Returns Lighthouse disks visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching Lighthouse disks.",
+        "return_total_doc": "Number of disks reported by the API.",
+        "examples": """\
+- name: List all Lighthouse disks
+  susunola.tencentcloud.lighthouse_disk_info:
+    region: ap-guangzhou
+
+- name: Find disks by ID
+  susunola.tencentcloud.lighthouse_disk_info:
+    region: ap-guangzhou
+    disk_ids: [lhdisk-xxxxxxxx]
+""",
+    },
+    {
+        "module": "lighthouse_firewall_rules_info",
+        "version_added": LEGACY_VERSION_ADDED,
+        "service_package": "tencentcloud.lighthouse.v20200324",
+        "client_module": "lighthouse_client",
+        "client_class": "LighthouseClient",
+        "sdk_package": "tencentcloud-sdk-python-lighthouse",
+        "endpoint": "lighthouse.tencentcloudapi.com",
+        "action": "DescribeFirewallRules",
+        "request_class": "DescribeFirewallRulesRequest",
+        "ids": None,  # DescribeFirewallRules scopes by instance, not rule ID.
+        "filters": None,  # DescribeFirewallRules has no Filters field.
+        "extra_params": [
+            {
+                "name": "instance_id",
+                "field": "InstanceId",
+                "type": "str",
+                "required": True,
+                "doc": "Lighthouse instance whose firewall rules are returned.",
+            },
+        ],
+        "response_items": "FirewallRuleSet",
+        "response_total": "TotalCount",
+        "result_key": "firewall_rules",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud Lighthouse firewall rules",
+        "description": "Returns the firewall rules of one Lighthouse instance.",
+        "return_items_doc": "Matching firewall rules.",
+        "return_total_doc": "Number of firewall rules reported by the API.",
+        "examples": """\
+- name: List firewall rules of one instance
+  susunola.tencentcloud.lighthouse_firewall_rules_info:
+    region: ap-guangzhou
+    instance_id: lhins-xxxxxxxx
+""",
+    },
+    {
+        "module": "lighthouse_key_pair_info",
+        "version_added": LEGACY_VERSION_ADDED,
+        "service_package": "tencentcloud.lighthouse.v20200324",
+        "client_module": "lighthouse_client",
+        "client_class": "LighthouseClient",
+        "sdk_package": "tencentcloud-sdk-python-lighthouse",
+        "endpoint": "lighthouse.tencentcloudapi.com",
+        "action": "DescribeKeyPairs",
+        "request_class": "DescribeKeyPairsRequest",
+        "ids": {
+            "param": "key_ids",
+            "field": "KeyIds",
+            "doc": "Key pair IDs to return. Mutually exclusive with O(filters).",
+            # Key pair IDs are not secret; silences validate-modules no-log-needed.
+            "no_log": False,
+        },
+        "filters": {"doc": "Lighthouse API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "KeyPairSet",
+        "response_total": "TotalCount",
+        "result_key": "key_pairs",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud Lighthouse key pairs",
+        "description": "Returns Lighthouse SSH key pairs visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching Lighthouse key pairs.",
+        "return_total_doc": "Number of key pairs reported by the API.",
+        "examples": """\
+- name: List all Lighthouse key pairs
+  susunola.tencentcloud.lighthouse_key_pair_info:
+    region: ap-guangzhou
+
+- name: Find key pairs by ID
+  susunola.tencentcloud.lighthouse_key_pair_info:
+    region: ap-guangzhou
+    key_ids: [lhkp-xxxxxxxx]
+""",
+    },
+    {
+        "module": "lighthouse_snapshot_info",
+        "version_added": LEGACY_VERSION_ADDED,
+        "service_package": "tencentcloud.lighthouse.v20200324",
+        "client_module": "lighthouse_client",
+        "client_class": "LighthouseClient",
+        "sdk_package": "tencentcloud-sdk-python-lighthouse",
+        "endpoint": "lighthouse.tencentcloudapi.com",
+        "action": "DescribeSnapshots",
+        "request_class": "DescribeSnapshotsRequest",
+        "ids": {
+            "param": "snapshot_ids",
+            "field": "SnapshotIds",
+            "doc": "Snapshot IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "Lighthouse API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "SnapshotSet",
+        "response_total": "TotalCount",
+        "result_key": "snapshots",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud Lighthouse snapshots",
+        "description": "Returns Lighthouse snapshots visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching Lighthouse snapshots.",
+        "return_total_doc": "Number of snapshots reported by the API.",
+        "examples": """\
+- name: List all Lighthouse snapshots
+  susunola.tencentcloud.lighthouse_snapshot_info:
+    region: ap-guangzhou
+
+- name: Find snapshots by ID
+  susunola.tencentcloud.lighthouse_snapshot_info:
+    region: ap-guangzhou
+    snapshot_ids: [lhins-xxxxxxxx]
+""",
+    },
 ]
 
 
