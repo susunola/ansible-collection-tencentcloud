@@ -121,9 +121,11 @@ scf_function、ckafka_instance、cbs_disk、eip、nat_gateway）全部无集成 
 | 资源族回归测试 | `tests/unit/plugins/modules/test_resource_family_resolution.py` 对全部查找入口断言同一契约（精确名优先 / 唯一模糊候选接受 / ≥2 候选 C(ambiguous) / ID 忽略噪声行） | ✅ |
 | TKE 资源族 | `tke_cluster`、`tke_node_pool`、`tke_cluster_upgrade` | ✅ |
 | 负载均衡资源族 | `clb_load_balancer`、`clb_target_group`、`clb_listener`、`clb_rule` | ✅ |
+| 数据库资源族 | `cdb_instance`、`redis_instance`、`mongodb_instance`、`elasticsearch_instance`、`sqlserver_instance`、`mariadb_instance`、`dcdb_instance`、`postgresql_instance`、`cynosdb_cluster`、`tdcpg_cluster`、`tdmysql_db_instance` | ✅ |
 
-**剩余**：resolver/lifecycle 已覆盖 VPC 资源族；其余 ~30 个 `find_*` 仍是
-first-match。按 panorama 推荐顺序（VPC → TKE → 负载均衡 → 数据库）逐族推进，
+**剩余**：resolver/lifecycle 已覆盖 VPC / TKE / 负载均衡 / 数据库四个旗舰资源族。
+其余 ~20 个 `find_*` 仍是 first-match（TSF、TSE、DLC、TIONE、WAF、Oceanus、
+TEO、CFW、CFS、Lighthouse 等），继续按 panorama 推荐顺序逐族推进，
 每完成一个资源族同步升级对应角色与 info 面。
 
 ## 待批准执行清单

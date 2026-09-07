@@ -53,6 +53,7 @@ EXAMPLES = r"""
     admin_password: "{{ vault_cynosdb_password }}"
 """
 RETURN = r"""cluster: {description: Effective CynosDB cluster metadata., type: dict, returned: always}"""
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
@@ -125,15 +126,21 @@ def offline_request(models, cluster_id):
 
 
 def find(module, client, models, p):
-    response = module.sdk_call(client.DescribeClusters, describe_request(models, p))
-    matches = []
-    for item in response.ClusterSet or []:
-        value = item._serialize(allow_none=True)
-        if (p.get("cluster_id") and value.get("ClusterId") == p["cluster_id"]) or (not p.get("cluster_id") and value.get("ClusterName") == p.get("name")):
-            matches.append(value)
-    if len(matches) > 1:
-        module.fail_json(msg="Multiple CynosDB clusters matched; specify cluster_id")
-    return matches[0] if matches else None
+    """Return the matching cluster dict or None.
+
+    The match is re-checked client-side by the shared resolver, so two
+    candidates fail with C(ambiguous=true) plus the candidate list instead of
+    a flat "specify cluster_id" message with nothing to choose from.
+    """
+    def describe(filters):
+        response = module.sdk_call(client.DescribeClusters, describe_request(models, p))
+        return resolver.records(response.ClusterSet)
+
+    return resolver.resolve_one(
+        module, describe, resource="CynosDB cluster",
+        id_value=p.get("cluster_id"), name_value=p.get("name"),
+        id_keys=("ClusterId",), name_keys=("ClusterName",),
+    )
 
 
 def _wait(module, client, models, p, states):

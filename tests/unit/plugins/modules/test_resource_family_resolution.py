@@ -18,17 +18,27 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 import pytest
 from ansible_collections.susunola.tencentcloud.plugins.modules import (
+    cdb_instance,
     clb_listener,
     clb_load_balancer,
     clb_rule,
     clb_target_group,
     customer_gateway,
+    cynosdb_cluster,
     dc_direct_connect,
     dc_direct_connect_tunnel,
+    dcdb_instance,
+    elasticsearch_instance,
+    mariadb_instance,
+    mongodb_instance,
     nat_gateway_rule,
     network_acl,
     network_interface,
     peering_connection,
+    postgresql_instance,
+    redis_instance,
+    sqlserver_instance,
+    tdcpg_cluster,
     tke_cluster,
     tke_cluster_upgrade,
     tke_node_pool,
@@ -102,7 +112,7 @@ class Spec(object):
     """One member of the VPC family, wired up for the shared assertions."""
 
     def __init__(self, key, find, method, set_name, request_name, id_field, name_field,
-                 call, by_name=True, by_id=True, total_attr="TotalCount", wrap=None):
+                 call, by_name=True, by_id=True, total_attr="TotalCount", wrap=None, extra_models=()):
         self.key = key
         self.find = find
         self.method = method
@@ -117,10 +127,16 @@ class Spec(object):
         # CLB forwarding rules are not a top-level Describe* result set: they
         # hang off the listener, so the records are wrapped in one.
         self.wrap = wrap
+        # Products that build their scope with a differently named filter
+        # model (CynosDB uses QueryFilter) need it on the fake models.
+        self.extra_models = extra_models
 
     @property
     def models(self):
-        return type("FakeModels", (), {"Filter": FakeFilter, self.request_name: FakeRequest})
+        namespace = {"Filter": FakeFilter, self.request_name: FakeRequest}
+        for name in self.extra_models:
+            namespace[name] = FakeFilter
+        return type("FakeModels", (), namespace)
 
     def record(self, resource_id, name, **extra):
         fields = {self.id_field: resource_id, self.name_field: name}
@@ -230,6 +246,64 @@ SPECS = [
             module, client, models, "lb-1", "lbl-1", id_value, None, None),
         by_name=False,
         wrap=lambda records: [Listener(records)],
+    ),
+    # --- database family ------------------------------------------------
+    Spec(
+        "cdb_instance", cdb_instance.find_instance, "DescribeDBInstances", "Items",
+        "DescribeDBInstancesRequest", "InstanceId", "InstanceName",
+        lambda find, module, client, models, id_value, name_value: find(module, client, models, id_value, name_value),
+    ),
+    Spec(
+        "redis_instance", redis_instance.find_instance, "DescribeInstances", "InstanceSet",
+        "DescribeInstancesRequest", "InstanceId", "InstanceName",
+        lambda find, module, client, models, id_value, name_value: find(module, client, models, id_value, name_value),
+    ),
+    Spec(
+        "mongodb_instance", mongodb_instance.find_instance, "DescribeDBInstances", "InstanceDetails",
+        "DescribeDBInstancesRequest", "InstanceId", "InstanceName",
+        lambda find, module, client, models, id_value, name_value: find(module, client, models, id_value, name_value),
+    ),
+    Spec(
+        "elasticsearch_instance", elasticsearch_instance.find_instance, "DescribeInstances", "InstanceList",
+        "DescribeInstancesRequest", "InstanceId", "InstanceName",
+        lambda find, module, client, models, id_value, name_value: find(module, client, models, id_value, name_value),
+    ),
+    Spec(
+        "sqlserver_instance", sqlserver_instance.find, "DescribeDBInstances", "DBInstances",
+        "DescribeDBInstancesRequest", "InstanceId", "Name",
+        lambda find, module, client, models, id_value, name_value: find(
+            module, client, models, {"instance_id": id_value, "name": name_value}),
+    ),
+    Spec(
+        "mariadb_instance", mariadb_instance.find, "DescribeDBInstances", "Instances",
+        "DescribeDBInstancesRequest", "InstanceId", "InstanceName",
+        lambda find, module, client, models, id_value, name_value: find(
+            module, client, models, {"instance_id": id_value, "name": name_value}),
+    ),
+    Spec(
+        "dcdb_instance", dcdb_instance.find, "DescribeDCDBInstances", "Instances",
+        "DescribeDCDBInstancesRequest", "InstanceId", "InstanceName",
+        lambda find, module, client, models, id_value, name_value: find(
+            module, client, models, {"instance_id": id_value, "name": name_value}),
+    ),
+    Spec(
+        "postgresql_instance", postgresql_instance.find, "DescribeDBInstances", "DBInstanceSet",
+        "DescribeDBInstancesRequest", "DBInstanceId", "DBInstanceName",
+        lambda find, module, client, models, id_value, name_value: find(
+            module, client, models, {"instance_id": id_value, "name": name_value}),
+    ),
+    Spec(
+        "cynosdb_cluster", cynosdb_cluster.find, "DescribeClusters", "ClusterSet",
+        "DescribeClustersRequest", "ClusterId", "ClusterName",
+        lambda find, module, client, models, id_value, name_value: find(
+            module, client, models, {"cluster_id": id_value, "name": name_value}),
+        extra_models=("QueryFilter",),
+    ),
+    Spec(
+        "tdcpg_cluster", tdcpg_cluster.find, "DescribeClusters", "ClusterSet",
+        "DescribeClustersRequest", "ClusterId", "ClusterName",
+        lambda find, module, client, models, id_value, name_value: find(
+            module, client, models, {"cluster_id": id_value, "name": name_value}),
     ),
 ]
 

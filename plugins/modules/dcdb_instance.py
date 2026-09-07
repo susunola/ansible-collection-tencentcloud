@@ -49,6 +49,7 @@ EXAMPLES = r"""
     shard_count: 2
 """
 RETURN = r"""instance: {description: Effective DCDB instance metadata., type: dict, returned: always}"""
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
@@ -128,15 +129,21 @@ def destroy_request(models, instance_id, hourly=True):
 
 
 def find(module, client, models, p):
-    response = module.sdk_call(client.DescribeDCDBInstances, describe_request(models, p))
-    matches = []
-    for item in response.Instances or []:
-        value = item._serialize(allow_none=True)
-        if (p.get("instance_id") and value.get("InstanceId") == p["instance_id"]) or (not p.get("instance_id") and value.get("InstanceName") == p.get("name")):
-            matches.append(value)
-    if len(matches) > 1:
-        module.fail_json(msg="Multiple DCDB instances matched; specify instance_id")
-    return matches[0] if matches else None
+    """Return the matching instance dict or None.
+
+    The match is re-checked client-side by the shared resolver, so two
+    candidates fail with C(ambiguous=true) plus the candidate list instead of
+    a flat "specify instance_id" message with nothing to choose from.
+    """
+    def describe(filters):
+        response = module.sdk_call(client.DescribeDCDBInstances, describe_request(models, p))
+        return resolver.records(response.Instances)
+
+    return resolver.resolve_one(
+        module, describe, resource="DCDB instance",
+        id_value=p.get("instance_id"), name_value=p.get("name"),
+        id_keys=("InstanceId",), name_keys=("InstanceName",),
+    )
 
 
 def _hourly(current):

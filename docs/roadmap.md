@@ -260,6 +260,18 @@
     `LocationId` or by (domain, url), both of which go through the
     resolver's `extra_match`. Two listeners on the same port and protocol
     now fail as ambiguous instead of managing `Listeners[0]`.
+50. Database resource family rollout. **Done** — `cdb_instance`,
+    `redis_instance`, `mongodb_instance`, `elasticsearch_instance`,
+    `sqlserver_instance`, `mariadb_instance`, `dcdb_instance`,
+    `postgresql_instance`, `cynosdb_cluster`, `tdcpg_cluster` and
+    `tdmysql_db_instance` join the same contract. Every one of these
+    products filters names **fuzzily** on the server (`InstanceNames`,
+    `SearchKey`, `SearchName`, `LoadBalancerName`-style substring matches),
+    so `name: prod` could match `prod-old` and the old helper managed
+    whichever row the API returned first. `tdmysql_db_instance` now collects
+    every page before resolving, so a match beyond the first 100 rows is no
+    longer invisible; its ambiguity failure carries the candidate list
+    instead of the flat "specify instance_id" message.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

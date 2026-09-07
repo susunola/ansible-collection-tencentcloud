@@ -1,0 +1,12 @@
+minor_changes:
+  - >-
+    cdb_instance, redis_instance, mongodb_instance, elasticsearch_instance,
+    sqlserver_instance, mariadb_instance, dcdb_instance, postgresql_instance,
+    cynosdb_cluster, tdcpg_cluster and tdmysql_db_instance - resolve through
+    ``resolver.resolve_one`` instead of hand-rolled first-match lookups.
+    Every one of these products filters names fuzzily on the server, so a
+    task that said ``name: prod`` could silently manage ``prod-old``; the
+    exact name now wins, and two candidates fail as ambiguous with the
+    candidate list instead of the flat "specify instance_id" message.
+    tdmysql_db_instance collects every page before resolving, so a match
+    beyond the first 100 rows is no longer invisible.

@@ -232,6 +232,7 @@ instance:
     EngineVersion: "8.0"
 '''
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import (
@@ -260,17 +261,24 @@ def _first(collection):
 
 
 def find_instance(module, client, models, instance_id, name):
-    """Return the matching instance dict or None."""
-    request = build_describe_request(models, instance_id, name)
-    response = module.sdk_call(client.DescribeDBInstances, request)
-    if instance_id:
-        instance = _first(response.Items or [])
-        return instance._serialize(allow_none=True) if instance is not None else None
-    for instance in response.Items or []:
-        current = instance._serialize(allow_none=True)
-        if current.get("InstanceName") == name:
-            return current
-    return None
+    """Return the matching instance dict or None.
+
+    ``InstanceNames`` is a fuzzy filter, so the candidate set is re-checked
+    client-side by the shared resolver: an ID is authoritative, an exact name
+    wins, and two candidates fail with C(ambiguous=true) plus the candidate
+    list instead of managing ``Items[0]``.
+    """
+    def describe(filters):
+        request = build_describe_request(models, instance_id, name)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeDBInstances, request)
+        return resolver.records(response.Items)
+
+    return resolver.resolve_one(
+        module, describe, resource="CDB instance",
+        id_value=instance_id, name_value=name,
+        id_keys=("InstanceId",), name_keys=("InstanceName",),
+    )
 
 
 def _create(module, client, models, params):

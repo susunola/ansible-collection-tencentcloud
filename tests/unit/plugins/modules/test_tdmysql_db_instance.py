@@ -396,7 +396,10 @@ def test_find_multiple_matches_fails():
     client = FakeTdmysqlClient(instances=[INSTANCE, dict(INSTANCE, InstanceId="tdsql-0002")])
     with pytest.raises(AnsibleFailJson) as exc:
         tdmysql.find(module, client, FakeModels(), {"name": "prod-tdmysql"})
-    assert "Multiple TDMysql instances" in exc.value.args[0]["msg"]
+    payload = exc.value.args[0]
+    assert payload["ambiguous"] is True
+    assert payload["match_count"] == 2
+    assert {item["id"] for item in payload["matches"]} == {"tdsql-8b0a1c2d", "tdsql-0002"}
 
 
 def test_wait_helper_returns_when_state_reached():
