@@ -377,7 +377,9 @@ def test_non_not_found_error_is_reported(monkeypatch):
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
     payload = exc.value.args[0]
-    assert payload["msg"] == "Tencent Cloud API request failed"
+    assert payload["msg"] == "Tencent Cloud API request failed during GetAlias"
     assert payload["error"] == "no permission"
     assert payload["error_code"] == "AuthFailure"
+    assert payload["error_kind"] == "unauthorized"
+    assert payload["operation"] == "GetAlias"
     assert payload["request_id"] == "req-err"
