@@ -238,6 +238,7 @@ listener_id:
   sample: lbl-xxxxxxxx
 '''
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
@@ -288,17 +289,29 @@ def build_describe_request(models, load_balancer_id, listener_id, port, protocol
 
 
 def find_listener(module, client, models, load_balancer_id, listener_id, port, protocol):
-    """Return the matching listener dict or None."""
-    request = build_describe_request(models, load_balancer_id, listener_id, port, protocol)
-    response = module.sdk_call(client.DescribeListeners, request)
-    for candidate in response.Listeners or []:
-        current = candidate._serialize(allow_none=True)
-        if listener_id and current.get("ListenerId") != listener_id:
-            continue
-        if not listener_id and (current.get("Port") != port or current.get("Protocol") != protocol):
-            continue
-        return current
-    return None
+    """Return the matching listener dict or None.
+
+    A listener is addressed by ID or by its endpoint (port + protocol), and
+    neither is a name, so the endpoint goes through the resolver's
+    ``extra_match``: the candidate set is re-checked client-side and two
+    candidates fail with C(ambiguous=true) instead of managing
+    ``Listeners[0]``.
+    """
+    def describe(filters):
+        request = build_describe_request(models, load_balancer_id, listener_id, port, protocol)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeListeners, request)
+        return resolver.records(response.Listeners)
+
+    def matches_endpoint(record):
+        return record.get("Port") == port and record.get("Protocol") == protocol
+
+    return resolver.resolve_one(
+        module, describe, resource="listener",
+        id_value=listener_id,
+        id_keys=("ListenerId",), name_keys=("ListenerName",),
+        extra_match=None if listener_id or not (port or protocol) else matches_endpoint,
+    )
 
 
 def build_health_check(models, health_check):

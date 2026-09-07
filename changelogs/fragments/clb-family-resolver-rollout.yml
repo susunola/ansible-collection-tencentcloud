@@ -1,0 +1,9 @@
+minor_changes:
+  - >-
+    clb_load_balancer, clb_target_group, clb_listener and clb_rule - resolve
+    through ``resolver.resolve_one`` instead of hand-rolled first-match
+    lookups. A listener and a forwarding rule have no name: a listener is
+    addressed by ID or by its endpoint (port + protocol) and a rule by
+    ``LocationId`` or by domain and url, both of which now go through the
+    resolver's ``extra_match``, so two listeners on the same port and
+    protocol fail as ambiguous instead of managing ``Listeners[0]``.

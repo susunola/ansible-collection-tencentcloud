@@ -253,6 +253,13 @@
     which is the wrong place to trust the API's row order. Node pools have no
     server-side name filter at all, so every pool of the cluster is now
     listed and resolved client-side.
+49. Load-balancer resource family rollout. **Done** — `clb_load_balancer`,
+    `clb_target_group`, `clb_listener` and `clb_rule` join the same contract.
+    A listener and a forwarding rule have no name at all: a listener is
+    addressed by ID or by its endpoint (port + protocol) and a rule by
+    `LocationId` or by (domain, url), both of which go through the
+    resolver's `extra_match`. Two listeners on the same port and protocol
+    now fail as ambiguous instead of managing `Listeners[0]`.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

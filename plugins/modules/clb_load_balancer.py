@@ -204,6 +204,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors impor
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tagging import (
     compare_tags,
 )
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import (
     wait_for_state,
     wait_for_task,
@@ -292,25 +293,28 @@ def build_create_request(models, params):
 def find_load_balancer(module, client, models, load_balancer_id, name, vpc_id):
     """Return the matching load balancer dict or None.
 
-    The API matches ``LoadBalancerName`` fuzzily, so the result set is
-    filtered client-side for an exact name (and VPC) match.
+    ``LoadBalancerName`` is a fuzzy filter and the VPC is only a scope, so
+    the candidate set is re-checked client-side by the shared resolver: an
+    ID is authoritative (the name is then the desired value, not a lookup
+    criterion), an exact name wins over a fuzzy one, and two candidates fail
+    with C(ambiguous=true) plus the candidate list instead of silently
+    managing the first row.
     """
-    request = build_describe_request(models, load_balancer_id, name, vpc_id)
-    response = module.sdk_call(client.DescribeLoadBalancers, request)
-    for candidate in response.LoadBalancerSet or []:
-        current = candidate._serialize(allow_none=True)
-        if load_balancer_id:
-            # An ID lookup addresses exactly one instance; the name is the
-            # desired value to enforce, not a lookup criterion.
-            if current.get("LoadBalancerId") != load_balancer_id:
-                continue
-        else:
-            if name and current.get("LoadBalancerName") != name:
-                continue
-            if vpc_id and current.get("VpcId") != vpc_id:
-                continue
-        return current
-    return None
+    def describe(filters):
+        request = build_describe_request(models, load_balancer_id, name, vpc_id)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeLoadBalancers, request)
+        return resolver.records(response.LoadBalancerSet)
+
+    def matches_vpc(record):
+        return record.get("VpcId") == vpc_id
+
+    return resolver.resolve_one(
+        module, describe, resource="load balancer",
+        id_value=load_balancer_id, name_value=name,
+        id_keys=("LoadBalancerId",), name_keys=("LoadBalancerName",),
+        extra_match=matches_vpc if vpc_id else None,
+    )
 
 
 def immutable_drift(current, load_balancer_type=None, vpc_id=None, subnet_id=None):

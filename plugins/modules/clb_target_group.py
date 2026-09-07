@@ -58,6 +58,7 @@ target_group: {description: Target group metadata including Instances., type: di
 
 import time
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 
@@ -135,17 +136,36 @@ def _dict(value):
 
 
 def find_group(module, client, models, target_group_id, name, vpc_id):
-    offset, matches = 0, []
-    while True:
-        response = module.sdk_call(client.DescribeTargetGroups, build_describe_request(models, target_group_id, name, vpc_id, offset))
-        items = list(getattr(response, "TargetGroupSet", None) or [])
-        matches.extend(_dict(item) for item in items)
-        offset += len(items)
-        if target_group_id or not items or offset >= int(getattr(response, "TotalCount", 0) or 0):
-            break
-    if len(matches) > 1:
-        module.fail_json(msg="Multiple target groups match; specify target_group_id")
-    return matches[0] if matches else None
+    """Return the matching target group dict or None.
+
+    Every page is collected and re-checked client-side by the shared
+    resolver: an exact name wins, a lone fuzzy candidate is accepted, and two
+    or more candidates fail with C(ambiguous=true) plus the candidate list
+    instead of the old flat "specify target_group_id" message with nothing to
+    choose from.
+    """
+    def describe(filters):
+        matches, offset = [], 0
+        while True:
+            request = build_describe_request(models, target_group_id, name, vpc_id, offset)
+            resolver.attach_filters(request, models, filters)
+            response = module.sdk_call(client.DescribeTargetGroups, request)
+            items = list(getattr(response, "TargetGroupSet", None) or [])
+            matches.extend(_dict(item) for item in items)
+            offset += len(items)
+            if target_group_id or not items or offset >= int(getattr(response, "TotalCount", 0) or 0):
+                break
+        return matches
+
+    def matches_vpc(record):
+        return record.get("VpcId") == vpc_id
+
+    return resolver.resolve_one(
+        module, describe, resource="target group",
+        id_value=target_group_id, name_value=name,
+        id_keys=("TargetGroupId",), name_keys=("TargetGroupName",),
+        extra_match=matches_vpc if vpc_id else None,
+    )
 
 
 def find_instances(module, client, models, target_group_id):

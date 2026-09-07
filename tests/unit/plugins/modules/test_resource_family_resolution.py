@@ -18,6 +18,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 import pytest
 from ansible_collections.susunola.tencentcloud.plugins.modules import (
+    clb_listener,
+    clb_load_balancer,
+    clb_rule,
+    clb_target_group,
     customer_gateway,
     dc_direct_connect,
     dc_direct_connect_tunnel,
@@ -42,6 +46,13 @@ class FakeFilter(object):
     def __init__(self):
         self.Name = None
         self.Values = None
+
+
+class Listener(object):
+    """A CLB listener; ``clb_rule`` reads its forwarding rules off it."""
+
+    def __init__(self, rules):
+        self.Rules = rules
 
 
 class FakeRequest(object):
@@ -91,7 +102,7 @@ class Spec(object):
     """One member of the VPC family, wired up for the shared assertions."""
 
     def __init__(self, key, find, method, set_name, request_name, id_field, name_field,
-                 call, by_name=True, by_id=True, total_attr="TotalCount"):
+                 call, by_name=True, by_id=True, total_attr="TotalCount", wrap=None):
         self.key = key
         self.find = find
         self.method = method
@@ -103,6 +114,9 @@ class Spec(object):
         self.by_name = by_name
         self.by_id = by_id
         self.total_attr = total_attr
+        # CLB forwarding rules are not a top-level Describe* result set: they
+        # hang off the listener, so the records are wrapped in one.
+        self.wrap = wrap
 
     @property
     def models(self):
@@ -114,7 +128,8 @@ class Spec(object):
         return Record(**fields)
 
     def resolve(self, records, id_value=None, name_value=None):
-        client = FakeClient(self.method, self.set_name, [records], self.total_attr)
+        page = self.wrap(records) if self.wrap else records
+        client = FakeClient(self.method, self.set_name, [page], self.total_attr)
         module = FakeModule()
         return self.call(self.find, module, client, self.models, id_value, name_value)
 
@@ -191,6 +206,30 @@ SPECS = [
         "DescribeClustersRequest", "ClusterId", "ClusterName",
         lambda find, module, client, models, id_value, name_value: find(module, client, models, id_value),
         by_name=False,
+    ),
+    Spec(
+        "clb_load_balancer", clb_load_balancer.find_load_balancer, "DescribeLoadBalancers", "LoadBalancerSet",
+        "DescribeLoadBalancersRequest", "LoadBalancerId", "LoadBalancerName",
+        lambda find, module, client, models, id_value, name_value: find(module, client, models, id_value, name_value, None),
+    ),
+    Spec(
+        "clb_target_group", clb_target_group.find_group, "DescribeTargetGroups", "TargetGroupSet",
+        "DescribeTargetGroupsRequest", "TargetGroupId", "TargetGroupName",
+        lambda find, module, client, models, id_value, name_value: find(module, client, models, id_value, name_value, None),
+    ),
+    Spec(
+        "clb_listener", clb_listener.find_listener, "DescribeListeners", "Listeners",
+        "DescribeListenersRequest", "ListenerId", "ListenerName",
+        lambda find, module, client, models, id_value, name_value: find(module, client, models, "lb-1", id_value, None, None),
+        by_name=False,
+    ),
+    Spec(
+        "clb_rule", clb_rule.find_rule, "DescribeListeners", "Listeners",
+        "DescribeListenersRequest", "LocationId", "Url",
+        lambda find, module, client, models, id_value, name_value: find(
+            module, client, models, "lb-1", "lbl-1", id_value, None, None),
+        by_name=False,
+        wrap=lambda records: [Listener(records)],
     ),
 ]
 
@@ -292,3 +331,54 @@ def test_find_tunnel_scopes_to_direct_connect_id():
     ]
     found = _tunnel_find(records, name="shared", direct_connect_id="dc-2")
     assert found["DirectConnectTunnelId"] == "dcx-2"
+
+
+def _clb_models():
+    return type("FakeModels", (), {"Filter": FakeFilter, "DescribeListenersRequest": FakeRequest})
+
+
+def _find_listener(records, listener_id=None, port=None, protocol=None):
+    client = FakeClient("DescribeListeners", "Listeners", [records])
+    return clb_listener.find_listener(FakeModule(), client, _clb_models(), "lb-1", listener_id, port, protocol)
+
+
+def test_find_listener_by_endpoint_picks_the_matching_port():
+    records = [
+        Record(ListenerId="lbl-1", Port=80, Protocol="TCP"),
+        Record(ListenerId="lbl-2", Port=443, Protocol="TCP"),
+    ]
+    assert _find_listener(records, port=443, protocol="TCP")["ListenerId"] == "lbl-2"
+
+
+def test_find_listener_same_endpoint_twice_is_ambiguous():
+    records = [
+        Record(ListenerId="lbl-1", Port=80, Protocol="TCP"),
+        Record(ListenerId="lbl-2", Port=80, Protocol="TCP"),
+    ]
+    with pytest.raises(ResolutionFailed) as exc:
+        _find_listener(records, port=80, protocol="TCP")
+    assert exc.value.args[0]["match_count"] == 2
+
+
+def _find_rule(records, location_id=None, domain=None, url=None):
+    client = FakeClient("DescribeListeners", "Listeners", [[Listener(records)]])
+    return clb_rule.find_rule(FakeModule(), client, _clb_models(), "lb-1", "lbl-1", location_id, domain, url)
+
+
+def test_find_rule_by_endpoint_picks_the_matching_url():
+    records = [
+        Record(LocationId="loc-1", Domain="a.example.com", Url="/a"),
+        Record(LocationId="loc-2", Domain="a.example.com", Url="/b"),
+    ]
+    found = _find_rule(records, domain="a.example.com", url="/b")
+    assert found["LocationId"] == "loc-2"
+
+
+def test_find_rule_same_endpoint_twice_is_ambiguous():
+    records = [
+        Record(LocationId="loc-1", Domain="a.example.com", Url="/a"),
+        Record(LocationId="loc-2", Domain="a.example.com", Url="/a"),
+    ]
+    with pytest.raises(ResolutionFailed) as exc:
+        _find_rule(records, domain="a.example.com", url="/a")
+    assert exc.value.args[0]["match_count"] == 2
