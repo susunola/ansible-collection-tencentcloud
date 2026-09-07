@@ -228,6 +228,7 @@ snat_rules:
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 
 
 def _load_vpc():
@@ -513,12 +514,7 @@ def run_module():
     try:
         gateway = find_gateway(module, client, models, nat_gateway_id)
     except Exception as exc:
-        module.fail_json(
-            msg="Tencent Cloud API request failed",
-            error=str(exc),
-            error_code=getattr(exc, "get_code", lambda: None)(),
-            request_id=getattr(exc, "get_request_id", lambda: None)(),
-        )
+        fail_from_sdk_error(module, exc)
     if gateway is None:
         module.fail_json(msg="NAT gateway %s not found" % nat_gateway_id, nat_gateway_id=nat_gateway_id)
 
