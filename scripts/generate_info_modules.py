@@ -4491,7 +4491,7 @@ SPECS = [
         "pagination_type": "int",
         "short_description": "Gather information about Tencent Cloud CHC host network configuration",
         "description": "Returns CHC (Cloud Hardware Security Module) physical servers visible in "
-                   "a Tencent Cloud region, including their VPC attachment state.",
+                       "a Tencent Cloud region, including their VPC attachment state.",
         "return_items_doc": "Matching CHC hosts.",
         "return_total_doc": "Number of CHC hosts reported by the API.",
         "examples": """\
@@ -4541,7 +4541,7 @@ SPECS = [
         "pagination_type": "list",
         "short_description": "Gather information about Tencent Cloud CVM instance action timers",
         "description": "Returns the scheduled action timers of CVM instances visible in a "
-                   "Tencent Cloud region.",
+                       "Tencent Cloud region.",
         "return_items_doc": "Matching action timers.",
         "return_total_doc": "Number of action timers returned (the API reports no pageable total).",
         "examples": """\

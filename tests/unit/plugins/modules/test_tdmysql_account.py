@@ -1,5 +1,11 @@
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.tdmysql import privileges_request
-from ansible_collections.susunola.tencentcloud.plugins.modules.tdmysql_account import create_request, delete_request, get, privileges_modify_request, reset_request
+from ansible_collections.susunola.tencentcloud.plugins.modules.tdmysql_account import (
+    create_request,
+    delete_request,
+    get,
+    privileges_modify_request,
+    reset_request,
+)
 
 
 class Object:
