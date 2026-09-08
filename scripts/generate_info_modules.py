@@ -4555,6 +4555,198 @@ SPECS = [
     instance_ids: [ins-xxxxxxxx]
 """,
     },
+    # --- Batch: TCR family sub-resources (v20190924) ----------------------
+    {
+        "module": "tcr_namespace_info",
+        "version_added": LEGACY_VERSION_ADDED,
+        "service_package": "tencentcloud.tcr.v20190924",
+        "client_module": "tcr_client",
+        "client_class": "TcrClient",
+        "sdk_package": "tencentcloud-sdk-python-tcr",
+        "endpoint": "tcr.tencentcloudapi.com",
+        "action": "DescribeNamespaces",
+        "request_class": "DescribeNamespacesRequest",
+        "ids": None,  # Namespaces are scoped by parent registry, not by ID.
+        "filters": None,  # DescribeNamespaces filters by name/All, not Filters.
+        "extra_params": [
+            {
+                "name": "registry_id",
+                "field": "RegistryId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the parent TCR enterprise instance, e.g. C(tcr-xxxxxxxx).",
+            },
+            {
+                "name": "namespace_name",
+                "field": "NamespaceName",
+                "type": "str",
+                "doc": "Exact namespace name to return. Omitted to return every "
+                       "namespace of the registry.",
+            },
+            {
+                "name": "all",
+                "field": "All",
+                "type": "bool",
+                "doc": "Set C(true) to list all namespaces including shared ones, "
+                       "mirroring the write module's lookup.",
+            },
+        ],
+        "response_items": "NamespaceList",
+        "response_total": "TotalCount",
+        "result_key": "namespaces",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud TCR namespaces",
+        "description": "Returns TCR (Tencent Container Registry) namespaces of one "
+                       "enterprise instance.",
+        "return_items_doc": "Matching TCR namespaces.",
+        "return_total_doc": "Number of namespaces reported by the API.",
+        "examples": """\
+- name: List all namespaces of a registry
+  susunola.tencentcloud.tcr_namespace_info:
+    region: ap-guangzhou
+    registry_id: tcr-xxxxxxxx
+
+- name: Find one namespace by name
+  susunola.tencentcloud.tcr_namespace_info:
+    region: ap-guangzhou
+    registry_id: tcr-xxxxxxxx
+    namespace_name: team-a
+""",
+    },
+    {
+        "module": "tcr_repository_info",
+        "version_added": LEGACY_VERSION_ADDED,
+        "service_package": "tencentcloud.tcr.v20190924",
+        "client_module": "tcr_client",
+        "client_class": "TcrClient",
+        "sdk_package": "tencentcloud-sdk-python-tcr",
+        "endpoint": "tcr.tencentcloudapi.com",
+        "action": "DescribeRepositories",
+        "request_class": "DescribeRepositoriesRequest",
+        "ids": None,  # Repositories are scoped by parent registry/namespace.
+        "filters": None,  # DescribeRepositories filters by name fields, not Filters.
+        "extra_params": [
+            {
+                "name": "registry_id",
+                "field": "RegistryId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the parent TCR enterprise instance, e.g. C(tcr-xxxxxxxx).",
+            },
+            {
+                "name": "namespace_name",
+                "field": "NamespaceName",
+                "type": "str",
+                "doc": "Namespace whose repositories are returned. Omitted to query "
+                       "repositories across all namespaces.",
+            },
+            {
+                "name": "repository_name",
+                "field": "RepositoryName",
+                "type": "str",
+                "doc": "Repository name to return. Omitted to return every "
+                       "repository of the namespace.",
+            },
+        ],
+        "response_items": "RepositoryList",
+        "response_total": "TotalCount",
+        "result_key": "repositories",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud TCR repositories",
+        "description": "Returns TCR (Tencent Container Registry) repositories of one "
+                       "enterprise instance, optionally narrowed by namespace and name.",
+        "return_items_doc": "Matching TCR repositories.",
+        "return_total_doc": "Number of repositories reported by the API.",
+        "examples": """\
+- name: List all repositories of a registry
+  susunola.tencentcloud.tcr_repository_info:
+    region: ap-guangzhou
+    registry_id: tcr-xxxxxxxx
+
+- name: Find repositories inside one namespace
+  susunola.tencentcloud.tcr_repository_info:
+    region: ap-guangzhou
+    registry_id: tcr-xxxxxxxx
+    namespace_name: production
+""",
+    },
+    {
+        "module": "tcr_replication_instance_info",
+        "version_added": LEGACY_VERSION_ADDED,
+        "service_package": "tencentcloud.tcr.v20190924",
+        "client_module": "tcr_client",
+        "client_class": "TcrClient",
+        "sdk_package": "tencentcloud-sdk-python-tcr",
+        "endpoint": "tcr.tencentcloudapi.com",
+        "action": "DescribeReplicationInstances",
+        "request_class": "DescribeReplicationInstancesRequest",
+        "ids": None,  # Replication instances are scoped by parent registry.
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "registry_id",
+                "field": "RegistryId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the source TCR enterprise instance, e.g. C(tcr-xxxxxxxx).",
+            },
+        ],
+        "response_items": "ReplicationRegistries",
+        "response_total": "TotalCount",
+        "result_key": "replication_instances",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud TCR replication instances",
+        "description": "Returns the cross-region replication instances created from one "
+                       "TCR enterprise instance.",
+        "return_items_doc": "Matching TCR replication instances.",
+        "return_total_doc": "Number of replication instances reported by the API.",
+        "examples": """\
+- name: List replication instances of a registry
+  susunola.tencentcloud.tcr_replication_instance_info:
+    region: ap-guangzhou
+    registry_id: tcr-xxxxxxxx
+""",
+    },
+    {
+        "module": "tcr_replication_rule_info",
+        "version_added": LEGACY_VERSION_ADDED,
+        "service_package": "tencentcloud.tcr.v20190924",
+        "client_module": "tcr_client",
+        "client_class": "TcrClient",
+        "sdk_package": "tencentcloud-sdk-python-tcr",
+        "endpoint": "tcr.tencentcloudapi.com",
+        "action": "DescribeReplicationPolicies",
+        "request_class": "DescribeReplicationPoliciesRequest",
+        "ids": None,  # Replication rules are scoped by parent registry.
+        "filters": None,
+        "extra_params": [
+            {
+                "name": "registry_id",
+                "field": "RegistryId",
+                "type": "str",
+                "required": True,
+                "doc": "ID of the source TCR enterprise instance, e.g. C(tcr-xxxxxxxx).",
+            },
+        ],
+        "response_items": "ReplicationPolicyInfoList",
+        "response_total": "TotalCount",
+        "result_key": "replication_rules",
+        # DescribeReplicationPolicies numbers pages from 1 via Page/PageSize
+        # instead of the Offset/Limit most Tencent Cloud APIs use.
+        "pagination_type": "page",
+        "page_number_field": "Page",
+        "short_description": "Gather information about Tencent Cloud TCR replication rules",
+        "description": "Returns the replication (sync) rules configured on one TCR "
+                       "enterprise instance.",
+        "return_items_doc": "Matching TCR replication rules.",
+        "return_total_doc": "Number of replication rules reported by the API.",
+        "examples": """\
+- name: List replication rules of a registry
+  susunola.tencentcloud.tcr_replication_rule_info:
+    region: ap-guangzhou
+    registry_id: tcr-xxxxxxxx
+""",
+    },
 ]
 
 

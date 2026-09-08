@@ -757,6 +757,10 @@ Read-only `_info` modules (return `changed=false`):
 | `tcbr_cloud_run_pod_info` | Gather information about Tencent Cloud TCBR cloud run pods |
 | `tcm_mesh_info` | Gather information about Tencent Cloud TCM meshes |
 | `tcr_instance_info` | Gather information about Tencent Cloud TCR registries |
+| `tcr_namespace_info` | Gather information about Tencent Cloud TCR namespaces |
+| `tcr_replication_instance_info` | Gather information about Tencent Cloud TCR replication instances |
+| `tcr_replication_rule_info` | Gather information about Tencent Cloud TCR replication rules |
+| `tcr_repository_info` | Gather information about Tencent Cloud TCR repositories |
 | `tcss_abnormal_process_event_info` | Gather information about Tencent Cloud TCSS abnormal process events |
 | `tdai_agent_duty_task_info` | Gather information about Tencent Cloud TDAI agent duty tasks |
 | `tdcpg_cluster_info` | Gather information about Tencent Cloud TDCPG clusters |

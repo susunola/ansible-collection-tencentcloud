@@ -574,9 +574,13 @@ action_groups:
     - tcr_instance
     - tcr_instance_info
     - tcr_namespace
+    - tcr_namespace_info
     - tcr_replication_instance
+    - tcr_replication_instance_info
     - tcr_replication_rule
+    - tcr_replication_rule_info
     - tcr_repository
+    - tcr_repository_info
     - tcss_abnormal_process_event_info
     - tdai_agent_duty_task_info
     - tdcpg_account
