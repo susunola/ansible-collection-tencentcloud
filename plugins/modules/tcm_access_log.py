@@ -20,11 +20,14 @@ options:
   enable_stdout: {type: bool, default: true, description: Send logs to standard output.}
   enable_server: {type: bool, default: false, description: Send logs to a third-party gRPC server.}
   server_address: {type: str, description: Third-party gRPC server address.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  waiter_delay: {type: int, default: 5, description: Polling interval.}
-  waiter_timeout: {type: int, default: 120, description: Convergence timeout.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

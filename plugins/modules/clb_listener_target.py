@@ -83,12 +83,6 @@ options:
         the target was registered with.
     type: bool
     default: true
-  retries:
-    description:
-      - Maximum number of retry attempts for throttled or transient API
-        failures, using exponential backoff with jitter.
-    type: int
-    default: 5
   waiter_timeout:
     description:
       - Maximum time in seconds to wait for an asynchronous register or
@@ -99,11 +93,6 @@ options:
     description: Interval in seconds between state polls while waiting.
     type: int
     default: 5
-  user_agent:
-    description:
-      - User-Agent string sent with API requests.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-clb) package on the controller.
   - Uses the C(clb.tencentcloudapi.com) endpoint by default.
@@ -111,7 +100,12 @@ notes:
     polls V(DescribeTaskStatus) until each task succeeds.
   - V(RegisterTargets) also updates the weight of an already registered
     target, so weight drift is fixed by re-registering.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

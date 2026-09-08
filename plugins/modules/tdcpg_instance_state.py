@@ -14,11 +14,16 @@ options:
   instance_ids: {type: list, elements: str, required: true, description: Exact instances to operate on.}
   state: {type: str, choices: [running, isolated, restarted], required: true, description: Desired action or state.}
   period_months: {type: int, default: 1, description: Recovery purchase period for prepaid instances.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
+
   waiter_delay: {type: int, default: 5, description: Polling interval.}
   waiter_timeout: {type: int, default: 300, description: Convergence timeout.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

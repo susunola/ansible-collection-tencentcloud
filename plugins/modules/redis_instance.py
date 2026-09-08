@@ -121,10 +121,6 @@ options:
       - Only applied at creation.
     type: dict
     default: {}
-  retries:
-    description: Number of retries for transient SDK failures.
-    type: int
-    default: 5
   waiter_delay:
     description: Seconds to wait between state-polling attempts.
     type: int
@@ -139,12 +135,6 @@ options:
         instance.
     type: int
     default: 900
-  user_agent:
-    description:
-      - Value appended to the SDK User-Agent header so API usage can be
-        attributed to this collection.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-redis) package on the controller.
   - Redis instances are billed while present; destroy them as soon as they
@@ -152,7 +142,12 @@ notes:
   - Creation takes several minutes; after the creation order is accepted
     the module waits for the instance to reach Status 2 (running) before
     returning.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

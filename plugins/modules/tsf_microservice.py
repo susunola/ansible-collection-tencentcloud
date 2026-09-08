@@ -15,7 +15,10 @@ options:
   namespace_id: {type: str, required: true, description: TSF namespace ID.}
   name: {type: str, required: true, description: Microservice name.}
   description: {type: str, description: Microservice description.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

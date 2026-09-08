@@ -12,10 +12,7 @@ short_description: Manage Tencent Cloud Auto Scaling scheduled actions
 version_added: "0.14.0"
 description: Creates, updates and deletes scheduled capacity changes.
 options:
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
+
   state: {type: str, choices: [present, absent], default: present, description: Desired state.}
   scaling_group_id: {type: str, required: true, description: Auto Scaling group ID.}
   action_id: {type: str, description: Existing scheduled action ID.}
@@ -27,7 +24,13 @@ options:
   end_time: {type: str, description: Recurrence end time in ISO 8601 format.}
   recurrence: {type: str, description: Cron recurrence expression.}
   disable_update_desired_capacity: {type: bool, default: false, description: Preserve current desired capacity.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

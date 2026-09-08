@@ -196,12 +196,6 @@ options:
         and the tag service to be enabled for the account.
     type: dict
     default: {}
-  retries:
-    description:
-      - Maximum number of retry attempts for throttled or transient API
-        failures, using exponential backoff with jitter.
-    type: int
-    default: 5
   waiter_timeout:
     description:
       - Maximum time in seconds to wait for the instance to reach the desired
@@ -213,11 +207,6 @@ options:
     description: Interval in seconds between state polls while waiting.
     type: int
     default: 5
-  user_agent:
-    description:
-      - User-Agent string sent with API requests.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-cvm) package on the controller.
   - Tag reconciliation additionally requires C(tencentcloud-sdk-python-tag).
@@ -241,7 +230,12 @@ notes:
   - O(exact_count) reads the pool through the C(tag:key) filter; tags attached
     after creation through the console or the tag service are matched the same
     way as tags set through O(tags).
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

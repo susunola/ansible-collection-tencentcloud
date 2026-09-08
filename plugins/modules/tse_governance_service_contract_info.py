@@ -19,7 +19,10 @@ options:
   protocol: {type: str, description: Contract protocol filter.}
   brief: {type: bool, default: false, description: Return basic contract information only.}
   page_size: {type: int, default: 100, description: Number of contracts requested per API call.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

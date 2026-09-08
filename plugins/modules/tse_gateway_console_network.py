@@ -17,9 +17,13 @@ options:
   access_control: {type: dict, description: Exact SDK NetworkAccessControl payload used when opening the console.}
   waiter_delay: {type: int, default: 5, description: Polling interval while waiting for convergence.}
   waiter_timeout: {type: int, default: 600, description: Maximum convergence wait.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

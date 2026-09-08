@@ -14,7 +14,10 @@ options:
   gateway_id: {type: str, required: true, description: Cloud-native API gateway ID.}
   group_id: {type: str, description: Optional gateway group ID used to scope configuration, addresses and nodes.}
   page_size: {type: int, default: 100, description: Number of nodes requested per API call.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

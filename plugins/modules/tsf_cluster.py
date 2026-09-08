@@ -26,7 +26,10 @@ options:
   max_cluster_services: {type: int, description: Maximum services at creation.}
   enable_log_collection: {type: bool, description: Enable CLS collection.}
   unbind_only: {type: bool, default: false, description: Unbind instead of deleting the underlying container cluster.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

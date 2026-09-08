@@ -12,10 +12,7 @@ short_description: Manage Tencent Cloud PostgreSQL parameter templates
 version_added: "0.14.0"
 description: Creates, updates and deletes reusable TencentDB for PostgreSQL parameter templates.
 options:
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
+
   state: {type: str, choices: [present, absent], default: present, description: Desired state.}
   template_id: {type: str, description: Existing parameter template ID.}
   name: {type: str, description: Template name.}
@@ -24,7 +21,13 @@ options:
   database_engine: {type: str, default: postgresql, description: Database engine required at creation.}
   parameters: {type: dict, default: {}, description: Parameter name and expected value mapping to enforce.}
   reset_parameters: {type: list, elements: str, default: [], description: Parameter names to reset to template defaults.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

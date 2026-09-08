@@ -27,11 +27,14 @@ options:
       record: {type: str, required: true, description: "IPv4, IPv6, domain, or object-storage endpoint."}
       record_type: {type: str, choices: [IP_DOMAIN, COS, AWS_S3], default: IP_DOMAIN, description: Origin record type.}
       weight: {type: int, description: Optional traffic weight from 0 through 100.}
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall timeout in seconds for state polling., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 

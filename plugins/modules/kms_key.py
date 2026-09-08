@@ -27,11 +27,14 @@ options:
   rotation_days: {description: Automatic rotation period in days., type: int, default: 365}
   deletion_window_days: {description: Waiting period before permanent deletion., type: int, default: 7}
   deletion_protection: {description: Refuse O(state=absent) while enabled., type: bool, default: false}
-  retries: {description: Number of retries for transient SDK failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between state-polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall timeout in seconds for state polling., type: int, default: 120}
-  user_agent: {description: User-Agent value appended to SDK requests., type: str, default: ansible-collection.susunola.tencentcloud}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

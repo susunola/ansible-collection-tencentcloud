@@ -12,10 +12,7 @@ short_description: Manage Tencent Cloud Auto Scaling policies
 version_added: "0.14.0"
 description: Creates, updates and deletes simple or target-tracking scaling policies.
 options:
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
+
   state: {type: str, choices: [present, absent], default: present, description: Desired state.}
   scaling_group_id: {type: str, required: true, description: Auto Scaling group ID.}
   policy_id: {type: str, description: Existing policy ID.}
@@ -32,7 +29,13 @@ options:
   target_value: {type: int, description: Target metric value.}
   estimated_instance_warmup: {type: int, default: 300, description: Instance warmup seconds.}
   disable_scale_in: {type: bool, default: false, description: Disable target-tracking scale-in.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

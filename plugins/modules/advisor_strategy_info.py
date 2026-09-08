@@ -14,7 +14,10 @@ short_description: Gather information about Tencent Cloud ADVISOR strategies
 version_added: "0.9.0"
 description: Returns ADVISOR strategies visible in a Tencent Cloud region.
 options: {}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

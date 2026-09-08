@@ -22,11 +22,14 @@ options:
   notify_content_format: {type: str, choices: [JSON, SIMPLIFIED], default: JSON, description: Push payload format.}
   filter_tags: {type: list, elements: str, default: [], description: Message filter tags.}
   binding_key: {type: list, elements: str, default: [], description: Routing binding keys.}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

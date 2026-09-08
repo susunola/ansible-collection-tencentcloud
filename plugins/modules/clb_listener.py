@@ -141,12 +141,6 @@ options:
   keepalive_enable:
     description: Whether keep-alive is enabled, only meaningful for HTTP and HTTPS listeners.
     type: bool
-  retries:
-    description:
-      - Maximum number of retry attempts for throttled or transient API
-        failures, using exponential backoff with jitter.
-    type: int
-    default: 5
   waiter_timeout:
     description:
       - Maximum time in seconds to wait for an asynchronous listener task to
@@ -157,18 +151,18 @@ options:
     description: Interval in seconds between state polls while waiting.
     type: int
     default: 5
-  user_agent:
-    description:
-      - User-Agent string sent with API requests.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-clb) package on the controller.
   - Uses the C(clb.tencentcloudapi.com) endpoint by default.
   - Listener operations are asynchronous; V(CreateListener),
     V(ModifyListener) and V(DeleteListener) return a request ID the module
     polls through V(DescribeTaskStatus) until the task succeeds.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

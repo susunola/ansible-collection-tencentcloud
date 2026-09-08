@@ -20,7 +20,10 @@ options:
   namespace_type: {type: str, choices: [DEF, GLOBAL], default: DEF, description: Namespace type, immutable after creation.}
   high_availability: {type: bool, description: Whether high availability is enabled.}
   create_k8s_namespace: {type: bool, description: Create the corresponding Kubernetes namespace.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

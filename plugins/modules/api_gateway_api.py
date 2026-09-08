@@ -13,10 +13,7 @@ short_description: Manage Tencent Cloud API Gateway APIs
 version_added: "0.14.0"
 description: Creates, updates and deletes an API within an API Gateway service, including MOCK and SCF backends.
 options:
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
+
   state: {type: str, choices: [present, absent], default: present, description: Desired state.}
   service_id: {type: str, required: true, description: Parent service ID.}
   api_id: {type: str, description: Existing API ID.}
@@ -34,7 +31,13 @@ options:
   scf_function_type: {type: str, choices: [EVENT, HTTP], default: EVENT, description: SCF event or web-function mode.}
   scf_integrated_response: {type: bool, default: false, description: Enable SCF integrated response handling.}
   enable_cors: {type: bool, default: false, description: Enable CORS.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

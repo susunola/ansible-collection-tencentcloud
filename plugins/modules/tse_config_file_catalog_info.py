@@ -18,7 +18,10 @@ options:
   config_file_id: {type: str, description: Configuration file ID filter.}
   tags: {type: list, elements: dict, description: SDK ConfigFileTag filter payloads.}
   page_size: {type: int, default: 100, description: Number of files requested per API call.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

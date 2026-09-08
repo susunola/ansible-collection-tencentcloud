@@ -16,9 +16,13 @@ options:
   model_api_name: {type: str, description: Model API name resolved within the gateway.}
   consumer_group_ids: {type: list, elements: str, description: Unique consumer group IDs, one through ten entries.}
   consumer_group_names: {type: list, elements: str, description: Unique consumer group names resolved within the gateway.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -19,7 +19,10 @@ options:
   bucket_name: {type: str, description: COS bucket name, required for a private repository.}
   bucket_region: {type: str, description: COS bucket region, required for a private repository.}
   directory: {type: str, description: Repository directory in the COS bucket.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

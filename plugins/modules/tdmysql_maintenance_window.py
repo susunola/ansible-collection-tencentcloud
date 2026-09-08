@@ -17,9 +17,13 @@ options:
   start_time: {type: str, required: true, description: Maintenance start time in HH:MM or HH:MM:SS format.}
   duration_hours: {type: int, choices: [1, 2, 3], required: true, description: Maintenance duration in hours.}
   week_days: {type: list, elements: str, required: true, description: Non-empty weekday set.}
-  retries: {type: int, default: 5, description: Retries for transient API failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -18,9 +18,13 @@ options:
   priority: {type: int, required: true, description: Unique rule priority from 0 through 100.}
   rule_type: {type: str, choices: [Standard, Lane], default: Standard, description: Rule category used for lookup.}
   config: {type: dict, description: SDK CloudNativeAPIGatewayCanaryRule payload excluding Priority.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

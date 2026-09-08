@@ -15,11 +15,14 @@ options:
   state: {type: str, choices: [present, absent], default: present, description: Desired relationship state.}
   uin: {type: str, required: true, description: Target primary account UIN.}
   account: {type: str, required: true, description: Target primary account login name.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  waiter_delay: {type: int, default: 5, description: Polling interval.}
-  waiter_timeout: {type: int, default: 120, description: Polling timeout.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

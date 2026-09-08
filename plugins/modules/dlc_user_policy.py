@@ -16,11 +16,14 @@ options:
   account_source: {type: str, choices: [TencentAccount, EntraAccount], default: TencentAccount, description: User source for policy and query APIs.}
   policies: {type: list, elements: dict, required: true, description: Exact desired SDK Policy list.}
   allow_empty: {type: bool, default: false, description: Explicitly authorize removing every directly attached policy.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
-  waiter_delay: {type: int, default: 5, description: Seconds between convergence polls.}
-  waiter_timeout: {type: int, default: 120, description: Overall convergence timeout.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

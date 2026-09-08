@@ -12,10 +12,7 @@ short_description: Manage Tencent Cloud SCF triggers
 version_added: "0.14.0"
 description: Creates, enables, disables, replaces and deletes SCF function triggers.
 options:
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
+
   state: {type: str, choices: [present, absent], default: present, description: Desired state.}
   function_name: {type: str, required: true, description: Function name.}
   namespace: {type: str, default: default, description: Function namespace.}
@@ -27,7 +24,13 @@ options:
   custom_argument: {type: str, description: Custom trigger argument.}
   description: {type: str, default: '', description: Human-readable description.}
   force_replace: {type: bool, default: false, description: Replace the trigger when immutable configuration changes.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

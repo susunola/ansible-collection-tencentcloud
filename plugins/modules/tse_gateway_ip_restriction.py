@@ -17,9 +17,13 @@ options:
   enabled: {type: bool, description: Whether the plugin is enabled; creation defaults to true.}
   restriction_type: {type: str, choices: [whiteList, blackList], description: Allow-list or deny-list behavior.}
   addresses: {type: list, elements: str, description: Exact IP addresses or CIDR ranges.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

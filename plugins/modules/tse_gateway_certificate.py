@@ -25,9 +25,13 @@ options:
   cert_usage: {type: str, choices: [SERVER, CLIENT], description: Certificate usage.}
   rotate_certificate: {type: bool, default: false, description: Explicitly replace certificate material in place.}
   force_delete: {type: bool, default: false, description: Delete even when the API reports active references.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

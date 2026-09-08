@@ -242,24 +242,6 @@ options:
         V(DeleteEKSContainerInstancesRequest.ReleaseAutoCreatedEip).
     type: bool
     default: true
-  retries:
-    description: Number of retries for transient SDK failures.
-    type: int
-    default: 5
-  waiter_delay:
-    description: Seconds to wait between state-polling attempts.
-    type: int
-    default: 5
-  waiter_timeout:
-    description: Overall timeout in seconds for state polling.
-    type: int
-    default: 120
-  user_agent:
-    description:
-      - Value appended to the SDK User-Agent header so API usage can be
-        attributed to this collection.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-tke) package on the controller.
   - Instance creation is asynchronous; this module returns as soon as the
@@ -268,7 +250,13 @@ notes:
   - Changing the VPC, subnet, CPU, memory or container definitions of an
     existing instance is not supported by this module; remove the instance
     (state=absent) and re-run to rebuild it.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

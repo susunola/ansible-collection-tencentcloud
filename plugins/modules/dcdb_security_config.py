@@ -16,7 +16,10 @@ options:
   encryption_enabled: {type: bool, description: Enable irreversible data-at-rest encryption.}
   ssl_enabled: {type: bool, description: Enable or disable instance SSL authentication.}
   security_group_ids: {type: list, elements: str, description: Complete desired security-group ID set.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -41,9 +41,13 @@ options:
   wait: {type: bool, default: true, description: Wait until a created session is usable or a deleted session is terminal.}
   waiter_delay: {type: int, default: 5, description: Seconds between polls.}
   waiter_timeout: {type: int, default: 900, description: Overall lifecycle timeout.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

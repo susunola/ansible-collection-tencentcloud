@@ -12,10 +12,7 @@ short_description: Manage Tencent Cloud CKafka ACL entries
 version_added: "0.14.0"
 description: Creates and deletes exact CKafka ACL grants idempotently.
 options:
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
+
   state: {type: str, choices: [present, absent], default: present, description: Desired state.}
   instance_id: {type: str, required: true, description: CKafka instance ID.}
   resource_type: {type: str, choices: [TOPIC, GROUP, CLUSTER, TRANSACTIONAL_ID], required: true, description: Kafka resource type.}
@@ -24,7 +21,13 @@ options:
   permission: {type: str, choices: [ALLOW, DENY], default: ALLOW, description: Permission type.}
   host: {type: str, default: '*', description: Client host pattern.}
   principal: {type: str, required: true, description: Kafka principal.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

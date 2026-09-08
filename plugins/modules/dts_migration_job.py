@@ -13,10 +13,7 @@ short_description: Manage Tencent Cloud DTS migration jobs
 version_added: "0.14.0"
 description: Purchases, renames, resizes and destroys DTS migration jobs.
 options:
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
+
   state: {description: Desired state., type: str, choices: [present, absent], default: present}
   job_id: {description: Existing migration job ID., type: str}
   name: {description: Migration job name., type: str}
@@ -26,7 +23,13 @@ options:
   destination_region: {description: Destination Tencent Cloud region., type: str}
   instance_class: {description: DTS migration instance class., type: str, default: micro}
   tags: {description: Tags applied at creation., type: dict, default: {}}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

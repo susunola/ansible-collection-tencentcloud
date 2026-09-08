@@ -14,9 +14,13 @@ options:
   gateway_id: {type: str, required: true, description: Gateway ID.}
   domains: {type: list, elements: str, required: true, description: Unique domain names.}
   purge_unlisted: {type: bool, default: false, description: With state=present, remove registered domains not listed here.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

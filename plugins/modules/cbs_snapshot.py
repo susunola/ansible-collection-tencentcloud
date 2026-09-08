@@ -58,10 +58,6 @@ options:
         still in C(CREATING).
     type: bool
     default: true
-  retries:
-    description: Number of retries for transient SDK failures.
-    type: int
-    default: 5
   waiter_timeout:
     description:
       - Maximum time in seconds to wait for the snapshot to reach the
@@ -72,12 +68,6 @@ options:
     description: Interval in seconds between state polls while waiting.
     type: int
     default: 5
-  user_agent:
-    description:
-      - Value appended to the SDK User-Agent header so API usage can be
-        attributed to this collection.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-cbs) package on the controller.
   - Only disks with snapshot ability can be snapshotted; the error
@@ -85,7 +75,12 @@ notes:
   - The quota of snapshots per disk is limited; the error
     C(InsufficientSnapshotQuota) is reported by the API when the quota is
     exhausted.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

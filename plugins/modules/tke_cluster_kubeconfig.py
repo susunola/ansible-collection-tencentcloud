@@ -43,31 +43,16 @@ options:
         value; consider setting C(no_log) to C(true) on the task to keep the
         credentials out of logs.
     type: path
-  retries:
-    description:
-      - Maximum number of retry attempts for throttled or transient API
-        failures, using exponential backoff with jitter.
-    type: int
-    default: 5
-  waiter_timeout:
-    description:
-      - Maximum time in seconds to wait for an asynchronous resource to reach
-        the desired state.
-    type: int
-    default: 120
-  waiter_delay:
-    description: Interval in seconds between state polls while waiting.
-    type: int
-    default: 5
-  user_agent:
-    description:
-      - User-Agent string sent with API requests.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - The kubeconfig contains cluster access credentials; protect task output
     with C(no_log) set to C(true) when O(dest) is not set.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

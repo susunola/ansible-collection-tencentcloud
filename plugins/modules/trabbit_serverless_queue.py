@@ -38,11 +38,14 @@ options:
   dead_letter_strategy: {type: str, choices: [at-most-once, at-least-once], description: Quorum dead-letter strategy; immutable after creation.}
   queue_leader_locator: {type: str, choices: [client-local, balanced], description: Quorum leader locator; immutable after creation.}
   quorum_initial_group_size: {type: int, description: Initial quorum replica count; immutable after creation.}
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

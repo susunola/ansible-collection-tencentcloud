@@ -15,7 +15,10 @@ options:
   subnet_id: {type: str, description: Subnet used to resolve an intranet endpoint.}
   workload: {type: str, description: Additional engine workload such as pushgateway or polaris-limiter.}
   engine_region: {type: str, description: Deployment region override for the queried endpoint.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -48,7 +48,31 @@ VERSION_ADDED = "0.6.0"
 # Modules generated before the 0.6.0 batch keep their original version_added.
 LEGACY_VERSION_ADDED = "0.4.0"
 AUTHOR = "Tencent Cloud Ansible Collection Contributors (@susunola)"
-DOC_FRAGMENT = "susunola.tencentcloud.tencentcloud"
+# Doc fragments owned by this collection (plugins/doc_fragments/).
+# base argument_spec() options are documented by fragments, not copied
+# inline, so validate-modules sees every accepted option documented and the
+# text has a single source of truth (scripts/sync_doc_fragments.py enforces
+# this in CI).
+BASE_FRAGMENTS = (
+    "susunola.tencentcloud.credentials",
+    "susunola.tencentcloud.region",
+    "susunola.tencentcloud.connection",
+)
+# Runtime options (retries/user_agent/waiter_*) are only accepted by
+# resource modules; read-only modules reference the base fragments alone.
+RESOURCE_FRAGMENTS = BASE_FRAGMENTS + (
+    "susunola.tencentcloud.retry",
+    "susunola.tencentcloud.user_agent",
+    "susunola.tencentcloud.waiter",
+)
+
+
+def extends_lines(fragments):
+    """Render an extends_documentation_fragment block for *fragments*."""
+    return ["extends_documentation_fragment:"] + [
+        "  - %s" % fragment for fragment in fragments
+    ]
+
 
 # Hand-curated per-module specification. All SDK field names were verified
 # against the installed tencentcloud-sdk-python-<service> packages.
@@ -5411,8 +5435,8 @@ def _documentation(spec):
         lines += option_lines
     else:
         lines[-1] = "options: {}"
+    lines += extends_lines(BASE_FRAGMENTS)
     lines += [
-        f"extends_documentation_fragment: {DOC_FRAGMENT}",
         f"author: {AUTHOR}",
     ]
     return "\n".join(lines)
@@ -6880,28 +6904,10 @@ def _resource_documentation(spec, collected, option_order):
         if option in no_log:
             options.append("    no_log: true")
     # base_argument_spec() adds retries/waiter_*/user_agent on top of the
-    # documented fragment; the exemplar modules document them inline so
-    # validate-modules sees every accepted option documented.
-    options += [
-        "  retries:",
-        "    description: Number of retries for transient SDK failures.",
-        "    type: int",
-        "    default: 5",
-        "  waiter_delay:",
-        "    description: Seconds to wait between state-polling attempts.",
-        "    type: int",
-        "    default: 5",
-        "  waiter_timeout:",
-        "    description: Overall timeout in seconds for state polling.",
-        "    type: int",
-        "    default: 120",
-        "  user_agent:",
-        "    description:",
-        "      - Value appended to the SDK User-Agent header so API usage can",
-        "        be attributed to this collection.",
-        "    type: str",
-        "    default: ansible-collection.susunola.tencentcloud",
-    ]
+    # base connection options; RESOURCE_FRAGMENTS documents them so
+    # validate-modules sees every accepted option documented.  Resource
+    # modules therefore extend the full fragment set instead of copying
+    # these options inline (single source of truth).
     identity_joined = ", ".join("O(%s)" % option for option in spec["identity"])
     notes = [
         "notes:",
@@ -6923,8 +6929,8 @@ def _resource_documentation(spec, collected, option_order):
                                             _service_label(spec["service_package"])),
          "  - Supports check mode; no API write happens in check mode, only reads.",
          "options:"] + options + notes +
-        ["extends_documentation_fragment: susunola.tencentcloud.tencentcloud",
-         "author: %s" % RESOURCE_AUTHOR])
+        extends_lines(RESOURCE_FRAGMENTS) +
+        ["author: %s" % RESOURCE_AUTHOR])
 
 
 def render_resource_skeleton(spec, collected):

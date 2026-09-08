@@ -17,9 +17,13 @@ options:
   name: {type: str, required: true, description: Cooldown policy name.}
   cooldown_ttl: {type: str, description: Relative cooldown TTL accepted by Doris.}
   cooldown_datetime: {type: str, description: Absolute cooldown datetime accepted by Doris.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

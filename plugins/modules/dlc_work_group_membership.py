@@ -13,11 +13,14 @@ options:
   work_group_id: {type: int, required: true, description: DLC work-group ID.}
   user_ids: {type: list, elements: str, required: true, description: Exact desired set of DLC user IDs or CAM sub-user UINs.}
   allow_empty: {type: bool, default: false, description: Explicitly authorize removing every member from the work group.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
-  waiter_delay: {type: int, default: 5, description: Seconds between convergence polls.}
-  waiter_timeout: {type: int, default: 120, description: Overall convergence timeout in seconds.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

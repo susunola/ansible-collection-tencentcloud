@@ -14,7 +14,10 @@ short_description: Gather information about Tencent Cloud CAM SAML identity prov
 version_added: "1.2.0"
 description: Returns the SAML identity providers of the account.
 options: {}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

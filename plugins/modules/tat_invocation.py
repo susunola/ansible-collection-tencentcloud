@@ -26,11 +26,16 @@ options:
   wait: {type: bool, default: true, description: Wait for all instance tasks to reach terminal states.}
   fail_on_task_error: {type: bool, default: true, description: Fail when any task is unsuccessful.}
   include_output: {type: bool, default: false, description: Return task output; use task-level C(no_log=true) when enabled.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
+
   waiter_delay: {type: int, default: 5, description: Polling interval.}
   waiter_timeout: {type: int, default: 900, description: Overall execution wait timeout.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

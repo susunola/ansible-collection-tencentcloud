@@ -22,9 +22,13 @@ options:
   version_remark: {type: str, description: Initial version description.}
   folder_id: {type: str, default: root, description: Resource folder ID.}
   allow_delete_in_use: {type: bool, default: false, description: Explicitly authorize deleting a resource referenced by job configurations.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

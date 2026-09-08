@@ -32,11 +32,16 @@ options:
   security_group_ids: {type: list, elements: str, default: [], description: Security groups bound during creation.}
   deletion_protection: {type: bool, default: false, description: Enable deletion protection during creation.}
   purge: {type: bool, default: false, description: Permanently destroy an already isolated instance instead of retaining it in the recycle bin.}
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
+
   waiter_delay: {description: Seconds between polling attempts., type: int, default: 10}
   waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 900}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

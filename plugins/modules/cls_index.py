@@ -12,10 +12,7 @@ short_description: Manage Tencent Cloud CLS topic indexes
 version_added: "0.14.0"
 description: Creates, updates and deletes full-text indexes for CLS topics.
 options:
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
+
   state: {type: str, choices: [present, absent], default: present, description: Desired state.}
   topic_id: {type: str, required: true, description: CLS topic ID.}
   enabled: {type: bool, default: true, description: Enable indexing.}
@@ -25,7 +22,13 @@ options:
   include_internal_fields: {type: bool, default: false, description: Index internal fields.}
   metadata_flag: {type: int, choices: [0, 1], default: 0, description: Metadata indexing flag.}
   coverage_field: {type: str, description: Field used for log coverage.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

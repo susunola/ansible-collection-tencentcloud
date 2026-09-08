@@ -27,7 +27,10 @@ notes:
   - Requires the C(tencentcloud-sdk-python-cam) package on the controller.
   - CAM is a global service. O(region) is accepted but ignored; the global
     C(cam.tencentcloudapi.com) endpoint is used.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

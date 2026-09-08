@@ -62,27 +62,6 @@ options:
       - Re-upload every local file even when its MD5 matches the remote ETag.
     type: bool
     default: false
-  retries:
-    description:
-      - Maximum number of retry attempts for throttled or transient API
-        failures, using exponential backoff with jitter.
-    type: int
-    default: 5
-  waiter_timeout:
-    description:
-      - Maximum time in seconds to wait for an asynchronous resource to reach
-        the desired state.
-    type: int
-    default: 120
-  waiter_delay:
-    description: Interval in seconds between state polls while waiting.
-    type: int
-    default: 5
-  user_agent:
-    description:
-      - User-Agent string sent with API requests.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(cos-python-sdk-v5) package on the controller.
   - O(role_arn) is honoured; the temporary credentials obtained via STS
@@ -91,7 +70,13 @@ notes:
   - Files are uploaded with single-part C(put_object) calls so the ETag
     comparison stays exact; very large files are better handled by a
     dedicated streaming module.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

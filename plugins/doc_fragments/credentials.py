@@ -5,7 +5,7 @@ __metaclass__ = type
 
 
 class ModuleDocFragment(object):
-    DOCUMENTATION = r'''
+    DOCUMENTATION = r"""
 options:
   secret_id:
     description:
@@ -50,21 +50,4 @@ options:
         C(default) section is used.
     type: str
     version_added: "0.5.0"
-  region:
-    description:
-      - Tencent Cloud region.
-      - Falls back to C(TENCENTCLOUD_REGION), then to the C(region) key of
-        the selected O(profile) section in
-        C(~/.tencentcloud/default.configure).
-      - Required unless one of those fallbacks provides it.
-    type: str
-  endpoint:
-    description:
-      - Override the Tencent Cloud API endpoint.
-      - Intended for private endpoints, proxies, and integration tests.
-    type: str
-  timeout:
-    description: SDK HTTP request timeout in seconds.
-    type: int
-    default: 60
-'''
+"""

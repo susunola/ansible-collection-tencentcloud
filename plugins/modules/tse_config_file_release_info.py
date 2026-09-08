@@ -19,7 +19,10 @@ options:
   release_name: {type: str, description: Release name filter.}
   only_in_use: {type: bool, default: false, description: Return only releases currently in use.}
   page_size: {type: int, default: 100, description: Number of releases or history entries requested per call.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

@@ -25,11 +25,14 @@ options:
   enable_overrun: {type: str, choices: ['TRUE', 'FALSE'], description: Overrun billing switch.}
   force_destroy: {type: bool, default: false, description: Force environment destruction.}
   bypass_destroy_check: {type: bool, default: false, description: Bypass server-side destruction checks.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
-  waiter_delay: {type: int, default: 5, description: Seconds between polling attempts.}
-  waiter_timeout: {type: int, default: 120, description: Overall polling timeout in seconds.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

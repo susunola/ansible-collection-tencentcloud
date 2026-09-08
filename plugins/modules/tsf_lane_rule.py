@@ -26,7 +26,10 @@ options:
       name: {type: str, required: true, description: Request tag name.}
       operator: {type: str, required: true, description: TSF tag matching operator.}
       value: {type: str, required: true, description: Match value.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -24,11 +24,16 @@ options:
   tags: {type: dict, description: Creation-time tags.}
   product_version: {type: str, description: Creation-time product version.}
   wait: {type: bool, default: true, description: Wait for serving or absent convergence.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
+
   waiter_delay: {type: int, default: 10, description: Seconds between polling attempts.}
   waiter_timeout: {type: int, default: 1800, description: Overall polling timeout in seconds.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

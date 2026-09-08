@@ -14,7 +14,10 @@ short_description: Gather information about the Tencent Cloud account balance
 version_added: "0.7.0"
 description: Returns the balance of the Tencent Cloud account.
 options: {}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

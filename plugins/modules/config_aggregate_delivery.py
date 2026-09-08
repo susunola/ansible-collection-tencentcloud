@@ -21,11 +21,14 @@ options:
   delivery_type: {type: str, choices: [COS, CLS], required: true, description: Destination service type.}
   delivery_uin: {type: int, default: 0, description: Delegated administrator destination UIN or zero for the administrator account.}
   content_type: {type: int, choices: [1, 2, 3], default: 3, description: "One for changes, two for resource lists or three for both."}
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall timeout in seconds for state polling., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 

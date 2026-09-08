@@ -22,7 +22,10 @@ options:
     suboptions:
       group_id: {type: str, required: true, description: TSF deployment group ID.}
       entrance: {type: bool, default: false, description: Whether this is the lane entrance group.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

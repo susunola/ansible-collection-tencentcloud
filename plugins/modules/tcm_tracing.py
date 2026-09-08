@@ -15,11 +15,14 @@ options:
   sampling: {type: float, default: 1.0, description: Trace sampling value accepted by TCM.}
   apm: {type: dict, description: SDK APM destination payload.}
   zipkin: {type: dict, description: SDK TracingZipkin payload.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  waiter_delay: {type: int, default: 5, description: Polling interval.}
-  waiter_timeout: {type: int, default: 120, description: Convergence timeout.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

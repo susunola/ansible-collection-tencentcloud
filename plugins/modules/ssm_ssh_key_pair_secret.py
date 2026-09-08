@@ -23,11 +23,14 @@ options:
   tags: {type: dict, default: {}, description: Creation tags.}
   enabled: {type: bool, default: true, description: Whether the secret is enabled.}
   recovery_window_days: {type: int, default: 7, description: Deletion recovery window from 0 through 30 days.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  waiter_delay: {type: int, default: 5, description: Polling interval.}
-  waiter_timeout: {type: int, default: 120, description: Polling timeout.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

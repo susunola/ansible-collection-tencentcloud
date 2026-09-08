@@ -14,9 +14,13 @@ options:
   scope: {type: str, choices: [Global, Service, Route], required: true, description: Protection scope.}
   resource_ids: {type: list, elements: str, description: Service or route IDs; required outside Global scope.}
   enabled: {type: bool, required: true, description: Desired WAF protection status.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

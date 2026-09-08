@@ -17,9 +17,13 @@ options:
   folder_type: {type: int, choices: [0, 1], required: true, description: Job folder or resource dependency folder.}
   parent_id: {type: str, default: root, description: Desired parent folder ID.}
   allow_delete_nonempty: {type: bool, default: false, description: Explicitly authorize deleting a folder that contains children or resources.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -19,11 +19,16 @@ options:
   access_control: {type: dict, description: Exact SDK NetworkAccessControl payload.}
   address_version: {type: str, choices: [IPV4, IPV6], default: IPV4, description: Public address family used for deletion.}
   vip: {type: str, description: Public VIP; required by the API when a group has multiple public networks.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
+
   waiter_delay: {type: int, default: 5, description: Polling interval.}
   waiter_timeout: {type: int, default: 600, description: Convergence timeout.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

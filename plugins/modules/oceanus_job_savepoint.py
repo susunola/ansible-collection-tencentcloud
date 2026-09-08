@@ -17,11 +17,16 @@ options:
   description: {type: str, required: true, description: Stable savepoint description used for idempotent reconciliation.}
   force: {type: bool, default: false, description: Trigger another savepoint even when the description already exists.}
   wait: {type: bool, default: true, description: Wait for the savepoint to become active.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
+
   waiter_delay: {type: int, default: 5, description: Seconds between savepoint status polls.}
   waiter_timeout: {type: int, default: 600, description: Overall savepoint wait timeout in seconds.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

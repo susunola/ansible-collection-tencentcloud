@@ -27,11 +27,14 @@ options:
   output_cos_bucket_url: {description: HTTPS COS bucket URL for command output., type: str}
   output_cos_key_prefix: {description: COS key prefix for command output., type: str}
   tags: {description: Tags assigned when creating the command., type: dict, default: {}}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

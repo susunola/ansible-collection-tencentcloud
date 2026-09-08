@@ -16,9 +16,13 @@ options:
   meta_strategy: {type: dict, description: Metadata schedule with retain_days, week_days and execute_hour.}
   data_strategy: {type: dict, description: Table-data schedule with retain_days, week_days and execute_hour.}
   backup_tables: {type: list, elements: dict, description: Exact SDK BackupTableContent list for the data schedule.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

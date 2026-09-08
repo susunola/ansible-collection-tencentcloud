@@ -22,11 +22,14 @@ options:
   update_strategy: {description: Strategy used to apply addon values., type: str, choices: [merge, replace], default: merge}
   api_dry_run: {description: Run the TKE API DryRun validation before installation or update., type: bool, default: false}
   allow_downgrade: {description: Allow changing to a numerically lower addon version., type: bool, default: false}
-  retries: {description: Number of retries for transient SDK failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between state-polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall timeout in seconds for state polling., type: int, default: 120}
-  user_agent: {description: User-Agent value appended to SDK requests., type: str, default: ansible-collection.susunola.tencentcloud}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

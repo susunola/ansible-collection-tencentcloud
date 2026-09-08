@@ -12,7 +12,10 @@ version_added: "0.14.0"
 description: Returns cloud-native API gateway instance information associated with a public network IP.
 options:
   public_ip: {type: str, required: true, description: Public IP assigned to a cloud-native API gateway.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

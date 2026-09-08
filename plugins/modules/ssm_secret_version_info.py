@@ -18,9 +18,13 @@ options:
   include_secret_value: {type: bool, default: false, description: Retrieve sensitive SecretString or SecretBinary for version_id.}
   encryption_public_key: {type: str, description: Optional public key used by supported encrypted-response flows.}
   encryption_algorithm: {type: str, description: Optional encrypted-response algorithm.}
-  retries: {type: int, default: 5, description: Retries for transient API failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

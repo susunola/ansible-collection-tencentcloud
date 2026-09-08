@@ -53,27 +53,6 @@ options:
         changing it after creation is a no-op (the API does not support it).
     type: int
     default: 0
-  retries:
-    description:
-      - Maximum number of retry attempts for throttled or transient API
-        failures, using exponential backoff with jitter.
-    type: int
-    default: 5
-  waiter_timeout:
-    description:
-      - Maximum time in seconds to wait for an asynchronous resource to reach
-        the desired state.
-    type: int
-    default: 120
-  waiter_delay:
-    description: Interval in seconds between state polls while waiting.
-    type: int
-    default: 5
-  user_agent:
-    description:
-      - User-Agent string sent with API requests.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-cvm) package on the controller.
   - Key pairs are immutable after creation; name, project and public key
@@ -84,7 +63,13 @@ notes:
     save it immediately (for example with the C(copy) module and
     C(no_log=true)).
   - Uses the C(cvm.tencentcloudapi.com) endpoint by default.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

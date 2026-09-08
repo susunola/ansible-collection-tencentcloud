@@ -132,10 +132,6 @@ options:
       - Only applied at creation.
     type: dict
     default: {}
-  retries:
-    description: Number of retries for transient SDK failures.
-    type: int
-    default: 5
   waiter_delay:
     description: Seconds to wait between state-polling attempts.
     type: int
@@ -150,12 +146,6 @@ options:
         renames an existing instance.
     type: int
     default: 900
-  user_agent:
-    description:
-      - Value appended to the SDK User-Agent header so API usage can be
-        attributed to this collection.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-cdb) package on the controller.
   - CDB instances are billed while present; isolate them as soon as they
@@ -172,7 +162,12 @@ notes:
     note that disk capacity can only be expanded, never reduced. For
     valid Memory and Volume values use the DescribeDBInstanceConfig
     salesable-spec API.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

@@ -18,9 +18,13 @@ options:
   group_ids: {type: list, elements: str, description: Exact group IDs allowed to operate the namespace.}
   service_export_to: {type: list, elements: str, description: Exact namespaces allowed to discover its services.}
   sync_to_global_registry: {type: bool, description: Synchronize to the global registry.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

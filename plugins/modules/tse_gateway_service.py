@@ -25,9 +25,13 @@ options:
   delete_routes: {type: bool, default: false, description: Delete bound routes together with the service.}
   waiter_delay: {type: int, default: 3, description: Reconciliation polling interval.}
   waiter_timeout: {type: int, default: 180, description: Reconciliation timeout.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

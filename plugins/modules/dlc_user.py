@@ -24,11 +24,14 @@ options:
   allow_delete_bound: {type: bool, default: false, description: Explicitly authorize deleting a user that still has policies or work groups.}
   allow_delete: {type: bool, default: false, description: Explicitly authorize user deletion.}
   wait: {type: bool, default: true, description: Wait for mutation convergence.}
-  waiter_delay: {type: int, default: 5, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 120, description: Overall convergence timeout.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

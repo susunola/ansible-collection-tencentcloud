@@ -20,9 +20,13 @@ options:
   batch_id: {type: str, description: Optional batch ID used when reading SQL results.}
   max_results: {type: int, default: 1000, description: Maximum rows requested per result page, from 1 to 1000.}
   data_field_cut_length: {type: int, description: Optional maximum returned field-value length.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

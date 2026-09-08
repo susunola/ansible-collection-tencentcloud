@@ -64,6 +64,12 @@ jobs:
         run: python scripts/generate_info_modules.py --resources --check
       - name: Module registries are up to date
         run: python scripts/sync_registry.py --check
+      # Common options (credentials/region/connection/retry/user_agent/waiter)
+      # are documented by doc_fragments, not copied inline; a module that
+      # re-introduces a strippable inline copy or drops a base fragment
+      # fails here.
+      - name: Doc fragments are canonical
+        run: python scripts/sync_doc_fragments.py --check
       - name: Module tiers are consistent
         run: python scripts/check_module_tiers.py --check
       # Every write module needs a readable query surface: a matching _info

@@ -12,10 +12,7 @@ short_description: Manage Tencent Cloud CDB parameter templates
 version_added: "0.14.0"
 description: Creates, updates and deletes reusable CDB parameter templates.
 options:
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
+
   state: {type: str, choices: [present, absent], default: present, description: Desired state.}
   template_id: {type: int, description: Existing template ID.}
   name: {type: str, description: Template name.}
@@ -24,7 +21,13 @@ options:
   engine_type: {type: str, default: mysql, description: Database engine type.}
   template_type: {type: int, default: 0, description: Template type.}
   parameters: {type: dict, default: {}, description: Exact parameter name and value mapping.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

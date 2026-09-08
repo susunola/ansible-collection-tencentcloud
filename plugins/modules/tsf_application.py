@@ -25,7 +25,10 @@ options:
   ignore_create_image_repository: {type: bool, description: Do not create an image repository with the application.}
   create_same_name_image_repository: {type: bool, description: Create and bind a same-name image repository.}
   sync_delete_image_repository: {type: bool, default: false, description: Delete the associated image repository when removing the application.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

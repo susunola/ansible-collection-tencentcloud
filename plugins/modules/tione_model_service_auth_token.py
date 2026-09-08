@@ -24,9 +24,13 @@ options:
   rotate_from_token_id: {type: str, no_log: true, description: Rotate only while the current token ID equals this value.}
   show_token_value: {type: bool, default: false, description: Include the sensitive generated token value in the result.}
   allow_delete: {type: bool, default: false, description: Explicit destructive-operation guard.}
-  retries: {type: int, default: 5, description: Retries for transient API failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
