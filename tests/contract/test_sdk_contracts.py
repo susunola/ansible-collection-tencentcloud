@@ -786,7 +786,10 @@ WRITE_MODULE_BUILDERS = {
     "ssm_parameter": [
         "_create",
         "_delete",
+        "_restore",
+        "_update_description",
         "_update_value",
+        "_value_matches",
         "find_secret",
     ],
     "tag": [
@@ -950,7 +953,7 @@ WRITE_MODULE_BUILDERS = {
     "tcaplusdb_cluster": ["create_request", "delete_request", "describe_request", "password_request", "rename_request"],
     "tdmq_rabbitmq_instance": ["create_request", "delete_request", "describe_request", "modify_request"],
     "oceanus_workspace": ["create_request", "delete_request", "describe_request", "modify_request"],
-    "oceanus_job": ["create_request", "delete_request", "describe_request", "modify_request", "run_request", "stop_request"],
+    "oceanus_job": ["create_request", "delete_request", "describe_request", "job_folder", "modify_request", "run_request", "stop_request"],
     "tse_sre_instance": ["create_request", "delete_request", "describe_request", "internet_request"],
     "tdcpg_cluster": [
         "create_instances_request",
@@ -2540,6 +2543,9 @@ def test_ssm_parameter():
         },
     )
     module._update_value(fake, client, models, "db-password", "NewSecret!", None)
+    module._value_matches(fake, client, models, "db-password", "NewSecret!", None)
+    module._update_description(fake, client, models, "db-password", "Rotated database password")
+    module._restore(fake, client, models, "db-password")
     module._delete(fake, client, models, "db-password", False, 30)
     assert audit_recorded(fake, "ssm_parameter") == []
 
@@ -3380,6 +3386,109 @@ def test_tse_sre_instance():
     assert errors == []
 
 
+def test_tse_gateway_cors():
+    module = _import_plugin("tse_gateway_cors")
+    models = _models("tse.v20201207")
+    p = {"gateway_id": "gateway-xxxxxxxx", "scope": "route", "resource_id": "route-xxxxxxxx"}
+    target = {
+        "Enabled": True,
+        "Origins": ["https://app.example.com"],
+        "Headers": ["Content-Type"],
+        "Methods": ["GET", "POST"],
+        "ExposedHeaders": ["X-Custom-Header"],
+        "MaxAge": 600,
+        "Credentials": True,
+        "PreFlightContinue": False,
+    }
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(module.request(models.DescribeCloudNativeAPIGatewayCORSRequest, p), "TSE gateway CORS describe"))
+    errors.extend(audit_request(module.request(models.CreateOrModifyCloudNativeAPIGatewayCORSRequest, p, target), "TSE gateway CORS upsert"))
+    errors.extend(audit_request(module.request(models.DeleteCloudNativeAPIGatewayCORSRequest, p), "TSE gateway CORS delete"))
+    module.get_current(fake, client, models, p)
+    errors.extend(audit_recorded(fake, "tse_gateway_cors get_current"))
+    assert errors == []
+
+
+def test_tse_gateway_ip_restriction():
+    module = _import_plugin("tse_gateway_ip_restriction")
+    models = _models("tse.v20201207")
+    p = {"gateway_id": "gateway-xxxxxxxx", "scope": "service", "resource_id": "service-xxxxxxxx"}
+    target = {"Enabled": True, "RestrictionType": "whiteList", "AddressList": ["1.2.3.4", "10.0.0.0/8"]}
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(module.request(models.DescribeCloudNativeAPIGatewayIPRestrictionRequest, p), "TSE gateway IP restriction describe"))
+    errors.extend(
+        audit_request(module.request(models.CreateOrModifyCloudNativeAPIGatewayIPRestrictionRequest, p, target), "TSE gateway IP restriction upsert")
+    )
+    errors.extend(audit_request(module.request(models.DeleteCloudNativeAPIGatewayIPRestrictionRequest, p), "TSE gateway IP restriction delete"))
+    module.get_current(fake, client, models, p)
+    errors.extend(audit_recorded(fake, "tse_gateway_ip_restriction get_current"))
+    assert errors == []
+
+
+def test_tse_gateway_rate_limit():
+    module = _import_plugin("tse_gateway_rate_limit")
+    models = _models("tse.v20201207")
+    config = {
+        "Enabled": True,
+        "QpsThresholds": [{"Unit": "second", "Max": 10}],
+        "LimitBy": "header",
+        "Header": "x-user-id",
+        "ResponseType": "default",
+        "HideClientHeaders": True,
+        "IsDelay": False,
+        "Path": "/orders",
+        "Policy": "server",
+        "LineUpTime": 30,
+    }
+    service = {"gateway_id": "gateway-xxxxxxxx", "scope": "service", "resource": "service-xxxxxxxx"}
+    route = {"gateway_id": "gateway-xxxxxxxx", "scope": "route", "resource": "route-xxxxxxxx"}
+    errors = []
+    errors.extend(audit_request(module.request(models.DescribeCloudNativeAPIGatewayServiceRateLimitRequest, models, service), "TSE service rate limit describe"))
+    errors.extend(audit_request(module.request(models.CreateCloudNativeAPIGatewayServiceRateLimitRequest, models, service, config), "TSE service rate limit create"))
+    errors.extend(audit_request(module.request(models.DeleteCloudNativeAPIGatewayServiceRateLimitRequest, models, service), "TSE service rate limit delete"))
+    errors.extend(audit_request(module.request(models.DescribeCloudNativeAPIGatewayRouteRateLimitRequest, models, route), "TSE route rate limit describe"))
+    errors.extend(audit_request(module.request(models.CreateCloudNativeAPIGatewayRouteRateLimitRequest, models, route, config), "TSE route rate limit create"))
+    errors.extend(audit_request(module.request(models.DeleteCloudNativeAPIGatewayRouteRateLimitRequest, models, route), "TSE route rate limit delete"))
+    assert errors == []
+
+
+def test_tse_gateway_service_source():
+    module = _import_plugin("tse_gateway_service_source")
+    models = _models("tse.v20201207")
+    p = {
+        "gateway_id": "gateway-xxxxxxxx",
+        "source_type": "Customer-DNS",
+        "source_name": "corp-dns",
+        "source_info": {"Addresses": ["10.0.0.10"], "Auth": {"Username": "readonly", "Password": "Secret-1234", "AccessToken": None}},
+    }
+    current = {"SourceID": "source-xxxxxxxx", "SourceName": "corp-dns"}
+    errors = []
+    errors.extend(audit_request(module.list_request(models, p), "TSE gateway service source list"))
+    errors.extend(audit_request(module.create_request(models, p), "TSE gateway service source create"))
+    errors.extend(audit_request(module.update_request(models, p, current), "TSE gateway service source update"))
+    errors.extend(audit_request(module.delete_request(models, p, "source-xxxxxxxx"), "TSE gateway service source delete"))
+    assert errors == []
+
+
+def test_tse_gateway_waf_domains():
+    module = _import_plugin("tse_gateway_waf_domains")
+    models = _models("tse.v20201207")
+    p = {"gateway_id": "gateway-xxxxxxxx", "domains": ["api.example.com", "api2.example.com"], "purge_unlisted": False}
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(module.request(models.DescribeWafDomainsRequest, p), "TSE gateway WAF domains describe"))
+    errors.extend(audit_request(module.request(models.CreateWafDomainsRequest, p, ["api.example.com"]), "TSE gateway WAF domains create"))
+    errors.extend(audit_request(module.request(models.DeleteWafDomainsRequest, p, ["api2.example.com"]), "TSE gateway WAF domains delete"))
+    module.current(fake, client, models, p)
+    errors.extend(audit_recorded(fake, "tse_gateway_waf_domains current"))
+    assert errors == []
+
+
 def test_oceanus_job():
     module = _import_plugin("oceanus_job")
     models = _models("oceanus.v20190422")
@@ -3415,6 +3524,10 @@ def test_oceanus_job():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "Oceanus job request %s" % index))
+    fake = _RecordingModule()
+    client = _StubClient()
+    module.job_folder(fake, client, models, p, p["job_id"])
+    errors.extend(audit_recorded(fake, "oceanus_job job_folder"))
     assert errors == []
 
 
@@ -3503,6 +3616,52 @@ def test_dcdb_instance():
     errors = []
     for index, request in enumerate(requests):
         errors.extend(audit_request(request, "DCDB instance request %s" % index))
+    assert errors == []
+
+
+def test_dcdb_account_privilege():
+    module = _import_plugin("dcdb_account_privilege")
+    models = _models("dcdb.v20180411")
+    p = {
+        "instance_id": "dcdbt-xxxxxxxx",
+        "username": "application",
+        "host": "%",
+        "database": "orders",
+        "object_type": "table",
+        "object_name": "events",
+        "column": "*",
+    }
+    errors = []
+    errors.extend(audit_request(module.request(models, "DescribeAccountPrivilegesRequest", p), "DCDB account privilege describe"))
+    errors.extend(audit_request(module.request(models, "GrantAccountPrivilegesRequest", p, ["SELECT", "INSERT", "UPDATE"]), "DCDB account privilege grant"))
+    errors.extend(audit_request(module.request(models, "GrantAccountPrivilegesRequest", p, []), "DCDB account privilege revoke all"))
+    assert errors == []
+
+
+def test_dcdb_security_config():
+    module = _import_plugin("dcdb_security_config")
+    models = _models("dcdb.v20180411")
+    p = {
+        "instance_id": "dcdbt-xxxxxxxx",
+        "encryption_enabled": True,
+        "ssl_enabled": True,
+        "security_group_ids": ["sg-aaaaaaaa", "sg-bbbbbbbb"],
+    }
+    fake = _RecordingModule()
+    client = _StubClient()
+    module.describe(fake, client, models, p)
+    errors = []
+    errors.extend(audit_recorded(fake, "dcdb_security_config describe"))
+    encrypt = module.instance_request(models.ModifyDBEncryptAttributesRequest, p["instance_id"])
+    encrypt.EncryptEnabled = 1
+    errors.extend(audit_request(encrypt, "dcdb_security_config modify encrypt"))
+    ssl = module.instance_request(models.ModifyInstanceSSLAttributesRequest, p["instance_id"])
+    ssl.SSLEnabled = 1
+    errors.extend(audit_request(ssl, "dcdb_security_config modify ssl"))
+    groups = module.instance_request(models.ModifyDBInstanceSecurityGroupsRequest, p["instance_id"])
+    groups.Product = "dcdb"
+    groups.SecurityGroupIds = p["security_group_ids"]
+    errors.extend(audit_request(groups, "dcdb_security_config modify security groups"))
     assert errors == []
 
 
@@ -6832,6 +6991,79 @@ def test_cbs_snapshot_share():
     errors.extend(audit_request(module.describe_request(models, "snap-xxxxxxxx"), "CBS snapshot share describe"))
     errors.extend(audit_request(module.modify_request(models, "snap-xxxxxxxx", ["100001122000"], "SHARE"), "CBS snapshot share add"))
     errors.extend(audit_request(module.modify_request(models, "snap-xxxxxxxx", ["100001122000"], "CANCEL"), "CBS snapshot share remove"))
+    assert errors == []
+
+
+def test_ssm_product_secret():
+    module = _import_plugin("ssm_product_secret")
+    models = _models("ssm.v20190923")
+    p = {
+        "secret_name": "orders-db-managed",
+        "product_name": "Mysql",
+        "instance_id": "cdb-xxxxxxxx",
+        "username_prefix": "ssmapp",
+        "domains": ["%"],
+        "privileges": [{"privilege_name": "GlobalPrivileges", "privileges": ["SELECT", "INSERT", "UPDATE"]}],
+        "description": "managed by Ansible",
+        "kms_key_id": None,
+        "kms_hsm_cluster_id": None,
+        "encrypt_type": 0,
+        "tags": {"environment": "production"},
+        "rotation_enabled": True,
+        "rotation_frequency": 30,
+        "rotation_begin_time": "2026-09-02 02:00:00",
+        "account_remark": None,
+        "account_type": None,
+        "recovery_window_days": 7,
+    }
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(module.create_request(models, p), "SSM product secret create"))
+    module.find(fake, client, models, p["secret_name"])
+    errors.extend(audit_recorded(fake, "ssm_product_secret"))
+    for name, kwargs in [
+        ("DeleteSecretRequest", {"SecretName": p["secret_name"], "RecoveryWindowInDays": p["recovery_window_days"]}),
+        ("RestoreSecretRequest", {"SecretName": p["secret_name"]}),
+        ("UpdateDescriptionRequest", {"SecretName": p["secret_name"], "Description": "managed by Ansible"}),
+        ("EnableSecretRequest", {"SecretName": p["secret_name"]}),
+        ("DisableSecretRequest", {"SecretName": p["secret_name"]}),
+        ("UpdateRotationStatusRequest", {"SecretName": p["secret_name"], "EnableRotation": True, "Frequency": 30, "RotationBeginTime": "2026-09-02 02:00:00"}),
+        ("DescribeAsyncRequestInfoRequest", {"FlowID": 12345}),
+    ]:
+        errors.extend(audit_request(module._request(models, name, **kwargs), "SSM product secret %s" % name))
+    assert errors == []
+
+
+def test_ssm_ssh_key_pair_secret():
+    module = _import_plugin("ssm_ssh_key_pair_secret")
+    models = _models("ssm.v20190923")
+    p = {
+        "secret_name": "prod-bastion-key",
+        "ssh_key_name": "prod_bastion",
+        "project_id": 0,
+        "description": "managed by Ansible",
+        "kms_key_id": None,
+        "kms_hsm_cluster_id": None,
+        "encrypt_type": 0,
+        "tags": {"environment": "production"},
+        "enabled": True,
+        "recovery_window_days": 7,
+    }
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(module.create_request(models, p), "SSM SSH key-pair secret create"))
+    module.find(fake, client, models, p["secret_name"])
+    errors.extend(audit_recorded(fake, "ssm_ssh_key_pair_secret"))
+    for name, kwargs in [
+        ("DeleteSecretRequest", {"SecretName": p["secret_name"], "RecoveryWindowInDays": p["recovery_window_days"]}),
+        ("RestoreSecretRequest", {"SecretName": p["secret_name"]}),
+        ("UpdateDescriptionRequest", {"SecretName": p["secret_name"], "Description": "managed by Ansible"}),
+        ("EnableSecretRequest", {"SecretName": p["secret_name"]}),
+        ("DisableSecretRequest", {"SecretName": p["secret_name"]}),
+    ]:
+        errors.extend(audit_request(module.request(models, name, **kwargs), "SSM SSH key-pair secret %s" % name))
     assert errors == []
 
 
