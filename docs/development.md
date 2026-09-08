@@ -209,7 +209,8 @@ product-level capability matrix is current.
   `tests/contract/test_sdk_contracts.py`: a `WRITE_MODULE_BUILDERS` entry
   plus a `test_<module>()` function that runs against the real Tencent Cloud
   SDK classes in CI. The contract suite also enforces the coverage
-  threshold (`--cov-fail-under=50`).
+  threshold (`--cov-fail-under`; current gate 80, set in
+  `.github/workflows/ci.yml`).
 
 ## Local collection layout
 

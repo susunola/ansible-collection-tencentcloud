@@ -1,11 +1,20 @@
 # Coverage batching: scaling write-module unit tests (roadmap #57)
 
-How to raise the CI coverage gate (55%) back towards 70% without writing
-~200 module test files one by one at the current per-batch pace.
+> **Status (2026-09-08)**: milestone reached — measured total **81.44%**
+> (9,985 tests / 30 skipped), CI gate raised `--cov-fail-under` 72 → **80**
+> (`.github/workflows/ci.yml`). The log below is the historical batch
+> record from the earlier drive (gate 55 → 70+); the 80% sprint added 73
+> more `test_<module>_main.py` main-path files (1,102 tests, 6 parallel
+> groups). Remaining work is branch/edge-line closure, not the structural
+> gap that this document originally tracked.
 
-## Current state (measured 2026-09-03, after batch 40)
+How the batching drive raised the CI coverage gate (55%) to 80 without
+writing ~200 module test files one by one at the initial per-batch pace.
 
-- Gate: `--cov-fail-under=55`, baseline total ~60.9% after batches 1-11.
+## Current state (historical: measured 2026-09-03, after batch 40)
+
+- Gate at the time: `--cov-fail-under=55`, baseline total ~60.9% after
+  batches 1-11.
 - 313 write modules, 128 of them have **no** unit test file (file-scan
   count — batch-29 closeout reconciled the documented figure to the
   authoritative file-scan baseline, correcting an +11 legacy over-credit
@@ -162,8 +171,8 @@ hour:
 
 ### Guardrails (keep the gate green)
 
-- Each batch must leave `--cov-fail-under=55` green (current margin
-  ~+6 pp).
+- Each batch must leave `--cov-fail-under` green (gate now 80, measured
+  81.44%; keep ≥ ~1.5 pp headroom).
 - Run the full module unit suite + `ansible-test sanity` before each
   commit, exactly as batches 1-11 did.
 - Do not raise the gate in the same commit as a batch; raise it only on a

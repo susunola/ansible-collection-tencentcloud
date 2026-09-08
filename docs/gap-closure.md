@@ -9,7 +9,7 @@
 | ID | 差距维度 | 本库实测 | 行业最优实测 | 判定 | 状态 |
 |---|---|---|---|---|---|
 | G1 | 集成测试深度 | 21 targets / 62 yml | amazon 160 targets / 690 yml（google 115 targets / 468 yml） | 落后 ~8x（按 target） | 🔄 待启动独立集成计划 |
-| G1b | 单测广度（write 面） | write 模块 222/313 无单测 | 覆盖率 60.9%（目标 70） | 广度缺口 | 🔄 roadmap #57 在途 |
+| G1b | 单测广度（write 面） | 无专属单测 write 模块 222 → 大幅收口（80% 冲刺 +73 测试文件 / 1,102 tests） | 覆盖率 81.44%（gate 80，2026-09-08） | 广度缺口缩小 | ✅ 里程碑达成，收口持续 |
 | G2 | 生态信任与下载 | 0（2026-09 首发） | amazon 90.5M | 差距巨大 | ⏸ #89 inclusion 评审中 |
 | G3 | ansible-core 门槛 | ≥ 2.19 | ≥ 2.16 / 2.17 | 声明更高 | ❌ 有意取舍，不追 |
 | G4 | 维护资源 | 个人维护 | 厂商 + Red Hat/社区团队 | 结构性差距 | 📋 缓解型动作 |
@@ -42,21 +42,23 @@ scf_function、ckafka_instance、cbs_disk、eip、nat_gateway）全部无集成 
 **验收**：cvm_instance / vpc / cdb_instance / redis_instance / tke_cluster 至少进入
 集成套件；集成 target ≥ 30。
 
-## G1b 单元测试广度（write 面）— 🔄 在途（roadmap #57，唯一持续缩小项）
+## G1b 单元测试广度（write 面）— ✅ 80% 里程碑达成（收口持续）
 
-**现状**：313 个 write 模块中 222 个无专属单测文件（coverage-batching 结构扫描；
-其中 175 个共享同一 helper 骨架，组 A 20 waiter-CRUD + 组 B 155 纯 CRUD）。
-语句覆盖率 ~60.9%（gate 55），目标把 write 面推回 70% 基线。批次 1-11 已把
-单模块从 1-2h 压到 20-40min（lever-1 骨架生成器待实现）。
+**现状**：整体语句覆盖率 81.44%（2026-09-08 实测，9,985 tests / 30 skipped），
+coverage gate 随实测抬至 80。80% 冲刺以主路径 `run_module` 单测批量新增
+73 个模块测试文件（1,102 tests，6 组并行）。历史基线（2026-08-31）：
+313 个 write 模块中 222 个无专属单测文件、语句覆盖率 ~60.9%（gate 55）；
+批次 1-11 已把单模块耗时从 1-2h 压到 20-40min。
 
 **建议动作**：
 | 步骤 | 动作 | 依赖 | 截止 | 状态 |
 |---|---|---|---|---|
 | G1b-a | 先实现 `--module-test` 骨架生成器（coverage-batching.md lever 1） | 无 | 下一批前 | 📋 |
-| G1b-b | batch 12+：按 per-file miss 报告从高到低逐模块写测试 | G1b-a 可并行，不阻塞 | 每周 1-2 批 | 🔄 |
-| G1b-c | 每批 commit + CI 全绿（sanity 矩阵 + coverage gate 55 不破） | G1b-b | 随批 | 🔄 |
+| G1b-b | 继续按 per-file miss 报告从高到低逐模块写测试（主路径单测 + 分支补漏） | G1b-a 可并行，不阻塞 | 持续 | 🔄 |
+| G1b-c | 每批 commit + CI 全绿（sanity 矩阵 + coverage gate 不破，现 80） | G1b-b | 随批 | 🔄 |
 
-**验收**：write 模块语句覆盖率从 ~51% 推回 70% 基线（222 个无单测模块逐步收口，gate 55 全程不破）。
+**验收**：整体实测覆盖率 ≥ 80% 且 gate 抬至 80（✅ 2026-09-08 达成 81.44%）；
+write 面无专属单测模块持续收口。
 
 ## G2 生态信任 — ⏸ 半被动（inclusion #89 评审中）
 
