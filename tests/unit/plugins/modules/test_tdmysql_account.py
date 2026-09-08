@@ -1,5 +1,5 @@
-from ansible_collections.susunola.tencentcloud.plugins.modules.tdmysql_account import create_request, delete_request, privileges_modify_request, reset_request
-from ansible_collections.susunola.tencentcloud.plugins.modules.tdmysql_account_info import privileges_request, read_accounts
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tdmysql import privileges_request
+from ansible_collections.susunola.tencentcloud.plugins.modules.tdmysql_account import create_request, delete_request, get, privileges_modify_request, reset_request
 
 
 class Object:
@@ -64,7 +64,7 @@ class Module:
         raise ValueError(kwargs["msg"])
 
 
-def test_read_accounts_matches_username_and_host_and_enriches_privileges():
-    values, request_id = read_accounts(Module(), Client(), Models, dict(P, include_global_privileges=True))
-    assert len(values) == 1 and values[0]["Host"] == "10.%"
-    assert values[0]["GlobalPrivileges"] == ["SELECT", "UPDATE"] and request_id == "r2"
+def test_account_get_matches_username_and_host_and_enriches_privileges():
+    value = get(Module(), Client(), Models, dict(P, include_global_privileges=True))
+    assert value["Host"] == "10.%"
+    assert value["GlobalPrivileges"] == ["SELECT", "UPDATE"]

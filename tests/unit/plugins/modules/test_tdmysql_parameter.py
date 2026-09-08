@@ -1,5 +1,5 @@
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tdmysql import parameter_describe_request
 from ansible_collections.susunola.tencentcloud.plugins.modules.tdmysql_parameter import (
-    describe_request,
     flow_request,
     modify_request,
     read_parameters,
@@ -16,7 +16,7 @@ class Models:
 
 
 def test_requests_map_instance_task_and_sorted_values():
-    assert describe_request(Models, "db1").InstanceId == "db1" and flow_request(Models, 42).FlowId == 42
+    assert parameter_describe_request(Models, "db1").InstanceId == "db1" and flow_request(Models, 42).FlowId == 42
     request = modify_request(Models, "db1", {"z": 2, "a": True})
     assert [(x.Param, x.Value) for x in request.Params] == [("a", "True"), ("z", "2")]
 

@@ -48,6 +48,7 @@ import re
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tdmysql import _load, backup_policy_describe_request, normalize
 
 FIELDS = {
     "backup_start_time": "BackupStartTime",
@@ -61,28 +62,8 @@ FIELDS = {
 }
 
 
-def _load():
-    from tencentcloud.tdmysql.v20211122 import models, tdmysql_client
-
-    return models, tdmysql_client
-
-
-def describe_request(models, instance_id):
-    request = models.DescribeDBSBackupPolicyRequest()
-    request.InstanceId = instance_id
-    return request
-
-
-def normalize(value):
-    result = dict(value or {})
-    for key in ("EnableFull", "EnableLog"):
-        if result.get(key) is not None:
-            result[key] = bool(result[key])
-    return result
-
-
 def get(module, client, models, instance_id):
-    response = module.sdk_call(client.DescribeDBSBackupPolicy, describe_request(models, instance_id))
+    response = module.sdk_call(client.DescribeDBSBackupPolicy, backup_policy_describe_request(models, instance_id))
     items = response.Items or []
     if len(items) != 1:
         module.fail_json(msg="expected exactly one TDSQL MySQL backup policy", instance_id=instance_id, policy_count=len(items))

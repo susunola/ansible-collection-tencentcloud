@@ -29,7 +29,7 @@ parameters: {description: Parameter metadata keyed by name., type: dict, returne
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
-from ansible_collections.susunola.tencentcloud.plugins.modules.tdmysql_parameter import _load, read_parameters, selected
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tdmysql import _load, parameter_describe_request, parameter_map, selected
 
 
 def run_module():
@@ -39,7 +39,8 @@ def run_module():
     models, cm = _load()
     client = module.create_client(cm.TdmysqlClient, "tdmysql.tencentcloudapi.com")
     try:
-        values = read_parameters(module, client, models, p["instance_id"])
+        response = module.sdk_call(client.DescribeDBParameters, parameter_describe_request(models, p["instance_id"]))
+        values = parameter_map(response)
         if p.get("names") is not None:
             missing = sorted(set(p["names"]) - set(values))
             if missing:

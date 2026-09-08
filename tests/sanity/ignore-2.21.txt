@@ -341,7 +341,6 @@ plugins/modules/tdcpg_endpoint_wan.py validate-modules:doc-default-does-not-matc
 plugins/modules/tdcpg_endpoint_wan.py validate-modules:missing-gplv3-license
 plugins/modules/tdcpg_instance_state.py validate-modules:doc-default-does-not-match-spec
 plugins/modules/tdcpg_instance_state.py validate-modules:missing-gplv3-license
-plugins/modules/tdmysql_account.py import-3.13
 plugins/modules/tdmysql_account.py pylint:disallowed-name
 plugins/modules/tdmysql_account.py validate-modules:invalid-documentation
 plugins/modules/tdmysql_account.py validate-modules:missing-gplv3-license
@@ -357,7 +356,6 @@ plugins/modules/tdmysql_backup_policy.py validate-modules:doc-default-does-not-m
 plugins/modules/tdmysql_backup_policy.py validate-modules:missing-gplv3-license
 plugins/modules/tdmysql_backup_policy.py validate-modules:parameter-type-not-in-doc
 plugins/modules/tdmysql_backup_policy.py validate-modules:undocumented-parameter
-plugins/modules/tdmysql_backup_policy_info.py import-3.13
 plugins/modules/tdmysql_backup_policy_info.py validate-modules:doc-default-does-not-match-spec
 plugins/modules/tdmysql_backup_policy_info.py validate-modules:missing-gplv3-license
 plugins/modules/tdmysql_backup_policy_info.py validate-modules:parameter-type-not-in-doc
@@ -375,7 +373,6 @@ plugins/modules/tdmysql_maintenance_window.py validate-modules:missing-gplv3-lic
 plugins/modules/tdmysql_maintenance_window.py validate-modules:parameter-type-not-in-doc
 plugins/modules/tdmysql_maintenance_window.py validate-modules:undocumented-parameter
 plugins/modules/tdmysql_parameter.py validate-modules:missing-gplv3-license
-plugins/modules/tdmysql_parameter_info.py import-3.13
 plugins/modules/tdmysql_parameter_info.py validate-modules:doc-default-does-not-match-spec
 plugins/modules/tdmysql_parameter_info.py validate-modules:missing-gplv3-license
 plugins/modules/tdmysql_parameter_info.py validate-modules:parameter-type-not-in-doc

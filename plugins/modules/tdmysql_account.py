@@ -47,14 +47,8 @@ account: {description: Effective account metadata., type: dict, returned: always
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tdmysql import _load, account_items, privileges_request, users_request
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
-from ansible_collections.susunola.tencentcloud.plugins.modules.tdmysql_account_info import read_accounts
-
-
-def _load():
-    from tencentcloud.tdmysql.v20211122 import models, tdmysql_client
-
-    return models, tdmysql_client
 
 
 def user(models, p):
@@ -110,7 +104,13 @@ def wait_flow(module, client, models, flow_id):
 
 
 def get(module, client, models, p):
-    values, _ = read_accounts(module, client, models, dict(p, include_global_privileges=True))
+    response = module.sdk_call(client.DescribeUsers, users_request(models, p["instance_id"]))
+    values = [item for item in account_items(response) if item.get("UserName") == p["username"] and item.get("Host") == p["host"]]
+    if len(values) > 1:
+        module.fail_json(msg="Multiple TDSQL MySQL accounts matched the exact username and host")
+    if values:
+        privilege_response = module.sdk_call(client.DescribeUserPrivileges, privileges_request(models, p))
+        values[0]["GlobalPrivileges"] = sorted(privilege_response.Privileges or [])
     return values[0] if values else None
 
 

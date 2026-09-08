@@ -38,24 +38,8 @@ restart_required: {description: Whether any changed parameter requires a restart
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tdmysql import _load, parameter_describe_request, parameter_map, selected
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
-
-
-def _load():
-    from tencentcloud.tdmysql.v20211122 import models, tdmysql_client
-
-    return models, tdmysql_client
-
-
-def describe_request(models, instance_id):
-    request = models.DescribeDBParametersRequest()
-    request.InstanceId = instance_id
-    return request
-
-
-def read_parameters(module, client, models, instance_id):
-    response = module.sdk_call(client.DescribeDBParameters, describe_request(models, instance_id))
-    return {item.Param: item._serialize(allow_none=True) for item in response.Params or []}
 
 
 def modify_request(models, instance_id, values):
@@ -86,8 +70,9 @@ def wait_task(module, client, models, task_id):
     wait_for_state(module, poll, ["success"], timeout=module.params["waiter_timeout"], delay=module.params["waiter_delay"])
 
 
-def selected(current, names):
-    return {name: current[name] for name in sorted(names) if name in current}
+def read_parameters(module, client, models, instance_id):
+    response = module.sdk_call(client.DescribeDBParameters, parameter_describe_request(models, instance_id))
+    return parameter_map(response)
 
 
 def run_module():

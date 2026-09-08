@@ -35,40 +35,7 @@ request_id: {description: Request ID from the final API call., type: str, return
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
-
-
-def _load():
-    from tencentcloud.tdmysql.v20211122 import models, tdmysql_client
-
-    return models, tdmysql_client
-
-
-def users_request(models, instance_id):
-    request = models.DescribeUsersRequest()
-    request.InstanceId = instance_id
-    return request
-
-
-def privileges_request(models, p):
-    request = models.DescribeUserPrivilegesRequest()
-    request.InstanceId, request.UserName, request.Host = p["instance_id"], p["username"], p["host"]
-    request.DbName, request.ObjectType, request.Object, request.ColName = "*", "*", "*", "*"
-    return request
-
-
-def read_accounts(module, client, models, p):
-    response = module.sdk_call(client.DescribeUsers, users_request(models, p["instance_id"]))
-    request_id = response.RequestId
-    values = [item._serialize(allow_none=True) for item in response.Users or []]
-    if p.get("username") is not None:
-        values = [item for item in values if item.get("UserName") == p["username"] and item.get("Host") == p["host"]]
-    if len(values) > 1 and p.get("username") is not None:
-        module.fail_json(msg="Multiple TDSQL MySQL accounts matched the exact username and host")
-    if values and p.get("username") is not None and p["include_global_privileges"]:
-        privilege_response = module.sdk_call(client.DescribeUserPrivileges, privileges_request(models, p))
-        request_id = privilege_response.RequestId
-        values[0]["GlobalPrivileges"] = sorted(privilege_response.Privileges or [])
-    return values, request_id
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tdmysql import _load, account_items, privileges_request, users_request
 
 
 def run_module():
@@ -86,7 +53,17 @@ def run_module():
     models, cm = _load()
     client = module.create_client(cm.TdmysqlClient, "tdmysql.tencentcloudapi.com")
     try:
-        values, request_id = read_accounts(module, client, models, p)
+        response = module.sdk_call(client.DescribeUsers, users_request(models, p["instance_id"]))
+        request_id = response.RequestId
+        values = account_items(response)
+        if p.get("username") is not None:
+            values = [item for item in values if item.get("UserName") == p["username"] and item.get("Host") == p["host"]]
+            if len(values) > 1:
+                module.fail_json(msg="Multiple TDSQL MySQL accounts matched the exact username and host")
+            if values and p["include_global_privileges"]:
+                privilege_response = module.sdk_call(client.DescribeUserPrivileges, privileges_request(models, p))
+                request_id = privilege_response.RequestId
+                values[0]["GlobalPrivileges"] = sorted(privilege_response.Privileges or [])
         module.exit_json(changed=False, accounts=values, request_id=request_id)
     except Exception as exc:
         module.fail_json(**sdk_error_payload(exc))
