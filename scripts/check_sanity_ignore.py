@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Sanity-ignore budget guard.
 
 ansible-test sanity failures are progressively triaged (see docs/product-depth.md
