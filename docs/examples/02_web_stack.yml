@@ -1,0 +1,64 @@
+---
+# docs/examples/02_web_stack.yml
+#
+# Full web stack in one call: CVM instance pool + MySQL CDB + Redis cache,
+# fronted by a CLB HTTP listener with the CVM pool auto-registered as
+# backends on port 8080.
+#
+# Run 01_network_foundation.yml first, then either paste the printed
+# vpc/subnet/security-group ids below or override them with extra-vars:
+#   ansible-playbook docs/examples/02_web_stack.yml \
+#     -e vpc_id=vpc-xxxxxxxx -e subnet_id=subnet-xxxxxxxx -e sg_id=sg-xxxxxxxx
+#
+# state: absent tears the whole stack down in reverse order (CLB -> Redis ->
+# CDB -> CVM), so the same playbook doubles as the teardown runbook.
+- name: Provision a Tencent Cloud web stack
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    region: ap-guangzhou
+    # Fill in values that are unique to your account / region:
+    image_id: img-xxxxxxxx
+    instance_type: S5.MEDIUM2
+    cdb_password: "ReplaceWith-AStrongPassword1"
+    # Values printed by 01_network_foundation.yml:
+    vpc_id: vpc-xxxxxxxx
+    subnet_id: subnet-xxxxxxxx
+    sg_id: sg-xxxxxxxx
+
+  roles:
+    - role: susunola.tencentcloud.tc_web_stack
+      vars:
+        tc_web_stack_state: present
+        tc_web_stack_region: "{{ region }}"
+        tc_web_stack_tags:
+          environment: production
+          application: web
+        # CVM tier
+        tc_web_stack_instance_name: web-01
+        tc_web_stack_image_id: "{{ image_id }}"
+        tc_web_stack_instance_type: "{{ instance_type }}"
+        tc_web_stack_vpc_id: "{{ vpc_id }}"
+        tc_web_stack_subnet_id: "{{ subnet_id }}"
+        tc_web_stack_security_group_ids: ["{{ sg_id }}"]
+        # CDB tier (MySQL)
+        tc_web_stack_cdb_name: web-mysql
+        tc_web_stack_cdb_engine_version: '8.0'
+        tc_web_stack_cdb_memory: 1000
+        tc_web_stack_cdb_volume: 50
+        tc_web_stack_cdb_password: "{{ cdb_password }}"
+        # Redis tier
+        tc_web_stack_redis_name: web-cache
+        tc_web_stack_redis_type_id: 2
+        tc_web_stack_redis_mem_size: 4096
+        # CLB tier
+        tc_web_stack_lb_name: web-lb
+        tc_web_stack_lb_type: OPEN
+        tc_web_stack_listener_port: 80
+        tc_web_stack_web_port: 8080
+
+  tasks:
+    - name: Show the stack result (resource ids)
+      ansible.builtin.debug:
+        var: tc_web_stack_result

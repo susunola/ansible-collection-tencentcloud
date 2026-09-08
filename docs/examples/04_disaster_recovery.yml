@@ -1,0 +1,60 @@
+---
+# docs/examples/04_disaster_recovery.yml
+#
+# Cross-region DR artifacts in one call: a golden CVM image of the source
+# instance (primary region, the recovery point) plus cross-region COS bucket
+# replication, and an optional standby CLB that becomes the failover entry
+# point once the replica fleet is rebuilt in the DR region.
+#
+# Run:  ansible-playbook docs/examples/04_disaster_recovery.yml
+#       -e source_instance_id=ins-xxxxxxxx -e bucket=my-bucket-1250000000
+#
+# state: absent removes the artifacts in reverse order (CLB -> replication
+# config -> image), which is the safe rollback path after a failover test.
+- name: Prepare cross-region disaster recovery artifacts
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    region: ap-guangzhou
+    dr_region: ap-shanghai
+    # Fill in values that are unique to your account:
+    source_instance_id: ins-xxxxxxxx
+    bucket_name: my-bucket-1250000000
+    replication_role: qcs::cam::uin/1250000000:roleName/COSCrossAccountReplicationRole
+    dr_vpc_id: vpc-xxxxxxxx
+    dr_subnet_id: subnet-xxxxxxxx
+
+  roles:
+    - role: susunola.tencentcloud.tc_disaster_recovery
+      vars:
+        tc_dr_state: present
+        tc_dr_region: "{{ region }}"
+        tc_dr_dr_region: "{{ dr_region }}"
+        # Golden image of the source instance (primary region)
+        tc_dr_image_name: golden-app
+        tc_dr_image_instance_id: "{{ source_instance_id }}"
+        tc_dr_image_description: Recovery point rebuilt nightly by CI
+        # COS cross-region replication
+        tc_dr_bucket_name: "{{ bucket_name }}"
+        tc_dr_bucket_appid: 1250000000
+        tc_dr_replication_role: "{{ replication_role }}"
+        tc_dr_replication_rules:
+          - id: dr-replication
+            status: Enabled
+            prefix: ""
+            destination:
+              bucket: qcs::cos:ap-shanghai::{{ bucket_name }}-backup
+              storage_class: STANDARD
+        # Standby CLB in the DR region (failover entry point)
+        tc_dr_enable_clb: true
+        tc_dr_clb_name: dr-standby-lb
+        tc_dr_clb_vpc_id: "{{ dr_vpc_id }}"
+        tc_dr_clb_subnet_id: "{{ dr_subnet_id }}"
+        tc_dr_listener_port: 80
+        tc_dr_listener_protocol: TCP
+
+  tasks:
+    - name: Show the DR artifact result (image id, replication status, CLB id)
+      ansible.builtin.debug:
+        var: tc_disaster_recovery_result
