@@ -50,22 +50,41 @@ action_groups:
 plugin_routing: {}
 """
 
+# Mirrors README.md: an overview paragraph carrying derived module counts,
+# two <details> blocks (resource table first, _info table second) whose
+# summary titles also carry counts, and hand-written content in between.
+# The module tables use the legacy two-column header, which one script run
+# must migrate to the current FQCN + source-link format.
 README_MD = """\
 # Collection
 
-Resource modules:
+The collection covers **2 Tencent Cloud product domains** through **3 modules**,
+including **2 resource modules**, **1 read-only `_info` modules**, and **68
+reusable roles**.
+
+<details>
+<summary><strong>Browse all 2 resource modules</strong></summary>
+
+Resource modules are idempotent and support check mode.
 
 | Module | Purpose |
 | --- | --- |
 | `vpc` | old description |
 
-Read-only `_info` modules:
+</details>
+
+Hand-written note about generated modules.
+
+<details>
+<summary><strong>Browse all 1 read-only <code>_info</code> modules</strong></summary>
+
+Read-only `_info` modules query resources.
 
 | Module | Purpose |
 | --- | --- |
 | `vpc_info` | old description |
 
-Hand-written note about generated modules.
+</details>
 
 ## Included plugins
 
@@ -133,6 +152,14 @@ def test_short_description_missing_block(sync, tmp_path):
         sync.short_description(path)
 
 
+def test_module_row_renders_fqcn_and_source_link(sync):
+    row = sync.module_row("vpc", "Manage Tencent Cloud VPCs")
+    assert row == (
+        "| `susunola.tencentcloud.vpc` | Manage Tencent Cloud VPCs | "
+        "[`vpc`](plugins/modules/vpc.py) |\n"
+    )
+
+
 def test_render_runtime_yml_preserves_surroundings(sync):
     rendered = sync.render_runtime_yml(RUNTIME_YML, ["subnet", "vpc", "vpc_info"])
     assert rendered == RUNTIME_YML.replace(
@@ -153,18 +180,57 @@ def test_render_readme_replaces_both_tables(sync):
         [sync.module_row("subnet", "Manage subnets"), sync.module_row("vpc", "Manage VPCs")],
         [sync.module_row("vpc_info", "Query VPCs")],
     )
-    assert "| `subnet` | Manage subnets |\n| `vpc` | Manage VPCs |\n" in rendered
-    assert "| `vpc_info` | Query VPCs |\n" in rendered
+    # Legacy two-column tables are migrated to the FQCN + source-link format.
+    assert sync.TABLE_HEADER in rendered
+    assert "| `susunola.tencentcloud.subnet` | Manage subnets | [`subnet`](plugins/modules/subnet.py) |\n" in rendered
+    assert "| `susunola.tencentcloud.vpc` | Manage VPCs | [`vpc`](plugins/modules/vpc.py) |\n" in rendered
+    assert "| `susunola.tencentcloud.vpc_info` | Query VPCs | [`vpc_info`](plugins/modules/vpc_info.py) |\n" in rendered
     # The note paragraph, section headers and the plugins table survive.
     assert "Hand-written note about generated modules." in rendered
+    assert "Resource modules are idempotent and support check mode." in rendered
     assert "| Plugin | Type | Purpose |" in rendered
     assert "| `tencentcloud_cvm` | inventory | old plugin row |" in rendered
     assert "old description" not in rendered
+    # Count slots are refreshed from the rendered rows (2 write + 1 info).
+    assert "through **3 modules**" in rendered
+    assert "including **2 resource modules**" in rendered
+    assert "**1 read-only `_info` modules**" in rendered
+    assert "Browse all 2 resource modules" in rendered
+    assert "Browse all 1 read-only <code>_info</code> modules" in rendered
 
 
 def test_render_readme_requires_two_module_tables(sync):
     with pytest.raises(ValueError, match="expected exactly two"):
         sync.render_readme("# no tables\n", [], [])
+
+
+def test_sync_readme_counts_refreshes_all_slots(sync):
+    rendered = sync.sync_readme_counts(README_MD, total=5, write_count=3, info_count=2)
+    assert "through **5 modules**" in rendered
+    assert "including **3 resource modules**" in rendered
+    assert "**2 read-only `_info` modules**" in rendered
+    assert "Browse all 3 resource modules" in rendered
+    assert "Browse all 2 read-only <code>_info</code> modules" in rendered
+    # Unrelated content is untouched.
+    assert "Hand-written note about generated modules." in rendered
+
+
+def test_sync_readme_counts_requires_exactly_one_slot(sync):
+    # A duplicated slot must fail loudly instead of drifting silently.
+    duplicated = README_MD.replace(
+        "<summary><strong>Browse all 2 resource modules</strong></summary>",
+        "<summary><strong>Browse all 2 resource modules</strong></summary>\n"
+        "<summary><strong>Browse all 2 resource modules</strong></summary>")
+    with pytest.raises(ValueError, match="must appear exactly once"):
+        sync.sync_readme_counts(duplicated, total=5, write_count=3, info_count=2)
+
+
+def test_sync_readme_counts_missing_slot_fails(sync):
+    # A slot that disappears entirely is also a hard error.
+    missing = README_MD.replace(
+        "including **2 resource modules**", "including resource modules")
+    with pytest.raises(ValueError, match="must appear exactly once"):
+        sync.sync_readme_counts(missing, total=5, write_count=3, info_count=2)
 
 
 def test_main_writes_then_check_passes(sync, tmp_path, monkeypatch, capsys):
@@ -182,7 +248,8 @@ def test_main_writes_then_check_passes(sync, tmp_path, monkeypatch, capsys):
     assert "    - subnet\n" in runtime_text
     assert "# Deprecation process" in runtime_text
     readme_text = readme.read_text(encoding="utf-8")
-    assert "| `subnet` | Manage subnet |" in readme_text
+    assert sync.TABLE_HEADER in readme_text
+    assert "| `susunola.tencentcloud.subnet` | Manage subnet | [`subnet`](plugins/modules/subnet.py) |\n" in readme_text
     assert "Hand-written note about generated modules." in readme_text
     # The fake repo has 3 modules; the count in the galaxy description is
     # rewritten in place, without duplicating the "modules" wording.
@@ -195,6 +262,11 @@ def test_main_writes_then_check_passes(sync, tmp_path, monkeypatch, capsys):
     assert sync.main([]) == 0
     assert "    - eip\n" in runtime.read_text(encoding="utf-8")
     assert "4 modules (resource modules" in galaxy.read_text(encoding="utf-8")
+    # README count slots follow the module batch (3 write + 1 info now).
+    readme_text = readme.read_text(encoding="utf-8")
+    assert "through **4 modules**" in readme_text
+    assert "including **3 resource modules**" in readme_text
+    assert "Browse all 3 resource modules" in readme_text
 
 
 def test_render_galaxy_yml_rewrites_count_without_duplication(sync):
