@@ -31,9 +31,66 @@ source surfaces the cluster lifecycle state the API exposes. Polling is
 ``interval`` seconds apart and the status call runs in a worker thread so the
 event loop stays responsive.
 """
+
+
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
+
+DOCUMENTATION = r'''
+---
+module: tke_cluster
+short_description: Poll Tencent Cloud TKE cluster state changes (event source)
+description:
+  - Polls the Tencent Cloud TKE C(DescribeClusterStatus) API and yields an
+    event whenever a cluster's state changes (for example Running to
+    Abnormal, or a node count moving) for Event-Driven Ansible
+    (ansible-rulebook).
+  - The first poll records every cluster's current state as the baseline;
+    no event is emitted unless O(initial) is true. Afterwards an event is
+    yielded for each state transition, a C(ClusterDeleted) event for a
+    cluster that was seen before and no longer appears in the listing, and
+    the previous state is attached as C(previous_state).
+  - TKE ships Kubernetes object-level events (Pod restarts etc.) to CLS when
+    cluster event log collection is enabled; the C(cls_topic) source covers
+    that path, while this source surfaces the cluster lifecycle state the
+    API exposes.
+  - The status call runs in a worker thread; polling happens every
+    O(interval) seconds.
+version_added: "1.0.0"
+options:
+  secret_id:
+    description: Tencent Cloud secret id (fallback C(TENCENTCLOUD_SECRET_ID)).
+    type: str
+  secret_key:
+    description: Tencent Cloud secret key (fallback C(TENCENTCLOUD_SECRET_KEY)).
+    type: str
+  token:
+    description: Temporary session token (fallback C(TENCENTCLOUD_TOKEN)).
+    type: str
+  region:
+    description: Region of the clusters (fallback C(TENCENTCLOUD_REGION)), e.g. C(ap-guangzhou).
+    type: str
+  endpoint:
+    description: API endpoint override, defaults to C(tke.tencentcloudapi.com).
+    type: str
+  cluster_ids:
+    description: Clusters to watch; when omitted, every cluster in the region is polled.
+    type: list
+    elements: str
+  interval:
+    description: Seconds between polls.
+    type: float
+    default: 5
+  initial:
+    description: Emit events for the clusters' state at the first (baseline) poll.
+    type: bool
+    default: false
+requirements:
+  - tencentcloud-sdk-python
+author:
+  - Tencent Cloud Ansible Collection Contributors (@susunola)
+'''
 
 import argparse
 import asyncio

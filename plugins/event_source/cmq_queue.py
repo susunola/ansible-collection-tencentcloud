@@ -23,11 +23,69 @@ The SDK ReceiveMessage call blocks for up to ``polling_wait_seconds``
 When ``acknowledge`` is true (default) each message is deleted after it is
 yielded, so the queue drains as events are processed; set it to false to
 keep the messages in the queue (they become visible again after the
-visibility timeout).
+    visibility timeout).
 """
+
+
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
+
+DOCUMENTATION = r'''
+---
+module: cmq_queue
+short_description: Poll a Tencent Cloud CMQ queue for messages (event source)
+description:
+  - Long-polls a Tencent Cloud CMQ queue and yields each received message as
+    an event for Event-Driven Ansible (ansible-rulebook).
+  - The SDK ReceiveMessage call blocks for up to O(polling_wait_seconds)
+    seconds and runs in a worker thread so the event loop stays responsive.
+  - When O(acknowledge) is true (the default) each message is deleted after it
+    is yielded, so the queue drains as events are processed; set it to false
+    to keep messages in the queue (they become visible again after the
+    visibility timeout).
+  - Every event carries the message under the C(cmq) key, e.g.
+    I(event.cmq.msg_body); C(msg_body_json) is added when the body parses as
+    JSON. Poll failures are emitted as C(cmq.error) events and never crash
+    the source.
+version_added: "1.0.0"
+options:
+  secret_id:
+    description: Tencent Cloud secret id (fallback C(TENCENTCLOUD_SECRET_ID)).
+    type: str
+  secret_key:
+    description: Tencent Cloud secret key (fallback C(TENCENTCLOUD_SECRET_KEY)).
+    type: str
+  token:
+    description: Temporary session token (fallback C(TENCENTCLOUD_TOKEN)).
+    type: str
+  region:
+    description: Region of the queue (fallback C(TENCENTCLOUD_REGION)), e.g. C(ap-guangzhou).
+    type: str
+  endpoint:
+    description: API endpoint override, defaults to C(cmq.tencentcloudapi.com).
+    type: str
+  queue_name:
+    description: Name of the CMQ queue to poll.
+    type: str
+    required: true
+  polling_wait_seconds:
+    description: Seconds the ReceiveMessage call blocks waiting for a message (0-30).
+    type: int
+    default: 20
+  acknowledge:
+    description: Delete each message after it is yielded (true) or leave it in the queue (false).
+    type: bool
+    default: true
+  idle_interval:
+    description: Seconds to wait before polling again when a poll returns no message.
+    type: float
+    default: 1
+requirements:
+  - tencentcloud-sdk-python
+author:
+  - Tencent Cloud Ansible Collection Contributors (@susunola)
+'''
 
 import argparse
 import asyncio

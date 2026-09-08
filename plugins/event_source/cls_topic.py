@@ -26,9 +26,69 @@ each log is yielded exactly once under normal operation. Polling is
 ``interval`` seconds apart; the CLS search API is called from a worker
 thread so the event loop stays responsive.
 """
+
+
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
+
+DOCUMENTATION = r'''
+---
+module: cls_topic
+short_description: Poll a Tencent Cloud CLS log topic for matching log records (event source)
+description:
+  - Polls a Tencent Cloud CLS (Cloud Log Service) log topic with a search
+    query and yields each new matching log record as an event for
+    Event-Driven Ansible (ansible-rulebook).
+  - The source keeps a rolling C(from) timestamp (now minus O(lookback) at
+    start, then the previous poll's C(to)) so logs between polls are not
+    skipped and each log is yielded exactly once under normal operation.
+  - The CLS search API runs in a worker thread so the event loop stays
+    responsive; polling happens every O(interval) seconds.
+version_added: "1.0.0"
+options:
+  secret_id:
+    description: Tencent Cloud secret id (fallback C(TENCENTCLOUD_SECRET_ID)).
+    type: str
+  secret_key:
+    description: Tencent Cloud secret key (fallback C(TENCENTCLOUD_SECRET_KEY)).
+    type: str
+  token:
+    description: Temporary session token (fallback C(TENCENTCLOUD_TOKEN)).
+    type: str
+  region:
+    description: Region of the log topic (fallback C(TENCENTCLOUD_REGION)), e.g. C(ap-guangzhou).
+    type: str
+  endpoint:
+    description: API endpoint override, defaults to C(cls.tencentcloudapi.com).
+    type: str
+  topic_id:
+    description: Id of the CLS log topic to search, e.g. C(dc9b3c16-xxxx).
+    type: str
+  topic_name:
+    description: Name of the log topic; resolved to an id when O(topic_id) is not given.
+    type: str
+  query:
+    description: CLS search query, e.g. C(level:ERROR). Defaults to all records.
+    type: str
+    default: "*"
+  interval:
+    description: Seconds between polls.
+    type: float
+    default: 5
+  batch_size:
+    description: Maximum number of log records returned per search page.
+    type: int
+    default: 20
+  lookback:
+    description: Seconds of history searched on the first poll before the rolling window starts.
+    type: float
+    default: 30
+requirements:
+  - tencentcloud-sdk-python
+author:
+  - Tencent Cloud Ansible Collection Contributors (@susunola)
+'''
 
 import argparse
 import asyncio
