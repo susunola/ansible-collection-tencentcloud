@@ -302,6 +302,14 @@
     (DescribeDisasterRecoverGroups returns the `InstanceIds` bound per group,
     the exact set the write module reconciles). Info-coverage audit:
     covered 159→161, mapped 7→8, gap 274→271.
+54. Coverage 80% milestone (2026-09-08): the 80% sprint added main-path
+    `run_module` unit tests for 73 more write modules (1,102 tests across six
+    parallel groups), lifting measured statement coverage to **81.44%** and the
+    CI gate from 72 to **80** (`--cov-fail-under 80`). Write modules without a
+    dedicated test file fell from 222 (of 313, 2026-08-31) to 111 (of 440).
+    Benchmark docs are synchronized to this state — `docs/panorama.html`,
+    `docs/capability-map.html` (09-08 figures), `docs/gap-closure.md`
+    (G1b milestone marked reached). **Done**
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
@@ -312,6 +320,19 @@ The collection has moved beyond the original 50-write-module target. Current
 module and product counts are generated in
 [`product-capabilities.md`](product-capabilities.md); they should not be copied
 into this roadmap because those numbers change with every coverage batch.
+
+### In flight — P0×12 + P1×10 execution (approved 2026-09-08)
+
+The 30-item urgent list in [`panorama.html`](panorama.html) is now the execution
+backlog: P0-01/02 flagship integration-target skeletons and the trusted-run
+environment (G1-a/b/c), P0-05/06 read-surface closure (356 write modules without
+an `_info` sibling across 74 products), P0-07/08/09 unit-test breadth and shallow
+test upgrades (111 → <60 write modules without dedicated tests), P0-10/11 role
+task tests and contract coverage for generated modules, and the P1 structural
+items — plugin_utils / action / filter plugins, docsite, extensions.yml,
+doc_fragments and module_utils grouping, event_source docs, README FQCN index
+and example playbooks. Items land as individual commits, each keeping the
+coverage gate (80) and the sanity ignore budget (2292/2350) intact.
 
 1. **Deepen the eight highest-use resource families.** Close runtime and
    operational workflows in TEM, TKE, CLB, CDB/Redis/MongoDB, TCR, SCF,
