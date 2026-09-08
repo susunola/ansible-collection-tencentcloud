@@ -55,6 +55,7 @@ class CachedModels(object):
             self._classes[name] = cls
         return cls
 
+
 INSTANCE = "ins-abc"
 
 ALIAS = {

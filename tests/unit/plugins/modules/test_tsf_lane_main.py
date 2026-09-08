@@ -176,7 +176,7 @@ def test_absent_deletes_lane(monkeypatch):
 
 def test_absent_rejected_delete_fails(monkeypatch):
     fake = FakeTsfClient(lanes=[_lane()])
-    fake.DeleteLane = lambda request: (_ for _ in ()).throw(
+    fake.DeleteLane = lambda request: (unused for unused in ()).throw(
         AssertionError("must patch result")
     )
 

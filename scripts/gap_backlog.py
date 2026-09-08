@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Depth backlog helper (offline).
 
 Lists, per product, write modules that have no sibling ``_info`` yet and
@@ -61,7 +60,7 @@ def main():
             shown = items
         untracked = [m for m in items if m not in gaps]
         total += len(items)
-        print(f'## {prod}: {len(items)} missing sibling _info ({len(items)-len(untracked)} in KNOWN_GAPS, {len(untracked)} UNTRACKED)')
+        print(f'## {prod}: {len(items)} missing sibling _info ({len(items) - len(untracked)} in KNOWN_GAPS, {len(untracked)} UNTRACKED)')
         if not all_flag and len(items) > 12:
             pass
         for m in shown:
