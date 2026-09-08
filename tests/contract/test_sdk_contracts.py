@@ -326,6 +326,22 @@ UNEXERCISED_BUILDERS = {
     ("eks_container_instance", "run_module"): "inline Create/Update/DeleteEKSContainerInstance(s) requests are covered by unit tests",
     ("vod_class", "run_module"): "inline CreateClass/DeleteClass requests are covered by unit tests",
     ("vod_sub_app", "run_module"): "inline CreateSubAppId/ModifySubAppIdInfo/ModifySubAppIdStatus requests are covered by unit tests",
+    ("dcdb_account", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("gaap_real_server", "run_module"): "inline AddRealServers/ModifyRealServerName/RemoveRealServers requests are covered by unit tests",
+    ("tsf_application", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tsf_application_config", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tsf_application_config_release", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tsf_cluster", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tsf_container_deployment_group", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tsf_lane", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tsf_lane_rule", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tsf_microservice", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tsf_namespace", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tsf_public_config", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tsf_repository", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tsf_vm_deployment_group", "run_module"): "inline lifecycle requests are covered by unit tests",
+
+    ('tse_gateway_service', 'detail_request'): 'detail_request assigns DescribeOneCloudNativeAPIGatewayServiceRequest.ServiceName but the SDK model declares the field as Name, so the misnamed attribute is silently dropped by _serialize and the request cannot be audited as a valid contract (module defect; the detail path is covered by unit tests)',
 }
 
 # Write-module request builders exercised by the ``test_<module>`` functions
@@ -1050,6 +1066,170 @@ WRITE_MODULE_BUILDERS = {
     "dnspod_domain": ["find"],
     "postgresql_parameter_template": ["find"],
     "redis_parameter_template": ["find"],
+    "cdwch_backup_config": ["describe", "schedule_request", "switch_request"],
+    "cdwch_parameter": ["change_request", "describe"],
+    "cdwdoris_cooldown_policy": ["describe", "request_for"],
+    "cdwdoris_user_workload_group": ["describe", "modify_request"],
+    "cdwdoris_workload_group": ["delete_request", "describe", "group_request", "status_request", "update_request"],
+    "cdwpg_hba_config": ["change_request", "describe"],
+    "cdwpg_parameter": ["change_request", "describe"],
+    "tdcpg_account": ["describe_request", "description_request", "password_request"],
+    "tdcpg_endpoint_wan": ["describe_request", "update_request"],
+    "tdcpg_instance_state": ["describe_request"],
+    "tcb_auth_domain": ["create_request", "delete_request", "describe_request"],
+    "tcb_static_store": ["create_request", "delete_request", "describe_request"],
+    "tcm_access_log": ["describe_request", "update_request"],
+    "tcm_prometheus": ["describe_request", "link_request", "unlink_request"],
+    "tcm_tracing": ["describe_request", "update_request"],
+    "dcdb_account": ["find"],
+    "dcdb_backup_config": ["describe_request", "modify_request"],
+    "tat_invocation": ["cancel_request", "invoke_request", "tasks_request"],
+    "private_dns_account": ["list_request"],
+    "dts_migration_action": ["describe"],
+    "dts_migration_check": ["describe", "start"],
+    "dts_migration_job_config": ["build_request", "describe"],
+    "emr_auto_scale_strategy": ["add", "delete", "describe", "update"],
+    "gaap_layer4_listener": ["delete"],
+    "gaap_listener_real_servers": ["bind", "describe"],
+    "gaap_real_server": ["find"],
+    "tdmysql_account": ["create_request", "delete_request", "flow_request", "privileges_modify_request", "reset_request"],
+    "tdmysql_account_privilege": ["describe_request", "modify_request"],
+    "tdmysql_backup_policy": ["modify_request"],
+    "tdmysql_maintenance_window": ["describe_request", "modify_request"],
+    "tdmysql_parameter": ["flow_request", "modify_request"],
+    "tdmysql_ssl": ["describe_request", "flow_request", "modify_request"],
+    "tsf_application": ["find"],
+    "tsf_application_config": ["detail", "find"],
+    "tsf_application_config_release": ["find"],
+    "tsf_cluster": ["find"],
+    "tsf_container_deployment_group": ["find"],
+    "tsf_lane": ["find"],
+    "tsf_lane_rule": ["find"],
+    "tsf_microservice": ["find"],
+    "tsf_namespace": ["find"],
+    "tsf_public_config": ["detail", "find"],
+    "tsf_repository": ["find"],
+    "tsf_vm_deployment_group": ["find"],
+    "dlc_cluster_group": ["cluster_request", "delete_request", "list_request", "make_request"],
+    "dlc_data_engine": [
+        "create_request",
+        "delete_request",
+        "describe_request",
+        "description_request",
+        "image_switch_request",
+        "image_versions_request",
+        "operation_request",
+        "standby_request",
+        "update_request",
+    ],
+    "dlc_data_engine_config": ["describe_request", "engine_request", "update_request"],
+    "dlc_data_mask_strategy": ["create_request", "delete_request", "describe_request", "update_request"],
+    "dlc_database": ["create_request", "delete_request", "describe_request", "table_count_request"],
+    "dlc_engine_resource_group": [
+        "base_request",
+        "capacity_request",
+        "config_request",
+        "config_update_request",
+        "create_request",
+        "delete_request",
+        "describe_request",
+        "network_request",
+    ],
+    "dlc_inference_model": ["create_request", "list_request", "update_request"],
+    "dlc_inference_service": ["create_request", "get_request", "list_request"],
+    "dlc_job_spec": ["delete_request", "list_request", "make_request", "priority_request"],
+    "dlc_lab": ["delete_request", "list_request", "make_request", "priority_request"],
+    "dlc_model_version": ["create_request", "list_request"],
+    "dlc_network_connection": ["describe_request", "update_request"],
+    "dlc_notebook_session": ["create_request", "delete_request", "describe_request", "list_request"],
+    "dlc_partition_queue": ["delete_request", "describe_request", "make_request"],
+    "dlc_ray_cluster": ["delete_request", "list_request", "make_request", "priority_request"],
+    "dlc_resource_config": ["delete_request", "list_request", "make_request", "references"],
+    "dlc_script": ["create_request", "delete_request", "list_request"],
+    "dlc_spark_job": ["delete_request", "describe_request", "make_request"],
+    "dlc_store_location": ["create_request", "modify_request", "read"],
+    "dlc_table": [
+        "comment_request",
+        "delete_request",
+        "describe_request",
+        "generate_request",
+        "task_request",
+        "task_status_request",
+    ],
+    "dlc_table_partition": ["add_request", "alter_request", "drop_request", "list_request"],
+    "dlc_udf_policy": ["describe_request", "update_request"],
+    "dlc_user": ["create_request", "delete_request", "describe_request", "modify_request", "type_request"],
+    "dlc_user_policy": ["attach_request", "describe_request", "detach_request"],
+    "dlc_user_vpc_connection": ["create_request", "delete_request", "describe_request"],
+    "dlc_work_group": ["create_request", "delete_request", "describe_request", "modify_request"],
+    "dlc_work_group_membership": ["describe_request", "membership_request"],
+    "dlc_work_group_policy": ["attach_request", "describe_request", "detach_request"],
+    "oceanus_cluster": ["create_request", "delete_request", "describe_request", "scale_request"],
+    "oceanus_folder": ["create_request", "delete_request", "modify_request", "tree"],
+    "oceanus_job_config": ["create_request", "delete_request", "describe", "resolve_named_refs"],
+    "oceanus_job_savepoint": ["describe_request", "trigger_request"],
+    "oceanus_meta_table": ["create_request", "get_request", "modify_request"],
+    "oceanus_resource": ["create_request", "delete_request", "describe_request", "references"],
+    "oceanus_resource_config": ["create_request", "delete_request", "describe", "references"],
+    "tione_data_source": ["create_request", "delete_request", "get_request", "list_request"],
+    "tione_dataset": ["create_request", "delete_request", "list_request"],
+    "tione_model_service": ["create_request", "delete_request", "detail_request", "modify_request"],
+    "tione_model_service_auth_token": ["create_request", "delete_request", "group_request", "modify_request"],
+    "tione_model_service_state": ["detail_request"],
+    "tione_model_service_traffic": ["authorization_request", "group_request", "weights_request"],
+    "tione_notebook": ["create_request", "detail_request", "list_request", "modify_request"],
+    "tione_training_model_version": ["create_request", "delete_request", "detail_request", "list_request"],
+    "tione_training_task": ["create_request", "detail_request", "list_request"],
+    "tse_cloud_native_gateway": [
+        "create_request",
+        "delete_request",
+        "detail_request",
+        "list_request",
+        "spec_request",
+        "update_request",
+    ],
+    "tse_config_file": ["delete_request", "describe_request"],
+    "tse_config_file_deployment": ["delete_file_request", "delete_release_request", "deploy_request", "file_detail_request", "release_detail_request"],
+    "tse_config_file_group": ["delete_request", "describe_request"],
+    "tse_config_file_release": ["delete_request", "detail_request", "publish_request", "rollback_request"],
+    "tse_gateway_autoscaler_binding": ["describe_request", "groups_request", "strategy_request"],
+    "tse_gateway_autoscaler_strategy": ["delete_request", "describe_request"],
+    "tse_gateway_canary_rule": ["list_request"],
+    "tse_gateway_certificate": ["delete_request", "detail_request", "list_request", "metadata_request"],
+    "tse_gateway_console_network": ["describe_request", "modify_request"],
+    "tse_gateway_consumer": ["create_request", "delete_request", "detail_request", "list_request", "update_request"],
+    "tse_gateway_consumer_group": ["create_request", "delete_request", "detail_request", "list_request", "update_request"],
+    "tse_gateway_consumer_group_membership": ["_consumer_list_request", "_group_list_request", "detail_request"],
+    "tse_gateway_model_api": ["delete_request", "detail_request", "list_request"],
+    "tse_gateway_model_api_group_auth": ["_api_list_request", "_group_list_request", "detail_request"],
+    "tse_gateway_model_service": ["delete_request", "detail_request", "list_request"],
+    "tse_gateway_public_network": [
+        "access_request",
+        "basic_request",
+        "create_request",
+        "delete_request",
+        "describe_request",
+        "group_request",
+    ],
+    "tse_gateway_route": ["delete_request", "list_request"],
+    "tse_gateway_secret_key": [
+        "create_request",
+        "delete_request",
+        "detail_request",
+        "list_request",
+        "status_request",
+        "value_request",
+    ],
+    "tse_gateway_server_group": ["list_request"],
+    "tse_gateway_service": ["delete_request", "health_detail_request", "list_request"],
+    "tse_gateway_upstream_node_status": ["describe_request", "modify_request"],
+    "tse_gateway_waf_protection": ["describe_request"],
+    "tse_governance_alias": ["describe_request"],
+    "tse_governance_host_retirement": ["delete_request", "describe_request"],
+    "tse_governance_instance": ["describe_request"],
+    "tse_governance_lane_group": ["delete_request", "describe_request"],
+    "tse_governance_namespace": ["describe_request"],
+    "tse_governance_service": ["describe_request"],
 }
 
 
@@ -1227,6 +1407,457 @@ INFO_BUILDERS_HANDWRITTEN = [
         [
             ("local", "app-read-only", 1, 100),
             ("all", None, 1, 100),
+        ],
+    ),
+    (
+        "dlc_inference_engine_info",
+        "dlc.v20210125",
+        "build_request",
+        [
+            ({"filters": {}, "page_size": 50}, 1),
+            (
+                {
+                    "start_time": 1700000000,
+                    "end_time": 1700000005,
+                    "filters": {"EngineType": ["SQL"], "Status": ["RUNNING"]},
+                    "sort_fields": [{"field": "Name", "order": "ASC"}],
+                    "page_size": 50,
+                },
+                1,
+            ),
+        ],
+    ),
+    (
+        "dlc_inference_model_info",
+        "dlc.v20210125",
+        "build_request",
+        [
+            ({"filters": {}, "page_size": 50}, 1),
+            (
+                {
+                    "start_time": 1700000000,
+                    "end_time": 1700000005,
+                    "parameter_size_min": 7,
+                    "parameter_size_max": 175,
+                    "filters": {"ModelName": ["llama-7b"]},
+                    "sort_fields": [{"field": "Name", "order": "DESC"}],
+                    "page_size": 50,
+                },
+                1,
+            ),
+        ],
+    ),
+    (
+        "dlc_inference_service_info",
+        "dlc.v20210125",
+        "build_request",
+        [
+            ({"filters": {}, "page_size": 50}, 1),
+            (
+                {
+                    "start_time": 1700000000,
+                    "end_time": 1700000005,
+                    "filters": {"ServiceName": ["my-svc"]},
+                    "sort_fields": [{"field": "Name", "order": "ASC"}],
+                    "page_size": 50,
+                },
+                1,
+            ),
+        ],
+    ),
+    (
+        "dlc_model_version_info",
+        "dlc.v20210125",
+        "build_request",
+        [
+            ({"model_uid": "model-xxxxxxxx", "filters": {}, "page_size": 50}, 1),
+            (
+                {
+                    "model_uid": "model-xxxxxxxx",
+                    "filters": {"Status": ["READY"]},
+                    "sort_fields": [{"field": "Version", "order": "ASC"}],
+                    "page_size": 50,
+                },
+                1,
+            ),
+        ],
+    ),
+    (
+        "dlc_notebook_session_info",
+        "dlc.v20210125",
+        "build_request",
+        [
+            ({"ascending": True, "page_size": 20}, 0),
+            (
+                {
+                    "data_engine_name": "engine-xxxxxxxx",
+                    "states": ["idle", "busy"],
+                    "keyword": "etl",
+                    "engine_generation": "native",
+                    "sort_fields": ["CreatedAt"],
+                    "ascending": False,
+                    "page_size": 20,
+                },
+                0,
+            ),
+        ],
+    ),
+    (
+        "dlc_notebook_session_log_info",
+        "dlc.v20210125",
+        "build_request",
+        [
+            ("session-xxxxxxxx", 0, 100),
+            ("session-xxxxxxxx", 25, 200),
+        ],
+    ),
+    (
+        "dlc_notebook_statement_info",
+        "dlc.v20210125",
+        "statement_request",
+        [
+            ("session-xxxxxxxx", "statement-xxxxxxxx", None),
+            ("session-xxxxxxxx", "statement-xxxxxxxx", "task-xxxxxxxx"),
+        ],
+    ),
+    (
+        "dlc_notebook_statement_info",
+        "dlc.v20210125",
+        "result_request",
+        [
+            ("task-xxxxxxxx", {"max_results": 1000}, None),
+            ("task-xxxxxxxx", {"batch_id": "batch-xxxxxxxx", "data_field_cut_length": 1024, "max_results": 1000}, "next-token"),
+        ],
+    ),
+    (
+        "dlc_ray_job_list_info",
+        "dlc.v20210125",
+        "build_request",
+        [
+            ({"filters": {}, "page_size": 50}, 1),
+            (
+                {
+                    "start_time": 1700000000,
+                    "end_time": 1700000005,
+                    "filters": {"JobName": ["ray-etl"]},
+                    "sort_fields": [{"field": "Name", "order": "ASC"}],
+                    "page_size": 50,
+                },
+                1,
+            ),
+        ],
+    ),
+    (
+        "ssm_secret_info",
+        "ssm.v20190923",
+        "exact_request",
+        [("prod-db-pass",)],
+    ),
+    (
+        "ssm_secret_info",
+        "ssm.v20190923",
+        "list_request",
+        [
+            ({"page_size": 50, "order": "descending", "state_filter": 0, "tag_filters": {}}, 0),
+            (
+                {
+                    "page_size": 50,
+                    "order": "ascending",
+                    "state_filter": 3,
+                    "search_name": "prod",
+                    "secret_type": 1,
+                    "product_name": "mysql",
+                    "encrypt_type": 1,
+                    "instance_id": "cdb-xxxxxxxx",
+                    "tag_filters": {"env": ["prod"]},
+                },
+                100,
+            ),
+        ],
+    ),
+    (
+        "ssm_secret_version_info",
+        "ssm.v20190923",
+        "list_request",
+        [("prod-db-pass",)],
+    ),
+    (
+        "ssm_secret_version_info",
+        "ssm.v20190923",
+        "value_request",
+        [
+            ({"secret_name": "prod-db-pass", "version_id": "v1"},),
+            (
+                {
+                    "secret_name": "prod-db-pass",
+                    "version_id": "v1",
+                    "encryption_public_key": "-----BEGIN PUBLIC KEY-----",
+                    "encryption_algorithm": "SM2",
+                },
+            ),
+        ],
+    ),
+    ("ssm_supported_product_info", "ssm.v20190923", "request", [()]),
+    (
+        "tat_invocation_info",
+        "tat.v20201028",
+        "invocation_request",
+        [
+            ({"page_size": 50, "invocation_id": "inv-xxxxxxxx"}, 0),
+            ({"page_size": 50, "command_id": "cmd-xxxxxxxx", "instance_kind": "CVM"}, 100),
+        ],
+    ),
+    (
+        "tat_invocation_info",
+        "tat.v20201028",
+        "task_request",
+        [
+            ({"invocation_id": "inv-xxxxxxxx", "include_output": True, "page_size": 50}, 0),
+            ({"invocation_id": "inv-xxxxxxxx", "include_output": False, "page_size": 50}, 100),
+        ],
+    ),
+    (
+        "tdmysql_database_object_info",
+        "tdmysql.v20211122",
+        "database_request",
+        [
+            ({"instance_id": "tdsql-xxxxxxxx", "page_size": 50}, 0),
+            ({"instance_id": "tdsql-xxxxxxxx", "database_regexp": "^prod", "page_size": 50}, 100),
+        ],
+    ),
+    (
+        "tdmysql_database_object_info",
+        "tdmysql.v20211122",
+        "object_request",
+        [
+            ({"instance_id": "tdsql-xxxxxxxx", "database": "app_db", "page_size": 50}, 0),
+            ({"instance_id": "tdsql-xxxxxxxx", "database": "app_db", "table_regexp": "^t_", "page_size": 50}, 100),
+        ],
+    ),
+    (
+        "tione_data_source_info",
+        "tione.v20211111",
+        "build_request",
+        [
+            ({"filters": {}, "tag_filters": {}, "order": "DESC", "order_field": "CreateTime", "page_size": 50}, 0),
+            (
+                {
+                    "project_id": "pr-xxxxxxxx",
+                    "filters": {"Name": ["ds-1"]},
+                    "tag_filters": {"env": ["prod"]},
+                    "order": "ASC",
+                    "order_field": "UpdateTime",
+                    "page_size": 50,
+                },
+                0,
+            ),
+        ],
+    ),
+    (
+        "tione_model_service_diagnostics_info",
+        "tione.v20211111",
+        "call_request",
+        [
+            ({"service_group_id": "msg-xxxxxxxx"},),
+            ({"service_group_id": "msg-xxxxxxxx", "project_id": "pr-xxxxxxxx"},),
+        ],
+    ),
+    (
+        "tione_model_service_diagnostics_info",
+        "tione.v20211111",
+        "preflight_request",
+        [
+            ({},),
+            (
+                {
+                    "image_info": {"ImageType": "CPU", "ImageUrl": "ccr.ccs.tencentyun.com/tione/demo"},
+                    "model_info": {"ModelType": "CFS", "ModelName": "demo-model"},
+                    "volume_mount": {"VolumeSourceType": "CFS", "MountPath": "/data"},
+                },
+            ),
+        ],
+    ),
+    (
+        "tione_model_service_info",
+        "tione.v20211111",
+        "service_request",
+        [
+            ({"service_id": "ms-xxxxxxxx"},),
+            ({"service_id": "ms-xxxxxxxx", "project_id": "pr-xxxxxxxx"},),
+        ],
+    ),
+    (
+        "tione_model_service_info",
+        "tione.v20211111",
+        "group_request",
+        [
+            ({"service_group_id": "msg-xxxxxxxx"},),
+            ({"service_group_id": "msg-xxxxxxxx", "project_id": "pr-xxxxxxxx"},),
+        ],
+    ),
+    (
+        "tione_model_service_info",
+        "tione.v20211111",
+        "list_request",
+        [
+            ({"filters": {}, "tag_filters": {}, "order": "DESC", "order_field": "UpdateTime", "page_size": 50}, 0),
+            (
+                {
+                    "project_id": "pr-xxxxxxxx",
+                    "filters": {"ServiceGroupName": ["web"]},
+                    "tag_filters": {"env": ["prod"]},
+                    "order": "ASC",
+                    "order_field": "CreateTime",
+                    "page_size": 50,
+                },
+                100,
+            ),
+        ],
+    ),
+    (
+        "tione_notebook_info",
+        "tione.v20211111",
+        "build_request",
+        [
+            ({"filters": {}, "tag_filters": {}, "order": "DESC", "order_field": "UpdateTime", "page_size": 50}, 0),
+            (
+                {
+                    "project_id": "pr-xxxxxxxx",
+                    "filters": {"Name": ["nb-1"]},
+                    "tag_filters": {"env": ["prod"]},
+                    "order": "ASC",
+                    "order_field": "CreateTime",
+                    "page_size": 50,
+                },
+                100,
+            ),
+        ],
+    ),
+    (
+        "tione_training_model_version_info",
+        "tione.v20211111",
+        "detail_request",
+        [("tmv-xxxxxxxx",)],
+    ),
+    (
+        "tione_training_model_version_info",
+        "tione.v20211111",
+        "list_request",
+        [
+            ("tm-xxxxxxxx", None),
+            ("tm-xxxxxxxx", {"Version": ["v1"]}),
+        ],
+    ),
+    (
+        "tione_training_task_info",
+        "tione.v20211111",
+        "detail_request",
+        [
+            ({"task_id": "task-xxxxxxxx"},),
+            ({"task_id": "task-xxxxxxxx", "project_id": "pr-xxxxxxxx", "instance_id": "ins-xxxxxxxx"},),
+        ],
+    ),
+    (
+        "tione_training_task_info",
+        "tione.v20211111",
+        "list_request",
+        [
+            ({"filters": {}, "tag_filters": {}, "order": "DESC", "order_field": "UpdateTime", "page_size": 50}, 0),
+            (
+                {
+                    "project_id": "pr-xxxxxxxx",
+                    "filters": {"TaskName": ["train-1"]},
+                    "tag_filters": {"env": ["prod"]},
+                    "order": "ASC",
+                    "order_field": "StartTime",
+                    "page_size": 50,
+                },
+                100,
+            ),
+        ],
+    ),
+    (
+        "tse_config_file_catalog_info",
+        "tse.v20201207",
+        "request",
+        [
+            ({"instance_id": "ins-xxxxxxxx", "page_size": 50}, 0),
+            (
+                {
+                    "instance_id": "ins-xxxxxxxx",
+                    "namespace": "default",
+                    "group": "app",
+                    "name": "app.conf",
+                    "config_file_id": "cfg-xxxxxxxx",
+                    "tags": [{"Key": "env", "Value": "prod"}],
+                    "page_size": 50,
+                },
+                100,
+            ),
+        ],
+    ),
+    (
+        "tse_config_file_release_info",
+        "tse.v20201207",
+        "release_request",
+        [
+            ({"instance_id": "ins-xxxxxxxx", "namespace": "default", "group": "app", "name": "app.conf", "only_in_use": True, "page_size": 50}, 0),
+            ({"instance_id": "ins-xxxxxxxx", "namespace": "default", "group": "app", "name": "app.conf", "release_name": "release-1", "only_in_use": False, "page_size": 50}, 100),
+        ],
+    ),
+    (
+        "tse_config_file_release_info",
+        "tse.v20201207",
+        "history_request",
+        [
+            ({"instance_id": "ins-xxxxxxxx", "namespace": "default", "group": "app", "name": "app.conf", "page_size": 50}, 0),
+            ({"instance_id": "ins-xxxxxxxx", "namespace": "default", "group": "app", "name": "app.conf", "config_file_id": "cfg-xxxxxxxx", "page_size": 50}, 100),
+        ],
+    ),
+    (
+        "tse_config_file_release_info",
+        "tse.v20201207",
+        "version_request",
+        [
+            ({"instance_id": "ins-xxxxxxxx", "namespace": "default", "group": "app", "name": "app.conf"},),
+            ({"instance_id": "ins-xxxxxxxx", "namespace": "default", "group": "app", "name": "app.conf", "config_file_id": "cfg-xxxxxxxx"},),
+        ],
+    ),
+    ("tse_config_file_template_info", "tse.v20201207", "request", [("ins-xxxxxxxx",)]),
+    ("tse_gateway_ip_lookup_info", "tse.v20201207", "request", [("1.2.3.4",)]),
+    (
+        "tse_gateway_service_inventory_info",
+        "tse.v20201207",
+        "inventory_request",
+        [
+            ({"gateway_id": "gw-xxxxxxxx", "filters": {}, "page_size": 50}, 0),
+            ({"gateway_id": "gw-xxxxxxxx", "filters": {"name": "web-svc", "healthStatus": "HEALTHY"}, "page_size": 50}, 100),
+        ],
+    ),
+    ("tse_gateway_service_inventory_info", "tse.v20201207", "upstream_request", [("gw-xxxxxxxx", "web-svc")]),
+    (
+        "tse_governance_service_contract_info",
+        "tse.v20201207",
+        "contract_request",
+        [
+            ({"instance_id": "ins-xxxxxxxx", "namespace": "default", "service": "order-svc", "brief": True, "page_size": 50}, 0),
+            ({"instance_id": "ins-xxxxxxxx", "namespace": "default", "service": "order-svc", "name": "OrderAPI", "contract_version": "v1", "protocol": "http", "brief": False, "page_size": 50}, 100),
+        ],
+    ),
+    (
+        "tse_governance_service_contract_info",
+        "tse.v20201207",
+        "version_request",
+        [({"instance_id": "ins-xxxxxxxx", "namespace": "default", "service": "order-svc"},)],
+    ),
+    ("tse_instance_tag_info", "tse.v20201207", "request", [("ins-xxxxxxxx",)]),
+    (
+        "tse_sre_access_address_info",
+        "tse.v20201207",
+        "request",
+        [
+            ({"instance_id": "ins-xxxxxxxx"},),
+            ({"instance_id": "ins-xxxxxxxx", "vpc_id": "vpc-xxxxxxxx", "subnet_id": "subnet-xxxxxxxx", "workload": "normal", "engine_region": "ap-guangzhou"},),
         ],
     ),
 ]
@@ -8525,4 +9156,2102 @@ def test_vod_sub_app():
     modify_status.SubAppId = 1400000000
     modify_status.Status = "Destroyed"
     errors.extend(audit_request(modify_status, "vod_sub_app modify status"))
+    assert errors == []
+
+
+def test_cdwch_backup_config():
+    module = _import_plugin("cdwch_backup_config")
+    models = _models("cdwch.v20200915")
+    fake = _RecordingModule()
+    client = _StubClient()
+    p = {
+        "instance_id": "cdwch-xxxxxxxx",
+        "enabled": True,
+        "cos_bucket_name": "analytics-backup-1250000000",
+        "backup_tables": [{"Database": "analytics", "Table": "events"}],
+    }
+    errors = []
+    module.describe(fake, client, models, p["instance_id"])
+    meta = {"RetainDays": 30, "WeekDays": "1,3,5", "ExecuteHour": 2}
+    errors.extend(audit_request(module.switch_request(models, p), "CDWCH backup switch"))
+    errors.extend(audit_request(module.schedule_request(models, p, "meta", meta, None), "CDWCH backup meta schedule create"))
+    errors.extend(audit_request(module.schedule_request(models, p, "data", meta, {"ScheduleId": 12345}), "CDWCH backup data schedule update"))
+    errors.extend(audit_recorded(fake, "cdwch_backup_config"))
+    assert errors == []
+
+
+def test_cdwch_parameter():
+    module = _import_plugin("cdwch_parameter")
+    models = _models("cdwch.v20200915")
+    fake = _RecordingModule()
+    client = _StubClient()
+    p = {"instance_id": "cdwch-xxxxxxxx", "name": "max_threads", "value": "8", "remark": "managed by Ansible", "state": "present"}
+    errors = []
+    module.describe(fake, client, models, p)
+    current = {"ConfValue": "4", "NeedRestart": False}
+    errors.extend(audit_request(module.change_request(models, p, current, None), "CDWCH parameter update"))
+    p["state"] = "absent"
+    errors.extend(audit_request(module.change_request(models, p, None, None), "CDWCH parameter delete"))
+    errors.extend(audit_recorded(fake, "cdwch_parameter"))
+    assert errors == []
+
+
+def test_cdwdoris_cooldown_policy():
+    module = _import_plugin("cdwdoris_cooldown_policy")
+    models = _models("cdwdoris.v20211228")
+    fake = _RecordingModule()
+    client = _StubClient()
+    p = {"instance_id": "cdwdoris-xxxxxxxx", "name": "cold-30d", "cooldown_ttl": "30", "cooldown_datetime": "2026-01-01 00:00:00"}
+    errors = []
+    module.describe(fake, client, models, p["instance_id"], p["name"])
+    errors.extend(audit_request(module.request_for(models, p, False), "CDW Doris cooldown policy create"))
+    errors.extend(audit_request(module.request_for(models, p, True), "CDW Doris cooldown policy update"))
+    errors.extend(audit_recorded(fake, "cdwdoris_cooldown_policy"))
+    assert errors == []
+
+
+def test_cdwdoris_user_workload_group():
+    module = _import_plugin("cdwdoris_user_workload_group")
+    models = _models("cdwdoris.v20211228")
+    fake = _RecordingModule()
+    client = _StubClient()
+    p = {"instance_id": "cdwdoris-xxxxxxxx", "user_name": "etl_user", "hosts": ["%", "10.0.0.0/16"], "workload_group": "etl_group"}
+    errors = []
+    module.describe(fake, client, models, p["instance_id"], p["user_name"])
+    errors.extend(audit_request(module.modify_request(models, p, "old_group"), "CDW Doris user workload group bind"))
+    errors.extend(audit_recorded(fake, "cdwdoris_user_workload_group"))
+    assert errors == []
+
+
+def test_cdwdoris_workload_group():
+    module = _import_plugin("cdwdoris_workload_group")
+    models = _models("cdwdoris.v20211228")
+    fake = _RecordingModule()
+    client = _StubClient()
+    p = {
+        "instance_id": "cdwdoris-xxxxxxxx",
+        "name": "etl_group",
+        "cpu_share": 10,
+        "memory_limit": 20,
+        "enable_memory_overcommit": False,
+        "cpu_hard_limit": "30%",
+        "min_cpu_percent": 5,
+        "min_memory_percent": 10,
+        "max_concurrency": 100,
+        "max_queue_size": 10,
+        "queue_timeout": 30000,
+    }
+    errors = []
+    module.describe(fake, client, models, p["instance_id"])
+    errors.extend(audit_request(module.group_request(models, p), "CDW Doris workload group create"))
+    payload = {"WorkloadGroupName": p["name"], "CpuShare": 20, "MemoryLimit": 30}
+    errors.extend(audit_request(module.update_request(models, p["instance_id"], payload), "CDW Doris workload group update"))
+    errors.extend(audit_request(module.status_request(models, p["instance_id"], False), "CDW Doris workload group close"))
+    errors.extend(audit_request(module.delete_request(models, p), "CDW Doris workload group delete"))
+    errors.extend(audit_recorded(fake, "cdwdoris_workload_group"))
+    assert errors == []
+
+
+def test_cdwpg_hba_config():
+    module = _import_plugin("cdwpg_hba_config")
+    models = _models("cdwpg.v20201230")
+    fake = _RecordingModule()
+    client = _StubClient()
+    rules = [
+        {"type": "hostssl", "database": "all", "user": "analysts", "address": "10.0.0.0/16", "method": "md5"},
+        {"type": "host", "database": "all", "user": "all", "address": "0.0.0.0/0", "method": "scram-sha-256"},
+    ]
+    errors = []
+    module.describe(fake, client, models, "cdwpg-xxxxxxxx")
+    errors.extend(audit_request(module.change_request(models, "cdwpg-xxxxxxxx", rules), "CDWPG HBA replace"))
+    errors.extend(audit_recorded(fake, "cdwpg_hba_config"))
+    assert errors == []
+
+
+def test_cdwpg_parameter():
+    from types import SimpleNamespace
+
+    module = _import_plugin("cdwpg_parameter")
+    models = _models("cdwpg.v20201230")
+    p = {"instance_id": "cdwpg-xxxxxxxx", "node_type": "cn", "name": "max_connections", "value": "200", "state": "present"}
+
+    class _ParamDetail(object):
+        def _serialize(self, allow_none=True):
+            return {"ParamName": "max_connections", "DefaultValue": "100", "LatestValue": "100", "RunningValue": "100"}
+
+    class _TailoredModule(_RecordingModule):
+        def sdk_call(self, operation, request):
+            self.requests.append(request)
+            return SimpleNamespace(ErrorMsg=None, Items=[SimpleNamespace(NodeType="cn", Details=[_ParamDetail()])], TotalCount=1)
+
+    class _ParamClient(object):
+        def DescribeDBParams(self, request):
+            raise AssertionError("unexpected SDK operation")
+
+    fake = _TailoredModule()
+    errors = []
+    result = module.describe(fake, _ParamClient(), models, p)
+    assert result["EffectiveValue"] == "100"
+    current = {"EffectiveValue": "100", "DefaultValue": "100"}
+    errors.extend(audit_request(module.change_request(models, p, current, "200"), "CDWPG parameter change"))
+    errors.extend(audit_recorded(fake, "cdwpg_parameter"))
+    assert errors == []
+
+
+def test_tdcpg_account():
+    module = _import_plugin("tdcpg_account")
+    models = _models("tdcpg.v20211118")
+    p = {"cluster_id": "tdcpg-xxxxxxxx", "account_name": "analytics", "description": "read-only analytics user", "password": "example-password"}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p["cluster_id"]), "TDC PostgreSQL account describe"))
+    errors.extend(audit_request(module.description_request(models, p), "TDC PostgreSQL account description"))
+    errors.extend(audit_request(module.password_request(models, p), "TDC PostgreSQL account password"))
+    assert errors == []
+
+
+def test_tdcpg_endpoint_wan():
+    module = _import_plugin("tdcpg_endpoint_wan")
+    models = _models("tdcpg.v20211118")
+    p = {"cluster_id": "tdcpg-xxxxxxxx", "endpoint_id": "ep-xxxxxxxx", "state": "open"}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p["cluster_id"]), "TDC PostgreSQL endpoint describe"))
+    errors.extend(audit_request(module.update_request(models, p), "TDC PostgreSQL endpoint WAN open"))
+    p["state"] = "closed"
+    errors.extend(audit_request(module.update_request(models, p), "TDC PostgreSQL endpoint WAN close"))
+    assert errors == []
+
+
+def test_tdcpg_instance_state():
+    module = _import_plugin("tdcpg_instance_state")
+    models = _models("tdcpg.v20211118")
+    p = {"cluster_id": "tdcpg-xxxxxxxx", "instance_ids": ["tdcpg-ins-1", "tdcpg-ins-2"], "state": "running", "period_months": 1}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "TDC PostgreSQL instance describe"))
+    assert errors == []
+
+
+def test_tcb_auth_domain():
+    module = _import_plugin("tcb_auth_domain")
+    models = _models("tcb.v20180608")
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, "env-xxxxxxxx"), "CloudBase auth domain describe"))
+    errors.extend(audit_request(module.create_request(models, "env-xxxxxxxx", "auth.example.com"), "CloudBase auth domain create"))
+    errors.extend(audit_request(module.delete_request(models, "env-xxxxxxxx", "auth-domain-id"), "CloudBase auth domain delete"))
+    assert errors == []
+
+
+def test_tcb_static_store():
+    module = _import_plugin("tcb_static_store")
+    models = _models("tcb.v20180608")
+    p = {"env_id": "env-xxxxxxxx", "enable_union": True, "external_storage": None, "cdn_domain": "static.example.com"}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p["env_id"]), "CloudBase static store describe"))
+    errors.extend(audit_request(module.create_request(models, p), "CloudBase static store create"))
+    p["external_storage"] = {"StorageType": "cos", "Bucket": "web-assets-1250000000", "Region": "ap-guangzhou"}
+    errors.extend(audit_request(module.create_request(models, p), "CloudBase static store create external"))
+    errors.extend(audit_request(module.delete_request(models, p["env_id"], p["cdn_domain"]), "CloudBase static store destroy"))
+    assert errors == []
+
+
+def test_tcm_access_log():
+    module = _import_plugin("tcm_access_log")
+    models = _models("tcm.v20210413")
+    p = {
+        "mesh_id": "mesh-xxxxxxxx",
+        "enabled": True,
+        "selected_range": {"Items": [{"Gateway": "mesh-xxxxxxxx/ingress-gateway"}]},
+        "template": "istio",
+        "encoding": "TEXT",
+        "format": "common",
+        "cls": {"Enable": False},
+        "enable_stdout": True,
+        "enable_server": False,
+        "server_address": None,
+    }
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p["mesh_id"]), "TCM access log describe"))
+    errors.extend(audit_request(module.update_request(models, p), "TCM access log update"))
+    assert errors == []
+
+
+def test_tcm_prometheus():
+    module = _import_plugin("tcm_prometheus")
+    models = _models("tcm.v20210413")
+    config = {
+        "InstanceId": "prom-xxxxxxxx",
+        "Region": "ap-guangzhou",
+        "VpcId": "vpc-xxxxxxxx",
+        "SubnetId": "subnet-xxxxxxxx",
+        "CustomProm": {"Url": "http://prometheus.example.com", "AuthType": "none"},
+    }
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, "mesh-xxxxxxxx"), "TCM Prometheus describe"))
+    errors.extend(audit_request(module.link_request(models, "mesh-xxxxxxxx", config), "TCM Prometheus link"))
+    errors.extend(audit_request(module.unlink_request(models, "mesh-xxxxxxxx"), "TCM Prometheus unlink"))
+    assert errors == []
+
+
+def test_tcm_tracing():
+    module = _import_plugin("tcm_tracing")
+    models = _models("tcm.v20210413")
+    p = {
+        "mesh_id": "mesh-xxxxxxxx",
+        "enabled": True,
+        "sampling": 1.0,
+        "apm": {"Enable": True, "Region": "ap-guangzhou", "InstanceId": "apm-xxxxxxxx"},
+        "zipkin": {"Url": "http://zipkin.example.com:9411/api/v2/spans"},
+    }
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p["mesh_id"]), "TCM tracing describe"))
+    errors.extend(audit_request(module.update_request(models, p), "TCM tracing update"))
+    assert errors == []
+
+
+def test_dcdb_account():
+    module = _import_plugin("dcdb_account")
+    models = _models("dcdb.v20180411")
+    fake = _RecordingModule()
+    client = _StubClient()
+    p = {
+        "instance_id": "dcdbt-xxxxxxxx",
+        "username": "application",
+        "host": "%",
+        "password": "example-password",
+        "description": "app account",
+        "read_only": 0,
+        "delay_threshold": 10,
+        "sticky_replica": False,
+        "max_user_connections": 0,
+    }
+    errors = []
+    result = module.find(fake, client, models, p)
+    assert result is None
+    errors.extend(audit_recorded(fake, "dcdb_account describe"))
+    assert errors == []
+
+
+def test_dcdb_backup_config():
+    module = _import_plugin("dcdb_backup_config")
+    models = _models("dcdb.v20180411")
+    p = {
+        "instance_id": "dcdbt-xxxxxxxx",
+        "retention_days": 7,
+        "start_time": "22:00",
+        "end_time": "23:59",
+        "weekdays": ["Monday", "Wednesday", "Friday"],
+        "archive_after_days": 30,
+    }
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p["instance_id"]), "DCDB backup config describe"))
+    errors.extend(audit_request(module.modify_request(models, p), "DCDB backup config modify"))
+    assert errors == []
+
+
+def test_tat_invocation():
+    module = _import_plugin("tat_invocation")
+    models = _models("tat.v20201028")
+    p = {
+        "invocation_id": "inv-xxxxxxxx",
+        "command_id": "cmd-xxxxxxxx",
+        "instance_ids": ["ins-aaaaaaaa", "ins-bbbbbbbb"],
+        "parameters": {"k1": "v1"},
+        "username": "root",
+        "working_directory": "/root",
+        "timeout": 60,
+        "output_cos_bucket_url": "https://bucket-1250000000.cos.ap-guangzhou.myqcloud.com",
+        "output_cos_key_prefix": "tat-output",
+    }
+    errors = []
+    errors.extend(audit_request(module.invoke_request(models, p), "TAT invocation invoke"))
+    errors.extend(audit_request(module.cancel_request(models, p), "TAT invocation cancel"))
+    errors.extend(audit_request(module.tasks_request(models, p["invocation_id"], 0, True), "TAT invocation tasks"))
+    assert errors == []
+
+
+def test_private_dns_account():
+    module = _import_plugin("private_dns_account")
+    models = _models("privatedns.v20201028")
+    errors = []
+    errors.extend(audit_request(module.list_request(models, 0), "Private DNS account list"))
+    errors.extend(audit_request(module.list_request(models, 100), "Private DNS account list next page"))
+    assert errors == []
+
+
+def test_dts_migration_action():
+    module = _import_plugin("dts_migration_action")
+    models = _models("dts.v20211206")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    detail = module.describe(fake, client, models, "dts-xxxxxxxx")
+    assert detail == {}
+    errors.extend(audit_recorded(fake, "dts_migration_action describe"))
+    assert errors == []
+
+
+def test_dts_migration_check():
+    module = _import_plugin("dts_migration_check")
+    models = _models("dts.v20211206")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    module.describe(fake, client, models, "dts-xxxxxxxx")
+    module.start(fake, client, models, "dts-xxxxxxxx")
+    errors.extend(audit_recorded(fake, "dts_migration_check"))
+    assert errors == []
+
+
+def test_dts_migration_job_config():
+    module = _import_plugin("dts_migration_job_config")
+    models = _models("dts.v20211206")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    module.describe(fake, client, models, "dts-xxxxxxxx")
+    wanted = {"JobId": "dts-xxxxxxxx", "JobName": "mysql-to-cdb", "RunMode": "immediate", "AutoRetryTimeRangeMinutes": 5}
+    errors.extend(audit_request(module.build_request(models, wanted), "DTS migration job config build"))
+    errors.extend(audit_recorded(fake, "dts_migration_job_config"))
+    assert errors == []
+
+
+def test_emr_auto_scale_strategy():
+    module = _import_plugin("emr_auto_scale_strategy")
+    models = _models("emr.v20190103")
+    fake = _RecordingModule()
+    client = _StubClient()
+    params = {"cluster_id": "emr-xxxxxxxx", "group_id": 2, "strategy_type": "load", "name": "scale-on-yarn-pressure"}
+    target = {"StrategyName": "scale-on-yarn-pressure", "ScaleAction": 1, "ScaleNum": 2, "StrategyStatus": 1, "CalmDownTime": 300, "LoadMetricsConditions": {"LoadMetrics": []}}
+    current = dict(target)
+    current["StrategyId"] = 10001
+    errors = []
+    module.describe(fake, client, models, params["cluster_id"], params["group_id"], params["strategy_type"])
+    module.add(fake, client, models, params, target)
+    module.update(fake, client, models, params, [current], current, target)
+    module.delete(fake, client, models, params, current)
+    errors.extend(audit_recorded(fake, "emr_auto_scale_strategy"))
+    assert errors == []
+
+
+def test_gaap_layer4_listener():
+    module = _import_plugin("gaap_layer4_listener")
+    models = _models("gaap.v20180529")
+    fake = _RecordingModule()
+    client = _StubClient()
+    p = {"proxy_id": "proxy-xxxxxxxx", "group_id": None, "force_delete_bound": True}
+    errors = []
+    module.delete(fake, client, models, p, "listener-xxxxxxxx")
+    errors.extend(audit_recorded(fake, "gaap_layer4_listener delete"))
+    assert errors == []
+
+
+def test_gaap_listener_real_servers():
+    module = _import_plugin("gaap_listener_real_servers")
+    models = _models("gaap.v20180529")
+    fake = _RecordingModule()
+    client = _StubClient()
+    values = [
+        {"RealServerId": "rs-aaaaaaaa", "RealServerIP": "10.0.1.10", "RealServerPort": 3306, "RealServerWeight": 10},
+        {"RealServerId": "rs-bbbbbbbb", "RealServerIP": "10.0.1.11", "RealServerPort": 3306, "RealServerWeight": 20},
+    ]
+    errors = []
+    module.describe(fake, client, models, "listener-xxxxxxxx")
+    module.bind(fake, client, models, "listener-xxxxxxxx", values)
+    errors.extend(audit_recorded(fake, "gaap_listener_real_servers"))
+    assert errors == []
+
+
+def test_gaap_real_server():
+    module = _import_plugin("gaap_real_server")
+    models = _models("gaap.v20180529")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    result = module.find(fake, client, models, None, "10.0.1.10", 0)
+    assert result is None
+    result = module.find(fake, client, models, "rs-xxxxxxxx", None, 0)
+    assert result is None
+    errors.extend(audit_recorded(fake, "gaap_real_server find"))
+    assert errors == []
+
+
+def test_tdmysql_account():
+    module = _import_plugin("tdmysql_account")
+    models = _models("tdmysql.v20211122")
+    p = {
+        "instance_id": "tdsql3-xxxxxxxx",
+        "username": "reporting",
+        "host": "%",
+        "password": "s3cret-pw",
+        "description": "read-only reporting account",
+        "global_privileges": ["SELECT", "SHOW VIEW"],
+    }
+    errors = []
+    errors.extend(audit_request(module.create_request(models, p), "tdmysql_account create"))
+    errors.extend(audit_request(module.delete_request(models, p), "tdmysql_account delete"))
+    errors.extend(audit_request(module.privileges_modify_request(models, p), "tdmysql_account privileges"))
+    errors.extend(audit_request(module.reset_request(models, p), "tdmysql_account reset"))
+    errors.extend(audit_request(module.flow_request(models, 123456), "tdmysql_account flow"))
+    assert errors == []
+
+
+def test_tdmysql_account_privilege():
+    module = _import_plugin("tdmysql_account_privilege")
+    models = _models("tdmysql.v20211122")
+    base = {"instance_id": "tdsql3-xxxxxxxx", "username": "reporting", "host": "%", "privileges": ["SELECT"]}
+    errors = []
+    p_global = dict(base, scope="global")
+    errors.extend(audit_request(module.describe_request(models, p_global), "tdmysql_account_privilege describe global"))
+    errors.extend(audit_request(module.modify_request(models, p_global), "tdmysql_account_privilege modify global"))
+    p_db = dict(base, scope="database", database="appdb")
+    errors.extend(audit_request(module.describe_request(models, p_db), "tdmysql_account_privilege describe database"))
+    errors.extend(audit_request(module.modify_request(models, p_db), "tdmysql_account_privilege modify database"))
+    p_table = dict(base, scope="table", database="appdb", table="orders")
+    errors.extend(audit_request(module.describe_request(models, p_table), "tdmysql_account_privilege describe table"))
+    errors.extend(audit_request(module.modify_request(models, p_table), "tdmysql_account_privilege modify table"))
+    assert errors == []
+
+
+def test_tdmysql_backup_policy():
+    module = _import_plugin("tdmysql_backup_policy")
+    models = _models("tdmysql.v20211122")
+    p = {
+        "instance_id": "tdsql3-xxxxxxxx",
+        "backup_start_time": "00:00",
+        "backup_method": "physical",
+        "enable_full": True,
+        "enable_log": True,
+        "full_retention_days": 7,
+        "log_retention_days": 7,
+        "period_time": "0,1,2,3,4,5,6",
+    }
+    target = {
+        "BackupStartTime": "00:00",
+        "BackupEndTime": "04:00",
+        "BackupMethod": "physical",
+        "EnableFull": True,
+        "EnableLog": True,
+        "FullRetentionPeriod": 7,
+        "LogRetentionPeriod": 7,
+        "PeriodTime": "0,1,2,3,4,5,6",
+    }
+    errors = []
+    errors.extend(audit_request(module.modify_request(models, p, target), "tdmysql_backup_policy modify"))
+    assert errors == []
+
+
+def test_tdmysql_maintenance_window():
+    module = _import_plugin("tdmysql_maintenance_window")
+    models = _models("tdmysql.v20211122")
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, "tdsql3-xxxxxxxx"), "tdmysql_maintenance_window describe"))
+    p = {"instance_id": "tdsql3-xxxxxxxx", "start_time": "02:00", "duration_hours": 2, "week_days": ["Tuesday", "Saturday"]}
+    errors.extend(audit_request(module.modify_request(models, p), "tdmysql_maintenance_window modify"))
+    assert errors == []
+
+
+def test_tdmysql_parameter():
+    module = _import_plugin("tdmysql_parameter")
+    models = _models("tdmysql.v20211122")
+    errors = []
+    errors.extend(
+        audit_request(
+            module.modify_request(models, "tdsql3-xxxxxxxx", {"max_connections": "3000", "sql_mode": "STRICT_TRANS_TABLES"}),
+            "tdmysql_parameter modify",
+        )
+    )
+    errors.extend(audit_request(module.flow_request(models, 987654), "tdmysql_parameter flow"))
+    assert errors == []
+
+
+def test_tdmysql_ssl():
+    module = _import_plugin("tdmysql_ssl")
+    models = _models("tdmysql.v20211122")
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, "tdsql3-xxxxxxxx"), "tdmysql_ssl describe"))
+    errors.extend(audit_request(module.modify_request(models, "tdsql3-xxxxxxxx", True), "tdmysql_ssl modify"))
+    errors.extend(audit_request(module.flow_request(models, 555666), "tdmysql_ssl flow"))
+    assert errors == []
+
+
+def test_tsf_application():
+    module = _import_plugin("tsf_application")
+    models = _models("tsf.v20180326")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    module.find(fake, client, models, {"application_id": "application-xxxxxxxx", "name": "orders"})
+    result = module.find(fake, client, models, {"name": "orders"})
+    assert result is None
+    errors.extend(audit_recorded(fake, "tsf_application find"))
+    assert errors == []
+
+
+def test_tsf_application_config():
+    module = _import_plugin("tsf_application_config")
+    models = _models("tsf.v20180326")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    result = module.detail(fake, client, models, "dcfg-xxxxxxxx")
+    assert result is None
+    result = module.find(fake, client, models, {"config_id": "dcfg-xxxxxxxx", "application_id": "application-xxxxxxxx", "name": "app.conf", "version": "v1"})
+    assert result is None
+    result = module.find(fake, client, models, {"application_id": "application-xxxxxxxx", "name": "app.conf", "version": "v1"})
+    assert result is None
+    errors.extend(audit_recorded(fake, "tsf_application_config find"))
+    assert errors == []
+
+
+def test_tsf_application_config_release():
+    module = _import_plugin("tsf_application_config_release")
+    models = _models("tsf.v20180326")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    result = module.find(fake, client, models, {"config_id": "dcfg-xxxxxxxx", "group_id": "group-xxxxxxxx"})
+    assert result is None
+    errors.extend(audit_recorded(fake, "tsf_application_config_release find"))
+    assert errors == []
+
+
+def test_tsf_cluster():
+    module = _import_plugin("tsf_cluster")
+    models = _models("tsf.v20180326")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    result = module.find(fake, client, models, {"cluster_id": "cluster-xxxxxxxx", "name": "prod"})
+    assert result is None
+    result = module.find(fake, client, models, {"name": "prod"})
+    assert result is None
+    errors.extend(audit_recorded(fake, "tsf_cluster find"))
+    assert errors == []
+
+
+def test_tsf_container_deployment_group():
+    module = _import_plugin("tsf_container_deployment_group")
+    models = _models("tsf.v20180326")
+    fake = _RecordingModule()
+    client = _StubClient()
+    p = {"application_id": "application-xxxxxxxx", "namespace_id": "namespace-xxxxxxxx", "cluster_id": "cluster-xxxxxxxx"}
+    errors = []
+    result = module.find(fake, client, models, dict(p, group_id="group-xxxxxxxx", name="orders"))
+    assert result is None
+    result = module.find(fake, client, models, dict(p, name="orders"))
+    assert result is None
+    errors.extend(audit_recorded(fake, "tsf_container_deployment_group find"))
+    assert errors == []
+
+
+def test_tsf_lane():
+    module = _import_plugin("tsf_lane")
+    models = _models("tsf.v20180326")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    result = module.find(fake, client, models, {"lane_id": "lane-xxxxxxxx", "name": "canary"})
+    assert result is None
+    result = module.find(fake, client, models, {"name": "canary"})
+    assert result is None
+    errors.extend(audit_recorded(fake, "tsf_lane find"))
+    assert errors == []
+
+
+def test_tsf_lane_rule():
+    module = _import_plugin("tsf_lane_rule")
+    models = _models("tsf.v20180326")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    result = module.find(fake, client, models, {"rule_id": "rule-xxxxxxxx", "name": "canary-rule", "lane_id": "lane-xxxxxxxx"})
+    assert result is None
+    result = module.find(fake, client, models, {"name": "canary-rule", "lane_id": "lane-xxxxxxxx"})
+    assert result is None
+    errors.extend(audit_recorded(fake, "tsf_lane_rule find"))
+    assert errors == []
+
+
+def test_tsf_microservice():
+    module = _import_plugin("tsf_microservice")
+    models = _models("tsf.v20180326")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    result = module.find(fake, client, models, {"namespace_id": "namespace-xxxxxxxx", "microservice_id": "ms-xxxxxxxx", "name": "orders"})
+    assert result is None
+    result = module.find(fake, client, models, {"namespace_id": "namespace-xxxxxxxx", "name": "orders"})
+    assert result is None
+    errors.extend(audit_recorded(fake, "tsf_microservice find"))
+    assert errors == []
+
+
+def test_tsf_namespace():
+    module = _import_plugin("tsf_namespace")
+    models = _models("tsf.v20180326")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    result = module.find(fake, client, models, {"namespace_id": "namespace-xxxxxxxx", "name": "prod", "cluster_id": "cluster-xxxxxxxx"})
+    assert result is None
+    result = module.find(fake, client, models, {"name": "prod", "cluster_id": "cluster-xxxxxxxx"})
+    assert result is None
+    errors.extend(audit_recorded(fake, "tsf_namespace find"))
+    assert errors == []
+
+
+def test_tsf_public_config():
+    module = _import_plugin("tsf_public_config")
+    models = _models("tsf.v20180326")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    result = module.detail(fake, client, models, "dcfg-xxxxxxxx")
+    assert result is None
+    result = module.find(fake, client, models, {"config_id": "dcfg-xxxxxxxx", "name": "common.conf", "version": "v1"})
+    assert result is None
+    result = module.find(fake, client, models, {"name": "common.conf", "version": "v1"})
+    assert result is None
+    errors.extend(audit_recorded(fake, "tsf_public_config find"))
+    assert errors == []
+
+
+def test_tsf_repository():
+    module = _import_plugin("tsf_repository")
+    models = _models("tsf.v20180326")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    result = module.find(fake, client, models, {"repository_id": "repo-xxxxxxxx", "name": "orders", "repository_type": "default"})
+    assert result is None
+    result = module.find(fake, client, models, {"name": "orders", "repository_type": "default"})
+    assert result is None
+    errors.extend(audit_recorded(fake, "tsf_repository find"))
+    assert errors == []
+
+
+def test_tsf_vm_deployment_group():
+    module = _import_plugin("tsf_vm_deployment_group")
+    models = _models("tsf.v20180326")
+    fake = _RecordingModule()
+    client = _StubClient()
+    p = {"application_id": "application-xxxxxxxx", "namespace_id": "namespace-xxxxxxxx", "cluster_id": "cluster-xxxxxxxx"}
+    errors = []
+    result = module.find(fake, client, models, dict(p, group_id="group-xxxxxxxx", name="orders"))
+    assert result is None
+    result = module.find(fake, client, models, dict(p, name="orders"))
+    assert result is None
+    errors.extend(audit_recorded(fake, "tsf_vm_deployment_group find"))
+    assert errors == []
+
+
+def test_dlc_cluster_group():
+    module = _import_plugin("dlc_cluster_group")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.list_request(models), "dlc_cluster_group list"))
+    p = {"name": "shared-ray-compute", "description": "shared managed compute", "config": '{"dispatchStrategy":"RANDOM"}'}
+    errors.extend(audit_request(module.make_request(models, p), "dlc_cluster_group create"))
+    errors.extend(audit_request(module.make_request(models, p, update=True, group_id="cluster-group-xxxxxxxx"), "dlc_cluster_group update"))
+    errors.extend(audit_request(module.cluster_request(models, "cluster-group-xxxxxxxx"), "dlc_cluster_group clusters"))
+    errors.extend(audit_request(module.delete_request(models, "cluster-group-xxxxxxxx", True), "dlc_cluster_group delete"))
+    assert errors == []
+
+
+def test_dlc_data_engine():
+    module = _import_plugin("dlc_data_engine")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, "analytics-01"), "dlc_data_engine describe"))
+    p = {
+        "name": "analytics-01",
+        "pay_mode": 0,
+        "engine_type": "spark",
+        "cluster_type": "spark_private",
+        "mode": 0,
+        "size": 16,
+        "auto_resume": True,
+        "auto_suspend": False,
+        "auto_suspend_time": 300,
+        "max_concurrency": 20,
+        "tolerable_queue_time": 60,
+        "description": "batch analytics",
+        "engine_exec_type": "SQL",
+        "resource_type": "Standard_CU",
+        "engine_generation": "Native",
+        "image_version_name": "Spark 3.2",
+    }
+    errors.extend(audit_request(module.create_request(models, p), "dlc_data_engine create"))
+    errors.extend(audit_request(module.update_request(models, dict(p, size=32, auto_suspend=True)), "dlc_data_engine update"))
+    errors.extend(audit_request(module.description_request(models, "analytics-01", "renamed"), "dlc_data_engine description"))
+    errors.extend(audit_request(module.operation_request(models, "analytics-01", "Suspend"), "dlc_data_engine operation"))
+    errors.extend(audit_request(module.delete_request(models, "analytics-01"), "dlc_data_engine delete"))
+    errors.extend(audit_request(module.image_versions_request(models, "spark"), "dlc_data_engine image versions"))
+    errors.extend(audit_request(module.image_switch_request(models, "data-engine-xxxxxxxx", "image-xxxxxxxx"), "dlc_data_engine image switch"))
+    errors.extend(audit_request(module.standby_request(models, "analytics-01", True), "dlc_data_engine standby"))
+    assert errors == []
+
+
+def test_dlc_data_engine_config():
+    module = _import_plugin("dlc_data_engine_config")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.engine_request(models, "analytics-01"), "dlc_data_engine_config engine"))
+    errors.extend(audit_request(module.describe_request(models, "data-engine-xxxxxxxx"), "dlc_data_engine_config describe"))
+    target = {
+        "DataEngineId": "data-engine-xxxxxxxx",
+        "DataEngineConfigPairs": [{"ConfigItem": "spark.executor.cores", "ConfigValue": "2"}],
+        "SessionResourceTemplate": {"DriverSize": "small", "ExecutorSize": "medium", "ExecutorNums": 2, "ExecutorMaxNumbers": 10},
+    }
+    errors.extend(audit_request(module.update_request(models, target), "dlc_data_engine_config update"))
+    assert errors == []
+
+
+def test_dlc_data_mask_strategy():
+    module = _import_plugin("dlc_data_mask_strategy")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, {"name": "ssn-mask", "strategy_id": "sm-xxxxxxxx"}), "dlc_data_mask_strategy describe"))
+    target = {
+        "StrategyName": "ssn-mask",
+        "StrategyType": "field",
+        "StrategyDesc": "mask ssn",
+        "Groups": [{"WorkGroupId": 1, "StrategyType": "field"}],
+        "Users": ["100009876543", "100001111111"],
+    }
+    errors.extend(audit_request(module.create_request(models, target), "dlc_data_mask_strategy create"))
+    errors.extend(audit_request(module.update_request(models, dict(target, StrategyId="sm-xxxxxxxx")), "dlc_data_mask_strategy update"))
+    errors.extend(audit_request(module.delete_request(models, "sm-xxxxxxxx"), "dlc_data_mask_strategy delete"))
+    assert errors == []
+
+
+def test_dlc_database():
+    module = _import_plugin("dlc_database")
+    models = _models("dlc.v20210125")
+    errors = []
+    p = {"name": "appdb", "datasource_connection_name": "DataLakeCatalog"}
+    errors.extend(audit_request(module.describe_request(models, p), "dlc_database describe"))
+    errors.extend(audit_request(module.table_count_request(models, p), "dlc_database table count"))
+    p_create = {
+        "name": "appdb",
+        "datasource_connection_name": "DataLakeCatalog",
+        "comment": "application db",
+        "govern_policy": {"RuleType": "GovernSQL", "GovernEngine": "spark"},
+    }
+    errors.extend(audit_request(module.create_request(models, p_create), "dlc_database create"))
+    errors.extend(audit_request(module.delete_request(models, p), "dlc_database delete"))
+    assert errors == []
+
+
+def test_dlc_engine_resource_group():
+    module = _import_plugin("dlc_engine_resource_group")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, "rg-batch"), "dlc_engine_resource_group describe"))
+    errors.extend(audit_request(module.config_request(models, "d-resource-group-xxxxxxxx"), "dlc_engine_resource_group config"))
+    p_create = {
+        "name": "rg-batch",
+        "data_engine_name": "analytics-01",
+        "launch_now": True,
+        "auto_launch": True,
+        "auto_pause": False,
+        "auto_pause_time": 900,
+        "max_concurrency": 8,
+        "driver_cu_spec": "medium",
+        "executor_cu_spec": "small",
+        "min_executors": 2,
+        "max_executors": 10,
+        "network_config_names": ["net-a", "net-b"],
+        "static_config": {"spark.executor.cores": "2"},
+        "dynamic_config": {"spark.dynamicAllocation.enabled": "true"},
+    }
+    errors.extend(audit_request(module.create_request(models, p_create), "dlc_engine_resource_group create"))
+    p_base = {"name": "rg-batch", "auto_launch": True, "auto_pause": False, "max_concurrency": 8}
+    errors.extend(audit_request(module.base_request(models, p_base), "dlc_engine_resource_group base"))
+    p_capacity = {"name": "rg-batch", "effective_now": True, "driver_cu_spec": "medium", "executor_cu_spec": "small", "min_executors": 2, "max_executors": 12}
+    errors.extend(audit_request(module.capacity_request(models, p_capacity), "dlc_engine_resource_group capacity"))
+    errors.extend(audit_request(module.network_request(models, "d-resource-group-xxxxxxxx", ["net-a", "net-c"], True), "dlc_engine_resource_group network"))
+    changes = {"StaticConfig": {"spark.executor.cores": ("1", "2")}, "DynamicConfig": {"spark.dynamicAllocation.enabled": (None, "true")}}
+    errors.extend(audit_request(module.config_update_request(models, "rg-batch", changes, True), "dlc_engine_resource_group config update"))
+    errors.extend(audit_request(module.delete_request(models, "rg-batch"), "dlc_engine_resource_group delete"))
+    assert errors == []
+
+
+def test_dlc_inference_model():
+    module = _import_plugin("dlc_inference_model")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.list_request(models), "dlc_inference_model list"))
+    p = {
+        "name": "llama-7b",
+        "model_type": "LLM",
+        "initial_version": "v1",
+        "model_uid": "model-xxxxxxxx",
+        "provider": "meta",
+        "description": "7B chat model",
+        "parameter_size": "7B",
+        "tags": ["chat", "text-generation"],
+        "tasks": ["inference", "eval"],
+        "storage_uri": "cosn://model-1250000000/llama-7b",
+        "use_custom_storage": True,
+        "storage_type": "COS",
+        "resource_tags": [{"key": "env", "value": "prod"}],
+    }
+    errors.extend(audit_request(module.create_request(models, p), "dlc_inference_model create"))
+    p_update = {"description": "7B chat model v2", "parameter_size": "8B", "tags": ["chat"], "resource_tags": [{"TagKey": "env", "TagValue": "prod"}]}
+    errors.extend(audit_request(module.update_request(models, p_update, "model-xxxxxxxx"), "dlc_inference_model update"))
+    assert errors == []
+
+
+def test_dlc_inference_service():
+    module = _import_plugin("dlc_inference_service")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.list_request(models), "dlc_inference_service list"))
+    errors.extend(audit_request(module.get_request(models, "service-xxxxxxxx"), "dlc_inference_service get"))
+    p = {
+        "name": "llama-serve",
+        "model_uid": "model-xxxxxxxx",
+        "engine": "ccr.ccs.tencentyun.com/tione/inference",
+        "replicas": 1,
+        "image": "ccr.ccs.tencentyun.com/tione/llama",
+        "model_identifier": "llama-7b",
+        "model_version": "v1",
+        "head_high_availability_enabled": True,
+        "advanced_params": '{"env": {"K": "V"}}',
+        "image_pull_policy": "IfNotPresent",
+        "autoscaling_enabled": True,
+        "min_replicas": 1,
+        "max_replicas": 4,
+        "autoscaler_options": '{"minReplicas": 1}',
+        "api_key_ids": ["key-xxxxxxxx"],
+        "advanced_options": '{"x": 1}',
+        "resource_tags": [{"key": "env", "value": "prod"}],
+        "runtime_env": '{"PYTHONPATH": "/data"}',
+    }
+    errors.extend(audit_request(module.create_request(models, p), "dlc_inference_service create"))
+    assert errors == []
+
+
+def test_dlc_job_spec():
+    module = _import_plugin("dlc_job_spec")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.list_request(models), "dlc_job_spec list"))
+    p = {
+        "name": "etl-job",
+        "description": "hourly etl",
+        "entrypoint": "main.py",
+        "image": "ccr.ccs.tencentyun.com/dlc/spark",
+        "image_pull_type": "BuiltIn",
+        "image_pull_policy": "Always",
+        "resource_config": '{"driverMemory": "4G"}',
+        "runtime_env": '{"PYTHONPATH": "/data"}',
+        "catalog": "DataLakeCatalog",
+        "autoscaler_options": '{"minReplicas": 1}',
+        "queue": "queue-1",
+        "job_package": "cosn://artifacts-1250000000/job.zip",
+        "job_package_name": "job.zip",
+        "advanced_options": '{"retries": 2}',
+        "priority": 1,
+        "tags": [{"key": "env", "value": "prod"}],
+    }
+    errors.extend(audit_request(module.make_request(models, p), "dlc_job_spec create"))
+    errors.extend(audit_request(module.make_request(models, p, update=True, spec_id="job-spec-xxxxxxxx"), "dlc_job_spec update"))
+    errors.extend(audit_request(module.delete_request(models, "job-spec-xxxxxxxx"), "dlc_job_spec delete"))
+    errors.extend(audit_request(module.priority_request(models, "job-spec-xxxxxxxx", 2), "dlc_job_spec priority"))
+    assert errors == []
+
+
+def test_dlc_lab():
+    module = _import_plugin("dlc_lab")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.list_request(models), "dlc_lab list"))
+    p = {
+        "name": "lab-1",
+        "description": "ml workspace",
+        "image": "ccr.ccs.tencentyun.com/dlc/jupyter",
+        "image_pull_policy": "IfNotPresent",
+        "priority": 1,
+        "tags": [{"key": "env", "value": "prod"}],
+    }
+    errors.extend(audit_request(module.make_request(models, p), "dlc_lab create"))
+    errors.extend(audit_request(module.make_request(models, p, update=True), "dlc_lab update"))
+    errors.extend(audit_request(module.delete_request(models, "lab-xxxxxxxx"), "dlc_lab delete"))
+    errors.extend(audit_request(module.priority_request(models, "lab-xxxxxxxx", 2), "dlc_lab priority"))
+    assert errors == []
+
+
+def test_dlc_model_version():
+    module = _import_plugin("dlc_model_version")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.list_request(models, {"model_uid": "model-xxxxxxxx"}, 1), "dlc_model_version list"))
+    p = {
+        "model_uid": "model-xxxxxxxx",
+        "version": "v1",
+        "description": "first release",
+        "storage_uri": "cosn://model-1250000000/llama-7b/v1",
+        "use_custom_storage": True,
+        "storage_type": "COS",
+    }
+    errors.extend(audit_request(module.create_request(models, p), "dlc_model_version create"))
+    assert errors == []
+
+
+def test_dlc_network_connection():
+    module = _import_plugin("dlc_network_connection")
+    models = _models("dlc.v20210125")
+    errors = []
+    p = {"name": "conn-1", "data_engine_name": "analytics-01", "vpc_id": "vpc-xxxxxxxx", "connection_type": 1}
+    errors.extend(audit_request(module.describe_request(models, p), "dlc_network_connection describe"))
+    errors.extend(audit_request(module.update_request(models, "conn-1", "primary connection"), "dlc_network_connection update"))
+    assert errors == []
+
+
+def test_dlc_notebook_session():
+    module = _import_plugin("dlc_notebook_session")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, "session-xxxxxxxx"), "dlc_notebook_session describe"))
+    errors.extend(audit_request(module.list_request(models, {"name": "nb-1", "data_engine_name": "analytics-01"}), "dlc_notebook_session list"))
+    p = {
+        "name": "nb-1",
+        "kind": "pyspark",
+        "data_engine_name": "analytics-01",
+        "dependent_files": ["cosn://scripts-1250000000/init.py"],
+        "driver_size": "small",
+        "executor_size": "medium",
+        "executor_numbers": 1,
+        "executor_max_numbers": 4,
+        "arguments": [{"key": "k1", "value": "v1"}],
+        "proxy_user": "100009876543",
+        "timeout": 3600,
+    }
+    errors.extend(audit_request(module.create_request(models, p), "dlc_notebook_session create"))
+    errors.extend(audit_request(module.delete_request(models, "session-xxxxxxxx"), "dlc_notebook_session delete"))
+    assert errors == []
+
+
+def test_dlc_partition_queue():
+    module = _import_plugin("dlc_partition_queue")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, "partition-1"), "dlc_partition_queue describe"))
+    p = {
+        "partition_code": "partition-1",
+        "name": "queue-1",
+        "queue_type": 1,
+        "description": "ingest queue",
+        "resource_usages": [
+            {
+                "ResourceSpec": {"ResourceType": "C", "BillingItem": "hour", "InstanceType": "S1", "Spec": "4", "GpuType": "T4"},
+                "Min": 1,
+                "Max": 2,
+            }
+        ],
+    }
+    errors.extend(audit_request(module.make_request(models, p), "dlc_partition_queue create"))
+    errors.extend(audit_request(module.make_request(models, p, update=True, queue_id=10001), "dlc_partition_queue update"))
+    errors.extend(audit_request(module.delete_request(models, p, 10001), "dlc_partition_queue delete"))
+    assert errors == []
+
+
+def test_dlc_ray_cluster():
+    module = _import_plugin("dlc_ray_cluster")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.list_request(models), "dlc_ray_cluster list"))
+    p = {
+        "name": "ray-1",
+        "description": "training cluster",
+        "group_id": "group-xxxxxxxx",
+        "resource_partition_id": "part-xxxxxxxx",
+        "queue": "queue-1",
+        "image": "ccr.ccs.tencentyun.com/dlc/ray",
+        "image_pull_policy": "Always",
+        "image_pull_type": "BuiltIn",
+        "resource_config": '{"head": {"cpu": 2}}',
+        "resource_config_id": "resource-config-xxxxxxxx",
+        "catalog": "DataLakeCatalog",
+        "advanced_options": '{"env": {"K": "V"}}',
+        "priority": 1,
+        "tags": [{"key": "env", "value": "prod"}],
+    }
+    errors.extend(audit_request(module.make_request(models, p), "dlc_ray_cluster create"))
+    errors.extend(audit_request(module.make_request(models, p, update=True, cluster_id="ray-xxxxxxxx"), "dlc_ray_cluster update"))
+    errors.extend(audit_request(module.delete_request(models, "ray-xxxxxxxx"), "dlc_ray_cluster delete"))
+    errors.extend(audit_request(module.priority_request(models, "ray-xxxxxxxx", 3), "dlc_ray_cluster priority"))
+    assert errors == []
+
+
+def test_dlc_resource_config():
+    module = _import_plugin("dlc_resource_config")
+    models = _models("dlc.v20210125")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    errors.extend(audit_request(module.list_request(models), "dlc_resource_config list"))
+    errors.extend(audit_request(module.list_request(models, ray=True), "dlc_resource_config list ray"))
+    p = {
+        "name": "rc-1",
+        "description": "shared ray template",
+        "template_type": "Ray",
+        "head": {"name": "head-1", "pod_cpu": 4, "pod_mem": 8, "pod_num": 1},
+        "workers": [
+            {"name": "worker-1", "pod_cpu": 2, "pod_mem": 4, "min_pod_num": 1, "max_pod_num": 4, "enable_auto_scaling": True},
+        ],
+    }
+    errors.extend(audit_request(module.make_request(models, p), "dlc_resource_config create"))
+    errors.extend(audit_request(module.make_request(models, p, update=True, config_id="resource-config-xxxxxxxx"), "dlc_resource_config update"))
+    errors.extend(audit_request(module.delete_request(models, "resource-config-xxxxxxxx"), "dlc_resource_config delete"))
+    module.references(fake, client, models, "resource-config-xxxxxxxx")
+    errors.extend(audit_recorded(fake, "dlc_resource_config references"))
+    assert errors == []
+
+
+def test_dlc_script():
+    module = _import_plugin("dlc_script")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.list_request(models), "dlc_script list"))
+    p = {"name": "script-1", "sql_statement": "SELECT 1", "description": "sanity check", "database_name": "appdb"}
+    errors.extend(audit_request(module.create_request(models, p), "dlc_script create"))
+    errors.extend(audit_request(module.delete_request(models, "script-xxxxxxxx"), "dlc_script delete"))
+    assert errors == []
+
+
+def test_dlc_spark_job():
+    module = _import_plugin("dlc_spark_job")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, name="etl-1"), "dlc_spark_job describe by name"))
+    errors.extend(audit_request(module.describe_request(models, job_id="job-xxxxxxxx"), "dlc_spark_job describe by id"))
+    p = {
+        "name": "etl-1",
+        "app_type": 1,
+        "data_engine": "analytics-01",
+        "app_file": "cosn://artifacts-1250000000/jobs/etl.jar",
+        "role_arn": 1,
+        "driver_size": "small",
+        "executor_size": "small",
+        "executor_nums": 2,
+        "executor_max_nums": 4,
+        "main_class": "com.example.EtlJob",
+        "app_conf": '{"spark.ui.enabled": "false"}',
+        "cmd_args": "--date 2026-01-01",
+        "max_retries": 3,
+        "data_source": "cosn://data-1250000000/raw",
+        "package_source": "cos",
+        "jars": "cosn://artifacts-1250000000/jobs/lib.jar",
+        "files": "cosn://artifacts-1250000000/jobs/conf.xml",
+        "python_files": "cosn://artifacts-1250000000/jobs/run.py",
+        "archives": "cosn://artifacts-1250000000/jobs/venv.zip",
+        "spark_image": "ccr.ccs.tencentyun.com/dlc/spark",
+        "spark_image_version": "3.2",
+        "session_id": "session-xxxxxxxx",
+        "session_started": False,
+        "inherit_engine_config": False,
+    }
+    errors.extend(audit_request(module.make_request(models, p), "dlc_spark_job create"))
+    errors.extend(audit_request(module.make_request(models, p, update=True, job_id="job-xxxxxxxx"), "dlc_spark_job update"))
+    errors.extend(audit_request(module.delete_request(models, "etl-1"), "dlc_spark_job delete"))
+    assert errors == []
+
+
+def test_dlc_store_location():
+    module = _import_plugin("dlc_store_location")
+    models = _models("dlc.v20210125")
+    fake = _RecordingModule()
+    client = _StubClient()
+    errors = []
+    module.read(fake, client, models)
+    errors.extend(audit_recorded(fake, "dlc_store_location read"))
+    errors.extend(audit_request(module.create_request(models, "cosn://bucket-1250000000/store"), "dlc_store_location create"))
+    errors.extend(audit_request(module.modify_request(models, True, "cosn://bucket-1250000000/advanced"), "dlc_store_location modify"))
+    assert errors == []
+
+
+def test_dlc_table():
+    module = _import_plugin("dlc_table")
+    models = _models("dlc.v20210125")
+    errors = []
+    base = {"name": "orders", "database_name": "appdb", "datasource_connection_name": "DataLakeCatalog"}
+    errors.extend(audit_request(module.describe_request(models, base), "dlc_table describe"))
+    p_create = {
+        "name": "orders",
+        "database_name": "appdb",
+        "datasource_connection_name": "DataLakeCatalog",
+        "table_type": "TABLE",
+        "comment": "customer orders",
+        "table_format": "Hive",
+        "primary_keys": ["order_id"],
+        "columns": [
+            {"name": "order_id", "type": "bigint", "nullable": False, "comment": "pk"},
+            {"name": "customer", "type": "string", "nullable": True},
+        ],
+        "partitions": [{"name": "dt", "type": "string"}],
+        "data_format": "Parquet",
+        "location": "cosn://data-1250000000/appdb/orders",
+    }
+    errors.extend(audit_request(module.generate_request(models, p_create), "dlc_table generate"))
+    p_task = {
+        "database_name": "appdb",
+        "datasource_connection_name": "DataLakeCatalog",
+        "data_engine_name": "analytics-01",
+        "resource_group_name": "rg-batch",
+    }
+    errors.extend(audit_request(module.task_request(models, p_task, "INSERT INTO orders SELECT 1"), "dlc_table task"))
+    errors.extend(audit_request(module.task_status_request(models, "task-xxxxxxxx"), "dlc_table task status"))
+    errors.extend(audit_request(module.delete_request(models, base), "dlc_table delete"))
+    errors.extend(audit_request(module.comment_request(models, dict(base, comment="new comment")), "dlc_table comment"))
+    assert errors == []
+
+
+def test_dlc_table_partition():
+    module = _import_plugin("dlc_table_partition")
+    models = _models("dlc.v20210125")
+    errors = []
+    p = {
+        "database_name": "appdb",
+        "table_name": "orders",
+        "values": ["2026-01-01"],
+        "datasource_connection_name": "DataLakeCatalog",
+        "schema_name": "default",
+        "name": "orders-2026-01-01",
+    }
+    errors.extend(audit_request(module.list_request(models, p), "dlc_table_partition list"))
+    p_add = dict(
+        p,
+        params={"transient_lastDdlTime": "1700000000"},
+        storage={"location": "cosn://data-1250000000/appdb/orders/dt=2026-01-01"},
+    )
+    errors.extend(audit_request(module.add_request(models, p_add), "dlc_table_partition add"))
+    errors.extend(audit_request(module.alter_request(models, p_add, {"Name": "orders-2026-01-01"}), "dlc_table_partition alter"))
+    errors.extend(
+        audit_request(module.drop_request(models, dict(p, delete_data=True, schema_name="default", name="orders-2026-01-01")), "dlc_table_partition drop")
+    )
+    assert errors == []
+
+
+def test_dlc_udf_policy():
+    module = _import_plugin("dlc_udf_policy")
+    models = _models("dlc.v20210125")
+    errors = []
+    p = {"name": "my_udf", "database_name": "appdb", "catalog_name": "DataLakeCatalog"}
+    errors.extend(audit_request(module.describe_request(models, p), "dlc_udf_policy describe"))
+    p_update = dict(
+        p,
+        policy_infos=[
+            {"Accesses": ["SELECT", "DESCRIBE"], "Users": ["100009876543"], "Groups": ["analysts"]},
+            {"Accesses": ["SELECT"], "Users": ["100001111111"], "Groups": []},
+        ],
+    )
+    errors.extend(audit_request(module.update_request(models, p_update), "dlc_udf_policy update"))
+    assert errors == []
+
+
+def test_dlc_user():
+    module = _import_plugin("dlc_user")
+    models = _models("dlc.v20210125")
+    errors = []
+    p = {"user_id": "100009876543", "account_source": "TencentAccount"}
+    errors.extend(audit_request(module.describe_request(models, p), "dlc_user describe"))
+    p_create = {
+        "user_id": "100009876543",
+        "description": "billing analyst",
+        "user_type": "COMMON",
+        "alias": "alice",
+        "principal_type": "UserAccount",
+        "account_source": "TencentAccount",
+        "initial_policies": [{"Database": "*", "Catalog": "DataLakeCatalog", "Table": "*", "Operation": "SELECT", "PolicyType": "TABLE"}],
+        "initial_work_group_ids": [1, 2],
+    }
+    errors.extend(audit_request(module.create_request(models, p_create), "dlc_user create"))
+    errors.extend(audit_request(module.modify_request(models, dict(p, description="senior analyst")), "dlc_user modify"))
+    errors.extend(audit_request(module.type_request(models, dict(p, user_type="ADMIN")), "dlc_user type"))
+    errors.extend(audit_request(module.delete_request(models, p), "dlc_user delete"))
+    assert errors == []
+
+
+def test_dlc_user_policy():
+    module = _import_plugin("dlc_user_policy")
+    models = _models("dlc.v20210125")
+    errors = []
+    values = [
+        {"Database": "appdb", "Catalog": "DataLakeCatalog", "Table": "orders", "Operation": "SELECT", "PolicyType": "TABLE"},
+        {"Database": "appdb", "Catalog": "DataLakeCatalog", "Table": "customers", "Operation": "SELECT", "PolicyType": "TABLE"},
+    ]
+    errors.extend(audit_request(module.describe_request(models, "100009876543", "TencentAccount"), "dlc_user_policy describe"))
+    errors.extend(audit_request(module.attach_request(models, "100009876543", "TencentAccount", values), "dlc_user_policy attach"))
+    errors.extend(audit_request(module.detach_request(models, "100009876543", "TencentAccount", values, ["policy-1", "policy-2"]), "dlc_user_policy detach by ids"))
+    errors.extend(audit_request(module.detach_request(models, "100009876543", "TencentAccount", values), "dlc_user_policy detach by set"))
+    assert errors == []
+
+
+def test_dlc_user_vpc_connection():
+    module = _import_plugin("dlc_user_vpc_connection")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, "engine-network-xxxxxxxx"), "dlc_user_vpc_connection describe"))
+    errors.extend(audit_request(module.describe_request(models, "engine-network-xxxxxxxx", "endpoint-xxxxxxxx"), "dlc_user_vpc_connection describe endpoint"))
+    p = {
+        "engine_network_id": "engine-network-xxxxxxxx",
+        "vpc_id": "vpc-xxxxxxxx",
+        "subnet_id": "subnet-xxxxxxxx",
+        "endpoint_name": "vpce-1",
+        "endpoint_vip": "10.0.0.5",
+    }
+    errors.extend(audit_request(module.create_request(models, p), "dlc_user_vpc_connection create"))
+    errors.extend(audit_request(module.delete_request(models, "engine-network-xxxxxxxx", "endpoint-xxxxxxxx"), "dlc_user_vpc_connection delete"))
+    assert errors == []
+
+
+def test_dlc_work_group():
+    module = _import_plugin("dlc_work_group")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, {"work_group_id": 1}), "dlc_work_group describe by id"))
+    errors.extend(audit_request(module.describe_request(models, {"name": "analysts"}), "dlc_work_group describe by name"))
+    p = {
+        "name": "analysts",
+        "description": "data analysts",
+        "initial_policies": [{"Database": "*", "Catalog": "DataLakeCatalog", "Table": "*", "Operation": "SELECT", "PolicyType": "TABLE"}],
+        "initial_user_ids": ["100009876543"],
+    }
+    errors.extend(audit_request(module.create_request(models, p), "dlc_work_group create"))
+    errors.extend(audit_request(module.modify_request(models, 1, "senior analysts"), "dlc_work_group modify"))
+    errors.extend(audit_request(module.delete_request(models, 1), "dlc_work_group delete"))
+    assert errors == []
+
+
+def test_dlc_work_group_membership():
+    module = _import_plugin("dlc_work_group_membership")
+    models = _models("dlc.v20210125")
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, 1), "dlc_work_group_membership describe"))
+    errors.extend(audit_request(module.membership_request(models, 1, ["100009876543"], True), "dlc_work_group_membership add"))
+    errors.extend(audit_request(module.membership_request(models, 1, ["100009876543"], False), "dlc_work_group_membership remove"))
+    assert errors == []
+
+
+def test_dlc_work_group_policy():
+    module = _import_plugin("dlc_work_group_policy")
+    models = _models("dlc.v20210125")
+    errors = []
+    values = [{"Database": "appdb", "Catalog": "DataLakeCatalog", "Table": "orders", "Operation": "SELECT", "PolicyType": "TABLE"}]
+    errors.extend(audit_request(module.describe_request(models, 1), "dlc_work_group_policy describe"))
+    errors.extend(audit_request(module.attach_request(models, 1, values), "dlc_work_group_policy attach"))
+    errors.extend(audit_request(module.detach_request(models, 1, values, ["policy-1"]), "dlc_work_group_policy detach by ids"))
+    errors.extend(audit_request(module.detach_request(models, 1, values), "dlc_work_group_policy detach by set"))
+    assert errors == []
+
+
+def test_oceanus_cluster():
+    module = _import_plugin("oceanus_cluster")
+    models = _models("oceanus.v20190422")
+    p = {
+        "cluster_id": "cluster-xxxxxxxx",
+        "name": "production-flink",
+        "region_id": 1,
+        "zone_id": 100001,
+        "login_password": "s3cret-pw",
+        "vpc_descriptions": [{"VpcId": "vpc-xxxxxxxx", "SubnetId": "subnet-xxxxxxxx"}],
+        "slave_vpc_descriptions": [{"VpcId": "vpc-xxxxxxxx", "SubnetId": "subnet-xxxxxxxx"}],
+        "default_cos_bucket": "flink-artifacts-1250000000",
+        "cu": 19,
+        "cu_memory": 4,
+        "remark": "production Flink cluster",
+        "period": 1,
+        "charge_type": "POSTPAID_BY_SECOND",
+        "cluster_type": "MULTI_AZ_CLUSTER",
+        "renew_flag": "NOTIFY_AND_AUTO_RENEW",
+        "flink_ui_access_type": "NetworkAccess_EXTERNAL",
+    }
+    by_name = dict(p, cluster_id=None, name="production-flink")
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "oceanus_cluster describe by id"))
+    errors.extend(audit_request(module.describe_request(models, by_name), "oceanus_cluster describe by name"))
+    errors.extend(audit_request(module.create_request(models, p), "oceanus_cluster create"))
+    errors.extend(audit_request(module.scale_request(models, "cluster-xxxxxxxx", 19, 26), "oceanus_cluster scale"))
+    errors.extend(audit_request(module.delete_request(models, "cluster-xxxxxxxx"), "oceanus_cluster delete"))
+    assert errors == []
+
+
+def test_oceanus_folder():
+    module = _import_plugin("oceanus_folder")
+    models = _models("oceanus.v20190422")
+    fake = _RecordingModule()
+    client = _StubClient()
+    p_jobs = {"workspace_id": "space-xxxxxxxx", "folder_type": 0, "parent_id": "root", "name": "production-jobs"}
+    p_resources = dict(p_jobs, folder_type=1)
+    errors = []
+    module.tree(fake, client, models, p_jobs)
+    module.tree(fake, client, models, p_resources)
+    errors.extend(audit_recorded(fake, "oceanus_folder tree"))
+    errors.extend(audit_request(module.create_request(models, p_jobs), "oceanus_folder create"))
+    errors.extend(audit_request(module.modify_request(models, dict(p_jobs, name="renamed-jobs"), "folder-xxxxxxxx"), "oceanus_folder modify"))
+    errors.extend(audit_request(module.delete_request(models, p_jobs, "folder-xxxxxxxx"), "oceanus_folder delete"))
+    assert errors == []
+
+
+def test_oceanus_job_config():
+    module = _import_plugin("oceanus_job_config")
+    models = _models("oceanus.v20190422")
+    fake = _RecordingModule()
+    client = _StubClient()
+    p = {
+        "job_id": "cql-xxxxxxxx",
+        "workspace_id": "space-xxxxxxxx",
+        "version": 3,
+        "config_scope": 0,
+        "auto_delete_oldest": False,
+        "resource_ref_names": [],
+    }
+    errors = []
+    module.resolve_named_refs(fake, client, models, p)
+    module.describe(fake, client, models, p)
+    module.describe(fake, client, models, p, p["version"])
+    errors.extend(audit_recorded(fake, "oceanus_job_config describe"))
+    target = {
+        "EntrypointClass": "com.example.Main",
+        "ProgramArgs": "--state.checkpoint-interval 60000",
+        "Remark": "release-1.2",
+        "DefaultParallelism": 4,
+        "FlinkVersion": "Flink-1.17",
+        "COSBucket": "cosn://flink-artifacts-1250000000",
+        "ConfigScope": 0,
+    }
+    errors.extend(audit_request(module.create_request(models, p, target), "oceanus_job_config create"))
+    errors.extend(audit_request(module.delete_request(models, p), "oceanus_job_config delete"))
+    assert errors == []
+
+
+def test_oceanus_job_savepoint():
+    module = _import_plugin("oceanus_job_savepoint")
+    models = _models("oceanus.v20190422")
+    p = {"job_id": "cql-xxxxxxxx", "workspace_id": "space-xxxxxxxx", "description": "before-release-2026-08-31"}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "oceanus_job_savepoint describe"))
+    errors.extend(audit_request(module.describe_request(models, p, 25), "oceanus_job_savepoint describe page 2"))
+    errors.extend(audit_request(module.trigger_request(models, p), "oceanus_job_savepoint trigger"))
+    assert errors == []
+
+
+def test_oceanus_meta_table():
+    module = _import_plugin("oceanus_meta_table")
+    models = _models("oceanus.v20190422")
+    p = {
+        "table_name": "orders",
+        "database_name": "production",
+        "database_id": 12,
+        "catalog_name": "default_catalog",
+        "catalog_id": 0,
+        "workspace_id": "space-xxxxxxxx",
+        "cluster_id": "cluster-xxxxxxxx",
+        "flink_version": "Flink-1.17",
+        "comment": "orders kafka source",
+        "resource_refs": [{"ResourceId": "resource-xxxxxxxx", "Version": 2, "Type": 1}],
+        "async_task_id": None,
+    }
+    encoded = "Q1JFQVRFIFRBQkxFIG9yZGVycyAoaWQgQklHSU5ULCBhbW91bnQgREVDSU1BTCkoMTgsIDIpKQ=="
+    current = {"SerialId": "mt-xxxxxxxx"}
+    errors = []
+    errors.extend(audit_request(module.get_request(models, p), "oceanus_meta_table get"))
+    errors.extend(audit_request(module.create_request(models, p, encoded), "oceanus_meta_table create"))
+    errors.extend(audit_request(module.modify_request(models, p, current, encoded), "oceanus_meta_table modify"))
+    assert errors == []
+
+
+def test_oceanus_resource():
+    module = _import_plugin("oceanus_resource")
+    models = _models("oceanus.v20190422")
+    fake = _RecordingModule()
+    client = _StubClient()
+    p = {
+        "resource_id": "resource-xxxxxxxx",
+        "name": "orders-processor",
+        "workspace_id": "space-xxxxxxxx",
+        "resource_type": 1,
+        "resource_location": {"StorageType": 1, "Param": {"Bucket": "flink-artifacts-1250000000", "Path": "jars/orders-1.0.jar", "Region": "ap-guangzhou"}},
+        "remark": "orders jar",
+        "version_remark": "v1",
+        "folder_id": "root",
+    }
+    by_name = dict(p, resource_id=None, name="orders-processor")
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "oceanus_resource describe by id"))
+    errors.extend(audit_request(module.describe_request(models, by_name), "oceanus_resource describe by name"))
+    module.references(fake, client, models, p, p["resource_id"])
+    errors.extend(audit_recorded(fake, "oceanus_resource references"))
+    errors.extend(audit_request(module.create_request(models, p), "oceanus_resource create"))
+    errors.extend(audit_request(module.delete_request(models, p, p["resource_id"]), "oceanus_resource delete"))
+    assert errors == []
+
+
+def test_oceanus_resource_config():
+    module = _import_plugin("oceanus_resource_config")
+    models = _models("oceanus.v20190422")
+    fake = _RecordingModule()
+    client = _StubClient()
+    p = {
+        "resource_id": "resource-xxxxxxxx",
+        "workspace_id": "space-xxxxxxxx",
+        "version": 3,
+        "resource_location": {"StorageType": 1, "Param": {"Bucket": "flink-artifacts-1250000000", "Path": "jars/orders-1.1.jar", "Region": "ap-guangzhou"}},
+        "remark": "release-1.1",
+        "auto_delete_oldest": False,
+    }
+    errors = []
+    module.describe(fake, client, models, p)
+    module.describe(fake, client, models, p, p["version"])
+    module.references(fake, client, models, p, p["version"])
+    errors.extend(audit_recorded(fake, "oceanus_resource_config describe"))
+    errors.extend(audit_request(module.create_request(models, p), "oceanus_resource_config create"))
+    errors.extend(audit_request(module.delete_request(models, p), "oceanus_resource_config delete"))
+    assert errors == []
+
+
+def test_tione_data_source():
+    module = _import_plugin("tione_data_source")
+    models = _models("tione.v20211111")
+    p = {
+        "data_source_id": "datasource-xxxxxxxx",
+        "project_id": "prj-xxxxxxxx",
+        "name": "shared-training-cfs",
+        "source_type": "CFS",
+        "permission": "RW",
+        "storage_id": "cfs-xxxxxxxx",
+        "mount_config": {"WorkDir": "/training"},
+        "tags": [{"TagKey": "environment", "TagValue": "production"}],
+    }
+    errors = []
+    errors.extend(audit_request(module.get_request(models, p), "tione_data_source get"))
+    errors.extend(audit_request(module.list_request(models, p, 0), "tione_data_source list"))
+    errors.extend(audit_request(module.create_request(models, p), "tione_data_source create"))
+    errors.extend(audit_request(module.delete_request(models, p), "tione_data_source delete"))
+    assert errors == []
+
+
+def test_tione_dataset():
+    module = _import_plugin("tione_dataset")
+    models = _models("tione.v20211111")
+    p = {
+        "dataset_id": "ds-xxxxxxxx",
+        "project_id": "prj-xxxxxxxx",
+        "name": "customer-support-sft",
+        "dataset_type": "TYPE_DATASET_LLM",
+        "storage_data_path": {"Bucket": "ml-datasets-1250000000", "Region": "ap-guangzhou", "Paths": ["/support/sft/"]},
+        "dataset_tags": [{"TagKey": "environment", "TagValue": "production"}],
+        "scene_tags": ["llm"],
+        "dataset_scene": "LLM",
+        "is_schema_existed": False,
+        "delete_label_files": False,
+    }
+    by_name = dict(p, dataset_id=None, name="customer-support-sft")
+    errors = []
+    errors.extend(audit_request(module.list_request(models, p, 0), "tione_dataset list by id"))
+    errors.extend(audit_request(module.list_request(models, by_name, 25), "tione_dataset list by name"))
+    errors.extend(audit_request(module.create_request(models, p), "tione_dataset create"))
+    errors.extend(audit_request(module.delete_request(models, p), "tione_dataset delete"))
+    assert errors == []
+
+
+def test_tione_model_service():
+    module = _import_plugin("tione_model_service")
+    models = _models("tione.v20211111")
+    p = {
+        "service_id": "ms-xxxxxxxx",
+        "project_id": "prj-xxxxxxxx",
+        "service_group_id": "ms-group-xxxxxxxx",
+        "service_group_name": "fraud-detection",
+        "service_description": "fraud detection serving",
+        "charge_type": "POSTPAID_BY_HOUR",
+        "resource_group_id": "resource-group-xxxxxxxx",
+        "model_info": {"ModelId": "model-xxxxxxxx", "ModelVersion": "v3"},
+        "image_info": {"ImageType": "TCR", "ImageUrl": "ccr.ccs.tencentyun.com/ml/fraud:v3"},
+        "env": [{"Name": "DEPLOY_ENV", "Value": "production"}],
+        "resources": {"Cpu": 4, "Memory": 16384},
+        "instance_type": "TI.S.LARGE.POST",
+        "scale_mode": "MANUAL",
+        "replicas": 2,
+        "log_enable": True,
+        "log_config": {"LogsetId": "logset-xxxxxxxx", "TopicId": "topic-xxxxxxxx"},
+        "authorization_enable": True,
+        "tags": [{"TagKey": "environment", "TagValue": "production"}],
+        "service_port": 8501,
+        "pre_stop_command": ["echo drained"],
+        "scheduling_strategy": "spread",
+    }
+    errors = []
+    errors.extend(audit_request(module.detail_request(models, p), "tione_model_service detail"))
+    errors.extend(audit_request(module.create_request(models, p), "tione_model_service create"))
+    errors.extend(audit_request(module.modify_request(models, p), "tione_model_service modify"))
+    errors.extend(audit_request(module.delete_request(models, p), "tione_model_service delete"))
+    assert errors == []
+
+
+def test_tione_model_service_auth_token():
+    module = _import_plugin("tione_model_service_auth_token")
+    models = _models("tione.v20211111")
+    p = {
+        "service_group_id": "ms-group-xxxxxxxx",
+        "project_id": "prj-xxxxxxxx",
+        "token_id": "token-xxxxxxxx",
+        "name": "production-client",
+        "description": "production API client",
+        "limits": [{"Strategy": "PerMinute", "Max": 1200}],
+    }
+    current = {
+        "Base": {"Id": "token-xxxxxxxx", "Name": "production-client", "Description": "production API client", "Value": "secret-token-value", "Status": "Normal"},
+        "Limits": [{"Strategy": "PerMinute", "Max": 1200}],
+    }
+    errors = []
+    errors.extend(audit_request(module.group_request(models, p), "tione_model_service_auth_token group"))
+    errors.extend(audit_request(module.create_request(models, p), "tione_model_service_auth_token create"))
+    errors.extend(audit_request(module.modify_request(models, p, current, True), "tione_model_service_auth_token modify"))
+    errors.extend(audit_request(module.delete_request(models, p, current), "tione_model_service_auth_token delete"))
+    assert errors == []
+
+
+def test_tione_model_service_state():
+    module = _import_plugin("tione_model_service_state")
+    models = _models("tione.v20211111")
+    p = {"service_id": "ms-xxxxxxxx", "project_id": "prj-xxxxxxxx"}
+    errors = []
+    errors.extend(audit_request(module.detail_request(models, p), "tione_model_service_state detail"))
+    assert errors == []
+
+
+def test_tione_model_service_traffic():
+    module = _import_plugin("tione_model_service_traffic")
+    models = _models("tione.v20211111")
+    p = {
+        "service_group_id": "ms-group-xxxxxxxx",
+        "project_id": "prj-xxxxxxxx",
+        "authorization_enable": True,
+        "weights": [{"ServiceId": "ms-v1", "Weight": 90}, {"ServiceId": "ms-v2", "Weight": 10}],
+    }
+    errors = []
+    errors.extend(audit_request(module.group_request(models, p), "tione_model_service_traffic group"))
+    errors.extend(audit_request(module.authorization_request(models, p), "tione_model_service_traffic authorization"))
+    errors.extend(audit_request(module.weights_request(models, p), "tione_model_service_traffic weights"))
+    assert errors == []
+
+
+def test_tione_notebook():
+    module = _import_plugin("tione_notebook")
+    models = _models("tione.v20211111")
+    p_create = {
+        "name": "llm-finetuning",
+        "project_id": "prj-xxxxxxxx",
+        "charge_type": "POSTPAID_BY_HOUR",
+        "resource_conf": {"Cpu": 8, "Memory": 32768},
+        "log_enable": True,
+        "root_access": True,
+        "auto_stopping": True,
+        "direct_internet_access": False,
+        "volume_source_type": "CLOUD_PREMIUM",
+        "volume_size_gb": 100,
+        "automatic_stop_time": 4,
+        "tags": [{"TagKey": "environment", "TagValue": "production"}],
+        "additional_code_repo_ids": ["repo-xxxxxxxx"],
+        "description": "LLM fine-tuning workbench",
+    }
+    p_lookup = {"name": "llm-finetuning", "project_id": "prj-xxxxxxxx"}
+    errors = []
+    errors.extend(audit_request(module.detail_request(models, "nb-xxxxxxxx", "prj-xxxxxxxx"), "tione_notebook detail"))
+    errors.extend(audit_request(module.detail_request(models, "nb-xxxxxxxx"), "tione_notebook detail no project"))
+    errors.extend(audit_request(module.list_request(models, p_lookup, 0), "tione_notebook list"))
+    errors.extend(audit_request(module.create_request(models, p_create), "tione_notebook create"))
+    errors.extend(audit_request(module.modify_request(models, "nb-xxxxxxxx", p_create), "tione_notebook modify"))
+    assert errors == []
+
+
+def test_tione_training_model_version():
+    module = _import_plugin("tione_training_model_version")
+    models = _models("tione.v20211111")
+    p = {
+        "model_id": "model-xxxxxxxx",
+        "version_id": "modelversion-xxxxxxxx",
+        "version": "v2",
+        "import_method": "VERSION",
+        "model_version_type": "NORMAL",
+        "model_move_mode": "CUT",
+        "training_model_source": "JOB",
+        "training_job_id": "train-xxxxxxxx",
+        "training_job_version": "job-xxxxxxxx",
+        "algorithm_framework": "PYTORCH",
+        "model_format": "PYTORCH",
+        "reasoning_environment_source": "SYSTEM",
+        "reasoning_environment_id": "ti-infer-pytorch",
+        "auto_clean": "true",
+        "max_reserved_models": 3,
+        "model_clean_period": 10,
+        "is_qat": False,
+        "delete_cos": False,
+    }
+    errors = []
+    errors.extend(audit_request(module.detail_request(models, p["version_id"]), "tione_training_model_version detail"))
+    errors.extend(audit_request(module.list_request(models, p["model_id"]), "tione_training_model_version list"))
+    errors.extend(audit_request(module.create_request(models, p), "tione_training_model_version create"))
+    errors.extend(audit_request(module.delete_request(models, p), "tione_training_model_version delete"))
+    assert errors == []
+
+
+def test_tione_training_task():
+    module = _import_plugin("tione_training_task")
+    models = _models("tione.v20211111")
+    p_create = {
+        "name": "customer-support-sft",
+        "task_id": "train-xxxxxxxx",
+        "project_id": "prj-xxxxxxxx",
+        "charge_type": "POSTPAID_BY_HOUR",
+        "framework_name": "PYTORCH",
+        "framework_version": "2.4",
+        "framework_environment": "torch2.4-py3.10-cuda12.1-gpu",
+        "resource_configs": [{"Role": "WORKER", "InstanceType": "TI.GN10X.2XLARGE40.POST", "InstanceNum": 1}],
+        "tags": [{"TagKey": "environment", "TagValue": "production"}],
+        "data_source": "DATASET",
+        "data_configs": [{"MappingPath": "/data", "DataSourceType": "DATASET", "DataSetSource": {"Id": "ds-xxxxxxxx"}}],
+        "output": {"Bucket": "ml-output-1250000000", "Region": "ap-guangzhou", "Paths": ["/sft/"]},
+        "log_config": {"LogsetId": "logset-xxxxxxxx", "TopicId": "topic-xxxxxxxx"},
+        "log_enable": True,
+        "queues": ["queue-xxxxxxxx"],
+    }
+    p_lookup = {"name": "customer-support-sft", "project_id": "prj-xxxxxxxx"}
+    errors = []
+    errors.extend(audit_request(module.detail_request(models, "train-xxxxxxxx", "prj-xxxxxxxx"), "tione_training_task detail"))
+    errors.extend(audit_request(module.list_request(models, p_lookup, 0), "tione_training_task list"))
+    errors.extend(audit_request(module.create_request(models, p_create), "tione_training_task create"))
+    assert errors == []
+
+
+def test_tse_cloud_native_gateway():
+    module = _import_plugin("tse_cloud_native_gateway")
+    models = _models("tse.v20201207")
+    errors = []
+    p = {
+        "gateway_id": "gateway-xxxxxxxx",
+        "name": "prod-gateway",
+        "gateway_type": "kong",
+        "gateway_version": "2.5.1",
+        "node_config": {"Specification": "1c2g", "Number": 2},
+        "vpc_config": {"VpcId": "vpc-xxxxxxxx", "SubnetId": "subnet-xxxxxxxx"},
+        "region": "ap-guangzhou",
+        "description": "production gateway",
+        "enable_cls": True,
+        "feature_version": "STANDARD",
+        "internet_max_bandwidth_out": 100,
+        "ingress_class_name": "kong",
+        "trade_type": 0,
+        "internet_config": {"InternetMaxBandwidthOut": 100, "InternetPayMode": "BANDWIDTH"},
+        "delete_cls_topic": True,
+    }
+    by_name = dict(p, gateway_id=None, name="prod-gateway")
+    errors.extend(audit_request(module.list_request(models, p), "tse_cloud_native_gateway list by id"))
+    errors.extend(audit_request(module.list_request(models, by_name), "tse_cloud_native_gateway list by name"))
+    errors.extend(audit_request(module.detail_request(models, p["gateway_id"]), "tse_cloud_native_gateway detail"))
+    errors.extend(audit_request(module.create_request(models, p), "tse_cloud_native_gateway create"))
+    errors.extend(
+        audit_request(
+            module.update_request(models, p["gateway_id"], {"Name": "prod-gateway", "Description": "production gateway", "EnableCls": True}),
+            "tse_cloud_native_gateway update",
+        )
+    )
+    errors.extend(
+        audit_request(module.spec_request(models, p["gateway_id"], "group-xxxxxxxx", {"Specification": "2c4g", "Number": 3}), "tse_cloud_native_gateway spec")
+    )
+    errors.extend(audit_request(module.delete_request(models, p, p["gateway_id"]), "tse_cloud_native_gateway delete"))
+    assert errors == []
+
+
+def test_tse_config_file():
+    module = _import_plugin("tse_config_file")
+    models = _models("tse.v20201207")
+    p = {"instance_id": "ins-xxxxxxxx", "namespace": "production", "group": "DEFAULT_GROUP", "name": "application.yml"}
+    current = {"Id": "1001"}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "tse_config_file describe"))
+    errors.extend(audit_request(module.delete_request(models, p, current), "tse_config_file delete"))
+    assert errors == []
+
+
+def test_tse_config_file_deployment():
+    module = _import_plugin("tse_config_file_deployment")
+    models = _models("tse.v20201207")
+    params = {
+        "instance_id": "ins-xxxxxxxx",
+        "namespace": "production",
+        "group": "DEFAULT_GROUP",
+        "name": "application.yml",
+        "release_name": "release-1",
+        "strict_enable": True,
+    }
+    target = {
+        "ReleaseName": "release-1",
+        "Namespace": "production",
+        "Group": "DEFAULT_GROUP",
+        "FileName": "application.yml",
+        "Content": "server:\n  port: 8080\n",
+        "Format": "yaml",
+        "Comment": "production config",
+    }
+    release_current = {"Id": 2, "Version": "2"}
+    file_current = {"Id": "1001"}
+    errors = []
+    errors.extend(audit_request(module.release_detail_request(models, params), "tse_config_file_deployment release detail"))
+    errors.extend(audit_request(module.file_detail_request(models, params), "tse_config_file_deployment file detail"))
+    errors.extend(audit_request(module.deploy_request(models, params, target), "tse_config_file_deployment deploy"))
+    errors.extend(audit_request(module.delete_release_request(models, params, release_current), "tse_config_file_deployment delete release"))
+    errors.extend(audit_request(module.delete_file_request(models, params, file_current), "tse_config_file_deployment delete file"))
+    assert errors == []
+
+
+def test_tse_config_file_group():
+    module = _import_plugin("tse_config_file_group")
+    models = _models("tse.v20201207")
+    p = {"instance_id": "ins-xxxxxxxx", "namespace": "production", "name": "DEFAULT_GROUP"}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "tse_config_file_group describe"))
+    errors.extend(audit_request(module.delete_request(models, p), "tse_config_file_group delete"))
+    assert errors == []
+
+
+def test_tse_config_file_release():
+    module = _import_plugin("tse_config_file_release")
+    models = _models("tse.v20201207")
+    p = {
+        "instance_id": "ins-xxxxxxxx",
+        "namespace": "production",
+        "group": "DEFAULT_GROUP",
+        "name": "application.yml",
+        "release_name": "release-1",
+        "release_id": "1001",
+        "rollback_version": 3,
+        "strict_enable": True,
+    }
+    target = {
+        "Id": 2,
+        "Name": "application.yml",
+        "Namespace": "production",
+        "Group": "DEFAULT_GROUP",
+        "FileName": "application.yml",
+        "Version": 3,
+        "Content": "server:\n  port: 8080\n",
+    }
+    current = {
+        "Id": 2,
+        "Name": "application.yml",
+        "Namespace": "production",
+        "Group": "DEFAULT_GROUP",
+        "FileName": "application.yml",
+        "Version": "3",
+    }
+    errors = []
+    errors.extend(audit_request(module.detail_request(models, p), "tse_config_file_release detail"))
+    errors.extend(audit_request(module.publish_request(models, p, target), "tse_config_file_release publish"))
+    errors.extend(audit_request(module.rollback_request(models, p, current), "tse_config_file_release rollback"))
+    errors.extend(audit_request(module.delete_request(models, p, current), "tse_config_file_release delete"))
+    assert errors == []
+
+
+def test_tse_gateway_autoscaler_binding():
+    module = _import_plugin("tse_gateway_autoscaler_binding")
+    models = _models("tse.v20201207")
+    p = {"gateway_id": "gateway-xxxxxxxx", "strategy_id": "strategy-xxxxxxxx"}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "tse_gateway_autoscaler_binding describe"))
+    errors.extend(audit_request(module.strategy_request(models, p), "tse_gateway_autoscaler_binding strategy"))
+    errors.extend(audit_request(module.groups_request(models, p), "tse_gateway_autoscaler_binding groups"))
+    assert errors == []
+
+
+def test_tse_gateway_autoscaler_strategy():
+    module = _import_plugin("tse_gateway_autoscaler_strategy")
+    models = _models("tse.v20201207")
+    p = {"gateway_id": "gateway-xxxxxxxx"}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "tse_gateway_autoscaler_strategy describe"))
+    errors.extend(audit_request(module.describe_request(models, p, "strategy-xxxxxxxx"), "tse_gateway_autoscaler_strategy describe by id"))
+    errors.extend(
+        audit_request(module.delete_request(models, p, {"StrategyId": "strategy-xxxxxxxx"}), "tse_gateway_autoscaler_strategy delete")
+    )
+    assert errors == []
+
+
+def test_tse_gateway_canary_rule():
+    module = _import_plugin("tse_gateway_canary_rule")
+    models = _models("tse.v20201207")
+    p = {"gateway_id": "gateway-xxxxxxxx", "service_id": "service-xxxxxxxx", "rule_type": "Path"}
+    errors = []
+    errors.extend(audit_request(module.list_request(models, p), "tse_gateway_canary_rule list"))
+    errors.extend(audit_request(module.list_request(models, p, 20), "tse_gateway_canary_rule list page 2"))
+    assert errors == []
+
+
+def test_tse_gateway_certificate():
+    module = _import_plugin("tse_gateway_certificate")
+    models = _models("tse.v20201207")
+    p = {"gateway_id": "gateway-xxxxxxxx", "cert_type": "Server", "cert_usage": "Ssl"}
+    current = {"Id": "cert-xxxxxxxx", "Name": "prod-cert", "BindDomains": ["api.example.com"]}
+    errors = []
+    errors.extend(audit_request(module.list_request(models, p), "tse_gateway_certificate list"))
+    errors.extend(audit_request(module.detail_request(models, p, "cert-xxxxxxxx"), "tse_gateway_certificate detail"))
+    errors.extend(audit_request(module.delete_request(models, p, current), "tse_gateway_certificate delete"))
+    errors.extend(audit_request(module.metadata_request(models, p, current), "tse_gateway_certificate metadata"))
+    assert errors == []
+
+
+def test_tse_gateway_console_network():
+    module = _import_plugin("tse_gateway_console_network")
+    models = _models("tse.v20201207")
+    params = {
+        "gateway_id": "gateway-xxxxxxxx",
+        "network_type": "Open",
+        "state": "open",
+        "access_control": {"Mode": "whitelist", "CidrWhiteList": ["1.2.3.4/32"]},
+    }
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, params["gateway_id"]), "tse_gateway_console_network describe"))
+    errors.extend(audit_request(module.modify_request(models, params), "tse_gateway_console_network modify"))
+    assert errors == []
+
+
+def test_tse_gateway_consumer():
+    module = _import_plugin("tse_gateway_consumer")
+    models = _models("tse.v20201207")
+    p = {"gateway_id": "gateway-xxxxxxxx", "name": "consumer-a", "priority": "Medium", "description": "production consumer"}
+    current = {"ConsumerId": "consumer-xxxxxxxx"}
+    errors = []
+    errors.extend(audit_request(module.list_request(models, p), "tse_gateway_consumer list"))
+    errors.extend(audit_request(module.detail_request(models, p, current["ConsumerId"]), "tse_gateway_consumer detail"))
+    errors.extend(audit_request(module.create_request(models, p), "tse_gateway_consumer create"))
+    errors.extend(audit_request(module.update_request(models, p, current), "tse_gateway_consumer update"))
+    errors.extend(audit_request(module.delete_request(models, p, current), "tse_gateway_consumer delete"))
+    assert errors == []
+
+
+def test_tse_gateway_consumer_group():
+    module = _import_plugin("tse_gateway_consumer_group")
+    models = _models("tse.v20201207")
+    p = {"gateway_id": "gateway-xxxxxxxx", "name": "group-a", "status": "off", "description": "production consumer group"}
+    current = {"ConsumerGroupId": "group-xxxxxxxx"}
+    errors = []
+    errors.extend(audit_request(module.list_request(models, p), "tse_gateway_consumer_group list"))
+    errors.extend(audit_request(module.detail_request(models, p, current["ConsumerGroupId"]), "tse_gateway_consumer_group detail"))
+    errors.extend(audit_request(module.create_request(models, p), "tse_gateway_consumer_group create"))
+    errors.extend(audit_request(module.update_request(models, p, current), "tse_gateway_consumer_group update"))
+    errors.extend(audit_request(module.delete_request(models, p, current), "tse_gateway_consumer_group delete"))
+    assert errors == []
+
+
+def test_tse_gateway_consumer_group_membership():
+    module = _import_plugin("tse_gateway_consumer_group_membership")
+    models = _models("tse.v20201207")
+    p = {"gateway_id": "gateway-xxxxxxxx"}
+    errors = []
+    errors.extend(audit_request(module.detail_request(models, p, "consumer-xxxxxxxx"), "tse_gateway_consumer_group_membership detail"))
+    errors.extend(audit_request(module._group_list_request(models, p, 0), "tse_gateway_consumer_group_membership group list"))
+    errors.extend(audit_request(module._consumer_list_request(models, p, 0), "tse_gateway_consumer_group_membership consumer list"))
+    assert errors == []
+
+
+def test_tse_gateway_model_api():
+    module = _import_plugin("tse_gateway_model_api")
+    models = _models("tse.v20201207")
+    p = {"gateway_id": "gateway-xxxxxxxx"}
+    current = {"Id": "modelapi-xxxxxxxx"}
+    errors = []
+    errors.extend(audit_request(module.list_request(models, p), "tse_gateway_model_api list"))
+    errors.extend(audit_request(module.detail_request(models, p, "modelapi-xxxxxxxx"), "tse_gateway_model_api detail"))
+    errors.extend(audit_request(module.delete_request(models, p, current), "tse_gateway_model_api delete"))
+    assert errors == []
+
+
+def test_tse_gateway_model_api_group_auth():
+    module = _import_plugin("tse_gateway_model_api_group_auth")
+    models = _models("tse.v20201207")
+    p = {"gateway_id": "gateway-xxxxxxxx", "model_api_id": "modelapi-xxxxxxxx"}
+    errors = []
+    errors.extend(audit_request(module.detail_request(models, p), "tse_gateway_model_api_group_auth detail"))
+    errors.extend(audit_request(module._api_list_request(models, p, 0), "tse_gateway_model_api_group_auth api list"))
+    errors.extend(audit_request(module._group_list_request(models, p, 0), "tse_gateway_model_api_group_auth group list"))
+    assert errors == []
+
+
+def test_tse_gateway_model_service():
+    module = _import_plugin("tse_gateway_model_service")
+    models = _models("tse.v20201207")
+    p = {"gateway_id": "gateway-xxxxxxxx"}
+    current = {"Id": "modelservice-xxxxxxxx"}
+    errors = []
+    errors.extend(audit_request(module.list_request(models, p), "tse_gateway_model_service list"))
+    errors.extend(audit_request(module.detail_request(models, p, "modelservice-xxxxxxxx"), "tse_gateway_model_service detail"))
+    errors.extend(audit_request(module.delete_request(models, p, current), "tse_gateway_model_service delete"))
+    assert errors == []
+
+
+def test_tse_gateway_public_network():
+    module = _import_plugin("tse_gateway_public_network")
+    models = _models("tse.v20201207")
+    p = {
+        "gateway_id": "gateway-xxxxxxxx",
+        "group_name": "group-xxxxxxxx",
+        "group_id": "group-xxxxxxxx",
+        "network_id": "network-xxxxxxxx",
+        "address_version": "IPV4",
+        "vip": "1.2.3.4",
+        "config": {"InternetMaxBandwidthOut": 100, "InternetPayMode": "BANDWIDTH", "SlaType": "clb.c2.medium"},
+    }
+    current = {"Vip": "1.2.3.4"}
+    target = {"InternetMaxBandwidthOut": 200, "Description": "scaled public network", "SlaType": "clb.c3.medium"}
+    access = {"Mode": "whitelist", "CidrWhiteList": ["1.2.3.4/32"]}
+    errors = []
+    errors.extend(audit_request(module.group_request(models, p), "tse_gateway_public_network group"))
+    errors.extend(audit_request(module.describe_request(models, p), "tse_gateway_public_network describe"))
+    errors.extend(audit_request(module.create_request(models, p), "tse_gateway_public_network create"))
+    errors.extend(audit_request(module.delete_request(models, p, current), "tse_gateway_public_network delete"))
+    errors.extend(audit_request(module.basic_request(models, p, current, target), "tse_gateway_public_network basic"))
+    errors.extend(audit_request(module.access_request(models, p, current, access), "tse_gateway_public_network access"))
+    assert errors == []
+
+
+def test_tse_gateway_route():
+    module = _import_plugin("tse_gateway_route")
+    models = _models("tse.v20201207")
+    p = {"gateway_id": "gateway-xxxxxxxx", "name": "route-xxxxxxxx"}
+    errors = []
+    errors.extend(audit_request(module.list_request(models, p), "tse_gateway_route list"))
+    errors.extend(audit_request(module.delete_request(models, p, {"ID": "route-xxxxxxxx"}), "tse_gateway_route delete by id"))
+    errors.extend(audit_request(module.delete_request(models, p, {}), "tse_gateway_route delete by name"))
+    assert errors == []
+
+
+def test_tse_gateway_secret_key():
+    module = _import_plugin("tse_gateway_secret_key")
+    models = _models("tse.v20201207")
+    p = {
+        "gateway_id": "gateway-xxxxxxxx",
+        "secret_type": "Basic",
+        "name": "client-secret",
+        "generate_type": "Custom",
+        "resource_type": "Consumer",
+        "secret_value": "s3cret-value",
+        "description": "production client secret",
+    }
+    current = {"SecretKeyId": "secret-xxxxxxxx"}
+    errors = []
+    errors.extend(audit_request(module.create_request(models, p), "tse_gateway_secret_key create"))
+    errors.extend(audit_request(module.list_request(models, p), "tse_gateway_secret_key list"))
+    errors.extend(audit_request(module.detail_request(models, p, "secret-xxxxxxxx"), "tse_gateway_secret_key detail"))
+    errors.extend(audit_request(module.delete_request(models, p, current), "tse_gateway_secret_key delete"))
+    errors.extend(audit_request(module.status_request(models, p, current, "Enabled"), "tse_gateway_secret_key status"))
+    errors.extend(audit_request(module.value_request(models, p, current), "tse_gateway_secret_key value"))
+    assert errors == []
+
+
+def test_tse_gateway_server_group():
+    module = _import_plugin("tse_gateway_server_group")
+    models = _models("tse.v20201207")
+    p = {"gateway_id": "gateway-xxxxxxxx", "group_id": "group-xxxxxxxx", "name": "group-xxxxxxxx"}
+    by_name = dict(p, group_id=None)
+    errors = []
+    errors.extend(audit_request(module.list_request(models, p), "tse_gateway_server_group list by id"))
+    errors.extend(audit_request(module.list_request(models, by_name), "tse_gateway_server_group list by name"))
+    assert errors == []
+
+
+def test_tse_gateway_service():
+    module = _import_plugin("tse_gateway_service")
+    models = _models("tse.v20201207")
+    p = {"gateway_id": "gateway-xxxxxxxx", "service_id": "service-xxxxxxxx", "name": "service-xxxxxxxx", "delete_routes": True}
+    current = {"ID": "service-xxxxxxxx"}
+    errors = []
+    errors.extend(audit_request(module.list_request(models, p), "tse_gateway_service list"))
+    errors.extend(audit_request(module.health_detail_request(models, p, "service-xxxxxxxx"), "tse_gateway_service health detail"))
+    errors.extend(audit_request(module.delete_request(models, p, current), "tse_gateway_service delete"))
+    errors.extend(audit_request(module.delete_request(models, p, {}), "tse_gateway_service delete by name"))
+    assert errors == []
+
+
+def test_tse_gateway_upstream_node_status():
+    module = _import_plugin("tse_gateway_upstream_node_status")
+    models = _models("tse.v20201207")
+    params = {"gateway_id": "gateway-xxxxxxxx", "service_name": "service-xxxxxxxx", "host": "10.0.0.11", "port": 8080, "status": "health"}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, params), "tse_gateway_upstream_node_status describe"))
+    errors.extend(audit_request(module.modify_request(models, params), "tse_gateway_upstream_node_status modify"))
+    assert errors == []
+
+
+def test_tse_gateway_waf_protection():
+    module = _import_plugin("tse_gateway_waf_protection")
+    models = _models("tse.v20201207")
+    p = {"gateway_id": "gateway-xxxxxxxx", "scope": "Global"}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "tse_gateway_waf_protection describe"))
+    assert errors == []
+
+
+def test_tse_governance_alias():
+    module = _import_plugin("tse_governance_alias")
+    models = _models("tse.v20201207")
+    p = {"instance_id": "ins-xxxxxxxx", "alias": "orders-alias", "alias_namespace": "production"}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "tse_governance_alias describe"))
+    errors.extend(audit_request(module.describe_request(models, p, 25), "tse_governance_alias describe page 2"))
+    assert errors == []
+
+
+def test_tse_governance_host_retirement():
+    module = _import_plugin("tse_governance_host_retirement")
+    models = _models("tse.v20201207")
+    params = {"instance_id": "ins-xxxxxxxx", "host": "10.0.0.11"}
+    instances = [
+        {"Id": "instance-1", "Service": "orders", "Namespace": "production", "Host": "10.0.0.11", "Port": 8080},
+        {"Id": "instance-2", "Service": "orders", "Namespace": "production", "Host": "10.0.0.11", "Port": 8081},
+    ]
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, params, 0), "tse_governance_host_retirement describe"))
+    errors.extend(audit_request(module.delete_request(models, params, instances), "tse_governance_host_retirement delete"))
+    assert errors == []
+
+
+def test_tse_governance_instance():
+    module = _import_plugin("tse_governance_instance")
+    models = _models("tse.v20201207")
+    p = {"instance_id": "ins-xxxxxxxx", "namespace": "production", "service": "orders", "host": "10.0.0.11"}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "tse_governance_instance describe"))
+    errors.extend(audit_request(module.describe_request(models, p, 25), "tse_governance_instance describe page 2"))
+    assert errors == []
+
+
+def test_tse_governance_lane_group():
+    module = _import_plugin("tse_governance_lane_group")
+    models = _models("tse.v20201207")
+    p = {"instance_id": "ins-xxxxxxxx", "name": "canary", "lane_group_id": "lane-xxxxxxxx"}
+    current = {"ID": "lane-xxxxxxxx", "Name": "canary"}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "tse_governance_lane_group describe"))
+    errors.extend(audit_request(module.delete_request(models, p, current), "tse_governance_lane_group delete"))
+    assert errors == []
+
+
+def test_tse_governance_namespace():
+    module = _import_plugin("tse_governance_namespace")
+    models = _models("tse.v20201207")
+    p = {"instance_id": "ins-xxxxxxxx", "name": "production"}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "tse_governance_namespace describe"))
+    assert errors == []
+
+
+def test_tse_governance_service():
+    module = _import_plugin("tse_governance_service")
+    models = _models("tse.v20201207")
+    p = {"instance_id": "ins-xxxxxxxx", "namespace": "production", "name": "orders"}
+    errors = []
+    errors.extend(audit_request(module.describe_request(models, p), "tse_governance_service describe"))
     assert errors == []
