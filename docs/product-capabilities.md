@@ -7,7 +7,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 
 - Products/services: **204**
 - Write modules: **440**
-- Information modules: **329**
+- Information modules: **341**
 - Solution roles: **68**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
@@ -85,7 +85,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `csip` | discovery-only | 0 | 1 | — | — |
 | `ctem` | discovery-only | 0 | 1 | — | — |
 | `ctsdb` | discovery-only | 0 | 1 | — | — |
-| `cvm` | solution | 12 | 8 | `tc_launch` | `cvm_chc`, `cvm_disaster_recover_group`, `cvm_disaster_recover_group_binding`, `cvm_hpc_cluster`, `cvm_image`, `cvm_image_share`, `cvm_instance`, `cvm_instance_action_timer`, +4 more |
+| `cvm` | solution | 12 | 10 | `tc_launch` | `cvm_chc`, `cvm_disaster_recover_group`, `cvm_disaster_recover_group_binding`, `cvm_hpc_cluster`, `cvm_image`, `cvm_image_share`, `cvm_instance`, `cvm_instance_action_timer`, +4 more |
 | `cwp` | discovery-only | 0 | 1 | — | — |
 | `cws` | discovery-only | 0 | 1 | — | — |
 | `cynosdb` | solution | 4 | 3 | `tc_cynosdb_cluster` | `cynosdb_account`, `cynosdb_account_privilege`, `cynosdb_backup_config`, `cynosdb_cluster` |
@@ -108,7 +108,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `eiam` | discovery-only | 0 | 1 | — | — |
 | `eis` | discovery-only | 0 | 1 | — | — |
 | `emr` | solution | 2 | 1 | `tc_emr_platform` | `emr_auto_scale_strategy`, `emr_cluster` |
-| `es` | solution | 3 | 1 | `tc_elasticsearch_platform` | `elasticsearch_index`, `elasticsearch_instance`, `elasticsearch_snapshot` |
+| `es` | solution | 3 | 2 | `tc_elasticsearch_platform` | `elasticsearch_index`, `elasticsearch_instance`, `elasticsearch_snapshot` |
 | `ess` | discovery-only | 0 | 1 | — | — |
 | `essbasic` | discovery-only | 0 | 1 | — | — |
 | `facefusion` | discovery-only | 0 | 1 | — | — |
@@ -139,7 +139,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `keewidb` | discovery-only | 0 | 1 | — | — |
 | `kms` | solution | 2 | 2 | `tc_kms_keyring` | `kms_key`, `kms_key_rotation` |
 | `lcic` | discovery-only | 0 | 1 | — | — |
-| `lighthouse` | solution | 5 | 1 | `tc_lighthouse_stack` | `lighthouse_disk`, `lighthouse_firewall_rules`, `lighthouse_instance`, `lighthouse_key_pair`, `lighthouse_snapshot` |
+| `lighthouse` | solution | 5 | 5 | `tc_lighthouse_stack` | `lighthouse_disk`, `lighthouse_firewall_rules`, `lighthouse_instance`, `lighthouse_key_pair`, `lighthouse_snapshot` |
 | `live` | discovery-only | 0 | 1 | — | — |
 | `lke` | discovery-only | 0 | 1 | — | — |
 | `lkeap` | discovery-only | 0 | 1 | — | — |
@@ -184,10 +184,10 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `tcb` | solution | 4 | 1 | `tc_cloudbase_platform` | `tcb_auth_domain`, `tcb_environment`, `tcb_http_service_route`, `tcb_static_store` |
 | `tcbr` | discovery-only | 0 | 1 | — | — |
 | `tcm` | solution | 5 | 1 | `tc_service_mesh_platform` | `tcm_access_log`, `tcm_mesh`, `tcm_mesh_clusters`, `tcm_prometheus`, `tcm_tracing` |
-| `tcr` | solution | 5 | 1 | `tc_container_registry` | `tcr_instance`, `tcr_namespace`, `tcr_replication_instance`, `tcr_replication_rule`, `tcr_repository` |
+| `tcr` | solution | 5 | 5 | `tc_container_registry` | `tcr_instance`, `tcr_namespace`, `tcr_replication_instance`, `tcr_replication_rule`, `tcr_repository` |
 | `tcss` | discovery-only | 0 | 1 | — | — |
 | `tdai` | discovery-only | 0 | 1 | — | — |
-| `tdcpg` | solution | 4 | 1 | `tc_tdcpg_platform` | `tdcpg_account`, `tdcpg_cluster`, `tdcpg_endpoint_wan`, `tdcpg_instance_state` |
+| `tdcpg` | solution | 4 | 2 | `tc_tdcpg_platform` | `tdcpg_account`, `tdcpg_cluster`, `tdcpg_endpoint_wan`, `tdcpg_instance_state` |
 | `tdid` | discovery-only | 0 | 1 | — | — |
 | `tdmq` | solution | 18 | 1 | `tc_cmq_messaging`, `tc_rabbitmq_platform`, `tc_rocketmq_platform` | `cmq_queue`, `cmq_subscription`, `cmq_topic`, `tdmq_namespace`, `tdmq_namespace_role`, `tdmq_rabbitmq_binding`, `tdmq_rabbitmq_instance`, `tdmq_rabbitmq_permission`, +10 more |
 | `tdmysql` | solution | 7 | 5 | `tc_tdsql_mysql_platform` | `tdmysql_account`, `tdmysql_account_privilege`, `tdmysql_backup_policy`, `tdmysql_db_instance`, `tdmysql_maintenance_window`, `tdmysql_parameter`, `tdmysql_ssl` |
