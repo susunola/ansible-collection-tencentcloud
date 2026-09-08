@@ -740,6 +740,8 @@ modules:
   - ModifyChcNetworkMode
   - RemoveChcAssistVpc
   - RemoveChcDeployVpc
+  cvm_chc_info:
+  - DescribeChcHosts
   cvm_disaster_recover_group:
   - CreateDisasterRecoverGroup
   - DeleteDisasterRecoverGroups
@@ -786,6 +788,8 @@ modules:
   - DeleteInstancesActionTimer
   - DescribeInstancesActionTimer
   - ImportInstancesActionTimer
+  cvm_instance_action_timer_info:
+  - DescribeInstancesActionTimer
   cvm_instance_info:
   - DescribeInstances
   cvm_instance_security_group:
@@ -1208,6 +1212,8 @@ modules:
   - DeleteInstance
   - DescribeInstances
   - UpdateInstance
+  elasticsearch_instance_info:
+  - DescribeInstances
   elasticsearch_snapshot:
   - CreateClusterSnapshot
   - DeleteClusterSnapshot
@@ -1383,9 +1389,13 @@ modules:
   - DetachDisks
   - ModifyDisksAttribute
   - TerminateDisks
+  lighthouse_disk_info:
+  - DescribeDisks
   lighthouse_firewall_rules:
   - CreateFirewallRules
   - DeleteFirewallRules
+  - DescribeFirewallRules
+  lighthouse_firewall_rules_info:
   - DescribeFirewallRules
   lighthouse_instance:
   - CreateInstances
@@ -1402,11 +1412,15 @@ modules:
   - DescribeKeyPairs
   - DisassociateInstancesKeyPairs
   - ImportKeyPair
+  lighthouse_key_pair_info:
+  - DescribeKeyPairs
   lighthouse_snapshot:
   - CreateInstanceSnapshot
   - DeleteSnapshots
   - DescribeSnapshots
   - ModifySnapshotAttribute
+  lighthouse_snapshot_info:
+  - DescribeSnapshots
   live_audit_keyword_info:
   - DescribeAuditKeywords
   lke_app_knowledge_info:
@@ -2053,20 +2067,28 @@ modules:
   - DeleteNamespace
   - DescribeNamespaces
   - ModifyNamespace
+  tcr_namespace_info:
+  - DescribeNamespaces
   tcr_replication_instance:
   - CreateReplicationInstance
   - DeleteReplicationInstance
+  - DescribeReplicationInstances
+  tcr_replication_instance_info:
   - DescribeReplicationInstances
   tcr_replication_rule:
   - DeleteReplicationRule
   - DescribeReplicationPolicies
   - ManageReplication
   - ModifyReplication
+  tcr_replication_rule_info:
+  - DescribeReplicationPolicies
   tcr_repository:
   - CreateRepository
   - DeleteRepository
   - DescribeRepositories
   - ModifyRepository
+  tcr_repository_info:
+  - DescribeRepositories
   tcss_abnormal_process_event_info:
   - DescribeAbnormalProcessEvents
   tdai_agent_duty_task_info:
@@ -2086,6 +2108,8 @@ modules:
   - ModifyClusterInstancesSpec
   - ModifyClusterName
   - ModifyClustersAutoRenewFlag
+  tdcpg_cluster_info:
+  - DescribeClusters
   tdcpg_cluster_instance_info:
   - DescribeClusterInstances
   tdcpg_endpoint_wan:
@@ -2176,6 +2200,8 @@ modules:
   - CreateUsers
   - DeleteUsers
   - DescribeFlow
+  - DescribeUserPrivileges
+  - DescribeUsers
   - ModifyUserPrivileges
   - ResetUsersPassword
   tdmysql_account_info:
@@ -2214,6 +2240,8 @@ modules:
   - DescribeDBParameters
   - DescribeFlow
   - ModifyDBParameters
+  tdmysql_parameter_info:
+  - DescribeDBParameters
   tdmysql_ssl:
   - DescribeFlow
   - DescribeInstanceSSLStatus
