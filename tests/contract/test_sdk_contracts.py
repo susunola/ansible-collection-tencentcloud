@@ -341,7 +341,12 @@ UNEXERCISED_BUILDERS = {
     ("tsf_repository", "run_module"): "inline lifecycle requests are covered by unit tests",
     ("tsf_vm_deployment_group", "run_module"): "inline lifecycle requests are covered by unit tests",
 
-    ('tse_gateway_service', 'detail_request'): 'detail_request assigns DescribeOneCloudNativeAPIGatewayServiceRequest.ServiceName but the SDK model declares the field as Name, so the misnamed attribute is silently dropped by _serialize and the request cannot be audited as a valid contract (module defect; the detail path is covered by unit tests)',
+    ('tse_gateway_service', 'detail_request'): (
+        'detail_request assigns DescribeOneCloudNativeAPIGatewayServiceRequest.ServiceName but '
+        'the SDK model declares the field as Name, so the misnamed attribute is silently dropped '
+        'by _serialize and the request cannot be audited as a valid contract (module defect; '
+        'the detail path is covered by unit tests)'
+    ),
 }
 
 # Write-module request builders exercised by the ``test_<module>`` functions
@@ -1802,7 +1807,18 @@ INFO_BUILDERS_HANDWRITTEN = [
         "release_request",
         [
             ({"instance_id": "ins-xxxxxxxx", "namespace": "default", "group": "app", "name": "app.conf", "only_in_use": True, "page_size": 50}, 0),
-            ({"instance_id": "ins-xxxxxxxx", "namespace": "default", "group": "app", "name": "app.conf", "release_name": "release-1", "only_in_use": False, "page_size": 50}, 100),
+            (
+                {
+                    "instance_id": "ins-xxxxxxxx",
+                    "namespace": "default",
+                    "group": "app",
+                    "name": "app.conf",
+                    "release_name": "release-1",
+                    "only_in_use": False,
+                    "page_size": 50,
+                },
+                100,
+            ),
         ],
     ),
     (
@@ -1811,7 +1827,17 @@ INFO_BUILDERS_HANDWRITTEN = [
         "history_request",
         [
             ({"instance_id": "ins-xxxxxxxx", "namespace": "default", "group": "app", "name": "app.conf", "page_size": 50}, 0),
-            ({"instance_id": "ins-xxxxxxxx", "namespace": "default", "group": "app", "name": "app.conf", "config_file_id": "cfg-xxxxxxxx", "page_size": 50}, 100),
+            (
+                {
+                    "instance_id": "ins-xxxxxxxx",
+                    "namespace": "default",
+                    "group": "app",
+                    "name": "app.conf",
+                    "config_file_id": "cfg-xxxxxxxx",
+                    "page_size": 50,
+                },
+                100,
+            ),
         ],
     ),
     (
@@ -1841,7 +1867,19 @@ INFO_BUILDERS_HANDWRITTEN = [
         "contract_request",
         [
             ({"instance_id": "ins-xxxxxxxx", "namespace": "default", "service": "order-svc", "brief": True, "page_size": 50}, 0),
-            ({"instance_id": "ins-xxxxxxxx", "namespace": "default", "service": "order-svc", "name": "OrderAPI", "contract_version": "v1", "protocol": "http", "brief": False, "page_size": 50}, 100),
+            (
+                {
+                    "instance_id": "ins-xxxxxxxx",
+                    "namespace": "default",
+                    "service": "order-svc",
+                    "name": "OrderAPI",
+                    "contract_version": "v1",
+                    "protocol": "http",
+                    "brief": False,
+                    "page_size": 50,
+                },
+                100,
+            ),
         ],
     ),
     (
@@ -4078,8 +4116,18 @@ def test_tse_gateway_rate_limit():
     service = {"gateway_id": "gateway-xxxxxxxx", "scope": "service", "resource": "service-xxxxxxxx"}
     route = {"gateway_id": "gateway-xxxxxxxx", "scope": "route", "resource": "route-xxxxxxxx"}
     errors = []
-    errors.extend(audit_request(module.request(models.DescribeCloudNativeAPIGatewayServiceRateLimitRequest, models, service), "TSE service rate limit describe"))
-    errors.extend(audit_request(module.request(models.CreateCloudNativeAPIGatewayServiceRateLimitRequest, models, service, config), "TSE service rate limit create"))
+    errors.extend(
+        audit_request(
+            module.request(models.DescribeCloudNativeAPIGatewayServiceRateLimitRequest, models, service),
+            "TSE service rate limit describe",
+        )
+    )
+    errors.extend(
+        audit_request(
+            module.request(models.CreateCloudNativeAPIGatewayServiceRateLimitRequest, models, service, config),
+            "TSE service rate limit create",
+        )
+    )
     errors.extend(audit_request(module.request(models.DeleteCloudNativeAPIGatewayServiceRateLimitRequest, models, service), "TSE service rate limit delete"))
     errors.extend(audit_request(module.request(models.DescribeCloudNativeAPIGatewayRouteRateLimitRequest, models, route), "TSE route rate limit describe"))
     errors.extend(audit_request(module.request(models.CreateCloudNativeAPIGatewayRouteRateLimitRequest, models, route, config), "TSE route rate limit create"))
@@ -9520,7 +9568,14 @@ def test_emr_auto_scale_strategy():
     fake = _RecordingModule()
     client = _StubClient()
     params = {"cluster_id": "emr-xxxxxxxx", "group_id": 2, "strategy_type": "load", "name": "scale-on-yarn-pressure"}
-    target = {"StrategyName": "scale-on-yarn-pressure", "ScaleAction": 1, "ScaleNum": 2, "StrategyStatus": 1, "CalmDownTime": 300, "LoadMetricsConditions": {"LoadMetrics": []}}
+    target = {
+        "StrategyName": "scale-on-yarn-pressure",
+        "ScaleAction": 1,
+        "ScaleNum": 2,
+        "StrategyStatus": 1,
+        "CalmDownTime": 300,
+        "LoadMetricsConditions": {"LoadMetrics": []},
+    }
     current = dict(target)
     current["StrategyId"] = 10001
     errors = []
@@ -10384,7 +10439,12 @@ def test_dlc_user_policy():
     ]
     errors.extend(audit_request(module.describe_request(models, "100009876543", "TencentAccount"), "dlc_user_policy describe"))
     errors.extend(audit_request(module.attach_request(models, "100009876543", "TencentAccount", values), "dlc_user_policy attach"))
-    errors.extend(audit_request(module.detach_request(models, "100009876543", "TencentAccount", values, ["policy-1", "policy-2"]), "dlc_user_policy detach by ids"))
+    errors.extend(
+        audit_request(
+            module.detach_request(models, "100009876543", "TencentAccount", values, ["policy-1", "policy-2"]),
+            "dlc_user_policy detach by ids",
+        )
+    )
     errors.extend(audit_request(module.detach_request(models, "100009876543", "TencentAccount", values), "dlc_user_policy detach by set"))
     assert errors == []
 
@@ -10703,7 +10763,13 @@ def test_tione_model_service_auth_token():
         "limits": [{"Strategy": "PerMinute", "Max": 1200}],
     }
     current = {
-        "Base": {"Id": "token-xxxxxxxx", "Name": "production-client", "Description": "production API client", "Value": "secret-token-value", "Status": "Normal"},
+        "Base": {
+            "Id": "token-xxxxxxxx",
+            "Name": "production-client",
+            "Description": "production API client",
+            "Value": "secret-token-value",
+            "Status": "Normal",
+        },
         "Limits": [{"Strategy": "PerMinute", "Max": 1200}],
     }
     errors = []
