@@ -42,50 +42,325 @@ MODULES_DIR = REPO_ROOT / "plugins" / "modules"
 KNOWN_COVERAGE = {
     "clb_rule": (
         ["clb_listener_info"],
-        "DescribeListeners returns L7 listeners with their Rules inline",
-    ),
-    "nat_gateway_rule": (
-        ["nat_gateway_dnat_rule_info", "nat_gateway_snat_rule_info"],
-        "the write module reconciles the DNAT and SNAT rule sets; the two "
-        "generated modules read them via DescribeNatGateway*NatRules",
-    ),
-    "havip_association": (
-        ["havip_info"],
-        "DescribeHaVips returns the HaVipAssociationSet with bound CVM/ENI per HAVIP",
+            "DescribeListeners returns L7 listeners with their Rules inline",
     ),
     "cos_object_sync": (
         ["cos_object_info"],
-        "cos_object_info lists and filters the objects of a bucket, which is "
-        "the read side a sync reconciles against",
-    ),
-    "cvm_instance_security_group": (
-        ["cvm_instance_info"],
-        "DescribeInstances returns SecurityGroupIds per instance",
-    ),
-    "postgresql_instance": (
-        ["postgres_instance_info"],
-        "postgres_instance_info (generated) reads TencentDB for PostgreSQL "
-        "instances via DescribeDBInstances, the same list surface the write "
-        "module reconciles against",
-    ),
-    "tke_cluster_upgrade": (
-        ["tke_cluster_info"],
-        "DescribeClusters returns the current ClusterVersion per cluster",
+            "cos_object_info lists and filters the objects of a bucket,"
+            "whichis the read side a sync reconciles against",
     ),
     "cvm_disaster_recover_group_binding": (
         ["cvm_disaster_recover_group_info"],
-        "DescribeDisasterRecoverGroups returns the InstanceIds bound to each "
-        "placement group, the exact set the write module reconciles",
+            "DescribeDisasterRecoverGroups returns the InstanceIds bound"
+            "toeach placement group, the exact set the write module"
+            "reconciles",
+    ),
+    "cvm_instance_security_group": (
+        ["cvm_instance_info"],
+            "DescribeInstances returns SecurityGroupIds per instance",
+    ),
+    "dlc_data_engine_config": (
+        ["dlc_user_data_engine_config_info"],
+            "DescribeUserDataEngineConfig returns"
+            "theDataEngineConfigInstanceInfos the write module reconciles",
+    ),
+    "dlc_engine_resource_group": (
+        ["dlc_standard_engine_resource_group_info"],
+            "DescribeStandardEngineResourceGroups returns the"
+            "standard-engineresource groups the write module manages",
+    ),
+    "dlc_spark_job": (
+        ["dlc_spark_app_job_info"],
+            "DescribeSparkAppJobs lists the SparkAppJob definitions the"
+            "writemodule creates and updates",
+    ),
+    "dlc_user_policy": (
+        ["dlc_user_info"],
+            "DescribeUsers returns each user with its attached"
+            "PolicySetinline, the exact set dlc_user_policy reconciles",
+    ),
+    "dlc_work_group_membership": (
+        ["dlc_work_group_info"],
+            "DescribeWorkGroups returns each group with its bound"
+            "users(WorkGroupInfo.UserSet) inline",
+    ),
+    "dlc_work_group_policy": (
+        ["dlc_work_group_info"],
+            "DescribeWorkGroups returns each group with its attachedPolicySet"
+            "(WorkGroupInfo.PolicySet) inline",
+    ),
+    "havip_association": (
+        ["havip_info"],
+            "DescribeHaVips returns the HaVipAssociationSet with boundCVM/ENI"
+            "per HAVIP",
+    ),
+    "nat_gateway_rule": (
+        ["nat_gateway_dnat_rule_info", "nat_gateway_snat_rule_info"],
+            "the write module reconciles the DNAT and SNAT rule sets; the"
+            "twogenerated modules read them via DescribeNatGateway*NatRules",
+    ),
+    "postgresql_instance": (
+        ["postgres_instance_info"],
+            "postgres_instance_info (generated) reads TencentDB forPostgreSQL"
+            "instances via DescribeDBInstances, the same listsurface the"
+            "write module reconciles against",
+    ),
+    "tdmq_namespace": (
+        ["tdmq_environment_info"],
+            "DescribeEnvironments lists TDMQ namespaces (the API calls"
+            "anamespace an environment)",
+    ),
+    "tdmq_namespace_role": (
+        ["tdmq_environment_role_info"],
+            "DescribeEnvironmentRoles lists TDMQ namespace-role"
+            "bindings(EnvironmentRoleSets)",
+    ),
+    "tdmq_rabbitmq_binding": (
+        ["tdmq_rabbit_mq_binding_info"],
+            "DescribeRabbitMQBindings lists the RabbitMQ bindings the"
+            "writemodule reconciles",
+    ),
+    "tdmq_rabbitmq_instance": (
+        ["tdmq_rabbit_mq_vip_instance_info"],
+            "DescribeRabbitMQVipInstances lists the RabbitMQ instances"
+            "thewrite module manages",
+    ),
+    "tdmq_rabbitmq_permission": (
+        ["tdmq_rabbit_mq_permission_info"],
+            "DescribeRabbitMQPermission lists the RabbitMQ"
+            "virtual-hostpermissions the write module manages",
+    ),
+    "tdmq_rabbitmq_user": (
+        ["tdmq_rabbit_mq_user_info"],
+            "DescribeRabbitMQUser lists the RabbitMQ users the write"
+            "modulemanages",
+    ),
+    "tdmq_rabbitmq_vhost": (
+        ["tdmq_rabbit_mq_virtual_host_info"],
+            "DescribeRabbitMQVirtualHost lists the RabbitMQ virtual hosts"
+            "thewrite module manages",
+    ),
+    "tdmq_rocketmq_cluster": (
+        ["tdmq_rocket_mq_cluster_info"],
+            "DescribeRocketMQClusters lists the RocketMQ clusters the"
+            "writemodule manages",
+    ),
+    "tdmq_rocketmq_group": (
+        ["tdmq_rocket_mq_group_info"],
+            "DescribeRocketMQGroups lists the RocketMQ groups the writemodule"
+            "manages",
+    ),
+    "tdmq_rocketmq_namespace": (
+        ["tdmq_rocket_mq_namespace_info"],
+            "DescribeRocketMQNamespaces lists the RocketMQ namespaces"
+            "thewrite module manages",
+    ),
+    "tdmq_rocketmq_permission": (
+        ["tdmq_rocket_mq_environment_role_info"],
+            "DescribeRocketMQEnvironmentRoles lists the"
+            "RocketMQnamespace-role (permission) bindings the write module"
+            "reconciles",
+    ),
+    "tdmq_rocketmq_role": (
+        ["tdmq_rocket_mq_role_info"],
+            "DescribeRocketMQRoles lists the RocketMQ roles the write"
+            "modulemanages",
+    ),
+    "tdmq_rocketmq_topic": (
+        ["tdmq_rocket_mq_topic_info"],
+            "DescribeRocketMQTopics lists the RocketMQ topics the writemodule"
+            "manages",
+    ),
+    "tke_cluster_upgrade": (
+        ["tke_cluster_info"],
+            "DescribeClusters returns the current ClusterVersion per cluster",
+    ),
+    "tse_cloud_native_gateway": (
+        ["tse_cloud_native_api_gateway_info"],
+            "DescribeCloudNativeAPIGateways returns the cloud-native"
+            "APIgateways the write module manages",
+    ),
+    "tse_gateway_autoscaler_binding": (
+        ["tse_auto_scaler_resource_strategy_binding_group_info"],
+            "DescribeAutoScalerResourceStrategyBindingGroups returns"
+            "thestrategy-to-group bindings the write module reconciles",
+    ),
+    "tse_gateway_canary_rule": (
+        ["tse_cloud_native_api_gateway_canary_rule_info"],
+            "DescribeCloudNativeAPIGatewayCanaryRules returns the canaryrules"
+            "of a gateway",
+    ),
+    "tse_gateway_certificate": (
+        ["tse_cloud_native_api_gateway_certificate_info"],
+            "DescribeCloudNativeAPIGatewayCertificates returns the"
+            "gatewaycertificates the write module manages",
+    ),
+    "tse_gateway_consumer": (
+        ["tse_cloud_native_api_gateway_consumer_info"],
+            "DescribeCloudNativeAPIGatewayConsumerList returns the"
+            "gatewayconsumers the write module manages",
+    ),
+    "tse_gateway_consumer_group": (
+        ["tse_cloud_native_api_gateway_consumer_group_info"],
+            "DescribeCloudNativeAPIGatewayConsumerGroupList returns"
+            "thegateway consumer groups the write module manages",
+    ),
+    "tse_gateway_model_api": (
+        ["tse_cloud_native_api_gateway_llm_model_api_info"],
+            "DescribeCloudNativeAPIGatewayLLMModelAPIs returns the Model"
+            "APIbindings the write module manages",
+    ),
+    "tse_gateway_model_service": (
+        ["tse_cloud_native_api_gateway_llm_model_service_info"],
+            "DescribeCloudNativeAPIGatewayLLMModelServices returns the"
+            "Modelservices the write module manages",
+    ),
+    "tse_gateway_route": (
+        ["tse_cloud_native_api_gateway_route_info"],
+            "DescribeCloudNativeAPIGatewayRoutes returns the gateway"
+            "routesthe write module manages",
+    ),
+    "tse_gateway_secret_key": (
+        ["tse_cloud_native_api_gateway_secret_key_info"],
+            "DescribeCloudNativeAPIGatewaySecretKeyList returns the"
+            "gatewaysecret keys the write module manages",
+    ),
+    "tse_gateway_server_group": (
+        ["tse_native_gateway_server_group_info"],
+            "DescribeNativeGatewayServerGroups returns the server groups of"
+            "agateway",
+    ),
+    "tse_gateway_service": (
+        ["tse_cloud_native_api_gateway_service_info"],
+            "DescribeCloudNativeAPIGatewayServices returns the"
+            "gatewayservices the write module manages",
+    ),
+    "tse_gateway_service_source": (
+        ["tse_native_gateway_service_source_info"],
+            "DescribeNativeGatewayServiceSources returns the service"
+            "sourcesthe write module manages",
+    ),
+    "tse_governance_host_retirement": (
+        ["tse_governance_instance_info"],
+            "DescribeGovernanceInstances returns every governance"
+            "instancewith its Host and isolate state; host retirement"
+            "reconciles theinstances of one host",
     ),
 }
 
 # Write modules that are themselves the read surface, or whose resource has
 # no list API at all; keyed by module name with the reason as value.
 KNOWN_NO_LIST_API = {
-    "tke_cluster_kubeconfig": (
-        "kubeconfig is a per-cluster credential fetch (DescribeClusterKubeconfig "
-        "requires a ClusterId); the module itself is the read surface"
-    ),
+    "cos_bucket_domain":
+        "COS bucket custom domain config is a bucket sub-resource read"
+        "through the bucket-scoped GET API in module_utils.cos; no"
+        "tencentcloud SDK list action exists",
+    "cos_bucket_domain_certificate":
+        "COS bucket domain certificate is a bucket sub-resource read"
+        "through the bucket-scoped GET API in module_utils.cos; no"
+        "tencentcloud SDK list action exists",
+    "cos_bucket_encryption":
+        "COS bucket default encryption is a bucket sub-resource read"
+        "through the bucket-scoped GET API in module_utils.cos; no"
+        "tencentcloud SDK list action exists",
+    "cos_bucket_intelligent_tiering":
+        "COS bucket intelligent-tiering config is a bucket sub-resource"
+        "read through the bucket-scoped GET API in module_utils.cos; no"
+        "tencentcloud SDK list action exists",
+    "cos_bucket_inventory":
+        "COS bucket inventory config is a bucket sub-resource read"
+        "through the bucket-scoped GET API in module_utils.cos; no"
+        "tencentcloud SDK list action exists",
+    "cos_bucket_logging":
+        "COS bucket logging config is a bucket sub-resource read through"
+        "the bucket-scoped GET API in module_utils.cos; no tencentcloud"
+        "SDK list action exists",
+    "cos_bucket_object_lock":
+        "COS bucket object-lock config is a bucket sub-resource read"
+        "through the bucket-scoped GET API in module_utils.cos; no"
+        "tencentcloud SDK list action exists",
+    "cos_bucket_origin":
+        "COS bucket origin-pull config is a bucket sub-resource read"
+        "through the bucket-scoped GET API in module_utils.cos; no"
+        "tencentcloud SDK list action exists",
+    "cos_bucket_policy":
+        "COS bucket policy is a bucket sub-resource read through the"
+        "bucket-scoped GET API in module_utils.cos; no tencentcloud SDK"
+        "list action exists",
+    "cos_bucket_referer":
+        "COS bucket referer config is a bucket sub-resource read through"
+        "the bucket-scoped GET API in module_utils.cos; no tencentcloud"
+        "SDK list action exists",
+    "cos_bucket_replication":
+        "COS bucket replication config is a bucket sub-resource read"
+        "through the bucket-scoped GET API in module_utils.cos; no"
+        "tencentcloud SDK list action exists",
+    "cos_bucket_response_control":
+        "COS bucket response-header config is a bucket sub-resource read"
+        "through the bucket-scoped GET API in module_utils.cos; no"
+        "tencentcloud SDK list action exists",
+    "cos_bucket_website":
+        "COS bucket static-website config is a bucket sub-resource read"
+        "through the bucket-scoped GET API in module_utils.cos; no"
+        "tencentcloud SDK list action exists",
+    "dlc_udf_policy":
+        "UDF access policy is read back through DescribeUDFPolicy with a"
+        "required UDF identity; no list API enumerates UDF policies",
+    "dlc_user_vpc_connection":
+        "DescribeUserVpcConnection is an engine-network-scoped detail"
+        "call returning an unpaginated connection list; no free-standing"
+        "list API exists",
+    "tke_cluster_kubeconfig":
+        "kubeconfig is a per-cluster credential"
+        "fetch(DescribeClusterKubeconfig requires a ClusterId); the"
+        "moduleitself is the read surface",
+    "tse_config_file":
+        "config files are scoped to a group and read individually via"
+        "DescribeConfigFile (requires a config file id); no free-standing"
+        "list API exists",
+    "tse_config_file_deployment":
+        "deployment is the atomic create of a config file plus release;"
+        "its read side is DescribeConfigFileRelease, keyed by release id,"
+        "no list API exists",
+    "tse_gateway_autoscaler_strategy":
+        "DescribeAutoScalerResourceStrategies is a strategy-detail call"
+        "keyed by strategy id; no list API exists",
+    "tse_gateway_console_network":
+        "console network access is part of the per-gateway"
+        "DescribeCloudNativeAPIGatewayConfig singleton; no list API"
+        "exists",
+    "tse_gateway_consumer_group_membership":
+        "consumer-group membership is an association;"
+        "DescribeCloudNativeAPIGatewayConsumerGroup (group detail) is the"
+        "only read, no list API exists",
+    "tse_gateway_cors":
+        "CORS is a per-gateway singleton read via"
+        "DescribeCloudNativeAPIGatewayCORS (requires GatewayId); no list"
+        "API exists",
+    "tse_gateway_ip_restriction":
+        "IP access control is a per-gateway singleton read via"
+        "DescribeCloudNativeAPIGatewayIPRestriction (requires GatewayId);"
+        "no list API exists",
+    "tse_gateway_model_api_group_auth":
+        "Model API consumer-group authorization is read from each API"
+        "detail (DescribeCloudNativeAPIGatewayLLMModelAPI); no list API"
+        "enumerates the bindings",
+    "tse_gateway_public_network":
+        "public network access is a per-gateway/per-group detail read via"
+        "DescribePublicNetwork; no list API exists",
+    "tse_gateway_rate_limit":
+        "rate limiting is a per-service/per-route singleton detail read"
+        "(DescribeCloudNativeAPIGateway*RateLimit); no list API exists",
+    "tse_gateway_upstream_node_status":
+        "upstream node health is read through"
+        "DescribeCloudNativeAPIGatewayUpstream keyed by gateway; no list"
+        "API exists",
+    "tse_gateway_waf_domains":
+        "WAF domains are returned by the per-gateway DescribeWafDomains"
+        "singleton; no list API exists",
+    "tse_gateway_waf_protection":
+        "WAF protection state is a per-gateway singleton detail"
+        "(DescribeWafProtection); no list API exists",
 }
 
 # Coverage backlog: write modules whose read surface is not wired up yet.
@@ -93,273 +368,189 @@ KNOWN_NO_LIST_API = {
 # --check; close a gap by adding a SPECS entry (preferred) or a curated
 # KNOWN_COVERAGE mapping, and remove the name from this set.
 KNOWN_GAPS = {
-    "cdwch_backup_config",
-    "cdwch_parameter",
-    "cdwdoris_cooldown_policy",
-    "cdwdoris_user_workload_group",
-    "cdwdoris_workload_group",
-    "cdwpg_hba_config",
-    "cdwpg_parameter",
-    "dcdb_account",
-    "dcdb_account_privilege",
-    "dcdb_backup_config",
-    "dcdb_security_config",
-    "dlc_cluster_group",
-    "dlc_data_engine",
-    "dlc_data_engine_config",
-    "dlc_data_mask_strategy",
-    "dlc_database",
-    "dlc_engine_resource_group",
-    "dlc_job_spec",
-    "dlc_lab",
-    "dlc_network_connection",
-    "dlc_partition_queue",
-    "dlc_ray_cluster",
-    "dlc_resource_config",
-    "dlc_script",
-    "dlc_spark_job",
-    "dlc_store_location",
-    "dlc_table",
-    "dlc_table_partition",
-    "dlc_udf_policy",
-    "dlc_user",
-    "dlc_user_policy",
-    "dlc_user_vpc_connection",
-    "dlc_work_group",
-    "dlc_work_group_membership",
-    "dlc_work_group_policy",
-    "dts_migration_action",
-    "dts_migration_check",
-    "dts_migration_job_config",
-    "emr_auto_scale_strategy",
-    "gaap_layer4_listener",
-    "gaap_listener_real_servers",
-    "gaap_real_server",
-    "oceanus_folder",
-    "oceanus_job_config",
-    "oceanus_job_savepoint",
-    "oceanus_meta_table",
-    "oceanus_resource",
-    "oceanus_resource_config",
-    "private_dns_account",
-    "ssm_product_secret",
-    "ssm_ssh_key_pair_secret",
-    "tcb_auth_domain",
-    "tcb_static_store",
-    "tcm_access_log",
-    "tcm_prometheus",
-    "tcm_tracing",
-    "tdcpg_account",
-    "tdcpg_endpoint_wan",
-    "tdcpg_instance_state",
-    "tdmysql_account_privilege",
-    "tdmysql_maintenance_window",
-    "tdmysql_ssl",
-    "tione_model_service_auth_token",
-    "tione_model_service_state",
-    "tione_model_service_traffic",
-    "tse_cloud_native_gateway",
-    "tse_config_file",
-    "tse_config_file_deployment",
-    "tse_config_file_group",
-    "tse_gateway_autoscaler_binding",
-    "tse_gateway_autoscaler_strategy",
-    "tse_gateway_canary_rule",
-    "tse_gateway_certificate",
-    "tse_gateway_console_network",
-    "tse_gateway_consumer",
-    "tse_gateway_consumer_group",
-    "tse_gateway_consumer_group_membership",
-    "tse_gateway_cors",
-    "tse_gateway_ip_restriction",
-    "tse_gateway_model_api",
-    "tse_gateway_model_api_group_auth",
-    "tse_gateway_model_service",
-    "tse_gateway_public_network",
-    "tse_gateway_rate_limit",
-    "tse_gateway_route",
-    "tse_gateway_secret_key",
-    "tse_gateway_server_group",
-    "tse_gateway_service",
-    "tse_gateway_service_source",
-    "tse_gateway_upstream_node_status",
-    "tse_gateway_waf_domains",
-    "tse_gateway_waf_protection",
-    "tse_governance_alias",
-    "tse_governance_host_retirement",
-    "tse_governance_instance",
-    "tse_governance_lane_group",
-    "tse_governance_namespace",
-    "tse_governance_service",
-    "tsf_application_config",
-    "tsf_application_config_release",
-    "tsf_cluster",
-    "tsf_container_deployment_group",
-    "tsf_lane",
-    "tsf_lane_rule",
-    "tsf_microservice",
-    "tsf_namespace",
-    "tsf_public_config",
-    "tsf_repository",
-    "tsf_vm_deployment_group",
-    "api_gateway_api_key",
-    "api_gateway_service_release",
-    "api_gateway_usage_plan",
-    "api_gateway_usage_plan_binding",
-    "api_gateway_usage_plan_key_binding",
-    "as_scaling_policy",
-    "as_scheduled_action",
-    "cbs_disk_backup",
-    "cbs_snapshot_share",
-    "cdn_cls_log_topic",
-    "cdwch_instance",
-    "cdwdoris_instance",
-    "cdwpg_instance",
-    "cfw_address_template",
-    "cfw_internet_acl_rule",
-    "cfw_nat_acl_rule",
-    "cfw_nat_dnat_rule",
-    "cfw_vpc_acl_rule",
-    "chdfs_access_group",
-    "chdfs_access_rules",
-    "chdfs_mount_access_groups",
-    "chdfs_mount_point",
-    "ckafka_acl",
-    "ckafka_acl_rule",
-    "ckafka_datahub_connection",
-    "ckafka_datahub_task",
-    "ckafka_datahub_topic",
-    "ckafka_route",
-    "cloudaudit_audit",
-    "cloudaudit_track",
-    "cmq_subscription",
-    "cmq_topic",
-    "config_aggregate_delivery",
-    "config_aggregator",
-    "config_alarm_policy",
-    "config_compliance_pack",
-    "config_delivery",
-    "config_recorder",
-    "config_remediation",
-    "config_rule",
-    "cos_bucket_domain",
-    "cos_bucket_domain_certificate",
-    "cos_bucket_encryption",
-    "cos_bucket_intelligent_tiering",
-    "cos_bucket_inventory",
-    "cos_bucket_logging",
-    "cos_bucket_object_lock",
-    "cos_bucket_origin",
-    "cos_bucket_policy",
-    "cos_bucket_referer",
-    "cos_bucket_replication",
-    "cos_bucket_response_control",
-    "cos_bucket_website",
-    "cynosdb_account_privilege",
-    "dbbrain_sql_filter",
-    "dnspod_custom_line",
-    "dnspod_domain",
-    "dnspod_line_group",
-    "dts_consumer_group",
-    "dts_migration_job",
-    "eb_connection",
-    "eb_rule",
-    "eb_target",
-    "elasticsearch_index",
-    "elasticsearch_snapshot",
-    "emr_cluster",
-    "goosefs_fileset",
-    "gwlb_load_balancer",
-    "gwlb_target_group",
-    "gwlb_target_group_association",
-    "gwlb_target_group_instances",
-    "mariadb_account_privilege",
-    "monitor_alarm_policy_notice",
-    "monitor_grafana_integration",
-    "monitor_grafana_internet",
-    "monitor_grafana_notification_channel",
-    "monitor_grafana_whitelist",
-    "monitor_prometheus_alert_group",
-    "monitor_prometheus_alertmanager_config",
-    "monitor_prometheus_cluster_agent",
-    "monitor_prometheus_global_notification",
-    "monitor_prometheus_grafana_binding",
-    "monitor_prometheus_record_rule",
-    "monitor_prometheus_scrape_job",
-    "mqtt_authorization_policy",
-    "mqtt_instance",
-    "mqtt_topic",
-    "mqtt_user",
-    "oceanus_job",
-    "oceanus_workspace",
-    "organization_member_identity",
-    "organization_member_policy",
-    "organization_node",
-    "private_dns_record",
-    "private_dns_zone",
-    "privatelink_endpoint",
-    "privatelink_endpoint_service",
-    "sqlserver_backup_config",
-    "ssm_parameter",
-    "tat_invoker",
-    "tcb_environment",
-    "tcb_http_service_route",
-    "tcm_mesh_clusters",
-    "tdmq_namespace",
-    "tdmq_namespace_role",
-    "tdmq_rabbitmq_binding",
-    "tdmq_rabbitmq_instance",
-    "tdmq_rabbitmq_permission",
-    "tdmq_rabbitmq_user",
-    "tdmq_rabbitmq_vhost",
-    "tdmq_rocketmq_cluster",
-    "tdmq_rocketmq_group",
-    "tdmq_rocketmq_namespace",
-    "tdmq_rocketmq_permission",
-    "tdmq_rocketmq_role",
-    "tdmq_rocketmq_topic",
-    "tdmq_subscription",
-    "tdmq_topic",
-    "tem_application_deployment",
-    "tem_application_service",
-    "tem_environment",
-    "teo_acceleration_domain",
-    "teo_dns_record",
-    "teo_origin_group",
-    "teo_security_bot_lite",
-    "teo_security_custom_rules",
-    "teo_security_exception_rules",
-    "teo_security_ip_group",
-    "teo_security_managed_rules",
-    "teo_security_rate_limiting_rules",
-    "teo_security_template_binding",
-    "teo_web_security_template",
-    "teo_zone",
-    "tke_addon",
-    "tke_backup_storage_location",
-    "tke_cluster_audit",
-    "tke_cluster_authentication",
-    "tke_cluster_endpoint",
-    "trabbit_serverless_binding",
-    "trabbit_serverless_exchange",
-    "trabbit_serverless_permission",
-    "trabbit_serverless_queue",
-    "trabbit_serverless_user",
-    "trabbit_serverless_vhost",
-    "waf_anti_info_leak_rule",
-    "waf_anti_tamper_rule",
-    "waf_area_ban_rule",
-    "waf_attack_white_rule",
-    "waf_auto_deny",
-    "waf_cc_rule",
-    "waf_custom_rule",
-    "waf_custom_white_rule",
-    "waf_host",
-    "waf_ip_access_control",
-    "waf_owasp_white_rule",
-    "waf_protect_group",
-    "waf_threat_intelligence",
+    'api_gateway_api_key',
+    'api_gateway_service_release',
+    'api_gateway_usage_plan',
+    'api_gateway_usage_plan_binding',
+    'api_gateway_usage_plan_key_binding',
+    'as_scaling_policy',
+    'as_scheduled_action',
+    'cbs_disk_backup',
+    'cbs_snapshot_share',
+    'cdn_cls_log_topic',
+    'cdwch_backup_config',
+    'cdwch_instance',
+    'cdwch_parameter',
+    'cdwdoris_cooldown_policy',
+    'cdwdoris_instance',
+    'cdwdoris_user_workload_group',
+    'cdwdoris_workload_group',
+    'cdwpg_hba_config',
+    'cdwpg_instance',
+    'cdwpg_parameter',
+    'cfw_address_template',
+    'cfw_internet_acl_rule',
+    'cfw_nat_acl_rule',
+    'cfw_nat_dnat_rule',
+    'cfw_vpc_acl_rule',
+    'chdfs_access_group',
+    'chdfs_access_rules',
+    'chdfs_mount_access_groups',
+    'chdfs_mount_point',
+    'ckafka_acl',
+    'ckafka_acl_rule',
+    'ckafka_datahub_connection',
+    'ckafka_datahub_task',
+    'ckafka_datahub_topic',
+    'ckafka_route',
+    'cloudaudit_audit',
+    'cloudaudit_track',
+    'cmq_subscription',
+    'cmq_topic',
+    'config_aggregate_delivery',
+    'config_aggregator',
+    'config_alarm_policy',
+    'config_compliance_pack',
+    'config_delivery',
+    'config_recorder',
+    'config_remediation',
+    'config_rule',
+    'cynosdb_account_privilege',
+    'dbbrain_sql_filter',
+    'dcdb_account',
+    'dcdb_account_privilege',
+    'dcdb_backup_config',
+    'dcdb_security_config',
+    'dnspod_custom_line',
+    'dnspod_domain',
+    'dnspod_line_group',
+    'dts_consumer_group',
+    'dts_migration_action',
+    'dts_migration_check',
+    'dts_migration_job',
+    'dts_migration_job_config',
+    'eb_connection',
+    'eb_rule',
+    'eb_target',
+    'elasticsearch_index',
+    'elasticsearch_snapshot',
+    'emr_auto_scale_strategy',
+    'emr_cluster',
+    'gaap_layer4_listener',
+    'gaap_listener_real_servers',
+    'gaap_real_server',
+    'goosefs_fileset',
+    'gwlb_load_balancer',
+    'gwlb_target_group',
+    'gwlb_target_group_association',
+    'gwlb_target_group_instances',
+    'mariadb_account_privilege',
+    'monitor_alarm_policy_notice',
+    'monitor_grafana_integration',
+    'monitor_grafana_internet',
+    'monitor_grafana_notification_channel',
+    'monitor_grafana_whitelist',
+    'monitor_prometheus_alert_group',
+    'monitor_prometheus_alertmanager_config',
+    'monitor_prometheus_cluster_agent',
+    'monitor_prometheus_global_notification',
+    'monitor_prometheus_grafana_binding',
+    'monitor_prometheus_record_rule',
+    'monitor_prometheus_scrape_job',
+    'mqtt_authorization_policy',
+    'mqtt_instance',
+    'mqtt_topic',
+    'mqtt_user',
+    'oceanus_folder',
+    'oceanus_job',
+    'oceanus_job_config',
+    'oceanus_job_savepoint',
+    'oceanus_meta_table',
+    'oceanus_resource',
+    'oceanus_resource_config',
+    'oceanus_workspace',
+    'organization_member_identity',
+    'organization_member_policy',
+    'organization_node',
+    'private_dns_account',
+    'private_dns_record',
+    'private_dns_zone',
+    'privatelink_endpoint',
+    'privatelink_endpoint_service',
+    'sqlserver_backup_config',
+    'ssm_parameter',
+    'ssm_product_secret',
+    'ssm_ssh_key_pair_secret',
+    'tat_invoker',
+    'tcb_auth_domain',
+    'tcb_environment',
+    'tcb_http_service_route',
+    'tcb_static_store',
+    'tcm_access_log',
+    'tcm_mesh_clusters',
+    'tcm_prometheus',
+    'tcm_tracing',
+    'tdcpg_account',
+    'tdcpg_endpoint_wan',
+    'tdcpg_instance_state',
+    'tdmysql_account_privilege',
+    'tdmysql_maintenance_window',
+    'tdmysql_ssl',
+    'tem_application_deployment',
+    'tem_application_service',
+    'tem_environment',
+    'teo_acceleration_domain',
+    'teo_dns_record',
+    'teo_origin_group',
+    'teo_security_bot_lite',
+    'teo_security_custom_rules',
+    'teo_security_exception_rules',
+    'teo_security_ip_group',
+    'teo_security_managed_rules',
+    'teo_security_rate_limiting_rules',
+    'teo_security_template_binding',
+    'teo_web_security_template',
+    'teo_zone',
+    'tione_model_service_auth_token',
+    'tione_model_service_state',
+    'tione_model_service_traffic',
+    'tke_addon',
+    'tke_backup_storage_location',
+    'tke_cluster_audit',
+    'tke_cluster_authentication',
+    'tke_cluster_endpoint',
+    'trabbit_serverless_binding',
+    'trabbit_serverless_exchange',
+    'trabbit_serverless_permission',
+    'trabbit_serverless_queue',
+    'trabbit_serverless_user',
+    'trabbit_serverless_vhost',
+    'tsf_application_config',
+    'tsf_application_config_release',
+    'tsf_cluster',
+    'tsf_container_deployment_group',
+    'tsf_lane',
+    'tsf_lane_rule',
+    'tsf_microservice',
+    'tsf_namespace',
+    'tsf_public_config',
+    'tsf_repository',
+    'tsf_vm_deployment_group',
+    'waf_anti_info_leak_rule',
+    'waf_anti_tamper_rule',
+    'waf_area_ban_rule',
+    'waf_attack_white_rule',
+    'waf_auto_deny',
+    'waf_cc_rule',
+    'waf_custom_rule',
+    'waf_custom_white_rule',
+    'waf_host',
+    'waf_ip_access_control',
+    'waf_owasp_white_rule',
+    'waf_protect_group',
+    'waf_threat_intelligence',
 }
+
 
 
 def discover_modules():

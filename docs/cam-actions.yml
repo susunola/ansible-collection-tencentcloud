@@ -920,6 +920,8 @@ modules:
   - DescribeClusterGroupClusters
   - ListClusterGroups
   - UpdateClusterGroup
+  dlc_cluster_group_info:
+  - ListClusterGroups
   dlc_data_engine:
   - CreateDataEngine
   - DeleteDataEngine
@@ -934,16 +936,22 @@ modules:
   - DescribeDataEngines
   - DescribeUserDataEngineConfig
   - UpdateUserDataEngineConfig
+  dlc_data_engine_info:
+  - DescribeDataEngines
   dlc_data_mask_strategy:
   - CreateDataMaskStrategy
   - DeleteDataMaskStrategy
   - DescribeDataMaskStrategies
   - UpdateDataMaskStrategy
+  dlc_data_mask_strategy_info:
+  - DescribeDataMaskStrategies
   dlc_database:
   - CreateMetaDatabase
   - DeleteMetaDatabase
   - DescribeDatabase
   - DescribeTables
+  dlc_database_info:
+  - DescribeDatabases
   dlc_engine_resource_group:
   - CreateStandardEngineResourceGroup
   - DeleteStandardEngineResourceGroup
@@ -975,12 +983,16 @@ modules:
   - ListJobSpecs
   - UpdateJobSpec
   - UpdateJobSpecPriority
+  dlc_job_spec_info:
+  - ListJobSpecs
   dlc_lab:
   - CreateLab
   - DeleteLab
   - ListLabs
   - ModifyLabPriority
   - UpdateLab
+  dlc_lab_info:
+  - ListLabs
   dlc_model_artifact_info:
   - GetModelConfig
   - GetModelFiles
@@ -993,6 +1005,8 @@ modules:
   dlc_network_connection:
   - DescribeNetworkConnections
   - UpdateNetworkConnection
+  dlc_network_connection_info:
+  - DescribeNetworkConnections
   dlc_notebook_session:
   - CreateNotebookSession
   - DeleteNotebookSession
@@ -1010,12 +1024,16 @@ modules:
   - DeletePartitionQueue
   - DescribePartitionQueues
   - ModifyPartitionQueue
+  dlc_partition_queue_info:
+  - DescribePartitionQueues
   dlc_ray_cluster:
   - CreateRayCluster
   - DeleteRayCluster
   - ListRayClusters
   - ModifyClusterPriority
   - UpdateRayCluster
+  dlc_ray_cluster_info:
+  - ListRayClusters
   dlc_ray_job_info:
   - GetRayJob
   - GetRayJobEvent
@@ -1031,20 +1049,30 @@ modules:
   - ListRayClusters
   - ListResourceConfigs
   - UpdateResourceConfig
+  dlc_resource_config_info:
+  - ListResourceConfigs
   dlc_script:
   - CreateScript
   - DeleteScript
   - DescribeScripts
+  dlc_script_info:
+  - DescribeScripts
+  dlc_spark_app_job_info:
+  - DescribeSparkAppJobs
   dlc_spark_job:
   - CreateSparkApp
   - DeleteSparkApp
   - DescribeSparkAppJob
   - ModifySparkApp
+  dlc_standard_engine_resource_group_info:
+  - DescribeStandardEngineResourceGroups
   dlc_store_location:
   - CreateStoreLocation
   - DescribeAdvancedStoreLocation
   - DescribeStoreLocation
   - ModifyAdvancedStoreLocation
+  dlc_store_location_info:
+  - DescribeStoreLocation
   dlc_table:
   - AlterTableComment
   - CreateTable
@@ -1052,11 +1080,15 @@ modules:
   - DeleteTable
   - DescribeTable
   - DescribeTaskDetail
+  dlc_table_info:
+  - DescribeTables
   dlc_table_partition:
   - AddDMSPartitions
   - AlterDMSPartition
   - DescribeDMSPartitions
   - DropDMSPartitions
+  dlc_table_partition_info:
+  - DescribeTablePartitions
   dlc_task_info:
   - DescribeTaskList
   dlc_udf_policy:
@@ -1068,6 +1100,10 @@ modules:
   - DescribeUsers
   - ModifyUser
   - ModifyUserType
+  dlc_user_data_engine_config_info:
+  - DescribeUserDataEngineConfig
+  dlc_user_info:
+  - DescribeUsers
   dlc_user_policy:
   - AttachUserPolicy
   - DescribeUsers
@@ -1081,6 +1117,8 @@ modules:
   - DeleteWorkGroup
   - DescribeWorkGroups
   - ModifyWorkGroup
+  dlc_work_group_info:
+  - DescribeWorkGroups
   dlc_work_group_membership:
   - AddUsersToWorkGroup
   - DeleteUsersFromWorkGroup
@@ -2124,6 +2162,10 @@ modules:
   - GetOverSummary
   tdmq_amqp_cluster_info:
   - DescribeAMQPClusters
+  tdmq_environment_info:
+  - DescribeEnvironments
+  tdmq_environment_role_info:
+  - DescribeEnvironmentRoles
   tdmq_namespace:
   - CreateEnvironment
   - DeleteEnvironments
@@ -2134,6 +2176,16 @@ modules:
   - DeleteEnvironmentRoles
   - DescribeEnvironmentRoles
   - ModifyEnvironmentRole
+  tdmq_rabbit_mq_binding_info:
+  - DescribeRabbitMQBindings
+  tdmq_rabbit_mq_permission_info:
+  - DescribeRabbitMQPermission
+  tdmq_rabbit_mq_user_info:
+  - DescribeRabbitMQUser
+  tdmq_rabbit_mq_vip_instance_info:
+  - DescribeRabbitMQVipInstances
+  tdmq_rabbit_mq_virtual_host_info:
+  - DescribeRabbitMQVirtualHost
   tdmq_rabbitmq_binding:
   - CreateRabbitMQBinding
   - DeleteRabbitMQBinding
@@ -2157,6 +2209,18 @@ modules:
   - DeleteRabbitMQVirtualHost
   - DescribeRabbitMQVirtualHost
   - ModifyRabbitMQVirtualHost
+  tdmq_rocket_mq_cluster_info:
+  - DescribeRocketMQClusters
+  tdmq_rocket_mq_environment_role_info:
+  - DescribeRocketMQEnvironmentRoles
+  tdmq_rocket_mq_group_info:
+  - DescribeRocketMQGroups
+  tdmq_rocket_mq_namespace_info:
+  - DescribeRocketMQNamespaces
+  tdmq_rocket_mq_role_info:
+  - DescribeRocketMQRoles
+  tdmq_rocket_mq_topic_info:
+  - DescribeRocketMQTopics
   tdmq_rocketmq_cluster:
   - CreateRocketMQCluster
   - DeleteRocketMQCluster
@@ -2191,11 +2255,15 @@ modules:
   - CreateSubscription
   - DeleteSubscriptions
   - DescribeSubscriptions
+  tdmq_subscription_info:
+  - DescribeSubscriptions
   tdmq_topic:
   - CreateTopic
   - DeleteTopics
   - DescribeTopics
   - ModifyTopic
+  tdmq_topic_info:
+  - DescribeTopics
   tdmysql_account:
   - CreateUsers
   - DeleteUsers
@@ -2486,6 +2554,28 @@ modules:
   - DescribeDeviceList
   trtc_call_info:
   - DescribeCallDetailInfo
+  tse_auto_scaler_resource_strategy_binding_group_info:
+  - DescribeAutoScalerResourceStrategyBindingGroups
+  tse_cloud_native_api_gateway_canary_rule_info:
+  - DescribeCloudNativeAPIGatewayCanaryRules
+  tse_cloud_native_api_gateway_certificate_info:
+  - DescribeCloudNativeAPIGatewayCertificates
+  tse_cloud_native_api_gateway_consumer_group_info:
+  - DescribeCloudNativeAPIGatewayConsumerGroupList
+  tse_cloud_native_api_gateway_consumer_info:
+  - DescribeCloudNativeAPIGatewayConsumerList
+  tse_cloud_native_api_gateway_info:
+  - DescribeCloudNativeAPIGateways
+  tse_cloud_native_api_gateway_llm_model_api_info:
+  - DescribeCloudNativeAPIGatewayLLMModelAPIs
+  tse_cloud_native_api_gateway_llm_model_service_info:
+  - DescribeCloudNativeAPIGatewayLLMModelServices
+  tse_cloud_native_api_gateway_route_info:
+  - DescribeCloudNativeAPIGatewayRoutes
+  tse_cloud_native_api_gateway_secret_key_info:
+  - DescribeCloudNativeAPIGatewaySecretKeyList
+  tse_cloud_native_api_gateway_service_info:
+  - DescribeCloudNativeAPIGatewayServices
   tse_cloud_native_gateway:
   - CreateCloudNativeAPIGateway
   - DeleteCloudNativeAPIGateway
@@ -2511,6 +2601,8 @@ modules:
   - DeleteConfigFileGroup
   - DescribeConfigFileGroups
   - ModifyConfigFileGroup
+  tse_config_file_group_info:
+  - DescribeConfigFileGroups
   tse_config_file_release:
   - DeleteConfigFileReleases
   - DescribeConfigFileRelease
@@ -2666,6 +2758,8 @@ modules:
   - DeleteGovernanceAliases
   - DescribeGovernanceAliases
   - ModifyGovernanceAlias
+  tse_governance_alias_info:
+  - DescribeGovernanceAliases
   tse_governance_host_retirement:
   - DeleteGovernanceInstancesByHost
   - DescribeGovernanceInstances
@@ -2674,16 +2768,22 @@ modules:
   - DeleteGovernanceInstances
   - DescribeGovernanceInstances
   - ModifyGovernanceInstances
+  tse_governance_instance_info:
+  - DescribeGovernanceInstances
   tse_governance_lane_group:
   - CreateGovernanceLaneGroups
   - DeleteGovernanceLaneGroups
   - DescribeGovernanceLaneGroups
   - ModifyGovernanceLaneGroups
+  tse_governance_lane_group_info:
+  - DescribeGovernanceLaneGroups
   tse_governance_namespace:
   - CreateGovernanceNamespaces
   - DeleteGovernanceNamespaces
   - DescribeGovernanceNamespaces
   - ModifyGovernanceNamespaces
+  tse_governance_namespace_info:
+  - DescribeGovernanceNamespaces
   tse_governance_service:
   - CreateGovernanceServices
   - DeleteGovernanceServices
@@ -2692,8 +2792,14 @@ modules:
   tse_governance_service_contract_info:
   - DescribeGovernanceServiceContractVersions
   - DescribeGovernanceServiceContracts
+  tse_governance_service_info:
+  - DescribeGovernanceServices
   tse_instance_tag_info:
   - DescribeInstanceTagInfos
+  tse_native_gateway_server_group_info:
+  - DescribeNativeGatewayServerGroups
+  tse_native_gateway_service_source_info:
+  - DescribeNativeGatewayServiceSources
   tse_sre_access_address_info:
   - DescribeSREInstanceAccessAddress
   tse_sre_instance:

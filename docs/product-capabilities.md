@@ -7,7 +7,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 
 - Products/services: **204**
 - Write modules: **440**
-- Information modules: **341**
+- Information modules: **394**
 - Solution roles: **68**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
@@ -97,7 +97,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `dbs` | discovery-only | 0 | 1 | — | — |
 | `dc` | solution | 2 | 2 | `tc_direct_connect_fabric` | `dc_direct_connect`, `dc_direct_connect_tunnel` |
 | `dcdb` | solution | 5 | 1 | `tc_dcdb_stack` | `dcdb_account`, `dcdb_account_privilege`, `dcdb_backup_config`, `dcdb_instance`, `dcdb_security_config` |
-| `dlc` | solution | 28 | 11 | `tc_dlc_access_governance` | `dlc_cluster_group`, `dlc_data_engine`, `dlc_data_engine_config`, `dlc_data_mask_strategy`, `dlc_database`, `dlc_engine_resource_group`, `dlc_inference_model`, `dlc_inference_service`, +20 more |
+| `dlc` | solution | 28 | 30 | `tc_dlc_access_governance` | `dlc_cluster_group`, `dlc_data_engine`, `dlc_data_engine_config`, `dlc_data_mask_strategy`, `dlc_database`, `dlc_engine_resource_group`, `dlc_inference_model`, `dlc_inference_service`, +20 more |
 | `dnspod` | solution | 4 | 1 | `tc_dns_zone` | `dnspod_custom_line`, `dnspod_domain`, `dnspod_line_group`, `dnspod_record` |
 | `domain` | discovery-only | 0 | 1 | — | — |
 | `dsgc` | discovery-only | 0 | 1 | — | — |
@@ -189,7 +189,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `tdai` | discovery-only | 0 | 1 | — | — |
 | `tdcpg` | solution | 4 | 2 | `tc_tdcpg_platform` | `tdcpg_account`, `tdcpg_cluster`, `tdcpg_endpoint_wan`, `tdcpg_instance_state` |
 | `tdid` | discovery-only | 0 | 1 | — | — |
-| `tdmq` | solution | 18 | 1 | `tc_cmq_messaging`, `tc_rabbitmq_platform`, `tc_rocketmq_platform` | `cmq_queue`, `cmq_subscription`, `cmq_topic`, `tdmq_namespace`, `tdmq_namespace_role`, `tdmq_rabbitmq_binding`, `tdmq_rabbitmq_instance`, `tdmq_rabbitmq_permission`, +10 more |
+| `tdmq` | solution | 18 | 16 | `tc_cmq_messaging`, `tc_rabbitmq_platform`, `tc_rocketmq_platform` | `cmq_queue`, `cmq_subscription`, `cmq_topic`, `tdmq_namespace`, `tdmq_namespace_role`, `tdmq_rabbitmq_binding`, `tdmq_rabbitmq_instance`, `tdmq_rabbitmq_permission`, +10 more |
 | `tdmysql` | solution | 7 | 5 | `tc_tdsql_mysql_platform` | `tdmysql_account`, `tdmysql_account_privilege`, `tdmysql_backup_policy`, `tdmysql_db_instance`, `tdmysql_maintenance_window`, `tdmysql_parameter`, `tdmysql_ssl` |
 | `tem` | solution | 4 | 1 | `tc_tem_application` | `tem_application`, `tem_application_deployment`, `tem_application_service`, `tem_environment` |
 | `teo` | solution | 12 | 1 | `tc_edgeone_application` | `teo_acceleration_domain`, `teo_dns_record`, `teo_origin_group`, `teo_security_bot_lite`, `teo_security_custom_rules`, `teo_security_exception_rules`, `teo_security_ip_group`, `teo_security_managed_rules`, +4 more |
@@ -206,7 +206,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `trp` | discovery-only | 0 | 1 | — | — |
 | `trro` | discovery-only | 0 | 1 | — | — |
 | `trtc` | discovery-only | 0 | 1 | — | — |
-| `tse` | solution | 35 | 11 | `tc_tse_api_gateway`, `tc_tse_governance_platform` | `tse_cloud_native_gateway`, `tse_config_file`, `tse_config_file_deployment`, `tse_config_file_group`, `tse_config_file_release`, `tse_gateway_autoscaler_binding`, `tse_gateway_autoscaler_strategy`, `tse_gateway_canary_rule`, +27 more |
+| `tse` | solution | 35 | 30 | `tc_tse_api_gateway`, `tc_tse_governance_platform` | `tse_cloud_native_gateway`, `tse_config_file`, `tse_config_file_deployment`, `tse_config_file_group`, `tse_config_file_release`, `tse_gateway_autoscaler_binding`, `tse_gateway_autoscaler_strategy`, `tse_gateway_canary_rule`, +27 more |
 | `tsf` | resource-family | 12 | 1 | — | `tsf_application`, `tsf_application_config`, `tsf_application_config_release`, `tsf_cluster`, `tsf_container_deployment_group`, `tsf_lane`, `tsf_lane_rule`, `tsf_microservice`, +4 more |
 | `vcube` | discovery-only | 0 | 1 | — | — |
 | `vdb` | managed | 1 | 1 | — | `vdb_instance` |

@@ -272,10 +272,14 @@ action_groups:
     - dcdb_instance_info
     - dcdb_security_config
     - dlc_cluster_group
+    - dlc_cluster_group_info
     - dlc_data_engine
     - dlc_data_engine_config
+    - dlc_data_engine_info
     - dlc_data_mask_strategy
+    - dlc_data_mask_strategy_info
     - dlc_database
+    - dlc_database_info
     - dlc_engine_resource_group
     - dlc_inference_engine_info
     - dlc_inference_model
@@ -283,31 +287,46 @@ action_groups:
     - dlc_inference_service
     - dlc_inference_service_info
     - dlc_job_spec
+    - dlc_job_spec_info
     - dlc_lab
+    - dlc_lab_info
     - dlc_model_artifact_info
     - dlc_model_version
     - dlc_model_version_info
     - dlc_network_connection
+    - dlc_network_connection_info
     - dlc_notebook_session
     - dlc_notebook_session_info
     - dlc_notebook_session_log_info
     - dlc_notebook_statement_info
     - dlc_partition_queue
+    - dlc_partition_queue_info
     - dlc_ray_cluster
+    - dlc_ray_cluster_info
     - dlc_ray_job_info
     - dlc_ray_job_list_info
     - dlc_resource_config
+    - dlc_resource_config_info
     - dlc_script
+    - dlc_script_info
+    - dlc_spark_app_job_info
     - dlc_spark_job
+    - dlc_standard_engine_resource_group_info
     - dlc_store_location
+    - dlc_store_location_info
     - dlc_table
+    - dlc_table_info
     - dlc_table_partition
+    - dlc_table_partition_info
     - dlc_task_info
     - dlc_udf_policy
     - dlc_user
+    - dlc_user_data_engine_config_info
+    - dlc_user_info
     - dlc_user_policy
     - dlc_user_vpc_connection
     - dlc_work_group
+    - dlc_work_group_info
     - dlc_work_group_membership
     - dlc_work_group_policy
     - dnspod_custom_line
@@ -591,13 +610,26 @@ action_groups:
     - tdcpg_instance_state
     - tdid_over_summary_info
     - tdmq_amqp_cluster_info
+    - tdmq_environment_info
+    - tdmq_environment_role_info
     - tdmq_namespace
     - tdmq_namespace_role
+    - tdmq_rabbit_mq_binding_info
+    - tdmq_rabbit_mq_permission_info
+    - tdmq_rabbit_mq_user_info
+    - tdmq_rabbit_mq_vip_instance_info
+    - tdmq_rabbit_mq_virtual_host_info
     - tdmq_rabbitmq_binding
     - tdmq_rabbitmq_instance
     - tdmq_rabbitmq_permission
     - tdmq_rabbitmq_user
     - tdmq_rabbitmq_vhost
+    - tdmq_rocket_mq_cluster_info
+    - tdmq_rocket_mq_environment_role_info
+    - tdmq_rocket_mq_group_info
+    - tdmq_rocket_mq_namespace_info
+    - tdmq_rocket_mq_role_info
+    - tdmq_rocket_mq_topic_info
     - tdmq_rocketmq_cluster
     - tdmq_rocketmq_group
     - tdmq_rocketmq_namespace
@@ -605,7 +637,9 @@ action_groups:
     - tdmq_rocketmq_role
     - tdmq_rocketmq_topic
     - tdmq_subscription
+    - tdmq_subscription_info
     - tdmq_topic
+    - tdmq_topic_info
     - tdmysql_account
     - tdmysql_account_info
     - tdmysql_account_privilege
@@ -683,11 +717,23 @@ action_groups:
     - trp_code_batch_info
     - trro_device_info
     - trtc_call_info
+    - tse_auto_scaler_resource_strategy_binding_group_info
+    - tse_cloud_native_api_gateway_canary_rule_info
+    - tse_cloud_native_api_gateway_certificate_info
+    - tse_cloud_native_api_gateway_consumer_group_info
+    - tse_cloud_native_api_gateway_consumer_info
+    - tse_cloud_native_api_gateway_info
+    - tse_cloud_native_api_gateway_llm_model_api_info
+    - tse_cloud_native_api_gateway_llm_model_service_info
+    - tse_cloud_native_api_gateway_route_info
+    - tse_cloud_native_api_gateway_secret_key_info
+    - tse_cloud_native_api_gateway_service_info
     - tse_cloud_native_gateway
     - tse_config_file
     - tse_config_file_catalog_info
     - tse_config_file_deployment
     - tse_config_file_group
+    - tse_config_file_group_info
     - tse_config_file_release
     - tse_config_file_release_info
     - tse_config_file_template_info
@@ -718,13 +764,20 @@ action_groups:
     - tse_gateway_waf_domains
     - tse_gateway_waf_protection
     - tse_governance_alias
+    - tse_governance_alias_info
     - tse_governance_host_retirement
     - tse_governance_instance
+    - tse_governance_instance_info
     - tse_governance_lane_group
+    - tse_governance_lane_group_info
     - tse_governance_namespace
+    - tse_governance_namespace_info
     - tse_governance_service
     - tse_governance_service_contract_info
+    - tse_governance_service_info
     - tse_instance_tag_info
+    - tse_native_gateway_server_group_info
+    - tse_native_gateway_service_source_info
     - tse_sre_access_address_info
     - tse_sre_instance
     - tse_sre_instance_info
