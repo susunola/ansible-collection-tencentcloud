@@ -33,8 +33,10 @@ file is a starting point, not a pass. Delete the ``MARKER`` line once you
 start hand-finishing a file so the generator (and CI ``--check``) never
 touches it again.
 
-Run ``--module-test <name> --check`` to verify a committed skeleton is
-unmodified (CI), ``--print`` to review instead of writing.
+Run ``--module-test <name> --check`` to verify one committed skeleton is
+unmodified, or bare ``--check`` (no ``--module-test``) to scan every
+committed skeleton in ``tests/unit/plugins/modules`` at once (CI);
+``--print`` to review instead of writing.
 """
 
 from __future__ import annotations
@@ -460,6 +462,31 @@ def _render_helper_tests(info, module_name, alias, spec):
     return lines
 
 
+_TOP_LEVEL_RE = re.compile(r"^(?:def |class |@)")
+
+
+def _pad_top_level_spacing(lines):
+    """PEP8 (E302): module-level defs/classes need >=2 blank lines above.
+
+    Comments may sit between the trailing blanks and the definition, so the
+    padding is inserted directly above the def/class/@ line. A def that
+    immediately follows a decorator line is not padded (the decorator was
+    already padded when it was seen).
+    """
+    out = []
+    for line in lines:
+        if _TOP_LEVEL_RE.match(line):
+            blanks = 0
+            idx = len(out) - 1
+            while idx >= 0 and out[idx] == "":
+                blanks += 1
+                idx -= 1
+            if blanks < 2 and (idx < 0 or not out[idx].startswith("@")):
+                out.extend([""] * (2 - blanks))
+        out.append(line)
+    return out
+
+
 def render(analysis):
     """Render the full skeleton test file for the analyzed module."""
     name = analysis["name"]
@@ -614,8 +641,11 @@ def render(analysis):
         lines.append("            loader,")
         lines.append("            lambda: (FakeModels(), SimpleNamespace(%s=object))," % analysis["client_class"])
         lines.append("        )")
-        lines.append('    monkeypatch.setattr(TencentCloudModule, "create_client",')
-        lines.append("        lambda self, client_class, endpoint: _BoomClient())")
+        lines.append("    monkeypatch.setattr(")
+        lines.append("        TencentCloudModule,")
+        lines.append('        "create_client",')
+        lines.append("        lambda self, client_class, endpoint: _BoomClient(),")
+        lines.append("    )")
         if satisfiers:
             lines.append("    # Placeholder values clear the module's early gates (required one-of/")
             lines.append("    # if checks, body pre-checks) so the wrapped SDK error path is reached.")
@@ -657,11 +687,45 @@ def render(analysis):
         lines.append("    # result[\"changed\"] / result[\"msg\"] and which sdk calls were recorded.")
         lines.append("    pytest.fail(\"unfinished skeleton\")")
         lines.append("")
-    return "\n".join(lines).rstrip() + "\n"
+    return "\n".join(_pad_top_level_spacing(lines)).rstrip() + "\n"
 
 
 def _target_path(module_name):
     return TESTS_DIR / ("test_%s.py" % module_name)
+
+
+def _check_all_skeletons():
+    """Verify every committed skeleton (MARKER still present) is unmodified.
+
+    Hand-finished files delete the MARKER line, so they are never guarded;
+    only files the generator still owns are compared against a fresh render.
+    The MARKER is always the first line of a generated file, so the probe is
+    a one-line read -- scanning thousands of test files never slurps them.
+    """
+    stale = []
+    checked = 0
+    for target in sorted(TESTS_DIR.glob("test_*.py")):
+        with open(target, "r") as handle:
+            first_line = handle.readline()
+        if MARKER not in first_line:
+            continue
+        checked += 1
+        text = target.read_text()
+        module_name = target.name[len("test_"):-len(".py")]
+        try:
+            rendered = render(analyze(module_name))
+        except AnalysisError as exc:
+            stale.append("%s: %s" % (target.name, exc))
+            continue
+        if text != rendered:
+            stale.append(target.name)
+    if stale:
+        print("stale skeleton(s):", file=sys.stderr)
+        for item in stale:
+            print("  %s (regenerate with --module-test <module>)" % item, file=sys.stderr)
+        return 1
+    print("%d skeleton(s) up to date" % checked, file=sys.stdout)
+    return 0
 
 
 def main(argv=None):
@@ -676,12 +740,15 @@ def main(argv=None):
     )
     parser.add_argument(
         "--check", action="store_true",
-        help="do not write; fail when a committed skeleton (marker still present) drifted",
+        help="do not write; fail when a committed skeleton (marker still present) drifted. "
+        "Without --module-test, scans every committed skeleton",
     )
     args = parser.parse_args(argv)
 
     if not args.module_test:
-        parser.error("--module-test <name> is required")
+        if args.check:
+            return _check_all_skeletons()
+        parser.error("--module-test <name> is required (or bare --check to scan committed skeletons)")
     name = args.module_test
     try:
         analysis = analyze(name)

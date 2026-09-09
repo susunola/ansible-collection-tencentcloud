@@ -347,6 +347,31 @@ def test_cli_unknown_module_exits_1(generator, fixture_dir, capsys):
     assert "cannot analyze" in capsys.readouterr().err
 
 
+def test_cli_scan_all_clean_with_no_skeletons(generator, fixture_dir, capsys):
+    assert generator.main(["--check"]) == 0
+    assert "0 skeleton(s) up to date" in capsys.readouterr().out
+
+
+def test_cli_scan_all_detects_drift(generator, fixture_dir, capsys):
+    assert generator.main(["--module-test", "fixture_thing"]) == 0
+    target = fixture_dir / "test_fixture_thing.py"
+    target.write_text(target.read_text() + "\n# drift\n")
+    assert generator.main(["--check"]) == 1
+    assert "test_fixture_thing.py" in capsys.readouterr().err
+
+
+def test_cli_scan_all_ignores_hand_finished(generator, fixture_dir, capsys):
+    assert generator.main(["--module-test", "fixture_thing"]) == 0
+    target = fixture_dir / "test_fixture_thing.py"
+    hand_finished = target.read_text().replace(generator.MARKER + "\n", "", 1)
+    hand_finished += "\n\ndef test_human_added():\n    pass\n"
+    target.write_text(hand_finished)
+    # --module-test never rewrites it, and bare --check does not guard it
+    assert generator.main(["--module-test", "fixture_thing"]) == 0
+    assert generator.main(["--check"]) == 0
+    assert target.read_text() == hand_finished
+
+
 def test_skeleton_line_numbers_point_at_fixture_source(generator, fixture_dir):
     """The '# module line N' annotations must match the analyzed module."""
     info = generator.analyze("fixture_thing")
