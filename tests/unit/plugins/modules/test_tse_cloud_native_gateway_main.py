@@ -19,6 +19,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import copy
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -345,3 +346,51 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_cloud_native_gateway.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyValue(object):
+    def from_json_string(self, raw):
+        self.raw = raw
+
+
+class LegacyModels(object):
+    CreateCloudNativeAPIGatewayRequest = LegacyValue
+    ModifyCloudNativeAPIGatewayRequest = LegacyValue
+    UpdateCloudNativeAPIGatewaySpecRequest = LegacyValue
+
+
+def test_gateway_requests_map_creation_and_mutable_fields():
+    p = {
+        "name": "gw",
+        "gateway_type": "kong",
+        "gateway_version": "2.5.1",
+        "node_config": {"Number": 2},
+        "vpc_config": {"VpcId": "v1"},
+        "description": None,
+        "tags": None,
+        "enable_cls": True,
+        "feature_version": "STANDARD",
+        "internet_max_bandwidth_out": None,
+        "region": "ap-guangzhou",
+        "ingress_class_name": None,
+        "trade_type": 0,
+        "internet_config": None,
+        "prometheus_id": None,
+    }
+    assert '"EngineRegion": "ap-guangzhou"' in mod.create_request(LegacyModels, p).raw
+    value = mod.update_request(LegacyModels, "g1", {"Name": "gw2", "Description": "x", "EnableCls": True, "InternetPayMode": "TRAFFIC", "DeleteProtect": True})
+    assert value.GatewayId == "g1" and value.DeleteProtect is True
+
+
+def test_gateway_spec_request_maps_group_and_node_configuration():
+    value = mod.spec_request(LegacyModels, "g1", "group-1", {"Specification": "4c8g", "Number": 4})
+    assert json.loads(value.raw) == {
+        "GatewayId": "g1",
+        "GroupId": "group-1",
+        "NodeConfig": {"Specification": "4c8g", "Number": 4},
+    }

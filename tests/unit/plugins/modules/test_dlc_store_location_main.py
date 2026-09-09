@@ -252,3 +252,30 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "catalog unavailable" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_dlc_store_location.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyRequest(object):
+    pass
+
+
+class LegacyModels(object):
+    CreateStoreLocationRequest = ModifyAdvancedStoreLocationRequest = LegacyRequest
+
+
+def test_base_and_advanced_requests_are_explicit():
+    create = mod.create_request(LegacyModels, "cosn://results/")
+    modify = mod.modify_request(LegacyModels, True, "cosn://advanced/")
+    assert create.StoreLocation == "cosn://results/"
+    assert modify.Enable == 1 and modify.StoreLocation == "cosn://advanced/"
+
+
+def test_advanced_drift_does_not_treat_read_only_fields_as_managed():
+    p = {"store_location": "cosn://results/", "advanced_enabled": True, "advanced_store_location": "cosn://advanced/"}
+    current = {"StoreLocation": "cosn://results/", "AdvancedEnabled": False, "AdvancedStoreLocation": "", "HasLakeFs": True}
+    assert mod.advanced_drift(p, current) == {"AdvancedEnabled": (False, True), "AdvancedStoreLocation": ("", "cosn://advanced/")}
+    assert mod.desired(p, current)["HasLakeFs"] is True

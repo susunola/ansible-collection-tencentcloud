@@ -20,6 +20,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import copy
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -317,3 +318,53 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "engine down" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_config_file_release.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyValue(object):
+    def from_json_string(self, raw):
+        self.raw = raw
+
+
+class LegacyRequest(object):
+    pass
+
+
+class LegacyModels(object):
+    ConfigFileRelease = LegacyValue
+    ConfigFileReleaseDeletion = LegacyValue
+    PublishConfigFilesRequest = LegacyRequest
+    RollbackConfigFileReleasesRequest = LegacyRequest
+    DeleteConfigFileReleasesRequest = LegacyRequest
+
+
+def test_config_release_requests_map_publish_rollback_and_delete():
+    p = {
+        "instance_id": "ins1",
+        "namespace": "production",
+        "group": "application",
+        "name": "orders.yaml",
+        "release_name": "stable",
+        "strict_enable": True,
+        "content": "port: 8080",
+        "format": "YAML",
+        "comment": None,
+        "release_description": "deploy",
+        "supported_client": None,
+        "persistent": None,
+        "beta_labels": None,
+        "release_type": None,
+        "rollback_version": "2",
+    }
+    target = mod.desired(p)
+    publish = mod.publish_request(LegacyModels, p, target)
+    assert publish.StrictEnable is True and json.loads(publish.ConfigFileReleases.raw)["Content"] == "port: 8080"
+    current = dict(target, Id="release-1", Version="3")
+    rollback = mod.rollback_request(LegacyModels, p, current)
+    assert json.loads(rollback.RollbackConfigFileReleases[0].raw)["Version"] == "2"
+    delete = mod.delete_request(LegacyModels, p, current)
+    assert json.loads(delete.ConfigFileReleases[0].raw)["ReleaseVersion"] == "3"

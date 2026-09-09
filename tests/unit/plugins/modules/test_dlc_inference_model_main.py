@@ -295,3 +295,72 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "catalog unavailable" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_dlc_inference_model.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyModel(object):
+    def from_json_string(self, value):
+        import json
+
+        for key, item in json.loads(value).items():
+            setattr(self, key, item)
+
+
+class LegacyModels(object):
+    CreateInferenceModelRequest = UpdateInferenceModelRequest = GooseFSConfig = Tag = ListInferenceModelsRequest = LegacyModel
+
+
+def legacy_params():
+    return {
+        "name": "bge",
+        "model_uid": "model-1",
+        "model_type": "Embedding",
+        "initial_version": "v1",
+        "provider": "BAAI",
+        "description": "managed",
+        "parameter_size": "1.5B",
+        "tags": ["prod", "embedding"],
+        "tasks": ["Embedding"],
+        "storage_uri": "cos://bucket/bge",
+        "use_custom_storage": True,
+        "storage_type": "COS",
+        "goosefs_config": None,
+        "resource_tags": [{"key": "env", "value": "prod"}],
+    }
+
+
+def test_normalization_and_drift_split_mutable_and_immutable_fields():
+    p = legacy_params()
+    current = mod.normalize(
+        {
+            "Name": "bge",
+            "ModelUid": "model-1",
+            "ModelType": "Embedding",
+            "Provider": "BAAI",
+            "Description": "old",
+            "ParameterSize": "1.5B",
+            "Tags": ["embedding", "prod"],
+            "Tasks": ["Embedding"],
+            "StorageType": "cos",
+            "HasCustomStorage": True,
+            "ResourceTags": [{"TagValue": "prod", "TagKey": "env"}],
+        }
+    )
+    assert mod.mutable_drift(p, current) == {"Description": ("old", "managed")}
+    assert mod.immutable_drift(p, current) == {}
+    assert mod.resource_tags(p["resource_tags"])[0]["TagKey"] == "env"
+
+
+def test_create_update_and_paging_requests_use_stable_uid():
+    p = legacy_params()
+    create = mod.create_request(LegacyModels, p)
+    update = mod.update_request(LegacyModels, p, "model-1")
+    listing = mod.list_request(LegacyModels, 3)
+    assert create.ModelUid == "model-1" and create.InitialVersion == "v1"
+    assert create.Tags == ["embedding", "prod"] and create.ResourceTags[0].TagKey == "env"
+    assert update.ModelUid == "model-1" and update.Description == "managed"
+    assert listing.Page == 3 and listing.PageSize == 200

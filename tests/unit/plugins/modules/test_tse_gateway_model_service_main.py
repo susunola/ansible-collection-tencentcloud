@@ -339,3 +339,30 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_gateway_model_service.py)
+# ---------------------------------------------------------------------------
+
+
+def test_create_payload_maps_full_service_identity():
+    p = {
+        "gateway_id": "g1",
+        "name": "openai",
+        "config": {
+            "ServiceType": "LLMService",
+            "ModelProvider": "OpenAI",
+            "ModelProtocol": "OpenAI/v1",
+            "ModelSelector": "Specify",
+            "DefaultModel": "gpt",
+        },
+    }
+    assert mod.create_payload(p)["ModelProvider"] == "OpenAI"
+
+
+def test_modify_payload_preserves_unspecified_values():
+    p = {"gateway_id": "g1", "name": None, "config": {"ReadTimeout": 30000}}
+    current = {"Id": "ms1", "Name": "openai", "ReadTimeout": 60000, "Retries": 2}
+    payload = mod.modify_payload(p, current)
+    assert payload["ReadTimeout"] == 30000 and payload["Retries"] == 2

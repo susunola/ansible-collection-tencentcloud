@@ -1,12 +1,30 @@
-from ansible_collections.susunola.tencentcloud.plugins.modules.dlc_inference_model_info import build_request, read
+"""Deep harness tests for the dlc_inference_model_info module.
+
+Covers build_request (model-parameter and time bounds, stable filter
+ordering, ordered sort fields, page-number pagination) plus run_module page
+pagination, page-budget truncation, empty results, parameter validation and
+the sdk_error_payload failure contract.
+"""
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
+import sys
+import types
+
+import pytest
+
+from ansible_collections.susunola.tencentcloud.plugins.modules import dlc_inference_model_info
 
 
 class Object:
     pass
 
 
-class Models:
-    ListInferenceModelsRequest = Filter = SortField = Object
+class FakeModels:
+    Filter = Object
+    SortField = Object
+    ListInferenceModelsRequest = Object
 
 
 def params():
@@ -22,13 +40,28 @@ def params():
     }
 
 
-def test_request_maps_model_specific_bounds():
-    request = build_request(Models, params(), 2)
-    assert request.Page == 2 and request.ParameterSizeMin == 7.0 and request.ParameterSizeMax == 70.0
-    assert request.Filters[0].Name == "name" and request.SortFields[0].Order == "DESC"
+def test_build_request_maps_model_specific_bounds():
+    request = dlc_inference_model_info.build_request(FakeModels, params(), 2)
+    assert request.Page == 2
+    assert request.PageSize == 2
+    assert request.StartTime == 10
+    assert request.EndTime == 20
+    assert request.ParameterSizeMin == 7.0
+    assert request.ParameterSizeMax == 70.0
+    assert [(item.Name, item.Values) for item in request.Filters] == [("name", ["llm"])]
+    assert [(item.Field, item.Order) for item in request.SortFields] == [("CreateTime", "DESC")]
 
 
-class Item:
+def test_build_request_omits_absent_bounds_filters_and_sort():
+    p = {"start_time": None, "end_time": None, "parameter_size_min": None, "parameter_size_max": None,
+         "filters": {}, "sort_fields": None, "page_size": 2, "max_pages": 5}
+    request = dlc_inference_model_info.build_request(FakeModels, p, 1)
+    assert request.Page == 1
+    for attribute in ("StartTime", "EndTime", "ParameterSizeMin", "ParameterSizeMax", "Filters", "SortFields"):
+        assert not hasattr(request, attribute)
+
+
+class FakeItem:
     def __init__(self, name):
         self.name = name
 
@@ -36,25 +69,144 @@ class Item:
         return {"Name": self.name}
 
 
-class Response:
-    def __init__(self, values, pages, request_id):
-        self.Items, self.TotalPages, self.Total, self.RequestId = [Item(x) for x in values], pages, 3, request_id
+class FakeResponse:
+    def __init__(self, items, total_pages, total, request_id):
+        self.Items = items
+        self.TotalPages = total_pages
+        self.Total = total
+        self.RequestId = request_id
 
 
-class Client:
-    def __init__(self):
-        self.responses = [Response(["a", "b"], 2, "r1"), Response(["c"], 2, "r2")]
+class FakeClient:
+    def __init__(self, pages):
+        self._pages = list(pages)
+        self.requests = []
 
     def ListInferenceModels(self, request):
-        return self.responses.pop(0)
+        self.requests.append(request)
+        return self._pages.pop(0)
 
 
-class Module:
-    def sdk_call(self, fn, request):
-        return fn(request)
+class ModuleExit(BaseException):
+    pass
 
 
-def test_read_follows_all_model_pages():
-    values, total, truncated, request_id = read(Module(), Client(), Models, params())
-    assert values == [{"Name": "a"}, {"Name": "b"}, {"Name": "c"}]
-    assert total == 3 and truncated is False and request_id == "r2"
+class ModuleFail(BaseException):
+    def __init__(self, payload):
+        self.payload = payload
+        super(ModuleFail, self).__init__("module failed: %r" % (payload,))
+
+
+class SDKError(Exception):
+    def get_code(self):
+        return "UnauthorizedOperation"
+
+    def get_request_id(self):
+        return "req-err"
+
+
+class FakeModule:
+    def __init__(self, params, client):
+        self.params = params
+        self.client = client
+        self.exit_payload = None
+        self.fail_payload = None
+
+    def exit_json(self, **kwargs):
+        self.exit_payload = kwargs
+        raise ModuleExit()
+
+    def fail_json(self, **kwargs):
+        self.fail_payload = kwargs
+        raise ModuleFail(kwargs)
+
+    def require_sdk(self):
+        pass
+
+    def create_client(self, client_class, endpoint):
+        return self.client
+
+    def sdk_call(self, operation, request=None, retry=True):
+        if request is None:
+            return operation()
+        return operation(request)
+
+
+def _inject_sdk(monkeypatch):
+    service = types.ModuleType("tencentcloud.dlc.v20210125")
+    service.models = FakeModels
+    service.dlc_client = types.SimpleNamespace(DlcClient=object)
+    monkeypatch.setitem(sys.modules, "tencentcloud", types.ModuleType("tencentcloud"))
+    monkeypatch.setitem(sys.modules, "tencentcloud.dlc",
+                        types.ModuleType("tencentcloud.dlc"))
+    monkeypatch.setitem(sys.modules, "tencentcloud.dlc.v20210125", service)
+
+
+def _run(monkeypatch, client, expect_fail=False, **p):
+    _inject_sdk(monkeypatch)
+    fake = FakeModule(p, client)
+    monkeypatch.setattr(dlc_inference_model_info, "TencentCloudModule", lambda **kwargs: fake)
+    with pytest.raises(ModuleFail if expect_fail else ModuleExit):
+        dlc_inference_model_info.run_module()
+    return fake
+
+
+def test_run_module_follows_all_model_pages(monkeypatch):
+    client = FakeClient([
+        FakeResponse([FakeItem("a"), FakeItem("b")], 2, 3, "r1"),
+        FakeResponse([FakeItem("c")], 2, 3, "r2"),
+    ])
+    fake = _run(monkeypatch, client, region="ap-guangzhou", **params())
+    payload = fake.exit_payload
+    assert payload["changed"] is False
+    assert [item["Name"] for item in payload["models"]] == ["a", "b", "c"]
+    assert payload["total_count"] == 3
+    assert payload["truncated"] is False
+    assert payload["request_id"] == "r2"
+    assert [request.Page for request in client.requests] == [1, 2]
+    assert [request.PageSize for request in client.requests] == [2, 2]
+
+
+def test_run_module_reports_truncation_at_max_pages(monkeypatch):
+    p = dict(params(), max_pages=1)
+    client = FakeClient([FakeResponse([FakeItem("a"), FakeItem("b")], 2, 3, "r1")])
+    fake = _run(monkeypatch, client, region="ap-guangzhou", **p)
+    payload = fake.exit_payload
+    assert [item["Name"] for item in payload["models"]] == ["a", "b"]
+    assert payload["total_count"] == 3
+    assert payload["truncated"] is True
+    assert payload["request_id"] == "r1"
+
+
+def test_run_module_returns_empty_when_no_models(monkeypatch):
+    client = FakeClient([FakeResponse([], 0, 0, "r-empty")])
+    fake = _run(monkeypatch, client, region="ap-guangzhou", **params())
+    payload = fake.exit_payload
+    assert payload["models"] == []
+    assert payload["total_count"] == 0
+    assert payload["truncated"] is False
+
+
+def test_run_module_validates_bounds_and_ranges(monkeypatch):
+    payload = _run(monkeypatch, FakeClient([]), expect_fail=True,
+                   region="ap-guangzhou", **dict(params(), max_pages=0)).fail_payload
+    assert payload["msg"] == "max_pages must be between 1 and 1000"
+    payload = _run(monkeypatch, FakeClient([]), expect_fail=True,
+                   region="ap-guangzhou", **dict(params(), start_time=30, end_time=10)).fail_payload
+    assert payload["msg"] == "start_time must not exceed end_time"
+    payload = _run(monkeypatch, FakeClient([]), expect_fail=True,
+                   region="ap-guangzhou", **dict(params(), parameter_size_min=70.0, parameter_size_max=7.0)).fail_payload
+    assert payload["msg"] == "parameter_size_min must not exceed parameter_size_max"
+
+
+def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
+    class FailingClient:
+        def ListInferenceModels(self, request):
+            raise SDKError("api exploded")
+
+    payload = _run(monkeypatch, FailingClient(), expect_fail=True,
+                   region="ap-guangzhou", **params()).fail_payload
+    assert payload["msg"] == "Tencent Cloud API request failed"
+    assert payload["error"] == "api exploded"
+    assert payload["error_code"] == "UnauthorizedOperation"
+    assert payload["request_id"] == "req-err"

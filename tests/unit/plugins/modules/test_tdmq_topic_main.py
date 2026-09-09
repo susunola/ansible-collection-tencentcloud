@@ -352,3 +352,43 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tdmq_topic.py)
+# ---------------------------------------------------------------------------
+
+PARAMS = {
+    "cluster_id": "pulsar-x",
+    "environment_id": "prod",
+    "name": "orders",
+    "partitions": 4,
+    "topic_type": 3,
+    "remark": "orders",
+    "message_ttl": 86400,
+    "isolate_consumer": True,
+    "ack_timeout": 120,
+    "delay_message_policy": "defaultPolicy",
+}
+
+
+def test_request_builders():
+    models = FakeModels()
+    describe = mod.build_describe_request(models, "pulsar-x", "prod", "orders")
+    assert describe.Filters[0].Values == ["orders"]
+    create = mod.build_create_request(models, PARAMS)
+    assert create.PulsarTopicType == 3
+    assert create.Partitions == 4
+    update = mod.build_update_request(models, PARAMS)
+    assert update.MsgTTL == 86400
+    delete = mod.build_delete_request(models, "pulsar-x", "prod", "orders", True)
+    assert delete.TopicSets[0].TopicName == "orders"
+    assert delete.Force is True
+
+
+def test_exact_idempotency():
+    desired = mod._desired(PARAMS)
+    assert mod._matches(dict(desired), desired)
+    changed = dict(desired)
+    changed["Partitions"] = 2
+    assert not mod._matches(changed, desired)

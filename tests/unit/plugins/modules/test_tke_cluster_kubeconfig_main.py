@@ -112,3 +112,62 @@ def test_diff_mode_reports_hashes_not_content(client, tmp_path):
     assert result["diff"]["before"] is None
     assert "sha256" in result["diff"]["after"]
     assert KUBECONFIG not in str(result["diff"])
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tke_cluster_kubeconfig.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyRequest(object):
+    pass
+
+
+class LegacyModels(object):
+    DescribeClusterKubeconfigRequest = LegacyRequest
+
+
+class LegacyClient(object):
+    def __init__(self, kubeconfig="apiVersion: v1", exc=None):
+        self.kubeconfig = kubeconfig
+        self.exc = exc
+        self.calls = []
+
+    def DescribeClusterKubeconfig(self, request):
+        self.calls.append(request)
+        if self.exc:
+            raise self.exc
+        return SimpleNamespace(Kubeconfig=self.kubeconfig, RequestId="req-fake")
+
+
+class LegacyModule(object):
+    def sdk_call(self, operation, request):
+        return operation(request)
+
+
+def test_build_request_intranet():
+    request = tke_cluster_kubeconfig.build_request(LegacyModels, "cls-xxxxxxxx", False)
+    assert request.ClusterId == "cls-xxxxxxxx"
+    assert request.IsExtranet is False
+
+
+def test_build_request_extranet():
+    request = tke_cluster_kubeconfig.build_request(LegacyModels, "cls-xxxxxxxx", True)
+    assert request.ClusterId == "cls-xxxxxxxx"
+    assert request.IsExtranet is True
+
+
+def test_fetch_kubeconfig_returns_content():
+    client = LegacyClient(kubeconfig="clusters: []")
+    result = tke_cluster_kubeconfig.fetch_kubeconfig(LegacyModule(), client, LegacyModels, "cls-xxxxxxxx", False)
+    assert result == "clusters: []"
+    assert client.calls[0].ClusterId == "cls-xxxxxxxx"
+
+
+def test_fetch_kubeconfig_surfaces_sdk_exceptions():
+    client = LegacyClient(exc=RuntimeError("boom"))
+    try:
+        tke_cluster_kubeconfig.fetch_kubeconfig(LegacyModule(), client, LegacyModels, "cls-xxxxxxxx", False)
+        raise AssertionError("expected exception")
+    except RuntimeError:
+        pass

@@ -20,6 +20,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import copy
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -303,3 +304,48 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_governance_lane_group.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyValue(object):
+    def from_json_string(self, raw):
+        self.raw = raw
+
+
+class LegacyRequest(object):
+    pass
+
+
+class LegacyModels(object):
+    GovernanceLaneGroup = LegacyValue
+    DeleteGovernanceLaneGroup = LegacyValue
+    CreateGovernanceLaneGroupsRequest = LegacyRequest
+    DeleteGovernanceLaneGroupsRequest = LegacyRequest
+
+
+def test_lane_group_requests_map_full_lifecycle():
+    p = {
+        "instance_id": "ins1",
+        "name": "gray",
+        "traffic_entries": [{"Service": "edge"}],
+        "destinations": [{"Service": "orders"}],
+        "description": "gray lane",
+        "rules": [{"Name": "canary"}],
+    }
+    target = mod.desired(p)
+    create = mod.write_request(LegacyModels.CreateGovernanceLaneGroupsRequest, LegacyModels, p, target)
+    assert json.loads(create.LaneGroups[0].raw)["Rules"] == [{"Name": "canary"}]
+    delete = mod.delete_request(LegacyModels, p, {"ID": "lane-1", "Name": "gray"})
+    assert json.loads(delete.LaneGroups[0].raw) == {"ID": "lane-1", "Name": "gray"}
+
+
+def test_lane_group_comparison_is_order_independent_and_ignores_read_only_fields():
+    desired_rules = [{"Name": "b", "Priority": 2}, {"Name": "a", "Priority": 1}]
+    actual = [{"Name": "a", "Priority": 1, "Revision": "r1"}, {"Name": "b", "Priority": 2, "Revision": "r2"}]
+    assert mod.contains(actual, desired_rules)
+    assert not mod.contains(actual, desired_rules[:1])
+    assert not mod.contains([actual[0], actual[1]], [desired_rules[0], desired_rules[0]])

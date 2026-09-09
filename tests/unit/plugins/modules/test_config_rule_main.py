@@ -369,3 +369,42 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_config_rule.py)
+# ---------------------------------------------------------------------------
+
+_PARAMS = {
+    "name": "encrypted-disks",
+    "identifier": "CBS_DISK_ENCRYPTED",
+    "identifier_type": "SYSTEM",
+    "resource_types": ["QCS::CBS::Disk"],
+    "triggers": [{"message_type": "ConfigurationItemChangeNotification", "maximum_execution_frequency": None}],
+    "risk_level": 1,
+    "input_parameters": {"required": "true"},
+    "description": "Encrypted disks",
+    "regions": ["ap-shanghai", "ap-guangzhou"],
+    "tags": {"env": "prod"},
+    "excluded_resource_ids": ["disk-x"],
+}
+
+
+def test_request_builders():
+    models = FakeModels()
+    create = mod.build_create_request(models, _PARAMS)
+    assert create.Identifier == "CBS_DISK_ENCRYPTED"
+    assert create.InputParameter[0].ParameterKey == "required"
+    update = mod.build_update_request(models, "rule-x", _PARAMS)
+    assert update.RuleId == "rule-x"
+    assert mod.build_delete_request(models, "rule-x").RuleId == "rule-x"
+    assert mod.build_describe_request(models, "rule-x").RuleId == "rule-x"
+
+
+def test_exact_idempotency_normalizes_order():
+    desired = mod._desired(_PARAMS)
+    current = dict(desired)
+    current["RegionsScope"] = list(reversed(current["RegionsScope"]))
+    assert mod._matches(current, desired)
+    current["RiskLevel"] = 3
+    assert not mod._matches(current, desired)

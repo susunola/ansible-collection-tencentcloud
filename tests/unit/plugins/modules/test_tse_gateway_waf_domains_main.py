@@ -30,6 +30,7 @@ import pytest
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import tse_gateway_waf_domains as mod
+from ansible_collections.susunola.tencentcloud.plugins.modules.tse_gateway_waf_domains import request
 from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
     AnsibleFailJson,
     FakeModels,
@@ -260,3 +261,18 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy pure-helper assertions (folded from the shallow test file)
+# ---------------------------------------------------------------------------
+
+
+class _Value(object):
+    pass
+
+
+def test_legacy_domain_request_maps_delta():
+    value = request(_Value, {"gateway_id": "g1"}, ["api.example.com"])
+    assert value.GatewayId == "g1"
+    assert value.Domains == ["api.example.com"]

@@ -342,3 +342,29 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tcb_static_store.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyValue(object):
+    def from_json_string(self, raw):
+        self.raw = raw
+
+
+class LegacyModels(object):
+    DescribeStaticStoreRequest = LegacyValue
+    CreateStaticStoreRequest = LegacyValue
+    DestroyStaticStoreRequest = LegacyValue
+    ExternalStorage = LegacyValue
+
+
+def test_static_store_requests_are_environment_scoped():
+    assert mod.describe_request(LegacyModels, "env-1").EnvId == "env-1"
+    create = mod.create_request(LegacyModels, {"env_id": "env-1", "enable_union": True, "external_storage": {"Type": "cos"}})
+    assert create.EnableUnion is True
+    assert '"Type": "cos"' in create.ExternalStorage.raw
+    delete = mod.delete_request(LegacyModels, "env-1", "cdn.example.com")
+    assert delete.CdnDomain == "cdn.example.com"

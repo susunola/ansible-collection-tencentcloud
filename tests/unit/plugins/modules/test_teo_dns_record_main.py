@@ -337,3 +337,36 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     assert "connection dropped" in payload["error"]
     assert payload["error_code"] == "InternalError"
     assert payload["request_id"] == "req-boom"
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_teo_dns_record.py)
+# ---------------------------------------------------------------------------
+
+PARAMS = {
+    "zone_id": "zone-x",
+    "name": "api.example.com",
+    "record_type": "A",
+    "content": "203.0.113.10",
+    "location": "Default",
+    "ttl": 300,
+    "weight": -1,
+    "priority": 0,
+}
+
+
+def test_request_builders():
+    models = FakeModels()
+    assert mod.build_describe_request(models, "zone-x", name="api.example.com").Filters[0].Name == "name"
+    assert mod.build_create_request(models, PARAMS).Content == "203.0.113.10"
+    update = mod.build_update_request(models, "record-x", PARAMS)
+    assert update.DnsRecords[0].RecordId == "record-x"
+    assert mod.build_delete_request(models, "zone-x", "record-x").RecordIds == ["record-x"]
+
+
+def test_exact_idempotency():
+    desired = mod._desired(PARAMS)
+    assert mod._matches(dict(desired), desired)
+    changed = dict(desired)
+    changed["TTL"] = 600
+    assert not mod._matches(changed, desired)

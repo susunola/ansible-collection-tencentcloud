@@ -387,3 +387,44 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_dlc_job_spec.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyRequest(object):
+    def from_json_string(self, value):
+        import json
+
+        for key, item in json.loads(value).items():
+            setattr(self, key, item)
+
+
+class LegacyModels(object):
+    ListJobSpecsRequest = LegacyRequest
+    CreateJobSpecRequest = LegacyRequest
+    UpdateJobSpecRequest = LegacyRequest
+    DeleteJobSpecRequest = LegacyRequest
+    UpdateJobSpecPriorityRequest = LegacyRequest
+
+
+def test_json_and_tags_compare_semantically():
+    current = mod.normalize({"Name": "etl", "RuntimeEnv": '{"b":2,"a":1}', "Tags": [{"TagValue": "prod", "TagKey": "env"}]})
+    params = {"name": "etl", "runtime_env": '{"a":1,"b":2}', "tags": [{"key": "env", "value": "prod"}]}
+    assert mod.drift(params, current) == {}
+
+
+def test_requests_use_spec_id_and_normalized_payload():
+    params = {"name": "etl", "entrypoint": "python main.py", "runtime_env": '{"z":1,"a":2}', "tags": [{"key": "b", "value": "2"}, {"key": "a", "value": "1"}]}
+    create = mod.make_request(LegacyModels, params)
+    update = mod.make_request(LegacyModels, params, update=True, spec_id="spec-1")
+    delete = mod.delete_request(LegacyModels, "spec-1")
+    listing = mod.list_request(LegacyModels, 2)
+    assert create.RuntimeEnv == '{"a":2,"z":1}' and create.Tags[0]["TagKey"] == "a"
+    assert update.SpecId == "spec-1" and delete.SpecId == "spec-1"
+    assert not hasattr(update, "Priority")
+    priority = mod.priority_request(LegacyModels, "spec-1", 7)
+    assert priority.SpecId == "spec-1" and priority.Priority == 7
+    assert listing.Page == 2 and listing.PageSize == 200

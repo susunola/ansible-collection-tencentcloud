@@ -284,3 +284,29 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_ccn.py)
+# ---------------------------------------------------------------------------
+
+
+def test_request_builders():
+    models = FakeModels()
+    params = {
+        "name": "backbone",
+        "description": "prod",
+        "qos_level": "AU",
+        "instance_charge_type": "POSTPAID",
+        "bandwidth_limit_type": None,
+        "route_ecmp": True,
+        "route_overlap": False,
+        "traffic_marking_policy": True,
+        "tags": {"env": "prod"},
+    }
+    create = mod.build_create_request(models, params)
+    assert create.CcnName == "backbone"
+    assert create.Tags[0].Key == "env"
+    update = mod.build_update_request(models, "ccn-1", params)
+    assert update.RouteECMPFlag is True
+    assert mod.build_delete_request(models, "ccn-1").CcnId == "ccn-1"

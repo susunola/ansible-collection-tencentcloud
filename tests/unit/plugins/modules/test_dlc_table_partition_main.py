@@ -343,3 +343,63 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_dlc_table_partition.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyModel(object):
+    def from_json_string(self, value):
+        import json
+
+        for key, item in json.loads(value).items():
+            setattr(self, key, item)
+
+
+class LegacyModels(object):
+    AddDMSPartitionsRequest = AlterDMSPartitionRequest = DropDMSPartitionsRequest = DescribeDMSPartitionsRequest = DMSPartition = LegacyModel
+
+
+def legacy_params():
+    return {
+        "database_name": "analytics",
+        "table_name": "sales",
+        "values": ["2026-08-31"],
+        "schema_name": None,
+        "name": "date=2026-08-31",
+        "datasource_connection_name": "DataLakeCatalog",
+        "params": {"b": "2", "a": "1"},
+        "storage": {"location": "cosn://bucket/date=2026-08-31", "serde_params": {"z": "9", "a": "1"}},
+        "delete_data": False,
+    }
+
+
+def test_normalization_and_drift_are_semantic():
+    p = legacy_params()
+    current = mod.normalize(
+        {
+            "DatabaseName": "analytics",
+            "TableName": "sales",
+            "Values": ["2026-08-31"],
+            "Name": p["name"],
+            "DatasourceConnectionName": "DataLakeCatalog",
+            "Params": [{"Key": "a", "Value": "1"}, {"Key": "b", "Value": "2"}],
+            "Sds": {"Location": p["storage"]["location"], "SerdeParams": [{"Key": "a", "Value": "1"}, {"Key": "z", "Value": "9"}]},
+        }
+    )
+    assert mod.kv(p["params"])[0]["Key"] == "a" and mod.storage(p["storage"])["SerdeParams"][0]["Key"] == "a"
+    assert mod.drift(p, current) == {}
+
+
+def test_requests_preserve_exact_identity_and_delete_data_choice():
+    p = legacy_params()
+    add = mod.add_request(LegacyModels, p)
+    alter = mod.alter_request(LegacyModels, p, {"Name": p["name"]})
+    drop = mod.drop_request(LegacyModels, p)
+    listing = mod.list_request(LegacyModels, p, 100)
+    assert add.Partitions[0].Values == p["values"]
+    assert alter.CurrentValues == p["name"] and alter.Partition.Values == p["values"]
+    assert drop.Values == p["values"] and drop.DeleteData is False
+    assert listing.Values == p["values"] and listing.Offset == 100

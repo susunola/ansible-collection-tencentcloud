@@ -268,3 +268,21 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "namespace lookup exploded" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tsf_namespace.py)
+# ---------------------------------------------------------------------------
+
+
+def test_namespace_converts_high_availability_to_sdk_value():
+    params = {"name": "prod", "cluster_id": "cluster-1", "description": "production",
+              "resource_type": "DEF", "namespace_type": "DEF", "high_availability": True,
+              "create_k8s_namespace": None}
+    assert mod.desired(params)["IsHaEnable"] == "1"
+
+
+def test_namespace_create_only_flag_is_not_compared_after_creation():
+    target = {"NamespaceName": "prod", "ClusterId": "cluster-1", "CreateK8sNamespaceFlag": True}
+    current = {"NamespaceName": "prod", "ClusterId": "cluster-1", "NamespaceId": "namespace-1"}
+    assert mod.comparable(current, target) == {"NamespaceName": "prod", "ClusterId": "cluster-1"}

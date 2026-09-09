@@ -262,3 +262,25 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_gateway_consumer_group.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyValue(object):
+    pass
+
+
+class LegacyModels(object):
+    CreateCloudNativeAPIGatewayConsumerGroupRequest = LegacyValue
+    ModifyCloudNativeAPIGatewayConsumerGroupRequest = LegacyValue
+
+
+def test_consumer_group_requests_cover_mutable_fields():
+    p = {"gateway_id": "g1", "name": "trusted", "status": "Enable", "description": "apps"}
+    assert mod.create_request(LegacyModels, p).Status == "Enable"
+    request = mod.update_request(LegacyModels, p, {"ConsumerGroupId": "cg1"})
+    assert request.ConsumerGroupId == "cg1"
+    assert request.Description == "apps"

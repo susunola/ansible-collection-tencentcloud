@@ -205,3 +205,32 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tdmysql_maintenance_ssl.py)
+# ---------------------------------------------------------------------------
+
+
+def test_normalize_start_and_expected_range_helpers():
+    assert mod.normalize_start("02:30:00") == "02:30"
+    assert mod.expected_range("23:30", 2) == "23:30-01:30"
+
+
+def test_modify_request_sorts_weekdays_chronologically():
+    class _Request(object):
+        pass
+
+    class _Models(object):
+        ModifyMaintenanceWindowRequest = _Request
+
+    params = {
+        "instance_id": "db1",
+        "start_time": "02:00",
+        "duration_hours": 2,
+        "week_days": ["Saturday", "Tuesday"],
+    }
+    request = mod.modify_request(_Models, params)
+    assert request.StartTime == "02:00:00"
+    assert request.Duration == 2
+    assert request.WeekDays == ["Tuesday", "Saturday"]

@@ -294,3 +294,63 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_dlc_data_engine_config.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyObject(object):
+    def from_json_string(self, value):
+        import json
+
+        for key, item in json.loads(value).items():
+            setattr(self, key, item)
+
+
+class LegacyModels(object):
+    DescribeDataEnginesRequest = DescribeUserDataEngineConfigRequest = UpdateUserDataEngineConfigRequest = LegacyObject
+    DataEngineConfigPair = SessionResourceTemplate = Filter = LegacyObject
+
+
+def test_requests_filter_exact_engine_identity():
+    request = mod.engine_request(LegacyModels, "spark-prod", 100)
+    assert request.Offset == 100 and request.Filters[0].Name == "data-engine-name"
+    assert request.Filters[0].Values == ["spark-prod"]
+    request = mod.describe_request(LegacyModels, "engine-1", 200)
+    assert request.Offset == 200 and request.Filters[0].Name == "engine-id"
+    assert request.Filters[0].Values == ["engine-1"]
+
+
+def test_configuration_normalization_is_order_independent():
+    value = mod.normalize(
+        {
+            "DataEngineId": "engine-1",
+            "DataEngineConfigPairs": [{"ConfigItem": "z", "ConfigValue": "2"}, {"ConfigItem": "a", "ConfigValue": "1"}],
+            "SessionResourceTemplate": {
+                "ExecutorNums": 2,
+                "RunningTimeParameters": [{"ConfigItem": "b", "ConfigValue": "2"}, {"ConfigItem": "a", "ConfigValue": "1"}],
+            },
+        }
+    )
+    assert value["DataEngineConfigPairs"] == [{"ConfigItem": "a", "ConfigValue": "1"}, {"ConfigItem": "z", "ConfigValue": "2"}]
+    assert value["SessionResourceTemplate"]["RunningTimeParameters"][0]["ConfigItem"] == "a"
+
+
+def test_desired_preserves_omitted_session_template():
+    current = {"SessionResourceTemplate": {"DriverSize": "medium"}}
+    p = {"config_pairs": [{"key": "spark.sql.adaptive.enabled", "value": "true"}], "session_resource_template": None}
+    assert mod.desired(p, "engine-1", current)["SessionResourceTemplate"] == {"DriverSize": "medium"}
+
+
+def test_update_serializes_complete_configuration():
+    target = {
+        "DataEngineId": "engine-1",
+        "DataEngineConfigPairs": mod._pairs([{"key": "b", "value": "2"}, {"key": "a", "value": "1"}]),
+        "SessionResourceTemplate": mod._template({"driver_size": "medium", "executor_nums": 2}),
+    }
+    request = mod.update_request(LegacyModels, target)
+    assert request.DataEngineId == "engine-1"
+    assert [x.ConfigItem for x in request.DataEngineConfigPairs] == ["a", "b"]
+    assert request.SessionResourceTemplate.DriverSize == "medium" and request.SessionResourceTemplate.ExecutorNums == 2

@@ -325,3 +325,16 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_oceanus_cluster.py)
+# ---------------------------------------------------------------------------
+
+
+def test_valid_cu_accepts_service_sequence():
+    assert all(mod.valid_cu(x) for x in (12, 19, 26, 47))
+
+
+def test_valid_cu_rejects_below_minimum_and_wrong_step():
+    assert not mod.valid_cu(11) and not mod.valid_cu(20)

@@ -294,3 +294,29 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_organization_node.py)
+# ---------------------------------------------------------------------------
+
+_PARAMS = {"parent_node_id": 1001, "name": "Production", "remark": "Production units", "tags": {"env": "prod"}}
+
+
+def test_request_builders():
+    models = FakeModels()
+    create = mod.build_create_request(models, _PARAMS)
+    assert create.ParentNodeId == 1001
+    assert create.Tags[0].TagKey == "env"
+    update = mod.build_update_request(models, 1002, _PARAMS)
+    assert update.NodeId == 1002
+    assert mod.build_delete_request(models, 1002).NodeId == [1002]
+
+
+def test_exact_idempotency_normalizes_tags():
+    desired = mod._desired(_PARAMS)
+    current = dict(desired)
+    current["Tags"] = [{"TagKey": "env", "TagValue": "prod"}]
+    assert mod._matches(current, desired)
+    current["Remark"] = "changed"
+    assert not mod._matches(current, desired)

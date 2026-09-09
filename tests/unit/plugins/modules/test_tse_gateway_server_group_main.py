@@ -21,6 +21,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import copy
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -355,3 +356,36 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_gateway_server_group.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyValue(object):
+    def from_json_string(self, raw):
+        self.raw = raw
+
+
+class LegacyModels(object):
+    CreateNativeGatewayServerGroupRequest = LegacyValue
+    ModifyNativeGatewayServerGroupRequest = LegacyValue
+    UpdateCloudNativeAPIGatewaySpecRequest = LegacyValue
+    DeleteNativeGatewayServerGroupRequest = LegacyValue
+
+
+def test_server_group_requests_map_full_lifecycle():
+    p = {
+        "gateway_id": "g1",
+        "name": "workers",
+        "node_config": {"Specification": "4c8g", "Number": 3},
+        "subnet_id": "subnet-1",
+        "description": "worker pool",
+        "internet_max_bandwidth_out": None,
+        "internet_config": None,
+    }
+    assert json.loads(mod.create_request(LegacyModels, p).raw)["SubnetId"] == "subnet-1"
+    assert json.loads(mod.update_request(LegacyModels, p, "group-1", {"Name": "workers-v2", "Description": "new"}).raw)["GroupId"] == "group-1"
+    assert json.loads(mod.resize_request(LegacyModels, p, "group-1").raw)["NodeConfig"]["Number"] == 3
+    assert json.loads(mod.delete_request(LegacyModels, p, "group-1").raw) == {"GatewayId": "g1", "GroupId": "group-1"}

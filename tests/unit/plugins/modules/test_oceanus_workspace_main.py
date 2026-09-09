@@ -258,3 +258,21 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_oceanus_workspace.py)
+# ---------------------------------------------------------------------------
+
+
+def test_describe_request_carries_pagination_offset():
+    class Filter:
+        pass
+
+    class Request:
+        pass
+
+    Models = type("Models", (), {"DescribeWorkSpacesRequest": Request, "Filter": Filter})
+    request = mod.describe_request(Models, {"name": "production"}, 300)
+    assert (request.Offset, request.Limit) == (300, 100)
+    assert request.Filters[0].Name == "WorkSpaceName"

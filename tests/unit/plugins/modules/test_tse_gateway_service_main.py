@@ -5,6 +5,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import copy
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -358,3 +359,48 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_gateway_service.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyValue(object):
+    def from_json_string(self, raw):
+        self.raw = raw
+
+
+class LegacyModels(object):
+    UpdateUpstreamTargetsRequest = LegacyValue
+    UpdateUpstreamHealthCheckConfigRequest = LegacyValue
+
+
+def test_gateway_service_payload_and_subset_comparison():
+    p = {
+        "name": "orders",
+        "protocol": "http",
+        "timeout": 30000,
+        "retries_count": 2,
+        "upstream_type": "IPList",
+        "upstream_info": {"Targets": [{"Host": "10.0.0.1", "Port": 80}]},
+        "path": "/",
+    }
+    target = mod.desired(p)
+    assert mod.contains(dict(target, ID="s1"), target)
+    assert '"GatewayId": "g1"' in mod.write_request(LegacyValue, p, {"GatewayId": "g1", **target}).raw
+
+
+def test_gateway_upstream_requests_map_targets_and_health_checks():
+    p = {"gateway_id": "g1"}
+    targets = [{"Host": "10.0.0.1", "Port": 80, "Weight": 100}]
+    health = {"EnableActiveHealthCheck": True}
+    assert json.loads(mod.targets_request(LegacyModels, p, "orders", targets).raw) == {"GatewayId": "g1", "Name": "orders", "Targets": targets}
+    assert json.loads(mod.health_update_request(LegacyModels, p, "orders", health).raw) == {"GatewayId": "g1", "Name": "orders", "HealthCheckConfig": health}
+
+
+def test_gateway_targets_compare_authoritative_membership_and_ignore_read_only_fields():
+    desired_targets = [{"Host": "10.0.0.2", "Port": 80, "Weight": 50}, {"Host": "10.0.0.1", "Port": 80, "Weight": 100}]
+    actual = [{"Host": "10.0.0.1", "Port": 80, "Weight": 100, "Health": "HEALTHY"}, {"Host": "10.0.0.2", "Port": 80, "Weight": 50, "CreatedTime": "now"}]
+    assert mod.targets_match(actual, desired_targets)
+    assert not mod.targets_match(actual, desired_targets[:1])

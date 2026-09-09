@@ -414,3 +414,78 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tdmysql_account.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyObject(object):
+    pass
+
+
+class LegacyModels(object):
+    CreateUsersRequest = DeleteUsersRequest = ModifyUserPrivilegesRequest = ResetUsersPasswordRequest = ResetUserPasswordInfo = DescribeUsersRequest = (
+        DescribeUserPrivilegesRequest
+    ) = User = LegacyObject
+
+
+LEGACY_PARAMS = {
+    "instance_id": "db1",
+    "username": "report",
+    "host": "10.%",
+    "password": "secret",
+    "encrypted_password": None,
+    "description": "reporting",
+    "global_privileges": ["SELECT"],
+}
+
+
+def test_account_requests_keep_composite_identity():
+    create = mod.create_request(LegacyModels, LEGACY_PARAMS)
+    delete = mod.delete_request(LegacyModels, LEGACY_PARAMS)
+    reset = mod.reset_request(LegacyModels, LEGACY_PARAMS)
+    assert (create.Users[0].UserName, create.Users[0].Host) == ("report", "10.%")
+    assert delete.Users[0].Host == "10.%" and reset.Users[0].Password == "secret"
+
+
+def test_privilege_requests_use_global_scope_and_sorted_set():
+    describe, modify = mod.privileges_request(LegacyModels, LEGACY_PARAMS), mod.privileges_modify_request(LegacyModels, LEGACY_PARAMS)
+    assert (describe.DbName, describe.ObjectType, describe.Object, describe.ColName) == ("*", "*", "*", "*")
+    assert modify.GlobalPrivileges == ["SELECT"]
+
+
+class LegacyItem(object):
+    def __init__(self, value):
+        self.value = value
+
+    def _serialize(self, allow_none=True):
+        return self.value
+
+
+class LegacyResponse(object):
+    def __init__(self, users=None, privileges=None, request_id="r1"):
+        self.Users, self.Privileges, self.RequestId = users, privileges, request_id
+
+
+class LegacyClient(object):
+    def DescribeUsers(self, request):
+        return LegacyResponse([LegacyItem({"UserName": "report", "Host": "10.%"}), LegacyItem({"UserName": "report", "Host": "%"})])
+
+    def DescribeUserPrivileges(self, request):
+        return LegacyResponse(privileges=["UPDATE", "SELECT"], request_id="r2")
+
+
+class LegacyModule(object):
+    def sdk_call(self, fn, request):
+        return fn(request)
+
+    def fail_json(self, **kwargs):
+        raise ValueError(kwargs["msg"])
+
+
+def test_account_get_matches_username_and_host_and_enriches_privileges():
+    value = mod.get(LegacyModule(), LegacyClient(), LegacyModels, dict(LEGACY_PARAMS, include_global_privileges=True))
+    assert value["Host"] == "10.%"
+    assert value["GlobalPrivileges"] == ["SELECT", "UPDATE"]

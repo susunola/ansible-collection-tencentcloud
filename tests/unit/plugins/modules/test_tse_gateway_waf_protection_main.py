@@ -28,6 +28,10 @@ import pytest
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import tse_gateway_waf_protection as mod
+from ansible_collections.susunola.tencentcloud.plugins.modules.tse_gateway_waf_protection import (
+    enabled_value,
+    status_map,
+)
 from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
     AnsibleFailJson,
     FakeModels,
@@ -258,3 +262,14 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy pure-helper assertions (folded from the shallow test file)
+# ---------------------------------------------------------------------------
+
+
+def test_legacy_status_normalizes_sdk_strings():
+    assert enabled_value("open") is True
+    assert enabled_value("close") is False
+    assert status_map({"ServicesStatus": [{"Id": "s1", "Status": "enabled"}]}, "Service") == {"s1": True}

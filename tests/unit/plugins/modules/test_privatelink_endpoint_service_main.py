@@ -304,3 +304,27 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_privatelink_endpoint_service.py)
+# ---------------------------------------------------------------------------
+
+
+def test_request_builders():
+    models = FakeModels()
+    params = {
+        "name": "api",
+        "vpc_id": "vpc-1",
+        "service_instance_id": "lb-1",
+        "service_type": "CLB",
+        "auto_accept": True,
+        "ip_address_type": "IPv4",
+        "tags": {"env": "prod"},
+    }
+    create = mod.build_create_request(models, params)
+    assert create.ServiceInstanceId == "lb-1"
+    assert create.Tags[0].Key == "env"
+    update = mod.build_update_request(models, "vpcsvc-1", params)
+    assert update.EndPointServiceId == "vpcsvc-1"
+    assert mod.build_delete_request(models, "vpcsvc-1", "IPv4").EndPointServiceId == "vpcsvc-1"

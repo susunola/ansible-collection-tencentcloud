@@ -375,3 +375,26 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
     assert payload["error_code"] == "AuthFailure.SignatureFailure"
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tsf_lane.py)
+# ---------------------------------------------------------------------------
+
+
+def test_lane_normalizes_group_order_and_ignores_read_only_fields():
+    groups = [
+        {"GroupId": "group-b", "Entrance": False, "GroupName": "b"},
+        {"GroupId": "group-a", "Entrance": True, "LaneGroupId": "lane-group-a"},
+    ]
+    assert mod.normalize_groups(groups) == [
+        {"GroupId": "group-a", "Entrance": True},
+        {"GroupId": "group-b", "Entrance": False},
+    ]
+
+
+def test_lane_maps_observable_state():
+    params = {"name": "canary", "remark": "checkout", "deployment_groups": [{"group_id": "group-a", "entrance": True}]}
+    target = mod.desired(params)
+    assert target["LaneGroupList"] == [{"GroupId": "group-a", "Entrance": True}]
+    assert mod.comparable(dict(target, LaneId="lane-a"), target) == target

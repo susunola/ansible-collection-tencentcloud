@@ -166,3 +166,20 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression test (folded from test_tdmysql_maintenance_ssl.py)
+# ---------------------------------------------------------------------------
+
+
+def test_modify_request_maps_boolean_without_integer_coercion():
+    class _Request(object):
+        pass
+
+    class _Models(object):
+        ModifyInstanceSSLStatusRequest = _Request
+
+    request = mod.modify_request(_Models, "db1", True)
+    assert request.InstanceId == "db1"
+    assert request.Enabled is True

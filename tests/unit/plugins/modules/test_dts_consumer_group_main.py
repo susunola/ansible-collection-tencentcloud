@@ -259,3 +259,27 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_dts_consumer_group.py)
+# ---------------------------------------------------------------------------
+
+_PARAMS = {"subscribe_id": "subs-x", "consumer_group_name": "analytics", "account_name": "reader", "password": "secret", "description": "analytics"}
+
+
+def test_request_builders():
+    models = FakeModels()
+    create = mod.build_create_request(models, _PARAMS)
+    assert create.SubscribeId == "subs-x"
+    assert create.Password == "secret"
+    update = mod.build_update_request(models, "subs-x", "consumer-full", "account-full", "new")
+    assert update.Description == "new"
+    delete = mod.build_delete_request(models, "subs-x", "consumer-full", "account-full")
+    assert delete.AccountName == "account-full"
+
+
+def test_generated_name_matching():
+    assert mod._name_matches("consumer-grp-subs-x-analytics", "analytics", "consumer-grp-subs-x")
+    assert mod._name_matches("analytics", "analytics", "consumer-grp-subs-x")
+    assert not mod._name_matches("other", "analytics", "consumer-grp-subs-x")

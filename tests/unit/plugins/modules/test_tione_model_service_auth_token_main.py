@@ -374,3 +374,66 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tione_model_service_auth_token.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyObject(object):
+    def from_json_string(self, value):
+        self.value = value
+
+
+class LegacyModels(object):
+    CreateModelServiceAuthTokenRequest = ModifyModelServiceAuthTokenRequest = DeleteModelServiceAuthTokenRequest = AuthToken = LegacyObject
+
+
+class LegacyModule(object):
+    def fail_json(self, **kwargs):
+        raise ValueError(kwargs["msg"])
+
+
+LEGACY_TOKENS = [{
+    "Base": {"Id": "t1", "Value": "secret", "Name": "prod", "Description": "old"},
+    "Limits": [{"Strategy": "PerDay", "Max": 10}],
+}]
+LEGACY_P = {
+    "service_group_id": "g1",
+    "project_id": "p1",
+    "token_id": "t1",
+    "name": "prod",
+    "description": "new",
+    "limits": [{"Strategy": "PerMinute", "Max": 5}],
+}
+
+
+def test_find_prefers_stable_id_and_rejects_duplicate_names():
+    assert mod.find(LegacyModule(), LEGACY_TOKENS, LEGACY_P)["Base"]["Id"] == "t1"
+    try:
+        mod.find(LegacyModule(), LEGACY_TOKENS * 2, dict(LEGACY_P, token_id=None))
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("ambiguous token name was accepted")
+
+
+def test_desired_preserves_identity_and_normalizes_limits():
+    value = mod.desired(LEGACY_P, LEGACY_TOKENS[0])
+    assert value["Base"]["Id"] == "t1" and value["Base"]["Description"] == "new"
+    assert value["Limits"] == mod.normalized_limits(LEGACY_P["limits"])
+
+
+def test_requests_keep_group_workspace_and_secret_identity():
+    create = mod.create_request(LegacyModels, LEGACY_P)
+    modify = mod.modify_request(LegacyModels, LEGACY_P, LEGACY_TOKENS[0], True)
+    delete = mod.delete_request(LegacyModels, LEGACY_P, LEGACY_TOKENS[0])
+    assert (create.ServiceGroupId, create.TiProjectId, create.Name) == ("g1", "p1", "prod")
+    assert modify.NeedReset is True and '"Id": "t1"' in modify.AuthToken.value
+    assert delete.AuthTokenValue == "secret"
+
+
+def test_sanitize_removes_value_unless_explicitly_requested():
+    assert "Value" not in mod.sanitize(LEGACY_TOKENS[0])["Base"]
+    assert mod.sanitize(LEGACY_TOKENS[0], True)["Base"]["Value"] == "secret"

@@ -453,3 +453,72 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_dlc_resource_config.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyObject(object):
+    def from_json_string(self, value):
+        import json
+
+        for key, item in json.loads(value).items():
+            setattr(self, key, item)
+
+
+class LegacyModels(object):
+    ListResourceConfigsRequest = LegacyObject
+    ListRayClustersRequest = LegacyObject
+    CreateResourceConfigRequest = LegacyObject
+    UpdateResourceConfigRequest = LegacyObject
+    DeleteResourceConfigRequest = LegacyObject
+
+
+def legacy_params():
+    return {
+        "name": "ray-small",
+        "template_type": "Ray",
+        "description": "shared",
+        "head": {"name": "head", "pod_cpu": 4, "pod_mem": 16, "pod_num": 1, "envs": [{"name": "B", "value": "2"}, {"name": "A", "value": "1"}]},
+        "workers": [
+            {"name": "worker-b", "pod_cpu": 4, "min_pod_num": 1, "max_pod_num": 8},
+            {"name": "worker-a", "pod_cpu": 2, "min_pod_num": 1, "max_pod_num": 4},
+        ],
+    }
+
+
+def test_list_request_is_paginated_for_both_resource_types():
+    assert mod.list_request(LegacyModels, 2).Page == 2 and mod.list_request(LegacyModels, 3, ray=True).Page == 3
+
+
+def test_node_and_worker_normalization_is_order_insensitive():
+    assert [x["Name"] for x in mod.node(legacy_params()["head"])["Envs"]] == ["A", "B"]
+    assert [x["Name"] for x in mod.workers(legacy_params()["workers"])] == ["worker-a", "worker-b"]
+
+
+def test_create_and_update_map_stable_contract():
+    assert mod.make_request(LegacyModels, legacy_params()).Head["PodCpu"] == 4
+    assert mod.make_request(LegacyModels, legacy_params(), update=True, config_id="rc-1").Id == "rc-1"
+
+
+def test_normalized_readback_is_idempotent():
+    current = mod.normalize({
+        "Description": "shared",
+        "Type": "Ray",
+        "Head": mod.node(legacy_params()["head"]),
+        "Worker": mod.workers(legacy_params()["workers"]),
+    })
+    assert mod.drift(legacy_params(), current) == {}
+
+
+def test_scale_down_detects_reduced_or_removed_workers():
+    old = mod.workers(legacy_params()["workers"])
+    lower = mod.workers([legacy_params()["workers"][0]])
+    assert mod.scale_down(mod.node(legacy_params()["head"]), mod.node(legacy_params()["head"]), old, lower) is True
+    assert mod.scale_down({"PodCpu": 4}, {"PodCpu": 2}, [], []) is True
+
+
+def test_delete_uses_stable_template_id():
+    assert mod.delete_request(LegacyModels, "rc-1").Id == "rc-1"

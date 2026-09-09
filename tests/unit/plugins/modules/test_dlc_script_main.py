@@ -310,3 +310,34 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_dlc_script.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyRequest(object):
+    pass
+
+
+class LegacyModels(object):
+    DescribeScriptsRequest = LegacyRequest
+    CreateScriptRequest = LegacyRequest
+    DeleteScriptRequest = LegacyRequest
+
+
+def test_sql_is_encoded_for_create_and_decoded_for_comparison():
+    params = {"name": "daily", "sql_statement": "SELECT 1", "description": "test", "database_name": "analytics"}
+    request = mod.create_request(LegacyModels, params)
+    assert request.SQLStatement == base64.b64encode(b"SELECT 1").decode("ascii")
+    current = mod.normalize({"ScriptName": "daily", "SQLStatement": request.SQLStatement, "ScriptDesc": "test", "DatabaseName": "analytics"})
+    assert mod.decode_sql(request.SQLStatement) == "SELECT 1"
+    assert mod.drift(params, current) == {}
+
+
+def test_pagination_and_delete_use_exact_ids():
+    listing = mod.list_request(LegacyModels, 200)
+    deletion = mod.delete_request(LegacyModels, "script-1")
+    assert listing.Offset == 200 and listing.Limit == 100
+    assert deletion.ScriptIds == ["script-1"]

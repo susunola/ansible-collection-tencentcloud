@@ -271,3 +271,47 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "catalog unavailable" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_dlc_model_version.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyModel(object):
+    def from_json_string(self, value):
+        import json
+
+        for key, item in json.loads(value).items():
+            setattr(self, key, item)
+
+
+class LegacyModels(object):
+    ListModelVersionsRequest = CreateModelVersionRequest = GooseFSConfig = LegacyModel
+
+
+def legacy_params():
+    return {
+        "model_uid": "model-1",
+        "version": "v2",
+        "description": "release",
+        "storage_uri": "cos://bucket/v2",
+        "use_custom_storage": True,
+        "storage_type": "COS",
+        "goosefs_config": None,
+    }
+
+
+def test_immutable_version_conflict_is_precise():
+    p = legacy_params()
+    current = {"Version": "v2", "Description": "old", "StorageUri": "cos://bucket/v2", "UseCustomStorage": True}
+    assert mod.conflict(p, current) == {"Description": ("old", "release")}
+    assert mod.desired(p)["Version"] == "v2"
+
+
+def test_create_and_list_requests_use_parent_and_exact_version():
+    p = legacy_params()
+    create = mod.create_request(LegacyModels, p)
+    listing = mod.list_request(LegacyModels, p, 4)
+    assert create.ModelUid == "model-1" and create.ModelVersion == "v2" and create.StorageType == "COS"
+    assert listing.ModelUid == "model-1" and listing.Page == 4 and listing.PageSize == 200

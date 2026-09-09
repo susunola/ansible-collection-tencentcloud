@@ -369,3 +369,69 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_dlc_partition_queue.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyObject(object):
+    def from_json_string(self, value):
+        import json
+
+        for key, item in json.loads(value).items():
+            setattr(self, key, item)
+
+
+class LegacyModels(object):
+    DescribePartitionQueuesRequest = LegacyObject
+    CreatePartitionQueueRequest = LegacyObject
+    ModifyPartitionQueueRequest = LegacyObject
+    DeletePartitionQueueRequest = LegacyObject
+
+
+def legacy_params():
+    return {
+        "partition_code": "rp-1",
+        "name": "notebooks",
+        "queue_type": 1,
+        "description": "interactive",
+        "resource_usages": [
+            {"resource_type": "CU", "billing_item": "standard", "instance_type": None, "spec": "0:1:4:0", "gpu_type": None, "min": 32, "max": 128}
+        ],
+    }
+
+
+def test_describe_scopes_partition_and_page():
+    request = mod.describe_request(LegacyModels, "rp-1", 2)
+    assert request.PartitionCode == "rp-1" and request.Page == 2 and request.PageSize == 200
+
+
+def test_create_maps_nested_resource_contract():
+    request = mod.make_request(LegacyModels, legacy_params())
+    assert request.QueueName == "notebooks" and request.ResourceUsages[0]["ResourceSpec"]["BillingItem"] == "standard"
+
+
+def test_modify_and_delete_use_stable_id():
+    assert mod.make_request(LegacyModels, legacy_params(), update=True, queue_id=42).Id == 42
+    assert mod.delete_request(LegacyModels, legacy_params(), 42).Id == 42
+
+
+def test_normalized_readback_is_idempotent():
+    current = mod.normalize(
+        {
+            "Description": "interactive",
+            "QueueType": 1,
+            "ResourceUsage": [
+                {"ResourceSpec": {"ResourceType": "CU", "BillingItem": "standard", "Spec": "0:1:4:0", "SpecDesc": "ignored"}, "Min": 32, "Max": 128}
+            ],
+        }
+    )
+    assert mod.drift(legacy_params(), current) == {}
+
+
+def test_scale_down_detects_reduction_and_removal():
+    old = mod.normalize({"ResourceUsage": [{"ResourceSpec": {"BillingItem": "standard"}, "Min": 32, "Max": 128}]})["ResourceUsage"]
+    lower = mod.normalize({"ResourceUsage": [{"ResourceSpec": {"BillingItem": "standard"}, "Min": 16, "Max": 64}]})["ResourceUsage"]
+    assert mod.scale_down(old, lower) is True and mod.scale_down(old, []) is True and mod.scale_down(lower, old) is False

@@ -331,3 +331,43 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tat_command.py)
+# ---------------------------------------------------------------------------
+
+PARAMS = {
+    "name": "hello",
+    "content": "#!/bin/bash\necho {{word}}",
+    "description": "hello",
+    "command_type": "SHELL",
+    "working_directory": "/root",
+    "timeout": 60,
+    "enable_parameters": True,
+    "default_parameters": {"word": "hello"},
+    "username": "root",
+    "output_cos_bucket_url": None,
+    "output_cos_key_prefix": None,
+    "tags": {"env": "prod"},
+}
+
+
+def test_request_builders_encode_content_and_parameters():
+    models = FakeModels()
+    create = mod.build_create_request(models, PARAMS)
+    assert create.Content == "IyEvYmluL2Jhc2gKZWNobyB7e3dvcmR9fQ=="
+    assert create.DefaultParameters == '{"word":"hello"}'
+    assert create.Tags[0].Key == "env"
+    update = mod.build_update_request(models, "cmd-x", PARAMS)
+    assert update.CommandId == "cmd-x"
+    assert mod.build_delete_request(models, "cmd-x").CommandId == "cmd-x"
+
+
+def test_exact_idempotency():
+    desired = mod._desired(PARAMS)
+    current = dict(desired)
+    current["Tags"] = [{"Key": "env", "Value": "prod"}]
+    assert mod._matches(current, desired)
+    current["Timeout"] = 120
+    assert not mod._matches(current, desired)

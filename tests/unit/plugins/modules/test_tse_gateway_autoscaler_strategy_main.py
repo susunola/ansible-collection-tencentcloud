@@ -284,3 +284,36 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_gateway_autoscaler.py)
+# ---------------------------------------------------------------------------
+
+
+def test_strategy_target_preserves_unspecified_config():
+    p = {
+        "gateway_id": "g1",
+        "name": None,
+        "description": None,
+        "metric_config": {"Enabled": True},
+        "cron_config": None,
+        "max_replicas": None,
+    }
+    current = {"StrategyId": "st1", "StrategyName": "elastic", "Description": "prod", "CronConfig": {"Enabled": False}, "MaxReplicas": 8}
+    value = mod.target(p, current)
+    assert value["Config"] == {"Enabled": True}
+    assert value["CronConfig"] == {"Enabled": False}
+    assert value["MaxReplicas"] == 8
+    assert value["StrategyName"] == "elastic"
+    assert mod.mutation_payload(p, current)["StrategyId"] == "st1"
+    assert mod.mutation_payload(p, current)["GatewayId"] == "g1"
+
+
+def test_strategy_target_uses_supplied_name_description_and_replicas():
+    p = {"gateway_id": "g1", "name": "scaled", "description": "new", "metric_config": None, "cron_config": None, "max_replicas": 12}
+    current = {"StrategyId": "st1", "StrategyName": "elastic", "Description": "prod", "MaxReplicas": 8}
+    value = mod.target(p, current)
+    assert value["StrategyName"] == "scaled"
+    assert value["Description"] == "new"
+    assert value["MaxReplicas"] == 12

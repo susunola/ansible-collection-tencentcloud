@@ -339,3 +339,31 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_sre_instance.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyModule(object):
+    def fail_json(self, **kwargs):
+        raise AssertionError(kwargs)
+
+
+def test_wait_requires_expected_engine_state(monkeypatch):
+    values = iter([
+        {"Status": "running", "EnableInternet": False},
+        {"Status": "running", "EnableInternet": True},
+    ])
+    monkeypatch.setattr(mod, "find", lambda *args: next(values))
+    monkeypatch.setattr(mod.time, "sleep", lambda delay: None)
+    result = mod._wait(LegacyModule(), object(), object(), {"waiter_timeout": 10, "waiter_delay": 0}, ["running"], {"EnableInternet": True})
+    assert result["EnableInternet"] is True
+
+
+def test_wait_requires_engine_absence(monkeypatch):
+    values = iter([{"Status": "deleting"}, None])
+    monkeypatch.setattr(mod, "find", lambda *args: next(values))
+    monkeypatch.setattr(mod.time, "sleep", lambda delay: None)
+    assert mod._wait(LegacyModule(), object(), object(), {"waiter_timeout": 10, "waiter_delay": 0}, absent=True) is None

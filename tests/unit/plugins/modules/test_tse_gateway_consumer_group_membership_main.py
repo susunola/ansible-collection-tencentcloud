@@ -264,3 +264,27 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_gateway_consumer_group_membership.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyValue(object):
+    pass
+
+
+def test_group_ids_reads_consumer_detail_memberships():
+    assert mod.group_ids({"ConsumerGroups": [{"ConsumerGroupId": "cg1"}, {"ConsumerGroupId": "cg2"}]}) == {"cg1", "cg2"}
+
+
+def test_membership_request_maps_only_delta():
+    p = {"gateway_id": "g1", "consumer_group_id": "cg1"}
+    request = mod.mutation_request(LegacyValue, p, ["c2"])
+    assert request.ConsumerGroupId == "cg1" and request.ConsumerIds == ["c2"]
+
+
+def test_resolve_ids_reports_unknown_names():
+    ids, missing = mod.resolve_ids([{"Name": "mobile", "ConsumerId": "c1"}], ["mobile", "missing"], "ConsumerId")
+    assert ids == ["c1"] and missing == ["missing"]

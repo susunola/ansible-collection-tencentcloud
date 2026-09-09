@@ -254,3 +254,36 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_dlc_user_vpc_connection.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyObject(object):
+    pass
+
+
+class LegacyModels(object):
+    DescribeUserVpcConnectionRequest = LegacyObject
+    CreateUserVpcConnectionRequest = LegacyObject
+    DeleteUserVpcConnectionRequest = LegacyObject
+
+
+def test_describe_can_filter_by_exact_endpoint_id():
+    request = mod.describe_request(LegacyModels, "network-1", "vpce-1")
+    assert request.EngineNetworkId == "network-1" and request.UserVpcEndpointIds == ["vpce-1"]
+
+
+def test_create_maps_network_endpoint_contract():
+    request = mod.create_request(
+        LegacyModels, {"engine_network_id": "network-1", "vpc_id": "vpc-1", "subnet_id": "subnet-1", "endpoint_name": "lake", "endpoint_vip": "10.0.0.8"}
+    )
+    assert request.EngineNetworkId == "network-1" and request.UserVpcId == "vpc-1"
+    assert request.UserSubnetId == "subnet-1" and request.UserVpcEndpointVip == "10.0.0.8"
+
+
+def test_delete_requires_both_network_and_endpoint_identity():
+    request = mod.delete_request(LegacyModels, "network-1", "vpce-1")
+    assert request.EngineNetworkId == "network-1" and request.UserVpcEndpointId == "vpce-1"

@@ -412,3 +412,43 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_as_scaling_group.py)
+# ---------------------------------------------------------------------------
+
+_PARAMS = {
+    "name": "web",
+    "launch_configuration_id": "asc-x",
+    "vpc_id": "vpc-x",
+    "subnet_ids": ["subnet-a", "subnet-b"],
+    "min_size": 0,
+    "max_size": 10,
+    "desired_capacity": 0,
+    "default_cooldown": 300,
+    "termination_policy": "OLDEST_INSTANCE",
+    "retry_policy": "IMMEDIATE_RETRY",
+    "subnet_policy": "PRIORITY",
+    "health_check_type": "CVM",
+    "capacity_rebalance": False,
+    "project_id": 0,
+}
+
+
+def test_request_builders():
+    models = FakeModels()
+    create = mod.build_create_request(models, _PARAMS)
+    assert create.DesiredCapacity == 0
+    assert create.SubnetIds == ["subnet-a", "subnet-b"]
+    update = mod.build_update_request(models, "asg-x", _PARAMS)
+    assert update.AutoScalingGroupId == "asg-x"
+    assert mod.build_delete_request(models, "asg-x").AutoScalingGroupId == "asg-x"
+
+
+def test_exact_idempotency():
+    desired = mod._desired(_PARAMS)
+    assert mod._matches(dict(desired), desired)
+    changed = dict(desired)
+    changed["DesiredCapacity"] = 1
+    assert not mod._matches(changed, desired)

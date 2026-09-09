@@ -311,3 +311,25 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_gateway_model_api.py)
+# ---------------------------------------------------------------------------
+
+
+def test_service_ids_normalizes_direct_and_routed_services():
+    value = {"ModelServiceId": "s1", "ModelServiceRoute": {"WeightedConfig": [{"ModelServiceId": "s2"}], "ModelNameConfig": [{"ModelServiceId": "s1"}]}}
+    assert mod.service_ids(value) == ["s1", "s2"]
+
+
+def test_modify_payload_preserves_resolved_service_links():
+    p = {"gateway_id": "g1", "name": None, "config": {"BasePath": "/v2"}}
+    current = {"Id": "api1", "Name": "chat", "BasePath": "/v1", "ModelServiceId": "s1"}
+    payload = mod.modify_payload(p, current)
+    assert payload["ListModelServiceId"] == ["s1"] and payload["BasePath"] == "/v2"
+
+
+def test_create_payload_keeps_routing_config():
+    p = {"gateway_id": "g1", "name": "chat", "config": {"SceneType": "Chat", "RequestProtocol": "OpenAI", "ListModelServiceId": ["s1"]}}
+    assert mod.create_payload(p)["ListModelServiceId"] == ["s1"]

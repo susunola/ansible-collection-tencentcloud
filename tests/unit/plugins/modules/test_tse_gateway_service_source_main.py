@@ -20,6 +20,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import copy
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -339,3 +340,45 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_gateway_service_source.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyValue(object):
+    def from_json_string(self, raw):
+        self.raw = raw
+
+
+class LegacyModels(object):
+    CreateNativeGatewayServiceSourceRequest = LegacyValue
+    ModifyNativeGatewayServiceSourceRequest = LegacyValue
+    DeleteNativeGatewayServiceSourceRequest = LegacyValue
+
+
+def test_service_source_requests_map_full_lifecycle():
+    p = {
+        "gateway_id": "g1",
+        "source_id": "nacos-1",
+        "source_name": "registry",
+        "source_type": "Customer-Nacos",
+        "source_info": {
+            "Addresses": ["10.0.0.2:8848"],
+            "Auth": {"Username": "reader", "Password": "secret"},
+        },
+    }
+    assert json.loads(mod.create_request(LegacyModels, p).raw)["GatewayID"] == "g1"
+    current = {"SourceID": "nacos-1", "SourceName": "old", "SourceInfo": {}}
+    assert json.loads(mod.update_request(LegacyModels, p, current).raw)["SourceName"] == "registry"
+    without_info = dict(p, source_info=None)
+    assert "SourceInfo" not in json.loads(mod.update_request(LegacyModels, without_info, current).raw)
+    assert json.loads(mod.delete_request(LegacyModels, p, "nacos-1").raw)["SourceID"] == "nacos-1"
+
+
+def test_service_source_comparison_removes_write_only_credentials():
+    value = {"SourceInfo": {"Addresses": ["10.0.0.2:8848"], "Auth": {"Username": "reader", "Password": "secret", "AccessToken": "token"}}}
+    assert mod.readable(value) == {"SourceInfo": {"Addresses": ["10.0.0.2:8848"], "Auth": {"Username": "reader"}}}
+    p = {"source_name": "registry", "source_type": "Customer-Nacos", "source_info": value["SourceInfo"]}
+    assert mod.desired(p)["SourceInfo"]["Auth"] == {"Username": "reader"}

@@ -312,3 +312,26 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_cynosdb_account.py)
+# ---------------------------------------------------------------------------
+
+
+def test_request_builders():
+    models = FakeModels()
+    params = {
+        "cluster_id": "cluster-1",
+        "account_name": "app",
+        "host": "%",
+        "password": "secret",
+        "description": "application",
+        "max_user_connections": 100,
+        "password_rotation": 90,
+    }
+    create = mod.build_create_request(models, params)
+    assert create.Accounts[0].AccountName == "app"
+    assert create.Accounts[0].MaxUserConnections == 100
+    assert mod.build_password_request(models, params).AccountPassword == "secret"
+    assert mod.build_delete_request(models, params).Accounts[0].Host == "%"

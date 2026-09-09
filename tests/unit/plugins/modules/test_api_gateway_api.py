@@ -549,3 +549,62 @@ def test_absent_check_mode_is_dry_run(monkeypatch):
     assert result["api"]["ApiId"] == "api-1"  # pre-change API reported
     assert not any("DeleteApi" == c[0] for c in fake.calls)
     assert len(fake.apis) == 1
+
+
+# ---------------------------------------------------------------------------
+# SCF-backend contract tests (folded from test_api_gateway_api_scf.py)
+# ---------------------------------------------------------------------------
+
+
+class _ScfObject(object):
+    pass
+
+
+class _ScfModels(object):
+    ApiRequestConfig = _ScfObject
+
+
+def _scf_params(service_type="SCF"):
+    return {
+        "service_id": "service-1",
+        "name": "orders",
+        "description": "Orders API",
+        "auth_type": "NONE",
+        "service_type": service_type,
+        "service_timeout": 20,
+        "path": "/orders",
+        "method": "POST",
+        "enable_cors": True,
+        "mock_response": '{"ok":true}',
+        "scf_function_name": "order-handler",
+        "scf_function_namespace": "default",
+        "scf_function_qualifier": "production",
+        "scf_function_type": "EVENT",
+        "scf_integrated_response": True,
+    }
+
+
+def test_apply_request_sets_typed_scf_backend_fields():
+    request = mod.apply_request(_ScfObject(), _ScfModels, _scf_params())
+    assert request.ServiceType == "SCF"
+    assert request.ServiceScfFunctionName == "order-handler"
+    assert request.ServiceScfFunctionNamespace == "default"
+    assert request.ServiceScfFunctionQualifier == "production"
+    assert request.ServiceScfFunctionType == "EVENT"
+    assert request.ServiceScfIsIntegratedResponse is True
+
+
+def test_scf_desired_and_comparable_have_same_shape():
+    expected = mod.desired(_scf_params())
+    remote = dict(expected)
+    remote["RequestConfig"] = {"Path": remote.pop("Path"), "Method": remote.pop("Method")}
+    assert mod.comparable(remote) == expected
+
+
+def test_mock_response_drift_is_compared():
+    expected = mod.desired(_scf_params("MOCK"))
+    assert expected["ServiceMockReturnMessage"] == '{"ok":true}'
+    remote = dict(expected)
+    remote["ServiceMockReturnMessage"] = "different"
+    remote["RequestConfig"] = {"Path": remote.pop("Path"), "Method": remote.pop("Method")}
+    assert mod.comparable(remote) != expected

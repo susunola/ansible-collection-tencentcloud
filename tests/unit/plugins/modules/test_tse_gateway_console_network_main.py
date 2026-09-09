@@ -280,3 +280,34 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "engine down" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_gateway_console_network.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyValue(object):
+    def from_json_string(self, value):
+        self.json = value
+
+
+class LegacyModels(object):
+    DescribeCloudNativeAPIGatewayConfigRequest = LegacyValue
+    ModifyConsoleNetworkRequest = LegacyValue
+    NetworkAccessControl = LegacyValue
+
+
+PARAMS = {"gateway_id": "gateway-1", "state": "open", "network_type": "Open", "access_control": {"Mode": "Whitelist"}}
+
+
+def test_console_network_request_and_target_mapping():
+    describe = mod.describe_request(LegacyModels, "gateway-1")
+    modify = mod.modify_request(LegacyModels, PARAMS)
+    assert describe.GatewayId == "gateway-1"
+    assert (modify.NetworkType, modify.Operate) == ("Open", "Open")
+    assert mod.desired(PARAMS) == {"NetType": "Open", "Status": "Open", "AccessControl": {"Mode": "Whitelist"}}
+
+
+def test_readable_removes_console_password():
+    assert mod.readable({"ConsoleType": "Konga", "AdminPassword": "secret"}) == {"ConsoleType": "Konga"}

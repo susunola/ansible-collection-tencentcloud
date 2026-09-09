@@ -342,3 +342,30 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_gateway_autoscaler.py)
+# ---------------------------------------------------------------------------
+
+
+class _Request(object):
+    pass
+
+
+def test_mutation_request_maps_group_delta():
+    p = {"gateway_id": "g1", "strategy_id": "st1"}
+    request = mod.mutation_request(_Request, p, ["group2"])
+    assert request.GatewayId == "g1"
+    assert request.StrategyId == "st1"
+    assert request.GroupIds == ["group2"]
+
+
+def test_strategy_and_groups_requests_map_identity():
+    p = {"gateway_id": "g1", "strategy_id": "st1"}
+    strategy = mod.strategy_request(FakeModels(), p)
+    assert strategy.GatewayId == "g1"
+    group_request = mod.groups_request(FakeModels(), p)
+    assert group_request.GatewayId == "g1"
+    assert group_request.Offset == 0
+    assert group_request.Limit == 100

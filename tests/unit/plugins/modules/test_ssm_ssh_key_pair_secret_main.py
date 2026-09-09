@@ -367,3 +367,44 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_ssm_ssh_key_pair_secret.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyValue(object):
+    pass
+
+
+class LegacyModels(object):
+    CreateSSHKeyPairSecretRequest = LegacyValue
+    DescribeSecretRequest = LegacyValue
+    Tag = LegacyValue
+
+
+def test_create_request_maps_key_metadata_without_private_material():
+    value = mod.create_request(
+        LegacyModels,
+        {
+            "secret_name": "bastion",
+            "project_id": 0,
+            "description": "key",
+            "kms_key_id": None,
+            "tags": {"env": "prod"},
+            "ssh_key_name": "bastion_key",
+            "kms_hsm_cluster_id": None,
+            "encrypt_type": 0,
+        },
+    )
+    assert value.SecretName == "bastion"
+    assert value.SSHKeyName == "bastion_key"
+    assert value.Tags[0].TagKey == "env"
+    assert not hasattr(value, "PrivateKey")
+
+
+def test_comparable_requires_ssh_secret_type_and_stable_identity():
+    value = mod.comparable({"SecretName": "bastion", "ResourceName": "bastion_key", "ProjectID": 3, "SecretType": 2, "Status": "Disabled"})
+    assert value == {"SecretName": "bastion", "Description": "", "ResourceName": "bastion_key", "ProjectID": 3, "SecretType": 2, "Enabled": False}
+    assert mod.request(LegacyModels, "DescribeSecretRequest", SecretName="bastion").SecretName == "bastion"

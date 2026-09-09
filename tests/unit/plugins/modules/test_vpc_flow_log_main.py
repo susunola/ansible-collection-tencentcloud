@@ -406,3 +406,30 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_vpc_flow_log.py)
+# ---------------------------------------------------------------------------
+
+
+def test_request_builders():
+    models = FakeModels()
+    params = {
+        "name": "eni-flow",
+        "vpc_id": "vpc-1",
+        "resource_type": "NETWORKINTERFACE",
+        "resource_id": "eni-1",
+        "traffic_type": "ALL",
+        "cls_topic_id": "topic-1",
+        "description": "audit",
+        "cls_region": None,
+        "period": None,
+        "tags": {"env": "prod"},
+    }
+    create = mod.build_create_request(models, params)
+    assert create.ResourceId == "eni-1"
+    assert create.CloudLogId == "topic-1"
+    assert create.Tags[0].Key == "env"
+    assert mod.build_toggle_request(models, True, "fl-1").FlowLogIds == ["fl-1"]
+    assert mod.build_delete_request(models, "vpc-1", "fl-1").FlowLogId == "fl-1"

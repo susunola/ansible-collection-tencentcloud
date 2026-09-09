@@ -368,3 +368,40 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "cluster unreachable" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tsf_container_deployment_group.py)
+# ---------------------------------------------------------------------------
+
+
+def test_container_group_normalizes_port_order():
+    ports = [
+        {"Protocol": "TCP", "Port": 81, "TargetPort": 8081, "Name": "z"},
+        {"Protocol": "TCP", "Port": 80, "TargetPort": 8080, "Name": "a"},
+    ]
+    assert mod._ports(ports)[0]["Name"] == "a"
+
+
+def test_container_group_maps_capacity_and_resources():
+    p = {
+        "name": "orders",
+        "application_id": "app-1",
+        "namespace_id": "ns-1",
+        "cluster_id": "c-1",
+        "replicas": 3,
+        "cpu_request": "0.5",
+        "cpu_limit": "1",
+        "memory_request": "512",
+        "memory_limit": "1024",
+        "access_type": 1,
+        "protocol_ports": None,
+        "update_type": 0,
+        "update_interval": None,
+        "subnet_id": None,
+        "alias": None,
+        "resource_type": "DEF",
+    }
+    target = mod.desired(p)
+    assert target["InstanceNum"] == 3 and target["MemLimit"] == "1024"
+    assert mod.comparable(dict(target, Status="Running"), target) == target

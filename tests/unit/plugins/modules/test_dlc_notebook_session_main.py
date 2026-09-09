@@ -500,3 +500,66 @@ def test_validation_rejects_duplicate_argument_keys(monkeypatch):
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
     assert "arguments contains duplicate keys" in exc.value.args[0]["msg"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_dlc_notebook_session.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyObject(object):
+    def from_json_string(self, value):
+        import json
+
+        for key, item in json.loads(value).items():
+            setattr(self, key, item)
+
+
+class LegacyModels(object):
+    CreateNotebookSessionRequest = DeleteNotebookSessionRequest = DescribeNotebookSessionRequest = DescribeNotebookSessionsRequest = Filter = LegacyObject
+
+
+def legacy_params():
+    return {
+        "name": "analyst",
+        "kind": "pyspark",
+        "data_engine_name": "spark-prod",
+        "dependent_files": ["cosn://b/z", "cosn://b/a"],
+        "dependent_jars": None,
+        "dependent_python": None,
+        "archives": None,
+        "driver_size": "medium",
+        "executor_size": "large",
+        "executor_numbers": 2,
+        "executor_max_numbers": 8,
+        "arguments": [{"key": "z", "value": "2"}, {"key": "a", "value": "1"}],
+        "proxy_user": "root",
+        "timeout": 7200,
+    }
+
+
+def test_identity_requests_are_exact_and_paginated():
+    assert mod.describe_request(LegacyModels, "session-1").SessionId == "session-1"
+    request = mod.list_request(LegacyModels, legacy_params(), 100)
+    assert request.DataEngineName == "spark-prod" and request.Offset == 100 and request.Limit == 100
+    assert request.Filters[0].Name == "notebook-keyword" and request.Filters[0].Values == ["analyst"]
+    assert mod.delete_request(LegacyModels, "session-1").SessionId == "session-1"
+
+
+def test_create_maps_and_normalizes_immutable_contract():
+    request = mod.create_request(LegacyModels, legacy_params())
+    assert request.Name == "analyst" and request.Kind == "pyspark" and request.DataEngineName == "spark-prod"
+    assert request.ProgramDependentFiles == ["cosn://b/a", "cosn://b/z"]
+    assert [x["Key"] for x in request.Arguments] == ["a", "z"]
+
+
+def test_normalize_and_drift_ignore_list_order():
+    p = legacy_params()
+    current = mod.desired(p)
+    current.update({"SessionId": "session-1", "State": "idle"})
+    current["ProgramDependentFiles"].reverse()
+    current["Arguments"].reverse()
+    normalized = mod.normalize(current)
+    assert mod.immutable_drift(p, normalized) == {}
+    p["driver_size"] = "xlarge"
+    assert mod.immutable_drift(p, normalized)["DriverSize"] == ("medium", "xlarge")

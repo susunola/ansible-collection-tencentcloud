@@ -325,3 +325,58 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_dlc_data_mask_strategy.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyObject(object):
+    def from_json_string(self, value):
+        import json
+
+        for key, item in json.loads(value).items():
+            setattr(self, key, item)
+
+
+class LegacyFilter(LegacyObject):
+    pass
+
+
+class LegacyModels(object):
+    DescribeDataMaskStrategiesRequest = LegacyObject
+    CreateDataMaskStrategyRequest = LegacyObject
+    UpdateDataMaskStrategyRequest = LegacyObject
+    DeleteDataMaskStrategyRequest = LegacyObject
+    DataMaskStrategyInfo = LegacyObject
+    Filter = LegacyFilter
+
+
+def legacy_target():
+    return {
+        "StrategyId": "mask-1",
+        "StrategyName": "phone",
+        "StrategyType": "MASK_SHOW_LAST_4",
+        "StrategyDesc": "phone mask",
+        "Groups": [{"WorkGroupId": 2, "StrategyType": "MASK_HASH"}],
+        "Users": ["10001", "10002"],
+    }
+
+
+def test_normalization_stabilizes_groups_and_users():
+    assert mod.normalize_users("10002;10001;10001") == ["10001", "10002"]
+    assert mod.normalize_groups([{"WorkGroupId": 2, "StrategyType": "B"}, {"WorkGroupId": 1, "StrategyType": "A"}])[0]["WorkGroupId"] == 1
+    assert mod.normalize({**legacy_target(), "Users": "10002;10001"}) == legacy_target()
+
+
+def test_describe_uses_name_filter_and_pagination():
+    request = mod.describe_request(LegacyModels, {"name": "phone"}, 100)
+    assert request.Offset == 100 and request.Filters[0].Name == "strategy-name"
+
+
+def test_mutation_requests_serialize_normalized_users():
+    created = mod.create_request(LegacyModels, legacy_target())
+    updated = mod.update_request(LegacyModels, legacy_target())
+    assert created.Strategy.Users == "10001;10002" and updated.Strategy.StrategyId == "mask-1"
+    assert mod.delete_request(LegacyModels, "mask-1").StrategyId == "mask-1"

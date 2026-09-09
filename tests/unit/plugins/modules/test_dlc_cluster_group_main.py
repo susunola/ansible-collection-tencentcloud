@@ -333,3 +333,44 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_dlc_cluster_group.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyRequest(object):
+    def from_json_string(self, value):
+        import json
+
+        for key, item in json.loads(value).items():
+            setattr(self, key, item)
+
+
+class LegacyModels(object):
+    ListClusterGroupsRequest = LegacyRequest
+    CreateClusterGroupRequest = LegacyRequest
+    UpdateClusterGroupRequest = LegacyRequest
+    DeleteClusterGroupRequest = LegacyRequest
+    DescribeClusterGroupClustersRequest = LegacyRequest
+
+
+def test_json_normalization_and_drift_are_semantic():
+    current = mod.normalize({"Name": "compute", "Description": "old", "Config": '{"b":2,"a":1}'})
+    params = {"name": "compute", "description": "new", "config": '{"a":1,"b":2}'}
+    assert mod.canonical(params["config"]) == '{"a":1,"b":2}'
+    assert mod.drift(params, current) == {"Description": ("old", "new")}
+
+
+def test_requests_preserve_stable_identity_and_force_guard():
+    create = mod.make_request(LegacyModels, {"name": "compute", "description": None, "config": '{"z":1,"a":2}'})
+    update = mod.make_request(LegacyModels, {"name": "compute", "description": "managed", "config": None}, update=True, group_id="cg-1")
+    delete = mod.delete_request(LegacyModels, "cg-1", True)
+    listing = mod.list_request(LegacyModels, 3)
+    clusters = mod.cluster_request(LegacyModels, "cg-1")
+    assert create.Config == '{"a":2,"z":1}'
+    assert update.Id == "cg-1" and update.Description == "managed"
+    assert delete.Id == "cg-1" and delete.Force is True
+    assert listing.Page == 3 and listing.PageSize == 200
+    assert clusters.Id == "cg-1" and clusters.SampleLimit == 20

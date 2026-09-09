@@ -285,3 +285,56 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_dlc_database.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyObject(object):
+    def from_json_string(self, value):
+        import json
+
+        for key, item in json.loads(value).items():
+            setattr(self, key, item)
+
+
+class LegacyModels(object):
+    DescribeDatabaseRequest = LegacyObject
+    DescribeTablesRequest = LegacyObject
+    CreateMetaDatabaseRequest = LegacyObject
+    DeleteMetaDatabaseRequest = LegacyObject
+    MetaDatabaseInfo = LegacyObject
+    DataGovernPolicy = LegacyObject
+    SmartPolicy = LegacyObject
+
+
+def legacy_params():
+    return {
+        "name": "analytics",
+        "datasource_connection_name": "DataLakeCatalog",
+        "comment": "curated",
+        "govern_policy": {"RuleType": "STANDARD"},
+        "smart_policy": None,
+    }
+
+
+def test_requests_keep_catalog_identity_consistent():
+    p = legacy_params()
+    assert mod.describe_request(LegacyModels, p).DatasourceConnectionName == "DataLakeCatalog"
+    assert mod.delete_request(LegacyModels, p).DatabaseName == "analytics"
+    count = mod.table_count_request(LegacyModels, p)
+    assert count.DatabaseName == "analytics" and count.Limit == 1
+
+
+def test_create_maps_metadata_and_governance():
+    request = mod.create_request(LegacyModels, legacy_params())
+    assert request.MetaDatabaseInfo.DatabaseName == "analytics"
+    assert request.MetaDatabaseInfo.Comment == "curated"
+    assert request.GovernPolicy.RuleType == "STANDARD"
+
+
+def test_immutable_drift_is_normalized():
+    assert mod.immutable_drift(legacy_params(), {"Comment": "curated", "GovernPolicy": {"RuleType": "STANDARD", "Extra": None}}) == {}
+    assert "Comment" in mod.immutable_drift(legacy_params(), {"Comment": "old", "GovernPolicy": {"RuleType": "STANDARD"}})

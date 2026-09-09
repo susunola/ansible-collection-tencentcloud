@@ -299,3 +299,26 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "tsf control plane down" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tsf_lane_rule.py)
+# ---------------------------------------------------------------------------
+
+
+def test_lane_rule_normalizes_tag_order_and_read_only_fields():
+    tags = [{"TagName": "z", "TagOperator": "EQUAL", "TagValue": "1", "TagId": "x"}, {"TagName": "a", "TagOperator": "EQUAL", "TagValue": "2"}]
+    assert mod.normalize_tags(tags)[0] == {"TagName": "a", "TagOperator": "EQUAL", "TagValue": "2"}
+
+
+def test_lane_rule_maps_observable_state():
+    params = {
+        "name": "canary",
+        "lane_id": "lane-a",
+        "remark": None,
+        "enabled": True,
+        "tag_relationship": "RELEATION_AND",
+        "tags": [{"name": "x-canary", "operator": "EQUAL", "value": "true"}],
+    }
+    target = mod.desired(params)
+    assert mod.comparable(dict(target, RuleId="rule-a"), target) == target

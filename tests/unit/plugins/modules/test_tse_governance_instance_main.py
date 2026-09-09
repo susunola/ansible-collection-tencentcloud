@@ -21,6 +21,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import copy
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -356,3 +357,55 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "engine down" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_governance_instance.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyValue(object):
+    def from_json_string(self, raw):
+        self.raw = raw
+
+
+class LegacyRequest(object):
+    pass
+
+
+class LegacyModels(object):
+    GovernanceInstanceInput = LegacyValue
+    GovernanceInstanceUpdate = LegacyValue
+    CreateGovernanceInstancesRequest = LegacyRequest
+    ModifyGovernanceInstancesRequest = LegacyRequest
+    DeleteGovernanceInstancesRequest = LegacyRequest
+
+
+def test_governance_instance_requests_map_create_update_and_delete():
+    p = {
+        "instance_id": "engine-1",
+        "namespace": "production",
+        "service": "orders",
+        "host": "10.0.0.3",
+        "port": 8080,
+        "protocol": "http",
+        "instance_version": "v1",
+        "weight": 100,
+        "healthy": True,
+        "isolate": False,
+        "enable_health_check": True,
+        "ttl": 5,
+        "metadata": [{"Key": "zone", "Value": "a"}],
+    }
+    target = mod.desired(p)
+    create = mod.request(LegacyModels.CreateGovernanceInstancesRequest, LegacyModels, p, target)
+    assert json.loads(create.GovernanceInstances[0].raw)["Host"] == "10.0.0.3"
+    current = dict(target, Id="service-instance-1")
+    delete = mod.delete_request(LegacyModels, p, current)
+    assert json.loads(delete.GovernanceInstances[0].raw)["Id"] == "service-instance-1"
+
+
+def test_governance_instance_metadata_comparison_ignores_order_and_read_only_fields():
+    expected = [{"Key": "zone", "Value": "a"}, {"Key": "stage", "Value": "prod"}]
+    actual = [{"Key": "stage", "Value": "prod", "CreateTime": "now"}, {"Key": "zone", "Value": "a"}]
+    assert mod.contains(actual, expected)

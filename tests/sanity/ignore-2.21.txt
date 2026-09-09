@@ -693,9 +693,7 @@ tests/unit/plugins/modules/test_tcm_access_log.py pep8:E501
 tests/unit/plugins/modules/test_tcm_access_log.py pylint:multiple-statements
 tests/unit/plugins/modules/test_tcm_prometheus.py pep8:E302
 tests/unit/plugins/modules/test_tcm_prometheus.py pylint:multiple-statements
-tests/unit/plugins/modules/test_tcm_tracing.py pep8:E302
 tests/unit/plugins/modules/test_tcm_tracing.py pylint:multiple-statements
-tests/unit/plugins/modules/test_tione_model_service_diagnostics_info.py pep8:E302
 tests/unit/plugins/modules/test_tione_model_service_diagnostics_info.py pylint:multiple-statements
 tests/unit/plugins/modules/test_tione_notebook.py pylint:unnecessary-comprehension
 tests/unit/plugins/modules/test_tse_cloud_native_gateway.py pep8:E225
@@ -718,8 +716,6 @@ tests/unit/plugins/modules/test_tse_gateway_route.py pep8:E225
 tests/unit/plugins/modules/test_tse_gateway_route.py pep8:E231
 tests/unit/plugins/modules/test_tse_gateway_route.py pep8:E501
 tests/unit/plugins/modules/test_tse_gateway_route.py pylint:multiple-statements
-tests/unit/plugins/modules/test_tse_gateway_runtime_info.py pep8:E301
-tests/unit/plugins/modules/test_tse_gateway_runtime_info.py pylint:multiple-statements
 tests/unit/plugins/modules/test_tse_gateway_secret_key.py pep8:E231
 tests/unit/plugins/modules/test_tse_gateway_secret_key.py pep8:E501
 tests/unit/plugins/modules/test_tse_gateway_server_group.py pep8:E225
@@ -740,8 +736,6 @@ tests/unit/plugins/modules/test_tse_governance_service.py pep8:E501
 tests/unit/plugins/modules/test_tse_sre_instance.py pep8:E225
 tests/unit/plugins/modules/test_tse_sre_instance.py pep8:E231
 tests/unit/plugins/modules/test_tse_sre_instance.py pylint:multiple-statements
-tests/unit/plugins/modules/test_tse_sre_topology_info.py pep8:E306
-tests/unit/plugins/modules/test_tse_sre_topology_info.py pylint:multiple-statements
 tests/unit/plugins/modules/test_tsf_application_config.py pep8:E501
 tests/unit/plugins/modules/test_tsf_application_config_release.py pep8:E501
 tests/unit/plugins/modules/test_tsf_cluster.py pep8:E225

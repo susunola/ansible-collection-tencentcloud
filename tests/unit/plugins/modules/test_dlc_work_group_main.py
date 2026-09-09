@@ -270,3 +270,28 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_dlc_work_group.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyRequest(object):
+    pass
+
+
+class LegacyFilter(object):
+    pass
+
+
+LegacyModels = type("LegacyModels", (), {"DescribeWorkGroupsRequest": LegacyRequest, "DeleteWorkGroupRequest": LegacyRequest, "Filter": LegacyFilter})
+
+
+def test_describe_request_supports_exact_id_and_pagination():
+    request = mod.describe_request(LegacyModels, {"work_group_id": 42, "name": None}, 200)
+    assert (request.WorkGroupId, request.Offset, request.Limit) == (42, 200, 100)
+
+
+def test_delete_request_is_narrowly_scoped():
+    assert mod.delete_request(LegacyModels, 42).WorkGroupIds == [42]

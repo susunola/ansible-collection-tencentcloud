@@ -290,3 +290,18 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_cls_logset.py)
+# ---------------------------------------------------------------------------
+
+
+def test_request_builders():
+    models = FakeModels()
+    create = mod.build_create_request(models, "prod", {"env": "prod"})
+    assert create.LogsetName == "prod"
+    assert create.Tags[0].Key == "env"
+    update = mod.build_update_request(models, "logset-1", "prod-v2", {})
+    assert update.LogsetId == "logset-1"
+    assert mod.build_delete_request(models, "logset-1").LogsetId == "logset-1"

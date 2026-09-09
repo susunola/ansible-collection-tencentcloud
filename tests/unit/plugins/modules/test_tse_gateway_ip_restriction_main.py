@@ -255,3 +255,33 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_gateway_policies.py)
+# ---------------------------------------------------------------------------
+
+
+class _PolicyRequest(object):
+    pass
+
+
+def test_ip_request_maps_exact_policy():
+    p = {"gateway_id": "g1", "scope": "service", "resource_id": "s1"}
+    target = {"Enabled": True, "RestrictionType": "whiteList", "AddressList": ["10.0.0.0/8"]}
+    request = mod.request(_PolicyRequest, p, target)
+    assert request.GatewayId == "g1"
+    assert request.SourceType == "service"
+    assert request.SourceId == "s1"
+    assert request.Enabled is True
+    assert request.RestrictionType == "whiteList"
+    assert request.AddressList == ["10.0.0.0/8"]
+
+
+def test_ip_delete_request_maps_identity_only():
+    p = {"gateway_id": "g1", "scope": "route", "resource_id": "r1"}
+    request = mod.request(_PolicyRequest, p)
+    assert request.GatewayId == "g1"
+    assert request.SourceType == "route"
+    assert request.SourceId == "r1"
+    assert not hasattr(request, "AddressList")

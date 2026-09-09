@@ -272,3 +272,18 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_postgresql_account.py)
+# ---------------------------------------------------------------------------
+
+
+def test_request_builders():
+    models = FakeModels()
+    params = {"instance_id": "postgres-1", "username": "app", "password": "secret", "account_type": "normal", "remark": "application", "cam_auth": False}
+    create = mod.build_create_request(models, params)
+    assert create.UserName == "app"
+    assert create.Type == "normal"
+    assert mod.build_password_request(models, "postgres-1", "app", "next").Password == "next"
+    assert mod.build_delete_request(models, "postgres-1", "app").UserName == "app"

@@ -376,3 +376,37 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_gateway_public_network.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyValue(object):
+    def from_json_string(self, raw):
+        self.raw = raw
+
+
+class LegacyFilter(object):
+    pass
+
+
+class LegacyModels(object):
+    CreateCloudNativeAPIGatewayPublicNetworkRequest = LegacyValue
+    DescribeNativeGatewayServerGroupsRequest = LegacyValue
+    Filter = LegacyFilter
+
+
+def test_public_network_payload_and_access_control_comparison():
+    p = {
+        "gateway_id": "g1",
+        "group_id": "grp1",
+        "config": {"InternetMaxBandwidthOut": 20, "MultiZoneFlag": True},
+        "access_control": {"Mode": "Whitelist", "CidrWhiteList": ["10.0.0.0/8"]},
+    }
+    assert '"GroupId": "grp1"' in mod.create_request(LegacyModels, p).raw
+    target = mod.desired(p)
+    assert mod.contains(dict(target, Status="Open"), target)
+    lookup = mod.group_request(LegacyModels, {"gateway_id": "g1", "group_name": "workers"})
+    assert lookup.Filters[0].Values == ["workers"]

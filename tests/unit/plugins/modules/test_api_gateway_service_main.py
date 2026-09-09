@@ -297,3 +297,40 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_api_gateway_service.py)
+# ---------------------------------------------------------------------------
+
+
+def test_request_builders():
+    models = FakeModels()
+    params = {
+        "name": "orders",
+        "description": "order APIs",
+        "protocol": "http&https",
+        "network_types": ["OUTER"],
+        "ip_version": "IPv4",
+        "vpc_id": None,
+        "instance_id": None,
+        "tags": {"env": "prod"},
+    }
+    create = mod.build_create_request(models, params)
+    assert create.ServiceName == "orders"
+    assert create.NetTypes == ["OUTER"]
+    update = mod.build_update_request(models, "service-1", params)
+    assert update.ServiceId == "service-1"
+    assert mod.build_delete_request(models, "service-1").ServiceId == "service-1"
+
+
+def test_find_service_treats_not_found_as_absent(monkeypatch):
+    class Module:
+        def sdk_call(self, operation, request):
+            raise RuntimeError("missing")
+
+    class Client:
+        DescribeService = object()
+
+    monkeypatch.setattr(mod, "is_not_found", lambda exc: True)
+    assert mod.find_service(Module(), Client(), FakeModels(), "service-1", None) is None

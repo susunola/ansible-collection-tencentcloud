@@ -306,3 +306,28 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_waf_ip_access_control.py)
+# ---------------------------------------------------------------------------
+
+
+def test_request_builders():
+    models = FakeModels()
+    params = {
+        "rule_id": 123,
+        "domain": "api.example.com",
+        "action": "block",
+        "ip_list": ["203.0.113.0/24"],
+        "note": "abuse",
+        "valid_until": 0,
+        "instance_id": "waf-1",
+        "edition": "sparta-waf",
+    }
+    create = mod.build_create_request(models, params)
+    assert create.ActionType == 42
+    assert create.IpList == ["203.0.113.0/24"]
+    update = mod.build_update_request(models, params)
+    assert update.RuleId == 123
+    assert mod.build_delete_request(models, params).Items == ["123"]

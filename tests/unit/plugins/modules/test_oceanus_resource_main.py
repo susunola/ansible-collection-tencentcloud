@@ -360,3 +360,32 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_oceanus_resource.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyModel(object):
+    def from_json_string(self, value):
+        self.value = value
+
+
+class LegacyModels(object):
+    ResourceLoc = LegacyModel
+    CreateResourceRequest = type("LegacyRequest", (), {})
+
+
+def test_create_request_preserves_workspace_and_initial_version_metadata():
+    p = {
+        "name": "app",
+        "workspace_id": "space-1",
+        "resource_location": {"StorageType": 1},
+        "resource_type": 1,
+        "remark": "r",
+        "version_remark": "v1",
+        "folder_id": "root",
+    }
+    r = mod.create_request(LegacyModels, p)
+    assert r.Name == "app" and r.WorkSpaceId == "space-1" and r.ResourceConfigRemark == "v1"

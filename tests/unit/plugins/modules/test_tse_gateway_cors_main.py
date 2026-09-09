@@ -277,3 +277,51 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_gateway_policies.py)
+# ---------------------------------------------------------------------------
+
+
+class _Value(object):
+    pass
+
+
+def test_cors_defaults_and_request_identity():
+    p = {"gateway_id": "g1", "scope": "route", "resource_id": "r1"}
+    target = mod.target_config(p, None)
+    assert target["Enabled"] is True
+    assert target["Origins"] == []
+    assert target["Methods"] == []
+    request = mod.request(_Value, p, target)
+    assert request.GatewayId == "g1"
+    assert request.SourceType == "route"
+    assert request.SourceId == "r1"
+    assert request.Enabled is True
+    assert request.Origins == []
+
+
+def test_cors_request_maps_identity_without_target():
+    p = {"gateway_id": "g1", "scope": "service", "resource_id": "svc-1"}
+    request = mod.request(_Value, p)
+    assert request.GatewayId == "g1"
+    assert request.SourceType == "service"
+    assert request.SourceId == "svc-1"
+
+
+def test_cors_target_supplied_fields_override_defaults():
+    p = {"gateway_id": "g1", "scope": "route", "resource_id": "r1", "methods": ["GET"], "credentials": True}
+    target = mod.target_config(p, None)
+    assert target["Methods"] == ["GET"]
+    assert target["Credentials"] is True
+    assert target["Enabled"] is True
+
+
+def test_cors_target_merges_unsupplied_fields_from_current():
+    current = {"Enabled": True, "Origins": ["https://app.example.com"], "MaxAge": 600}
+    p = {"gateway_id": "g1", "scope": "route", "resource_id": "r1", "methods": ["PUT"]}
+    target = mod.target_config(p, current)
+    assert target["Methods"] == ["PUT"]
+    assert target["Origins"] == ["https://app.example.com"]
+    assert target["MaxAge"] == 600

@@ -401,3 +401,55 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "gateway unreachable" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_gateway_certificate.py)
+# ---------------------------------------------------------------------------
+
+
+def test_ssl_create_payload_excludes_private_material():
+    p = {
+        "gateway_id": "g1",
+        "name": "api",
+        "cert_source": "ssl",
+        "ssl_certificate_id": "ssl1",
+        "bind_domains": ["api.example.com"],
+        "cert_type": "SVR",
+        "cert_usage": "SERVER",
+    }
+    payload = mod.create_payload(p)
+    assert payload["CertId"] == "ssl1" and "Key" not in payload
+
+
+def test_native_modify_requires_explicit_material_from_params():
+    p = {
+        "gateway_id": "g1",
+        "name": None,
+        "bind_domains": None,
+        "cert_source": None,
+        "ssl_certificate_id": None,
+        "private_key": "private",
+        "certificate": "public",
+    }
+    payload = mod.modify_payload(p, {"Id": "c1", "Name": "api", "BindDomains": [], "CertSource": "native", "Crt": "old"})
+    assert payload["Key"] == "private" and payload["Crt"] == "public"
+
+
+def test_private_key_is_always_scrubbed():
+    assert mod.scrub({"Cert": {"Key": "private", "Crt": "public"}}) == {"Cert": {"Crt": "public"}}
+
+
+class LegacyValue(object):
+    pass
+
+
+class LegacyModels(object):
+    UpdateCloudNativeAPIGatewayCertificateInfoRequest = LegacyValue
+
+
+def test_metadata_request_does_not_require_certificate_material():
+    value = mod.metadata_request(
+        LegacyModels, {"gateway_id": "g1", "name": "renamed", "bind_domains": ["api.example.com"]}, {"Id": "c1", "Name": "old", "BindDomains": []}
+    )
+    assert (value.GatewayId, value.Id, value.Name, value.BindDomains) == ("g1", "c1", "renamed", ["api.example.com"])

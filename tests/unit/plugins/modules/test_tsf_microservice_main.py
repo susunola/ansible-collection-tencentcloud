@@ -305,3 +305,19 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tsf_microservice.py)
+# ---------------------------------------------------------------------------
+
+
+def test_microservice_maps_managed_fields():
+    p = {"namespace_id": "ns-1", "name": "payments", "description": "managed"}
+    assert mod.desired(p) == {"NamespaceId": "ns-1", "MicroserviceName": "payments", "MicroserviceDesc": "managed"}
+
+
+def test_microservice_comparison_limits_updates_to_supported_fields():
+    target = {"NamespaceId": "ns-1", "MicroserviceName": "orders", "MicroserviceDesc": "managed"}
+    current = dict(target, MicroserviceId="ms-1", RunInstanceCount=3)
+    assert mod.comparable(current, target) == {"NamespaceId": "ns-1", "MicroserviceName": "orders", "MicroserviceDesc": "managed"}

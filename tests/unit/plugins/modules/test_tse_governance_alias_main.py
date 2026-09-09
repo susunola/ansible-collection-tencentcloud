@@ -20,6 +20,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import copy
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -311,3 +312,43 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+# ---------------------------------------------------------------------------
+# legacy helper regression tests (folded from test_tse_governance_alias.py)
+# ---------------------------------------------------------------------------
+
+
+class LegacyValue(object):
+    def from_json_string(self, raw):
+        self.raw = raw
+
+
+class LegacyDeleteValue(object):
+    pass
+
+
+class LegacyModels(object):
+    CreateGovernanceAliasRequest = LegacyValue
+    ModifyGovernanceAliasRequest = LegacyValue
+    DeleteGovernanceAliasesRequest = LegacyDeleteValue
+    GovernanceAlias = LegacyValue
+
+
+def test_governance_alias_requests_map_full_lifecycle():
+    p = {"instance_id": "ins1", "alias": "orders-api", "alias_namespace": "shared", "service": "orders", "namespace": "production", "comment": "stable"}
+    target = mod.desired(p)
+    assert json.loads(mod.write_request(LegacyModels.CreateGovernanceAliasRequest, LegacyModels, p, target).raw)["Service"] == "orders"
+    delete = mod.write_request(LegacyModels.DeleteGovernanceAliasesRequest, LegacyModels, p, target)
+    assert delete.InstanceId == "ins1" and json.loads(delete.GovernanceAliases[0].raw)["AliasNamespace"] == "shared"
+
+
+def test_governance_alias_update_preserves_unspecified_fields():
+    p = {"alias": "orders-api", "alias_namespace": "shared", "service": None, "namespace": None, "comment": "new"}
+    assert mod.desired(p, {"Service": "orders", "Namespace": "production", "Comment": "old"}) == {
+        "Alias": "orders-api",
+        "AliasNamespace": "shared",
+        "Service": "orders",
+        "Namespace": "production",
+        "Comment": "new",
+    }
