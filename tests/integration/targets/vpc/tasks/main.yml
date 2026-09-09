@@ -1,0 +1,90 @@
+---
+# Standalone end-to-end coverage for the vpc flagship module:
+# provision -> read-back (vpc_info by id) -> idempotency -> check-mode
+# delete -> delete, each step asserted.
+#
+# VPCs are free of charge, so unlike the billed-resource targets this one
+# runs unconditionally when invoked. The network scenario target already
+# exercises vpc as a dependency of subnet / route_table / eip flows; this
+# dedicated target keeps the flagship module runnable on its own and
+# verifies the by-id read-back and delete paths with no other product
+# involved. The CIDR 10.97.0.0/16 stays clear of the 10.99.0.0/16 block
+# used by the network target so both may run in the same account/region.
+- name: VPC end-to-end
+  vars:
+    region: "{{ tencentcloud_region }}"
+    run_id: "{{ 99999999 | random }}"
+    vpc_name: "ansible-vpc-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ region }}"
+  block:
+    - name: Create a VPC
+      susunola.tencentcloud.vpc:
+        state: present
+        name: "{{ vpc_name }}"
+        cidr_block: 10.97.0.0/16
+      register: vpc_create
+
+    - name: Creation reports changed with a VPC id
+      ansible.builtin.assert:
+        that:
+          - vpc_create is changed
+          - vpc_create.vpc.VpcId is defined
+
+    - name: Read the VPC back by id
+      susunola.tencentcloud.vpc_info:
+        vpc_ids:
+          - "{{ vpc_create.vpc.VpcId }}"
+      register: vpc_query
+
+    - name: Read-back returns exactly the created VPC
+      ansible.builtin.assert:
+        that:
+          - vpc_query.vpcs | length == 1
+          - vpc_query.vpcs[0].VpcId == vpc_create.vpc.VpcId
+          - vpc_query.vpcs[0].VpcName == vpc_name
+
+    - name: Create the same VPC again (idempotency)
+      susunola.tencentcloud.vpc:
+        state: present
+        name: "{{ vpc_name }}"
+        cidr_block: 10.97.0.0/16
+      register: vpc_second
+
+    - name: Second run reports no change and keeps the same VPC
+      ansible.builtin.assert:
+        that:
+          - vpc_second is not changed
+          - vpc_second.vpc.VpcId == vpc_create.vpc.VpcId
+
+    - name: Check deletion without writing
+      susunola.tencentcloud.vpc:
+        state: absent
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+      check_mode: true
+      register: vpc_checked
+
+    - name: Check mode reports a change
+      ansible.builtin.assert:
+        that:
+          - vpc_checked is changed
+
+    - name: Delete the VPC
+      susunola.tencentcloud.vpc:
+        state: absent
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+      register: vpc_delete
+
+    - name: Deletion reports changed
+      ansible.builtin.assert:
+        that:
+          - vpc_delete is changed
+
+  always:
+    - name: Delete the VPC if the run failed mid-way
+      susunola.tencentcloud.vpc:
+        state: absent
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+      when: vpc_create is defined and vpc_create.vpc is defined
+      ignore_errors: true

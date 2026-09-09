@@ -1,0 +1,163 @@
+---
+# End-to-end coverage for tke_cluster (flagship, P0-02): provision (in a
+# throwaway VPC / subnet) -> read-back (tke_cluster_info by id) -> poll to
+# Running -> idempotency -> delete, each step asserted.
+#
+# Billing: a managed cluster bills while it exists and building one takes
+# 10-20 minutes, so this target only runs for real when the operator opts
+# in with TENCENTCLOUD_RUN_BILLED_TARGETS=1. Without it the target reports
+# that it was skipped. CreateCluster returns as soon as the build is
+# accepted, so the read-back runs immediately while the delete path first
+# polls tke_cluster_info until ClusterStatus is Running (the module itself
+# exposes no waiter). The 10.42/10.43 CIDRs stay clear of the throwaway
+# VPC's 10.95.0.0/16 and of the blocks used by the vpc / subnet / network
+# targets. Deletion keeps any instances (none are created here) and is
+# queued by the API; a killed run may leave a cluster behind that a
+# re-run of this target deletes by the same name prefix convention.
+- name: Read TKE cluster integration inputs
+  ansible.builtin.set_fact:
+    run_billed_targets: "{{ lookup('env', 'TENCENTCLOUD_RUN_BILLED_TARGETS') | default('0', true) }}"
+    tke_cluster_version: "{{ lookup('env', 'TENCENTCLOUD_TKE_CLUSTER_VERSION') | default('', true) }}"
+
+- name: Explain skipped TKE cluster integration
+  ansible.builtin.debug:
+    msg: >-
+      Set TENCENTCLOUD_RUN_BILLED_TARGETS=1 to run this target. A managed
+      TKE cluster bills while it exists and takes 10-20 minutes to build,
+      so the target stays skipped until an operator opts in. The cluster
+      version can be pinned with TENCENTCLOUD_TKE_CLUSTER_VERSION; when it
+      is unset the platform default is used.
+  when: run_billed_targets != '1'
+
+- name: TKE cluster end-to-end
+  vars:
+    region: "{{ tencentcloud_region }}"
+    zone: "{{ tencentcloud_zone }}"
+    run_id: "{{ 99999999 | random }}"
+    vpc_name: "ansible-tke-cluster-it-vpc-{{ run_id }}"
+    subnet_name: "ansible-tke-cluster-it-subnet-{{ run_id }}"
+    cluster_name: "ansible-tke-cluster-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ region }}"
+  when: run_billed_targets == '1'
+  block:
+    - name: Create a throwaway VPC for the cluster
+      susunola.tencentcloud.vpc:
+        state: present
+        name: "{{ vpc_name }}"
+        cidr_block: 10.95.0.0/16
+      register: vpc_create
+
+    - name: VPC creation reports changed with a VPC id
+      ansible.builtin.assert:
+        that:
+          - vpc_create is changed
+          - vpc_create.vpc.VpcId is defined
+
+    - name: Create a subnet for the cluster masters
+      susunola.tencentcloud.subnet:
+        state: present
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        name: "{{ subnet_name }}"
+        cidr_block: 10.95.1.0/24
+        zone: "{{ zone }}"
+      register: subnet_create
+
+    - name: Subnet creation reports changed with a subnet id
+      ansible.builtin.assert:
+        that:
+          - subnet_create is changed
+          - subnet_create.subnet.SubnetId is defined
+
+    - name: Create the managed cluster
+      susunola.tencentcloud.tke_cluster:
+        state: present
+        name: "{{ cluster_name }}"
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+        cluster_version: "{{ tke_cluster_version if tke_cluster_version else omit }}"
+        cluster_cidr: 10.42.0.0/16
+        service_cidr: 10.43.0.0/16
+      register: cluster_create
+
+    - name: Creation reports changed with a cluster id
+      ansible.builtin.assert:
+        that:
+          - cluster_create is changed
+          - cluster_create.cluster.ClusterId is defined
+          - cluster_create.cluster.ClusterName == cluster_name
+
+    - name: Read the cluster back by id
+      susunola.tencentcloud.tke_cluster_info:
+        cluster_ids:
+          - "{{ cluster_create.cluster.ClusterId }}"
+      register: cluster_query
+
+    - name: Read-back returns exactly the created cluster
+      ansible.builtin.assert:
+        that:
+          - cluster_query.clusters | length == 1
+          - cluster_query.clusters[0].ClusterId == cluster_create.cluster.ClusterId
+          - cluster_query.clusters[0].ClusterName == cluster_name
+
+    - name: Wait for the cluster to finish building
+      susunola.tencentcloud.tke_cluster_info:
+        cluster_ids:
+          - "{{ cluster_create.cluster.ClusterId }}"
+      register: cluster_poll
+      until: cluster_poll.clusters | length > 0 and cluster_poll.clusters[0].ClusterStatus == 'Running'
+      retries: 60
+      delay: 30
+
+    - name: Run the same provisioning task again (idempotency)
+      susunola.tencentcloud.tke_cluster:
+        state: present
+        name: "{{ cluster_name }}"
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+        cluster_version: "{{ tke_cluster_version if tke_cluster_version else omit }}"
+        cluster_cidr: 10.42.0.0/16
+        service_cidr: 10.43.0.0/16
+      register: cluster_second
+
+    - name: Second run reports no change and keeps the same cluster
+      ansible.builtin.assert:
+        that:
+          - cluster_second is not changed
+          - cluster_second.cluster.ClusterId == cluster_create.cluster.ClusterId
+
+    - name: Delete the cluster, retaining any instances
+      susunola.tencentcloud.tke_cluster:
+        state: absent
+        cluster_id: "{{ cluster_create.cluster.ClusterId }}"
+        instance_delete_mode: retain
+      register: cluster_delete
+
+    - name: Deletion reports changed
+      ansible.builtin.assert:
+        that:
+          - cluster_delete is changed
+
+  always:
+    - name: Delete the cluster if the run failed mid-way
+      susunola.tencentcloud.tke_cluster:
+        state: absent
+        cluster_id: "{{ cluster_create.cluster.ClusterId }}"
+        instance_delete_mode: retain
+      when: cluster_create is defined and cluster_create.cluster is defined
+      ignore_errors: true
+
+    - name: Delete the subnet once the cluster is gone
+      susunola.tencentcloud.subnet:
+        state: absent
+        subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+      when: subnet_create is defined and subnet_create.subnet is defined
+      ignore_errors: true
+
+    - name: Delete the throwaway VPC
+      susunola.tencentcloud.vpc:
+        state: absent
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+      when: vpc_create is defined and vpc_create.vpc is defined
+      ignore_errors: true

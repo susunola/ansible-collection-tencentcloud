@@ -18,3 +18,9 @@ targets:
   cls_log_pipeline: {cost: low, modules: [cls_logset, cls_topic]}
   api_gateway_service: {cost: low, modules: [api_gateway_service]}
   tat_command: {cost: free, modules: [tat_command]}
+  # P0-01 / P0-02 flagship dedicated targets.
+  cvm_instance: {cost: medium, modules: [cvm_instance]}
+  vpc: {cost: free, modules: [vpc]}
+  subnet: {cost: free, modules: [subnet]}
+  cdb_instance: {cost: high, modules: [cdb_instance]}
+  tke_cluster: {cost: high, modules: [tke_cluster]}

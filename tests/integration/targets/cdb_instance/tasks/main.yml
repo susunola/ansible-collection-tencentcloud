@@ -1,0 +1,118 @@
+---
+# End-to-end coverage for cdb_instance (flagship, P0-02): provision ->
+# read-back (cdb_instance_info by id) -> idempotency -> delete, each step
+# asserted.
+#
+# Billing: a MySQL instance bills by the second while it exists, and
+# provisioning is async (several minutes), so this target only runs for
+# real when the operator opts in with TENCENTCLOUD_RUN_BILLED_TARGETS=1.
+# Without it the target reports that it was skipped. state=absent
+# *isolates* the instance (billing stops) rather than destroying it; the
+# isolated instance stays in the recycle bin and is purged by Tencent
+# Cloud after the retention period. The waiter budget is raised well
+# beyond the fragment default because instance delivery is slow.
+#
+# The root password is derived from the run id so it is stable across the
+# tasks of one run (idempotency compares like-for-like) and never touches
+# a file on the controller.
+- name: Read CDB instance integration inputs
+  ansible.builtin.set_fact:
+    run_billed_targets: "{{ lookup('env', 'TENCENTCLOUD_RUN_BILLED_TARGETS') | default('0', true) }}"
+    cdb_engine_version: "{{ lookup('env', 'TENCENTCLOUD_CDB_ENGINE_VERSION') | default('8.0', true) }}"
+    cdb_memory: "{{ lookup('env', 'TENCENTCLOUD_CDB_MEMORY') | default('8000', true) }}"
+    cdb_volume: "{{ lookup('env', 'TENCENTCLOUD_CDB_VOLUME') | default('100', true) }}"
+
+- name: Explain skipped CDB instance integration
+  ansible.builtin.debug:
+    msg: >-
+      Set TENCENTCLOUD_RUN_BILLED_TARGETS=1 to run this target. A MySQL
+      instance bills by the second and provisioning takes minutes, so the
+      target stays skipped until an operator opts in. Engine version,
+      memory (MB) and volume (GB) can be tuned with TENCENTCLOUD_CDB_ENGINE_VERSION,
+      TENCENTCLOUD_CDB_MEMORY and TENCENTCLOUD_CDB_VOLUME.
+  when: run_billed_targets != '1'
+
+- name: CDB instance end-to-end
+  vars:
+    region: "{{ tencentcloud_region }}"
+    zone: "{{ tencentcloud_cdb_zone }}"
+    run_id: "{{ 99999999 | random }}"
+    db_name: "ansible-cdb-instance-it-{{ run_id }}"
+    db_password: "TccIt!{{ run_id }}aZ"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ region }}"
+  when: run_billed_targets == '1'
+  block:
+    - name: Provision the MySQL instance
+      susunola.tencentcloud.cdb_instance:
+        state: present
+        name: "{{ db_name }}"
+        zone: "{{ zone }}"
+        engine_version: "{{ cdb_engine_version }}"
+        memory: "{{ cdb_memory | int }}"
+        volume: "{{ cdb_volume | int }}"
+        password: "{{ db_password }}"
+        waiter_timeout: 1800
+        waiter_delay: 20
+      register: db_create
+
+    - name: Provisioning reports changed with an instance id
+      ansible.builtin.assert:
+        that:
+          - db_create is changed
+          - db_create.instance.InstanceId is defined
+          - db_create.instance.InstanceName == db_name
+
+    - name: Read the instance back by id
+      susunola.tencentcloud.cdb_instance_info:
+        instance_ids:
+          - "{{ db_create.instance.InstanceId }}"
+      register: db_query
+
+    - name: Read-back returns exactly the created instance
+      ansible.builtin.assert:
+        that:
+          - db_query.instances | length == 1
+          - db_query.instances[0].InstanceId == db_create.instance.InstanceId
+          - db_query.instances[0].InstanceName == db_name
+
+    - name: Run the same provisioning task again (idempotency)
+      susunola.tencentcloud.cdb_instance:
+        state: present
+        name: "{{ db_name }}"
+        zone: "{{ zone }}"
+        engine_version: "{{ cdb_engine_version }}"
+        memory: "{{ cdb_memory | int }}"
+        volume: "{{ cdb_volume | int }}"
+        password: "{{ db_password }}"
+        waiter_timeout: 1800
+        waiter_delay: 20
+      register: db_second
+
+    - name: Second run reports no change and keeps the same instance
+      ansible.builtin.assert:
+        that:
+          - db_second is not changed
+          - db_second.instance.InstanceId == db_create.instance.InstanceId
+
+    - name: Isolate the instance (stops billing)
+      susunola.tencentcloud.cdb_instance:
+        state: absent
+        instance_id: "{{ db_create.instance.InstanceId }}"
+        waiter_timeout: 1800
+        waiter_delay: 20
+      register: db_delete
+
+    - name: Isolation reports changed
+      ansible.builtin.assert:
+        that:
+          - db_delete is changed
+
+  always:
+    - name: Isolate the instance if the run failed mid-way
+      susunola.tencentcloud.cdb_instance:
+        state: absent
+        instance_id: "{{ db_create.instance.InstanceId }}"
+      when: db_create is defined and db_create.instance is defined
+      ignore_errors: true

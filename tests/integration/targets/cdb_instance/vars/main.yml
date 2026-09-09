@@ -1,0 +1,5 @@
+---
+tencentcloud_region: "{{ lookup('env', 'TENCENTCLOUD_REGION') | default('ap-guangzhou', true) }}"
+# CDB availability differs from CVM; ap-guangzhou-3 is the zone used by the
+# module examples and has MySQL 8.0 capacity in the default region.
+tencentcloud_cdb_zone: "{{ lookup('env', 'TENCENTCLOUD_CDB_ZONE') | default('ap-guangzhou-3', true) }}"

@@ -1,0 +1,181 @@
+---
+# End-to-end coverage for cvm_instance (flagship template, P0-01):
+# provision -> read-back -> idempotency -> delete, each step asserted.
+#
+# Billing: instances are POSTPAID_BY_HOUR and billed by the second while
+# running, so this target only runs for real when an operator supplies a
+# boot image via TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID (any public or private
+# image id of an image that boots in the target region). Without it the
+# target reports that it was skipped. The instance is created in its own
+# throwaway VPC / subnet / security group and terminated in the always
+# block, so a killed run leaks at most one instance; leaked resources are
+# recognisable by the ansible-cvm-instance-it- name prefix.
+#
+# Creation waits for the RUNNING state; the waiter budget is raised from
+# the 120 s fragment default because instance boot can take several minutes
+# on a cold image. The read-back step exercises cvm_instance_info by id.
+- name: Read CVM instance integration inputs
+  ansible.builtin.set_fact:
+    cvm_instance_image_id: "{{ lookup('env', 'TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID') | default('', true) }}"
+    cvm_instance_type: "{{ lookup('env', 'TENCENTCLOUD_CVM_INSTANCE_TYPE') | default('S5.MEDIUM2', true) }}"
+
+- name: Explain skipped CVM instance integration
+  ansible.builtin.debug:
+    msg: >-
+      Set TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID (and optionally
+      TENCENTCLOUD_CVM_INSTANCE_TYPE) to run this target. Booting an
+      instance is billed by the second, so the target stays skipped until
+      an operator opts in.
+  when: cvm_instance_image_id | length == 0
+
+- name: CVM instance end-to-end
+  vars:
+    region: "{{ tencentcloud_region }}"
+    zone: "{{ tencentcloud_zone }}"
+    run_id: "{{ 99999999 | random }}"
+    instance_name: "ansible-cvm-instance-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ region }}"
+  when: cvm_instance_image_id | length > 0
+  block:
+    - name: Create an isolated VPC for the instance
+      susunola.tencentcloud.vpc:
+        state: present
+        name: "ansible-cvm-instance-it-vpc-{{ run_id }}"
+        cidr_block: 10.98.0.0/16
+      register: vpc_create
+
+    - name: VPC creation reports changed with a VPC id
+      ansible.builtin.assert:
+        that:
+          - vpc_create is changed
+          - vpc_create.vpc.VpcId is defined
+
+    - name: Create a subnet in the zone under test
+      susunola.tencentcloud.subnet:
+        state: present
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        name: "ansible-cvm-instance-it-subnet-{{ run_id }}"
+        cidr_block: 10.98.1.0/24
+        zone: "{{ zone }}"
+      register: subnet_create
+
+    - name: Subnet creation reports changed with a subnet id
+      ansible.builtin.assert:
+        that:
+          - subnet_create is changed
+          - subnet_create.subnet.SubnetId is defined
+
+    - name: Create a security group for the instance
+      susunola.tencentcloud.security_group:
+        state: present
+        name: "ansible-cvm-instance-it-sg-{{ run_id }}"
+        description: cvm_instance integration test
+      register: sg_create
+
+    - name: Security group creation reports changed with an id
+      ansible.builtin.assert:
+        that:
+          - sg_create is changed
+          - sg_create.security_group.SecurityGroupId is defined
+
+    - name: Provision the instance from the operator-supplied image
+      susunola.tencentcloud.cvm_instance:
+        state: present
+        instance_name: "{{ instance_name }}"
+        image_id: "{{ cvm_instance_image_id }}"
+        instance_type: "{{ cvm_instance_type }}"
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+        security_group_ids:
+          - "{{ sg_create.security_group.SecurityGroupId }}"
+        instance_charge_type: POSTPAID_BY_HOUR
+        waiter_timeout: 900
+        waiter_delay: 10
+      register: instance_create
+
+    - name: Provisioning reports changed with a RUNNING instance
+      ansible.builtin.assert:
+        that:
+          - instance_create is changed
+          - instance_create.instance.InstanceId is defined
+          - instance_create.instance.InstanceName == instance_name
+          - instance_create.instance.InstanceState == 'RUNNING'
+          - instance_create.instance.ImageId == cvm_instance_image_id
+
+    - name: Read the instance back by id
+      susunola.tencentcloud.cvm_instance_info:
+        instance_ids:
+          - "{{ instance_create.instance.InstanceId }}"
+      register: instance_query
+
+    - name: Read-back returns exactly the created instance
+      ansible.builtin.assert:
+        that:
+          - instance_query.instances | length == 1
+          - instance_query.instances[0].InstanceId == instance_create.instance.InstanceId
+          - instance_query.instances[0].InstanceName == instance_name
+
+    - name: Run the same provisioning task again (idempotency)
+      susunola.tencentcloud.cvm_instance:
+        state: present
+        instance_name: "{{ instance_name }}"
+        image_id: "{{ cvm_instance_image_id }}"
+        instance_type: "{{ cvm_instance_type }}"
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+        security_group_ids:
+          - "{{ sg_create.security_group.SecurityGroupId }}"
+        instance_charge_type: POSTPAID_BY_HOUR
+        waiter_timeout: 900
+        waiter_delay: 10
+      register: instance_second
+
+    - name: Second run reports no change and keeps the same instance
+      ansible.builtin.assert:
+        that:
+          - instance_second is not changed
+          - instance_second.instance.InstanceId == instance_create.instance.InstanceId
+
+    - name: Terminate the instance
+      susunola.tencentcloud.cvm_instance:
+        state: absent
+        instance_id: "{{ instance_create.instance.InstanceId }}"
+        waiter_timeout: 900
+        waiter_delay: 10
+      register: instance_delete
+
+    - name: Termination reports changed
+      ansible.builtin.assert:
+        that:
+          - instance_delete is changed
+
+  always:
+    - name: Terminate the instance if the run failed mid-way
+      susunola.tencentcloud.cvm_instance:
+        state: absent
+        instance_id: "{{ instance_create.instance.InstanceId }}"
+      when: instance_create is defined and instance_create.instance is defined
+      ignore_errors: true
+
+    - name: Delete the security group
+      susunola.tencentcloud.security_group:
+        state: absent
+        security_group_id: "{{ sg_create.security_group.SecurityGroupId }}"
+      when: sg_create is defined and sg_create.security_group is defined
+      ignore_errors: true
+
+    - name: Delete the subnet
+      susunola.tencentcloud.subnet:
+        state: absent
+        subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+      when: subnet_create is defined and subnet_create.subnet is defined
+      ignore_errors: true
+
+    - name: Delete the VPC
+      susunola.tencentcloud.vpc:
+        state: absent
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+      when: vpc_create is defined and vpc_create.vpc is defined
+      ignore_errors: true

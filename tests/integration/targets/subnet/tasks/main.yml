@@ -1,0 +1,103 @@
+---
+# Standalone end-to-end coverage for the subnet flagship module:
+# provision (with a throwaway VPC) -> read-back (subnet_info filtered by
+# vpc-id) -> idempotency -> delete, each step asserted.
+#
+# Subnets and VPCs are free of charge, so the target runs unconditionally
+# when invoked. The network scenario target already exercises subnet as a
+# dependency of route_table / eip flows; this dedicated target keeps the
+# flagship module runnable on its own. The 10.96.0.0/16 block stays clear
+# of the 10.97.0.0/16 (vpc target) and 10.99.0.0/16 (network target)
+# blocks so all three may run in the same account/region.
+- name: Subnet end-to-end
+  vars:
+    region: "{{ tencentcloud_region }}"
+    zone: "{{ tencentcloud_zone }}"
+    run_id: "{{ 99999999 | random }}"
+    vpc_name: "ansible-subnet-it-vpc-{{ run_id }}"
+    subnet_name: "ansible-subnet-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ region }}"
+  block:
+    - name: Create a throwaway VPC for the subnet
+      susunola.tencentcloud.vpc:
+        state: present
+        name: "{{ vpc_name }}"
+        cidr_block: 10.96.0.0/16
+      register: vpc_create
+
+    - name: VPC creation reports changed with a VPC id
+      ansible.builtin.assert:
+        that:
+          - vpc_create is changed
+          - vpc_create.vpc.VpcId is defined
+
+    - name: Create a subnet in the VPC
+      susunola.tencentcloud.subnet:
+        state: present
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        name: "{{ subnet_name }}"
+        cidr_block: 10.96.1.0/24
+        zone: "{{ zone }}"
+      register: subnet_create
+
+    - name: Creation reports changed with a subnet id
+      ansible.builtin.assert:
+        that:
+          - subnet_create is changed
+          - subnet_create.subnet.SubnetId is defined
+
+    - name: Read the subnet back by its VPC
+      susunola.tencentcloud.subnet_info:
+        filters:
+          vpc-id: ["{{ vpc_create.vpc.VpcId }}"]
+      register: subnet_query
+
+    - name: Read-back returns exactly the created subnet
+      ansible.builtin.assert:
+        that:
+          - subnet_query.subnets | length == 1
+          - subnet_query.subnets[0].SubnetId == subnet_create.subnet.SubnetId
+          - subnet_query.subnets[0].SubnetName == subnet_name
+
+    - name: Create the same subnet again (idempotency)
+      susunola.tencentcloud.subnet:
+        state: present
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+        name: "{{ subnet_name }}"
+        cidr_block: 10.96.1.0/24
+        zone: "{{ zone }}"
+      register: subnet_second
+
+    - name: Second run reports no change and keeps the same subnet
+      ansible.builtin.assert:
+        that:
+          - subnet_second is not changed
+          - subnet_second.subnet.SubnetId == subnet_create.subnet.SubnetId
+
+    - name: Delete the subnet
+      susunola.tencentcloud.subnet:
+        state: absent
+        subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+      register: subnet_delete
+
+    - name: Deletion reports changed
+      ansible.builtin.assert:
+        that:
+          - subnet_delete is changed
+
+  always:
+    - name: Delete the subnet if the run failed mid-way
+      susunola.tencentcloud.subnet:
+        state: absent
+        subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+      when: subnet_create is defined and subnet_create.subnet is defined
+      ignore_errors: true
+
+    - name: Delete the throwaway VPC
+      susunola.tencentcloud.vpc:
+        state: absent
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+      when: vpc_create is defined and vpc_create.vpc is defined
+      ignore_errors: true

@@ -343,7 +343,7 @@
         </tr>
         <tr>
           <td class="dim">集成测试 target 数</td>
-          <td class="ours num"><span class="num">21</span></td>
+          <td class="ours num"><span class="num">26</span></td>
           <td class="num">160</td>
           <td class="num">— *</td>
           <td class="num">115</td>
@@ -397,7 +397,7 @@
         <div class="gt">▼ 差距项（需追赶）</div>
         <ul>
           <li><b>生态与信任</b>：Galaxy 下载 415 vs 11.9M–90.9M；需持续 release、inclusion 申请（#89 进行中）与社区口碑积累。</li>
-          <li><b>集成测试深度</b>：21 targets（62 yml）vs amazon 160（690）/ google 115（468）；13 个旗舰模块（cvm_instance / vpc / cdb_instance / redis_instance / tke_cluster / clb_load_balancer / cos_object / scf_function / ckafka_instance / cbs_disk / eip / nat_gateway / subnet）尚无集成 target。</li>
+          <li><b>集成测试深度</b>：26 targets（66 yml）vs amazon 160（690）/ google 115（468）；13 个旗舰模块中 cvm_instance / vpc / subnet / cdb_instance / tke_cluster 已建专属集成 target（provision → assert → cleanup），其余 8 个（redis_instance / clb_load_balancer / cos_object / scf_function / ckafka_instance / cbs_disk / eip / nat_gateway）尚无专属 target，其中 clb_load_balancer、eip 已被 clb_http / network 场景 target 覆盖。</li>
           <li><b>读面缺口</b>：356 个 write 模块没有配套 _info 读面（波及 74 个产品；tse 33 / dlc 26 / cos 16 / tdmq 15 / waf 13 / teo 12 / tsf 12 / monitor 12 居前）——write 之后读不回来，闭环断在读面这一侧。</li>
           <li><b>单测广度有虚点</b>：440 个 write 模块中 111 个没有专属单测文件（25%）；81.44% 覆盖率仍由深测模块拉高，广度分布不均。</li>
           <li><b>ansible-core 门槛</b>：≥2.19 起步（2.16–2.18 已 EOL；三家 ≥2.16/≥2.17 为历史声明，实际 CI 只测最新版）—— 主动对齐演进，换取旧控制节点用户覆盖的部分代价。</li>
