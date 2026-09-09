@@ -320,6 +320,21 @@
     30 skipped; gate 80 held). Commit `c9b16df`; `docs/capability-map.html`
     synchronized to the 09-09 figures. Wave 2 (waf / teo / tsf / monitor /
     config / oceanus / ckafka ...) is tracked as P0-06. **Done**
+56. P0-06 read-surface wave 2 (2026-09-09): closed the 69 write-module read
+    gaps in the config / monitor / oceanus / teo / tsf / waf / tke families —
+    41 curated generator specs added via SDK introspection (config 5, monitor
+    6, oceanus 6, teo 5, tsf 10, waf 9), 2 write modules mapped to an existing
+    generated `_info` (`monitor_alarm_policy_notice` / `monitor_grafana_internet`),
+    and 26 modules judged to have no usable list API (per-domain singleton
+    reads and non-standard paging, each recorded with its reason in
+    KNOWN_NO_LIST_API), lifting the module count 834→**875** (440 write +
+    435 `_info`). Info-coverage audit: covered 189→**230**, mapped 41→**43**,
+    gap 210→**167** (112 backlog + 55 no-list, was 181 backlog + 29 no-list).
+    The new `_info` unit tests raised measured statement coverage to **82%**
+    (10,601 collected / 10,571 passed / 30 skipped; gate 80 held). Commit
+    `b236013`; `docs/capability-map.html` synchronized to the 09-09 figures
+    (`e0d531d`). Wave 3 (ckafka / trabbit / api_gateway / cfw / dts backlog)
+    folds into the next read-surface wave. **Done**
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
@@ -336,8 +351,10 @@ into this roadmap because those numbers change with every coverage batch.
 The 30-item urgent list in [`panorama.html`](panorama.html) is now the execution
 backlog: P0-01/02 flagship integration-target skeletons and the trusted-run
 environment (G1-a/b/c), P0-05/06 read-surface closure (wave 1 tse/dlc/cos/tdmq
-done 2026-09-09 — 85 write gaps closed, audit covered 189 / mapped 41 / gap
-210 = 181 backlog + 29 no-list; wave 2 waf/teo/tsf/monitor etc. is P0-06),
+85 gaps + wave 2 config/monitor/oceanus/teo/tsf/waf/tke 69 gaps done
+2026-09-09 — 154 write gaps closed, audit covered 230 / mapped 43 / gap
+167 = 112 backlog + 55 no-list; the next wave chases the ckafka / trabbit /
+api_gateway / cfw / dts backlog),
 P0-07/08/09 unit-test breadth and shallow
 test upgrades (111 → <60 write modules without dedicated tests), P0-10/11 role
 task tests and contract coverage for generated modules, and the P1 structural
