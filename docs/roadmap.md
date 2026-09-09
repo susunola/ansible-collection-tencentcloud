@@ -310,6 +310,16 @@
     Benchmark docs are synchronized to this state — `docs/panorama.html`,
     `docs/capability-map.html` (09-08 figures), `docs/gap-closure.md`
     (G1b milestone marked reached). **Done**
+55. P0-05 read-surface wave 1 (2026-09-09): closed the 85 write-module read
+    gaps in the tse / dlc / cos / tdmq families — 53 curated generator specs
+    added via SDK introspection (`scripts/generate_info_modules.py`), lifting
+    the module count 781→**834** (440 write + 394 `_info`). Info-coverage
+    audit: covered 165→**189**, mapped 8→**41**, gap 267→**210** (181 backlog +
+    29 judged no-list-API). The new `_info` unit tests raised measured
+    statement coverage to **81.64%** (10,327 collected / 10,297 passed /
+    30 skipped; gate 80 held). Commit `c9b16df`; `docs/capability-map.html`
+    synchronized to the 09-09 figures. Wave 2 (waf / teo / tsf / monitor /
+    config / oceanus / ckafka ...) is tracked as P0-06. **Done**
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
@@ -325,8 +335,10 @@ into this roadmap because those numbers change with every coverage batch.
 
 The 30-item urgent list in [`panorama.html`](panorama.html) is now the execution
 backlog: P0-01/02 flagship integration-target skeletons and the trusted-run
-environment (G1-a/b/c), P0-05/06 read-surface closure (356 write modules without
-an `_info` sibling across 74 products), P0-07/08/09 unit-test breadth and shallow
+environment (G1-a/b/c), P0-05/06 read-surface closure (wave 1 tse/dlc/cos/tdmq
+done 2026-09-09 — 85 write gaps closed, audit covered 189 / mapped 41 / gap
+210 = 181 backlog + 29 no-list; wave 2 waf/teo/tsf/monitor etc. is P0-06),
+P0-07/08/09 unit-test breadth and shallow
 test upgrades (111 → <60 write modules without dedicated tests), P0-10/11 role
 task tests and contract coverage for generated modules, and the P1 structural
 items — plugin_utils / action / filter plugins, docsite, extensions.yml,
