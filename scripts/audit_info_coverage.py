@@ -94,6 +94,18 @@ KNOWN_COVERAGE = {
             "DescribeHaVips returns the HaVipAssociationSet with boundCVM/ENI"
             "per HAVIP",
     ),
+    "monitor_alarm_policy_notice": (
+        ["monitor_alarm_policy_info"],
+        "DescribeAlarmPolicies returns each policy with its"
+        "NoticeIds, HierarchicalNotices and"
+        "NoticeContentTmplBindInfos inline, the exact bindings"
+        "monitor_alarm_policy_notice reconciles",
+    ),
+    "monitor_grafana_internet": (
+        ["monitor_grafana_instance_info"],
+        "DescribeGrafanaInstances returns InternetUrl per instance,"
+        "the exact state monitor_grafana_internet toggles",
+    ),
     "nat_gateway_rule": (
         ["nat_gateway_dnat_rule_info", "nat_gateway_snat_rule_info"],
             "the write module reconciles the DNAT and SNAT rule sets; the"
@@ -251,6 +263,17 @@ KNOWN_COVERAGE = {
 # Write modules that are themselves the read surface, or whose resource has
 # no list API at all; keyed by module name with the reason as value.
 KNOWN_NO_LIST_API = {
+    "config_aggregate_delivery":
+        "DescribeAggregateConfigDeliver returns the account's single"
+        "aggregate-delivery config (detail call, no pagination); no"
+        "free-standing list API enumerates delivery channels",
+    "config_delivery":
+        "DescribeConfigDeliver returns the account's single delivery"
+        "channel (unpaginated singleton); no list API exists",
+    "config_recorder":
+        "DescribeConfigRecorder returns the region's single"
+        "ConfigurationRecorder (Status plus the monitored"
+        "UserConfigResource list); no list API enumerates recorders",
     "cos_bucket_domain":
         "COS bucket custom domain config is a bucket sub-resource read"
         "through the bucket-scoped GET API in module_utils.cos; no"
@@ -310,10 +333,72 @@ KNOWN_NO_LIST_API = {
         "DescribeUserVpcConnection is an engine-network-scoped detail"
         "call returning an unpaginated connection list; no free-standing"
         "list API exists",
+    "monitor_grafana_integration":
+        "DescribeGrafanaIntegrations is an instance-scoped unpaginated"
+        "detail call (requires InstanceId); no free-standing list API"
+        "exists",
+    "monitor_grafana_whitelist":
+        "DescribeGrafanaWhiteList is an instance-scoped singleton"
+        "returning the allowed-IP list (requires InstanceId); no list"
+        "API exists",
+    "monitor_prometheus_alertmanager_config":
+        "DescribePrometheusAlertmanagerConfig is a per-instance singleton"
+        "read (requires InstanceId); no list API exists",
+    "monitor_prometheus_global_notification":
+        "DescribePrometheusGlobalNotification is a per-instance singleton"
+        "read (requires InstanceId); no list API exists",
+    "oceanus_folder":
+        "folders form an organizational tree read through"
+        "DescribeTreeJobs/DescribeTreeResources scoped to a WorkSpaceId;"
+        "no flat list API exists",
+    "oceanus_meta_table":
+        "GetMetaTable returns one meta table by composite identity; no"
+        "list API enumerates meta tables",
+    "teo_security_bot_lite":
+        "DescribeSecurityPolicy returns the per-zone security policy with"
+        "the bot-lite settings inline; no list API enumerates them alone",
+    "teo_security_custom_rules":
+        "DescribeSecurityPolicy returns the per-zone security policy with"
+        "the custom-rule set inline; no list API enumerates custom rules"
+        "alone",
+    "teo_security_exception_rules":
+        "DescribeSecurityPolicy returns the per-zone security policy with"
+        "the exception-rule set inline; no list API enumerates exception"
+        "rules alone",
+    "teo_security_managed_rules":
+        "DescribeSecurityPolicy returns the per-zone security policy with"
+        "the managed-rule set inline; no list API enumerates managed rules"
+        "alone",
+    "teo_security_rate_limiting_rules":
+        "DescribeSecurityPolicy returns the per-zone security policy with"
+        "the rate-limiting rule set inline; no list API enumerates"
+        "rate-limiting rules alone",
+    "teo_security_template_binding":
+        "DescribeSecurityTemplateBindings returns the template-to-entity"
+        "bindings keyed by a template; no list API exists",
+    "teo_web_security_template":
+        "DescribeWebSecurityTemplates is a template-detail call keyed by"
+        "TemplateId; no list API enumerates templates",
     "tke_cluster_kubeconfig":
         "kubeconfig is a per-cluster credential"
         "fetch(DescribeClusterKubeconfig requires a ClusterId); the"
         "moduleitself is the read surface",
+    "tke_addon":
+        "DescribeAddon is a per-cluster/per-addon detail call (requires"
+        "ClusterId and Name); no list API enumerates addons",
+    "tke_backup_storage_location":
+        "DescribeBackupStorageLocations returns the cluster's configured"
+        "backup-storage locations (unpaginated detail); no list API"
+        "exists",
+    "tke_cluster_audit":
+        "audit log switches are per-cluster state read via"
+        "DescribeLogSwitches (requires ClusterId); no list API exists",
+    "tke_cluster_authentication":
+        "DescribeClusterAuthenticationOptions is a per-cluster singleton"
+        "read (requires ClusterId); no list API exists",
+    "tke_cluster_endpoint":
+        "DescribeClusterEndpoints is a per-cluster singleton read"
+        "(requires ClusterId); no list API exists",
     "tse_config_file":
         "config files are scoped to a group and read individually via"
         "DescribeConfigFile (requires a config file id); no free-standing"
@@ -361,6 +446,21 @@ KNOWN_NO_LIST_API = {
     "tse_gateway_waf_protection":
         "WAF protection state is a per-gateway singleton detail"
         "(DescribeWafProtection); no list API exists",
+    "waf_area_ban_rule":
+        "DescribeAreaBanRule is a per-domain singleton rule read"
+        "(requires Domain); no list API exists",
+    "waf_auto_deny":
+        "DescribeWafAutoDenyRules is a per-domain singleton auto-deny"
+        "config read (requires Domain); no list API exists",
+    "waf_ip_access_control":
+        "DescribeIpAccessControl is a per-domain access-control read with"
+        "non-standard paging; no supported list API exists",
+    "waf_protect_group":
+        "DescribeProtectGroup is a per-domain protection-group detail"
+        "read; no supported list API exists",
+    "waf_threat_intelligence":
+        "DescribeWafThreatenIntelligence returns the per-domain singleton"
+        "threat-intel feed config; no list API exists",
 }
 
 # Coverage backlog: write modules whose read surface is not wired up yet.
@@ -407,14 +507,6 @@ KNOWN_GAPS = {
     'cloudaudit_track',
     'cmq_subscription',
     'cmq_topic',
-    'config_aggregate_delivery',
-    'config_aggregator',
-    'config_alarm_policy',
-    'config_compliance_pack',
-    'config_delivery',
-    'config_recorder',
-    'config_remediation',
-    'config_rule',
     'cynosdb_account_privilege',
     'dbbrain_sql_filter',
     'dcdb_account',
@@ -445,30 +537,10 @@ KNOWN_GAPS = {
     'gwlb_target_group_association',
     'gwlb_target_group_instances',
     'mariadb_account_privilege',
-    'monitor_alarm_policy_notice',
-    'monitor_grafana_integration',
-    'monitor_grafana_internet',
-    'monitor_grafana_notification_channel',
-    'monitor_grafana_whitelist',
-    'monitor_prometheus_alert_group',
-    'monitor_prometheus_alertmanager_config',
-    'monitor_prometheus_cluster_agent',
-    'monitor_prometheus_global_notification',
-    'monitor_prometheus_grafana_binding',
-    'monitor_prometheus_record_rule',
-    'monitor_prometheus_scrape_job',
     'mqtt_authorization_policy',
     'mqtt_instance',
     'mqtt_topic',
     'mqtt_user',
-    'oceanus_folder',
-    'oceanus_job',
-    'oceanus_job_config',
-    'oceanus_job_savepoint',
-    'oceanus_meta_table',
-    'oceanus_resource',
-    'oceanus_resource_config',
-    'oceanus_workspace',
     'organization_member_identity',
     'organization_member_policy',
     'organization_node',
@@ -499,56 +571,15 @@ KNOWN_GAPS = {
     'tem_application_deployment',
     'tem_application_service',
     'tem_environment',
-    'teo_acceleration_domain',
-    'teo_dns_record',
-    'teo_origin_group',
-    'teo_security_bot_lite',
-    'teo_security_custom_rules',
-    'teo_security_exception_rules',
-    'teo_security_ip_group',
-    'teo_security_managed_rules',
-    'teo_security_rate_limiting_rules',
-    'teo_security_template_binding',
-    'teo_web_security_template',
-    'teo_zone',
     'tione_model_service_auth_token',
     'tione_model_service_state',
     'tione_model_service_traffic',
-    'tke_addon',
-    'tke_backup_storage_location',
-    'tke_cluster_audit',
-    'tke_cluster_authentication',
-    'tke_cluster_endpoint',
     'trabbit_serverless_binding',
     'trabbit_serverless_exchange',
     'trabbit_serverless_permission',
     'trabbit_serverless_queue',
     'trabbit_serverless_user',
     'trabbit_serverless_vhost',
-    'tsf_application_config',
-    'tsf_application_config_release',
-    'tsf_cluster',
-    'tsf_container_deployment_group',
-    'tsf_lane',
-    'tsf_lane_rule',
-    'tsf_microservice',
-    'tsf_namespace',
-    'tsf_public_config',
-    'tsf_repository',
-    'tsf_vm_deployment_group',
-    'waf_anti_info_leak_rule',
-    'waf_anti_tamper_rule',
-    'waf_area_ban_rule',
-    'waf_attack_white_rule',
-    'waf_auto_deny',
-    'waf_cc_rule',
-    'waf_custom_rule',
-    'waf_custom_white_rule',
-    'waf_host',
-    'waf_ip_access_control',
-    'waf_owasp_white_rule',
-    'waf_protect_group',
-    'waf_threat_intelligence',
 }
 
 

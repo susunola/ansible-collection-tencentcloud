@@ -685,11 +685,15 @@ modules:
   - CreateAggregator
   - DescribeAggregator
   - ListAggregators
+  config_aggregator_info:
+  - ListAggregators
   config_alarm_policy:
   - AddAlarmPolicy
   - DeleteAlarmPolicy
   - ListAlarmPolicy
   - UpdateAlarmPolicy
+  config_alarm_policy_info:
+  - ListAlarmPolicy
   config_compliance_pack:
   - AddCompliancePack
   - DeleteCompliancePack
@@ -697,6 +701,8 @@ modules:
   - ListCompliancePacks
   - UpdateCompliancePack
   - UpdateCompliancePackStatus
+  config_compliance_pack_info:
+  - ListCompliancePacks
   config_delivery:
   - DescribeConfigDeliver
   - UpdateConfigDeliver
@@ -710,12 +716,16 @@ modules:
   - DeleteRemediations
   - ListRemediations
   - UpdateRemediation
+  config_remediation_info:
+  - ListRemediations
   config_rule:
   - AddConfigRule
   - DeleteConfigRule
   - DescribeConfigRule
   - ListConfigRules
   - UpdateConfigRule
+  config_rule_info:
+  - ListConfigRules
   controlcenter_account_factory_baseline_item_info:
   - ListAccountFactoryBaselineItems
   cpdp_merchant_info_for_management_info:
@@ -1557,6 +1567,8 @@ modules:
   - DeleteGrafanaNotificationChannel
   - DescribeGrafanaNotificationChannels
   - UpdateGrafanaNotificationChannel
+  monitor_grafana_notification_channel_info:
+  - DescribeGrafanaNotificationChannels
   monitor_grafana_whitelist:
   - DescribeGrafanaWhiteList
   - UpdateGrafanaWhiteList
@@ -1565,12 +1577,16 @@ modules:
   - DeletePrometheusAlertGroups
   - DescribePrometheusAlertGroups
   - UpdatePrometheusAlertGroup
+  monitor_prometheus_alert_group_info:
+  - DescribePrometheusAlertGroups
   monitor_prometheus_alertmanager_config:
   - DescribePrometheusAlertmanagerConfig
   - ReplacePrometheusAlertmanagerConfig
   monitor_prometheus_cluster_agent:
   - CreatePrometheusClusterAgent
   - DeletePrometheusClusterAgent
+  - DescribePrometheusClusterAgents
+  monitor_prometheus_cluster_agent_info:
   - DescribePrometheusClusterAgents
   monitor_prometheus_global_notification:
   - DescribePrometheusGlobalNotification
@@ -1579,6 +1595,8 @@ modules:
   - BindPrometheusManagedGrafana
   - DescribePrometheusInstances
   - UnbindPrometheusManagedGrafana
+  monitor_prometheus_grafana_binding_info:
+  - DescribePrometheusInstances
   monitor_prometheus_instance:
   - CreatePrometheusMultiTenantInstancePostPayMode
   - DescribePrometheusInstances
@@ -1591,11 +1609,15 @@ modules:
   - DeletePrometheusRecordRuleYaml
   - DescribePrometheusRecordRules
   - ModifyPrometheusRecordRuleYaml
+  monitor_prometheus_record_rule_info:
+  - DescribePrometheusRecordRules
   monitor_prometheus_scrape_job:
   - CreatePrometheusScrapeJob
   - DeletePrometheusScrapeJobs
   - DescribePrometheusScrapeJobs
   - UpdatePrometheusScrapeJob
+  monitor_prometheus_scrape_job_info:
+  - DescribePrometheusScrapeJobs
   mps_person_sample_info:
   - DescribePersonSamples
   mqtt_authorization_policy:
@@ -1687,9 +1709,15 @@ modules:
   - DeleteJobConfigs
   - DescribeJobConfigs
   - DescribeResources
+  oceanus_job_config_info:
+  - DescribeJobConfigs
+  oceanus_job_info:
+  - DescribeJobs
   oceanus_job_savepoint:
   - DescribeJobSavepoint
   - TriggerJobSavepoint
+  oceanus_job_savepoint_info:
+  - DescribeJobSavepoint
   oceanus_meta_table:
   - CreateMetaTable
   - GetMetaTable
@@ -1704,11 +1732,17 @@ modules:
   - DeleteResourceConfigs
   - DescribeResourceConfigs
   - DescribeResourceRelatedJobs
+  oceanus_resource_config_info:
+  - DescribeResourceConfigs
+  oceanus_resource_info:
+  - DescribeResources
   oceanus_workspace:
   - CreateWorkSpace
   - DeleteWorkSpace
   - DescribeWorkSpaces
   - ModifyWorkSpace
+  oceanus_workspace_info:
+  - DescribeWorkSpaces
   omics_application_info:
   - DescribeApplications
   organization_member:
@@ -2340,11 +2374,15 @@ modules:
   - DescribeAccelerationDomains
   - ModifyAccelerationDomain
   - ModifyAccelerationDomainStatuses
+  teo_acceleration_domain_info:
+  - DescribeAccelerationDomains
   teo_dns_record:
   - CreateDnsRecord
   - DeleteDnsRecords
   - DescribeDnsRecords
   - ModifyDnsRecords
+  teo_dns_record_info:
+  - DescribeDnsRecords
   teo_function_info:
   - DescribeFunctions
   teo_origin_group:
@@ -2352,6 +2390,8 @@ modules:
   - DeleteOriginGroup
   - DescribeOriginGroup
   - ModifyOriginGroup
+  teo_origin_group_info:
+  - DescribeOriginGroup
   teo_security_bot_lite:
   - DescribeSecurityPolicy
   - ModifySecurityPolicy
@@ -2367,6 +2407,8 @@ modules:
   - DescribeSecurityIPGroupContent
   - DescribeSecurityIPGroupInfo
   - ModifySecurityIPGroup
+  teo_security_ip_group_info:
+  - DescribeSecurityIPGroupInfo
   teo_security_managed_rules:
   - DescribeSecurityPolicy
   - ModifySecurityPolicy
@@ -2387,6 +2429,8 @@ modules:
   - DescribeZones
   - ModifyZone
   - ModifyZoneStatus
+  teo_zone_info:
+  - DescribeZones
   thpc_cluster:
   - CreateCluster
   - DeleteCluster
@@ -2825,10 +2869,14 @@ modules:
   - DeleteConfig
   - DescribeConfig
   - DescribeConfigs
+  tsf_application_config_info:
+  - DescribeConfigs
   tsf_application_config_release:
   - DescribeConfigReleases
   - ReleaseConfig
   - RevocationConfig
+  tsf_application_config_release_info:
+  - DescribeConfigReleases
   tsf_application_info:
   - DescribeApplications
   tsf_cluster:
@@ -2836,6 +2884,8 @@ modules:
   - DeleteCluster
   - DescribeClusters
   - ModifyCluster
+  tsf_cluster_info:
+  - DescribeClusters
   tsf_container_deployment_group:
   - CreateContainGroup
   - DeleteContainerGroup
@@ -2843,30 +2893,42 @@ modules:
   - DescribeContainerGroups
   - ModifyContainerGroup
   - ModifyContainerReplicas
+  tsf_container_deployment_group_info:
+  - DescribeContainerGroups
   tsf_lane:
   - CreateLane
   - DeleteLane
   - DescribeLanes
   - ModifyLane
+  tsf_lane_info:
+  - DescribeLanes
   tsf_lane_rule:
   - CreateLaneRule
   - DeleteLaneRule
   - DescribeLaneRules
   - ModifyLaneRule
+  tsf_lane_rule_info:
+  - DescribeLaneRules
   tsf_microservice:
   - CreateMicroserviceWithDetailResp
   - DeleteMicroservice
   - DescribeMicroservices
   - ModifyMicroservice
+  tsf_microservice_info:
+  - DescribeMicroservices
   tsf_namespace:
   - CreateNamespace
   - DeleteNamespace
   - DescribeSimpleNamespaces
   - ModifyNamespace
+  tsf_namespace_info:
+  - DescribeSimpleNamespaces
   tsf_public_config:
   - CreatePublicConfig
   - DeletePublicConfig
   - DescribePublicConfig
+  - DescribePublicConfigs
+  tsf_public_config_info:
   - DescribePublicConfigs
   tsf_repository:
   - CreateRepository
@@ -2874,11 +2936,15 @@ modules:
   - DescribeRepositories
   - DescribeRepository
   - UpdateRepository
+  tsf_repository_info:
+  - DescribeRepositories
   tsf_vm_deployment_group:
   - CreateGroup
   - DeleteGroup
   - DescribeGroups
   - ModifyGroup
+  tsf_vm_deployment_group_info:
+  - DescribeGroups
   vcube_resource_info:
   - DescribeVcubeResourcesList
   vdb_instance:
@@ -2961,6 +3027,8 @@ modules:
   - DescribeAntiInfoLeakageRules
   - ModifyAntiInfoLeakRuleStatus
   - ModifyAntiInfoLeakRules
+  waf_anti_info_leak_rule_info:
+  - DescribeAntiInfoLeakageRules
   waf_anti_tamper_rule:
   - AddAntiFakeUrl
   - DeleteAntiFakeUrl
@@ -2968,6 +3036,8 @@ modules:
   - FreshAntiFakeUrl
   - ModifyAntiFakeUrl
   - ModifyAntiFakeUrlStatus
+  waf_anti_tamper_rule_info:
+  - DescribeAntiFakeRules
   waf_area_ban_rule:
   - CreateAreaBanRule
   - DescribeAreaBanRule
@@ -2978,6 +3048,8 @@ modules:
   - DeleteAttackWhiteRule
   - DescribeAttackWhiteRule
   - ModifyAttackWhiteRule
+  waf_attack_white_rule_info:
+  - DescribeAttackWhiteRule
   waf_auto_deny:
   - DescribeWafAutoDenyRules
   - ModifyWafAutoDenyRules
@@ -2985,22 +3057,30 @@ modules:
   - DeleteCCRule
   - DescribeCCRuleList
   - UpsertCCRule
+  waf_cc_rule_info:
+  - DescribeCCRuleList
   waf_custom_rule:
   - AddCustomRule
   - DeleteCustomRule
   - DescribeCustomRuleList
   - ModifyCustomRule
+  waf_custom_rule_info:
+  - DescribeCustomRuleList
   waf_custom_white_rule:
   - AddCustomWhiteRule
   - DeleteCustomWhiteRule
   - DescribeCustomWhiteRule
   - ModifyCustomWhiteRule
   - ModifyCustomWhiteRuleStatus
+  waf_custom_white_rule_info:
+  - DescribeCustomWhiteRule
   waf_host:
   - CreateHost
   - DeleteHost
   - DescribeHost
   - ModifyHost
+  waf_host_info:
+  - DescribeHosts
   waf_instance_info:
   - DescribeInstances
   waf_ip_access_control:
@@ -3013,6 +3093,8 @@ modules:
   - DeleteOwaspWhiteRule
   - DescribeOwaspWhiteRules
   - ModifyOwaspWhiteRule
+  waf_owasp_white_rule_info:
+  - DescribeOwaspWhiteRules
   waf_protect_group:
   - CreateProtectGroup
   - DeleteProtectGroup
