@@ -78,6 +78,17 @@ jobs:
           TENCENTCLOUD_TCR_REGISTRY_ID: ${{ secrets.TENCENTCLOUD_TCR_REGISTRY_ID }}
           TENCENTCLOUD_TCR_REPLICATION_REGION_ID: ${{ vars.TENCENTCLOUD_TCR_REPLICATION_REGION_ID }}
           TENCENTCLOUD_TCR_REPLICATION_REGION_NAME: ${{ vars.TENCENTCLOUD_TCR_REPLICATION_REGION_NAME }}
+          # P0-01/02 flagship targets: billed targets stay out of the default
+          # list and self-skip until their gate is configured (see
+          # docs/integration-env.md §2.2 - keep that table in sync here).
+          TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID: ${{ secrets.TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID }}
+          TENCENTCLOUD_CVM_INSTANCE_TYPE: ${{ vars.TENCENTCLOUD_CVM_INSTANCE_TYPE }}
+          TENCENTCLOUD_RUN_BILLED_TARGETS: ${{ vars.TENCENTCLOUD_RUN_BILLED_TARGETS }}
+          TENCENTCLOUD_CDB_ENGINE_VERSION: ${{ vars.TENCENTCLOUD_CDB_ENGINE_VERSION }}
+          TENCENTCLOUD_CDB_MEMORY: ${{ vars.TENCENTCLOUD_CDB_MEMORY }}
+          TENCENTCLOUD_CDB_VOLUME: ${{ vars.TENCENTCLOUD_CDB_VOLUME }}
+          TENCENTCLOUD_CDB_ZONE: ${{ vars.TENCENTCLOUD_CDB_ZONE }}
+          TENCENTCLOUD_TKE_CLUSTER_VERSION: ${{ vars.TENCENTCLOUD_TKE_CLUSTER_VERSION }}
         run: >-
           ansible-test integration ${{ inputs.targets || 'security_group network cmq_queue cls_log_pipeline api_gateway_service tat_command cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns tke_addon vpc subnet' }}
           --color --python 3.12 --coverage
@@ -124,3 +135,20 @@ jobs:
             ansible_collections/susunola/tencentcloud/tests/output/e2e-resources.jsonl
             ansible_collections/susunola/tencentcloud/tests/output/reaper-plan.json
           if-no-files-found: ignore
+      # Alert a human when a real-cloud run fails: weekly and manual runs are
+      # the only ones that touch billable resources, so red means triage the
+      # same day. No-ops when TENCENTCLOUD_IT_ALERT_WEBHOOK is unconfigured.
+      - name: Alert on integration failure
+        if: failure()
+        env:
+          ALERT_WEBHOOK: ${{ secrets.TENCENTCLOUD_IT_ALERT_WEBHOOK }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "$ALERT_WEBHOOK" ]; then
+            echo "TENCENTCLOUD_IT_ALERT_WEBHOOK not configured - skipping alert"
+            exit 0
+          fi
+          SUMMARY="[${{ github.workflow }}] integration run FAILED (${{ github.ref_name }}) - $RUN_URL"
+          curl -sS -X POST -H 'Content-Type: application/json' \
+            -d "{\"msgtype\":\"text\",\"text\":{\"content\":\"${SUMMARY}\"}}" \
+            "$ALERT_WEBHOOK"

@@ -1,7 +1,8 @@
 # Gap closure plan — 与行业顶尖 Collection 的差距追差
 
 > 依据：`docs/capability-map.html` / `docs/panorama.html` 的 INDUSTRY BENCHMARK 区块
-> （本库源码 main HEAD 实测 + 对比方 Galaxy 产物实拉；2026-09-02 初版，2026-09-08 随 P0-12 同步刷新）。
+> （本库源码 main HEAD 实测 + 对比方 Galaxy 产物实拉；2026-09-02 初版，2026-09-08 随 P0-12 同步刷新，
+> 2026-09-09 随 P0-03/04 同步 G1 集成口径至 26 targets / 77 yml）。
 > 对比对象：amazon.aws 11.4.0 / azure.azcollection 4.0.0 / google.cloud 1.14.0（版本未变，沿用 09-02 核验）。
 > 状态图例：✅ 已闭合 · 🔄 在途 · ⏸ 排队/等待外部 · 📋 待启动 · ❌ 明确不追（有意取舍）。
 
@@ -9,7 +10,7 @@
 
 | ID | 差距维度 | 本库实测 | 行业最优实测 | 判定 | 状态 |
 |---|---|---|---|---|---|
-| G1 | 集成测试深度 | 21 targets / 62 yml | amazon 160 targets / 690 yml（google 115 targets / 468 yml） | 落后 ~8x（按 target） | 🔄 待启动独立集成计划 |
+| G1 | 集成测试深度 | 26 targets / 77 yml | amazon 160 targets / 690 yml（google 115 targets / 468 yml） | 落后 ~6x（按 target；google ~4.4x） | 🔄 在途（P0-01/02 已落 5 旗舰 target） |
 | G1b | 单测广度（write 面） | 无专属单测 write 模块 222 → 111（440 中 25%，2026-09-08） | 覆盖率 81.44%（gate 80，2026-09-08） | 广度缺口缩小 | ✅ 里程碑达成，收口持续 |
 | G2 | 生态信任与下载 | 0（2026-09 首发） | amazon 90.5M | 差距巨大 | ⏸ #89 inclusion 评审中 |
 | G3 | ansible-core 门槛 | ≥ 2.19 | ≥ 2.16 / 2.17 | 声明更高 | ❌ 有意取舍，不追 |
@@ -21,13 +22,15 @@
 > 21 vs 160 vs 115 ≈ 落后 ~8x（对 google 为 ~5.5x）。google 集成测试实为
 > 115 targets / 468 yml（此前误记 504，那是全仓库含单测的 yml 数）。
 
-## G1 集成测试深度 — 📋 需独立计划（不要把 #57 误记为集成驱动）
+## G1 集成测试深度 — 🔄 在途（P0-01/02 骨架落地 · P0-04 扩至 30+）
 
-**现状**：21 targets / 62 yml（`tests/integration/targets/`）。与 amazon 160 / google 115
-的差距按 target 数约 8x / 5.5x。**关键盲区**：13 个旗舰 write 模块（cvm_instance、vpc、
-subnet、cdb_instance、redis_instance、tke_cluster、clb_load_balancer、cos_object、
-scf_function、ckafka_instance、cbs_disk、eip、nat_gateway）全部无集成 target ——
-旗舰面集成覆盖为零。
+**现状**（2026-09-09 随 P0-03/04 刷新，此前口径沿革见 09-02 注）：26 targets / 77 yml
+（`tests/integration/targets/` 76 yml + 1 coverage.yml）。与 amazon 160 / google 115 的差距按
+target 数约 6x / 4.4x。**旗舰覆盖**：13 个旗舰 write 模块中 cvm_instance / vpc / subnet /
+cdb_instance / tke_cluster 已有专属集成 target（provision → assert → cleanup，落地 `6d83295`）；
+eip / clb_load_balancer 由 network / clb_http 场景 target 覆盖。**剩余盲区**：redis_instance /
+cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway 六个旗舰仍无任何集成覆盖，
+已按 product-depth 排入 P0-04 路线图（`docs/integration-env.md` §7 R1-R6）。
 
 > ⚠️ 逻辑修正（2026-09-02）：roadmap #57 是**单元测试覆盖驱动**（针对 write 模块
 > 语句覆盖率，已由 G1b 承接），**不是**集成测试驱动，不能记在 G1 名下。G1 需要
@@ -36,12 +39,13 @@ scf_function、ckafka_instance、cbs_disk、eip、nat_gateway）全部无集成 
 **建议动作**：
 | 步骤 | 动作 | 依赖 | 截止 | 状态 |
 |---|---|---|---|---|
-| G1-a | 为旗舰 write 模块建集成 target 骨架（cvm_instance 起步，复用 amazon `tests/integration/targets/` 布局；先容器化/假云认证，再接真实环境 job） | 无 | 2026-09-16 | 📋 |
-| G1-b | 定义集成测试的可信执行环境（真实腾讯云账号 + 资源清理策略，或 ansible-test cloud 插件） | G1-a | 随首批 | 📋 |
-| G1-c | 目标：集成 target 21 → 30+（先覆盖 13 个旗舰中的 5 个） | G1-a/b | 2026-10 | 📋 |
+| G1-a | 为旗舰 write 模块建集成 target 骨架（复用 amazon `tests/integration/targets/` 布局；执行环境策略定为真实腾讯云账号 + 计费护栏） | 无 | 2026-09-16 | ✅ P0-01/02（`6d83295`，2026-09-09：cvm_instance / vpc / subnet / cdb_instance / tke_cluster） |
+| G1-b | 定义集成测试的可信执行环境（真实腾讯云账号 + 凭据注入 + 资源清理防线 + 失败告警） | G1-a | 随首批 | ✅ P0-03（`docs/integration-env.md` 落盘 + workflow 凭据接线/告警步，2026-09-09） |
+| G1-c | 目标：集成 target 26 → 30+（13 旗舰已覆盖 7 个：5 专属 + 2 场景；余 6 个按 product-depth 优先补） | G1-a/b | 2026-10 | 🔄 P0-04（R1-R9，2026-09 里程碑 28 dirs，见 `docs/integration-env.md` §7） |
 
-**验收**：cvm_instance / vpc / cdb_instance / redis_instance / tke_cluster 至少进入
-集成套件；集成 target ≥ 30。
+**验收**：cvm_instance / vpc / subnet / cdb_instance / tke_cluster 已进入集成套件 ✅（2026-09-09）；
+redis_instance 等其余旗舰随 P0-04 R1-R6 排入；2026-10 底前集成 target ≥ 30 且全部绿
+（R1-R9 里程碑与验收口径见 `docs/integration-env.md` §7）。
 
 ## G1b 单元测试广度（write 面）— ✅ 80% 里程碑达成（收口持续）
 
@@ -133,19 +137,21 @@ write 面无专属单测模块持续收口。
 TEO、CFW、CFS、Lighthouse 等），继续按 panorama 推荐顺序逐族推进，
 每完成一个资源族同步升级对应角色与 info 面。
 
-## 执行清单（2026-09-08 刷新）
+## 执行清单（2026-09-09 刷新）
 
 > 全景图 30 件事（`docs/panorama.html`）已获批准执行 **P0×12 + P1×10**（本清单
 > G1/G1b 相关项已并入对应 P0 编号；G2/G3/G4 映射的 P2 项仍在待批状态）。
 > 状态图例：✅ 已完成 · 🔄 在途 · ⏸ 排队/等待外部 · 📋 待启动/待批准。
 
-1. G1-a 集成 target 骨架 → **P0-01/02** 🔄（cvm_instance 起步 + vpc/subnet/cdb_instance/tke_cluster，
-   2026-09-16 前；执行环境策略待定：容器化 mock vs 真实账号）
-2. G1b-a 单测骨架生成器 → **P0-08** 🔄（纯本地，1 commit，已启动）
-3. G1b-b 继续 batch 12 → **P0-07** 🔄（每周节奏，111 → <60，不需特批）
-4. G2-a 评审 1 个他人 collection → **P2-01** 📋（2026-09-09 前，需你指定目标或我从官方清单挑）
-5. G3-b + G4-c capability-map.html 差距卡措辞修正 → ✅（已随 09-08 数据同步合入）
-6. G4-a CONTRIBUTING.md 补 co-maintainer 路径 → **P2-03** 📋（2026-09-30 前，低优先级）
+1. G1-a 集成 target 骨架 → **P0-01/02** ✅（cvm_instance/vpc/subnet/cdb_instance/tke_cluster 落地
+   `6d83295`，2026-09-09；执行环境策略：真实腾讯云账号 + 计费护栏 + 三道清理防线）
+2. G1-b/c 可信执行环境 + 30+ 路线图 → **P0-03/04** 🔄（`docs/integration-env.md` 已落盘 + workflow
+   凭据接线/失败告警；R1-R9 至 2026-10 底，2026-09 里程碑 28 dirs）
+3. G1b-a 单测骨架生成器 → **P0-08** 🔄（纯本地，1 commit，已启动）
+4. G1b-b 继续 batch 12 → **P0-07** 🔄（每周节奏，111 → <60，不需特批）
+5. G2-a 评审 1 个他人 collection → **P2-01** 📋（2026-09-09 前，需你指定目标或我从官方清单挑）
+6. G3-b + G4-c capability-map.html 差距卡措辞修正 → ✅（已随 09-08 数据同步合入）
+7. G4-a CONTRIBUTING.md 补 co-maintainer 路径 → **P2-03** 📋（2026-09-30 前，低优先级）
 
 ---
 

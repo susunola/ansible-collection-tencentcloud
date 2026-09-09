@@ -350,7 +350,7 @@
         </tr>
         <tr>
           <td class="dim sub">· 对应 yml 用例数</td>
-          <td class="ours num"><span class="num">62</span></td>
+          <td class="ours num"><span class="num">77</span></td>
           <td class="num">690</td>
           <td class="num">— *</td>
           <td class="num">468</td>
@@ -365,7 +365,7 @@
       </tbody>
     </table>
     </div>
-    <div class="cmp-note">* azure.azcollection 发布产物不携带 integration / unit 目录（源码仓库中有），无法从 Galaxy 产物统计。<b>口径提示</b>：① amazon.aws 大量通用模块已迁往 community.aws / amazon.aws.aws_*，本表仅计 amazon.aws 本体；② google.cloud 产物仅携带 1 个 unit 测试文件（unit 测试同样被剥离，源仓库有完整测试），故其 unit 测试数以源码仓库为准更公平；③ 集成测试按 target 数对比（21 vs 160 vs 115），yml 数只作参考 —— 各家 target 内 yml 组织密度不同，直接用 yml 总数对比会把本库 62 yml（61 target + 1 coverage.yml）与 amazon 690 yml 的差距放大 ~11x；④ 模块数多≠质量高，下方按维度看真实差距；⑤ 本库 781 为源码 main 口径（脚本实测），已发布 v1.1.0 产物为 584，对外引用请注明口径。</div>
+    <div class="cmp-note">* azure.azcollection 发布产物不携带 integration / unit 目录（源码仓库中有），无法从 Galaxy 产物统计。<b>口径提示</b>：① amazon.aws 大量通用模块已迁往 community.aws / amazon.aws.aws_*，本表仅计 amazon.aws 本体；② google.cloud 产物仅携带 1 个 unit 测试文件（unit 测试同样被剥离，源仓库有完整测试），故其 unit 测试数以源码仓库为准更公平；③ 集成测试按 target 数对比（26 vs 160 vs 115），yml 数只作参考 —— 各家 target 内 yml 组织密度不同，直接用 yml 总数对比会把本库 77 yml（76 target + 1 coverage.yml）与 amazon 690 yml 的差距放大到 ~9x（按 target 计约 6x）；④ 模块数多≠质量高，下方按维度看真实差距；⑤ 本库 781 为源码 main 口径（脚本实测），已发布 v1.1.0 产物为 584，对外引用请注明口径。</div>
 
     <div class="barblock">
       <div class="barset">
@@ -397,7 +397,7 @@
         <div class="gt">▼ 差距项（需追赶）</div>
         <ul>
           <li><b>生态与信任</b>：Galaxy 下载 415 vs 11.9M–90.9M；需持续 release、inclusion 申请（#89 进行中）与社区口碑积累。</li>
-          <li><b>集成测试深度</b>：26 targets（66 yml）vs amazon 160（690）/ google 115（468）；13 个旗舰模块中 cvm_instance / vpc / subnet / cdb_instance / tke_cluster 已建专属集成 target（provision → assert → cleanup），其余 8 个（redis_instance / clb_load_balancer / cos_object / scf_function / ckafka_instance / cbs_disk / eip / nat_gateway）尚无专属 target，其中 clb_load_balancer、eip 已被 clb_http / network 场景 target 覆盖。</li>
+          <li><b>集成测试深度</b>：26 targets（77 yml）vs amazon 160（690）/ google 115（468）；13 个旗舰模块中 cvm_instance / vpc / subnet / cdb_instance / tke_cluster 已建专属集成 target（provision → assert → cleanup），其余 8 个（redis_instance / clb_load_balancer / cos_object / scf_function / ckafka_instance / cbs_disk / eip / nat_gateway）尚无专属 target，其中 clb_load_balancer、eip 已被 clb_http / network 场景 target 覆盖，余下 6 个排入 P0-04 路线图（docs/integration-env.md §7）。</li>
           <li><b>读面缺口</b>：356 个 write 模块没有配套 _info 读面（波及 74 个产品；tse 33 / dlc 26 / cos 16 / tdmq 15 / waf 13 / teo 12 / tsf 12 / monitor 12 居前）——write 之后读不回来，闭环断在读面这一侧。</li>
           <li><b>单测广度有虚点</b>：440 个 write 模块中 111 个没有专属单测文件（25%）；81.44% 覆盖率仍由深测模块拉高，广度分布不均。</li>
           <li><b>ansible-core 门槛</b>：≥2.19 起步（2.16–2.18 已 EOL；三家 ≥2.16/≥2.17 为历史声明，实际 CI 只测最新版）—— 主动对齐演进，换取旧控制节点用户覆盖的部分代价。</li>
