@@ -42,57 +42,57 @@ MODULES_DIR = REPO_ROOT / "plugins" / "modules"
 KNOWN_COVERAGE = {
     "clb_rule": (
         ["clb_listener_info"],
-            "DescribeListeners returns L7 listeners with their Rules inline",
+        "DescribeListeners returns L7 listeners with their Rules inline",
     ),
     "cos_object_sync": (
         ["cos_object_info"],
-            "cos_object_info lists and filters the objects of a bucket,"
-            "whichis the read side a sync reconciles against",
+        "cos_object_info lists and filters the objects of a bucket,"
+        "whichis the read side a sync reconciles against",
     ),
     "cvm_disaster_recover_group_binding": (
         ["cvm_disaster_recover_group_info"],
-            "DescribeDisasterRecoverGroups returns the InstanceIds bound"
-            "toeach placement group, the exact set the write module"
-            "reconciles",
+        "DescribeDisasterRecoverGroups returns the InstanceIds bound"
+        "toeach placement group, the exact set the write module"
+        "reconciles",
     ),
     "cvm_instance_security_group": (
         ["cvm_instance_info"],
-            "DescribeInstances returns SecurityGroupIds per instance",
+        "DescribeInstances returns SecurityGroupIds per instance",
     ),
     "dlc_data_engine_config": (
         ["dlc_user_data_engine_config_info"],
-            "DescribeUserDataEngineConfig returns"
-            "theDataEngineConfigInstanceInfos the write module reconciles",
+        "DescribeUserDataEngineConfig returns"
+        "theDataEngineConfigInstanceInfos the write module reconciles",
     ),
     "dlc_engine_resource_group": (
         ["dlc_standard_engine_resource_group_info"],
-            "DescribeStandardEngineResourceGroups returns the"
-            "standard-engineresource groups the write module manages",
+        "DescribeStandardEngineResourceGroups returns the"
+        "standard-engineresource groups the write module manages",
     ),
     "dlc_spark_job": (
         ["dlc_spark_app_job_info"],
-            "DescribeSparkAppJobs lists the SparkAppJob definitions the"
-            "writemodule creates and updates",
+        "DescribeSparkAppJobs lists the SparkAppJob definitions the"
+        "writemodule creates and updates",
     ),
     "dlc_user_policy": (
         ["dlc_user_info"],
-            "DescribeUsers returns each user with its attached"
-            "PolicySetinline, the exact set dlc_user_policy reconciles",
+        "DescribeUsers returns each user with its attached"
+        "PolicySetinline, the exact set dlc_user_policy reconciles",
     ),
     "dlc_work_group_membership": (
         ["dlc_work_group_info"],
-            "DescribeWorkGroups returns each group with its bound"
-            "users(WorkGroupInfo.UserSet) inline",
+        "DescribeWorkGroups returns each group with its bound"
+        "users(WorkGroupInfo.UserSet) inline",
     ),
     "dlc_work_group_policy": (
         ["dlc_work_group_info"],
-            "DescribeWorkGroups returns each group with its attachedPolicySet"
-            "(WorkGroupInfo.PolicySet) inline",
+        "DescribeWorkGroups returns each group with its attachedPolicySet"
+        "(WorkGroupInfo.PolicySet) inline",
     ),
     "havip_association": (
         ["havip_info"],
-            "DescribeHaVips returns the HaVipAssociationSet with boundCVM/ENI"
-            "per HAVIP",
+        "DescribeHaVips returns the HaVipAssociationSet with boundCVM/ENI"
+        "per HAVIP",
     ),
     "monitor_alarm_policy_notice": (
         ["monitor_alarm_policy_info"],
@@ -108,155 +108,155 @@ KNOWN_COVERAGE = {
     ),
     "nat_gateway_rule": (
         ["nat_gateway_dnat_rule_info", "nat_gateway_snat_rule_info"],
-            "the write module reconciles the DNAT and SNAT rule sets; the"
-            "twogenerated modules read them via DescribeNatGateway*NatRules",
+        "the write module reconciles the DNAT and SNAT rule sets; the"
+        "twogenerated modules read them via DescribeNatGateway*NatRules",
     ),
     "postgresql_instance": (
         ["postgres_instance_info"],
-            "postgres_instance_info (generated) reads TencentDB forPostgreSQL"
-            "instances via DescribeDBInstances, the same listsurface the"
-            "write module reconciles against",
+        "postgres_instance_info (generated) reads TencentDB forPostgreSQL"
+        "instances via DescribeDBInstances, the same listsurface the"
+        "write module reconciles against",
     ),
     "tdmq_namespace": (
         ["tdmq_environment_info"],
-            "DescribeEnvironments lists TDMQ namespaces (the API calls"
-            "anamespace an environment)",
+        "DescribeEnvironments lists TDMQ namespaces (the API calls"
+        "anamespace an environment)",
     ),
     "tdmq_namespace_role": (
         ["tdmq_environment_role_info"],
-            "DescribeEnvironmentRoles lists TDMQ namespace-role"
-            "bindings(EnvironmentRoleSets)",
+        "DescribeEnvironmentRoles lists TDMQ namespace-role"
+        "bindings(EnvironmentRoleSets)",
     ),
     "tdmq_rabbitmq_binding": (
         ["tdmq_rabbit_mq_binding_info"],
-            "DescribeRabbitMQBindings lists the RabbitMQ bindings the"
-            "writemodule reconciles",
+        "DescribeRabbitMQBindings lists the RabbitMQ bindings the"
+        "writemodule reconciles",
     ),
     "tdmq_rabbitmq_instance": (
         ["tdmq_rabbit_mq_vip_instance_info"],
-            "DescribeRabbitMQVipInstances lists the RabbitMQ instances"
-            "thewrite module manages",
+        "DescribeRabbitMQVipInstances lists the RabbitMQ instances"
+        "thewrite module manages",
     ),
     "tdmq_rabbitmq_permission": (
         ["tdmq_rabbit_mq_permission_info"],
-            "DescribeRabbitMQPermission lists the RabbitMQ"
-            "virtual-hostpermissions the write module manages",
+        "DescribeRabbitMQPermission lists the RabbitMQ"
+        "virtual-hostpermissions the write module manages",
     ),
     "tdmq_rabbitmq_user": (
         ["tdmq_rabbit_mq_user_info"],
-            "DescribeRabbitMQUser lists the RabbitMQ users the write"
-            "modulemanages",
+        "DescribeRabbitMQUser lists the RabbitMQ users the write"
+        "modulemanages",
     ),
     "tdmq_rabbitmq_vhost": (
         ["tdmq_rabbit_mq_virtual_host_info"],
-            "DescribeRabbitMQVirtualHost lists the RabbitMQ virtual hosts"
-            "thewrite module manages",
+        "DescribeRabbitMQVirtualHost lists the RabbitMQ virtual hosts"
+        "thewrite module manages",
     ),
     "tdmq_rocketmq_cluster": (
         ["tdmq_rocket_mq_cluster_info"],
-            "DescribeRocketMQClusters lists the RocketMQ clusters the"
-            "writemodule manages",
+        "DescribeRocketMQClusters lists the RocketMQ clusters the"
+        "writemodule manages",
     ),
     "tdmq_rocketmq_group": (
         ["tdmq_rocket_mq_group_info"],
-            "DescribeRocketMQGroups lists the RocketMQ groups the writemodule"
-            "manages",
+        "DescribeRocketMQGroups lists the RocketMQ groups the writemodule"
+        "manages",
     ),
     "tdmq_rocketmq_namespace": (
         ["tdmq_rocket_mq_namespace_info"],
-            "DescribeRocketMQNamespaces lists the RocketMQ namespaces"
-            "thewrite module manages",
+        "DescribeRocketMQNamespaces lists the RocketMQ namespaces"
+        "thewrite module manages",
     ),
     "tdmq_rocketmq_permission": (
         ["tdmq_rocket_mq_environment_role_info"],
-            "DescribeRocketMQEnvironmentRoles lists the"
-            "RocketMQnamespace-role (permission) bindings the write module"
-            "reconciles",
+        "DescribeRocketMQEnvironmentRoles lists the"
+        "RocketMQnamespace-role (permission) bindings the write module"
+        "reconciles",
     ),
     "tdmq_rocketmq_role": (
         ["tdmq_rocket_mq_role_info"],
-            "DescribeRocketMQRoles lists the RocketMQ roles the write"
-            "modulemanages",
+        "DescribeRocketMQRoles lists the RocketMQ roles the write"
+        "modulemanages",
     ),
     "tdmq_rocketmq_topic": (
         ["tdmq_rocket_mq_topic_info"],
-            "DescribeRocketMQTopics lists the RocketMQ topics the writemodule"
-            "manages",
+        "DescribeRocketMQTopics lists the RocketMQ topics the writemodule"
+        "manages",
     ),
     "tke_cluster_upgrade": (
         ["tke_cluster_info"],
-            "DescribeClusters returns the current ClusterVersion per cluster",
+        "DescribeClusters returns the current ClusterVersion per cluster",
     ),
     "tse_cloud_native_gateway": (
         ["tse_cloud_native_api_gateway_info"],
-            "DescribeCloudNativeAPIGateways returns the cloud-native"
-            "APIgateways the write module manages",
+        "DescribeCloudNativeAPIGateways returns the cloud-native"
+        "APIgateways the write module manages",
     ),
     "tse_gateway_autoscaler_binding": (
         ["tse_auto_scaler_resource_strategy_binding_group_info"],
-            "DescribeAutoScalerResourceStrategyBindingGroups returns"
-            "thestrategy-to-group bindings the write module reconciles",
+        "DescribeAutoScalerResourceStrategyBindingGroups returns"
+        "thestrategy-to-group bindings the write module reconciles",
     ),
     "tse_gateway_canary_rule": (
         ["tse_cloud_native_api_gateway_canary_rule_info"],
-            "DescribeCloudNativeAPIGatewayCanaryRules returns the canaryrules"
-            "of a gateway",
+        "DescribeCloudNativeAPIGatewayCanaryRules returns the canaryrules"
+        "of a gateway",
     ),
     "tse_gateway_certificate": (
         ["tse_cloud_native_api_gateway_certificate_info"],
-            "DescribeCloudNativeAPIGatewayCertificates returns the"
-            "gatewaycertificates the write module manages",
+        "DescribeCloudNativeAPIGatewayCertificates returns the"
+        "gatewaycertificates the write module manages",
     ),
     "tse_gateway_consumer": (
         ["tse_cloud_native_api_gateway_consumer_info"],
-            "DescribeCloudNativeAPIGatewayConsumerList returns the"
-            "gatewayconsumers the write module manages",
+        "DescribeCloudNativeAPIGatewayConsumerList returns the"
+        "gatewayconsumers the write module manages",
     ),
     "tse_gateway_consumer_group": (
         ["tse_cloud_native_api_gateway_consumer_group_info"],
-            "DescribeCloudNativeAPIGatewayConsumerGroupList returns"
-            "thegateway consumer groups the write module manages",
+        "DescribeCloudNativeAPIGatewayConsumerGroupList returns"
+        "thegateway consumer groups the write module manages",
     ),
     "tse_gateway_model_api": (
         ["tse_cloud_native_api_gateway_llm_model_api_info"],
-            "DescribeCloudNativeAPIGatewayLLMModelAPIs returns the Model"
-            "APIbindings the write module manages",
+        "DescribeCloudNativeAPIGatewayLLMModelAPIs returns the Model"
+        "APIbindings the write module manages",
     ),
     "tse_gateway_model_service": (
         ["tse_cloud_native_api_gateway_llm_model_service_info"],
-            "DescribeCloudNativeAPIGatewayLLMModelServices returns the"
-            "Modelservices the write module manages",
+        "DescribeCloudNativeAPIGatewayLLMModelServices returns the"
+        "Modelservices the write module manages",
     ),
     "tse_gateway_route": (
         ["tse_cloud_native_api_gateway_route_info"],
-            "DescribeCloudNativeAPIGatewayRoutes returns the gateway"
-            "routesthe write module manages",
+        "DescribeCloudNativeAPIGatewayRoutes returns the gateway"
+        "routesthe write module manages",
     ),
     "tse_gateway_secret_key": (
         ["tse_cloud_native_api_gateway_secret_key_info"],
-            "DescribeCloudNativeAPIGatewaySecretKeyList returns the"
-            "gatewaysecret keys the write module manages",
+        "DescribeCloudNativeAPIGatewaySecretKeyList returns the"
+        "gatewaysecret keys the write module manages",
     ),
     "tse_gateway_server_group": (
         ["tse_native_gateway_server_group_info"],
-            "DescribeNativeGatewayServerGroups returns the server groups of"
-            "agateway",
+        "DescribeNativeGatewayServerGroups returns the server groups of"
+        "agateway",
     ),
     "tse_gateway_service": (
         ["tse_cloud_native_api_gateway_service_info"],
-            "DescribeCloudNativeAPIGatewayServices returns the"
-            "gatewayservices the write module manages",
+        "DescribeCloudNativeAPIGatewayServices returns the"
+        "gatewayservices the write module manages",
     ),
     "tse_gateway_service_source": (
         ["tse_native_gateway_service_source_info"],
-            "DescribeNativeGatewayServiceSources returns the service"
-            "sourcesthe write module manages",
+        "DescribeNativeGatewayServiceSources returns the service"
+        "sourcesthe write module manages",
     ),
     "tse_governance_host_retirement": (
         ["tse_governance_instance_info"],
-            "DescribeGovernanceInstances returns every governance"
-            "instancewith its Host and isolate state; host retirement"
-            "reconciles theinstances of one host",
+        "DescribeGovernanceInstances returns every governance"
+        "instancewith its Host and isolate state; host retirement"
+        "reconciles theinstances of one host",
     ),
 }
 
@@ -581,7 +581,6 @@ KNOWN_GAPS = {
     'trabbit_serverless_user',
     'trabbit_serverless_vhost',
 }
-
 
 
 def discover_modules():
