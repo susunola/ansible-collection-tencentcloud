@@ -250,18 +250,18 @@
       </div>
     </div>
     <div class="ver">
-      <div class="tag">main HEAD · 2026-09-08</div>
-      <div class="meta">数据源：源码 main HEAD 实测（领先已发布 v1.1.0 +197 模块）<br>模块清单 sync_registry.py 同步</div>
+      <div class="tag">main HEAD · 2026-09-09</div>
+      <div class="meta">数据源：源码 main HEAD 实测（领先已发布 v1.1.0 +250 模块）<br>模块清单 sync_registry.py 同步</div>
     </div>
   </div>
 
   <!-- ================= KPI ================= -->
   <div class="kpi">
-    <div class="cell"><div class="num">781</div><div class="lbl"><b>模块总数</b> · 440 write + 341 _info</div></div>
+    <div class="cell"><div class="num">834</div><div class="lbl"><b>模块总数</b> · 440 write + 394 _info</div></div>
     <div class="cell"><div class="num">440</div><div class="lbl"><b>资源管理模块</b> · idempotent write</div></div>
-    <div class="cell"><div class="num">341</div><div class="lbl"><b>只读发现模块</b> · *_info</div></div>
+    <div class="cell"><div class="num">394</div><div class="lbl"><b>只读发现模块</b> · *_info</div></div>
     <div class="cell"><div class="num">204</div><div class="lbl"><b>覆盖腾讯云产品</b> · 71 含写（61 solution + 9 managed + 1 resource-family）</div></div>
-    <div class="cell"><div class="num">10,015</div><div class="lbl"><b>单元测试函数</b> · pytest 实测，9,985 过 / 30 跳过</div></div>
+    <div class="cell"><div class="num">10,327</div><div class="lbl"><b>单元测试函数</b> · pytest 实测，10,297 过 / 30 跳过</div></div>
   </div>
 
   <div class="legend">
@@ -269,7 +269,7 @@
     <span class="sw"><span class="doti"></span> 只读 _info 模块（发现 / 查询）</span>
     <span class="hint">数字 = 该产品下的模块数 · 浅色 chip = 仅只读</span>
   </div>
-  <div style="font-size:10.5px;color:var(--dim);margin:0 2px 14px;line-height:1.7">产品格 = collection 结构视图（display-product grouping，09-02 快照）。09-08 数量口径以上方 KPI / 下方 INDUSTRY BENCHMARK 为准（模块 781 · 440 write · 341 _info · 204 产品 / 71 含写）；逐产品明细以 docs/product-capabilities.md（脚本生成）为规范目录。</div>
+  <div style="font-size:10.5px;color:var(--dim);margin:0 2px 14px;line-height:1.7">产品格 = collection 结构视图（display-product grouping，09-02 快照）。09-09 数量口径以上方 KPI / 下方 INDUSTRY BENCHMARK 为准（模块 834 · 440 write · 394 _info · 204 产品 / 71 含写）；逐产品明细以 docs/product-capabilities.md（脚本生成）为规范目录。</div>
 
   <!-- ================= GRID ================= -->
   <div class="grid" id="grid"></div>
@@ -277,9 +277,9 @@
   <!-- ================= QUALITY ================= -->
   <div class="foot">
     <div class="q"><div class="ic">✅</div><div><div class="t">幂等性</div><div class="d">二次运行 changed=false；check mode 不发写请求</div></div><div class="ok">✓</div></div>
-    <div class="q"><div class="ic">🧪</div><div><div class="t">单元 + 契约测试</div><div class="d">逐模块 unit tests + contract tests；coverage gate 80 达成（实测 81.44%）</div></div><div class="ok">✓</div></div>
+    <div class="q"><div class="ic">🧪</div><div><div class="t">单元 + 契约测试</div><div class="d">逐模块 unit tests + contract tests；coverage gate 80 达成（实测 81.64%）</div></div><div class="ok">✓</div></div>
     <div class="q"><div class="ic">🩺</div><div><div class="t">ansible-test sanity</div><div class="d">2.19/2.20/2.21 × py 3.11/3.12/3.13 矩阵全绿；ignore 2292 条预算化（2350 封顶 + CI guard）</div></div><div class="ok">✓</div></div>
-    <div class="q"><div class="ic">📦</div><div><div class="t">生成式治理</div><div class="d">341 个 *_info 由 SDK introspection / spec 生成，禁止手改</div></div><div class="ok">✓</div></div>
+    <div class="q"><div class="ic">📦</div><div><div class="t">生成式治理</div><div class="d">394 个 *_info 由 SDK introspection / spec 生成，禁止手改</div></div><div class="ok">✓</div></div>
     <div class="q"><div class="ic">🔍</div><div><div class="t">变更审计</div><div class="d">tc_api_calls 返回 + tencentcloud_resource_actions 回调</div></div><div class="ok">✓</div></div>
     <div class="q"><div class="ic">🧰</div><div><div class="t">扩展插件</div><div class="d">5 inventory + 3 lookup + 1 connection + 1 callback + 4 event_source</div></div><div class="ok">✓</div></div>
   </div>
@@ -290,7 +290,7 @@
       <div>
         <div class="eyebrow">Industry Benchmark</div>
         <h2>与行业顶尖 Collection 的差距</h2>
-        <div class="sub">口径：本库按源码 main HEAD 实测（2026-09-08，领先已发布 v1.1.0 的 584 模块 +197）；对比方 Galaxy tar.gz 实拉，版本未变沿用 09-02 核验 · amazon.aws 11.4.0 / azure.azcollection 4.0.0 / google.cloud 1.14.0</div>
+        <div class="sub">口径：本库按源码 main HEAD 实测（2026-09-09，领先已发布 v1.1.0 的 584 模块 +250）；对比方 Galaxy tar.gz 实拉，版本未变沿用 09-02 核验 · amazon.aws 11.4.0 / azure.azcollection 4.0.0 / google.cloud 1.14.0</div>
       </div>
     </div>
 
@@ -308,7 +308,7 @@
       <tbody>
         <tr>
           <td class="dim">模块总数</td>
-          <td class="ours num big">781</td>
+          <td class="ours num big">834</td>
           <td class="num">141</td>
           <td class="num">426</td>
           <td class="num">194</td>
@@ -322,7 +322,7 @@
         </tr>
         <tr>
           <td class="dim sub">· 只读 *_info 模块</td>
-          <td class="ours num"><span class="num">341</span></td>
+          <td class="ours num"><span class="num">394</span></td>
           <td class="num">67</td>
           <td class="num">214</td>
           <td class="num">79</td>
@@ -365,12 +365,12 @@
       </tbody>
     </table>
     </div>
-    <div class="cmp-note">* azure.azcollection 发布产物不携带 integration / unit 目录（源码仓库中有），无法从 Galaxy 产物统计。<b>口径提示</b>：① amazon.aws 大量通用模块已迁往 community.aws / amazon.aws.aws_*，本表仅计 amazon.aws 本体；② google.cloud 产物仅携带 1 个 unit 测试文件（unit 测试同样被剥离，源仓库有完整测试），故其 unit 测试数以源码仓库为准更公平；③ 集成测试按 target 数对比（26 vs 160 vs 115），yml 数只作参考 —— 各家 target 内 yml 组织密度不同，直接用 yml 总数对比会把本库 77 yml（76 target + 1 coverage.yml）与 amazon 690 yml 的差距放大到 ~9x（按 target 计约 6x）；④ 模块数多≠质量高，下方按维度看真实差距；⑤ 本库 781 为源码 main 口径（脚本实测），已发布 v1.1.0 产物为 584，对外引用请注明口径。</div>
+    <div class="cmp-note">* azure.azcollection 发布产物不携带 integration / unit 目录（源码仓库中有），无法从 Galaxy 产物统计。<b>口径提示</b>：① amazon.aws 大量通用模块已迁往 community.aws / amazon.aws.aws_*，本表仅计 amazon.aws 本体；② google.cloud 产物仅携带 1 个 unit 测试文件（unit 测试同样被剥离，源仓库有完整测试），故其 unit 测试数以源码仓库为准更公平；③ 集成测试按 target 数对比（26 vs 160 vs 115），yml 数只作参考 —— 各家 target 内 yml 组织密度不同，直接用 yml 总数对比会把本库 77 yml（76 target + 1 coverage.yml）与 amazon 690 yml 的差距放大到 ~9x（按 target 计约 6x）；④ 模块数多≠质量高，下方按维度看真实差距；⑤ 本库 834 为源码 main 口径（脚本实测），已发布 v1.1.0 产物为 584，对外引用请注明口径。</div>
 
     <div class="barblock">
       <div class="barset">
         <div class="bt">模块总数对比（含 write + _info）</div>
-        <div class="brow"><div class="bn">susunola.tencentcloud</div><div class="btrack"><div class="bfill" style="width:100%;background:linear-gradient(90deg,#2563eb,#60a5fa)"></div></div><div class="bv">781</div></div>
+        <div class="brow"><div class="bn">susunola.tencentcloud</div><div class="btrack"><div class="bfill" style="width:100%;background:linear-gradient(90deg,#2563eb,#60a5fa)"></div></div><div class="bv">834</div></div>
         <div class="brow"><div class="bn">azure.azcollection</div><div class="btrack"><div class="bfill" style="width:55%;background:linear-gradient(90deg,#7c3aed,#a78bfa)"></div></div><div class="bv">426</div></div>
         <div class="brow"><div class="bn">google.cloud</div><div class="btrack"><div class="bfill" style="width:25%;background:linear-gradient(90deg,#0d9488,#2dd4bf)"></div></div><div class="bv">194</div></div>
         <div class="brow"><div class="bn">amazon.aws</div><div class="btrack"><div class="bfill" style="width:18%;background:linear-gradient(90deg,#b45309,#f59e0b)"></div></div><div class="bv">141</div></div>
@@ -388,9 +388,9 @@
       <div class="gcard lead">
         <div class="gt">▲ 领先项（实测数据）</div>
         <ul>
-          <li><b>覆盖面第一梯队</b>：模块总数 781、幂等 write 440、只读 _info 341，均列四家第一（含全腾讯云 2000+ API 的长尾只读覆盖）。</li>
-          <li><b>生成式治理</b>：341 个 *_info 由 SDK introspection / spec 生成、禁止手改，幂等 + check mode 全量内置；三类官方库大量模块为半手写维护。</li>
-          <li><b>质量门槛</b>：unit + contract 双测试、sanity ignore 预算化（2292/2350 封顶 + CI guard）、coverage gate 80 达成（实测 81.44%），测试密度高于多数官方模块。</li>
+          <li><b>覆盖面第一梯队</b>：模块总数 834、幂等 write 440、只读 _info 394，均列四家第一（含全腾讯云 2000+ API 的长尾只读覆盖）。</li>
+          <li><b>生成式治理</b>：394 个 *_info 由 SDK introspection / spec 生成、禁止手改，幂等 + check mode 全量内置；三类官方库大量模块为半手写维护。</li>
+          <li><b>质量门槛</b>：unit + contract 双测试、sanity ignore 预算化（2292/2350 封顶 + CI guard）、coverage gate 80 达成（实测 81.64%），测试密度高于多数官方模块。</li>
         </ul>
       </div>
       <div class="gcard lag">
@@ -398,8 +398,8 @@
         <ul>
           <li><b>生态与信任</b>：Galaxy 下载 415 vs 11.9M–90.9M；需持续 release、inclusion 申请（#89 进行中）与社区口碑积累。</li>
           <li><b>集成测试深度</b>：26 targets（77 yml）vs amazon 160（690）/ google 115（468）；13 个旗舰模块中 cvm_instance / vpc / subnet / cdb_instance / tke_cluster 已建专属集成 target（provision → assert → cleanup），其余 8 个（redis_instance / clb_load_balancer / cos_object / scf_function / ckafka_instance / cbs_disk / eip / nat_gateway）尚无专属 target，其中 clb_load_balancer、eip 已被 clb_http / network 场景 target 覆盖，余下 6 个排入 P0-04 路线图（docs/integration-env.md §7）。</li>
-          <li><b>读面缺口</b>：356 个 write 模块没有配套 _info 读面（波及 74 个产品；tse 33 / dlc 26 / cos 16 / tdmq 15 / waf 13 / teo 12 / tsf 12 / monitor 12 居前）——write 之后读不回来，闭环断在读面这一侧。</li>
-          <li><b>单测广度有虚点</b>：440 个 write 模块中 111 个没有专属单测文件（25%）；81.44% 覆盖率仍由深测模块拉高，广度分布不均。</li>
+          <li><b>读面缺口（首波收口中）</b>：tse / dlc / cos / tdmq 四族 85 个缺口已清零（covered 189 · mapped 41 · 29 判定无 list API 豁免）；余 210 = 181 backlog + 29 no-list（cos 13 / tse 13 / dlc 2 / tke 1），backlog 以 waf 13 / monitor 12 / teo 12 / tsf 11 / config 8 / oceanus 8 居前——写后读不回的闭环随 P0-06+ 逐波收口。</li>
+          <li><b>单测广度有虚点</b>：440 个 write 模块中 111 个没有专属单测文件（25%）；81.64% 覆盖率仍由深测模块拉高，广度分布不均。</li>
           <li><b>ansible-core 门槛</b>：≥2.19 起步（2.16–2.18 已 EOL；三家 ≥2.16/≥2.17 为历史声明，实际 CI 只测最新版）—— 主动对齐演进，换取旧控制节点用户覆盖的部分代价。</li>
           <li><b>维护资源</b>：个人维护（贡献 / 加入路径见 CONTRIBUTING.md）vs 厂商 + Red Hat/社区全职团队；issue 响应与版本节奏是长期风险。</li>
         </ul>
@@ -407,7 +407,7 @@
     </div>
   </div>
 
-  <div class="source">susunola.ansible-collection-tencentcloud · 由仓库模块清单实时生成 · data: 2026-09-08</div>
+  <div class="source">susunola.ansible-collection-tencentcloud · 由仓库模块清单实时生成 · data: 2026-09-09</div>
 </div>
 
 <script>
