@@ -285,6 +285,7 @@ NO_API3_CONTRACT = {
         "cos_bucket_domain_certificate uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit"
     ),
     "cos_object": "cos_object uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
+    "cos_object_sync": "cos_object_sync uses the qcloud_cos SDK (COS is not an API 3.0 service), which has no declarative request models to audit",
 }
 
 # Individual builders that exist but cannot be exercised by the contract
@@ -490,6 +491,8 @@ WRITE_MODULE_BUILDERS = {
     "vod_sub_app": ["find_sub_app"],
     "ssm_secret": ["create_request", "delete_request", "describe_request", "description_request", "restore_request", "state_request"],
     "ssm_rotation": ["describe_request", "update_request"],
+    "ssm_product_secret": ["_request", "create_request", "find"],
+    "ssm_ssh_key_pair_secret": ["request", "create_request", "find"],
     "tat_invoker": ["create_request", "delete_request", "describe_request", "enable_request", "update_request"],
     "cbs_disk_backup": ["create_request", "delete_request", "describe_request"],
     "lighthouse_firewall_rules": ["create_request", "delete_request", "describe_request"],
@@ -849,6 +852,7 @@ WRITE_MODULE_BUILDERS = {
         "build_tasks_request",
         "find_policy",
     ],
+    "monitor_alarm_policy_notice": ["build_notice_request", "find_policy"],
     "tke_addon": ["build_install_request", "build_update_request", "describe_addon"],
     "tke_cluster": [
         "_create",
@@ -1088,6 +1092,8 @@ WRITE_MODULE_BUILDERS = {
     "tcm_tracing": ["describe_request", "update_request"],
     "dcdb_account": ["find"],
     "dcdb_backup_config": ["describe_request", "modify_request"],
+    "dcdb_account_privilege": ["request"],
+    "dcdb_security_config": ["describe"],
     "tat_invocation": ["cancel_request", "invoke_request", "tasks_request"],
     "private_dns_account": ["list_request"],
     "dts_migration_action": ["describe"],
@@ -1205,6 +1211,8 @@ WRITE_MODULE_BUILDERS = {
     "tse_gateway_consumer": ["create_request", "delete_request", "detail_request", "list_request", "update_request"],
     "tse_gateway_consumer_group": ["create_request", "delete_request", "detail_request", "list_request", "update_request"],
     "tse_gateway_consumer_group_membership": ["_consumer_list_request", "_group_list_request", "detail_request"],
+    "tse_gateway_cors": ["get_current"],
+    "tse_gateway_ip_restriction": ["get_current"],
     "tse_gateway_model_api": ["delete_request", "detail_request", "list_request"],
     "tse_gateway_model_api_group_auth": ["_api_list_request", "_group_list_request", "detail_request"],
     "tse_gateway_model_service": ["delete_request", "detail_request", "list_request"],
@@ -1216,6 +1224,7 @@ WRITE_MODULE_BUILDERS = {
         "describe_request",
         "group_request",
     ],
+    "tse_gateway_rate_limit": ["apis"],
     "tse_gateway_route": ["delete_request", "list_request"],
     "tse_gateway_secret_key": [
         "create_request",
@@ -1227,7 +1236,9 @@ WRITE_MODULE_BUILDERS = {
     ],
     "tse_gateway_server_group": ["list_request"],
     "tse_gateway_service": ["delete_request", "health_detail_request", "list_request"],
+    "tse_gateway_service_source": ["create_request", "delete_request", "list_request", "update_request"],
     "tse_gateway_upstream_node_status": ["describe_request", "modify_request"],
+    "tse_gateway_waf_domains": ["current"],
     "tse_gateway_waf_protection": ["describe_request"],
     "tse_governance_alias": ["describe_request"],
     "tse_governance_host_retirement": ["delete_request", "describe_request"],
@@ -1256,6 +1267,48 @@ def _request_calls(node):
             and func.value.id.endswith("models")
         ):
             calls.add(func.attr)
+    return calls
+
+
+def _request_refs(node):
+    """Return every request-model reference inside *node*, however constructed.
+
+    The plain ``_request_calls`` scan only sees direct
+    ``models.CreateXRequest()`` construction. Real builders also:
+
+    1. pass the model class to an instantiating helper
+       (``instance_request(models.XRequest, id)``,
+       ``write_request(models.XRequest, p, ...)``),
+    2. resolve the class dynamically (``getattr(models, "XRequest")()``),
+    3. send the request name as a string literal to a local helper
+       (``request(models, "DescribeAccountPrivilegesRequest", p)``).
+
+    This reference scan is deliberately broader than ``_request_calls``; it
+    is only applied to builders an author has *registered* as exercised, so
+    over-matching cannot create phantom unexercised builders elsewhere.
+    ``models`` matches any receiver whose identifier ends with ``models``.
+    """
+    calls = set()
+    for sub in ast.walk(node):
+        if isinstance(sub, ast.Attribute) and sub.attr.endswith("Request") and isinstance(sub.value, ast.Name) and sub.value.id.endswith("models"):
+            # shapes 1 (callee) and 2 (helper argument)
+            calls.add(sub.attr)
+            continue
+        if isinstance(sub, ast.Call) and isinstance(sub.func, ast.Name) and sub.func.id == "getattr" and len(sub.args) >= 2:
+            obj, name = sub.args[0], sub.args[1]
+            if isinstance(obj, ast.Name) and obj.id.endswith("models"):
+                if isinstance(name, ast.Constant) and isinstance(name.value, str) and name.value.endswith("Request"):
+                    calls.add(name.value)
+                else:
+                    # dynamic name: getattr(models, <variable>)() - the
+                    # caller supplies the request name as data
+                    calls.add("<dynamic>")
+            continue
+        if isinstance(sub, ast.Call):
+            for arg in sub.args:
+                if isinstance(arg, ast.Constant) and isinstance(arg.value, str) and arg.value.endswith("Request"):
+                    calls.add(arg.value)
+                    break
     return calls
 
 
@@ -1306,20 +1359,39 @@ def discover_request_builders(module_name):
     the module file alone. Registered builders (``WRITE_MODULE_BUILDERS``) are
     therefore also resolved through the module's own module_utils imports so
     the exercised/phantom audit keeps working after such refactors.
+
+    Two refinements keep the audit honest without flooding it with noise:
+
+    * A function registered as exercised is scanned with :func:`_request_refs`,
+      which additionally sees model classes passed to an instantiating helper
+      (``request(models.XRequest, ...)``), ``getattr(models, "XRequest")()``
+      lookups and request names sent as string literals. Without this a
+      registered builder written in any of those styles would look like a
+      stale registration.
+    * A *write* module that has no exercised builders at all is scanned
+      broadly too. When nothing is registered there is no narrower "the
+      module is covered" signal, so every request construction in the file -
+      including ``run_module`` and imported module_utils helpers - must
+      surface or the module would silently ship without contract coverage.
     """
     path = os.path.join(MODULES_DIR, module_name + ".py")
     with open(path, encoding="utf-8") as handle:
         tree = ast.parse(handle.read(), filename=path)
+    exercised = set(WRITE_MODULE_BUILDERS.get(module_name, ()))
+    broad_unregistered = not exercised and not module_name.endswith("_info") and module_name not in NO_API3_CONTRACT
     builders = {}
     for node in tree.body:
         if not isinstance(node, ast.FunctionDef):
             continue
-        requests = _request_calls(node)
+        requests = _request_refs(node) if (node.name in exercised or broad_unregistered) else _request_calls(node)
         if requests:
             builders[node.name] = requests
     util_builders = _module_utils_builders(tree)
-    for name in set(WRITE_MODULE_BUILDERS.get(module_name, ())):
+    for name in exercised:
         if name not in builders and name in util_builders:
+            builders[name] = util_builders[name]
+    if broad_unregistered:
+        for name in sorted(set(util_builders) - set(builders)):
             builders[name] = util_builders[name]
     return builders
 
@@ -4132,6 +4204,13 @@ def test_tse_gateway_rate_limit():
     errors.extend(audit_request(module.request(models.DescribeCloudNativeAPIGatewayRouteRateLimitRequest, models, route), "TSE route rate limit describe"))
     errors.extend(audit_request(module.request(models.CreateCloudNativeAPIGatewayRouteRateLimitRequest, models, route, config), "TSE route rate limit create"))
     errors.extend(audit_request(module.request(models.DeleteCloudNativeAPIGatewayRouteRateLimitRequest, models, route), "TSE route rate limit delete"))
+    client = _StubClient()
+    for scope, describe_cls in (
+        ("service", models.DescribeCloudNativeAPIGatewayServiceRateLimitRequest),
+        ("route", models.DescribeCloudNativeAPIGatewayRouteRateLimitRequest),
+    ):
+        _describe, _create, _modify, _delete, found_describe, _c_cls, _m_cls, _d_cls = module.apis(client, models, scope)
+        assert found_describe is describe_cls
     assert errors == []
 
 
@@ -6301,7 +6380,13 @@ def test_monitor_alarm_policy_notice():
         },
         "policy-xxxxxxxx",
     )
-    assert audit_request(request, "monitor notice request") == []
+    errors = audit_request(request, "monitor notice request")
+    fake = _RecordingModule()
+    client = _StubClient()
+    policy = module.find_policy(fake, client, models, "policy-xxxxxxxx", None, "monitor")
+    assert policy is None
+    errors.extend(audit_recorded(fake, "monitor_alarm_policy_notice find"))
+    assert errors == []
 
 
 def test_private_dns_zone():
