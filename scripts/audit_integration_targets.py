@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Structural audit for the 5 new flagship integration targets (P0-01/02).
 
 Checks, per tasks/main.yml:
