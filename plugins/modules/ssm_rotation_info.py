@@ -29,7 +29,7 @@ request_id: {description: Request ID from the final API call., type: str, return
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 
 
 def _load():
@@ -64,7 +64,7 @@ def run_module():
             result["history"] = history
         module.exit_json(**result)
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

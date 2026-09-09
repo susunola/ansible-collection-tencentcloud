@@ -38,7 +38,7 @@ network_connection: {description: Effective DLC network-connection metadata., ty
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
 
 
@@ -129,7 +129,7 @@ def run_module():
             current = find(module, client, models, p)
         module.exit_json(changed=True, **(diff_value or {}), network_connection=current if not module.check_mode else target)
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

@@ -45,7 +45,7 @@ RETURN = r"""connection: {description: Effective DLC user VPC connection metadat
 endpoint_id: {description: DLC user VPC endpoint ID., type: str, returned: when present}"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
 
 
@@ -149,7 +149,7 @@ def run_module():
             module.fail_json(msg="DLC VPC connection identity is immutable", immutable_drift=drift)
         module.exit_json(changed=False, connection=current, endpoint_id=current.get("UserVpcEndpointId"))
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

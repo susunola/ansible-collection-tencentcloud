@@ -67,7 +67,7 @@ EXAMPLES = r"""
 RETURN = r"""instance: {description: Effective TSE registry-engine metadata., type: dict, returned: always}"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 import time
 
 
@@ -264,7 +264,7 @@ def run_module():
                 current = _wait(module, client, models, p, ["running"], {"EnableInternet": p["internet_access"]})
         module.exit_json(changed=changed, **(diff or {}), instance=current)
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

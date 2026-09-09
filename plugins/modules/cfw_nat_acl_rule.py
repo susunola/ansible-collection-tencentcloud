@@ -56,7 +56,7 @@ RETURN = r"""rule: {description: Cloud Firewall NAT ACL rule metadata., type: di
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 
 VALUE_TYPES = ("ip", "domain", "ip_template", "domain_template")
 ACTIONS = {"observe": "log", "block": "drop", "accept": "accept"}
@@ -217,7 +217,7 @@ def run_module():
             current = find_rule(module, client, models, p)
         module.exit_json(changed=True, **(diff or {}), rule=current)
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

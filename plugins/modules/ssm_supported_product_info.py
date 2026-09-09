@@ -26,7 +26,7 @@ total_count: {description: Number of supported products., type: int, returned: a
 request_id: {description: Tencent Cloud request ID., type: str, returned: always}
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 
 
 def _load():
@@ -49,7 +49,7 @@ def run_module():
         products = sorted(response.Products or [])
         module.exit_json(changed=False, products=products, total_count=int(response.TotalCount or len(products)), request_id=response.RequestId)
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

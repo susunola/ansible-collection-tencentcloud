@@ -30,7 +30,7 @@ added: {description: Member IDs added by this run., type: list, elements: str, r
 removed: {description: Member IDs removed by this run., type: list, elements: str, returned: always}"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
 
 
@@ -105,7 +105,7 @@ def run_module():
             current = current_users(module, client, models, p["work_group_id"])
         module.exit_json(changed=True, **(diff or {}), user_ids=current if not module.check_mode else target, added=added, removed=removed)
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

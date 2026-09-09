@@ -22,7 +22,7 @@ RETURN = r"""migration_check: {description: DTS check status and step details., 
 
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 
 
 def _load():
@@ -83,7 +83,7 @@ def run_module():
             module.fail_json(msg="DTS migration check did not pass", migration_check=result)
         module.exit_json(changed=should_start, migration_check=result)
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

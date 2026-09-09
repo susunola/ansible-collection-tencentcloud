@@ -40,7 +40,7 @@ request_id: {description: Request ID from the final page., type: str, returned: 
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 
 
 def database_request(models, p, offset):
@@ -127,7 +127,7 @@ def run_module():
         values, total, truncated, request_id = read_databases(module, client, models, p)
         module.exit_json(changed=False, databases=values, total_count=total, truncated=truncated, request_id=request_id)
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

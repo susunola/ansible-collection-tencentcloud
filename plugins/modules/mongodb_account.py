@@ -49,7 +49,7 @@ RETURN = r"""account: {description: MongoDB account metadata., type: dict, retur
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import require_immutable_unchanged, sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import require_immutable_unchanged, fail_from_sdk_error
 
 MASKS = {"none": 0, "read": 1, "read_write": 3}
 
@@ -188,7 +188,7 @@ def run_module():
             current = find(module, client, models, p)
         module.exit_json(changed=True, **(diff or {}), account=current)
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

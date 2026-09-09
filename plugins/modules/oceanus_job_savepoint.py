@@ -34,7 +34,7 @@ RETURN = r"""savepoint: {description: Existing or newly created savepoint metada
 savepoint_id: {description: Savepoint serial ID., type: str, returned: when available}
 savepoint_path: {description: Savepoint restore path., type: str, returned: when available}"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_task
 
 
@@ -124,7 +124,7 @@ def run_module():
             changed=True, savepoint=current or target, savepoint_id=savepoint_id, savepoint_path=(current or {}).get("Path") or response.FinalSavepointPath
         )
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

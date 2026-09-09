@@ -30,7 +30,7 @@ EXAMPLES = r"""
 RETURN = r"""membership: {description: Requested group and effective member IDs., type: dict, returned: always}"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 
 
 def _load():
@@ -159,7 +159,7 @@ def run_module():
             changed=True, **(diff or {}), membership={"ConsumerGroupId": p["consumer_group_id"], "ConsumerIds": effective, "AffectedConsumerIds": affected}
         )
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

@@ -28,7 +28,7 @@ parameters: {description: Parameter metadata keyed by name., type: dict, returne
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 from ansible_collections.susunola.tencentcloud.plugins.modules.tdmysql_parameter import _load, read_parameters, selected
 
 
@@ -47,7 +47,7 @@ def run_module():
             values = selected(values, p["names"])
         module.exit_json(changed=False, parameters=values)
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

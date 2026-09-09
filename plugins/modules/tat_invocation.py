@@ -49,7 +49,7 @@ import json
 import time
 from collections import Counter
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 
 TERMINAL = {"SUCCESS", "DELIVER_FAILED", "START_FAILED", "FAILED", "TIMEOUT", "TASK_TIMEOUT", "CANCELLED", "TERMINATED"}
 FAILED = TERMINAL - {"SUCCESS"}
@@ -170,7 +170,7 @@ def run_module():
             module.fail_json(msg="One or more TAT invocation tasks failed", invocation_id=invocation_id, status_summary=summary, failed_tasks=failures)
         module.exit_json(changed=True, invocation_id=invocation_id, tasks=values, status_summary=summary)
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

@@ -80,7 +80,7 @@ spark_job_id:
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
 
 FIELDS = {
@@ -284,7 +284,7 @@ def run_module():
             current = find(module, client, models, job_id=current["JobId"])
         module.exit_json(changed=True, **(diff_value or {}), spark_job=current if not module.check_mode else after, spark_job_id=current.get("JobId"))
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

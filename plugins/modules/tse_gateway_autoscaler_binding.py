@@ -32,7 +32,7 @@ EXAMPLES = r"""
 RETURN = r"""binding: {description: Effective strategy group bindings., type: dict, returned: always}"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 
 
 def _load():
@@ -135,7 +135,7 @@ def run_module():
     try:
         resolve_groups(module, client, models, p)
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
     if not p["group_ids"]:
         module.fail_json(msg="group_ids must contain at least one entry")
     if len(set(p["group_ids"])) != len(p["group_ids"]):
@@ -178,7 +178,7 @@ def run_module():
             },
         )
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

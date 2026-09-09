@@ -48,7 +48,7 @@ request_id: {description: Request ID from the Ray job detail call., type: str, r
 
 import re
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 
 
 def _load():
@@ -166,7 +166,7 @@ def run_module():
             yaml = module.sdk_call(client.GetRayJobYaml, id_request(models.GetRayJobYamlRequest, p["ray_job_id"])).Yaml
         module.exit_json(changed=False, ray_job=detail, history=history, events=events, pods=pods, yaml=yaml, truncated=truncated, request_id=request_id)
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

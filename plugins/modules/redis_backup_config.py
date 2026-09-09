@@ -34,7 +34,7 @@ EXAMPLES = r"""
 RETURN = r"""backup_config: {description: Effective automatic backup configuration., type: dict, returned: always}"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 
 
 def _load():
@@ -97,7 +97,7 @@ def run_module():
             module.sdk_call(client.ModifyAutoBackupConfig, build_update(models, p))
         module.exit_json(changed=True, **(diff or {}), backup_config=target)
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

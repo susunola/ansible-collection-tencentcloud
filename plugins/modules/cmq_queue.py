@@ -36,8 +36,8 @@ RETURN = r"""queue: {description: Queue metadata., type: dict, returned: always}
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import (
+    fail_from_sdk_error,
     require_immutable_unchanged,
-    sdk_error_payload,
 )
 import time
 
@@ -153,7 +153,7 @@ def run_module():
             current = wait_for_queue(module, client, models, desired)
         module.exit_json(changed=True, **(diff or {}), queue=current if module.check_mode else current)
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

@@ -61,7 +61,7 @@ resource_group_id: {description: Standard engine resource-group ID., type: str, 
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
 
 BASE = {"auto_launch": "AutoLaunch", "auto_pause": "AutoPause", "auto_pause_time": "AutoPauseTime", "max_concurrency": "MaxConcurrency"}
@@ -371,7 +371,7 @@ def run_module():
             resource_group_id=(current or {}).get("EngineResourceGroupId"),
         )
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

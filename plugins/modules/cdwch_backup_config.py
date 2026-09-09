@@ -34,7 +34,7 @@ RETURN = r"""backup_config: {description: Effective backup configuration., type:
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 
 STRATEGY_FIELDS = {"retain_days": "RetainDays", "week_days": "WeekDays", "execute_hour": "ExecuteHour"}
 
@@ -147,7 +147,7 @@ def run_module():
             current = describe(module, client, models, p["instance_id"])
         module.exit_json(changed=True, **(diff or {}), backup_config=current if not module.check_mode else target)
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

@@ -28,7 +28,7 @@ request_id: {description: Tencent Cloud request ID., type: str, returned: always
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 from ansible_collections.susunola.tencentcloud.plugins.modules.tdmysql_backup_policy import _load, describe_request, normalize
 
 
@@ -43,7 +43,7 @@ def run_module():
         values = [normalize(item._serialize(allow_none=True)) for item in response.Items or []]
         module.exit_json(changed=False, backup_policies=values, total_count=int(response.TotalCount or 0), request_id=response.RequestId)
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

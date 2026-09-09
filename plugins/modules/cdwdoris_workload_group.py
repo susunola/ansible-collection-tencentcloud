@@ -48,7 +48,7 @@ workload_groups_status: {description: Instance-wide workload-group status., type
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 
 FIELDS = {
     "cpu_share": "CpuShare",
@@ -189,7 +189,7 @@ def run_module():
             workload_groups_status=desired_status or current_status,
         )
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():

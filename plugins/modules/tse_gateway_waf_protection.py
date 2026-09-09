@@ -29,7 +29,7 @@ EXAMPLES = r"""
 RETURN = r"""waf_protection: {description: Effective WAF state for the requested scope and resources., type: dict, returned: always}"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import sdk_error_payload
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 
 
 def _load():
@@ -112,7 +112,7 @@ def run_module():
             waf_protection={"Scope": p["scope"], "Status": {item: effective.get(item, p["enabled"]) for item in requested}, "AffectedResourceIds": missing},
         )
     except Exception as exc:
-        module.fail_json(**sdk_error_payload(exc))
+        fail_from_sdk_error(module, exc)
 
 
 def main():
