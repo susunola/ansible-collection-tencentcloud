@@ -4,7 +4,9 @@ targets:
   cam_group_membership: {cost: free, modules: [cam_group_membership]}
   key_pair: {cost: free, modules: [key_pair]}
   security_group: {cost: free, modules: [security_group, security_group_rule]}
-  network: {cost: low, modules: [vpc, subnet, route_table, network_acl, eip]}
+  # vpc/subnet have dedicated flagship targets below (P0-01/02); keep the
+  # module->target mapping unique so the registry validator passes.
+  network: {cost: low, modules: [route_table, network_acl, eip]}
   cos_bucket: {cost: low, modules: [cos_bucket]}
   cfs_file_system: {cost: medium, modules: [cfs_file_system]}
   clb_http: {cost: medium, modules: [clb_load_balancer, clb_listener, clb_rule]}
