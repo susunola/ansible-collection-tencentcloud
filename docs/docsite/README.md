@@ -64,3 +64,17 @@ P1-04.
 everything`. The latter deletes *every* file in the destination directory,
 including the tracked `rst/index.rst`, and the Sphinx build then aborts with
 "Sphinx is unable to load the master document".
+
+## Sanity tests and the build output
+
+`docs/docsite/build/` is git-ignored, and `ansible-test sanity` honours
+`.gitignore`, so a build tree never affects the sanity run in a checkout. It
+*does* matter when the collection is copied somewhere without `.git` (a
+release tarball, a CI artifact, a plain `rsync`): without git to consult,
+sanity scans everything on disk, and `no-smart-quotes` then flags the 38
+typographic quotes Sphinx emits in the generated HTML. Exclude the directory
+in that case:
+
+```console
+$ ansible-test sanity --exclude docs/docsite/build --python 3.13 --local
+```

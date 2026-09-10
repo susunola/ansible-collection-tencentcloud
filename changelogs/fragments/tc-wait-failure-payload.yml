@@ -1,0 +1,14 @@
+bugfixes:
+  - >-
+    tc_wait - ansible-core 2.21.3 moved action failures onto
+    ``UnifiedTaskResult`` and now passes the ``result`` dict of an
+    ``AnsibleActionFail`` through untouched, where 2.21.2 and earlier merged
+    the message into it as ``msg``. Every failure the plugin raised therefore
+    surfaced as an empty payload: the task still failed, but the operator lost
+    the reason and the timeout payload lost ``attempts``, ``waited``,
+    ``observed_states`` and ``last_result`` along with it. The plugin now puts
+    ``failed`` and ``msg`` into the result it passes, which is
+    version-independent, and a regression test asserts the payload rather than
+    the exception type. One test that covers the ``Invalid options`` failure
+    raised by ``ActionBase.run`` (not by this plugin) accepts either spelling,
+    since the plugin cannot influence a failure it does not raise.

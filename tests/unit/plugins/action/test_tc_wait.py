@@ -350,6 +350,22 @@ def test_args_must_be_a_dictionary():
     assert "must be a dictionary" in excinfo.value.result["msg"]
 
 
+def test_every_failure_raised_by_the_plugin_carries_the_message():
+    # ansible-core 2.21.3 stopped merging the message into
+    # AnsibleActionFail.result, so a bare AnsibleActionFail("...") surfaced as
+    # an empty payload and every `result["msg"]` assertion below started
+    # raising KeyError. tc_wait now puts `msg` (and `failed`) in the result it
+    # passes, which is version-independent.
+    with pytest.raises(AnsibleActionFail) as excinfo:
+        positive_int(0, "delay")
+    assert excinfo.value.result["failed"] is True
+    assert excinfo.value.result["msg"] == "tc_wait 'delay' must be greater than zero, got 0"
+
+    with pytest.raises(AnsibleActionFail) as excinfo:
+        positive_int("soon", "timeout")
+    assert excinfo.value.result["msg"] == "tc_wait 'timeout' must be an integer, got 'soon'"
+
+
 def test_zero_delay_is_rejected():
     action, calls = build_action({"module": "cvm_instance_info", "args": REGION, "state": "RUNNING", "delay": 0}, [{}])
     with pytest.raises(AnsibleActionFail) as excinfo:
@@ -359,14 +375,19 @@ def test_zero_delay_is_rejected():
 
 
 def test_unknown_options_are_rejected():
-    # _VALID_ARGS makes the base class catch typos before any polling.
+    # _VALID_ARGS makes the base class catch typos before any polling. This
+    # one is raised by ActionBase.run rather than by tc_wait, so its payload is
+    # whatever the installed ansible-core puts there: 2.21.2 and earlier merge
+    # the message into `result` as `msg`, 2.21.3 keeps it on UnifiedTaskResult
+    # and leaves `result` empty. Both spellings are accepted here because the
+    # plugin cannot influence a failure it does not raise.
     action, calls = build_action(
         {"module": "cvm_instance_info", "args": REGION, "state": "RUNNING", "timeouts": 30},
         [{}],
     )
     with pytest.raises(AnsibleActionFail) as excinfo:
         action.run(task_vars={})
-    assert "Invalid options" in excinfo.value.result["msg"]
+    assert "Invalid options" in (excinfo.value.result.get("msg") or str(excinfo.value))
     assert calls == []
 
 

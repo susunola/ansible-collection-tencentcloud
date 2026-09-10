@@ -254,14 +254,29 @@ def matches(states, desired):
     return bool(states) and all(str(state) == desired for state in states)
 
 
+def _fail(message, **extra):
+    """Fail the task with a payload that carries ``msg`` on every ansible-core.
+
+    ansible-core 2.21.3 moved action failures onto ``UnifiedTaskResult`` and
+    passes the ``result`` dict through untouched, where 2.21.2 and earlier
+    merged the message into it as ``msg``. A bare
+    ``AnsibleActionFail(message)`` therefore surfaces as an empty payload on
+    the newer core, so the plugin supplies ``failed`` and ``msg`` itself and
+    the task result is identical on both.
+    """
+    payload = {"failed": True, "msg": message}
+    payload.update(extra)
+    raise AnsibleActionFail(message, result=payload)
+
+
 def positive_int(value, name):
     """Coerce an action-plugin option to a positive int or fail the task."""
     try:
         number = int(value)
     except (TypeError, ValueError):
-        raise AnsibleActionFail("tc_wait '%s' must be an integer, got %r" % (name, value))
+        _fail("tc_wait '%s' must be an integer, got %r" % (name, value))
     if number <= 0:
-        raise AnsibleActionFail("tc_wait '%s' must be greater than zero, got %r" % (name, value))
+        _fail("tc_wait '%s' must be greater than zero, got %r" % (name, value))
     return number
 
 
@@ -275,16 +290,16 @@ class ActionModule(ActionBase):
 
         module = args.get("module")
         if not module:
-            raise AnsibleActionFail("tc_wait requires 'module'")
+            _fail("tc_wait requires 'module'")
         module_name = fully_qualified(module)
 
         module_args = args.get("args") or {}
         if not isinstance(module_args, dict):
-            raise AnsibleActionFail("tc_wait 'args' must be a dictionary of arguments for %s" % module_name)
+            _fail("tc_wait 'args' must be a dictionary of arguments for %s" % module_name)
 
         desired = args.get("state")
         if desired is None:
-            raise AnsibleActionFail("tc_wait requires 'state'")
+            _fail("tc_wait requires 'state'")
         desired = str(desired)
 
         delay = positive_int(args.get("delay", DEFAULT_DELAY), "delay")
@@ -292,7 +307,7 @@ class ActionModule(ActionBase):
 
         list_field, state_field = observation_spec(module, args.get("list_field"), args.get("state_field"))
         if not list_field or not state_field:
-            raise AnsibleActionFail(
+            _fail(
                 "tc_wait has no observation table entry for %r; set list_field and state_field explicitly"
                 % module
             )
@@ -300,11 +315,12 @@ class ActionModule(ActionBase):
         def poll():
             observed = self._execute_module(module_name=module_name, module_args=module_args, task_vars=task_vars)
             if not isinstance(observed, dict):
-                raise AnsibleActionFail("tc_wait: %s returned no result" % module_name)
+                _fail("tc_wait: %s returned no result" % module_name)
             if observed.get("failed"):
-                raise AnsibleActionFail(
+                _fail(
                     "%s failed while tc_wait was observing it: %s" % (module_name, observed.get("msg", "no message")),
-                    result={"module": module_name, "last_result": observed},
+                    module=module_name,
+                    last_result=observed,
                 )
             return observed
 
@@ -329,19 +345,17 @@ class ActionModule(ActionBase):
         outcome = poll_until(poll, is_done, timeout, delay)
         states = observed_states(outcome.value, list_field, state_field)
         if not outcome.matched:
-            raise AnsibleActionFail(
+            _fail(
                 "Timed out after %ss waiting for %s to report %s=%s (%s polls); last observed states: %s"
                 % (outcome.waited, module_name, state_field, desired, outcome.attempts, states),
-                result={
-                    "module": module_name,
-                    "state": desired,
-                    "state_field": state_field,
-                    "list_field": list_field,
-                    "attempts": outcome.attempts,
-                    "waited": outcome.waited,
-                    "observed_states": states,
-                    "last_result": outcome.value,
-                },
+                module=module_name,
+                state=desired,
+                state_field=state_field,
+                list_field=list_field,
+                attempts=outcome.attempts,
+                waited=outcome.waited,
+                observed_states=states,
+                last_result=outcome.value,
             )
         self._display.vvv(
             "tc_wait: %s reached %s=%s after %s polls" % (module_name, state_field, desired, outcome.attempts)
