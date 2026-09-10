@@ -107,6 +107,7 @@ def forbidden_in(names):
     leaked.update(name for name in names if name in FORBIDDEN_NAMES)
     return sorted(leaked)
 
+
 # Ceiling for the built tarball, in MiB. A correct build is about 2 MiB; one
 # that packaged docs/docsite/build was 35 MiB, hence a ceiling well below that
 # but with room to grow. This is a catch-all for "something large and
