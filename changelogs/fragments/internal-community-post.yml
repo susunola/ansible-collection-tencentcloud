@@ -1,0 +1,11 @@
+---
+minor_changes:
+  - >-
+    docs/internal-community-post.md is an internal write-up of the month's
+    collection work, framed as reusable methodology rather than a status
+    report: static "cannot execute, still can check" gates (check_examples /
+    check_porting_map), reading doc facts out of the repository before
+    shipping, layering fast static gates ahead of the slow ansible-test
+    suite, and three sandbox/toolchain traps (tmp_path uid collision, zsh
+    word-split, ansible-test sanity being stricter than ruff on unused
+    imports).

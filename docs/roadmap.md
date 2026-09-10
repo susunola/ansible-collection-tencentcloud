@@ -631,6 +631,18 @@
     `docs/scenarios.md` and `docs/examples/README.md` now cross-link it, and it
     is linked from the README's "Coming from Terraform" paragraph.
 
+67. P2-08 internal community post (2026-09-10): `docs/internal-community-post.md`
+    turns the month of collection work into reusable methodology instead of a
+    status report. It leads with the "cannot execute, still can check" lesson
+    — the collection is too big to run in CI and cannot bill resources, so
+    static gates (`check_examples.py`, `check_porting_map.py`) stand in for
+    execution — then documents reading doc facts out of the repository before
+    shipping, layering fast static gates ahead of the slow `ansible-test`
+    suite, and three sandbox/toolchain traps (`tmp_path` uid collision, zsh
+    word-split, `ansible-test sanity` being stricter than ruff on unused
+    imports). Every module name, option and path in it points back to the
+    collection at commit `2f383da`.
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
 
