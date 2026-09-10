@@ -7,6 +7,9 @@ minor_changes:
     response (human comments and submitted reviews, never bot comments).
   - >-
     scripts/triage_sla.py measures that SLA from the GitHub API and prints
-    one row per item with its age, response time, and status. --check exits
-    non-zero when an open item has breached, so the promise can be enforced
-    instead of merely made.
+    one row per item with its age, response time, and one of four statuses
+    (OK, LATE, WAITING, BREACH). Only BREACH -- unanswered and overdue --
+    fails --check, because it is the only one that is still actionable; a
+    late answer is history, and failing on it would leave CI red on an item
+    nobody can clear except by closing it. --exclude-author drops items a
+    maintainer opened, which can never receive a first response.

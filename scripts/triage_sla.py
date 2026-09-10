@@ -11,11 +11,24 @@ only a review has still responded). Comments by bots are ignored, because
 dependabot and the changelog bot answer instantly and would make every
 number look perfect.
 
+Four statuses, and only one of them fails --check: OK (answered in time),
+LATE (answered, but after the deadline), WAITING (unanswered, still inside
+the window), BREACH (unanswered and overdue). A late answer is history and
+nothing can be done about it, whereas an unanswered item is actionable
+right now; conflating the two would leave --check red forever on an item
+nobody can clear except by closing it.
+
 Usage:
     python scripts/triage_sla.py                 # open issues and PRs
     python scripts/triage_sla.py --closed 30     # also the last 30 days
     python scripts/triage_sla.py --json          # machine-readable
     python scripts/triage_sla.py --check         # exit 1 on any breach
+    python scripts/triage_sla.py --exclude-author susunola
+
+--exclude-author drops items a given account opened. A maintainer's own
+tracking issue can never receive a first response — by definition nobody
+answers it but the author — and the promise is to reporters, so counting it
+as a breach is noise. Repeat the flag for more than one account.
 
 Authentication is optional but recommended: unauthenticated requests are
 rate-limited to 60/hour. The token is read from GITHUB_TOKEN or GH_TOKEN,
@@ -126,6 +139,8 @@ def main():
     parser.add_argument('--json', action='store_true', help='print JSON instead of a table')
     parser.add_argument('--check', action='store_true',
                         help='exit 1 if any open item has breached the SLA')
+    parser.add_argument('--exclude-author', action='append', default=[], metavar='LOGIN',
+                        help='skip items opened by this account (repeatable)')
     args = parser.parse_args()
     if not args.repo:
         raise SystemExit('no --repo given and the origin remote is not on GitHub')
@@ -134,6 +149,8 @@ def main():
     now = datetime.now(timezone.utc)
     rows = []
     for item in client.get('issues', state='open', per_page=100, sort='created', direction='asc'):
+        if item['user']['login'] in args.exclude_author:
+            continue
         rows.append(describe(client, item, now, args.sla, 'open'))
     if args.closed:
         since = (now - timedelta(days=args.closed)).strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -155,9 +172,17 @@ def describe(client, item, now, sla, state):
     age = (now - created).total_seconds() / 3600.0
     response = first_response(client, item, author)
     if response is None:
+        # Nobody has answered: actionable now, so this is the only status
+        # that fails --check.
         status = 'BREACH' if age > sla else 'WAITING'
+    elif response <= sla:
+        status = 'OK'
     else:
-        status = 'OK' if response <= sla else 'BREACH'
+        # Answered, but late. That is a fact for the report, not an alarm:
+        # the reporter is no longer waiting, and an item that stays open
+        # after a late answer would otherwise keep --check red forever with
+        # nothing left to do about it.
+        status = 'LATE'
     return {
         'kind': 'pr' if item.get('pull_request') else 'issue',
         'number': item['number'],
