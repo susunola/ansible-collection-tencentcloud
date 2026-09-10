@@ -16,12 +16,12 @@ options:
   cluster_type: {type: str, choices: [V, C, S], description: Cluster type; required when creating.}
   description: {type: str, description: Cluster description.}
   remark_name: {type: str, description: Cluster display remark.}
-  vpc_id: {type: str, description: VPC ID, immutable after creation.}
-  subnet_id: {type: str, description: Subnet ID, immutable after creation.}
-  cluster_cidr: {type: str, description: Container and service CIDR, immutable after creation.}
-  tsf_region_id: {type: str, description: TSF region ID, immutable after creation.}
-  tsf_zone_id: {type: str, description: TSF zone ID, immutable after creation.}
-  cluster_version: {type: str, description: Cluster version, immutable after creation.}
+  vpc_id: {type: str, description: 'VPC ID, immutable after creation.'}
+  subnet_id: {type: str, description: 'Subnet ID, immutable after creation.'}
+  cluster_cidr: {type: str, description: 'Container and service CIDR, immutable after creation.'}
+  tsf_region_id: {type: str, description: 'TSF region ID, immutable after creation.'}
+  tsf_zone_id: {type: str, description: 'TSF zone ID, immutable after creation.'}
+  cluster_version: {type: str, description: 'Cluster version, immutable after creation.'}
   max_node_pods: {type: int, description: Maximum pods per node at creation.}
   max_cluster_services: {type: int, description: Maximum services at creation.}
   enable_log_collection: {type: bool, description: Enable CLS collection.}

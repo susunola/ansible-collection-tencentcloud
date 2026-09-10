@@ -28,10 +28,10 @@ options:
   image_info: {type: dict, description: ImageInfo-compatible custom image.}
   code_package_path: {type: dict, description: CosPathInfo-compatible code package.}
   start_cmd_info: {type: dict, description: StartCmdInfo-compatible command.}
-  encoded_start_cmd_info: {type: dict, description: EncodedStartCmdInfo-compatible command, taking precedence over start_cmd_info.}
+  encoded_start_cmd_info: {type: dict, description: 'EncodedStartCmdInfo-compatible command, taking precedence over start_cmd_info.'}
   training_mode: {type: str, description: Distributed training mode.}
-  data_configs: {type: list, elements: dict, description: DataConfig-compatible input mounts, at most ten.}
-  data_source: {type: str, description: Data source type such as DATASET, COS, CFS, CFSTurbo, HDFS or GooseFSx.}
+  data_configs: {type: list, elements: dict, description: 'DataConfig-compatible input mounts, at most ten.'}
+  data_source: {type: str, description: 'Data source type such as DATASET, COS, CFS, CFSTurbo, HDFS or GooseFSx.'}
   vpc_id: {type: str, description: VPC ID.}
   subnet_id: {type: str, description: Subnet ID.}
   output: {type: dict, description: CosPathInfo-compatible training output.}

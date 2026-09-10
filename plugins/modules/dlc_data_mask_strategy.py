@@ -14,7 +14,7 @@ description:
 options:
   state: {type: str, choices: [present, absent], default: present, description: Desired strategy state.}
   strategy_id: {type: str, description: Existing masking strategy ID.}
-  name: {type: str, description: Strategy name, required for creation and usable for exact discovery.}
+  name: {type: str, description: 'Strategy name, required for creation and usable for exact discovery.'}
   strategy_type: {type: str, choices: [MASK_SHOW_FIRST_4, MASK_SHOW_LAST_4, MASK_HASH, MASK_DATE_SHOW_YEAR, MASK_NULL, MASK_DEFAULT], description: Desired masking method.}
   description: {type: str, description: Desired strategy description.}
   groups: {type: list, elements: dict, description: Desired GroupInfo list containing WorkGroupId and StrategyType.}

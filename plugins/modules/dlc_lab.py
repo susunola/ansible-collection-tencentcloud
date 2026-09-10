@@ -34,7 +34,7 @@ options:
     type: list
     elements: dict
     description: Exact Tencent Cloud tag set.
-    options:
+    suboptions:
       key: {type: str, required: true, description: Tag key.}
       value: {type: str, required: true, description: Tag value.}
   persistent_work_dir: {type: dict, description: Persistent workspace directory contract passed to DLC.}

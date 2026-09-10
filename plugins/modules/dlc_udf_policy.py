@@ -21,8 +21,8 @@ options:
     elements: dict
     required: true
     description: Complete desired UDF policy set.
-    options:
-      accesses: {type: list, elements: str, required: true, description: Access types such as select, alter or drop.}
+    suboptions:
+      accesses: {type: list, elements: str, required: true, description: 'Access types such as select, alter or drop.'}
       users: {type: list, elements: str, default: [], description: Exact user identity set.}
       groups: {type: list, elements: str, default: [], description: Exact work-group identity set.}
   allow_empty: {type: bool, default: false, description: Explicitly authorize clearing every UDF policy entry.}

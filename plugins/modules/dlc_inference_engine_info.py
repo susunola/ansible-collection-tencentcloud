@@ -20,11 +20,11 @@ options:
     type: list
     elements: dict
     description: Ordered API sort definitions.
-    options:
+    suboptions:
       field: {type: str, required: true, description: API entity field name.}
       order: {type: str, choices: [ASC, DESC], default: ASC, description: Sort direction.}
-  page_size: {type: int, default: 200, description: Engines requested per page, from 1 to 200.}
-  max_pages: {type: int, default: 1000, description: Maximum pages fetched, from 1 to 1000.}
+  page_size: {type: int, default: 200, description: 'Engines requested per page, from 1 to 200.'}
+  max_pages: {type: int, default: 1000, description: 'Maximum pages fetched, from 1 to 1000.'}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

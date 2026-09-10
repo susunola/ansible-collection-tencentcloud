@@ -21,8 +21,8 @@ options:
   start_time: {type: int, description: Optional diagnostic start timestamp in milliseconds.}
   end_time: {type: int, description: Optional diagnostic end timestamp in milliseconds.}
   event_type: {type: str, description: Optional ASCII event type such as Normal or Warning.}
-  page_size: {type: int, default: 100, description: History, event and Pod page size, from 1 to 200.}
-  max_pages: {type: int, default: 100, description: Maximum pages per diagnostic stream, from 1 to 1000.}
+  page_size: {type: int, default: 100, description: 'History, event and Pod page size, from 1 to 200.'}
+  max_pages: {type: int, default: 100, description: 'Maximum pages per diagnostic stream, from 1 to 1000.'}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

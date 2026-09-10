@@ -63,7 +63,6 @@ def load_profile(profile=None, path=None):
     return {key: value for key, value in parser.items(section) if value}
 
 
-
 def require_sdk(module):
     """Fail the module when the Tencent Cloud SDK is not importable."""
     if not HAS_TENCENTCLOUD_SDK:

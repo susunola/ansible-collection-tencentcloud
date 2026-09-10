@@ -16,7 +16,7 @@ options:
   state: {type: str, choices: [present, absent], default: present, description: Desired lifecycle state.}
   name: {type: str, required: true, description: Exact saved-script name and identity.}
   sql_statement: {type: str, description: Plain-text SQL content; required on creation.}
-  description: {type: str, description: Script description, at most 50 characters.}
+  description: {type: str, description: 'Script description, at most 50 characters.'}
   database_name: {type: str, description: Default database name.}
   allow_replace: {type: bool, default: false, description: Explicitly authorize delete-and-recreate when immutable script content drifts.}
   allow_delete: {type: bool, default: false, description: Explicitly authorize script deletion.}

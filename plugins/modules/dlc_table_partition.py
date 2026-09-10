@@ -55,7 +55,7 @@ EXAMPLES = r"""
 """
 RETURN = r"""
 partition: {description: Effective DLC table partition., type: dict, returned: always}
-partition_identity: {description: Stable database, table and values identity., type: dict, returned: always}
+partition_identity: {description: 'Stable database, table and values identity.', type: dict, returned: always}
 """
 
 import json

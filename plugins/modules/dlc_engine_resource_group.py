@@ -15,7 +15,7 @@ description:
 options:
   state: {type: str, choices: [present, absent], default: present, description: Desired lifecycle state.}
   name: {type: str, required: true, description: Exact resource-group name.}
-  data_engine_name: {type: str, description: Parent standard engine name, required for creation and immutable afterwards.}
+  data_engine_name: {type: str, description: 'Parent standard engine name, required for creation and immutable afterwards.'}
   auto_launch: {type: bool, description: Automatically launch when a task is submitted.}
   auto_pause: {type: bool, description: Automatically pause while idle.}
   auto_pause_time: {type: int, description: Idle minutes before automatic pause.}

@@ -21,7 +21,7 @@ options:
   name: {type: str, description: Exact token name; required for creation.}
   description: {type: str, description: Token description.}
   limits: {type: list, elements: dict, description: AuthTokenLimit-compatible rate limits.}
-  rotate_from_token_id: {type: str, no_log: true, description: Rotate only while the current token ID equals this value.}
+  rotate_from_token_id: {type: str, description: Rotate only while the current token ID equals this value.}
   show_token_value: {type: bool, default: false, description: Include the sensitive generated token value in the result.}
   allow_delete: {type: bool, default: false, description: Explicit destructive-operation guard.}
 
@@ -48,7 +48,7 @@ EXAMPLES = r"""
   no_log: true
 """
 RETURN = r"""
-auth_token: {description: Effective token metadata, with Value removed by default., type: dict, returned: always}
+auth_token: {description: 'Effective token metadata, with Value removed by default.', type: dict, returned: always}
 token_id: {description: Stable token ID., type: str, returned: when available}
 """
 

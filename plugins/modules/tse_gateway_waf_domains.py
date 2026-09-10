@@ -13,7 +13,7 @@ options:
   state: {type: str, choices: [present, absent], default: present, description: Whether listed domains are registered.}
   gateway_id: {type: str, required: true, description: Gateway ID.}
   domains: {type: list, elements: str, required: true, description: Unique domain names.}
-  purge_unlisted: {type: bool, default: false, description: With state=present, remove registered domains not listed here.}
+  purge_unlisted: {type: bool, default: false, description: 'With state=present, remove registered domains not listed here.'}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

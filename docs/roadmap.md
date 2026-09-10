@@ -425,6 +425,51 @@
     completed the hand-maintained "Included plugins" table in `README.md`,
     which was missing the action, callback, filter, TKE/COS inventory and
     COS/TKE event-source rows. **Done**
+60. P1-04 collection docsite (2026-09-10): `docs/docsite/` adds an
+    `antsibull-docs` + Sphinx build that renders the `DOCUMENTATION` /
+    `RETURN` / `EXAMPLES` blocks of all 875 modules and every other plugin
+    into an `ansible-doc`-style HTML site — `docs/docsite/build/html/`, ~900
+    pages, about eight minutes end to end. `docs/docsite/build.sh` is the
+    entry point and `docs/docsite/README.md` documents it. Two flags are
+    deliberate: `antsibull-docs --fail-on-error` and `sphinx-build -W`.
+    Without the first, a module whose documentation cannot be parsed becomes a
+    page that reads "Did not return correct DOCUMENTATION"; without the
+    second, a dangling `O(option)` reference ships as a broken link. Both are
+    the reason the docsite is a gate rather than a snapshot.
+
+    Building it is what surfaced a defect that had been invisible since the
+    modules were written: **141 findings across 70 modules**, and all of them
+    one mistake. An option documented as
+    `{type: int, description: Maximum retained versions, from 1 to 24.}` puts
+    a comma inside an unquoted YAML flow mapping, so `from 1 to 24.` parses as
+    a second option key. `ansible-doc` rendered it as a real parameter —
+    `dlc_model_version` documented a `from 1 to 24.: null` line under
+    `max_reserved_models`, and 82 such keys across the collection are English
+    sentence fragments (`'from 1 to 1000'` fourteen times, `'immutable after
+    creation'` twelve). 115 lines in 68 modules were repaired: 88 option and
+    return-value descriptions are now quoted, 18 nested `options:` blocks
+    became the `suboptions:` the schema requires, and 9 `no_log` keys were
+    dropped from `DOCUMENTATION` (it is not part of the doc schema — it
+    belongs in `argument_spec`).
+
+    The reason CI never saw any of it is the second half of this item:
+    `tests/sanity/ignore-2.21.txt` carried 66 blanket
+    `validate-modules:invalid-documentation` entries, one per affected file.
+    That suppression was worse than it looked, because a module whose
+    documentation cannot be parsed is not validated *at all*: those 66 entries
+    were also hiding `doc-missing-type`, `doc-required-mismatch`,
+    `missing-suboption-docs`, `undocumented-parameter` and five more codes on
+    the same files. With the documentation fixed, 73 entries per version file
+    were provably obsolete. Removing them and the 11 `no-log-needed` entries
+    they covered took the ignore total from **2289 to 1869** and made
+    `validate-modules` pass for the first time; `dlc_ray_job_list_info` also
+    gained a real fix, since `O(fetched_count)` pointed at a return value.
+    The 11 files where `no_log` is a genuine name-based false positive —
+    `key` inside `tags`, `primary_keys`, `keyword`, `output_cos_key_prefix`,
+    `kms_key_version` — keep a targeted `validate-modules:no-log-needed`
+    entry instead of the blanket ones. Sanity is back to exactly its three
+    pre-existing failures (`ignores` 100, down from 102; `pep8` 1;
+    `pylint` 46). **Done**
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
@@ -453,8 +498,8 @@ doc_fragments and module_utils grouping, event_source docs, README FQCN index
 and example playbooks. Items land as individual commits, each keeping the
 coverage gate (80) and the sanity ignore budget (2289/2350) intact.
 
-Status 2026-09-10: P0-01…P0-12 and P1-01/02/03/05…10 have landed (see the
-numbered entries above). The one open P1 item is the docsite build (P1-04).
+Status 2026-09-10: P0-01…P0-12 and P1-01…P1-10 have landed (see the numbered
+entries above); the docsite build (P1-04) closed the last open P1 item.
 
 1. **Deepen the eight highest-use resource families.** Close runtime and
    operational workflows in TEM, TKE, CLB, CDB/Redis/MongoDB, TCR, SCF,

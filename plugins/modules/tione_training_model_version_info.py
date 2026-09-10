@@ -15,7 +15,7 @@ description:
 options:
   model_id: {type: str, description: Parent training-model ID; required in list mode.}
   version_id: {type: str, description: Exact model-version ID; switches to detail mode.}
-  filters: {type: dict, default: {}, description: Parent-scoped version filters such as TrainingModelVersionId, ModelVersionType, ModelFormat or AlgorithmFramework.}
+  filters: {type: dict, default: {}, description: 'Parent-scoped version filters such as TrainingModelVersionId, ModelVersionType, ModelFormat or AlgorithmFramework.'}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

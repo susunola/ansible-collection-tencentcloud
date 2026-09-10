@@ -17,7 +17,7 @@ options:
   gateway_id: {type: str, required: true, description: Gateway ID.}
   model_api_id: {type: str, description: Existing Model API ID.}
   name: {type: str, description: Instance-unique Model API name.}
-  config: {type: dict, description: Model API configuration in SDK field shape, excluding Name and GatewayId.}
+  config: {type: dict, description: 'Model API configuration in SDK field shape, excluding Name and GatewayId.'}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -22,7 +22,7 @@ options:
   group_ids: {type: list, elements: str, description: Exact operator group IDs.}
   export_to: {type: list, elements: str, description: Exact namespaces allowed to discover the service.}
   sync_to_global_registry: {type: bool, description: Synchronize to the global registry.}
-  service_type: {type: int, choices: [0, 1, 2], default: 0, description: Microservice, MCP Server or AI Agent type.}
+  service_type: {type: int, choices: [0, 1, 2], default: 0, description: 'Microservice, MCP Server or AI Agent type.'}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

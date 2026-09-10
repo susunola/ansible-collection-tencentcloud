@@ -18,7 +18,7 @@ options:
   user_type: {type: str, choices: [ADMIN, COMMON], description: Desired DLC user type; defaults to COMMON only during creation.}
   alias: {type: str, description: Creation-time user alias shorter than 50 characters.}
   principal_type: {type: str, choices: [UserAccount, RoleAccount], default: UserAccount, description: Creation-time DLC principal type.}
-  account_source: {type: str, choices: [TencentAccount, EntraAccount], default: TencentAccount, description: Account source used by query, update and deletion APIs.}
+  account_source: {type: str, choices: [TencentAccount, EntraAccount], default: TencentAccount, description: 'Account source used by query, update and deletion APIs.'}
   initial_policies: {type: list, elements: dict, description: Policies attached during creation; use dedicated policy resources for ongoing reconciliation.}
   initial_work_group_ids: {type: list, elements: int, description: Work groups attached during creation; use C(dlc_work_group_membership) for ongoing reconciliation.}
   allow_delete_bound: {type: bool, default: false, description: Explicitly authorize deleting a user that still has policies or work groups.}

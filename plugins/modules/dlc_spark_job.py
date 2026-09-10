@@ -15,7 +15,7 @@ description:
 options:
   state: {type: str, choices: [present, absent], default: present, description: Desired lifecycle state.}
   name: {type: str, required: true, description: Exact job name and immutable module identity.}
-  app_type: {type: int, choices: [1, 2], description: Job type, 1 batch or 2 streaming.}
+  app_type: {type: int, choices: [1, 2], description: 'Job type, 1 batch or 2 streaming.'}
   data_engine: {type: str, description: DLC data engine name.}
   app_file: {type: str, description: COS program package path.}
   role_arn: {type: int, description: DLC data-access role ID.}

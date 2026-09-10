@@ -15,7 +15,7 @@ options:
   name: {type: str, description: Cluster name; immutable after creation.}
   region_id: {type: int, description: Numeric region ID; required for creation.}
   zone_id: {type: int, description: Numeric availability-zone ID; required for creation.}
-  login_password: {type: str, no_log: true, description: Initial Flink UI administrator password.}
+  login_password: {type: str, description: Initial Flink UI administrator password.}
   vpc_descriptions: {type: list, elements: dict, description: SDK VPCDescription list; immutable after creation.}
   default_cos_bucket: {type: str, description: Default checkpoint and artifact COS bucket; immutable after creation.}
   cu: {type: int, description: Desired CU count following 12 + 7n.}

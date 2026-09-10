@@ -14,7 +14,7 @@ options:
   gateway_id: {type: str, required: true, description: Gateway ID.}
   consumer_group_id: {type: str, description: Consumer group ID.}
   consumer_group_name: {type: str, description: Consumer group name resolved within the gateway.}
-  consumer_ids: {type: list, elements: str, description: Unique consumer IDs, one through ten entries.}
+  consumer_ids: {type: list, elements: str, description: 'Unique consumer IDs, one through ten entries.'}
   consumer_names: {type: list, elements: str, description: Unique consumer names resolved within the gateway.}
 
 extends_documentation_fragment:

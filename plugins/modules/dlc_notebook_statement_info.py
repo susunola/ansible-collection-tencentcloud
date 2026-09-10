@@ -18,7 +18,7 @@ options:
   task_id: {type: str, description: Exact backing task ID; inferred from the statement when available.}
   include_sql_result: {type: bool, default: false, description: Retrieve all SQL-result pages for the backing task.}
   batch_id: {type: str, description: Optional batch ID used when reading SQL results.}
-  max_results: {type: int, default: 1000, description: Maximum rows requested per result page, from 1 to 1000.}
+  max_results: {type: int, default: 1000, description: 'Maximum rows requested per result page, from 1 to 1000.'}
   data_field_cut_length: {type: int, description: Optional maximum returned field-value length.}
 
 extends_documentation_fragment:

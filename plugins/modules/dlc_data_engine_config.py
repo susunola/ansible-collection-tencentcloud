@@ -20,13 +20,13 @@ options:
     elements: dict
     required: true
     description: Complete desired custom configuration set.
-    options:
+    suboptions:
       key: {type: str, required: true, description: Configuration item name.}
       value: {type: str, required: true, description: Configuration item value.}
   session_resource_template:
     type: dict
     description: Optional desired Spark session resource template; omit to preserve the current template.
-    options:
+    suboptions:
       driver_size: {type: str, description: Driver size.}
       executor_size: {type: str, description: Executor size.}
       executor_nums: {type: int, description: Initial executor count.}
@@ -35,7 +35,7 @@ options:
         type: list
         elements: dict
         description: Complete runtime parameter set for the session template.
-        options:
+        suboptions:
           key: {type: str, required: true, description: Runtime parameter name.}
           value: {type: str, required: true, description: Runtime parameter value.}
   allow_empty: {type: bool, default: false, description: Explicitly authorize clearing every custom configuration pair.}

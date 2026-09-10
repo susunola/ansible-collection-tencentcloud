@@ -14,8 +14,8 @@ description:
   - A configurable page cap prevents unbounded reads when the service returns repeated full pages.
 options:
   session_id: {type: str, required: true, description: Exact Notebook session ID.}
-  page_size: {type: int, default: 200, description: Log lines requested per page, from 1 to 1000.}
-  max_pages: {type: int, default: 100, description: Maximum number of pages fetched, from 1 to 1000.}
+  page_size: {type: int, default: 200, description: 'Log lines requested per page, from 1 to 1000.'}
+  max_pages: {type: int, default: 100, description: 'Maximum number of pages fetched, from 1 to 1000.'}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

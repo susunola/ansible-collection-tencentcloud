@@ -1,0 +1,43 @@
+minor_changes:
+  - >-
+    docsite - the collection now ships an ``antsibull-docs`` documentation
+    build under ``docs/docsite/``. ``docs/docsite/build.sh`` renders every
+    module and plugin into ``ansible-doc``-style RST and hands it to Sphinx,
+    producing a browsable and searchable site in
+    ``docs/docsite/build/html/``. With ~875 modules the only index of the
+    collection was the README table, so this is what makes the
+    ``DOCUMENTATION`` blocks reachable without installing anything. The build
+    runs ``antsibull-docs`` with ``--fail-on-error`` and ``sphinx-build`` with
+    ``-W``: a module whose documentation cannot be parsed, or a reference to
+    an option that does not exist, fails the build instead of shipping a
+    broken page.
+  - >-
+    sanity - the 66 blanket ``validate-modules:invalid-documentation`` ignore
+    entries are gone. They were suppressing a real defect (see the bugfix
+    entry) rather than a false positive, and they were also masking every
+    *other* validate-modules code for the same files, because a module whose
+    documentation cannot be parsed is not validated at all. Removing them
+    dropped the ignore total from 2289 to 1869 and made
+    ``validate-modules`` pass for the first time; the 11 files where
+    ``no_log`` is genuinely a name-based false positive (``key`` inside
+    ``tags``, ``primary_keys``, ``keyword``, ``output_cos_key_prefix``) keep a
+    targeted ``validate-modules:no-log-needed`` entry.
+
+bugfixes:
+  - >-
+    DOCUMENTATION - 65 modules documented an option with a comma inside an
+    unquoted YAML flow mapping, for example ``{type: int, description:
+    Maximum retained versions, from 1 to 24.}``. The comma is the flow
+    separator, so ``from 1 to 24.`` was parsed as a second option key and
+    ``ansible-doc`` rendered it as a parameter (``max_reserved_models`` showed
+    a ``from 1 to 24.: null`` line). 115 option descriptions in 68 modules are
+    now quoted, including the same mistake in five ``RETURN`` blocks. Two
+    related defects were fixed in the same pass: ``no_log`` inside a
+    ``DOCUMENTATION`` option (9 modules - it belongs in ``argument_spec``, not
+    in the docs) and nested ``options:`` where the schema requires
+    ``suboptions:`` (3 modules).
+  - >-
+    dlc_ray_job_list_info - the module description referenced
+    ``O(fetched_count)``, which is a return value and not an option, so the
+    docsite build failed on an unresolved cross-reference. It is now
+    ``RV(fetched_count)``.

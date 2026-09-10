@@ -16,8 +16,8 @@ options:
   name: {type: str, required: true, description: Repository name.}
   repository_type: {type: str, choices: [default, private], required: true, description: Repository type.}
   description: {type: str, description: Repository description.}
-  bucket_name: {type: str, description: COS bucket name, required for a private repository.}
-  bucket_region: {type: str, description: COS bucket region, required for a private repository.}
+  bucket_name: {type: str, description: 'COS bucket name, required for a private repository.'}
+  bucket_region: {type: str, description: 'COS bucket region, required for a private repository.'}
   directory: {type: str, description: Repository directory in the COS bucket.}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

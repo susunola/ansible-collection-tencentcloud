@@ -31,13 +31,13 @@ options:
   elastic_switch: {type: bool, description: Enable prepaid Spark-batch elasticity.}
   elastic_limit: {type: int, description: Maximum prepaid Spark-batch elastic capacity.}
   schedule_elasticity_conf: {type: dict, description: Complete SDK time-based elasticity configuration.}
-  description: {type: str, description: Engine description, at most 250 characters.}
+  description: {type: str, description: 'Engine description, at most 250 characters.'}
   cidr_block: {type: str, description: Creation-time VPC CIDR block.}
   engine_network_id: {type: str, description: Creation-time engine network ID.}
   engine_exec_type: {type: str, choices: [SQL, BATCH], description: Creation-time execution type.}
   resource_type: {type: str, choices: [Standard_CU, Memory_CU], description: Creation-time resource type.}
   engine_generation: {type: str, choices: [Native, SuperSQL], description: Creation-time engine generation.}
-  image_version_name: {type: str, description: Desired engine image name, resolved to an online image version ID for existing engines.}
+  image_version_name: {type: str, description: 'Desired engine image name, resolved to an online image version ID for existing engines.'}
   allow_image_switch: {type: bool, default: false, description: Explicitly authorize switching an existing engine image.}
   standby_cluster: {type: bool, description: Enable or disable the engine standby cluster for high availability.}
   allow_standby_switch: {type: bool, default: false, description: Explicitly authorize changing standby-cluster availability and cost posture.}

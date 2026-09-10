@@ -13,8 +13,8 @@ options:
   instance_id: {type: str, required: true, description: CDW ClickHouse instance ID.}
   enabled: {type: bool, required: true, description: Whether backup is enabled.}
   cos_bucket_name: {type: str, description: COS bucket used when enabling backup.}
-  meta_strategy: {type: dict, description: Metadata schedule with retain_days, week_days and execute_hour.}
-  data_strategy: {type: dict, description: Table-data schedule with retain_days, week_days and execute_hour.}
+  meta_strategy: {type: dict, description: 'Metadata schedule with retain_days, week_days and execute_hour.'}
+  data_strategy: {type: dict, description: 'Table-data schedule with retain_days, week_days and execute_hour.'}
   backup_tables: {type: list, elements: dict, description: Exact SDK BackupTableContent list for the data schedule.}
 
 extends_documentation_fragment:

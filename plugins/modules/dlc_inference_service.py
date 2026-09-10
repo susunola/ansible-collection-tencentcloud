@@ -39,7 +39,7 @@ options:
     type: list
     elements: dict
     description: Exact readable Tencent Cloud resource tag set.
-    options:
+    suboptions:
       key: {type: str, required: true, description: Tag key.}
       value: {type: str, required: true, description: Tag value.}
   wait: {type: bool, default: true, description: Wait for Running or Stopped convergence.}

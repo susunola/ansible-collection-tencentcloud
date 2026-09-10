@@ -16,7 +16,7 @@ description:
 options:
   name: {type: str, required: true, description: Exact model name.}
   model_uid: {type: str, description: Stable model UID; used as identity when supplied.}
-  model_type: {type: str, description: Model type such as LLM, Embedding or Reranker; required on creation.}
+  model_type: {type: str, description: 'Model type such as LLM, Embedding or Reranker; required on creation.'}
   initial_version: {type: str, description: Initial version label; required on creation and not treated as drift after later versions are published.}
   provider: {type: str, description: Creation-time model provider.}
   description: {type: str, description: Mutable model description.}
@@ -31,7 +31,7 @@ options:
     type: list
     elements: dict
     description: Exact Tencent Cloud resource tag set.
-    options:
+    suboptions:
       key: {type: str, required: true, description: Tag key.}
       value: {type: str, required: true, description: Tag value.}
   wait: {type: bool, default: true, description: Wait for model presence and mutable-field convergence.}

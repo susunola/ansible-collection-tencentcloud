@@ -12,7 +12,7 @@ description: Links, reconciles or unlinks Tencent Cloud or third-party Prometheu
 options:
   mesh_id: {type: str, required: true, description: TCM mesh ID.}
   state: {type: str, choices: [present, absent], default: present, description: Desired integration state.}
-  config: {type: dict, no_log: true, description: SDK PrometheusConfig payload, including optional CustomProm credentials.}
+  config: {type: dict, description: 'SDK PrometheusConfig payload, including optional CustomProm credentials.'}
   rotate_credentials: {type: bool, default: false, description: Force relinking when write-only credentials must be rotated.}
 
   waiter_delay: {type: int, default: 5, description: Polling interval.}

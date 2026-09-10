@@ -1149,6 +1149,11 @@ Integration tests require Tencent Cloud credentials and run only when
 `TENCENTCLOUD_SECRET_ID` / `TENCENTCLOUD_SECRET_KEY` are set (see
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
 
+The plugin table above is an index, not documentation: the full
+`ansible-doc`-style reference for every module and plugin is built from their
+`DOCUMENTATION` blocks by [`docs/docsite/build.sh`](docs/docsite/README.md),
+which writes a browsable site to `docs/docsite/build/html/`.
+
 ## Code of Conduct
 
 This collection follows the [Ansible Community Code of Conduct](https://docs.ansible.com/ansible/latest/community/code_of_conduct.html).

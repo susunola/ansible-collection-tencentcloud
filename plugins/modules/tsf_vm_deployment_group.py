@@ -18,7 +18,7 @@ options:
   cluster_id: {type: str, required: true, description: Owning TSF cluster ID.}
   description: {type: str, description: Deployment group description.}
   alias: {type: str, description: Deployment group display remark.}
-  resource_type: {type: str, choices: [DEF], default: DEF, description: Deployment group resource type, immutable after creation.}
+  resource_type: {type: str, choices: [DEF], default: DEF, description: 'Deployment group resource type, immutable after creation.'}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

@@ -12,12 +12,12 @@ version_added: "0.15.0"
 description: Creates, updates and deletes a TSF namespace with immutable placement protection.
 options:
   state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  namespace_id: {type: str, description: Existing namespace ID. When omitted, exact name and cluster are used.}
+  namespace_id: {type: str, description: 'Existing namespace ID. When omitted, exact name and cluster are used.'}
   name: {type: str, required: true, description: Namespace name.}
   cluster_id: {type: str, description: Cluster ID; required when creating a cluster namespace.}
   description: {type: str, description: Namespace description.}
-  resource_type: {type: str, choices: [DEF, GW], description: Namespace resource type, immutable after creation.}
-  namespace_type: {type: str, choices: [DEF, GLOBAL], default: DEF, description: Namespace type, immutable after creation.}
+  resource_type: {type: str, choices: [DEF, GW], description: 'Namespace resource type, immutable after creation.'}
+  namespace_type: {type: str, choices: [DEF, GLOBAL], default: DEF, description: 'Namespace type, immutable after creation.'}
   high_availability: {type: bool, description: Whether high availability is enabled.}
   create_k8s_namespace: {type: bool, description: Create the corresponding Kubernetes namespace.}
 extends_documentation_fragment:

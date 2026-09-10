@@ -19,7 +19,7 @@ options:
   datasource_connection_name: {type: str, default: DataLakeCatalog, description: Catalog or data-source connection name.}
   comment: {type: str, description: Table comment.}
   table_type: {type: str, default: TABLE, description: Catalog table type.}
-  table_format: {type: str, description: Table storage format such as HIVE, ICEBERG or LAKEFS.}
+  table_format: {type: str, description: 'Table storage format such as HIVE, ICEBERG or LAKEFS.'}
   data_format: {type: str, choices: [TextFile, CSV, Json, Parquet, ORC, AVRO], default: Parquet, description: Physical data format.}
   location: {type: str, description: COS table location.}
   primary_keys: {type: list, elements: str, description: T-Iceberg primary-key columns.}
@@ -27,7 +27,7 @@ options:
     type: list
     elements: dict
     description: Ordered table columns; required on creation.
-    options:
+    suboptions:
       name: {type: str, required: true, description: Column name.}
       type: {type: str, required: true, description: DLC column type.}
       comment: {type: str, description: Column comment.}
@@ -38,7 +38,7 @@ options:
     type: list
     elements: dict
     description: Ordered partition definition.
-    options:
+    suboptions:
       name: {type: str, required: true, description: Partition column name.}
       type: {type: str, required: true, description: Partition type.}
       comment: {type: str, description: Partition comment.}

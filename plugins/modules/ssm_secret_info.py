@@ -22,7 +22,7 @@ options:
   encrypt_type: {type: int, choices: [0, 1], description: Encryption type filter.}
   instance_id: {type: str, description: Cloud product instance filter.}
   order: {type: str, choices: [ascending, descending], default: descending, description: Creation-time ordering.}
-  page_size: {type: int, default: 100, description: Results requested per page, from 1 to 100.}
+  page_size: {type: int, default: 100, description: 'Results requested per page, from 1 to 100.'}
   max_pages: {type: int, default: 1000, description: Maximum pages fetched.}
 
 extends_documentation_fragment:

@@ -18,7 +18,7 @@ options:
   name: {type: str, description: Instance-unique certificate name.}
   cert_source: {type: str, choices: [native, ssl], description: Certificate source.}
   ssl_certificate_id: {type: str, description: Tencent Cloud SSL-platform certificate ID.}
-  private_key: {type: str, no_log: true, description: Native PEM private key.}
+  private_key: {type: str, description: Native PEM private key.}
   certificate: {type: str, description: Native PEM certificate chain.}
   bind_domains: {type: list, elements: str, description: Bound domain names.}
   cert_type: {type: str, choices: [SVR, CA], description: Certificate type.}

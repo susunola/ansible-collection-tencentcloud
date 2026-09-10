@@ -17,8 +17,8 @@ options:
   instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
   username: {type: str, required: true, description: Login username.}
   host: {type: str, default: '%', description: Allowed client host; username and host form the identity.}
-  password: {type: str, no_log: true, description: Plaintext password used for creation or explicit rotation.}
-  encrypted_password: {type: str, no_log: true, description: Encrypted password used instead of plaintext.}
+  password: {type: str, description: Plaintext password used for creation or explicit rotation.}
+  encrypted_password: {type: str, description: Encrypted password used instead of plaintext.}
   rotate_password: {type: bool, default: false, description: Explicitly reset the password; this is an action on every enabled run.}
   description: {type: str, description: Create-only account description.}
   global_privileges: {type: list, elements: str, description: Full desired global privilege set.}

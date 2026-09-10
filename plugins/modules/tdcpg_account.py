@@ -13,7 +13,7 @@ options:
   cluster_id: {type: str, required: true, description: Cluster ID.}
   account_name: {type: str, required: true, description: Existing database account name.}
   description: {type: str, description: Account description.}
-  password: {type: str, no_log: true, description: New password used only with rotate_password=true.}
+  password: {type: str, description: New password used only with rotate_password=true.}
   rotate_password: {type: bool, default: false, description: Explicitly rotate the write-only password.}
 
 extends_documentation_fragment:

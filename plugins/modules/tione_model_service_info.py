@@ -20,8 +20,8 @@ options:
   tag_filters: {type: dict, default: {}, description: Tag keys mapped to values or value lists in list mode.}
   order_field: {type: str, choices: [CreateTime, UpdateTime], default: UpdateTime, description: List sort field.}
   order: {type: str, choices: [ASC, DESC], default: DESC, description: List sort direction.}
-  page_size: {type: int, default: 100, description: Service groups requested per page, from 1 to 100.}
-  max_pages: {type: int, default: 1000, description: Maximum pages fetched, from 1 to 1000.}
+  page_size: {type: int, default: 100, description: 'Service groups requested per page, from 1 to 100.'}
+  max_pages: {type: int, default: 1000, description: 'Maximum pages fetched, from 1 to 1000.'}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

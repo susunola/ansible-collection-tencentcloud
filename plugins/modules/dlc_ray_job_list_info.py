@@ -11,7 +11,7 @@ short_description: List Tencent Cloud DLC Ray jobs
 version_added: "0.14.0"
 description:
   - Lists DLC Ray jobs with bounded page-number pagination, time bounds, stable filters and ordered sorting.
-  - The API reports total pages but not total records, so O(fetched_count) is the exact returned count.
+  - The API reports total pages but not total records, so RV(fetched_count) is the exact returned count.
 options:
   start_time: {type: int, description: Optional submission-time lower bound in milliseconds.}
   end_time: {type: int, description: Optional submission-time upper bound in milliseconds.}
@@ -20,11 +20,11 @@ options:
     type: list
     elements: dict
     description: Ordered API sort definitions.
-    options:
+    suboptions:
       field: {type: str, required: true, description: API entity field name.}
       order: {type: str, choices: [ASC, DESC], default: ASC, description: Sort direction.}
-  page_size: {type: int, default: 200, description: Jobs requested per page, from 1 to 200.}
-  max_pages: {type: int, default: 1000, description: Maximum pages fetched, from 1 to 1000.}
+  page_size: {type: int, default: 200, description: 'Jobs requested per page, from 1 to 200.'}
+  max_pages: {type: int, default: 1000, description: 'Maximum pages fetched, from 1 to 1000.'}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

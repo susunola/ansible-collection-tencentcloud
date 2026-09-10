@@ -16,7 +16,7 @@ options:
   address: {type: str, description: Exact origin IP address or domain.}
   name: {type: str, description: Origin display name.}
   project_id: {type: int, default: 0, description: Tencent Cloud project ID.}
-  allow_shared_delete: {type: bool, default: false, description: Authorize global removal, which can affect every listener using this origin.}
+  allow_shared_delete: {type: bool, default: false, description: 'Authorize global removal, which can affect every listener using this origin.'}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

@@ -27,7 +27,7 @@ EXAMPLES = r"""
   register: engine_access
 """
 RETURN = r"""
-access_address: {description: Engine client, console, environment, limiter and bandwidth endpoint metadata., type: dict, returned: always}
+access_address: {description: 'Engine client, console, environment, limiter and bandwidth endpoint metadata.', type: dict, returned: always}
 request_id: {description: Tencent Cloud request ID., type: str, returned: always}
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

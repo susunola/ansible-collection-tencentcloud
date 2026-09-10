@@ -36,8 +36,8 @@ options:
   model_version_type: {type: str, choices: [NORMAL, ACCELERATE], default: NORMAL, description: Model-version type.}
   model_format: {type: str, description: Model serialization format.}
   auto_clean: {type: str, choices: ['true', 'false'], description: Automatic version cleanup switch.}
-  max_reserved_models: {type: int, description: Maximum retained versions, from 1 to 24.}
-  model_clean_period: {type: int, description: Cleanup interval in minutes, from 1 to 1440.}
+  max_reserved_models: {type: int, description: 'Maximum retained versions, from 1 to 24.'}
+  model_clean_period: {type: int, description: 'Cleanup interval in minutes, from 1 to 1440.'}
   is_qat: {type: bool, description: Whether this is a quantization-aware-training model.}
   delete_cos: {type: bool, default: false, description: Also remove version model files from COS.}
   allow_delete: {type: bool, default: false, description: Explicit destructive-operation guard.}

@@ -17,7 +17,7 @@ options:
   lane_id: {type: str, required: true, description: Owning traffic lane ID.}
   remark: {type: str, description: Rule remark.}
   enabled: {type: bool, default: true, description: Whether the rule is enabled.}
-  tag_relationship: {type: str, choices: [RELEATION_AND, RELEATION_OR], default: RELEATION_AND, description: Relationship between tags, using TSF API values.}
+  tag_relationship: {type: str, choices: [RELEATION_AND, RELEATION_OR], default: RELEATION_AND, description: 'Relationship between tags, using TSF API values.'}
   tags:
     type: list
     elements: dict

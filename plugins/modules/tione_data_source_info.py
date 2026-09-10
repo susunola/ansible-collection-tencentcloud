@@ -17,8 +17,8 @@ options:
   tag_filters: {type: dict, default: {}, description: Tag keys mapped to tag values or value lists.}
   order_field: {type: str, description: API field used for ordering.}
   order: {type: str, choices: [ASC, DESC], default: DESC, description: Sort direction.}
-  page_size: {type: int, default: 200, description: Data sources requested per page, from 1 to 200.}
-  max_pages: {type: int, default: 1000, description: Maximum pages fetched, from 1 to 1000.}
+  page_size: {type: int, default: 200, description: 'Data sources requested per page, from 1 to 200.'}
+  max_pages: {type: int, default: 1000, description: 'Maximum pages fetched, from 1 to 1000.'}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

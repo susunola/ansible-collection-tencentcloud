@@ -13,7 +13,7 @@ options:
   state: {type: str, choices: [present, absent], default: present, description: Desired plugin state.}
   gateway_id: {type: str, required: true, description: Gateway ID.}
   scope: {type: str, choices: [service, route], required: true, description: Protected resource type.}
-  resource: {type: str, required: true, description: Service name or ID, or route name or ID.}
+  resource: {type: str, required: true, description: 'Service name or ID, or route name or ID.'}
   config: {type: dict, description: SDK CloudNativeAPIGatewayRateLimitDetail payload.}
 
 extends_documentation_fragment:

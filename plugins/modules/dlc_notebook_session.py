@@ -31,7 +31,7 @@ options:
     type: list
     elements: dict
     description: Complete creation-time session argument set.
-    options:
+    suboptions:
       key: {type: str, required: true, description: Argument key.}
       value: {type: str, required: true, description: Argument value.}
   proxy_user: {type: str, description: Creation-time proxy user.}

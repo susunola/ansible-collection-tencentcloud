@@ -126,25 +126,21 @@ def _iter_tag_pairs(source):
     if isinstance(source, dict):
         pair = _single_tag_pair(source)
         if pair is None:
-            for item in normalize_tags(source).items():
-                yield item
+            yield from normalize_tags(source).items()
             return
         # Re-read the pair through normalize_tags so an empty key is dropped
         # exactly as it is for a tag map or a tag list.
-        for item in normalize_tags([{"key": pair[0], "value": pair[1]}]).items():
-            yield item
+        yield from normalize_tags([{"key": pair[0], "value": pair[1]}]).items()
         return
     if isinstance(source, (list, tuple)):
         for element in source:
-            for item in _iter_tag_pairs(element):
-                yield item
+            yield from _iter_tag_pairs(element)
         return
     if not hasattr(source, "Key"):
         raise TypeError(
             "unsupported tag source %r: expected a mapping, a list of tags or an SDK Tag object" % (source,)
         )
-    for item in tags_from_sdk([source]).items():
-        yield item
+    yield from tags_from_sdk([source]).items()
 
 
 def merge_tags(*sources):
