@@ -88,10 +88,24 @@ FORBIDDEN_PREFIXES = (
     ".pytest_cache/",
     ".ruff_cache/",
     ".ansible/",
-    ".coverage",
-    "coverage.xml",
     "coverage-html/",
+    # Trailing dot on purpose. ".coverage." matches the generated
+    # .coverage.<host>.<pid> data files; bare ".coverage" would also match
+    # .coveragerc, which is a committed config file that ships by design.
+    ".coverage.",
 )
+
+# Exact filenames, matched as a whole: a prefix test on these would collide
+# with legitimate neighbours (.coverage vs .coveragerc).
+FORBIDDEN_NAMES = (".coverage", "coverage.xml")
+
+
+def forbidden_in(names):
+    """Return the forbidden entries present in a list of tarball members."""
+    leaked = {prefix for name in names for prefix in FORBIDDEN_PREFIXES
+              if name.startswith(prefix)}
+    leaked.update(name for name in names if name in FORBIDDEN_NAMES)
+    return sorted(leaked)
 
 # Ceiling for the built tarball, in MiB. A correct build is about 2 MiB; one
 # that packaged docs/docsite/build was 35 MiB, hence a ceiling well below that
@@ -379,8 +393,7 @@ def dry_run(state, out, smoke=True, max_size_mib=DEFAULT_MAX_SIZE_MIB):
             results.append(("dry-run-version", FAIL,
                             "MANIFEST.json says %s but galaxy.yml says %s" % (shipped, version)))
 
-        leaked = sorted({prefix for name in names for prefix in FORBIDDEN_PREFIXES
-                         if name.startswith(prefix)})
+        leaked = forbidden_in(names)
         if leaked:
             results.append(("dry-run-build-ignore", FAIL,
                             "tarball contains %s; galaxy.yml build_ignore no "

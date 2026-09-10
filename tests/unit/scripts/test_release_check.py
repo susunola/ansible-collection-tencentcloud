@@ -198,6 +198,26 @@ def test_ignore_marks_check_skipped(guard):
     assert "ignored via --ignore" in detail
 
 
+def test_coveragerc_is_not_confused_with_coverage_data(guard):
+    """.coveragerc is a committed config file; .coverage is generated data.
+
+    A prefix test on ".coverage" matches both, which would fail every dry
+    run on a tree that legitimately ships .coveragerc.
+    """
+    assert guard.forbidden_in([".coveragerc", "plugins/modules/cvm_instance.py"]) == []
+    assert guard.forbidden_in([".coverage"]) == [".coverage"]
+    assert guard.forbidden_in([".coverage.atom.1234.5678"]) == [".coverage."]
+
+
+def test_forbidden_in_finds_packaged_junk(guard):
+    names = ["MANIFEST.json", "plugins/", "docs/docsite/build/html/index.html",
+             ".pytest_cache/v/cache/nodeids", ".github/workflows/ci.yml",
+             "tests/unit/foo.py", "coverage.xml"]
+    assert guard.forbidden_in(names) == [
+        ".github/", ".pytest_cache/", "coverage.xml", "docs/docsite/build/", "tests/",
+    ]
+
+
 def test_unknown_ignore_name_is_rejected(guard):
     err = io.StringIO()
     assert guard.main(["--ignore", "no-such-check"], out=io.StringIO(), err=err) == 2
