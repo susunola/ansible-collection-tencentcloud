@@ -750,6 +750,19 @@
     check-mode x2 / missing-pattern validation / SDK-failure) plus changelog
     fragment. Next family increment: TCR webhook trigger.
 
+78. TCR webhook trigger module (theme #1, 2026-09-11):
+    `plugins/modules/tcr_webhook_trigger.py` closes the first TCR webhook-trigger
+    gap from theme #1. It creates or deletes a webhook trigger
+    (`CreateWebhookTrigger` / `DeleteWebhookTrigger`), identified by the trigger
+    name and namespace and describable via `DescribeWebhookTrigger`. The nested
+    `WebhookTrigger` SDK payload is accepted verbatim under `trigger` and built
+    via `from_json_string`, because the model mixes fuzzy enumeration values
+    (`Condition`, `EventTypes`) with free-form endpoint `Targets`. Idempotent on
+    the trigger name within the namespace, check-mode safe. Unit-test matrix
+    (create / idempotent / absent / delete / check-mode x2 / missing-name
+    validation / SDK-failure) plus changelog fragment. Next family increment: CLS
+    alarm.
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
 
