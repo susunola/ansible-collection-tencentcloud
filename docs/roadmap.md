@@ -776,6 +776,21 @@
     check-mode x2 / required_if / SDK-failure) plus changelog fragment. Next
     family increment: Redis replication group.
 
+80. Redis replication group module (theme #1, 2026-09-11):
+    `plugins/modules/redis_replication_group.py` closes the first Redis
+    replication-group gap from theme #1. It creates or removes a Redis
+    replication group (`CreateReplicationGroup` / `RemoveReplicationGroup`),
+    identified by the group name and describable via `DescribeReplicationGroup`
+    (matched by `SearchKey`). Create seeds the group from an existing instance
+    (I(instance_id), required on create), which becomes the group master; removal
+    detaches the group and its members. Per-instance membership reconcile
+    (AddReplicationInstance / RemoveReplicationInstance) is intentionally left
+    out of scope. Idempotent on the group name, check-mode safe. Unit-test matrix
+    (create / idempotent / absent / remove / check-mode x2 / required_if /
+    SDK-failure) plus changelog fragment. This completes the four original theme
+    #1 family groups with a second operational increment each (TCR immutable-tag
+    rule + webhook trigger, Redis replication group, CLS alarm).
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
 
