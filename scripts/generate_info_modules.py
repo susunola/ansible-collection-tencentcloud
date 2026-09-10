@@ -478,6 +478,80 @@ SPECS = [
 """,
     },
     {
+        "module": "as_scaling_policy_info",
+        "version_added": "1.3.0",
+        "service_package": "tencentcloud.autoscaling.v20180419",
+        "client_module": "autoscaling_client",
+        "client_class": "AutoscalingClient",
+        "sdk_package": "tencentcloud-sdk-python-autoscaling",
+        "endpoint": "as.tencentcloudapi.com",
+        "action": "DescribeScalingPolicies",
+        "request_class": "DescribeScalingPoliciesRequest",
+        "ids": {
+            "param": "auto_scaling_policy_ids",
+            "field": "AutoScalingPolicyIds",
+            "doc": "Auto scaling policy IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "Auto Scaling policy API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "ScalingPolicySet",
+        "response_total": "TotalCount",
+        "result_key": "scaling_policies",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud auto scaling policies",
+        "description": "Returns auto scaling policies visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching auto scaling policies.",
+        "return_total_doc": "Number of auto scaling policies reported by the API.",
+        "examples": """\
+- name: List all auto scaling policies
+  susunola.tencentcloud.as_scaling_policy_info:
+    region: ap-guangzhou
+
+- name: Find auto scaling policies by group
+  susunola.tencentcloud.as_scaling_policy_info:
+    region: ap-guangzhou
+    filters:
+      auto-scaling-group-id: [asg-xxxxxxxx]
+""",
+    },
+    {
+        "module": "as_scheduled_action_info",
+        "version_added": "1.3.0",
+        "service_package": "tencentcloud.autoscaling.v20180419",
+        "client_module": "autoscaling_client",
+        "client_class": "AutoscalingClient",
+        "sdk_package": "tencentcloud-sdk-python-autoscaling",
+        "endpoint": "as.tencentcloudapi.com",
+        "action": "DescribeScheduledActions",
+        "request_class": "DescribeScheduledActionsRequest",
+        "ids": {
+            "param": "scheduled_action_ids",
+            "field": "ScheduledActionIds",
+            "doc": "Scheduled action IDs to return. Mutually exclusive with O(filters).",
+        },
+        "filters": {"doc": "Auto Scaling scheduled action API filter names mapped to lists of values."},
+        "extra_params": [],
+        "response_items": "ScheduledActionSet",
+        "response_total": "TotalCount",
+        "result_key": "scheduled_actions",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud auto scaling scheduled actions",
+        "description": "Returns auto scaling scheduled actions visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching auto scaling scheduled actions.",
+        "return_total_doc": "Number of scheduled actions reported by the API.",
+        "examples": """\
+- name: List all auto scaling scheduled actions
+  susunola.tencentcloud.as_scheduled_action_info:
+    region: ap-guangzhou
+
+- name: Find scheduled actions by group
+  susunola.tencentcloud.as_scheduled_action_info:
+    region: ap-guangzhou
+    filters:
+      auto-scaling-group-id: [asg-xxxxxxxx]
+""",
+    },
+    {
         "module": "scf_function_info",
         "service_package": "tencentcloud.scf.v20180416",
         "client_module": "scf_client",

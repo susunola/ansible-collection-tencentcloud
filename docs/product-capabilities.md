@@ -7,7 +7,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 
 - Products/services: **204**
 - Write modules: **440**
-- Information modules: **335**
+- Information modules: **337**
 - Solution roles: **68**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
@@ -32,7 +32,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `apm` | discovery-only | 0 | 1 | — | — |
 | `asr` | discovery-only | 0 | 1 | — | — |
 | `asw` | discovery-only | 0 | 1 | — | — |
-| `autoscaling` | solution | 3 | 1 | `tc_autoscaling_group` | `as_scaling_group`, `as_scaling_policy`, `as_scheduled_action` |
+| `autoscaling` | solution | 3 | 3 | `tc_autoscaling_group` | `as_scaling_group`, `as_scaling_policy`, `as_scheduled_action` |
 | `ba` | discovery-only | 0 | 1 | — | — |
 | `batch` | discovery-only | 0 | 1 | — | — |
 | `bdrc` | discovery-only | 0 | 1 | — | — |

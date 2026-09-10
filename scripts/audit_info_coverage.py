@@ -192,8 +192,6 @@ KNOWN_GAPS = {
     "tsf_repository",
     "tsf_vm_deployment_group",
     "api_gateway_service_release",
-    "as_scaling_policy",
-    "as_scheduled_action",
     "cbs_disk_backup",
     "cbs_snapshot_share",
     "cdn_cls_log_topic",
