@@ -127,7 +127,10 @@ def run(cmd, cwd=REPO_ROOT, env=None, timeout=300):
         return None, "", "%s is not installed or not on PATH" % cmd[0]
     except subprocess.TimeoutExpired:
         return None, "", "%s timed out after %ss" % (cmd[0], timeout)
-    decode = lambda blob: blob.decode("utf-8", "replace")
+
+    def decode(blob):
+        return blob.decode("utf-8", "replace")
+
     return proc.returncode, decode(proc.stdout), decode(proc.stderr)
 
 

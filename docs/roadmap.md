@@ -544,6 +544,43 @@
     broken on `main` at their base commit, not on their own content. The
     nightly triage job is parked on a local branch — the OAuth token in use
     cannot push `.github/workflows/`. **Done**
+64. P2-04 release automation (2026-09-10): releases are cut by pushing a
+    `v*` tag, which is also the only trigger `release.yml` has — so the
+    first thing that can tell you a release is broken is the push that makes
+    it unbreakable, by which point the tag is out, a GitHub release object
+    exists and Galaxy may already have a copy.
+
+    - `scripts/release_check.py` is the guard that runs *before* the tag:
+      version format, version ahead of the newest released tag, tag free
+      locally and on origin, fragments present, version not already folded
+      into `changelog.yaml`, clean tree. `--dry-run` also builds the tarball
+      into a temporary directory, checks `MANIFEST.json` against
+      `galaxy.yml`, asserts nothing from `build_ignore` leaked in, installs
+      it and lists its documentation, then prints the plan without doing any
+      of it. `docs/release.md` is the runbook.
+    - Two packaging bugs fell out of writing the dry run, both invisible to
+      CI because CI builds from a clean checkout. `ansible-galaxy` reads
+      `build_ignore` and not `.gitignore`, so `docs/docsite/build` (252 MB of
+      generated Sphinx HTML) and the tool caches (`.pytest_cache`,
+      `.ruff_cache`, coverage output) were being packaged on any machine that
+      was not pristine: **36.6 MB and nine minutes instead of 1.9 MB and
+      three**, and a tarball whose own `FILES.json` checksums disagree with
+      its contents, which `ansible-galaxy collection install` rejects.
+      Fixed in `build_ignore`, asserted by the dry run.
+    - `fragment-lint` is opt-in (`--lint`): it takes ~2 minutes for the
+      fragments currently queued and `release.yml` already runs it. A guard
+      you run before deciding whether to tag has to answer in under a second.
+    - On `release.yml` the guard replaces the inline tag/version shell check
+      and moves it ahead of the sanity suite, so a tag that disagrees with
+      `galaxy.yml` fails in seconds instead of ten minutes. `tag-free` and
+      `version-bumped` are skipped there on purpose — the job runs *because*
+      the tag exists, so both would fail by construction. That edit is
+      parked on a local branch with the other workflow changes.
+    - Operational note learned the hard way: do not edit the working tree
+      while `ansible-galaxy collection build` is running. It hashes files
+      into `FILES.json` and writes them into the tarball separately, so a
+      mid-build edit produces a checksum mismatch that looks exactly like a
+      corrupt release.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
