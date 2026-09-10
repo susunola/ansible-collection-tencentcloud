@@ -1,0 +1,18 @@
+minor_changes:
+  - >-
+    CONTRIBUTING.md - replaced the one-paragraph "becoming a maintainer"
+    pointer with an actual path: the three roles (contributor / reviewer /
+    maintainer) and what each may decide, the protected surfaces a reviewer
+    may not merge alone (workflows, CODEOWNERS, the sanity-ignore budget, the
+    SDK stamp, the module tiers and specs, galaxy.yml version), the CI gates a
+    merge must not weaken, who owns module naming and why a rename is a
+    deprecation, the expected commitment (2-4h/week, 48h first response, 60
+    days of silence means stepping down), and what a nomination issue should
+    contain. MAINTAINERS.md now names the roles and records the same 60-day
+    rule.
+  - >-
+    scripts/check_sanity_ignore.py - lowered the ignore budget from 2350 to
+    1900 against a committed total of 1869. After the docsite work removed 420
+    blanket ignore lines the old ceiling left 481 lines of slack, so the guard
+    could not fire; it now binds again. Updated the budget figures quoted in
+    docs/panorama.html, docs/capability-map.html and docs/roadmap.md.

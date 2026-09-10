@@ -8,7 +8,12 @@ collection and their responsibilities. It follows the
 
 | GitHub handle | Role |
 |---|---|
-| [@susunola](https://github.com/susunola) | Collection maintainer |
+| [@susunola](https://github.com/susunola) | Maintainer (release rights) |
+
+Roles: **contributor** → **reviewer** (co-maintainer, may merge anything
+outside the protected surfaces) → **maintainer** (may change CI gates and cut
+releases). See [`CONTRIBUTING.md`](CONTRIBUTING.md#maintainership-roles-boundaries-and-how-to-join)
+for the boundaries.
 
 ## Maintainer responsibilities
 
@@ -40,10 +45,12 @@ collection, open a GitHub issue nominating yourself (or another
 contributor). See the
 [Ansible maintainer guidelines](https://docs.ansible.com/ansible/latest/community/maintainers_guidelines.html)
 for the general process, and `CONTRIBUTING.md` for how to start
-contributing.
+contributing and for what the nomination issue should contain.
 
 ## Stepping down
 
 A maintainer who can no longer fulfil the responsibilities above should
 open an issue announcing their intent to step down and, where possible,
-help hand over to a new maintainer before leaving.
+help hand over to a new maintainer before leaving. Sixty days without a
+response in issues or reviews is treated as an intent to step down: the
+remaining maintainers open that issue on the absent maintainer's behalf.

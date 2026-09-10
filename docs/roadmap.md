@@ -470,6 +470,31 @@
     entry instead of the blanket ones. Sanity is back to exactly its three
     pre-existing failures (`ignores` 100, down from 102; `pep8` 1;
     `pylint` 46). **Done**
+61. P2-03 co-maintainer path (2026-09-10): `CONTRIBUTING.md` now spells out
+    how a second maintainer actually takes authority, rather than pointing at
+    `MAINTAINERS.md` and hoping. Three roles — contributor, reviewer
+    (co-maintainer), maintainer — with an explicit table of what each may
+    decide, and the **protected surfaces** a reviewer may not merge alone:
+    `.github/workflows/` and `CODEOWNERS`, `BASELINE_TOTAL` in
+    `scripts/check_sanity_ignore.py`, `GENERATED_SDK_VERSION` in
+    `scripts/check_sdk_drift.py`, `CORE_MODULES` / `scripts/SPECS.py`, and
+    `version` in `galaxy.yml`. The reasoning is that each of those is a gate
+    someone will want to loosen to get a PR green, and a gate that is easy to
+    loosen is not a gate: the doc also lists the CI gates a merge must never
+    weaken (`audit_info_coverage`, `check_module_tiers`, `check_sdk_drift`,
+    `generate_info_modules --check`, `check_sanity_ignore`, `ruff check .`,
+    sanity, and `--cov-fail-under=80`). Module naming is the maintainer's call
+    because a published FQCN is public API and a rename is a deprecation, not
+    an edit. Commitment is stated as a number — 2-4h/week, 48h first response,
+    60 days of silence means stepping down — so that the expectation is not
+    left to mind-reading.
+
+    Tightening the sanity-ignore budget came with it: after the docsite work
+    removed 420 blanket lines the 2350 ceiling left 481 lines of slack, so
+    `check_sanity_ignore.py` could not have fired at all. `BASELINE_TOTAL` is
+    now 1900 against a committed total of 1869, and the figures quoted in
+    `panorama.html`, `capability-map.html` and this roadmap were corrected.
+    **Done**
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
@@ -496,7 +521,7 @@ task tests and contract coverage for generated modules, and the P1 structural
 items — plugin_utils / action / filter plugins, docsite, extensions.yml,
 doc_fragments and module_utils grouping, event_source docs, README FQCN index
 and example playbooks. Items land as individual commits, each keeping the
-coverage gate (80) and the sanity ignore budget (2289/2350) intact.
+coverage gate (80) and the sanity ignore budget (1869/1900) intact.
 
 Status 2026-09-10: P0-01…P0-12 and P1-01…P1-10 have landed (see the numbered
 entries above); the docsite build (P1-04) closed the last open P1 item.

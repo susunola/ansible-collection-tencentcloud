@@ -94,11 +94,64 @@ accept is passed through with `| default(omit, true)`, and each role ships a
 `README.md` with a usage example. Roles are covered by the integration targets
 that exercise the underlying modules.
 
-## Becoming a maintainer
+## Maintainership: roles, boundaries, and how to join
 
-Active contributors are welcome to become maintainers. See
-[`MAINTAINERS.md`](MAINTAINERS.md) for the current maintainers, their
-responsibilities, and how to nominate yourself.
+The collection is maintained by one person today, which is a structural risk
+rather than a badge. This section exists so that a second pair of hands can
+take over real authority without a handover ceremony: it says who may decide
+what, and what is expected in return.
+
+|  | Contributor | Reviewer (co-maintainer) | Maintainer |
+| --- | --- | --- | --- |
+| Entry | open a PR | nominated by a maintainer after sustained contribution | nominated by the maintainers |
+| Approve and merge PRs | — | yes, except the protected surfaces below | yes |
+| Decide module names | proposes | proposes; a maintainer ratifies | decides |
+| Change CI gates | — | — | yes |
+| Cut a release, push tags | — | — | yes |
+
+**Protected surfaces.** A reviewer may merge anything except these, which need
+a maintainer's approval (`CODEOWNERS` enforces the first two, the rest is repo
+policy):
+
+- `.github/workflows/` and `.github/CODEOWNERS` — CI and release automation;
+- `BASELINE_TOTAL` in `scripts/check_sanity_ignore.py` — the sanity-ignore
+  budget, currently 1900 against a committed total of 1869. Raising it is how
+  un-triaged debt becomes permanent, so it is a deliberate act with a comment,
+  never a side effect of a module batch;
+- `GENERATED_SDK_VERSION` in the generated `scripts/info_specs_auto.py` — the
+  SDK stamp the `*_info` modules are vouched for, which
+  `scripts/check_sdk_drift.py` checks against the installed SDK;
+- `CORE_MODULES` in `scripts/check_module_tiers.py` and `scripts/SPECS.py` —
+  what is hand-written versus generated;
+- `version` in `galaxy.yml`, which `release.yml` checks against the tag.
+
+**CI gates a merge must not weaken.** `audit_info_coverage.py --check`,
+`check_module_tiers.py --check`, `check_sdk_drift.py --check`,
+`generate_info_modules.py --check`, `check_sanity_ignore.py`, `ruff check .`,
+the sanity tests, and the unit/contract run at `--cov-fail-under=80`. A PR
+that lowers a threshold to get green is the one thing a reviewer should always
+block.
+
+**Module naming.** A module name is public API the moment it is released:
+`susunola.tencentcloud.<name>` appears in playbooks nobody will let you edit.
+Names follow the product-prefix convention and are the maintainer's call;
+renames are deprecations, not edits — see
+[`docs/deprecation-policy.md`](docs/deprecation-policy.md).
+
+**Expected commitment.** Roughly two to four hours a week: first response on
+issues and PRs within 48 hours, review rather than rubber-stamp, and keeping
+`main` green. Sixty days of silence is treated as stepping down rather than as
+a paused subscription — see [`MAINTAINERS.md`](MAINTAINERS.md).
+
+**How to join.** Open an issue titled `Maintainer nomination: <handle>` with:
+what you have contributed or reviewed here, which product area you know well
+enough to own, and the first three things you would change. An existing
+maintainer responds within a week; if nobody objects, the nominee starts as a
+reviewer and moves to maintainer once they have cut a release with supervision.
+
+**Decisions.** With a single maintainer, decisions are theirs. Once there are
+two or more, aim for consensus; if a decision stalls, escalate to the
+[Ansible community](https://forum.ansible.com) rather than letting a PR rot.
 
 ## Releasing
 
