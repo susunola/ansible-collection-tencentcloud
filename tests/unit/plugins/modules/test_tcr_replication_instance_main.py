@@ -169,7 +169,7 @@ def test_present_create_check_mode_is_dry_run(monkeypatch):
 
 
 def test_present_waiter_times_out_when_create_never_converges(monkeypatch):
-    fake = _make_module(monkeypatch, FakeTcrClient(create_status="Creating"))
+    _make_module(monkeypatch, FakeTcrClient(create_status="Creating"))
     _base(waiter_timeout=0)
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -180,7 +180,7 @@ def test_present_waiter_times_out_when_create_never_converges(monkeypatch):
 
 
 def test_present_waiter_fails_when_instance_enters_failed_state(monkeypatch):
-    fake = _make_module(monkeypatch, FakeTcrClient(create_status="Failed"))
+    _make_module(monkeypatch, FakeTcrClient(create_status="Failed"))
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -282,7 +282,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
         def DescribeReplicationInstances(self, request):
             raise Boom("tcr endpoint unreachable")
 
-    fake = _make_module(monkeypatch, ExplodingClient())
+    _make_module(monkeypatch, ExplodingClient())
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)

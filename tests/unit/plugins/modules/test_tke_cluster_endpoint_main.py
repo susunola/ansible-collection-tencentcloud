@@ -32,7 +32,6 @@ from ansible_collections.susunola.tencentcloud.plugins.modules import tke_cluste
 from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
     AnsibleFailJson,
     FakeModels,
-    FakeResource,
     module_args,
     run,
 )

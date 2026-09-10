@@ -236,7 +236,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
         def DescribeAccounts(self, request):
             raise Boom("tdcpg endpoint unreachable")
 
-    fake = _make_module(monkeypatch, ExplodingClient())
+    _make_module(monkeypatch, ExplodingClient())
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)

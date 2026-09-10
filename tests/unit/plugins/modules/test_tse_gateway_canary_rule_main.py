@@ -253,7 +253,7 @@ def test_converged_rule_is_idempotent(monkeypatch):
 def test_rule_type_filters_same_priority_rules(monkeypatch):
     standard = _rule(GatewayId=GATEWAY_ID, ServiceId=SERVICE_ID)
     lane = _rule(GatewayId=GATEWAY_ID, ServiceId=SERVICE_ID, RuleType="Lane", Enabled=False)
-    fake = _make_module(monkeypatch, FakeCanaryClient(rules=[standard, lane]))
+    _make_module(monkeypatch, FakeCanaryClient(rules=[standard, lane]))
     _base()
     result = run(mod.run_module)
     assert result["changed"] is False
@@ -298,7 +298,7 @@ def test_priority_above_range_fails_before_sdk(monkeypatch):
         def DescribeCloudNativeAPIGatewayCanaryRules(self, request):
             raise AssertionError("sdk must not be reached")
 
-    fake = _make_module(monkeypatch, NeverClient())
+    _make_module(monkeypatch, NeverClient())
     _base(priority=101)
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -310,7 +310,7 @@ def test_negative_priority_fails_before_sdk(monkeypatch):
         def DescribeCloudNativeAPIGatewayCanaryRules(self, request):
             raise AssertionError("sdk must not be reached")
 
-    fake = _make_module(monkeypatch, NeverClient())
+    _make_module(monkeypatch, NeverClient())
     _base(priority=-1)
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -337,7 +337,7 @@ def test_duplicate_matching_rules_fail(monkeypatch):
             ]
             return SimpleNamespace(Result=SimpleNamespace(CanaryRuleList=values, TotalCount=2), RequestId="req-fake")
 
-    fake = _make_module(monkeypatch, DuplicateClient())
+    _make_module(monkeypatch, DuplicateClient())
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -357,7 +357,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
         def DescribeCloudNativeAPIGatewayCanaryRules(self, request):
             raise Boom("tse endpoint unreachable")
 
-    fake = _make_module(monkeypatch, ExplodingClient())
+    _make_module(monkeypatch, ExplodingClient())
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)

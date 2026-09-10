@@ -300,7 +300,7 @@ def test_duplicate_name_match_requires_consumer_id(monkeypatch):
             values = [FakeResource(_consumer("consumer-1", name="dup")), FakeResource(_consumer("consumer-2", name="dup"))]
             return SimpleNamespace(Result=SimpleNamespace(Consumers=values, TotalCount=2), RequestId="req-fake")
 
-    fake = _make_module(monkeypatch, DuplicateClient())
+    _make_module(monkeypatch, DuplicateClient())
     _base(name="dup")
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -320,7 +320,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
         def DescribeCloudNativeAPIGatewayConsumerList(self, request):
             raise Boom("tse endpoint unreachable")
 
-    fake = _make_module(monkeypatch, ExplodingClient())
+    _make_module(monkeypatch, ExplodingClient())
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)

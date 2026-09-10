@@ -100,7 +100,7 @@ def test_matching_rotation_is_idempotent(monkeypatch):
 
 
 def test_disabled_rotation_is_idempotent(monkeypatch):
-    fake = _make_module(monkeypatch, FakeSsmClient(detail=_detail(EnableRotation=False)))
+    _make_module(monkeypatch, FakeSsmClient(detail=_detail(EnableRotation=False)))
     _base(enabled=False)
     result = run(mod.run_module)
     assert result["changed"] is False
@@ -184,7 +184,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
         def DescribeRotationDetail(self, request):
             raise Boom("ssm endpoint unreachable")
 
-    fake = _make_module(monkeypatch, ExplodingClient())
+    _make_module(monkeypatch, ExplodingClient())
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)

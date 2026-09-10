@@ -248,7 +248,7 @@ def test_apm_and_zipkin_are_mutually_exclusive(monkeypatch):
 
 
 def test_missing_mesh_fails(monkeypatch):
-    fake = _make_module(monkeypatch, FakeTcmClient(mesh_exists=False))
+    _make_module(monkeypatch, FakeTcmClient(mesh_exists=False))
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -265,7 +265,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
         def DescribeMesh(self, request):
             raise Boom("tcm endpoint unreachable")
 
-    fake = _make_module(monkeypatch, ExplodingClient())
+    _make_module(monkeypatch, ExplodingClient())
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)

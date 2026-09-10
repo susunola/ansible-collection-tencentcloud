@@ -225,7 +225,7 @@ def test_weight_drift_check_mode_is_dry_run(monkeypatch):
 
 def test_weight_update_failed_state_fails(monkeypatch):
     group = _group(services=[{"ServiceId": "ms-v1", "Weight": 50}, {"ServiceId": "ms-v2", "Weight": 50}])
-    fake = _make_module(monkeypatch, FakeTioneClient(group=group, weight_result="failed"))
+    _make_module(monkeypatch, FakeTioneClient(group=group, weight_result="failed"))
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -234,7 +234,7 @@ def test_weight_update_failed_state_fails(monkeypatch):
 
 def test_weight_wait_times_out(monkeypatch):
     group = _group(services=[{"ServiceId": "ms-v1", "Weight": 50}, {"ServiceId": "ms-v2", "Weight": 50}])
-    fake = _make_module(monkeypatch, FakeTioneClient(group=group, weight_result="stuck"))
+    _make_module(monkeypatch, FakeTioneClient(group=group, weight_result="stuck"))
     _base(waiter_timeout=0)
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -293,7 +293,7 @@ def test_negative_or_non_integer_weights_fail(monkeypatch):
 
 
 def test_missing_service_group_fails(monkeypatch):
-    fake = _make_module(monkeypatch, FakeTioneClient())
+    _make_module(monkeypatch, FakeTioneClient())
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -310,7 +310,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
         def DescribeModelServiceGroup(self, request):
             raise Boom("tione endpoint unreachable")
 
-    fake = _make_module(monkeypatch, ExplodingClient())
+    _make_module(monkeypatch, ExplodingClient())
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)

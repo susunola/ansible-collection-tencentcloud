@@ -204,7 +204,7 @@ def test_unknown_parameter_names_are_rejected(monkeypatch):
 
 
 def test_flow_failure_fails(monkeypatch):
-    fake = _make_module(monkeypatch, FakeParameterClient(params=_store({"max_connections": "1000"}), flow_status="failed"))
+    _make_module(monkeypatch, FakeParameterClient(params=_store({"max_connections": "1000"}), flow_status="failed"))
     _base(parameters={"max_connections": "2000"})
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -215,7 +215,7 @@ def test_flow_failure_fails(monkeypatch):
 
 
 def test_flow_wait_times_out(monkeypatch):
-    fake = _make_module(monkeypatch, FakeParameterClient(params=_store({"max_connections": "1000"}), flow_status="running"))
+    _make_module(monkeypatch, FakeParameterClient(params=_store({"max_connections": "1000"}), flow_status="running"))
     _base(parameters={"max_connections": "2000"}, waiter_timeout=0)
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -232,7 +232,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
         def DescribeDBParameters(self, request):
             raise Boom("tdmysql endpoint unreachable")
 
-    fake = _make_module(monkeypatch, ExplodingClient())
+    _make_module(monkeypatch, ExplodingClient())
     _base(parameters={"max_connections": "2000"})
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)

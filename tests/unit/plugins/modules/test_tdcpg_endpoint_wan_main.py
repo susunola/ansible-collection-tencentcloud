@@ -205,7 +205,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
         def DescribeClusterEndpoints(self, request):
             raise Boom("tdcpg endpoint unreachable")
 
-    fake = _make_module(monkeypatch, ExplodingClient())
+    _make_module(monkeypatch, ExplodingClient())
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -215,7 +215,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
 
 
 def test_waiter_times_out_when_status_does_not_change(monkeypatch):
-    fake = _make_module(monkeypatch, FakeTdcpgWanClient(endpoint=_closed_endpoint(), stubborn=True))
+    _make_module(monkeypatch, FakeTdcpgWanClient(endpoint=_closed_endpoint(), stubborn=True))
     _base(state="open", waiter_timeout=0)
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)

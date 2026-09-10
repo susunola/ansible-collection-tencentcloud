@@ -138,7 +138,7 @@ def test_absent_deletes_relationship(monkeypatch):
 
 
 def test_absent_waiter_times_out_when_delete_does_not_converge(monkeypatch):
-    fake = _make_module(monkeypatch, FakePrivatednsClient(accounts=[_binding()], delete_noop=True))
+    _make_module(monkeypatch, FakePrivatednsClient(accounts=[_binding()], delete_noop=True))
     _base(state="absent", waiter_timeout=0)
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -196,7 +196,7 @@ def test_present_create_check_mode_is_dry_run(monkeypatch):
 
 
 def test_present_multiple_matches_fail(monkeypatch):
-    fake = _make_module(
+    _make_module(
         monkeypatch,
         FakePrivatednsClient(accounts=[_binding(), _binding(Account="other@example.com")]),
     )
@@ -228,7 +228,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
         def DescribePrivateDNSAccountList(self, request):
             raise Boom("privatedns unavailable")
 
-    fake = _make_module(monkeypatch, ExplodingClient())
+    _make_module(monkeypatch, ExplodingClient())
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)

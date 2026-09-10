@@ -326,7 +326,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
         def DeleteCloudNativeAPIGatewayRouteRateLimit(self, request):
             raise AssertionError("must not be reached")
 
-    fake = _make_module(monkeypatch, ExplodingClient())
+    _make_module(monkeypatch, ExplodingClient())
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)

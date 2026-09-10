@@ -210,7 +210,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
         def DescribeDBSBackupPolicy(self, request):
             raise Boom("tdmysql endpoint unreachable")
 
-    fake = _make_module(monkeypatch, ExplodingClient())
+    _make_module(monkeypatch, ExplodingClient())
     _base(backup_method="physical")
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)

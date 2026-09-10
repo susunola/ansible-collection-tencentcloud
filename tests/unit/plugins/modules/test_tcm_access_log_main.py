@@ -118,7 +118,7 @@ def test_matching_config_is_idempotent(monkeypatch):
 
 
 def test_matching_config_allows_server_enriched_nested_fields(monkeypatch):
-    fake = _make_module(
+    _make_module(
         monkeypatch,
         FakeTcmAccessLogClient(config=_config(SelectedRange={"All": True, "Namespace": "default"})),
     )
@@ -212,7 +212,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
         def DescribeAccessLogConfig(self, request):
             raise Boom("tcm endpoint unreachable")
 
-    fake = _make_module(monkeypatch, ExplodingClient())
+    _make_module(monkeypatch, ExplodingClient())
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)

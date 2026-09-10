@@ -289,7 +289,7 @@ def test_multiple_matches_fail(monkeypatch):
                 RequestId="req-fake",
             )
 
-    fake = _make_module(monkeypatch, DuplicateClient())
+    _make_module(monkeypatch, DuplicateClient())
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -306,7 +306,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
         def DescribeConfigFileGroups(self, request):
             raise Boom("tse endpoint unreachable")
 
-    fake = _make_module(monkeypatch, ExplodingClient())
+    _make_module(monkeypatch, ExplodingClient())
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)

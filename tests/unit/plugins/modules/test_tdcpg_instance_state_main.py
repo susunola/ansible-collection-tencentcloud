@@ -237,7 +237,7 @@ def test_period_months_out_of_range_fails_before_sdk(monkeypatch):
 
 
 def test_missing_instances_fail(monkeypatch):
-    fake = _make_module(monkeypatch, FakeInstanceStateClient(instances=[_instance(INSTANCE_1, "running")]))
+    _make_module(monkeypatch, FakeInstanceStateClient(instances=[_instance(INSTANCE_1, "running")]))
     _base(state="running", instance_ids=[INSTANCE_1, "tdcpg-ins-ghost"])
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -254,7 +254,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
         def DescribeClusterInstances(self, request):
             raise Boom("tdcpg endpoint unreachable")
 
-    fake = _make_module(monkeypatch, ExplodingClient())
+    _make_module(monkeypatch, ExplodingClient())
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -264,7 +264,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
 
 
 def test_waiter_times_out_when_state_never_changes(monkeypatch):
-    fake = _make_module(monkeypatch, FakeInstanceStateClient(instances=[_instance(INSTANCE_1, "isolated")], stuck=True))
+    _make_module(monkeypatch, FakeInstanceStateClient(instances=[_instance(INSTANCE_1, "isolated")], stuck=True))
     _base(state="running", waiter_timeout=0)
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)

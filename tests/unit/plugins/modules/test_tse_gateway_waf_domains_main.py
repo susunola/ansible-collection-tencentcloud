@@ -23,7 +23,6 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import copy
 from types import SimpleNamespace
 
 import pytest
@@ -34,7 +33,6 @@ from ansible_collections.susunola.tencentcloud.plugins.modules.tse_gateway_waf_d
 from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
     AnsibleFailJson,
     FakeModels,
-    FakeResource,
     module_args,
     run,
 )

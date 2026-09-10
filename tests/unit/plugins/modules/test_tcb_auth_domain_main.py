@@ -146,7 +146,7 @@ def test_absent_deletes_domain(monkeypatch):
 
 
 def test_absent_waiter_times_out_when_delete_does_not_converge(monkeypatch):
-    fake = _make_module(monkeypatch, FakeTcbClient(domains=[_domain()], delete_noop=True))
+    _make_module(monkeypatch, FakeTcbClient(domains=[_domain()], delete_noop=True))
     _base(state="absent", waiter_timeout=0)
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
@@ -196,7 +196,7 @@ def test_present_create_check_mode_is_dry_run(monkeypatch):
 
 
 def test_present_multiple_matching_domains_fail(monkeypatch):
-    fake = _make_module(
+    _make_module(
         monkeypatch,
         FakeTcbClient(domains=[_domain(), _domain(Id="domain-0002")]),
     )
@@ -228,7 +228,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
         def DescribeAuthDomains(self, request):
             raise Boom("tcb down")
 
-    fake = _make_module(monkeypatch, ExplodingClient())
+    _make_module(monkeypatch, ExplodingClient())
     _base()
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
