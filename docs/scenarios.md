@@ -1,6 +1,8 @@
 # Scenario playbooks
 
-The `playbooks/` directory ships runnable end-to-end scenarios. All of them
+The `playbooks/` directory ships runnable end-to-end scenarios. The numbered
+golden path (network foundation -> web stack -> teardown, in one file) lives
+next to this page in [`examples/`](examples/README.md). All of them
 target `localhost` (the modules call the Tencent Cloud APIs from the
 controller) and take credentials from the shared `TENCENTCLOUD_*`
 environment variables; the region defaults to `ap-guangzhou` and can be

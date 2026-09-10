@@ -3,7 +3,7 @@
 # (respecting each pool's keep_instance), then the cluster itself.
 - name: Remove the addons
   susunola.tencentcloud.tke_addon:
-    region: "{{ tc_tke_cluster_region | default(omit) }}"
+    region: "{{ tc_tke_cluster_region | default(omit, true) }}"
     state: absent
     cluster_id: "{{ tc_tke_cluster_id }}"
     name: "{{ item.name }}"
@@ -16,7 +16,7 @@
 
 - name: Remove the node pools
   susunola.tencentcloud.tke_node_pool:
-    region: "{{ tc_tke_cluster_region | default(omit) }}"
+    region: "{{ tc_tke_cluster_region | default(omit, true) }}"
     state: absent
     cluster_id: "{{ tc_tke_cluster_id }}"
     name: "{{ item.name }}"
@@ -30,7 +30,7 @@
 
 - name: Remove the TKE cluster
   susunola.tencentcloud.tke_cluster:
-    region: "{{ tc_tke_cluster_region | default(omit) }}"
+    region: "{{ tc_tke_cluster_region | default(omit, true) }}"
     state: absent
     cluster_id: "{{ tc_tke_cluster_id | default(omit, true) }}"
     name: "{{ tc_tke_cluster_name | default(omit, true) }}"

@@ -77,7 +77,7 @@
     - name: Show what the create play produced
       ansible.builtin.debug:
         msg:
-          - "security group: {{ sg.security_group_id | default('(name-based, no id echoed)') }}"
+          - "security group: {{ sg.security_group.SecurityGroupId | default('(name-based, no id echoed)', true) }}"
           - "instances running now: {{ running.instances | length }}"
           - "re-run this playbook to reconcile the pool; use --tags teardown to remove it"
 

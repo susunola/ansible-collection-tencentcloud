@@ -1,0 +1,40 @@
+---
+minor_changes:
+  - >-
+    scripts/check_examples.py --check validates the example playbooks in
+    docs/examples/ and playbooks/ in CI. They are the copy-paste entry point
+    to the collection and the only artefacts no job ever ran, so they could
+    rot silently. The check asserts every susunola.tencentcloud module
+    resolves, every option passed to one is declared (doc fragments
+    included), every role exists, every role variable is declared in that
+    role's defaults/main.yml, and every variable a play reads is declared,
+    registered, published by a role, documented as an extra var or guarded
+    with "is defined".
+  - >-
+    docs/examples/06_full_chain.yml is the golden path in one file: network
+    foundation, web stack on the ids the foundation published, a read-back
+    stage, and a tagged teardown play. 01 and 02 remain the split-apart
+    version of the same two stages; 06 needs no copied ids because
+    tc_vpc_foundation publishes tc_vpc_foundation_result. docs/examples/README.md
+    documents the chain, the hand-off facts and the teardown order.
+bugfixes:
+  - >-
+    tc_web_stack and tc_disaster_recovery now publish tc_web_stack_result
+    and tc_disaster_recovery_result as facts. docs/examples/02_web_stack.yml,
+    03_tke_cluster.yml and 04_disaster_recovery.yml all end by printing a
+    role result; two of the three roles never set one, so the last task of
+    those examples printed "VARIABLE IS NOT DEFINED!".
+  - >-
+    tc_web_stack, tc_tke_cluster, tc_disaster_recovery, tc_clb_http and
+    tc_launch declare their region variable in defaults/main.yml and read it
+    with default(omit, true), matching the other 43 roles. They read an
+    undeclared tc_<role>_region, which worked by accident (default(omit)
+    tolerates undefined) but left a variable every example sets out of the
+    role's documented interface.
+  - >-
+    playbooks/three_tier_web.yml declares web_instance_password, which it
+    passed to cvm_instance without ever defining; a copy of the playbook
+    failed with "The task includes an option with an undefined variable".
+    docs/examples/05_module_mix.yml prints
+    sg.security_group.SecurityGroupId instead of a top-level
+    sg.security_group_id the security_group module does not return.

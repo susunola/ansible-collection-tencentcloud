@@ -5,6 +5,9 @@
 # addressed by cluster.
 tc_tke_cluster_state: present
 
+# Region: empty falls back to the module default (TENCENTCLOUD_REGION).
+tc_tke_cluster_region: ""
+
 # ---- Cluster ----------------------------------------------------------
 # cluster_id or name must be set for the cluster task to run.
 tc_tke_cluster_id: ""

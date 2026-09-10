@@ -1133,6 +1133,12 @@ All modules accept the shared options (`region`, `endpoint`, `timeout`,
 credentials and `role_arn`); `module_defaults` with the
 `group/susunola.tencentcloud.all` action group applies them once per play.
 
+Runnable end-to-end playbooks live in
+[`docs/examples/`](docs/examples/README.md) — `06_full_chain.yml` builds the
+whole golden path (network foundation, web stack, read-back, teardown) in one
+invocation — and standalone scenarios in `playbooks/` are described in
+[`docs/scenarios.md`](docs/scenarios.md).
+
 See [`docs/roadmap.md`](docs/roadmap.md) for the suggested implementation order.
 Contributor conventions are in [`docs/development.md`](docs/development.md).
 
@@ -1148,6 +1154,11 @@ ansible-galaxy collection build
 Releases are cut from `v*` tags; `python scripts/release_check.py` checks a
 release is publishable before the tag is pushed and `--dry-run` builds and
 smoke-tests the tarball. See [`docs/release.md`](docs/release.md).
+
+`python scripts/check_examples.py --check` validates the example playbooks
+(modules resolve, options are declared, role variables exist, no undefined
+variables); run it after touching anything under `docs/examples/` or
+`playbooks/`. See [`docs/examples/README.md`](docs/examples/README.md).
 
 Integration tests require Tencent Cloud credentials and run only when
 `TENCENTCLOUD_SECRET_ID` / `TENCENTCLOUD_SECRET_KEY` are set (see

@@ -582,6 +582,38 @@
       mid-build edit produces a checksum mismatch that looks exactly like a
       corrupt release.
 
+65. P2-06 end-to-end demo case (2026-09-10): `docs/examples/` and
+    `playbooks/` are what a new user copies first, and they were the only
+    artefacts in the repository that nothing at all looked at — CI cannot
+    run them, because running them creates billable resources. So they rot
+    silently: rename a module option, drop a role variable and every test
+    stays green while the README's golden path becomes a wall of
+    "Unsupported parameters".
+
+    - `scripts/check_examples.py --check` closes that statically, in under a
+      second: modules resolve, every option passed to one is declared (doc
+      fragments included, so `region` counts), roles exist, role variables
+      are declared in `defaults/main.yml`, and every variable a play reads
+      is declared, registered, published by a role, documented as
+      `-e name=` or guarded with `is defined`. It cannot prove a playbook
+      works — only that it does not reference things that are gone.
+    - What it found on its first run: `playbooks/three_tier_web.yml` passed
+      an undeclared `web_instance_password`; two of the three examples that
+      end by printing a role result used a fact no role ever set (so they
+      printed `VARIABLE IS NOT DEFINED!`); five roles read a region variable
+      they never declared, which worked by accident through
+      `default(omit)` and kept the variable out of the role's documented
+      interface. All fixed.
+    - `docs/examples/06_full_chain.yml` is the golden path in one file:
+      network foundation, web stack on the ids the foundation published, a
+      read-back stage and a tagged teardown play. `01`/`02` remain the
+      split-apart version; `06` needs no copied ids because the hand-off is
+      `tc_vpc_foundation_result`. `docs/examples/README.md` documents the
+      chain, the hand-off facts and the teardown order.
+    - Every example file also passes `ansible-playbook --syntax-check`,
+      which is the other half of the verification: the static check proves
+      the references resolve, the syntax check proves Ansible agrees.
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
 

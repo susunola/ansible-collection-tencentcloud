@@ -10,6 +10,11 @@
 # (standby CLB -> replication -> image).
 tc_dr_state: present
 
+# Primary and DR regions: empty falls back to the module default
+# (TENCENTCLOUD_REGION).
+tc_dr_region: ""
+tc_dr_dr_region: ""
+
 # ---- Golden image (primary region) ------------------------------------
 # The cvm_image module creates the image on first run and only updates the
 # name/description afterwards; it does not re-snapshot the instance on every

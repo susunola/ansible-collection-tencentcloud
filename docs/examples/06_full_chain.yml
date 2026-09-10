@@ -1,0 +1,144 @@
+---
+# docs/examples/06_full_chain.yml
+#
+# The whole golden path in one file: network foundation -> web stack ->
+# verification -> teardown, with the ids carried between the stages by the
+# roles instead of by hand.
+#
+# 01_network_foundation.yml and 02_web_stack.yml are the same two stages
+# split apart so each can be read (and re-run) on its own; they hand off by
+# printing ids that you paste into the next file. This file is the copy of
+# that chain that needs no pasting: tc_vpc_foundation publishes
+# tc_vpc_foundation_result and the next play reads it directly.
+#
+# Run:
+#   ansible-playbook docs/examples/06_full_chain.yml \
+#     -e image_id=img-xxxxxxxx -e web_password='ReplaceWith-AStrongPassword1'
+#
+# Tear down (every resource created above, in reverse order):
+#   ansible-playbook docs/examples/06_full_chain.yml --tags teardown
+#
+# Credentials and region follow the collection defaults (TENCENTCLOUD_*
+# environment variables, or ~/.tencentcloud/default.configure). Everything
+# the chain creates bills by the hour until the teardown run.
+- name: Stage 1 - network foundation
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    region: ap-guangzhou
+
+  roles:
+    - role: susunola.tencentcloud.tc_vpc_foundation
+      vars:
+        tc_vpc_foundation_region: "{{ region }}"
+        tc_vpc_foundation_name: demo-foundation
+        tc_vpc_foundation_cidr_block: 10.30.0.0/16
+        tc_vpc_foundation_tags:
+          environment: demo
+          owner: platform
+        tc_vpc_foundation_subnets:
+          - {name: app-a, cidr_block: 10.30.1.0/24, zone: ap-guangzhou-3}
+          - {name: app-b, cidr_block: 10.30.2.0/24, zone: ap-guangzhou-4}
+        tc_vpc_foundation_security_groups:
+          - name: application
+            description: Application tier access rules
+            rules:
+              - {direction: ingress, protocol: TCP, port: '443', cidr_block: 0.0.0.0/0}
+              - {direction: ingress, protocol: TCP, port: '22', cidr_block: 0.0.0.0/0}
+
+- name: Stage 2 - web stack on the new foundation
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    region: ap-guangzhou
+    # Unique to your account / region; pass both with -e (see the header).
+    image_id: img-xxxxxxxx
+    web_password: "ReplaceWith-AStrongPassword1"
+    # Handed over by stage 1: no ids to copy and paste.
+    subnet_id: "{{ tc_vpc_foundation_result.subnets[0].subnet.SubnetId }}"
+    sg_id: "{{ tc_vpc_foundation_result.security_groups[0].security_group.SecurityGroupId }}"
+
+  roles:
+    - role: susunola.tencentcloud.tc_web_stack
+      vars:
+        tc_web_stack_region: "{{ region }}"
+        tc_web_stack_tags:
+          environment: demo
+          application: web
+        # CVM tier
+        tc_web_stack_instance_name: web-01
+        tc_web_stack_image_id: "{{ image_id }}"
+        tc_web_stack_instance_type: S5.MEDIUM2
+        tc_web_stack_password: "{{ web_password }}"
+        tc_web_stack_vpc_id: "{{ tc_vpc_foundation_result.vpc_id }}"
+        tc_web_stack_subnet_id: "{{ subnet_id }}"
+        tc_web_stack_security_group_ids: ["{{ sg_id }}"]
+        # CDB tier (MySQL)
+        tc_web_stack_cdb_name: demo-mysql
+        tc_web_stack_cdb_engine_version: '8.0'
+        tc_web_stack_cdb_memory: 1000
+        tc_web_stack_cdb_volume: 50
+        tc_web_stack_cdb_password: "{{ web_password }}"
+        # Redis tier
+        tc_web_stack_redis_name: demo-cache
+        tc_web_stack_redis_type_id: 2
+        tc_web_stack_redis_mem_size: 4096
+        # CLB tier
+        tc_web_stack_lb_name: demo-lb
+        tc_web_stack_lb_type: OPEN
+        tc_web_stack_listener_port: 80
+        tc_web_stack_web_port: 8080
+
+- name: Stage 3 - read the stack back
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    region: ap-guangzhou
+
+  tasks:
+    - name: Query the running demo instances
+      susunola.tencentcloud.cvm_instance_info:
+        region: "{{ region }}"
+        filters:
+          instance-state: [RUNNING]
+      register: running
+
+    - name: Show what the chain produced
+      ansible.builtin.debug:
+        msg:
+          - "vpc: {{ tc_vpc_foundation_result.vpc_id }}"
+          - "stack: {{ tc_web_stack_result }}"
+          - "instances running: {{ running.instances | length }}"
+
+- name: Teardown - remove the chain in reverse order
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tags: [teardown]
+  vars:
+    region: ap-guangzhou
+
+  roles:
+    # Stack first: the CLB, CDB, Redis and CVM all live inside the VPC, and
+    # a VPC with live dependencies cannot be deleted.
+    - role: susunola.tencentcloud.tc_web_stack
+      vars:
+        tc_web_stack_region: "{{ region }}"
+        tc_web_stack_state: absent
+        tc_web_stack_instance_name: web-01
+        tc_web_stack_cdb_name: demo-mysql
+        tc_web_stack_redis_name: demo-cache
+        tc_web_stack_lb_name: demo-lb
+    - role: susunola.tencentcloud.tc_vpc_foundation
+      vars:
+        tc_vpc_foundation_region: "{{ region }}"
+        tc_vpc_foundation_state: absent
+        tc_vpc_foundation_name: demo-foundation
+        tc_vpc_foundation_subnets:
+          - {name: app-a, cidr_block: 10.30.1.0/24, zone: ap-guangzhou-3}
+          - {name: app-b, cidr_block: 10.30.2.0/24, zone: ap-guangzhou-4}
+        tc_vpc_foundation_security_groups:
+          - name: application

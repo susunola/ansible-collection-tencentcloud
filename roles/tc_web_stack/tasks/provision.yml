@@ -1,7 +1,7 @@
 ---
 - name: Manage the CVM web instances
   susunola.tencentcloud.cvm_instance:
-    region: "{{ tc_web_stack_region | default(omit) }}"
+    region: "{{ tc_web_stack_region | default(omit, true) }}"
     state: present
     instance_id: "{{ tc_web_stack_instance_id | default(omit, true) }}"
     instance_name: "{{ tc_web_stack_instance_name | default(omit, true) }}"
@@ -25,7 +25,7 @@
 
 - name: Manage the MySQL CDB instance
   susunola.tencentcloud.cdb_instance:
-    region: "{{ tc_web_stack_region | default(omit) }}"
+    region: "{{ tc_web_stack_region | default(omit, true) }}"
     state: present
     instance_id: "{{ tc_web_stack_cdb_instance_id | default(omit, true) }}"
     name: "{{ tc_web_stack_cdb_name | default(omit, true) }}"
@@ -46,7 +46,7 @@
 
 - name: Manage the Redis cache instance
   susunola.tencentcloud.redis_instance:
-    region: "{{ tc_web_stack_region | default(omit) }}"
+    region: "{{ tc_web_stack_region | default(omit, true) }}"
     state: present
     instance_id: "{{ tc_web_stack_redis_instance_id | default(omit, true) }}"
     name: "{{ tc_web_stack_redis_name | default(omit, true) }}"
@@ -67,7 +67,7 @@
 
 - name: Provision the CLB load balancer
   susunola.tencentcloud.clb_load_balancer:
-    region: "{{ tc_web_stack_region | default(omit) }}"
+    region: "{{ tc_web_stack_region | default(omit, true) }}"
     state: present
     load_balancer_id: "{{ tc_web_stack_lb_id | default(omit, true) }}"
     name: "{{ tc_web_stack_lb_name | default(omit, true) }}"
@@ -84,7 +84,7 @@
 
 - name: Create the HTTP listener
   susunola.tencentcloud.clb_listener:
-    region: "{{ tc_web_stack_region | default(omit) }}"
+    region: "{{ tc_web_stack_region | default(omit, true) }}"
     state: present
     load_balancer_id: "{{ tc_web_stack_lb.load_balancer.LoadBalancerId }}"
     protocol: HTTP
@@ -134,7 +134,7 @@
 
 - name: Reconcile the backend target set
   susunola.tencentcloud.clb_listener_target:
-    region: "{{ tc_web_stack_region | default(omit) }}"
+    region: "{{ tc_web_stack_region | default(omit, true) }}"
     state: present
     load_balancer_id: "{{ tc_web_stack_lb.load_balancer.LoadBalancerId }}"
     listener_id: "{{ tc_web_stack_listener.listener.ListenerId }}"
@@ -148,13 +148,19 @@
     - tc_web_stack_effective_targets is defined
     - tc_web_stack_effective_targets | length > 0
 
+# Published as a fact, not just printed: the next play in a chained
+# playbook (and docs/examples/02_web_stack.yml) reads these ids.
+- name: Publish the web stack result
+  ansible.builtin.set_fact:
+    tc_web_stack_result:
+      state: "{{ tc_web_stack_state }}"
+      cvm_changed: "{{ tc_web_stack_cvm.changed | default(false) }}"
+      cdb_instance: "{{ (tc_web_stack_cdb.instance | default({}, true)).InstanceId | default('skipped', true) }}"
+      redis_instance: "{{ (tc_web_stack_redis.instance | default({}, true)).InstanceId | default('skipped', true) }}"
+      lb: "{{ (tc_web_stack_lb.load_balancer | default({}, true)).LoadBalancerId | default('skipped', true) }}"
+      vip: "{{ tc_web_stack_lb.load_balancer.LoadBalancerVips | default([], true) }}"
+      targets_changed: "{{ tc_web_stack_targets_result.changed | default(false) }}"
+
 - name: Report the web stack
   ansible.builtin.debug:
-    msg:
-      - "state={{ tc_web_stack_state }}"
-      - "cvm_changed={{ tc_web_stack_cvm.changed | default(false) }}"
-      - "cdb_instance={{ (tc_web_stack_cdb.instance | default({}, true)).InstanceId | default('skipped', true) }}"
-      - "redis_instance={{ (tc_web_stack_redis.instance | default({}, true)).InstanceId | default('skipped', true) }}"
-      - "lb={{ (tc_web_stack_lb.load_balancer | default({}, true)).LoadBalancerId | default('skipped', true) }}"
-      - "vip={{ tc_web_stack_lb.load_balancer.LoadBalancerVips | default([], true) }}"
-      - "targets_changed={{ tc_web_stack_targets_result.changed | default(false) }}"
+    var: tc_web_stack_result

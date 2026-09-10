@@ -1,7 +1,7 @@
 ---
 - name: Manage the TKE cluster
   susunola.tencentcloud.tke_cluster:
-    region: "{{ tc_tke_cluster_region | default(omit) }}"
+    region: "{{ tc_tke_cluster_region | default(omit, true) }}"
     state: present
     cluster_id: "{{ tc_tke_cluster_id | default(omit, true) }}"
     name: "{{ tc_tke_cluster_name | default(omit, true) }}"
@@ -24,7 +24,7 @@
 
 - name: Manage the node pools
   susunola.tencentcloud.tke_node_pool:
-    region: "{{ tc_tke_cluster_region | default(omit) }}"
+    region: "{{ tc_tke_cluster_region | default(omit, true) }}"
     state: present
     cluster_id: "{{ tc_tke_cluster_result.cluster.ClusterId }}"
     name: "{{ item.name }}"
@@ -49,7 +49,7 @@
 
 - name: Manage the addons
   susunola.tencentcloud.tke_addon:
-    region: "{{ tc_tke_cluster_region | default(omit) }}"
+    region: "{{ tc_tke_cluster_region | default(omit, true) }}"
     state: present
     cluster_id: "{{ tc_tke_cluster_result.cluster.ClusterId }}"
     name: "{{ item.name }}"

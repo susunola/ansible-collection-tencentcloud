@@ -5,6 +5,9 @@
 # implicitly when the listener is deleted.
 tc_web_stack_state: present
 
+# Region: empty falls back to the module default (TENCENTCLOUD_REGION).
+tc_web_stack_region: ""
+
 # ---- CVM web tier -----------------------------------------------------
 # One of instance_id / instance_name / exact_count must resolve for the
 # CVM task to run; leave all empty to skip the web tier.
