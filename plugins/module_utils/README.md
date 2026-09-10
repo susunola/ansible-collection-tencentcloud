@@ -28,7 +28,7 @@ module needs cannot live in `plugin_utils`.
 | | `polling.py` | The bare bounded poll loop (`poll_until` / `PollOutcome`), shared with the `tc_wait` action plugin | — |
 | | `lifecycle.py` | `state: present/absent` state machine: compare → apply → wait, shared teardown ordering | `base`, `errors` |
 | **3 · Resolution and comparison** | `resolver.py` | Uniform resource-reference resolution (name / id / filters → real resource id) | `tagging` |
-| | `tagging.py` | Tag normalization and tag-diff computation | — |
+| | `tagging.py` | Tag normalization, tag merging and tag-diff computation | — |
 | | `comparison.py` | Expected-vs-actual structure comparison (idempotency decisions) | — |
 | | `paging.py` | `Paginator` (offset/limit walk) plus the `paginate()` module wrapper | — |
 | **4 · Product-private helpers** | `monitor.py` | Monitor-specific shared computation | — |
@@ -78,10 +78,12 @@ graph TD
         pu_profile["profile"]
         pu_paging["paging"]
         pu_polling["polling"]
+        pu_tags["tags"]
     end
     pu_profile --> client
     pu_paging --> paging
     pu_polling --> polling
+    pu_tags --> tagging
 ```
 
 Same graph as a flat table:
@@ -106,6 +108,7 @@ Same graph as a flat table:
 | `plugin_utils/profile.py` | `module_utils.client` | consumer |
 | `plugin_utils/paging.py` | `module_utils.paging` | consumer |
 | `plugin_utils/polling.py` | `module_utils.polling` | consumer |
+| `plugin_utils/tags.py` | `module_utils.tagging` | consumer |
 
 ## Rules for new helpers
 
@@ -119,7 +122,8 @@ Same graph as a flat table:
    auth / region / client construction / profile reading goes to `client.py`;
    exception types to `errors.py`; backoff to `retries.py`; state polling to
    `waiters.py`, over the bare loop in `polling.py`; idempotency comparison to
-   `comparison.py`; tag diffing to `tagging.py`; pagination to `paging.py`.
+   `comparison.py`; tag reading, merging and diffing to `tagging.py`;
+   pagination to `paging.py`.
    Product-specific logic that no other product will reuse goes to group 4
    (`monitor.py` / `cos.py` / `tdmysql.py`) or, better, stays inside the
    module.
@@ -132,10 +136,13 @@ Same graph as a flat table:
    intra-directory dependencies, so the direction map above stays auditable
    by diff review.
 6. **A helper with no `AnsibleModule` dependency still belongs here** if a
-   module needs it — `polling.py` is the worked example. Put the
-   implementation here, add a one-line re-export to
-   `plugins/plugin_utils/` when a controller-side plugin needs the same
-   import path, and do not re-export module globals: a re-exported constant is
-   a separate binding, so rebinding it through the shim would silently do
-   nothing. See [`plugins/plugin_utils/README.md`](../plugin_utils/README.md)
-   for the boundary test and the two shim tests that pin it.
+   module needs it — `polling.py` is the worked example. A helper that only a
+   controller-side plugin needs belongs here too when it extends an existing
+   body of semantics instead of standing alone; `tagging.merge_tags` (the
+   `tag_merge` filter) is that case. Put the implementation here, add a
+   one-line re-export to `plugins/plugin_utils/` when a controller-side plugin
+   needs the import path, and do not re-export module globals: a re-exported
+   constant is a separate binding, so rebinding it through the shim would
+   silently do nothing. See
+   [`plugins/plugin_utils/README.md`](../plugin_utils/README.md) for the
+   boundary test and the shim tests that pin it.

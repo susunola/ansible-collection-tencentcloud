@@ -391,7 +391,40 @@
     Full tree: 12,984 passed / 31 skipped / 5 xfailed in the measured scope;
     `ruff check .` clean; sanity ignore budget 2289/2350; the remaining sanity
     failures are the three pre-existing ones (`ignores` 102, `pep8` 1,
-    `pylint` 50). **Done**
+    `pylint` 46). **Done**
+59. P1-03 first filter plugin (2026-09-10): added `plugins/filter/tags.py`
+    exposing `tag_merge`, plus `module_utils.tagging.merge_tags` and the
+    `plugin_utils.tags` re-export. The filter closes a gap no existing filter
+    covered: `ansible.builtin.combine` only understands mappings, so a playbook
+    that had the `tags` mapping a module parameter takes *and* the
+    `Key`/`Value` list an `*_info` module returns had no way to combine them —
+    the API-shaped side had to be re-typed by hand. `tag_merge` accepts a tag
+    mapping, a single `Key`/`Value` tag, a list of tags, a list of SDK `Tag`
+    objects or a nested list of any of those, merges left to right (last source
+    wins, like `combine`), and returns a key-sorted string-valued mapping —
+    the same normalization the resource modules apply, so the result can be fed
+    straight back into a module.
+
+    Two decisions are worth recording. The implementation sits in
+    `module_utils.tagging` rather than in the filter even though the filter is
+    its only consumer today: tag reading and tag comparison are one body of
+    semantics, and the layering rule is one-directional, so a module that later
+    needs the merge would force the implementation back down anyway. And an
+    unsupported source raises `AnsibleFilterError` instead of being skipped —
+    for a merge, silently dropping a source is a permanent tag loss, so the
+    filter names itself in the failure (`tag_merge: unsupported tag source
+    'oops': expected a mapping, a list of tags or an SDK Tag object`).
+
+    `filter` is in ansible-test's `DOCUMENTABLE_PLUGINS` (unlike `action`), so
+    no sanity ignore entry is needed and `ansible-doc -t filter
+    susunola.tencentcloud.tag_merge` renders the inline DOCUMENTATION —
+    verified locally against the materialized collection layout, together with
+    an end-to-end playbook run through the templar (merge, nested-list
+    flattening, unset-variable tolerance, and the failure path). 46 tests cover
+    the helper, the Jinja surface and the shim identity. This item also
+    completed the hand-maintained "Included plugins" table in `README.md`,
+    which was missing the action, callback, filter, TKE/COS inventory and
+    COS/TKE event-source rows. **Done**
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
@@ -420,9 +453,8 @@ doc_fragments and module_utils grouping, event_source docs, README FQCN index
 and example playbooks. Items land as individual commits, each keeping the
 coverage gate (80) and the sanity ignore budget (2289/2350) intact.
 
-Status 2026-09-10: P0-01…P0-12 and P1-01/02/05…10 have landed (see the
-numbered entries above). The open P1 items are the first filter plugin
-(P1-03) and the docsite build (P1-04).
+Status 2026-09-10: P0-01…P0-12 and P1-01/02/03/05…10 have landed (see the
+numbered entries above). The one open P1 item is the docsite build (P1-04).
 
 1. **Deepen the eight highest-use resource families.** Close runtime and
    operational workflows in TEM, TKE, CLB, CDB/Redis/MongoDB, TCR, SCF,

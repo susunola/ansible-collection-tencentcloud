@@ -201,7 +201,7 @@
   `ansible-test sanity --test import` reported 881 errors that way.
 - So the order is `module_utils` (implementations) → `plugin_utils`
   (re-exports) → non-module plugins (action / lookup / inventory / connection /
-  event_source). The reverse never.
+  filter / event_source). The reverse never.
 - Do not re-export module globals (constants, file paths). A re-exported
   constant is a separate binding: `monkeypatch.setattr(shim, "PROFILE_FILE",
   ...)` would silently not affect the function that reads it. Re-export
@@ -228,6 +228,31 @@
   extend `BaseInventoryPlugin` with `Constructable` and `Cacheable`
   (`plugins/inventory/tencentcloud_clb.py` walks listeners/backends,
   `tencentcloud_sg.py` deduplicates hosts across security groups).
+
+## Filter plugins
+
+- A filter plugin file defines `FilterModule.filters()`; the keys of that dict
+  are the filter names, so the file name need not match any of them —
+  `plugins/filter/tags.py` provides `tag_merge`. ansible-test knows this:
+  `filter` is a `MULTI_FILE_PLUGINS` type, which is why `ansible-doc` lists a
+  filter by the name inside `DOCUMENTATION` and why `validate-modules` is
+  skipped for it.
+- Unlike an action plugin, a filter *is* documentation-visible: `filter` is in
+  `DOCUMENTABLE_PLUGINS`, so `ansible-doc -t filter <fqcn>` has to render the
+  file's inline `DOCUMENTATION`. Write it in the module style — `_input` and
+  `_additional` options for the positional arguments, `positional:` naming
+  them in order, `_value` under `RETURN`. The sanity `ansible-doc` test runs
+  it for every filter and treats output on stderr as a failure.
+- Keep the filter a wrapper. Put the semantics in `module_utils` and import
+  them through `plugin_utils`, so a playbook and a module compute the same
+  thing from the same code. `plugins/filter/tags.py` is the worked example:
+  the whole filter is one call plus a `TypeError` → `AnsibleFilterError`
+  translation.
+- Fail with `AnsibleFilterError` on a bad argument. A filter that returns its
+  input, or an empty value, for input it does not understand loses data
+  silently — and a merge filter makes that loss permanent, because the tags it
+  dropped are gone from the result. Name the filter in the message so the
+  failure is findable in a long play.
 
 ## Connection plugins
 

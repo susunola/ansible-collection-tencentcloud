@@ -936,12 +936,19 @@ for product-level write, discovery and reusable-role maturity.
 
 | Plugin | Type | Purpose |
 | --- | --- | --- |
+| `tc_wait` | action | Wait for an existing resource to reach a state by polling one of the `*_info` modules |
+| `tencentcloud_resource_actions` | callback | Summarise the Tencent Cloud API calls a play made, task by task |
 | `tencentcloud_cvm` | inventory | Dynamic inventory of CVM instances with constructed groups and caching |
 | `tencentcloud_clb` | inventory | Dynamic inventory of CLB load balancers, listeners and backend targets |
 | `tencentcloud_sg` | inventory | Dynamic inventory of security groups and their associated network interfaces |
+| `tencentcloud_tke` | inventory | Dynamic inventory of TKE cluster nodes |
+| `tencentcloud_cos` | inventory | Dynamic inventory of COS buckets and objects |
 | `tat` | connection | Run commands and transfer files over the TAT agent (no SSH or public IP required) |
+| `tag_merge` | filter | Merge tag mappings, API-shaped tag lists and SDK tag objects into one mapping |
 | `cls_topic` | event_source | Stream new log records from a CLS log topic (Event-Driven Ansible) |
 | `cmq_queue` | event_source | Long-poll a CMQ queue and stream messages (Event-Driven Ansible) |
+| `cos_bucket` | event_source | Poll a COS bucket for new or changed objects (Event-Driven Ansible) |
+| `tke_cluster` | event_source | Poll TKE cluster state changes (Event-Driven Ansible) |
 | `sts_caller_identity` | lookup | Return the current caller identity (Uin, AccountId, Arn) |
 | `ssm_parameter` | lookup | Read secrets from Tencent Cloud Secrets Manager (SSM) |
 | `resource_id` | lookup | Resolve exact names to IDs across core network, compute, database, API Gateway, TCR and TEM resources |

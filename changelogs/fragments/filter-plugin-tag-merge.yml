@@ -1,0 +1,24 @@
+minor_changes:
+  - >-
+    tag_merge - new filter plugin that merges any number of Tencent Cloud tag
+    sources into one ``{key: value}`` mapping. It is the collection's first
+    filter plugin, and it closes a gap no existing filter could:
+    ``ansible.builtin.combine`` only understands mappings, so combining the
+    ``tags`` mapping a module parameter takes with the ``Key``/``Value`` list
+    an ``*_info`` module returns had no expression. A source may be a tag
+    mapping, a single ``Key``/``Value`` tag, a list of tags, a list of SDK
+    ``Tag`` objects, or a nested list of any of those; later sources win, the
+    result is sorted by key with string values (the same normalization the
+    resource modules apply to ``tags``), and an unsupported source fails the
+    task with the filter named instead of dropping tags silently.
+  - >-
+    module_utils.tagging - new ``merge_tags`` helper implementing that merge
+    on top of the existing ``normalize_tags`` / ``tags_from_sdk`` readers, so
+    the filter and the resource modules cannot drift apart; the
+    ``tag_merge`` filter is a thin wrapper that only translates the helper's
+    ``TypeError`` into an ``AnsibleFilterError``. It lives in ``module_utils``
+    even though the filter is its only consumer today, because tag reading and
+    tag comparison are one body of semantics and because the layering rule is
+    one-directional: a helper a module may later need has to be born in
+    ``module_utils``. ``plugin_utils.tags`` re-exports it for the
+    controller side.

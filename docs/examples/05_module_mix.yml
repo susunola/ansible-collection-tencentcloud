@@ -14,6 +14,11 @@
 # number of running demo instances to exactly what is declared, and teardown
 # removes every instance that carries the tag.
 #
+# The tag_merge filter keeps the tags in one place: demo_tags is declared once
+# and merged with the per-resource extras, and the tags the API reports back
+# (the Key/Value list shape, which ansible.builtin.combine cannot read) are
+# merged into the same mapping.
+#
 # Run:  ansible-playbook docs/examples/05_module_mix.yml
 - name: Module mix - create a tagged demo workload
   hosts: localhost
@@ -28,6 +33,9 @@
     subnet_id: subnet-xxxxxxxx
     demo_sg_name: demo-sg
     demo_eip_name: demo-eip
+    # Declared once; every resource below merges its own extras into this.
+    demo_tags:
+      app: demo
 
   tasks:
     - name: Create the demo security group (idempotent by name)
@@ -36,8 +44,7 @@
         state: present
         name: "{{ demo_sg_name }}"
         description: Demo workload security group
-        tags:
-          app: demo
+        tags: "{{ demo_tags }}"
       register: sg
 
     - name: Create the exact-count CVM pool (tagged app=demo)
@@ -50,10 +57,10 @@
         subnet_id: "{{ subnet_id }}"
         security_group_ids: ["{{ sg.security_group_id }}"]
         exact_count: 1
-        count_tag:
-          app: demo
-        tags:
-          app: demo
+        count_tag: "{{ demo_tags }}"
+        # A mapping merged with a mapping: the instance keeps app=demo and
+        # gains role=web.
+        tags: "{{ demo_tags | susunola.tencentcloud.tag_merge({'role': 'web'}) }}"
         internet_charge_type: TRAFFIC_POSTPAID_BY_HOUR
         internet_max_bandwidth_out: 10
         public_ip_assigned: true
@@ -74,6 +81,15 @@
           - "instances running now: {{ running.instances | length }}"
           - "re-run this playbook to reconcile the pool; use --tags teardown to remove it"
 
+    # The API reports tags as a Key/Value list, which no builtin filter can
+    # merge with a mapping. tag_merge reads both shapes, so the tags already
+    # on the instance and the tags this play wants to add end up in one
+    # mapping that can go straight back into a module.
+    - name: Merge the tags the API reported with this play's own tags
+      ansible.builtin.debug:
+        msg: "{{ running.instances[0].Tags | susunola.tencentcloud.tag_merge(demo_tags, {'role': 'web'}) }}"
+      when: running.instances | length > 0
+
     - name: Allocate a demo EIP
       susunola.tencentcloud.eip:
         region: "{{ region }}"
@@ -81,8 +97,7 @@
         name: "{{ demo_eip_name }}"
         internet_charge_type: TRAFFIC_POSTPAID_BY_HOUR
         internet_max_bandwidth_out: 10
-        tags:
-          app: demo
+        tags: "{{ demo_tags }}"
 
 - name: Module mix - teardown the tagged demo workload
   hosts: localhost

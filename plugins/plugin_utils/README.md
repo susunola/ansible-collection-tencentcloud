@@ -40,6 +40,7 @@ one error per module (881 of them the first time it was tried).
 | `profile.py` | `load_profile` from `module_utils.client` | the `resource_id` / `ssm_parameter` / `sts_caller_identity` lookups, the CVM / CLB / COS / SG / TKE inventory plugins, the `tat` connection plugin |
 | `paging.py` | `Paginator` from `module_utils.paging` | the CVM / CLB / SG / TKE inventory plugins |
 | `polling.py` | `PollOutcome`, `poll_until` from `module_utils.polling` | the `tc_wait` action plugin |
+| `tags.py` | `merge_tags` from `module_utils.tagging` | the `tag_merge` filter plugin |
 
 `PROFILE_FILE` / `DEFAULT_PROFILE_NAME` are deliberately **not** re-exported:
 a re-exported constant is a separate binding, so rebinding
@@ -73,6 +74,12 @@ graph TD
    `module_utils.client` itself, `Paginator` by every generated `_info`
    module, `poll_until` by `module_utils.waiters`). Add a file here only when
    a controller-side plugin needs it.
+   The reverse case — a helper only a controller-side plugin consumes — still
+   goes in `module_utils`. `merge_tags` is the worked example: its only
+   consumer today is the `tag_merge` filter, but tag reading and tag
+   comparison are one body of semantics, so splitting them would let
+   `module_utils.tagging` and the filter drift apart, and a module that later
+   needs the merge would have to move the implementation back down anyway.
 3. **Every file needs a module docstring** stating its responsibility and its
    intra-collection dependencies, so the boundary stays auditable by diff.
 4. **Tests live next to the implementation.** Reader tests for
