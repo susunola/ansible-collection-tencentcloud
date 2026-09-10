@@ -652,6 +652,17 @@
     `ansible-test` automation because it needs live credentials from
     `~/wbenv`. Running it green validates the collection end to end.
 
+69. TKE deletion-protection module (theme #1, 2026-09-11):
+    `plugins/modules/tke_cluster_deletion_protection.py` closes the first TKE
+    operational-workflow gap from theme #1 (deepen the highest-use resource
+    families). It is an idempotent, check-mode-safe toggle over the SDK's
+    Enable/DisableClusterDeletionProtection operations: it reads the live
+    `DeletionProtection` flag via DescribeClusters before changing it, so a
+    cluster already in the desired state is a no-op. Ship with a unit-test
+    matrix (enable / disable / idempotent / check-mode / not-found / SDK
+    failure) and the changelog fragment. The next TKE increments are cluster
+    routes (CreateClusterRoute / ClusterRouteTable) and CLS log configs.
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
 

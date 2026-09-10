@@ -1,0 +1,8 @@
+---
+minor_changes:
+  - >-
+    tke_cluster_deletion_protection is a new idempotent TKE module that
+    enables or disables deletion protection on a cluster, preventing
+    accidental cluster deletion through the console, CLI or API. It reads the
+    current protection state first and is a no-op when the cluster is already
+    in the desired state; it supports check mode.
