@@ -1,39 +1,50 @@
 # plugin_utils layout and boundary with module_utils
 
-`plugins/plugin_utils/` holds helpers that every plugin type may import: they
-take no `AnsibleModule`, read no module argument spec, and make no assumption
-that they are running inside a module payload. That is the whole point of the
-directory — it is the layer *below* `module_utils`.
+`plugins/plugin_utils/` is the import surface for helpers shared by
+**non-module** plugins (action, callback, connection, filter, inventory,
+lookup). Its files are re-exports: the implementations live in
+`plugins/module_utils/`, and this directory gives the controller-side plugins
+one stable, uniform path to them.
 
-The split is not cosmetic. `module_utils` is documented as a support directory
-for **modules**; a lookup, inventory or connection plugin importing from it
-works only because the collection happens to be installed on the controller.
-`plugin_utils` is the directory the collection requirements define for code
-shared between plugin types, so a controller-side plugin importing from here
-depends on a layer that is defined for it.
+## Why the implementation is not here
+
+ansible-test's `import` sanity test decides what module-side code may import.
+For a module or a `module_utils` file it installs a restricted loader that
+allows exactly two collection namespaces:
+
+```
+ansible_collections.*.*.plugins.module_utils
+```
+
+(`ansible-test/_util/target/sanity/import/importer.py`, the
+`ansible_collections...plugins.module_utils` namespace entry). Anything else
+in the collection — including `plugins.plugin_utils` — raises
+`ImportError: import of "..." is not allowed in this context`.
+
+So the constraint is one-directional and enforced:
+
+* **modules and `module_utils` may not import `plugin_utils`** — a helper a
+  module needs has to be implemented in `module_utils`;
+* **non-module plugins may import either** — the loader is unrestricted for
+  them, so importing `plugin_utils` (or `module_utils` directly) both work.
+
+`plugin_utils` is therefore not the layer *below* `module_utils`; it is the
+layer *above* it that only controller-side plugins reach. Putting an
+implementation here and re-exporting it from `module_utils` fails sanity with
+one error per module (881 of them the first time it was tried).
 
 ## Current files
 
-| File | Responsibility | Consumers today |
+| File | Re-exports | Consumers today |
 | --- | --- | --- |
-| `profile.py` | Read a TCCLI credential profile section from `~/.tencentcloud/default.configure` (explicit option > environment variable > profile is the caller's job; this file only reads the file) | `module_utils.client` (re-export), the `resource_id` / `ssm_parameter` / `sts_caller_identity` lookups, the CVM / CLB / COS / SG / TKE inventory plugins, the `tat` connection plugin |
-| `paging.py` | `Paginator`: the single offset/limit list-API loop | generated `_info` modules and hand-written modules via `module_utils.paging` (re-export), the CVM / CLB / SG / TKE inventory plugins |
+| `profile.py` | `load_profile` from `module_utils.client` | the `resource_id` / `ssm_parameter` / `sts_caller_identity` lookups, the CVM / CLB / COS / SG / TKE inventory plugins, the `tat` connection plugin |
+| `paging.py` | `Paginator` from `module_utils.paging` | the CVM / CLB / SG / TKE inventory plugins |
+| `polling.py` | `PollOutcome`, `poll_until` from `module_utils.polling` | the `tc_wait` action plugin |
 
-## Boundary
-
-Put a helper in `plugin_utils` when **all** of the following hold:
-
-1. it has no `AnsibleModule` dependency (no `module.params`, no
-   `module.fail_json`, no `module.warn`);
-2. it is not tied to the module payload (no `ansible.module_utils` imports that
-   only exist inside a module, no reliance on being shipped to the target);
-3. at least one non-module plugin type (action, callback, connection, filter,
-   inventory, lookup) either uses it already or plausibly will.
-
-Put it in `module_utils` when it is module-side: an `AnsibleModule` subclass,
-an argument spec, an exit/fail envelope, or a lifecycle helper that reports
-through a module. Product-specific computation that only one product family
-needs belongs in `module_utils` (or, better, stays inside the module).
+`PROFILE_FILE` / `DEFAULT_PROFILE_NAME` are deliberately **not** re-exported:
+a re-exported constant is a separate binding, so rebinding
+`plugin_utils.profile.PROFILE_FILE` would silently have no effect on the
+reader. Patch `module_utils.client.PROFILE_FILE` instead.
 
 ## Layering
 
@@ -41,38 +52,44 @@ A lower layer never imports a higher one.
 
 ```mermaid
 graph TD
-    plugin_utils["plugin_utils - no AnsibleModule"]
-    module_utils["module_utils - module-side helpers"]
-    consumers["modules / action / callback / connection / filter / inventory / lookup"]
-    module_utils --> plugin_utils
-    consumers --> module_utils
+    module_utils["module_utils - implementations; importable by every plugin type"]
+    plugin_utils["plugin_utils - controller-side re-exports"]
+    modules["modules"]
+    consumers["action / callback / connection / filter / inventory / lookup"]
+    modules --> module_utils
+    plugin_utils --> module_utils
     consumers --> plugin_utils
 ```
 
-`module_utils/paging.py` and `module_utils/client.py` re-export the moved
-names. That is deliberate and load-bearing:
-
-* `scripts/generate_info_modules.py` emits
-  `from ...module_utils.paging import Paginator` into every generated `_info`
-  module, and the generator is write-once — committed generated modules can
-  never be rewritten — so that import path is frozen;
-* the module-side helpers keep a stable public surface for existing module
-  imports.
-
-New code that is not a module should import from `plugin_utils` directly.
-
 ## Rules for new helpers
 
-1. **Import direction**: `plugin_utils` imports nothing from `module_utils`;
-   `module_utils` may import `plugin_utils`. Review enforces this, not tooling.
-2. **Every file needs a module docstring** stating its responsibility and its
+1. **Import direction**: `plugin_utils` may import `module_utils`;
+   `module_utils` may **never** import `plugin_utils`, and neither may a
+   module. This one is enforced by `ansible-test sanity --test import`, so it
+   cannot be argued with — run that test after any move between the two
+   directories.
+2. **Implement in `module_utils`, re-export here** when modules need the
+   helper too (which is the common case: `load_profile` is used by
+   `module_utils.client` itself, `Paginator` by every generated `_info`
+   module, `poll_until` by `module_utils.waiters`). Add a file here only when
+   a controller-side plugin needs it.
+3. **Every file needs a module docstring** stating its responsibility and its
    intra-collection dependencies, so the boundary stays auditable by diff.
-3. **Re-exports need a comment** saying why the old path must keep working.
-4. **Tests live in `tests/unit/plugins/plugin_utils/`** and import through the
-   plugin_utils path. Tests that patch module state (for example
-   `profile.PROFILE_FILE`) must patch the module that reads it, not a
-   re-exporting module — the re-exported name is a separate binding.
+4. **Tests live next to the implementation.** Reader tests for
+   `load_profile` patch `module_utils.client.PROFILE_FILE` and live in
+   `tests/unit/plugins/module_utils/`; `tests/unit/plugins/plugin_utils/`
+   keeps the re-export identity assertions (`plugin_utils.profile.load_profile
+   is module_utils.client.load_profile`), which are what stop the shim from
+   silently drifting into a copy.
 5. `ansible-test` recognises `plugin_utils` as a collection plugin directory
    (`_internal/provider/layout/__init__.py`), so nothing needs to be declared
    in `meta/extensions.yml`; that file is only for plugin types ansible-core
    does not know at all (here: `event_source`).
+6. **Every `tests/` directory that holds pytest files carries an empty
+   `__init__.py`.** pytest's default `prepend` import mode names a test module
+   after its bare file name unless the directory is a package, so
+   `module_utils/test_paging.py` and `plugin_utils/test_paging.py` would
+   otherwise abort collection with "import file mismatch". The file must be
+   **zero bytes**: ansible-test's `empty-init` code-smell test fails any
+   non-empty `__init__.py` under `tests/unit/`. Keep the marker when you add a
+   directory, and put the explanation here rather than in the file.

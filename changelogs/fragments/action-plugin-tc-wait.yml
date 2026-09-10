@@ -1,0 +1,23 @@
+minor_changes:
+  - >-
+    tc_wait - new action plugin that waits for an existing Tencent Cloud
+    resource to reach a state by polling one of the ``*_info`` modules. It is
+    the collection's first action plugin and the first plugin that can drive
+    another module: a module cannot call a module, so "wait until this disk
+    is attached" was previously inexpressible without ``until``/``retries``
+    against a raw API call. Options are ``module`` (the ``*_info`` module to
+    poll, short name or FQCN), ``args`` (its arguments), ``state`` (required;
+    ``absent`` means "no longer listed"), plus optional ``state_field``,
+    ``list_field``, ``delay`` and ``timeout``. Waiting only reads, so the
+    task never reports ``changed``; in check mode it observes once instead of
+    polling.
+  - >-
+    module_utils.polling - new ``poll_until`` helper: the bounded poll loop
+    with the budget counted as the delays actually slept. It lives in
+    ``module_utils`` because both callers must reach it, and
+    ``plugin_utils.polling`` re-exports it for the controller side. It is the
+    first shared helper motivated by a controller-side consumer, and
+    ``module_utils.waiters.wait_for_state`` now delegates to it while keeping
+    its exact module-side failure payload (``expected_states``,
+    ``last_state``, ``timeout``). ``wait_until_gone`` and ``wait_for_task``
+    keep their own terminal conditions and are unchanged.

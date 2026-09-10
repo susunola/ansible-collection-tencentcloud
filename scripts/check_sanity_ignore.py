@@ -13,7 +13,7 @@ import os
 import sys
 import collections
 
-BASELINE_TOTAL = 2350  # current committed total (2026-09): 2292 + headroom
+BASELINE_TOTAL = 2350  # current committed total (2026-09-10): 2289 + headroom
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 

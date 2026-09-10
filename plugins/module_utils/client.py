@@ -7,16 +7,21 @@ identical endpoint/timeout/language behaviour and lets us inject a shared
 User-Agent without each module remembering to do so.
 
 Reading the TCCLI profile is not module-specific — the lookup, inventory and
-connection plugins resolve credentials the same way — so ``load_profile``
-lives in ``plugins/plugin_utils/profile.py`` and is re-exported here for the
-modules and for existing ``module_utils.client`` imports.
+connection plugins resolve credentials the same way — but it is needed *here*
+too, because ``create_credential`` and ``resolve_region`` fall back to it. It
+therefore lives in this module and ``plugin_utils.profile`` re-exports it for
+the controller-side plugins; the reverse direction is not allowed by
+ansible-test's ``import`` test. See ``plugins/plugin_utils/README.md``.
 
-Layering: imports ``plugin_utils.profile``.
+Layering: imports nothing else from the collection.
 """
 
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
+
+import configparser
+import os
 
 try:
     from tencentcloud.common.profile.client_profile import ClientProfile
@@ -26,9 +31,37 @@ try:
 except ImportError:
     HAS_TENCENTCLOUD_SDK = False
 
-from ansible_collections.susunola.tencentcloud.plugins.plugin_utils.profile import load_profile
-
 SDK_IMP_ERR = "The tencentcloud-sdk-python package is required on the Ansible controller."
+
+DEFAULT_PROFILE_NAME = "default"
+PROFILE_FILE = os.path.join(os.path.expanduser("~"), ".tencentcloud", "default.configure")
+
+
+def load_profile(profile=None, path=None):
+    """Return the settings stored in a TCCLI profile section.
+
+    Reads ``~/.tencentcloud/default.configure`` (the TCCLI INI format) and
+    returns the keys of the requested section, or of ``[default]`` when no
+    profile name is given. A missing, unreadable or corrupt file — or a
+    missing section — yields an empty dict: profile data is only ever a
+    fallback and must never crash a plugin that does not rely on it.
+
+    :param profile: section name; ``None`` selects ``[default]``.
+    :param path: configuration file override, mainly for tests. When omitted
+        the module-level ``PROFILE_FILE`` is read, so a caller that rebinds
+        that name also redirects this function.
+    """
+    parser = configparser.ConfigParser()
+    try:
+        with open(path or PROFILE_FILE) as handle:
+            parser.read_file(handle)
+    except (OSError, configparser.Error):
+        return {}
+    section = profile or DEFAULT_PROFILE_NAME
+    if not parser.has_section(section):
+        return {}
+    return {key: value for key, value in parser.items(section) if value}
+
 
 
 def require_sdk(module):

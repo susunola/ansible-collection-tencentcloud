@@ -34,6 +34,15 @@ the release workflow folds them into `changelogs/` on tag.
 
 ## Plugins
 
+- **action** — an action plugin runs on the controller, so it can call other
+  modules through `_execute_module`; that is the only place a cross-module
+  operation can live, and it is why `tc_wait` is an action plugin and not a
+  module. Declare `_VALID_ARGS` so the base class rejects option typos, reuse
+  `plugin_utils.polling.poll_until` instead of writing another loop, and carry
+  the docs in the plugin's own `DOCUMENTATION` block: unlike a module, an
+  action plugin has no module file to document it, and `ansible-doc` cannot
+  read it at all — so add a `action-plugin-docs` entry to
+  `tests/sanity/ignore-*.txt`. See `plugins/action/tc_wait.py`.
 - **connection** — a connection plugin (e.g. `tat`) runs without a shell, so
   it must never import Ansible module machinery; reuse
   `plugin_utils.profile.load_profile` through a thin adapter over the
@@ -47,9 +56,14 @@ the release workflow folds them into `changelogs/` on tag.
   `Constructable` and `Cacheable`, build their client through
   `plugin_utils.paging.Paginator`, and declare their options in
   `DOCUMENTATION` with an example YAML file.
-- **shared helpers** — a helper that has no `AnsibleModule` dependency and is
-  useful to more than one plugin type belongs in `plugins/plugin_utils/`, not
-  `plugins/module_utils/`. See `plugins/plugin_utils/README.md`.
+- **shared helpers** — implementations belong in `plugins/module_utils/`, and
+  `plugins/plugin_utils/` re-exports them for non-module plugins. The
+  direction is forced, not stylistic: ansible-test's `import` test lets
+  module-side code import only `plugins.module_utils`, so a helper that any
+  module needs cannot live in `plugin_utils`. Put the implementation in
+  `module_utils`, add a one-line re-export to `plugin_utils` when a controller
+  plugin needs the same path, and document the pair in
+  `plugins/plugin_utils/README.md`.
 
 ## Dependencies
 

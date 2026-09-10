@@ -1,28 +1,28 @@
 # -*- coding: utf-8 -*-
 # Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-"""Support code shared by every plugin type, not only by modules.
+"""The controller-side import surface for shared helpers.
 
-``module_utils`` is the home of module-side helpers: anything that receives an
-``AnsibleModule`` (``module.params``, ``module.fail_json``) or that only makes
-sense inside a module payload belongs there. This directory is the home of the
-layer *below* it: helpers with no ``AnsibleModule`` dependency at all, so they
-can be imported unchanged by action, callback, connection, filter, inventory
-and lookup plugins as well as by modules.
+Every plugin type may import ``module_utils`` — ansible-test's ``import`` test
+allows it explicitly — but the reverse is not true: a module or a
+``module_utils`` helper that imports ``plugins.plugin_utils`` fails with
+"import of ... is not allowed in this context". A helper that modules need
+therefore *must* be implemented in ``module_utils``.
 
-The split is not cosmetic. ``module_utils`` is documented as a support
-directory for *modules*; a lookup or inventory plugin importing from it works
-only by accident of the collection being installed on the controller. Keeping
-the plugin-agnostic helpers here makes the intended consumers explicit and lets
-those plugins depend on a layer that is defined for them.
+This directory is what remains useful after that constraint: one stable,
+uniform import path for the non-module plugins (action, callback, connection,
+filter, inventory, lookup), so their dependency surface is reviewable in one
+place instead of being spread over ``module_utils`` internals. Its files
+re-export the shared implementations and hold nothing else today; genuine
+controller-only helpers belong here when they appear.
 
 Layering (a lower layer never imports a higher one):
 
-    plugin_utils      no AnsibleModule, no ansible module payload assumptions
+    module_utils      implementations; importable by every plugin type
       ^
-    module_utils      module-side helpers; may import plugin_utils
-      ^
-    modules / other plugin types
+    plugin_utils      controller-side re-export surface; never imported by
+      ^               modules or by module_utils
+    non-module plugins
 
 See ``README.md`` in this directory for the file inventory and the rules for
 adding helpers.

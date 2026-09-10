@@ -336,25 +336,62 @@
     (`e0d531d`). Wave 3 (ckafka / trabbit / api_gateway / cfw / dts backlog)
     folds into the next read-surface wave. **Done**
 57. P1-01 plugin_utils shared library (2026-09-10): added
-    `plugins/plugin_utils/` — the layer *below* `module_utils`, for helpers
-    with no `AnsibleModule` dependency that any plugin type may import — and
-    moved the two helpers controller-side plugins were already reaching into
-    `module_utils` for: `profile.load_profile` (TCCLI credential-profile
-    reader, imported by the `resource_id` / `ssm_parameter` /
-    `sts_caller_identity` lookups, the CVM / CLB / COS / SG / TKE inventory
-    plugins and the `tat` connection plugin) and `paging.Paginator` (the
-    offset/limit loop, used by the inventory plugins as well as the generated
-    `_info` modules). `module_utils.client` re-exports `load_profile` and
-    `module_utils.paging` re-exports `Paginator` — the latter is load-bearing
-    because the write-once generator emits that import path into every
-    generated `_info` module — while `PROFILE_FILE` / `DEFAULT_PROFILE_NAME`
-    are deliberately not re-exported (rebinding a re-exported constant had no
-    effect on the reader). New tests live in
+    `plugins/plugin_utils/` for the two helpers controller-side plugins were
+    already reaching into `module_utils` for: `profile.load_profile` (TCCLI
+    credential-profile reader, imported by the `resource_id` /
+    `ssm_parameter` / `sts_caller_identity` lookups, the CVM / CLB / COS / SG /
+    TKE inventory plugins and the `tat` connection plugin) and
+    `paging.Paginator` (the offset/limit loop, used by the inventory plugins
+    as well as the generated `_info` modules). The first cut treated
+    `plugin_utils` as the layer *below* `module_utils` and moved the
+    implementations into it, with `module_utils.client` / `module_utils.paging`
+    importing back up. That direction is not allowed and the layer map was
+    wrong; entry 58 corrects it. New tests live in
     `tests/unit/plugins/plugin_utils/`, and `plugins/plugin_utils/README.md`
-    documents the boundary and the revised layer map. Commit `f9f92c1`. The
-    same window cleared `ruff check .`, which was red on main with 50
-    pre-existing findings (43× F841, 7× F401) in
-    `tests/unit/plugins/modules` (`3fec907`). **Done**
+    documents the boundary. Commit `f9f92c1`. The same window cleared
+    `ruff check .`, which was red on main with 50 pre-existing findings
+    (43× F841, 7× F401) in `tests/unit/plugins/modules` (`3fec907`). **Done**
+58. P1-02 first action plugin (2026-09-10): added `plugins/action/tc_wait.py`,
+    plus `plugins/module_utils/polling.py` and the re-export shims.
+    `tc_wait` waits for an existing resource to reach a state by polling a
+    `*_info` module through `_execute_module` — the one operation no module can
+    express, since a module cannot invoke a module, so "wait until this disk is
+    attached" was previously only reachable via `until`/`retries` against a raw
+    API call. Its observation table (module → result list key → state field) is
+    not guessed: `tests/unit/plugins/action/test_tc_wait.py` asserts every
+    `state_field` still exists on the corresponding installed SDK model, so an
+    SDK rename fails a test instead of making the plugin wait forever.
+
+    The sanity run for this item also exposed a real defect that P1-01 had
+    shipped to main: ansible-test's `import` test permits module-side code to
+    import only `plugins.module_utils`, so `module_utils/client.py:29` and
+    `module_utils/paging.py:23` importing `plugin_utils` failed it **881
+    times** on `origin/main` (traced through `module_utils.base` / `cos` /
+    `lifecycle` / `tencentcloud` and every generated `_info` module). The fix
+    inverts the layering rather than patching symptoms: implementations live in
+    `module_utils` (`client.load_profile`, `paging.Paginator`, the new
+    `polling.poll_until`), and `plugin_utils/{profile,paging,polling}.py`
+    re-export them for the controller side. The direction
+    `module_utils` → `plugin_utils` → non-module plugins is enforced by
+    `ansible-test sanity --test import`, which now reports **0** errors.
+    `module_utils.paging` keeps `Paginator` at the path the write-once
+    generator emits into every generated `_info` module;
+    `PROFILE_FILE` / `DEFAULT_PROFILE_NAME` are deliberately not re-exported
+    (a re-exported constant is a separate binding, so rebinding it through the
+    shim silently did nothing — the reader tests patch
+    `module_utils.client.PROFILE_FILE` instead).
+
+    `wait_for_state` delegates to `poll_until` with a byte-identical
+    module-side failure payload. 25 action tests + 7 polling-mechanics tests +
+    3 shim-identity tests. Also fixed a latent pytest collection failure:
+    `tests/` had no `__init__.py`, so the `module_utils` / `plugin_utils`
+    `test_paging.py` / `test_profile.py` pairs collided under the default
+    `prepend` import mode and aborted the CI coverage step — 12 package markers
+    added, all zero-byte because the `empty-init` sanity test requires it.
+    Full tree: 12,984 passed / 31 skipped / 5 xfailed in the measured scope;
+    `ruff check .` clean; sanity ignore budget 2289/2350; the remaining sanity
+    failures are the three pre-existing ones (`ignores` 102, `pep8` 1,
+    `pylint` 50). **Done**
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
@@ -381,11 +418,11 @@ task tests and contract coverage for generated modules, and the P1 structural
 items — plugin_utils / action / filter plugins, docsite, extensions.yml,
 doc_fragments and module_utils grouping, event_source docs, README FQCN index
 and example playbooks. Items land as individual commits, each keeping the
-coverage gate (80) and the sanity ignore budget (2292/2350) intact.
+coverage gate (80) and the sanity ignore budget (2289/2350) intact.
 
-Status 2026-09-10: P0-01…P0-12 and P1-01/05…10 have landed (see the numbered
-entries above). The open P1 items are the first action plugin (P1-02), the
-first filter plugin (P1-03) and the docsite build (P1-04).
+Status 2026-09-10: P0-01…P0-12 and P1-01/02/05…10 have landed (see the
+numbered entries above). The open P1 items are the first filter plugin
+(P1-03) and the docsite build (P1-04).
 
 1. **Deepen the eight highest-use resource families.** Close runtime and
    operational workflows in TEM, TKE, CLB, CDB/Redis/MongoDB, TCR, SCF,

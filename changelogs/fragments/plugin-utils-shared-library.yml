@@ -1,22 +1,34 @@
 minor_changes:
   - >-
-    plugins/plugin_utils - new shared library for helpers that every plugin
-    type may import, not only modules. ``plugin_utils.profile`` owns the TCCLI
-    credential-profile reader and ``plugin_utils.paging`` owns the offset/limit
-    ``Paginator``; both take no ``AnsibleModule`` and are now imported directly
-    by the ``resource_id`` / ``ssm_parameter`` / ``sts_caller_identity``
-    lookups, the CVM / CLB / COS / SG / TKE inventory plugins and the ``tat``
-    connection plugin instead of reaching into ``module_utils``.
+    plugins/plugin_utils - new controller-side import surface for helpers that
+    non-module plugins need. ``plugin_utils.profile`` re-exports
+    ``module_utils.client.load_profile``, ``plugin_utils.paging`` re-exports
+    ``module_utils.paging.Paginator`` and ``plugin_utils.polling`` re-exports
+    ``module_utils.polling.poll_until`` / ``PollOutcome``; the ``resource_id``
+    / ``ssm_parameter`` / ``sts_caller_identity`` lookups, the CVM / CLB / COS
+    / SG / TKE inventory plugins and the ``tat`` connection plugin now import
+    those paths, and the ``tc_wait`` action plugin imports
+    ``plugin_utils.polling``.
   - >-
-    module_utils.client - ``load_profile`` moved to ``plugin_utils.profile``
-    and is re-exported, so existing module imports keep working;
-    ``PROFILE_FILE`` / ``DEFAULT_PROFILE_NAME`` are no longer re-exported
-    because rebinding a re-exported constant silently had no effect on the
-    reader. Tests that redirected the profile file now patch
-    ``plugin_utils.profile.PROFILE_FILE``.
+    plugins/plugin_utils - the implementations stay in ``module_utils`` rather
+    than moving here, because ansible-test's ``import`` test lets module-side
+    code import only ``plugins.module_utils``: putting ``load_profile`` or
+    ``Paginator`` in ``plugin_utils`` makes every module that imports them fail
+    that test (observed: 881 errors). The direction is therefore
+    ``module_utils`` implementations -> ``plugin_utils`` re-exports ->
+    non-module plugins, and it is enforced by ``ansible-test sanity --test
+    import``. ``plugins/plugin_utils/README.md`` documents the rule.
   - >-
-    module_utils.paging - ``Paginator`` moved to ``plugin_utils.paging`` and
-    is re-exported, because ``scripts/generate_info_modules.py`` emits
-    ``from ...module_utils.paging import Paginator`` into every generated
-    ``_info`` module and committed generated modules are never rewritten.
-    ``paginate()`` stays in ``module_utils``.
+    module_utils.client - ``load_profile`` keeps its definition here and is
+    re-exported through ``plugin_utils.profile`` for controller-side callers.
+    ``PROFILE_FILE`` / ``DEFAULT_PROFILE_NAME`` are deliberately not
+    re-exported: a re-exported constant is a separate binding, so rebinding it
+    through the shim silently had no effect on the reader. Tests that redirect
+    the profile file patch ``module_utils.client.PROFILE_FILE``.
+  - >-
+    module_utils.paging - ``Paginator`` keeps its definition here, because
+    ``scripts/generate_info_modules.py`` emits ``from ...module_utils.paging
+    import Paginator`` into every generated ``_info`` module and committed
+    generated modules are never rewritten; the class is re-exported through
+    ``plugin_utils.paging`` for the inventory plugins. ``paginate()`` remains a
+    module-only convenience wrapper and is not re-exported.
