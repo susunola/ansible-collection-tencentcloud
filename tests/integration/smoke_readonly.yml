@@ -1,0 +1,54 @@
+# =============================================================================
+# Read-only live smoke test for the susunola.tencentcloud collection.
+#
+# PURPOSE
+#   Prove the full runtime chain against the REAL Tencent Cloud API:
+#     credential resolution (env TENCENTCLOUD_SECRET_*) -> SDK client ->
+#     signed request -> live API -> real data.
+#   This is READ-ONLY: it only lists existing VPCs and CVM instances.
+#   It creates NO resources and incurs NO billing (changed=0).
+#
+# CREDENTIALS (required, NOT committed)
+#   Source them from ~/wbenv (the local env file that holds the valid
+#   TENCENTCLOUD_SECRET_ID / TENCENTCLOUD_SECRET_KEY for the intl account):
+#     set -a; source ~/wbenv; set +a
+#   The region is NOT in ~/wbenv — export it explicitly:
+#     export TENCENTCLOUD_REGION=ap-hongkong
+#   Do NOT use ~/.tccli/default.credential — that key is stale (SecretIdNotFound).
+#
+# RUN (manual — needs live creds, so it is NOT part of ansible-test automation)
+#   cd <repo root>
+#   ANSIBLE_COLLECTIONS_PATH=/tmp/at HOME=/tmp/atest_home \
+#     /tmp/venv219/bin/ansible-playbook -i localhost, \
+#     -e ansible_connection=local \
+#     -e ansible_python_interpreter=/tmp/venv219/bin/python \
+#     tests/integration/smoke_readonly.yml
+# =============================================================================
+---
+- hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Read-only smoke — list VPCs (no resources created)
+      susunola.tencentcloud.vpc_info: {}
+      register: vpcs
+
+    - name: Read-only smoke — list CVM instances (no resources created)
+      susunola.tencentcloud.cvm_instance_info: {}
+      register: cvm
+
+    - name: Report aggregate result (no secrets, no full dumps)
+      debug:
+        msg:
+          - "vpc_info: total_count={{ vpcs.total_count | default('?') }} failed={{ vpcs.failed | default(false) }}"
+          - "cvm_instance_info: total_count={{ cvm.total_count | default('?') }} failed={{ cvm.failed | default(false) }}"
+
+    - name: Assert live smoke passed (non-zero exit on any failure)
+      assert:
+        that:
+          - not (vpcs.failed | default(false))
+          - not (cvm.failed | default(false))
+        fail_msg: "Live read-only smoke FAILED — see module errors above."
+        success_msg: >-
+          Live read-only smoke PASSED:
+          vpc_info total_count={{ vpcs.total_count | default('?') }},
+          cvm_instance_info total_count={{ cvm.total_count | default('?') }}

@@ -1,0 +1,9 @@
+---
+minor_changes:
+  - >-
+    tests/integration/smoke_readonly.yml is a manual, credential-gated,
+    read-only smoke test that proves the full runtime chain against the real
+    Tencent Cloud API (credential resolution, SDK client, signed request,
+    live response) without creating any resources. It lists VPCs and CVM
+    instances only and is excluded from ansible-test automation because it
+    needs live credentials.

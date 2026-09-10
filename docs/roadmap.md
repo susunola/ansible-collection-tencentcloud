@@ -643,6 +643,15 @@
     imports). Every module name, option and path in it points back to the
     collection at commit `2f383da`.
 
+68. P2-09 read-only live smoke playbook (2026-09-11):
+    `tests/integration/smoke_readonly.yml` is a manual, credential-gated,
+    read-only smoke test that proves the full runtime chain against the real
+    Tencent Cloud API — credential resolution, SDK client, signed request,
+    live response — without creating any resources (changed=0, no billing).
+    It lists VPCs and CVM instances only, and is intentionally excluded from
+    `ansible-test` automation because it needs live credentials from
+    `~/wbenv`. Running it green validates the collection end to end.
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
 
