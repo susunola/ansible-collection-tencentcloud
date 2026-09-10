@@ -520,6 +520,30 @@
     lesson to keep: a green local run is not a green CI run, and a
     "pre-existing failure" is only pre-existing until somebody checks whether
     it is failing the build. **Done**
+63. P2-05 triage SLA and label flow (2026-09-10): `CONTRIBUTING.md` had
+    promised a first response on issues and pull requests within 48 hours
+    since the P2-03 maintainer-path section landed, and nothing measured it.
+    At the time this shipped, three items were open and unanswered, the
+    oldest 194 hours old.
+
+    - `docs/triage.md` defines what a response *is* (a human comment or a
+      submitted review; never a bot comment, which would make every number
+      look perfect) and the label set used to triage.
+    - `scripts/triage_sla.py` computes first-response times from the GitHub
+      API. Four statuses, and only one is an alarm: `OK`, `LATE` (answered
+      past the deadline — history), `WAITING` (unanswered, inside the
+      window), `BREACH` (unanswered and overdue). Lumping `LATE` in with
+      `BREACH`, as the first version did, leaves `--check` red on an item
+      that has already been answered and can only be cleared by closing it.
+    - `--exclude-author` drops a maintainer's own tracking issues, which can
+      never receive a first response by definition.
+
+    The three breaches were answered as part of landing this: #8 (adoption
+    tracking) got a refreshed inclusion scorecard, and #9/#10 turned out to
+    be red on a `generate_cam_actions.py --check` gate that was already
+    broken on `main` at their base commit, not on their own content. The
+    nightly triage job is parked on a local branch — the OAuth token in use
+    cannot push `.github/workflows/`. **Done**
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
