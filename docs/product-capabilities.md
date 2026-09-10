@@ -7,7 +7,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 
 - Products/services: **204**
 - Write modules: **440**
-- Information modules: **337**
+- Information modules: **339**
 - Solution roles: **68**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
@@ -49,7 +49,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `cam` | solution | 8 | 8 | `tc_security_baseline` | `cam_group`, `cam_group_membership`, `cam_oidc_provider`, `cam_policy`, `cam_policy_attachment`, `cam_role`, `cam_saml_provider`, `cam_user` |
 | `captcha` | discovery-only | 0 | 1 | — | — |
 | `cat` | discovery-only | 0 | 1 | — | — |
-| `cbs` | solution | 5 | 3 | `tc_block_storage` | `cbs_auto_snapshot_policy`, `cbs_disk`, `cbs_disk_backup`, `cbs_snapshot`, `cbs_snapshot_share` |
+| `cbs` | solution | 5 | 5 | `tc_block_storage` | `cbs_auto_snapshot_policy`, `cbs_disk`, `cbs_disk_backup`, `cbs_snapshot`, `cbs_snapshot_share` |
 | `ccc` | discovery-only | 0 | 1 | — | — |
 | `cdb` | solution | 7 | 7 | `tc_database_stack` | `cdb_account`, `cdb_account_privilege`, `cdb_audit_config`, `cdb_backup_config`, `cdb_database`, `cdb_instance`, `cdb_parameter_template` |
 | `cdc` | discovery-only | 0 | 1 | — | — |

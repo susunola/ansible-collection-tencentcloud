@@ -289,6 +289,72 @@ SPECS = [
 """,
     },
     {
+        "module": "cbs_disk_backup_info",
+        "version_added": "1.3.0",
+        "service_package": "tencentcloud.cbs.v20170312",
+        "client_module": "cbs_client",
+        "client_class": "CbsClient",
+        "sdk_package": "tencentcloud-sdk-python-cbs",
+        "endpoint": "cbs.tencentcloudapi.com",
+        "action": "DescribeDiskBackups",
+        "request_class": "DescribeDiskBackupsRequest",
+        "ids": {
+            "param": "disk_backup_ids",
+            "field": "DiskBackupIds",
+            "doc": "Disk backup IDs to return.",
+        },
+        "filters": None,
+        "extra_params": [],
+        "response_items": "DiskBackupSet",
+        "response_total": "TotalCount",
+        "result_key": "disk_backups",
+        "pagination_type": "int",
+        "short_description": "Gather information about Tencent Cloud CBS disk backups",
+        "description": "Returns CBS disk backup points visible in a Tencent Cloud region.",
+        "return_items_doc": "Matching CBS disk backup points.",
+        "return_total_doc": "Number of disk backup points reported by the API.",
+        "examples": """\
+- name: List all CBS disk backups
+  susunola.tencentcloud.cbs_disk_backup_info:
+    region: ap-guangzhou
+
+- name: Find CBS disk backups by ID
+  susunola.tencentcloud.cbs_disk_backup_info:
+    region: ap-guangzhou
+    disk_backup_ids: [dbp-xxxxxxxx]
+""",
+    },
+    {
+        "module": "cbs_snapshot_share_info",
+        "version_added": "1.3.0",
+        "service_package": "tencentcloud.cbs.v20170312",
+        "client_module": "cbs_client",
+        "client_class": "CbsClient",
+        "sdk_package": "tencentcloud-sdk-python-cbs",
+        "endpoint": "cbs.tencentcloudapi.com",
+        "action": "DescribeSnapshotSharePermission",
+        "request_class": "DescribeSnapshotSharePermissionRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [
+            {"name": "snapshot_id", "field": "SnapshotId", "type": "str", "required": True, "doc": "Snapshot ID whose share permissions are returned."},
+        ],
+        "response_items": "SharePermissionSet",
+        "response_total": None,
+        "result_key": "share_permissions",
+        "pagination_type": "list",
+        "short_description": "Gather information about Tencent Cloud CBS snapshot share permissions",
+        "description": "Returns account permissions for a shared CBS snapshot.",
+        "return_items_doc": "Matching CBS snapshot share permissions.",
+        "return_total_doc": "Number of share permissions returned by the API.",
+        "examples": """\
+- name: List snapshot share permissions
+  susunola.tencentcloud.cbs_snapshot_share_info:
+    region: ap-guangzhou
+    snapshot_id: snap-xxxxxxxx
+""",
+    },
+    {
         "module": "redis_instance_info",
         "version_added": LEGACY_VERSION_ADDED,
         "service_package": "tencentcloud.redis.v20180412",
