@@ -278,7 +278,7 @@
   <div class="foot">
     <div class="q"><div class="ic">✅</div><div><div class="t">幂等性</div><div class="d">二次运行 changed=false；check mode 不发写请求</div></div><div class="ok">✓</div></div>
     <div class="q"><div class="ic">🧪</div><div><div class="t">单元 + 契约测试</div><div class="d">逐模块 unit tests + contract tests；coverage gate 80 达成（实测 82%）</div></div><div class="ok">✓</div></div>
-    <div class="q"><div class="ic">🩺</div><div><div class="t">ansible-test sanity</div><div class="d">2.19/2.20/2.21 × py 3.11/3.12/3.13 矩阵全绿；ignore 1869 条预算化（1900 封顶 + CI guard）</div></div><div class="ok">✓</div></div>
+    <div class="q"><div class="ic">🩺</div><div><div class="t">ansible-test sanity</div><div class="d">2.19/2.20/2.21 × py 3.11/3.12/3.13 矩阵全绿；ignore 1557 条预算化（1900 封顶 + CI guard）</div></div><div class="ok">✓</div></div>
     <div class="q"><div class="ic">📦</div><div><div class="t">生成式治理</div><div class="d">435 个 *_info 由 SDK introspection / spec 生成，禁止手改</div></div><div class="ok">✓</div></div>
     <div class="q"><div class="ic">🔍</div><div><div class="t">变更审计</div><div class="d">tc_api_calls 返回 + tencentcloud_resource_actions 回调</div></div><div class="ok">✓</div></div>
     <div class="q"><div class="ic">🧰</div><div><div class="t">扩展插件</div><div class="d">5 inventory + 3 lookup + 1 connection + 1 callback + 4 event_source</div></div><div class="ok">✓</div></div>
@@ -390,7 +390,7 @@
         <ul>
           <li><b>覆盖面第一梯队</b>：模块总数 875、幂等 write 440、只读 _info 435，均列四家第一（含全腾讯云 2000+ API 的长尾只读覆盖）。</li>
           <li><b>生成式治理</b>：435 个 *_info 由 SDK introspection / spec 生成、禁止手改，幂等 + check mode 全量内置；三类官方库大量模块为半手写维护。</li>
-          <li><b>质量门槛</b>：unit + contract 双测试、sanity ignore 预算化（1869/1900 封顶 + CI guard）、coverage gate 80 达成（实测 82%），测试密度高于多数官方模块。</li>
+          <li><b>质量门槛</b>：unit + contract 双测试、sanity ignore 预算化（1557/1900 封顶 + CI guard）、coverage gate 80 达成（实测 82%），测试密度高于多数官方模块。</li>
         </ul>
       </div>
       <div class="gcard lag">

@@ -33,8 +33,10 @@ class FakeModels:
     Filter = FakeFilter
 
 
-def params():
-    return {"model_id": None, "version_id": None, "filters": {}}
+def params(**overrides):
+    options = {"model_id": None, "version_id": None, "filters": {}}
+    options.update(overrides)
+    return options
 
 
 def test_detail_request_uses_stable_version_id():
@@ -159,7 +161,7 @@ def _expect_fail(monkeypatch, fake):
 def test_run_module_describes_exact_version(monkeypatch, detail, expected):
     client = FakeClient()
     client.version_response = FakeVersionResponse(detail, "req-detail")
-    fake = _run(monkeypatch, client, **dict(params(), version_id="mv-1"))
+    fake = _run(monkeypatch, client, **params(version_id="mv-1"))
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert payload["model_version"] == expected

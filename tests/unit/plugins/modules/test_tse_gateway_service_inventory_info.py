@@ -34,9 +34,13 @@ class FakeModels:
     ListFilter = FakeFilter
 
 
-def params():
-    return {"gateway_id": "gateway-1", "filters": {"name": "orders", "upstreamType": "NATIVE"},
-            "include_upstreams": True, "page_size": 2}
+def params(**overrides):
+    options = {
+        "gateway_id": "gateway-1", "filters": {"name": "orders", "upstreamType": "NATIVE"},
+        "include_upstreams": True, "page_size": 2,
+    }
+    options.update(overrides)
+    return options
 
 
 def test_inventory_request_maps_filters_and_pagination():
@@ -48,7 +52,7 @@ def test_inventory_request_maps_filters_and_pagination():
 
 
 def test_inventory_request_always_builds_a_filter_list():
-    p = dict(params(), filters={})
+    p = params(filters={})
     inventory = tse_gateway_service_inventory_info.inventory_request(FakeModels, p, 0)
     assert inventory.Filters == []
 

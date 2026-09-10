@@ -518,7 +518,7 @@ def test_modify_excludes_unmodifiable_goosefs_but_maps_mutable_fields():
 
 def test_drift_separates_mutable_and_immutable_fields_and_normalizes_tags():
     p = legacy_params()
-    current = {key: value for key, value in mod.normalize({"Name": "nb", "ChargeType": "PREPAID", "ResourceConf": {"Cpu": 2}, "Tags": p["tags"]}).items()}
+    current = dict(mod.normalize({"Name": "nb", "ChargeType": "PREPAID", "ResourceConf": {"Cpu": 2}, "Tags": p["tags"]}))
     mutable, immutable = mod.drift(p, current)
     assert "ResourceConf" in mutable and "ChargeType" in immutable and "Tags" not in mutable
 

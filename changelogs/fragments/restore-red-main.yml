@@ -1,0 +1,24 @@
+bugfixes:
+  - >-
+    Sanity ignores - dropped 302 entries (100 in ignore-2.21.txt, 101 each in
+    2.19 and 2.20) that named test files deleted during the P0-07/P0-09 unit
+    test rewrites, plus 10 entries ansible-test reports as unnecessary. An
+    ignore line naming a file that no longer exists is itself a failure of
+    ansible-test's ``ignores`` test, and 302 lines of "File ... does not
+    exist" are easy to mistake for noise: they kept ``main`` red from
+    2026-09-09T16:27 until now. ``scripts/check_sanity_ignore.py`` now also
+    rejects any entry whose file is missing, so the next one fails as one
+    obvious line instead of three hundred.
+  - >-
+    Unit tests - fixed the 44 pylint ``repeated-keyword`` findings and 2
+    ``unnecessary-comprehension`` findings that were also failing sanity. The
+    ``repeated-keyword`` ones were a pylint false positive: ``dict(params(),
+    page_size=0)`` is inferred as having ``page_size`` twice whenever the
+    overridden key already exists in the base dict. The ``params()`` helpers
+    now take overrides directly (``params(page_size=0)``), which reads better
+    and does not trip the inference.
+minor_changes:
+  - >-
+    scripts/check_sanity_ignore.py - the budget guard now also fails when an
+    ignore entry names a file that does not exist, and the committed total
+    dropped from 1869 to 1557 after the dangling entries were removed.

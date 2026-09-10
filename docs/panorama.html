@@ -177,7 +177,7 @@
         <div class="badge-row">
           <span class="pill">Galaxy <b>v1.1.0</b> 已发布</span>
           <span class="pill">仓库 main <b>781 模块</b>（领先发布 +197）</span>
-          <span class="pill">sanity ignore <b>1869 / 预算 1900</b></span>
+          <span class="pill">sanity ignore <b>1557 / 预算 1900</b></span>
           <span class="pill">覆盖 <b>204 产品</b> · 71 含写</span>
           <span class="pill">gate <b>80</b></span>
         </div>
@@ -279,7 +279,7 @@
           <li><span class="tag">覆盖面</span><b>模块 781、write 440、info 341，均列四家第一</b>（azure 426/212 次之）。341 个 *_info 由 SDK introspection 生成，是三家官方库没有的「全产品可发现」能力。</li>
           <li><span class="tag">写读配对</span><b>v1.1 起系统性关闭 read-surface 缺口</b>：shared resolver 铺到 VPC / TKE / 负载均衡 / 数据库家族，CVM / Lighthouse / database / TCR 读面逐批补齐 —— write 之后能用同一 collection 读回状态的主力产品已闭环。</li>
           <li><span class="tag">组合能力</span><b>68 个 solution roles</b>（含 launch / clb_http / web_stack / tke_cluster / disaster_recovery 等）vs 三家官方 0 个组合 role；一次调用编排多资源 + teardown。</li>
-          <li><span class="tag">质量治理</span><b>生成式治理</b>：generated 模块由 spec 生成、禁止手改；幂等 + check mode 全量内置。sanity ignore 债务 <b>1869 条预算化</b>（1900 封顶 + CI guard step），杜绝合并悄悄放大豁免面。<b>coverage gate 80 已达成</b>（81.44%）。</li>
+          <li><span class="tag">质量治理</span><b>生成式治理</b>：generated 模块由 spec 生成、禁止手改；幂等 + check mode 全量内置。sanity ignore 债务 <b>1557 条预算化</b>（1900 封顶 + CI guard step），杜绝合并悄悄放大豁免面。<b>coverage gate 80 已达成</b>（81.44%）。</li>
           <li><span class="tag">单测密度</span>781 个模块级单测文件 / 10,015 个测试函数（pytest 实测，9,985 过 / 30 跳）；80% 冲刺单批 +73 文件 / 1,102 tests，行覆盖 60.9% → 81.44%。</li>
           <li><span class="tag">演进对齐</span>ansible-core 门槛 ≥2.19（2.16-2.18 已 EOL），CI 矩阵 2.19/2.20/2.21 × py 3.11/3.12/3.13 —— 主动对齐演进而非历史声明。</li>
         </ul>
@@ -309,7 +309,7 @@
       <div>
         <div class="eyebrow">Urgent · 30</div>
         <h2>目前急切可补齐的 30 件事</h2>
-        <div class="sub">按「先证明旗舰可信 → 再补读面/广度 → 后建生态」排序；每批不破坏 coverage gate 80 与 sanity 预算（1869/1900）。</div>
+        <div class="sub">按「先证明旗舰可信 → 再补读面/广度 → 后建生态」排序；每批不破坏 coverage gate 80 与 sanity 预算（1557/1900）。</div>
       </div>
       <div class="grpbar">
         <span class="g"><span class="dot" style="background:rgba(251,113,133,.8)"></span>P0 测试可信度 ×12</span>

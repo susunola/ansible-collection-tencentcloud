@@ -491,10 +491,35 @@
 
     Tightening the sanity-ignore budget came with it: after the docsite work
     removed 420 blanket lines the 2350 ceiling left 481 lines of slack, so
-    `check_sanity_ignore.py` could not have fired at all. `BASELINE_TOTAL` is
+    `check_sanity_ignore.py` could not have fired at all.     `BASELINE_TOTAL` is
     now 1900 against a committed total of 1869, and the figures quoted in
     `panorama.html`, `capability-map.html` and this roadmap were corrected.
     **Done**
+62. Restore red `main` (2026-09-10): `main` had been failing CI since
+    2026-09-09T16:27 — sixteen hours and six commits — and nothing caught
+    it, because the only verification being run was local sanity, whose
+    output was being read as "the three pre-existing failures" rather than
+    as three things that fail CI. What was actually broken:
+
+    - **302 sanity-ignore entries named test files that no longer exist** (37
+      distinct files, deleted during the P0-07/P0-09 unit-test rewrites). An
+      ignore entry for a deleted file is *itself* an `ignores` failure, and
+      302 lines of "File ... does not exist" are easy to file under noise.
+    - 10 entries (2.19/2.20 only) that ansible-test reports as unnecessary.
+    - **44 pylint `repeated-keyword`** in the dlc/tione deep-harness tests:
+      `dict(params(), page_size=0)` is inferred as passing `page_size` twice
+      whenever the overridden key already exists in the base dict, which is
+      exactly the override case. The `params()` helpers now take overrides
+      directly (`params(page_size=0)`).
+    - 2 `unnecessary-comprehension` and 1 pep8 `E128`.
+
+    `scripts/check_sanity_ignore.py` now rejects any entry whose file is
+    missing, so the next dangling entry fails as one obvious line instead of
+    three hundred. With this, `ansible-test sanity` is **EXIT=0 for the first
+    time** — 24 tests, zero failures — and the ignore total is 1557. The
+    lesson to keep: a green local run is not a green CI run, and a
+    "pre-existing failure" is only pre-existing until somebody checks whether
+    it is failing the build. **Done**
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
@@ -521,7 +546,7 @@ task tests and contract coverage for generated modules, and the P1 structural
 items — plugin_utils / action / filter plugins, docsite, extensions.yml,
 doc_fragments and module_utils grouping, event_source docs, README FQCN index
 and example playbooks. Items land as individual commits, each keeping the
-coverage gate (80) and the sanity ignore budget (1869/1900) intact.
+coverage gate (80) and the sanity ignore budget (1557/1900) intact.
 
 Status 2026-09-10: P0-01…P0-12 and P1-01…P1-10 have landed (see the numbered
 entries above); the docsite build (P1-04) closed the last open P1 item.

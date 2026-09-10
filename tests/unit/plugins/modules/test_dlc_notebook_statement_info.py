@@ -26,8 +26,8 @@ class FakeModels:
     DescribeNotebookSessionStatementSqlResultRequest = Object
 
 
-def params():
-    return {
+def params(**overrides):
+    options = {
         "session_id": "session-1",
         "statement_id": "statement-1",
         "task_id": "task-1",
@@ -36,6 +36,8 @@ def params():
         "max_results": 500,
         "data_field_cut_length": 2048,
     }
+    options.update(overrides)
+    return options
 
 
 def test_build_requests_keep_strong_identity():
@@ -180,7 +182,7 @@ def test_run_module_returns_statement_without_results(monkeypatch):
 
 
 def test_run_module_fetches_result_pages_with_inferred_task_id(monkeypatch):
-    p = dict(params(), task_id=None, include_sql_result=True)
+    p = params(task_id=None, include_sql_result=True)
     client = FakeClient(
         statement=StatementResponse(StatementItem("task-1")),
         result_pages=[ResultResponse("page-1", "n2"), ResultResponse("page-2", None)],
@@ -195,7 +197,7 @@ def test_run_module_fetches_result_pages_with_inferred_task_id(monkeypatch):
 
 
 def test_run_module_fails_when_task_id_is_unavailable(monkeypatch):
-    p = dict(params(), task_id=None, include_sql_result=True)
+    p = params(task_id=None, include_sql_result=True)
     client = FakeClient(statement=StatementResponse(None))
     payload = _run(monkeypatch, client, expect_fail=True,
                    region="ap-guangzhou", **p).fail_payload
@@ -204,7 +206,7 @@ def test_run_module_fails_when_task_id_is_unavailable(monkeypatch):
 
 
 def test_run_module_fails_on_repeated_continuation_token(monkeypatch):
-    p = dict(params(), include_sql_result=True)
+    p = params(include_sql_result=True)
     client = FakeClient(
         statement=StatementResponse(StatementItem("task-1")),
         result_pages=[ResultResponse("page-1", "n1"), ResultResponse("page-2", "n1")],
@@ -217,11 +219,11 @@ def test_run_module_fails_on_repeated_continuation_token(monkeypatch):
 
 
 def test_run_module_validates_max_results_and_cut_length(monkeypatch):
-    p = dict(params(), max_results=0)
+    p = params(max_results=0)
     payload = _run(monkeypatch, FakeClient(), expect_fail=True,
                    region="ap-guangzhou", **p).fail_payload
     assert payload["msg"] == "max_results must be between 1 and 1000"
-    p = dict(params(), data_field_cut_length=0)
+    p = params(data_field_cut_length=0)
     payload = _run(monkeypatch, FakeClient(), expect_fail=True,
                    region="ap-guangzhou", **p).fail_payload
     assert payload["msg"] == "data_field_cut_length must be positive"

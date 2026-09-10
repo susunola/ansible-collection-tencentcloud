@@ -115,7 +115,7 @@ class FakeVpnClient(object):
         if not hasattr(request, "SecurityPolicyDatabases"):
             return None
         return [
-            {"LocalCidrBlock": p.LocalCidrBlock, "RemoteCidrBlock": [x for x in p.RemoteCidrBlock]}
+            {"LocalCidrBlock": p.LocalCidrBlock, "RemoteCidrBlock": list(p.RemoteCidrBlock)}
             for p in request.SecurityPolicyDatabases
         ]
 

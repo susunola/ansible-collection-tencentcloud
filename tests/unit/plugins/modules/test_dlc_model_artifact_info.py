@@ -28,9 +28,13 @@ class FakeModels:
     GetModelReadmeRequest = Request
 
 
-def params():
-    return {"model_uid": "model-1", "model_version": "v2",
-            "include_config": True, "include_files": True, "include_readme": True}
+def params(**overrides):
+    options = {
+        "model_uid": "model-1", "model_version": "v2",
+        "include_config": True, "include_files": True, "include_readme": True,
+    }
+    options.update(overrides)
+    return options
 
 
 def test_build_request_uses_strong_model_version_identity():
@@ -149,7 +153,7 @@ def test_run_module_combines_all_artifacts_and_parses_config_json(monkeypatch):
 
 
 def test_run_module_honours_selection_and_tolerates_invalid_config_json(monkeypatch):
-    p = dict(params(), include_files=False, include_readme=False)
+    p = params(include_files=False, include_readme=False)
     client = FakeClient({"config": {"ConfigJson": "not-json", "RequestId": "rc"}})
     fake = _run(monkeypatch, client, region="ap-guangzhou", **p)
     payload = fake.exit_payload
@@ -162,7 +166,7 @@ def test_run_module_honours_selection_and_tolerates_invalid_config_json(monkeypa
 
 
 def test_run_module_rejects_no_selected_artifact(monkeypatch):
-    p = dict(params(), include_config=False, include_files=False, include_readme=False)
+    p = params(include_config=False, include_files=False, include_readme=False)
     payload = _run(monkeypatch, None, expect_fail=True,
                    region="ap-guangzhou", **p).fail_payload
     assert payload["msg"] == "at least one model artifact must be selected"

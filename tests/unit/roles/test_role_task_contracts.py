@@ -351,8 +351,8 @@ def _check_state_switch(graph: RoleGraph) -> None:
     primaries = [k for k in state_keys if k == "tc_%s_state" % prefix]
     if not primaries:
         primaries = state_keys
-    gate_used = [k for k in state_keys if any(k in s["when_text"] for s in graph.steps
-                                             if not s.get("orphan"))]
+    visible = [s for s in graph.steps if not s.get("orphan")]
+    gate_used = [k for k in state_keys if any(k in s["when_text"] for s in visible)]
     if not state_keys:
         # Stateless ensure-only roles: hardcoded reconcile, no teardown and
         # no hidden removal path hidden behind a state template.

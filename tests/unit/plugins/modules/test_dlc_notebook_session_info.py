@@ -26,8 +26,8 @@ class FakeModels:
     DescribeNotebookSessionsRequest = Object
 
 
-def params():
-    return {
+def params(**overrides):
+    options = {
         "data_engine_name": "spark-prod",
         "states": ["idle", "busy"],
         "keyword": "analyst",
@@ -36,6 +36,8 @@ def params():
         "ascending": True,
         "page_size": 2,
     }
+    options.update(overrides)
+    return options
 
 
 def test_build_request_maps_filters_sort_and_pagination():
@@ -180,7 +182,7 @@ def test_run_module_returns_empty_when_no_sessions(monkeypatch):
 
 def test_run_module_validates_page_size_range(monkeypatch):
     payload = _run(monkeypatch, FakeClient([]), expect_fail=True,
-                   region="ap-guangzhou", **dict(params(), page_size=200)).fail_payload
+                   region="ap-guangzhou", **params(page_size=200)).fail_payload
     assert payload["msg"] == "page_size must be between 1 and 100"
 
 

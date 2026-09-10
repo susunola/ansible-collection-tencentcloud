@@ -27,8 +27,8 @@ class FakeModels:
     ListInferenceModelsRequest = Object
 
 
-def params():
-    return {
+def params(**overrides):
+    options = {
         "start_time": 10,
         "end_time": 20,
         "parameter_size_min": 7.0,
@@ -38,6 +38,8 @@ def params():
         "page_size": 2,
         "max_pages": 5,
     }
+    options.update(overrides)
+    return options
 
 
 def test_build_request_maps_model_specific_bounds():
@@ -168,7 +170,7 @@ def test_run_module_follows_all_model_pages(monkeypatch):
 
 
 def test_run_module_reports_truncation_at_max_pages(monkeypatch):
-    p = dict(params(), max_pages=1)
+    p = params(max_pages=1)
     client = FakeClient([FakeResponse([FakeItem("a"), FakeItem("b")], 2, 3, "r1")])
     fake = _run(monkeypatch, client, region="ap-guangzhou", **p)
     payload = fake.exit_payload
@@ -189,13 +191,13 @@ def test_run_module_returns_empty_when_no_models(monkeypatch):
 
 def test_run_module_validates_bounds_and_ranges(monkeypatch):
     payload = _run(monkeypatch, FakeClient([]), expect_fail=True,
-                   region="ap-guangzhou", **dict(params(), max_pages=0)).fail_payload
+                   region="ap-guangzhou", **params(max_pages=0)).fail_payload
     assert payload["msg"] == "max_pages must be between 1 and 1000"
     payload = _run(monkeypatch, FakeClient([]), expect_fail=True,
-                   region="ap-guangzhou", **dict(params(), start_time=30, end_time=10)).fail_payload
+                   region="ap-guangzhou", **params(start_time=30, end_time=10)).fail_payload
     assert payload["msg"] == "start_time must not exceed end_time"
     payload = _run(monkeypatch, FakeClient([]), expect_fail=True,
-                   region="ap-guangzhou", **dict(params(), parameter_size_min=70.0, parameter_size_max=7.0)).fail_payload
+                   region="ap-guangzhou", **params(parameter_size_min=70.0, parameter_size_max=7.0)).fail_payload
     assert payload["msg"] == "parameter_size_min must not exceed parameter_size_max"
 
 

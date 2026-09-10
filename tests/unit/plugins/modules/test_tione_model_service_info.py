@@ -19,8 +19,8 @@ import pytest
 from ansible_collections.susunola.tencentcloud.plugins.modules import tione_model_service_info
 
 
-def params():
-    return {
+def params(**overrides):
+    options = {
         "service_id": None,
         "service_group_id": None,
         "project_id": "p1",
@@ -31,6 +31,8 @@ def params():
         "page_size": 2,
         "max_pages": 5,
     }
+    options.update(overrides)
+    return options
 
 
 class FakeRequest:
@@ -54,8 +56,8 @@ class FakeModels:
 
 
 def test_exact_requests_use_distinct_strong_identities():
-    service = tione_model_service_info.service_request(FakeModels, dict(params(), service_id="ms-1"))
-    group = tione_model_service_info.group_request(FakeModels, dict(params(), service_group_id="msg-1"))
+    service = tione_model_service_info.service_request(FakeModels, params(service_id="ms-1"))
+    group = tione_model_service_info.group_request(FakeModels, params(service_group_id="msg-1"))
     assert service.ServiceId == "ms-1"
     assert service.TiProjectId == "p1"
     assert group.ServiceGroupId == "msg-1"
@@ -63,7 +65,7 @@ def test_exact_requests_use_distinct_strong_identities():
 
 
 def test_exact_requests_skip_missing_workspace():
-    p = dict(params(), project_id=None, service_id="ms-1", service_group_id="msg-1")
+    p = params(project_id=None, service_id="ms-1", service_group_id="msg-1")
     assert not hasattr(tione_model_service_info.service_request(FakeModels, p), "TiProjectId")
     assert not hasattr(tione_model_service_info.group_request(FakeModels, p), "TiProjectId")
 

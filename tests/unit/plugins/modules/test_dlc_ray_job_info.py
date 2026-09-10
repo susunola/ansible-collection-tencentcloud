@@ -29,8 +29,8 @@ class FakeModels:
     GetRayJobYamlRequest = Object
 
 
-def params():
-    return {
+def params(**overrides):
+    options = {
         "ray_job_id": "job-1",
         "include_history": False,
         "include_events": False,
@@ -42,6 +42,8 @@ def params():
         "page_size": 2,
         "max_pages": 5,
     }
+    options.update(overrides)
+    return options
 
 
 def test_request_helpers_keep_job_identity_and_diagnostic_bounds():
@@ -193,7 +195,7 @@ def _run(monkeypatch, client, expect_fail=False, **p):
 
 
 def test_run_module_collects_all_diagnostics(monkeypatch):
-    p = dict(params(), include_history=True, include_events=True, include_pods=True, include_yaml=True)
+    p = params(include_history=True, include_events=True, include_pods=True, include_yaml=True)
     client = FakeClient(
         detail=DetailResponse({"RayJobId": "job-1", "Status": "running", "RequestId": "rr"}),
         history=[PageResponse(["h1", "h2"], 2), PageResponse(["h3"], 2)],
@@ -219,7 +221,7 @@ def test_run_module_collects_all_diagnostics(monkeypatch):
 
 
 def test_run_module_fetches_history_only(monkeypatch):
-    p = dict(params(), include_history=True)
+    p = params(include_history=True)
     client = FakeClient(
         detail=DetailResponse({"RayJobId": "job-1", "RequestId": "rr"}),
         history=[PageResponse(["h1", "h2"], 1)],
@@ -236,7 +238,7 @@ def test_run_module_fetches_history_only(monkeypatch):
 
 
 def test_run_module_reports_truncated_history_at_max_pages(monkeypatch):
-    p = dict(params(), include_history=True, max_pages=1)
+    p = params(include_history=True, max_pages=1)
     client = FakeClient(
         detail=DetailResponse({"RayJobId": "job-1", "RequestId": "rr"}),
         history=[PageResponse(["h1", "h2"], 2)],
@@ -248,7 +250,7 @@ def test_run_module_reports_truncated_history_at_max_pages(monkeypatch):
 
 
 def test_run_module_fails_on_repeated_event_context(monkeypatch):
-    p = dict(params(), include_events=True)
+    p = params(include_events=True)
     client = FakeClient(
         detail=DetailResponse({"RayJobId": "job-1", "RequestId": "rr"}),
         events=[EventResponse(["ev1"], "ctx", False), EventResponse(["ev2"], "ctx", False)],
@@ -262,13 +264,13 @@ def test_run_module_fails_on_repeated_event_context(monkeypatch):
 
 def test_run_module_validates_page_size_and_event_type(monkeypatch):
     payload = _run(monkeypatch, FakeClient(), expect_fail=True,
-                   region="ap-guangzhou", **dict(params(), page_size=300)).fail_payload
+                   region="ap-guangzhou", **params(page_size=300)).fail_payload
     assert payload["msg"] == "page_size must be between 1 and 200"
     payload = _run(monkeypatch, FakeClient(), expect_fail=True,
-                   region="ap-guangzhou", **dict(params(), event_type="Warn123")).fail_payload
+                   region="ap-guangzhou", **params(event_type="Warn123")).fail_payload
     assert payload["msg"] == "event_type must contain ASCII letters only"
     payload = _run(monkeypatch, FakeClient(), expect_fail=True,
-                   region="ap-guangzhou", **dict(params(), start_time=30, end_time=10)).fail_payload
+                   region="ap-guangzhou", **params(start_time=30, end_time=10)).fail_payload
     assert payload["msg"] == "start_time must not exceed end_time"
 
 
