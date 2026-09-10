@@ -218,6 +218,17 @@ def test_forbidden_in_finds_packaged_junk(guard):
     ]
 
 
+def test_plan_lines_up(guard, monkeypatch):
+    """The five release steps align regardless of version width."""
+    monkeypatch.setattr(guard, "FRAGMENTS_DIR", REPO_ROOT / "changelogs" / "fragments")
+    for version in ("1.2.0", "10.20.30"):
+        out = io.StringIO()
+        guard.plan(make_state(guard, version=version), out)
+        arrows = {line.index("->") for line in out.getvalue().splitlines() if "->" in line}
+        assert len(arrows) == 1, out.getvalue()
+        assert "push tag v%s" % version in out.getvalue()
+
+
 def test_unknown_ignore_name_is_rejected(guard):
     err = io.StringIO()
     assert guard.main(["--ignore", "no-such-check"], out=io.StringIO(), err=err) == 2

@@ -333,12 +333,18 @@ def plan(state, out):
     version = state["version"]
     collection = "%s.%s" % (state["namespace"], state["name"])
     fragments = len(sorted(FRAGMENTS_DIR.glob("*.y*ml"))) if FRAGMENTS_DIR.is_dir() else 0
+    steps = [
+        ("push tag v%s" % version, ".github/workflows/release.yml"),
+        ("fold %d fragment(s)" % fragments,
+         "changelogs/changelog.yaml, CHANGELOG.rst"),
+        ("build and upload", "susunola-tencentcloud-%s.tar.gz" % version),
+        ("create GitHub release", "gh release create v%s --generate-notes" % version),
+        ("publish to Galaxy", "only if GALAXY_API_KEY is set"),
+    ]
+    width = max(len(label) for label, _ in steps)
     out.write("\nWould release %s %s:\n" % (collection, version))
-    out.write("  1. push tag v%s            -> .github/workflows/release.yml\n" % version)
-    out.write("  2. fold %d fragment(s)     -> changelogs/changelog.yaml, CHANGELOG.rst\n" % fragments)
-    out.write("  3. build and upload        -> susunola-tencentcloud-%s.tar.gz\n" % version)
-    out.write("  4. create GitHub release   -> gh release create v%s --generate-notes\n" % version)
-    out.write("  5. publish to Galaxy       -> only if GALAXY_API_KEY is set\n")
+    for index, (label, target) in enumerate(steps, start=1):
+        out.write("  %d. %-*s  -> %s\n" % (index, width, label, target))
     out.write("\nNothing above happened. To proceed: bump galaxy.yml, commit, "
               "then\n    git tag v%s && git push origin v%s\n" % (version, version))
 
