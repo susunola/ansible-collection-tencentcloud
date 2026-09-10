@@ -1,0 +1,12 @@
+---
+minor_changes:
+  - >-
+    docs/triage.md defines a 48-hour first-response SLA on issues and pull
+    requests, the label set used to triage them (triage, needs-info, module,
+    dependencies, sla-breach, good first issue), and what counts as a
+    response (human comments and submitted reviews, never bot comments).
+  - >-
+    scripts/triage_sla.py measures that SLA from the GitHub API and prints
+    one row per item with its age, response time, and status. --check exits
+    non-zero when an open item has breached, so the promise can be enforced
+    instead of merely made.

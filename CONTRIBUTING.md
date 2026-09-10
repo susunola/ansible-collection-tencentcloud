@@ -115,7 +115,7 @@ policy):
 
 - `.github/workflows/` and `.github/CODEOWNERS` — CI and release automation;
 - `BASELINE_TOTAL` in `scripts/check_sanity_ignore.py` — the sanity-ignore
-  budget, currently 1900 against a committed total of 1869. Raising it is how
+  budget, currently 1900 against a committed total of 1557. Raising it is how
   un-triaged debt becomes permanent, so it is a deliberate act with a comment,
   never a side effect of a module batch;
 - `GENERATED_SDK_VERSION` in the generated `scripts/info_specs_auto.py` — the
@@ -139,9 +139,10 @@ renames are deprecations, not edits — see
 [`docs/deprecation-policy.md`](docs/deprecation-policy.md).
 
 **Expected commitment.** Roughly two to four hours a week: first response on
-issues and PRs within 48 hours, review rather than rubber-stamp, and keeping
-`main` green. Sixty days of silence is treated as stepping down rather than as
-a paused subscription — see [`MAINTAINERS.md`](MAINTAINERS.md).
+issues and PRs within 48 hours (measured, not aspirational — see
+[`docs/triage.md`](docs/triage.md)), review rather than rubber-stamp, and
+keeping `main` green. Sixty days of silence is treated as stepping down rather
+than as a paused subscription — see [`MAINTAINERS.md`](MAINTAINERS.md).
 
 **How to join.** Open an issue titled `Maintainer nomination: <handle>` with:
 what you have contributed or reviewed here, which product area you know well

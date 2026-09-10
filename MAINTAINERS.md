@@ -22,7 +22,9 @@ Maintainers of this collection are expected to:
 - Act in accordance with the
   [Ansible Community Code of Conduct](https://docs.ansible.com/ansible/latest/community/code_of_conduct.html).
 - Watch the repository (GitHub *Watch > All activity*) and stay responsive
-  in issues and pull requests.
+  in issues and pull requests: a first response within 48 hours, which
+  [`scripts/triage_sla.py`](scripts/triage_sla.py) measures and
+  [`docs/triage.md`](docs/triage.md) defines.
 - Keep the `README`, `CONTRIBUTING.md`, and other general documentation
   current.
 - Review and merge contributions using the Ansible
