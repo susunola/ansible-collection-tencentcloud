@@ -1,0 +1,7 @@
+---
+minor_changes:
+  - >-
+    tke_cls_log_config is a new idempotent TKE module that creates or deletes a
+    CLS log collection configuration for a cluster. The configuration is the
+    raw TKE log-config object, passed through as JSON to the API; idempotency is
+    keyed on the configuration name within the cluster. It supports check mode.

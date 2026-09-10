@@ -679,6 +679,17 @@
     changelog fragment. The CLS log config gap (CLSLogConfig / ModifyLogConfig)
     is the remaining TKE operational-workflow item.
 
+72. TKE CLS log config module (theme #1, 2026-09-11):
+    `plugins/modules/tke_cls_log_config.py` creates or deletes a CLS log
+    collection configuration for a cluster, passing the raw TKE log-config
+    object through as JSON (the SDK exposes LogConfig/LogConfigs only as JSON
+    strings, with no typed model). Idempotent on the configuration name within
+    the cluster, check-mode safe, defensive JSON parsing of DescribeLogConfigs.
+    Unit-test matrix (create / idempotent / absent / delete / check-mode /
+    required_if) plus changelog fragment. This closes the TKE operational gap
+    set from theme #1; the next family to deepen is CLB / CDB / Redis / TCR /
+    SCF / API Gateway / CLS-Monitor.
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
 
