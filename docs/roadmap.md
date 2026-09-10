@@ -714,6 +714,17 @@
     required_if / SDK-failure) plus changelog fragment. Next family increments:
     SCF custom domain, API Gateway app.
 
+75. SCF custom domain module (theme #1, 2026-09-11):
+    `plugins/modules/scf_custom_domain.py` closes the first SCF/TCR operational
+    gap from theme #1. It creates or deletes an SCF custom domain
+    (`CreateCustomDomain` / `DeleteCustomDomain`), identified by domain name and
+    describable via `ListCustomDomains` (filtered by the `Domain` name). Only the
+    domain name and protocol are set on create; certificate/WAF/endpoint routing
+    are immutable post-create and left to a separate raw-payload increment.
+    Idempotent on the domain name, check-mode safe. Unit-test matrix (create /
+    idempotent / absent / delete / check-mode x2 / SDK-failure) plus changelog
+    fragment. Next family increment: API Gateway app.
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
 

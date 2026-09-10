@@ -1,0 +1,5 @@
+---
+minor_changes:
+  - scf_custom_domain - add module to create or delete a Tencent Cloud SCF
+    custom domain (present/absent, idempotent on the domain name, check-mode
+    safe).
