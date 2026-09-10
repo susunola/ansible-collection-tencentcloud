@@ -690,6 +690,19 @@
     set from theme #1; the next family to deepen is CLB / CDB / Redis / TCR /
     SCF / API Gateway / CLS-Monitor.
 
+73. CLB SNAT IP module (theme #1, 2026-09-11):
+    `plugins/modules/clb_snat_ip.py` closes the first classic-CLB operational
+    gap from theme #1. CLB expose no standalone create/delete resource for most
+    of its remaining SDK write ops (rewrites and customized-config are
+    bind/set only), but `CreateLoadBalancerSnatIps` / `DeleteLoadBalancerSnatIps`
+    are genuine additive resource ops and the current SNAT IP set is
+    describable via `DescribeLoadBalancers(...).LoadBalancerSet[].SnatIps`. The
+    module is idempotent on the *requested* IP set: it adds only the missing
+    IPs and removes only the requested ones, leaving other SNAT IPs on the same
+    CLB untouched. Unit-test matrix (create / idempotent / partial-add / absent
+    / delete / check-mode x2 / not-found) plus changelog fragment. Next family
+    increments: CDB audit rule, SCF custom domain, API Gateway app.
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
 

@@ -1,0 +1,4 @@
+---
+minor_changes:
+  - clb_snat_ip - add module to manage SNAT IPs on a Tencent Cloud CLB instance
+    (present/absent, idempotent on the requested IP set, check-mode safe).
