@@ -170,7 +170,7 @@
 
 - Connection plugins (`plugins/connection/`) run without a shell or module
   runtime, so they must never import Ansible module machinery. Credentials
-  are resolved through `module_utils.client.load_profile` via a thin
+  are resolved through `plugin_utils.profile.load_profile` via a thin
   `_OptionAdapter` that exposes connection options as module-like `params`
   (see `plugins/connection/tat.py`).
 - Never call `super().exec_command/put_file/fetch_file`: the base class

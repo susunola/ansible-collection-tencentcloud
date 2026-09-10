@@ -1,0 +1,22 @@
+minor_changes:
+  - >-
+    plugins/plugin_utils - new shared library for helpers that every plugin
+    type may import, not only modules. ``plugin_utils.profile`` owns the TCCLI
+    credential-profile reader and ``plugin_utils.paging`` owns the offset/limit
+    ``Paginator``; both take no ``AnsibleModule`` and are now imported directly
+    by the ``resource_id`` / ``ssm_parameter`` / ``sts_caller_identity``
+    lookups, the CVM / CLB / COS / SG / TKE inventory plugins and the ``tat``
+    connection plugin instead of reaching into ``module_utils``.
+  - >-
+    module_utils.client - ``load_profile`` moved to ``plugin_utils.profile``
+    and is re-exported, so existing module imports keep working;
+    ``PROFILE_FILE`` / ``DEFAULT_PROFILE_NAME`` are no longer re-exported
+    because rebinding a re-exported constant silently had no effect on the
+    reader. Tests that redirected the profile file now patch
+    ``plugin_utils.profile.PROFILE_FILE``.
+  - >-
+    module_utils.paging - ``Paginator`` moved to ``plugin_utils.paging`` and
+    is re-exported, because ``scripts/generate_info_modules.py`` emits
+    ``from ...module_utils.paging import Paginator`` into every generated
+    ``_info`` module and committed generated modules are never rewritten.
+    ``paginate()`` stays in ``module_utils``.

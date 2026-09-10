@@ -7,6 +7,11 @@ explicit matters more here than in any other directory — a helper with
 unclear ownership gets duplicated by the next generated module, and an
 upward import silently couples two layers.
 
+`module_utils` is not the bottom of the stack. Helpers with no `AnsibleModule`
+dependency — the ones a lookup, inventory or connection plugin can import
+unchanged — live one layer down in [`plugins/plugin_utils/`](../plugin_utils/README.md),
+and `module_utils` re-exports the names that existing module imports depend on.
+
 ## Grouping by responsibility
 
 | Group | Files | Responsibility | Internal dependencies |
@@ -21,7 +26,7 @@ upward import silently couples two layers.
 | **3 · Resolution and comparison** | `resolver.py` | Uniform resource-reference resolution (name / id / filters → real resource id) | `tagging` |
 | | `tagging.py` | Tag normalization and tag-diff computation | — |
 | | `comparison.py` | Expected-vs-actual structure comparison (idempotency decisions) | — |
-| | `paging.py` | SDK pagination aggregation | — |
+| | `paging.py` | `paginate()` module wrapper, plus a re-export of `Paginator` for the generated `_info` modules | `plugin_utils.paging` |
 | **4 · Product-private helpers** | `monitor.py` | Monitor-specific shared computation | — |
 | | `cos.py` | COS client wrapper (S3-style API, not API 3.0) | `client` |
 | | `tdmysql.py` | TDSQL MySQL-specific shared logic | — |
@@ -34,6 +39,10 @@ must never import a higher one.
 
 ```mermaid
 graph TD
+    subgraph P0["plugin_utils - no AnsibleModule dependency"]
+        pu_profile["profile"]
+        pu_paging["paging"]
+    end
     subgraph L0["Level 0 - no internal imports"]
         errors
         comparison
@@ -51,6 +60,7 @@ graph TD
         base --> retries
         resolver --> tagging
         cos --> client
+        client --> pu_profile
     end
     subgraph L3["Level 3 - lifecycle orchestration"]
         lifecycle --> base
@@ -61,15 +71,17 @@ graph TD
         tencentcloud --> errors
         tencentcloud --> paging
     end
+    paging --> pu_paging
 ```
 
 Same graph as a flat table:
 
-| File | Imports (intra-directory) | Level |
+| File | Imports (intra-collection) | Level |
 | --- | --- | --- |
+| `plugin_utils/profile.py` | — | -1 |
+| `plugin_utils/paging.py` | — | -1 |
 | `errors.py` | — | 0 |
 | `comparison.py` | — | 0 |
-| `paging.py` | — | 0 |
 | `tagging.py` | — | 0 |
 | `monitor.py` | — | 0 |
 | `tdmysql.py` | — | 0 |
@@ -78,6 +90,8 @@ Same graph as a flat table:
 | `base.py` | `client`, `retries` | 2 |
 | `resolver.py` | `tagging` | 2 |
 | `cos.py` | `client` | 2 |
+| `client.py` | `plugin_utils.profile` | 2 |
+| `paging.py` | `plugin_utils.paging` | 2 |
 | `lifecycle.py` | `base`, `errors` | 3 |
 | `tencentcloud.py` | `client`, `errors`, `paging` | 4 (shim) |
 
@@ -101,3 +115,9 @@ Same graph as a flat table:
 5. **Every new file needs a module docstring** stating its group and its
    intra-directory dependencies, so the direction map above stays auditable
    by diff review.
+6. **A helper with no `AnsibleModule` dependency does not belong here.** If a
+   lookup, inventory or connection plugin can use it unchanged, it goes to
+   `plugins/plugin_utils/` and is re-exported from here only if an existing
+   module import path must keep resolving. See
+   [`plugins/plugin_utils/README.md`](../plugin_utils/README.md) for the
+   boundary test.

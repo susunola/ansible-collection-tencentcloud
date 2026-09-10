@@ -90,7 +90,7 @@ from ansible.module_utils.common.text.converters import to_native
 from ansible.parsing.splitter import parse_kv
 from ansible.plugins.lookup import LookupBase
 
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.client import load_profile
+from ansible_collections.susunola.tencentcloud.plugins.plugin_utils.profile import load_profile
 
 try:
     from tencentcloud.sts.v20180813 import sts_client, models as sts_models

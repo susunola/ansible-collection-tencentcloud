@@ -134,6 +134,8 @@ from ansible.utils.display import Display
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.client import (
     HAS_TENCENTCLOUD_SDK,
+)
+from ansible_collections.susunola.tencentcloud.plugins.plugin_utils.profile import (
     load_profile,
 )
 

@@ -35,17 +35,21 @@ the release workflow folds them into `changelogs/` on tag.
 ## Plugins
 
 - **connection** — a connection plugin (e.g. `tat`) runs without a shell, so
-  it must never import Ansible module machinery; reuse `module_utils.client`
-  through a thin adapter over the connection options. Document the SDK package
-  it needs and add that package to `README.md` requirements.
+  it must never import Ansible module machinery; reuse
+  `plugin_utils.profile.load_profile` through a thin adapter over the
+  connection options. Document the SDK package it needs and add that package
+  to `README.md` requirements.
 - **event_source** — Event-Driven Ansible sources implement `async def
   main(queue, args)`; keep blocking SDK calls in `asyncio.to_thread`, resolve
   credentials from args with environment fallbacks, and yield error events
   instead of dying so the source stays alive.
 - **inventory** — inventory plugins extend `BaseInventoryPlugin` with
   `Constructable` and `Cacheable`, build their client through
-  `module_utils.paging.Paginator`, and declare their options in
+  `plugin_utils.paging.Paginator`, and declare their options in
   `DOCUMENTATION` with an example YAML file.
+- **shared helpers** — a helper that has no `AnsibleModule` dependency and is
+  useful to more than one plugin type belongs in `plugins/plugin_utils/`, not
+  `plugins/module_utils/`. See `plugins/plugin_utils/README.md`.
 
 ## Dependencies
 

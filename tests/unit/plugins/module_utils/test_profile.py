@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
-"""Unit tests for TCCLI credential profile support.
+"""Unit tests for credential resolution in ``module_utils.client``.
 
-Covers ``~/.tencentcloud/default.configure`` parsing and the precedence
-chain (explicit parameter > environment variable > profile section) in
-:mod:`client`, plus the ``profile`` option in both shared argument specs.
+Covers the precedence chain (explicit parameter > environment variable >
+profile section) and the ``profile`` option in both shared argument specs.
+
+Reading the TCCLI file itself moved to ``plugins/plugin_utils/profile.py`` and
+is covered by ``tests/unit/plugins/plugin_utils/test_profile.py``; here the
+fixture points that module's ``PROFILE_FILE`` global at a temp file, because
+that is the name ``load_profile`` actually reads. ``client`` re-exports the
+function, which is asserted explicitly below so the shim cannot silently drift.
 """
 
 from __future__ import absolute_import, division, print_function
@@ -15,6 +20,7 @@ from ansible.module_utils.basic import env_fallback
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import base, client
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import tencentcloud as legacy
+from ansible_collections.susunola.tencentcloud.plugins.plugin_utils import profile as plugin_profile
 
 
 class AnsibleFailJson(Exception):
@@ -75,43 +81,16 @@ def fake_sdk(monkeypatch):
 
 @pytest.fixture
 def profile_path(tmp_path, monkeypatch):
-    """Point client.py at a TCCLI configuration file in a temp directory."""
+    """Point the profile reader at a TCCLI configuration file."""
     path = tmp_path / "default.configure"
     path.write_text(PROFILE_BODY)
-    monkeypatch.setattr(client, "PROFILE_FILE", str(path))
+    monkeypatch.setattr(plugin_profile, "PROFILE_FILE", str(path))
     return str(path)
 
 
-def test_load_profile_returns_section_keys(profile_path):
-    settings = client.load_profile()
-    assert settings == {
-        "secret_id": "akid-default",
-        "secret_key": "secret-default",
-        "region": "ap-guangzhou",
-    }
-
-
-def test_load_profile_named_section(profile_path):
-    settings = client.load_profile("prod")
-    assert settings["secret_id"] == "akid-prod"
-    assert settings["region"] == "ap-shanghai"
-
-
-def test_load_profile_missing_file_tolerated(tmp_path, monkeypatch):
-    monkeypatch.setattr(client, "PROFILE_FILE", str(tmp_path / "does-not-exist"))
-    assert client.load_profile() == {}
-    assert client.load_profile("prod") == {}
-
-
-def test_load_profile_corrupt_file_tolerated(tmp_path, monkeypatch):
-    path = tmp_path / "default.configure"
-    path.write_text("this is [not = valid ini\n")
-    monkeypatch.setattr(client, "PROFILE_FILE", str(path))
-    assert client.load_profile() == {}
-
-
-def test_load_profile_unknown_section(profile_path):
-    assert client.load_profile("no-such-profile") == {}
+def test_client_reexports_the_shared_profile_reader():
+    """client.load_profile must be the plugin_utils function, not a copy."""
+    assert client.load_profile is plugin_profile.load_profile
 
 
 def test_credentials_from_profile(fake_sdk, profile_path):
@@ -195,7 +174,7 @@ def test_region_param_beats_profile(fake_sdk, profile_path):
 
 
 def test_region_missing_everywhere_fails_clearly(fake_sdk, tmp_path, monkeypatch):
-    monkeypatch.setattr(client, "PROFILE_FILE", str(tmp_path / "does-not-exist"))
+    monkeypatch.setattr(plugin_profile, "PROFILE_FILE", str(tmp_path / "does-not-exist"))
     module = FakeModule(
         dict(BASE_PARAMS, secret_id="akid-param", secret_key="secret-param")
     )
@@ -208,7 +187,7 @@ def test_region_missing_everywhere_fails_clearly(fake_sdk, tmp_path, monkeypatch
 
 
 def test_credentials_missing_everywhere_fails_clearly(fake_sdk, tmp_path, monkeypatch):
-    monkeypatch.setattr(client, "PROFILE_FILE", str(tmp_path / "does-not-exist"))
+    monkeypatch.setattr(plugin_profile, "PROFILE_FILE", str(tmp_path / "does-not-exist"))
     module = FakeModule(dict(BASE_PARAMS, region="ap-guangzhou"))
     with pytest.raises(AnsibleFailJson):
         client.create_credential(module)

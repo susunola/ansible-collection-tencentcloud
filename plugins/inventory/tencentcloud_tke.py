@@ -114,8 +114,8 @@ compose:
 from ansible.errors import AnsibleError
 from ansible.plugins.inventory import BaseInventoryPlugin, Cacheable, Constructable
 
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.client import load_profile
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import Paginator
+from ansible_collections.susunola.tencentcloud.plugins.plugin_utils.paging import Paginator
+from ansible_collections.susunola.tencentcloud.plugins.plugin_utils.profile import load_profile
 
 try:
     from tencentcloud.common import credential as tc_credential

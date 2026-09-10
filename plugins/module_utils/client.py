@@ -5,14 +5,18 @@ Every module constructs its service client with the same three pieces:
 credentials, region, and a profile. Centralising the construction guarantees
 identical endpoint/timeout/language behaviour and lets us inject a shared
 User-Agent without each module remembering to do so.
+
+Reading the TCCLI profile is not module-specific — the lookup, inventory and
+connection plugins resolve credentials the same way — so ``load_profile``
+lives in ``plugins/plugin_utils/profile.py`` and is re-exported here for the
+modules and for existing ``module_utils.client`` imports.
+
+Layering: imports ``plugin_utils.profile``.
 """
 
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
-
-import configparser
-import os
 
 try:
     from tencentcloud.common.profile.client_profile import ClientProfile
@@ -22,41 +26,15 @@ try:
 except ImportError:
     HAS_TENCENTCLOUD_SDK = False
 
+from ansible_collections.susunola.tencentcloud.plugins.plugin_utils.profile import load_profile
 
 SDK_IMP_ERR = "The tencentcloud-sdk-python package is required on the Ansible controller."
-
-# TCCLI stores its configuration as an INI file whose sections are profile
-# names (``[default]``, ``[prod]``, ...) holding ``secret_id``, ``secret_key``
-# and ``region`` keys.
-DEFAULT_PROFILE_NAME = "default"
-PROFILE_FILE = os.path.join(os.path.expanduser("~"), ".tencentcloud", "default.configure")
 
 
 def require_sdk(module):
     """Fail the module when the Tencent Cloud SDK is not importable."""
     if not HAS_TENCENTCLOUD_SDK:
         module.fail_json(msg=SDK_IMP_ERR)
-
-
-def load_profile(profile=None, path=None):
-    """Return the settings stored in a TCCLI profile section.
-
-    Reads ``~/.tencentcloud/default.configure`` (the TCCLI INI format) and
-    returns the keys of the requested section, or of ``[default]`` when no
-    profile name is given. A missing, unreadable or corrupt file — or a
-    missing section — yields an empty dict: profile data is only ever a
-    fallback and must never crash a module that does not rely on it.
-    """
-    parser = configparser.ConfigParser()
-    try:
-        with open(path or PROFILE_FILE) as handle:
-            parser.read_file(handle)
-    except (OSError, configparser.Error):
-        return {}
-    section = profile or DEFAULT_PROFILE_NAME
-    if not parser.has_section(section):
-        return {}
-    return {key: value for key, value in parser.items(section) if value}
 
 
 def resolve_region(module, profile=None):
