@@ -703,6 +703,17 @@
     / delete / check-mode x2 / not-found) plus changelog fragment. Next family
     increments: CDB audit rule, SCF custom domain, API Gateway app.
 
+74. CDB audit rule module (theme #1, 2026-09-11):
+    `plugins/modules/cdb_audit_rule.py` closes the first CDB/Redis operational
+    gap from theme #1. It creates or deletes a CDB (MySQL) audit rule
+    (`CreateAuditRule` / `DeleteAuditRule`), identified by rule name and
+    describable via `DescribeAuditRules`. The nested `RuleFilters` SDK payload is
+    accepted verbatim under `rule_filters` and rebuilt into `AuditRuleFilters` /
+    `RuleFilters` model objects. Idempotent on the rule name, check-mode safe.
+    Unit-test matrix (create / idempotent / absent / delete / check-mode x2 /
+    required_if / SDK-failure) plus changelog fragment. Next family increments:
+    SCF custom domain, API Gateway app.
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
 

@@ -1,0 +1,4 @@
+---
+minor_changes:
+  - cdb_audit_rule - add module to create or delete a Tencent Cloud CDB audit
+    rule (present/absent, idempotent on the rule name, check-mode safe).
