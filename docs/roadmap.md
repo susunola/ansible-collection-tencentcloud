@@ -737,6 +737,19 @@
     API Gateway/CLS); follow-ups per group are TCR webhook/immutable-tag rules,
     Redis replication groups, and CLS alarms/consumers.
 
+77. TCR immutable tag rule module (theme #1, 2026-09-11):
+    `plugins/modules/tcr_immutable_tag_rule.py` closes the first TCR
+    immutable-tag-rule gap from theme #1. It creates or deletes an immutable tag
+    rule (`CreateImmutableTagRules` / `DeleteImmutableTagRules`), identified by
+    the repository pattern, tag pattern and namespace and describable via
+    `DescribeImmutableTagRules`. The nested `ImmutableTagRule` SDK payload is
+    accepted verbatim under `rule` and built via `from_json_string`, because the
+    model mixes fuzzy enumeration values (`RepositoryDecoration`, `TagDecoration`)
+    with free-form patterns. Idempotent on the pattern pair within the namespace,
+    check-mode safe. Unit-test matrix (create / idempotent / absent / delete /
+    check-mode x2 / missing-pattern validation / SDK-failure) plus changelog
+    fragment. Next family increment: TCR webhook trigger.
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
 
