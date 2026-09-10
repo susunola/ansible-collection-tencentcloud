@@ -763,6 +763,19 @@
     validation / SDK-failure) plus changelog fragment. Next family increment: CLS
     alarm.
 
+79. CLS alarm module (theme #1, 2026-09-11):
+    `plugins/modules/cls_alarm.py` closes the first CLS alarm gap from theme #1.
+    It creates or deletes a CLS alarm policy (`CreateAlarm` / `DeleteAlarm`),
+    identified by the alarm name and describable via `DescribeAlarms` (filtered by
+    the `name` key). The full alarm configuration is accepted verbatim under
+    `alarm` and built via `from_json_string`, because the alarm object is a large
+    nested structure (monitor targets, conditions, callbacks, analysis) with no
+    clean flat suboption set; the module forces `Name` to the top-level `name`
+    for a consistent create/idempotency key. Idempotent on the alarm name,
+    check-mode safe. Unit-test matrix (create / idempotent / absent / delete /
+    check-mode x2 / required_if / SDK-failure) plus changelog fragment. Next
+    family increment: Redis replication group.
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
 

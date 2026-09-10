@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - cls_alarm - add module to create/delete a CLS alarm policy, idempotent on alarm name, raw alarm payload via from_json_string (roadmap #79).
