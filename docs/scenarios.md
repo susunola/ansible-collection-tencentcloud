@@ -5,8 +5,9 @@ golden path (network foundation -> web stack -> teardown, in one file) lives
 next to this page in [`examples/`](examples/README.md). All of them
 target `localhost` (the modules call the Tencent Cloud APIs from the
 controller) and take credentials from the shared `TENCENTCLOUD_*`
-environment variables; the region defaults to `ap-guangzhou` and can be
-overridden with `-e tencentcloud_region=<region>`.
+environment variables; there is no default region (set it with `-e region=<region>`
+or a module-level `region:` — see [`porting.md`](porting.md) for the credential
+and region differences from Terraform).
 
 Run one with:
 

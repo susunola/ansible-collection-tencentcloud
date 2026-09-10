@@ -7,6 +7,10 @@ Two directories hold runnable playbooks:
 | `docs/examples/` | a numbered chain: one environment built up stage by stage | this page |
 | `playbooks/` | standalone scenarios (query, static site, kubeconfig, three-tier) | [`../scenarios.md`](../scenarios.md) |
 
+Moving a Terraform config onto this collection? [`../porting.md`](../porting.md)
+maps each provider resource to a module FQCN and explains the state, region and
+check-mode differences.
+
 Everything targets `localhost` — the modules call the Tencent Cloud APIs
 from the controller — and takes credentials from the `TENCENTCLOUD_*`
 environment variables (or `~/.tencentcloud/default.configure`). Nothing

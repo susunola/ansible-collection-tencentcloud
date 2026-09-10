@@ -614,6 +614,23 @@
       which is the other half of the verification: the static check proves
       the references resolve, the syntax check proves Ansible agrees.
 
+66. P2-07 porting guide (2026-09-10): `docs/porting.md` is the translation
+    manual for anyone arriving with a working `tencentcloudstack/tencentcloud`
+    Terraform config or a raw Tencent Cloud SDK script. It maps every resource
+    to a module FQCN (with a table of the names that are not the obvious
+    guess — `clb_instance` is `clb_load_balancer`, `dns_record` is
+    `dnspod_record`, `route_table_entry` is a `routes` option on `route_table`,
+    `elasticsearch_instance` is read-only), explains what replaces
+    `terraform.tfstate` (nothing — every task re-discovers by id or name),
+    contrasts the credential/region handling (no region default here; the
+    token variable is `TENCENTCLOUD_TOKEN`, not `TENCENTCLOUD_SECURITY_TOKEN`;
+    the profile file is `~/.tencentcloud/default.configure`), shows the
+    `--check` / `tc_wait` / `exact_count` equivalents of plan / wait / count,
+    and walks a VPC-plus-subnet config end to end. Every name, option and
+    helper in it was read out of the repository before it shipped.
+    `docs/scenarios.md` and `docs/examples/README.md` now cross-link it, and it
+    is linked from the README's "Coming from Terraform" paragraph.
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
 

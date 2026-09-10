@@ -1,0 +1,15 @@
+---
+minor_changes:
+  - >-
+    docs/porting.md maps a tencentcloudstack/tencentcloud Terraform config or a
+    raw Tencent Cloud SDK script onto this collection. It translates every
+    provider resource to a module FQCN (including the names that are not the
+    obvious guess), explains what replaces terraform.tfstate (nothing — each
+    task re-discovers the resource by id or name), and contrasts credential,
+    region and check-mode handling on both sides. The README,
+    docs/scenarios.md and docs/examples/README.md cross-link it.
+  - >-
+    docs/scenarios.md no longer claims the region defaults to ap-guangzhou; the
+    modules have no default region, so a play must set region or
+    TENCENTCLOUD_REGION. This was the single most common first-run failure when
+    porting from Terraform and contradicted docs/porting.md.

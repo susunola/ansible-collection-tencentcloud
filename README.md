@@ -1139,6 +1139,11 @@ whole golden path (network foundation, web stack, read-back, teardown) in one
 invocation — and standalone scenarios in `playbooks/` are described in
 [`docs/scenarios.md`](docs/scenarios.md).
 
+Coming from Terraform or a raw Tencent Cloud SDK script?
+[`docs/porting.md`](docs/porting.md) maps provider resources to module FQCNs,
+explains what replaces `terraform.tfstate`, and contrasts credential, region and
+check-mode handling on both sides.
+
 See [`docs/roadmap.md`](docs/roadmap.md) for the suggested implementation order.
 Contributor conventions are in [`docs/development.md`](docs/development.md).
 
