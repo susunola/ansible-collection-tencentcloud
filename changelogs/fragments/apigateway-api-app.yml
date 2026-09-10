@@ -1,0 +1,5 @@
+---
+minor_changes:
+  - apigateway_api_app - add module to create or delete a Tencent Cloud API
+    Gateway application (present/absent, idempotent on the app name, check-mode
+    safe).

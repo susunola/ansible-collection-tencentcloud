@@ -725,6 +725,18 @@
     idempotent / absent / delete / check-mode x2 / SDK-failure) plus changelog
     fragment. Next family increment: API Gateway app.
 
+76. API Gateway application module (theme #1, 2026-09-11):
+    `plugins/modules/apigateway_api_app.py` closes the first API Gateway / CLS
+    operational gap from theme #1. It creates or deletes an API Gateway
+    application (`CreateApiApp` / `DeleteApiApp`), identified by app name and
+    describable via `DescribeApiAppsStatus` (filtered by the `ApiAppName`).
+    Idempotent on the app name, check-mode safe. Unit-test matrix (create /
+    idempotent / absent / delete / check-mode x2 / SDK-failure) plus changelog
+    fragment. This completes the first concrete operational-workflow module for
+    each of the four remaining theme #1 family groups (CLB, CDB/Redis, SCF/TCR,
+    API Gateway/CLS); follow-ups per group are TCR webhook/immutable-tag rules,
+    Redis replication groups, and CLS alarms/consumers.
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
 
