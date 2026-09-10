@@ -2387,6 +2387,72 @@ SPECS = [
 """,
     },
     {
+        'module': 'cmq_topic_info',
+        'version_added': '1.3.0',
+        'service_package': 'tencentcloud.tdmq.v20200217',
+        'client_module': 'tdmq_client',
+        'client_class': 'TdmqClient',
+        'sdk_package': 'tencentcloud-sdk-python-tdmq',
+        'endpoint': 'tdmq.tencentcloudapi.com',
+        'action': 'DescribeCmqTopics',
+        'request_class': 'DescribeCmqTopicsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {'name': 'topic_name', 'field': 'TopicName', 'type': 'str', 'doc': 'Topic name used to narrow the returned topics.'},
+        ],
+        'response_items': 'TopicList',
+        'response_total': 'TotalCount',
+        'result_key': 'topics',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CMQ topics',
+        'description': 'Returns CMQ topics visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CMQ topics.',
+        'return_total_doc': 'Number of CMQ topics reported by the API.',
+        "examples": """\
+- name: List CMQ topics
+  susunola.tencentcloud.cmq_topic_info:
+    region: ap-guangzhou
+
+- name: Find a CMQ topic by name
+  susunola.tencentcloud.cmq_topic_info:
+    region: ap-guangzhou
+    topic_name: order-events
+
+""",
+    },
+    {
+        'module': 'cmq_subscription_info',
+        'version_added': '1.3.0',
+        'service_package': 'tencentcloud.tdmq.v20200217',
+        'client_module': 'tdmq_client',
+        'client_class': 'TdmqClient',
+        'sdk_package': 'tencentcloud-sdk-python-tdmq',
+        'endpoint': 'tdmq.tencentcloudapi.com',
+        'action': 'DescribeCmqSubscriptionDetail',
+        'request_class': 'DescribeCmqSubscriptionDetailRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {'name': 'topic_name', 'field': 'TopicName', 'type': 'str', 'required': True, 'doc': 'Parent topic name whose subscriptions are returned.'},
+        ],
+        'response_items': 'SubscriptionSet',
+        'response_total': 'TotalCount',
+        'result_key': 'subscriptions',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CMQ subscriptions',
+        'description': 'Returns subscriptions for a CMQ topic.',
+        'return_items_doc': 'Matching CMQ subscriptions.',
+        'return_total_doc': 'Number of CMQ subscriptions reported by the API.',
+        "examples": """\
+- name: List subscriptions for a CMQ topic
+  susunola.tencentcloud.cmq_subscription_info:
+    region: ap-guangzhou
+    topic_name: order-events
+
+""",
+    },
+    {
         'module': 'cfs_auto_snapshot_policy_info',
         'version_added': '1.2.0',
         'service_package': 'tencentcloud.cfs.v20190719',

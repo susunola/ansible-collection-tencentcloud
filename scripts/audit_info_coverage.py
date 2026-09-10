@@ -217,8 +217,6 @@ KNOWN_GAPS = {
     "ckafka_route",
     "cloudaudit_audit",
     "cloudaudit_track",
-    "cmq_subscription",
-    "cmq_topic",
     "config_aggregate_delivery",
     "config_aggregator",
     "config_alarm_policy",
