@@ -335,6 +335,26 @@
     `b236013`; `docs/capability-map.html` synchronized to the 09-09 figures
     (`e0d531d`). Wave 3 (ckafka / trabbit / api_gateway / cfw / dts backlog)
     folds into the next read-surface wave. **Done**
+57. P1-01 plugin_utils shared library (2026-09-10): added
+    `plugins/plugin_utils/` — the layer *below* `module_utils`, for helpers
+    with no `AnsibleModule` dependency that any plugin type may import — and
+    moved the two helpers controller-side plugins were already reaching into
+    `module_utils` for: `profile.load_profile` (TCCLI credential-profile
+    reader, imported by the `resource_id` / `ssm_parameter` /
+    `sts_caller_identity` lookups, the CVM / CLB / COS / SG / TKE inventory
+    plugins and the `tat` connection plugin) and `paging.Paginator` (the
+    offset/limit loop, used by the inventory plugins as well as the generated
+    `_info` modules). `module_utils.client` re-exports `load_profile` and
+    `module_utils.paging` re-exports `Paginator` — the latter is load-bearing
+    because the write-once generator emits that import path into every
+    generated `_info` module — while `PROFILE_FILE` / `DEFAULT_PROFILE_NAME`
+    are deliberately not re-exported (rebinding a re-exported constant had no
+    effect on the reader). New tests live in
+    `tests/unit/plugins/plugin_utils/`, and `plugins/plugin_utils/README.md`
+    documents the boundary and the revised layer map. Commit `f9f92c1`. The
+    same window cleared `ruff check .`, which was red on main with 50
+    pre-existing findings (43× F841, 7× F401) in
+    `tests/unit/plugins/modules` (`3fec907`). **Done**
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
@@ -362,6 +382,10 @@ items — plugin_utils / action / filter plugins, docsite, extensions.yml,
 doc_fragments and module_utils grouping, event_source docs, README FQCN index
 and example playbooks. Items land as individual commits, each keeping the
 coverage gate (80) and the sanity ignore budget (2292/2350) intact.
+
+Status 2026-09-10: P0-01…P0-12 and P1-01/05…10 have landed (see the numbered
+entries above). The open P1 items are the first action plugin (P1-02), the
+first filter plugin (P1-03) and the docsite build (P1-04).
 
 1. **Deepen the eight highest-use resource families.** Close runtime and
    operational workflows in TEM, TKE, CLB, CDB/Redis/MongoDB, TCR, SCF,
