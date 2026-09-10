@@ -52,7 +52,7 @@ def test_version_format(guard):
 
 
 def test_version_bumped_first_release(guard):
-    status, _ = guard.check_version_bumped(make_state(guard, local=()))
+    status, detail = guard.check_version_bumped(make_state(guard, local=()))
     assert status == guard.PASS
 
 
@@ -71,18 +71,18 @@ def test_version_bumped_fails_when_version_is_already_released(guard):
 
 
 def test_version_bumped_fails_when_behind(guard):
-    status, _ = guard.check_version_bumped(
+    status, detail = guard.check_version_bumped(
         make_state(guard, version="1.0.0", local=("v1.1.0",)))
     assert status == guard.FAIL
 
 
 def test_version_bumped_skips_unparseable_version(guard):
-    status, _ = guard.check_version_bumped(make_state(guard, version="nope"))
+    status, detail = guard.check_version_bumped(make_state(guard, version="nope"))
     assert status == guard.SKIP
 
 
 def test_tag_free(guard):
-    status, _ = guard.check_tag_free(
+    status, detail = guard.check_tag_free(
         make_state(guard, version="1.2.0", local=("v1.1.0",), remote=("v1.1.0",)))
     assert status == guard.PASS
 
@@ -140,7 +140,7 @@ def test_no_duplicate(guard, tmp_path, monkeypatch):
     assert status == guard.FAIL
     assert "already holds a 1.1.0 entry" in detail
 
-    status, _ = guard.check_no_duplicate(make_state(guard, version="1.2.0"))
+    status, detail = guard.check_no_duplicate(make_state(guard, version="1.2.0"))
     assert status == guard.PASS
 
 
@@ -187,7 +187,7 @@ def test_optional_check_is_skipped_unless_lint_requested(guard, monkeypatch):
     assert "--lint" in detail
 
     run = guard.run_checks(state, set(), lint=True)
-    name, status, _ = next(r for r in run if r[0] == "fragment-lint")
+    name, status, detail = next(r for r in run if r[0] == "fragment-lint")
     assert status == guard.PASS
 
 
@@ -236,7 +236,7 @@ def test_unknown_ignore_name_is_rejected(guard):
 
 
 def test_every_check_has_a_name_and_a_function(guard):
-    assert [name for _, name in guard.CHECKS] == guard.CHECK_NAMES
+    assert [name for func, name in guard.CHECKS] == guard.CHECK_NAMES
 
 
 def test_real_galaxy_yml_is_a_release_version(guard):

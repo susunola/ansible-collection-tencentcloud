@@ -136,7 +136,7 @@ def run(cmd, cwd=REPO_ROOT, env=None, timeout=300):
     try:
         proc = subprocess.run(
             cmd, cwd=str(cwd), env=env, stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE, timeout=timeout)
+            stderr=subprocess.PIPE, timeout=timeout, check=False)
     except FileNotFoundError:
         return None, "", "%s is not installed or not on PATH" % cmd[0]
     except subprocess.TimeoutExpired:
@@ -157,7 +157,7 @@ def version_tuple(value):
 
 
 def local_tags():
-    rc, out, _ = run(["git", "tag", "--list"])
+    rc, out, err = run(["git", "tag", "--list"])
     if rc != 0:
         return set()
     return set(line.strip() for line in out.splitlines() if line.strip())
@@ -172,7 +172,7 @@ def remote_tags():
     or in a sandbox, and offline is not the same as unsafe, so an unreachable
     remote downgrades the check to SKIP rather than failing the guard.
     """
-    rc, out, _ = run(["git", "ls-remote", "--tags", "origin"], timeout=60)
+    rc, out, err = run(["git", "ls-remote", "--tags", "origin"], timeout=60)
     if rc != 0:
         return None
     return set(line.split("\t")[-1].replace("refs/tags/", "").rstrip("^{}")
@@ -341,7 +341,7 @@ def plan(state, out):
         ("create GitHub release", "gh release create v%s --generate-notes" % version),
         ("publish to Galaxy", "only if GALAXY_API_KEY is set"),
     ]
-    width = max(len(label) for label, _ in steps)
+    width = max(len(label) for label, target in steps)
     out.write("\nWould release %s %s:\n" % (collection, version))
     for index, (label, target) in enumerate(steps, start=1):
         out.write("  %d. %-*s  -> %s\n" % (index, width, label, target))
@@ -445,7 +445,7 @@ def dry_run(state, out, smoke=True, max_size_mib=DEFAULT_MAX_SIZE_MIB):
 
 
 def render(results, out):
-    width = max(len(name) for name, _, _ in results)
+    width = max(len(name) for name, status, detail in results)
     for name, status, detail in results:
         out.write("  %-4s  %-*s  %s\n" % (status, width, name, detail))
 
@@ -489,7 +489,7 @@ def main(argv=None, out=None, err=None):
     state = build_state(args.tag)
     results = run_checks(state, set(args.ignore), lint=args.lint)
 
-    failures = [name for name, status, _ in results if status == FAIL]
+    failures = [name for name, status, detail in results if status == FAIL]
     if args.json:
         payload = {
             "version": state["version"],
@@ -515,7 +515,7 @@ def main(argv=None, out=None, err=None):
             render(dry_results, out)
             # A dry run that failed is a release that must not be tagged, so it
             # counts here and not just in the section above.
-            failures = [name for name, status, _ in results if status == FAIL]
+            failures = [name for name, status, detail in results if status == FAIL]
             if not failures:
                 plan(state, out)
 
