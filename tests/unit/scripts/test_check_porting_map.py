@@ -6,8 +6,6 @@ from __future__ import absolute_import, division, print_function
 import importlib.util
 import pathlib
 
-import pytest
-
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
 SCRIPT = REPO_ROOT / "scripts" / "check_porting_map.py"
 
