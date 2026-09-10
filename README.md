@@ -1145,6 +1145,10 @@ ansible-test units --python 3.13
 ansible-galaxy collection build
 ```
 
+Releases are cut from `v*` tags; `python scripts/release_check.py` checks a
+release is publishable before the tag is pushed and `--dry-run` builds and
+smoke-tests the tarball. See [`docs/release.md`](docs/release.md).
+
 Integration tests require Tencent Cloud credentials and run only when
 `TENCENTCLOUD_SECRET_ID` / `TENCENTCLOUD_SECRET_KEY` are set (see
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)).

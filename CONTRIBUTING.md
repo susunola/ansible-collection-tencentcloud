@@ -162,7 +162,18 @@ Releases are cut from tags and published by
 1. Bump `version` in `galaxy.yml` and add changelog fragments for the
    changes under `changelogs/fragments/` (lint them with
    `antsibull-changelog lint`).
-2. Tag the release and push the tag:
+2. Check the release is publishable *before* the tag exists:
+
+   ```bash
+   python scripts/release_check.py                  # exit non-zero if it is not
+   python scripts/release_check.py --dry-run        # build and smoke-test the tarball
+   ```
+
+   Pushing the tag is the only trigger the workflow has, so a release that
+   turns out to be broken is already tagged, already has a GitHub release
+   object and may already be on Galaxy. The guard is what moves that
+   discovery earlier — see [`docs/release.md`](docs/release.md).
+3. Tag the release and push the tag:
 
    ```bash
    git tag vX.Y.Z

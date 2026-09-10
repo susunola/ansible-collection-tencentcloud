@@ -1,0 +1,23 @@
+---
+minor_changes:
+  - >-
+    scripts/release_check.py is a pre-release guard: it reports whether the
+    version in galaxy.yml is publishable before a tag is pushed, checking the
+    version format, that it is ahead of the newest released tag, that the tag
+    is free locally and on origin, that there are changelog fragments to fold,
+    that the version is not already in changelog.yaml, and that the tree is
+    clean. --dry-run additionally builds the tarball in a temporary directory,
+    checks MANIFEST.json against galaxy.yml, asserts nothing from
+    build_ignore leaked in, installs it and lists its documentation, then
+    prints what pushing the tag would do. docs/release.md is the runbook.
+bugfixes:
+  - >-
+    galaxy.yml now excludes generated, gitignored output from the collection
+    build: docs/docsite/build, docs/docsite/rst/collections, .pytest_cache,
+    .ruff_cache, .ansible, .coverage and the coverage reports.
+    ansible-galaxy reads build_ignore but not .gitignore, so building on a
+    machine that had built the docsite shipped roughly 250 MB of Sphinx HTML
+    (36.6 MB and nine minutes instead of 1.9 MB and three), and packaging the
+    tool caches made the tarball's own FILES.json checksums disagree with its
+    contents, which ansible-galaxy collection install rejects. CI never saw
+    either problem because CI builds from a clean checkout.
