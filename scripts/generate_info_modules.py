@@ -2269,6 +2269,124 @@ SPECS = [
 """,
     },
     {
+        'module': 'api_gateway_api_key_info',
+        'version_added': '1.3.0',
+        'service_package': 'tencentcloud.apigateway.v20180808',
+        'client_module': 'apigateway_client',
+        'client_class': 'ApigatewayClient',
+        'sdk_package': 'tencentcloud-sdk-python-apigateway',
+        'endpoint': 'apigateway.tencentcloudapi.com',
+        'action': 'DescribeApiKeysStatus',
+        'request_class': 'DescribeApiKeysStatusRequest',
+        'ids': None,
+        'filters': {'doc': 'APIGATEWAY API key filter names mapped to lists of values.'},
+        'extra_params': [],
+        'response_items': 'Result.ApiKeySet',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'api_keys',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud API Gateway API keys',
+        'description': 'Returns API Gateway API keys visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching API Gateway API keys.',
+        'return_total_doc': 'Number of API keys reported by the API.',
+        "examples": """\
+- name: List all API Gateway API keys
+  susunola.tencentcloud.api_gateway_api_key_info:
+    region: ap-guangzhou
+
+""",
+    },
+    {
+        'module': 'api_gateway_usage_plan_info',
+        'version_added': '1.3.0',
+        'service_package': 'tencentcloud.apigateway.v20180808',
+        'client_module': 'apigateway_client',
+        'client_class': 'ApigatewayClient',
+        'sdk_package': 'tencentcloud-sdk-python-apigateway',
+        'endpoint': 'apigateway.tencentcloudapi.com',
+        'action': 'DescribeUsagePlansStatus',
+        'request_class': 'DescribeUsagePlansStatusRequest',
+        'ids': None,
+        'filters': {'doc': 'APIGATEWAY usage plan filter names mapped to lists of values.'},
+        'extra_params': [],
+        'response_items': 'Result.UsagePlanStatusSet',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'usage_plans',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud API Gateway usage plans',
+        'description': 'Returns API Gateway usage plans visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching API Gateway usage plans.',
+        'return_total_doc': 'Number of usage plans reported by the API.',
+        "examples": """\
+- name: List all API Gateway usage plans
+  susunola.tencentcloud.api_gateway_usage_plan_info:
+    region: ap-guangzhou
+
+""",
+    },
+    {
+        'module': 'api_gateway_usage_plan_binding_info',
+        'version_added': '1.3.0',
+        'service_package': 'tencentcloud.apigateway.v20180808',
+        'client_module': 'apigateway_client',
+        'client_class': 'ApigatewayClient',
+        'sdk_package': 'tencentcloud-sdk-python-apigateway',
+        'endpoint': 'apigateway.tencentcloudapi.com',
+        'action': 'DescribeUsagePlanEnvironments',
+        'request_class': 'DescribeUsagePlanEnvironmentsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {'name': 'usage_plan_id', 'field': 'UsagePlanId', 'type': 'str', 'required': True, 'doc': 'ID of the usage plan whose environment bindings are returned.'},
+        ],
+        'response_items': 'Result.EnvironmentList',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'bindings',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud API Gateway usage plan environment bindings',
+        'description': 'Returns service environment bindings for an API Gateway usage plan.',
+        'return_items_doc': 'Matching API Gateway usage plan environment bindings.',
+        'return_total_doc': 'Number of usage plan environment bindings reported by the API.',
+        "examples": """\
+- name: List usage plan environment bindings
+  susunola.tencentcloud.api_gateway_usage_plan_binding_info:
+    region: ap-guangzhou
+    usage_plan_id: usagePlan-xxxxxxxx
+
+""",
+    },
+    {
+        'module': 'api_gateway_usage_plan_key_binding_info',
+        'version_added': '1.3.0',
+        'service_package': 'tencentcloud.apigateway.v20180808',
+        'client_module': 'apigateway_client',
+        'client_class': 'ApigatewayClient',
+        'sdk_package': 'tencentcloud-sdk-python-apigateway',
+        'endpoint': 'apigateway.tencentcloudapi.com',
+        'action': 'DescribeUsagePlanSecretIds',
+        'request_class': 'DescribeUsagePlanSecretIdsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {'name': 'usage_plan_id', 'field': 'UsagePlanId', 'type': 'str', 'required': True, 'doc': 'ID of the usage plan whose API key bindings are returned.'},
+        ],
+        'response_items': 'Result.AccessKeyList',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'bindings',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud API Gateway usage plan key bindings',
+        'description': 'Returns API key bindings for an API Gateway usage plan.',
+        'return_items_doc': 'Matching API Gateway usage plan key bindings.',
+        'return_total_doc': 'Number of usage plan key bindings reported by the API.',
+        "examples": """\
+- name: List usage plan key bindings
+  susunola.tencentcloud.api_gateway_usage_plan_key_binding_info:
+    region: ap-guangzhou
+    usage_plan_id: usagePlan-xxxxxxxx
+
+""",
+    },
+    {
         'module': 'cfs_auto_snapshot_policy_info',
         'version_added': '1.2.0',
         'service_package': 'tencentcloud.cfs.v20190719',
