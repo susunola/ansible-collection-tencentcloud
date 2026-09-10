@@ -663,6 +663,22 @@
     failure) and the changelog fragment. The next TKE increments are cluster
     routes (CreateClusterRoute / ClusterRouteTable) and CLS log configs.
 
+70. TKE cluster route table module (theme #1, 2026-09-11):
+    `plugins/modules/tke_cluster_route_table.py` creates or deletes a TKE
+    cluster route table (name usually = cluster ID), idempotent on the table
+    name, check-mode safe. CIDR/VPC are immutable post-create, so an existing
+    same-named table is a no-op rather than reconciled. Unit-test matrix
+    (create / idempotent / absent / delete / check-mode / required_if) plus
+    changelog fragment.
+
+71. TKE cluster route module (theme #1, 2026-09-11):
+    `plugins/modules/tke_cluster_route.py` creates or deletes a route
+    (destination PodCIDR -> next-hop gateway IP) inside a cluster route table,
+    uniquely keyed by destination CIDR block, idempotent and check-mode safe.
+    Unit-test matrix (create / idempotent / absent / delete / check-mode) plus
+    changelog fragment. The CLS log config gap (CLSLogConfig / ModifyLogConfig)
+    is the remaining TKE operational-workflow item.
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
 

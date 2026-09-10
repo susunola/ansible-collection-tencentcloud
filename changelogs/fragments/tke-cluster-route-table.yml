@@ -1,0 +1,8 @@
+---
+minor_changes:
+  - >-
+    tke_cluster_route_table is a new idempotent TKE module that creates or
+    deletes a cluster route table (usually named after the cluster ID). Route
+    table CIDR and VPC are immutable once created, so an existing table with the
+    same name is treated as present rather than reconciled. It supports check
+    mode.

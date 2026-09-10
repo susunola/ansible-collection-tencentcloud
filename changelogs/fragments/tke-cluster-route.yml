@@ -1,0 +1,7 @@
+---
+minor_changes:
+  - >-
+    tke_cluster_route is a new idempotent TKE module that creates or deletes a
+    route (destination PodCIDR to next-hop gateway IP) inside a cluster route
+    table. A route is uniquely identified within a table by its destination CIDR
+    block. It supports check mode.
