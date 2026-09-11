@@ -580,6 +580,24 @@ KNOWN_GAPS = {
     'trabbit_serverless_queue',
     'trabbit_serverless_user',
     'trabbit_serverless_vhost',
+    # theme #1 batch (roadmap #77-#84): read surface not wired up yet;
+    # promote to _info (or KNOWN_COVERAGE) once SDK discovery confirms an API.
+    'apigateway_api_app',
+    'apigateway_ip_strategy',
+    'apigateway_plugin',
+    'cdb_audit_rule',
+    'cdb_audit_rule_template',
+    'clb_snat_ip',
+    'cls_alarm',
+    'cls_alarm_notice',
+    'redis_replication_group',
+    'scf_custom_domain',
+    'tcr_immutable_tag_rule',
+    'tcr_webhook_trigger',
+    'tke_cls_log_config',
+    'tke_cluster_deletion_protection',
+    'tke_cluster_route',
+    'tke_cluster_route_table',
 }
 
 

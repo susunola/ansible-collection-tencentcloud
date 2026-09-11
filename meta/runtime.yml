@@ -30,6 +30,9 @@ action_groups:
     - api_gateway_usage_plan_binding
     - api_gateway_usage_plan_key_binding
     - api_product_info
+    - apigateway_api_app
+    - apigateway_ip_strategy
+    - apigateway_plugin
     - apigateway_service_info
     - apis_agent_app_mcp_server_info
     - apm_general_span_info
@@ -89,6 +92,8 @@ action_groups:
     - cdb_account_privilege_info
     - cdb_audit_config
     - cdb_audit_config_info
+    - cdb_audit_rule
+    - cdb_audit_rule_template
     - cdb_backup_config
     - cdb_backup_config_info
     - cdb_database
@@ -161,6 +166,7 @@ action_groups:
     - clb_load_balancer
     - clb_load_balancer_info
     - clb_rule
+    - clb_snat_ip
     - clb_target_group
     - clb_target_group_info
     - cloudaudit_audit
@@ -169,6 +175,8 @@ action_groups:
     - cloudhsm_vsm_info
     - cloudrc_resource_info
     - cloudstudio_image_info
+    - cls_alarm
+    - cls_alarm_notice
     - cls_config
     - cls_config_info
     - cls_config_machine_group_binding
@@ -539,12 +547,14 @@ action_groups:
     - redis_instance_info
     - redis_parameter_template
     - redis_parameter_template_info
+    - redis_replication_group
     - region_product_info
     - route_table
     - route_table_info
     - rum_project_info
     - scf_alias
     - scf_alias_info
+    - scf_custom_domain
     - scf_function
     - scf_function_info
     - scf_trigger
@@ -607,6 +617,7 @@ action_groups:
     - tcm_mesh_info
     - tcm_prometheus
     - tcm_tracing
+    - tcr_immutable_tag_rule
     - tcr_instance
     - tcr_instance_info
     - tcr_namespace
@@ -617,6 +628,7 @@ action_groups:
     - tcr_replication_rule_info
     - tcr_repository
     - tcr_repository_info
+    - tcr_webhook_trigger
     - tcss_abnormal_process_event_info
     - tdai_agent_duty_task_info
     - tdcpg_account
@@ -715,14 +727,18 @@ action_groups:
     - tiw_running_task_info
     - tke_addon
     - tke_backup_storage_location
+    - tke_cls_log_config
     - tke_cluster
     - tke_cluster_audit
     - tke_cluster_authentication
     - tke_cluster_autoscaler
     - tke_cluster_autoscaler_info
+    - tke_cluster_deletion_protection
     - tke_cluster_endpoint
     - tke_cluster_info
     - tke_cluster_kubeconfig
+    - tke_cluster_route
+    - tke_cluster_route_table
     - tke_cluster_upgrade
     - tke_node_pool
     - tke_node_pool_info

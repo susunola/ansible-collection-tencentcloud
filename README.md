@@ -9,8 +9,8 @@ in the `ansible-collections` GitHub organization.
 
 ## Capability overview
 
-The collection covers **204 Tencent Cloud product domains** through **875 modules**,
-including **440 resource modules**, **435 read-only `_info` modules**, and **68
+The collection covers **204 Tencent Cloud product domains** through **891 modules**,
+including **456 resource modules**, **435 read-only `_info` modules**, and **68
 reusable roles**. The README highlights how to navigate the collection instead of
 rendering the entire catalog by default.
 
@@ -28,7 +28,7 @@ the generated [product capability matrix](docs/product-capabilities.md). It is t
 canonical catalog and stays synchronized with the collection.
 
 <details>
-<summary><strong>Browse all 440 resource modules</strong></summary>
+<summary><strong>Browse all 456 resource modules</strong></summary>
 
 Resource modules are idempotent and support `state: present|absent`, check mode,
 and diff unless their individual documentation states otherwise.
@@ -46,6 +46,9 @@ and diff unless their individual documentation states otherwise.
 | `susunola.tencentcloud.api_gateway_usage_plan` | Manage Tencent Cloud API Gateway usage plans | [`api_gateway_usage_plan`](plugins/modules/api_gateway_usage_plan.py) |
 | `susunola.tencentcloud.api_gateway_usage_plan_binding` | Bind API Gateway usage plans to service environments or APIs | [`api_gateway_usage_plan_binding`](plugins/modules/api_gateway_usage_plan_binding.py) |
 | `susunola.tencentcloud.api_gateway_usage_plan_key_binding` | Bind API Gateway keys to usage plans | [`api_gateway_usage_plan_key_binding`](plugins/modules/api_gateway_usage_plan_key_binding.py) |
+| `susunola.tencentcloud.apigateway_api_app` | Create or delete a Tencent Cloud API Gateway application | [`apigateway_api_app`](plugins/modules/apigateway_api_app.py) |
+| `susunola.tencentcloud.apigateway_ip_strategy` | Create or delete a Tencent Cloud API Gateway IP strategy | [`apigateway_ip_strategy`](plugins/modules/apigateway_ip_strategy.py) |
+| `susunola.tencentcloud.apigateway_plugin` | Create or delete a Tencent Cloud API Gateway plugin | [`apigateway_plugin`](plugins/modules/apigateway_plugin.py) |
 | `susunola.tencentcloud.as_scaling_group` | Manage Tencent Cloud Auto Scaling groups | [`as_scaling_group`](plugins/modules/as_scaling_group.py) |
 | `susunola.tencentcloud.as_scaling_policy` | Manage Tencent Cloud Auto Scaling policies | [`as_scaling_policy`](plugins/modules/as_scaling_policy.py) |
 | `susunola.tencentcloud.as_scheduled_action` | Manage Tencent Cloud Auto Scaling scheduled actions | [`as_scheduled_action`](plugins/modules/as_scheduled_action.py) |
@@ -67,6 +70,8 @@ and diff unless their individual documentation states otherwise.
 | `susunola.tencentcloud.cdb_account` | Manage TencentDB for MySQL accounts | [`cdb_account`](plugins/modules/cdb_account.py) |
 | `susunola.tencentcloud.cdb_account_privilege` | Manage TencentDB for MySQL account privileges | [`cdb_account_privilege`](plugins/modules/cdb_account_privilege.py) |
 | `susunola.tencentcloud.cdb_audit_config` | Manage TencentDB for MySQL audit configuration | [`cdb_audit_config`](plugins/modules/cdb_audit_config.py) |
+| `susunola.tencentcloud.cdb_audit_rule` | Create or delete a Tencent Cloud CDB audit rule | [`cdb_audit_rule`](plugins/modules/cdb_audit_rule.py) |
+| `susunola.tencentcloud.cdb_audit_rule_template` | Create or delete a Tencent Cloud CDB audit rule template | [`cdb_audit_rule_template`](plugins/modules/cdb_audit_rule_template.py) |
 | `susunola.tencentcloud.cdb_backup_config` | Manage TencentDB for MySQL backup configuration | [`cdb_backup_config`](plugins/modules/cdb_backup_config.py) |
 | `susunola.tencentcloud.cdb_database` | Manage databases in TencentDB for MySQL | [`cdb_database`](plugins/modules/cdb_database.py) |
 | `susunola.tencentcloud.cdb_instance` | Manage Tencent Cloud CDB MySQL instances | [`cdb_instance`](plugins/modules/cdb_instance.py) |
@@ -111,9 +116,12 @@ and diff unless their individual documentation states otherwise.
 | `susunola.tencentcloud.clb_listener_target` | Manage backend targets of Tencent Cloud CLB listeners | [`clb_listener_target`](plugins/modules/clb_listener_target.py) |
 | `susunola.tencentcloud.clb_load_balancer` | Manage Tencent Cloud CLB load balancers | [`clb_load_balancer`](plugins/modules/clb_load_balancer.py) |
 | `susunola.tencentcloud.clb_rule` | Manage Tencent Cloud CLB L7 forwarding rules | [`clb_rule`](plugins/modules/clb_rule.py) |
+| `susunola.tencentcloud.clb_snat_ip` | Manage SNAT IPs on a Tencent Cloud CLB instance | [`clb_snat_ip`](plugins/modules/clb_snat_ip.py) |
 | `susunola.tencentcloud.clb_target_group` | Manage Tencent Cloud CLB target groups and members | [`clb_target_group`](plugins/modules/clb_target_group.py) |
 | `susunola.tencentcloud.cloudaudit_audit` | Manage Tencent Cloud account-level CloudAudit delivery | [`cloudaudit_audit`](plugins/modules/cloudaudit_audit.py) |
 | `susunola.tencentcloud.cloudaudit_track` | Manage Tencent Cloud CloudAudit tracks | [`cloudaudit_track`](plugins/modules/cloudaudit_track.py) |
+| `susunola.tencentcloud.cls_alarm` | Create or delete a Tencent Cloud CLS alarm | [`cls_alarm`](plugins/modules/cls_alarm.py) |
+| `susunola.tencentcloud.cls_alarm_notice` | Create or delete a Tencent Cloud CLS alarm notice (notification channel group) | [`cls_alarm_notice`](plugins/modules/cls_alarm_notice.py) |
 | `susunola.tencentcloud.cls_config` | Manage Tencent Cloud CLS collection configurations | [`cls_config`](plugins/modules/cls_config.py) |
 | `susunola.tencentcloud.cls_config_machine_group_binding` | Bind CLS collection configurations to machine groups | [`cls_config_machine_group_binding`](plugins/modules/cls_config_machine_group_binding.py) |
 | `susunola.tencentcloud.cls_index` | Manage Tencent Cloud CLS topic indexes | [`cls_index`](plugins/modules/cls_index.py) |
@@ -299,8 +307,10 @@ and diff unless their individual documentation states otherwise.
 | `susunola.tencentcloud.redis_backup_config` | Manage TencentDB for Redis automatic backup configuration | [`redis_backup_config`](plugins/modules/redis_backup_config.py) |
 | `susunola.tencentcloud.redis_instance` | Manage Tencent Cloud Redis instances | [`redis_instance`](plugins/modules/redis_instance.py) |
 | `susunola.tencentcloud.redis_parameter_template` | Manage Tencent Cloud Redis parameter templates | [`redis_parameter_template`](plugins/modules/redis_parameter_template.py) |
+| `susunola.tencentcloud.redis_replication_group` | Create or remove a TencentDB for Redis replication group | [`redis_replication_group`](plugins/modules/redis_replication_group.py) |
 | `susunola.tencentcloud.route_table` | Manage Tencent Cloud VPC route tables | [`route_table`](plugins/modules/route_table.py) |
 | `susunola.tencentcloud.scf_alias` | Manage Tencent Cloud SCF function aliases | [`scf_alias`](plugins/modules/scf_alias.py) |
+| `susunola.tencentcloud.scf_custom_domain` | Create or delete a Tencent Cloud SCF custom domain | [`scf_custom_domain`](plugins/modules/scf_custom_domain.py) |
 | `susunola.tencentcloud.scf_function` | Manage Tencent Cloud SCF functions | [`scf_function`](plugins/modules/scf_function.py) |
 | `susunola.tencentcloud.scf_trigger` | Manage Tencent Cloud SCF triggers | [`scf_trigger`](plugins/modules/scf_trigger.py) |
 | `susunola.tencentcloud.scf_version` | Manage Tencent Cloud SCF function versions | [`scf_version`](plugins/modules/scf_version.py) |
@@ -333,11 +343,13 @@ and diff unless their individual documentation states otherwise.
 | `susunola.tencentcloud.tcm_mesh_clusters` | Reconcile Tencent Cloud Mesh cluster links | [`tcm_mesh_clusters`](plugins/modules/tcm_mesh_clusters.py) |
 | `susunola.tencentcloud.tcm_prometheus` | Manage Tencent Cloud Mesh Prometheus integration | [`tcm_prometheus`](plugins/modules/tcm_prometheus.py) |
 | `susunola.tencentcloud.tcm_tracing` | Manage Tencent Cloud Mesh tracing | [`tcm_tracing`](plugins/modules/tcm_tracing.py) |
+| `susunola.tencentcloud.tcr_immutable_tag_rule` | Create or delete a Tencent Cloud TCR immutable tag rule | [`tcr_immutable_tag_rule`](plugins/modules/tcr_immutable_tag_rule.py) |
 | `susunola.tencentcloud.tcr_instance` | Manage Tencent Cloud TCR enterprise instances | [`tcr_instance`](plugins/modules/tcr_instance.py) |
 | `susunola.tencentcloud.tcr_namespace` | Manage Tencent Cloud TCR namespaces | [`tcr_namespace`](plugins/modules/tcr_namespace.py) |
 | `susunola.tencentcloud.tcr_replication_instance` | Manage Tencent Cloud TCR replication instances | [`tcr_replication_instance`](plugins/modules/tcr_replication_instance.py) |
 | `susunola.tencentcloud.tcr_replication_rule` | Manage Tencent Cloud TCR replication rules | [`tcr_replication_rule`](plugins/modules/tcr_replication_rule.py) |
 | `susunola.tencentcloud.tcr_repository` | Manage a Tencent Cloud TCR repository | [`tcr_repository`](plugins/modules/tcr_repository.py) |
+| `susunola.tencentcloud.tcr_webhook_trigger` | Create or delete a Tencent Cloud TCR webhook trigger | [`tcr_webhook_trigger`](plugins/modules/tcr_webhook_trigger.py) |
 | `susunola.tencentcloud.tdcpg_account` | Govern a TDSQL-C PostgreSQL account | [`tdcpg_account`](plugins/modules/tdcpg_account.py) |
 | `susunola.tencentcloud.tdcpg_cluster` | Manage Tencent Cloud TDSQL-C PostgreSQL clusters | [`tdcpg_cluster`](plugins/modules/tdcpg_cluster.py) |
 | `susunola.tencentcloud.tdcpg_endpoint_wan` | Manage public access for a TDSQL-C PostgreSQL endpoint | [`tdcpg_endpoint_wan`](plugins/modules/tdcpg_endpoint_wan.py) |
@@ -392,12 +404,16 @@ and diff unless their individual documentation states otherwise.
 | `susunola.tencentcloud.tione_training_task` | Manage Tencent Cloud TIONE training tasks | [`tione_training_task`](plugins/modules/tione_training_task.py) |
 | `susunola.tencentcloud.tke_addon` | Manage a Tencent Kubernetes Engine addon | [`tke_addon`](plugins/modules/tke_addon.py) |
 | `susunola.tencentcloud.tke_backup_storage_location` | Manage Tencent Kubernetes Engine backup storage locations | [`tke_backup_storage_location`](plugins/modules/tke_backup_storage_location.py) |
+| `susunola.tencentcloud.tke_cls_log_config` | Create or delete a TKE cluster CLS log configuration | [`tke_cls_log_config`](plugins/modules/tke_cls_log_config.py) |
 | `susunola.tencentcloud.tke_cluster` | Manage Tencent Cloud TKE clusters | [`tke_cluster`](plugins/modules/tke_cluster.py) |
 | `susunola.tencentcloud.tke_cluster_audit` | Manage Tencent Cloud TKE cluster audit logging | [`tke_cluster_audit`](plugins/modules/tke_cluster_audit.py) |
 | `susunola.tencentcloud.tke_cluster_authentication` | Manage Tencent Cloud TKE cluster authentication options | [`tke_cluster_authentication`](plugins/modules/tke_cluster_authentication.py) |
 | `susunola.tencentcloud.tke_cluster_autoscaler` | Manage the cluster autoscaler options of a Tencent Cloud TKE cluster | [`tke_cluster_autoscaler`](plugins/modules/tke_cluster_autoscaler.py) |
+| `susunola.tencentcloud.tke_cluster_deletion_protection` | Enable or disable deletion protection for a Tencent Cloud TKE cluster | [`tke_cluster_deletion_protection`](plugins/modules/tke_cluster_deletion_protection.py) |
 | `susunola.tencentcloud.tke_cluster_endpoint` | Manage Tencent Cloud TKE cluster access endpoints | [`tke_cluster_endpoint`](plugins/modules/tke_cluster_endpoint.py) |
 | `susunola.tencentcloud.tke_cluster_kubeconfig` | Fetch the kubeconfig of a Tencent Cloud TKE cluster | [`tke_cluster_kubeconfig`](plugins/modules/tke_cluster_kubeconfig.py) |
+| `susunola.tencentcloud.tke_cluster_route` | Create or delete a route in a Tencent Cloud TKE cluster route table | [`tke_cluster_route`](plugins/modules/tke_cluster_route.py) |
+| `susunola.tencentcloud.tke_cluster_route_table` | Create or delete a Tencent Cloud TKE cluster route table | [`tke_cluster_route_table`](plugins/modules/tke_cluster_route_table.py) |
 | `susunola.tencentcloud.tke_cluster_upgrade` | Upgrade the Kubernetes version of a Tencent Cloud TKE cluster | [`tke_cluster_upgrade`](plugins/modules/tke_cluster_upgrade.py) |
 | `susunola.tencentcloud.tke_node_pool` | Manage Tencent Cloud TKE cluster node pools | [`tke_node_pool`](plugins/modules/tke_node_pool.py) |
 | `susunola.tencentcloud.trabbit_serverless_binding` | Manage Tencent Cloud RabbitMQ Serverless bindings | [`trabbit_serverless_binding`](plugins/modules/trabbit_serverless_binding.py) |

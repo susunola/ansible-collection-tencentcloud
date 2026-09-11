@@ -93,6 +93,18 @@ modules:
   - UnBindSecretIds
   api_product_info:
   - DescribeProducts
+  apigateway_api_app:
+  - CreateApiApp
+  - DeleteApiApp
+  - DescribeApiAppsStatus
+  apigateway_ip_strategy:
+  - CreateIPStrategy
+  - DeleteIPStrategy
+  - DescribeIPStrategysStatus
+  apigateway_plugin:
+  - CreatePlugin
+  - DeletePlugin
+  - DescribePlugins
   apigateway_service_info:
   - DescribeServicesStatus
   apis_agent_app_mcp_server_info:
@@ -284,6 +296,14 @@ modules:
   - ModifyAuditConfig
   cdb_audit_config_info:
   - DescribeAuditConfig
+  cdb_audit_rule:
+  - CreateAuditRule
+  - DeleteAuditRule
+  - DescribeAuditRules
+  cdb_audit_rule_template:
+  - CreateAuditRuleTemplate
+  - DeleteAuditRuleTemplates
+  - DescribeAuditRuleTemplates
   cdb_backup_config:
   - DescribeBackupConfig
   - ModifyBackupConfig
@@ -576,6 +596,10 @@ modules:
   - DeleteRule
   - DescribeListeners
   - ModifyRule
+  clb_snat_ip:
+  - CreateLoadBalancerSnatIps
+  - DeleteLoadBalancerSnatIps
+  - DescribeLoadBalancers
   clb_target_group:
   - CreateTargetGroup
   - DeleteTargetGroups
@@ -605,6 +629,14 @@ modules:
   - SearchResources
   cloudstudio_image_info:
   - DescribeImages
+  cls_alarm:
+  - CreateAlarm
+  - DeleteAlarm
+  - DescribeAlarms
+  cls_alarm_notice:
+  - CreateAlarmNotice
+  - DeleteAlarmNotice
+  - DescribeAlarmNotices
   cls_config:
   - CreateConfig
   - DeleteConfig
@@ -1870,6 +1902,10 @@ modules:
   - ModifyParamTemplate
   redis_parameter_template_info:
   - DescribeParamTemplates
+  redis_replication_group:
+  - CreateReplicationGroup
+  - DescribeReplicationGroup
+  - RemoveReplicationGroup
   region_product_info:
   - DescribeProducts
   route_table:
@@ -1892,6 +1928,10 @@ modules:
   - UpdateAlias
   scf_alias_info:
   - ListAliases
+  scf_custom_domain:
+  - CreateCustomDomain
+  - DeleteCustomDomain
+  - ListCustomDomains
   scf_function:
   - CreateFunction
   - DeleteFunction
@@ -2127,6 +2167,10 @@ modules:
   tcm_tracing:
   - DescribeMesh
   - ModifyTracingConfig
+  tcr_immutable_tag_rule:
+  - CreateImmutableTagRules
+  - DeleteImmutableTagRules
+  - DescribeImmutableTagRules
   tcr_instance:
   - CreateInstance
   - DeleteInstance
@@ -2161,6 +2205,10 @@ modules:
   - ModifyRepository
   tcr_repository_info:
   - DescribeRepositories
+  tcr_webhook_trigger:
+  - CreateWebhookTrigger
+  - DeleteWebhookTrigger
+  - DescribeWebhookTrigger
   tcss_abnormal_process_event_info:
   - DescribeAbnormalProcessEvents
   tdai_agent_duty_task_info:
@@ -2519,6 +2567,10 @@ modules:
   - CreateBackupStorageLocation
   - DeleteBackupStorageLocation
   - DescribeBackupStorageLocations
+  tke_cls_log_config:
+  - CreateCLSLogConfig
+  - DeleteLogConfigs
+  - DescribeLogConfigs
   tke_cluster:
   - CreateCluster
   - DeleteCluster
@@ -2536,6 +2588,10 @@ modules:
   - ModifyClusterAsGroupOptionAttribute
   tke_cluster_autoscaler_info:
   - DescribeClusterAsGroupOption
+  tke_cluster_deletion_protection:
+  - DescribeClusters
+  - DisableClusterDeletionProtection
+  - EnableClusterDeletionProtection
   tke_cluster_endpoint:
   - CreateClusterEndpoint
   - DeleteClusterEndpoint
@@ -2544,6 +2600,14 @@ modules:
   - DescribeClusters
   tke_cluster_kubeconfig:
   - DescribeClusterKubeconfig
+  tke_cluster_route:
+  - CreateClusterRoute
+  - DeleteClusterRoute
+  - DescribeClusterRoutes
+  tke_cluster_route_table:
+  - CreateClusterRouteTable
+  - DeleteClusterRouteTable
+  - DescribeClusterRouteTables
   tke_cluster_upgrade:
   - DescribeClusters
   - UpdateClusterVersion
