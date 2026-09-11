@@ -791,6 +791,65 @@
     #1 family groups with a second operational increment each (TCR immutable-tag
     rule + webhook trigger, Redis replication group, CLS alarm).
 
+81. CDB audit rule template module (theme #1, 2026-09-11):
+    `plugins/modules/cdb_audit_rule_template.py` deepens the CDB family with a
+    second operational increment from theme #1. It creates or deletes an audit
+    rule template (`CreateAuditRuleTemplate` / `DeleteAuditRuleTemplates`),
+    identified by the template name and describable via
+    `DescribeAuditRuleTemplates` (filtered by `RuleTemplateNames`). The filter
+    payload is a flat list of `RuleFilters{Type, Value(list), Compare}` objects
+    built via `_build_rule_filters`, mirroring `cdb_audit_rule` but without the
+    `AuditRuleFilters` wrapper. Optional `alarm_level` (1/2/3) and `alarm_policy`
+    (0/1) are passed through on create. Idempotent on the template name,
+    check-mode safe. Unit-test matrix (create / idempotent / absent / delete /
+    check-mode x2 / required_if / SDK-failure) plus changelog fragment. Next
+    family increment: CLS alarm notice.
+
+82. CLS alarm notice module (theme #1, 2026-09-11):
+    `plugins/modules/cls_alarm_notice.py` deepens the CLS/Monitor family with a
+    second operational increment from theme #1. It creates or deletes a CLS
+    alarm notice (notification channel group) (`CreateAlarmNotice` /
+    `DeleteAlarmNotice`), identified by the notice name and describable via
+    `DescribeAlarmNotices` (filtered by the `name` key). The full notice
+    configuration is accepted verbatim under `notice` and built via
+    `from_json_string`, because the notice object is a large nested structure
+    (simple/advanced receivers, web callbacks, delivery config) with no clean
+    flat suboption set; the module forces `Name` to the top-level `name` for a
+    consistent create/idempotency key. Idempotent on the notice name,
+    check-mode safe. Unit-test matrix (create / idempotent / absent / delete /
+    check-mode x2 / required_if / SDK-failure) plus changelog fragment. Next
+    family increment: API GW plugin.
+
+83. API GW plugin module (theme #1, 2026-09-11):
+    `plugins/modules/apigateway_plugin.py` deepens the API Gateway family with a
+    second operational increment from theme #1. It creates or deletes an API GW
+    plugin (`CreatePlugin` / `DeletePlugin`), identified by the plugin name and
+    describable via `DescribePlugins` (filtered by `PluginName`). The plugin
+    config (`PluginType`, `PluginData` JSON string, `Description`) is set
+    directly on `CreatePluginRequest`; `PluginData` stays a raw JSON string
+    because its shape is type-specific. The API GW describe/create responses
+    wrap the object in a `Result` field (`PluginSummary.PluginSet`,
+    `Plugin.PluginId`), which the module unwraps. Idempotent on the plugin name,
+    check-mode safe. Unit-test matrix (create / idempotent / absent / delete /
+    check-mode x2 / required_if / SDK-failure) plus changelog fragment. Next
+    family increment: API GW IP strategy.
+
+84. API GW IP strategy module (theme #1, 2026-09-11):
+    `plugins/modules/apigateway_ip_strategy.py` deepens the API Gateway family
+    with a third operational increment from theme #1. It creates or deletes an
+    API GW IP access strategy (`CreateIPStrategy` / `DeleteIPStrategy`),
+    identified by the `(ServiceId, StrategyName)` pair and listable via
+    `DescribeIPStrategysStatus` (filtered by the `StrategyName` key). The
+    strategy data is a newline-separated IP list passed as a plain string on
+    `CreateIPStrategyRequest`; `StrategyType` is WHITE/BLACK. The API GW
+    responses wrap the object in a `Result` field (`IPStrategiesStatus.StrategySet`,
+    `IPStrategy.StrategyId`), which the module unwraps. Idempotent on the
+    `(ServiceId, StrategyName)` pair, check-mode safe. Unit-test matrix (create /
+    idempotent / absent / delete / check-mode x2 / required_if / SDK-failure) plus
+    changelog fragment. With #83 this gives API GW two independently-idempotent
+    resources (plugin + IP strategy); the earlier tag-retention candidate was
+    skipped (no natural name key, only a server `RetentionId`).
+
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
 
