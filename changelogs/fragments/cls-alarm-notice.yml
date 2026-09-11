@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - cls_alarm_notice - add module to create/remove a CLS alarm notice (notification channel group), idempotent on the notice name (roadmap #82).
