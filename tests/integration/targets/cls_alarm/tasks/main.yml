@@ -1,24 +1,35 @@
 ---
-# Gated on a real CLS topic: a CLS alarm always watches one, and creating a
-# logset + topic for it would pull in the cls_log_pipeline cost tier. Left out
-# of the weekly default list (docs/integration-env.md 6).
+# A CLS alarm needs two things this target cannot inherit from the account:
+#
+#   * a notification channel group - CreateAlarm rejects a body with neither
+#     AlarmNoticeIds nor MonitorNotice ("miss param AlarmNoticeIds or
+#     MonitorNotice"), so the target creates one with cls_alarm_notice first;
+#   * a hot-storage log topic - every pre-existing topic on the test account is
+#     either cold (rejected with OperationDenied.AlarmNotSupportForSearchLow)
+#     or owned by another product's logset, so the target creates its own
+#     logset + topic and removes them again in `always`.
+#
+# The single gate is therefore the UIN used as the notice receiver.
 - name: Read CLS alarm integration inputs
   ansible.builtin.set_fact:
-    cls_alarm_topic_id: "{{ e2e_inputs.TENCENTCLOUD_CLS_ALARM_TOPIC_ID | default(lookup('env', 'TENCENTCLOUD_CLS_ALARM_TOPIC_ID'), true) | default('', true) }}"
+    cls_alarm_uin: "{{ e2e_inputs.TENCENTCLOUD_CLS_ALARM_UIN | default(lookup('env', 'TENCENTCLOUD_CLS_ALARM_UIN'), true) | default('', true) }}"
     run_id: "{{ e2e_inputs.GITHUB_RUN_ID | default(lookup('env', 'GITHUB_RUN_ID'), true) | default(99999999 | random, true) }}"
 
 - name: Explain skipped CLS alarm integration
   ansible.builtin.debug:
-    msg: Set TENCENTCLOUD_CLS_ALARM_TOPIC_ID to run this target.
-  when: cls_alarm_topic_id | length == 0
+    msg: Set TENCENTCLOUD_CLS_ALARM_UIN to run this target.
+  when: cls_alarm_uin | length == 0
 
 - name: CLS alarm end-to-end
   vars:
+    logset_name: "ansible-clsalarm-ls-{{ run_id }}"
+    topic_name: "ansible-clsalarm-tp-{{ run_id }}"
+    notice_name: "ansible-clsalarm-notice-{{ run_id }}"
     alarm_name: "ansible-clsalarm-it-{{ run_id }}"
   module_defaults:
     group/susunola.tencentcloud.all:
       region: "{{ tencentcloud_region }}"
-  when: cls_alarm_topic_id | length > 0
+  when: cls_alarm_uin | length > 0
   block:
     # NOTE: a `vars:` block is templated lazily, so a `| random` name is
     # re-rolled on EVERY reference. Freeze it once with set_fact (facts
@@ -26,55 +37,85 @@
     - name: Freeze the per-run resource names
       ansible.builtin.set_fact:
         run_id: "{{ run_id }}"
+        logset_name: "{{ logset_name }}"
+        topic_name: "{{ topic_name }}"
+        notice_name: "{{ notice_name }}"
         alarm_name: "{{ alarm_name }}"
+
+    - name: Create the logset the alarm watches
+      susunola.tencentcloud.cls_logset:
+        name: "{{ logset_name }}"
+      register: logset
+
+    - name: Create the hot log topic the alarm watches
+      susunola.tencentcloud.cls_topic:
+        logset_id: "{{ logset.logset.LogsetId }}"
+        name: "{{ topic_name }}"
+        period: 7
+      register: topic
+
+    - name: Create the notification channel group the alarm must point at
+      susunola.tencentcloud.cls_alarm_notice:
+        name: "{{ notice_name }}"
+        notice:
+          Name: "{{ notice_name }}"
+          Type: All
+          NoticeReceivers:
+            # ReceiverIds are int64 - a quoted UIN is rejected server-side.
+            - ReceiverType: Uin
+              ReceiverIds:
+                - "{{ cls_alarm_uin | int }}"
+              ReceiverChannels:
+                - Email
+              StartTime: "00:00:00"
+              EndTime: "23:59:59"
+      register: notice
+
+    # MonitorObjectType is a uint64 (0 = one shared monitor object), MonitorTime
+    # is {Type: Period|Fixed|Cron, Time: minutes} and AlarmPeriod is minutes.
+    # The body is forwarded verbatim, so a string or a list here is only
+    # rejected by the API, never by Ansible.
+    - name: Freeze the alarm body
+      ansible.builtin.set_fact:
+        alarm_body:
+          Name: "{{ alarm_name }}"
+          MonitorObjectType: 0
+          MonitorTime:
+            Type: Period
+            Time: 10
+          Condition: "$1.error_count > 1000000"
+          AlarmTargets:
+            - LogsetId: "{{ logset.logset.LogsetId }}"
+              TopicId: "{{ topic.topic.TopicId }}"
+              Number: 1
+              Query: "*"
+              # Non-positive minute offsets, End > Start. Both default to 0,
+              # which the API rejects ("EndTimeOffset must be greater than the
+              # StartTimeOffset").
+              StartTimeOffset: -5
+              EndTimeOffset: 0
+          AlarmNoticeIds:
+            - "{{ notice.alarm_notice_id }}"
+          TriggerCount: 1
+          AlarmPeriod: 10
 
     - name: Predict alarm creation
       susunola.tencentcloud.cls_alarm:
         name: "{{ alarm_name }}"
-        alarm:
-          Name: "{{ alarm_name }}"
-          MonitorObjectType: log
-          MonitorTime:
-            Type: Relative
-            TimeGap: 600
-          Condition: "$1.error_count > 1000000"
-          AlarmTargets:
-            - TopicId: "{{ cls_alarm_topic_id }}"
-          TriggerCount: 1
-          AlarmPeriod: 1
+        alarm: "{{ alarm_body }}"
       check_mode: true
       register: predicted
 
     - name: Create alarm
       susunola.tencentcloud.cls_alarm:
         name: "{{ alarm_name }}"
-        alarm:
-          Name: "{{ alarm_name }}"
-          MonitorObjectType: log
-          MonitorTime:
-            Type: Relative
-            TimeGap: 600
-          Condition: "$1.error_count > 1000000"
-          AlarmTargets:
-            - TopicId: "{{ cls_alarm_topic_id }}"
-          TriggerCount: 1
-          AlarmPeriod: 1
+        alarm: "{{ alarm_body }}"
       register: created
 
     - name: Reconcile alarm
       susunola.tencentcloud.cls_alarm:
         name: "{{ alarm_name }}"
-        alarm:
-          Name: "{{ alarm_name }}"
-          MonitorObjectType: log
-          MonitorTime:
-            Type: Relative
-            TimeGap: 600
-          Condition: "$1.error_count > 1000000"
-          AlarmTargets:
-            - TopicId: "{{ cls_alarm_topic_id }}"
-          TriggerCount: 1
-          AlarmPeriod: 1
+        alarm: "{{ alarm_body }}"
       register: reconciled
 
     - name: Verify alarm idempotency
@@ -103,6 +144,17 @@
         that:
           - deleted is changed
           - deleted_again is not changed
+
+    - name: Delete the notification channel group
+      susunola.tencentcloud.cls_alarm_notice:
+        state: absent
+        name: "{{ notice_name }}"
+      register: notice_deleted
+
+    - name: Verify notice deletion
+      ansible.builtin.assert:
+        that:
+          - notice_deleted is changed
   always:
     - name: Remove alarm if the run failed mid-way
       susunola.tencentcloud.cls_alarm:
@@ -110,3 +162,27 @@
         name: "{{ alarm_name | default('') }}"
       ignore_errors: true
       when: alarm_name | default('') | length > 0
+
+    - name: Remove the notification channel group if the run failed mid-way
+      susunola.tencentcloud.cls_alarm_notice:
+        state: absent
+        name: "{{ notice_name | default('') }}"
+      ignore_errors: true
+      when: notice_name | default('') | length > 0
+
+    - name: Clean up topic
+      susunola.tencentcloud.cls_topic:
+        state: absent
+        topic_id: "{{ topic.topic.TopicId | default(omit) }}"
+        logset_id: "{{ logset.logset.LogsetId | default('cleanup') }}"
+        name: "{{ topic_name }}"
+      ignore_errors: true
+      when: topic_name | default('') | length > 0
+
+    - name: Clean up logset
+      susunola.tencentcloud.cls_logset:
+        state: absent
+        logset_id: "{{ logset.logset.LogsetId | default(omit) }}"
+        name: "{{ logset_name }}"
+      ignore_errors: true
+      when: logset_name | default('') | length > 0

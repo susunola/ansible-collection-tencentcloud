@@ -91,7 +91,7 @@ environment second, so a value materialised into
 | `TENCENTCLOUD_APIGW_SERVICE_ID` | secret | apigateway_ip_strategy | a throwaway service is created instead (and skipped if the product is unavailable) |
 | `TENCENTCLOUD_TCR_NAMESPACE` | var | tcr_immutable_tag_rule, tcr_webhook_trigger | both TCR targets skip |
 | `TENCENTCLOUD_TCR_WEBHOOK_URL` | secret | tcr_webhook_trigger | tcr_webhook_trigger skips |
-| `TENCENTCLOUD_CLS_ALARM_TOPIC_ID` | secret | cls_alarm | cls_alarm skips |
+| `TENCENTCLOUD_CLS_ALARM_UIN` | secret | cls_alarm | cls_alarm skips (the notice group it creates needs a receiver UIN) |
 | `TENCENTCLOUD_REDIS_INSTANCE_ID` | secret | redis_replication_group | redis skips (billed, also needs `TENCENTCLOUD_RUN_BILLED_TARGETS=1`) |
 
 Per-target resource pointers (image ids, cluster ids) are **secrets**; tuning

@@ -1,0 +1,12 @@
+---
+bugfixes:
+  - >-
+    cls_alarm - correct the documented alarm body so the example actually creates an alarm.
+    The old payload used ``MonitorObjectType: log`` (the field is a ``uint64``: 0 = one shared
+    monitor object, 1 = one per query), ``MonitorTime: {Type: Relative, TimeGap: 600}``
+    (``Type`` accepts only ``Period``, ``Fixed`` or ``Cron`` and the period field is ``Time``,
+    not ``TimeGap``), and omitted everything CLS requires - at least one of ``AlarmNoticeIds``
+    or ``MonitorNotice``, a ``LogsetId`` next to every ``TopicId``, and an ``EndTimeOffset``
+    greater than its ``StartTimeOffset``. The module forwards the body verbatim, so every one
+    of these was rejected by the API rather than by Ansible; only a real-cloud run surfaced
+    them. The option documentation now spells out the constraints.

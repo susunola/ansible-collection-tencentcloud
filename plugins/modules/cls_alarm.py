@@ -36,6 +36,15 @@ options:
       - Raw SDK-shaped alarm configuration (the C(CreateAlarmRequest) body).
       - Required when O(state=present); ignored when O(state=absent), where the
         alarm is matched by O(name) alone.
+      - Keys and value types must match the CLS C(AlarmInfo) model exactly.
+        Ansible does not validate them; the body is handed to the SDK's
+        C(from_json_string) verbatim, so a misspelled key is dropped and a
+        wrongly typed value (for example C(MonitorObjectType) as a string)
+        is only rejected by the API.
+      - CLS also requires at least one notification channel, so pass
+        C(AlarmNoticeIds) (a C(cls_alarm_notice) id) or C(MonitorNotice).
+        An alarm target needs C(LogsetId) as well as C(TopicId), and its
+        C(EndTimeOffset) must be greater than its C(StartTimeOffset).
     type: dict
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -53,14 +62,22 @@ EXAMPLES = r'''
     name: error-spike
     alarm:
       Name: error-spike
-      MonitorObjectType: log
+      MonitorObjectType: 0
       MonitorTime:
-        Type: Relative
-        TimeGap: 600
+        Type: Period
+        Time: 10
       Condition: "$1.error_count > 10"
       AlarmTargets:
-        - TopicId: "log-topic-abc"
+        - LogsetId: "logset-abc"
+          TopicId: "log-topic-abc"
+          Number: 1
+          Query: "*"
+          StartTimeOffset: -5
+          EndTimeOffset: 0
+      AlarmNoticeIds:
+        - "notice-abc"
       TriggerCount: 1
+      AlarmPeriod: 10
 
 - name: Remove the alarm
   susunola.tencentcloud.cls_alarm:

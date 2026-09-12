@@ -237,8 +237,8 @@ def test_gate_exported_on_both_steps_passes(target_tree):
     _write_target(target_tree, GOOD_TASKS)
     _write_gated_workflow(
         target_tree,
-        {"TENCENTCLOUD_REGION": "ap-guangzhou", "TENCENTCLOUD_CLS_ALARM_TOPIC_ID": "abc"},
-        {"TENCENTCLOUD_SECRET_ID": "id", "TENCENTCLOUD_CLS_ALARM_TOPIC_ID": "abc"},
+        {"TENCENTCLOUD_REGION": "ap-guangzhou", "TENCENTCLOUD_CLS_ALARM_UIN": "abc"},
+        {"TENCENTCLOUD_SECRET_ID": "id", "TENCENTCLOUD_CLS_ALARM_UIN": "abc"},
     )
     assert _AUDIT.audit_workflow_input_parity(target_tree) == []
     assert _AUDIT.main() == 0
@@ -249,11 +249,11 @@ def test_gate_missing_from_the_inputs_step_is_flagged(target_tree):
     _write_gated_workflow(
         target_tree,
         {"TENCENTCLOUD_REGION": "ap-guangzhou"},
-        {"TENCENTCLOUD_SECRET_ID": "id", "TENCENTCLOUD_CLS_ALARM_TOPIC_ID": "abc"},
+        {"TENCENTCLOUD_SECRET_ID": "id", "TENCENTCLOUD_CLS_ALARM_UIN": "abc"},
     )
     problems = _AUDIT.audit_workflow_input_parity(target_tree)
     assert len(problems) == 1
-    assert "TENCENTCLOUD_CLS_ALARM_TOPIC_ID" in problems[0]
+    assert "TENCENTCLOUD_CLS_ALARM_UIN" in problems[0]
     assert "self-skips" in problems[0]
     assert _AUDIT.main() == 1
 
