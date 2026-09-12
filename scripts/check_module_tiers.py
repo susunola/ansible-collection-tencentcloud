@@ -55,6 +55,7 @@ CORE_MODULES = {
     "api_gateway_api",
     "api_gateway_api_key",
     "api_gateway_service_release",
+    "api_gateway_service_release_info",
     "api_gateway_usage_plan",
     "api_gateway_usage_plan_binding",
     "api_gateway_usage_plan_key_binding",

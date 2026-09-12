@@ -191,7 +191,6 @@ KNOWN_GAPS = {
     "tsf_public_config",
     "tsf_repository",
     "tsf_vm_deployment_group",
-    "api_gateway_service_release",
     "cdn_cls_log_topic",
     "cdwch_instance",
     "cdwdoris_instance",
