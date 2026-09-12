@@ -1,0 +1,570 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta content="2.26.0" name="antsibull-docs" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>susunola.tencentcloud.cbs_disk module – Manage Tencent Cloud CBS cloud disks &mdash; Tencent Cloud Collection  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=41de9001" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/ansible.css?v=b54c304f" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/antsibull-minimal.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/rtd-ethical-ads.css?v=289b023e" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/images/Ansible-Mark-RGB_Black.png"/>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=7f41d439"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="susunola.tencentcloud.cbs_disk_backup module – Manage Tencent Cloud CBS disk backup points" href="cbs_disk_backup_module.html" />
+    <link rel="prev" title="susunola.tencentcloud.cbs_auto_snapshot_policy_info module – Gather information about Tencent Cloud CBS automatic snapshot policies" href="cbs_auto_snapshot_policy_info_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
+
+
+
+
+</head>
+
+<body class="wy-body-for-nav"><!-- extra body elements for Ansible beyond RTD Sphinx Theme -->
+
+<div class="DocSite-globalNav ansibleNav">
+  <ul>
+    <li><a href="https://www.ansible.com/blog" target="_blank">Blog</a></li>
+    <li><a href="https://forum.ansible.com/" target="_blank">Ansible community forum</a></li>
+    <li><a href="https://docs.ansible.com/" target="_blank">Documentation</a></li>
+  </ul>
+</div>
+
+<a class="DocSite-nav" href="/" style="padding-bottom: 30px;">
+
+  <img class="DocSiteNav-logo"
+    src="../../../_static/images/Ansible-Mark-RGB_White.png"
+    alt="Ansible Logo">
+  <div class="DocSiteNav-title">Tencent Cloud Collection</div>
+</a>
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Tencent Cloud Collection
+          </a><!--- Based on https://github.com/rtfd/sphinx_rtd_theme/pull/438/files -->
+
+<div class="version">
+  
+    
+  
+</div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <label class="sr-only" for="q">Search docs:</label>
+    <input type="text" class="st-default-search-input" id="q" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+  
+              <p class="caption" role="heading"><span class="caption-text">Collections:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Collection Index</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Collections in the Susunola Namespace</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Susunola.Tencentcloud</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="index.html#description">Description</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html#plugin-index">Plugin Index</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plugin indexes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index_callback.html">Index of all Callback Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_connection.html">Index of all Connection Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_filter.html">Index of all Filter Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_inventory.html">Index of all Inventory Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_lookup.html">Index of all Lookup Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_module.html">Index of all Modules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference indexes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../environment_variables.html">Index of all Collection Environment Variables</a></li>
+</ul>
+<!-- extra nav elements for Ansible beyond RTD Sphinx Theme -->
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tencent Cloud Collection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Collection Index</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Collections in the Susunola Namespace</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Susunola.Tencentcloud</a></li>
+      <li class="breadcrumb-item active">susunola.tencentcloud.cbs_disk module – Manage Tencent Cloud CBS cloud disks</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+  
+           <div itemprop="articleBody">
+             
+  <span class="target" id="ansible-collections-susunola-tencentcloud-cbs-disk-module"></span><section id="susunola-tencentcloud-cbs-disk-module-manage-tencent-cloud-cbs-cloud-disks">
+<h1>susunola.tencentcloud.cbs_disk module – Manage Tencent Cloud CBS cloud disks<a class="headerlink" href="#susunola-tencentcloud-cbs-disk-module-manage-tencent-cloud-cbs-cloud-disks" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This module is part of the <a class="reference external" href="https://github.com/susunola/ansible-collection-tencentcloud">susunola.tencentcloud collection</a> (version 1.1.0).</p>
+<p>It is not included in <code class="docutils literal notranslate"><span class="pre">ansible-core</span></code>.
+To check whether it is installed, run <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">list</span></code>.</p>
+<p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">susunola.tencentcloud</span></code>.</p>
+<p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">susunola.tencentcloud.cbs_disk</span></code>.</p>
+</div>
+<p class="ansible-version-added">New in susunola.tencentcloud 0.12.0</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
+<li><p><a class="reference internal" href="#parameters" id="id2">Parameters</a></p></li>
+<li><p><a class="reference internal" href="#notes" id="id3">Notes</a></p></li>
+<li><p><a class="reference internal" href="#examples" id="id4">Examples</a></p></li>
+<li><p><a class="reference internal" href="#return-values" id="id5">Return Values</a></p></li>
+</ul>
+</nav>
+<section id="synopsis">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Synopsis</a><a class="headerlink" href="#synopsis" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Create, resize, attach, detach and delete CBS cloud disks through the <code class="docutils literal notranslate"><span class="pre">cbs.v20170312</span></code> API.</p></li>
+<li><p>This module is idempotent. Running it twice leaves the disk unchanged and the second run reports <code class="docutils literal notranslate"><span class="pre">changed=false</span></code>.</p></li>
+<li><p>Supports check mode; no API write happens in check mode, only reads.</p></li>
+<li><p>Attachment changes wait for the disk to reach the target state (<code class="docutils literal notranslate"><span class="pre">ATTACHED</span></code>/<code class="docutils literal notranslate"><span class="pre">UNATTACHED</span></code>) using <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-waiter-delay"><span class="std std-ref"><span class="pre">waiter_delay</span></span></a></strong></code> and <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-waiter-timeout"><span class="std std-ref"><span class="pre">waiter_timeout</span></span></a></strong></code>.</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Parameters</a><a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<table class="longtable ansible-option-table docutils align-default" style="width: 100%">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-charge_type"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-charge-type"><strong>charge_type</strong></p>
+<a class="ansibleOptionLink" href="#parameter-charge_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Billing mode of the disk, written to <code class="ansible-value docutils literal notranslate"><span class="pre">CreateDisksRequest.DiskChargeType</span></code>.</p>
+<p>Only applied at creation.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;PREPAID&quot;</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">&quot;POSTPAID_BY_HOUR&quot;</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-delete_snapshot"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-delete-snapshot"><strong>delete_snapshot</strong></p>
+<a class="ansibleOptionLink" href="#parameter-delete_snapshot" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Delete snapshots of the disk together with the disk, written to <code class="ansible-value docutils literal notranslate"><span class="pre">TerminateDisksRequest.DeleteSnapshot</span></code>.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-delete_with_instance"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-delete-with-instance"><strong>delete_with_instance</strong></p>
+<a class="ansibleOptionLink" href="#parameter-delete_with_instance" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>When true, the disk is deleted together with the instance it is attached to, written to <code class="ansible-value docutils literal notranslate"><span class="pre">AttachDisksRequest.DeleteWithInstance</span></code>.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-detach"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-detach"><strong>detach</strong></p>
+<a class="ansibleOptionLink" href="#parameter-detach" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>When true and the disk is attached, the disk is detached and waited into <code class="docutils literal notranslate"><span class="pre">UNATTACHED</span></code> state.</p>
+<p>Mutually exclusive with <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-instance-id"><span class="std std-ref"><span class="pre">instance_id</span></span></a></strong></code> in effect; when both are given <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-instance-id"><span class="std std-ref"><span class="pre">instance_id</span></span></a></strong></code> wins.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-disk_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-disk-id"><strong>disk_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-disk_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>ID of an existing disk, e.g. <code class="docutils literal notranslate"><span class="pre">disk-xxxxxxxx</span></code>.</p>
+<p>When given, the module operates on that disk; otherwise the disk is matched by <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-name"><span class="std std-ref"><span class="pre">name</span></span></a></strong></code> (optionally scoped by <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-zone"><span class="std std-ref"><span class="pre">zone</span></span></a></strong></code>).</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-disk_size"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-disk-size"><strong>disk_size</strong></p>
+<a class="ansibleOptionLink" href="#parameter-disk_size" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Capacity of the disk in GiB, written to <code class="ansible-value docutils literal notranslate"><span class="pre">CreateDisksRequest.DiskSize</span></code>.</p>
+<p>When the disk exists and <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-disk-size"><span class="std std-ref"><span class="pre">disk_size</span></span></a></strong></code> is larger than the current size, the disk is resized with <code class="ansible-value docutils literal notranslate"><span class="pre">ResizeDisk</span></code> (resize only grows, never shrinks).</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-disk_type"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-disk-type"><strong>disk_type</strong></p>
+<a class="ansibleOptionLink" href="#parameter-disk_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Media type of the disk, written to <code class="ansible-value docutils literal notranslate"><span class="pre">CreateDisksRequest.DiskType</span></code>.</p>
+<p>Only applied at creation.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CLOUD_BASIC&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CLOUD_PREMIUM&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CLOUD_SSD&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CLOUD_HSSD&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CLOUD_TSSD&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-encrypt"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-encrypt"><strong>encrypt</strong></p>
+<a class="ansibleOptionLink" href="#parameter-encrypt" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Encrypt the disk at creation, written to <code class="ansible-value docutils literal notranslate"><span class="pre">CreateDisksRequest.Encrypt</span></code>.</p>
+<p>Only applied at creation.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-endpoint"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-endpoint"><strong>endpoint</strong></p>
+<a class="ansibleOptionLink" href="#parameter-endpoint" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Override the Tencent Cloud API endpoint.</p>
+<p>Intended for private endpoints, proxies, and integration tests.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-instance_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-instance-id"><strong>instance_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-instance_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>ID of the CVM instance to attach the disk to, e.g. <code class="docutils literal notranslate"><span class="pre">ins-xxxxxxxx</span></code>, written to <code class="ansible-value docutils literal notranslate"><span class="pre">AttachDisksRequest.InstanceId</span></code>.</p>
+<p>When given and the disk is attached elsewhere, the disk is detached first, then attached and waited into <code class="docutils literal notranslate"><span class="pre">ATTACHED</span></code> state.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-name"><strong>name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Name of the disk, written to <code class="ansible-value docutils literal notranslate"><span class="pre">CreateDisksRequest.DiskName</span></code> and <code class="ansible-value docutils literal notranslate"><span class="pre">ModifyDiskAttributesRequest.DiskName</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-prepaid_period_months"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-prepaid-period-months"><strong>prepaid_period_months</strong></p>
+<a class="ansibleOptionLink" href="#parameter-prepaid_period_months" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Prepaid period in months, written to <code class="ansible-value docutils literal notranslate"><span class="pre">CreateDisksRequest.DiskChargePrepaid.Period</span></code>.</p>
+<p>Only applied when <code class="ansible-option-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-charge-type"><span class="std std-ref"><span class="pre">charge_type=PREPAID</span></span></a></code>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-profile"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-profile"><strong>profile</strong></p>
+<a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><em class="ansible-option-versionadded">added in susunola.tencentcloud 0.5.0</em></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Name of the TCCLI profile section in <code class="docutils literal notranslate"><span class="pre">~/.tencentcloud/default.configure</span></code> to read credentials and region from, for example <code class="docutils literal notranslate"><span class="pre">default</span></code> or <code class="docutils literal notranslate"><span class="pre">prod</span></code>.</p>
+<p>A profile only supplies values not given as module parameters or environment variables; precedence is parameter &gt; environment variable &gt; profile section.</p>
+<p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_PROFILE</span></code>; when neither is set the <code class="docutils literal notranslate"><span class="pre">default</span></code> section is used.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-region"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-region"><strong>region</strong></p>
+<a class="ansibleOptionLink" href="#parameter-region" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Tencent Cloud region.</p>
+<p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_REGION</span></code>, then to the <code class="docutils literal notranslate"><span class="pre">region</span></code> key of the selected <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-profile"><span class="std std-ref"><span class="pre">profile</span></span></a></strong></code> section in <code class="docutils literal notranslate"><span class="pre">~/.tencentcloud/default.configure</span></code>.</p>
+<p>Required unless one of those fallbacks provides it.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-retries"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-retries"><strong>retries</strong></p>
+<a class="ansibleOptionLink" href="#parameter-retries" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Number of retries for transient SDK failures, applied with exponential backoff before the module gives up.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">5</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-role_arn"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-role-arn"><strong>role_arn</strong></p>
+<a class="ansibleOptionLink" href="#parameter-role_arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>CAM role ARN to assume via the STS AssumeRole API before calling any other service, for example <code class="docutils literal notranslate"><span class="pre">qcs::cam::uin/1000000000:roleName/MyRole</span></code>.</p>
+<p>When set, the module exchanges <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-secret-id"><span class="std std-ref"><span class="pre">secret_id</span></span></a></strong></code>/<code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-secret-key"><span class="std std-ref"><span class="pre">secret_key</span></span></a></strong></code> for temporary credentials bound to this role.</p>
+<p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_ROLE_ARN</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-role_session_duration"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-role-session-duration"><strong>role_session_duration</strong></p>
+<a class="ansibleOptionLink" href="#parameter-role_session_duration" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Validity of the temporary role credentials in seconds.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">7200</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-role_session_name"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-role-session-name"><strong>role_session_name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-role_session_name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Session name recorded for the assumed role.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;ansible-tencentcloud&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-secret_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-secret-id"><strong>secret_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-secret_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Tencent Cloud API secret ID.</p>
+<p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_SECRET_ID</span></code>, then to the selected <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-profile"><span class="std std-ref"><span class="pre">profile</span></span></a></strong></code> section in <code class="docutils literal notranslate"><span class="pre">~/.tencentcloud/default.configure</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-secret_key"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-secret-key"><strong>secret_key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-secret_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Tencent Cloud API secret key.</p>
+<p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_SECRET_KEY</span></code>, then to the selected <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-profile"><span class="std std-ref"><span class="pre">profile</span></span></a></strong></code> section in <code class="docutils literal notranslate"><span class="pre">~/.tencentcloud/default.configure</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-snapshot_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-snapshot-id"><strong>snapshot_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-snapshot_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Create the disk from this snapshot, written to <code class="ansible-value docutils literal notranslate"><span class="pre">CreateDisksRequest.SnapshotId</span></code>.</p>
+<p>Only applied at creation.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-state"><strong>state</strong></p>
+<a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">present</span></code> creates the disk when it does not exist and reconciles its name, size and attachment when it does.</p>
+<p><code class="docutils literal notranslate"><span class="pre">absent</span></code> terminates the disk.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">&quot;present&quot;</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-tags"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-tags"><strong>tags</strong></p>
+<a class="ansibleOptionLink" href="#parameter-tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Tags to apply to the disk as a dict, for example <em>env=prod</em>.</p>
+<p>Only applied at creation.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-timeout"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-timeout"><strong>timeout</strong></p>
+<a class="ansibleOptionLink" href="#parameter-timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>SDK HTTP request timeout in seconds.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">60</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-token"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-token"><strong>token</strong></p>
+<a class="ansibleOptionLink" href="#parameter-token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Temporary credential token. Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_TOKEN</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-user_agent"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-user-agent"><strong>user_agent</strong></p>
+<a class="ansibleOptionLink" href="#parameter-user_agent" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Value appended to the SDK User-Agent header so API usage can be attributed to this collection.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;ansible-collection.susunola.tencentcloud&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-waiter_delay"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-waiter-delay"><strong>waiter_delay</strong></p>
+<a class="ansibleOptionLink" href="#parameter-waiter_delay" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Seconds to wait between state-polling attempts while waiting for a resource to reach its desired state.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">5</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-waiter_timeout"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-waiter-timeout"><strong>waiter_timeout</strong></p>
+<a class="ansibleOptionLink" href="#parameter-waiter_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Overall timeout in seconds for state polling before the module gives up and fails the task.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">120</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-zone"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-zone"><strong>zone</strong></p>
+<a class="ansibleOptionLink" href="#parameter-zone" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Availability zone of the disk, e.g. <code class="docutils literal notranslate"><span class="pre">ap-guangzhou-3</span></code>.</p>
+<p>Required when creating the disk and used to narrow <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cbs-disk-module-parameter-name"><span class="std std-ref"><span class="pre">name</span></span></a></strong></code> matches.</p>
+</div></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="notes">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Notes</a><a class="headerlink" href="#notes" title="Link to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Requires the <code class="docutils literal notranslate"><span class="pre">tencentcloud-sdk-python-cbs</span></code> package on the controller.</p></li>
+<li><p>POSTPAID_BY_HOUR disks are billed per hour while present; terminate them as soon as they are no longer needed to avoid unnecessary charges.</p></li>
+</ul>
+</div>
+</section>
+<section id="examples">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a 50 GiB SSD disk</span>
+<span class="w">  </span><span class="nt">susunola.tencentcloud.cbs_disk</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data-disk</span>
+<span class="w">    </span><span class="nt">zone</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou-3</span>
+<span class="w">    </span><span class="nt">disk_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CLOUD_SSD</span>
+<span class="w">    </span><span class="nt">disk_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Attach it to an instance and wait until ATTACHED</span>
+<span class="w">  </span><span class="nt">susunola.tencentcloud.cbs_disk</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data-disk</span>
+<span class="w">    </span><span class="nt">zone</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou-3</span>
+<span class="w">    </span><span class="nt">instance_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ins-aaaaaaaa</span>
+<span class="w">    </span><span class="nt">delete_with_instance</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Detach and wait until UNATTACHED</span>
+<span class="w">  </span><span class="nt">susunola.tencentcloud.cbs_disk</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data-disk</span>
+<span class="w">    </span><span class="nt">zone</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou-3</span>
+<span class="w">    </span><span class="nt">detach</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Grow the disk to 100 GiB</span>
+<span class="w">  </span><span class="nt">susunola.tencentcloud.cbs_disk</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data-disk</span>
+<span class="w">    </span><span class="nt">zone</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou-3</span>
+<span class="w">    </span><span class="nt">disk_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Terminate the disk</span>
+<span class="w">  </span><span class="nt">susunola.tencentcloud.cbs_disk</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data-disk</span>
+<span class="w">    </span><span class="nt">zone</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou-3</span>
+</pre></div>
+</div>
+</section>
+<section id="return-values">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Return Values</a><a class="headerlink" href="#return-values" title="Link to this heading"></a></h2>
+<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/projects/ansible/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible devel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
+<table class="longtable ansible-option-table docutils align-default" style="width: 100%">
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-disk"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cbs-disk-module-return-disk"><strong>disk</strong></p>
+<a class="ansibleOptionLink" href="#return-disk" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The disk as reported by <code class="ansible-value docutils literal notranslate"><span class="pre">DescribeDisks</span></code> after the operation.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;DiskChargeType&quot;:</span> <span class="pre">&quot;POSTPAID_BY_HOUR&quot;,</span> <span class="pre">&quot;DiskId&quot;:</span> <span class="pre">&quot;disk-xxxxxxxx&quot;,</span> <span class="pre">&quot;DiskName&quot;:</span> <span class="pre">&quot;data-disk&quot;,</span> <span class="pre">&quot;DiskSize&quot;:</span> <span class="pre">50,</span> <span class="pre">&quot;DiskState&quot;:</span> <span class="pre">&quot;ATTACHED&quot;,</span> <span class="pre">&quot;DiskType&quot;:</span> <span class="pre">&quot;CLOUD_SSD&quot;,</span> <span class="pre">&quot;InstanceId&quot;:</span> <span class="pre">&quot;ins-aaaaaaaa&quot;}</span></code></p>
+</div></td>
+</tr>
+</tbody>
+</table>
+<section id="authors">
+<h3>Authors<a class="headerlink" href="#authors" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Tencent Cloud Ansible Collection Contributors (&#64;susunola)</p></li>
+</ul>
+</section>
+<section id="collection-links">
+<h3>Collection links<a class="headerlink" href="#collection-links" title="Link to this heading"></a></h3>
+<ul class="ansible-links">
+<li><span><a aria-role="button" class="ansible-link reference external" href="https://github.com/susunola/ansible-collection-tencentcloud/issues" rel="noopener external" target="_blank">Issue Tracker</a></span></li>
+<li><span><a aria-role="button" class="ansible-link reference external" href="https://github.com/susunola/ansible-collection-tencentcloud" rel="noopener external" target="_blank">Repository (Sources)</a></span></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          
+
+<footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cbs_auto_snapshot_policy_info_module.html" class="btn btn-neutral float-left" title="susunola.tencentcloud.cbs_auto_snapshot_policy_info module – Gather information about Tencent Cloud CBS automatic snapshot policies" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cbs_disk_backup_module.html" class="btn btn-neutral float-right" title="susunola.tencentcloud.cbs_disk_backup module – Manage Tencent Cloud CBS disk backup points" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Tencent Cloud Ansible Collection Contributors.</p>
+  </div>
+
+  
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script><!-- extra footer elements for Ansible beyond RTD Sphinx Theme -->
+
+</body>
+</html>

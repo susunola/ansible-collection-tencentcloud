@@ -1,0 +1,517 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta content="2.26.0" name="antsibull-docs" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>susunola.tencentcloud.clb_load_balancer module – Manage Tencent Cloud CLB load balancers &mdash; Tencent Cloud Collection  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=41de9001" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/ansible.css?v=b54c304f" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/antsibull-minimal.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/rtd-ethical-ads.css?v=289b023e" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/images/Ansible-Mark-RGB_Black.png"/>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=7f41d439"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="susunola.tencentcloud.clb_load_balancer_info module – Gather information about Tencent Cloud CLB load balancers" href="clb_load_balancer_info_module.html" />
+    <link rel="prev" title="susunola.tencentcloud.clb_listener_target_info module – Gather information about Tencent Cloud CLB listener targets" href="clb_listener_target_info_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
+
+
+
+
+</head>
+
+<body class="wy-body-for-nav"><!-- extra body elements for Ansible beyond RTD Sphinx Theme -->
+
+<div class="DocSite-globalNav ansibleNav">
+  <ul>
+    <li><a href="https://www.ansible.com/blog" target="_blank">Blog</a></li>
+    <li><a href="https://forum.ansible.com/" target="_blank">Ansible community forum</a></li>
+    <li><a href="https://docs.ansible.com/" target="_blank">Documentation</a></li>
+  </ul>
+</div>
+
+<a class="DocSite-nav" href="/" style="padding-bottom: 30px;">
+
+  <img class="DocSiteNav-logo"
+    src="../../../_static/images/Ansible-Mark-RGB_White.png"
+    alt="Ansible Logo">
+  <div class="DocSiteNav-title">Tencent Cloud Collection</div>
+</a>
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Tencent Cloud Collection
+          </a><!--- Based on https://github.com/rtfd/sphinx_rtd_theme/pull/438/files -->
+
+<div class="version">
+  
+    
+  
+</div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <label class="sr-only" for="q">Search docs:</label>
+    <input type="text" class="st-default-search-input" id="q" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+  
+              <p class="caption" role="heading"><span class="caption-text">Collections:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Collection Index</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Collections in the Susunola Namespace</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Susunola.Tencentcloud</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="index.html#description">Description</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html#plugin-index">Plugin Index</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plugin indexes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index_callback.html">Index of all Callback Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_connection.html">Index of all Connection Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_filter.html">Index of all Filter Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_inventory.html">Index of all Inventory Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_lookup.html">Index of all Lookup Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_module.html">Index of all Modules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference indexes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../environment_variables.html">Index of all Collection Environment Variables</a></li>
+</ul>
+<!-- extra nav elements for Ansible beyond RTD Sphinx Theme -->
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tencent Cloud Collection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Collection Index</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Collections in the Susunola Namespace</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Susunola.Tencentcloud</a></li>
+      <li class="breadcrumb-item active">susunola.tencentcloud.clb_load_balancer module – Manage Tencent Cloud CLB load balancers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+  
+           <div itemprop="articleBody">
+             
+  <span class="target" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module"></span><section id="susunola-tencentcloud-clb-load-balancer-module-manage-tencent-cloud-clb-load-balancers">
+<h1>susunola.tencentcloud.clb_load_balancer module – Manage Tencent Cloud CLB load balancers<a class="headerlink" href="#susunola-tencentcloud-clb-load-balancer-module-manage-tencent-cloud-clb-load-balancers" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This module is part of the <a class="reference external" href="https://github.com/susunola/ansible-collection-tencentcloud">susunola.tencentcloud collection</a> (version 1.1.0).</p>
+<p>It is not included in <code class="docutils literal notranslate"><span class="pre">ansible-core</span></code>.
+To check whether it is installed, run <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">list</span></code>.</p>
+<p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">susunola.tencentcloud</span></code>.</p>
+<p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">susunola.tencentcloud.clb_load_balancer</span></code>.</p>
+</div>
+<p class="ansible-version-added">New in susunola.tencentcloud 0.10.0</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
+<li><p><a class="reference internal" href="#parameters" id="id2">Parameters</a></p></li>
+<li><p><a class="reference internal" href="#notes" id="id3">Notes</a></p></li>
+<li><p><a class="reference internal" href="#examples" id="id4">Examples</a></p></li>
+<li><p><a class="reference internal" href="#return-values" id="id5">Return Values</a></p></li>
+</ul>
+</nav>
+<section id="synopsis">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Synopsis</a><a class="headerlink" href="#synopsis" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Create, update, and delete Tencent Cloud CLB (Cloud Load Balancer) instances through the <code class="docutils literal notranslate"><span class="pre">clb.v20180317</span></code> API.</p></li>
+<li><p>This module is idempotent. Running it twice leaves the load balancer unchanged and the second run reports <code class="docutils literal notranslate"><span class="pre">changed=false</span></code>. When <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-load-balancer-id"><span class="std std-ref"><span class="pre">load_balancer_id</span></span></a></strong></code> is not given, the instance is matched by the exact <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-name"><span class="std std-ref"><span class="pre">name</span></span></a></strong></code> (and <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-vpc-id"><span class="std std-ref"><span class="pre">vpc_id</span></span></a></strong></code> when given) from the fuzzy <code class="ansible-value docutils literal notranslate"><span class="pre">DescribeLoadBalancers</span></code> result set.</p></li>
+<li><p>Supports check mode; no API write happens in check mode, only reads.</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Parameters</a><a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<table class="longtable ansible-option-table docutils align-default" style="width: 100%">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-client_token"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-client-token"><strong>client_token</strong></p>
+<a class="ansibleOptionLink" href="#parameter-client_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Idempotency token passed to <code class="ansible-value docutils literal notranslate"><span class="pre">CreateLoadBalancer</span></code> as <code class="docutils literal notranslate"><span class="pre">ClientToken</span></code>, so a retried creation does not provision a second instance.</p>
+<p>Only applied at creation; the value is not sensitive.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-endpoint"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-endpoint"><strong>endpoint</strong></p>
+<a class="ansibleOptionLink" href="#parameter-endpoint" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Override the Tencent Cloud API endpoint.</p>
+<p>Intended for private endpoints, proxies, and integration tests.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-internet_charge_type"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-internet-charge-type"><strong>internet_charge_type</strong></p>
+<a class="ansibleOptionLink" href="#parameter-internet_charge_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Network billing mode written to <code class="ansible-value docutils literal notranslate"><span class="pre">InternetAccessible.InternetChargeType</span></code>.</p>
+<p>On an existing instance the value is reconciled through <code class="ansible-value docutils literal notranslate"><span class="pre">ModifyLoadBalancerAttributes</span></code>.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;BANDWIDTH_PREPAID&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;TRAFFIC_POSTPAID_BY_HOUR&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;BANDWIDTH_POSTPAID_BY_HOUR&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;BANDWIDTH_PACKAGE&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-internet_max_bandwidth_out"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-internet-max-bandwidth-out"><strong>internet_max_bandwidth_out</strong></p>
+<a class="ansibleOptionLink" href="#parameter-internet_max_bandwidth_out" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Maximum outbound bandwidth in Mbps, written to <code class="ansible-value docutils literal notranslate"><span class="pre">InternetAccessible.InternetMaxBandwidthOut</span></code>.</p>
+<p>On an existing instance the value is reconciled through <code class="ansible-value docutils literal notranslate"><span class="pre">ModifyLoadBalancerAttributes</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-load_balancer_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-load-balancer-id"><strong>load_balancer_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-load_balancer_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>ID of an existing load balancer, e.g. <code class="docutils literal notranslate"><span class="pre">lb-xxxxxxxx</span></code>.</p>
+<p>When given, the module operates on that instance; otherwise the instance is matched by <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-name"><span class="std std-ref"><span class="pre">name</span></span></a></strong></code> through <code class="ansible-value docutils literal notranslate"><span class="pre">DescribeLoadBalancers</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-load_balancer_type"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-load-balancer-type"><strong>load_balancer_type</strong></p>
+<a class="ansibleOptionLink" href="#parameter-load_balancer_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Network type of the load balancer, <code class="docutils literal notranslate"><span class="pre">OPEN</span></code> for public or <code class="docutils literal notranslate"><span class="pre">INTERNAL</span></code> for private.</p>
+<p>Only applied at creation; changing it on an existing instance fails with a message asking to recreate the load balancer.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;OPEN&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;INTERNAL&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-name"><strong>name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Name of the load balancer. Required when <code class="docutils literal notranslate"><span class="pre">state=present</span></code>.</p>
+<p><code class="ansible-value docutils literal notranslate"><span class="pre">DescribeLoadBalancers</span></code> matches names fuzzily; the module filters the result for an exact name match before acting.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-profile"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-profile"><strong>profile</strong></p>
+<a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><em class="ansible-option-versionadded">added in susunola.tencentcloud 0.5.0</em></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Name of the TCCLI profile section in <code class="docutils literal notranslate"><span class="pre">~/.tencentcloud/default.configure</span></code> to read credentials and region from, for example <code class="docutils literal notranslate"><span class="pre">default</span></code> or <code class="docutils literal notranslate"><span class="pre">prod</span></code>.</p>
+<p>A profile only supplies values not given as module parameters or environment variables; precedence is parameter &gt; environment variable &gt; profile section.</p>
+<p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_PROFILE</span></code>; when neither is set the <code class="docutils literal notranslate"><span class="pre">default</span></code> section is used.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-project_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-project-id"><strong>project_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-project_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Project ID the load balancer belongs to. Only applied at creation; changing it after creation is a no-op.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">0</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-region"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-region"><strong>region</strong></p>
+<a class="ansibleOptionLink" href="#parameter-region" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Tencent Cloud region.</p>
+<p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_REGION</span></code>, then to the <code class="docutils literal notranslate"><span class="pre">region</span></code> key of the selected <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-profile"><span class="std std-ref"><span class="pre">profile</span></span></a></strong></code> section in <code class="docutils literal notranslate"><span class="pre">~/.tencentcloud/default.configure</span></code>.</p>
+<p>Required unless one of those fallbacks provides it.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-retries"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-retries"><strong>retries</strong></p>
+<a class="ansibleOptionLink" href="#parameter-retries" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Number of retries for transient SDK failures, applied with exponential backoff before the module gives up.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">5</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-role_arn"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-role-arn"><strong>role_arn</strong></p>
+<a class="ansibleOptionLink" href="#parameter-role_arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>CAM role ARN to assume via the STS AssumeRole API before calling any other service, for example <code class="docutils literal notranslate"><span class="pre">qcs::cam::uin/1000000000:roleName/MyRole</span></code>.</p>
+<p>When set, the module exchanges <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-secret-id"><span class="std std-ref"><span class="pre">secret_id</span></span></a></strong></code>/<code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-secret-key"><span class="std std-ref"><span class="pre">secret_key</span></span></a></strong></code> for temporary credentials bound to this role.</p>
+<p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_ROLE_ARN</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-role_session_duration"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-role-session-duration"><strong>role_session_duration</strong></p>
+<a class="ansibleOptionLink" href="#parameter-role_session_duration" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Validity of the temporary role credentials in seconds.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">7200</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-role_session_name"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-role-session-name"><strong>role_session_name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-role_session_name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Session name recorded for the assumed role.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;ansible-tencentcloud&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-secret_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-secret-id"><strong>secret_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-secret_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Tencent Cloud API secret ID.</p>
+<p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_SECRET_ID</span></code>, then to the selected <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-profile"><span class="std std-ref"><span class="pre">profile</span></span></a></strong></code> section in <code class="docutils literal notranslate"><span class="pre">~/.tencentcloud/default.configure</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-secret_key"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-secret-key"><strong>secret_key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-secret_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Tencent Cloud API secret key.</p>
+<p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_SECRET_KEY</span></code>, then to the selected <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-profile"><span class="std std-ref"><span class="pre">profile</span></span></a></strong></code> section in <code class="docutils literal notranslate"><span class="pre">~/.tencentcloud/default.configure</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-state"><strong>state</strong></p>
+<a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">present</span></code> creates the load balancer with <code class="ansible-value docutils literal notranslate"><span class="pre">CreateLoadBalancer</span></code> when it does not exist, and updates its name, network billing and tags when it does.</p>
+<p><code class="docutils literal notranslate"><span class="pre">absent</span></code> deletes the load balancer with <code class="ansible-value docutils literal notranslate"><span class="pre">DeleteLoadBalancer</span></code> and waits until it is gone.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">&quot;present&quot;</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-subnet_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-subnet-id"><strong>subnet_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-subnet_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Subnet ID (<code class="docutils literal notranslate"><span class="pre">subnet-xxxxxxxx</span></code>) the VIP of a private load balancer is allocated from. Required by the API when creating an <code class="docutils literal notranslate"><span class="pre">INTERNAL</span></code> load balancer.</p>
+<p>Only applied at creation; changing it on an existing instance fails with a message asking to recreate the load balancer.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-tags"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-tags"><strong>tags</strong></p>
+<a class="ansibleOptionLink" href="#parameter-tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Tags to apply to the load balancer as a dict, for example <em>env=prod</em>.</p>
+<p>At creation the tags are bound through <code class="ansible-value docutils literal notranslate"><span class="pre">CreateLoadBalancer</span></code>; on an existing instance they are reconciled through the tag service (<code class="docutils literal notranslate"><span class="pre">ServiceType=clb</span></code>, <code class="docutils literal notranslate"><span class="pre">ResourcePrefix=clb</span></code>).</p>
+<p>Existing tags not listed are removed; listed tags with a different value are updated. Requires the <code class="docutils literal notranslate"><span class="pre">tencentcloud-sdk-python-tag</span></code> package and the tag service to be enabled for the account.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-timeout"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-timeout"><strong>timeout</strong></p>
+<a class="ansibleOptionLink" href="#parameter-timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>SDK HTTP request timeout in seconds.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">60</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-token"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-token"><strong>token</strong></p>
+<a class="ansibleOptionLink" href="#parameter-token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Temporary credential token. Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_TOKEN</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-user_agent"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-user-agent"><strong>user_agent</strong></p>
+<a class="ansibleOptionLink" href="#parameter-user_agent" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Value appended to the SDK User-Agent header so API usage can be attributed to this collection.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;ansible-collection.susunola.tencentcloud&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-vpc_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-vpc-id"><strong>vpc_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-vpc_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>VPC ID (<code class="docutils literal notranslate"><span class="pre">vpc-xxxxxxxx</span></code>) the load balancer belongs to.</p>
+<p>Only applied at creation; changing it on an existing instance fails with a message asking to recreate the load balancer.</p>
+<p>Also used to disambiguate the name match when <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-load-balancer-id"><span class="std std-ref"><span class="pre">load_balancer_id</span></span></a></strong></code> is not given.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-waiter_delay"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-waiter-delay"><strong>waiter_delay</strong></p>
+<a class="ansibleOptionLink" href="#parameter-waiter_delay" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Interval in seconds between state polls while waiting.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">5</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-waiter_timeout"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-parameter-waiter-timeout"><strong>waiter_timeout</strong></p>
+<a class="ansibleOptionLink" href="#parameter-waiter_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Maximum time in seconds to wait for the load balancer to reach the running state after creation, or to disappear after deletion.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">120</span></code></p>
+</div></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="notes">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Notes</a><a class="headerlink" href="#notes" title="Link to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Requires the <code class="docutils literal notranslate"><span class="pre">tencentcloud-sdk-python-clb</span></code> package on the controller.</p></li>
+<li><p>Tag reconciliation additionally requires <code class="docutils literal notranslate"><span class="pre">tencentcloud-sdk-python-tag</span></code>.</p></li>
+<li><p>Uses the <code class="docutils literal notranslate"><span class="pre">clb.tencentcloudapi.com</span></code> endpoint by default.</p></li>
+<li><p>CLB operations are asynchronous. After creation the module polls <code class="ansible-value docutils literal notranslate"><span class="pre">DescribeLoadBalancers</span></code> until the instance <code class="docutils literal notranslate"><span class="pre">Status</span></code> is <code class="docutils literal notranslate"><span class="pre">1</span></code> (running), and <code class="ansible-value docutils literal notranslate"><span class="pre">ModifyLoadBalancerAttributes</span></code> is confirmed through <code class="ansible-value docutils literal notranslate"><span class="pre">DescribeTaskStatus</span></code>.</p></li>
+<li><p>Network type, VPC and subnet cannot be changed on an existing load balancer; the module fails with a clear message when they drift instead of silently ignoring them.</p></li>
+</ul>
+</div>
+</section>
+<section id="examples">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a public CLB load balancer</span>
+<span class="w">  </span><span class="nt">susunola.tencentcloud.clb_load_balancer</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web-lb</span>
+<span class="w">    </span><span class="nt">load_balancer_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OPEN</span>
+<span class="w">    </span><span class="nt">vpc_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-xxxxxxxx</span>
+<span class="w">    </span><span class="nt">internet_charge_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TRAFFIC_POSTPAID_BY_HOUR</span>
+<span class="w">    </span><span class="nt">internet_max_bandwidth_out</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod</span>
+<span class="w">      </span><span class="nt">tier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a private CLB load balancer</span>
+<span class="w">  </span><span class="nt">susunola.tencentcloud.clb_load_balancer</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">internal-lb</span>
+<span class="w">    </span><span class="nt">load_balancer_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">INTERNAL</span>
+<span class="w">    </span><span class="nt">vpc_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-xxxxxxxx</span>
+<span class="w">    </span><span class="nt">subnet_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-xxxxxxxx</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Preview the changes without applying them</span>
+<span class="w">  </span><span class="nt">susunola.tencentcloud.clb_load_balancer</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web-lb</span>
+<span class="w">    </span><span class="nt">load_balancer_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OPEN</span>
+<span class="w">  </span><span class="nt">check_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete a load balancer</span>
+<span class="w">  </span><span class="nt">susunola.tencentcloud.clb_load_balancer</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web-lb</span>
+</pre></div>
+</div>
+</section>
+<section id="return-values">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Return Values</a><a class="headerlink" href="#return-values" title="Link to this heading"></a></h2>
+<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/projects/ansible/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible devel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
+<table class="longtable ansible-option-table docutils align-default" style="width: 100%">
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-load_balancer"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-load-balancer-module-return-load-balancer"><strong>load_balancer</strong></p>
+<a class="ansibleOptionLink" href="#return-load_balancer" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The load balancer as reported by <code class="ansible-value docutils literal notranslate"><span class="pre">DescribeLoadBalancers</span></code> after the operation.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;LoadBalancerId&quot;:</span> <span class="pre">&quot;lb-xxxxxxxx&quot;,</span> <span class="pre">&quot;LoadBalancerName&quot;:</span> <span class="pre">&quot;web-lb&quot;,</span> <span class="pre">&quot;LoadBalancerType&quot;:</span> <span class="pre">&quot;OPEN&quot;,</span> <span class="pre">&quot;LoadBalancerVips&quot;:</span> <span class="pre">[&quot;1.2.3.4&quot;],</span> <span class="pre">&quot;Status&quot;:</span> <span class="pre">1,</span> <span class="pre">&quot;Tags&quot;:</span> <span class="pre">[],</span> <span class="pre">&quot;VpcId&quot;:</span> <span class="pre">&quot;vpc-xxxxxxxx&quot;}</span></code></p>
+</div></td>
+</tr>
+</tbody>
+</table>
+<section id="authors">
+<h3>Authors<a class="headerlink" href="#authors" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Tencent Cloud Ansible Collection Contributors (&#64;susunola)</p></li>
+</ul>
+</section>
+<section id="collection-links">
+<h3>Collection links<a class="headerlink" href="#collection-links" title="Link to this heading"></a></h3>
+<ul class="ansible-links">
+<li><span><a aria-role="button" class="ansible-link reference external" href="https://github.com/susunola/ansible-collection-tencentcloud/issues" rel="noopener external" target="_blank">Issue Tracker</a></span></li>
+<li><span><a aria-role="button" class="ansible-link reference external" href="https://github.com/susunola/ansible-collection-tencentcloud" rel="noopener external" target="_blank">Repository (Sources)</a></span></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          
+
+<footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="clb_listener_target_info_module.html" class="btn btn-neutral float-left" title="susunola.tencentcloud.clb_listener_target_info module – Gather information about Tencent Cloud CLB listener targets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="clb_load_balancer_info_module.html" class="btn btn-neutral float-right" title="susunola.tencentcloud.clb_load_balancer_info module – Gather information about Tencent Cloud CLB load balancers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Tencent Cloud Ansible Collection Contributors.</p>
+  </div>
+
+  
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script><!-- extra footer elements for Ansible beyond RTD Sphinx Theme -->
+
+</body>
+</html>

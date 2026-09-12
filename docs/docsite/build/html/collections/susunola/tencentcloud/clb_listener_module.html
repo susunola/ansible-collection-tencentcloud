@@ -1,0 +1,680 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta content="2.26.0" name="antsibull-docs" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>susunola.tencentcloud.clb_listener module – Manage listeners on Tencent Cloud CLB load balancers &mdash; Tencent Cloud Collection  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=41de9001" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/ansible.css?v=b54c304f" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/antsibull-minimal.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/rtd-ethical-ads.css?v=289b023e" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/images/Ansible-Mark-RGB_Black.png"/>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=7f41d439"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="susunola.tencentcloud.clb_listener_info module – Gather information about Tencent Cloud CLB listeners" href="clb_listener_info_module.html" />
+    <link rel="prev" title="susunola.tencentcloud.ckafka_user_info module – Gather information about Tencent Cloud CKafka users" href="ckafka_user_info_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
+
+
+
+
+</head>
+
+<body class="wy-body-for-nav"><!-- extra body elements for Ansible beyond RTD Sphinx Theme -->
+
+<div class="DocSite-globalNav ansibleNav">
+  <ul>
+    <li><a href="https://www.ansible.com/blog" target="_blank">Blog</a></li>
+    <li><a href="https://forum.ansible.com/" target="_blank">Ansible community forum</a></li>
+    <li><a href="https://docs.ansible.com/" target="_blank">Documentation</a></li>
+  </ul>
+</div>
+
+<a class="DocSite-nav" href="/" style="padding-bottom: 30px;">
+
+  <img class="DocSiteNav-logo"
+    src="../../../_static/images/Ansible-Mark-RGB_White.png"
+    alt="Ansible Logo">
+  <div class="DocSiteNav-title">Tencent Cloud Collection</div>
+</a>
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Tencent Cloud Collection
+          </a><!--- Based on https://github.com/rtfd/sphinx_rtd_theme/pull/438/files -->
+
+<div class="version">
+  
+    
+  
+</div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <label class="sr-only" for="q">Search docs:</label>
+    <input type="text" class="st-default-search-input" id="q" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+  
+              <p class="caption" role="heading"><span class="caption-text">Collections:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Collection Index</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Collections in the Susunola Namespace</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Susunola.Tencentcloud</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="index.html#description">Description</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html#plugin-index">Plugin Index</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plugin indexes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index_callback.html">Index of all Callback Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_connection.html">Index of all Connection Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_filter.html">Index of all Filter Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_inventory.html">Index of all Inventory Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_lookup.html">Index of all Lookup Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_module.html">Index of all Modules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference indexes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../environment_variables.html">Index of all Collection Environment Variables</a></li>
+</ul>
+<!-- extra nav elements for Ansible beyond RTD Sphinx Theme -->
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tencent Cloud Collection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Collection Index</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Collections in the Susunola Namespace</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Susunola.Tencentcloud</a></li>
+      <li class="breadcrumb-item active">susunola.tencentcloud.clb_listener module – Manage listeners on Tencent Cloud CLB load balancers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+  
+           <div itemprop="articleBody">
+             
+  <span class="target" id="ansible-collections-susunola-tencentcloud-clb-listener-module"></span><section id="susunola-tencentcloud-clb-listener-module-manage-listeners-on-tencent-cloud-clb-load-balancers">
+<h1>susunola.tencentcloud.clb_listener module – Manage listeners on Tencent Cloud CLB load balancers<a class="headerlink" href="#susunola-tencentcloud-clb-listener-module-manage-listeners-on-tencent-cloud-clb-load-balancers" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This module is part of the <a class="reference external" href="https://github.com/susunola/ansible-collection-tencentcloud">susunola.tencentcloud collection</a> (version 1.1.0).</p>
+<p>It is not included in <code class="docutils literal notranslate"><span class="pre">ansible-core</span></code>.
+To check whether it is installed, run <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">list</span></code>.</p>
+<p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">susunola.tencentcloud</span></code>.</p>
+<p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">susunola.tencentcloud.clb_listener</span></code>.</p>
+</div>
+<p class="ansible-version-added">New in susunola.tencentcloud 0.10.0</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
+<li><p><a class="reference internal" href="#parameters" id="id2">Parameters</a></p></li>
+<li><p><a class="reference internal" href="#notes" id="id3">Notes</a></p></li>
+<li><p><a class="reference internal" href="#examples" id="id4">Examples</a></p></li>
+<li><p><a class="reference internal" href="#return-values" id="id5">Return Values</a></p></li>
+</ul>
+</nav>
+<section id="synopsis">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Synopsis</a><a class="headerlink" href="#synopsis" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Create, update, and delete listeners on a Tencent Cloud CLB (Cloud Load Balancer) instance through the <code class="docutils literal notranslate"><span class="pre">clb.v20180317</span></code> API.</p></li>
+<li><p>A listener is identified by the combination of <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-load-balancer-id"><span class="std std-ref"><span class="pre">load_balancer_id</span></span></a></strong></code>, <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-port"><span class="std std-ref"><span class="pre">port</span></span></a></strong></code> and <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-protocol"><span class="std std-ref"><span class="pre">protocol</span></span></a></strong></code>; <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-listener-id"><span class="std std-ref"><span class="pre">listener_id</span></span></a></strong></code> selects a listener directly when known.</p></li>
+<li><p>This module is idempotent. Running it twice leaves the listener unchanged and the second run reports <code class="docutils literal notranslate"><span class="pre">changed=false</span></code>.</p></li>
+<li><p>Supports check mode; no API write happens in check mode, only reads.</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Parameters</a><a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<table class="longtable ansible-option-table docutils align-default" style="width: 100%">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-certificate"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-certificate"><strong>certificate</strong></p>
+<a class="ansibleOptionLink" href="#parameter-certificate" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Server certificate for HTTPS and TCP_SSL listeners, written to <code class="ansible-value docutils literal notranslate"><span class="pre">CertificateInput</span></code>. One of <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-certificate-cert-id"><span class="std std-ref"><span class="pre">certificate.cert_id</span></span></a></strong></code> or inline content must be resolvable by the API when the protocol requires it.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-certificate/cert_ca_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-certificate-cert-ca-id"><strong>cert_ca_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-certificate/cert_ca_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Client CA certificate ID, required when <code class="ansible-option-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-certificate-ssl-mode"><span class="std std-ref"><span class="pre">certificate.ssl_mode=MUTUAL</span></span></a></code>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-certificate/cert_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-certificate-cert-id"><strong>cert_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-certificate/cert_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Server certificate ID from the SSL certificate service.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-certificate/ssl_mode"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-certificate-ssl-mode"><strong>ssl_mode</strong></p>
+<a class="ansibleOptionLink" href="#parameter-certificate/ssl_mode" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Authentication mode.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;UNIDIRECTIONAL&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;MUTUAL&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-endpoint"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-endpoint"><strong>endpoint</strong></p>
+<a class="ansibleOptionLink" href="#parameter-endpoint" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Override the Tencent Cloud API endpoint.</p>
+<p>Intended for private endpoints, proxies, and integration tests.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-health_check"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-health-check"><strong>health_check</strong></p>
+<a class="ansibleOptionLink" href="#parameter-health_check" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Health check configuration, only meaningful for TCP, UDP, TCP_SSL and QUIC listeners (layer-7 listeners carry the health check on their forwarding rules).</p>
+<p>Only the keys listed are compared for idempotency; keys not given are left at the API default on creation and untouched on update.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-health_check/check_port"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-health-check-check-port"><strong>check_port</strong></p>
+<a class="ansibleOptionLink" href="#parameter-health_check/check_port" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Custom probe port; defaults to the backend port when omitted.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-health_check/check_type"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-health-check-check-type"><strong>check_type</strong></p>
+<a class="ansibleOptionLink" href="#parameter-health_check/check_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Probe protocol.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;TCP&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;HTTP&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;HTTPS&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;GRPC&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;PING&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CUSTOM&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-health_check/health_num"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-health-check-health-num"><strong>health_num</strong></p>
+<a class="ansibleOptionLink" href="#parameter-health_check/health_num" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Healthy threshold in consecutive probes, 2-10.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-health_check/health_switch"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-health-check-health-switch"><strong>health_switch</strong></p>
+<a class="ansibleOptionLink" href="#parameter-health_check/health_switch" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Whether the health check is enabled.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-health_check/http_check_domain"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-health-check-http-check-domain"><strong>http_check_domain</strong></p>
+<a class="ansibleOptionLink" href="#parameter-health_check/http_check_domain" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Probe domain carried in the HTTP Host header.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-health_check/http_check_method"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-health-check-http-check-method"><strong>http_check_method</strong></p>
+<a class="ansibleOptionLink" href="#parameter-health_check/http_check_method" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Probe HTTP method.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;HEAD&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;GET&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-health_check/http_check_path"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-health-check-http-check-path"><strong>http_check_path</strong></p>
+<a class="ansibleOptionLink" href="#parameter-health_check/http_check_path" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Probe path for HTTP probes.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-health_check/http_code"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-health-check-http-code"><strong>http_code</strong></p>
+<a class="ansibleOptionLink" href="#parameter-health_check/http_code" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Bitmask of HTTP status codes considered healthy, 1-31.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-health_check/http_version"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-health-check-http-version"><strong>http_version</strong></p>
+<a class="ansibleOptionLink" href="#parameter-health_check/http_version" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Backend HTTP version for HTTP probes on TCP listeners.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;HTTP/1.0&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;HTTP/1.1&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-health_check/interval_time"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-health-check-interval-time"><strong>interval_time</strong></p>
+<a class="ansibleOptionLink" href="#parameter-health_check/interval_time" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Probe interval in seconds, 2-300 (5-300 for some legacy IPv4 instances).</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-health_check/time_out"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-health-check-time-out"><strong>time_out</strong></p>
+<a class="ansibleOptionLink" href="#parameter-health_check/time_out" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Probe response timeout in seconds, 2-60; must be lower than <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-health-check-interval-time"><span class="std std-ref"><span class="pre">health_check.interval_time</span></span></a></strong></code>.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-health_check/un_health_num"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-health-check-un-health-num"><strong>un_health_num</strong></p>
+<a class="ansibleOptionLink" href="#parameter-health_check/un_health_num" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Unhealthy threshold in consecutive probes, 2-10.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-keepalive_enable"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-keepalive-enable"><strong>keepalive_enable</strong></p>
+<a class="ansibleOptionLink" href="#parameter-keepalive_enable" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Whether keep-alive is enabled, only meaningful for HTTP and HTTPS listeners.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-listener_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-listener-id"><strong>listener_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-listener_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>ID of an existing listener, e.g. <code class="docutils literal notranslate"><span class="pre">lbl-xxxxxxxx</span></code>.</p>
+<p>When given, the module operates on that listener; otherwise the listener is matched by <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-port"><span class="std std-ref"><span class="pre">port</span></span></a></strong></code> and <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-protocol"><span class="std std-ref"><span class="pre">protocol</span></span></a></strong></code>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-load_balancer_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-load-balancer-id"><strong>load_balancer_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-load_balancer_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>ID of the CLB instance owning the listener, e.g. <code class="docutils literal notranslate"><span class="pre">lb-xxxxxxxx</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-name"><strong>name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Name of the listener. Enforced on existing listeners.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-port"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-port"><strong>port</strong></p>
+<a class="ansibleOptionLink" href="#parameter-port" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Listener port, range 1-65535.</p>
+<p>Part of the listener identity; changing it recreates the listener.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-profile"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-profile"><strong>profile</strong></p>
+<a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><em class="ansible-option-versionadded">added in susunola.tencentcloud 0.5.0</em></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Name of the TCCLI profile section in <code class="docutils literal notranslate"><span class="pre">~/.tencentcloud/default.configure</span></code> to read credentials and region from, for example <code class="docutils literal notranslate"><span class="pre">default</span></code> or <code class="docutils literal notranslate"><span class="pre">prod</span></code>.</p>
+<p>A profile only supplies values not given as module parameters or environment variables; precedence is parameter &gt; environment variable &gt; profile section.</p>
+<p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_PROFILE</span></code>; when neither is set the <code class="docutils literal notranslate"><span class="pre">default</span></code> section is used.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-protocol"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-protocol"><strong>protocol</strong></p>
+<a class="ansibleOptionLink" href="#parameter-protocol" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Listener protocol.</p>
+<p>Part of the listener identity; changing it recreates the listener.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;TCP&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;UDP&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;HTTP&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;HTTPS&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;TCP_SSL&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;QUIC&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-region"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-region"><strong>region</strong></p>
+<a class="ansibleOptionLink" href="#parameter-region" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Tencent Cloud region.</p>
+<p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_REGION</span></code>, then to the <code class="docutils literal notranslate"><span class="pre">region</span></code> key of the selected <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-profile"><span class="std std-ref"><span class="pre">profile</span></span></a></strong></code> section in <code class="docutils literal notranslate"><span class="pre">~/.tencentcloud/default.configure</span></code>.</p>
+<p>Required unless one of those fallbacks provides it.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-retries"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-retries"><strong>retries</strong></p>
+<a class="ansibleOptionLink" href="#parameter-retries" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Number of retries for transient SDK failures, applied with exponential backoff before the module gives up.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">5</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-role_arn"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-role-arn"><strong>role_arn</strong></p>
+<a class="ansibleOptionLink" href="#parameter-role_arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>CAM role ARN to assume via the STS AssumeRole API before calling any other service, for example <code class="docutils literal notranslate"><span class="pre">qcs::cam::uin/1000000000:roleName/MyRole</span></code>.</p>
+<p>When set, the module exchanges <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-secret-id"><span class="std std-ref"><span class="pre">secret_id</span></span></a></strong></code>/<code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-secret-key"><span class="std std-ref"><span class="pre">secret_key</span></span></a></strong></code> for temporary credentials bound to this role.</p>
+<p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_ROLE_ARN</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-role_session_duration"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-role-session-duration"><strong>role_session_duration</strong></p>
+<a class="ansibleOptionLink" href="#parameter-role_session_duration" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Validity of the temporary role credentials in seconds.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">7200</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-role_session_name"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-role-session-name"><strong>role_session_name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-role_session_name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Session name recorded for the assumed role.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;ansible-tencentcloud&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-scheduler"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-scheduler"><strong>scheduler</strong></p>
+<a class="ansibleOptionLink" href="#parameter-scheduler" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Balancing method, only meaningful for TCP, UDP, TCP_SSL and QUIC listeners.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;WRR&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;LEAST_CONN&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;IP_HASH&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-secret_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-secret-id"><strong>secret_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-secret_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Tencent Cloud API secret ID.</p>
+<p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_SECRET_ID</span></code>, then to the selected <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-profile"><span class="std std-ref"><span class="pre">profile</span></span></a></strong></code> section in <code class="docutils literal notranslate"><span class="pre">~/.tencentcloud/default.configure</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-secret_key"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-secret-key"><strong>secret_key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-secret_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Tencent Cloud API secret key.</p>
+<p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_SECRET_KEY</span></code>, then to the selected <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-profile"><span class="std std-ref"><span class="pre">profile</span></span></a></strong></code> section in <code class="docutils literal notranslate"><span class="pre">~/.tencentcloud/default.configure</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-session_expire_time"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-session-expire-time"><strong>session_expire_time</strong></p>
+<a class="ansibleOptionLink" href="#parameter-session_expire_time" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Session persistence duration in seconds, 30-3600; <code class="docutils literal notranslate"><span class="pre">0</span></code> disables session persistence. Only meaningful for TCP and UDP listeners.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-sni_switch"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-sni-switch"><strong>sni_switch</strong></p>
+<a class="ansibleOptionLink" href="#parameter-sni_switch" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Whether SNI is enabled, only meaningful for HTTPS listeners.</p>
+<p>An SNI-enabled listener cannot be switched back off; the API rejects the change.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-state"><strong>state</strong></p>
+<a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">present</span></code> creates the listener with <code class="ansible-value docutils literal notranslate"><span class="pre">CreateListener</span></code> when it does not exist, and updates the mutable attributes with <code class="ansible-value docutils literal notranslate"><span class="pre">ModifyListener</span></code> when it does.</p>
+<p><code class="docutils literal notranslate"><span class="pre">absent</span></code> deletes the listener with <code class="ansible-value docutils literal notranslate"><span class="pre">DeleteListener</span></code>.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">&quot;present&quot;</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-timeout"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-timeout"><strong>timeout</strong></p>
+<a class="ansibleOptionLink" href="#parameter-timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>SDK HTTP request timeout in seconds.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">60</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-token"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-token"><strong>token</strong></p>
+<a class="ansibleOptionLink" href="#parameter-token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Temporary credential token. Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_TOKEN</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-user_agent"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-user-agent"><strong>user_agent</strong></p>
+<a class="ansibleOptionLink" href="#parameter-user_agent" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Value appended to the SDK User-Agent header so API usage can be attributed to this collection.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;ansible-collection.susunola.tencentcloud&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-waiter_delay"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-waiter-delay"><strong>waiter_delay</strong></p>
+<a class="ansibleOptionLink" href="#parameter-waiter_delay" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Interval in seconds between state polls while waiting.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">5</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-waiter_timeout"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-parameter-waiter-timeout"><strong>waiter_timeout</strong></p>
+<a class="ansibleOptionLink" href="#parameter-waiter_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Maximum time in seconds to wait for an asynchronous listener task to finish.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">120</span></code></p>
+</div></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="notes">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Notes</a><a class="headerlink" href="#notes" title="Link to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Requires the <code class="docutils literal notranslate"><span class="pre">tencentcloud-sdk-python-clb</span></code> package on the controller.</p></li>
+<li><p>Uses the <code class="docutils literal notranslate"><span class="pre">clb.tencentcloudapi.com</span></code> endpoint by default.</p></li>
+<li><p>Listener operations are asynchronous; <code class="ansible-value docutils literal notranslate"><span class="pre">CreateListener</span></code>, <code class="ansible-value docutils literal notranslate"><span class="pre">ModifyListener</span></code> and <code class="ansible-value docutils literal notranslate"><span class="pre">DeleteListener</span></code> return a request ID the module polls through <code class="ansible-value docutils literal notranslate"><span class="pre">DescribeTaskStatus</span></code> until the task succeeds.</p></li>
+</ul>
+</div>
+</section>
+<section id="examples">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a TCP listener with a custom health check</span>
+<span class="w">  </span><span class="nt">susunola.tencentcloud.clb_listener</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou</span>
+<span class="w">    </span><span class="nt">load_balancer_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lb-xxxxxxxx</span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tcp-8080</span>
+<span class="w">    </span><span class="nt">scheduler</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WRR</span>
+<span class="w">    </span><span class="nt">session_expire_time</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">    </span><span class="nt">health_check</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">health_switch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">interval_time</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">      </span><span class="nt">health_num</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">un_health_num</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">time_out</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create an HTTPS listener with a certificate</span>
+<span class="w">  </span><span class="nt">susunola.tencentcloud.clb_listener</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou</span>
+<span class="w">    </span><span class="nt">load_balancer_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lb-xxxxxxxx</span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTPS</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">443</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https-443</span>
+<span class="w">    </span><span class="nt">certificate</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">ssl_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UNIDIRECTIONAL</span>
+<span class="w">      </span><span class="nt">cert_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">abcdefgh</span>
+<span class="w">    </span><span class="nt">sni_switch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Preview the listener changes (no changes applied)</span>
+<span class="w">  </span><span class="nt">susunola.tencentcloud.clb_listener</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou</span>
+<span class="w">    </span><span class="nt">load_balancer_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lb-xxxxxxxx</span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">    </span><span class="nt">scheduler</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LEAST_CONN</span>
+<span class="w">  </span><span class="nt">check_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete a listener</span>
+<span class="w">  </span><span class="nt">susunola.tencentcloud.clb_listener</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-guangzhou</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
+<span class="w">    </span><span class="nt">load_balancer_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lb-xxxxxxxx</span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+</pre></div>
+</div>
+</section>
+<section id="return-values">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Return Values</a><a class="headerlink" href="#return-values" title="Link to this heading"></a></h2>
+<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/projects/ansible/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible devel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
+<table class="longtable ansible-option-table docutils align-default" style="width: 100%">
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-listener"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-return-listener"><strong>listener</strong></p>
+<a class="ansibleOptionLink" href="#return-listener" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The listener as reported by <code class="ansible-value docutils literal notranslate"><span class="pre">DescribeListeners</span></code> after the operation.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;ListenerId&quot;:</span> <span class="pre">&quot;lbl-xxxxxxxx&quot;,</span> <span class="pre">&quot;ListenerName&quot;:</span> <span class="pre">&quot;tcp-8080&quot;,</span> <span class="pre">&quot;Port&quot;:</span> <span class="pre">8080,</span> <span class="pre">&quot;Protocol&quot;:</span> <span class="pre">&quot;TCP&quot;,</span> <span class="pre">&quot;Scheduler&quot;:</span> <span class="pre">&quot;WRR&quot;,</span> <span class="pre">&quot;SessionExpireTime&quot;:</span> <span class="pre">0}</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-listener_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-clb-listener-module-return-listener-id"><strong>listener_id</strong></p>
+<a class="ansibleOptionLink" href="#return-listener_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>ID of the managed listener.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;lbl-xxxxxxxx&quot;</span></code></p>
+</div></td>
+</tr>
+</tbody>
+</table>
+<section id="authors">
+<h3>Authors<a class="headerlink" href="#authors" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Tencent Cloud Ansible Collection Contributors (&#64;susunola)</p></li>
+</ul>
+</section>
+<section id="collection-links">
+<h3>Collection links<a class="headerlink" href="#collection-links" title="Link to this heading"></a></h3>
+<ul class="ansible-links">
+<li><span><a aria-role="button" class="ansible-link reference external" href="https://github.com/susunola/ansible-collection-tencentcloud/issues" rel="noopener external" target="_blank">Issue Tracker</a></span></li>
+<li><span><a aria-role="button" class="ansible-link reference external" href="https://github.com/susunola/ansible-collection-tencentcloud" rel="noopener external" target="_blank">Repository (Sources)</a></span></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          
+
+<footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ckafka_user_info_module.html" class="btn btn-neutral float-left" title="susunola.tencentcloud.ckafka_user_info module – Gather information about Tencent Cloud CKafka users" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="clb_listener_info_module.html" class="btn btn-neutral float-right" title="susunola.tencentcloud.clb_listener_info module – Gather information about Tencent Cloud CLB listeners" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Tencent Cloud Ansible Collection Contributors.</p>
+  </div>
+
+  
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script><!-- extra footer elements for Ansible beyond RTD Sphinx Theme -->
+
+</body>
+</html>
