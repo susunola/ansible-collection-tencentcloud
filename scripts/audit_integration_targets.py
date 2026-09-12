@@ -109,6 +109,45 @@ def audit_workflow_targets(root: Path | None = None) -> list[str]:
     return []
 
 
+# ansible-test rebuilds the environment before it spawns ansible-playbook, so
+# a gate only reaches a target if it was exported on the "Materialise
+# integration inputs" step. The run step's own env is too late - and it is
+# where every gate used to live, which made every gated target self-skip.
+_INPUTS_STEP = "Materialise integration inputs for ansible-test"
+_RUN_STEP = "Run integration tests"
+# The key pair travels in the TCCLI profile instead (and is masked anyway).
+_INPUT_PARITY_EXEMPT = frozenset({"TENCENTCLOUD_SECRET_ID", "TENCENTCLOUD_SECRET_KEY"})
+
+
+def audit_workflow_input_parity(root: Path | None = None) -> list[str]:
+    """Flag a per-target gate exported on the run step but not on the inputs step."""
+    root = root or ROOT
+    path = root / ".github/workflows/integration.yml"
+    if not path.exists():
+        return []
+    try:
+        data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001 - reported by the parse check
+        return [f"{path}: YAML error: {exc}"]
+    found: dict[str, set] = {}
+    for job in (data.get("jobs") or {}).values():
+        for step in (job or {}).get("steps") or []:
+            if isinstance(step, dict) and step.get("name") in (_INPUTS_STEP, _RUN_STEP):
+                found[step["name"]] = set(step.get("env") or {})
+    inputs_env = found.get(_INPUTS_STEP)
+    run_env = found.get(_RUN_STEP)
+    if inputs_env is None or run_env is None:
+        return []
+    missing = sorted((run_env - _INPUT_PARITY_EXEMPT) - inputs_env)
+    if not missing:
+        return []
+    return [
+        f"{path}: {' '.join(missing)} is exported on the '{_RUN_STEP}' step but not on "
+        f"the '{_INPUTS_STEP}' step - ansible-test strips it before the playbook runs, "
+        "so the gated target silently self-skips"
+    ]
+
+
 def main() -> int:
     errors.clear()  # main() may run multiple times under pytest.
     for t in TARGETS:
@@ -122,6 +161,7 @@ def main() -> int:
         audit_tasks(base / "tasks/main.yml")
     errors.extend(audit_conditionals())
     errors.extend(audit_workflow_targets())
+    errors.extend(audit_workflow_input_parity())
     # coverage registry + workflow parse
     for p in (ROOT / "tests/integration/coverage.yml", ROOT / ".github/workflows/integration.yml"):
         try:
@@ -136,7 +176,8 @@ def main() -> int:
     print(
         "AUDIT OK: 5 targets x 3 files + coverage.yml + integration.yml parse; "
         "all FQCNs resolve; when-guards reference earlier registers; "
-        "no bare or malformed conditionals; dispatch default matches the run fallback"
+        "no bare or malformed conditionals; dispatch default matches the run fallback; "
+        "per-target gates are exported where ansible-test can still see them"
     )
     return 0
 

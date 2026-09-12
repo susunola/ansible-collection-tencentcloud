@@ -96,9 +96,40 @@ jobs:
       # ansible-playbook (docs/integration-env.md 2.3).
       - name: Materialise integration inputs for ansible-test
         if: steps.creds.outputs.available == 'true'
+        # Every gate below has to be exported HERE, not on the "Run integration
+        # tests" step: by then ansible-test has already rebuilt the environment
+        # and stripped TENCENTCLOUD_*, so lookup('env', ...) inside the playbook
+        # sees nothing and every gated target self-skips. Keep this list in sync
+        # with the one on the run step below and with docs/integration-env.md.
         env:
           TENCENTCLOUD_REGION: ap-guangzhou
           GITHUB_RUN_ID: ${{ github.run_id }}
+          TENCENTCLOUD_TKE_CLUSTER_ID: ${{ secrets.TENCENTCLOUD_TKE_CLUSTER_ID }}
+          TENCENTCLOUD_TKE_ADDON_NAME: ${{ vars.TENCENTCLOUD_TKE_ADDON_NAME }}
+          TENCENTCLOUD_TKE_ADDON_VERSION: ${{ vars.TENCENTCLOUD_TKE_ADDON_VERSION }}
+          TENCENTCLOUD_APIGW_SERVICE_ID: ${{ secrets.TENCENTCLOUD_APIGW_SERVICE_ID }}
+          TENCENTCLOUD_MONITOR_NAMESPACE: ${{ vars.TENCENTCLOUD_MONITOR_NAMESPACE }}
+          TENCENTCLOUD_MONITOR_NOTICE_ID: ${{ secrets.TENCENTCLOUD_MONITOR_NOTICE_ID }}
+          TENCENTCLOUD_PRIVATE_DNS_VPC_ID: ${{ secrets.TENCENTCLOUD_PRIVATE_DNS_VPC_ID }}
+          TENCENTCLOUD_CAM_GROUP_ID: ${{ secrets.TENCENTCLOUD_CAM_GROUP_ID }}
+          TENCENTCLOUD_CAM_SUB_UIN: ${{ secrets.TENCENTCLOUD_CAM_SUB_UIN }}
+          TENCENTCLOUD_DBBRAIN_INSTANCE_ID: ${{ secrets.TENCENTCLOUD_DBBRAIN_INSTANCE_ID }}
+          TENCENTCLOUD_DBBRAIN_SESSION_TOKEN: ${{ secrets.TENCENTCLOUD_DBBRAIN_SESSION_TOKEN }}
+          TENCENTCLOUD_TCR_REGISTRY_ID: ${{ secrets.TENCENTCLOUD_TCR_REGISTRY_ID }}
+          TENCENTCLOUD_TCR_REPLICATION_REGION_ID: ${{ vars.TENCENTCLOUD_TCR_REPLICATION_REGION_ID }}
+          TENCENTCLOUD_TCR_REPLICATION_REGION_NAME: ${{ vars.TENCENTCLOUD_TCR_REPLICATION_REGION_NAME }}
+          TENCENTCLOUD_TCR_NAMESPACE: ${{ vars.TENCENTCLOUD_TCR_NAMESPACE }}
+          TENCENTCLOUD_TCR_WEBHOOK_URL: ${{ secrets.TENCENTCLOUD_TCR_WEBHOOK_URL }}
+          TENCENTCLOUD_CLS_ALARM_TOPIC_ID: ${{ secrets.TENCENTCLOUD_CLS_ALARM_TOPIC_ID }}
+          TENCENTCLOUD_REDIS_INSTANCE_ID: ${{ secrets.TENCENTCLOUD_REDIS_INSTANCE_ID }}
+          TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID: ${{ secrets.TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID }}
+          TENCENTCLOUD_CVM_INSTANCE_TYPE: ${{ vars.TENCENTCLOUD_CVM_INSTANCE_TYPE }}
+          TENCENTCLOUD_RUN_BILLED_TARGETS: ${{ vars.TENCENTCLOUD_RUN_BILLED_TARGETS }}
+          TENCENTCLOUD_CDB_ENGINE_VERSION: ${{ vars.TENCENTCLOUD_CDB_ENGINE_VERSION }}
+          TENCENTCLOUD_CDB_MEMORY: ${{ vars.TENCENTCLOUD_CDB_MEMORY }}
+          TENCENTCLOUD_CDB_VOLUME: ${{ vars.TENCENTCLOUD_CDB_VOLUME }}
+          TENCENTCLOUD_CDB_ZONE: ${{ vars.TENCENTCLOUD_CDB_ZONE }}
+          TENCENTCLOUD_TKE_CLUSTER_VERSION: ${{ vars.TENCENTCLOUD_TKE_CLUSTER_VERSION }}
         run: |
           python scripts/integration_inputs.py --write
           python scripts/integration_inputs.py --check

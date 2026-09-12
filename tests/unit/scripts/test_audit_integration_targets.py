@@ -204,3 +204,67 @@ def test_workflow_without_a_dispatch_input_passes(target_tree):
         encoding="utf-8",
     )
     assert _AUDIT.audit_workflow_targets(target_tree) == []
+
+
+# ansible-test rebuilds the environment before spawning ansible-playbook, so a
+# gate only reaches a target when it is exported on the "Materialise
+# integration inputs" step. Before this check existed every gate lived on the
+# "Run integration tests" step - too late - and every gated target self-skipped
+# while the run still reported success.
+def _write_gated_workflow(root, inputs_env, run_env):
+    def block(indent, env):
+        return "".join(f"{indent}{key}: '{value}'\n" for key, value in env.items())
+
+    (root / ".github" / "workflows" / "integration.yml").write_text(
+        "name: Integration\n"
+        "on:\n  schedule:\n    - cron: '0 2 * * 6'\n"
+        "jobs:\n"
+        "  integration:\n"
+        "    steps:\n"
+        "      - name: Materialise integration inputs for ansible-test\n"
+        "        env:\n"
+        + block(" " * 10, inputs_env)
+        + "        run: python scripts/integration_inputs.py --write\n"
+        "      - name: Run integration tests\n"
+        "        env:\n"
+        + block(" " * 10, run_env)
+        + "        run: ansible-test integration vpc\n",
+        encoding="utf-8",
+    )
+
+
+def test_gate_exported_on_both_steps_passes(target_tree):
+    _write_target(target_tree, GOOD_TASKS)
+    _write_gated_workflow(
+        target_tree,
+        {"TENCENTCLOUD_REGION": "ap-guangzhou", "TENCENTCLOUD_CLS_ALARM_TOPIC_ID": "abc"},
+        {"TENCENTCLOUD_SECRET_ID": "id", "TENCENTCLOUD_CLS_ALARM_TOPIC_ID": "abc"},
+    )
+    assert _AUDIT.audit_workflow_input_parity(target_tree) == []
+    assert _AUDIT.main() == 0
+
+
+def test_gate_missing_from_the_inputs_step_is_flagged(target_tree):
+    _write_target(target_tree, GOOD_TASKS)
+    _write_gated_workflow(
+        target_tree,
+        {"TENCENTCLOUD_REGION": "ap-guangzhou"},
+        {"TENCENTCLOUD_SECRET_ID": "id", "TENCENTCLOUD_CLS_ALARM_TOPIC_ID": "abc"},
+    )
+    problems = _AUDIT.audit_workflow_input_parity(target_tree)
+    assert len(problems) == 1
+    assert "TENCENTCLOUD_CLS_ALARM_TOPIC_ID" in problems[0]
+    assert "self-skips" in problems[0]
+    assert _AUDIT.main() == 1
+
+
+def test_credential_pair_is_exempt_from_input_parity(target_tree):
+    # The key pair travels in the TCCLI profile, so it is expected to be
+    # missing from the inputs step.
+    _write_target(target_tree, GOOD_TASKS)
+    _write_gated_workflow(
+        target_tree,
+        {"TENCENTCLOUD_REGION": "ap-guangzhou"},
+        {"TENCENTCLOUD_SECRET_ID": "id", "TENCENTCLOUD_SECRET_KEY": "key"},
+    )
+    assert _AUDIT.audit_workflow_input_parity(target_tree) == []
