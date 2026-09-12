@@ -22,11 +22,21 @@ options:
   working_directory: {description: Command working directory., type: str, default: /root}
   timeout: {description: Command timeout in seconds., type: int, default: 60}
   enable_parameters: {description: Enable script parameter placeholders., type: bool, default: false}
-  default_parameters: {description: Default placeholder values. Omitted from the request when empty because TAT rejects the field unless C(enable_parameters) is true., type: dict, default: {}}
+  default_parameters:
+    description:
+      - Default placeholder values.
+      - Omitted from the request when empty because TAT rejects the field unless C(enable_parameters) is true.
+    type: dict
+    default: {}
   username: {description: Operating system user used to execute the command., type: str, default: root}
   output_cos_bucket_url: {description: HTTPS COS bucket URL for command output., type: str}
   output_cos_key_prefix: {description: COS key prefix for command output., type: str}
-  tags: {description: Tags assigned when creating the command. Applied on create only - TAT does not return tags so they are never reconciled., type: dict, default: {}}
+  tags:
+    description:
+      - Tags assigned when creating the command.
+      - Applied on create only - TAT does not return tags so they are never reconciled.
+    type: dict
+    default: {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

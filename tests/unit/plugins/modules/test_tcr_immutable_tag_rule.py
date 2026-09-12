@@ -204,7 +204,10 @@ def test_missing_patterns_fails(monkeypatch):
 
 def test_sdk_failure_fails(monkeypatch):
     fake = FakeTcrClient(rules=[])
-    fake.CreateImmutableTagRules = lambda request: (_ for _ in ()).throw(RuntimeError("boom"))
+
+    def _raise_error(request):
+        raise RuntimeError("boom")
+    fake.CreateImmutableTagRules = _raise_error
     _make_module(monkeypatch, fake)
     module_args(registry_id="tcr-abc", namespace_name="prod", rule=dict(RULE), state="present")
     try:

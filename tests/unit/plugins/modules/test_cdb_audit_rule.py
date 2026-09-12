@@ -186,7 +186,10 @@ def test_required_if_guard(monkeypatch):
 
 def test_sdk_failure_fails(monkeypatch):
     fake = FakeCdbClient(rules=[])
-    fake.CreateAuditRule = lambda request: (_ for _ in ()).throw(RuntimeError("boom"))
+
+    def _raise_error(request):
+        raise RuntimeError("boom")
+    fake.CreateAuditRule = _raise_error
     _make_module(monkeypatch, fake)
     module_args(rule_name="rule-host-prod", rule_filters=RF, state="present")
     try:

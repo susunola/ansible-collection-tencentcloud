@@ -183,7 +183,10 @@ def test_missing_instance_id_on_present_fails(monkeypatch):
 
 def test_sdk_failure_fails(monkeypatch):
     fake = FakeRedisClient(groups=[])
-    fake.CreateReplicationGroup = lambda request: (_ for _ in ()).throw(RuntimeError("boom"))
+
+    def _raise_error(request):
+        raise RuntimeError("boom")
+    fake.CreateReplicationGroup = _raise_error
     _make_module(monkeypatch, fake)
     module_args(group_name="app-cache-ha", instance_id="crs-abc", state="present")
     try:

@@ -110,7 +110,7 @@ def check(home: str | os.PathLike[str] | None = None) -> tuple[bool, dict[str, s
     try:
         for line in path.read_text(encoding="utf-8").splitlines():
             if "=" in line and not line.strip().startswith(("#", "[")):
-                key, _, value = line.partition("=")
+                key, _sep, value = line.partition("=")
                 values[key.strip()] = value.strip()
     except OSError:
         return False, values

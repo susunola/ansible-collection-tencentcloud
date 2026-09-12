@@ -189,7 +189,10 @@ def test_missing_rule_filters_on_present_fails(monkeypatch):
 
 def test_sdk_failure_fails(monkeypatch):
     fake = FakeCdbClient(templates=[])
-    fake.CreateAuditRuleTemplate = lambda request: (_ for _ in ()).throw(RuntimeError("boom"))
+
+    def _raise_error(request):
+        raise RuntimeError("boom")
+    fake.CreateAuditRuleTemplate = _raise_error
     _make_module(monkeypatch, fake)
     module_args(rule_template_name="tmpl-host-prod", rule_filters=list(RULE_FILTERS), state="present")
     try:

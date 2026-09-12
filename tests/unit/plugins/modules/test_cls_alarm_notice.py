@@ -190,7 +190,10 @@ def test_missing_notice_payload_on_present_fails(monkeypatch):
 
 def test_sdk_failure_fails(monkeypatch):
     fake = FakeClsClient(notices=[])
-    fake.CreateAlarmNotice = lambda request: (_ for _ in ()).throw(RuntimeError("boom"))
+
+    def _raise_error(request):
+        raise RuntimeError("boom")
+    fake.CreateAlarmNotice = _raise_error
     _make_module(monkeypatch, fake)
     module_args(name="oncall-email", notice=dict(NOTICE), state="present")
     try:

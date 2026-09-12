@@ -13,6 +13,8 @@ Checks, per tasks/main.yml:
    ("Conditional result (False) was derived from value of type 'str'"), and
    gate variables are strings, so they need an explicit test such as
    ``| length > 0``.
+6. The Integration workflow's ``workflow_dispatch`` ``targets`` default names
+   the same targets as the inline fallback the scheduled run uses.
 Also parses coverage.yml and the integration workflow YAML.
 """
 from __future__ import annotations
@@ -57,6 +59,56 @@ def is_malformed_conditional(cond: str) -> bool:
     return bool(_LENGTH_AFTER_COMPARISON.search(cond))
 
 
+# The scheduled run has no ``inputs``, so it falls through to the inline
+# fallback list; a manual dispatch uses the input default. They must name the
+# same targets - they drifted once already, which left the weekly run
+# exercising a different set from the one documented in integration-env.md.
+_FALLBACK_TARGETS = re.compile(r"inputs\.targets\s*\|\|\s*'([^']*)'")
+
+
+def _workflow_trigger(data) -> dict | None:
+    """Return the ``on:`` mapping. PyYAML resolves that key to boolean True."""
+    if not isinstance(data, dict):
+        return None
+    for key in (True, "on"):
+        value = data.get(key)
+        if isinstance(value, dict):
+            return value
+    return None
+
+
+def audit_workflow_targets(root: Path | None = None) -> list[str]:
+    """Flag a workflow_dispatch default that drifted from the run fallback."""
+    root = root or ROOT
+    path = root / ".github/workflows/integration.yml"
+    if not path.exists():
+        return []
+    try:
+        data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001 - reported by the parse check
+        return [f"{path}: YAML error: {exc}"]
+    trigger = _workflow_trigger(data)
+    if trigger is None:
+        return []
+    inputs = ((trigger.get("workflow_dispatch") or {}).get("inputs") or {})
+    default = (inputs.get("targets") or {}).get("default")
+    run_step = ""
+    for job in (data.get("jobs") or {}).values():
+        for step in (job or {}).get("steps") or []:
+            if isinstance(step, dict) and "inputs.targets" in (step.get("run") or ""):
+                run_step = step["run"]
+    fallback = _FALLBACK_TARGETS.search(run_step)
+    if not default or not fallback:
+        return []
+    if default.split() != fallback.group(1).split():
+        return [
+            f"{path}: the workflow_dispatch 'targets' default and the scheduled "
+            "run's fallback list differ - a manual run would exercise a different "
+            "set of targets from the weekly one"
+        ]
+    return []
+
+
 def main() -> int:
     errors.clear()  # main() may run multiple times under pytest.
     for t in TARGETS:
@@ -69,6 +121,7 @@ def main() -> int:
                 errors.append(f"{p}: YAML error: {exc}")
         audit_tasks(base / "tasks/main.yml")
     errors.extend(audit_conditionals())
+    errors.extend(audit_workflow_targets())
     # coverage registry + workflow parse
     for p in (ROOT / "tests/integration/coverage.yml", ROOT / ".github/workflows/integration.yml"):
         try:
@@ -80,7 +133,11 @@ def main() -> int:
         for e in errors:
             print(" -", e)
         return 1
-    print("AUDIT OK: 5 targets x 3 files + coverage.yml + integration.yml parse; all FQCNs resolve; when-guards reference earlier registers; no bare or malformed conditionals")
+    print(
+        "AUDIT OK: 5 targets x 3 files + coverage.yml + integration.yml parse; "
+        "all FQCNs resolve; when-guards reference earlier registers; "
+        "no bare or malformed conditionals; dispatch default matches the run fallback"
+    )
     return 0
 
 

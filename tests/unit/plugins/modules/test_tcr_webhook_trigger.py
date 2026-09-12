@@ -205,7 +205,10 @@ def test_missing_name_fails(monkeypatch):
 
 def test_sdk_failure_fails(monkeypatch):
     fake = FakeTcrClient(triggers=[])
-    fake.CreateWebhookTrigger = lambda request: (_ for _ in ()).throw(RuntimeError("boom"))
+
+    def _raise_error(request):
+        raise RuntimeError("boom")
+    fake.CreateWebhookTrigger = _raise_error
     _make_module(monkeypatch, fake)
     module_args(registry_id="tcr-abc", namespace="prod", trigger=dict(TRIGGER), state="present")
     try:

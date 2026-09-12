@@ -158,3 +158,49 @@ def test_boolean_conditionals_are_accepted(target_tree, guard):
     _write_target(target_tree, GOOD_TASKS + guard.rstrip("\n").replace("  when:", "- name: Guard\n  ansible.builtin.debug:\n    msg: x\n  when:"))
     assert _AUDIT.audit_conditionals(target_tree) == []
     assert _AUDIT.main() == 0
+
+
+# The scheduled run has no workflow_dispatch inputs, so it uses the inline
+# `${{ inputs.targets || '...' }}` fallback; a manual dispatch uses the input
+# default. Both must name the same targets.
+def _write_workflow(root, default, fallback):
+    (root / ".github" / "workflows" / "integration.yml").write_text(
+        "name: Integration\n"
+        "on:\n"
+        "  workflow_dispatch:\n"
+        "    inputs:\n"
+        "      targets:\n"
+        f'        default: "{default}"\n'
+        "jobs:\n"
+        "  integration:\n"
+        "    steps:\n"
+        "      - name: Run integration tests\n"
+        "        run: >-\n"
+        f"          ansible-test integration ${{{{ inputs.targets || '{fallback}' }}}}\n",
+        encoding="utf-8",
+    )
+
+
+def test_matching_dispatch_default_and_fallback_pass(target_tree):
+    _write_target(target_tree, GOOD_TASKS)
+    _write_workflow(target_tree, "vpc subnet", "vpc subnet")
+    assert _AUDIT.audit_workflow_targets(target_tree) == []
+    assert _AUDIT.main() == 0
+
+
+def test_drifted_dispatch_default_is_flagged(target_tree):
+    # The stale default from commit fd1d754: it had lost the five new targets.
+    _write_target(target_tree, GOOD_TASKS)
+    _write_workflow(target_tree, "vpc", "vpc subnet")
+    problems = _AUDIT.audit_workflow_targets(target_tree)
+    assert len(problems) == 1
+    assert "fallback" in problems[0]
+    assert _AUDIT.main() == 1
+
+
+def test_workflow_without_a_dispatch_input_passes(target_tree):
+    (target_tree / ".github" / "workflows" / "integration.yml").write_text(
+        "name: Integration\non:\n  schedule:\n    - cron: '0 2 * * 6'\n",
+        encoding="utf-8",
+    )
+    assert _AUDIT.audit_workflow_targets(target_tree) == []

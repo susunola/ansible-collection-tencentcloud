@@ -45,7 +45,7 @@ class FakeTkeClient(object):
 
     def __init__(self, clusters=None):
         # clusters: list of (cluster_id, deletion_protection) tuples
-        self.flags = {cid: flag for cid, flag in (clusters or [])}
+        self.flags = dict(clusters or [])
         self.calls = []
 
     def _record(self, name, request=None):

@@ -166,7 +166,10 @@ def test_delete_check_mode_is_dry_run(monkeypatch):
 
 def test_sdk_failure_fails(monkeypatch):
     fake = FakeApiGatewayClient(apps=[])
-    fake.CreateApiApp = lambda request: (_ for _ in ()).throw(RuntimeError("boom"))
+
+    def _raise_error(request):
+        raise RuntimeError("boom")
+    fake.CreateApiApp = _raise_error
     _make_module(monkeypatch, fake)
     module_args(api_app_name="mobile-client", state="present")
     try:

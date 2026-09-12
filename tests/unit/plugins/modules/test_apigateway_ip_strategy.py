@@ -205,7 +205,10 @@ def test_missing_strategy_type_on_present_fails(monkeypatch):
 
 def test_sdk_failure_fails(monkeypatch):
     fake = FakeApigwClient(strategies=[])
-    fake.CreateIPStrategy = lambda request: (_ for _ in ()).throw(RuntimeError("boom"))
+
+    def _raise_error(request):
+        raise RuntimeError("boom")
+    fake.CreateIPStrategy = _raise_error
     _make_module(monkeypatch, fake)
     module_args(service_id="service-abc", strategy_name="allow-office",
                 strategy_type="WHITE", strategy_data=STRATEGY_DATA, state="present")

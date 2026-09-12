@@ -190,7 +190,10 @@ def test_missing_plugin_type_on_present_fails(monkeypatch):
 
 def test_sdk_failure_fails(monkeypatch):
     fake = FakeApigwClient(plugins=[])
-    fake.CreatePlugin = lambda request: (_ for _ in ()).throw(RuntimeError("boom"))
+
+    def _raise_error(request):
+        raise RuntimeError("boom")
+    fake.CreatePlugin = _raise_error
     _make_module(monkeypatch, fake)
     module_args(plugin_name="allow-office", plugin_type="IPControl", plugin_data=PLUGIN_DATA, state="present")
     try:
