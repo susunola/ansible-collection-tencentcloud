@@ -1,8 +1,10 @@
 ---
 # Sweeper for integration-test resources.
 #
-# Every integration target names its resources ``ansible-<kind>-it-*`` and
-# (where the module supports tags) tags them ``ansible_test: "true"``. This
+# Every integration target names its resources ``ansible-<kind>-it-*`` (or the
+# underscore spelling ``ansible_<kind>_it_*`` where the API forbids '-' — the
+# CVM key pair API does), and (where the module supports tags) tags them
+# ``ansible_test: "true"``. The regexes below accept both separators. This
 # target scans for both markers and deletes whatever it finds, in reverse
 # dependency order, so a failed or cancelled CI run cannot leave billable
 # resources behind. It is intentionally tolerant: nothing here fails the
@@ -70,7 +72,7 @@
           {{ vpcs.vpcs
              | selectattr('VpcName', 'defined')
              | selectattr('VpcName', 'truthy')
-             | selectattr('VpcName', 'search', 'ansible-.*-it-') | list }}
+             | selectattr('VpcName', 'search', 'ansible[-_].*[-_]it[-_]') | list }}
 
     - name: Select test subnets
       ansible.builtin.set_fact:
@@ -78,7 +80,7 @@
           {{ subnets.subnets
              | selectattr('SubnetName', 'defined')
              | selectattr('SubnetName', 'truthy')
-             | selectattr('SubnetName', 'search', 'ansible-.*-it-') | list }}
+             | selectattr('SubnetName', 'search', 'ansible[-_].*[-_]it[-_]') | list }}
 
     - name: Select test route tables
       ansible.builtin.set_fact:
@@ -87,7 +89,7 @@
              | selectattr('RouteTableName', 'defined')
              | selectattr('RouteTableName', 'truthy')
              | selectattr('RouteTableName', 'search',
-                          'ansible-.*-it-') | list }}
+                          'ansible[-_].*[-_]it[-_]') | list }}
 
     - name: Select test security groups
       ansible.builtin.set_fact:
@@ -96,7 +98,7 @@
              | selectattr('SecurityGroupName', 'defined')
              | selectattr('SecurityGroupName', 'truthy')
              | selectattr('SecurityGroupName', 'search',
-                          'ansible-.*-it-') | list }}
+                          'ansible[-_].*[-_]it[-_]') | list }}
 
     - name: Select test EIPs
       ansible.builtin.set_fact:
@@ -104,7 +106,7 @@
           {{ eips.addresses
              | selectattr('AddressName', 'defined')
              | selectattr('AddressName', 'truthy')
-             | selectattr('AddressName', 'search', 'ansible-.*-it-') | list }}
+             | selectattr('AddressName', 'search', 'ansible[-_].*[-_]it[-_]') | list }}
 
     - name: Select test CLB load balancers
       ansible.builtin.set_fact:
@@ -113,7 +115,7 @@
              | selectattr('LoadBalancerName', 'defined')
              | selectattr('LoadBalancerName', 'truthy')
              | selectattr('LoadBalancerName', 'search',
-                          'ansible-.*-it-') | list }}
+                          'ansible[-_].*[-_]it[-_]') | list }}
 
     - name: Select test CFS file systems
       ansible.builtin.set_fact:
@@ -121,7 +123,7 @@
           {{ file_systems.file_systems
              | selectattr('Name', 'defined')
              | selectattr('Name', 'truthy')
-             | selectattr('Name', 'search', 'ansible-.*-it-') | list }}
+             | selectattr('Name', 'search', 'ansible[-_].*[-_]it[-_]') | list }}
 
     - name: Select test NAT gateways
       ansible.builtin.set_fact:
@@ -129,7 +131,7 @@
           {{ nat_gateways.nat_gateways
              | selectattr('NatGatewayName', 'defined')
              | selectattr('NatGatewayName', 'truthy')
-             | selectattr('NatGatewayName', 'search', 'ansible-.*-it-') | list }}
+             | selectattr('NatGatewayName', 'search', 'ansible[-_].*[-_]it[-_]') | list }}
 
     - name: Select test key pairs
       ansible.builtin.set_fact:
@@ -137,7 +139,7 @@
           {{ key_pairs.key_pairs
              | selectattr('KeyName', 'defined')
              | selectattr('KeyName', 'truthy')
-             | selectattr('KeyName', 'search', 'ansible-.*-it-') | list }}
+             | selectattr('KeyName', 'search', 'ansible[-_].*[-_]it[-_]') | list }}
 
     - name: Select test Lighthouse instances
       ansible.builtin.set_fact:
@@ -145,7 +147,7 @@
           {{ lighthouse_instances.instances
              | selectattr('InstanceName', 'defined')
              | selectattr('InstanceName', 'truthy')
-             | selectattr('InstanceName', 'search', 'ansible-.*-it-') | list }}
+             | selectattr('InstanceName', 'search', 'ansible[-_].*[-_]it[-_]') | list }}
 
     - name: Select test CAM users
       ansible.builtin.set_fact:
@@ -153,7 +155,7 @@
           {{ cam_users.users
              | selectattr('Name', 'defined')
              | selectattr('Name', 'truthy')
-             | selectattr('Name', 'search', 'ansible-.*-it-') | list }}
+             | selectattr('Name', 'search', 'ansible[-_].*[-_]it[-_]') | list }}
 
     # ------------------------------------------------------------------
     # Tear down in reverse dependency order. Each delete is best-effort;

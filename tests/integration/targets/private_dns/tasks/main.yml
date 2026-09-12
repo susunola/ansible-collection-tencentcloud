@@ -16,6 +16,15 @@
       region: "{{ tencentcloud_region }}"
   when: private_dns_vpc_id
   block:
+    # NOTE: a `vars:` block is templated lazily, so a `| random` name is
+    # re-rolled on EVERY reference - the resource is created under one
+    # name and asserted/deleted under another, which fails the run and
+    # leaks the resource. Freeze the names once with set_fact (facts
+    # outrank play vars).
+    - name: Freeze the per-run resource names
+      ansible.builtin.set_fact:
+        test_domain: "{{ test_domain }}"
+
     - name: Create private zone
       susunola.tencentcloud.private_dns_zone:
         domain: "{{ test_domain }}"

@@ -1,0 +1,114 @@
+---
+# End-to-end coverage for cls_alarm_notice: create + idempotency + check mode
+# + delete. An alarm notice is pure metadata (a notification channel group),
+# so this target creates no billable resource and is safe to run on every CI
+# pass.
+#
+# Payload shape confirmed against the live CLS API:
+#   * NoticeReceivers[].ReceiverType accepts only "Uin" and "Group"; the
+#     "Person" value used by older examples is rejected with
+#     InvalidParameterValue: invalid param .NoticeReceiver[0].ReceiverType.
+#   * ReceiverIds is a list of int64, not strings ("取值类型错误。参数类型应为
+#     `int64`").
+#   * StartTime / EndTime are mandatory and formatted "15:04:05".
+#
+# The module passes `notice` through verbatim as the CreateAlarmNoticeRequest
+# body and overwrites Name with the top-level `name`, so the idempotency
+# lookup and the create can never disagree.
+- name: CLS alarm notice end-to-end
+  vars:
+    run_id: "{{ 99999999 | random }}"
+    notice_name: "ansible-notice-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  block:
+    # NOTE: a `vars:` block is templated lazily, so a `| random` name is
+    # re-rolled on EVERY reference - the resource is created under one name
+    # and asserted/deleted under another, which fails the run and leaks the
+    # resource. Freeze the names once with set_fact (facts outrank play vars).
+    - name: Freeze the per-run resource names
+      ansible.builtin.set_fact:
+        run_id: "{{ run_id }}"
+
+    - name: Create an alarm notice
+      susunola.tencentcloud.cls_alarm_notice:
+        state: present
+        name: "{{ notice_name }}"
+        notice:
+          Name: "{{ notice_name }}"
+          Type: All
+          NoticeReceivers:
+            - ReceiverType: Uin
+              ReceiverIds:
+                - 1
+              ReceiverChannels:
+                - Email
+              StartTime: "00:00:00"
+              EndTime: "23:59:59"
+      register: notice_create
+
+    - name: Creation reports changed with a server-assigned notice id
+      ansible.builtin.assert:
+        that:
+          - notice_create is changed
+          - notice_create.name == notice_name
+          - notice_create.alarm_notice_id is defined
+          - notice_create.alarm_notice_id is search('^notice-')
+          - notice_create.exists
+
+    - name: Create the same alarm notice again (idempotency)
+      susunola.tencentcloud.cls_alarm_notice:
+        state: present
+        name: "{{ notice_name }}"
+        notice:
+          Name: "{{ notice_name }}"
+          Type: All
+          NoticeReceivers:
+            - ReceiverType: Uin
+              ReceiverIds:
+                - 1
+              ReceiverChannels:
+                - Email
+              StartTime: "00:00:00"
+              EndTime: "23:59:59"
+      register: notice_second
+
+    - name: Second run reports no change and the same notice id
+      ansible.builtin.assert:
+        that:
+          - notice_second is not changed
+          - notice_second.alarm_notice_id == notice_create.alarm_notice_id
+          - notice_second.exists
+
+    - name: Check mode reports the delete without deleting
+      susunola.tencentcloud.cls_alarm_notice:
+        state: absent
+        name: "{{ notice_name }}"
+      check_mode: true
+      register: notice_check_delete
+
+    - name: Check mode reports the post-operation state without touching the API
+      ansible.builtin.assert:
+        that:
+          - notice_check_delete is changed
+          - not notice_check_delete.exists
+
+    - name: Delete the alarm notice
+      susunola.tencentcloud.cls_alarm_notice:
+        state: absent
+        name: "{{ notice_name }}"
+      register: notice_delete
+
+    - name: Deletion reports changed and the notice is gone
+      ansible.builtin.assert:
+        that:
+          - notice_delete is changed
+          - not notice_delete.exists
+
+  always:
+    - name: Delete the alarm notice if the run failed mid-way
+      susunola.tencentcloud.cls_alarm_notice:
+        state: absent
+        name: "{{ notice_name }}"
+      ignore_errors: true

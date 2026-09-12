@@ -38,6 +38,9 @@ options:
       - Flat list of audit-rule filter objects, mirroring the CDB SDK
         C(RuleFilters) shape. Each item is a mapping with C(type), C(value) as
         a list of strings, and C(compare).
+      - C(compare) is validated server-side and accepts only C(EXC), C(EQS),
+        C(NEQ), C(REG) and C(INC); anything else is rejected with
+        C(InvalidParameter.InvalidParameterError).
       - Required when I(state=present).
     type: list
     elements: dict
@@ -68,7 +71,8 @@ EXAMPLES = r'''
       - type: host
         value:
           - "10.0.0.%"
-        compare: "="
+        # compare accepts EXC / EQS / NEQ / REG / INC only.
+        compare: INC
     alarm_level: 2
     alarm_policy: 1
 

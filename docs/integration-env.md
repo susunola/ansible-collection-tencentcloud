@@ -1,15 +1,16 @@
-# Real-cloud integration: trusted execution environment (P0-03) and the 26 → 30+ plan (P0-04)
+# Real-cloud integration: trusted execution environment (P0-03) and the 29 → 30+ plan (P0-04)
 
 > Owners: panorama P0-03 / P0-04 · gap-closure G1-b / G1-c · complements
 > `docs/testing-e2e.md` (per-module C1-C10 contract) and
 > `tests/integration/coverage.yml` (target / cost / module registry).
-> Last synced with the repo at 26 targets (P0-01/P0-02 landed, `6d83295`).
+> Last synced with the repo at 29 targets (P0-01/P0-02 landed, `6d83295`;
+> the three pure-configuration theme-#1 targets added after it).
 
 Integration targets create **billable cloud resources in a real Tencent Cloud
 account**. This document is the operator contract for that account: how
 credentials are injected, when runs happen, what prevents a broken run from
 leaking billable resources, how failures alert a human, and the roadmap from
-26 to 30+ targets by 2026-10.
+29 to 30+ targets by 2026-10.
 
 ## 1. Execution model
 
@@ -40,6 +41,7 @@ tables below must stay in sync with it.
 |---|---|---|
 | `TENCENTCLOUD_SECRET_ID` | secret | every module (via `tencentcloud_argument_spec`) |
 | `TENCENTCLOUD_SECRET_KEY` | secret | every module |
+| `TENCENTCLOUD_TOKEN` | secret | optional STS token, forwarded to the profile |
 | `TENCENTCLOUD_REGION` | literal `ap-guangzhou` | every target |
 
 Use a CAM sub-account API key (never the root key). Rotate quarterly. The
@@ -79,6 +81,72 @@ Per-target resource pointers (image ids, cluster ids) are **secrets**; tuning
 values (versions, sizes, zones) are **variables**. Never encode a billed
 target's gate in the default target list — see §6 runbook for how to run them.
 
+### 2.3 The `ansible-test` environment sanitiser (and why a profile file is the contract)
+
+`ansible-test` does **not** forward the caller's environment to the
+`ansible-playbook` process it spawns. `common_environment()` in
+`ansible_test._internal.util` rebuilds the environment from scratch: only
+`HOME`, `PATH`, `LC_ALL` plus a short platform-compatibility list
+(`LD_LIBRARY_PATH`, `SSH_AUTH_SOCK`, `LDFLAGS`, `CFLAGS`, …) survive. Every
+`TENCENTCLOUD_*` variable — including the two above — is dropped, and every
+module then fails with:
+
+```
+Set secret_id and secret_key, their TENCENTCLOUD_* environment variables, or
+the secret_id/secret_key keys of a profile in ~/.tencentcloud/default.configure.
+```
+
+The same applies to the controller-side `lookup('env', …)` calls in the
+targets' `vars/main.yml`: they resolve **inside** `ansible-playbook`, so the
+per-target gate variables of §2.2 are empty as well. That is safe by design
+(targets self-skip) but it means a gate can never be *enabled* through the
+workflow's `env:` block alone.
+
+The one channel that survives is `HOME`, and every module already falls back to
+the TCCLI profile `$HOME/.tencentcloud/default.configure` for `secret_id`,
+`secret_key`, `token` and `region` (`plugins/module_utils/client.py`). The
+workflow therefore materialises the secrets into that file before invoking
+`ansible-test`:
+
+```console
+export TENCENTCLOUD_SECRET_ID=… TENCENTCLOUD_SECRET_KEY=…
+export TENCENTCLOUD_REGION=ap-guangzhou          # optional; default below
+python scripts/integration_credentials.py --write
+python scripts/integration_credentials.py --check   # verify, exit 1 when absent
+ansible-test integration key_pair --local
+```
+
+The script writes mode `0600`, omits empty keys, never prints a secret, and
+exits `2` when the key pair is missing. Use the identical two commands for a
+local trusted-environment run — the only difference is `TENCENTCLOUD_REGION`,
+which the intl test account sets to `ap-hongkong`.
+
+Consequence to remember when writing a target: **anything the test needs from
+the environment must come from a file under `$HOME`, not from `env:`.**
+
+### 2.4 Products that refuse new resources (API Gateway)
+
+Some products reject *any* create call on accounts that never activated them,
+in every region. API Gateway on the intl test account is the live example:
+
+```
+CreateService  → FailedOperation.LimitingResourceCreated:
+                 The API gateway product has been stopped for sale, and no
+                 new resources can be created.
+CreatePlugin   → InternalError (the same condition, surfaced without a code)
+```
+
+`ap-guangzhou`, `ap-hongkong`, `ap-singapore`, `ap-shanghai` and `ap-beijing`
+all behave identically, so no region switch works around it.
+
+Rather than leave a permanently red target, the API Gateway targets
+(`api_gateway_service`, `apigateway_plugin`, `apigateway_ip_strategy`) treat
+those two codes as **"this account cannot host the product"** and skip their
+lifecycle with a debug explanation. Any other error still fails the run, so a
+genuine regression is never masked. On an account that does have API Gateway
+the same targets run the full create → idempotency → check-mode → delete
+contract unchanged.
+
 ## 3. Billing guardrails
 
 - Workflow: 40-minute wall cap + run serialisation + high-cost targets kept out
@@ -88,7 +156,10 @@ target's gate in the default target list — see §6 runbook for how to run them
   even if every GitHub-side guard fails.
 - Resource hygiene: names must start `ansible-<kind>-it-` and taggable
   resources must carry `ansible_test=true` so the sweeper (next section) can
-  find anything that leaks.
+  find anything that leaks. Some APIs forbid `-` in a name — the CVM key pair
+  API rejects it with `InvalidParameterValue: 包含不合法的字符'-'` — so those
+  targets use the underscore spelling `ansible_<kind>_it_*`; the sweeper
+  accepts both separators.
 
 ## 4. Cleanup fallback (three lines of defence)
 
@@ -148,7 +219,7 @@ account console if a run dies between create and delete.
 **Reading a run.** Skipped targets print an "Explain skipped …" debug task and
 pass green; real coverage is visible only when the gate variable is set.
 
-## 7. Roadmap: 26 → 30+ targets by 2026-10 (P0-04 / G1-c)
+## 7. Roadmap: 29 → 30+ targets by 2026-10 (P0-04 / G1-c)
 
 Direction from panorama G1-c: keep covering the flagship modules first, in
 product-depth order, on the customer lines most used with the ones already

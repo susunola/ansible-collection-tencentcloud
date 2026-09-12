@@ -19,6 +19,10 @@ targets:
   tcr_replication_instance: {cost: high, modules: [tcr_replication_instance]}
   cls_log_pipeline: {cost: low, modules: [cls_logset, cls_topic]}
   api_gateway_service: {cost: low, modules: [api_gateway_service]}
+  # Pure-configuration write modules: no billable resource, safe every pass.
+  cls_alarm_notice: {cost: free, modules: [cls_alarm_notice]}
+  cdb_audit_rule_template: {cost: free, modules: [cdb_audit_rule_template]}
+  apigateway_plugin: {cost: free, modules: [apigateway_plugin]}
   tat_command: {cost: free, modules: [tat_command]}
   # P0-01 / P0-02 flagship dedicated targets.
   cvm_instance: {cost: medium, modules: [cvm_instance]}

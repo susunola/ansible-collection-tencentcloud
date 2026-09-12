@@ -33,7 +33,12 @@ options:
     type: str
     required: true
   notice:
-    description: Raw SDK-shaped alarm notice configuration (the C(CreateAlarmNoticeRequest) body).
+    description:
+      - Raw SDK-shaped alarm notice configuration (the C(CreateAlarmNoticeRequest) body).
+      - The receiver entries are validated server-side. C(ReceiverType) accepts
+        only C(Uin) and C(Group), C(ReceiverIds) is a list of B(int64) (not
+        strings), and C(StartTime) / C(EndTime) are mandatory and formatted
+        C(15:04:05).
     type: dict
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -53,10 +58,15 @@ EXAMPLES = r'''
       Name: oncall-email
       Type: All
       NoticeReceivers:
-        - ReceiverType: "Person"
-          ReceiverIds: ["1137546"]
-          ReceiverChannels: ["Email"]
-          Enable: 1
+        # ReceiverType is Uin (account/子用户 uid) or Group (CAM group id);
+        # ReceiverIds are int64 values, not strings.
+        - ReceiverType: Uin
+          ReceiverIds:
+            - 1137546
+          ReceiverChannels:
+            - Email
+          StartTime: "00:00:00"
+          EndTime: "23:59:59"
 
 - name: Remove the alarm notice
   susunola.tencentcloud.cls_alarm_notice:

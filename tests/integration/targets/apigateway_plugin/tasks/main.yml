@@ -1,0 +1,128 @@
+---
+# End-to-end coverage for apigateway_plugin: create + idempotency + check
+# mode + delete. A plugin is pure metadata, so this target creates no
+# billable resource.
+#
+# PLATFORM CAVEAT (verified 2026-09 against a live intl account): API Gateway
+# refuses new resources on accounts that never activated the product -
+# CreateService returns
+#   FailedOperation.LimitingResourceCreated: API网关产品已停止售卖，无法新建资源
+# and CreatePlugin surfaces the same condition as a bare InternalError, in
+# every region. The suite therefore treats those two codes as "this account
+# cannot host API Gateway" and skips the lifecycle instead of failing, so the
+# target still exercises the module on accounts that do have the product.
+# Any other error is a genuine regression and fails the run.
+- name: API Gateway plugin end-to-end
+  vars:
+    run_id: "{{ 99999999 | random }}"
+    plugin_name: "ansible-plugin-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  block:
+    # NOTE: a `vars:` block is templated lazily, so a `| random` name is
+    # re-rolled on EVERY reference - the resource is created under one name
+    # and asserted/deleted under another, which fails the run and leaks the
+    # resource. Freeze the names once with set_fact (facts outrank play vars).
+    - name: Freeze the per-run resource names
+      ansible.builtin.set_fact:
+        run_id: "{{ run_id }}"
+
+    - name: Create an IP-control plugin
+      susunola.tencentcloud.apigateway_plugin:
+        state: present
+        plugin_name: "{{ plugin_name }}"
+        plugin_type: IPControl
+        plugin_data: '{"type":"ALLOW","ipList":["10.0.0.0/8"]}'
+        description: Created by the Ansible integration suite
+      register: plugin_create
+      ignore_errors: true
+
+    # The module wraps every SDK failure in a generic `msg`, so the platform
+    # refusal has to be recognised from the structured `error_code` /
+    # `error` fields that fail_sdk_error() adds alongside it.
+    - name: Decide whether API Gateway accepts new resources on this account
+      ansible.builtin.set_fact:
+        apigateway_refused: >-
+          {{ plugin_create is failed
+             and (plugin_create.error_code | default('') == 'InternalError'
+                  or 'LimitingResourceCreated' in plugin_create.error_code | default('')
+                  or '停止售卖' in plugin_create.error | default('')) }}
+
+    - name: Report the platform refusal and skip the lifecycle
+      ansible.builtin.debug:
+        msg: >-
+          API Gateway refused to create a plugin on this account
+          ({{ plugin_create.error_code | default('unknown') }}:
+          {{ plugin_create.error | default(plugin_create.msg | default('unknown error')) }});
+          skipping the plugin lifecycle. No assertion was run and nothing was
+          leaked.
+      when: apigateway_refused | bool
+
+    - name: Fail on any create error that is not a platform refusal
+      ansible.builtin.fail:
+        msg: >-
+          Creating the API Gateway plugin failed unexpectedly:
+          {{ plugin_create.error_code | default('unknown') }}:
+          {{ plugin_create.error | default(plugin_create.msg | default('no detail')) }}
+      when: plugin_create is failed and not (apigateway_refused | bool)
+
+    - name: Plugin lifecycle
+      when: not (apigateway_refused | bool)
+      block:
+        - name: Creation reports changed with a server-assigned plugin id
+          ansible.builtin.assert:
+            that:
+              - plugin_create is changed
+              - plugin_create.plugin_name == plugin_name
+              - plugin_create.plugin_id is defined
+              - plugin_create.plugin_id | length > 0
+              - plugin_create.exists
+
+        - name: Create the same plugin again (idempotency)
+          susunola.tencentcloud.apigateway_plugin:
+            state: present
+            plugin_name: "{{ plugin_name }}"
+            plugin_type: IPControl
+            plugin_data: '{"type":"ALLOW","ipList":["10.0.0.0/8"]}'
+            description: Created by the Ansible integration suite
+          register: plugin_second
+
+        - name: Second run reports no change and the same plugin id
+          ansible.builtin.assert:
+            that:
+              - plugin_second is not changed
+              - plugin_second.plugin_id == plugin_create.plugin_id
+              - plugin_second.exists
+
+        - name: Check mode reports the delete without deleting
+          susunola.tencentcloud.apigateway_plugin:
+            state: absent
+            plugin_name: "{{ plugin_name }}"
+          check_mode: true
+          register: plugin_check_delete
+
+        - name: Check mode reports the post-operation state without touching the API
+          ansible.builtin.assert:
+            that:
+              - plugin_check_delete is changed
+              - not plugin_check_delete.exists
+
+        - name: Delete the plugin
+          susunola.tencentcloud.apigateway_plugin:
+            state: absent
+            plugin_name: "{{ plugin_name }}"
+          register: plugin_delete
+
+        - name: Deletion reports changed and the plugin is gone
+          ansible.builtin.assert:
+            that:
+              - plugin_delete is changed
+              - not plugin_delete.exists
+
+  always:
+    - name: Delete the plugin if the run failed mid-way
+      susunola.tencentcloud.apigateway_plugin:
+        state: absent
+        plugin_name: "{{ plugin_name }}"
+      ignore_errors: true

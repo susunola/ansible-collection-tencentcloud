@@ -59,6 +59,23 @@ jobs:
       - name: Install collection
         if: steps.creds.outputs.available == 'true'
         run: ansible-galaxy collection install susunola-tencentcloud-*.tar.gz --force
+      # ansible-test sanitises the environment it hands to ansible-playbook:
+      # only HOME / PATH / LC_ALL and a short platform-compatibility list
+      # survive, so a step-level env: block never reaches the modules under
+      # test and every module fails with "Set secret_id and secret_key".
+      # Copy the credentials into the TCCLI profile under $HOME instead -
+      # that file is the modules' last credential/region fallback and does
+      # survive the sanitiser (docs/integration-env.md §2.3).
+      - name: Materialise credentials for ansible-test
+        if: steps.creds.outputs.available == 'true'
+        env:
+          TENCENTCLOUD_SECRET_ID: ${{ secrets.TENCENTCLOUD_SECRET_ID }}
+          TENCENTCLOUD_SECRET_KEY: ${{ secrets.TENCENTCLOUD_SECRET_KEY }}
+          TENCENTCLOUD_TOKEN: ${{ secrets.TENCENTCLOUD_TOKEN }}
+          TENCENTCLOUD_REGION: ap-guangzhou
+        run: |
+          python scripts/integration_credentials.py --write
+          python scripts/integration_credentials.py --check
       - name: Run integration tests
         if: steps.creds.outputs.available == 'true'
         env:

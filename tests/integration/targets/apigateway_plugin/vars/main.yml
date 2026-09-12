@@ -1,0 +1,2 @@
+---
+tencentcloud_region: "{{ lookup('env', 'TENCENTCLOUD_REGION') | default('ap-guangzhou', true) }}"
