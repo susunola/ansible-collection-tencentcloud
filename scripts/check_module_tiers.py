@@ -350,6 +350,7 @@ CORE_MODULES = {
     "tdmysql_backup_policy_info",
     "dbdc_db_custom_cluster",
     "cdwch_instance",
+    "cdwch_instance_info",
     "cdwch_backup_config",
     "cdwch_parameter",
     "trabbit_serverless_vhost",
