@@ -60,9 +60,11 @@ class FakeTcrClient(object):
     def DescribeWebhookTrigger(self, request):
         self._record("DescribeWebhookTrigger", request)
         registry = getattr(request, "RegistryId", None)
-        ns = getattr(request, "Namespace", None)
-        matched = [t for t in self.triggers
-                   if t._data.get("RegistryId", registry) == registry and t.NamespaceName == ns]
+        # The real API scopes the listing by the request's Namespace and
+        # returns NamespaceName=null on every trigger, so the fake must not
+        # filter on it either - otherwise the module's lookup looks correct
+        # here and only breaks against the live service.
+        matched = [t for t in self.triggers if t._data.get("RegistryId", registry) == registry]
         return SimpleNamespace(Triggers=[FakeResource(dict(t._data)) for t in matched],
                                TotalCount=len(matched), RequestId="req-fake")
 
@@ -81,8 +83,7 @@ class FakeTcrClient(object):
         ns = getattr(request, "Namespace", None)
         tid = getattr(request, "Id", None)
         self.triggers = [t for t in self.triggers
-                         if not (t._data.get("RegistryId", registry) == registry
-                                 and t.NamespaceName == ns and t.Id == tid)]
+                         if not (t._data.get("RegistryId", registry) == registry and t.Id == tid)]
         return SimpleNamespace(RequestId="req-fake")
 
 
@@ -146,6 +147,37 @@ def test_already_present_is_idempotent(monkeypatch):
     assert result["trigger_id"] == "1"
     assert [c for c, unused in fake.calls] == ["DescribeWebhookTrigger"]
     assert "CreateWebhookTrigger" not in [c for c, unused in fake.calls]
+
+
+def test_trigger_returned_with_a_null_namespace_still_matches(monkeypatch):
+    """Regression: the API fills NamespaceId and leaves NamespaceName null.
+
+    Comparing NamespaceName against the requested namespace therefore never
+    matched, the module concluded the trigger was absent, and a second
+    `state: present` run called CreateWebhookTrigger again - which the API
+    rejects with "notification policy named ... already exists".
+    """
+    trig = _trigger(1, None, "push-notify")
+    trig._data["RegistryId"] = "tcr-abc"
+    fake = FakeTcrClient(triggers=[trig])
+    _make_module(monkeypatch, fake)
+    module_args(registry_id="tcr-abc", namespace="prod", trigger=dict(TRIGGER), state="present")
+    result = run(mod.run_module)
+    assert result["changed"] is False
+    assert result["trigger_id"] == "1"
+    assert [c for c, unused in fake.calls] == ["DescribeWebhookTrigger"]
+
+
+def test_delete_matches_a_trigger_returned_with_a_null_namespace(monkeypatch):
+    trig = _trigger(2, None, "push-notify")
+    trig._data["RegistryId"] = "tcr-abc"
+    fake = FakeTcrClient(triggers=[trig])
+    _make_module(monkeypatch, fake)
+    module_args(registry_id="tcr-abc", namespace="prod", trigger=dict(TRIGGER), state="absent")
+    result = run(mod.run_module)
+    assert result["changed"] is True
+    assert result["exists"] is False
+    assert fake.triggers == []
 
 
 def test_absent_when_missing_is_idempotent(monkeypatch):

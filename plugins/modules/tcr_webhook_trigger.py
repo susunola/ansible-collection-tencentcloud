@@ -131,8 +131,18 @@ def find_trigger(module, client, models, registry_id, namespace, name):
     response = module.sdk_call(client.DescribeWebhookTrigger, request)
     triggers = list(getattr(response, "Triggers", None) or [])
     for item in triggers:
-        if getattr(item, "Name", None) == name and getattr(item, "NamespaceName", None) == namespace:
-            return item
+        if getattr(item, "Name", None) != name:
+            continue
+        # The API leaves NamespaceName null on every trigger and only fills
+        # NamespaceId, so comparing it against the requested namespace makes
+        # the trigger look absent: a second run would try to create it again
+        # and fail with "notification policy named ... already exists". The
+        # request is already scoped to the namespace, so only reject a
+        # trigger whose namespace is present AND different.
+        item_namespace = getattr(item, "NamespaceName", None)
+        if item_namespace and item_namespace != namespace:
+            continue
+        return item
     return None
 
 

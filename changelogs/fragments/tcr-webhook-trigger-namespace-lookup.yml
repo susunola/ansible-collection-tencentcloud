@@ -1,0 +1,10 @@
+---
+bugfixes:
+  - >-
+    tcr_webhook_trigger - stop requiring NamespaceName to match when looking up an existing
+    trigger. DescribeWebhookTrigger returns NamespaceName as null and only populates
+    NamespaceId, so the comparison never matched: the module decided the trigger was absent
+    and a second ``state: present`` run called CreateWebhookTrigger again, which the API
+    rejects with "notification policy named ... already exists". The lookup is already scoped
+    to the namespace by the request, so it now only rejects a trigger whose namespace is
+    present AND different.
