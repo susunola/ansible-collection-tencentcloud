@@ -1,0 +1,16 @@
+---
+bugfixes:
+  - >-
+    redis_replication_group - document a remark that the API actually accepts. The example
+    used ``remark: Primary HA group for app cache``, but CreateReplicationGroup validates the
+    remark with the instance-name rule and rejects any space with
+    ``InvalidParameterValue.InstanceNameRuleError: Illegal character of replication group
+    remark``. The integration target carried the same defect (``CI integration test``), so the
+    real-cloud run failed on the very first create.
+  - >-
+    redis_replication_group integration target - stop failing on an account that is not
+    whitelisted for replication groups. CreateReplicationGroup answers
+    ``UnauthorizedOperation.NoCAMAuthed: user not in replication group whitelist`` even for a
+    freshly created, running Redis instance, which is an account capability gap rather than a
+    regression. The target now recognises that code, explains it and skips the lifecycle, while
+    any other create error still fails the run.

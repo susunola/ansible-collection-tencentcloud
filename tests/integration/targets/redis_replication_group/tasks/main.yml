@@ -3,6 +3,10 @@
 # starts one, so it is gated on BOTH TENCENTCLOUD_RUN_BILLED_TARGETS=1 and a
 # seed instance id, and is kept out of the weekly default list
 # (docs/integration-env.md 3 + 6).
+#
+# Replication groups are also whitelist-only: on an account that is not
+# whitelisted the create is refused with UnauthorizedOperation.NoCAMAuthed and
+# the lifecycle is skipped rather than failed (docs/integration-env.md 2.4).
 - name: Read Redis replication group integration inputs
   ansible.builtin.set_fact:
     redis_instance_id: "{{ e2e_inputs.TENCENTCLOUD_REDIS_INSTANCE_ID | default(lookup('env', 'TENCENTCLOUD_REDIS_INSTANCE_ID'), true) | default('', true) }}"
@@ -34,7 +38,7 @@
       susunola.tencentcloud.redis_replication_group:
         group_name: "{{ group_name }}"
         instance_id: "{{ redis_instance_id }}"
-        remark: CI integration test
+        remark: ansible-e2e-redis-group
       check_mode: true
       register: predicted
 
@@ -42,41 +46,75 @@
       susunola.tencentcloud.redis_replication_group:
         group_name: "{{ group_name }}"
         instance_id: "{{ redis_instance_id }}"
-        remark: CI integration test
+        remark: ansible-e2e-redis-group
       register: created
+      ignore_errors: true
 
-    - name: Reconcile replication group
-      susunola.tencentcloud.redis_replication_group:
-        group_name: "{{ group_name }}"
-        remark: CI integration test
-      register: reconciled
+    # PLATFORM CAVEAT (verified 2026-09 against a live ap-guangzhou account):
+    # replication groups are whitelist-only - the API answers
+    #   UnauthorizedOperation.NoCAMAuthed: user not in replication group whitelist
+    # even for a freshly created, running Redis instance. That is an account
+    # capability gap, not a regression, so the lifecycle is skipped instead of
+    # failing (docs/integration-env.md 2.4).
+    - name: Decide whether this account may create replication groups
+      ansible.builtin.set_fact:
+        redis_group_refused: >-
+          {{ created is failed
+             and ('NoCAMAuthed' in created.error_code | default('')
+                  or 'replication group whitelist' in created.error | default('')) }}
 
-    - name: Verify replication group idempotency
-      ansible.builtin.assert:
-        that:
-          - predicted is changed
-          - created is changed
-          - created.group_id is defined
-          - created.exists
-          - reconciled is not changed
+    - name: Report the whitelist refusal and skip the lifecycle
+      ansible.builtin.debug:
+        msg: >-
+          Redis refused to create a replication group on this account
+          ({{ created.error_code | default('unknown') }}:
+          {{ created.error | default(created.msg | default('unknown error')) }});
+          skipping the lifecycle. No assertion was run and nothing was leaked.
+      when: redis_group_refused | bool
 
-    - name: Delete replication group
-      susunola.tencentcloud.redis_replication_group:
-        state: absent
-        group_name: "{{ group_name }}"
-      register: deleted
+    - name: Fail on any create error that is not the whitelist refusal
+      ansible.builtin.fail:
+        msg: >-
+          Creating the Redis replication group failed unexpectedly:
+          {{ created.error_code | default('unknown') }}:
+          {{ created.error | default(created.msg | default('no detail')) }}
+      when: created is failed and not (redis_group_refused | bool)
 
-    - name: Delete replication group again
-      susunola.tencentcloud.redis_replication_group:
-        state: absent
-        group_name: "{{ group_name }}"
-      register: deleted_again
+    - name: Replication group lifecycle
+      when: not (redis_group_refused | bool)
+      block:
+        - name: Reconcile replication group
+          susunola.tencentcloud.redis_replication_group:
+            group_name: "{{ group_name }}"
+            remark: ansible-e2e-redis-group
+          register: reconciled
 
-    - name: Verify replication group deletion
-      ansible.builtin.assert:
-        that:
-          - deleted is changed
-          - deleted_again is not changed
+        - name: Verify replication group idempotency
+          ansible.builtin.assert:
+            that:
+              - predicted is changed
+              - created is changed
+              - created.group_id is defined
+              - created.exists
+              - reconciled is not changed
+
+        - name: Delete replication group
+          susunola.tencentcloud.redis_replication_group:
+            state: absent
+            group_name: "{{ group_name }}"
+          register: deleted
+
+        - name: Delete replication group again
+          susunola.tencentcloud.redis_replication_group:
+            state: absent
+            group_name: "{{ group_name }}"
+          register: deleted_again
+
+        - name: Verify replication group deletion
+          ansible.builtin.assert:
+            that:
+              - deleted is changed
+              - deleted_again is not changed
   always:
     - name: Remove replication group if the run failed mid-way
       susunola.tencentcloud.redis_replication_group:

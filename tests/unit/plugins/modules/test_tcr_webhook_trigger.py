@@ -80,7 +80,8 @@ class FakeTcrClient(object):
     def DeleteWebhookTrigger(self, request):
         self._record("DeleteWebhookTrigger", request)
         registry = getattr(request, "RegistryId", None)
-        ns = getattr(request, "Namespace", None)
+        # The API leaves NamespaceName null on every trigger, so the delete
+        # must not filter on the namespace - only registry + id identify it.
         tid = getattr(request, "Id", None)
         self.triggers = [t for t in self.triggers
                          if not (t._data.get("RegistryId", registry) == registry and t.Id == tid)]

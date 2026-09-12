@@ -141,9 +141,9 @@ which the intl test account sets to `ap-hongkong`.
 Consequence to remember when writing a target: **anything the test needs from
 the environment must come from a file under `$HOME`, not from `env:`.**
 
-### 2.4 Products the account cannot host (API Gateway, CAM, Monitor)
+### 2.4 Products the account cannot host (API Gateway, CAM, Monitor, Redis replication groups)
 
-Some creates fail for reasons that have nothing to do with the module. Three
+Some creates fail for reasons that have nothing to do with the module. Four
 cases are known on the intl test account, and all of them are **account
 capability gaps** rather than regressions:
 
@@ -157,7 +157,15 @@ CAM          AddUser        → AuthFailure.UnauthorizedOperation:
                               (cam:AddUser)
 Monitor      CreateAlarmPolicy → InvalidParameter: "INVALID_ARGUMENT":
                               view not found: QCE/CVM
+Redis        CreateReplicationGroup → UnauthorizedOperation.NoCAMAuthed:
+                              user not in replication group whitelist
 ```
+
+The Redis one is a **whitelist**, not a product-availability problem: the
+account happily creates Redis instances (a 1 GB postpaid standard-architecture
+instance provisions in under a minute), it just may not create replication
+groups against them. Pointing `TENCENTCLOUD_REDIS_INSTANCE_ID` at any instance
+therefore gets you exactly one refusal, on the group create.
 
 API Gateway refuses in `ap-guangzhou`, `ap-hongkong`, `ap-singapore`,
 `ap-shanghai` and `ap-beijing` alike, so no region switch works around it. The
@@ -175,6 +183,7 @@ debug explanation:
 | `api_gateway_service`, `apigateway_plugin`, `apigateway_ip_strategy` | `LimitingResourceCreated` / `InternalError` / "stopped for sale" |
 | `cam_user` | `AuthFailure.UnauthorizedOperation` on `AddUser` |
 | `monitor_alarm_policy` | `InvalidParameter` containing "view not found" |
+| `redis_replication_group` | `NoCAMAuthed` / "replication group whitelist" |
 
 Any other error still fails the run, so a genuine regression is never masked.
 On an account that does have the product the same targets run the full
@@ -280,6 +289,28 @@ secrets/variables configured. `state=absent` on cdb_instance **isolates**
 (billing stops, instance lingers in the recycle bin) and tke_cluster deletion
 is queued by the API — check `e2e-resources`/`reaper-plan` artifacts or the
 account console if a run dies between create and delete.
+
+**Opt-in medium/high targets.** Same dispatch mechanism, but these stay out of
+the weekly default list because their registry cost is `medium`/`high` (§3).
+All of the ones below are provisioned and verified green on a live account, so
+a dispatch is expected to pass rather than self-skip:
+
+| target | cost | requires | verified |
+|---|---|---|---|
+| `cls_alarm` | medium | `TENCENTCLOUD_CLS_ALARM_UIN` | 2026-09-12, run `34689479278` — `ok=20 changed=9` |
+| `tcr_immutable_tag_rule` | high | `TENCENTCLOUD_TCR_REGISTRY_ID`, `TENCENTCLOUD_TCR_NAMESPACE` | 2026-09-12, run `34690038467` — `ok=10 changed=3` |
+| `tcr_webhook_trigger` | high | `TENCENTCLOUD_TCR_REGISTRY_ID`, `TENCENTCLOUD_TCR_NAMESPACE`, `TENCENTCLOUD_TCR_WEBHOOK_URL` | 2026-09-12, run `34690038467` — `ok=11 changed=3` |
+
+These create no long-lived billable resource: `cls_alarm` provisions a logset,
+hot topic and notice group and removes all three in `always:`; the TCR targets
+reuse an existing registry and namespace and delete the rule/trigger they
+create. `cls_alarm` and the two TCR targets are cheap enough to dispatch
+together in one run (~35 s each).
+
+**Targets that cannot run on this account at all** (§2.4): `apigateway_ip_strategy`
+and `redis_replication_group` both self-skip green, so they are safe to include
+in any dispatch, but they contribute no coverage until the account gains the
+missing capability.
 
 **Reading a run.** Skipped targets print an "Explain skipped …" debug task and
 pass green; real coverage is visible only when the gate variable is set.

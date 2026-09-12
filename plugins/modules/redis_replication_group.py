@@ -52,7 +52,7 @@ EXAMPLES = r'''
   susunola.tencentcloud.redis_replication_group:
     group_name: app-cache-ha
     instance_id: crs-abc123
-    remark: Primary HA group for app cache
+    remark: primary-ha-group-for-app-cache
 
 - name: Remove the replication group
   susunola.tencentcloud.redis_replication_group:
