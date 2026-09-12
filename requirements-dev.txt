@@ -1,3 +1,10 @@
 -r requirements.txt
 ansible-core>=2.21.3,<2.22
 pytest>=9.1.1
+# ansible-test integration --coverage and ansible-test coverage xml/report
+# shell out to `python -m coverage` in the controller interpreter, so the
+# package itself has to be installed - ansible-core does not depend on it.
+# Without this the run dies on the first target with
+# "No module named 'coverage'" (only requirements.txt + pytest-cov are
+# installed for the ci.yml coverage step, which is a different path).
+coverage>=7.6
