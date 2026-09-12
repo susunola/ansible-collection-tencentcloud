@@ -196,7 +196,6 @@ KNOWN_GAPS = {
     "cdwch_instance",
     "cdwdoris_instance",
     "cdwpg_instance",
-    "cfw_address_template",
     "cfw_internet_acl_rule",
     "cfw_nat_acl_rule",
     "cfw_nat_dnat_rule",
