@@ -52,6 +52,17 @@ jobs:
           else
             echo "available=false" >> "$GITHUB_OUTPUT"
           fi
+      # This workflow only triggers on schedule and workflow_dispatch, both of
+      # which run on the canonical repository, so a run that gets here without
+      # credentials is a misconfiguration rather than a fork to tolerate. Every
+      # later step is guarded by available == 'true', so without this one the
+      # job would skip all of them and still report success - a green run that
+      # executed no test at all. Fail instead and name the missing secrets.
+      - name: Require Tencent Cloud credentials
+        if: steps.creds.outputs.available != 'true'
+        run: |
+          echo "::error title=Integration run executed no tests::TENCENTCLOUD_SECRET_ID is not set for this repository, so every integration step was skipped. Configure the TENCENTCLOUD_SECRET_ID and TENCENTCLOUD_SECRET_KEY repository secrets (docs/integration-env.md section 2) to enable real-cloud runs."
+          exit 1
       - name: Install dependencies
         if: steps.creds.outputs.available == 'true'
         run: python -m pip install -r requirements-dev.txt

@@ -49,6 +49,13 @@ Use a CAM sub-account API key (never the root key). Rotate quarterly. The
 modules additionally support STS `role_arn` / `profile`; CI uses the direct
 key pair for simplicity.
 
+Without `TENCENTCLOUD_SECRET_ID` every step of the `Integration` workflow is
+guarded off, and the `Require Tencent Cloud credentials` step then **fails** the
+run. That is deliberate: both triggers (`schedule`, `workflow_dispatch`) run on
+the canonical repository, so a credential-less run is a misconfiguration. Left
+unhandled it would skip all 10 downstream steps and still report success - a
+green run that executed no test.
+
 ### 2.2 Per-target gating variables
 
 Targets self-skip (they print "Explain skipped …" and exit green) when their
