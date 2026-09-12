@@ -1,7 +1,9 @@
 version: 1
 targets:
-  cam_user: {cost: free, modules: [cam_user]}
-  cam_group_membership: {cost: free, modules: [cam_group_membership]}
+  # CAM sub-user and group writes are refused with AuthFailure.UnauthorizedOperation
+  # on this account (2.4), so these self-skip whatever their gate says.
+  cam_user: {cost: free, modules: [cam_user], account_blocked: true}
+  cam_group_membership: {cost: free, modules: [cam_group_membership], account_blocked: true}
   key_pair: {cost: free, modules: [key_pair]}
   security_group: {cost: free, modules: [security_group, security_group_rule]}
   # vpc/subnet have dedicated flagship targets below (P0-01/02); keep the
@@ -11,7 +13,9 @@ targets:
   cfs_file_system: {cost: medium, modules: [cfs_file_system]}
   clb_http: {cost: medium, modules: [clb_load_balancer, clb_listener, clb_rule]}
   kms_key: {cost: low, modules: [kms_key, kms_key_rotation]}
-  monitor_alarm_policy: {cost: free, modules: [monitor_alarm_policy, monitor_alarm_policy_notice]}
+  # Monitor has no alarm view map for QCE/CVM on this account (2.4): "view not
+  # found", so the policy lifecycle cannot run regardless of the gate.
+  monitor_alarm_policy: {cost: free, modules: [monitor_alarm_policy, monitor_alarm_policy_notice], account_blocked: true}
   private_dns: {cost: low, modules: [private_dns_zone, private_dns_record]}
   tke_addon: {cost: medium, modules: [tke_addon]}
   cmq_queue: {cost: low, modules: [cmq_queue]}
@@ -20,7 +24,9 @@ targets:
   tcr_immutable_tag_rule: {cost: high, modules: [tcr_immutable_tag_rule]}
   tcr_webhook_trigger: {cost: high, modules: [tcr_webhook_trigger]}
   cls_alarm: {cost: medium, modules: [cls_alarm]}
-  redis_replication_group: {cost: high, modules: [redis_replication_group]}
+  # Replication groups are whitelist-only: CreateReplicationGroup answers
+  # UnauthorizedOperation.NoCAMAuthed even for a running instance (2.4).
+  redis_replication_group: {cost: high, modules: [redis_replication_group], account_blocked: true}
   dbbrain_sql_filter: {cost: high, modules: [dbbrain_sql_filter]}
   tcr_replication_instance: {cost: high, modules: [tcr_replication_instance]}
   cls_log_pipeline: {cost: low, modules: [cls_logset, cls_topic]}
@@ -28,8 +34,14 @@ targets:
   # Pure-configuration write modules: no billable resource, safe every pass.
   cls_alarm_notice: {cost: free, modules: [cls_alarm_notice]}
   cdb_audit_rule_template: {cost: free, modules: [cdb_audit_rule_template]}
-  apigateway_plugin: {cost: free, modules: [apigateway_plugin]}
-  apigateway_ip_strategy: {cost: free, modules: [apigateway_ip_strategy]}
+  # Creating a plugin needs an API Gateway service, and the product is stopped
+  # for sale here, so the create answers InternalError (2.4).
+  apigateway_plugin: {cost: free, modules: [apigateway_plugin], account_blocked: true}
+  # account_blocked: the product is unavailable on this account, so the target
+  # can only ever self-skip (docs/integration-env.md 2.4). Declared here rather
+  # than in the checker so scripts/check_integration_ran.py can tell "gate not
+  # configured" (a failure) from "account cannot host it" (tolerated).
+  apigateway_ip_strategy: {cost: free, modules: [apigateway_ip_strategy], account_blocked: true}
   tat_command: {cost: free, modules: [tat_command]}
   # P0-01 / P0-02 flagship dedicated targets.
   cvm_instance: {cost: medium, modules: [cvm_instance]}

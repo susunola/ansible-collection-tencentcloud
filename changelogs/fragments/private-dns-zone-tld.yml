@@ -1,0 +1,14 @@
+---
+bugfixes:
+  - >-
+    private_dns integration target - use a domain the API actually accepts. The target created
+    ``ansible-<random>.internal``, but a single-label ``.internal`` zone is refused outright with
+    ``InvalidParameter.IllegalDomainTld``. The target had therefore never once completed, which is
+    how the defect survived: it self-skipped on its gate variable for as long as that was unset.
+    It now uses the ``<label>.example.com`` shape the module already documents.
+  - >-
+    private_dns_zone - recognise ``InvalidParameter.ZoneNotExists`` as "already gone". Private DNS
+    reports a missing zone as an ``InvalidParameter`` rather than a ``ResourceNotFound``, so
+    ``state=absent`` failed its own post-delete confirmation instead of treating the successful
+    delete as success. The code was added to the shared ``is_not_found`` classification, so every
+    module benefits, not just this one.

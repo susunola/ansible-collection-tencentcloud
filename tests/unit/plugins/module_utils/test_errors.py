@@ -24,6 +24,7 @@ def test_classify_known_not_found_variants():
     assert errors.classify(FakeExc("InvalidInstanceId.NotFound")) == "not_found"
     assert errors.classify(FakeExc("InvalidParameter.LBIdNotFound")) == "not_found"
     assert errors.classify(FakeExc("InvalidParameter.ListenerIdNotFound")) == "not_found"
+    assert errors.classify(FakeExc("InvalidParameter.ZoneNotExists")) == "not_found"
 
 
 def test_classify_rate_limited():

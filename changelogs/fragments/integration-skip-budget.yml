@@ -1,0 +1,12 @@
+---
+minor_changes:
+  - >-
+    Integration runs now fail when a target reports green without ever executing its module
+    (scripts/check_integration_ran.py). A target whose gate variable is unset prints an "Explain
+    skipped" task and exits 0, so a whole run could be green while running nothing - the same
+    failure mode that let the scheduled workflow report success for months without a single test.
+    The checker reads each target's PLAY RECAP and flags any that changed nothing while skipping
+    more tasks than it ran. Targets the account genuinely cannot host are exempt through
+    ``account_blocked: true`` in tests/integration/coverage.yml, so the exemptions live in the
+    registry instead of being hard-coded in the checker, and a new target added to the default
+    list without its gate wired up fails the run.

@@ -47,6 +47,10 @@ def is_not_found(exc):
         "InvalidParameterValue.NotFound",
         "InvalidParameter.LBIdNotFound",
         "InvalidParameter.ListenerIdNotFound",
+        # Private DNS reports a missing zone as an InvalidParameter rather
+        # than a ResourceNotFound, so `state=absent` failed its post-delete
+        # confirmation instead of recognising the zone was already gone.
+        "InvalidParameter.ZoneNotExists",
     )
 
 

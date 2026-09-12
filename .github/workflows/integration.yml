@@ -171,9 +171,20 @@ jobs:
           TENCENTCLOUD_CDB_VOLUME: ${{ vars.TENCENTCLOUD_CDB_VOLUME }}
           TENCENTCLOUD_CDB_ZONE: ${{ vars.TENCENTCLOUD_CDB_ZONE }}
           TENCENTCLOUD_TKE_CLUSTER_VERSION: ${{ vars.TENCENTCLOUD_TKE_CLUSTER_VERSION }}
-        run: >-
-          ansible-test integration ${{ inputs.targets || 'security_group network cmq_queue cls_log_pipeline api_gateway_service apigateway_plugin apigateway_ip_strategy cls_alarm_notice cdb_audit_rule_template tat_command cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns tke_addon vpc subnet' }}
-          --color --python 3.12 --coverage
+        # `tee` the output so the next step can audit it: a target that
+        # self-skips exits green, so a run can be green having executed
+        # nothing. `pipefail` keeps ansible-test's own exit code.
+        run: |-
+          set -o pipefail
+          ansible-test integration ${{ inputs.targets || 'security_group network cmq_queue cls_log_pipeline api_gateway_service apigateway_plugin apigateway_ip_strategy cls_alarm_notice cdb_audit_rule_template tat_command cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns tke_addon vpc subnet' }} --color --python 3.12 --coverage 2>&1 | tee /tmp/integration.log
+      # Guard against "green but nothing ran". Without this, a target whose
+      # gate variable is unset prints "Explain skipped ..." and passes, which
+      # is exactly how the scheduled run reported success for months without
+      # executing a single test. Targets the account genuinely cannot host are
+      # exempt via account_blocked in tests/integration/coverage.yml.
+      - name: Verify every target actually executed
+        if: always() && steps.creds.outputs.available == 'true'
+        run: python scripts/check_integration_ran.py --log /tmp/integration.log
       # Coverage is collected (not gated) on real-cloud runs: the numbers
       # fluctuate with the account's resource state, so they are reported
       # as an artifact for inspection instead of failing the run. The XML

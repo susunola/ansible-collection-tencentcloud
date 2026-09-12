@@ -10,7 +10,10 @@
 
 - name: Private DNS zone and record end-to-end
   vars:
-    test_domain: "ansible-{{ 99999999 | random }}.internal"
+    # A single-label `.internal` zone is rejected outright with
+    # InvalidParameter.IllegalDomainTld, and the target never ran, so the
+    # defect stayed hidden. Use the same shape the module documents.
+    test_domain: "ansible-{{ 99999999 | random }}.example.com"
   module_defaults:
     group/susunola.tencentcloud.all:
       region: "{{ tencentcloud_region }}"
