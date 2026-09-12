@@ -185,6 +185,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <a class="ansibleOptionLink" href="#parameter-notice" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Raw SDK-shaped alarm notice configuration (the <code class="docutils literal notranslate"><span class="pre">CreateAlarmNoticeRequest</span></code> body).</p>
+<p>The receiver entries are validated server-side. <code class="docutils literal notranslate"><span class="pre">ReceiverType</span></code> accepts only <code class="docutils literal notranslate"><span class="pre">Uin</span></code> and <code class="docutils literal notranslate"><span class="pre">Group</span></code>, <code class="docutils literal notranslate"><span class="pre">ReceiverIds</span></code> is a list of <strong>int64</strong> (not strings), and <code class="docutils literal notranslate"><span class="pre">StartTime</span></code> / <code class="docutils literal notranslate"><span class="pre">EndTime</span></code> are mandatory and formatted <code class="docutils literal notranslate"><span class="pre">15:04:05</span></code>.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -318,10 +319,15 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <span class="w">      </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">oncall-email</span>
 <span class="w">      </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">All</span>
 <span class="w">      </span><span class="nt">NoticeReceivers</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ReceiverType</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Person&quot;</span>
-<span class="w">          </span><span class="nt">ReceiverIds</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;1137546&quot;</span><span class="p p-Indicator">]</span>
-<span class="w">          </span><span class="nt">ReceiverChannels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;Email&quot;</span><span class="p p-Indicator">]</span>
-<span class="w">          </span><span class="nt">Enable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">        </span><span class="c1"># ReceiverType is Uin (account/子用户 uid) or Group (CAM group id);</span>
+<span class="w">        </span><span class="c1"># ReceiverIds are int64 values, not strings.</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ReceiverType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Uin</span>
+<span class="w">          </span><span class="nt">ReceiverIds</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1137546</span>
+<span class="w">          </span><span class="nt">ReceiverChannels</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Email</span>
+<span class="w">          </span><span class="nt">StartTime</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;00:00:00&quot;</span>
+<span class="w">          </span><span class="nt">EndTime</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;23:59:59&quot;</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Remove the alarm notice</span>
 <span class="w">  </span><span class="nt">susunola.tencentcloud.cls_alarm_notice</span><span class="p">:</span>

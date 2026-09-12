@@ -43,6 +43,7 @@ P = {
     "max_msg_size": 65536,
     "msg_retention_seconds": 345600,
     "rewind_seconds": 0,
+    "retention_size_in_mb": 0,
 }
 
 QUEUE = {
@@ -168,6 +169,42 @@ def test_visibility_drift_updates_queue(monkeypatch):
     assert getattr(modify_call[1], "MaxMsgSize") is None
 
 
+def test_modify_always_sends_retention_size_in_mb(monkeypatch):
+    """Regression: ModifyCmqQueueAttribute rejects a request without it.
+
+    The live API answers "Invalid RetentionSizeInMB: Value should be between
+    10240MB and 512000MB" unless the field is present and set to 0 for a queue
+    without message rewind, so the module must always send it.
+    """
+    stored = dict(QUEUE)
+    stored["VisibilityTimeout"] = 30
+    fake = FakeTdmqClient(queues=[stored])
+    _make_module(monkeypatch, fake)
+    _args(visibility_timeout=45)
+    run(mod.run_module)
+    modify_call = next((c, r) for c, r in fake.calls if c == "ModifyCmqQueueAttribute")
+    assert getattr(modify_call[1], "RetentionSizeInMB") == 0
+
+
+def test_create_sends_the_configured_retention_size(monkeypatch):
+    fake = FakeTdmqClient()
+    _make_module(monkeypatch, fake)
+    _args(rewind_seconds=86400, retention_size_in_mb=10240)
+    run(mod.run_module)
+    create_call = next((c, r) for c, r in fake.calls if c == "CreateCmqQueue")
+    assert getattr(create_call[1], "RetentionSizeInMB") == 10240
+    assert getattr(create_call[1], "RewindSeconds") == 86400
+
+
+def test_rewind_without_a_retention_quota_fails(monkeypatch):
+    fake = FakeTdmqClient()
+    _make_module(monkeypatch, fake)
+    _args(rewind_seconds=86400)
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "retention_size_in_mb" in exc.value.args[0]["msg"]
+
+
 def test_immutable_max_msg_size_drift_fails(monkeypatch):
     stored = dict(QUEUE)
     stored["MaxMsgSize"] = 1048576
@@ -239,5 +276,7 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
 def test_request_builders_map_attributes():
     assert mod.build_describe_request(FakeModels(), "jobs").QueueName == "jobs"
     assert mod.build_create_request(FakeModels(), P).PollingWaitSeconds == 10
+    assert mod.build_create_request(FakeModels(), P).RetentionSizeInMB == 0
     assert mod.build_update_request(FakeModels(), P).VisibilityTimeout == 30
+    assert mod.build_update_request(FakeModels(), P).RetentionSizeInMB == 0
     assert mod.build_delete_request(FakeModels(), "jobs").QueueName == "jobs"

@@ -1,16 +1,17 @@
-# Real-cloud integration: trusted execution environment (P0-03) and the 29 → 30+ plan (P0-04)
+# Real-cloud integration: trusted execution environment (P0-03) and the 30 → 34+ plan (P0-04)
 
 > Owners: panorama P0-03 / P0-04 · gap-closure G1-b / G1-c · complements
 > `docs/testing-e2e.md` (per-module C1-C10 contract) and
 > `tests/integration/coverage.yml` (target / cost / module registry).
-> Last synced with the repo at 29 targets (P0-01/P0-02 landed, `6d83295`;
-> the three pure-configuration theme-#1 targets added after it).
+> Last synced with the repo at 34 targets (P0-01/P0-02 landed, `6d83295`;
+> the four pure-configuration theme-#1 targets and `apigateway_ip_strategy`
+> added after it).
 
 Integration targets create **billable cloud resources in a real Tencent Cloud
 account**. This document is the operator contract for that account: how
 credentials are injected, when runs happen, what prevents a broken run from
 leaking billable resources, how failures alert a human, and the roadmap from
-29 to 30+ targets by 2026-10.
+30 to 34+ targets by 2026-10.
 
 ## 1. Execution model
 
@@ -52,6 +53,10 @@ key pair for simplicity.
 
 Targets self-skip (they print "Explain skipped …" and exit green) when their
 gate variable is unset, so un-configured values are safe to leave empty.
+Every variable below is read through `e2e_inputs` (§2.5) first and the real
+environment second, so a value materialised into
+`$HOME/.tencentcloud/e2e_inputs.yml` does reach the target even though
+`ansible-test` empties the environment.
 
 | env | source | target | effect when unset |
 |---|---|---|---|
@@ -76,6 +81,11 @@ gate variable is unset, so un-configured values are safe to leave empty.
 | `TENCENTCLOUD_CDB_VOLUME` | var | cdb_instance | defaults `100` (GB) |
 | `TENCENTCLOUD_CDB_ZONE` | var | cdb_instance | defaults `ap-guangzhou-3` |
 | `TENCENTCLOUD_TKE_CLUSTER_VERSION` | var | tke_cluster | platform default version |
+| `TENCENTCLOUD_APIGW_SERVICE_ID` | secret | apigateway_ip_strategy | a throwaway service is created instead (and skipped if the product is unavailable) |
+| `TENCENTCLOUD_TCR_NAMESPACE` | var | tcr_immutable_tag_rule, tcr_webhook_trigger | both TCR targets skip |
+| `TENCENTCLOUD_TCR_WEBHOOK_URL` | secret | tcr_webhook_trigger | tcr_webhook_trigger skips |
+| `TENCENTCLOUD_CLS_ALARM_TOPIC_ID` | secret | cls_alarm | cls_alarm skips |
+| `TENCENTCLOUD_REDIS_INSTANCE_ID` | secret | redis_replication_group | redis skips (billed, also needs `TENCENTCLOUD_RUN_BILLED_TARGETS=1`) |
 
 Per-target resource pointers (image ids, cluster ids) are **secrets**; tuning
 values (versions, sizes, zones) are **variables**. Never encode a billed
@@ -124,28 +134,76 @@ which the intl test account sets to `ap-hongkong`.
 Consequence to remember when writing a target: **anything the test needs from
 the environment must come from a file under `$HOME`, not from `env:`.**
 
-### 2.4 Products that refuse new resources (API Gateway)
+### 2.4 Products the account cannot host (API Gateway, CAM, Monitor)
 
-Some products reject *any* create call on accounts that never activated them,
-in every region. API Gateway on the intl test account is the live example:
+Some creates fail for reasons that have nothing to do with the module. Three
+cases are known on the intl test account, and all of them are **account
+capability gaps** rather than regressions:
 
 ```
-CreateService  → FailedOperation.LimitingResourceCreated:
-                 The API gateway product has been stopped for sale, and no
-                 new resources can be created.
-CreatePlugin   → InternalError (the same condition, surfaced without a code)
+API Gateway  CreateService  → FailedOperation.LimitingResourceCreated:
+                              The API gateway product has been stopped for
+                              sale, and no new resources can be created.
+             CreatePlugin   → InternalError (same condition, no code)
+CAM          AddUser        → AuthFailure.UnauthorizedOperation:
+                              you are not authorized to perform operation
+                              (cam:AddUser)
+Monitor      CreateAlarmPolicy → InvalidParameter: "INVALID_ARGUMENT":
+                              view not found: QCE/CVM
 ```
 
-`ap-guangzhou`, `ap-hongkong`, `ap-singapore`, `ap-shanghai` and `ap-beijing`
-all behave identically, so no region switch works around it.
+API Gateway refuses in `ap-guangzhou`, `ap-hongkong`, `ap-singapore`,
+`ap-shanghai` and `ap-beijing` alike, so no region switch works around it. The
+Monitor failure is not about the namespace either: every namespace
+`DescribeProductList` returns (`qce/dlc`, `qce/tke2`, `qce/excluster`, …) is
+rejected with the same "view not found", which means the account has no alarm
+view map loaded at all.
 
-Rather than leave a permanently red target, the API Gateway targets
-(`api_gateway_service`, `apigateway_plugin`, `apigateway_ip_strategy`) treat
-those two codes as **"this account cannot host the product"** and skip their
-lifecycle with a debug explanation. Any other error still fails the run, so a
-genuine regression is never masked. On an account that does have API Gateway
-the same targets run the full create → idempotency → check-mode → delete
-contract unchanged.
+Rather than leave permanently red targets, the affected ones treat these codes
+as **"this account cannot host the product"** and skip their lifecycle with a
+debug explanation:
+
+| Target | Skips on |
+| --- | --- |
+| `api_gateway_service`, `apigateway_plugin`, `apigateway_ip_strategy` | `LimitingResourceCreated` / `InternalError` / "stopped for sale" |
+| `cam_user` | `AuthFailure.UnauthorizedOperation` on `AddUser` |
+| `monitor_alarm_policy` | `InvalidParameter` containing "view not found" |
+
+Any other error still fails the run, so a genuine regression is never masked.
+On an account that does have the product the same targets run the full
+create → idempotency → check-mode → delete contract unchanged.
+
+### 2.5 Non-secret inputs: the same file channel
+
+Credentials are only half the problem. Before this existed, every gate in §2.2
+was unreachable: the workflow's `env:` block was stripped, so
+`lookup('env', …)` was empty and the gated targets could never be switched on -
+not locally, not in CI. `scripts/integration_inputs.py` copies every
+`TENCENTCLOUD_*` variable plus `GITHUB_RUN_ID` into
+`$HOME/.tencentcloud/e2e_inputs.yml` (mode 0600; the key pair and the STS token
+are deliberately excluded, they belong to §2.3):
+
+```console
+export TENCENTCLOUD_RUN_BILLED_TARGETS=1
+python scripts/integration_inputs.py --write
+python scripts/integration_inputs.py --check     # exit 1 when the file is absent
+python scripts/integration_inputs.py --dry-run   # print masked, write nothing
+ansible-test integration cdb_instance --local
+```
+
+Targets pick the values up in `vars/main.yml`:
+
+```yaml
+e2e_inputs: >-
+  {{ lookup('ansible.builtin.file', lookup('env', 'HOME') ~ '/.tencentcloud/e2e_inputs.yml', errors='ignore')
+     | default('', true) | from_yaml | default({}, true) }}
+tencentcloud_region: "{{ e2e_inputs.TENCENTCLOUD_REGION
+                          | default(lookup('env', 'TENCENTCLOUD_REGION'), true)
+                          | default('ap-guangzhou', true) }}"
+```
+
+A missing file yields `{}`, so the documented default still applies and a plain
+`ansible-playbook` run (where `env` *does* work) is unaffected.
 
 ## 3. Billing guardrails
 
@@ -219,7 +277,7 @@ account console if a run dies between create and delete.
 **Reading a run.** Skipped targets print an "Explain skipped …" debug task and
 pass green; real coverage is visible only when the gate variable is set.
 
-## 7. Roadmap: 29 → 30+ targets by 2026-10 (P0-04 / G1-c)
+## 7. Roadmap: 30 → 34+ targets by 2026-10 (P0-04 / G1-c)
 
 Direction from panorama G1-c: keep covering the flagship modules first, in
 product-depth order, on the customer lines most used with the ones already

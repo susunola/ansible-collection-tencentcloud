@@ -109,3 +109,36 @@ def test_group_module_defaults_is_not_an_fqcn(target_tree):
     )
     _write_target(target_tree, tasks)
     assert _AUDIT.main() == 0
+
+
+# ansible-core 2.19 raises "Conditional result (False) was derived from value
+# of type 'str'" for a guard that is only identifiers and and/or/not, so the
+# audit has to reject them (gate variables are strings).
+BARE_GUARDS = [
+    "  when: demo_vpc_id\n",
+    "  when: not demo_vpc_id\n",
+    "  when: demo_vpc_id and demo_subnet_id\n",
+    "  when: not (demo_vpc_id and demo_subnet_id)\n",
+]
+SAFE_GUARDS = [
+    "  when: demo_vpc_id | length > 0\n",
+    "  when: demo_vpc_id | length == 0 or demo_subnet_id | length == 0\n",
+    "  when: created is defined\n",
+    "  when: created.thing.PolicyId is defined\n",
+    "  when: region == 'ap-guangzhou'\n",
+]
+
+
+@pytest.mark.parametrize("guard", BARE_GUARDS)
+def test_bare_conditionals_are_flagged(target_tree, guard):
+    _write_target(target_tree, GOOD_TASKS + guard.rstrip("\n").replace("  when:", "- name: Guard\n  ansible.builtin.debug:\n    msg: x\n  when:"))
+    problems = _AUDIT.audit_conditionals(target_tree)
+    assert len(problems) == 1
+    assert _AUDIT.main() == 1
+
+
+@pytest.mark.parametrize("guard", SAFE_GUARDS)
+def test_boolean_conditionals_are_accepted(target_tree, guard):
+    _write_target(target_tree, GOOD_TASKS + guard.rstrip("\n").replace("  when:", "- name: Guard\n  ansible.builtin.debug:\n    msg: x\n  when:"))
+    assert _AUDIT.audit_conditionals(target_tree) == []
+    assert _AUDIT.main() == 0

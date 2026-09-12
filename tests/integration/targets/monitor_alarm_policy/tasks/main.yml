@@ -1,9 +1,16 @@
 ---
+# PLATFORM CAVEAT (verified 2026-09 against a live intl account): some
+# accounts/regions have no alarm "view map" loaded - CreateAlarmPolicy answers
+#   InvalidParameter: "INVALID_ARGUMENT": view not found: QCE/CVM
+# for EVERY namespace, including the ones DescribeProductList returns. That is
+# an account capability gap, not a module defect, so the target reports and
+# skips instead of failing the whole suite. Any other error still fails.
 - name: Monitor alarm policy end-to-end
   vars:
-    policy_name: "ansible-monitor-it-{{ 99999999 | random }}"
-    namespace: "{{ lookup('env', 'TENCENTCLOUD_MONITOR_NAMESPACE') | default('QCE/CVM', true) }}"
-    notice_id: "{{ lookup('env', 'TENCENTCLOUD_MONITOR_NOTICE_ID') | default('', true) }}"
+    run_id: "{{ e2e_inputs.GITHUB_RUN_ID | default(lookup('env', 'GITHUB_RUN_ID'), true) | default(99999999 | random, true) }}"
+    policy_name: "ansible-monitor-it-{{ run_id }}"
+    namespace: "{{ e2e_inputs.TENCENTCLOUD_MONITOR_NAMESPACE | default(lookup('env', 'TENCENTCLOUD_MONITOR_NAMESPACE'), true) | default('QCE/CVM', true) }}"
+    notice_id: "{{ e2e_inputs.TENCENTCLOUD_MONITOR_NOTICE_ID | default(lookup('env', 'TENCENTCLOUD_MONITOR_NOTICE_ID'), true) | default('', true) }}"
   module_defaults:
     group/susunola.tencentcloud.all:
       region: "{{ tencentcloud_region }}"
@@ -15,6 +22,7 @@
     # outrank play vars).
     - name: Freeze the per-run resource names
       ansible.builtin.set_fact:
+        run_id: "{{ run_id }}"
         policy_name: "{{ policy_name }}"
 
     - name: Create policy
@@ -27,68 +35,95 @@
           IsUnionRule: 0
           Rules: []
       register: created
+      ignore_errors: true
 
-    - name: Reconcile policy again
-      susunola.tencentcloud.monitor_alarm_policy:
-        policy_id: "{{ created.policy.PolicyId }}"
-        name: "{{ policy_name }}"
-        namespace: "{{ namespace }}"
-        remark: CI integration test
-        enabled: false
-        condition:
-          IsUnionRule: 0
-          Rules: []
-      register: second
+    - name: Decide whether this account can create alarm policies
+      ansible.builtin.set_fact:
+        monitor_refused: >-
+          {{ created is failed
+             and created.error_code | default('') == 'InvalidParameter'
+             and 'view not found' in created.error | default('') }}
 
-    - name: Verify idempotency
-      ansible.builtin.assert:
-        that:
-          - created is changed
-          - second is not changed
+    - name: Report the skipped alarm policy coverage
+      ansible.builtin.debug:
+        msg: >-
+          Skipping the monitor_alarm_policy lifecycle: this account has no
+          alarm view map for namespace {{ namespace }}
+          ({{ created.error_code | default('unknown') }}). Override
+          TENCENTCLOUD_MONITOR_NAMESPACE to try another namespace.
+      when: monitor_refused | bool
 
-    - name: Update policy remark
-      susunola.tencentcloud.monitor_alarm_policy:
-        policy_id: "{{ created.policy.PolicyId }}"
-        name: "{{ policy_name }}"
-        namespace: "{{ namespace }}"
-        remark: CI integration test updated
-        enabled: false
-        condition:
-          IsUnionRule: 0
-          Rules: []
-      register: updated
+    - name: Fail on any create error that is not a missing view map
+      ansible.builtin.fail:
+        msg: >-
+          Creating the monitor alarm policy failed unexpectedly:
+          {{ created.error_code | default('unknown') }}:
+          {{ created.error | default(created.msg | default('no detail')) }}
+      when: created is failed and not (monitor_refused | bool)
 
-    - name: Verify update
-      ansible.builtin.assert:
-        that:
-          - updated is changed
-          - updated.policy.Remark == 'CI integration test updated'
+    - name: Alarm policy lifecycle
+      when: not (monitor_refused | bool)
+      block:
+        - name: Reconcile policy again
+          susunola.tencentcloud.monitor_alarm_policy:
+            policy_id: "{{ created.policy.PolicyId }}"
+            name: "{{ policy_name }}"
+            namespace: "{{ namespace }}"
+            remark: CI integration test
+            enabled: false
+            condition:
+              IsUnionRule: 0
+              Rules: []
+          register: second
 
-    - name: Bind notification independently
-      susunola.tencentcloud.monitor_alarm_policy_notice:
-        policy_id: "{{ created.policy.PolicyId }}"
-        notice_ids: ["{{ notice_id }}"]
-      register: notice_update
-      when: notice_id
+        - name: Verify idempotency
+          ansible.builtin.assert:
+            that:
+              - created is changed
+              - second is not changed
 
-    - name: Reconcile notification independently
-      susunola.tencentcloud.monitor_alarm_policy_notice:
-        policy_id: "{{ created.policy.PolicyId }}"
-        notice_ids: ["{{ notice_id }}"]
-      register: notice_second
-      when: notice_id
+        - name: Update policy remark
+          susunola.tencentcloud.monitor_alarm_policy:
+            policy_id: "{{ created.policy.PolicyId }}"
+            name: "{{ policy_name }}"
+            namespace: "{{ namespace }}"
+            remark: CI integration test updated
+            enabled: false
+            condition:
+              IsUnionRule: 0
+              Rules: []
+          register: updated
 
-    - name: Verify notification idempotency
-      ansible.builtin.assert:
-        that:
-          - notice_update is changed
-          - notice_second is not changed
-      when: notice_id
+        - name: Verify update
+          ansible.builtin.assert:
+            that:
+              - updated is changed
+              - updated.policy.Remark == 'CI integration test updated'
 
+        - name: Bind notification independently
+          susunola.tencentcloud.monitor_alarm_policy_notice:
+            policy_id: "{{ created.policy.PolicyId }}"
+            notice_ids: ["{{ notice_id }}"]
+          register: notice_update
+          when: notice_id | length > 0
+
+        - name: Reconcile notification independently
+          susunola.tencentcloud.monitor_alarm_policy_notice:
+            policy_id: "{{ created.policy.PolicyId }}"
+            notice_ids: ["{{ notice_id }}"]
+          register: notice_second
+          when: notice_id | length > 0
+
+        - name: Verify notification idempotency
+          ansible.builtin.assert:
+            that:
+              - notice_update is changed
+              - notice_second is not changed
+          when: notice_id | length > 0
   always:
     - name: Delete integration policy
       susunola.tencentcloud.monitor_alarm_policy:
         state: absent
         policy_id: "{{ created.policy.PolicyId }}"
-      when: created is defined and created.policy is defined and created.policy.PolicyId is defined
+      when: created.policy is defined and created.policy.PolicyId is defined
       ignore_errors: true

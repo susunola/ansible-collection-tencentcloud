@@ -1,20 +1,20 @@
 ---
 - name: Read TCR replication integration inputs
   ansible.builtin.set_fact:
-    tcr_registry_id: "{{ lookup('env', 'TENCENTCLOUD_TCR_REGISTRY_ID') | default('', true) }}"
-    tcr_replication_region_id: "{{ lookup('env', 'TENCENTCLOUD_TCR_REPLICATION_REGION_ID') | default('', true) }}"
-    tcr_replication_region_name: "{{ lookup('env', 'TENCENTCLOUD_TCR_REPLICATION_REGION_NAME') | default('', true) }}"
+    tcr_registry_id: "{{ e2e_inputs.TENCENTCLOUD_TCR_REGISTRY_ID | default(lookup('env', 'TENCENTCLOUD_TCR_REGISTRY_ID'), true) | default('', true) }}"
+    tcr_replication_region_id: "{{ e2e_inputs.TENCENTCLOUD_TCR_REPLICATION_REGION_ID | default(lookup('env', 'TENCENTCLOUD_TCR_REPLICATION_REGION_ID'), true) | default('', true) }}"
+    tcr_replication_region_name: "{{ e2e_inputs.TENCENTCLOUD_TCR_REPLICATION_REGION_NAME | default(lookup('env', 'TENCENTCLOUD_TCR_REPLICATION_REGION_NAME'), true) | default('', true) }}"
 
 - name: Explain skipped TCR integration
   ansible.builtin.debug:
     msg: Set the TENCENTCLOUD_TCR_REGISTRY_ID and replication region variables to run this billable target.
-  when: not (tcr_registry_id and tcr_replication_region_id and tcr_replication_region_name)
+  when: tcr_registry_id | length == 0 or tcr_replication_region_id | length == 0 or tcr_replication_region_name | length == 0
 
 - name: TCR replication instance lifecycle
   module_defaults:
     group/susunola.tencentcloud.all:
       region: "{{ tencentcloud_region }}"
-  when: tcr_registry_id and tcr_replication_region_id and tcr_replication_region_name
+  when: tcr_registry_id | length > 0 and tcr_replication_region_id | length > 0 and tcr_replication_region_name | length > 0
   block:
     - name: Create replication instance
       susunola.tencentcloud.tcr_replication_instance:

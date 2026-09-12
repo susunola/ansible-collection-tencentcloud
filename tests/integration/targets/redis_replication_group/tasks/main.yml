@@ -1,0 +1,86 @@
+---
+# Billed target: creating a replication group needs a live Redis instance and
+# starts one, so it is gated on BOTH TENCENTCLOUD_RUN_BILLED_TARGETS=1 and a
+# seed instance id, and is kept out of the weekly default list
+# (docs/integration-env.md 3 + 6).
+- name: Read Redis replication group integration inputs
+  ansible.builtin.set_fact:
+    redis_instance_id: "{{ e2e_inputs.TENCENTCLOUD_REDIS_INSTANCE_ID | default(lookup('env', 'TENCENTCLOUD_REDIS_INSTANCE_ID'), true) | default('', true) }}"
+    run_billed_targets: "{{ e2e_inputs.TENCENTCLOUD_RUN_BILLED_TARGETS | default(lookup('env', 'TENCENTCLOUD_RUN_BILLED_TARGETS'), true) | default('0', true) }}"
+    run_id: "{{ e2e_inputs.GITHUB_RUN_ID | default(lookup('env', 'GITHUB_RUN_ID'), true) | default(99999999 | random, true) }}"
+
+- name: Explain skipped Redis replication group integration
+  ansible.builtin.debug:
+    msg: Set TENCENTCLOUD_RUN_BILLED_TARGETS=1 and TENCENTCLOUD_REDIS_INSTANCE_ID to run this billed target.
+  when: redis_instance_id | length == 0 or run_billed_targets != '1'
+
+- name: Redis replication group end-to-end
+  vars:
+    group_name: "ansible-redisgrp-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  when: redis_instance_id | length > 0 and run_billed_targets == '1'
+  block:
+    # NOTE: a `vars:` block is templated lazily, so a `| random` name is
+    # re-rolled on EVERY reference. Freeze it once with set_fact (facts
+    # outrank play vars).
+    - name: Freeze the per-run resource names
+      ansible.builtin.set_fact:
+        run_id: "{{ run_id }}"
+        group_name: "{{ group_name }}"
+
+    - name: Predict replication group creation
+      susunola.tencentcloud.redis_replication_group:
+        group_name: "{{ group_name }}"
+        instance_id: "{{ redis_instance_id }}"
+        remark: CI integration test
+      check_mode: true
+      register: predicted
+
+    - name: Create replication group
+      susunola.tencentcloud.redis_replication_group:
+        group_name: "{{ group_name }}"
+        instance_id: "{{ redis_instance_id }}"
+        remark: CI integration test
+      register: created
+
+    - name: Reconcile replication group
+      susunola.tencentcloud.redis_replication_group:
+        group_name: "{{ group_name }}"
+        remark: CI integration test
+      register: reconciled
+
+    - name: Verify replication group idempotency
+      ansible.builtin.assert:
+        that:
+          - predicted is changed
+          - created is changed
+          - created.group_id is defined
+          - created.exists
+          - reconciled is not changed
+
+    - name: Delete replication group
+      susunola.tencentcloud.redis_replication_group:
+        state: absent
+        group_name: "{{ group_name }}"
+      register: deleted
+
+    - name: Delete replication group again
+      susunola.tencentcloud.redis_replication_group:
+        state: absent
+        group_name: "{{ group_name }}"
+      register: deleted_again
+
+    - name: Verify replication group deletion
+      ansible.builtin.assert:
+        that:
+          - deleted is changed
+          - deleted_again is not changed
+  always:
+    - name: Remove replication group if the run failed mid-way
+      susunola.tencentcloud.redis_replication_group:
+        state: absent
+        group_name: "{{ group_name | default('') }}"
+      ignore_errors: true
+      when: group_name | default('') | length > 0

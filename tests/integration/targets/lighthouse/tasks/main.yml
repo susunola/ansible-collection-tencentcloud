@@ -13,9 +13,9 @@
     region: "{{ tencentcloud_region }}"
     run_id: "{{ 99999999 | random }}"
     instance_name: "ansible-lh-it-{{ run_id }}"
-    lh_bundle_id: "{{ lookup('env', 'TENCENTCLOUD_LH_BUNDLE_ID') | default('', true) }}"
-    lh_blueprint_id: "{{ lookup('env', 'TENCENTCLOUD_LH_BLUEPRINT_ID') | default('', true) }}"
-    lh_zone: "{{ lookup('env', 'TENCENTCLOUD_LH_ZONE') | default('ap-guangzhou-1', true) }}"
+    lh_bundle_id: "{{ e2e_inputs.TENCENTCLOUD_LH_BUNDLE_ID | default(lookup('env', 'TENCENTCLOUD_LH_BUNDLE_ID'), true) | default('', true) }}"
+    lh_blueprint_id: "{{ e2e_inputs.TENCENTCLOUD_LH_BLUEPRINT_ID | default(lookup('env', 'TENCENTCLOUD_LH_BLUEPRINT_ID'), true) | default('', true) }}"
+    lh_zone: "{{ e2e_inputs.TENCENTCLOUD_LH_ZONE | default(lookup('env', 'TENCENTCLOUD_LH_ZONE'), true) | default('ap-guangzhou-1', true) }}"
   module_defaults:
     group/susunola.tencentcloud.all:
       region: "{{ region }}"

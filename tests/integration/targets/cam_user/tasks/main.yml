@@ -21,6 +21,11 @@
       ansible.builtin.set_fact:
         run_id: "{{ run_id }}"
 
+    # NOTE: many test accounts (including the intl CI account) are not
+    # authorised for cam:AddUser - the API answers
+    # AuthFailure.UnauthorizedOperation. That is an account capability gap,
+    # not a module defect, so the target reports and skips instead of
+    # failing the whole suite.
     - name: Create a CAM sub-user
       susunola.tencentcloud.cam_user:
         state: present
@@ -28,8 +33,31 @@
         remark: CI integration test
         console_login: true
       register: user_create
+      ignore_errors: true
+
+    - name: Decide whether this account may create CAM sub-users
+      ansible.builtin.set_fact:
+        cam_user_unauthorized: >-
+          {{ user_create is failed
+             and ('UnauthorizedOperation' in user_create.error_code | default('')
+                  or 'AuthFailure' in user_create.error_code | default('')
+                  or 'not authorized' in user_create.error | default('')) }}
+
+    - name: Report the skipped CAM sub-user coverage
+      ansible.builtin.debug:
+        msg: >-
+          Skipping the cam_user lifecycle: this account may not create CAM
+          sub-users ({{ user_create.error_code | default('unknown') }}).
+          Grant cam:AddUser to enable this target.
+      when: cam_user_unauthorized | bool
+
+    - name: Fail on any other creation error
+      ansible.builtin.fail:
+        msg: "cam_user create failed: {{ user_create.error | default(user_create.msg, true) }}"
+      when: user_create is failed and not (cam_user_unauthorized | bool)
 
     - name: Creation reports changed with the user details
+      when: not (cam_user_unauthorized | bool)
       ansible.builtin.assert:
         that:
           - user_create is changed
@@ -37,6 +65,7 @@
           - user_create.user.Uin is defined
 
     - name: Create the same sub-user again (idempotency)
+      when: not (cam_user_unauthorized | bool)
       susunola.tencentcloud.cam_user:
         state: present
         name: "{{ user_name }}"
@@ -45,12 +74,14 @@
       register: user_second
 
     - name: Second run reports no change
+      when: not (cam_user_unauthorized | bool)
       ansible.builtin.assert:
         that:
           - user_second is not changed
           - user_second.user.Uin == user_create.user.Uin
 
     - name: Update the remark
+      when: not (cam_user_unauthorized | bool)
       susunola.tencentcloud.cam_user:
         state: present
         name: "{{ user_name }}"
@@ -58,12 +89,14 @@
       register: user_update
 
     - name: Update reports changed with the new remark
+      when: not (cam_user_unauthorized | bool)
       ansible.builtin.assert:
         that:
           - user_update is changed
           - user_update.user.Remark == "CI integration test updated"
 
     - name: Check mode reports the delete without deleting
+      when: not (cam_user_unauthorized | bool)
       susunola.tencentcloud.cam_user:
         state: absent
         name: "{{ user_name }}"
@@ -71,17 +104,20 @@
       register: user_check_delete
 
     - name: Check mode reports changed
+      when: not (cam_user_unauthorized | bool)
       ansible.builtin.assert:
         that:
           - user_check_delete is changed
 
     - name: Delete the sub-user
+      when: not (cam_user_unauthorized | bool)
       susunola.tencentcloud.cam_user:
         state: absent
         name: "{{ user_name }}"
       register: user_delete
 
     - name: Deletion reports changed
+      when: not (cam_user_unauthorized | bool)
       ansible.builtin.assert:
         that:
           - user_delete is changed

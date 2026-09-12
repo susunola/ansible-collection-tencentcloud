@@ -32,9 +32,11 @@ options:
     type: str
     required: true
   alarm:
-    description: Raw SDK-shaped alarm configuration (the C(CreateAlarmRequest) body).
+    description:
+      - Raw SDK-shaped alarm configuration (the C(CreateAlarmRequest) body).
+      - Required when O(state=present); ignored when O(state=absent), where the
+        alarm is matched by O(name) alone.
     type: dict
-    required: true
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

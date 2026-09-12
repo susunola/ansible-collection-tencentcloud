@@ -1,0 +1,101 @@
+---
+# High-impact target: it writes to a real TCR registry namespace. Gated on
+# TENCENTCLOUD_TCR_REGISTRY_ID + TENCENTCLOUD_TCR_NAMESPACE and deliberately
+# kept out of the weekly default list (docs/integration-env.md 6).
+- name: Read TCR immutable tag rule integration inputs
+  ansible.builtin.set_fact:
+    tcr_registry_id: "{{ e2e_inputs.TENCENTCLOUD_TCR_REGISTRY_ID | default(lookup('env', 'TENCENTCLOUD_TCR_REGISTRY_ID'), true) | default('', true) }}"
+    tcr_namespace: "{{ e2e_inputs.TENCENTCLOUD_TCR_NAMESPACE | default(lookup('env', 'TENCENTCLOUD_TCR_NAMESPACE'), true) | default('', true) }}"
+
+- name: Explain skipped TCR immutable tag rule integration
+  ansible.builtin.debug:
+    msg: Set TENCENTCLOUD_TCR_REGISTRY_ID and TENCENTCLOUD_TCR_NAMESPACE to run this high-impact target.
+  when: tcr_registry_id | length == 0 or tcr_namespace | length == 0
+
+- name: TCR immutable tag rule end-to-end
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  when: tcr_registry_id | length > 0 and tcr_namespace | length > 0
+  block:
+    - name: Predict immutable tag rule creation
+      susunola.tencentcloud.tcr_immutable_tag_rule:
+        registry_id: "{{ tcr_registry_id }}"
+        namespace_name: "{{ tcr_namespace }}"
+        rule:
+          RepositoryPattern: "ansible-e2e-*"
+          TagPattern: "latest"
+          RepositoryDecoration: repoMatches
+          TagDecoration: matches
+          Disabled: false
+      check_mode: true
+      register: predicted
+
+    - name: Create immutable tag rule
+      susunola.tencentcloud.tcr_immutable_tag_rule:
+        registry_id: "{{ tcr_registry_id }}"
+        namespace_name: "{{ tcr_namespace }}"
+        rule:
+          RepositoryPattern: "ansible-e2e-*"
+          TagPattern: "latest"
+          RepositoryDecoration: repoMatches
+          TagDecoration: matches
+          Disabled: false
+      register: created
+
+    - name: Reconcile immutable tag rule
+      susunola.tencentcloud.tcr_immutable_tag_rule:
+        registry_id: "{{ tcr_registry_id }}"
+        namespace_name: "{{ tcr_namespace }}"
+        rule:
+          RepositoryPattern: "ansible-e2e-*"
+          TagPattern: "latest"
+          RepositoryDecoration: repoMatches
+          TagDecoration: matches
+          Disabled: false
+      register: reconciled
+
+    - name: Verify immutable tag rule idempotency
+      ansible.builtin.assert:
+        that:
+          - predicted is changed
+          - created is changed
+          - created.exists
+          - reconciled is not changed
+
+    - name: Delete immutable tag rule
+      susunola.tencentcloud.tcr_immutable_tag_rule:
+        state: absent
+        registry_id: "{{ tcr_registry_id }}"
+        namespace_name: "{{ tcr_namespace }}"
+        rule:
+          RepositoryPattern: "ansible-e2e-*"
+          TagPattern: "latest"
+      register: deleted
+
+    - name: Delete immutable tag rule again
+      susunola.tencentcloud.tcr_immutable_tag_rule:
+        state: absent
+        registry_id: "{{ tcr_registry_id }}"
+        namespace_name: "{{ tcr_namespace }}"
+        rule:
+          RepositoryPattern: "ansible-e2e-*"
+          TagPattern: "latest"
+      register: deleted_again
+
+    - name: Verify immutable tag rule deletion
+      ansible.builtin.assert:
+        that:
+          - deleted is changed
+          - deleted_again is not changed
+  always:
+    - name: Remove immutable tag rule if the run failed mid-way
+      susunola.tencentcloud.tcr_immutable_tag_rule:
+        state: absent
+        registry_id: "{{ tcr_registry_id }}"
+        namespace_name: "{{ tcr_namespace }}"
+        rule:
+          RepositoryPattern: "ansible-e2e-*"
+          TagPattern: "latest"
+      ignore_errors: true
+      when: tcr_registry_id | length > 0 and tcr_namespace | length > 0

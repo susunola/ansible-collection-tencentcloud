@@ -1,7 +1,7 @@
 ---
 - name: CLS logset and topic real-cloud lifecycle
   vars:
-    run_id: "{{ lookup('env', 'GITHUB_RUN_ID') | default(99999999 | random, true) }}"
+    run_id: "{{ e2e_inputs.GITHUB_RUN_ID | default(lookup('env', 'GITHUB_RUN_ID'), true) | default(99999999 | random, true) }}"
     logset_name: "ansible-cls-it-{{ run_id }}"
     topic_name: "ansible-topic-it-{{ run_id }}"
   module_defaults:

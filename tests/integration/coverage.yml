@@ -15,6 +15,12 @@ targets:
   private_dns: {cost: low, modules: [private_dns_zone, private_dns_record]}
   tke_addon: {cost: medium, modules: [tke_addon]}
   cmq_queue: {cost: low, modules: [cmq_queue]}
+  # High-impact / billed targets: gated and kept out of the weekly default
+  # list; they run when an operator switches their inputs on (§2.2, §6).
+  tcr_immutable_tag_rule: {cost: high, modules: [tcr_immutable_tag_rule]}
+  tcr_webhook_trigger: {cost: high, modules: [tcr_webhook_trigger]}
+  cls_alarm: {cost: medium, modules: [cls_alarm]}
+  redis_replication_group: {cost: high, modules: [redis_replication_group]}
   dbbrain_sql_filter: {cost: high, modules: [dbbrain_sql_filter]}
   tcr_replication_instance: {cost: high, modules: [tcr_replication_instance]}
   cls_log_pipeline: {cost: low, modules: [cls_logset, cls_topic]}
@@ -23,6 +29,7 @@ targets:
   cls_alarm_notice: {cost: free, modules: [cls_alarm_notice]}
   cdb_audit_rule_template: {cost: free, modules: [cdb_audit_rule_template]}
   apigateway_plugin: {cost: free, modules: [apigateway_plugin]}
+  apigateway_ip_strategy: {cost: free, modules: [apigateway_ip_strategy]}
   tat_command: {cost: free, modules: [tat_command]}
   # P0-01 / P0-02 flagship dedicated targets.
   cvm_instance: {cost: medium, modules: [cvm_instance]}

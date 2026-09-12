@@ -1,8 +1,8 @@
 ---
 - name: Network closure modules end-to-end (vpc, subnet, route_table, security_group_rule, eip)
   vars:
-    region: "{{ lookup('ansible.builtin.env', 'TENCENTCLOUD_REGION') | default('ap-guangzhou', true) }}"
-    zone: "{{ lookup('ansible.builtin.env', 'TENCENTCLOUD_ZONE') | default('ap-guangzhou-1', true) }}"
+    region: "{{ e2e_inputs.TENCENTCLOUD_REGION | default(lookup('env', 'TENCENTCLOUD_REGION'), true) | default('ap-guangzhou', true) }}"
+    zone: "{{ e2e_inputs.TENCENTCLOUD_ZONE | default(lookup('env', 'TENCENTCLOUD_ZONE'), true) | default('ap-guangzhou-1', true) }}"
     run_id: "{{ 99999999 | random }}"
     vpc_name: "ansible-net-it-{{ 99999999 | random }}"
   module_defaults:

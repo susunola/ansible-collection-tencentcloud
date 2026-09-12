@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Structural audit for the 5 new flagship integration targets (P0-01/02).
+"""Structural audit for the integration targets (P0-01/02 and friends).
 
 Checks, per tasks/main.yml:
 1. YAML parses.
@@ -8,6 +8,11 @@ Checks, per tasks/main.yml:
 3. Every ``register`` variable referenced in a ``when`` guard with
    ``is defined`` was registered earlier in the same file.
 4. meta/main.yml declares the collection and vars/main.yml parses.
+5. Across *every* target: no bare ``when: <var>`` / ``when: a and b`` guard.
+   ansible-core 2.19 rejects a conditional whose result is a non-boolean
+   ("Conditional result (False) was derived from value of type 'str'"), and
+   gate variables are strings, so they need an explicit test such as
+   ``| length > 0``.
 Also parses coverage.yml and the integration workflow YAML.
 """
 from __future__ import annotations
@@ -22,6 +27,18 @@ MODULES = {p.stem for p in (ROOT / "plugins/modules").glob("*.py")}
 TARGETS = ["cvm_instance", "vpc", "subnet", "cdb_instance", "tke_cluster"]
 errors: list[str] = []
 
+# A conditional made only of identifiers and and/or/not. Those evaluate to the
+# *value* of the last identifier (a string) instead of a boolean.
+_IDENTIFIER = re.compile(r"^[A-Za-z_][A-Za-z0-9_.]*$")
+
+
+def is_bare_conditional(cond: str) -> bool:
+    """True when a ``when:`` string can only ever yield a non-boolean."""
+    text = re.sub(r"\bnot\b", " ", cond.strip()).replace("(", " ").replace(")", " ").strip()
+    if not text:
+        return False
+    return all(_IDENTIFIER.match(part.strip()) for part in re.split(r"\band\b|\bor\b", text))
+
 
 def main() -> int:
     errors.clear()  # main() may run multiple times under pytest.
@@ -34,6 +51,7 @@ def main() -> int:
             except Exception as exc:  # noqa: BLE001
                 errors.append(f"{p}: YAML error: {exc}")
         audit_tasks(base / "tasks/main.yml")
+    errors.extend(audit_conditionals())
     # coverage registry + workflow parse
     for p in (ROOT / "tests/integration/coverage.yml", ROOT / ".github/workflows/integration.yml"):
         try:
@@ -45,8 +63,29 @@ def main() -> int:
         for e in errors:
             print(" -", e)
         return 1
-    print("AUDIT OK: 5 targets x 3 files + coverage.yml + integration.yml parse; all FQCNs resolve; when-guards reference earlier registers")
+    print("AUDIT OK: 5 targets x 3 files + coverage.yml + integration.yml parse; all FQCNs resolve; when-guards reference earlier registers; no bare conditionals")
     return 0
+
+
+def audit_conditionals(root: Path | None = None) -> list[str]:
+    """Flag 'when:' guards that are a bare variable / and-or chain."""
+    root = root or ROOT
+    problems: list[str] = []
+    for path in sorted((root / "tests/integration/targets").glob("*/tasks/main.yml")):
+        try:
+            data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        except Exception as exc:  # noqa: BLE001 - reported by the parse check
+            problems.append(f"{path}: YAML error: {exc}")
+            continue
+        for task in walk_tasks(data):
+            when = task.get("when") if isinstance(task, dict) else None
+            for cond in when if isinstance(when, list) else [when]:
+                if isinstance(cond, str) and is_bare_conditional(cond):
+                    problems.append(
+                        f"{path}: 'when: {cond.strip()}' yields a string, not a boolean - "
+                        "add an explicit test (e.g. '| length > 0')"
+                    )
+    return problems
 
 
 def audit_tasks(path: Path) -> None:

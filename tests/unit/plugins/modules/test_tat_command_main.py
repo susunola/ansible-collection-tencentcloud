@@ -286,6 +286,29 @@ def test_update_command_content(monkeypatch):
     assert result["command"]["Description"] == "bump"
 
 
+def test_create_with_tags_converges_even_though_tat_hides_them(monkeypatch):
+    # DescribeCommands always answers with an empty tag list, so a create that
+    # carries tags must still converge instead of waiting for tags that never
+    # come back.
+    fake = FakeTatClient(commands=[])
+    _make_module(monkeypatch, fake)
+    _present_args(state="present", tags={"env": "staging"})
+    result = run(mod.run_module)
+    assert result["changed"] is True
+    assert result["command"]["CommandName"] == "install-agent"
+    assert "Tags" not in mod._desired(dict(PARAMS, tags={"env": "staging"}))
+
+
+def test_empty_tags_never_block_convergence(monkeypatch):
+    # An empty tags dict used to compare {} against None and never match.
+    fake = FakeTatClient(commands=[_command(Tags=[])])
+    _make_module(monkeypatch, fake)
+    _present_args(state="present", tags={})
+    result = run(mod.run_module)
+    assert result["changed"] is False
+    assert result["msg"] == "TAT command is up to date"
+
+
 def test_update_check_mode_is_dry_run(monkeypatch):
     fake = FakeTatClient(commands=[_command(Description="old desc")])
     _make_module(monkeypatch, fake)
@@ -362,6 +385,17 @@ def test_request_builders_encode_content_and_parameters():
     update = mod.build_update_request(models, "cmd-x", PARAMS)
     assert update.CommandId == "cmd-x"
     assert mod.build_delete_request(models, "cmd-x").CommandId == "cmd-x"
+
+
+def test_empty_default_parameters_are_omitted_from_the_wire():
+    # The live API refuses a create that carries DefaultParameters while
+    # EnableParameter is false, so the empty mapping must not be serialised.
+    assert mod._parameters({}) == ""
+    assert mod._parameters(None) == ""
+    models = FakeModels()
+    empty = dict(PARAMS, enable_parameters=False, default_parameters={})
+    assert getattr(mod.build_create_request(models, empty), "DefaultParameters", None) is None
+    assert getattr(mod.build_update_request(models, "cmd-x", empty), "DefaultParameters", None) is None
 
 
 def test_exact_idempotency():

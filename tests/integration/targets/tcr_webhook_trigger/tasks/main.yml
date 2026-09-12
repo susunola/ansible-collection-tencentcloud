@@ -1,0 +1,120 @@
+---
+# High-impact target: it writes to a real TCR registry namespace. Gated on
+# TENCENTCLOUD_TCR_REGISTRY_ID + TENCENTCLOUD_TCR_NAMESPACE + a callback URL,
+# and deliberately kept out of the weekly default list
+# (docs/integration-env.md 6).
+- name: Read TCR webhook trigger integration inputs
+  ansible.builtin.set_fact:
+    tcr_registry_id: "{{ e2e_inputs.TENCENTCLOUD_TCR_REGISTRY_ID | default(lookup('env', 'TENCENTCLOUD_TCR_REGISTRY_ID'), true) | default('', true) }}"
+    tcr_namespace: "{{ e2e_inputs.TENCENTCLOUD_TCR_NAMESPACE | default(lookup('env', 'TENCENTCLOUD_TCR_NAMESPACE'), true) | default('', true) }}"
+    tcr_webhook_url: "{{ e2e_inputs.TENCENTCLOUD_TCR_WEBHOOK_URL | default(lookup('env', 'TENCENTCLOUD_TCR_WEBHOOK_URL'), true) | default('', true) }}"
+    run_id: "{{ e2e_inputs.GITHUB_RUN_ID | default(lookup('env', 'GITHUB_RUN_ID'), true) | default(99999999 | random, true) }}"
+
+- name: Explain skipped TCR webhook trigger integration
+  ansible.builtin.debug:
+    msg: Set TENCENTCLOUD_TCR_REGISTRY_ID, TENCENTCLOUD_TCR_NAMESPACE and TENCENTCLOUD_TCR_WEBHOOK_URL to run this high-impact target.
+  when: tcr_registry_id | length == 0 or tcr_namespace | length == 0 or tcr_webhook_url | length == 0
+
+- name: TCR webhook trigger end-to-end
+  vars:
+    trigger_name: "ansible-tcr-hook-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  when: tcr_registry_id | length > 0 and tcr_namespace | length > 0 and tcr_webhook_url | length > 0
+  block:
+    # NOTE: a `vars:` block is templated lazily, so a `| random` name is
+    # re-rolled on EVERY reference. Freeze it once with set_fact (facts
+    # outrank play vars).
+    - name: Freeze the per-run resource names
+      ansible.builtin.set_fact:
+        run_id: "{{ run_id }}"
+        trigger_name: "{{ trigger_name }}"
+
+    - name: Predict webhook trigger creation
+      susunola.tencentcloud.tcr_webhook_trigger:
+        registry_id: "{{ tcr_registry_id }}"
+        namespace: "{{ tcr_namespace }}"
+        trigger:
+          Name: "{{ trigger_name }}"
+          Description: CI integration test
+          Enabled: false
+          Condition: all
+          EventTypes: [pushImage]
+          Targets:
+            - Address: "{{ tcr_webhook_url }}"
+              Headers: []
+      check_mode: true
+      register: predicted
+
+    - name: Create webhook trigger
+      susunola.tencentcloud.tcr_webhook_trigger:
+        registry_id: "{{ tcr_registry_id }}"
+        namespace: "{{ tcr_namespace }}"
+        trigger:
+          Name: "{{ trigger_name }}"
+          Description: CI integration test
+          Enabled: false
+          Condition: all
+          EventTypes: [pushImage]
+          Targets:
+            - Address: "{{ tcr_webhook_url }}"
+              Headers: []
+      register: created
+
+    - name: Reconcile webhook trigger
+      susunola.tencentcloud.tcr_webhook_trigger:
+        registry_id: "{{ tcr_registry_id }}"
+        namespace: "{{ tcr_namespace }}"
+        trigger:
+          Name: "{{ trigger_name }}"
+          Description: CI integration test
+          Enabled: false
+          Condition: all
+          EventTypes: [pushImage]
+          Targets:
+            - Address: "{{ tcr_webhook_url }}"
+              Headers: []
+      register: reconciled
+
+    - name: Verify webhook trigger idempotency
+      ansible.builtin.assert:
+        that:
+          - predicted is changed
+          - created is changed
+          - created.exists
+          - reconciled is not changed
+
+    - name: Delete webhook trigger
+      susunola.tencentcloud.tcr_webhook_trigger:
+        state: absent
+        registry_id: "{{ tcr_registry_id }}"
+        namespace: "{{ tcr_namespace }}"
+        trigger:
+          Name: "{{ trigger_name }}"
+      register: deleted
+
+    - name: Delete webhook trigger again
+      susunola.tencentcloud.tcr_webhook_trigger:
+        state: absent
+        registry_id: "{{ tcr_registry_id }}"
+        namespace: "{{ tcr_namespace }}"
+        trigger:
+          Name: "{{ trigger_name }}"
+      register: deleted_again
+
+    - name: Verify webhook trigger deletion
+      ansible.builtin.assert:
+        that:
+          - deleted is changed
+          - deleted_again is not changed
+  always:
+    - name: Remove webhook trigger if the run failed mid-way
+      susunola.tencentcloud.tcr_webhook_trigger:
+        state: absent
+        registry_id: "{{ tcr_registry_id }}"
+        namespace: "{{ tcr_namespace }}"
+        trigger:
+          Name: "{{ trigger_name | default('') }}"
+      ignore_errors: true
+      when: tcr_registry_id | length > 0 and tcr_namespace | length > 0 and trigger_name | default('') | length > 0

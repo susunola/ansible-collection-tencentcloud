@@ -22,11 +22,11 @@ options:
   working_directory: {description: Command working directory., type: str, default: /root}
   timeout: {description: Command timeout in seconds., type: int, default: 60}
   enable_parameters: {description: Enable script parameter placeholders., type: bool, default: false}
-  default_parameters: {description: Default placeholder values., type: dict, default: {}}
+  default_parameters: {description: Default placeholder values. Omitted from the request when empty because TAT rejects the field unless C(enable_parameters) is true., type: dict, default: {}}
   username: {description: Operating system user used to execute the command., type: str, default: root}
   output_cos_bucket_url: {description: HTTPS COS bucket URL for command output., type: str}
   output_cos_key_prefix: {description: COS key prefix for command output., type: str}
-  tags: {description: Tags assigned when creating the command., type: dict, default: {}}
+  tags: {description: Tags assigned when creating the command. Applied on create only - TAT does not return tags so they are never reconciled., type: dict, default: {}}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -69,7 +69,12 @@ def _content(value):
 
 
 def _parameters(value):
-    return json.dumps({str(k): str(v) for k, v in (value or {}).items()}, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    # TAT refuses a create that carries DefaultParameters while EnableParameter
+    # is false ("Parameters requires 'EnableParameter' to be 'true'"), so an
+    # empty mapping must encode to "" and stay off the wire entirely.
+    if not value:
+        return ""
+    return json.dumps({str(k): str(v) for k, v in value.items()}, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
 
 def build_tags(models, values):
@@ -97,7 +102,9 @@ def _apply(request, params):
     request.CommandName, request.Content = params["name"], _content(params["content"])
     request.Description, request.CommandType = params["description"], params["command_type"]
     request.WorkingDirectory, request.Timeout = params["working_directory"], params["timeout"]
-    request.DefaultParameters = _parameters(params["default_parameters"])
+    default_parameters = _parameters(params["default_parameters"])
+    if default_parameters:
+        request.DefaultParameters = default_parameters
     request.Username = params["username"]
     if params.get("output_cos_bucket_url"):
         request.OutputCOSBucketUrl = params["output_cos_bucket_url"]
@@ -148,7 +155,15 @@ def _tags(values):
     return {x.get("Key"): x.get("Value") for x in (values or [])}
 
 
+def _desired_tags(params):
+    return {str(k): str(v) for k, v in params["tags"].items()}
+
+
 def _desired(params):
+    # NOTE: Tags are deliberately absent here. TAT accepts them on
+    # CreateCommand but DescribeCommands always answers with an empty tag
+    # list (verified against a live account), so they cannot be reconciled -
+    # comparing them made every run wait for a state that never arrives.
     return {
         "CommandName": params["name"],
         "Content": _content(params["content"]),
@@ -161,12 +176,11 @@ def _desired(params):
         "Username": params["username"],
         "OutputCOSBucketUrl": params["output_cos_bucket_url"],
         "OutputCOSKeyPrefix": params["output_cos_key_prefix"],
-        "Tags": {str(k): str(v) for k, v in params["tags"].items()},
     }
 
 
 def _matches(current, desired):
-    return all((_tags(current.get(key)) if key == "Tags" else (current.get(key) or None)) == (value or None) for key, value in desired.items())
+    return all((current.get(key) or None) == (value or None) for key, value in desired.items())
 
 
 def wait_for_command(module, client, models, command_id, desired=None, absent=False):
@@ -231,7 +245,10 @@ def run_module():
             module.exit_json(changed=True, **(diff or {}), command=current, msg="TAT command created")
         if current.get("EnableParameter") != desired["EnableParameter"]:
             module.fail_json(msg="TAT command enable_parameters cannot be changed; recreate the command")
-        if _tags(current.get("Tags")) != desired["Tags"]:
+        # TAT does not echo tags back, so only refuse the change when the
+        # server actually reported some and they disagree with the request.
+        current_tags = _tags(current.get("Tags"))
+        if current_tags and current_tags != _desired_tags(p):
             module.fail_json(msg="TAT command tags cannot be changed by ModifyCommand; recreate the command")
         if _matches(current, desired):
             module.exit_json(changed=False, command=current, msg="TAT command is up to date")

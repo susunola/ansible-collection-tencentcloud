@@ -262,6 +262,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <a class="ansibleOptionLink" href="#parameter-rule_filters" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Flat list of audit-rule filter objects, mirroring the CDB SDK <code class="docutils literal notranslate"><span class="pre">RuleFilters</span></code> shape. Each item is a mapping with <code class="docutils literal notranslate"><span class="pre">type</span></code>, <code class="docutils literal notranslate"><span class="pre">value</span></code> as a list of strings, and <code class="docutils literal notranslate"><span class="pre">compare</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">compare</span></code> is validated server-side and accepts only <code class="docutils literal notranslate"><span class="pre">EXC</span></code>, <code class="docutils literal notranslate"><span class="pre">EQS</span></code>, <code class="docutils literal notranslate"><span class="pre">NEQ</span></code>, <code class="docutils literal notranslate"><span class="pre">REG</span></code> and <code class="docutils literal notranslate"><span class="pre">INC</span></code>; anything else is rejected with <code class="docutils literal notranslate"><span class="pre">InvalidParameter.InvalidParameterError</span></code>.</p>
 <p>Required when <em>state=present</em>.</p>
 </div></td>
 </tr>
@@ -352,7 +353,8 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">host</span>
 <span class="w">        </span><span class="nt">value</span><span class="p">:</span>
 <span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;10.0.0.%&quot;</span>
-<span class="w">        </span><span class="nt">compare</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;=&quot;</span>
+<span class="w">        </span><span class="c1"># compare accepts EXC / EQS / NEQ / REG / INC only.</span>
+<span class="w">        </span><span class="nt">compare</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">INC</span>
 <span class="w">    </span><span class="nt">alarm_level</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
 <span class="w">    </span><span class="nt">alarm_policy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 

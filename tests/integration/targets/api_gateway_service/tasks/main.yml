@@ -12,7 +12,7 @@
 # product. Any other error is a genuine regression and fails the run.
 - name: API Gateway service real-cloud lifecycle
   vars:
-    run_id: "{{ lookup('env', 'GITHUB_RUN_ID') | default(99999999 | random, true) }}"
+    run_id: "{{ e2e_inputs.GITHUB_RUN_ID | default(lookup('env', 'GITHUB_RUN_ID'), true) | default(99999999 | random, true) }}"
     service_name: "ansible-apigw-it-{{ run_id }}"
   module_defaults:
     group/susunola.tencentcloud.all:

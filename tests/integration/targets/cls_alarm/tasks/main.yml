@@ -1,0 +1,115 @@
+---
+# Gated on a real CLS topic: a CLS alarm always watches one, and creating a
+# logset + topic for it would pull in the cls_log_pipeline cost tier. Left out
+# of the weekly default list (docs/integration-env.md 6).
+- name: Read CLS alarm integration inputs
+  ansible.builtin.set_fact:
+    cls_alarm_topic_id: "{{ e2e_inputs.TENCENTCLOUD_CLS_ALARM_TOPIC_ID | default(lookup('env', 'TENCENTCLOUD_CLS_ALARM_TOPIC_ID'), true) | default('', true) }}"
+    run_id: "{{ e2e_inputs.GITHUB_RUN_ID | default(lookup('env', 'GITHUB_RUN_ID'), true) | default(99999999 | random, true) }}"
+
+- name: Explain skipped CLS alarm integration
+  ansible.builtin.debug:
+    msg: Set TENCENTCLOUD_CLS_ALARM_TOPIC_ID to run this target.
+  when: cls_alarm_topic_id | length == 0
+
+- name: CLS alarm end-to-end
+  vars:
+    alarm_name: "ansible-clsalarm-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  when: cls_alarm_topic_id | length > 0
+  block:
+    # NOTE: a `vars:` block is templated lazily, so a `| random` name is
+    # re-rolled on EVERY reference. Freeze it once with set_fact (facts
+    # outrank play vars).
+    - name: Freeze the per-run resource names
+      ansible.builtin.set_fact:
+        run_id: "{{ run_id }}"
+        alarm_name: "{{ alarm_name }}"
+
+    - name: Predict alarm creation
+      susunola.tencentcloud.cls_alarm:
+        name: "{{ alarm_name }}"
+        alarm:
+          Name: "{{ alarm_name }}"
+          MonitorObjectType: log
+          MonitorTime:
+            Type: Relative
+            TimeGap: 600
+          Condition: "$1.error_count > 1000000"
+          AlarmTargets:
+            - TopicId: "{{ cls_alarm_topic_id }}"
+          TriggerCount: 1
+          AlarmPeriod:
+            - 1
+      check_mode: true
+      register: predicted
+
+    - name: Create alarm
+      susunola.tencentcloud.cls_alarm:
+        name: "{{ alarm_name }}"
+        alarm:
+          Name: "{{ alarm_name }}"
+          MonitorObjectType: log
+          MonitorTime:
+            Type: Relative
+            TimeGap: 600
+          Condition: "$1.error_count > 1000000"
+          AlarmTargets:
+            - TopicId: "{{ cls_alarm_topic_id }}"
+          TriggerCount: 1
+          AlarmPeriod:
+            - 1
+      register: created
+
+    - name: Reconcile alarm
+      susunola.tencentcloud.cls_alarm:
+        name: "{{ alarm_name }}"
+        alarm:
+          Name: "{{ alarm_name }}"
+          MonitorObjectType: log
+          MonitorTime:
+            Type: Relative
+            TimeGap: 600
+          Condition: "$1.error_count > 1000000"
+          AlarmTargets:
+            - TopicId: "{{ cls_alarm_topic_id }}"
+          TriggerCount: 1
+          AlarmPeriod:
+            - 1
+      register: reconciled
+
+    - name: Verify alarm idempotency
+      ansible.builtin.assert:
+        that:
+          - predicted is changed
+          - created is changed
+          - created.alarm_id is defined
+          - created.exists
+          - reconciled is not changed
+
+    - name: Delete alarm
+      susunola.tencentcloud.cls_alarm:
+        state: absent
+        name: "{{ alarm_name }}"
+      register: deleted
+
+    - name: Delete alarm again
+      susunola.tencentcloud.cls_alarm:
+        state: absent
+        name: "{{ alarm_name }}"
+      register: deleted_again
+
+    - name: Verify alarm deletion
+      ansible.builtin.assert:
+        that:
+          - deleted is changed
+          - deleted_again is not changed
+  always:
+    - name: Remove alarm if the run failed mid-way
+      susunola.tencentcloud.cls_alarm:
+        state: absent
+        name: "{{ alarm_name | default('') }}"
+      ignore_errors: true
+      when: alarm_name | default('') | length > 0

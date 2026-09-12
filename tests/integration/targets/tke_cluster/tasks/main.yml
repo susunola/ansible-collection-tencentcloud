@@ -16,8 +16,8 @@
 # re-run of this target deletes by the same name prefix convention.
 - name: Read TKE cluster integration inputs
   ansible.builtin.set_fact:
-    run_billed_targets: "{{ lookup('env', 'TENCENTCLOUD_RUN_BILLED_TARGETS') | default('0', true) }}"
-    tke_cluster_version: "{{ lookup('env', 'TENCENTCLOUD_TKE_CLUSTER_VERSION') | default('', true) }}"
+    run_billed_targets: "{{ e2e_inputs.TENCENTCLOUD_RUN_BILLED_TARGETS | default(lookup('env', 'TENCENTCLOUD_RUN_BILLED_TARGETS'), true) | default('0', true) }}"
+    tke_cluster_version: "{{ e2e_inputs.TENCENTCLOUD_TKE_CLUSTER_VERSION | default(lookup('env', 'TENCENTCLOUD_TKE_CLUSTER_VERSION'), true) | default('', true) }}"
 
 - name: Explain skipped TKE cluster integration
   ansible.builtin.debug:

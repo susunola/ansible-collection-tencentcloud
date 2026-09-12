@@ -1,19 +1,19 @@
 ---
 - name: Read DBbrain integration inputs
   ansible.builtin.set_fact:
-    dbbrain_instance_id: "{{ lookup('env', 'TENCENTCLOUD_DBBRAIN_INSTANCE_ID') | default('', true) }}"
-    dbbrain_session_token: "{{ lookup('env', 'TENCENTCLOUD_DBBRAIN_SESSION_TOKEN') | default('', true) }}"
+    dbbrain_instance_id: "{{ e2e_inputs.TENCENTCLOUD_DBBRAIN_INSTANCE_ID | default(lookup('env', 'TENCENTCLOUD_DBBRAIN_INSTANCE_ID'), true) | default('', true) }}"
+    dbbrain_session_token: "{{ e2e_inputs.TENCENTCLOUD_DBBRAIN_SESSION_TOKEN | default(lookup('env', 'TENCENTCLOUD_DBBRAIN_SESSION_TOKEN'), true) | default('', true) }}"
 
 - name: Explain skipped DBbrain integration
   ansible.builtin.debug:
     msg: Set TENCENTCLOUD_DBBRAIN_INSTANCE_ID and TENCENTCLOUD_DBBRAIN_SESSION_TOKEN to run this high-impact target.
-  when: not (dbbrain_instance_id and dbbrain_session_token)
+  when: dbbrain_instance_id | length == 0 or dbbrain_session_token | length == 0
 
 - name: DBbrain SQL filter lifecycle
   module_defaults:
     group/susunola.tencentcloud.all:
       region: "{{ tencentcloud_region }}"
-  when: dbbrain_instance_id and dbbrain_session_token
+  when: dbbrain_instance_id | length > 0 and dbbrain_session_token | length > 0
   block:
     - name: Create SQL filter
       susunola.tencentcloud.dbbrain_sql_filter:

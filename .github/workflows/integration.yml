@@ -76,6 +76,19 @@ jobs:
         run: |
           python scripts/integration_credentials.py --write
           python scripts/integration_credentials.py --check
+      # Same sanitiser, same fix, for everything that is not a credential:
+      # target gates (TENCENTCLOUD_RUN_BILLED_TARGETS), region/zone overrides,
+      # pre-existing resource ids and GITHUB_RUN_ID. Without this step every
+      # gated target self-skips, because lookup('env', ...) is empty inside
+      # ansible-playbook (docs/integration-env.md 2.3).
+      - name: Materialise integration inputs for ansible-test
+        if: steps.creds.outputs.available == 'true'
+        env:
+          TENCENTCLOUD_REGION: ap-guangzhou
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        run: |
+          python scripts/integration_inputs.py --write
+          python scripts/integration_inputs.py --check
       - name: Run integration tests
         if: steps.creds.outputs.available == 'true'
         env:
@@ -85,6 +98,9 @@ jobs:
           TENCENTCLOUD_TKE_CLUSTER_ID: ${{ secrets.TENCENTCLOUD_TKE_CLUSTER_ID }}
           TENCENTCLOUD_TKE_ADDON_NAME: ${{ vars.TENCENTCLOUD_TKE_ADDON_NAME }}
           TENCENTCLOUD_TKE_ADDON_VERSION: ${{ vars.TENCENTCLOUD_TKE_ADDON_VERSION }}
+          # Reuse an existing API Gateway service for apigateway_ip_strategy
+          # instead of creating a throwaway one (docs/integration-env.md §2.4).
+          TENCENTCLOUD_APIGW_SERVICE_ID: ${{ secrets.TENCENTCLOUD_APIGW_SERVICE_ID }}
           TENCENTCLOUD_MONITOR_NAMESPACE: ${{ vars.TENCENTCLOUD_MONITOR_NAMESPACE }}
           TENCENTCLOUD_MONITOR_NOTICE_ID: ${{ secrets.TENCENTCLOUD_MONITOR_NOTICE_ID }}
           TENCENTCLOUD_PRIVATE_DNS_VPC_ID: ${{ secrets.TENCENTCLOUD_PRIVATE_DNS_VPC_ID }}
@@ -95,6 +111,11 @@ jobs:
           TENCENTCLOUD_TCR_REGISTRY_ID: ${{ secrets.TENCENTCLOUD_TCR_REGISTRY_ID }}
           TENCENTCLOUD_TCR_REPLICATION_REGION_ID: ${{ vars.TENCENTCLOUD_TCR_REPLICATION_REGION_ID }}
           TENCENTCLOUD_TCR_REPLICATION_REGION_NAME: ${{ vars.TENCENTCLOUD_TCR_REPLICATION_REGION_NAME }}
+          # High-impact TCR / CLS / Redis targets: unset means skip (§2.2).
+          TENCENTCLOUD_TCR_NAMESPACE: ${{ vars.TENCENTCLOUD_TCR_NAMESPACE }}
+          TENCENTCLOUD_TCR_WEBHOOK_URL: ${{ secrets.TENCENTCLOUD_TCR_WEBHOOK_URL }}
+          TENCENTCLOUD_CLS_ALARM_TOPIC_ID: ${{ secrets.TENCENTCLOUD_CLS_ALARM_TOPIC_ID }}
+          TENCENTCLOUD_REDIS_INSTANCE_ID: ${{ secrets.TENCENTCLOUD_REDIS_INSTANCE_ID }}
           # P0-01/02 flagship targets: billed targets stay out of the default
           # list and self-skip until their gate is configured (see
           # docs/integration-env.md §2.2 - keep that table in sync here).
@@ -107,7 +128,7 @@ jobs:
           TENCENTCLOUD_CDB_ZONE: ${{ vars.TENCENTCLOUD_CDB_ZONE }}
           TENCENTCLOUD_TKE_CLUSTER_VERSION: ${{ vars.TENCENTCLOUD_TKE_CLUSTER_VERSION }}
         run: >-
-          ansible-test integration ${{ inputs.targets || 'security_group network cmq_queue cls_log_pipeline api_gateway_service tat_command cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns tke_addon vpc subnet' }}
+          ansible-test integration ${{ inputs.targets || 'security_group network cmq_queue cls_log_pipeline api_gateway_service apigateway_plugin apigateway_ip_strategy cls_alarm_notice cdb_audit_rule_template tat_command cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns tke_addon vpc subnet' }}
           --color --python 3.12 --coverage
       # Coverage is collected (not gated) on real-cloud runs: the numbers
       # fluctuate with the account's resource state, so they are reported

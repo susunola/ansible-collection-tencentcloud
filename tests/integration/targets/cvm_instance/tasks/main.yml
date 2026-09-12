@@ -16,8 +16,8 @@
 # on a cold image. The read-back step exercises cvm_instance_info by id.
 - name: Read CVM instance integration inputs
   ansible.builtin.set_fact:
-    cvm_instance_image_id: "{{ lookup('env', 'TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID') | default('', true) }}"
-    cvm_instance_type: "{{ lookup('env', 'TENCENTCLOUD_CVM_INSTANCE_TYPE') | default('S5.MEDIUM2', true) }}"
+    cvm_instance_image_id: "{{ e2e_inputs.TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID | default(lookup('env', 'TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID'), true) | default('', true) }}"
+    cvm_instance_type: "{{ e2e_inputs.TENCENTCLOUD_CVM_INSTANCE_TYPE | default(lookup('env', 'TENCENTCLOUD_CVM_INSTANCE_TYPE'), true) | default('S5.MEDIUM2', true) }}"
 
 - name: Explain skipped CVM instance integration
   ansible.builtin.debug:

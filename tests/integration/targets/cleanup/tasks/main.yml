@@ -13,7 +13,7 @@
 - name: Sweep leftover integration-test resources
   vars:
     region: >-
-      {{ lookup('ansible.builtin.env', 'TENCENTCLOUD_REGION')
+      {{ e2e_inputs.TENCENTCLOUD_REGION | default(lookup('env', 'TENCENTCLOUD_REGION'), true)
          | default('ap-guangzhou', true) }}
   module_defaults:
     group/susunola.tencentcloud.all:

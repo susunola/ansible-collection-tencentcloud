@@ -15,7 +15,7 @@
     region: "{{ tencentcloud_region }}"
     run_id: "{{ 99999999 | random }}"
     image_name: "ansible-cvm-image-it-{{ run_id }}"
-    source_instance: "{{ lookup('env', 'TENCENTCLOUD_CVM_IMAGE_SOURCE_INSTANCE') | default('', true) }}"
+    source_instance: "{{ e2e_inputs.TENCENTCLOUD_CVM_IMAGE_SOURCE_INSTANCE | default(lookup('env', 'TENCENTCLOUD_CVM_IMAGE_SOURCE_INSTANCE'), true) | default('', true) }}"
   module_defaults:
     group/susunola.tencentcloud.all:
       region: "{{ region }}"
