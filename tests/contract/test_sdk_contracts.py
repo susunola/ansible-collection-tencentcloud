@@ -341,6 +341,22 @@ UNEXERCISED_BUILDERS = {
     ("tsf_public_config", "run_module"): "inline lifecycle requests are covered by unit tests",
     ("tsf_repository", "run_module"): "inline lifecycle requests are covered by unit tests",
     ("tsf_vm_deployment_group", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("apigateway_api_app", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("apigateway_ip_strategy", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("apigateway_plugin", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("cdb_audit_rule", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("cdb_audit_rule_template", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("clb_snat_ip", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("cls_alarm", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("cls_alarm_notice", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("redis_replication_group", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("scf_custom_domain", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tcr_immutable_tag_rule", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tcr_webhook_trigger", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tke_cls_log_config", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tke_cluster_deletion_protection", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tke_cluster_route", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tke_cluster_route_table", "run_module"): "inline lifecycle requests are covered by unit tests",
 
     ('tse_gateway_service', 'detail_request'): (
         'detail_request assigns DescribeOneCloudNativeAPIGatewayServiceRequest.ServiceName but '
@@ -1246,6 +1262,22 @@ WRITE_MODULE_BUILDERS = {
     "tse_governance_lane_group": ["delete_request", "describe_request"],
     "tse_governance_namespace": ["describe_request"],
     "tse_governance_service": ["describe_request"],
+    "apigateway_api_app": ["find_app"],
+    "apigateway_ip_strategy": ["find_strategy"],
+    "apigateway_plugin": ["find_plugin"],
+    "cdb_audit_rule": ["find_rule"],
+    "cdb_audit_rule_template": ["find_template"],
+    "clb_snat_ip": ["_current_snat_ips"],
+    "cls_alarm": ["find_alarm"],
+    "cls_alarm_notice": ["find_notice"],
+    "redis_replication_group": ["find_group"],
+    "scf_custom_domain": ["find_domain"],
+    "tcr_immutable_tag_rule": ["find_rule"],
+    "tcr_webhook_trigger": ["find_trigger"],
+    "tke_cls_log_config": ["describe_state"],
+    "tke_cluster_deletion_protection": ["describe_state"],
+    "tke_cluster_route": ["describe_state"],
+    "tke_cluster_route_table": ["describe_state"],
 }
 
 
@@ -2687,6 +2719,9 @@ def test_cfs_file_system():
             "vpc_id": "vpc-xxxxxxxx",
             "subnet_id": "subnet-xxxxxxxx",
             "pgroup_id": "pgroup-xxxxxxxx",
+            "net_interface": "CCN",
+            "ccn_id": "ccn-xxxxxxxx",
+            "cidr_block": "10.0.0.0/16",
         },
     )
     module._update_name(fake, client, models, "cfs-xxxxxxxx", "app-share-v2")
@@ -5527,6 +5562,7 @@ def test_cmq_queue():
         "max_msg_size": 1048576,
         "msg_retention_seconds": 3600,
         "rewind_seconds": 0,
+        "retention_size_in_mb": 0,
     }
     requests = [
         module.build_describe_request(models, "jobs"),
@@ -11405,4 +11441,230 @@ def test_tse_governance_service():
     p = {"instance_id": "ins-xxxxxxxx", "namespace": "production", "name": "orders"}
     errors = []
     errors.extend(audit_request(module.describe_request(models, p), "tse_governance_service describe"))
+    assert errors == []
+
+
+# ---------------------------------------------------------------------------
+# Lookup builders: the read half of modules whose writes are built inline
+# ---------------------------------------------------------------------------
+
+
+def test_apigateway_api_app():
+    module = _import_plugin("apigateway_api_app")
+    models = _models("apigateway.v20180808")
+    fake = _RecordingModule()
+    client = SimpleNamespace(DescribeApiAppsStatus=lambda request: SimpleNamespace(
+        Result=SimpleNamespace(ApiAppSet=[SimpleNamespace(ApiAppName="orders-app")]),
+    ))
+    errors = []
+    assert module.find_app(fake, client, models, "orders-app") is not None
+    assert module.find_app(fake, client, models, "absent-app") is None
+    errors.extend(audit_recorded(fake, "apigateway_api_app"))
+    assert errors == []
+
+
+def test_apigateway_ip_strategy():
+    module = _import_plugin("apigateway_ip_strategy")
+    models = _models("apigateway.v20180808")
+    fake = _RecordingModule()
+    client = SimpleNamespace(DescribeIPStrategysStatus=lambda request: SimpleNamespace(
+        Result=SimpleNamespace(StrategySet=[SimpleNamespace(StrategyName="office", ServiceId="service-xxxxxxxx")]),
+    ))
+    errors = []
+    assert module.find_strategy(fake, client, models, "service-xxxxxxxx", "office") is not None
+    assert module.find_strategy(fake, client, models, "service-xxxxxxxx", "absent") is None
+    errors.extend(audit_recorded(fake, "apigateway_ip_strategy"))
+    assert errors == []
+
+
+def test_apigateway_plugin():
+    module = _import_plugin("apigateway_plugin")
+    models = _models("apigateway.v20180808")
+    fake = _RecordingModule()
+    client = SimpleNamespace(DescribePlugins=lambda request: SimpleNamespace(
+        Result=SimpleNamespace(PluginSet=[SimpleNamespace(PluginName="rate-limit")]),
+    ))
+    errors = []
+    assert module.find_plugin(fake, client, models, "rate-limit") is not None
+    assert module.find_plugin(fake, client, models, "absent") is None
+    errors.extend(audit_recorded(fake, "apigateway_plugin"))
+    assert errors == []
+
+
+def test_cdb_audit_rule():
+    module = _import_plugin("cdb_audit_rule")
+    models = _models("cdb.v20170320")
+    fake = _RecordingModule()
+    client = SimpleNamespace(DescribeAuditRules=lambda request: SimpleNamespace(
+        Items=[SimpleNamespace(RuleName="slow-query")],
+    ))
+    errors = []
+    assert module.find_rule(fake, client, models, "slow-query") is not None
+    assert module.find_rule(fake, client, models, "absent") is None
+    errors.extend(audit_recorded(fake, "cdb_audit_rule"))
+    assert errors == []
+
+
+def test_cdb_audit_rule_template():
+    module = _import_plugin("cdb_audit_rule_template")
+    models = _models("cdb.v20170320")
+    fake = _RecordingModule()
+    client = SimpleNamespace(DescribeAuditRuleTemplates=lambda request: SimpleNamespace(
+        Items=[SimpleNamespace(RuleTemplateName="pci-dss")],
+    ))
+    errors = []
+    assert module.find_template(fake, client, models, "pci-dss") is not None
+    assert module.find_template(fake, client, models, "absent") is None
+    errors.extend(audit_recorded(fake, "cdb_audit_rule_template"))
+    assert errors == []
+
+
+def test_clb_snat_ip():
+    module = _import_plugin("clb_snat_ip")
+    models = _models("clb.v20180317")
+    fake = _RecordingModule()
+    client = SimpleNamespace(DescribeLoadBalancers=lambda request: SimpleNamespace(
+        LoadBalancerSet=[SimpleNamespace(SnatIps=["1.2.3.4", SimpleNamespace(SnatIp="5.6.7.8")])],
+    ))
+    errors = []
+    assert module._current_snat_ips(fake, client, models, "lb-xxxxxxxx") == ["1.2.3.4", "5.6.7.8"]
+    errors.extend(audit_recorded(fake, "clb_snat_ip"))
+    assert errors == []
+
+
+def test_cls_alarm():
+    module = _import_plugin("cls_alarm")
+    models = _models("cls.v20201016")
+    fake = _RecordingModule()
+    client = SimpleNamespace(DescribeAlarms=lambda request: SimpleNamespace(
+        Alarms=[SimpleNamespace(Name="error-spike")],
+    ))
+    errors = []
+    assert module.find_alarm(fake, client, models, "error-spike") is not None
+    assert module.find_alarm(fake, client, models, "absent") is None
+    errors.extend(audit_recorded(fake, "cls_alarm"))
+    assert errors == []
+
+
+def test_cls_alarm_notice():
+    module = _import_plugin("cls_alarm_notice")
+    models = _models("cls.v20201016")
+    fake = _RecordingModule()
+    client = SimpleNamespace(DescribeAlarmNotices=lambda request: SimpleNamespace(
+        AlarmNotices=[SimpleNamespace(Name="oncall")],
+    ))
+    errors = []
+    assert module.find_notice(fake, client, models, "oncall") is not None
+    assert module.find_notice(fake, client, models, "absent") is None
+    errors.extend(audit_recorded(fake, "cls_alarm_notice"))
+    assert errors == []
+
+
+def test_redis_replication_group():
+    module = _import_plugin("redis_replication_group")
+    models = _models("redis.v20180412")
+    fake = _RecordingModule()
+    client = SimpleNamespace(DescribeReplicationGroup=lambda request: SimpleNamespace(
+        Groups=[SimpleNamespace(GroupName="orders")],
+    ))
+    errors = []
+    assert module.find_group(fake, client, models, "orders") is not None
+    assert module.find_group(fake, client, models, "absent") is None
+    errors.extend(audit_recorded(fake, "redis_replication_group"))
+    assert errors == []
+
+
+def test_scf_custom_domain():
+    module = _import_plugin("scf_custom_domain")
+    models = _models("scf.v20180416")
+    fake = _RecordingModule()
+    client = SimpleNamespace(ListCustomDomains=lambda request: SimpleNamespace(
+        Domains=[SimpleNamespace(Domain="api.example.com")],
+    ))
+    errors = []
+    assert module.find_domain(fake, client, models, "api.example.com") is not None
+    assert module.find_domain(fake, client, models, "absent.example.com") is None
+    errors.extend(audit_recorded(fake, "scf_custom_domain"))
+    assert errors == []
+
+
+def test_tcr_immutable_tag_rule():
+    module = _import_plugin("tcr_immutable_tag_rule")
+    models = _models("tcr.v20190924")
+    fake = _RecordingModule()
+    client = SimpleNamespace(DescribeImmutableTagRules=lambda request: SimpleNamespace(
+        Rules=[SimpleNamespace(NsName="team", RepositoryPattern="**", TagPattern="v*")],
+    ))
+    errors = []
+    assert module.find_rule(fake, client, models, "tcr-xxxxxxxx", "team", "**", "v*") is not None
+    assert module.find_rule(fake, client, models, "tcr-xxxxxxxx", "team", "**", "absent") is None
+    errors.extend(audit_recorded(fake, "tcr_immutable_tag_rule"))
+    assert errors == []
+
+
+def test_tcr_webhook_trigger():
+    module = _import_plugin("tcr_webhook_trigger")
+    models = _models("tcr.v20190924")
+    fake = _RecordingModule()
+    client = SimpleNamespace(DescribeWebhookTrigger=lambda request: SimpleNamespace(
+        Triggers=[SimpleNamespace(Name="ci-push", NamespaceName="team")],
+    ))
+    errors = []
+    assert module.find_trigger(fake, client, models, "tcr-xxxxxxxx", "team", "ci-push") is not None
+    assert module.find_trigger(fake, client, models, "tcr-xxxxxxxx", "team", "absent") is None
+    errors.extend(audit_recorded(fake, "tcr_webhook_trigger"))
+    assert errors == []
+
+
+def test_tke_cls_log_config():
+    module = _import_plugin("tke_cls_log_config")
+    models = _models("tke.v20180525")
+    fake = _RecordingModule()
+    log_configs = '[{"name": "app-logs"}]'
+    client = SimpleNamespace(DescribeLogConfigs=lambda request: SimpleNamespace(LogConfigs=log_configs))
+    errors = []
+    assert module.describe_state(fake, client, models, "cls-xxxxxxxx", "tke", "app-logs") == {"name": "app-logs"}
+    assert module.describe_state(fake, client, models, "cls-xxxxxxxx", "tke", "absent") is None
+    errors.extend(audit_recorded(fake, "tke_cls_log_config"))
+    assert errors == []
+
+
+def test_tke_cluster_deletion_protection():
+    module = _import_plugin("tke_cluster_deletion_protection")
+    models = _models("tke.v20180525")
+    fake = _RecordingModule()
+    client = SimpleNamespace(DescribeClusters=lambda request: SimpleNamespace(
+        Clusters=[SimpleNamespace(DeletionProtection=True)],
+    ))
+    errors = []
+    assert module.describe_state(fake, client, models, "cls-xxxxxxxx") is True
+    errors.extend(audit_recorded(fake, "tke_cluster_deletion_protection"))
+    assert errors == []
+
+
+def test_tke_cluster_route():
+    module = _import_plugin("tke_cluster_route")
+    models = _models("tke.v20180525")
+    fake = _RecordingModule()
+    client = SimpleNamespace(DescribeClusterRoutes=lambda request: SimpleNamespace(
+        RouteSet=[SimpleNamespace(DestinationCidrBlock="10.0.0.0/16")],
+    ))
+    errors = []
+    assert module.describe_state(fake, client, models, "rtb-xxxxxxxx", "10.0.0.0/16") is not None
+    assert module.describe_state(fake, client, models, "rtb-xxxxxxxx", "192.168.0.0/16") is None
+    errors.extend(audit_recorded(fake, "tke_cluster_route"))
+    assert errors == []
+
+
+def test_tke_cluster_route_table():
+    module = _import_plugin("tke_cluster_route_table")
+    models = _models("tke.v20180525")
+    fake = _RecordingModule()
+    client = SimpleNamespace(DescribeClusterRouteTables=lambda request: SimpleNamespace(
+        RouteTableSet=[SimpleNamespace(RouteTableName="rtb-xxxxxxxx")],
+    ))
+    errors = []
+    assert module.describe_state(fake, client, models, "rtb-xxxxxxxx") is not None
+    assert module.describe_state(fake, client, models, "absent") is None
+    errors.extend(audit_recorded(fake, "tke_cluster_route_table"))
     assert errors == []

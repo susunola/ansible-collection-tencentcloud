@@ -95,11 +95,9 @@ def find_strategy(module, client, models, service_id, name):
     request = models.DescribeIPStrategysStatusRequest()
     request.ServiceId = service_id
     flt = models.Filter()
-    flt.Key = "StrategyName"
+    flt.Name = "StrategyName"
     flt.Values = [name]
     request.Filters = [flt]
-    request.Limit = 100
-    request.Offset = 0
     response = module.sdk_call(client.DescribeIPStrategysStatus, request)
     summary = getattr(response, "Result", None)
     strategies = list(getattr(summary, "StrategySet", None) or [])

@@ -53,7 +53,7 @@ class FakeApigwClient(object):
 
     def _name_filter(self, request):
         for flt in getattr(request, "Filters", None) or []:
-            if getattr(flt, "Key", None) == "StrategyName":
+            if getattr(flt, "Name", None) == "StrategyName":
                 return list(getattr(flt, "Values", None) or [])
         return []
 

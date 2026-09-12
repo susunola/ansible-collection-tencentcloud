@@ -1,0 +1,9 @@
+---
+bugfixes:
+  - >-
+    apigateway_ip_strategy - build the DescribeIPStrategysStatus filter with the field the SDK actually
+    declares. The lookup set ``Filter.Key``, but the API Gateway ``Filter`` model only declares ``Name``
+    and ``Values``, so the attribute was silently dropped: the request went out unfiltered and the
+    strategy was matched client-side only. It also set ``Limit`` and ``Offset``, which
+    ``DescribeIPStrategysStatusRequest`` does not declare - the SDK serialized them into the unknown
+    parameters ``Imit`` and ``Ffset`` and sent those to the API as well.
