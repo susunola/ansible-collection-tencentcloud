@@ -32,12 +32,29 @@ errors: list[str] = []
 _IDENTIFIER = re.compile(r"^[A-Za-z_][A-Za-z0-9_.]*$")
 
 
+# `x | length > 0 | length == 0` - what a careless find/replace leaves behind:
+# the second `length` is applied to the boolean the comparison produced and
+# the task dies with "object of type 'bool' has no len()".
+# A comparison immediately followed by another filter: the operand is the
+# boolean the comparison produced, not a collection. The right-hand side is
+# restricted to a literal so two legitimate filters in one guard
+# (`a | length == 0 or b | length == 0`) are not flagged.
+_LENGTH_AFTER_COMPARISON = re.compile(
+    r"(?:==|!=|>=|<=|>|<)\s*(?:'[^']*'|\"[^\"]*\"|\d+)\s*\|\s*length\b"
+)
+
+
 def is_bare_conditional(cond: str) -> bool:
     """True when a ``when:`` string can only ever yield a non-boolean."""
     text = re.sub(r"\bnot\b", " ", cond.strip()).replace("(", " ").replace(")", " ").strip()
     if not text:
         return False
     return all(_IDENTIFIER.match(part.strip()) for part in re.split(r"\band\b|\bor\b", text))
+
+
+def is_malformed_conditional(cond: str) -> bool:
+    """True when a ``when:`` chains a filter onto a comparison result."""
+    return bool(_LENGTH_AFTER_COMPARISON.search(cond))
 
 
 def main() -> int:
@@ -63,7 +80,7 @@ def main() -> int:
         for e in errors:
             print(" -", e)
         return 1
-    print("AUDIT OK: 5 targets x 3 files + coverage.yml + integration.yml parse; all FQCNs resolve; when-guards reference earlier registers; no bare conditionals")
+    print("AUDIT OK: 5 targets x 3 files + coverage.yml + integration.yml parse; all FQCNs resolve; when-guards reference earlier registers; no bare or malformed conditionals")
     return 0
 
 
@@ -80,10 +97,17 @@ def audit_conditionals(root: Path | None = None) -> list[str]:
         for task in walk_tasks(data):
             when = task.get("when") if isinstance(task, dict) else None
             for cond in when if isinstance(when, list) else [when]:
-                if isinstance(cond, str) and is_bare_conditional(cond):
+                if not isinstance(cond, str):
+                    continue
+                if is_bare_conditional(cond):
                     problems.append(
                         f"{path}: 'when: {cond.strip()}' yields a string, not a boolean - "
                         "add an explicit test (e.g. '| length > 0')"
+                    )
+                elif is_malformed_conditional(cond):
+                    problems.append(
+                        f"{path}: 'when: {cond.strip()}' chains a filter onto a comparison "
+                        "result - the task fails at runtime with 'object of type X has no len()'"
                     )
     return problems
 

@@ -1,0 +1,4 @@
+---
+bugfixes:
+  - cos_bucket, cos_bucket_info - read CORS and lifecycle rules from the flat shape the SDK actually returns. A ``get_bucket_cors`` / ``get_bucket_lifecycle`` GET answers ``{"CORSRule": [...]}`` / ``{"Rule": [...]}`` rather than nesting them under ``CORSConfiguration`` / ``LifecycleConfiguration``, so both sub-configurations always looked empty: the module reported a change on every run and never converged.
+  - cos_bucket, cos_bucket_info, cos_object, cos_object_info, cos_object_sync - resolve the COS AppId through CAM ``GetUserAppId`` instead of treating the STS ``GetCallerIdentity`` ``AccountId`` as the AppId. On accounts where the UIN and the AppId differ the bucket was addressed under a name the account does not own and every COS call answered ``AccessDenied``.

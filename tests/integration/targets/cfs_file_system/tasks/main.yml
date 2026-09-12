@@ -48,8 +48,13 @@
         protocol: NFS
         storage_type: SD
         capacity: 10
+        net_interface: VPC
         vpc_id: "{{ vpc_create.vpc.VpcId }}"
         subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+        # CreateCfsFileSystem rejects a body without PGroupId on accounts
+        # where no default permission group is applied; pgroupbasic is the
+        # built-in group every account has.
+        pgroup_id: pgroupbasic
       register: cfs_create
 
     - name: Creation reports changed with an ID
@@ -57,7 +62,17 @@
         that:
           - cfs_create is changed
           - cfs_create.file_system.FileSystemId is defined
-          - cfs_create.file_system.Name == fs_name
+          - cfs_create.file_system.FsName == fs_name
+
+    # A file system in the "creating" state rejects both a rename and a
+    # delete with UnsupportedOperation, so settle before asserting on it.
+    - name: Wait until the file system is available
+      susunola.tencentcloud.cfs_file_system_info:
+        file_system_id: "{{ cfs_create.file_system.FileSystemId }}"
+      register: cfs_state
+      until: cfs_state.file_systems | length > 0 and cfs_state.file_systems[0].LifeCycleState == "available"
+      retries: 30
+      delay: 10
 
     - name: Create the same file system again (idempotency)
       susunola.tencentcloud.cfs_file_system:
@@ -67,8 +82,13 @@
         protocol: NFS
         storage_type: SD
         capacity: 10
+        net_interface: VPC
         vpc_id: "{{ vpc_create.vpc.VpcId }}"
         subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+        # CreateCfsFileSystem rejects a body without PGroupId on accounts
+        # where no default permission group is applied; pgroupbasic is the
+        # built-in group every account has.
+        pgroup_id: pgroupbasic
       register: cfs_second
 
     - name: Second run reports no change
@@ -118,11 +138,18 @@
       when: cfs_create is defined and cfs_create.file_system is defined
       ignore_errors: true
 
+    # Deleting the file system releases its mount-target IP asynchronously, so
+    # for a short while the subnet still reports ResourceInUse. Retry instead
+    # of leaking a VPC per run.
     - name: Delete the subnet
       susunola.tencentcloud.subnet:
         state: absent
         subnet_id: "{{ subnet_create.subnet.SubnetId }}"
       when: subnet_create is defined and subnet_create.subnet is defined
+      register: subnet_cleanup
+      until: subnet_cleanup is succeeded
+      retries: 10
+      delay: 15
       ignore_errors: true
 
     - name: Delete the VPC
@@ -130,4 +157,8 @@
         state: absent
         vpc_id: "{{ vpc_create.vpc.VpcId }}"
       when: vpc_create is defined and vpc_create.vpc is defined
+      register: vpc_cleanup
+      until: vpc_cleanup is succeeded
+      retries: 10
+      delay: 15
       ignore_errors: true

@@ -12,7 +12,9 @@ on:
       targets:
         description: "Integration targets to run (space separated)"
         type: string
-        default: "security_group network cmq_queue cls_log_pipeline api_gateway_service tat_command cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns tke_addon"
+        # Keep in sync with the fallback list on the "Run integration tests"
+        # step: the scheduled run has no inputs and uses that one instead.
+        default: "security_group network cmq_queue cls_log_pipeline api_gateway_service apigateway_plugin apigateway_ip_strategy cls_alarm_notice cdb_audit_rule_template tat_command cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns tke_addon vpc subnet"
 
 # Integration tests create billable resources in a shared Tencent Cloud
 # account. A single fixed concurrency group serialises every run (any

@@ -23,7 +23,12 @@ html_show_sphinx = False
 
 display_version = False
 
-html_use_smartypants = True
+# Docutils' smartquotes transform rewrites ASCII quotes into curly ones. That
+# looks nicer in a browser but the rendered HTML is committed to the repo, and
+# ansible-test's no-smart-quotes sanity test then fails on the build output.
+# Keep the generated pages pure ASCII instead.
+smartquotes = False
+smartquotes_action = ""
 html_use_modindex = False
 html_use_index = False
 html_copy_source = False

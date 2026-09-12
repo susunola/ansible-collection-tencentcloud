@@ -7,10 +7,10 @@
 <meta content="2.26.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>susunola.tencentcloud.cfs_file_system module – Manage Tencent Cloud CFS file systems &mdash; Tencent Cloud Collection  documentation</title>
+  <title>susunola.tencentcloud.cfs_file_system module -- Manage Tencent Cloud CFS file systems &mdash; Tencent Cloud Collection  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=41de9001" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/ansible.css?v=b54c304f" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/antsibull-minimal.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/antsibull-minimal.css?v=6a2449bc" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/rtd-ethical-ads.css?v=289b023e" />
 
   
@@ -22,8 +22,8 @@
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="susunola.tencentcloud.cfs_file_system_info module – Gather information about Tencent Cloud CFS file systems" href="cfs_file_system_info_module.html" />
-    <link rel="prev" title="susunola.tencentcloud.cfs_auto_snapshot_policy_info module – Gather information about Tencent Cloud CFS automatic snapshot policies" href="cfs_auto_snapshot_policy_info_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
+    <link rel="next" title="susunola.tencentcloud.cfs_file_system_info module -- Gather information about Tencent Cloud CFS file systems" href="cfs_file_system_info_module.html" />
+    <link rel="prev" title="susunola.tencentcloud.cfs_auto_snapshot_policy_info module -- Gather information about Tencent Cloud CFS automatic snapshot policies" href="cfs_auto_snapshot_policy_info_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
 
 
 
@@ -119,7 +119,7 @@
           <li class="breadcrumb-item"><a href="../../index.html">Collection Index</a></li>
           <li class="breadcrumb-item"><a href="../index.html">Collections in the Susunola Namespace</a></li>
           <li class="breadcrumb-item"><a href="index.html">Susunola.Tencentcloud</a></li>
-      <li class="breadcrumb-item active">susunola.tencentcloud.cfs_file_system module – Manage Tencent Cloud CFS file systems</li>
+      <li class="breadcrumb-item active">susunola.tencentcloud.cfs_file_system module -- Manage Tencent Cloud CFS file systems</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -131,7 +131,7 @@
            <div itemprop="articleBody">
              
   <span class="target" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module"></span><section id="susunola-tencentcloud-cfs-file-system-module-manage-tencent-cloud-cfs-file-systems">
-<h1>susunola.tencentcloud.cfs_file_system module – Manage Tencent Cloud CFS file systems<a class="headerlink" href="#susunola-tencentcloud-cfs-file-system-module-manage-tencent-cloud-cfs-file-systems" title="Link to this heading"></a></h1>
+<h1>susunola.tencentcloud.cfs_file_system module -- Manage Tencent Cloud CFS file systems<a class="headerlink" href="#susunola-tencentcloud-cfs-file-system-module-manage-tencent-cloud-cfs-file-systems" title="Link to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This module is part of the <a class="reference external" href="https://github.com/susunola/ansible-collection-tencentcloud">susunola.tencentcloud collection</a> (version 1.1.0).</p>
@@ -177,6 +177,22 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-ccn_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-ccn-id"><strong>ccn_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-ccn_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Cloud Connect Network ID written to <code class="ansible-value docutils literal notranslate"><span class="pre">CreateCfsFileSystemRequest.CcnId</span></code>.</p>
+<p>Required when <code class="ansible-option-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-net-interface"><span class="std std-ref"><span class="pre">net_interface=CCN</span></span></a></code>. Only applied at creation.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-cidr_block"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-cidr-block"><strong>cidr_block</strong></p>
+<a class="ansibleOptionLink" href="#parameter-cidr_block" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>CCN CIDR block written to <code class="ansible-value docutils literal notranslate"><span class="pre">CreateCfsFileSystemRequest.CidrBlock</span></code>.</p>
+<p>Required when <code class="ansible-option-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-net-interface"><span class="std std-ref"><span class="pre">net_interface=CCN</span></span></a></code>. Only applied at creation.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-endpoint"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-endpoint"><strong>endpoint</strong></p>
 <a class="ansibleOptionLink" href="#parameter-endpoint" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -201,6 +217,20 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-net_interface"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-net-interface"><strong>net_interface</strong></p>
+<a class="ansibleOptionLink" href="#parameter-net_interface" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Network type written to <code class="ansible-value docutils literal notranslate"><span class="pre">CreateCfsFileSystemRequest.NetInterface</span></code>.</p>
+<p>The API rejects a create call that omits this field; it defaults to <code class="docutils literal notranslate"><span class="pre">VPC</span></code> so an existing playbook keeps working unchanged.</p>
+<p>Only applied at creation.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">&quot;VPC&quot;</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CCN&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-pgroup_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-pgroup-id"><strong>pgroup_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-pgroup_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -208,7 +238,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p>Only applied at creation.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-profile"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-profile"><strong>profile</strong></p>
 <a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 <p><em class="ansible-option-versionadded">added in susunola.tencentcloud 0.5.0</em></p>
@@ -218,7 +248,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_PROFILE</span></code>; when neither is set the <code class="docutils literal notranslate"><span class="pre">default</span></code> section is used.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-protocol"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-protocol"><strong>protocol</strong></p>
 <a class="ansibleOptionLink" href="#parameter-protocol" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -231,7 +261,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-region"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-region"><strong>region</strong></p>
 <a class="ansibleOptionLink" href="#parameter-region" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -240,7 +270,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p>Required unless one of those fallbacks provides it.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-retries"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-retries"><strong>retries</strong></p>
 <a class="ansibleOptionLink" href="#parameter-retries" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -248,7 +278,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">5</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-role_arn"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-role-arn"><strong>role_arn</strong></p>
 <a class="ansibleOptionLink" href="#parameter-role_arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -257,7 +287,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_ROLE_ARN</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-role_session_duration"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-role-session-duration"><strong>role_session_duration</strong></p>
 <a class="ansibleOptionLink" href="#parameter-role_session_duration" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -265,7 +295,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">7200</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-role_session_name"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-role-session-name"><strong>role_session_name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-role_session_name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -273,7 +303,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;ansible-tencentcloud&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-secret_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-secret-id"><strong>secret_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-secret_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -281,7 +311,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_SECRET_ID</span></code>, then to the selected <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-profile"><span class="std std-ref"><span class="pre">profile</span></span></a></strong></code> section in <code class="docutils literal notranslate"><span class="pre">~/.tencentcloud/default.configure</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-secret_key"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-secret-key"><strong>secret_key</strong></p>
 <a class="ansibleOptionLink" href="#parameter-secret_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -289,7 +319,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p>Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_SECRET_KEY</span></code>, then to the selected <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-profile"><span class="std std-ref"><span class="pre">profile</span></span></a></strong></code> section in <code class="docutils literal notranslate"><span class="pre">~/.tencentcloud/default.configure</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-size_limit"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-size-limit"><strong>size_limit</strong></p>
 <a class="ansibleOptionLink" href="#parameter-size_limit" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -297,7 +327,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p>When given, the size limit of an existing file system is reconciled; a differing limit counts as a change.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -310,7 +340,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-storage_type"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-storage-type"><strong>storage_type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-storage_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -326,14 +356,15 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-subnet_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-subnet-id"><strong>subnet_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-subnet_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Subnet ID for the file system network, written to <code class="ansible-value docutils literal notranslate"><span class="pre">CreateCfsFileSystemRequest.SubnetId</span></code>. Only applied at creation.</p>
+<p>Required when <code class="ansible-option-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-net-interface"><span class="std std-ref"><span class="pre">net_interface=VPC</span></span></a></code>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-timeout"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-timeout"><strong>timeout</strong></p>
 <a class="ansibleOptionLink" href="#parameter-timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -341,14 +372,14 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">60</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-token"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-token"><strong>token</strong></p>
 <a class="ansibleOptionLink" href="#parameter-token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Temporary credential token. Falls back to <code class="docutils literal notranslate"><span class="pre">TENCENTCLOUD_TOKEN</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-user_agent"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-user-agent"><strong>user_agent</strong></p>
 <a class="ansibleOptionLink" href="#parameter-user_agent" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -356,14 +387,15 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;ansible-collection.susunola.tencentcloud&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-vpc_id"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-vpc-id"><strong>vpc_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-vpc_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>VPC ID for the file system network, written to <code class="ansible-value docutils literal notranslate"><span class="pre">CreateCfsFileSystemRequest.VpcId</span></code>. Only applied at creation.</p>
+<p>Required when <code class="ansible-option-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-net-interface"><span class="std std-ref"><span class="pre">net_interface=VPC</span></span></a></code>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-waiter_delay"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-waiter-delay"><strong>waiter_delay</strong></p>
 <a class="ansibleOptionLink" href="#parameter-waiter_delay" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -371,7 +403,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">5</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-waiter_timeout"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-waiter-timeout"><strong>waiter_timeout</strong></p>
 <a class="ansibleOptionLink" href="#parameter-waiter_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -379,7 +411,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">120</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-zone"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cfs-file-system-module-parameter-zone"><strong>zone</strong></p>
 <a class="ansibleOptionLink" href="#parameter-zone" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -472,8 +504,8 @@ To check whether it is installed, run <code class="code docutils literal notrans
           
 
 <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cfs_auto_snapshot_policy_info_module.html" class="btn btn-neutral float-left" title="susunola.tencentcloud.cfs_auto_snapshot_policy_info module – Gather information about Tencent Cloud CFS automatic snapshot policies" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="cfs_file_system_info_module.html" class="btn btn-neutral float-right" title="susunola.tencentcloud.cfs_file_system_info module – Gather information about Tencent Cloud CFS file systems" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cfs_auto_snapshot_policy_info_module.html" class="btn btn-neutral float-left" title="susunola.tencentcloud.cfs_auto_snapshot_policy_info module -- Gather information about Tencent Cloud CFS automatic snapshot policies" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cfs_file_system_info_module.html" class="btn btn-neutral float-right" title="susunola.tencentcloud.cfs_file_system_info module -- Gather information about Tencent Cloud CFS file systems" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

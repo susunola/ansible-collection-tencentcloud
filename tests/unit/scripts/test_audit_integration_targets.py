@@ -120,6 +120,13 @@ BARE_GUARDS = [
     "  when: demo_vpc_id and demo_subnet_id\n",
     "  when: not (demo_vpc_id and demo_subnet_id)\n",
 ]
+# A filter chained onto the result of a comparison: dies at runtime with
+# "object of type 'bool' has no len()".
+MALFORMED_GUARDS = [
+    "  when: demo_vpc_id | length > 0 | length == 0\n",
+    "  when: demo_vpc_id | length > 0 | length > 0\n",
+    "  when: demo_count > 0 | length > 0\n",
+]
 SAFE_GUARDS = [
     "  when: demo_vpc_id | length > 0\n",
     "  when: demo_vpc_id | length == 0 or demo_subnet_id | length == 0\n",
@@ -134,6 +141,15 @@ def test_bare_conditionals_are_flagged(target_tree, guard):
     _write_target(target_tree, GOOD_TASKS + guard.rstrip("\n").replace("  when:", "- name: Guard\n  ansible.builtin.debug:\n    msg: x\n  when:"))
     problems = _AUDIT.audit_conditionals(target_tree)
     assert len(problems) == 1
+    assert _AUDIT.main() == 1
+
+
+@pytest.mark.parametrize("guard", MALFORMED_GUARDS)
+def test_malformed_conditionals_are_flagged(target_tree, guard):
+    _write_target(target_tree, GOOD_TASKS + guard.rstrip("\n").replace("  when:", "- name: Guard\n  ansible.builtin.debug:\n    msg: x\n  when:"))
+    problems = _AUDIT.audit_conditionals(target_tree)
+    assert len(problems) == 1
+    assert "comparison" in problems[0]
     assert _AUDIT.main() == 1
 
 

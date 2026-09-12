@@ -91,7 +91,7 @@ class FakeCfsClient(object):
             "SizeLimit": data.get("Capacity"),
             "Status": "available",
         }
-        for key in ("VpcId", "SubnetId", "PGroupId"):
+        for key in ("NetInterface", "VpcId", "SubnetId", "CcnId", "CidrBlock", "PGroupId"):
             if data.get(key):
                 entry[key] = data[key]
         self.entries.append(entry)
@@ -245,6 +245,71 @@ def test_create_request_carries_network_fields(monkeypatch):
     assert request.VpcId == "vpc-abc123"
     assert request.SubnetId == "subnet-abc123"
     assert request.PGroupId == "pgroup-abc123"
+
+
+def test_create_always_sends_net_interface(monkeypatch):
+    """CreateCfsFileSystem rejects a body without NetInterface (MissingParameter)."""
+    fake = FakeCfsClient()
+    _make_module(monkeypatch, fake)
+    _base(state="present", name="app-share", zone="ap-guangzhou-3")
+    run(mod.run_module)
+    request = _request(fake, "CreateCfsFileSystem")
+    assert request.NetInterface == "VPC"
+
+
+def test_create_with_ccn_sends_ccn_identifiers(monkeypatch):
+    fake = FakeCfsClient()
+    _make_module(monkeypatch, fake)
+    _base(
+        state="present",
+        name="app-share",
+        zone="ap-guangzhou-3",
+        net_interface="CCN",
+        ccn_id="ccn-abc123",
+        cidr_block="10.99.0.0/16",
+    )
+    run(mod.run_module)
+    request = _request(fake, "CreateCfsFileSystem")
+    assert request.NetInterface == "CCN"
+    assert request.CcnId == "ccn-abc123"
+    assert request.CidrBlock == "10.99.0.0/16"
+
+
+def test_ccn_requires_ccn_id_and_cidr_block(monkeypatch):
+    fake = FakeCfsClient()
+    _make_module(monkeypatch, fake)
+    _base(state="present", name="app-share", zone="ap-guangzhou-3", net_interface="CCN")
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "ccn_id" in exc.value.args[0]["msg"]
+
+
+def test_name_lookup_uses_fs_name_from_the_api(monkeypatch):
+    """DescribeCfsFileSystems reports the name as FsName, never Name."""
+    fake = FakeCfsClient(entries=[_fs(Name=None, FsName="app-share")])
+    _make_module(monkeypatch, fake)
+    _base(state="present", name="app-share", size_limit=100)
+    result = run(mod.run_module)
+    assert result["changed"] is False
+    assert result["file_system"]["FileSystemId"] == FS_ID
+
+
+def test_no_drift_when_only_fs_name_is_set(monkeypatch):
+    fake = FakeCfsClient(entries=[_fs(Name=None, FsName="app-share")])
+    _make_module(monkeypatch, fake)
+    _base(state="present", name="app-share", size_limit=100)
+    run(mod.run_module)
+    assert "UpdateCfsFileSystemName" not in _ops(fake)
+
+
+def test_create_re_reads_by_the_id_returned_by_create(monkeypatch):
+    fake = FakeCfsClient()
+    _make_module(monkeypatch, fake)
+    _base(state="present", name="app-share", zone="ap-guangzhou-3")
+    result = run(mod.run_module)
+    assert result["changed"] is True
+    assert result["file_system"] is not None
+    assert result["file_system"]["FileSystemId"] == "cfs-new-001"
 
 
 def test_create_check_mode_is_dry_run(monkeypatch):

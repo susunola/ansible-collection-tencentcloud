@@ -7,7 +7,7 @@
 <meta content="2.26.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>susunola.tencentcloud.cls_alarm module – Create or delete a Tencent Cloud CLS alarm &mdash; Tencent Cloud Collection  documentation</title>
+  <title>susunola.tencentcloud.cls_alarm module -- Create or delete a Tencent Cloud CLS alarm &mdash; Tencent Cloud Collection  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=41de9001" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/ansible.css?v=b54c304f" />
       <link rel="stylesheet" type="text/css" href="../../../_static/antsibull-minimal.css?v=6a2449bc" />
@@ -22,8 +22,8 @@
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="susunola.tencentcloud.cls_alarm_notice module – Create or delete a Tencent Cloud CLS alarm notice (notification channel group)" href="cls_alarm_notice_module.html" />
-    <link rel="prev" title="susunola.tencentcloud.cloudstudio_image_info module – Gather information about Tencent Cloud CLOUDSTUDIO images" href="cloudstudio_image_info_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
+    <link rel="next" title="susunola.tencentcloud.cls_alarm_notice module -- Create or delete a Tencent Cloud CLS alarm notice (notification channel group)" href="cls_alarm_notice_module.html" />
+    <link rel="prev" title="susunola.tencentcloud.cloudstudio_image_info module -- Gather information about Tencent Cloud CLOUDSTUDIO images" href="cloudstudio_image_info_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
 
 
 
@@ -119,7 +119,7 @@
           <li class="breadcrumb-item"><a href="../../index.html">Collection Index</a></li>
           <li class="breadcrumb-item"><a href="../index.html">Collections in the Susunola Namespace</a></li>
           <li class="breadcrumb-item"><a href="index.html">Susunola.Tencentcloud</a></li>
-      <li class="breadcrumb-item active">susunola.tencentcloud.cls_alarm module – Create or delete a Tencent Cloud CLS alarm</li>
+      <li class="breadcrumb-item active">susunola.tencentcloud.cls_alarm module -- Create or delete a Tencent Cloud CLS alarm</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -131,7 +131,7 @@
            <div itemprop="articleBody">
              
   <span class="target" id="ansible-collections-susunola-tencentcloud-cls-alarm-module"></span><section id="susunola-tencentcloud-cls-alarm-module-create-or-delete-a-tencent-cloud-cls-alarm">
-<h1>susunola.tencentcloud.cls_alarm module – Create or delete a Tencent Cloud CLS alarm<a class="headerlink" href="#susunola-tencentcloud-cls-alarm-module-create-or-delete-a-tencent-cloud-cls-alarm" title="Link to this heading"></a></h1>
+<h1>susunola.tencentcloud.cls_alarm module -- Create or delete a Tencent Cloud CLS alarm<a class="headerlink" href="#susunola-tencentcloud-cls-alarm-module-create-or-delete-a-tencent-cloud-cls-alarm" title="Link to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This module is part of the <a class="reference external" href="https://github.com/susunola/ansible-collection-tencentcloud">susunola.tencentcloud collection</a> (version 1.1.0).</p>
@@ -153,7 +153,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <h2><a class="toc-backref" href="#id1" role="doc-backlink">Synopsis</a><a class="headerlink" href="#synopsis" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>Creates or deletes a Tencent Cloud CLS (Cloud Log Service) alarm policy, identified by its name. The module is idempotent; it reads the current alarms before changing anything and matches on the alarm name.</p></li>
-<li><p>The alarm configuration is a raw SDK-shaped dictionary (the full <code class="docutils literal notranslate"><span class="pre">AlarmInfo</span></code> / <code class="docutils literal notranslate"><span class="pre">CreateAlarmRequest</span></code> body) passed through verbatim, because the alarm object is a large nested structure (monitor targets, conditions, callbacks, analysis) with no clean flat suboption set. The <code class="docutils literal notranslate"><span class="pre">Name</span></code> field is forced to the module’s top-level <em>name</em> so the create and the idempotency lookup stay consistent.</p></li>
+<li><p>The alarm configuration is a raw SDK-shaped dictionary (the full <code class="docutils literal notranslate"><span class="pre">AlarmInfo</span></code> / <code class="docutils literal notranslate"><span class="pre">CreateAlarmRequest</span></code> body) passed through verbatim, because the alarm object is a large nested structure (monitor targets, conditions, callbacks, analysis) with no clean flat suboption set. The <code class="docutils literal notranslate"><span class="pre">Name</span></code> field is forced to the module's top-level <em>name</em> so the create and the idempotency lookup stay consistent.</p></li>
 </ul>
 </section>
 <section id="parameters">
@@ -391,8 +391,8 @@ To check whether it is installed, run <code class="code docutils literal notrans
           
 
 <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cloudstudio_image_info_module.html" class="btn btn-neutral float-left" title="susunola.tencentcloud.cloudstudio_image_info module – Gather information about Tencent Cloud CLOUDSTUDIO images" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="cls_alarm_notice_module.html" class="btn btn-neutral float-right" title="susunola.tencentcloud.cls_alarm_notice module – Create or delete a Tencent Cloud CLS alarm notice (notification channel group)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cloudstudio_image_info_module.html" class="btn btn-neutral float-left" title="susunola.tencentcloud.cloudstudio_image_info module -- Gather information about Tencent Cloud CLOUDSTUDIO images" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cls_alarm_notice_module.html" class="btn btn-neutral float-right" title="susunola.tencentcloud.cls_alarm_notice module -- Create or delete a Tencent Cloud CLS alarm notice (notification channel group)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

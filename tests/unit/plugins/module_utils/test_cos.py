@@ -6,7 +6,21 @@ __metaclass__ = type
 
 from types import SimpleNamespace
 
+import pytest
+
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
+
+
+class FakeFailJson(Exception):
+    """Stands in for AnsibleModule.fail_json."""
+
+    def __init__(self, **kwargs):
+        super(FakeFailJson, self).__init__(kwargs.get("msg"))
+        self.msg = kwargs.get("msg")
+
+
+def _fail(**kwargs):
+    raise FakeFailJson(**kwargs)
 
 
 class FakeCosError(Exception):
@@ -309,6 +323,37 @@ def test_create_cos_client_without_role_arn_keeps_credentials(monkeypatch):
     assert s3_client.config.Token == "session-token"
 
 
+def test_create_cos_client_falls_back_to_the_tccli_profile(monkeypatch):
+    """ansible-test strips TENCENTCLOUD_*, so the profile file is the only source."""
+    _fake_cos_sdk(monkeypatch)
+    monkeypatch.setattr(
+        cos.api3_client,
+        "load_profile",
+        lambda profile=None, path=None: {
+            "secret_id": "profile-akid",
+            "secret_key": "profile-secret",
+            "region": "ap-shanghai",
+        },
+    )
+    params = dict(COS_PARAMS, secret_id=None, secret_key=None, region=None)
+    module = SimpleNamespace(params=params)
+    s3_client = cos.create_cos_client(module)
+
+    assert s3_client.config.SecretId == "profile-akid"
+    assert s3_client.config.SecretKey == "profile-secret"
+    assert module.params["region"] == "ap-shanghai"
+
+
+def test_create_cos_client_fails_without_any_credential_source(monkeypatch):
+    _fake_cos_sdk(monkeypatch)
+    monkeypatch.setattr(cos.api3_client, "load_profile", lambda profile=None, path=None: {})
+    params = dict(COS_PARAMS, secret_id=None, secret_key=None)
+    module = SimpleNamespace(params=params, fail_json=_fail)
+    with pytest.raises(FakeFailJson) as exc:
+        cos.create_cos_client(module)
+    assert "default.configure" in exc.value.msg
+
+
 def test_cors_rules_desired_normalizes_user_params():
     rules = [
         {
@@ -447,6 +492,103 @@ def test_get_bucket_cors_maps_missing_configuration_to_empty():
     assert cos.get_bucket_cors(client, "b-1") == []
 
 
+def _flat_client(method_name, payload):
+    """FakeCosClient whose one accessor answers with the real SDK shape.
+
+    The fake returns the XML wrapper (``CORSConfiguration``); a real
+    ``get_bucket_cors`` GET strips it and answers ``{"CORSRule": [...]}``.
+    Both shapes must parse, so the flat one is injected per test.
+    """
+    client = FakeCosClient({"b-1": _bucket()})
+    setattr(client, method_name, lambda Bucket, **kwargs: payload)
+    return client
+
+
+def test_get_bucket_cors_reads_the_flat_sdk_response():
+    client = _flat_client(
+        "get_bucket_cors",
+        {
+            "CORSRule": [
+                {
+                    "ID": "web",
+                    "AllowedOrigin": ["https://www.example.com"],
+                    "AllowedMethod": ["GET", "HEAD"],
+                    "MaxAgeSeconds": "600",
+                }
+            ],
+            "ResponseVary": "false",
+        },
+    )
+    assert cos.get_bucket_cors(client, "b-1") == [
+        {
+            "ID": "web",
+            "AllowedOrigin": ["https://www.example.com"],
+            "AllowedMethod": ["GET", "HEAD"],
+            "MaxAgeSeconds": 600,
+        }
+    ]
+
+
+def test_get_bucket_lifecycle_reads_the_flat_sdk_response():
+    client = _flat_client(
+        "get_bucket_lifecycle",
+        {
+            "Rule": [
+                {
+                    "ID": "logs",
+                    "Status": "Enabled",
+                    "Filter": {"Prefix": "logs/"},
+                    "Expiration": {"Days": "30"},
+                }
+            ]
+        },
+    )
+    assert cos.get_bucket_lifecycle(client, "b-1") == [
+        {"ID": "logs", "Status": "Enabled", "Filter": {"Prefix": "logs/"}, "Expiration": {"Days": 30}}
+    ]
+
+
 def test_get_bucket_lifecycle_maps_missing_configuration_to_empty():
     client = FakeCosClient({"b-1": _bucket()})
     assert cos.get_bucket_lifecycle(client, "b-1") == []
+
+
+def _appid_module(cam_appid=None, cam_error=None, sts_account="200037874754"):
+    """Module double whose CAM/STS clients answer AppId lookups."""
+    seen = []
+
+    def create_client(client_class, endpoint):
+        seen.append(endpoint)
+        if endpoint.startswith("cam"):
+            if cam_error:
+                raise cam_error
+            return SimpleNamespace(
+                GetUserAppId=lambda request: SimpleNamespace(AppId=cam_appid)
+            )
+        return SimpleNamespace(
+            GetCallerIdentity=lambda request: SimpleNamespace(AccountId=sts_account)
+        )
+
+    def sdk_call(method, request, **kwargs):
+        return method(request)
+
+    return SimpleNamespace(params={}, create_client=create_client, sdk_call=sdk_call), seen
+
+
+def test_fetch_appid_prefers_cam_get_user_app_id():
+    module, seen = _appid_module(cam_appid=1328140161)
+    assert cos.fetch_appid(module) == "1328140161"
+    assert seen == ["cam.tencentcloudapi.com"]
+
+
+def test_fetch_appid_falls_back_to_sts_when_cam_is_denied():
+    module, seen = _appid_module(cam_error=RuntimeError("cam:GetUserAppId denied"))
+    assert cos.fetch_appid(module) == "200037874754"
+    assert seen == ["cam.tencentcloudapi.com", "sts.tencentcloudapi.com"]
+
+
+def test_resolve_appid_prefers_the_explicit_parameter():
+    module, seen = _appid_module(cam_appid=1328140161)
+    module.params["appid"] = 999
+    assert cos.resolve_appid(module) == "999"
+    assert seen == []

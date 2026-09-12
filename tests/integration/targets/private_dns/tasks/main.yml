@@ -6,7 +6,7 @@
 - name: Explain skipped Private DNS integration
   ansible.builtin.debug:
     msg: Set TENCENTCLOUD_PRIVATE_DNS_VPC_ID to run the Private DNS integration target.
-  when: private_dns_vpc_id | length > 0 | length == 0
+  when: private_dns_vpc_id | length == 0
 
 - name: Private DNS zone and record end-to-end
   vars:
@@ -14,7 +14,7 @@
   module_defaults:
     group/susunola.tencentcloud.all:
       region: "{{ tencentcloud_region }}"
-  when: private_dns_vpc_id | length > 0 | length > 0
+  when: private_dns_vpc_id | length > 0
   block:
     # NOTE: a `vars:` block is templated lazily, so a `| random` name is
     # re-rolled on EVERY reference - the resource is created under one

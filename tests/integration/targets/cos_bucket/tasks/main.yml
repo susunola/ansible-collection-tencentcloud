@@ -3,8 +3,8 @@
 # faces (ACL, versioning, tags, CORS, lifecycle) + check mode + delete.
 # The bucket is named ansible-cos-it-<run_id> so the cleanup sweeper can
 # find leftovers; buckets are free until objects are stored in them, so the
-# cost of this target is negligible. The AppId suffix is resolved through
-# the STS GetCallerIdentity API by the module itself.
+# cost of this target is negligible. The AppId suffix is resolved by the
+# module itself (CAM GetUserAppId, falling back to STS).
 - name: COS bucket end-to-end
   vars:
     region: "{{ tencentcloud_region }}"

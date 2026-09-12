@@ -1,0 +1,6 @@
+---
+minor_changes:
+  - cfs_file_system - add the ``net_interface`` option (``VPC`` by default, ``CCN`` also accepted) plus ``ccn_id`` and ``cidr_block``; ``CreateCfsFileSystem`` rejects a request body without ``NetInterface``.
+bugfixes:
+  - cfs_file_system - match an existing file system on ``FsName`` instead of ``Name``. ``DescribeCfsFileSystems`` reports the display name as ``FsName``, so name-based lookups never matched and a rename was reported as drift on every run.
+  - cfs_file_system - re-read the file system by the ID returned from ``CreateCfsFileSystem`` so the created resource is reported back instead of ``None``.

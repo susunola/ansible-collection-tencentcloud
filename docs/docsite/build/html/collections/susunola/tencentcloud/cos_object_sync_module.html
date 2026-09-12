@@ -7,10 +7,10 @@
 <meta content="2.26.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>susunola.tencentcloud.cos_object_sync module – Mirror a local directory tree into a Tencent Cloud COS bucket &mdash; Tencent Cloud Collection  documentation</title>
+  <title>susunola.tencentcloud.cos_object_sync module -- Mirror a local directory tree into a Tencent Cloud COS bucket &mdash; Tencent Cloud Collection  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=41de9001" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/ansible.css?v=b54c304f" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/antsibull-minimal.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/antsibull-minimal.css?v=6a2449bc" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/rtd-ethical-ads.css?v=289b023e" />
 
   
@@ -22,8 +22,8 @@
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="susunola.tencentcloud.cpdp_merchant_info_for_management_info module – Gather information about Tencent Cloud CPDP merchant info for managements" href="cpdp_merchant_info_for_management_info_module.html" />
-    <link rel="prev" title="susunola.tencentcloud.cos_object_info module – Gather information about Tencent Cloud COS objects" href="cos_object_info_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
+    <link rel="next" title="susunola.tencentcloud.cpdp_merchant_info_for_management_info module -- Gather information about Tencent Cloud CPDP merchant info for managements" href="cpdp_merchant_info_for_management_info_module.html" />
+    <link rel="prev" title="susunola.tencentcloud.cos_object_info module -- Gather information about Tencent Cloud COS objects" href="cos_object_info_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
 
 
 
@@ -119,7 +119,7 @@
           <li class="breadcrumb-item"><a href="../../index.html">Collection Index</a></li>
           <li class="breadcrumb-item"><a href="../index.html">Collections in the Susunola Namespace</a></li>
           <li class="breadcrumb-item"><a href="index.html">Susunola.Tencentcloud</a></li>
-      <li class="breadcrumb-item active">susunola.tencentcloud.cos_object_sync module – Mirror a local directory tree into a Tencent Cloud COS bucket</li>
+      <li class="breadcrumb-item active">susunola.tencentcloud.cos_object_sync module -- Mirror a local directory tree into a Tencent Cloud COS bucket</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -131,7 +131,7 @@
            <div itemprop="articleBody">
              
   <span class="target" id="ansible-collections-susunola-tencentcloud-cos-object-sync-module"></span><section id="susunola-tencentcloud-cos-object-sync-module-mirror-a-local-directory-tree-into-a-tencent-cloud-cos-bucket">
-<h1>susunola.tencentcloud.cos_object_sync module – Mirror a local directory tree into a Tencent Cloud COS bucket<a class="headerlink" href="#susunola-tencentcloud-cos-object-sync-module-mirror-a-local-directory-tree-into-a-tencent-cloud-cos-bucket" title="Link to this heading"></a></h1>
+<h1>susunola.tencentcloud.cos_object_sync module -- Mirror a local directory tree into a Tencent Cloud COS bucket<a class="headerlink" href="#susunola-tencentcloud-cos-object-sync-module-mirror-a-local-directory-tree-into-a-tencent-cloud-cos-bucket" title="Link to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This module is part of the <a class="reference external" href="https://github.com/susunola/ansible-collection-tencentcloud">susunola.tencentcloud collection</a> (version 1.1.0).</p>
@@ -156,7 +156,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <li><p>Synchronise a local directory tree into a Tencent Cloud Object Storage (COS) bucket prefix, uploading files that are new or changed and optionally deleting remote objects that no longer exist locally.</p></li>
 <li><p>COS is not part of the Tencent Cloud API 3.0 family; this module uses the <code class="docutils literal notranslate"><span class="pre">qcloud_cos</span></code> SDK (<code class="docutils literal notranslate"><span class="pre">cos-python-sdk-v5</span></code> package) instead.</p></li>
 <li><p>This module is idempotent. A second run with an unchanged tree reports <code class="docutils literal notranslate"><span class="pre">changed=false</span></code>.</p></li>
-<li><p>Upload change detection compares each local file’s MD5 digest against the remote object’s ETag, which is exact for single-part uploads.</p></li>
+<li><p>Upload change detection compares each local file's MD5 digest against the remote object's ETag, which is exact for single-part uploads.</p></li>
 <li><p>Supports check mode; no API write happens in check mode, only reads.</p></li>
 </ul>
 </section>
@@ -222,7 +222,7 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <div class="ansibleOptionAnchor" id="parameter-prefix"></div><p class="ansible-option-title" id="ansible-collections-susunola-tencentcloud-cos-object-sync-module-parameter-prefix"><strong>prefix</strong></p>
 <a class="ansibleOptionLink" href="#parameter-prefix" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>Bucket key prefix the local tree is mirrored under, for example <code class="docutils literal notranslate"><span class="pre">assets/</span></code>. The bucket prefix, not the module’s <code class="docutils literal notranslate"><span class="pre">prefix</span></code> option.</p>
+<td><div class="ansible-option-cell"><p>Bucket key prefix the local tree is mirrored under, for example <code class="docutils literal notranslate"><span class="pre">assets/</span></code>. The bucket prefix, not the module's <code class="docutils literal notranslate"><span class="pre">prefix</span></code> option.</p>
 <p>When omitted, the tree is mirrored at the bucket root.</p>
 </div></td>
 </tr>
@@ -442,8 +442,8 @@ To check whether it is installed, run <code class="code docutils literal notrans
           
 
 <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cos_object_info_module.html" class="btn btn-neutral float-left" title="susunola.tencentcloud.cos_object_info module – Gather information about Tencent Cloud COS objects" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="cpdp_merchant_info_for_management_info_module.html" class="btn btn-neutral float-right" title="susunola.tencentcloud.cpdp_merchant_info_for_management_info module – Gather information about Tencent Cloud CPDP merchant info for managements" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cos_object_info_module.html" class="btn btn-neutral float-left" title="susunola.tencentcloud.cos_object_info module -- Gather information about Tencent Cloud COS objects" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cpdp_merchant_info_for_management_info_module.html" class="btn btn-neutral float-right" title="susunola.tencentcloud.cpdp_merchant_info_for_management_info module -- Gather information about Tencent Cloud CPDP merchant info for managements" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
