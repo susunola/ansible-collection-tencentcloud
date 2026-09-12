@@ -283,6 +283,12 @@ per dispatch — each exceeds the provision budget comfortably inside the
 | cvm_instance | 5-15 min (boot wait) | `TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID` |
 | cdb_instance | 10-20 min (delivery wait) | `TENCENTCLOUD_RUN_BILLED_TARGETS=1` |
 | tke_cluster | 15-30 min (poll to Running) | `TENCENTCLOUD_RUN_BILLED_TARGETS=1` |
+| tke_addon | seconds, but only once a cluster exists | `TENCENTCLOUD_TKE_CLUSTER_ID`, `TENCENTCLOUD_TKE_ADDON_NAME`, `TENCENTCLOUD_TKE_ADDON_VERSION` |
+
+`tke_addon` is cheap but **cannot run on its own**: it needs a running cluster
+and the account has none, so it left the weekly default list — there it could
+only self-skip, which the "nothing executed" gate (§6 below) treats as a
+failure. Dispatch it together with `tke_cluster`, reusing that cluster id.
 
 Dispatch with `inputs.targets` set to the single target name and the required
 secrets/variables configured. `state=absent` on cdb_instance **isolates**
@@ -312,8 +318,22 @@ and `redis_replication_group` both self-skip green, so they are safe to include
 in any dispatch, but they contribute no coverage until the account gains the
 missing capability.
 
-**Reading a run.** Skipped targets print an "Explain skipped …" debug task and
-pass green; real coverage is visible only when the gate variable is set.
+**Reading a run.** Skipped targets still print an "Explain skipped …" debug
+task, but they no longer get a free pass. The workflow runs
+`scripts/check_integration_ran.py` after `ansible-test`, which reads every
+target's `PLAY RECAP` and **fails the run** on any target that changed nothing
+while skipping more tasks than it ran — i.e. any target that never reached its
+module. A green run therefore means every requested target either executed or
+is a declared account limitation.
+
+Exemptions are declared in the registry, not in the checker:
+`account_blocked: true` in `tests/integration/coverage.yml` marks a target the
+account genuinely cannot host (§2.4). Six are declared today — API Gateway
+service/plugin, CAM user/group-membership, Monitor alarm policy and Redis
+replication groups. Add one only when the limitation is real and documented in
+§2.4; otherwise wire the gate instead. The upside is that a target added to the
+default list without its gate configured fails on its first run instead of
+silently contributing nothing.
 
 ## 7. Roadmap: 30 → 34+ targets by 2026-10 (P0-04 / G1-c)
 
