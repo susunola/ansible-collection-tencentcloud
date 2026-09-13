@@ -1,2 +1,0 @@
-minor_changes:
-  - Add idempotent Oceanus job savepoint triggering with asynchronous completion and failure handling.

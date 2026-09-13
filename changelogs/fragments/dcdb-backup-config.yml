@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Add idempotent DCDB automatic backup retention, schedule and archive configuration.

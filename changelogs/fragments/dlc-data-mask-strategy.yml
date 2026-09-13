@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``dlc_data_mask_strategy`` with exact discovery, normalized subjects, mutable masking configuration and guarded deletion.

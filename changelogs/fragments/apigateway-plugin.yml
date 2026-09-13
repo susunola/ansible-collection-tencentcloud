@@ -1,3 +1,0 @@
----
-minor_changes:
-  - apigateway_plugin - add module to create/remove a Tencent Cloud API Gateway plugin, idempotent on the plugin name (roadmap #83).

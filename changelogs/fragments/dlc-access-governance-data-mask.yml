@@ -1,2 +1,0 @@
-minor_changes:
-  - Extend ``tc_dlc_access_governance`` with subject-aware data masking creation and mask-first teardown.

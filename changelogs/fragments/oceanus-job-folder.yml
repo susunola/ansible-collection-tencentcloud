@@ -1,2 +1,0 @@
-minor_changes:
-  - Reconcile Oceanus job folder placement after creation using the workspace job tree and ModifyJob target-folder support.

@@ -1,2 +1,0 @@
-minor_changes:
-  - Add the ``tc_tione_ml_pipeline`` role to compose data, training, model registry and online inference with guarded reverse-order teardown.

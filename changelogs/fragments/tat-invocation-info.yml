@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``tat_invocation_info`` for bounded, redacted invocation and per-instance task auditing with opt-in task output.

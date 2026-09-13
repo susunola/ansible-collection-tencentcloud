@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``dlc_table`` with generated-DDL task execution, schema convergence, immutable replacement and stored-data deletion guards.

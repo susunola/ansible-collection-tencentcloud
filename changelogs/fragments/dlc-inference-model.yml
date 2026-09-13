@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``dlc_inference_model`` for presence-only inference model creation and mutable metadata reconciliation with explicit non-deletion semantics.

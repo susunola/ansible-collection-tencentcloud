@@ -1,4 +1,0 @@
-minor_changes:
-  - >-
-    roles - add ``tc_container_registry`` for TCR instances, namespaces,
-    repositories, vulnerability policy and cross-region replication.

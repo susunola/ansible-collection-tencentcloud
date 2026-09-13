@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``dlc_data_engine`` for guarded DLC compute-engine creation, configuration, power-state convergence and deletion.

@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Added exact-name GWLB lookups and the tc_gwlb_service_chain role for load balancers, target groups, appliances and associations.

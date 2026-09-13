@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``dlc_partition_queue`` for exact, guarded DLC resource queue lifecycle and capacity reconciliation.

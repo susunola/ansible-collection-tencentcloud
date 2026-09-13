@@ -15,7 +15,11 @@ plugins:
         via TAT
       name: tat
       version_added: 0.12.0
-  filter: {}
+  filter:
+    tag_merge:
+      description: Merge Tencent Cloud tag sources into one mapping
+      name: tag_merge
+      version_added: 1.2.0
   httpapi: {}
   inventory:
     tencentcloud_clb:
@@ -39,6 +43,10 @@ plugins:
       name: tencentcloud_tke
       version_added: 0.14.0
   lookup:
+    resource_id:
+      description: Resolve Tencent Cloud resource names to IDs
+      name: resource_id
+      version_added: 0.14.0
     ssm_parameter:
       description: Retrieve Tencent Cloud Secrets Manager secret values
       name: ssm_parameter
@@ -143,6 +151,11 @@ plugins:
       name: api_gateway_api
       namespace: ''
       version_added: 0.14.0
+    api_gateway_api_info:
+      description: Gather information about Tencent Cloud API Gateway APIs
+      name: api_gateway_api_info
+      namespace: ''
+      version_added: 1.2.0
     api_gateway_api_key:
       description: Manage Tencent Cloud API Gateway API keys
       name: api_gateway_api_key
@@ -153,6 +166,11 @@ plugins:
       name: api_gateway_service
       namespace: ''
       version_added: 0.14.0
+    api_gateway_service_info:
+      description: Gather information about Tencent Cloud API Gateway services
+      name: api_gateway_service_info
+      namespace: ''
+      version_added: 1.2.0
     api_gateway_service_release:
       description: Manage Tencent Cloud API Gateway service releases
       name: api_gateway_service_release
@@ -178,6 +196,21 @@ plugins:
       name: api_product_info
       namespace: ''
       version_added: 0.8.0
+    apigateway_api_app:
+      description: Create or delete a Tencent Cloud API Gateway application
+      name: apigateway_api_app
+      namespace: ''
+      version_added: 1.1.0
+    apigateway_ip_strategy:
+      description: Create or delete a Tencent Cloud API Gateway IP strategy
+      name: apigateway_ip_strategy
+      namespace: ''
+      version_added: 1.1.0
+    apigateway_plugin:
+      description: Create or delete a Tencent Cloud API Gateway plugin
+      name: apigateway_plugin
+      namespace: ''
+      version_added: 1.1.0
     apigateway_service_info:
       description: Gather information about Tencent Cloud API Gateway services
       name: apigateway_service_info
@@ -293,16 +326,32 @@ plugins:
       name: cam_group
       namespace: ''
       version_added: 0.14.0
+    cam_group_info:
+      description: Gather information about Tencent Cloud CAM groups
+      name: cam_group_info
+      namespace: ''
+      version_added: 1.2.0
     cam_group_membership:
       description: Manage Tencent Cloud CAM user group membership
       name: cam_group_membership
       namespace: ''
       version_added: 0.13.0
+    cam_group_membership_info:
+      description: Gather information about Tencent Cloud CAM group memberships of
+        a user
+      name: cam_group_membership_info
+      namespace: ''
+      version_added: 1.2.0
     cam_oidc_provider:
       description: Manage Tencent Cloud CAM OIDC identity providers
       name: cam_oidc_provider
       namespace: ''
       version_added: 0.14.0
+    cam_oidc_provider_info:
+      description: Gather information about a Tencent Cloud CAM OIDC identity provider
+      name: cam_oidc_provider_info
+      namespace: ''
+      version_added: 1.2.0
     cam_policy:
       description: Manage Tencent Cloud CAM policies
       name: cam_policy
@@ -338,6 +387,11 @@ plugins:
       name: cam_saml_provider
       namespace: ''
       version_added: 0.14.0
+    cam_saml_provider_info:
+      description: Gather information about Tencent Cloud CAM SAML identity providers
+      name: cam_saml_provider_info
+      namespace: ''
+      version_added: 1.2.0
     cam_user:
       description: Manage Tencent Cloud CAM sub-users
       name: cam_user
@@ -413,6 +467,11 @@ plugins:
       name: ccn_attachment
       namespace: ''
       version_added: 0.14.0
+    ccn_attachment_info:
+      description: Gather information about Tencent Cloud CCN attachments
+      name: ccn_attachment_info
+      namespace: ''
+      version_added: 1.2.0
     ccn_info:
       description: Gather information about Tencent Cloud CCN instances
       name: ccn_info
@@ -433,11 +492,31 @@ plugins:
       name: cdb_account_privilege
       namespace: ''
       version_added: 0.14.0
+    cdb_account_privilege_info:
+      description: Gather information about Tencent Cloud CDB account privileges
+      name: cdb_account_privilege_info
+      namespace: ''
+      version_added: 1.2.0
     cdb_audit_config:
       description: Manage TencentDB for MySQL audit configuration
       name: cdb_audit_config
       namespace: ''
       version_added: 0.14.0
+    cdb_audit_config_info:
+      description: Gather information about a Tencent Cloud CDB audit configuration
+      name: cdb_audit_config_info
+      namespace: ''
+      version_added: 1.2.0
+    cdb_audit_rule:
+      description: Create or delete a Tencent Cloud CDB audit rule
+      name: cdb_audit_rule
+      namespace: ''
+      version_added: 1.1.0
+    cdb_audit_rule_template:
+      description: Create or delete a Tencent Cloud CDB audit rule template
+      name: cdb_audit_rule_template
+      namespace: ''
+      version_added: 1.1.0
     cdb_backup_config:
       description: Manage TencentDB for MySQL backup configuration
       name: cdb_backup_config
@@ -473,6 +552,11 @@ plugins:
       name: cdb_parameter_template
       namespace: ''
       version_added: 0.14.0
+    cdb_parameter_template_info:
+      description: Gather information about Tencent Cloud CDB parameter templates
+      name: cdb_parameter_template_info
+      namespace: ''
+      version_added: 1.2.0
     cdc_dedicated_cluster_order_info:
       description: Gather information about Tencent Cloud CDC dedicated cluster orders
       name: cdc_dedicated_cluster_order_info
@@ -498,6 +582,11 @@ plugins:
       name: cds_asset_info
       namespace: ''
       version_added: 0.8.0
+    cdwch_backup_config:
+      description: Manage Tencent Cloud CDW ClickHouse backup configuration
+      name: cdwch_backup_config
+      namespace: ''
+      version_added: 0.14.0
     cdwch_cn_instance_info:
       description: Gather information about Tencent Cloud CDWCH cn instances
       name: cdwch_cn_instance_info
@@ -508,15 +597,35 @@ plugins:
       name: cdwch_instance
       namespace: ''
       version_added: 0.14.0
+    cdwch_parameter:
+      description: Manage a Tencent Cloud CDW ClickHouse instance parameter
+      name: cdwch_parameter
+      namespace: ''
+      version_added: 0.14.0
     cdwdoris_cluster_configs_history_info:
       description: Gather information about Tencent Cloud CDWDORIS cluster configs
         histories
       name: cdwdoris_cluster_configs_history_info
       namespace: ''
       version_added: 0.8.0
+    cdwdoris_cooldown_policy:
+      description: Manage a Tencent Cloud CDW Doris cooldown policy
+      name: cdwdoris_cooldown_policy
+      namespace: ''
+      version_added: 0.14.0
     cdwdoris_instance:
       description: Manage Tencent Cloud CDW Doris instances
       name: cdwdoris_instance
+      namespace: ''
+      version_added: 0.14.0
+    cdwdoris_user_workload_group:
+      description: Bind a Tencent Cloud CDW Doris user to a workload group
+      name: cdwdoris_user_workload_group
+      namespace: ''
+      version_added: 0.14.0
+    cdwdoris_workload_group:
+      description: Manage Tencent Cloud CDW Doris workload groups
+      name: cdwdoris_workload_group
       namespace: ''
       version_added: 0.14.0
     cdwpg_account_info:
@@ -524,9 +633,19 @@ plugins:
       name: cdwpg_account_info
       namespace: ''
       version_added: 0.8.0
+    cdwpg_hba_config:
+      description: Manage Tencent Cloud CDW PostgreSQL HBA rules
+      name: cdwpg_hba_config
+      namespace: ''
+      version_added: 0.14.0
     cdwpg_instance:
       description: Manage Tencent Cloud CDW PostgreSQL instances
       name: cdwpg_instance
+      namespace: ''
+      version_added: 0.14.0
+    cdwpg_parameter:
+      description: Manage a Tencent Cloud CDW PostgreSQL parameter
+      name: cdwpg_parameter
       namespace: ''
       version_added: 0.14.0
     cdz_cloud_dedicated_zone_host_info:
@@ -550,6 +669,11 @@ plugins:
       name: cfs_auto_snapshot_policy
       namespace: ''
       version_added: 0.14.0
+    cfs_auto_snapshot_policy_info:
+      description: Gather information about Tencent Cloud CFS automatic snapshot policies
+      name: cfs_auto_snapshot_policy_info
+      namespace: ''
+      version_added: 1.2.0
     cfs_file_system:
       description: Manage Tencent Cloud CFS file systems
       name: cfs_file_system
@@ -755,6 +879,11 @@ plugins:
       name: clb_rule
       namespace: ''
       version_added: 0.12.0
+    clb_snat_ip:
+      description: Manage SNAT IPs on a Tencent Cloud CLB instance
+      name: clb_snat_ip
+      namespace: ''
+      version_added: 1.1.0
     clb_target_group:
       description: Manage Tencent Cloud CLB target groups and members
       name: clb_target_group
@@ -795,6 +924,17 @@ plugins:
       name: cloudstudio_image_info
       namespace: ''
       version_added: 0.9.0
+    cls_alarm:
+      description: Create or delete a Tencent Cloud CLS alarm
+      name: cls_alarm
+      namespace: ''
+      version_added: 1.1.0
+    cls_alarm_notice:
+      description: Create or delete a Tencent Cloud CLS alarm notice (notification
+        channel group)
+      name: cls_alarm_notice
+      namespace: ''
+      version_added: 1.1.0
     cls_config:
       description: Manage Tencent Cloud CLS collection configurations
       name: cls_config
@@ -810,6 +950,12 @@ plugins:
       name: cls_config_machine_group_binding
       namespace: ''
       version_added: 0.14.0
+    cls_config_machine_group_binding_info:
+      description: Gather information about Tencent Cloud CLS machine group config
+        bindings
+      name: cls_config_machine_group_binding_info
+      namespace: ''
+      version_added: 1.2.0
     cls_index:
       description: Manage Tencent Cloud CLS topic indexes
       name: cls_index
@@ -912,16 +1058,31 @@ plugins:
       name: config_aggregator
       namespace: ''
       version_added: 0.14.0
+    config_aggregator_info:
+      description: Gather information about Tencent Cloud Config aggregators
+      name: config_aggregator_info
+      namespace: ''
+      version_added: 1.1.0
     config_alarm_policy:
       description: Manage Tencent Cloud Config alarm policies
       name: config_alarm_policy
       namespace: ''
       version_added: 0.14.0
+    config_alarm_policy_info:
+      description: Gather information about Tencent Cloud Config alarm policies
+      name: config_alarm_policy_info
+      namespace: ''
+      version_added: 1.1.0
     config_compliance_pack:
       description: Manage Tencent Cloud Config compliance packs
       name: config_compliance_pack
       namespace: ''
       version_added: 0.14.0
+    config_compliance_pack_info:
+      description: Gather information about Tencent Cloud Config compliance packs
+      name: config_compliance_pack_info
+      namespace: ''
+      version_added: 1.1.0
     config_delivery:
       description: Manage Tencent Cloud Config delivery settings
       name: config_delivery
@@ -937,11 +1098,21 @@ plugins:
       name: config_remediation
       namespace: ''
       version_added: 0.14.0
+    config_remediation_info:
+      description: Gather information about Tencent Cloud Config remediations
+      name: config_remediation_info
+      namespace: ''
+      version_added: 1.1.0
     config_rule:
       description: Manage Tencent Cloud Config compliance rules
       name: config_rule
       namespace: ''
       version_added: 0.14.0
+    config_rule_info:
+      description: Gather information about Tencent Cloud Config Config rules
+      name: config_rule_info
+      namespace: ''
+      version_added: 1.1.0
     controlcenter_account_factory_baseline_item_info:
       description: Gather information about Tencent Cloud CONTROLCENTER account factory
         baseline items
@@ -1073,6 +1244,11 @@ plugins:
       name: cvm_chc
       namespace: ''
       version_added: 0.13.0
+    cvm_chc_info:
+      description: Gather information about Tencent Cloud CHC host network configuration
+      name: cvm_chc_info
+      namespace: ''
+      version_added: 0.4.0
     cvm_disaster_recover_group:
       description: Manage Tencent Cloud CVM placement groups
       name: cvm_disaster_recover_group
@@ -1083,16 +1259,31 @@ plugins:
       name: cvm_disaster_recover_group_binding
       namespace: ''
       version_added: 0.14.0
+    cvm_disaster_recover_group_info:
+      description: Gather information about Tencent Cloud CVM placement groups
+      name: cvm_disaster_recover_group_info
+      namespace: ''
+      version_added: 1.2.0
     cvm_hpc_cluster:
       description: Manage Tencent Cloud CVM high-performance clusters
       name: cvm_hpc_cluster
       namespace: ''
       version_added: 0.14.0
+    cvm_hpc_cluster_info:
+      description: Gather information about Tencent Cloud CVM HPC clusters
+      name: cvm_hpc_cluster_info
+      namespace: ''
+      version_added: 1.2.0
     cvm_image:
       description: Manage Tencent Cloud CVM custom images
       name: cvm_image
       namespace: ''
       version_added: 0.12.0
+    cvm_image_info:
+      description: Gather information about Tencent Cloud CVM images
+      name: cvm_image_info
+      namespace: ''
+      version_added: 1.2.0
     cvm_image_share:
       description: Manage Tencent Cloud CVM image sharing permissions
       name: cvm_image_share
@@ -1113,6 +1304,11 @@ plugins:
       name: cvm_instance_action_timer
       namespace: ''
       version_added: 0.14.0
+    cvm_instance_action_timer_info:
+      description: Gather information about Tencent Cloud CVM instance action timers
+      name: cvm_instance_action_timer_info
+      namespace: ''
+      version_added: 0.4.0
     cvm_instance_info:
       description: Gather information about Tencent Cloud CVM instances
       name: cvm_instance_info
@@ -1128,11 +1324,21 @@ plugins:
       name: cvm_launch_template
       namespace: ''
       version_added: 0.14.0
+    cvm_launch_template_info:
+      description: Gather information about Tencent Cloud CVM launch templates
+      name: cvm_launch_template_info
+      namespace: ''
+      version_added: 1.2.0
     cvm_launch_template_version:
       description: Manage Tencent Cloud CVM launch-template versions
       name: cvm_launch_template_version
       namespace: ''
       version_added: 0.14.0
+    cvm_launch_template_version_info:
+      description: Gather information about Tencent Cloud CVM launch template versions
+      name: cvm_launch_template_version_info
+      namespace: ''
+      version_added: 1.2.0
     cwp_machine_info:
       description: Gather information about Tencent Cloud CWP machines
       name: cwp_machine_info
@@ -1163,6 +1369,11 @@ plugins:
       name: cynosdb_backup_config
       namespace: ''
       version_added: 0.14.0
+    cynosdb_backup_config_info:
+      description: Gather information about a Tencent Cloud CynosDB backup configuration
+      name: cynosdb_backup_config_info
+      namespace: ''
+      version_added: 1.2.0
     cynosdb_cluster:
       description: Manage Tencent Cloud CynosDB clusters
       name: cynosdb_cluster
@@ -1233,6 +1444,21 @@ plugins:
       name: dc_direct_connect_tunnel_info
       namespace: ''
       version_added: 0.8.0
+    dcdb_account:
+      description: Manage Tencent Cloud DCDB accounts
+      name: dcdb_account
+      namespace: ''
+      version_added: 0.14.0
+    dcdb_account_privilege:
+      description: Manage scoped Tencent Cloud DCDB account privileges
+      name: dcdb_account_privilege
+      namespace: ''
+      version_added: 0.14.0
+    dcdb_backup_config:
+      description: Manage Tencent Cloud DCDB automatic backup configuration
+      name: dcdb_backup_config
+      namespace: ''
+      version_added: 0.14.0
     dcdb_instance:
       description: Manage Tencent Cloud DCDB instances
       name: dcdb_instance
@@ -1243,11 +1469,302 @@ plugins:
       name: dcdb_instance_info
       namespace: ''
       version_added: 0.8.0
+    dcdb_security_config:
+      description: Manage Tencent Cloud DCDB encryption, SSL and security groups
+      name: dcdb_security_config
+      namespace: ''
+      version_added: 0.14.0
+    dlc_cluster_group:
+      description: Manage Tencent Cloud DLC compute cluster groups
+      name: dlc_cluster_group
+      namespace: ''
+      version_added: 0.14.0
+    dlc_cluster_group_info:
+      description: Gather information about Tencent Cloud DLC cluster groups
+      name: dlc_cluster_group_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_data_engine:
+      description: Manage Tencent Cloud Data Lake Compute engines
+      name: dlc_data_engine
+      namespace: ''
+      version_added: 0.14.0
+    dlc_data_engine_config:
+      description: Reconcile Tencent Cloud DLC data-engine runtime configuration
+      name: dlc_data_engine_config
+      namespace: ''
+      version_added: 0.14.0
+    dlc_data_engine_info:
+      description: Gather information about Tencent Cloud DLC data engines
+      name: dlc_data_engine_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_data_mask_strategy:
+      description: Manage Tencent Cloud Data Lake Compute masking strategies
+      name: dlc_data_mask_strategy
+      namespace: ''
+      version_added: 0.14.0
+    dlc_data_mask_strategy_info:
+      description: Gather information about Tencent Cloud DLC data mask strategies
+      name: dlc_data_mask_strategy_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_database:
+      description: Manage Tencent Cloud Data Lake Compute metadata databases
+      name: dlc_database
+      namespace: ''
+      version_added: 0.14.0
+    dlc_database_info:
+      description: Gather information about Tencent Cloud DLC databases
+      name: dlc_database_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_engine_resource_group:
+      description: Manage Tencent Cloud DLC standard engine resource groups
+      name: dlc_engine_resource_group
+      namespace: ''
+      version_added: 0.14.0
+    dlc_inference_engine_info:
+      description: Gather Tencent Cloud DLC inference engines
+      name: dlc_inference_engine_info
+      namespace: ''
+      version_added: 0.14.0
+    dlc_inference_model:
+      description: Ensure and reconcile Tencent Cloud DLC inference models
+      name: dlc_inference_model
+      namespace: ''
+      version_added: 0.14.0
+    dlc_inference_model_info:
+      description: Gather Tencent Cloud DLC inference models
+      name: dlc_inference_model_info
+      namespace: ''
+      version_added: 0.14.0
+    dlc_inference_service:
+      description: Manage Tencent Cloud DLC inference-service runtime state
+      name: dlc_inference_service
+      namespace: ''
+      version_added: 0.14.0
+    dlc_inference_service_info:
+      description: Gather Tencent Cloud DLC inference services
+      name: dlc_inference_service_info
+      namespace: ''
+      version_added: 0.14.0
+    dlc_job_spec:
+      description: Manage reusable Tencent Cloud DLC job specifications
+      name: dlc_job_spec
+      namespace: ''
+      version_added: 0.14.0
+    dlc_job_spec_info:
+      description: Gather information about Tencent Cloud DLC job specs
+      name: dlc_job_spec_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_lab:
+      description: Manage Tencent Cloud DLC data laboratories
+      name: dlc_lab
+      namespace: ''
+      version_added: 0.14.0
+    dlc_lab_info:
+      description: Gather information about Tencent Cloud DLC labs
+      name: dlc_lab_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_model_artifact_info:
+      description: Inspect Tencent Cloud DLC model-version artifacts
+      name: dlc_model_artifact_info
+      namespace: ''
+      version_added: 0.14.0
+    dlc_model_version:
+      description: Publish immutable Tencent Cloud DLC model versions
+      name: dlc_model_version
+      namespace: ''
+      version_added: 0.14.0
+    dlc_model_version_info:
+      description: Gather versions of a Tencent Cloud DLC inference model
+      name: dlc_model_version_info
+      namespace: ''
+      version_added: 0.14.0
+    dlc_network_connection:
+      description: Reconcile Tencent Cloud DLC network-connection metadata
+      name: dlc_network_connection
+      namespace: ''
+      version_added: 0.14.0
+    dlc_network_connection_info:
+      description: Gather information about Tencent Cloud DLC network connections
+      name: dlc_network_connection_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_notebook_session:
+      description: Manage Tencent Cloud DLC Notebook sessions
+      name: dlc_notebook_session
+      namespace: ''
+      version_added: 0.14.0
+    dlc_notebook_session_info:
+      description: Gather Tencent Cloud DLC Notebook sessions
+      name: dlc_notebook_session_info
+      namespace: ''
+      version_added: 0.14.0
+    dlc_notebook_session_log_info:
+      description: Gather Tencent Cloud DLC Notebook session logs
+      name: dlc_notebook_session_log_info
+      namespace: ''
+      version_added: 0.14.0
+    dlc_notebook_statement_info:
+      description: Gather a Tencent Cloud DLC Notebook statement and SQL results
+      name: dlc_notebook_statement_info
+      namespace: ''
+      version_added: 0.14.0
+    dlc_partition_queue:
+      description: Manage Tencent Cloud DLC resource partition queues
+      name: dlc_partition_queue
+      namespace: ''
+      version_added: 0.14.0
+    dlc_partition_queue_info:
+      description: Gather information about Tencent Cloud DLC partition queues
+      name: dlc_partition_queue_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_ray_cluster:
+      description: Manage Tencent Cloud DLC Ray clusters
+      name: dlc_ray_cluster
+      namespace: ''
+      version_added: 0.14.0
+    dlc_ray_cluster_info:
+      description: Gather information about Tencent Cloud DLC ray clusters
+      name: dlc_ray_cluster_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_ray_job_info:
+      description: Gather Tencent Cloud DLC Ray job diagnostics
+      name: dlc_ray_job_info
+      namespace: ''
+      version_added: 0.14.0
+    dlc_ray_job_list_info:
+      description: List Tencent Cloud DLC Ray jobs
+      name: dlc_ray_job_list_info
+      namespace: ''
+      version_added: 0.14.0
+    dlc_resource_config:
+      description: Manage Tencent Cloud DLC Ray and Spark resource templates
+      name: dlc_resource_config
+      namespace: ''
+      version_added: 0.14.0
+    dlc_resource_config_info:
+      description: Gather information about Tencent Cloud DLC resource configs
+      name: dlc_resource_config_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_script:
+      description: Manage Tencent Cloud DLC saved SQL scripts
+      name: dlc_script
+      namespace: ''
+      version_added: 0.14.0
+    dlc_script_info:
+      description: Gather information about Tencent Cloud DLC scripts
+      name: dlc_script_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_spark_app_job_info:
+      description: Gather information about Tencent Cloud DLC spark app jobs
+      name: dlc_spark_app_job_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_spark_job:
+      description: Manage Tencent Cloud DLC Spark job definitions
+      name: dlc_spark_job
+      namespace: ''
+      version_added: 0.14.0
+    dlc_standard_engine_resource_group_info:
+      description: Gather information about Tencent Cloud DLC standard engine resource
+        groups
+      name: dlc_standard_engine_resource_group_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_store_location:
+      description: Configure Tencent Cloud DLC query-result storage locations
+      name: dlc_store_location
+      namespace: ''
+      version_added: 0.14.0
+    dlc_store_location_info:
+      description: Gather information about Tencent Cloud DLC store location
+      name: dlc_store_location_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_table:
+      description: Manage Tencent Cloud DLC metadata tables
+      name: dlc_table
+      namespace: ''
+      version_added: 0.14.0
+    dlc_table_info:
+      description: Gather information about Tencent Cloud DLC tables
+      name: dlc_table_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_table_partition:
+      description: Manage Tencent Cloud DLC table partition entries
+      name: dlc_table_partition
+      namespace: ''
+      version_added: 0.14.0
+    dlc_table_partition_info:
+      description: Gather information about Tencent Cloud DLC table partitions
+      name: dlc_table_partition_info
+      namespace: ''
+      version_added: 0.9.0
     dlc_task_info:
       description: Gather information about Tencent Cloud DLC tasks
       name: dlc_task_info
       namespace: ''
       version_added: 0.8.0
+    dlc_udf_policy:
+      description: Reconcile Tencent Cloud DLC UDF access policies
+      name: dlc_udf_policy
+      namespace: ''
+      version_added: 0.14.0
+    dlc_user:
+      description: Manage Tencent Cloud Data Lake Compute users
+      name: dlc_user
+      namespace: ''
+      version_added: 0.14.0
+    dlc_user_data_engine_config_info:
+      description: Gather information about Tencent Cloud DLC user data engine configs
+      name: dlc_user_data_engine_config_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_user_info:
+      description: Gather information about Tencent Cloud DLC users
+      name: dlc_user_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_user_policy:
+      description: Manage Tencent Cloud Data Lake Compute user policies
+      name: dlc_user_policy
+      namespace: ''
+      version_added: 0.14.0
+    dlc_user_vpc_connection:
+      description: Connect DLC engine networks to Tencent Cloud VPCs
+      name: dlc_user_vpc_connection
+      namespace: ''
+      version_added: 0.14.0
+    dlc_work_group:
+      description: Manage Tencent Cloud Data Lake Compute work groups
+      name: dlc_work_group
+      namespace: ''
+      version_added: 0.14.0
+    dlc_work_group_info:
+      description: Gather information about Tencent Cloud DLC work groups
+      name: dlc_work_group_info
+      namespace: ''
+      version_added: 0.9.0
+    dlc_work_group_membership:
+      description: Manage Tencent Cloud Data Lake Compute work-group members
+      name: dlc_work_group_membership
+      namespace: ''
+      version_added: 0.14.0
+    dlc_work_group_policy:
+      description: Manage Tencent Cloud Data Lake Compute work-group policies
+      name: dlc_work_group_policy
+      namespace: ''
+      version_added: 0.14.0
     dnspod_custom_line:
       description: Manage DNSPod domain custom lines
       name: dnspod_custom_line
@@ -1288,9 +1805,24 @@ plugins:
       name: dts_consumer_group
       namespace: ''
       version_added: 0.14.0
+    dts_migration_action:
+      description: Control a Tencent Cloud DTS migration job
+      name: dts_migration_action
+      namespace: ''
+      version_added: 0.14.0
+    dts_migration_check:
+      description: Run and wait for a Tencent Cloud DTS migration check
+      name: dts_migration_check
+      namespace: ''
+      version_added: 0.14.0
     dts_migration_job:
       description: Manage Tencent Cloud DTS migration jobs
       name: dts_migration_job
+      namespace: ''
+      version_added: 0.14.0
+    dts_migration_job_config:
+      description: Configure a Tencent Cloud DTS migration job
+      name: dts_migration_job_config
       namespace: ''
       version_added: 0.14.0
     dts_subscribe_job_info:
@@ -1384,9 +1916,19 @@ plugins:
       name: elasticsearch_instance
       namespace: ''
       version_added: 0.13.0
+    elasticsearch_instance_info:
+      description: Gather information about Tencent Cloud Elasticsearch instances
+      name: elasticsearch_instance_info
+      namespace: ''
+      version_added: 0.4.0
     elasticsearch_snapshot:
       description: Manage Tencent Cloud Elasticsearch cluster snapshots
       name: elasticsearch_snapshot
+      namespace: ''
+      version_added: 0.14.0
+    emr_auto_scale_strategy:
+      description: Manage Tencent Cloud EMR automatic scaling strategies
+      name: emr_auto_scale_strategy
       namespace: ''
       version_added: 0.14.0
     emr_cluster:
@@ -1439,6 +1981,16 @@ plugins:
       name: ga2_accelerate_area_info
       namespace: ''
       version_added: 0.8.0
+    gaap_layer4_listener:
+      description: Manage Tencent Cloud GAAP TCP and UDP listeners
+      name: gaap_layer4_listener
+      namespace: ''
+      version_added: 0.14.0
+    gaap_listener_real_servers:
+      description: Reconcile Tencent Cloud GAAP listener origin bindings
+      name: gaap_listener_real_servers
+      namespace: ''
+      version_added: 0.14.0
     gaap_proxy:
       description: Manage Tencent Cloud GAAP proxies
       name: gaap_proxy
@@ -1449,6 +2001,11 @@ plugins:
       name: gaap_proxy_info
       namespace: ''
       version_added: 0.7.0
+    gaap_real_server:
+      description: Manage Tencent Cloud GAAP real servers
+      name: gaap_real_server
+      namespace: ''
+      version_added: 0.14.0
     gme_voice_print_info:
       description: Gather information about Tencent Cloud GME voice prints
       name: gme_voice_print_info
@@ -1634,11 +2191,21 @@ plugins:
       name: lighthouse_disk
       namespace: ''
       version_added: 0.14.0
+    lighthouse_disk_info:
+      description: Gather information about Tencent Cloud Lighthouse disks
+      name: lighthouse_disk_info
+      namespace: ''
+      version_added: 0.4.0
     lighthouse_firewall_rules:
       description: Manage Tencent Cloud Lighthouse instance firewall rules
       name: lighthouse_firewall_rules
       namespace: ''
       version_added: 0.14.0
+    lighthouse_firewall_rules_info:
+      description: Gather information about Tencent Cloud Lighthouse firewall rules
+      name: lighthouse_firewall_rules_info
+      namespace: ''
+      version_added: 0.4.0
     lighthouse_instance:
       description: Manage Tencent Cloud Lighthouse instances
       name: lighthouse_instance
@@ -1654,11 +2221,21 @@ plugins:
       name: lighthouse_key_pair
       namespace: ''
       version_added: 0.14.0
+    lighthouse_key_pair_info:
+      description: Gather information about Tencent Cloud Lighthouse key pairs
+      name: lighthouse_key_pair_info
+      namespace: ''
+      version_added: 0.4.0
     lighthouse_snapshot:
       description: Manage Tencent Cloud Lighthouse instance snapshots
       name: lighthouse_snapshot
       namespace: ''
       version_added: 0.14.0
+    lighthouse_snapshot_info:
+      description: Gather information about Tencent Cloud Lighthouse snapshots
+      name: lighthouse_snapshot_info
+      namespace: ''
+      version_added: 0.4.0
     live_audit_keyword_info:
       description: Gather information about Tencent Cloud LIVE audit keywords
       name: live_audit_keyword_info
@@ -1704,6 +2281,11 @@ plugins:
       name: mariadb_backup_config
       namespace: ''
       version_added: 0.14.0
+    mariadb_backup_config_info:
+      description: Gather information about a Tencent Cloud MariaDB backup configuration
+      name: mariadb_backup_config_info
+      namespace: ''
+      version_added: 1.2.0
     mariadb_instance:
       description: Manage Tencent Cloud MariaDB instances
       name: mariadb_instance
@@ -1744,6 +2326,11 @@ plugins:
       name: mongodb_backup_config
       namespace: ''
       version_added: 0.14.0
+    mongodb_backup_config_info:
+      description: Gather information about a Tencent Cloud MongoDB backup configuration
+      name: mongodb_backup_config_info
+      namespace: ''
+      version_added: 1.2.0
     mongodb_instance:
       description: Manage Tencent Cloud MongoDB instances
       name: mongodb_instance
@@ -1794,6 +2381,12 @@ plugins:
       name: monitor_grafana_notification_channel
       namespace: ''
       version_added: 0.14.0
+    monitor_grafana_notification_channel_info:
+      description: Gather information about Tencent Cloud Monitor Grafana notification
+        channels
+      name: monitor_grafana_notification_channel_info
+      namespace: ''
+      version_added: 1.1.0
     monitor_grafana_whitelist:
       description: Manage a Tencent Cloud Managed Grafana IP whitelist
       name: monitor_grafana_whitelist
@@ -1804,6 +2397,12 @@ plugins:
       name: monitor_prometheus_alert_group
       namespace: ''
       version_added: 0.14.0
+    monitor_prometheus_alert_group_info:
+      description: Gather information about Tencent Cloud Monitor Prometheus alert
+        groups
+      name: monitor_prometheus_alert_group_info
+      namespace: ''
+      version_added: 1.1.0
     monitor_prometheus_alertmanager_config:
       description: Manage Managed Prometheus Alertmanager configuration
       name: monitor_prometheus_alertmanager_config
@@ -1814,6 +2413,12 @@ plugins:
       name: monitor_prometheus_cluster_agent
       namespace: ''
       version_added: 0.14.0
+    monitor_prometheus_cluster_agent_info:
+      description: Gather information about Tencent Cloud Monitor Prometheus cluster
+        agents
+      name: monitor_prometheus_cluster_agent_info
+      namespace: ''
+      version_added: 1.1.0
     monitor_prometheus_global_notification:
       description: Manage Managed Prometheus global notification settings
       name: monitor_prometheus_global_notification
@@ -1824,6 +2429,12 @@ plugins:
       name: monitor_prometheus_grafana_binding
       namespace: ''
       version_added: 0.14.0
+    monitor_prometheus_grafana_binding_info:
+      description: Gather information about Tencent Cloud Monitor Prometheus instances
+        with their managed-Grafana binding state
+      name: monitor_prometheus_grafana_binding_info
+      namespace: ''
+      version_added: 1.1.0
     monitor_prometheus_instance:
       description: Manage Tencent Cloud pay-as-you-go Managed Prometheus instances
       name: monitor_prometheus_instance
@@ -1840,11 +2451,23 @@ plugins:
       name: monitor_prometheus_record_rule
       namespace: ''
       version_added: 0.14.0
+    monitor_prometheus_record_rule_info:
+      description: Gather information about Tencent Cloud Monitor Prometheus recording
+        rules
+      name: monitor_prometheus_record_rule_info
+      namespace: ''
+      version_added: 1.1.0
     monitor_prometheus_scrape_job:
       description: Manage Tencent Cloud Managed Prometheus scrape jobs
       name: monitor_prometheus_scrape_job
       namespace: ''
       version_added: 0.14.0
+    monitor_prometheus_scrape_job_info:
+      description: Gather information about Tencent Cloud Monitor Prometheus scrape
+        jobs
+      name: monitor_prometheus_scrape_job_info
+      namespace: ''
+      version_added: 1.1.0
     mps_person_sample_info:
       description: Gather information about Tencent Cloud MPS person samples
       name: mps_person_sample_info
@@ -1930,21 +2553,87 @@ plugins:
       name: network_interface_info
       namespace: ''
       version_added: 1.1.0
+    oceanus_cluster:
+      description: Manage Tencent Cloud Oceanus dedicated clusters
+      name: oceanus_cluster
+      namespace: ''
+      version_added: 0.14.0
     oceanus_cluster_info:
       description: Gather information about Tencent Cloud OCEANUS clusters
       name: oceanus_cluster_info
       namespace: ''
       version_added: 0.8.0
+    oceanus_folder:
+      description: Manage Tencent Cloud Oceanus folders
+      name: oceanus_folder
+      namespace: ''
+      version_added: 0.14.0
     oceanus_job:
       description: Manage Tencent Cloud Oceanus jobs
       name: oceanus_job
       namespace: ''
       version_added: 0.14.0
+    oceanus_job_config:
+      description: Manage Tencent Cloud Oceanus job configuration versions
+      name: oceanus_job_config
+      namespace: ''
+      version_added: 0.14.0
+    oceanus_job_config_info:
+      description: Gather information about Tencent Cloud Oceanus job config versions
+      name: oceanus_job_config_info
+      namespace: ''
+      version_added: 1.1.0
+    oceanus_job_info:
+      description: Gather information about Tencent Cloud Oceanus jobs
+      name: oceanus_job_info
+      namespace: ''
+      version_added: 1.1.0
+    oceanus_job_savepoint:
+      description: Create Tencent Cloud Oceanus job savepoints
+      name: oceanus_job_savepoint
+      namespace: ''
+      version_added: 0.14.0
+    oceanus_job_savepoint_info:
+      description: Gather information about Tencent Cloud Oceanus job savepoints
+      name: oceanus_job_savepoint_info
+      namespace: ''
+      version_added: 1.1.0
+    oceanus_meta_table:
+      description: Manage Tencent Cloud Oceanus metadata tables
+      name: oceanus_meta_table
+      namespace: ''
+      version_added: 0.14.0
+    oceanus_resource:
+      description: Manage Tencent Cloud Oceanus resources
+      name: oceanus_resource
+      namespace: ''
+      version_added: 0.14.0
+    oceanus_resource_config:
+      description: Manage Tencent Cloud Oceanus resource versions
+      name: oceanus_resource_config
+      namespace: ''
+      version_added: 0.14.0
+    oceanus_resource_config_info:
+      description: Gather information about Tencent Cloud Oceanus resource config
+        versions
+      name: oceanus_resource_config_info
+      namespace: ''
+      version_added: 1.1.0
+    oceanus_resource_info:
+      description: Gather information about Tencent Cloud Oceanus resources
+      name: oceanus_resource_info
+      namespace: ''
+      version_added: 1.1.0
     oceanus_workspace:
       description: Manage Tencent Cloud Oceanus workspaces
       name: oceanus_workspace
       namespace: ''
       version_added: 0.14.0
+    oceanus_workspace_info:
+      description: Gather information about Tencent Cloud Oceanus workspaces
+      name: oceanus_workspace_info
+      namespace: ''
+      version_added: 1.1.0
     omics_application_info:
       description: Gather information about Tencent Cloud OMICS applications
       name: omics_application_info
@@ -2016,6 +2705,11 @@ plugins:
       name: postgresql_backup_plan
       namespace: ''
       version_added: 0.14.0
+    postgresql_backup_plan_info:
+      description: Gather information about Tencent Cloud PostgreSQL backup plans
+      name: postgresql_backup_plan_info
+      namespace: ''
+      version_added: 1.2.0
     postgresql_instance:
       description: Manage Tencent Cloud PostgreSQL instances
       name: postgresql_instance
@@ -2024,6 +2718,16 @@ plugins:
     postgresql_parameter_template:
       description: Manage Tencent Cloud PostgreSQL parameter templates
       name: postgresql_parameter_template
+      namespace: ''
+      version_added: 0.14.0
+    postgresql_parameter_template_info:
+      description: Gather information about Tencent Cloud PostgreSQL parameter templates
+      name: postgresql_parameter_template_info
+      namespace: ''
+      version_added: 1.2.0
+    private_dns_account:
+      description: Manage Tencent Cloud Private DNS cross-account authorization
+      name: private_dns_account
       namespace: ''
       version_added: 0.14.0
     private_dns_record:
@@ -2071,6 +2775,11 @@ plugins:
       name: redis_backup_config
       namespace: ''
       version_added: 0.14.0
+    redis_backup_config_info:
+      description: Gather information about a Tencent Cloud Redis backup configuration
+      name: redis_backup_config_info
+      namespace: ''
+      version_added: 1.2.0
     redis_instance:
       description: Manage Tencent Cloud Redis instances
       name: redis_instance
@@ -2086,6 +2795,16 @@ plugins:
       name: redis_parameter_template
       namespace: ''
       version_added: 0.14.0
+    redis_parameter_template_info:
+      description: Gather information about Tencent Cloud Redis parameter templates
+      name: redis_parameter_template_info
+      namespace: ''
+      version_added: 1.2.0
+    redis_replication_group:
+      description: Create or remove a TencentDB for Redis replication group
+      name: redis_replication_group
+      namespace: ''
+      version_added: 1.1.0
     region_product_info:
       description: Gather information about Tencent Cloud REGION products
       name: region_product_info
@@ -2114,6 +2833,11 @@ plugins:
     scf_alias_info:
       description: Gather information about Tencent Cloud SCF function aliases
       name: scf_alias_info
+      namespace: ''
+      version_added: 1.1.0
+    scf_custom_domain:
+      description: Create or delete a Tencent Cloud SCF custom domain
+      name: scf_custom_domain
       namespace: ''
       version_added: 1.1.0
     scf_function:
@@ -2257,9 +2981,19 @@ plugins:
       name: ssm_parameter
       namespace: ''
       version_added: 0.12.0
+    ssm_product_secret:
+      description: Manage Tencent Cloud SSM managed-product secrets
+      name: ssm_product_secret
+      namespace: ''
+      version_added: 0.14.0
     ssm_rotation:
       description: Manage Tencent Cloud SSM secret rotation settings
       name: ssm_rotation
+      namespace: ''
+      version_added: 0.14.0
+    ssm_rotation_info:
+      description: Gather Tencent Cloud Secrets Manager rotation state
+      name: ssm_rotation_info
       namespace: ''
       version_added: 0.14.0
     ssm_secret:
@@ -2268,13 +3002,28 @@ plugins:
       namespace: ''
       version_added: 0.14.0
     ssm_secret_info:
-      description: Gather information about Tencent Cloud Secrets Manager secrets
+      description: Gather Tencent Cloud Secrets Manager metadata
       name: ssm_secret_info
       namespace: ''
-      version_added: 1.1.0
+      version_added: 0.14.0
     ssm_secret_version:
       description: Manage Tencent Cloud SSM secret versions
       name: ssm_secret_version
+      namespace: ''
+      version_added: 0.14.0
+    ssm_secret_version_info:
+      description: Gather Tencent Cloud Secrets Manager versions
+      name: ssm_secret_version_info
+      namespace: ''
+      version_added: 0.14.0
+    ssm_ssh_key_pair_secret:
+      description: Manage Tencent Cloud SSM SSH key-pair secrets
+      name: ssm_ssh_key_pair_secret
+      namespace: ''
+      version_added: 0.14.0
+    ssm_supported_product_info:
+      description: Gather cloud products supported by Tencent Cloud SSM
+      name: ssm_supported_product_info
       namespace: ''
       version_added: 0.14.0
     subnet:
@@ -2312,6 +3061,16 @@ plugins:
       name: tat_command_info
       namespace: ''
       version_added: 0.7.0
+    tat_invocation:
+      description: Invoke or cancel a Tencent Cloud TAT command
+      name: tat_invocation
+      namespace: ''
+      version_added: 0.14.0
+    tat_invocation_info:
+      description: Gather Tencent Cloud TAT invocations and instance tasks
+      name: tat_invocation_info
+      namespace: ''
+      version_added: 0.14.0
     tat_invoker:
       description: Manage Tencent Cloud TAT scheduled invokers
       name: tat_invoker
@@ -2332,6 +3091,11 @@ plugins:
       name: tcaplusdb_cluster_info
       namespace: ''
       version_added: 0.8.0
+    tcb_auth_domain:
+      description: Manage Tencent CloudBase authentication domains
+      name: tcb_auth_domain
+      namespace: ''
+      version_added: 0.14.0
     tcb_billing_info:
       description: Gather information about Tencent Cloud TCB billings
       name: tcb_billing_info
@@ -2347,11 +3111,21 @@ plugins:
       name: tcb_http_service_route
       namespace: ''
       version_added: 0.14.0
+    tcb_static_store:
+      description: Manage Tencent CloudBase static website hosting
+      name: tcb_static_store
+      namespace: ''
+      version_added: 0.14.0
     tcbr_cloud_run_pod_info:
       description: Gather information about Tencent Cloud TCBR cloud run pods
       name: tcbr_cloud_run_pod_info
       namespace: ''
       version_added: 0.9.0
+    tcm_access_log:
+      description: Manage Tencent Cloud Mesh access logging
+      name: tcm_access_log
+      namespace: ''
+      version_added: 0.14.0
     tcm_mesh:
       description: Manage Tencent Cloud Mesh instances
       name: tcm_mesh
@@ -2367,6 +3141,21 @@ plugins:
       name: tcm_mesh_info
       namespace: ''
       version_added: 0.8.0
+    tcm_prometheus:
+      description: Manage Tencent Cloud Mesh Prometheus integration
+      name: tcm_prometheus
+      namespace: ''
+      version_added: 0.14.0
+    tcm_tracing:
+      description: Manage Tencent Cloud Mesh tracing
+      name: tcm_tracing
+      namespace: ''
+      version_added: 0.14.0
+    tcr_immutable_tag_rule:
+      description: Create or delete a Tencent Cloud TCR immutable tag rule
+      name: tcr_immutable_tag_rule
+      namespace: ''
+      version_added: 1.1.0
     tcr_instance:
       description: Manage Tencent Cloud TCR enterprise instances
       name: tcr_instance
@@ -2382,21 +3171,46 @@ plugins:
       name: tcr_namespace
       namespace: ''
       version_added: 0.13.0
+    tcr_namespace_info:
+      description: Gather information about Tencent Cloud TCR namespaces
+      name: tcr_namespace_info
+      namespace: ''
+      version_added: 0.4.0
     tcr_replication_instance:
       description: Manage Tencent Cloud TCR replication instances
       name: tcr_replication_instance
       namespace: ''
       version_added: 0.14.0
+    tcr_replication_instance_info:
+      description: Gather information about Tencent Cloud TCR replication instances
+      name: tcr_replication_instance_info
+      namespace: ''
+      version_added: 0.4.0
     tcr_replication_rule:
       description: Manage Tencent Cloud TCR replication rules
       name: tcr_replication_rule
       namespace: ''
       version_added: 0.14.0
+    tcr_replication_rule_info:
+      description: Gather information about Tencent Cloud TCR replication rules
+      name: tcr_replication_rule_info
+      namespace: ''
+      version_added: 0.4.0
     tcr_repository:
       description: Manage a Tencent Cloud TCR repository
       name: tcr_repository
       namespace: ''
       version_added: 0.13.0
+    tcr_repository_info:
+      description: Gather information about Tencent Cloud TCR repositories
+      name: tcr_repository_info
+      namespace: ''
+      version_added: 0.4.0
+    tcr_webhook_trigger:
+      description: Create or delete a Tencent Cloud TCR webhook trigger
+      name: tcr_webhook_trigger
+      namespace: ''
+      version_added: 1.1.0
     tcss_abnormal_process_event_info:
       description: Gather information about Tencent Cloud TCSS abnormal process events
       name: tcss_abnormal_process_event_info
@@ -2407,16 +3221,36 @@ plugins:
       name: tdai_agent_duty_task_info
       namespace: ''
       version_added: 0.8.0
+    tdcpg_account:
+      description: Govern a TDSQL-C PostgreSQL account
+      name: tdcpg_account
+      namespace: ''
+      version_added: 0.14.0
     tdcpg_cluster:
       description: Manage Tencent Cloud TDSQL-C PostgreSQL clusters
       name: tdcpg_cluster
       namespace: ''
       version_added: 0.14.0
+    tdcpg_cluster_info:
+      description: Gather information about Tencent Cloud TDCPG clusters
+      name: tdcpg_cluster_info
+      namespace: ''
+      version_added: 0.4.0
     tdcpg_cluster_instance_info:
       description: Gather information about Tencent Cloud TDCPG cluster instances
       name: tdcpg_cluster_instance_info
       namespace: ''
       version_added: 0.8.0
+    tdcpg_endpoint_wan:
+      description: Manage public access for a TDSQL-C PostgreSQL endpoint
+      name: tdcpg_endpoint_wan
+      namespace: ''
+      version_added: 0.14.0
+    tdcpg_instance_state:
+      description: Manage TDSQL-C PostgreSQL instance runtime state
+      name: tdcpg_instance_state
+      namespace: ''
+      version_added: 0.14.0
     tdid_over_summary_info:
       description: Gather information about Tencent Cloud TDID over summary
       name: tdid_over_summary_info
@@ -2427,6 +3261,16 @@ plugins:
       name: tdmq_amqp_cluster_info
       namespace: ''
       version_added: 0.8.0
+    tdmq_environment_info:
+      description: Gather information about Tencent Cloud TDMQ environments
+      name: tdmq_environment_info
+      namespace: ''
+      version_added: 0.9.0
+    tdmq_environment_role_info:
+      description: Gather information about Tencent Cloud TDMQ environment roles
+      name: tdmq_environment_role_info
+      namespace: ''
+      version_added: 0.9.0
     tdmq_namespace:
       description: Manage Tencent Cloud TDMQ Pulsar namespaces
       name: tdmq_namespace
@@ -2437,6 +3281,31 @@ plugins:
       name: tdmq_namespace_role
       namespace: ''
       version_added: 0.14.0
+    tdmq_rabbit_mq_binding_info:
+      description: Gather information about Tencent Cloud TDMQ rabbit mq bindings
+      name: tdmq_rabbit_mq_binding_info
+      namespace: ''
+      version_added: 0.9.0
+    tdmq_rabbit_mq_permission_info:
+      description: Gather information about Tencent Cloud TDMQ rabbit mq permissions
+      name: tdmq_rabbit_mq_permission_info
+      namespace: ''
+      version_added: 0.9.0
+    tdmq_rabbit_mq_user_info:
+      description: Gather information about Tencent Cloud TDMQ rabbit mq users
+      name: tdmq_rabbit_mq_user_info
+      namespace: ''
+      version_added: 0.9.0
+    tdmq_rabbit_mq_vip_instance_info:
+      description: Gather information about Tencent Cloud TDMQ rabbit mq vip instances
+      name: tdmq_rabbit_mq_vip_instance_info
+      namespace: ''
+      version_added: 0.9.0
+    tdmq_rabbit_mq_virtual_host_info:
+      description: Gather information about Tencent Cloud TDMQ rabbit mq virtual hosts
+      name: tdmq_rabbit_mq_virtual_host_info
+      namespace: ''
+      version_added: 0.9.0
     tdmq_rabbitmq_binding:
       description: Manage TDMQ RabbitMQ bindings
       name: tdmq_rabbitmq_binding
@@ -2462,6 +3331,37 @@ plugins:
       name: tdmq_rabbitmq_vhost
       namespace: ''
       version_added: 0.14.0
+    tdmq_rocket_mq_cluster_info:
+      description: Gather information about Tencent Cloud TDMQ rocket mq clusters
+      name: tdmq_rocket_mq_cluster_info
+      namespace: ''
+      version_added: 0.9.0
+    tdmq_rocket_mq_environment_role_info:
+      description: Gather information about Tencent Cloud TDMQ rocket mq environment
+        roles
+      name: tdmq_rocket_mq_environment_role_info
+      namespace: ''
+      version_added: 0.9.0
+    tdmq_rocket_mq_group_info:
+      description: Gather information about Tencent Cloud TDMQ rocket mq groups
+      name: tdmq_rocket_mq_group_info
+      namespace: ''
+      version_added: 0.9.0
+    tdmq_rocket_mq_namespace_info:
+      description: Gather information about Tencent Cloud TDMQ rocket mq namespaces
+      name: tdmq_rocket_mq_namespace_info
+      namespace: ''
+      version_added: 0.9.0
+    tdmq_rocket_mq_role_info:
+      description: Gather information about Tencent Cloud TDMQ rocket mq roles
+      name: tdmq_rocket_mq_role_info
+      namespace: ''
+      version_added: 0.9.0
+    tdmq_rocket_mq_topic_info:
+      description: Gather information about Tencent Cloud TDMQ rocket mq topics
+      name: tdmq_rocket_mq_topic_info
+      namespace: ''
+      version_added: 0.9.0
     tdmq_rocketmq_cluster:
       description: Manage TDMQ RocketMQ clusters
       name: tdmq_rocketmq_cluster
@@ -2497,9 +3397,49 @@ plugins:
       name: tdmq_subscription
       namespace: ''
       version_added: 0.14.0
+    tdmq_subscription_info:
+      description: Gather information about Tencent Cloud TDMQ subscriptions
+      name: tdmq_subscription_info
+      namespace: ''
+      version_added: 0.9.0
     tdmq_topic:
       description: Manage Tencent Cloud TDMQ Pulsar topics
       name: tdmq_topic
+      namespace: ''
+      version_added: 0.14.0
+    tdmq_topic_info:
+      description: Gather information about Tencent Cloud TDMQ topics
+      name: tdmq_topic_info
+      namespace: ''
+      version_added: 0.9.0
+    tdmysql_account:
+      description: Manage Tencent Cloud TDSQL MySQL accounts
+      name: tdmysql_account
+      namespace: ''
+      version_added: 0.14.0
+    tdmysql_account_info:
+      description: Gather Tencent Cloud TDSQL MySQL accounts
+      name: tdmysql_account_info
+      namespace: ''
+      version_added: 0.14.0
+    tdmysql_account_privilege:
+      description: Manage scoped Tencent Cloud TDSQL MySQL account privileges
+      name: tdmysql_account_privilege
+      namespace: ''
+      version_added: 0.14.0
+    tdmysql_backup_policy:
+      description: Manage Tencent Cloud TDSQL MySQL backup policy
+      name: tdmysql_backup_policy
+      namespace: ''
+      version_added: 0.14.0
+    tdmysql_backup_policy_info:
+      description: Gather Tencent Cloud TDSQL MySQL backup policy
+      name: tdmysql_backup_policy_info
+      namespace: ''
+      version_added: 0.14.0
+    tdmysql_database_object_info:
+      description: Gather Tencent Cloud TDSQL MySQL databases and objects
+      name: tdmysql_database_object_info
       namespace: ''
       version_added: 0.14.0
     tdmysql_db_instance:
@@ -2512,6 +3452,26 @@ plugins:
       name: tdmysql_db_instance_info
       namespace: ''
       version_added: 0.8.0
+    tdmysql_maintenance_window:
+      description: Manage Tencent Cloud TDSQL MySQL maintenance windows
+      name: tdmysql_maintenance_window
+      namespace: ''
+      version_added: 0.14.0
+    tdmysql_parameter:
+      description: Manage Tencent Cloud TDSQL MySQL instance parameters
+      name: tdmysql_parameter
+      namespace: ''
+      version_added: 0.14.0
+    tdmysql_parameter_info:
+      description: Gather Tencent Cloud TDSQL MySQL instance parameters
+      name: tdmysql_parameter_info
+      namespace: ''
+      version_added: 0.14.0
+    tdmysql_ssl:
+      description: Manage Tencent Cloud TDSQL MySQL SSL state
+      name: tdmysql_ssl
+      namespace: ''
+      version_added: 0.14.0
     tem_application:
       description: Manage Tencent Cloud TEM applications
       name: tem_application
@@ -2542,11 +3502,21 @@ plugins:
       name: teo_acceleration_domain
       namespace: ''
       version_added: 0.14.0
+    teo_acceleration_domain_info:
+      description: Gather information about Tencent Cloud EdgeOne acceleration domains
+      name: teo_acceleration_domain_info
+      namespace: ''
+      version_added: 1.1.0
     teo_dns_record:
       description: Manage Tencent Cloud TEO DNS records
       name: teo_dns_record
       namespace: ''
       version_added: 0.14.0
+    teo_dns_record_info:
+      description: Gather information about Tencent Cloud EdgeOne DNS records
+      name: teo_dns_record_info
+      namespace: ''
+      version_added: 1.1.0
     teo_function_info:
       description: Gather information about Tencent Cloud TEO functions
       name: teo_function_info
@@ -2557,6 +3527,11 @@ plugins:
       name: teo_origin_group
       namespace: ''
       version_added: 0.14.0
+    teo_origin_group_info:
+      description: Gather information about Tencent Cloud EdgeOne origin groups
+      name: teo_origin_group_info
+      namespace: ''
+      version_added: 1.1.0
     teo_security_bot_lite:
       description: Manage Tencent Cloud EdgeOne basic Bot protection
       name: teo_security_bot_lite
@@ -2577,6 +3552,11 @@ plugins:
       name: teo_security_ip_group
       namespace: ''
       version_added: 0.14.0
+    teo_security_ip_group_info:
+      description: Gather information about Tencent Cloud EdgeOne security IP groups
+      name: teo_security_ip_group_info
+      namespace: ''
+      version_added: 1.1.0
     teo_security_managed_rules:
       description: Manage Tencent Cloud EdgeOne managed WAF rules
       name: teo_security_managed_rules
@@ -2602,6 +3582,11 @@ plugins:
       name: teo_zone
       namespace: ''
       version_added: 0.14.0
+    teo_zone_info:
+      description: Gather information about Tencent Cloud EdgeOne zones
+      name: teo_zone_info
+      namespace: ''
+      version_added: 1.1.0
     thpc_cluster:
       description: Manage Tencent Cloud THPC clusters
       name: thpc_cluster
@@ -2622,11 +3607,86 @@ plugins:
       name: tiia_group_info
       namespace: ''
       version_added: 0.9.0
+    tione_data_source:
+      description: Manage Tencent Cloud TIONE data sources
+      name: tione_data_source
+      namespace: ''
+      version_added: 0.14.0
+    tione_data_source_info:
+      description: Gather Tencent Cloud TIONE data sources
+      name: tione_data_source_info
+      namespace: ''
+      version_added: 0.14.0
+    tione_dataset:
+      description: Manage Tencent Cloud TIONE datasets
+      name: tione_dataset
+      namespace: ''
+      version_added: 0.14.0
     tione_dataset_info:
       description: Gather information about Tencent Cloud TIONE datasets
       name: tione_dataset_info
       namespace: ''
       version_added: 0.8.0
+    tione_model_service:
+      description: Manage Tencent Cloud TIONE online model service configuration
+      name: tione_model_service
+      namespace: ''
+      version_added: 0.14.0
+    tione_model_service_auth_token:
+      description: Manage Tencent Cloud TIONE model service authentication tokens
+      name: tione_model_service_auth_token
+      namespace: ''
+      version_added: 0.14.0
+    tione_model_service_diagnostics_info:
+      description: Gather Tencent Cloud TIONE model service diagnostics
+      name: tione_model_service_diagnostics_info
+      namespace: ''
+      version_added: 0.14.0
+    tione_model_service_info:
+      description: Gather Tencent Cloud TIONE online model services
+      name: tione_model_service_info
+      namespace: ''
+      version_added: 0.14.0
+    tione_model_service_state:
+      description: Manage Tencent Cloud TIONE online model service state
+      name: tione_model_service_state
+      namespace: ''
+      version_added: 0.14.0
+    tione_model_service_traffic:
+      description: Manage Tencent Cloud TIONE service authorization and version traffic
+      name: tione_model_service_traffic
+      namespace: ''
+      version_added: 0.14.0
+    tione_notebook:
+      description: Manage Tencent Cloud TIONE notebooks
+      name: tione_notebook
+      namespace: ''
+      version_added: 0.14.0
+    tione_notebook_info:
+      description: Gather Tencent Cloud TIONE notebooks
+      name: tione_notebook_info
+      namespace: ''
+      version_added: 0.14.0
+    tione_training_model_version:
+      description: Manage versions of an existing Tencent Cloud TIONE training model
+      name: tione_training_model_version
+      namespace: ''
+      version_added: 0.14.0
+    tione_training_model_version_info:
+      description: Gather Tencent Cloud TIONE training-model versions
+      name: tione_training_model_version_info
+      namespace: ''
+      version_added: 0.14.0
+    tione_training_task:
+      description: Manage Tencent Cloud TIONE training tasks
+      name: tione_training_task
+      namespace: ''
+      version_added: 0.14.0
+    tione_training_task_info:
+      description: Gather Tencent Cloud TIONE training tasks
+      name: tione_training_task_info
+      namespace: ''
+      version_added: 0.14.0
     tiw_running_task_info:
       description: Gather information about Tencent Cloud TIW running tasks
       name: tiw_running_task_info
@@ -2642,6 +3702,11 @@ plugins:
       name: tke_backup_storage_location
       namespace: ''
       version_added: 0.14.0
+    tke_cls_log_config:
+      description: Create or delete a TKE cluster CLS log configuration
+      name: tke_cls_log_config
+      namespace: ''
+      version_added: 1.1.0
     tke_cluster:
       description: Manage Tencent Cloud TKE clusters
       name: tke_cluster
@@ -2667,6 +3732,11 @@ plugins:
       name: tke_cluster_autoscaler_info
       namespace: ''
       version_added: 1.1.0
+    tke_cluster_deletion_protection:
+      description: Enable or disable deletion protection for a Tencent Cloud TKE cluster
+      name: tke_cluster_deletion_protection
+      namespace: ''
+      version_added: 1.1.0
     tke_cluster_endpoint:
       description: Manage Tencent Cloud TKE cluster access endpoints
       name: tke_cluster_endpoint
@@ -2680,6 +3750,16 @@ plugins:
     tke_cluster_kubeconfig:
       description: Fetch the kubeconfig of a Tencent Cloud TKE cluster
       name: tke_cluster_kubeconfig
+      namespace: ''
+      version_added: 1.1.0
+    tke_cluster_route:
+      description: Create or delete a route in a Tencent Cloud TKE cluster route table
+      name: tke_cluster_route
+      namespace: ''
+      version_added: 1.1.0
+    tke_cluster_route_table:
+      description: Create or delete a Tencent Cloud TKE cluster route table
+      name: tke_cluster_route_table
       namespace: ''
       version_added: 1.1.0
     tke_cluster_upgrade:
@@ -2763,6 +3843,328 @@ plugins:
       name: trtc_call_info
       namespace: ''
       version_added: 0.8.0
+    tse_auto_scaler_resource_strategy_binding_group_info:
+      description: Gather information about Tencent Cloud TSE auto scaler resource
+        strategy binding groups
+      name: tse_auto_scaler_resource_strategy_binding_group_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_cloud_native_api_gateway_canary_rule_info:
+      description: Gather information about Tencent Cloud TSE cloud native api gateway
+        canary rules
+      name: tse_cloud_native_api_gateway_canary_rule_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_cloud_native_api_gateway_certificate_info:
+      description: Gather information about Tencent Cloud TSE cloud native api gateway
+        certificates
+      name: tse_cloud_native_api_gateway_certificate_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_cloud_native_api_gateway_consumer_group_info:
+      description: Gather information about Tencent Cloud TSE cloud native api gateway
+        consumer groups
+      name: tse_cloud_native_api_gateway_consumer_group_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_cloud_native_api_gateway_consumer_info:
+      description: Gather information about Tencent Cloud TSE cloud native api gateway
+        consumers
+      name: tse_cloud_native_api_gateway_consumer_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_cloud_native_api_gateway_info:
+      description: Gather information about Tencent Cloud TSE cloud native api gateways
+      name: tse_cloud_native_api_gateway_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_cloud_native_api_gateway_llm_model_api_info:
+      description: Gather information about Tencent Cloud TSE cloud native api gateway
+        llm model apis
+      name: tse_cloud_native_api_gateway_llm_model_api_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_cloud_native_api_gateway_llm_model_service_info:
+      description: Gather information about Tencent Cloud TSE cloud native api gateway
+        llm model services
+      name: tse_cloud_native_api_gateway_llm_model_service_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_cloud_native_api_gateway_route_info:
+      description: Gather information about Tencent Cloud TSE cloud native api gateway
+        routes
+      name: tse_cloud_native_api_gateway_route_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_cloud_native_api_gateway_secret_key_info:
+      description: Gather information about Tencent Cloud TSE cloud native api gateway
+        secret keys
+      name: tse_cloud_native_api_gateway_secret_key_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_cloud_native_api_gateway_service_info:
+      description: Gather information about Tencent Cloud TSE cloud native api gateway
+        services
+      name: tse_cloud_native_api_gateway_service_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_cloud_native_gateway:
+      description: Manage a Tencent Cloud TSE cloud-native API gateway
+      name: tse_cloud_native_gateway
+      namespace: ''
+      version_added: 0.14.0
+    tse_config_file:
+      description: Manage a Tencent Cloud TSE configuration file
+      name: tse_config_file
+      namespace: ''
+      version_added: 0.14.0
+    tse_config_file_catalog_info:
+      description: Gather Tencent Cloud TSE configuration file inventory
+      name: tse_config_file_catalog_info
+      namespace: ''
+      version_added: 0.14.0
+    tse_config_file_deployment:
+      description: Atomically deploy a Tencent Cloud TSE configuration file and release
+      name: tse_config_file_deployment
+      namespace: ''
+      version_added: 0.14.0
+    tse_config_file_group:
+      description: Manage a Tencent Cloud TSE configuration file group
+      name: tse_config_file_group
+      namespace: ''
+      version_added: 0.14.0
+    tse_config_file_group_info:
+      description: Gather information about Tencent Cloud TSE config file groups
+      name: tse_config_file_group_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_config_file_release:
+      description: Manage a Tencent Cloud TSE configuration file release
+      name: tse_config_file_release
+      namespace: ''
+      version_added: 0.14.0
+    tse_config_file_release_info:
+      description: Gather Tencent Cloud TSE configuration release audit data
+      name: tse_config_file_release_info
+      namespace: ''
+      version_added: 0.14.0
+    tse_config_file_template_info:
+      description: Gather Tencent Cloud TSE configuration file templates
+      name: tse_config_file_template_info
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_autoscaler_binding:
+      description: Bind a TSE gateway autoscaler strategy to gateway groups
+      name: tse_gateway_autoscaler_binding
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_autoscaler_strategy:
+      description: Manage a Tencent Cloud TSE gateway autoscaler strategy
+      name: tse_gateway_autoscaler_strategy
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_canary_rule:
+      description: Manage a Tencent Cloud TSE gateway canary rule
+      name: tse_gateway_canary_rule
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_certificate:
+      description: Manage a Tencent Cloud TSE gateway certificate
+      name: tse_gateway_certificate
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_console_network:
+      description: Manage Tencent Cloud TSE gateway console network access
+      name: tse_gateway_console_network
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_consumer:
+      description: Manage a Tencent Cloud TSE API gateway consumer
+      name: tse_gateway_consumer
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_consumer_group:
+      description: Manage a Tencent Cloud TSE API gateway consumer group
+      name: tse_gateway_consumer_group
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_consumer_group_membership:
+      description: Manage TSE API gateway consumer group membership
+      name: tse_gateway_consumer_group_membership
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_cors:
+      description: Manage CORS policy on a Tencent Cloud TSE gateway resource
+      name: tse_gateway_cors
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_ip_lookup_info:
+      description: Resolve a Tencent Cloud TSE gateway from its public IP
+      name: tse_gateway_ip_lookup_info
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_ip_restriction:
+      description: Manage IP access control on a Tencent Cloud TSE gateway resource
+      name: tse_gateway_ip_restriction
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_model_api:
+      description: Manage a Tencent Cloud TSE AI gateway model API
+      name: tse_gateway_model_api
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_model_api_group_auth:
+      description: Manage TSE gateway Model API consumer group authorization
+      name: tse_gateway_model_api_group_auth
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_model_service:
+      description: Manage a Tencent Cloud TSE AI gateway model service
+      name: tse_gateway_model_service
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_public_network:
+      description: Manage a Tencent Cloud TSE gateway public network
+      name: tse_gateway_public_network
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_rate_limit:
+      description: Manage Tencent Cloud TSE service or route rate limiting
+      name: tse_gateway_rate_limit
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_route:
+      description: Manage a Tencent Cloud TSE gateway route
+      name: tse_gateway_route
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_runtime_info:
+      description: Gather Tencent Cloud TSE gateway runtime topology
+      name: tse_gateway_runtime_info
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_secret_key:
+      description: Manage a Tencent Cloud TSE API gateway secret key
+      name: tse_gateway_secret_key
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_server_group:
+      description: Manage a Tencent Cloud TSE gateway server group
+      name: tse_gateway_server_group
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_service:
+      description: Manage a Tencent Cloud TSE gateway upstream service
+      name: tse_gateway_service
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_service_inventory_info:
+      description: Gather Tencent Cloud TSE gateway service and route inventory
+      name: tse_gateway_service_inventory_info
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_service_source:
+      description: Manage a Tencent Cloud TSE gateway service source
+      name: tse_gateway_service_source
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_upstream_node_status:
+      description: Reconcile Tencent Cloud TSE gateway upstream node health state
+      name: tse_gateway_upstream_node_status
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_waf_domains:
+      description: Manage Tencent Cloud TSE gateway WAF domains
+      name: tse_gateway_waf_domains
+      namespace: ''
+      version_added: 0.14.0
+    tse_gateway_waf_protection:
+      description: Manage Tencent Cloud TSE gateway WAF protection
+      name: tse_gateway_waf_protection
+      namespace: ''
+      version_added: 0.14.0
+    tse_governance_alias:
+      description: Manage a Tencent Cloud TSE governance service alias
+      name: tse_governance_alias
+      namespace: ''
+      version_added: 0.14.0
+    tse_governance_alias_info:
+      description: Gather information about Tencent Cloud TSE governance aliases
+      name: tse_governance_alias_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_governance_host_retirement:
+      description: Retire all Tencent Cloud TSE governance instances on a host
+      name: tse_governance_host_retirement
+      namespace: ''
+      version_added: 0.14.0
+    tse_governance_instance:
+      description: Manage a Tencent Cloud TSE governance service instance
+      name: tse_governance_instance
+      namespace: ''
+      version_added: 0.14.0
+    tse_governance_instance_info:
+      description: Gather information about Tencent Cloud TSE governance instances
+      name: tse_governance_instance_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_governance_lane_group:
+      description: Manage a Tencent Cloud TSE governance lane group
+      name: tse_governance_lane_group
+      namespace: ''
+      version_added: 0.14.0
+    tse_governance_lane_group_info:
+      description: Gather information about Tencent Cloud TSE governance lane groups
+      name: tse_governance_lane_group_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_governance_namespace:
+      description: Manage a Tencent Cloud TSE governance namespace
+      name: tse_governance_namespace
+      namespace: ''
+      version_added: 0.14.0
+    tse_governance_namespace_info:
+      description: Gather information about Tencent Cloud TSE governance namespaces
+      name: tse_governance_namespace_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_governance_service:
+      description: Manage a Tencent Cloud TSE governance service
+      name: tse_governance_service
+      namespace: ''
+      version_added: 0.14.0
+    tse_governance_service_contract_info:
+      description: Gather Tencent Cloud TSE governance service contracts
+      name: tse_governance_service_contract_info
+      namespace: ''
+      version_added: 0.14.0
+    tse_governance_service_info:
+      description: Gather information about Tencent Cloud TSE governance services
+      name: tse_governance_service_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_instance_tag_info:
+      description: Gather Tencent Cloud TSE instance tag metadata
+      name: tse_instance_tag_info
+      namespace: ''
+      version_added: 0.14.0
+    tse_native_gateway_server_group_info:
+      description: Gather information about Tencent Cloud TSE native gateway server
+        groups
+      name: tse_native_gateway_server_group_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_native_gateway_service_source_info:
+      description: Gather information about Tencent Cloud TSE native gateway service
+        sources
+      name: tse_native_gateway_service_source_info
+      namespace: ''
+      version_added: 0.9.0
+    tse_sre_access_address_info:
+      description: Gather Tencent Cloud TSE registry-engine access addresses
+      name: tse_sre_access_address_info
+      namespace: ''
+      version_added: 0.14.0
     tse_sre_instance:
       description: Manage Tencent Cloud TSE service registry engines
       name: tse_sre_instance
@@ -2773,11 +4175,132 @@ plugins:
       name: tse_sre_instance_info
       namespace: ''
       version_added: 0.8.0
+    tse_sre_topology_info:
+      description: Gather Tencent Cloud TSE registry-engine topology
+      name: tse_sre_topology_info
+      namespace: ''
+      version_added: 0.14.0
+    tsf_application:
+      description: Manage a Tencent Cloud TSF application
+      name: tsf_application
+      namespace: ''
+      version_added: 0.15.0
+    tsf_application_config:
+      description: Manage a versioned Tencent Cloud TSF application configuration
+      name: tsf_application_config
+      namespace: ''
+      version_added: 0.15.0
+    tsf_application_config_info:
+      description: Gather information about Tencent Cloud TSF application configs
+      name: tsf_application_config_info
+      namespace: ''
+      version_added: 1.1.0
+    tsf_application_config_release:
+      description: Manage a Tencent Cloud TSF application configuration release
+      name: tsf_application_config_release
+      namespace: ''
+      version_added: 0.15.0
+    tsf_application_config_release_info:
+      description: Gather information about Tencent Cloud TSF config releases
+      name: tsf_application_config_release_info
+      namespace: ''
+      version_added: 1.1.0
     tsf_application_info:
       description: Gather information about Tencent Cloud TSF applications
       name: tsf_application_info
       namespace: ''
       version_added: 0.8.0
+    tsf_cluster:
+      description: Manage a Tencent Cloud TSF cluster
+      name: tsf_cluster
+      namespace: ''
+      version_added: 0.15.0
+    tsf_cluster_info:
+      description: Gather information about Tencent Cloud TSF clusters
+      name: tsf_cluster_info
+      namespace: ''
+      version_added: 1.1.0
+    tsf_container_deployment_group:
+      description: Manage a Tencent Cloud TSF container deployment group
+      name: tsf_container_deployment_group
+      namespace: ''
+      version_added: 0.15.0
+    tsf_container_deployment_group_info:
+      description: Gather information about Tencent Cloud TSF container deployment
+        groups
+      name: tsf_container_deployment_group_info
+      namespace: ''
+      version_added: 1.1.0
+    tsf_lane:
+      description: Manage a Tencent Cloud TSF traffic lane
+      name: tsf_lane
+      namespace: ''
+      version_added: 0.15.0
+    tsf_lane_info:
+      description: Gather information about Tencent Cloud TSF lanes
+      name: tsf_lane_info
+      namespace: ''
+      version_added: 1.1.0
+    tsf_lane_rule:
+      description: Manage a Tencent Cloud TSF traffic lane rule
+      name: tsf_lane_rule
+      namespace: ''
+      version_added: 0.15.0
+    tsf_lane_rule_info:
+      description: Gather information about Tencent Cloud TSF lane rules
+      name: tsf_lane_rule_info
+      namespace: ''
+      version_added: 1.1.0
+    tsf_microservice:
+      description: Manage a Tencent Cloud TSF microservice
+      name: tsf_microservice
+      namespace: ''
+      version_added: 0.15.0
+    tsf_microservice_info:
+      description: Gather information about Tencent Cloud TSF microservices
+      name: tsf_microservice_info
+      namespace: ''
+      version_added: 1.1.0
+    tsf_namespace:
+      description: Manage a Tencent Cloud TSF namespace
+      name: tsf_namespace
+      namespace: ''
+      version_added: 0.15.0
+    tsf_namespace_info:
+      description: Gather information about Tencent Cloud TSF namespaces
+      name: tsf_namespace_info
+      namespace: ''
+      version_added: 1.1.0
+    tsf_public_config:
+      description: Manage a versioned Tencent Cloud TSF public configuration
+      name: tsf_public_config
+      namespace: ''
+      version_added: 0.15.0
+    tsf_public_config_info:
+      description: Gather information about Tencent Cloud TSF public configs
+      name: tsf_public_config_info
+      namespace: ''
+      version_added: 1.1.0
+    tsf_repository:
+      description: Manage a Tencent Cloud TSF package repository
+      name: tsf_repository
+      namespace: ''
+      version_added: 0.15.0
+    tsf_repository_info:
+      description: Gather information about Tencent Cloud TSF repositories
+      name: tsf_repository_info
+      namespace: ''
+      version_added: 1.1.0
+    tsf_vm_deployment_group:
+      description: Manage a Tencent Cloud TSF virtual-machine deployment group
+      name: tsf_vm_deployment_group
+      namespace: ''
+      version_added: 0.15.0
+    tsf_vm_deployment_group_info:
+      description: Gather information about Tencent Cloud TSF VM deployment groups
+      name: tsf_vm_deployment_group_info
+      namespace: ''
+      version_added: 1.1.0
     vcube_resource_info:
       description: Gather information about Tencent Cloud VCUBE resources
       name: vcube_resource_info
@@ -2854,6 +4377,11 @@ plugins:
       name: vpc_flow_log
       namespace: ''
       version_added: 0.14.0
+    vpc_flow_log_info:
+      description: Gather information about Tencent Cloud VPC flow logs
+      name: vpc_flow_log_info
+      namespace: ''
+      version_added: 1.2.0
     vpc_info:
       description: Gather information about Tencent Cloud VPCs
       name: vpc_info
@@ -2884,11 +4412,21 @@ plugins:
       name: waf_anti_info_leak_rule
       namespace: ''
       version_added: 0.14.0
+    waf_anti_info_leak_rule_info:
+      description: Gather information about Tencent Cloud WAF anti-info-leak rules
+      name: waf_anti_info_leak_rule_info
+      namespace: ''
+      version_added: 1.1.0
     waf_anti_tamper_rule:
       description: Manage Tencent Cloud WAF anti-tamper URL rules
       name: waf_anti_tamper_rule
       namespace: ''
       version_added: 0.14.0
+    waf_anti_tamper_rule_info:
+      description: Gather information about Tencent Cloud WAF anti-tamper rules
+      name: waf_anti_tamper_rule_info
+      namespace: ''
+      version_added: 1.1.0
     waf_area_ban_rule:
       description: Manage Tencent Cloud WAF geographic blocking
       name: waf_area_ban_rule
@@ -2899,6 +4437,11 @@ plugins:
       name: waf_attack_white_rule
       namespace: ''
       version_added: 0.14.0
+    waf_attack_white_rule_info:
+      description: Gather information about Tencent Cloud WAF attack-whitelist rules
+      name: waf_attack_white_rule_info
+      namespace: ''
+      version_added: 1.1.0
     waf_auto_deny:
       description: Manage Tencent Cloud WAF automatic IP blocking
       name: waf_auto_deny
@@ -2909,21 +4452,41 @@ plugins:
       name: waf_cc_rule
       namespace: ''
       version_added: 0.14.0
+    waf_cc_rule_info:
+      description: Gather information about Tencent Cloud WAF CC rules
+      name: waf_cc_rule_info
+      namespace: ''
+      version_added: 1.1.0
     waf_custom_rule:
       description: Manage Tencent Cloud WAF custom rules
       name: waf_custom_rule
       namespace: ''
       version_added: 0.14.0
+    waf_custom_rule_info:
+      description: Gather information about Tencent Cloud WAF custom rules
+      name: waf_custom_rule_info
+      namespace: ''
+      version_added: 1.1.0
     waf_custom_white_rule:
       description: Manage Tencent Cloud WAF precision allowlist rules
       name: waf_custom_white_rule
       namespace: ''
       version_added: 0.14.0
+    waf_custom_white_rule_info:
+      description: Gather information about Tencent Cloud WAF custom-whitelist rules
+      name: waf_custom_white_rule_info
+      namespace: ''
+      version_added: 1.1.0
     waf_host:
       description: Manage Tencent Cloud WAF protected hosts
       name: waf_host
       namespace: ''
       version_added: 0.14.0
+    waf_host_info:
+      description: Gather information about Tencent Cloud WAF protected hosts
+      name: waf_host_info
+      namespace: ''
+      version_added: 1.1.0
     waf_instance_info:
       description: Gather information about Tencent Cloud WAF instances
       name: waf_instance_info
@@ -2939,6 +4502,11 @@ plugins:
       name: waf_owasp_white_rule
       namespace: ''
       version_added: 0.14.0
+    waf_owasp_white_rule_info:
+      description: Gather information about Tencent Cloud WAF OWASP-whitelist rules
+      name: waf_owasp_white_rule_info
+      namespace: ''
+      version_added: 1.1.0
     waf_protect_group:
       description: Manage Tencent Cloud WAF protection object groups
       name: waf_protect_group
@@ -2985,4 +4553,4 @@ plugins:
   strategy: {}
   test: {}
   vars: {}
-version: 1.1.0
+version: 1.2.0

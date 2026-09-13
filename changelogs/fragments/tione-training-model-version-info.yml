@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``tione_training_model_version_info`` with stable version-ID detail and strongly parent-scoped model-version inventory.

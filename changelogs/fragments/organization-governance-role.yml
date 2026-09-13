@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Added Organization member exact-name lookup and the tc_organization_governance role for nodes, members, identities and policies.

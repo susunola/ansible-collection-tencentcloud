@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Added the tc_config_governance role for Config recording, delivery, compliance, remediation, alerting and aggregation workflows.

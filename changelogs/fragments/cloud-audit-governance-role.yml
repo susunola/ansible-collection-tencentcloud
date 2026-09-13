@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Added the tc_cloud_audit_governance role for account audit delivery, scoped tracks and truthful stop-only teardown.
