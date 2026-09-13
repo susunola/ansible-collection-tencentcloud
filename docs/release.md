@@ -128,6 +128,13 @@ again.
 
 Deciding *when* to release, and choosing the version number. The guard tells
 you whether the version you picked is publishable; it has no opinion on
-whether 176 pending fragments should ship as one `1.2.0` or be split. There
-is no scheduled release job and no auto-bump — releases are still a person
-pushing a tag.
+whether 200-odd pending fragments should ship as one release or be split.
+There is no scheduled release job and no auto-bump — releases are still a
+person pushing a tag.
+
+Note that a large fragment backlog is **not** a defect the guard reports. A
+fragment is unreleased work, and `fragments` passes as long as there is at
+least one; the failure that looks like a changelog problem is almost always
+`version-bumped` — `galaxy.yml` still naming a version that has already been
+tagged. Fold nothing by hand: the workflow folds at tag time, and folding
+early empties `changelogs/fragments/`, which then fails `fragments`.
