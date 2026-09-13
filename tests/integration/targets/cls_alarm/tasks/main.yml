@@ -26,6 +26,11 @@
     topic_name: "ansible-clsalarm-tp-{{ run_id }}"
     notice_name: "ansible-clsalarm-notice-{{ run_id }}"
     alarm_name: "ansible-clsalarm-it-{{ run_id }}"
+    # Absolute, because ansible-test runs this target from a temporary copy
+    # (see the longer note in private_dns). Supplied by
+    # scripts/integration_inputs.py.
+    manifest_script: "{{ e2e_inputs.E2E_SCRIPTS_DIR | default('', true) }}/e2e_manifest.py"
+    manifest_path: "{{ e2e_inputs.E2E_MANIFEST_PATH | default('', true) }}"
   module_defaults:
     group/susunola.tencentcloud.all:
       region: "{{ tencentcloud_region }}"
@@ -111,6 +116,43 @@
         name: "{{ alarm_name }}"
         alarm: "{{ alarm_body }}"
       register: created
+
+    # Bookkeeping only: never fail a test because the manifest could not be
+    # written, but do register what was created so an orphan is caught even if
+    # the `always:` block never gets to run.
+    - name: Note that resource tracking is unavailable
+      ansible.builtin.debug:
+        msg: >-
+          No E2E_MANIFEST_PATH in the integration inputs, so the alarm created
+          here cannot be registered and the resource reaper will audit
+          nothing. Run `python scripts/integration_inputs.py --write` first.
+      when: manifest_path | length == 0
+
+    - name: Register the alarm with the TTL manifest
+      ansible.builtin.command:
+        argv:
+          - "{{ ansible_playbook_python }}"
+          - "{{ manifest_script }}"
+          - --path
+          - "{{ manifest_path }}"
+          - add
+          - --run-id
+          - "{{ run_id }}"
+          - --target
+          - cls_alarm
+          - --resource-type
+          - cls:alarm
+          - --resource-id
+          - "{{ created.alarm_id }}"
+          - --region
+          - "{{ tencentcloud_region }}"
+          - --name
+          - "{{ alarm_name }}"
+          - --cost-class
+          - medium
+      when: manifest_path | length > 0
+      changed_when: false
+      ignore_errors: true
 
     - name: Reconcile alarm
       susunola.tencentcloud.cls_alarm:

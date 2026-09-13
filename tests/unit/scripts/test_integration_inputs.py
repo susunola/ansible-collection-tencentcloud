@@ -131,8 +131,36 @@ def test_main_writes_by_default(mod, tmp_path, monkeypatch, capsys):
     assert mod.main(["--home", str(tmp_path)]) == 0
     out = capsys.readouterr().out
     assert "wrote" in out
-    assert "1 key(s)" in out
+    # The region plus the two derived paths a target cannot work out itself.
+    assert "3 key(s)" in out
     assert mod.read(str(tmp_path))["TENCENTCLOUD_REGION"] == "ap-guangzhou"
+
+
+def test_derived_inputs_resolve_inside_the_real_collection(mod):
+    derived = mod.derived_inputs()
+    assert set(derived) == {"E2E_MANIFEST_PATH", "E2E_SCRIPTS_DIR"}
+    assert Path(derived["E2E_SCRIPTS_DIR"]) == ROOT / "scripts"
+    assert Path(derived["E2E_MANIFEST_PATH"]) == ROOT / "tests/output/e2e-resources.jsonl"
+    for value in derived.values():
+        assert Path(value).is_absolute(), value
+
+
+def test_derived_inputs_are_outside_the_temporary_work_directory(mod):
+    """ansible-test runs a target from a copy under tests/output/.tmp/.
+
+    Anything built up from role_path lands in that copy and is deleted with
+    it, so these have to be resolved against the real collection root.
+    """
+    for value in mod.derived_inputs().values():
+        assert ".tmp" not in value
+
+
+def test_main_writes_the_derived_paths(mod, tmp_path, monkeypatch):
+    monkeypatch.setenv("TENCENTCLOUD_REGION", "ap-guangzhou")
+    assert mod.main(["--home", str(tmp_path)]) == 0
+    values = mod.read(str(tmp_path))
+    assert values["E2E_SCRIPTS_DIR"] == str(ROOT / "scripts")
+    assert values["E2E_MANIFEST_PATH"] == str(ROOT / "tests/output/e2e-resources.jsonl")
 
 
 def test_main_region_overrides_the_environment(mod, tmp_path, monkeypatch):

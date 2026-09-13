@@ -6,6 +6,7 @@
   ansible.builtin.set_fact:
     tcr_registry_id: "{{ e2e_inputs.TENCENTCLOUD_TCR_REGISTRY_ID | default(lookup('env', 'TENCENTCLOUD_TCR_REGISTRY_ID'), true) | default('', true) }}"
     tcr_namespace: "{{ e2e_inputs.TENCENTCLOUD_TCR_NAMESPACE | default(lookup('env', 'TENCENTCLOUD_TCR_NAMESPACE'), true) | default('', true) }}"
+    run_id: "{{ e2e_inputs.GITHUB_RUN_ID | default(lookup('env', 'GITHUB_RUN_ID'), true) | default(99999999 | random, true) }}"
 
 - name: Explain skipped TCR immutable tag rule integration
   ansible.builtin.debug:
@@ -13,6 +14,12 @@
   when: tcr_registry_id | length == 0 or tcr_namespace | length == 0
 
 - name: TCR immutable tag rule end-to-end
+  vars:
+    # Absolute, because ansible-test runs this target from a temporary copy
+    # (see the longer note in private_dns). Supplied by
+    # scripts/integration_inputs.py.
+    manifest_script: "{{ e2e_inputs.E2E_SCRIPTS_DIR | default('', true) }}/e2e_manifest.py"
+    manifest_path: "{{ e2e_inputs.E2E_MANIFEST_PATH | default('', true) }}"
   module_defaults:
     group/susunola.tencentcloud.all:
       region: "{{ tencentcloud_region }}"
@@ -42,6 +49,45 @@
           TagDecoration: matches
           Disabled: false
       register: created
+
+    # Bookkeeping only: never fail a test because the manifest could not be
+    # written, but do register what was created so an orphan is caught even if
+    # the `always:` block never gets to run.
+    - name: Note that resource tracking is unavailable
+      ansible.builtin.debug:
+        msg: >-
+          No E2E_MANIFEST_PATH in the integration inputs, so the rule created
+          here cannot be registered and the resource reaper will audit
+          nothing. Run `python scripts/integration_inputs.py --write` first.
+      when: manifest_path | length == 0
+
+    - name: Register the rule with the TTL manifest
+      ansible.builtin.command:
+        argv:
+          - "{{ ansible_playbook_python }}"
+          - "{{ manifest_script }}"
+          - --path
+          - "{{ manifest_path }}"
+          - add
+          - --run-id
+          - "{{ run_id }}"
+          - --target
+          - tcr_immutable_tag_rule
+          - --resource-type
+          - tcr:immutable_tag_rule
+          # The rule has no id of its own; registry + namespace + pattern is
+          # what identifies it.
+          - --resource-id
+          - "{{ tcr_registry_id }}/{{ tcr_namespace }}"
+          - --region
+          - "{{ tencentcloud_region }}"
+          - --name
+          - ansible-e2e-*/latest
+          - --cost-class
+          - free
+      when: manifest_path | length > 0
+      changed_when: false
+      ignore_errors: true
 
     - name: Reconcile immutable tag rule
       susunola.tencentcloud.tcr_immutable_tag_rule:

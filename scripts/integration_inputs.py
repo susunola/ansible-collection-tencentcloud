@@ -7,7 +7,8 @@
 ``lookup('env', ...)``. Credentials get their own escape hatch
 (``scripts/integration_credentials.py`` writes a TCCLI profile). This script is
 the same trick for everything else - target gates, region/zone overrides,
-resource ids, ``GITHUB_RUN_ID`` - by writing them to a small YAML file under
+resource ids, ``GITHUB_RUN_ID``, and the absolute paths a target cannot derive
+for itself (see ``derived_inputs``) - by writing them to a small YAML file under
 ``$HOME``, which is one of the few variables that does survive.
 
 Usage (locally and in CI, before ``ansible-test integration``)::
@@ -59,6 +60,25 @@ def inputs_path(home=None) -> Path:
     """Absolute path of the inputs file for ``home`` (default ``$HOME``)."""
     base = Path(home) if home else Path(os.environ.get("HOME", str(Path.home())))
     return base / PROFILE_DIR / FILE_NAME
+
+
+def derived_inputs() -> dict:
+    """Return absolute paths a target cannot work out from inside the run.
+
+    ``ansible-test`` copies each target into a temporary work directory
+    (``tests/output/.tmp/integration/<target>-<random>/...``) and runs it from
+    there, so ``role_path``, ``playbook_dir`` and ``output_dir`` all point into
+    a tree that is deleted when the run ends. A target therefore cannot reach
+    ``scripts/`` or the shared resource manifest by walking up from its own
+    directory - every one of those ``../`` hops lands in the temporary copy.
+
+    These are resolved here, where the real collection root is known.
+    """
+    root = Path(__file__).resolve().parent.parent
+    return {
+        "E2E_MANIFEST_PATH": str(root / "tests" / "output" / "e2e-resources.jsonl"),
+        "E2E_SCRIPTS_DIR": str(root / "scripts"),
+    }
 
 
 def collect(env=None) -> dict:
@@ -133,9 +153,10 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
 
     values = collect()
+    values.update(derived_inputs())
     if args.region:
         values["TENCENTCLOUD_REGION"] = args.region
-        values = dict(sorted(values.items()))
+    values = dict(sorted(values.items()))
 
     if args.dry_run:
         print("would write %s" % inputs_path(args.home))

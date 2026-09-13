@@ -1,0 +1,23 @@
+---
+minor_changes:
+  - >-
+    Integration targets now register the resources they create with
+    ``scripts/e2e_manifest.py``, so the TTL reaper - the third cleanup line - finally has
+    data to audit. Registered: ``private_dns``, ``cls_alarm``, ``tcr_immutable_tag_rule``
+    and ``tcr_webhook_trigger``.
+  - >-
+    ``scripts/e2e_manifest.py add`` takes ``--ttl-seconds`` (default 7200) instead of
+    requiring a caller-computed ``--expires-at``. An explicit ``--expires-at`` still
+    overrides it. This keeps the expiry arithmetic in one tested place instead of
+    duplicating Jinja date maths in every target.
+  - >-
+    ``scripts/integration_inputs.py`` now also emits ``E2E_SCRIPTS_DIR`` and
+    ``E2E_MANIFEST_PATH`` as absolute paths. ``ansible-test`` copies each target into a
+    temporary work directory and runs it from there, so ``role_path``, ``playbook_dir``
+    and ``output_dir`` all point into a tree that is deleted when the run ends - a target
+    cannot reach ``scripts/`` or the shared manifest by walking up from its own directory.
+  - >-
+    ``scripts/resource_reaper.py`` gained ``--warn-on-empty``. An empty manifest is not
+    "nothing expired", it is "nothing was tracked"; reporting ``0 expired`` there read like
+    a working safeguard while the third cleanup line did no work at all. The workflow now
+    passes the flag.

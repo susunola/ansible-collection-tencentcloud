@@ -2,6 +2,7 @@
 - name: Read Private DNS integration inputs
   ansible.builtin.set_fact:
     private_dns_vpc_id: "{{ e2e_inputs.TENCENTCLOUD_PRIVATE_DNS_VPC_ID | default(lookup('env', 'TENCENTCLOUD_PRIVATE_DNS_VPC_ID'), true) | default('', true) }}"
+    run_id: "{{ e2e_inputs.GITHUB_RUN_ID | default(lookup('env', 'GITHUB_RUN_ID'), true) | default(99999999 | random, true) }}"
 
 - name: Explain skipped Private DNS integration
   ansible.builtin.debug:
@@ -14,6 +15,15 @@
     # InvalidParameter.IllegalDomainTld, and the target never ran, so the
     # defect stayed hidden. Use the same shape the module documents.
     test_domain: "ansible-{{ 99999999 | random }}.example.com"
+    # Both paths have to be absolute. ansible-test copies this target into a
+    # temporary work directory and runs it from there, so role_path,
+    # playbook_dir and output_dir all point into a tree that is deleted when
+    # the run ends - walking up with ../ never reaches the real collection.
+    # scripts/integration_inputs.py resolves them where the root is known.
+    # The reaper is the third cleanup line: it can only audit resources a
+    # target registers here.
+    manifest_script: "{{ e2e_inputs.E2E_SCRIPTS_DIR | default('', true) }}/e2e_manifest.py"
+    manifest_path: "{{ e2e_inputs.E2E_MANIFEST_PATH | default('', true) }}"
   module_defaults:
     group/susunola.tencentcloud.all:
       region: "{{ tencentcloud_region }}"
@@ -36,6 +46,53 @@
           - region: "{{ tencentcloud_region }}"
             vpc_id: "{{ private_dns_vpc_id }}"
       register: zone_create
+
+    # Bookkeeping only: never fail a test because the manifest could not be
+    # written, but do register the resource so an orphaned zone is caught even
+    # if this `always:` block never runs.
+    - name: Note that resource tracking is unavailable
+      ansible.builtin.debug:
+        msg: >-
+          No E2E_MANIFEST_PATH in the integration inputs, so the zone created
+          here cannot be registered and the resource reaper will audit
+          nothing. Run `python scripts/integration_inputs.py --write` first.
+      when: manifest_path | length == 0
+
+    - name: Register the zone with the TTL manifest
+      ansible.builtin.command:
+        argv:
+          # The interpreter running this play, not whatever `python` resolves
+          # to on PATH - a bare `python` can be a different, dependency-less
+          # interpreter.
+          - "{{ ansible_playbook_python }}"
+          - "{{ manifest_script }}"
+          # --path is an argument of the top-level parser, so it has to come
+          # before the subcommand.
+          - --path
+          - "{{ manifest_path }}"
+          - add
+          - --run-id
+          - "{{ run_id }}"
+          - --target
+          - private_dns
+          - --resource-type
+          - privatedns:zone
+          - --resource-id
+          - "{{ zone_create.zone.ZoneId }}"
+          - --region
+          - "{{ tencentcloud_region }}"
+          - --name
+          - "{{ test_domain }}"
+          - --cost-class
+          - low
+          # The expiry is computed from --ttl-seconds rather than templated
+          # here: that keeps the arithmetic in one tested place instead of
+          # duplicating it in every target.
+          - --ttl-seconds
+          - "7200"
+      when: manifest_path | length > 0
+      changed_when: false
+      ignore_errors: true
 
     - name: Reconcile private zone again
       susunola.tencentcloud.private_dns_zone:

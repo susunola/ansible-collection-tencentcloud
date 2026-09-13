@@ -221,7 +221,10 @@ jobs:
       - name: Audit expired manifest resources
         if: always() && steps.creds.outputs.available == 'true'
         continue-on-error: true
-        run: python scripts/resource_reaper.py --fail-on-expired
+        # --warn-on-empty: an empty manifest means no target registers what it
+        # creates, so "0 expired" is an absence of data rather than a clean
+        # bill of health. Say so instead of looking like a working safeguard.
+        run: python scripts/resource_reaper.py --fail-on-expired --warn-on-empty
       - name: Upload E2E resource manifests
         if: always() && steps.creds.outputs.available == 'true'
         uses: actions/upload-artifact@v7

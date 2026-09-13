@@ -246,15 +246,30 @@ A missing file yields `{}`, so the documented default still applies and a plain
    It scans for the `ansible-*` name prefix / `ansible_test=true` tag across
    products and deletes in reverse dependency order, tolerating individual
    errors. This is the operative second line today.
-3. **TTL manifest reaper (third line, partially wired).** Each created
-   resource should be recorded with
-   `python scripts/e2e_manifest.py add --run-id … --target … --resource-type …
-   --resource-id … --region … --expires-at …`, and
-   `scripts/resource_reaper.py --fail-on-expired` (run at the end of every
-   workflow) flags entries past their TTL and writes `reaper-plan.json`.
-   **Known gap:** no target emits manifest entries yet, so the reaper has
-   nothing to audit until registration is wired into the targets — tracked as
-   part of the P0-04 batches (§7). Until then line 2 is the real backstop.
+3. **TTL manifest reaper (third line, wired).** Targets register what they
+   create with `scripts/e2e_manifest.py`, and
+   `scripts/resource_reaper.py --fail-on-expired --warn-on-empty` (run at the
+   end of every workflow) flags entries past their TTL and writes
+   `reaper-plan.json`. Registered today: `private_dns`, `cls_alarm`,
+   `tcr_immutable_tag_rule`, `tcr_webhook_trigger`. Line 2 remains the
+   operative backstop; this line is what catches a run that dies so hard the
+   `always:` blocks never execute.
+
+   Registration is bookkeeping, so it is `ignore_errors: true` and can never
+   fail a test. That cuts both ways: a broken registration looks exactly like
+   a clean run. `--warn-on-empty` closes that hole — when *nothing* was
+   registered the reaper says the audit proves nothing instead of reporting
+   `0 expired` as if it had passed.
+
+   **A target must not derive these paths itself.** `ansible-test` copies each
+   target into a temporary work directory
+   (`tests/output/.tmp/integration/<target>-<random>/…`) and runs it from
+   there, so `role_path`, `playbook_dir` and `output_dir` all point into a
+   tree that is deleted when the run ends — walking up with `../` from any of
+   them never reaches the real collection. `scripts/integration_inputs.py`
+   resolves `E2E_SCRIPTS_DIR` and `E2E_MANIFEST_PATH` as absolute paths and
+   writes them into `$HOME/.tencentcloud/e2e_inputs.yml`, the same channel the
+   target gates already use (§2.3); targets read them back from `e2e_inputs`.
 
 ## 5. Failure alerting
 
