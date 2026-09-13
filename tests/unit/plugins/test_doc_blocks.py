@@ -53,7 +53,7 @@ def _blocks():
 
 def test_the_repo_actually_has_doc_blocks():
     """Guard against the scan silently matching nothing."""
-    count = sum(1 for _ in _blocks())
+    count = len(list(_blocks()))
     assert count > 100, "only {0} doc blocks found; the scan is broken".format(count)
 
 

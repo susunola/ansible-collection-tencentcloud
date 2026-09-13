@@ -37,7 +37,7 @@ class FakeItem(object):
             setattr(self, name, value)
 
     def _serialize(self, allow_none=False):
-        return {name: value for name, value in vars(self).items()}
+        return dict(vars(self).items())
 
 
 class FakeResponse(object):

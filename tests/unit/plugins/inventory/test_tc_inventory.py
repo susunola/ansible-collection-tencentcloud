@@ -183,8 +183,9 @@ def test_fetch_all_queries_every_source_in_every_region_with_its_own_filters():
         return [_entry(spec.name, VpcId="vpc-1")] if spec.name == "vpc" else []
 
     plugin._fetch_source = fake_fetch_source
-    results = plugin._fetch_all(plugin._specs(), ["ap-singapore", "ap-guangzhou"],
-                               {"cvm": [{"name": "zone"}]}, dedupe=True)
+    results = plugin._fetch_all(
+        plugin._specs(), ["ap-singapore", "ap-guangzhou"],
+        {"cvm": [{"name": "zone"}]}, dedupe=True)
     assert calls == [
         ("cvm", "ap-singapore", [{"name": "zone"}]),
         ("vpc", "ap-singapore", None),
@@ -310,7 +311,7 @@ def _parse_plugin(options, inventory=None):
     plugin.load_cache_plugin = lambda: None
     plugin._cache = {}
     plugin.populated = []
-    plugin._populate = lambda results: plugin.populated.append(results)
+    plugin._populate = plugin.populated.append
     return plugin
 
 
