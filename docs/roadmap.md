@@ -849,6 +849,45 @@
     changelog fragment. With #83 this gives API GW two independently-idempotent
     resources (plugin + IP strategy); the earlier tag-retention candidate was
     skipped (no natural name key, only a server `RetentionId`).
+85. Unified `tc_inventory` plugin (2026-09-13): added
+    `plugins/inventory/tc_inventory.py`, which builds one inventory from
+    several Tencent Cloud products at once — **CVM, TKE (cluster nodes),
+    Lighthouse and VPC** as the first batch — instead of one source file per
+    product. The per-product plugins remain the right tool when a playbook
+    targets a single product and needs its product-specific options; this one
+    is for inventorying an estate, where one source file, one credential block
+    and one cache entry should cover compute and network together. Lighthouse
+    and VPC had no inventory plugin at all before this. The shared layer is
+    `plugins/module_utils/inventory.py` (re-exported by
+    `plugins/plugin_utils/inventory.py` for the controller side) and has four
+    parts: a source registry (`SOURCE_SPECS`) holding each product's SDK
+    client, request/response field names and normalizer; collectors built on
+    `paging.Paginator`; a standardised `tc_*` host-variable set that every
+    product fills the same way (a product with no concept for a field reports
+    `null` rather than omitting the key, so `keyed_groups` and `compose` need
+    no per-product branch, and the raw API fields are kept alongside so
+    nothing is lost); and a cache key that hashes the query *configuration*
+    (sources / regions / filters / dedupe) rather than only the source path,
+    because `Cacheable.get_cache_key` hashes the path alone and would silently
+    serve a stale inventory after an edit. `merge_entries` folds entries
+    sharing a resource id into one host — real, not theoretical, since a TKE
+    worker node *is* a CVM instance and both sources report the same
+    `i-xxxx`. Two per-product facts live in the registry rather than in the
+    request builder, and both were found by running against the live API
+    rather than by reading the SDK: TKE exposes nodes only *inside* clusters,
+    so it gets its own collector walking
+    `DescribeClusters` → `DescribeClusterInstances` (and resolving node-pool
+    names), and `Offset`/`Limit` are **not typed consistently** — CVM, TKE and
+    Lighthouse answer `InvalidParameter` (`Offset` must be `int64`) for a
+    string, while VPC answers `InvalidParameter` (must be `string`) for an
+    integer, which is what `string_paging` on the spec encodes. Verified live
+    read-only against `ap-hongkong` (19 hosts: 5 CVM + 14 VPC; TKE and
+    Lighthouse genuinely empty in that region). The same window added
+    `tests/unit/plugins/test_doc_blocks.py`, which parses every
+    `DOCUMENTATION` / `EXAMPLES` / `RETURN` block in `plugins/` as YAML: an
+    unparseable doc block makes a plugin **unloadable**, and ansible reports
+    it as a generic "failed to parse inventory" pointing at the config file,
+    so nothing else catches it. **Done**
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

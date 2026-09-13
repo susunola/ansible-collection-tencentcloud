@@ -1,7 +1,7 @@
 # module_utils layout and dependency direction
 
 `plugins/module_utils/` holds every shared helper behind the collection's
-modules: 15 files, ~2,400 lines. It is the single home for logic shared by
+modules: 16 files, ~3,200 lines. It is the single home for logic shared by
 the ~440 write modules and the module generator, so keeping the boundaries
 explicit matters more here than in any other directory — a helper with
 unclear ownership gets duplicated by the next generated module, and an
@@ -31,6 +31,7 @@ module needs cannot live in `plugin_utils`.
 | | `tagging.py` | Tag normalization, tag merging and tag-diff computation | — |
 | | `comparison.py` | Expected-vs-actual structure comparison (idempotency decisions) | — |
 | | `paging.py` | `Paginator` (offset/limit walk) plus the `paginate()` module wrapper | — |
+| | `inventory.py` | Unified multi-product inventory query layer: source registry, standardised `tc_*` host fields, cross-product de-duplication, cache keying | `client`, `paging` |
 | **4 · Product-private helpers** | `monitor.py` | Monitor-specific shared computation | — |
 | | `cos.py` | COS client wrapper (S3-style API, not API 3.0) | `client` |
 | | `tdmysql.py` | TDSQL MySQL-specific shared logic | — |
@@ -64,6 +65,8 @@ graph TD
         base --> retries
         resolver --> tagging
         cos --> client
+        inventory --> client
+        inventory --> paging
     end
     subgraph L3["Level 3 - lifecycle orchestration"]
         lifecycle --> base
@@ -79,11 +82,13 @@ graph TD
         pu_paging["paging"]
         pu_polling["polling"]
         pu_tags["tags"]
+        pu_inventory["inventory"]
     end
     pu_profile --> client
     pu_paging --> paging
     pu_polling --> polling
     pu_tags --> tagging
+    pu_inventory --> inventory
 ```
 
 Same graph as a flat table:
@@ -103,12 +108,14 @@ Same graph as a flat table:
 | `base.py` | `client`, `retries` | 2 |
 | `resolver.py` | `tagging` | 2 |
 | `cos.py` | `client` | 2 |
+| `inventory.py` | `client`, `paging` | 2 |
 | `lifecycle.py` | `base`, `errors` | 3 |
 | `tencentcloud.py` | `client`, `errors`, `paging` | 4 (shim) |
 | `plugin_utils/profile.py` | `module_utils.client` | consumer |
 | `plugin_utils/paging.py` | `module_utils.paging` | consumer |
 | `plugin_utils/polling.py` | `module_utils.polling` | consumer |
 | `plugin_utils/tags.py` | `module_utils.tagging` | consumer |
+| `plugin_utils/inventory.py` | `module_utils.inventory` | consumer |
 
 ## Rules for new helpers
 
@@ -139,7 +146,10 @@ Same graph as a flat table:
    module needs it — `polling.py` is the worked example. A helper that only a
    controller-side plugin needs belongs here too when it extends an existing
    body of semantics instead of standing alone; `tagging.merge_tags` (the
-   `tag_merge` filter) is that case. Put the implementation here, add a
+   `tag_merge` filter) and `inventory` (the `tc_inventory` plugin) are that
+   case — the inventory layer composes `client` credential resolution and
+   `paging`, so splitting it would let those drift apart. Put the
+   implementation here, add a
    one-line re-export to `plugins/plugin_utils/` when a controller-side plugin
    needs the import path, and do not re-export module globals: a re-exported
    constant is a separate binding, so rebinding it through the shim would

@@ -1,0 +1,27 @@
+---
+minor_changes:
+  - >-
+    tc_inventory - new inventory plugin that builds one inventory from several Tencent Cloud
+    products at once, with CVM, TKE (cluster nodes), Lighthouse and VPC as the first batch.
+    The per-product inventory plugins remain available and stay the right choice when a
+    playbook targets a single product; this one is for inventorying an estate, where one
+    source file, one credential block and one cache entry should cover compute and network
+    together. Lighthouse and VPC had no inventory plugin before this.
+  - >-
+    tc_inventory - every host carries the same standardised variable set regardless of the
+    product it came from (``tc_source``, ``tc_sources``, ``tc_region``, ``tc_id``, ``tc_name``,
+    ``tc_state``, ``tc_private_ip``, ``tc_public_ip``, ``tc_zone``, ``tc_tags``, ``tc_role``,
+    ``tc_parent_id``, ``tc_parent_name``), so ``keyed_groups`` and ``compose`` do not need a
+    per-product branch. Fields a product has no concept of are ``null`` rather than absent, and
+    the raw API fields are kept alongside, so nothing is lost.
+  - >-
+    tc_inventory - entries that share a resource id are folded into a single host by default
+    (``dedupe``, default ``true``). The overlap is real: a TKE worker node is also a CVM
+    instance and both sources report the same ``i-xxxx``. Merging unions ``tc_sources``, merges
+    list fields and keeps the first configured source's value for scalars, so a host reported
+    by several products joins every matching ``tc_<source>`` group instead of appearing twice.
+  - >-
+    tc_inventory - the cache key covers the query configuration (``sources``, ``regions``,
+    ``filters``, ``dedupe``) in addition to the source file path. The inherited
+    ``Cacheable.get_cache_key`` hashes the plugin name and path only, so editing ``regions`` or
+    ``filters`` would otherwise serve a stale inventory until the cache expired.

@@ -41,6 +41,12 @@ one error per module (881 of them the first time it was tried).
 | `paging.py` | `Paginator` from `module_utils.paging` | the CVM / CLB / SG / TKE inventory plugins |
 | `polling.py` | `PollOutcome`, `poll_until` from `module_utils.polling` | the `tc_wait` action plugin |
 | `tags.py` | `merge_tags` from `module_utils.tagging` | the `tag_merge` filter plugin |
+| `inventory.py` | the shared inventory layer from `module_utils.inventory` (`SourceSpec`, `SOURCE_SPECS`, `collect_source`, `merge_entries`, `build_cache_key`, ...) | the `tc_inventory` inventory plugin |
+
+`PAGE_SIZE` is deliberately **not** re-exported, for the same reason as
+`PROFILE_FILE` below: it is a plain int, so the re-export is a second binding
+and rebinding it would silently do nothing. `SOURCE_SPECS` *is* re-exported
+because it is a mapping — mutating it through either path is the same object.
 
 `PROFILE_FILE` / `DEFAULT_PROFILE_NAME` are deliberately **not** re-exported:
 a re-exported constant is a separate binding, so rebinding

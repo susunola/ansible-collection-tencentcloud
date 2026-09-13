@@ -246,17 +246,33 @@ def test_real_galaxy_yml_is_a_release_version(guard):
     assert guard.version_tuple(str(galaxy["version"])) is not None
 
 
-def test_json_output_reports_readiness(guard, monkeypatch):
-    """--json emits one object per check plus a readiness flag."""
+def test_json_output_reports_readiness(guard, monkeypatch, tmp_path):
+    """--json emits one object per check plus a readiness flag.
+
+    The state is synthetic on purpose. Two checks read the real repository,
+    and tying them to it made this test fail the morning after a release:
+    ``fragments`` fails once the release fold has emptied
+    ``changelogs/fragments/``, and ``no-duplicate`` fails as soon as the
+    version used here appears in ``changelogs/changelog.yaml``. Both are
+    correct behaviours of the guard and wrong reasons for a unit test to
+    fail, so the fragments directory is a temporary one and the version is
+    one the repository has never shipped.
+    """
+    fragments = tmp_path / "fragments"
+    fragments.mkdir()
+    (fragments / "synthetic.yml").write_text(
+        "minor_changes:\n  - synthetic fragment for the readiness test.\n",
+        encoding="utf-8",
+    )
     monkeypatch.setattr(
         guard, "build_state",
-        lambda tag=None: make_state(guard, version="1.2.0",
-                                    local=("v1.1.0",), remote=("v1.1.0",)))
-    monkeypatch.setattr(guard, "FRAGMENTS_DIR", REPO_ROOT / "changelogs" / "fragments")
+        lambda tag=None: make_state(guard, version="9.9.9",
+                                    local=("v1.2.0",), remote=("v1.2.0",)))
+    monkeypatch.setattr(guard, "FRAGMENTS_DIR", fragments)
     monkeypatch.setattr(guard, "run", lambda *a, **k: (0, "", ""))
     out = io.StringIO()
     assert guard.main(["--json"], out=out, err=io.StringIO()) == 0
     payload = json.loads(out.getvalue())
     assert payload["ready"] is True
-    assert payload["version"] == "1.2.0"
+    assert payload["version"] == "9.9.9"
     assert {item["check"] for item in payload["results"]} == set(guard.CHECK_NAMES)
