@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      # Needed by the step below that re-dispatches CI on the folded main.
+      actions: write
     defaults:
       run:
         working-directory: ansible_collections/susunola/tencentcloud
@@ -50,6 +52,7 @@ jobs:
         # Only push from the canonical repository; tag builds on forks
         # must not attempt to push.
         if: github.repository == 'susunola/ansible-collection-tencentcloud'
+        id: fold
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -65,6 +68,55 @@ jobs:
           fi
           git commit -m "chore(release): fold changelog for ${GITHUB_REF_NAME}"
           git push origin HEAD:main
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      # A commit pushed with the default GITHUB_TOKEN does not start any
+      # workflow, so the fold commit above has historically never been tested:
+      # v1.2.0's fold landed a red unit test on main and nothing noticed until
+      # the next manual push. Dispatch CI explicitly and wait for it, so a red
+      # main is reported here instead of sitting there until someone looks.
+      - name: Run CI on the folded main
+        if: steps.fold.outputs.sha != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FOLD_SHA: ${{ steps.fold.outputs.sha }}
+        run: |
+          set -u
+          api="https://api.github.com/repos/${GITHUB_REPOSITORY}"
+          auth=(-H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json")
+
+          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "${api}/actions/workflows/ci.yml/dispatches" \
+            "${auth[@]}" -H "Content-Type: application/json" -d "{\"ref\":\"main\"}")
+          if [ "$code" != "204" ]; then
+            echo "::warning::Could not dispatch CI on main (HTTP ${code}); the folded commit will not be verified."
+            exit 0
+          fi
+
+          # The run is created asynchronously; give it a moment, then find it
+          # by its head SHA so a concurrent run cannot be mistaken for ours.
+          run=""
+          for _ in $(seq 1 30); do
+            run=$(curl -s "${auth[@]}" "${api}/actions/runs?head_sha=${FOLD_SHA}&per_page=1" \
+              | jq -r '.workflow_runs[0].id // empty')
+            if [ -n "$run" ]; then break; fi
+            sleep 5
+          done
+          if [ -z "$run" ]; then
+            echo "::warning::CI was dispatched but no run for ${FOLD_SHA} appeared; skipping the wait."
+            exit 0
+          fi
+
+          url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${run}"
+          echo "Waiting for CI on the folded main: ${url}"
+          for _ in $(seq 1 90); do
+            state=$(curl -s "${auth[@]}" "${api}/actions/runs/${run}" | jq -r '.status + " " + (.conclusion // "")')
+            case "$state" in
+              completed\ success) echo "CI green on the folded main: ${url}"; exit 0 ;;
+              completed\ *) echo "::error::CI failed on the folded main: ${url} (${state})"; exit 1 ;;
+            esac
+            sleep 20
+          done
+          echo "::error::CI did not finish within 30 minutes: ${url}"
+          exit 1
       - name: Build collection
         run: ansible-galaxy collection build
       - name: Upload collection tarball

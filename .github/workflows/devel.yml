@@ -31,6 +31,14 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
+      # ansible-test resolves its ignore file from the ansible-core version
+      # under test (tests/sanity/ignore-<major>.<minor>.txt), and devel is one
+      # minor ahead of the newest pinned row in ci.yml. Without a matching
+      # file none of the ~519 triaged entries apply, so the run reports every
+      # known violation at once and drowns the new-rule signal this job exists
+      # to find. tests/sanity/ignore-2.22.txt is a copy of ignore-2.21.txt:
+      # refresh it (and the budget in scripts/check_sanity_ignore.py) whenever
+      # devel's minor version moves.
       - name: Install ansible-core from the devel branch
         run: |
           python -m pip install --upgrade pip

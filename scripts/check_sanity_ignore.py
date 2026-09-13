@@ -19,7 +19,10 @@ import os
 import sys
 import collections
 
-BASELINE_TOTAL = 1900  # current committed total (2026-09-10): 1557 + headroom
+# The total counts every ignore-*.txt, so each new ansible-core minor adds a
+# full copy of the baseline. 2076 = 4 files x 519 (2.19/2.20/2.21/2.22);
+# the headroom above that is room for genuine triage before the next bump.
+BASELINE_TOTAL = 2600  # current committed total (2026-09-13): 2076 + headroom
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
