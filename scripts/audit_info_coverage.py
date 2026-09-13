@@ -82,9 +82,6 @@ KNOWN_NO_LIST_API = {
 # --check; close a gap by adding a SPECS entry (preferred) or a curated
 # KNOWN_COVERAGE mapping, and remove the name from this set.
 KNOWN_GAPS = {
-    "cdwdoris_cooldown_policy",
-    "cdwdoris_user_workload_group",
-    "cdwdoris_workload_group",
     "cdwpg_hba_config",
     "cdwpg_parameter",
     "dcdb_account",
