@@ -184,8 +184,6 @@ KNOWN_GAPS = {
     "tsf_public_config",
     "tsf_repository",
     "tsf_vm_deployment_group",
-    "chdfs_access_group",
-    "chdfs_access_rules",
     "chdfs_mount_access_groups",
     "chdfs_mount_point",
     "ckafka_acl",
