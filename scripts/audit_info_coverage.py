@@ -82,8 +82,6 @@ KNOWN_NO_LIST_API = {
 # --check; close a gap by adding a SPECS entry (preferred) or a curated
 # KNOWN_COVERAGE mapping, and remove the name from this set.
 KNOWN_GAPS = {
-    "cdwpg_hba_config",
-    "cdwpg_parameter",
     "dcdb_account",
     "dcdb_account_privilege",
     "dcdb_backup_config",
