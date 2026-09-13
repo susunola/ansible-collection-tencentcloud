@@ -138,6 +138,7 @@ CORE_MODULES = {
     "cfw_address_template",
     "cfw_address_template_info",
     "cfw_internet_acl_rule",
+    "cfw_internet_acl_rule_info",
     "cfw_nat_dnat_rule",
     "cfw_nat_acl_rule",
     "cfw_vpc_acl_rule",

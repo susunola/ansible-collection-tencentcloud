@@ -184,7 +184,6 @@ KNOWN_GAPS = {
     "tsf_public_config",
     "tsf_repository",
     "tsf_vm_deployment_group",
-    "cfw_internet_acl_rule",
     "cfw_nat_acl_rule",
     "cfw_nat_dnat_rule",
     "cfw_vpc_acl_rule",
