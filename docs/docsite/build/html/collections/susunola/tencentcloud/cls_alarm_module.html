@@ -134,7 +134,7 @@
 <h1>susunola.tencentcloud.cls_alarm module -- Create or delete a Tencent Cloud CLS alarm<a class="headerlink" href="#susunola-tencentcloud-cls-alarm-module-create-or-delete-a-tencent-cloud-cls-alarm" title="Link to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://github.com/susunola/ansible-collection-tencentcloud">susunola.tencentcloud collection</a> (version 1.1.0).</p>
+<p>This module is part of the <a class="reference external" href="https://github.com/susunola/ansible-collection-tencentcloud">susunola.tencentcloud collection</a> (version 1.2.0).</p>
 <p>It is not included in <code class="docutils literal notranslate"><span class="pre">ansible-core</span></code>.
 To check whether it is installed, run <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">list</span></code>.</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">susunola.tencentcloud</span></code>.</p>
@@ -171,6 +171,8 @@ To check whether it is installed, run <code class="code docutils literal notrans
 </div></td>
 <td><div class="ansible-option-cell"><p>Raw SDK-shaped alarm configuration (the <code class="docutils literal notranslate"><span class="pre">CreateAlarmRequest</span></code> body).</p>
 <p>Required when <code class="ansible-option-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cls-alarm-module-parameter-state"><span class="std std-ref"><span class="pre">state=present</span></span></a></code>; ignored when <code class="ansible-option-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cls-alarm-module-parameter-state"><span class="std std-ref"><span class="pre">state=absent</span></span></a></code>, where the alarm is matched by <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-susunola-tencentcloud-cls-alarm-module-parameter-name"><span class="std std-ref"><span class="pre">name</span></span></a></strong></code> alone.</p>
+<p>Keys and value types must match the CLS <code class="docutils literal notranslate"><span class="pre">AlarmInfo</span></code> model exactly. Ansible does not validate them; the body is handed to the SDK's <code class="docutils literal notranslate"><span class="pre">from_json_string</span></code> verbatim, so a misspelled key is dropped and a wrongly typed value (for example <code class="docutils literal notranslate"><span class="pre">MonitorObjectType</span></code> as a string) is only rejected by the API.</p>
+<p>CLS also requires at least one notification channel, so pass <code class="docutils literal notranslate"><span class="pre">AlarmNoticeIds</span></code> (a <code class="docutils literal notranslate"><span class="pre">cls_alarm_notice</span></code> id) or <code class="docutils literal notranslate"><span class="pre">MonitorNotice</span></code>. An alarm target needs <code class="docutils literal notranslate"><span class="pre">LogsetId</span></code> as well as <code class="docutils literal notranslate"><span class="pre">TopicId</span></code>, and its <code class="docutils literal notranslate"><span class="pre">EndTimeOffset</span></code> must be greater than its <code class="docutils literal notranslate"><span class="pre">StartTimeOffset</span></code>.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -317,14 +319,22 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">error-spike</span>
 <span class="w">    </span><span class="nt">alarm</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">error-spike</span>
-<span class="w">      </span><span class="nt">MonitorObjectType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">log</span>
+<span class="w">      </span><span class="nt">MonitorObjectType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
 <span class="w">      </span><span class="nt">MonitorTime</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Relative</span>
-<span class="w">        </span><span class="nt">TimeGap</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">600</span>
+<span class="w">        </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Period</span>
+<span class="w">        </span><span class="nt">Time</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
 <span class="w">      </span><span class="nt">Condition</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;$1.error_count</span><span class="nv"> </span><span class="s">&gt;</span><span class="nv"> </span><span class="s">10&quot;</span>
 <span class="w">      </span><span class="nt">AlarmTargets</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">TopicId</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;log-topic-abc&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">LogsetId</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;logset-abc&quot;</span>
+<span class="w">          </span><span class="nt">TopicId</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;log-topic-abc&quot;</span>
+<span class="w">          </span><span class="nt">Number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">          </span><span class="nt">Query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span>
+<span class="w">          </span><span class="nt">StartTimeOffset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-5</span>
+<span class="w">          </span><span class="nt">EndTimeOffset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">      </span><span class="nt">AlarmNoticeIds</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;notice-abc&quot;</span>
 <span class="w">      </span><span class="nt">TriggerCount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">AlarmPeriod</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Remove the alarm</span>
 <span class="w">  </span><span class="nt">susunola.tencentcloud.cls_alarm</span><span class="p">:</span>
