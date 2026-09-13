@@ -20,9 +20,15 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install dependencies
+        # Same dependency set as ci.yml, including the pinned SDK: the CI job
+        # runs `ansible-test units` in a shell where the SDK happens to be
+        # importable, so a unit test that needs it passes there and fails
+        # here. Installing it keeps this workflow's verdict equal to CI's.
         run: |
           python -m pip install --upgrade pip
           python -m pip install "ansible-core==2.19.*" pytest pytest-xdist yamllint antsibull-changelog
+          python -m pip install -r requirements.txt
+          python -m pip install "tencentcloud-sdk-python==$(python scripts/check_sdk_drift.py --print-stamp)"
       - name: Lint changelog fragments
         run: antsibull-changelog lint
       - name: Sanity tests

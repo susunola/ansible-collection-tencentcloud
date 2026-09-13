@@ -4,6 +4,9 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import sys
+import types
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -575,13 +578,60 @@ def _appid_module(cam_appid=None, cam_error=None, sts_account="200037874754"):
     return SimpleNamespace(params={}, create_client=create_client, sdk_call=sdk_call), seen
 
 
-def test_fetch_appid_prefers_cam_get_user_app_id():
+def _stub_credential_sdk(monkeypatch):
+    """Install stand-in CAM/STS modules so ``fetch_appid`` needs no SDK.
+
+    ``fetch_appid`` asks the SDK for nothing but a client class and a request
+    object, both of which it hands straight to the module double.  Supplying
+    them here keeps these tests runnable in an environment without
+    ``tencentcloud-sdk-python`` - which is exactly what the release workflow's
+    ``ansible-test units`` step is (it is the step that used to fail because
+    these two tests imported the real package).
+    """
+
+    def _module(name, **attrs):
+        module = types.ModuleType(name)
+        for key, value in attrs.items():
+            setattr(module, key, value)
+        return module
+
+    cam_models = _module(
+        "tencentcloud.cam.v20190116.models", GetUserAppIdRequest=SimpleNamespace
+    )
+    cam_client = _module("tencentcloud.cam.v20190116.cam_client", CamClient=SimpleNamespace)
+    cam_package = _module(
+        "tencentcloud.cam.v20190116", models=cam_models, cam_client=cam_client
+    )
+    sts_models = _module(
+        "tencentcloud.sts.v20180813.models", GetCallerIdentityRequest=SimpleNamespace
+    )
+    sts_client = _module("tencentcloud.sts.v20180813.sts_client", StsClient=SimpleNamespace)
+    sts_package = _module(
+        "tencentcloud.sts.v20180813", models=sts_models, sts_client=sts_client
+    )
+    for name, module in (
+        ("tencentcloud", _module("tencentcloud")),
+        ("tencentcloud.cam", _module("tencentcloud.cam")),
+        ("tencentcloud.cam.v20190116", cam_package),
+        ("tencentcloud.cam.v20190116.models", cam_models),
+        ("tencentcloud.cam.v20190116.cam_client", cam_client),
+        ("tencentcloud.sts", _module("tencentcloud.sts")),
+        ("tencentcloud.sts.v20180813", sts_package),
+        ("tencentcloud.sts.v20180813.models", sts_models),
+        ("tencentcloud.sts.v20180813.sts_client", sts_client),
+    ):
+        monkeypatch.setitem(sys.modules, name, module)
+
+
+def test_fetch_appid_prefers_cam_get_user_app_id(monkeypatch):
+    _stub_credential_sdk(monkeypatch)
     module, seen = _appid_module(cam_appid=1328140161)
     assert cos.fetch_appid(module) == "1328140161"
     assert seen == ["cam.tencentcloudapi.com"]
 
 
-def test_fetch_appid_falls_back_to_sts_when_cam_is_denied():
+def test_fetch_appid_falls_back_to_sts_when_cam_is_denied(monkeypatch):
+    _stub_credential_sdk(monkeypatch)
     module, seen = _appid_module(cam_error=RuntimeError("cam:GetUserAppId denied"))
     assert cos.fetch_appid(module) == "200037874754"
     assert seen == ["cam.tencentcloudapi.com", "sts.tencentcloudapi.com"]
@@ -592,3 +642,20 @@ def test_resolve_appid_prefers_the_explicit_parameter():
     module.params["appid"] = 999
     assert cos.resolve_appid(module) == "999"
     assert seen == []
+
+
+def test_this_module_stays_importable_without_the_sdk():
+    """Regression guard: ``ansible-test units`` has no SDK installed.
+
+    A top-level ``import tencentcloud`` here breaks collection in the release
+    workflow (and any other SDK-free unit run) before a single assertion is
+    reached, which is how v1.2.0's release job failed. The AppId tests get
+    their SDK objects from :func:`_stub_credential_sdk` instead.
+    """
+    source = Path(__file__).read_text(encoding="utf-8")
+    offenders = [
+        line.strip()
+        for line in source.splitlines()
+        if line.startswith(("import tencentcloud", "from tencentcloud"))
+    ]
+    assert offenders == []
