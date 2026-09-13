@@ -184,7 +184,6 @@ KNOWN_GAPS = {
     "tsf_public_config",
     "tsf_repository",
     "tsf_vm_deployment_group",
-    "cfw_nat_dnat_rule",
     "chdfs_access_group",
     "chdfs_access_rules",
     "chdfs_mount_access_groups",
