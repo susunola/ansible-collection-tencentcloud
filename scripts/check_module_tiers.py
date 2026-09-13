@@ -233,6 +233,7 @@ CORE_MODULES = {
     "cdwdoris_workload_group",
     "cdwdoris_workload_group_info",
     "cdwpg_instance",
+    "cdwpg_instance_info",
     "cdwpg_hba_config",
     "cdwpg_hba_config_info",
     "cdwpg_parameter",

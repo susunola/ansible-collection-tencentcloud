@@ -7,7 +7,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 
 - Products/services: **204**
 - Write modules: **440**
-- Information modules: **351**
+- Information modules: **352**
 - Solution roles: **68**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
@@ -57,7 +57,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `cds` | discovery-only | 0 | 1 | — | — |
 | `cdwch` | solution | 3 | 4 | `tc_clickhouse_platform` | `cdwch_backup_config`, `cdwch_instance`, `cdwch_parameter` |
 | `cdwdoris` | solution | 4 | 5 | `tc_doris_analytics_platform` | `cdwdoris_cooldown_policy`, `cdwdoris_instance`, `cdwdoris_user_workload_group`, `cdwdoris_workload_group` |
-| `cdwpg` | solution | 3 | 3 | `tc_cdwpg_analytics_platform` | `cdwpg_hba_config`, `cdwpg_instance`, `cdwpg_parameter` |
+| `cdwpg` | solution | 3 | 4 | `tc_cdwpg_analytics_platform` | `cdwpg_hba_config`, `cdwpg_instance`, `cdwpg_parameter` |
 | `cdz` | discovery-only | 0 | 1 | — | — |
 | `cetcd` | discovery-only | 0 | 1 | — | — |
 | `cfg` | discovery-only | 0 | 1 | — | — |
