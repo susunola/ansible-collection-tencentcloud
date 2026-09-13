@@ -225,6 +225,7 @@ CORE_MODULES = {
     "emr_cluster",
     "emr_auto_scale_strategy",
     "cdwdoris_instance",
+    "cdwdoris_instance_info",
     "cdwdoris_cooldown_policy",
     "cdwdoris_user_workload_group",
     "cdwdoris_workload_group",

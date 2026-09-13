@@ -189,7 +189,6 @@ KNOWN_GAPS = {
     "tsf_public_config",
     "tsf_repository",
     "tsf_vm_deployment_group",
-    "cdwdoris_instance",
     "cdwpg_instance",
     "cfw_internet_acl_rule",
     "cfw_nat_acl_rule",
