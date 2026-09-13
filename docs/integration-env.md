@@ -92,7 +92,7 @@ environment second, so a value materialised into
 | `TENCENTCLOUD_TCR_NAMESPACE` | var | tcr_immutable_tag_rule, tcr_webhook_trigger | both TCR targets skip |
 | `TENCENTCLOUD_TCR_WEBHOOK_URL` | secret | tcr_webhook_trigger | tcr_webhook_trigger skips |
 | `TENCENTCLOUD_CLS_ALARM_UIN` | secret | cls_alarm | cls_alarm skips (the notice group it creates needs a receiver UIN) |
-| `TENCENTCLOUD_REDIS_INSTANCE_ID` | secret | redis_replication_group | redis skips (billed, also needs `TENCENTCLOUD_RUN_BILLED_TARGETS=1`) |
+| `TENCENTCLOUD_REDIS_INSTANCE_ID` | secret | redis_replication_group | redis skips — the account is not whitelisted for replication groups (§2.4), so even with an instance id and `TENCENTCLOUD_RUN_BILLED_TARGETS=1` it cannot run |
 
 Per-target resource pointers (image ids, cluster ids) are **secrets**; tuning
 values (versions, sizes, zones) are **variables**. Never encode a billed
@@ -328,10 +328,19 @@ reuse an existing registry and namespace and delete the rule/trigger they
 create. `cls_alarm` and the two TCR targets are cheap enough to dispatch
 together in one run (~35 s each).
 
-**Targets that cannot run on this account at all** (§2.4): `apigateway_ip_strategy`
-and `redis_replication_group` both self-skip green, so they are safe to include
-in any dispatch, but they contribute no coverage until the account gains the
-missing capability.
+**Targets that cannot run on this account at all** (§2.4): the six declared
+above — API Gateway service/plugin, CAM user and group-membership, Monitor
+alarm policy and Redis replication groups. They are safe to include in any
+dispatch, but they contribute no coverage until the account gains the missing
+capability. "Safe" now depends on the declaration: without `account_blocked`
+the skip-budget step below fails the run rather than tolerating the skip.
+
+Redis deserves the explicit note because it looks provisionable and is not.
+`TENCENTCLOUD_REDIS_INSTANCE_ID` + `TENCENTCLOUD_RUN_BILLED_TARGETS=1` are
+necessary but not sufficient — the account creates Redis instances happily and
+is still refused at `CreateReplicationGroup`, so there is no gate value that
+makes this target measurable. Provisioning a permanent instance would buy
+nothing but a standing bill.
 
 **Reading a run.** Skipped targets still print an "Explain skipped …" debug
 task, but they no longer get a free pass. The workflow runs

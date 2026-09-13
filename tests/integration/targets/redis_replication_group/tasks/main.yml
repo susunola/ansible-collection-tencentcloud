@@ -7,6 +7,10 @@
 # Replication groups are also whitelist-only: on an account that is not
 # whitelisted the create is refused with UnauthorizedOperation.NoCAMAuthed and
 # the lifecycle is skipped rather than failed (docs/integration-env.md 2.4).
+# No gate value makes this target measurable on such an account, so
+# tests/integration/coverage.yml declares `account_blocked: true` - that is
+# what lets the skip-budget gate tolerate a run that executes nothing
+# (docs/integration-env.md 6).
 - name: Read Redis replication group integration inputs
   ansible.builtin.set_fact:
     redis_instance_id: "{{ e2e_inputs.TENCENTCLOUD_REDIS_INSTANCE_ID | default(lookup('env', 'TENCENTCLOUD_REDIS_INSTANCE_ID'), true) | default('', true) }}"
