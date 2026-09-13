@@ -42,6 +42,12 @@ jobs:
       - name: Install ansible-core from the devel branch
         run: |
           python -m pip install --upgrade pip
+          # pytest and pytest-xdist are ansible-test units' own requirements:
+          # it shells out to `pytest -n auto` with the interpreter on PATH, so
+          # without them the step dies with "No module named pytest". The gap
+          # stayed invisible while sanity ran first and failed, which skipped
+          # the units step entirely.
+          python -m pip install pytest pytest-xdist
           git clone --depth=1 --branch devel https://github.com/ansible/ansible.git ansible-core-devel
           python -m pip install ./ansible-core-devel
           ansible --version
