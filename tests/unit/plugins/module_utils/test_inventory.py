@@ -27,6 +27,9 @@ class FakeModels(object):
     DescribeClustersRequest = FakeRequest
     DescribeClusterInstancesRequest = FakeRequest
     DescribeClusterNodePoolsRequest = FakeRequest
+    DescribeLoadBalancersRequest = FakeRequest
+    DescribeDBInstancesRequest = FakeRequest
+    DescribeDisksRequest = FakeRequest
 
 
 class FakeItem(object):
@@ -50,14 +53,27 @@ class FakeResponse(object):
 # Source registry
 # ---------------------------------------------------------------------------
 
-def test_source_names_are_the_documented_first_batch():
-    assert inventory.SOURCE_NAMES == ("cvm", "tke", "lighthouse", "vpc")
+def test_source_names_cover_both_documented_batches():
+    assert inventory.SOURCE_NAMES == (
+        "cvm", "tke", "lighthouse", "vpc", "clb", "cdb", "cbs", "cos")
 
 
 def test_every_spec_is_self_consistent():
     for name, spec in inventory.SOURCE_SPECS.items():
         assert spec.name == name
         assert spec.label
+        assert callable(spec.normalizer)
+        assert spec.endpoint
+        assert spec.client_module
+        assert spec.client_class
+        if not spec.api3:
+            # Not an API 3.0 product: nothing of the Describe* contract
+            # applies, but it must say how to build and to walk itself.
+            assert spec.client_builder is not None
+            assert spec.collector is not None
+            assert spec.models_module is None
+            assert spec.request_class is None
+            continue
         assert spec.sdk_package.startswith("tencentcloud-sdk-python")
         assert spec.endpoint.endswith(".tencentcloudapi.com")
         assert spec.client_module.endswith(".models") is False
@@ -67,7 +83,7 @@ def test_every_spec_is_self_consistent():
         assert spec.describe.startswith("Describe")
         assert spec.items_attr
         assert spec.total_attr == "TotalCount"
-        assert callable(spec.normalizer)
+        assert spec.client_builder is None
 
 
 def test_spec_client_modules_exist_in_the_documented_sdk_packages():
@@ -78,6 +94,26 @@ def test_spec_client_modules_exist_in_the_documented_sdk_packages():
     assert inventory.SOURCE_SPECS["vpc"].request_class == "DescribeVpcsRequest"
     assert inventory.SOURCE_SPECS["vpc"].items_attr == "VpcSet"
     assert inventory.SOURCE_SPECS["tke"].items_attr == "Clusters"
+    assert inventory.SOURCE_SPECS["clb"].client_module == "tencentcloud.clb.v20180317.clb_client"
+    assert inventory.SOURCE_SPECS["clb"].items_attr == "LoadBalancerSet"
+    assert inventory.SOURCE_SPECS["cdb"].client_module == "tencentcloud.cdb.v20170320.cdb_client"
+    # Not ItemsSet: CDB names its page attribute Items.
+    assert inventory.SOURCE_SPECS["cdb"].items_attr == "Items"
+    assert inventory.SOURCE_SPECS["cbs"].client_module == "tencentcloud.cbs.v20170312.cbs_client"
+    assert inventory.SOURCE_SPECS["cbs"].items_attr == "DiskSet"
+
+
+def test_only_cos_is_not_an_api3_source():
+    """COS has its own SDK, so it is the one source that builds its own client."""
+    assert inventory.SOURCE_SPECS["cos"].api3 is False
+    assert inventory.SOURCE_SPECS["cos"].client_module == "qcloud_cos"
+    assert inventory.SOURCE_SPECS["cos"].client_class == "CosS3Client"
+    assert inventory.SOURCE_SPECS["cos"].client_builder is inventory.build_cos_client
+    assert inventory.SOURCE_SPECS["cos"].collector is inventory.collect_cos_buckets
+    assert inventory.SOURCE_SPECS["cos"].sdk_package == "cos-python-sdk-v5"
+    for name in ("cvm", "tke", "lighthouse", "vpc", "clb", "cdb", "cbs"):
+        assert inventory.SOURCE_SPECS[name].api3 is True
+        assert inventory.SOURCE_SPECS[name].client_builder is None
 
 
 def test_only_the_nested_source_declares_a_child_request():
@@ -86,7 +122,7 @@ def test_only_the_nested_source_declares_a_child_request():
     assert tke.child_describe == "DescribeClusterInstances"
     assert tke.child_items_attr == "InstanceSet"
     assert tke.collector is inventory.collect_tke_nodes
-    for name in ("cvm", "lighthouse", "vpc"):
+    for name in ("cvm", "lighthouse", "vpc", "clb", "cdb", "cbs"):
         assert inventory.SOURCE_SPECS[name].child_request_class is None
         assert inventory.SOURCE_SPECS[name].child_describe is None
         assert inventory.SOURCE_SPECS[name].child_items_attr is None
@@ -134,6 +170,18 @@ def test_tag_mapping_skips_entries_without_a_key():
     assert inventory.tag_mapping([{"Value": "prod"}, {"Key": "", "Value": "x"}]) == {}
 
 
+def test_tag_mapping_reads_the_tagkey_dialect_of_clb_and_cdb():
+    """CLB and CDB spell the pair ``TagKey``/``TagValue`` (verified live).
+
+    Without this branch those two sources would report an empty ``tc_tags``.
+    """
+    expected = {"env": "prod"}
+    assert inventory.tag_mapping([{"TagKey": "env", "TagValue": "prod"}]) == expected
+    assert inventory.tag_mapping([FakeItem(TagKey="env", TagValue="prod")]) == expected
+    assert inventory.tag_mapping([{"Key": "a", "Value": "1"},
+                                  {"TagKey": "b", "TagValue": "2"}]) == {"a": "1", "b": "2"}
+
+
 # ---------------------------------------------------------------------------
 # Normalisation
 # ---------------------------------------------------------------------------
@@ -174,6 +222,61 @@ VPC = {
     "CidrBlock": "10.0.0.0/16",
     "IsDefault": False,
     "TagSet": [{"Key": "team", "Value": "cpt"}],
+}
+
+# Shapes below are transcribed from live API responses (ap-singapore for CLB,
+# ap-jakarta for CDB, ap-hongkong for CBS) rather than invented.
+CLB_EXTERNAL = {
+    "LoadBalancerId": "lb-hzqwpojk",
+    "LoadBalancerName": "cls-fpuoi6sy_default_kubernetes-extranet",
+    "LoadBalancerType": "OPEN",
+    "LoadBalancerVips": [],
+    "Status": 1,
+    "VpcId": "vpc-8rmsgz5p",
+    "MasterZone": {"ZoneId": 900004, "Zone": "ap-singapore-4"},
+    "Tags": [{"TagKey": "tke-clusterId", "TagValue": "cls-fpuoi6sy"}],
+}
+
+CLB_INTERNAL = {
+    "LoadBalancerId": "lb-9v5qgcps",
+    "LoadBalancerName": "cls-fpuoi6sy_default_kubernetes-intranet",
+    "LoadBalancerType": "INTERNAL",
+    "LoadBalancerVips": ["10.0.0.121"],
+    "Status": 1,
+    "VpcId": "vpc-8rmsgz5p",
+    "Zones": ["ap-singapore-2", "ap-singapore-3"],
+    "Tags": [{"TagKey": "tke-clusterId", "TagValue": "cls-fpuoi6sy"}],
+}
+
+CDB_INSTANCE = {
+    "InstanceId": "cdb-iq6ecsue",
+    "InstanceName": "test-chia",
+    "Status": 1,
+    "Vip": "10.223.1.83",
+    "Vport": 3306,
+    "Zone": "ap-jakarta-1",
+    "UniqVpcId": "vpc-h70u60bi",
+    "DeviceType": "UNIVERSAL",
+    "EngineVersion": "8.4",
+}
+
+CBS_DISK = {
+    "DiskId": "disk-lx3epqu8",
+    "DiskName": "vpn-testconn-jon_SYSTEM_DISK",
+    "DiskState": "ATTACHED",
+    "DiskUsage": "SYSTEM_DISK",
+    "InstanceIdList": ["ins-n1jymopa"],
+    "Placement": {"Zone": "ap-hongkong-2"},
+    "Tags": [{"Key": "jon-manulife-tag1", "Value": "phase2-test"}],
+}
+
+COS_BUCKET = {
+    "Name": "2d67-static-test-7ggi931ce79b5c6e-1328140161",
+    "Location": "ap-singapore",
+    "CreationDate": "2025-12-23T10:41:40Z",
+    "Type": "tcb",
+    "BucketType": "unknown",
+    "AZType": "SAZ",
 }
 
 
@@ -218,18 +321,92 @@ def test_normalize_vpc_has_no_address_and_flags_the_default_vpc():
     assert inventory.normalize_vpc("ap-singapore", default)["tc_state"] == "DEFAULT"
 
 
+def test_normalize_clb_maps_the_integer_status_and_classifies_the_vip():
+    entry = inventory.normalize_clb("ap-singapore", CLB_INTERNAL)
+    assert entry["tc_id"] == "lb-9v5qgcps"
+    assert entry["tc_name"] == "cls-fpuoi6sy_default_kubernetes-intranet"
+    assert entry["tc_state"] == "RUNNING"
+    assert entry["tc_private_ip"] == "10.0.0.121"
+    assert entry["tc_public_ip"] is None
+    assert entry["tc_zone"] == "ap-singapore-2"
+    assert entry["tc_tags"] == {"tke-clusterId": "cls-fpuoi6sy"}
+    assert entry["tc_role"] == "INTERNAL"
+    assert entry["tc_parent_id"] == "vpc-8rmsgz5p"
+
+
+def test_normalize_clb_treats_an_open_balancer_as_public_and_reads_the_master_zone():
+    entry = inventory.normalize_clb("ap-singapore", CLB_EXTERNAL)
+    assert entry["tc_role"] == "OPEN"
+    assert entry["tc_zone"] == "ap-singapore-4"
+    # No VIP on this balancer: an OPEN one with an empty VIP list must not
+    # invent an address on the private side either.
+    assert entry["tc_public_ip"] is None
+    assert entry["tc_private_ip"] is None
+    assert inventory.normalize_clb("r", dict(CLB_EXTERNAL, Status=0))["tc_state"] == "CREATING"
+
+
+def test_normalize_cdb_maps_the_integer_status_and_the_vpc_parent():
+    entry = inventory.normalize_cdb("ap-jakarta", CDB_INSTANCE)
+    assert entry["tc_id"] == "cdb-iq6ecsue"
+    assert entry["tc_state"] == "RUNNING"
+    assert entry["tc_private_ip"] == "10.223.1.83"
+    assert entry["tc_public_ip"] is None
+    assert entry["tc_zone"] == "ap-jakarta-1"
+    assert entry["tc_parent_id"] == "vpc-h70u60bi"
+    assert entry["tc_role"] == "UNIVERSAL"
+    assert inventory.normalize_cdb("r", dict(CDB_INSTANCE, Status=5))["tc_state"] == "ISOLATED"
+    assert inventory.normalize_cdb("r", dict(CDB_INSTANCE, Status=0))["tc_state"] == "CREATING"
+    assert inventory.normalize_cdb("r", dict(CDB_INSTANCE, Status=4))["tc_state"] == "ISOLATING"
+
+
+def test_normalize_cbs_reads_the_zone_the_host_and_the_disk_usage():
+    entry = inventory.normalize_cbs("ap-hongkong", CBS_DISK)
+    assert entry["tc_id"] == "disk-lx3epqu8"
+    assert entry["tc_state"] == "ATTACHED"
+    assert entry["tc_zone"] == "ap-hongkong-2"
+    assert entry["tc_tags"] == {"jon-manulife-tag1": "phase2-test"}
+    assert entry["tc_role"] == "SYSTEM_DISK"
+    assert entry["tc_parent_id"] == "ins-n1jymopa"
+    assert entry["tc_private_ip"] is None
+    assert entry["tc_public_ip"] is None
+
+
+def test_normalize_cos_uses_the_bucket_name_as_identity():
+    entry = inventory.normalize_cos("ap-singapore", COS_BUCKET)
+    assert entry["tc_id"] == "2d67-static-test-7ggi931ce79b5c6e-1328140161"
+    assert entry["tc_name"] == entry["tc_id"]
+    assert entry["tc_state"] is None
+    assert entry["tc_role"] == "tcb"
+    assert entry["tc_tags"] == {}
+    assert entry["tc_parent_id"] is None
+
+
+def test_integer_statuses_are_passed_through_when_unknown():
+    """A new API value must surface as itself, not as a guessed label."""
+    assert inventory.normalize_clb("r", dict(CLB_EXTERNAL, Status=7))["tc_state"] == "7"
+    assert inventory.normalize_cdb("r", dict(CDB_INSTANCE, Status=-1))["tc_state"] == "-1"
+    assert inventory.normalize_clb("r", dict(CLB_EXTERNAL, Status=None))["tc_state"] is None
+    assert inventory.normalize_cdb("r", dict(CDB_INSTANCE, Status="RUNNING"))["tc_state"] == "RUNNING"
+
+
 def test_every_normaliser_returns_the_same_key_set():
     keys = set(inventory.normalize_cvm("r", CVM_INSTANCE))
     assert keys == set(inventory.normalize_lighthouse("r", LIGHTHOUSE_INSTANCE))
     assert keys == set(inventory.normalize_tke_node("r", TKE_NODE))
     assert keys == set(inventory.normalize_vpc("r", VPC))
+    assert keys == set(inventory.normalize_clb("r", CLB_EXTERNAL))
+    assert keys == set(inventory.normalize_cdb("r", CDB_INSTANCE))
+    assert keys == set(inventory.normalize_cbs("r", CBS_DISK))
+    assert keys == set(inventory.normalize_cos("r", COS_BUCKET))
     assert "tc_id" in keys and "tc_parent_name" in keys
 
 
 def test_normalisers_tolerate_missing_fields():
     """A half-populated API response must not raise."""
     for normalize in (inventory.normalize_cvm, inventory.normalize_lighthouse,
-                      inventory.normalize_tke_node, inventory.normalize_vpc):
+                      inventory.normalize_tke_node, inventory.normalize_vpc,
+                      inventory.normalize_clb, inventory.normalize_cdb,
+                      inventory.normalize_cbs, inventory.normalize_cos):
         entry = normalize("r", {})
         assert entry["tc_id"] is None
         assert entry["tc_tags"] == {}
@@ -373,7 +550,10 @@ class FakePagedClient(object):
         self.requests.append(request)
         offset, limit = int(request.Offset), int(request.Limit)
         page = items[offset:offset + limit]
-        return FakeResponse(InstanceSet=page, VpcSet=page, TotalCount=len(items))
+        fields = {attr: page for attr in (
+            "InstanceSet", "VpcSet", "LoadBalancerSet", "Items", "DiskSet")}
+        fields["TotalCount"] = len(items)
+        return FakeResponse(**fields)
 
 
 class FakeFlatClient(FakePagedClient):
@@ -381,6 +561,15 @@ class FakeFlatClient(FakePagedClient):
         return self._respond(request, self.items)
 
     def DescribeVpcs(self, request):
+        return self._respond(request, self.items)
+
+    def DescribeLoadBalancers(self, request):
+        return self._respond(request, self.items)
+
+    def DescribeDBInstances(self, request):
+        return self._respond(request, self.items)
+
+    def DescribeDisks(self, request):
         return self._respond(request, self.items)
 
 
@@ -414,6 +603,10 @@ def test_paging_serialisation_follows_the_product_contract():
     assert inventory.SOURCE_SPECS["tke"].string_paging is False
     assert inventory.SOURCE_SPECS["lighthouse"].string_paging is False
     assert inventory.SOURCE_SPECS["vpc"].string_paging is True
+    # The second batch declares Offset/Limit as int64 as well.
+    assert inventory.SOURCE_SPECS["clb"].string_paging is False
+    assert inventory.SOURCE_SPECS["cdb"].string_paging is False
+    assert inventory.SOURCE_SPECS["cbs"].string_paging is False
 
     cvm = FakeFlatClient([FakeItem(InstanceId="ins-1")])
     inventory.collect_flat(inventory.SOURCE_SPECS["cvm"], cvm, FakeModels, None, page_size=20)
@@ -431,6 +624,59 @@ def test_collect_flat_uses_the_spec_response_attributes():
     client = FakeFlatClient([FakeItem(VpcId="vpc-1")])
     collected = inventory.collect_flat(inventory.SOURCE_SPECS["vpc"], client, FakeModels, None)
     assert collected == [{"VpcId": "vpc-1"}]
+
+
+def test_collect_flat_reads_the_second_batch_response_attributes():
+    """Each product names its page attribute differently; verified live."""
+    clb = FakeFlatClient([FakeItem(LoadBalancerId="lb-1", Status=1)])
+    assert inventory.collect_flat(
+        inventory.SOURCE_SPECS["clb"], clb, FakeModels, None) == [
+            {"LoadBalancerId": "lb-1", "Status": 1}]
+    cdb = FakeFlatClient([FakeItem(InstanceId="cdb-1", Status=1)])
+    assert inventory.collect_flat(
+        inventory.SOURCE_SPECS["cdb"], cdb, FakeModels, None) == [
+            {"InstanceId": "cdb-1", "Status": 1}]
+    cbs = FakeFlatClient([FakeItem(DiskId="disk-1", DiskState="ATTACHED")])
+    assert inventory.collect_flat(
+        inventory.SOURCE_SPECS["cbs"], cbs, FakeModels, None) == [
+            {"DiskId": "disk-1", "DiskState": "ATTACHED"}]
+    assert cdb.requests[0].Limit == 100
+    assert isinstance(cdb.requests[0].Offset, int)
+
+
+class FakeCosClient(object):
+    """Minimal COS client: only the region-scoped bucket listing."""
+
+    def __init__(self, buckets):
+        self.buckets = buckets
+        self.calls = []
+
+    def list_buckets(self, **kwargs):
+        self.calls.append(kwargs)
+        return {"Buckets": {"Bucket": self.buckets}}
+
+
+def test_collect_cos_buckets_scopes_the_listing_to_the_queried_region():
+    """COS narrows server-side, so the region is passed, not filtered locally.
+
+    Verified live: with ``Region="ap-singapore"`` the service returns 28 of
+    the account's 84 buckets and every one has ``Location=ap-singapore``.
+    """
+    client = FakeCosClient([dict(COS_BUCKET)])
+    collected = inventory.collect_cos_buckets(
+        inventory.SOURCE_SPECS["cos"], client, None, None, region="ap-singapore")
+    assert client.calls == [{"Region": "ap-singapore"}]
+    assert collected == [COS_BUCKET]
+    assert collected[0] is not COS_BUCKET  # a copy, so the raw page is not shared
+
+
+def test_collect_cos_buckets_tolerates_an_empty_account():
+    assert inventory.collect_cos_buckets(
+        inventory.SOURCE_SPECS["cos"], FakeCosClient([]), None, None,
+        region="ap-singapore") == []
+    empty = type("Empty", (), {"list_buckets": lambda self, **k: {"Buckets": None}})()
+    assert inventory.collect_cos_buckets(
+        inventory.SOURCE_SPECS["cos"], empty, None, None, region="ap-singapore") == []
 
 
 class FakeTkeClient(object):
@@ -493,10 +739,12 @@ def test_collect_source_dispatches_to_the_registered_collector(monkeypatch):
     monkeypatch.setattr(inventory, "load_models", lambda spec: FakeModels)
     monkeypatch.setitem(
         inventory.SOURCE_SPECS["tke"].__dict__, "collector",
-        lambda spec, client, models, filters, page_size=100: calls.append(spec.name) or [],
+        lambda spec, client, models, filters, page_size=100, region=None: (
+            calls.append((spec.name, region)) or []),
     )
-    assert inventory.collect_source(inventory.SOURCE_SPECS["tke"], object()) == []
-    assert calls == ["tke"]
+    assert inventory.collect_source(
+        inventory.SOURCE_SPECS["tke"], object(), None, region="ap-singapore") == []
+    assert calls == [("tke", "ap-singapore")]
 
 
 def test_collect_source_uses_the_flat_collector_for_flat_products(monkeypatch):
@@ -504,6 +752,17 @@ def test_collect_source_uses_the_flat_collector_for_flat_products(monkeypatch):
     client = FakeFlatClient([FakeItem(VpcId="vpc-1")])
     collected = inventory.collect_source(inventory.SOURCE_SPECS["vpc"], client)
     assert collected == [{"VpcId": "vpc-1"}]
+
+
+def test_collect_source_skips_model_loading_for_a_non_api3_source(monkeypatch):
+    def explode(spec):
+        raise AssertionError("a source without models must not be imported")
+
+    monkeypatch.setattr(inventory, "load_models", explode)
+    client = FakeCosClient([dict(COS_BUCKET)])
+    collected = inventory.collect_source(
+        inventory.SOURCE_SPECS["cos"], client, None, region="ap-singapore")
+    assert collected == [COS_BUCKET]
 
 
 # ---------------------------------------------------------------------------
@@ -537,6 +796,54 @@ def test_build_client_names_the_missing_package(monkeypatch):
     monkeypatch.setattr(inventory, "importlib", FakeImportlib({}))
     with pytest.raises(inventory.InventorySourceError, match="tencentcloud-sdk-python-vpc"):
         inventory.build_client(inventory.SOURCE_SPECS["vpc"], "ap-singapore", "id", "key")
+
+
+def test_load_models_refuses_a_source_that_has_no_models():
+    with pytest.raises(inventory.InventorySourceError, match="not an API 3.0 product"):
+        inventory.load_models(inventory.SOURCE_SPECS["cos"])
+
+
+def test_build_client_dispatches_to_the_source_client_builder(monkeypatch):
+    """COS has no credential object or client profile; it builds itself."""
+    calls = []
+
+    def fake_builder(spec, region, secret_id, secret_key, token=None):
+        calls.append((spec.name, region, secret_id, secret_key, token))
+        return "cos-client"
+
+    monkeypatch.setattr(
+        inventory.SOURCE_SPECS["cos"], "client_builder", fake_builder)
+    client = inventory.build_client(
+        inventory.SOURCE_SPECS["cos"], "ap-hongkong", "akid", "secret", "tok")
+    assert client == "cos-client"
+    assert calls == [("cos", "ap-hongkong", "akid", "secret", "tok")]
+
+
+def test_build_cos_client_delegates_to_the_cos_helper(monkeypatch):
+    from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos as cos_utils
+    calls = []
+
+    def fake(region, secret_id, secret_key, token=None):
+        calls.append((region, secret_id, secret_key, token))
+        return "built"
+
+    monkeypatch.setattr(cos_utils, "build_cos_client", fake)
+    client = inventory.build_cos_client(
+        inventory.SOURCE_SPECS["cos"], "ap-hongkong", "akid", "secret", "tok")
+    assert client == "built"
+    assert calls == [("ap-hongkong", "akid", "secret", "tok")]
+
+
+def test_build_cos_client_names_the_missing_sdk(monkeypatch):
+    from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos as cos_utils
+
+    def explode(*args, **kwargs):
+        raise cos_utils.CosSDKMissing(cos_utils.COS_SDK_IMP_ERR)
+
+    monkeypatch.setattr(cos_utils, "build_cos_client", explode)
+    with pytest.raises(inventory.InventorySourceError, match="cos-python-sdk-v5"):
+        inventory.build_cos_client(
+            inventory.SOURCE_SPECS["cos"], "ap-hongkong", "id", "key")
 
 
 class FakeCredential(object):

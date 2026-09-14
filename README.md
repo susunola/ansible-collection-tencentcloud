@@ -953,7 +953,7 @@ for product-level write, discovery and reusable-role maturity.
 | Plugin | Type | Purpose |
 | --- | --- | --- |
 | `tc_wait` | action | Wait for an existing resource to reach a state by polling one of the `*_info` modules |
-| `tc_inventory` | inventory | One inventory across CVM, TKE, Lighthouse and VPC, with standardised host variables and cross-product de-duplication |
+| `tc_inventory` | inventory | One inventory across CVM, TKE, Lighthouse, VPC, CLB, CDB, CBS and COS, with standardised host variables and cross-product de-duplication |
 | `tencentcloud_resource_actions` | callback | Summarise the Tencent Cloud API calls a play made, task by task |
 | `tencentcloud_cvm` | inventory | Dynamic inventory of CVM instances with constructed groups and caching |
 | `tencentcloud_clb` | inventory | Dynamic inventory of CLB load balancers, listeners and backend targets |

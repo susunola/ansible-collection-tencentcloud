@@ -39,6 +39,13 @@ this module — and the plugin that uses it — importable and unit-testable
 without the ``tencentcloud`` package installed, the same property the
 per-product plugins achieve with their ``HAS_TENCENTCLOUD_SDK`` gates.
 
+Most sources are API 3.0 products and are described entirely by data: which
+client, which ``Describe*`` call, which response attribute. COS is the one
+exception — it has its own SDK and its own client model — so a source may
+carry a ``client_builder`` and a ``collector`` instead, and is flagged
+``api3=False``. Sources built that way are not assumed to have a models
+module, a request class or a ``TotalCount``.
+
 Layering: imports ``module_utils.client`` and ``module_utils.paging``.
 """
 
@@ -92,13 +99,20 @@ class SourceSpec(object):
         as ``string`` and answers ``InvalidParameter`` for an integer. The
         flag keeps that per-product fact in the registry instead of in the
         request builder.
+    :param client_builder: callable(spec, region, secret_id, secret_key,
+        token) -> client, for a source that is not an API 3.0 product and
+        therefore cannot be built by :func:`build_client`. Only COS needs
+        this today.
+    :param api3: whether this source is an API 3.0 product. ``False`` relaxes
+        everything the API 3.0 shape implies: a non-API 3.0 source has no
+        models module, no request class and no ``TotalCount``.
     """
 
     def __init__(self, name, label, sdk_package, endpoint, client_module,
                  client_class, models_module, request_class, describe,
                  items_attr, total_attr, normalizer, child_request_class=None,
                  child_describe=None, child_items_attr=None, collector=None,
-                 string_paging=False):
+                 string_paging=False, client_builder=None, api3=True):
         self.name = name
         self.label = label
         self.sdk_package = sdk_package
@@ -116,6 +130,8 @@ class SourceSpec(object):
         self.child_items_attr = child_items_attr
         self.collector = collector
         self.string_paging = string_paging
+        self.client_builder = client_builder
+        self.api3 = api3
 
     def __repr__(self):
         return "<SourceSpec {0}>".format(self.name)
@@ -132,6 +148,23 @@ def serialize(item):
     return dict(item)
 
 
+def _tag_pair(entry):
+    """Return the ``(key, value)`` of one tag entry, in either API dialect.
+
+    CVM, Lighthouse, VPC and CBS use ``Key``/``Value``; CLB and CDB use
+    ``TagKey``/``TagValue`` (verified against the live APIs). Reading both
+    keeps ``tc_tags`` populated for every source instead of silently
+    returning ``{}`` for half of them.
+    """
+    if isinstance(entry, dict):
+        key = entry.get("Key", entry.get("TagKey"))
+        value = entry.get("Value", entry.get("TagValue"))
+    else:
+        key = getattr(entry, "Key", getattr(entry, "TagKey", None))
+        value = getattr(entry, "Value", getattr(entry, "TagValue", None))
+    return key, value
+
+
 def tag_mapping(tags):
     """Normalise an API-shaped tag list or mapping into a plain mapping.
 
@@ -144,15 +177,29 @@ def tag_mapping(tags):
         return dict(tags)
     result = {}
     for entry in tags or []:
-        if isinstance(entry, dict):
-            key = entry.get("Key")
-            value = entry.get("Value")
-        else:
-            key = getattr(entry, "Key", None)
-            value = getattr(entry, "Value", None)
+        key, value = _tag_pair(entry)
         if key:
             result[key] = value
     return result
+
+
+# Integer run states, as documented by the products' own SDK models. Products
+# that report a state as an integer (CLB, CDB) are mapped to the same readable
+# vocabulary the string-state products use, so ``keyed_groups`` on ``tc_state``
+# yields one group per state rather than per number. An unrecognised value is
+# passed through as a string instead of being invented.
+CLB_STATUS = {0: "CREATING", 1: "RUNNING"}
+CDB_STATUS = {0: "CREATING", 1: "RUNNING", 4: "ISOLATING", 5: "ISOLATED"}
+
+
+def _status_label(value, mapping):
+    """Map an integer API state to a readable one, passing unknowns through."""
+    if value is None:
+        return None
+    try:
+        return mapping[int(value)]
+    except (KeyError, TypeError, ValueError):
+        return str(value)
 
 
 def _first(mapping, *names):
@@ -272,6 +319,99 @@ def normalize_vpc(region, item):
     }
 
 
+def normalize_clb(region, item):
+    """Standardise one CLB load balancer.
+
+    The VIP is classified from ``LoadBalancerType``: an ``OPEN`` balancer
+    faces the internet, anything else (``INTERNAL``) is reachable only
+    inside its VPC. A balancer has no zone of its own - it spans them - so
+    ``tc_zone`` is the master zone when the API names one and otherwise the
+    first zone of the ``Zones`` list; both stay available as raw fields.
+    """
+    vip = _first_of(item.get("LoadBalancerVips"))
+    internet_facing = _first(item, "LoadBalancerType") == "OPEN"
+    return {
+        "tc_region": region,
+        "tc_id": _first(item, "LoadBalancerId"),
+        "tc_name": _first(item, "LoadBalancerName"),
+        "tc_state": _status_label(item.get("Status"), CLB_STATUS),
+        "tc_private_ip": None if internet_facing else vip,
+        "tc_public_ip": vip if internet_facing else None,
+        "tc_zone": _nested(item, "MasterZone", "Zone") or _first_of(item.get("Zones")),
+        "tc_tags": tag_mapping(item.get("Tags") or []),
+        "tc_role": _first(item, "LoadBalancerType"),
+        "tc_parent_id": _first(item, "VpcId"),
+        "tc_parent_name": None,
+    }
+
+
+def normalize_cdb(region, item):
+    """Standardise one CDB (MySQL) instance.
+
+    ``Vip`` is the private address inside the VPC; public access, when it is
+    enabled at all, is a domain (``WanDomain``) rather than an address, so
+    ``tc_public_ip`` stays ``None``.
+    """
+    return {
+        "tc_region": region,
+        "tc_id": _first(item, "InstanceId"),
+        "tc_name": _first(item, "InstanceName"),
+        "tc_state": _status_label(item.get("Status"), CDB_STATUS),
+        "tc_private_ip": _first(item, "Vip"),
+        "tc_public_ip": None,
+        "tc_zone": _first(item, "Zone"),
+        "tc_tags": tag_mapping(item.get("TagList") or []),
+        "tc_role": _first(item, "DeviceType"),
+        "tc_parent_id": _first(item, "UniqVpcId"),
+        "tc_parent_name": None,
+    }
+
+
+def normalize_cbs(region, item):
+    """Standardise one CBS disk.
+
+    A disk is not addressable over the network, so both address fields stay
+    ``None``; what it does have is a host, which fills ``tc_parent_id``, and
+    a usage (``SYSTEM_DISK`` / ``DATA_DISK``), which fills ``tc_role``.
+    """
+    return {
+        "tc_region": region,
+        "tc_id": _first(item, "DiskId"),
+        "tc_name": _first(item, "DiskName"),
+        "tc_state": _first(item, "DiskState"),
+        "tc_private_ip": None,
+        "tc_public_ip": None,
+        "tc_zone": _nested(item, "Placement", "Zone"),
+        "tc_tags": tag_mapping(item.get("Tags") or []),
+        "tc_role": _first(item, "DiskUsage"),
+        "tc_parent_id": _first_of(item.get("InstanceIdList")),
+        "tc_parent_name": None,
+    }
+
+
+def normalize_cos(region, item):
+    """Standardise one COS bucket.
+
+    A bucket has no run state, no address and no host, so only the identity
+    fields are filled; ``tc_role`` carries the owning product reported by COS
+    (``Type``, for example ``tcb``). Bucket tags would need one extra call
+    per bucket, so ``tc_tags`` is empty - use ``cos_bucket_info`` for those.
+    """
+    return {
+        "tc_region": region,
+        "tc_id": _first(item, "Name"),
+        "tc_name": _first(item, "Name"),
+        "tc_state": None,
+        "tc_private_ip": None,
+        "tc_public_ip": None,
+        "tc_zone": None,
+        "tc_tags": {},
+        "tc_role": _first(item, "Type"),
+        "tc_parent_id": None,
+        "tc_parent_name": None,
+    }
+
+
 # ---------------------------------------------------------------------------
 # Collectors
 # ---------------------------------------------------------------------------
@@ -328,7 +468,7 @@ def _paged(spec, client, models, filters, page_size, request_class, extra=None,
     return [serialize(item) for item in items]
 
 
-def collect_flat(spec, client, models, filters, page_size=PAGE_SIZE):
+def collect_flat(spec, client, models, filters, page_size=PAGE_SIZE, region=None):
     """Return every item of a product that lists its assets in one call."""
     return _paged(spec, client, models, filters, page_size,
                   getattr(models, spec.request_class))
@@ -350,7 +490,7 @@ def _fetch_node_pools(client, models, cluster_id):
     return pools
 
 
-def collect_tke_nodes(spec, client, models, filters, page_size=PAGE_SIZE):
+def collect_tke_nodes(spec, client, models, filters, page_size=PAGE_SIZE, region=None):
     """Return every node of every cluster, annotated with its cluster.
 
     TKE has no region-wide node listing: nodes are reachable only through
@@ -380,6 +520,32 @@ def collect_tke_nodes(spec, client, models, filters, page_size=PAGE_SIZE):
             node["NodePoolName"] = pools.get(pool_id) if pool_id else None
             nodes.append(node)
     return nodes
+
+
+def collect_cos_buckets(spec, client, models, filters, page_size=PAGE_SIZE,
+                        region=None):
+    """Return every bucket of the queried region as plain dicts.
+
+    COS is not paged and not filtered by the inventory layer: the service
+    call is region-scoped (unlike the account-wide listing the console
+    shows), so ``region`` does the narrowing that ``Offset``/``Limit`` and
+    ``Filters`` do for the API 3.0 sources. COS-specific filtering belongs in
+    ``compose``/``keyed_groups``, where it also sees the raw fields.
+    """
+    from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
+    return [dict(entry) for entry in cos.list_bucket_entries(client, region)]
+
+
+def build_cos_client(spec, region, secret_id, secret_key, token=None):
+    """Build a COS client for one region; the ``client_builder`` of the COS source."""
+    from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
+    try:
+        return cos.build_cos_client(region, secret_id, secret_key, token)
+    except ImportError as exc:
+        raise InventorySourceError(
+            "The {0} package is required on the Ansible controller to query "
+            "the '{1}' source ({2}).".format(
+                spec.sdk_package, spec.name, exc))
 
 
 SOURCE_SPECS = {
@@ -444,6 +610,66 @@ SOURCE_SPECS = {
         normalizer=normalize_vpc,
         string_paging=True,
     ),
+    "clb": SourceSpec(
+        name="clb",
+        label="CLB load balancers",
+        sdk_package="tencentcloud-sdk-python-clb",
+        endpoint="clb.tencentcloudapi.com",
+        client_module="tencentcloud.clb.v20180317.clb_client",
+        client_class="ClbClient",
+        models_module="tencentcloud.clb.v20180317.models",
+        request_class="DescribeLoadBalancersRequest",
+        describe="DescribeLoadBalancers",
+        items_attr="LoadBalancerSet",
+        total_attr="TotalCount",
+        normalizer=normalize_clb,
+    ),
+    "cdb": SourceSpec(
+        name="cdb",
+        label="CDB instances",
+        sdk_package="tencentcloud-sdk-python-cdb",
+        endpoint="cdb.tencentcloudapi.com",
+        client_module="tencentcloud.cdb.v20170320.cdb_client",
+        client_class="CdbClient",
+        models_module="tencentcloud.cdb.v20170320.models",
+        request_class="DescribeDBInstancesRequest",
+        describe="DescribeDBInstances",
+        # Not ``ItemsSet``: CDB names its page attribute ``Items``.
+        items_attr="Items",
+        total_attr="TotalCount",
+        normalizer=normalize_cdb,
+    ),
+    "cbs": SourceSpec(
+        name="cbs",
+        label="CBS disks",
+        sdk_package="tencentcloud-sdk-python-cbs",
+        endpoint="cbs.tencentcloudapi.com",
+        client_module="tencentcloud.cbs.v20170312.cbs_client",
+        client_class="CbsClient",
+        models_module="tencentcloud.cbs.v20170312.models",
+        request_class="DescribeDisksRequest",
+        describe="DescribeDisks",
+        items_attr="DiskSet",
+        total_attr="TotalCount",
+        normalizer=normalize_cbs,
+    ),
+    "cos": SourceSpec(
+        name="cos",
+        label="COS buckets",
+        sdk_package="cos-python-sdk-v5",
+        endpoint="service.cos.myqcloud.com",
+        client_module="qcloud_cos",
+        client_class="CosS3Client",
+        models_module=None,
+        request_class=None,
+        describe="list_buckets",
+        items_attr=None,
+        total_attr=None,
+        normalizer=normalize_cos,
+        collector=collect_cos_buckets,
+        client_builder=build_cos_client,
+        api3=False,
+    ),
 }
 
 SOURCE_NAMES = tuple(SOURCE_SPECS)
@@ -475,6 +701,10 @@ def resolve_sources(names):
 
 def load_models(spec):
     """Import the models module of a source, with a package-named error."""
+    if not spec.models_module:
+        raise InventorySourceError(
+            "The '{0}' source is not an API 3.0 product and has no request "
+            "models; query it through its own collector.".format(spec.name))
     try:
         return importlib.import_module(spec.models_module)
     except ImportError as exc:
@@ -489,7 +719,13 @@ def build_client(spec, region, secret_id, secret_key, token=None):
 
     The SDK is imported here rather than at module level so that this module
     stays importable without it.
+
+    A source with its own ``client_builder`` (COS) is dispatched there: it is
+    not an API 3.0 product, so it has no credential object, no client profile
+    and no endpoint to set here.
     """
+    if spec.client_builder is not None:
+        return spec.client_builder(spec, region, secret_id, secret_key, token)
     try:
         client_module = importlib.import_module(spec.client_module)
         credential_module = importlib.import_module("tencentcloud.common.credential")
@@ -535,16 +771,19 @@ def resolve_credentials(secret_id=None, secret_key=None, token=None,
     return secret_id, secret_key, token
 
 
-def collect_source(spec, client, filters=None, page_size=PAGE_SIZE):
+def collect_source(spec, client, filters=None, page_size=PAGE_SIZE, region=None):
     """Return the raw items of one source in one region.
 
     :param spec: the :class:`SourceSpec` to query.
     :param client: an already-constructed product client.
     :param filters: API filters for this source, as ``[{name, values}]``.
+    :param region: region being queried. Collectors of API 3.0 sources do
+        not need it (the client already carries it); the COS collector does,
+        because its service call is region-scoped.
     """
-    models = load_models(spec)
+    models = load_models(spec) if spec.models_module else None
     collector = spec.collector or collect_flat
-    return collector(spec, client, models, filters, page_size)
+    return collector(spec, client, models, filters, page_size, region=region)
 
 
 def describe_entry(spec, region, item):
@@ -645,6 +884,8 @@ def hostname_of(hostnames, entry, compose):
 
 
 __all__ = [
+    "CDB_STATUS",
+    "CLB_STATUS",
     "InventorySourceError",
     "LITERAL_HOSTNAMES",
     "PAGE_SIZE",
@@ -653,8 +894,10 @@ __all__ = [
     "SourceSpec",
     "build_cache_key",
     "build_client",
+    "build_cos_client",
     "build_filter",
     "build_request",
+    "collect_cos_buckets",
     "collect_flat",
     "collect_source",
     "collect_tke_nodes",
@@ -663,6 +906,10 @@ __all__ = [
     "load_models",
     "merge_entries",
     "normalize",
+    "normalize_cbs",
+    "normalize_cdb",
+    "normalize_clb",
+    "normalize_cos",
     "normalize_cvm",
     "normalize_lighthouse",
     "normalize_tke_node",

@@ -139,8 +139,8 @@ def test_fetch_source_builds_a_client_per_source_and_normalises(monkeypatch):
         seen["client"] = (spec.name, region, secret_id, secret_key, token)
         return "client-for-" + spec.name
 
-    def fake_collect(spec, client, filters):
-        seen["collect"] = (client, filters)
+    def fake_collect(spec, client, filters, region=None):
+        seen["collect"] = (client, filters, region)
         return [{"InstanceId": "ins-1", "InstanceName": "web-1", "PrivateIpAddresses": ["10.0.0.4"]}]
 
     monkeypatch.setattr(inv_mod, "resolve_credentials", lambda *a, **k: ("akid", "secret", "tok"))
@@ -150,14 +150,16 @@ def test_fetch_source_builds_a_client_per_source_and_normalises(monkeypatch):
     plugin = _plugin(_options())
     entries = plugin._fetch_source(SOURCE_SPECS["cvm"], "ap-singapore", [{"name": "zone"}])
     assert seen["client"] == ("cvm", "ap-singapore", "akid", "secret", "tok")
-    assert seen["collect"] == ("client-for-cvm", [{"name": "zone"}])
+    # The region is handed to the collector too: COS narrows its service call
+    # by region, unlike the API 3.0 sources whose client already carries it.
+    assert seen["collect"] == ("client-for-cvm", [{"name": "zone"}], "ap-singapore")
     assert entries[0]["tc_id"] == "ins-1"
     assert entries[0]["tc_region"] == "ap-singapore"
     assert entries[0]["tc_source"] == "cvm"
 
 
 def test_fetch_source_wraps_inventory_errors_as_ansible_errors(monkeypatch):
-    def explode(spec, client, filters):
+    def explode(spec, client, filters, region=None):
         raise InventorySourceError("The tencentcloud-sdk-python-vpc package is required")
 
     monkeypatch.setattr(inv_mod, "resolve_credentials", lambda *a, **k: ("id", "key", None))

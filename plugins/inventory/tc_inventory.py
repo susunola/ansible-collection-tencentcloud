@@ -8,7 +8,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 name: tc_inventory
-short_description: Unified Tencent Cloud asset inventory across CVM, TKE, Lighthouse and VPC
+short_description: Unified Tencent Cloud asset inventory across CVM, TKE, Lighthouse, VPC, CLB, CDB, CBS and COS
 version_added: "1.3.0"
 description:
   - Build one Ansible inventory from several Tencent Cloud products at once,
@@ -18,7 +18,7 @@ description:
     remain the right tool when a playbook targets a single product and needs
     its product-specific options. This plugin is for the "inventory the
     estate" case, where one source file, one credential block and one cache
-    entry should cover compute and network together.
+    entry should cover compute, network, storage and load balancing together.
   - Every host carries a standardised field set regardless of the product it
     came from (see O(hostnames) and the C(tc_*) variables below), so
     O(keyed_groups) and O(compose) expressions do not need a per-product
@@ -32,8 +32,11 @@ options:
   sources:
     description:
       - Products to include, as a list.
-      - Valid values are C(cvm) (CVM instances), C(tke) (TKE cluster nodes),
-        C(lighthouse) (Lighthouse instances) and C(vpc) (VPCs).
+      - >
+        Valid values are C(cvm) (CVM instances), C(tke) (TKE cluster nodes),
+        C(lighthouse) (Lighthouse instances), C(vpc) (VPCs), C(clb) (CLB load
+        balancers), C(cdb) (CDB MySQL instances), C(cbs) (CBS disks) and
+        C(cos) (COS buckets).
       - Sources are queried in the order given, which also decides which
         product's fields win when O(dedupe) merges two entries for the same
         resource.
@@ -121,8 +124,15 @@ extends_documentation_fragment:
   - constructed
   - inventory_cache
 notes:
-  - Requires the C(tencentcloud-sdk-python) distribution on the controller;
-    the C(cvm), C(tke), C(lighthouse) and C(vpc) clients ship in it.
+  - >
+    Requires the C(tencentcloud-sdk-python) distribution on the controller;
+    the C(cvm), C(tke), C(lighthouse), C(vpc), C(clb), C(cdb) and C(cbs)
+    clients ship in it.
+  - >
+    The C(cos) source additionally requires the C(cos-python-sdk-v5)
+    distribution, because COS is not part of the API 3.0 family and has its
+    own client model. It is the only source that ignores O(filters): the COS
+    service call is region-scoped, so narrowing is done by O(regions).
   - The C(tke) source yields cluster I(worker and master) nodes rather than
     clusters, because a cluster has no address to connect to. Each node
     carries C(tc_parent_id) and C(tc_parent_name) for its cluster, plus the
@@ -131,6 +141,18 @@ notes:
   - The C(vpc) source yields VPCs, which have no run state and no address;
     C(tc_state) is C(DEFAULT) for the default VPC of a region and C(null)
     otherwise, and C(CidrBlock) stays available as a raw field.
+  - >
+    C(clb) and C(cdb) report their run state as an integer; it is mapped to
+    the same vocabulary the other sources use (C(CREATING), C(RUNNING),
+    C(ISOLATING), C(ISOLATED)) and passed through as a string when the API
+    grows a value this plugin does not know yet. For C(clb) the VIP is
+    classified from C(LoadBalancerType): C(OPEN) fills C(tc_public_ip), any
+    other value fills C(tc_private_ip).
+  - >
+    C(cbs) fills C(tc_parent_id) with the CVM the disk is attached to and
+    C(tc_role) with its usage (C(SYSTEM_DISK) or C(DATA_DISK)); C(cos) fills
+    C(tc_role) with the owning product reported by COS and leaves
+    C(tc_tags) empty, because bucket tags need one extra call per bucket.
   - The cache key covers the query configuration (O(sources), O(regions),
     O(filters), O(dedupe)) in addition to the source file path, so editing
     any of them is a cache miss instead of a stale inventory.
@@ -138,7 +160,9 @@ notes:
     C(tc_sources), C(tc_region), C(tc_id), C(tc_name), C(tc_state),
     C(tc_private_ip), C(tc_public_ip), C(tc_zone), C(tc_tags), C(tc_role),
     C(tc_parent_id) and C(tc_parent_name); fields a product has no concept of
-    are C(null) rather than absent.
+    are C(null) rather than absent. C(tc_role) carries the product-specific
+    sub-kind when the product has one - a TKE node role, a CBS disk usage, a
+    CLB network type or a COS bucket product type.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
@@ -150,14 +174,18 @@ regions:
   - ap-guangzhou
   - ap-singapore
 
-# The whole estate: compute, containers, lightweight servers and networks.
-# Group by product once instead of writing one source file per product.
+# The whole estate: compute, containers, lightweight servers, networks,
+# load balancers, databases and disks. Group by product once instead of
+# writing one source file per product.
 plugin: susunola.tencentcloud.tc_inventory
 sources:
   - cvm
   - tke
   - lighthouse
   - vpc
+  - clb
+  - cdb
+  - cbs
 regions:
   - ap-singapore
 keyed_groups:
@@ -183,6 +211,21 @@ filters:
   vpc:
     - name: vpc-id
       values: ["vpc-xxxxxxxx"]
+
+# Storage and load balancing. COS needs cos-python-sdk-v5 on the controller
+# and is narrowed by region, not by filters.
+plugin: susunola.tencentcloud.tc_inventory
+sources:
+  - cbs
+  - cos
+regions:
+  - ap-hongkong
+keyed_groups:
+  - key: tc_role
+    prefix: kind
+    separator: "_"
+compose:
+  ansible_host: tc_private_ip
 
 # Report the estate rather than connect to it: name hosts after the resource
 # id, and keep the raw API fields for later inventory-driven reporting.
@@ -301,7 +344,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
                 self.get_option("profile"),
             )
             client = build_client(spec, region, secret_id, secret_key, token)
-            items = collect_source(spec, client, filters)
+            items = collect_source(spec, client, filters, region=region)
         except InventorySourceError as exc:
             raise AnsibleError(str(exc))
         return [describe_entry(spec, region, item) for item in items]

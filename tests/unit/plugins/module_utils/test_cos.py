@@ -237,6 +237,33 @@ def test_list_buckets_empty():
     assert cos.list_buckets(EmptyClient()) == []
 
 
+def test_list_bucket_entries_keeps_the_fields_list_buckets_drops():
+    """The inventory layer needs Type/BucketType/AZType, which the
+    ``cos_bucket_info`` projection deliberately leaves out."""
+    entry = {"Name": "b-1", "Location": "ap-singapore",
+             "CreationDate": "2025-12-23T10:41:40Z", "Type": "tcb",
+             "BucketType": "unknown", "AZType": "SAZ"}
+
+    class Client(object):
+        def __init__(self):
+            self.calls = []
+
+        def list_buckets(self, **kwargs):
+            self.calls.append(kwargs)
+            return {"Buckets": {"Bucket": [entry]}}
+
+    client = Client()
+    assert cos.list_bucket_entries(client, "ap-singapore") == [entry]
+    # The region really is sent: the COS service call is region-scoped.
+    assert client.calls == [{"Region": "ap-singapore"}]
+    assert cos.list_bucket_entries(EmptyClientNoBuckets()) == []
+
+
+class EmptyClientNoBuckets(object):
+    def list_buckets(self, **kwargs):
+        return {"Buckets": None}
+
+
 class FakeCosConfig(object):
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
@@ -355,6 +382,57 @@ def test_create_cos_client_fails_without_any_credential_source(monkeypatch):
     with pytest.raises(FakeFailJson) as exc:
         cos.create_cos_client(module)
     assert "default.configure" in exc.value.msg
+
+
+def test_build_cos_client_needs_no_module(monkeypatch):
+    """The module-free builder used by the inventory plugin."""
+    _fake_cos_sdk(monkeypatch)
+    client = cos.build_cos_client("ap-hongkong", "akid", "secret", "tok")
+    assert isinstance(client, FakeCosS3Client)
+    assert client.config.Region == "ap-hongkong"
+    assert client.config.SecretId == "akid"
+    assert client.config.SecretKey == "secret"
+    assert client.config.Token == "tok"
+    # Defaults a caller does not have to spell out.
+    assert client.config.Timeout == 60
+    assert client.config.Endpoint is None
+
+
+def test_build_cos_client_accepts_a_custom_endpoint_and_timeout(monkeypatch):
+    _fake_cos_sdk(monkeypatch)
+    client = cos.build_cos_client("ap-hongkong", "akid", "secret", timeout=120,
+                                  endpoint="cos.internal.example.com")
+    assert client.config.Timeout == 120
+    assert client.config.Endpoint == "cos.internal.example.com"
+
+
+def test_build_cos_client_raises_a_typed_error_without_the_sdk(monkeypatch):
+    monkeypatch.setattr(cos, "HAS_COS_SDK", False)
+    with pytest.raises(cos.CosSDKMissing, match="cos-python-sdk-v5"):
+        cos.build_cos_client("ap-hongkong", "akid", "secret")
+    # It is an ImportError, so a caller catching the broader class still works.
+    assert issubclass(cos.CosSDKMissing, ImportError)
+
+
+def test_create_cos_client_delegates_to_build_cos_client(monkeypatch):
+    """One construction path, so the two entry points cannot drift apart."""
+    calls = {}
+
+    def spy(region, secret_id, secret_key, token=None, timeout=60,
+            endpoint=None, user_agent=None):
+        calls.update(region=region, secret_id=secret_id, secret_key=secret_key,
+                     token=token, timeout=timeout, endpoint=endpoint,
+                     user_agent=user_agent)
+        return "client"
+
+    monkeypatch.setattr(cos, "build_cos_client", spy)
+    params = dict(COS_PARAMS, timeout=90, endpoint="e", user_agent="ua",
+                  token="tok")
+    module = SimpleNamespace(params=params, fail_json=_fail)
+    assert cos.create_cos_client(module) == "client"
+    assert calls == {"region": "ap-guangzhou", "secret_id": "akid-test",
+                     "secret_key": "secret-test", "token": "tok", "timeout": 90,
+                     "endpoint": "e", "user_agent": "ua"}
 
 
 def test_cors_rules_desired_normalizes_user_params():

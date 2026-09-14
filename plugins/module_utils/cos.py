@@ -37,6 +37,16 @@ COS_SDK_IMP_ERR = (
     "for cos_* modules."
 )
 
+
+class CosSDKMissing(ImportError):
+    """Raised when the ``qcloud_cos`` SDK is needed but not importable.
+
+    A dedicated class (rather than a bare ``ImportError``) lets a caller that
+    has no ``AnsibleModule`` - the inventory layer - distinguish "the SDK is
+    missing" from an unrelated import failure inside the SDK itself.
+    """
+
+
 # COS error codes meaning the addressed resource does not exist. For a
 # delete, or for reading optional sub-resources such as the tag set, these
 # are expected and must not fail the module.
@@ -54,6 +64,33 @@ def require_cos_sdk(module):
     """Fail the module when the qcloud_cos SDK is not importable."""
     if not HAS_COS_SDK:
         module.fail_json(msg=COS_SDK_IMP_ERR)
+
+
+def build_cos_client(region, secret_id, secret_key, token=None, timeout=60,
+                     endpoint=None, user_agent=None):
+    """Build a ``CosS3Client`` from plain values, without an ``AnsibleModule``.
+
+    Module-free entry point shared by :func:`create_cos_client` and by
+    controller-side callers that have no ``AnsibleModule`` to read parameters
+    from (the unified inventory plugin builds one client per region). It
+    resolves nothing: the caller has already applied the parameter,
+    environment and profile fallbacks.
+
+    Raises :class:`CosSDKMissing` when the SDK is not importable, so the
+    caller can turn it into its own error type.
+    """
+    if not HAS_COS_SDK:
+        raise CosSDKMissing(COS_SDK_IMP_ERR)
+    config = CosConfig(
+        Region=region,
+        SecretId=secret_id,
+        SecretKey=secret_key,
+        Token=token,
+        Timeout=timeout or 60,
+        Endpoint=endpoint,
+        UA=user_agent,
+    )
+    return CosS3Client(config)
 
 
 def create_cos_client(module):
@@ -92,16 +129,15 @@ def create_cos_client(module):
         secret_id, secret_key, token = api3_client.maybe_assume_role(
             module, secret_id, secret_key, token
         )
-    config = CosConfig(
-        Region=module.params["region"],
-        SecretId=secret_id,
-        SecretKey=secret_key,
-        Token=token,
-        Timeout=module.params.get("timeout") or 60,
-        Endpoint=module.params.get("endpoint"),
-        UA=module.params.get("user_agent"),
+    return build_cos_client(
+        module.params["region"],
+        secret_id,
+        secret_key,
+        token,
+        timeout=module.params.get("timeout"),
+        endpoint=module.params.get("endpoint"),
+        user_agent=module.params.get("user_agent"),
     )
-    return CosS3Client(config)
 
 
 def _accessor(exc, name):
@@ -264,20 +300,34 @@ def describe_bucket(client, full_name, short_name=None):
     }
 
 
-def list_buckets(client, region=None):
-    """Return all buckets owned by the account as plain dicts."""
+def list_bucket_entries(client, region=None):
+    """Return the raw bucket entries of ``list_buckets``.
+
+    :func:`list_buckets` projects three fields because that is what
+    ``cos_bucket_info`` returns; a caller that wants the rest of the entry
+    (``Type``, ``BucketType``, ``AZType``, …) reads it here instead.
+
+    ``region`` is not a cosmetic argument: the COS service call is
+    region-scoped, so ``Region="ap-singapore"`` returns only the buckets
+    whose ``Location`` is that region (verified live: 28 of 84 on one
+    account), not the whole account.
+    """
     kwargs = {}
     if region:
         kwargs["Region"] = region
     result = client.list_buckets(**kwargs) or {}
-    bucket_list = (result.get("Buckets") or {}).get("Bucket") or []
+    return list((result.get("Buckets") or {}).get("Bucket") or [])
+
+
+def list_buckets(client, region=None):
+    """Return all buckets owned by the account as plain dicts."""
     return [
         {
             "name": item.get("Name"),
             "location": item.get("Location"),
             "creation_date": item.get("CreationDate"),
         }
-        for item in bucket_list
+        for item in list_bucket_entries(client, region)
     ]
 
 
