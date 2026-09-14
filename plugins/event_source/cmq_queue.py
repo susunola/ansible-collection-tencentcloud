@@ -13,7 +13,7 @@ Long-polls a CMQ queue and yields each received message as an event::
             queue_name: order-events
       rules:
         - name: process order
-          condition: event.cmq.MsgBody is defined
+          condition: event.cmq.msg_body is defined
           action:
             run_playbook:
               name: playbooks/process_order.yml
@@ -85,6 +85,22 @@ requirements:
   - tencentcloud-sdk-python
 author:
   - Tencent Cloud Ansible Collection Contributors (@susunola)
+'''
+
+EXAMPLES = r'''
+- name: react to CMQ messages
+  hosts: all
+  sources:
+    - susunola.tencentcloud.cmq_queue:
+        region: ap-guangzhou
+        queue_name: order-events
+        polling_wait_seconds: 10
+  rules:
+    - name: process an order
+      condition: event.cmq.msg_body is defined
+      action:
+        run_playbook:
+          name: playbooks/process_order.yml
 '''
 
 import argparse

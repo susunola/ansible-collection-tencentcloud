@@ -57,6 +57,13 @@ description:
     API exposes.
   - The status call runs in a worker thread; polling happens every
     O(interval) seconds.
+  - Every event carries the cluster under the C(tke) key, so a transition is
+    matched as I(event.tke.event_type) with I(event.tke.cluster_state),
+    I(event.tke.cluster_instance_state), the node counts and the previous
+    value attached as I(event.tke.previous_state); C(region) is added
+    alongside. A cluster that disappears from the listing is emitted as
+    I(event.tke.cluster_id) with C(ClusterDeleted). Poll failures are
+    emitted as C(tke.error) events and never crash the source.
 version_added: "1.0.0"
 options:
   secret_id:
@@ -90,6 +97,22 @@ requirements:
   - tencentcloud-sdk-python
 author:
   - Tencent Cloud Ansible Collection Contributors (@susunola)
+'''
+
+EXAMPLES = r'''
+- name: react to TKE cluster state changes
+  hosts: all
+  sources:
+    - susunola.tencentcloud.tke_cluster:
+        region: ap-guangzhou
+        cluster_ids:
+          - cls-xxxxxxxx
+  rules:
+    - name: page when a cluster turns abnormal
+      condition: event.tke.event_type == "ClusterStateChanged" and event.tke.cluster_state == "Abnormal"
+      action:
+        run_playbook:
+          name: playbooks/on_abnormal.yml
 '''
 
 import argparse

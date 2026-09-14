@@ -53,6 +53,12 @@ description:
     cap can hide objects sorted after the cut-off, so it is off by default).
   - The listing runs in a worker thread; polling happens every O(interval)
     seconds.
+  - Every event carries the object under the C(cos) key, e.g.
+    I(event.cos.key), I(event.cos.size) and I(event.cos.last_modified);
+    C(bucket), C(region) and I(event.cos.event_type) are added alongside.
+    The event type is always C(ObjectCreated) because an object listing
+    cannot tell a new object from a modified one. Listing failures are
+    emitted as C(cos.error) events and never crash the source.
 version_added: "1.0.0"
 options:
   secret_id:
@@ -95,6 +101,23 @@ requirements:
   - qcloud_cos
 author:
   - Tencent Cloud Ansible Collection Contributors (@susunola)
+'''
+
+EXAMPLES = r'''
+- name: react to objects uploaded to a COS bucket
+  hosts: all
+  sources:
+    - susunola.tencentcloud.cos_bucket:
+        region: ap-guangzhou
+        bucket: mybucket
+        appid: "1300000000"
+        prefix: images/
+  rules:
+    - name: process a new object
+      condition: event.cos.event_type == "ObjectCreated"
+      action:
+        run_playbook:
+          name: playbooks/on_upload.yml
 '''
 
 import argparse

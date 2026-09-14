@@ -291,7 +291,7 @@
           <li><span class="tag">集成测试</span><b>34 个 target 目录（33 个进 registry，21 个在默认清单）vs amazon 160 / google 115</b>（azure 产物无）。旗舰零覆盖已从 13 个降到 <b>6 个</b>（redis_instance / cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway）—— cvm_instance / vpc / subnet / cdb_instance / tke_cluster 已立 target，但 billed target 仍未进默认清单；cvm_image / lighthouse 曾是两个孤儿 target（两侧都不在），09-14 已补进 registry 并加「目录 vs registry」反向校验（G1-d 关闭）。</li>
           <li><span class="tag">读面缺口</span><b>226 个 write 模块没有配套 _info 读面</b>（scripts/gap_backlog.py 实测，波及 59 个产品；tse 27 / cos 14 / tdmq 13 / tke 11 / dlc 8 居前）—— 已从 356 降到 226，但 write 之后读不回来的闭环仍断在读面这一侧。</li>
           <li><span class="tag">单测广度</span>write 侧已闭合（<b>456 / 456 全部有专属单测文件</b>，09-08 时缺 111 个）；info 侧 36 个缺口已于 09-14 收口 —— <b>435 / 435 个 _info 全部有专属单测文件</b>（write 面 456 / 456 亦全）。92.65% 覆盖率仍由深测模块拉高，分布不均。</li>
-          <li><span class="tag">结构补课</span>plugin_utils（6）/ action（tc_wait）/ filter（tags）/ docsite（Sphinx -W 构建，产物已入库）已补齐，<b>extensions.yml 已落地</b>（声明 plugins/event_source 扩展；09-14 起由 scripts/check_extensions_metadata.py --check 双向校验，声明缺失或指向空目录即失败）；doc_fragments 6 个（amazon 5 个）；module_utils 16 个（amazon 42）。剩余结构项集中在 event_source 的文档与单测（P1-08）。</li>
+          <li><span class="tag">结构补课</span>plugin_utils（6）/ action（tc_wait）/ filter（tags）/ docsite（Sphinx -W 构建，产物已入库）已补齐，<b>extensions.yml 已落地</b>（声明 plugins/event_source 扩展；09-14 起由 scripts/check_extensions_metadata.py --check 双向校验，声明缺失或指向空目录即失败）；doc_fragments 6 个（amazon 5 个）；module_utils 16 个（amazon 42）。4 个 event_source（cmq/cls/cos/tke）09-14 补齐 EXAMPLES 块与载荷字段文档、修正 2 处永不匹配的规则条件，并由 test_examples.py 双向校验（P1-08 关闭）；ansible-core 与 antsibull-docs 都不识别该扩展类型，docsite 入口仍缺。</li>
           <li><span class="tag">生态信任</span>Galaxy 下载 553（09-14 实拉）vs 91.3M / 17.1M / 11.9M；inclusion #89 尚在评审，<b>暂无第三方采用证据</b>。</li>
           <li><span class="tag">维护资源</span>个人维护 vs 厂商 + Red Hat/社区团队；issue 响应与版本节奏是长期风险（缓解：生成式治理 + 自动化 CI 已把人均负担压低）。</li>
         </ul>
@@ -383,8 +383,8 @@
           <td class="item"><b>module_utils 按职责重组（14 → 分组）</b><span class="why">base/client/errors 已清晰，补 comparison/lifecycle 分组注释与边界文档</span></td>
           <td class="item"><span class="why">14 个文件承载全部生成逻辑，边界不清会让新模块生成器难维护。验收：module_utils README + 依赖方向图。</span></td><td><span class="chip cost">S-M</span></td></tr>
         <tr class="grp-p1"><td class="no">P1-08</td><td><span class="chip p1">P1</span></td>
-          <td class="item"><b>event_source 插件补文档 + 单测</b><span class="why">4 个 event_source（cmq/cls/cos/tke）目前无 docsite 入口，单测覆盖浅</span></td>
-          <td class="item"><span class="why">EDA 场景是腾讯云差异化（三家官方均无 event_source 目录形态）。验收：每插件 DOCUMENTATION + 至少 3 个用例。</span></td><td><span class="chip cost">M</span></td></tr>
+          <td class="item"><b>event_source 插件补文档 + 单测</b> <span class="chip done">✓ 已达成</span><span class="why">4 个 event_source 单测 8 / 12 / 13 / 20 例（共 53）；09-14 补齐 EXAMPLES 块与载荷字段文档，并修正 2 处永不匹配的规则条件（event.level → event.cls.level、event.cmq.MsgBody → event.cmq.msg_body）；新增 test_examples.py（11 例）双向校验「示例字段 ⊆ 文档承诺字段 ⊆ 代码/单测实测字段」；仍无 docsite 入口（扩展类型不被 antsibull-docs 识别）</span></td>
+          <td class="item"><span class="why">EDA 场景是腾讯云差异化（三家官方均无 event_source 目录形态）。验收：每插件 DOCUMENTATION + 至少 3 个用例 —— 已达成；docsite 入口待评估（需手写或生成 RST）。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p1"><td class="no">P1-09</td><td><span class="chip p1">P1</span></td>
           <td class="item"><b>README 模块索引加 FQCN 与示例链接</b><span class="why">每模块一行：FQCN、1 句用途、example 锚点；sync_registry.py 继续保证不漂移</span></td>
           <td class="item"><span class="why">204 产品 891 模块的发现成本是新人第一道坎。验收：README 可直接被 Galaxy 页面友好展示。</span></td><td><span class="chip cost">S</span></td></tr>

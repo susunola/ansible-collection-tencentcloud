@@ -1035,6 +1035,19 @@ budget (2076/2600) intact.
 Status 2026-09-10: P0-01…P0-12 and P1-01…P1-10 have landed (see the numbered
 entries above); the docsite build (P1-04) closed the last open P1 item.
 
+Status 2026-09-14: P1-08 landed. The four `event_source` plugins
+(`cmq_queue`, `cls_topic`, `cos_bucket`, `tke_cluster`) now carry an
+`EXAMPLES` block and document the payload fields a rule may match, and two
+rule conditions that could never have matched were corrected — the cls
+example addressed `event.level` while the source nests the record under
+`cls`, and the cmq example addressed `event.cmq.MsgBody` while the source
+emits `msg_body`. `tests/unit/plugins/event_source/test_examples.py` now
+checks both directions (example fields ⊆ documented fields ⊆ fields the
+source and its unit tests actually emit), because `plugins/event_source` is
+an extension type that no sanity test renders and `ansible-doc` never sees,
+so its examples could otherwise drift for good. `meta/extensions.yml` is
+enforced in CI as of the same day (G1-f).
+
 1. **Deepen the eight highest-use resource families.** Close runtime and
    operational workflows in TEM, TKE, CLB, CDB/Redis/MongoDB, TCR, SCF,
    API Gateway and CLS/Monitor before adding more discovery-only products.

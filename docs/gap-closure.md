@@ -184,6 +184,16 @@ TEO、CFW、CFS、Lighthouse 等），继续按 panorama 推荐顺序逐族推�
     并已进 CI：声明 → 磁盘（目录存在、集合内相对路径、有 .py）与磁盘 → 声明（非 core 插件
     类型、非 module_utils / plugin_utils 的目录必须声明）双向校验；24 条单测，3 次变异均被
     捕获后按 sha256 逐字节还原）
+ 11. **G1-g（09-14 新增）** event_source 的示例与文档不再无人校验 → ✅（ansible-core 不加载
+    `plugins/event_source`，`ansible-doc` 与任何 sanity test 都看不到它，所以 4 个插件的示例可以
+    长期与代码不一致且无人发现 —— 实际已经发生了两处：cls 示例写 `event.level` 而源码把整条日志
+    嵌在 `cls` 键下，cmq 示例写 `event.cmq.MsgBody` 而源码发的是 `msg_body`，两条规则在真实
+    rulebook 里永远匹配不到。已给 4 个插件补齐 EXAMPLES 块与载荷字段文档（DOCUMENTATION 用
+    `I(event.<key>.<field>)` 声明可匹配字段），并新增
+    `tests/unit/plugins/event_source/test_examples.py`（11 例）双向校验：示例/模块 docstring 用到
+    的字段 ⊆ 文档承诺的字段 ⊆ 源码与其单测里实测出现的字段。6 次变异全部被捕获后按 sha256
+    逐字节还原；含防空断言（找不到插件、找不到 payload key、文档未声明任何字段都会失败）——
+    第一版就因为 `parents[3]` 算错层级而整体空转，三个「变异」全过）
 
 ---
 

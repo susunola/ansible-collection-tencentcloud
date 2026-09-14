@@ -15,7 +15,7 @@ record as an event. Works with ansible-rulebook::
             query: 'level:ERROR'
       rules:
         - name: page on error
-          condition: event.level == "ERROR"
+          condition: event.cls.level == "ERROR"
           action:
             run_playbook:
               name: playbooks/on_error.yml
@@ -45,6 +45,11 @@ description:
     skipped and each log is yielded exactly once under normal operation.
   - The CLS search API runs in a worker thread so the event loop stays
     responsive; polling happens every O(interval) seconds.
+  - Every event carries the log record under the C(cls) key, so a JSON log
+    with a C(level) field is matched as I(event.cls.level); a raw log that
+    does not parse as JSON arrives as I(event.cls.message). C(topic_id) and
+    C(region) are added alongside. Search failures are emitted as
+    C(cls.error) events and never crash the source.
 version_added: "1.0.0"
 options:
   secret_id:
@@ -88,6 +93,23 @@ requirements:
   - tencentcloud-sdk-python
 author:
   - Tencent Cloud Ansible Collection Contributors (@susunola)
+'''
+
+EXAMPLES = r'''
+- name: react to error logs in a CLS topic
+  hosts: all
+  sources:
+    - susunola.tencentcloud.cls_topic:
+        region: ap-guangzhou
+        topic_id: 6a2b7c9e-1f0d-4a3b-8c5d-0e9f1a2b3c4d
+        query: level:ERROR
+        interval: 10
+  rules:
+    - name: page on an error record
+      condition: event.cls.level == "ERROR"
+      action:
+        run_playbook:
+          name: playbooks/on_error.yml
 '''
 
 import argparse

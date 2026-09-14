@@ -277,6 +277,15 @@
   exception) on transient API failures so the source stays alive.
 - Each source ships a standalone `__main__` runner for manual testing.
   See `plugins/event_source/cls_topic.py` and `cmq_queue.py`.
+- ansible-core does not load this plugin type (it is declared in
+  `meta/extensions.yml`), so no sanity test renders its doc blocks and
+  `ansible-doc` never sees them. Every source must carry a `DOCUMENTATION`
+  block naming the payload fields a rule may match as
+  `I(event.<key>.<field>)`, plus an `EXAMPLES` block, and
+  `tests/unit/plugins/event_source/test_examples.py` checks both against
+  what the source really emits. Two examples had already drifted into
+  conditions that could never match; update the doc block whenever the
+  emitted payload changes.
 
 ## Module tiers
 
