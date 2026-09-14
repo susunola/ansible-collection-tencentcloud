@@ -888,6 +888,64 @@
     unparseable doc block makes a plugin **unloadable**, and ansible reports
     it as a generic "failed to parse inventory" pointing at the config file,
     so nothing else catches it. **Done**
+86. `tc_inventory` second batch (2026-09-14, v1.4.0): the plugin now also
+    covers **CLB, CDB, CBS and COS**, taking it from four sources to eight.
+    CBS and CDB had no inventory plugin at all before this. Three things the
+    live API forced, all of them found by querying it rather than by reading
+    the SDK:
+
+    - **CLB and CDB report run state as an integer** (CLB 0/1; CDB 0/1/4/5),
+      so it is mapped to the vocabulary the other sources use and passed
+      through unchanged for a value the plugin does not know yet — otherwise
+      `keyed_groups` silently groups on a bare number.
+    - **Two tag dialects.** CLB and CDB spell tags `TagKey`/`TagValue` where
+      CVM, Lighthouse, VPC and CBS spell them `Key`/`Value`; both are read
+      now, so `tc_tags` is populated for every source.
+    - **COS is the first source that is not an API 3.0 product.** It gets its
+      own `client_builder` and `collector` on `SourceSpec` (flagged
+      `api3=False`) and needs `cos-python-sdk-v5` on the controller. Bucket
+      listing is region-scoped server-side — 28 of the account's 84 buckets
+      for `ap-singapore` — so the source ignores `filters` and is narrowed
+      with `regions` instead. CDB, meanwhile, pages on **`Items`**, not the
+      `ItemsSet` every other product uses.
+
+    Adding a source is now one `SOURCE_SPECS` entry plus a normalizer; the
+    controller-side shim (`plugin_utils/inventory.py`) needed no change at
+    all, because the new normalizers are module-side only. Verified live
+    read-only: 57 hosts across `ap-singapore` + `ap-hongkong` (cos 39,
+    cbs 16, clb 2, cdb 0 — CDB genuinely has none in those regions) and 1
+    host in `ap-jakarta` for cdb. **Done**
+
+87. Benchmark docs re-measured against the shipped v1.4.0 artifact
+    (2026-09-14): `panorama.html`, `capability-map.html` and `gap-closure.md`
+    had all drifted, because entry 86 and the v1.4.0 batch changed the numbers
+    underneath them while the pages still quoted the 2026-09-08 snapshot. Every
+    figure was re-measured rather than extrapolated:
+
+    | Figure | 09-08 page | 09-14 measured |
+    |---|---|---|
+    | Modules | 781 (440 write + 341 info) | **891 (456 write + 435 info)** |
+    | Statement coverage | 81.44% | **92.58%** (gate 80) |
+    | Module unit-test files | 781 | **918** (10,383 test functions) |
+    | Sanity ignore debt | 1557 / 1900 | **2076 / 2600** (519 x 4 core versions) |
+    | Integration targets | 21 | **34** (31 in the registry, 22 in the default list) |
+    | Write modules without a `_info` read surface | 356 / 74 products | **226 / 59 products** |
+    | Write modules without a dedicated unit test | 111 | **0** |
+    | Galaxy downloads | 415 | **553** |
+
+    The module count for the unit tests is deliberately the module-level one
+    (918 files under `tests/unit/plugins/modules`); the CI coverage step also
+    collects `tests/contract` and `tests/unit/plugins/module_utils`, which is
+    where 12,828 tests / 92.58% comes from.
+
+    **Finding while measuring — two orphan integration targets.** `cvm_image`
+    and `lighthouse` ship a complete `meta/tasks/vars` layout but appear in
+    neither `tests/integration/coverage.yml` nor the workflow's default target
+    list (they were committed as "opt-in" in `85fc1ad0` and never wired). They
+    therefore never run, and nothing fails: `check_integration_ran.py` only
+    reads the log, and `audit_integration_targets.py` does not compare the
+    target directories against the registry. Not fixed in this entry; filed as
+    G1-d in the execution checklist of `gap-closure.md`.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
@@ -909,12 +967,14 @@ environment (G1-a/b/c), P0-05/06 read-surface closure (wave 1 tse/dlc/cos/tdmq
 167 = 112 backlog + 55 no-list; the next wave chases the ckafka / trabbit /
 api_gateway / cfw / dts backlog),
 P0-07/08/09 unit-test breadth and shallow
-test upgrades (111 → <60 write modules without dedicated tests), P0-10/11 role
+test upgrades (write modules without dedicated tests: was 111, **0 as of
+2026-09-14** — the gap moved to 36 of 435 `_info` modules), P0-10/11 role
 task tests and contract coverage for generated modules, and the P1 structural
 items — plugin_utils / action / filter plugins, docsite, extensions.yml,
 doc_fragments and module_utils grouping, event_source docs, README FQCN index
 and example playbooks. Items land as individual commits, each keeping the
-coverage gate (80) and the sanity ignore budget (1557/1900) intact.
+coverage gate (80, measured 92.58% on 2026-09-14) and the sanity ignore
+budget (2076/2600) intact.
 
 Status 2026-09-10: P0-01…P0-12 and P1-01…P1-10 have landed (see the numbered
 entries above); the docsite build (P1-04) closed the last open P1 item.

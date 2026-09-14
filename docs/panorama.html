@@ -137,6 +137,7 @@
   .chip.p1{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.35)}
   .chip.p2{background:rgba(52,211,153,.1);color:#6ee7b7;border:1px solid rgba(52,211,153,.3)}
   .chip.cost{background:rgba(148,163,184,.1);color:#94a3b8;border:1px solid rgba(148,163,184,.25)}
+  .chip.done{background:rgba(52,211,153,.16);color:#6ee7b7;border:1px solid rgba(52,211,153,.45)}
   .grpbar{display:flex;gap:8px;align-items:center;margin:10px 2px 0}
   .grpbar .g{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
   .grpbar .dot{width:10px;height:10px;border-radius:3px}
@@ -175,28 +176,28 @@
         <h1>susunola.<span class="mono">tencentcloud</span> 全景对比</h1>
         <div class="sub">Full-picture benchmark · 优势与劣势 · 30 件急切可补事项（与 amazon.aws / azure.azcollection / google.cloud 对照）</div>
         <div class="badge-row">
-          <span class="pill">Galaxy <b>v1.1.0</b> 已发布</span>
-          <span class="pill">仓库 main <b>781 模块</b>（领先发布 +197）</span>
-          <span class="pill">sanity ignore <b>1557 / 预算 1900</b></span>
+          <span class="pill">Galaxy <b>v1.4.0</b> 已发布</span>
+          <span class="pill">仓库 main <b>891 模块</b>（与产物一致）</span>
+          <span class="pill">sanity ignore <b>2076 / 预算 2600</b></span>
           <span class="pill">覆盖 <b>204 产品</b> · 71 含写</span>
-          <span class="pill">gate <b>80</b></span>
+          <span class="pill">gate <b>80</b> · 实测 <b>92.58%</b></span>
         </div>
       </div>
     </div>
     <div class="ver">
-      <div class="tag">全景对比 · 2026-09-08</div>
-      <div class="meta">本库：源码 main HEAD 实测（领先已发布 v1.1.0 的 584 模块 +197）<br>对比方：Galaxy 发布产物（amazon.aws 11.4.0 / azure 4.0.0 / google.cloud 1.14.0）</div>
+      <div class="tag">全景对比 · 2026-09-14</div>
+      <div class="meta">本库：源码 main HEAD 实测（= 已发布 v1.4.0，891 模块）<br>对比方：Galaxy 发布产物（amazon.aws 11.4.0 / azure 4.0.0 / google.cloud 1.14.0）</div>
     </div>
   </div>
 
   <!-- ================= KPI ================= -->
   <div class="kpi" style="margin-top:26px">
-    <div class="cell"><div class="num">781</div><div class="lbl"><b>模块总数</b> · 440 write + 341 _info</div></div>
+    <div class="cell"><div class="num">891</div><div class="lbl"><b>模块总数</b> · 456 write + 435 _info</div></div>
     <div class="cell"><div class="num">204</div><div class="lbl"><b>覆盖产品</b> · 71 含写（61 solution + 9 managed + 1 resource-family）</div></div>
-    <div class="cell hot"><div class="num">10,015</div><div class="lbl"><b>测试函数（pytest 实测）</b> · 9,985 过 / 30 跳过</div></div>
-    <div class="cell hot"><div class="num">81.44%</div><div class="lbl"><b>语句覆盖率</b> · CI gate 80 已达成</div></div>
-    <div class="cell warn"><div class="num">21</div><div class="lbl"><b>集成测试 targets</b> · 旗舰 13 模块仍为 0</div></div>
-    <div class="cell warn"><div class="num">111</div><div class="lbl"><b>write 模块无专属单测</b> · 440 中占 25%</div></div>
+    <div class="cell hot"><div class="num">10,383</div><div class="lbl"><b>测试函数（模块级单测，pytest 实测）</b> · CI 口径 12,828：12,792 过 / 31 跳 / 5 xfail</div></div>
+    <div class="cell hot"><div class="num">92.58%</div><div class="lbl"><b>语句覆盖率</b> · CI gate 80（余 12.6 点余量）</div></div>
+    <div class="cell warn"><div class="num">34</div><div class="lbl"><b>集成测试 targets</b> · 旗舰 6 模块仍为 0</div></div>
+    <div class="cell warn"><div class="num">226</div><div class="lbl"><b>write 模块缺 _info 读面</b> · 456 中占 50%，波及 59 产品</div></div>
   </div>
 
   <!-- ================= RADAR ================= -->
@@ -225,39 +226,39 @@
           <line x1="360" y1="320" x2="174" y2="428" stroke="#202a42" stroke-width="1"/>
           <line x1="360" y1="320" x2="174" y2="212" stroke="#202a42" stroke-width="1"/>
           <!-- polygons: susunola / amazon / google / azure -->
-          <polygon points="360.0,105.0 546.2,212.5 546.2,427.5 360.0,535.0 335.6,334.1 174.0,212.5" fill="rgba(59,130,246,.16)" stroke="#3b82f6" stroke-width="2.2"/>
+          <polygon points="360.0,105.0 546.2,212.5 546.2,427.5 360.0,535.0 320.5,342.9 174.0,212.5" fill="rgba(59,130,246,.16)" stroke="#3b82f6" stroke-width="2.2"/>
           <polygon points="360.0,281.2 391.4,301.9 396.6,341.1 360.0,359.6 173.8,427.5 337.3,306.9" fill="rgba(245,158,11,.07)" stroke="#f59e0b" stroke-width="1.5"/>
           <polygon points="360.0,266.6 408.7,291.9 403.1,344.9 360.0,320.3 226.2,397.3 348.7,313.5" fill="rgba(34,211,238,.06)" stroke="#22d3ee" stroke-width="1.5"/>
           <polygon points="360.0,202.7 449.7,268.2 476.8,387.5 360.0,320.0 360.0,320.0 348.7,313.5" fill="rgba(139,92,246,.05)" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="5 3"/>
           <!-- axis labels (main + values, legend order: susunola / amazon / google / azure) -->
           <text x="360" y="26" text-anchor="middle" font-size="13.5" fill="#c3cde0">模块广度</text>
-          <text x="360" y="42" text-anchor="middle" font-size="10.5" fill="#5d6a85">781 / 141 / 194 / 426</text>
+          <text x="360" y="42" text-anchor="middle" font-size="10.5" fill="#5d6a85">891 / 141 / 194 / 426</text>
           <text x="611" y="172" text-anchor="start" font-size="13.5" fill="#c3cde0">write 深度</text>
-          <text x="611" y="188" text-anchor="start" font-size="10.5" fill="#5d6a85">440 / 74 / 115 / 212</text>
+          <text x="611" y="188" text-anchor="start" font-size="10.5" fill="#5d6a85">456 / 74 / 115 / 212</text>
           <text x="611" y="452" text-anchor="start" font-size="13.5" fill="#c3cde0">info 发现</text>
-          <text x="611" y="468" text-anchor="start" font-size="10.5" fill="#5d6a85">341 / 67 / 79 / 214</text>
+          <text x="611" y="468" text-anchor="start" font-size="10.5" fill="#5d6a85">435 / 67 / 79 / 214</text>
           <text x="360" y="598" text-anchor="middle" font-size="13.5" fill="#c3cde0">单测文件 *</text>
-          <text x="360" y="614" text-anchor="middle" font-size="10.5" fill="#5d6a85">781 / 144 / 1 / 0</text>
+          <text x="360" y="614" text-anchor="middle" font-size="10.5" fill="#5d6a85">918 / 144 / 1 / 0</text>
           <text x="109" y="452" text-anchor="end" font-size="13.5" fill="#c3cde0">集成 targets</text>
-          <text x="109" y="468" text-anchor="end" font-size="10.5" fill="#5d6a85">21 / 160 / 115 / 0</text>
+          <text x="109" y="468" text-anchor="end" font-size="10.5" fill="#5d6a85">34 / 160 / 115 / 0</text>
           <text x="109" y="172" text-anchor="end" font-size="13.5" fill="#c3cde0">插件 + roles</text>
-          <text x="109" y="188" text-anchor="end" font-size="10.5" fill="#5d6a85">82 / 10 / 5 / 5</text>
+          <text x="109" y="188" text-anchor="end" font-size="10.5" fill="#5d6a85">85 / 10 / 5 / 5</text>
         </svg>
         <div class="legend">
-          <div class="li"><span class="sw" style="background:#3b82f6"></span><b>susunola.tencentcloud</b> main @ 2026-09-08 · 本库（领先已发布 v1.1.0）</div>
+          <div class="li"><span class="sw" style="background:#3b82f6"></span><b>susunola.tencentcloud</b> main @ 2026-09-14 · 本库（= 已发布 v1.4.0）</div>
           <div class="li"><span class="sw" style="background:#f59e0b"></span><b>amazon.aws</b> v11.4.0</div>
           <div class="li"><span class="sw" style="background:#22d3ee"></span><b>google.cloud</b> v1.14.0</div>
           <div class="li"><span class="sw" style="background:#8b5cf6;opacity:.8"></span><b>azure.azcollection</b> v4.0.0（虚线 = 测试轴为产物剥离值）</div>
-          <div class="note"><b>读数</b>：六边形越外越大。本库在模块广度 / write 深度 / info 发现 / 单测文件 / 插件+roles 五轴满格或近满格（模块 781 / write 440 / info 341 均列四家第一）；<b>集成 targets 轴明显内凹（21 vs amazon 160）</b>——这是全景中唯一的结构性短板，也是 30 件事里 P0 的主战场。</div>
+          <div class="note"><b>读数</b>：六边形越外越大。本库在模块广度 / write 深度 / info 发现 / 单测文件 / 插件+roles 五轴满格（模块 891 / write 456 / info 435 均列四家第一）；<b>集成 targets 轴仍是唯一明显内凹的一轴（34 vs amazon 160）</b>——从 09-08 的 21 推进到 34，但仍是 30 件事里 P0 的主战场。</div>
         </div>
       </div>
       <div class="radar-card">
         <div class="rt">轴归一说明</div>
         <div class="legend" style="margin-top:4px">
-          <div class="li" style="align-items:flex-start"><span class="sw" style="background:#3b82f6;margin-top:2px"></span><span><b>模块广度 / write 深度 / info 发现</b>：<br>三家官方库的模块已按「通用模块外迁」（amazon→community.aws / aws_*）收窄过口径，仍以 Galaxy 产物实数为准；本库按源码 main 全量实测（发布 v1.1.0 = 584，main 已领先 +197 未发布）。</span></div>
-          <div class="li" style="align-items:flex-start"><span class="sw" style="background:#f59e0b;margin-top:2px"></span><span><b>单测文件（口径差异）</b>：<br>amazon 产物带 144 个单测文件；azure 产物剥离全部 tests/、google 产物仅留 1 个 —— 这两家在源码仓库的测试规模远大于产物所见，对比时只看趋势、勿当作源码差距。本库 781 个模块级单测文件（10,015 个测试函数，pytest 实测），口径为 repo 而非产物。</span></div>
-          <div class="li" style="align-items:flex-start"><span class="sw" style="background:#22d3ee;margin-top:2px"></span><span><b>插件 + roles</b>：<br>本库 68 roles（61 solution + 组合 role，三家官方 0）+ 14 个非模块插件文件（inventory 5 / lookup 3 / connection 1 / callback 1 / event_source 4）；amazon 10 个（action 1 / callback 1 / connection 1 / inventory 2 / lookup 5）。</span></div>
-          <div class="li" style="align-items:flex-start"><span class="sw" style="background:#8b5cf6;margin-top:2px"></span><span><b>读图局限</b>：六维归一只能覆盖「有产物可比的量」；<u style="color:var(--muted)">幂等质量、生成式治理、写读配对深度这类「质」的领先与「生态下载 415」这类差距不进雷达</u>，见下方结论卡。</span></div>
+          <div class="li" style="align-items:flex-start"><span class="sw" style="background:#3b82f6;margin-top:2px"></span><span><b>模块广度 / write 深度 / info 发现</b>：<br>三家官方库的模块已按「通用模块外迁」（amazon→community.aws / aws_*）收窄过口径，仍以 Galaxy 产物实数为准；本库按源码 main 全量实测（发布 v1.4.0 = 891，main 与产物一致）。</span></div>
+          <div class="li" style="align-items:flex-start"><span class="sw" style="background:#f59e0b;margin-top:2px"></span><span><b>单测文件（口径差异）</b>：<br>amazon 产物带 144 个单测文件；azure 产物剥离全部 tests/、google 产物仅留 1 个 —— 这两家在源码仓库的测试规模远大于产物所见，对比时只看趋势、勿当作源码差距。本库 918 个模块级单测文件（10,383 个测试函数，pytest 实测），口径为 repo 而非产物。</span></div>
+          <div class="li" style="align-items:flex-start"><span class="sw" style="background:#22d3ee;margin-top:2px"></span><span><b>插件 + roles</b>：<br>本库 68 roles（61 solution + 组合 role，三家官方 0）+ 17 个非模块插件文件（inventory 6 / lookup 3 / connection 1 / callback 1 / event_source 4 / action 1 / filter 1）；amazon 10 个（action 1 / callback 1 / connection 1 / inventory 2 / lookup 5）。</span></div>
+          <div class="li" style="align-items:flex-start"><span class="sw" style="background:#8b5cf6;margin-top:2px"></span><span><b>读图局限</b>：六维归一只能覆盖「有产物可比的量」；<u style="color:var(--muted)">幂等质量、生成式治理、写读配对深度这类「质」的领先与「生态下载 553」这类差距不进雷达</u>，见下方结论卡。</span></div>
         </div>
       </div>
     </div>
@@ -269,37 +270,37 @@
       <div>
         <div class="eyebrow">Verdict</div>
         <h2>对比友商：优势与劣势</h2>
-        <div class="sub">本库按源码 main 实测（2026-09-08）；对比方按 Galaxy 产物实测数据（版本未变，沿用 09-02 核验口径）。</div>
+        <div class="sub">本库按源码 main 实测（2026-09-14，= 已发布 v1.4.0 产物）；对比方按 Galaxy 产物实测数据（版本未变，沿用 09-02 核验口径，下载计数 09-14 实拉）。</div>
       </div>
     </div>
     <div class="verdict">
       <div class="vc good">
         <div class="vt">▲ 领先项（实测）</div>
         <ul>
-          <li><span class="tag">覆盖面</span><b>模块 781、write 440、info 341，均列四家第一</b>（azure 426/212 次之）。341 个 *_info 由 SDK introspection 生成，是三家官方库没有的「全产品可发现」能力。</li>
+          <li><span class="tag">覆盖面</span><b>模块 891、write 456、info 435，均列四家第一</b>（azure 426/212 次之）。435 个 *_info 由 SDK introspection 生成，是三家官方库没有的「全产品可发现」能力。</li>
           <li><span class="tag">写读配对</span><b>v1.1 起系统性关闭 read-surface 缺口</b>：shared resolver 铺到 VPC / TKE / 负载均衡 / 数据库家族，CVM / Lighthouse / database / TCR 读面逐批补齐 —— write 之后能用同一 collection 读回状态的主力产品已闭环。</li>
-          <li><span class="tag">组合能力</span><b>68 个 solution roles</b>（含 launch / clb_http / web_stack / tke_cluster / disaster_recovery 等）vs 三家官方 0 个组合 role；一次调用编排多资源 + teardown。</li>
-          <li><span class="tag">质量治理</span><b>生成式治理</b>：generated 模块由 spec 生成、禁止手改；幂等 + check mode 全量内置。sanity ignore 债务 <b>1557 条预算化</b>（1900 封顶 + CI guard step），杜绝合并悄悄放大豁免面。<b>coverage gate 80 已达成</b>（81.44%）。</li>
-          <li><span class="tag">单测密度</span>781 个模块级单测文件 / 10,015 个测试函数（pytest 实测，9,985 过 / 30 跳）；80% 冲刺单批 +73 文件 / 1,102 tests，行覆盖 60.9% → 81.44%。</li>
+          <li><span class="tag">组合能力</span><b>68 个 roles（61 个达 solution 成熟度）</b>（含 launch / clb_http / web_stack / tke_cluster / disaster_recovery 等）vs 三家官方 0 个组合 role；一次调用编排多资源 + teardown。</li>
+          <li><span class="tag">质量治理</span><b>生成式治理</b>：generated 模块由 spec 生成、禁止手改；幂等 + check mode 全量内置。sanity ignore 债务 <b>2076 条预算化</b>（519 条 × 4 个 core 版本 ignore 文件，2600 封顶 + CI guard step），杜绝合并悄悄放大豁免面。<b>coverage gate 80 已达成</b>（实测 92.58%）。</li>
+          <li><span class="tag">单测密度</span>918 个模块级单测文件 / 10,383 个测试函数（pytest 实测）；CI 口径（contract + module_utils + modules）12,828 条：12,792 过 / 31 跳 / 5 xfail，语句覆盖 92.58%。<b>456 个 write 模块已全部有专属单测文件</b>（09-08 时还缺 111 个）。</li>
           <li><span class="tag">演进对齐</span>ansible-core 门槛 ≥2.19（2.16-2.18 已 EOL），CI 矩阵 2.19/2.20/2.21 × py 3.11/3.12/3.13 —— 主动对齐演进而非历史声明。</li>
         </ul>
       </div>
       <div class="vc bad">
         <div class="vt">▼ 差距项（需追赶）</div>
         <ul>
-          <li><span class="tag">集成测试</span><b>21 targets vs amazon 160 / google 115</b>（azure 产物无）。且 13 个旗舰模块（cvm_instance / vpc / cdb_instance / redis_instance / tke_cluster / clb_load_balancer / cos_object / scf_function / ckafka_instance / cbs_disk / eip / nat_gateway / subnet）<b>零集成覆盖</b> —— 旗舰面在真实环境从未被验证。</li>
-          <li><span class="tag">读面缺口</span><b>356 个 write 模块没有配套 _info 读面</b>（波及 74 个产品；tse 33 / dlc 26 / cos 16 / tdmq 15 / waf 13 / teo 12 / tsf 12 / monitor 12 居前）——write 之后读不回来，闭环断在读面这一侧。</li>
-          <li><span class="tag">单测广度</span><b>440 个 write 模块中 111 个没有专属单测文件</b>（25%）；81.44% 覆盖率仍由深测模块拉高，广度分布不均。</li>
-          <li><span class="tag">结构补课</span>缺 <b>plugin_utils / action / filter / docsite / extensions.yml</b> 等目录与元数据；doc_fragments 仅 1 个（amazon 5 个）；module_utils 14 个（amazon 42）。文档站点、依赖声明等「官方库标配」尚未建立。</li>
-          <li><span class="tag">生态信任</span>Galaxy 下载 415 vs 90.9M / 17.1M / 11.9M；inclusion #89 尚在评审，<b>暂无第三方采用证据</b>。</li>
+          <li><span class="tag">集成测试</span><b>34 个 target 目录（31 个进 registry，22 个在默认清单）vs amazon 160 / google 115</b>（azure 产物无）。旗舰零覆盖已从 13 个降到 <b>6 个</b>（redis_instance / cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway）—— cvm_instance / vpc / subnet / cdb_instance / tke_cluster 已立 target，但 billed target 仍未进默认清单，且 cvm_image / lighthouse 两个 target 既不进 registry 也不进默认清单（孤儿 target）。</li>
+          <li><span class="tag">读面缺口</span><b>226 个 write 模块没有配套 _info 读面</b>（scripts/gap_backlog.py 实测，波及 59 个产品；tse 27 / cos 14 / tdmq 13 / tke 11 / dlc 8 居前）—— 已从 356 降到 226，但 write 之后读不回来的闭环仍断在读面这一侧。</li>
+          <li><span class="tag">单测广度</span>write 侧已闭合（<b>456 / 456 全部有专属单测文件</b>，09-08 时缺 111 个）；广度缺口转移到 info 侧 —— <b>435 个 _info 中 36 个没有专属单测文件</b>（8%）。92.58% 覆盖率仍由深测模块拉高，分布不均。</li>
+          <li><span class="tag">结构补课</span>plugin_utils（6）/ action（tc_wait）/ filter（tags）/ docsite（Sphinx -W 构建，产物已入库）已补齐，<b>extensions.yml 仍缺</b>；doc_fragments 6 个（amazon 5 个）；module_utils 16 个（amazon 42）。依赖声明是最后一块「官方库标配」。</li>
+          <li><span class="tag">生态信任</span>Galaxy 下载 553（09-14 实拉）vs 91.3M / 17.1M / 11.9M；inclusion #89 尚在评审，<b>暂无第三方采用证据</b>。</li>
           <li><span class="tag">维护资源</span>个人维护 vs 厂商 + Red Hat/社区团队；issue 响应与版本节奏是长期风险（缓解：生成式治理 + 自动化 CI 已把人均负担压低）。</li>
         </ul>
       </div>
     </div>
     <div class="hard-truth">
       <span class="ht-t">⚠ 两条硬真相（自审结论，非客套）：</span>
-      ① <b>「模块多」不等于「可信」</b> —— 13 个旗舰模块从未在真实腾讯云环境跑过集成测试，这是向外宣称「企业级」前必须先补的信用账；
-      ② <b>广度数字要按「写读双闭环」来读</b> —— 781 模块里 356 个 write 没有 _info 读面、132 个产品只有单只读 _info，真正 write+read 双面闭环的产品约 71 个；对外展示覆盖时不能只报 781。
+      ① <b>「模块多」不等于「可信」</b> —— 仍有 6 个旗舰模块（redis_instance / cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway）从未在真实腾讯云环境跑过集成测试，且 billed target 只在人工 dispatch 时才跑：这是向外宣称「企业级」前必须先补的信用账；
+      ② <b>广度数字要按「写读双闭环」来读</b> —— 891 模块里 226 个 write 没有 _info 读面、132 个产品只有单只读 _info，真正含 write 的产品 71 个；对外展示覆盖时不能只报 891。
     </div>
   </section>
 
@@ -309,7 +310,7 @@
       <div>
         <div class="eyebrow">Urgent · 30</div>
         <h2>目前急切可补齐的 30 件事</h2>
-        <div class="sub">按「先证明旗舰可信 → 再补读面/广度 → 后建生态」排序；每批不破坏 coverage gate 80 与 sanity 预算（1557/1900）。</div>
+        <div class="sub">按「先证明旗舰可信 → 再补读面/广度 → 后建生态」排序；每批不破坏 coverage gate 80（实测 92.58%）与 sanity 预算（2076/2600）。<span class="chip done">✓ 已达成</span> 标记为 2026-09-14 复核时已落地的事项。</div>
       </div>
       <div class="grpbar">
         <span class="g"><span class="dot" style="background:rgba(251,113,133,.8)"></span>P0 测试可信度 ×12</span>
@@ -324,29 +325,29 @@
       </thead>
       <tbody>
         <tr class="grp-p0"><td class="no">P0-01</td><td><span class="chip p0">P0</span></td>
-          <td class="item"><b>cvm_instance 首个集成 target</b><span class="why">在 tests/integration/targets/ 建 layout 模板（provision → assert → cleanup），复用 amazon 的 target 组织规范（G1-a）</span></td>
-          <td class="item"><span class="why">旗舰模块真实环境验证从 0 到 1，为其余 12 个旗舰立样板。验收：cvm_instance create/read/delete 全流程集成用例可跑。</span></td><td><span class="chip cost">M</span></td></tr>
+          <td class="item"><b>cvm_instance 首个集成 target</b> <span class="chip done">✓ 已达成</span><span class="why">在 tests/integration/targets/ 建 layout 模板（provision → assert → cleanup），复用 amazon 的 target 组织规范（G1-a）</span></td>
+          <td class="item"><span class="why">旗舰模块真实环境验证从 0 到 1。已进 coverage.yml（cost: medium），因属 billed target 只在人工 dispatch 时跑。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-02</td><td><span class="chip p0">P0</span></td>
-          <td class="item"><b>再补 4 个旗舰集成 target</b><span class="why">vpc / subnet（网络基础面）、cdb_instance（数据库）、tke_cluster（容器）</span></td>
-          <td class="item"><span class="why">旗舰零集成从 13 个降到 8 个；网络 + 数据库 + 容器是客户最常用的三条线。验收：21 → 25+ targets。</span></td><td><span class="chip cost">L</span></td></tr>
+          <td class="item"><b>再补 4 个旗舰集成 target</b> <span class="chip done">✓ 已达成</span><span class="why">vpc / subnet（网络基础面，cost: free）、cdb_instance（数据库）、tke_cluster（容器）四个 target 均已落地</span></td>
+          <td class="item"><span class="why">旗舰零集成 09-14 实测已从 13 个降到 <b>6 个</b>（redis_instance / cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway）。target 总数 21 → 34。</span></td><td><span class="chip cost">L</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-03</td><td><span class="chip p0">P0</span></td>
           <td class="item"><b>定义集成测试可信执行环境</b><span class="why">真实腾讯云账号 + 资源自动清理策略，或 ansible-test cloud 插件化接入；CI 定时跑而非 PR 阻塞（G1-b）</span></td>
           <td class="item"><span class="why">没有可信环境，target 只是摆设。验收：文档写明凭据注入、清理兜底（防资源泄漏扣费）、失败告警。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-04</td><td><span class="chip p0">P0</span></td>
-          <td class="item"><b>目标：集成 target 21 → 30+</b><span class="why">覆盖 13 旗舰中的 5 个后继续向 30+ 推进（G1-c），按 product-depth 里旗舰产品优先</span></td>
-          <td class="item"><span class="why">对齐 amazon 160 / google 115 的量级仍是长期目标；先立可执行的 30+ 里程碑。验收：2026-10 前 30+ targets 全绿。</span></td><td><span class="chip cost">L</span></td></tr>
+          <td class="item"><b>目标：集成 target 21 → 30+</b> <span class="chip done">✓ 数量已达成</span><span class="why">覆盖 13 旗舰中的 7 个后继续向 30+ 推进（G1-c），按 product-depth 里旗舰产品优先</span></td>
+          <td class="item"><span class="why">09-14 实测 34 个 target 目录 / 31 个进 registry，数量里程碑已过；但对齐 amazon 160 / google 115 仍是长期目标，且默认清单只有 22 个（billed target 需人工 dispatch），「30+ 全绿」待 2026-09-19 首次带凭据的定时跑验证。</span></td><td><span class="chip cost">L</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-05</td><td><span class="chip p0">P0</span></td>
-          <td class="item"><b>read-surface 收口第一波：write 缺 _info 大户</b><span class="why">tse(33) / dlc(26) / cos(16) / tdmq(15) 的 write 模块补 _info 读面；用 discover_info_specs.py + 生成器，只生成 SDK 真实 list API</span></td>
-          <td class="item"><span class="why">356 个 write 无读面（74 产品），这是当前最大深度缺口。验收：356 → ~260，四个大户率先归零。</span></td><td><span class="chip cost">M</span></td></tr>
+          <td class="item"><b>read-surface 收口第一波：write 缺 _info 大户</b><span class="why">09-14 实测大户为 tse(27) / cos(14) / tdmq(13) / tke(11) / dlc(8)；用 discover_info_specs.py + 生成器，只生成 SDK 真实 list API</span></td>
+          <td class="item"><span class="why">09-14 实测 226 个 write 无读面（59 产品），仍是当前最大深度缺口（09-08 为 356/74）。验收：226 → ~150，tse / cos / tdmq 三个大户率先归零。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-06</td><td><span class="chip p0">P0</span></td>
-          <td class="item"><b>read-surface 收口第二波</b><span class="why">waf(13) / teo(12) / tsf(12) / monitor(12) / cvm(9) / config(8) / oceanus(8) / tke(7) 逐个补；无 list API 的资源记入 KNOWN_GAPS 不硬造</span></td>
-          <td class="item"><span class="why">write→read 闭环是「管理面完整」的定义；宁可明确 KNOWN_GAPS 也不造不存在的读面。验收：74 产品 → &lt;30。</span></td><td><span class="chip cost">M</span></td></tr>
+          <td class="item"><b>read-surface 收口第二波</b><span class="why">09-14 实测尾部为 teo(7) / trabbit(6) / monitor(6) / ckafka(6) / waf(5) / dts(5) / cfw(5) / api(5)；无 list API 的资源记入 KNOWN_GAPS 不硬造</span></td>
+          <td class="item"><span class="why">write→read 闭环是「管理面完整」的定义；宁可明确 KNOWN_GAPS 也不造不存在的读面。验收：59 产品 → &lt;30。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-07</td><td><span class="chip p0">P0</span></td>
-          <td class="item"><b>batch 12+：按 per-file miss 从高到低补 write 单测</b><span class="why">继续每周 1-2 批；111 个无专属单测的 write 模块按 miss 榜单逐个补主路径测试</span></td>
-          <td class="item"><span class="why">每批语句覆盖小幅前进 + 广度趋匀。验收：111 → &lt;60，write 面覆盖向 85% 推进，gate 80 全程不破。</span></td><td><span class="chip cost">M</span></td></tr>
+          <td class="item"><b>batch 12+：按 per-file miss 从高到低补 write 单测</b> <span class="chip done">✓ 已达成</span><span class="why">每周 1-2 批推进；write 面按 miss 榜单逐个补主路径测试</span></td>
+          <td class="item"><span class="why">验收口径（111 → &lt;60）已超额完成：<b>456 / 456 个 write 模块全部有专属单测文件</b>。剩余广度缺口转移到 info 侧（435 中 36 个缺专属单测）。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-08</td><td><span class="chip p0">P0</span></td>
-          <td class="item"><b>实现 --module-test 骨架生成器</b><span class="why">coverage-batching lever 1：静态读 write 模块，产出可跑 harness（imports + fake client + 每 state 分支测试 stub），断言人工写（G1b-a）</span></td>
-          <td class="item"><span class="why">剩余 write 模块多共享同一 helper 骨架，单模块 1-2h → 20-40min；是把 111 → 0 的唯一杠杆。验收：1 个参考生成测试过 sanity + units。</span></td><td><span class="chip cost">S-M</span></td></tr>
+          <td class="item"><b>实现 --module-test 骨架生成器</b> <span class="chip done">✓ 已达成</span><span class="why">coverage-batching lever 1：静态读 write 模块，产出可跑 harness（imports + fake client + 每 state 分支测试 stub），断言人工写（G1b-a）。落地为 scripts/generate_module_test_skeleton.py</span></td>
+          <td class="item"><span class="why">剩余 write 模块多共享同一 helper 骨架，单模块 1-2h → 20-40min；是把 111 → 0 的唯一杠杆（09-14 复核：write 无单测已归零）。验收：1 个参考生成测试过 sanity + units。</span></td><td><span class="chip cost">S-M</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-09</td><td><span class="chip p0">P0</span></td>
           <td class="item"><b>单测文件质量审计：浅测试升级</b><span class="why">扫描 &lt;80 行模块测试文件（多为冒烟），逐个升级为全 harness 或并入同族文件</span></td>
           <td class="item"><span class="why">浅测试制造「有测试」假象。验收：&lt;80 行模块测试文件归零（与 80% 冲刺前同口径复查）。</span></td><td><span class="chip cost">M</span></td></tr>
@@ -355,28 +356,28 @@
           <td class="item"><span class="why">roles 从 5 涨到 68 后是差异化主卖点，也是最容易在重构时悄悄坏的部分。验收：每 role 至少 3 个 task 级断言用例。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-11</td><td><span class="chip p0">P0</span></td>
           <td class="item"><b>补齐 contract tests 对生成模块的覆盖</b><span class="why">每个 SDK 请求模型逐字段比对真实返回值结构；新增 SDK 方法自动检测</span></td>
-          <td class="item"><span class="why">生成式治理的短板在「SDK 升级悄悄破坏请求形状」——contract 测试是护栏。验收：440 write 模块全部有契约用例。</span></td><td><span class="chip cost">L</span></td></tr>
+          <td class="item"><span class="why">生成式治理的短板在「SDK 升级悄悄破坏请求形状」——contract 测试是护栏。验收：456 write 模块全部有契约用例（当前 contract 覆盖仍在推进中）。</span></td><td><span class="chip cost">L</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-12</td><td><span class="chip p0">P0</span></td>
-          <td class="item"><b>修正 capability-map / gap-closure / roadmap 的 benchmark 数据口径</b><span class="why">KPI 按 204 产品 / 71 含写 / 781 模块刷新；雷达与 30 件事与 panorama 同源；G1b 里程碑已达成标注</span></td>
-          <td class="item"><span class="why">对外展示的对比表不能带已知过期数字（225 产品 / 60.9% / gate 55 等已失效）。验收：三份文档数据与本页一致。</span></td><td><span class="chip cost">S</span></td></tr>
+          <td class="item"><b>修正 capability-map / gap-closure / roadmap 的 benchmark 数据口径</b><span class="why">KPI 按 204 产品 / 71 含写 / 891 模块刷新；雷达与 30 件事与 panorama 同源；G1b 里程碑已达成标注</span></td>
+          <td class="item"><span class="why">对外展示的对比表不能带已知过期数字（781 模块 / 81.44% / sanity 1557-1900 等已失效）。验收：三份文档数据与本页一致 —— panorama 已于 2026-09-14 按实测刷新（891 / 92.58% / 2076-2600）。</span></td><td><span class="chip cost">S</span></td></tr>
 
         <tr class="grp-p1"><td class="no">P1-01</td><td><span class="chip p1">P1</span></td>
-          <td class="item"><b>新增 plugins/plugin_utils 共享库</b><span class="why">把 module_utils 中与模块无关的公共逻辑（认证、region 归一、分页）上移；对齐 amazon plugin_utils 14 文件的结构</span></td>
+          <td class="item"><b>新增 plugins/plugin_utils 共享库</b> <span class="chip done">✓ 已达成</span><span class="why">落地为 plugins/plugin_utils/ 下 6 个文件（含 inventory.py 控制器 shim）；与 module_utils（16 个）分工</span></td>
           <td class="item"><span class="why">官方库标配；为未来 action/filter 插件提供公共底座。验收：plugin_utils 首个文件 + 迁移 1-2 个公共函数。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p1"><td class="no">P1-02</td><td><span class="chip p1">P1</span></td>
-          <td class="item"><b>新增首个 action 插件</b><span class="why">如 tc_wait（等待资源就绪的跨模块操作）或 run_instances 语义扩展；对齐 amazon action/ 目录</span></td>
+          <td class="item"><b>新增首个 action 插件</b> <span class="chip done">✓ 已达成</span><span class="why">落地为 plugins/action/tc_wait.py（等待资源就绪的跨模块操作），已完成 sanity + 单测</span></td>
           <td class="item"><span class="why">action 是「模块做不到的流程控制」入口，社区常见需求。验收：1 个 action + sanity + 单测。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p1"><td class="no">P1-03</td><td><span class="chip p1">P1</span></td>
-          <td class="item"><b>新增 filter 插件（首个）</b><span class="why">如 tc_tag_merge / tc_instance_name 归一；google 有 1 个 filter，amazon/azure 无</span></td>
+          <td class="item"><b>新增 filter 插件（首个）</b> <span class="chip done">✓ 已达成</span><span class="why">落地为 plugins/filter/tags.py（tag_merge 标签归并）；google 有 1 个 filter，amazon/azure 无</span></td>
           <td class="item"><span class="why">jinja 过滤器让 playbook 表达更顺；低成本差异化。验收：1 个 filter + 文档 + 单测。</span></td><td><span class="chip cost">S-M</span></td></tr>
         <tr class="grp-p1"><td class="no">P1-04</td><td><span class="chip p1">P1</span></td>
-          <td class="item"><b>引入 docsite 文档构建</b><span class="why">antsibull-docs 生成 ansible-doc 风格的 HTML 站点，作为 docs.pages 发布源</span></td>
-          <td class="item"><span class="why">781 模块的 DOCUMENTATION 目前只在 README 索引可见；可搜索文档是采用门槛。验收：本地构建出站点的 docs 目录。</span></td><td><span class="chip cost">M</span></td></tr>
+          <td class="item"><b>引入 docsite 文档构建</b> <span class="chip done">✓ 已达成</span><span class="why">docs/docsite/build.sh：antsibull-docs + sphinx-build -M html（--fail-on-error / -W），构建产物 docs/docsite/build/html 已入库，随每次 release 重建</span></td>
+          <td class="item"><span class="why">891 个插件的 DOCUMENTATION 已可在站点内搜索。验收达成：构建在 -W（warning = error）下通过并随 v1.4.0 重建。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p1"><td class="no">P1-05</td><td><span class="chip p1">P1</span></td>
           <td class="item"><b>补齐 extensions.yml 元数据</b><span class="why">声明 collection 提供的插件路由/依赖；amazon/azure 均有、本库缺失</span></td>
           <td class="item"><span class="why">ansible-navigator / 执行环境 / Galaxy 页面展示依赖它。验收：extensions.yml 通过 ansible-community 校验。</span></td><td><span class="chip cost">S</span></td></tr>
         <tr class="grp-p1"><td class="no">P1-06</td><td><span class="chip p1">P1</span></td>
-          <td class="item"><b>doc_fragments 从 1 拆到 5+</b><span class="why">公共参数（认证、region、waiter、retry）抽成 fragment，各模块文档引用而非复制</span></td>
+          <td class="item"><b>doc_fragments 从 1 拆到 5+</b> <span class="chip done">✓ 已达成</span><span class="why">公共参数（认证、region、waiter、retry）抽成 fragment，各模块文档引用而非复制；现有 6 个，已超过 amazon 的 5 个</span></td>
           <td class="item"><span class="why">与 amazon doc_fragments 5 个对齐；文档单一事实来源。验收：常用参数迁移到 fragment 且 validate-modules 全绿。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p1"><td class="no">P1-07</td><td><span class="chip p1">P1</span></td>
           <td class="item"><b>module_utils 按职责重组（14 → 分组）</b><span class="why">base/client/errors 已清晰，补 comparison/lifecycle 分组注释与边界文档</span></td>
@@ -386,14 +387,14 @@
           <td class="item"><span class="why">EDA 场景是腾讯云差异化（三家官方均无 event_source 目录形态）。验收：每插件 DOCUMENTATION + 至少 3 个用例。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p1"><td class="no">P1-09</td><td><span class="chip p1">P1</span></td>
           <td class="item"><b>README 模块索引加 FQCN 与示例链接</b><span class="why">每模块一行：FQCN、1 句用途、example 锚点；sync_registry.py 继续保证不漂移</span></td>
-          <td class="item"><span class="why">204 产品 781 模块的发现成本是新人第一道坎。验收：README 可直接被 Galaxy 页面友好展示。</span></td><td><span class="chip cost">S</span></td></tr>
+          <td class="item"><span class="why">204 产品 891 模块的发现成本是新人第一道坎。验收：README 可直接被 Galaxy 页面友好展示。</span></td><td><span class="chip cost">S</span></td></tr>
         <tr class="grp-p1"><td class="no">P1-10</td><td><span class="chip p1">P1</span></td>
           <td class="item"><b>补 docs/examples 端到端 playbook 集</b><span class="why">旗舰场景（建站、K8s、DR）各一个可跑 playbook，从 68 roles 挑 5 个场景，模块混排示范</span></td>
           <td class="item"><span class="why">「拿来就能跑」比任何 marketing 都有说服力。验收：5 个 example 全部 syntax-check 通过。</span></td><td><span class="chip cost">M</span></td></tr>
 
         <tr class="grp-p2"><td class="no">P2-01</td><td><span class="chip p2">P2</span></td>
           <td class="item"><b>G2-a：按官方流程评审 1 个排队中的他人 collection</b><span class="why">inclusion README step 1：先评审别人可提升自身优先级</span></td>
-          <td class="item"><span class="why">#89 已静置数日，这是唯一主动杠杆。验收：在官方队列提交 1 份评审，2026-09-09 前。</span></td><td><span class="chip cost">M</span></td></tr>
+          <td class="item"><span class="why">#89 已静置数日，这是唯一主动杠杆。验收：在官方队列提交 1 份评审。<b>原定 2026-09-09，截至 09-14 仍未提交 —— 已逾期，仍是最高优先的 P2。</b></span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p2"><td class="no">P2-02</td><td><span class="chip p2">P2</span></td>
           <td class="item"><b>每周五检查 #89 评审反馈并回复</b><span class="why">评审者开始 review 后 24h 内响应，避免冷却</span></td>
           <td class="item"><span class="why">inclusion 通过 = Galaxy 推荐位 + 社区信任起点。验收：讨论串有实质往来。</span></td><td><span class="chip cost">S</span></td></tr>
@@ -401,16 +402,16 @@
           <td class="item"><b>CONTRIBUTING.md 补 co-maintainer 加入路径</b><span class="why">明确权限边界（模块命名 / CI 闸门 / release 权）、期望投入、加入步骤</span></td>
           <td class="item"><span class="why">单人维护是 G4 结构性风险，加入路径是解药第一步。验收：2026-09-30 前合入。</span></td><td><span class="chip cost">S</span></td></tr>
         <tr class="grp-p2"><td class="no">P2-04</td><td><span class="chip p2">P2</span></td>
-          <td class="item"><b>release 流程全自动化（tag → Galaxy publish → changelog）</b><span class="why">release.yml 已在跑测试，补发布段：自动打 tag、build、galaxy publish、changelog 生成；v1.1.0 已打通手动发布</span></td>
-          <td class="item"><span class="why">main 已领先发布 +197 模块，稳定小步发布是下载/信任积累的基础节奏。验收：一次手工触发完成全链路发布。</span></td><td><span class="chip cost">M</span></td></tr>
+          <td class="item"><b>release 流程全自动化（tag → Galaxy publish → changelog）</b> <span class="chip done">✓ 已达成</span><span class="why">release.yml 在 v* tag 上跑 lint → sanity → units → fold changelog → build → GitHub release → Galaxy publish；v1.4.0（2026-09-14）已端到端走通并在 Galaxy 核验</span></td>
+          <td class="item"><span class="why">验收达成：v1.4.0 全流程 18.5 分钟跑完，Galaxy v3 API 已可查到该版本。下一节奏点是 changelog fragment 的积累（当前目录为空）。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p2"><td class="no">P2-05</td><td><span class="chip p2">P2</span></td>
           <td class="item"><b>建立 issue/PR 响应 SLA 与模板</b><span class="why">首响 &lt;48h 的记录口径；bug/feature/question 模板已建，补 triage 标签流</span></td>
           <td class="item"><span class="why">社区信任的第二来源是「有人理」。验收：可记录的 SLA + 标签流落地。</span></td><td><span class="chip cost">S</span></td></tr>
         <tr class="grp-p2"><td class="no">P2-06</td><td><span class="chip p2">P2</span></td>
           <td class="item"><b>生成 1 页采用案例 / demo 视频</b><span class="why">用 example playbook 录屏 3-5 分钟：建 CVM+CLB+CDB 全流程</span></td>
-          <td class="item"><span class="why">下载 415 → 首批用户需要「看见它跑起来」。验收：demo 页上线并链入 README。</span></td><td><span class="chip cost">M</span></td></tr>
+          <td class="item"><span class="why">下载 553 → 首批用户需要「看见它跑起来」。验收：demo 页上线并链入 README。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p2"><td class="no">P2-07</td><td><span class="chip p2">P2</span></td>
-          <td class="item"><b>给 changelog.yaml 补全版本映射与 porting guide</b><span class="why">v1.1.0 起每 release 的 breaking/porting 记录，changelog 已存在、补叙述性 guide</span></td>
+          <td class="item"><b>给 changelog.yaml 补全版本映射与 porting guide</b><span class="why">v1.1.0 起（现至 v1.4.0）每 release 的 breaking/porting 记录，changelog 已存在、补叙述性 guide</span></td>
           <td class="item"><span class="why">采用方升级依赖它；也是 inclusion checklist 项目。验收：docs/porting_guide 页面。</span></td><td><span class="chip cost">S</span></td></tr>
         <tr class="grp-p2"><td class="no">P2-08</td><td><span class="chip p2">P2</span></td>
           <td class="item"><b>iWiki / 内部社区发一篇「用 Ansible 管腾讯云」实践文</b><span class="why">把 panorama + capability-map + depth docs 提炼成团队可读的落地文章（内部渠道先行）</span></td>
@@ -430,14 +431,14 @@
       </div>
     </div>
     <div class="foot">
-      <div class="m"><div class="t">1 · 数据来源</div><div class="d">Galaxy API v3 download_count 09-08 实拉（amazon 90,890,861 / azure 17,055,861 / google 11,869,660 / 本库 415）+ 各家 tar.gz 解包统计模块 / 测试 / 目录结构；本库按源码 main HEAD 实测（pytest 10,015 函数 / 9,985 过）。</div></div>
-      <div class="m"><div class="t">2 · 模块计数法</div><div class="d">总数 = modules/ 下全部 .py；info = *_info.py；write = 总数 − info。本库 781 = 440 write + 341 info；产品与 roles 来自 scripts/generate_product_capabilities.py（204 产品 / 68 roles）。</div></div>
-      <div class="m"><div class="t">3 · 测试口径</div><div class="d">本库单测 = unit 目录 test_*.py（781 模块级文件）+ pytest 实跑函数数；集成 = integration targets 目录数（21）。对比方单测 = 其产物 unit 文件数；azure 产物剥离 tests/、google 产物仅 1 个 —— 已标注，勿当源码水平。</div></div>
-      <div class="m"><div class="t">4 · 已知修正</div><div class="d">对比方版本未变（amazon 11.4.0 / azure 4.0.0 / google 1.14.0），沿用 09-02 tarball 核验数、仅更新下载计数；本库由 09-02 的 v1.0.0 产物口径（524 模块）改为 main 源码口径（781），读面缺口（356/74 产品）与 111 write 无单测为脚本实时统计。</div></div>
+      <div class="m"><div class="t">1 · 数据来源</div><div class="d">Galaxy API v3 download_count 09-14 实拉（amazon 91,290,318 / azure 17,127,874 / google 11,900,300 / 本库 553）+ 各家 tar.gz 解包统计模块 / 测试 / 目录结构；本库按源码 main HEAD 实测（= v1.4.0 产物），pytest 模块级 10,383 函数、CI 口径 12,828 条（12,792 过 / 31 跳 / 5 xfail）。</div></div>
+      <div class="m"><div class="t">2 · 模块计数法</div><div class="d">总数 = modules/ 下全部 .py；info = *_info.py；write = 总数 − info。本库 891 = 456 write + 435 info；产品与 roles 来自 scripts/generate_product_capabilities.py（204 产品 / 71 含写 / 68 roles）。</div></div>
+      <div class="m"><div class="t">3 · 测试口径</div><div class="d">本库单测 = tests/unit 下 test_*.py（977 个，其中 918 个模块级）；集成 = tests/integration/targets 目录数（34 = 31 进 registry + cleanup + 2 个孤儿 target），默认清单 22 个。覆盖率按 CI 口径实跑：contract + module_utils + modules，--cov=plugins/module_utils --cov=plugins/modules，92.58%。对比方单测 = 其产物 unit 文件数；azure 产物剥离 tests/、google 产物仅 1 个 —— 已标注，勿当源码水平。</div></div>
+      <div class="m"><div class="t">4 · 已知修正</div><div class="d">对比方版本未变（amazon 11.4.0 / azure 4.0.0 / google 1.14.0），沿用 09-02 tarball 核验数、仅更新下载计数；本库口径沿 09-08 的 main 源码口径，09-14 全部数字重测：模块 781 → 891、覆盖 81.44% → 92.58%、sanity 1557/1900 → 2076/2600、集成 21 → 34、write 无单测 111 → 0。读面缺口（226 / 59 产品）与 36 个 _info 无专属单测为脚本实时统计。</div></div>
     </div>
   </section>
 
-  <div class="source">susunola.ansible-collection-tencentcloud · docs/panorama.html · data 2026-09-08 · 与本页配套：docs/capability-map.html（能力图 + INDUSTRY BENCHMARK）· docs/gap-closure.md（追差计划）· docs/product-capabilities.md · docs/depth-recommendations.md（读面缺口清单）· docs/coverage-batching.md · docs/roadmap.md</div>
+  <div class="source">susunola.ansible-collection-tencentcloud · docs/panorama.html · data 2026-09-14（上一版 2026-09-08）· 与本页配套：docs/capability-map.html（能力图 + INDUSTRY BENCHMARK）· docs/gap-closure.md（追差计划）· docs/product-capabilities.md · docs/depth-recommendations.md（读面缺口清单）· docs/coverage-batching.md · docs/roadmap.md</div>
 </div>
 </body>
 </html>

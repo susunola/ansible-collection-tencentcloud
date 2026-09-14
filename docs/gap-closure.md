@@ -2,7 +2,9 @@
 
 > 依据：`docs/capability-map.html` / `docs/panorama.html` 的 INDUSTRY BENCHMARK 区块
 > （本库源码 main HEAD 实测 + 对比方 Galaxy 产物实拉；2026-09-02 初版，2026-09-08 随 P0-12 同步刷新，
-> 2026-09-09 随 P0-03/04 同步 G1 集成口径至 26 targets / 77 yml）。
+> 2026-09-09 随 P0-03/04 同步 G1 集成口径至 26 targets / 77 yml，
+> 2026-09-14 随 v1.4.0 发布全量重测：891 模块 / 456 write + 435 _info、34 targets / 104 yml、
+> 覆盖率 92.58%、write 无专属单测 111 → 0、读面缺口 356 → 226）。
 > 对比对象：amazon.aws 11.4.0 / azure.azcollection 4.0.0 / google.cloud 1.14.0（版本未变，沿用 09-02 核验）。
 > 状态图例：✅ 已闭合 · 🔄 在途 · ⏸ 排队/等待外部 · 📋 待启动 · ❌ 明确不追（有意取舍）。
 
@@ -10,9 +12,9 @@
 
 | ID | 差距维度 | 本库实测 | 行业最优实测 | 判定 | 状态 |
 |---|---|---|---|---|---|
-| G1 | 集成测试深度 | 26 targets / 77 yml | amazon 160 targets / 690 yml（google 115 targets / 468 yml） | 落后 ~6x（按 target；google ~4.4x） | 🔄 在途（P0-01/02 已落 5 旗舰 target） |
-| G1b | 单测广度（write 面） | 无专属单测 write 模块 222 → 111（440 中 25%，2026-09-08） | 覆盖率 82%（gate 80，2026-09-09） | 广度缺口缩小 | ✅ 里程碑达成，收口持续 |
-| G2 | 生态信任与下载 | 0（2026-09 首发） | amazon 90.5M | 差距巨大 | ⏸ #89 inclusion 评审中 |
+| G1 | 集成测试深度 | 34 targets / 104 yml（2026-09-14） | amazon 160 targets / 690 yml（google 115 targets / 468 yml） | 落后 ~4.7x（按 target；google ~3.4x） | 🔄 在途（7 / 13 旗舰已覆盖，余 6 个排入 P0-04） |
+| G1b | 单测广度（write 面） | 无专属单测 write 模块 222 → 111 → **0**（456 中 0%，2026-09-14） | 覆盖率 92.58%（gate 80） | 广度缺口已闭合 | ✅ 里程碑达成（缺口转移至 info 侧 36 / 435） |
+| G2 | 生态信任与下载 | 553 累计（2026-09-14 实拉） | amazon 91.3M | 差距巨大 | ⏸ #89 inclusion 评审中 |
 | G3 | ansible-core 门槛 | ≥ 2.19 | ≥ 2.16 / 2.17 | 声明更高 | ❌ 有意取舍，不追 |
 | G4 | 维护资源 | 个人维护 | 厂商 + Red Hat/社区团队 | 结构性差距 | 📋 缓解型动作 |
 
@@ -24,13 +26,20 @@
 
 ## G1 集成测试深度 — 🔄 在途（P0-01/02 骨架落地 · P0-04 扩至 30+）
 
-**现状**（2026-09-09 随 P0-03/04 刷新，此前口径沿革见 09-02 注）：26 targets / 77 yml
-（`tests/integration/targets/` 76 yml + 1 coverage.yml）。与 amazon 160 / google 115 的差距按
-target 数约 6x / 4.4x。**旗舰覆盖**：13 个旗舰 write 模块中 cvm_instance / vpc / subnet /
-cdb_instance / tke_cluster 已有专属集成 target（provision → assert → cleanup，落地 `6d83295`）；
-eip / clb_load_balancer 由 network / clb_http 场景 target 覆盖。**剩余盲区**：redis_instance /
+**现状**（2026-09-14 全量重测，此前口径沿革见 09-02 / 09-09 注）：**34 个 target 目录 / 104 个 yml**
+（`tests/integration/targets/` 102 yml + coverage.yml + smoke_readonly.yml）。按 target 数与
+amazon 160 / google 115 的差距约 4.7x / 3.4x。**目录 ≠ 已跑**：34 个目录里 31 个进
+`coverage.yml` registry、22 个在 workflow 默认清单，`cvm_image` / `lighthouse` 两个 target
+两侧都不在（孤儿 target，见「已知缺口」）。**旗舰覆盖**：13 个旗舰 write 模块中 7 个已覆盖
+（cvm_instance / vpc / subnet / cdb_instance / tke_cluster 有专属 target，落地 `6d83295`；
+eip / clb_load_balancer 由 network / clb_http 场景 target 覆盖）。**剩余盲区**：redis_instance /
 cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway 六个旗舰仍无任何集成覆盖，
 已按 product-depth 排入 P0-04 路线图（`docs/integration-env.md` §7 R1-R6）。
+
+> ⚠️ **已知缺口（2026-09-14 复核）**：`cvm_image` 与 `lighthouse` 两个 target 有完整
+> meta/tasks/vars，但既不进 `coverage.yml` registry 也不进 workflow 默认清单 —— 它们永远不会
+> 被跑，且没有任何检查会发现。需在 registry 补登记（或明确标注为 opt-in）并加一条
+> 「目录 vs registry」完整性校验。
 
 > ⚠️ 逻辑修正（2026-09-02）：roadmap #57 是**单元测试覆盖驱动**（针对 write 模块
 > 语句覆盖率，已由 G1b 承接），**不是**集成测试驱动，不能记在 G1 名下。G1 需要
@@ -41,7 +50,7 @@ cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway 六个旗�
 |---|---|---|---|---|
 | G1-a | 为旗舰 write 模块建集成 target 骨架（复用 amazon `tests/integration/targets/` 布局；执行环境策略定为真实腾讯云账号 + 计费护栏） | 无 | 2026-09-16 | ✅ P0-01/02（`6d83295`，2026-09-09：cvm_instance / vpc / subnet / cdb_instance / tke_cluster） |
 | G1-b | 定义集成测试的可信执行环境（真实腾讯云账号 + 凭据注入 + 资源清理防线 + 失败告警） | G1-a | 随首批 | ✅ P0-03（`docs/integration-env.md` 落盘 + workflow 凭据接线/告警步，2026-09-09） |
-| G1-c | 目标：集成 target 26 → 30+（13 旗舰已覆盖 7 个：5 专属 + 2 场景；余 6 个按 product-depth 优先补） | G1-a/b | 2026-10 | 🔄 P0-04（R1-R9，2026-09 里程碑 28 dirs，见 `docs/integration-env.md` §7） |
+| G1-c | 目标：集成 target 26 → 30+（13 旗舰已覆盖 7 个：5 专属 + 2 场景；余 6 个按 product-depth 优先补） | G1-a/b | 2026-10 | 🔄 P0-04（R1-R9；数量里程碑已过：09-14 实测 **34 dirs / 31 进 registry**，但默认清单仍 22 个，billed target 需人工 dispatch） |
 
 **验收**：cvm_instance / vpc / subnet / cdb_instance / tke_cluster 已进入集成套件 ✅（2026-09-09）；
 redis_instance 等其余旗舰随 P0-04 R1-R6 排入；2026-10 底前集成 target ≥ 30 且全部绿
@@ -49,33 +58,35 @@ redis_instance 等其余旗舰随 P0-04 R1-R6 排入；2026-10 底前集成 targ
 
 ## G1b 单元测试广度（write 面）— ✅ 80% 里程碑达成（收口持续）
 
-**现状**：整体语句覆盖率 82%（2026-09-09 实测，10,571 tests / 30 skipped，
-P0-05 的 52 个新 `_info` 测试文件把 09-08 的 81.44% 抬升 0.2pp，
-P0-06 的 41 个新 `_info` 测试文件续升至 82%），
-coverage gate 随实测抬至 80。80% 冲刺以主路径 `run_module` 单测批量新增
-73 个模块测试文件（1,102 tests，6 组并行），write 面无专属单测模块从
-222（/313，2026-08-31 基线）收口到 **111（/440，25%，2026-09-08）**。
-历史基线（2026-08-31）：语句覆盖率 ~60.9%（gate 55）；
-批次 1-11 已把单模块耗时从 1-2h 压到 20-40min。
+**现状**（2026-09-14 全量重测）：整体语句覆盖率 **92.58%**（CI 口径
+`tests/contract` + `tests/unit/plugins/module_utils` + `tests/unit/plugins/modules`
+共 12,828 条：12,792 passed / 31 skipped / 5 xfailed，`--cov-fail-under=80` 通过）。
+模块级单测 918 个文件 / 10,383 个测试函数。
+**write 面无专属单测模块已归零**：456 / 456 全部有专属单测文件
+（`test_<module>_main.py` 约定），从 222（/313，2026-08-31 基线）→ 111（/440，2026-09-08）
+→ **0（/456，2026-09-14）**。
+历史基线（2026-08-31）：语句覆盖率 ~60.9%（gate 55）；09-08 80% 冲刺达 81.44%，
+09-09 随 P0-05/06 续升至 82%，09-14 重测为 92.58%。
+**广度缺口转移到 info 侧**：435 个 `_info` 中 36 个（8%）没有专属单测文件。
 
 **建议动作**：
 | 步骤 | 动作 | 依赖 | 截止 | 状态 |
 |---|---|---|---|---|
-| G1b-a | 先实现 `--module-test` 骨架生成器（coverage-batching.md lever 1） | 无 | 下一批前 | 🔄 在途（P0-08，2026-09-08 启动） |
-| G1b-b | 继续按 per-file miss 报告从高到低逐模块写测试（主路径单测 + 分支补漏） | G1b-a 可并行，不阻塞 | 持续 | 🔄 在途（P0-07，按 miss 榜批量） |
-| G1b-c | 每批 commit + CI 全绿（sanity 矩阵 + coverage gate 不破，现 80） | G1b-b | 随批 | 🔄 |
+| G1b-a | 先实现 `--module-test` 骨架生成器（coverage-batching.md lever 1） | 无 | 下一批前 | ✅ 已落地 `scripts/generate_module_test_skeleton.py` |
+| G1b-b | 继续按 per-file miss 报告从高到低逐模块写测试（主路径单测 + 分支补漏） | G1b-a 可并行，不阻塞 | 持续 | ✅ write 面已归零（456/456）；下一目标：36 个缺专属单测的 `_info` |
+| G1b-c | 每批 commit + CI 全绿（sanity 矩阵 + coverage gate 不破，现 80） | G1b-b | 随批 | 🔄（实测 92.58%，余 12.6 点） |
 
-**验收**：整体实测覆盖率 ≥ 80% 且 gate 抬至 80（✅ 2026-09-08 达成 81.44%，09-09 随 P0-05 续升至 81.64%、随 P0-06 升至 82%）；
-write 面无专属单测模块持续收口。
+**验收**：整体实测覆盖率 ≥ 80% 且 gate 抬至 80（✅ 2026-09-08 达成 81.44%，09-09 随 P0-05 续升至 81.64%、随 P0-06 升至 82%，
+09-14 重测 92.58%）；write 面无专属单测模块已收口到 0。
 
 ## G2 生态信任 — ⏸ 半被动（inclusion #89 评审中）
 
-**现状**：inclusion 申请已提交（discussion #89，2026-09-02），自查评论已贴（discussioncomment-18250641），仓库已发布 v1.0.0 / v1.1.0（09-04）。评审者尚未回复（截至 09-08）。
+**现状**：inclusion 申请已提交（discussion #89，2026-09-02），自查评论已贴（discussioncomment-18250641），仓库已发布至 **v1.4.0（2026-09-14）**，release 全链路（tag → build → GitHub release → Galaxy publish）已自动化。Galaxy 累计下载 553（09-14 实拉）。评审者尚未回复（截至 09-14）。
 
 **建议动作**：
 | 步骤 | 动作 | 依赖 | 截止 | 状态 |
 |---|---|---|---|---|
-| G2-a | 按官方流程评审 1 个排队中的他人 collection（README step 1：先评审别人可提升自身优先级） | 官方 README 排队清单 | 2026-09-09 | 📋 |
+| G2-a | 按官方流程评审 1 个排队中的他人 collection（README step 1：先评审别人可提升自身优先级） | 官方 README 排队清单 | 2026-09-09 → **逾期未做（09-14 复核仍 📋）** | 📋 |
 | G2-b | 每周五检查 #89 是否有评审反馈并回复 | 无 | 每周 | ⏸ |
 | G2-c | 保持 devel 每周测试 + release 节奏（devel.yml/release.yml 已在跑） | 无 | 持续 | ✅ 已自动化 |
 
@@ -139,7 +150,7 @@ write 面无专属单测模块持续收口。
 TEO、CFW、CFS、Lighthouse 等），继续按 panorama 推荐顺序逐族推进，
 每完成一个资源族同步升级对应角色与 info 面。
 
-## 执行清单（2026-09-09 刷新）
+## 执行清单（2026-09-14 刷新）
 
 > 全景图 30 件事（`docs/panorama.html`）已获批准执行 **P0×12 + P1×10**（本清单
 > G1/G1b 相关项已并入对应 P0 编号；G2/G3/G4 映射的 P2 项仍在待批状态）。
@@ -148,13 +159,16 @@ TEO、CFW、CFS、Lighthouse 等），继续按 panorama 推荐顺序逐族推�
 1. G1-a 集成 target 骨架 → **P0-01/02** ✅（cvm_instance/vpc/subnet/cdb_instance/tke_cluster 落地
    `6d83295`，2026-09-09；执行环境策略：真实腾讯云账号 + 计费护栏 + 三道清理防线）
 2. G1-b/c 可信执行环境 + 30+ 路线图 → **P0-03/04** 🔄（`docs/integration-env.md` 已落盘 + workflow
-   凭据接线/失败告警；R1-R9 至 2026-10 底，2026-09 里程碑 28 dirs）
-3. G1b-a 单测骨架生成器 → **P0-08** 🔄（纯本地，1 commit，已启动）
-4. G1b-b 继续 batch 12 → **P0-07** 🔄（每周节奏，111 → <60，不需特批）
-5. G2-a 评审 1 个他人 collection → **P2-01** 📋（2026-09-09 前，需你指定目标或我从官方清单挑）
-6. G3-b + G4-c capability-map.html 差距卡措辞修正 → ✅（已随 09-08 数据同步合入）
+   凭据接线/失败告警；**数量里程碑已过**（09-14：34 dirs / 31 进 registry），但默认清单仍 22 个；
+   下一次带凭据的定时跑 2026-09-19 是「可信执行环境」的真正验收点）
+3. G1b-a 单测骨架生成器 → **P0-08** ✅（`scripts/generate_module_test_skeleton.py` 已落地）
+4. G1b-b 继续 batch 12 → **P0-07** ✅（write 面 111 → **0**；新目标：36 个缺专属单测的 `_info`）
+5. G2-a 评审 1 个他人 collection → **P2-01** 📋（需你指定目标或我从官方清单挑）
+6. G3-b + G4-c capability-map.html 差距卡措辞修正 → ✅（已随 09-08 数据同步合入，09-14 再同步数量）
 7. G4-a CONTRIBUTING.md 补 co-maintainer 路径 → **P2-03** 📋（2026-09-30 前，低优先级）
+8. **G1-d（09-14 新增）** 孤儿 target 收口 → 📋（`cvm_image` / `lighthouse` 补进 `coverage.yml`
+   registry 或显式标注 opt-in，并加「target 目录 vs registry」完整性校验）
 
 ---
 
-_本计划由 docs/capability-map.html / docs/panorama.html INDUSTRY BENCHMARK 区块派生 · 2026-09-02 初版 · 2026-09-08 随 P0-12 刷新至 781 模块 / 204 产品 / gate 80 口径 · 2026-09-09 随 P0-05 刷新覆盖率至 81.64%、随 P0-06 至 82% · 数据均为源码实测 + Galaxy 产物实拉_
+_本计划由 docs/capability-map.html / docs/panorama.html INDUSTRY BENCHMARK 区块派生 · 2026-09-02 初版 · 2026-09-08 随 P0-12 刷新至 781 模块 / 204 产品 / gate 80 口径 · 2026-09-09 随 P0-05 刷新覆盖率至 81.64%、随 P0-06 至 82% · **2026-09-14 随 v1.4.0 全量重测至 891 模块（456 write + 435 _info）/ 204 产品 / gate 80 实测 92.58% / 34 targets（104 yml）/ write 无专属单测 0 / 读面缺口 226（59 产品）** · 数据均为源码实测 + Galaxy 产物实拉_

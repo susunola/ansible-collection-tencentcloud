@@ -1,0 +1,26 @@
+---
+minor_changes:
+  - >-
+    docs - panorama.html, capability-map.html and gap-closure.md now quote
+    figures measured against the published v1.4.0 artifact instead of the
+    2026-09-08 snapshot: 891 modules (456 write + 435 ``_info``), 204 products
+    with 71 of them carrying write operations, 918 module unit-test files with
+    10,383 test functions, 92.58% statement coverage against the CI gate of 80,
+    sanity ignore debt 2076 against a 2600 budget, 34 integration targets and
+    553 Galaxy downloads. Every number was re-measured, not extrapolated: the
+    unit-test count is the module-level one, while 12,828 tests and 92.58%
+    come from the CI coverage scope, which also collects tests/contract and
+    tests/unit/plugins/module_utils.
+  - >-
+    docs - the 30-item backlog in panorama.html now marks the items that have
+    actually shipped (write-module unit tests, the test skeleton generator,
+    plugin_utils, the action and filter plugins, the docsite, doc_fragments and
+    release automation) so the page stops listing finished work as outstanding.
+known_issues:
+  - >-
+    The ``cvm_image`` and ``lighthouse`` integration targets ship a complete
+    meta/tasks/vars layout but are listed in neither
+    tests/integration/coverage.yml nor the workflow's default target list, so
+    they never run. Nothing fails today, because check_integration_ran.py only
+    reads the run log and audit_integration_targets.py does not compare the
+    target directories against the registry. Tracked as G1-d in gap-closure.md.
