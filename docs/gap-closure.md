@@ -28,18 +28,23 @@
 
 **现状**（2026-09-14 全量重测，此前口径沿革见 09-02 / 09-09 注）：**34 个 target 目录 / 104 个 yml**
 （`tests/integration/targets/` 102 yml + coverage.yml + smoke_readonly.yml）。按 target 数与
-amazon 160 / google 115 的差距约 4.7x / 3.4x。**目录 ≠ 已跑**：34 个目录里 31 个进
-`coverage.yml` registry、22 个在 workflow 默认清单，`cvm_image` / `lighthouse` 两个 target
-两侧都不在（孤儿 target，见「已知缺口」）。**旗舰覆盖**：13 个旗舰 write 模块中 7 个已覆盖
+amazon 160 / google 115 的差距约 4.7x / 3.4x。**目录 ≠ 已跑**：34 个目录里 33 个进
+`coverage.yml` registry、21 个在 workflow 默认清单；`cvm_image` / `lighthouse` 曾两侧都不在
+（孤儿 target），09-14 已补进 registry（G1-d 关闭），唯一未登记的目录是 `cleanup` 清扫器
+（由 workflow 直接调用，非 target）。**旗舰覆盖**：13 个旗舰 write 模块中 7 个已覆盖
 （cvm_instance / vpc / subnet / cdb_instance / tke_cluster 有专属 target，落地 `6d83295`；
 eip / clb_load_balancer 由 network / clb_http 场景 target 覆盖）。**剩余盲区**：redis_instance /
 cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway 六个旗舰仍无任何集成覆盖，
 已按 product-depth 排入 P0-04 路线图（`docs/integration-env.md` §7 R1-R6）。
 
-> ⚠️ **已知缺口（2026-09-14 复核）**：`cvm_image` 与 `lighthouse` 两个 target 有完整
-> meta/tasks/vars，但既不进 `coverage.yml` registry 也不进 workflow 默认清单 —— 它们永远不会
-> 被跑，且没有任何检查会发现。需在 registry 补登记（或明确标注为 opt-in）并加一条
-> 「目录 vs registry」完整性校验。
+> ✅ **G1-d 已关闭（2026-09-14）**：`cvm_image` 与 `lighthouse` 两个 target 有完整
+> meta/tasks/vars，但既不进 `coverage.yml` registry 也不进 workflow 默认清单 —— 它们永远
+> 不会被跑，且没有任何检查会发现（`validate_registry` 只走 registry → 目录，反方向没人管）。
+> 两处都已修：两个 target 以 `cost: high` 补进 registry（仍在默认清单外，两者都建计费资源），
+> 并给 `scripts/integration_impact.py` 加了 `validate_target_dirs()` —— 反向校验
+> 「目录 vs registry」，未登记的 target 目录直接让 `--check` 失败（`cleanup` 清扫器是唯一
+> 豁免：它由 workflow 直接调用，不走 target 选择）。回归测试见
+> `tests/unit/scripts/test_integration_impact.py`。
 
 > ⚠️ 逻辑修正（2026-09-02）：roadmap #57 是**单元测试覆盖驱动**（针对 write 模块
 > 语句覆盖率，已由 G1b 承接），**不是**集成测试驱动，不能记在 G1 名下。G1 需要
@@ -50,7 +55,7 @@ cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway 六个旗�
 |---|---|---|---|---|
 | G1-a | 为旗舰 write 模块建集成 target 骨架（复用 amazon `tests/integration/targets/` 布局；执行环境策略定为真实腾讯云账号 + 计费护栏） | 无 | 2026-09-16 | ✅ P0-01/02（`6d83295`，2026-09-09：cvm_instance / vpc / subnet / cdb_instance / tke_cluster） |
 | G1-b | 定义集成测试的可信执行环境（真实腾讯云账号 + 凭据注入 + 资源清理防线 + 失败告警） | G1-a | 随首批 | ✅ P0-03（`docs/integration-env.md` 落盘 + workflow 凭据接线/告警步，2026-09-09） |
-| G1-c | 目标：集成 target 26 → 30+（13 旗舰已覆盖 7 个：5 专属 + 2 场景；余 6 个按 product-depth 优先补） | G1-a/b | 2026-10 | 🔄 P0-04（R1-R9；数量里程碑已过：09-14 实测 **34 dirs / 31 进 registry**，但默认清单仍 22 个，billed target 需人工 dispatch） |
+| G1-c | 目标：集成 target 26 → 30+（13 旗舰已覆盖 7 个：5 专属 + 2 场景；余 6 个按 product-depth 优先补） | G1-a/b | 2026-10 | 🔄 P0-04（R1-R9；数量里程碑已过：09-14 实测 **34 dirs / 33 进 registry**（G1-d 补入 cvm_image / lighthouse 后），但默认清单仍 21 个，billed target 需人工 dispatch） |
 
 **验收**：cvm_instance / vpc / subnet / cdb_instance / tke_cluster 已进入集成套件 ✅（2026-09-09）；
 redis_instance 等其余旗舰随 P0-04 R1-R6 排入；2026-10 底前集成 target ≥ 30 且全部绿
@@ -159,15 +164,16 @@ TEO、CFW、CFS、Lighthouse 等），继续按 panorama 推荐顺序逐族推�
 1. G1-a 集成 target 骨架 → **P0-01/02** ✅（cvm_instance/vpc/subnet/cdb_instance/tke_cluster 落地
    `6d83295`，2026-09-09；执行环境策略：真实腾讯云账号 + 计费护栏 + 三道清理防线）
 2. G1-b/c 可信执行环境 + 30+ 路线图 → **P0-03/04** 🔄（`docs/integration-env.md` 已落盘 + workflow
-   凭据接线/失败告警；**数量里程碑已过**（09-14：34 dirs / 31 进 registry），但默认清单仍 22 个；
+   凭据接线/失败告警；**数量里程碑已过**（09-14：34 dirs / 33 进 registry），但默认清单仍 21 个；
    下一次带凭据的定时跑 2026-09-19 是「可信执行环境」的真正验收点）
 3. G1b-a 单测骨架生成器 → **P0-08** ✅（`scripts/generate_module_test_skeleton.py` 已落地）
 4. G1b-b 继续 batch 12 → **P0-07** ✅（write 面 111 → **0**；新目标：36 个缺专属单测的 `_info`）
 5. G2-a 评审 1 个他人 collection → **P2-01** 📋（需你指定目标或我从官方清单挑）
 6. G3-b + G4-c capability-map.html 差距卡措辞修正 → ✅（已随 09-08 数据同步合入，09-14 再同步数量）
 7. G4-a CONTRIBUTING.md 补 co-maintainer 路径 → **P2-03** 📋（2026-09-30 前，低优先级）
-8. **G1-d（09-14 新增）** 孤儿 target 收口 → 📋（`cvm_image` / `lighthouse` 补进 `coverage.yml`
-   registry 或显式标注 opt-in，并加「target 目录 vs registry」完整性校验）
+8. **G1-d（09-14 新增）** 孤儿 target 收口 → ✅（两个 target 以 `cost: high` 补进 `coverage.yml`
+   registry；`scripts/integration_impact.py` 新增 `validate_target_dirs()` 反向校验并已进 CI 的
+   「Integration coverage registry is valid」步骤；9 条回归测试全绿）
 
 ---
 

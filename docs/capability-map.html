@@ -397,7 +397,7 @@
         <div class="gt">▼ 差距项（需追赶）</div>
         <ul>
           <li><b>生态与信任</b>：Galaxy 下载 553 vs 11.9M–91.3M；需持续 release、inclusion 申请（#89 进行中）与社区口碑积累。</li>
-          <li><b>集成测试深度</b>：34 targets（104 yml）vs amazon 160（690）/ google 115（468）；13 个旗舰模块中 7 个（cvm_instance / vpc / subnet / cdb_instance / tke_cluster / clb_load_balancer / eip）已建或被场景 target 覆盖（provision → assert → cleanup），<b>余 6 个（redis_instance / cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway）尚无专属 target</b>，排入 P0-04 路线图（docs/integration-env.md §7）。注意 34 个目录里 31 个进 coverage.yml registry、22 个在默认清单，cvm_image / lighthouse 两个 target 尚未纳入任一侧。</li>
+          <li><b>集成测试深度</b>：34 targets（104 yml）vs amazon 160（690）/ google 115（468）；13 个旗舰模块中 7 个（cvm_instance / vpc / subnet / cdb_instance / tke_cluster / clb_load_balancer / eip）已建或被场景 target 覆盖（provision → assert → cleanup），<b>余 6 个（redis_instance / cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway）尚无专属 target</b>，排入 P0-04 路线图（docs/integration-env.md §7）。注意 34 个目录里 33 个进 coverage.yml registry、21 个在默认清单；cvm_image / lighthouse 两个孤儿 target 已于 09-14 补进 registry（仍在默认清单外，两者都建计费资源），并新增「目录 vs registry」反向校验防复发。</li>
           <li><b>读面缺口（scripts/gap_backlog.py 09-14 实测）</b>：<b>226 个 write 模块缺配套 _info 读面，波及 59 个产品</b>；tse 27 / cos 14 / tdmq 13 / tke 11 / dlc 8 居前，尾部 teo 7 / trabbit 6 / monitor 6 / ckafka 6 / waf 5。已从 09-08 的 356/74 收口到 226/59 —— 写后读不回的闭环随 P0-05/06 逐波收口。</li>
           <li><b>单测广度</b>：write 侧已闭合（<b>456 / 456 全部有专属单测文件</b>，09-08 时缺 111 个）；广度缺口转移到 info 侧 —— <b>435 个 _info 中 36 个没有专属单测文件</b>（8%）。92.58% 覆盖率仍由深测模块拉高，分布不均。</li>
           <li><b>ansible-core 门槛</b>：≥2.19 起步（2.16–2.18 已 EOL；三家 ≥2.16/≥2.17 为历史声明，实际 CI 只测最新版）—— 主动对齐演进，换取旧控制节点用户覆盖的部分代价。</li>

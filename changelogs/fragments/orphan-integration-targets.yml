@@ -1,0 +1,14 @@
+bugfixes:
+  - integration tests - ``cvm_image`` and ``lighthouse`` shipped a complete
+    ``meta/tasks/vars`` layout but were listed in neither
+    ``tests/integration/coverage.yml`` nor the workflow's default target list,
+    so no selector could ever reach them and they silently never ran. Both are
+    now registered as high-cost targets and stay out of the weekly default
+    list because they create billable resources.
+  - integration tests - ``scripts/integration_impact.py`` now also validates
+    the registry in the direction it was missing -- every directory under
+    ``tests/integration/targets/`` must be registered, or ``--check`` fails.
+    Previously only registry entries were validated against the filesystem, so
+    an unregistered target passed every check while never running. The
+    ``cleanup`` sweeper is exempt because the workflow invokes it directly
+    rather than through target selection.

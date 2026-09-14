@@ -944,8 +944,37 @@
     list (they were committed as "opt-in" in `85fc1ad0` and never wired). They
     therefore never run, and nothing fails: `check_integration_ran.py` only
     reads the log, and `audit_integration_targets.py` does not compare the
-    target directories against the registry. Not fixed in this entry; filed as
-    G1-d in the execution checklist of `gap-closure.md`.
+    target directories against the registry. Filed as G1-d in the execution
+    checklist of `gap-closure.md`; closed by entry 88 below.
+
+88. **Orphan integration targets are now impossible to add silently (G1-d).**
+    The root cause was a one-directional validator: `integration_impact.py`'s
+    `validate_registry()` walked *registry -> directory* (every registered
+    target needs a `tasks/main.yml`, a valid cost and real, uniquely-mapped
+    modules), so a target that was written but never registered passed every
+    check while never being reachable by any selector. `cvm_image` and
+    `lighthouse` sat in exactly that state since `85fc1ad0`.
+
+    Fix, in two parts:
+
+    - The two targets are now in `coverage.yml` at `cost: high`, so they are
+      visible to `integration_impact.py` and to the sweeper, and stay out of
+      the weekly default list because both create billable resources (a CVM
+      image snapshot, a Lighthouse instance). They still self-skip unless an
+      operator sets `TENCENTCLOUD_CVM_IMAGE_SOURCE_INSTANCE` or the
+      `TENCENTCLOUD_LH_*` gates.
+    - `scripts/integration_impact.py` gained `validate_target_dirs()`, which
+      walks the other way — every directory under
+      `tests/integration/targets/` must be registered. It runs inside the
+      existing `Integration coverage registry is valid` CI step, so it is
+      enforced rather than advisory. `cleanup` is the single exemption: it is
+      the leftover-resource sweeper the workflow calls directly, never a
+      selectable target.
+
+    Counts after the fix: **34 target directories / 33 registered / 21 in the
+    workflow default list** (was 31 registered). Nine regression tests in
+    `tests/unit/scripts/test_integration_impact.py` pin both directions, so
+    neither the registry nor the checker can rot unnoticed again.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.

@@ -49,3 +49,11 @@ targets:
   subnet: {cost: free, modules: [subnet]}
   cdb_instance: {cost: high, modules: [cdb_instance]}
   tke_cluster: {cost: high, modules: [tke_cluster]}
+  # Manual-only targets (G1-d). Both ship a complete meta/tasks/vars layout
+  # and self-skip when their operator gate is unset, but neither was ever
+  # entered in this registry, so no target selector could reach them and they
+  # silently never ran. Registered now so scripts/integration_impact.py --check
+  # accounts for them; both stay out of the weekly default list because they
+  # create billable resources (a CVM image snapshot, a Lighthouse instance).
+  cvm_image: {cost: high, modules: [cvm_image]}
+  lighthouse: {cost: high, modules: [lighthouse_instance]}

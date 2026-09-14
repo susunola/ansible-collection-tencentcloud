@@ -16,11 +16,7 @@ minor_changes:
     actually shipped (write-module unit tests, the test skeleton generator,
     plugin_utils, the action and filter plugins, the docsite, doc_fragments and
     release automation) so the page stops listing finished work as outstanding.
-known_issues:
   - >-
-    The ``cvm_image`` and ``lighthouse`` integration targets ship a complete
-    meta/tasks/vars layout but are listed in neither
-    tests/integration/coverage.yml nor the workflow's default target list, so
-    they never run. Nothing fails today, because check_integration_ran.py only
-    reads the run log and audit_integration_targets.py does not compare the
-    target directories against the registry. Tracked as G1-d in gap-closure.md.
+    docs - P2-01 and G2-a now state that reviewing another collection to unblock
+    inclusion #89 slipped past its 2026-09-09 acceptance date and is still open,
+    instead of presenting a past deadline as a live target.
