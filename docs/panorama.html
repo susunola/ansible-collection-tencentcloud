@@ -291,7 +291,7 @@
           <li><span class="tag">集成测试</span><b>34 个 target 目录（33 个进 registry，21 个在默认清单）vs amazon 160 / google 115</b>（azure 产物无）。旗舰零覆盖已从 13 个降到 <b>6 个</b>（redis_instance / cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway）—— cvm_instance / vpc / subnet / cdb_instance / tke_cluster 已立 target，但 billed target 仍未进默认清单；cvm_image / lighthouse 曾是两个孤儿 target（两侧都不在），09-14 已补进 registry 并加「目录 vs registry」反向校验（G1-d 关闭）。</li>
           <li><span class="tag">读面缺口</span><b>226 个 write 模块没有配套 _info 读面</b>（scripts/gap_backlog.py 实测，波及 59 个产品；tse 27 / cos 14 / tdmq 13 / tke 11 / dlc 8 居前）—— 已从 356 降到 226，但 write 之后读不回来的闭环仍断在读面这一侧。</li>
           <li><span class="tag">单测广度</span>write 侧已闭合（<b>456 / 456 全部有专属单测文件</b>，09-08 时缺 111 个）；info 侧 36 个缺口已于 09-14 收口 —— <b>435 / 435 个 _info 全部有专属单测文件</b>（write 面 456 / 456 亦全）。92.65% 覆盖率仍由深测模块拉高，分布不均。</li>
-          <li><span class="tag">结构补课</span>plugin_utils（6）/ action（tc_wait）/ filter（tags）/ docsite（Sphinx -W 构建，产物已入库）已补齐，<b>extensions.yml 仍缺</b>；doc_fragments 6 个（amazon 5 个）；module_utils 16 个（amazon 42）。依赖声明是最后一块「官方库标配」。</li>
+          <li><span class="tag">结构补课</span>plugin_utils（6）/ action（tc_wait）/ filter（tags）/ docsite（Sphinx -W 构建，产物已入库）已补齐，<b>extensions.yml 已落地</b>（声明 plugins/event_source 扩展；09-14 起由 scripts/check_extensions_metadata.py --check 双向校验，声明缺失或指向空目录即失败）；doc_fragments 6 个（amazon 5 个）；module_utils 16 个（amazon 42）。剩余结构项集中在 event_source 的文档与单测（P1-08）。</li>
           <li><span class="tag">生态信任</span>Galaxy 下载 553（09-14 实拉）vs 91.3M / 17.1M / 11.9M；inclusion #89 尚在评审，<b>暂无第三方采用证据</b>。</li>
           <li><span class="tag">维护资源</span>个人维护 vs 厂商 + Red Hat/社区团队；issue 响应与版本节奏是长期风险（缓解：生成式治理 + 自动化 CI 已把人均负担压低）。</li>
         </ul>
@@ -374,8 +374,8 @@
           <td class="item"><b>引入 docsite 文档构建</b> <span class="chip done">✓ 已达成</span><span class="why">docs/docsite/build.sh：antsibull-docs + sphinx-build -M html（--fail-on-error / -W），构建产物 docs/docsite/build/html 已入库，随每次 release 重建</span></td>
           <td class="item"><span class="why">891 个插件的 DOCUMENTATION 已可在站点内搜索。验收达成：构建在 -W（warning = error）下通过并随 v1.4.0 重建。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p1"><td class="no">P1-05</td><td><span class="chip p1">P1</span></td>
-          <td class="item"><b>补齐 extensions.yml 元数据</b><span class="why">声明 collection 提供的插件路由/依赖；amazon/azure 均有、本库缺失</span></td>
-          <td class="item"><span class="why">ansible-navigator / 执行环境 / Galaxy 页面展示依赖它。验收：extensions.yml 通过 ansible-community 校验。</span></td><td><span class="chip cost">S</span></td></tr>
+          <td class="item"><b>补齐 extensions.yml 元数据</b> <span class="chip done">✓ 已达成</span><span class="why">落地为 meta/extensions.yml，声明 plugins/event_source（4 个 EDA source：cmq_queue / cls_topic / cos_bucket / tke_cluster），格式对齐 amazon.aws，随 v1.4.0 发布</span></td>
+          <td class="item"><span class="why">ansible-navigator / 执行环境 / Galaxy 页面展示依赖它。验收达成：scripts/check_extensions_metadata.py --check 已进 CI —— 声明缺失、指向空目录、误声明 core 插件类型均会失败。</span></td><td><span class="chip cost">S</span></td></tr>
         <tr class="grp-p1"><td class="no">P1-06</td><td><span class="chip p1">P1</span></td>
           <td class="item"><b>doc_fragments 从 1 拆到 5+</b> <span class="chip done">✓ 已达成</span><span class="why">公共参数（认证、region、waiter、retry）抽成 fragment，各模块文档引用而非复制；现有 6 个，已超过 amazon 的 5 个</span></td>
           <td class="item"><span class="why">与 amazon doc_fragments 5 个对齐；文档单一事实来源。验收：常用参数迁移到 fragment 且 validate-modules 全绿。</span></td><td><span class="chip cost">M</span></td></tr>

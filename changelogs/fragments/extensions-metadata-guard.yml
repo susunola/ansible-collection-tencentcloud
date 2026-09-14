@@ -1,0 +1,12 @@
+minor_changes:
+  - meta extensions - ``scripts/check_extensions_metadata.py --check`` now runs
+    in CI and validates ``meta/extensions.yml`` in both directions. Every
+    declared ``ext_dir`` must exist and hold Python plugins, and every
+    ``plugins/`` directory that ansible-core does not resolve natively must be
+    declared. The manifest had no verification at all before, which is how the
+    benchmark docs kept describing it as missing long after it shipped.
+  - docs - ``docs/panorama.html`` no longer lists ``meta/extensions.yml`` as a
+    gap. The file landed on 2026-09-09 and shipped with v1.4.0, but the
+    benchmark page still claimed it was absent, so the claim and the artifact
+    disagreed. The acceptance note now points at the CI guard rather than an
+    external validator that was never actually run.

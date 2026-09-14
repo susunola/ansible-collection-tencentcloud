@@ -87,6 +87,8 @@ jobs:
       # Runs after the SDK drift sentinel so the models are importable.
       - name: No hidden required params
         run: python scripts/check_hidden_required_params.py --check
+      - name: Extensions metadata matches plugins
+        run: python scripts/check_extensions_metadata.py --check
       - name: Ruff lint
         run: ruff check .
       - name: Sanity ignore budget
