@@ -197,7 +197,7 @@
     <div class="cell hot"><div class="num">10,321</div><div class="lbl"><b>测试函数（模块级单测，pytest 实测）</b> · CI 口径 12,961：12,908 过 / 31 跳 / 22 xfail</div></div>
     <div class="cell hot"><div class="num">92.65%</div><div class="lbl"><b>语句覆盖率</b> · CI gate 80（余 12.6 点余量）</div></div>
     <div class="cell warn"><div class="num">34</div><div class="lbl"><b>集成测试 targets</b> · 旗舰 6 模块仍为 0</div></div>
-    <div class="cell warn"><div class="num">226</div><div class="lbl"><b>write 模块缺 _info 读面</b> · 456 中占 50%，波及 59 产品</div></div>
+    <div class="cell warn"><div class="num">128</div><div class="lbl"><b>待补的 _info 读面 backlog</b> · 另 43 已映射 / 55 无列表 API，共 226 个缺 _info，波及 55 产品</div></div>
   </div>
 
   <!-- ================= RADAR ================= -->
@@ -289,7 +289,7 @@
         <div class="vt">▼ 差距项（需追赶）</div>
         <ul>
           <li><span class="tag">集成测试</span><b>34 个 target 目录（33 个进 registry，21 个在默认清单）vs amazon 160 / google 115</b>（azure 产物无）。旗舰零覆盖已从 13 个降到 <b>6 个</b>（redis_instance / cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway）—— cvm_instance / vpc / subnet / cdb_instance / tke_cluster 已立 target，但 billed target 仍未进默认清单；cvm_image / lighthouse 曾是两个孤儿 target（两侧都不在），09-14 已补进 registry 并加「目录 vs registry」反向校验（G1-d 关闭）。</li>
-          <li><span class="tag">读面缺口</span><b>226 个 write 模块没有配套 _info 读面</b>（scripts/gap_backlog.py 实测，波及 59 个产品；tse 27 / cos 14 / tdmq 13 / tke 11 / dlc 8 居前）—— 已从 356 降到 226，但 write 之后读不回来的闭环仍断在读面这一侧。</li>
+          <li><span class="tag">读面缺口</span><b>226 个 write 模块没有同名 _info，但只有 128 个是真 backlog</b>（scripts/gap_backlog.py 实测）：43 个已由 KNOWN_COVERAGE 映射到确实返回该资源的别的 _info（tse 14 / tdmq 11 / dlc 6）、55 个资源根本没有列表 API（cos 13 / tse 13 / teo 7）、<b>128 个才是有列表 API 却没接的待补项，波及 45 个产品</b>（apigateway 8 / ckafka 6 / trabbit 6 / cfw 5 / dts 5 居前）。已从 356 降到 226（其中 backlog 128），write 之后读不回来的闭环仍断在读面这一侧；<b>tse 与 cos 的 backlog 已归零</b>——旧稿把它们当成大户是统计口径错误（只按「有没有同名 _info」计数）。</li>
           <li><span class="tag">单测广度</span>write 侧已闭合（<b>456 / 456 全部有专属单测文件</b>，09-08 时缺 111 个）；info 侧 36 个缺口已于 09-14 收口 —— <b>435 / 435 个 _info 全部有专属单测文件</b>（write 面 456 / 456 亦全）。92.65% 覆盖率仍由深测模块拉高，分布不均。</li>
           <li><span class="tag">结构补课</span>plugin_utils（5）/ action（tc_wait）/ filter（tags）/ docsite（Sphinx -W 构建，产物已入库）已补齐，<b>extensions.yml 已落地</b>（声明 plugins/event_source 扩展；09-14 起由 scripts/check_extensions_metadata.py --check 双向校验，声明缺失或指向空目录即失败）；doc_fragments 6 个（amazon 5 个）；module_utils 16 个（amazon 42）。4 个 event_source（cmq/cls/cos/tke）09-14 补齐 EXAMPLES 块与载荷字段文档、修正 2 处永不匹配的规则条件，并由 test_examples.py 双向校验（P1-08 关闭）；ansible-core 与 antsibull-docs 都不识别该扩展类型，docsite 入口仍缺。</li>
           <li><span class="tag">生态信任</span>Galaxy 下载 553（09-14 实拉）vs 91.3M / 17.1M / 11.9M；inclusion #89 尚在评审，<b>暂无第三方采用证据</b>。</li>
@@ -300,7 +300,7 @@
     <div class="hard-truth">
       <span class="ht-t">⚠ 两条硬真相（自审结论，非客套）：</span>
       ① <b>「模块多」不等于「可信」</b> —— 仍有 6 个旗舰模块（redis_instance / cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway）从未在真实腾讯云环境跑过集成测试，且 billed target 只在人工 dispatch 时才跑：这是向外宣称「企业级」前必须先补的信用账；
-      ② <b>广度数字要按「写读双闭环」来读</b> —— 891 模块里 226 个 write 没有 _info 读面、132 个产品只有单只读 _info，真正含 write 的产品 71 个；对外展示覆盖时不能只报 891。
+      ② <b>广度数字要按「写读双闭环」来读</b> —— 891 模块里 226 个 write 没有同名 _info（43 个已映射、55 个无列表 API、<b>128 个待补</b>）、132 个产品只有单只读 _info，真正含 write 的产品 71 个；对外展示覆盖时不能只报 891。
     </div>
   </section>
 
@@ -337,11 +337,11 @@
           <td class="item"><b>目标：集成 target 21 → 30+</b> <span class="chip done">✓ 数量已达成</span><span class="why">覆盖 13 旗舰中的 7 个后继续向 30+ 推进（G1-c），按 product-depth 里旗舰产品优先</span></td>
           <td class="item"><span class="why">09-14 实测 34 个 target 目录 / 33 个进 registry，数量里程碑已过；但对齐 amazon 160 / google 115 仍是长期目标，且默认清单只有 21 个（billed target 需人工 dispatch），「30+ 全绿」待 2026-09-19 首次带凭据的定时跑验证。</span></td><td><span class="chip cost">L</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-05</td><td><span class="chip p0">P0</span></td>
-          <td class="item"><b>read-surface 收口第一波：write 缺 _info 大户</b><span class="why">09-14 实测大户为 tse(27) / cos(14) / tdmq(13) / tke(11) / dlc(8)；用 discover_info_specs.py + 生成器，只生成 SDK 真实 list API</span></td>
-          <td class="item"><span class="why">09-14 实测 226 个 write 无读面（59 产品），仍是当前最大深度缺口（09-08 为 356/74）。验收：226 → ~150，tse / cos / tdmq 三个大户率先归零。</span></td><td><span class="chip cost">M</span></td></tr>
+          <td class="item"><b>read-surface 收口第一波：write 缺 _info 大户</b><span class="why">09-14 按 audit 判定重测：backlog 大户是 apigateway(8) / ckafka(6) / trabbit(6) / cfw(5) / dts(5)；tse(27) / cos(14) 只是「缺同名 _info」，其中 tse 14 个已映射 + 13 个无列表 API、cos 13 个无列表 API + 1 个已映射，<b>两者 backlog 实为 0</b>。用 discover_info_specs.py + 生成器，只生成 SDK 真实 list API</span></td>
+          <td class="item"><span class="why">09-14 实测 226 个 write 无同名 _info（55 产品），其中 <b>128 个 backlog 才是缺口</b>（45 产品；09-08 为 356/74）。验收：backlog 128 → ~60，apigateway / ckafka / trabbit 三个大户率先归零。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-06</td><td><span class="chip p0">P0</span></td>
           <td class="item"><b>read-surface 收口第二波</b><span class="why">09-14 实测尾部为 teo(7) / trabbit(6) / monitor(6) / ckafka(6) / waf(5) / dts(5) / cfw(5) / api(5)；无 list API 的资源记入 KNOWN_GAPS 不硬造</span></td>
-          <td class="item"><span class="why">write→read 闭环是「管理面完整」的定义；宁可明确 KNOWN_GAPS 也不造不存在的读面。验收：59 产品 → &lt;30。</span></td><td><span class="chip cost">M</span></td></tr>
+          <td class="item"><span class="why">write→read 闭环是「管理面完整」的定义；宁可明确 KNOWN_GAPS 也不造不存在的读面。验收：backlog 产品 45 → &lt;25（无列表 API 的 55 个不进验收）。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-07</td><td><span class="chip p0">P0</span></td>
           <td class="item"><b>batch 12+：按 per-file miss 从高到低补 write 单测</b> <span class="chip done">✓ 已达成</span><span class="why">每周 1-2 批推进；write 面按 miss 榜单逐个补主路径测试</span></td>
           <td class="item"><span class="why">验收口径（111 → &lt;60）已超额完成：<b>456 / 456 个 write 模块全部有专属单测文件</b>。剩余广度缺口已归零（info 侧 36 个缺专属单测亦已补齐）。</span></td><td><span class="chip cost">M</span></td></tr>
@@ -433,8 +433,8 @@
     <div class="foot">
       <div class="m"><div class="t">1 · 数据来源</div><div class="d">Galaxy API v3 download_count 09-14 实拉（amazon 91,290,318 / azure 17,127,874 / google 11,900,300 / 本库 553）+ 各家 tar.gz 解包统计模块 / 测试 / 目录结构；本库按源码 main HEAD 实测（= v1.4.0 产物），pytest 模块级 10,321 函数、CI 口径 12,961 条（12,908 过 / 31 跳 / 22 xfail）。</div></div>
       <div class="m"><div class="t">2 · 模块计数法</div><div class="d">总数 = modules/ 下全部 .py；info = *_info.py；write = 总数 − info。本库 891 = 456 write + 435 info；产品与 roles 来自 scripts/generate_product_capabilities.py（204 产品 / 71 含写 / 68 roles）。</div></div>
-      <div class="m"><div class="t">3 · 测试口径</div><div class="d">本库单测 = tests/unit 下 test_*.py（1,017 个，其中 954 个模块级）；集成 = tests/integration/targets 目录数（34 = 33 进 registry + cleanup 清扫器；2 个孤儿 target 已于 09-14 补登记），默认清单 21 个。覆盖率按 CI 口径实跑：contract + module_utils + modules，--cov=plugins/module_utils --cov=plugins/modules，92.65%。对比方单测 = 其产物 unit 文件数；azure 产物剥离 tests/、google 产物仅 1 个 —— 已标注，勿当源码水平。「测试函数」按模块级 test_*.py 中行首 def test_ 计数，09-14 重新按该口径钉死以防漂移。</div></div>
-      <div class="m"><div class="t">4 · 已知修正</div><div class="d">对比方版本未变（amazon 11.4.0 / azure 4.0.0 / google 1.14.0），沿用 09-02 tarball 核验数、仅更新下载计数；本库口径沿 09-08 的 main 源码口径，09-14 全部数字重测：模块 781 → 891、覆盖 81.44% → 92.65%、sanity 1557/1900 → 2076/2600、集成 21 → 34、write 与 info 无专属单测均归零（111 → 0、36 → 0）。读面缺口（226 / 59 产品）为脚本实时统计。</div></div>
+      <div class="m"><div class="t">3 · 测试口径</div><div class="d">本库单测 = tests/unit 下 test_*.py（1,018 个，其中 954 个模块级）；集成 = tests/integration/targets 目录数（34 = 33 进 registry + cleanup 清扫器；2 个孤儿 target 已于 09-14 补登记），默认清单 21 个。覆盖率按 CI 口径实跑：contract + module_utils + modules，--cov=plugins/module_utils --cov=plugins/modules，92.65%。对比方单测 = 其产物 unit 文件数；azure 产物剥离 tests/、google 产物仅 1 个 —— 已标注，勿当源码水平。「测试函数」按模块级 test_*.py 中行首 def test_ 计数，09-14 重新按该口径钉死以防漂移。</div></div>
+      <div class="m"><div class="t">4 · 已知修正</div><div class="d">对比方版本未变（amazon 11.4.0 / azure 4.0.0 / google 1.14.0），沿用 09-02 tarball 核验数、仅更新下载计数；本库口径沿 09-08 的 main 源码口径，09-14 全部数字重测：模块 781 → 891、覆盖 81.44% → 92.65%、sanity 1557/1900 → 2076/2600、集成 21 → 34、write 与 info 无专属单测均归零（111 → 0、36 → 0）。读面缺口 226 个缺 _info（55 个产品）为脚本实时统计，其中 43 个已由 KNOWN_COVERAGE 映射到别的 _info、55 个资源无列表 API，真正待补的 backlog 为 128 个（45 个产品）—— 大户是 apigateway 8 / ckafka 6 / trabbit 6 / cfw 5 / dts 5，而 tse 与 cos 的 backlog 已为 0（它们的 27 / 14 全是映射或无列表 API）。</div></div>
     </div>
   </section>
 

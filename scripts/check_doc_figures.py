@@ -10,6 +10,10 @@ new guard files had landed, and plugin_utils was called 6 files when it has
 5 -- the convention that gives module_utils 16 excludes ``__init__.py``.
 Nothing in the gate noticed either, because nothing re-measured them.
 
+A number is matched as a whole number, never as a substring: ``55`` occurs
+inside ``1557`` and ``553``, both of which the page quotes elsewhere, and
+that made a claim pass while the page never stated the figure at all.
+
 The check is deliberately one-directional: for each figure it looks for a
 line of the doc that carries both the figure and a keyword that pins what
 the figure means. A figure that is edited away, or edited to a wrong value,
@@ -27,6 +31,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PANORAMA = "docs/panorama.html"
 CAPABILITIES = "scripts/generate_product_capabilities.py"
+BACKLOG = "scripts/gap_backlog.py"
 WORKFLOW = ".github/workflows/integration.yml"
 IGNORE_CHECK = "scripts/check_sanity_ignore.py"
 
@@ -42,6 +47,10 @@ CLAIMS = (
     ("module-level unit files", ("模块级",)),
     ("read-side gap", ("_info 读面", "读面缺口")),
     ("read-side gap products", ("读面", "产品")),
+    ("read-side mapped", ("映射", "mapped")),
+    ("read-side backlog", ("backlog", "待补")),
+    ("read-side no-list-api", ("no-list-api", "无列表")),
+    ("read-side backlog products", ("backlog", "产品")),
     ("integration target dirs", ("targets", "目录数")),
     ("integration default list", ("默认清单",)),
     ("sanity ignores", ("ignore", "豁免")),
@@ -72,6 +81,33 @@ def _product_count(root):
         roles_dir=str(root / "roles"),
     )
     return len(products), sum(1 for value in products.values() if value["write"])
+
+
+def _backlog(root):
+    """Return the read-side split scripts/gap_backlog.py computes.
+
+    ``read-side gap`` alone is not a backlog: a write module without a
+    sibling ``_info`` may already be read through a curated mapping, or the
+    resource may have no list API at all. Only the ``backlog`` bucket is
+    actionable, so the docs have to state all three.
+    """
+    path = root / BACKLOG
+    spec = importlib.util.spec_from_file_location("_gap_backlog", str(path))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    data = module.collect(root)
+    counts = data["counts"]
+    products = data["by_product"]
+    return {
+        "read-side mapped": counts["mapped"],
+        "read-side no-list-api": counts["no-list-api"],
+        "read-side backlog": counts["backlog"],
+        "read-side backlog products": len(products["backlog"]),
+        "read-side gap products": len(
+            set(products["mapped"])
+            | set(products["no-list-api"])
+            | set(products["backlog"])),
+    }
 
 
 def _default_targets(root):
@@ -120,7 +156,6 @@ def measure(root):
         "unit test files": len(unit_files),
         "module-level unit files": len(module_level),
         "read-side gap": len(gap),
-        "read-side gap products": len({p.stem.split("_")[0] for p in gap}),
         "integration target dirs": len(
             [p for p in (root / "tests" / "integration" / "targets").iterdir()
              if p.is_dir()]),
@@ -133,7 +168,33 @@ def measure(root):
         figures["%s plugins" % name if name not in
                 ("doc_fragments", "module_utils", "plugin_utils") else name] = \
             len(_py_files(root / "plugins" / name))
+    figures.update(_backlog(root))
     return figures
+
+
+NUMBER_RE = re.compile(r"\d[\d,]*(?:\.\d+)?")
+
+
+def _numbers(line):
+    """Whole numbers on a line, as numbers.
+
+    Substring matching is not good enough: ``55`` occurs inside ``1557``
+    and ``553``, and the page is full of both, so the ``read-side gap
+    products`` claim passed while the doc never stated it. Commas and a
+    trailing decimal point are stripped; ``1,017`` and ``1017`` are the
+    same number.
+    """
+    found = set()
+    for token in NUMBER_RE.findall(line):
+        text = token.replace(",", "").rstrip(".")
+        if not text:
+            continue
+        try:
+            value = float(text)
+        except ValueError:
+            continue
+        found.add(int(value) if value.is_integer() else value)
+    return found
 
 
 def validate(figures, doc_text):
@@ -145,10 +206,9 @@ def validate(figures, doc_text):
         if value is None:
             problems.append("%s: not measured" % label)
             continue
-        forms = {str(value), "{:,}".format(value)}
         hit = any(
             any(keyword in line for keyword in keywords)
-            and any(form in line for form in forms)
+            and value in _numbers(line)
             for line in lines
         )
         if not hit:

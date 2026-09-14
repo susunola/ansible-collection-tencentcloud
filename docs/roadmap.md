@@ -929,7 +929,7 @@
     | Module unit-test files | 781 | **954** (10,321 test functions) |
     | Sanity ignore debt | 1557 / 1900 | **2076 / 2600** (519 x 4 core versions) |
     | Integration targets | 21 | **34** (33 in the registry, 21 in the default list) |
-    | Write modules without a `_info` read surface | 356 / 74 products | **226 / 59 products** |
+    | Write modules without a `_info` read surface | 356 / 74 products | **226 / 55 products (128 backlog + 55 no-list-api + 43 mapped)** |
     | Write modules without a dedicated unit test | 111 | **0** |
     | Read-only `_info` modules without a dedicated unit test | 36 | **0** |
     | Galaxy downloads | 415 | **553** |
@@ -1047,6 +1047,25 @@ source and its unit tests actually emit), because `plugins/event_source` is
 an extension type that no sanity test renders and `ansible-doc` never sees,
 so its examples could otherwise drift for good. `meta/extensions.yml` is
 enforced in CI as of the same day (G1-f).
+
+Status 2026-09-14: the read-surface backlog figure was corrected at the
+source. `scripts/gap_backlog.py` used to scrape `KNOWN_GAPS` out of
+`scripts/audit_info_coverage.py` with a regex that only matched
+double-quoted names while the set is written with single quotes, so it
+reported every curated gap as UNTRACKED; it also counted any write module
+without a same-named `_info` as a gap, which mixed together three different
+situations. It now imports the audit module and reuses its verdicts, and
+groups modules by product with the repo's own inventory instead of
+`name.split('_')[0]`. The corrected split: 456 write modules — 230 have a
+sibling `_info`, and of the 226 that do not, 43 are already read through a
+curated `KNOWN_COVERAGE` mapping, 55 have no list API at all, and **128 are
+the real backlog across 45 products**. `scripts/check_doc_figures.py` now
+pins all four numbers (24 figures in total) and matches them as whole
+numbers rather than substrings — `55` used to match inside `1557`.
+The practical consequence is that P0-05's target list was wrong: tse(27)
+and cos(14) were only "missing a same-named `_info`", and both have a
+**backlog of 0**; the real leaders are apigateway 8 / ckafka 6 / trabbit 6 /
+cfw 5 / dts 5.
 
 1. **Deepen the eight highest-use resource families.** Close runtime and
    operational workflows in TEM, TKE, CLB, CDB/Redis/MongoDB, TCR, SCF,

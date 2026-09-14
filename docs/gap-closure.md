@@ -4,7 +4,7 @@
 > （本库源码 main HEAD 实测 + 对比方 Galaxy 产物实拉；2026-09-02 初版，2026-09-08 随 P0-12 同步刷新，
 > 2026-09-09 随 P0-03/04 同步 G1 集成口径至 26 targets / 77 yml，
 > 2026-09-14 随 v1.4.0 发布全量重测：891 模块 / 456 write + 435 _info、34 targets / 104 yml、
-> 覆盖率 92.65%、write 无专属单测 111 → 0、读面缺口 356 → 226）。
+> 覆盖率 92.65%、write 无专属单测 111 → 0、读面缺口 356 → 226，其中真 backlog 128）。
 > 对比对象：amazon.aws 11.4.0 / azure.azcollection 4.0.0 / google.cloud 1.14.0（版本未变，沿用 09-02 核验）。
 > 状态图例：✅ 已闭合 · 🔄 在途 · ⏸ 排队/等待外部 · 📋 待启动 · ❌ 明确不追（有意取舍）。
 
@@ -197,12 +197,24 @@ TEO、CFW、CFS、Lighthouse 等），继续按 panorama 推荐顺序逐族推�
  12. **G1-h（09-14 新增）** panorama 的头版数字改为实测 → ✅（benchmark 页上的
     模块 / 产品 / role / 单测文件 / 集成 target / sanity ignore / 插件类型计数全是手抄的，
     已经错两处：单测文件写 1,014（新增两个 guard 后实为 1,016/1,017），plugin_utils 写 6
-    （按 module_utils 16 的同款口径 —— 不计 `__init__.py` —— 实为 5）。新增
-    `scripts/check_doc_figures.py --check` 并已进 CI：20 个数字全部从磁盘重算，再要求在
-    `docs/panorama.html` 里存在「数字 + 定位关键词同行」的一行，数字被改掉或整段删掉都会失败；
-    14 条单测，含真实仓库锚点（`validate(measure(ROOT), panorama) == []`）与自反性校验
-    （新增任一单测文件会让该数字变化 —— 已按 1,017 改正）
+     （按 module_utils 16 的同款口径 —— 不计 `__init__.py` —— 实为 5）。新增
+     `scripts/check_doc_figures.py --check` 并已进 CI：24 个数字全部从磁盘重算，再要求在
+     `docs/panorama.html` 里存在「数字 + 定位关键词同行」的一行，数字被改掉或整段删掉都会失败；
+     18 条单测，含真实仓库锚点（`validate(measure(ROOT), panorama) == []`）与自反性校验
+     （新增任一单测文件会让该数字变化 —— 已按 1,018 改正）。数字按**整体数值**比对而非子串：
+     `55` 会出现在 `1557` 与 `553` 里，子串匹配曾让「读面缺口波及 55 产品」在页面根本没写
+     这个数时依然通过 —— 该 vacuity 由 `test_validate_matches_whole_numbers_only` 守住
+  13. **G1-i（09-14 新增）** 读面 backlog 的统计口径 → ✅（`scripts/gap_backlog.py`
+     用「双引号正则」去抓 `KNOWN_GAPS`，而该 set 是单引号写的 —— 于是 128 条 curated
+     backlog 全被报成 UNTRACKED（0 in KNOWN_GAPS）；且它只按「有没有同名 `_info`」计数，
+     把「已经映射到别的 _info」「根本没有列表 API」「真待补」三种情况混为一谈，对外报 226/59。
+     现在改为**直接 import** `audit_info_coverage` 复用它的判定，产品分组也换成本库自己的
+     inventory（旧口径把 `api_gateway_*` 与 `apigateway_*` 拆成两个产品）。实测拆分：
+     456 write = 230 有同名 _info + 43 已映射 + 55 无列表 API + **128 真 backlog（45 产品）**。
+     `check_doc_figures.py` 新增 4 条 claim 钉住这四个数。连带修正：panorama / capability-map /
+     roadmap 里「tse 27 / cos 14 是大户」是错的 —— 两者 backlog 实为 **0**，真正的大户是
+     apigateway 8 / ckafka 6 / trabbit 6 / cfw 5 / dts 5。10 条单测，6 个变异全被捕获）
 
 ---
 
-_本计划由 docs/capability-map.html / docs/panorama.html INDUSTRY BENCHMARK 区块派生 · 2026-09-02 初版 · 2026-09-08 随 P0-12 刷新至 781 模块 / 204 产品 / gate 80 口径 · 2026-09-09 随 P0-05 刷新覆盖率至 81.64%、随 P0-06 至 82% · **2026-09-14 随 v1.4.0 全量重测至 891 模块（456 write + 435 _info）/ 204 产品 / gate 80 实测 92.65% / 34 targets（104 yml）/ write 与 info 无专属单测均 0 / 读面缺口 226（59 产品）** · 数据均为源码实测 + Galaxy 产物实拉_
+_本计划由 docs/capability-map.html / docs/panorama.html INDUSTRY BENCHMARK 区块派生 · 2026-09-02 初版 · 2026-09-08 随 P0-12 刷新至 781 模块 / 204 产品 / gate 80 口径 · 2026-09-09 随 P0-05 刷新覆盖率至 81.64%、随 P0-06 至 82% · **2026-09-14 随 v1.4.0 全量重测至 891 模块（456 write + 435 _info）/ 204 产品 / gate 80 实测 92.65% / 34 targets（104 yml）/ write 与 info 无专属单测均 0 / 读面缺口 226（55 产品，其中 backlog 128 / 45 产品）** · 数据均为源码实测 + Galaxy 产物实拉_

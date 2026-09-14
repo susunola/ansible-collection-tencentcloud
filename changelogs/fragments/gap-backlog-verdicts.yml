@@ -1,0 +1,22 @@
+---
+minor_changes:
+  - scripts/gap_backlog.py - report the read-surface backlog with the verdicts
+    that scripts/audit_info_coverage.py already computes, instead of scraping
+    KNOWN_GAPS with a regex that only matched double-quoted names (the set is
+    written with single quotes, so all 128 curated gaps were reported as
+    untracked) and instead of counting every write module without a
+    same-named _info as a gap. The 226 write modules with no same-named _info
+    are now split into 43 already read through a curated KNOWN_COVERAGE
+    mapping, 55 whose resource has no list API at all, and 128 that are the
+    actionable backlog across 45 products. Products are grouped with the
+    repo's own inventory, so api_gateway_* and apigateway_* are no longer
+    counted as two different products.
+  - scripts/check_doc_figures.py - pin the four read-side figures in
+    docs/panorama.html (24 figures in total) and compare every figure as a
+    whole number rather than a substring, because 55 also occurs inside 1557
+    and 553 and that let a claim pass while the page never stated it.
+  - docs - correct the read-surface backlog in panorama, capability-map,
+    roadmap and gap-closure. tse and cos were quoted as the biggest gaps
+    (27 and 14); both were only missing a same-named _info and have a backlog
+    of zero. The real backlog leaders are apigateway 8, ckafka 6, trabbit 6,
+    cfw 5 and dts 5.

@@ -55,6 +55,11 @@ def test_measured_figures_are_internally_consistent(figures):
     assert figures["sanity ignores"] <= figures["sanity ignore budget"]
 
 
+def test_every_measured_figure_has_a_claim(guard, figures):
+    """A figure that is measured but not claimed is measured for nothing."""
+    assert set(figures) == {label for label, _keywords in guard.CLAIMS}
+
+
 def test_real_panorama_states_every_figure(guard, figures):
     """The regression this guard was written for: rot on the benchmark page."""
     problems = guard.validate(figures, PANORAMA.read_text(encoding="utf-8"))
@@ -99,9 +104,33 @@ def test_validate_flags_a_figure_the_doc_dropped(guard, figures):
 
 def test_validate_flags_only_the_figure_that_moved(guard, figures):
     """One wrong figure must not make the whole report unreadable."""
-    doc = PANORAMA.read_text(encoding="utf-8").replace("1,017 个", "1,999 个")
+    doc = PANORAMA.read_text(encoding="utf-8").replace("1,018 个", "1,999 个")
     problems = guard.validate(figures, doc)
     assert len(problems) == 1 and problems[0].startswith("unit test files:")
+
+
+def test_validate_matches_whole_numbers_only(guard, figures):
+    """`55` is inside `1557` and `553`, and the page quotes both.
+
+    Substring matching let a claim pass while the page never stated the
+    figure, so the number has to be compared as a number.
+    """
+    doc = "sanity 1557/1900 and 553 downloads 产品\n"
+    problems = guard.validate(
+        _with(figures, **{"read-side gap products": 55}), doc)
+    assert any(p.startswith("read-side gap products:") for p in problems)
+    stated = guard.validate(
+        _with(figures, **{"read-side gap products": 55}),
+        _doc_plus("55 产品"))
+    assert [p for p in stated if p.startswith("read-side gap products")] == []
+
+
+def test_read_side_figures_partition_the_gap(figures):
+    """Only the backlog is actionable; the other two are not gaps to close."""
+    assert figures["read-side mapped"] + figures["read-side no-list-api"] + \
+        figures["read-side backlog"] == figures["read-side gap"]
+    assert figures["read-side backlog products"] <= figures[
+        "read-side gap products"]
 
 
 def test_validate_ignores_the_keyword_on_other_lines(guard, figures):
@@ -140,8 +169,8 @@ def test_main_fails_when_a_figure_is_stale(guard, tmp_path, capsys):
     root = _fake_root(tmp_path)
     panorama = root / "docs" / "panorama.html"
     text = panorama.read_text(encoding="utf-8")
-    assert "1,017 个" in text, "the anchor string changed; retarget the test"
-    panorama.write_text(text.replace("1,017 个", "1,014 个"), encoding="utf-8")
+    assert "1,018 个" in text, "the anchor string changed; retarget the test"
+    panorama.write_text(text.replace("1,018 个", "1,014 个"), encoding="utf-8")
     assert guard.main(["--root", str(root), "--check"]) == 1
     assert "unit test files" in capsys.readouterr().out
 
