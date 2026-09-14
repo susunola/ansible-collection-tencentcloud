@@ -291,7 +291,7 @@
           <li><span class="tag">集成测试</span><b>34 个 target 目录（33 个进 registry，21 个在默认清单）vs amazon 160 / google 115</b>（azure 产物无）。旗舰零覆盖已从 13 个降到 <b>6 个</b>（redis_instance / cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway）—— cvm_instance / vpc / subnet / cdb_instance / tke_cluster 已立 target，但 billed target 仍未进默认清单；cvm_image / lighthouse 曾是两个孤儿 target（两侧都不在），09-14 已补进 registry 并加「目录 vs registry」反向校验（G1-d 关闭）。</li>
           <li><span class="tag">读面缺口</span><b>226 个 write 模块没有配套 _info 读面</b>（scripts/gap_backlog.py 实测，波及 59 个产品；tse 27 / cos 14 / tdmq 13 / tke 11 / dlc 8 居前）—— 已从 356 降到 226，但 write 之后读不回来的闭环仍断在读面这一侧。</li>
           <li><span class="tag">单测广度</span>write 侧已闭合（<b>456 / 456 全部有专属单测文件</b>，09-08 时缺 111 个）；info 侧 36 个缺口已于 09-14 收口 —— <b>435 / 435 个 _info 全部有专属单测文件</b>（write 面 456 / 456 亦全）。92.65% 覆盖率仍由深测模块拉高，分布不均。</li>
-          <li><span class="tag">结构补课</span>plugin_utils（6）/ action（tc_wait）/ filter（tags）/ docsite（Sphinx -W 构建，产物已入库）已补齐，<b>extensions.yml 已落地</b>（声明 plugins/event_source 扩展；09-14 起由 scripts/check_extensions_metadata.py --check 双向校验，声明缺失或指向空目录即失败）；doc_fragments 6 个（amazon 5 个）；module_utils 16 个（amazon 42）。4 个 event_source（cmq/cls/cos/tke）09-14 补齐 EXAMPLES 块与载荷字段文档、修正 2 处永不匹配的规则条件，并由 test_examples.py 双向校验（P1-08 关闭）；ansible-core 与 antsibull-docs 都不识别该扩展类型，docsite 入口仍缺。</li>
+          <li><span class="tag">结构补课</span>plugin_utils（5）/ action（tc_wait）/ filter（tags）/ docsite（Sphinx -W 构建，产物已入库）已补齐，<b>extensions.yml 已落地</b>（声明 plugins/event_source 扩展；09-14 起由 scripts/check_extensions_metadata.py --check 双向校验，声明缺失或指向空目录即失败）；doc_fragments 6 个（amazon 5 个）；module_utils 16 个（amazon 42）。4 个 event_source（cmq/cls/cos/tke）09-14 补齐 EXAMPLES 块与载荷字段文档、修正 2 处永不匹配的规则条件，并由 test_examples.py 双向校验（P1-08 关闭）；ansible-core 与 antsibull-docs 都不识别该扩展类型，docsite 入口仍缺。</li>
           <li><span class="tag">生态信任</span>Galaxy 下载 553（09-14 实拉）vs 91.3M / 17.1M / 11.9M；inclusion #89 尚在评审，<b>暂无第三方采用证据</b>。</li>
           <li><span class="tag">维护资源</span>个人维护 vs 厂商 + Red Hat/社区团队；issue 响应与版本节奏是长期风险（缓解：生成式治理 + 自动化 CI 已把人均负担压低）。</li>
         </ul>
@@ -362,7 +362,7 @@
           <td class="item"><span class="why">对外展示的对比表不能带已知过期数字（781 模块 / 81.44% / sanity 1557-1900 等已失效）。验收：三份文档数据与本页一致 —— panorama 已于 2026-09-14 按实测刷新（891 / 92.65% / 2076-2600）。</span></td><td><span class="chip cost">S</span></td></tr>
 
         <tr class="grp-p1"><td class="no">P1-01</td><td><span class="chip p1">P1</span></td>
-          <td class="item"><b>新增 plugins/plugin_utils 共享库</b> <span class="chip done">✓ 已达成</span><span class="why">落地为 plugins/plugin_utils/ 下 6 个文件（含 inventory.py 控制器 shim）；与 module_utils（16 个）分工</span></td>
+          <td class="item"><b>新增 plugins/plugin_utils 共享库</b> <span class="chip done">✓ 已达成</span><span class="why">落地为 plugins/plugin_utils/ 下 5 个模块文件（inventory / paging / polling / profile / tags，含 inventory.py 控制器 shim，另有 __init__.py；口径同 module_utils 16 个，均不计 __init__.py）；与 module_utils（16 个）分工</span></td>
           <td class="item"><span class="why">官方库标配；为未来 action/filter 插件提供公共底座。验收：plugin_utils 首个文件 + 迁移 1-2 个公共函数。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p1"><td class="no">P1-02</td><td><span class="chip p1">P1</span></td>
           <td class="item"><b>新增首个 action 插件</b> <span class="chip done">✓ 已达成</span><span class="why">落地为 plugins/action/tc_wait.py（等待资源就绪的跨模块操作），已完成 sanity + 单测</span></td>
@@ -433,7 +433,7 @@
     <div class="foot">
       <div class="m"><div class="t">1 · 数据来源</div><div class="d">Galaxy API v3 download_count 09-14 实拉（amazon 91,290,318 / azure 17,127,874 / google 11,900,300 / 本库 553）+ 各家 tar.gz 解包统计模块 / 测试 / 目录结构；本库按源码 main HEAD 实测（= v1.4.0 产物），pytest 模块级 10,321 函数、CI 口径 12,961 条（12,908 过 / 31 跳 / 22 xfail）。</div></div>
       <div class="m"><div class="t">2 · 模块计数法</div><div class="d">总数 = modules/ 下全部 .py；info = *_info.py；write = 总数 − info。本库 891 = 456 write + 435 info；产品与 roles 来自 scripts/generate_product_capabilities.py（204 产品 / 71 含写 / 68 roles）。</div></div>
-      <div class="m"><div class="t">3 · 测试口径</div><div class="d">本库单测 = tests/unit 下 test_*.py（1,014 个，其中 954 个模块级）；集成 = tests/integration/targets 目录数（34 = 33 进 registry + cleanup 清扫器；2 个孤儿 target 已于 09-14 补登记），默认清单 21 个。覆盖率按 CI 口径实跑：contract + module_utils + modules，--cov=plugins/module_utils --cov=plugins/modules，92.65%。对比方单测 = 其产物 unit 文件数；azure 产物剥离 tests/、google 产物仅 1 个 —— 已标注，勿当源码水平。「测试函数」按模块级 test_*.py 中行首 def test_ 计数，09-14 重新按该口径钉死以防漂移。</div></div>
+      <div class="m"><div class="t">3 · 测试口径</div><div class="d">本库单测 = tests/unit 下 test_*.py（1,016 个，其中 954 个模块级）；集成 = tests/integration/targets 目录数（34 = 33 进 registry + cleanup 清扫器；2 个孤儿 target 已于 09-14 补登记），默认清单 21 个。覆盖率按 CI 口径实跑：contract + module_utils + modules，--cov=plugins/module_utils --cov=plugins/modules，92.65%。对比方单测 = 其产物 unit 文件数；azure 产物剥离 tests/、google 产物仅 1 个 —— 已标注，勿当源码水平。「测试函数」按模块级 test_*.py 中行首 def test_ 计数，09-14 重新按该口径钉死以防漂移。</div></div>
       <div class="m"><div class="t">4 · 已知修正</div><div class="d">对比方版本未变（amazon 11.4.0 / azure 4.0.0 / google 1.14.0），沿用 09-02 tarball 核验数、仅更新下载计数；本库口径沿 09-08 的 main 源码口径，09-14 全部数字重测：模块 781 → 891、覆盖 81.44% → 92.65%、sanity 1557/1900 → 2076/2600、集成 21 → 34、write 与 info 无专属单测均归零（111 → 0、36 → 0）。读面缺口（226 / 59 产品）为脚本实时统计。</div></div>
     </div>
   </section>
