@@ -194,6 +194,14 @@ TEO、CFW、CFS、Lighthouse 等），继续按 panorama 推荐顺序逐族推�
     的字段 ⊆ 文档承诺的字段 ⊆ 源码与其单测里实测出现的字段。6 次变异全部被捕获后按 sha256
     逐字节还原；含防空断言（找不到插件、找不到 payload key、文档未声明任何字段都会失败）——
     第一版就因为 `parents[3]` 算错层级而整体空转，三个「变异」全过）
+ 12. **G1-h（09-14 新增）** panorama 的头版数字改为实测 → ✅（benchmark 页上的
+    模块 / 产品 / role / 单测文件 / 集成 target / sanity ignore / 插件类型计数全是手抄的，
+    已经错两处：单测文件写 1,014（新增两个 guard 后实为 1,016/1,017），plugin_utils 写 6
+    （按 module_utils 16 的同款口径 —— 不计 `__init__.py` —— 实为 5）。新增
+    `scripts/check_doc_figures.py --check` 并已进 CI：20 个数字全部从磁盘重算，再要求在
+    `docs/panorama.html` 里存在「数字 + 定位关键词同行」的一行，数字被改掉或整段删掉都会失败；
+    14 条单测，含真实仓库锚点（`validate(measure(ROOT), panorama) == []`）与自反性校验
+    （新增任一单测文件会让该数字变化 —— 已按 1,017 改正）
 
 ---
 

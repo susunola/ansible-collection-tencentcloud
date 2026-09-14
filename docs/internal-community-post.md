@@ -43,7 +43,7 @@ CI 不能跑示例 playbook——跑了就创建计费资源。但"不能执行"
 全量门禁（`ansible-test sanity` × 三 Python 版本、`ansible-test units`、`coverage --cov-fail-under=80`、collection build）一次要十几分钟。把能在 1 秒内的静态检查单列成"快门禁"，先跑：
 
 - SDK 漂移哨兵（生成代码与 SDK 版本不一致直接红）
-- `sync_doc_fragments` / `sync_registry` / `audit_info_coverage` / `generate_cam_actions` / `generate_product_capabilities` / `check_module_tiers` / `check_sanity_ignore` / `check_hidden_required_params` / `check_extensions_metadata` / `check_examples` / `check_porting_map` ——全部 `--check` 退出 0
+- `sync_doc_fragments` / `sync_registry` / `audit_info_coverage` / `generate_cam_actions` / `generate_product_capabilities` / `check_module_tiers` / `check_sanity_ignore` / `check_hidden_required_params` / `check_extensions_metadata` / `check_doc_figures` / `check_examples` / `check_porting_map` ——全部 `--check` 退出 0
 
 快门禁挡在前面，大部分引用类回归在 10 秒内就能红，不用等十几分钟全量跑完才发现模块名拼错。
 

@@ -1,0 +1,8 @@
+---
+minor_changes:
+  - docs - add scripts/check_doc_figures.py, which re-measures the 20 headline
+    figures quoted on docs/panorama.html (module, product, role, unit-test,
+    integration-target, sanity-ignore and plugin-type counts) and fails when
+    one of them is no longer stated. Two figures had already drifted - the
+    unit-test file count and the plugin_utils file count - because nothing
+    re-measured them.

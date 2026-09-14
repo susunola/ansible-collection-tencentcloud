@@ -89,6 +89,8 @@ jobs:
         run: python scripts/check_hidden_required_params.py --check
       - name: Extensions metadata matches plugins
         run: python scripts/check_extensions_metadata.py --check
+      - name: Docs figures match the repo
+        run: python scripts/check_doc_figures.py --check
       - name: Ruff lint
         run: ruff check .
       - name: Sanity ignore budget
