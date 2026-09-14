@@ -178,6 +178,12 @@ TEO、CFW、CFS、Lighthouse 等），继续按 panorama 推荐顺序逐族推�
     `none` 与 `token` 两套测试模板，`SPECS` 之外的 7 个模块由骨架生成器补齐；**435 / 435 个
     `_info` 全部有专属单测文件**，模块与测试共用 `_token_termination()` 终结表达式以免漂移；
     4 条生成器回归测试锁定该契约。CI 口径 12,828 → 12,961，覆盖 92.58% → 92.65%）
+ 10. **G1-f（09-14 新增）** `meta/extensions.yml` 有了反向校验 → ✅（该文件 09-09 落地并随
+    v1.4.0 发布，但 panorama 一直写「仍缺」—— 手工元数据无人校验，声明与产物可以长期不一致，
+    与 G1-d 的孤儿 target 同一类缺陷。新增 `scripts/check_extensions_metadata.py --check`
+    并已进 CI：声明 → 磁盘（目录存在、集合内相对路径、有 .py）与磁盘 → 声明（非 core 插件
+    类型、非 module_utils / plugin_utils 的目录必须声明）双向校验；24 条单测，3 次变异均被
+    捕获后按 sha256 逐字节还原）
 
 ---
 
