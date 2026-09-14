@@ -925,18 +925,19 @@
     | Figure | 09-08 page | 09-14 measured |
     |---|---|---|
     | Modules | 781 (440 write + 341 info) | **891 (456 write + 435 info)** |
-    | Statement coverage | 81.44% | **92.58%** (gate 80) |
-    | Module unit-test files | 781 | **918** (10,383 test functions) |
+    | Statement coverage | 81.44% | **92.65%** (gate 80) |
+    | Module unit-test files | 781 | **954** (10,321 test functions) |
     | Sanity ignore debt | 1557 / 1900 | **2076 / 2600** (519 x 4 core versions) |
-    | Integration targets | 21 | **34** (31 in the registry, 22 in the default list) |
+    | Integration targets | 21 | **34** (33 in the registry, 21 in the default list) |
     | Write modules without a `_info` read surface | 356 / 74 products | **226 / 59 products** |
     | Write modules without a dedicated unit test | 111 | **0** |
+    | Read-only `_info` modules without a dedicated unit test | 36 | **0** |
     | Galaxy downloads | 415 | **553** |
 
     The module count for the unit tests is deliberately the module-level one
-    (918 files under `tests/unit/plugins/modules`); the CI coverage step also
+    (954 files under `tests/unit/plugins/modules`); the CI coverage step also
     collects `tests/contract` and `tests/unit/plugins/module_utils`, which is
-    where 12,828 tests / 92.58% comes from.
+    where 12,961 tests / 92.65% comes from.
 
     **Finding while measuring — two orphan integration targets.** `cvm_image`
     and `lighthouse` ship a complete `meta/tasks/vars` layout but appear in
@@ -971,10 +972,36 @@
       the leftover-resource sweeper the workflow calls directly, never a
       selectable target.
 
-    Counts after the fix: **34 target directories / 33 registered / 21 in the
-    workflow default list** (was 31 registered). Nine regression tests in
-    `tests/unit/scripts/test_integration_impact.py` pin both directions, so
-    neither the registry nor the checker can rot unnoticed again.
+     Counts after the fix: **34 target directories / 33 registered / 21 in the
+     workflow default list** (was 31 registered). Nine regression tests in
+     `tests/unit/scripts/test_integration_impact.py` pin both directions, so
+     neither the registry nor the checker can rot unnoticed again.
+
+89. **Every module now has a dedicated unit test (the last 36 were `_info`).**
+     Write modules reached 456 / 456 earlier in the batch; the remaining gap
+     was 36 of 435 read-only modules, all of them generator-driven, so the fix
+     belongs in the generator rather than in 36 hand-written files:
+
+     - `scripts/generate_info_modules.py` gained a test template for
+       `pagination_type` `none` (one API call, whole response returned) and
+       one for `token` (cursor loop). 29 of the 36 were covered this way.
+     - The other 7 (`ssm_*`, `tdmysql_*`) are not driven by `SPECS` at all, so
+       they were closed with `scripts/generate_module_test_skeleton.py`.
+     - `pagination_type` `list` now renders a nested item holder, which covers
+       `asr_async_recognition_task_info` (its list is `Data.Tasks`).
+
+     The token work exposed a real drift hazard: the loop that ends a cursor
+     walk is not uniform — alb and cloudaudit end on `ListOver`, chdfs on
+     `IsOver`, faceid on the *absence* of `HasNextPage`, and ams / vm / wav /
+     cloudrc on the cursor alone. The module renderer and the test renderer
+     now share one helper (`_token_termination()`), and
+     `test_token_test_drives_the_loop_the_module_renders` asserts the fake sets
+     every response field the generated loop reads, so the test can no longer
+     pass against a loop the module never walks.
+
+     Result: **435 / 435 `_info` and 456 / 456 write modules** have a dedicated
+     unit test file, CI scope moved from 12,828 to 12,961 tests and measured
+     statement coverage from 92.58% to 92.65%.
 
 Resource modules must be idempotent, support check mode, expose API request
 IDs on failure, and use consistent `*_info` naming for read-only operations.
@@ -997,12 +1024,12 @@ environment (G1-a/b/c), P0-05/06 read-surface closure (wave 1 tse/dlc/cos/tdmq
 api_gateway / cfw / dts backlog),
 P0-07/08/09 unit-test breadth and shallow
 test upgrades (write modules without dedicated tests: was 111, **0 as of
-2026-09-14** — the gap moved to 36 of 435 `_info` modules), P0-10/11 role
+2026-09-14** — and the 36-module gap on the 435 `_info` side is closed as well), P0-10/11 role
 task tests and contract coverage for generated modules, and the P1 structural
 items — plugin_utils / action / filter plugins, docsite, extensions.yml,
 doc_fragments and module_utils grouping, event_source docs, README FQCN index
 and example playbooks. Items land as individual commits, each keeping the
-coverage gate (80, measured 92.58% on 2026-09-14) and the sanity ignore
+coverage gate (80, measured 92.65% on 2026-09-14) and the sanity ignore
 budget (2076/2600) intact.
 
 Status 2026-09-10: P0-01…P0-12 and P1-01…P1-10 have landed (see the numbered

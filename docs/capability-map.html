@@ -261,7 +261,7 @@
     <div class="cell"><div class="num">456</div><div class="lbl"><b>资源管理模块</b> · idempotent write</div></div>
     <div class="cell"><div class="num">435</div><div class="lbl"><b>只读发现模块</b> · *_info</div></div>
     <div class="cell"><div class="num">204</div><div class="lbl"><b>覆盖腾讯云产品</b> · 71 含写（61 solution + 9 managed + 1 resource-family）</div></div>
-    <div class="cell"><div class="num">10,383</div><div class="lbl"><b>单元测试函数（模块级）</b> · pytest 实测；CI 口径 12,828：12,792 过 / 31 跳 / 5 xfail</div></div>
+    <div class="cell"><div class="num">10,321</div><div class="lbl"><b>单元测试函数（模块级）</b> · pytest 实测；CI 口径 12,961：12,908 过 / 31 跳 / 22 xfail</div></div>
   </div>
 
   <div class="legend">
@@ -277,7 +277,7 @@
   <!-- ================= QUALITY ================= -->
   <div class="foot">
     <div class="q"><div class="ic">✅</div><div><div class="t">幂等性</div><div class="d">二次运行 changed=false；check mode 不发写请求</div></div><div class="ok">✓</div></div>
-    <div class="q"><div class="ic">🧪</div><div><div class="t">单元 + 契约测试</div><div class="d">逐模块 unit tests + contract tests；coverage gate 80 达成（实测 92.58%）</div></div><div class="ok">✓</div></div>
+    <div class="q"><div class="ic">🧪</div><div><div class="t">单元 + 契约测试</div><div class="d">逐模块 unit tests + contract tests；coverage gate 80 达成（实测 92.65%）</div></div><div class="ok">✓</div></div>
     <div class="q"><div class="ic">🩺</div><div><div class="t">ansible-test sanity</div><div class="d">2.19/2.20/2.21 × py 3.11/3.12/3.13 矩阵全绿；ignore 2076 条预算化（2600 封顶 + CI guard）</div></div><div class="ok">✓</div></div>
     <div class="q"><div class="ic">📦</div><div><div class="t">生成式治理</div><div class="d">435 个 *_info 由 SDK introspection / spec 生成，禁止手改</div></div><div class="ok">✓</div></div>
     <div class="q"><div class="ic">🔍</div><div><div class="t">变更审计</div><div class="d">tc_api_calls 返回 + tencentcloud_resource_actions 回调</div></div><div class="ok">✓</div></div>
@@ -390,7 +390,7 @@
         <ul>
           <li><b>覆盖面第一梯队</b>：模块总数 891、幂等 write 456、只读 _info 435，均列四家第一（含全腾讯云 2000+ API 的长尾只读覆盖）。</li>
           <li><b>生成式治理</b>：435 个 *_info 由 SDK introspection / spec 生成、禁止手改，幂等 + check mode 全量内置；三类官方库大量模块为半手写维护。</li>
-          <li><b>质量门槛</b>：unit + contract 双测试、sanity ignore 预算化（2076/2600 封顶 + CI guard）、coverage gate 80 达成（实测 92.58%），测试密度高于多数官方模块。</li>
+          <li><b>质量门槛</b>：unit + contract 双测试、sanity ignore 预算化（2076/2600 封顶 + CI guard）、coverage gate 80 达成（实测 92.65%），测试密度高于多数官方模块。</li>
         </ul>
       </div>
       <div class="gcard lag">
@@ -399,7 +399,7 @@
           <li><b>生态与信任</b>：Galaxy 下载 553 vs 11.9M–91.3M；需持续 release、inclusion 申请（#89 进行中）与社区口碑积累。</li>
           <li><b>集成测试深度</b>：34 targets（104 yml）vs amazon 160（690）/ google 115（468）；13 个旗舰模块中 7 个（cvm_instance / vpc / subnet / cdb_instance / tke_cluster / clb_load_balancer / eip）已建或被场景 target 覆盖（provision → assert → cleanup），<b>余 6 个（redis_instance / cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway）尚无专属 target</b>，排入 P0-04 路线图（docs/integration-env.md §7）。注意 34 个目录里 33 个进 coverage.yml registry、21 个在默认清单；cvm_image / lighthouse 两个孤儿 target 已于 09-14 补进 registry（仍在默认清单外，两者都建计费资源），并新增「目录 vs registry」反向校验防复发。</li>
           <li><b>读面缺口（scripts/gap_backlog.py 09-14 实测）</b>：<b>226 个 write 模块缺配套 _info 读面，波及 59 个产品</b>；tse 27 / cos 14 / tdmq 13 / tke 11 / dlc 8 居前，尾部 teo 7 / trabbit 6 / monitor 6 / ckafka 6 / waf 5。已从 09-08 的 356/74 收口到 226/59 —— 写后读不回的闭环随 P0-05/06 逐波收口。</li>
-          <li><b>单测广度</b>：write 侧已闭合（<b>456 / 456 全部有专属单测文件</b>，09-08 时缺 111 个）；广度缺口转移到 info 侧 —— <b>435 个 _info 中 36 个没有专属单测文件</b>（8%）。92.58% 覆盖率仍由深测模块拉高，分布不均。</li>
+          <li><b>单测广度</b>：write 侧已闭合（<b>456 / 456 全部有专属单测文件</b>，09-08 时缺 111 个）；info 侧 36 个缺口已于 09-14 收口 —— <b>435 / 435 个 _info 全部有专属单测文件</b>（write 面 456 / 456 亦全）。92.65% 覆盖率仍由深测模块拉高，分布不均。</li>
           <li><b>ansible-core 门槛</b>：≥2.19 起步（2.16–2.18 已 EOL；三家 ≥2.16/≥2.17 为历史声明，实际 CI 只测最新版）—— 主动对齐演进，换取旧控制节点用户覆盖的部分代价。</li>
           <li><b>维护资源</b>：个人维护（贡献 / 加入路径见 CONTRIBUTING.md）vs 厂商 + Red Hat/社区全职团队；issue 响应与版本节奏是长期风险。</li>
         </ul>

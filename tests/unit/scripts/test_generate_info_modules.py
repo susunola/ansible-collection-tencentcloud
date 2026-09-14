@@ -226,6 +226,56 @@ def test_list_module_renders_single_call(generator):
     assert "total_count=len(strategies)" in rendered
 
 
+def test_list_test_renders_a_nested_item_holder(generator):
+    """asr returns its list nested (Data.Tasks); the fake must nest too."""
+    spec = _spec(generator, "asr_async_recognition_task_info")
+    assert generator.is_simple_spec(spec)
+    rendered = generator.render_test(spec)
+    assert "self.Data = types.SimpleNamespace(Tasks=items)" in rendered
+
+
+def test_token_specs_are_simple_enough_to_generate(generator):
+    for spec in generator.SPECS:
+        if spec.get("pagination_type") != "token":
+            continue
+        assert generator.is_simple_spec(spec), spec["module"]
+
+
+def test_token_test_drives_the_loop_the_module_renders(generator):
+    """A generated token test must reproduce the loop the module generates.
+
+    Termination is not uniform: alb and cloudaudit end on ``ListOver``, chdfs
+    on ``IsOver``, faceid on the *absence* of ``HasNextPage`` and ams/vm/wav/
+    cloudrc on the token alone. Both renderers read the same helper, so this
+    asserts the fake really sets every field the loop reads -- otherwise the
+    test would pass against a loop the module never walks.
+    """
+    for spec in generator.SPECS:
+        if spec.get("pagination_type") != "token":
+            continue
+        module_src = generator.render_module(spec)
+        loop = module_src.split("while True:", 1)[1].split("break", 1)[0]
+        rendered = generator.render_test(spec)
+        for chunk in loop.split("response.")[1:]:
+            field = chunk.split(" ", 1)[0].split("\n", 1)[0].rstrip()
+            assert field
+            assert "self.%s = " % field in rendered, (spec["module"], field)
+        if "if not response." in loop:
+            # "there is more" flags invert: True keeps the loop going.
+            assert '3, "cursor-2", True)' in rendered
+        else:
+            assert '3, "cursor-2", False)' in rendered
+
+
+def test_token_test_uses_the_spec_filter_fields(generator):
+    """cloudrc filters through ExtendedFilter (Key/Values), not Filter (Name/Values)."""
+    spec = _spec(generator, "cloudrc_resource_info")
+    rendered = generator.render_test(spec)
+    assert "ExtendedFilter = FakeFilter" in rendered
+    assert "[(item.Key, item.Values) for item in request.Filters]" in rendered
+    assert "item.Name" not in rendered
+
+
 def test_simple_spec_tests_are_generated(generator):
     for spec in generator.SPECS:
         if not generator.is_simple_spec(spec):
