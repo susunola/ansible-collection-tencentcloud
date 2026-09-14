@@ -1,8 +1,21 @@
 ===============================
-Tencent Cloud 1.3 Release Notes
+Tencent Cloud 1.4 Release Notes
 ===============================
 
 .. contents:: Topics
+
+v1.4.0
+======
+
+Minor Changes
+-------------
+
+- module_utils.cos - new ``build_cos_client(region, secret_id, secret_key, ...)`` helper that builds a ``CosS3Client`` without an ``AnsibleModule``, for controller-side callers such as the inventory plugin; ``create_cos_client(module)`` now delegates to it, so the two entry points cannot drift apart. Missing SDK raises the typed ``CosSDKMissing`` error.
+- module_utils.cos - new ``list_bucket_entries(client, region)`` helper returning the raw bucket entries of ``list_buckets``. ``list_buckets`` projects three fields for ``cos_bucket_info`` and keeps doing so; callers that want the rest of the entry (``Type``, ``BucketType``, ``AZType``) read it here.
+- tc_inventory - CLB and CDB report their run state as an integer; it is now mapped to the same vocabulary the other sources use (``CREATING``, ``RUNNING``, ``ISOLATING``, ``ISOLATED``) and passed through unchanged when the API grows a value this plugin does not know yet, instead of leaving ``keyed_groups`` to group on a bare number.
+- tc_inventory - CLB and CDB spell their tags ``TagKey``/``TagValue`` where CVM, Lighthouse, VPC and CBS spell them ``Key``/``Value``. Both dialects are read now, so ``tc_tags`` is populated for every source rather than being empty for half of them.
+- tc_inventory - second batch of sources: ``clb`` (CLB load balancers), ``cdb`` (CDB MySQL instances), ``cbs`` (CBS disks) and ``cos`` (COS buckets), alongside the existing ``cvm``, ``tke``, ``lighthouse`` and ``vpc``. CBS and CDB had no inventory plugin before this. Every source keeps the same standardised ``tc_*`` variable set, so grouping and ``compose`` expressions still do not need a per-product branch.
+- tc_inventory - the ``cos`` source is the first one that is not an API 3.0 product: it uses its own client builder and collector and therefore needs the ``cos-python-sdk-v5`` distribution on the controller in addition to ``tencentcloud-sdk-python``. It ignores ``filters`` because the COS service call is region-scoped, so narrowing is done with ``regions``; bucket tags are not collected, because they need one extra call per bucket.
 
 v1.3.0
 ======

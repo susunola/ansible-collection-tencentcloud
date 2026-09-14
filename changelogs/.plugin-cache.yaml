@@ -23,8 +23,8 @@ plugins:
   httpapi: {}
   inventory:
     tc_inventory:
-      description: Unified Tencent Cloud asset inventory across CVM, TKE, Lighthouse
-        and VPC
+      description: Unified Tencent Cloud asset inventory across CVM, TKE, Lighthouse,
+        VPC, CLB, CDB, CBS and COS
       name: tc_inventory
       version_added: 1.3.0
     tencentcloud_clb:
@@ -4558,4 +4558,4 @@ plugins:
   strategy: {}
   test: {}
   vars: {}
-version: 1.3.0
+version: 1.4.0
