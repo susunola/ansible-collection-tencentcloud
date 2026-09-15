@@ -99,7 +99,7 @@ ambiguous. It covers 41 resource families (VPC, subnet, security group, CVM,
 CLB/ALB/GWLB, TKE, CDB, PostgreSQL, MariaDB, SQL Server, CynosDB, Redis,
 MongoDB, Elasticsearch, CFS, CHDFS, CKafka, TDMQ, Prometheus, API Gateway,
 TCR, TEM, and others). Anything outside that list goes through the
-`<resource>_info` module instead — there are 435 of them.
+`<resource>_info` module instead — there are 535 of them.
 
 ### 2.3 Finding a module that is not in the table
 
@@ -147,7 +147,7 @@ ansible-playbook site.yml                  # terraform apply
 ansible-playbook teardown.yml              # terraform destroy  (state: absent)
 ```
 
-All 875 modules declare `supports_check_mode=True`, and the contract is the one
+All 991 modules declare `supports_check_mode=True`, and the contract is the one
 `vpc` implements: resolve, compute the change set once with
 `lifecycle.plan_changes`, then — if check mode — `exit_json(changed=True, ...)`
 without calling a write API. Waiters skip themselves in check mode, so a
@@ -354,7 +354,7 @@ returned resource is read back from the API, not assembled from the request, so
 ## 6. The `_info` + write module pair
 
 A write module and its `_info` sibling are one surface split in two: the write
-module converges, the `_info` module reads. 230 of the 440 write modules ship
+module converges, the `_info` module reads. 330 of the 456 write modules ship
 their own `<name>_info` sibling; the rest are covered either by a curated
 mapping to another `_info` module that really returns the resource, or by a
 recorded gap. `scripts/audit_info_coverage.py --check` is the authority — it is

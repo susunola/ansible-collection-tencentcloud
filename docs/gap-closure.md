@@ -3,8 +3,8 @@
 > 依据：`docs/capability-map.html` / `docs/panorama.html` 的 INDUSTRY BENCHMARK 区块
 > （本库源码 main HEAD 实测 + 对比方 Galaxy 产物实拉；2026-09-02 初版，2026-09-08 随 P0-12 同步刷新，
 > 2026-09-09 随 P0-03/04 同步 G1 集成口径至 26 targets / 77 yml，
-> 2026-09-14 随 v1.4.0 发布全量重测：891 模块 / 456 write + 435 _info、34 targets / 104 yml、
-> 覆盖率 92.65%、write 无专属单测 111 → 0、读面缺口 356 → 226，其中真 backlog 128）。
+> 2026-09-14 随 v1.4.0 发布全量重测：991 模块 / 456 write + 535 _info、34 targets / 104 yml、
+> 覆盖率 92.65%、write 无专属单测 111 → 0、读面缺口 356 → 126，其中真 backlog 28）。
 > 对比对象：amazon.aws 11.4.0 / azure.azcollection 4.0.0 / google.cloud 1.14.0（版本未变，沿用 09-02 核验）。
 > 状态图例：✅ 已闭合 · 🔄 在途 · ⏸ 排队/等待外部 · 📋 待启动 · ❌ 明确不追（有意取舍）。
 
@@ -66,19 +66,19 @@ redis_instance 等其余旗舰随 P0-04 R1-R6 排入；2026-10 底前集成 targ
 **现状**（2026-09-14 全量重测）：整体语句覆盖率 **92.65%**（CI 口径
 `tests/contract` + `tests/unit/plugins/module_utils` + `tests/unit/plugins/modules`
 共 12,961 条：12,908 passed / 31 skipped / 22 xfailed，`--cov-fail-under=80` 通过）。
-模块级单测 954 个文件 / 10,321 个测试函数。
+模块级单测 1,054 个文件 / 10,826 个测试函数。
 **write 面无专属单测模块已归零**：456 / 456 全部有专属单测文件
 （`test_<module>_main.py` 约定），从 222（/313，2026-08-31 基线）→ 111（/440，2026-09-08）
 → **0（/456，2026-09-14）**。
 历史基线（2026-08-31）：语句覆盖率 ~60.9%（gate 55）；09-08 80% 冲刺达 81.44%，
 09-09 随 P0-05/06 续升至 82%，09-14 重测为 92.65%。
-**广度缺口已完全闭合**：435 个 `_info` 曾有 36 个（8%）没有专属单测文件，2026-09-14 由生成器扩展补齐；现 **write 456 / 456 与 info 435 / 435 全部有专属单测文件**。
+**广度缺口已完全闭合**：435 个 `_info` 曾有 36 个（8%）没有专属单测文件，2026-09-14 由生成器扩展补齐；现 **write 456 / 456 与 info 535 / 535 全部有专属单测文件**。
 
 **建议动作**：
 | 步骤 | 动作 | 依赖 | 截止 | 状态 |
 |---|---|---|---|---|
 | G1b-a | 先实现 `--module-test` 骨架生成器（coverage-batching.md lever 1） | 无 | 下一批前 | ✅ 已落地 `scripts/generate_module_test_skeleton.py` |
-| G1b-b | 继续按 per-file miss 报告从高到低逐模块写测试（主路径单测 + 分支补漏） | G1b-a 可并行，不阻塞 | 持续 | ✅ write 面已归零（456/456）；info 侧 36 个缺口已同步归零（435/435） |
+| G1b-b | 继续按 per-file miss 报告从高到低逐模块写测试（主路径单测 + 分支补漏） | G1b-a 可并行，不阻塞 | 持续 | ✅ write 面已归零（456/456）；info 侧 36 个缺口已同步归零（535/535） |
 | G1b-c | 每批 commit + CI 全绿（sanity 矩阵 + coverage gate 不破，现 80） | G1b-b | 随批 | 🔄（实测 92.65%，余 12.65 点） |
 
 **验收**：整体实测覆盖率 ≥ 80% 且 gate 抬至 80（✅ 2026-09-08 达成 81.44%，09-09 随 P0-05 续升至 81.64%、随 P0-06 升至 82%，
@@ -175,7 +175,7 @@ TEO、CFW、CFS、Lighthouse 等），继续按 panorama 推荐顺序逐族推�
     registry；`scripts/integration_impact.py` 新增 `validate_target_dirs()` 反向校验并已进 CI 的
     「Integration coverage registry is valid」步骤；9 条回归测试全绿）
  9. **G1-e（09-14 新增）** info 侧单测广度收口 → ✅（`scripts/generate_info_modules.py` 新增
-    `none` 与 `token` 两套测试模板，`SPECS` 之外的 7 个模块由骨架生成器补齐；**435 / 435 个
+    `none` 与 `token` 两套测试模板，`SPECS` 之外的 7 个模块由骨架生成器补齐；**535 / 535 个
     `_info` 全部有专属单测文件**，模块与测试共用 `_token_termination()` 终结表达式以免漂移；
     4 条生成器回归测试锁定该契约。CI 口径 12,828 → 12,961，覆盖 92.58% → 92.65%）
  10. **G1-f（09-14 新增）** `meta/extensions.yml` 有了反向校验 → ✅（该文件 09-09 落地并随
@@ -210,7 +210,7 @@ TEO、CFW、CFS、Lighthouse 等），继续按 panorama 推荐顺序逐族推�
      把「已经映射到别的 _info」「根本没有列表 API」「真待补」三种情况混为一谈，对外报 226/59。
      现在改为**直接 import** `audit_info_coverage` 复用它的判定，产品分组也换成本库自己的
      inventory（旧口径把 `api_gateway_*` 与 `apigateway_*` 拆成两个产品）。实测拆分：
-     456 write = 230 有同名 _info + 43 已映射 + 55 无列表 API + **128 真 backlog（45 产品）**。
+     456 write = 330 有同名 _info + 43 已映射 + 55 无列表 API + **28 真 backlog（18 产品）**。
      `check_doc_figures.py` 新增 4 条 claim 钉住这四个数。连带修正：panorama / capability-map /
      roadmap 里「tse 27 / cos 14 是大户」是错的 —— 两者 backlog 实为 **0**，真正的大户是
      apigateway 8 / ckafka 6 / trabbit 6 / cfw 5 / dts 5。10 条单测，6 个变异全被捕获）
@@ -226,7 +226,7 @@ _本计划由 docs/capability-map.html / docs/panorama.html INDUSTRY BENCHMARK �
      仍列为未完成**，文档因此持续对外宣称一批并不存在的缺口。
      新增 `scripts/check_roadmap_status.py`：12 项可机械度量的验收逐个从磁盘实测
      （module 测试文件 <80 行归零 = 0 / 68 role × 6 断言族 / 456 write 契约覆盖
-     442 实跑 + 14 书面豁免 / 891 FQCN 索引零缺失 / 16 个 module_utils helper 全部入档 /
+     442 实跑 + 14 书面豁免 / 991 FQCN 索引零缺失 / 16 个 module_utils helper 全部入档 /
      三份伴生文档都写出当前模块数 / triage 工作流存在且 SLA 成文 / demo 页存在且被 README 链接 /
      14 个发布版本全部进 porting 版本映射表），再与徽章做**双向**比对 —— 标 done 但验收不过、
      或验收过了却没标，两边都失败。P0-05/06（读面收口）与 P2-01/02/08（外部动作）不伪造成
@@ -238,3 +238,43 @@ _本计划由 docs/capability-map.html / docs/panorama.html INDUSTRY BENCHMARK �
      `docs/triage.md` 里「None of this is automated yet」这句旧断言已同步改写。
      24 条单测，含真实仓库锚点与 6 个合成失败路径（浅测试 / 陈旧数字 / 缺告警章节 /
      版本未映射 / demo 页缺失或未链接），**8 个变异全部被捕获**）
+  15. **G1-k（09-14 新增）** 策展读面目标表不再无人校验 → ✅（P0-05 / P0-06 的收口靠
+     `scripts/info_specs_targets.py` —— 一张手写的「write 模块 → SDK 读接口」表，100 条。
+     `discover_info_specs.py` 对每个 SDK 产品只保留评分最高的一个 action，多资源产品因此
+     被系统性欠覆盖：apigateway / ckafka / trabbit 各自拥有多个列表接口，此前三家加起来
+     只落了一个 `_info` 模块。这张表补上了缺口，但它**本身就是典型的会静默腐烂的手写索引**：
+     一条 entry 可能指向已改名的 write 模块、已被 SDK 下线的 action，或被生成器拒收的
+     spec —— 三种情况的后果完全一样：目标从缺口报表里悄悄消失，没有任何东西失败。
+     新增 `scripts/check_info_targets.py` 做**双向**校验：声明侧 → 磁盘（write 模块存在、
+     `<name>_info` 已生成、单测已生成、target 不得以 `_info` 结尾、mapping 必须有非空
+     action）；spec 侧 → 声明（`info_specs_auto.py` 里带 `TARGET_VERSION_ADDED` 标记的
+     spec 集合必须**恰好等于** target 集合，于是「action 解析不出来」会在这里炸掉，而不是
+     让读面悄悄缩水）。14 条单测，含空表反空转、真实仓库锚点与 target 数 ≥ 50 的反空转，
+     **10 个变异全部被捕获**。
+     结果：backlog **128 → 28**、backlog 产品 **45 → 18**、读面缺口 **226 → 126**、
+     `_info` 模块 **435 → 535**、模块总数 **891 → 991**；apigateway / ckafka / trabbit
+     三个大户全部归零。生成器顺带修掉三处真实缺陷：`_join_args` / `_join_kwargs` 折行
+     （100 个新模块/测试原本有 20 处超过 160 列）、`offset`/`limit` 与请求自带 Offset/Limit
+     撞名导致的 `Duplicate parameter`（`tke_cls_log_config_info`）、以及
+     `pagination_type == "list"` 且带 ids 时漏传 ids 参数（`goosefs_fileset_info`）。
+     100 个新模块与 100 个新测试零改动任何既有文件；`scripts/check_info_targets.py`
+     已挂进 CI 的 ruff 之前）
+     100 个模块首次进 sanity 时又暴露出**三条生成器规则缺失**（原始统计：60 处 pep8 E128、
+     34 处 `parameter-list-no-elements`、7 处 `no-log-needed`）：
+     ① 生成的续行用固定 8 空格缩进，ruff 只查 E501 放过了，但 `ansible-test sanity` 跑
+     完整 pep8，E128 要求续行对齐**视觉缩进**（开括号后那一列）—— 改成按
+     `len(<call head>)` 计算衬垫；
+     ② `type: list` 的 `extra_params` 没带 `elements`（新增 `_EXTRA_ELEMENTS`）；
+     ③ `no_log` 判定过于粗糙：`next_token` / `page_token` 是模块自己走的分页游标，不该
+     暴露成选项（并入 `_RESERVED`）；而 `keyword` / `search_key` / `client_token` 只是
+     *名字像*凭据，必须显式写 `no_log: False`，反之 `password` / `secret` / `credential` /
+     `private_key` 是真的凭据，必须写 `no_log: True`（ES `DescribeIndexList` 的 Password
+     就是活例子）。注意 **`no_log` 不是合法的 DOCUMENTATION key**，只属于 argument_spec——
+     写进文档会被 validate-modules 判 `extra keys not allowed`。
+     这三条规则此前**没有任何测试**，只有在有人重新生成模块时才会炸，因此新增
+     `tests/unit/scripts/test_discover_info_specs.py`（23 条，含真实 spec 反空转与
+     「生成文档不得出现 no_log」），**6 个变异全部被捕获**。
+     另外修掉一个潜伏的 CI 自伤：`ruff check .` 会在工作副本里留下 `.ruff_cache/`，而紧随
+     其后的 `ansible-test sanity` 会扫描**全部文件**，把缓存二进制判成 CRLF 和非 UTF-8
+     （实测 13 处 line-endings + 577 处 no-smart-quotes）。CI 改为 `ruff check . --no-cache`，
+     `.ruff_cache/` 同时加入 `.gitignore`。）

@@ -11,10 +11,18 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 GENERATOR_PATH = REPO_ROOT / "scripts" / "generate_info_modules.py"
+TARGETS_PATH = REPO_ROOT / "scripts" / "info_specs_targets.py"
 
 
 def _load_generator():
     spec = importlib.util.spec_from_file_location("generate_info_modules", GENERATOR_PATH)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _load_targets():
+    spec = importlib.util.spec_from_file_location("info_specs_targets", TARGETS_PATH)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -197,11 +205,13 @@ def test_auto_specs_are_appended_and_pin_release_version(generator):
     spec.loader.exec_module(module)
     assert module.SPECS_AUTO, "info_specs_auto.py must not be empty"
     by_name = {entry["module"] for entry in generator.SPECS}
+    # 0.8.0/0.9.0 specs are reused verbatim by discovery; later batches pin the
+    # release they were nominated in, and curated read-surface targets pin the
+    # marker scripts/info_specs_targets.py stamps on them.
+    allowed = ("0.8.0", "0.9.0", _load_targets().TARGET_VERSION_ADDED)
     for entry in module.SPECS_AUTO:
         assert entry["module"] in by_name
-        # 0.8.0 specs are reused verbatim by discovery; new batches pin the
-        # release they were nominated in.
-        assert entry["version_added"] in ("0.8.0", "0.9.0")
+        assert entry["version_added"] in allowed, entry["module"]
         rendered = generator.render_module(entry)
         assert 'version_added: "%s"' % entry["version_added"] in rendered
 

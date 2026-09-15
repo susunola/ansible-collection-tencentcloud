@@ -9,8 +9,8 @@ in the `ansible-collections` GitHub organization.
 
 ## Capability overview
 
-The collection covers **204 Tencent Cloud product domains** through **891 modules**,
-including **456 resource modules**, **435 read-only `_info` modules**, and **68
+The collection covers **204 Tencent Cloud product domains** through **991 modules**,
+including **456 resource modules**, **535 read-only `_info` modules**, and **68
 reusable roles**. The README highlights how to navigate the collection instead of
 rendering the entire catalog by default.
 
@@ -500,7 +500,7 @@ and diff unless their individual documentation states otherwise.
 </details>
 
 <details>
-<summary><strong>Browse all 435 read-only <code>_info</code> modules</strong></summary>
+<summary><strong>Browse all 535 read-only <code>_info</code> modules</strong></summary>
 
 Read-only `_info` modules (return `changed=false`):
 
@@ -521,12 +521,22 @@ Read-only `_info` modules (return `changed=false`):
 | `susunola.tencentcloud.antiddos_ddos_block_record_info` | Gather information about Tencent Cloud ANTIDDOS DDoS block records | [`antiddos_ddos_block_record_info`](plugins/modules/antiddos_ddos_block_record_info.py) |
 | `susunola.tencentcloud.ape_auth_user_info` | Gather information about Tencent Cloud APE auth users | [`ape_auth_user_info`](plugins/modules/ape_auth_user_info.py) |
 | `susunola.tencentcloud.api_gateway_api_info` | Gather information about Tencent Cloud API Gateway APIs | [`api_gateway_api_info`](plugins/modules/api_gateway_api_info.py) |
+| `susunola.tencentcloud.api_gateway_api_key_info` | Gather information about Tencent Cloud APIGATEWAY api keys | [`api_gateway_api_key_info`](plugins/modules/api_gateway_api_key_info.py) |
 | `susunola.tencentcloud.api_gateway_service_info` | Gather information about Tencent Cloud API Gateway services | [`api_gateway_service_info`](plugins/modules/api_gateway_service_info.py) |
+| `susunola.tencentcloud.api_gateway_service_release_info` | Gather information about Tencent Cloud APIGATEWAY service environment release histories | [`api_gateway_service_release_info`](plugins/modules/api_gateway_service_release_info.py) |
+| `susunola.tencentcloud.api_gateway_usage_plan_binding_info` | Gather information about Tencent Cloud APIGATEWAY service usage plans | [`api_gateway_usage_plan_binding_info`](plugins/modules/api_gateway_usage_plan_binding_info.py) |
+| `susunola.tencentcloud.api_gateway_usage_plan_info` | Gather information about Tencent Cloud APIGATEWAY usage plans | [`api_gateway_usage_plan_info`](plugins/modules/api_gateway_usage_plan_info.py) |
+| `susunola.tencentcloud.api_gateway_usage_plan_key_binding_info` | Gather information about Tencent Cloud APIGATEWAY usage plan secret ids | [`api_gateway_usage_plan_key_binding_info`](plugins/modules/api_gateway_usage_plan_key_binding_info.py) |
 | `susunola.tencentcloud.api_product_info` | Gather information about Tencent Cloud API products | [`api_product_info`](plugins/modules/api_product_info.py) |
+| `susunola.tencentcloud.apigateway_api_app_info` | Gather information about Tencent Cloud APIGATEWAY api apps | [`apigateway_api_app_info`](plugins/modules/apigateway_api_app_info.py) |
+| `susunola.tencentcloud.apigateway_ip_strategy_info` | Gather information about Tencent Cloud APIGATEWAY ip strategies | [`apigateway_ip_strategy_info`](plugins/modules/apigateway_ip_strategy_info.py) |
+| `susunola.tencentcloud.apigateway_plugin_info` | Gather information about Tencent Cloud APIGATEWAY plugins | [`apigateway_plugin_info`](plugins/modules/apigateway_plugin_info.py) |
 | `susunola.tencentcloud.apigateway_service_info` | Gather information about Tencent Cloud API Gateway services | [`apigateway_service_info`](plugins/modules/apigateway_service_info.py) |
 | `susunola.tencentcloud.apis_agent_app_mcp_server_info` | Gather information about Tencent Cloud APIS agent app mcp servers | [`apis_agent_app_mcp_server_info`](plugins/modules/apis_agent_app_mcp_server_info.py) |
 | `susunola.tencentcloud.apm_general_span_info` | Gather information about Tencent Cloud APM general spans | [`apm_general_span_info`](plugins/modules/apm_general_span_info.py) |
 | `susunola.tencentcloud.as_scaling_group_info` | Gather information about Tencent Cloud auto scaling groups | [`as_scaling_group_info`](plugins/modules/as_scaling_group_info.py) |
+| `susunola.tencentcloud.as_scaling_policy_info` | Gather information about Tencent Cloud AUTOSCALING scaling policies | [`as_scaling_policy_info`](plugins/modules/as_scaling_policy_info.py) |
+| `susunola.tencentcloud.as_scheduled_action_info` | Gather information about Tencent Cloud AUTOSCALING scheduled actions | [`as_scheduled_action_info`](plugins/modules/as_scheduled_action_info.py) |
 | `susunola.tencentcloud.asr_async_recognition_task_info` | Gather information about Tencent Cloud ASR async recognition tasks | [`asr_async_recognition_task_info`](plugins/modules/asr_async_recognition_task_info.py) |
 | `susunola.tencentcloud.asw_flow_service_info` | Gather information about Tencent Cloud ASW flow services | [`asw_flow_service_info`](plugins/modules/asw_flow_service_info.py) |
 | `susunola.tencentcloud.ba_auth_info` | Gather information about Tencent Cloud BA auth | [`ba_auth_info`](plugins/modules/ba_auth_info.py) |
@@ -553,24 +563,36 @@ Read-only `_info` modules (return `changed=false`):
 | `susunola.tencentcloud.captcha_user_all_app_id_info` | Gather information about Tencent Cloud CAPTCHA user all app ids | [`captcha_user_all_app_id_info`](plugins/modules/captcha_user_all_app_id_info.py) |
 | `susunola.tencentcloud.cat_probe_task_info` | Gather information about Tencent Cloud CAT probe tasks | [`cat_probe_task_info`](plugins/modules/cat_probe_task_info.py) |
 | `susunola.tencentcloud.cbs_auto_snapshot_policy_info` | Gather information about Tencent Cloud CBS automatic snapshot policies | [`cbs_auto_snapshot_policy_info`](plugins/modules/cbs_auto_snapshot_policy_info.py) |
+| `susunola.tencentcloud.cbs_disk_backup_info` | Gather information about Tencent Cloud CBS disk backups | [`cbs_disk_backup_info`](plugins/modules/cbs_disk_backup_info.py) |
 | `susunola.tencentcloud.cbs_disk_info` | Gather information about Tencent Cloud CBS disks | [`cbs_disk_info`](plugins/modules/cbs_disk_info.py) |
 | `susunola.tencentcloud.cbs_snapshot_info` | Gather information about Tencent Cloud CBS snapshots | [`cbs_snapshot_info`](plugins/modules/cbs_snapshot_info.py) |
+| `susunola.tencentcloud.cbs_snapshot_share_info` | Gather information about Tencent Cloud CBS snapshot share permissions | [`cbs_snapshot_share_info`](plugins/modules/cbs_snapshot_share_info.py) |
 | `susunola.tencentcloud.ccc_extension_info` | Gather information about Tencent Cloud CCC extensions | [`ccc_extension_info`](plugins/modules/ccc_extension_info.py) |
 | `susunola.tencentcloud.ccn_attachment_info` | Gather information about Tencent Cloud CCN attachments | [`ccn_attachment_info`](plugins/modules/ccn_attachment_info.py) |
 | `susunola.tencentcloud.ccn_info` | Gather information about Tencent Cloud CCN instances | [`ccn_info`](plugins/modules/ccn_info.py) |
 | `susunola.tencentcloud.cdb_account_info` | Gather information about Tencent Cloud CDB accounts | [`cdb_account_info`](plugins/modules/cdb_account_info.py) |
 | `susunola.tencentcloud.cdb_account_privilege_info` | Gather information about Tencent Cloud CDB account privileges | [`cdb_account_privilege_info`](plugins/modules/cdb_account_privilege_info.py) |
 | `susunola.tencentcloud.cdb_audit_config_info` | Gather information about a Tencent Cloud CDB audit configuration | [`cdb_audit_config_info`](plugins/modules/cdb_audit_config_info.py) |
+| `susunola.tencentcloud.cdb_audit_rule_info` | Gather information about Tencent Cloud CDB audit rules | [`cdb_audit_rule_info`](plugins/modules/cdb_audit_rule_info.py) |
+| `susunola.tencentcloud.cdb_audit_rule_template_info` | Gather information about Tencent Cloud CDB audit rule templates | [`cdb_audit_rule_template_info`](plugins/modules/cdb_audit_rule_template_info.py) |
 | `susunola.tencentcloud.cdb_backup_config_info` | Gather information about Tencent Cloud CDB backup configuration | [`cdb_backup_config_info`](plugins/modules/cdb_backup_config_info.py) |
 | `susunola.tencentcloud.cdb_database_info` | Gather information about Tencent Cloud CDB databases | [`cdb_database_info`](plugins/modules/cdb_database_info.py) |
 | `susunola.tencentcloud.cdb_instance_info` | Gather information about TencentDB for MySQL instances | [`cdb_instance_info`](plugins/modules/cdb_instance_info.py) |
 | `susunola.tencentcloud.cdb_parameter_template_info` | Gather information about Tencent Cloud CDB parameter templates | [`cdb_parameter_template_info`](plugins/modules/cdb_parameter_template_info.py) |
 | `susunola.tencentcloud.cdc_dedicated_cluster_order_info` | Gather information about Tencent Cloud CDC dedicated cluster orders | [`cdc_dedicated_cluster_order_info`](plugins/modules/cdc_dedicated_cluster_order_info.py) |
+| `susunola.tencentcloud.cdn_cls_log_topic_info` | Gather information about Tencent Cloud CDN cls log topics | [`cdn_cls_log_topic_info`](plugins/modules/cdn_cls_log_topic_info.py) |
 | `susunola.tencentcloud.cdn_domain_info` | Gather information about Tencent Cloud CDN domains | [`cdn_domain_info`](plugins/modules/cdn_domain_info.py) |
 | `susunola.tencentcloud.cds_asset_info` | Gather information about Tencent Cloud CDS assets | [`cds_asset_info`](plugins/modules/cds_asset_info.py) |
 | `susunola.tencentcloud.cdwch_cn_instance_info` | Gather information about Tencent Cloud CDWCH cn instances | [`cdwch_cn_instance_info`](plugins/modules/cdwch_cn_instance_info.py) |
+| `susunola.tencentcloud.cdwch_instance_info` | Gather information about Tencent Cloud CDWCH cn instances | [`cdwch_instance_info`](plugins/modules/cdwch_instance_info.py) |
 | `susunola.tencentcloud.cdwdoris_cluster_configs_history_info` | Gather information about Tencent Cloud CDWDORIS cluster configs histories | [`cdwdoris_cluster_configs_history_info`](plugins/modules/cdwdoris_cluster_configs_history_info.py) |
+| `susunola.tencentcloud.cdwdoris_cooldown_policy_info` | Gather information about Tencent Cloud CDWDORIS cool down policies | [`cdwdoris_cooldown_policy_info`](plugins/modules/cdwdoris_cooldown_policy_info.py) |
+| `susunola.tencentcloud.cdwdoris_instance_info` | Gather information about Tencent Cloud CDWDORIS instances | [`cdwdoris_instance_info`](plugins/modules/cdwdoris_instance_info.py) |
+| `susunola.tencentcloud.cdwdoris_user_workload_group_info` | Gather information about Tencent Cloud CDWDORIS user bind workload groups | [`cdwdoris_user_workload_group_info`](plugins/modules/cdwdoris_user_workload_group_info.py) |
+| `susunola.tencentcloud.cdwdoris_workload_group_info` | Gather information about Tencent Cloud CDWDORIS workload groups | [`cdwdoris_workload_group_info`](plugins/modules/cdwdoris_workload_group_info.py) |
 | `susunola.tencentcloud.cdwpg_account_info` | Gather information about Tencent Cloud CDWPG accounts | [`cdwpg_account_info`](plugins/modules/cdwpg_account_info.py) |
+| `susunola.tencentcloud.cdwpg_hba_config_info` | Gather information about Tencent Cloud CDWPG user hba configs | [`cdwpg_hba_config_info`](plugins/modules/cdwpg_hba_config_info.py) |
+| `susunola.tencentcloud.cdwpg_instance_info` | Gather information about Tencent Cloud CDWPG instances | [`cdwpg_instance_info`](plugins/modules/cdwpg_instance_info.py) |
 | `susunola.tencentcloud.cdz_cloud_dedicated_zone_host_info` | Gather information about Tencent Cloud CDZ cloud dedicated zone hosts | [`cdz_cloud_dedicated_zone_host_info`](plugins/modules/cdz_cloud_dedicated_zone_host_info.py) |
 | `susunola.tencentcloud.cetcd_etcd_instance_info` | Gather information about Tencent Cloud CETCD etcd instances | [`cetcd_etcd_instance_info`](plugins/modules/cetcd_etcd_instance_info.py) |
 | `susunola.tencentcloud.cfg_action_library_info` | Gather information about Tencent Cloud CFG action libraries | [`cfg_action_library_info`](plugins/modules/cfg_action_library_info.py) |
@@ -579,21 +601,36 @@ Read-only `_info` modules (return `changed=false`):
 | `susunola.tencentcloud.cfs_permission_group_info` | Gather information about Tencent Cloud CFS permission groups | [`cfs_permission_group_info`](plugins/modules/cfs_permission_group_info.py) |
 | `susunola.tencentcloud.cfs_permission_rule_info` | Gather information about Tencent Cloud CFS permission group rules | [`cfs_permission_rule_info`](plugins/modules/cfs_permission_rule_info.py) |
 | `susunola.tencentcloud.cfs_snapshot_info` | Gather information about Tencent Cloud CFS snapshots | [`cfs_snapshot_info`](plugins/modules/cfs_snapshot_info.py) |
+| `susunola.tencentcloud.cfw_address_template_info` | Gather information about Tencent Cloud CFW address templates | [`cfw_address_template_info`](plugins/modules/cfw_address_template_info.py) |
 | `susunola.tencentcloud.cfw_cluster_nat_ccn_fw_switch_info` | Gather information about Tencent Cloud CFW cluster nat ccn fw switches | [`cfw_cluster_nat_ccn_fw_switch_info`](plugins/modules/cfw_cluster_nat_ccn_fw_switch_info.py) |
+| `susunola.tencentcloud.cfw_nat_dnat_rule_info` | Gather information about Tencent Cloud CFW nat fw dnat rules | [`cfw_nat_dnat_rule_info`](plugins/modules/cfw_nat_dnat_rule_info.py) |
 | `susunola.tencentcloud.chc_device_info` | Gather information about Tencent Cloud CHC devices | [`chc_device_info`](plugins/modules/chc_device_info.py) |
+| `susunola.tencentcloud.chdfs_access_group_info` | Gather information about Tencent Cloud CHDFS access groups | [`chdfs_access_group_info`](plugins/modules/chdfs_access_group_info.py) |
+| `susunola.tencentcloud.chdfs_access_rules_info` | Gather information about Tencent Cloud CHDFS access rules | [`chdfs_access_rules_info`](plugins/modules/chdfs_access_rules_info.py) |
 | `susunola.tencentcloud.chdfs_file_system_info` | Gather information about Tencent Cloud CHDFS file systems | [`chdfs_file_system_info`](plugins/modules/chdfs_file_system_info.py) |
+| `susunola.tencentcloud.chdfs_mount_point_info` | Gather information about Tencent Cloud CHDFS mount points | [`chdfs_mount_point_info`](plugins/modules/chdfs_mount_point_info.py) |
 | `susunola.tencentcloud.ciam_user_store_info` | Gather information about Tencent Cloud CIAM user stores | [`ciam_user_store_info`](plugins/modules/ciam_user_store_info.py) |
+| `susunola.tencentcloud.ckafka_acl_info` | Gather information about Tencent Cloud CKAFKA acls | [`ckafka_acl_info`](plugins/modules/ckafka_acl_info.py) |
+| `susunola.tencentcloud.ckafka_acl_rule_info` | Gather information about Tencent Cloud CKAFKA acl rules | [`ckafka_acl_rule_info`](plugins/modules/ckafka_acl_rule_info.py) |
+| `susunola.tencentcloud.ckafka_datahub_connection_info` | Gather information about Tencent Cloud CKAFKA datahub connections | [`ckafka_datahub_connection_info`](plugins/modules/ckafka_datahub_connection_info.py) |
+| `susunola.tencentcloud.ckafka_datahub_task_info` | Gather information about Tencent Cloud CKAFKA datahub tasks | [`ckafka_datahub_task_info`](plugins/modules/ckafka_datahub_task_info.py) |
+| `susunola.tencentcloud.ckafka_datahub_topic_info` | Gather information about Tencent Cloud CKAFKA datahub topics | [`ckafka_datahub_topic_info`](plugins/modules/ckafka_datahub_topic_info.py) |
 | `susunola.tencentcloud.ckafka_instance_info` | Gather information about Tencent Cloud CKafka instances | [`ckafka_instance_info`](plugins/modules/ckafka_instance_info.py) |
+| `susunola.tencentcloud.ckafka_route_info` | Gather information about Tencent Cloud CKAFKA routes | [`ckafka_route_info`](plugins/modules/ckafka_route_info.py) |
 | `susunola.tencentcloud.ckafka_topic_info` | Gather information about Tencent Cloud CKafka topics | [`ckafka_topic_info`](plugins/modules/ckafka_topic_info.py) |
 | `susunola.tencentcloud.ckafka_user_info` | Gather information about Tencent Cloud CKafka users | [`ckafka_user_info`](plugins/modules/ckafka_user_info.py) |
 | `susunola.tencentcloud.clb_listener_info` | Gather information about Tencent Cloud CLB listeners | [`clb_listener_info`](plugins/modules/clb_listener_info.py) |
 | `susunola.tencentcloud.clb_listener_target_info` | Gather information about Tencent Cloud CLB listener targets | [`clb_listener_target_info`](plugins/modules/clb_listener_target_info.py) |
 | `susunola.tencentcloud.clb_load_balancer_info` | Gather information about Tencent Cloud CLB load balancers | [`clb_load_balancer_info`](plugins/modules/clb_load_balancer_info.py) |
 | `susunola.tencentcloud.clb_target_group_info` | Gather information about Tencent Cloud CLB target groups | [`clb_target_group_info`](plugins/modules/clb_target_group_info.py) |
+| `susunola.tencentcloud.cloudaudit_audit_info` | Gather information about Tencent Cloud CLOUDAUDIT audits | [`cloudaudit_audit_info`](plugins/modules/cloudaudit_audit_info.py) |
 | `susunola.tencentcloud.cloudaudit_event_info` | Gather information about Tencent Cloud CloudAudit events | [`cloudaudit_event_info`](plugins/modules/cloudaudit_event_info.py) |
+| `susunola.tencentcloud.cloudaudit_track_info` | Gather information about Tencent Cloud CLOUDAUDIT audit tracks | [`cloudaudit_track_info`](plugins/modules/cloudaudit_track_info.py) |
 | `susunola.tencentcloud.cloudhsm_vsm_info` | Gather information about Tencent Cloud CLOUDHSM vsms | [`cloudhsm_vsm_info`](plugins/modules/cloudhsm_vsm_info.py) |
 | `susunola.tencentcloud.cloudrc_resource_info` | Gather information about Tencent Cloud CLOUDRC resources | [`cloudrc_resource_info`](plugins/modules/cloudrc_resource_info.py) |
 | `susunola.tencentcloud.cloudstudio_image_info` | Gather information about Tencent Cloud CLOUDSTUDIO images | [`cloudstudio_image_info`](plugins/modules/cloudstudio_image_info.py) |
+| `susunola.tencentcloud.cls_alarm_info` | Gather information about Tencent Cloud CLS alarms | [`cls_alarm_info`](plugins/modules/cls_alarm_info.py) |
+| `susunola.tencentcloud.cls_alarm_notice_info` | Gather information about Tencent Cloud CLS alarm notices | [`cls_alarm_notice_info`](plugins/modules/cls_alarm_notice_info.py) |
 | `susunola.tencentcloud.cls_config_info` | Gather information about Tencent Cloud CLS collection configurations | [`cls_config_info`](plugins/modules/cls_config_info.py) |
 | `susunola.tencentcloud.cls_config_machine_group_binding_info` | Gather information about Tencent Cloud CLS machine group config bindings | [`cls_config_machine_group_binding_info`](plugins/modules/cls_config_machine_group_binding_info.py) |
 | `susunola.tencentcloud.cls_index_info` | Gather information about a Tencent Cloud CLS topic index | [`cls_index_info`](plugins/modules/cls_index_info.py) |
@@ -603,6 +640,7 @@ Read-only `_info` modules (return `changed=false`):
 | `susunola.tencentcloud.cls_topic_info` | Gather information about Tencent Cloud CLS log topics | [`cls_topic_info`](plugins/modules/cls_topic_info.py) |
 | `susunola.tencentcloud.cme_platform_info` | Gather information about Tencent Cloud CME platforms | [`cme_platform_info`](plugins/modules/cme_platform_info.py) |
 | `susunola.tencentcloud.cmq_queue_info` | Gather information about Tencent Cloud CMQ queues | [`cmq_queue_info`](plugins/modules/cmq_queue_info.py) |
+| `susunola.tencentcloud.cmq_topic_info` | Gather information about Tencent Cloud TDMQ cmq topics | [`cmq_topic_info`](plugins/modules/cmq_topic_info.py) |
 | `susunola.tencentcloud.cms_lib_sample_info` | Gather information about Tencent Cloud CMS lib samples | [`cms_lib_sample_info`](plugins/modules/cms_lib_sample_info.py) |
 | `susunola.tencentcloud.cngw_cloud_native_api_gateway_llm_model_api_info` | Gather information about Tencent Cloud CNGW cloud native api gateway llm model apis | [`cngw_cloud_native_api_gateway_llm_model_api_info`](plugins/modules/cngw_cloud_native_api_gateway_llm_model_api_info.py) |
 | `susunola.tencentcloud.config_aggregate_compliance_pack_info` | Gather information about Tencent Cloud CONFIG aggregate compliance packs | [`config_aggregate_compliance_pack_info`](plugins/modules/config_aggregate_compliance_pack_info.py) |
@@ -631,16 +669,21 @@ Read-only `_info` modules (return `changed=false`):
 | `susunola.tencentcloud.cwp_machine_info` | Gather information about Tencent Cloud CWP machines | [`cwp_machine_info`](plugins/modules/cwp_machine_info.py) |
 | `susunola.tencentcloud.cws_monitor_info` | Gather information about Tencent Cloud CWS monitors | [`cws_monitor_info`](plugins/modules/cws_monitor_info.py) |
 | `susunola.tencentcloud.cynosdb_account_info` | Gather information about Tencent Cloud CynosDB accounts | [`cynosdb_account_info`](plugins/modules/cynosdb_account_info.py) |
+| `susunola.tencentcloud.cynosdb_account_privilege_info` | Gather information about Tencent Cloud CYNOSDB account privilege | [`cynosdb_account_privilege_info`](plugins/modules/cynosdb_account_privilege_info.py) |
 | `susunola.tencentcloud.cynosdb_backup_config_info` | Gather information about a Tencent Cloud CynosDB backup configuration | [`cynosdb_backup_config_info`](plugins/modules/cynosdb_backup_config_info.py) |
 | `susunola.tencentcloud.cynosdb_cluster_info` | Gather information about TencentDB for CynosDB clusters | [`cynosdb_cluster_info`](plugins/modules/cynosdb_cluster_info.py) |
 | `susunola.tencentcloud.dasb_device_info` | Gather information about Tencent Cloud DASB devices | [`dasb_device_info`](plugins/modules/dasb_device_info.py) |
 | `susunola.tencentcloud.dataagent_chunk_info` | Gather information about Tencent Cloud DATAAGENT chunks | [`dataagent_chunk_info`](plugins/modules/dataagent_chunk_info.py) |
 | `susunola.tencentcloud.dayu_resource_info` | Gather information about Tencent Cloud DAYU resources | [`dayu_resource_info`](plugins/modules/dayu_resource_info.py) |
 | `susunola.tencentcloud.dbbrain_db_diag_event_info` | Gather information about Tencent Cloud DBBRAIN db diag events | [`dbbrain_db_diag_event_info`](plugins/modules/dbbrain_db_diag_event_info.py) |
+| `susunola.tencentcloud.dbbrain_sql_filter_info` | Gather information about Tencent Cloud DBBRAIN sql filters | [`dbbrain_sql_filter_info`](plugins/modules/dbbrain_sql_filter_info.py) |
 | `susunola.tencentcloud.dbdc_db_custom_cluster_info` | Gather information about Tencent Cloud DBDC db custom clusters | [`dbdc_db_custom_cluster_info`](plugins/modules/dbdc_db_custom_cluster_info.py) |
 | `susunola.tencentcloud.dbs_backup_plan_info` | Gather information about Tencent Cloud DBS backup plans | [`dbs_backup_plan_info`](plugins/modules/dbs_backup_plan_info.py) |
 | `susunola.tencentcloud.dc_direct_connect_info` | Gather information about Tencent Cloud direct connect connections | [`dc_direct_connect_info`](plugins/modules/dc_direct_connect_info.py) |
 | `susunola.tencentcloud.dc_direct_connect_tunnel_info` | Gather information about Tencent Cloud DC direct connect tunnels | [`dc_direct_connect_tunnel_info`](plugins/modules/dc_direct_connect_tunnel_info.py) |
+| `susunola.tencentcloud.dcdb_account_info` | Gather information about Tencent Cloud DCDB accounts | [`dcdb_account_info`](plugins/modules/dcdb_account_info.py) |
+| `susunola.tencentcloud.dcdb_account_privilege_info` | Gather information about Tencent Cloud DCDB account privilege | [`dcdb_account_privilege_info`](plugins/modules/dcdb_account_privilege_info.py) |
+| `susunola.tencentcloud.dcdb_backup_config_info` | Gather information about Tencent Cloud DCDB backup configs | [`dcdb_backup_config_info`](plugins/modules/dcdb_backup_config_info.py) |
 | `susunola.tencentcloud.dcdb_instance_info` | Gather information about Tencent Cloud DCDB instances | [`dcdb_instance_info`](plugins/modules/dcdb_instance_info.py) |
 | `susunola.tencentcloud.dlc_cluster_group_info` | Gather information about Tencent Cloud DLC cluster groups | [`dlc_cluster_group_info`](plugins/modules/dlc_cluster_group_info.py) |
 | `susunola.tencentcloud.dlc_data_engine_info` | Gather information about Tencent Cloud DLC data engines | [`dlc_data_engine_info`](plugins/modules/dlc_data_engine_info.py) |
@@ -672,11 +715,20 @@ Read-only `_info` modules (return `changed=false`):
 | `susunola.tencentcloud.dlc_user_data_engine_config_info` | Gather information about Tencent Cloud DLC user data engine configs | [`dlc_user_data_engine_config_info`](plugins/modules/dlc_user_data_engine_config_info.py) |
 | `susunola.tencentcloud.dlc_user_info` | Gather information about Tencent Cloud DLC users | [`dlc_user_info`](plugins/modules/dlc_user_info.py) |
 | `susunola.tencentcloud.dlc_work_group_info` | Gather information about Tencent Cloud DLC work groups | [`dlc_work_group_info`](plugins/modules/dlc_work_group_info.py) |
+| `susunola.tencentcloud.dnspod_custom_line_info` | Gather information about Tencent Cloud DNSPOD domain custom lines | [`dnspod_custom_line_info`](plugins/modules/dnspod_custom_line_info.py) |
+| `susunola.tencentcloud.dnspod_domain_info` | Gather information about Tencent Cloud DNSPOD domains | [`dnspod_domain_info`](plugins/modules/dnspod_domain_info.py) |
+| `susunola.tencentcloud.dnspod_line_group_info` | Gather information about Tencent Cloud DNSPOD line groups | [`dnspod_line_group_info`](plugins/modules/dnspod_line_group_info.py) |
 | `susunola.tencentcloud.dnspod_record_info` | Gather information about DNSPod records | [`dnspod_record_info`](plugins/modules/dnspod_record_info.py) |
 | `susunola.tencentcloud.domain_batch_operation_log_info` | Gather information about Tencent Cloud DOMAIN batch operation logs | [`domain_batch_operation_log_info`](plugins/modules/domain_batch_operation_log_info.py) |
 | `susunola.tencentcloud.dsgc_dspa_assessment_risk_info` | Gather information about Tencent Cloud DSGC dspa assessment risks | [`dsgc_dspa_assessment_risk_info`](plugins/modules/dsgc_dspa_assessment_risk_info.py) |
+| `susunola.tencentcloud.dts_consumer_group_info` | Gather information about Tencent Cloud DTS consumer groups | [`dts_consumer_group_info`](plugins/modules/dts_consumer_group_info.py) |
+| `susunola.tencentcloud.dts_migration_check_info` | Gather information about Tencent Cloud DTS migration check jobs | [`dts_migration_check_info`](plugins/modules/dts_migration_check_info.py) |
+| `susunola.tencentcloud.dts_migration_job_info` | Gather information about Tencent Cloud DTS migration jobs | [`dts_migration_job_info`](plugins/modules/dts_migration_job_info.py) |
 | `susunola.tencentcloud.dts_subscribe_job_info` | Gather information about Tencent Cloud DTS subscribe jobs | [`dts_subscribe_job_info`](plugins/modules/dts_subscribe_job_info.py) |
+| `susunola.tencentcloud.eb_connection_info` | Gather information about Tencent Cloud EB connections | [`eb_connection_info`](plugins/modules/eb_connection_info.py) |
 | `susunola.tencentcloud.eb_event_bus_info` | Gather information about Tencent Cloud EB event buses | [`eb_event_bus_info`](plugins/modules/eb_event_bus_info.py) |
+| `susunola.tencentcloud.eb_rule_info` | Gather information about Tencent Cloud EB rules | [`eb_rule_info`](plugins/modules/eb_rule_info.py) |
+| `susunola.tencentcloud.eb_target_info` | Gather information about Tencent Cloud EB targets | [`eb_target_info`](plugins/modules/eb_target_info.py) |
 | `susunola.tencentcloud.ecdn_domain_info` | Gather information about Tencent Cloud ECDN domains | [`ecdn_domain_info`](plugins/modules/ecdn_domain_info.py) |
 | `susunola.tencentcloud.ecm_address_info` | Gather information about Tencent Cloud ECM addresses | [`ecm_address_info`](plugins/modules/ecm_address_info.py) |
 | `susunola.tencentcloud.eiam_application_info` | Gather information about Tencent Cloud EIAM applications | [`eiam_application_info`](plugins/modules/eiam_application_info.py) |
@@ -684,7 +736,9 @@ Read-only `_info` modules (return `changed=false`):
 | `susunola.tencentcloud.eis_runtime_deployed_instances_mc_info` | Gather information about Tencent Cloud EIS runtime deployed instances mcs | [`eis_runtime_deployed_instances_mc_info`](plugins/modules/eis_runtime_deployed_instances_mc_info.py) |
 | `susunola.tencentcloud.eks_cluster_info` | Gather information about Tencent Cloud EKS clusters | [`eks_cluster_info`](plugins/modules/eks_cluster_info.py) |
 | `susunola.tencentcloud.eks_container_instance_info` | Gather information about Tencent Cloud EKS container instances | [`eks_container_instance_info`](plugins/modules/eks_container_instance_info.py) |
+| `susunola.tencentcloud.elasticsearch_index_info` | Gather information about Tencent Cloud ES indexes | [`elasticsearch_index_info`](plugins/modules/elasticsearch_index_info.py) |
 | `susunola.tencentcloud.elasticsearch_instance_info` | Gather information about Tencent Cloud Elasticsearch instances | [`elasticsearch_instance_info`](plugins/modules/elasticsearch_instance_info.py) |
+| `susunola.tencentcloud.emr_auto_scale_strategy_info` | Gather information about Tencent Cloud EMR auto scale strategies | [`emr_auto_scale_strategy_info`](plugins/modules/emr_auto_scale_strategy_info.py) |
 | `susunola.tencentcloud.emr_node_data_disk_info` | Gather information about Tencent Cloud EMR node data disks | [`emr_node_data_disk_info`](plugins/modules/emr_node_data_disk_info.py) |
 | `susunola.tencentcloud.es_cluster_info` | Gather information about Tencent Cloud Elasticsearch clusters | [`es_cluster_info`](plugins/modules/es_cluster_info.py) |
 | `susunola.tencentcloud.ess_file_url_info` | Gather information about Tencent Cloud ESS file urls | [`ess_file_url_info`](plugins/modules/ess_file_url_info.py) |
@@ -694,11 +748,17 @@ Read-only `_info` modules (return `changed=false`):
 | `susunola.tencentcloud.fmu_model_info` | Gather information about Tencent Cloud FMU models | [`fmu_model_info`](plugins/modules/fmu_model_info.py) |
 | `susunola.tencentcloud.fwm_edge_acl_rule_info` | Gather information about Tencent Cloud FWM edge acl rules | [`fwm_edge_acl_rule_info`](plugins/modules/fwm_edge_acl_rule_info.py) |
 | `susunola.tencentcloud.ga2_accelerate_area_info` | Gather information about Tencent Cloud GA2 accelerate areas | [`ga2_accelerate_area_info`](plugins/modules/ga2_accelerate_area_info.py) |
+| `susunola.tencentcloud.gaap_listener_real_servers_info` | Gather information about Tencent Cloud GAAP listener real servers | [`gaap_listener_real_servers_info`](plugins/modules/gaap_listener_real_servers_info.py) |
 | `susunola.tencentcloud.gaap_proxy_info` | Gather information about Tencent Cloud GAAP proxies | [`gaap_proxy_info`](plugins/modules/gaap_proxy_info.py) |
+| `susunola.tencentcloud.gaap_real_server_info` | Gather information about Tencent Cloud GAAP real servers | [`gaap_real_server_info`](plugins/modules/gaap_real_server_info.py) |
 | `susunola.tencentcloud.gme_voice_print_info` | Gather information about Tencent Cloud GME voice prints | [`gme_voice_print_info`](plugins/modules/gme_voice_print_info.py) |
 | `susunola.tencentcloud.goosefs_file_system_info` | Gather information about Tencent Cloud GOOSEFS file systems | [`goosefs_file_system_info`](plugins/modules/goosefs_file_system_info.py) |
+| `susunola.tencentcloud.goosefs_fileset_info` | Gather information about Tencent Cloud GOOSEFS filesets | [`goosefs_fileset_info`](plugins/modules/goosefs_fileset_info.py) |
 | `susunola.tencentcloud.gs_android_app_info` | Gather information about Tencent Cloud GS android apps | [`gs_android_app_info`](plugins/modules/gs_android_app_info.py) |
 | `susunola.tencentcloud.gwlb_gateway_load_balancer_info` | Gather information about Tencent Cloud GWLB gateway load balancers | [`gwlb_gateway_load_balancer_info`](plugins/modules/gwlb_gateway_load_balancer_info.py) |
+| `susunola.tencentcloud.gwlb_load_balancer_info` | Gather information about Tencent Cloud GWLB gateway load balancers | [`gwlb_load_balancer_info`](plugins/modules/gwlb_load_balancer_info.py) |
+| `susunola.tencentcloud.gwlb_target_group_info` | Gather information about Tencent Cloud GWLB target groups | [`gwlb_target_group_info`](plugins/modules/gwlb_target_group_info.py) |
+| `susunola.tencentcloud.gwlb_target_group_instances_info` | Gather information about Tencent Cloud GWLB target group instances | [`gwlb_target_group_instances_info`](plugins/modules/gwlb_target_group_instances_info.py) |
 | `susunola.tencentcloud.hai_application_info` | Gather information about Tencent Cloud HAI applications | [`hai_application_info`](plugins/modules/hai_application_info.py) |
 | `susunola.tencentcloud.hasim_link_info` | Gather information about Tencent Cloud HASIM links | [`hasim_link_info`](plugins/modules/hasim_link_info.py) |
 | `susunola.tencentcloud.havip_info` | Gather information about Tencent Cloud HAVIPs | [`havip_info`](plugins/modules/havip_info.py) |
@@ -731,6 +791,7 @@ Read-only `_info` modules (return `changed=false`):
 | `susunola.tencentcloud.lowcode_knowledge_set_info` | Gather information about Tencent Cloud LOWCODE knowledge sets | [`lowcode_knowledge_set_info`](plugins/modules/lowcode_knowledge_set_info.py) |
 | `susunola.tencentcloud.mall_draw_resource_info` | Gather information about Tencent Cloud MALL draw resources | [`mall_draw_resource_info`](plugins/modules/mall_draw_resource_info.py) |
 | `susunola.tencentcloud.mariadb_account_info` | Gather information about Tencent Cloud MariaDB accounts | [`mariadb_account_info`](plugins/modules/mariadb_account_info.py) |
+| `susunola.tencentcloud.mariadb_account_privilege_info` | Gather information about Tencent Cloud MARIADB account privilege | [`mariadb_account_privilege_info`](plugins/modules/mariadb_account_privilege_info.py) |
 | `susunola.tencentcloud.mariadb_backup_config_info` | Gather information about a Tencent Cloud MariaDB backup configuration | [`mariadb_backup_config_info`](plugins/modules/mariadb_backup_config_info.py) |
 | `susunola.tencentcloud.mariadb_instance_info` | Gather information about TencentDB for MariaDB instances | [`mariadb_instance_info`](plugins/modules/mariadb_instance_info.py) |
 | `susunola.tencentcloud.memcached_instance_info` | Gather information about Tencent Cloud MEMCACHED instances | [`memcached_instance_info`](plugins/modules/memcached_instance_info.py) |
@@ -749,7 +810,11 @@ Read-only `_info` modules (return `changed=false`):
 | `susunola.tencentcloud.monitor_prometheus_record_rule_info` | Gather information about Tencent Cloud Monitor Prometheus recording rules | [`monitor_prometheus_record_rule_info`](plugins/modules/monitor_prometheus_record_rule_info.py) |
 | `susunola.tencentcloud.monitor_prometheus_scrape_job_info` | Gather information about Tencent Cloud Monitor Prometheus scrape jobs | [`monitor_prometheus_scrape_job_info`](plugins/modules/monitor_prometheus_scrape_job_info.py) |
 | `susunola.tencentcloud.mps_person_sample_info` | Gather information about Tencent Cloud MPS person samples | [`mps_person_sample_info`](plugins/modules/mps_person_sample_info.py) |
+| `susunola.tencentcloud.mqtt_authorization_policy_info` | Gather information about Tencent Cloud MQTT authorization policies | [`mqtt_authorization_policy_info`](plugins/modules/mqtt_authorization_policy_info.py) |
 | `susunola.tencentcloud.mqtt_device_certificate_info` | Gather information about Tencent Cloud MQTT device certificates | [`mqtt_device_certificate_info`](plugins/modules/mqtt_device_certificate_info.py) |
+| `susunola.tencentcloud.mqtt_instance_info` | Gather information about Tencent Cloud MQTT instances | [`mqtt_instance_info`](plugins/modules/mqtt_instance_info.py) |
+| `susunola.tencentcloud.mqtt_topic_info` | Gather information about Tencent Cloud MQTT topics | [`mqtt_topic_info`](plugins/modules/mqtt_topic_info.py) |
+| `susunola.tencentcloud.mqtt_user_info` | Gather information about Tencent Cloud MQTT users | [`mqtt_user_info`](plugins/modules/mqtt_user_info.py) |
 | `susunola.tencentcloud.ms_shield_instance_info` | Gather information about Tencent Cloud MS shield instances | [`ms_shield_instance_info`](plugins/modules/ms_shield_instance_info.py) |
 | `susunola.tencentcloud.msp_migration_project_info` | Gather information about Tencent Cloud MSP migration projects | [`msp_migration_project_info`](plugins/modules/msp_migration_project_info.py) |
 | `susunola.tencentcloud.nat_gateway_dnat_rule_info` | Gather information about Tencent Cloud NAT gateway DNAT rules | [`nat_gateway_dnat_rule_info`](plugins/modules/nat_gateway_dnat_rule_info.py) |
@@ -765,7 +830,10 @@ Read-only `_info` modules (return `changed=false`):
 | `susunola.tencentcloud.oceanus_resource_info` | Gather information about Tencent Cloud Oceanus resources | [`oceanus_resource_info`](plugins/modules/oceanus_resource_info.py) |
 | `susunola.tencentcloud.oceanus_workspace_info` | Gather information about Tencent Cloud Oceanus workspaces | [`oceanus_workspace_info`](plugins/modules/oceanus_workspace_info.py) |
 | `susunola.tencentcloud.omics_application_info` | Gather information about Tencent Cloud OMICS applications | [`omics_application_info`](plugins/modules/omics_application_info.py) |
+| `susunola.tencentcloud.organization_member_identity_info` | Gather information about Tencent Cloud ORGANIZATION member auth identities | [`organization_member_identity_info`](plugins/modules/organization_member_identity_info.py) |
 | `susunola.tencentcloud.organization_member_info` | Gather information about Tencent Cloud Organization members | [`organization_member_info`](plugins/modules/organization_member_info.py) |
+| `susunola.tencentcloud.organization_member_policy_info` | Gather information about Tencent Cloud ORGANIZATION member policies | [`organization_member_policy_info`](plugins/modules/organization_member_policy_info.py) |
+| `susunola.tencentcloud.organization_node_info` | Gather information about Tencent Cloud ORGANIZATION nodes | [`organization_node_info`](plugins/modules/organization_node_info.py) |
 | `susunola.tencentcloud.partners_agent_deals_by_cache_info` | Gather information about Tencent Cloud PARTNERS agent deals by caches | [`partners_agent_deals_by_cache_info`](plugins/modules/partners_agent_deals_by_cache_info.py) |
 | `susunola.tencentcloud.peering_connection_info` | Gather information about Tencent Cloud VPC peering connections | [`peering_connection_info`](plugins/modules/peering_connection_info.py) |
 | `susunola.tencentcloud.portal_document_info` | Gather information about Tencent Cloud PORTAL documents | [`portal_document_info`](plugins/modules/portal_document_info.py) |
@@ -773,16 +841,23 @@ Read-only `_info` modules (return `changed=false`):
 | `susunola.tencentcloud.postgresql_account_info` | Gather information about Tencent Cloud PostgreSQL accounts | [`postgresql_account_info`](plugins/modules/postgresql_account_info.py) |
 | `susunola.tencentcloud.postgresql_backup_plan_info` | Gather information about Tencent Cloud PostgreSQL backup plans | [`postgresql_backup_plan_info`](plugins/modules/postgresql_backup_plan_info.py) |
 | `susunola.tencentcloud.postgresql_parameter_template_info` | Gather information about Tencent Cloud PostgreSQL parameter templates | [`postgresql_parameter_template_info`](plugins/modules/postgresql_parameter_template_info.py) |
+| `susunola.tencentcloud.private_dns_account_info` | Gather information about Tencent Cloud PRIVATEDNS private dns accounts | [`private_dns_account_info`](plugins/modules/private_dns_account_info.py) |
+| `susunola.tencentcloud.private_dns_record_info` | Gather information about Tencent Cloud PRIVATEDNS private zone records | [`private_dns_record_info`](plugins/modules/private_dns_record_info.py) |
+| `susunola.tencentcloud.private_dns_zone_info` | Gather information about Tencent Cloud PRIVATEDNS private zones | [`private_dns_zone_info`](plugins/modules/private_dns_zone_info.py) |
 | `susunola.tencentcloud.privatedns_account_vpc_info` | Gather information about Tencent Cloud PRIVATEDNS account vpcs | [`privatedns_account_vpc_info`](plugins/modules/privatedns_account_vpc_info.py) |
+| `susunola.tencentcloud.privatelink_endpoint_info` | Gather information about Tencent Cloud VPC end points | [`privatelink_endpoint_info`](plugins/modules/privatelink_endpoint_info.py) |
+| `susunola.tencentcloud.privatelink_endpoint_service_info` | Gather information about Tencent Cloud VPC end point services | [`privatelink_endpoint_service_info`](plugins/modules/privatelink_endpoint_service_info.py) |
 | `susunola.tencentcloud.pts_cron_job_info` | Gather information about Tencent Cloud PTS cron jobs | [`pts_cron_job_info`](plugins/modules/pts_cron_job_info.py) |
 | `susunola.tencentcloud.redis_account_info` | Gather information about Tencent Cloud Redis accounts | [`redis_account_info`](plugins/modules/redis_account_info.py) |
 | `susunola.tencentcloud.redis_backup_config_info` | Gather information about a Tencent Cloud Redis backup configuration | [`redis_backup_config_info`](plugins/modules/redis_backup_config_info.py) |
 | `susunola.tencentcloud.redis_instance_info` | Gather information about TencentDB for Redis instances | [`redis_instance_info`](plugins/modules/redis_instance_info.py) |
 | `susunola.tencentcloud.redis_parameter_template_info` | Gather information about Tencent Cloud Redis parameter templates | [`redis_parameter_template_info`](plugins/modules/redis_parameter_template_info.py) |
+| `susunola.tencentcloud.redis_replication_group_info` | Gather information about Tencent Cloud REDIS replication groups | [`redis_replication_group_info`](plugins/modules/redis_replication_group_info.py) |
 | `susunola.tencentcloud.region_product_info` | Gather information about Tencent Cloud REGION products | [`region_product_info`](plugins/modules/region_product_info.py) |
 | `susunola.tencentcloud.route_table_info` | Gather information about Tencent Cloud VPC route tables | [`route_table_info`](plugins/modules/route_table_info.py) |
 | `susunola.tencentcloud.rum_project_info` | Gather information about Tencent Cloud RUM projects | [`rum_project_info`](plugins/modules/rum_project_info.py) |
 | `susunola.tencentcloud.scf_alias_info` | Gather information about Tencent Cloud SCF function aliases | [`scf_alias_info`](plugins/modules/scf_alias_info.py) |
+| `susunola.tencentcloud.scf_custom_domain_info` | Gather information about Tencent Cloud SCF custom domains | [`scf_custom_domain_info`](plugins/modules/scf_custom_domain_info.py) |
 | `susunola.tencentcloud.scf_function_info` | Gather information about Tencent Cloud SCF functions | [`scf_function_info`](plugins/modules/scf_function_info.py) |
 | `susunola.tencentcloud.scf_trigger_info` | Gather information about Tencent Cloud SCF function triggers | [`scf_trigger_info`](plugins/modules/scf_trigger_info.py) |
 | `susunola.tencentcloud.scf_version_info` | Gather information about Tencent Cloud SCF function versions | [`scf_version_info`](plugins/modules/scf_version_info.py) |
@@ -808,20 +883,31 @@ Read-only `_info` modules (return `changed=false`):
 | `susunola.tencentcloud.tag_info` | Gather information about Tencent Cloud tags | [`tag_info`](plugins/modules/tag_info.py) |
 | `susunola.tencentcloud.tat_command_info` | Gather information about Tencent Cloud TAT commands | [`tat_command_info`](plugins/modules/tat_command_info.py) |
 | `susunola.tencentcloud.tat_invocation_info` | Gather Tencent Cloud TAT invocations and instance tasks | [`tat_invocation_info`](plugins/modules/tat_invocation_info.py) |
+| `susunola.tencentcloud.tat_invoker_info` | Gather information about Tencent Cloud TAT invokers | [`tat_invoker_info`](plugins/modules/tat_invoker_info.py) |
 | `susunola.tencentcloud.tbaas_block_info` | Gather information about Tencent Cloud TBAAS blocks | [`tbaas_block_info`](plugins/modules/tbaas_block_info.py) |
 | `susunola.tencentcloud.tcaplusdb_cluster_info` | Gather information about Tencent Cloud TCAPLUSDB clusters | [`tcaplusdb_cluster_info`](plugins/modules/tcaplusdb_cluster_info.py) |
+| `susunola.tencentcloud.tcb_auth_domain_info` | Gather information about Tencent Cloud TCB auth domains | [`tcb_auth_domain_info`](plugins/modules/tcb_auth_domain_info.py) |
 | `susunola.tencentcloud.tcb_billing_info` | Gather information about Tencent Cloud TCB billings | [`tcb_billing_info`](plugins/modules/tcb_billing_info.py) |
+| `susunola.tencentcloud.tcb_environment_info` | Gather information about Tencent Cloud TCB envs | [`tcb_environment_info`](plugins/modules/tcb_environment_info.py) |
+| `susunola.tencentcloud.tcb_http_service_route_info` | Gather information about Tencent Cloud TCB http service routes | [`tcb_http_service_route_info`](plugins/modules/tcb_http_service_route_info.py) |
+| `susunola.tencentcloud.tcb_static_store_info` | Gather information about Tencent Cloud TCB static stores | [`tcb_static_store_info`](plugins/modules/tcb_static_store_info.py) |
 | `susunola.tencentcloud.tcbr_cloud_run_pod_info` | Gather information about Tencent Cloud TCBR cloud run pods | [`tcbr_cloud_run_pod_info`](plugins/modules/tcbr_cloud_run_pod_info.py) |
+| `susunola.tencentcloud.tcm_access_log_info` | Gather information about Tencent Cloud TCM access log configs | [`tcm_access_log_info`](plugins/modules/tcm_access_log_info.py) |
 | `susunola.tencentcloud.tcm_mesh_info` | Gather information about Tencent Cloud TCM meshes | [`tcm_mesh_info`](plugins/modules/tcm_mesh_info.py) |
+| `susunola.tencentcloud.tcr_immutable_tag_rule_info` | Gather information about Tencent Cloud TCR immutable tag rules | [`tcr_immutable_tag_rule_info`](plugins/modules/tcr_immutable_tag_rule_info.py) |
 | `susunola.tencentcloud.tcr_instance_info` | Gather information about Tencent Cloud TCR registries | [`tcr_instance_info`](plugins/modules/tcr_instance_info.py) |
 | `susunola.tencentcloud.tcr_namespace_info` | Gather information about Tencent Cloud TCR namespaces | [`tcr_namespace_info`](plugins/modules/tcr_namespace_info.py) |
 | `susunola.tencentcloud.tcr_replication_instance_info` | Gather information about Tencent Cloud TCR replication instances | [`tcr_replication_instance_info`](plugins/modules/tcr_replication_instance_info.py) |
 | `susunola.tencentcloud.tcr_replication_rule_info` | Gather information about Tencent Cloud TCR replication rules | [`tcr_replication_rule_info`](plugins/modules/tcr_replication_rule_info.py) |
 | `susunola.tencentcloud.tcr_repository_info` | Gather information about Tencent Cloud TCR repositories | [`tcr_repository_info`](plugins/modules/tcr_repository_info.py) |
+| `susunola.tencentcloud.tcr_webhook_trigger_info` | Gather information about Tencent Cloud TCR webhook triggers | [`tcr_webhook_trigger_info`](plugins/modules/tcr_webhook_trigger_info.py) |
 | `susunola.tencentcloud.tcss_abnormal_process_event_info` | Gather information about Tencent Cloud TCSS abnormal process events | [`tcss_abnormal_process_event_info`](plugins/modules/tcss_abnormal_process_event_info.py) |
 | `susunola.tencentcloud.tdai_agent_duty_task_info` | Gather information about Tencent Cloud TDAI agent duty tasks | [`tdai_agent_duty_task_info`](plugins/modules/tdai_agent_duty_task_info.py) |
+| `susunola.tencentcloud.tdcpg_account_info` | Gather information about Tencent Cloud TDCPG accounts | [`tdcpg_account_info`](plugins/modules/tdcpg_account_info.py) |
 | `susunola.tencentcloud.tdcpg_cluster_info` | Gather information about Tencent Cloud TDCPG clusters | [`tdcpg_cluster_info`](plugins/modules/tdcpg_cluster_info.py) |
 | `susunola.tencentcloud.tdcpg_cluster_instance_info` | Gather information about Tencent Cloud TDCPG cluster instances | [`tdcpg_cluster_instance_info`](plugins/modules/tdcpg_cluster_instance_info.py) |
+| `susunola.tencentcloud.tdcpg_endpoint_wan_info` | Gather information about Tencent Cloud TDCPG cluster endpoints | [`tdcpg_endpoint_wan_info`](plugins/modules/tdcpg_endpoint_wan_info.py) |
+| `susunola.tencentcloud.tdcpg_instance_state_info` | Gather information about Tencent Cloud TDCPG cluster instances | [`tdcpg_instance_state_info`](plugins/modules/tdcpg_instance_state_info.py) |
 | `susunola.tencentcloud.tdid_over_summary_info` | Gather information about Tencent Cloud TDID over summary | [`tdid_over_summary_info`](plugins/modules/tdid_over_summary_info.py) |
 | `susunola.tencentcloud.tdmq_amqp_cluster_info` | Gather information about Tencent Cloud TDMQ amqp clusters | [`tdmq_amqp_cluster_info`](plugins/modules/tdmq_amqp_cluster_info.py) |
 | `susunola.tencentcloud.tdmq_environment_info` | Gather information about Tencent Cloud TDMQ environments | [`tdmq_environment_info`](plugins/modules/tdmq_environment_info.py) |
@@ -840,11 +926,16 @@ Read-only `_info` modules (return `changed=false`):
 | `susunola.tencentcloud.tdmq_subscription_info` | Gather information about Tencent Cloud TDMQ subscriptions | [`tdmq_subscription_info`](plugins/modules/tdmq_subscription_info.py) |
 | `susunola.tencentcloud.tdmq_topic_info` | Gather information about Tencent Cloud TDMQ topics | [`tdmq_topic_info`](plugins/modules/tdmq_topic_info.py) |
 | `susunola.tencentcloud.tdmysql_account_info` | Gather Tencent Cloud TDSQL MySQL accounts | [`tdmysql_account_info`](plugins/modules/tdmysql_account_info.py) |
+| `susunola.tencentcloud.tdmysql_account_privilege_info` | Gather information about Tencent Cloud TDMYSQL user privilege | [`tdmysql_account_privilege_info`](plugins/modules/tdmysql_account_privilege_info.py) |
 | `susunola.tencentcloud.tdmysql_backup_policy_info` | Gather Tencent Cloud TDSQL MySQL backup policy | [`tdmysql_backup_policy_info`](plugins/modules/tdmysql_backup_policy_info.py) |
 | `susunola.tencentcloud.tdmysql_database_object_info` | Gather Tencent Cloud TDSQL MySQL databases and objects | [`tdmysql_database_object_info`](plugins/modules/tdmysql_database_object_info.py) |
 | `susunola.tencentcloud.tdmysql_db_instance_info` | Gather information about Tencent Cloud TDMYSQL db instances | [`tdmysql_db_instance_info`](plugins/modules/tdmysql_db_instance_info.py) |
+| `susunola.tencentcloud.tdmysql_maintenance_window_info` | Gather information about Tencent Cloud TDMYSQL maintenance window | [`tdmysql_maintenance_window_info`](plugins/modules/tdmysql_maintenance_window_info.py) |
 | `susunola.tencentcloud.tdmysql_parameter_info` | Gather Tencent Cloud TDSQL MySQL instance parameters | [`tdmysql_parameter_info`](plugins/modules/tdmysql_parameter_info.py) |
+| `susunola.tencentcloud.tdmysql_ssl_info` | Gather information about Tencent Cloud TDMYSQL instance ssl | [`tdmysql_ssl_info`](plugins/modules/tdmysql_ssl_info.py) |
 | `susunola.tencentcloud.tem_application_info` | Gather information about Tencent Cloud TEM applications | [`tem_application_info`](plugins/modules/tem_application_info.py) |
+| `susunola.tencentcloud.tem_application_service_info` | Gather information about Tencent Cloud TEM application services | [`tem_application_service_info`](plugins/modules/tem_application_service_info.py) |
+| `susunola.tencentcloud.tem_environment_info` | Gather information about Tencent Cloud TEM environments | [`tem_environment_info`](plugins/modules/tem_environment_info.py) |
 | `susunola.tencentcloud.teo_acceleration_domain_info` | Gather information about Tencent Cloud EdgeOne acceleration domains | [`teo_acceleration_domain_info`](plugins/modules/teo_acceleration_domain_info.py) |
 | `susunola.tencentcloud.teo_dns_record_info` | Gather information about Tencent Cloud EdgeOne DNS records | [`teo_dns_record_info`](plugins/modules/teo_dns_record_info.py) |
 | `susunola.tencentcloud.teo_function_info` | Gather information about Tencent Cloud TEO functions | [`teo_function_info`](plugins/modules/teo_function_info.py) |
@@ -862,12 +953,21 @@ Read-only `_info` modules (return `changed=false`):
 | `susunola.tencentcloud.tione_training_model_version_info` | Gather Tencent Cloud TIONE training-model versions | [`tione_training_model_version_info`](plugins/modules/tione_training_model_version_info.py) |
 | `susunola.tencentcloud.tione_training_task_info` | Gather Tencent Cloud TIONE training tasks | [`tione_training_task_info`](plugins/modules/tione_training_task_info.py) |
 | `susunola.tencentcloud.tiw_running_task_info` | Gather information about Tencent Cloud TIW running tasks | [`tiw_running_task_info`](plugins/modules/tiw_running_task_info.py) |
+| `susunola.tencentcloud.tke_cls_log_config_info` | Gather information about Tencent Cloud TKE log config | [`tke_cls_log_config_info`](plugins/modules/tke_cls_log_config_info.py) |
 | `susunola.tencentcloud.tke_cluster_autoscaler_info` | Gather information about Tencent Cloud TKE cluster autoscaler options | [`tke_cluster_autoscaler_info`](plugins/modules/tke_cluster_autoscaler_info.py) |
 | `susunola.tencentcloud.tke_cluster_info` | Gather information about Tencent Cloud TKE clusters | [`tke_cluster_info`](plugins/modules/tke_cluster_info.py) |
+| `susunola.tencentcloud.tke_cluster_route_info` | Gather information about Tencent Cloud TKE cluster routes | [`tke_cluster_route_info`](plugins/modules/tke_cluster_route_info.py) |
+| `susunola.tencentcloud.tke_cluster_route_table_info` | Gather information about Tencent Cloud TKE cluster route tables | [`tke_cluster_route_table_info`](plugins/modules/tke_cluster_route_table_info.py) |
 | `susunola.tencentcloud.tke_node_pool_info` | Gather information about Tencent Cloud TKE node pools | [`tke_node_pool_info`](plugins/modules/tke_node_pool_info.py) |
 | `susunola.tencentcloud.tokenhub_model_info` | Gather information about Tencent Cloud TOKENHUB models | [`tokenhub_model_info`](plugins/modules/tokenhub_model_info.py) |
 | `susunola.tencentcloud.tourism_draw_resource_info` | Gather information about Tencent Cloud TOURISM draw resources | [`tourism_draw_resource_info`](plugins/modules/tourism_draw_resource_info.py) |
 | `susunola.tencentcloud.trabbit_rabbit_mq_serverless_instance_info` | Gather information about Tencent Cloud TRABBIT rabbit mq serverless instances | [`trabbit_rabbit_mq_serverless_instance_info`](plugins/modules/trabbit_rabbit_mq_serverless_instance_info.py) |
+| `susunola.tencentcloud.trabbit_serverless_binding_info` | Gather information about Tencent Cloud TRABBIT serverless bindings | [`trabbit_serverless_binding_info`](plugins/modules/trabbit_serverless_binding_info.py) |
+| `susunola.tencentcloud.trabbit_serverless_exchange_info` | Gather information about Tencent Cloud TRABBIT serverless exchanges | [`trabbit_serverless_exchange_info`](plugins/modules/trabbit_serverless_exchange_info.py) |
+| `susunola.tencentcloud.trabbit_serverless_permission_info` | Gather information about Tencent Cloud TRABBIT serverless permissions | [`trabbit_serverless_permission_info`](plugins/modules/trabbit_serverless_permission_info.py) |
+| `susunola.tencentcloud.trabbit_serverless_queue_info` | Gather information about Tencent Cloud TRABBIT serverless queues | [`trabbit_serverless_queue_info`](plugins/modules/trabbit_serverless_queue_info.py) |
+| `susunola.tencentcloud.trabbit_serverless_user_info` | Gather information about Tencent Cloud TRABBIT serverless users | [`trabbit_serverless_user_info`](plugins/modules/trabbit_serverless_user_info.py) |
+| `susunola.tencentcloud.trabbit_serverless_vhost_info` | Gather information about Tencent Cloud TRABBIT serverless vhosts | [`trabbit_serverless_vhost_info`](plugins/modules/trabbit_serverless_vhost_info.py) |
 | `susunola.tencentcloud.trocket_consumer_client_info` | Gather information about Tencent Cloud TROCKET consumer clients | [`trocket_consumer_client_info`](plugins/modules/trocket_consumer_client_info.py) |
 | `susunola.tencentcloud.trp_code_batch_info` | Gather information about Tencent Cloud TRP code batches | [`trp_code_batch_info`](plugins/modules/trp_code_batch_info.py) |
 | `susunola.tencentcloud.trro_device_info` | Gather information about Tencent Cloud TRRO devices | [`trro_device_info`](plugins/modules/trro_device_info.py) |

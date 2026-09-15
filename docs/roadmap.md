@@ -924,18 +924,18 @@
 
     | Figure | 09-08 page | 09-14 measured |
     |---|---|---|
-    | Modules | 781 (440 write + 341 info) | **891 (456 write + 435 info)** |
+    | Modules | 781 (440 write + 341 info) | **991 (456 write + 535 info)** |
     | Statement coverage | 81.44% | **92.65%** (gate 80) |
-    | Module unit-test files | 781 | **954** (10,321 test functions) |
+    | Module unit-test files | 781 | **1,054** (10,826 test functions) |
     | Sanity ignore debt | 1557 / 1900 | **2076 / 2600** (519 x 4 core versions) |
     | Integration targets | 21 | **34** (33 in the registry, 21 in the default list) |
-    | Write modules without a `_info` read surface | 356 / 74 products | **226 / 55 products (128 backlog + 55 no-list-api + 43 mapped)** |
+    | Write modules without a `_info` read surface | 356 / 74 products | **126 / 29 products (28 backlog + 55 no-list-api + 43 mapped)** |
     | Write modules without a dedicated unit test | 111 | **0** |
     | Read-only `_info` modules without a dedicated unit test | 36 | **0** |
     | Galaxy downloads | 415 | **553** |
 
     The module count for the unit tests is deliberately the module-level one
-    (954 files under `tests/unit/plugins/modules`); the CI coverage step also
+    (1,054 files under `tests/unit/plugins/modules`); the CI coverage step also
     collects `tests/contract` and `tests/unit/plugins/module_utils`, which is
     where 12,961 tests / 92.65% comes from.
 
@@ -999,7 +999,7 @@
      every response field the generated loop reads, so the test can no longer
      pass against a loop the module never walks.
 
-     Result: **435 / 435 `_info` and 456 / 456 write modules** have a dedicated
+     Result: **535 / 535 `_info` and 456 / 456 write modules** have a dedicated
      unit test file, CI scope moved from 12,828 to 12,961 tests and measured
      statement coverage from 92.58% to 92.65%.
 
@@ -1056,10 +1056,10 @@ reported every curated gap as UNTRACKED; it also counted any write module
 without a same-named `_info` as a gap, which mixed together three different
 situations. It now imports the audit module and reuses its verdicts, and
 groups modules by product with the repo's own inventory instead of
-`name.split('_')[0]`. The corrected split: 456 write modules — 230 have a
-sibling `_info`, and of the 226 that do not, 43 are already read through a
-curated `KNOWN_COVERAGE` mapping, 55 have no list API at all, and **128 are
-the real backlog across 45 products**. `scripts/check_doc_figures.py` now
+`name.split('_')[0]`. The corrected split: 456 write modules — 330 have a
+sibling `_info`, and of the 126 that do not, 43 are already read through a
+curated `KNOWN_COVERAGE` mapping, 55 have no list API at all, and **28 are
+the real backlog across 18 products**. `scripts/check_doc_figures.py` now
 pins all four numbers (24 figures in total) and matches them as whole
 numbers rather than substrings — `55` used to match inside `1557`.
 The practical consequence is that P0-05's target list was wrong: tse(27)

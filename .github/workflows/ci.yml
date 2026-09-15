@@ -89,12 +89,18 @@ jobs:
         run: python scripts/check_hidden_required_params.py --check
       - name: Extensions metadata matches plugins
         run: python scripts/check_extensions_metadata.py --check
+      - name: Curated info targets shipped
+        run: python scripts/check_info_targets.py --check
       - name: Docs figures match the repo
         run: python scripts/check_doc_figures.py --check
       - name: Roadmap badges match the acceptance criteria
         run: python scripts/check_roadmap_status.py --check
       - name: Ruff lint
-        run: ruff check .
+        # --no-cache matters: ruff would otherwise drop a .ruff_cache/ into the
+        # working copy, and the ansible-test sanity step below scans *every*
+        # file in it -- flagging the cache blobs for line-endings and
+        # no-smart-quotes (they are binary-ish and carry CRLF).
+        run: ruff check . --no-cache
       - name: Sanity ignore budget
         run: python scripts/check_sanity_ignore.py
       - name: Sanity tests

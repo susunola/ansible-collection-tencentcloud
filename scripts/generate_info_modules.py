@@ -8285,6 +8285,9 @@ def _documentation(spec):
             option_lines.append("    required: true")
         if "default" in param:
             option_lines.append(f"    default: {param['default']}")
+        # ``no_log`` is deliberately not rendered here: it is not a legal
+        # DOCUMENTATION option key (validate-modules rejects it as "extra keys
+        # not allowed"), only an argument_spec one.
         if param.get("struct"):
             # Ansible module documentation nests sub-options under
             # ``suboptions:`` (validate-modules rejects ``options:`` here).
@@ -8356,6 +8359,70 @@ request_id:
   type: str"""
 
 
+# pep8/ruff column limit (see ruff.toml). Generated source must stay under
+# it: a module with many ``extra_params`` otherwise renders calls far longer
+# than 160 columns. Ruff only enforces E501, but ansible-test sanity runs
+# full pep8, which also enforces E128 -- so continuation lines have to line
+# up with the *visual* indent (the column after the opening paren/brace),
+# not just any hanging indent.
+_LINE_LIMIT = 160
+
+# Fixed head of a generated ``fake = _run(...)`` line, used to work out how
+# much room the generated keyword arguments have left.
+_RUN_HEAD = '    fake = _run(monkeypatch, client, region="ap-guangzhou"'
+# Fixed head of a generated ``fake = FakeModule({...})`` line.
+_FAKE_HEAD = "    fake = FakeModule({"
+# ...and of the variant whose first key is hard-coded in the template.
+_INIT_HEAD = '    fake = FakeModule({"region": "ap-guangzhou"'
+
+
+def _join_args(items, pad, budget, trailing=False):
+    """Join call arguments inline, or one per line when they do not fit.
+
+    *pad* is the hanging indent for continuation lines and *budget* is how
+    many columns the argument list itself may fill. With *trailing* the
+    result ends in a separator so a template can append one last argument
+    (``{params}page_size=2``); an empty *items* always yields "".
+
+    Wrapping only ever kicks in past the limit, so a spec that already fits
+    keeps byte-identical output -- regeneration must not churn files.
+    """
+    if not items:
+        return ""
+    sep = ",\n" + pad
+    inline = ", ".join(items) + (", " if trailing else "")
+    if len(inline) <= budget:
+        return inline
+    out = sep.join(items)
+    return out + sep if trailing else out
+
+
+def _join_kwargs(items, pad, budget):
+    """Join ``", name=value"`` fragments following a hard-coded argument.
+
+    The wrapped form moves the comma onto the preceding line so the
+    template's own text (``region="ap-guangzhou"{run_kwargs}``) stays valid
+    whether or not wrapping happened.
+    """
+    inline = "".join(items)
+    if len(inline) <= budget:
+        return inline
+    sep = ",\n" + pad
+    return ",\n" + pad + sep.join(item[2:] for item in items)
+
+
+def _wrap_kwargs_text(text, pad, budget):
+    """Wrap an already-joined ``", a=1, b=2"`` fragment one item per line.
+
+    Same shape as :func:`_join_kwargs`, for call sites that accumulate the
+    fragment with ``+=`` and so only have the joined text to work with.
+    """
+    if not text or len(text) <= budget:
+        return text
+    items = [item.strip() for item in text.split(",") if item.strip()]
+    return ",\n" + pad + (",\n" + pad).join(items)
+
+
 def _build_request_source(spec):
     """Render the module-level request builder function(s)."""
     request_class = spec["request_class"]
@@ -8387,7 +8454,12 @@ def build_describe_request(models, {ids['param']}):
     else:
         args += ["offset", "limit"]
     lines = [
-        f"def build_request({', '.join(args)}):",
+        # A module with many extra_params can overflow the 160-column limit
+        # on the signature itself, so it wraps the same way calls do.
+        "def build_request(%s):" % _join_args(
+            args, " " * len("def build_request("),
+            _LINE_LIMIT - len("def build_request():"),
+        ),
         f"    request = models.{request_class}()",
     ]
     if pagination == "page":
@@ -8679,7 +8751,11 @@ def _run_module_list_source(spec):
     if spec["filters"]:
         build_args.append('module.params["filters"]')
     build_args += ["0", "0"]
-    build_call = f"build_request({', '.join(build_args)})"
+    # The call is emitted as `    request = build_request(...)`; wrap it one
+    # argument per line when it would not fit the 160-column limit.
+    build_call = "build_request(%s)" % _join_args(
+        build_args, " " * len("    request = build_request("),
+        _LINE_LIMIT - len("    request = build_request()"))
     return f"""\
 def run_module():
     argument_spec = tencentcloud_argument_spec()
@@ -8923,17 +8999,24 @@ def render_list_test(spec):
     """Render the unit test file for an unpaginated list spec."""
     module = spec["module"]
     product = spec["service_package"].split(".")[1]
-    run_kwargs = "".join(
-        ", %s=%s" % (param["name"], _sample_literal(param))
-        for param in spec["extra_params"]
-    )
-    init_kwargs = "".join(
-        ', "%s": %s' % (param["name"], _sample_literal(param))
-        for param in spec["extra_params"]
-    )
+    run_items = ["%s=%s" % (param["name"], _sample_literal(param))
+                 for param in spec["extra_params"]]
+    init_items = ['"%s": %s' % (param["name"], _sample_literal(param))
+                  for param in spec["extra_params"]]
+    if spec.get("ids") and not spec.get("ids_action"):
+        # run_module() forwards the id-list option to build_request(), so the
+        # test has to pass it too -- otherwise the module raises KeyError on
+        # module.params (goosefs_fileset_info was the first such spec).
+        run_items.append("%s=None" % spec["ids"]["param"])
+        init_items.append('"%s": None' % spec["ids"]["param"])
     if spec["filters"]:
-        run_kwargs += ", filters={}"
-        init_kwargs += ', "filters": {}'
+        run_items.append("filters={}")
+        init_items.append('"filters": {}')
+    run_kwargs = _join_kwargs([", " + item for item in run_items],
+                              " " * 16, _LINE_LIMIT - len(_RUN_HEAD) - 1)
+    init_kwargs = _join_kwargs([", " + item for item in init_items],
+                               " " * len(_FAKE_HEAD),
+                               _LINE_LIMIT - len(_INIT_HEAD) - 2)
     fake_filter = ""
     if spec["filters"]:
         fake_filter = '''
@@ -9250,7 +9333,10 @@ def render_unpaginated_test(spec):
         if filters:
             parts.append(filters_value)
         parts += ["0", "0"]
-        return "%s.build_request(%s)" % (module, ", ".join(parts))
+        head = "    request = %s.build_request(" % module
+        return "%s.build_request(%s)" % (
+            module, _join_args(parts, " " * len(head),
+                               _LINE_LIMIT - len(head) - 1))
 
     param_asserts = "\n".join(
         "    assert request.%s == %s" % (param["field"], _sample_literal(param))
@@ -9274,11 +9360,13 @@ def test_build_request_sorts_filters():
     )
     if filters:
         run_params += ", filters={}"
-    params_dict = '"region": "ap-guangzhou"' + "".join(
-        ', "%s": %s' % (param["name"], _sample_literal(param)) for param in params
-    )
+    dict_items = ['"region": "ap-guangzhou"']
+    dict_items += ['"%s": %s' % (param["name"], _sample_literal(param))
+                   for param in params]
     if filters:
-        params_dict += ', "filters": {}'
+        dict_items.append('"filters": {}')
+    params_dict = _join_args(dict_items, " " * len(_FAKE_HEAD),
+                             _LINE_LIMIT - len(_FAKE_HEAD) - 2)
 
     sample_key = params[0]["field"] if params else "Status"
     pkg = ".".join(spec["service_package"].split(".")[:2])
@@ -9298,7 +9386,8 @@ def test_build_request_sorts_filters():
         ("@@PKG@@", pkg),
         ("@@SAMPLE_KEY@@", sample_key),
         ("@@RESULT_KEY@@", spec["result_key"]),
-        ("@@RUN_PARAMS@@", run_params),
+        ("@@RUN_PARAMS@@", _wrap_kwargs_text(
+            run_params, " " * 16, _LINE_LIMIT - len(_RUN_HEAD) - 1)),
         ("@@PARAMS_DICT@@", params_dict),
     ):
         rendered = rendered.replace(key, value)
@@ -9505,7 +9594,10 @@ def render_token_test(spec):
         if filters:
             parts.append(filters_value)
         parts += ["None", "100"]
-        return "%s.build_request(%s)" % (module, ", ".join(parts))
+        head = "    request = %s.build_request(" % module
+        return "%s.build_request(%s)" % (
+            module, _join_args(parts, " " * len(head),
+                               _LINE_LIMIT - len(head) - 1))
 
     asserts = []
     if page_size_field is not None:
@@ -9559,15 +9651,17 @@ def test_build_request_sorts_filters():
         run_params += ", filters={}"
     if page_size_field is not None:
         run_params += ", page_size=100"
-    params_dict = '"region": "ap-guangzhou"' + "".join(
-        ', "%s": %s' % (param["name"], _sample_literal(param)) for param in params
-    )
+    dict_items = ['"region": "ap-guangzhou"']
+    dict_items += ['"%s": %s' % (param["name"], _sample_literal(param))
+                   for param in params]
     if ids:
-        params_dict += ', "%s": None' % ids["param"]
+        dict_items.append('"%s": None' % ids["param"])
     if filters:
-        params_dict += ', "filters": {}'
+        dict_items.append('"filters": {}')
     if page_size_field is not None:
-        params_dict += ', "page_size": 100'
+        dict_items.append('"page_size": 100')
+    params_dict = _join_args(dict_items, " " * len(_FAKE_HEAD),
+                             _LINE_LIMIT - len(_FAKE_HEAD) - 2)
 
     pkg = ".".join(spec["service_package"].split(".")[:2])
 
@@ -9592,7 +9686,8 @@ def test_build_request_sorts_filters():
         ("@@STOP_DONE@@", stop_done),
         ("@@TOKEN_REQUEST_FIELD@@", token_request_field),
         ("@@RESULT_KEY@@", spec["result_key"]),
-        ("@@RUN_PARAMS@@", run_params),
+        ("@@RUN_PARAMS@@", _wrap_kwargs_text(
+            run_params, " " * 16, _LINE_LIMIT - len(_RUN_HEAD) - 1)),
         ("@@PARAMS_DICT@@", params_dict),
     ):
         rendered = rendered.replace(key, value)
@@ -9656,7 +9751,9 @@ class FakeFilter:
         if filters:
             parts.append(filters_value)
         parts += [offset, limit]
-        return f"{module}.build_request({', '.join(parts)})"
+        head = f"    request = {module}.build_request("
+        return f"{module}.build_request(%s)" % _join_args(
+            parts, " " * len(head), _LINE_LIMIT - len(head) - 1)
 
     if page:
         page_number_field = spec.get("page_number_field", "PageNumber")
@@ -9708,21 +9805,25 @@ def test_build_request_sorts_filters():
     ]
 '''
 
-    params = ""
+    param_items = []
     params_dict = ["        \"region\": \"ap-guangzhou\","]
     for param in spec["extra_params"]:
-        params += f"{param['name']}={sample_expr(param, full=True)}, "
+        param_items.append("%s=%s" % (param["name"], sample_expr(param, full=True)))
         # Only the first struct sub-key keeps the FakeModule dict literal
         # within pep8's 160-column limit (same rule as build_call above).
         params_dict.append('        "%s": %s,' % (param["name"], sample_expr(param, full=False)))
     if ids:
-        params += f'{ids["param"]}=None, '
+        param_items.append("%s=None" % ids["param"])
         params_dict.append('        "%s": None,' % ids["param"])
     if filters:
-        params += "filters={}, "
+        param_items.append("filters={}")
         params_dict.append('        "filters": {},')
     params_dict.append('        "page_size": 2,')
     params_dict = "\n".join(params_dict)
+    # Emitted as `                {params}page_size=2)`, hence the trailing
+    # separator and the room reserved for that last argument.
+    params = _join_args(param_items, " " * 16,
+                        _LINE_LIMIT - 16 - len("page_size=2)"), trailing=True)
 
     if spec["response_total"] is None:
         # No total-count field: pagination stops at the first short page and
