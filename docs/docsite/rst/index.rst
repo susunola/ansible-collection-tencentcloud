@@ -29,3 +29,10 @@ without requiring the collection to be installed.
    :caption: Reference indexes:
 
    collections/environment_variables
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Hand-written pages:
+
+   event_source_plugins

@@ -72,7 +72,7 @@ root and runs `ansible-doc -l` against it.
 Neither the size ceiling nor the install step is ceremony.
 `ansible-galaxy` reads `build_ignore` but not `.gitignore`, so two classes
 of junk used to reach the tarball on any machine that was not a clean
-checkout: `docs/docsite/build` (generated, gitignored, 252 MB — 36.6 MB and
+checkout: `docs/docsite/build` (generated Sphinx HTML, 252 MB — 36.6 MB and
 nine minutes instead of 1.9 MB and three) and the tool caches
 (`.pytest_cache`, `.ruff_cache`, coverage output), which are rewritten while
 tooling runs, so a tarball containing them can disagree with its own

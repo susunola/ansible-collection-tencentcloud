@@ -427,10 +427,15 @@
     COS/TKE event-source rows. **Done**
 60. P1-04 collection docsite (2026-09-10): `docs/docsite/` adds an
     `antsibull-docs` + Sphinx build that renders the `DOCUMENTATION` /
-    `RETURN` / `EXAMPLES` blocks of all 875 modules and every other plugin
-    into an `ansible-doc`-style HTML site — `docs/docsite/build/html/`, ~900
-    pages, about eight minutes end to end. `docs/docsite/build.sh` is the
-    entry point and `docs/docsite/README.md` documents it. Two flags are
+    `RETURN` / `EXAMPLES` blocks of all 1005 modules and every other plugin
+    into an `ansible-doc`-style HTML site — `docs/docsite/build/html/`,
+    1,032 pages, about five minutes end to end (77 s antsibull-docs +
+    221 s Sphinx; both re-measured 2026-09-15). The four `event_source`
+    plugins are the exception: neither ansible-core nor antsibull-docs knows
+    that plugin type, so 09-15 added `scripts/generate_event_source_docs.py`,
+    which renders their page into `docs/docsite/extra_rst/` and checks the
+    page *and* the chain that makes it reachable. `docs/docsite/build.sh` is
+    the entry point and `docs/docsite/README.md` documents it. Two flags are
     deliberate: `antsibull-docs --fail-on-error` and `sphinx-build -W`.
     Without the first, a module whose documentation cannot be parsed becomes a
     page that reads "Did not return correct DOCUMENTATION"; without the

@@ -399,3 +399,41 @@ _本计划由 docs/capability-map.html / docs/panorama.html INDUSTRY BENCHMARK �
      （当前目录为空）」已与仓库不符（fragment 已随 PR 逐条积累），改为陈述
      机制而非计数——`fragment` 一词在页面别处与 `doc_fragments` 的实测数字同行，
      硬塞一个新数字进 `check_doc_figures.py` 会与既有断言打架。）
+ 18. **G1-n（09-15 新增）** event_source 的 docsite 页不再是 0，且整条可达链
+     都有人校验 → ✅（G1-g 给 4 个 event_source 插件补齐了 EXAMPLES 与载荷字段
+     文档，但它们的 docsite 页始终是 **0 页** —— `plugins/event_source` 是
+     ansible-core 与 antsibull-docs 都不加载的扩展类型，`ansible-doc` 看不到、
+     sanity 测不到、antsibull-docs 也不会为它生成页面。于是 panorama P1-08 长期
+     写着「docsite 入口待评估（需手写或生成 RST）」，而手写 RST 恰恰是本仓库反复
+     出事的那类东西：它可能被下一次构建悄悄删掉，也可能永远不进任何 toctree，两种
+     情况都不会有任何东西失败。
+     因此做成**生成器 + 双向接线校验**而不是一份手写文档：
+     `scripts/generate_event_source_docs.py` 从 4 个插件的 DOCUMENTATION /
+     EXAMPLES 渲染 `docs/docsite/extra_rst/event_source_plugins.rst`（4 插件 /
+     39 选项 / 12 个可匹配字段），`--check` 同时校验 ① 页面与 `render()` 逐字节
+     一致 ② 插件 ↔ 章节双向（有插件没章节、有章节没插件都失败）③ 每个插件都声明
+     了 `I(event.*)` 载荷字段与 EXAMPLES ④ **接线**：`build.sh` 必须把
+     `extra_rst/` 拷进 `rst/`，且 `rst/index.rst` 的 toctree 里必须有
+     `event_source_plugins`。页面放在 `extra_rst/` 而非 `rst/`，是因为
+     `--cleanup similar-files-and-dirs` 会删掉 antsibull-docs 没写过的文件与目录；
+     拷贝发生在 antsibull-docs 之后，任何 cleanup 模式都动不了它。
+     33 条单测（真实仓库锚点：4 个插件逐个点名、每插件 ≥8 选项、载荷字段逐个匹配
+     `event.<key>.<field>`、真实页面可复现），**12/12 变异全部被捕获**（逐个关掉
+     9 条判定 + 改锚点正则 + 删拷页步骤 + 删 toctree 条目），脚本按 sha256 逐字节
+     还原；已进 `ci.yml`（ruff 之前，「Event source docsite page」步骤）。
+     顺带收掉四处残留失校，全是「没有守卫盯着的手写数字/断言」：
+     ① `docs/docsite/README.md` 的 875 模块 / ~900 页 / 八分钟 —— 实测
+     **1005 模块 / 1032 页 / 冷构建 77s（antsibull）+ 221s（Sphinx）**；
+     ② 同一份 README 的「Everything else under rst/ and build/ is generated and
+     ignored」与「build/ is git-ignored」**都是假的** —— `build/html` 有 1101 个
+     入库文件，只有 `/build/doctrees`、`/rst/collections` 与顶层 `/rst/*.rst`
+     被忽略（后者本次补进 `.gitignore`：`/rst/*.rst` + `!/rst/index.rst`）；
+     smart quotes 那节还把已被 `conf.py` 的 `smartquotes = False` 修掉的问题写成
+     仍在进行时（实测生成 HTML 里弯引号 **0** 个）；
+     ③ `docs/roadmap.md` P1-04 同款的 875 / ~900 页；`docs/panorama.html` 与
+     `docs/demo.html` 的 991 模块（实测 1005，且 1005 个模块确实全部声明
+     `supports_check_mode=True`）；
+     ④ panorama P1-04「随每次 release 重建」—— **没有任何工作流碰 docsite**，
+     已改为「随插件变更手工重建（无自动重建工作流）」并写明 09-15 起的守卫。
+     `check_doc_figures.py --check` 当场抓到一处新漂移：新增的测试文件让「单测文件」
+     从 1,135 变 **1,137**，panorama 已同步 —— 这正是 G1-h 该有的样子。）

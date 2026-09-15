@@ -76,5 +76,18 @@ antsibull-docs \
     --dest-dir rst \
     susunola.tencentcloud
 
+# Hand-written pages. plugins/event_source is invisible to both ansible-core
+# and antsibull-docs, so scripts/generate_event_source_docs.py renders its
+# page into extra_rst/ instead of letting antsibull-docs generate one. It is
+# copied in *after* antsibull-docs so no --cleanup mode can remove it, and
+# scripts/generate_event_source_docs.py --check fails CI if this copy step or
+# the toctree entry in rst/index.rst ever disappears.
+if [ -d extra_rst ]; then
+    for page in extra_rst/*.rst; do
+        [ -e "$page" ] || continue
+        cp "$page" rst/
+    done
+fi
+
 # Build Sphinx site
 sphinx-build -M html rst build -c . -W --keep-going
