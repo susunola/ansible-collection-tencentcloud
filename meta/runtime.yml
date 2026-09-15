@@ -123,10 +123,12 @@ action_groups:
     - cdn_domain_info
     - cds_asset_info
     - cdwch_backup_config
+    - cdwch_backup_config_info
     - cdwch_cn_instance_info
     - cdwch_instance
     - cdwch_instance_info
     - cdwch_parameter
+    - cdwch_parameter_info
     - cdwdoris_cluster_configs_history_info
     - cdwdoris_cooldown_policy
     - cdwdoris_cooldown_policy_info
@@ -142,6 +144,7 @@ action_groups:
     - cdwpg_instance
     - cdwpg_instance_info
     - cdwpg_parameter
+    - cdwpg_parameter_info
     - cdz_cloud_dedicated_zone_host_info
     - cetcd_etcd_instance_info
     - cfg_action_library_info
@@ -159,10 +162,13 @@ action_groups:
     - cfw_address_template_info
     - cfw_cluster_nat_ccn_fw_switch_info
     - cfw_internet_acl_rule
+    - cfw_internet_acl_rule_info
     - cfw_nat_acl_rule
+    - cfw_nat_acl_rule_info
     - cfw_nat_dnat_rule
     - cfw_nat_dnat_rule_info
     - cfw_vpc_acl_rule
+    - cfw_vpc_acl_rule_info
     - chc_device_info
     - chdfs_access_group
     - chdfs_access_group_info
@@ -232,6 +238,7 @@ action_groups:
     - cmq_queue
     - cmq_queue_info
     - cmq_subscription
+    - cmq_subscription_info
     - cmq_topic
     - cmq_topic_info
     - cms_lib_sample_info
@@ -327,6 +334,7 @@ action_groups:
     - dcdb_instance
     - dcdb_instance_info
     - dcdb_security_config
+    - dcdb_security_config_info
     - dlc_cluster_group
     - dlc_cluster_group_info
     - dlc_data_engine
@@ -427,9 +435,11 @@ action_groups:
     - elasticsearch_instance
     - elasticsearch_instance_info
     - elasticsearch_snapshot
+    - elasticsearch_snapshot_info
     - emr_auto_scale_strategy
     - emr_auto_scale_strategy_info
     - emr_cluster
+    - emr_cluster_info
     - emr_node_data_disk_info
     - es_cluster_info
     - ess_file_url_info
@@ -440,6 +450,7 @@ action_groups:
     - fwm_edge_acl_rule_info
     - ga2_accelerate_area_info
     - gaap_layer4_listener
+    - gaap_layer4_listener_info
     - gaap_listener_real_servers
     - gaap_listener_real_servers_info
     - gaap_proxy
@@ -772,6 +783,7 @@ action_groups:
     - tdmysql_ssl_info
     - tem_application
     - tem_application_deployment
+    - tem_application_deployment_info
     - tem_application_info
     - tem_application_service
     - tem_application_service_info
@@ -808,7 +820,9 @@ action_groups:
     - tione_model_service_diagnostics_info
     - tione_model_service_info
     - tione_model_service_state
+    - tione_model_service_state_info
     - tione_model_service_traffic
+    - tione_model_service_traffic_info
     - tione_notebook
     - tione_notebook_info
     - tione_training_model_version

@@ -311,6 +311,295 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'api_gateway_api_key_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.apigateway.v20180808',
+        'client_module': 'apigateway_client',
+        'client_class': 'ApigatewayClient',
+        'sdk_package': 'tencentcloud-sdk-python-apigateway',
+        'endpoint': 'apigateway.tencentcloudapi.com',
+        'action': 'DescribeApiKeysStatus',
+        'request_class': 'DescribeApiKeysStatusRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'APIGATEWAY API filter names mapped to lists of values.',
+        },
+        'extra_params': [],
+        'response_items': 'Result.ApiKeySet',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'api_keys',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud APIGATEWAY api keys',
+        'description': 'Returns APIGATEWAY api keys visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching APIGATEWAY api keys.',
+        'return_total_doc': 'Number of api keys reported by the API.',
+        'examples': """\
+- name: List all api keys
+  susunola.tencentcloud.api_gateway_api_key_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'api_gateway_service_release_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.apigateway.v20180808',
+        'client_module': 'apigateway_client',
+        'client_class': 'ApigatewayClient',
+        'sdk_package': 'tencentcloud-sdk-python-apigateway',
+        'endpoint': 'apigateway.tencentcloudapi.com',
+        'action': 'DescribeServiceEnvironmentReleaseHistory',
+        'request_class': 'DescribeServiceEnvironmentReleaseHistoryRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'service_id',
+                'field': 'ServiceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Service id. API field C(ServiceId).',
+            },
+            {
+                'name': 'environment_name',
+                'field': 'EnvironmentName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Environment name. API field C(EnvironmentName).',
+            },
+        ],
+        'response_items': 'Result.VersionList',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'service_environment_release_histories',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud APIGATEWAY service environment release histories',
+        'description': 'Returns APIGATEWAY service environment release histories visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching APIGATEWAY service environment release histories.',
+        'return_total_doc': 'Number of service environment release histories reported by the API.',
+        'examples': """\
+- name: List all service environment release histories
+  susunola.tencentcloud.api_gateway_service_release_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'api_gateway_usage_plan_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.apigateway.v20180808',
+        'client_module': 'apigateway_client',
+        'client_class': 'ApigatewayClient',
+        'sdk_package': 'tencentcloud-sdk-python-apigateway',
+        'endpoint': 'apigateway.tencentcloudapi.com',
+        'action': 'DescribeUsagePlansStatus',
+        'request_class': 'DescribeUsagePlansStatusRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'APIGATEWAY API filter names mapped to lists of values.',
+        },
+        'extra_params': [],
+        'response_items': 'Result.UsagePlanStatusSet',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'usage_plans',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud APIGATEWAY usage plans',
+        'description': 'Returns APIGATEWAY usage plans visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching APIGATEWAY usage plans.',
+        'return_total_doc': 'Number of usage plans reported by the API.',
+        'examples': """\
+- name: List all usage plans
+  susunola.tencentcloud.api_gateway_usage_plan_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'api_gateway_usage_plan_binding_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.apigateway.v20180808',
+        'client_module': 'apigateway_client',
+        'client_class': 'ApigatewayClient',
+        'sdk_package': 'tencentcloud-sdk-python-apigateway',
+        'endpoint': 'apigateway.tencentcloudapi.com',
+        'action': 'DescribeServiceUsagePlan',
+        'request_class': 'DescribeServiceUsagePlanRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'service_id',
+                'field': 'ServiceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Service id. API field C(ServiceId).',
+            },
+        ],
+        'response_items': 'Result.ServiceUsagePlanList',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'service_usage_plans',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud APIGATEWAY service usage plans',
+        'description': 'Returns APIGATEWAY service usage plans visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching APIGATEWAY service usage plans.',
+        'return_total_doc': 'Number of service usage plans reported by the API.',
+        'examples': """\
+- name: List all service usage plans
+  susunola.tencentcloud.api_gateway_usage_plan_binding_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'api_gateway_usage_plan_key_binding_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.apigateway.v20180808',
+        'client_module': 'apigateway_client',
+        'client_class': 'ApigatewayClient',
+        'sdk_package': 'tencentcloud-sdk-python-apigateway',
+        'endpoint': 'apigateway.tencentcloudapi.com',
+        'action': 'DescribeUsagePlanSecretIds',
+        'request_class': 'DescribeUsagePlanSecretIdsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'usage_plan_id',
+                'field': 'UsagePlanId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Usage plan id. API field C(UsagePlanId).',
+            },
+        ],
+        'response_items': 'Result.AccessKeyList',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'usage_plan_secret_ids',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud APIGATEWAY usage plan secret ids',
+        'description': 'Returns APIGATEWAY usage plan secret ids visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching APIGATEWAY usage plan secret ids.',
+        'return_total_doc': 'Number of usage plan secret ids reported by the API.',
+        'examples': """\
+- name: List all usage plan secret ids
+  susunola.tencentcloud.api_gateway_usage_plan_key_binding_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'apigateway_api_app_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.apigateway.v20180808',
+        'client_module': 'apigateway_client',
+        'client_class': 'ApigatewayClient',
+        'sdk_package': 'tencentcloud-sdk-python-apigateway',
+        'endpoint': 'apigateway.tencentcloudapi.com',
+        'action': 'DescribeApiAppsStatus',
+        'request_class': 'DescribeApiAppsStatusRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'APIGATEWAY API filter names mapped to lists of values.',
+        },
+        'extra_params': [],
+        'response_items': 'Result.ApiAppSet',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'api_apps',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud APIGATEWAY api apps',
+        'description': 'Returns APIGATEWAY api apps visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching APIGATEWAY api apps.',
+        'return_total_doc': 'Number of api apps reported by the API.',
+        'examples': """\
+- name: List all api apps
+  susunola.tencentcloud.apigateway_api_app_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'apigateway_ip_strategy_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.apigateway.v20180808',
+        'client_module': 'apigateway_client',
+        'client_class': 'ApigatewayClient',
+        'sdk_package': 'tencentcloud-sdk-python-apigateway',
+        'endpoint': 'apigateway.tencentcloudapi.com',
+        'action': 'DescribeIPStrategysStatus',
+        'request_class': 'DescribeIPStrategysStatusRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'APIGATEWAY API filter names mapped to lists of values.',
+        },
+        'extra_params': [
+            {
+                'name': 'service_id',
+                'field': 'ServiceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Service id. API field C(ServiceId).',
+            },
+        ],
+        'response_items': 'Result.StrategySet',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'ip_strategies',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud APIGATEWAY ip strategies',
+        'description': 'Returns APIGATEWAY ip strategies visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching APIGATEWAY ip strategies.',
+        'return_total_doc': 'Number of ip strategies reported by the API.',
+        'examples': """\
+- name: List all ip strategies
+  susunola.tencentcloud.apigateway_ip_strategy_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'apigateway_plugin_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.apigateway.v20180808',
+        'client_module': 'apigateway_client',
+        'client_class': 'ApigatewayClient',
+        'sdk_package': 'tencentcloud-sdk-python-apigateway',
+        'endpoint': 'apigateway.tencentcloudapi.com',
+        'action': 'DescribePlugins',
+        'request_class': 'DescribePluginsRequest',
+        'ids': {
+            'param': 'plugin_ids',
+            'field': 'PluginIds',
+            'doc': 'Plugin IDs to return. Mutually exclusive with O(filters).',
+        },
+        'filters': {
+            'doc': 'APIGATEWAY API filter names mapped to lists of values.',
+        },
+        'extra_params': [
+            {
+                'name': 'plugin_name',
+                'field': 'PluginName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Plugin name. API field C(PluginName).',
+            },
+            {
+                'name': 'plugin_type',
+                'field': 'PluginType',
+                'type': 'str',
+                'required': False,
+                'doc': 'Plugin type. API field C(PluginType).',
+            },
+        ],
+        'response_items': 'Result.PluginSet',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'plugins',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud APIGATEWAY plugins',
+        'description': 'Returns APIGATEWAY plugins visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching APIGATEWAY plugins.',
+        'return_total_doc': 'Number of plugins reported by the API.',
+        'examples': """\
+- name: List all plugins
+  susunola.tencentcloud.apigateway_plugin_info:
+    region: ap-guangzhou
+
+- name: Find plugins by ID
+  susunola.tencentcloud.apigateway_plugin_info:
+    region: ap-guangzhou
+    plugin_ids: [x-xxxxxxxx]
+""",
+    },
+    {
         'module': 'apis_agent_app_mcp_server_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.apis.v20240801',
@@ -427,6 +716,82 @@ SPECS_AUTO = [
 - name: List all flow services
   susunola.tencentcloud.asw_flow_service_info:
     region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'as_scaling_policy_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.autoscaling.v20180419',
+        'client_module': 'autoscaling_client',
+        'client_class': 'AutoscalingClient',
+        'sdk_package': 'tencentcloud-sdk-python-autoscaling',
+        'endpoint': 'as.tencentcloudapi.com',
+        'action': 'DescribeScalingPolicies',
+        'request_class': 'DescribeScalingPoliciesRequest',
+        'ids': {
+            'param': 'scaling_policy_ids',
+            'field': 'AutoScalingPolicyIds',
+            'doc': 'Scaling policy IDs to return. Mutually exclusive with O(filters).',
+        },
+        'filters': {
+            'doc': 'AUTOSCALING API filter names mapped to lists of values.',
+        },
+        'extra_params': [],
+        'response_items': 'ScalingPolicySet',
+        'response_total': 'TotalCount',
+        'result_key': 'scaling_policies',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud AUTOSCALING scaling policies',
+        'description': 'Returns AUTOSCALING scaling policies visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching AUTOSCALING scaling policies.',
+        'return_total_doc': 'Number of scaling policies reported by the API.',
+        'examples': """\
+- name: List all scaling policies
+  susunola.tencentcloud.as_scaling_policy_info:
+    region: ap-guangzhou
+
+- name: Find scaling policies by ID
+  susunola.tencentcloud.as_scaling_policy_info:
+    region: ap-guangzhou
+    scaling_policy_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'as_scheduled_action_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.autoscaling.v20180419',
+        'client_module': 'autoscaling_client',
+        'client_class': 'AutoscalingClient',
+        'sdk_package': 'tencentcloud-sdk-python-autoscaling',
+        'endpoint': 'as.tencentcloudapi.com',
+        'action': 'DescribeScheduledActions',
+        'request_class': 'DescribeScheduledActionsRequest',
+        'ids': {
+            'param': 'scheduled_action_ids',
+            'field': 'ScheduledActionIds',
+            'doc': 'Scheduled action IDs to return. Mutually exclusive with O(filters).',
+        },
+        'filters': {
+            'doc': 'AUTOSCALING API filter names mapped to lists of values.',
+        },
+        'extra_params': [],
+        'response_items': 'ScheduledActionSet',
+        'response_total': 'TotalCount',
+        'result_key': 'scheduled_actions',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud AUTOSCALING scheduled actions',
+        'description': 'Returns AUTOSCALING scheduled actions visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching AUTOSCALING scheduled actions.',
+        'return_total_doc': 'Number of scheduled actions reported by the API.',
+        'examples': """\
+- name: List all scheduled actions
+  susunola.tencentcloud.as_scheduled_action_info:
+    region: ap-guangzhou
+
+- name: Find scheduled actions by ID
+  susunola.tencentcloud.as_scheduled_action_info:
+    region: ap-guangzhou
+    scheduled_action_ids: [x-xxxxxxxx]
 """,
     },
     {
@@ -890,6 +1255,94 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'cbs_disk_backup_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cbs.v20170312',
+        'client_module': 'cbs_client',
+        'client_class': 'CbsClient',
+        'sdk_package': 'tencentcloud-sdk-python-cbs',
+        'endpoint': 'cbs.tencentcloudapi.com',
+        'action': 'DescribeDiskBackups',
+        'request_class': 'DescribeDiskBackupsRequest',
+        'ids': {
+            'param': 'disk_backup_ids',
+            'field': 'DiskBackupIds',
+            'doc': 'Disk backup IDs to return. Mutually exclusive with O(filters).',
+        },
+        'filters': {
+            'doc': 'CBS API filter names mapped to lists of values.',
+        },
+        'extra_params': [
+            {
+                'name': 'order',
+                'field': 'Order',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order. API field C(Order).',
+            },
+            {
+                'name': 'order_field',
+                'field': 'OrderField',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order field. API field C(OrderField).',
+            },
+        ],
+        'response_items': 'DiskBackupSet',
+        'response_total': 'TotalCount',
+        'result_key': 'disk_backups',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CBS disk backups',
+        'description': 'Returns CBS disk backups visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CBS disk backups.',
+        'return_total_doc': 'Number of disk backups reported by the API.',
+        'examples': """\
+- name: List all disk backups
+  susunola.tencentcloud.cbs_disk_backup_info:
+    region: ap-guangzhou
+
+- name: Find disk backups by ID
+  susunola.tencentcloud.cbs_disk_backup_info:
+    region: ap-guangzhou
+    disk_backup_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'cbs_snapshot_share_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cbs.v20170312',
+        'client_module': 'cbs_client',
+        'client_class': 'CbsClient',
+        'sdk_package': 'tencentcloud-sdk-python-cbs',
+        'endpoint': 'cbs.tencentcloudapi.com',
+        'action': 'DescribeSnapshotSharePermission',
+        'request_class': 'DescribeSnapshotSharePermissionRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'snapshot_id',
+                'field': 'SnapshotId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Snapshot id. API field C(SnapshotId).',
+            },
+        ],
+        'response_items': 'SharePermissionSet',
+        'response_total': None,
+        'result_key': 'snapshot_share_permissions',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CBS snapshot share permissions',
+        'description': 'Returns CBS snapshot share permissions visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CBS snapshot share permissions.',
+        'return_total_doc': 'Number of snapshot share permissions returned (the API reports no total count).',
+        'examples': """\
+- name: List all snapshot share permissions
+  susunola.tencentcloud.cbs_snapshot_share_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'ccc_extension_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.ccc.v20200210',
@@ -926,6 +1379,107 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'cdb_audit_rule_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cdb.v20170320',
+        'client_module': 'cdb_client',
+        'client_class': 'CdbClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdb',
+        'endpoint': 'cdb.tencentcloudapi.com',
+        'action': 'DescribeAuditRules',
+        'request_class': 'DescribeAuditRulesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'rule_id',
+                'field': 'RuleId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Rule id. API field C(RuleId).',
+            },
+            {
+                'name': 'rule_name',
+                'field': 'RuleName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Rule name. API field C(RuleName).',
+            },
+        ],
+        'response_items': 'Items',
+        'response_total': 'TotalCount',
+        'result_key': 'audit_rules',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CDB audit rules',
+        'description': 'Returns CDB audit rules visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CDB audit rules.',
+        'return_total_doc': 'Number of audit rules reported by the API.',
+        'examples': """\
+- name: List all audit rules
+  susunola.tencentcloud.cdb_audit_rule_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cdb_audit_rule_template_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cdb.v20170320',
+        'client_module': 'cdb_client',
+        'client_class': 'CdbClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdb',
+        'endpoint': 'cdb.tencentcloudapi.com',
+        'action': 'DescribeAuditRuleTemplates',
+        'request_class': 'DescribeAuditRuleTemplatesRequest',
+        'ids': {
+            'param': 'audit_rule_template_ids',
+            'field': 'RuleTemplateIds',
+            'doc': 'Audit rule template IDs to return.',
+        },
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'rule_template_names',
+                'field': 'RuleTemplateNames',
+                'type': 'list',
+                'required': False,
+                'doc': 'Rule template names. API field C(RuleTemplateNames).',
+                'elements': 'str',
+            },
+            {
+                'name': 'alarm_level',
+                'field': 'AlarmLevel',
+                'type': 'int',
+                'required': False,
+                'doc': 'Alarm level. API field C(AlarmLevel).',
+            },
+            {
+                'name': 'alarm_policy',
+                'field': 'AlarmPolicy',
+                'type': 'int',
+                'required': False,
+                'doc': 'Alarm policy. API field C(AlarmPolicy).',
+            },
+        ],
+        'response_items': 'Items',
+        'response_total': 'TotalCount',
+        'result_key': 'audit_rule_templates',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CDB audit rule templates',
+        'description': 'Returns CDB audit rule templates visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CDB audit rule templates.',
+        'return_total_doc': 'Number of audit rule templates reported by the API.',
+        'examples': """\
+- name: List all audit rule templates
+  susunola.tencentcloud.cdb_audit_rule_template_info:
+    region: ap-guangzhou
+
+- name: Find audit rule templates by ID
+  susunola.tencentcloud.cdb_audit_rule_template_info:
+    region: ap-guangzhou
+    audit_rule_template_ids: [x-xxxxxxxx]
+""",
+    },
+    {
         'module': 'cdc_dedicated_cluster_order_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.cdc.v20201214',
@@ -959,6 +1513,41 @@ SPECS_AUTO = [
   susunola.tencentcloud.cdc_dedicated_cluster_order_info:
     region: ap-guangzhou
     dedicated_cluster_order_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'cdn_cls_log_topic_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cdn.v20180606',
+        'client_module': 'cdn_client',
+        'client_class': 'CdnClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdn',
+        'endpoint': 'cdn.tencentcloudapi.com',
+        'action': 'ListClsLogTopics',
+        'request_class': 'ListClsLogTopicsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'channel',
+                'field': 'Channel',
+                'type': 'str',
+                'required': False,
+                'doc': 'Channel. API field C(Channel).',
+            },
+        ],
+        'response_items': 'Topics',
+        'response_total': None,
+        'result_key': 'cls_log_topics',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CDN cls log topics',
+        'description': 'Returns CDN cls log topics visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CDN cls log topics.',
+        'return_total_doc': 'Number of cls log topics returned (the API reports no total count).',
+        'examples': """\
+- name: List all cls log topics
+  susunola.tencentcloud.cdn_cls_log_topic_info:
+    region: ap-guangzhou
 """,
     },
     {
@@ -1016,6 +1605,140 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'cdwch_instance_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cdwch.v20200915',
+        'client_module': 'cdwch_client',
+        'client_class': 'CdwchClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdwch',
+        'endpoint': 'cdwch.tencentcloudapi.com',
+        'action': 'DescribeCNInstances',
+        'request_class': 'DescribeCNInstancesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'search_instance_id',
+                'field': 'SearchInstanceID',
+                'type': 'str',
+                'required': False,
+                'doc': 'Search instance id. API field C(SearchInstanceID).',
+            },
+            {
+                'name': 'search_instance_name',
+                'field': 'SearchInstanceName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Search instance name. API field C(SearchInstanceName).',
+            },
+            {
+                'name': 'instance_type',
+                'field': 'InstanceType',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance type. API field C(InstanceType).',
+            },
+            {
+                'name': 'components',
+                'field': 'Components',
+                'type': 'list',
+                'required': False,
+                'doc': 'Components. API field C(Components).',
+                'elements': 'str',
+            },
+        ],
+        'response_items': 'InstancesList',
+        'response_total': 'TotalCount',
+        'result_key': 'cn_instances',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CDWCH cn instances',
+        'description': 'Returns CDWCH cn instances visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CDWCH cn instances.',
+        'return_total_doc': 'Number of cn instances reported by the API.',
+        'examples': """\
+- name: List all cn instances
+  susunola.tencentcloud.cdwch_instance_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cdwch_backup_config_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cdwch.v20200915',
+        'client_module': 'cdwch_client',
+        'client_class': 'CdwchClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdwch',
+        'endpoint': 'cdwch.tencentcloudapi.com',
+        'action': 'DescribeBackUpSchedule',
+        'request_class': 'DescribeBackUpScheduleRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+        ],
+        'response_items': 'BackUpContents',
+        'response_total': None,
+        'result_key': 'backup_configs',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CDWCH backup configs',
+        'description': 'Returns CDWCH backup configs visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CDWCH backup configs.',
+        'return_total_doc': 'Number of backup configs returned (the API reports no total count).',
+        'examples': """\
+- name: List all backup configs
+  susunola.tencentcloud.cdwch_backup_config_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cdwch_parameter_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cdwch.v20200915',
+        'client_module': 'cdwch_client',
+        'client_class': 'CdwchClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdwch',
+        'endpoint': 'cdwch.tencentcloudapi.com',
+        'action': 'DescribeInstanceKeyValConfigs',
+        'request_class': 'DescribeInstanceKeyValConfigsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+            {
+                'name': 'search_config_name',
+                'field': 'SearchConfigName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Search config name. API field C(SearchConfigName).',
+            },
+        ],
+        'response_items': 'ConfigItems',
+        'response_total': None,
+        'result_key': 'parameters',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CDWCH parameters',
+        'description': 'Returns CDWCH parameters visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CDWCH parameters.',
+        'return_total_doc': 'Number of parameters returned (the API reports no total count).',
+        'examples': """\
+- name: List all parameters
+  susunola.tencentcloud.cdwch_parameter_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'cdwdoris_cluster_configs_history_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.cdwdoris.v20211228',
@@ -1052,6 +1775,160 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'cdwdoris_cooldown_policy_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cdwdoris.v20211228',
+        'client_module': 'cdwdoris_client',
+        'client_class': 'CdwdorisClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdwdoris',
+        'endpoint': 'cdwdoris.tencentcloudapi.com',
+        'action': 'DescribeCoolDownPolicies',
+        'request_class': 'DescribeCoolDownPoliciesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+        ],
+        'response_items': 'List',
+        'response_total': None,
+        'result_key': 'cool_down_policies',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CDWDORIS cool down policies',
+        'description': 'Returns CDWDORIS cool down policies visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CDWDORIS cool down policies.',
+        'return_total_doc': 'Number of cool down policies returned (the API reports no total count).',
+        'examples': """\
+- name: List all cool down policies
+  susunola.tencentcloud.cdwdoris_cooldown_policy_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cdwdoris_instance_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cdwdoris.v20211228',
+        'client_module': 'cdwdoris_client',
+        'client_class': 'CdwdorisClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdwdoris',
+        'endpoint': 'cdwdoris.tencentcloudapi.com',
+        'action': 'DescribeInstances',
+        'request_class': 'DescribeInstancesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'search_instance_id',
+                'field': 'SearchInstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Search instance id. API field C(SearchInstanceId).',
+            },
+            {
+                'name': 'search_instance_name',
+                'field': 'SearchInstanceName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Search instance name. API field C(SearchInstanceName).',
+            },
+            {
+                'name': 'instance_type',
+                'field': 'InstanceType',
+                'type': 'int',
+                'required': False,
+                'doc': 'Instance type. API field C(InstanceType).',
+            },
+        ],
+        'response_items': 'InstancesList',
+        'response_total': 'TotalCount',
+        'result_key': 'instances',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CDWDORIS instances',
+        'description': 'Returns CDWDORIS instances visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CDWDORIS instances.',
+        'return_total_doc': 'Number of instances reported by the API.',
+        'examples': """\
+- name: List all instances
+  susunola.tencentcloud.cdwdoris_instance_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cdwdoris_user_workload_group_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cdwdoris.v20211228',
+        'client_module': 'cdwdoris_client',
+        'client_class': 'CdwdorisClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdwdoris',
+        'endpoint': 'cdwdoris.tencentcloudapi.com',
+        'action': 'DescribeUserBindWorkloadGroup',
+        'request_class': 'DescribeUserBindWorkloadGroupRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+        ],
+        'response_items': 'UserBindInfos',
+        'response_total': None,
+        'result_key': 'user_bind_workload_groups',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CDWDORIS user bind workload groups',
+        'description': 'Returns CDWDORIS user bind workload groups visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CDWDORIS user bind workload groups.',
+        'return_total_doc': 'Number of user bind workload groups returned (the API reports no total count).',
+        'examples': """\
+- name: List all user bind workload groups
+  susunola.tencentcloud.cdwdoris_user_workload_group_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cdwdoris_workload_group_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cdwdoris.v20211228',
+        'client_module': 'cdwdoris_client',
+        'client_class': 'CdwdorisClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdwdoris',
+        'endpoint': 'cdwdoris.tencentcloudapi.com',
+        'action': 'DescribeWorkloadGroup',
+        'request_class': 'DescribeWorkloadGroupRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+        ],
+        'response_items': 'WorkloadGroups',
+        'response_total': None,
+        'result_key': 'workload_groups',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CDWDORIS workload groups',
+        'description': 'Returns CDWDORIS workload groups visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CDWDORIS workload groups.',
+        'return_total_doc': 'Number of workload groups returned (the API reports no total count).',
+        'examples': """\
+- name: List all workload groups
+  susunola.tencentcloud.cdwdoris_workload_group_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'cdwpg_account_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.cdwpg.v20201230',
@@ -1075,6 +1952,126 @@ SPECS_AUTO = [
         'examples': """\
 - name: List all accounts
   susunola.tencentcloud.cdwpg_account_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cdwpg_hba_config_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cdwpg.v20201230',
+        'client_module': 'cdwpg_client',
+        'client_class': 'CdwpgClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdwpg',
+        'endpoint': 'cdwpg.tencentcloudapi.com',
+        'action': 'DescribeUserHbaConfig',
+        'request_class': 'DescribeUserHbaConfigRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+        ],
+        'response_items': 'HbaConfigs',
+        'response_total': 'TotalCount',
+        'result_key': 'user_hba_configs',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CDWPG user hba configs',
+        'description': 'Returns CDWPG user hba configs visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CDWPG user hba configs.',
+        'return_total_doc': 'Number of user hba configs reported by the API.',
+        'examples': """\
+- name: List all user hba configs
+  susunola.tencentcloud.cdwpg_hba_config_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cdwpg_instance_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cdwpg.v20201230',
+        'client_module': 'cdwpg_client',
+        'client_class': 'CdwpgClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdwpg',
+        'endpoint': 'cdwpg.tencentcloudapi.com',
+        'action': 'DescribeInstances',
+        'request_class': 'DescribeInstancesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'search_instance_id',
+                'field': 'SearchInstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Search instance id. API field C(SearchInstanceId).',
+            },
+            {
+                'name': 'search_instance_name',
+                'field': 'SearchInstanceName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Search instance name. API field C(SearchInstanceName).',
+            },
+        ],
+        'response_items': 'InstancesList',
+        'response_total': 'TotalCount',
+        'result_key': 'instances',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CDWPG instances',
+        'description': 'Returns CDWPG instances visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CDWPG instances.',
+        'return_total_doc': 'Number of instances reported by the API.',
+        'examples': """\
+- name: List all instances
+  susunola.tencentcloud.cdwpg_instance_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cdwpg_parameter_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cdwpg.v20201230',
+        'client_module': 'cdwpg_client',
+        'client_class': 'CdwpgClient',
+        'sdk_package': 'tencentcloud-sdk-python-cdwpg',
+        'endpoint': 'cdwpg.tencentcloudapi.com',
+        'action': 'DescribeDBParams',
+        'request_class': 'DescribeDBParamsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'node_types',
+                'field': 'NodeTypes',
+                'type': 'list',
+                'required': False,
+                'doc': 'Node types. API field C(NodeTypes).',
+                'elements': 'str',
+            },
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+        ],
+        'response_items': 'Items',
+        'response_total': 'TotalCount',
+        'result_key': 'parameters',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CDWPG parameters',
+        'description': 'Returns CDWPG parameters visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CDWPG parameters.',
+        'return_total_doc': 'Number of parameters reported by the API.',
+        'examples': """\
+- name: List all parameters
+  susunola.tencentcloud.cdwpg_parameter_info:
     region: ap-guangzhou
 """,
     },
@@ -1210,6 +2207,340 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'cfw_address_template_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cfw.v20190904',
+        'client_module': 'cfw_client',
+        'client_class': 'CfwClient',
+        'sdk_package': 'tencentcloud-sdk-python-cfw',
+        'endpoint': 'cfw.tencentcloudapi.com',
+        'action': 'DescribeAddressTemplateList',
+        'request_class': 'DescribeAddressTemplateListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'by',
+                'field': 'By',
+                'type': 'str',
+                'required': False,
+                'doc': 'By. API field C(By).',
+            },
+            {
+                'name': 'order',
+                'field': 'Order',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order. API field C(Order).',
+            },
+            {
+                'name': 'search_value',
+                'field': 'SearchValue',
+                'type': 'str',
+                'required': False,
+                'doc': 'Search value. API field C(SearchValue).',
+            },
+            {
+                'name': 'uuid',
+                'field': 'Uuid',
+                'type': 'str',
+                'required': False,
+                'doc': 'Uuid. API field C(Uuid).',
+            },
+            {
+                'name': 'template_type',
+                'field': 'TemplateType',
+                'type': 'str',
+                'required': False,
+                'doc': 'Template type. API field C(TemplateType).',
+            },
+            {
+                'name': 'template_id',
+                'field': 'TemplateId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Template id. API field C(TemplateId).',
+            },
+        ],
+        'response_items': 'Data',
+        'response_total': 'Total',
+        'result_key': 'address_templates',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CFW address templates',
+        'description': 'Returns CFW address templates visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CFW address templates.',
+        'return_total_doc': 'Number of address templates reported by the API.',
+        'examples': """\
+- name: List all address templates
+  susunola.tencentcloud.cfw_address_template_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cfw_nat_dnat_rule_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cfw.v20190904',
+        'client_module': 'cfw_client',
+        'client_class': 'CfwClient',
+        'sdk_package': 'tencentcloud-sdk-python-cfw',
+        'endpoint': 'cfw.tencentcloudapi.com',
+        'action': 'DescribeNatFwDnatRule',
+        'request_class': 'DescribeNatFwDnatRuleRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'CFW API filter names mapped to lists of values.',
+            'model': 'CommonFilter',
+        },
+        'extra_params': [
+            {
+                'name': 'index',
+                'field': 'Index',
+                'type': 'str',
+                'required': False,
+                'doc': 'Index. API field C(Index).',
+            },
+            {
+                'name': 'start_time',
+                'field': 'StartTime',
+                'type': 'str',
+                'required': False,
+                'doc': 'Start time. API field C(StartTime).',
+            },
+            {
+                'name': 'end_time',
+                'field': 'EndTime',
+                'type': 'str',
+                'required': False,
+                'doc': 'End time. API field C(EndTime).',
+            },
+            {
+                'name': 'order',
+                'field': 'Order',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order. API field C(Order).',
+            },
+            {
+                'name': 'by',
+                'field': 'By',
+                'type': 'str',
+                'required': False,
+                'doc': 'By. API field C(By).',
+            },
+        ],
+        'response_items': 'Data',
+        'response_total': 'Total',
+        'result_key': 'nat_fw_dnat_rules',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CFW nat fw dnat rules',
+        'description': 'Returns CFW nat fw dnat rules visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CFW nat fw dnat rules.',
+        'return_total_doc': 'Number of nat fw dnat rules reported by the API.',
+        'examples': """\
+- name: List all nat fw dnat rules
+  susunola.tencentcloud.cfw_nat_dnat_rule_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cfw_internet_acl_rule_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cfw.v20190904',
+        'client_module': 'cfw_client',
+        'client_class': 'CfwClient',
+        'sdk_package': 'tencentcloud-sdk-python-cfw',
+        'endpoint': 'cfw.tencentcloudapi.com',
+        'action': 'DescribeAclRule',
+        'request_class': 'DescribeAclRuleRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'CFW API filter names mapped to lists of values.',
+            'model': 'CommonFilter',
+        },
+        'extra_params': [
+            {
+                'name': 'index',
+                'field': 'Index',
+                'type': 'str',
+                'required': False,
+                'doc': 'Index. API field C(Index).',
+            },
+            {
+                'name': 'start_time',
+                'field': 'StartTime',
+                'type': 'str',
+                'required': False,
+                'doc': 'Start time. API field C(StartTime).',
+            },
+            {
+                'name': 'end_time',
+                'field': 'EndTime',
+                'type': 'str',
+                'required': False,
+                'doc': 'End time. API field C(EndTime).',
+            },
+            {
+                'name': 'order',
+                'field': 'Order',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order. API field C(Order).',
+            },
+            {
+                'name': 'by',
+                'field': 'By',
+                'type': 'str',
+                'required': False,
+                'doc': 'By. API field C(By).',
+            },
+        ],
+        'response_items': 'Data',
+        'response_total': 'Total',
+        'result_key': 'acl_rules',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CFW acl rules',
+        'description': 'Returns CFW acl rules visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CFW acl rules.',
+        'return_total_doc': 'Number of acl rules reported by the API.',
+        'examples': """\
+- name: List all acl rules
+  susunola.tencentcloud.cfw_internet_acl_rule_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cfw_nat_acl_rule_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cfw.v20190904',
+        'client_module': 'cfw_client',
+        'client_class': 'CfwClient',
+        'sdk_package': 'tencentcloud-sdk-python-cfw',
+        'endpoint': 'cfw.tencentcloudapi.com',
+        'action': 'DescribeNatAcRule',
+        'request_class': 'DescribeNatAcRuleRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'CFW API filter names mapped to lists of values.',
+            'model': 'CommonFilter',
+        },
+        'extra_params': [
+            {
+                'name': 'index',
+                'field': 'Index',
+                'type': 'str',
+                'required': False,
+                'doc': 'Index. API field C(Index).',
+            },
+            {
+                'name': 'start_time',
+                'field': 'StartTime',
+                'type': 'str',
+                'required': False,
+                'doc': 'Start time. API field C(StartTime).',
+            },
+            {
+                'name': 'end_time',
+                'field': 'EndTime',
+                'type': 'str',
+                'required': False,
+                'doc': 'End time. API field C(EndTime).',
+            },
+            {
+                'name': 'order',
+                'field': 'Order',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order. API field C(Order).',
+            },
+            {
+                'name': 'by',
+                'field': 'By',
+                'type': 'str',
+                'required': False,
+                'doc': 'By. API field C(By).',
+            },
+        ],
+        'response_items': 'Data',
+        'response_total': 'Total',
+        'result_key': 'nat_ac_rules',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CFW nat ac rules',
+        'description': 'Returns CFW nat ac rules visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CFW nat ac rules.',
+        'return_total_doc': 'Number of nat ac rules reported by the API.',
+        'examples': """\
+- name: List all nat ac rules
+  susunola.tencentcloud.cfw_nat_acl_rule_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cfw_vpc_acl_rule_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cfw.v20190904',
+        'client_module': 'cfw_client',
+        'client_class': 'CfwClient',
+        'sdk_package': 'tencentcloud-sdk-python-cfw',
+        'endpoint': 'cfw.tencentcloudapi.com',
+        'action': 'DescribeVpcAcRule',
+        'request_class': 'DescribeVpcAcRuleRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'CFW API filter names mapped to lists of values.',
+            'model': 'CommonFilter',
+        },
+        'extra_params': [
+            {
+                'name': 'index',
+                'field': 'Index',
+                'type': 'str',
+                'required': False,
+                'doc': 'Index. API field C(Index).',
+            },
+            {
+                'name': 'start_time',
+                'field': 'StartTime',
+                'type': 'str',
+                'required': False,
+                'doc': 'Start time. API field C(StartTime).',
+            },
+            {
+                'name': 'end_time',
+                'field': 'EndTime',
+                'type': 'str',
+                'required': False,
+                'doc': 'End time. API field C(EndTime).',
+            },
+            {
+                'name': 'order',
+                'field': 'Order',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order. API field C(Order).',
+            },
+            {
+                'name': 'by',
+                'field': 'By',
+                'type': 'str',
+                'required': False,
+                'doc': 'By. API field C(By).',
+            },
+        ],
+        'response_items': 'Data',
+        'response_total': 'Total',
+        'result_key': 'vpc_ac_rules',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CFW vpc ac rules',
+        'description': 'Returns CFW vpc ac rules visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CFW vpc ac rules.',
+        'return_total_doc': 'Number of vpc ac rules reported by the API.',
+        'examples': """\
+- name: List all vpc ac rules
+  susunola.tencentcloud.cfw_vpc_acl_rule_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'chc_device_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.chc.v20230418',
@@ -1270,6 +2601,136 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'chdfs_access_group_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.chdfs.v20201112',
+        'client_module': 'chdfs_client',
+        'client_class': 'ChdfsClient',
+        'sdk_package': 'tencentcloud-sdk-python-chdfs',
+        'endpoint': 'chdfs.tencentcloudapi.com',
+        'action': 'DescribeAccessGroups',
+        'request_class': 'DescribeAccessGroupsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'vpc_id',
+                'field': 'VpcId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Vpc id. API field C(VpcId).',
+            },
+            {
+                'name': 'owner_uin',
+                'field': 'OwnerUin',
+                'type': 'int',
+                'required': False,
+                'doc': 'Owner uin. API field C(OwnerUin).',
+            },
+        ],
+        'response_items': 'AccessGroups',
+        'response_total': None,
+        'result_key': 'access_groups',
+        'pagination_type': 'token',
+        'token_request_field': 'AccessGroupIdMarker',
+        'token_response_field': 'NextAccessGroupIdMarker',
+        'page_size_field': None,
+        'list_over_field': 'IsOver',
+        'short_description': 'Gather information about Tencent Cloud CHDFS access groups',
+        'description': 'Returns CHDFS access groups visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CHDFS access groups.',
+        'return_total_doc': 'Number of access groups returned (the API reports no total count).',
+        'examples': """\
+- name: List all access groups
+  susunola.tencentcloud.chdfs_access_group_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'chdfs_access_rules_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.chdfs.v20201112',
+        'client_module': 'chdfs_client',
+        'client_class': 'ChdfsClient',
+        'sdk_package': 'tencentcloud-sdk-python-chdfs',
+        'endpoint': 'chdfs.tencentcloudapi.com',
+        'action': 'DescribeAccessRules',
+        'request_class': 'DescribeAccessRulesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'access_group_id',
+                'field': 'AccessGroupId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Access group id. API field C(AccessGroupId).',
+            },
+        ],
+        'response_items': 'AccessRules',
+        'response_total': None,
+        'result_key': 'access_rules',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CHDFS access rules',
+        'description': 'Returns CHDFS access rules visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CHDFS access rules.',
+        'return_total_doc': 'Number of access rules returned (the API reports no total count).',
+        'examples': """\
+- name: List all access rules
+  susunola.tencentcloud.chdfs_access_rules_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'chdfs_mount_point_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.chdfs.v20201112',
+        'client_module': 'chdfs_client',
+        'client_class': 'ChdfsClient',
+        'sdk_package': 'tencentcloud-sdk-python-chdfs',
+        'endpoint': 'chdfs.tencentcloudapi.com',
+        'action': 'DescribeMountPoints',
+        'request_class': 'DescribeMountPointsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'file_system_id',
+                'field': 'FileSystemId',
+                'type': 'str',
+                'required': False,
+                'doc': 'File system id. API field C(FileSystemId).',
+            },
+            {
+                'name': 'access_group_id',
+                'field': 'AccessGroupId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Access group id. API field C(AccessGroupId).',
+            },
+            {
+                'name': 'owner_uin',
+                'field': 'OwnerUin',
+                'type': 'int',
+                'required': False,
+                'doc': 'Owner uin. API field C(OwnerUin).',
+            },
+        ],
+        'response_items': 'MountPoints',
+        'response_total': None,
+        'result_key': 'mount_points',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CHDFS mount points',
+        'description': 'Returns CHDFS mount points visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CHDFS mount points.',
+        'return_total_doc': 'Number of mount points returned (the API reports no total count).',
+        'examples': """\
+- name: List all mount points
+  susunola.tencentcloud.chdfs_mount_point_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'ciam_user_store_info',
         'version_added': '0.9.0',
         'service_package': 'tencentcloud.ciam.v20220331',
@@ -1293,6 +2754,382 @@ SPECS_AUTO = [
         'examples': """\
 - name: List all user stores
   susunola.tencentcloud.ciam_user_store_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'ckafka_acl_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.ckafka.v20190819',
+        'client_module': 'ckafka_client',
+        'client_class': 'CkafkaClient',
+        'sdk_package': 'tencentcloud-sdk-python-ckafka',
+        'endpoint': 'ckafka.tencentcloudapi.com',
+        'action': 'DescribeACL',
+        'request_class': 'DescribeACLRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+            {
+                'name': 'resource_type',
+                'field': 'ResourceType',
+                'type': 'int',
+                'required': False,
+                'doc': 'Resource type. API field C(ResourceType).',
+            },
+            {
+                'name': 'resource_name',
+                'field': 'ResourceName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Resource name. API field C(ResourceName).',
+            },
+        ],
+        'response_items': 'Result.AclList',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'acls',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CKAFKA acls',
+        'description': 'Returns CKAFKA acls visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CKAFKA acls.',
+        'return_total_doc': 'Number of acls reported by the API.',
+        'examples': """\
+- name: List all acls
+  susunola.tencentcloud.ckafka_acl_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'ckafka_acl_rule_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.ckafka.v20190819',
+        'client_module': 'ckafka_client',
+        'client_class': 'CkafkaClient',
+        'sdk_package': 'tencentcloud-sdk-python-ckafka',
+        'endpoint': 'ckafka.tencentcloudapi.com',
+        'action': 'DescribeAclRule',
+        'request_class': 'DescribeAclRuleRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+            {
+                'name': 'rule_name',
+                'field': 'RuleName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Rule name. API field C(RuleName).',
+            },
+            {
+                'name': 'pattern_type',
+                'field': 'PatternType',
+                'type': 'str',
+                'required': False,
+                'doc': 'Pattern type. API field C(PatternType).',
+            },
+            {
+                'name': 'is_simplified',
+                'field': 'IsSimplified',
+                'type': 'bool',
+                'required': False,
+                'doc': 'Is simplified. API field C(IsSimplified).',
+            },
+        ],
+        'response_items': 'Result.AclRuleList',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'acl_rules',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CKAFKA acl rules',
+        'description': 'Returns CKAFKA acl rules visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CKAFKA acl rules.',
+        'return_total_doc': 'Number of acl rules reported by the API.',
+        'examples': """\
+- name: List all acl rules
+  susunola.tencentcloud.ckafka_acl_rule_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'ckafka_datahub_connection_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.ckafka.v20190819',
+        'client_module': 'ckafka_client',
+        'client_class': 'CkafkaClient',
+        'sdk_package': 'tencentcloud-sdk-python-ckafka',
+        'endpoint': 'ckafka.tencentcloudapi.com',
+        'action': 'DescribeConnectResources',
+        'request_class': 'DescribeConnectResourcesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'type',
+                'field': 'Type',
+                'type': 'str',
+                'required': False,
+                'doc': 'Type. API field C(Type).',
+            },
+            {
+                'name': 'search_word',
+                'field': 'SearchWord',
+                'type': 'str',
+                'required': False,
+                'doc': 'Search word. API field C(SearchWord).',
+            },
+            {
+                'name': 'resource_region',
+                'field': 'ResourceRegion',
+                'type': 'str',
+                'required': False,
+                'doc': 'Resource region. API field C(ResourceRegion).',
+            },
+        ],
+        'response_items': 'Result.ConnectResourceList',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'datahub_connections',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CKAFKA datahub connections',
+        'description': 'Returns CKAFKA datahub connections visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CKAFKA datahub connections.',
+        'return_total_doc': 'Number of datahub connections reported by the API.',
+        'examples': """\
+- name: List all datahub connections
+  susunola.tencentcloud.ckafka_datahub_connection_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'ckafka_datahub_task_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.ckafka.v20190819',
+        'client_module': 'ckafka_client',
+        'client_class': 'CkafkaClient',
+        'sdk_package': 'tencentcloud-sdk-python-ckafka',
+        'endpoint': 'ckafka.tencentcloudapi.com',
+        'action': 'DescribeDatahubTasks',
+        'request_class': 'DescribeDatahubTasksRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'search_word',
+                'field': 'SearchWord',
+                'type': 'str',
+                'required': False,
+                'doc': 'Search word. API field C(SearchWord).',
+            },
+            {
+                'name': 'target_type',
+                'field': 'TargetType',
+                'type': 'str',
+                'required': False,
+                'doc': 'Target type. API field C(TargetType).',
+            },
+            {
+                'name': 'task_type',
+                'field': 'TaskType',
+                'type': 'str',
+                'required': False,
+                'doc': 'Task type. API field C(TaskType).',
+            },
+            {
+                'name': 'source_type',
+                'field': 'SourceType',
+                'type': 'str',
+                'required': False,
+                'doc': 'Source type. API field C(SourceType).',
+            },
+            {
+                'name': 'resource',
+                'field': 'Resource',
+                'type': 'str',
+                'required': False,
+                'doc': 'Resource. API field C(Resource).',
+            },
+        ],
+        'response_items': 'Result.TaskList',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'datahub_tasks',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CKAFKA datahub tasks',
+        'description': 'Returns CKAFKA datahub tasks visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CKAFKA datahub tasks.',
+        'return_total_doc': 'Number of datahub tasks reported by the API.',
+        'examples': """\
+- name: List all datahub tasks
+  susunola.tencentcloud.ckafka_datahub_task_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'ckafka_datahub_topic_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.ckafka.v20190819',
+        'client_module': 'ckafka_client',
+        'client_class': 'CkafkaClient',
+        'sdk_package': 'tencentcloud-sdk-python-ckafka',
+        'endpoint': 'ckafka.tencentcloudapi.com',
+        'action': 'DescribeDatahubTopics',
+        'request_class': 'DescribeDatahubTopicsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'search_word',
+                'field': 'SearchWord',
+                'type': 'str',
+                'required': False,
+                'doc': 'Search word. API field C(SearchWord).',
+            },
+            {
+                'name': 'query_from_connect_resource',
+                'field': 'QueryFromConnectResource',
+                'type': 'bool',
+                'required': False,
+                'doc': 'Query from connect resource. API field C(QueryFromConnectResource).',
+            },
+            {
+                'name': 'connect_resource_id',
+                'field': 'ConnectResourceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Connect resource id. API field C(ConnectResourceId).',
+            },
+            {
+                'name': 'topic_regular_expression',
+                'field': 'TopicRegularExpression',
+                'type': 'str',
+                'required': False,
+                'doc': 'Topic regular expression. API field C(TopicRegularExpression).',
+            },
+        ],
+        'response_items': 'Result.TopicList',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'datahub_topics',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CKAFKA datahub topics',
+        'description': 'Returns CKAFKA datahub topics visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CKAFKA datahub topics.',
+        'return_total_doc': 'Number of datahub topics reported by the API.',
+        'examples': """\
+- name: List all datahub topics
+  susunola.tencentcloud.ckafka_datahub_topic_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'ckafka_route_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.ckafka.v20190819',
+        'client_module': 'ckafka_client',
+        'client_class': 'CkafkaClient',
+        'sdk_package': 'tencentcloud-sdk-python-ckafka',
+        'endpoint': 'ckafka.tencentcloudapi.com',
+        'action': 'DescribeRoute',
+        'request_class': 'DescribeRouteRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+            {
+                'name': 'route_id',
+                'field': 'RouteId',
+                'type': 'int',
+                'required': False,
+                'doc': 'Route id. API field C(RouteId).',
+            },
+            {
+                'name': 'main_route_flag',
+                'field': 'MainRouteFlag',
+                'type': 'bool',
+                'required': False,
+                'doc': 'Main route flag. API field C(MainRouteFlag).',
+            },
+        ],
+        'response_items': 'Result.Routers',
+        'response_total': None,
+        'result_key': 'routes',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CKAFKA routes',
+        'description': 'Returns CKAFKA routes visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CKAFKA routes.',
+        'return_total_doc': 'Number of routes returned (the API reports no total count).',
+        'examples': """\
+- name: List all routes
+  susunola.tencentcloud.ckafka_route_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cloudaudit_audit_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cloudaudit.v20190319',
+        'client_module': 'cloudaudit_client',
+        'client_class': 'CloudauditClient',
+        'sdk_package': 'tencentcloud-sdk-python-cloudaudit',
+        'endpoint': 'cloudaudit.tencentcloudapi.com',
+        'action': 'ListAudits',
+        'request_class': 'ListAuditsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'AuditSummarys',
+        'response_total': None,
+        'result_key': 'audits',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud CLOUDAUDIT audits',
+        'description': 'Returns CLOUDAUDIT audits visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CLOUDAUDIT audits.',
+        'return_total_doc': 'Number of audits returned (the API reports no total count).',
+        'examples': """\
+- name: List all audits
+  susunola.tencentcloud.cloudaudit_audit_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cloudaudit_track_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cloudaudit.v20190319',
+        'client_module': 'cloudaudit_client',
+        'client_class': 'CloudauditClient',
+        'sdk_package': 'tencentcloud-sdk-python-cloudaudit',
+        'endpoint': 'cloudaudit.tencentcloudapi.com',
+        'action': 'DescribeAuditTracks',
+        'request_class': 'DescribeAuditTracksRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Tracks',
+        'response_total': 'TotalCount',
+        'result_key': 'audit_tracks',
+        'pagination_type': 'page',
+        'short_description': 'Gather information about Tencent Cloud CLOUDAUDIT audit tracks',
+        'description': 'Returns CLOUDAUDIT audit tracks visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CLOUDAUDIT audit tracks.',
+        'return_total_doc': 'Number of audit tracks reported by the API.',
+        'examples': """\
+- name: List all audit tracks
+  susunola.tencentcloud.cloudaudit_track_info:
     region: ap-guangzhou
 """,
     },
@@ -1379,6 +3216,74 @@ SPECS_AUTO = [
         'examples': """\
 - name: List all images
   susunola.tencentcloud.cloudstudio_image_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cls_alarm_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cls.v20201016',
+        'client_module': 'cls_client',
+        'client_class': 'ClsClient',
+        'sdk_package': 'tencentcloud-sdk-python-cls',
+        'endpoint': 'cls.tencentcloudapi.com',
+        'action': 'DescribeAlarms',
+        'request_class': 'DescribeAlarmsRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'CLS API filter names mapped to lists of values.',
+            'name_field': 'Key',
+        },
+        'extra_params': [],
+        'response_items': 'Alarms',
+        'response_total': 'TotalCount',
+        'result_key': 'alarms',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CLS alarms',
+        'description': 'Returns CLS alarms visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CLS alarms.',
+        'return_total_doc': 'Number of alarms reported by the API.',
+        'examples': """\
+- name: List all alarms
+  susunola.tencentcloud.cls_alarm_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cls_alarm_notice_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cls.v20201016',
+        'client_module': 'cls_client',
+        'client_class': 'ClsClient',
+        'sdk_package': 'tencentcloud-sdk-python-cls',
+        'endpoint': 'cls.tencentcloudapi.com',
+        'action': 'DescribeAlarmNotices',
+        'request_class': 'DescribeAlarmNoticesRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'CLS API filter names mapped to lists of values.',
+            'name_field': 'Key',
+        },
+        'extra_params': [
+            {
+                'name': 'has_alarm_shield_count',
+                'field': 'HasAlarmShieldCount',
+                'type': 'bool',
+                'required': False,
+                'doc': 'Has alarm shield count. API field C(HasAlarmShieldCount).',
+            },
+        ],
+        'response_items': 'AlarmNotices',
+        'response_total': 'TotalCount',
+        'result_key': 'alarm_notices',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud CLS alarm notices',
+        'description': 'Returns CLS alarm notices visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CLS alarm notices.',
+        'return_total_doc': 'Number of alarm notices reported by the API.',
+        'examples': """\
+- name: List all alarm notices
+  susunola.tencentcloud.cls_alarm_notice_info:
     region: ap-guangzhou
 """,
     },
@@ -1720,6 +3625,76 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'cynosdb_account_privilege_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.cynosdb.v20190107',
+        'client_module': 'cynosdb_client',
+        'client_class': 'CynosdbClient',
+        'sdk_package': 'tencentcloud-sdk-python-cynosdb',
+        'endpoint': 'cynosdb.tencentcloudapi.com',
+        'action': 'DescribeAccountPrivileges',
+        'request_class': 'DescribeAccountPrivilegesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'cluster_id',
+                'field': 'ClusterId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Cluster id. API field C(ClusterId).',
+            },
+            {
+                'name': 'account_name',
+                'field': 'AccountName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Account name. API field C(AccountName).',
+            },
+            {
+                'name': 'host',
+                'field': 'Host',
+                'type': 'str',
+                'required': False,
+                'doc': 'Host. API field C(Host).',
+            },
+            {
+                'name': 'db',
+                'field': 'Db',
+                'type': 'str',
+                'required': False,
+                'doc': 'Db. API field C(Db).',
+            },
+            {
+                'name': 'type',
+                'field': 'Type',
+                'type': 'str',
+                'required': False,
+                'doc': 'Type. API field C(Type).',
+            },
+            {
+                'name': 'table_name',
+                'field': 'TableName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Table name. API field C(TableName).',
+            },
+        ],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'account_privilege',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about Tencent Cloud CYNOSDB account privilege',
+        'description': 'Returns CYNOSDB account privilege visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching CYNOSDB account privilege.',
+        'return_total_doc': '',
+        'examples': """\
+- name: Show the account privilege
+  susunola.tencentcloud.cynosdb_account_privilege_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'dasb_device_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.dasb.v20191018',
@@ -1855,6 +3830,64 @@ SPECS_AUTO = [
   susunola.tencentcloud.dbbrain_db_diag_event_info:
     region: ap-guangzhou
     db_diag_event_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'dbbrain_sql_filter_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.dbbrain.v20210527',
+        'client_module': 'dbbrain_client',
+        'client_class': 'DbbrainClient',
+        'sdk_package': 'tencentcloud-sdk-python-dbbrain',
+        'endpoint': 'dbbrain.tencentcloudapi.com',
+        'action': 'DescribeSqlFilters',
+        'request_class': 'DescribeSqlFiltersRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+            {
+                'name': 'filter_ids',
+                'field': 'FilterIds',
+                'type': 'list',
+                'required': False,
+                'doc': 'Filter ids. API field C(FilterIds).',
+                'elements': 'int',
+            },
+            {
+                'name': 'statuses',
+                'field': 'Statuses',
+                'type': 'list',
+                'required': False,
+                'doc': 'Statuses. API field C(Statuses).',
+                'elements': 'str',
+            },
+            {
+                'name': 'product',
+                'field': 'Product',
+                'type': 'str',
+                'required': False,
+                'doc': 'Product. API field C(Product).',
+            },
+        ],
+        'response_items': 'Items',
+        'response_total': 'TotalCount',
+        'result_key': 'sql_filters',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud DBBRAIN sql filters',
+        'description': 'Returns DBBRAIN sql filters visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching DBBRAIN sql filters.',
+        'return_total_doc': 'Number of sql filters reported by the API.',
+        'examples': """\
+- name: List all sql filters
+  susunola.tencentcloud.dbbrain_sql_filter_info:
+    region: ap-guangzhou
 """,
     },
     {
@@ -1997,6 +4030,195 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'dcdb_account_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.dcdb.v20180411',
+        'client_module': 'dcdb_client',
+        'client_class': 'DcdbClient',
+        'sdk_package': 'tencentcloud-sdk-python-dcdb',
+        'endpoint': 'dcdb.tencentcloudapi.com',
+        'action': 'DescribeAccounts',
+        'request_class': 'DescribeAccountsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+        ],
+        'response_items': 'Users',
+        'response_total': None,
+        'result_key': 'accounts',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud DCDB accounts',
+        'description': 'Returns DCDB accounts visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching DCDB accounts.',
+        'return_total_doc': 'Number of accounts returned (the API reports no total count).',
+        'examples': """\
+- name: List all accounts
+  susunola.tencentcloud.dcdb_account_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'dcdb_account_privilege_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.dcdb.v20180411',
+        'client_module': 'dcdb_client',
+        'client_class': 'DcdbClient',
+        'sdk_package': 'tencentcloud-sdk-python-dcdb',
+        'endpoint': 'dcdb.tencentcloudapi.com',
+        'action': 'DescribeAccountPrivileges',
+        'request_class': 'DescribeAccountPrivilegesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+            {
+                'name': 'user_name',
+                'field': 'UserName',
+                'type': 'str',
+                'required': False,
+                'doc': 'User name. API field C(UserName).',
+            },
+            {
+                'name': 'host',
+                'field': 'Host',
+                'type': 'str',
+                'required': False,
+                'doc': 'Host. API field C(Host).',
+            },
+            {
+                'name': 'db_name',
+                'field': 'DbName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Db name. API field C(DbName).',
+            },
+            {
+                'name': 'type',
+                'field': 'Type',
+                'type': 'str',
+                'required': False,
+                'doc': 'Type. API field C(Type).',
+            },
+            {
+                'name': 'object',
+                'field': 'Object',
+                'type': 'str',
+                'required': False,
+                'doc': 'Object. API field C(Object).',
+            },
+            {
+                'name': 'col_name',
+                'field': 'ColName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Col name. API field C(ColName).',
+            },
+        ],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'account_privilege',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about Tencent Cloud DCDB account privilege',
+        'description': 'Returns DCDB account privilege visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching DCDB account privilege.',
+        'return_total_doc': '',
+        'examples': """\
+- name: Show the account privilege
+  susunola.tencentcloud.dcdb_account_privilege_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'dcdb_backup_config_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.dcdb.v20180411',
+        'client_module': 'dcdb_client',
+        'client_class': 'DcdbClient',
+        'sdk_package': 'tencentcloud-sdk-python-dcdb',
+        'endpoint': 'dcdb.tencentcloudapi.com',
+        'action': 'DescribeBackupConfigs',
+        'request_class': 'DescribeBackupConfigsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+        ],
+        'response_items': 'BackupConfigSet',
+        'response_total': None,
+        'result_key': 'backup_configs',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud DCDB backup configs',
+        'description': 'Returns DCDB backup configs visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching DCDB backup configs.',
+        'return_total_doc': 'Number of backup configs returned (the API reports no total count).',
+        'examples': """\
+- name: List all backup configs
+  susunola.tencentcloud.dcdb_backup_config_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'dcdb_security_config_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.dcdb.v20180411',
+        'client_module': 'dcdb_client',
+        'client_class': 'DcdbClient',
+        'sdk_package': 'tencentcloud-sdk-python-dcdb',
+        'endpoint': 'dcdb.tencentcloudapi.com',
+        'action': 'DescribeDBSecurityGroups',
+        'request_class': 'DescribeDBSecurityGroupsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'product',
+                'field': 'Product',
+                'type': 'str',
+                'required': False,
+                'doc': 'Product. API field C(Product).',
+            },
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+        ],
+        'response_items': 'Groups',
+        'response_total': None,
+        'result_key': 'db_security_groups',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud DCDB db security groups',
+        'description': 'Returns DCDB db security groups visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching DCDB db security groups.',
+        'return_total_doc': 'Number of db security groups returned (the API reports no total count).',
+        'examples': """\
+- name: List all db security groups
+  susunola.tencentcloud.dcdb_security_config_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'dlc_task_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.dlc.v20210125',
@@ -2032,6 +4254,148 @@ SPECS_AUTO = [
   susunola.tencentcloud.dlc_task_info:
     region: ap-guangzhou
     task_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'dnspod_custom_line_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.dnspod.v20210323',
+        'client_module': 'dnspod_client',
+        'client_class': 'DnspodClient',
+        'sdk_package': 'tencentcloud-sdk-python-dnspod',
+        'endpoint': 'dnspod.tencentcloudapi.com',
+        'action': 'DescribeDomainCustomLineList',
+        'request_class': 'DescribeDomainCustomLineListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'domain',
+                'field': 'Domain',
+                'type': 'str',
+                'required': False,
+                'doc': 'Domain. API field C(Domain).',
+            },
+            {
+                'name': 'domain_id',
+                'field': 'DomainId',
+                'type': 'int',
+                'required': False,
+                'doc': 'Domain id. API field C(DomainId).',
+            },
+        ],
+        'response_items': 'LineList',
+        'response_total': None,
+        'result_key': 'domain_custom_lines',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud DNSPOD domain custom lines',
+        'description': 'Returns DNSPOD domain custom lines visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching DNSPOD domain custom lines.',
+        'return_total_doc': 'Number of domain custom lines returned (the API reports no total count).',
+        'examples': """\
+- name: List all domain custom lines
+  susunola.tencentcloud.dnspod_custom_line_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'dnspod_domain_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.dnspod.v20210323',
+        'client_module': 'dnspod_client',
+        'client_class': 'DnspodClient',
+        'sdk_package': 'tencentcloud-sdk-python-dnspod',
+        'endpoint': 'dnspod.tencentcloudapi.com',
+        'action': 'DescribeDomainList',
+        'request_class': 'DescribeDomainListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'type',
+                'field': 'Type',
+                'type': 'str',
+                'required': False,
+                'doc': 'Type. API field C(Type).',
+            },
+            {
+                'name': 'group_id',
+                'field': 'GroupId',
+                'type': 'int',
+                'required': False,
+                'doc': 'Group id. API field C(GroupId).',
+            },
+            {
+                'name': 'keyword',
+                'field': 'Keyword',
+                'type': 'str',
+                'required': False,
+                'doc': 'Keyword. API field C(Keyword).',
+                'no_log': False,
+            },
+        ],
+        'response_items': 'DomainList',
+        'response_total': None,
+        'result_key': 'domains',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud DNSPOD domains',
+        'description': 'Returns DNSPOD domains visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching DNSPOD domains.',
+        'return_total_doc': 'Number of domains returned (the API reports no total count).',
+        'examples': """\
+- name: List all domains
+  susunola.tencentcloud.dnspod_domain_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'dnspod_line_group_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.dnspod.v20210323',
+        'client_module': 'dnspod_client',
+        'client_class': 'DnspodClient',
+        'sdk_package': 'tencentcloud-sdk-python-dnspod',
+        'endpoint': 'dnspod.tencentcloudapi.com',
+        'action': 'DescribeLineGroupList',
+        'request_class': 'DescribeLineGroupListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'domain',
+                'field': 'Domain',
+                'type': 'str',
+                'required': False,
+                'doc': 'Domain. API field C(Domain).',
+            },
+            {
+                'name': 'sort_type',
+                'field': 'SortType',
+                'type': 'str',
+                'required': False,
+                'doc': 'Sort type. API field C(SortType).',
+            },
+            {
+                'name': 'domain_id',
+                'field': 'DomainId',
+                'type': 'int',
+                'required': False,
+                'doc': 'Domain id. API field C(DomainId).',
+            },
+        ],
+        'response_items': 'LineGroups',
+        'response_total': None,
+        'result_key': 'line_groups',
+        'pagination_type': 'int',
+        'page_size_field': 'Length',
+        'short_description': 'Gather information about Tencent Cloud DNSPOD line groups',
+        'description': 'Returns DNSPOD line groups visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching DNSPOD line groups.',
+        'return_total_doc': 'Number of line groups returned (the API reports no total count).',
+        'examples': """\
+- name: List all line groups
+  susunola.tencentcloud.dnspod_line_group_info:
+    region: ap-guangzhou
 """,
     },
     {
@@ -2128,6 +4492,200 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'dts_consumer_group_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.dts.v20211206',
+        'client_module': 'dts_client',
+        'client_class': 'DtsClient',
+        'sdk_package': 'tencentcloud-sdk-python-dts',
+        'endpoint': 'dts.tencentcloudapi.com',
+        'action': 'DescribeConsumerGroups',
+        'request_class': 'DescribeConsumerGroupsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'subscribe_id',
+                'field': 'SubscribeId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Subscribe id. API field C(SubscribeId).',
+            },
+        ],
+        'response_items': 'Items',
+        'response_total': 'TotalCount',
+        'result_key': 'consumer_groups',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud DTS consumer groups',
+        'description': 'Returns DTS consumer groups visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching DTS consumer groups.',
+        'return_total_doc': 'Number of consumer groups reported by the API.',
+        'examples': """\
+- name: List all consumer groups
+  susunola.tencentcloud.dts_consumer_group_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'dts_migration_check_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.dts.v20211206',
+        'client_module': 'dts_client',
+        'client_class': 'DtsClient',
+        'sdk_package': 'tencentcloud-sdk-python-dts',
+        'endpoint': 'dts.tencentcloudapi.com',
+        'action': 'DescribeMigrationCheckJob',
+        'request_class': 'DescribeMigrationCheckJobRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'job_id',
+                'field': 'JobId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Job id. API field C(JobId).',
+            },
+        ],
+        'response_items': 'StepInfo',
+        'response_total': None,
+        'result_key': 'migration_check_jobs',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud DTS migration check jobs',
+        'description': 'Returns DTS migration check jobs visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching DTS migration check jobs.',
+        'return_total_doc': 'Number of migration check jobs returned (the API reports no total count).',
+        'examples': """\
+- name: List all migration check jobs
+  susunola.tencentcloud.dts_migration_check_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'dts_migration_job_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.dts.v20211206',
+        'client_module': 'dts_client',
+        'client_class': 'DtsClient',
+        'sdk_package': 'tencentcloud-sdk-python-dts',
+        'endpoint': 'dts.tencentcloudapi.com',
+        'action': 'DescribeMigrationJobs',
+        'request_class': 'DescribeMigrationJobsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'job_id',
+                'field': 'JobId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Job id. API field C(JobId).',
+            },
+            {
+                'name': 'job_name',
+                'field': 'JobName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Job name. API field C(JobName).',
+            },
+            {
+                'name': 'status',
+                'field': 'Status',
+                'type': 'list',
+                'required': False,
+                'doc': 'Status. API field C(Status).',
+                'elements': 'str',
+            },
+            {
+                'name': 'src_instance_id',
+                'field': 'SrcInstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Src instance id. API field C(SrcInstanceId).',
+            },
+            {
+                'name': 'src_region',
+                'field': 'SrcRegion',
+                'type': 'str',
+                'required': False,
+                'doc': 'Src region. API field C(SrcRegion).',
+            },
+            {
+                'name': 'src_database_type',
+                'field': 'SrcDatabaseType',
+                'type': 'list',
+                'required': False,
+                'doc': 'Src database type. API field C(SrcDatabaseType).',
+                'elements': 'str',
+            },
+            {
+                'name': 'src_access_type',
+                'field': 'SrcAccessType',
+                'type': 'list',
+                'required': False,
+                'doc': 'Src access type. API field C(SrcAccessType).',
+                'elements': 'str',
+            },
+            {
+                'name': 'dst_instance_id',
+                'field': 'DstInstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Dst instance id. API field C(DstInstanceId).',
+            },
+            {
+                'name': 'dst_region',
+                'field': 'DstRegion',
+                'type': 'str',
+                'required': False,
+                'doc': 'Dst region. API field C(DstRegion).',
+            },
+            {
+                'name': 'dst_database_type',
+                'field': 'DstDatabaseType',
+                'type': 'list',
+                'required': False,
+                'doc': 'Dst database type. API field C(DstDatabaseType).',
+                'elements': 'str',
+            },
+            {
+                'name': 'dst_access_type',
+                'field': 'DstAccessType',
+                'type': 'list',
+                'required': False,
+                'doc': 'Dst access type. API field C(DstAccessType).',
+                'elements': 'str',
+            },
+            {
+                'name': 'run_mode',
+                'field': 'RunMode',
+                'type': 'str',
+                'required': False,
+                'doc': 'Run mode. API field C(RunMode).',
+            },
+            {
+                'name': 'order_seq',
+                'field': 'OrderSeq',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order seq. API field C(OrderSeq).',
+            },
+        ],
+        'response_items': 'JobList',
+        'response_total': 'TotalCount',
+        'result_key': 'migration_jobs',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud DTS migration jobs',
+        'description': 'Returns DTS migration jobs visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching DTS migration jobs.',
+        'return_total_doc': 'Number of migration jobs reported by the API.',
+        'examples': """\
+- name: List all migration jobs
+  susunola.tencentcloud.dts_migration_job_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'eb_event_bus_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.eb.v20210416',
@@ -2153,6 +4711,160 @@ SPECS_AUTO = [
         'examples': """\
 - name: List all event buses
   susunola.tencentcloud.eb_event_bus_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'eb_connection_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.eb.v20210416',
+        'client_module': 'eb_client',
+        'client_class': 'EbClient',
+        'sdk_package': 'tencentcloud-sdk-python-eb',
+        'endpoint': 'eb.tencentcloudapi.com',
+        'action': 'ListConnections',
+        'request_class': 'ListConnectionsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'event_bus_id',
+                'field': 'EventBusId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Event bus id. API field C(EventBusId).',
+            },
+            {
+                'name': 'order_by',
+                'field': 'OrderBy',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order by. API field C(OrderBy).',
+            },
+            {
+                'name': 'order',
+                'field': 'Order',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order. API field C(Order).',
+            },
+        ],
+        'response_items': 'Connections',
+        'response_total': 'TotalCount',
+        'result_key': 'connections',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud EB connections',
+        'description': 'Returns EB connections visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching EB connections.',
+        'return_total_doc': 'Number of connections reported by the API.',
+        'examples': """\
+- name: List all connections
+  susunola.tencentcloud.eb_connection_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'eb_rule_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.eb.v20210416',
+        'client_module': 'eb_client',
+        'client_class': 'EbClient',
+        'sdk_package': 'tencentcloud-sdk-python-eb',
+        'endpoint': 'eb.tencentcloudapi.com',
+        'action': 'ListRules',
+        'request_class': 'ListRulesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'event_bus_id',
+                'field': 'EventBusId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Event bus id. API field C(EventBusId).',
+            },
+            {
+                'name': 'order_by',
+                'field': 'OrderBy',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order by. API field C(OrderBy).',
+            },
+            {
+                'name': 'order',
+                'field': 'Order',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order. API field C(Order).',
+            },
+        ],
+        'response_items': 'Rules',
+        'response_total': 'TotalCount',
+        'result_key': 'rules',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud EB rules',
+        'description': 'Returns EB rules visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching EB rules.',
+        'return_total_doc': 'Number of rules reported by the API.',
+        'examples': """\
+- name: List all rules
+  susunola.tencentcloud.eb_rule_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'eb_target_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.eb.v20210416',
+        'client_module': 'eb_client',
+        'client_class': 'EbClient',
+        'sdk_package': 'tencentcloud-sdk-python-eb',
+        'endpoint': 'eb.tencentcloudapi.com',
+        'action': 'ListTargets',
+        'request_class': 'ListTargetsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'event_bus_id',
+                'field': 'EventBusId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Event bus id. API field C(EventBusId).',
+            },
+            {
+                'name': 'rule_id',
+                'field': 'RuleId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Rule id. API field C(RuleId).',
+            },
+            {
+                'name': 'order_by',
+                'field': 'OrderBy',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order by. API field C(OrderBy).',
+            },
+            {
+                'name': 'order',
+                'field': 'Order',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order. API field C(Order).',
+            },
+        ],
+        'response_items': 'Targets',
+        'response_total': 'TotalCount',
+        'result_key': 'targets',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud EB targets',
+        'description': 'Returns EB targets visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching EB targets.',
+        'return_total_doc': 'Number of targets reported by the API.',
+        'examples': """\
+- name: List all targets
+  susunola.tencentcloud.eb_target_info:
     region: ap-guangzhou
 """,
     },
@@ -2325,6 +5037,248 @@ SPECS_AUTO = [
   susunola.tencentcloud.emr_node_data_disk_info:
     region: ap-guangzhou
     node_data_disk_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'emr_auto_scale_strategy_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.emr.v20190103',
+        'client_module': 'emr_client',
+        'client_class': 'EmrClient',
+        'sdk_package': 'tencentcloud-sdk-python-emr',
+        'endpoint': 'emr.tencentcloudapi.com',
+        'action': 'DescribeAutoScaleStrategies',
+        'request_class': 'DescribeAutoScaleStrategiesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+            {
+                'name': 'group_id',
+                'field': 'GroupId',
+                'type': 'int',
+                'required': False,
+                'doc': 'Group id. API field C(GroupId).',
+            },
+        ],
+        'response_items': 'LoadAutoScaleStrategies',
+        'response_total': None,
+        'result_key': 'auto_scale_strategies',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud EMR auto scale strategies',
+        'description': 'Returns EMR auto scale strategies visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching EMR auto scale strategies.',
+        'return_total_doc': 'Number of auto scale strategies returned (the API reports no total count).',
+        'examples': """\
+- name: List all auto scale strategies
+  susunola.tencentcloud.emr_auto_scale_strategy_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'emr_cluster_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.emr.v20190103',
+        'client_module': 'emr_client',
+        'client_class': 'EmrClient',
+        'sdk_package': 'tencentcloud-sdk-python-emr',
+        'endpoint': 'emr.tencentcloudapi.com',
+        'action': 'DescribeInstances',
+        'request_class': 'DescribeInstancesRequest',
+        'ids': {
+            'param': 'cluster_ids',
+            'field': 'InstanceIds',
+            'doc': 'Cluster IDs to return.',
+        },
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'display_strategy',
+                'field': 'DisplayStrategy',
+                'type': 'str',
+                'required': False,
+                'doc': 'Display strategy. API field C(DisplayStrategy).',
+            },
+            {
+                'name': 'project_id',
+                'field': 'ProjectId',
+                'type': 'int',
+                'required': False,
+                'doc': 'Project id. API field C(ProjectId).',
+            },
+            {
+                'name': 'order_field',
+                'field': 'OrderField',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order field. API field C(OrderField).',
+            },
+            {
+                'name': 'asc',
+                'field': 'Asc',
+                'type': 'int',
+                'required': False,
+                'doc': 'Asc. API field C(Asc).',
+            },
+        ],
+        'response_items': 'ClusterList',
+        'response_total': None,
+        'result_key': 'clusters',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud EMR clusters',
+        'description': 'Returns EMR clusters visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching EMR clusters.',
+        'return_total_doc': 'Number of clusters returned (the API reports no total count).',
+        'examples': """\
+- name: List all clusters
+  susunola.tencentcloud.emr_cluster_info:
+    region: ap-guangzhou
+
+- name: Find clusters by ID
+  susunola.tencentcloud.emr_cluster_info:
+    region: ap-guangzhou
+    cluster_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'elasticsearch_index_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.es.v20180416',
+        'client_module': 'es_client',
+        'client_class': 'EsClient',
+        'sdk_package': 'tencentcloud-sdk-python-es',
+        'endpoint': 'es.tencentcloudapi.com',
+        'action': 'DescribeIndexList',
+        'request_class': 'DescribeIndexListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'index_type',
+                'field': 'IndexType',
+                'type': 'str',
+                'required': False,
+                'doc': 'Index type. API field C(IndexType).',
+            },
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+            {
+                'name': 'index_name',
+                'field': 'IndexName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Index name. API field C(IndexName).',
+            },
+            {
+                'name': 'username',
+                'field': 'Username',
+                'type': 'str',
+                'required': False,
+                'doc': 'Username. API field C(Username).',
+            },
+            {
+                'name': 'password',
+                'field': 'Password',
+                'type': 'str',
+                'required': False,
+                'doc': 'Password. API field C(Password).',
+                'no_log': True,
+            },
+            {
+                'name': 'order_by',
+                'field': 'OrderBy',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order by. API field C(OrderBy).',
+            },
+            {
+                'name': 'index_status_list',
+                'field': 'IndexStatusList',
+                'type': 'list',
+                'required': False,
+                'doc': 'Index status list. API field C(IndexStatusList).',
+                'elements': 'str',
+            },
+            {
+                'name': 'order',
+                'field': 'Order',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order. API field C(Order).',
+            },
+        ],
+        'response_items': 'IndexMetaFields',
+        'response_total': 'TotalCount',
+        'result_key': 'indexes',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud ES indexes',
+        'description': 'Returns ES indexes visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching ES indexes.',
+        'return_total_doc': 'Number of indexes reported by the API.',
+        'examples': """\
+- name: List all indexes
+  susunola.tencentcloud.elasticsearch_index_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'elasticsearch_snapshot_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.es.v20180416',
+        'client_module': 'es_client',
+        'client_class': 'EsClient',
+        'sdk_package': 'tencentcloud-sdk-python-es',
+        'endpoint': 'es.tencentcloudapi.com',
+        'action': 'DescribeClusterSnapshot',
+        'request_class': 'DescribeClusterSnapshotRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+            {
+                'name': 'repository_name',
+                'field': 'RepositoryName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Repository name. API field C(RepositoryName).',
+            },
+            {
+                'name': 'snapshot_name',
+                'field': 'SnapshotName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Snapshot name. API field C(SnapshotName).',
+            },
+        ],
+        'response_items': 'Snapshots',
+        'response_total': None,
+        'result_key': 'cluster_snapshots',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud ES cluster snapshots',
+        'description': 'Returns ES cluster snapshots visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching ES cluster snapshots.',
+        'return_total_doc': 'Number of cluster snapshots returned (the API reports no total count).',
+        'examples': """\
+- name: List all cluster snapshots
+  susunola.tencentcloud.elasticsearch_snapshot_info:
+    region: ap-guangzhou
 """,
     },
     {
@@ -2545,6 +5499,85 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'gaap_listener_real_servers_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.gaap.v20180529',
+        'client_module': 'gaap_client',
+        'client_class': 'GaapClient',
+        'sdk_package': 'tencentcloud-sdk-python-gaap',
+        'endpoint': 'gaap.tencentcloudapi.com',
+        'action': 'DescribeListenerRealServers',
+        'request_class': 'DescribeListenerRealServersRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'listener_id',
+                'field': 'ListenerId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Listener id. API field C(ListenerId).',
+            },
+        ],
+        'response_items': 'RealServerSet',
+        'response_total': 'TotalCount',
+        'result_key': 'listener_real_servers',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud GAAP listener real servers',
+        'description': 'Returns GAAP listener real servers visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching GAAP listener real servers.',
+        'return_total_doc': 'Number of listener real servers reported by the API.',
+        'examples': """\
+- name: List all listener real servers
+  susunola.tencentcloud.gaap_listener_real_servers_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'gaap_real_server_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.gaap.v20180529',
+        'client_module': 'gaap_client',
+        'client_class': 'GaapClient',
+        'sdk_package': 'tencentcloud-sdk-python-gaap',
+        'endpoint': 'gaap.tencentcloudapi.com',
+        'action': 'DescribeRealServers',
+        'request_class': 'DescribeRealServersRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'GAAP API filter names mapped to lists of values.',
+        },
+        'extra_params': [
+            {
+                'name': 'project_id',
+                'field': 'ProjectId',
+                'type': 'int',
+                'required': False,
+                'doc': 'Project id. API field C(ProjectId).',
+            },
+            {
+                'name': 'search_value',
+                'field': 'SearchValue',
+                'type': 'str',
+                'required': False,
+                'doc': 'Search value. API field C(SearchValue).',
+            },
+        ],
+        'response_items': 'RealServerSet',
+        'response_total': 'TotalCount',
+        'result_key': 'real_servers',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud GAAP real servers',
+        'description': 'Returns GAAP real servers visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching GAAP real servers.',
+        'return_total_doc': 'Number of real servers reported by the API.',
+        'examples': """\
+- name: List all real servers
+  susunola.tencentcloud.gaap_real_server_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'gme_voice_print_info',
         'version_added': '0.9.0',
         'service_package': 'tencentcloud.gme.v20180711',
@@ -2606,6 +5639,58 @@ SPECS_AUTO = [
 - name: List all file systems
   susunola.tencentcloud.goosefs_file_system_info:
     region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'goosefs_fileset_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.goosefs.v20220519',
+        'client_module': 'goosefs_client',
+        'client_class': 'GoosefsClient',
+        'sdk_package': 'tencentcloud-sdk-python-goosefs',
+        'endpoint': 'goosefs.tencentcloudapi.com',
+        'action': 'DescribeFilesets',
+        'request_class': 'DescribeFilesetsRequest',
+        'ids': {
+            'param': 'fileset_ids',
+            'field': 'FilesetIds',
+            'doc': 'Fileset IDs to return.',
+        },
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'file_system_id',
+                'field': 'FileSystemId',
+                'type': 'str',
+                'required': False,
+                'doc': 'File system id. API field C(FileSystemId).',
+            },
+            {
+                'name': 'fileset_dirs',
+                'field': 'FilesetDirs',
+                'type': 'list',
+                'required': False,
+                'doc': 'Fileset dirs. API field C(FilesetDirs).',
+                'elements': 'str',
+            },
+        ],
+        'response_items': 'FilesetList',
+        'response_total': None,
+        'result_key': 'filesets',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud GOOSEFS filesets',
+        'description': 'Returns GOOSEFS filesets visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching GOOSEFS filesets.',
+        'return_total_doc': 'Number of filesets returned (the API reports no total count).',
+        'examples': """\
+- name: List all filesets
+  susunola.tencentcloud.goosefs_fileset_info:
+    region: ap-guangzhou
+
+- name: Find filesets by ID
+  susunola.tencentcloud.goosefs_fileset_info:
+    region: ap-guangzhou
+    fileset_ids: [x-xxxxxxxx]
 """,
     },
     {
@@ -2682,6 +5767,120 @@ SPECS_AUTO = [
   susunola.tencentcloud.gwlb_gateway_load_balancer_info:
     region: ap-guangzhou
     gateway_load_balancer_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'gwlb_load_balancer_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.gwlb.v20240906',
+        'client_module': 'gwlb_client',
+        'client_class': 'GwlbClient',
+        'sdk_package': 'tencentcloud-sdk-python-gwlb',
+        'endpoint': 'gwlb.tencentcloudapi.com',
+        'action': 'DescribeGatewayLoadBalancers',
+        'request_class': 'DescribeGatewayLoadBalancersRequest',
+        'ids': {
+            'param': 'gateway_load_balancer_ids',
+            'field': 'LoadBalancerIds',
+            'doc': 'Gateway load balancer IDs to return. Mutually exclusive with O(filters).',
+        },
+        'filters': {
+            'doc': 'GWLB API filter names mapped to lists of values.',
+        },
+        'extra_params': [
+            {
+                'name': 'search_key',
+                'field': 'SearchKey',
+                'type': 'str',
+                'required': False,
+                'doc': 'Search key. API field C(SearchKey).',
+                'no_log': False,
+            },
+        ],
+        'response_items': 'LoadBalancerSet',
+        'response_total': 'TotalCount',
+        'result_key': 'gateway_load_balancers',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud GWLB gateway load balancers',
+        'description': 'Returns GWLB gateway load balancers visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching GWLB gateway load balancers.',
+        'return_total_doc': 'Number of gateway load balancers reported by the API.',
+        'examples': """\
+- name: List all gateway load balancers
+  susunola.tencentcloud.gwlb_load_balancer_info:
+    region: ap-guangzhou
+
+- name: Find gateway load balancers by ID
+  susunola.tencentcloud.gwlb_load_balancer_info:
+    region: ap-guangzhou
+    gateway_load_balancer_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'gwlb_target_group_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.gwlb.v20240906',
+        'client_module': 'gwlb_client',
+        'client_class': 'GwlbClient',
+        'sdk_package': 'tencentcloud-sdk-python-gwlb',
+        'endpoint': 'gwlb.tencentcloudapi.com',
+        'action': 'DescribeTargetGroups',
+        'request_class': 'DescribeTargetGroupsRequest',
+        'ids': {
+            'param': 'target_group_ids',
+            'field': 'TargetGroupIds',
+            'doc': 'Target group IDs to return. Mutually exclusive with O(filters).',
+        },
+        'filters': {
+            'doc': 'GWLB API filter names mapped to lists of values.',
+        },
+        'extra_params': [],
+        'response_items': 'TargetGroupSet',
+        'response_total': 'TotalCount',
+        'result_key': 'target_groups',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud GWLB target groups',
+        'description': 'Returns GWLB target groups visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching GWLB target groups.',
+        'return_total_doc': 'Number of target groups reported by the API.',
+        'examples': """\
+- name: List all target groups
+  susunola.tencentcloud.gwlb_target_group_info:
+    region: ap-guangzhou
+
+- name: Find target groups by ID
+  susunola.tencentcloud.gwlb_target_group_info:
+    region: ap-guangzhou
+    target_group_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'gwlb_target_group_instances_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.gwlb.v20240906',
+        'client_module': 'gwlb_client',
+        'client_class': 'GwlbClient',
+        'sdk_package': 'tencentcloud-sdk-python-gwlb',
+        'endpoint': 'gwlb.tencentcloudapi.com',
+        'action': 'DescribeTargetGroupInstances',
+        'request_class': 'DescribeTargetGroupInstancesRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'GWLB API filter names mapped to lists of values.',
+        },
+        'extra_params': [],
+        'response_items': 'TargetGroupInstanceSet',
+        'response_total': 'TotalCount',
+        'result_key': 'target_group_instances',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud GWLB target group instances',
+        'description': 'Returns GWLB target group instances visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching GWLB target group instances.',
+        'return_total_doc': 'Number of target group instances reported by the API.',
+        'examples': """\
+- name: List all target group instances
+  susunola.tencentcloud.gwlb_target_group_instances_info:
+    region: ap-guangzhou
 """,
     },
     {
@@ -3326,6 +6525,83 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'mariadb_account_privilege_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.mariadb.v20170312',
+        'client_module': 'mariadb_client',
+        'client_class': 'MariadbClient',
+        'sdk_package': 'tencentcloud-sdk-python-mariadb',
+        'endpoint': 'mariadb.tencentcloudapi.com',
+        'action': 'DescribeAccountPrivileges',
+        'request_class': 'DescribeAccountPrivilegesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+            {
+                'name': 'user_name',
+                'field': 'UserName',
+                'type': 'str',
+                'required': False,
+                'doc': 'User name. API field C(UserName).',
+            },
+            {
+                'name': 'host',
+                'field': 'Host',
+                'type': 'str',
+                'required': False,
+                'doc': 'Host. API field C(Host).',
+            },
+            {
+                'name': 'db_name',
+                'field': 'DbName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Db name. API field C(DbName).',
+            },
+            {
+                'name': 'type',
+                'field': 'Type',
+                'type': 'str',
+                'required': False,
+                'doc': 'Type. API field C(Type).',
+            },
+            {
+                'name': 'object',
+                'field': 'Object',
+                'type': 'str',
+                'required': False,
+                'doc': 'Object. API field C(Object).',
+            },
+            {
+                'name': 'col_name',
+                'field': 'ColName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Col name. API field C(ColName).',
+            },
+        ],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'account_privilege',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about Tencent Cloud MARIADB account privilege',
+        'description': 'Returns MARIADB account privilege visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching MARIADB account privilege.',
+        'return_total_doc': '',
+        'examples': """\
+- name: Show the account privilege
+  susunola.tencentcloud.mariadb_account_privilege_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'memcached_instance_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.memcached.v20190318',
@@ -3481,6 +6757,144 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'mqtt_authorization_policy_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.mqtt.v20240516',
+        'client_module': 'mqtt_client',
+        'client_class': 'MqttClient',
+        'sdk_package': 'tencentcloud-sdk-python-mqtt',
+        'endpoint': 'mqtt.tencentcloudapi.com',
+        'action': 'DescribeAuthorizationPolicies',
+        'request_class': 'DescribeAuthorizationPoliciesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+        ],
+        'response_items': 'Data',
+        'response_total': None,
+        'result_key': 'authorization_policies',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud MQTT authorization policies',
+        'description': 'Returns MQTT authorization policies visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching MQTT authorization policies.',
+        'return_total_doc': 'Number of authorization policies returned (the API reports no total count).',
+        'examples': """\
+- name: List all authorization policies
+  susunola.tencentcloud.mqtt_authorization_policy_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'mqtt_instance_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.mqtt.v20240516',
+        'client_module': 'mqtt_client',
+        'client_class': 'MqttClient',
+        'sdk_package': 'tencentcloud-sdk-python-mqtt',
+        'endpoint': 'mqtt.tencentcloudapi.com',
+        'action': 'DescribeInstanceList',
+        'request_class': 'DescribeInstanceListRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'MQTT API filter names mapped to lists of values.',
+        },
+        'extra_params': [],
+        'response_items': 'Data',
+        'response_total': 'TotalCount',
+        'result_key': 'instances',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud MQTT instances',
+        'description': 'Returns MQTT instances visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching MQTT instances.',
+        'return_total_doc': 'Number of instances reported by the API.',
+        'examples': """\
+- name: List all instances
+  susunola.tencentcloud.mqtt_instance_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'mqtt_topic_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.mqtt.v20240516',
+        'client_module': 'mqtt_client',
+        'client_class': 'MqttClient',
+        'sdk_package': 'tencentcloud-sdk-python-mqtt',
+        'endpoint': 'mqtt.tencentcloudapi.com',
+        'action': 'DescribeTopicList',
+        'request_class': 'DescribeTopicListRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'MQTT API filter names mapped to lists of values.',
+        },
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+        ],
+        'response_items': 'Data',
+        'response_total': 'TotalCount',
+        'result_key': 'topics',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud MQTT topics',
+        'description': 'Returns MQTT topics visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching MQTT topics.',
+        'return_total_doc': 'Number of topics reported by the API.',
+        'examples': """\
+- name: List all topics
+  susunola.tencentcloud.mqtt_topic_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'mqtt_user_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.mqtt.v20240516',
+        'client_module': 'mqtt_client',
+        'client_class': 'MqttClient',
+        'sdk_package': 'tencentcloud-sdk-python-mqtt',
+        'endpoint': 'mqtt.tencentcloudapi.com',
+        'action': 'DescribeUserList',
+        'request_class': 'DescribeUserListRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'MQTT API filter names mapped to lists of values.',
+        },
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+        ],
+        'response_items': 'Data',
+        'response_total': 'TotalCount',
+        'result_key': 'users',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud MQTT users',
+        'description': 'Returns MQTT users visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching MQTT users.',
+        'return_total_doc': 'Number of users reported by the API.',
+        'examples': """\
+- name: List all users
+  susunola.tencentcloud.mqtt_user_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'ms_shield_instance_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.ms.v20180408',
@@ -3611,6 +7025,118 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'organization_member_identity_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.organization.v20210331',
+        'client_module': 'organization_client',
+        'client_class': 'OrganizationClient',
+        'sdk_package': 'tencentcloud-sdk-python-organization',
+        'endpoint': 'organization.tencentcloudapi.com',
+        'action': 'DescribeOrganizationMemberAuthIdentities',
+        'request_class': 'DescribeOrganizationMemberAuthIdentitiesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'member_uin',
+                'field': 'MemberUin',
+                'type': 'int',
+                'required': False,
+                'doc': 'Member uin. API field C(MemberUin).',
+            },
+            {
+                'name': 'identity_id',
+                'field': 'IdentityId',
+                'type': 'int',
+                'required': False,
+                'doc': 'Identity id. API field C(IdentityId).',
+            },
+        ],
+        'response_items': 'Items',
+        'response_total': 'Total',
+        'result_key': 'member_auth_identities',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud ORGANIZATION member auth identities',
+        'description': 'Returns ORGANIZATION member auth identities visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching ORGANIZATION member auth identities.',
+        'return_total_doc': 'Number of member auth identities reported by the API.',
+        'examples': """\
+- name: List all member auth identities
+  susunola.tencentcloud.organization_member_identity_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'organization_member_policy_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.organization.v20210331',
+        'client_module': 'organization_client',
+        'client_class': 'OrganizationClient',
+        'sdk_package': 'tencentcloud-sdk-python-organization',
+        'endpoint': 'organization.tencentcloudapi.com',
+        'action': 'DescribeOrganizationMemberPolicies',
+        'request_class': 'DescribeOrganizationMemberPoliciesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'member_uin',
+                'field': 'MemberUin',
+                'type': 'int',
+                'required': False,
+                'doc': 'Member uin. API field C(MemberUin).',
+            },
+            {
+                'name': 'search_key',
+                'field': 'SearchKey',
+                'type': 'str',
+                'required': False,
+                'doc': 'Search key. API field C(SearchKey).',
+                'no_log': False,
+            },
+        ],
+        'response_items': 'Items',
+        'response_total': 'Total',
+        'result_key': 'member_policies',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud ORGANIZATION member policies',
+        'description': 'Returns ORGANIZATION member policies visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching ORGANIZATION member policies.',
+        'return_total_doc': 'Number of member policies reported by the API.',
+        'examples': """\
+- name: List all member policies
+  susunola.tencentcloud.organization_member_policy_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'organization_node_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.organization.v20210331',
+        'client_module': 'organization_client',
+        'client_class': 'OrganizationClient',
+        'sdk_package': 'tencentcloud-sdk-python-organization',
+        'endpoint': 'organization.tencentcloudapi.com',
+        'action': 'DescribeOrganizationNodes',
+        'request_class': 'DescribeOrganizationNodesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Items',
+        'response_total': 'Total',
+        'result_key': 'nodes',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud ORGANIZATION nodes',
+        'description': 'Returns ORGANIZATION nodes visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching ORGANIZATION nodes.',
+        'return_total_doc': 'Number of nodes reported by the API.',
+        'examples': """\
+- name: List all nodes
+  susunola.tencentcloud.organization_node_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'partners_agent_deals_by_cache_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.partners.v20180321',
@@ -3704,6 +7230,101 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'private_dns_account_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.privatedns.v20201028',
+        'client_module': 'privatedns_client',
+        'client_class': 'PrivatednsClient',
+        'sdk_package': 'tencentcloud-sdk-python-privatedns',
+        'endpoint': 'privatedns.tencentcloudapi.com',
+        'action': 'DescribePrivateDNSAccountList',
+        'request_class': 'DescribePrivateDNSAccountListRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'PRIVATEDNS API filter names mapped to lists of values.',
+        },
+        'extra_params': [],
+        'response_items': 'AccountSet',
+        'response_total': 'TotalCount',
+        'result_key': 'private_dns_accounts',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud PRIVATEDNS private dns accounts',
+        'description': 'Returns PRIVATEDNS private dns accounts visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching PRIVATEDNS private dns accounts.',
+        'return_total_doc': 'Number of private dns accounts reported by the API.',
+        'examples': """\
+- name: List all private dns accounts
+  susunola.tencentcloud.private_dns_account_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'private_dns_record_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.privatedns.v20201028',
+        'client_module': 'privatedns_client',
+        'client_class': 'PrivatednsClient',
+        'sdk_package': 'tencentcloud-sdk-python-privatedns',
+        'endpoint': 'privatedns.tencentcloudapi.com',
+        'action': 'DescribePrivateZoneRecordList',
+        'request_class': 'DescribePrivateZoneRecordListRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'PRIVATEDNS API filter names mapped to lists of values.',
+        },
+        'extra_params': [
+            {
+                'name': 'zone_id',
+                'field': 'ZoneId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Zone id. API field C(ZoneId).',
+            },
+        ],
+        'response_items': 'RecordSet',
+        'response_total': 'TotalCount',
+        'result_key': 'private_zone_records',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud PRIVATEDNS private zone records',
+        'description': 'Returns PRIVATEDNS private zone records visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching PRIVATEDNS private zone records.',
+        'return_total_doc': 'Number of private zone records reported by the API.',
+        'examples': """\
+- name: List all private zone records
+  susunola.tencentcloud.private_dns_record_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'private_dns_zone_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.privatedns.v20201028',
+        'client_module': 'privatedns_client',
+        'client_class': 'PrivatednsClient',
+        'sdk_package': 'tencentcloud-sdk-python-privatedns',
+        'endpoint': 'privatedns.tencentcloudapi.com',
+        'action': 'DescribePrivateZoneList',
+        'request_class': 'DescribePrivateZoneListRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'PRIVATEDNS API filter names mapped to lists of values.',
+        },
+        'extra_params': [],
+        'response_items': 'PrivateZoneSet',
+        'response_total': 'TotalCount',
+        'result_key': 'private_zones',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud PRIVATEDNS private zones',
+        'description': 'Returns PRIVATEDNS private zones visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching PRIVATEDNS private zones.',
+        'return_total_doc': 'Number of private zones reported by the API.',
+        'examples': """\
+- name: List all private zones
+  susunola.tencentcloud.private_dns_zone_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'pts_cron_job_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.pts.v20210728',
@@ -3737,6 +7358,49 @@ SPECS_AUTO = [
   susunola.tencentcloud.pts_cron_job_info:
     region: ap-guangzhou
     cron_job_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'redis_replication_group_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.redis.v20180412',
+        'client_module': 'redis_client',
+        'client_class': 'RedisClient',
+        'sdk_package': 'tencentcloud-sdk-python-redis',
+        'endpoint': 'redis.tencentcloudapi.com',
+        'action': 'DescribeReplicationGroup',
+        'request_class': 'DescribeReplicationGroupRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'group_id',
+                'field': 'GroupId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Group id. API field C(GroupId).',
+            },
+            {
+                'name': 'search_key',
+                'field': 'SearchKey',
+                'type': 'str',
+                'required': False,
+                'doc': 'Search key. API field C(SearchKey).',
+                'no_log': False,
+            },
+        ],
+        'response_items': 'Groups',
+        'response_total': 'TotalCount',
+        'result_key': 'replication_groups',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud REDIS replication groups',
+        'description': 'Returns REDIS replication groups visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching REDIS replication groups.',
+        'return_total_doc': 'Number of replication groups reported by the API.',
+        'examples': """\
+- name: List all replication groups
+  susunola.tencentcloud.redis_replication_group_info:
+    region: ap-guangzhou
 """,
     },
     {
@@ -3792,6 +7456,50 @@ SPECS_AUTO = [
         'examples': """\
 - name: List all projects
   susunola.tencentcloud.rum_project_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'scf_custom_domain_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.scf.v20180416',
+        'client_module': 'scf_client',
+        'client_class': 'ScfClient',
+        'sdk_package': 'tencentcloud-sdk-python-scf',
+        'endpoint': 'scf.tencentcloudapi.com',
+        'action': 'ListCustomDomains',
+        'request_class': 'ListCustomDomainsRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'SCF API filter names mapped to lists of values.',
+        },
+        'extra_params': [
+            {
+                'name': 'order_by',
+                'field': 'OrderBy',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order by. API field C(OrderBy).',
+            },
+            {
+                'name': 'order',
+                'field': 'Order',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order. API field C(Order).',
+            },
+        ],
+        'response_items': 'Domains',
+        'response_total': 'Total',
+        'result_key': 'custom_domains',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud SCF custom domains',
+        'description': 'Returns SCF custom domains visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching SCF custom domains.',
+        'return_total_doc': 'Number of custom domains reported by the API.',
+        'examples': """\
+- name: List all custom domains
+  susunola.tencentcloud.scf_custom_domain_info:
     region: ap-guangzhou
 """,
     },
@@ -3997,6 +7705,44 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'tat_invoker_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tat.v20201028',
+        'client_module': 'tat_client',
+        'client_class': 'TatClient',
+        'sdk_package': 'tencentcloud-sdk-python-tat',
+        'endpoint': 'tat.tencentcloudapi.com',
+        'action': 'DescribeInvokers',
+        'request_class': 'DescribeInvokersRequest',
+        'ids': {
+            'param': 'invoker_ids',
+            'field': 'InvokerIds',
+            'doc': 'Invoker IDs to return. Mutually exclusive with O(filters).',
+        },
+        'filters': {
+            'doc': 'TAT API filter names mapped to lists of values.',
+        },
+        'extra_params': [],
+        'response_items': 'InvokerSet',
+        'response_total': 'TotalCount',
+        'result_key': 'invokers',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud TAT invokers',
+        'description': 'Returns TAT invokers visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TAT invokers.',
+        'return_total_doc': 'Number of invokers reported by the API.',
+        'examples': """\
+- name: List all invokers
+  susunola.tencentcloud.tat_invoker_info:
+    region: ap-guangzhou
+
+- name: Find invokers by ID
+  susunola.tencentcloud.tat_invoker_info:
+    region: ap-guangzhou
+    invoker_ids: [x-xxxxxxxx]
+""",
+    },
+    {
         'module': 'tbaas_block_info',
         'version_added': '0.9.0',
         'service_package': 'tencentcloud.tbaas.v20180416',
@@ -4098,6 +7844,163 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'tcb_auth_domain_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tcb.v20180608',
+        'client_module': 'tcb_client',
+        'client_class': 'TcbClient',
+        'sdk_package': 'tencentcloud-sdk-python-tcb',
+        'endpoint': 'tcb.tencentcloudapi.com',
+        'action': 'DescribeAuthDomains',
+        'request_class': 'DescribeAuthDomainsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'env_id',
+                'field': 'EnvId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Env id. API field C(EnvId).',
+            },
+        ],
+        'response_items': 'Domains',
+        'response_total': None,
+        'result_key': 'auth_domains',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud TCB auth domains',
+        'description': 'Returns TCB auth domains visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TCB auth domains.',
+        'return_total_doc': 'Number of auth domains returned (the API reports no total count).',
+        'examples': """\
+- name: List all auth domains
+  susunola.tencentcloud.tcb_auth_domain_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tcb_environment_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tcb.v20180608',
+        'client_module': 'tcb_client',
+        'client_class': 'TcbClient',
+        'sdk_package': 'tencentcloud-sdk-python-tcb',
+        'endpoint': 'tcb.tencentcloudapi.com',
+        'action': 'DescribeEnvs',
+        'request_class': 'DescribeEnvsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'env_id',
+                'field': 'EnvId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Env id. API field C(EnvId).',
+            },
+            {
+                'name': 'is_visible',
+                'field': 'IsVisible',
+                'type': 'bool',
+                'required': False,
+                'doc': 'Is visible. API field C(IsVisible).',
+            },
+            {
+                'name': 'channels',
+                'field': 'Channels',
+                'type': 'list',
+                'required': False,
+                'doc': 'Channels. API field C(Channels).',
+                'elements': 'str',
+            },
+        ],
+        'response_items': 'EnvList',
+        'response_total': 'Total',
+        'result_key': 'envs',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud TCB envs',
+        'description': 'Returns TCB envs visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TCB envs.',
+        'return_total_doc': 'Number of envs reported by the API.',
+        'examples': """\
+- name: List all envs
+  susunola.tencentcloud.tcb_environment_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tcb_http_service_route_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tcb.v20180608',
+        'client_module': 'tcb_client',
+        'client_class': 'TcbClient',
+        'sdk_package': 'tencentcloud-sdk-python-tcb',
+        'endpoint': 'tcb.tencentcloudapi.com',
+        'action': 'DescribeHTTPServiceRoute',
+        'request_class': 'DescribeHTTPServiceRouteRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'TCB API filter names mapped to lists of values.',
+        },
+        'extra_params': [
+            {
+                'name': 'env_id',
+                'field': 'EnvId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Env id. API field C(EnvId).',
+            },
+        ],
+        'response_items': 'Domains',
+        'response_total': 'TotalCount',
+        'result_key': 'http_service_routes',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud TCB http service routes',
+        'description': 'Returns TCB http service routes visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TCB http service routes.',
+        'return_total_doc': 'Number of http service routes reported by the API.',
+        'examples': """\
+- name: List all http service routes
+  susunola.tencentcloud.tcb_http_service_route_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tcb_static_store_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tcb.v20180608',
+        'client_module': 'tcb_client',
+        'client_class': 'TcbClient',
+        'sdk_package': 'tencentcloud-sdk-python-tcb',
+        'endpoint': 'tcb.tencentcloudapi.com',
+        'action': 'DescribeStaticStore',
+        'request_class': 'DescribeStaticStoreRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'env_id',
+                'field': 'EnvId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Env id. API field C(EnvId).',
+            },
+        ],
+        'response_items': 'Data',
+        'response_total': None,
+        'result_key': 'static_stores',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud TCB static stores',
+        'description': 'Returns TCB static stores visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TCB static stores.',
+        'return_total_doc': 'Number of static stores returned (the API reports no total count).',
+        'examples': """\
+- name: List all static stores
+  susunola.tencentcloud.tcb_static_store_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'tcbr_cloud_run_pod_info',
         'version_added': '0.9.0',
         'service_package': 'tencentcloud.tcbr.v20220217',
@@ -4151,6 +8054,119 @@ SPECS_AUTO = [
         'examples': """\
 - name: List all meshes
   susunola.tencentcloud.tcm_mesh_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tcm_access_log_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tcm.v20210413',
+        'client_module': 'tcm_client',
+        'client_class': 'TcmClient',
+        'sdk_package': 'tencentcloud-sdk-python-tcm',
+        'endpoint': 'tcm.tencentcloudapi.com',
+        'action': 'DescribeAccessLogConfig',
+        'request_class': 'DescribeAccessLogConfigRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'mesh_id',
+                'field': 'MeshId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Mesh id. API field C(MeshId).',
+            },
+        ],
+        'response_items': 'SelectedRange.Items',
+        'response_total': None,
+        'result_key': 'access_log_configs',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud TCM access log configs',
+        'description': 'Returns TCM access log configs visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TCM access log configs.',
+        'return_total_doc': 'Number of access log configs returned (the API reports no total count).',
+        'examples': """\
+- name: List all access log configs
+  susunola.tencentcloud.tcm_access_log_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tcr_immutable_tag_rule_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tcr.v20190924',
+        'client_module': 'tcr_client',
+        'client_class': 'TcrClient',
+        'sdk_package': 'tencentcloud-sdk-python-tcr',
+        'endpoint': 'tcr.tencentcloudapi.com',
+        'action': 'DescribeImmutableTagRules',
+        'request_class': 'DescribeImmutableTagRulesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'registry_id',
+                'field': 'RegistryId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Registry id. API field C(RegistryId).',
+            },
+        ],
+        'response_items': 'Rules',
+        'response_total': 'Total',
+        'result_key': 'immutable_tag_rules',
+        'pagination_type': 'page',
+        'page_number_field': 'Page',
+        'short_description': 'Gather information about Tencent Cloud TCR immutable tag rules',
+        'description': 'Returns TCR immutable tag rules visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TCR immutable tag rules.',
+        'return_total_doc': 'Number of immutable tag rules reported by the API.',
+        'examples': """\
+- name: List all immutable tag rules
+  susunola.tencentcloud.tcr_immutable_tag_rule_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tcr_webhook_trigger_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tcr.v20190924',
+        'client_module': 'tcr_client',
+        'client_class': 'TcrClient',
+        'sdk_package': 'tencentcloud-sdk-python-tcr',
+        'endpoint': 'tcr.tencentcloudapi.com',
+        'action': 'DescribeWebhookTrigger',
+        'request_class': 'DescribeWebhookTriggerRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'registry_id',
+                'field': 'RegistryId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Registry id. API field C(RegistryId).',
+            },
+            {
+                'name': 'namespace',
+                'field': 'Namespace',
+                'type': 'str',
+                'required': False,
+                'doc': 'Namespace. API field C(Namespace).',
+            },
+        ],
+        'response_items': 'Triggers',
+        'response_total': 'TotalCount',
+        'result_key': 'webhook_triggers',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud TCR webhook triggers',
+        'description': 'Returns TCR webhook triggers visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TCR webhook triggers.',
+        'return_total_doc': 'Number of webhook triggers reported by the API.',
+        'examples': """\
+- name: List all webhook triggers
+  susunola.tencentcloud.tcr_webhook_trigger_info:
     region: ap-guangzhou
 """,
     },
@@ -4241,6 +8257,127 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'tdcpg_account_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tdcpg.v20211118',
+        'client_module': 'tdcpg_client',
+        'client_class': 'TdcpgClient',
+        'sdk_package': 'tencentcloud-sdk-python-tdcpg',
+        'endpoint': 'tdcpg.tencentcloudapi.com',
+        'action': 'DescribeAccounts',
+        'request_class': 'DescribeAccountsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'cluster_id',
+                'field': 'ClusterId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Cluster id. API field C(ClusterId).',
+            },
+        ],
+        'response_items': 'AccountSet',
+        'response_total': 'TotalCount',
+        'result_key': 'accounts',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud TDCPG accounts',
+        'description': 'Returns TDCPG accounts visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TDCPG accounts.',
+        'return_total_doc': 'Number of accounts reported by the API.',
+        'examples': """\
+- name: List all accounts
+  susunola.tencentcloud.tdcpg_account_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tdcpg_endpoint_wan_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tdcpg.v20211118',
+        'client_module': 'tdcpg_client',
+        'client_class': 'TdcpgClient',
+        'sdk_package': 'tencentcloud-sdk-python-tdcpg',
+        'endpoint': 'tdcpg.tencentcloudapi.com',
+        'action': 'DescribeClusterEndpoints',
+        'request_class': 'DescribeClusterEndpointsRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'cluster_id',
+                'field': 'ClusterId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Cluster id. API field C(ClusterId).',
+            },
+        ],
+        'response_items': 'EndpointSet',
+        'response_total': 'TotalCount',
+        'result_key': 'cluster_endpoints',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud TDCPG cluster endpoints',
+        'description': 'Returns TDCPG cluster endpoints visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TDCPG cluster endpoints.',
+        'return_total_doc': 'Number of cluster endpoints reported by the API.',
+        'examples': """\
+- name: List all cluster endpoints
+  susunola.tencentcloud.tdcpg_endpoint_wan_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tdcpg_instance_state_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tdcpg.v20211118',
+        'client_module': 'tdcpg_client',
+        'client_class': 'TdcpgClient',
+        'sdk_package': 'tencentcloud-sdk-python-tdcpg',
+        'endpoint': 'tdcpg.tencentcloudapi.com',
+        'action': 'DescribeClusterInstances',
+        'request_class': 'DescribeClusterInstancesRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'TDCPG API filter names mapped to lists of values.',
+        },
+        'extra_params': [
+            {
+                'name': 'cluster_id',
+                'field': 'ClusterId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Cluster id. API field C(ClusterId).',
+            },
+            {
+                'name': 'order_by',
+                'field': 'OrderBy',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order by. API field C(OrderBy).',
+            },
+            {
+                'name': 'order_by_type',
+                'field': 'OrderByType',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order by type. API field C(OrderByType).',
+            },
+        ],
+        'response_items': 'InstanceSet',
+        'response_total': 'TotalCount',
+        'result_key': 'cluster_instances',
+        'pagination_type': 'page',
+        'short_description': 'Gather information about Tencent Cloud TDCPG cluster instances',
+        'description': 'Returns TDCPG cluster instances visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TDCPG cluster instances.',
+        'return_total_doc': 'Number of cluster instances reported by the API.',
+        'examples': """\
+- name: List all cluster instances
+  susunola.tencentcloud.tdcpg_instance_state_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'tdid_over_summary_info',
         'version_added': '0.9.0',
         'service_package': 'tencentcloud.tdid.v20210519',
@@ -4306,6 +8443,114 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'cmq_topic_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tdmq.v20200217',
+        'client_module': 'tdmq_client',
+        'client_class': 'TdmqClient',
+        'sdk_package': 'tencentcloud-sdk-python-tdmq',
+        'endpoint': 'tdmq.tencentcloudapi.com',
+        'action': 'DescribeCmqTopics',
+        'request_class': 'DescribeCmqTopicsRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'TDMQ API filter names mapped to lists of values.',
+        },
+        'extra_params': [
+            {
+                'name': 'topic_name',
+                'field': 'TopicName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Topic name. API field C(TopicName).',
+            },
+            {
+                'name': 'topic_name_list',
+                'field': 'TopicNameList',
+                'type': 'list',
+                'required': False,
+                'doc': 'Topic name list. API field C(TopicNameList).',
+                'elements': 'str',
+            },
+            {
+                'name': 'is_tag_filter',
+                'field': 'IsTagFilter',
+                'type': 'bool',
+                'required': False,
+                'doc': 'Is tag filter. API field C(IsTagFilter).',
+            },
+        ],
+        'response_items': 'TopicList',
+        'response_total': 'TotalCount',
+        'result_key': 'cmq_topics',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud TDMQ cmq topics',
+        'description': 'Returns TDMQ cmq topics visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TDMQ cmq topics.',
+        'return_total_doc': 'Number of cmq topics reported by the API.',
+        'examples': """\
+- name: List all cmq topics
+  susunola.tencentcloud.cmq_topic_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'cmq_subscription_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tdmq.v20200217',
+        'client_module': 'tdmq_client',
+        'client_class': 'TdmqClient',
+        'sdk_package': 'tencentcloud-sdk-python-tdmq',
+        'endpoint': 'tdmq.tencentcloudapi.com',
+        'action': 'DescribeCmqSubscriptionDetail',
+        'request_class': 'DescribeCmqSubscriptionDetailRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'topic_name',
+                'field': 'TopicName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Topic name. API field C(TopicName).',
+            },
+            {
+                'name': 'subscription_name',
+                'field': 'SubscriptionName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Subscription name. API field C(SubscriptionName).',
+            },
+            {
+                'name': 'queue_name',
+                'field': 'QueueName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Queue name. API field C(QueueName).',
+            },
+            {
+                'name': 'query_type',
+                'field': 'QueryType',
+                'type': 'str',
+                'required': False,
+                'doc': 'Query type. API field C(QueryType).',
+            },
+        ],
+        'response_items': 'SubscriptionSet',
+        'response_total': 'TotalCount',
+        'result_key': 'cmq_subscriptions',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud TDMQ cmq subscriptions',
+        'description': 'Returns TDMQ cmq subscriptions visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TDMQ cmq subscriptions.',
+        'return_total_doc': 'Number of cmq subscriptions reported by the API.',
+        'examples': """\
+- name: List all cmq subscriptions
+  susunola.tencentcloud.cmq_subscription_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'tdmysql_db_instance_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.tdmysql.v20211122',
@@ -4332,6 +8577,153 @@ SPECS_AUTO = [
         'examples': """\
 - name: List all db instances
   susunola.tencentcloud.tdmysql_db_instance_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tdmysql_account_privilege_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tdmysql.v20211122',
+        'client_module': 'tdmysql_client',
+        'client_class': 'TdmysqlClient',
+        'sdk_package': 'tencentcloud-sdk-python-tdmysql',
+        'endpoint': 'tdmysql.tencentcloudapi.com',
+        'action': 'DescribeUserPrivileges',
+        'request_class': 'DescribeUserPrivilegesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+            {
+                'name': 'host',
+                'field': 'Host',
+                'type': 'str',
+                'required': False,
+                'doc': 'Host. API field C(Host).',
+            },
+            {
+                'name': 'user_name',
+                'field': 'UserName',
+                'type': 'str',
+                'required': False,
+                'doc': 'User name. API field C(UserName).',
+            },
+            {
+                'name': 'db_name',
+                'field': 'DbName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Db name. API field C(DbName).',
+            },
+            {
+                'name': 'object',
+                'field': 'Object',
+                'type': 'str',
+                'required': False,
+                'doc': 'Object. API field C(Object).',
+            },
+            {
+                'name': 'object_type',
+                'field': 'ObjectType',
+                'type': 'str',
+                'required': False,
+                'doc': 'Object type. API field C(ObjectType).',
+            },
+            {
+                'name': 'col_name',
+                'field': 'ColName',
+                'type': 'str',
+                'required': False,
+                'doc': 'Col name. API field C(ColName).',
+            },
+        ],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'user_privilege',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about Tencent Cloud TDMYSQL user privilege',
+        'description': 'Returns TDMYSQL user privilege visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TDMYSQL user privilege.',
+        'return_total_doc': '',
+        'examples': """\
+- name: Show the user privilege
+  susunola.tencentcloud.tdmysql_account_privilege_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tdmysql_maintenance_window_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tdmysql.v20211122',
+        'client_module': 'tdmysql_client',
+        'client_class': 'TdmysqlClient',
+        'sdk_package': 'tencentcloud-sdk-python-tdmysql',
+        'endpoint': 'tdmysql.tencentcloudapi.com',
+        'action': 'DescribeMaintenanceWindow',
+        'request_class': 'DescribeMaintenanceWindowRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+        ],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'maintenance_window',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about Tencent Cloud TDMYSQL maintenance window',
+        'description': 'Returns TDMYSQL maintenance window visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TDMYSQL maintenance window.',
+        'return_total_doc': '',
+        'examples': """\
+- name: Show the maintenance window
+  susunola.tencentcloud.tdmysql_maintenance_window_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tdmysql_ssl_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tdmysql.v20211122',
+        'client_module': 'tdmysql_client',
+        'client_class': 'TdmysqlClient',
+        'sdk_package': 'tencentcloud-sdk-python-tdmysql',
+        'endpoint': 'tdmysql.tencentcloudapi.com',
+        'action': 'DescribeInstanceSSLStatus',
+        'request_class': 'DescribeInstanceSSLStatusRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'instance_id',
+                'field': 'InstanceId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Instance id. API field C(InstanceId).',
+            },
+        ],
+        'response_items': None,
+        'response_total': None,
+        'result_key': 'instance_ssl',
+        'pagination_type': 'none',
+        'short_description': 'Gather information about Tencent Cloud TDMYSQL instance ssl',
+        'description': 'Returns TDMYSQL instance ssl visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TDMYSQL instance ssl.',
+        'return_total_doc': '',
+        'examples': """\
+- name: Show the instance ssl
+  susunola.tencentcloud.tdmysql_ssl_info:
     region: ap-guangzhou
 """,
     },
@@ -4363,6 +8755,150 @@ SPECS_AUTO = [
         'examples': """\
 - name: List all applications
   susunola.tencentcloud.tem_application_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tem_application_service_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tem.v20210701',
+        'client_module': 'tem_client',
+        'client_class': 'TemClient',
+        'sdk_package': 'tencentcloud-sdk-python-tem',
+        'endpoint': 'tem.tencentcloudapi.com',
+        'action': 'DescribeApplicationServiceList',
+        'request_class': 'DescribeApplicationServiceListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'environment_id',
+                'field': 'EnvironmentId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Environment id. API field C(EnvironmentId).',
+            },
+            {
+                'name': 'application_id',
+                'field': 'ApplicationId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Application id. API field C(ApplicationId).',
+            },
+            {
+                'name': 'source_channel',
+                'field': 'SourceChannel',
+                'type': 'int',
+                'required': False,
+                'doc': 'Source channel. API field C(SourceChannel).',
+            },
+        ],
+        'response_items': 'Result.PortMappings',
+        'response_total': None,
+        'result_key': 'application_services',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud TEM application services',
+        'description': 'Returns TEM application services visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TEM application services.',
+        'return_total_doc': 'Number of application services returned (the API reports no total count).',
+        'examples': """\
+- name: List all application services
+  susunola.tencentcloud.tem_application_service_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tem_environment_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tem.v20210701',
+        'client_module': 'tem_client',
+        'client_class': 'TemClient',
+        'sdk_package': 'tencentcloud-sdk-python-tem',
+        'endpoint': 'tem.tencentcloudapi.com',
+        'action': 'DescribeEnvironments',
+        'request_class': 'DescribeEnvironmentsRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'TEM API filter names mapped to lists of values.',
+            'model': 'QueryFilter',
+            'value_field': 'Value',
+        },
+        'extra_params': [
+            {
+                'name': 'source_channel',
+                'field': 'SourceChannel',
+                'type': 'int',
+                'required': False,
+                'doc': 'Source channel. API field C(SourceChannel).',
+            },
+            {
+                'name': 'environment_id',
+                'field': 'EnvironmentId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Environment id. API field C(EnvironmentId).',
+            },
+        ],
+        'response_items': 'Result.Records',
+        'response_total': 'Result.Total',
+        'result_key': 'environments',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud TEM environments',
+        'description': 'Returns TEM environments visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TEM environments.',
+        'return_total_doc': 'Number of environments reported by the API.',
+        'examples': """\
+- name: List all environments
+  susunola.tencentcloud.tem_environment_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tem_application_deployment_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tem.v20210701',
+        'client_module': 'tem_client',
+        'client_class': 'TemClient',
+        'sdk_package': 'tencentcloud-sdk-python-tem',
+        'endpoint': 'tem.tencentcloudapi.com',
+        'action': 'DescribeDeployApplicationDetail',
+        'request_class': 'DescribeDeployApplicationDetailRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'application_id',
+                'field': 'ApplicationId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Application id. API field C(ApplicationId).',
+            },
+            {
+                'name': 'environment_id',
+                'field': 'EnvironmentId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Environment id. API field C(EnvironmentId).',
+            },
+            {
+                'name': 'version_id',
+                'field': 'VersionId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Version id. API field C(VersionId).',
+            },
+        ],
+        'response_items': 'Result.OtherBatchDetail',
+        'response_total': None,
+        'result_key': 'deployments',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud TEM deployments',
+        'description': 'Returns TEM deployments visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TEM deployments.',
+        'return_total_doc': 'Number of deployments returned (the API reports no total count).',
+        'examples': """\
+- name: List all deployments
+  susunola.tencentcloud.tem_application_deployment_info:
     region: ap-guangzhou
 """,
     },
@@ -4535,6 +9071,99 @@ SPECS_AUTO = [
 """,
     },
     {
+        'module': 'tione_model_service_state_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tione.v20211111',
+        'client_module': 'tione_client',
+        'client_class': 'TioneClient',
+        'sdk_package': 'tencentcloud-sdk-python-tione',
+        'endpoint': 'tione.tencentcloudapi.com',
+        'action': 'DescribeModelServiceGroup',
+        'request_class': 'DescribeModelServiceGroupRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [
+            {
+                'name': 'service_group_id',
+                'field': 'ServiceGroupId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Service group id. API field C(ServiceGroupId).',
+            },
+            {
+                'name': 'ti_project_id',
+                'field': 'TiProjectId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Ti project id. API field C(TiProjectId).',
+            },
+        ],
+        'response_items': 'ServiceGroup.Services',
+        'response_total': None,
+        'result_key': 'model_services',
+        'pagination_type': 'list',
+        'short_description': 'Gather information about Tencent Cloud TIONE model services',
+        'description': 'Returns TIONE model services visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TIONE model services.',
+        'return_total_doc': 'Number of model services returned (the API reports no total count).',
+        'examples': """\
+- name: List all model services
+  susunola.tencentcloud.tione_model_service_state_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tione_model_service_traffic_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.tione.v20211111',
+        'client_module': 'tione_client',
+        'client_class': 'TioneClient',
+        'sdk_package': 'tencentcloud-sdk-python-tione',
+        'endpoint': 'tione.tencentcloudapi.com',
+        'action': 'DescribeModelServiceGroups',
+        'request_class': 'DescribeModelServiceGroupsRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'TIONE API filter names mapped to lists of values.',
+        },
+        'extra_params': [
+            {
+                'name': 'ti_project_id',
+                'field': 'TiProjectId',
+                'type': 'str',
+                'required': False,
+                'doc': 'Ti project id. API field C(TiProjectId).',
+            },
+            {
+                'name': 'order',
+                'field': 'Order',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order. API field C(Order).',
+            },
+            {
+                'name': 'order_field',
+                'field': 'OrderField',
+                'type': 'str',
+                'required': False,
+                'doc': 'Order field. API field C(OrderField).',
+            },
+        ],
+        'response_items': 'ServiceGroups',
+        'response_total': 'TotalCount',
+        'result_key': 'model_service_groups',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud TIONE model service groups',
+        'description': 'Returns TIONE model service groups visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TIONE model service groups.',
+        'return_total_doc': 'Number of model service groups reported by the API.',
+        'examples': """\
+- name: List all model service groups
+  susunola.tencentcloud.tione_model_service_traffic_info:
+    region: ap-guangzhou
+""",
+    },
+    {
         'module': 'tiw_running_task_info',
         'version_added': '0.8.0',
         'service_package': 'tencentcloud.tiw.v20190919',
@@ -4558,4669 +9187,6 @@ SPECS_AUTO = [
         'examples': """\
 - name: List all running tasks
   susunola.tencentcloud.tiw_running_task_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'tokenhub_model_info',
-        'version_added': '0.8.0',
-        'service_package': 'tencentcloud.tokenhub.v20260322',
-        'client_module': 'tokenhub_client',
-        'client_class': 'TokenhubClient',
-        'sdk_package': 'tencentcloud-sdk-python-tokenhub',
-        'endpoint': 'tokenhub.tencentcloudapi.com',
-        'action': 'DescribeModelList',
-        'request_class': 'DescribeModelListRequest',
-        'ids': {
-            'param': 'model_ids',
-            'field': 'ModelIds',
-            'doc': 'Model IDs to return.',
-        },
-        'filters': None,
-        'extra_params': [],
-        'response_items': 'ModelSet',
-        'response_total': 'TotalCount',
-        'result_key': 'models',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud TOKENHUB models',
-        'description': 'Returns TOKENHUB models visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TOKENHUB models.',
-        'return_total_doc': 'Number of models reported by the API.',
-        'examples': """\
-- name: List all models
-  susunola.tencentcloud.tokenhub_model_info:
-    region: ap-guangzhou
-
-- name: Find models by ID
-  susunola.tencentcloud.tokenhub_model_info:
-    region: ap-guangzhou
-    model_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'tourism_draw_resource_info',
-        'version_added': '0.8.0',
-        'service_package': 'tencentcloud.tourism.v20230215',
-        'client_module': 'tourism_client',
-        'client_class': 'TourismClient',
-        'sdk_package': 'tencentcloud-sdk-python-tourism',
-        'endpoint': 'tourism.tencentcloudapi.com',
-        'action': 'DescribeDrawResourceList',
-        'request_class': 'DescribeDrawResourceListRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [],
-        'response_items': 'ResourceDrawList',
-        'response_total': 'TotalCount',
-        'result_key': 'draw_resources',
-        'pagination_type': 'page',
-        'short_description': 'Gather information about Tencent Cloud TOURISM draw resources',
-        'description': 'Returns TOURISM draw resources visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TOURISM draw resources.',
-        'return_total_doc': 'Number of draw resources reported by the API.',
-        'examples': """\
-- name: List all draw resources
-  susunola.tencentcloud.tourism_draw_resource_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'trabbit_rabbit_mq_serverless_instance_info',
-        'version_added': '0.8.0',
-        'service_package': 'tencentcloud.trabbit.v20230418',
-        'client_module': 'trabbit_client',
-        'client_class': 'TrabbitClient',
-        'sdk_package': 'tencentcloud-sdk-python-trabbit',
-        'endpoint': 'trabbit.tencentcloudapi.com',
-        'action': 'ListRabbitMQServerlessInstances',
-        'request_class': 'ListRabbitMQServerlessInstancesRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'TRABBIT API filter names mapped to lists of values.',
-        },
-        'extra_params': [],
-        'response_items': 'Instances',
-        'response_total': 'TotalCount',
-        'result_key': 'rabbit_mq_serverless_instances',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud TRABBIT rabbit mq serverless instances',
-        'description': 'Returns TRABBIT rabbit mq serverless instances visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TRABBIT rabbit mq serverless instances.',
-        'return_total_doc': 'Number of rabbit mq serverless instances reported by the API.',
-        'examples': """\
-- name: List all rabbit mq serverless instances
-  susunola.tencentcloud.trabbit_rabbit_mq_serverless_instance_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'trocket_consumer_client_info',
-        'version_added': '0.8.0',
-        'service_package': 'tencentcloud.trocket.v20230308',
-        'client_module': 'trocket_client',
-        'client_class': 'TrocketClient',
-        'sdk_package': 'tencentcloud-sdk-python-trocket',
-        'endpoint': 'trocket.tencentcloudapi.com',
-        'action': 'DescribeConsumerClientList',
-        'request_class': 'DescribeConsumerClientListRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'TROCKET API filter names mapped to lists of values.',
-        },
-        'extra_params': [],
-        'response_items': 'Data',
-        'response_total': 'TotalCount',
-        'result_key': 'consumer_clients',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud TROCKET consumer clients',
-        'description': 'Returns TROCKET consumer clients visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TROCKET consumer clients.',
-        'return_total_doc': 'Number of consumer clients reported by the API.',
-        'examples': """\
-- name: List all consumer clients
-  susunola.tencentcloud.trocket_consumer_client_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'trp_code_batch_info',
-        'version_added': '0.8.0',
-        'service_package': 'tencentcloud.trp.v20210515',
-        'client_module': 'trp_client',
-        'client_class': 'TrpClient',
-        'sdk_package': 'tencentcloud-sdk-python-trp',
-        'endpoint': 'trp.tencentcloudapi.com',
-        'action': 'DescribeCodeBatches',
-        'request_class': 'DescribeCodeBatchesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [],
-        'response_items': 'CodeBatches',
-        'response_total': 'TotalCount',
-        'result_key': 'code_batches',
-        'pagination_type': 'page',
-        'short_description': 'Gather information about Tencent Cloud TRP code batches',
-        'description': 'Returns TRP code batches visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TRP code batches.',
-        'return_total_doc': 'Number of code batches reported by the API.',
-        'examples': """\
-- name: List all code batches
-  susunola.tencentcloud.trp_code_batch_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'trro_device_info',
-        'version_added': '0.8.0',
-        'service_package': 'tencentcloud.trro.v20220325',
-        'client_module': 'trro_client',
-        'client_class': 'TrroClient',
-        'sdk_package': 'tencentcloud-sdk-python-trro',
-        'endpoint': 'trro.tencentcloudapi.com',
-        'action': 'DescribeDeviceList',
-        'request_class': 'DescribeDeviceListRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [],
-        'response_items': 'Devices',
-        'response_total': 'Total',
-        'result_key': 'devices',
-        'pagination_type': 'page',
-        'short_description': 'Gather information about Tencent Cloud TRRO devices',
-        'description': 'Returns TRRO devices visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TRRO devices.',
-        'return_total_doc': 'Number of devices reported by the API.',
-        'examples': """\
-- name: List all devices
-  susunola.tencentcloud.trro_device_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'trtc_call_info',
-        'version_added': '0.8.0',
-        'service_package': 'tencentcloud.trtc.v20190722',
-        'client_module': 'trtc_client',
-        'client_class': 'TrtcClient',
-        'sdk_package': 'tencentcloud-sdk-python-trtc',
-        'endpoint': 'trtc.tencentcloudapi.com',
-        'action': 'DescribeCallDetailInfo',
-        'request_class': 'DescribeCallDetailInfoRequest',
-        'ids': {
-            'param': 'call_ids',
-            'field': 'UserIds',
-            'doc': 'Call IDs to return.',
-        },
-        'filters': None,
-        'extra_params': [],
-        'response_items': 'UserList',
-        'response_total': 'Total',
-        'result_key': 'calls',
-        'pagination_type': 'page',
-        'short_description': 'Gather information about Tencent Cloud TRTC calls',
-        'description': 'Returns TRTC calls visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TRTC calls.',
-        'return_total_doc': 'Number of calls reported by the API.',
-        'examples': """\
-- name: List all calls
-  susunola.tencentcloud.trtc_call_info:
-    region: ap-guangzhou
-
-- name: Find calls by ID
-  susunola.tencentcloud.trtc_call_info:
-    region: ap-guangzhou
-    call_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'tse_sre_instance_info',
-        'version_added': '0.8.0',
-        'service_package': 'tencentcloud.tse.v20201207',
-        'client_module': 'tse_client',
-        'client_class': 'TseClient',
-        'sdk_package': 'tencentcloud-sdk-python-tse',
-        'endpoint': 'tse.tencentcloudapi.com',
-        'action': 'DescribeSREInstances',
-        'request_class': 'DescribeSREInstancesRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'TSE API filter names mapped to lists of values.',
-        },
-        'extra_params': [],
-        'response_items': 'Content',
-        'response_total': 'TotalCount',
-        'result_key': 'sre_instances',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud TSE sre instances',
-        'description': 'Returns TSE sre instances visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TSE sre instances.',
-        'return_total_doc': 'Number of sre instances reported by the API.',
-        'examples': """\
-- name: List all sre instances
-  susunola.tencentcloud.tse_sre_instance_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'tsf_application_info',
-        'version_added': '0.8.0',
-        'service_package': 'tencentcloud.tsf.v20180326',
-        'client_module': 'tsf_client',
-        'client_class': 'TsfClient',
-        'sdk_package': 'tencentcloud-sdk-python-tsf',
-        'endpoint': 'tsf.tencentcloudapi.com',
-        'action': 'DescribeApplications',
-        'request_class': 'DescribeApplicationsRequest',
-        'ids': {
-            'param': 'application_ids',
-            'field': 'ApplicationIdList',
-            'doc': 'Application IDs to return.',
-        },
-        'filters': None,
-        'extra_params': [],
-        'response_items': 'Result.Content',
-        'response_total': 'Result.TotalCount',
-        'result_key': 'applications',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud TSF applications',
-        'description': 'Returns TSF applications visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TSF applications.',
-        'return_total_doc': 'Number of applications reported by the API.',
-        'examples': """\
-- name: List all applications
-  susunola.tencentcloud.tsf_application_info:
-    region: ap-guangzhou
-
-- name: Find applications by ID
-  susunola.tencentcloud.tsf_application_info:
-    region: ap-guangzhou
-    application_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'vcube_resource_info',
-        'version_added': '0.8.0',
-        'service_package': 'tencentcloud.vcube.v20220410',
-        'client_module': 'vcube_client',
-        'client_class': 'VcubeClient',
-        'sdk_package': 'tencentcloud-sdk-python-vcube',
-        'endpoint': 'vcube.tencentcloudapi.com',
-        'action': 'DescribeVcubeResourcesList',
-        'request_class': 'DescribeVcubeResourcesListRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [],
-        'response_items': 'ResourceList',
-        'response_total': 'TotalCount',
-        'result_key': 'resources',
-        'pagination_type': 'page',
-        'short_description': 'Gather information about Tencent Cloud VCUBE resources',
-        'description': 'Returns VCUBE resources visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching VCUBE resources.',
-        'return_total_doc': 'Number of resources reported by the API.',
-        'examples': """\
-- name: List all resources
-  susunola.tencentcloud.vcube_resource_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'vdb_instance_info',
-        'version_added': '0.8.0',
-        'service_package': 'tencentcloud.vdb.v20230616',
-        'client_module': 'vdb_client',
-        'client_class': 'VdbClient',
-        'sdk_package': 'tencentcloud-sdk-python-vdb',
-        'endpoint': 'vdb.tencentcloudapi.com',
-        'action': 'DescribeInstances',
-        'request_class': 'DescribeInstancesRequest',
-        'ids': {
-            'param': 'instance_ids',
-            'field': 'InstanceIds',
-            'doc': 'Instance IDs to return.',
-        },
-        'filters': None,
-        'extra_params': [],
-        'response_items': 'Items',
-        'response_total': 'TotalCount',
-        'result_key': 'instances',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud VDB instances',
-        'description': 'Returns VDB instances visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching VDB instances.',
-        'return_total_doc': 'Number of instances reported by the API.',
-        'examples': """\
-- name: List all instances
-  susunola.tencentcloud.vdb_instance_info:
-    region: ap-guangzhou
-
-- name: Find instances by ID
-  susunola.tencentcloud.vdb_instance_info:
-    region: ap-guangzhou
-    instance_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'vm_task_info',
-        'version_added': '0.9.0',
-        'service_package': 'tencentcloud.vm.v20210922',
-        'client_module': 'vm_client',
-        'client_class': 'VmClient',
-        'sdk_package': 'tencentcloud-sdk-python-vm',
-        'endpoint': 'vm.tencentcloudapi.com',
-        'action': 'DescribeTasks',
-        'request_class': 'DescribeTasksRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [],
-        'response_items': 'Data',
-        'response_total': None,
-        'result_key': 'tasks',
-        'pagination_type': 'token',
-        'token_request_field': 'PageToken',
-        'token_response_field': 'PageToken',
-        'page_size_field': 'Limit',
-        'list_over_field': None,
-        'short_description': 'Gather information about Tencent Cloud VM tasks',
-        'description': 'Returns VM tasks visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching VM tasks.',
-        'return_total_doc': 'Number of tasks returned (the API reports no total count).',
-        'examples': """\
-- name: List all tasks
-  susunola.tencentcloud.vm_task_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'vod_incremental_migration_strategy_info',
-        'version_added': '0.8.0',
-        'service_package': 'tencentcloud.vod.v20240718',
-        'client_module': 'vod_client',
-        'client_class': 'VodClient',
-        'sdk_package': 'tencentcloud-sdk-python-vod',
-        'endpoint': 'vod.tencentcloudapi.com',
-        'action': 'DescribeIncrementalMigrationStrategyInfos',
-        'request_class': 'DescribeIncrementalMigrationStrategyInfosRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'VOD API filter names mapped to lists of values.',
-        },
-        'extra_params': [],
-        'response_items': 'StrategyInfoSet',
-        'response_total': 'TotalCount',
-        'result_key': 'incremental_migration_strategies',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud VOD incremental migration strategies',
-        'description': 'Returns VOD incremental migration strategies visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching VOD incremental migration strategies.',
-        'return_total_doc': 'Number of incremental migration strategies reported by the API.',
-        'examples': """\
-- name: List all incremental migration strategies
-  susunola.tencentcloud.vod_incremental_migration_strategy_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'wav_activity_info',
-        'version_added': '0.9.0',
-        'service_package': 'tencentcloud.wav.v20210129',
-        'client_module': 'wav_client',
-        'client_class': 'WavClient',
-        'sdk_package': 'tencentcloud-sdk-python-wav',
-        'endpoint': 'wav.tencentcloudapi.com',
-        'action': 'QueryActivityList',
-        'request_class': 'QueryActivityListRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [],
-        'response_items': 'PageData',
-        'response_total': None,
-        'result_key': 'activities',
-        'pagination_type': 'token',
-        'token_request_field': 'Cursor',
-        'token_response_field': 'NextCursor',
-        'page_size_field': 'Limit',
-        'list_over_field': None,
-        'short_description': 'Gather information about Tencent Cloud WAV activities',
-        'description': 'Returns WAV activities visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching WAV activities.',
-        'return_total_doc': 'Number of activities returned (the API reports no total count).',
-        'examples': """\
-- name: List all activities
-  susunola.tencentcloud.wav_activity_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'wedata_project_info',
-        'version_added': '0.8.0',
-        'service_package': 'tencentcloud.wedata.v20250806',
-        'client_module': 'wedata_client',
-        'client_class': 'WedataClient',
-        'sdk_package': 'tencentcloud-sdk-python-wedata',
-        'endpoint': 'wedata.tencentcloudapi.com',
-        'action': 'ListProjects',
-        'request_class': 'ListProjectsRequest',
-        'ids': {
-            'param': 'project_ids',
-            'field': 'ProjectIds',
-            'doc': 'Project IDs to return.',
-        },
-        'filters': None,
-        'extra_params': [],
-        'response_items': 'Data.Items',
-        'response_total': 'Data.TotalCount',
-        'result_key': 'projects',
-        'pagination_type': 'page',
-        'short_description': 'Gather information about Tencent Cloud WEDATA projects',
-        'description': 'Returns WEDATA projects visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching WEDATA projects.',
-        'return_total_doc': 'Number of projects reported by the API.',
-        'examples': """\
-- name: List all projects
-  susunola.tencentcloud.wedata_project_info:
-    region: ap-guangzhou
-
-- name: Find projects by ID
-  susunola.tencentcloud.wedata_project_info:
-    region: ap-guangzhou
-    project_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'weilingwith_element_profile_page_info',
-        'version_added': '0.8.0',
-        'service_package': 'tencentcloud.weilingwith.v20230427',
-        'client_module': 'weilingwith_client',
-        'client_class': 'WeilingwithClient',
-        'sdk_package': 'tencentcloud-sdk-python-weilingwith',
-        'endpoint': 'weilingwith.tencentcloudapi.com',
-        'action': 'DescribeElementProfilePage',
-        'request_class': 'DescribeElementProfilePageRequest',
-        'ids': {
-            'param': 'element_profile_page_ids',
-            'field': 'ParentElementIds',
-            'doc': 'Element profile page IDs to return.',
-        },
-        'filters': None,
-        'extra_params': [],
-        'response_items': 'Result.List',
-        'response_total': 'Result.TotalCount',
-        'result_key': 'element_profile_pages',
-        'pagination_type': 'page',
-        'short_description': 'Gather information about Tencent Cloud WEILINGWITH element profile pages',
-        'description': 'Returns WEILINGWITH element profile pages visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching WEILINGWITH element profile pages.',
-        'return_total_doc': 'Number of element profile pages reported by the API.',
-        'examples': """\
-- name: List all element profile pages
-  susunola.tencentcloud.weilingwith_element_profile_page_info:
-    region: ap-guangzhou
-
-- name: Find element profile pages by ID
-  susunola.tencentcloud.weilingwith_element_profile_page_info:
-    region: ap-guangzhou
-    element_profile_page_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'wss_cert_info',
-        'version_added': '0.8.0',
-        'service_package': 'tencentcloud.wss.v20180426',
-        'client_module': 'wss_client',
-        'client_class': 'WssClient',
-        'sdk_package': 'tencentcloud-sdk-python-wss',
-        'endpoint': 'wss.tencentcloudapi.com',
-        'action': 'DescribeCertList',
-        'request_class': 'DescribeCertListRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [],
-        'response_items': 'CertificateSet',
-        'response_total': 'TotalCount',
-        'result_key': 'certs',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud WSS certs',
-        'description': 'Returns WSS certs visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching WSS certs.',
-        'return_total_doc': 'Number of certs reported by the API.',
-        'examples': """\
-- name: List all certs
-  susunola.tencentcloud.wss_cert_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'yinsuda_ktv_robot_info',
-        'version_added': '0.8.0',
-        'service_package': 'tencentcloud.yinsuda.v20220527',
-        'client_module': 'yinsuda_client',
-        'client_class': 'YinsudaClient',
-        'sdk_package': 'tencentcloud-sdk-python-yinsuda',
-        'endpoint': 'yinsuda.tencentcloudapi.com',
-        'action': 'DescribeKTVRobots',
-        'request_class': 'DescribeKTVRobotsRequest',
-        'ids': {
-            'param': 'ktv_robot_ids',
-            'field': 'RobotIds',
-            'doc': 'Ktv robot IDs to return.',
-        },
-        'filters': None,
-        'extra_params': [],
-        'response_items': 'KTVRobotInfoSet',
-        'response_total': 'TotalCount',
-        'result_key': 'ktv_robots',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud YINSUDA ktv robots',
-        'description': 'Returns YINSUDA ktv robots visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching YINSUDA ktv robots.',
-        'return_total_doc': 'Number of ktv robots reported by the API.',
-        'examples': """\
-- name: List all ktv robots
-  susunola.tencentcloud.yinsuda_ktv_robot_info:
-    region: ap-guangzhou
-
-- name: Find ktv robots by ID
-  susunola.tencentcloud.yinsuda_ktv_robot_info:
-    region: ap-guangzhou
-    ktv_robot_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'yunjing_account_statistic_info',
-        'version_added': '0.8.0',
-        'service_package': 'tencentcloud.yunjing.v20180228',
-        'client_module': 'yunjing_client',
-        'client_class': 'YunjingClient',
-        'sdk_package': 'tencentcloud-sdk-python-yunjing',
-        'endpoint': 'yunjing.tencentcloudapi.com',
-        'action': 'DescribeAccountStatistics',
-        'request_class': 'DescribeAccountStatisticsRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'YUNJING API filter names mapped to lists of values.',
-        },
-        'extra_params': [],
-        'response_items': 'AccountStatistics',
-        'response_total': 'TotalCount',
-        'result_key': 'account_statistics',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud YUNJING account statistics',
-        'description': 'Returns YUNJING account statistics visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching YUNJING account statistics.',
-        'return_total_doc': 'Number of account statistics reported by the API.',
-        'examples': """\
-- name: List all account statistics
-  susunola.tencentcloud.yunjing_account_statistic_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'api_gateway_api_key_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.apigateway.v20180808',
-        'client_module': 'apigateway_client',
-        'client_class': 'ApigatewayClient',
-        'sdk_package': 'tencentcloud-sdk-python-apigateway',
-        'endpoint': 'apigateway.tencentcloudapi.com',
-        'action': 'DescribeApiKeysStatus',
-        'request_class': 'DescribeApiKeysStatusRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'APIGATEWAY API filter names mapped to lists of values.',
-        },
-        'extra_params': [],
-        'response_items': 'Result.ApiKeySet',
-        'response_total': 'Result.TotalCount',
-        'result_key': 'api_keys',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud APIGATEWAY api keys',
-        'description': 'Returns APIGATEWAY api keys visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching APIGATEWAY api keys.',
-        'return_total_doc': 'Number of api keys reported by the API.',
-        'examples': """\
-- name: List all api keys
-  susunola.tencentcloud.api_gateway_api_key_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'api_gateway_service_release_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.apigateway.v20180808',
-        'client_module': 'apigateway_client',
-        'client_class': 'ApigatewayClient',
-        'sdk_package': 'tencentcloud-sdk-python-apigateway',
-        'endpoint': 'apigateway.tencentcloudapi.com',
-        'action': 'DescribeServiceEnvironmentReleaseHistory',
-        'request_class': 'DescribeServiceEnvironmentReleaseHistoryRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'service_id',
-                'field': 'ServiceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Service id. API field C(ServiceId).',
-            },
-            {
-                'name': 'environment_name',
-                'field': 'EnvironmentName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Environment name. API field C(EnvironmentName).',
-            },
-        ],
-        'response_items': 'Result.VersionList',
-        'response_total': 'Result.TotalCount',
-        'result_key': 'service_environment_release_histories',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud APIGATEWAY service environment release histories',
-        'description': 'Returns APIGATEWAY service environment release histories visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching APIGATEWAY service environment release histories.',
-        'return_total_doc': 'Number of service environment release histories reported by the API.',
-        'examples': """\
-- name: List all service environment release histories
-  susunola.tencentcloud.api_gateway_service_release_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'api_gateway_usage_plan_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.apigateway.v20180808',
-        'client_module': 'apigateway_client',
-        'client_class': 'ApigatewayClient',
-        'sdk_package': 'tencentcloud-sdk-python-apigateway',
-        'endpoint': 'apigateway.tencentcloudapi.com',
-        'action': 'DescribeUsagePlansStatus',
-        'request_class': 'DescribeUsagePlansStatusRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'APIGATEWAY API filter names mapped to lists of values.',
-        },
-        'extra_params': [],
-        'response_items': 'Result.UsagePlanStatusSet',
-        'response_total': 'Result.TotalCount',
-        'result_key': 'usage_plans',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud APIGATEWAY usage plans',
-        'description': 'Returns APIGATEWAY usage plans visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching APIGATEWAY usage plans.',
-        'return_total_doc': 'Number of usage plans reported by the API.',
-        'examples': """\
-- name: List all usage plans
-  susunola.tencentcloud.api_gateway_usage_plan_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'api_gateway_usage_plan_binding_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.apigateway.v20180808',
-        'client_module': 'apigateway_client',
-        'client_class': 'ApigatewayClient',
-        'sdk_package': 'tencentcloud-sdk-python-apigateway',
-        'endpoint': 'apigateway.tencentcloudapi.com',
-        'action': 'DescribeServiceUsagePlan',
-        'request_class': 'DescribeServiceUsagePlanRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'service_id',
-                'field': 'ServiceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Service id. API field C(ServiceId).',
-            },
-        ],
-        'response_items': 'Result.ServiceUsagePlanList',
-        'response_total': 'Result.TotalCount',
-        'result_key': 'service_usage_plans',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud APIGATEWAY service usage plans',
-        'description': 'Returns APIGATEWAY service usage plans visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching APIGATEWAY service usage plans.',
-        'return_total_doc': 'Number of service usage plans reported by the API.',
-        'examples': """\
-- name: List all service usage plans
-  susunola.tencentcloud.api_gateway_usage_plan_binding_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'api_gateway_usage_plan_key_binding_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.apigateway.v20180808',
-        'client_module': 'apigateway_client',
-        'client_class': 'ApigatewayClient',
-        'sdk_package': 'tencentcloud-sdk-python-apigateway',
-        'endpoint': 'apigateway.tencentcloudapi.com',
-        'action': 'DescribeUsagePlanSecretIds',
-        'request_class': 'DescribeUsagePlanSecretIdsRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'usage_plan_id',
-                'field': 'UsagePlanId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Usage plan id. API field C(UsagePlanId).',
-            },
-        ],
-        'response_items': 'Result.AccessKeyList',
-        'response_total': 'Result.TotalCount',
-        'result_key': 'usage_plan_secret_ids',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud APIGATEWAY usage plan secret ids',
-        'description': 'Returns APIGATEWAY usage plan secret ids visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching APIGATEWAY usage plan secret ids.',
-        'return_total_doc': 'Number of usage plan secret ids reported by the API.',
-        'examples': """\
-- name: List all usage plan secret ids
-  susunola.tencentcloud.api_gateway_usage_plan_key_binding_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'apigateway_api_app_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.apigateway.v20180808',
-        'client_module': 'apigateway_client',
-        'client_class': 'ApigatewayClient',
-        'sdk_package': 'tencentcloud-sdk-python-apigateway',
-        'endpoint': 'apigateway.tencentcloudapi.com',
-        'action': 'DescribeApiAppsStatus',
-        'request_class': 'DescribeApiAppsStatusRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'APIGATEWAY API filter names mapped to lists of values.',
-        },
-        'extra_params': [],
-        'response_items': 'Result.ApiAppSet',
-        'response_total': 'Result.TotalCount',
-        'result_key': 'api_apps',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud APIGATEWAY api apps',
-        'description': 'Returns APIGATEWAY api apps visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching APIGATEWAY api apps.',
-        'return_total_doc': 'Number of api apps reported by the API.',
-        'examples': """\
-- name: List all api apps
-  susunola.tencentcloud.apigateway_api_app_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'apigateway_ip_strategy_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.apigateway.v20180808',
-        'client_module': 'apigateway_client',
-        'client_class': 'ApigatewayClient',
-        'sdk_package': 'tencentcloud-sdk-python-apigateway',
-        'endpoint': 'apigateway.tencentcloudapi.com',
-        'action': 'DescribeIPStrategysStatus',
-        'request_class': 'DescribeIPStrategysStatusRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'APIGATEWAY API filter names mapped to lists of values.',
-        },
-        'extra_params': [
-            {
-                'name': 'service_id',
-                'field': 'ServiceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Service id. API field C(ServiceId).',
-            },
-        ],
-        'response_items': 'Result.StrategySet',
-        'response_total': 'Result.TotalCount',
-        'result_key': 'ip_strategies',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud APIGATEWAY ip strategies',
-        'description': 'Returns APIGATEWAY ip strategies visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching APIGATEWAY ip strategies.',
-        'return_total_doc': 'Number of ip strategies reported by the API.',
-        'examples': """\
-- name: List all ip strategies
-  susunola.tencentcloud.apigateway_ip_strategy_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'apigateway_plugin_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.apigateway.v20180808',
-        'client_module': 'apigateway_client',
-        'client_class': 'ApigatewayClient',
-        'sdk_package': 'tencentcloud-sdk-python-apigateway',
-        'endpoint': 'apigateway.tencentcloudapi.com',
-        'action': 'DescribePlugins',
-        'request_class': 'DescribePluginsRequest',
-        'ids': {
-            'param': 'plugin_ids',
-            'field': 'PluginIds',
-            'doc': 'Plugin IDs to return. Mutually exclusive with O(filters).',
-        },
-        'filters': {
-            'doc': 'APIGATEWAY API filter names mapped to lists of values.',
-        },
-        'extra_params': [
-            {
-                'name': 'plugin_name',
-                'field': 'PluginName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Plugin name. API field C(PluginName).',
-            },
-            {
-                'name': 'plugin_type',
-                'field': 'PluginType',
-                'type': 'str',
-                'required': False,
-                'doc': 'Plugin type. API field C(PluginType).',
-            },
-        ],
-        'response_items': 'Result.PluginSet',
-        'response_total': 'Result.TotalCount',
-        'result_key': 'plugins',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud APIGATEWAY plugins',
-        'description': 'Returns APIGATEWAY plugins visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching APIGATEWAY plugins.',
-        'return_total_doc': 'Number of plugins reported by the API.',
-        'examples': """\
-- name: List all plugins
-  susunola.tencentcloud.apigateway_plugin_info:
-    region: ap-guangzhou
-
-- name: Find plugins by ID
-  susunola.tencentcloud.apigateway_plugin_info:
-    region: ap-guangzhou
-    plugin_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'as_scaling_policy_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.autoscaling.v20180419',
-        'client_module': 'autoscaling_client',
-        'client_class': 'AutoscalingClient',
-        'sdk_package': 'tencentcloud-sdk-python-autoscaling',
-        'endpoint': 'as.tencentcloudapi.com',
-        'action': 'DescribeScalingPolicies',
-        'request_class': 'DescribeScalingPoliciesRequest',
-        'ids': {
-            'param': 'scaling_policy_ids',
-            'field': 'AutoScalingPolicyIds',
-            'doc': 'Scaling policy IDs to return. Mutually exclusive with O(filters).',
-        },
-        'filters': {
-            'doc': 'AUTOSCALING API filter names mapped to lists of values.',
-        },
-        'extra_params': [],
-        'response_items': 'ScalingPolicySet',
-        'response_total': 'TotalCount',
-        'result_key': 'scaling_policies',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud AUTOSCALING scaling policies',
-        'description': 'Returns AUTOSCALING scaling policies visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching AUTOSCALING scaling policies.',
-        'return_total_doc': 'Number of scaling policies reported by the API.',
-        'examples': """\
-- name: List all scaling policies
-  susunola.tencentcloud.as_scaling_policy_info:
-    region: ap-guangzhou
-
-- name: Find scaling policies by ID
-  susunola.tencentcloud.as_scaling_policy_info:
-    region: ap-guangzhou
-    scaling_policy_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'as_scheduled_action_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.autoscaling.v20180419',
-        'client_module': 'autoscaling_client',
-        'client_class': 'AutoscalingClient',
-        'sdk_package': 'tencentcloud-sdk-python-autoscaling',
-        'endpoint': 'as.tencentcloudapi.com',
-        'action': 'DescribeScheduledActions',
-        'request_class': 'DescribeScheduledActionsRequest',
-        'ids': {
-            'param': 'scheduled_action_ids',
-            'field': 'ScheduledActionIds',
-            'doc': 'Scheduled action IDs to return. Mutually exclusive with O(filters).',
-        },
-        'filters': {
-            'doc': 'AUTOSCALING API filter names mapped to lists of values.',
-        },
-        'extra_params': [],
-        'response_items': 'ScheduledActionSet',
-        'response_total': 'TotalCount',
-        'result_key': 'scheduled_actions',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud AUTOSCALING scheduled actions',
-        'description': 'Returns AUTOSCALING scheduled actions visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching AUTOSCALING scheduled actions.',
-        'return_total_doc': 'Number of scheduled actions reported by the API.',
-        'examples': """\
-- name: List all scheduled actions
-  susunola.tencentcloud.as_scheduled_action_info:
-    region: ap-guangzhou
-
-- name: Find scheduled actions by ID
-  susunola.tencentcloud.as_scheduled_action_info:
-    region: ap-guangzhou
-    scheduled_action_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'cbs_disk_backup_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cbs.v20170312',
-        'client_module': 'cbs_client',
-        'client_class': 'CbsClient',
-        'sdk_package': 'tencentcloud-sdk-python-cbs',
-        'endpoint': 'cbs.tencentcloudapi.com',
-        'action': 'DescribeDiskBackups',
-        'request_class': 'DescribeDiskBackupsRequest',
-        'ids': {
-            'param': 'disk_backup_ids',
-            'field': 'DiskBackupIds',
-            'doc': 'Disk backup IDs to return. Mutually exclusive with O(filters).',
-        },
-        'filters': {
-            'doc': 'CBS API filter names mapped to lists of values.',
-        },
-        'extra_params': [
-            {
-                'name': 'order',
-                'field': 'Order',
-                'type': 'str',
-                'required': False,
-                'doc': 'Order. API field C(Order).',
-            },
-            {
-                'name': 'order_field',
-                'field': 'OrderField',
-                'type': 'str',
-                'required': False,
-                'doc': 'Order field. API field C(OrderField).',
-            },
-        ],
-        'response_items': 'DiskBackupSet',
-        'response_total': 'TotalCount',
-        'result_key': 'disk_backups',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud CBS disk backups',
-        'description': 'Returns CBS disk backups visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CBS disk backups.',
-        'return_total_doc': 'Number of disk backups reported by the API.',
-        'examples': """\
-- name: List all disk backups
-  susunola.tencentcloud.cbs_disk_backup_info:
-    region: ap-guangzhou
-
-- name: Find disk backups by ID
-  susunola.tencentcloud.cbs_disk_backup_info:
-    region: ap-guangzhou
-    disk_backup_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'cbs_snapshot_share_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cbs.v20170312',
-        'client_module': 'cbs_client',
-        'client_class': 'CbsClient',
-        'sdk_package': 'tencentcloud-sdk-python-cbs',
-        'endpoint': 'cbs.tencentcloudapi.com',
-        'action': 'DescribeSnapshotSharePermission',
-        'request_class': 'DescribeSnapshotSharePermissionRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'snapshot_id',
-                'field': 'SnapshotId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Snapshot id. API field C(SnapshotId).',
-            },
-        ],
-        'response_items': 'SharePermissionSet',
-        'response_total': None,
-        'result_key': 'snapshot_share_permissions',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud CBS snapshot share permissions',
-        'description': 'Returns CBS snapshot share permissions visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CBS snapshot share permissions.',
-        'return_total_doc': 'Number of snapshot share permissions returned (the API reports no total count).',
-        'examples': """\
-- name: List all snapshot share permissions
-  susunola.tencentcloud.cbs_snapshot_share_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'cdb_audit_rule_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cdb.v20170320',
-        'client_module': 'cdb_client',
-        'client_class': 'CdbClient',
-        'sdk_package': 'tencentcloud-sdk-python-cdb',
-        'endpoint': 'cdb.tencentcloudapi.com',
-        'action': 'DescribeAuditRules',
-        'request_class': 'DescribeAuditRulesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'rule_id',
-                'field': 'RuleId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Rule id. API field C(RuleId).',
-            },
-            {
-                'name': 'rule_name',
-                'field': 'RuleName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Rule name. API field C(RuleName).',
-            },
-        ],
-        'response_items': 'Items',
-        'response_total': 'TotalCount',
-        'result_key': 'audit_rules',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud CDB audit rules',
-        'description': 'Returns CDB audit rules visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CDB audit rules.',
-        'return_total_doc': 'Number of audit rules reported by the API.',
-        'examples': """\
-- name: List all audit rules
-  susunola.tencentcloud.cdb_audit_rule_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'cdb_audit_rule_template_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cdb.v20170320',
-        'client_module': 'cdb_client',
-        'client_class': 'CdbClient',
-        'sdk_package': 'tencentcloud-sdk-python-cdb',
-        'endpoint': 'cdb.tencentcloudapi.com',
-        'action': 'DescribeAuditRuleTemplates',
-        'request_class': 'DescribeAuditRuleTemplatesRequest',
-        'ids': {
-            'param': 'audit_rule_template_ids',
-            'field': 'RuleTemplateIds',
-            'doc': 'Audit rule template IDs to return.',
-        },
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'rule_template_names',
-                'field': 'RuleTemplateNames',
-                'type': 'list',
-                'required': False,
-                'doc': 'Rule template names. API field C(RuleTemplateNames).',
-                'elements': 'str',
-            },
-            {
-                'name': 'alarm_level',
-                'field': 'AlarmLevel',
-                'type': 'int',
-                'required': False,
-                'doc': 'Alarm level. API field C(AlarmLevel).',
-            },
-            {
-                'name': 'alarm_policy',
-                'field': 'AlarmPolicy',
-                'type': 'int',
-                'required': False,
-                'doc': 'Alarm policy. API field C(AlarmPolicy).',
-            },
-        ],
-        'response_items': 'Items',
-        'response_total': 'TotalCount',
-        'result_key': 'audit_rule_templates',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud CDB audit rule templates',
-        'description': 'Returns CDB audit rule templates visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CDB audit rule templates.',
-        'return_total_doc': 'Number of audit rule templates reported by the API.',
-        'examples': """\
-- name: List all audit rule templates
-  susunola.tencentcloud.cdb_audit_rule_template_info:
-    region: ap-guangzhou
-
-- name: Find audit rule templates by ID
-  susunola.tencentcloud.cdb_audit_rule_template_info:
-    region: ap-guangzhou
-    audit_rule_template_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'cdn_cls_log_topic_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cdn.v20180606',
-        'client_module': 'cdn_client',
-        'client_class': 'CdnClient',
-        'sdk_package': 'tencentcloud-sdk-python-cdn',
-        'endpoint': 'cdn.tencentcloudapi.com',
-        'action': 'ListClsLogTopics',
-        'request_class': 'ListClsLogTopicsRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'channel',
-                'field': 'Channel',
-                'type': 'str',
-                'required': False,
-                'doc': 'Channel. API field C(Channel).',
-            },
-        ],
-        'response_items': 'Topics',
-        'response_total': None,
-        'result_key': 'cls_log_topics',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud CDN cls log topics',
-        'description': 'Returns CDN cls log topics visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CDN cls log topics.',
-        'return_total_doc': 'Number of cls log topics returned (the API reports no total count).',
-        'examples': """\
-- name: List all cls log topics
-  susunola.tencentcloud.cdn_cls_log_topic_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'cdwch_instance_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cdwch.v20200915',
-        'client_module': 'cdwch_client',
-        'client_class': 'CdwchClient',
-        'sdk_package': 'tencentcloud-sdk-python-cdwch',
-        'endpoint': 'cdwch.tencentcloudapi.com',
-        'action': 'DescribeCNInstances',
-        'request_class': 'DescribeCNInstancesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'search_instance_id',
-                'field': 'SearchInstanceID',
-                'type': 'str',
-                'required': False,
-                'doc': 'Search instance id. API field C(SearchInstanceID).',
-            },
-            {
-                'name': 'search_instance_name',
-                'field': 'SearchInstanceName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Search instance name. API field C(SearchInstanceName).',
-            },
-            {
-                'name': 'instance_type',
-                'field': 'InstanceType',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance type. API field C(InstanceType).',
-            },
-            {
-                'name': 'components',
-                'field': 'Components',
-                'type': 'list',
-                'required': False,
-                'doc': 'Components. API field C(Components).',
-                'elements': 'str',
-            },
-        ],
-        'response_items': 'InstancesList',
-        'response_total': 'TotalCount',
-        'result_key': 'cn_instances',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud CDWCH cn instances',
-        'description': 'Returns CDWCH cn instances visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CDWCH cn instances.',
-        'return_total_doc': 'Number of cn instances reported by the API.',
-        'examples': """\
-- name: List all cn instances
-  susunola.tencentcloud.cdwch_instance_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'cdwdoris_cooldown_policy_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cdwdoris.v20211228',
-        'client_module': 'cdwdoris_client',
-        'client_class': 'CdwdorisClient',
-        'sdk_package': 'tencentcloud-sdk-python-cdwdoris',
-        'endpoint': 'cdwdoris.tencentcloudapi.com',
-        'action': 'DescribeCoolDownPolicies',
-        'request_class': 'DescribeCoolDownPoliciesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-        ],
-        'response_items': 'List',
-        'response_total': None,
-        'result_key': 'cool_down_policies',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud CDWDORIS cool down policies',
-        'description': 'Returns CDWDORIS cool down policies visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CDWDORIS cool down policies.',
-        'return_total_doc': 'Number of cool down policies returned (the API reports no total count).',
-        'examples': """\
-- name: List all cool down policies
-  susunola.tencentcloud.cdwdoris_cooldown_policy_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'cdwdoris_instance_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cdwdoris.v20211228',
-        'client_module': 'cdwdoris_client',
-        'client_class': 'CdwdorisClient',
-        'sdk_package': 'tencentcloud-sdk-python-cdwdoris',
-        'endpoint': 'cdwdoris.tencentcloudapi.com',
-        'action': 'DescribeInstances',
-        'request_class': 'DescribeInstancesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'search_instance_id',
-                'field': 'SearchInstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Search instance id. API field C(SearchInstanceId).',
-            },
-            {
-                'name': 'search_instance_name',
-                'field': 'SearchInstanceName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Search instance name. API field C(SearchInstanceName).',
-            },
-            {
-                'name': 'instance_type',
-                'field': 'InstanceType',
-                'type': 'int',
-                'required': False,
-                'doc': 'Instance type. API field C(InstanceType).',
-            },
-        ],
-        'response_items': 'InstancesList',
-        'response_total': 'TotalCount',
-        'result_key': 'instances',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud CDWDORIS instances',
-        'description': 'Returns CDWDORIS instances visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CDWDORIS instances.',
-        'return_total_doc': 'Number of instances reported by the API.',
-        'examples': """\
-- name: List all instances
-  susunola.tencentcloud.cdwdoris_instance_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'cdwdoris_user_workload_group_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cdwdoris.v20211228',
-        'client_module': 'cdwdoris_client',
-        'client_class': 'CdwdorisClient',
-        'sdk_package': 'tencentcloud-sdk-python-cdwdoris',
-        'endpoint': 'cdwdoris.tencentcloudapi.com',
-        'action': 'DescribeUserBindWorkloadGroup',
-        'request_class': 'DescribeUserBindWorkloadGroupRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-        ],
-        'response_items': 'UserBindInfos',
-        'response_total': None,
-        'result_key': 'user_bind_workload_groups',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud CDWDORIS user bind workload groups',
-        'description': 'Returns CDWDORIS user bind workload groups visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CDWDORIS user bind workload groups.',
-        'return_total_doc': 'Number of user bind workload groups returned (the API reports no total count).',
-        'examples': """\
-- name: List all user bind workload groups
-  susunola.tencentcloud.cdwdoris_user_workload_group_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'cdwdoris_workload_group_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cdwdoris.v20211228',
-        'client_module': 'cdwdoris_client',
-        'client_class': 'CdwdorisClient',
-        'sdk_package': 'tencentcloud-sdk-python-cdwdoris',
-        'endpoint': 'cdwdoris.tencentcloudapi.com',
-        'action': 'DescribeWorkloadGroup',
-        'request_class': 'DescribeWorkloadGroupRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-        ],
-        'response_items': 'WorkloadGroups',
-        'response_total': None,
-        'result_key': 'workload_groups',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud CDWDORIS workload groups',
-        'description': 'Returns CDWDORIS workload groups visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CDWDORIS workload groups.',
-        'return_total_doc': 'Number of workload groups returned (the API reports no total count).',
-        'examples': """\
-- name: List all workload groups
-  susunola.tencentcloud.cdwdoris_workload_group_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'cdwpg_hba_config_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cdwpg.v20201230',
-        'client_module': 'cdwpg_client',
-        'client_class': 'CdwpgClient',
-        'sdk_package': 'tencentcloud-sdk-python-cdwpg',
-        'endpoint': 'cdwpg.tencentcloudapi.com',
-        'action': 'DescribeUserHbaConfig',
-        'request_class': 'DescribeUserHbaConfigRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-        ],
-        'response_items': 'HbaConfigs',
-        'response_total': 'TotalCount',
-        'result_key': 'user_hba_configs',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud CDWPG user hba configs',
-        'description': 'Returns CDWPG user hba configs visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CDWPG user hba configs.',
-        'return_total_doc': 'Number of user hba configs reported by the API.',
-        'examples': """\
-- name: List all user hba configs
-  susunola.tencentcloud.cdwpg_hba_config_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'cdwpg_instance_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cdwpg.v20201230',
-        'client_module': 'cdwpg_client',
-        'client_class': 'CdwpgClient',
-        'sdk_package': 'tencentcloud-sdk-python-cdwpg',
-        'endpoint': 'cdwpg.tencentcloudapi.com',
-        'action': 'DescribeInstances',
-        'request_class': 'DescribeInstancesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'search_instance_id',
-                'field': 'SearchInstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Search instance id. API field C(SearchInstanceId).',
-            },
-            {
-                'name': 'search_instance_name',
-                'field': 'SearchInstanceName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Search instance name. API field C(SearchInstanceName).',
-            },
-        ],
-        'response_items': 'InstancesList',
-        'response_total': 'TotalCount',
-        'result_key': 'instances',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud CDWPG instances',
-        'description': 'Returns CDWPG instances visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CDWPG instances.',
-        'return_total_doc': 'Number of instances reported by the API.',
-        'examples': """\
-- name: List all instances
-  susunola.tencentcloud.cdwpg_instance_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'cfw_address_template_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cfw.v20190904',
-        'client_module': 'cfw_client',
-        'client_class': 'CfwClient',
-        'sdk_package': 'tencentcloud-sdk-python-cfw',
-        'endpoint': 'cfw.tencentcloudapi.com',
-        'action': 'DescribeAddressTemplateList',
-        'request_class': 'DescribeAddressTemplateListRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'by',
-                'field': 'By',
-                'type': 'str',
-                'required': False,
-                'doc': 'By. API field C(By).',
-            },
-            {
-                'name': 'order',
-                'field': 'Order',
-                'type': 'str',
-                'required': False,
-                'doc': 'Order. API field C(Order).',
-            },
-            {
-                'name': 'search_value',
-                'field': 'SearchValue',
-                'type': 'str',
-                'required': False,
-                'doc': 'Search value. API field C(SearchValue).',
-            },
-            {
-                'name': 'uuid',
-                'field': 'Uuid',
-                'type': 'str',
-                'required': False,
-                'doc': 'Uuid. API field C(Uuid).',
-            },
-            {
-                'name': 'template_type',
-                'field': 'TemplateType',
-                'type': 'str',
-                'required': False,
-                'doc': 'Template type. API field C(TemplateType).',
-            },
-            {
-                'name': 'template_id',
-                'field': 'TemplateId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Template id. API field C(TemplateId).',
-            },
-        ],
-        'response_items': 'Data',
-        'response_total': 'Total',
-        'result_key': 'address_templates',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud CFW address templates',
-        'description': 'Returns CFW address templates visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CFW address templates.',
-        'return_total_doc': 'Number of address templates reported by the API.',
-        'examples': """\
-- name: List all address templates
-  susunola.tencentcloud.cfw_address_template_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'cfw_nat_dnat_rule_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cfw.v20190904',
-        'client_module': 'cfw_client',
-        'client_class': 'CfwClient',
-        'sdk_package': 'tencentcloud-sdk-python-cfw',
-        'endpoint': 'cfw.tencentcloudapi.com',
-        'action': 'DescribeNatFwDnatRule',
-        'request_class': 'DescribeNatFwDnatRuleRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'CFW API filter names mapped to lists of values.',
-            'model': 'CommonFilter',
-        },
-        'extra_params': [
-            {
-                'name': 'index',
-                'field': 'Index',
-                'type': 'str',
-                'required': False,
-                'doc': 'Index. API field C(Index).',
-            },
-            {
-                'name': 'start_time',
-                'field': 'StartTime',
-                'type': 'str',
-                'required': False,
-                'doc': 'Start time. API field C(StartTime).',
-            },
-            {
-                'name': 'end_time',
-                'field': 'EndTime',
-                'type': 'str',
-                'required': False,
-                'doc': 'End time. API field C(EndTime).',
-            },
-            {
-                'name': 'order',
-                'field': 'Order',
-                'type': 'str',
-                'required': False,
-                'doc': 'Order. API field C(Order).',
-            },
-            {
-                'name': 'by',
-                'field': 'By',
-                'type': 'str',
-                'required': False,
-                'doc': 'By. API field C(By).',
-            },
-        ],
-        'response_items': 'Data',
-        'response_total': 'Total',
-        'result_key': 'nat_fw_dnat_rules',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud CFW nat fw dnat rules',
-        'description': 'Returns CFW nat fw dnat rules visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CFW nat fw dnat rules.',
-        'return_total_doc': 'Number of nat fw dnat rules reported by the API.',
-        'examples': """\
-- name: List all nat fw dnat rules
-  susunola.tencentcloud.cfw_nat_dnat_rule_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'chdfs_access_group_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.chdfs.v20201112',
-        'client_module': 'chdfs_client',
-        'client_class': 'ChdfsClient',
-        'sdk_package': 'tencentcloud-sdk-python-chdfs',
-        'endpoint': 'chdfs.tencentcloudapi.com',
-        'action': 'DescribeAccessGroups',
-        'request_class': 'DescribeAccessGroupsRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'vpc_id',
-                'field': 'VpcId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Vpc id. API field C(VpcId).',
-            },
-            {
-                'name': 'owner_uin',
-                'field': 'OwnerUin',
-                'type': 'int',
-                'required': False,
-                'doc': 'Owner uin. API field C(OwnerUin).',
-            },
-        ],
-        'response_items': 'AccessGroups',
-        'response_total': None,
-        'result_key': 'access_groups',
-        'pagination_type': 'token',
-        'token_request_field': 'AccessGroupIdMarker',
-        'token_response_field': 'NextAccessGroupIdMarker',
-        'page_size_field': None,
-        'list_over_field': 'IsOver',
-        'short_description': 'Gather information about Tencent Cloud CHDFS access groups',
-        'description': 'Returns CHDFS access groups visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CHDFS access groups.',
-        'return_total_doc': 'Number of access groups returned (the API reports no total count).',
-        'examples': """\
-- name: List all access groups
-  susunola.tencentcloud.chdfs_access_group_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'chdfs_access_rules_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.chdfs.v20201112',
-        'client_module': 'chdfs_client',
-        'client_class': 'ChdfsClient',
-        'sdk_package': 'tencentcloud-sdk-python-chdfs',
-        'endpoint': 'chdfs.tencentcloudapi.com',
-        'action': 'DescribeAccessRules',
-        'request_class': 'DescribeAccessRulesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'access_group_id',
-                'field': 'AccessGroupId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Access group id. API field C(AccessGroupId).',
-            },
-        ],
-        'response_items': 'AccessRules',
-        'response_total': None,
-        'result_key': 'access_rules',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud CHDFS access rules',
-        'description': 'Returns CHDFS access rules visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CHDFS access rules.',
-        'return_total_doc': 'Number of access rules returned (the API reports no total count).',
-        'examples': """\
-- name: List all access rules
-  susunola.tencentcloud.chdfs_access_rules_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'chdfs_mount_point_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.chdfs.v20201112',
-        'client_module': 'chdfs_client',
-        'client_class': 'ChdfsClient',
-        'sdk_package': 'tencentcloud-sdk-python-chdfs',
-        'endpoint': 'chdfs.tencentcloudapi.com',
-        'action': 'DescribeMountPoints',
-        'request_class': 'DescribeMountPointsRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'file_system_id',
-                'field': 'FileSystemId',
-                'type': 'str',
-                'required': False,
-                'doc': 'File system id. API field C(FileSystemId).',
-            },
-            {
-                'name': 'access_group_id',
-                'field': 'AccessGroupId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Access group id. API field C(AccessGroupId).',
-            },
-            {
-                'name': 'owner_uin',
-                'field': 'OwnerUin',
-                'type': 'int',
-                'required': False,
-                'doc': 'Owner uin. API field C(OwnerUin).',
-            },
-        ],
-        'response_items': 'MountPoints',
-        'response_total': None,
-        'result_key': 'mount_points',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud CHDFS mount points',
-        'description': 'Returns CHDFS mount points visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CHDFS mount points.',
-        'return_total_doc': 'Number of mount points returned (the API reports no total count).',
-        'examples': """\
-- name: List all mount points
-  susunola.tencentcloud.chdfs_mount_point_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'ckafka_acl_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.ckafka.v20190819',
-        'client_module': 'ckafka_client',
-        'client_class': 'CkafkaClient',
-        'sdk_package': 'tencentcloud-sdk-python-ckafka',
-        'endpoint': 'ckafka.tencentcloudapi.com',
-        'action': 'DescribeACL',
-        'request_class': 'DescribeACLRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-            {
-                'name': 'resource_type',
-                'field': 'ResourceType',
-                'type': 'int',
-                'required': False,
-                'doc': 'Resource type. API field C(ResourceType).',
-            },
-            {
-                'name': 'resource_name',
-                'field': 'ResourceName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Resource name. API field C(ResourceName).',
-            },
-        ],
-        'response_items': 'Result.AclList',
-        'response_total': 'Result.TotalCount',
-        'result_key': 'acls',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud CKAFKA acls',
-        'description': 'Returns CKAFKA acls visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CKAFKA acls.',
-        'return_total_doc': 'Number of acls reported by the API.',
-        'examples': """\
-- name: List all acls
-  susunola.tencentcloud.ckafka_acl_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'ckafka_acl_rule_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.ckafka.v20190819',
-        'client_module': 'ckafka_client',
-        'client_class': 'CkafkaClient',
-        'sdk_package': 'tencentcloud-sdk-python-ckafka',
-        'endpoint': 'ckafka.tencentcloudapi.com',
-        'action': 'DescribeAclRule',
-        'request_class': 'DescribeAclRuleRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-            {
-                'name': 'rule_name',
-                'field': 'RuleName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Rule name. API field C(RuleName).',
-            },
-            {
-                'name': 'pattern_type',
-                'field': 'PatternType',
-                'type': 'str',
-                'required': False,
-                'doc': 'Pattern type. API field C(PatternType).',
-            },
-            {
-                'name': 'is_simplified',
-                'field': 'IsSimplified',
-                'type': 'bool',
-                'required': False,
-                'doc': 'Is simplified. API field C(IsSimplified).',
-            },
-        ],
-        'response_items': 'Result.AclRuleList',
-        'response_total': 'Result.TotalCount',
-        'result_key': 'acl_rules',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud CKAFKA acl rules',
-        'description': 'Returns CKAFKA acl rules visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CKAFKA acl rules.',
-        'return_total_doc': 'Number of acl rules reported by the API.',
-        'examples': """\
-- name: List all acl rules
-  susunola.tencentcloud.ckafka_acl_rule_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'ckafka_datahub_connection_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.ckafka.v20190819',
-        'client_module': 'ckafka_client',
-        'client_class': 'CkafkaClient',
-        'sdk_package': 'tencentcloud-sdk-python-ckafka',
-        'endpoint': 'ckafka.tencentcloudapi.com',
-        'action': 'DescribeConnectResources',
-        'request_class': 'DescribeConnectResourcesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'type',
-                'field': 'Type',
-                'type': 'str',
-                'required': False,
-                'doc': 'Type. API field C(Type).',
-            },
-            {
-                'name': 'search_word',
-                'field': 'SearchWord',
-                'type': 'str',
-                'required': False,
-                'doc': 'Search word. API field C(SearchWord).',
-            },
-            {
-                'name': 'resource_region',
-                'field': 'ResourceRegion',
-                'type': 'str',
-                'required': False,
-                'doc': 'Resource region. API field C(ResourceRegion).',
-            },
-        ],
-        'response_items': 'Result.ConnectResourceList',
-        'response_total': 'Result.TotalCount',
-        'result_key': 'datahub_connections',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud CKAFKA datahub connections',
-        'description': 'Returns CKAFKA datahub connections visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CKAFKA datahub connections.',
-        'return_total_doc': 'Number of datahub connections reported by the API.',
-        'examples': """\
-- name: List all datahub connections
-  susunola.tencentcloud.ckafka_datahub_connection_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'ckafka_datahub_task_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.ckafka.v20190819',
-        'client_module': 'ckafka_client',
-        'client_class': 'CkafkaClient',
-        'sdk_package': 'tencentcloud-sdk-python-ckafka',
-        'endpoint': 'ckafka.tencentcloudapi.com',
-        'action': 'DescribeDatahubTasks',
-        'request_class': 'DescribeDatahubTasksRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'search_word',
-                'field': 'SearchWord',
-                'type': 'str',
-                'required': False,
-                'doc': 'Search word. API field C(SearchWord).',
-            },
-            {
-                'name': 'target_type',
-                'field': 'TargetType',
-                'type': 'str',
-                'required': False,
-                'doc': 'Target type. API field C(TargetType).',
-            },
-            {
-                'name': 'task_type',
-                'field': 'TaskType',
-                'type': 'str',
-                'required': False,
-                'doc': 'Task type. API field C(TaskType).',
-            },
-            {
-                'name': 'source_type',
-                'field': 'SourceType',
-                'type': 'str',
-                'required': False,
-                'doc': 'Source type. API field C(SourceType).',
-            },
-            {
-                'name': 'resource',
-                'field': 'Resource',
-                'type': 'str',
-                'required': False,
-                'doc': 'Resource. API field C(Resource).',
-            },
-        ],
-        'response_items': 'Result.TaskList',
-        'response_total': 'Result.TotalCount',
-        'result_key': 'datahub_tasks',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud CKAFKA datahub tasks',
-        'description': 'Returns CKAFKA datahub tasks visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CKAFKA datahub tasks.',
-        'return_total_doc': 'Number of datahub tasks reported by the API.',
-        'examples': """\
-- name: List all datahub tasks
-  susunola.tencentcloud.ckafka_datahub_task_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'ckafka_datahub_topic_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.ckafka.v20190819',
-        'client_module': 'ckafka_client',
-        'client_class': 'CkafkaClient',
-        'sdk_package': 'tencentcloud-sdk-python-ckafka',
-        'endpoint': 'ckafka.tencentcloudapi.com',
-        'action': 'DescribeDatahubTopics',
-        'request_class': 'DescribeDatahubTopicsRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'search_word',
-                'field': 'SearchWord',
-                'type': 'str',
-                'required': False,
-                'doc': 'Search word. API field C(SearchWord).',
-            },
-            {
-                'name': 'query_from_connect_resource',
-                'field': 'QueryFromConnectResource',
-                'type': 'bool',
-                'required': False,
-                'doc': 'Query from connect resource. API field C(QueryFromConnectResource).',
-            },
-            {
-                'name': 'connect_resource_id',
-                'field': 'ConnectResourceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Connect resource id. API field C(ConnectResourceId).',
-            },
-            {
-                'name': 'topic_regular_expression',
-                'field': 'TopicRegularExpression',
-                'type': 'str',
-                'required': False,
-                'doc': 'Topic regular expression. API field C(TopicRegularExpression).',
-            },
-        ],
-        'response_items': 'Result.TopicList',
-        'response_total': 'Result.TotalCount',
-        'result_key': 'datahub_topics',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud CKAFKA datahub topics',
-        'description': 'Returns CKAFKA datahub topics visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CKAFKA datahub topics.',
-        'return_total_doc': 'Number of datahub topics reported by the API.',
-        'examples': """\
-- name: List all datahub topics
-  susunola.tencentcloud.ckafka_datahub_topic_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'ckafka_route_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.ckafka.v20190819',
-        'client_module': 'ckafka_client',
-        'client_class': 'CkafkaClient',
-        'sdk_package': 'tencentcloud-sdk-python-ckafka',
-        'endpoint': 'ckafka.tencentcloudapi.com',
-        'action': 'DescribeRoute',
-        'request_class': 'DescribeRouteRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-            {
-                'name': 'route_id',
-                'field': 'RouteId',
-                'type': 'int',
-                'required': False,
-                'doc': 'Route id. API field C(RouteId).',
-            },
-            {
-                'name': 'main_route_flag',
-                'field': 'MainRouteFlag',
-                'type': 'bool',
-                'required': False,
-                'doc': 'Main route flag. API field C(MainRouteFlag).',
-            },
-        ],
-        'response_items': 'Result.Routers',
-        'response_total': None,
-        'result_key': 'routes',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud CKAFKA routes',
-        'description': 'Returns CKAFKA routes visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CKAFKA routes.',
-        'return_total_doc': 'Number of routes returned (the API reports no total count).',
-        'examples': """\
-- name: List all routes
-  susunola.tencentcloud.ckafka_route_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'cloudaudit_audit_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cloudaudit.v20190319',
-        'client_module': 'cloudaudit_client',
-        'client_class': 'CloudauditClient',
-        'sdk_package': 'tencentcloud-sdk-python-cloudaudit',
-        'endpoint': 'cloudaudit.tencentcloudapi.com',
-        'action': 'ListAudits',
-        'request_class': 'ListAuditsRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [],
-        'response_items': 'AuditSummarys',
-        'response_total': None,
-        'result_key': 'audits',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud CLOUDAUDIT audits',
-        'description': 'Returns CLOUDAUDIT audits visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CLOUDAUDIT audits.',
-        'return_total_doc': 'Number of audits returned (the API reports no total count).',
-        'examples': """\
-- name: List all audits
-  susunola.tencentcloud.cloudaudit_audit_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'cloudaudit_track_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cloudaudit.v20190319',
-        'client_module': 'cloudaudit_client',
-        'client_class': 'CloudauditClient',
-        'sdk_package': 'tencentcloud-sdk-python-cloudaudit',
-        'endpoint': 'cloudaudit.tencentcloudapi.com',
-        'action': 'DescribeAuditTracks',
-        'request_class': 'DescribeAuditTracksRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [],
-        'response_items': 'Tracks',
-        'response_total': 'TotalCount',
-        'result_key': 'audit_tracks',
-        'pagination_type': 'page',
-        'short_description': 'Gather information about Tencent Cloud CLOUDAUDIT audit tracks',
-        'description': 'Returns CLOUDAUDIT audit tracks visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CLOUDAUDIT audit tracks.',
-        'return_total_doc': 'Number of audit tracks reported by the API.',
-        'examples': """\
-- name: List all audit tracks
-  susunola.tencentcloud.cloudaudit_track_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'cls_alarm_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cls.v20201016',
-        'client_module': 'cls_client',
-        'client_class': 'ClsClient',
-        'sdk_package': 'tencentcloud-sdk-python-cls',
-        'endpoint': 'cls.tencentcloudapi.com',
-        'action': 'DescribeAlarms',
-        'request_class': 'DescribeAlarmsRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'CLS API filter names mapped to lists of values.',
-            'name_field': 'Key',
-        },
-        'extra_params': [],
-        'response_items': 'Alarms',
-        'response_total': 'TotalCount',
-        'result_key': 'alarms',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud CLS alarms',
-        'description': 'Returns CLS alarms visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CLS alarms.',
-        'return_total_doc': 'Number of alarms reported by the API.',
-        'examples': """\
-- name: List all alarms
-  susunola.tencentcloud.cls_alarm_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'cls_alarm_notice_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cls.v20201016',
-        'client_module': 'cls_client',
-        'client_class': 'ClsClient',
-        'sdk_package': 'tencentcloud-sdk-python-cls',
-        'endpoint': 'cls.tencentcloudapi.com',
-        'action': 'DescribeAlarmNotices',
-        'request_class': 'DescribeAlarmNoticesRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'CLS API filter names mapped to lists of values.',
-            'name_field': 'Key',
-        },
-        'extra_params': [
-            {
-                'name': 'has_alarm_shield_count',
-                'field': 'HasAlarmShieldCount',
-                'type': 'bool',
-                'required': False,
-                'doc': 'Has alarm shield count. API field C(HasAlarmShieldCount).',
-            },
-        ],
-        'response_items': 'AlarmNotices',
-        'response_total': 'TotalCount',
-        'result_key': 'alarm_notices',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud CLS alarm notices',
-        'description': 'Returns CLS alarm notices visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CLS alarm notices.',
-        'return_total_doc': 'Number of alarm notices reported by the API.',
-        'examples': """\
-- name: List all alarm notices
-  susunola.tencentcloud.cls_alarm_notice_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'cmq_topic_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.tdmq.v20200217',
-        'client_module': 'tdmq_client',
-        'client_class': 'TdmqClient',
-        'sdk_package': 'tencentcloud-sdk-python-tdmq',
-        'endpoint': 'tdmq.tencentcloudapi.com',
-        'action': 'DescribeCmqTopics',
-        'request_class': 'DescribeCmqTopicsRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'TDMQ API filter names mapped to lists of values.',
-        },
-        'extra_params': [
-            {
-                'name': 'topic_name',
-                'field': 'TopicName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Topic name. API field C(TopicName).',
-            },
-            {
-                'name': 'topic_name_list',
-                'field': 'TopicNameList',
-                'type': 'list',
-                'required': False,
-                'doc': 'Topic name list. API field C(TopicNameList).',
-                'elements': 'str',
-            },
-            {
-                'name': 'is_tag_filter',
-                'field': 'IsTagFilter',
-                'type': 'bool',
-                'required': False,
-                'doc': 'Is tag filter. API field C(IsTagFilter).',
-            },
-        ],
-        'response_items': 'TopicList',
-        'response_total': 'TotalCount',
-        'result_key': 'cmq_topics',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud TDMQ cmq topics',
-        'description': 'Returns TDMQ cmq topics visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TDMQ cmq topics.',
-        'return_total_doc': 'Number of cmq topics reported by the API.',
-        'examples': """\
-- name: List all cmq topics
-  susunola.tencentcloud.cmq_topic_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'cynosdb_account_privilege_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.cynosdb.v20190107',
-        'client_module': 'cynosdb_client',
-        'client_class': 'CynosdbClient',
-        'sdk_package': 'tencentcloud-sdk-python-cynosdb',
-        'endpoint': 'cynosdb.tencentcloudapi.com',
-        'action': 'DescribeAccountPrivileges',
-        'request_class': 'DescribeAccountPrivilegesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'cluster_id',
-                'field': 'ClusterId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Cluster id. API field C(ClusterId).',
-            },
-            {
-                'name': 'account_name',
-                'field': 'AccountName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Account name. API field C(AccountName).',
-            },
-            {
-                'name': 'host',
-                'field': 'Host',
-                'type': 'str',
-                'required': False,
-                'doc': 'Host. API field C(Host).',
-            },
-            {
-                'name': 'db',
-                'field': 'Db',
-                'type': 'str',
-                'required': False,
-                'doc': 'Db. API field C(Db).',
-            },
-            {
-                'name': 'type',
-                'field': 'Type',
-                'type': 'str',
-                'required': False,
-                'doc': 'Type. API field C(Type).',
-            },
-            {
-                'name': 'table_name',
-                'field': 'TableName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Table name. API field C(TableName).',
-            },
-        ],
-        'response_items': None,
-        'response_total': None,
-        'result_key': 'account_privilege',
-        'pagination_type': 'none',
-        'short_description': 'Gather information about Tencent Cloud CYNOSDB account privilege',
-        'description': 'Returns CYNOSDB account privilege visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching CYNOSDB account privilege.',
-        'return_total_doc': '',
-        'examples': """\
-- name: Show the account privilege
-  susunola.tencentcloud.cynosdb_account_privilege_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'dbbrain_sql_filter_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.dbbrain.v20210527',
-        'client_module': 'dbbrain_client',
-        'client_class': 'DbbrainClient',
-        'sdk_package': 'tencentcloud-sdk-python-dbbrain',
-        'endpoint': 'dbbrain.tencentcloudapi.com',
-        'action': 'DescribeSqlFilters',
-        'request_class': 'DescribeSqlFiltersRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-            {
-                'name': 'filter_ids',
-                'field': 'FilterIds',
-                'type': 'list',
-                'required': False,
-                'doc': 'Filter ids. API field C(FilterIds).',
-                'elements': 'int',
-            },
-            {
-                'name': 'statuses',
-                'field': 'Statuses',
-                'type': 'list',
-                'required': False,
-                'doc': 'Statuses. API field C(Statuses).',
-                'elements': 'str',
-            },
-            {
-                'name': 'product',
-                'field': 'Product',
-                'type': 'str',
-                'required': False,
-                'doc': 'Product. API field C(Product).',
-            },
-        ],
-        'response_items': 'Items',
-        'response_total': 'TotalCount',
-        'result_key': 'sql_filters',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud DBBRAIN sql filters',
-        'description': 'Returns DBBRAIN sql filters visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching DBBRAIN sql filters.',
-        'return_total_doc': 'Number of sql filters reported by the API.',
-        'examples': """\
-- name: List all sql filters
-  susunola.tencentcloud.dbbrain_sql_filter_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'dcdb_account_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.dcdb.v20180411',
-        'client_module': 'dcdb_client',
-        'client_class': 'DcdbClient',
-        'sdk_package': 'tencentcloud-sdk-python-dcdb',
-        'endpoint': 'dcdb.tencentcloudapi.com',
-        'action': 'DescribeAccounts',
-        'request_class': 'DescribeAccountsRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-        ],
-        'response_items': 'Users',
-        'response_total': None,
-        'result_key': 'accounts',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud DCDB accounts',
-        'description': 'Returns DCDB accounts visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching DCDB accounts.',
-        'return_total_doc': 'Number of accounts returned (the API reports no total count).',
-        'examples': """\
-- name: List all accounts
-  susunola.tencentcloud.dcdb_account_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'dcdb_account_privilege_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.dcdb.v20180411',
-        'client_module': 'dcdb_client',
-        'client_class': 'DcdbClient',
-        'sdk_package': 'tencentcloud-sdk-python-dcdb',
-        'endpoint': 'dcdb.tencentcloudapi.com',
-        'action': 'DescribeAccountPrivileges',
-        'request_class': 'DescribeAccountPrivilegesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-            {
-                'name': 'user_name',
-                'field': 'UserName',
-                'type': 'str',
-                'required': False,
-                'doc': 'User name. API field C(UserName).',
-            },
-            {
-                'name': 'host',
-                'field': 'Host',
-                'type': 'str',
-                'required': False,
-                'doc': 'Host. API field C(Host).',
-            },
-            {
-                'name': 'db_name',
-                'field': 'DbName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Db name. API field C(DbName).',
-            },
-            {
-                'name': 'type',
-                'field': 'Type',
-                'type': 'str',
-                'required': False,
-                'doc': 'Type. API field C(Type).',
-            },
-            {
-                'name': 'object',
-                'field': 'Object',
-                'type': 'str',
-                'required': False,
-                'doc': 'Object. API field C(Object).',
-            },
-            {
-                'name': 'col_name',
-                'field': 'ColName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Col name. API field C(ColName).',
-            },
-        ],
-        'response_items': None,
-        'response_total': None,
-        'result_key': 'account_privilege',
-        'pagination_type': 'none',
-        'short_description': 'Gather information about Tencent Cloud DCDB account privilege',
-        'description': 'Returns DCDB account privilege visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching DCDB account privilege.',
-        'return_total_doc': '',
-        'examples': """\
-- name: Show the account privilege
-  susunola.tencentcloud.dcdb_account_privilege_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'dcdb_backup_config_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.dcdb.v20180411',
-        'client_module': 'dcdb_client',
-        'client_class': 'DcdbClient',
-        'sdk_package': 'tencentcloud-sdk-python-dcdb',
-        'endpoint': 'dcdb.tencentcloudapi.com',
-        'action': 'DescribeBackupConfigs',
-        'request_class': 'DescribeBackupConfigsRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-        ],
-        'response_items': 'BackupConfigSet',
-        'response_total': None,
-        'result_key': 'backup_configs',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud DCDB backup configs',
-        'description': 'Returns DCDB backup configs visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching DCDB backup configs.',
-        'return_total_doc': 'Number of backup configs returned (the API reports no total count).',
-        'examples': """\
-- name: List all backup configs
-  susunola.tencentcloud.dcdb_backup_config_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'dnspod_custom_line_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.dnspod.v20210323',
-        'client_module': 'dnspod_client',
-        'client_class': 'DnspodClient',
-        'sdk_package': 'tencentcloud-sdk-python-dnspod',
-        'endpoint': 'dnspod.tencentcloudapi.com',
-        'action': 'DescribeDomainCustomLineList',
-        'request_class': 'DescribeDomainCustomLineListRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'domain',
-                'field': 'Domain',
-                'type': 'str',
-                'required': False,
-                'doc': 'Domain. API field C(Domain).',
-            },
-            {
-                'name': 'domain_id',
-                'field': 'DomainId',
-                'type': 'int',
-                'required': False,
-                'doc': 'Domain id. API field C(DomainId).',
-            },
-        ],
-        'response_items': 'LineList',
-        'response_total': None,
-        'result_key': 'domain_custom_lines',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud DNSPOD domain custom lines',
-        'description': 'Returns DNSPOD domain custom lines visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching DNSPOD domain custom lines.',
-        'return_total_doc': 'Number of domain custom lines returned (the API reports no total count).',
-        'examples': """\
-- name: List all domain custom lines
-  susunola.tencentcloud.dnspod_custom_line_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'dnspod_domain_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.dnspod.v20210323',
-        'client_module': 'dnspod_client',
-        'client_class': 'DnspodClient',
-        'sdk_package': 'tencentcloud-sdk-python-dnspod',
-        'endpoint': 'dnspod.tencentcloudapi.com',
-        'action': 'DescribeDomainList',
-        'request_class': 'DescribeDomainListRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'type',
-                'field': 'Type',
-                'type': 'str',
-                'required': False,
-                'doc': 'Type. API field C(Type).',
-            },
-            {
-                'name': 'group_id',
-                'field': 'GroupId',
-                'type': 'int',
-                'required': False,
-                'doc': 'Group id. API field C(GroupId).',
-            },
-            {
-                'name': 'keyword',
-                'field': 'Keyword',
-                'type': 'str',
-                'required': False,
-                'doc': 'Keyword. API field C(Keyword).',
-                'no_log': False,
-            },
-        ],
-        'response_items': 'DomainList',
-        'response_total': None,
-        'result_key': 'domains',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud DNSPOD domains',
-        'description': 'Returns DNSPOD domains visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching DNSPOD domains.',
-        'return_total_doc': 'Number of domains returned (the API reports no total count).',
-        'examples': """\
-- name: List all domains
-  susunola.tencentcloud.dnspod_domain_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'dnspod_line_group_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.dnspod.v20210323',
-        'client_module': 'dnspod_client',
-        'client_class': 'DnspodClient',
-        'sdk_package': 'tencentcloud-sdk-python-dnspod',
-        'endpoint': 'dnspod.tencentcloudapi.com',
-        'action': 'DescribeLineGroupList',
-        'request_class': 'DescribeLineGroupListRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'domain',
-                'field': 'Domain',
-                'type': 'str',
-                'required': False,
-                'doc': 'Domain. API field C(Domain).',
-            },
-            {
-                'name': 'sort_type',
-                'field': 'SortType',
-                'type': 'str',
-                'required': False,
-                'doc': 'Sort type. API field C(SortType).',
-            },
-            {
-                'name': 'domain_id',
-                'field': 'DomainId',
-                'type': 'int',
-                'required': False,
-                'doc': 'Domain id. API field C(DomainId).',
-            },
-        ],
-        'response_items': 'LineGroups',
-        'response_total': None,
-        'result_key': 'line_groups',
-        'pagination_type': 'int',
-        'page_size_field': 'Length',
-        'short_description': 'Gather information about Tencent Cloud DNSPOD line groups',
-        'description': 'Returns DNSPOD line groups visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching DNSPOD line groups.',
-        'return_total_doc': 'Number of line groups returned (the API reports no total count).',
-        'examples': """\
-- name: List all line groups
-  susunola.tencentcloud.dnspod_line_group_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'dts_consumer_group_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.dts.v20211206',
-        'client_module': 'dts_client',
-        'client_class': 'DtsClient',
-        'sdk_package': 'tencentcloud-sdk-python-dts',
-        'endpoint': 'dts.tencentcloudapi.com',
-        'action': 'DescribeConsumerGroups',
-        'request_class': 'DescribeConsumerGroupsRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'subscribe_id',
-                'field': 'SubscribeId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Subscribe id. API field C(SubscribeId).',
-            },
-        ],
-        'response_items': 'Items',
-        'response_total': 'TotalCount',
-        'result_key': 'consumer_groups',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud DTS consumer groups',
-        'description': 'Returns DTS consumer groups visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching DTS consumer groups.',
-        'return_total_doc': 'Number of consumer groups reported by the API.',
-        'examples': """\
-- name: List all consumer groups
-  susunola.tencentcloud.dts_consumer_group_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'dts_migration_check_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.dts.v20211206',
-        'client_module': 'dts_client',
-        'client_class': 'DtsClient',
-        'sdk_package': 'tencentcloud-sdk-python-dts',
-        'endpoint': 'dts.tencentcloudapi.com',
-        'action': 'DescribeMigrationCheckJob',
-        'request_class': 'DescribeMigrationCheckJobRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'job_id',
-                'field': 'JobId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Job id. API field C(JobId).',
-            },
-        ],
-        'response_items': 'StepInfo',
-        'response_total': None,
-        'result_key': 'migration_check_jobs',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud DTS migration check jobs',
-        'description': 'Returns DTS migration check jobs visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching DTS migration check jobs.',
-        'return_total_doc': 'Number of migration check jobs returned (the API reports no total count).',
-        'examples': """\
-- name: List all migration check jobs
-  susunola.tencentcloud.dts_migration_check_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'dts_migration_job_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.dts.v20211206',
-        'client_module': 'dts_client',
-        'client_class': 'DtsClient',
-        'sdk_package': 'tencentcloud-sdk-python-dts',
-        'endpoint': 'dts.tencentcloudapi.com',
-        'action': 'DescribeMigrationJobs',
-        'request_class': 'DescribeMigrationJobsRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'job_id',
-                'field': 'JobId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Job id. API field C(JobId).',
-            },
-            {
-                'name': 'job_name',
-                'field': 'JobName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Job name. API field C(JobName).',
-            },
-            {
-                'name': 'status',
-                'field': 'Status',
-                'type': 'list',
-                'required': False,
-                'doc': 'Status. API field C(Status).',
-                'elements': 'str',
-            },
-            {
-                'name': 'src_instance_id',
-                'field': 'SrcInstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Src instance id. API field C(SrcInstanceId).',
-            },
-            {
-                'name': 'src_region',
-                'field': 'SrcRegion',
-                'type': 'str',
-                'required': False,
-                'doc': 'Src region. API field C(SrcRegion).',
-            },
-            {
-                'name': 'src_database_type',
-                'field': 'SrcDatabaseType',
-                'type': 'list',
-                'required': False,
-                'doc': 'Src database type. API field C(SrcDatabaseType).',
-                'elements': 'str',
-            },
-            {
-                'name': 'src_access_type',
-                'field': 'SrcAccessType',
-                'type': 'list',
-                'required': False,
-                'doc': 'Src access type. API field C(SrcAccessType).',
-                'elements': 'str',
-            },
-            {
-                'name': 'dst_instance_id',
-                'field': 'DstInstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Dst instance id. API field C(DstInstanceId).',
-            },
-            {
-                'name': 'dst_region',
-                'field': 'DstRegion',
-                'type': 'str',
-                'required': False,
-                'doc': 'Dst region. API field C(DstRegion).',
-            },
-            {
-                'name': 'dst_database_type',
-                'field': 'DstDatabaseType',
-                'type': 'list',
-                'required': False,
-                'doc': 'Dst database type. API field C(DstDatabaseType).',
-                'elements': 'str',
-            },
-            {
-                'name': 'dst_access_type',
-                'field': 'DstAccessType',
-                'type': 'list',
-                'required': False,
-                'doc': 'Dst access type. API field C(DstAccessType).',
-                'elements': 'str',
-            },
-            {
-                'name': 'run_mode',
-                'field': 'RunMode',
-                'type': 'str',
-                'required': False,
-                'doc': 'Run mode. API field C(RunMode).',
-            },
-            {
-                'name': 'order_seq',
-                'field': 'OrderSeq',
-                'type': 'str',
-                'required': False,
-                'doc': 'Order seq. API field C(OrderSeq).',
-            },
-        ],
-        'response_items': 'JobList',
-        'response_total': 'TotalCount',
-        'result_key': 'migration_jobs',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud DTS migration jobs',
-        'description': 'Returns DTS migration jobs visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching DTS migration jobs.',
-        'return_total_doc': 'Number of migration jobs reported by the API.',
-        'examples': """\
-- name: List all migration jobs
-  susunola.tencentcloud.dts_migration_job_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'eb_connection_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.eb.v20210416',
-        'client_module': 'eb_client',
-        'client_class': 'EbClient',
-        'sdk_package': 'tencentcloud-sdk-python-eb',
-        'endpoint': 'eb.tencentcloudapi.com',
-        'action': 'ListConnections',
-        'request_class': 'ListConnectionsRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'event_bus_id',
-                'field': 'EventBusId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Event bus id. API field C(EventBusId).',
-            },
-            {
-                'name': 'order_by',
-                'field': 'OrderBy',
-                'type': 'str',
-                'required': False,
-                'doc': 'Order by. API field C(OrderBy).',
-            },
-            {
-                'name': 'order',
-                'field': 'Order',
-                'type': 'str',
-                'required': False,
-                'doc': 'Order. API field C(Order).',
-            },
-        ],
-        'response_items': 'Connections',
-        'response_total': 'TotalCount',
-        'result_key': 'connections',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud EB connections',
-        'description': 'Returns EB connections visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching EB connections.',
-        'return_total_doc': 'Number of connections reported by the API.',
-        'examples': """\
-- name: List all connections
-  susunola.tencentcloud.eb_connection_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'eb_rule_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.eb.v20210416',
-        'client_module': 'eb_client',
-        'client_class': 'EbClient',
-        'sdk_package': 'tencentcloud-sdk-python-eb',
-        'endpoint': 'eb.tencentcloudapi.com',
-        'action': 'ListRules',
-        'request_class': 'ListRulesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'event_bus_id',
-                'field': 'EventBusId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Event bus id. API field C(EventBusId).',
-            },
-            {
-                'name': 'order_by',
-                'field': 'OrderBy',
-                'type': 'str',
-                'required': False,
-                'doc': 'Order by. API field C(OrderBy).',
-            },
-            {
-                'name': 'order',
-                'field': 'Order',
-                'type': 'str',
-                'required': False,
-                'doc': 'Order. API field C(Order).',
-            },
-        ],
-        'response_items': 'Rules',
-        'response_total': 'TotalCount',
-        'result_key': 'rules',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud EB rules',
-        'description': 'Returns EB rules visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching EB rules.',
-        'return_total_doc': 'Number of rules reported by the API.',
-        'examples': """\
-- name: List all rules
-  susunola.tencentcloud.eb_rule_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'eb_target_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.eb.v20210416',
-        'client_module': 'eb_client',
-        'client_class': 'EbClient',
-        'sdk_package': 'tencentcloud-sdk-python-eb',
-        'endpoint': 'eb.tencentcloudapi.com',
-        'action': 'ListTargets',
-        'request_class': 'ListTargetsRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'event_bus_id',
-                'field': 'EventBusId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Event bus id. API field C(EventBusId).',
-            },
-            {
-                'name': 'rule_id',
-                'field': 'RuleId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Rule id. API field C(RuleId).',
-            },
-            {
-                'name': 'order_by',
-                'field': 'OrderBy',
-                'type': 'str',
-                'required': False,
-                'doc': 'Order by. API field C(OrderBy).',
-            },
-            {
-                'name': 'order',
-                'field': 'Order',
-                'type': 'str',
-                'required': False,
-                'doc': 'Order. API field C(Order).',
-            },
-        ],
-        'response_items': 'Targets',
-        'response_total': 'TotalCount',
-        'result_key': 'targets',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud EB targets',
-        'description': 'Returns EB targets visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching EB targets.',
-        'return_total_doc': 'Number of targets reported by the API.',
-        'examples': """\
-- name: List all targets
-  susunola.tencentcloud.eb_target_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'elasticsearch_index_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.es.v20180416',
-        'client_module': 'es_client',
-        'client_class': 'EsClient',
-        'sdk_package': 'tencentcloud-sdk-python-es',
-        'endpoint': 'es.tencentcloudapi.com',
-        'action': 'DescribeIndexList',
-        'request_class': 'DescribeIndexListRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'index_type',
-                'field': 'IndexType',
-                'type': 'str',
-                'required': False,
-                'doc': 'Index type. API field C(IndexType).',
-            },
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-            {
-                'name': 'index_name',
-                'field': 'IndexName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Index name. API field C(IndexName).',
-            },
-            {
-                'name': 'username',
-                'field': 'Username',
-                'type': 'str',
-                'required': False,
-                'doc': 'Username. API field C(Username).',
-            },
-            {
-                'name': 'password',
-                'field': 'Password',
-                'type': 'str',
-                'required': False,
-                'doc': 'Password. API field C(Password).',
-                'no_log': True,
-            },
-            {
-                'name': 'order_by',
-                'field': 'OrderBy',
-                'type': 'str',
-                'required': False,
-                'doc': 'Order by. API field C(OrderBy).',
-            },
-            {
-                'name': 'index_status_list',
-                'field': 'IndexStatusList',
-                'type': 'list',
-                'required': False,
-                'doc': 'Index status list. API field C(IndexStatusList).',
-                'elements': 'str',
-            },
-            {
-                'name': 'order',
-                'field': 'Order',
-                'type': 'str',
-                'required': False,
-                'doc': 'Order. API field C(Order).',
-            },
-        ],
-        'response_items': 'IndexMetaFields',
-        'response_total': 'TotalCount',
-        'result_key': 'indexes',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud ES indexes',
-        'description': 'Returns ES indexes visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching ES indexes.',
-        'return_total_doc': 'Number of indexes reported by the API.',
-        'examples': """\
-- name: List all indexes
-  susunola.tencentcloud.elasticsearch_index_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'emr_auto_scale_strategy_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.emr.v20190103',
-        'client_module': 'emr_client',
-        'client_class': 'EmrClient',
-        'sdk_package': 'tencentcloud-sdk-python-emr',
-        'endpoint': 'emr.tencentcloudapi.com',
-        'action': 'DescribeAutoScaleStrategies',
-        'request_class': 'DescribeAutoScaleStrategiesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-            {
-                'name': 'group_id',
-                'field': 'GroupId',
-                'type': 'int',
-                'required': False,
-                'doc': 'Group id. API field C(GroupId).',
-            },
-        ],
-        'response_items': 'LoadAutoScaleStrategies',
-        'response_total': None,
-        'result_key': 'auto_scale_strategies',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud EMR auto scale strategies',
-        'description': 'Returns EMR auto scale strategies visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching EMR auto scale strategies.',
-        'return_total_doc': 'Number of auto scale strategies returned (the API reports no total count).',
-        'examples': """\
-- name: List all auto scale strategies
-  susunola.tencentcloud.emr_auto_scale_strategy_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'gaap_listener_real_servers_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.gaap.v20180529',
-        'client_module': 'gaap_client',
-        'client_class': 'GaapClient',
-        'sdk_package': 'tencentcloud-sdk-python-gaap',
-        'endpoint': 'gaap.tencentcloudapi.com',
-        'action': 'DescribeListenerRealServers',
-        'request_class': 'DescribeListenerRealServersRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'listener_id',
-                'field': 'ListenerId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Listener id. API field C(ListenerId).',
-            },
-        ],
-        'response_items': 'RealServerSet',
-        'response_total': 'TotalCount',
-        'result_key': 'listener_real_servers',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud GAAP listener real servers',
-        'description': 'Returns GAAP listener real servers visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching GAAP listener real servers.',
-        'return_total_doc': 'Number of listener real servers reported by the API.',
-        'examples': """\
-- name: List all listener real servers
-  susunola.tencentcloud.gaap_listener_real_servers_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'gaap_real_server_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.gaap.v20180529',
-        'client_module': 'gaap_client',
-        'client_class': 'GaapClient',
-        'sdk_package': 'tencentcloud-sdk-python-gaap',
-        'endpoint': 'gaap.tencentcloudapi.com',
-        'action': 'DescribeRealServers',
-        'request_class': 'DescribeRealServersRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'GAAP API filter names mapped to lists of values.',
-        },
-        'extra_params': [
-            {
-                'name': 'project_id',
-                'field': 'ProjectId',
-                'type': 'int',
-                'required': False,
-                'doc': 'Project id. API field C(ProjectId).',
-            },
-            {
-                'name': 'search_value',
-                'field': 'SearchValue',
-                'type': 'str',
-                'required': False,
-                'doc': 'Search value. API field C(SearchValue).',
-            },
-        ],
-        'response_items': 'RealServerSet',
-        'response_total': 'TotalCount',
-        'result_key': 'real_servers',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud GAAP real servers',
-        'description': 'Returns GAAP real servers visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching GAAP real servers.',
-        'return_total_doc': 'Number of real servers reported by the API.',
-        'examples': """\
-- name: List all real servers
-  susunola.tencentcloud.gaap_real_server_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'goosefs_fileset_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.goosefs.v20220519',
-        'client_module': 'goosefs_client',
-        'client_class': 'GoosefsClient',
-        'sdk_package': 'tencentcloud-sdk-python-goosefs',
-        'endpoint': 'goosefs.tencentcloudapi.com',
-        'action': 'DescribeFilesets',
-        'request_class': 'DescribeFilesetsRequest',
-        'ids': {
-            'param': 'fileset_ids',
-            'field': 'FilesetIds',
-            'doc': 'Fileset IDs to return.',
-        },
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'file_system_id',
-                'field': 'FileSystemId',
-                'type': 'str',
-                'required': False,
-                'doc': 'File system id. API field C(FileSystemId).',
-            },
-            {
-                'name': 'fileset_dirs',
-                'field': 'FilesetDirs',
-                'type': 'list',
-                'required': False,
-                'doc': 'Fileset dirs. API field C(FilesetDirs).',
-                'elements': 'str',
-            },
-        ],
-        'response_items': 'FilesetList',
-        'response_total': None,
-        'result_key': 'filesets',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud GOOSEFS filesets',
-        'description': 'Returns GOOSEFS filesets visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching GOOSEFS filesets.',
-        'return_total_doc': 'Number of filesets returned (the API reports no total count).',
-        'examples': """\
-- name: List all filesets
-  susunola.tencentcloud.goosefs_fileset_info:
-    region: ap-guangzhou
-
-- name: Find filesets by ID
-  susunola.tencentcloud.goosefs_fileset_info:
-    region: ap-guangzhou
-    fileset_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'gwlb_load_balancer_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.gwlb.v20240906',
-        'client_module': 'gwlb_client',
-        'client_class': 'GwlbClient',
-        'sdk_package': 'tencentcloud-sdk-python-gwlb',
-        'endpoint': 'gwlb.tencentcloudapi.com',
-        'action': 'DescribeGatewayLoadBalancers',
-        'request_class': 'DescribeGatewayLoadBalancersRequest',
-        'ids': {
-            'param': 'gateway_load_balancer_ids',
-            'field': 'LoadBalancerIds',
-            'doc': 'Gateway load balancer IDs to return. Mutually exclusive with O(filters).',
-        },
-        'filters': {
-            'doc': 'GWLB API filter names mapped to lists of values.',
-        },
-        'extra_params': [
-            {
-                'name': 'search_key',
-                'field': 'SearchKey',
-                'type': 'str',
-                'required': False,
-                'doc': 'Search key. API field C(SearchKey).',
-                'no_log': False,
-            },
-        ],
-        'response_items': 'LoadBalancerSet',
-        'response_total': 'TotalCount',
-        'result_key': 'gateway_load_balancers',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud GWLB gateway load balancers',
-        'description': 'Returns GWLB gateway load balancers visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching GWLB gateway load balancers.',
-        'return_total_doc': 'Number of gateway load balancers reported by the API.',
-        'examples': """\
-- name: List all gateway load balancers
-  susunola.tencentcloud.gwlb_load_balancer_info:
-    region: ap-guangzhou
-
-- name: Find gateway load balancers by ID
-  susunola.tencentcloud.gwlb_load_balancer_info:
-    region: ap-guangzhou
-    gateway_load_balancer_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'gwlb_target_group_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.gwlb.v20240906',
-        'client_module': 'gwlb_client',
-        'client_class': 'GwlbClient',
-        'sdk_package': 'tencentcloud-sdk-python-gwlb',
-        'endpoint': 'gwlb.tencentcloudapi.com',
-        'action': 'DescribeTargetGroups',
-        'request_class': 'DescribeTargetGroupsRequest',
-        'ids': {
-            'param': 'target_group_ids',
-            'field': 'TargetGroupIds',
-            'doc': 'Target group IDs to return. Mutually exclusive with O(filters).',
-        },
-        'filters': {
-            'doc': 'GWLB API filter names mapped to lists of values.',
-        },
-        'extra_params': [],
-        'response_items': 'TargetGroupSet',
-        'response_total': 'TotalCount',
-        'result_key': 'target_groups',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud GWLB target groups',
-        'description': 'Returns GWLB target groups visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching GWLB target groups.',
-        'return_total_doc': 'Number of target groups reported by the API.',
-        'examples': """\
-- name: List all target groups
-  susunola.tencentcloud.gwlb_target_group_info:
-    region: ap-guangzhou
-
-- name: Find target groups by ID
-  susunola.tencentcloud.gwlb_target_group_info:
-    region: ap-guangzhou
-    target_group_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'gwlb_target_group_instances_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.gwlb.v20240906',
-        'client_module': 'gwlb_client',
-        'client_class': 'GwlbClient',
-        'sdk_package': 'tencentcloud-sdk-python-gwlb',
-        'endpoint': 'gwlb.tencentcloudapi.com',
-        'action': 'DescribeTargetGroupInstances',
-        'request_class': 'DescribeTargetGroupInstancesRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'GWLB API filter names mapped to lists of values.',
-        },
-        'extra_params': [],
-        'response_items': 'TargetGroupInstanceSet',
-        'response_total': 'TotalCount',
-        'result_key': 'target_group_instances',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud GWLB target group instances',
-        'description': 'Returns GWLB target group instances visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching GWLB target group instances.',
-        'return_total_doc': 'Number of target group instances reported by the API.',
-        'examples': """\
-- name: List all target group instances
-  susunola.tencentcloud.gwlb_target_group_instances_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'mariadb_account_privilege_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.mariadb.v20170312',
-        'client_module': 'mariadb_client',
-        'client_class': 'MariadbClient',
-        'sdk_package': 'tencentcloud-sdk-python-mariadb',
-        'endpoint': 'mariadb.tencentcloudapi.com',
-        'action': 'DescribeAccountPrivileges',
-        'request_class': 'DescribeAccountPrivilegesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-            {
-                'name': 'user_name',
-                'field': 'UserName',
-                'type': 'str',
-                'required': False,
-                'doc': 'User name. API field C(UserName).',
-            },
-            {
-                'name': 'host',
-                'field': 'Host',
-                'type': 'str',
-                'required': False,
-                'doc': 'Host. API field C(Host).',
-            },
-            {
-                'name': 'db_name',
-                'field': 'DbName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Db name. API field C(DbName).',
-            },
-            {
-                'name': 'type',
-                'field': 'Type',
-                'type': 'str',
-                'required': False,
-                'doc': 'Type. API field C(Type).',
-            },
-            {
-                'name': 'object',
-                'field': 'Object',
-                'type': 'str',
-                'required': False,
-                'doc': 'Object. API field C(Object).',
-            },
-            {
-                'name': 'col_name',
-                'field': 'ColName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Col name. API field C(ColName).',
-            },
-        ],
-        'response_items': None,
-        'response_total': None,
-        'result_key': 'account_privilege',
-        'pagination_type': 'none',
-        'short_description': 'Gather information about Tencent Cloud MARIADB account privilege',
-        'description': 'Returns MARIADB account privilege visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching MARIADB account privilege.',
-        'return_total_doc': '',
-        'examples': """\
-- name: Show the account privilege
-  susunola.tencentcloud.mariadb_account_privilege_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'mqtt_authorization_policy_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.mqtt.v20240516',
-        'client_module': 'mqtt_client',
-        'client_class': 'MqttClient',
-        'sdk_package': 'tencentcloud-sdk-python-mqtt',
-        'endpoint': 'mqtt.tencentcloudapi.com',
-        'action': 'DescribeAuthorizationPolicies',
-        'request_class': 'DescribeAuthorizationPoliciesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-        ],
-        'response_items': 'Data',
-        'response_total': None,
-        'result_key': 'authorization_policies',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud MQTT authorization policies',
-        'description': 'Returns MQTT authorization policies visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching MQTT authorization policies.',
-        'return_total_doc': 'Number of authorization policies returned (the API reports no total count).',
-        'examples': """\
-- name: List all authorization policies
-  susunola.tencentcloud.mqtt_authorization_policy_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'mqtt_instance_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.mqtt.v20240516',
-        'client_module': 'mqtt_client',
-        'client_class': 'MqttClient',
-        'sdk_package': 'tencentcloud-sdk-python-mqtt',
-        'endpoint': 'mqtt.tencentcloudapi.com',
-        'action': 'DescribeInstanceList',
-        'request_class': 'DescribeInstanceListRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'MQTT API filter names mapped to lists of values.',
-        },
-        'extra_params': [],
-        'response_items': 'Data',
-        'response_total': 'TotalCount',
-        'result_key': 'instances',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud MQTT instances',
-        'description': 'Returns MQTT instances visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching MQTT instances.',
-        'return_total_doc': 'Number of instances reported by the API.',
-        'examples': """\
-- name: List all instances
-  susunola.tencentcloud.mqtt_instance_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'mqtt_topic_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.mqtt.v20240516',
-        'client_module': 'mqtt_client',
-        'client_class': 'MqttClient',
-        'sdk_package': 'tencentcloud-sdk-python-mqtt',
-        'endpoint': 'mqtt.tencentcloudapi.com',
-        'action': 'DescribeTopicList',
-        'request_class': 'DescribeTopicListRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'MQTT API filter names mapped to lists of values.',
-        },
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-        ],
-        'response_items': 'Data',
-        'response_total': 'TotalCount',
-        'result_key': 'topics',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud MQTT topics',
-        'description': 'Returns MQTT topics visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching MQTT topics.',
-        'return_total_doc': 'Number of topics reported by the API.',
-        'examples': """\
-- name: List all topics
-  susunola.tencentcloud.mqtt_topic_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'mqtt_user_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.mqtt.v20240516',
-        'client_module': 'mqtt_client',
-        'client_class': 'MqttClient',
-        'sdk_package': 'tencentcloud-sdk-python-mqtt',
-        'endpoint': 'mqtt.tencentcloudapi.com',
-        'action': 'DescribeUserList',
-        'request_class': 'DescribeUserListRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'MQTT API filter names mapped to lists of values.',
-        },
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-        ],
-        'response_items': 'Data',
-        'response_total': 'TotalCount',
-        'result_key': 'users',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud MQTT users',
-        'description': 'Returns MQTT users visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching MQTT users.',
-        'return_total_doc': 'Number of users reported by the API.',
-        'examples': """\
-- name: List all users
-  susunola.tencentcloud.mqtt_user_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'organization_member_identity_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.organization.v20210331',
-        'client_module': 'organization_client',
-        'client_class': 'OrganizationClient',
-        'sdk_package': 'tencentcloud-sdk-python-organization',
-        'endpoint': 'organization.tencentcloudapi.com',
-        'action': 'DescribeOrganizationMemberAuthIdentities',
-        'request_class': 'DescribeOrganizationMemberAuthIdentitiesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'member_uin',
-                'field': 'MemberUin',
-                'type': 'int',
-                'required': False,
-                'doc': 'Member uin. API field C(MemberUin).',
-            },
-            {
-                'name': 'identity_id',
-                'field': 'IdentityId',
-                'type': 'int',
-                'required': False,
-                'doc': 'Identity id. API field C(IdentityId).',
-            },
-        ],
-        'response_items': 'Items',
-        'response_total': 'Total',
-        'result_key': 'member_auth_identities',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud ORGANIZATION member auth identities',
-        'description': 'Returns ORGANIZATION member auth identities visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching ORGANIZATION member auth identities.',
-        'return_total_doc': 'Number of member auth identities reported by the API.',
-        'examples': """\
-- name: List all member auth identities
-  susunola.tencentcloud.organization_member_identity_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'organization_member_policy_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.organization.v20210331',
-        'client_module': 'organization_client',
-        'client_class': 'OrganizationClient',
-        'sdk_package': 'tencentcloud-sdk-python-organization',
-        'endpoint': 'organization.tencentcloudapi.com',
-        'action': 'DescribeOrganizationMemberPolicies',
-        'request_class': 'DescribeOrganizationMemberPoliciesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'member_uin',
-                'field': 'MemberUin',
-                'type': 'int',
-                'required': False,
-                'doc': 'Member uin. API field C(MemberUin).',
-            },
-            {
-                'name': 'search_key',
-                'field': 'SearchKey',
-                'type': 'str',
-                'required': False,
-                'doc': 'Search key. API field C(SearchKey).',
-                'no_log': False,
-            },
-        ],
-        'response_items': 'Items',
-        'response_total': 'Total',
-        'result_key': 'member_policies',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud ORGANIZATION member policies',
-        'description': 'Returns ORGANIZATION member policies visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching ORGANIZATION member policies.',
-        'return_total_doc': 'Number of member policies reported by the API.',
-        'examples': """\
-- name: List all member policies
-  susunola.tencentcloud.organization_member_policy_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'organization_node_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.organization.v20210331',
-        'client_module': 'organization_client',
-        'client_class': 'OrganizationClient',
-        'sdk_package': 'tencentcloud-sdk-python-organization',
-        'endpoint': 'organization.tencentcloudapi.com',
-        'action': 'DescribeOrganizationNodes',
-        'request_class': 'DescribeOrganizationNodesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [],
-        'response_items': 'Items',
-        'response_total': 'Total',
-        'result_key': 'nodes',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud ORGANIZATION nodes',
-        'description': 'Returns ORGANIZATION nodes visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching ORGANIZATION nodes.',
-        'return_total_doc': 'Number of nodes reported by the API.',
-        'examples': """\
-- name: List all nodes
-  susunola.tencentcloud.organization_node_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'private_dns_account_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.privatedns.v20201028',
-        'client_module': 'privatedns_client',
-        'client_class': 'PrivatednsClient',
-        'sdk_package': 'tencentcloud-sdk-python-privatedns',
-        'endpoint': 'privatedns.tencentcloudapi.com',
-        'action': 'DescribePrivateDNSAccountList',
-        'request_class': 'DescribePrivateDNSAccountListRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'PRIVATEDNS API filter names mapped to lists of values.',
-        },
-        'extra_params': [],
-        'response_items': 'AccountSet',
-        'response_total': 'TotalCount',
-        'result_key': 'private_dns_accounts',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud PRIVATEDNS private dns accounts',
-        'description': 'Returns PRIVATEDNS private dns accounts visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching PRIVATEDNS private dns accounts.',
-        'return_total_doc': 'Number of private dns accounts reported by the API.',
-        'examples': """\
-- name: List all private dns accounts
-  susunola.tencentcloud.private_dns_account_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'private_dns_record_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.privatedns.v20201028',
-        'client_module': 'privatedns_client',
-        'client_class': 'PrivatednsClient',
-        'sdk_package': 'tencentcloud-sdk-python-privatedns',
-        'endpoint': 'privatedns.tencentcloudapi.com',
-        'action': 'DescribePrivateZoneRecordList',
-        'request_class': 'DescribePrivateZoneRecordListRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'PRIVATEDNS API filter names mapped to lists of values.',
-        },
-        'extra_params': [
-            {
-                'name': 'zone_id',
-                'field': 'ZoneId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Zone id. API field C(ZoneId).',
-            },
-        ],
-        'response_items': 'RecordSet',
-        'response_total': 'TotalCount',
-        'result_key': 'private_zone_records',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud PRIVATEDNS private zone records',
-        'description': 'Returns PRIVATEDNS private zone records visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching PRIVATEDNS private zone records.',
-        'return_total_doc': 'Number of private zone records reported by the API.',
-        'examples': """\
-- name: List all private zone records
-  susunola.tencentcloud.private_dns_record_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'private_dns_zone_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.privatedns.v20201028',
-        'client_module': 'privatedns_client',
-        'client_class': 'PrivatednsClient',
-        'sdk_package': 'tencentcloud-sdk-python-privatedns',
-        'endpoint': 'privatedns.tencentcloudapi.com',
-        'action': 'DescribePrivateZoneList',
-        'request_class': 'DescribePrivateZoneListRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'PRIVATEDNS API filter names mapped to lists of values.',
-        },
-        'extra_params': [],
-        'response_items': 'PrivateZoneSet',
-        'response_total': 'TotalCount',
-        'result_key': 'private_zones',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud PRIVATEDNS private zones',
-        'description': 'Returns PRIVATEDNS private zones visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching PRIVATEDNS private zones.',
-        'return_total_doc': 'Number of private zones reported by the API.',
-        'examples': """\
-- name: List all private zones
-  susunola.tencentcloud.private_dns_zone_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'privatelink_endpoint_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.vpc.v20170312',
-        'client_module': 'vpc_client',
-        'client_class': 'VpcClient',
-        'sdk_package': 'tencentcloud-sdk-python-vpc',
-        'endpoint': 'vpc.tencentcloudapi.com',
-        'action': 'DescribeVpcEndPoint',
-        'request_class': 'DescribeVpcEndPointRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'VPC API filter names mapped to lists of values.',
-        },
-        'extra_params': [
-            {
-                'name': 'end_point_id',
-                'field': 'EndPointId',
-                'type': 'list',
-                'required': False,
-                'doc': 'End point id. API field C(EndPointId).',
-                'elements': 'str',
-            },
-            {
-                'name': 'ip_address_type',
-                'field': 'IpAddressType',
-                'type': 'str',
-                'required': False,
-                'doc': 'Ip address type. API field C(IpAddressType).',
-            },
-            {
-                'name': 'max_results',
-                'field': 'MaxResults',
-                'type': 'int',
-                'required': False,
-                'doc': 'Max results. API field C(MaxResults).',
-            },
-        ],
-        'response_items': 'EndPointSet',
-        'response_total': 'TotalCount',
-        'result_key': 'end_points',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud VPC end points',
-        'description': 'Returns VPC end points visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching VPC end points.',
-        'return_total_doc': 'Number of end points reported by the API.',
-        'examples': """\
-- name: List all end points
-  susunola.tencentcloud.privatelink_endpoint_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'privatelink_endpoint_service_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.vpc.v20170312',
-        'client_module': 'vpc_client',
-        'client_class': 'VpcClient',
-        'sdk_package': 'tencentcloud-sdk-python-vpc',
-        'endpoint': 'vpc.tencentcloudapi.com',
-        'action': 'DescribeVpcEndPointService',
-        'request_class': 'DescribeVpcEndPointServiceRequest',
-        'ids': {
-            'param': 'end_point_service_ids',
-            'field': 'EndPointServiceIds',
-            'doc': 'End point service IDs to return. Mutually exclusive with O(filters).',
-        },
-        'filters': {
-            'doc': 'VPC API filter names mapped to lists of values.',
-        },
-        'extra_params': [
-            {
-                'name': 'is_list_authorized_end_point_service',
-                'field': 'IsListAuthorizedEndPointService',
-                'type': 'bool',
-                'required': False,
-                'doc': 'Is list authorized end point service. API field C(IsListAuthorizedEndPointService).',
-            },
-            {
-                'name': 'ip_address_type',
-                'field': 'IpAddressType',
-                'type': 'str',
-                'required': False,
-                'doc': 'Ip address type. API field C(IpAddressType).',
-            },
-            {
-                'name': 'max_results',
-                'field': 'MaxResults',
-                'type': 'int',
-                'required': False,
-                'doc': 'Max results. API field C(MaxResults).',
-            },
-        ],
-        'response_items': 'EndPointServiceSet',
-        'response_total': 'TotalCount',
-        'result_key': 'end_point_services',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud VPC end point services',
-        'description': 'Returns VPC end point services visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching VPC end point services.',
-        'return_total_doc': 'Number of end point services reported by the API.',
-        'examples': """\
-- name: List all end point services
-  susunola.tencentcloud.privatelink_endpoint_service_info:
-    region: ap-guangzhou
-
-- name: Find end point services by ID
-  susunola.tencentcloud.privatelink_endpoint_service_info:
-    region: ap-guangzhou
-    end_point_service_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'redis_replication_group_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.redis.v20180412',
-        'client_module': 'redis_client',
-        'client_class': 'RedisClient',
-        'sdk_package': 'tencentcloud-sdk-python-redis',
-        'endpoint': 'redis.tencentcloudapi.com',
-        'action': 'DescribeReplicationGroup',
-        'request_class': 'DescribeReplicationGroupRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'group_id',
-                'field': 'GroupId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Group id. API field C(GroupId).',
-            },
-            {
-                'name': 'search_key',
-                'field': 'SearchKey',
-                'type': 'str',
-                'required': False,
-                'doc': 'Search key. API field C(SearchKey).',
-                'no_log': False,
-            },
-        ],
-        'response_items': 'Groups',
-        'response_total': 'TotalCount',
-        'result_key': 'replication_groups',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud REDIS replication groups',
-        'description': 'Returns REDIS replication groups visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching REDIS replication groups.',
-        'return_total_doc': 'Number of replication groups reported by the API.',
-        'examples': """\
-- name: List all replication groups
-  susunola.tencentcloud.redis_replication_group_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'scf_custom_domain_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.scf.v20180416',
-        'client_module': 'scf_client',
-        'client_class': 'ScfClient',
-        'sdk_package': 'tencentcloud-sdk-python-scf',
-        'endpoint': 'scf.tencentcloudapi.com',
-        'action': 'ListCustomDomains',
-        'request_class': 'ListCustomDomainsRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'SCF API filter names mapped to lists of values.',
-        },
-        'extra_params': [
-            {
-                'name': 'order_by',
-                'field': 'OrderBy',
-                'type': 'str',
-                'required': False,
-                'doc': 'Order by. API field C(OrderBy).',
-            },
-            {
-                'name': 'order',
-                'field': 'Order',
-                'type': 'str',
-                'required': False,
-                'doc': 'Order. API field C(Order).',
-            },
-        ],
-        'response_items': 'Domains',
-        'response_total': 'Total',
-        'result_key': 'custom_domains',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud SCF custom domains',
-        'description': 'Returns SCF custom domains visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching SCF custom domains.',
-        'return_total_doc': 'Number of custom domains reported by the API.',
-        'examples': """\
-- name: List all custom domains
-  susunola.tencentcloud.scf_custom_domain_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'tat_invoker_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.tat.v20201028',
-        'client_module': 'tat_client',
-        'client_class': 'TatClient',
-        'sdk_package': 'tencentcloud-sdk-python-tat',
-        'endpoint': 'tat.tencentcloudapi.com',
-        'action': 'DescribeInvokers',
-        'request_class': 'DescribeInvokersRequest',
-        'ids': {
-            'param': 'invoker_ids',
-            'field': 'InvokerIds',
-            'doc': 'Invoker IDs to return. Mutually exclusive with O(filters).',
-        },
-        'filters': {
-            'doc': 'TAT API filter names mapped to lists of values.',
-        },
-        'extra_params': [],
-        'response_items': 'InvokerSet',
-        'response_total': 'TotalCount',
-        'result_key': 'invokers',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud TAT invokers',
-        'description': 'Returns TAT invokers visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TAT invokers.',
-        'return_total_doc': 'Number of invokers reported by the API.',
-        'examples': """\
-- name: List all invokers
-  susunola.tencentcloud.tat_invoker_info:
-    region: ap-guangzhou
-
-- name: Find invokers by ID
-  susunola.tencentcloud.tat_invoker_info:
-    region: ap-guangzhou
-    invoker_ids: [x-xxxxxxxx]
-""",
-    },
-    {
-        'module': 'tcb_auth_domain_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.tcb.v20180608',
-        'client_module': 'tcb_client',
-        'client_class': 'TcbClient',
-        'sdk_package': 'tencentcloud-sdk-python-tcb',
-        'endpoint': 'tcb.tencentcloudapi.com',
-        'action': 'DescribeAuthDomains',
-        'request_class': 'DescribeAuthDomainsRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'env_id',
-                'field': 'EnvId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Env id. API field C(EnvId).',
-            },
-        ],
-        'response_items': 'Domains',
-        'response_total': None,
-        'result_key': 'auth_domains',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud TCB auth domains',
-        'description': 'Returns TCB auth domains visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TCB auth domains.',
-        'return_total_doc': 'Number of auth domains returned (the API reports no total count).',
-        'examples': """\
-- name: List all auth domains
-  susunola.tencentcloud.tcb_auth_domain_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'tcb_environment_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.tcb.v20180608',
-        'client_module': 'tcb_client',
-        'client_class': 'TcbClient',
-        'sdk_package': 'tencentcloud-sdk-python-tcb',
-        'endpoint': 'tcb.tencentcloudapi.com',
-        'action': 'DescribeEnvs',
-        'request_class': 'DescribeEnvsRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'env_id',
-                'field': 'EnvId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Env id. API field C(EnvId).',
-            },
-            {
-                'name': 'is_visible',
-                'field': 'IsVisible',
-                'type': 'bool',
-                'required': False,
-                'doc': 'Is visible. API field C(IsVisible).',
-            },
-            {
-                'name': 'channels',
-                'field': 'Channels',
-                'type': 'list',
-                'required': False,
-                'doc': 'Channels. API field C(Channels).',
-                'elements': 'str',
-            },
-        ],
-        'response_items': 'EnvList',
-        'response_total': 'Total',
-        'result_key': 'envs',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud TCB envs',
-        'description': 'Returns TCB envs visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TCB envs.',
-        'return_total_doc': 'Number of envs reported by the API.',
-        'examples': """\
-- name: List all envs
-  susunola.tencentcloud.tcb_environment_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'tcb_http_service_route_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.tcb.v20180608',
-        'client_module': 'tcb_client',
-        'client_class': 'TcbClient',
-        'sdk_package': 'tencentcloud-sdk-python-tcb',
-        'endpoint': 'tcb.tencentcloudapi.com',
-        'action': 'DescribeHTTPServiceRoute',
-        'request_class': 'DescribeHTTPServiceRouteRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'TCB API filter names mapped to lists of values.',
-        },
-        'extra_params': [
-            {
-                'name': 'env_id',
-                'field': 'EnvId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Env id. API field C(EnvId).',
-            },
-        ],
-        'response_items': 'Domains',
-        'response_total': 'TotalCount',
-        'result_key': 'http_service_routes',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud TCB http service routes',
-        'description': 'Returns TCB http service routes visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TCB http service routes.',
-        'return_total_doc': 'Number of http service routes reported by the API.',
-        'examples': """\
-- name: List all http service routes
-  susunola.tencentcloud.tcb_http_service_route_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'tcb_static_store_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.tcb.v20180608',
-        'client_module': 'tcb_client',
-        'client_class': 'TcbClient',
-        'sdk_package': 'tencentcloud-sdk-python-tcb',
-        'endpoint': 'tcb.tencentcloudapi.com',
-        'action': 'DescribeStaticStore',
-        'request_class': 'DescribeStaticStoreRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'env_id',
-                'field': 'EnvId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Env id. API field C(EnvId).',
-            },
-        ],
-        'response_items': 'Data',
-        'response_total': None,
-        'result_key': 'static_stores',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud TCB static stores',
-        'description': 'Returns TCB static stores visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TCB static stores.',
-        'return_total_doc': 'Number of static stores returned (the API reports no total count).',
-        'examples': """\
-- name: List all static stores
-  susunola.tencentcloud.tcb_static_store_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'tcm_access_log_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.tcm.v20210413',
-        'client_module': 'tcm_client',
-        'client_class': 'TcmClient',
-        'sdk_package': 'tencentcloud-sdk-python-tcm',
-        'endpoint': 'tcm.tencentcloudapi.com',
-        'action': 'DescribeAccessLogConfig',
-        'request_class': 'DescribeAccessLogConfigRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'mesh_id',
-                'field': 'MeshId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Mesh id. API field C(MeshId).',
-            },
-        ],
-        'response_items': 'SelectedRange.Items',
-        'response_total': None,
-        'result_key': 'access_log_configs',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud TCM access log configs',
-        'description': 'Returns TCM access log configs visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TCM access log configs.',
-        'return_total_doc': 'Number of access log configs returned (the API reports no total count).',
-        'examples': """\
-- name: List all access log configs
-  susunola.tencentcloud.tcm_access_log_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'tcr_immutable_tag_rule_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.tcr.v20190924',
-        'client_module': 'tcr_client',
-        'client_class': 'TcrClient',
-        'sdk_package': 'tencentcloud-sdk-python-tcr',
-        'endpoint': 'tcr.tencentcloudapi.com',
-        'action': 'DescribeImmutableTagRules',
-        'request_class': 'DescribeImmutableTagRulesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'registry_id',
-                'field': 'RegistryId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Registry id. API field C(RegistryId).',
-            },
-        ],
-        'response_items': 'Rules',
-        'response_total': 'Total',
-        'result_key': 'immutable_tag_rules',
-        'pagination_type': 'page',
-        'page_number_field': 'Page',
-        'short_description': 'Gather information about Tencent Cloud TCR immutable tag rules',
-        'description': 'Returns TCR immutable tag rules visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TCR immutable tag rules.',
-        'return_total_doc': 'Number of immutable tag rules reported by the API.',
-        'examples': """\
-- name: List all immutable tag rules
-  susunola.tencentcloud.tcr_immutable_tag_rule_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'tcr_webhook_trigger_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.tcr.v20190924',
-        'client_module': 'tcr_client',
-        'client_class': 'TcrClient',
-        'sdk_package': 'tencentcloud-sdk-python-tcr',
-        'endpoint': 'tcr.tencentcloudapi.com',
-        'action': 'DescribeWebhookTrigger',
-        'request_class': 'DescribeWebhookTriggerRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'registry_id',
-                'field': 'RegistryId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Registry id. API field C(RegistryId).',
-            },
-            {
-                'name': 'namespace',
-                'field': 'Namespace',
-                'type': 'str',
-                'required': False,
-                'doc': 'Namespace. API field C(Namespace).',
-            },
-        ],
-        'response_items': 'Triggers',
-        'response_total': 'TotalCount',
-        'result_key': 'webhook_triggers',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud TCR webhook triggers',
-        'description': 'Returns TCR webhook triggers visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TCR webhook triggers.',
-        'return_total_doc': 'Number of webhook triggers reported by the API.',
-        'examples': """\
-- name: List all webhook triggers
-  susunola.tencentcloud.tcr_webhook_trigger_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'tdcpg_account_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.tdcpg.v20211118',
-        'client_module': 'tdcpg_client',
-        'client_class': 'TdcpgClient',
-        'sdk_package': 'tencentcloud-sdk-python-tdcpg',
-        'endpoint': 'tdcpg.tencentcloudapi.com',
-        'action': 'DescribeAccounts',
-        'request_class': 'DescribeAccountsRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'cluster_id',
-                'field': 'ClusterId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Cluster id. API field C(ClusterId).',
-            },
-        ],
-        'response_items': 'AccountSet',
-        'response_total': 'TotalCount',
-        'result_key': 'accounts',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud TDCPG accounts',
-        'description': 'Returns TDCPG accounts visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TDCPG accounts.',
-        'return_total_doc': 'Number of accounts reported by the API.',
-        'examples': """\
-- name: List all accounts
-  susunola.tencentcloud.tdcpg_account_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'tdcpg_endpoint_wan_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.tdcpg.v20211118',
-        'client_module': 'tdcpg_client',
-        'client_class': 'TdcpgClient',
-        'sdk_package': 'tencentcloud-sdk-python-tdcpg',
-        'endpoint': 'tdcpg.tencentcloudapi.com',
-        'action': 'DescribeClusterEndpoints',
-        'request_class': 'DescribeClusterEndpointsRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'cluster_id',
-                'field': 'ClusterId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Cluster id. API field C(ClusterId).',
-            },
-        ],
-        'response_items': 'EndpointSet',
-        'response_total': 'TotalCount',
-        'result_key': 'cluster_endpoints',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud TDCPG cluster endpoints',
-        'description': 'Returns TDCPG cluster endpoints visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TDCPG cluster endpoints.',
-        'return_total_doc': 'Number of cluster endpoints reported by the API.',
-        'examples': """\
-- name: List all cluster endpoints
-  susunola.tencentcloud.tdcpg_endpoint_wan_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'tdcpg_instance_state_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.tdcpg.v20211118',
-        'client_module': 'tdcpg_client',
-        'client_class': 'TdcpgClient',
-        'sdk_package': 'tencentcloud-sdk-python-tdcpg',
-        'endpoint': 'tdcpg.tencentcloudapi.com',
-        'action': 'DescribeClusterInstances',
-        'request_class': 'DescribeClusterInstancesRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'TDCPG API filter names mapped to lists of values.',
-        },
-        'extra_params': [
-            {
-                'name': 'cluster_id',
-                'field': 'ClusterId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Cluster id. API field C(ClusterId).',
-            },
-            {
-                'name': 'order_by',
-                'field': 'OrderBy',
-                'type': 'str',
-                'required': False,
-                'doc': 'Order by. API field C(OrderBy).',
-            },
-            {
-                'name': 'order_by_type',
-                'field': 'OrderByType',
-                'type': 'str',
-                'required': False,
-                'doc': 'Order by type. API field C(OrderByType).',
-            },
-        ],
-        'response_items': 'InstanceSet',
-        'response_total': 'TotalCount',
-        'result_key': 'cluster_instances',
-        'pagination_type': 'page',
-        'short_description': 'Gather information about Tencent Cloud TDCPG cluster instances',
-        'description': 'Returns TDCPG cluster instances visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TDCPG cluster instances.',
-        'return_total_doc': 'Number of cluster instances reported by the API.',
-        'examples': """\
-- name: List all cluster instances
-  susunola.tencentcloud.tdcpg_instance_state_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'tdmysql_account_privilege_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.tdmysql.v20211122',
-        'client_module': 'tdmysql_client',
-        'client_class': 'TdmysqlClient',
-        'sdk_package': 'tencentcloud-sdk-python-tdmysql',
-        'endpoint': 'tdmysql.tencentcloudapi.com',
-        'action': 'DescribeUserPrivileges',
-        'request_class': 'DescribeUserPrivilegesRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-            {
-                'name': 'host',
-                'field': 'Host',
-                'type': 'str',
-                'required': False,
-                'doc': 'Host. API field C(Host).',
-            },
-            {
-                'name': 'user_name',
-                'field': 'UserName',
-                'type': 'str',
-                'required': False,
-                'doc': 'User name. API field C(UserName).',
-            },
-            {
-                'name': 'db_name',
-                'field': 'DbName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Db name. API field C(DbName).',
-            },
-            {
-                'name': 'object',
-                'field': 'Object',
-                'type': 'str',
-                'required': False,
-                'doc': 'Object. API field C(Object).',
-            },
-            {
-                'name': 'object_type',
-                'field': 'ObjectType',
-                'type': 'str',
-                'required': False,
-                'doc': 'Object type. API field C(ObjectType).',
-            },
-            {
-                'name': 'col_name',
-                'field': 'ColName',
-                'type': 'str',
-                'required': False,
-                'doc': 'Col name. API field C(ColName).',
-            },
-        ],
-        'response_items': None,
-        'response_total': None,
-        'result_key': 'user_privilege',
-        'pagination_type': 'none',
-        'short_description': 'Gather information about Tencent Cloud TDMYSQL user privilege',
-        'description': 'Returns TDMYSQL user privilege visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TDMYSQL user privilege.',
-        'return_total_doc': '',
-        'examples': """\
-- name: Show the user privilege
-  susunola.tencentcloud.tdmysql_account_privilege_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'tdmysql_maintenance_window_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.tdmysql.v20211122',
-        'client_module': 'tdmysql_client',
-        'client_class': 'TdmysqlClient',
-        'sdk_package': 'tencentcloud-sdk-python-tdmysql',
-        'endpoint': 'tdmysql.tencentcloudapi.com',
-        'action': 'DescribeMaintenanceWindow',
-        'request_class': 'DescribeMaintenanceWindowRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-        ],
-        'response_items': None,
-        'response_total': None,
-        'result_key': 'maintenance_window',
-        'pagination_type': 'none',
-        'short_description': 'Gather information about Tencent Cloud TDMYSQL maintenance window',
-        'description': 'Returns TDMYSQL maintenance window visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TDMYSQL maintenance window.',
-        'return_total_doc': '',
-        'examples': """\
-- name: Show the maintenance window
-  susunola.tencentcloud.tdmysql_maintenance_window_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'tdmysql_ssl_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.tdmysql.v20211122',
-        'client_module': 'tdmysql_client',
-        'client_class': 'TdmysqlClient',
-        'sdk_package': 'tencentcloud-sdk-python-tdmysql',
-        'endpoint': 'tdmysql.tencentcloudapi.com',
-        'action': 'DescribeInstanceSSLStatus',
-        'request_class': 'DescribeInstanceSSLStatusRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'instance_id',
-                'field': 'InstanceId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Instance id. API field C(InstanceId).',
-            },
-        ],
-        'response_items': None,
-        'response_total': None,
-        'result_key': 'instance_ssl',
-        'pagination_type': 'none',
-        'short_description': 'Gather information about Tencent Cloud TDMYSQL instance ssl',
-        'description': 'Returns TDMYSQL instance ssl visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TDMYSQL instance ssl.',
-        'return_total_doc': '',
-        'examples': """\
-- name: Show the instance ssl
-  susunola.tencentcloud.tdmysql_ssl_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'tem_application_service_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.tem.v20210701',
-        'client_module': 'tem_client',
-        'client_class': 'TemClient',
-        'sdk_package': 'tencentcloud-sdk-python-tem',
-        'endpoint': 'tem.tencentcloudapi.com',
-        'action': 'DescribeApplicationServiceList',
-        'request_class': 'DescribeApplicationServiceListRequest',
-        'ids': None,
-        'filters': None,
-        'extra_params': [
-            {
-                'name': 'environment_id',
-                'field': 'EnvironmentId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Environment id. API field C(EnvironmentId).',
-            },
-            {
-                'name': 'application_id',
-                'field': 'ApplicationId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Application id. API field C(ApplicationId).',
-            },
-            {
-                'name': 'source_channel',
-                'field': 'SourceChannel',
-                'type': 'int',
-                'required': False,
-                'doc': 'Source channel. API field C(SourceChannel).',
-            },
-        ],
-        'response_items': 'Result.PortMappings',
-        'response_total': None,
-        'result_key': 'application_services',
-        'pagination_type': 'list',
-        'short_description': 'Gather information about Tencent Cloud TEM application services',
-        'description': 'Returns TEM application services visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TEM application services.',
-        'return_total_doc': 'Number of application services returned (the API reports no total count).',
-        'examples': """\
-- name: List all application services
-  susunola.tencentcloud.tem_application_service_info:
-    region: ap-guangzhou
-""",
-    },
-    {
-        'module': 'tem_environment_info',
-        'version_added': '1.5.0',
-        'service_package': 'tencentcloud.tem.v20210701',
-        'client_module': 'tem_client',
-        'client_class': 'TemClient',
-        'sdk_package': 'tencentcloud-sdk-python-tem',
-        'endpoint': 'tem.tencentcloudapi.com',
-        'action': 'DescribeEnvironments',
-        'request_class': 'DescribeEnvironmentsRequest',
-        'ids': None,
-        'filters': {
-            'doc': 'TEM API filter names mapped to lists of values.',
-            'model': 'QueryFilter',
-            'value_field': 'Value',
-        },
-        'extra_params': [
-            {
-                'name': 'source_channel',
-                'field': 'SourceChannel',
-                'type': 'int',
-                'required': False,
-                'doc': 'Source channel. API field C(SourceChannel).',
-            },
-            {
-                'name': 'environment_id',
-                'field': 'EnvironmentId',
-                'type': 'str',
-                'required': False,
-                'doc': 'Environment id. API field C(EnvironmentId).',
-            },
-        ],
-        'response_items': 'Result.Records',
-        'response_total': 'Result.Total',
-        'result_key': 'environments',
-        'pagination_type': 'int',
-        'short_description': 'Gather information about Tencent Cloud TEM environments',
-        'description': 'Returns TEM environments visible in a Tencent Cloud region.',
-        'return_items_doc': 'Matching TEM environments.',
-        'return_total_doc': 'Number of environments reported by the API.',
-        'examples': """\
-- name: List all environments
-  susunola.tencentcloud.tem_environment_info:
     region: ap-guangzhou
 """,
     },
@@ -9334,6 +9300,98 @@ SPECS_AUTO = [
         'examples': """\
 - name: List all cluster route tables
   susunola.tencentcloud.tke_cluster_route_table_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tokenhub_model_info',
+        'version_added': '0.8.0',
+        'service_package': 'tencentcloud.tokenhub.v20260322',
+        'client_module': 'tokenhub_client',
+        'client_class': 'TokenhubClient',
+        'sdk_package': 'tencentcloud-sdk-python-tokenhub',
+        'endpoint': 'tokenhub.tencentcloudapi.com',
+        'action': 'DescribeModelList',
+        'request_class': 'DescribeModelListRequest',
+        'ids': {
+            'param': 'model_ids',
+            'field': 'ModelIds',
+            'doc': 'Model IDs to return.',
+        },
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'ModelSet',
+        'response_total': 'TotalCount',
+        'result_key': 'models',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud TOKENHUB models',
+        'description': 'Returns TOKENHUB models visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TOKENHUB models.',
+        'return_total_doc': 'Number of models reported by the API.',
+        'examples': """\
+- name: List all models
+  susunola.tencentcloud.tokenhub_model_info:
+    region: ap-guangzhou
+
+- name: Find models by ID
+  susunola.tencentcloud.tokenhub_model_info:
+    region: ap-guangzhou
+    model_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'tourism_draw_resource_info',
+        'version_added': '0.8.0',
+        'service_package': 'tencentcloud.tourism.v20230215',
+        'client_module': 'tourism_client',
+        'client_class': 'TourismClient',
+        'sdk_package': 'tencentcloud-sdk-python-tourism',
+        'endpoint': 'tourism.tencentcloudapi.com',
+        'action': 'DescribeDrawResourceList',
+        'request_class': 'DescribeDrawResourceListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'ResourceDrawList',
+        'response_total': 'TotalCount',
+        'result_key': 'draw_resources',
+        'pagination_type': 'page',
+        'short_description': 'Gather information about Tencent Cloud TOURISM draw resources',
+        'description': 'Returns TOURISM draw resources visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TOURISM draw resources.',
+        'return_total_doc': 'Number of draw resources reported by the API.',
+        'examples': """\
+- name: List all draw resources
+  susunola.tencentcloud.tourism_draw_resource_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'trabbit_rabbit_mq_serverless_instance_info',
+        'version_added': '0.8.0',
+        'service_package': 'tencentcloud.trabbit.v20230418',
+        'client_module': 'trabbit_client',
+        'client_class': 'TrabbitClient',
+        'sdk_package': 'tencentcloud-sdk-python-trabbit',
+        'endpoint': 'trabbit.tencentcloudapi.com',
+        'action': 'ListRabbitMQServerlessInstances',
+        'request_class': 'ListRabbitMQServerlessInstancesRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'TRABBIT API filter names mapped to lists of values.',
+        },
+        'extra_params': [],
+        'response_items': 'Instances',
+        'response_total': 'TotalCount',
+        'result_key': 'rabbit_mq_serverless_instances',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud TRABBIT rabbit mq serverless instances',
+        'description': 'Returns TRABBIT rabbit mq serverless instances visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TRABBIT rabbit mq serverless instances.',
+        'return_total_doc': 'Number of rabbit mq serverless instances reported by the API.',
+        'examples': """\
+- name: List all rabbit mq serverless instances
+  susunola.tencentcloud.trabbit_rabbit_mq_serverless_instance_info:
     region: ap-guangzhou
 """,
     },
@@ -9722,6 +9780,620 @@ SPECS_AUTO = [
         'examples': """\
 - name: List all serverless vhosts
   susunola.tencentcloud.trabbit_serverless_vhost_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'trocket_consumer_client_info',
+        'version_added': '0.8.0',
+        'service_package': 'tencentcloud.trocket.v20230308',
+        'client_module': 'trocket_client',
+        'client_class': 'TrocketClient',
+        'sdk_package': 'tencentcloud-sdk-python-trocket',
+        'endpoint': 'trocket.tencentcloudapi.com',
+        'action': 'DescribeConsumerClientList',
+        'request_class': 'DescribeConsumerClientListRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'TROCKET API filter names mapped to lists of values.',
+        },
+        'extra_params': [],
+        'response_items': 'Data',
+        'response_total': 'TotalCount',
+        'result_key': 'consumer_clients',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud TROCKET consumer clients',
+        'description': 'Returns TROCKET consumer clients visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TROCKET consumer clients.',
+        'return_total_doc': 'Number of consumer clients reported by the API.',
+        'examples': """\
+- name: List all consumer clients
+  susunola.tencentcloud.trocket_consumer_client_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'trp_code_batch_info',
+        'version_added': '0.8.0',
+        'service_package': 'tencentcloud.trp.v20210515',
+        'client_module': 'trp_client',
+        'client_class': 'TrpClient',
+        'sdk_package': 'tencentcloud-sdk-python-trp',
+        'endpoint': 'trp.tencentcloudapi.com',
+        'action': 'DescribeCodeBatches',
+        'request_class': 'DescribeCodeBatchesRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'CodeBatches',
+        'response_total': 'TotalCount',
+        'result_key': 'code_batches',
+        'pagination_type': 'page',
+        'short_description': 'Gather information about Tencent Cloud TRP code batches',
+        'description': 'Returns TRP code batches visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TRP code batches.',
+        'return_total_doc': 'Number of code batches reported by the API.',
+        'examples': """\
+- name: List all code batches
+  susunola.tencentcloud.trp_code_batch_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'trro_device_info',
+        'version_added': '0.8.0',
+        'service_package': 'tencentcloud.trro.v20220325',
+        'client_module': 'trro_client',
+        'client_class': 'TrroClient',
+        'sdk_package': 'tencentcloud-sdk-python-trro',
+        'endpoint': 'trro.tencentcloudapi.com',
+        'action': 'DescribeDeviceList',
+        'request_class': 'DescribeDeviceListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Devices',
+        'response_total': 'Total',
+        'result_key': 'devices',
+        'pagination_type': 'page',
+        'short_description': 'Gather information about Tencent Cloud TRRO devices',
+        'description': 'Returns TRRO devices visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TRRO devices.',
+        'return_total_doc': 'Number of devices reported by the API.',
+        'examples': """\
+- name: List all devices
+  susunola.tencentcloud.trro_device_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'trtc_call_info',
+        'version_added': '0.8.0',
+        'service_package': 'tencentcloud.trtc.v20190722',
+        'client_module': 'trtc_client',
+        'client_class': 'TrtcClient',
+        'sdk_package': 'tencentcloud-sdk-python-trtc',
+        'endpoint': 'trtc.tencentcloudapi.com',
+        'action': 'DescribeCallDetailInfo',
+        'request_class': 'DescribeCallDetailInfoRequest',
+        'ids': {
+            'param': 'call_ids',
+            'field': 'UserIds',
+            'doc': 'Call IDs to return.',
+        },
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'UserList',
+        'response_total': 'Total',
+        'result_key': 'calls',
+        'pagination_type': 'page',
+        'short_description': 'Gather information about Tencent Cloud TRTC calls',
+        'description': 'Returns TRTC calls visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TRTC calls.',
+        'return_total_doc': 'Number of calls reported by the API.',
+        'examples': """\
+- name: List all calls
+  susunola.tencentcloud.trtc_call_info:
+    region: ap-guangzhou
+
+- name: Find calls by ID
+  susunola.tencentcloud.trtc_call_info:
+    region: ap-guangzhou
+    call_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'tse_sre_instance_info',
+        'version_added': '0.8.0',
+        'service_package': 'tencentcloud.tse.v20201207',
+        'client_module': 'tse_client',
+        'client_class': 'TseClient',
+        'sdk_package': 'tencentcloud-sdk-python-tse',
+        'endpoint': 'tse.tencentcloudapi.com',
+        'action': 'DescribeSREInstances',
+        'request_class': 'DescribeSREInstancesRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'TSE API filter names mapped to lists of values.',
+        },
+        'extra_params': [],
+        'response_items': 'Content',
+        'response_total': 'TotalCount',
+        'result_key': 'sre_instances',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud TSE sre instances',
+        'description': 'Returns TSE sre instances visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TSE sre instances.',
+        'return_total_doc': 'Number of sre instances reported by the API.',
+        'examples': """\
+- name: List all sre instances
+  susunola.tencentcloud.tse_sre_instance_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'tsf_application_info',
+        'version_added': '0.8.0',
+        'service_package': 'tencentcloud.tsf.v20180326',
+        'client_module': 'tsf_client',
+        'client_class': 'TsfClient',
+        'sdk_package': 'tencentcloud-sdk-python-tsf',
+        'endpoint': 'tsf.tencentcloudapi.com',
+        'action': 'DescribeApplications',
+        'request_class': 'DescribeApplicationsRequest',
+        'ids': {
+            'param': 'application_ids',
+            'field': 'ApplicationIdList',
+            'doc': 'Application IDs to return.',
+        },
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Result.Content',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'applications',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud TSF applications',
+        'description': 'Returns TSF applications visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching TSF applications.',
+        'return_total_doc': 'Number of applications reported by the API.',
+        'examples': """\
+- name: List all applications
+  susunola.tencentcloud.tsf_application_info:
+    region: ap-guangzhou
+
+- name: Find applications by ID
+  susunola.tencentcloud.tsf_application_info:
+    region: ap-guangzhou
+    application_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'vcube_resource_info',
+        'version_added': '0.8.0',
+        'service_package': 'tencentcloud.vcube.v20220410',
+        'client_module': 'vcube_client',
+        'client_class': 'VcubeClient',
+        'sdk_package': 'tencentcloud-sdk-python-vcube',
+        'endpoint': 'vcube.tencentcloudapi.com',
+        'action': 'DescribeVcubeResourcesList',
+        'request_class': 'DescribeVcubeResourcesListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'ResourceList',
+        'response_total': 'TotalCount',
+        'result_key': 'resources',
+        'pagination_type': 'page',
+        'short_description': 'Gather information about Tencent Cloud VCUBE resources',
+        'description': 'Returns VCUBE resources visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching VCUBE resources.',
+        'return_total_doc': 'Number of resources reported by the API.',
+        'examples': """\
+- name: List all resources
+  susunola.tencentcloud.vcube_resource_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'vdb_instance_info',
+        'version_added': '0.8.0',
+        'service_package': 'tencentcloud.vdb.v20230616',
+        'client_module': 'vdb_client',
+        'client_class': 'VdbClient',
+        'sdk_package': 'tencentcloud-sdk-python-vdb',
+        'endpoint': 'vdb.tencentcloudapi.com',
+        'action': 'DescribeInstances',
+        'request_class': 'DescribeInstancesRequest',
+        'ids': {
+            'param': 'instance_ids',
+            'field': 'InstanceIds',
+            'doc': 'Instance IDs to return.',
+        },
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Items',
+        'response_total': 'TotalCount',
+        'result_key': 'instances',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud VDB instances',
+        'description': 'Returns VDB instances visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching VDB instances.',
+        'return_total_doc': 'Number of instances reported by the API.',
+        'examples': """\
+- name: List all instances
+  susunola.tencentcloud.vdb_instance_info:
+    region: ap-guangzhou
+
+- name: Find instances by ID
+  susunola.tencentcloud.vdb_instance_info:
+    region: ap-guangzhou
+    instance_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'vm_task_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.vm.v20210922',
+        'client_module': 'vm_client',
+        'client_class': 'VmClient',
+        'sdk_package': 'tencentcloud-sdk-python-vm',
+        'endpoint': 'vm.tencentcloudapi.com',
+        'action': 'DescribeTasks',
+        'request_class': 'DescribeTasksRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Data',
+        'response_total': None,
+        'result_key': 'tasks',
+        'pagination_type': 'token',
+        'token_request_field': 'PageToken',
+        'token_response_field': 'PageToken',
+        'page_size_field': 'Limit',
+        'list_over_field': None,
+        'short_description': 'Gather information about Tencent Cloud VM tasks',
+        'description': 'Returns VM tasks visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching VM tasks.',
+        'return_total_doc': 'Number of tasks returned (the API reports no total count).',
+        'examples': """\
+- name: List all tasks
+  susunola.tencentcloud.vm_task_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'vod_incremental_migration_strategy_info',
+        'version_added': '0.8.0',
+        'service_package': 'tencentcloud.vod.v20240718',
+        'client_module': 'vod_client',
+        'client_class': 'VodClient',
+        'sdk_package': 'tencentcloud-sdk-python-vod',
+        'endpoint': 'vod.tencentcloudapi.com',
+        'action': 'DescribeIncrementalMigrationStrategyInfos',
+        'request_class': 'DescribeIncrementalMigrationStrategyInfosRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'VOD API filter names mapped to lists of values.',
+        },
+        'extra_params': [],
+        'response_items': 'StrategyInfoSet',
+        'response_total': 'TotalCount',
+        'result_key': 'incremental_migration_strategies',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud VOD incremental migration strategies',
+        'description': 'Returns VOD incremental migration strategies visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching VOD incremental migration strategies.',
+        'return_total_doc': 'Number of incremental migration strategies reported by the API.',
+        'examples': """\
+- name: List all incremental migration strategies
+  susunola.tencentcloud.vod_incremental_migration_strategy_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'privatelink_endpoint_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.vpc.v20170312',
+        'client_module': 'vpc_client',
+        'client_class': 'VpcClient',
+        'sdk_package': 'tencentcloud-sdk-python-vpc',
+        'endpoint': 'vpc.tencentcloudapi.com',
+        'action': 'DescribeVpcEndPoint',
+        'request_class': 'DescribeVpcEndPointRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'VPC API filter names mapped to lists of values.',
+        },
+        'extra_params': [
+            {
+                'name': 'end_point_id',
+                'field': 'EndPointId',
+                'type': 'list',
+                'required': False,
+                'doc': 'End point id. API field C(EndPointId).',
+                'elements': 'str',
+            },
+            {
+                'name': 'ip_address_type',
+                'field': 'IpAddressType',
+                'type': 'str',
+                'required': False,
+                'doc': 'Ip address type. API field C(IpAddressType).',
+            },
+            {
+                'name': 'max_results',
+                'field': 'MaxResults',
+                'type': 'int',
+                'required': False,
+                'doc': 'Max results. API field C(MaxResults).',
+            },
+        ],
+        'response_items': 'EndPointSet',
+        'response_total': 'TotalCount',
+        'result_key': 'end_points',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud VPC end points',
+        'description': 'Returns VPC end points visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching VPC end points.',
+        'return_total_doc': 'Number of end points reported by the API.',
+        'examples': """\
+- name: List all end points
+  susunola.tencentcloud.privatelink_endpoint_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'privatelink_endpoint_service_info',
+        'version_added': '1.5.0',
+        'service_package': 'tencentcloud.vpc.v20170312',
+        'client_module': 'vpc_client',
+        'client_class': 'VpcClient',
+        'sdk_package': 'tencentcloud-sdk-python-vpc',
+        'endpoint': 'vpc.tencentcloudapi.com',
+        'action': 'DescribeVpcEndPointService',
+        'request_class': 'DescribeVpcEndPointServiceRequest',
+        'ids': {
+            'param': 'end_point_service_ids',
+            'field': 'EndPointServiceIds',
+            'doc': 'End point service IDs to return. Mutually exclusive with O(filters).',
+        },
+        'filters': {
+            'doc': 'VPC API filter names mapped to lists of values.',
+        },
+        'extra_params': [
+            {
+                'name': 'is_list_authorized_end_point_service',
+                'field': 'IsListAuthorizedEndPointService',
+                'type': 'bool',
+                'required': False,
+                'doc': 'Is list authorized end point service. API field C(IsListAuthorizedEndPointService).',
+            },
+            {
+                'name': 'ip_address_type',
+                'field': 'IpAddressType',
+                'type': 'str',
+                'required': False,
+                'doc': 'Ip address type. API field C(IpAddressType).',
+            },
+            {
+                'name': 'max_results',
+                'field': 'MaxResults',
+                'type': 'int',
+                'required': False,
+                'doc': 'Max results. API field C(MaxResults).',
+            },
+        ],
+        'response_items': 'EndPointServiceSet',
+        'response_total': 'TotalCount',
+        'result_key': 'end_point_services',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud VPC end point services',
+        'description': 'Returns VPC end point services visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching VPC end point services.',
+        'return_total_doc': 'Number of end point services reported by the API.',
+        'examples': """\
+- name: List all end point services
+  susunola.tencentcloud.privatelink_endpoint_service_info:
+    region: ap-guangzhou
+
+- name: Find end point services by ID
+  susunola.tencentcloud.privatelink_endpoint_service_info:
+    region: ap-guangzhou
+    end_point_service_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'wav_activity_info',
+        'version_added': '0.9.0',
+        'service_package': 'tencentcloud.wav.v20210129',
+        'client_module': 'wav_client',
+        'client_class': 'WavClient',
+        'sdk_package': 'tencentcloud-sdk-python-wav',
+        'endpoint': 'wav.tencentcloudapi.com',
+        'action': 'QueryActivityList',
+        'request_class': 'QueryActivityListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'PageData',
+        'response_total': None,
+        'result_key': 'activities',
+        'pagination_type': 'token',
+        'token_request_field': 'Cursor',
+        'token_response_field': 'NextCursor',
+        'page_size_field': 'Limit',
+        'list_over_field': None,
+        'short_description': 'Gather information about Tencent Cloud WAV activities',
+        'description': 'Returns WAV activities visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching WAV activities.',
+        'return_total_doc': 'Number of activities returned (the API reports no total count).',
+        'examples': """\
+- name: List all activities
+  susunola.tencentcloud.wav_activity_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'wedata_project_info',
+        'version_added': '0.8.0',
+        'service_package': 'tencentcloud.wedata.v20250806',
+        'client_module': 'wedata_client',
+        'client_class': 'WedataClient',
+        'sdk_package': 'tencentcloud-sdk-python-wedata',
+        'endpoint': 'wedata.tencentcloudapi.com',
+        'action': 'ListProjects',
+        'request_class': 'ListProjectsRequest',
+        'ids': {
+            'param': 'project_ids',
+            'field': 'ProjectIds',
+            'doc': 'Project IDs to return.',
+        },
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Data.Items',
+        'response_total': 'Data.TotalCount',
+        'result_key': 'projects',
+        'pagination_type': 'page',
+        'short_description': 'Gather information about Tencent Cloud WEDATA projects',
+        'description': 'Returns WEDATA projects visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching WEDATA projects.',
+        'return_total_doc': 'Number of projects reported by the API.',
+        'examples': """\
+- name: List all projects
+  susunola.tencentcloud.wedata_project_info:
+    region: ap-guangzhou
+
+- name: Find projects by ID
+  susunola.tencentcloud.wedata_project_info:
+    region: ap-guangzhou
+    project_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'weilingwith_element_profile_page_info',
+        'version_added': '0.8.0',
+        'service_package': 'tencentcloud.weilingwith.v20230427',
+        'client_module': 'weilingwith_client',
+        'client_class': 'WeilingwithClient',
+        'sdk_package': 'tencentcloud-sdk-python-weilingwith',
+        'endpoint': 'weilingwith.tencentcloudapi.com',
+        'action': 'DescribeElementProfilePage',
+        'request_class': 'DescribeElementProfilePageRequest',
+        'ids': {
+            'param': 'element_profile_page_ids',
+            'field': 'ParentElementIds',
+            'doc': 'Element profile page IDs to return.',
+        },
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'Result.List',
+        'response_total': 'Result.TotalCount',
+        'result_key': 'element_profile_pages',
+        'pagination_type': 'page',
+        'short_description': 'Gather information about Tencent Cloud WEILINGWITH element profile pages',
+        'description': 'Returns WEILINGWITH element profile pages visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching WEILINGWITH element profile pages.',
+        'return_total_doc': 'Number of element profile pages reported by the API.',
+        'examples': """\
+- name: List all element profile pages
+  susunola.tencentcloud.weilingwith_element_profile_page_info:
+    region: ap-guangzhou
+
+- name: Find element profile pages by ID
+  susunola.tencentcloud.weilingwith_element_profile_page_info:
+    region: ap-guangzhou
+    element_profile_page_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'wss_cert_info',
+        'version_added': '0.8.0',
+        'service_package': 'tencentcloud.wss.v20180426',
+        'client_module': 'wss_client',
+        'client_class': 'WssClient',
+        'sdk_package': 'tencentcloud-sdk-python-wss',
+        'endpoint': 'wss.tencentcloudapi.com',
+        'action': 'DescribeCertList',
+        'request_class': 'DescribeCertListRequest',
+        'ids': None,
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'CertificateSet',
+        'response_total': 'TotalCount',
+        'result_key': 'certs',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud WSS certs',
+        'description': 'Returns WSS certs visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching WSS certs.',
+        'return_total_doc': 'Number of certs reported by the API.',
+        'examples': """\
+- name: List all certs
+  susunola.tencentcloud.wss_cert_info:
+    region: ap-guangzhou
+""",
+    },
+    {
+        'module': 'yinsuda_ktv_robot_info',
+        'version_added': '0.8.0',
+        'service_package': 'tencentcloud.yinsuda.v20220527',
+        'client_module': 'yinsuda_client',
+        'client_class': 'YinsudaClient',
+        'sdk_package': 'tencentcloud-sdk-python-yinsuda',
+        'endpoint': 'yinsuda.tencentcloudapi.com',
+        'action': 'DescribeKTVRobots',
+        'request_class': 'DescribeKTVRobotsRequest',
+        'ids': {
+            'param': 'ktv_robot_ids',
+            'field': 'RobotIds',
+            'doc': 'Ktv robot IDs to return.',
+        },
+        'filters': None,
+        'extra_params': [],
+        'response_items': 'KTVRobotInfoSet',
+        'response_total': 'TotalCount',
+        'result_key': 'ktv_robots',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud YINSUDA ktv robots',
+        'description': 'Returns YINSUDA ktv robots visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching YINSUDA ktv robots.',
+        'return_total_doc': 'Number of ktv robots reported by the API.',
+        'examples': """\
+- name: List all ktv robots
+  susunola.tencentcloud.yinsuda_ktv_robot_info:
+    region: ap-guangzhou
+
+- name: Find ktv robots by ID
+  susunola.tencentcloud.yinsuda_ktv_robot_info:
+    region: ap-guangzhou
+    ktv_robot_ids: [x-xxxxxxxx]
+""",
+    },
+    {
+        'module': 'yunjing_account_statistic_info',
+        'version_added': '0.8.0',
+        'service_package': 'tencentcloud.yunjing.v20180228',
+        'client_module': 'yunjing_client',
+        'client_class': 'YunjingClient',
+        'sdk_package': 'tencentcloud-sdk-python-yunjing',
+        'endpoint': 'yunjing.tencentcloudapi.com',
+        'action': 'DescribeAccountStatistics',
+        'request_class': 'DescribeAccountStatisticsRequest',
+        'ids': None,
+        'filters': {
+            'doc': 'YUNJING API filter names mapped to lists of values.',
+        },
+        'extra_params': [],
+        'response_items': 'AccountStatistics',
+        'response_total': 'TotalCount',
+        'result_key': 'account_statistics',
+        'pagination_type': 'int',
+        'short_description': 'Gather information about Tencent Cloud YUNJING account statistics',
+        'description': 'Returns YUNJING account statistics visible in a Tencent Cloud region.',
+        'return_items_doc': 'Matching YUNJING account statistics.',
+        'return_total_doc': 'Number of account statistics reported by the API.',
+        'examples': """\
+- name: List all account statistics
+  susunola.tencentcloud.yunjing_account_statistic_info:
     region: ap-guangzhou
 """,
     },

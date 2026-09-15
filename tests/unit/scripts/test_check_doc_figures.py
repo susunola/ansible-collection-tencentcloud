@@ -73,6 +73,24 @@ def _with(figures, **overrides):
     return merged
 
 
+def _unit_files_anchor(figures):
+    """The string on the page that carries the unit-test file figure.
+
+    Derived from the measured figure rather than written down: the page
+    quotes it with a thousands separator, and a hardcoded ``1,121 个`` had
+    to be retargeted by hand every time a test file landed -- at which
+    point the two tests below passed *without testing anything*, because
+    the replacement they performed simply never matched.
+    """
+    text = PANORAMA.read_text(encoding="utf-8")
+    value = figures["unit test files"]
+    for candidate in ("%d 个" % value, "{:,} 个".format(value)):
+        if candidate in text:
+            return candidate
+    raise AssertionError(
+        "docs/panorama.html no longer states the unit test file count %d" % value)
+
+
 def _doc_plus(line):
     """The real page plus one synthetic line, so only one claim is at stake."""
     return PANORAMA.read_text(encoding="utf-8") + "\n模块 %s 个\n" % line
@@ -104,7 +122,8 @@ def test_validate_flags_a_figure_the_doc_dropped(guard, figures):
 
 def test_validate_flags_only_the_figure_that_moved(guard, figures):
     """One wrong figure must not make the whole report unreadable."""
-    doc = PANORAMA.read_text(encoding="utf-8").replace("1,121 个", "1,999 个")
+    doc = PANORAMA.read_text(encoding="utf-8").replace(
+        _unit_files_anchor(figures), "1,999 个")
     problems = guard.validate(figures, doc)
     assert len(problems) == 1 and problems[0].startswith("unit test files:")
 
@@ -165,12 +184,13 @@ def test_main_is_green_on_the_current_docs(guard, tmp_path, capsys):
     assert "all %d figures" % len(guard.CLAIMS) in capsys.readouterr().out
 
 
-def test_main_fails_when_a_figure_is_stale(guard, tmp_path, capsys):
+def test_main_fails_when_a_figure_is_stale(guard, figures, tmp_path, capsys):
     root = _fake_root(tmp_path)
     panorama = root / "docs" / "panorama.html"
     text = panorama.read_text(encoding="utf-8")
-    assert "1,121 个" in text, "the anchor string changed; retarget the test"
-    panorama.write_text(text.replace("1,121 个", "1,014 个"), encoding="utf-8")
+    anchor = _unit_files_anchor(figures)
+    assert anchor in text, "the anchor string changed; retarget the test"
+    panorama.write_text(text.replace(anchor, "1,014 个"), encoding="utf-8")
     assert guard.main(["--root", str(root), "--check"]) == 1
     assert "unit test files" in capsys.readouterr().out
 

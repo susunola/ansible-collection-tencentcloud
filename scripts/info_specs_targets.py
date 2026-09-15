@@ -95,7 +95,15 @@ TARGETS = {
     # --- cdn ------------------------------------------------------------
     "cdn_cls_log_topic": "ListClsLogTopics",
     # --- cdwch ----------------------------------------------------------
+    "cdwch_backup_config": {
+        "action": "DescribeBackUpSchedule",
+        "resource": "backup_config",
+    },
     "cdwch_instance": "DescribeCNInstances",
+    "cdwch_parameter": {
+        "action": "DescribeInstanceKeyValConfigs",
+        "resource": "parameter",
+    },
     # --- cdwdoris -------------------------------------------------------
     "cdwdoris_cooldown_policy": "DescribeCoolDownPolicies",
     "cdwdoris_instance": "DescribeInstances",
@@ -104,9 +112,13 @@ TARGETS = {
     # --- cdwpg ----------------------------------------------------------
     "cdwpg_hba_config": "DescribeUserHbaConfig",
     "cdwpg_instance": "DescribeInstances",
+    "cdwpg_parameter": {"action": "DescribeDBParams", "resource": "parameter"},
     # --- cfw ------------------------------------------------------------
     "cfw_address_template": "DescribeAddressTemplateList",
+    "cfw_internet_acl_rule": "DescribeAclRule",
+    "cfw_nat_acl_rule": "DescribeNatAcRule",
     "cfw_nat_dnat_rule": "DescribeNatFwDnatRule",
+    "cfw_vpc_acl_rule": "DescribeVpcAcRule",
     # --- chdfs ----------------------------------------------------------
     "chdfs_access_group": "DescribeAccessGroups",
     "chdfs_access_rules": "DescribeAccessRules",
@@ -118,6 +130,7 @@ TARGETS = {
     "cls_alarm": "DescribeAlarms",
     "cls_alarm_notice": "DescribeAlarmNotices",
     # --- cmq (tdmq) -----------------------------------------------------
+    "cmq_subscription": "DescribeCmqSubscriptionDetail",
     "cmq_topic": "DescribeCmqTopics",
     # --- cynosdb --------------------------------------------------------
     "cynosdb_account_privilege": "DescribeAccountPrivileges",
@@ -127,6 +140,7 @@ TARGETS = {
     "dcdb_account": "DescribeAccounts",
     "dcdb_account_privilege": "DescribeAccountPrivileges",
     "dcdb_backup_config": "DescribeBackupConfigs",
+    "dcdb_security_config": "DescribeDBSecurityGroups",
     # --- dnspod ---------------------------------------------------------
     "dnspod_custom_line": "DescribeDomainCustomLineList",
     "dnspod_domain": "DescribeDomainList",
@@ -141,8 +155,10 @@ TARGETS = {
     "eb_target": "ListTargets",
     # --- es -------------------------------------------------------------
     "elasticsearch_index": {"action": "DescribeIndexList", "resource": "index"},
+    "elasticsearch_snapshot": "DescribeClusterSnapshot",
     # --- emr ------------------------------------------------------------
     "emr_auto_scale_strategy": "DescribeAutoScaleStrategies",
+    "emr_cluster": {"action": "DescribeInstances", "resource": "cluster"},
     # --- gaap -----------------------------------------------------------
     "gaap_listener_real_servers": "DescribeListenerRealServers",
     "gaap_real_server": "DescribeRealServers",
@@ -195,8 +211,24 @@ TARGETS = {
     "tdmysql_maintenance_window": "DescribeMaintenanceWindow",
     "tdmysql_ssl": "DescribeInstanceSSLStatus",
     # --- tem ------------------------------------------------------------
+    "tem_application_deployment": {
+        "action": "DescribeDeployApplicationDetail",
+        "resource": "deployment",
+    },
     "tem_application_service": "DescribeApplicationServiceList",
     "tem_environment": "DescribeEnvironments",
+    # --- tione ----------------------------------------------------------
+    # Both model-service facets read the service group, but not the same
+    # one: the *state* of a service is a per-service field of one group
+    # (DescribeModelServiceGroup -> ServiceGroup.Services[].Status), while
+    # traffic and authorization are group-level fields best read across
+    # groups (DescribeModelServiceGroups -> ServiceGroups[] with
+    # WeightUpdateStatus, AuthorizationEnable and AuthTokens).
+    "tione_model_service_state": {
+        "action": "DescribeModelServiceGroup",
+        "resource": "model_service",
+    },
+    "tione_model_service_traffic": "DescribeModelServiceGroups",
     # --- tke ------------------------------------------------------------
     "tke_cluster_route": "DescribeClusterRoutes",
     "tke_cluster_route_table": "DescribeClusterRouteTables",

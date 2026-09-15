@@ -13,6 +13,15 @@ mixed together three very different situations.
 So the anchor here is the curated tables themselves: every name the audit
 module knows about must land in the bucket its verdict implies. If the
 scraper ever comes back, or if a bucket silently empties, these fail.
+
+The backlog was closed in 1.5.0, so ``KNOWN_GAPS`` is now empty by design
+and the real repo reports ``backlog 0``. That is exactly the state in which
+a reporter bug would be invisible -- an empty bucket looks identical to a
+bucket nobody can ever fill -- so the anti-vacuity moved: instead of
+asserting the real repo still has a backlog, ``test_a_module_with_no_excuse_
+still_lands_in_backlog`` puts a module into the bucket on purpose and
+requires the tool to report it. The real repo only has to keep the *other*
+two buckets non-trivial.
 """
 
 from __future__ import absolute_import, division, print_function
@@ -54,16 +63,43 @@ def _names(bucket_map):
     return {name for names in bucket_map.values() for name in names}
 
 
-def test_the_real_repo_has_a_backlog(data):
-    """Anti-vacuity: an empty backlog would make every other test pass."""
-    assert data["counts"]["backlog"] > 0
+def test_the_real_repo_split_is_non_trivial(data):
+    """Anti-vacuity: the two curated tables must still be doing work."""
     assert data["counts"]["mapped"] > 0
     assert data["counts"]["no-list-api"] > 0
+    # The read surface is closed, so the actionable bucket is empty -- but
+    # "no sibling _info" must still be a real, partitioned population, or
+    # every assertion below would hold vacuously.
+    assert sum(data["counts"].values()) > 0
+    assert data["counts"]["backlog"] == 0
+
+
+def test_a_module_with_no_excuse_still_lands_in_backlog():
+    """An empty backlog is the state where the reporter is easiest to break.
+
+    Take one module that is currently excused as having no list API, drop the
+    excuse and name it as a gap instead; the tool has to put it in the
+    backlog bucket. If ``KNOWN_GAPS`` handling ever rots -- the regex
+    scraper coming back, the detail prefix changing, the bucket name
+    drifting -- this fails while the real repo would still report 0.
+    """
+    audit = _load(AUDIT_PATH, "audit_info_coverage_synthetic_gap")
+    assert not audit.KNOWN_GAPS, "expected the curated backlog to be closed"
+    victim = sorted(audit.KNOWN_NO_LIST_API)[0]
+    audit.KNOWN_NO_LIST_API = dict(audit.KNOWN_NO_LIST_API)
+    del audit.KNOWN_NO_LIST_API[victim]
+    audit.KNOWN_GAPS = {victim}
+
+    rows, uncovered = audit.audit()
+    verdicts = {name: (verdict, detail) for name, verdict, detail in rows}
+    assert victim in verdicts
+    assert verdicts[victim][0] == "gap"
+    assert verdicts[victim][1].startswith("backlog:")
+    assert victim not in uncovered
 
 
 def test_every_known_gap_is_reported_as_backlog(data, audit):
     backlog = _names(data["by_product"]["backlog"])
-    assert audit.KNOWN_GAPS, "the curated backlog itself is empty"
     assert audit.KNOWN_GAPS <= backlog
 
 
@@ -133,17 +169,21 @@ def test_the_report_states_every_bucket(tool, data):
     assert "tse" in text or "cos" in text
 
 
-def test_the_report_lists_every_backlog_product(tool, data):
+def test_the_report_lists_every_product_of_every_populated_bucket(tool, data):
     full = tool.report(data, show_all=True)
-    products = data["by_product"]["backlog"]
-    assert products
-    for product in products:
-        assert product in full
+    populated = [b for b in data["by_product"] if data["by_product"][b]]
+    assert populated, "no populated bucket would make the report vacuous"
+    for bucket in populated:
+        for product in data["by_product"][bucket]:
+            assert product in full
 
 
 def test_the_report_can_truncate_long_products(tool, data):
-    long_product = max(data["by_product"]["backlog"],
-                       key=lambda p: len(data["by_product"]["backlog"][p]))
+    bucket = max(data["by_product"],
+                 key=lambda b: len(data["by_product"][b]))
+    products = data["by_product"][bucket]
+    assert products, "every bucket is empty"
+    long_product = max(products, key=lambda p: len(products[p]))
     text = tool.report(data)
     full = tool.report(data, show_all=True)
     assert len(full) >= len(text)

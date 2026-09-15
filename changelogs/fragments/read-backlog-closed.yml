@@ -1,0 +1,47 @@
+---
+minor_changes:
+  - >-
+    Close the read-surface backlog. The 28 write modules that still had no read
+    side after 1.4.0 were checked against the SDK one by one and resolved in
+    three ways. Thirteen had a usable list API and now ship a generated
+    ``_info`` module, cdwch_backup_config_info, cdwch_parameter_info,
+    cdwpg_parameter_info, cfw_internet_acl_rule_info, cfw_nat_acl_rule_info,
+    cfw_vpc_acl_rule_info, cmq_subscription_info, dcdb_security_config_info,
+    elasticsearch_snapshot_info, emr_cluster_info,
+    tem_application_deployment_info, tione_model_service_state_info and
+    tione_model_service_traffic_info. Fourteen were already readable through an
+    existing ``_info`` module and are now recorded as such, for example
+    tke_cluster_deletion_protection through tke_cluster_info, clb_snat_ip
+    through clb_load_balancer_info and gwlb_target_group_association through
+    gwlb_gateway_load_balancer_info. The backlog is now zero modules over zero
+    products, and ``_info`` coverage rises from 535 to 549 modules.
+  - >-
+    Add gaap_layer4_listener_info, a hand-written read module, because GAAP
+    exposes layer-4 listeners through two sibling list actions,
+    DescribeTCPListeners and DescribeUDPListeners, with identical request and
+    response shapes while the generator maps one write module to one action.
+    The module queries both protocols, tags every listener with the protocol the
+    API does not return, and totals the two counts.
+  - >-
+    Measure the module-level test-function count instead of writing it down.
+    docs/panorama.html and docs/capability-map.html both claimed to quote the
+    number of test functions, and quoted two different values, 10,826 and
+    10,869, neither of which reproduced under the counting rule the page
+    itself states. The true figure, 10,674, is now produced by
+    scripts/check_doc_figures.py as one of its 25 guarded numbers, so the page
+    can no longer disagree with the repository.
+bugfixes:
+  - >-
+    Correct every stale test-count reference in docs/panorama.html,
+    docs/capability-map.html, docs/roadmap.md and docs/gap-closure.md after
+    re-measuring them. The CI total is 13,654 tests over the documented scope
+    of tests/contract, tests/unit/plugins/module_utils and
+    tests/unit/plugins/modules, not the 12,961 or 14,290 the pages quoted, and
+    the unit file counts move from 1,121 / 1,054 to 1,135 / 1,068. The
+    reproduction command is now recorded on the page next to the figure.
+  - >-
+    Repair the prose in the read-surface coverage tables, which is written as
+    implicitly concatenated string literals and had lost the space at roughly
+    170 join points, producing words such as "whichis" and "thewritemodule".
+    Only spaces were inserted; a whitespace-insensitive comparison against the
+    previous text proves no character and no verdict changed.

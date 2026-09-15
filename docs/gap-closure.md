@@ -3,8 +3,9 @@
 > 依据：`docs/capability-map.html` / `docs/panorama.html` 的 INDUSTRY BENCHMARK 区块
 > （本库源码 main HEAD 实测 + 对比方 Galaxy 产物实拉；2026-09-02 初版，2026-09-08 随 P0-12 同步刷新，
 > 2026-09-09 随 P0-03/04 同步 G1 集成口径至 26 targets / 77 yml，
-> 2026-09-14 随 v1.4.0 发布全量重测：991 模块 / 456 write + 535 _info、34 targets / 104 yml、
-> 覆盖率 92.65%、write 无专属单测 111 → 0、读面缺口 356 → 126，其中真 backlog 28）。
+> 2026-09-14 随 v1.4.0 发布全量重测：1005 模块 / 456 write + 549 _info、34 targets / 104 yml、
+> 覆盖率 92.65%、write 无专属单测 111 → 0、读面缺口 356 → 112，其中真 backlog 28 → **0**
+> （2026-09-15 由 G1-l 收干，见文末执行清单第 16 项）。
 > 对比对象：amazon.aws 11.4.0 / azure.azcollection 4.0.0 / google.cloud 1.14.0（版本未变，沿用 09-02 核验）。
 > 状态图例：✅ 已闭合 · 🔄 在途 · ⏸ 排队/等待外部 · 📋 待启动 · ❌ 明确不追（有意取舍）。
 
@@ -63,16 +64,16 @@ redis_instance 等其余旗舰随 P0-04 R1-R6 排入；2026-10 底前集成 targ
 
 ## G1b 单元测试广度（write 面）— ✅ 80% 里程碑达成（收口持续）
 
-**现状**（2026-09-14 全量重测）：整体语句覆盖率 **92.65%**（CI 口径
+**现状**（2026-09-15 全量重测）：整体语句覆盖率 **92.65%**（CI 口径
 `tests/contract` + `tests/unit/plugins/module_utils` + `tests/unit/plugins/modules`
-共 12,961 条：12,908 passed / 31 skipped / 22 xfailed，`--cov-fail-under=80` 通过）。
-模块级单测 1,054 个文件 / 10,826 个测试函数。
+共 13,654 条：13,601 passed / 31 skipped / 22 xfailed，`--cov-fail-under=80` 通过）。
+模块级单测 1,068 个文件 / 10,674 个测试函数。
 **write 面无专属单测模块已归零**：456 / 456 全部有专属单测文件
 （`test_<module>_main.py` 约定），从 222（/313，2026-08-31 基线）→ 111（/440，2026-09-08）
 → **0（/456，2026-09-14）**。
 历史基线（2026-08-31）：语句覆盖率 ~60.9%（gate 55）；09-08 80% 冲刺达 81.44%，
 09-09 随 P0-05/06 续升至 82%，09-14 重测为 92.65%。
-**广度缺口已完全闭合**：435 个 `_info` 曾有 36 个（8%）没有专属单测文件，2026-09-14 由生成器扩展补齐；现 **write 456 / 456 与 info 535 / 535 全部有专属单测文件**。
+**广度缺口已完全闭合**：435 个 `_info` 曾有 36 个（8%）没有专属单测文件，2026-09-14 由生成器扩展补齐；现 **write 456 / 456 与 info 549 / 549 全部有专属单测文件**。
 
 **建议动作**：
 | 步骤 | 动作 | 依赖 | 截止 | 状态 |
@@ -175,7 +176,7 @@ TEO、CFW、CFS、Lighthouse 等），继续按 panorama 推荐顺序逐族推�
     registry；`scripts/integration_impact.py` 新增 `validate_target_dirs()` 反向校验并已进 CI 的
     「Integration coverage registry is valid」步骤；9 条回归测试全绿）
  9. **G1-e（09-14 新增）** info 侧单测广度收口 → ✅（`scripts/generate_info_modules.py` 新增
-    `none` 与 `token` 两套测试模板，`SPECS` 之外的 7 个模块由骨架生成器补齐；**535 / 535 个
+    `none` 与 `token` 两套测试模板，`SPECS` 之外的 7 个模块由骨架生成器补齐；**549 / 549 个
     `_info` 全部有专属单测文件**，模块与测试共用 `_token_termination()` 终结表达式以免漂移；
     4 条生成器回归测试锁定该契约。CI 口径 12,828 → 12,961，覆盖 92.58% → 92.65%）
  10. **G1-f（09-14 新增）** `meta/extensions.yml` 有了反向校验 → ✅（该文件 09-09 落地并随
@@ -226,7 +227,7 @@ _本计划由 docs/capability-map.html / docs/panorama.html INDUSTRY BENCHMARK �
      仍列为未完成**，文档因此持续对外宣称一批并不存在的缺口。
      新增 `scripts/check_roadmap_status.py`：12 项可机械度量的验收逐个从磁盘实测
      （module 测试文件 <80 行归零 = 0 / 68 role × 6 断言族 / 456 write 契约覆盖
-     442 实跑 + 14 书面豁免 / 991 FQCN 索引零缺失 / 16 个 module_utils helper 全部入档 /
+     442 实跑 + 14 书面豁免 / 1005 FQCN 索引零缺失 / 16 个 module_utils helper 全部入档 /
      三份伴生文档都写出当前模块数 / triage 工作流存在且 SLA 成文 / demo 页存在且被 README 链接 /
      14 个发布版本全部进 porting 版本映射表），再与徽章做**双向**比对 —— 标 done 但验收不过、
      或验收过了却没标，两边都失败。P0-05/06（读面收口）与 P2-01/02/08（外部动作）不伪造成
@@ -278,3 +279,54 @@ _本计划由 docs/capability-map.html / docs/panorama.html INDUSTRY BENCHMARK �
      其后的 `ansible-test sanity` 会扫描**全部文件**，把缓存二进制判成 CRLF 和非 UTF-8
      （实测 13 处 line-endings + 577 处 no-smart-quotes）。CI 改为 `ruff check . --no-cache`，
      `.ruff_cache/` 同时加入 `.gitignore`。）
+  16. **G1-l（09-15 新增）** 读面 backlog 收干到 0，且空表不再等于「没人检查」 → ✅
+     （G1-k 把 backlog 从 128 压到 **28**，剩下的 28 个跨 18 个产品，逐个查过 SDK 后
+     分三类处置：**13 个**确实有可用列表接口 —— 补进 `scripts/info_specs_targets.py`
+     策展表后由生成器直接产出 `_info`（`cdwch_backup_config` / `cdwch_parameter` /
+     `cdwpg_parameter` / `cfw_internet_acl_rule` / `cfw_nat_acl_rule` /
+     `cfw_vpc_acl_rule` / `cmq_subscription` / `dcdb_security_config` /
+     `elasticsearch_snapshot` / `emr_cluster` / `tem_application_deployment` /
+     `tione_model_service_state` / `tione_model_service_traffic`）；**14 个**本来就
+     能被某个既有 `_info` 读到，只是没人登记 —— 逐个比对该 `_info` 的响应模型后写进
+     `KNOWN_COVERAGE`（例：`tke_cluster_deletion_protection` 读的是
+     `tke.Cluster.DeletionProtection`、`clb_snat_ip` 读的是 `clb.LoadBalancer.SnatIps`、
+     `gwlb_target_group_association` 读的是 `gwlb.GatewayLoadBalancer.TargetGroupId`）；
+     **1 个**（`gaap_layer4_listener`）无法用生成器表达 —— GAAP 把四层监听的列表接口
+     拆成 `DescribeTCPListeners` / `DescribeUDPListeners` 两个 sibling action，请求与
+     响应形状完全相同，而生成器是「一个 write 模块对一个 action」，因此手写
+     `gaap_layer4_listener_info` 依次查两个协议并给每条记录打上 `protocol` 标记
+     （API 不返回协议字段）。映射一律先读 SDK 响应模型再落笔：`KNOWN_COVERAGE` 的
+     docstring 里那句「a wrong mapping is worse than an honest gap」是硬约束，
+     宁可留着缺口也不造不存在的读面。
+     结果：backlog **28 → 0**、backlog 产品 **18 → 0**、读面缺口 **126 → 112**
+     （57 已映射 + 55 无列表 API）、`_info` **535 → 549**、模块总数 **991 → 1005**
+     —— P0-05 的验收口径是 backlog 128 → ~60、P0-06 是 backlog 产品 45 → <25，两项
+     均已完成而非接近。
+     但 **backlog 归零恰恰是最危险的状态**：空桶和「永远填不进去的桶」长得一模一样，
+     原来那条反空转断言 `assert data["counts"]["backlog"] > 0` 会当场失守。
+     因此 `tests/unit/scripts/test_gap_backlog.py` 把反空转**从真实仓库搬到合成用例**：
+     `test_a_module_with_no_excuse_still_lands_in_backlog` 摘掉一个「无列表 API」豁免、
+     把它改判为 gap，要求工具必须把它报进 backlog；真实仓库只负责保证另外两个桶
+     非空。`KNOWN_GAPS` 现为空集，并在源码里写明它不是停车场——新 write 模块必须
+     落地即被 `KNOWN_COVERAGE` 覆盖，否则
+     `scripts/audit_info_coverage.py --check` 立刻失败。**4 个变异全部被捕获**
+     （改 `backlog:` 前缀 / 删掉 `KNOWN_GAPS` 分支 / 把 `KNOWN_NO_LIST_API` 的判定
+     换成 `KNOWN_GAPS` / 往 `KNOWN_GAPS` 塞回一个陈旧条目）。
+     顺带修掉两处长期失校：① 上述两张表的说明文字是隐式字符串拼接，约 40 处丢空格
+     （`whichis` / `thewritemodule` / `bucket,whichis`）与 130+ 处拼接点缺空格，
+     已按「只插入空格、不改任何字符」逐条修好并用去空白比对证明零语义变化；
+     ② `tests/unit/scripts/test_check_doc_figures.py` 里硬编码的 `1,121 个` 锚点
+     每次新增测试文件都会失效，且失效方式是**静默通过**（replace 没匹配上，于是断言的
+     「应当报出 1 个问题」变成 0 个问题也算过）—— 改为从实测数字推导锚点，
+     并在锚点消失时直接报错而不是静默放行；
+     ③ 测试函数个数是同一类失校——`docs/panorama.html` 与
+     `docs/capability-map.html` 都声称引用该数字，却一处写 10,826、一处写
+     10,869，且两者在页面自己声明的口径（模块级 `test_*.py` 里行首
+     `def test_`）下都复现不出来（实测 **10,674**）。根因与 ① ② 相同：**只要
+     数字是手写的，就一定会被下一次提交甩在后面**。因此把该数字收进
+     `scripts/check_doc_figures.py`（第 25 项），由脚本按页面自述口径实测；
+     CI 条数同理按 `.github/workflows/ci.yml` 的 coverage 口径
+     （`tests/contract` + `tests/unit/plugins/module_utils` +
+     `tests/unit/plugins/modules`）重测为 **13,654 条（13,601 过 / 31 跳 /
+     22 xfail）**，并把复测命令写进页面，替换掉原先 12,961 / 14,290 两个
+     互相打架的历史值。）

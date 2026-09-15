@@ -45,6 +45,7 @@ CLAIMS = (
     ("roles", ("roles",)),
     ("unit test files", ("test_*.py", "单测")),
     ("module-level unit files", ("模块级",)),
+    ("module-level test functions", ("测试函数",)),
     ("read-side gap", ("_info 读面", "读面缺口")),
     ("read-side gap products", ("读面", "产品")),
     ("read-side mapped", ("映射", "mapped")),
@@ -68,6 +69,22 @@ def _py_files(directory):
     if not directory.is_dir():
         return []
     return sorted(p for p in directory.glob("*.py") if not p.name.startswith("__"))
+
+
+def _test_functions(paths):
+    """Count test functions declared at module scope (``def test_`` at column 0).
+
+    The rule is part of the figure. The page once quoted this number twice,
+    as 10,826 in one place and 10,869 in another, and neither reproduced
+    under any stated rule -- because the number was remembered instead of
+    measured. Counting here means the page cannot disagree with the repo.
+    """
+    total = 0
+    for path in paths:
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if line.startswith("def test_"):
+                total += 1
+    return total
 
 
 def _product_count(root):
@@ -155,6 +172,7 @@ def measure(root):
         "roles": len([p for p in (root / "roles").iterdir() if p.is_dir()]),
         "unit test files": len(unit_files),
         "module-level unit files": len(module_level),
+        "module-level test functions": _test_functions(module_level),
         "read-side gap": len(gap),
         "integration target dirs": len(
             [p for p in (root / "tests" / "integration" / "targets").iterdir()

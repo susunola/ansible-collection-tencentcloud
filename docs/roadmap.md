@@ -922,22 +922,22 @@
     underneath them while the pages still quoted the 2026-09-08 snapshot. Every
     figure was re-measured rather than extrapolated:
 
-    | Figure | 09-08 page | 09-14 measured |
+    | Figure | 09-08 page | 09-15 measured |
     |---|---|---|
-    | Modules | 781 (440 write + 341 info) | **991 (456 write + 535 info)** |
+    | Modules | 781 (440 write + 341 info) | **1005 (456 write + 549 info)** |
     | Statement coverage | 81.44% | **92.65%** (gate 80) |
-    | Module unit-test files | 781 | **1,054** (10,826 test functions) |
+    | Module unit-test files | 781 | **1,068** (10,674 test functions) |
     | Sanity ignore debt | 1557 / 1900 | **2076 / 2600** (519 x 4 core versions) |
     | Integration targets | 21 | **34** (33 in the registry, 21 in the default list) |
-    | Write modules without a `_info` read surface | 356 / 74 products | **126 / 29 products (28 backlog + 55 no-list-api + 43 mapped)** |
+    | Write modules without a `_info` read surface | 356 / 74 products | **112 / 21 products (0 backlog + 55 no-list-api + 57 mapped)** |
     | Write modules without a dedicated unit test | 111 | **0** |
     | Read-only `_info` modules without a dedicated unit test | 36 | **0** |
     | Galaxy downloads | 415 | **553** |
 
     The module count for the unit tests is deliberately the module-level one
-    (1,054 files under `tests/unit/plugins/modules`); the CI coverage step also
+    (1,068 files under `tests/unit/plugins/modules`); the CI coverage step also
     collects `tests/contract` and `tests/unit/plugins/module_utils`, which is
-    where 12,961 tests / 92.65% comes from.
+    where 13,654 tests / 92.65% comes from (09-15 re-measured).
 
     **Finding while measuring — two orphan integration targets.** `cvm_image`
     and `lighthouse` ship a complete `meta/tasks/vars` layout but appear in
@@ -999,7 +999,7 @@
      every response field the generated loop reads, so the test can no longer
      pass against a loop the module never walks.
 
-     Result: **535 / 535 `_info` and 456 / 456 write modules** have a dedicated
+     Result: **549 / 549 `_info` and 456 / 456 write modules** have a dedicated
      unit test file, CI scope moved from 12,828 to 12,961 tests and measured
      statement coverage from 92.58% to 92.65%.
 
@@ -1066,6 +1066,25 @@ The practical consequence is that P0-05's target list was wrong: tse(27)
 and cos(14) were only "missing a same-named `_info`", and both have a
 **backlog of 0**; the real leaders are apigateway 8 / ckafka 6 / trabbit 6 /
 cfw 5 / dts 5.
+
+Status 2026-09-15: the read-surface backlog is **closed at the source**, not
+merely re-bucketed. The 28 modules left over from 09-14 were checked against
+the SDK one at a time. Thirteen had a usable list API and now ship a
+generated ``_info`` module; fourteen were already readable through an
+existing ``_info`` module and are recorded in ``KNOWN_COVERAGE`` only after
+that module's response model was read to confirm it really returns the
+resource; and one (``gaap_layer4_listener``) needed a hand-written module
+because GAAP splits layer-4 listeners across two sibling list actions with
+identical shapes, which the one-module-one-action generator cannot express.
+The corrected split is now 456 write modules -- 344 have a sibling
+``_info``, and of the 112 that do not, **57 are mapped, 55 have no list API
+and 0 are backlog** over 0 products. ``KNOWN_GAPS`` is deliberately empty and
+is documented as not being a parking lot, so a new write module must be
+covered on arrival or ``scripts/audit_info_coverage.py --check`` fails.
+Because an empty bucket is indistinguishable from one that can never be
+filled, the anti-vacuity assertion in ``tests/unit/scripts/test_gap_backlog.py``
+moved from the real repo to a synthetic injection test that puts a module
+into the backlog on purpose and requires the tool to report it.
 
 Status 2026-09-14: the roadmap's own status column was audited, and it had
 rotted in the quieter direction. The 30-item priority table in

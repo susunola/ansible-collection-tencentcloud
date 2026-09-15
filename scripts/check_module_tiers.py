@@ -230,6 +230,11 @@ CORE_MODULES = {
     "cdwpg_parameter",
     "gaap_proxy",
     "gaap_layer4_listener",
+    # Hand-written: GAAP splits layer-4 listeners across two sibling list
+    # actions (DescribeTCPListeners / DescribeUDPListeners) with identical
+    # request and response shapes, which the one-module-one-action generator
+    # cannot express.
+    "gaap_layer4_listener_info",
     "gaap_listener_real_servers",
     "gaap_real_server",
     "gwlb_load_balancer",
