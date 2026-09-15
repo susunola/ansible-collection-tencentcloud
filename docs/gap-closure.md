@@ -87,13 +87,19 @@ redis_instance 等其余旗舰随 P0-04 R1-R6 排入；2026-10 底前集成 targ
 
 ## G2 生态信任 — ⏸ 半被动（inclusion #89 评审中）
 
-**现状**：inclusion 申请已提交（discussion #89，2026-09-02），自查评论已贴（discussioncomment-18250641），仓库已发布至 **v1.4.0（2026-09-14）**，release 全链路（tag → build → GitHub release → Galaxy publish）已自动化。Galaxy 累计下载 553（09-14 实拉）。评审者尚未回复（截至 09-14）。
+**现状**：inclusion 申请已提交（discussion #89，2026-09-02），自查评论已贴（discussioncomment-18250641），仓库已发布至 **v1.4.0（2026-09-14）**，release 全链路（tag → build → GitHub release → Galaxy publish）已自动化。Galaxy 累计下载 553（09-14 实拉）。**评审者已于 2026-09-15 首次回复**
+（steering committee 的 Andersson007：已收到申请，待委员会有人接手）——这是
+「有人理了」的信号，但还不是正式 review，G2-b 的 24h 响应窗口由此开启。
+**已于当日 11:40 UTC 响应**（[discussioncomment-18448852](https://github.com/ansible-collections/ansible-inclusion/discussions/89#discussioncomment-18448852)，
+5 小时内）：自查评论写于 1.0.0 时期，其中「3000+ 单测」已滞后近 4 倍，而那正是
+未来评审者会先读到的一条——响应顺手把它订正为实测值，并说明 release 全链路已
+自动化（checklist 从此每次 release 重验，而非提交时验一次）。
 
 **建议动作**：
 | 步骤 | 动作 | 依赖 | 截止 | 状态 |
 |---|---|---|---|---|
 | G2-a | 按官方流程评审 1 个排队中的他人 collection（README step 1：先评审别人可提升自身优先级） | 官方 README 排队清单 | 2026-09-09 → **逾期未做（09-14 复核仍 📋）** | 📋 |
-| G2-b | 每周五检查 #89 是否有评审反馈并回复 | 无 | 每周 | ⏸ |
+| G2-b | 每周五检查 #89 是否有评审反馈并回复 | 无 | 每周 | ✅ 本周（09-15 收到首条回复，5h 内已响应；下周五复检） |
 | G2-c | 保持 devel 每周测试 + release 节奏（devel.yml/release.yml 已在跑） | 无 | 持续 | ✅ 已自动化 |
 
 **验收**：#89 进入正式 review；Galaxy 周下载量 > 0。
