@@ -218,3 +218,23 @@ TEO、CFW、CFS、Lighthouse 等），继续按 panorama 推荐顺序逐族推�
 ---
 
 _本计划由 docs/capability-map.html / docs/panorama.html INDUSTRY BENCHMARK 区块派生 · 2026-09-02 初版 · 2026-09-08 随 P0-12 刷新至 781 模块 / 204 产品 / gate 80 口径 · 2026-09-09 随 P0-05 刷新覆盖率至 81.64%、随 P0-06 至 82% · **2026-09-14 随 v1.4.0 全量重测至 891 模块（456 write + 435 _info）/ 204 产品 / gate 80 实测 92.65% / 34 targets（104 yml）/ write 与 info 无专属单测均 0 / 读面缺口 226（55 产品，其中 backlog 128 / 45 产品）** · 数据均为源码实测 + Galaxy 产物实拉_
+  14. **G1-j（09-14 新增）** panorama 30 件事的「已达成」徽章不再无人校验 → ✅
+     （`docs/panorama.html` 的优先级表每行挂一个手写的 `chip done`，没有任何东西校验它 ——
+     于是它**双向**腐烂：既可能挂着 done 而验收从没满足，也可能工作早就落地却一直没标。
+     09-14 实测后一种更严重：**10 项（P0-03 / P0-09 / P0-10 / P0-11 / P0-12 / P1-07 /
+     P1-09 / P1-10 / P2-03 / P2-08 的稿件部分）按它们自己写下的验收口径全部通过，表格却
+     仍列为未完成**，文档因此持续对外宣称一批并不存在的缺口。
+     新增 `scripts/check_roadmap_status.py`：12 项可机械度量的验收逐个从磁盘实测
+     （module 测试文件 <80 行归零 = 0 / 68 role × 6 断言族 / 456 write 契约覆盖
+     442 实跑 + 14 书面豁免 / 891 FQCN 索引零缺失 / 16 个 module_utils helper 全部入档 /
+     三份伴生文档都写出当前模块数 / triage 工作流存在且 SLA 成文 / demo 页存在且被 README 链接 /
+     14 个发布版本全部进 porting 版本映射表），再与徽章做**双向**比对 —— 标 done 但验收不过、
+     或验收过了却没标，两边都失败。P0-05/06（读面收口）与 P2-01/02/08（外部动作）不伪造成
+     可度量，而是明确列为 not mechanically measurable。
+     顺带把 3 个**真**缺口补上：`.github/workflows/triage.yml`（open/reopen 打 `triage`，
+     首个真人评论或 review 自动摘除，机器人不算，每日 07:23 UTC 跑 SLA 扫描 —— 从不 checkout
+     PR 代码）、`docs/porting.md` §10 版本映射（14 个发布版本逐个入表 + 3 个需要动手的版本的
+     升级说明）、`docs/demo.html`（把 06_full_chain.yml 拆成 4 步的可执行演示，已链入 README）。
+     `docs/triage.md` 里「None of this is automated yet」这句旧断言已同步改写。
+     24 条单测，含真实仓库锚点与 6 个合成失败路径（浅测试 / 陈旧数字 / 缺告警章节 /
+     版本未映射 / demo 页缺失或未链接），**8 个变异全部被捕获**）

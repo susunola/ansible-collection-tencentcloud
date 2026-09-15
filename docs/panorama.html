@@ -331,8 +331,8 @@
           <td class="item"><b>再补 4 个旗舰集成 target</b> <span class="chip done">✓ 已达成</span><span class="why">vpc / subnet（网络基础面，cost: free）、cdb_instance（数据库）、tke_cluster（容器）四个 target 均已落地</span></td>
           <td class="item"><span class="why">旗舰零集成 09-14 实测已从 13 个降到 <b>6 个</b>（redis_instance / cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway）。target 总数 21 → 34。</span></td><td><span class="chip cost">L</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-03</td><td><span class="chip p0">P0</span></td>
-          <td class="item"><b>定义集成测试可信执行环境</b><span class="why">真实腾讯云账号 + 资源自动清理策略，或 ansible-test cloud 插件化接入；CI 定时跑而非 PR 阻塞（G1-b）</span></td>
-          <td class="item"><span class="why">没有可信环境，target 只是摆设。验收：文档写明凭据注入、清理兜底（防资源泄漏扣费）、失败告警。</span></td><td><span class="chip cost">M</span></td></tr>
+          <td class="item"><b>定义集成测试可信执行环境</b> <span class="chip done">✓ 已达成</span><span class="why">docs/integration-env.md（397 行）已写明：真实账号凭据注入（<code>TENCENTCLOUD_SECRET_ID/_KEY</code> 走 secret，缺凭据时步骤整体跳过）、<code>cleanup</code> sweeper target 以 <code>if: always()</code> 兜底防资源泄漏扣费、§5 失败告警（<code>if: failure()</code> + 产物留存）；CI 定时跑而非 PR 阻塞</span></td>
+          <td class="item"><span class="why">没有可信环境，target 只是摆设。验收达成：凭据注入 / 清理兜底 / 失败告警三节齐备，并由 <code>scripts/check_roadmap_status.py --check</code> 逐项校验（缺任一项即失配）。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-04</td><td><span class="chip p0">P0</span></td>
           <td class="item"><b>目标：集成 target 21 → 30+</b> <span class="chip done">✓ 数量已达成</span><span class="why">覆盖 13 旗舰中的 7 个后继续向 30+ 推进（G1-c），按 product-depth 里旗舰产品优先</span></td>
           <td class="item"><span class="why">09-14 实测 34 个 target 目录 / 33 个进 registry，数量里程碑已过；但对齐 amazon 160 / google 115 仍是长期目标，且默认清单只有 21 个（billed target 需人工 dispatch），「30+ 全绿」待 2026-09-19 首次带凭据的定时跑验证。</span></td><td><span class="chip cost">L</span></td></tr>
@@ -349,17 +349,17 @@
           <td class="item"><b>实现 --module-test 骨架生成器</b> <span class="chip done">✓ 已达成</span><span class="why">coverage-batching lever 1：静态读 write 模块，产出可跑 harness（imports + fake client + 每 state 分支测试 stub），断言人工写（G1b-a）。落地为 scripts/generate_module_test_skeleton.py</span></td>
           <td class="item"><span class="why">剩余 write 模块多共享同一 helper 骨架，单模块 1-2h → 20-40min；是把 111 → 0 的唯一杠杆（09-14 复核：write 无单测已归零）。验收：1 个参考生成测试过 sanity + units。</span></td><td><span class="chip cost">S-M</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-09</td><td><span class="chip p0">P0</span></td>
-          <td class="item"><b>单测文件质量审计：浅测试升级</b><span class="why">扫描 &lt;80 行模块测试文件（多为冒烟），逐个升级为全 harness 或并入同族文件</span></td>
-          <td class="item"><span class="why">浅测试制造「有测试」假象。验收：&lt;80 行模块测试文件归零（与 80% 冲刺前同口径复查）。</span></td><td><span class="chip cost">M</span></td></tr>
+          <td class="item"><b>单测文件质量审计：浅测试升级</b> <span class="chip done">✓ 已达成</span><span class="why">扫描 &lt;80 行模块测试文件（多为冒烟），逐个升级为全 harness 或并入同族文件</span></td>
+          <td class="item"><span class="why">浅测试制造「有测试」假象。验收达成：<b>954 个模块测试文件中 0 个低于 80 行</b>（09-14 实测，最短一批也在 80–150 行区间）；口径与详情由 <code>scripts/check_roadmap_status.py</code> 持续复测，新增浅测试会立刻失配。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-10</td><td><span class="chip p0">P0</span></td>
-          <td class="item"><b>为 68 个 solution roles 补 task 级测试</b><span class="why">roles 目前只有 syntax-check 守护；task 级逻辑（enable 开关、teardown 逆序）无测试</span></td>
-          <td class="item"><span class="why">roles 从 5 涨到 68 后是差异化主卖点，也是最容易在重构时悄悄坏的部分。验收：每 role 至少 3 个 task 级断言用例。</span></td><td><span class="chip cost">M</span></td></tr>
+          <td class="item"><b>为 68 个 solution roles 补 task 级测试</b> <span class="chip done">✓ 已达成</span><span class="why"><code>tests/unit/roles/test_role_task_contracts.py</code> 以 6 个断言族参数化覆盖全部 68 个 <code>tc_*</code> role：state-switch / absent-never-provisions / reverse-teardown / module-and-target-integrity / inputs-declared-or-derived / jinja-parse</span></td>
+          <td class="item"><span class="why">roles 从 5 涨到 68 后是差异化主卖点，也是最容易在重构时悄悄坏的部分。验收达成：<b>68 role × 6 断言族 = 408 个参数化用例</b>，远超「每 role ≥3 个」；新增 role 未覆盖即失配。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-11</td><td><span class="chip p0">P0</span></td>
-          <td class="item"><b>补齐 contract tests 对生成模块的覆盖</b><span class="why">每个 SDK 请求模型逐字段比对真实返回值结构；新增 SDK 方法自动检测</span></td>
-          <td class="item"><span class="why">生成式治理的短板在「SDK 升级悄悄破坏请求形状」——contract 测试是护栏。验收：456 write 模块全部有契约用例（当前 contract 覆盖仍在推进中）。</span></td><td><span class="chip cost">L</span></td></tr>
+          <td class="item"><b>补齐 contract tests 对生成模块的覆盖</b> <span class="chip done">✓ 已达成</span><span class="why">每个 SDK 请求模型逐字段比对真实返回值结构；<code>test_module_request_builders_are_exercised</code> 对全部 891 个模块做自审计：新增模块只要开始构造 API 3.0 请求而没有契约用例，该用例立即失败</span></td>
+          <td class="item"><span class="why">生成式治理的短板在「SDK 升级悄悄破坏请求形状」——contract 测试是护栏。验收达成：<b>456 个 write 模块中 442 个有专属契约用例，另 14 个（全部 cos_bucket*）经 NO_API3_CONTRACT 书面豁免</b>——COS 走 qcloud_cos SDK 而非 API 3.0，本身没有可审计的请求模型；豁免一旦失实（模块开始构造 API 3.0 请求）即失败。</span></td><td><span class="chip cost">L</span></td></tr>
         <tr class="grp-p0"><td class="no">P0-12</td><td><span class="chip p0">P0</span></td>
-          <td class="item"><b>修正 capability-map / gap-closure / roadmap 的 benchmark 数据口径</b><span class="why">KPI 按 204 产品 / 71 含写 / 891 模块刷新；雷达与 30 件事与 panorama 同源；G1b 里程碑已达成标注</span></td>
-          <td class="item"><span class="why">对外展示的对比表不能带已知过期数字（781 模块 / 81.44% / sanity 1557-1900 等已失效）。验收：三份文档数据与本页一致 —— panorama 已于 2026-09-14 按实测刷新（891 / 92.65% / 2076-2600）。</span></td><td><span class="chip cost">S</span></td></tr>
+          <td class="item"><b>修正 capability-map / gap-closure / roadmap 的 benchmark 数据口径</b> <span class="chip done">✓ 已达成</span><span class="why">KPI 按 204 产品 / 71 含写 / 891 模块刷新；雷达与 30 件事与 panorama 同源；G1b 里程碑已达成标注</span></td>
+          <td class="item"><span class="why">对外展示的对比表不能带已知过期数字（781 模块 / 81.44% / sanity 1557-1900 等已失效）。验收达成：<code>scripts/check_doc_figures.py --check</code> 已用 24 项声明按整数字面比对 panorama；<code>scripts/check_roadmap_status.py --check</code> 再要求 capability-map / roadmap / gap-closure 三份文档都写出当前模块数 <b>891</b>，任一份回落到旧数字即失配。</span></td><td><span class="chip cost">S</span></td></tr>
 
         <tr class="grp-p1"><td class="no">P1-01</td><td><span class="chip p1">P1</span></td>
           <td class="item"><b>新增 plugins/plugin_utils 共享库</b> <span class="chip done">✓ 已达成</span><span class="why">落地为 plugins/plugin_utils/ 下 5 个模块文件（inventory / paging / polling / profile / tags，含 inventory.py 控制器 shim，另有 __init__.py；口径同 module_utils 16 个，均不计 __init__.py）；与 module_utils（16 个）分工</span></td>
@@ -380,17 +380,17 @@
           <td class="item"><b>doc_fragments 从 1 拆到 5+</b> <span class="chip done">✓ 已达成</span><span class="why">公共参数（认证、region、waiter、retry）抽成 fragment，各模块文档引用而非复制；现有 6 个，已超过 amazon 的 5 个</span></td>
           <td class="item"><span class="why">与 amazon doc_fragments 5 个对齐；文档单一事实来源。验收：常用参数迁移到 fragment 且 validate-modules 全绿。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p1"><td class="no">P1-07</td><td><span class="chip p1">P1</span></td>
-          <td class="item"><b>module_utils 按职责重组（14 → 分组）</b><span class="why">base/client/errors 已清晰，补 comparison/lifecycle 分组注释与边界文档</span></td>
-          <td class="item"><span class="why">14 个文件承载全部生成逻辑，边界不清会让新模块生成器难维护。验收：module_utils README + 依赖方向图。</span></td><td><span class="chip cost">S-M</span></td></tr>
+          <td class="item"><b>module_utils 按职责重组（14 → 分组）</b> <span class="chip done">✓ 已达成</span><span class="why"><code>plugins/module_utils/README.md</code>：16 个 helper 按 4 组（Module base / Error 与 lifecycle / Resolution 与 comparison / Product-private）列表，逐个标注内部依赖</span></td>
+          <td class="item"><span class="why">14 个文件承载全部生成逻辑，边界不清会让新模块生成器难维护。验收达成：README 含「## Dependency direction」依赖方向节与「Rules for new helpers」边界规则，<b>16 个 helper 全部被逐个点名</b>；新增 helper 未入档即失配。</span></td><td><span class="chip cost">S-M</span></td></tr>
         <tr class="grp-p1"><td class="no">P1-08</td><td><span class="chip p1">P1</span></td>
           <td class="item"><b>event_source 插件补文档 + 单测</b> <span class="chip done">✓ 已达成</span><span class="why">4 个 event_source 单测 8 / 12 / 13 / 20 例（共 53）；09-14 补齐 EXAMPLES 块与载荷字段文档，并修正 2 处永不匹配的规则条件（event.level → event.cls.level、event.cmq.MsgBody → event.cmq.msg_body）；新增 test_examples.py（11 例）双向校验「示例字段 ⊆ 文档承诺字段 ⊆ 代码/单测实测字段」；仍无 docsite 入口（扩展类型不被 antsibull-docs 识别）</span></td>
           <td class="item"><span class="why">EDA 场景是腾讯云差异化（三家官方均无 event_source 目录形态）。验收：每插件 DOCUMENTATION + 至少 3 个用例 —— 已达成；docsite 入口待评估（需手写或生成 RST）。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p1"><td class="no">P1-09</td><td><span class="chip p1">P1</span></td>
-          <td class="item"><b>README 模块索引加 FQCN 与示例链接</b><span class="why">每模块一行：FQCN、1 句用途、example 锚点；sync_registry.py 继续保证不漂移</span></td>
-          <td class="item"><span class="why">204 产品 891 模块的发现成本是新人第一道坎。验收：README 可直接被 Galaxy 页面友好展示。</span></td><td><span class="chip cost">S</span></td></tr>
+          <td class="item"><b>README 模块索引加 FQCN 与示例链接</b> <span class="chip done">✓ 已达成</span><span class="why">每模块一行：FQCN、1 句用途、example 锚点；sync_registry.py 继续保证不漂移</span></td>
+          <td class="item"><span class="why">204 产品 891 模块的发现成本是新人第一道坎。验收达成：<b>README 索引 891 行 FQCN，与 891 个模块一一对应，零缺失</b>；新增模块未入索引即失配。</span></td><td><span class="chip cost">S</span></td></tr>
         <tr class="grp-p1"><td class="no">P1-10</td><td><span class="chip p1">P1</span></td>
-          <td class="item"><b>补 docs/examples 端到端 playbook 集</b><span class="why">旗舰场景（建站、K8s、DR）各一个可跑 playbook，从 68 roles 挑 5 个场景，模块混排示范</span></td>
-          <td class="item"><span class="why">「拿来就能跑」比任何 marketing 都有说服力。验收：5 个 example 全部 syntax-check 通过。</span></td><td><span class="chip cost">M</span></td></tr>
+          <td class="item"><b>补 docs/examples 端到端 playbook 集</b> <span class="chip done">✓ 已达成</span><span class="why">旗舰场景（建站、K8s、DR）各一个可跑 playbook，从 68 roles 挑 5 个场景，模块混排示范</span></td>
+          <td class="item"><span class="why">「拿来就能跑」比任何 marketing 都有说服力。验收达成：<b>11 个 example playbook</b>（docs/examples 6 个 + playbooks/ 5 个）<code>scripts/check_examples.py --check</code> 全绿 —— 不仅 syntax-check，还校验任务引用的模块名与 role 变量真实存在。</span></td><td><span class="chip cost">M</span></td></tr>
 
         <tr class="grp-p2"><td class="no">P2-01</td><td><span class="chip p2">P2</span></td>
           <td class="item"><b>G2-a：按官方流程评审 1 个排队中的他人 collection</b><span class="why">inclusion README step 1：先评审别人可提升自身优先级</span></td>
@@ -399,23 +399,23 @@
           <td class="item"><b>每周五检查 #89 评审反馈并回复</b><span class="why">评审者开始 review 后 24h 内响应，避免冷却</span></td>
           <td class="item"><span class="why">inclusion 通过 = Galaxy 推荐位 + 社区信任起点。验收：讨论串有实质往来。</span></td><td><span class="chip cost">S</span></td></tr>
         <tr class="grp-p2"><td class="no">P2-03</td><td><span class="chip p2">P2</span></td>
-          <td class="item"><b>CONTRIBUTING.md 补 co-maintainer 加入路径</b><span class="why">明确权限边界（模块命名 / CI 闸门 / release 权）、期望投入、加入步骤</span></td>
-          <td class="item"><span class="why">单人维护是 G4 结构性风险，加入路径是解药第一步。验收：2026-09-30 前合入。</span></td><td><span class="chip cost">S</span></td></tr>
+          <td class="item"><b>CONTRIBUTING.md 补 co-maintainer 加入路径</b> <span class="chip done">✓ 已达成</span><span class="why">「Maintainership: roles, boundaries, and how to join」：三级权限矩阵（Contributor / Reviewer (co-maintainer) / Maintainer）、受保护面清单（workflows / BASELINE_TOTAL / GENERATED_SDK_VERSION / CORE_MODULES / galaxy.yml version）、期望投入、加入步骤、决策规则</span></td>
+          <td class="item"><span class="why">单人维护是 G4 结构性风险，加入路径是解药第一步。验收达成（早于 2026-09-30 期限）：权限边界 / 期望投入（每周 2–4 小时，首响 48h）/ 加入步骤（提名 issue 模板）三段齐备。</span></td><td><span class="chip cost">S</span></td></tr>
         <tr class="grp-p2"><td class="no">P2-04</td><td><span class="chip p2">P2</span></td>
           <td class="item"><b>release 流程全自动化（tag → Galaxy publish → changelog）</b> <span class="chip done">✓ 已达成</span><span class="why">release.yml 在 v* tag 上跑 lint → sanity → units → fold changelog → build → GitHub release → Galaxy publish；v1.4.0（2026-09-14）已端到端走通并在 Galaxy 核验</span></td>
           <td class="item"><span class="why">验收达成：v1.4.0 全流程 18.5 分钟跑完，Galaxy v3 API 已可查到该版本。下一节奏点是 changelog fragment 的积累（当前目录为空）。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p2"><td class="no">P2-05</td><td><span class="chip p2">P2</span></td>
-          <td class="item"><b>建立 issue/PR 响应 SLA 与模板</b><span class="why">首响 &lt;48h 的记录口径；bug/feature/question 模板已建，补 triage 标签流</span></td>
-          <td class="item"><span class="why">社区信任的第二来源是「有人理」。验收：可记录的 SLA + 标签流落地。</span></td><td><span class="chip cost">S</span></td></tr>
+          <td class="item"><b>建立 issue/PR 响应 SLA 与模板</b> <span class="chip done">✓ 已达成</span><span class="why">首响 &lt;48h 的记录口径（<code>scripts/triage_sla.py --check</code>，只有 BREACH 才失败）；bug/feature/question 模板已建；<b>标签流已由 .github/workflows/triage.yml 自动化</b>——open/reopen 打 <code>triage</code>，首个真人评论或 review 自动摘掉，每日 07:23 UTC 跑 SLA 扫描</span></td>
+          <td class="item"><span class="why">社区信任的第二来源是「有人理」。验收达成：SLA 可测量、标签流自动落地，机器人评论不计入首响（否则每个数字都好看而队列没人读）。</span></td><td><span class="chip cost">S</span></td></tr>
         <tr class="grp-p2"><td class="no">P2-06</td><td><span class="chip p2">P2</span></td>
-          <td class="item"><b>生成 1 页采用案例 / demo 视频</b><span class="why">用 example playbook 录屏 3-5 分钟：建 CVM+CLB+CDB 全流程</span></td>
-          <td class="item"><span class="why">下载 553 → 首批用户需要「看见它跑起来」。验收：demo 页上线并链入 README。</span></td><td><span class="chip cost">M</span></td></tr>
+          <td class="item"><b>生成 1 页采用案例 / demo 视频</b> <span class="chip done">✓ 已达成</span><span class="why"><code>docs/demo.html</code>：把 06_full_chain.yml 拆成 4 步（--check 预演 → 真跑 → 重跑看 changed=0 → 逆序拆除），每步给可复制命令与真实形状的输出，并解释每个现象背后的机制（diff mode / 幂等状态机 / 内建 waiter / teardown 逆序断言）</span></td>
+          <td class="item"><span class="why">下载 553 → 首批用户需要「看见它跑起来」。验收达成：demo 页已上线并链入 README「New here? See it run」。<b>录屏视频仍缺</b>——页面是可逐条照做的脚本化演示，视频属后续增强。</span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p2"><td class="no">P2-07</td><td><span class="chip p2">P2</span></td>
-          <td class="item"><b>给 changelog.yaml 补全版本映射与 porting guide</b><span class="why">v1.1.0 起（现至 v1.4.0）每 release 的 breaking/porting 记录，changelog 已存在、补叙述性 guide</span></td>
-          <td class="item"><span class="why">采用方升级依赖它；也是 inclusion checklist 项目。验收：docs/porting_guide 页面。</span></td><td><span class="chip cost">S</span></td></tr>
+          <td class="item"><b>给 changelog.yaml 补全版本映射与 porting guide</b> <span class="chip done">✓ 已达成</span><span class="why"><code>docs/porting.md</code> §10「Version map and upgrade notes」：<code>changelogs/changelog.yaml</code> 的 <b>14 个发布版本逐个入表</b>（0.5.0 → 1.4.0，含变更条数与是否 breaking），并单列 3 个需要动手的版本（0.11.0 集合改名 / 0.12.0 五个 _info 改名且返回键变化 / 1.0.0 ansible-core 下限升到 2.19）与跨版本升级顺序</span></td>
+          <td class="item"><span class="why">采用方升级依赖它；也是 inclusion checklist 项目。验收达成：版本映射 + 叙述性 porting guide 落地，且 <code>scripts/check_roadmap_status.py</code> 保证新增 release 若未入表即失配。</span></td><td><span class="chip cost">S</span></td></tr>
         <tr class="grp-p2"><td class="no">P2-08</td><td><span class="chip p2">P2</span></td>
-          <td class="item"><b>iWiki / 内部社区发一篇「用 Ansible 管腾讯云」实践文</b><span class="why">把 panorama + capability-map + depth docs 提炼成团队可读的落地文章（内部渠道先行）</span></td>
-          <td class="item"><span class="why">先从内部团队积累首批真实用户与反馈，再外溢社区。验收：文章发布并收集 ≥3 条反馈。</span></td><td><span class="chip cost">S</span></td></tr>
+          <td class="item"><b>iWiki / 内部社区发一篇「用 Ansible 管腾讯云」实践文</b><span class="why">把 panorama + capability-map + depth docs 提炼成团队可读的落地文章（内部渠道先行）。<b>稿件 docs/internal-community-post.md 已成稿，可直接贴 iWiki</b></span></td>
+          <td class="item"><span class="why">先从内部团队积累首批真实用户与反馈，再外溢社区。验收：文章发布并收集 ≥3 条反馈 —— <b>发布与收反馈是仓库外动作，不因稿件就绪而标达成</b>；本项与 P2-01/P2-02 同属外部事项，不进机械校验。</span></td><td><span class="chip cost">S</span></td></tr>
       </tbody>
     </table>
     </div>
@@ -433,7 +433,7 @@
     <div class="foot">
       <div class="m"><div class="t">1 · 数据来源</div><div class="d">Galaxy API v3 download_count 09-14 实拉（amazon 91,290,318 / azure 17,127,874 / google 11,900,300 / 本库 553）+ 各家 tar.gz 解包统计模块 / 测试 / 目录结构；本库按源码 main HEAD 实测（= v1.4.0 产物），pytest 模块级 10,321 函数、CI 口径 12,961 条（12,908 过 / 31 跳 / 22 xfail）。</div></div>
       <div class="m"><div class="t">2 · 模块计数法</div><div class="d">总数 = modules/ 下全部 .py；info = *_info.py；write = 总数 − info。本库 891 = 456 write + 435 info；产品与 roles 来自 scripts/generate_product_capabilities.py（204 产品 / 71 含写 / 68 roles）。</div></div>
-      <div class="m"><div class="t">3 · 测试口径</div><div class="d">本库单测 = tests/unit 下 test_*.py（1,018 个，其中 954 个模块级）；集成 = tests/integration/targets 目录数（34 = 33 进 registry + cleanup 清扫器；2 个孤儿 target 已于 09-14 补登记），默认清单 21 个。覆盖率按 CI 口径实跑：contract + module_utils + modules，--cov=plugins/module_utils --cov=plugins/modules，92.65%。对比方单测 = 其产物 unit 文件数；azure 产物剥离 tests/、google 产物仅 1 个 —— 已标注，勿当源码水平。「测试函数」按模块级 test_*.py 中行首 def test_ 计数，09-14 重新按该口径钉死以防漂移。</div></div>
+      <div class="m"><div class="t">3 · 测试口径</div><div class="d">本库单测 = tests/unit 下 test_*.py（1,019 个，其中 954 个模块级）；集成 = tests/integration/targets 目录数（34 = 33 进 registry + cleanup 清扫器；2 个孤儿 target 已于 09-14 补登记），默认清单 21 个。覆盖率按 CI 口径实跑：contract + module_utils + modules，--cov=plugins/module_utils --cov=plugins/modules，92.65%。对比方单测 = 其产物 unit 文件数；azure 产物剥离 tests/、google 产物仅 1 个 —— 已标注，勿当源码水平。「测试函数」按模块级 test_*.py 中行首 def test_ 计数，09-14 重新按该口径钉死以防漂移。</div></div>
       <div class="m"><div class="t">4 · 已知修正</div><div class="d">对比方版本未变（amazon 11.4.0 / azure 4.0.0 / google 1.14.0），沿用 09-02 tarball 核验数、仅更新下载计数；本库口径沿 09-08 的 main 源码口径，09-14 全部数字重测：模块 781 → 891、覆盖 81.44% → 92.65%、sanity 1557/1900 → 2076/2600、集成 21 → 34、write 与 info 无专属单测均归零（111 → 0、36 → 0）。读面缺口 226 个缺 _info（55 个产品）为脚本实时统计，其中 43 个已由 KNOWN_COVERAGE 映射到别的 _info、55 个资源无列表 API，真正待补的 backlog 为 128 个（45 个产品）—— 大户是 apigateway 8 / ckafka 6 / trabbit 6 / cfw 5 / dts 5，而 tse 与 cos 的 backlog 已为 0（它们的 27 / 14 全是映射或无列表 API）。</div></div>
     </div>
   </section>

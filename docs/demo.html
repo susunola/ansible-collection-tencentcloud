@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>susunola.tencentcloud 演示 · 从零到一套三层 Web 栈</title>
+<style>
+  :root{
+    --bg:#0f1420;
+    --panel:#161d2e;
+    --panel2:#1c2438;
+    --line:#26304a;
+    --text:#e8edf7;
+    --muted:#8b97b0;
+    --dim:#5d6a85;
+    --accent:#3b82f6;
+    --accent2:#60a5fa;
+    --cyan:#22d3ee;
+    --violet:#8b5cf6;
+    --amber:#f59e0b;
+    --emerald:#34d399;
+    --rose:#fb7185;
+    --radius:14px;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:
+      radial-gradient(1200px 500px at 80% -10%, rgba(59,130,246,.14), transparent 60%),
+      radial-gradient(900px 400px at -10% 20%, rgba(139,92,246,.10), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    padding:40px 28px 56px;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.65;
+  }
+  .wrap{max-width:1100px;margin:0 auto}
+  .head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:10px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:14px}
+  .logo{
+    width:52px;height:52px;border-radius:13px;flex:none;
+    background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+    display:grid;place-items:center;font-weight:800;font-size:21px;color:#fff;
+    box-shadow:0 8px 24px rgba(59,130,246,.35);
+  }
+  .brand h1{font-size:24px;font-weight:700;letter-spacing:.2px}
+  .brand h1 .mono{font-family:var(--mono);color:var(--accent2);font-weight:600}
+  .brand .sub{color:var(--muted);font-size:13px;margin-top:4px}
+  .ver{text-align:right;font-family:var(--mono);font-size:12.5px;color:var(--accent2)}
+  .ver .dim{color:var(--dim);display:block;margin-top:4px}
+
+  .pill-row{display:flex;gap:8px;margin:18px 0 30px;flex-wrap:wrap}
+  .pill{
+    font-size:11.5px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);
+    color:var(--muted);background:rgba(255,255,255,.02);white-space:nowrap;
+  }
+  .pill b{color:var(--text);font-weight:600}
+
+  h2{font-size:18px;margin:38px 0 14px;padding-left:11px;border-left:3px solid var(--accent);letter-spacing:.2px}
+  h3{font-size:14.5px;margin:22px 0 8px;color:var(--accent2);font-family:var(--mono);font-weight:600}
+  p{font-size:13.5px;color:#cfd8ea;margin-bottom:12px}
+  p.muted{color:var(--muted);font-size:12.5px}
+  a{color:var(--accent2)}
+  code{font-family:var(--mono);font-size:12.5px;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;color:#dbe4f7}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:16px}
+  .card.warn{border-color:rgba(245,158,11,.45);background:linear-gradient(180deg,rgba(245,158,11,.07),var(--panel))}
+  .card.warn .lbl{color:var(--amber)}
+  .lbl{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;font-weight:600}
+
+  /* ===== Steps ===== */
+  .step{display:grid;grid-template-columns:38px 1fr;gap:16px;margin-bottom:22px}
+  .step .n{
+    width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
+    background:var(--panel2);border:1px solid var(--line);font-family:var(--mono);
+    font-size:14px;color:var(--accent2);font-weight:700;
+  }
+  .step h4{font-size:14.5px;margin-bottom:6px;font-weight:650}
+  .step .body{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+
+  pre{
+    background:#0b1020;border:1px solid var(--line);border-radius:10px;padding:13px 15px;
+    overflow-x:auto;margin:10px 0 4px;
+  }
+  pre code{background:none;padding:0;color:#c7d3ea;font-size:12.2px;line-height:1.6;display:block}
+  .cm{color:var(--dim)}
+  .ok{color:var(--emerald)}
+  .hl{color:var(--accent2)}
+  .wn{color:var(--amber)}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.7px;font-weight:600}
+  td.mono{font-family:var(--mono);color:var(--accent2)}
+  tbody tr:last-child td{border-bottom:none}
+
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+  .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--dim);font-size:12px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <div class="brand">
+      <div class="logo">tc</div>
+      <div>
+        <h1>看它跑起来 · <span class="mono">susunola.tencentcloud</span></h1>
+        <div class="sub">一条命令建起 VPC + CVM + CDB + Redis + CLB，再一条命令全部拆掉</div>
+      </div>
+    </div>
+    <div class="ver">v1.4.0<span class="dim">2026-09-14</span></div>
+  </div>
+
+  <div class="pill-row">
+    <span class="pill"><b>891</b> 模块</span>
+    <span class="pill"><b>204</b> 产品</span>
+    <span class="pill"><b>68</b> 个 solution role</span>
+    <span class="pill"><b>6</b> 个端到端 example</span>
+    <span class="pill"><b>约 6 分钟</b> 走完全程</span>
+  </div>
+
+  <p>这一页不是幻灯片。下面每一个代码块都可以直接复制粘贴运行，输出是真实形状（资源 id 已打码）。
+  整条链路就是仓库里 <code>docs/examples/06_full_chain.yml</code> 这一个文件 —— 网络基础 → Web 栈 →
+  回读校验 → 逆序拆除，四个 stage 之间由 role 自己传递 id，不需要人工抄任何东西。</p>
+
+  <h2>开始前</h2>
+  <div class="grid2">
+    <div class="card">
+      <div class="lbl">安装</div>
+<pre><code>ansible-galaxy collection install susunola.tencentcloud
+
+<span class="cm"># 控制器上还需要 SDK（COS 源额外需要 cos-python-sdk-v5）</span>
+pip install "tencentcloud-sdk-python&gt;=3.1.164,&lt;4.0.0"</code></pre>
+      <p class="muted" style="margin-top:10px">需要 ansible-core 2.19+ 与 Python 3.11+（1.0.0 起的下限，见 <a href="porting.md#102-the-three-releases-that-need-work">porting guide</a>）。</p>
+    </div>
+    <div class="card">
+      <div class="lbl">凭据</div>
+<pre><code><span class="cm"># 环境变量（优先级：模块参数 &gt; 环境变量 &gt; profile 文件）</span>
+export TENCENTCLOUD_SECRET_ID=AKIDxxxxxxxx
+export TENCENTCLOUD_SECRET_KEY=xxxxxxxx
+export TENCENTCLOUD_REGION=ap-guangzhou</code></pre>
+      <p class="muted" style="margin-top:10px">也支持 TCCLI 风格的 <code>~/.tencentcloud/default.configure</code> profile，以及 STS AssumeRole。</p>
+    </div>
+  </div>
+
+  <div class="card warn">
+    <div class="lbl">这条链路会真实计费</div>
+    <p style="margin:0">CVM、CDB、Redis、CLB 都是按小时计费的资源，建起来之后只有跑到第 4 步才会停止计费。
+    演练完请务必执行拆除 —— 这就是为什么 example 里 teardown 是 <code>--tags teardown</code> 而不是另一个文件：
+    它和创建共用同一份变量，不会拆漏。</p>
+  </div>
+
+  <h2>四步走完</h2>
+
+  <div class="step">
+    <div class="n">1</div>
+    <div class="body">
+      <h4>先看它打算做什么（<code>--check</code>）</h4>
+      <p>891 个模块全部支持 check mode 与 diff mode，这一步不碰云端任何东西。</p>
+<pre><code>ansible-playbook docs/examples/06_full_chain.yml --check --diff \
+  -e image_id=img-xxxxxxxx -e web_password='ReplaceWith-AStrongPassword1'</code></pre>
+<pre><code><span class="cm"># 输出节选</span>
+TASK [susunola.tencentcloud.tc_vpc_foundation : ensure the VPC exists]
+<span class="hl">changed: [localhost]</span> =&gt; (item=demo-foundation)
+
+TASK [susunola.tencentcloud.tc_web_stack : ensure the CVM instance exists]
+<span class="hl">changed: [localhost]</span>
+
+<span class="wn">PLAY RECAP *****</span>
+localhost : ok=14   changed=9   unreachable=0   failed=0   skipped=2</code></pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="n">2</div>
+    <div class="body">
+      <h4>真跑一遍</h4>
+<pre><code>ansible-playbook docs/examples/06_full_chain.yml \
+  -e image_id=img-xxxxxxxx -e web_password='ReplaceWith-AStrongPassword1'</code></pre>
+<pre><code>PLAY [Stage 1 - network foundation] <span class="ok">*****</span>
+TASK [tc_vpc_foundation : ensure the VPC exists]        <span class="hl">changed</span>
+TASK [tc_vpc_foundation : ensure the subnets exist]     <span class="hl">changed</span> (2)
+TASK [tc_vpc_foundation : ensure the security groups]  <span class="hl">changed</span>
+
+PLAY [Stage 2 - web stack on the new foundation] <span class="ok">*****</span>
+TASK [tc_web_stack : ensure the CVM instance exists]    <span class="hl">changed</span>
+TASK [tc_web_stack : wait for the instance to run]      <span class="ok">ok</span>
+TASK [tc_web_stack : ensure the CDB instance exists]    <span class="hl">changed</span>
+TASK [tc_web_stack : ensure the Redis instance exists]  <span class="hl">changed</span>
+TASK [tc_web_stack : ensure the CLB exists]             <span class="hl">changed</span>
+TASK [tc_web_stack : register the CVM behind the CLB]   <span class="hl">changed</span>
+
+<span class="wn">PLAY RECAP *****</span>
+localhost : ok=31   changed=14   unreachable=0   failed=0</code></pre>
+      <p class="muted">注意 <code>wait for the instance to run</code>：这是内建的 waiter，不是 <code>until</code> 循环。
+      模块自己知道资源什么时候算就绪，playbook 里不用写轮询。</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="n">3</div>
+    <div class="body">
+      <h4>再跑一次 —— 什么都不该变</h4>
+      <p>幂等性是这套模块被生成时就带上的属性，不是事后补的。同一条命令重跑：</p>
+<pre><code>PLAY RECAP *****
+localhost : ok=31   <span class="ok">changed=0</span>   unreachable=0   failed=0</code></pre>
+      <p class="muted"><code>changed=0</code> 是这一段真正要展示的东西：第二次运行不产生任何写操作。</p>
+      <h3>回读校验（stage 3 已经在 playbook 里）</h3>
+<pre><code>TASK [Show what the chain produced]
+ok: [localhost] =&gt; {
+    "msg": [
+        "vpc: vpc-1a2b3c4d",
+        "instances running: 1"
+    ]
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="n">4</div>
+    <div class="body">
+      <h4>逆序拆除</h4>
+<pre><code>ansible-playbook docs/examples/06_full_chain.yml --tags teardown</code></pre>
+<pre><code>PLAY [Teardown - remove the chain in reverse order] <span class="ok">*****</span>
+TASK [tc_web_stack : ...]        <span class="hl">changed</span>   <span class="cm"># CLB / CDB / Redis / CVM 先走</span>
+TASK [tc_vpc_foundation : ...]   <span class="hl">changed</span>   <span class="cm"># 依赖清空后 VPC 才能删</span>
+
+PLAY RECAP *****
+localhost : ok=18   changed=11   unreachable=0   failed=0</code></pre>
+      <p class="muted">顺序不是靠人记的：role 的 teardown 是 state 机的另一条分支，
+      <code>tests/unit/roles/test_role_task_contracts.py</code> 里的 <code>reverse-teardown</code>
+      断言族保证它永远是创建的逆序。</p>
+    </div>
+  </div>
+
+  <h2>为什么这值得看</h2>
+  <table>
+    <thead><tr><th style="width:230px">你看到的</th><th>背后是什么</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">--check --diff 有真实输出</td><td>456 个 write 模块全部实现 diff mode；check mode 下 waiter 按设计空转，不会真的等</td></tr>
+      <tr><td class="mono">changed=0</td><td>写模块统一走 compare → apply → wait 状态机，幂等是结构属性而非逐个手写</td></tr>
+      <tr><td class="mono">自动等待资源就绪</td><td><code>module_utils/waiters.py</code> + <code>polling.py</code>，另有 <code>tc_wait</code> action 插件可单独调用</td></tr>
+      <tr><td class="mono">teardown 顺序正确</td><td>68 个 role 的 task 图有 6 个断言族在 CI 里守着，teardown 逆序是其中之一</td></tr>
+      <tr><td class="mono">id 不用手抄</td><td>role 之间用 <code>tc_*_result</code> 传递，跨 play 由 hostvars 承接</td></tr>
+    </tbody>
+  </table>
+
+  <h2>下一步</h2>
+  <div class="grid2">
+    <div class="card">
+      <div class="lbl">照着跑</div>
+      <p><a href="examples/README.md">docs/examples/</a> —— 6 个可跑 playbook：网络基础、Web 栈、TKE 集群、容灾、模块混排、全链路。</p>
+      <p><a href="scenarios.md">docs/scenarios.md</a> —— 5 个场景的前置条件与成本提示。</p>
+    </div>
+    <div class="card">
+      <div class="lbl">换成你自己的</div>
+      <p><a href="porting.md">docs/porting.md</a> —— 从 Terraform provider 或裸 SDK 脚本迁过来的翻译对照，含 14 个版本的升级映射。</p>
+      <p><a href="capability-map.html">docs/capability-map.html</a> —— 204 个产品里哪些有写模块、哪些只能读。</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>susunola.tencentcloud · v1.4.0 · 页面随仓库维护</span>
+    <span>本页是 <code>docs/examples/06_full_chain.yml</code> 的逐步骤讲解，所有命令均可直接执行</span>
+  </div>
+
+</div>
+</body>
+</html>

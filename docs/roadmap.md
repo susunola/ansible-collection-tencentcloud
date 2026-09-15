@@ -1067,6 +1067,27 @@ and cos(14) were only "missing a same-named `_info`", and both have a
 **backlog of 0**; the real leaders are apigateway 8 / ckafka 6 / trabbit 6 /
 cfw 5 / dts 5.
 
+Status 2026-09-14: the roadmap's own status column was audited, and it had
+rotted in the quieter direction. The 30-item priority table in
+`docs/panorama.html` carries a hand-maintained `chip done` badge that nothing
+validated, so ten items — P0-03, P0-09, P0-10, P0-11, P0-12, P1-07, P1-09,
+P1-10, P2-03 and the P2-08 draft — already met the acceptance criterion
+written in their own row while the table still listed them as open. The
+documents were therefore advertising gaps that had been closed for weeks.
+`scripts/check_roadmap_status.py` now measures twelve of the criteria
+mechanically and compares them with the badge in both directions: a false
+claim and a stale claim both fail CI. Three items turned out to be genuinely
+open and were closed in the same pass — P2-05 gained
+`.github/workflows/triage.yml` (labels `triage` on open, clears it on the
+first human comment or review, never counts bots, and sweeps the 48-hour SLA
+daily), P2-07 gained the version map in `docs/porting.md` covering all
+fourteen releases with upgrade notes for the three that need work, and P2-06
+gained `docs/demo.html`, a four-step runnable walkthrough of
+`06_full_chain.yml` linked from the README. P0-05/P0-06 (read surface) and
+P2-01/P2-02/P2-08 (external actions) are reported as not mechanically
+measurable rather than being fitted with a criterion that would pass for the
+wrong reason.
+
 1. **Deepen the eight highest-use resource families.** Close runtime and
    operational workflows in TEM, TKE, CLB, CDB/Redis/MongoDB, TCR, SCF,
    API Gateway and CLS/Monitor before adding more discovery-only products.

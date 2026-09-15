@@ -1,0 +1,29 @@
+minor_changes:
+  - scripts/check_roadmap_status.py - new guard that measures the roadmap's own
+    acceptance criteria and compares them with the ``chip done`` badges in
+    docs/panorama.html in both directions. Ten items already met the criterion
+    written in their own row while the table still listed them as open, so the
+    documents were advertising gaps that had been closed; a false claim and a
+    stale claim now both fail CI. Twelve criteria are measured from disk
+    (shallow module tests, role task-level assertions, write-module contract
+    coverage, README FQCN index, module_utils helper documentation, companion
+    doc figures, triage automation, the demo page and the porting version map);
+    P0-05/P0-06 and P2-01/P2-02/P2-08 are reported as not mechanically
+    measurable rather than fitted with a criterion that passes for the wrong
+    reason.
+  - triage - new .github/workflows/triage.yml automates the triage label flow
+    described in docs/triage.md — ``triage`` is added when an issue or pull
+    request is opened or reopened and cleared on the first human comment or
+    submitted review, with bot comments deliberately not counting. A daily
+    scheduled job runs scripts/triage_sla.py --check so an overdue first
+    response fails the job instead of sitting in a report nobody reads. The
+    workflow never checks out pull request code.
+  - docs/porting.md - new "Version map and upgrade notes" section mapping all
+    fourteen published releases with their change counts, plus upgrade notes
+    for the three that are not a no-op (the 0.11.0 collection rename, the five
+    renamed _info modules in 0.12.0 and the ansible-core 2.19 floor in 1.0.0).
+    A release that ships without an entry here now fails the roadmap guard.
+  - docs/demo.html - new adoption page walking through
+    docs/examples/06_full_chain.yml in four steps (check-mode dry run, real
+    run, idempotent re-run, reverse teardown) with copy-pasteable commands and
+    real-shaped output, linked from the README as "New here? See it run.".

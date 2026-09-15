@@ -27,6 +27,11 @@ For exact module names, maturity, write/read coverage, and role availability, us
 the generated [product capability matrix](docs/product-capabilities.md). It is the
 canonical catalog and stays synchronized with the collection.
 
+**New here? [See it run](docs/demo.html).** One command builds a VPC, a CVM, a
+MySQL instance, a Redis instance and a load balancer; a second command removes
+all of them in reverse order. Every command on that page is copy-pasteable and
+the outputs are the real shape.
+
 <details>
 <summary><strong>Browse all 456 resource modules</strong></summary>
 

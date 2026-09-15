@@ -494,3 +494,82 @@ python scripts/audit_info_coverage.py --check   # if you touched a write module
 Module authoring conventions, tier rules and the unit-test harness are in
 [`development.md`](development.md). The deprecation rules that govern renaming
 anything named in this guide are in [`deprecation-policy.md`](deprecation-policy.md).
+
+## 10. Version map and upgrade notes
+
+`changelogs/changelog.yaml` records every release this collection has shipped.
+This section is the upgrade path across them: which release you are coming
+from, what changed under you, and the three releases where an upgrade is not a
+no-op. Every version below is one this repository actually published.
+
+### 10.1 Release index
+
+| Version | Changes | Breaking | What it is |
+| --- | --- | --- | --- |
+| `0.5.0` | 7 major / 45 minor / 4 bugfix | — | TCCLI credential profiles, the first dynamic inventory plugin, the `ssm_parameter` and `sts_caller_identity` lookups, STS AssumeRole on every module, `--diff` on every write module, and the `*_info` generator |
+| `0.6.0` | 14 minor / 1 bugfix | — | more generated `*_info` modules (API Gateway, Auto Scaling, CFS); `action_groups.all` fixed so `module_defaults` applies to generated modules |
+| `0.7.0` | 14 minor | — | generated read surfaces for billing, CDN and CloudAudit, including the first token-paginated one |
+| `0.8.0` | 4 minor | — | `scripts/discover_info_specs.py` starts nominating generator specs from SDK introspection; 126 generated `*_info` modules lift product coverage from 36 to 162 |
+| `0.9.0` | 3 minor | — | coverage batch 5 closes every product on the official API index with a usable list API; new pagination modes (no total-count, custom token pairs) |
+| `0.10.0` | 5 minor | — | the CLB write modules (`clb_load_balancer`, `clb_listener`, `clb_listener_target`) and the `wait_for_task` async-task helper |
+| `0.11.0` | 4 minor / 23 bugfix | **yes** | the collection rename to `susunola.tencentcloud` — see 10.2 |
+| `0.12.0` | 41 minor / 4 bugfix | **yes** | five `*_info` modules renamed and their return keys changed — see 10.2 |
+| `0.13.0` | 93 minor / 9 bugfix | — | the API Gateway API lifecycle and Auto Scaling policy wave, plus the inherited retry/waiter documentation pass that makes strict validation succeed |
+| `1.0.0` | 1 major / 155 minor / 4 bugfix | **yes** | first stable release; semantic versioning from here, and the ansible-core floor rises to 2.19 — see 10.2 |
+| `1.1.0` | 11 minor / 2 bugfix | — | `docs/deprecation-policy.md`, the `audit_info_coverage.py` CI gate, the three-tier-web scenario playbook, and the SDK pin relaxed to a compatibility range |
+| `1.2.0` | 311 minor / 36 bugfix | — | the large product-depth wave: DCDB accounts and encryption, DLC work groups, GAAP listeners and real servers, Oceanus clusters and jobs |
+| `1.3.0` | 4 minor | — | the `tc_inventory` multi-product inventory plugin (CVM, TKE, Lighthouse, VPC) with cross-product de-duplication |
+| `1.4.0` | 6 minor | — | `tc_inventory` second batch (CLB, CDB, CBS, COS) and the controller-side COS client builder that needs `cos-python-sdk-v5` on the controller |
+
+Across the 14 releases: 8 major changes, 710 minor changes, 83 bugfixes and
+7 breaking changes.
+
+### 10.2 The three releases that need work
+
+Everything else upgrades with `ansible-galaxy collection install --force`.
+These three do not.
+
+**`0.11.0` — the collection was renamed.** It moved from
+`tencentcloud.cloud` to `susunola.tencentcloud` because a Galaxy namespace has
+to match a GitHub account. Fully qualified collection names in every playbook
+and role change (`tencentcloud.cloud.cvm_instance` becomes
+`susunola.tencentcloud.cvm_instance`), the install command changes, the
+tarball name changes, and any `ansible_collections.tencentcloud.cloud.*`
+Python import changes. This is a mechanical find-and-replace, but it is
+everywhere.
+
+**`0.12.0` — five `*_info` modules were renamed, and their return keys moved
+with them.** The old names dropped a duplicated product prefix:
+
+| Before `0.12.0` | After | Return key | Ids option |
+| --- | --- | --- | --- |
+| `antiddos_d_do_s_block_record_info` | `antiddos_ddos_block_record_info` | `d_do_s_block_records` → `ddos_block_records` | — |
+| `captcha_captcha_user_all_app_id_info` | `captcha_user_all_app_id_info` | `captcha_user_all_app_ids` → `user_all_app_ids` | — |
+| `dcdb_dcdb_instance_info` | `dcdb_instance_info` | `dcdb_instances` → `instances` | `dcdb_instance_ids` → `instance_ids` |
+| `sms_sms_sign_info` | `sms_sign_info` | `sms_signs` → `signs` | — |
+| `vcube_vcube_resource_info` | `vcube_resource_info` | `vcube_resources` → `resources` | — |
+
+A playbook that reads `result.ddos_block_records` keeps working; one that
+still calls the old module name does not, because the old name is gone rather
+than deprecated.
+
+**`1.0.0` — the controller has to move first.** The collection now requires
+ansible-core 2.19 or newer and Python 3.11 or newer on the controller.
+ansible-core 2.16, 2.17 and 2.18 are end-of-life and no longer tested. Upgrade
+ansible-core *before* upgrading the collection, or the install will succeed
+and every module will fail to load.
+
+### 10.3 Upgrading across several releases
+
+Pick the highest row in 10.2 that you are still behind and do that work first;
+the rest is additive. If you are coming from before `0.11.0`, the order is:
+
+1. Rename every `tencentcloud.cloud.` reference to `susunola.tencentcloud.`
+   (`0.11.0`).
+2. Rename the five `*_info` modules and their return keys (`0.12.0`).
+3. Move the controller to ansible-core 2.19+ and Python 3.11+ (`1.0.0`).
+4. `ansible-galaxy collection install susunola.tencentcloud --force`.
+
+`scripts/check_sdk_drift.py --check` tells you whether the SDK you have
+installed still matches the version the generated `*_info` modules were
+vouched for; run it after any upgrade that touches `requirements.txt`.

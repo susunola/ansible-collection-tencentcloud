@@ -62,17 +62,26 @@ The flag is repeatable.
 
 | Label | Meaning | Who sets it |
 | --- | --- | --- |
-| `triage` | Nobody has looked at it yet. This is the queue. | by hand on open, removed at first response |
+| `triage` | Nobody has looked at it yet. This is the queue. | [`.github/workflows/triage.yml`](../.github/workflows/triage.yml) on open/reopen, removed at the first human comment or submitted review |
 | `needs-info` | Blocked on the reporter: a reproduction, a version, a playbook. | maintainer |
 | `module` | Affects one or more modules in the collection. | maintainer |
-| `dependencies` | A dependency version bump, usually from dependabot. | by hand |
+| `dependencies` | A dependency version bump, usually from dependabot. | maintainer, or the author with write access |
 | `sla-breach` | First response is overdue. | maintainer when `--check` goes red, removed once answered |
 | `good first issue` | Small, well-scoped, and safe to hand to a newcomer. | maintainer |
 
-None of this is automated yet: labelling on open needs an `issues: opened`
-workflow and the repository has none, so a new item is unlabelled until a
-maintainer touches it. That is the gap this label set makes visible rather
-than the state it claims to have fixed.
+The `triage` half of this is automated. `.github/workflows/triage.yml` adds
+`triage` when an issue or pull request is opened or reopened, and removes it
+on the first human signal — a comment on an issue, or a submitted review on a
+pull request. Bot comments do not clear it: dependabot answers within seconds
+of an item opening, and letting it count would make every response time look
+perfect while the queue went unread. The workflow never checks out pull
+request code; the only thing it does with its token is call the labels API.
+
+What is still manual is everything that needs judgement: `needs-info`,
+`module`, `sla-breach` and `good first issue` are a maintainer's read of the
+item, and no workflow can make that call. The daily scheduled job runs
+`scripts/triage_sla.py --check` so a breach fails the job and shows up as a
+notification rather than as a number nobody looks at.
 
 `triage` is the queue: an item either carries it or it does not, and the
 first response is what removes it. The rest describe what the item *is*, so a

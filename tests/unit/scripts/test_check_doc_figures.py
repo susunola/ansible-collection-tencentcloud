@@ -104,7 +104,7 @@ def test_validate_flags_a_figure_the_doc_dropped(guard, figures):
 
 def test_validate_flags_only_the_figure_that_moved(guard, figures):
     """One wrong figure must not make the whole report unreadable."""
-    doc = PANORAMA.read_text(encoding="utf-8").replace("1,018 个", "1,999 个")
+    doc = PANORAMA.read_text(encoding="utf-8").replace("1,019 个", "1,999 个")
     problems = guard.validate(figures, doc)
     assert len(problems) == 1 and problems[0].startswith("unit test files:")
 
@@ -169,8 +169,8 @@ def test_main_fails_when_a_figure_is_stale(guard, tmp_path, capsys):
     root = _fake_root(tmp_path)
     panorama = root / "docs" / "panorama.html"
     text = panorama.read_text(encoding="utf-8")
-    assert "1,018 个" in text, "the anchor string changed; retarget the test"
-    panorama.write_text(text.replace("1,018 个", "1,014 个"), encoding="utf-8")
+    assert "1,019 个" in text, "the anchor string changed; retarget the test"
+    panorama.write_text(text.replace("1,019 个", "1,014 个"), encoding="utf-8")
     assert guard.main(["--root", str(root), "--check"]) == 1
     assert "unit test files" in capsys.readouterr().out
 
