@@ -7,7 +7,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 
 - Products/services: **204**
 - Write modules: **456**
-- Information modules: **535**
+- Information modules: **549**
 - Solution roles: **68**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
@@ -55,14 +55,14 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `cdc` | discovery-only | 0 | 1 | — | — |
 | `cdn` | solution | 2 | 2 | `tc_cdn_delivery` | `cdn_cls_log_topic`, `cdn_domain` |
 | `cds` | discovery-only | 0 | 1 | — | — |
-| `cdwch` | solution | 3 | 2 | `tc_clickhouse_platform` | `cdwch_backup_config`, `cdwch_instance`, `cdwch_parameter` |
+| `cdwch` | solution | 3 | 4 | `tc_clickhouse_platform` | `cdwch_backup_config`, `cdwch_instance`, `cdwch_parameter` |
 | `cdwdoris` | solution | 4 | 5 | `tc_doris_analytics_platform` | `cdwdoris_cooldown_policy`, `cdwdoris_instance`, `cdwdoris_user_workload_group`, `cdwdoris_workload_group` |
-| `cdwpg` | solution | 3 | 3 | `tc_cdwpg_analytics_platform` | `cdwpg_hba_config`, `cdwpg_instance`, `cdwpg_parameter` |
+| `cdwpg` | solution | 3 | 4 | `tc_cdwpg_analytics_platform` | `cdwpg_hba_config`, `cdwpg_instance`, `cdwpg_parameter` |
 | `cdz` | discovery-only | 0 | 1 | — | — |
 | `cetcd` | discovery-only | 0 | 1 | — | — |
 | `cfg` | discovery-only | 0 | 1 | — | — |
 | `cfs` | solution | 5 | 5 | `tc_shared_file_storage` | `cfs_auto_snapshot_policy`, `cfs_file_system`, `cfs_permission_group`, `cfs_permission_rule`, `cfs_snapshot` |
-| `cfw` | solution | 5 | 3 | `tc_cloud_firewall_policy` | `cfw_address_template`, `cfw_internet_acl_rule`, `cfw_nat_acl_rule`, `cfw_nat_dnat_rule`, `cfw_vpc_acl_rule` |
+| `cfw` | solution | 5 | 6 | `tc_cloud_firewall_policy` | `cfw_address_template`, `cfw_internet_acl_rule`, `cfw_nat_acl_rule`, `cfw_nat_dnat_rule`, `cfw_vpc_acl_rule` |
 | `chc` | discovery-only | 0 | 1 | — | — |
 | `chdfs` | solution | 5 | 4 | `tc_chdfs_data_lake` | `chdfs_access_group`, `chdfs_access_rules`, `chdfs_file_system`, `chdfs_mount_access_groups`, `chdfs_mount_point` |
 | `ciam` | discovery-only | 0 | 1 | — | — |
@@ -96,7 +96,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `dbdc` | managed | 1 | 1 | — | `dbdc_db_custom_cluster` |
 | `dbs` | discovery-only | 0 | 1 | — | — |
 | `dc` | solution | 2 | 2 | `tc_direct_connect_fabric` | `dc_direct_connect`, `dc_direct_connect_tunnel` |
-| `dcdb` | solution | 5 | 4 | `tc_dcdb_stack` | `dcdb_account`, `dcdb_account_privilege`, `dcdb_backup_config`, `dcdb_instance`, `dcdb_security_config` |
+| `dcdb` | solution | 5 | 5 | `tc_dcdb_stack` | `dcdb_account`, `dcdb_account_privilege`, `dcdb_backup_config`, `dcdb_instance`, `dcdb_security_config` |
 | `dlc` | solution | 28 | 30 | `tc_dlc_access_governance` | `dlc_cluster_group`, `dlc_data_engine`, `dlc_data_engine_config`, `dlc_data_mask_strategy`, `dlc_database`, `dlc_engine_resource_group`, `dlc_inference_model`, `dlc_inference_service`, +20 more |
 | `dnspod` | solution | 4 | 4 | `tc_dns_zone` | `dnspod_custom_line`, `dnspod_domain`, `dnspod_line_group`, `dnspod_record` |
 | `domain` | discovery-only | 0 | 1 | — | — |
@@ -107,8 +107,8 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `ecm` | discovery-only | 0 | 1 | — | — |
 | `eiam` | discovery-only | 0 | 1 | — | — |
 | `eis` | discovery-only | 0 | 1 | — | — |
-| `emr` | solution | 2 | 2 | `tc_emr_platform` | `emr_auto_scale_strategy`, `emr_cluster` |
-| `es` | solution | 3 | 3 | `tc_elasticsearch_platform` | `elasticsearch_index`, `elasticsearch_instance`, `elasticsearch_snapshot` |
+| `emr` | solution | 2 | 3 | `tc_emr_platform` | `emr_auto_scale_strategy`, `emr_cluster` |
+| `es` | solution | 3 | 4 | `tc_elasticsearch_platform` | `elasticsearch_index`, `elasticsearch_instance`, `elasticsearch_snapshot` |
 | `ess` | discovery-only | 0 | 1 | — | — |
 | `essbasic` | discovery-only | 0 | 1 | — | — |
 | `facefusion` | discovery-only | 0 | 1 | — | — |
@@ -116,7 +116,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `fmu` | discovery-only | 0 | 1 | — | — |
 | `fwm` | discovery-only | 0 | 1 | — | — |
 | `ga2` | discovery-only | 0 | 1 | — | — |
-| `gaap` | solution | 4 | 3 | `tc_gaap_accelerator` | `gaap_layer4_listener`, `gaap_listener_real_servers`, `gaap_proxy`, `gaap_real_server` |
+| `gaap` | solution | 4 | 4 | `tc_gaap_accelerator` | `gaap_layer4_listener`, `gaap_listener_real_servers`, `gaap_proxy`, `gaap_real_server` |
 | `gme` | discovery-only | 0 | 1 | — | — |
 | `goosefs` | solution | 2 | 2 | `tc_goosefs_cache` | `goosefs_file_system`, `goosefs_fileset` |
 | `gs` | discovery-only | 0 | 1 | — | — |
@@ -189,14 +189,14 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `tdai` | discovery-only | 0 | 1 | — | — |
 | `tdcpg` | solution | 4 | 5 | `tc_tdcpg_platform` | `tdcpg_account`, `tdcpg_cluster`, `tdcpg_endpoint_wan`, `tdcpg_instance_state` |
 | `tdid` | discovery-only | 0 | 1 | — | — |
-| `tdmq` | solution | 18 | 17 | `tc_cmq_messaging`, `tc_rabbitmq_platform`, `tc_rocketmq_platform` | `cmq_queue`, `cmq_subscription`, `cmq_topic`, `tdmq_namespace`, `tdmq_namespace_role`, `tdmq_rabbitmq_binding`, `tdmq_rabbitmq_instance`, `tdmq_rabbitmq_permission`, +10 more |
+| `tdmq` | solution | 18 | 18 | `tc_cmq_messaging`, `tc_rabbitmq_platform`, `tc_rocketmq_platform` | `cmq_queue`, `cmq_subscription`, `cmq_topic`, `tdmq_namespace`, `tdmq_namespace_role`, `tdmq_rabbitmq_binding`, `tdmq_rabbitmq_instance`, `tdmq_rabbitmq_permission`, +10 more |
 | `tdmysql` | solution | 7 | 8 | `tc_tdsql_mysql_platform` | `tdmysql_account`, `tdmysql_account_privilege`, `tdmysql_backup_policy`, `tdmysql_db_instance`, `tdmysql_maintenance_window`, `tdmysql_parameter`, `tdmysql_ssl` |
-| `tem` | solution | 4 | 3 | `tc_tem_application` | `tem_application`, `tem_application_deployment`, `tem_application_service`, `tem_environment` |
+| `tem` | solution | 4 | 4 | `tc_tem_application` | `tem_application`, `tem_application_deployment`, `tem_application_service`, `tem_environment` |
 | `teo` | solution | 12 | 6 | `tc_edgeone_application` | `teo_acceleration_domain`, `teo_dns_record`, `teo_origin_group`, `teo_security_bot_lite`, `teo_security_custom_rules`, `teo_security_exception_rules`, `teo_security_ip_group`, `teo_security_managed_rules`, +4 more |
 | `thpc` | managed | 1 | 1 | — | `thpc_cluster` |
 | `tia` | discovery-only | 0 | 1 | — | — |
 | `tiia` | discovery-only | 0 | 1 | — | — |
-| `tione` | solution | 9 | 7 | `tc_tione_ml_pipeline` | `tione_data_source`, `tione_dataset`, `tione_model_service`, `tione_model_service_auth_token`, `tione_model_service_state`, `tione_model_service_traffic`, `tione_notebook`, `tione_training_model_version`, +1 more |
+| `tione` | solution | 9 | 9 | `tc_tione_ml_pipeline` | `tione_data_source`, `tione_dataset`, `tione_model_service`, `tione_model_service_auth_token`, `tione_model_service_state`, `tione_model_service_traffic`, `tione_notebook`, `tione_training_model_version`, +1 more |
 | `tiw` | discovery-only | 0 | 1 | — | — |
 | `tke` | solution | 16 | 8 | `tc_tke_platform` | `eks_cluster`, `eks_container_instance`, `tke_addon`, `tke_backup_storage_location`, `tke_cls_log_config`, `tke_cluster`, `tke_cluster_audit`, `tke_cluster_authentication`, +8 more |
 | `tokenhub` | discovery-only | 0 | 1 | — | — |

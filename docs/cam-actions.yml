@@ -388,6 +388,8 @@ modules:
   - CreateBackUpSchedule
   - DescribeBackUpSchedule
   - OpenBackUp
+  cdwch_backup_config_info:
+  - DescribeBackUpSchedule
   cdwch_cn_instance_info:
   - DescribeCNInstances
   cdwch_instance:
@@ -403,6 +405,8 @@ modules:
   cdwch_parameter:
   - DescribeInstanceKeyValConfigs
   - ModifyInstanceKeyValConfigs
+  cdwch_parameter_info:
+  - DescribeInstanceKeyValConfigs
   cdwdoris_cluster_configs_history_info:
   - DescribeClusterConfigsHistory
   cdwdoris_cooldown_policy:
@@ -450,6 +454,8 @@ modules:
   cdwpg_parameter:
   - DescribeDBParams
   - ModifyDBParameters
+  cdwpg_parameter_info:
+  - DescribeDBParams
   cdz_cloud_dedicated_zone_host_info:
   - DescribeCloudDedicatedZoneHosts
   cetcd_etcd_instance_info:
@@ -508,11 +514,15 @@ modules:
   - DescribeAclRule
   - ModifyAclRule
   - RemoveAclRule
+  cfw_internet_acl_rule_info:
+  - DescribeAclRule
   cfw_nat_acl_rule:
   - AddNatAcRule
   - DescribeNatAcRule
   - ModifyNatAcRule
   - RemoveNatAcRule
+  cfw_nat_acl_rule_info:
+  - DescribeNatAcRule
   cfw_nat_dnat_rule:
   - CreateNatFwDnatRule
   - DeleteNatFwDnatRule
@@ -525,6 +535,8 @@ modules:
   - DescribeVpcAcRule
   - ModifyVpcAcRule
   - RemoveVpcAcRule
+  cfw_vpc_acl_rule_info:
+  - DescribeVpcAcRule
   chc_device_info:
   - DescribeDeviceList
   chdfs_access_group:
@@ -773,6 +785,8 @@ modules:
   - DeleteCmqSubscribe
   - DescribeCmqSubscriptionDetail
   - ModifyCmqSubscriptionAttribute
+  cmq_subscription_info:
+  - DescribeCmqSubscriptionDetail
   cmq_topic:
   - CreateCmqTopic
   - DeleteCmqTopic
@@ -1042,6 +1056,8 @@ modules:
   - ModifyDBEncryptAttributes
   - ModifyDBInstanceSecurityGroups
   - ModifyInstanceSSLAttributes
+  dcdb_security_config_info:
+  - DescribeDBSecurityGroups
   dlc_cluster_group:
   - CreateClusterGroup
   - DeleteClusterGroup
@@ -1404,6 +1420,8 @@ modules:
   - CreateClusterSnapshot
   - DeleteClusterSnapshot
   - DescribeClusterSnapshot
+  elasticsearch_snapshot_info:
+  - DescribeClusterSnapshot
   emr_auto_scale_strategy:
   - AddMetricScaleStrategy
   - DeleteAutoScaleStrategy
@@ -1416,6 +1434,8 @@ modules:
   - DescribeInstances
   - ModifyInstanceBasic
   - TerminateInstance
+  emr_cluster_info:
+  - DescribeInstances
   emr_node_data_disk_info:
   - DescribeNodeDataDisks
   es_cluster_info:
@@ -2582,6 +2602,8 @@ modules:
   tem_application_deployment:
   - DeployApplication
   - DescribeApplicationInfo
+  tem_application_deployment_info:
+  - DescribeDeployApplicationDetail
   tem_application_info:
   - DescribeApplications
   tem_application_service:
@@ -2706,10 +2728,14 @@ modules:
   - DeleteModelService
   - DescribeModelService
   - ModifyModelService
+  tione_model_service_state_info:
+  - DescribeModelServiceGroup
   tione_model_service_traffic:
   - DescribeModelServiceGroup
   - ModifyModelServiceAuthorization
   - ModifyServiceGroupWeights
+  tione_model_service_traffic_info:
+  - DescribeModelServiceGroups
   tione_notebook:
   - CreateNotebook
   - DeleteNotebook
