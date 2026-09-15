@@ -1103,9 +1103,10 @@ daily), P2-07 gained the version map in `docs/porting.md` covering all
 fourteen releases with upgrade notes for the three that need work, and P2-06
 gained `docs/demo.html`, a four-step runnable walkthrough of
 `06_full_chain.yml` linked from the README. P0-05/P0-06 (read surface) and
-P2-01/P2-02/P2-08 (external actions) are reported as not mechanically
+P2-02/P2-08 (external actions) are reported as not mechanically
 measurable rather than being fitted with a criterion that would pass for the
-wrong reason.
+wrong reason; P2-01 closed on 2026-09-15 with a re-measured review of
+`ansible-inclusion` #87.
 
 1. **Deepen the eight highest-use resource families.** Close runtime and
    operational workflows in TEM, TKE, CLB, CDB/Redis/MongoDB, TCR, SCF,

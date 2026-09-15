@@ -95,10 +95,36 @@ redis_instance 等其余旗舰随 P0-04 R1-R6 排入；2026-10 底前集成 targ
 未来评审者会先读到的一条——响应顺手把它订正为实测值，并说明 release 全链路已
 自动化（checklist 从此每次 release 重验，而非提交时验一次）。
 
+**G2-a 已交付（09-15）：评审 #87 openvswitch.openvswitch**
+
+选它的理由不是随机：队列里 #88（cisco.catalystcenter）与 #87 都在 "First review in progress"，
+但 **#87 自 Andersson007 2026-08-19 贴出 checklist 后 4 周无 maintainer 回应** —— 一个评审挂 4 周
+没人接，正是本库 roadmap 把「没人理」当结构性风险的同一件事，而且它 6 条 MUST FIX 全部可机械核验。
+
+做法不是复述 checklist，而是把每条拿去对 `main` @ `3b979e2`（2026-09-10，tag 2.2.2）**重测**：
+
+| MUST FIX（2026-08-19 checklist） | 09-15 实测 |
+|---|---|
+| 加 `attributes:` | 4/4 模块都没有 |
+| 选项级 `version_added`（原只点名 `database_socket`、`set`） | **38/38 全缺**，checklist 只点了 2 个 |
+| `openvswitch_bond` 的 `version_added` 写错 | 仍写 1.0.0；changelog 1.1.0（PR #58）才是真正的加入版本 |
+| 用语义标记 | `O(`/`V(`/`C(`/`M(` 计数为 **0**；`I(` 出现 8 次且基本都该是 `O(`/`V(` |
+| 不得用 `state: read` 查信息 | 仍在 choices + 3 个示例 + 2 段 RETURN + `main()` 分支 |
+| `datbase` 拼写 | 4 个模块各 1 处 |
+| 描述句末句号 | 另有 **28 处**缺（bond 10 / bridge 7 / db 4 / port 7） |
+
+另附一条**评审之后才出现**的新证据：`2.2.1` 在 **patch 版本**里带 `breaking_changes`（"Minimum
+required ansible-core version is now 2.16"），且 `release_date` 为空 —— 正是 checklist 标
+「MUST FIX in future」的 semver 问题在继续发生。2 个在途 PR（#149 / #150）均未触及上述任何一项。
+
+结尾主动提出：机械四项（选项 `version_added` / bond 版本 / 拼写 / 句号）我可直接提 PR，让
+maintainer 只花时间在需要设计判断的两项（`attributes:` 取值与 `openvswitch_db_info` 拆分）上。
+**是否提 PR 取决于对方回应** —— 已按外部动作规则先问后动，未擅自改他人代码。
+
 **建议动作**：
 | 步骤 | 动作 | 依赖 | 截止 | 状态 |
 |---|---|---|---|---|
-| G2-a | 按官方流程评审 1 个排队中的他人 collection（README step 1：先评审别人可提升自身优先级） | 官方 README 排队清单 | 2026-09-09 → **逾期未做（09-14 复核仍 📋）** | 📋 |
+| G2-a | 按官方流程评审 1 个排队中的他人 collection（README step 1：先评审别人可提升自身优先级） | 官方 README 排队清单 | 2026-09-09 → **逾期 6 天，09-15 已交付** | ✅ 目标 #87 openvswitch.openvswitch（[discussioncomment-18449321](https://github.com/ansible-collections/ansible-inclusion/discussions/87#discussioncomment-18449321)），7 项实测结论见下 |
 | G2-b | 每周五检查 #89 是否有评审反馈并回复 | 无 | 每周 | ✅ 本周（09-15 收到首条回复，5h 内已响应；下周五复检） |
 | G2-c | 保持 devel 每周测试 + release 节奏（devel.yml/release.yml 已在跑） | 无 | 持续 | ✅ 已自动化 |
 
@@ -175,7 +201,8 @@ TEO、CFW、CFS、Lighthouse 等），继续按 panorama 推荐顺序逐族推�
    下一次带凭据的定时跑 2026-09-19 是「可信执行环境」的真正验收点）
 3. G1b-a 单测骨架生成器 → **P0-08** ✅（`scripts/generate_module_test_skeleton.py` 已落地）
 4. G1b-b 继续 batch 12 → **P0-07** ✅（write 面 111 → **0**；info 面 36 → **0**）
-5. G2-a 评审 1 个他人 collection → **P2-01** 📋（需你指定目标或我从官方清单挑）
+5. G2-a 评审 1 个他人 collection → **P2-01** ✅（09-15 交付：#87 openvswitch.openvswitch，
+   7 项实测 + 1 项评审后才出现的新证据；选它的理由见下）
 6. G3-b + G4-c capability-map.html 差距卡措辞修正 → ✅（已随 09-08 数据同步合入，09-14 再同步数量）
 7. G4-a CONTRIBUTING.md 补 co-maintainer 路径 → **P2-03** 📋（2026-09-30 前，低优先级）
 8. **G1-d（09-14 新增）** 孤儿 target 收口 → ✅（两个 target 以 `cost: high` 补进 `coverage.yml`
@@ -237,7 +264,9 @@ _本计划由 docs/capability-map.html / docs/panorama.html INDUSTRY BENCHMARK �
      三份伴生文档都写出当前模块数 / triage 工作流存在且 SLA 成文 / demo 页存在且被 README 链接 /
      14 个发布版本全部进 porting 版本映射表），再与徽章做**双向**比对 —— 标 done 但验收不过、
      或验收过了却没标，两边都失败。P0-05/06（读面收口）与 P2-01/02/08（外部动作）不伪造成
-     可度量，而是明确列为 not mechanically measurable。
+     可度量，而是明确列为 not mechanically measurable —— **即便 P2-01 已于 09-15 交付，
+     它仍不在 CRITERIA 里**：评审是否「实质」无法从磁盘测出，硬造一个可过的判据只会让徽章
+     为错误的原因变绿。
      顺带把 3 个**真**缺口补上：`.github/workflows/triage.yml`（open/reopen 打 `triage`，
      首个真人评论或 review 自动摘除，机器人不算，每日 07:23 UTC 跑 SLA 扫描 —— 从不 checkout
      PR 代码）、`docs/porting.md` §10 版本映射（14 个发布版本逐个入表 + 3 个需要动手的版本的

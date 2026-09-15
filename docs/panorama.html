@@ -129,6 +129,8 @@
   table.t30 td.no{font-family:var(--mono);color:var(--dim);white-space:nowrap}
   table.t30 td.item b{color:var(--text);font-weight:600}
   table.t30 td.item .why{display:block;color:var(--dim);font-size:11.5px;margin-top:3px;line-height:1.5}
+  table.t30 td.item a{color:var(--accent2);text-decoration:none;border-bottom:1px dotted rgba(96,165,250,.5)}
+  table.t30 td.item a:hover{border-bottom-style:solid}
   .grp-p0 td{background:rgba(59,130,246,.05)}
   .grp-p1 td{background:rgba(139,92,246,.04)}
   .grp-p2 td{background:rgba(22,29,46,.35)}
@@ -393,10 +395,10 @@
           <td class="item"><span class="why">「拿来就能跑」比任何 marketing 都有说服力。验收达成：<b>11 个 example playbook</b>（docs/examples 6 个 + playbooks/ 5 个）<code>scripts/check_examples.py --check</code> 全绿 —— 不仅 syntax-check，还校验任务引用的模块名与 role 变量真实存在。</span></td><td><span class="chip cost">M</span></td></tr>
 
         <tr class="grp-p2"><td class="no">P2-01</td><td><span class="chip p2">P2</span></td>
-          <td class="item"><b>G2-a：按官方流程评审 1 个排队中的他人 collection</b><span class="why">inclusion README step 1：先评审别人可提升自身优先级</span></td>
-          <td class="item"><span class="why">#89 已静置数日，这是唯一主动杠杆。验收：在官方队列提交 1 份评审。<b>原定 2026-09-09，截至 09-14 仍未提交 —— 已逾期，仍是最高优先的 P2。</b></span></td><td><span class="chip cost">M</span></td></tr>
+          <td class="item"><b>G2-a：按官方流程评审 1 个排队中的他人 collection</b> <span class="chip done">✓ 已达成</span><span class="why">inclusion README step 1：先评审别人可提升自身优先级。目标选 <b>#87 openvswitch.openvswitch</b>：其 MUST FIX 清单可机械核验，且自 2026-08-19 起 4 周无 maintainer 回应 —— 正是本 roadmap 视为结构性风险的「没人理」</span></td>
+          <td class="item"><span class="why">验收达成（09-15，<a href="https://github.com/ansible-collections/ansible-inclusion/discussions/87#discussioncomment-18449321">discussioncomment-18449321</a>）：不复述 checklist，而是对 <code>main</code> @ <code>3b979e2</code>（2026-09-10，tag 2.2.2）逐项<b>实测</b> —— <code>attributes:</code> 4/4 缺失；选项级 <code>version_added</code> <b>38/38 全缺</b>（checklist 只点了 2 个）；<code>openvswitch_bond</code> 仍写 1.0.0 而 changelog 1.1.0 才是真正的加入版本；语义标记 <code>O(</code>/<code>V(</code>/<code>C(</code>/<code>M(</code> 计数为 0；<code>state: read</code> 仍在 choices / 示例 / RETURN / 代码分支四处；<code>datbase</code> 拼写 4 处；描述缺句号 28 处。另附评审后才出现的新证据：<b>2.2.1 在 patch 版本里带 <code>breaking_changes</code></b> 且 <code>release_date</code> 为空 —— 正是 checklist 标「MUST FIX in future」的 semver 问题在继续发生；2 个在途 PR 均未触及上述任何一项。<b>原定 2026-09-09，逾期 6 天后于 09-15 交付。</b></span></td><td><span class="chip cost">M</span></td></tr>
         <tr class="grp-p2"><td class="no">P2-02</td><td><span class="chip p2">P2</span></td>
-          <td class="item"><b>每周五检查 #89 评审反馈并回复</b><span class="why">评审者开始 review 后 24h 内响应，避免冷却。<b>09-15 已收到首条回复</b>（steering committee 的 Andersson007：已收到、待委员会接手）——不是正式 review，但响应窗口已开启；自查评论写于 1.0.0 时期，其「3000+ 单测」已滞后近 4 倍——**09-15 已 5 小时内响应并订正**（discussioncomment-18448852）</span></td>
+          <td class="item"><b>每周五检查 #89 评审反馈并回复</b><span class="why">评审者开始 review 后 24h 内响应，避免冷却。<b>09-15 已收到首条回复</b>（steering committee 的 Andersson007：已收到、待委员会接手）——不是正式 review，但响应窗口已开启；自查评论写于 1.0.0 时期，其「3000+ 单测」已滞后近 4 倍——<b>09-15 已 5 小时内响应并订正</b>（discussioncomment-18448852）</span></td>
           <td class="item"><span class="why">inclusion 通过 = Galaxy 推荐位 + 社区信任起点。验收：讨论串有实质往来。</span></td><td><span class="chip cost">S</span></td></tr>
         <tr class="grp-p2"><td class="no">P2-03</td><td><span class="chip p2">P2</span></td>
           <td class="item"><b>CONTRIBUTING.md 补 co-maintainer 加入路径</b> <span class="chip done">✓ 已达成</span><span class="why">「Maintainership: roles, boundaries, and how to join」：三级权限矩阵（Contributor / Reviewer (co-maintainer) / Maintainer）、受保护面清单（workflows / BASELINE_TOTAL / GENERATED_SDK_VERSION / CORE_MODULES / galaxy.yml version）、期望投入、加入步骤、决策规则</span></td>
@@ -415,7 +417,7 @@
           <td class="item"><span class="why">采用方升级依赖它；也是 inclusion checklist 项目。验收达成：版本映射 + 叙述性 porting guide 落地，且 <code>scripts/check_roadmap_status.py</code> 保证新增 release 若未入表即失配。</span></td><td><span class="chip cost">S</span></td></tr>
         <tr class="grp-p2"><td class="no">P2-08</td><td><span class="chip p2">P2</span></td>
           <td class="item"><b>iWiki / 内部社区发一篇「用 Ansible 管腾讯云」实践文</b><span class="why">把 panorama + capability-map + depth docs 提炼成团队可读的落地文章（内部渠道先行）。<b>稿件 docs/internal-community-post.md 已成稿，可直接贴 iWiki</b></span></td>
-          <td class="item"><span class="why">先从内部团队积累首批真实用户与反馈，再外溢社区。验收：文章发布并收集 ≥3 条反馈 —— <b>发布与收反馈是仓库外动作，不因稿件就绪而标达成</b>；本项与 P2-01/P2-02 同属外部事项，不进机械校验。</span></td><td><span class="chip cost">S</span></td></tr>
+          <td class="item"><span class="why">先从内部团队积累首批真实用户与反馈，再外溢社区。验收：文章发布并收集 ≥3 条反馈 —— <b>发布与收反馈是仓库外动作，不因稿件就绪而标达成</b>；本项与 P2-02 同属外部事项（P2-01 已于 09-15 交付），不进机械校验。</span></td><td><span class="chip cost">S</span></td></tr>
       </tbody>
     </table>
     </div>

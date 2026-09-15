@@ -1,0 +1,28 @@
+---
+minor_changes:
+  - >-
+    community - reviewed ansible-inclusion #87 (openvswitch.openvswitch), the
+    first review of another collection from this project (P2-01 / G2-a). The
+    target was picked because its MUST FIX list is mechanically checkable and
+    because it had sat unanswered for four weeks since the steering committee
+    checklist of 2026-08-19, which is the same "nobody answers" failure this
+    project's own roadmap treats as structural.
+  - >-
+    community - the review re-measures every MUST FIX item against
+    openvswitch.openvswitch main (3b979e2, 2026-09-10, tag 2.2.2) rather than
+    restating the checklist: attributes: absent from all four modules;
+    option-level version_added missing on 38 of 38 options, not only the two the
+    checklist named; openvswitch_bond still declaring 1.0.0 when changelog 1.1.0
+    added it; semantic markup O(/V(/C(/M( counting zero across all four
+    DOCUMENTATION blocks; state: read still present in choices, examples, RETURN
+    and the code branch; the "datbase" typo still in all four modules; and 28
+    option descriptions still missing their final period. It also reports
+    evidence that appeared after the review, where 2.2.1 ships a
+    breaking_changes entry in a patch release with no release_date set, which is
+    the semver problem the checklist flagged as MUST FIX in future still
+    happening. Both open pull requests touch none of it.
+bugfixes:
+  - >-
+    docs - panorama.html no longer mixes markdown emphasis into HTML: the P2-02
+    row now uses a proper <b> element instead of literal ** markers, which
+    rendered as visible asterisk pairs rather than bold text.

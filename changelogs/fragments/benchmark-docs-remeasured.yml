@@ -17,6 +17,7 @@ minor_changes:
     plugin_utils, the action and filter plugins, the docsite, doc_fragments and
     release automation) so the page stops listing finished work as outstanding.
   - >-
-    docs - P2-01 and G2-a now state that reviewing another collection to unblock
-    inclusion #89 slipped past its 2026-09-09 acceptance date and is still open,
-    instead of presenting a past deadline as a live target.
+    docs - P2-01 and G2-a state that reviewing another collection to unblock
+    inclusion #89 slipped past its 2026-09-09 acceptance date instead of
+    presenting a past deadline as a live target. (Delivered 2026-09-15 — see
+    the inclusion-review-87 fragment.)
