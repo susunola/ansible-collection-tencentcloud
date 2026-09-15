@@ -330,3 +330,37 @@ _本计划由 docs/capability-map.html / docs/panorama.html INDUSTRY BENCHMARK �
      `tests/unit/plugins/modules`）重测为 **13,654 条（13,601 过 / 31 跳 /
      22 xfail）**，并把复测命令写进页面，替换掉原先 12,961 / 14,290 两个
      互相打架的历史值。）
+  17. **G1-m（09-15 新增）** 每周真实账号跑的默认清单不再无人校验 → ✅
+     （P0-04 剩下的一半。`docs/integration-env.md` 里**写着**规则——free/low
+     进默认清单、medium/high 保持 opt-in——但「写下规则」不等于执行：清单实
+     测 **21 个**，里面混着 **2 个 `cost: medium`**（`cfs_file_system` /
+     `clb_http`），与文档自述的规则直接冲突。更根本的问题是这份清单在
+     `.github/workflows/integration.yml` 里被**手打了两遍**（`workflow_dispatch`
+     的 `default:` 与 `inputs.targets || '...'` 的兜底），改其中一遍是一次
+     完整、静默、成功的编辑——而这是本仓库唯一会碰真实云账号的东西。
+     新增 `scripts/check_integration_defaults.py --check`，把规则变成代码，
+     并接进 `ci.yml`（在 ruff 之前）：两遍清单必须一致；不得重复；每个目标
+     必须在 `coverage.yml` 里登记（否则周跑是「未知目标报错」而不是跳过）；
+     `high` 永不进清单；`medium` 只有在 `VETTED_MEDIUM` 里写明理由才允许
+     ——理由会打在 `--check` 的输出里，评审者看到的是依据而不是名字；反向
+     同样校验：`free`/`low` 漏出清单即失败，因为**没人跑的目标正是 registry
+     声称有、实际没有的覆盖**。两个 medium 目标的理由都是「provision 一个
+     资源加其 VPC/子网，并在 `always:` 块里三者一起拆掉，不留长期计费资源」。
+     `tests/unit/scripts/test_check_integration_defaults.py` 共 **22 个用例**，
+     含反空转（默认清单 >10 个、opt-in 集合非空、每个 cost 档都有样本）与
+     双向驱动（不该跑的被抓 / 该跑却没跑的也被抓），外加合成失败路径
+     ——high 混入、未登记目标、重复、两遍不一致、工作流改结构导致正则失效、
+     清单被清空、`VETTED_MEDIUM` 自身腐烂（指到不存在的目标 / 目标 cost 已
+     经不是 medium / 已不再被 dispatch）、以及 empty 分支失效。
+     变异测试 **10/10 被杀死**（逐条关掉 9 条判定规则 + 把正则改回 `+`），
+     **9/9 个工作流变异都以正确的规则名报错**（而不是被「两遍不一致」这条
+     兜底捕获——第一版变异只改了一遍，8 个里有 5 个是被兜底捞住的，那不是
+     证据）。过程中修掉脚本自身一个死角：正则原为 `+`，清单被清空时匹配
+     不上，于是报「找不到两遍清单」——把人引向改正则而不是恢复目标；改为
+     `*` 后空的归空的、解析不了的归解析不了的。
+     顺带收掉两处残留失校：`docs/integration-env.md` 三处规则表述改为指向
+     新脚本（§3 计费护栏、§6 runbook、新增目标清单），不再由文档复述规则；
+     `docs/panorama.html` P2-04 那句「下一节奏点是 changelog fragment 的积累
+     （当前目录为空）」已与仓库不符（fragment 已随 PR 逐条积累），改为陈述
+     机制而非计数——`fragment` 一词在页面别处与 `doc_fragments` 的实测数字同行，
+     硬塞一个新数字进 `check_doc_figures.py` 会与既有断言打架。）

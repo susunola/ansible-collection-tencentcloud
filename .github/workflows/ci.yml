@@ -82,6 +82,12 @@ jobs:
         run: python scripts/generate_product_capabilities.py --check
       - name: Integration coverage registry is valid
         run: python scripts/integration_impact.py --check --files plugins/module_utils/base.py
+      # The default dispatch list is typed twice in integration.yml and is the
+      # only thing here that runs against a real cloud account. free/low must
+      # be dispatched, high never, medium only when vetted with a reason --
+      # and the two copies must agree with each other.
+      - name: Integration default dispatch list
+        run: python scripts/check_integration_defaults.py --check
       # Generated _info modules must expose every required request field:
       # a spec hiding one makes every call fail with a confusing API error.
       # Runs after the SDK drift sentinel so the models are importable.

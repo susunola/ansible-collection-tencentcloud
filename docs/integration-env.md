@@ -223,8 +223,10 @@ A missing file yields `{}`, so the documented default still applies and a plain
 
 ## 3. Billing guardrails
 
-- Workflow: 40-minute wall cap + run serialisation + high-cost targets kept out
-  of the weekly default list (registry `cost: high|medium` = opt-in only).
+- Workflow: 40-minute wall cap + run serialisation + a default dispatch list
+  where `cost: high` is never present and `cost: medium` is present only when
+  `scripts/check_integration_defaults.py` records why it is safe unattended
+  (`free`/`low` is always dispatched; §6).
 - Account: enable a CAM **budget alarm** on the integration sub-account
   (console-side, outside this repo) so any spend anomaly pages an operator
   even if every GitHub-side guard fails.
@@ -284,8 +286,12 @@ A missing file yields `{}`, so the documented default still applies and a plain
 
 ## 6. Runbook
 
-**Weekly default suite (free/low targets).** Nothing to do — the Saturday
-02:00 UTC schedule runs the default list and uploads coverage + manifests.
+**Weekly default suite (free/low, plus the vetted medium targets).** Nothing
+to do — the Saturday 02:00 UTC schedule runs the default list and uploads
+coverage + manifests. Which targets that list may contain is not a judgement
+call: `python scripts/check_integration_defaults.py --check` fails CI when a
+`high` target appears, when an unvetted `medium` one does, when a cheap one is
+missing, or when the two hand-typed copies of the list drift apart.
 A green run needs no review; a red run should be triaged the same day using
 the alert and artifacts.
 
@@ -311,10 +317,14 @@ secrets/variables configured. `state=absent` on cdb_instance **isolates**
 is queued by the API — check `e2e-resources`/`reaper-plan` artifacts or the
 account console if a run dies between create and delete.
 
-**Opt-in medium/high targets.** Same dispatch mechanism, but these stay out of
-the weekly default list because their registry cost is `medium`/`high` (§3).
-All of the ones below are provisioned and verified green on a live account, so
-a dispatch is expected to pass rather than self-skip:
+**Opt-in medium/high targets.** Same dispatch mechanism. A `high` target never
+joins the weekly default list; a `medium` one joins only when
+`scripts/check_integration_defaults.py` records why it is safe unattended —
+`cfs_file_system` and `clb_http` are, and they run weekly. The ones below are
+not vetted, so they stay a hand-dispatched run, and the guard above is what
+keeps that distinction from being a matter of memory (§3). All of them are
+provisioned and verified green on a live account, so a dispatch is expected
+to pass rather than self-skip:
 
 | target | cost | requires | verified |
 |---|---|---|---|
@@ -391,7 +401,9 @@ Milestones:
   panorama G1-c: **30+ targets all green before 2026-10 end**.
 
 Every new target must pass `scripts/audit_integration_targets.py`, register in
-`coverage.yml` (free/low joins the workflow default list; medium/high stays
-opt-in), and follow the provision → assert → cleanup template from
+`coverage.yml` and, if it is cheap enough to run weekly, the default dispatch
+list in `integration.yml` — `scripts/check_integration_defaults.py --check`
+decides that, not the doc — and follow the provision → assert → cleanup
+template from
 `tests/integration/targets/cvm_instance/`. When a target lands, update the
 counts in this document and in `docs/gap-closure.md` G1.
