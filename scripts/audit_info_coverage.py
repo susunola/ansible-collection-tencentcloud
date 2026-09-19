@@ -184,8 +184,6 @@ KNOWN_GAPS = {
     "tsf_public_config",
     "tsf_repository",
     "tsf_vm_deployment_group",
-    "ckafka_datahub_connection",
-    "ckafka_datahub_task",
     "cloudaudit_audit",
     "cloudaudit_track",
     "config_aggregate_delivery",
