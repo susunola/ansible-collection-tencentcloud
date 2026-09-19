@@ -184,8 +184,6 @@ KNOWN_GAPS = {
     "tsf_public_config",
     "tsf_repository",
     "tsf_vm_deployment_group",
-    "cloudaudit_audit",
-    "cloudaudit_track",
     "config_aggregate_delivery",
     "config_aggregator",
     "config_alarm_policy",
