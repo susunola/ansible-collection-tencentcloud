@@ -188,7 +188,6 @@ KNOWN_GAPS = {
     "ckafka_acl_rule",
     "ckafka_datahub_connection",
     "ckafka_datahub_task",
-    "ckafka_route",
     "cloudaudit_audit",
     "cloudaudit_track",
     "config_aggregate_delivery",

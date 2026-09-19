@@ -94,6 +94,7 @@ CORE_MODULES = {
     "ckafka_instance",
     "ckafka_user",
     "ckafka_route",
+    "ckafka_route_info",
     "ckafka_acl_rule",
     "ckafka_datahub_topic",
     "ckafka_datahub_topic_info",

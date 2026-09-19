@@ -7,7 +7,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 
 - Products/services: **204**
 - Write modules: **440**
-- Information modules: **361**
+- Information modules: **362**
 - Solution roles: **68**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
@@ -66,7 +66,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `chc` | discovery-only | 0 | 1 | — | — |
 | `chdfs` | solution | 5 | 5 | `tc_chdfs_data_lake` | `chdfs_access_group`, `chdfs_access_rules`, `chdfs_file_system`, `chdfs_mount_access_groups`, `chdfs_mount_point` |
 | `ciam` | discovery-only | 0 | 1 | — | — |
-| `ckafka` | solution | 9 | 4 | `tc_kafka_platform` | `ckafka_acl`, `ckafka_acl_rule`, `ckafka_datahub_connection`, `ckafka_datahub_task`, `ckafka_datahub_topic`, `ckafka_instance`, `ckafka_route`, `ckafka_topic`, +1 more |
+| `ckafka` | solution | 9 | 5 | `tc_kafka_platform` | `ckafka_acl`, `ckafka_acl_rule`, `ckafka_datahub_connection`, `ckafka_datahub_task`, `ckafka_datahub_topic`, `ckafka_instance`, `ckafka_route`, `ckafka_topic`, +1 more |
 | `clb` | solution | 5 | 4 | `tc_clb_http` | `clb_listener`, `clb_listener_target`, `clb_load_balancer`, `clb_rule`, `clb_target_group` |
 | `cloudaudit` | solution | 2 | 1 | `tc_cloud_audit_governance` | `cloudaudit_audit`, `cloudaudit_track` |
 | `cloudhsm` | discovery-only | 0 | 1 | — | — |
