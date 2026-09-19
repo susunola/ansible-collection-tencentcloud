@@ -188,8 +188,6 @@ KNOWN_GAPS = {
     "config_aggregator",
     "config_alarm_policy",
     "config_compliance_pack",
-    "config_delivery",
-    "config_recorder",
     "config_remediation",
     "config_rule",
     "cos_bucket_domain",

@@ -1,0 +1,51 @@
+#!/usr/bin/python
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
+DOCUMENTATION = r'''
+---
+module: config_delivery_info
+short_description: Gather Tencent Cloud Config delivery settings
+version_added: "1.4.0"
+description: Returns the complete observable account-level Config delivery configuration.
+extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+author: Tencent Cloud Ansible Collection Contributors (@susunola)
+'''
+EXAMPLES = r'''
+- susunola.tencentcloud.config_delivery_info:
+    region: ap-guangzhou
+'''
+RETURN = r'''
+deliveries: {description: Delivery configuration as a single-element list., returned: always, type: list, elements: dict}
+delivery: {description: Config delivery configuration., returned: always, type: dict}
+request_id: {description: Request ID returned by the API., returned: always, type: str}
+'''
+
+from ansible.module_utils.basic import AnsibleModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import create_client_profile, create_credential, sdk_call, serialize_sdk_object, tencentcloud_argument_spec
+
+
+def build_request(models):
+    return models.DescribeConfigDeliverRequest()
+
+
+def run_module():
+    module = AnsibleModule(argument_spec=tencentcloud_argument_spec(), supports_check_mode=True)
+    try:
+        from tencentcloud.config.v20220802 import config_client, models
+    except ImportError:
+        module.fail_json(msg="The tencentcloud-sdk-python-config package is required.")
+    client = config_client.ConfigClient(create_credential(module), module.params["region"], create_client_profile(module, "config.tencentcloudapi.com"))
+    response = sdk_call(module, client.DescribeConfigDeliver, build_request(models))
+    delivery = serialize_sdk_object(response)
+    delivery.pop("RequestId", None)
+    module.exit_json(changed=False, deliveries=[delivery], delivery=delivery, request_id=getattr(response, "RequestId", None))
+
+
+def main():
+    run_module()
+
+
+if __name__ == "__main__":
+    main()
