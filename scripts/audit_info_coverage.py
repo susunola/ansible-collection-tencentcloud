@@ -185,8 +185,6 @@ KNOWN_GAPS = {
     "tsf_repository",
     "tsf_vm_deployment_group",
     "config_aggregate_delivery",
-    "config_alarm_policy",
-    "config_compliance_pack",
     "config_remediation",
     "cos_bucket_domain",
     "cos_bucket_domain_certificate",
