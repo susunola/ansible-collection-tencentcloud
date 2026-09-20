@@ -280,6 +280,7 @@ CORE_MODULES = {
     "gwlb_target_group_instances",
     "goosefs_file_system",
     "goosefs_fileset",
+    "goosefs_fileset_info",
     "chdfs_file_system",
     "chdfs_mount_point",
     "chdfs_mount_point_info",
