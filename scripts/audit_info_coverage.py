@@ -196,7 +196,6 @@ KNOWN_GAPS = {
     "dts_consumer_group",
     "dts_migration_job",
     "eb_connection",
-    "eb_rule",
     "eb_target",
     "elasticsearch_index",
     "elasticsearch_instance",

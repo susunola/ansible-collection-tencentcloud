@@ -197,6 +197,7 @@ CORE_MODULES = {
     "eb_connection",
     "eb_event_bus",
     "eb_rule",
+    "eb_rule_info",
     "eb_target",
     "cynosdb_backup_config",
     "cynosdb_account_privilege",
