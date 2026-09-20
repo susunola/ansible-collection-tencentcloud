@@ -188,8 +188,6 @@ KNOWN_GAPS = {
     "cos_bucket_domain",
     "cos_bucket_domain_certificate",
     "cos_bucket_inventory",
-    "cos_bucket_object_lock",
-    "cos_bucket_origin",
     "cos_bucket_replication",
     "cos_bucket_response_control",
     "cvm_chc",
