@@ -222,7 +222,6 @@ KNOWN_GAPS = {
     "monitor_prometheus_scrape_job",
     "mqtt_authorization_policy",
     "mqtt_instance",
-    "mqtt_topic",
     "mqtt_user",
     "oceanus_job",
     "oceanus_workspace",

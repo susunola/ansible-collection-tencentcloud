@@ -307,6 +307,7 @@ CORE_MODULES = {
     "mqtt_authorization_policy",
     "mqtt_instance",
     "mqtt_topic",
+    "mqtt_topic_info",
     "mqtt_user",
     "mariadb_account",
     "mariadb_backup_config",
