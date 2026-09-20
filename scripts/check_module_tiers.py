@@ -136,6 +136,7 @@ CORE_MODULES = {
     "config_remediation",
     "config_alarm_policy",
     "config_aggregator",
+    "config_aggregator_info",
     "config_aggregate_delivery",
     "cmq_queue",
     "cmq_topic",
