@@ -294,6 +294,7 @@ CORE_MODULES = {
     "kms_key_rotation",
     "lighthouse_instance",
     "lighthouse_firewall_rules",
+    "lighthouse_firewall_rules_info",
     "lighthouse_snapshot",
     "lighthouse_snapshot_info",
     "lighthouse_key_pair",

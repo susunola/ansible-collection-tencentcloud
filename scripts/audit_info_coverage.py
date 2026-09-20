@@ -207,7 +207,6 @@ KNOWN_GAPS = {
     "gwlb_target_group",
     "gwlb_target_group_association",
     "gwlb_target_group_instances",
-    "lighthouse_firewall_rules",
     "mariadb_account_privilege",
     "monitor_alarm_policy_notice",
     "monitor_grafana_integration",
