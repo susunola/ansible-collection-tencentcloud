@@ -128,6 +128,7 @@ CORE_MODULES = {
     "cos_object_info",
     "cos_object_sync",
     "config_rule",
+    "config_rule_info",
     "config_recorder",
     "config_recorder_info",
     "config_delivery",
