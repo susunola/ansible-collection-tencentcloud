@@ -7,7 +7,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 
 - Products/services: **204**
 - Write modules: **440**
-- Information modules: **374**
+- Information modules: **375**
 - Solution roles: **68**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
@@ -77,7 +77,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `cmq` | discovery-only | 0 | 1 | — | — |
 | `cms` | discovery-only | 0 | 1 | — | — |
 | `cngw` | discovery-only | 0 | 1 | — | — |
-| `config` | solution | 8 | 7 | `tc_config_governance` | `config_aggregate_delivery`, `config_aggregator`, `config_alarm_policy`, `config_compliance_pack`, `config_delivery`, `config_recorder`, `config_remediation`, `config_rule` |
+| `config` | solution | 8 | 8 | `tc_config_governance` | `config_aggregate_delivery`, `config_aggregator`, `config_alarm_policy`, `config_compliance_pack`, `config_delivery`, `config_recorder`, `config_remediation`, `config_rule` |
 | `controlcenter` | discovery-only | 0 | 1 | — | — |
 | `cos` | solution | 16 | 2 | `tc_object_storage_baseline` | `cos_bucket`, `cos_bucket_domain`, `cos_bucket_domain_certificate`, `cos_bucket_encryption`, `cos_bucket_intelligent_tiering`, `cos_bucket_inventory`, `cos_bucket_logging`, `cos_bucket_object_lock`, +8 more |
 | `cpdp` | discovery-only | 0 | 1 | — | — |

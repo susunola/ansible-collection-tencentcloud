@@ -141,6 +141,7 @@ CORE_MODULES = {
     "config_aggregator",
     "config_aggregator_info",
     "config_aggregate_delivery",
+    "config_aggregate_delivery_info",
     "cmq_queue",
     "cmq_topic",
     "cmq_subscription",
