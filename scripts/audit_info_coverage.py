@@ -207,7 +207,6 @@ KNOWN_GAPS = {
     "gwlb_target_group",
     "gwlb_target_group_association",
     "gwlb_target_group_instances",
-    "lighthouse_disk",
     "lighthouse_firewall_rules",
     "lighthouse_key_pair",
     "lighthouse_snapshot",

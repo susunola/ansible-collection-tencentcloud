@@ -297,6 +297,7 @@ CORE_MODULES = {
     "lighthouse_snapshot",
     "lighthouse_key_pair",
     "lighthouse_disk",
+    "lighthouse_disk_info",
     "mongodb_instance",
     "mongodb_backup_config",
     "mongodb_account",
