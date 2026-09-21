@@ -118,7 +118,6 @@ KNOWN_GAPS = {
     "dts_migration_check",
     "dts_migration_job_config",
     "gaap_layer4_listener",
-    "gaap_listener_real_servers",
     "oceanus_folder",
     "oceanus_job_config",
     "oceanus_job_savepoint",

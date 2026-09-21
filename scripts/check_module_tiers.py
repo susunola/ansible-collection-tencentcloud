@@ -284,6 +284,7 @@ CORE_MODULES = {
     "gaap_proxy",
     "gaap_layer4_listener",
     "gaap_listener_real_servers",
+    "gaap_listener_real_servers_info",
     "gaap_real_server",
     "gaap_real_server_info",
     "gwlb_load_balancer",
