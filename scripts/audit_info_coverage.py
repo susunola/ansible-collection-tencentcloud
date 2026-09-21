@@ -117,7 +117,6 @@ KNOWN_GAPS = {
     "dts_migration_action",
     "dts_migration_check",
     "dts_migration_job_config",
-    "emr_auto_scale_strategy",
     "gaap_layer4_listener",
     "gaap_listener_real_servers",
     "gaap_real_server",
