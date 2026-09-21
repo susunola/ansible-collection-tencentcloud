@@ -195,6 +195,7 @@ CORE_MODULES = {
     "dc_direct_connect",
     "dc_direct_connect_tunnel",
     "eb_connection",
+    "eb_connection_info",
     "eb_event_bus",
     "eb_rule",
     "eb_rule_info",
