@@ -200,6 +200,7 @@ CORE_MODULES = {
     "eb_rule",
     "eb_rule_info",
     "eb_target",
+    "eb_target_info",
     "cynosdb_backup_config",
     "cynosdb_account_privilege",
     "dnspod_record",

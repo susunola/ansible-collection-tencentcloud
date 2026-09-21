@@ -195,7 +195,6 @@ KNOWN_GAPS = {
     "dnspod_line_group",
     "dts_consumer_group",
     "dts_migration_job",
-    "eb_target",
     "elasticsearch_index",
     "elasticsearch_instance",
     "elasticsearch_snapshot",
