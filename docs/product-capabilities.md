@@ -7,7 +7,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 
 - Products/services: **204**
 - Write modules: **440**
-- Information modules: **410**
+- Information modules: **411**
 - Solution roles: **68**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
@@ -116,7 +116,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `fmu` | discovery-only | 0 | 1 | — | — |
 | `fwm` | discovery-only | 0 | 1 | — | — |
 | `ga2` | discovery-only | 0 | 1 | — | — |
-| `gaap` | solution | 4 | 3 | `tc_gaap_accelerator` | `gaap_layer4_listener`, `gaap_listener_real_servers`, `gaap_proxy`, `gaap_real_server` |
+| `gaap` | solution | 4 | 4 | `tc_gaap_accelerator` | `gaap_layer4_listener`, `gaap_listener_real_servers`, `gaap_proxy`, `gaap_real_server` |
 | `gme` | discovery-only | 0 | 1 | — | — |
 | `goosefs` | solution | 2 | 2 | `tc_goosefs_cache` | `goosefs_file_system`, `goosefs_fileset` |
 | `gs` | discovery-only | 0 | 1 | — | — |

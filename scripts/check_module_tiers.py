@@ -283,6 +283,7 @@ CORE_MODULES = {
     "cdwpg_parameter_info",
     "gaap_proxy",
     "gaap_layer4_listener",
+    "gaap_layer4_listener_info",
     "gaap_listener_real_servers",
     "gaap_listener_real_servers_info",
     "gaap_real_server",
