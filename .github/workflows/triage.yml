@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Add triage
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const number = context.payload.issue?.number
@@ -87,7 +87,7 @@ jobs:
 
       - name: Remove triage
         if: steps.author.outputs.bot == 'false'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const number = context.payload.issue?.number
