@@ -196,7 +196,6 @@ KNOWN_GAPS = {
     "dbbrain_sql_filter",
     "dts_consumer_group",
     "dts_migration_job",
-    "emr_cluster",
     "mariadb_account_privilege",
     "monitor_alarm_policy_notice",
     "monitor_grafana_integration",

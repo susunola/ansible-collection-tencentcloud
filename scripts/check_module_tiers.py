@@ -264,6 +264,7 @@ CORE_MODULES = {
     "eks_cluster",
     "eks_container_instance",
     "emr_cluster",
+    "emr_cluster_info",
     "emr_auto_scale_strategy",
     "cdwdoris_instance",
     "cdwdoris_instance_info",
