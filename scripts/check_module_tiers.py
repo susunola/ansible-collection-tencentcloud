@@ -256,6 +256,7 @@ CORE_MODULES = {
     "dbbrain_sql_filter",
     "eip",
     "elasticsearch_instance",
+    "elasticsearch_instance_info",
     "elasticsearch_index",
     "elasticsearch_index_info",
     "elasticsearch_snapshot",
