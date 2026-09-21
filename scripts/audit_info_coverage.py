@@ -196,7 +196,6 @@ KNOWN_GAPS = {
     "elasticsearch_instance",
     "elasticsearch_snapshot",
     "emr_cluster",
-    "gwlb_load_balancer",
     "gwlb_target_group",
     "gwlb_target_group_association",
     "gwlb_target_group_instances",

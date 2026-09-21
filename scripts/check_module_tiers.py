@@ -281,6 +281,7 @@ CORE_MODULES = {
     "gaap_listener_real_servers",
     "gaap_real_server",
     "gwlb_load_balancer",
+    "gwlb_load_balancer_info",
     "gwlb_target_group",
     "gwlb_target_group_association",
     "gwlb_target_group_instances",
