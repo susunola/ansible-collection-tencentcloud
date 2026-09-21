@@ -283,6 +283,7 @@ CORE_MODULES = {
     "gwlb_load_balancer",
     "gwlb_load_balancer_info",
     "gwlb_target_group",
+    "gwlb_target_group_info",
     "gwlb_target_group_association",
     "gwlb_target_group_instances",
     "goosefs_file_system",

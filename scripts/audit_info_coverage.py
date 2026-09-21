@@ -196,7 +196,6 @@ KNOWN_GAPS = {
     "elasticsearch_instance",
     "elasticsearch_snapshot",
     "emr_cluster",
-    "gwlb_target_group",
     "gwlb_target_group_association",
     "gwlb_target_group_instances",
     "mariadb_account_privilege",
