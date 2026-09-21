@@ -245,6 +245,7 @@ CORE_MODULES = {
     "dnspod_custom_line",
     "dnspod_line_group",
     "dnspod_domain",
+    "dnspod_domain_info",
     "dts_consumer_group",
     "dts_migration_action",
     "dts_migration_check",

@@ -191,7 +191,6 @@ KNOWN_GAPS = {
     "cynosdb_account_privilege",
     "dbbrain_sql_filter",
     "dnspod_custom_line",
-    "dnspod_domain",
     "dnspod_line_group",
     "dts_consumer_group",
     "dts_migration_job",

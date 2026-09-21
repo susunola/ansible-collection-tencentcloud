@@ -7,7 +7,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 
 - Products/services: **204**
 - Write modules: **440**
-- Information modules: **397**
+- Information modules: **398**
 - Solution roles: **68**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
@@ -98,7 +98,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `dc` | solution | 2 | 2 | `tc_direct_connect_fabric` | `dc_direct_connect`, `dc_direct_connect_tunnel` |
 | `dcdb` | solution | 5 | 1 | `tc_dcdb_stack` | `dcdb_account`, `dcdb_account_privilege`, `dcdb_backup_config`, `dcdb_instance`, `dcdb_security_config` |
 | `dlc` | solution | 28 | 11 | `tc_dlc_access_governance` | `dlc_cluster_group`, `dlc_data_engine`, `dlc_data_engine_config`, `dlc_data_mask_strategy`, `dlc_database`, `dlc_engine_resource_group`, `dlc_inference_model`, `dlc_inference_service`, +20 more |
-| `dnspod` | solution | 4 | 1 | `tc_dns_zone` | `dnspod_custom_line`, `dnspod_domain`, `dnspod_line_group`, `dnspod_record` |
+| `dnspod` | solution | 4 | 2 | `tc_dns_zone` | `dnspod_custom_line`, `dnspod_domain`, `dnspod_line_group`, `dnspod_record` |
 | `domain` | discovery-only | 0 | 1 | — | — |
 | `dsgc` | discovery-only | 0 | 1 | — | — |
 | `dts` | solution | 5 | 1 | `tc_dts_migration` | `dts_consumer_group`, `dts_migration_action`, `dts_migration_check`, `dts_migration_job`, `dts_migration_job_config` |
