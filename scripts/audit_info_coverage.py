@@ -66,6 +66,10 @@ KNOWN_COVERAGE = {
         ["tke_cluster_info"],
         "DescribeClusters returns the current ClusterVersion per cluster",
     ),
+    "gwlb_target_group_association": (
+        ["gwlb_load_balancer_info"],
+        "DescribeGatewayLoadBalancers returns TargetGroupId for each load balancer",
+    ),
 }
 
 # Write modules that are themselves the read surface, or whose resource has
@@ -196,8 +200,6 @@ KNOWN_GAPS = {
     "elasticsearch_instance",
     "elasticsearch_snapshot",
     "emr_cluster",
-    "gwlb_target_group_association",
-    "gwlb_target_group_instances",
     "mariadb_account_privilege",
     "monitor_alarm_policy_notice",
     "monitor_grafana_integration",

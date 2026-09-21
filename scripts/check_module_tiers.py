@@ -286,6 +286,7 @@ CORE_MODULES = {
     "gwlb_target_group_info",
     "gwlb_target_group_association",
     "gwlb_target_group_instances",
+    "gwlb_target_group_instances_info",
     "goosefs_file_system",
     "goosefs_fileset",
     "goosefs_fileset_info",
