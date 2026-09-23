@@ -11,7 +11,8 @@ tc_container_registry_sync_tag: true
 tc_container_registry_enable_cos_maz: false
 tc_container_registry_tags: {}
 
-# Namespace items follow tcr_namespace options and may contain repositories.
+# Namespace items follow tcr_namespace options and may contain repositories
+# and immutable_tag_rules (raw SDK-shaped rule mappings).
 tc_container_registry_namespaces: []
 # Destination instance and replication-rule items follow their modules.
 tc_container_registry_replication_instances: []

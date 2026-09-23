@@ -23,6 +23,9 @@ description:
     Ansible suboptions. Provide at least C(RepositoryPattern) and C(TagPattern)
     to identify the rule; C(RepositoryDecoration), C(TagDecoration) and
     C(Disabled) are optional.
+  - Existing rules are not updated in place. If an explicitly supplied field
+    differs from the observed rule, the module fails rather than reporting a
+    false no-op. Remove and recreate the rule deliberately.
 options:
   state:
     description: Desired state of the immutable tag rule.
@@ -154,6 +157,12 @@ def run_module():
     client = module.create_client(tcr_client.TcrClient, "tcr.tencentcloudapi.com")
     try:
         current = find_rule(module, client, models, registry_id, namespace_name, repo_pattern, tag_pattern)
+        if current and desired_present:
+            drift = [field for field in ("RepositoryDecoration", "TagDecoration", "Disabled")
+                     if field in rule and getattr(current, field, None) != rule[field]]
+            if drift:
+                module.fail_json(msg="Immutable tag rule differs in %s; remove and recreate it to change these fields" %
+                                 ", ".join(drift), registry_id=registry_id, namespace_name=namespace_name)
         if bool(current) == desired_present:
             module.exit_json(
                 changed=False,
@@ -184,6 +193,9 @@ def run_module():
             request.RuleId = getattr(current, "RuleId", None)
             module.sdk_call(client.DeleteImmutableTagRules, request)
         final = find_rule(module, client, models, registry_id, namespace_name, repo_pattern, tag_pattern)
+        if bool(final) != desired_present:
+            module.fail_json(msg="TCR immutable tag rule did not reach the requested state",
+                             registry_id=registry_id, namespace_name=namespace_name)
         module.exit_json(
             changed=True,
             registry_id=registry_id,

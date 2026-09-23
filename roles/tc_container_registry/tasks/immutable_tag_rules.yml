@@ -1,0 +1,11 @@
+---
+- name: Manage immutable tag rules in namespace
+  susunola.tencentcloud.tcr_immutable_tag_rule:
+    region: "{{ tc_container_registry_region | default(omit, true) }}"
+    state: "{{ tc_container_registry_state }}"
+    registry_id: "{{ _tc_container_registry_id | default(tc_container_registry_id) }}"
+    namespace_name: "{{ _tc_tcr_namespace.name }}"
+    rule: "{{ item }}"
+  loop: "{{ _tc_tcr_namespace.immutable_tag_rules | default([]) }}"
+  loop_control:
+    label: "{{ _tc_tcr_namespace.name }}/{{ item.RepositoryPattern }}/{{ item.TagPattern }}"

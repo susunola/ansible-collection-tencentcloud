@@ -23,9 +23,12 @@ __metaclass__ = type
 
 from types import SimpleNamespace
 
+import pytest
+
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import tcr_immutable_tag_rule as mod
 from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
     FakeModels,
     FakeResource,
     module_args,
@@ -217,3 +220,23 @@ def test_sdk_failure_fails(monkeypatch):
         assert payload.get("failed")
     else:
         raise AssertionError("expected SDK failure to fail the module")
+
+
+def test_existing_rule_drift_fails_instead_of_noop(monkeypatch):
+    fake = FakeTcrClient(rules=[_rule(1, "prod", "web-*", "latest", disabled=True)])
+    _make_module(monkeypatch, fake)
+    module_args(registry_id="tcr-abc", namespace_name="prod", rule=dict(RULE, Disabled=False))
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "differs in Disabled" in exc.value.args[0]["msg"]
+    assert [name for name, unused in fake.calls] == ["DescribeImmutableTagRules"]
+
+
+def test_create_must_be_visible_after_write(monkeypatch):
+    fake = FakeTcrClient()
+    fake.CreateImmutableTagRules = lambda request: SimpleNamespace(RequestId="req-fake")
+    _make_module(monkeypatch, fake)
+    module_args(registry_id="tcr-abc", namespace_name="prod", rule=dict(RULE))
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "did not reach" in exc.value.args[0]["msg"]

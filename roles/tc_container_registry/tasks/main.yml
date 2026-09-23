@@ -70,6 +70,16 @@
     loop_var: _tc_tcr_namespace
     label: "{{ _tc_tcr_namespace.name }}"
 
+- name: Reconcile TCR immutable tag rules
+  when:
+    - tc_container_registry_state == 'present'
+    - _tc_container_registry_id | length > 0
+  ansible.builtin.include_tasks: immutable_tag_rules.yml
+  loop: "{{ tc_container_registry_namespaces }}"
+  loop_control:
+    loop_var: _tc_tcr_namespace
+    label: "{{ _tc_tcr_namespace.name }}"
+
 - name: Provision TCR replication instances
   when:
     - tc_container_registry_state == 'present'
@@ -125,6 +135,14 @@
     destination_region_id: "{{ item.destination_region_id }}"
     name: "{{ item.name }}"
   loop: "{{ tc_container_registry_replication_rules }}"
+
+- name: Remove TCR immutable tag rules
+  when: tc_container_registry_state == 'absent'
+  ansible.builtin.include_tasks: immutable_tag_rules.yml
+  loop: "{{ tc_container_registry_namespaces }}"
+  loop_control:
+    loop_var: _tc_tcr_namespace
+    label: "{{ _tc_tcr_namespace.name }}"
 
 - name: Remove TCR repositories
   when: tc_container_registry_state == 'absent'

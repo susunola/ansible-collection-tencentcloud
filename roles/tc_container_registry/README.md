@@ -18,8 +18,15 @@ vulnerability controls and optional cross-region replication.
             severity: high
             repositories:
               - {name: orders, brief_description: Orders service}
+            immutable_tag_rules:
+              - RepositoryPattern: orders
+                TagPattern: "v*"
+                RepositoryDecoration: repoMatches
+                TagDecoration: matches
 ```
 
 The role publishes `tc_container_registry_result`. Deletion requires an
 explicit registry ID when child resources are declared and removes replication
-rules and repositories before namespaces and the registry instance.
+rules, immutable tag rules and repositories before namespaces and the registry
+instance. Immutable rules are identified by namespace and repository/tag
+patterns; to change other rule fields, remove and recreate the rule explicitly.

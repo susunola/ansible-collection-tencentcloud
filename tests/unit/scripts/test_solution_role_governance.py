@@ -429,11 +429,14 @@ def test_container_registry_disables_protection_and_removes_children_first():
         text,
         "Disable TCR deletion protection before teardown",
         "Remove TCR replication rules",
+        "Remove TCR immutable tag rules",
         "Remove TCR repositories",
         "Remove TCR namespaces",
         "Remove TCR instance",
     )
     assert "tc_container_registry_id | length > 0" in text
+    rules = (ROOT / "roles" / "tc_container_registry" / "tasks" / "immutable_tag_rules.yml").read_text(encoding="utf-8")
+    assert "susunola.tencentcloud.tcr_immutable_tag_rule" in rules
 
 
 def test_dlc_governance_teardown_removes_access_before_group():
