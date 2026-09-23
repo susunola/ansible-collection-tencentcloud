@@ -43,13 +43,13 @@ def _load():
     return models, monitor_client
 
 
-def build_describe(models, p):
+def build_describe(models, p, offset=0):
     request = models.DescribeGrafanaNotificationChannelsRequest()
     request.InstanceId, request.ChannelName, request.ChannelIDs, request.Offset, request.Limit = (
         p["instance_id"],
-        p.get("name"),
+        p.get("name") if not p.get("channel_id") else None,
         [p["channel_id"]] if p.get("channel_id") else None,
-        0,
+        offset,
         100,
     )
     return request
@@ -74,12 +74,19 @@ def build_delete(models, p, cid):
 
 
 def find(module, client, models, p):
-    response = module.sdk_call(client.DescribeGrafanaNotificationChannels, build_describe(models, p))
-    matches = [
-        x._serialize(allow_none=True)
-        for x in list(response.NotificationChannelSet or [])
-        if (p.get("channel_id") and x.ChannelId == p["channel_id"]) or (not p.get("channel_id") and x.ChannelName == p.get("name"))
-    ]
+    matches, offset = [], 0
+    while True:
+        response = module.sdk_call(client.DescribeGrafanaNotificationChannels, build_describe(models, p, offset))
+        page = list(response.NotificationChannelSet or [])
+        matches.extend(
+            x._serialize(allow_none=True)
+            for x in page
+            if (p.get("channel_id") and x.ChannelId == p["channel_id"]) or
+            (not p.get("channel_id") and x.ChannelName == p.get("name"))
+        )
+        offset += len(page)
+        if len(page) < 100:
+            break
     if len(matches) > 1:
         module.fail_json(msg="Multiple Grafana channels have the requested name", name=p.get("name"))
     return matches[0] if matches else None
@@ -91,6 +98,13 @@ def target(p):
 
 def comparable(v):
     return {"ChannelName": v.get("ChannelName"), "Receivers": sorted(v.get("Receivers") or []), "OrganizationIds": sorted(v.get("OrganizationIds") or [])}
+
+
+def validate_immutable_name(module, current, desired_name):
+    if current and current.get("ChannelName") != desired_name:
+        module.fail_json(msg="Grafana notification channel name cannot be changed",
+                         channel_id=current.get("ChannelId"), current_name=current.get("ChannelName"),
+                         desired_name=desired_name)
 
 
 def run_module():
@@ -121,6 +135,7 @@ def run_module():
             if not module.check_mode:
                 module.sdk_call(client.DeleteGrafanaNotificationChannel, build_delete(models, p, current["ChannelId"]))
             module.exit_json(changed=True, **(diff or {}), channel=current if module.check_mode else None)
+        validate_immutable_name(module, current, p["name"])
         wanted = target(p)
         before = comparable(current) if current else None
         if before == wanted:
