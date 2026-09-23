@@ -14,10 +14,10 @@ Verdicts:
 * **mapped** -- ``KNOWN_COVERAGE`` below points the write module at one or
   more existing ``_info`` modules that genuinely return the resource
   (verified against the covering module's API response shape).
-* **gap** -- ``KNOWN_GAPS`` records why there is no read surface yet; gaps
-  are reported but do not fail ``--check`` (they are the curated backlog).
-  Reasons: ``backlog`` (a scoped list API exists; nobody wired it up yet) or
-  ``no-list-api`` (the service offers no list/describe API for the resource).
+* **gap** -- curated tables record why there is no read surface yet; gaps
+  are reported but do not fail ``--check``. Reasons: ``backlog`` (not wired
+  up yet), ``no-list-api`` (no list/describe API), or ``retiring-api``
+  (the current API is being retired and must not be expanded blindly).
 
 Anything else fails ``--check``.
 
@@ -74,6 +74,11 @@ KNOWN_COVERAGE = {
         ["monitor_grafana_instance_info"],
         "DescribeGrafanaInstances returns InternetUrl for each Grafana instance",
     ),
+    "monitor_alarm_policy_notice": (
+        ["monitor_alarm_policy_info"],
+        "DescribeAlarmPolicies returns NoticeIds, HierarchicalNotices, and "
+        "NoticeContentTmplBindInfos inline for each alarm policy",
+    ),
 }
 
 # Write modules that are themselves the read surface, or whose resource has
@@ -82,6 +87,17 @@ KNOWN_NO_LIST_API = {
     "tke_cluster_kubeconfig": (
         "kubeconfig is a per-cluster credential fetch (DescribeClusterKubeconfig "
         "requires a ClusterId); the module itself is the read surface"
+    ),
+}
+
+# Existing write modules backed by APIs that Tencent Cloud has marked for
+# retirement. Keep them visible as gaps, but do not mislabel them as a backlog
+# for new read modules without first identifying a supported replacement.
+KNOWN_RETIRING_API = {
+    "monitor_prometheus_global_notification": (
+        "Describe/ModifyPrometheusGlobalNotification were marked for "
+        "retirement on 2026-05-25; use Prometheus alert groups/receivers "
+        "for new configurations"
     ),
 }
 
@@ -197,10 +213,8 @@ KNOWN_GAPS = {
     "dts_consumer_group",
     "dts_migration_job",
     "mariadb_account_privilege",
-    "monitor_alarm_policy_notice",
     "monitor_prometheus_alert_group",
     "monitor_prometheus_cluster_agent",
-    "monitor_prometheus_global_notification",
     "monitor_prometheus_grafana_binding",
     "monitor_prometheus_record_rule",
     "monitor_prometheus_scrape_job",
@@ -319,6 +333,9 @@ def audit():
         if name in KNOWN_NO_LIST_API:
             rows.append((name, "gap", "no-list-api: " + KNOWN_NO_LIST_API[name]))
             continue
+        if name in KNOWN_RETIRING_API:
+            rows.append((name, "gap", "retiring-api: " + KNOWN_RETIRING_API[name]))
+            continue
         if name in KNOWN_GAPS:
             rows.append((name, "gap", "backlog: read surface not wired up yet"))
             continue
@@ -358,13 +375,13 @@ def main(argv=None, out=None, err=None):
     # Stale table entries are as broken as missing coverage.
     writes, infos = discover_modules()
     stale_coverage = sorted(set(KNOWN_COVERAGE) - set(writes))
-    gap_tables = set(KNOWN_GAPS) | set(KNOWN_NO_LIST_API)
+    gap_tables = set(KNOWN_GAPS) | set(KNOWN_NO_LIST_API) | set(KNOWN_RETIRING_API)
     stale_gaps = sorted(gap_tables - set(writes))
     stale_gap_now_covered = sorted(
         name for name in gap_tables if name + "_info" in infos
     )
     overlaps = sorted(
-        (set(KNOWN_GAPS) | set(KNOWN_NO_LIST_API)) & set(KNOWN_COVERAGE)
+        gap_tables & set(KNOWN_COVERAGE)
     )
     for name in stale_coverage:
         print("  stale KNOWN_COVERAGE entry (module gone): %s" % name, file=err)

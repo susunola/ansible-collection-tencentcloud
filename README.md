@@ -9,10 +9,10 @@ in the `ansible-collections` GitHub organization.
 
 ## Capability overview
 
-The collection covers **204 Tencent Cloud product domains** through **769 modules**,
-including **440 resource modules**, **329 read-only `_info` modules**, and **68
-reusable roles**. The README highlights how to navigate the collection instead of
-rendering the entire catalog by default.
+The collection includes resource modules, read-only `_info` modules, and reusable
+roles across Tencent Cloud product domains. The README highlights how to navigate
+the collection instead of rendering the entire catalog by default; use the
+generated capability matrix below for current counts and coverage.
 
 | Start with | Typical products | Where to explore |
 | --- | --- | --- |

@@ -10,7 +10,9 @@ DOCUMENTATION = r"""
 module: monitor_prometheus_global_notification
 short_description: Manage Managed Prometheus global notification settings
 version_added: "0.14.0"
-description: Reconciles the singleton global notification configuration of a Prometheus instance.
+description:
+  - Reconciles the singleton global notification configuration of a Prometheus instance.
+  - The underlying Describe/ModifyPrometheusGlobalNotification APIs were marked by Tencent Cloud for retirement on 2026-05-25. This module is retained for compatibility; prefer Prometheus alert groups and receivers for new configurations. If the API is unavailable, the module fails rather than claiming convergence.
 options:
   instance_id: {type: str, required: true, description: Prometheus instance ID.}
   notification: {type: dict, required: true, description: SDK-compatible PrometheusNotificationItem configuration.}
