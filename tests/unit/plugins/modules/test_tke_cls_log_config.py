@@ -129,6 +129,32 @@ def test_already_present_is_idempotent(monkeypatch):
     assert "CreateCLSLogConfig" not in ops
 
 
+def test_existing_config_ignores_server_added_fields(monkeypatch):
+    fake = FakeTkeClient(configs={"stdout": {
+        "metadata": {"name": "stdout", "resourceVersion": "2"},
+        "spec": {"inputDetail": {"type": "container_stdout", "containerStdout": {}}},
+        "status": {"status": "Synced"},
+    }})
+    _make_module(monkeypatch, fake)
+    module_args(cluster_id="cls-abc123", log_config_name="stdout", logset_id="ls-1",
+                log_config={"metadata": {"name": "stdout"}, "spec": {"inputDetail": {"type": "container_stdout"}}})
+    result = run(mod.run_module)
+    assert result["changed"] is False
+
+
+def test_existing_config_drift_fails_instead_of_false_noop(monkeypatch):
+    fake = FakeTkeClient(configs={"stdout": {
+        "metadata": {"name": "stdout"}, "spec": {"inputDetail": {"type": "container_file"}},
+    }})
+    _make_module(monkeypatch, fake)
+    module_args(cluster_id="cls-abc123", log_config_name="stdout", logset_id="ls-1",
+                log_config={"metadata": {"name": "stdout"}, "spec": {"inputDetail": {"type": "container_stdout"}}})
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "spec.inputDetail.type" in exc.value.args[0]["msg"]
+    assert [op for op, unused in fake.calls] == ["DescribeLogConfigs"]
+
+
 def test_absent_when_missing_is_idempotent(monkeypatch):
     fake = FakeTkeClient(configs={})
     _make_module(monkeypatch, fake)

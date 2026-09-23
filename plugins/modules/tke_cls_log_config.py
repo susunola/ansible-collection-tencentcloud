@@ -18,8 +18,9 @@ description:
   - The module is idempotent on I(log_config_name) within a cluster; it reads
     the existing configurations via DescribeLogConfigs before changing anything.
     When a configuration with the same name already exists and I(state=present),
-    the module is a no-op (the collection does not reconcile the raw JSON
-    payload in place - delete and recreate to change it).
+    explicitly supplied fields are compared with the observed configuration.
+    Drift fails rather than reporting a false no-op. The collection does not
+    update the raw JSON payload in place; delete and recreate to change it.
   - I(log_config.metadata.name) must equal I(log_config_name). An unreadable response or
     an unconfirmed post-write state fails instead of reporting convergence.
 options:
@@ -46,7 +47,10 @@ options:
       Required when I(state=present).
     type: dict
   logset_id:
-    description: CLS logset ID the configuration is bound to. Required when I(state=present).
+    description:
+      - CLS logset ID used on creation. Required when I(state=present).
+      - The query API does not expose this creation parameter separately, so
+        changes to this value cannot be compared on an existing configuration.
     type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -142,6 +146,19 @@ def describe_state(module, client, models, cluster_id, cluster_type, name):
     return _find_config(getattr(response, "LogConfigs", None), name)
 
 
+def _drift_paths(desired, current, prefix=""):
+    """Compare only fields explicitly supplied by the caller."""
+    if not isinstance(desired, dict):
+        return [prefix] if desired != current else []
+    if not isinstance(current, dict):
+        return [prefix or "log_config"]
+    paths = []
+    for key, value in desired.items():
+        path = "%s.%s" % (prefix, key) if prefix else key
+        paths.extend(_drift_paths(value, current.get(key), path))
+    return paths
+
+
 def run_module():
     module = TencentCloudModule(
         argument_spec={
@@ -170,6 +187,11 @@ def run_module():
     client = module.create_client(client_module.TkeClient, "tke.tencentcloudapi.com")
     try:
         current = describe_state(module, client, models, cluster_id, cluster_type, name)
+        if desired_present and current:
+            drift = _drift_paths(p["log_config"], current)
+            if drift:
+                module.fail_json(msg="TKE CLS log configuration differs in %s; delete and recreate it to change these fields" %
+                                 ", ".join(drift), cluster_id=cluster_id, log_config_name=name)
         if bool(current) == desired_present:
             module.exit_json(
                 changed=False,
