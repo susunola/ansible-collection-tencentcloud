@@ -44,13 +44,13 @@ def _load():
     return models, monitor_client
 
 
-def build_describe(models, p):
+def build_describe(models, p, offset=0):
     request = models.DescribePrometheusClusterAgentsRequest()
     request.InstanceId, request.ClusterIds, request.ClusterTypes, request.Offset, request.Limit = (
         p["instance_id"],
         [p["cluster_id"]],
         [p["cluster_type"]],
-        0,
+        offset,
         100,
     )
     return request
@@ -79,11 +79,18 @@ def build_delete(models, p):
 
 
 def find(module, client, models, p):
-    response = module.sdk_call(client.DescribePrometheusClusterAgents, build_describe(models, p))
-    for x in list(response.Agents or []):
-        value = x._serialize(allow_none=True)
-        if value.get("ClusterId") == p["cluster_id"] and value.get("ClusterType") == p["cluster_type"]:
-            return value
+    offset = 0
+    while True:
+        response = module.sdk_call(client.DescribePrometheusClusterAgents, build_describe(models, p, offset))
+        page = list(response.Agents or [])
+        for item in page:
+            value = item._serialize(allow_none=True)
+            if value.get("ClusterId") == p["cluster_id"] and value.get("ClusterType") == p["cluster_type"]:
+                return value
+        offset += len(page)
+        total = getattr(response, "Total", None)
+        if not page or (total is not None and offset >= total) or (total is None and len(page) < 100):
+            break
     return None
 
 

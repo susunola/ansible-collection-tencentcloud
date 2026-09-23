@@ -432,6 +432,7 @@ CORE_MODULES = {
     "monitor_prometheus_alert_group_info",
     "monitor_prometheus_instance",
     "monitor_prometheus_cluster_agent",
+    "monitor_prometheus_cluster_agent_info",
     "monitor_grafana_instance",
     "monitor_prometheus_grafana_binding",
     "monitor_grafana_integration",
