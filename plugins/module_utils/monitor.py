@@ -173,3 +173,19 @@ def wait_for_policy(module, client, models, policy_id, name, module_name, desire
                 expected="absent" if absent else desired,
             )
         time.sleep(module.params["waiter_delay"])
+
+
+def wait_for_policy_notice(module, client, models, policy_id, module_name, desired):
+    deadline = time.time() + module.params["waiter_timeout"]
+    while True:
+        policy = find_policy(module, client, models, policy_id, None, module_name)
+        if policy and all((
+            sorted(policy.get("NoticeIds") or []) == sorted(desired["notice_ids"]),
+            _contains(policy.get("HierarchicalNotices") or [], desired["hierarchical_notices"]),
+            _contains(policy.get("NoticeContentTmplBindInfos") or [], desired["notice_content_template_bindings"]),
+        )):
+            return policy
+        if time.time() >= deadline:
+            module.fail_json(msg="Timed out waiting for alarm policy notice convergence",
+                             policy_id=policy_id, policy=policy, expected=desired)
+        time.sleep(module.params["waiter_delay"])

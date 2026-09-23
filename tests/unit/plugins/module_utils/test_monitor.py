@@ -3,6 +3,9 @@ from __future__ import absolute_import, division, print_function
 import json
 from types import SimpleNamespace
 
+import pytest
+
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import monitor
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.monitor import find_policy
 
 
@@ -63,3 +66,28 @@ def test_find_policy_continues_full_page_when_total_count_is_missing():
     assert find_policy(module, SimpleNamespace(DescribeAlarmPolicies=object()), models,
                        "policy-target", None, "monitor") == target
     assert [request.PageNumber for request in module.requests] == [1, 2]
+
+
+def test_notice_waiter_observes_convergence(monkeypatch):
+    stale = {"NoticeIds": ["old"], "HierarchicalNotices": [], "NoticeContentTmplBindInfos": []}
+    current = {"NoticeIds": ["new"], "HierarchicalNotices": [], "NoticeContentTmplBindInfos": []}
+    policies = iter([stale, current])
+    monkeypatch.setattr(monitor, "find_policy", lambda *args: next(policies))
+    monkeypatch.setattr(monitor.time, "sleep", lambda delay: None)
+    module = SimpleNamespace(params={"waiter_timeout": 10, "waiter_delay": 0})
+    desired = {"notice_ids": ["new"], "hierarchical_notices": [], "notice_content_template_bindings": []}
+    assert monitor.wait_for_policy_notice(module, object(), object(), "policy-1", "monitor", desired) == current
+
+
+def test_notice_waiter_fails_if_state_does_not_converge(monkeypatch):
+    stale = {"NoticeIds": ["old"], "HierarchicalNotices": [], "NoticeContentTmplBindInfos": []}
+    monkeypatch.setattr(monitor, "find_policy", lambda *args: stale)
+    ticks = iter([0, 2])
+    monkeypatch.setattr(monitor.time, "time", lambda: next(ticks))
+    module = SimpleNamespace(
+        params={"waiter_timeout": 1, "waiter_delay": 0},
+        fail_json=lambda **kwargs: (_ for _ in ()).throw(ValueError(kwargs["msg"])),
+    )
+    desired = {"notice_ids": ["new"], "hierarchical_notices": [], "notice_content_template_bindings": []}
+    with pytest.raises(ValueError, match="Timed out waiting"):
+        monitor.wait_for_policy_notice(module, object(), object(), "policy-1", "monitor", desired)

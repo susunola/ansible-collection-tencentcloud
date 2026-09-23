@@ -44,6 +44,7 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.monitor impo
     _load_monitor,
     build_notice_request,
     find_policy,
+    wait_for_policy_notice,
 )
 
 
@@ -91,7 +92,7 @@ def run_module():
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), notice=current, msg="Would update alarm policy notices")
         module.sdk_call(client.ModifyAlarmPolicyNotice, build_notice_request(models, p, p["policy_id"]))
-        policy = find_policy(module, client, models, p["policy_id"], None, p["module"])
+        policy = wait_for_policy_notice(module, client, models, p["policy_id"], p["module"], desired)
         module.exit_json(changed=True, **(diff or {}), notice=_view(policy), msg="Alarm policy notices updated")
     except Exception as exc:
         fail_from_sdk_error(module, exc)
