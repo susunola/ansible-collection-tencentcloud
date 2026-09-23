@@ -34,7 +34,7 @@ def find_policy(module, client, models, policy_id, name, module_name):
         if name:
             request.PolicyName = name
         response = module.sdk_call(client.DescribeAlarmPolicies, request)
-        items = list(getattr(response, "PolicyList", None) or [])
+        items = list(getattr(response, "Policies", None) or [])
         for item in items:
             value = _dict(item)
             if (policy_id and value.get("PolicyId") == policy_id) or (not policy_id and value.get("PolicyName") == name):
