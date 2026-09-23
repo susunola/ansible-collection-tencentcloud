@@ -3,7 +3,7 @@
 # replication configuration, then the golden image.
 - name: Remove the standby listener in the DR region
   susunola.tencentcloud.clb_listener:
-    region: "{{ tc_dr_dr_region | default(omit) }}"
+    region: "{{ tc_dr_dr_region | default(omit, true) }}"
     state: absent
     load_balancer_id: "{{ tc_dr_clb_id }}"
     port: "{{ tc_dr_listener_port }}"
@@ -16,7 +16,7 @@
 
 - name: Remove the standby CLB in the DR region
   susunola.tencentcloud.clb_load_balancer:
-    region: "{{ tc_dr_dr_region | default(omit) }}"
+    region: "{{ tc_dr_dr_region | default(omit, true) }}"
     state: absent
     load_balancer_id: "{{ tc_dr_clb_id | default(omit, true) }}"
     name: "{{ tc_dr_clb_name | default(omit, true) }}"
@@ -28,7 +28,7 @@
 
 - name: Remove the COS bucket replication configuration
   susunola.tencentcloud.cos_bucket_replication:
-    region: "{{ tc_dr_region | default(omit) }}"
+    region: "{{ tc_dr_region | default(omit, true) }}"
     state: absent
     name: "{{ tc_dr_bucket_name }}"
     appid: "{{ tc_dr_bucket_appid | default(omit, true) }}"
@@ -40,7 +40,7 @@
 
 - name: Remove the golden image
   susunola.tencentcloud.cvm_image:
-    region: "{{ tc_dr_region | default(omit) }}"
+    region: "{{ tc_dr_region | default(omit, true) }}"
     state: absent
     image_id: "{{ tc_dr_image_id | default(omit, true) }}"
     image_name: "{{ tc_dr_image_name | default(omit, true) }}"

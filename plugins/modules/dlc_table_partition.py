@@ -27,9 +27,11 @@ options:
   wait: {type: bool, default: true, description: Wait for lifecycle and field convergence.}
   waiter_delay: {type: int, default: 3, description: Seconds between polls.}
   waiter_timeout: {type: int, default: 180, description: Overall convergence timeout.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -51,7 +53,7 @@ EXAMPLES = r"""
 """
 RETURN = r"""
 partition: {description: Effective DLC table partition., type: dict, returned: always}
-partition_identity: {description: Stable database, table and values identity., type: dict, returned: always}
+partition_identity: {description: 'Stable database, table and values identity.', type: dict, returned: always}
 """
 
 import json

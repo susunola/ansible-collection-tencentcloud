@@ -18,11 +18,11 @@ options:
   cluster_type: {type: str, default: tke, description: Kubernetes cluster type.}
   region: {type: str, description: Cluster region.}
   agent: {type: dict, default: {}, description: Additional SDK-compatible PrometheusClusterAgentBasic fields.}
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -43,31 +43,16 @@ options:
         V(UpdateClusterVersionRequest.SkipPreCheck).
     type: bool
     default: false
-  retries:
-    description: Number of retries for transient SDK failures.
-    type: int
-    default: 5
-  waiter_delay:
-    description: Seconds to wait between state-polling attempts.
-    type: int
-    default: 5
-  waiter_timeout:
-    description: Overall timeout in seconds for state polling.
-    type: int
-    default: 120
-  user_agent:
-    description:
-      - Value appended to the SDK User-Agent header so API usage can be
-        attributed to this collection.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-tke) package on the controller.
   - Upgrades are only supported between adjacent minor versions; list the
     target versions with C(DescribeAvailableClusterVersion) first.
   - Node-level upgrades are not handled by this module; use the node-pool
     tooling for that.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
@@ -106,6 +91,7 @@ changed:
   type: bool
 '''
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
@@ -117,14 +103,23 @@ def _load_tke():
 
 
 def find_cluster(module, client, models, cluster_id):
-    """Return the serialized cluster dict or None."""
-    request = models.DescribeClustersRequest()
-    request.ClusterIds = [cluster_id]
-    response = module.sdk_call(client.DescribeClusters, request)
-    cluster = (response.Clusters or [None])[0]
-    if cluster is None:
-        return None
-    return cluster._serialize(allow_none=True)
+    """Return the serialized cluster dict or None.
+
+    The ID is re-checked client-side instead of taking ``Clusters[0]``, so a
+    request that comes back with an unrelated first row no longer upgrades
+    the wrong cluster.
+    """
+    def describe(filters):
+        request = models.DescribeClustersRequest()
+        request.ClusterIds = [cluster_id]
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeClusters, request)
+        return resolver.records(response.Clusters)
+
+    return resolver.resolve_one(
+        module, describe, resource="TKE cluster",
+        id_value=cluster_id, id_keys=("ClusterId",),
+    )
 
 
 def run_module():

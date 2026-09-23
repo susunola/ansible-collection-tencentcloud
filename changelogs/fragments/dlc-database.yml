@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``dlc_database`` with catalog-aware discovery, asynchronous convergence, immutable governance checks and guarded non-empty deletion.

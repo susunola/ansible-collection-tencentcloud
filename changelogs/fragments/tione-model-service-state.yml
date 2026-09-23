@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``tione_model_service_state`` for guarded, wait-aware online service start, stop and deletion by stable service-version ID.

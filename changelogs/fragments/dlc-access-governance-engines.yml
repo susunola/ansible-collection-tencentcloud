@@ -1,2 +1,0 @@
-minor_changes:
-  - Extend ``tc_dlc_access_governance`` to provision compute engines before access resources and tear them down last.

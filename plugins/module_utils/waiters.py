@@ -6,6 +6,15 @@ provisioning) are asynchronous: the request returns immediately and the
 resource transitions to a target state some seconds later. A waiter polls a
 describe API until the resource matches, so a module can return a
 ``changed`` result only once the state has converged.
+
+These are the module-side envelopes: they decide what a timeout means and
+report it through ``module.fail_json``. The plain state loop they share lives
+in ``module_utils.polling``, because the controller-side ``tc_wait`` action
+plugin needs the same loop without an ``AnsibleModule``; a module-side file
+cannot import ``plugin_utils`` (ansible-test's ``import`` test), so
+``module_utils`` is the only home that both callers can reach.
+
+Layering: imports ``module_utils.errors`` and ``module_utils.polling``.
 """
 
 from __future__ import absolute_import, division, print_function
@@ -17,10 +26,17 @@ import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import (
     is_not_found,
 )
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.polling import (
+    poll_until,
+)
 
 
 def wait_for_state(module, poll, desired_states, timeout=120, delay=5, sleep_fn=None):
     """Poll until the resource reaches one of the desired states.
+
+    The loop itself lives in :mod:`module_utils.polling` because the
+    controller-side ``tc_wait`` action plugin runs the same loop; this function
+    is the module-side envelope around it.
 
     :param module: module instance (used for check-mode and fail_json).
     :param poll: zero-argument callable returning the current state string.
@@ -34,14 +50,9 @@ def wait_for_state(module, poll, desired_states, timeout=120, delay=5, sleep_fn=
     """
     if module.check_mode:
         return None
-    sleep_fn = sleep_fn or time.sleep
-    waited = 0
-    while waited < timeout:
-        state = poll()
-        if state in desired_states:
-            return state
-        sleep_fn(delay)
-        waited += delay
+    outcome = poll_until(poll, lambda state: state in desired_states, timeout, delay, sleep_fn)
+    if outcome.matched:
+        return outcome.value
     module.fail_json(
         msg="Timed out waiting for resource state",
         expected_states=sorted(desired_states),

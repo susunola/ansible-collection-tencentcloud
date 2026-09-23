@@ -18,7 +18,12 @@ paragraph between the two module tables).
 
 README table row descriptions come from each module's DOCUMENTATION
 ``short_description``; write modules go into the resource table and
-``*_info`` modules into the info table, both sorted by module name.
+``*_info`` modules into the info table, both sorted by module name. Every
+row renders the full FQCN (``susunola.tencentcloud.<module>``) plus a link
+to the module source, which carries the module's complete documentation and
+its EXAMPLES block. The module counts embedded in the README overview and in
+the two ``<details>`` summary titles are derived here as well, so a module
+batch cannot leave a stale "769 modules" paragraph behind.
 """
 
 from __future__ import annotations
@@ -36,10 +41,26 @@ RUNTIME_YML = REPO_ROOT / "meta" / "runtime.yml"
 README_MD = REPO_ROOT / "README.md"
 GALAXY_YML = REPO_ROOT / "galaxy.yml"
 
-TABLE_HEADER = "| Module | Purpose |"
-TABLE_SEPARATOR = "| --- | --- |"
+FQCN_PREFIX = "susunola.tencentcloud."
+TABLE_HEADER = "| Module (FQCN) | Purpose | Examples |"
+TABLE_SEPARATOR = "| --- | --- | --- |"
+# Historic header accepted on input so one script run migrates the README.
+LEGACY_TABLE_HEADER = "| Module | Purpose |"
+_TABLE_HEADERS = {LEGACY_TABLE_HEADER, TABLE_HEADER}
 
 _DOC_RE = re.compile(r"^DOCUMENTATION = r?(?P<quote>'''|\"\"\")\n(?P<body>.*?)\n(?P=quote)", re.M | re.S)
+
+# Count slots in the README that duplicate module numbers and rot silently.
+# Each pattern must appear exactly once; group(1) is the stale count.
+_COUNT_SLOTS = (
+    # Capability-overview paragraph.
+    (r"through \*\*(\d+) modules\*\*", "total"),
+    (r"including \*\*(\d+) resource modules\*\*", "write"),
+    (r"\*\*(\d+) read-only `_info` modules\*\*", "info"),
+    # <details> summary titles of the two module tables.
+    (r"Browse all (\d+) resource modules", "write"),
+    (r"Browse all (\d+) read-only <code>_info</code> modules", "info"),
+)
 
 
 def discover_modules(modules_dir):
@@ -89,36 +110,65 @@ def render_runtime_yml(text, module_names):
 
 
 def module_row(name, description):
-    """Render one README module-table row."""
-    return "| `%s` | %s |\n" % (name, description)
+    """Render one README module-table row (FQCN + purpose + source link)."""
+    return "| `%s%s` | %s | [`%s`](plugins/modules/%s.py) |\n" % (
+        FQCN_PREFIX, name, description, name, name)
 
 
 def _replace_table(lines, header_index, rows):
-    if lines[header_index + 1].rstrip("\n") != TABLE_SEPARATOR:
-        raise ValueError("README.md: malformed module table header")
+    """Replace header, separator and rows of the table at *header_index*.
+
+    ``lines[header_index]`` is the (legacy or current) header line; its
+    separator and every following ``|`` row are consumed and rewritten with
+    the current header, separator and the generated *rows*.
+    """
     end = header_index + 2
     while end < len(lines) and lines[end].startswith("|"):
         end += 1
-    return lines[:header_index + 2] + rows + lines[end:]
+    block = [TABLE_HEADER + "\n", TABLE_SEPARATOR + "\n"] + rows
+    return lines[:header_index] + block + lines[end:]
+
+
+def sync_readme_counts(text, total, write_count, info_count):
+    """Return *text* with the four README count slots refreshed.
+
+    Every pattern in ``_COUNT_SLOTS`` must appear exactly once; a missing or
+    duplicated slot raises instead of silently drifting.
+    """
+    counts = {"total": str(total), "write": str(write_count), "info": str(info_count)}
+    for pattern, slot in _COUNT_SLOTS:
+        text, n = re.subn(pattern, lambda m, value=counts[slot]: m.group(0).replace(m.group(1), value), text)
+        if n != 1:
+            raise ValueError(
+                "README.md: count slot %r must appear exactly once, found %d"
+                % (pattern, n))
+    return text
 
 
 def render_readme(text, write_rows, info_rows):
     """Return *text* with the two module tables replaced by the given rows.
 
-    The first ``| Module | Purpose |`` table is the resource (write module)
-    table, the second the ``_info`` table. Headers, separators, the plugins
-    table and the note paragraph between the module tables are untouched.
+    The first module table is the resource (write module) table, the second
+    the ``_info`` table. Headers, the plugins table and the note paragraphs
+    between the module tables are rewritten only where they carry derived
+    counts (see ``sync_readme_counts``).
     """
     lines = text.splitlines(keepends=True)
-    headers = [i for i, line in enumerate(lines) if line.rstrip("\n") == TABLE_HEADER]
+    headers = [i for i, line in enumerate(lines)
+               if line.rstrip("\n") in _TABLE_HEADERS]
     if len(headers) != 2:
         raise ValueError(
-            "README.md: expected exactly two %r tables, found %d"
-            % (TABLE_HEADER, len(headers)))
+            "README.md: expected exactly two module tables, found %d"
+            % len(headers))
     # Replace from the bottom up so the first header index stays valid.
     lines = _replace_table(lines, headers[1], info_rows)
     lines = _replace_table(lines, headers[0], write_rows)
-    return "".join(lines)
+    return sync_readme_counts(
+        "".join(lines),
+        len(write_rows) + len(info_rows),
+        len(write_rows),
+        len(info_rows),
+    )
 
 
 def render_galaxy_yml(text, module_names):

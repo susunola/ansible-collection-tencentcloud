@@ -1,0 +1,20 @@
+---
+# meta/extensions.yml declares plugin types that ansible-core does not know
+# natively so that collection tooling can still find and package them:
+#
+# * ansible-navigator / ansible-creator project and execution-environment
+#   builders use it to include non-core plugins in EE images;
+# * Galaxy and Automation Hub use it to surface EDA content under the
+#   collection's "Contents" tab.
+#
+# ansible-core plugin types (action, callback, connection, filter, inventory,
+# lookup, module, module_utils, doc_fragments) are resolved automatically and
+# must NOT be listed here. Only ansible.eda event_source plugins live outside
+# the core plugin loader, so they are the single extension declared below.
+#
+# The format mirrors amazon.aws (see its meta/extensions.yml): each entry is
+# an ``args.ext_dir`` pointing at the collection-relative directory that
+# holds the extension plugins.
+extensions:
+  - args:
+      ext_dir: plugins/event_source

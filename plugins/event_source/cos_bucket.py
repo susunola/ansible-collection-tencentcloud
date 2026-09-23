@@ -21,7 +21,7 @@ as an event, the polling equivalent of a bucket event notification::
             run_playbook:
               name: playbooks/on_upload.yml
 
-The first poll establishes a baseline: objects already in the bucket are
+The first poll establishes a baseline; objects already in the bucket are
 recorded but not emitted unless ``initial`` is true. Afterwards an event is
 yielded for every object whose key is new or whose last-modified time has
 changed since the previous poll. COS object keys are ordered lexicographically,
@@ -30,9 +30,95 @@ very large buckets (a cap can hide objects sorted after the cut-off, so it is
 off by default). Polling is ``interval`` seconds apart and the listing runs in
 a worker thread so the event loop stays responsive.
 """
+
+
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
+
+DOCUMENTATION = r'''
+---
+module: cos_bucket
+short_description: Poll a Tencent Cloud COS bucket for new or changed objects (event source)
+description:
+  - Polls a Tencent Cloud COS bucket's object listing and yields each new (or
+    changed) object as an event for Event-Driven Ansible (ansible-rulebook),
+    the polling equivalent of a bucket event notification.
+  - The first poll establishes a baseline; objects already in the bucket are
+    recorded but not emitted unless O(initial) is true. Afterwards an event
+    is yielded for every object whose key is new or whose last-modified time
+    has changed since the previous poll.
+  - COS object keys are ordered lexicographically, so the listing is walked
+    in full each poll; O(max_objects) caps the walk for very large buckets (a
+    cap can hide objects sorted after the cut-off, so it is off by default).
+  - The listing runs in a worker thread; polling happens every O(interval)
+    seconds.
+  - Every event carries the object under the C(cos) key, e.g.
+    I(event.cos.key), I(event.cos.size) and I(event.cos.last_modified);
+    C(bucket), C(region) and I(event.cos.event_type) are added alongside.
+    The event type is always C(ObjectCreated) because an object listing
+    cannot tell a new object from a modified one. Listing failures are
+    emitted as C(cos.error) events and never crash the source.
+version_added: "1.0.0"
+options:
+  secret_id:
+    description: Tencent Cloud secret id (fallback C(TENCENTCLOUD_SECRET_ID)).
+    type: str
+  secret_key:
+    description: Tencent Cloud secret key (fallback C(TENCENTCLOUD_SECRET_KEY)).
+    type: str
+  token:
+    description: Temporary session token (fallback C(TENCENTCLOUD_TOKEN)).
+    type: str
+  appid:
+    description: Tencent Cloud appid used to expand a short bucket name (fallback C(TENCENTCLOUD_APPID)).
+    type: str
+  region:
+    description: Region of the bucket (fallback C(TENCENTCLOUD_REGION)), e.g. C(ap-guangzhou).
+    type: str
+  endpoint:
+    description: COS endpoint override.
+    type: str
+  bucket:
+    description: Bucket to poll, as a short name (with O(appid)) or a full C(bucket-appid) name.
+    type: str
+    required: true
+  prefix:
+    description: Only yield objects whose key starts with this prefix.
+    type: str
+  interval:
+    description: Seconds between polls.
+    type: float
+    default: 5
+  initial:
+    description: Emit events for objects present at the first (baseline) poll.
+    type: bool
+    default: false
+  max_objects:
+    description: Cap the number of objects walked per poll (off by default; can hide objects).
+    type: int
+requirements:
+  - qcloud_cos
+author:
+  - Tencent Cloud Ansible Collection Contributors (@susunola)
+'''
+
+EXAMPLES = r'''
+- name: react to objects uploaded to a COS bucket
+  hosts: all
+  sources:
+    - susunola.tencentcloud.cos_bucket:
+        region: ap-guangzhou
+        bucket: mybucket
+        appid: "1300000000"
+        prefix: images/
+  rules:
+    - name: process a new object
+      condition: event.cos.event_type == "ObjectCreated"
+      action:
+        run_playbook:
+          name: playbooks/on_upload.yml
+'''
 
 import argparse
 import asyncio

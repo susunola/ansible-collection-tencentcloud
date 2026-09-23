@@ -1,2 +1,0 @@
-minor_changes:
-  - Add Oceanus workspace resource creation and reference-aware guarded deletion.

@@ -10,38 +10,47 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: cmq_subscription_info
-short_description: Gather information about Tencent Cloud CMQ subscriptions
-version_added: "1.3.0"
-description: Returns subscriptions for a CMQ topic.
+short_description: Gather information about Tencent Cloud TDMQ cmq subscriptions
+version_added: "1.5.0"
+description: Returns TDMQ cmq subscriptions visible in a Tencent Cloud region.
 options:
   topic_name:
-    description: Parent topic name whose subscriptions are returned.
+    description: Topic name. API field C(TopicName).
     type: str
-    required: true
+  subscription_name:
+    description: Subscription name. API field C(SubscriptionName).
+    type: str
+  queue_name:
+    description: Queue name. API field C(QueueName).
+    type: str
+  query_type:
+    description: Query type. API field C(QueryType).
+    type: str
   page_size:
     description: Number of results requested per API call.
     type: int
     default: 100
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List subscriptions for a CMQ topic
+- name: List all cmq subscriptions
   susunola.tencentcloud.cmq_subscription_info:
     region: ap-guangzhou
-    topic_name: order-events
-
 '''
 
 RETURN = r'''
-subscriptions:
-  description: Matching CMQ subscriptions.
+cmq_subscriptions:
+  description: Matching TDMQ cmq subscriptions.
   returned: always
   type: list
   elements: dict
 total_count:
-  description: Number of CMQ subscriptions reported by the API.
+  description: Number of cmq subscriptions reported by the API.
   returned: always
   type: int
 request_id:
@@ -58,18 +67,28 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, topic_name, offset, limit):
+def build_request(models, topic_name, subscription_name, queue_name, query_type, offset, limit):
     request = models.DescribeCmqSubscriptionDetailRequest()
     request.Offset = offset
     request.Limit = limit
-    request.TopicName = topic_name
+    if topic_name is not None:
+        request.TopicName = topic_name
+    if subscription_name is not None:
+        request.SubscriptionName = subscription_name
+    if queue_name is not None:
+        request.QueueName = queue_name
+    if query_type is not None:
+        request.QueryType = query_type
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
-        "topic_name": {"type": "str", "required": True},
+        "topic_name": {"type": "str"},
+        "subscription_name": {"type": "str"},
+        "queue_name": {"type": "str"},
+        "query_type": {"type": "str"},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -87,14 +106,21 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, module.params["topic_name"], offset, limit),
+        lambda offset, limit: build_request(
+            models,
+            module.params["topic_name"],
+            module.params["subscription_name"],
+            module.params["queue_name"],
+            module.params["query_type"],
+            offset,
+            limit),
         lambda request: sdk_call(module, client.DescribeCmqSubscriptionDetail, request),
         lambda response: response.SubscriptionSet,
         lambda response: response.TotalCount,
     )
     item_set, total_count = paginator.fetch_all()
-    subscriptions = [serialize_sdk_object(item) for item in item_set]
-    module.exit_json(changed=False, subscriptions=subscriptions,
+    cmq_subscriptions = [serialize_sdk_object(item) for item in item_set]
+    module.exit_json(changed=False, cmq_subscriptions=cmq_subscriptions,
                      total_count=total_count, request_id=paginator.request_id)
 
 

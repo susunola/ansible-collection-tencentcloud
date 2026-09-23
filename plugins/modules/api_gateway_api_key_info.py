@@ -10,37 +10,39 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: api_gateway_api_key_info
-short_description: Gather information about Tencent Cloud API Gateway API keys
-version_added: "1.3.0"
-description: Returns API Gateway API keys visible in a Tencent Cloud region.
+short_description: Gather information about Tencent Cloud APIGATEWAY api keys
+version_added: "1.5.0"
+description: Returns APIGATEWAY api keys visible in a Tencent Cloud region.
 options:
   filters:
-    description: APIGATEWAY API key filter names mapped to lists of values.
+    description: APIGATEWAY API filter names mapped to lists of values.
     type: dict
     default: {}
   page_size:
     description: Number of results requested per API call.
     type: int
     default: 100
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all API Gateway API keys
+- name: List all api keys
   susunola.tencentcloud.api_gateway_api_key_info:
     region: ap-guangzhou
-
 '''
 
 RETURN = r'''
 api_keys:
-  description: Matching API Gateway API keys.
+  description: Matching APIGATEWAY api keys.
   returned: always
   type: list
   elements: dict
 total_count:
-  description: Number of API keys reported by the API.
+  description: Number of api keys reported by the API.
   returned: always
   type: int
 request_id:

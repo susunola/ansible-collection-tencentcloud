@@ -1,0 +1,9 @@
+---
+minor_changes:
+  - event_source plugins - add an EXAMPLES block to cmq_queue, cls_topic,
+    cos_bucket and tke_cluster, and document the payload each one emits so a
+    rulebook condition can be written straight from the docs.
+  - event_source plugins - fix two rule conditions that could never match.
+    The cls_topic example addressed event.level while the source nests the
+    record under cls (event.cls.level), and the cmq_queue example addressed
+    event.cmq.MsgBody while the source emits msg_body.

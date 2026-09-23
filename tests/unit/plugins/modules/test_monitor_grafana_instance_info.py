@@ -40,7 +40,7 @@ class FakeItem:
 
 class FakeResponse:
     def __init__(self, items, total_count):
-        self.Instances = items
+        self.InstanceSet = items
         self.TotalCount = total_count
         self.RequestId = "req-page"
 

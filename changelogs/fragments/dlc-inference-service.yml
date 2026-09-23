@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``dlc_inference_service`` for honest Running/Stopped service coordination, deployment failure convergence and immutable creation-field checks.

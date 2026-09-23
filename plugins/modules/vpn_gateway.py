@@ -83,29 +83,14 @@ options:
       - Only applied at creation.
     type: dict
     default: {}
-  retries:
-    description: Number of retries for transient SDK failures.
-    type: int
-    default: 5
-  waiter_delay:
-    description: Seconds to wait between state-polling attempts.
-    type: int
-    default: 5
-  waiter_timeout:
-    description: Overall timeout in seconds for state polling.
-    type: int
-    default: 120
-  user_agent:
-    description:
-      - Value appended to the SDK User-Agent header so API usage can be
-        attributed to this collection.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-vpc) package on the controller.
   - Deleting a gateway also removes its associated VPN connections and routes;
     only IPsec tunnels under SSL gateways are unaffected.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
@@ -149,8 +134,9 @@ vpn_gateway:
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 
 
 def _load_vpc():
@@ -181,18 +167,27 @@ def build_describe_request(models, vpn_gateway_id, name, vpc_id):
     return request
 
 
-def _first(collection):
-    return collection[0] if collection else None
-
-
 def find_gateway(module, client, models, vpn_gateway_id, name, vpc_id):
-    """Return the matching VPN gateway dict or None."""
-    request = build_describe_request(models, vpn_gateway_id, name, vpc_id)
-    response = module.sdk_call(client.DescribeVpnGateways, request)
-    gateway = _first(response.VpnGatewaySet or [])
-    if gateway is None:
-        return None
-    return gateway._serialize(allow_none=True)
+    """Return the matching VPN gateway dict or None.
+
+    ``vpn-gateway-name`` is a substring filter, so the candidate set is
+    re-checked client-side by the shared resolver: an exact name wins, a
+    lone fuzzy candidate is accepted, and two or more candidates fail with
+    C(ambiguous=true) instead of silently managing whichever gateway the API
+    listed first.
+    """
+    def describe(filters):
+        request = build_describe_request(models, vpn_gateway_id, name, vpc_id)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeVpnGateways, request)
+        return resolver.records(response.VpnGatewaySet)
+
+    return resolver.resolve_one(
+        module, describe, resource="VPN gateway",
+        id_value=vpn_gateway_id, name_value=name,
+        id_keys=("VpnGatewayId",), name_keys=("VpnGatewayName",),
+        name_filters=("vpn-gateway-name",),
+    )
 
 
 def _create(module, client, models, params):

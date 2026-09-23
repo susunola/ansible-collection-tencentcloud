@@ -13,10 +13,12 @@ options:
   state: {type: str, choices: [present, absent], default: present, description: Whether listed domains are registered.}
   gateway_id: {type: str, required: true, description: Gateway ID.}
   domains: {type: list, elements: str, required: true, description: Unique domain names.}
-  purge_unlisted: {type: bool, default: false, description: With state=present, remove registered domains not listed here.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+  purge_unlisted: {type: bool, default: false, description: 'With state=present, remove registered domains not listed here.'}
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

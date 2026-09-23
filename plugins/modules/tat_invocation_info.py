@@ -17,11 +17,13 @@ options:
   instance_kind: {type: str, choices: [CVM, LIGHTHOUSE], description: Instance-kind filter in list mode.}
   include_tasks: {type: bool, default: true, description: Return per-instance tasks in exact mode.}
   include_output: {type: bool, default: false, description: Return task output; use task-level C(no_log=true) when enabled.}
-  page_size: {type: int, default: 100, description: Results per API request, from 1 through 100.}
+  page_size: {type: int, default: 100, description: 'Results per API request, from 1 through 100.'}
   max_pages: {type: int, default: 1000, description: Maximum pages fetched.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

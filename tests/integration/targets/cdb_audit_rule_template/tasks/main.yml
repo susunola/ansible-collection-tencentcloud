@@ -1,0 +1,106 @@
+---
+# End-to-end coverage for cdb_audit_rule_template: create + idempotency +
+# check mode + delete. An audit rule template is pure metadata - it costs
+# nothing until it is bound to an instance - so this target is safe to run on
+# every CI pass.
+#
+# Payload shape confirmed against the live CDB API:
+#   * RuleTemplateName is capped at 30 characters, hence the short
+#     `ansible-audit-it-<run_id>` spelling (25 characters).
+#   * RuleFilters[].Compare accepts only EXC / EQS / NEQ / REG / INC; the
+#     "=" shown in older examples is rejected with
+#     InvalidParameter.InvalidParameterError (参数规则类型不支持该过滤项).
+#
+# The module is name-keyed, so the create and the idempotency lookup always
+# agree.
+- name: CDB audit rule template end-to-end
+  vars:
+    run_id: "{{ 99999999 | random }}"
+    template_name: "ansible-audit-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ tencentcloud_region }}"
+  block:
+    # NOTE: a `vars:` block is templated lazily, so a `| random` name is
+    # re-rolled on EVERY reference - the resource is created under one name
+    # and asserted/deleted under another, which fails the run and leaks the
+    # resource. Freeze the names once with set_fact (facts outrank play vars).
+    - name: Freeze the per-run resource names
+      ansible.builtin.set_fact:
+        run_id: "{{ run_id }}"
+
+    - name: Create an audit rule template
+      susunola.tencentcloud.cdb_audit_rule_template:
+        state: present
+        rule_template_name: "{{ template_name }}"
+        description: Created by the Ansible integration suite
+        rule_filters:
+          - type: host
+            value:
+              - "10.0.0.%"
+            compare: INC
+        alarm_level: 1
+        alarm_policy: 0
+      register: template_create
+
+    - name: Creation reports changed with a server-assigned template id
+      ansible.builtin.assert:
+        that:
+          - template_create is changed
+          - template_create.rule_template_name == template_name
+          - template_create.rule_template_id is defined
+          - template_create.rule_template_id is search('^cdb-art-')
+          - template_create.exists
+
+    - name: Create the same audit rule template again (idempotency)
+      susunola.tencentcloud.cdb_audit_rule_template:
+        state: present
+        rule_template_name: "{{ template_name }}"
+        description: Created by the Ansible integration suite
+        rule_filters:
+          - type: host
+            value:
+              - "10.0.0.%"
+            compare: INC
+        alarm_level: 1
+        alarm_policy: 0
+      register: template_second
+
+    - name: Second run reports no change and the same template id
+      ansible.builtin.assert:
+        that:
+          - template_second is not changed
+          - template_second.rule_template_id == template_create.rule_template_id
+          - template_second.exists
+
+    - name: Check mode reports the delete without deleting
+      susunola.tencentcloud.cdb_audit_rule_template:
+        state: absent
+        rule_template_name: "{{ template_name }}"
+      check_mode: true
+      register: template_check_delete
+
+    - name: Check mode reports the post-operation state without touching the API
+      ansible.builtin.assert:
+        that:
+          - template_check_delete is changed
+          - not template_check_delete.exists
+
+    - name: Delete the audit rule template
+      susunola.tencentcloud.cdb_audit_rule_template:
+        state: absent
+        rule_template_name: "{{ template_name }}"
+      register: template_delete
+
+    - name: Deletion reports changed and the template is gone
+      ansible.builtin.assert:
+        that:
+          - template_delete is changed
+          - not template_delete.exists
+
+  always:
+    - name: Delete the audit rule template if the run failed mid-way
+      susunola.tencentcloud.cdb_audit_rule_template:
+        state: absent
+        rule_template_name: "{{ template_name }}"
+      ignore_errors: true

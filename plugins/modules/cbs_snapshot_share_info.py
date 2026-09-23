@@ -11,32 +11,33 @@ DOCUMENTATION = r'''
 ---
 module: cbs_snapshot_share_info
 short_description: Gather information about Tencent Cloud CBS snapshot share permissions
-version_added: "1.3.0"
-description: Returns account permissions for a shared CBS snapshot.
+version_added: "1.5.0"
+description: Returns CBS snapshot share permissions visible in a Tencent Cloud region.
 options:
   snapshot_id:
-    description: Snapshot ID whose share permissions are returned.
+    description: Snapshot id. API field C(SnapshotId).
     type: str
-    required: true
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List snapshot share permissions
+- name: List all snapshot share permissions
   susunola.tencentcloud.cbs_snapshot_share_info:
     region: ap-guangzhou
-    snapshot_id: snap-xxxxxxxx
 '''
 
 RETURN = r'''
-share_permissions:
+snapshot_share_permissions:
   description: Matching CBS snapshot share permissions.
   returned: always
   type: list
   elements: dict
 total_count:
-  description: Number of share permissions returned by the API.
+  description: Number of snapshot share permissions returned (the API reports no total count).
   returned: always
   type: int
 request_id:
@@ -56,14 +57,15 @@ def build_request(models, snapshot_id, offset, limit):
     # DescribeSnapshotSharePermission returns the full list in one call and is not
     # paginated; offset and limit are accepted for signature uniformity.
     request = models.DescribeSnapshotSharePermissionRequest()
-    request.SnapshotId = snapshot_id
+    if snapshot_id is not None:
+        request.SnapshotId = snapshot_id
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
-        "snapshot_id": {"type": "str", "required": True},
+        "snapshot_id": {"type": "str"},
     })
     module = AnsibleModule(
         argument_spec=argument_spec,
@@ -81,9 +83,9 @@ def run_module():
     request = build_request(models, module.params["snapshot_id"], 0, 0)
     response = sdk_call(module, client.DescribeSnapshotSharePermission, request)
     items = response.SharePermissionSet or []
-    share_permissions = [serialize_sdk_object(item) for item in items]
-    module.exit_json(changed=False, share_permissions=share_permissions,
-                     total_count=len(share_permissions), request_id=response.RequestId)
+    snapshot_share_permissions = [serialize_sdk_object(item) for item in items]
+    module.exit_json(changed=False, snapshot_share_permissions=snapshot_share_permissions,
+                     total_count=len(snapshot_share_permissions), request_id=response.RequestId)
 
 
 def main():

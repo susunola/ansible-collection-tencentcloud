@@ -133,24 +133,6 @@ options:
       - Only applied at creation.
     type: dict
     default: {}
-  retries:
-    description: Number of retries for transient SDK failures.
-    type: int
-    default: 5
-  waiter_delay:
-    description: Seconds to wait between state-polling attempts.
-    type: int
-    default: 5
-  waiter_timeout:
-    description: Overall timeout in seconds for state polling.
-    type: int
-    default: 120
-  user_agent:
-    description:
-      - Value appended to the SDK User-Agent header so API usage can be
-        attributed to this collection.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-mongodb) package on the
     controller.
@@ -160,7 +142,10 @@ notes:
     creation order is accepted.
   - The creation APIs size memory and disk in GiB, while V(DescribeDBInstances)
     reports them in MiB; the returned instance carries the raw API values.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
@@ -208,6 +193,7 @@ instance:
     MongoVersion: "5.0"
 '''
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
@@ -233,17 +219,24 @@ def _first(collection):
 
 
 def find_instance(module, client, models, instance_id, name):
-    """Return the matching instance dict or None."""
-    request = build_describe_request(models, instance_id, name)
-    response = module.sdk_call(client.DescribeDBInstances, request)
-    if instance_id:
-        instance = _first(response.InstanceDetails or [])
-        return instance._serialize(allow_none=True) if instance is not None else None
-    for instance in response.InstanceDetails or []:
-        current = instance._serialize(allow_none=True)
-        if current.get("InstanceName") == name:
-            return current
-    return None
+    """Return the matching instance dict or None.
+
+    ``SearchKey`` is a fuzzy filter, so the candidate set is re-checked
+    client-side by the shared resolver: an ID is authoritative, an exact name
+    wins, and two candidates fail with C(ambiguous=true) plus the candidate
+    list instead of managing ``InstanceDetails[0]``.
+    """
+    def describe(filters):
+        request = build_describe_request(models, instance_id, name)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeDBInstances, request)
+        return resolver.records(response.InstanceDetails)
+
+    return resolver.resolve_one(
+        module, describe, resource="MongoDB instance",
+        id_value=instance_id, name_value=name,
+        id_keys=("InstanceId",), name_keys=("InstanceName",),
+    )
 
 
 def _tag_models(models, tags):

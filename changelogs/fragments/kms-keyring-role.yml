@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Added the tc_kms_keyring role for multi-key lifecycle, independent rotation and guarded scheduled deletion.

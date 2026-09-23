@@ -14,7 +14,10 @@ options:
   job_id: {description: DTS migration job ID., type: str, required: true}
   wait: {description: Wait for the check to finish., type: bool, default: true}
   fail_on_check_error: {description: Fail when DTS reports a failed or non-passing check., type: bool, default: true}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""- susunola.tencentcloud.dts_migration_check: {job_id: dts-abcd1234}"""

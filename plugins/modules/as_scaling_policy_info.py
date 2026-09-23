@@ -10,46 +10,48 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: as_scaling_policy_info
-short_description: Gather information about Tencent Cloud auto scaling policies
-version_added: "1.3.0"
-description: Returns auto scaling policies visible in a Tencent Cloud region.
+short_description: Gather information about Tencent Cloud AUTOSCALING scaling policies
+version_added: "1.5.0"
+description: Returns AUTOSCALING scaling policies visible in a Tencent Cloud region.
 options:
-  auto_scaling_policy_ids:
-    description: Auto scaling policy IDs to return. Mutually exclusive with O(filters).
+  scaling_policy_ids:
+    description: Scaling policy IDs to return. Mutually exclusive with O(filters).
     type: list
     elements: str
   filters:
-    description: Auto Scaling policy API filter names mapped to lists of values.
+    description: AUTOSCALING API filter names mapped to lists of values.
     type: dict
     default: {}
   page_size:
     description: Number of results requested per API call.
     type: int
     default: 100
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all auto scaling policies
+- name: List all scaling policies
   susunola.tencentcloud.as_scaling_policy_info:
     region: ap-guangzhou
 
-- name: Find auto scaling policies by group
+- name: Find scaling policies by ID
   susunola.tencentcloud.as_scaling_policy_info:
     region: ap-guangzhou
-    filters:
-      auto-scaling-group-id: [asg-xxxxxxxx]
+    scaling_policy_ids: [x-xxxxxxxx]
 '''
 
 RETURN = r'''
 scaling_policies:
-  description: Matching auto scaling policies.
+  description: Matching AUTOSCALING scaling policies.
   returned: always
   type: list
   elements: dict
 total_count:
-  description: Number of auto scaling policies reported by the API.
+  description: Number of scaling policies reported by the API.
   returned: always
   type: int
 request_id:
@@ -66,12 +68,12 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, auto_scaling_policy_ids, filters, offset, limit):
+def build_request(models, scaling_policy_ids, filters, offset, limit):
     request = models.DescribeScalingPoliciesRequest()
     request.Offset = offset
     request.Limit = limit
-    if auto_scaling_policy_ids:
-        request.AutoScalingPolicyIds = auto_scaling_policy_ids
+    if scaling_policy_ids:
+        request.AutoScalingPolicyIds = scaling_policy_ids
     if filters:
         request.Filters = []
         for name, values in sorted(filters.items()):
@@ -85,13 +87,13 @@ def build_request(models, auto_scaling_policy_ids, filters, offset, limit):
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
-        "auto_scaling_policy_ids": {"type": "list", "elements": "str"},
+        "scaling_policy_ids": {"type": "list", "elements": "str"},
         "filters": {"type": "dict", "default": {}},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
         argument_spec=argument_spec,
-        mutually_exclusive=[("auto_scaling_policy_ids", "filters")],
+        mutually_exclusive=[("scaling_policy_ids", "filters")],
         supports_check_mode=True,
     )
     try:
@@ -107,7 +109,7 @@ def run_module():
         module.params["page_size"],
         lambda offset, limit: build_request(
             models,
-            module.params["auto_scaling_policy_ids"],
+            module.params["scaling_policy_ids"],
             module.params["filters"],
             offset,
             limit),

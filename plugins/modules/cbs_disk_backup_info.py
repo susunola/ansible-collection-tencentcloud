@@ -11,40 +11,53 @@ DOCUMENTATION = r'''
 ---
 module: cbs_disk_backup_info
 short_description: Gather information about Tencent Cloud CBS disk backups
-version_added: "1.3.0"
-description: Returns CBS disk backup points visible in a Tencent Cloud region.
+version_added: "1.5.0"
+description: Returns CBS disk backups visible in a Tencent Cloud region.
 options:
+  order:
+    description: Order. API field C(Order).
+    type: str
+  order_field:
+    description: Order field. API field C(OrderField).
+    type: str
   disk_backup_ids:
-    description: Disk backup IDs to return.
+    description: Disk backup IDs to return. Mutually exclusive with O(filters).
     type: list
     elements: str
+  filters:
+    description: CBS API filter names mapped to lists of values.
+    type: dict
+    default: {}
   page_size:
     description: Number of results requested per API call.
     type: int
     default: 100
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all CBS disk backups
+- name: List all disk backups
   susunola.tencentcloud.cbs_disk_backup_info:
     region: ap-guangzhou
 
-- name: Find CBS disk backups by ID
+- name: Find disk backups by ID
   susunola.tencentcloud.cbs_disk_backup_info:
     region: ap-guangzhou
-    disk_backup_ids: [dbp-xxxxxxxx]
+    disk_backup_ids: [x-xxxxxxxx]
 '''
 
 RETURN = r'''
 disk_backups:
-  description: Matching CBS disk backup points.
+  description: Matching CBS disk backups.
   returned: always
   type: list
   elements: dict
 total_count:
-  description: Number of disk backup points reported by the API.
+  description: Number of disk backups reported by the API.
   returned: always
   type: int
 request_id:
@@ -61,23 +74,38 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, disk_backup_ids, offset, limit):
+def build_request(models, order, order_field, disk_backup_ids, filters, offset, limit):
     request = models.DescribeDiskBackupsRequest()
     request.Offset = offset
     request.Limit = limit
+    if order is not None:
+        request.Order = order
+    if order_field is not None:
+        request.OrderField = order_field
     if disk_backup_ids:
         request.DiskBackupIds = disk_backup_ids
+    if filters:
+        request.Filters = []
+        for name, values in sorted(filters.items()):
+            api_filter = models.Filter()
+            api_filter.Name = name
+            api_filter.Values = values if isinstance(values, list) else [values]
+            request.Filters.append(api_filter)
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
+        "order": {"type": "str"},
+        "order_field": {"type": "str"},
         "disk_backup_ids": {"type": "list", "elements": "str"},
+        "filters": {"type": "dict", "default": {}},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
         argument_spec=argument_spec,
+        mutually_exclusive=[("disk_backup_ids", "filters")],
         supports_check_mode=True,
     )
     try:
@@ -91,7 +119,14 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, module.params["disk_backup_ids"], offset, limit),
+        lambda offset, limit: build_request(
+            models,
+            module.params["order"],
+            module.params["order_field"],
+            module.params["disk_backup_ids"],
+            module.params["filters"],
+            offset,
+            limit),
         lambda request: sdk_call(module, client.DescribeDiskBackups, request),
         lambda response: response.DiskBackupSet,
         lambda response: response.TotalCount,

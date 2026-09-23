@@ -84,29 +84,14 @@ options:
       - Only applied at creation.
     type: dict
     default: {}
-  retries:
-    description: Number of retries for transient SDK failures.
-    type: int
-    default: 5
-  waiter_delay:
-    description: Seconds to wait between state-polling attempts.
-    type: int
-    default: 5
-  waiter_timeout:
-    description: Overall timeout in seconds for state polling.
-    type: int
-    default: 120
-  user_agent:
-    description:
-      - Value appended to the SDK User-Agent header so API usage can be
-        attributed to this collection.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-vpc) package on the controller.
   - An interface that is attached to an instance cannot be deleted; detach
     it first.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
@@ -158,8 +143,9 @@ network_interface:
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 
 
 def _load_vpc():
@@ -175,27 +161,33 @@ def build_describe_request(models, interface_id, subnet_id, name):
     return request
 
 
-def _first(collection):
-    return collection[0] if collection else None
-
-
 def _serialize(item):
     return item._serialize(allow_none=True)
 
 
 def find_interface(module, client, models, interface_id, subnet_id, name):
-    """Return the matching interface dict or None."""
-    request = build_describe_request(models, interface_id, subnet_id, name)
-    response = module.sdk_call(client.DescribeNetworkInterfaces, request)
-    if interface_id:
-        item = _first(response.NetworkInterfaceSet or [])
-        return _serialize(item) if item is not None else None
-    for item in response.NetworkInterfaceSet or []:
-        current = _serialize(item)
-        if current.get("NetworkInterfaceName") == name:
-            if not subnet_id or current.get("SubnetId") == subnet_id:
-                return current
-    return None
+    """Return the matching interface dict or None.
+
+    ENI names are not unique, so the resolver re-checks the candidate set
+    client-side: an exact name within the requested subnet wins, and two or
+    more candidates fail with C(ambiguous=true) instead of returning the
+    first ENI the API happened to list.
+    """
+    def describe(filters):
+        request = build_describe_request(models, interface_id, subnet_id, name)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeNetworkInterfaces, request)
+        return resolver.records(response.NetworkInterfaceSet)
+
+    def matches_subnet(record):
+        return str(resolver.value_of(record, ("SubnetId",)) or "") == subnet_id
+
+    return resolver.resolve_one(
+        module, describe, resource="network interface",
+        id_value=interface_id, name_value=name,
+        id_keys=("NetworkInterfaceId",), name_keys=("NetworkInterfaceName",),
+        extra_match=matches_subnet if subnet_id else None,
+    )
 
 
 def build_create_request(models, params):

@@ -10,38 +10,38 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: api_gateway_usage_plan_binding_info
-short_description: Gather information about Tencent Cloud API Gateway usage plan environment bindings
-version_added: "1.3.0"
-description: Returns service environment bindings for an API Gateway usage plan.
+short_description: Gather information about Tencent Cloud APIGATEWAY service usage plans
+version_added: "1.5.0"
+description: Returns APIGATEWAY service usage plans visible in a Tencent Cloud region.
 options:
-  usage_plan_id:
-    description: ID of the usage plan whose environment bindings are returned.
+  service_id:
+    description: Service id. API field C(ServiceId).
     type: str
-    required: true
   page_size:
     description: Number of results requested per API call.
     type: int
     default: 100
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List usage plan environment bindings
+- name: List all service usage plans
   susunola.tencentcloud.api_gateway_usage_plan_binding_info:
     region: ap-guangzhou
-    usage_plan_id: usagePlan-xxxxxxxx
-
 '''
 
 RETURN = r'''
-bindings:
-  description: Matching API Gateway usage plan environment bindings.
+service_usage_plans:
+  description: Matching APIGATEWAY service usage plans.
   returned: always
   type: list
   elements: dict
 total_count:
-  description: Number of usage plan environment bindings reported by the API.
+  description: Number of service usage plans reported by the API.
   returned: always
   type: int
 request_id:
@@ -58,18 +58,19 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, usage_plan_id, offset, limit):
-    request = models.DescribeUsagePlanEnvironmentsRequest()
+def build_request(models, service_id, offset, limit):
+    request = models.DescribeServiceUsagePlanRequest()
     request.Offset = offset
     request.Limit = limit
-    request.UsagePlanId = usage_plan_id
+    if service_id is not None:
+        request.ServiceId = service_id
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
-        "usage_plan_id": {"type": "str", "required": True},
+        "service_id": {"type": "str"},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -87,14 +88,14 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, module.params["usage_plan_id"], offset, limit),
-        lambda request: sdk_call(module, client.DescribeUsagePlanEnvironments, request),
-        lambda response: response.Result.EnvironmentList if response.Result is not None else None,
+        lambda offset, limit: build_request(models, module.params["service_id"], offset, limit),
+        lambda request: sdk_call(module, client.DescribeServiceUsagePlan, request),
+        lambda response: response.Result.ServiceUsagePlanList if response.Result is not None else None,
         lambda response: response.Result.TotalCount if response.Result is not None else None,
     )
     item_set, total_count = paginator.fetch_all()
-    bindings = [serialize_sdk_object(item) for item in item_set]
-    module.exit_json(changed=False, bindings=bindings,
+    service_usage_plans = [serialize_sdk_object(item) for item in item_set]
+    module.exit_json(changed=False, service_usage_plans=service_usage_plans,
                      total_count=total_count, request_id=paginator.request_id)
 
 

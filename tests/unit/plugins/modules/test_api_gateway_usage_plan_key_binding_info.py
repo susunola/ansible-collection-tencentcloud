@@ -104,7 +104,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
                 usage_plan_id="sample", page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
-    assert [item["Marker"] for item in payload["bindings"]] == ["a", "b", "c"]
+    assert [item["Marker"] for item in payload["usage_plan_secret_ids"]] == ["a", "b", "c"]
     assert payload["total_count"] == 3
     assert payload["request_id"] == "req-page"
     assert [request.Offset for request in client.requests] == [0, 2]

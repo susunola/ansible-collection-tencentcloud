@@ -122,26 +122,6 @@ options:
         created when missing, but no rule is ever deleted.
     type: bool
     default: true
-  retries:
-    description: Number of retries for transient SDK failures.
-    type: int
-    default: 5
-  waiter_timeout:
-    description:
-      - Maximum time in seconds to wait for an asynchronous resource to reach
-        the desired state.
-    type: int
-    default: 120
-  waiter_delay:
-    description: Interval in seconds between state polls while waiting.
-    type: int
-    default: 5
-  user_agent:
-    description:
-      - Value appended to the SDK User-Agent header so API usage can be
-        attributed to this collection.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-vpc) package on the controller.
   - DNAT deletion addresses rules by the full rule object
@@ -151,7 +131,10 @@ notes:
   - Recreating an SNAT rule changes its public IPs; per the official
     documentation this may interrupt in-flight connections, so keep
     O(snat_rules) stable unless a change is intended.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
@@ -227,8 +210,9 @@ snat_rules:
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 
 
 def _load_vpc():
@@ -236,19 +220,25 @@ def _load_vpc():
     return models, vpc_client
 
 
-def _first(collection):
-    return collection[0] if collection else None
-
-
 def find_gateway(module, client, models, nat_gateway_id):
-    """Return the NAT gateway dict or None."""
-    request = models.DescribeNatGatewaysRequest()
-    request.NatGatewayIds = [nat_gateway_id]
-    response = module.sdk_call(client.DescribeNatGateways, request)
-    gateway = _first(response.NatGatewaySet or [])
-    if gateway is None:
-        return None
-    return gateway._serialize(allow_none=True)
+    """Return the NAT gateway dict or None.
+
+    The lookup is by ID, so the resolver's contribution here is the
+    client-side re-check: the returned row is verified to actually carry the
+    requested ID instead of trusting the first entry of the result set.
+    """
+    def describe(filters):
+        request = models.DescribeNatGatewaysRequest()
+        request.NatGatewayIds = [nat_gateway_id]
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeNatGateways, request)
+        return resolver.records(response.NatGatewaySet)
+
+    return resolver.resolve_one(
+        module, describe, resource="NAT gateway",
+        id_value=nat_gateway_id,
+        id_keys=("NatGatewayId",), name_keys=("NatGatewayName",),
+    )
 
 
 def build_dnat_describe_request(models, nat_gateway_id):

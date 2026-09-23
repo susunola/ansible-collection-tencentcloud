@@ -10,41 +10,49 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: cmq_topic_info
-short_description: Gather information about Tencent Cloud CMQ topics
-version_added: "1.3.0"
-description: Returns CMQ topics visible in a Tencent Cloud region.
+short_description: Gather information about Tencent Cloud TDMQ cmq topics
+version_added: "1.5.0"
+description: Returns TDMQ cmq topics visible in a Tencent Cloud region.
 options:
   topic_name:
-    description: Topic name used to narrow the returned topics.
+    description: Topic name. API field C(TopicName).
     type: str
+  topic_name_list:
+    description: Topic name list. API field C(TopicNameList).
+    type: list
+    elements: str
+  is_tag_filter:
+    description: Is tag filter. API field C(IsTagFilter).
+    type: bool
+  filters:
+    description: TDMQ API filter names mapped to lists of values.
+    type: dict
+    default: {}
   page_size:
     description: Number of results requested per API call.
     type: int
     default: 100
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List CMQ topics
+- name: List all cmq topics
   susunola.tencentcloud.cmq_topic_info:
     region: ap-guangzhou
-
-- name: Find a CMQ topic by name
-  susunola.tencentcloud.cmq_topic_info:
-    region: ap-guangzhou
-    topic_name: order-events
-
 '''
 
 RETURN = r'''
-topics:
-  description: Matching CMQ topics.
+cmq_topics:
+  description: Matching TDMQ cmq topics.
   returned: always
   type: list
   elements: dict
 total_count:
-  description: Number of CMQ topics reported by the API.
+  description: Number of cmq topics reported by the API.
   returned: always
   type: int
 request_id:
@@ -61,12 +69,23 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud
 )
 
 
-def build_request(models, topic_name, offset, limit):
+def build_request(models, topic_name, topic_name_list, is_tag_filter, filters, offset, limit):
     request = models.DescribeCmqTopicsRequest()
     request.Offset = offset
     request.Limit = limit
     if topic_name is not None:
         request.TopicName = topic_name
+    if topic_name_list is not None:
+        request.TopicNameList = topic_name_list
+    if is_tag_filter is not None:
+        request.IsTagFilter = is_tag_filter
+    if filters:
+        request.Filters = []
+        for name, values in sorted(filters.items()):
+            api_filter = models.Filter()
+            api_filter.Name = name
+            api_filter.Values = values if isinstance(values, list) else [values]
+            request.Filters.append(api_filter)
     return request
 
 
@@ -74,6 +93,9 @@ def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
         "topic_name": {"type": "str"},
+        "topic_name_list": {"type": "list", "elements": "str"},
+        "is_tag_filter": {"type": "bool"},
+        "filters": {"type": "dict", "default": {}},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -91,14 +113,21 @@ def run_module():
     )
     paginator = Paginator(
         module.params["page_size"],
-        lambda offset, limit: build_request(models, module.params["topic_name"], offset, limit),
+        lambda offset, limit: build_request(
+            models,
+            module.params["topic_name"],
+            module.params["topic_name_list"],
+            module.params["is_tag_filter"],
+            module.params["filters"],
+            offset,
+            limit),
         lambda request: sdk_call(module, client.DescribeCmqTopics, request),
         lambda response: response.TopicList,
         lambda response: response.TotalCount,
     )
     item_set, total_count = paginator.fetch_all()
-    topics = [serialize_sdk_object(item) for item in item_set]
-    module.exit_json(changed=False, topics=topics,
+    cmq_topics = [serialize_sdk_object(item) for item in item_set]
+    module.exit_json(changed=False, cmq_topics=cmq_topics,
                      total_count=total_count, request_id=paginator.request_id)
 
 

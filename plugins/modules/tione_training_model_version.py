@@ -36,17 +36,19 @@ options:
   model_version_type: {type: str, choices: [NORMAL, ACCELERATE], default: NORMAL, description: Model-version type.}
   model_format: {type: str, description: Model serialization format.}
   auto_clean: {type: str, choices: ['true', 'false'], description: Automatic version cleanup switch.}
-  max_reserved_models: {type: int, description: Maximum retained versions, from 1 to 24.}
-  model_clean_period: {type: int, description: Cleanup interval in minutes, from 1 to 1440.}
+  max_reserved_models: {type: int, description: 'Maximum retained versions, from 1 to 24.'}
+  model_clean_period: {type: int, description: 'Cleanup interval in minutes, from 1 to 1440.'}
   is_qat: {type: bool, description: Whether this is a quantization-aware-training model.}
   delete_cos: {type: bool, default: false, description: Also remove version model files from COS.}
   allow_delete: {type: bool, default: false, description: Explicit destructive-operation guard.}
   wait: {type: bool, default: true, description: Wait for import completion or deletion disappearance.}
   waiter_delay: {type: int, default: 10, description: Seconds between state checks.}
   waiter_timeout: {type: int, default: 1800, description: Overall convergence timeout.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -13,7 +13,10 @@ options:
   instance_id: {description: Grafana instance ID., type: str, required: true}
   integration_id: {description: Exact integration ID., type: str}
   kind: {description: Exact integration type code., type: str}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

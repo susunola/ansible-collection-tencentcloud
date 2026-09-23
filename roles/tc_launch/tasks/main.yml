@@ -1,7 +1,7 @@
 ---
 - name: Manage CVM instance pool
   susunola.tencentcloud.cvm_instance:
-    region: "{{ tc_launch_region | default(omit) }}"
+    region: "{{ tc_launch_region | default(omit, true) }}"
     state: "{{ tc_launch_state }}"
     instance_id: "{{ tc_launch_instance_id | default(omit, true) }}"
     instance_name: "{{ tc_launch_instance_name | default(omit, true) }}"

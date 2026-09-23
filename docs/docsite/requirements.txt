@@ -1,0 +1,7 @@
+# Pinned to the versions the docsite was verified against. antsibull-docs
+# changes its RST output between minor releases, so an unpinned upper bound
+# lets a new release rewrite all ~900 generated pages.
+antsibull-docs >= 2.26.0, < 3.0.0
+ansible-pygments
+sphinx >= 7.0.0
+sphinx-ansible-theme >= 0.10.0

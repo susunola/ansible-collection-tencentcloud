@@ -29,11 +29,11 @@ options:
   ha_type: {type: str, description: High availability type.}
   secondary_zones: {type: list, elements: str, description: Secondary availability zones.}
   purge: {type: bool, default: false, description: Permanently delete an already isolated instance.}
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -47,6 +47,7 @@ EXAMPLES = r"""
     db_version: '2019'
 """
 RETURN = r"""instance: {description: Effective SQL Server instance metadata., type: dict, returned: always}"""
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
@@ -122,15 +123,21 @@ def destroy_request(models, instance_id):
 
 
 def find(module, client, models, p):
-    response = module.sdk_call(client.DescribeDBInstances, describe_request(models, p))
-    matches = []
-    for item in response.DBInstances or []:
-        value = item._serialize(allow_none=True)
-        if (p.get("instance_id") and value.get("InstanceId") == p["instance_id"]) or (not p.get("instance_id") and value.get("Name") == p.get("name")):
-            matches.append(value)
-    if len(matches) > 1:
-        module.fail_json(msg="Multiple SQL Server instances matched; specify instance_id")
-    return matches[0] if matches else None
+    """Return the matching instance dict or None.
+
+    The match is re-checked client-side by the shared resolver, so two
+    candidates fail with C(ambiguous=true) plus the candidate list instead of
+    a flat "specify instance_id" message with nothing to choose from.
+    """
+    def describe(filters):
+        response = module.sdk_call(client.DescribeDBInstances, describe_request(models, p))
+        return resolver.records(response.DBInstances)
+
+    return resolver.resolve_one(
+        module, describe, resource="SQL Server instance",
+        id_value=p.get("instance_id"), name_value=p.get("name"),
+        id_keys=("InstanceId",), name_keys=("Name",),
+    )
 
 
 def _wait(module, client, models, p, states):

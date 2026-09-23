@@ -65,6 +65,8 @@ modules:
   - DescribeApiKey
   - DescribeApiKeysStatus
   - UpdateApiKey
+  api_gateway_api_key_info:
+  - DescribeApiKeysStatus
   api_gateway_service:
   - CreateService
   - DeleteService
@@ -77,6 +79,8 @@ modules:
   - DescribeServiceEnvironmentList
   - ReleaseService
   - UnReleaseService
+  api_gateway_service_release_info:
+  - DescribeServiceEnvironmentReleaseHistory
   api_gateway_usage_plan:
   - CreateUsagePlan
   - DeleteUsagePlan
@@ -87,12 +91,36 @@ modules:
   - BindEnvironment
   - DescribeUsagePlanEnvironments
   - UnBindEnvironment
+  api_gateway_usage_plan_binding_info:
+  - DescribeServiceUsagePlan
+  api_gateway_usage_plan_info:
+  - DescribeUsagePlansStatus
   api_gateway_usage_plan_key_binding:
   - BindSecretIds
   - DescribeUsagePlanSecretIds
   - UnBindSecretIds
+  api_gateway_usage_plan_key_binding_info:
+  - DescribeUsagePlanSecretIds
   api_product_info:
   - DescribeProducts
+  apigateway_api_app:
+  - CreateApiApp
+  - DeleteApiApp
+  - DescribeApiAppsStatus
+  apigateway_api_app_info:
+  - DescribeApiAppsStatus
+  apigateway_ip_strategy:
+  - CreateIPStrategy
+  - DeleteIPStrategy
+  - DescribeIPStrategysStatus
+  apigateway_ip_strategy_info:
+  - DescribeIPStrategysStatus
+  apigateway_plugin:
+  - CreatePlugin
+  - DeletePlugin
+  - DescribePlugins
+  apigateway_plugin_info:
+  - DescribePlugins
   apigateway_service_info:
   - DescribeServicesStatus
   apis_agent_app_mcp_server_info:
@@ -111,11 +139,15 @@ modules:
   - DeleteScalingPolicy
   - DescribeScalingPolicies
   - ModifyScalingPolicy
+  as_scaling_policy_info:
+  - DescribeScalingPolicies
   as_scheduled_action:
   - CreateScheduledAction
   - DeleteScheduledAction
   - DescribeScheduledActions
   - ModifyScheduledAction
+  as_scheduled_action_info:
+  - DescribeScheduledActions
   asr_async_recognition_task_info:
   - DescribeAsyncRecognitionTasks
   asw_flow_service_info:
@@ -238,6 +270,8 @@ modules:
   - CreateDiskBackup
   - DeleteDiskBackups
   - DescribeDiskBackups
+  cbs_disk_backup_info:
+  - DescribeDiskBackups
   cbs_disk_info:
   - DescribeDisks
   cbs_snapshot:
@@ -249,6 +283,8 @@ modules:
   cbs_snapshot_share:
   - DescribeSnapshotSharePermission
   - ModifySnapshotsSharePermission
+  cbs_snapshot_share_info:
+  - DescribeSnapshotSharePermission
   ccc_extension_info:
   - DescribeExtensions
   ccn:
@@ -284,6 +320,18 @@ modules:
   - ModifyAuditConfig
   cdb_audit_config_info:
   - DescribeAuditConfig
+  cdb_audit_rule:
+  - CreateAuditRule
+  - DeleteAuditRule
+  - DescribeAuditRules
+  cdb_audit_rule_info:
+  - DescribeAuditRules
+  cdb_audit_rule_template:
+  - CreateAuditRuleTemplate
+  - DeleteAuditRuleTemplates
+  - DescribeAuditRuleTemplates
+  cdb_audit_rule_template_info:
+  - DescribeAuditRuleTemplates
   cdb_backup_config:
   - DescribeBackupConfig
   - ModifyBackupConfig
@@ -323,6 +371,8 @@ modules:
   - ListClsLogTopics
   - ListClsTopicDomains
   - ManageClsTopicDomains
+  cdn_cls_log_topic_info:
+  - ListClsLogTopics
   cdn_domain:
   - AddCdnDomain
   - DeleteCdnDomain
@@ -338,6 +388,8 @@ modules:
   - CreateBackUpSchedule
   - DescribeBackUpSchedule
   - OpenBackUp
+  cdwch_backup_config_info:
+  - DescribeBackUpSchedule
   cdwch_cn_instance_info:
   - DescribeCNInstances
   cdwch_instance:
@@ -348,44 +400,62 @@ modules:
   - ResizeDisk
   - ScaleOutInstance
   - ScaleUpInstance
+  cdwch_instance_info:
+  - DescribeCNInstances
   cdwch_parameter:
   - DescribeInstanceKeyValConfigs
   - ModifyInstanceKeyValConfigs
+  cdwch_parameter_info:
+  - DescribeInstanceKeyValConfigs
   cdwdoris_cluster_configs_history_info:
   - DescribeClusterConfigsHistory
   cdwdoris_cooldown_policy:
   - CreateCoolDownPolicy
   - DescribeCoolDownPolicies
   - ModifyCoolDownPolicy
+  cdwdoris_cooldown_policy_info:
+  - DescribeCoolDownPolicies
   cdwdoris_instance:
   - CreateInstanceNew
   - DescribeInstanceState
   - DescribeInstances
   - DestroyInstance
   - ModifyInstance
+  cdwdoris_instance_info:
+  - DescribeInstances
   cdwdoris_user_workload_group:
   - DescribeUserBindWorkloadGroup
   - ModifyUserBindWorkloadGroup
+  cdwdoris_user_workload_group_info:
+  - DescribeUserBindWorkloadGroup
   cdwdoris_workload_group:
   - CreateWorkloadGroup
   - DeleteWorkloadGroup
   - DescribeWorkloadGroup
   - ModifyWorkloadGroup
   - ModifyWorkloadGroupStatus
+  cdwdoris_workload_group_info:
+  - DescribeWorkloadGroup
   cdwpg_account_info:
   - DescribeAccounts
   cdwpg_hba_config:
   - DescribeUserHbaConfig
   - ModifyUserHba
+  cdwpg_hba_config_info:
+  - DescribeUserHbaConfig
   cdwpg_instance:
   - CreateInstanceByApi
   - DescribeInstanceState
   - DescribeInstances
   - DestroyInstanceByApi
   - ModifyInstance
+  cdwpg_instance_info:
+  - DescribeInstances
   cdwpg_parameter:
   - DescribeDBParams
   - ModifyDBParameters
+  cdwpg_parameter_info:
+  - DescribeDBParams
   cdz_cloud_dedicated_zone_host_info:
   - DescribeCloudDedicatedZoneHosts
   cetcd_etcd_instance_info:
@@ -435,6 +505,8 @@ modules:
   - DeleteAddressTemplate
   - DescribeAddressTemplateList
   - ModifyAddressTemplate
+  cfw_address_template_info:
+  - DescribeAddressTemplateList
   cfw_cluster_nat_ccn_fw_switch_info:
   - DescribeClusterNatCcnFwSwitchList
   cfw_internet_acl_rule:
@@ -442,21 +514,29 @@ modules:
   - DescribeAclRule
   - ModifyAclRule
   - RemoveAclRule
+  cfw_internet_acl_rule_info:
+  - DescribeAclRule
   cfw_nat_acl_rule:
   - AddNatAcRule
   - DescribeNatAcRule
   - ModifyNatAcRule
   - RemoveNatAcRule
+  cfw_nat_acl_rule_info:
+  - DescribeNatAcRule
   cfw_nat_dnat_rule:
   - CreateNatFwDnatRule
   - DeleteNatFwDnatRule
   - DescribeNatFwDnatRule
   - SetNatFwDnatRule
+  cfw_nat_dnat_rule_info:
+  - DescribeNatFwDnatRule
   cfw_vpc_acl_rule:
   - AddVpcAcRule
   - DescribeVpcAcRule
   - ModifyVpcAcRule
   - RemoveVpcAcRule
+  cfw_vpc_acl_rule_info:
+  - DescribeVpcAcRule
   chc_device_info:
   - DescribeDeviceList
   chdfs_access_group:
@@ -464,11 +544,15 @@ modules:
   - DeleteAccessGroup
   - DescribeAccessGroups
   - ModifyAccessGroup
+  chdfs_access_group_info:
+  - DescribeAccessGroups
   chdfs_access_rules:
   - CreateAccessRules
   - DeleteAccessRules
   - DescribeAccessRules
   - ModifyAccessRules
+  chdfs_access_rules_info:
+  - DescribeAccessRules
   chdfs_file_system:
   - CreateFileSystem
   - DeleteFileSystem
@@ -480,28 +564,38 @@ modules:
   - AssociateAccessGroups
   - DescribeMountPoints
   - DisassociateAccessGroups
+  chdfs_mount_access_groups_info:
+  - DescribeMountPoints
   chdfs_mount_point:
   - CreateMountPoint
   - DeleteMountPoint
   - DescribeMountPoints
   - ModifyMountPoint
+  chdfs_mount_point_info:
+  - DescribeMountPoints
   ciam_user_store_info:
   - ListUserStore
   ckafka_acl:
   - CreateAcl
   - DeleteAcl
   - DescribeACL
+  ckafka_acl_info:
+  - DescribeACL
   ckafka_acl_rule:
   - CreateAclRule
   - DeleteAclRule
   - DescribeAclRule
   - ModifyAclRule
+  ckafka_acl_rule_info:
+  - DescribeAclRule
   ckafka_datahub_connection:
   - CreateConnectResource
   - DeleteConnectResource
   - DescribeConnectResource
   - DescribeConnectResources
   - ModifyConnectResource
+  ckafka_datahub_connection_info:
+  - DescribeConnectResources
   ckafka_datahub_task:
   - CreateDatahubTask
   - DeleteDatahubTask
@@ -510,11 +604,15 @@ modules:
   - ModifyDatahubTask
   - PauseDatahubTask
   - ResumeDatahubTask
+  ckafka_datahub_task_info:
+  - DescribeDatahubTasks
   ckafka_datahub_topic:
   - CreateDatahubTopic
   - DeleteDatahubTopic
   - DescribeDatahubTopic
   - ModifyDatahubTopic
+  ckafka_datahub_topic_info:
+  - DescribeDatahubTopics
   ckafka_instance:
   - CreateInstancePre
   - CreatePostPaidInstance
@@ -529,6 +627,8 @@ modules:
   ckafka_route:
   - CreateRoute
   - DeleteRoute
+  - DescribeRoute
+  ckafka_route_info:
   - DescribeRoute
   ckafka_topic:
   - CreatePartition
@@ -576,6 +676,10 @@ modules:
   - DeleteRule
   - DescribeListeners
   - ModifyRule
+  clb_snat_ip:
+  - CreateLoadBalancerSnatIps
+  - DeleteLoadBalancerSnatIps
+  - DescribeLoadBalancers
   clb_target_group:
   - CreateTargetGroup
   - DeleteTargetGroups
@@ -591,6 +695,8 @@ modules:
   - StartLogging
   - StopLogging
   - UpdateAudit
+  cloudaudit_audit_info:
+  - ListAudits
   cloudaudit_event_info:
   - LookUpEvents
   cloudaudit_track:
@@ -599,12 +705,26 @@ modules:
   - DescribeAuditTrack
   - DescribeAuditTracks
   - ModifyAuditTrack
+  cloudaudit_track_info:
+  - DescribeAuditTracks
   cloudhsm_vsm_info:
   - DescribeVsms
   cloudrc_resource_info:
   - SearchResources
   cloudstudio_image_info:
   - DescribeImages
+  cls_alarm:
+  - CreateAlarm
+  - DeleteAlarm
+  - DescribeAlarms
+  cls_alarm_info:
+  - DescribeAlarms
+  cls_alarm_notice:
+  - CreateAlarmNotice
+  - DeleteAlarmNotice
+  - DescribeAlarmNotices
+  cls_alarm_notice_info:
+  - DescribeAlarmNotices
   cls_config:
   - CreateConfig
   - DeleteConfig
@@ -667,11 +787,15 @@ modules:
   - DeleteCmqSubscribe
   - DescribeCmqSubscriptionDetail
   - ModifyCmqSubscriptionAttribute
+  cmq_subscription_info:
+  - DescribeCmqSubscriptionDetail
   cmq_topic:
   - CreateCmqTopic
   - DeleteCmqTopic
   - DescribeCmqTopics
   - ModifyCmqTopicAttribute
+  cmq_topic_info:
+  - DescribeCmqTopics
   cms_lib_sample_info:
   - DescribeLibSamples
   cngw_cloud_native_api_gateway_llm_model_api_info:
@@ -681,15 +805,21 @@ modules:
   config_aggregate_delivery:
   - DescribeAggregateConfigDeliver
   - UpdateAggregateConfigDeliver
+  config_aggregate_delivery_info:
+  - DescribeAggregateConfigDeliver
   config_aggregator:
   - CreateAggregator
   - DescribeAggregator
+  - ListAggregators
+  config_aggregator_info:
   - ListAggregators
   config_alarm_policy:
   - AddAlarmPolicy
   - DeleteAlarmPolicy
   - ListAlarmPolicy
   - UpdateAlarmPolicy
+  config_alarm_policy_info:
+  - ListAlarmPolicy
   config_compliance_pack:
   - AddCompliancePack
   - DeleteCompliancePack
@@ -697,25 +827,35 @@ modules:
   - ListCompliancePacks
   - UpdateCompliancePack
   - UpdateCompliancePackStatus
+  config_compliance_pack_info:
+  - ListCompliancePacks
   config_delivery:
   - DescribeConfigDeliver
   - UpdateConfigDeliver
+  config_delivery_info:
+  - DescribeConfigDeliver
   config_recorder:
   - CloseConfigRecorder
   - DescribeConfigRecorder
   - OpenConfigRecorder
   - UpdateConfigRecorder
+  config_recorder_info:
+  - DescribeConfigRecorder
   config_remediation:
   - CreateRemediation
   - DeleteRemediations
   - ListRemediations
   - UpdateRemediation
+  config_remediation_info:
+  - ListRemediations
   config_rule:
   - AddConfigRule
   - DeleteConfigRule
   - DescribeConfigRule
   - ListConfigRules
   - UpdateConfigRule
+  config_rule_info:
+  - ListConfigRules
   controlcenter_account_factory_baseline_item_info:
   - ListAccountFactoryBaselineItems
   cpdp_merchant_info_for_management_info:
@@ -740,6 +880,8 @@ modules:
   - ModifyChcNetworkMode
   - RemoveChcAssistVpc
   - RemoveChcDeployVpc
+  cvm_chc_info:
+  - DescribeChcHosts
   cvm_disaster_recover_group:
   - CreateDisasterRecoverGroup
   - DeleteDisasterRecoverGroups
@@ -786,6 +928,8 @@ modules:
   - DeleteInstancesActionTimer
   - DescribeInstancesActionTimer
   - ImportInstancesActionTimer
+  cvm_instance_action_timer_info:
+  - DescribeInstancesActionTimer
   cvm_instance_info:
   - DescribeInstances
   cvm_instance_security_group:
@@ -821,6 +965,8 @@ modules:
   cynosdb_account_privilege:
   - DescribeAccountAllGrantPrivileges
   - ModifyAccountPrivileges
+  cynosdb_account_privilege_info:
+  - DescribeAccountPrivileges
   cynosdb_backup_config:
   - DescribeBackupConfig
   - ModifyBackupConfig
@@ -848,6 +994,8 @@ modules:
   dbbrain_sql_filter:
   - CreateSqlFilter
   - DeleteSqlFilters
+  - DescribeSqlFilters
+  dbbrain_sql_filter_info:
   - DescribeSqlFilters
   dbdc_db_custom_cluster:
   - AddNodesToDBCustomCluster
@@ -884,12 +1032,18 @@ modules:
   - DescribeAccounts
   - ModifyAccountDescription
   - ResetAccountPassword
+  dcdb_account_info:
+  - DescribeAccounts
   dcdb_account_privilege:
   - DescribeAccountPrivileges
   - GrantAccountPrivileges
+  dcdb_account_privilege_info:
+  - DescribeAccountPrivileges
   dcdb_backup_config:
   - DescribeBackupConfigs
   - ModifyBackupConfigs
+  dcdb_backup_config_info:
+  - DescribeBackupConfigs
   dcdb_instance:
   - CreateDCDBInstance
   - CreateHourDCDBInstance
@@ -910,12 +1064,16 @@ modules:
   - ModifyDBEncryptAttributes
   - ModifyDBInstanceSecurityGroups
   - ModifyInstanceSSLAttributes
+  dcdb_security_config_info:
+  - DescribeDBSecurityGroups
   dlc_cluster_group:
   - CreateClusterGroup
   - DeleteClusterGroup
   - DescribeClusterGroupClusters
   - ListClusterGroups
   - UpdateClusterGroup
+  dlc_cluster_group_info:
+  - ListClusterGroups
   dlc_data_engine:
   - CreateDataEngine
   - DeleteDataEngine
@@ -930,16 +1088,22 @@ modules:
   - DescribeDataEngines
   - DescribeUserDataEngineConfig
   - UpdateUserDataEngineConfig
+  dlc_data_engine_info:
+  - DescribeDataEngines
   dlc_data_mask_strategy:
   - CreateDataMaskStrategy
   - DeleteDataMaskStrategy
   - DescribeDataMaskStrategies
   - UpdateDataMaskStrategy
+  dlc_data_mask_strategy_info:
+  - DescribeDataMaskStrategies
   dlc_database:
   - CreateMetaDatabase
   - DeleteMetaDatabase
   - DescribeDatabase
   - DescribeTables
+  dlc_database_info:
+  - DescribeDatabases
   dlc_engine_resource_group:
   - CreateStandardEngineResourceGroup
   - DeleteStandardEngineResourceGroup
@@ -971,12 +1135,16 @@ modules:
   - ListJobSpecs
   - UpdateJobSpec
   - UpdateJobSpecPriority
+  dlc_job_spec_info:
+  - ListJobSpecs
   dlc_lab:
   - CreateLab
   - DeleteLab
   - ListLabs
   - ModifyLabPriority
   - UpdateLab
+  dlc_lab_info:
+  - ListLabs
   dlc_model_artifact_info:
   - GetModelConfig
   - GetModelFiles
@@ -989,6 +1157,8 @@ modules:
   dlc_network_connection:
   - DescribeNetworkConnections
   - UpdateNetworkConnection
+  dlc_network_connection_info:
+  - DescribeNetworkConnections
   dlc_notebook_session:
   - CreateNotebookSession
   - DeleteNotebookSession
@@ -1006,12 +1176,16 @@ modules:
   - DeletePartitionQueue
   - DescribePartitionQueues
   - ModifyPartitionQueue
+  dlc_partition_queue_info:
+  - DescribePartitionQueues
   dlc_ray_cluster:
   - CreateRayCluster
   - DeleteRayCluster
   - ListRayClusters
   - ModifyClusterPriority
   - UpdateRayCluster
+  dlc_ray_cluster_info:
+  - ListRayClusters
   dlc_ray_job_info:
   - GetRayJob
   - GetRayJobEvent
@@ -1027,20 +1201,30 @@ modules:
   - ListRayClusters
   - ListResourceConfigs
   - UpdateResourceConfig
+  dlc_resource_config_info:
+  - ListResourceConfigs
   dlc_script:
   - CreateScript
   - DeleteScript
   - DescribeScripts
+  dlc_script_info:
+  - DescribeScripts
+  dlc_spark_app_job_info:
+  - DescribeSparkAppJobs
   dlc_spark_job:
   - CreateSparkApp
   - DeleteSparkApp
   - DescribeSparkAppJob
   - ModifySparkApp
+  dlc_standard_engine_resource_group_info:
+  - DescribeStandardEngineResourceGroups
   dlc_store_location:
   - CreateStoreLocation
   - DescribeAdvancedStoreLocation
   - DescribeStoreLocation
   - ModifyAdvancedStoreLocation
+  dlc_store_location_info:
+  - DescribeStoreLocation
   dlc_table:
   - AlterTableComment
   - CreateTable
@@ -1048,11 +1232,15 @@ modules:
   - DeleteTable
   - DescribeTable
   - DescribeTaskDetail
+  dlc_table_info:
+  - DescribeTables
   dlc_table_partition:
   - AddDMSPartitions
   - AlterDMSPartition
   - DescribeDMSPartitions
   - DropDMSPartitions
+  dlc_table_partition_info:
+  - DescribeTablePartitions
   dlc_task_info:
   - DescribeTaskList
   dlc_udf_policy:
@@ -1064,6 +1252,10 @@ modules:
   - DescribeUsers
   - ModifyUser
   - ModifyUserType
+  dlc_user_data_engine_config_info:
+  - DescribeUserDataEngineConfig
+  dlc_user_info:
+  - DescribeUsers
   dlc_user_policy:
   - AttachUserPolicy
   - DescribeUsers
@@ -1077,6 +1269,8 @@ modules:
   - DeleteWorkGroup
   - DescribeWorkGroups
   - ModifyWorkGroup
+  dlc_work_group_info:
+  - DescribeWorkGroups
   dlc_work_group_membership:
   - AddUsersToWorkGroup
   - DeleteUsersFromWorkGroup
@@ -1090,17 +1284,23 @@ modules:
   - DeleteDomainCustomLine
   - DescribeDomainCustomLineList
   - ModifyDomainCustomLine
+  dnspod_custom_line_info:
+  - DescribeDomainCustomLineList
   dnspod_domain:
   - CreateDomain
   - DeleteDomain
   - DescribeDomainList
   - ModifyDomainRemark
   - ModifyDomainStatus
+  dnspod_domain_info:
+  - DescribeDomainList
   dnspod_line_group:
   - CreateLineGroup
   - DeleteLineGroup
   - DescribeLineGroupList
   - ModifyLineGroup
+  dnspod_line_group_info:
+  - DescribeLineGroupList
   dnspod_record:
   - CreateRecord
   - DeleteRecord
@@ -1117,6 +1317,8 @@ modules:
   - DeleteConsumerGroup
   - DescribeConsumerGroups
   - ModifyConsumerGroupDescription
+  dts_consumer_group_info:
+  - DescribeConsumerGroups
   dts_migration_action:
   - CompleteMigrateJob
   - DescribeMigrationDetail
@@ -1126,6 +1328,8 @@ modules:
   - StopMigrateJob
   dts_migration_check:
   - CreateMigrateCheckJob
+  - DescribeMigrationCheckJob
+  dts_migration_check_info:
   - DescribeMigrationCheckJob
   dts_migration_job:
   - CreateMigrationService
@@ -1137,6 +1341,8 @@ modules:
   - DescribeMigrationDetail
   - DescribeMigrationJobs
   - ModifyMigrationJob
+  dts_migration_job_info:
+  - DescribeMigrationJobs
   dts_subscribe_job_info:
   - DescribeSubscribeJobs
   eb_connection:
@@ -1144,6 +1350,8 @@ modules:
   - DeleteConnection
   - ListConnections
   - UpdateConnection
+  eb_connection_info:
+  - ListConnections
   eb_event_bus:
   - CreateEventBus
   - DeleteEventBus
@@ -1158,11 +1366,15 @@ modules:
   - GetRule
   - ListRules
   - UpdateRule
+  eb_rule_info:
+  - ListRules
   eb_target:
   - CreateTarget
   - DeleteTarget
   - ListTargets
   - UpdateTarget
+  eb_target_info:
+  - ListTargets
   ecdn_domain_info:
   - DescribeDomains
   ecm_address_info:
@@ -1203,25 +1415,35 @@ modules:
   - DeleteIndex
   - DescribeIndexMeta
   - UpdateIndex
+  elasticsearch_index_info:
+  - DescribeIndexList
   elasticsearch_instance:
   - CreateInstance
   - DeleteInstance
   - DescribeInstances
   - UpdateInstance
+  elasticsearch_instance_info:
+  - DescribeInstances
   elasticsearch_snapshot:
   - CreateClusterSnapshot
   - DeleteClusterSnapshot
+  - DescribeClusterSnapshot
+  elasticsearch_snapshot_info:
   - DescribeClusterSnapshot
   emr_auto_scale_strategy:
   - AddMetricScaleStrategy
   - DeleteAutoScaleStrategy
   - DescribeAutoScaleStrategies
   - ModifyAutoScaleStrategy
+  emr_auto_scale_strategy_info:
+  - DescribeAutoScaleStrategies
   emr_cluster:
   - CreateCluster
   - DescribeInstances
   - ModifyInstanceBasic
   - TerminateInstance
+  emr_cluster_info:
+  - DescribeInstances
   emr_node_data_disk_info:
   - DescribeNodeDataDisks
   es_cluster_info:
@@ -1251,6 +1473,8 @@ modules:
   gaap_listener_real_servers:
   - BindListenerRealServers
   - DescribeListenerRealServers
+  gaap_listener_real_servers_info:
+  - DescribeListenerRealServers
   gaap_proxy:
   - CloseProxies
   - CreateProxy
@@ -1265,6 +1489,8 @@ modules:
   - DescribeRealServers
   - ModifyRealServerName
   - RemoveRealServers
+  gaap_real_server_info:
+  - DescribeRealServers
   gme_voice_print_info:
   - DescribeVoicePrint
   goosefs_file_system:
@@ -1279,6 +1505,8 @@ modules:
   - DeleteFileset
   - DescribeFilesets
   - UpdateFileset
+  goosefs_fileset_info:
+  - DescribeFilesets
   gs_android_app_info:
   - DescribeAndroidApps
   gwlb_gateway_load_balancer_info:
@@ -1288,6 +1516,8 @@ modules:
   - DeleteGatewayLoadBalancer
   - DescribeGatewayLoadBalancers
   - ModifyGatewayLoadBalancerAttribute
+  gwlb_load_balancer_info:
+  - DescribeGatewayLoadBalancers
   gwlb_target_group:
   - CreateTargetGroup
   - DeleteTargetGroups
@@ -1297,11 +1527,15 @@ modules:
   - AssociateTargetGroups
   - DescribeGatewayLoadBalancers
   - DisassociateTargetGroups
+  gwlb_target_group_info:
+  - DescribeTargetGroups
   gwlb_target_group_instances:
   - DeregisterTargetGroupInstances
   - DescribeTargetGroupInstances
   - ModifyTargetGroupInstancesWeight
   - RegisterTargetGroupInstances
+  gwlb_target_group_instances_info:
+  - DescribeTargetGroupInstances
   hai_application_info:
   - DescribeApplications
   hasim_link_info:
@@ -1383,9 +1617,13 @@ modules:
   - DetachDisks
   - ModifyDisksAttribute
   - TerminateDisks
+  lighthouse_disk_info:
+  - DescribeDisks
   lighthouse_firewall_rules:
   - CreateFirewallRules
   - DeleteFirewallRules
+  - DescribeFirewallRules
+  lighthouse_firewall_rules_info:
   - DescribeFirewallRules
   lighthouse_instance:
   - CreateInstances
@@ -1402,11 +1640,15 @@ modules:
   - DescribeKeyPairs
   - DisassociateInstancesKeyPairs
   - ImportKeyPair
+  lighthouse_key_pair_info:
+  - DescribeKeyPairs
   lighthouse_snapshot:
   - CreateInstanceSnapshot
   - DeleteSnapshots
   - DescribeSnapshots
   - ModifySnapshotAttribute
+  lighthouse_snapshot_info:
+  - DescribeSnapshots
   live_audit_keyword_info:
   - DescribeAuditKeywords
   lke_app_knowledge_info:
@@ -1428,6 +1670,8 @@ modules:
   mariadb_account_privilege:
   - DescribeAccountPrivileges
   - GrantAccountPrivileges
+  mariadb_account_privilege_info:
+  - DescribeAccountPrivileges
   mariadb_backup_config:
   - DescribeBackupConfigs
   - ModifyBackupConfigs
@@ -1497,6 +1741,8 @@ modules:
   - DeleteGrafanaIntegration
   - DescribeGrafanaIntegrations
   - UpdateGrafanaIntegration
+  monitor_grafana_integration_info:
+  - DescribeGrafanaIntegrations
   monitor_grafana_internet:
   - DescribeGrafanaInstances
   - EnableGrafanaInternet
@@ -1505,20 +1751,30 @@ modules:
   - DeleteGrafanaNotificationChannel
   - DescribeGrafanaNotificationChannels
   - UpdateGrafanaNotificationChannel
+  monitor_grafana_notification_channel_info:
+  - DescribeGrafanaNotificationChannels
   monitor_grafana_whitelist:
   - DescribeGrafanaWhiteList
   - UpdateGrafanaWhiteList
+  monitor_grafana_whitelist_info:
+  - DescribeGrafanaWhiteList
   monitor_prometheus_alert_group:
   - CreatePrometheusAlertGroup
   - DeletePrometheusAlertGroups
   - DescribePrometheusAlertGroups
   - UpdatePrometheusAlertGroup
+  monitor_prometheus_alert_group_info:
+  - DescribePrometheusAlertGroups
   monitor_prometheus_alertmanager_config:
   - DescribePrometheusAlertmanagerConfig
   - ReplacePrometheusAlertmanagerConfig
+  monitor_prometheus_alertmanager_config_info:
+  - DescribePrometheusAlertmanagerConfig
   monitor_prometheus_cluster_agent:
   - CreatePrometheusClusterAgent
   - DeletePrometheusClusterAgent
+  - DescribePrometheusClusterAgents
+  monitor_prometheus_cluster_agent_info:
   - DescribePrometheusClusterAgents
   monitor_prometheus_global_notification:
   - DescribePrometheusGlobalNotification
@@ -1527,6 +1783,8 @@ modules:
   - BindPrometheusManagedGrafana
   - DescribePrometheusInstances
   - UnbindPrometheusManagedGrafana
+  monitor_prometheus_grafana_binding_info:
+  - DescribePrometheusInstances
   monitor_prometheus_instance:
   - CreatePrometheusMultiTenantInstancePostPayMode
   - DescribePrometheusInstances
@@ -1539,11 +1797,15 @@ modules:
   - DeletePrometheusRecordRuleYaml
   - DescribePrometheusRecordRules
   - ModifyPrometheusRecordRuleYaml
+  monitor_prometheus_record_rule_info:
+  - DescribePrometheusRecordRules
   monitor_prometheus_scrape_job:
   - CreatePrometheusScrapeJob
   - DeletePrometheusScrapeJobs
   - DescribePrometheusScrapeJobs
   - UpdatePrometheusScrapeJob
+  monitor_prometheus_scrape_job_info:
+  - DescribePrometheusScrapeJobs
   mps_person_sample_info:
   - DescribePersonSamples
   mqtt_authorization_policy:
@@ -1551,6 +1813,8 @@ modules:
   - DeleteAuthorizationPolicy
   - DescribeAuthorizationPolicies
   - ModifyAuthorizationPolicy
+  mqtt_authorization_policy_info:
+  - DescribeAuthorizationPolicies
   mqtt_device_certificate_info:
   - DescribeDeviceCertificates
   mqtt_instance:
@@ -1559,16 +1823,22 @@ modules:
   - DescribeInstance
   - DescribeInstanceList
   - ModifyInstance
+  mqtt_instance_info:
+  - DescribeInstanceList
   mqtt_topic:
   - CreateTopic
   - DeleteTopic
   - DescribeTopic
   - ModifyTopic
+  mqtt_topic_info:
+  - DescribeTopicList
   mqtt_user:
   - CreateUser
   - DeleteUser
   - DescribeUserList
   - ModifyUser
+  mqtt_user_info:
+  - DescribeUserList
   ms_shield_instance_info:
   - DescribeShieldInstances
   msp_migration_project_info:
@@ -1635,9 +1905,15 @@ modules:
   - DeleteJobConfigs
   - DescribeJobConfigs
   - DescribeResources
+  oceanus_job_config_info:
+  - DescribeJobConfigs
+  oceanus_job_info:
+  - DescribeJobs
   oceanus_job_savepoint:
   - DescribeJobSavepoint
   - TriggerJobSavepoint
+  oceanus_job_savepoint_info:
+  - DescribeJobSavepoint
   oceanus_meta_table:
   - CreateMetaTable
   - GetMetaTable
@@ -1652,11 +1928,17 @@ modules:
   - DeleteResourceConfigs
   - DescribeResourceConfigs
   - DescribeResourceRelatedJobs
+  oceanus_resource_config_info:
+  - DescribeResourceConfigs
+  oceanus_resource_info:
+  - DescribeResources
   oceanus_workspace:
   - CreateWorkSpace
   - DeleteWorkSpace
   - DescribeWorkSpaces
   - ModifyWorkSpace
+  oceanus_workspace_info:
+  - DescribeWorkSpaces
   omics_application_info:
   - DescribeApplications
   organization_member:
@@ -1669,6 +1951,8 @@ modules:
   - CreateOrganizationMemberAuthIdentity
   - DeleteOrganizationMemberAuthIdentity
   - DescribeOrganizationMemberAuthIdentities
+  organization_member_identity_info:
+  - DescribeOrganizationMemberAuthIdentities
   organization_member_info:
   - DescribeOrganizationMembers
   organization_member_policy:
@@ -1676,11 +1960,15 @@ modules:
   - DeleteOrganizationMembersPolicy
   - DescribeOrganizationMemberPolicies
   - UpdateOrganizationMembersPolicy
+  organization_member_policy_info:
+  - DescribeOrganizationMemberPolicies
   organization_node:
   - AddOrganizationNode
   - DeleteOrganizationNodes
   - DescribeOrganizationNodes
   - UpdateOrganizationNode
+  organization_node_info:
+  - DescribeOrganizationNodes
   partners_agent_deals_by_cache_info:
   - DescribeAgentDealsByCache
   peering_connection:
@@ -1730,11 +2018,15 @@ modules:
   - CreatePrivateDNSAccount
   - DeletePrivateDNSAccount
   - DescribePrivateDNSAccountList
+  private_dns_account_info:
+  - DescribePrivateDNSAccountList
   private_dns_record:
   - CreatePrivateZoneRecord
   - DeletePrivateZoneRecord
   - DescribePrivateZoneRecordList
   - ModifyPrivateZoneRecord
+  private_dns_record_info:
+  - DescribePrivateZoneRecordList
   private_dns_zone:
   - CreatePrivateZone
   - DeletePrivateZone
@@ -1742,6 +2034,8 @@ modules:
   - DescribePrivateZoneList
   - ModifyPrivateZone
   - ModifyPrivateZoneVpc
+  private_dns_zone_info:
+  - DescribePrivateZoneList
   privatedns_account_vpc_info:
   - DescribeAccountVpcList
   privatelink_endpoint:
@@ -1749,11 +2043,15 @@ modules:
   - DeleteVpcEndPoint
   - DescribeVpcEndPoint
   - ModifyVpcEndPointAttribute
+  privatelink_endpoint_info:
+  - DescribeVpcEndPoint
   privatelink_endpoint_service:
   - CreateVpcEndPointService
   - DeleteVpcEndPointService
   - DescribeVpcEndPointService
   - ModifyVpcEndPointServiceAttribute
+  privatelink_endpoint_service_info:
+  - DescribeVpcEndPointService
   pts_cron_job_info:
   - DescribeCronJobs
   redis_account:
@@ -1784,6 +2082,12 @@ modules:
   - ModifyParamTemplate
   redis_parameter_template_info:
   - DescribeParamTemplates
+  redis_replication_group:
+  - CreateReplicationGroup
+  - DescribeReplicationGroup
+  - RemoveReplicationGroup
+  redis_replication_group_info:
+  - DescribeReplicationGroup
   region_product_info:
   - DescribeProducts
   route_table:
@@ -1806,6 +2110,12 @@ modules:
   - UpdateAlias
   scf_alias_info:
   - ListAliases
+  scf_custom_domain:
+  - CreateCustomDomain
+  - DeleteCustomDomain
+  - ListCustomDomains
+  scf_custom_domain_info:
+  - ListCustomDomains
   scf_function:
   - CreateFunction
   - DeleteFunction
@@ -1987,6 +2297,8 @@ modules:
   - DisableInvoker
   - EnableInvoker
   - ModifyInvoker
+  tat_invoker_info:
+  - DescribeInvokers
   tbaas_block_info:
   - GetBlockList
   tcaplusdb_cluster:
@@ -2001,6 +2313,8 @@ modules:
   - CreateAuthDomain
   - DeleteAuthDomain
   - DescribeAuthDomains
+  tcb_auth_domain_info:
+  - DescribeAuthDomains
   tcb_billing_info:
   - DescribeBillingInfo
   tcb_environment:
@@ -2008,20 +2322,28 @@ modules:
   - DescribeEnvs
   - DestroyEnv
   - ModifyEnv
+  tcb_environment_info:
+  - DescribeEnvs
   tcb_http_service_route:
   - CreateHTTPServiceRoute
   - DeleteHTTPServiceRoute
   - DescribeHTTPServiceRoute
   - ModifyHTTPServiceRoute
+  tcb_http_service_route_info:
+  - DescribeHTTPServiceRoute
   tcb_static_store:
   - CreateStaticStore
   - DescribeStaticStore
   - DestroyStaticStore
+  tcb_static_store_info:
+  - DescribeStaticStore
   tcbr_cloud_run_pod_info:
   - DescribeCloudRunPodList
   tcm_access_log:
   - DescribeAccessLogConfig
   - ModifyAccessLogConfig
+  tcm_access_log_info:
+  - DescribeAccessLogConfig
   tcm_mesh:
   - CreateMesh
   - DeleteMesh
@@ -2041,6 +2363,12 @@ modules:
   tcm_tracing:
   - DescribeMesh
   - ModifyTracingConfig
+  tcr_immutable_tag_rule:
+  - CreateImmutableTagRules
+  - DeleteImmutableTagRules
+  - DescribeImmutableTagRules
+  tcr_immutable_tag_rule_info:
+  - DescribeImmutableTagRules
   tcr_instance:
   - CreateInstance
   - DeleteInstance
@@ -2053,20 +2381,34 @@ modules:
   - DeleteNamespace
   - DescribeNamespaces
   - ModifyNamespace
+  tcr_namespace_info:
+  - DescribeNamespaces
   tcr_replication_instance:
   - CreateReplicationInstance
   - DeleteReplicationInstance
+  - DescribeReplicationInstances
+  tcr_replication_instance_info:
   - DescribeReplicationInstances
   tcr_replication_rule:
   - DeleteReplicationRule
   - DescribeReplicationPolicies
   - ManageReplication
   - ModifyReplication
+  tcr_replication_rule_info:
+  - DescribeReplicationPolicies
   tcr_repository:
   - CreateRepository
   - DeleteRepository
   - DescribeRepositories
   - ModifyRepository
+  tcr_repository_info:
+  - DescribeRepositories
+  tcr_webhook_trigger:
+  - CreateWebhookTrigger
+  - DeleteWebhookTrigger
+  - DescribeWebhookTrigger
+  tcr_webhook_trigger_info:
+  - DescribeWebhookTrigger
   tcss_abnormal_process_event_info:
   - DescribeAbnormalProcessEvents
   tdai_agent_duty_task_info:
@@ -2075,6 +2417,8 @@ modules:
   - DescribeAccounts
   - ModifyAccountDescription
   - ResetAccountPassword
+  tdcpg_account_info:
+  - DescribeAccounts
   tdcpg_cluster:
   - CreateCluster
   - CreateClusterInstances
@@ -2086,20 +2430,30 @@ modules:
   - ModifyClusterInstancesSpec
   - ModifyClusterName
   - ModifyClustersAutoRenewFlag
+  tdcpg_cluster_info:
+  - DescribeClusters
   tdcpg_cluster_instance_info:
   - DescribeClusterInstances
   tdcpg_endpoint_wan:
   - DescribeClusterEndpoints
   - ModifyClusterEndpointWanStatus
+  tdcpg_endpoint_wan_info:
+  - DescribeClusterEndpoints
   tdcpg_instance_state:
   - DescribeClusterInstances
   - IsolateClusterInstances
   - RecoverClusterInstances
   - RestartClusterInstances
+  tdcpg_instance_state_info:
+  - DescribeClusterInstances
   tdid_over_summary_info:
   - GetOverSummary
   tdmq_amqp_cluster_info:
   - DescribeAMQPClusters
+  tdmq_environment_info:
+  - DescribeEnvironments
+  tdmq_environment_role_info:
+  - DescribeEnvironmentRoles
   tdmq_namespace:
   - CreateEnvironment
   - DeleteEnvironments
@@ -2110,6 +2464,16 @@ modules:
   - DeleteEnvironmentRoles
   - DescribeEnvironmentRoles
   - ModifyEnvironmentRole
+  tdmq_rabbit_mq_binding_info:
+  - DescribeRabbitMQBindings
+  tdmq_rabbit_mq_permission_info:
+  - DescribeRabbitMQPermission
+  tdmq_rabbit_mq_user_info:
+  - DescribeRabbitMQUser
+  tdmq_rabbit_mq_vip_instance_info:
+  - DescribeRabbitMQVipInstances
+  tdmq_rabbit_mq_virtual_host_info:
+  - DescribeRabbitMQVirtualHost
   tdmq_rabbitmq_binding:
   - CreateRabbitMQBinding
   - DeleteRabbitMQBinding
@@ -2133,6 +2497,18 @@ modules:
   - DeleteRabbitMQVirtualHost
   - DescribeRabbitMQVirtualHost
   - ModifyRabbitMQVirtualHost
+  tdmq_rocket_mq_cluster_info:
+  - DescribeRocketMQClusters
+  tdmq_rocket_mq_environment_role_info:
+  - DescribeRocketMQEnvironmentRoles
+  tdmq_rocket_mq_group_info:
+  - DescribeRocketMQGroups
+  tdmq_rocket_mq_namespace_info:
+  - DescribeRocketMQNamespaces
+  tdmq_rocket_mq_role_info:
+  - DescribeRocketMQRoles
+  tdmq_rocket_mq_topic_info:
+  - DescribeRocketMQTopics
   tdmq_rocketmq_cluster:
   - CreateRocketMQCluster
   - DeleteRocketMQCluster
@@ -2167,15 +2543,21 @@ modules:
   - CreateSubscription
   - DeleteSubscriptions
   - DescribeSubscriptions
+  tdmq_subscription_info:
+  - DescribeSubscriptions
   tdmq_topic:
   - CreateTopic
   - DeleteTopics
   - DescribeTopics
   - ModifyTopic
+  tdmq_topic_info:
+  - DescribeTopics
   tdmysql_account:
   - CreateUsers
   - DeleteUsers
   - DescribeFlow
+  - DescribeUserPrivileges
+  - DescribeUsers
   - ModifyUserPrivileges
   - ResetUsersPassword
   tdmysql_account_info:
@@ -2184,6 +2566,8 @@ modules:
   tdmysql_account_privilege:
   - DescribeUserPrivileges
   - ModifyUserPrivileges
+  tdmysql_account_privilege_info:
+  - DescribeUserPrivileges
   tdmysql_backup_policy:
   - DescribeDBSBackupPolicy
   - ModifyDBSBackupPolicy
@@ -2210,14 +2594,20 @@ modules:
   tdmysql_maintenance_window:
   - DescribeMaintenanceWindow
   - ModifyMaintenanceWindow
+  tdmysql_maintenance_window_info:
+  - DescribeMaintenanceWindow
   tdmysql_parameter:
   - DescribeDBParameters
   - DescribeFlow
   - ModifyDBParameters
+  tdmysql_parameter_info:
+  - DescribeDBParameters
   tdmysql_ssl:
   - DescribeFlow
   - DescribeInstanceSSLStatus
   - ModifyInstanceSSLStatus
+  tdmysql_ssl_info:
+  - DescribeInstanceSSLStatus
   tem_application:
   - CreateApplication
   - DeleteApplication
@@ -2226,6 +2616,8 @@ modules:
   tem_application_deployment:
   - DeployApplication
   - DescribeApplicationInfo
+  tem_application_deployment_info:
+  - DescribeDeployApplicationDetail
   tem_application_info:
   - DescribeApplications
   tem_application_service:
@@ -2233,22 +2625,30 @@ modules:
   - DeleteApplicationService
   - DescribeApplicationServiceList
   - ModifyApplicationService
+  tem_application_service_info:
+  - DescribeApplicationServiceList
   tem_environment:
   - CreateEnvironment
   - DescribeEnvironments
   - DestroyEnvironment
   - ModifyEnvironment
+  tem_environment_info:
+  - DescribeEnvironments
   teo_acceleration_domain:
   - CreateAccelerationDomain
   - DeleteAccelerationDomains
   - DescribeAccelerationDomains
   - ModifyAccelerationDomain
   - ModifyAccelerationDomainStatuses
+  teo_acceleration_domain_info:
+  - DescribeAccelerationDomains
   teo_dns_record:
   - CreateDnsRecord
   - DeleteDnsRecords
   - DescribeDnsRecords
   - ModifyDnsRecords
+  teo_dns_record_info:
+  - DescribeDnsRecords
   teo_function_info:
   - DescribeFunctions
   teo_origin_group:
@@ -2256,6 +2656,8 @@ modules:
   - DeleteOriginGroup
   - DescribeOriginGroup
   - ModifyOriginGroup
+  teo_origin_group_info:
+  - DescribeOriginGroup
   teo_security_bot_lite:
   - DescribeSecurityPolicy
   - ModifySecurityPolicy
@@ -2271,6 +2673,8 @@ modules:
   - DescribeSecurityIPGroupContent
   - DescribeSecurityIPGroupInfo
   - ModifySecurityIPGroup
+  teo_security_ip_group_info:
+  - DescribeSecurityIPGroupInfo
   teo_security_managed_rules:
   - DescribeSecurityPolicy
   - ModifySecurityPolicy
@@ -2291,6 +2695,8 @@ modules:
   - DescribeZones
   - ModifyZone
   - ModifyZoneStatus
+  teo_zone_info:
+  - DescribeZones
   thpc_cluster:
   - CreateCluster
   - DeleteCluster
@@ -2336,10 +2742,14 @@ modules:
   - DeleteModelService
   - DescribeModelService
   - ModifyModelService
+  tione_model_service_state_info:
+  - DescribeModelServiceGroup
   tione_model_service_traffic:
   - DescribeModelServiceGroup
   - ModifyModelServiceAuthorization
   - ModifyServiceGroupWeights
+  tione_model_service_traffic_info:
+  - DescribeModelServiceGroups
   tione_notebook:
   - CreateNotebook
   - DeleteNotebook
@@ -2379,6 +2789,12 @@ modules:
   - CreateBackupStorageLocation
   - DeleteBackupStorageLocation
   - DescribeBackupStorageLocations
+  tke_cls_log_config:
+  - CreateCLSLogConfig
+  - DeleteLogConfigs
+  - DescribeLogConfigs
+  tke_cls_log_config_info:
+  - DescribeLogConfigs
   tke_cluster:
   - CreateCluster
   - DeleteCluster
@@ -2396,6 +2812,10 @@ modules:
   - ModifyClusterAsGroupOptionAttribute
   tke_cluster_autoscaler_info:
   - DescribeClusterAsGroupOption
+  tke_cluster_deletion_protection:
+  - DescribeClusters
+  - DisableClusterDeletionProtection
+  - EnableClusterDeletionProtection
   tke_cluster_endpoint:
   - CreateClusterEndpoint
   - DeleteClusterEndpoint
@@ -2404,6 +2824,18 @@ modules:
   - DescribeClusters
   tke_cluster_kubeconfig:
   - DescribeClusterKubeconfig
+  tke_cluster_route:
+  - CreateClusterRoute
+  - DeleteClusterRoute
+  - DescribeClusterRoutes
+  tke_cluster_route_info:
+  - DescribeClusterRoutes
+  tke_cluster_route_table:
+  - CreateClusterRouteTable
+  - DeleteClusterRouteTable
+  - DescribeClusterRouteTables
+  tke_cluster_route_table_info:
+  - DescribeClusterRouteTables
   tke_cluster_upgrade:
   - DescribeClusters
   - UpdateClusterVersion
@@ -2424,32 +2856,44 @@ modules:
   - CreateRabbitMQServerlessBinding
   - DeleteRabbitMQServerlessBinding
   - DescribeRabbitMQServerlessBindings
+  trabbit_serverless_binding_info:
+  - DescribeRabbitMQServerlessBindings
   trabbit_serverless_exchange:
   - CreateRabbitMQServerlessExchange
   - DeleteRabbitMQServerlessExchange
   - DescribeRabbitMQServerlessExchangeDetail
   - DescribeRabbitMQServerlessExchanges
   - ModifyRabbitMQServerlessExchange
+  trabbit_serverless_exchange_info:
+  - DescribeRabbitMQServerlessExchanges
   trabbit_serverless_permission:
   - DeleteRabbitMQServerlessPermission
   - DescribeRabbitMQServerlessPermission
   - ModifyRabbitMQServerlessPermission
+  trabbit_serverless_permission_info:
+  - DescribeRabbitMQServerlessPermission
   trabbit_serverless_queue:
   - CreateRabbitMQServerlessQueue
   - DeleteRabbitMQServerlessQueue
   - DescribeRabbitMQServerlessQueueDetail
   - DescribeRabbitMQServerlessQueues
   - ModifyRabbitMQServerlessQueue
+  trabbit_serverless_queue_info:
+  - DescribeRabbitMQServerlessQueues
   trabbit_serverless_user:
   - CreateRabbitMQServerlessUser
   - DeleteRabbitMQServerlessUser
   - DescribeRabbitMQServerlessUser
   - ModifyRabbitMQServerlessUser
+  trabbit_serverless_user_info:
+  - DescribeRabbitMQServerlessUser
   trabbit_serverless_vhost:
   - CreateRabbitMQServerlessVirtualHost
   - DeleteRabbitMQServerlessVirtualHost
   - DescribeRabbitMQServerlessVirtualHost
   - ModifyRabbitMQServerlessVirtualHost
+  trabbit_serverless_vhost_info:
+  - DescribeRabbitMQServerlessVirtualHost
   trocket_consumer_client_info:
   - DescribeConsumerClientList
   trp_code_batch_info:
@@ -2458,6 +2902,28 @@ modules:
   - DescribeDeviceList
   trtc_call_info:
   - DescribeCallDetailInfo
+  tse_auto_scaler_resource_strategy_binding_group_info:
+  - DescribeAutoScalerResourceStrategyBindingGroups
+  tse_cloud_native_api_gateway_canary_rule_info:
+  - DescribeCloudNativeAPIGatewayCanaryRules
+  tse_cloud_native_api_gateway_certificate_info:
+  - DescribeCloudNativeAPIGatewayCertificates
+  tse_cloud_native_api_gateway_consumer_group_info:
+  - DescribeCloudNativeAPIGatewayConsumerGroupList
+  tse_cloud_native_api_gateway_consumer_info:
+  - DescribeCloudNativeAPIGatewayConsumerList
+  tse_cloud_native_api_gateway_info:
+  - DescribeCloudNativeAPIGateways
+  tse_cloud_native_api_gateway_llm_model_api_info:
+  - DescribeCloudNativeAPIGatewayLLMModelAPIs
+  tse_cloud_native_api_gateway_llm_model_service_info:
+  - DescribeCloudNativeAPIGatewayLLMModelServices
+  tse_cloud_native_api_gateway_route_info:
+  - DescribeCloudNativeAPIGatewayRoutes
+  tse_cloud_native_api_gateway_secret_key_info:
+  - DescribeCloudNativeAPIGatewaySecretKeyList
+  tse_cloud_native_api_gateway_service_info:
+  - DescribeCloudNativeAPIGatewayServices
   tse_cloud_native_gateway:
   - CreateCloudNativeAPIGateway
   - DeleteCloudNativeAPIGateway
@@ -2483,6 +2949,8 @@ modules:
   - DeleteConfigFileGroup
   - DescribeConfigFileGroups
   - ModifyConfigFileGroup
+  tse_config_file_group_info:
+  - DescribeConfigFileGroups
   tse_config_file_release:
   - DeleteConfigFileReleases
   - DescribeConfigFileRelease
@@ -2638,6 +3106,8 @@ modules:
   - DeleteGovernanceAliases
   - DescribeGovernanceAliases
   - ModifyGovernanceAlias
+  tse_governance_alias_info:
+  - DescribeGovernanceAliases
   tse_governance_host_retirement:
   - DeleteGovernanceInstancesByHost
   - DescribeGovernanceInstances
@@ -2646,16 +3116,22 @@ modules:
   - DeleteGovernanceInstances
   - DescribeGovernanceInstances
   - ModifyGovernanceInstances
+  tse_governance_instance_info:
+  - DescribeGovernanceInstances
   tse_governance_lane_group:
   - CreateGovernanceLaneGroups
   - DeleteGovernanceLaneGroups
   - DescribeGovernanceLaneGroups
   - ModifyGovernanceLaneGroups
+  tse_governance_lane_group_info:
+  - DescribeGovernanceLaneGroups
   tse_governance_namespace:
   - CreateGovernanceNamespaces
   - DeleteGovernanceNamespaces
   - DescribeGovernanceNamespaces
   - ModifyGovernanceNamespaces
+  tse_governance_namespace_info:
+  - DescribeGovernanceNamespaces
   tse_governance_service:
   - CreateGovernanceServices
   - DeleteGovernanceServices
@@ -2664,8 +3140,14 @@ modules:
   tse_governance_service_contract_info:
   - DescribeGovernanceServiceContractVersions
   - DescribeGovernanceServiceContracts
+  tse_governance_service_info:
+  - DescribeGovernanceServices
   tse_instance_tag_info:
   - DescribeInstanceTagInfos
+  tse_native_gateway_server_group_info:
+  - DescribeNativeGatewayServerGroups
+  tse_native_gateway_service_source_info:
+  - DescribeNativeGatewayServiceSources
   tse_sre_access_address_info:
   - DescribeSREInstanceAccessAddress
   tse_sre_instance:
@@ -2691,10 +3173,14 @@ modules:
   - DeleteConfig
   - DescribeConfig
   - DescribeConfigs
+  tsf_application_config_info:
+  - DescribeConfigs
   tsf_application_config_release:
   - DescribeConfigReleases
   - ReleaseConfig
   - RevocationConfig
+  tsf_application_config_release_info:
+  - DescribeConfigReleases
   tsf_application_info:
   - DescribeApplications
   tsf_cluster:
@@ -2702,6 +3188,8 @@ modules:
   - DeleteCluster
   - DescribeClusters
   - ModifyCluster
+  tsf_cluster_info:
+  - DescribeClusters
   tsf_container_deployment_group:
   - CreateContainGroup
   - DeleteContainerGroup
@@ -2709,30 +3197,42 @@ modules:
   - DescribeContainerGroups
   - ModifyContainerGroup
   - ModifyContainerReplicas
+  tsf_container_deployment_group_info:
+  - DescribeContainerGroups
   tsf_lane:
   - CreateLane
   - DeleteLane
   - DescribeLanes
   - ModifyLane
+  tsf_lane_info:
+  - DescribeLanes
   tsf_lane_rule:
   - CreateLaneRule
   - DeleteLaneRule
   - DescribeLaneRules
   - ModifyLaneRule
+  tsf_lane_rule_info:
+  - DescribeLaneRules
   tsf_microservice:
   - CreateMicroserviceWithDetailResp
   - DeleteMicroservice
   - DescribeMicroservices
   - ModifyMicroservice
+  tsf_microservice_info:
+  - DescribeMicroservices
   tsf_namespace:
   - CreateNamespace
   - DeleteNamespace
   - DescribeSimpleNamespaces
   - ModifyNamespace
+  tsf_namespace_info:
+  - DescribeSimpleNamespaces
   tsf_public_config:
   - CreatePublicConfig
   - DeletePublicConfig
   - DescribePublicConfig
+  - DescribePublicConfigs
+  tsf_public_config_info:
   - DescribePublicConfigs
   tsf_repository:
   - CreateRepository
@@ -2740,11 +3240,15 @@ modules:
   - DescribeRepositories
   - DescribeRepository
   - UpdateRepository
+  tsf_repository_info:
+  - DescribeRepositories
   tsf_vm_deployment_group:
   - CreateGroup
   - DeleteGroup
   - DescribeGroups
   - ModifyGroup
+  tsf_vm_deployment_group_info:
+  - DescribeGroups
   vcube_resource_info:
   - DescribeVcubeResourcesList
   vdb_instance:
@@ -2827,6 +3331,8 @@ modules:
   - DescribeAntiInfoLeakageRules
   - ModifyAntiInfoLeakRuleStatus
   - ModifyAntiInfoLeakRules
+  waf_anti_info_leak_rule_info:
+  - DescribeAntiInfoLeakageRules
   waf_anti_tamper_rule:
   - AddAntiFakeUrl
   - DeleteAntiFakeUrl
@@ -2834,6 +3340,8 @@ modules:
   - FreshAntiFakeUrl
   - ModifyAntiFakeUrl
   - ModifyAntiFakeUrlStatus
+  waf_anti_tamper_rule_info:
+  - DescribeAntiFakeRules
   waf_area_ban_rule:
   - CreateAreaBanRule
   - DescribeAreaBanRule
@@ -2844,6 +3352,8 @@ modules:
   - DeleteAttackWhiteRule
   - DescribeAttackWhiteRule
   - ModifyAttackWhiteRule
+  waf_attack_white_rule_info:
+  - DescribeAttackWhiteRule
   waf_auto_deny:
   - DescribeWafAutoDenyRules
   - ModifyWafAutoDenyRules
@@ -2851,22 +3361,30 @@ modules:
   - DeleteCCRule
   - DescribeCCRuleList
   - UpsertCCRule
+  waf_cc_rule_info:
+  - DescribeCCRuleList
   waf_custom_rule:
   - AddCustomRule
   - DeleteCustomRule
   - DescribeCustomRuleList
   - ModifyCustomRule
+  waf_custom_rule_info:
+  - DescribeCustomRuleList
   waf_custom_white_rule:
   - AddCustomWhiteRule
   - DeleteCustomWhiteRule
   - DescribeCustomWhiteRule
   - ModifyCustomWhiteRule
   - ModifyCustomWhiteRuleStatus
+  waf_custom_white_rule_info:
+  - DescribeCustomWhiteRule
   waf_host:
   - CreateHost
   - DeleteHost
   - DescribeHost
   - ModifyHost
+  waf_host_info:
+  - DescribeHosts
   waf_instance_info:
   - DescribeInstances
   waf_ip_access_control:
@@ -2879,6 +3397,8 @@ modules:
   - DeleteOwaspWhiteRule
   - DescribeOwaspWhiteRules
   - ModifyOwaspWhiteRule
+  waf_owasp_white_rule_info:
+  - DescribeOwaspWhiteRules
   waf_protect_group:
   - CreateProtectGroup
   - DeleteProtectGroup

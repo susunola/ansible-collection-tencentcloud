@@ -34,7 +34,7 @@ options:
   log_config: {type: dict, description: LogConfig-compatible log destination.}
   lifecycle_script_id: {type: str, description: Lifecycle script ID.}
   default_code_repo_id: {type: str, description: Default code repository ID.}
-  additional_code_repo_ids: {type: list, elements: str, description: Additional code repository IDs, at most three.}
+  additional_code_repo_ids: {type: list, elements: str, description: 'Additional code repository IDs, at most three.'}
   automatic_stop_time: {type: int, description: Automatic stop interval in hours.}
   tags: {type: list, elements: dict, description: Tag-compatible notebook tags.}
   data_configs: {type: list, elements: dict, description: DataConfig-compatible storage mounts.}
@@ -46,9 +46,11 @@ options:
   wait: {type: bool, default: true, description: Wait for state convergence.}
   waiter_delay: {type: int, default: 10, description: Seconds between state checks.}
   waiter_timeout: {type: int, default: 1800, description: Overall convergence timeout.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

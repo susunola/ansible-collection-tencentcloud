@@ -4,9 +4,26 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import sys
+import types
+from pathlib import Path
 from types import SimpleNamespace
 
+import pytest
+
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
+
+
+class FakeFailJson(Exception):
+    """Stands in for AnsibleModule.fail_json."""
+
+    def __init__(self, **kwargs):
+        super(FakeFailJson, self).__init__(kwargs.get("msg"))
+        self.msg = kwargs.get("msg")
+
+
+def _fail(**kwargs):
+    raise FakeFailJson(**kwargs)
 
 
 class FakeCosError(Exception):
@@ -220,6 +237,33 @@ def test_list_buckets_empty():
     assert cos.list_buckets(EmptyClient()) == []
 
 
+def test_list_bucket_entries_keeps_the_fields_list_buckets_drops():
+    """The inventory layer needs Type/BucketType/AZType, which the
+    ``cos_bucket_info`` projection deliberately leaves out."""
+    entry = {"Name": "b-1", "Location": "ap-singapore",
+             "CreationDate": "2025-12-23T10:41:40Z", "Type": "tcb",
+             "BucketType": "unknown", "AZType": "SAZ"}
+
+    class Client(object):
+        def __init__(self):
+            self.calls = []
+
+        def list_buckets(self, **kwargs):
+            self.calls.append(kwargs)
+            return {"Buckets": {"Bucket": [entry]}}
+
+    client = Client()
+    assert cos.list_bucket_entries(client, "ap-singapore") == [entry]
+    # The region really is sent: the COS service call is region-scoped.
+    assert client.calls == [{"Region": "ap-singapore"}]
+    assert cos.list_bucket_entries(EmptyClientNoBuckets()) == []
+
+
+class EmptyClientNoBuckets(object):
+    def list_buckets(self, **kwargs):
+        return {"Buckets": None}
+
+
 class FakeCosConfig(object):
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
@@ -307,6 +351,88 @@ def test_create_cos_client_without_role_arn_keeps_credentials(monkeypatch):
     assert s3_client.config.SecretId == "akid-test"
     assert s3_client.config.SecretKey == "secret-test"
     assert s3_client.config.Token == "session-token"
+
+
+def test_create_cos_client_falls_back_to_the_tccli_profile(monkeypatch):
+    """ansible-test strips TENCENTCLOUD_*, so the profile file is the only source."""
+    _fake_cos_sdk(monkeypatch)
+    monkeypatch.setattr(
+        cos.api3_client,
+        "load_profile",
+        lambda profile=None, path=None: {
+            "secret_id": "profile-akid",
+            "secret_key": "profile-secret",
+            "region": "ap-shanghai",
+        },
+    )
+    params = dict(COS_PARAMS, secret_id=None, secret_key=None, region=None)
+    module = SimpleNamespace(params=params)
+    s3_client = cos.create_cos_client(module)
+
+    assert s3_client.config.SecretId == "profile-akid"
+    assert s3_client.config.SecretKey == "profile-secret"
+    assert module.params["region"] == "ap-shanghai"
+
+
+def test_create_cos_client_fails_without_any_credential_source(monkeypatch):
+    _fake_cos_sdk(monkeypatch)
+    monkeypatch.setattr(cos.api3_client, "load_profile", lambda profile=None, path=None: {})
+    params = dict(COS_PARAMS, secret_id=None, secret_key=None)
+    module = SimpleNamespace(params=params, fail_json=_fail)
+    with pytest.raises(FakeFailJson) as exc:
+        cos.create_cos_client(module)
+    assert "default.configure" in exc.value.msg
+
+
+def test_build_cos_client_needs_no_module(monkeypatch):
+    """The module-free builder used by the inventory plugin."""
+    _fake_cos_sdk(monkeypatch)
+    client = cos.build_cos_client("ap-hongkong", "akid", "secret", "tok")
+    assert isinstance(client, FakeCosS3Client)
+    assert client.config.Region == "ap-hongkong"
+    assert client.config.SecretId == "akid"
+    assert client.config.SecretKey == "secret"
+    assert client.config.Token == "tok"
+    # Defaults a caller does not have to spell out.
+    assert client.config.Timeout == 60
+    assert client.config.Endpoint is None
+
+
+def test_build_cos_client_accepts_a_custom_endpoint_and_timeout(monkeypatch):
+    _fake_cos_sdk(monkeypatch)
+    client = cos.build_cos_client("ap-hongkong", "akid", "secret", timeout=120,
+                                  endpoint="cos.internal.example.com")
+    assert client.config.Timeout == 120
+    assert client.config.Endpoint == "cos.internal.example.com"
+
+
+def test_build_cos_client_raises_a_typed_error_without_the_sdk(monkeypatch):
+    monkeypatch.setattr(cos, "HAS_COS_SDK", False)
+    with pytest.raises(cos.CosSDKMissing, match="cos-python-sdk-v5"):
+        cos.build_cos_client("ap-hongkong", "akid", "secret")
+    # It is an ImportError, so a caller catching the broader class still works.
+    assert issubclass(cos.CosSDKMissing, ImportError)
+
+
+def test_create_cos_client_delegates_to_build_cos_client(monkeypatch):
+    """One construction path, so the two entry points cannot drift apart."""
+    calls = {}
+
+    def spy(region, secret_id, secret_key, token=None, timeout=60,
+            endpoint=None, user_agent=None):
+        calls.update(region=region, secret_id=secret_id, secret_key=secret_key,
+                     token=token, timeout=timeout, endpoint=endpoint,
+                     user_agent=user_agent)
+        return "client"
+
+    monkeypatch.setattr(cos, "build_cos_client", spy)
+    params = dict(COS_PARAMS, timeout=90, endpoint="e", user_agent="ua",
+                  token="tok")
+    module = SimpleNamespace(params=params, fail_json=_fail)
+    assert cos.create_cos_client(module) == "client"
+    assert calls == {"region": "ap-guangzhou", "secret_id": "akid-test",
+                     "secret_key": "secret-test", "token": "tok", "timeout": 90,
+                     "endpoint": "e", "user_agent": "ua"}
 
 
 def test_cors_rules_desired_normalizes_user_params():
@@ -447,6 +573,167 @@ def test_get_bucket_cors_maps_missing_configuration_to_empty():
     assert cos.get_bucket_cors(client, "b-1") == []
 
 
+def _flat_client(method_name, payload):
+    """FakeCosClient whose one accessor answers with the real SDK shape.
+
+    The fake returns the XML wrapper (``CORSConfiguration``); a real
+    ``get_bucket_cors`` GET strips it and answers ``{"CORSRule": [...]}``.
+    Both shapes must parse, so the flat one is injected per test.
+    """
+    client = FakeCosClient({"b-1": _bucket()})
+    setattr(client, method_name, lambda Bucket, **kwargs: payload)
+    return client
+
+
+def test_get_bucket_cors_reads_the_flat_sdk_response():
+    client = _flat_client(
+        "get_bucket_cors",
+        {
+            "CORSRule": [
+                {
+                    "ID": "web",
+                    "AllowedOrigin": ["https://www.example.com"],
+                    "AllowedMethod": ["GET", "HEAD"],
+                    "MaxAgeSeconds": "600",
+                }
+            ],
+            "ResponseVary": "false",
+        },
+    )
+    assert cos.get_bucket_cors(client, "b-1") == [
+        {
+            "ID": "web",
+            "AllowedOrigin": ["https://www.example.com"],
+            "AllowedMethod": ["GET", "HEAD"],
+            "MaxAgeSeconds": 600,
+        }
+    ]
+
+
+def test_get_bucket_lifecycle_reads_the_flat_sdk_response():
+    client = _flat_client(
+        "get_bucket_lifecycle",
+        {
+            "Rule": [
+                {
+                    "ID": "logs",
+                    "Status": "Enabled",
+                    "Filter": {"Prefix": "logs/"},
+                    "Expiration": {"Days": "30"},
+                }
+            ]
+        },
+    )
+    assert cos.get_bucket_lifecycle(client, "b-1") == [
+        {"ID": "logs", "Status": "Enabled", "Filter": {"Prefix": "logs/"}, "Expiration": {"Days": 30}}
+    ]
+
+
 def test_get_bucket_lifecycle_maps_missing_configuration_to_empty():
     client = FakeCosClient({"b-1": _bucket()})
     assert cos.get_bucket_lifecycle(client, "b-1") == []
+
+
+def _appid_module(cam_appid=None, cam_error=None, sts_account="200037874754"):
+    """Module double whose CAM/STS clients answer AppId lookups."""
+    seen = []
+
+    def create_client(client_class, endpoint):
+        seen.append(endpoint)
+        if endpoint.startswith("cam"):
+            if cam_error:
+                raise cam_error
+            return SimpleNamespace(
+                GetUserAppId=lambda request: SimpleNamespace(AppId=cam_appid)
+            )
+        return SimpleNamespace(
+            GetCallerIdentity=lambda request: SimpleNamespace(AccountId=sts_account)
+        )
+
+    def sdk_call(method, request, **kwargs):
+        return method(request)
+
+    return SimpleNamespace(params={}, create_client=create_client, sdk_call=sdk_call), seen
+
+
+def _stub_credential_sdk(monkeypatch):
+    """Install stand-in CAM/STS modules so ``fetch_appid`` needs no SDK.
+
+    ``fetch_appid`` asks the SDK for nothing but a client class and a request
+    object, both of which it hands straight to the module double.  Supplying
+    them here keeps these tests runnable in an environment without
+    ``tencentcloud-sdk-python`` - which is exactly what the release workflow's
+    ``ansible-test units`` step is (it is the step that used to fail because
+    these two tests imported the real package).
+    """
+
+    def _module(name, **attrs):
+        module = types.ModuleType(name)
+        for key, value in attrs.items():
+            setattr(module, key, value)
+        return module
+
+    cam_models = _module(
+        "tencentcloud.cam.v20190116.models", GetUserAppIdRequest=SimpleNamespace
+    )
+    cam_client = _module("tencentcloud.cam.v20190116.cam_client", CamClient=SimpleNamespace)
+    cam_package = _module(
+        "tencentcloud.cam.v20190116", models=cam_models, cam_client=cam_client
+    )
+    sts_models = _module(
+        "tencentcloud.sts.v20180813.models", GetCallerIdentityRequest=SimpleNamespace
+    )
+    sts_client = _module("tencentcloud.sts.v20180813.sts_client", StsClient=SimpleNamespace)
+    sts_package = _module(
+        "tencentcloud.sts.v20180813", models=sts_models, sts_client=sts_client
+    )
+    for name, module in (
+        ("tencentcloud", _module("tencentcloud")),
+        ("tencentcloud.cam", _module("tencentcloud.cam")),
+        ("tencentcloud.cam.v20190116", cam_package),
+        ("tencentcloud.cam.v20190116.models", cam_models),
+        ("tencentcloud.cam.v20190116.cam_client", cam_client),
+        ("tencentcloud.sts", _module("tencentcloud.sts")),
+        ("tencentcloud.sts.v20180813", sts_package),
+        ("tencentcloud.sts.v20180813.models", sts_models),
+        ("tencentcloud.sts.v20180813.sts_client", sts_client),
+    ):
+        monkeypatch.setitem(sys.modules, name, module)
+
+
+def test_fetch_appid_prefers_cam_get_user_app_id(monkeypatch):
+    _stub_credential_sdk(monkeypatch)
+    module, seen = _appid_module(cam_appid=1328140161)
+    assert cos.fetch_appid(module) == "1328140161"
+    assert seen == ["cam.tencentcloudapi.com"]
+
+
+def test_fetch_appid_falls_back_to_sts_when_cam_is_denied(monkeypatch):
+    _stub_credential_sdk(monkeypatch)
+    module, seen = _appid_module(cam_error=RuntimeError("cam:GetUserAppId denied"))
+    assert cos.fetch_appid(module) == "200037874754"
+    assert seen == ["cam.tencentcloudapi.com", "sts.tencentcloudapi.com"]
+
+
+def test_resolve_appid_prefers_the_explicit_parameter():
+    module, seen = _appid_module(cam_appid=1328140161)
+    module.params["appid"] = 999
+    assert cos.resolve_appid(module) == "999"
+    assert seen == []
+
+
+def test_this_module_stays_importable_without_the_sdk():
+    """Regression guard: ``ansible-test units`` has no SDK installed.
+
+    A top-level ``import tencentcloud`` here breaks collection in the release
+    workflow (and any other SDK-free unit run) before a single assertion is
+    reached, which is how v1.2.0's release job failed. The AppId tests get
+    their SDK objects from :func:`_stub_credential_sdk` instead.
+    """
+    source = Path(__file__).read_text(encoding="utf-8")
+    offenders = [
+        line.strip()
+        for line in source.splitlines()
+        if line.startswith(("import tencentcloud", "from tencentcloud"))
+    ]
+    assert offenders == []

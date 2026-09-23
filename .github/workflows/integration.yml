@@ -12,7 +12,12 @@ on:
       targets:
         description: "Integration targets to run (space separated)"
         type: string
-        default: "security_group network cmq_queue cls_log_pipeline api_gateway_service tat_command cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns tke_addon"
+        # Keep in sync with the fallback list on the "Run integration tests"
+        # step: the scheduled run has no inputs and uses that one instead.
+        # tke_addon is deliberately absent: it needs a running cluster, and the
+        # account has none, so it can only self-skip and would trip the
+        # "nothing executed" gate below. Dispatch it with tke_cluster.
+        default: "security_group network cmq_queue cls_log_pipeline api_gateway_service apigateway_plugin apigateway_ip_strategy cls_alarm_notice cdb_audit_rule_template tat_command cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns vpc subnet"
 
 # Integration tests create billable resources in a shared Tencent Cloud
 # account. A single fixed concurrency group serialises every run (any
@@ -50,6 +55,17 @@ jobs:
           else
             echo "available=false" >> "$GITHUB_OUTPUT"
           fi
+      # This workflow only triggers on schedule and workflow_dispatch, both of
+      # which run on the canonical repository, so a run that gets here without
+      # credentials is a misconfiguration rather than a fork to tolerate. Every
+      # later step is guarded by available == 'true', so without this one the
+      # job would skip all of them and still report success - a green run that
+      # executed no test at all. Fail instead and name the missing secrets.
+      - name: Require Tencent Cloud credentials
+        if: steps.creds.outputs.available != 'true'
+        run: |
+          echo "::error title=Integration run executed no tests::TENCENTCLOUD_SECRET_ID is not set for this repository, so every integration step was skipped. Configure the TENCENTCLOUD_SECRET_ID and TENCENTCLOUD_SECRET_KEY repository secrets (docs/integration-env.md section 2) to enable real-cloud runs."
+          exit 1
       - name: Install dependencies
         if: steps.creds.outputs.available == 'true'
         run: python -m pip install -r requirements-dev.txt
@@ -59,15 +75,42 @@ jobs:
       - name: Install collection
         if: steps.creds.outputs.available == 'true'
         run: ansible-galaxy collection install susunola-tencentcloud-*.tar.gz --force
-      - name: Run integration tests
+      # ansible-test sanitises the environment it hands to ansible-playbook:
+      # only HOME / PATH / LC_ALL and a short platform-compatibility list
+      # survive, so a step-level env: block never reaches the modules under
+      # test and every module fails with "Set secret_id and secret_key".
+      # Copy the credentials into the TCCLI profile under $HOME instead -
+      # that file is the modules' last credential/region fallback and does
+      # survive the sanitiser (docs/integration-env.md §2.3).
+      - name: Materialise credentials for ansible-test
         if: steps.creds.outputs.available == 'true'
         env:
           TENCENTCLOUD_SECRET_ID: ${{ secrets.TENCENTCLOUD_SECRET_ID }}
           TENCENTCLOUD_SECRET_KEY: ${{ secrets.TENCENTCLOUD_SECRET_KEY }}
+          TENCENTCLOUD_TOKEN: ${{ secrets.TENCENTCLOUD_TOKEN }}
           TENCENTCLOUD_REGION: ap-guangzhou
+        run: |
+          python scripts/integration_credentials.py --write
+          python scripts/integration_credentials.py --check
+      # Same sanitiser, same fix, for everything that is not a credential:
+      # target gates (TENCENTCLOUD_RUN_BILLED_TARGETS), region/zone overrides,
+      # pre-existing resource ids and GITHUB_RUN_ID. Without this step every
+      # gated target self-skips, because lookup('env', ...) is empty inside
+      # ansible-playbook (docs/integration-env.md 2.3).
+      - name: Materialise integration inputs for ansible-test
+        if: steps.creds.outputs.available == 'true'
+        # Every gate below has to be exported HERE, not on the "Run integration
+        # tests" step: by then ansible-test has already rebuilt the environment
+        # and stripped TENCENTCLOUD_*, so lookup('env', ...) inside the playbook
+        # sees nothing and every gated target self-skips. Keep this list in sync
+        # with the one on the run step below and with docs/integration-env.md.
+        env:
+          TENCENTCLOUD_REGION: ap-guangzhou
+          GITHUB_RUN_ID: ${{ github.run_id }}
           TENCENTCLOUD_TKE_CLUSTER_ID: ${{ secrets.TENCENTCLOUD_TKE_CLUSTER_ID }}
           TENCENTCLOUD_TKE_ADDON_NAME: ${{ vars.TENCENTCLOUD_TKE_ADDON_NAME }}
           TENCENTCLOUD_TKE_ADDON_VERSION: ${{ vars.TENCENTCLOUD_TKE_ADDON_VERSION }}
+          TENCENTCLOUD_APIGW_SERVICE_ID: ${{ secrets.TENCENTCLOUD_APIGW_SERVICE_ID }}
           TENCENTCLOUD_MONITOR_NAMESPACE: ${{ vars.TENCENTCLOUD_MONITOR_NAMESPACE }}
           TENCENTCLOUD_MONITOR_NOTICE_ID: ${{ secrets.TENCENTCLOUD_MONITOR_NOTICE_ID }}
           TENCENTCLOUD_PRIVATE_DNS_VPC_ID: ${{ secrets.TENCENTCLOUD_PRIVATE_DNS_VPC_ID }}
@@ -78,9 +121,73 @@ jobs:
           TENCENTCLOUD_TCR_REGISTRY_ID: ${{ secrets.TENCENTCLOUD_TCR_REGISTRY_ID }}
           TENCENTCLOUD_TCR_REPLICATION_REGION_ID: ${{ vars.TENCENTCLOUD_TCR_REPLICATION_REGION_ID }}
           TENCENTCLOUD_TCR_REPLICATION_REGION_NAME: ${{ vars.TENCENTCLOUD_TCR_REPLICATION_REGION_NAME }}
-        run: >-
-          ansible-test integration ${{ inputs.targets || 'security_group network cmq_queue cls_log_pipeline api_gateway_service tat_command cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns tke_addon' }}
-          --color --python 3.12 --coverage
+          TENCENTCLOUD_TCR_NAMESPACE: ${{ vars.TENCENTCLOUD_TCR_NAMESPACE }}
+          TENCENTCLOUD_TCR_WEBHOOK_URL: ${{ secrets.TENCENTCLOUD_TCR_WEBHOOK_URL }}
+          TENCENTCLOUD_CLS_ALARM_UIN: ${{ secrets.TENCENTCLOUD_CLS_ALARM_UIN }}
+          TENCENTCLOUD_REDIS_INSTANCE_ID: ${{ secrets.TENCENTCLOUD_REDIS_INSTANCE_ID }}
+          TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID: ${{ secrets.TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID }}
+          TENCENTCLOUD_CVM_INSTANCE_TYPE: ${{ vars.TENCENTCLOUD_CVM_INSTANCE_TYPE }}
+          TENCENTCLOUD_RUN_BILLED_TARGETS: ${{ vars.TENCENTCLOUD_RUN_BILLED_TARGETS }}
+          TENCENTCLOUD_CDB_ENGINE_VERSION: ${{ vars.TENCENTCLOUD_CDB_ENGINE_VERSION }}
+          TENCENTCLOUD_CDB_MEMORY: ${{ vars.TENCENTCLOUD_CDB_MEMORY }}
+          TENCENTCLOUD_CDB_VOLUME: ${{ vars.TENCENTCLOUD_CDB_VOLUME }}
+          TENCENTCLOUD_CDB_ZONE: ${{ vars.TENCENTCLOUD_CDB_ZONE }}
+          TENCENTCLOUD_TKE_CLUSTER_VERSION: ${{ vars.TENCENTCLOUD_TKE_CLUSTER_VERSION }}
+        run: |
+          python scripts/integration_inputs.py --write
+          python scripts/integration_inputs.py --check
+      - name: Run integration tests
+        if: steps.creds.outputs.available == 'true'
+        env:
+          TENCENTCLOUD_SECRET_ID: ${{ secrets.TENCENTCLOUD_SECRET_ID }}
+          TENCENTCLOUD_SECRET_KEY: ${{ secrets.TENCENTCLOUD_SECRET_KEY }}
+          TENCENTCLOUD_REGION: ap-guangzhou
+          TENCENTCLOUD_TKE_CLUSTER_ID: ${{ secrets.TENCENTCLOUD_TKE_CLUSTER_ID }}
+          TENCENTCLOUD_TKE_ADDON_NAME: ${{ vars.TENCENTCLOUD_TKE_ADDON_NAME }}
+          TENCENTCLOUD_TKE_ADDON_VERSION: ${{ vars.TENCENTCLOUD_TKE_ADDON_VERSION }}
+          # Reuse an existing API Gateway service for apigateway_ip_strategy
+          # instead of creating a throwaway one (docs/integration-env.md §2.4).
+          TENCENTCLOUD_APIGW_SERVICE_ID: ${{ secrets.TENCENTCLOUD_APIGW_SERVICE_ID }}
+          TENCENTCLOUD_MONITOR_NAMESPACE: ${{ vars.TENCENTCLOUD_MONITOR_NAMESPACE }}
+          TENCENTCLOUD_MONITOR_NOTICE_ID: ${{ secrets.TENCENTCLOUD_MONITOR_NOTICE_ID }}
+          TENCENTCLOUD_PRIVATE_DNS_VPC_ID: ${{ secrets.TENCENTCLOUD_PRIVATE_DNS_VPC_ID }}
+          TENCENTCLOUD_CAM_GROUP_ID: ${{ secrets.TENCENTCLOUD_CAM_GROUP_ID }}
+          TENCENTCLOUD_CAM_SUB_UIN: ${{ secrets.TENCENTCLOUD_CAM_SUB_UIN }}
+          TENCENTCLOUD_DBBRAIN_INSTANCE_ID: ${{ secrets.TENCENTCLOUD_DBBRAIN_INSTANCE_ID }}
+          TENCENTCLOUD_DBBRAIN_SESSION_TOKEN: ${{ secrets.TENCENTCLOUD_DBBRAIN_SESSION_TOKEN }}
+          TENCENTCLOUD_TCR_REGISTRY_ID: ${{ secrets.TENCENTCLOUD_TCR_REGISTRY_ID }}
+          TENCENTCLOUD_TCR_REPLICATION_REGION_ID: ${{ vars.TENCENTCLOUD_TCR_REPLICATION_REGION_ID }}
+          TENCENTCLOUD_TCR_REPLICATION_REGION_NAME: ${{ vars.TENCENTCLOUD_TCR_REPLICATION_REGION_NAME }}
+          # High-impact TCR / CLS / Redis targets: unset means skip (§2.2).
+          TENCENTCLOUD_TCR_NAMESPACE: ${{ vars.TENCENTCLOUD_TCR_NAMESPACE }}
+          TENCENTCLOUD_TCR_WEBHOOK_URL: ${{ secrets.TENCENTCLOUD_TCR_WEBHOOK_URL }}
+          TENCENTCLOUD_CLS_ALARM_UIN: ${{ secrets.TENCENTCLOUD_CLS_ALARM_UIN }}
+          TENCENTCLOUD_REDIS_INSTANCE_ID: ${{ secrets.TENCENTCLOUD_REDIS_INSTANCE_ID }}
+          # P0-01/02 flagship targets: billed targets stay out of the default
+          # list and self-skip until their gate is configured (see
+          # docs/integration-env.md §2.2 - keep that table in sync here).
+          TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID: ${{ secrets.TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID }}
+          TENCENTCLOUD_CVM_INSTANCE_TYPE: ${{ vars.TENCENTCLOUD_CVM_INSTANCE_TYPE }}
+          TENCENTCLOUD_RUN_BILLED_TARGETS: ${{ vars.TENCENTCLOUD_RUN_BILLED_TARGETS }}
+          TENCENTCLOUD_CDB_ENGINE_VERSION: ${{ vars.TENCENTCLOUD_CDB_ENGINE_VERSION }}
+          TENCENTCLOUD_CDB_MEMORY: ${{ vars.TENCENTCLOUD_CDB_MEMORY }}
+          TENCENTCLOUD_CDB_VOLUME: ${{ vars.TENCENTCLOUD_CDB_VOLUME }}
+          TENCENTCLOUD_CDB_ZONE: ${{ vars.TENCENTCLOUD_CDB_ZONE }}
+          TENCENTCLOUD_TKE_CLUSTER_VERSION: ${{ vars.TENCENTCLOUD_TKE_CLUSTER_VERSION }}
+        # `tee` the output so the next step can audit it: a target that
+        # self-skips exits green, so a run can be green having executed
+        # nothing. `pipefail` keeps ansible-test's own exit code.
+        run: |-
+          set -o pipefail
+          ansible-test integration ${{ inputs.targets || 'security_group network cmq_queue cls_log_pipeline api_gateway_service apigateway_plugin apigateway_ip_strategy cls_alarm_notice cdb_audit_rule_template tat_command cfs_file_system clb_http cam_user cam_group_membership cos_bucket key_pair kms_key monitor_alarm_policy private_dns vpc subnet' }} --color --python 3.12 --coverage 2>&1 | tee /tmp/integration.log
+      # Guard against "green but nothing ran". Without this, a target whose
+      # gate variable is unset prints "Explain skipped ..." and passes, which
+      # is exactly how the scheduled run reported success for months without
+      # executing a single test. Targets the account genuinely cannot host are
+      # exempt via account_blocked in tests/integration/coverage.yml.
+      - name: Verify every target actually executed
+        if: always() && steps.creds.outputs.available == 'true'
+        run: python scripts/check_integration_ran.py --log /tmp/integration.log
       # Coverage is collected (not gated) on real-cloud runs: the numbers
       # fluctuate with the account's resource state, so they are reported
       # as an artifact for inspection instead of failing the run. The XML
@@ -114,7 +221,10 @@ jobs:
       - name: Audit expired manifest resources
         if: always() && steps.creds.outputs.available == 'true'
         continue-on-error: true
-        run: python scripts/resource_reaper.py --fail-on-expired
+        # --warn-on-empty: an empty manifest means no target registers what it
+        # creates, so "0 expired" is an absence of data rather than a clean
+        # bill of health. Say so instead of looking like a working safeguard.
+        run: python scripts/resource_reaper.py --fail-on-expired --warn-on-empty
       - name: Upload E2E resource manifests
         if: always() && steps.creds.outputs.available == 'true'
         uses: actions/upload-artifact@v7
@@ -124,3 +234,20 @@ jobs:
             ansible_collections/susunola/tencentcloud/tests/output/e2e-resources.jsonl
             ansible_collections/susunola/tencentcloud/tests/output/reaper-plan.json
           if-no-files-found: ignore
+      # Alert a human when a real-cloud run fails: weekly and manual runs are
+      # the only ones that touch billable resources, so red means triage the
+      # same day. No-ops when TENCENTCLOUD_IT_ALERT_WEBHOOK is unconfigured.
+      - name: Alert on integration failure
+        if: failure()
+        env:
+          ALERT_WEBHOOK: ${{ secrets.TENCENTCLOUD_IT_ALERT_WEBHOOK }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "$ALERT_WEBHOOK" ]; then
+            echo "TENCENTCLOUD_IT_ALERT_WEBHOOK not configured - skipping alert"
+            exit 0
+          fi
+          SUMMARY="[${{ github.workflow }}] integration run FAILED (${{ github.ref_name }}) - $RUN_URL"
+          curl -sS -X POST -H 'Content-Type: application/json' \
+            -d "{\"msgtype\":\"text\",\"text\":{\"content\":\"${SUMMARY}\"}}" \
+            "$ALERT_WEBHOOK"

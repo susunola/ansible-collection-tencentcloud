@@ -22,11 +22,13 @@ options:
   encrypt_type: {type: int, choices: [0, 1], description: Encryption type filter.}
   instance_id: {type: str, description: Cloud product instance filter.}
   order: {type: str, choices: [ascending, descending], default: descending, description: Creation-time ordering.}
-  page_size: {type: int, default: 100, description: Results requested per page, from 1 to 100.}
+  page_size: {type: int, default: 100, description: 'Results requested per page, from 1 to 100.'}
   max_pages: {type: int, default: 1000, description: Maximum pages fetched.}
-  retries: {type: int, default: 5, description: Retries for transient API failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

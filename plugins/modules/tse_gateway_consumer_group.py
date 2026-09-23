@@ -16,9 +16,11 @@ options:
   name: {type: str, description: Instance-unique consumer group name.}
   status: {type: str, choices: [Enable, Disable], description: Group status; creation defaults to Enable.}
   description: {type: str, description: Consumer group description.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

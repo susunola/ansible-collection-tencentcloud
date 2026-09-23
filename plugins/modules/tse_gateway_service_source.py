@@ -15,13 +15,15 @@ options:
   source_id: {type: str, description: Service source ID or backing source instance ID.}
   source_name: {type: str, description: Service source name.}
   source_type: {type: str, choices: [TSE-Nacos, TSE-Consul, TSE-PolarisMesh, Customer-Nacos, Customer-Consul, Customer-PolarisMesh, TSF, TKE, EKS, PrivateDNS, Customer-DNS], description: Service source type.}
-  source_info: {type: dict, no_log: true, description: SDK SourceInfo payload. Password and access-token values are write-only.}
+  source_info: {type: dict, description: SDK SourceInfo payload. Password and access-token values are write-only.}
   rotate_credentials: {type: bool, default: false, description: Force an update when write-only credentials in source_info must be rotated.}
   waiter_delay: {type: int, default: 3, description: Reconciliation polling interval.}
   waiter_timeout: {type: int, default: 180, description: Reconciliation timeout.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

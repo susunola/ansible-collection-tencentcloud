@@ -1,2 +1,0 @@
-minor_changes:
-  - Add idempotent CDW ClickHouse backup enablement, metadata and table-data schedule management.

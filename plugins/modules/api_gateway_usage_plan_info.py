@@ -10,32 +10,34 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: api_gateway_usage_plan_info
-short_description: Gather information about Tencent Cloud API Gateway usage plans
-version_added: "1.3.0"
-description: Returns API Gateway usage plans visible in a Tencent Cloud region.
+short_description: Gather information about Tencent Cloud APIGATEWAY usage plans
+version_added: "1.5.0"
+description: Returns APIGATEWAY usage plans visible in a Tencent Cloud region.
 options:
   filters:
-    description: APIGATEWAY usage plan filter names mapped to lists of values.
+    description: APIGATEWAY API filter names mapped to lists of values.
     type: dict
     default: {}
   page_size:
     description: Number of results requested per API call.
     type: int
     default: 100
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all API Gateway usage plans
+- name: List all usage plans
   susunola.tencentcloud.api_gateway_usage_plan_info:
     region: ap-guangzhou
-
 '''
 
 RETURN = r'''
 usage_plans:
-  description: Matching API Gateway usage plans.
+  description: Matching APIGATEWAY usage plans.
   returned: always
   type: list
   elements: dict

@@ -21,7 +21,10 @@ options:
   delay_threshold: {type: int, default: 10, description: Creation-time replica-delay threshold.}
   sticky_replica: {type: bool, default: false, description: Creation-time fixed-replica policy.}
   max_user_connections: {type: int, default: 0, description: Creation-time maximum connections; zero means unlimited.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -10,38 +10,38 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: api_gateway_usage_plan_key_binding_info
-short_description: Gather information about Tencent Cloud API Gateway usage plan key bindings
-version_added: "1.3.0"
-description: Returns API key bindings for an API Gateway usage plan.
+short_description: Gather information about Tencent Cloud APIGATEWAY usage plan secret ids
+version_added: "1.5.0"
+description: Returns APIGATEWAY usage plan secret ids visible in a Tencent Cloud region.
 options:
   usage_plan_id:
-    description: ID of the usage plan whose API key bindings are returned.
+    description: Usage plan id. API field C(UsagePlanId).
     type: str
-    required: true
   page_size:
     description: Number of results requested per API call.
     type: int
     default: 100
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List usage plan key bindings
+- name: List all usage plan secret ids
   susunola.tencentcloud.api_gateway_usage_plan_key_binding_info:
     region: ap-guangzhou
-    usage_plan_id: usagePlan-xxxxxxxx
-
 '''
 
 RETURN = r'''
-bindings:
-  description: Matching API Gateway usage plan key bindings.
+usage_plan_secret_ids:
+  description: Matching APIGATEWAY usage plan secret ids.
   returned: always
   type: list
   elements: dict
 total_count:
-  description: Number of usage plan key bindings reported by the API.
+  description: Number of usage plan secret ids reported by the API.
   returned: always
   type: int
 request_id:
@@ -62,14 +62,15 @@ def build_request(models, usage_plan_id, offset, limit):
     request = models.DescribeUsagePlanSecretIdsRequest()
     request.Offset = offset
     request.Limit = limit
-    request.UsagePlanId = usage_plan_id
+    if usage_plan_id is not None:
+        request.UsagePlanId = usage_plan_id
     return request
 
 
 def run_module():
     argument_spec = tencentcloud_argument_spec()
     argument_spec.update({
-        "usage_plan_id": {"type": "str", "required": True},
+        "usage_plan_id": {"type": "str"},
         "page_size": {"type": "int", "default": 100},
     })
     module = AnsibleModule(
@@ -93,8 +94,8 @@ def run_module():
         lambda response: response.Result.TotalCount if response.Result is not None else None,
     )
     item_set, total_count = paginator.fetch_all()
-    bindings = [serialize_sdk_object(item) for item in item_set]
-    module.exit_json(changed=False, bindings=bindings,
+    usage_plan_secret_ids = [serialize_sdk_object(item) for item in item_set]
+    module.exit_json(changed=False, usage_plan_secret_ids=usage_plan_secret_ids,
                      total_count=total_count, request_id=paginator.request_id)
 
 

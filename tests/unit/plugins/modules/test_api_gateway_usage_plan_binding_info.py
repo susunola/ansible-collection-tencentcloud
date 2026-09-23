@@ -16,7 +16,7 @@ class FakeRequest:
 
 
 class FakeModels:
-    DescribeUsagePlanEnvironmentsRequest = FakeRequest
+    DescribeServiceUsagePlanRequest = FakeRequest
 
 
 def test_build_request_sets_pagination():
@@ -35,7 +35,7 @@ class FakeItem:
 
 class FakeResponse:
     def __init__(self, items, total_count):
-        self.Result = types.SimpleNamespace(EnvironmentList=items, TotalCount=total_count)
+        self.Result = types.SimpleNamespace(ServiceUsagePlanList=items, TotalCount=total_count)
         self.RequestId = "req-page"
 
 
@@ -44,7 +44,7 @@ class FakeClient:
         self._pages = list(pages)
         self.requests = []
 
-    def DescribeUsagePlanEnvironments(self, request):
+    def DescribeServiceUsagePlan(self, request):
         self.requests.append(request)
         return self._pages.pop(0)
 
@@ -101,10 +101,10 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                usage_plan_id="sample", page_size=2)
+                service_id="sample", page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
-    assert [item["Marker"] for item in payload["bindings"]] == ["a", "b", "c"]
+    assert [item["Marker"] for item in payload["service_usage_plans"]] == ["a", "b", "c"]
     assert payload["total_count"] == 3
     assert payload["request_id"] == "req-page"
     assert [request.Offset for request in client.requests] == [0, 2]
@@ -112,7 +112,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
 
 def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
     class FailingClient:
-        def DescribeUsagePlanEnvironments(self, request):
+        def DescribeServiceUsagePlan(self, request):
             raise RuntimeError("api exploded")
 
     def failing_sdk_call(module, function, request):
@@ -133,7 +133,7 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
     # page_size (and ids/filters when declared) before the API call fails.
     fake = FakeModule({
         "region": "ap-guangzhou",
-        "usage_plan_id": "sample",
+        "service_id": "sample",
         "page_size": 2,
     })
     monkeypatch.setattr(api_gateway_usage_plan_binding_info, "AnsibleModule", lambda **kwargs: fake)

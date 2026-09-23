@@ -11,10 +11,18 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 GENERATOR_PATH = REPO_ROOT / "scripts" / "generate_info_modules.py"
+TARGETS_PATH = REPO_ROOT / "scripts" / "info_specs_targets.py"
 
 
 def _load_generator():
     spec = importlib.util.spec_from_file_location("generate_info_modules", GENERATOR_PATH)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _load_targets():
+    spec = importlib.util.spec_from_file_location("info_specs_targets", TARGETS_PATH)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -53,7 +61,10 @@ def test_every_spec_renders_valid_documentation_yaml(generator):
         doc = yaml.safe_load(blocks["DOCUMENTATION"])
         assert doc["module"] == spec["module"]
         assert doc["version_added"] == spec.get("version_added", generator.VERSION_ADDED)
-        assert doc["extends_documentation_fragment"] == "susunola.tencentcloud.tencentcloud"
+        # read-only modules extend the base fragments (credentials/region/
+        # connection); doc_fragments/tencentcloud.py was split into these
+        # and sync_doc_fragments.py keeps the layout canonical.
+        assert doc["extends_documentation_fragment"] == list(generator.BASE_FRAGMENTS)
 
         expected_options = {param["name"] for param in spec["extra_params"]}
         if spec["ids"]:
@@ -194,11 +205,13 @@ def test_auto_specs_are_appended_and_pin_release_version(generator):
     spec.loader.exec_module(module)
     assert module.SPECS_AUTO, "info_specs_auto.py must not be empty"
     by_name = {entry["module"] for entry in generator.SPECS}
+    # 0.8.0/0.9.0 specs are reused verbatim by discovery; later batches pin the
+    # release they were nominated in, and curated read-surface targets pin the
+    # marker scripts/info_specs_targets.py stamps on them.
+    allowed = ("0.8.0", "0.9.0", _load_targets().TARGET_VERSION_ADDED)
     for entry in module.SPECS_AUTO:
         assert entry["module"] in by_name
-        # 0.8.0 specs are reused verbatim by discovery; new batches pin the
-        # release they were nominated in.
-        assert entry["version_added"] in ("0.8.0", "0.9.0")
+        assert entry["version_added"] in allowed, entry["module"]
         rendered = generator.render_module(entry)
         assert 'version_added: "%s"' % entry["version_added"] in rendered
 
@@ -221,6 +234,56 @@ def test_list_module_renders_single_call(generator):
     assert "Paginator" not in rendered
     assert "items = response.Strategies or []" in rendered
     assert "total_count=len(strategies)" in rendered
+
+
+def test_list_test_renders_a_nested_item_holder(generator):
+    """asr returns its list nested (Data.Tasks); the fake must nest too."""
+    spec = _spec(generator, "asr_async_recognition_task_info")
+    assert generator.is_simple_spec(spec)
+    rendered = generator.render_test(spec)
+    assert "self.Data = types.SimpleNamespace(Tasks=items)" in rendered
+
+
+def test_token_specs_are_simple_enough_to_generate(generator):
+    for spec in generator.SPECS:
+        if spec.get("pagination_type") != "token":
+            continue
+        assert generator.is_simple_spec(spec), spec["module"]
+
+
+def test_token_test_drives_the_loop_the_module_renders(generator):
+    """A generated token test must reproduce the loop the module generates.
+
+    Termination is not uniform: alb and cloudaudit end on ``ListOver``, chdfs
+    on ``IsOver``, faceid on the *absence* of ``HasNextPage`` and ams/vm/wav/
+    cloudrc on the token alone. Both renderers read the same helper, so this
+    asserts the fake really sets every field the loop reads -- otherwise the
+    test would pass against a loop the module never walks.
+    """
+    for spec in generator.SPECS:
+        if spec.get("pagination_type") != "token":
+            continue
+        module_src = generator.render_module(spec)
+        loop = module_src.split("while True:", 1)[1].split("break", 1)[0]
+        rendered = generator.render_test(spec)
+        for chunk in loop.split("response.")[1:]:
+            field = chunk.split(" ", 1)[0].split("\n", 1)[0].rstrip()
+            assert field
+            assert "self.%s = " % field in rendered, (spec["module"], field)
+        if "if not response." in loop:
+            # "there is more" flags invert: True keeps the loop going.
+            assert '3, "cursor-2", True)' in rendered
+        else:
+            assert '3, "cursor-2", False)' in rendered
+
+
+def test_token_test_uses_the_spec_filter_fields(generator):
+    """cloudrc filters through ExtendedFilter (Key/Values), not Filter (Name/Values)."""
+    spec = _spec(generator, "cloudrc_resource_info")
+    rendered = generator.render_test(spec)
+    assert "ExtendedFilter = FakeFilter" in rendered
+    assert "[(item.Key, item.Values) for item in request.Filters]" in rendered
+    assert "item.Name" not in rendered
 
 
 def test_simple_spec_tests_are_generated(generator):
@@ -687,6 +750,18 @@ def _resource_doc_blocks(rendered):
     return blocks
 
 
+def _fragment_options(fragment):
+    """Parse the options dict out of a plugins/doc_fragments/<fragment>.py file."""
+    path = REPO_ROOT / "plugins" / "doc_fragments" / ("%s.py" % fragment)
+    text = path.read_text()
+    marker = re.search(r"DOCUMENTATION = [ru]*('''|\"\"\")", text)
+    assert marker, "no DOCUMENTATION block in %s" % path
+    quote = marker.group(1)
+    start = marker.end()
+    end = text.index(quote, start)
+    return yaml.safe_load(text[start:end])["options"]
+
+
 def _resource_arg_keys(rendered):
     region = rendered.split("argument_spec={", 1)[1].split("supports_check_mode", 1)[0]
     return set(re.findall(r'^\s{12}"([a-z_]+)":', region, re.M))
@@ -715,9 +790,12 @@ def test_resource_skeleton_renders_consistent_module(generator, monkeypatch):
     assert "thing" in returned
 
     local_options = {"state", "thing_id", "name", "count", "tags", "config", "secret"}
-    # shared params from base_argument_spec() are documented (validate-modules)
+    # shared params from base_argument_spec() are supplied by the
+    # retry/user_agent/waiter fragments, not copied inline (validate-modules
+    # sees them once fragments merge; sync_doc_fragments.py keeps layout canonical)
     documented = set(doc["options"])
-    assert documented == local_options | {"retries", "waiter_delay", "waiter_timeout", "user_agent"}
+    assert documented == local_options
+    assert doc["extends_documentation_fragment"] == list(generator.RESOURCE_FRAGMENTS)
     assert _resource_arg_keys(rendered) == local_options
     # builders read exactly the resource options (state is a run_module concern)
     assert _resource_builder_params(rendered) == local_options - {"state"}
@@ -737,9 +815,13 @@ def test_resource_skeleton_renders_consistent_module(generator, monkeypatch):
     # no_log option is marked in both places
     assert '"secret": {"type": "str", "no_log": True}' in rendered
     assert "    no_log: true" in blocks["DOCUMENTATION"]
-    # shared-parameter defaults match module_utils/base.py
-    assert doc["options"]["retries"]["default"] == 5
-    assert doc["options"]["user_agent"]["default"] == "ansible-collection.susunola.tencentcloud"
+    # shared-parameter defaults live in the retry/user_agent/waiter fragments
+    # and must mirror module_utils/base.py (validate-modules merges fragments)
+    assert _fragment_options("retry")["retries"]["default"] == 5
+    assert _fragment_options("user_agent")["user_agent"]["default"] == (
+        "ansible-collection.susunola.tencentcloud")
+    assert _fragment_options("waiter")["waiter_delay"]["default"] == 5
+    assert _fragment_options("waiter")["waiter_timeout"]["default"] == 120
 
     # wiring: lazy loader, action wrappers, identify/find, run_module paths
     for needle in (

@@ -29,11 +29,11 @@ options:
   force_replace: {type: bool, default: false, description: "Recreate when immutable size, type or zone differs."}
   force_detach: {type: bool, default: false, description: Allow detaching a disk before replacement or deletion.}
   wait: {type: bool, default: true, description: Wait for attachment and lifecycle operations to settle.}
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall timeout in seconds for state polling., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 

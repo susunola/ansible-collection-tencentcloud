@@ -17,10 +17,12 @@ options:
   gateway_id: {type: str, required: true, description: Gateway ID.}
   model_api_id: {type: str, description: Existing Model API ID.}
   name: {type: str, description: Instance-unique Model API name.}
-  config: {type: dict, description: Model API configuration in SDK field shape, excluding Name and GatewayId.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+  config: {type: dict, description: 'Model API configuration in SDK field shape, excluding Name and GatewayId.'}
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

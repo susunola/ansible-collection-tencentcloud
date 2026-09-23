@@ -119,7 +119,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                auto_scaling_policy_ids=None, filters={}, page_size=2)
+                scaling_policy_ids=None, filters={}, page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["scaling_policies"]] == ["a", "b", "c"]
@@ -151,7 +151,7 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
     # page_size (and ids/filters when declared) before the API call fails.
     fake = FakeModule({
         "region": "ap-guangzhou",
-        "auto_scaling_policy_ids": None,
+        "scaling_policy_ids": None,
         "filters": {},
         "page_size": 2,
     })

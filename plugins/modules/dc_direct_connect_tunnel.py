@@ -32,11 +32,11 @@ options:
   bfd_enabled: {type: int, choices: [0, 1], description: Enable BFD.}
   nqa_enabled: {type: int, choices: [0, 1], description: Enable NQA.}
   tags: {type: dict, description: Creation-time tags.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
-  waiter_delay: {type: int, default: 5, description: Seconds between polling attempts.}
-  waiter_timeout: {type: int, default: 120, description: Overall polling timeout in seconds.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -57,6 +57,7 @@ EXAMPLES = r"""
 RETURN = r"""tunnel: {description: Effective Direct Connect tunnel metadata., type: dict, returned: always}"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import require_immutable_unchanged, fail_from_sdk_error
 
@@ -130,21 +131,31 @@ def delete_request(models, tunnel_id):
 
 
 def find(module, client, models, p):
-    response = module.sdk_call(client.DescribeDirectConnectTunnels, describe_request(models, p))
-    matches = []
-    for item in response.DirectConnectTunnelSet or []:
-        value = item._serialize(allow_none=True)
-        if isinstance(value.get("BgpPeer"), dict):
-            value["BgpPeer"].pop("AuthKey", None)
-        if (p.get("tunnel_id") and value.get("DirectConnectTunnelId") == p["tunnel_id"]) or (
-            not p.get("tunnel_id")
-            and value.get("DirectConnectTunnelName") == p.get("name")
-            and (not p.get("direct_connect_id") or value.get("DirectConnectId") == p["direct_connect_id"])
-        ):
-            matches.append(value)
-    if len(matches) > 1:
-        module.fail_json(msg="Multiple Direct Connect tunnels matched; specify tunnel_id")
-    return matches[0] if matches else None
+    """Return the matching Direct Connect tunnel dict or None.
+
+    The match is re-checked client-side by the shared resolver, so a fuzzy
+    server-side filter can never widen the result and two candidates fail with
+    C(ambiguous=true) plus the candidate list. The BGP auth key is dropped
+    before the record leaves this module.
+    """
+    def describe(filters):
+        response = module.sdk_call(client.DescribeDirectConnectTunnels, describe_request(models, p))
+        items = []
+        for item in resolver.records(response.DirectConnectTunnelSet):
+            if isinstance(item.get("BgpPeer"), dict):
+                item["BgpPeer"].pop("AuthKey", None)
+            items.append(item)
+        return items
+
+    def matches_connection(record):
+        return record.get("DirectConnectId") == p["direct_connect_id"]
+
+    return resolver.resolve_one(
+        module, describe, resource="Direct Connect tunnel",
+        id_value=p.get("tunnel_id"), name_value=p.get("name"),
+        id_keys=("DirectConnectTunnelId",), name_keys=("DirectConnectTunnelName",),
+        extra_match=matches_connection if p.get("direct_connect_id") else None,
+    )
 
 
 def _route_values(v):

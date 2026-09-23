@@ -19,7 +19,7 @@ options:
   datasource_connection_name: {type: str, default: DataLakeCatalog, description: Catalog or data-source connection name.}
   comment: {type: str, description: Table comment.}
   table_type: {type: str, default: TABLE, description: Catalog table type.}
-  table_format: {type: str, description: Table storage format such as HIVE, ICEBERG or LAKEFS.}
+  table_format: {type: str, description: 'Table storage format such as HIVE, ICEBERG or LAKEFS.'}
   data_format: {type: str, choices: [TextFile, CSV, Json, Parquet, ORC, AVRO], default: Parquet, description: Physical data format.}
   location: {type: str, description: COS table location.}
   primary_keys: {type: list, elements: str, description: T-Iceberg primary-key columns.}
@@ -27,7 +27,7 @@ options:
     type: list
     elements: dict
     description: Ordered table columns; required on creation.
-    options:
+    suboptions:
       name: {type: str, required: true, description: Column name.}
       type: {type: str, required: true, description: DLC column type.}
       comment: {type: str, description: Column comment.}
@@ -38,7 +38,7 @@ options:
     type: list
     elements: dict
     description: Ordered partition definition.
-    options:
+    suboptions:
       name: {type: str, required: true, description: Partition column name.}
       type: {type: str, required: true, description: Partition type.}
       comment: {type: str, description: Partition comment.}
@@ -52,9 +52,11 @@ options:
   wait: {type: bool, default: true, description: Wait for DDL task and catalog convergence.}
   waiter_delay: {type: int, default: 5, description: Seconds between polls.}
   waiter_timeout: {type: int, default: 900, description: Overall convergence timeout.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

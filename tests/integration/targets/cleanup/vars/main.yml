@@ -1,0 +1,8 @@
+---
+# Integration inputs materialised by scripts/integration_inputs.py.
+# ansible-test strips every TENCENTCLOUD_* variable from the environment
+# (docs/integration-env.md 2.3), so per-target inputs travel through a file
+# under $HOME instead. A missing file yields {} and the default still applies.
+e2e_inputs: >-
+  {{ lookup('ansible.builtin.file', lookup('env', 'HOME') ~ '/.tencentcloud/e2e_inputs.yml', errors='ignore')
+     | default('', true) | from_yaml | default({}, true) }}

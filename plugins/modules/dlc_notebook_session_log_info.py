@@ -14,11 +14,13 @@ description:
   - A configurable page cap prevents unbounded reads when the service returns repeated full pages.
 options:
   session_id: {type: str, required: true, description: Exact Notebook session ID.}
-  page_size: {type: int, default: 200, description: Log lines requested per page, from 1 to 1000.}
-  max_pages: {type: int, default: 100, description: Maximum number of pages fetched, from 1 to 1000.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+  page_size: {type: int, default: 200, description: 'Log lines requested per page, from 1 to 1000.'}
+  max_pages: {type: int, default: 100, description: 'Maximum number of pages fetched, from 1 to 1000.'}
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

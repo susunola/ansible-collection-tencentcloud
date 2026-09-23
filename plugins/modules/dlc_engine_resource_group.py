@@ -15,7 +15,7 @@ description:
 options:
   state: {type: str, choices: [present, absent], default: present, description: Desired lifecycle state.}
   name: {type: str, required: true, description: Exact resource-group name.}
-  data_engine_name: {type: str, description: Parent standard engine name, required for creation and immutable afterwards.}
+  data_engine_name: {type: str, description: 'Parent standard engine name, required for creation and immutable afterwards.'}
   auto_launch: {type: bool, description: Automatically launch when a task is submitted.}
   auto_pause: {type: bool, description: Automatically pause while idle.}
   auto_pause_time: {type: int, description: Idle minutes before automatic pause.}
@@ -34,9 +34,11 @@ options:
   wait: {type: bool, default: true, description: Wait for lifecycle and field convergence.}
   waiter_delay: {type: int, default: 10, description: Seconds between polls.}
   waiter_timeout: {type: int, default: 1800, description: Overall convergence timeout.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``dlc_model_version`` for append-only inference-model version publication and immutable metadata conflict detection.

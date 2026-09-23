@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``dlc_user_policy`` for exact direct-user policy reconciliation with metadata normalization and precise ID-based detach.

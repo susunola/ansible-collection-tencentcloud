@@ -14,7 +14,10 @@ options:
   instance_id: {type: str, required: true, description: TSE engine instance ID.}
   engine_type: {type: str, required: true, choices: [nacos, zookeeper], description: Registry-engine family.}
   page_size: {type: int, default: 100, description: Number of records requested per API call.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

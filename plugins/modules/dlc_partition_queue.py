@@ -16,13 +16,13 @@ options:
   state: {type: str, choices: [present, absent], default: present, description: Desired lifecycle state.}
   partition_code: {type: str, required: true, description: Parent resource partition code.}
   name: {type: str, required: true, description: Exact queue name and immutable identity.}
-  queue_type: {type: int, choices: [1, 2], description: Queue type, 1 dedicated or 2 shared.}
+  queue_type: {type: int, choices: [1, 2], description: 'Queue type, 1 dedicated or 2 shared.'}
   description: {type: str, description: Queue description.}
   resource_usages:
     type: list
     elements: dict
     description: Exact resource type and usage ranges.
-    options:
+    suboptions:
       resource_type: {type: str, required: true, description: DLC resource package type.}
       billing_item: {type: str, required: true, description: DLC billing item.}
       instance_type: {type: str, description: GPU machine type when applicable.}
@@ -36,9 +36,11 @@ options:
   wait: {type: bool, default: true, description: Wait for lifecycle and field convergence.}
   waiter_delay: {type: int, default: 5, description: Seconds between polls.}
   waiter_timeout: {type: int, default: 300, description: Overall convergence timeout.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

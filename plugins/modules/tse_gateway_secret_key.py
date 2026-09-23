@@ -21,11 +21,11 @@ options:
   generate_type: {type: str, choices: [System, Custom, KMS], description: Credential generation mode.}
   resource_type: {type: str, choices: [Consumer, ModelService], description: Owning resource type.}
   status: {type: str, choices: [Enable, Disable], description: Credential status; creation defaults to Enable.}
-  secret_value: {type: str, no_log: true, description: Custom secret material.}
+  secret_value: {type: str, description: Custom secret material.}
   kms_key_name: {type: str, description: KMS key name.}
   kms_key_version: {type: str, description: KMS key version.}
   description: {type: str, description: Credential description.}
-  provider: {type: str, description: External provider, for example Dify.}
+  provider: {type: str, description: 'External provider, for example Dify.'}
   jwt_credential_config: {type: dict, description: JWT credential configuration passed to the API.}
   oauth_credential_config: {type: dict, description: OAuth credential configuration passed to the API.}
   oidc_credential_config: {type: dict, description: OIDC credential configuration passed to the API.}
@@ -38,9 +38,11 @@ options:
   rotate_secret: {type: bool, default: false, description: Delete and recreate an existing credential.}
   allow_recreate: {type: bool, default: false, description: Required safety guard for destructive rotation.}
   reveal_secret_value: {type: bool, default: false, description: Explicitly return plaintext secret_value.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -13,7 +13,6 @@ sys.modules.setdefault("ansible.module_utils", types.ModuleType("ansible.module_
 sys.modules.setdefault("ansible.module_utils.basic", basic)
 
 from ansible_collections.susunola.tencentcloud.plugins.modules import chdfs_mount_access_groups_info
-from ansible_collections.susunola.tencentcloud.plugins.modules import chdfs_mount_point_info
 
 
 class FakeRequest:
@@ -22,13 +21,6 @@ class FakeRequest:
 
 class FakeModels:
     DescribeMountPointsRequest = FakeRequest
-
-
-def test_mount_point_request_and_filter():
-    request = chdfs_mount_point_info.build_request(FakeModels, "fs-x")
-    assert request.FileSystemId == "fs-x"
-    assert chdfs_mount_point_info._matches({"MountPointId": "mp-x", "MountPointName": "analytics"}, "mp-x", None) is True
-    assert chdfs_mount_point_info._matches({"MountPointId": "mp-x", "MountPointName": "analytics"}, None, "other") is False
 
 
 def test_mount_access_groups_request_sets_file_system_id():

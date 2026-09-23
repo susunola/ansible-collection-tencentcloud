@@ -1,4 +1,7 @@
 ---
+# Region: empty falls back to the module default (TENCENTCLOUD_REGION).
+tc_clb_http_region: ""
+
 # Load balancer settings
 tc_clb_http_lb_name: ""
 tc_clb_http_load_balancer_type: OPEN

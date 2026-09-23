@@ -11,7 +11,10 @@ version_added: "1.4.0"
 description: Reads the complete internet-access whitelist of a Tencent Cloud Managed Grafana instance.
 options:
   instance_id: {description: Grafana instance ID., type: str, required: true}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

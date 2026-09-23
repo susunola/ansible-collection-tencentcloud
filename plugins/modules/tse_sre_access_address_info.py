@@ -15,7 +15,10 @@ options:
   subnet_id: {type: str, description: Subnet used to resolve an intranet endpoint.}
   workload: {type: str, description: Additional engine workload such as pushgateway or polaris-limiter.}
   engine_region: {type: str, description: Deployment region override for the queried endpoint.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -24,7 +27,7 @@ EXAMPLES = r"""
   register: engine_access
 """
 RETURN = r"""
-access_address: {description: Engine client, console, environment, limiter and bandwidth endpoint metadata., type: dict, returned: always}
+access_address: {description: 'Engine client, console, environment, limiter and bandwidth endpoint metadata.', type: dict, returned: always}
 request_id: {description: Tencent Cloud request ID., type: str, returned: always}
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

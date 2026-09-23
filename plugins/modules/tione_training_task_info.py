@@ -20,11 +20,13 @@ options:
   tag_filters: {type: dict, default: {}, description: Tag keys mapped to values or value lists in list mode.}
   order_field: {type: str, choices: [CreateTime, UpdateTime, StartTime], default: UpdateTime, description: List sort field.}
   order: {type: str, choices: [ASC, DESC], default: DESC, description: List sort direction.}
-  page_size: {type: int, default: 50, description: Tasks requested per page, from 1 to 50.}
-  max_pages: {type: int, default: 1000, description: Maximum pages fetched, from 1 to 1000.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+  page_size: {type: int, default: 50, description: 'Tasks requested per page, from 1 to 50.'}
+  max_pages: {type: int, default: 1000, description: 'Maximum pages fetched, from 1 to 1000.'}
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

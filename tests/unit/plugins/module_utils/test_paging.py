@@ -1,9 +1,23 @@
-"""Unit tests for the paginator."""
+"""Unit tests for the shared offset/limit paginator.
+
+``Paginator`` is implemented here in ``plugins/module_utils/paging.py`` because
+generated ``_info`` modules, hand-written modules and the inventory plugins all
+page the same list APIs, and modules may import only ``plugins.module_utils``
+(ansible-test's ``import`` test). ``plugins/plugin_utils/paging.py`` re-exports
+the class for controller-side callers; ``tests/unit/plugins/plugin_utils/test_paging.py``
+guards that import path.
+
+This file covers the paginator behaviour and ``paginate()``, the module-flavoured
+convenience wrapper that stays behind.
+"""
 
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import Paginator
+
+from importlib import import_module
+
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import paging
 
 
 class FakeResponse(object):
@@ -25,7 +39,7 @@ def _paginator_rounds(rounds, page_size=10):
         idx = request["offset"] // page_size
         return FakeResponse(rounds[idx], sum(len(r) for r in rounds))
 
-    return Paginator(page_size, build_request, call_api, lambda r: r.items, lambda r: r.total), calls
+    return paging.Paginator(page_size, build_request, call_api, lambda r: r.items, lambda r: r.total), calls
 
 
 def test_single_page():
@@ -70,8 +84,22 @@ def test_exact_multiple_stops_after_last_full_page():
     assert calls == [0, 3]
 
 
+def test_short_page_without_reported_total_terminates():
+    # An API that never reports TotalCount falls back to the short-page rule.
+    rounds = [[1, 2, 3], [4]]
+
+    def call_api(request):
+        idx = request["offset"] // 3
+        return FakeResponse(rounds[idx], None)
+
+    p = paging.Paginator(3, lambda o, lim: {"offset": o}, call_api, lambda r: r.items, lambda r: r.total)
+    items, total = p.fetch_all()
+    assert items == [1, 2, 3, 4]
+    assert total == 4
+
+
 def test_none_items_are_treated_as_empty():
-    p = Paginator(3, lambda o, lim: {}, lambda r: FakeResponse(None, 0), lambda r: r.items, lambda r: r.total)
+    p = paging.Paginator(3, lambda o, lim: {}, lambda r: FakeResponse(None, 0), lambda r: r.items, lambda r: r.total)
     items, total = p.fetch_all()
     assert items == []
 
@@ -79,7 +107,7 @@ def test_none_items_are_treated_as_empty():
 def test_request_id_tracks_last_response():
     # The paginator records the last response's RequestId; responses without
     # one fall back to None instead of raising.
-    p = Paginator(
+    p = paging.Paginator(
         3,
         lambda o, lim: {},
         lambda r: FakeResponse([1, 2], 2, request_id="req-final"),
@@ -90,15 +118,19 @@ def test_request_id_tracks_last_response():
     assert (items, total) == ([1, 2], 2)
     assert p.request_id == "req-final"
 
-    p = Paginator(3, lambda o, lim: {}, lambda r: object(), lambda r: [], lambda r: None)
+    p = paging.Paginator(3, lambda o, lim: {}, lambda r: object(), lambda r: [], lambda r: None)
     p.fetch_all()
     assert p.request_id is None
 
 
-def test_paginate_wrapper_returns_items_and_total():
-    from ansible_collections.susunola.tencentcloud.plugins.module_utils.paging import paginate
+def test_generated_module_import_path_still_resolves():
+    """The exact import path emitted by the generator must keep working."""
+    module = import_module("ansible_collections.susunola.tencentcloud.plugins.module_utils.paging")
+    assert module.Paginator is paging.Paginator
 
-    items, total = paginate(
+
+def test_paginate_wrapper_returns_items_and_total():
+    items, total = paging.paginate(
         None,
         2,
         lambda offset, limit: {"offset": offset},
@@ -108,3 +140,21 @@ def test_paginate_wrapper_returns_items_and_total():
     )
     assert items == [1, 2]
     assert total == 2
+
+
+def test_paginate_wrapper_walks_every_page():
+    rounds = [[1, 2], [3, 4], [5]]
+
+    def call_api(request):
+        return FakeResponse(rounds[request["offset"] // 2], 5)
+
+    items, total = paging.paginate(
+        None,
+        2,
+        lambda offset, limit: {"offset": offset, "limit": limit},
+        call_api,
+        lambda r: r.items,
+        lambda r: r.total,
+    )
+    assert items == [1, 2, 3, 4, 5]
+    assert total == 5

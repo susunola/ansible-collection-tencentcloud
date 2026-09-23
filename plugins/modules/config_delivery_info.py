@@ -9,7 +9,10 @@ module: config_delivery_info
 short_description: Gather Tencent Cloud Config delivery settings
 version_added: "1.4.0"
 description: Returns the complete observable account-level Config delivery configuration.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -23,7 +26,10 @@ request_id: {description: Request ID returned by the API., returned: always, typ
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import create_client_profile, create_credential, sdk_call, serialize_sdk_object, tencentcloud_argument_spec
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tencentcloud import (
+    create_client_profile, create_credential, sdk_call, serialize_sdk_object,
+    tencentcloud_argument_spec,
+)
 
 
 def build_request(models):

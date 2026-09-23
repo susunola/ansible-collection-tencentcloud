@@ -1,0 +1,15 @@
+minor_changes:
+  - unit tests - every read-only info module now ships a dedicated unit test
+    file, closing the last 36 gaps. ``scripts/generate_info_modules.py`` grew
+    two test templates, one for single-call specs (``pagination_type`` set to
+    ``none``) and one for cursor loops (``pagination_type`` set to ``token``),
+    and the seven modules that are not driven by ``SPECS`` at all received
+    generated skeletons. Write modules were already fully covered, so the
+    collection now has no module without a unit test. CI scope moved from
+    12,828 to 12,961 tests and coverage from 92.58% to 92.65%.
+  - unit tests - the generated token test and the generated module now share a
+    single helper for the loop-termination expression, so the test cannot
+    drift from the loop it exercises. The products genuinely differ here --
+    alb and cloudaudit end on ``ListOver``, chdfs on ``IsOver``, faceid on the
+    absence of ``HasNextPage``, and ams, vm, wav and cloudrc on the cursor
+    alone -- so sharing the expression matters more than it looks.

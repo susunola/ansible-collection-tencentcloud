@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``dlc_data_engine_config`` to reconcile complete DLC engine configuration sets and Spark session resource templates by engine ID or exact name.

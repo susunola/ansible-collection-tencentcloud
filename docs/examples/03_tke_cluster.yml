@@ -1,0 +1,61 @@
+---
+# docs/examples/03_tke_cluster.yml
+#
+# Managed Kubernetes cluster: cluster + one node pool + addons, reconciled
+# idempotently. Node pools and addons are lists, so scaling later is just a
+# matter of editing the list and re-running.
+#
+# Run:  ansible-playbook docs/examples/03_tke_cluster.yml
+#       -e vpc_id=vpc-xxxxxxxx -e subnet_id=subnet-xxxxxxxx
+#
+# state: absent removes addons -> node pools -> cluster in that order.
+- name: Provision a Tencent Cloud TKE cluster
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    region: ap-guangzhou
+    vpc_id: vpc-xxxxxxxx
+    subnet_id: subnet-xxxxxxxx
+
+  roles:
+    - role: susunola.tencentcloud.tc_tke_cluster
+      vars:
+        tc_tke_cluster_state: present
+        tc_tke_cluster_region: "{{ region }}"
+        tc_tke_cluster_name: prod-cluster
+        tc_tke_cluster_vpc_id: "{{ vpc_id }}"
+        tc_tke_cluster_subnet_id: "{{ subnet_id }}"
+        tc_tke_cluster_version: "1.28"
+        tc_tke_cluster_cidr: "172.16.0.0/16"
+        tc_tke_cluster_service_cidr: "172.20.0.0/16"
+        tc_tke_cluster_desc: Production workload cluster
+        tc_tke_cluster_tags:
+          environment: production
+        tc_tke_cluster_node_pools:
+          - name: general
+            launch_configuration_json:
+              InstanceType: S5.MEDIUM2
+              SystemDisk:
+                DiskType: CLOUD_PREMIUM
+                DiskSize: 50
+            autoscaling_group_json:
+              MinSize: 2
+              MaxSize: 6
+              DesiredCapacity: 2
+              VpcSubnetIds:
+                - "{{ subnet_id }}"
+            enable_autoscale: true
+            max_nodes_num: 6
+            min_nodes_num: 2
+            labels:
+              workload: general
+            deletion_protection: true
+        tc_tke_cluster_addons:
+          - name: cbs
+            version: ""
+
+  tasks:
+    - name: Show the cluster result (cluster id and node pool status)
+      ansible.builtin.debug:
+        var: tc_tke_cluster_result

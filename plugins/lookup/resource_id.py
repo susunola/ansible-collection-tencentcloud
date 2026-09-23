@@ -113,7 +113,7 @@ from ansible.errors import AnsibleError
 from ansible.module_utils.common.text.converters import to_native
 from ansible.plugins.lookup import LookupBase
 
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.client import load_profile
+from ansible_collections.susunola.tencentcloud.plugins.plugin_utils.profile import load_profile
 
 try:
     from tencentcloud.common import credential as tc_credential

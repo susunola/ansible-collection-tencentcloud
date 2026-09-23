@@ -58,6 +58,16 @@
   server-side filter names (`name_filters`, `id_filters`) separately;
   `resolver.attach_filters` keeps any scope filter the module already set
   (for example a subnet lookup's `vpc-id`).
+- Product-specific identity that is not an ID, a name or a tag goes through
+  `extra_match` (an ENI's `SubnetId`, a Direct Connect tunnel's
+  `DirectConnectId`). Pass it only when the task actually supplied that
+  scope, otherwise a lookup with no selector would match everything.
+- Paginated `Describe*` calls collect every page inside `describe` and return
+  the full list; the resolver does the matching.
+- Every lookup in a resource family is pinned by one contract test — see
+  `tests/unit/plugins/modules/test_resource_family_resolution.py`. Adding a
+  module to a family means adding it to that table, not writing a new set of
+  near-duplicate tests.
 
 ## Lifecycle semantics
 
@@ -140,6 +150,69 @@
 - Keep the SDK import lazy with a `HAS_*_SDK` flag so `module_utils` stays
   importable without the SDK (unit tests, `ansible-doc`).
 
+## Action plugins
+
+- Action plugins (`plugins/action/`) run on the controller, in the task
+  process, and are the only plugin type that can invoke *another module*:
+  `self._execute_module(module_name=..., module_args=..., task_vars=...)`
+  runs a module and returns its result dict. Reach for one when a task needs
+  a second module call, must choose between modules at runtime, or must run
+  entirely controller-side. See `plugins/action/tc_wait.py`.
+- Declare `_VALID_ARGS` as a `frozenset` of the option names. ansible-core
+  then rejects an unknown task option before `run()` is entered; without it a
+  typo'd option is silently ignored.
+- `super().run(tmp, task_vars)` returns `{}` — it does not seed `changed` or
+  `failed`. Start from it and set both explicitly in every return path.
+- The base class defaults are already right for a controller-side plugin:
+  `TRANSFERS_FILES = False` (nothing is shipped to the target, so
+  `_early_needs_tmp_path()` stays false), `_supports_check_mode = True` and
+  `_supports_async = False` (the base `run()` raises on `async`). Override only
+  to differ from those.
+- Because `_supports_check_mode` is `True`, `run()` is entered in check mode:
+  handle it there — observe once, then report without acting or polling.
+- Fail through `AnsibleActionFail(msg, result=...)`. The `result` payload
+  lands on `excinfo.value.result` and is the only way to attach structured
+  detail to a controller-side failure — there is no `module.fail_json` here.
+- An action plugin resolves no credentials of its own. Either forward `args`
+  into the module it invokes (which applies its own `TENCENTCLOUD_*`
+  fallbacks) or let that module's `env:` fallbacks do the work.
+- Never hand-roll a poll loop: use `plugin_utils.polling.poll_until`, which
+  counts the budget as the delays actually slept.
+- **Action plugins are invisible to `ansible-doc`.** `action` is not in
+  ansible-test's `DOCUMENTABLE_PLUGINS`, and `ansible-doc -t action` is
+  rejected even on 2.21, so the DOCUMENTATION block in the file is read by
+  source reviewers only. The `action-plugin-docs` sanity test therefore
+  *requires a matching `plugins/modules/<name>.py`* to carry user-facing docs.
+  A plugin that cannot be a module — because its whole job is to invoke other
+  modules — takes an `action-plugin-docs` entry in `tests/sanity/ignore-2.*.txt`
+  instead of a stub module, which would otherwise count as a write module in
+  `scripts/audit_info_coverage.py` and distort the module inventory.
+
+## Shared helpers and `plugin_utils`
+
+- Implementations go in `plugins/module_utils/`. `plugins/plugin_utils/`
+  re-exports the ones non-module plugins need; it holds no logic of its own.
+- The direction is enforced, not stylistic. ansible-test's `import` test runs
+  modules and `module_utils` under a restricted loader whose only permitted
+  collection namespace is `plugins.module_utils`, so
+  `from ...plugins.plugin_utils.x import y` **fails the sanity test** for every
+  module that transitively reaches it. Putting an implementation in
+  `plugin_utils` and importing it from `module_utils` breaks the whole tree —
+  `ansible-test sanity --test import` reported 881 errors that way.
+- So the order is `module_utils` (implementations) → `plugin_utils`
+  (re-exports) → non-module plugins (action / lookup / inventory / connection /
+  filter / event_source). The reverse never.
+- Do not re-export module globals (constants, file paths). A re-exported
+  constant is a separate binding: `monkeypatch.setattr(shim, "PROFILE_FILE",
+  ...)` would silently not affect the function that reads it. Re-export
+  callables only, and patch the defining module in tests.
+- A shim is worth a two-line test asserting identity
+  (`plugin_utils.paging.Paginator is module_utils.paging.Paginator`) and that
+  nothing else was re-exported, so it cannot quietly grow into a second
+  implementation. See `tests/unit/plugins/plugin_utils/`.
+- `plugins/plugin_utils/README.md` and `plugins/module_utils/README.md` carry
+  the full file-by-file dependency map.
+
 ## Lookup and inventory plugins
 
 - Lookup (`plugins/lookup/`) and inventory (`plugins/inventory/`) plugins
@@ -151,16 +224,41 @@
   `plugins/inventory/tencentcloud_cvm.py`.
 - Options are parsed from lookup terms with `parse_kv`; the SDK import is
   guarded by `HAS_TENCENTCLOUD_SDK`.
-- Inventory plugins paginate through `module_utils.paging.Paginator` and
+- Inventory plugins paginate through `plugin_utils.paging.Paginator` and
   extend `BaseInventoryPlugin` with `Constructable` and `Cacheable`
   (`plugins/inventory/tencentcloud_clb.py` walks listeners/backends,
   `tencentcloud_sg.py` deduplicates hosts across security groups).
+
+## Filter plugins
+
+- A filter plugin file defines `FilterModule.filters()`; the keys of that dict
+  are the filter names, so the file name need not match any of them —
+  `plugins/filter/tags.py` provides `tag_merge`. ansible-test knows this:
+  `filter` is a `MULTI_FILE_PLUGINS` type, which is why `ansible-doc` lists a
+  filter by the name inside `DOCUMENTATION` and why `validate-modules` is
+  skipped for it.
+- Unlike an action plugin, a filter *is* documentation-visible: `filter` is in
+  `DOCUMENTABLE_PLUGINS`, so `ansible-doc -t filter <fqcn>` has to render the
+  file's inline `DOCUMENTATION`. Write it in the module style — `_input` and
+  `_additional` options for the positional arguments, `positional:` naming
+  them in order, `_value` under `RETURN`. The sanity `ansible-doc` test runs
+  it for every filter and treats output on stderr as a failure.
+- Keep the filter a wrapper. Put the semantics in `module_utils` and import
+  them through `plugin_utils`, so a playbook and a module compute the same
+  thing from the same code. `plugins/filter/tags.py` is the worked example:
+  the whole filter is one call plus a `TypeError` → `AnsibleFilterError`
+  translation.
+- Fail with `AnsibleFilterError` on a bad argument. A filter that returns its
+  input, or an empty value, for input it does not understand loses data
+  silently — and a merge filter makes that loss permanent, because the tags it
+  dropped are gone from the result. Name the filter in the message so the
+  failure is findable in a long play.
 
 ## Connection plugins
 
 - Connection plugins (`plugins/connection/`) run without a shell or module
   runtime, so they must never import Ansible module machinery. Credentials
-  are resolved through `module_utils.client.load_profile` via a thin
+  are resolved through `plugin_utils.profile.load_profile` via a thin
   `_OptionAdapter` that exposes connection options as module-like `params`
   (see `plugins/connection/tat.py`).
 - Never call `super().exec_command/put_file/fetch_file`: the base class
@@ -179,6 +277,15 @@
   exception) on transient API failures so the source stays alive.
 - Each source ships a standalone `__main__` runner for manual testing.
   See `plugins/event_source/cls_topic.py` and `cmq_queue.py`.
+- ansible-core does not load this plugin type (it is declared in
+  `meta/extensions.yml`), so no sanity test renders its doc blocks and
+  `ansible-doc` never sees them. Every source must carry a `DOCUMENTATION`
+  block naming the payload fields a rule may match as
+  `I(event.<key>.<field>)`, plus an `EXAMPLES` block, and
+  `tests/unit/plugins/event_source/test_examples.py` checks both against
+  what the source really emits. Two examples had already drifted into
+  conditions that could never match; update the doc block whenever the
+  emitted payload changes.
 
 ## Module tiers
 
@@ -199,13 +306,25 @@ product-level capability matrix is current.
   `tests/contract/test_sdk_contracts.py`: a `WRITE_MODULE_BUILDERS` entry
   plus a `test_<module>()` function that runs against the real Tencent Cloud
   SDK classes in CI. The contract suite also enforces the coverage
-  threshold (`--cov-fail-under=50`).
+  threshold (`--cov-fail-under`; current gate 80, set in
+  `.github/workflows/ci.yml`).
 
 ## Local collection layout
 
 `ansible-test` requires the checkout to appear below
-`ansible_collections/susunola/tencentcloud`. Clone it into that layout or create a
-temporary copy before running tests.
+`ansible_collections/susunola/tencentcloud`. Clone it into that layout or copy
+the tree there before running tests:
+
+```bash
+mkdir -p /tmp/acol/ansible_collections/susunola/tencentcloud
+rsync -a --exclude .git ./ /tmp/acol/ansible_collections/susunola/tencentcloud/
+cd /tmp/acol/ansible_collections/susunola/tencentcloud && ansible-test sanity --python 3.13
+```
+
+A **symlink** into that layout does not work: `ansible-test` resolves the
+working directory with `os.getcwd()`, so it sees the real path and aborts with
+"must be within the source tree being tested". Copy instead, and re-copy after
+edits.
 
 ## Adding a service
 

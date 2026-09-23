@@ -5,6 +5,15 @@ Every module constructs its service client with the same three pieces:
 credentials, region, and a profile. Centralising the construction guarantees
 identical endpoint/timeout/language behaviour and lets us inject a shared
 User-Agent without each module remembering to do so.
+
+Reading the TCCLI profile is not module-specific — the lookup, inventory and
+connection plugins resolve credentials the same way — but it is needed *here*
+too, because ``create_credential`` and ``resolve_region`` fall back to it. It
+therefore lives in this module and ``plugin_utils.profile`` re-exports it for
+the controller-side plugins; the reverse direction is not allowed by
+ansible-test's ``import`` test. See ``plugins/plugin_utils/README.md``.
+
+Layering: imports nothing else from the collection.
 """
 
 from __future__ import absolute_import, division, print_function
@@ -22,20 +31,10 @@ try:
 except ImportError:
     HAS_TENCENTCLOUD_SDK = False
 
-
 SDK_IMP_ERR = "The tencentcloud-sdk-python package is required on the Ansible controller."
 
-# TCCLI stores its configuration as an INI file whose sections are profile
-# names (``[default]``, ``[prod]``, ...) holding ``secret_id``, ``secret_key``
-# and ``region`` keys.
 DEFAULT_PROFILE_NAME = "default"
 PROFILE_FILE = os.path.join(os.path.expanduser("~"), ".tencentcloud", "default.configure")
-
-
-def require_sdk(module):
-    """Fail the module when the Tencent Cloud SDK is not importable."""
-    if not HAS_TENCENTCLOUD_SDK:
-        module.fail_json(msg=SDK_IMP_ERR)
 
 
 def load_profile(profile=None, path=None):
@@ -45,7 +44,12 @@ def load_profile(profile=None, path=None):
     returns the keys of the requested section, or of ``[default]`` when no
     profile name is given. A missing, unreadable or corrupt file — or a
     missing section — yields an empty dict: profile data is only ever a
-    fallback and must never crash a module that does not rely on it.
+    fallback and must never crash a plugin that does not rely on it.
+
+    :param profile: section name; ``None`` selects ``[default]``.
+    :param path: configuration file override, mainly for tests. When omitted
+        the module-level ``PROFILE_FILE`` is read, so a caller that rebinds
+        that name also redirects this function.
     """
     parser = configparser.ConfigParser()
     try:
@@ -57,6 +61,12 @@ def load_profile(profile=None, path=None):
     if not parser.has_section(section):
         return {}
     return {key: value for key, value in parser.items(section) if value}
+
+
+def require_sdk(module):
+    """Fail the module when the Tencent Cloud SDK is not importable."""
+    if not HAS_TENCENTCLOUD_SDK:
+        module.fail_json(msg=SDK_IMP_ERR)
 
 
 def resolve_region(module, profile=None):

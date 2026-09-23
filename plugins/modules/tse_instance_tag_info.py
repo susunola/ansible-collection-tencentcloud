@@ -12,7 +12,10 @@ version_added: "0.14.0"
 description: Returns the tag associations reported for a TSE registry engine or cloud-native gateway instance.
 options:
   instance_id: {type: str, required: true, description: TSE instance ID.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

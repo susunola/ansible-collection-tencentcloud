@@ -20,7 +20,10 @@ options:
   name: {type: str, required: true, description: Unique strategy name in the cluster.}
   strategy: {type: dict, description: SDK LoadAutoScaleStrategy or TimeAutoScaleStrategy fields.}
   allow_node_termination: {type: bool, default: false, description: Authorize deletion and its associated scaled-node termination.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

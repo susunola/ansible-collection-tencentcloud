@@ -1,9 +1,19 @@
 # -*- coding: utf-8 -*-
-"""Unit tests for TCCLI credential profile support.
+"""Unit tests for the TCCLI profile reader and credential resolution.
 
-Covers ``~/.tencentcloud/default.configure`` parsing and the precedence
-chain (explicit parameter > environment variable > profile section) in
-:mod:`client`, plus the ``profile`` option in both shared argument specs.
+``load_profile`` is defined here in ``module_utils.client`` because modules
+need it and ansible-test's ``import`` test lets module-side code import only
+``plugins.module_utils``. ``plugins/plugin_utils/profile.py`` re-exports it for
+controller-side callers, and that one-directional relationship is asserted
+below so neither side can silently drift.
+
+The fixture patches ``client.PROFILE_FILE`` — the module global the function
+actually reads. Patching the re-exporting module instead would be a no-op,
+which is exactly why ``plugin_utils`` deliberately does not re-export the
+constant: a re-exported constant is a separate binding, not the same object.
+
+Also covers the precedence chain (explicit parameter > environment variable >
+profile section) and the ``profile`` option in both shared argument specs.
 """
 
 from __future__ import absolute_import, division, print_function
@@ -15,6 +25,7 @@ from ansible.module_utils.basic import env_fallback
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import base, client
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import tencentcloud as legacy
+from ansible_collections.susunola.tencentcloud.plugins.plugin_utils import profile as plugin_profile
 
 
 class AnsibleFailJson(Exception):
@@ -75,16 +86,25 @@ def fake_sdk(monkeypatch):
 
 @pytest.fixture
 def profile_path(tmp_path, monkeypatch):
-    """Point client.py at a TCCLI configuration file in a temp directory."""
+    """Point the profile reader at a TCCLI configuration file."""
     path = tmp_path / "default.configure"
     path.write_text(PROFILE_BODY)
     monkeypatch.setattr(client, "PROFILE_FILE", str(path))
     return str(path)
 
 
+def test_plugin_utils_reexports_the_shared_profile_reader():
+    """plugin_utils must re-export client's function, not define a copy."""
+    assert plugin_profile.load_profile is client.load_profile
+
+
+def test_profile_reader_uses_the_tccli_location_by_default():
+    assert client.DEFAULT_PROFILE_NAME == "default"
+    assert client.PROFILE_FILE.endswith(".tencentcloud/default.configure")
+
+
 def test_load_profile_returns_section_keys(profile_path):
-    settings = client.load_profile()
-    assert settings == {
+    assert client.load_profile() == {
         "secret_id": "akid-default",
         "secret_key": "secret-default",
         "region": "ap-guangzhou",
@@ -95,6 +115,13 @@ def test_load_profile_named_section(profile_path):
     settings = client.load_profile("prod")
     assert settings["secret_id"] == "akid-prod"
     assert settings["region"] == "ap-shanghai"
+
+
+def test_load_profile_explicit_path_overrides_module_global(tmp_path, monkeypatch):
+    path = tmp_path / "explicit.configure"
+    path.write_text(PROFILE_BODY)
+    monkeypatch.setattr(client, "PROFILE_FILE", str(tmp_path / "never-read"))
+    assert client.load_profile("prod", path=str(path))["secret_id"] == "akid-prod"
 
 
 def test_load_profile_missing_file_tolerated(tmp_path, monkeypatch):
@@ -112,6 +139,13 @@ def test_load_profile_corrupt_file_tolerated(tmp_path, monkeypatch):
 
 def test_load_profile_unknown_section(profile_path):
     assert client.load_profile("no-such-profile") == {}
+
+
+def test_load_profile_drops_empty_values(tmp_path, monkeypatch):
+    path = tmp_path / "default.configure"
+    path.write_text("[default]\nsecret_id =\nregion = ap-beijing\n")
+    monkeypatch.setattr(client, "PROFILE_FILE", str(path))
+    assert client.load_profile() == {"region": "ap-beijing"}
 
 
 def test_credentials_from_profile(fake_sdk, profile_path):

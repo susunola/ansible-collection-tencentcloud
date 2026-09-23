@@ -20,7 +20,10 @@ options:
   migration_options: {description: Fields accepted by DTS MigrateOption., type: dict, required: true}
   tags: {description: Job tags., type: dict}
   auto_retry_minutes: {description: Automatic retry window in minutes; 0 disables retries., type: int, default: 0}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

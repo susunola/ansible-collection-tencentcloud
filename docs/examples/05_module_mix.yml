@@ -1,0 +1,131 @@
+---
+# docs/examples/05_module_mix.yml
+#
+# Raw-module demonstration of the write -> read -> teardown cycle using the
+# shared resolver semantics instead of a solution role:
+#
+#   1. create a security group and an EIP (idempotent, by name)
+#   2. create an exact-count CVM pool identified by the count_tag app=demo
+#   3. read the pool back with cvm_instance_info (write/read closure)
+#   4. tear everything down again (run with --tags teardown, or flip the
+#      create play's state to absent and run once)
+#
+# The pool semantics (exact_count + count_tag) mean a re-run reconciles the
+# number of running demo instances to exactly what is declared, and teardown
+# removes every instance that carries the tag.
+#
+# The tag_merge filter keeps the tags in one place: demo_tags is declared once
+# and merged with the per-resource extras, and the tags the API reports back
+# (the Key/Value list shape, which ansible.builtin.combine cannot read) are
+# merged into the same mapping.
+#
+# Run:  ansible-playbook docs/examples/05_module_mix.yml
+- name: Module mix - create a tagged demo workload
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    region: ap-guangzhou
+    # Values unique to your account / region (see 01_network_foundation.yml):
+    image_id: img-xxxxxxxx
+    instance_type: S5.MEDIUM2
+    vpc_id: vpc-xxxxxxxx
+    subnet_id: subnet-xxxxxxxx
+    demo_sg_name: demo-sg
+    demo_eip_name: demo-eip
+    # Declared once; every resource below merges its own extras into this.
+    demo_tags:
+      app: demo
+
+  tasks:
+    - name: Create the demo security group (idempotent by name)
+      susunola.tencentcloud.security_group:
+        region: "{{ region }}"
+        state: present
+        name: "{{ demo_sg_name }}"
+        description: Demo workload security group
+        tags: "{{ demo_tags }}"
+      register: sg
+
+    - name: Create the exact-count CVM pool (tagged app=demo)
+      susunola.tencentcloud.cvm_instance:
+        region: "{{ region }}"
+        state: present
+        image_id: "{{ image_id }}"
+        instance_type: "{{ instance_type }}"
+        vpc_id: "{{ vpc_id }}"
+        subnet_id: "{{ subnet_id }}"
+        security_group_ids: ["{{ sg.security_group_id }}"]
+        exact_count: 1
+        count_tag: "{{ demo_tags }}"
+        # A mapping merged with a mapping: the instance keeps app=demo and
+        # gains role=web.
+        tags: "{{ demo_tags | susunola.tencentcloud.tag_merge({'role': 'web'}) }}"
+        internet_charge_type: TRAFFIC_POSTPAID_BY_HOUR
+        internet_max_bandwidth_out: 10
+        public_ip_assigned: true
+        waiter_timeout: 600
+      register: cvm
+
+    - name: Read running demo instances back with the info module
+      susunola.tencentcloud.cvm_instance_info:
+        region: "{{ region }}"
+        filters:
+          instance-state: [RUNNING]
+      register: running
+
+    - name: Show what the create play produced
+      ansible.builtin.debug:
+        msg:
+          - "security group: {{ sg.security_group.SecurityGroupId | default('(name-based, no id echoed)', true) }}"
+          - "instances running now: {{ running.instances | length }}"
+          - "re-run this playbook to reconcile the pool; use --tags teardown to remove it"
+
+    # The API reports tags as a Key/Value list, which no builtin filter can
+    # merge with a mapping. tag_merge reads both shapes, so the tags already
+    # on the instance and the tags this play wants to add end up in one
+    # mapping that can go straight back into a module.
+    - name: Merge the tags the API reported with this play's own tags
+      ansible.builtin.debug:
+        msg: "{{ running.instances[0].Tags | susunola.tencentcloud.tag_merge(demo_tags, {'role': 'web'}) }}"
+      when: running.instances | length > 0
+
+    - name: Allocate a demo EIP
+      susunola.tencentcloud.eip:
+        region: "{{ region }}"
+        state: present
+        name: "{{ demo_eip_name }}"
+        internet_charge_type: TRAFFIC_POSTPAID_BY_HOUR
+        internet_max_bandwidth_out: 10
+        tags: "{{ demo_tags }}"
+
+- name: Module mix - teardown the tagged demo workload
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tags: [teardown]
+  vars:
+    region: ap-guangzhou
+
+  tasks:
+    - name: Drain the CVM pool to zero (removes every app=demo instance)
+      susunola.tencentcloud.cvm_instance:
+        region: "{{ region }}"
+        state: absent
+        count_tag:
+          app: demo
+        exact_count: 0
+        waiter_timeout: 600
+
+    - name: Release the demo security group
+      susunola.tencentcloud.security_group:
+        region: "{{ region }}"
+        state: absent
+        name: demo-sg
+
+    - name: Release the demo EIP (pass -e demo_eip_id=eip-xxxxxxxx to bind)
+      susunola.tencentcloud.eip:
+        region: "{{ region }}"
+        state: absent
+        eip_id: "{{ demo_eip_id | default('') }}"
+      when: demo_eip_id is defined and demo_eip_id | length > 0

@@ -18,17 +18,17 @@ options:
   user_type: {type: str, choices: [ADMIN, COMMON], description: Desired DLC user type; defaults to COMMON only during creation.}
   alias: {type: str, description: Creation-time user alias shorter than 50 characters.}
   principal_type: {type: str, choices: [UserAccount, RoleAccount], default: UserAccount, description: Creation-time DLC principal type.}
-  account_source: {type: str, choices: [TencentAccount, EntraAccount], default: TencentAccount, description: Account source used by query, update and deletion APIs.}
+  account_source: {type: str, choices: [TencentAccount, EntraAccount], default: TencentAccount, description: 'Account source used by query, update and deletion APIs.'}
   initial_policies: {type: list, elements: dict, description: Policies attached during creation; use dedicated policy resources for ongoing reconciliation.}
   initial_work_group_ids: {type: list, elements: int, description: Work groups attached during creation; use C(dlc_work_group_membership) for ongoing reconciliation.}
   allow_delete_bound: {type: bool, default: false, description: Explicitly authorize deleting a user that still has policies or work groups.}
   allow_delete: {type: bool, default: false, description: Explicitly authorize user deletion.}
   wait: {type: bool, default: true, description: Wait for mutation convergence.}
-  waiter_delay: {type: int, default: 5, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 120, description: Overall convergence timeout.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

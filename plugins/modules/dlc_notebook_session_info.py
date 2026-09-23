@@ -18,14 +18,16 @@ options:
     elements: str
     choices: [not_started, starting, idle, busy, shutting_down, error, dead, killed, success]
     description: Return sessions in any of these lifecycle states.
-  keyword: {type: str, description: DLC notebook keyword filter over engine name, session ID or session name.}
+  keyword: {type: str, description: 'DLC notebook keyword filter over engine name, session ID or session name.'}
   engine_generation: {type: str, choices: [supersql, native], description: Filter by engine generation.}
   sort_fields: {type: list, elements: str, description: API-supported session sort fields.}
   ascending: {type: bool, default: false, description: Sort in ascending order.}
-  page_size: {type: int, default: 100, description: Number of sessions requested per page, from 1 to 100.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+  page_size: {type: int, default: 100, description: 'Number of sessions requested per page, from 1 to 100.'}
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

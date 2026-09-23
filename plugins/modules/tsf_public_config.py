@@ -15,9 +15,12 @@ options:
   config_id: {type: str, description: Existing configuration ID; exact name and version are used when omitted.}
   name: {type: str, required: true, description: Configuration name.}
   version: {type: str, required: true, description: Configuration version.}
-  value: {type: str, description: Configuration YAML value, required when creating.}
+  value: {type: str, description: 'Configuration YAML value, required when creating.'}
   version_description: {type: str, description: Configuration version description.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -22,11 +22,11 @@ options:
   grafana_instance_id: {type: str, description: Managed Grafana instance to associate at creation.}
   tags: {type: dict, default: {}, description: Instance tags.}
   instance_attributes: {type: dict, default: {}, description: Additional instance attributes.}
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

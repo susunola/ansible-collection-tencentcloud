@@ -18,9 +18,11 @@ options:
   include_config: {type: bool, default: true, description: Read the model config.json artifact.}
   include_files: {type: bool, default: true, description: Read the model file tree.}
   include_readme: {type: bool, default: true, description: Read model README metadata and Markdown.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -34,7 +36,7 @@ EXAMPLES = r"""
     include_readme: false
 """
 RETURN = r"""
-config: {description: Model config response, including raw ConfigJson and parsed Config when valid JSON., type: dict, returned: when include_config}
+config: {description: 'Model config response, including raw ConfigJson and parsed Config when valid JSON.', type: dict, returned: when include_config}
 files: {description: Model file-tree response., type: dict, returned: when include_files}
 readme: {description: Model README and descriptive metadata., type: dict, returned: when include_readme}
 request_ids: {description: Request IDs keyed by requested artifact., type: dict, returned: always}

@@ -20,9 +20,11 @@ options:
   user_ids: {type: list, elements: str, description: Exact operator user IDs.}
   group_ids: {type: list, elements: str, description: Exact operator group IDs.}
   tags: {type: list, elements: dict, description: SDK ConfigFileGroupTag entries.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

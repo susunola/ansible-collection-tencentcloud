@@ -17,11 +17,13 @@ options:
   database: {type: str, description: Database whose objects are requested; omit to list databases.}
   database_regexp: {type: str, description: Database-name expression in database-list mode.}
   table_regexp: {type: str, description: Table-name expression in object-list mode.}
-  page_size: {type: int, default: 100, description: Items requested per page, from 1 to 100.}
-  max_pages: {type: int, default: 1000, description: Maximum pages fetched, from 1 to 1000.}
-  retries: {type: int, default: 5, description: Retries for transient API failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+  page_size: {type: int, default: 100, description: 'Items requested per page, from 1 to 100.'}
+  max_pages: {type: int, default: 1000, description: 'Maximum pages fetched, from 1 to 1000.'}
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -33,7 +35,7 @@ EXAMPLES = r"""
 """
 RETURN = r"""
 databases: {description: Database metadata., type: list, elements: dict, returned: in database-list mode}
-objects: {description: Tables, views, procedures and functions., type: dict, returned: in object-list mode}
+objects: {description: 'Tables, views, procedures and functions.', type: dict, returned: in object-list mode}
 total_count: {description: Matching database count reported by the API., type: int, returned: in database-list mode}
 truncated: {description: Whether max_pages stopped pagination., type: bool, returned: always}
 request_id: {description: Request ID from the final page., type: str, returned: always}

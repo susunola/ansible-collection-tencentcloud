@@ -11,18 +11,30 @@ import pytest
 from ansible_collections.susunola.tencentcloud.plugins.modules import cmq_topic_info
 
 
+class FakeFilter:
+    pass
+
+
 class FakeRequest:
     pass
 
 
 class FakeModels:
+    Filter = FakeFilter
     DescribeCmqTopicsRequest = FakeRequest
 
 
 def test_build_request_sets_pagination():
-    request = cmq_topic_info.build_request(FakeModels, "sample", 200, 100)
+    request = cmq_topic_info.build_request(FakeModels, "sample", ["sample"], True, {}, 200, 100)
     assert request.Offset == 200
     assert request.Limit == 100
+
+
+def test_build_request_sorts_filters():
+    request = cmq_topic_info.build_request(FakeModels, "sample", ["sample"], True, {"b-name": ["v1"], "a-name": ["v2"]}, 0, 100)
+    assert [(item.Name, item.Values) for item in request.Filters] == [
+        ("a-name", ["v2"]), ("b-name", ["v1"]),
+    ]
 
 
 class FakeItem:
@@ -102,10 +114,10 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                topic_name="sample", page_size=2)
+                topic_name="sample", topic_name_list=["sample"], is_tag_filter=True, filters={}, page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
-    assert [item["Marker"] for item in payload["topics"]] == ["a", "b", "c"]
+    assert [item["Marker"] for item in payload["cmq_topics"]] == ["a", "b", "c"]
     assert payload["total_count"] == 3
     assert payload["request_id"] == "req-page"
     assert [request.Offset for request in client.requests] == [0, 2]
@@ -135,6 +147,9 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
     fake = FakeModule({
         "region": "ap-guangzhou",
         "topic_name": "sample",
+        "topic_name_list": ["sample"],
+        "is_tag_filter": True,
+        "filters": {},
         "page_size": 2,
     })
     monkeypatch.setattr(cmq_topic_info, "AnsibleModule", lambda **kwargs: fake)

@@ -23,11 +23,11 @@ options:
   vpc_id: {description: VPC ID for private API Gateway services., type: str}
   instance_id: {description: Dedicated API Gateway instance ID., type: str}
   tags: {description: Tags applied at creation., type: dict, default: {}}
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

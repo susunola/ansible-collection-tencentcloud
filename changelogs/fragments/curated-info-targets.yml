@@ -1,0 +1,31 @@
+---
+minor_changes:
+  - >-
+    Add 100 new ``_info`` modules covering the multi-resource read surface that
+    discovery systematically missed. ``scripts/discover_info_specs.py`` keeps
+    only the single best-scoring list action per SDK product, so products owning
+    several list APIs (apigateway, ckafka, trabbit) were represented by one
+    ``_info`` module between them. The curated table
+    ``scripts/info_specs_targets.py`` names one read action per write module and
+    lifts ``_info`` coverage from 435 to 535 modules, cutting the read-surface
+    backlog from 128 modules spread over 45 products down to 28 over 18.
+  - >-
+    Add scripts/check_info_targets.py, a CI gate proving the curated
+    read-surface targets actually shipped. It validates both directions,
+    that every target produced a write module, an ``_info`` module and a unit
+    test, and that the set of generated specs carrying the target version marker
+    is exactly the target set. A target whose SDK action stops resolving now
+    fails the build instead of silently shrinking the read surface.
+  - >-
+    Fix three generator defects surfaced by the 100 new modules, long argument
+    lists that exceeded the 160 column limit, a duplicate parameter collision
+    when a request carries its own Offset or Limit fields, and a missing id-list
+    argument when a spec paginates by list and also filters by ids.
+bugfixes:
+  - >-
+    Mark genuinely secret-looking generated options ``no_log``. A read action
+    that takes a credential as a request field, such as ES DescribeIndexList and
+    its Password, previously shipped without ``no_log`` and could echo the value
+    into the task log. Read filters that are merely named like a credential,
+    Keyword or the idempotency ClientToken, are explicitly marked as not secret
+    instead.

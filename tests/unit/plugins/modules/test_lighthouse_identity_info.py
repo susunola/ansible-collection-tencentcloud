@@ -10,8 +10,12 @@ sys.modules.setdefault("ansible.module_utils.basic", basic)
 from ansible_collections.susunola.tencentcloud.plugins.modules.lighthouse_key_pair import describe_request as key_request
 from ansible_collections.susunola.tencentcloud.plugins.modules.lighthouse_snapshot import describe_request as snapshot_request
 
-class FakeRequest: pass
-class FakeFilter: pass
+class FakeRequest:
+    pass
+
+
+class FakeFilter:
+    pass
 class FakeModels:
     DescribeKeyPairsRequest = FakeRequest
     DescribeSnapshotsRequest = FakeRequest

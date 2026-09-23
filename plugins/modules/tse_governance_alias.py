@@ -19,9 +19,11 @@ options:
   comment: {type: str, description: Alias description.}
   waiter_delay: {type: int, default: 2, description: Reconciliation polling interval.}
   waiter_timeout: {type: int, default: 60, description: Reconciliation timeout.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

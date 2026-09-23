@@ -1,19 +1,19 @@
 ---
 - name: Read CAM membership integration inputs
   ansible.builtin.set_fact:
-    cam_group_id: "{{ lookup('env', 'TENCENTCLOUD_CAM_GROUP_ID') | default('', true) }}"
-    cam_sub_uin: "{{ lookup('env', 'TENCENTCLOUD_CAM_SUB_UIN') | default('', true) }}"
+    cam_group_id: "{{ e2e_inputs.TENCENTCLOUD_CAM_GROUP_ID | default(lookup('env', 'TENCENTCLOUD_CAM_GROUP_ID'), true) | default('', true) }}"
+    cam_sub_uin: "{{ e2e_inputs.TENCENTCLOUD_CAM_SUB_UIN | default(lookup('env', 'TENCENTCLOUD_CAM_SUB_UIN'), true) | default('', true) }}"
 
 - name: Explain skipped CAM membership integration
   ansible.builtin.debug:
     msg: Set TENCENTCLOUD_CAM_GROUP_ID and TENCENTCLOUD_CAM_SUB_UIN to run this target.
-  when: not (cam_group_id and cam_sub_uin)
+  when: cam_group_id | length == 0 or cam_sub_uin | length == 0
 
 - name: CAM group membership end-to-end
   module_defaults:
     group/susunola.tencentcloud.all:
       region: "{{ tencentcloud_region }}"
-  when: cam_group_id and cam_sub_uin
+  when: cam_group_id | length > 0 and cam_sub_uin | length > 0
   block:
     - name: Add user to group
       susunola.tencentcloud.cam_group_membership:

@@ -10,41 +10,43 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: as_scheduled_action_info
-short_description: Gather information about Tencent Cloud auto scaling scheduled actions
-version_added: "1.3.0"
-description: Returns auto scaling scheduled actions visible in a Tencent Cloud region.
+short_description: Gather information about Tencent Cloud AUTOSCALING scheduled actions
+version_added: "1.5.0"
+description: Returns AUTOSCALING scheduled actions visible in a Tencent Cloud region.
 options:
   scheduled_action_ids:
     description: Scheduled action IDs to return. Mutually exclusive with O(filters).
     type: list
     elements: str
   filters:
-    description: Auto Scaling scheduled action API filter names mapped to lists of values.
+    description: AUTOSCALING API filter names mapped to lists of values.
     type: dict
     default: {}
   page_size:
     description: Number of results requested per API call.
     type: int
     default: 100
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
-- name: List all auto scaling scheduled actions
+- name: List all scheduled actions
   susunola.tencentcloud.as_scheduled_action_info:
     region: ap-guangzhou
 
-- name: Find scheduled actions by group
+- name: Find scheduled actions by ID
   susunola.tencentcloud.as_scheduled_action_info:
     region: ap-guangzhou
-    filters:
-      auto-scaling-group-id: [asg-xxxxxxxx]
+    scheduled_action_ids: [x-xxxxxxxx]
 '''
 
 RETURN = r'''
 scheduled_actions:
-  description: Matching auto scaling scheduled actions.
+  description: Matching AUTOSCALING scheduled actions.
   returned: always
   type: list
   elements: dict

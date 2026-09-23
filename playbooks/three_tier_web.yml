@@ -14,6 +14,8 @@
     vpc_cidr: 10.0.0.0/16
     web_image_id: img-xxxxxxxx
     web_instance_type: S5.MEDIUM2
+    # Set on the CVM pool; override with -e web_instance_password=...
+    web_instance_password: "ReplaceWith-AStrongPassword1"
   tasks:
     # -- Stage 1: network foundation --------------------------------------
     - name: Create the VPC

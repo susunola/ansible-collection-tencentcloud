@@ -15,7 +15,7 @@ options:
   name: {type: str, description: Cluster name; immutable after creation.}
   region_id: {type: int, description: Numeric region ID; required for creation.}
   zone_id: {type: int, description: Numeric availability-zone ID; required for creation.}
-  login_password: {type: str, no_log: true, description: Initial Flink UI administrator password.}
+  login_password: {type: str, description: Initial Flink UI administrator password.}
   vpc_descriptions: {type: list, elements: dict, description: SDK VPCDescription list; immutable after creation.}
   default_cos_bucket: {type: str, description: Default checkpoint and artifact COS bucket; immutable after creation.}
   cu: {type: int, description: Desired CU count following 12 + 7n.}
@@ -31,9 +31,11 @@ options:
   wait: {type: bool, default: true, description: Wait for running or absent convergence.}
   waiter_delay: {type: int, default: 10, description: Seconds between polls.}
   waiter_timeout: {type: int, default: 1800, description: Overall convergence timeout.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

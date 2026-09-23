@@ -17,8 +17,8 @@ options:
   instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
   username: {type: str, required: true, description: Login username.}
   host: {type: str, default: '%', description: Allowed client host; username and host form the identity.}
-  password: {type: str, no_log: true, description: Plaintext password used for creation or explicit rotation.}
-  encrypted_password: {type: str, no_log: true, description: Encrypted password used instead of plaintext.}
+  password: {type: str, description: Plaintext password used for creation or explicit rotation.}
+  encrypted_password: {type: str, description: Encrypted password used instead of plaintext.}
   rotate_password: {type: bool, default: false, description: Explicitly reset the password; this is an action on every enabled run.}
   description: {type: str, description: Create-only account description.}
   global_privileges: {type: list, elements: str, description: Full desired global privilege set.}
@@ -26,9 +26,11 @@ options:
   wait: {type: bool, default: true, description: Wait for asynchronous account operations.}
   waiter_delay: {type: int, default: 5, description: Seconds between Flow checks.}
   waiter_timeout: {type: int, default: 600, description: Overall Flow timeout.}
-  retries: {type: int, default: 5, description: Retries for transient API failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -47,14 +49,8 @@ account: {description: Effective account metadata., type: dict, returned: always
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tdmysql import _load, account_items, privileges_request, users_request
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_state
-from ansible_collections.susunola.tencentcloud.plugins.modules.tdmysql_account_info import read_accounts
-
-
-def _load():
-    from tencentcloud.tdmysql.v20211122 import models, tdmysql_client
-
-    return models, tdmysql_client
 
 
 def user(models, p):
@@ -110,7 +106,13 @@ def wait_flow(module, client, models, flow_id):
 
 
 def get(module, client, models, p):
-    values, _ = read_accounts(module, client, models, dict(p, include_global_privileges=True))
+    response = module.sdk_call(client.DescribeUsers, users_request(models, p["instance_id"]))
+    values = [item for item in account_items(response) if item.get("UserName") == p["username"] and item.get("Host") == p["host"]]
+    if len(values) > 1:
+        module.fail_json(msg="Multiple TDSQL MySQL accounts matched the exact username and host")
+    if values:
+        privilege_response = module.sdk_call(client.DescribeUserPrivileges, privileges_request(models, p))
+        values[0]["GlobalPrivileges"] = sorted(privilege_response.Privileges or [])
     return values[0] if values else None
 
 

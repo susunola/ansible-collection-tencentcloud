@@ -7,9 +7,35 @@
 #
 # Generated *_info modules are covered too: the generator emits
 # E402-style lazy imports only, which this configuration permits.
+#
+# E501 is selected so the 160-column limit is caught here instead of by
+# the pep8 sanity test in CI - the two must agree, and line-length below
+# is the ansible-test pep8 max-line-length.
 line-length = 160
 target-version = "py310"
 
 [lint]
-select = ["E4", "E7", "E9", "F", "W"]
+select = ["E4", "E501", "E7", "E9", "F", "W"]
 ignore = ["E402"]
+
+# Files whose long lines ansible-test pep8 already accepts: each one has a
+# matching `pep8:E501` entry in tests/sanity/ignore-*.txt. Keep the two lists
+# in sync - fixing a file here means dropping its sanity ignore as well.
+[lint.per-file-ignores]
+"plugins/lookup/resource_id.py" = ["E501"]
+"plugins/modules/dcdb_backup_config.py" = ["E501"]
+"plugins/modules/dlc_data_mask_strategy.py" = ["E501"]
+"plugins/modules/dlc_user.py" = ["E501"]
+"plugins/modules/dlc_work_group.py" = ["E501"]
+"plugins/modules/oceanus_job_config.py" = ["E501"]
+"plugins/modules/private_dns_zone.py" = ["E501"]
+"plugins/modules/tione_dataset.py" = ["E501"]
+"plugins/modules/tione_training_model_version_info.py" = ["E501"]
+"plugins/modules/tse_cloud_native_gateway.py" = ["E501"]
+"plugins/modules/tse_gateway_service_source.py" = ["E501"]
+"plugins/modules/tse_governance_instance.py" = ["E501"]
+"plugins/modules/tsf_application_config.py" = ["E501"]
+"plugins/modules/tsf_container_deployment_group.py" = ["E501"]
+"scripts/check_module_tiers.py" = ["E501"]
+"tests/unit/plugins/modules/test_ssm_product_secret.py" = ["E501"]
+"tests/unit/scripts/test_solution_role_governance.py" = ["E501"]

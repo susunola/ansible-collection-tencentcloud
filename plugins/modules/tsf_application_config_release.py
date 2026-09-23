@@ -15,7 +15,10 @@ options:
   config_id: {type: str, required: true, description: Configuration version ID.}
   group_id: {type: str, required: true, description: Target deployment group ID.}
   release_description: {type: str, description: Release description.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

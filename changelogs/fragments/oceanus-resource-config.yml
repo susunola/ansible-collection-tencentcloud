@@ -1,2 +1,0 @@
-minor_changes:
-  - Add immutable Oceanus resource configuration versions with content-aware publication and referenced-version deletion protection.

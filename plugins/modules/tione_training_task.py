@@ -28,10 +28,10 @@ options:
   image_info: {type: dict, description: ImageInfo-compatible custom image.}
   code_package_path: {type: dict, description: CosPathInfo-compatible code package.}
   start_cmd_info: {type: dict, description: StartCmdInfo-compatible command.}
-  encoded_start_cmd_info: {type: dict, description: EncodedStartCmdInfo-compatible command, taking precedence over start_cmd_info.}
+  encoded_start_cmd_info: {type: dict, description: 'EncodedStartCmdInfo-compatible command, taking precedence over start_cmd_info.'}
   training_mode: {type: str, description: Distributed training mode.}
-  data_configs: {type: list, elements: dict, description: DataConfig-compatible input mounts, at most ten.}
-  data_source: {type: str, description: Data source type such as DATASET, COS, CFS, CFSTurbo, HDFS or GooseFSx.}
+  data_configs: {type: list, elements: dict, description: 'DataConfig-compatible input mounts, at most ten.'}
+  data_source: {type: str, description: 'Data source type such as DATASET, COS, CFS, CFSTurbo, HDFS or GooseFSx.'}
   vpc_id: {type: str, description: VPC ID.}
   subnet_id: {type: str, description: Subnet ID.}
   output: {type: dict, description: CosPathInfo-compatible training output.}
@@ -50,9 +50,11 @@ options:
   wait: {type: bool, default: true, description: Wait for lifecycle convergence.}
   waiter_delay: {type: int, default: 10, description: Seconds between state checks.}
   waiter_timeout: {type: int, default: 7200, description: Overall convergence timeout.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

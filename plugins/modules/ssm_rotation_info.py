@@ -13,9 +13,11 @@ description: Returns current rotation configuration and optionally the visible r
 options:
   secret_name: {type: str, required: true, description: Secret name.}
   include_history: {type: bool, default: true, description: Include recent rotation version IDs and account metadata.}
-  retries: {type: int, default: 5, description: Retries for transient API failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

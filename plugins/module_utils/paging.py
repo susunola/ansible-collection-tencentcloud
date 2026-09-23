@@ -11,6 +11,15 @@ The existing discovery modules each hand-rolled this loop, which duplicated
 the same two latent bugs: ``total_count`` was overwritten every round, and an
 empty first batch relied on a short-circuit to stop. This module replaces all
 of that with a single tested loop.
+
+The loop is pure Python over three callables and has no ``AnsibleModule``
+dependency. It lives in ``module_utils`` rather than ``plugin_utils`` because
+the generated ``_info`` modules — the largest consumer — are module-side, and
+ansible-test's ``import`` test allows module-side code to import only
+``plugins.module_utils``. ``plugin_utils.paging`` re-exports it for the
+controller-side inventory plugins. See ``plugins/plugin_utils/README.md``.
+
+Layering: imports nothing else from the collection.
 """
 
 from __future__ import absolute_import, division, print_function
@@ -34,8 +43,8 @@ class Paginator(object):
         self.call_api = call_api
         self.items_of = items_of
         self.total_of = total_of
-        # RequestId of the last API response, set by fetch_all(). Modules can
-        # surface it to the caller for cross-referencing cloud audit logs.
+        # RequestId of the last API response, set by fetch_all(). Callers can
+        # surface it to the user for cross-referencing cloud audit logs.
         self.request_id = None
 
     def fetch_all(self):
@@ -63,6 +72,9 @@ class Paginator(object):
                 break
             offset += len(batch)
         return items, total_count if total_count is not None else len(items)
+
+
+__all__ = ["Paginator", "paginate"]
 
 
 def paginate(module, page_size, build_request, call_api, items_of, total_of):

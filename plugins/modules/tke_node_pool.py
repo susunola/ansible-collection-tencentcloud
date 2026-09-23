@@ -119,30 +119,15 @@ options:
       - Only applied at creation.
     type: dict
     default: {}
-  retries:
-    description: Number of retries for transient SDK failures.
-    type: int
-    default: 5
-  waiter_delay:
-    description: Seconds to wait between state-polling attempts.
-    type: int
-    default: 5
-  waiter_timeout:
-    description: Overall timeout in seconds for state polling.
-    type: int
-    default: 120
-  user_agent:
-    description:
-      - Value appended to the SDK User-Agent header so API usage can be
-        attributed to this collection.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-tke) package on the controller.
   - The node pool is considered up to date as soon as the create API
     returns; node provisioning continues asynchronously inside the
     cluster.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
@@ -201,6 +186,7 @@ node_pool:
         Value: workers
 '''
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
@@ -218,14 +204,24 @@ def build_describe_request(models, cluster_id):
 
 
 def find_node_pool(module, client, models, cluster_id, name):
-    """Return the matching node pool dict or None."""
-    request = build_describe_request(models, cluster_id)
-    response = module.sdk_call(client.DescribeClusterNodePools, request)
-    for item in response.NodePoolSet or []:
-        current = item._serialize(allow_none=True)
-        if current.get("Name") == name:
-            return current
-    return None
+    """Return the matching node pool dict or None.
+
+    The API has no server-side name filter for node pools, so every pool of
+    the cluster is listed and resolved client-side: an exact name wins, a
+    lone fuzzy candidate is accepted, and two same-named pools fail with
+    C(ambiguous=true) instead of silently managing whichever came first.
+    """
+    def describe(filters):
+        request = build_describe_request(models, cluster_id)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeClusterNodePools, request)
+        return resolver.records(response.NodePoolSet)
+
+    return resolver.resolve_one(
+        module, describe, resource="TKE node pool",
+        id_value=None, name_value=name,
+        id_keys=("NodePoolId",), name_keys=("Name",),
+    )
 
 
 def build_create_request(models, params):

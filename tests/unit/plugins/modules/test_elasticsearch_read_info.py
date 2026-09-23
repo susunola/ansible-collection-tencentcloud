@@ -10,7 +10,8 @@ sys.modules.setdefault("ansible.module_utils.basic", basic)
 from ansible_collections.susunola.tencentcloud.plugins.modules.elasticsearch_index import describe_request as index_request
 from ansible_collections.susunola.tencentcloud.plugins.modules.elasticsearch_snapshot import describe_request as snapshot_request
 
-class FakeRequest: pass
+class FakeRequest:
+    pass
 class FakeModels:
     DescribeIndexMetaRequest = FakeRequest
     DescribeClusterSnapshotRequest = FakeRequest

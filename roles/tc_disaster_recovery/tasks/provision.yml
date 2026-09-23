@@ -1,7 +1,7 @@
 ---
 - name: Create or update the golden image from the source instance
   susunola.tencentcloud.cvm_image:
-    region: "{{ tc_dr_region | default(omit) }}"
+    region: "{{ tc_dr_region | default(omit, true) }}"
     state: present
     image_id: "{{ tc_dr_image_id | default(omit, true) }}"
     image_name: "{{ tc_dr_image_name | default(omit, true) }}"
@@ -19,7 +19,7 @@
 
 - name: Configure COS cross-region bucket replication
   susunola.tencentcloud.cos_bucket_replication:
-    region: "{{ tc_dr_region | default(omit) }}"
+    region: "{{ tc_dr_region | default(omit, true) }}"
     state: present
     name: "{{ tc_dr_bucket_name }}"
     appid: "{{ tc_dr_bucket_appid | default(omit, true) }}"
@@ -35,7 +35,7 @@
 
 - name: Create the standby CLB in the DR region
   susunola.tencentcloud.clb_load_balancer:
-    region: "{{ tc_dr_dr_region | default(omit) }}"
+    region: "{{ tc_dr_dr_region | default(omit, true) }}"
     state: present
     load_balancer_id: "{{ tc_dr_clb_id | default(omit, true) }}"
     name: "{{ tc_dr_clb_name | default(omit, true) }}"
@@ -52,7 +52,7 @@
 
 - name: Create the standby listener in the DR region
   susunola.tencentcloud.clb_listener:
-    region: "{{ tc_dr_dr_region | default(omit) }}"
+    region: "{{ tc_dr_dr_region | default(omit, true) }}"
     state: present
     load_balancer_id: "{{ tc_dr_clb.load_balancer.LoadBalancerId }}"
     protocol: "{{ tc_dr_listener_protocol }}"
@@ -71,7 +71,7 @@
 
 - name: Reconcile the standby backend target set
   susunola.tencentcloud.clb_listener_target:
-    region: "{{ tc_dr_dr_region | default(omit) }}"
+    region: "{{ tc_dr_dr_region | default(omit, true) }}"
     state: present
     load_balancer_id: "{{ tc_dr_clb.load_balancer.LoadBalancerId }}"
     listener_id: "{{ tc_dr_listener.listener.ListenerId }}"
@@ -86,12 +86,18 @@
     - tc_dr_listener.listener is defined
     - tc_dr_targets | length > 0
 
+# Published as a fact, not just printed: docs/examples/04_disaster_recovery.yml
+# and any chained playbook read these ids back.
+- name: Publish the DR artifact result
+  ansible.builtin.set_fact:
+    tc_disaster_recovery_result:
+      state: "{{ tc_dr_state }}"
+      image: "{{ (tc_dr_image.image | default({}, true)).ImageId | default('skipped', true) }}"
+      replication: "{{ tc_dr_replication.replication | default('skipped', true) }}"
+      dr_lb: "{{ (tc_dr_clb.load_balancer | default({}, true)).LoadBalancerId | default('skipped', true) }}"
+      dr_vip: "{{ tc_dr_clb.load_balancer.LoadBalancerVips | default([], true) }}"
+      targets_changed: "{{ tc_dr_targets_result.changed | default(false) }}"
+
 - name: Report the DR artifacts
   ansible.builtin.debug:
-    msg:
-      - "state={{ tc_dr_state }}"
-      - "image={{ (tc_dr_image.image | default({}, true)).ImageId | default('skipped', true) }}"
-      - "replication={{ tc_dr_replication.replication | default('skipped', true) }}"
-      - "dr_lb={{ (tc_dr_clb.load_balancer | default({}, true)).LoadBalancerId | default('skipped', true) }}"
-      - "dr_vip={{ tc_dr_clb.load_balancer.LoadBalancerVips | default([], true) }}"
-      - "targets_changed={{ tc_dr_targets_result.changed | default(false) }}"
+    var: tc_disaster_recovery_result

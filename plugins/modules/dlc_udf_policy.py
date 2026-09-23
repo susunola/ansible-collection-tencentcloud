@@ -21,17 +21,19 @@ options:
     elements: dict
     required: true
     description: Complete desired UDF policy set.
-    options:
-      accesses: {type: list, elements: str, required: true, description: Access types such as select, alter or drop.}
+    suboptions:
+      accesses: {type: list, elements: str, required: true, description: 'Access types such as select, alter or drop.'}
       users: {type: list, elements: str, default: [], description: Exact user identity set.}
       groups: {type: list, elements: str, default: [], description: Exact work-group identity set.}
   allow_empty: {type: bool, default: false, description: Explicitly authorize clearing every UDF policy entry.}
   wait: {type: bool, default: true, description: Wait for readable policy convergence.}
   waiter_delay: {type: int, default: 3, description: Seconds between polls.}
   waiter_timeout: {type: int, default: 180, description: Overall convergence timeout.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

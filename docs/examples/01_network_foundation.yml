@@ -1,0 +1,52 @@
+---
+# docs/examples/01_network_foundation.yml
+#
+# Reusable multi-AZ network foundation: VPC, one subnet per AZ, route tables,
+# NAT gateways, security groups with exact-set rules.
+#
+# Run:  ansible-playbook docs/examples/01_network_foundation.yml
+# Credentials and region follow the collection defaults (TENCENTCLOUD_*
+# environment variables, or ~/.tencentcloud/default.configure).
+#
+# Re-running the playbook is safe: every resource is managed idempotently and
+# the VPC/subnet set is reconciled to exactly what is declared below.
+- name: Provision a Tencent Cloud network foundation
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    # Override per environment; module defaults apply when unset.
+    region: ap-guangzhou
+
+  roles:
+    - role: susunola.tencentcloud.tc_vpc_foundation
+      vars:
+        tc_vpc_foundation_region: "{{ region }}"
+        tc_vpc_foundation_name: production
+        tc_vpc_foundation_cidr_block: 10.20.0.0/16
+        tc_vpc_foundation_tags:
+          environment: production
+          owner: platform
+        tc_vpc_foundation_subnets:
+          - {name: app-a, cidr_block: 10.20.1.0/24, zone: ap-guangzhou-3}
+          - {name: app-b, cidr_block: 10.20.2.0/24, zone: ap-guangzhou-4}
+          - {name: data-a, cidr_block: 10.20.3.0/24, zone: ap-guangzhou-3}
+        tc_vpc_foundation_security_groups:
+          - name: application
+            description: Application tier access rules
+            rules:
+              - {direction: ingress, protocol: TCP, port: '443', cidr_block: 10.20.0.0/16}
+              - {direction: ingress, protocol: TCP, port: '22', cidr_block: 0.0.0.0/0}
+          - name: database
+            description: Database tier, only reachable from the app tier
+            rules:
+              - {direction: ingress, protocol: TCP, port: '3306', cidr_block: 10.20.1.0/24}
+              - {direction: ingress, protocol: TCP, port: '3306', cidr_block: 10.20.2.0/24}
+
+  tasks:
+    # The role publishes the created resource ids on localhost; the next
+    # example (02_web_stack.yml) can consume them by running against the
+    # same inventory, or copy the printed ids into its variables.
+    - name: Show the created foundation ids
+      ansible.builtin.debug:
+        var: tc_vpc_foundation_result

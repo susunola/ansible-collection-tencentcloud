@@ -23,11 +23,11 @@ options:
   health_check: {type: dict, description: SDK HealthCheckConfig payload.}
   sticky_session: {type: dict, description: SDK StickySessionConfig payload.}
   tags: {type: dict, description: Creation-time tags.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
-  waiter_delay: {type: int, default: 5, description: Seconds between polling attempts.}
-  waiter_timeout: {type: int, default: 120, description: Overall polling timeout in seconds.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

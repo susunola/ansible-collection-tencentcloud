@@ -128,30 +128,15 @@ options:
         description: HTTP version of the probe.
         type: str
         choices: [HTTP/1.0, HTTP/1.1]
-  retries:
-    description: Number of retries for transient SDK failures.
-    type: int
-    default: 5
-  waiter_delay:
-    description: Seconds to wait between state-polling attempts.
-    type: int
-    default: 5
-  waiter_timeout:
-    description: Overall timeout in seconds for state polling.
-    type: int
-    default: 120
-  user_agent:
-    description:
-      - Value appended to the SDK User-Agent header so API usage can be
-        attributed to this collection.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-clb) package on the controller.
   - Rule creation is asynchronous; use
     M(susunola.tencentcloud.clb_load_balancer) or the V(DescribeTaskStatus)
     API to wait for the operation to complete before changing targets.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
@@ -205,6 +190,7 @@ rule:
     SessionExpireTime: 300
 '''
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
@@ -243,22 +229,31 @@ def _first(collection):
 
 
 def find_rule(module, client, models, load_balancer_id, listener_id, location_id, domain, url):
-    """Return the matching forwarding rule dict or None."""
-    request = build_describe_request(models, load_balancer_id, listener_id)
-    response = module.sdk_call(client.DescribeListeners, request)
-    listener = _first(response.Listeners or [])
-    if listener is None:
-        return None
-    rules = listener.Rules or []
-    for rule in rules:
-        current = rule._serialize(allow_none=True)
-        if location_id:
-            if current.get("LocationId") == location_id:
-                return current
-            continue
-        if current.get("Domain") == domain and current.get("Url") == url:
-            return current
-    return None
+    """Return the matching forwarding rule dict or None.
+
+    A rule is addressed by ``LocationId`` or by its endpoint (domain + url);
+    the endpoint goes through the resolver's ``extra_match`` so two rules
+    with the same domain and url fail with C(ambiguous=true) plus the
+    candidate list instead of managing the first row.
+    """
+    def describe(filters):
+        request = build_describe_request(models, load_balancer_id, listener_id)
+        resolver.attach_filters(request, models, filters)
+        response = module.sdk_call(client.DescribeListeners, request)
+        listener = _first(response.Listeners or [])
+        if listener is None:
+            return []
+        return resolver.records(listener.Rules)
+
+    def matches_endpoint(record):
+        return record.get("Domain") == domain and record.get("Url") == url
+
+    return resolver.resolve_one(
+        module, describe, resource="forwarding rule",
+        id_value=location_id,
+        id_keys=("LocationId",), name_keys=("Url",),
+        extra_match=None if location_id else matches_endpoint,
+    )
 
 
 def build_health_check(models, health_check):

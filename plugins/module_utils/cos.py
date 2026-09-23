@@ -37,6 +37,16 @@ COS_SDK_IMP_ERR = (
     "for cos_* modules."
 )
 
+
+class CosSDKMissing(ImportError):
+    """Raised when the ``qcloud_cos`` SDK is needed but not importable.
+
+    A dedicated class (rather than a bare ``ImportError``) lets a caller that
+    has no ``AnsibleModule`` - the inventory layer - distinguish "the SDK is
+    missing" from an unrelated import failure inside the SDK itself.
+    """
+
+
 # COS error codes meaning the addressed resource does not exist. For a
 # delete, or for reading optional sub-resources such as the tag set, these
 # are expected and must not fail the module.
@@ -56,37 +66,78 @@ def require_cos_sdk(module):
         module.fail_json(msg=COS_SDK_IMP_ERR)
 
 
+def build_cos_client(region, secret_id, secret_key, token=None, timeout=60,
+                     endpoint=None, user_agent=None):
+    """Build a ``CosS3Client`` from plain values, without an ``AnsibleModule``.
+
+    Module-free entry point shared by :func:`create_cos_client` and by
+    controller-side callers that have no ``AnsibleModule`` to read parameters
+    from (the unified inventory plugin builds one client per region). It
+    resolves nothing: the caller has already applied the parameter,
+    environment and profile fallbacks.
+
+    Raises :class:`CosSDKMissing` when the SDK is not importable, so the
+    caller can turn it into its own error type.
+    """
+    if not HAS_COS_SDK:
+        raise CosSDKMissing(COS_SDK_IMP_ERR)
+    config = CosConfig(
+        Region=region,
+        SecretId=secret_id,
+        SecretKey=secret_key,
+        Token=token,
+        Timeout=timeout or 60,
+        Endpoint=endpoint,
+        UA=user_agent,
+    )
+    return CosS3Client(config)
+
+
 def create_cos_client(module):
     """Build a ``CosS3Client`` from the module's standard parameters.
 
-    Supports secret id/key plus an optional temporary token. When
-    ``role_arn`` is set, the long-lived credentials are first exchanged for
-    temporary ones via the STS ``AssumeRole`` API (through
+    Supports secret id/key plus an optional temporary token. Values still
+    missing after the parameter and environment fallbacks come from the
+    selected TCCLI profile section, exactly like :func:`client.create_credential`
+    does for API 3.0 services - without that step every ``cos_*`` module fails
+    under ``ansible-test integration``, which strips the environment and
+    leaves the profile file as the only source.
+
+    When ``role_arn`` is set, the long-lived credentials are first exchanged
+    for temporary ones via the STS ``AssumeRole`` API (through
     :func:`client.maybe_assume_role`), which additionally requires the
     ``tencentcloud-sdk-python-sts`` package.
     """
     require_cos_sdk(module)
     secret_id = module.params.get("secret_id")
     secret_key = module.params.get("secret_key")
+    profile = {}
+    if not secret_id or not secret_key:
+        profile = api3_client.load_profile(module.params.get("profile"))
+        secret_id = secret_id or profile.get("secret_id")
+        secret_key = secret_key or profile.get("secret_key")
     if not secret_id or not secret_key:
         module.fail_json(
-            msg="Set secret_id and secret_key, or their TENCENTCLOUD_* environment variables."
+            msg="Set secret_id and secret_key, their TENCENTCLOUD_* "
+                "environment variables, or the secret_id/secret_key keys of "
+                "a profile in ~/.tencentcloud/default.configure."
         )
+    if not module.params.get("region"):
+        api3_client.resolve_region(module, profile or None)
     token = module.params.get("token")
     if module.params.get("role_arn"):
         secret_id, secret_key, token = api3_client.maybe_assume_role(
             module, secret_id, secret_key, token
         )
-    config = CosConfig(
-        Region=module.params["region"],
-        SecretId=secret_id,
-        SecretKey=secret_key,
-        Token=token,
-        Timeout=module.params.get("timeout") or 60,
-        Endpoint=module.params.get("endpoint"),
-        UA=module.params.get("user_agent"),
+    return build_cos_client(
+        module.params["region"],
+        secret_id,
+        secret_key,
+        token,
+        timeout=module.params.get("timeout"),
+        endpoint=module.params.get("endpoint"),
+        user_agent=module.params.get("user_agent"),
     )
-    return CosS3Client(config)
 
 
 def _accessor(exc, name):
@@ -158,12 +209,30 @@ def _load_sts():
     return models, sts_client
 
 
-def fetch_appid(module):
-    """Resolve the account AppId via the STS ``GetCallerIdentity`` API.
+def _load_cam():
+    from tencentcloud.cam.v20190116 import models, cam_client
+    return models, cam_client
 
-    The ``AccountId`` returned by GetCallerIdentity is the root account's
-    AppId, which COS uses as the bucket name suffix.
+
+def fetch_appid(module):
+    """Resolve the account AppId used as the COS bucket-name suffix.
+
+    CAM ``GetUserAppId`` is authoritative: it returns the AppId itself, which
+    is *not* the same number as the account UIN. STS ``GetCallerIdentity``
+    reports ``AccountId`` (the root-account UIN) and is only used as a
+    fallback, because on accounts where the two differ it yields a bucket
+    name the account does not own and every COS call answers AccessDenied.
     """
+    try:
+        models, cam_client = _load_cam()
+        cam = module.create_client(cam_client.CamClient, "cam.tencentcloudapi.com")
+        response = module.sdk_call(cam.GetUserAppId, models.GetUserAppIdRequest())
+        if getattr(response, "AppId", None):
+            return str(response.AppId)
+    except Exception:
+        # No CAM permission, no CAM SDK, or an account shape CAM refuses:
+        # fall through to the STS-derived value.
+        pass
     models, sts_client = _load_sts()
     sts = module.create_client(sts_client.StsClient, "sts.tencentcloudapi.com")
     response = module.sdk_call(sts.GetCallerIdentity, models.GetCallerIdentityRequest())
@@ -174,8 +243,8 @@ def resolve_appid(module):
     """Return the account AppId used in COS bucket names.
 
     Prefers the module's ``appid`` parameter; when it is not set the AppId is
-    resolved via STS, which additionally requires the
-    ``tencentcloud-sdk-python-sts`` package.
+    resolved through CAM ``GetUserAppId`` (falling back to STS), which
+    additionally requires the ``tencentcloud-sdk-python-cam`` package.
     """
     appid = module.params.get("appid")
     if appid:
@@ -231,20 +300,34 @@ def describe_bucket(client, full_name, short_name=None):
     }
 
 
-def list_buckets(client, region=None):
-    """Return all buckets owned by the account as plain dicts."""
+def list_bucket_entries(client, region=None):
+    """Return the raw bucket entries of ``list_buckets``.
+
+    :func:`list_buckets` projects three fields because that is what
+    ``cos_bucket_info`` returns; a caller that wants the rest of the entry
+    (``Type``, ``BucketType``, ``AZType``, …) reads it here instead.
+
+    ``region`` is not a cosmetic argument: the COS service call is
+    region-scoped, so ``Region="ap-singapore"`` returns only the buckets
+    whose ``Location`` is that region (verified live: 28 of 84 on one
+    account), not the whole account.
+    """
     kwargs = {}
     if region:
         kwargs["Region"] = region
     result = client.list_buckets(**kwargs) or {}
-    bucket_list = (result.get("Buckets") or {}).get("Bucket") or []
+    return list((result.get("Buckets") or {}).get("Bucket") or [])
+
+
+def list_buckets(client, region=None):
+    """Return all buckets owned by the account as plain dicts."""
     return [
         {
             "name": item.get("Name"),
             "location": item.get("Location"),
             "creation_date": item.get("CreationDate"),
         }
-        for item in bucket_list
+        for item in list_bucket_entries(client, region)
     ]
 
 
@@ -445,8 +528,11 @@ def get_bucket_cors(client, full_name):
         if is_not_found(exc):
             return []
         raise
-    rules = (result or {}).get("CORSConfiguration") or {}
-    return cors_rules_current(rules.get("CORSRule") or [])
+    # The XML wrapper is stripped by the SDK: a GET returns CORSRule at the
+    # top level ({"CORSRule": [...], "ResponseVary": ...}), not nested under
+    # CORSConfiguration. Accept both so an older SDK shape still parses.
+    body = (result or {}).get("CORSConfiguration") or result or {}
+    return cors_rules_current(body.get("CORSRule") or [])
 
 
 def get_bucket_lifecycle(client, full_name):
@@ -457,5 +543,7 @@ def get_bucket_lifecycle(client, full_name):
         if is_not_found(exc):
             return []
         raise
-    rules = (result or {}).get("LifecycleConfiguration") or {}
-    return lifecycle_rules_current(rules.get("Rule") or [])
+    # Same flat shape as CORS: a GET returns {"Rule": [...]}, not
+    # {"LifecycleConfiguration": {"Rule": [...]}}.
+    body = (result or {}).get("LifecycleConfiguration") or result or {}
+    return lifecycle_rules_current(body.get("Rule") or [])

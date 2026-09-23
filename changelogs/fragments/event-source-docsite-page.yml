@@ -1,0 +1,32 @@
+---
+minor_changes:
+  - >-
+    docsite - the four ``event_source`` plugins (``cls_topic``, ``cmq_queue``,
+    ``cos_bucket``, ``tke_cluster``) now have a docsite page. They had none:
+    ``plugins/event_source`` is a plugin type that neither ansible-core nor
+    antsibull-docs loads, so ``ansible-doc``, every sanity test and the
+    docsite build all skipped it silently. ``scripts/generate_event_source_docs.py``
+    renders ``docs/docsite/extra_rst/event_source_plugins.rst`` from the
+    plugins' DOCUMENTATION and EXAMPLES (4 plugins, 39 options, 12 matchable
+    payload fields) and ``--check`` validates the page in both directions
+    against the plugins *and* the chain that makes it reachable: ``build.sh``
+    copying ``extra_rst/`` into ``rst/``, and the toctree entry in
+    ``rst/index.rst``. It runs in CI before ruff. The copy happens after the
+    antsibull-docs run because ``--cleanup similar-files-and-dirs`` also
+    removes files that antsibull-docs did not write.
+  - >-
+    docsite - README.md now describes the build as measured instead of
+    remembered: 1005 modules, 1032 pages, a cold build of 77 s for
+    antsibull-docs plus 221 s for Sphinx, and the tracked/ignored split that
+    actually exists -- ``build/html/`` is committed on purpose, while only
+    ``/build/doctrees``, ``/rst/collections`` and the generated top-level
+    ``/rst/*.rst`` are ignored.
+bugfixes:
+  - >-
+    docs - corrected stale figures that no guard covered: roadmap item P1-04
+    and docs/docsite/README.md both said 875 modules with about 900 pages and
+    an eight-minute build, panorama.html and demo.html said 991 modules, and
+    panorama claimed the docsite is rebuilt on every release when no workflow
+    touches it. The docsite README also presented the smart-quotes sanity
+    failure as live; conf.py sets ``smartquotes = False`` and the generated
+    HTML is pure ASCII.

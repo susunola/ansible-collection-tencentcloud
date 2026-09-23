@@ -149,12 +149,16 @@ def test_create_sends_all_provided_fields():
         "storage_type": "SD",
         "capacity": 100,
         "name": "app-share",
+        "net_interface": "VPC",
         "vpc_id": "vpc-1",
         "subnet_id": "subnet-1",
+        "ccn_id": None,
+        "cidr_block": None,
         "pgroup_id": "pgroup-1",
     })
     request = client.calls[-1]
     assert request.Zone == "ap-guangzhou-3"
+    assert request.NetInterface == "VPC"
     assert request.Protocol == "NFS"
     assert request.StorageType == "SD"
     assert request.Capacity == 100
@@ -173,15 +177,22 @@ def test_create_omits_unset_fields():
         "storage_type": "SD",
         "capacity": 10,
         "name": None,
+        "net_interface": "VPC",
         "vpc_id": None,
         "subnet_id": None,
+        "ccn_id": None,
+        "cidr_block": None,
         "pgroup_id": None,
     })
     request = client.calls[-1]
     assert not hasattr(request, "FsName")
     assert not hasattr(request, "VpcId")
     assert not hasattr(request, "SubnetId")
+    assert not hasattr(request, "CcnId")
+    assert not hasattr(request, "CidrBlock")
     assert not hasattr(request, "PGroupId")
+    # NetInterface is mandatory on CreateCfsFileSystem, so it is always sent.
+    assert request.NetInterface == "VPC"
 
 
 def test_update_name():

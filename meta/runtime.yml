@@ -1,5 +1,5 @@
 ---
-requires_ansible: ">=2.16.0"
+requires_ansible: ">=2.19.0"
 action_groups:
   all:
     - acp_scan_task_info
@@ -23,20 +23,33 @@ action_groups:
     - api_gateway_api
     - api_gateway_api_info
     - api_gateway_api_key
+    - api_gateway_api_key_info
     - api_gateway_service
     - api_gateway_service_info
     - api_gateway_service_release
+    - api_gateway_service_release_info
     - api_gateway_usage_plan
     - api_gateway_usage_plan_binding
+    - api_gateway_usage_plan_binding_info
+    - api_gateway_usage_plan_info
     - api_gateway_usage_plan_key_binding
+    - api_gateway_usage_plan_key_binding_info
     - api_product_info
+    - apigateway_api_app
+    - apigateway_api_app_info
+    - apigateway_ip_strategy
+    - apigateway_ip_strategy_info
+    - apigateway_plugin
+    - apigateway_plugin_info
     - apigateway_service_info
     - apis_agent_app_mcp_server_info
     - apm_general_span_info
     - as_scaling_group
     - as_scaling_group_info
     - as_scaling_policy
+    - as_scaling_policy_info
     - as_scheduled_action
+    - as_scheduled_action_info
     - asr_async_recognition_task_info
     - asw_flow_service_info
     - ba_auth_info
@@ -74,10 +87,12 @@ action_groups:
     - cbs_auto_snapshot_policy_info
     - cbs_disk
     - cbs_disk_backup
+    - cbs_disk_backup_info
     - cbs_disk_info
     - cbs_snapshot
     - cbs_snapshot_info
     - cbs_snapshot_share
+    - cbs_snapshot_share_info
     - ccc_extension_info
     - ccn
     - ccn_attachment
@@ -89,6 +104,10 @@ action_groups:
     - cdb_account_privilege_info
     - cdb_audit_config
     - cdb_audit_config_info
+    - cdb_audit_rule
+    - cdb_audit_rule_info
+    - cdb_audit_rule_template
+    - cdb_audit_rule_template_info
     - cdb_backup_config
     - cdb_backup_config_info
     - cdb_database
@@ -99,22 +118,33 @@ action_groups:
     - cdb_parameter_template_info
     - cdc_dedicated_cluster_order_info
     - cdn_cls_log_topic
+    - cdn_cls_log_topic_info
     - cdn_domain
     - cdn_domain_info
     - cds_asset_info
     - cdwch_backup_config
+    - cdwch_backup_config_info
     - cdwch_cn_instance_info
     - cdwch_instance
+    - cdwch_instance_info
     - cdwch_parameter
+    - cdwch_parameter_info
     - cdwdoris_cluster_configs_history_info
     - cdwdoris_cooldown_policy
+    - cdwdoris_cooldown_policy_info
     - cdwdoris_instance
+    - cdwdoris_instance_info
     - cdwdoris_user_workload_group
+    - cdwdoris_user_workload_group_info
     - cdwdoris_workload_group
+    - cdwdoris_workload_group_info
     - cdwpg_account_info
     - cdwpg_hba_config
+    - cdwpg_hba_config_info
     - cdwpg_instance
+    - cdwpg_instance_info
     - cdwpg_parameter
+    - cdwpg_parameter_info
     - cdz_cloud_dedicated_zone_host_info
     - cetcd_etcd_instance_info
     - cfg_action_library_info
@@ -129,27 +159,42 @@ action_groups:
     - cfs_snapshot
     - cfs_snapshot_info
     - cfw_address_template
+    - cfw_address_template_info
     - cfw_cluster_nat_ccn_fw_switch_info
     - cfw_internet_acl_rule
+    - cfw_internet_acl_rule_info
     - cfw_nat_acl_rule
+    - cfw_nat_acl_rule_info
     - cfw_nat_dnat_rule
+    - cfw_nat_dnat_rule_info
     - cfw_vpc_acl_rule
+    - cfw_vpc_acl_rule_info
     - chc_device_info
     - chdfs_access_group
+    - chdfs_access_group_info
     - chdfs_access_rules
+    - chdfs_access_rules_info
     - chdfs_file_system
     - chdfs_file_system_info
     - chdfs_mount_access_groups
+    - chdfs_mount_access_groups_info
     - chdfs_mount_point
+    - chdfs_mount_point_info
     - ciam_user_store_info
     - ckafka_acl
+    - ckafka_acl_info
     - ckafka_acl_rule
+    - ckafka_acl_rule_info
     - ckafka_datahub_connection
+    - ckafka_datahub_connection_info
     - ckafka_datahub_task
+    - ckafka_datahub_task_info
     - ckafka_datahub_topic
+    - ckafka_datahub_topic_info
     - ckafka_instance
     - ckafka_instance_info
     - ckafka_route
+    - ckafka_route_info
     - ckafka_topic
     - ckafka_topic_info
     - ckafka_user
@@ -161,14 +206,21 @@ action_groups:
     - clb_load_balancer
     - clb_load_balancer_info
     - clb_rule
+    - clb_snat_ip
     - clb_target_group
     - clb_target_group_info
     - cloudaudit_audit
+    - cloudaudit_audit_info
     - cloudaudit_event_info
     - cloudaudit_track
+    - cloudaudit_track_info
     - cloudhsm_vsm_info
     - cloudrc_resource_info
     - cloudstudio_image_info
+    - cls_alarm
+    - cls_alarm_info
+    - cls_alarm_notice
+    - cls_alarm_notice_info
     - cls_config
     - cls_config_info
     - cls_config_machine_group_binding
@@ -187,34 +239,57 @@ action_groups:
     - cmq_queue
     - cmq_queue_info
     - cmq_subscription
+    - cmq_subscription_info
     - cmq_topic
+    - cmq_topic_info
     - cms_lib_sample_info
     - cngw_cloud_native_api_gateway_llm_model_api_info
     - config_aggregate_compliance_pack_info
     - config_aggregate_delivery
+    - config_aggregate_delivery_info
     - config_aggregator
+    - config_aggregator_info
     - config_alarm_policy
+    - config_alarm_policy_info
     - config_compliance_pack
+    - config_compliance_pack_info
     - config_delivery
+    - config_delivery_info
     - config_recorder
+    - config_recorder_info
     - config_remediation
+    - config_remediation_info
     - config_rule
+    - config_rule_info
     - controlcenter_account_factory_baseline_item_info
     - cos_bucket
     - cos_bucket_domain
     - cos_bucket_domain_certificate
+    - cos_bucket_domain_certificate_info
+    - cos_bucket_domain_info
     - cos_bucket_encryption
+    - cos_bucket_encryption_info
     - cos_bucket_info
     - cos_bucket_intelligent_tiering
+    - cos_bucket_intelligent_tiering_info
     - cos_bucket_inventory
+    - cos_bucket_inventory_info
     - cos_bucket_logging
+    - cos_bucket_logging_info
     - cos_bucket_object_lock
+    - cos_bucket_object_lock_info
     - cos_bucket_origin
+    - cos_bucket_origin_info
     - cos_bucket_policy
+    - cos_bucket_policy_info
     - cos_bucket_referer
+    - cos_bucket_referer_info
     - cos_bucket_replication
+    - cos_bucket_replication_info
     - cos_bucket_response_control
+    - cos_bucket_response_control_info
     - cos_bucket_website
+    - cos_bucket_website_info
     - cos_object
     - cos_object_info
     - cos_object_sync
@@ -225,6 +300,7 @@ action_groups:
     - customer_gateway
     - customer_gateway_info
     - cvm_chc
+    - cvm_chc_info
     - cvm_disaster_recover_group
     - cvm_disaster_recover_group_binding
     - cvm_disaster_recover_group_info
@@ -236,6 +312,7 @@ action_groups:
     - cvm_image_share_info
     - cvm_instance
     - cvm_instance_action_timer
+    - cvm_instance_action_timer_info
     - cvm_instance_info
     - cvm_instance_security_group
     - cvm_launch_template
@@ -247,6 +324,7 @@ action_groups:
     - cynosdb_account
     - cynosdb_account_info
     - cynosdb_account_privilege
+    - cynosdb_account_privilege_info
     - cynosdb_backup_config
     - cynosdb_backup_config_info
     - cynosdb_cluster
@@ -256,6 +334,7 @@ action_groups:
     - dayu_resource_info
     - dbbrain_db_diag_event_info
     - dbbrain_sql_filter
+    - dbbrain_sql_filter_info
     - dbdc_db_custom_cluster
     - dbdc_db_custom_cluster_info
     - dbs_backup_plan_info
@@ -264,16 +343,24 @@ action_groups:
     - dc_direct_connect_tunnel
     - dc_direct_connect_tunnel_info
     - dcdb_account
+    - dcdb_account_info
     - dcdb_account_privilege
+    - dcdb_account_privilege_info
     - dcdb_backup_config
+    - dcdb_backup_config_info
     - dcdb_instance
     - dcdb_instance_info
     - dcdb_security_config
+    - dcdb_security_config_info
     - dlc_cluster_group
+    - dlc_cluster_group_info
     - dlc_data_engine
     - dlc_data_engine_config
+    - dlc_data_engine_info
     - dlc_data_mask_strategy
+    - dlc_data_mask_strategy_info
     - dlc_database
+    - dlc_database_info
     - dlc_engine_resource_group
     - dlc_inference_engine_info
     - dlc_inference_model
@@ -281,51 +368,75 @@ action_groups:
     - dlc_inference_service
     - dlc_inference_service_info
     - dlc_job_spec
+    - dlc_job_spec_info
     - dlc_lab
+    - dlc_lab_info
     - dlc_model_artifact_info
     - dlc_model_version
     - dlc_model_version_info
     - dlc_network_connection
+    - dlc_network_connection_info
     - dlc_notebook_session
     - dlc_notebook_session_info
     - dlc_notebook_session_log_info
     - dlc_notebook_statement_info
     - dlc_partition_queue
+    - dlc_partition_queue_info
     - dlc_ray_cluster
+    - dlc_ray_cluster_info
     - dlc_ray_job_info
     - dlc_ray_job_list_info
     - dlc_resource_config
+    - dlc_resource_config_info
     - dlc_script
+    - dlc_script_info
+    - dlc_spark_app_job_info
     - dlc_spark_job
+    - dlc_standard_engine_resource_group_info
     - dlc_store_location
+    - dlc_store_location_info
     - dlc_table
+    - dlc_table_info
     - dlc_table_partition
+    - dlc_table_partition_info
     - dlc_task_info
     - dlc_udf_policy
     - dlc_user
+    - dlc_user_data_engine_config_info
+    - dlc_user_info
     - dlc_user_policy
     - dlc_user_vpc_connection
     - dlc_work_group
+    - dlc_work_group_info
     - dlc_work_group_membership
     - dlc_work_group_policy
     - dnspod_custom_line
+    - dnspod_custom_line_info
     - dnspod_domain
+    - dnspod_domain_info
     - dnspod_line_group
+    - dnspod_line_group_info
     - dnspod_record
     - dnspod_record_info
     - domain_batch_operation_log_info
     - dsgc_dspa_assessment_risk_info
     - dts_consumer_group
+    - dts_consumer_group_info
     - dts_migration_action
     - dts_migration_check
+    - dts_migration_check_info
     - dts_migration_job
     - dts_migration_job_config
+    - dts_migration_job_info
     - dts_subscribe_job_info
     - eb_connection
+    - eb_connection_info
     - eb_event_bus
     - eb_event_bus_info
     - eb_rule
+    - eb_rule_info
     - eb_target
+    - eb_target_info
     - ecdn_domain_info
     - ecm_address_info
     - eiam_application_info
@@ -337,10 +448,15 @@ action_groups:
     - eks_container_instance
     - eks_container_instance_info
     - elasticsearch_index
+    - elasticsearch_index_info
     - elasticsearch_instance
+    - elasticsearch_instance_info
     - elasticsearch_snapshot
+    - elasticsearch_snapshot_info
     - emr_auto_scale_strategy
+    - emr_auto_scale_strategy_info
     - emr_cluster
+    - emr_cluster_info
     - emr_node_data_disk_info
     - es_cluster_info
     - ess_file_url_info
@@ -351,20 +467,27 @@ action_groups:
     - fwm_edge_acl_rule_info
     - ga2_accelerate_area_info
     - gaap_layer4_listener
+    - gaap_layer4_listener_info
     - gaap_listener_real_servers
+    - gaap_listener_real_servers_info
     - gaap_proxy
     - gaap_proxy_info
     - gaap_real_server
+    - gaap_real_server_info
     - gme_voice_print_info
     - goosefs_file_system
     - goosefs_file_system_info
     - goosefs_fileset
+    - goosefs_fileset_info
     - gs_android_app_info
     - gwlb_gateway_load_balancer_info
     - gwlb_load_balancer
+    - gwlb_load_balancer_info
     - gwlb_target_group
     - gwlb_target_group_association
+    - gwlb_target_group_info
     - gwlb_target_group_instances
+    - gwlb_target_group_instances_info
     - hai_application_info
     - hasim_link_info
     - havip
@@ -392,11 +515,15 @@ action_groups:
     - kms_key_rotation_info
     - lcic_answer_info
     - lighthouse_disk
+    - lighthouse_disk_info
     - lighthouse_firewall_rules
+    - lighthouse_firewall_rules_info
     - lighthouse_instance
     - lighthouse_instance_info
     - lighthouse_key_pair
+    - lighthouse_key_pair_info
     - lighthouse_snapshot
+    - lighthouse_snapshot_info
     - live_audit_keyword_info
     - lke_app_knowledge_info
     - lkeap_character_usage_info
@@ -405,6 +532,7 @@ action_groups:
     - mariadb_account
     - mariadb_account_info
     - mariadb_account_privilege
+    - mariadb_account_privilege_info
     - mariadb_backup_config
     - mariadb_backup_config_info
     - mariadb_instance
@@ -424,24 +552,37 @@ action_groups:
     - monitor_grafana_instance
     - monitor_grafana_instance_info
     - monitor_grafana_integration
+    - monitor_grafana_integration_info
     - monitor_grafana_internet
     - monitor_grafana_notification_channel
+    - monitor_grafana_notification_channel_info
     - monitor_grafana_whitelist
+    - monitor_grafana_whitelist_info
     - monitor_prometheus_alert_group
+    - monitor_prometheus_alert_group_info
     - monitor_prometheus_alertmanager_config
+    - monitor_prometheus_alertmanager_config_info
     - monitor_prometheus_cluster_agent
+    - monitor_prometheus_cluster_agent_info
     - monitor_prometheus_global_notification
     - monitor_prometheus_grafana_binding
+    - monitor_prometheus_grafana_binding_info
     - monitor_prometheus_instance
     - monitor_prometheus_instance_info
     - monitor_prometheus_record_rule
+    - monitor_prometheus_record_rule_info
     - monitor_prometheus_scrape_job
+    - monitor_prometheus_scrape_job_info
     - mps_person_sample_info
     - mqtt_authorization_policy
+    - mqtt_authorization_policy_info
     - mqtt_device_certificate_info
     - mqtt_instance
+    - mqtt_instance_info
     - mqtt_topic
+    - mqtt_topic_info
     - mqtt_user
+    - mqtt_user_info
     - ms_shield_instance_info
     - msp_migration_project_info
     - nat_gateway
@@ -458,17 +599,26 @@ action_groups:
     - oceanus_folder
     - oceanus_job
     - oceanus_job_config
+    - oceanus_job_config_info
+    - oceanus_job_info
     - oceanus_job_savepoint
+    - oceanus_job_savepoint_info
     - oceanus_meta_table
     - oceanus_resource
     - oceanus_resource_config
+    - oceanus_resource_config_info
+    - oceanus_resource_info
     - oceanus_workspace
+    - oceanus_workspace_info
     - omics_application_info
     - organization_member
     - organization_member_identity
+    - organization_member_identity_info
     - organization_member_info
     - organization_member_policy
+    - organization_member_policy_info
     - organization_node
+    - organization_node_info
     - partners_agent_deals_by_cache_info
     - peering_connection
     - peering_connection_info
@@ -482,11 +632,16 @@ action_groups:
     - postgresql_parameter_template
     - postgresql_parameter_template_info
     - private_dns_account
+    - private_dns_account_info
     - private_dns_record
+    - private_dns_record_info
     - private_dns_zone
+    - private_dns_zone_info
     - privatedns_account_vpc_info
     - privatelink_endpoint
+    - privatelink_endpoint_info
     - privatelink_endpoint_service
+    - privatelink_endpoint_service_info
     - pts_cron_job_info
     - redis_account
     - redis_account_info
@@ -496,12 +651,16 @@ action_groups:
     - redis_instance_info
     - redis_parameter_template
     - redis_parameter_template_info
+    - redis_replication_group
+    - redis_replication_group_info
     - region_product_info
     - route_table
     - route_table_info
     - rum_project_info
     - scf_alias
     - scf_alias_info
+    - scf_custom_domain
+    - scf_custom_domain_info
     - scf_function
     - scf_function_info
     - scf_trigger
@@ -549,43 +708,74 @@ action_groups:
     - tat_invocation
     - tat_invocation_info
     - tat_invoker
+    - tat_invoker_info
     - tbaas_block_info
     - tcaplusdb_cluster
     - tcaplusdb_cluster_info
     - tcb_auth_domain
+    - tcb_auth_domain_info
     - tcb_billing_info
     - tcb_environment
+    - tcb_environment_info
     - tcb_http_service_route
+    - tcb_http_service_route_info
     - tcb_static_store
+    - tcb_static_store_info
     - tcbr_cloud_run_pod_info
     - tcm_access_log
+    - tcm_access_log_info
     - tcm_mesh
     - tcm_mesh_clusters
     - tcm_mesh_info
     - tcm_prometheus
     - tcm_tracing
+    - tcr_immutable_tag_rule
+    - tcr_immutable_tag_rule_info
     - tcr_instance
     - tcr_instance_info
     - tcr_namespace
+    - tcr_namespace_info
     - tcr_replication_instance
+    - tcr_replication_instance_info
     - tcr_replication_rule
+    - tcr_replication_rule_info
     - tcr_repository
+    - tcr_repository_info
+    - tcr_webhook_trigger
+    - tcr_webhook_trigger_info
     - tcss_abnormal_process_event_info
     - tdai_agent_duty_task_info
     - tdcpg_account
+    - tdcpg_account_info
     - tdcpg_cluster
+    - tdcpg_cluster_info
     - tdcpg_cluster_instance_info
     - tdcpg_endpoint_wan
+    - tdcpg_endpoint_wan_info
     - tdcpg_instance_state
+    - tdcpg_instance_state_info
     - tdid_over_summary_info
     - tdmq_amqp_cluster_info
+    - tdmq_environment_info
+    - tdmq_environment_role_info
     - tdmq_namespace
     - tdmq_namespace_role
+    - tdmq_rabbit_mq_binding_info
+    - tdmq_rabbit_mq_permission_info
+    - tdmq_rabbit_mq_user_info
+    - tdmq_rabbit_mq_vip_instance_info
+    - tdmq_rabbit_mq_virtual_host_info
     - tdmq_rabbitmq_binding
     - tdmq_rabbitmq_instance
     - tdmq_rabbitmq_permission
     - tdmq_rabbitmq_user
     - tdmq_rabbitmq_vhost
+    - tdmq_rocket_mq_cluster_info
+    - tdmq_rocket_mq_environment_role_info
+    - tdmq_rocket_mq_group_info
+    - tdmq_rocket_mq_namespace_info
+    - tdmq_rocket_mq_role_info
+    - tdmq_rocket_mq_topic_info
     - tdmq_rocketmq_cluster
     - tdmq_rocketmq_group
     - tdmq_rocketmq_namespace
@@ -593,37 +783,50 @@ action_groups:
     - tdmq_rocketmq_role
     - tdmq_rocketmq_topic
     - tdmq_subscription
+    - tdmq_subscription_info
     - tdmq_topic
+    - tdmq_topic_info
     - tdmysql_account
     - tdmysql_account_info
     - tdmysql_account_privilege
+    - tdmysql_account_privilege_info
     - tdmysql_backup_policy
     - tdmysql_backup_policy_info
     - tdmysql_database_object_info
     - tdmysql_db_instance
     - tdmysql_db_instance_info
     - tdmysql_maintenance_window
+    - tdmysql_maintenance_window_info
     - tdmysql_parameter
     - tdmysql_parameter_info
     - tdmysql_ssl
+    - tdmysql_ssl_info
     - tem_application
     - tem_application_deployment
+    - tem_application_deployment_info
     - tem_application_info
     - tem_application_service
+    - tem_application_service_info
     - tem_environment
+    - tem_environment_info
     - teo_acceleration_domain
+    - teo_acceleration_domain_info
     - teo_dns_record
+    - teo_dns_record_info
     - teo_function_info
     - teo_origin_group
+    - teo_origin_group_info
     - teo_security_bot_lite
     - teo_security_custom_rules
     - teo_security_exception_rules
     - teo_security_ip_group
+    - teo_security_ip_group_info
     - teo_security_managed_rules
     - teo_security_rate_limiting_rules
     - teo_security_template_binding
     - teo_web_security_template
     - teo_zone
+    - teo_zone_info
     - thpc_cluster
     - thpc_cluster_info
     - tia_job_info
@@ -637,7 +840,9 @@ action_groups:
     - tione_model_service_diagnostics_info
     - tione_model_service_info
     - tione_model_service_state
+    - tione_model_service_state_info
     - tione_model_service_traffic
+    - tione_model_service_traffic_info
     - tione_notebook
     - tione_notebook_info
     - tione_training_model_version
@@ -647,14 +852,21 @@ action_groups:
     - tiw_running_task_info
     - tke_addon
     - tke_backup_storage_location
+    - tke_cls_log_config
+    - tke_cls_log_config_info
     - tke_cluster
     - tke_cluster_audit
     - tke_cluster_authentication
     - tke_cluster_autoscaler
     - tke_cluster_autoscaler_info
+    - tke_cluster_deletion_protection
     - tke_cluster_endpoint
     - tke_cluster_info
     - tke_cluster_kubeconfig
+    - tke_cluster_route
+    - tke_cluster_route_info
+    - tke_cluster_route_table
+    - tke_cluster_route_table_info
     - tke_cluster_upgrade
     - tke_node_pool
     - tke_node_pool_info
@@ -662,20 +874,38 @@ action_groups:
     - tourism_draw_resource_info
     - trabbit_rabbit_mq_serverless_instance_info
     - trabbit_serverless_binding
+    - trabbit_serverless_binding_info
     - trabbit_serverless_exchange
+    - trabbit_serverless_exchange_info
     - trabbit_serverless_permission
+    - trabbit_serverless_permission_info
     - trabbit_serverless_queue
+    - trabbit_serverless_queue_info
     - trabbit_serverless_user
+    - trabbit_serverless_user_info
     - trabbit_serverless_vhost
+    - trabbit_serverless_vhost_info
     - trocket_consumer_client_info
     - trp_code_batch_info
     - trro_device_info
     - trtc_call_info
+    - tse_auto_scaler_resource_strategy_binding_group_info
+    - tse_cloud_native_api_gateway_canary_rule_info
+    - tse_cloud_native_api_gateway_certificate_info
+    - tse_cloud_native_api_gateway_consumer_group_info
+    - tse_cloud_native_api_gateway_consumer_info
+    - tse_cloud_native_api_gateway_info
+    - tse_cloud_native_api_gateway_llm_model_api_info
+    - tse_cloud_native_api_gateway_llm_model_service_info
+    - tse_cloud_native_api_gateway_route_info
+    - tse_cloud_native_api_gateway_secret_key_info
+    - tse_cloud_native_api_gateway_service_info
     - tse_cloud_native_gateway
     - tse_config_file
     - tse_config_file_catalog_info
     - tse_config_file_deployment
     - tse_config_file_group
+    - tse_config_file_group_info
     - tse_config_file_release
     - tse_config_file_release_info
     - tse_config_file_template_info
@@ -706,30 +936,48 @@ action_groups:
     - tse_gateway_waf_domains
     - tse_gateway_waf_protection
     - tse_governance_alias
+    - tse_governance_alias_info
     - tse_governance_host_retirement
     - tse_governance_instance
+    - tse_governance_instance_info
     - tse_governance_lane_group
+    - tse_governance_lane_group_info
     - tse_governance_namespace
+    - tse_governance_namespace_info
     - tse_governance_service
     - tse_governance_service_contract_info
+    - tse_governance_service_info
     - tse_instance_tag_info
+    - tse_native_gateway_server_group_info
+    - tse_native_gateway_service_source_info
     - tse_sre_access_address_info
     - tse_sre_instance
     - tse_sre_instance_info
     - tse_sre_topology_info
     - tsf_application
     - tsf_application_config
+    - tsf_application_config_info
     - tsf_application_config_release
+    - tsf_application_config_release_info
     - tsf_application_info
     - tsf_cluster
+    - tsf_cluster_info
     - tsf_container_deployment_group
+    - tsf_container_deployment_group_info
     - tsf_lane
+    - tsf_lane_info
     - tsf_lane_rule
+    - tsf_lane_rule_info
     - tsf_microservice
+    - tsf_microservice_info
     - tsf_namespace
+    - tsf_namespace_info
     - tsf_public_config
+    - tsf_public_config_info
     - tsf_repository
+    - tsf_repository_info
     - tsf_vm_deployment_group
+    - tsf_vm_deployment_group_info
     - vcube_resource_info
     - vdb_instance
     - vdb_instance_info
@@ -752,17 +1000,25 @@ action_groups:
     - vpn_gateway
     - vpn_gateway_info
     - waf_anti_info_leak_rule
+    - waf_anti_info_leak_rule_info
     - waf_anti_tamper_rule
+    - waf_anti_tamper_rule_info
     - waf_area_ban_rule
     - waf_attack_white_rule
+    - waf_attack_white_rule_info
     - waf_auto_deny
     - waf_cc_rule
+    - waf_cc_rule_info
     - waf_custom_rule
+    - waf_custom_rule_info
     - waf_custom_white_rule
+    - waf_custom_white_rule_info
     - waf_host
+    - waf_host_info
     - waf_instance_info
     - waf_ip_access_control
     - waf_owasp_white_rule
+    - waf_owasp_white_rule_info
     - waf_protect_group
     - waf_threat_intelligence
     - wav_activity_info

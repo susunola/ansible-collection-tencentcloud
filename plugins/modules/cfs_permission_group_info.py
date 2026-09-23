@@ -14,7 +14,10 @@ short_description: Gather information about Tencent Cloud CFS permission groups
 version_added: "1.1.0"
 description: Returns the CFS permission groups of the account.
 options: {}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

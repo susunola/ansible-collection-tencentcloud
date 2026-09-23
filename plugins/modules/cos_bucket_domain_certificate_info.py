@@ -11,7 +11,10 @@ options:
   name: {description: Bucket short name or full name., type: str, required: true}
   appid: {description: Tencent Cloud AppId used in the bucket suffix., type: str}
   domain_name: {description: Custom domain bound to the bucket., type: str, required: true}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

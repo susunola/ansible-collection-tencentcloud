@@ -12,15 +12,19 @@ short_description: Manage Managed Prometheus global notification settings
 version_added: "0.14.0"
 description:
   - Reconciles the singleton global notification configuration of a Prometheus instance.
-  - The underlying Describe/ModifyPrometheusGlobalNotification APIs were marked by Tencent Cloud for retirement on 2026-05-25. This module is retained for compatibility; prefer Prometheus alert groups and receivers for new configurations. If the API is unavailable, the module fails rather than claiming convergence.
+  - The underlying Describe/ModifyPrometheusGlobalNotification APIs were marked
+    by Tencent Cloud for retirement on 2026-05-25. This module is retained for
+    compatibility; prefer Prometheus alert groups and receivers for new
+    configurations. If the API is unavailable, the module fails rather than
+    claiming convergence.
 options:
   instance_id: {type: str, required: true, description: Prometheus instance ID.}
   notification: {type: dict, required: true, description: SDK-compatible PrometheusNotificationItem configuration.}
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

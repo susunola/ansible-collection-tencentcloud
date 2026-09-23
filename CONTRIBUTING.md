@@ -34,18 +34,36 @@ the release workflow folds them into `changelogs/` on tag.
 
 ## Plugins
 
+- **action** — an action plugin runs on the controller, so it can call other
+  modules through `_execute_module`; that is the only place a cross-module
+  operation can live, and it is why `tc_wait` is an action plugin and not a
+  module. Declare `_VALID_ARGS` so the base class rejects option typos, reuse
+  `plugin_utils.polling.poll_until` instead of writing another loop, and carry
+  the docs in the plugin's own `DOCUMENTATION` block: unlike a module, an
+  action plugin has no module file to document it, and `ansible-doc` cannot
+  read it at all — so add a `action-plugin-docs` entry to
+  `tests/sanity/ignore-*.txt`. See `plugins/action/tc_wait.py`.
 - **connection** — a connection plugin (e.g. `tat`) runs without a shell, so
-  it must never import Ansible module machinery; reuse `module_utils.client`
-  through a thin adapter over the connection options. Document the SDK package
-  it needs and add that package to `README.md` requirements.
+  it must never import Ansible module machinery; reuse
+  `plugin_utils.profile.load_profile` through a thin adapter over the
+  connection options. Document the SDK package it needs and add that package
+  to `README.md` requirements.
 - **event_source** — Event-Driven Ansible sources implement `async def
   main(queue, args)`; keep blocking SDK calls in `asyncio.to_thread`, resolve
   credentials from args with environment fallbacks, and yield error events
   instead of dying so the source stays alive.
 - **inventory** — inventory plugins extend `BaseInventoryPlugin` with
   `Constructable` and `Cacheable`, build their client through
-  `module_utils.paging.Paginator`, and declare their options in
+  `plugin_utils.paging.Paginator`, and declare their options in
   `DOCUMENTATION` with an example YAML file.
+- **shared helpers** — implementations belong in `plugins/module_utils/`, and
+  `plugins/plugin_utils/` re-exports them for non-module plugins. The
+  direction is forced, not stylistic: ansible-test's `import` test lets
+  module-side code import only `plugins.module_utils`, so a helper that any
+  module needs cannot live in `plugin_utils`. Put the implementation in
+  `module_utils`, add a one-line re-export to `plugin_utils` when a controller
+  plugin needs the same path, and document the pair in
+  `plugins/plugin_utils/README.md`.
 
 ## Dependencies
 
@@ -76,11 +94,65 @@ accept is passed through with `| default(omit, true)`, and each role ships a
 `README.md` with a usage example. Roles are covered by the integration targets
 that exercise the underlying modules.
 
-## Becoming a maintainer
+## Maintainership: roles, boundaries, and how to join
 
-Active contributors are welcome to become maintainers. See
-[`MAINTAINERS.md`](MAINTAINERS.md) for the current maintainers, their
-responsibilities, and how to nominate yourself.
+The collection is maintained by one person today, which is a structural risk
+rather than a badge. This section exists so that a second pair of hands can
+take over real authority without a handover ceremony: it says who may decide
+what, and what is expected in return.
+
+|  | Contributor | Reviewer (co-maintainer) | Maintainer |
+| --- | --- | --- | --- |
+| Entry | open a PR | nominated by a maintainer after sustained contribution | nominated by the maintainers |
+| Approve and merge PRs | — | yes, except the protected surfaces below | yes |
+| Decide module names | proposes | proposes; a maintainer ratifies | decides |
+| Change CI gates | — | — | yes |
+| Cut a release, push tags | — | — | yes |
+
+**Protected surfaces.** A reviewer may merge anything except these, which need
+a maintainer's approval (`CODEOWNERS` enforces the first two, the rest is repo
+policy):
+
+- `.github/workflows/` and `.github/CODEOWNERS` — CI and release automation;
+- `BASELINE_TOTAL` in `scripts/check_sanity_ignore.py` — the sanity-ignore
+  budget, currently 1900 against a committed total of 1557. Raising it is how
+  un-triaged debt becomes permanent, so it is a deliberate act with a comment,
+  never a side effect of a module batch;
+- `GENERATED_SDK_VERSION` in the generated `scripts/info_specs_auto.py` — the
+  SDK stamp the `*_info` modules are vouched for, which
+  `scripts/check_sdk_drift.py` checks against the installed SDK;
+- `CORE_MODULES` in `scripts/check_module_tiers.py` and `scripts/SPECS.py` —
+  what is hand-written versus generated;
+- `version` in `galaxy.yml`, which `release.yml` checks against the tag.
+
+**CI gates a merge must not weaken.** `audit_info_coverage.py --check`,
+`check_module_tiers.py --check`, `check_sdk_drift.py --check`,
+`generate_info_modules.py --check`, `check_sanity_ignore.py`, `ruff check .`,
+the sanity tests, and the unit/contract run at `--cov-fail-under=80`. A PR
+that lowers a threshold to get green is the one thing a reviewer should always
+block.
+
+**Module naming.** A module name is public API the moment it is released:
+`susunola.tencentcloud.<name>` appears in playbooks nobody will let you edit.
+Names follow the product-prefix convention and are the maintainer's call;
+renames are deprecations, not edits — see
+[`docs/deprecation-policy.md`](docs/deprecation-policy.md).
+
+**Expected commitment.** Roughly two to four hours a week: first response on
+issues and PRs within 48 hours (measured, not aspirational — see
+[`docs/triage.md`](docs/triage.md)), review rather than rubber-stamp, and
+keeping `main` green. Sixty days of silence is treated as stepping down rather
+than as a paused subscription — see [`MAINTAINERS.md`](MAINTAINERS.md).
+
+**How to join.** Open an issue titled `Maintainer nomination: <handle>` with:
+what you have contributed or reviewed here, which product area you know well
+enough to own, and the first three things you would change. An existing
+maintainer responds within a week; if nobody objects, the nominee starts as a
+reviewer and moves to maintainer once they have cut a release with supervision.
+
+**Decisions.** With a single maintainer, decisions are theirs. Once there are
+two or more, aim for consensus; if a decision stalls, escalate to the
+[Ansible community](https://forum.ansible.com) rather than letting a PR rot.
 
 ## Releasing
 
@@ -90,7 +162,18 @@ Releases are cut from tags and published by
 1. Bump `version` in `galaxy.yml` and add changelog fragments for the
    changes under `changelogs/fragments/` (lint them with
    `antsibull-changelog lint`).
-2. Tag the release and push the tag:
+2. Check the release is publishable *before* the tag exists:
+
+   ```bash
+   python scripts/release_check.py                  # exit non-zero if it is not
+   python scripts/release_check.py --dry-run        # build and smoke-test the tarball
+   ```
+
+   Pushing the tag is the only trigger the workflow has, so a release that
+   turns out to be broken is already tagged, already has a GitHub release
+   object and may already be on Galaxy. The guard is what moves that
+   discovery earlier — see [`docs/release.md`](docs/release.md).
+3. Tag the release and push the tag:
 
    ```bash
    git tag vX.Y.Z

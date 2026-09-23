@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``tdmysql_maintenance_window`` and ``tdmysql_ssl`` with normalized schedule comparison and async SSL convergence.

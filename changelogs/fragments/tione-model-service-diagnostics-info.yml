@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``tione_model_service_diagnostics_info`` for service call endpoints and model-acceleration compatibility preflight.

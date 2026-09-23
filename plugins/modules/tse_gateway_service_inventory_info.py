@@ -15,7 +15,10 @@ options:
   filters: {type: dict, default: {}, description: Service filters such as name and upstreamType.}
   include_upstreams: {type: bool, default: false, description: Query upstream targets for every matching service.}
   page_size: {type: int, default: 100, description: Number of services requested per API call.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

@@ -16,10 +16,12 @@ options:
   strategy_name: {type: str, description: Autoscaler strategy name resolved within the gateway.}
   group_ids: {type: list, elements: str, description: Unique gateway group IDs.}
   group_names: {type: list, elements: str, description: Unique gateway group names resolved within the gateway.}
-  purge_unlisted: {type: bool, default: false, description: With state=present, unbind groups not listed here.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+  purge_unlisted: {type: bool, default: false, description: 'With state=present, unbind groups not listed here.'}
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

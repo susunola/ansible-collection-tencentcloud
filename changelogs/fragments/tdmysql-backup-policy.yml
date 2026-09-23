@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``tdmysql_backup_policy`` and ``tdmysql_backup_policy_info`` with cardinality guards and readable-field reconciliation.

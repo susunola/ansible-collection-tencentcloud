@@ -53,9 +53,18 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 GENERATOR_PATH = REPO_ROOT / "scripts" / "generate_info_modules.py"
 AUTO_SPECS_PATH = REPO_ROOT / "scripts" / "info_specs_auto.py"
+TARGETS_PATH = REPO_ROOT / "scripts" / "info_specs_targets.py"
 MODULES_DIR = REPO_ROOT / "plugins" / "modules"
 
+# The SDK package a write module talks to, from its own ``_load()``.
+_WRITE_PKG_RE = re.compile(r"from tencentcloud\.([a-z0-9_]+)\.(v\d+) import")
+
 VERSION_ADDED = "0.9.0"
+# Curated targets are added in the release after the one that shipped the
+# original auto-discovered specs, not retroactively at 0.9.0. The constant
+# lives in scripts/info_specs_targets.py so that
+# scripts/check_info_targets.py can use the same value as the marker that
+# ties the generated specs back to the table.
 
 # Products already covered by curated SPECS or hand-written modules, or
 # deliberately out of scope (cos uses the qcloud_cos SDK, sts/ssm/tag are
@@ -79,6 +88,32 @@ RESOURCE_ALIASES = {
     "d_do_s_block_record": "ddos_block_record",
 }
 
+# Request field types an ``extra_params`` module option can carry. A field
+# of any other type (a nested model, a list of models) is not exposed: an
+# optional one is only reported, a required one disqualifies the action
+# because a module that cannot be called successfully is worse than a gap.
+_EXTRA_TYPES = {"str": "str", "int": "int", "bool": "bool",
+                "list of str": "list", "list of int": "list"}
+# ``elements`` for the list-shaped entries above. Ansible refuses a
+# ``type: list`` option without it -- validate-modules fails the module with
+# parameter-list-no-elements (11 of the curated targets hit this, G1-k).
+_EXTRA_ELEMENTS = {"list of str": "str", "list of int": "int"}
+# Option names the generator always owns, whatever the pagination shape.
+# ``offset``/``limit`` are emitted for *every* generated module -- even an
+# unpaginated one, "for signature uniformity" -- so a request field of that
+# name must never become an extra param or the module gets a duplicate
+# keyword argument (see tke_cls_log_config_info, G1-k).
+# ``next_token`` is the token-pagination cursor the module walks itself, so
+# exposing it as an option is never right -- and validate-modules reads the
+# name as a possible secret and demands ``no_log`` (privatelink_endpoint_info
+# hit both at once, G1-k).
+_RESERVED = {"region", "filters", "ids", "state", "offset", "limit",
+             "next_token", "page_token"}
+# Rejection reason for an action whose request carries fields but no
+# pagination fields: a plain discovery run cannot express those fields, but
+# a curated target can turn them into ``extra_params`` (see _analyze_action).
+_UNPAGINATED = "unpaginated with request fields that cannot be managed"
+
 _RTYPE_RE = re.compile(r":rtype:\s*(?P<rtype>[^\n]+)")
 _NESTED_RE = re.compile(r":class:`tencentcloud\.\w+\.\w+\.models\.(?P<cls>\w+)`")
 _ACTION_RE = re.compile(r"^(Describe|List|Get|Query|Search)[A-Z]")
@@ -86,6 +121,9 @@ _ACTION_PREFIX_RE = re.compile(r"^(Describe|List|Get|Query|Search)")
 _IDS_RE = re.compile(r"(Ids|IdSet|IdList|IDList|IDSet)$", re.IGNORECASE)
 _REQUIRED_RE = re.compile(r"是否必填：是")
 _NO_LOG_RE = re.compile(r"key|secret|token|passw", re.IGNORECASE)
+# Names that really do carry a credential. They win over _NO_LOG_RE: such a
+# param gets ``no_log: True`` (never logged), not the "not a secret" marker.
+_SECRET_LIKE_RE = re.compile(r"passw|secret|credential|private_key", re.IGNORECASE)
 _TOTAL_FIELDS = ("TotalCount", "Total", "TotalNumber", "TotalNum")
 _DROP_TOKENS = {"list", "detail", "details", "status", "info", "infos", "all", "new"}
 
@@ -179,6 +217,65 @@ def _plural(word):
     if word.endswith(("s", "x", "ch", "sh")):
         return word + "es"
     return word + "s"
+
+
+def _humanize(field):
+    """Turn an SDK request field name into readable lowercase words."""
+    return " ".join(word.lower() for word in _camel_words(field)) or field.lower()
+
+
+def _snake(field):
+    return "_".join(word.lower() for word in _camel_words(field)) or field.lower()
+
+
+def _extra_params(request_props, managed, reserved):
+    """Describe the request fields the generator cannot express itself.
+
+    A list API is often scoped to a parent resource
+    (``DescribeAccessRules`` needs ``AccessGroupId``). The generic module
+    options are ids/filters/pagination, so every other field has to become
+    an explicit module option: the generator's ``extra_params``.
+
+    Returns ``(params, dropped)`` where *dropped* lists
+    ``(field, rtype, required)`` for every field no option can carry.
+    """
+    params, dropped = [], []
+    for name, prop in request_props.items():
+        if name in managed:
+            continue
+        doc = prop.fget.__doc__ or ""
+        required = bool(_REQUIRED_RE.search(doc))
+        rtype = _rtype(prop)
+        snake = _snake(name)
+        if rtype not in _EXTRA_TYPES or snake in reserved:
+            reason = ("clashes with a module option" if snake in reserved
+                      else "unsupported type %s" % (rtype or "untyped"))
+            dropped.append((name, reason, required))
+            continue
+        param = {
+            "name": snake,
+            "field": name,
+            "type": _EXTRA_TYPES[rtype],
+            "required": required,
+            "doc": "%s. API field C(%s)%s." % (
+                _humanize(name).capitalize(), name,
+                ", required by the API" if required else ""),
+        }
+        if rtype in _EXTRA_ELEMENTS:
+            param["elements"] = _EXTRA_ELEMENTS[rtype]
+        if _SECRET_LIKE_RE.search(snake):
+            # A real credential (password, secret, credential, private_key).
+            # validate-modules demands ``no_log`` for it and the value must
+            # never reach the task log -- ES DescribeIndexList takes the
+            # cluster password as a request field (G1-k).
+            param["no_log"] = True
+        elif _NO_LOG_RE.search(snake):
+            # A read filter merely named like a credential (keyword,
+            # search_key) is not one; say so, or validate-modules demands
+            # ``no_log`` for it too and hides an ordinary filter.
+            param["no_log"] = False
+        params.append(param)
+    return params, dropped
 
 
 def _resource_name(action):
@@ -370,18 +467,29 @@ def _detect_pagination(request_props, response_props):
         return None, ("no supported pagination (int Offset/Limit, int page "
                       "pair, or token continuation)")
     if request_props:
-        return None, "unpaginated with request fields that cannot be managed"
+        return None, _UNPAGINATED
     return "list", {}
 
 
-def _analyze_action(models, action):
-    """Inspect one Describe/List-style action; return (candidate, reason)."""
+def _analyze_action(models, action, allow_extra=False):
+    """Inspect one Describe/List-style action; return (candidate, reason).
+
+    With ``allow_extra`` (curated targets only) request fields that are
+    neither ids, filters nor pagination become ``extra_params`` module
+    options, so a list API scoped to a parent resource is usable instead
+    of rejected. The plain per-product discovery keeps the stricter
+    behaviour: it must not change any spec that is already generated.
+    """
     request_cls = getattr(models, action + "Request", None)
     response_cls = getattr(models, action + "Response", None)
     if request_cls is None or response_cls is None:
         return None, "no request/response model"
     request_props = _props(request_cls)
     response_props = _props(response_cls)
+
+    resource = _resource_name(action)
+    if not resource or not resource.isidentifier() or keyword.iskeyword(resource):
+        return None, "cannot derive a usable resource name from %s" % action
 
     total, items = _response_shape(models, response_cls)
     if not items:
@@ -396,9 +504,6 @@ def _analyze_action(models, action):
                              and not _rtype(prop).startswith("list of ")]
             if not object_fields:
                 return None, "response carries no list-of-model items and no object fields"
-            resource = _resource_name(action)
-            if not resource or not resource.isidentifier() or keyword.iskeyword(resource):
-                return None, "cannot derive a usable resource name from %s" % action
             return {
                 "action": action,
                 "request_class": action + "Request",
@@ -409,23 +514,49 @@ def _analyze_action(models, action):
                 "resource": resource,
                 "ids_field": None,
                 "filters": None,
+                "extra_params": [],
                 "score": 0,
                 "notes": [],
             }, None
-        return None, "response has no list-of-model items field"
+        if not allow_extra:
+            return None, "response has no list-of-model items field"
+        # A Get-style action: one call, no items list, but the request
+        # fields can still become module options.
+        params, dropped = _extra_params(request_props, frozenset(), _RESERVED)
+        fatal = ["%s (%s)" % (name, why) for name, why, required in dropped if required]
+        if fatal:
+            return None, ("required request field(s) cannot be exposed: %s"
+                          % ", ".join(fatal))
+        get_notes = ["optional field %s not exposed (%s)" % (name, why)
+                     for name, why, _required in dropped]
+        return {
+            "action": action,
+            "request_class": action + "Request",
+            "pagination": "none",
+            "pagination_info": {},
+            "response_items": None,
+            "response_total": None,
+            "resource": resource,
+            "ids_field": None,
+            "filters": None,
+            "extra_params": params,
+            "score": 0,
+            "notes": get_notes,
+        }, None
 
     pagination, info = _detect_pagination(request_props, response_props)
     if pagination is None:
-        return None, info
-
-    resource = _resource_name(action)
-    if not resource or not resource.isidentifier() or keyword.iskeyword(resource):
-        return None, "cannot derive a usable resource name from %s" % action
+        if not allow_extra or info != _UNPAGINATED:
+            return None, info
+        # No pagination fields at all, but the request fields can become
+        # module options: one call returns the whole (scoped) list.
+        pagination, info = "list", {}
 
     ids_name, ids_note = _ids_field(request_props, resource)
     filters, filters_note = _filter_spec(models, request_props)
 
     managed = {"Filters", ids_name}
+    notes = []
     if pagination == "int":
         managed.add("Offset")
         managed.add(info.get("page_size_field") or "Limit")
@@ -437,11 +568,31 @@ def _analyze_action(models, action):
         size_field = info.get("page_size_field", "MaxResults")
         if size_field:
             managed.add(size_field)
-    for name, prop in request_props.items():
-        if name in managed:
-            continue
-        if _REQUIRED_RE.search(prop.fget.__doc__ or ""):
-            return None, "request field %s is marked required and is not manageable" % name
+    extra_params = []
+    if allow_extra:
+        reserved = set(_RESERVED)
+        if ids_name:
+            reserved.add("%s_ids" % resource)
+        if pagination == "int":
+            reserved.add("page_size")
+        elif pagination == "page":
+            reserved.update(("page_size", "page_number"))
+        elif pagination == "token":
+            reserved.add("max_results")
+        extra_params, dropped = _extra_params(request_props, managed, reserved)
+        fatal = ["%s (%s)" % (name, why) for name, why, required in dropped if required]
+        if fatal:
+            return None, ("required request field(s) cannot be exposed: %s"
+                          % ", ".join(fatal))
+        for name, why, _required in dropped:
+            notes.append("optional field %s not exposed (%s)" % (name, why))
+    else:
+        for name, prop in request_props.items():
+            if name in managed:
+                continue
+            if _REQUIRED_RE.search(prop.fget.__doc__ or ""):
+                return None, ("request field %s is marked required and is "
+                              "not manageable" % name)
 
     # Unmanaged optional fields (Query, ActivityId, ...) hint at an action
     # that cannot be usefully called through the generic module options, so
@@ -470,15 +621,16 @@ def _analyze_action(models, action):
         "resource": resource,
         "ids_field": ids_name,
         "filters": filters,
+        "extra_params": extra_params,
         "score": score,
-        "notes": [note for note in (ids_note, filters_note) if note],
+        "notes": notes + [note for note in (ids_note, filters_note) if note],
     }, None
 
 
 def _build_spec(product, version, client_cls, candidate):
     """Assemble the generator spec dict for one accepted candidate."""
     prefix = PRODUCT_ALIASES.get(product, product)
-    resource = candidate["resource"]
+    resource = candidate.get("resource_override") or candidate["resource"]
     # Some API actions embed the product name in the resource
     # (DescribeDCDBInstances -> dcdb_instance); drop the redundant leading
     # token so the module reads <product>_<resource>_info, not
@@ -486,7 +638,9 @@ def _build_spec(product, version, client_cls, candidate):
     if resource.startswith(prefix + "_"):
         resource = resource[len(prefix) + 1:]
     resource = RESOURCE_ALIASES.get(resource, resource)
-    module = "%s_%s_info" % (prefix, resource)
+    # Curated targets name the module after the write module they close,
+    # which is not always <product>_<action resource> (api_gateway_api_key).
+    module = candidate.get("module") or "%s_%s_info" % (prefix, resource)
     single_object = candidate["pagination"] == "none"
     plural = resource if single_object else _plural(resource)
     words = plural.replace("_", " ")
@@ -516,11 +670,18 @@ def _build_spec(product, version, client_cls, candidate):
             del filters["model"]
         filters = {"doc": filters.pop("doc"), **filters}
 
+    # A required extra param makes the plain "list everything" example
+    # unrunnable, so show it in the example instead of documenting an
+    # invocation that can only fail.
+    required_extra = "".join(
+        "\n    %s: %s" % (param["name"],
+                          "1" if param["type"] == "int" else "example")
+        for param in (candidate.get("extra_params") or []) if param["required"])
     examples = """\
 - name: List all %s
   susunola.tencentcloud.%s:
-    region: ap-guangzhou
-""" % (words, module)
+    region: ap-guangzhou%s
+""" % (words, module, required_extra)
     if ids:
         examples += """
 - name: Find %s by ID
@@ -546,7 +707,7 @@ def _build_spec(product, version, client_cls, candidate):
 
     spec = {
         "module": module,
-        "version_added": VERSION_ADDED,
+        "version_added": candidate.get("version_added") or VERSION_ADDED,
         "service_package": "tencentcloud.%s.%s" % (product, version),
         "client_module": "%s_client" % product,
         "client_class": client_cls.__name__,
@@ -556,7 +717,7 @@ def _build_spec(product, version, client_cls, candidate):
         "request_class": candidate["request_class"],
         "ids": ids,
         "filters": filters,
-        "extra_params": [],
+        "extra_params": candidate.get("extra_params") or [],
         "response_items": candidate["response_items"],
         "response_total": candidate["response_total"],
         "result_key": plural,
@@ -578,6 +739,71 @@ def _build_spec(product, version, client_cls, candidate):
     return spec
 
 
+def _write_pkg(write):
+    """Return the (product, version) a write module talks to."""
+    source = (MODULES_DIR / (write + ".py")).read_text(encoding="utf-8")
+    match = _WRITE_PKG_RE.search(source)
+    return match.groups() if match else None
+
+
+def _load_pkg(product, version):
+    """Return (models module, client class) for one SDK package."""
+    models = importlib.import_module("tencentcloud.%s.%s.models" % (product, version))
+    client_module = importlib.import_module(
+        "tencentcloud.%s.%s.%s_client" % (product, version, product))
+    client_cls = next(
+        cls for name, cls in vars(client_module).items()
+        if inspect.isclass(cls) and cls.__module__ == client_module.__name__
+        and name.endswith("Client"))
+    return models, client_cls
+
+
+def discover_targets(used_names):
+    """Build specs for the curated TARGETS; return (specs, skips).
+
+    Every target names the write module whose read surface it closes, so
+    the generated module is its ``<name>_info`` sibling -- which is what
+    ``scripts/audit_info_coverage.py`` looks for. Targets whose action no
+    longer exists, whose response lost its items list, or whose module
+    already exists are reported as skips and never silently dropped.
+    """
+    targets = _load_module(str(TARGETS_PATH), "info_specs_targets")
+    specs, skips, cache = [], [], {}
+    for write in sorted(targets.TARGETS):
+        action, resource = targets.entry(targets.TARGETS[write])
+        if not (MODULES_DIR / (write + ".py")).exists():
+            skips.append((write, action, "write module no longer exists"))
+            continue
+        pkg = _write_pkg(write)
+        if pkg is None:
+            skips.append((write, action, "write module imports no SDK package"))
+            continue
+        if pkg not in cache:
+            try:
+                cache[pkg] = _load_pkg(*pkg)
+            except Exception as exc:  # import failures vary by product
+                skips.append((write, action, "import failed: %r" % (exc,)))
+                continue
+        models, client_cls = cache[pkg]
+        candidate, reason = _analyze_action(models, action, allow_extra=True)
+        if candidate is None:
+            skips.append((write, action, reason))
+            continue
+        candidate["module"] = write + "_info"
+        candidate["version_added"] = targets.TARGET_VERSION_ADDED
+        if resource:
+            candidate["resource_override"] = resource
+        if candidate["module"] in used_names:
+            skips.append((write, action,
+                          "module %s already exists" % candidate["module"]))
+            continue
+        used_names.add(candidate["module"])
+        specs.append(_build_spec(pkg[0], pkg[1], client_cls, candidate))
+        for note in candidate["notes"]:
+            skips.append((write, action, "note: " + note))
+    return specs, skips
+
+
 def discover():
     """Scan every SDK product; return (specs, skip report entries)."""
     import tencentcloud
@@ -585,7 +811,12 @@ def discover():
     package_dir = os.path.dirname(tencentcloud.__file__)
     curated, old_auto = _curated_specs()
     auto_names = {spec["module"] for spec in old_auto}
-    old_by_product = {spec["service_package"].split(".")[1]: spec for spec in old_auto}
+    # A product may own several auto specs: the per-product discovery adds
+    # one, and the curated TARGETS add more. Keep them all -- collapsing
+    # this to one spec per product silently deletes modules on re-run.
+    old_by_product = {}
+    for spec in old_auto:
+        old_by_product.setdefault(spec["service_package"].split(".")[1], []).append(spec)
     covered = COVERED_PRODUCTS | {
         spec["service_package"].split(".")[1] for spec in curated}
     used_names = ({spec["module"] for spec in curated}
@@ -596,7 +827,12 @@ def discover():
             name for name in os.listdir(package_dir)
             if os.path.isdir(os.path.join(package_dir, name))
             and not name.startswith(("_", "common"))):
-        if product in covered:
+        # A product that gained a curated spec later still keeps the auto
+        # spec it was generated with: skipping the product here would drop
+        # an existing module from the next regeneration. So the reuse check
+        # has to come before the "covered" filter, not after it.
+        old_specs = old_by_product.get(product, [])
+        if product in covered and not old_specs:
             continue
         product_dir = os.path.join(package_dir, product)
         versions = sorted(v for v in os.listdir(product_dir) if re.fullmatch(r"v\d+", v))
@@ -619,16 +855,16 @@ def discover():
             skips.append((product, None, "import failed: %r" % (exc,)))
             continue
 
-        old = old_by_product.get(product)
-        if old is not None:
-            # Already covered by a previous discovery run: reuse the spec
-            # verbatim so the existing module output stays byte-identical.
-            candidate, _reason = _analyze_action(models, old["action"])
-            if candidate:
-                for note in candidate["notes"]:
-                    skips.append((product, old["action"], "note: " + note))
-            used_names.add(old["module"])
-            specs.append(old)
+        if old_specs:
+            # Already covered by a previous discovery run: reuse every
+            # spec verbatim so the existing module output stays identical.
+            for old in old_specs:
+                candidate, _reason = _analyze_action(models, old["action"])
+                if candidate:
+                    for note in candidate["notes"]:
+                        skips.append((product, old["action"], "note: " + note))
+                used_names.add(old["module"])
+                specs.append(old)
             continue
 
         candidates, reasons = [], []
@@ -655,6 +891,10 @@ def discover():
         specs.append(spec)
         for note in chosen["notes"]:
             skips.append((product, chosen["action"], "note: " + note))
+
+    target_specs, target_skips = discover_targets(used_names)
+    specs.extend(target_specs)
+    skips.extend(target_skips)
     return specs, skips
 
 

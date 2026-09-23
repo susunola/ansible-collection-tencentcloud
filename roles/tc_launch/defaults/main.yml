@@ -6,6 +6,9 @@
 # Lifecycle: present | absent | running | stopped
 tc_launch_state: present
 
+# Region: empty falls back to the module default (TENCENTCLOUD_REGION).
+tc_launch_region: ""
+
 # Identity: exactly one of these must resolve to an existing instance
 # when the instance already exists.
 tc_launch_instance_id: ""

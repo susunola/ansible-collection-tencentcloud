@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Added GooseFS exact-name lookup and the tc_goosefs_cache role for file systems, filesets and quota governance.

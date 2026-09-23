@@ -1,20 +1,20 @@
 ---
 - name: Read TKE addon integration inputs
   ansible.builtin.set_fact:
-    tke_cluster_id: "{{ lookup('env', 'TENCENTCLOUD_TKE_CLUSTER_ID') | default('', true) }}"
-    tke_addon_name: "{{ lookup('env', 'TENCENTCLOUD_TKE_ADDON_NAME') | default('', true) }}"
-    tke_addon_version: "{{ lookup('env', 'TENCENTCLOUD_TKE_ADDON_VERSION') | default('', true) }}"
+    tke_cluster_id: "{{ e2e_inputs.TENCENTCLOUD_TKE_CLUSTER_ID | default(lookup('env', 'TENCENTCLOUD_TKE_CLUSTER_ID'), true) | default('', true) }}"
+    tke_addon_name: "{{ e2e_inputs.TENCENTCLOUD_TKE_ADDON_NAME | default(lookup('env', 'TENCENTCLOUD_TKE_ADDON_NAME'), true) | default('', true) }}"
+    tke_addon_version: "{{ e2e_inputs.TENCENTCLOUD_TKE_ADDON_VERSION | default(lookup('env', 'TENCENTCLOUD_TKE_ADDON_VERSION'), true) | default('', true) }}"
 
 - name: Explain skipped TKE addon integration
   ansible.builtin.debug:
     msg: Set TENCENTCLOUD_TKE_CLUSTER_ID, TENCENTCLOUD_TKE_ADDON_NAME and TENCENTCLOUD_TKE_ADDON_VERSION to run this target.
-  when: not (tke_cluster_id and tke_addon_name and tke_addon_version)
+  when: tke_cluster_id | length == 0 or tke_addon_name | length == 0 or tke_addon_version | length == 0
 
 - name: TKE addon end-to-end
   module_defaults:
     group/susunola.tencentcloud.all:
       region: "{{ tencentcloud_region }}"
-  when: tke_cluster_id and tke_addon_name and tke_addon_version
+  when: tke_cluster_id | length > 0 and tke_addon_name | length > 0 and tke_addon_version | length > 0
   block:
     - name: Install addon
       susunola.tencentcloud.tke_addon:

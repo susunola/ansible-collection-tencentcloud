@@ -17,7 +17,10 @@ options:
   end_time: {type: str, default: '23:59', description: Backup window end time.}
   weekdays: {type: list, elements: str, choices: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday], default: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday], description: Backup weekdays.}
   archive_after_days: {type: int, default: -1, description: Days before archive transition; minus one disables archive storage.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

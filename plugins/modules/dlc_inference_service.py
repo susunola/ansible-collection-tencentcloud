@@ -39,15 +39,17 @@ options:
     type: list
     elements: dict
     description: Exact readable Tencent Cloud resource tag set.
-    options:
+    suboptions:
       key: {type: str, required: true, description: Tag key.}
       value: {type: str, required: true, description: Tag value.}
   wait: {type: bool, default: true, description: Wait for Running or Stopped convergence.}
   waiter_delay: {type: int, default: 10, description: Seconds between polls.}
   waiter_timeout: {type: int, default: 1800, description: Overall deployment convergence timeout.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

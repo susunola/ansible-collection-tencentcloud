@@ -12,9 +12,11 @@ version_added: "0.14.0"
 description: Returns the complete backup-policy list reported for an instance without assuming cardinality.
 options:
   instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
-  retries: {type: int, default: 5, description: Retries for transient API failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -29,7 +31,7 @@ request_id: {description: Tencent Cloud request ID., type: str, returned: always
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
-from ansible_collections.susunola.tencentcloud.plugins.modules.tdmysql_backup_policy import _load, describe_request, normalize
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tdmysql import _load, backup_policy_describe_request, normalize
 
 
 def run_module():
@@ -39,7 +41,7 @@ def run_module():
     models, cm = _load()
     client = module.create_client(cm.TdmysqlClient, "tdmysql.tencentcloudapi.com")
     try:
-        response = module.sdk_call(client.DescribeDBSBackupPolicy, describe_request(models, p["instance_id"]))
+        response = module.sdk_call(client.DescribeDBSBackupPolicy, backup_policy_describe_request(models, p["instance_id"]))
         values = [normalize(item._serialize(allow_none=True)) for item in response.Items or []]
         module.exit_json(changed=False, backup_policies=values, total_count=int(response.TotalCount or 0), request_id=response.RequestId)
     except Exception as exc:

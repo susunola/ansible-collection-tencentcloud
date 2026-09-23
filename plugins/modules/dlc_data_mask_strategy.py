@@ -14,18 +14,18 @@ description:
 options:
   state: {type: str, choices: [present, absent], default: present, description: Desired strategy state.}
   strategy_id: {type: str, description: Existing masking strategy ID.}
-  name: {type: str, description: Strategy name, required for creation and usable for exact discovery.}
+  name: {type: str, description: 'Strategy name, required for creation and usable for exact discovery.'}
   strategy_type: {type: str, choices: [MASK_SHOW_FIRST_4, MASK_SHOW_LAST_4, MASK_HASH, MASK_DATE_SHOW_YEAR, MASK_NULL, MASK_DEFAULT], description: Desired masking method.}
   description: {type: str, description: Desired strategy description.}
   groups: {type: list, elements: dict, description: Desired GroupInfo list containing WorkGroupId and StrategyType.}
   users: {type: list, elements: str, description: Exact desired sub-account UIN list.}
   allow_delete: {type: bool, default: false, description: Explicitly authorize strategy deletion.}
   wait: {type: bool, default: true, description: Wait for mutation convergence.}
-  waiter_delay: {type: int, default: 5, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 120, description: Overall convergence timeout.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

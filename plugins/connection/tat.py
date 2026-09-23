@@ -89,7 +89,10 @@ notes:
     features that assume an interactive shell (e.g. ``environment``
     persistence between commands) are not supported. Set what the command
     needs inside the command itself.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
@@ -131,6 +134,8 @@ from ansible.utils.display import Display
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.client import (
     HAS_TENCENTCLOUD_SDK,
+)
+from ansible_collections.susunola.tencentcloud.plugins.plugin_utils.profile import (
     load_profile,
 )
 

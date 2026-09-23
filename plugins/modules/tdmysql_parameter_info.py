@@ -13,9 +13,11 @@ description: Returns current parameter values, defaults, constraints and restart
 options:
   instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
   names: {type: list, elements: str, description: Optional exact parameter names to return.}
-  retries: {type: int, default: 5, description: Retries for transient API failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -29,7 +31,7 @@ parameters: {description: Parameter metadata keyed by name., type: dict, returne
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
-from ansible_collections.susunola.tencentcloud.plugins.modules.tdmysql_parameter import _load, read_parameters, selected
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.tdmysql import _load, parameter_describe_request, parameter_map, selected
 
 
 def run_module():
@@ -39,7 +41,8 @@ def run_module():
     models, cm = _load()
     client = module.create_client(cm.TdmysqlClient, "tdmysql.tencentcloudapi.com")
     try:
-        values = read_parameters(module, client, models, p["instance_id"])
+        response = module.sdk_call(client.DescribeDBParameters, parameter_describe_request(models, p["instance_id"]))
+        values = parameter_map(response)
         if p.get("names") is not None:
             missing = sorted(set(p["names"]) - set(values))
             if missing:

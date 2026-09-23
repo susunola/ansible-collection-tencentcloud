@@ -11,23 +11,35 @@ import pytest
 from ansible_collections.susunola.tencentcloud.plugins.modules import cbs_disk_backup_info
 
 
+class FakeFilter:
+    pass
+
+
 class FakeRequest:
     pass
 
 
 class FakeModels:
+    Filter = FakeFilter
     DescribeDiskBackupsRequest = FakeRequest
 
 
 def test_build_request_sets_pagination():
-    request = cbs_disk_backup_info.build_request(FakeModels, None, 200, 100)
+    request = cbs_disk_backup_info.build_request(FakeModels, "sample", "sample", None, {}, 200, 100)
     assert request.Offset == 200
     assert request.Limit == 100
 
 
 def test_build_request_maps_ids():
-    request = cbs_disk_backup_info.build_request(FakeModels, ["x-1"], 0, 100)
+    request = cbs_disk_backup_info.build_request(FakeModels, "sample", "sample", ["x-1"], {}, 0, 100)
     assert request.DiskBackupIds == ["x-1"]
+
+
+def test_build_request_sorts_filters():
+    request = cbs_disk_backup_info.build_request(FakeModels, "sample", "sample", None, {"b-name": ["v1"], "a-name": ["v2"]}, 0, 100)
+    assert [(item.Name, item.Values) for item in request.Filters] == [
+        ("a-name", ["v2"]), ("b-name", ["v1"]),
+    ]
 
 
 class FakeItem:
@@ -107,7 +119,7 @@ def test_run_module_paginates_until_total_count(monkeypatch):
         FakeResponse([FakeItem("c")], 3),
     ])
     fake = _run(monkeypatch, client, region="ap-guangzhou",
-                disk_backup_ids=None, page_size=2)
+                order="sample", order_field="sample", disk_backup_ids=None, filters={}, page_size=2)
     payload = fake.exit_payload
     assert payload["changed"] is False
     assert [item["Marker"] for item in payload["disk_backups"]] == ["a", "b", "c"]
@@ -139,7 +151,10 @@ def test_run_module_fails_cleanly_on_sdk_error(monkeypatch):
     # page_size (and ids/filters when declared) before the API call fails.
     fake = FakeModule({
         "region": "ap-guangzhou",
+        "order": "sample",
+        "order_field": "sample",
         "disk_backup_ids": None,
+        "filters": {},
         "page_size": 2,
     })
     monkeypatch.setattr(cbs_disk_backup_info, "AnsibleModule", lambda **kwargs: fake)

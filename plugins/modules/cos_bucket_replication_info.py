@@ -10,7 +10,10 @@ description: Returns the effective normalized replication configuration of a COS
 options:
   name: {description: Source bucket short name or full name., type: str, required: true}
   appid: {description: Tencent Cloud AppId used in the bucket suffix., type: str}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

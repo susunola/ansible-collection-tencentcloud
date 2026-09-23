@@ -49,11 +49,11 @@ options:
   tags: {type: dict, description: Tags applied during creation.}
   recover: {type: bool, default: false, description: Recover an isolated instance when state is present.}
   purge: {type: bool, default: false, description: Permanently destroy an already isolated instance.}
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -71,6 +71,7 @@ EXAMPLES = r"""
     password: "{{ vault_tdmysql_password }}"
 """
 RETURN = r"""instance: {description: Effective TDMysql instance metadata., type: dict, returned: always}"""
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
@@ -192,21 +193,30 @@ def security_groups_request(models, instance_id, groups):
 
 
 def find(module, client, models, p):
-    offset, matches = 0, []
-    while True:
-        response = module.sdk_call(client.DescribeDBInstances, describe_request(models, p, offset))
-        items = response.Instances or []
-        for item in items:
-            value = item._serialize(allow_none=True)
-            if (p.get("instance_id") and value.get("InstanceId") == p["instance_id"]) or (
-                not p.get("instance_id") and value.get("InstanceName") == p.get("name")
-            ):
-                matches.append(value)
-        offset += len(items)
-        if not items or offset >= (response.TotalCount or 0):
-            break
-    if len(matches) > 1:
-        module.fail_json(msg="Multiple TDMysql instances matched; specify instance_id")
+    """Return the matching instance dict or None.
+
+    Every page is collected and re-checked client-side by the shared
+    resolver, so two candidates fail with C(ambiguous=true) plus the
+    candidate list instead of a flat "specify instance_id" message with
+    nothing to choose from.
+    """
+    def describe(filters):
+        matches, offset = [], 0
+        while True:
+            response = module.sdk_call(client.DescribeDBInstances, describe_request(models, p, offset))
+            items = response.Instances or []
+            matches.extend(resolver.records(items))
+            offset += len(items)
+            if not items or offset >= (response.TotalCount or 0):
+                break
+        return matches
+
+    matches = resolver.resolve_one(
+        module, describe, resource="TDMysql instance",
+        id_value=p.get("instance_id"), name_value=p.get("name"),
+        id_keys=("InstanceId",), name_keys=("InstanceName",),
+    )
+    matches = [matches] if matches else []
     if matches:
         detail = module.sdk_call(client.DescribeDBInstanceDetail, detail_request(models, matches[0]["InstanceId"]))._serialize(allow_none=True)
         detail.pop("RequestId", None)

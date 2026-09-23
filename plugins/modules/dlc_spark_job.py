@@ -15,7 +15,7 @@ description:
 options:
   state: {type: str, choices: [present, absent], default: present, description: Desired lifecycle state.}
   name: {type: str, required: true, description: Exact job name and immutable module identity.}
-  app_type: {type: int, choices: [1, 2], description: Job type, 1 batch or 2 streaming.}
+  app_type: {type: int, choices: [1, 2], description: 'Job type, 1 batch or 2 streaming.'}
   data_engine: {type: str, description: DLC data engine name.}
   app_file: {type: str, description: COS program package path.}
   role_arn: {type: int, description: DLC data-access role ID.}
@@ -43,9 +43,11 @@ options:
   wait: {type: bool, default: true, description: Wait for definition convergence.}
   waiter_delay: {type: int, default: 5, description: Seconds between polls.}
   waiter_timeout: {type: int, default: 300, description: Overall convergence timeout.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

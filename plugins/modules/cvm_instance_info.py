@@ -27,7 +27,9 @@ options:
     default: 100
     choices: [20, 50, 100]
 extends_documentation_fragment:
-  - susunola.tencentcloud.tencentcloud
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

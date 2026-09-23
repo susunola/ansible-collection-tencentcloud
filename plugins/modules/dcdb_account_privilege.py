@@ -19,7 +19,10 @@ options:
   object_name: {type: str, default: '*', description: Table name or star.}
   column: {type: str, default: '*', description: Column name or star.}
   privileges: {type: list, elements: str, default: [], description: Complete desired privilege set.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

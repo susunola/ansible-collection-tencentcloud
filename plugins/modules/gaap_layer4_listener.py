@@ -32,7 +32,10 @@ options:
   send_context: {type: str, description: UDP probe request text.}
   receive_context: {type: str, description: UDP probe expected response text.}
   force_delete_bound: {type: bool, default: false, description: Allow deletion when origins remain bound.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

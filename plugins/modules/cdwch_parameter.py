@@ -20,9 +20,11 @@ options:
   wait: {type: bool, default: true, description: Wait until the configuration list reflects the change.}
   waiter_delay: {type: int, default: 3, description: Seconds between polls.}
   waiter_timeout: {type: int, default: 120, description: Overall convergence timeout.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -19,11 +19,19 @@ options:
   max_msg_size: {description: Maximum message size in bytes; immutable after creation., type: int, default: 1048576}
   msg_retention_seconds: {description: Message retention period in seconds., type: int, default: 3600}
   rewind_seconds: {description: Maximum message rewind period in seconds., type: int, default: 0}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+  retention_size_in_mb:
+    description:
+      - Rewind storage quota in MB. The API validates this field on every
+        C(ModifyCmqQueueAttribute) call - it must be C(0) when I(rewind_seconds)
+        is C(0) and between C(10240) and C(512000) when message rewind is on.
+      - Leaving it unset keeps the queue unrewindable.
+    type: int
+    default: 0
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r"""
@@ -64,6 +72,9 @@ def _set_queue_attributes(request, p):
     request.MaxMsgSize = p["max_msg_size"]
     request.MsgRetentionSeconds = p["msg_retention_seconds"]
     request.RewindSeconds = p["rewind_seconds"]
+    # ModifyCmqQueueAttribute rejects the request outright when this is absent:
+    # "Invalid RetentionSizeInMB: Value should be between 10240MB and 512000MB".
+    request.RetentionSizeInMB = p["retention_size_in_mb"]
     return request
 
 
@@ -123,9 +134,14 @@ def run_module():
         "max_msg_size": {"type": "int", "default": 1048576},
         "msg_retention_seconds": {"type": "int", "default": 3600},
         "rewind_seconds": {"type": "int", "default": 0},
+        "retention_size_in_mb": {"type": "int", "default": 0},
     }
     module = TencentCloudModule(argument_spec=spec, supports_check_mode=True)
     p = module.params
+    if p["rewind_seconds"] and p["retention_size_in_mb"] == 0:
+        module.fail_json(
+            msg="retention_size_in_mb must be between 10240 and 512000 when rewind_seconds is set"
+        )
     module.require_sdk()
     models, cm = _load_cmq()
     client = module.create_client(cm.TdmqClient, "tdmq.tencentcloudapi.com")

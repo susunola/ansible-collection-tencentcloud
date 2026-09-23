@@ -16,7 +16,10 @@ options:
   resume_option: {description: Resume mode., type: str, choices: [normal, clearData, overwrite], default: normal}
   complete_mode: {description: Completion mode for supported legacy MySQL jobs., type: str, choices: [waitForSync, immediately], default: waitForSync}
   confirm_impact: {description: Explicitly authorize stop or complete operations., type: bool, default: false}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""- susunola.tencentcloud.dts_migration_action: {job_id: dts-abcd1234, action: start}"""

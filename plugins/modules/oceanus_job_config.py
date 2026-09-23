@@ -51,11 +51,13 @@ options:
   jdk_version: {type: str, description: JDK runtime version.}
   variable_replace_mode: {type: int, choices: [0, 1], description: Table-variable or global SQL-variable replacement mode.}
   state_cos_bucket: {type: str, description: COS bucket used for Flink state.}
-  config_scope: {type: int, choices: [0, 1, 2], default: 0, description: Full, development-only or operations-only scope.}
+  config_scope: {type: int, choices: [0, 1, 2], default: 0, description: 'Full, development-only or operations-only scope.'}
   allow_delete: {type: bool, default: false, description: Explicitly authorize deletion of a historical configuration version.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

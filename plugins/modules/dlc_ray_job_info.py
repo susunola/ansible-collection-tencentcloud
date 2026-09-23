@@ -21,11 +21,13 @@ options:
   start_time: {type: int, description: Optional diagnostic start timestamp in milliseconds.}
   end_time: {type: int, description: Optional diagnostic end timestamp in milliseconds.}
   event_type: {type: str, description: Optional ASCII event type such as Normal or Warning.}
-  page_size: {type: int, default: 100, description: History, event and Pod page size, from 1 to 200.}
-  max_pages: {type: int, default: 100, description: Maximum pages per diagnostic stream, from 1 to 1000.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+  page_size: {type: int, default: 100, description: 'History, event and Pod page size, from 1 to 200.'}
+  max_pages: {type: int, default: 100, description: 'Maximum pages per diagnostic stream, from 1 to 1000.'}
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

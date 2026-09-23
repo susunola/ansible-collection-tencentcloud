@@ -16,7 +16,7 @@ options:
   state: {type: str, choices: [started, cancelled], default: started, description: Start a new invocation or cancel an existing one.}
   invocation_id: {type: str, description: Existing invocation ID required for cancellation.}
   command_id: {type: str, description: Reusable command ID required when starting.}
-  instance_ids: {type: list, elements: str, default: [], description: Target CVM, Lighthouse or managed instance IDs, up to 200.}
+  instance_ids: {type: list, elements: str, default: [], description: 'Target CVM, Lighthouse or managed instance IDs, up to 200.'}
   parameters: {type: dict, default: {}, description: Command placeholder values.}
   username: {type: str, description: Least-privilege operating-system user override.}
   working_directory: {type: str, description: Working-directory override.}
@@ -26,11 +26,14 @@ options:
   wait: {type: bool, default: true, description: Wait for all instance tasks to reach terminal states.}
   fail_on_task_error: {type: bool, default: true, description: Fail when any task is unsuccessful.}
   include_output: {type: bool, default: false, description: Return task output; use task-level C(no_log=true) when enabled.}
-  retries: {type: int, default: 5, description: Transient API retry count.}
+
   waiter_delay: {type: int, default: 5, description: Polling interval.}
   waiter_timeout: {type: int, default: 900, description: Overall execution wait timeout.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

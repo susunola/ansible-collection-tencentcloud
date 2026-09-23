@@ -64,15 +64,36 @@ options:
       - Only applied at creation.
     type: int
     default: 10
+  net_interface:
+    description:
+      - Network type written to V(CreateCfsFileSystemRequest.NetInterface).
+      - The API rejects a create call that omits this field; it defaults to
+        C(VPC) so an existing playbook keeps working unchanged.
+      - Only applied at creation.
+    type: str
+    choices: [VPC, CCN]
+    default: VPC
   vpc_id:
     description:
       - VPC ID for the file system network, written to
         V(CreateCfsFileSystemRequest.VpcId). Only applied at creation.
+      - Required when O(net_interface=VPC).
     type: str
   subnet_id:
     description:
       - Subnet ID for the file system network, written to
         V(CreateCfsFileSystemRequest.SubnetId). Only applied at creation.
+      - Required when O(net_interface=VPC).
+    type: str
+  ccn_id:
+    description:
+      - Cloud Connect Network ID written to V(CreateCfsFileSystemRequest.CcnId).
+      - Required when O(net_interface=CCN). Only applied at creation.
+    type: str
+  cidr_block:
+    description:
+      - CCN CIDR block written to V(CreateCfsFileSystemRequest.CidrBlock).
+      - Required when O(net_interface=CCN). Only applied at creation.
     type: str
   pgroup_id:
     description:
@@ -86,28 +107,13 @@ options:
       - When given, the size limit of an existing file system is
         reconciled; a differing limit counts as a change.
     type: int
-  retries:
-    description: Number of retries for transient SDK failures.
-    type: int
-    default: 5
-  waiter_delay:
-    description: Seconds to wait between state-polling attempts.
-    type: int
-    default: 5
-  waiter_timeout:
-    description: Overall timeout in seconds for state polling.
-    type: int
-    default: 120
-  user_agent:
-    description:
-      - Value appended to the SDK User-Agent header so API usage can be
-        attributed to this collection.
-    type: str
-    default: ansible-collection.susunola.tencentcloud
 notes:
   - Requires the C(tencentcloud-sdk-python-cfs) package on the controller.
   - CFS file systems are zone-scoped, so O(zone) is required at creation.
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
@@ -145,7 +151,7 @@ file_system:
   type: dict
   sample:
     FileSystemId: cfs-xxxxxxxx
-    Name: app-share
+    FsName: app-share
     Protocol: NFS
     StorageType: SD
     Zone: ap-guangzhou-3
@@ -175,11 +181,20 @@ def _first(collection):
     return collection[0] if collection else None
 
 
+def _fs_name(item):
+    """Read the display name out of a serialized file system.
+
+    DescribeCfsFileSystems reports the name as ``FsName``; ``Name`` is only
+    consulted so hand-built payloads (tests, cached results) keep working.
+    """
+    return item.get("FsName") or item.get("Name")
+
+
 def find_file_system(module, client, models, file_system_id, name):
     """Return the matching file system dict or None.
 
     The CFS describe API filters by ``FileSystemId`` (or subnet/VPC), not by
-    name, so a name lookup scans pages and compares the ``Name`` field.
+    name, so a name lookup scans pages and compares the ``FsName`` field.
     """
     request = build_describe_request(models, file_system_id, None)
     offset = 0
@@ -191,7 +206,7 @@ def find_file_system(module, client, models, file_system_id, name):
             serialized = item._serialize(allow_none=True)
             if file_system_id:
                 return serialized
-            if name is not None and serialized.get("Name") == name:
+            if name is not None and _fs_name(serialized) == name:
                 return serialized
         offset += len(page)
         total = response.TotalCount or 0
@@ -202,6 +217,9 @@ def find_file_system(module, client, models, file_system_id, name):
 def _create(module, client, models, params):
     request = models.CreateCfsFileSystemRequest()
     request.Zone = params["zone"]
+    # NetInterface is mandatory on CreateCfsFileSystem; VpcId/SubnetId or
+    # CcnId/CidrBlock are mandatory depending on the value chosen.
+    request.NetInterface = params["net_interface"]
     request.Protocol = params["protocol"]
     request.StorageType = params["storage_type"]
     request.Capacity = params["capacity"]
@@ -211,6 +229,10 @@ def _create(module, client, models, params):
         request.VpcId = params["vpc_id"]
     if params["subnet_id"]:
         request.SubnetId = params["subnet_id"]
+    if params["ccn_id"]:
+        request.CcnId = params["ccn_id"]
+    if params["cidr_block"]:
+        request.CidrBlock = params["cidr_block"]
     if params["pgroup_id"]:
         request.PGroupId = params["pgroup_id"]
     return module.sdk_call(client.CreateCfsFileSystem, request)
@@ -246,11 +268,15 @@ def run_module():
             "protocol": {"type": "str", "choices": ["NFS", "CIFS"], "default": "NFS"},
             "storage_type": {"type": "str", "choices": ["SD", "HP", "SD_HP", "TP", "SD_HIGH_AVAIL"], "default": "SD"},
             "capacity": {"type": "int", "default": 10},
+            "net_interface": {"type": "str", "choices": ["VPC", "CCN"], "default": "VPC"},
             "vpc_id": {"type": "str"},
             "subnet_id": {"type": "str"},
+            "ccn_id": {"type": "str"},
+            "cidr_block": {"type": "str"},
             "pgroup_id": {"type": "str"},
             "size_limit": {"type": "int"},
         },
+        required_if=[("net_interface", "CCN", ("ccn_id", "cidr_block"))],
         supports_check_mode=True,
     )
     module.require_sdk()
@@ -296,13 +322,16 @@ def run_module():
         diff = maybe_diff(module, None, desired)
         if module.check_mode:
             module.exit_json(changed=True, **(diff or {}), msg="Would create file system")
-        _create(module, client, models, module.params)
-        created = find_file_system(module, client, models, None, name)
+        create_response = _create(module, client, models, module.params)
+        # Re-read by the ID the create call returned: the name only becomes
+        # visible once the file system leaves the creating state.
+        created_id = getattr(create_response, "FileSystemId", None)
+        created = find_file_system(module, client, models, created_id, name)
         module.exit_json(changed=True, **(diff or {}), file_system=created, msg="File system created")
 
     target_id = current["FileSystemId"]
     changes = []
-    if name and current.get("Name") != name:
+    if name and _fs_name(current) != name:
         changes.append("name")
     size_limit = module.params["size_limit"]
     current_size = current.get("SizeLimit") or current.get("Capacity") or 0
@@ -313,7 +342,7 @@ def run_module():
         module.exit_json(changed=False, file_system=current, msg="File system is up to date")
 
     diff = maybe_diff(module, current, {
-        "Name": name or current.get("Name"),
+        "Name": name or _fs_name(current),
         "SizeLimit": size_limit if size_limit is not None else current_size,
     })
     if module.check_mode:

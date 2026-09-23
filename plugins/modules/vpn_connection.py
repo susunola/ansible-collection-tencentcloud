@@ -36,11 +36,11 @@ options:
   dpd_timeout: {description: Dead peer detection timeout in seconds., type: int}
   dpd_action: {description: Action after DPD timeout., type: str, choices: [clear, restart]}
   tags: {description: Tags applied at creation., type: dict, default: {}}
-  retries: {description: Number of retries for transient failures., type: int, default: 5}
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 5}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 120}
-  user_agent: {description: User-Agent suffix., type: str, default: ansible-collection.susunola.tencentcloud}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
@@ -63,8 +63,9 @@ vpn_connection: {description: VPN connection metadata., type: dict, returned: al
 import time
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
+from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 
 
 def _load_vpc():
@@ -158,17 +159,33 @@ def build_delete_request(models, gateway_id, connection_id):
 
 
 def find_connection(module, client, models, connection_id, name, gateway_id):
-    offset, matches = 0, []
-    while True:
-        response = module.sdk_call(client.DescribeVpnConnections, build_describe_request(models, connection_id, name, gateway_id, offset))
-        items = list(getattr(response, "VpnConnectionSet", None) or [])
-        matches.extend(item._serialize(allow_none=True) for item in items)
-        offset += len(items)
-        if connection_id or not items or offset >= int(getattr(response, "TotalCount", 0) or 0):
-            break
-    if len(matches) > 1:
-        module.fail_json(msg="Multiple VPN connections match; specify vpn_connection_id")
-    return matches[0] if matches else None
+    """Return the matching VPN connection dict or None.
+
+    ``vpn-connection-name`` is a substring filter and the result set is
+    paginated, so every page is collected and re-checked client-side: an
+    exact name wins, a lone fuzzy candidate is accepted, and two or more
+    candidates fail with C(ambiguous=true) plus the candidate list instead of
+    a flat "specify vpn_connection_id" message with nothing to choose from.
+    """
+    def describe(filters):
+        matches, offset = [], 0
+        while True:
+            request = build_describe_request(models, connection_id, name, gateway_id, offset)
+            resolver.attach_filters(request, models, filters)
+            response = module.sdk_call(client.DescribeVpnConnections, request)
+            items = list(getattr(response, "VpnConnectionSet", None) or [])
+            matches.extend(item._serialize(allow_none=True) for item in items)
+            offset += len(items)
+            if connection_id or not items or offset >= int(getattr(response, "TotalCount", 0) or 0):
+                break
+        return matches
+
+    return resolver.resolve_one(
+        module, describe, resource="VPN connection",
+        id_value=connection_id, name_value=name,
+        id_keys=("VpnConnectionId",), name_keys=("VpnConnectionName",),
+        name_filters=("vpn-connection-name",),
+    )
 
 
 def _desired(params):

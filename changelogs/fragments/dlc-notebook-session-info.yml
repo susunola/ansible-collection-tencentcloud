@@ -1,2 +1,0 @@
-minor_changes:
-  - Add ``dlc_notebook_session_info`` with complete pagination and engine, state, keyword, generation and sort filters.

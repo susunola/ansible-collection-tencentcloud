@@ -94,7 +94,7 @@ def test_run_module_returns_full_list(monkeypatch):
     fake = _run(monkeypatch, client, region="ap-guangzhou", snapshot_id="sample")
     payload = fake.exit_payload
     assert payload["changed"] is False
-    assert [item["Marker"] for item in payload["share_permissions"]] == ["a", "b"]
+    assert [item["Marker"] for item in payload["snapshot_share_permissions"]] == ["a", "b"]
     assert payload["total_count"] == 2
     assert payload["request_id"] == "req-list"
     assert len(client.requests) == 1

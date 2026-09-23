@@ -25,7 +25,10 @@ options:
       port: {type: int, required: true, description: Origin port.}
       weight: {type: int, default: 1, description: Weight for weighted round-robin.}
       failover_role: {type: str, choices: [master, slave], description: Role when listener failover is enabled.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

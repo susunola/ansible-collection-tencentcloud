@@ -28,6 +28,35 @@ def select(files, coverage):
     return sorted(selected)
 
 
+# Directories under tests/integration/targets that are not runnable targets:
+# shared helpers the workflow invokes directly rather than through target
+# selection, so they are legitimately absent from the coverage registry.
+HELPER_TARGETS = frozenset({"cleanup"})
+
+
+def validate_target_dirs(coverage):
+    """Flag a target directory the registry has never heard of.
+
+    ``validate_registry`` walks registry -> directory, so a target that was
+    written but never registered passes every check while never being
+    selected by anything: it simply never runs. This walks the other way.
+    """
+    targets_root = ROOT / "tests" / "integration" / "targets"
+    if not targets_root.is_dir():
+        return []
+    registered = set(coverage.get("targets", {}))
+    problems = []
+    for path in sorted(targets_root.iterdir()):
+        if not path.is_dir() or path.name in HELPER_TARGETS:
+            continue
+        if path.name not in registered:
+            problems.append(
+                "target directory %s is not listed in tests/integration/coverage.yml - "
+                "no selector can reach it, so it never runs" % path.name
+            )
+    return problems
+
+
 def validate_registry(coverage):
     """Return actionable registry problems instead of silently skipping E2E."""
     problems = []
@@ -57,7 +86,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     coverage = yaml.safe_load(MAP.read_text(encoding="utf-8"))
     if args.check:
-        problems = validate_registry(coverage)
+        problems = validate_registry(coverage) + validate_target_dirs(coverage)
         if problems:
             for problem in problems:
                 print(problem)

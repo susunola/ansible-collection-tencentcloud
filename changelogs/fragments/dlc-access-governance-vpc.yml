@@ -1,2 +1,0 @@
-minor_changes:
-  - Extend ``tc_dlc_access_governance`` with ordered DLC engine-network VPC endpoint provisioning and teardown.

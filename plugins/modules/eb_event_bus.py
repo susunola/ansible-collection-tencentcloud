@@ -18,11 +18,11 @@ options:
   description: {type: str, default: '', description: Event bus description.}
   save_days: {type: int, description: Event retention in days.}
   enable_store: {type: bool, description: Enable event storage.}
-  retries: {type: int, default: 5, description: Number of retries for transient failures.}
-  waiter_delay: {type: int, default: 5, description: Seconds between polling attempts.}
-  waiter_timeout: {type: int, default: 120, description: Overall polling timeout in seconds.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

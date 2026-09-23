@@ -10,7 +10,10 @@ description: Returns the normalized response query parameters allowed for a COS 
 options:
   name: {description: Bucket short name or full name., type: str, required: true}
   appid: {description: Tencent Cloud AppId used in the bucket suffix., type: str}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

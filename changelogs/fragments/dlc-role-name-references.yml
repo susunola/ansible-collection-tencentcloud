@@ -1,2 +1,0 @@
-minor_changes:
-  - Allow ``tc_dlc_access_governance`` model versions and inference services to reference managed inference models by name with validated UID resolution.

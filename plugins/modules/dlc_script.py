@@ -16,16 +16,18 @@ options:
   state: {type: str, choices: [present, absent], default: present, description: Desired lifecycle state.}
   name: {type: str, required: true, description: Exact saved-script name and identity.}
   sql_statement: {type: str, description: Plain-text SQL content; required on creation.}
-  description: {type: str, description: Script description, at most 50 characters.}
+  description: {type: str, description: 'Script description, at most 50 characters.'}
   database_name: {type: str, description: Default database name.}
   allow_replace: {type: bool, default: false, description: Explicitly authorize delete-and-recreate when immutable script content drifts.}
   allow_delete: {type: bool, default: false, description: Explicitly authorize script deletion.}
   wait: {type: bool, default: true, description: Wait for lifecycle and field convergence.}
   waiter_delay: {type: int, default: 3, description: Seconds between polls.}
   waiter_timeout: {type: int, default: 180, description: Overall convergence timeout.}
-  retries: {type: int, default: 5, description: Retries for transient failures.}
-  user_agent: {type: str, default: ansible-collection.susunola.tencentcloud, description: User-Agent suffix.}
-extends_documentation_fragment: susunola.tencentcloud.tencentcloud
+
+extends_documentation_fragment:
+  - susunola.tencentcloud.credentials
+  - susunola.tencentcloud.region
+  - susunola.tencentcloud.connection
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

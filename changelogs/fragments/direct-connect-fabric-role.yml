@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Added exact-name Direct Connect lookups and the tc_direct_connect_fabric role for guarded circuit and tunnel lifecycle.
