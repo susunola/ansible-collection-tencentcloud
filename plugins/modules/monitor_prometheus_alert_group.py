@@ -48,9 +48,11 @@ def _load():
     return models, monitor_client
 
 
-def build_describe(models, p):
+def build_describe(models, p, offset=0):
     request = models.DescribePrometheusAlertGroupsRequest()
-    request.InstanceId, request.GroupId, request.GroupName, request.Offset, request.Limit = p["instance_id"], p.get("group_id"), p.get("name"), 0, 100
+    request.InstanceId, request.GroupId = p["instance_id"], p.get("group_id")
+    request.GroupName = p.get("name") if not p.get("group_id") else None
+    request.Offset, request.Limit = offset, 100
     return request
 
 
@@ -86,12 +88,18 @@ def build_delete(models, instance_id, group_id):
 
 
 def find(module, client, models, p):
-    response = module.sdk_call(client.DescribePrometheusAlertGroups, build_describe(models, p))
-    matches = []
-    for item in list(response.AlertGroupSet or []):
-        value = item._serialize(allow_none=True)
-        if (p.get("group_id") and value.get("GroupId") == p["group_id"]) or (not p.get("group_id") and value.get("GroupName") == p.get("name")):
-            matches.append(value)
+    matches, offset = [], 0
+    while True:
+        response = module.sdk_call(client.DescribePrometheusAlertGroups, build_describe(models, p, offset))
+        page = list(response.AlertGroupSet or [])
+        for item in page:
+            value = item._serialize(allow_none=True)
+            if (p.get("group_id") and value.get("GroupId") == p["group_id"]) or (not p.get("group_id") and value.get("GroupName") == p.get("name")):
+                matches.append(value)
+        offset += len(page)
+        total = getattr(response, "TotalCount", None)
+        if not page or (total is not None and offset >= total) or (total is None and len(page) < 100):
+            break
     if len(matches) > 1:
         module.fail_json(msg="Multiple Prometheus alert groups have the requested name", name=p.get("name"))
     return matches[0] if matches else None

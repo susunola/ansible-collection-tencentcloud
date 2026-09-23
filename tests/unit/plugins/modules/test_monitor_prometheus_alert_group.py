@@ -139,8 +139,14 @@ class FakeMonitorClient(object):
         group_id = getattr(request, "GroupId", None)
         if group_id:
             values = [g for g in values if g["GroupId"] == group_id]
+        group_name = getattr(request, "GroupName", None)
+        if group_name:
+            values = [g for g in values if group_name in g["GroupName"]]
+        total = len(values)
+        values = values[request.Offset:request.Offset + request.Limit]
         return SimpleNamespace(
             AlertGroupSet=[FakeResource(dict(g)) for g in values],
+            TotalCount=total,
             RequestId="req-fake",
         )
 
@@ -215,7 +221,7 @@ def test_build_describe_carries_fields():
     request = mod.build_describe(_Models(), _params(group_id="grp-101"))
     assert request.InstanceId == "prom-abc"
     assert request.GroupId == "grp-101"
-    assert request.GroupName == "app-alerts"
+    assert request.GroupName is None
     assert request.Offset == 0
     assert request.Limit == 100
 
@@ -327,6 +333,23 @@ def test_find_multi_match_fails(monkeypatch):
     payload = exc.value.args[0]
     assert "Multiple Prometheus alert groups have the requested name" in payload["msg"]
     assert payload["name"] == "app-alerts"
+
+
+def test_find_by_name_searches_all_pages():
+    others = [_group(GroupId="grp-%03d" % index, GroupName="app-alerts-other") for index in range(100)]
+    target = _group(GroupId="grp-target")
+    fake = FakeMonitorClient(others + [target])
+    module = FakeModule(_params())
+    assert mod.find(module, fake, _Models(), module.params)["GroupId"] == "grp-target"
+    requests = [request for name, request in fake.calls if name == "DescribePrometheusAlertGroups"]
+    assert [request.Offset for request in requests] == [0, 100]
+
+
+def test_find_by_id_does_not_filter_old_name():
+    fake = FakeMonitorClient([_group(GroupName="old-name")])
+    module = FakeModule(_params(group_id="grp-101", name="new-name"))
+    assert mod.find(module, fake, _Models(), module.params)["GroupName"] == "old-name"
+    assert fake.calls[0][1].GroupName is None
 
 
 # ---------------------------------------------------------------------------
