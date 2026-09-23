@@ -23,10 +23,17 @@ vulnerability controls and optional cross-region replication.
                 TagPattern: "v*"
                 RepositoryDecoration: repoMatches
                 TagDecoration: matches
+            webhook_triggers:
+              - Name: push-notify
+                Condition: all
+                EventTypes: [pushImage]
+                Enabled: true
+                Targets: [{Address: "https://hooks.example.com/tcr"}]
 ```
 
 The role publishes `tc_container_registry_result`. Deletion requires an
 explicit registry ID when child resources are declared and removes replication
-rules, immutable tag rules and repositories before namespaces and the registry
+rules, immutable tag rules, webhook triggers and repositories before namespaces and the registry
 instance. Immutable rules are identified by namespace and repository/tag
-patterns; to change other rule fields, remove and recreate the rule explicitly.
+patterns; webhook triggers are identified by namespace and name. To change
+other fields, remove and recreate the resource explicitly.

@@ -80,6 +80,16 @@
     loop_var: _tc_tcr_namespace
     label: "{{ _tc_tcr_namespace.name }}"
 
+- name: Reconcile TCR webhook triggers
+  when:
+    - tc_container_registry_state == 'present'
+    - _tc_container_registry_id | length > 0
+  ansible.builtin.include_tasks: webhook_triggers.yml
+  loop: "{{ tc_container_registry_namespaces }}"
+  loop_control:
+    loop_var: _tc_tcr_namespace
+    label: "{{ _tc_tcr_namespace.name }}"
+
 - name: Provision TCR replication instances
   when:
     - tc_container_registry_state == 'present'
@@ -139,6 +149,14 @@
 - name: Remove TCR immutable tag rules
   when: tc_container_registry_state == 'absent'
   ansible.builtin.include_tasks: immutable_tag_rules.yml
+  loop: "{{ tc_container_registry_namespaces }}"
+  loop_control:
+    loop_var: _tc_tcr_namespace
+    label: "{{ _tc_tcr_namespace.name }}"
+
+- name: Remove TCR webhook triggers
+  when: tc_container_registry_state == 'absent'
+  ansible.builtin.include_tasks: webhook_triggers.yml
   loop: "{{ tc_container_registry_namespaces }}"
   loop_control:
     loop_var: _tc_tcr_namespace

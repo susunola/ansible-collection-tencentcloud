@@ -22,6 +22,8 @@ description:
     endpoint targets that do not map cleanly to Ansible suboptions. Provide at
     least C(Name) to identify the trigger; C(Description), C(Enabled),
     C(Condition), C(EventTypes) and C(Targets) are optional.
+  - Existing triggers are identified by name; their other fields are not
+    updated in place. Remove and recreate a trigger to change its payload.
 options:
   state:
     description: Desired state of the webhook trigger.
@@ -120,26 +122,30 @@ def _load_tcr():
 
 
 def find_trigger(module, client, models, registry_id, namespace, name):
-    request = models.DescribeWebhookTriggerRequest()
-    request.RegistryId = registry_id
-    request.Namespace = namespace
-    request.Limit = 100
-    request.Offset = 0
-    response = module.sdk_call(client.DescribeWebhookTrigger, request)
-    triggers = list(getattr(response, "Triggers", None) or [])
-    for item in triggers:
-        if getattr(item, "Name", None) != name:
-            continue
-        # The API leaves NamespaceName null on every trigger and only fills
-        # NamespaceId, so comparing it against the requested namespace makes
-        # the trigger look absent: a second run would try to create it again
-        # and fail with "notification policy named ... already exists". The
-        # request is already scoped to the namespace, so only reject a
-        # trigger whose namespace is present AND different.
-        item_namespace = getattr(item, "NamespaceName", None)
-        if item_namespace and item_namespace != namespace:
-            continue
-        return item
+    offset = 0
+    while True:
+        request = models.DescribeWebhookTriggerRequest()
+        request.RegistryId = registry_id
+        request.Namespace = namespace
+        request.Limit = 100
+        request.Offset = offset
+        response = module.sdk_call(client.DescribeWebhookTrigger, request)
+        total = getattr(response, "TotalCount", None)
+        if total is None:
+            raise ValueError("DescribeWebhookTrigger did not return TotalCount")
+        triggers = list(getattr(response, "Triggers", None) or [])
+        for item in triggers:
+            if getattr(item, "Name", None) != name:
+                continue
+            # NamespaceName may be null; the request is already namespace-scoped.
+            item_namespace = getattr(item, "NamespaceName", None)
+            if not item_namespace or item_namespace == namespace:
+                return item
+        offset += len(triggers)
+        if offset >= total:
+            break
+        if not triggers:
+            raise ValueError("DescribeWebhookTrigger returned an incomplete page")
     return None
 
 
@@ -196,6 +202,9 @@ def run_module():
             request.RegistryId = registry_id
             module.sdk_call(client.DeleteWebhookTrigger, request)
         final = find_trigger(module, client, models, registry_id, namespace, name)
+        if bool(final) != desired_present:
+            module.fail_json(msg="TCR webhook trigger did not reach the requested state",
+                             registry_id=registry_id, namespace=namespace)
         module.exit_json(
             changed=True,
             registry_id=registry_id,

@@ -23,9 +23,12 @@ __metaclass__ = type
 
 from types import SimpleNamespace
 
+import pytest
+
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.modules import tcr_webhook_trigger as mod
 from ansible_collections.susunola.tencentcloud.tests.unit.plugins.modules.harness import (
+    AnsibleFailJson,
     FakeModels,
     FakeResource,
     module_args,
@@ -251,3 +254,43 @@ def test_sdk_failure_fails(monkeypatch):
         assert payload.get("failed")
     else:
         raise AssertionError("expected SDK failure to fail the module")
+
+
+def test_finds_trigger_on_later_page(monkeypatch):
+    fake = FakeTcrClient()
+    pages = [
+        [_trigger(i, None, "other-%s" % i) for i in range(100)],
+        [_trigger(101, None, "push-notify")],
+    ]
+
+    def describe(request):
+        fake._record("DescribeWebhookTrigger", request)
+        return SimpleNamespace(Triggers=pages[0] if request.Offset == 0 else pages[1], TotalCount=101)
+
+    fake.DescribeWebhookTrigger = describe
+    _make_module(monkeypatch, fake)
+    module_args(registry_id="tcr-abc", namespace="prod", trigger=dict(TRIGGER))
+    result = run(mod.run_module)
+    assert result["changed"] is False
+    assert result["trigger_id"] == "101"
+    assert [request.Offset for name, request in fake.calls if name == "DescribeWebhookTrigger"] == [0, 100]
+
+
+def test_incomplete_page_fails_closed(monkeypatch):
+    fake = FakeTcrClient()
+    fake.DescribeWebhookTrigger = lambda request: SimpleNamespace(Triggers=[], TotalCount=1)
+    _make_module(monkeypatch, fake)
+    module_args(registry_id="tcr-abc", namespace="prod", trigger=dict(TRIGGER))
+    with pytest.raises(AnsibleFailJson):
+        run(mod.run_module)
+    assert fake.calls == []
+
+
+def test_create_must_be_visible_after_write(monkeypatch):
+    fake = FakeTcrClient()
+    fake.CreateWebhookTrigger = lambda request: SimpleNamespace(RequestId="req-fake")
+    _make_module(monkeypatch, fake)
+    module_args(registry_id="tcr-abc", namespace="prod", trigger=dict(TRIGGER))
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "did not reach" in exc.value.args[0]["msg"]
