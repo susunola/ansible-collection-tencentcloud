@@ -82,15 +82,19 @@ def find(module, client, models, p):
     offset = 0
     while True:
         response = module.sdk_call(client.DescribePrometheusClusterAgents, build_describe(models, p, offset))
+        total = getattr(response, "Total", None)
+        if total is None:
+            raise ValueError("DescribePrometheusClusterAgents did not return Total")
         page = list(response.Agents or [])
         for item in page:
             value = item._serialize(allow_none=True)
             if value.get("ClusterId") == p["cluster_id"] and value.get("ClusterType") == p["cluster_type"]:
                 return value
         offset += len(page)
-        total = getattr(response, "Total", None)
-        if not page or (total is not None and offset >= total) or (total is None and len(page) < 100):
+        if offset >= total:
             break
+        if not page:
+            raise ValueError("DescribePrometheusClusterAgents returned an incomplete page")
     return None
 
 
@@ -122,7 +126,12 @@ def run_module():
                 client.CreatePrometheusClusterAgent if present else client.DeletePrometheusClusterAgent,
                 build_create(models, p) if present else build_delete(models, p),
             )
-        module.exit_json(changed=True, **(diff or {}), agent=target if present else None)
+            final = find(module, client, models, p)
+            if bool(final) != present:
+                module.fail_json(msg="Prometheus cluster agent did not reach the requested state",
+                                 instance_id=p["instance_id"], cluster_id=p["cluster_id"])
+        module.exit_json(changed=True, **(diff or {}), agent=(final if present else None) if not module.check_mode else
+                         (target if present else None))
     except Exception as exc:
         fail_from_sdk_error(module, exc)
 

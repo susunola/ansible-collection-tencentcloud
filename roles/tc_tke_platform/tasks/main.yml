@@ -181,6 +181,31 @@
     label: "{{ item.name }}"
   register: _tc_tke_platform_cls_log_configs
 
+- name: Bind TKE cluster to Managed Prometheus
+  when:
+    - tc_tke_platform_state == 'present'
+    - _tc_tke_platform_cluster_id | length > 0
+    - tc_tke_platform_prometheus_instance_id | length > 0
+  susunola.tencentcloud.monitor_prometheus_cluster_agent:
+    region: "{{ tc_tke_platform_region | default(omit, true) }}"
+    state: present
+    instance_id: "{{ tc_tke_platform_prometheus_instance_id }}"
+    cluster_id: "{{ _tc_tke_platform_cluster_id }}"
+    cluster_type: tke
+    agent: "{{ tc_tke_platform_prometheus_agent }}"
+  register: _tc_tke_platform_prometheus_agent
+
+- name: Unbind TKE cluster from Managed Prometheus
+  when:
+    - tc_tke_platform_state == 'absent'
+    - tc_tke_platform_prometheus_instance_id | length > 0
+  susunola.tencentcloud.monitor_prometheus_cluster_agent:
+    region: "{{ tc_tke_platform_region | default(omit, true) }}"
+    state: absent
+    instance_id: "{{ tc_tke_platform_prometheus_instance_id }}"
+    cluster_id: "{{ tc_tke_platform_cluster_id }}"
+    cluster_type: tke
+
 - name: Remove TKE CLS log collection
   when: tc_tke_platform_state == 'absent'
   susunola.tencentcloud.tke_cls_log_config:
@@ -242,3 +267,4 @@
       endpoints: "{{ _tc_tke_platform_endpoints.results | default([]) }}"
       addons: "{{ _tc_tke_platform_addons.results | default([]) }}"
       cls_log_configs: "{{ _tc_tke_platform_cls_log_configs.results | default([]) }}"
+      prometheus_agent: "{{ _tc_tke_platform_prometheus_agent | default({}) }}"

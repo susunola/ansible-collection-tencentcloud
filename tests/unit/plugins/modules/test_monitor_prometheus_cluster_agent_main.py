@@ -77,7 +77,7 @@ class FakeMonitorClient(object):
             t for t in self.agents
             if t.get("ClusterId") in cluster_ids and t.get("ClusterType") in cluster_types
         ]
-        return SimpleNamespace(Agents=[FakeResource(t) for t in matched])
+        return SimpleNamespace(Agents=[FakeResource(t) for t in matched], Total=len(matched))
 
     def CreatePrometheusClusterAgent(self, request):
         self._record("CreatePrometheusClusterAgent", request)
@@ -144,7 +144,7 @@ def test_present_binds_cluster_agent(monkeypatch):
     _args(state="present")
     result = run(mod.run_module)
     assert result["changed"] is True
-    assert result["agent"] == {"ClusterId": "cls-abc123", "ClusterType": "tke"}
+    assert result["agent"] == {"ClusterId": "cls-abc123", "ClusterType": "tke", "Region": "ap-guangzhou"}
     assert len(fake.agents) == 1
     assert fake.agents[0]["ClusterId"] == "cls-abc123"
     ops = [c for c, unused in fake.calls]
@@ -212,3 +212,23 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+def test_missing_total_fails_closed(monkeypatch):
+    fake = FakeMonitorClient()
+    fake.DescribePrometheusClusterAgents = lambda request: SimpleNamespace(Agents=[])
+    _make_module(monkeypatch, fake)
+    _args(state="present")
+    with pytest.raises(AnsibleFailJson):
+        run(mod.run_module)
+    assert fake.calls == []
+
+
+def test_bind_requires_observed_state(monkeypatch):
+    fake = FakeMonitorClient()
+    fake.CreatePrometheusClusterAgent = lambda request: SimpleNamespace(RequestId="req-fake")
+    _make_module(monkeypatch, fake)
+    _args(state="present")
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "did not reach" in exc.value.args[0]["msg"]

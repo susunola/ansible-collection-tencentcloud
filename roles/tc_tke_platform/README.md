@@ -2,7 +2,8 @@
 
 Provision a TKE cluster together with node pools, API endpoints, addons,
 authentication, audit delivery, optional CLS log collection, and cluster
-autoscaler settings.
+autoscaler settings. An existing Managed Prometheus instance may be bound to
+the cluster without taking ownership of that instance.
 
 ```yaml
 - hosts: localhost
@@ -33,6 +34,7 @@ autoscaler settings.
           is_scale_down_enabled: true
           expander: least-waste
           scale_down_unneeded_time: 15
+        tc_tke_platform_prometheus_instance_id: prom-xxxxxxxx
         tc_tke_platform_cls_log_configs:
           - name: container-stdout
             logset_id: xxxxxx-xx-xx-xx-xxxxxxxx
@@ -49,3 +51,5 @@ endpoints and node pools before the cluster.
 CLS log configurations are removed first. Their raw payloads are not updated
 in place: if a configuration changes, remove the named configuration and
 recreate it deliberately. The referenced CLS logset must already exist.
+On teardown, the Prometheus cluster binding is removed before deleting the
+cluster; the Prometheus instance itself is never deleted by this role.

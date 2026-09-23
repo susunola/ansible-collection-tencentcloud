@@ -35,6 +35,9 @@ tc_tke_platform_audit_topic_region: ""
 # Items: {name, logset_id, log_config, cluster_type?}. Existing payloads are
 # not updated in place; remove and recreate a named configuration to change it.
 tc_tke_platform_cls_log_configs: []
+# Bind this cluster to an existing Managed Prometheus instance when set.
+tc_tke_platform_prometheus_instance_id: ""
+tc_tke_platform_prometheus_agent: {}
 
 tc_tke_platform_waiter_timeout: 1800
 tc_tke_platform_waiter_delay: 10

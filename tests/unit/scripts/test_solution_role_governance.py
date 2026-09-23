@@ -448,6 +448,13 @@ def test_tke_autoscaler_follows_node_pools():
     assert "susunola.tencentcloud.tke_cluster_autoscaler" in text
 
 
+def test_tke_prometheus_binding_is_removed_before_cluster():
+    text = role_tasks("tc_tke_platform")
+    assert_order(text, "Bind TKE cluster to Managed Prometheus", "Unbind TKE cluster from Managed Prometheus")
+    assert_order(text, "Unbind TKE cluster from Managed Prometheus", "Remove TKE cluster")
+    assert "susunola.tencentcloud.monitor_prometheus_cluster_agent" in text
+
+
 def test_dlc_governance_teardown_removes_access_before_group():
     teardown = (ROOT / "roles" / "tc_dlc_access_governance" / "tasks" / "teardown_work_group.yml").read_text(encoding="utf-8")
     assert_order(
