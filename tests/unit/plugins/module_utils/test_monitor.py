@@ -40,3 +40,26 @@ def test_find_policy_uses_describe_alarm_policies_response_and_paginates():
     assert result == target
     assert [request.PageNumber for request in module.requests] == [1, 2]
     assert all(request.Module == "monitor" for request in module.requests)
+
+
+def test_find_policy_by_id_does_not_filter_out_old_name():
+    policy = {"PolicyId": "policy-target", "PolicyName": "old-name"}
+    module = FakeModule([SimpleNamespace(Policies=[FakePolicy(policy)], TotalCount=1)])
+    models = SimpleNamespace(DescribeAlarmPoliciesRequest=SimpleNamespace)
+    result = find_policy(module, SimpleNamespace(DescribeAlarmPolicies=object()), models,
+                         "policy-target", "new-name", "monitor")
+    assert result == policy
+    assert not hasattr(module.requests[0], "PolicyName")
+
+
+def test_find_policy_continues_full_page_when_total_count_is_missing():
+    first_page = [FakePolicy({"PolicyId": "other-%d" % index}) for index in range(100)]
+    target = {"PolicyId": "policy-target", "PolicyName": "target"}
+    module = FakeModule([
+        SimpleNamespace(Policies=first_page, TotalCount=None),
+        SimpleNamespace(Policies=[FakePolicy(target)], TotalCount=None),
+    ])
+    models = SimpleNamespace(DescribeAlarmPoliciesRequest=SimpleNamespace)
+    assert find_policy(module, SimpleNamespace(DescribeAlarmPolicies=object()), models,
+                       "policy-target", None, "monitor") == target
+    assert [request.PageNumber for request in module.requests] == [1, 2]

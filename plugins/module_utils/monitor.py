@@ -31,7 +31,7 @@ def find_policy(module, client, models, policy_id, name, module_name):
     while True:
         request = models.DescribeAlarmPoliciesRequest()
         request.Module, request.PageNumber, request.PageSize = module_name, page, 100
-        if name:
+        if name and not policy_id:
             request.PolicyName = name
         response = module.sdk_call(client.DescribeAlarmPolicies, request)
         items = list(getattr(response, "Policies", None) or [])
@@ -40,7 +40,7 @@ def find_policy(module, client, models, policy_id, name, module_name):
             if (policy_id and value.get("PolicyId") == policy_id) or (not policy_id and value.get("PolicyName") == name):
                 matches.append(value)
         total = int(getattr(response, "TotalCount", 0) or 0)
-        if not items or page * 100 >= total:
+        if not items or (total and page * 100 >= total) or (not total and len(items) < 100):
             break
         page += 1
     if len(matches) > 1:
