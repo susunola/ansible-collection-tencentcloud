@@ -39,9 +39,12 @@ the cluster without taking ownership of that instance.
           - name: container-stdout
             logset_id: xxxxxx-xx-xx-xx-xxxxxxxx
             log_config:
-              name: container-stdout
-              logType: container_stdout
-              clsDetail: {region: ap-guangzhou}
+              apiVersion: cls.cloud.tencent.com/v1
+              kind: LogConfig
+              metadata: {name: container-stdout}
+              spec:
+                clsDetail: {region: ap-guangzhou, logType: minimalist_log}
+                inputDetail: {type: container_stdout}
 ```
 
 The role publishes `tc_tke_platform_result`. During check mode, child resources

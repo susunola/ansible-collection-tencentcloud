@@ -20,7 +20,7 @@ description:
     When a configuration with the same name already exists and I(state=present),
     the module is a no-op (the collection does not reconcile the raw JSON
     payload in place - delete and recreate to change it).
-  - I(log_config.name) must equal I(log_config_name). An unreadable response or
+  - I(log_config.metadata.name) must equal I(log_config_name). An unreadable response or
     an unconfirmed post-write state fails instead of reporting convergence.
 options:
   state:
@@ -62,10 +62,12 @@ EXAMPLES = r'''
     log_config_name: container-stdout
     logset_id: xxxxxx-xx-xx-xx-xxxxxxxx
     log_config:
-      name: container-stdout
-      logType: container_stdout
-      clsDetail:
-        region: ap-guangzhou
+      apiVersion: cls.cloud.tencent.com/v1
+      kind: LogConfig
+      metadata: {name: container-stdout}
+      spec:
+        clsDetail: {region: ap-guangzhou, logType: minimalist_log}
+        inputDetail: {type: container_stdout}
 
 - name: Remove a log configuration
   susunola.tencentcloud.tke_cls_log_config:
@@ -100,7 +102,7 @@ def _load_tke():
 
 
 def _find_config(log_configs, name):
-    """Return the parsed config dict whose ``name`` matches, or None.
+    """Return the log-config item whose ``metadata.name`` matches, or None.
 
     ``log_configs`` is the raw JSON string returned by DescribeLogConfigs; it is
     parsed strictly so an unreadable payload cannot be mistaken for absence.
@@ -111,13 +113,19 @@ def _find_config(log_configs, name):
         data = json.loads(log_configs)
     except (ValueError, TypeError) as exc:
         raise ValueError("DescribeLogConfigs returned invalid LogConfigs JSON") from exc
-    if not isinstance(data, (list, dict)):
+    if not isinstance(data, dict) or not isinstance(data.get("Items"), list):
         raise ValueError("DescribeLogConfigs returned an unexpected LogConfigs shape")
-    items = data if isinstance(data, list) else [data]
+    items = data["Items"]
+    count = data.get("ItemCount")
+    if not isinstance(count, int) or count != len(items):
+        raise ValueError("DescribeLogConfigs returned an incomplete Items page")
     if any(not isinstance(item, dict) for item in items):
         raise ValueError("DescribeLogConfigs returned a non-object log configuration")
     for item in items:
-        if isinstance(item, dict) and item.get("name") == name:
+        metadata = item.get("metadata")
+        if not isinstance(metadata, dict):
+            raise ValueError("DescribeLogConfigs returned a log configuration without metadata")
+        if metadata.get("name") == name:
             return item
     return None
 
@@ -126,7 +134,11 @@ def describe_state(module, client, models, cluster_id, cluster_type, name):
     request = models.DescribeLogConfigsRequest()
     request.ClusterId = cluster_id
     request.ClusterType = cluster_type
+    request.LogConfigNames = name
+    request.Limit = 100
     response = module.sdk_call(client.DescribeLogConfigs, request)
+    if getattr(response, "Message", None):
+        raise ValueError("DescribeLogConfigs reported a partial lookup failure: %s" % response.Message)
     return _find_config(getattr(response, "LogConfigs", None), name)
 
 
@@ -150,8 +162,9 @@ def run_module():
     cluster_type = p["cluster_type"]
     name = p["log_config_name"]
     desired_present = p["state"] == "present"
-    if desired_present and p["log_config"].get("name") != name:
-        module.fail_json(msg="log_config.name must match log_config_name")
+    metadata = p["log_config"].get("metadata") if desired_present else None
+    if desired_present and (not isinstance(metadata, dict) or metadata.get("name") != name):
+        module.fail_json(msg="log_config.metadata.name must match log_config_name")
     module.require_sdk()
     models, client_module = _load_tke()
     client = module.create_client(client_module.TkeClient, "tke.tencentcloudapi.com")
@@ -184,7 +197,7 @@ def run_module():
             request = models.DeleteLogConfigsRequest()
             request.ClusterId = cluster_id
             request.ClusterType = cluster_type
-            request.LogConfigNames = [name]
+            request.LogConfigNames = name
             module.sdk_call(client.DeleteLogConfigs, request)
         final = describe_state(module, client, models, cluster_id, cluster_type, name)
         if bool(final) != desired_present:
