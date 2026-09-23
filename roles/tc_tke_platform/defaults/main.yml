@@ -18,6 +18,8 @@ tc_tke_platform_tags: {}
 
 # Node-pool items follow tke_node_pool options.
 tc_tke_platform_node_pools: []
+# Optional subset of tke_cluster_autoscaler options, applied after node pools.
+tc_tke_platform_autoscaler: {}
 # Endpoint items: {access, subnet_id?, domain?, security_group_id?, load_balancer_id?}
 tc_tke_platform_endpoints: []
 # Addon items: {name, version?, values?, values_file?, update_strategy?}

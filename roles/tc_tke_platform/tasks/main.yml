@@ -86,6 +86,29 @@
     label: "{{ item.name }}"
   register: _tc_tke_platform_node_pools
 
+- name: Reconcile TKE cluster autoscaler
+  when:
+    - tc_tke_platform_state == 'present'
+    - _tc_tke_platform_cluster_id | length > 0
+    - tc_tke_platform_autoscaler | length > 0
+  susunola.tencentcloud.tke_cluster_autoscaler:
+    region: "{{ tc_tke_platform_region | default(omit, true) }}"
+    cluster_id: "{{ _tc_tke_platform_cluster_id }}"
+    is_scale_down_enabled: "{{ tc_tke_platform_autoscaler.is_scale_down_enabled | default(omit) }}"
+    expander: "{{ tc_tke_platform_autoscaler.expander | default(omit) }}"
+    max_empty_bulk_delete: "{{ tc_tke_platform_autoscaler.max_empty_bulk_delete | default(omit) }}"
+    scale_down_delay: "{{ tc_tke_platform_autoscaler.scale_down_delay | default(omit) }}"
+    scale_down_unneeded_time: "{{ tc_tke_platform_autoscaler.scale_down_unneeded_time | default(omit) }}"
+    scale_down_utilization_threshold: "{{ tc_tke_platform_autoscaler.scale_down_utilization_threshold | default(omit) }}"
+    skip_nodes_with_local_storage: "{{ tc_tke_platform_autoscaler.skip_nodes_with_local_storage | default(omit) }}"
+    skip_nodes_with_system_pods: "{{ tc_tke_platform_autoscaler.skip_nodes_with_system_pods | default(omit) }}"
+    ignore_daemon_sets_utilization: "{{ tc_tke_platform_autoscaler.ignore_daemon_sets_utilization | default(omit) }}"
+    ok_total_unready_count: "{{ tc_tke_platform_autoscaler.ok_total_unready_count | default(omit) }}"
+    max_total_unready_percentage: "{{ tc_tke_platform_autoscaler.max_total_unready_percentage | default(omit) }}"
+    scale_down_unready_time: "{{ tc_tke_platform_autoscaler.scale_down_unready_time | default(omit) }}"
+    unregistered_node_removal_time: "{{ tc_tke_platform_autoscaler.unregistered_node_removal_time | default(omit) }}"
+  register: _tc_tke_platform_autoscaler
+
 - name: Provision TKE endpoints
   when:
     - tc_tke_platform_state == 'present'
@@ -215,6 +238,7 @@
       cluster_id: "{{ _tc_tke_platform_cluster_id }}"
       cluster: "{{ _tc_tke_platform_cluster.cluster }}"
       node_pools: "{{ _tc_tke_platform_node_pools.results | default([]) }}"
+      autoscaler: "{{ _tc_tke_platform_autoscaler | default({}) }}"
       endpoints: "{{ _tc_tke_platform_endpoints.results | default([]) }}"
       addons: "{{ _tc_tke_platform_addons.results | default([]) }}"
       cls_log_configs: "{{ _tc_tke_platform_cls_log_configs.results | default([]) }}"

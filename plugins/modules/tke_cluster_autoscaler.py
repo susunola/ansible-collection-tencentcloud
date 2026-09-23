@@ -159,13 +159,13 @@ def _load_tke():
 
 
 def current_options(module, client, models, cluster_id):
-    """Return the serialized ClusterAsGroupOption dict or an empty dict."""
+    """Return observable ClusterAsGroupOption settings."""
     request = models.DescribeClusterAsGroupOptionRequest()
     request.ClusterId = cluster_id
     response = module.sdk_call(client.DescribeClusterAsGroupOption, request)
     option = response.ClusterAsGroupOption
     if option is None:
-        return {}
+        raise ValueError("DescribeClusterAsGroupOption returned no ClusterAsGroupOption")
     return option._serialize(allow_none=True)
 
 
@@ -220,6 +220,11 @@ def run_module():
         request.ClusterId = p["cluster_id"]
         request.ClusterAsGroupOption = option
         module.sdk_call(client.ModifyClusterAsGroupOptionAttribute, request)
+        observed = current_options(module, client, models, p["cluster_id"])
+        unconfirmed = [field for field, value in provided.items() if observed.get(field) != value]
+        if unconfirmed:
+            module.fail_json(msg="TKE autoscaler options did not reach the requested state: %s" %
+                             ", ".join(sorted(unconfirmed)), cluster_id=p["cluster_id"])
         module.exit_json(changed=True, **(diff or {}), cluster_id=p["cluster_id"],
                          msg="Updated autoscaler options: {0}".format(", ".join(sorted(changed_fields))))
     except Exception as exc:

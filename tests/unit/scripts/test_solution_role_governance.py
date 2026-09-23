@@ -442,6 +442,12 @@ def test_container_registry_disables_protection_and_removes_children_first():
     assert "susunola.tencentcloud.tcr_webhook_trigger" in webhooks
 
 
+def test_tke_autoscaler_follows_node_pools():
+    text = role_tasks("tc_tke_platform")
+    assert_order(text, "Provision TKE node pools", "Reconcile TKE cluster autoscaler")
+    assert "susunola.tencentcloud.tke_cluster_autoscaler" in text
+
+
 def test_dlc_governance_teardown_removes_access_before_group():
     teardown = (ROOT / "roles" / "tc_dlc_access_governance" / "tasks" / "teardown_work_group.yml").read_text(encoding="utf-8")
     assert_order(

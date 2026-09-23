@@ -1,7 +1,8 @@
 # tc_tke_platform
 
 Provision a TKE cluster together with node pools, API endpoints, addons,
-authentication, audit delivery, and optional CLS log collection.
+authentication, audit delivery, optional CLS log collection, and cluster
+autoscaler settings.
 
 ```yaml
 - hosts: localhost
@@ -28,6 +29,10 @@ authentication, audit delivery, and optional CLS log collection.
           - {access: private, subnet_id: subnet-xxxxxxxx}
         tc_tke_platform_addons:
           - {name: cbs, update_strategy: merge}
+        tc_tke_platform_autoscaler:
+          is_scale_down_enabled: true
+          expander: least-waste
+          scale_down_unneeded_time: 15
         tc_tke_platform_cls_log_configs:
           - name: container-stdout
             logset_id: xxxxxx-xx-xx-xx-xxxxxxxx

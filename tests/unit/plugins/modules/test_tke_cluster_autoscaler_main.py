@@ -170,3 +170,19 @@ def test_sdk_error_fails(client, monkeypatch):
     with pytest.raises(AnsibleFailJson) as exc:
         run(tke_cluster_autoscaler.run_module)
     assert exc.value.args[0]["failed"] is True
+
+
+def test_missing_describe_option_fails_closed(client):
+    client.DescribeClusterAsGroupOption = lambda request: SimpleNamespace(ClusterAsGroupOption=None)
+    module_args(cluster_id=CLUSTER_ID, is_scale_down_enabled=True)
+    with pytest.raises(AnsibleFailJson):
+        run(tke_cluster_autoscaler.run_module)
+    client.ModifyClusterAsGroupOptionAttribute.assert_not_called()
+
+
+def test_update_requires_observed_convergence(client):
+    client.ModifyClusterAsGroupOptionAttribute = MagicMock(return_value=SimpleNamespace())
+    module_args(cluster_id=CLUSTER_ID, scale_down_unneeded_time=20)
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(tke_cluster_autoscaler.run_module)
+    assert "did not reach" in exc.value.args[0]["msg"]
