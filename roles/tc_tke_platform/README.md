@@ -1,7 +1,7 @@
 # tc_tke_platform
 
 Provision a TKE cluster together with node pools, API endpoints, addons,
-authentication and audit delivery.
+authentication, audit delivery, and optional CLS log collection.
 
 ```yaml
 - hosts: localhost
@@ -28,9 +28,19 @@ authentication and audit delivery.
           - {access: private, subnet_id: subnet-xxxxxxxx}
         tc_tke_platform_addons:
           - {name: cbs, update_strategy: merge}
+        tc_tke_platform_cls_log_configs:
+          - name: container-stdout
+            logset_id: xxxxxx-xx-xx-xx-xxxxxxxx
+            log_config:
+              name: container-stdout
+              logType: container_stdout
+              clsDetail: {region: ap-guangzhou}
 ```
 
 The role publishes `tc_tke_platform_result`. During check mode, child resources
 are skipped if a newly planned cluster has no real cluster ID. For safe
 teardown, deletion requires `tc_tke_platform_cluster_id` and removes addons,
 endpoints and node pools before the cluster.
+CLS log configurations are removed first. Their raw payloads are not updated
+in place: if a configuration changes, remove the named configuration and
+recreate it deliberately. The referenced CLS logset must already exist.

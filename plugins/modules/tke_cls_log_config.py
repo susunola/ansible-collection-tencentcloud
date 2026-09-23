@@ -20,6 +20,8 @@ description:
     When a configuration with the same name already exists and I(state=present),
     the module is a no-op (the collection does not reconcile the raw JSON
     payload in place - delete and recreate to change it).
+  - I(log_config.name) must equal I(log_config_name). An unreadable response or
+    an unconfirmed post-write state fails instead of reporting convergence.
 options:
   state:
     description: Desired state of the log configuration.
@@ -101,15 +103,19 @@ def _find_config(log_configs, name):
     """Return the parsed config dict whose ``name`` matches, or None.
 
     ``log_configs`` is the raw JSON string returned by DescribeLogConfigs; it is
-    parsed defensively so a malformed or empty payload is treated as absent.
+    parsed strictly so an unreadable payload cannot be mistaken for absence.
     """
     if not log_configs:
-        return None
+        raise ValueError("DescribeLogConfigs returned an empty LogConfigs payload")
     try:
         data = json.loads(log_configs)
-    except (ValueError, TypeError):
-        return None
+    except (ValueError, TypeError) as exc:
+        raise ValueError("DescribeLogConfigs returned invalid LogConfigs JSON") from exc
+    if not isinstance(data, (list, dict)):
+        raise ValueError("DescribeLogConfigs returned an unexpected LogConfigs shape")
     items = data if isinstance(data, list) else [data]
+    if any(not isinstance(item, dict) for item in items):
+        raise ValueError("DescribeLogConfigs returned a non-object log configuration")
     for item in items:
         if isinstance(item, dict) and item.get("name") == name:
             return item
@@ -144,6 +150,8 @@ def run_module():
     cluster_type = p["cluster_type"]
     name = p["log_config_name"]
     desired_present = p["state"] == "present"
+    if desired_present and p["log_config"].get("name") != name:
+        module.fail_json(msg="log_config.name must match log_config_name")
     module.require_sdk()
     models, client_module = _load_tke()
     client = module.create_client(client_module.TkeClient, "tke.tencentcloudapi.com")
@@ -179,6 +187,9 @@ def run_module():
             request.LogConfigNames = [name]
             module.sdk_call(client.DeleteLogConfigs, request)
         final = describe_state(module, client, models, cluster_id, cluster_type, name)
+        if bool(final) != desired_present:
+            module.fail_json(msg="TKE CLS log configuration did not reach the requested state",
+                             cluster_id=cluster_id, log_config_name=name)
         module.exit_json(
             changed=True,
             cluster_id=cluster_id,

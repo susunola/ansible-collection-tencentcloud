@@ -141,6 +141,35 @@
     topic_id: "{{ tc_tke_platform_audit_topic_id | default(omit, true) }}"
     topic_region: "{{ tc_tke_platform_audit_topic_region | default(omit, true) }}"
 
+- name: Reconcile TKE CLS log collection
+  when:
+    - tc_tke_platform_state == 'present'
+    - _tc_tke_platform_cluster_id | length > 0
+  susunola.tencentcloud.tke_cls_log_config:
+    region: "{{ tc_tke_platform_region | default(omit, true) }}"
+    state: present
+    cluster_id: "{{ _tc_tke_platform_cluster_id }}"
+    cluster_type: "{{ item.cluster_type | default('tke') }}"
+    log_config_name: "{{ item.name }}"
+    log_config: "{{ item.log_config }}"
+    logset_id: "{{ item.logset_id }}"
+  loop: "{{ tc_tke_platform_cls_log_configs }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: _tc_tke_platform_cls_log_configs
+
+- name: Remove TKE CLS log collection
+  when: tc_tke_platform_state == 'absent'
+  susunola.tencentcloud.tke_cls_log_config:
+    region: "{{ tc_tke_platform_region | default(omit, true) }}"
+    state: absent
+    cluster_id: "{{ tc_tke_platform_cluster_id }}"
+    cluster_type: "{{ item.cluster_type | default('tke') }}"
+    log_config_name: "{{ item.name }}"
+  loop: "{{ tc_tke_platform_cls_log_configs }}"
+  loop_control:
+    label: "{{ item.name }}"
+
 - name: Remove TKE addons
   when: tc_tke_platform_state == 'absent'
   susunola.tencentcloud.tke_addon:
@@ -188,3 +217,4 @@
       node_pools: "{{ _tc_tke_platform_node_pools.results | default([]) }}"
       endpoints: "{{ _tc_tke_platform_endpoints.results | default([]) }}"
       addons: "{{ _tc_tke_platform_addons.results | default([]) }}"
+      cls_log_configs: "{{ _tc_tke_platform_cls_log_configs.results | default([]) }}"

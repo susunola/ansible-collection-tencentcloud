@@ -179,3 +179,35 @@ def test_present_requires_log_config_and_logset_id(monkeypatch):
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
     assert "log_config" in exc.value.args[0]["msg"]
+
+
+def test_malformed_describe_fails_closed(monkeypatch):
+    fake = FakeTkeClient()
+    fake.DescribeLogConfigs = lambda request: SimpleNamespace(LogConfigs="not-json")
+    _make_module(monkeypatch, fake)
+    module_args(cluster_id="cls-abc123", log_config_name="stdout", state="absent")
+    with pytest.raises(AnsibleFailJson):
+        run(mod.run_module)
+    assert "DeleteLogConfigs" not in [name for name, unused in fake.calls]
+
+
+def test_mismatched_config_name_is_rejected(monkeypatch):
+    fake = FakeTkeClient()
+    _make_module(monkeypatch, fake)
+    module_args(cluster_id="cls-abc123", log_config_name="stdout", logset_id="ls-1",
+                log_config={"name": "other"})
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "must match" in exc.value.args[0]["msg"]
+    assert fake.calls == []
+
+
+def test_create_must_be_visible_after_write(monkeypatch):
+    fake = FakeTkeClient()
+    fake.CreateCLSLogConfig = lambda request: SimpleNamespace(RequestId="req-fake")
+    _make_module(monkeypatch, fake)
+    module_args(cluster_id="cls-abc123", log_config_name="stdout", logset_id="ls-1",
+                log_config={"name": "stdout"})
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "did not reach" in exc.value.args[0]["msg"]
