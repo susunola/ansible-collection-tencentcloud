@@ -194,7 +194,6 @@ KNOWN_GAPS = {
     "dts_migration_job",
     "mariadb_account_privilege",
     "monitor_alarm_policy_notice",
-    "monitor_grafana_integration",
     "monitor_grafana_internet",
     "monitor_prometheus_alert_group",
     "monitor_prometheus_alertmanager_config",

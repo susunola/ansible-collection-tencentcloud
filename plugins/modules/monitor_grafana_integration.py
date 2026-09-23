@@ -44,7 +44,8 @@ def _load():
 
 def build_describe(models, p):
     request = models.DescribeGrafanaIntegrationsRequest()
-    request.InstanceId, request.IntegrationId, request.Kind = p["instance_id"], p.get("integration_id"), p["kind"]
+    request.InstanceId, request.IntegrationId = p["instance_id"], p.get("integration_id")
+    request.Kind = p["kind"] if not p.get("integration_id") else None
     return request
 
 

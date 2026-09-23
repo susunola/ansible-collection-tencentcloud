@@ -434,6 +434,7 @@ CORE_MODULES = {
     "monitor_grafana_instance",
     "monitor_prometheus_grafana_binding",
     "monitor_grafana_integration",
+    "monitor_grafana_integration_info",
     "monitor_grafana_whitelist",
     "monitor_grafana_whitelist_info",
     "monitor_grafana_internet",
