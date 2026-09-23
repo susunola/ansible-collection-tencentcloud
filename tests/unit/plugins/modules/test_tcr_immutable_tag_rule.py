@@ -240,3 +240,31 @@ def test_create_must_be_visible_after_write(monkeypatch):
     with pytest.raises(AnsibleFailJson) as exc:
         run(mod.run_module)
     assert "did not reach" in exc.value.args[0]["msg"]
+
+
+def test_finds_rule_on_later_page(monkeypatch):
+    fake = FakeTcrClient()
+    first_page = [_rule(i, "prod", "other-%s" % i, "latest") for i in range(100)]
+    second_page = [_rule(101, "prod", "web-*", "latest")]
+
+    def describe(request):
+        fake._record("DescribeImmutableTagRules", request)
+        items = first_page if request.Page == 1 else second_page
+        return SimpleNamespace(Rules=items, Total=101)
+
+    fake.DescribeImmutableTagRules = describe
+    _make_module(monkeypatch, fake)
+    module_args(registry_id="tcr-abc", namespace_name="prod", rule=dict(RULE))
+    result = run(mod.run_module)
+    assert result["changed"] is False
+    assert result["rule_id"] == 101
+    assert [request.Page for name, request in fake.calls if name == "DescribeImmutableTagRules"] == [1, 2]
+
+
+def test_incomplete_rule_page_fails_closed(monkeypatch):
+    fake = FakeTcrClient()
+    fake.DescribeImmutableTagRules = lambda request: SimpleNamespace(Rules=[], Total=1)
+    _make_module(monkeypatch, fake)
+    module_args(registry_id="tcr-abc", namespace_name="prod", rule=dict(RULE))
+    with pytest.raises(AnsibleFailJson):
+        run(mod.run_module)

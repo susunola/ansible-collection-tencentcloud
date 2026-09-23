@@ -118,17 +118,29 @@ def _load_tcr():
 
 
 def find_rule(module, client, models, registry_id, namespace_name, repo_pattern, tag_pattern):
-    request = models.DescribeImmutableTagRulesRequest()
-    request.RegistryId = registry_id
-    request.Page = 1
-    request.PageSize = 100
-    response = module.sdk_call(client.DescribeImmutableTagRules, request)
-    rules = list(getattr(response, "Rules", None) or [])
-    for item in rules:
-        if (getattr(item, "NsName", None) == namespace_name
-                and getattr(item, "RepositoryPattern", None) == repo_pattern
-                and getattr(item, "TagPattern", None) == tag_pattern):
-            return item
+    page = 1
+    seen = 0
+    while True:
+        request = models.DescribeImmutableTagRulesRequest()
+        request.RegistryId = registry_id
+        request.Page = page
+        request.PageSize = 100
+        response = module.sdk_call(client.DescribeImmutableTagRules, request)
+        total = getattr(response, "Total", None)
+        if total is None:
+            raise ValueError("DescribeImmutableTagRules did not return Total")
+        rules = list(getattr(response, "Rules", None) or [])
+        for item in rules:
+            if (getattr(item, "NsName", None) == namespace_name
+                    and getattr(item, "RepositoryPattern", None) == repo_pattern
+                    and getattr(item, "TagPattern", None) == tag_pattern):
+                return item
+        seen += len(rules)
+        if seen >= total:
+            break
+        if not rules:
+            raise ValueError("DescribeImmutableTagRules returned an incomplete page")
+        page += 1
     return None
 
 
