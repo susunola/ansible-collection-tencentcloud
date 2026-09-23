@@ -44,8 +44,8 @@ def _trigger(tid, ns, name, enabled=True):
         "Description": "",
         "Enabled": enabled,
         "Condition": "all",
-        "EventTypes": ["PUSH_IMAGE"],
-        "Targets": [],
+        "EventTypes": ["pushImage"],
+        "Targets": [{"Address": "https://hooks.example.com/tcr", "Headers": []}],
     })
 
 
@@ -98,7 +98,7 @@ def _make_module(monkeypatch, fake, models=None):
     return fake
 
 
-TRIGGER = {"Name": "push-notify", "Enabled": True, "Condition": "all", "EventTypes": ["PUSH_IMAGE"], "Targets": ["https://hooks.example.com/tcr"]}
+TRIGGER = {"Name": "push-notify", "Enabled": True, "Condition": "all", "EventTypes": ["pushImage"], "Targets": [{"Address": "https://hooks.example.com/tcr"}]}
 
 
 # ---------------------------------------------------------------------------
@@ -151,6 +151,26 @@ def test_already_present_is_idempotent(monkeypatch):
     assert result["trigger_id"] == "1"
     assert [c for c, unused in fake.calls] == ["DescribeWebhookTrigger"]
     assert "CreateWebhookTrigger" not in [c for c, unused in fake.calls]
+
+
+def test_existing_trigger_drift_fails_instead_of_noop(monkeypatch):
+    fake = FakeTcrClient(triggers=[_trigger(1, "prod", "push-notify", enabled=False)])
+    _make_module(monkeypatch, fake)
+    module_args(registry_id="tcr-abc", namespace="prod", trigger=dict(TRIGGER))
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "differs in Enabled" in exc.value.args[0]["msg"]
+    assert [name for name, unused in fake.calls] == ["DescribeWebhookTrigger"]
+
+
+def test_existing_trigger_target_drift_is_detected(monkeypatch):
+    fake = FakeTcrClient(triggers=[_trigger(1, "prod", "push-notify")])
+    fake.triggers[0]._data["Targets"] = [{"Address": "https://old.example.com"}]
+    _make_module(monkeypatch, fake)
+    module_args(registry_id="tcr-abc", namespace="prod", trigger=dict(TRIGGER))
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "Targets[0].Address" in exc.value.args[0]["msg"]
 
 
 def test_trigger_returned_with_a_null_namespace_still_matches(monkeypatch):

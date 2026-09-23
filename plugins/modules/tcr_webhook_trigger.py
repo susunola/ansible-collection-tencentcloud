@@ -22,8 +22,9 @@ description:
     endpoint targets that do not map cleanly to Ansible suboptions. Provide at
     least C(Name) to identify the trigger; C(Description), C(Enabled),
     C(Condition), C(EventTypes) and C(Targets) are optional.
-  - Existing triggers are identified by name; their other fields are not
-    updated in place. Remove and recreate a trigger to change its payload.
+  - Existing triggers are identified by name. Explicitly supplied fields are
+    compared with the observed trigger; drift fails rather than reporting a
+    false no-op. Remove and recreate a trigger to change its payload.
 options:
   state:
     description: Desired state of the webhook trigger.
@@ -60,9 +61,9 @@ options:
         type: list
         elements: str
       Targets:
-        description: Delivery targets (endpoint addresses) for the trigger.
+        description: Delivery targets, each with an Address and optional Headers.
         type: list
-        elements: str
+        elements: dict
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
@@ -80,8 +81,8 @@ EXAMPLES = r'''
       Description: Notify on image push
       Enabled: true
       Condition: all
-      EventTypes: [PUSH_IMAGE, DELETE_IMAGE]
-      Targets: ["https://hooks.example.com/tcr"]
+      EventTypes: [pushImage]
+      Targets: [{Address: "https://hooks.example.com/tcr"}]
 
 - name: Remove the webhook trigger
   susunola.tencentcloud.tcr_webhook_trigger:
@@ -119,6 +120,26 @@ from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import 
 def _load_tcr():
     from tencentcloud.tcr.v20190924 import models, tcr_client
     return models, tcr_client
+
+
+def _drift_paths(desired, observed, prefix=""):
+    """Compare only explicitly supplied fields of the SDK response."""
+    if isinstance(desired, dict):
+        if not isinstance(observed, dict):
+            return [prefix]
+        paths = []
+        for key, value in desired.items():
+            path = "%s.%s" % (prefix, key) if prefix else key
+            paths.extend(_drift_paths(value, observed.get(key), path))
+        return paths
+    if isinstance(desired, list):
+        if not isinstance(observed, list) or len(desired) != len(observed):
+            return [prefix]
+        paths = []
+        for index, value in enumerate(desired):
+            paths.extend(_drift_paths(value, observed[index], "%s[%s]" % (prefix, index)))
+        return paths
+    return [prefix] if desired != observed else []
 
 
 def find_trigger(module, client, models, registry_id, namespace, name):
@@ -172,6 +193,12 @@ def run_module():
     client = module.create_client(tcr_client.TcrClient, "tcr.tencentcloudapi.com")
     try:
         current = find_trigger(module, client, models, registry_id, namespace, name)
+        if desired_present and current:
+            observed = current._serialize(allow_none=True)
+            drift = _drift_paths(trigger, observed)
+            if drift:
+                module.fail_json(msg="TCR webhook trigger differs in %s; remove and recreate it to change these fields" %
+                                 ", ".join(drift), registry_id=registry_id, namespace=namespace)
         if bool(current) == desired_present:
             module.exit_json(
                 changed=False,
