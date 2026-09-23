@@ -199,7 +199,6 @@ KNOWN_GAPS = {
     "mariadb_account_privilege",
     "monitor_alarm_policy_notice",
     "monitor_prometheus_alert_group",
-    "monitor_prometheus_alertmanager_config",
     "monitor_prometheus_cluster_agent",
     "monitor_prometheus_global_notification",
     "monitor_prometheus_grafana_binding",

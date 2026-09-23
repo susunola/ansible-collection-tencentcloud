@@ -442,6 +442,7 @@ CORE_MODULES = {
     "monitor_grafana_notification_channel_info",
     "monitor_prometheus_global_notification",
     "monitor_prometheus_alertmanager_config",
+    "monitor_prometheus_alertmanager_config_info",
     "nat_gateway",
     "nat_gateway_rule",
     "network_interface",

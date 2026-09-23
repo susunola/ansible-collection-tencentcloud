@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 from __future__ import absolute_import, division, print_function
 
+import time
+
 __metaclass__ = type
 DOCUMENTATION = r"""
 ---
@@ -53,6 +55,24 @@ def build_update(models, iid, value):
     return request
 
 
+def read_config(module, client, models, instance_id):
+    item = module.sdk_call(client.DescribePrometheusAlertmanagerConfig,
+                           build_describe(models, instance_id)).AlertmanagerConfig
+    return item._serialize(allow_none=True) if item else {}
+
+
+def wait_for_config(module, client, models, instance_id, target):
+    deadline = time.monotonic() + module.params["waiter_timeout"]
+    while True:
+        current = read_config(module, client, models, instance_id)
+        if current == target:
+            return current
+        if time.monotonic() >= deadline:
+            module.fail_json(msg="Timed out waiting for Alertmanager config convergence",
+                             instance_id=instance_id, config=current, expected=target)
+        time.sleep(module.params["waiter_delay"])
+
+
 def run_module():
     module = TencentCloudModule(argument_spec={"instance_id": {"required": True}, "config": {"type": "dict", "required": True}}, supports_check_mode=True)
     p = module.params
@@ -60,14 +80,14 @@ def run_module():
     models, cm = _load()
     client = module.create_client(cm.MonitorClient, "monitor.tencentcloudapi.com")
     try:
-        item = module.sdk_call(client.DescribePrometheusAlertmanagerConfig, build_describe(models, p["instance_id"])).AlertmanagerConfig
-        current = item._serialize(allow_none=True) if item else {}
+        current = read_config(module, client, models, p["instance_id"])
         target = p["config"]
         if current == target:
             module.exit_json(changed=False, config=current)
         diff = maybe_diff(module, current, target)
         if not module.check_mode:
             module.sdk_call(client.ReplacePrometheusAlertmanagerConfig, build_update(models, p["instance_id"], target))
+            target = wait_for_config(module, client, models, p["instance_id"], target)
         module.exit_json(changed=True, **(diff or {}), config=target)
     except Exception as exc:
         fail_from_sdk_error(module, exc)
