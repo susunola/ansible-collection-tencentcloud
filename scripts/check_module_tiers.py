@@ -429,6 +429,7 @@ CORE_MODULES = {
     "trabbit_serverless_binding",
     "monitor_prometheus_record_rule",
     "monitor_prometheus_alert_group",
+    "monitor_prometheus_alert_group_info",
     "monitor_prometheus_instance",
     "monitor_prometheus_cluster_agent",
     "monitor_grafana_instance",

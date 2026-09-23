@@ -7,7 +7,7 @@ navigation and gap-discovery aid, not a claim that every Tencent Cloud API is co
 
 - Products/services: **204**
 - Write modules: **440**
-- Information modules: **415**
+- Information modules: **416**
 - Solution roles: **68**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
@@ -150,7 +150,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `mmps` | discovery-only | 0 | 1 | — | — |
 | `mna` | discovery-only | 0 | 1 | — | — |
 | `mongodb` | solution | 3 | 3 | `tc_mongodb_stack` | `mongodb_account`, `mongodb_backup_config`, `mongodb_instance` |
-| `monitor` | solution | 15 | 7 | `tc_prometheus_platform` | `monitor_alarm_policy`, `monitor_alarm_policy_notice`, `monitor_grafana_instance`, `monitor_grafana_integration`, `monitor_grafana_internet`, `monitor_grafana_notification_channel`, `monitor_grafana_whitelist`, `monitor_prometheus_alert_group`, +7 more |
+| `monitor` | solution | 15 | 8 | `tc_prometheus_platform` | `monitor_alarm_policy`, `monitor_alarm_policy_notice`, `monitor_grafana_instance`, `monitor_grafana_integration`, `monitor_grafana_internet`, `monitor_grafana_notification_channel`, `monitor_grafana_whitelist`, `monitor_prometheus_alert_group`, +7 more |
 | `mps` | discovery-only | 0 | 1 | — | — |
 | `mqtt` | solution | 4 | 2 | `tc_mqtt_broker` | `mqtt_authorization_policy`, `mqtt_instance`, `mqtt_topic`, `mqtt_user` |
 | `ms` | discovery-only | 0 | 1 | — | — |

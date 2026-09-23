@@ -213,7 +213,6 @@ KNOWN_GAPS = {
     "dts_consumer_group",
     "dts_migration_job",
     "mariadb_account_privilege",
-    "monitor_prometheus_alert_group",
     "monitor_prometheus_cluster_agent",
     "monitor_prometheus_grafana_binding",
     "monitor_prometheus_record_rule",
