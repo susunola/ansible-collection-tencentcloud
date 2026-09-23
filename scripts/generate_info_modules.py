@@ -3198,7 +3198,7 @@ SPECS = [
         'ids': {'param': 'instance_ids', 'field': 'InstanceIds', 'doc': 'Grafana instance IDs to return.'},
         'filters': None,
         'extra_params': [],
-        'response_items': 'InstanceSet',
+        'response_items': 'Instances',
         'response_total': 'TotalCount',
         'result_key': 'instances',
         'pagination_type': 'int',

@@ -94,7 +94,7 @@ def run_module():
         module.params["page_size"],
         lambda offset, limit: build_request(models, module.params["instance_ids"], offset, limit),
         lambda request: sdk_call(module, client.DescribeGrafanaInstances, request),
-        lambda response: response.InstanceSet,
+        lambda response: response.Instances,
         lambda response: response.TotalCount,
     )
     item_set, total_count = paginator.fetch_all()

@@ -70,6 +70,10 @@ KNOWN_COVERAGE = {
         ["gwlb_load_balancer_info"],
         "DescribeGatewayLoadBalancers returns TargetGroupId for each load balancer",
     ),
+    "monitor_grafana_internet": (
+        ["monitor_grafana_instance_info"],
+        "DescribeGrafanaInstances returns InternetUrl for each Grafana instance",
+    ),
 }
 
 # Write modules that are themselves the read surface, or whose resource has
@@ -194,7 +198,6 @@ KNOWN_GAPS = {
     "dts_migration_job",
     "mariadb_account_privilege",
     "monitor_alarm_policy_notice",
-    "monitor_grafana_internet",
     "monitor_prometheus_alert_group",
     "monitor_prometheus_alertmanager_config",
     "monitor_prometheus_cluster_agent",

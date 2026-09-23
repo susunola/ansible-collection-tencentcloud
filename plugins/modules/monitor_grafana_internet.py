@@ -4,6 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 from __future__ import absolute_import, division, print_function
 
+import time
+
 __metaclass__ = type
 DOCUMENTATION = r"""
 ---
@@ -51,6 +53,27 @@ def build_update(models, iid, enabled):
     return request
 
 
+def read_internet_state(module, client, models, instance_id):
+    response = module.sdk_call(client.DescribeGrafanaInstances, build_describe(models, instance_id))
+    items = list(getattr(response, "Instances", None) or getattr(response, "InstanceSet", None) or [])
+    matching = [item for item in items if item.InstanceId == instance_id]
+    if not matching:
+        module.fail_json(msg="Grafana instance was not found", instance_id=instance_id)
+    return bool(matching[0].InternetUrl)
+
+
+def wait_for_internet_state(module, client, models, instance_id, target):
+    deadline = time.monotonic() + module.params["waiter_timeout"]
+    while True:
+        current = read_internet_state(module, client, models, instance_id)
+        if current == target:
+            return current
+        if time.monotonic() >= deadline:
+            module.fail_json(msg="Timed out waiting for Grafana internet access convergence",
+                             instance_id=instance_id, enabled=current, expected=target)
+        time.sleep(module.params["waiter_delay"])
+
+
 def run_module():
     module = TencentCloudModule(argument_spec={"instance_id": {"required": True}, "enabled": {"type": "bool", "default": False}}, supports_check_mode=True)
     p = module.params
@@ -58,15 +81,14 @@ def run_module():
     models, cm = _load()
     client = module.create_client(cm.MonitorClient, "monitor.tencentcloudapi.com")
     try:
-        response = module.sdk_call(client.DescribeGrafanaInstances, build_describe(models, p["instance_id"]))
-        items = list(response.InstanceSet or response.Instances or [])
-        current = bool(items and items[0].InternetUrl)
+        current = read_internet_state(module, client, models, p["instance_id"])
         target = p["enabled"]
         if current == target:
             module.exit_json(changed=False, enabled=current)
         diff = maybe_diff(module, current, target)
         if not module.check_mode:
             module.sdk_call(client.EnableGrafanaInternet, build_update(models, p["instance_id"], target))
+            target = wait_for_internet_state(module, client, models, p["instance_id"], target)
         module.exit_json(changed=True, **(diff or {}), enabled=target)
     except Exception as exc:
         fail_from_sdk_error(module, exc)
