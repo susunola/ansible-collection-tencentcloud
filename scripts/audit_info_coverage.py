@@ -196,7 +196,6 @@ KNOWN_GAPS = {
     "monitor_alarm_policy_notice",
     "monitor_grafana_integration",
     "monitor_grafana_internet",
-    "monitor_grafana_notification_channel",
     "monitor_grafana_whitelist",
     "monitor_prometheus_alert_group",
     "monitor_prometheus_alertmanager_config",

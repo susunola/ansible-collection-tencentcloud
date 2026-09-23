@@ -437,6 +437,7 @@ CORE_MODULES = {
     "monitor_grafana_whitelist",
     "monitor_grafana_internet",
     "monitor_grafana_notification_channel",
+    "monitor_grafana_notification_channel_info",
     "monitor_prometheus_global_notification",
     "monitor_prometheus_alertmanager_config",
     "nat_gateway",
