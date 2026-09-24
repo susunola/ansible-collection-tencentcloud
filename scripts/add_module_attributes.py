@@ -97,11 +97,17 @@ def build_block(text, relpath):
     """
     check_mode = _check_mode_support(text)
     read_only = relpath.endswith("_info.py")
-    # Covers both the API 3.0 style (client.DescribeX) and the COS modules,
-    # which read through module_utils helpers (cos.describe_bucket, get_*).
+    # A module reconciles when it can know the current state.  There is no
+    # single naming convention for that in this collection, so look for all of
+    # them: the API 3.0 style (client.DescribeX), the COS modules (they read
+    # through module_utils helpers such as cos.iter_objects), the collection's
+    # drift helpers, and the read-back helpers modules define for themselves
+    # (is_attached, find_policy, current/desired pairs).
     reads_state = bool(
-        re.search(r"client\.(?:Describe|List|Get|Query)\w+", text)
-        or re.search(r"\b(?:describe|list|get)_[a-z0-9_]+\s*\(", text))
+        "maybe_diff" in text
+        or "require_immutable_unchanged" in text
+        or re.search(r"client\.(?:Describe|List|Get|Query)\w+", text)
+        or re.search(r"\b(?:describe|list|get|find|iter|wait_for|is)_[a-z0-9_]+\s*\(", text))
     one_shot = _one_shot_states(text)
 
     if read_only:
