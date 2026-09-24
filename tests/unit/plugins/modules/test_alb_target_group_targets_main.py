@@ -140,6 +140,47 @@ def test_purge_false_keeps_unmanaged_targets(monkeypatch):
     assert "RemoveTargetsFromTargetGroup" not in [c for c, unused in fake.calls]
 
 
+def test_purge_sees_backends_on_later_pages_in_check_mode(monkeypatch):
+    fake = FakeAlbClient(targets=[_target("10.0.1.99", 443, 20)])
+    _make_module(monkeypatch, fake)
+
+    def paged(request):
+        fake._record("DescribeTargetGroupTargets", request)
+        if not getattr(request, "NextToken", None):
+            return SimpleNamespace(Targets=[], NextToken="page-2")
+        return SimpleNamespace(Targets=fake._serialized(), NextToken=None)
+
+    fake.DescribeTargetGroupTargets = paged
+    _tg_args(targets=[], purge=True, _ansible_check_mode=True)
+    result = run(mod.run_module)
+    assert result["changed"] is True
+    assert result["targets"] == []
+    assert fake.targets == [_target("10.0.1.99", 443, 20)]
+    assert [getattr(request, "NextToken", None) for name, request in fake.calls if name == "DescribeTargetGroupTargets"] == [None, "page-2"]
+
+
+def test_repeated_backend_page_token_fails_before_writes(monkeypatch):
+    fake = FakeAlbClient()
+    _make_module(monkeypatch, fake)
+    fake.DescribeTargetGroupTargets = lambda request: SimpleNamespace(Targets=[], NextToken="same-page")
+    _tg_args(targets=[_target("10.0.1.10", 8080)])
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "repeated token" in exc.value.args[0]["msg"]
+    assert fake.targets == []
+
+
+def test_missing_backend_list_fails_before_writes(monkeypatch):
+    fake = FakeAlbClient()
+    _make_module(monkeypatch, fake)
+    fake.DescribeTargetGroupTargets = lambda request: SimpleNamespace(Targets=None, NextToken=None)
+    _tg_args(targets=[_target("10.0.1.10", 8080)])
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "not observable" in exc.value.args[0]["msg"]
+    assert fake.targets == []
+
+
 def test_existing_no_drift_is_idempotent(monkeypatch):
     fake = FakeAlbClient(targets=[_target("10.0.1.10", 8080, 10)])
     _make_module(monkeypatch, fake)

@@ -10,7 +10,11 @@ DOCUMENTATION = r"""
 module: alb_target_group_targets
 short_description: Reconcile Tencent Cloud ALB target group backends
 version_added: "0.14.0"
-description: Adds, updates and removes ALB backend targets using exact-set or additive reconciliation.
+description:
+  - Adds, updates, and removes ALB backend targets using exact-set or additive
+    reconciliation.
+  - Reads every backend page before calculating changes. With C(purge=true),
+    backends omitted from C(targets) are removed.
 options:
   target_group_id: {type: str, required: true, description: Target group ID.}
   targets:
@@ -23,6 +27,15 @@ options:
       port: {type: int, required: true, description: Backend service port.}
       weight: {type: int, default: 10, description: Backend weight from 0 to 100.}
   purge: {type: bool, default: true, description: Remove backends not listed in targets.}
+
+attributes:
+  check_mode:
+    description: Predicts changes without sending API write requests.
+    support: full
+  idempotent:
+    description: Compares the complete observed backend set before writing.
+    support: partial
+    details: Asynchronous API changes are not polled to convergence after a write.
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -52,9 +65,11 @@ def _load():
     return models, alb_client
 
 
-def describe_request(models, target_group_id):
+def describe_request(models, target_group_id, next_token=None):
     r = models.DescribeTargetGroupTargetsRequest()
     r.TargetGroupId, r.MaxResults = target_group_id, 100
+    if next_token:
+        r.NextToken = next_token
     return r
 
 
@@ -88,8 +103,21 @@ def remove_request(models, p, values):
 
 
 def find(module, client, models, p):
-    response = module.sdk_call(client.DescribeTargetGroupTargets, describe_request(models, p["target_group_id"]))
-    return sorted([{"ip": x.TargetIp, "port": x.Port, "weight": x.Weight} for x in response.Targets or []], key=lambda x: (x["ip"], x["port"]))
+    targets = []
+    next_token = None
+    seen_tokens = set()
+    while True:
+        response = module.sdk_call(client.DescribeTargetGroupTargets, describe_request(models, p["target_group_id"], next_token))
+        if getattr(response, "Targets", None) is None:
+            module.fail_json(msg="ALB target group backend list is not observable")
+        targets.extend({"ip": x.TargetIp, "port": x.Port, "weight": x.Weight} for x in response.Targets)
+        next_token = getattr(response, "NextToken", None)
+        if not next_token:
+            break
+        if next_token in seen_tokens:
+            module.fail_json(msg="ALB target group backend pagination returned a repeated token")
+        seen_tokens.add(next_token)
+    return sorted(targets, key=lambda x: (x["ip"], x["port"]))
 
 
 def normalized(values):

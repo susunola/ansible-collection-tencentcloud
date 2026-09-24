@@ -236,6 +236,11 @@ def test_describe_request_filters_by_id():
     assert request.TargetGroupIds == ["lbtg-9"]
 
 
+def test_describe_request_uses_next_token():
+    request = mod.describe_request(FakeAlbModels(), _params(), "page-2")
+    assert request.NextToken == "page-2"
+
+
 def test_tags_builder_sorted():
     items = mod._tags(FakeAlbModels(), {"z": "2", "a": "1"})
     assert [(x.TagKey, x.TagValue) for x in items] == [("a", "1"), ("z", "2")]
@@ -321,6 +326,42 @@ def test_find_by_name(monkeypatch):
     module = FakeModule(_params(name="app-http"))
     value = mod.find(module, fake, FakeAlbModels(), module.params)
     assert value["TargetGroupId"] == "lbtg-1"
+
+
+def test_find_by_name_on_later_page(monkeypatch):
+    fake = FakeAlbClient([_group()])
+    _make_module(monkeypatch, fake)
+
+    def paged(request):
+        fake._record("DescribeTargetGroups", request)
+        if not getattr(request, "NextToken", None):
+            return SimpleNamespace(TargetGroups=[FakeResource(_group(TargetGroupName="other"))], NextToken="page-2")
+        return SimpleNamespace(TargetGroups=[FakeResource(_group())], NextToken=None)
+
+    fake.DescribeTargetGroups = paged
+    module = FakeModule(_params(name="app-http"))
+    assert mod.find(module, fake, FakeAlbModels(), module.params)["TargetGroupId"] == "lbtg-1"
+    assert [getattr(request, "NextToken", None) for name, request in fake.calls if name == "DescribeTargetGroups"] == [None, "page-2"]
+
+
+def test_find_repeated_page_token_fails_closed(monkeypatch):
+    fake = FakeAlbClient()
+    _make_module(monkeypatch, fake)
+    fake.DescribeTargetGroups = lambda request: SimpleNamespace(TargetGroups=[], NextToken="same-page")
+    module = FakeModule(_params(name="app-http"))
+    with pytest.raises(AnsibleFailJson) as exc:
+        mod.find(module, fake, FakeAlbModels(), module.params)
+    assert "repeated token" in exc.value.args[0]["msg"]
+
+
+def test_find_missing_group_list_fails_closed(monkeypatch):
+    fake = FakeAlbClient()
+    _make_module(monkeypatch, fake)
+    fake.DescribeTargetGroups = lambda request: SimpleNamespace(TargetGroups=None, NextToken=None)
+    module = FakeModule(_params(name="app-http"))
+    with pytest.raises(AnsibleFailJson) as exc:
+        mod.find(module, fake, FakeAlbModels(), module.params)
+    assert "not observable" in exc.value.args[0]["msg"]
 
 
 def test_find_by_target_group_id(monkeypatch):

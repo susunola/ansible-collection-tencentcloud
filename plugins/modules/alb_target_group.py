@@ -10,7 +10,10 @@ DOCUMENTATION = r"""
 module: alb_target_group
 short_description: Manage Tencent Cloud ALB target groups
 version_added: "0.14.0"
-description: Creates, updates and deletes Application Load Balancer target groups.
+description:
+  - Creates, updates, and deletes Application Load Balancer target groups.
+  - Reads all target-group pages before determining whether a group is absent
+    or whether a name uniquely identifies one group.
 options:
   state: {type: str, choices: [present, absent], default: present, description: Desired state.}
   target_group_id: {type: str, description: Existing target group ID.}
@@ -23,6 +26,15 @@ options:
   health_check: {type: dict, description: SDK HealthCheckConfig payload.}
   sticky_session: {type: dict, description: SDK StickySessionConfig payload.}
   tags: {type: dict, description: Creation-time tags.}
+
+attributes:
+  check_mode:
+    description: Predicts changes without sending API write requests.
+    support: full
+  idempotent:
+    description: Compares observable target-group settings before writing.
+    support: partial
+    details: Asynchronous API changes are not polled to convergence after a write.
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -61,11 +73,13 @@ def _model(cls, value):
     return item
 
 
-def describe_request(models, p):
+def describe_request(models, p, next_token=None):
     r = models.DescribeTargetGroupsRequest()
     r.MaxResults = 100
     if p.get("target_group_id"):
         r.TargetGroupIds = [p["target_group_id"]]
+    if next_token:
+        r.NextToken = next_token
     return r
 
 
@@ -107,14 +121,25 @@ def delete_request(models, target_group_id):
 
 
 def find(module, client, models, p):
-    response = module.sdk_call(client.DescribeTargetGroups, describe_request(models, p))
     matches = []
-    for item in response.TargetGroups or []:
-        value = item._serialize(allow_none=True)
-        if (p.get("target_group_id") and value.get("TargetGroupId") == p["target_group_id"]) or (
-            not p.get("target_group_id") and value.get("TargetGroupName") == p.get("name")
-        ):
-            matches.append(value)
+    next_token = None
+    seen_tokens = set()
+    while True:
+        response = module.sdk_call(client.DescribeTargetGroups, describe_request(models, p, next_token))
+        if getattr(response, "TargetGroups", None) is None:
+            module.fail_json(msg="ALB target group list is not observable")
+        for item in response.TargetGroups:
+            value = item._serialize(allow_none=True)
+            if (p.get("target_group_id") and value.get("TargetGroupId") == p["target_group_id"]) or (
+                not p.get("target_group_id") and value.get("TargetGroupName") == p.get("name")
+            ):
+                matches.append(value)
+        next_token = getattr(response, "NextToken", None)
+        if not next_token:
+            break
+        if next_token in seen_tokens:
+            module.fail_json(msg="ALB target group pagination returned a repeated token")
+        seen_tokens.add(next_token)
     if len(matches) > 1:
         module.fail_json(msg="Multiple ALB target groups matched; specify target_group_id")
     return matches[0] if matches else None

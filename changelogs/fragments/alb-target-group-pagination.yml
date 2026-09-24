@@ -1,0 +1,6 @@
+bugfixes:
+  - alb_target_group - read every DescribeTargetGroups page before deciding
+    that a group is absent or uniquely matched.
+  - alb_target_group_targets - read every backend page before additive or
+    purge reconciliation, and fail closed on an unobservable list or repeated
+    pagination token.
