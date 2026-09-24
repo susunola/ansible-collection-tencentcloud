@@ -100,6 +100,7 @@ def run_module():
         "description": {"required": True},
         "force": {"type": "bool", "default": False},
         "wait": {"type": "bool", "default": True},
+        "waiter_timeout": {"type": "int", "default": 600},
     }
     module = TencentCloudModule(argument_spec=spec, supports_check_mode=True)
     p = module.params

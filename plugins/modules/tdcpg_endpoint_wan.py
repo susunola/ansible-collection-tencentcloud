@@ -84,7 +84,8 @@ def wait(module, client, models, p, target):
 
 def run_module():
     module = TencentCloudModule(
-        argument_spec={"cluster_id": {"required": True}, "endpoint_id": {"required": True}, "state": {"choices": ["open", "closed"], "default": "closed"}},
+        argument_spec={"cluster_id": {"required": True}, "endpoint_id": {"required": True}, "state": {"choices": ["open", "closed"], "default": "closed"},
+                       "waiter_timeout": {"type": "int", "default": 180}},
         supports_check_mode=True,
     )
     p = module.params

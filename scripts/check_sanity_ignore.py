@@ -20,9 +20,9 @@ import sys
 import collections
 
 # The total counts every ignore-*.txt, so each new ansible-core minor adds a
-# full copy of the baseline. Current baseline: 300 = 4 files x 75
+# full copy of the baseline. Current baseline: 268 = 4 files x 67
 # (2.19/2.20/2.21/2.22). Every new ignore requires deliberate review.
-BASELINE_TOTAL = 300
+BASELINE_TOTAL = 268
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 

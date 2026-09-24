@@ -1,0 +1,9 @@
+bugfixes:
+  - Align documented operation wait timeouts with the actual defaults in
+    Oceanus savepoint, SSM product secret, TCB static store, TCM Prometheus,
+    TDC PostgreSQL endpoint and instance state, and TSE gateway modules.
+minor_changes:
+  - Rewrite alb_listener documentation into readable option blocks and
+    explicitly describe check mode, diff, and idempotency limitations.
+  - Remove 32 stale sanity-ignore entries after fixing the underlying
+    argument-spec mismatches.

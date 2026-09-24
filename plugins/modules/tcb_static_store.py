@@ -106,6 +106,7 @@ def run_module():
             "state": {"choices": ["present", "absent"], "default": "present"},
             "env_id": {"required": True},
             "enable_union": {"type": "bool", "default": True},
+            "waiter_timeout": {"type": "int", "default": 600},
             "external_storage": {"type": "dict"},
             "cdn_domain": {},
         },

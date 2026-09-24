@@ -122,6 +122,7 @@ def run_module():
             "state": {"choices": ["present", "absent"], "default": "present"},
             "config": {"type": "dict", "no_log": True},
             "rotate_credentials": {"type": "bool", "default": False},
+            "waiter_timeout": {"type": "int", "default": 180},
         },
         required_if=[("state", "present", ("config",))],
         supports_check_mode=True,

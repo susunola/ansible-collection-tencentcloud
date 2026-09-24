@@ -97,6 +97,7 @@ def run_module():
             "instance_ids": {"type": "list", "elements": "str", "required": True},
             "state": {"choices": ["running", "isolated", "restarted"], "required": True},
             "period_months": {"type": "int", "default": 1},
+            "waiter_timeout": {"type": "int", "default": 300},
         },
         supports_check_mode=True,
     )

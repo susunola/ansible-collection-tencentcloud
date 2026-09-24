@@ -10,26 +10,94 @@ DOCUMENTATION = r"""
 module: alb_listener
 short_description: Manage Tencent Cloud ALB listeners
 version_added: "0.14.0"
-description: Creates, updates and deletes ALB HTTP, HTTPS and QUIC listeners with default target-group actions.
+description:
+  - Creates, updates, and deletes ALB HTTP, HTTPS, and QUIC listeners.
+  - Identify an existing listener by C(listener_id), or by the combination of
+    C(load_balancer_id), C(port), and C(protocol). Supply C(name), C(port),
+    C(protocol), and C(default_actions) when creating a listener.
+  - Port and protocol cannot be changed in place. Delete and recreate the
+    listener explicitly if either must change.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  load_balancer_id: {type: str, required: true, description: ALB ID.}
-  listener_id: {type: str, description: Existing listener ID.}
-  name: {type: str, description: Listener name.}
-  port: {type: int, description: Frontend port; immutable after creation.}
-  protocol: {type: str, choices: [HTTP, HTTPS, QUIC], description: Listener protocol; immutable after creation.}
-  default_actions: {type: list, elements: dict, description: SDK DefaultAction payloads normally forwarding to target groups.}
-  certificate_ids: {type: list, elements: str, description: Server certificate IDs.}
-  ca_enabled: {type: bool, default: false, description: Enable mutual TLS.}
-  ca_certificate_ids: {type: list, elements: str, description: CA certificate IDs.}
-  security_policy_id: {type: str, description: TLS security policy ID.}
-  gzip_enabled: {type: bool, default: true, description: Enable Gzip compression.}
-  http2_enabled: {type: bool, description: Enable HTTP/2 for HTTPS.}
-  idle_timeout: {type: int, default: 15, description: Idle timeout in seconds.}
-  request_timeout: {type: int, default: 60, description: Backend request timeout in seconds.}
-  x_forwarded_for: {type: dict, description: SDK XForwardedForConfig payload.}
-  tags: {type: dict, description: Creation-time tags.}
-  client_token: {type: str, description: Optional idempotency token.}
+  state:
+    description: Whether the listener should exist.
+    type: str
+    choices: [present, absent]
+    default: present
+  load_balancer_id:
+    description: ID of the ALB load balancer that owns the listener.
+    type: str
+    required: true
+  listener_id:
+    description: ID of an existing listener to update or delete.
+    type: str
+  name:
+    description: Listener name. Required when creating a listener.
+    type: str
+  port:
+    description: Frontend port. Required on creation and immutable thereafter.
+    type: int
+  protocol:
+    description: Listener protocol. Required on creation and immutable thereafter.
+    type: str
+    choices: [HTTP, HTTPS, QUIC]
+  default_actions:
+    description:
+      - Default actions sent to the ALB API. Required on creation.
+      - Each entry uses the Tencent Cloud C(DefaultAction) API structure;
+        for example, C(Type=ForwardGroup) with C(TargetGroupConfig).
+    type: list
+    elements: dict
+  certificate_ids:
+    description: Server certificate IDs for HTTPS or QUIC listeners.
+    type: list
+    elements: str
+  ca_enabled:
+    description: Whether mutual TLS is enabled.
+    type: bool
+    default: false
+  ca_certificate_ids:
+    description: CA certificate IDs used when mutual TLS is enabled.
+    type: list
+    elements: str
+  security_policy_id:
+    description: TLS security policy ID.
+    type: str
+  gzip_enabled:
+    description: Whether Gzip compression is enabled.
+    type: bool
+    default: true
+  http2_enabled:
+    description: Whether HTTP/2 is enabled for HTTPS.
+    type: bool
+  idle_timeout:
+    description: Client connection idle timeout in seconds.
+    type: int
+    default: 15
+  request_timeout:
+    description: Backend request timeout in seconds.
+    type: int
+    default: 60
+  x_forwarded_for:
+    description: ALB API C(XForwardedForConfig) settings for forwarded headers.
+    type: dict
+  tags:
+    description: Tags applied only when the listener is created.
+    type: dict
+  client_token:
+    description: API request token used to deduplicate create or delete calls.
+    type: str
+attributes:
+  check_mode:
+    description: Predicts changes without sending create, update, or delete requests.
+    support: full
+  diff_mode:
+    description: Returns a comparison of the observed and requested listener settings.
+    support: partial
+    details: API-assigned and other unmanaged fields are not part of the diff.
+  idempotent:
+    description: Compares observable listener settings before sending write requests.
+    support: partial
+    details: Listener discovery is limited to the first API page; an existing listener outside that page might not be found.
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -41,7 +109,8 @@ extends_documentation_fragment:
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
-- susunola.tencentcloud.alb_listener:
+- name: Ensure an HTTPS listener forwards to a target group
+  susunola.tencentcloud.alb_listener:
     load_balancer_id: alb-xxxxxxxx
     name: https
     port: 443
@@ -51,8 +120,19 @@ EXAMPLES = r"""
       - Type: ForwardGroup
         TargetGroupConfig:
           TargetGroups: [{TargetGroupId: alb-tg-xxxxxxxx, Weight: 100}]
+
+- name: Remove a listener by ID
+  susunola.tencentcloud.alb_listener:
+    load_balancer_id: alb-xxxxxxxx
+    listener_id: lbl-xxxxxxxx
+    state: absent
 """
-RETURN = r"""listener: {description: Effective ALB listener metadata., type: dict, returned: always}"""
+RETURN = r"""
+listener:
+  description: Observed listener details, or C(null) when absent.
+  type: dict
+  returned: always
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

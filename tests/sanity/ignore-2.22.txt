@@ -29,9 +29,7 @@ plugins/modules/oceanus_job_config.py validate-modules:doc-required-mismatch
 plugins/modules/oceanus_job_config.py validate-modules:missing-suboption-docs
 plugins/modules/oceanus_job_config.py validate-modules:parameter-type-not-in-doc
 plugins/modules/oceanus_job_config.py validate-modules:undocumented-parameter
-plugins/modules/oceanus_job_savepoint.py validate-modules:doc-default-does-not-match-spec
 plugins/modules/private_dns_zone.py pep8:E501
-plugins/modules/ssm_product_secret.py validate-modules:doc-default-does-not-match-spec
 plugins/modules/ssm_product_secret.py validate-modules:doc-elements-mismatch
 plugins/modules/ssm_product_secret.py validate-modules:missing-suboption-docs
 plugins/modules/ssm_product_secret.py validate-modules:parameter-type-not-in-doc
@@ -42,10 +40,6 @@ plugins/modules/tag.py pep8:E126
 plugins/modules/tat_invocation.py validate-modules:doc-default-does-not-match-spec
 plugins/modules/tat_invocation.py validate-modules:no-log-needed
 plugins/modules/tat_invocation_info.py pylint:disallowed-name
-plugins/modules/tcb_static_store.py validate-modules:doc-default-does-not-match-spec
-plugins/modules/tcm_prometheus.py validate-modules:doc-default-does-not-match-spec
-plugins/modules/tdcpg_endpoint_wan.py validate-modules:doc-default-does-not-match-spec
-plugins/modules/tdcpg_instance_state.py validate-modules:doc-default-does-not-match-spec
 plugins/modules/tdmysql_database_object_info.py pylint:disallowed-name
 plugins/modules/tdmysql_maintenance_window.py validate-modules:doc-choices-do-not-match-spec
 plugins/modules/tione_data_source_info.py pylint:disallowed-name
@@ -60,9 +54,7 @@ plugins/modules/tione_training_model_version_info.py pep8:E501
 plugins/modules/tione_training_task.py pylint:disallowed-name
 plugins/modules/tione_training_task_info.py pylint:disallowed-name
 plugins/modules/tse_cloud_native_gateway.py pep8:E501
-plugins/modules/tse_cloud_native_gateway.py validate-modules:doc-default-does-not-match-spec
 plugins/modules/tse_config_file_deployment.py pep8:E128
-plugins/modules/tse_gateway_public_network.py validate-modules:doc-default-does-not-match-spec
 plugins/modules/tse_gateway_secret_key.py validate-modules:no-log-needed
 plugins/modules/tse_gateway_service.py validate-modules:doc-default-does-not-match-spec
 plugins/modules/tse_gateway_service_source.py pep8:E501

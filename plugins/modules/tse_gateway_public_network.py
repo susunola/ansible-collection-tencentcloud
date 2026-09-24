@@ -175,6 +175,7 @@ def run_module():
             "config": {"type": "dict"},
             "access_control": {"type": "dict"},
             "address_version": {"choices": ["IPV4", "IPV6"], "default": "IPV4"},
+            "waiter_timeout": {"type": "int", "default": 600},
             "vip": {},
         },
         required_one_of=[("group_id", "group_name")],

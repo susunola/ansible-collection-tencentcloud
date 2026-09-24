@@ -206,6 +206,7 @@ def run_module():
             "account_remark": {},
             "account_type": {"choices": ["L3"]},
             "recovery_window_days": {"type": "int", "default": 7},
+            "waiter_timeout": {"type": "int", "default": 600},
         },
         supports_check_mode=True,
     )

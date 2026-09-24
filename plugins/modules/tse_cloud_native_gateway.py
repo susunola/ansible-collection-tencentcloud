@@ -188,6 +188,7 @@ def run_module():
         "internet_pay_mode": {"choices": ["BANDWIDTH", "TRAFFIC"]},
         "delete_protect": {"type": "bool"},
         "delete_cls_topic": {"type": "bool", "default": False},
+        "waiter_timeout": {"type": "int", "default": 600},
     }
     module = TencentCloudModule(argument_spec=spec, required_one_of=[("gateway_id", "name")], supports_check_mode=True)
     p = module.params
