@@ -16,61 +16,229 @@ description:
   - Existing resources require stable C(service_id). Create-only drift is rejected and must be deployed as a new version.
   - Use C(tione_model_service_state) for operational start and stop.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired configuration presence.}
-  service_id: {type: str, description: Stable service-version ID for update or deletion.}
-  project_id: {type: str, description: Optional TI workspace ID.}
-  service_group_id: {type: str, description: Existing group ID when creating a new version.}
-  service_group_name: {type: str, description: New service-group name.}
-  service_description: {type: str, description: Human-readable service description.}
-  charge_type: {type: str, choices: [PREPAID, POSTPAID_BY_HOUR, HYBRID_PAID], description: Create-only billing mode.}
-  resource_group_id: {type: str, description: Dedicated resource-group ID.}
-  model_info: {type: dict, description: ModelInfo-compatible model selection.}
-  image_info: {type: dict, description: ImageInfo-compatible runtime image.}
-  env: {type: list, elements: dict, description: EnvVar-compatible environment variables.}
-  resources: {type: dict, description: ResourceInfo-compatible prepaid resources.}
-  instance_type: {type: str, description: Postpaid billing specification.}
-  scale_mode: {type: str, choices: [AUTO, MANUAL], description: Replica scaling mode.}
-  replicas: {type: int, description: Desired replica count.}
-  horizontal_pod_autoscaler: {type: dict, description: HorizontalPodAutoscaler-compatible policy.}
-  log_enable: {type: bool, description: Enable service log delivery.}
-  log_config: {type: dict, description: LogConfig-compatible CLS destination.}
-  authorization_enable: {type: bool, description: Create-only request authentication setting.}
-  tags: {type: list, elements: dict, description: Create-only Tag-compatible tags.}
-  scale_strategy: {type: str, description: Automatic scaling strategy such as HPA or CRON.}
-  cron_scale_jobs: {type: list, elements: dict, description: CronScaleJob-compatible schedules.}
-  hybrid_billing_prepaid_replicas: {type: int, description: Prepaid replicas in hybrid billing mode.}
-  create_source: {type: str, description: Create-only service source.}
-  model_hot_update_enable: {type: bool, description: Enable model hot update.}
-  scheduled_action: {type: dict, description: ScheduledAction-compatible stop policy.}
-  volume_mount: {type: dict, description: Legacy VolumeMount-compatible mount.}
-  service_limit: {type: dict, description: ServiceLimit-compatible rate limits.}
-  model_turbo_enable: {type: bool, description: Enable model acceleration.}
-  command: {type: str, description: Container start command.}
-  service_eip: {type: dict, description: ServiceEIP-compatible outbound access.}
-  service_port: {type: int, description: Custom inference service port.}
-  deploy_type: {type: str, choices: [STANDARD, DIST, ROLE_SET], description: Create-only deployment topology.}
-  instance_per_replicas: {type: int, description: Instances in each distributed replica.}
-  termination_grace_period_seconds: {type: int, description: Graceful shutdown timeout.}
-  pre_stop_command: {type: list, elements: str, description: Commands run before instance termination.}
-  grpc_enable: {type: bool, description: Enable the gRPC port.}
-  health_probe: {type: dict, description: HealthProbe-compatible health checks.}
-  rolling_update: {type: dict, description: RollingUpdate-compatible deployment policy.}
-  volume_mounts: {type: list, elements: dict, description: VolumeMount-compatible data mounts.}
-  scheduling_strategy: {type: str, choices: [binpack, spread], description: Workload scheduling strategy.}
-  resource_supply_attribute: {type: dict, description: Create-only ResourceSupplyAttribute-compatible supply mode.}
-  infer_template_id: {type: str, description: Inference template ID.}
-  allow_delete: {type: bool, default: false, description: Explicit destructive-operation guard.}
-  wait: {type: bool, default: true, description: Wait for asynchronous convergence.}
-  waiter_delay: {type: int, default: 10, description: Seconds between state checks.}
-  waiter_timeout: {type: int, default: 1800, description: Overall convergence timeout.}
+  state:
+    description:
+      - Desired configuration presence.
+    type: str
+    choices: [present, absent]
+    default: present
+  service_id:
+    description:
+      - Stable service-version ID for update or deletion.
+    type: str
+  project_id:
+    description:
+      - Optional TI workspace ID.
+    type: str
+  service_group_id:
+    description:
+      - Existing group ID when creating a new version.
+    type: str
+  service_group_name:
+    description:
+      - New service-group name.
+    type: str
+  service_description:
+    description:
+      - Human-readable service description.
+    type: str
+  charge_type:
+    description:
+      - Create-only billing mode.
+    type: str
+    choices: [PREPAID, POSTPAID_BY_HOUR, HYBRID_PAID]
+  resource_group_id:
+    description:
+      - Dedicated resource-group ID.
+    type: str
+  model_info:
+    description:
+      - ModelInfo-compatible model selection.
+    type: dict
+  image_info:
+    description:
+      - ImageInfo-compatible runtime image.
+    type: dict
+  env:
+    description:
+      - EnvVar-compatible environment variables.
+    type: list
+    elements: dict
+  resources:
+    description:
+      - ResourceInfo-compatible prepaid resources.
+    type: dict
+  instance_type:
+    description:
+      - Postpaid billing specification.
+    type: str
+  scale_mode:
+    description:
+      - Replica scaling mode.
+    type: str
+    choices: [AUTO, MANUAL]
+  replicas:
+    description:
+      - Desired replica count.
+    type: int
+  horizontal_pod_autoscaler:
+    description:
+      - HorizontalPodAutoscaler-compatible policy.
+    type: dict
+  log_enable:
+    description:
+      - Enable service log delivery.
+    type: bool
+  log_config:
+    description:
+      - LogConfig-compatible CLS destination.
+    type: dict
+  authorization_enable:
+    description:
+      - Create-only request authentication setting.
+    type: bool
+  tags:
+    description:
+      - Create-only Tag-compatible tags.
+    type: list
+    elements: dict
+  scale_strategy:
+    description:
+      - Automatic scaling strategy such as HPA or CRON.
+    type: str
+  cron_scale_jobs:
+    description:
+      - CronScaleJob-compatible schedules.
+    type: list
+    elements: dict
+  hybrid_billing_prepaid_replicas:
+    description:
+      - Prepaid replicas in hybrid billing mode.
+    type: int
+  create_source:
+    description:
+      - Create-only service source.
+    type: str
+  model_hot_update_enable:
+    description:
+      - Enable model hot update.
+    type: bool
+  scheduled_action:
+    description:
+      - ScheduledAction-compatible stop policy.
+    type: dict
+  volume_mount:
+    description:
+      - Legacy VolumeMount-compatible mount.
+    type: dict
+  service_limit:
+    description:
+      - ServiceLimit-compatible rate limits.
+    type: dict
+  model_turbo_enable:
+    description:
+      - Enable model acceleration.
+    type: bool
+  command:
+    description:
+      - Container start command.
+    type: str
+  service_eip:
+    description:
+      - ServiceEIP-compatible outbound access.
+    type: dict
+  service_port:
+    description:
+      - Custom inference service port.
+    type: int
+  deploy_type:
+    description:
+      - Create-only deployment topology.
+    type: str
+    choices: [STANDARD, DIST, ROLE_SET]
+  instance_per_replicas:
+    description:
+      - Instances in each distributed replica.
+    type: int
+  termination_grace_period_seconds:
+    description:
+      - Graceful shutdown timeout.
+    type: int
+  pre_stop_command:
+    description:
+      - Commands run before instance termination.
+    type: list
+    elements: str
+  grpc_enable:
+    description:
+      - Enable the gRPC port.
+    type: bool
+  health_probe:
+    description:
+      - HealthProbe-compatible health checks.
+    type: dict
+  rolling_update:
+    description:
+      - RollingUpdate-compatible deployment policy.
+    type: dict
+  volume_mounts:
+    description:
+      - VolumeMount-compatible data mounts.
+    type: list
+    elements: dict
+  scheduling_strategy:
+    description:
+      - Workload scheduling strategy.
+    type: str
+    choices: [binpack, spread]
+  resource_supply_attribute:
+    description:
+      - Create-only ResourceSupplyAttribute-compatible supply mode.
+    type: dict
+  infer_template_id:
+    description:
+      - Inference template ID.
+    type: str
+  allow_delete:
+    description:
+      - Explicit destructive-operation guard.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for asynchronous convergence.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between state checks.
+    type: int
+    default: 10
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 1800
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

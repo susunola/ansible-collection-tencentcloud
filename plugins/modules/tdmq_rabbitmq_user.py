@@ -12,24 +12,75 @@ short_description: Manage TDMQ RabbitMQ users
 version_added: "0.14.0"
 description: Creates, updates and deletes RabbitMQ users and performs explicit password rotation.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: TDMQ RabbitMQ instance ID.}
-  name: {type: str, required: true, description: RabbitMQ username.}
-  password: {type: str, description: Password for creation or explicit rotation.}
-  rotate_password: {type: bool, default: false, description: Explicitly replace the password.}
-  description: {type: str, default: '', description: User description.}
-  tags: {type: list, elements: str, default: [], description: RabbitMQ Management access tags.}
-  max_connections: {type: int, description: Maximum connections. Omit to preserve the service default or current value.}
-  max_channels: {type: int, description: Maximum channels. Omit to preserve the service default or current value.}
-  cam_auth_enabled: {type: bool, default: false, description: Enable CAM authentication.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - TDMQ RabbitMQ instance ID.
+    type: str
+    required: true
+  name:
+    description:
+      - RabbitMQ username.
+    type: str
+    required: true
+  password:
+    description:
+      - Password for creation or explicit rotation.
+    type: str
+  rotate_password:
+    description:
+      - Explicitly replace the password.
+    type: bool
+    default: false
+  description:
+    description:
+      - User description.
+    type: str
+    default: ''
+  tags:
+    description:
+      - RabbitMQ Management access tags.
+    type: list
+    default: []
+    elements: str
+  max_connections:
+    description:
+      - Maximum connections. Omit to preserve the service default or current value.
+    type: int
+  max_channels:
+    description:
+      - Maximum channels. Omit to preserve the service default or current value.
+    type: int
+  cam_auth_enabled:
+    description:
+      - Enable CAM authentication.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

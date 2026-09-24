@@ -13,20 +13,60 @@ version_added: "0.14.0"
 description: Creates, updates, enables, disables and deletes DNSPod domains.
 options:
 
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  domain_id: {type: int, description: Existing DNSPod domain ID.}
-  name: {type: str, description: Domain name.}
-  group_id: {type: int, default: 1, description: DNSPod domain group ID at creation.}
-  remark: {type: str, default: '', description: Domain remark.}
-  enabled: {type: bool, default: true, description: Enable DNS resolution.}
-  tags: {type: dict, default: {}, description: Tags applied at creation.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  domain_id:
+    description:
+      - Existing DNSPod domain ID.
+    type: int
+  name:
+    description:
+      - Domain name.
+    type: str
+  group_id:
+    description:
+      - DNSPod domain group ID at creation.
+    type: int
+    default: 1
+  remark:
+    description:
+      - Domain remark.
+    type: str
+    default: ''
+  enabled:
+    description:
+      - Enable DNS resolution.
+    type: bool
+    default: true
+  tags:
+    description:
+      - Tags applied at creation.
+    type: dict
+    default:
+      {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

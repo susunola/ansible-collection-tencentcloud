@@ -13,21 +13,56 @@ short_description: Manage Tencent Cloud EdgeOne web security exception rules
 version_added: "0.14.0"
 description: Exactly reconciles web security exception rules without modifying other EdgeOne security policy modules.
 options:
-  zone_id: {type: str, required: true, description: EdgeOne zone ID.}
-  scope: {type: str, choices: [zone, template, host], default: zone, description: Security policy scope.}
-  template_id: {type: str, description: Web security template ID required for template scope.}
-  host: {type: str, description: Acceleration domain required for host scope.}
+  zone_id:
+    description:
+      - EdgeOne zone ID.
+    type: str
+    required: true
+  scope:
+    description:
+      - Security policy scope.
+    type: str
+    choices: [zone, template, host]
+    default: zone
+  template_id:
+    description:
+      - Web security template ID required for template scope.
+    type: str
+  host:
+    description:
+      - Acceleration domain required for host scope.
+    type: str
   rules:
     type: list
     elements: dict
     required: true
     description: Exact exception-rule set; an empty list removes every exception rule in this scope.
     suboptions:
-      rule_id: {type: str, description: Existing rule ID; otherwise an existing rule is matched by unique name.}
-      name: {type: str, required: true, description: Exception rule name.}
-      condition: {type: str, required: true, description: EdgeOne security expression selecting requests.}
-      enabled: {type: bool, default: true, description: Whether the exception is enabled.}
-      skip_scope: {type: str, choices: [WebSecurityModules, ManagedRules], required: true, description: Kind of protection bypassed.}
+      rule_id:
+        description:
+          - Existing rule ID; otherwise an existing rule is matched by unique name.
+        type: str
+      name:
+        description:
+          - Exception rule name.
+        type: str
+        required: true
+      condition:
+        description:
+          - EdgeOne security expression selecting requests.
+        type: str
+        required: true
+      enabled:
+        description:
+          - Whether the exception is enabled.
+        type: bool
+        default: true
+      skip_scope:
+        description:
+          - Kind of protection bypassed.
+        type: str
+        required: true
+        choices: [WebSecurityModules, ManagedRules]
       skip_option:
         type: str
         choices: [SkipOnAllRequestFields, SkipOnSpecifiedRequestFields]
@@ -39,25 +74,60 @@ options:
         default: []
         choices: [websec-mod-managed-rules, websec-mod-rate-limiting, websec-mod-custom-rules, websec-mod-adaptive-control, websec-mod-bot]
         description: Modules bypassed when skip_scope is WebSecurityModules.
-      managed_rule_ids: {type: list, elements: str, default: [], description: Exact managed rule IDs bypassed.}
-      managed_rule_group_ids: {type: list, elements: str, default: [], description: Exact managed rule-group IDs bypassed.}
+      managed_rule_ids:
+        description:
+          - Exact managed rule IDs bypassed.
+        type: list
+        default: []
+        elements: str
+      managed_rule_group_ids:
+        description:
+          - Exact managed rule-group IDs bypassed.
+        type: list
+        default: []
+        elements: str
       request_fields:
         type: list
         elements: dict
         default: []
         description: Request fields excluded from managed-rule inspection.
         suboptions:
-          field_scope: {type: str, choices: [body.json, cookie, header, uri.query, uri, body], required: true, description: Request field category.}
-          condition: {type: str, default: '', description: Field-selection expression.}
-          target_field: {type: str, required: true, description: "Key, value, path, query, fullpath, fullbody, or multipart target."}
+          field_scope:
+            description:
+              - Request field category.
+            type: str
+            required: true
+            choices: [body.json, cookie, header, uri.query, uri, body]
+          condition:
+            description:
+              - Field-selection expression.
+            type: str
+            default: ''
+          target_field:
+            description:
+              - Key, value, path, query, fullpath, fullbody, or multipart target.
+            type: str
+            required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 

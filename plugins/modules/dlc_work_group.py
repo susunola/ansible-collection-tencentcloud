@@ -14,21 +14,59 @@ description:
   - Creates, describes, updates and deletes DLC work groups.
   - Work-group names are immutable; descriptions remain mutable.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired work-group state.}
-  work_group_id: {type: int, description: Existing DLC work-group ID.}
-  name: {type: str, description: Work-group name.}
-  description: {type: str, description: Work-group description.}
-  initial_user_ids: {type: list, elements: str, description: Users bound during creation; use C(dlc_work_group_membership) for ongoing exact reconciliation.}
-  initial_policies: {type: list, elements: dict, description: SDK Policy objects bound during creation; use C(dlc_work_group_policy) for ongoing exact reconciliation.}
-  allow_delete_nonempty: {type: bool, default: false, description: Explicitly authorize deleting a work group that still has users or policies.}
+  state:
+    description:
+      - Desired work-group state.
+    type: str
+    choices: [present, absent]
+    default: present
+  work_group_id:
+    description:
+      - Existing DLC work-group ID.
+    type: int
+  name:
+    description:
+      - Work-group name.
+    type: str
+  description:
+    description:
+      - Work-group description.
+    type: str
+  initial_user_ids:
+    description:
+      - Users bound during creation; use C(dlc_work_group_membership) for ongoing exact reconciliation.
+    type: list
+    elements: str
+  initial_policies:
+    description:
+      - SDK Policy objects bound during creation; use C(dlc_work_group_policy) for ongoing exact reconciliation.
+    type: list
+    elements: dict
+  allow_delete_nonempty:
+    description:
+      - Explicitly authorize deleting a work group that still has users or policies.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

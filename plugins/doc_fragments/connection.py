@@ -12,8 +12,4 @@ options:
       - Override the Tencent Cloud API endpoint.
       - Intended for private endpoints, proxies, and integration tests.
     type: str
-  timeout:
-    description: SDK HTTP request timeout in seconds.
-    type: int
-    default: 60
 """

@@ -15,21 +15,58 @@ description:
   - Reads one DLC Notebook statement through its strong session and statement identities.
   - Optionally retrieves every SQL-result page while preserving page boundaries and result metadata.
 options:
-  session_id: {type: str, required: true, description: Exact Notebook session ID.}
-  statement_id: {type: str, required: true, description: Exact Notebook statement ID.}
-  task_id: {type: str, description: Exact backing task ID; inferred from the statement when available.}
-  include_sql_result: {type: bool, default: false, description: Retrieve all SQL-result pages for the backing task.}
-  batch_id: {type: str, description: Optional batch ID used when reading SQL results.}
-  max_results: {type: int, default: 1000, description: 'Maximum rows requested per result page, from 1 to 1000.'}
-  data_field_cut_length: {type: int, description: Optional maximum returned field-value length.}
+  session_id:
+    description:
+      - Exact Notebook session ID.
+    type: str
+    required: true
+  statement_id:
+    description:
+      - Exact Notebook statement ID.
+    type: str
+    required: true
+  task_id:
+    description:
+      - Exact backing task ID; inferred from the statement when available.
+    type: str
+  include_sql_result:
+    description:
+      - Retrieve all SQL-result pages for the backing task.
+    type: bool
+    default: false
+  batch_id:
+    description:
+      - Optional batch ID used when reading SQL results.
+    type: str
+  max_results:
+    description:
+      - Maximum rows requested per result page, from 1 to 1000.
+    type: int
+    default: 1000
+  data_field_cut_length:
+    description:
+      - Optional maximum returned field-value length.
+    type: int
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

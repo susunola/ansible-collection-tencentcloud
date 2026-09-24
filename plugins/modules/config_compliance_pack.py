@@ -13,41 +13,113 @@ short_description: Manage Tencent Cloud Config compliance packs
 version_added: "0.14.0"
 description: Creates, updates, enables, disables and deletes Config compliance packs with an exact rule set.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired pack state.}
-  compliance_pack_id: {type: str, description: Existing compliance pack ID; preferred for updates and deletion.}
-  name: {type: str, description: "Compliance pack name, also used for lookup."}
-  description: {type: str, default: '', description: Compliance pack description.}
-  risk_level: {type: int, choices: [1, 2, 3], default: 2, description: Pack risk level.}
-  enabled: {type: bool, default: true, description: Whether compliance evaluation is active.}
+  state:
+    description:
+      - Desired pack state.
+    type: str
+    choices: [present, absent]
+    default: present
+  compliance_pack_id:
+    description:
+      - Existing compliance pack ID; preferred for updates and deletion.
+    type: str
+  name:
+    description:
+      - Compliance pack name, also used for lookup.
+    type: str
+  description:
+    description:
+      - Compliance pack description.
+    type: str
+    default: ''
+  risk_level:
+    description:
+      - Pack risk level.
+    type: int
+    choices: [1, 2, 3]
+    default: 2
+  enabled:
+    description:
+      - Whether compliance evaluation is active.
+    type: bool
+    default: true
   rules:
     description: Exact set of Config rules contained in the pack.
     type: list
     elements: dict
     default: []
     suboptions:
-      name: {type: str, required: true, description: Rule name.}
-      risk_level: {type: int, choices: [1, 2, 3], required: true, description: Rule risk level.}
-      identifier: {type: str, required: true, description: Rule identity identifier.}
-      config_rule_id: {type: str, required: true, description: Existing Config rule ID.}
-      managed_rule_identifier: {type: str, description: Optional preset managed-rule identifier.}
-      description: {type: str, default: '', description: Rule description.}
+      name:
+        description:
+          - Rule name.
+        type: str
+        required: true
+      risk_level:
+        description:
+          - Rule risk level.
+        type: int
+        required: true
+        choices: [1, 2, 3]
+      identifier:
+        description:
+          - Rule identity identifier.
+        type: str
+        required: true
+      config_rule_id:
+        description:
+          - Existing Config rule ID.
+        type: str
+        required: true
+      managed_rule_identifier:
+        description:
+          - Optional preset managed-rule identifier.
+        type: str
+      description:
+        description:
+          - Rule description.
+        type: str
+        default: ''
       input_parameters:
         type: list
         elements: dict
         default: []
         description: Exact rule input parameter list.
         suboptions:
-          parameter_name: {type: str, required: true, description: Parameter key name.}
-          type: {type: str, required: true, description: Parameter value type.}
-          value: {type: str, required: true, description: Parameter value.}
+          parameter_name:
+            description:
+              - Parameter key name.
+            type: str
+            required: true
+          type:
+            description:
+              - Parameter value type.
+            type: str
+            required: true
+          value:
+            description:
+              - Parameter value.
+            type: str
+            required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 

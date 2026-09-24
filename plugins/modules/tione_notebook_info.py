@@ -14,21 +14,64 @@ version_added: "0.14.0"
 description:
   - Lists TIONE notebooks with workspace scoping, state and identity filters, tag filters, sorting and bounded offset pagination.
 options:
-  project_id: {type: str, description: Optional TI workspace ID.}
-  filters: {type: dict, default: {}, description: Notebook API filter names mapped to values or value lists.}
-  tag_filters: {type: dict, default: {}, description: Tag keys mapped to tag values or value lists.}
-  order_field: {type: str, choices: [CreateTime, UpdateTime], default: UpdateTime, description: Field used for ordering.}
-  order: {type: str, choices: [ASC, DESC], default: DESC, description: Sort direction.}
-  page_size: {type: int, default: 200, description: 'Notebooks requested per page, from 1 to 200.'}
-  max_pages: {type: int, default: 1000, description: 'Maximum pages fetched, from 1 to 1000.'}
+  project_id:
+    description:
+      - Optional TI workspace ID.
+    type: str
+  filters:
+    description:
+      - Notebook API filter names mapped to values or value lists.
+    type: dict
+    default:
+      {}
+  tag_filters:
+    description:
+      - Tag keys mapped to tag values or value lists.
+    type: dict
+    default:
+      {}
+  order_field:
+    description:
+      - Field used for ordering.
+    type: str
+    choices: [CreateTime, UpdateTime]
+    default: UpdateTime
+  order:
+    description:
+      - Sort direction.
+    type: str
+    choices: [ASC, DESC]
+    default: DESC
+  page_size:
+    description:
+      - Notebooks requested per page, from 1 to 200.
+    type: int
+    default: 200
+  max_pages:
+    description:
+      - Maximum pages fetched, from 1 to 1000.
+    type: int
+    default: 1000
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

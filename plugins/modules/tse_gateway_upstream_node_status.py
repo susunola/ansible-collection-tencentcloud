@@ -13,21 +13,62 @@ short_description: Reconcile Tencent Cloud TSE gateway upstream node health stat
 version_added: "0.14.0"
 description: Declaratively drains or restores one upstream target and waits for the queried topology to converge.
 options:
-  gateway_id: {type: str, required: true, description: Cloud-native API gateway ID.}
-  service_name: {type: str, required: true, description: Gateway service name.}
-  host: {type: str, required: true, description: Upstream target IP address or hostname.}
-  port: {type: int, required: true, description: Upstream target port.}
-  status: {type: str, required: true, choices: [HEALTHY, UNHEALTHY], description: Desired target state.}
-  waiter_delay: {type: int, default: 2, description: Polling interval while waiting for convergence.}
-  waiter_timeout: {type: int, default: 60, description: Maximum convergence wait.}
+  gateway_id:
+    description:
+      - Cloud-native API gateway ID.
+    type: str
+    required: true
+  service_name:
+    description:
+      - Gateway service name.
+    type: str
+    required: true
+  host:
+    description:
+      - Upstream target IP address or hostname.
+    type: str
+    required: true
+  port:
+    description:
+      - Upstream target port.
+    type: int
+    required: true
+  status:
+    description:
+      - Desired target state.
+    type: str
+    required: true
+    choices: [HEALTHY, UNHEALTHY]
+  waiter_delay:
+    description:
+      - Polling interval while waiting for convergence.
+    type: int
+    default: 2
+  waiter_timeout:
+    description:
+      - Maximum convergence wait.
+    type: int
+    default: 60
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

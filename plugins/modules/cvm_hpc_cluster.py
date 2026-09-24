@@ -12,22 +12,64 @@ short_description: Manage Tencent Cloud CVM high-performance clusters
 version_added: "0.14.0"
 description: Creates, updates and deletes CVM high-performance clusters with guarded replacement of immutable topology.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, description: Existing HPC cluster ID.}
-  name: {type: str, description: Cluster name.}
-  zone: {type: str, description: Availability zone; immutable after creation.}
-  remark: {type: str, default: managed by Ansible, description: Cluster remark.}
-  cluster_type: {type: str, choices: [STANDARD, CDC, CHC], default: STANDARD, description: HPC cluster type.}
-  business_id: {type: str, description: Business-scene ID used by CDC clusters.}
-  force_replace: {type: bool, default: false, description: Replace an empty cluster when immutable topology changes.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - Existing HPC cluster ID.
+    type: str
+  name:
+    description:
+      - Cluster name.
+    type: str
+  zone:
+    description:
+      - Availability zone; immutable after creation.
+    type: str
+  remark:
+    description:
+      - Cluster remark.
+    type: str
+    default: managed by Ansible
+  cluster_type:
+    description:
+      - HPC cluster type.
+    type: str
+    choices: [STANDARD, CDC, CHC]
+    default: STANDARD
+  business_id:
+    description:
+      - Business-scene ID used by CDC clusters.
+    type: str
+  force_replace:
+    description:
+      - Replace an empty cluster when immutable topology changes.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

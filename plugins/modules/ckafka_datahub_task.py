@@ -12,28 +12,95 @@ short_description: Manage Tencent Cloud CKafka Datahub tasks
 version_added: "0.14.0"
 description: Creates, updates, pauses, resumes and deletes CKafka Datahub source or sink tasks.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired existence state.}
-  task_id: {type: str, description: Existing task ID; preferred for rename and deletion.}
-  name: {type: str, required: true, description: Task name.}
-  task_type: {type: str, required: true, choices: [SOURCE, SINK], description: Immutable task direction.}
-  source_resource: {type: dict, required: true, description: SDK-compatible DatahubResource source configuration.}
-  target_resource: {type: dict, required: true, description: SDK-compatible DatahubResource target configuration.}
-  transform: {type: dict, description: SDK-compatible legacy TransformParam configuration.}
-  transforms: {type: dict, description: SDK-compatible TransformsParam configuration.}
-  schema_id: {type: str, description: Immutable bound schema ID.}
-  description: {type: str, default: '', description: Task description.}
-  desired_status: {type: str, choices: [running, paused], default: running, description: Desired operational status.}
-  tasks_max: {type: int, default: 1, description: Maximum task concurrency.}
-  sync_throttle_limit: {type: int, default: 20, description: Synchronization throttle in MB/s.}
-  auto_expand: {type: bool, default: true, description: Enable automatic capacity expansion.}
+  state:
+    description:
+      - Desired existence state.
+    type: str
+    choices: [present, absent]
+    default: present
+  task_id:
+    description:
+      - Existing task ID; preferred for rename and deletion.
+    type: str
+  name:
+    description:
+      - Task name.
+    type: str
+    required: true
+  task_type:
+    description:
+      - Immutable task direction.
+    type: str
+    required: true
+    choices: [SOURCE, SINK]
+  source_resource:
+    description:
+      - SDK-compatible DatahubResource source configuration.
+    type: dict
+    required: true
+  target_resource:
+    description:
+      - SDK-compatible DatahubResource target configuration.
+    type: dict
+    required: true
+  transform:
+    description:
+      - SDK-compatible legacy TransformParam configuration.
+    type: dict
+  transforms:
+    description:
+      - SDK-compatible TransformsParam configuration.
+    type: dict
+  schema_id:
+    description:
+      - Immutable bound schema ID.
+    type: str
+  description:
+    description:
+      - Task description.
+    type: str
+    default: ''
+  desired_status:
+    description:
+      - Desired operational status.
+    type: str
+    choices: [running, paused]
+    default: running
+  tasks_max:
+    description:
+      - Maximum task concurrency.
+    type: int
+    default: 1
+  sync_throttle_limit:
+    description:
+      - Synchronization throttle in MB/s.
+    type: int
+    default: 20
+  auto_expand:
+    description:
+      - Enable automatic capacity expansion.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

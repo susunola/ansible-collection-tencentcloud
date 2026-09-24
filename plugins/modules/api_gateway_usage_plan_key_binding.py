@@ -12,17 +12,42 @@ short_description: Bind API Gateway keys to usage plans
 version_added: "0.14.0"
 description: Idempotently binds or unbinds an API key and usage plan.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  usage_plan_id: {type: str, required: true, description: Usage plan ID.}
-  access_key_id: {type: str, required: true, description: API key ID.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  usage_plan_id:
+    description:
+      - Usage plan ID.
+    type: str
+    required: true
+  access_key_id:
+    description:
+      - API key ID.
+    type: str
+    required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

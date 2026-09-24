@@ -13,30 +13,77 @@ short_description: Manage Tencent Cloud TAT commands
 version_added: "0.14.0"
 description: Creates, updates and deletes reusable TencentCloud Automation Tools commands.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  command_id: {description: Existing TAT command ID., type: str}
-  name: {description: TAT command name., type: str}
-  content: {description: Plain text command script., type: str}
-  description: {description: Command description., type: str, default: ''}
-  command_type: {description: Command interpreter type., type: str, choices: [SHELL, POWERSHELL, BAT], default: SHELL}
-  working_directory: {description: Command working directory., type: str, default: /root}
-  timeout: {description: Command timeout in seconds., type: int, default: 60}
-  enable_parameters: {description: Enable script parameter placeholders., type: bool, default: false}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  command_id:
+    description:
+      - Existing TAT command ID.
+    type: str
+  name:
+    description:
+      - TAT command name.
+    type: str
+  content:
+    description:
+      - Plain text command script.
+    type: str
+  description:
+    description:
+      - Command description.
+    type: str
+    default: ''
+  command_type:
+    description:
+      - Command interpreter type.
+    type: str
+    choices: [SHELL, POWERSHELL, BAT]
+    default: SHELL
+  working_directory:
+    description:
+      - Command working directory.
+    type: str
+    default: /root
+  timeout:
+    description:
+      - Command timeout in seconds.
+    type: int
+    default: 60
+  enable_parameters:
+    description:
+      - Enable script parameter placeholders.
+    type: bool
+    default: false
   default_parameters:
     description:
       - Default placeholder values.
       - Omitted from the request when empty because TAT rejects the field unless C(enable_parameters) is true.
     type: dict
-    default: {}
-  username: {description: Operating system user used to execute the command., type: str, default: root}
-  output_cos_bucket_url: {description: HTTPS COS bucket URL for command output., type: str}
-  output_cos_key_prefix: {description: COS key prefix for command output., type: str}
+    default:
+      {}
+  username:
+    description:
+      - Operating system user used to execute the command.
+    type: str
+    default: root
+  output_cos_bucket_url:
+    description:
+      - HTTPS COS bucket URL for command output.
+    type: str
+  output_cos_key_prefix:
+    description:
+      - COS key prefix for command output.
+    type: str
   tags:
     description:
       - Tags assigned when creating the command.
       - Applied on create only - TAT does not return tags so they are never reconciled.
     type: dict
-    default: {}
+    default:
+      {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -45,6 +92,17 @@ extends_documentation_fragment:
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

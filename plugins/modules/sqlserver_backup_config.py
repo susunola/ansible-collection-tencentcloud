@@ -12,24 +12,58 @@ short_description: Manage TencentDB for SQL Server backup configuration
 version_added: "0.14.0"
 description: Reconciles the regular data and log backup schedule, execution hour, mode and retention period of a SQL Server instance.
 options:
-  instance_id: {type: str, required: true, description: SQL Server instance ID.}
-  backup_type: {type: str, choices: [daily, weekly], default: daily, description: Backup schedule type.}
-  backup_hour: {type: int, default: 3, description: Backup start hour from 0 through 23.}
-  backup_cycle: {type: list, elements: int, default: [], description: Weekday numbers 1 through 7 used for weekly backups.}
+  instance_id:
+    description:
+      - SQL Server instance ID.
+    type: str
+    required: true
+  backup_type:
+    description:
+      - Backup schedule type.
+    type: str
+    choices: [daily, weekly]
+    default: daily
+  backup_hour:
+    description:
+      - Backup start hour from 0 through 23.
+    type: int
+    default: 3
+  backup_cycle:
+    description:
+      - Weekday numbers 1 through 7 used for weekly backups.
+    type: list
+    default: []
+    elements: int
   backup_model:
     type: str
     choices: [master_pkg, master_no_pkg, slave_pkg, slave_no_pkg]
     default: master_pkg
     description: Backup execution and packaging mode.
-  retention_days: {type: int, default: 7, description: Data and log backup retention in days.}
+  retention_days:
+    description:
+      - Data and log backup retention in days.
+    type: int
+    default: 7
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

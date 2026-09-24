@@ -14,22 +14,63 @@ description:
   - Creates and deletes immutable CVM launch-template versions.
   - A version can be selected by number or by its exact description; configuration drift requires replacement with a new version.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  template_id: {type: str, required: true, description: Launch-template ID.}
-  version: {type: int, description: Existing version number.}
-  description: {type: str, description: Version description used as the declarative identity when version is omitted.}
-  template_data: {type: dict, description: Complete SDK-compatible launch-template version data.}
-  base_version: {type: int, description: Existing version inherited by the new version.}
-  make_default: {type: bool, default: false, description: Select the resulting version as the template default.}
-  force_replace: {type: bool, default: false, description: Delete and recreate when immutable version data differs.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  template_id:
+    description:
+      - Launch-template ID.
+    type: str
+    required: true
+  version:
+    description:
+      - Existing version number.
+    type: int
+  description:
+    description:
+      - Version description used as the declarative identity when version is omitted.
+    type: str
+  template_data:
+    description:
+      - Complete SDK-compatible launch-template version data.
+    type: dict
+  base_version:
+    description:
+      - Existing version inherited by the new version.
+    type: int
+  make_default:
+    description:
+      - Select the resulting version as the template default.
+    type: bool
+    default: false
+  force_replace:
+    description:
+      - Delete and recreate when immutable version data differs.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

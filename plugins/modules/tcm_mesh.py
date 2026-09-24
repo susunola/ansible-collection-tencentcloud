@@ -12,26 +12,81 @@ short_description: Manage Tencent Cloud Mesh instances
 version_added: "0.14.0"
 description: Creates, updates and deletes Tencent Cloud Mesh instances.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  mesh_id: {type: str, description: Existing mesh ID.}
-  name: {type: str, description: Mesh display name.}
-  mesh_version: {type: str, description: Creation-time service mesh version.}
-  mesh_type: {type: str, description: Creation-time mesh type.}
-  config: {type: dict, description: SDK MeshConfig payload.}
-  clusters: {type: list, elements: dict, description: Creation-time SDK Cluster payloads.}
-  tags: {type: dict, description: Creation-time tags.}
-  delete_cls: {type: bool, default: false, description: Delete associated CLS resources with the mesh.}
-  delete_tmp: {type: bool, default: false, description: Delete associated TMP resources with the mesh.}
-  delete_apm: {type: bool, default: false, description: Delete associated APM resources with the mesh.}
-  delete_grafana: {type: bool, default: false, description: Delete associated Grafana resources with the mesh.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  mesh_id:
+    description:
+      - Existing mesh ID.
+    type: str
+  name:
+    description:
+      - Mesh display name.
+    type: str
+  mesh_version:
+    description:
+      - Creation-time service mesh version.
+    type: str
+  mesh_type:
+    description:
+      - Creation-time mesh type.
+    type: str
+  config:
+    description:
+      - SDK MeshConfig payload.
+    type: dict
+  clusters:
+    description:
+      - Creation-time SDK Cluster payloads.
+    type: list
+    elements: dict
+  tags:
+    description:
+      - Creation-time tags.
+    type: dict
+  delete_cls:
+    description:
+      - Delete associated CLS resources with the mesh.
+    type: bool
+    default: false
+  delete_tmp:
+    description:
+      - Delete associated TMP resources with the mesh.
+    type: bool
+    default: false
+  delete_apm:
+    description:
+      - Delete associated APM resources with the mesh.
+    type: bool
+    default: false
+  delete_grafana:
+    description:
+      - Delete associated Grafana resources with the mesh.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

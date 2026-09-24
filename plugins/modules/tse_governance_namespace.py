@@ -12,22 +12,65 @@ short_description: Manage a Tencent Cloud TSE governance namespace
 version_added: "0.14.0"
 description: Creates, updates and deletes a governance namespace with exact operator and service visibility sets.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: TSE engine instance ID.}
-  name: {type: str, required: true, description: Namespace name.}
-  comment: {type: str, description: Namespace description.}
-  user_ids: {type: list, elements: str, description: Exact user IDs allowed to operate the namespace.}
-  group_ids: {type: list, elements: str, description: Exact group IDs allowed to operate the namespace.}
-  service_export_to: {type: list, elements: str, description: Exact namespaces allowed to discover its services.}
-  sync_to_global_registry: {type: bool, description: Synchronize to the global registry.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - TSE engine instance ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Namespace name.
+    type: str
+    required: true
+  comment:
+    description:
+      - Namespace description.
+    type: str
+  user_ids:
+    description:
+      - Exact user IDs allowed to operate the namespace.
+    type: list
+    elements: str
+  group_ids:
+    description:
+      - Exact group IDs allowed to operate the namespace.
+    type: list
+    elements: str
+  service_export_to:
+    description:
+      - Exact namespaces allowed to discover its services.
+    type: list
+    elements: str
+  sync_to_global_registry:
+    description:
+      - Synchronize to the global registry.
+    type: bool
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

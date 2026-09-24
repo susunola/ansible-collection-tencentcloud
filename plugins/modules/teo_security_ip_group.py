@@ -13,19 +13,50 @@ short_description: Manage Tencent Cloud EdgeOne security IP groups
 version_added: "0.14.0"
 description: Creates, renames, exactly replaces and deletes EdgeOne security IP groups.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired IP-group state.}
-  zone_id: {type: str, required: true, description: EdgeOne zone ID.}
-  group_id: {type: int, description: Existing numeric security IP-group ID.}
-  name: {type: str, description: "Security IP-group name, also used for lookup."}
-  content: {type: list, elements: str, description: "Exact set of IPv4, IPv6, and CIDR entries."}
+  state:
+    description:
+      - Desired IP-group state.
+    type: str
+    choices: [present, absent]
+    default: present
+  zone_id:
+    description:
+      - EdgeOne zone ID.
+    type: str
+    required: true
+  group_id:
+    description:
+      - Existing numeric security IP-group ID.
+    type: int
+  name:
+    description:
+      - Security IP-group name, also used for lookup.
+    type: str
+  content:
+    description:
+      - Exact set of IPv4, IPv6, and CIDR entries.
+    type: list
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 

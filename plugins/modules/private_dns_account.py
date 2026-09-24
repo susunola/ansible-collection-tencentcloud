@@ -14,17 +14,42 @@ description:
   - Adds or removes a previously authorized primary account from Private DNS.
   - The target account must complete the Tencent Cloud authorization prerequisite before creation.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired relationship state.}
-  uin: {type: str, required: true, description: Target primary account UIN.}
-  account: {type: str, required: true, description: Target primary account login name.}
+  state:
+    description:
+      - Desired relationship state.
+    type: str
+    choices: [present, absent]
+    default: present
+  uin:
+    description:
+      - Target primary account UIN.
+    type: str
+    required: true
+  account:
+    description:
+      - Target primary account login name.
+    type: str
+    required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

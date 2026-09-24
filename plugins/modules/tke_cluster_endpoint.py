@@ -12,22 +12,63 @@ short_description: Manage Tencent Cloud TKE cluster access endpoints
 version_added: "0.14.0"
 description: Creates or deletes a public or private Kubernetes API endpoint for a TKE cluster.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, required: true, description: TKE cluster ID.}
-  access: {type: str, choices: [public, private], default: private, description: Endpoint network scope.}
-  subnet_id: {type: str, description: Subnet for a private endpoint.}
-  domain: {type: str, description: Custom endpoint domain.}
-  security_group_id: {type: str, description: Security group for the endpoint load balancer.}
-  load_balancer_id: {type: str, description: Existing load balancer ID.}
-  extensive_parameters: {type: dict, description: Public load-balancer parameters serialized as JSON.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - TKE cluster ID.
+    type: str
+    required: true
+  access:
+    description:
+      - Endpoint network scope.
+    type: str
+    choices: [public, private]
+    default: private
+  subnet_id:
+    description:
+      - Subnet for a private endpoint.
+    type: str
+  domain:
+    description:
+      - Custom endpoint domain.
+    type: str
+  security_group_id:
+    description:
+      - Security group for the endpoint load balancer.
+    type: str
+  load_balancer_id:
+    description:
+      - Existing load balancer ID.
+    type: str
+  extensive_parameters:
+    description:
+      - Public load-balancer parameters serialized as JSON.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

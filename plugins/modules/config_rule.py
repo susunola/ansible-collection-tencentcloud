@@ -13,34 +13,106 @@ short_description: Manage Tencent Cloud Config compliance rules
 version_added: "0.14.0"
 description: Creates, updates and deletes managed or custom compliance rules.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  rule_id: {description: Existing Config rule ID., type: str}
-  name: {description: Config rule name., type: str}
-  identifier: {description: Managed rule identifier or custom SCF region and function name., type: str}
-  identifier_type: {description: Rule template type., type: str, choices: [SYSTEM, CUSTOMIZE], default: SYSTEM}
-  resource_types: {description: Exact resource type scope., type: list, elements: str}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  rule_id:
+    description:
+      - Existing Config rule ID.
+    type: str
+  name:
+    description:
+      - Config rule name.
+    type: str
+  identifier:
+    description:
+      - Managed rule identifier or custom SCF region and function name.
+    type: str
+  identifier_type:
+    description:
+      - Rule template type.
+    type: str
+    choices: [SYSTEM, CUSTOMIZE]
+    default: SYSTEM
+  resource_types:
+    description:
+      - Exact resource type scope.
+    type: list
+    elements: str
   triggers:
     description: Exact trigger configuration list.
     type: list
     elements: dict
     default: [{message_type: ConfigurationItemChangeNotification}]
     suboptions:
-      message_type: {description: Trigger type., type: str, choices: [ScheduledNotification, ConfigurationItemChangeNotification], required: true}
-      maximum_execution_frequency: {description: Scheduled evaluation frequency., type: str}
-  risk_level: {description: Risk level where 1 is high and 3 is low., type: int, choices: [1, 2, 3], default: 2}
-  input_parameters: {description: Rule input parameter values keyed by parameter name., type: dict, default: {}}
-  description: {description: Rule description., type: str, default: ''}
-  regions: {description: Exact evaluated region scope., type: list, elements: str, default: []}
-  tags: {description: Exact evaluated tag scope., type: dict, default: {}}
-  excluded_resource_ids: {description: Exact resource exclusion list., type: list, elements: str, default: []}
+      message_type:
+        description:
+          - Trigger type.
+        type: str
+        required: true
+        choices: [ScheduledNotification, ConfigurationItemChangeNotification]
+      maximum_execution_frequency:
+        description:
+          - Scheduled evaluation frequency.
+        type: str
+  risk_level:
+    description:
+      - Risk level where 1 is high and 3 is low.
+    type: int
+    choices: [1, 2, 3]
+    default: 2
+  input_parameters:
+    description:
+      - Rule input parameter values keyed by parameter name.
+    type: dict
+    default:
+      {}
+  description:
+    description:
+      - Rule description.
+    type: str
+    default: ''
+  regions:
+    description:
+      - Exact evaluated region scope.
+    type: list
+    default: []
+    elements: str
+  tags:
+    description:
+      - Exact evaluated tag scope.
+    type: dict
+    default:
+      {}
+  excluded_resource_ids:
+    description:
+      - Exact resource exclusion list.
+    type: list
+    default: []
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

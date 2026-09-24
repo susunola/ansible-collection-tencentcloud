@@ -12,20 +12,54 @@ short_description: Manage Tencent Cloud CBS disk backup points
 version_added: "0.14.0"
 description: Creates, waits for and deletes persistent CBS cloud-disk backup points.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  disk_backup_id: {type: str, description: Existing backup point ID; preferred for deletion.}
-  disk_id: {type: str, description: Source CBS cloud disk ID; immutable after creation.}
-  name: {type: str, description: Backup point name; immutable after creation.}
-  force_replace: {type: bool, default: false, description: Delete and recreate when immutable source disk or name differs.}
-  wait: {type: bool, default: true, description: Wait for the backup point to reach NORMAL after creation.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  disk_backup_id:
+    description:
+      - Existing backup point ID; preferred for deletion.
+    type: str
+  disk_id:
+    description:
+      - Source CBS cloud disk ID; immutable after creation.
+    type: str
+  name:
+    description:
+      - Backup point name; immutable after creation.
+    type: str
+  force_replace:
+    description:
+      - Delete and recreate when immutable source disk or name differs.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for the backup point to reach NORMAL after creation.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -13,18 +13,47 @@ short_description: Bind a Tencent Cloud CDW Doris user to a workload group
 version_added: "0.14.0"
 description: Declaratively moves every host identity of a Doris user from its current workload group to the requested group.
 options:
-  instance_id: {type: str, required: true, description: CDW Doris instance ID.}
-  user_name: {type: str, required: true, description: Doris database user name.}
-  hosts: {type: list, elements: str, required: true, description: Every host identity belonging to this user.}
-  workload_group: {type: str, required: true, description: Desired workload group name.}
+  instance_id:
+    description:
+      - CDW Doris instance ID.
+    type: str
+    required: true
+  user_name:
+    description:
+      - Doris database user name.
+    type: str
+    required: true
+  hosts:
+    description:
+      - Every host identity belonging to this user.
+    type: list
+    required: true
+    elements: str
+  workload_group:
+    description:
+      - Desired workload group name.
+    type: str
+    required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

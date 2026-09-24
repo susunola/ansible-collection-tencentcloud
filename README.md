@@ -33,7 +33,7 @@ all of them in reverse order. Every command on that page is copy-pasteable and
 the outputs are the real shape.
 
 <details>
-<summary><strong>Browse resource modules</strong></summary>
+<summary><strong>Browse all 457 resource modules</strong></summary>
 
 Resource modules aim to reconcile observable cloud state. Their check-mode,
 diff, and idempotency behavior varies by API and module; inspect each module's
@@ -353,6 +353,7 @@ idempotent.
 | `susunola.tencentcloud.tcm_tracing` | Manage Tencent Cloud Mesh tracing | [`tcm_tracing`](plugins/modules/tcm_tracing.py) |
 | `susunola.tencentcloud.tcr_immutable_tag_rule` | Create or delete a Tencent Cloud TCR immutable tag rule | [`tcr_immutable_tag_rule`](plugins/modules/tcr_immutable_tag_rule.py) |
 | `susunola.tencentcloud.tcr_instance` | Manage Tencent Cloud TCR enterprise instances | [`tcr_instance`](plugins/modules/tcr_instance.py) |
+| `susunola.tencentcloud.tcr_internal_endpoint` | Manage a TCR instance's private VPC endpoint | [`tcr_internal_endpoint`](plugins/modules/tcr_internal_endpoint.py) |
 | `susunola.tencentcloud.tcr_namespace` | Manage Tencent Cloud TCR namespaces | [`tcr_namespace`](plugins/modules/tcr_namespace.py) |
 | `susunola.tencentcloud.tcr_replication_instance` | Manage Tencent Cloud TCR replication instances | [`tcr_replication_instance`](plugins/modules/tcr_replication_instance.py) |
 | `susunola.tencentcloud.tcr_replication_rule` | Manage Tencent Cloud TCR replication rules | [`tcr_replication_rule`](plugins/modules/tcr_replication_rule.py) |
@@ -503,7 +504,7 @@ idempotent.
 </details>
 
 <details>
-<summary><strong>Browse read-only <code>_info</code> modules</strong></summary>
+<summary><strong>Browse all 570 read-only <code>_info</code> modules</strong></summary>
 
 Read-only `_info` modules (return `changed=false`):
 
@@ -930,6 +931,7 @@ Read-only `_info` modules (return `changed=false`):
 | `susunola.tencentcloud.tcm_mesh_info` | Gather information about Tencent Cloud TCM meshes | [`tcm_mesh_info`](plugins/modules/tcm_mesh_info.py) |
 | `susunola.tencentcloud.tcr_immutable_tag_rule_info` | Gather information about Tencent Cloud TCR immutable tag rules | [`tcr_immutable_tag_rule_info`](plugins/modules/tcr_immutable_tag_rule_info.py) |
 | `susunola.tencentcloud.tcr_instance_info` | Gather information about Tencent Cloud TCR registries | [`tcr_instance_info`](plugins/modules/tcr_instance_info.py) |
+| `susunola.tencentcloud.tcr_internal_endpoint_info` | Gather TCR internal endpoint information | [`tcr_internal_endpoint_info`](plugins/modules/tcr_internal_endpoint_info.py) |
 | `susunola.tencentcloud.tcr_namespace_info` | Gather information about Tencent Cloud TCR namespaces | [`tcr_namespace_info`](plugins/modules/tcr_namespace_info.py) |
 | `susunola.tencentcloud.tcr_replication_instance_info` | Gather information about Tencent Cloud TCR replication instances | [`tcr_replication_instance_info`](plugins/modules/tcr_replication_instance_info.py) |
 | `susunola.tencentcloud.tcr_replication_rule_info` | Gather information about Tencent Cloud TCR replication rules | [`tcr_replication_rule_info`](plugins/modules/tcr_replication_rule_info.py) |
@@ -1337,6 +1339,21 @@ The plugin table above is an index, not documentation: the full
 `ansible-doc`-style reference for every module and plugin is built from their
 `DOCUMENTATION` blocks by [`docs/docsite/build.sh`](docs/docsite/README.md),
 which writes a browsable site to `docs/docsite/build/html/`.
+
+## Communication
+
+This collection is discussed on the [Ansible forum](https://forum.ansible.com/),
+the asynchronous home of the Ansible community.
+
+- Questions and help: post in the [Get Help](https://forum.ansible.com/c/help/6)
+  category and use the [`tencentcloud` tag](https://forum.ansible.com/tag/tencentcloud).
+- Bug reports and feature requests: open an
+  [issue](https://github.com/susunola/ansible-collection-tencentcloud/issues).
+- Announcements and design discussion: use the same `tencentcloud` tag so the
+  thread is discoverable by everyone.
+
+Everyone is welcome to join and take part. The collection follows the
+[Ansible Community Code of Conduct](https://docs.ansible.com/ansible/latest/community/code_of_conduct.html).
 
 ## Code of Conduct
 

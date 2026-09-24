@@ -12,24 +12,74 @@ short_description: Manage a Tencent Cloud TSE governance lane group
 version_added: "0.14.0"
 description: Creates, updates and deletes a governance lane group with its traffic entries, destinations and lane rules.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: TSE engine instance ID.}
-  lane_group_id: {type: str, description: Existing lane group ID.}
-  name: {type: str, description: Lane group name.}
-  traffic_entries: {type: list, elements: dict, description: Authoritative SDK LaneTrafficEntry list.}
-  destinations: {type: list, elements: dict, description: Authoritative SDK GovernanceServiceDestination list.}
-  description: {type: str, description: Lane group description.}
-  rules: {type: list, elements: dict, description: Authoritative SDK GovernanceLaneRule list.}
-  waiter_delay: {type: int, default: 2, description: Reconciliation polling interval.}
-  waiter_timeout: {type: int, default: 60, description: Reconciliation timeout.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - TSE engine instance ID.
+    type: str
+    required: true
+  lane_group_id:
+    description:
+      - Existing lane group ID.
+    type: str
+  name:
+    description:
+      - Lane group name.
+    type: str
+  traffic_entries:
+    description:
+      - Authoritative SDK LaneTrafficEntry list.
+    type: list
+    elements: dict
+  destinations:
+    description:
+      - Authoritative SDK GovernanceServiceDestination list.
+    type: list
+    elements: dict
+  description:
+    description:
+      - Lane group description.
+    type: str
+  rules:
+    description:
+      - Authoritative SDK GovernanceLaneRule list.
+    type: list
+    elements: dict
+  waiter_delay:
+    description:
+      - Reconciliation polling interval.
+    type: int
+    default: 2
+  waiter_timeout:
+    description:
+      - Reconciliation timeout.
+    type: int
+    default: 60
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

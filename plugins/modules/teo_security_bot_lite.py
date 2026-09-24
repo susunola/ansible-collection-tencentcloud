@@ -13,13 +13,41 @@ short_description: Manage Tencent Cloud EdgeOne basic Bot protection
 version_added: "0.14.0"
 description: Manages CAPTCHA page and AI crawler detection without modifying other EdgeOne security policy modules.
 options:
-  zone_id: {type: str, required: true, description: EdgeOne zone ID.}
-  scope: {type: str, choices: [zone, template, host], default: zone, description: Security policy scope.}
-  template_id: {type: str, description: Web security template ID required for template scope.}
-  host: {type: str, description: Acceleration domain required for host scope.}
-  captcha_page_enabled: {type: bool, default: false, description: Enable the human-verification page.}
-  ai_crawler_enabled: {type: bool, default: false, description: Enable AI crawler detection.}
-  ai_crawler_action: {type: str, choices: [Deny, Monitor, Allow, Challenge], default: Monitor, description: Action applied to detected AI crawlers.}
+  zone_id:
+    description:
+      - EdgeOne zone ID.
+    type: str
+    required: true
+  scope:
+    description:
+      - Security policy scope.
+    type: str
+    choices: [zone, template, host]
+    default: zone
+  template_id:
+    description:
+      - Web security template ID required for template scope.
+    type: str
+  host:
+    description:
+      - Acceleration domain required for host scope.
+    type: str
+  captcha_page_enabled:
+    description:
+      - Enable the human-verification page.
+    type: bool
+    default: false
+  ai_crawler_enabled:
+    description:
+      - Enable AI crawler detection.
+    type: bool
+    default: false
+  ai_crawler_action:
+    description:
+      - Action applied to detected AI crawlers.
+    type: str
+    choices: [Deny, Monitor, Allow, Challenge]
+    default: Monitor
   challenge_option:
     type: str
     choices: [JSChallenge, ManagedChallenge]
@@ -30,9 +58,21 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 

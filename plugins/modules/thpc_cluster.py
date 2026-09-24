@@ -15,31 +15,112 @@ description:
   - Creates and deletes THPC clusters and reconciles deletion protection.
   - Node, image, network, scheduler and storage topology is immutable because THPC exposes no general cluster update API.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, description: Existing cluster ID.}
-  name: {type: str, description: Cluster display name; immutable after creation.}
-  zone: {type: str, description: Availability zone; immutable after creation.}
-  manager_node: {type: dict, description: Manager-node configuration using snake_case THPC SDK fields.}
-  manager_node_count: {type: int, description: Number of manager nodes; defaults to 1 during creation.}
-  compute_node: {type: dict, description: Compute-node configuration using snake_case THPC SDK fields.}
-  compute_node_count: {type: int, description: Number of initial compute nodes; defaults to 0 during creation.}
-  login_node: {type: dict, description: Login-node configuration using snake_case THPC SDK fields.}
-  login_node_count: {type: int, description: Number of login nodes; defaults to 0 during creation.}
-  scheduler_type: {type: str, choices: [SLURM], description: Cluster scheduler type; defaults to SLURM during creation.}
-  scheduler_version: {type: str, description: Scheduler version; defaults to latest during creation.}
-  image_id: {type: str, description: Image used by cluster nodes; immutable after creation.}
-  vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  subnet_id: {type: str, description: Subnet ID; immutable after creation.}
-  login_password: {type: str, description: Initial node login password.}
-  login_key_ids: {type: list, elements: str, description: Initial node SSH key IDs.}
-  security_group_ids: {type: list, elements: str, description: Initial security groups.}
-  client_token: {type: str, description: Caller-provided idempotency token.}
-  account_type: {type: str, description: Domain account service type; defaults to NIS during creation.}
-  storage_option: {type: dict, description: "Initial CFS, GooseFS, GooseFSx or COS mount options using snake_case SDK fields."}
-  tags: {type: dict, description: Tags applied during creation.}
-  auto_scaling_type: {type: str, description: Elastic scaling implementation; defaults to THPC_AS during creation.}
-  init_node_scripts: {type: list, elements: dict, description: Initial COS-backed node scripts with script_path and timeout.}
-  hpc_cluster_id: {type: str, description: CVM high-performance cluster placement ID.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - Existing cluster ID.
+    type: str
+  name:
+    description:
+      - Cluster display name; immutable after creation.
+    type: str
+  zone:
+    description:
+      - Availability zone; immutable after creation.
+    type: str
+  manager_node:
+    description:
+      - Manager-node configuration using snake_case THPC SDK fields.
+    type: dict
+  manager_node_count:
+    description:
+      - Number of manager nodes; defaults to 1 during creation.
+    type: int
+  compute_node:
+    description:
+      - Compute-node configuration using snake_case THPC SDK fields.
+    type: dict
+  compute_node_count:
+    description:
+      - Number of initial compute nodes; defaults to 0 during creation.
+    type: int
+  login_node:
+    description:
+      - Login-node configuration using snake_case THPC SDK fields.
+    type: dict
+  login_node_count:
+    description:
+      - Number of login nodes; defaults to 0 during creation.
+    type: int
+  scheduler_type:
+    description:
+      - Cluster scheduler type; defaults to SLURM during creation.
+    type: str
+    choices: [SLURM]
+  scheduler_version:
+    description:
+      - Scheduler version; defaults to latest during creation.
+    type: str
+  image_id:
+    description:
+      - Image used by cluster nodes; immutable after creation.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID; immutable after creation.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID; immutable after creation.
+    type: str
+  login_password:
+    description:
+      - Initial node login password.
+    type: str
+  login_key_ids:
+    description:
+      - Initial node SSH key IDs.
+    type: list
+    elements: str
+  security_group_ids:
+    description:
+      - Initial security groups.
+    type: list
+    elements: str
+  client_token:
+    description:
+      - Caller-provided idempotency token.
+    type: str
+  account_type:
+    description:
+      - Domain account service type; defaults to NIS during creation.
+    type: str
+  storage_option:
+    description:
+      - Initial CFS, GooseFS, GooseFSx or COS mount options using snake_case SDK fields.
+    type: dict
+  tags:
+    description:
+      - Tags applied during creation.
+    type: dict
+  auto_scaling_type:
+    description:
+      - Elastic scaling implementation; defaults to THPC_AS during creation.
+    type: str
+  init_node_scripts:
+    description:
+      - Initial COS-backed node scripts with script_path and timeout.
+    type: list
+    elements: dict
+  hpc_cluster_id:
+    description:
+      - CVM high-performance cluster placement ID.
+    type: str
   deletion_protection:
     type: bool
     description: Desired deletion protection. Must explicitly be false to delete a protected cluster.
@@ -48,9 +129,21 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 

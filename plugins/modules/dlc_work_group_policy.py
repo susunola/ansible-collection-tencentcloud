@@ -14,17 +14,42 @@ description:
   - Exactly reconciles writable DLC authorization policies attached to a work group.
   - Ignores server-generated policy IDs, sources, operators and timestamps while preferring PolicyId for precise detach operations.
 options:
-  work_group_id: {type: int, required: true, description: DLC work-group ID.}
-  policies: {type: list, elements: dict, required: true, description: Exact desired SDK Policy list.}
-  allow_empty: {type: bool, default: false, description: Explicitly authorize removing every policy from the work group.}
+  work_group_id:
+    description:
+      - DLC work-group ID.
+    type: int
+    required: true
+  policies:
+    description:
+      - Exact desired SDK Policy list.
+    type: list
+    required: true
+    elements: dict
+  allow_empty:
+    description:
+      - Explicitly authorize removing every policy from the work group.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

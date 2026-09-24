@@ -12,19 +12,54 @@ short_description: Manage notification bindings for a Cloud Monitor alarm policy
 version_added: "0.13.0"
 description: Reconciles notification rules, hierarchical notices and content templates independently from alarm conditions.
 options:
-  policy_id: {description: Alarm policy ID., type: str, required: true}
-  module: {description: API module selector., type: str, default: monitor}
-  notice_ids: {description: Exact notification rule ID set., type: list, elements: str, default: []}
-  hierarchical_notices: {description: Hierarchical notification bindings in Tencent Cloud API shape., type: list, elements: raw, default: []}
-  notice_content_template_bindings: {description: Notification content-template bindings in Tencent Cloud API shape., type: list, elements: raw, default: []}
+  policy_id:
+    description:
+      - Alarm policy ID.
+    type: str
+    required: true
+  module:
+    description:
+      - API module selector.
+    type: str
+    default: monitor
+  notice_ids:
+    description:
+      - Exact notification rule ID set.
+    type: list
+    default: []
+    elements: str
+  hierarchical_notices:
+    description:
+      - Hierarchical notification bindings in Tencent Cloud API shape.
+    type: list
+    default: []
+    elements: raw
+  notice_content_template_bindings:
+    description:
+      - Notification content-template bindings in Tencent Cloud API shape.
+    type: list
+    default: []
+    elements: raw
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

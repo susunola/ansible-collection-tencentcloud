@@ -14,27 +14,87 @@ description:
   - Manages native PEM and Tencent Cloud SSL-platform certificates on a cloud-native gateway.
   - Private keys are never returned. Native or SSL certificate material changes require C(rotate_certificate=true).
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  certificate_id: {type: str, description: Existing gateway certificate ID.}
-  name: {type: str, description: Instance-unique certificate name.}
-  cert_source: {type: str, choices: [native, ssl], description: Certificate source.}
-  ssl_certificate_id: {type: str, description: Tencent Cloud SSL-platform certificate ID.}
-  private_key: {type: str, description: Native PEM private key.}
-  certificate: {type: str, description: Native PEM certificate chain.}
-  bind_domains: {type: list, elements: str, description: Bound domain names.}
-  cert_type: {type: str, choices: [SVR, CA], description: Certificate type.}
-  cert_usage: {type: str, choices: [SERVER, CLIENT], description: Certificate usage.}
-  rotate_certificate: {type: bool, default: false, description: Explicitly replace certificate material in place.}
-  force_delete: {type: bool, default: false, description: Delete even when the API reports active references.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  certificate_id:
+    description:
+      - Existing gateway certificate ID.
+    type: str
+  name:
+    description:
+      - Instance-unique certificate name.
+    type: str
+  cert_source:
+    description:
+      - Certificate source.
+    type: str
+    choices: [native, ssl]
+  ssl_certificate_id:
+    description:
+      - Tencent Cloud SSL-platform certificate ID.
+    type: str
+  private_key:
+    description:
+      - Native PEM private key.
+    type: str
+  certificate:
+    description:
+      - Native PEM certificate chain.
+    type: str
+  bind_domains:
+    description:
+      - Bound domain names.
+    type: list
+    elements: str
+  cert_type:
+    description:
+      - Certificate type.
+    type: str
+    choices: [SVR, CA]
+  cert_usage:
+    description:
+      - Certificate usage.
+    type: str
+    choices: [SERVER, CLIENT]
+  rotate_certificate:
+    description:
+      - Explicitly replace certificate material in place.
+    type: bool
+    default: false
+  force_delete:
+    description:
+      - Delete even when the API reports active references.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

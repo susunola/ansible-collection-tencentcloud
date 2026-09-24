@@ -18,16 +18,36 @@ description:
     configurations. If the API is unavailable, the module fails rather than
     claiming convergence.
 options:
-  instance_id: {type: str, required: true, description: Prometheus instance ID.}
-  notification: {type: dict, required: true, description: SDK-compatible PrometheusNotificationItem configuration.}
+  instance_id:
+    description:
+      - Prometheus instance ID.
+    type: str
+    required: true
+  notification:
+    description:
+      - SDK-compatible PrometheusNotificationItem configuration.
+    type: dict
+    required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

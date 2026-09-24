@@ -12,31 +12,104 @@ short_description: Manage TencentDB for SQL Server instances
 version_added: "0.14.0"
 description: Creates, renames, resizes, isolates and optionally destroys TencentDB for SQL Server instances.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, description: Existing instance ID.}
-  name: {type: str, description: Instance name.}
-  zone: {type: str, description: Availability zone; immutable after creation.}
-  vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  subnet_id: {type: str, description: Subnet ID; immutable after creation.}
-  memory: {type: int, description: Memory in GiB.}
-  storage: {type: int, description: Storage in GiB.}
-  cpu: {type: int, description: CPU cores for specification changes.}
-  db_version: {type: str, description: SQL Server version identifier.}
-  charge_type: {type: str, choices: [PREPAID, POSTPAID], default: POSTPAID, description: Billing mode.}
-  period_months: {type: int, default: 1, description: Prepaid purchase period.}
-  auto_renew: {type: bool, default: false, description: Automatically renew prepaid instances.}
-  security_group_ids: {type: list, elements: str, default: [], description: Bound security groups.}
-  ha_type: {type: str, description: High availability type.}
-  secondary_zones: {type: list, elements: str, description: Secondary availability zones.}
-  purge: {type: bool, default: false, description: Permanently delete an already isolated instance.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Existing instance ID.
+    type: str
+  name:
+    description:
+      - Instance name.
+    type: str
+  zone:
+    description:
+      - Availability zone; immutable after creation.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID; immutable after creation.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID; immutable after creation.
+    type: str
+  memory:
+    description:
+      - Memory in GiB.
+    type: int
+  storage:
+    description:
+      - Storage in GiB.
+    type: int
+  cpu:
+    description:
+      - CPU cores for specification changes.
+    type: int
+  db_version:
+    description:
+      - SQL Server version identifier.
+    type: str
+  charge_type:
+    description:
+      - Billing mode.
+    type: str
+    choices: [PREPAID, POSTPAID]
+    default: POSTPAID
+  period_months:
+    description:
+      - Prepaid purchase period.
+    type: int
+    default: 1
+  auto_renew:
+    description:
+      - Automatically renew prepaid instances.
+    type: bool
+    default: false
+  security_group_ids:
+    description:
+      - Bound security groups.
+    type: list
+    default: []
+    elements: str
+  ha_type:
+    description:
+      - High availability type.
+    type: str
+  secondary_zones:
+    description:
+      - Secondary availability zones.
+    type: list
+    elements: str
+  purge:
+    description:
+      - Permanently delete an already isolated instance.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

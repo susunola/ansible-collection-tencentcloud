@@ -13,29 +13,97 @@ short_description: Atomically deploy a Tencent Cloud TSE configuration file and 
 version_added: "0.14.0"
 description: Reconciles a configuration file and named release through one atomic API operation; teardown removes the release before the file.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired deployment state.}
-  instance_id: {type: str, required: true, description: TSE engine instance ID.}
-  namespace: {type: str, required: true, description: Configuration namespace.}
-  group: {type: str, required: true, description: Configuration group.}
-  name: {type: str, required: true, description: Configuration file name.}
-  release_name: {type: str, required: true, description: Stable release name.}
-  content: {type: str, description: Exact configuration content.}
-  format: {type: str, description: Configuration format.}
-  comment: {type: str, description: Configuration and release comment.}
-  create_by: {type: str, description: Creator metadata.}
-  modify_by: {type: str, description: Modifier metadata.}
-  tags: {type: list, elements: dict, description: SDK ConfigFileTag payloads.}
-  strict_enable: {type: bool, default: true, description: Reject conflicting release versions.}
-  waiter_delay: {type: int, default: 2, description: Reconciliation polling interval.}
-  waiter_timeout: {type: int, default: 60, description: Reconciliation timeout.}
+  state:
+    description:
+      - Desired deployment state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - TSE engine instance ID.
+    type: str
+    required: true
+  namespace:
+    description:
+      - Configuration namespace.
+    type: str
+    required: true
+  group:
+    description:
+      - Configuration group.
+    type: str
+    required: true
+  name:
+    description:
+      - Configuration file name.
+    type: str
+    required: true
+  release_name:
+    description:
+      - Stable release name.
+    type: str
+    required: true
+  content:
+    description:
+      - Exact configuration content.
+    type: str
+  format:
+    description:
+      - Configuration format.
+    type: str
+  comment:
+    description:
+      - Configuration and release comment.
+    type: str
+  create_by:
+    description:
+      - Creator metadata.
+    type: str
+  modify_by:
+    description:
+      - Modifier metadata.
+    type: str
+  tags:
+    description:
+      - SDK ConfigFileTag payloads.
+    type: list
+    elements: dict
+  strict_enable:
+    description:
+      - Reject conflicting release versions.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Reconciliation polling interval.
+    type: int
+    default: 2
+  waiter_timeout:
+    description:
+      - Reconciliation timeout.
+    type: int
+    default: 60
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

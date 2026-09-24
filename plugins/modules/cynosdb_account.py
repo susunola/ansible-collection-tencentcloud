@@ -13,23 +13,69 @@ short_description: Manage Tencent Cloud CynosDB accounts
 version_added: "0.14.0"
 description: Creates, updates and deletes CynosDB cluster accounts with explicit password rotation.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  cluster_id: {description: CynosDB cluster ID., type: str, required: true}
-  account_name: {description: Database account name., type: str, required: true}
-  host: {description: Account host pattern., type: str, default: '%'}
-  password: {description: Password used at creation or explicit rotation., type: str}
-  rotate_password: {description: Explicitly reset the password during this run., type: bool, default: false}
-  description: {description: Account description., type: str, default: ''}
-  max_user_connections: {description: Maximum concurrent connections for the account., type: int}
-  password_rotation: {description: Password rotation interval in days., type: int}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - CynosDB cluster ID.
+    type: str
+    required: true
+  account_name:
+    description:
+      - Database account name.
+    type: str
+    required: true
+  host:
+    description:
+      - Account host pattern.
+    type: str
+    default: '%'
+  password:
+    description:
+      - Password used at creation or explicit rotation.
+    type: str
+  rotate_password:
+    description:
+      - Explicitly reset the password during this run.
+    type: bool
+    default: false
+  description:
+    description:
+      - Account description.
+    type: str
+    default: ''
+  max_user_connections:
+    description:
+      - Maximum concurrent connections for the account.
+    type: int
+  password_rotation:
+    description:
+      - Password rotation interval in days.
+    type: int
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

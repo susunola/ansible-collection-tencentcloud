@@ -14,45 +14,137 @@ version_added: "0.14.0"
 description:
   - Manages network ACL lifecycle, exact ingress and egress rule sets, and exact subnet associations.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  network_acl_id: {description: Existing ACL ID., type: str}
-  name: {description: ACL name., type: str}
-  vpc_id: {description: Parent VPC ID., type: str}
-  acl_type: {description: ACL type applied at creation., type: str}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  network_acl_id:
+    description:
+      - Existing ACL ID.
+    type: str
+  name:
+    description:
+      - ACL name.
+    type: str
+  vpc_id:
+    description:
+      - Parent VPC ID.
+    type: str
+  acl_type:
+    description:
+      - ACL type applied at creation.
+    type: str
   ingress:
     description: Exact ingress rule set.
     type: list
     elements: dict
     suboptions:
-      protocol: {description: Network protocol., type: str, choices: [TCP, UDP, ICMP, ALL], default: ALL}
-      port: {description: Port or range such as C(443) or C(8000-9000)., type: str}
-      cidr: {description: IPv4 CIDR., type: str}
-      ipv6_cidr: {description: IPv6 CIDR., type: str}
-      action: {description: Rule action., type: str, choices: [ACCEPT, DROP], required: true}
-      description: {description: Rule description., type: str, default: ''}
-      priority: {description: Rule priority starting at one., type: int, required: true}
+      protocol:
+        description:
+          - Network protocol.
+        type: str
+        choices: [TCP, UDP, ICMP, ALL]
+        default: ALL
+      port:
+        description:
+          - Port or range such as C(443) or C(8000-9000).
+        type: str
+      cidr:
+        description:
+          - IPv4 CIDR.
+        type: str
+      ipv6_cidr:
+        description:
+          - IPv6 CIDR.
+        type: str
+      action:
+        description:
+          - Rule action.
+        type: str
+        required: true
+        choices: [ACCEPT, DROP]
+      description:
+        description:
+          - Rule description.
+        type: str
+        default: ''
+      priority:
+        description:
+          - Rule priority starting at one.
+        type: int
+        required: true
   egress:
     description: Exact egress rule set.
     type: list
     elements: dict
     suboptions:
-      protocol: {description: Network protocol., type: str, choices: [TCP, UDP, ICMP, ALL], default: ALL}
-      port: {description: Port or range such as C(443) or C(8000-9000)., type: str}
-      cidr: {description: IPv4 CIDR., type: str}
-      ipv6_cidr: {description: IPv6 CIDR., type: str}
-      action: {description: Rule action., type: str, choices: [ACCEPT, DROP], required: true}
-      description: {description: Rule description., type: str, default: ''}
-      priority: {description: Rule priority starting at one., type: int, required: true}
-  subnet_ids: {description: Exact set of associated subnet IDs., type: list, elements: str}
-  tags: {description: Tags applied at creation., type: dict, default: {}}
+      protocol:
+        description:
+          - Network protocol.
+        type: str
+        choices: [TCP, UDP, ICMP, ALL]
+        default: ALL
+      port:
+        description:
+          - Port or range such as C(443) or C(8000-9000).
+        type: str
+      cidr:
+        description:
+          - IPv4 CIDR.
+        type: str
+      ipv6_cidr:
+        description:
+          - IPv6 CIDR.
+        type: str
+      action:
+        description:
+          - Rule action.
+        type: str
+        required: true
+        choices: [ACCEPT, DROP]
+      description:
+        description:
+          - Rule description.
+        type: str
+        default: ''
+      priority:
+        description:
+          - Rule priority starting at one.
+        type: int
+        required: true
+  subnet_ids:
+    description:
+      - Exact set of associated subnet IDs.
+    type: list
+    elements: str
+  tags:
+    description:
+      - Tags applied at creation.
+    type: dict
+    default:
+      {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

@@ -16,33 +16,110 @@ description:
   - Session creation settings are immutable; changing them requires explicitly authorized replacement.
   - Historical terminal sessions are ignored during name discovery, while C(session_id) remains a strong identity.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired session lifecycle state.}
-  session_id: {type: str, description: Exact session ID; recommended for deletion and strong identity.}
-  name: {type: str, description: Exact session name; required for creation and usable for active-session discovery.}
-  kind: {type: str, choices: [spark, pyspark, sparkr, sql], description: Session language kind required for creation.}
-  data_engine_name: {type: str, description: Exact DLC Spark engine name required for creation and usable to scope discovery.}
-  dependent_files: {type: list, elements: str, description: Complete creation-time dependent-file path list.}
-  dependent_jars: {type: list, elements: str, description: Complete creation-time dependent-JAR path list.}
-  dependent_python: {type: list, elements: str, description: Complete creation-time Python dependency path list.}
-  archives: {type: list, elements: str, description: Complete creation-time PySpark environment archive list.}
-  driver_size: {type: str, choices: [small, medium, large, xlarge], description: Creation-time driver size.}
-  executor_size: {type: str, choices: [small, medium, large, xlarge], description: Creation-time executor size.}
-  executor_numbers: {type: int, description: Creation-time initial executor count.}
-  executor_max_numbers: {type: int, description: Creation-time maximum executor count.}
+  state:
+    description:
+      - Desired session lifecycle state.
+    type: str
+    choices: [present, absent]
+    default: present
+  session_id:
+    description:
+      - Exact session ID; recommended for deletion and strong identity.
+    type: str
+  name:
+    description:
+      - Exact session name; required for creation and usable for active-session discovery.
+    type: str
+  kind:
+    description:
+      - Session language kind required for creation.
+    type: str
+    choices: [spark, pyspark, sparkr, sql]
+  data_engine_name:
+    description:
+      - Exact DLC Spark engine name required for creation and usable to scope discovery.
+    type: str
+  dependent_files:
+    description:
+      - Complete creation-time dependent-file path list.
+    type: list
+    elements: str
+  dependent_jars:
+    description:
+      - Complete creation-time dependent-JAR path list.
+    type: list
+    elements: str
+  dependent_python:
+    description:
+      - Complete creation-time Python dependency path list.
+    type: list
+    elements: str
+  archives:
+    description:
+      - Complete creation-time PySpark environment archive list.
+    type: list
+    elements: str
+  driver_size:
+    description:
+      - Creation-time driver size.
+    type: str
+    choices: [small, medium, large, xlarge]
+  executor_size:
+    description:
+      - Creation-time executor size.
+    type: str
+    choices: [small, medium, large, xlarge]
+  executor_numbers:
+    description:
+      - Creation-time initial executor count.
+    type: int
+  executor_max_numbers:
+    description:
+      - Creation-time maximum executor count.
+    type: int
   arguments:
     type: list
     elements: dict
     description: Complete creation-time session argument set.
     suboptions:
-      key: {type: str, required: true, description: Argument key.}
-      value: {type: str, required: true, description: Argument value.}
-  proxy_user: {type: str, description: Creation-time proxy user.}
-  timeout: {type: int, description: Creation-time session timeout in seconds.}
-  allow_replace: {type: bool, default: false, description: Explicitly authorize deleting and recreating a session whose immutable settings drift.}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize session deletion.}
-  wait: {type: bool, default: true, description: Wait until a created session is usable or a deleted session is terminal.}
-  waiter_delay: {type: int, default: 5, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 900, description: Overall lifecycle timeout.}
+      key:
+        description:
+          - Argument key.
+        type: str
+        required: true
+      value:
+        description:
+          - Argument value.
+        type: str
+        required: true
+  proxy_user:
+    description:
+      - Creation-time proxy user.
+    type: str
+  timeout:
+    description:
+      - Creation-time session timeout in seconds.
+    type: int
+  allow_replace:
+    description:
+      - Explicitly authorize deleting and recreating a session whose immutable settings drift.
+    type: bool
+    default: false
+  allow_delete:
+    description:
+      - Explicitly authorize session deletion.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait until a created session is usable or a deleted session is terminal.
+    type: bool
+    default: true
+  waiter_timeout:
+    description:
+      - Overall lifecycle timeout.
+    type: int
+    default: 900
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -51,6 +128,17 @@ extends_documentation_fragment:
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -227,7 +315,7 @@ def wait_session(module, client, models, p, session_id, present):
 
 
 def run_module():
-    pair = {"key": {"required": True}, "value": {"required": True}}
+    pair = {"key": {"required": True, "no_log": False}, "value": {"required": True}}
     spec = {
         "state": {"choices": ["present", "absent"], "default": "present"},
         "session_id": {},

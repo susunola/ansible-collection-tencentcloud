@@ -13,21 +13,62 @@ short_description: Gather Tencent Cloud TSE governance service contracts
 version_added: "0.14.0"
 description: Returns paginated service contracts and the available contract versions for a governance service.
 options:
-  instance_id: {type: str, required: true, description: TSE engine instance ID.}
-  namespace: {type: str, required: true, description: Governance namespace.}
-  service: {type: str, required: true, description: Governance service name.}
-  name: {type: str, description: Contract name filter.}
-  contract_version: {type: str, description: Contract version filter.}
-  protocol: {type: str, description: Contract protocol filter.}
-  brief: {type: bool, default: false, description: Return basic contract information only.}
-  page_size: {type: int, default: 100, description: Number of contracts requested per API call.}
+  instance_id:
+    description:
+      - TSE engine instance ID.
+    type: str
+    required: true
+  namespace:
+    description:
+      - Governance namespace.
+    type: str
+    required: true
+  service:
+    description:
+      - Governance service name.
+    type: str
+    required: true
+  name:
+    description:
+      - Contract name filter.
+    type: str
+  contract_version:
+    description:
+      - Contract version filter.
+    type: str
+  protocol:
+    description:
+      - Contract protocol filter.
+    type: str
+  brief:
+    description:
+      - Return basic contract information only.
+    type: bool
+    default: false
+  page_size:
+    description:
+      - Number of contracts requested per API call.
+    type: int
+    default: 100
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

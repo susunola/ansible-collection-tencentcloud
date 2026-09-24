@@ -12,16 +12,36 @@ short_description: Manage Managed Prometheus Alertmanager configuration
 version_added: "0.14.0"
 description: Replaces the singleton Alertmanager configuration of a Prometheus instance.
 options:
-  instance_id: {type: str, required: true, description: Prometheus instance ID.}
-  config: {type: dict, required: true, description: SDK-compatible PrometheusAlertmanagerConfigV2 configuration.}
+  instance_id:
+    description:
+      - Prometheus instance ID.
+    type: str
+    required: true
+  config:
+    description:
+      - SDK-compatible PrometheusAlertmanagerConfigV2 configuration.
+    type: dict
+    required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -13,24 +13,74 @@ short_description: Manage Tencent Cloud TEO DNS records
 version_added: "0.14.0"
 description: Creates, updates and deletes DNS records within an EdgeOne zone.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  zone_id: {description: EdgeOne zone ID., type: str, required: true}
-  record_id: {description: Existing DNS record ID., type: str}
-  name: {description: DNS record name., type: str}
-  record_type: {description: DNS record type., type: str, choices: [A, AAAA, CNAME, TXT, NS, CAA, SRV, MX]}
-  content: {description: DNS record content., type: str}
-  location: {description: DNS routing location., type: str, default: Default}
-  ttl: {description: Cache duration in seconds., type: int, default: 300}
-  weight: {description: DNS response weight., type: int, default: -1}
-  priority: {description: MX priority., type: int, default: 0}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  zone_id:
+    description:
+      - EdgeOne zone ID.
+    type: str
+    required: true
+  record_id:
+    description:
+      - Existing DNS record ID.
+    type: str
+  name:
+    description:
+      - DNS record name.
+    type: str
+  record_type:
+    description:
+      - DNS record type.
+    type: str
+    choices: [A, AAAA, CNAME, TXT, NS, CAA, SRV, MX]
+  content:
+    description:
+      - DNS record content.
+    type: str
+  location:
+    description:
+      - DNS routing location.
+    type: str
+    default: Default
+  ttl:
+    description:
+      - Cache duration in seconds.
+    type: int
+    default: 300
+  weight:
+    description:
+      - DNS response weight.
+    type: int
+    default: -1
+  priority:
+    description:
+      - MX priority.
+    type: int
+    default: 0
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

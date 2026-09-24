@@ -12,45 +12,147 @@ short_description: Manage Tencent Cloud TSE service registry engines
 version_added: "0.14.0"
 description: Creates and deletes TSE registry engines and reconciles client internet access for Nacos, Zookeeper, Consul, Apollo, Eureka and Polaris.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, description: Existing engine instance ID.}
-  name: {type: str, description: Engine name; immutable after creation.}
-  engine_type: {type: str, choices: [zookeeper, nacos, consul, apollo, eureka, polarismesh], description: Engine type; immutable after creation.}
-  engine_version: {type: str, description: Open-source engine version; immutable after creation.}
-  product_version: {type: str, choices: [STANDARD, PROFESSIONAL], description: Product edition; immutable after creation.}
-  resource_spec: {type: str, description: Node or capacity specification ID.}
-  node_count: {type: int, description: Engine node count.}
-  vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  subnet_id: {type: str, description: Subnet ID; immutable after creation.}
-  zone_ids: {type: list, elements: int, description: Numeric availability-zone IDs.}
-  storage_type: {type: str, description: Storage type.}
-  storage_capacity: {type: int, description: Storage capacity in GiB.}
-  storage_option: {type: list, elements: int, description: Storage option identifiers.}
-  admin_name: {type: str, description: Initial console administrator name.}
-  admin_password: {type: str, description: Initial console administrator password.}
-  admin_token: {type: str, description: Initial engine API administrator token.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Existing engine instance ID.
+    type: str
+  name:
+    description:
+      - Engine name; immutable after creation.
+    type: str
+  engine_type:
+    description:
+      - Engine type; immutable after creation.
+    type: str
+    choices: [zookeeper, nacos, consul, apollo, eureka, polarismesh]
+  engine_version:
+    description:
+      - Open-source engine version; immutable after creation.
+    type: str
+  product_version:
+    description:
+      - Product edition; immutable after creation.
+    type: str
+    choices: [STANDARD, PROFESSIONAL]
+  resource_spec:
+    description:
+      - Node or capacity specification ID.
+    type: str
+  node_count:
+    description:
+      - Engine node count.
+    type: int
+  vpc_id:
+    description:
+      - VPC ID; immutable after creation.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID; immutable after creation.
+    type: str
+  zone_ids:
+    description:
+      - Numeric availability-zone IDs.
+    type: list
+    elements: int
+  storage_type:
+    description:
+      - Storage type.
+    type: str
+  storage_capacity:
+    description:
+      - Storage capacity in GiB.
+    type: int
+  storage_option:
+    description:
+      - Storage option identifiers.
+    type: list
+    elements: int
+  admin_name:
+    description:
+      - Initial console administrator name.
+    type: str
+  admin_password:
+    description:
+      - Initial console administrator password.
+    type: str
+  admin_token:
+    description:
+      - Initial engine API administrator token.
+    type: str
   apollo_environments:
     type: list
     elements: dict
     description: Apollo environment topology required by Apollo engines.
     suboptions:
-      name: {type: str, required: true, description: Environment name.}
-      resource_spec: {type: str, required: true, description: Environment node specification.}
-      node_count: {type: int, required: true, description: Environment node count.}
-      storage_capacity: {type: int, required: true, description: Environment storage in GiB.}
-      vpc_id: {type: str, required: true, description: Environment VPC ID.}
-      subnet_id: {type: str, required: true, description: Environment subnet ID.}
-      description: {type: str, description: Environment description.}
-  tags: {type: dict, description: Tags applied during creation.}
-  internet_access: {type: bool, description: Enable client internet access.}
+      name:
+        description:
+          - Environment name.
+        type: str
+        required: true
+      resource_spec:
+        description:
+          - Environment node specification.
+        type: str
+        required: true
+      node_count:
+        description:
+          - Environment node count.
+        type: int
+        required: true
+      storage_capacity:
+        description:
+          - Environment storage in GiB.
+        type: int
+        required: true
+      vpc_id:
+        description:
+          - Environment VPC ID.
+        type: str
+        required: true
+      subnet_id:
+        description:
+          - Environment subnet ID.
+        type: str
+        required: true
+      description:
+        description:
+          - Environment description.
+        type: str
+  tags:
+    description:
+      - Tags applied during creation.
+    type: dict
+  internet_access:
+    description:
+      - Enable client internet access.
+    type: bool
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

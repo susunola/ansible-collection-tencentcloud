@@ -15,22 +15,67 @@ description:
   - Creates, updates and deletes PostgreSQL instance accounts.
   - Password replacement is explicit because the API never returns the current password.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  instance_id: {description: PostgreSQL instance ID., type: str, required: true}
-  username: {description: Database account name., type: str, required: true}
-  password: {description: Password used at creation or explicit rotation., type: str}
-  rotate_password: {description: Explicitly reset the password during this run., type: bool, default: false}
-  account_type: {description: Account privilege type., type: str, choices: [normal, tencentDBSuper], default: normal}
-  remark: {description: Account remark., type: str, default: ''}
-  cam_auth: {description: Enable CAM verification for the account., type: bool, default: false}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - PostgreSQL instance ID.
+    type: str
+    required: true
+  username:
+    description:
+      - Database account name.
+    type: str
+    required: true
+  password:
+    description:
+      - Password used at creation or explicit rotation.
+    type: str
+  rotate_password:
+    description:
+      - Explicitly reset the password during this run.
+    type: bool
+    default: false
+  account_type:
+    description:
+      - Account privilege type.
+    type: str
+    choices: [normal, tencentDBSuper]
+    default: normal
+  remark:
+    description:
+      - Account remark.
+    type: str
+    default: ''
+  cam_auth:
+    description:
+      - Enable CAM verification for the account.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

@@ -12,23 +12,71 @@ short_description: Manage Tencent Cloud Organization members
 version_added: "0.14.0"
 description: Creates, updates, moves and deletes organization-created members.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  member_uin: {type: int, description: Existing member UIN.}
-  name: {type: str, description: Member display name.}
-  account_name: {type: str, description: Account name used when creating the member.}
-  node_id: {type: int, description: Organization node ID.}
-  remark: {type: str, default: '', description: Member remark.}
-  permission_ids: {type: list, elements: int, default: [1, 2], description: Financial permission IDs used at creation.}
-  identity_role_ids: {type: list, elements: int, default: [1], description: Access identity IDs used at creation.}
-  allow_quit: {type: str, choices: [Allow, Denied], default: Denied, description: Whether the member may leave the organization.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  member_uin:
+    description:
+      - Existing member UIN.
+    type: int
+  name:
+    description:
+      - Member display name.
+    type: str
+  account_name:
+    description:
+      - Account name used when creating the member.
+    type: str
+  node_id:
+    description:
+      - Organization node ID.
+    type: int
+  remark:
+    description:
+      - Member remark.
+    type: str
+    default: ''
+  permission_ids:
+    description:
+      - Financial permission IDs used at creation.
+    type: list
+    default: [1, 2]
+    elements: int
+  identity_role_ids:
+    description:
+      - Access identity IDs used at creation.
+    type: list
+    default: [1]
+    elements: int
+  allow_quit:
+    description:
+      - Whether the member may leave the organization.
+    type: str
+    choices: [Allow, Denied]
+    default: Denied
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

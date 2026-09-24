@@ -12,16 +12,37 @@ short_description: Manage Tencent Cloud WAF threat-intelligence blocking
 version_added: "0.14.0"
 description: Reconciles the account-level WAF threat-intelligence blocking configuration.
 options:
-  enabled: {type: bool, default: true, description: Whether threat-intelligence blocking is active.}
-  tags: {type: list, elements: str, default: [], description: Exact threat-intelligence tag set to block.}
+  enabled:
+    description:
+      - Whether threat-intelligence blocking is active.
+    type: bool
+    default: true
+  tags:
+    description:
+      - Exact threat-intelligence tag set to block.
+    type: list
+    default: []
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

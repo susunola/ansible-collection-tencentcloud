@@ -12,23 +12,75 @@ short_description: Manage TencentDB for MongoDB automatic backup rules
 version_added: "0.14.0"
 description: Reconciles automatic backup method, schedule, retention and advanced-backup settings.
 options:
-  instance_id: {type: str, required: true, description: MongoDB instance ID.}
-  backup_method: {type: int, choices: [0, 1, 3], default: 1, description: "Backup method; logical, physical or snapshot."}
-  backup_hour: {type: int, default: 2, description: Automatic backup start hour from 0 through 23.}
-  frequency_hours: {type: int, choices: [12, 24], default: 24, description: Hours between automatic backups.}
-  active_weekdays: {type: list, elements: int, default: [0, 1, 2, 3, 4, 5, 6], description: Backup weekdays where zero is Sunday.}
-  retention_days: {type: int, default: 7, description: Full-backup retention in days.}
-  oplog_retention_days: {type: int, default: 7, description: Incremental-backup retention in days.}
-  backup_version: {type: int, choices: [0, 1], default: 1, description: Legacy or advanced backup mode.}
-  alert_threshold: {type: int, default: 100, description: Backup storage usage alert threshold percentage.}
+  instance_id:
+    description:
+      - MongoDB instance ID.
+    type: str
+    required: true
+  backup_method:
+    description:
+      - Backup method; logical, physical or snapshot.
+    type: int
+    choices: [0, 1, 3]
+    default: 1
+  backup_hour:
+    description:
+      - Automatic backup start hour from 0 through 23.
+    type: int
+    default: 2
+  frequency_hours:
+    description:
+      - Hours between automatic backups.
+    type: int
+    choices: [12, 24]
+    default: 24
+  active_weekdays:
+    description:
+      - Backup weekdays where zero is Sunday.
+    type: list
+    default: [0, 1, 2, 3, 4, 5, 6]
+    elements: int
+  retention_days:
+    description:
+      - Full-backup retention in days.
+    type: int
+    default: 7
+  oplog_retention_days:
+    description:
+      - Incremental-backup retention in days.
+    type: int
+    default: 7
+  backup_version:
+    description:
+      - Legacy or advanced backup mode.
+    type: int
+    choices: [0, 1]
+    default: 1
+  alert_threshold:
+    description:
+      - Backup storage usage alert threshold percentage.
+    type: int
+    default: 100
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

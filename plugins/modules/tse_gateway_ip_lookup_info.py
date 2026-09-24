@@ -13,14 +13,30 @@ short_description: Resolve a Tencent Cloud TSE gateway from its public IP
 version_added: "0.14.0"
 description: Returns cloud-native API gateway instance information associated with a public network IP.
 options:
-  public_ip: {type: str, required: true, description: Public IP assigned to a cloud-native API gateway.}
+  public_ip:
+    description:
+      - Public IP assigned to a cloud-native API gateway.
+    type: str
+    required: true
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

@@ -15,44 +15,153 @@ description:
   - Creates, updates and deletes reusable DLC Spark batch or streaming job definitions.
   - Manages the definition only; submitting tasks remains a separate operation.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired lifecycle state.}
-  name: {type: str, required: true, description: Exact job name and immutable module identity.}
-  app_type: {type: int, choices: [1, 2], description: 'Job type, 1 batch or 2 streaming.'}
-  data_engine: {type: str, description: DLC data engine name.}
-  app_file: {type: str, description: COS program package path.}
-  role_arn: {type: int, description: DLC data-access role ID.}
-  driver_size: {type: str, choices: [small, medium, large, xlarge], description: Driver CU specification.}
-  executor_size: {type: str, choices: [small, medium, large, xlarge], description: Executor CU specification.}
-  executor_nums: {type: int, description: Initial executor count.}
-  executor_max_nums: {type: int, description: Maximum executor count for dynamic allocation.}
-  main_class: {type: str, description: Application main class.}
-  app_conf: {type: str, description: Newline-separated Spark configuration.}
-  cmd_args: {type: str, description: Space-separated application arguments.}
-  max_retries: {type: int, description: Maximum streaming-job retries.}
-  data_source: {type: str, description: Bound DLC data-source name.}
-  package_source: {type: str, choices: [cos, lakefs], description: Main and dependency package source.}
-  jars: {type: str, description: Comma-separated dependency JAR paths.}
-  files: {type: str, description: Comma-separated dependency file paths.}
-  python_files: {type: str, description: Comma-separated PySpark dependency paths.}
-  archives: {type: str, description: Comma-separated archive paths.}
-  spark_image: {type: str, description: Spark image ID.}
-  spark_image_version: {type: str, description: Spark image version name.}
-  inherit_engine_config: {type: bool, description: Inherit the engine resource template.}
-  session_id: {type: str, description: Associated query-script session ID.}
-  session_started: {type: bool, description: Run SQL from the associated session script.}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize definition deletion.}
-  allow_delete_running: {type: bool, default: false, description: Explicitly authorize deletion while tasks are active.}
-  wait: {type: bool, default: true, description: Wait for definition convergence.}
-  waiter_delay: {type: int, default: 5, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 300, description: Overall convergence timeout.}
+  state:
+    description:
+      - Desired lifecycle state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Exact job name and immutable module identity.
+    type: str
+    required: true
+  app_type:
+    description:
+      - Job type, 1 batch or 2 streaming.
+    type: int
+    choices: [1, 2]
+  data_engine:
+    description:
+      - DLC data engine name.
+    type: str
+  app_file:
+    description:
+      - COS program package path.
+    type: str
+  role_arn:
+    description:
+      - DLC data-access role ID.
+    type: int
+  driver_size:
+    description:
+      - Driver CU specification.
+    type: str
+    choices: [small, medium, large, xlarge]
+  executor_size:
+    description:
+      - Executor CU specification.
+    type: str
+    choices: [small, medium, large, xlarge]
+  executor_nums:
+    description:
+      - Initial executor count.
+    type: int
+  executor_max_nums:
+    description:
+      - Maximum executor count for dynamic allocation.
+    type: int
+  main_class:
+    description:
+      - Application main class.
+    type: str
+  app_conf:
+    description:
+      - Newline-separated Spark configuration.
+    type: str
+  cmd_args:
+    description:
+      - Space-separated application arguments.
+    type: str
+  max_retries:
+    description:
+      - Maximum streaming-job retries.
+    type: int
+  data_source:
+    description:
+      - Bound DLC data-source name.
+    type: str
+  package_source:
+    description:
+      - Main and dependency package source.
+    type: str
+    choices: [cos, lakefs]
+  jars:
+    description:
+      - Comma-separated dependency JAR paths.
+    type: str
+  files:
+    description:
+      - Comma-separated dependency file paths.
+    type: str
+  python_files:
+    description:
+      - Comma-separated PySpark dependency paths.
+    type: str
+  archives:
+    description:
+      - Comma-separated archive paths.
+    type: str
+  spark_image:
+    description:
+      - Spark image ID.
+    type: str
+  spark_image_version:
+    description:
+      - Spark image version name.
+    type: str
+  inherit_engine_config:
+    description:
+      - Inherit the engine resource template.
+    type: bool
+  session_id:
+    description:
+      - Associated query-script session ID.
+    type: str
+  session_started:
+    description:
+      - Run SQL from the associated session script.
+    type: bool
+  allow_delete:
+    description:
+      - Explicitly authorize definition deletion.
+    type: bool
+    default: false
+  allow_delete_running:
+    description:
+      - Explicitly authorize deletion while tasks are active.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for definition convergence.
+    type: bool
+    default: true
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 300
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

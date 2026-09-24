@@ -15,39 +15,122 @@ description:
   - Creates, updates and deletes persistent DLC Ray clusters.
   - Uses exact-name discovery with stable ID updates and normalized JSON and tag comparison.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired lifecycle state.}
-  name: {type: str, required: true, description: Exact cluster name and immutable identity.}
-  description: {type: str, description: Cluster description.}
-  group_id: {type: str, description: Compute group ID.}
-  resource_partition_id: {type: str, description: Resource partition ID.}
-  queue: {type: str, description: Resource partition queue name.}
-  image: {type: str, description: Ray cluster image.}
-  image_pull_policy: {type: str, choices: [Always, IfNotPresent, Never], description: Image pull policy.}
-  image_pull_type: {type: str, choices: [BuiltIn, Custom, CustomCcr], description: Image source type.}
-  resource_config: {type: str, description: Inline resource configuration JSON.}
-  resource_config_id: {type: str, description: Reusable resource-template ID.}
-  catalog: {type: str, description: Volume and mount configuration JSON.}
-  advanced_options: {type: str, description: Flattened Ray cluster options JSON.}
-  priority: {type: int, description: Scheduling priority from 1 to 9.}
+  state:
+    description:
+      - Desired lifecycle state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Exact cluster name and immutable identity.
+    type: str
+    required: true
+  description:
+    description:
+      - Cluster description.
+    type: str
+  group_id:
+    description:
+      - Compute group ID.
+    type: str
+  resource_partition_id:
+    description:
+      - Resource partition ID.
+    type: str
+  queue:
+    description:
+      - Resource partition queue name.
+    type: str
+  image:
+    description:
+      - Ray cluster image.
+    type: str
+  image_pull_policy:
+    description:
+      - Image pull policy.
+    type: str
+    choices: [Always, IfNotPresent, Never]
+  image_pull_type:
+    description:
+      - Image source type.
+    type: str
+    choices: [BuiltIn, Custom, CustomCcr]
+  resource_config:
+    description:
+      - Inline resource configuration JSON.
+    type: str
+  resource_config_id:
+    description:
+      - Reusable resource-template ID.
+    type: str
+  catalog:
+    description:
+      - Volume and mount configuration JSON.
+    type: str
+  advanced_options:
+    description:
+      - Flattened Ray cluster options JSON.
+    type: str
+  priority:
+    description:
+      - Scheduling priority from 1 to 9.
+    type: int
   tags:
     type: list
     elements: dict
     description: Exact Tencent Cloud tag set.
     suboptions:
-      key: {type: str, required: true, description: Tag key.}
-      value: {type: str, required: true, description: Tag value.}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize cluster deletion.}
-  wait: {type: bool, default: true, description: Wait for lifecycle and field convergence.}
-  waiter_delay: {type: int, default: 10, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 1800, description: Overall convergence timeout.}
+      key:
+        description:
+          - Tag key.
+        type: str
+        required: true
+      value:
+        description:
+          - Tag value.
+        type: str
+        required: true
+  allow_delete:
+    description:
+      - Explicitly authorize cluster deletion.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for lifecycle and field convergence.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between polls.
+    type: int
+    default: 10
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 1800
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -219,7 +302,7 @@ def wait_cluster(module, client, models, p, absent=False, expected=None):
 
 
 def run_module():
-    tag_options = {"key": {"required": True}, "value": {"required": True}}
+    tag_options = {"key": {"required": True, "no_log": False}, "value": {"required": True}}
     spec = {
         "state": {"choices": ["present", "absent"], "default": "present"},
         "name": {"required": True},

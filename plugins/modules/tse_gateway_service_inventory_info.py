@@ -13,17 +13,46 @@ short_description: Gather Tencent Cloud TSE gateway service and route inventory
 version_added: "0.14.0"
 description: Returns paginated service-to-route relationships and optionally resolves upstream targets for every matching service.
 options:
-  gateway_id: {type: str, required: true, description: Cloud-native API gateway ID.}
-  filters: {type: dict, default: {}, description: Service filters such as name and upstreamType.}
-  include_upstreams: {type: bool, default: false, description: Query upstream targets for every matching service.}
-  page_size: {type: int, default: 100, description: Number of services requested per API call.}
+  gateway_id:
+    description:
+      - Cloud-native API gateway ID.
+    type: str
+    required: true
+  filters:
+    description:
+      - Service filters such as name and upstreamType.
+    type: dict
+    default:
+      {}
+  include_upstreams:
+    description:
+      - Query upstream targets for every matching service.
+    type: bool
+    default: false
+  page_size:
+    description:
+      - Number of services requested per API call.
+    type: int
+    default: 100
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

@@ -12,23 +12,73 @@ short_description: Manage TDMQ RocketMQ consumer groups
 version_added: "0.14.0"
 description: Creates, updates and deletes a RocketMQ consumer group in a namespace.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, required: true, description: RocketMQ cluster ID.}
-  namespace: {type: str, required: true, description: RocketMQ namespace.}
-  name: {type: str, required: true, description: Consumer group name.}
-  group_type: {type: str, choices: [TCP, HTTP], default: TCP, description: Immutable group protocol type.}
-  read_enabled: {type: bool, default: true, description: Enable message consumption.}
-  broadcast_enabled: {type: bool, default: false, description: Enable broadcast consumption.}
-  retry_max_times: {type: int, default: 16, description: Maximum delivery retry count.}
-  remark: {type: str, default: '', description: Consumer group remark.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - RocketMQ cluster ID.
+    type: str
+    required: true
+  namespace:
+    description:
+      - RocketMQ namespace.
+    type: str
+    required: true
+  name:
+    description:
+      - Consumer group name.
+    type: str
+    required: true
+  group_type:
+    description:
+      - Immutable group protocol type.
+    type: str
+    choices: [TCP, HTTP]
+    default: TCP
+  read_enabled:
+    description:
+      - Enable message consumption.
+    type: bool
+    default: true
+  broadcast_enabled:
+    description:
+      - Enable broadcast consumption.
+    type: bool
+    default: false
+  retry_max_times:
+    description:
+      - Maximum delivery retry count.
+    type: int
+    default: 16
+  remark:
+    description:
+      - Consumer group remark.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

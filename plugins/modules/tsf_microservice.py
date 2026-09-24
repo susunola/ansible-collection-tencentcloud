@@ -12,18 +12,49 @@ short_description: Manage a Tencent Cloud TSF microservice
 version_added: "0.15.0"
 description: Creates, updates and deletes a TSF microservice using namespace-scoped identity.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  microservice_id: {type: str, description: Existing microservice ID; namespace and exact name are used when omitted.}
-  namespace_id: {type: str, required: true, description: TSF namespace ID.}
-  name: {type: str, required: true, description: Microservice name.}
-  description: {type: str, description: Microservice description.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  microservice_id:
+    description:
+      - Existing microservice ID; namespace and exact name are used when omitted.
+    type: str
+  namespace_id:
+    description:
+      - TSF namespace ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Microservice name.
+    type: str
+    required: true
+  description:
+    description:
+      - Microservice description.
+    type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

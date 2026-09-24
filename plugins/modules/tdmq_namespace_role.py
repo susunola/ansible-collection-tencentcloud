@@ -12,19 +12,54 @@ short_description: Manage TDMQ Pulsar namespace role permissions
 version_added: "0.14.0"
 description: Creates, updates and deletes role permission bindings in a Pulsar namespace.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, required: true, description: Pulsar cluster ID.}
-  namespace: {type: str, required: true, description: Pulsar namespace name.}
-  role_name: {type: str, required: true, description: TDMQ role name.}
-  permissions: {type: list, elements: str, choices: [produce, consume], default: [produce, consume], description: Complete desired permission set.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - Pulsar cluster ID.
+    type: str
+    required: true
+  namespace:
+    description:
+      - Pulsar namespace name.
+    type: str
+    required: true
+  role_name:
+    description:
+      - TDMQ role name.
+    type: str
+    required: true
+  permissions:
+    description:
+      - Complete desired permission set.
+    type: list
+    choices: [produce, consume]
+    default: [produce, consume]
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

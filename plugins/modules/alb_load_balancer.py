@@ -17,24 +17,71 @@ description:
     uniquely identified by name. Refuses to delete when protection state
     cannot be read.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  load_balancer_id: {type: str, description: Existing ALB ID.}
-  name: {type: str, description: ALB name.}
-  address_type: {type: str, choices: [Internet, Intranet], description: Public or private address type.}
-  vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  zone_mappings: {type: list, elements: dict, description: SDK ZoneMappingsItem payloads used for creation or address conversion.}
-  ip_version: {type: str, choices: [IPv4, IPv6], default: IPv4, description: Address IP version; immutable after creation.}
-  charge_type: {type: str, default: POSTPAID_BY_HOUR, description: Billing charge type used during creation.}
-  bandwidth_package_id: {type: str, description: Optional bandwidth package ID.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  load_balancer_id:
+    description:
+      - Existing ALB ID.
+    type: str
+  name:
+    description:
+      - ALB name.
+    type: str
+  address_type:
+    description:
+      - Public or private address type.
+    type: str
+    choices: [Internet, Intranet]
+  vpc_id:
+    description:
+      - VPC ID; immutable after creation.
+    type: str
+  zone_mappings:
+    description:
+      - SDK ZoneMappingsItem payloads used for creation or address conversion.
+    type: list
+    elements: dict
+  ip_version:
+    description:
+      - Address IP version; immutable after creation.
+    type: str
+    choices: [IPv4, IPv6]
+    default: IPv4
+  charge_type:
+    description:
+      - Billing charge type used during creation.
+    type: str
+    default: POSTPAID_BY_HOUR
+  bandwidth_package_id:
+    description:
+      - Optional bandwidth package ID.
+    type: str
   internet_address_type:
     type: str
     choices: [EIP, AntiDDoSEIP, AnycastEIP, HighQualityEIP, ResidentialEIP]
     default: EIP
     description: Creation-time EIP type.
-  deletion_protection: {type: bool, description: Enable deletion protection.}
-  deletion_protection_reason: {type: str, default: Managed by Ansible, description: Protection reason.}
-  tags: {type: dict, description: Creation-time tags.}
-  client_token: {type: str, description: Optional idempotency token.}
+  deletion_protection:
+    description:
+      - Enable deletion protection.
+    type: bool
+  deletion_protection_reason:
+    description:
+      - Protection reason.
+    type: str
+    default: Managed by Ansible
+  tags:
+    description:
+      - Creation-time tags.
+    type: dict
+  client_token:
+    description:
+      - Optional idempotency token.
+    type: str
 
 attributes:
   check_mode:
@@ -49,6 +96,7 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter

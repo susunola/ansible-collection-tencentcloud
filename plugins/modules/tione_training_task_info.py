@@ -15,23 +15,72 @@ description:
   - Returns one exact training task or lists tasks with workspace, state, identity and tag filters.
   - Exact lookup can select a historical task instance; list mode uses bounded offset pagination.
 options:
-  task_id: {type: str, description: Exact training task ID; switches to detail mode.}
-  instance_id: {type: str, description: Optional historical training-task instance ID; requires task_id.}
-  project_id: {type: str, description: Optional TI workspace ID.}
-  filters: {type: dict, default: {}, description: Training-task API filters used in list mode.}
-  tag_filters: {type: dict, default: {}, description: Tag keys mapped to values or value lists in list mode.}
-  order_field: {type: str, choices: [CreateTime, UpdateTime, StartTime], default: UpdateTime, description: List sort field.}
-  order: {type: str, choices: [ASC, DESC], default: DESC, description: List sort direction.}
-  page_size: {type: int, default: 50, description: 'Tasks requested per page, from 1 to 50.'}
-  max_pages: {type: int, default: 1000, description: 'Maximum pages fetched, from 1 to 1000.'}
+  task_id:
+    description:
+      - Exact training task ID; switches to detail mode.
+    type: str
+  instance_id:
+    description:
+      - Optional historical training-task instance ID; requires task_id.
+    type: str
+  project_id:
+    description:
+      - Optional TI workspace ID.
+    type: str
+  filters:
+    description:
+      - Training-task API filters used in list mode.
+    type: dict
+    default:
+      {}
+  tag_filters:
+    description:
+      - Tag keys mapped to values or value lists in list mode.
+    type: dict
+    default:
+      {}
+  order_field:
+    description:
+      - List sort field.
+    type: str
+    choices: [CreateTime, UpdateTime, StartTime]
+    default: UpdateTime
+  order:
+    description:
+      - List sort direction.
+    type: str
+    choices: [ASC, DESC]
+    default: DESC
+  page_size:
+    description:
+      - Tasks requested per page, from 1 to 50.
+    type: int
+    default: 50
+  max_pages:
+    description:
+      - Maximum pages fetched, from 1 to 1000.
+    type: int
+    default: 1000
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

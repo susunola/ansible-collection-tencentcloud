@@ -16,20 +16,54 @@ description:
   - An enabled audit switch cannot be retargeted in place; disable it explicitly
     before enabling it with another destination.
 options:
-  state: {type: str, choices: [enabled, disabled], default: enabled, description: Desired audit state.}
-  cluster_id: {type: str, required: true, description: TKE cluster ID.}
-  logset_id: {type: str, description: Destination CLS logset ID.}
-  topic_id: {type: str, description: Destination CLS topic ID.}
-  topic_region: {type: str, description: Region of the CLS topic.}
-  delete_logset_and_topic: {type: bool, default: false, description: Delete automatically created CLS resources when disabling.}
+  state:
+    description:
+      - Desired audit state.
+    type: str
+    choices: [enabled, disabled]
+    default: enabled
+  cluster_id:
+    description:
+      - TKE cluster ID.
+    type: str
+    required: true
+  logset_id:
+    description:
+      - Destination CLS logset ID.
+    type: str
+  topic_id:
+    description:
+      - Destination CLS topic ID.
+    type: str
+  topic_region:
+    description:
+      - Region of the CLS topic.
+    type: str
+  delete_logset_and_topic:
+    description:
+      - Delete automatically created CLS resources when disabling.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

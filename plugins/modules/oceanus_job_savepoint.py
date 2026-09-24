@@ -14,22 +14,62 @@ description:
   - Triggers a savepoint for a running Oceanus job and optionally waits until it is usable.
   - The description is an idempotency key; an existing active or in-progress savepoint with the same description is reused unless C(force=true).
 options:
-  job_id: {type: str, required: true, description: Oceanus job ID.}
-  workspace_id: {type: str, required: true, description: Owning Oceanus workspace ID.}
-  description: {type: str, required: true, description: Stable savepoint description used for idempotent reconciliation.}
-  force: {type: bool, default: false, description: Trigger another savepoint even when the description already exists.}
-  wait: {type: bool, default: true, description: Wait for the savepoint to become active.}
+  job_id:
+    description:
+      - Oceanus job ID.
+    type: str
+    required: true
+  workspace_id:
+    description:
+      - Owning Oceanus workspace ID.
+    type: str
+    required: true
+  description:
+    description:
+      - Stable savepoint description used for idempotent reconciliation.
+    type: str
+    required: true
+  force:
+    description:
+      - Trigger another savepoint even when the description already exists.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for the savepoint to become active.
+    type: bool
+    default: true
 
-  waiter_delay: {type: int, default: 5, description: Seconds between savepoint status polls.}
-  waiter_timeout: {type: int, default: 600, description: Overall savepoint wait timeout in seconds.}
+  waiter_delay:
+    description:
+      - Seconds between savepoint status polls.
+    type: int
+    default: 5
+  waiter_timeout:
+    description:
+      - Overall savepoint wait timeout in seconds.
+    type: int
+    default: 600
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

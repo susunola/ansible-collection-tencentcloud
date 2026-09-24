@@ -2376,6 +2376,11 @@ modules:
   - ModifyInstance
   tcr_instance_info:
   - DescribeInstances
+  tcr_internal_endpoint:
+  - DescribeInternalEndpoints
+  - ManageInternalEndpoint
+  tcr_internal_endpoint_info:
+  - DescribeInternalEndpoints
   tcr_namespace:
   - CreateNamespace
   - DeleteNamespace

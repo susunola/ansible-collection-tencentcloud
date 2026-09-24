@@ -12,21 +12,61 @@ short_description: Manage Tencent Cloud TEM application access services
 version_added: "0.14.0"
 description: Creates, updates and deletes a TEM application service access mapping.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  application_id: {type: str, required: true, description: TEM application ID.}
-  environment_id: {type: str, required: true, description: TEM environment ID.}
-  name: {type: str, required: true, description: Service name.}
-  access_type: {type: str, required: true, description: "Access type such as EXTERNAL, VPC or CLUSTER."}
-  service: {type: dict, description: "SDK ServicePortMapping payload for ports, subnet and load balancer settings."}
-  source_channel: {type: int, default: 0, description: TEM source channel.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  application_id:
+    description:
+      - TEM application ID.
+    type: str
+    required: true
+  environment_id:
+    description:
+      - TEM environment ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Service name.
+    type: str
+    required: true
+  access_type:
+    description:
+      - Access type such as EXTERNAL, VPC or CLUSTER.
+    type: str
+    required: true
+  service:
+    description:
+      - SDK ServicePortMapping payload for ports, subnet and load balancer settings.
+    type: dict
+  source_channel:
+    description:
+      - TEM source channel.
+    type: int
+    default: 0
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

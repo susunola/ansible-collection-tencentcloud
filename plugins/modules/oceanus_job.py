@@ -12,35 +12,119 @@ short_description: Manage Tencent Cloud Oceanus jobs
 version_added: "0.14.0"
 description: Creates, updates, starts, pauses, stops and deletes Oceanus SQL or JAR jobs inside a workspace.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired resource state.}
-  job_id: {type: str, description: Existing job ID.}
-  name: {type: str, description: Job name.}
-  workspace_id: {type: str, required: true, description: Owning Oceanus workspace ID.}
-  job_type: {type: int, choices: [1, 2], description: SQL or JAR job type; immutable after creation.}
-  cluster_type: {type: int, choices: [1, 2], description: Shared or dedicated cluster type; defaults to shared during creation.}
-  cluster_id: {type: str, description: Dedicated cluster ID; required for cluster_type 2 and immutable after creation.}
-  cu_memory: {type: int, choices: [2, 4, 8, 16], description: Memory per CU in GiB; defaults to 4 during creation.}
-  folder_id: {type: str, description: Initial folder ID; defaults to root during creation.}
-  flink_version: {type: str, description: Flink version; immutable after creation.}
-  jdk_version: {type: str, description: JDK version; immutable after creation.}
-  remark: {type: str, description: Job remark.}
-  description: {type: str, description: Job description.}
-  default_alarm: {type: bool, default: false, description: Enable the default alarm during creation.}
-  continue_alarm: {type: bool, description: Continue alarming for a stopped job.}
-  tags: {type: dict, description: Tags applied during creation.}
-  desired_status: {type: str, choices: [running, stopped, paused], description: Desired runtime state.}
-  job_config_version: {type: int, description: Published configuration version to run.}
-  start_mode: {type: str, default: LATEST, description: SQL source start mode.}
-  savepoint_id: {type: str, description: Savepoint ID used when restoring a paused job.}
-  savepoint_path: {type: str, description: Savepoint path used when restoring a paused job.}
+  state:
+    description:
+      - Desired resource state.
+    type: str
+    choices: [present, absent]
+    default: present
+  job_id:
+    description:
+      - Existing job ID.
+    type: str
+  name:
+    description:
+      - Job name.
+    type: str
+  workspace_id:
+    description:
+      - Owning Oceanus workspace ID.
+    type: str
+    required: true
+  job_type:
+    description:
+      - SQL or JAR job type; immutable after creation.
+    type: int
+    choices: [1, 2]
+  cluster_type:
+    description:
+      - Shared or dedicated cluster type; defaults to shared during creation.
+    type: int
+    choices: [1, 2]
+  cluster_id:
+    description:
+      - Dedicated cluster ID; required for cluster_type 2 and immutable after creation.
+    type: str
+  cu_memory:
+    description:
+      - Memory per CU in GiB; defaults to 4 during creation.
+    type: int
+    choices: [2, 4, 8, 16]
+  folder_id:
+    description:
+      - Initial folder ID; defaults to root during creation.
+    type: str
+  flink_version:
+    description:
+      - Flink version; immutable after creation.
+    type: str
+  jdk_version:
+    description:
+      - JDK version; immutable after creation.
+    type: str
+  remark:
+    description:
+      - Job remark.
+    type: str
+  description:
+    description:
+      - Job description.
+    type: str
+  default_alarm:
+    description:
+      - Enable the default alarm during creation.
+    type: bool
+    default: false
+  continue_alarm:
+    description:
+      - Continue alarming for a stopped job.
+    type: bool
+  tags:
+    description:
+      - Tags applied during creation.
+    type: dict
+  desired_status:
+    description:
+      - Desired runtime state.
+    type: str
+    choices: [running, stopped, paused]
+  job_config_version:
+    description:
+      - Published configuration version to run.
+    type: int
+  start_mode:
+    description:
+      - SQL source start mode.
+    type: str
+    default: LATEST
+  savepoint_id:
+    description:
+      - Savepoint ID used when restoring a paused job.
+    type: str
+  savepoint_path:
+    description:
+      - Savepoint path used when restoring a paused job.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

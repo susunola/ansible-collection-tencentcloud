@@ -12,36 +12,116 @@ short_description: Manage Tencent Cloud physical Direct Connect circuits
 version_added: "0.14.0"
 description: Creates, updates and deletes physical Direct Connect circuit applications.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  direct_connect_id: {type: str, description: Existing physical connection ID.}
-  name: {type: str, description: Physical connection name.}
-  access_point_id: {type: str, description: Access point ID required for creation and immutable afterwards.}
-  line_operator: {type: str, description: Carrier required for creation and immutable afterwards.}
-  port_type: {type: str, description: Physical port type required for creation and immutable afterwards.}
-  circuit_code: {type: str, description: Carrier circuit code.}
-  location: {type: str, description: Customer equipment room location required for creation.}
-  bandwidth: {type: int, description: Circuit bandwidth in Mbps.}
-  redundant_direct_connect_id: {type: str, description: Creation-time redundant connection ID.}
-  vlan: {type: int, description: Management VLAN.}
-  tencent_address: {type: str, description: Tencent-side management address.}
-  customer_address: {type: str, description: Customer-side management address.}
-  customer_name: {type: str, description: Customer organization name.}
-  customer_contact_mail: {type: str, description: Customer contact email.}
-  customer_contact_number: {type: str, description: Customer contact phone.}
-  fault_contact_name: {type: str, description: Fault-report contact name.}
-  fault_contact_number: {type: str, description: Fault-report contact phone.}
-  fault_contact_email: {type: str, description: Fault-report contact email.}
-  sign_law: {type: bool, description: Accept applicable service agreement.}
-  macsec: {type: bool, description: Creation-time MACsec selection.}
-  tags: {type: dict, description: Creation-time tags.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  direct_connect_id:
+    description:
+      - Existing physical connection ID.
+    type: str
+  name:
+    description:
+      - Physical connection name.
+    type: str
+  access_point_id:
+    description:
+      - Access point ID required for creation and immutable afterwards.
+    type: str
+  line_operator:
+    description:
+      - Carrier required for creation and immutable afterwards.
+    type: str
+  port_type:
+    description:
+      - Physical port type required for creation and immutable afterwards.
+    type: str
+  circuit_code:
+    description:
+      - Carrier circuit code.
+    type: str
+  location:
+    description:
+      - Customer equipment room location required for creation.
+    type: str
+  bandwidth:
+    description:
+      - Circuit bandwidth in Mbps.
+    type: int
+  redundant_direct_connect_id:
+    description:
+      - Creation-time redundant connection ID.
+    type: str
+  vlan:
+    description:
+      - Management VLAN.
+    type: int
+  tencent_address:
+    description:
+      - Tencent-side management address.
+    type: str
+  customer_address:
+    description:
+      - Customer-side management address.
+    type: str
+  customer_name:
+    description:
+      - Customer organization name.
+    type: str
+  customer_contact_mail:
+    description:
+      - Customer contact email.
+    type: str
+  customer_contact_number:
+    description:
+      - Customer contact phone.
+    type: str
+  fault_contact_name:
+    description:
+      - Fault-report contact name.
+    type: str
+  fault_contact_number:
+    description:
+      - Fault-report contact phone.
+    type: str
+  fault_contact_email:
+    description:
+      - Fault-report contact email.
+    type: str
+  sign_law:
+    description:
+      - Accept applicable service agreement.
+    type: bool
+  macsec:
+    description:
+      - Creation-time MACsec selection.
+    type: bool
+  tags:
+    description:
+      - Creation-time tags.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

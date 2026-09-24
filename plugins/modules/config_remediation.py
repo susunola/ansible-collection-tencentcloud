@@ -13,21 +13,57 @@ short_description: Manage Tencent Cloud Config remediation settings
 version_added: "0.14.0"
 description: Creates, updates and deletes automatic or manual remediation bindings for Config rules.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired remediation state.}
-  remediation_id: {type: str, description: Existing remediation ID; preferred for updates and deletion.}
-  rule_id: {type: str, required: true, description: "Config rule ID, also used for lookup."}
-  remediation_type: {type: str, description: Remediation type; required when state is present.}
-  remediation_template_id: {type: str, description: Remediation template ID; required when state is present.}
-  invoke_type: {type: str, description: Manual or automatic invocation type; required when state is present.}
-  source_type: {type: str, description: Remediation source type; required when state is present.}
+  state:
+    description:
+      - Desired remediation state.
+    type: str
+    choices: [present, absent]
+    default: present
+  remediation_id:
+    description:
+      - Existing remediation ID; preferred for updates and deletion.
+    type: str
+  rule_id:
+    description:
+      - Config rule ID, also used for lookup.
+    type: str
+    required: true
+  remediation_type:
+    description:
+      - Remediation type; required when state is present.
+    type: str
+  remediation_template_id:
+    description:
+      - Remediation template ID; required when state is present.
+    type: str
+  invoke_type:
+    description:
+      - Manual or automatic invocation type; required when state is present.
+    type: str
+  source_type:
+    description:
+      - Remediation source type; required when state is present.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 

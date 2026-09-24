@@ -13,19 +13,46 @@ short_description: Manage Tencent Cloud TDSQL MySQL SSL state
 version_added: "0.14.0"
 description: Reconciles instance SSL enablement and waits for both the asynchronous Flow and final SSL state.
 options:
-  instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
-  enabled: {type: bool, required: true, description: Desired SSL state.}
-  wait: {type: bool, default: true, description: Wait for SSL convergence.}
-  waiter_delay: {type: int, default: 5, description: Seconds between checks.}
-  waiter_timeout: {type: int, default: 600, description: Overall convergence timeout.}
+  instance_id:
+    description:
+      - Stable TDSQL MySQL instance ID.
+    type: str
+    required: true
+  enabled:
+    description:
+      - Desired SSL state.
+    type: bool
+    required: true
+  wait:
+    description:
+      - Wait for SSL convergence.
+    type: bool
+    default: true
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 600
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

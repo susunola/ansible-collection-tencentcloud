@@ -12,45 +12,162 @@ short_description: Manage Tencent Cloud VectorDB instances
 version_added: "0.14.0"
 description: Creates, expands, isolates, recovers and destroys VectorDB instances and reconciles their security groups.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, description: Existing VectorDB instance ID.}
-  name: {type: str, description: Instance name; immutable after creation.}
-  zone: {type: str, description: Primary availability zone; immutable after creation.}
-  slave_zones: {type: list, elements: str, description: Secondary availability zones; immutable after creation.}
-  vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  subnet_id: {type: str, description: Subnet ID; immutable after creation.}
-  pay_mode: {type: int, choices: [0, 1], default: 0, description: Postpaid or prepaid billing mode.}
-  pay_period: {type: int, default: 1, description: Prepaid purchase period in months.}
-  auto_renew: {type: int, choices: [0, 1], default: 0, description: Prepaid auto-renew flag.}
-  product_type: {type: int, description: Numeric VectorDB product type; immutable after creation.}
-  instance_type: {type: str, description: Instance sales type; immutable after creation.}
-  mode: {type: str, description: Deployment mode; immutable after creation.}
-  network_type: {type: str, description: Network type; immutable after creation.}
-  engine_name: {type: str, description: Vector engine name; immutable after creation.}
-  engine_version: {type: str, description: Vector engine version; immutable after creation.}
-  node_type: {type: str, description: Node type; immutable after creation.}
-  cpu: {type: int, description: CPU cores per node.}
-  memory: {type: int, description: Memory in GiB per node.}
-  disk_size: {type: int, description: Storage capacity in GiB.}
-  replica_count: {type: int, description: Desired replica count; expansion only.}
-  worker_node_count: {type: int, description: Initial worker-node count.}
-  security_group_ids: {type: list, elements: str, description: Full desired security-group set.}
-  tags: {type: dict, description: Tags applied during creation.}
-  project: {type: str, description: Project identifier used during creation.}
-  brief: {type: str, description: Initial instance summary.}
-  chief: {type: str, description: Initial owner.}
-  dba: {type: str, description: Initial DBA contact.}
-  purge: {type: bool, default: false, description: Permanently destroy an already isolated instance.}
-  recover: {type: bool, default: false, description: Recover an isolated instance when state is present.}
-  run_now: {type: bool, default: true, description: Apply scaling immediately.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Existing VectorDB instance ID.
+    type: str
+  name:
+    description:
+      - Instance name; immutable after creation.
+    type: str
+  zone:
+    description:
+      - Primary availability zone; immutable after creation.
+    type: str
+  slave_zones:
+    description:
+      - Secondary availability zones; immutable after creation.
+    type: list
+    elements: str
+  vpc_id:
+    description:
+      - VPC ID; immutable after creation.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID; immutable after creation.
+    type: str
+  pay_mode:
+    description:
+      - Postpaid or prepaid billing mode.
+    type: int
+    choices: [0, 1]
+    default: 0
+  pay_period:
+    description:
+      - Prepaid purchase period in months.
+    type: int
+    default: 1
+  auto_renew:
+    description:
+      - Prepaid auto-renew flag.
+    type: int
+    choices: [0, 1]
+    default: 0
+  product_type:
+    description:
+      - Numeric VectorDB product type; immutable after creation.
+    type: int
+  instance_type:
+    description:
+      - Instance sales type; immutable after creation.
+    type: str
+  mode:
+    description:
+      - Deployment mode; immutable after creation.
+    type: str
+  network_type:
+    description:
+      - Network type; immutable after creation.
+    type: str
+  engine_name:
+    description:
+      - Vector engine name; immutable after creation.
+    type: str
+  engine_version:
+    description:
+      - Vector engine version; immutable after creation.
+    type: str
+  node_type:
+    description:
+      - Node type; immutable after creation.
+    type: str
+  cpu:
+    description:
+      - CPU cores per node.
+    type: int
+  memory:
+    description:
+      - Memory in GiB per node.
+    type: int
+  disk_size:
+    description:
+      - Storage capacity in GiB.
+    type: int
+  replica_count:
+    description:
+      - Desired replica count; expansion only.
+    type: int
+  worker_node_count:
+    description:
+      - Initial worker-node count.
+    type: int
+  security_group_ids:
+    description:
+      - Full desired security-group set.
+    type: list
+    elements: str
+  tags:
+    description:
+      - Tags applied during creation.
+    type: dict
+  project:
+    description:
+      - Project identifier used during creation.
+    type: str
+  brief:
+    description:
+      - Initial instance summary.
+    type: str
+  chief:
+    description:
+      - Initial owner.
+    type: str
+  dba:
+    description:
+      - Initial DBA contact.
+    type: str
+  purge:
+    description:
+      - Permanently destroy an already isolated instance.
+    type: bool
+    default: false
+  recover:
+    description:
+      - Recover an isolated instance when state is present.
+    type: bool
+    default: false
+  run_now:
+    description:
+      - Apply scaling immediately.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

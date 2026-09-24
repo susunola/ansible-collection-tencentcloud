@@ -12,20 +12,55 @@ short_description: Manage TSE API gateway consumer group membership
 version_added: "0.14.0"
 description: Adds or removes up to ten consumers using consumer detail readback for idempotent reconciliation.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Whether every listed consumer belongs to the group.}
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  consumer_group_id: {type: str, description: Consumer group ID.}
-  consumer_group_name: {type: str, description: Consumer group name resolved within the gateway.}
-  consumer_ids: {type: list, elements: str, description: 'Unique consumer IDs, one through ten entries.'}
-  consumer_names: {type: list, elements: str, description: Unique consumer names resolved within the gateway.}
+  state:
+    description:
+      - Whether every listed consumer belongs to the group.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  consumer_group_id:
+    description:
+      - Consumer group ID.
+    type: str
+  consumer_group_name:
+    description:
+      - Consumer group name resolved within the gateway.
+    type: str
+  consumer_ids:
+    description:
+      - Unique consumer IDs, one through ten entries.
+    type: list
+    elements: str
+  consumer_names:
+    description:
+      - Unique consumer names resolved within the gateway.
+    type: list
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

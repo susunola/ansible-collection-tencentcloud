@@ -15,30 +15,83 @@ description:
   - Creates, enables, disables and deletes CDN real-time log topics.
   - Reconciles the complete set of CDN domain and acceleration-area bindings.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired topic state.}
-  topic_id: {type: str, description: Existing CLS topic ID; preferred for updates and deletion.}
-  topic_name: {type: str, description: "Topic name, also used for lookup when topic_id is omitted."}
-  logset_id: {type: str, description: CLS logset ID; required for creation and topic operations.}
-  channel: {type: str, choices: [cdn, ecdn], default: cdn, description: CDN access channel.}
-  enabled: {type: bool, default: true, description: Whether real-time log delivery is enabled.}
+  state:
+    description:
+      - Desired topic state.
+    type: str
+    choices: [present, absent]
+    default: present
+  topic_id:
+    description:
+      - Existing CLS topic ID; preferred for updates and deletion.
+    type: str
+  topic_name:
+    description:
+      - Topic name, also used for lookup when topic_id is omitted.
+    type: str
+  logset_id:
+    description:
+      - CLS logset ID; required for creation and topic operations.
+    type: str
+  channel:
+    description:
+      - CDN access channel.
+    type: str
+    choices: [cdn, ecdn]
+    default: cdn
+  enabled:
+    description:
+      - Whether real-time log delivery is enabled.
+    type: bool
+    default: true
   domain_area_configs:
     description: Exact set of CDN domains and acceleration areas bound to the topic.
     type: list
     elements: dict
     default: []
     suboptions:
-      domain: {type: str, required: true, description: CDN acceleration domain.}
-      areas: {type: list, elements: str, choices: [mainland, overseas], required: true, description: Acceleration areas.}
-  inherit_domain_tags: {type: bool, default: false, description: Whether the CLS topic inherits CDN domain tags.}
-  force_replace: {type: bool, default: false, description: Recreate the topic when its immutable name or logset differs.}
+      domain:
+        description:
+          - CDN acceleration domain.
+        type: str
+        required: true
+      areas:
+        description:
+          - Acceleration areas.
+        type: list
+        required: true
+        choices: [mainland, overseas]
+        elements: str
+  inherit_domain_tags:
+    description:
+      - Whether the CLS topic inherits CDN domain tags.
+    type: bool
+    default: false
+  force_replace:
+    description:
+      - Recreate the topic when its immutable name or logset differs.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 

@@ -13,16 +13,37 @@ short_description: Manage Tencent Cloud Config resource recorder
 version_added: "0.14.0"
 description: Enables or disables the Config recorder and reconciles the exact monitored resource-type set.
 options:
-  enabled: {type: bool, default: true, description: Whether resource configuration recording is enabled.}
-  resource_types: {type: list, elements: str, default: [], description: Exact set of Tencent Cloud resource-type identifiers to record.}
+  enabled:
+    description:
+      - Whether resource configuration recording is enabled.
+    type: bool
+    default: true
+  resource_types:
+    description:
+      - Exact set of Tencent Cloud resource-type identifiers to record.
+    type: list
+    default: []
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 

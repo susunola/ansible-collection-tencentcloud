@@ -16,36 +16,131 @@ description:
   - Existing creation-field drift is reported because TIONE exposes no dataset update API.
   - Deletion deliberately requires C(dataset_id); dataset names aggregate versions and are not a safe destructive identity.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired dataset presence.}
-  name: {type: str, description: Exact dataset name; required for creation.}
-  dataset_id: {type: str, description: Stable dataset ID; optional for lookup and required for deletion.}
-  project_id: {type: str, description: Optional TI workspace ID.}
-  dataset_type: {type: str, choices: [TYPE_DATASET_IMAGE, TYPE_DATASET_LLM, TYPE_DATASET_TABLE, TYPE_DATASET_OTHER], description: Dataset type; required for creation.}
-  storage_data_path: {type: dict, description: CosPathInfo-compatible source path.}
-  storage_label_path: {type: dict, description: CosPathInfo-compatible label path.}
-  dataset_tags: {type: list, elements: dict, description: Tag-compatible dataset tags.}
-  annotation_status: {type: str, choices: [STATUS_NON_ANNOTATED, STATUS_ANNOTATED], description: Initial annotation status.}
-  annotation_type: {type: str, choices: [ANNOTATION_TYPE_CLASSIFICATION, ANNOTATION_TYPE_DETECTION, ANNOTATION_TYPE_SEGMENTATION, ANNOTATION_TYPE_TRACKING, ANNOTATION_TYPE_OCR], description: Initial annotation type.}
-  annotation_format: {type: str, choices: [ANNOTATION_FORMAT_TI, ANNOTATION_FORMAT_PASCAL, ANNOTATION_FORMAT_COCO, ANNOTATION_FORMAT_FILE], description: Initial annotation format.}
-  schema_infos: {type: list, elements: dict, description: SchemaInfo-compatible table headers.}
-  is_schema_existed: {type: bool, description: Whether source data contains a header.}
-  content_type: {type: str, choices: [TYPE_TEXT_LINE, TYPE_TEXT_FILE], description: Text import granularity.}
-  dataset_scene: {type: str, choices: [LLM, CV, STRUCTURE, OTHER], description: Dataset modeling category.}
-  scene_tags: {type: list, elements: str, description: Dataset scene tags.}
-  cfs_config: {type: dict, description: CFSConfig-compatible configuration for LLM datasets.}
-  delete_label_files: {type: bool, default: false, description: Also delete COS label files during explicit deletion.}
-  allow_delete: {type: bool, default: false, description: Explicit destructive-operation guard.}
-  wait: {type: bool, default: true, description: Wait for creation visibility or deletion disappearance.}
-  waiter_delay: {type: int, default: 5, description: Seconds between visibility checks.}
-  waiter_timeout: {type: int, default: 300, description: Overall visibility timeout.}
+  state:
+    description:
+      - Desired dataset presence.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Exact dataset name; required for creation.
+    type: str
+  dataset_id:
+    description:
+      - Stable dataset ID; optional for lookup and required for deletion.
+    type: str
+  project_id:
+    description:
+      - Optional TI workspace ID.
+    type: str
+  dataset_type:
+    description:
+      - Dataset type; required for creation.
+    type: str
+    choices: [TYPE_DATASET_IMAGE, TYPE_DATASET_LLM, TYPE_DATASET_TABLE, TYPE_DATASET_OTHER]
+  storage_data_path:
+    description:
+      - CosPathInfo-compatible source path.
+    type: dict
+  storage_label_path:
+    description:
+      - CosPathInfo-compatible label path.
+    type: dict
+  dataset_tags:
+    description:
+      - Tag-compatible dataset tags.
+    type: list
+    elements: dict
+  annotation_status:
+    description:
+      - Initial annotation status.
+    type: str
+    choices: [STATUS_NON_ANNOTATED, STATUS_ANNOTATED]
+  annotation_type:
+    description:
+      - Initial annotation type.
+    type: str
+    choices: [ANNOTATION_TYPE_CLASSIFICATION, ANNOTATION_TYPE_DETECTION, ANNOTATION_TYPE_SEGMENTATION, ANNOTATION_TYPE_TRACKING,
+      ANNOTATION_TYPE_OCR]
+  annotation_format:
+    description:
+      - Initial annotation format.
+    type: str
+    choices: [ANNOTATION_FORMAT_TI, ANNOTATION_FORMAT_PASCAL, ANNOTATION_FORMAT_COCO, ANNOTATION_FORMAT_FILE]
+  schema_infos:
+    description:
+      - SchemaInfo-compatible table headers.
+    type: list
+    elements: dict
+  is_schema_existed:
+    description:
+      - Whether source data contains a header.
+    type: bool
+  content_type:
+    description:
+      - Text import granularity.
+    type: str
+    choices: [TYPE_TEXT_LINE, TYPE_TEXT_FILE]
+  dataset_scene:
+    description:
+      - Dataset modeling category.
+    type: str
+    choices: [LLM, CV, STRUCTURE, OTHER]
+  scene_tags:
+    description:
+      - Dataset scene tags.
+    type: list
+    elements: str
+  cfs_config:
+    description:
+      - CFSConfig-compatible configuration for LLM datasets.
+    type: dict
+  delete_label_files:
+    description:
+      - Also delete COS label files during explicit deletion.
+    type: bool
+    default: false
+  allow_delete:
+    description:
+      - Explicit destructive-operation guard.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for creation visibility or deletion disappearance.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between visibility checks.
+    type: int
+    default: 5
+  waiter_timeout:
+    description:
+      - Overall visibility timeout.
+    type: int
+    default: 300
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

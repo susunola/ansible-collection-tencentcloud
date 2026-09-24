@@ -12,25 +12,77 @@ short_description: Manage Tencent Cloud GWLB target groups
 version_added: "0.14.0"
 description: Creates, updates and deletes Gateway Load Balancer target groups.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  target_group_id: {type: str, description: Existing target group ID.}
-  name: {type: str, description: Target group name.}
-  vpc_id: {type: str, description: VPC ID required for creation and immutable afterwards.}
-  port: {type: int, default: 6081, description: GENEVE backend port and immutable after creation.}
-  protocol: {type: str, choices: [GENEVE], default: GENEVE, description: Backend protocol and immutable after creation.}
-  schedule_algorithm: {type: str, choices: [WRR, LEAST_CONN, IP_HASH], description: Creation-time scheduling algorithm and immutable afterwards.}
-  health_check: {type: dict, description: SDK TargetGroupHealthCheck payload.}
-  all_dead_to_alive: {type: bool, default: false, description: Route traffic when all backends are unhealthy.}
-  forwarding_mode: {type: str, description: Creation-time forwarding mode.}
-  tags: {type: dict, description: Creation-time tags.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  target_group_id:
+    description:
+      - Existing target group ID.
+    type: str
+  name:
+    description:
+      - Target group name.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID required for creation and immutable afterwards.
+    type: str
+  port:
+    description:
+      - GENEVE backend port and immutable after creation.
+    type: int
+    default: 6081
+  protocol:
+    description:
+      - Backend protocol and immutable after creation.
+    type: str
+    choices: [GENEVE]
+    default: GENEVE
+  schedule_algorithm:
+    description:
+      - Creation-time scheduling algorithm and immutable afterwards.
+    type: str
+    choices: [WRR, LEAST_CONN, IP_HASH]
+  health_check:
+    description:
+      - SDK TargetGroupHealthCheck payload.
+    type: dict
+  all_dead_to_alive:
+    description:
+      - Route traffic when all backends are unhealthy.
+    type: bool
+    default: false
+  forwarding_mode:
+    description:
+      - Creation-time forwarding mode.
+    type: str
+  tags:
+    description:
+      - Creation-time tags.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

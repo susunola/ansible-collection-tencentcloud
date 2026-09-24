@@ -12,20 +12,55 @@ short_description: Manage Tencent Cloud SSM secret versions
 version_added: "0.14.0"
 description: Creates and deletes explicitly named versions of an existing Tencent Cloud SSM secret.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  secret_name: {type: str, required: true, description: Parent SSM secret name.}
-  version_id: {type: str, required: true, description: Explicit immutable version identifier.}
-  secret_string: {type: str, description: Plain-text secret value.}
-  secret_binary: {type: str, description: Base64-encoded binary secret value.}
-  force_replace: {type: bool, default: false, description: Delete and recreate the version when its immutable value differs.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  secret_name:
+    description:
+      - Parent SSM secret name.
+    type: str
+    required: true
+  version_id:
+    description:
+      - Explicit immutable version identifier.
+    type: str
+    required: true
+  secret_string:
+    description:
+      - Plain-text secret value.
+    type: str
+  secret_binary:
+    description:
+      - Base64-encoded binary secret value.
+    type: str
+  force_replace:
+    description:
+      - Delete and recreate the version when its immutable value differs.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -12,26 +12,78 @@ short_description: Manage Tencent Cloud CHDFS file systems
 version_added: "0.14.0"
 description: Creates, updates and deletes CHDFS file systems.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  file_system_id: {type: str, description: Existing file system ID.}
-  name: {type: str, description: File system name.}
-  description: {type: str, description: File system description.}
-  capacity_quota: {type: int, description: Capacity quota in bytes.}
-  super_users: {type: list, elements: str, description: Superuser names.}
-  posix_acl: {type: bool, description: Whether POSIX ACL checks are enabled.}
-  root_inode_user: {type: str, description: Creation-time root inode user.}
-  root_inode_group: {type: str, description: Creation-time root inode group.}
-  enable_ranger: {type: bool, description: Whether Ranger validation is enabled.}
-  ranger_service_addresses: {type: list, elements: str, description: Ranger service addresses.}
-  tags: {type: dict, description: Creation-time tags.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  file_system_id:
+    description:
+      - Existing file system ID.
+    type: str
+  name:
+    description:
+      - File system name.
+    type: str
+  description:
+    description:
+      - File system description.
+    type: str
+  capacity_quota:
+    description:
+      - Capacity quota in bytes.
+    type: int
+  super_users:
+    description:
+      - Superuser names.
+    type: list
+    elements: str
+  posix_acl:
+    description:
+      - Whether POSIX ACL checks are enabled.
+    type: bool
+  root_inode_user:
+    description:
+      - Creation-time root inode user.
+    type: str
+  root_inode_group:
+    description:
+      - Creation-time root inode group.
+    type: str
+  enable_ranger:
+    description:
+      - Whether Ranger validation is enabled.
+    type: bool
+  ranger_service_addresses:
+    description:
+      - Ranger service addresses.
+    type: list
+    elements: str
+  tags:
+    description:
+      - Creation-time tags.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

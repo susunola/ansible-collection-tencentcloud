@@ -12,32 +12,110 @@ short_description: Manage Tencent Cloud DCDB instances
 version_added: "0.14.0"
 description: Creates prepaid or postpaid DCDB instances, renames and expands shards, and performs two-stage removal.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, description: Existing DCDB instance ID.}
-  name: {type: str, description: Instance name.}
-  zones: {type: list, elements: str, description: Availability zones; immutable after creation.}
-  vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  subnet_id: {type: str, description: Subnet ID; immutable after creation.}
-  db_version: {type: str, description: Database version ID; immutable after creation.}
-  shard_memory: {type: int, description: Memory per shard in GiB.}
-  shard_storage: {type: int, description: Storage per shard in GiB.}
-  shard_node_count: {type: int, choices: [2, 3], description: Nodes per shard; defaults to 2 during creation.}
-  shard_count: {type: int, description: Number of shards; defaults to 2 during creation.}
-  shard_cpu: {type: int, description: CPU cores per shard for postpaid creation.}
-  charge_type: {type: str, choices: [PREPAID, POSTPAID_BY_HOUR], default: POSTPAID_BY_HOUR, description: Billing mode.}
-  period_months: {type: int, default: 1, description: Prepaid purchase period.}
-  auto_renew: {type: bool, default: false, description: Automatically renew prepaid instances.}
-  security_group_ids: {type: list, elements: str, default: [], description: Security groups bound during creation.}
-  ipv6: {type: bool, default: false, description: Enable IPv6 during creation.}
-  purge: {type: bool, default: false, description: Permanently destroy an already isolated instance.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Existing DCDB instance ID.
+    type: str
+  name:
+    description:
+      - Instance name.
+    type: str
+  zones:
+    description:
+      - Availability zones; immutable after creation.
+    type: list
+    elements: str
+  vpc_id:
+    description:
+      - VPC ID; immutable after creation.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID; immutable after creation.
+    type: str
+  db_version:
+    description:
+      - Database version ID; immutable after creation.
+    type: str
+  shard_memory:
+    description:
+      - Memory per shard in GiB.
+    type: int
+  shard_storage:
+    description:
+      - Storage per shard in GiB.
+    type: int
+  shard_node_count:
+    description:
+      - Nodes per shard; defaults to 2 during creation.
+    type: int
+    choices: [2, 3]
+  shard_count:
+    description:
+      - Number of shards; defaults to 2 during creation.
+    type: int
+  shard_cpu:
+    description:
+      - CPU cores per shard for postpaid creation.
+    type: int
+  charge_type:
+    description:
+      - Billing mode.
+    type: str
+    choices: [PREPAID, POSTPAID_BY_HOUR]
+    default: POSTPAID_BY_HOUR
+  period_months:
+    description:
+      - Prepaid purchase period.
+    type: int
+    default: 1
+  auto_renew:
+    description:
+      - Automatically renew prepaid instances.
+    type: bool
+    default: false
+  security_group_ids:
+    description:
+      - Security groups bound during creation.
+    type: list
+    default: []
+    elements: str
+  ipv6:
+    description:
+      - Enable IPv6 during creation.
+    type: bool
+    default: false
+  purge:
+    description:
+      - Permanently destroy an already isolated instance.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

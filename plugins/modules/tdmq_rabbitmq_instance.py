@@ -12,34 +12,119 @@ short_description: Manage Tencent Cloud TDMQ RabbitMQ dedicated instances
 version_added: "0.14.0"
 description: Creates, updates and deletes RabbitMQ dedicated instances used by the TDMQ RabbitMQ resource family.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, description: Existing instance ID.}
-  name: {type: str, description: Cluster name.}
-  zone_ids: {type: list, elements: int, description: Numeric availability-zone IDs; immutable after creation.}
-  vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  subnet_id: {type: str, description: Subnet ID; immutable after creation.}
-  node_spec: {type: str, default: rabbit-vip-basic-1, description: RabbitMQ node sales specification.}
-  node_count: {type: int, description: Node count; defaults to one for single-zone and three for multi-zone creation.}
-  storage_size: {type: int, default: 200, description: Storage per node in GiB.}
-  cluster_version: {type: str, choices: ['3.8.30', '3.11.8', '3.13.7'], description: RabbitMQ version; defaults to 3.11.8 during creation.}
-  pay_mode: {type: int, choices: [0, 1], default: 0, description: Postpaid or prepaid billing mode.}
-  period_months: {type: int, default: 1, description: Prepaid purchase period.}
-  auto_renew: {type: bool, default: true, description: Automatically renew prepaid instances.}
-  default_ha_mirror_queue: {type: bool, default: false, description: Create the default high-availability mirror queue policy.}
-  bandwidth: {type: int, description: Public bandwidth in Mbps.}
-  public_access: {type: bool, default: false, description: Enable public access during creation.}
-  deletion_protection: {type: bool, description: Enable deletion protection.}
-  remark: {type: str, description: Instance remark.}
-  tags: {type: dict, description: Full desired tag set.}
-  international: {type: bool, default: false, description: Use the international-site purchase path.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Existing instance ID.
+    type: str
+  name:
+    description:
+      - Cluster name.
+    type: str
+  zone_ids:
+    description:
+      - Numeric availability-zone IDs; immutable after creation.
+    type: list
+    elements: int
+  vpc_id:
+    description:
+      - VPC ID; immutable after creation.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID; immutable after creation.
+    type: str
+  node_spec:
+    description:
+      - RabbitMQ node sales specification.
+    type: str
+    default: rabbit-vip-basic-1
+  node_count:
+    description:
+      - Node count; defaults to one for single-zone and three for multi-zone creation.
+    type: int
+  storage_size:
+    description:
+      - Storage per node in GiB.
+    type: int
+    default: 200
+  cluster_version:
+    description:
+      - RabbitMQ version; defaults to 3.11.8 during creation.
+    type: str
+    choices: [3.8.30, 3.11.8, 3.13.7]
+  pay_mode:
+    description:
+      - Postpaid or prepaid billing mode.
+    type: int
+    choices: [0, 1]
+    default: 0
+  period_months:
+    description:
+      - Prepaid purchase period.
+    type: int
+    default: 1
+  auto_renew:
+    description:
+      - Automatically renew prepaid instances.
+    type: bool
+    default: true
+  default_ha_mirror_queue:
+    description:
+      - Create the default high-availability mirror queue policy.
+    type: bool
+    default: false
+  bandwidth:
+    description:
+      - Public bandwidth in Mbps.
+    type: int
+  public_access:
+    description:
+      - Enable public access during creation.
+    type: bool
+    default: false
+  deletion_protection:
+    description:
+      - Enable deletion protection.
+    type: bool
+  remark:
+    description:
+      - Instance remark.
+    type: str
+  tags:
+    description:
+      - Full desired tag set.
+    type: dict
+  international:
+    description:
+      - Use the international-site purchase path.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

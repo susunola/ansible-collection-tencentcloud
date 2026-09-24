@@ -15,27 +15,89 @@ description:
   - Reconciles an account identified by the exact username and host pair, including creation, global privileges, password rotation and deletion.
   - Account descriptions are create-only in the TDSQL MySQL API and drift is surfaced explicitly.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired account presence.}
-  instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
-  username: {type: str, required: true, description: Login username.}
-  host: {type: str, default: '%', description: Allowed client host; username and host form the identity.}
-  password: {type: str, description: Plaintext password used for creation or explicit rotation.}
-  encrypted_password: {type: str, description: Encrypted password used instead of plaintext.}
-  rotate_password: {type: bool, default: false, description: Explicitly reset the password; this is an action on every enabled run.}
-  description: {type: str, description: Create-only account description.}
-  global_privileges: {type: list, elements: str, description: Full desired global privilege set.}
-  allow_delete: {type: bool, default: false, description: Explicit destructive-operation guard.}
-  wait: {type: bool, default: true, description: Wait for asynchronous account operations.}
-  waiter_delay: {type: int, default: 5, description: Seconds between Flow checks.}
-  waiter_timeout: {type: int, default: 600, description: Overall Flow timeout.}
+  state:
+    description:
+      - Desired account presence.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Stable TDSQL MySQL instance ID.
+    type: str
+    required: true
+  username:
+    description:
+      - Login username.
+    type: str
+    required: true
+  host:
+    description:
+      - Allowed client host; username and host form the identity.
+    type: str
+    default: '%'
+  password:
+    description:
+      - Plaintext password used for creation or explicit rotation.
+    type: str
+  encrypted_password:
+    description:
+      - Encrypted password used instead of plaintext.
+    type: str
+  rotate_password:
+    description:
+      - Explicitly reset the password; this is an action on every enabled run.
+    type: bool
+    default: false
+  description:
+    description:
+      - Create-only account description.
+    type: str
+  global_privileges:
+    description:
+      - Full desired global privilege set.
+    type: list
+    elements: str
+  allow_delete:
+    description:
+      - Explicit destructive-operation guard.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for asynchronous account operations.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between Flow checks.
+    type: int
+    default: 5
+  waiter_timeout:
+    description:
+      - Overall Flow timeout.
+    type: int
+    default: 600
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

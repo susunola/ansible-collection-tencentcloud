@@ -195,7 +195,8 @@ options:
         value are updated. Requires the C(tencentcloud-sdk-python-tag) package
         and the tag service to be enabled for the account.
     type: dict
-    default: {}
+    default:
+      {}
   waiter_timeout:
     description:
       - Maximum time in seconds to wait for the instance to reach the desired
@@ -203,10 +204,6 @@ options:
         gone after terminate).
     type: int
     default: 120
-  waiter_delay:
-    description: Interval in seconds between state polls while waiting.
-    type: int
-    default: 5
 notes:
   - Requires the C(tencentcloud-sdk-python-cvm) package on the controller.
   - Tag reconciliation additionally requires C(tencentcloud-sdk-python-tag).
@@ -234,9 +231,21 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Most C(state) values converge and are idempotent, but C(state=rebooted)
+        performs the action on every run and always reports C(changed=true).
+    support: partial
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

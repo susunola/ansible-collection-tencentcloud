@@ -13,19 +13,57 @@ short_description: Manage Tencent Cloud DCDB automatic backup configuration
 version_added: "0.14.0"
 description: Reconciles normal backup retention, execution window, weekdays and archive transition.
 options:
-  instance_id: {type: str, required: true, description: DCDB instance ID.}
-  retention_days: {type: int, default: 7, description: Standard backup retention from 1 through 3650 days.}
-  start_time: {type: str, default: '22:00', description: Backup window start time.}
-  end_time: {type: str, default: '23:59', description: Backup window end time.}
-  weekdays: {type: list, elements: str, choices: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday], default: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday], description: Backup weekdays.}
-  archive_after_days: {type: int, default: -1, description: Days before archive transition; minus one disables archive storage.}
+  instance_id:
+    description:
+      - DCDB instance ID.
+    type: str
+    required: true
+  retention_days:
+    description:
+      - Standard backup retention from 1 through 3650 days.
+    type: int
+    default: 7
+  start_time:
+    description:
+      - Backup window start time.
+    type: str
+    default: '22:00'
+  end_time:
+    description:
+      - Backup window end time.
+    type: str
+    default: '23:59'
+  weekdays:
+    description:
+      - Backup weekdays.
+    type: list
+    choices: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday]
+    default: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday]
+    elements: str
+  archive_after_days:
+    description:
+      - Days before archive transition; minus one disables archive storage.
+    type: int
+    default: -1
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

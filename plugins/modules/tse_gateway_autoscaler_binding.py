@@ -12,21 +12,60 @@ short_description: Bind a TSE gateway autoscaler strategy to gateway groups
 version_added: "0.14.0"
 description: Reconciles autoscaler strategy group bindings with paginated readback and delta mutations.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Whether listed bindings exist.}
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  strategy_id: {type: str, description: Autoscaler strategy ID.}
-  strategy_name: {type: str, description: Autoscaler strategy name resolved within the gateway.}
-  group_ids: {type: list, elements: str, description: Unique gateway group IDs.}
-  group_names: {type: list, elements: str, description: Unique gateway group names resolved within the gateway.}
-  purge_unlisted: {type: bool, default: false, description: 'With state=present, unbind groups not listed here.'}
+  state:
+    description:
+      - Whether listed bindings exist.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  strategy_id:
+    description:
+      - Autoscaler strategy ID.
+    type: str
+  strategy_name:
+    description:
+      - Autoscaler strategy name resolved within the gateway.
+    type: str
+  group_ids:
+    description:
+      - Unique gateway group IDs.
+    type: list
+    elements: str
+  group_names:
+    description:
+      - Unique gateway group names resolved within the gateway.
+    type: list
+    elements: str
+  purge_unlisted:
+    description:
+      - With state=present, unbind groups not listed here.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

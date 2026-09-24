@@ -13,20 +13,58 @@ short_description: Manage a versioned Tencent Cloud TSF application configuratio
 version_added: "0.15.0"
 description: Creates and deletes an exact TSF application configuration version. Existing version content is immutable and drift is rejected rather than hidden by a new version.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired resource state.}
-  config_id: {type: str, description: 'Existing configuration version ID; application, name and version are used when omitted.'}
-  application_id: {type: str, required: true, description: Owning TSF application ID.}
-  name: {type: str, required: true, description: Configuration name.}
-  version: {type: str, required: true, description: Configuration version.}
-  value: {type: str, description: 'Configuration YAML value, required when creating.'}
-  version_description: {type: str, description: Configuration version description.}
+  state:
+    description:
+      - Desired resource state.
+    type: str
+    choices: [present, absent]
+    default: present
+  config_id:
+    description:
+      - Existing configuration version ID; application, name and version are used when omitted.
+    type: str
+  application_id:
+    description:
+      - Owning TSF application ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Configuration name.
+    type: str
+    required: true
+  version:
+    description:
+      - Configuration version.
+    type: str
+    required: true
+  value:
+    description:
+      - Configuration YAML value, required when creating.
+    type: str
+  version_description:
+    description:
+      - Configuration version description.
+    type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

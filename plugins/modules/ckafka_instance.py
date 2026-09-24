@@ -12,37 +12,127 @@ short_description: Manage Tencent Cloud CKafka instances
 version_added: "0.14.0"
 description: Creates prepaid or postpaid CKafka instances, reconciles runtime attributes and prepaid capacity, and deletes instances.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, description: Existing CKafka instance ID.}
-  name: {type: str, description: Instance name.}
-  zones: {type: list, elements: int, description: Numeric availability-zone IDs; immutable after creation.}
-  vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  subnet_id: {type: str, description: Subnet ID; immutable after creation.}
-  charge_type: {type: str, choices: [PREPAID, POSTPAID_BY_HOUR], default: POSTPAID_BY_HOUR, description: Billing mode.}
-  period_months: {type: int, default: 1, description: Prepaid purchase period.}
-  auto_renew: {type: bool, default: false, description: Automatically renew prepaid instances.}
-  instance_type: {type: int, description: Numeric instance type used during creation.}
-  specification: {type: str, description: Sales specification type.}
-  kafka_version: {type: str, description: Kafka version; immutable after creation.}
-  disk_type: {type: str, description: Disk type; immutable after creation.}
-  disk_size: {type: int, description: Disk capacity in GiB.}
-  bandwidth: {type: int, description: Peak bandwidth in MB per second.}
-  partitions: {type: int, description: Partition capacity.}
-  topic_count: {type: int, description: Topic capacity for postpaid creation.}
-  retention_minutes: {type: int, description: Message retention period in minutes.}
-  max_message_bytes: {type: int, description: Maximum message size in bytes.}
-  retention_bytes: {type: int, description: Maximum retained bytes per partition.}
-  unclean_leader_election: {type: bool, description: Permit unclean leader election.}
-  deletion_protection: {type: bool, description: Protect the instance from deletion.}
-  tags: {type: dict, default: {}, description: Tags applied during creation.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Existing CKafka instance ID.
+    type: str
+  name:
+    description:
+      - Instance name.
+    type: str
+  zones:
+    description:
+      - Numeric availability-zone IDs; immutable after creation.
+    type: list
+    elements: int
+  vpc_id:
+    description:
+      - VPC ID; immutable after creation.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID; immutable after creation.
+    type: str
+  charge_type:
+    description:
+      - Billing mode.
+    type: str
+    choices: [PREPAID, POSTPAID_BY_HOUR]
+    default: POSTPAID_BY_HOUR
+  period_months:
+    description:
+      - Prepaid purchase period.
+    type: int
+    default: 1
+  auto_renew:
+    description:
+      - Automatically renew prepaid instances.
+    type: bool
+    default: false
+  instance_type:
+    description:
+      - Numeric instance type used during creation.
+    type: int
+  specification:
+    description:
+      - Sales specification type.
+    type: str
+  kafka_version:
+    description:
+      - Kafka version; immutable after creation.
+    type: str
+  disk_type:
+    description:
+      - Disk type; immutable after creation.
+    type: str
+  disk_size:
+    description:
+      - Disk capacity in GiB.
+    type: int
+  bandwidth:
+    description:
+      - Peak bandwidth in MB per second.
+    type: int
+  partitions:
+    description:
+      - Partition capacity.
+    type: int
+  topic_count:
+    description:
+      - Topic capacity for postpaid creation.
+    type: int
+  retention_minutes:
+    description:
+      - Message retention period in minutes.
+    type: int
+  max_message_bytes:
+    description:
+      - Maximum message size in bytes.
+    type: int
+  retention_bytes:
+    description:
+      - Maximum retained bytes per partition.
+    type: int
+  unclean_leader_election:
+    description:
+      - Permit unclean leader election.
+    type: bool
+  deletion_protection:
+    description:
+      - Protect the instance from deletion.
+    type: bool
+  tags:
+    description:
+      - Tags applied during creation.
+    type: dict
+    default:
+      {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

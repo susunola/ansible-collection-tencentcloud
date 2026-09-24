@@ -13,16 +13,40 @@ short_description: Run and wait for a Tencent Cloud DTS migration check
 version_added: "0.14.0"
 description: Starts a DTS pre-migration check when needed and waits for a conclusive result.
 options:
-  job_id: {description: DTS migration job ID., type: str, required: true}
-  wait: {description: Wait for the check to finish., type: bool, default: true}
-  fail_on_check_error: {description: Fail when DTS reports a failed or non-passing check., type: bool, default: true}
+  job_id:
+    description:
+      - DTS migration job ID.
+    type: str
+    required: true
+  wait:
+    description:
+      - Wait for the check to finish.
+    type: bool
+    default: true
+  fail_on_check_error:
+    description:
+      - Fail when DTS reports a failed or non-passing check.
+    type: bool
+    default: true
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""- susunola.tencentcloud.dts_migration_check: {job_id: dts-abcd1234}"""

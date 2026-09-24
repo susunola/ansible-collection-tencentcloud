@@ -12,25 +12,82 @@ short_description: Manage Tencent Cloud CKafka access routes
 version_added: "0.14.0"
 description: Creates and deletes VPC, public or internal-support CKafka access routes and detects immutable drift.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: CKafka instance ID.}
-  route_id: {type: int, description: "Existing route ID, recommended for deletion."}
-  network_type: {type: int, choices: [1, 3, 7], default: 3, description: "Public, VPC or internal-support route type."}
-  access_type: {type: int, choices: [0, 1, 3, 4, 5], default: 0, description: Authentication and transport mode.}
-  vpc_id: {type: str, description: VPC ID required for VPC routes.}
-  subnet_id: {type: str, description: Subnet ID required for VPC routes.}
-  public_bandwidth: {type: int, description: Public bandwidth required for public routes.}
-  note: {type: str, default: '', description: Route note.}
-  security_group_ids: {type: list, elements: str, default: [], description: Ordered associated security groups.}
-  ip_whitelist: {type: list, elements: str, default: [], description: Initial public-route IP whitelist.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - CKafka instance ID.
+    type: str
+    required: true
+  route_id:
+    description:
+      - Existing route ID, recommended for deletion.
+    type: int
+  network_type:
+    description:
+      - Public, VPC or internal-support route type.
+    type: int
+    choices: [1, 3, 7]
+    default: 3
+  access_type:
+    description:
+      - Authentication and transport mode.
+    type: int
+    choices: [0, 1, 3, 4, 5]
+    default: 0
+  vpc_id:
+    description:
+      - VPC ID required for VPC routes.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID required for VPC routes.
+    type: str
+  public_bandwidth:
+    description:
+      - Public bandwidth required for public routes.
+    type: int
+  note:
+    description:
+      - Route note.
+    type: str
+    default: ''
+  security_group_ids:
+    description:
+      - Ordered associated security groups.
+    type: list
+    default: []
+    elements: str
+  ip_whitelist:
+    description:
+      - Initial public-route IP whitelist.
+    type: list
+    default: []
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

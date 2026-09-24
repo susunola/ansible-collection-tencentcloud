@@ -80,7 +80,8 @@ options:
       - User-defined object metadata as a dict; keys are sent as
         C(x-cos-meta-<key>) headers. Replaced in full on upload.
     type: dict
-    default: {}
+    default:
+      {}
   storage_class:
     description:
       - Storage class of the object, for example C(STANDARD), C(STANDARD_IA),
@@ -118,9 +119,21 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

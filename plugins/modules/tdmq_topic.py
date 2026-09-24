@@ -13,26 +13,89 @@ short_description: Manage Tencent Cloud TDMQ Pulsar topics
 version_added: "0.14.0"
 description: Creates, updates and deletes Pulsar topics in TDMQ.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  cluster_id: {description: Pulsar cluster ID., type: str, required: true}
-  environment_id: {description: Pulsar namespace name., type: str, required: true}
-  name: {description: Topic name., type: str, required: true}
-  partitions: {description: Partition count. Existing topics can only be expanded., type: int, default: 1}
-  topic_type: {description: Pulsar topic type., type: int, choices: [0, 1, 2, 3], default: 2}
-  remark: {description: Topic remark., type: str, default: ''}
-  message_ttl: {description: Unconsumed message TTL in seconds., type: int, default: 86400}
-  isolate_consumer: {description: Enable abnormal consumer isolation., type: bool, default: false}
-  ack_timeout: {description: Consumer acknowledgement timeout in seconds., type: int, default: 60}
-  delay_message_policy: {description: Delay-message policy., type: str, choices: [defaultPolicy, timingwheelPolicy], default: defaultPolicy}
-  force: {description: Force deletion., type: bool, default: false}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - Pulsar cluster ID.
+    type: str
+    required: true
+  environment_id:
+    description:
+      - Pulsar namespace name.
+    type: str
+    required: true
+  name:
+    description:
+      - Topic name.
+    type: str
+    required: true
+  partitions:
+    description:
+      - Partition count. Existing topics can only be expanded.
+    type: int
+    default: 1
+  topic_type:
+    description:
+      - Pulsar topic type.
+    type: int
+    choices: [0, 1, 2, 3]
+    default: 2
+  remark:
+    description:
+      - Topic remark.
+    type: str
+    default: ''
+  message_ttl:
+    description:
+      - Unconsumed message TTL in seconds.
+    type: int
+    default: 86400
+  isolate_consumer:
+    description:
+      - Enable abnormal consumer isolation.
+    type: bool
+    default: false
+  ack_timeout:
+    description:
+      - Consumer acknowledgement timeout in seconds.
+    type: int
+    default: 60
+  delay_message_policy:
+    description:
+      - Delay-message policy.
+    type: str
+    choices: [defaultPolicy, timingwheelPolicy]
+    default: defaultPolicy
+  force:
+    description:
+      - Force deletion.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

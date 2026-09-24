@@ -13,33 +13,98 @@ short_description: Manage Tencent Cloud Cloud Firewall inter-VPC ACL rules
 version_added: "0.14.0"
 description: Creates, updates and removes access-control rules between VPCs.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired rule state.}
-  rule_uuid: {type: int, description: Existing rule UUID; preferred for updates and deletion.}
-  description: {type: str, description: "Rule description, also used for lookup when rule_uuid is omitted."}
-  edge_id: {type: str, required: true, description: VPC firewall edge or all-VPC scope ID.}
-  source: {type: str, description: Source IP address or CIDR.}
-  destination: {type: str, description: Destination IP network or domain.}
-  destination_type: {type: str, choices: [net, domain, dnsparse], default: net, description: Destination value type.}
+  state:
+    description:
+      - Desired rule state.
+    type: str
+    choices: [present, absent]
+    default: present
+  rule_uuid:
+    description:
+      - Existing rule UUID; preferred for updates and deletion.
+    type: int
+  description:
+    description:
+      - Rule description, also used for lookup when rule_uuid is omitted.
+    type: str
+  edge_id:
+    description:
+      - VPC firewall edge or all-VPC scope ID.
+    type: str
+    required: true
+  source:
+    description:
+      - Source IP address or CIDR.
+    type: str
+  destination:
+    description:
+      - Destination IP network or domain.
+    type: str
+  destination_type:
+    description:
+      - Destination value type.
+    type: str
+    choices: [net, domain, dnsparse]
+    default: net
   protocol:
     type: str
     choices: [ANY, TCP, UDP, ICMP, HTTP, HTTPS, HTTP/HTTPS, SMTP, SMTPS, SMTP/SMTPS, FTP, DNS, TLS/SSL]
     default: ANY
     description: Network or application protocol.
-  ports: {type: str, default: "-1/-1", description: Port expression accepted by Cloud Firewall.}
-  action: {type: str, choices: [observe, block, accept], default: accept, description: Rule action.}
-  enabled: {type: bool, default: true, description: Whether the rule is enabled.}
-  order_index: {type: int, description: Rule insertion or execution order; defaults to append on creation.}
-  firewall_group_id: {type: str, description: Optional VPC firewall group ID.}
-  parameter_template_id: {type: str, description: Optional protocol-port parameter template ID.}
-  ip_version: {type: int, choices: [0, 1], default: 0, description: Zero for IPv4 or one for IPv6.}
+  ports:
+    description:
+      - Port expression accepted by Cloud Firewall.
+    type: str
+    default: -1/-1
+  action:
+    description:
+      - Rule action.
+    type: str
+    choices: [observe, block, accept]
+    default: accept
+  enabled:
+    description:
+      - Whether the rule is enabled.
+    type: bool
+    default: true
+  order_index:
+    description:
+      - Rule insertion or execution order; defaults to append on creation.
+    type: int
+  firewall_group_id:
+    description:
+      - Optional VPC firewall group ID.
+    type: str
+  parameter_template_id:
+    description:
+      - Optional protocol-port parameter template ID.
+    type: str
+  ip_version:
+    description:
+      - Zero for IPv4 or one for IPv6.
+    type: int
+    choices: [0, 1]
+    default: 0
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 

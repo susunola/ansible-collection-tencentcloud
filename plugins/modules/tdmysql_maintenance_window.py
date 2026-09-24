@@ -15,18 +15,49 @@ description:
   - Reconciles the weekly maintenance days, start time and one-to-three-hour duration.
   - Normalizes API C(HH:MM-HH:MM) ranges and accepts C(HH:MM) or C(HH:MM:SS) start times.
 options:
-  instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
-  start_time: {type: str, required: true, description: Maintenance start time in HH:MM or HH:MM:SS format.}
-  duration_hours: {type: int, choices: [1, 2, 3], required: true, description: Maintenance duration in hours.}
-  week_days: {type: list, elements: str, required: true, description: Non-empty weekday set.}
+  instance_id:
+    description:
+      - Stable TDSQL MySQL instance ID.
+    type: str
+    required: true
+  start_time:
+    description:
+      - Maintenance start time in HH:MM or HH:MM:SS format.
+    type: str
+    required: true
+  duration_hours:
+    description:
+      - Maintenance duration in hours.
+    type: int
+    required: true
+    choices: [1, 2, 3]
+  week_days:
+    description:
+      - Non-empty set of weekdays the maintenance window applies to.
+    type: list
+    elements: str
+    required: true
+    choices: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday]
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

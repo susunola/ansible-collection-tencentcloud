@@ -15,35 +15,106 @@ description:
   - Manages an IPsec connection between a VPN gateway and customer gateway.
   - Reconciles tunnel name, customer gateway, SPD routes, negotiation mode and DPD settings.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  vpn_connection_id: {description: Existing VPN connection ID., type: str}
-  name: {description: VPN connection name., type: str}
-  vpn_gateway_id: {description: Parent VPN gateway ID., type: str}
-  customer_gateway_id: {description: Remote customer gateway ID., type: str}
-  vpc_id: {description: VPC ID used when creating the connection., type: str}
-  pre_shared_key: {description: IPsec pre-shared key; used on create or explicit rotation., type: str}
-  rotate_pre_shared_key: {description: Explicitly replace the pre-shared key during this run., type: bool, default: false}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  vpn_connection_id:
+    description:
+      - Existing VPN connection ID.
+    type: str
+  name:
+    description:
+      - VPN connection name.
+    type: str
+  vpn_gateway_id:
+    description:
+      - Parent VPN gateway ID.
+    type: str
+  customer_gateway_id:
+    description:
+      - Remote customer gateway ID.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID used when creating the connection.
+    type: str
+  pre_shared_key:
+    description:
+      - IPsec pre-shared key; used on create or explicit rotation.
+    type: str
+  rotate_pre_shared_key:
+    description:
+      - Explicitly replace the pre-shared key during this run.
+    type: bool
+    default: false
   security_policy_databases:
     description: Exact local and remote CIDR pairs for policy-based routing.
     type: list
     elements: dict
     suboptions:
-      local_cidr: {description: Local VPC CIDR., type: str, required: true}
-      remote_cidr: {description: Remote network CIDR., type: str, required: true}
-  route_type: {description: Connection route type applied at creation., type: str, choices: [StaticRoute, BgpRoute, Policy], default: Policy}
-  negotiation_type: {description: IKE negotiation type., type: str, choices: [active, passive, flowTrigger]}
-  dpd_enabled: {description: Enable dead peer detection., type: bool}
-  dpd_timeout: {description: Dead peer detection timeout in seconds., type: int}
-  dpd_action: {description: Action after DPD timeout., type: str, choices: [clear, restart]}
-  tags: {description: Tags applied at creation., type: dict, default: {}}
+      local_cidr:
+        description:
+          - Local VPC CIDR.
+        type: str
+        required: true
+      remote_cidr:
+        description:
+          - Remote network CIDR.
+        type: str
+        required: true
+  route_type:
+    description:
+      - Connection route type applied at creation.
+    type: str
+    choices: [StaticRoute, BgpRoute, Policy]
+    default: Policy
+  negotiation_type:
+    description:
+      - IKE negotiation type.
+    type: str
+    choices: [active, passive, flowTrigger]
+  dpd_enabled:
+    description:
+      - Enable dead peer detection.
+    type: bool
+  dpd_timeout:
+    description:
+      - Dead peer detection timeout in seconds.
+    type: int
+  dpd_action:
+    description:
+      - Action after DPD timeout.
+    type: str
+    choices: [clear, restart]
+  tags:
+    description:
+      - Tags applied at creation.
+    type: dict
+    default:
+      {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

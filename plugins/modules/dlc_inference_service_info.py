@@ -14,26 +14,66 @@ version_added: "0.14.0"
 description:
   - Lists DLC inference services with complete page-number pagination, time bounds, API filters and ordered sorting.
 options:
-  start_time: {type: int, description: Optional creation-time lower bound in milliseconds.}
-  end_time: {type: int, description: Optional creation-time upper bound in milliseconds.}
-  filters: {type: dict, default: {}, description: DLC inference-service filter names mapped to values or value lists.}
+  start_time:
+    description:
+      - Optional creation-time lower bound in milliseconds.
+    type: int
+  end_time:
+    description:
+      - Optional creation-time upper bound in milliseconds.
+    type: int
+  filters:
+    description:
+      - DLC inference-service filter names mapped to values or value lists.
+    type: dict
+    default:
+      {}
   sort_fields:
     type: list
     elements: dict
     description: Ordered API sort definitions.
     suboptions:
-      field: {type: str, required: true, description: API entity field name.}
-      order: {type: str, choices: [ASC, DESC], default: ASC, description: Sort direction.}
-  page_size: {type: int, default: 200, description: 'Services requested per page, from 1 to 200.'}
-  max_pages: {type: int, default: 1000, description: 'Maximum pages fetched, from 1 to 1000.'}
+      field:
+        description:
+          - API entity field name.
+        type: str
+        required: true
+      order:
+        description:
+          - Sort direction.
+        type: str
+        choices: [ASC, DESC]
+        default: ASC
+  page_size:
+    description:
+      - Services requested per page, from 1 to 200.
+    type: int
+    default: 200
+  max_pages:
+    description:
+      - Maximum pages fetched, from 1 to 1000.
+    type: int
+    default: 1000
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

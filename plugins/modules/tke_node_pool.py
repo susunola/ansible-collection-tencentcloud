@@ -83,7 +83,8 @@ options:
       - Kubernetes labels applied to the nodes as a dict, written to
         V(ModifyClusterNodePoolRequest.Labels).
     type: dict
-    default: {}
+    default:
+      {}
   taints:
     description:
       - Kubernetes taints applied to the nodes as a list of dicts with
@@ -118,7 +119,8 @@ options:
       - Tags to apply to the node pool as a dict, for example I(env=prod).
       - Only applied at creation.
     type: dict
-    default: {}
+    default:
+      {}
 notes:
   - Requires the C(tencentcloud-sdk-python-tke) package on the controller.
   - The node pool is considered up to date as soon as the create API
@@ -128,9 +130,21 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

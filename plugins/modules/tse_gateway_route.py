@@ -12,33 +12,113 @@ short_description: Manage a Tencent Cloud TSE gateway route
 version_added: "0.14.0"
 description: Creates, updates and deletes an instance-unique cloud-native API gateway route.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  service_id: {type: str, description: Owning gateway service ID; required when present.}
-  route_id: {type: str, description: Existing route ID.}
-  name: {type: str, required: true, description: Instance-unique route name.}
-  methods: {type: list, elements: str, description: Accepted HTTP methods.}
-  hosts: {type: list, elements: str, description: Accepted host names.}
-  paths: {type: list, elements: str, description: Accepted paths.}
-  protocols: {type: list, elements: str, description: Accepted protocols.}
-  preserve_host: {type: bool, description: Preserve the incoming Host header.}
-  https_redirect_status_code: {type: int, description: HTTPS redirect status code.}
-  strip_path: {type: bool, description: Strip the matched path before forwarding.}
-  force_https: {type: bool, description: Force HTTPS.}
-  destination_ports: {type: list, elements: int, description: Layer-4 destination ports.}
-  headers: {type: list, elements: dict, description: SDK KVMapping header matchers.}
-  request_buffering: {type: bool, description: Buffer request bodies.}
-  response_buffering: {type: bool, description: Buffer response bodies.}
-  regex_priority: {type: int, description: Regular-expression route priority.}
-  query_string_parameters: {type: list, elements: dict, description: SDK KVMapping query matchers.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  service_id:
+    description:
+      - Owning gateway service ID; required when present.
+    type: str
+  route_id:
+    description:
+      - Existing route ID.
+    type: str
+  name:
+    description:
+      - Instance-unique route name.
+    type: str
+    required: true
+  methods:
+    description:
+      - Accepted HTTP methods.
+    type: list
+    elements: str
+  hosts:
+    description:
+      - Accepted host names.
+    type: list
+    elements: str
+  paths:
+    description:
+      - Accepted paths.
+    type: list
+    elements: str
+  protocols:
+    description:
+      - Accepted protocols.
+    type: list
+    elements: str
+  preserve_host:
+    description:
+      - Preserve the incoming Host header.
+    type: bool
+  https_redirect_status_code:
+    description:
+      - HTTPS redirect status code.
+    type: int
+  strip_path:
+    description:
+      - Strip the matched path before forwarding.
+    type: bool
+  force_https:
+    description:
+      - Force HTTPS.
+    type: bool
+  destination_ports:
+    description:
+      - Layer-4 destination ports.
+    type: list
+    elements: int
+  headers:
+    description:
+      - SDK KVMapping header matchers.
+    type: list
+    elements: dict
+  request_buffering:
+    description:
+      - Buffer request bodies.
+    type: bool
+  response_buffering:
+    description:
+      - Buffer response bodies.
+    type: bool
+  regex_priority:
+    description:
+      - Regular-expression route priority.
+    type: int
+  query_string_parameters:
+    description:
+      - SDK KVMapping query matchers.
+    type: list
+    elements: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -12,35 +12,118 @@ short_description: Manage Tencent Cloud TDSQL-C PostgreSQL clusters
 version_added: "0.14.0"
 description: Creates, renames, scales, isolates and permanently deletes TDSQL-C PostgreSQL clusters and reconciles their instance topology.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, description: Existing cluster ID.}
-  name: {type: str, description: Cluster name.}
-  zone: {type: str, description: Availability zone; immutable after creation.}
-  vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  subnet_id: {type: str, description: Subnet ID; immutable after creation.}
-  master_password: {type: str, description: Initial master-user password.}
-  cpu: {type: int, description: CPU cores per cluster instance.}
-  memory: {type: int, description: Memory in GiB per cluster instance.}
-  instance_count: {type: int, description: Desired instance count; defaults to one during creation.}
-  allow_scale_in: {type: bool, default: false, description: Authorize deleting excess instances when reducing instance_count.}
-  db_version: {type: str, description: Compatible PostgreSQL version; immutable after creation.}
-  db_major_version: {type: str, description: PostgreSQL major version; immutable after creation.}
-  db_kernel_version: {type: str, description: Database kernel version; immutable after creation.}
-  pay_mode: {type: str, choices: [PREPAID, POSTPAID_BY_HOUR], default: POSTPAID_BY_HOUR, description: Billing mode.}
-  period_months: {type: int, default: 1, description: Prepaid purchase period.}
-  auto_renew: {type: bool, description: Automatically renew prepaid clusters.}
-  port: {type: int, default: 5432, description: Initial database port.}
-  storage_pay_mode: {type: str, description: Storage billing mode.}
-  storage: {type: int, description: Storage capacity in GiB.}
-  purge: {type: bool, default: false, description: Permanently delete an already isolated cluster.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - Existing cluster ID.
+    type: str
+  name:
+    description:
+      - Cluster name.
+    type: str
+  zone:
+    description:
+      - Availability zone; immutable after creation.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID; immutable after creation.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID; immutable after creation.
+    type: str
+  master_password:
+    description:
+      - Initial master-user password.
+    type: str
+  cpu:
+    description:
+      - CPU cores per cluster instance.
+    type: int
+  memory:
+    description:
+      - Memory in GiB per cluster instance.
+    type: int
+  instance_count:
+    description:
+      - Desired instance count; defaults to one during creation.
+    type: int
+  allow_scale_in:
+    description:
+      - Authorize deleting excess instances when reducing instance_count.
+    type: bool
+    default: false
+  db_version:
+    description:
+      - Compatible PostgreSQL version; immutable after creation.
+    type: str
+  db_major_version:
+    description:
+      - PostgreSQL major version; immutable after creation.
+    type: str
+  db_kernel_version:
+    description:
+      - Database kernel version; immutable after creation.
+    type: str
+  pay_mode:
+    description:
+      - Billing mode.
+    type: str
+    choices: [PREPAID, POSTPAID_BY_HOUR]
+    default: POSTPAID_BY_HOUR
+  period_months:
+    description:
+      - Prepaid purchase period.
+    type: int
+    default: 1
+  auto_renew:
+    description:
+      - Automatically renew prepaid clusters.
+    type: bool
+  port:
+    description:
+      - Initial database port.
+    type: int
+    default: 5432
+  storage_pay_mode:
+    description:
+      - Storage billing mode.
+    type: str
+  storage:
+    description:
+      - Storage capacity in GiB.
+    type: int
+  purge:
+    description:
+      - Permanently delete an already isolated cluster.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

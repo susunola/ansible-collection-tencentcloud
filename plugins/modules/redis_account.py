@@ -13,23 +13,73 @@ short_description: Manage TencentDB for Redis accounts
 version_added: "0.14.0"
 description: Creates, updates and deletes a Redis account with explicit password rotation.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: Redis instance ID.}
-  name: {type: str, required: true, description: Account name.}
-  password: {type: str, description: Password used for creation or explicit rotation.}
-  rotate_password: {type: bool, default: false, description: Explicitly rotate the password.}
-  privilege: {type: str, choices: [r, w, rw], default: rw, description: Account privilege.}
-  readonly_policy: {type: list, elements: str, default: [master], description: Read-request routing policy.}
-  remark: {type: str, default: '', description: Account description.}
-  encrypt_password: {type: bool, default: false, description: Enable encrypted password transmission.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Redis instance ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Account name.
+    type: str
+    required: true
+  password:
+    description:
+      - Password used for creation or explicit rotation.
+    type: str
+  rotate_password:
+    description:
+      - Explicitly rotate the password.
+    type: bool
+    default: false
+  privilege:
+    description:
+      - Account privilege.
+    type: str
+    choices: [r, w, rw]
+    default: rw
+  readonly_policy:
+    description:
+      - Read-request routing policy.
+    type: list
+    default: [master]
+    elements: str
+  remark:
+    description:
+      - Account description.
+    type: str
+    default: ''
+  encrypt_password:
+    description:
+      - Enable encrypted password transmission.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -12,24 +12,72 @@ short_description: Manage TencentDB for PostgreSQL backup plans
 version_added: "0.14.0"
 description: Creates, updates and deletes a PostgreSQL backup plan.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: PostgreSQL instance ID.}
-  plan_id: {type: str, description: Existing plan ID.}
-  name: {type: str, description: Backup plan name.}
-  period_type: {type: str, default: week, description: Backup period type.}
-  periods: {type: list, elements: str, default: [], description: Backup periods.}
-  min_start_time: {type: str, description: Earliest backup start time. Required when C(state=present).}
-  max_start_time: {type: str, description: Latest backup start time. Required when C(state=present).}
-  retention_days: {type: int, description: Base backup retention days. Required when C(state=present).}
-  log_retention_days: {type: int, description: Log backup retention days.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - PostgreSQL instance ID.
+    type: str
+    required: true
+  plan_id:
+    description:
+      - Existing plan ID.
+    type: str
+  name:
+    description:
+      - Backup plan name.
+    type: str
+  period_type:
+    description:
+      - Backup period type.
+    type: str
+    default: week
+  periods:
+    description:
+      - Backup periods.
+    type: list
+    default: []
+    elements: str
+  min_start_time:
+    description:
+      - Earliest backup start time. Required when C(state=present).
+    type: str
+  max_start_time:
+    description:
+      - Latest backup start time. Required when C(state=present).
+    type: str
+  retention_days:
+    description:
+      - Base backup retention days. Required when C(state=present).
+    type: int
+  log_retention_days:
+    description:
+      - Log backup retention days.
+    type: int
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

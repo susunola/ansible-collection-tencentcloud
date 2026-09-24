@@ -12,25 +12,82 @@ short_description: Manage TencentDB for MariaDB accounts
 version_added: "0.14.0"
 description: Creates and deletes accounts, updates descriptions and explicitly rotates passwords.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: MariaDB instance ID.}
-  username: {type: str, required: true, description: Account name.}
-  host: {type: str, default: '%', description: Account host expression.}
-  password: {type: str, description: Password for creation or explicit rotation.}
-  rotate_password: {type: bool, default: false, description: Explicitly replace the account password.}
-  description: {type: str, default: '', description: Account description.}
-  read_only: {type: int, choices: [0, 1, 2, 3], default: 0, description: Immutable read-routing policy.}
-  delay_threshold: {type: int, default: 10, description: Immutable replica-delay threshold in seconds.}
-  sticky_replica: {type: bool, default: false, description: Keep read-only connections on a fixed replica.}
-  max_user_connections: {type: int, default: 0, description: Immutable maximum connections; zero means unlimited.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - MariaDB instance ID.
+    type: str
+    required: true
+  username:
+    description:
+      - Account name.
+    type: str
+    required: true
+  host:
+    description:
+      - Account host expression.
+    type: str
+    default: '%'
+  password:
+    description:
+      - Password for creation or explicit rotation.
+    type: str
+  rotate_password:
+    description:
+      - Explicitly replace the account password.
+    type: bool
+    default: false
+  description:
+    description:
+      - Account description.
+    type: str
+    default: ''
+  read_only:
+    description:
+      - Immutable read-routing policy.
+    type: int
+    choices: [0, 1, 2, 3]
+    default: 0
+  delay_threshold:
+    description:
+      - Immutable replica-delay threshold in seconds.
+    type: int
+    default: 10
+  sticky_replica:
+    description:
+      - Keep read-only connections on a fixed replica.
+    type: bool
+    default: false
+  max_user_connections:
+    description:
+      - Immutable maximum connections; zero means unlimited.
+    type: int
+    default: 0
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -15,18 +15,45 @@ description:
   - Returns all accounts for an instance or one account identified by the exact username and host pair.
   - Exact mode can also include the account's global privileges.
 options:
-  instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
-  username: {type: str, description: Exact login username.}
-  host: {type: str, default: '%', description: Exact allowed client host paired with username.}
-  include_global_privileges: {type: bool, default: true, description: Query global privileges in exact mode.}
+  instance_id:
+    description:
+      - Stable TDSQL MySQL instance ID.
+    type: str
+    required: true
+  username:
+    description:
+      - Exact login username.
+    type: str
+  host:
+    description:
+      - Exact allowed client host paired with username.
+    type: str
+    default: '%'
+  include_global_privileges:
+    description:
+      - Query global privileges in exact mode.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

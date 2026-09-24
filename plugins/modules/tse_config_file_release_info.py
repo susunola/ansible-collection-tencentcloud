@@ -13,21 +13,63 @@ short_description: Gather Tencent Cloud TSE configuration release audit data
 version_added: "0.14.0"
 description: Returns current releases, immutable release versions and publication history for one configuration file.
 options:
-  instance_id: {type: str, required: true, description: TSE engine instance ID.}
-  namespace: {type: str, required: true, description: Configuration namespace.}
-  group: {type: str, required: true, description: Configuration group.}
-  name: {type: str, required: true, description: Configuration file name.}
-  config_file_id: {type: str, description: Configuration file ID used to narrow version and history queries.}
-  release_name: {type: str, description: Release name filter.}
-  only_in_use: {type: bool, default: false, description: Return only releases currently in use.}
-  page_size: {type: int, default: 100, description: Number of releases or history entries requested per call.}
+  instance_id:
+    description:
+      - TSE engine instance ID.
+    type: str
+    required: true
+  namespace:
+    description:
+      - Configuration namespace.
+    type: str
+    required: true
+  group:
+    description:
+      - Configuration group.
+    type: str
+    required: true
+  name:
+    description:
+      - Configuration file name.
+    type: str
+    required: true
+  config_file_id:
+    description:
+      - Configuration file ID used to narrow version and history queries.
+    type: str
+  release_name:
+    description:
+      - Release name filter.
+    type: str
+  only_in_use:
+    description:
+      - Return only releases currently in use.
+    type: bool
+    default: false
+  page_size:
+    description:
+      - Number of releases or history entries requested per call.
+    type: int
+    default: 100
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

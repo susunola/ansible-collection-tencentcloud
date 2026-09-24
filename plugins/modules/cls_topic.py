@@ -13,26 +13,84 @@ short_description: Manage Tencent Cloud CLS topics
 version_added: "0.14.0"
 description: Creates, updates and deletes CLS log topics within a logset.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  topic_id: {description: Existing topic ID., type: str}
-  logset_id: {description: Parent logset ID., type: str, required: true}
-  name: {description: Topic name., type: str}
-  partition_count: {description: Topic partition count., type: int, default: 1}
-  period: {description: Retention period in days., type: int, default: 30}
-  hot_period: {description: Hot storage retention in days., type: int}
-  storage_type: {description: Storage class., type: str, choices: [hot, cold], default: hot}
-  auto_split: {description: Enable automatic partition splitting., type: bool, default: true}
-  max_split_partitions: {description: Maximum partitions after automatic splitting., type: int, default: 50}
-  description: {description: Topic description., type: str, default: ''}
-  tags: {description: Exact tag dictionary., type: dict}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  topic_id:
+    description:
+      - Existing topic ID.
+    type: str
+  logset_id:
+    description:
+      - Parent logset ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Topic name.
+    type: str
+  partition_count:
+    description:
+      - Topic partition count.
+    type: int
+    default: 1
+  period:
+    description:
+      - Retention period in days.
+    type: int
+    default: 30
+  hot_period:
+    description:
+      - Hot storage retention in days.
+    type: int
+  storage_type:
+    description:
+      - Storage class.
+    type: str
+    choices: [hot, cold]
+    default: hot
+  auto_split:
+    description:
+      - Enable automatic partition splitting.
+    type: bool
+    default: true
+  max_split_partitions:
+    description:
+      - Maximum partitions after automatic splitting.
+    type: int
+    default: 50
+  description:
+    description:
+      - Topic description.
+    type: str
+    default: ''
+  tags:
+    description:
+      - Exact tag dictionary.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

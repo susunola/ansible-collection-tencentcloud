@@ -15,17 +15,57 @@ description:
   - Reads all target-group pages before determining whether a group is absent
     or whether a name uniquely identifies one group.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  target_group_id: {type: str, description: Existing target group ID.}
-  name: {type: str, description: Target group name.}
-  vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  target_type: {type: str, choices: [Instance], description: Backend target type; defaults to Instance on creation and is immutable thereafter.}
-  protocol: {type: str, choices: [HTTP, HTTPS, GRPC, GRPCS], description: Backend protocol; defaults to HTTP on creation and is immutable thereafter.}
-  scheduler_algorithm: {type: str, choices: [wrr, wlc], default: wrr, description: Load-balancing algorithm.}
-  keepalive_enabled: {type: bool, default: false, description: Enable backend keepalive.}
-  health_check: {type: dict, description: SDK HealthCheckConfig payload.}
-  sticky_session: {type: dict, description: SDK StickySessionConfig payload.}
-  tags: {type: dict, description: Creation-time tags.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  target_group_id:
+    description:
+      - Existing target group ID.
+    type: str
+  name:
+    description:
+      - Target group name.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID; immutable after creation.
+    type: str
+  target_type:
+    description:
+      - Backend target type; defaults to Instance on creation and is immutable thereafter.
+    type: str
+    choices: [Instance]
+  protocol:
+    description:
+      - Backend protocol; defaults to HTTP on creation and is immutable thereafter.
+    type: str
+    choices: [HTTP, HTTPS, GRPC, GRPCS]
+  scheduler_algorithm:
+    description:
+      - Load-balancing algorithm.
+    type: str
+    choices: [wrr, wlc]
+    default: wrr
+  keepalive_enabled:
+    description:
+      - Enable backend keepalive.
+    type: bool
+    default: false
+  health_check:
+    description:
+      - SDK HealthCheckConfig payload.
+    type: dict
+  sticky_session:
+    description:
+      - SDK StickySessionConfig payload.
+    type: dict
+  tags:
+    description:
+      - Creation-time tags.
+    type: dict
 
 attributes:
   check_mode:
@@ -40,6 +80,7 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter

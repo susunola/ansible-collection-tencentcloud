@@ -12,24 +12,74 @@ short_description: Manage Tencent Cloud pay-as-you-go Managed Prometheus instanc
 version_added: "0.14.0"
 description: Creates, updates and terminates a pay-as-you-go Managed Prometheus instance.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, description: Existing instance ID.}
-  name: {type: str, description: Instance name.}
-  vpc_id: {type: str, description: VPC ID used at creation.}
-  subnet_id: {type: str, description: Subnet ID used at creation.}
-  zone: {type: str, description: Availability zone used at creation.}
-  retention_days: {type: int, choices: [15, 30, 45, 90, 180, 365, 730], default: 15, description: Data retention period.}
-  grafana_instance_id: {type: str, description: Managed Grafana instance to associate at creation.}
-  tags: {type: dict, default: {}, description: Instance tags.}
-  instance_attributes: {type: dict, default: {}, description: Additional instance attributes.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Existing instance ID.
+    type: str
+  name:
+    description:
+      - Instance name.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID used at creation.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID used at creation.
+    type: str
+  zone:
+    description:
+      - Availability zone used at creation.
+    type: str
+  retention_days:
+    description:
+      - Data retention period.
+    type: int
+    choices: [15, 30, 45, 90, 180, 365, 730]
+    default: 15
+  grafana_instance_id:
+    description:
+      - Managed Grafana instance to associate at creation.
+    type: str
+  tags:
+    description:
+      - Instance tags.
+    type: dict
+    default:
+      {}
+  instance_attributes:
+    description:
+      - Additional instance attributes.
+    type: dict
+    default:
+      {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

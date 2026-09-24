@@ -12,25 +12,57 @@ short_description: Reconcile Tencent Cloud GWLB target group instances
 version_added: "0.14.0"
 description: Registers, updates and deregisters GWLB backend appliance IPs using exact-set or additive reconciliation.
 options:
-  target_group_id: {type: str, required: true, description: Target group ID.}
+  target_group_id:
+    description:
+      - Target group ID.
+    type: str
+    required: true
   instances:
     type: list
     elements: dict
     default: []
     description: Desired backend appliance endpoints.
     suboptions:
-      ip: {type: str, required: true, description: Backend bind IP.}
-      port: {type: int, default: 6081, description: Backend GENEVE port.}
-      weight: {type: int, default: 10, description: Backend weight.}
-  purge: {type: bool, default: true, description: Deregister endpoints not listed.}
+      ip:
+        description:
+          - Backend bind IP.
+        type: str
+        required: true
+      port:
+        description:
+          - Backend GENEVE port.
+        type: int
+        default: 6081
+      weight:
+        description:
+          - Backend weight.
+        type: int
+        default: 10
+  purge:
+    description:
+      - Deregister endpoints not listed.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

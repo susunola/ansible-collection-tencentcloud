@@ -14,21 +14,58 @@ description:
   - Creates and deletes CVM launch templates and selects their default version.
   - Initial template data creates version 1 and is creation-only; use C(cvm_launch_template_version) for later configuration revisions.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  template_id: {type: str, description: Existing launch-template ID.}
-  name: {type: str, description: Launch-template name.}
-  initial_data: {type: dict, description: SDK-compatible launch-template version fields used when creating the template.}
-  version_description: {type: str, default: initial version, description: Description of version 1.}
-  default_version: {type: int, description: Existing version number that should be the default.}
-  force_replace: {type: bool, default: false, description: Replace the template when its immutable name differs.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  template_id:
+    description:
+      - Existing launch-template ID.
+    type: str
+  name:
+    description:
+      - Launch-template name.
+    type: str
+  initial_data:
+    description:
+      - SDK-compatible launch-template version fields used when creating the template.
+    type: dict
+  version_description:
+    description:
+      - Description of version 1.
+    type: str
+    default: initial version
+  default_version:
+    description:
+      - Existing version number that should be the default.
+    type: int
+  force_replace:
+    description:
+      - Replace the template when its immutable name differs.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

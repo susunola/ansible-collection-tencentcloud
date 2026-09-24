@@ -12,27 +12,69 @@ short_description: Manage imported Tencent Cloud Lighthouse SSH key pairs
 version_added: "0.14.0"
 description: Imports and deletes Lighthouse public SSH keys and reconciles their exact instance associations.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  key_id: {type: str, description: Existing key pair ID; preferred for replacement and deletion.}
-  name: {type: str, description: Immutable key pair name.}
-  public_key: {type: str, description: OpenSSH public key imported when the key does not exist.}
-  instance_ids: {type: list, elements: str, default: [], description: Exact set of Lighthouse instances associated with the key.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  key_id:
+    description:
+      - Existing key pair ID; preferred for replacement and deletion.
+    type: str
+  name:
+    description:
+      - Immutable key pair name.
+    type: str
+  public_key:
+    description:
+      - OpenSSH public key imported when the key does not exist.
+    type: str
+  instance_ids:
+    description:
+      - Exact set of Lighthouse instances associated with the key.
+    type: list
+    default: []
+    elements: str
   association_type:
     type: str
     choices: [ONLINE, OFFLINE]
     default: ONLINE
     description: Whether association operations may run without shutting down instances.
-  username: {type: str, description: Operating-system username for online association and disassociation.}
-  force_replace: {type: bool, default: false, description: "Disassociate, delete and re-import when immutable name or public key differs."}
-  force_delete: {type: bool, default: false, description: Disassociate every instance before deleting the key pair.}
+  username:
+    description:
+      - Operating-system username for online association and disassociation.
+    type: str
+  force_replace:
+    description:
+      - Disassociate, delete and re-import when immutable name or public key differs.
+    type: bool
+    default: false
+  force_delete:
+    description:
+      - Disassociate every instance before deleting the key pair.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

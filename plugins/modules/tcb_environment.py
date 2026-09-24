@@ -12,27 +12,86 @@ short_description: Manage Tencent CloudBase environments
 version_added: "0.14.0"
 description: Creates, renames and destroys Tencent CloudBase environments.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  env_id: {type: str, description: Existing environment ID.}
-  alias: {type: str, description: Environment alias used for lookup and rename.}
-  package_id: {type: str, description: Creation-time CloudBase package ID.}
-  resources: {type: list, elements: str, description: "Creation-time resource types such as flexdb, storage, function or postgresql."}
-  period: {type: int, default: 1, description: Purchase period in months.}
-  auto_voucher: {type: bool, description: Automatically select vouchers.}
-  tags: {type: dict, description: Creation-time tags.}
-  renew_flag: {type: str, choices: [NOTIFY_AND_AUTO_RENEW, NOTIFY_AND_MANUAL_RENEW], description: Renewal behavior.}
-  external_storage: {type: dict, description: SDK ExternalStorage payload.}
-  enable_overrun: {type: str, choices: ['TRUE', 'FALSE'], description: Overrun billing switch.}
-  force_destroy: {type: bool, default: false, description: Force environment destruction.}
-  bypass_destroy_check: {type: bool, default: false, description: Bypass server-side destruction checks.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  env_id:
+    description:
+      - Existing environment ID.
+    type: str
+  alias:
+    description:
+      - Environment alias used for lookup and rename.
+    type: str
+  package_id:
+    description:
+      - Creation-time CloudBase package ID.
+    type: str
+  resources:
+    description:
+      - Creation-time resource types such as flexdb, storage, function or postgresql.
+    type: list
+    elements: str
+  period:
+    description:
+      - Purchase period in months.
+    type: int
+    default: 1
+  auto_voucher:
+    description:
+      - Automatically select vouchers.
+    type: bool
+  tags:
+    description:
+      - Creation-time tags.
+    type: dict
+  renew_flag:
+    description:
+      - Renewal behavior.
+    type: str
+    choices: [NOTIFY_AND_AUTO_RENEW, NOTIFY_AND_MANUAL_RENEW]
+  external_storage:
+    description:
+      - SDK ExternalStorage payload.
+    type: dict
+  enable_overrun:
+    description:
+      - Overrun billing switch.
+    type: str
+    choices: ['TRUE', 'FALSE']
+  force_destroy:
+    description:
+      - Force environment destruction.
+    type: bool
+    default: false
+  bypass_destroy_check:
+    description:
+      - Bypass server-side destruction checks.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -14,22 +14,60 @@ description:
   - Adds, updates or removes one instance key/value parameter.
   - Reports whether the service marks the change as requiring a restart; it never restarts the cluster implicitly.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Set the value or restore the parameter to its unconfigured state.}
-  instance_id: {type: str, required: true, description: CDW ClickHouse instance ID.}
-  name: {type: str, required: true, description: Configuration key.}
-  value: {type: str, description: Desired configuration value.}
-  remark: {type: str, description: Change annotation recorded by the service.}
-  wait: {type: bool, default: true, description: Wait until the configuration list reflects the change.}
-  waiter_delay: {type: int, default: 3, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 120, description: Overall convergence timeout.}
+  state:
+    description:
+      - Set the value or restore the parameter to its unconfigured state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - CDW ClickHouse instance ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Configuration key.
+    type: str
+    required: true
+  value:
+    description:
+      - Desired configuration value.
+    type: str
+  remark:
+    description:
+      - Change annotation recorded by the service.
+    type: str
+  wait:
+    description:
+      - Wait until the configuration list reflects the change.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between polls.
+    type: int
+    default: 3
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

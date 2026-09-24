@@ -13,27 +13,89 @@ short_description: Manage a Tencent Cloud TSF application
 version_added: "0.15.0"
 description: Creates, updates and deletes a TSF application with idempotent lifecycle semantics.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  application_id: {type: str, description: 'Existing application ID. When omitted, the exact name is used.'}
-  name: {type: str, required: true, description: Application name.}
-  application_type: {type: str, choices: [V, C, S], description: Application runtime target; required when creating.}
-  microservice_type: {type: str, choices: [N, M, G, NATIVE, RAW], description: Microservice type; required when creating.}
-  description: {type: str, description: Application description.}
-  remark_name: {type: str, description: Application display remark.}
-  runtime_type: {type: str, description: 'Application runtime type, immutable after creation.'}
-  program_language: {type: str, choices: [Java, C/C++, Python, Go, Other], description: 'Programming language, immutable after creation.'}
-  framework_type: {type: str, choices: [SpringCloud, Dubbo, Go-GRPC, Other], description: Development framework.}
-  apm_instance_id: {type: str, description: 'APM business system ID, immutable after creation.'}
-  ignore_create_image_repository: {type: bool, description: Do not create an image repository with the application.}
-  create_same_name_image_repository: {type: bool, description: Create and bind a same-name image repository.}
-  sync_delete_image_repository: {type: bool, default: false, description: Delete the associated image repository when removing the application.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  application_id:
+    description:
+      - Existing application ID. When omitted, the exact name is used.
+    type: str
+  name:
+    description:
+      - Application name.
+    type: str
+    required: true
+  application_type:
+    description:
+      - Application runtime target; required when creating.
+    type: str
+    choices: [V, C, S]
+  microservice_type:
+    description:
+      - Microservice type; required when creating.
+    type: str
+    choices: [N, M, G, NATIVE, RAW]
+  description:
+    description:
+      - Application description.
+    type: str
+  remark_name:
+    description:
+      - Application display remark.
+    type: str
+  runtime_type:
+    description:
+      - Application runtime type, immutable after creation.
+    type: str
+  program_language:
+    description:
+      - Programming language, immutable after creation.
+    type: str
+    choices: [Java, C/C++, Python, Go, Other]
+  framework_type:
+    description:
+      - Development framework.
+    type: str
+    choices: [SpringCloud, Dubbo, Go-GRPC, Other]
+  apm_instance_id:
+    description:
+      - APM business system ID, immutable after creation.
+    type: str
+  ignore_create_image_repository:
+    description:
+      - Do not create an image repository with the application.
+    type: bool
+  create_same_name_image_repository:
+    description:
+      - Create and bind a same-name image repository.
+    type: bool
+  sync_delete_image_repository:
+    description:
+      - Delete the associated image repository when removing the application.
+    type: bool
+    default: false
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

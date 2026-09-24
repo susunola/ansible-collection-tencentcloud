@@ -15,21 +15,54 @@ description:
   - Reconciles a TIONE service group's request-authorization switch and per-version traffic weights.
   - Weight entries must use unique stable service IDs, be non-negative and total exactly 100.
 options:
-  service_group_id: {type: str, required: true, description: Stable online service-group ID.}
-  project_id: {type: str, description: Optional TI workspace ID used to read the group.}
-  authorization_enable: {type: bool, description: Whether inference requests require authorization.}
-  weights: {type: list, elements: dict, description: WeightEntry-compatible ServiceId and Weight mappings.}
-  wait: {type: bool, default: true, description: Wait for weight convergence.}
-  waiter_delay: {type: int, default: 5, description: Seconds between state checks.}
-  waiter_timeout: {type: int, default: 600, description: Overall weight convergence timeout.}
+  service_group_id:
+    description:
+      - Stable online service-group ID.
+    type: str
+    required: true
+  project_id:
+    description:
+      - Optional TI workspace ID used to read the group.
+    type: str
+  authorization_enable:
+    description:
+      - Whether inference requests require authorization.
+    type: bool
+  weights:
+    description:
+      - WeightEntry-compatible ServiceId and Weight mappings.
+    type: list
+    elements: dict
+  wait:
+    description:
+      - Wait for weight convergence.
+    type: bool
+    default: true
+  waiter_timeout:
+    description:
+      - Overall weight convergence timeout.
+    type: int
+    default: 600
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

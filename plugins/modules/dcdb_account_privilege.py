@@ -12,22 +12,73 @@ short_description: Manage scoped Tencent Cloud DCDB account privileges
 version_added: "0.14.0"
 description: Reconciles the complete privilege set for one global, database, table or column scope.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: DCDB instance ID.}
-  username: {type: str, required: true, description: Account name.}
-  host: {type: str, default: '%', description: Account host expression.}
-  database: {type: str, default: '*', description: Database name or star for global privileges.}
-  object_type: {type: str, choices: ['*', table], default: '*', description: Object type.}
-  object_name: {type: str, default: '*', description: Table name or star.}
-  column: {type: str, default: '*', description: Column name or star.}
-  privileges: {type: list, elements: str, default: [], description: Complete desired privilege set.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - DCDB instance ID.
+    type: str
+    required: true
+  username:
+    description:
+      - Account name.
+    type: str
+    required: true
+  host:
+    description:
+      - Account host expression.
+    type: str
+    default: '%'
+  database:
+    description:
+      - Database name or star for global privileges.
+    type: str
+    default: '*'
+  object_type:
+    description:
+      - Object type.
+    type: str
+    choices: ['*', table]
+    default: '*'
+  object_name:
+    description:
+      - Table name or star.
+    type: str
+    default: '*'
+  column:
+    description:
+      - Column name or star.
+    type: str
+    default: '*'
+  privileges:
+    description:
+      - Complete desired privilege set.
+    type: list
+    default: []
+    elements: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

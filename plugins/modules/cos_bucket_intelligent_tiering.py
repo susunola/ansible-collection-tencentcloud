@@ -15,19 +15,52 @@ description:
   - Enables the default COS intelligent-tiering rule.
   - The default rule cannot be disabled after enablement; C(state=absent) fails when it already exists.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  name: {type: str, required: true, description: Bucket short name or full name.}
-  appid: {type: str, description: Tencent Cloud AppId used in the bucket suffix.}
-  transition_days: {type: int, choices: [30, 60, 90], default: 30, description: Inactive days before transition to the infrequent-access tier.}
-  request_frequent: {type: int, default: 1, description: Maximum access count during the transition window.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Bucket short name or full name.
+    type: str
+    required: true
+  appid:
+    description:
+      - Tencent Cloud AppId used in the bucket suffix.
+    type: str
+  transition_days:
+    description:
+      - Inactive days before transition to the infrequent-access tier.
+    type: int
+    choices: [30, 60, 90]
+    default: 30
+  request_frequent:
+    description:
+      - Maximum access count during the transition window.
+    type: int
+    default: 1
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -13,21 +13,64 @@ version_added: "0.14.0"
 description: Creates, updates and deletes reusable CDB parameter templates.
 options:
 
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  template_id: {type: int, description: Existing template ID.}
-  name: {type: str, description: Template name.}
-  description: {type: str, default: '', description: Template description.}
-  engine_version: {type: str, description: MySQL engine version required at creation.}
-  engine_type: {type: str, default: mysql, description: Database engine type.}
-  template_type: {type: int, default: 0, description: Template type.}
-  parameters: {type: dict, default: {}, description: Exact parameter name and value mapping.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  template_id:
+    description:
+      - Existing template ID.
+    type: int
+  name:
+    description:
+      - Template name.
+    type: str
+  description:
+    description:
+      - Template description.
+    type: str
+    default: ''
+  engine_version:
+    description:
+      - MySQL engine version required at creation.
+    type: str
+  engine_type:
+    description:
+      - Database engine type.
+    type: str
+    default: mysql
+  template_type:
+    description:
+      - Template type.
+    type: int
+    default: 0
+  parameters:
+    description:
+      - Exact parameter name and value mapping.
+    type: dict
+    default:
+      {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

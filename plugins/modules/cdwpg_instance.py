@@ -12,29 +12,89 @@ short_description: Manage Tencent Cloud CDW PostgreSQL instances
 version_added: "0.14.0"
 description: Creates, renames, waits for and destroys CDW PostgreSQL instances.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, description: Existing instance ID.}
-  name: {type: str, description: Instance name used for lookup and rename.}
-  zone: {type: str, description: Creation-time availability zone.}
-  vpc_id: {type: str, description: Creation-time VPC ID.}
-  subnet_id: {type: str, description: Creation-time subnet ID.}
-  charge_properties: {type: dict, description: SDK ChargeProperties payload.}
-  admin_password: {type: str, description: Initial administrator password.}
-  resources: {type: list, elements: dict, description: SDK ResourceSpecNew payloads for the complete CN and DN topology.}
-  tags: {type: dict, description: Creation-time tags.}
-  product_version: {type: str, description: Creation-time product version.}
-  wait: {type: bool, default: true, description: Wait for serving or absent convergence.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Existing instance ID.
+    type: str
+  name:
+    description:
+      - Instance name used for lookup and rename.
+    type: str
+  zone:
+    description:
+      - Creation-time availability zone.
+    type: str
+  vpc_id:
+    description:
+      - Creation-time VPC ID.
+    type: str
+  subnet_id:
+    description:
+      - Creation-time subnet ID.
+    type: str
+  charge_properties:
+    description:
+      - SDK ChargeProperties payload.
+    type: dict
+  admin_password:
+    description:
+      - Initial administrator password.
+    type: str
+  resources:
+    description:
+      - SDK ResourceSpecNew payloads for the complete CN and DN topology.
+    type: list
+    elements: dict
+  tags:
+    description:
+      - Creation-time tags.
+    type: dict
+  product_version:
+    description:
+      - Creation-time product version.
+    type: str
+  wait:
+    description:
+      - Wait for serving or absent convergence.
+    type: bool
+    default: true
 
-  waiter_delay: {type: int, default: 10, description: Seconds between polling attempts.}
-  waiter_timeout: {type: int, default: 1800, description: Overall polling timeout in seconds.}
+  waiter_delay:
+    description:
+      - Seconds between polling attempts.
+    type: int
+    default: 10
+  waiter_timeout:
+    description:
+      - Overall polling timeout in seconds.
+    type: int
+    default: 1800
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

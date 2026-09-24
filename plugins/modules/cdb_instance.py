@@ -131,11 +131,8 @@ options:
       - Tags to apply to the instance as a dict, for example I(env=prod).
       - Only applied at creation.
     type: dict
-    default: {}
-  waiter_delay:
-    description: Seconds to wait between state-polling attempts.
-    type: int
-    default: 5
+    default:
+      {}
   waiter_timeout:
     description:
       - Overall timeout in seconds for lifecycle state polling; it bounds
@@ -166,9 +163,21 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Most C(state) values converge and are idempotent, but C(state=restarted)
+        performs the action on every run and always reports C(changed=true).
+    support: partial
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

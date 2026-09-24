@@ -12,21 +12,74 @@ short_description: Manage a Tencent Cloud TSE gateway upstream service
 version_added: "0.14.0"
 description: Creates, updates and deletes a cloud-native API gateway service using its instance-unique name.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  service_id: {type: str, description: Existing service ID.}
-  name: {type: str, required: true, description: Service name.}
-  protocol: {type: str, description: Backend protocol.}
-  timeout: {type: int, description: Backend timeout in milliseconds.}
-  retries_count: {type: int, description: Backend retry count.}
-  upstream_type: {type: str, description: Backend service type.}
-  upstream_info: {type: dict, description: SDK KongUpstreamInfo payload.}
-  targets: {type: list, elements: dict, description: Authoritative SDK KongTarget list reconciled independently after service creation.}
-  health_check_config: {type: dict, description: Authoritative SDK UpstreamHealthCheckConfig payload.}
-  path: {type: str, description: Backend request path.}
-  delete_routes: {type: bool, default: false, description: Delete bound routes together with the service.}
-  waiter_delay: {type: int, default: 3, description: Reconciliation polling interval.}
-  waiter_timeout: {type: int, default: 180, description: Reconciliation timeout.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  service_id:
+    description:
+      - Existing service ID.
+    type: str
+  name:
+    description:
+      - Service name.
+    type: str
+    required: true
+  protocol:
+    description:
+      - Backend protocol.
+    type: str
+  timeout:
+    description:
+      - Backend timeout in milliseconds.
+    type: int
+  retries_count:
+    description:
+      - Backend retry count.
+    type: int
+  upstream_type:
+    description:
+      - Backend service type.
+    type: str
+  upstream_info:
+    description:
+      - SDK KongUpstreamInfo payload.
+    type: dict
+  targets:
+    description:
+      - Authoritative SDK KongTarget list reconciled independently after service creation.
+    type: list
+    elements: dict
+  health_check_config:
+    description:
+      - Authoritative SDK UpstreamHealthCheckConfig payload.
+    type: dict
+  path:
+    description:
+      - Backend request path.
+    type: str
+  delete_routes:
+    description:
+      - Delete bound routes together with the service.
+    type: bool
+    default: false
+  waiter_delay:
+    description:
+      - Reconciliation polling interval.
+    type: int
+    default: 3
+  waiter_timeout:
+    description:
+      - Reconciliation timeout.
+    type: int
+    default: 180
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -35,6 +88,17 @@ extends_documentation_fragment:
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

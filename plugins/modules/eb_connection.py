@@ -12,22 +12,63 @@ short_description: Manage Tencent Cloud EventBridge connections
 version_added: "0.14.0"
 description: Creates, updates and deletes EventBridge event-source connections.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  event_bus_id: {type: str, required: true, description: Event bus ID.}
-  connection_id: {type: str, description: Existing connection ID.}
-  name: {type: str, description: Connection name.}
-  connection_type: {type: str, description: Connection source type; immutable after creation.}
-  connection_description: {type: dict, description: SDK ConnectionDescription payload; immutable after creation.}
-  enabled: {type: bool, default: true, description: Enable the connection.}
-  description: {type: str, default: '', description: Human-readable connection description.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  event_bus_id:
+    description:
+      - Event bus ID.
+    type: str
+    required: true
+  connection_id:
+    description:
+      - Existing connection ID.
+    type: str
+  name:
+    description:
+      - Connection name.
+    type: str
+  connection_type:
+    description:
+      - Connection source type; immutable after creation.
+    type: str
+  connection_description:
+    description:
+      - SDK ConnectionDescription payload; immutable after creation.
+    type: dict
+  enabled:
+    description:
+      - Enable the connection.
+    type: bool
+    default: true
+  description:
+    description:
+      - Human-readable connection description.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

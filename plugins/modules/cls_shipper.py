@@ -12,33 +12,123 @@ short_description: Manage Tencent Cloud CLS delivery tasks to COS
 version_added: "0.14.0"
 description: Creates, updates and deletes a CLS shipper that continuously delivers a log topic to COS.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  shipper_id: {type: str, description: Existing shipper ID; preferred for rename and deletion.}
-  topic_id: {type: str, required: true, description: CLS topic ID.}
-  name: {type: str, required: true, description: Shipper name.}
-  bucket: {type: str, required: true, description: Destination COS bucket full name.}
-  prefix: {type: str, default: '', description: Destination object prefix.}
-  enabled: {type: bool, default: true, description: Enable continuous delivery.}
-  interval: {type: int, default: 300, description: Delivery interval in seconds.}
-  max_size: {type: int, default: 256, description: Maximum output file size in MB.}
-  partition: {type: str, default: '%Y/%m/%d/%H', description: COS path partition pattern.}
-  compress: {type: dict, default: {Format: gzip}, description: SDK-compatible CompressInfo configuration.}
-  content: {type: dict, default: {Format: json}, description: SDK-compatible ContentInfo configuration.}
-  filter_rules: {type: list, elements: dict, default: [], description: SDK-compatible FilterRuleInfo list.}
-  filename_mode: {type: int, choices: [0, 1], default: 0, description: Random or delivery-time file naming.}
-  storage_type: {type: str, default: STANDARD, description: COS storage class.}
-  role_arn: {type: str, description: CAM role ARN used to write COS.}
-  external_id: {type: str, description: External ID paired with the CAM role.}
-  time_zone: {type: str, default: UTC+08:00, description: Time zone used by path time variables.}
-  dsl_filter: {type: str, default: '', description: Optional CLS DSL pre-filter expression.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  shipper_id:
+    description:
+      - Existing shipper ID; preferred for rename and deletion.
+    type: str
+  topic_id:
+    description:
+      - CLS topic ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Shipper name.
+    type: str
+    required: true
+  bucket:
+    description:
+      - Destination COS bucket full name.
+    type: str
+    required: true
+  prefix:
+    description:
+      - Destination object prefix.
+    type: str
+    default: ''
+  enabled:
+    description:
+      - Enable continuous delivery.
+    type: bool
+    default: true
+  interval:
+    description:
+      - Delivery interval in seconds.
+    type: int
+    default: 300
+  max_size:
+    description:
+      - Maximum output file size in MB.
+    type: int
+    default: 256
+  partition:
+    description:
+      - COS path partition pattern.
+    type: str
+    default: '%Y/%m/%d/%H'
+  compress:
+    description:
+      - SDK-compatible CompressInfo configuration.
+    type: dict
+    default:
+      Format: gzip
+  content:
+    description:
+      - SDK-compatible ContentInfo configuration.
+    type: dict
+    default:
+      Format: json
+  filter_rules:
+    description:
+      - SDK-compatible FilterRuleInfo list.
+    type: list
+    default: []
+    elements: dict
+  filename_mode:
+    description:
+      - Random or delivery-time file naming.
+    type: int
+    choices: [0, 1]
+    default: 0
+  storage_type:
+    description:
+      - COS storage class.
+    type: str
+    default: STANDARD
+  role_arn:
+    description:
+      - CAM role ARN used to write COS.
+    type: str
+  external_id:
+    description:
+      - External ID paired with the CAM role.
+    type: str
+  time_zone:
+    description:
+      - Time zone used by path time variables.
+    type: str
+    default: UTC+08:00
+  dsl_filter:
+    description:
+      - Optional CLS DSL pre-filter expression.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

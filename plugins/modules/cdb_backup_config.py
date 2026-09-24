@@ -12,20 +12,55 @@ short_description: Manage TencentDB for MySQL backup configuration
 version_added: "0.14.0"
 description: Reconciles automatic backup retention, method and time window for a MySQL instance.
 options:
-  instance_id: {type: str, required: true, description: TencentDB for MySQL instance ID.}
-  expire_days: {type: int, required: true, description: Data backup retention days.}
-  start_time: {type: str, required: true, description: Backup start time.}
-  backup_method: {type: str, choices: [physical, logical], default: physical, description: Backup method.}
-  binlog_expire_days: {type: int, description: Binlog retention days.}
-  backup_time_window: {type: str, description: Backup time window.}
+  instance_id:
+    description:
+      - TencentDB for MySQL instance ID.
+    type: str
+    required: true
+  expire_days:
+    description:
+      - Data backup retention days.
+    type: int
+    required: true
+  start_time:
+    description:
+      - Backup start time.
+    type: str
+    required: true
+  backup_method:
+    description:
+      - Backup method.
+    type: str
+    choices: [physical, logical]
+    default: physical
+  binlog_expire_days:
+    description:
+      - Binlog retention days.
+    type: int
+  backup_time_window:
+    description:
+      - Backup time window.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
