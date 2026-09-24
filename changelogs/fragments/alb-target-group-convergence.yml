@@ -1,0 +1,2 @@
+bugfixes:
+  - alb_target_group - wait for observable create, update, and delete convergence, and fail explicitly if the target group does not reach the requested state before timeout.

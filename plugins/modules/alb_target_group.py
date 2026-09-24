@@ -34,7 +34,7 @@ attributes:
   idempotent:
     description: Compares observable target-group settings before writing.
     support: partial
-    details: Asynchronous API changes are not polled to convergence after a write.
+    details: Waits for observable target-group settings to converge after writes.
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -54,6 +54,7 @@ EXAMPLES = r"""
 """
 RETURN = r"""target_group: {description: Effective ALB target group metadata., type: dict, returned: always}"""
 import json
+import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import require_immutable_unchanged, fail_from_sdk_error
@@ -172,6 +173,18 @@ def desired(p, current=None):
     }
 
 
+def wait_for_group(module, client, models, p, expected):
+    deadline = time.monotonic() + max(0, p["waiter_timeout"])
+    while True:
+        observed = find(module, client, models, p)
+        if (observed is None if expected is None else observed is not None and comparable(observed) == expected):
+            return observed
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            module.fail_json(msg="ALB target group did not converge before timeout", target_group=observed, expected=expected)
+        time.sleep(min(max(0, p["waiter_delay"]), remaining))
+
+
 def run_module():
     spec = {
         "state": {"choices": ["present", "absent"], "default": "present"},
@@ -199,6 +212,8 @@ def run_module():
             diff = maybe_diff(module, current, None)
             if not module.check_mode:
                 module.sdk_call(client.DeleteTargetGroups, delete_request(models, current["TargetGroupId"]))
+                p["target_group_id"] = current["TargetGroupId"]
+                wait_for_group(module, client, models, p, None)
             module.exit_json(changed=True, **(diff or {}), target_group=None)
         if not current:
             missing = [k for k in ("name", "vpc_id") if not p.get(k)]
@@ -226,7 +241,7 @@ def run_module():
                 update_request(models, effective, current["TargetGroupId"]) if current else create_request(models, effective),
             )
             p["target_group_id"] = current["TargetGroupId"] if current else response.TargetGroupId
-            current = find(module, client, models, p)
+            current = wait_for_group(module, client, models, p, target)
         module.exit_json(changed=True, **(diff or {}), target_group=current if not module.check_mode else target)
     except Exception as exc:
         fail_from_sdk_error(module, exc)

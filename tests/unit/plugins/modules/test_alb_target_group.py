@@ -408,6 +408,38 @@ def test_present_creates_target_group(monkeypatch):
     assert create.VpcId == "vpc-1"
 
 
+def test_present_waits_for_delayed_target_group_read(monkeypatch):
+    fake = FakeAlbClient()
+    _make_module(monkeypatch, fake)
+    original = fake.DescribeTargetGroups
+    reads = [0]
+
+    def delayed(request):
+        reads[0] += 1
+        if reads[0] == 2:
+            fake._record("DescribeTargetGroups", request)
+            return SimpleNamespace(TargetGroups=[], NextToken=None)
+        return original(request)
+
+    fake.DescribeTargetGroups = delayed
+    monkeypatch.setattr(mod.time, "sleep", lambda unused: None)
+    _run_args(waiter_delay=0)
+    result = run(mod.run_module)
+    assert result["target_group"]["TargetGroupId"] == "lbtg-20001"
+    assert reads[0] == 3
+
+
+def test_present_fails_when_target_group_write_not_observable(monkeypatch):
+    fake = FakeAlbClient([_group()])
+    _make_module(monkeypatch, fake)
+    fake.ModifyTargetGroupAttributes = lambda request: SimpleNamespace()
+    _run_args(scheduler_algorithm="wlc", waiter_timeout=0)
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "did not converge" in exc.value.args[0]["msg"]
+    assert exc.value.args[0]["target_group"]["SchedulerAlgorithm"] == "wrr"
+
+
 def test_present_requires_name_and_vpc_for_new(monkeypatch):
     fake = FakeAlbClient()
     _make_module(monkeypatch, fake)
@@ -534,6 +566,17 @@ def test_absent_removes_target_group(monkeypatch):
     delete = [c for c in fake.calls if c[0] == "DeleteTargetGroups"][0][1]
     assert delete.TargetGroupIds == ["lbtg-1"]
     assert fake.groups == []
+
+
+def test_absent_fails_when_delete_not_observable(monkeypatch):
+    fake = FakeAlbClient([_group()])
+    _make_module(monkeypatch, fake)
+    fake.DeleteTargetGroups = lambda request: SimpleNamespace()
+    _run_args(state="absent", waiter_timeout=0)
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "did not converge" in exc.value.args[0]["msg"]
+    assert exc.value.args[0]["target_group"]["TargetGroupId"] == "lbtg-1"
 
 
 def test_absent_not_found_is_noop(monkeypatch):
