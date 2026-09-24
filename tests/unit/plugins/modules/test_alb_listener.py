@@ -302,6 +302,11 @@ def test_list_request_without_listener_id():
     assert getattr(request, "ListenerIds", None) is None
 
 
+def test_list_request_with_next_token():
+    request = mod.list_request(FakeAlbModels(), _params(port=443, protocol="HTTPS"), "page-2")
+    assert request.NextToken == "page-2"
+
+
 def test_describe_request_fields():
     request = mod.describe_request(FakeAlbModels(), _params(), "lbl-abc")
     assert request.LoadBalancerId == "alb-8b0a1c2d"
@@ -397,6 +402,43 @@ def test_find_matches_by_port_and_protocol(monkeypatch):
     module = FakeModule(_params(port=443, protocol="HTTPS"))
     value = mod.find(module, fake, FakeAlbModels(), module.params)
     assert value["ListenerId"] == "lbl-8b0a1c2d"
+
+
+def test_find_reads_later_pages_before_deciding_absence(monkeypatch):
+    fake = FakeAlbClient([_listener()])
+    _make_module(monkeypatch, fake)
+
+    def paged(request):
+        fake._record("DescribeListeners", request)
+        if not getattr(request, "NextToken", None):
+            return SimpleNamespace(Listeners=[FakeResource(_listener(ListenerId="lbl-other", ListenerPort=80))], NextToken="page-2")
+        return SimpleNamespace(Listeners=[FakeResource(_listener())], NextToken=None)
+
+    fake.DescribeListeners = paged
+    module = FakeModule(_params(port=443, protocol="HTTPS"))
+    value = mod.find(module, fake, FakeAlbModels(), module.params)
+    assert value["ListenerId"] == "lbl-8b0a1c2d"
+    assert [getattr(request, "NextToken", None) for name, request in fake.calls if name == "DescribeListeners"] == [None, "page-2"]
+
+
+def test_find_repeated_page_token_fails_closed(monkeypatch):
+    fake = FakeAlbClient()
+    _make_module(monkeypatch, fake)
+    fake.DescribeListeners = lambda request: SimpleNamespace(Listeners=[], NextToken="same-page")
+    module = FakeModule(_params(port=443, protocol="HTTPS"))
+    with pytest.raises(AnsibleFailJson) as exc:
+        mod.find(module, fake, FakeAlbModels(), module.params)
+    assert "repeated token" in exc.value.args[0]["msg"]
+
+
+def test_find_missing_list_fails_closed(monkeypatch):
+    fake = FakeAlbClient()
+    _make_module(monkeypatch, fake)
+    fake.DescribeListeners = lambda request: SimpleNamespace(Listeners=None, NextToken=None)
+    module = FakeModule(_params(port=443, protocol="HTTPS"))
+    with pytest.raises(AnsibleFailJson) as exc:
+        mod.find(module, fake, FakeAlbModels(), module.params)
+    assert "not observable" in exc.value.args[0]["msg"]
 
 
 def test_find_multiple_matches_fails(monkeypatch):

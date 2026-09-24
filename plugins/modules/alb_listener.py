@@ -97,7 +97,7 @@ attributes:
   idempotent:
     description: Compares observable listener settings before sending write requests.
     support: partial
-    details: Listener discovery is limited to the first API page; an existing listener outside that page might not be found.
+    details: Asynchronous API changes are not polled to convergence after a write.
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -162,11 +162,13 @@ def _tags(models, values):
     return result
 
 
-def list_request(models, p):
+def list_request(models, p, next_token=None):
     r = models.DescribeListenersRequest()
     r.LoadBalancerId, r.MaxResults = p["load_balancer_id"], 100
     if p.get("listener_id"):
         r.ListenerIds = [p["listener_id"]]
+    if next_token:
+        r.NextToken = next_token
     return r
 
 
@@ -205,14 +207,25 @@ def delete_request(models, p, listener_id):
 
 
 def find(module, client, models, p):
-    response = module.sdk_call(client.DescribeListeners, list_request(models, p))
     matches = []
-    for item in response.Listeners or []:
-        value = item._serialize(allow_none=True)
-        if (p.get("listener_id") and value.get("ListenerId") == p["listener_id"]) or (
-            not p.get("listener_id") and value.get("ListenerPort") == p.get("port") and value.get("ListenerProtocol") == p.get("protocol")
-        ):
-            matches.append(value)
+    next_token = None
+    seen_tokens = set()
+    while True:
+        response = module.sdk_call(client.DescribeListeners, list_request(models, p, next_token))
+        if getattr(response, "Listeners", None) is None:
+            module.fail_json(msg="ALB listener list is not observable")
+        for item in response.Listeners:
+            value = item._serialize(allow_none=True)
+            if (p.get("listener_id") and value.get("ListenerId") == p["listener_id"]) or (
+                not p.get("listener_id") and value.get("ListenerPort") == p.get("port") and value.get("ListenerProtocol") == p.get("protocol")
+            ):
+                matches.append(value)
+        next_token = getattr(response, "NextToken", None)
+        if not next_token:
+            break
+        if next_token in seen_tokens:
+            module.fail_json(msg="ALB listener pagination returned a repeated token")
+        seen_tokens.add(next_token)
     if len(matches) > 1:
         module.fail_json(msg="Multiple ALB listeners matched; specify listener_id")
     if not matches:
