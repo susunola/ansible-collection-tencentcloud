@@ -1,0 +1,4 @@
+minor_changes:
+  - tc_tke_platform role - optionally reconcile explicitly owned TCR private
+    VPC links before provisioning node pools and disconnect them after node
+    pools on teardown, without taking ownership of the TCR instance.

@@ -18,6 +18,7 @@
       - not tc_tke_platform_authentication_enabled or tc_tke_platform_service_accounts | length > 0
       - not tc_tke_platform_authentication_enabled or tc_tke_platform_oidc | length > 0
       - tc_tke_platform_state == 'present' or (tc_tke_platform_node_pools | length == 0 and tc_tke_platform_endpoints | length == 0 and tc_tke_platform_addons | length == 0) or tc_tke_platform_cluster_id | length > 0
+      - tc_tke_platform_state == 'present' or tc_tke_platform_tcr_internal_endpoints | length == 0 or tc_tke_platform_cluster_id | length > 0
     fail_msg: >-
       A cluster ID or name is required; creation also requires vpc_id.
       Authentication requires both service_accounts and oidc payloads.
@@ -61,6 +62,19 @@
     cluster_id: "{{ _tc_tke_platform_cluster_id }}"
     service_accounts: "{{ tc_tke_platform_service_accounts }}"
     oidc: "{{ tc_tke_platform_oidc }}"
+
+- name: Connect private TCR registries before provisioning node pools
+  when: tc_tke_platform_state == 'present'
+  susunola.tencentcloud.tcr_internal_endpoint:
+    region: "{{ tc_tke_platform_region | default(omit, true) }}"
+    state: present
+    registry_id: "{{ item.registry_id }}"
+    vpc_id: "{{ item.vpc_id }}"
+    subnet_id: "{{ item.subnet_id }}"
+  loop: "{{ tc_tke_platform_tcr_internal_endpoints }}"
+  loop_control:
+    label: "{{ item.registry_id }}/{{ item.vpc_id }}/{{ item.subnet_id }}"
+  register: _tc_tke_platform_tcr_internal_endpoints
 
 - name: Provision TKE node pools
   when:
@@ -246,6 +260,18 @@
     keep_instance: "{{ item.keep_instance | default(false) }}"
   loop: "{{ tc_tke_platform_node_pools }}"
 
+- name: Disconnect platform-owned private TCR registries after node pools
+  when: tc_tke_platform_state == 'absent'
+  susunola.tencentcloud.tcr_internal_endpoint:
+    region: "{{ tc_tke_platform_region | default(omit, true) }}"
+    state: absent
+    registry_id: "{{ item.registry_id }}"
+    vpc_id: "{{ item.vpc_id }}"
+    subnet_id: "{{ item.subnet_id }}"
+  loop: "{{ tc_tke_platform_tcr_internal_endpoints }}"
+  loop_control:
+    label: "{{ item.registry_id }}/{{ item.vpc_id }}/{{ item.subnet_id }}"
+
 - name: Remove TKE cluster
   when: tc_tke_platform_state == 'absent'
   susunola.tencentcloud.tke_cluster:
@@ -263,6 +289,7 @@
       cluster_id: "{{ _tc_tke_platform_cluster_id }}"
       cluster: "{{ _tc_tke_platform_cluster.cluster }}"
       node_pools: "{{ _tc_tke_platform_node_pools.results | default([]) }}"
+      tcr_internal_endpoints: "{{ _tc_tke_platform_tcr_internal_endpoints.results | default([]) }}"
       autoscaler: "{{ _tc_tke_platform_autoscaler | default({}) }}"
       endpoints: "{{ _tc_tke_platform_endpoints.results | default([]) }}"
       addons: "{{ _tc_tke_platform_addons.results | default([]) }}"

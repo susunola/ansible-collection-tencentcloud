@@ -3,7 +3,9 @@
 Provision a TKE cluster together with node pools, API endpoints, addons,
 authentication, audit delivery, optional CLS log collection, and cluster
 autoscaler settings. An existing Managed Prometheus instance may be bound to
-the cluster without taking ownership of that instance.
+the cluster without taking ownership of that instance. The role can also
+reconcile explicitly owned TCR private VPC access links before creating node
+pools, so private registry access is in place before nodes are provisioned.
 
 ```yaml
 - hosts: localhost
@@ -35,6 +37,8 @@ the cluster without taking ownership of that instance.
           expander: least-waste
           scale_down_unneeded_time: 15
         tc_tke_platform_prometheus_instance_id: prom-xxxxxxxx
+        tc_tke_platform_tcr_internal_endpoints:
+          - {registry_id: tcr-xxxxxxxx, vpc_id: vpc-xxxxxxxx, subnet_id: subnet-xxxxxxxx}
         tc_tke_platform_cls_log_configs:
           - name: container-stdout
             logset_id: xxxxxx-xx-xx-xx-xxxxxxxx
@@ -56,3 +60,9 @@ in place: if a configuration changes, remove the named configuration and
 recreate it deliberately. The referenced CLS logset must already exist.
 On teardown, the Prometheus cluster binding is removed before deleting the
 cluster; the Prometheus instance itself is never deleted by this role.
+The TCR instance is likewise never deleted. Only links explicitly listed in
+`tc_tke_platform_tcr_internal_endpoints` are disconnected, after node-pool
+removal. Do not list a link shared with another cluster; manage shared links
+through `tc_container_registry` instead. A listed link appearing in the TCR
+API does not guarantee private DNS or image-pull readiness; configure DNS
+separately if needed. An existing TCR instance is required.

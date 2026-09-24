@@ -18,6 +18,9 @@ tc_tke_platform_tags: {}
 
 # Node-pool items follow tke_node_pool options.
 tc_tke_platform_node_pools: []
+# Private TCR links explicitly owned by this platform deployment.
+# Items: {registry_id, vpc_id, subnet_id}. Manage shared links elsewhere.
+tc_tke_platform_tcr_internal_endpoints: []
 # Optional subset of tke_cluster_autoscaler options, applied after node pools.
 tc_tke_platform_autoscaler: {}
 # Endpoint items: {access, subnet_id?, domain?, security_group_id?, load_balancer_id?}

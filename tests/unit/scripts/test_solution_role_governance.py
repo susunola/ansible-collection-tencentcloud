@@ -31,8 +31,16 @@ def test_serverless_teardown_removes_public_entrypoint_before_function():
 
 def test_tke_teardown_removes_children_before_cluster():
     text = role_tasks("tc_tke_platform")
-    assert_order(text, "Remove TKE addons", "Remove TKE endpoints", "Remove TKE node pools", "Remove TKE cluster")
+    assert_order(text, "Remove TKE addons", "Remove TKE endpoints", "Remove TKE node pools",
+                 "Disconnect platform-owned private TCR registries after node pools", "Remove TKE cluster")
     assert "tc_tke_platform_cluster_id | length > 0" in text
+
+
+def test_tke_private_registry_connects_before_nodes():
+    text = role_tasks("tc_tke_platform")
+    assert_order(text, "Provision TKE cluster", "Connect private TCR registries before provisioning node pools",
+                 "Provision TKE node pools")
+    assert text.count("susunola.tencentcloud.tcr_internal_endpoint:") == 2
 
 
 def test_vpc_teardown_removes_children_before_vpc():
