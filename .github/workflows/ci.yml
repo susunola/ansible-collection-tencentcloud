@@ -118,6 +118,10 @@ jobs:
       # single-line flow mappings.  Nothing upstream can see that -- a flow
       # mapping is legal YAML, validate-modules accepts it, and
       # sync_doc_fragments accepts it by design.
+      # Reviewer MUST FIX: every module must document check mode support and
+      # idempotency through an attributes block.
+      - name: Modules document check_mode and idempotency
+        run: python scripts/add_module_attributes.py --check
       - name: Module docs are block style
         run: python scripts/normalize_module_docs.py --check
       - name: Sanity tests

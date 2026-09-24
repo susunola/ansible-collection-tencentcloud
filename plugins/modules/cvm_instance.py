@@ -235,6 +235,17 @@ extends_documentation_fragment:
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - 'Can run in C(check_mode): the module reads the current state and
+        predicts the result without issuing a write API call.'
+    support: full
+  idempotency:
+    description:
+      - Most C(state) values converge and are idempotent, but C(state=rebooted)
+        performs the action on every run and always reports C(changed=true).
+    support: partial
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

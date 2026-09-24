@@ -37,6 +37,18 @@ extends_documentation_fragment:
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - 'Can run in C(check_mode): the module reads the current state and
+        predicts the result without issuing a write API call.'
+    support: full
+  idempotency:
+    description:
+      - The module does not read the resource back to compare it with the
+        requested state, so a repeated run may issue the write again instead
+        of reporting C(changed=false).
+    support: partial
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""- susunola.tencentcloud.dts_migration_check: {job_id: dts-abcd1234}"""
