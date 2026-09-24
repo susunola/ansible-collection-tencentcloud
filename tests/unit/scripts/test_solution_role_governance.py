@@ -121,6 +121,8 @@ def test_alb_teardown_removes_listeners_and_backends_before_parents():
     group = (ROOT / "roles" / "tc_alb_application_entry" / "tasks" / "target_group.yml").read_text(encoding="utf-8")
     assert_order(group, "Remove ALB listeners before target group", "Remove ALB target group backends", "Remove ALB target group")
     assert "deletion_protection: false" in main
+    assert "'TargetGroupConfig': {'TargetGroups':" in group
+    assert "ForwardGroupConfig" not in group
 
 
 def test_mqtt_teardown_removes_policies_and_children_before_instance():

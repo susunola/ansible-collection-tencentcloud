@@ -41,7 +41,7 @@
     name: "{{ item.name }}"
     port: "{{ item.port }}"
     protocol: "{{ item.protocol }}"
-    default_actions: "{{ item.default_actions | default([{'Type': 'ForwardGroup', 'ForwardGroupConfig': {'TargetGroups': [{'TargetGroupId': _tc_alb_target_group_id, 'Weight': 100}]}}]) }}"
+    default_actions: "{{ item.default_actions | default([{'Type': 'ForwardGroup', 'TargetGroupConfig': {'TargetGroups': [{'TargetGroupId': _tc_alb_target_group_id, 'Weight': 100}]}}]) }}"
     certificate_ids: "{{ item.certificate_ids | default(omit) }}"
     ca_enabled: "{{ item.ca_enabled | default(false) }}"
     ca_certificate_ids: "{{ item.ca_certificate_ids | default(omit) }}"

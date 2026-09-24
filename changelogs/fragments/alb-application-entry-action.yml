@@ -1,0 +1,2 @@
+bugfixes:
+  - tc_alb_application_entry - use the ALB SDK's TargetGroupConfig field for the generated listener forwarding action.
