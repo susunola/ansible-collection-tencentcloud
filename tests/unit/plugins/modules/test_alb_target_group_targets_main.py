@@ -211,6 +211,65 @@ def test_add_targets_when_missing(monkeypatch):
     assert "AddTargetsToTargetGroup" in ops
 
 
+def test_add_waits_for_delayed_observation(monkeypatch):
+    fake = FakeAlbClient()
+    _make_module(monkeypatch, fake)
+    original = fake.DescribeTargetGroupTargets
+    reads = [0]
+
+    def delayed(request):
+        reads[0] += 1
+        if reads[0] == 2:
+            fake._record("DescribeTargetGroupTargets", request)
+            return SimpleNamespace(Targets=[])
+        return original(request)
+
+    fake.DescribeTargetGroupTargets = delayed
+    monkeypatch.setattr(mod.time, "sleep", lambda unused: None)
+    _tg_args(targets=[TARGETS[0]], waiter_delay=0)
+    result = run(mod.run_module)
+    assert result["targets"] == [TARGETS[0]]
+    assert reads[0] == 3
+
+
+def test_add_fails_when_write_never_becomes_observable(monkeypatch):
+    fake = FakeAlbClient()
+    _make_module(monkeypatch, fake)
+    fake.AddTargetsToTargetGroup = lambda request: SimpleNamespace()
+    _tg_args(targets=[TARGETS[0]], waiter_timeout=0)
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "did not converge" in exc.value.args[0]["msg"]
+    assert exc.value.args[0]["targets"] == []
+
+
+def test_additive_wait_allows_unmanaged_concurrent_target(monkeypatch):
+    fake = FakeAlbClient()
+    _make_module(monkeypatch, fake)
+    original = fake.AddTargetsToTargetGroup
+
+    def add_with_concurrent_target(request):
+        result = original(request)
+        fake.targets.append(_target("10.0.1.99", 443, 10))
+        return result
+
+    fake.AddTargetsToTargetGroup = add_with_concurrent_target
+    _tg_args(targets=[TARGETS[0]], purge=False, waiter_timeout=0)
+    result = run(mod.run_module)
+    assert result["changed"] is True
+    assert result["targets"] == [TARGETS[0], _target("10.0.1.99", 443, 10)]
+
+
+def test_duplicate_desired_targets_fail_before_write(monkeypatch):
+    fake = FakeAlbClient()
+    _make_module(monkeypatch, fake)
+    _tg_args(targets=[TARGETS[0], TARGETS[0]])
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "duplicate IP and port" in exc.value.args[0]["msg"]
+    assert [name for name, unused in fake.calls] == ["DescribeTargetGroupTargets"]
+
+
 def test_add_targets_check_mode_is_dry_run(monkeypatch):
     fake = FakeAlbClient(targets=[])
     _make_module(monkeypatch, fake)

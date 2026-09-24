@@ -35,7 +35,7 @@ attributes:
   idempotent:
     description: Compares the complete observed backend set before writing.
     support: partial
-    details: Asynchronous API changes are not polled to convergence after a write.
+    details: Polls observable IP, port, and weight until the managed targets converge.
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -54,6 +54,8 @@ EXAMPLES = r"""
       - {ip: 10.0.1.11, port: 8080, weight: 50}
 """
 RETURN = r"""targets: {description: Effective ALB backend targets., type: list, elements: dict, returned: always}"""
+import time
+
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
@@ -124,6 +126,30 @@ def normalized(values):
     return sorted([{"ip": x["ip"], "port": x["port"], "weight": x.get("weight", 10)} for x in values], key=lambda x: (x["ip"], x["port"]))
 
 
+def _target_map(module, values, source):
+    result = {}
+    for value in values:
+        key = (value["ip"], value["port"])
+        if key in result:
+            module.fail_json(msg="ALB target group %s contains duplicate IP and port" % source, target_ip=key[0], port=key[1])
+        result[key] = value
+    return result
+
+
+def _wait_for_targets(module, client, models, p, wanted):
+    deadline = time.monotonic() + max(0, p["waiter_timeout"])
+    desired = _target_map(module, wanted, "desired targets")
+    while True:
+        observed = find(module, client, models, p)
+        actual = _target_map(module, observed, "observed targets")
+        if (actual == desired if p["purge"] else all(actual.get(key) == value for key, value in desired.items())):
+            return observed
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            module.fail_json(msg="ALB target group targets did not converge before timeout", targets=observed, expected=wanted)
+        time.sleep(min(max(0, p["waiter_delay"]), remaining))
+
+
 def run_module():
     spec = {
         "target_group_id": {"required": True},
@@ -142,8 +168,8 @@ def run_module():
     client = module.create_client(cm.AlbClient, "alb.tencentcloudapi.com")
     try:
         current, wanted = find(module, client, models, p), normalized(p["targets"])
-        old = {(x["ip"], x["port"]): x for x in current}
-        new = {(x["ip"], x["port"]): x for x in wanted}
+        old = _target_map(module, current, "observed targets")
+        new = _target_map(module, wanted, "desired targets")
         additions = [x for k, x in new.items() if k not in old]
         updates = [x for k, x in new.items() if k in old and old[k]["weight"] != x["weight"]]
         removals = [x for k, x in old.items() if p["purge"] and k not in new]
@@ -160,7 +186,7 @@ def run_module():
                 module.sdk_call(client.ModifyTargetsInTargetGroup, update_request(models, p, updates))
             if removals:
                 module.sdk_call(client.RemoveTargetsFromTargetGroup, remove_request(models, p, removals))
-            effective = find(module, client, models, p)
+            effective = _wait_for_targets(module, client, models, p, effective if p["purge"] else wanted)
         module.exit_json(changed=True, **(diff or {}), targets=effective)
     except Exception as exc:
         fail_from_sdk_error(module, exc)

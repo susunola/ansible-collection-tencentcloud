@@ -1,0 +1,2 @@
+bugfixes:
+  - alb_target_group_targets - wait for observable backend convergence after writes, fail on timeout, and reject duplicate target identities instead of reporting a false success.
