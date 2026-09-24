@@ -4581,6 +4581,37 @@ SPECS = [
     },
     # --- Batch: TCR family sub-resources (v20190924) ----------------------
     {
+        "module": "tcr_internal_endpoint_info",
+        "version_added": "1.5.0",
+        "service_package": "tencentcloud.tcr.v20190924",
+        "client_module": "tcr_client",
+        "client_class": "TcrClient",
+        "sdk_package": "tencentcloud-sdk-python-tcr",
+        "endpoint": "tcr.tencentcloudapi.com",
+        "action": "DescribeInternalEndpoints",
+        "request_class": "DescribeInternalEndpointsRequest",
+        "ids": None,
+        "filters": None,
+        "extra_params": [{
+            "name": "registry_id", "field": "RegistryId", "type": "str",
+            "required": True, "doc": "ID of the parent TCR enterprise instance.",
+        }],
+        "response_items": "AccessVpcSet",
+        "response_total": "TotalCount",
+        "result_key": "internal_endpoints",
+        "pagination_type": "list",
+        "short_description": "Gather TCR internal endpoint information",
+        "description": "Returns all private VPC connections for one TCR enterprise instance.",
+        "return_items_doc": "Private VPC connections reported by TCR.",
+        "return_total_doc": "Number of connections reported by the API.",
+        "examples": """\
+- name: List private connections for a registry
+  susunola.tencentcloud.tcr_internal_endpoint_info:
+    region: ap-guangzhou
+    registry_id: tcr-xxxxxxxx
+""",
+    },
+    {
         "module": "tcr_namespace_info",
         "version_added": LEGACY_VERSION_ADDED,
         "service_package": "tencentcloud.tcr.v20190924",

@@ -352,6 +352,7 @@ UNEXERCISED_BUILDERS = {
     ("redis_replication_group", "run_module"): "inline lifecycle requests are covered by unit tests",
     ("scf_custom_domain", "run_module"): "inline lifecycle requests are covered by unit tests",
     ("tcr_immutable_tag_rule", "run_module"): "inline lifecycle requests are covered by unit tests",
+    ("tcr_internal_endpoint", "run_module"): "inline lifecycle requests are covered by unit tests",
     ("tcr_webhook_trigger", "run_module"): "inline lifecycle requests are covered by unit tests",
     ("tke_cls_log_config", "run_module"): "inline lifecycle requests are covered by unit tests",
     ("tke_cluster_deletion_protection", "run_module"): "inline lifecycle requests are covered by unit tests",
@@ -1273,6 +1274,7 @@ WRITE_MODULE_BUILDERS = {
     "redis_replication_group": ["find_group"],
     "scf_custom_domain": ["find_domain"],
     "tcr_immutable_tag_rule": ["find_rule"],
+    "tcr_internal_endpoint": ["describe_links"],
     "tcr_webhook_trigger": ["find_trigger"],
     "tke_cls_log_config": ["describe_state"],
     "tke_cluster_deletion_protection": ["describe_state"],
@@ -11774,6 +11776,7 @@ def test_tcr_immutable_tag_rule():
     fake = _RecordingModule()
     client = SimpleNamespace(DescribeImmutableTagRules=lambda request: SimpleNamespace(
         Rules=[SimpleNamespace(NsName="team", RepositoryPattern="**", TagPattern="v*")],
+        Total=1,
     ))
     errors = []
     assert module.find_rule(fake, client, models, "tcr-xxxxxxxx", "team", "**", "v*") is not None
@@ -11788,6 +11791,7 @@ def test_tcr_webhook_trigger():
     fake = _RecordingModule()
     client = SimpleNamespace(DescribeWebhookTrigger=lambda request: SimpleNamespace(
         Triggers=[SimpleNamespace(Name="ci-push", NamespaceName="team")],
+        TotalCount=1,
     ))
     errors = []
     assert module.find_trigger(fake, client, models, "tcr-xxxxxxxx", "team", "ci-push") is not None
@@ -11800,13 +11804,26 @@ def test_tke_cls_log_config():
     module = _import_plugin("tke_cls_log_config")
     models = _models("tke.v20180525")
     fake = _RecordingModule()
-    log_configs = '[{"name": "app-logs"}]'
-    client = SimpleNamespace(DescribeLogConfigs=lambda request: SimpleNamespace(LogConfigs=log_configs))
+    log_configs = '{"ItemCount": 1, "Items": [{"metadata": {"name": "app-logs"}}]}'
+    client = SimpleNamespace(DescribeLogConfigs=lambda request: SimpleNamespace(LogConfigs=log_configs, Message=""))
     errors = []
-    assert module.describe_state(fake, client, models, "cls-xxxxxxxx", "tke", "app-logs") == {"name": "app-logs"}
+    assert module.describe_state(fake, client, models, "cls-xxxxxxxx", "tke", "app-logs") == {"metadata": {"name": "app-logs"}}
     assert module.describe_state(fake, client, models, "cls-xxxxxxxx", "tke", "absent") is None
     errors.extend(audit_recorded(fake, "tke_cls_log_config"))
     assert errors == []
+
+
+def test_tcr_internal_endpoint():
+    module = _import_plugin("tcr_internal_endpoint")
+    models = _models("tcr.v20190924")
+    fake = _RecordingModule()
+    endpoint = SimpleNamespace(_serialize=lambda allow_none=True: {"VpcId": "vpc-xxxxxxxx", "SubnetId": "subnet-xxxxxxxx"})
+    client = SimpleNamespace(DescribeInternalEndpoints=lambda request: SimpleNamespace(
+        AccessVpcSet=[endpoint], TotalCount=1,
+    ))
+    assert module.describe_links(fake, client, models, "tcr-xxxxxxxx") == [
+        {"VpcId": "vpc-xxxxxxxx", "SubnetId": "subnet-xxxxxxxx"}]
+    assert audit_recorded(fake, "tcr_internal_endpoint") == []
 
 
 def test_tke_cluster_deletion_protection():

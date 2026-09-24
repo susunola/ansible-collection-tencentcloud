@@ -1,0 +1,5 @@
+minor_changes:
+  - TCR - add read and idempotent lifecycle modules for private VPC endpoint
+    connections, with conflict detection when the same VPC uses another subnet.
+  - tc_container_registry role - optionally reconcile private VPC connections
+    after instance creation and remove them before instance deletion.

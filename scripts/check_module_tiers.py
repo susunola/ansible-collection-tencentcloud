@@ -558,6 +558,7 @@ CORE_MODULES = {
     "redis_replication_group",
     "scf_custom_domain",
     "tcr_immutable_tag_rule",
+    "tcr_internal_endpoint",
     "tcr_webhook_trigger",
     "tke_cls_log_config",
     "tke_cluster_deletion_protection",

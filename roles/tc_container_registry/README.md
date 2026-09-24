@@ -2,6 +2,7 @@
 
 Provision a TCR Enterprise instance with private namespaces, repositories,
 vulnerability controls and optional cross-region replication.
+Private VPC access links can be managed alongside the registry instance.
 
 ```yaml
 - hosts: localhost
@@ -11,6 +12,8 @@ vulnerability controls and optional cross-region replication.
       vars:
         tc_container_registry_name: production
         tc_container_registry_type: standard
+        tc_container_registry_internal_endpoints:
+          - {vpc_id: vpc-xxxxxxxx, subnet_id: subnet-xxxxxxxx}
         tc_container_registry_namespaces:
           - name: applications
             is_auto_scan: true
@@ -37,3 +40,6 @@ rules, immutable tag rules, webhook triggers and repositories before namespaces 
 instance. Immutable rules are identified by namespace and repository/tag
 patterns; webhook triggers are identified by namespace and name. To change
 other fields, remove and recreate the resource explicitly.
+The private endpoint task manages link presence only; private DNS and image
+pull readiness are separate concerns. An existing link in the same VPC but a
+different subnet is treated as a conflict, never replaced automatically.

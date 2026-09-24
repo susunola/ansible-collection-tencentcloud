@@ -14,7 +14,7 @@
     that:
       - tc_container_registry_state in ['present', 'absent']
       - tc_container_registry_id | length > 0 or tc_container_registry_name | length > 0
-      - tc_container_registry_state == 'present' or (tc_container_registry_namespaces | length == 0 and tc_container_registry_replication_instances | length == 0 and tc_container_registry_replication_rules | length == 0) or tc_container_registry_id | length > 0
+      - tc_container_registry_state == 'present' or (tc_container_registry_namespaces | length == 0 and tc_container_registry_replication_instances | length == 0 and tc_container_registry_replication_rules | length == 0 and tc_container_registry_internal_endpoints | length == 0) or tc_container_registry_id | length > 0
     fail_msg: Creation requires a registry name; child-first deletion requires an explicit registry ID.
 
 - name: Provision TCR instance
@@ -41,6 +41,23 @@
     _tc_container_registry_id: >-
       {{ tc_container_registry_id
          or (_tc_container_registry.instance.RegistryId | default('')) }}
+
+- name: Connect TCR private VPC endpoints
+  when:
+    - tc_container_registry_state == 'present'
+    - _tc_container_registry_id | length > 0
+  susunola.tencentcloud.tcr_internal_endpoint:
+    region: "{{ tc_container_registry_region | default(omit, true) }}"
+    state: present
+    registry_id: "{{ _tc_container_registry_id }}"
+    vpc_id: "{{ item.vpc_id }}"
+    subnet_id: "{{ item.subnet_id }}"
+    endpoint_region_name: "{{ item.endpoint_region_name | default(omit) }}"
+    endpoint_region_id: "{{ item.endpoint_region_id | default(omit) }}"
+  loop: "{{ tc_container_registry_internal_endpoints }}"
+  loop_control:
+    label: "{{ item.vpc_id }}/{{ item.subnet_id }}"
+  register: _tc_container_registry_internal_endpoints
 
 - name: Provision TCR namespaces
   when:
@@ -189,6 +206,20 @@
     replication_region_name: "{{ item.replication_region_name }}"
   loop: "{{ tc_container_registry_replication_instances }}"
 
+- name: Disconnect TCR private VPC endpoints
+  when: tc_container_registry_state == 'absent'
+  susunola.tencentcloud.tcr_internal_endpoint:
+    region: "{{ tc_container_registry_region | default(omit, true) }}"
+    state: absent
+    registry_id: "{{ tc_container_registry_id }}"
+    vpc_id: "{{ item.vpc_id }}"
+    subnet_id: "{{ item.subnet_id }}"
+    endpoint_region_name: "{{ item.endpoint_region_name | default(omit) }}"
+    endpoint_region_id: "{{ item.endpoint_region_id | default(omit) }}"
+  loop: "{{ tc_container_registry_internal_endpoints }}"
+  loop_control:
+    label: "{{ item.vpc_id }}/{{ item.subnet_id }}"
+
 - name: Remove TCR instance
   when: tc_container_registry_state == 'absent'
   susunola.tencentcloud.tcr_instance:
@@ -206,3 +237,4 @@
       instance: "{{ _tc_container_registry.instance }}"
       namespaces: "{{ _tc_container_registry_namespaces.results | default([]) }}"
       replication_instances: "{{ _tc_container_registry_replication_instances.results | default([]) }}"
+      internal_endpoints: "{{ _tc_container_registry_internal_endpoints.results | default([]) }}"

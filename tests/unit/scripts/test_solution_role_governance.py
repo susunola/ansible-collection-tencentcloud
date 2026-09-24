@@ -433,6 +433,7 @@ def test_container_registry_disables_protection_and_removes_children_first():
         "Remove TCR webhook triggers",
         "Remove TCR repositories",
         "Remove TCR namespaces",
+        "Disconnect TCR private VPC endpoints",
         "Remove TCR instance",
     )
     assert "tc_container_registry_id | length > 0" in text
@@ -440,6 +441,7 @@ def test_container_registry_disables_protection_and_removes_children_first():
     assert "susunola.tencentcloud.tcr_immutable_tag_rule" in rules
     webhooks = (ROOT / "roles" / "tc_container_registry" / "tasks" / "webhook_triggers.yml").read_text(encoding="utf-8")
     assert "susunola.tencentcloud.tcr_webhook_trigger" in webhooks
+    assert "susunola.tencentcloud.tcr_internal_endpoint" in text
 
 
 def test_tke_autoscaler_follows_node_pools():

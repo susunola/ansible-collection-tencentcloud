@@ -10,6 +10,8 @@ tc_container_registry_auto_renew: null
 tc_container_registry_sync_tag: true
 tc_container_registry_enable_cos_maz: false
 tc_container_registry_tags: {}
+# Private VPC access links: {vpc_id, subnet_id, endpoint_region_name?, endpoint_region_id?}.
+tc_container_registry_internal_endpoints: []
 
 # Namespace items follow tcr_namespace options and may contain repositories
 # immutable_tag_rules and webhook_triggers (raw SDK-shaped mappings).

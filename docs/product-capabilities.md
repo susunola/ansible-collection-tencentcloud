@@ -6,8 +6,8 @@ This matrix is generated from module SDK imports and role metadata. It is a
 navigation and gap-discovery aid, not a claim that every Tencent Cloud API is covered.
 
 - Products/services: **204**
-- Write modules: **456**
-- Information modules: **569**
+- Write modules: **457**
+- Information modules: **570**
 - Solution roles: **68**
 
 Maturity meanings: `discovery-only` can read resources; `managed` has write
@@ -184,7 +184,7 @@ operations; `resource-family` has at least three write modules plus discovery;
 | `tcb` | solution | 4 | 5 | `tc_cloudbase_platform` | `tcb_auth_domain`, `tcb_environment`, `tcb_http_service_route`, `tcb_static_store` |
 | `tcbr` | discovery-only | 0 | 1 | — | — |
 | `tcm` | solution | 5 | 2 | `tc_service_mesh_platform` | `tcm_access_log`, `tcm_mesh`, `tcm_mesh_clusters`, `tcm_prometheus`, `tcm_tracing` |
-| `tcr` | solution | 7 | 7 | `tc_container_registry` | `tcr_immutable_tag_rule`, `tcr_instance`, `tcr_namespace`, `tcr_replication_instance`, `tcr_replication_rule`, `tcr_repository`, `tcr_webhook_trigger` |
+| `tcr` | solution | 8 | 8 | `tc_container_registry` | `tcr_immutable_tag_rule`, `tcr_instance`, `tcr_internal_endpoint`, `tcr_namespace`, `tcr_replication_instance`, `tcr_replication_rule`, `tcr_repository`, `tcr_webhook_trigger` |
 | `tcss` | discovery-only | 0 | 1 | — | — |
 | `tdai` | discovery-only | 0 | 1 | — | — |
 | `tdcpg` | solution | 4 | 5 | `tc_tdcpg_platform` | `tdcpg_account`, `tdcpg_cluster`, `tdcpg_endpoint_wan`, `tdcpg_instance_state` |
