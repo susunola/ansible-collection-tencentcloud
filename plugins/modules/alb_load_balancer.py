@@ -43,7 +43,7 @@ attributes:
   idempotent:
     description: Compares observable ALB settings before writing.
     support: partial
-    details: Asynchronous create, update, and delete operations are not polled to convergence.
+    details: Waits for observable create, update, and delete convergence.
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -66,6 +66,7 @@ EXAMPLES = r"""
 """
 RETURN = r"""load_balancer: {description: Effective ALB metadata., type: dict, returned: always}"""
 import json
+import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import require_immutable_unchanged, fail_from_sdk_error
@@ -182,6 +183,28 @@ def _protected(value):
     return enabled
 
 
+def comparable(value):
+    return {
+        "LoadBalancerName": value.get("LoadBalancerName"),
+        "AddressType": value.get("AddressType"),
+        "VpcId": value.get("VpcId"),
+        "AddressIpVersion": value.get("AddressIpVersion"),
+        "DeletionProtection": _protected(value),
+    }
+
+
+def wait_for_load_balancer(module, client, models, p, expected):
+    deadline = time.monotonic() + max(0, p["waiter_timeout"])
+    while True:
+        observed = find(module, client, models, p)
+        if (observed is None if expected is None else observed is not None and comparable(observed) == expected):
+            return observed
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            module.fail_json(msg="ALB load balancer did not converge before timeout", load_balancer=observed, expected=expected)
+        time.sleep(min(max(0, p["waiter_delay"]), remaining))
+
+
 def run_module():
     spec = {
         "state": {"choices": ["present", "absent"], "default": "present"},
@@ -217,7 +240,11 @@ def run_module():
                     module.sdk_call(
                         client.ModifyLoadBalancerAttributes, update_request(models, p, current["LoadBalancerId"], current["LoadBalancerName"], False)
                     )
+                    p["load_balancer_id"] = current["LoadBalancerId"]
+                    wait_for_load_balancer(module, client, models, p, dict(comparable(current), DeletionProtection=False))
                 module.sdk_call(client.DeleteLoadBalancers, delete_request(models, p, current["LoadBalancerId"]))
+                p["load_balancer_id"] = current["LoadBalancerId"]
+                wait_for_load_balancer(module, client, models, p, None)
             module.exit_json(changed=True, **(diff or {}), load_balancer=None)
         if not current:
             missing = [k for k in ("name", "address_type", "vpc_id", "zone_mappings") if not p.get(k)]
@@ -233,15 +260,9 @@ def run_module():
             diff = maybe_diff(module, None, target)
             if not module.check_mode:
                 p["load_balancer_id"] = module.sdk_call(client.CreateLoadBalancer, create_request(models, p)).LoadBalancerId
-                current = find(module, client, models, p)
+                current = wait_for_load_balancer(module, client, models, p, target)
             module.exit_json(changed=True, **(diff or {}), load_balancer=current if not module.check_mode else target)
-        before = {
-            "LoadBalancerName": current.get("LoadBalancerName"),
-            "AddressType": current.get("AddressType"),
-            "VpcId": current.get("VpcId"),
-            "AddressIpVersion": current.get("AddressIpVersion"),
-            "DeletionProtection": _protected(current),
-        }
+        before = comparable(current)
         target = {
             "LoadBalancerName": p.get("name") or before["LoadBalancerName"],
             "AddressType": p.get("address_type") or before["AddressType"],
@@ -262,7 +283,7 @@ def run_module():
                     update_request(models, p, current["LoadBalancerId"], target["LoadBalancerName"], target["DeletionProtection"]),
                 )
             p["load_balancer_id"] = current["LoadBalancerId"]
-            current = find(module, client, models, p)
+            current = wait_for_load_balancer(module, client, models, p, target)
         module.exit_json(changed=True, **(diff or {}), load_balancer=current)
     except Exception as exc:
         fail_from_sdk_error(module, exc)

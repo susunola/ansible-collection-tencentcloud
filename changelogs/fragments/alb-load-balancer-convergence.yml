@@ -1,0 +1,2 @@
+bugfixes:
+  - alb_load_balancer - wait for observable create, update, and delete convergence; verify deletion protection is disabled before sending delete.

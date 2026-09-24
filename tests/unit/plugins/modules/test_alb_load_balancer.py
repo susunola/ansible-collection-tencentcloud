@@ -469,6 +469,39 @@ def test_present_creates_load_balancer(monkeypatch):
     assert "ModifyLoadBalancerAttributes" not in names
 
 
+def test_present_waits_for_delayed_load_balancer_read(monkeypatch):
+    fake = FakeAlbClient()
+    _make_module(monkeypatch, fake)
+    original = fake.DescribeLoadBalancers
+    reads = [0]
+
+    def delayed(request):
+        reads[0] += 1
+        if reads[0] == 2:
+            fake._record("DescribeLoadBalancers", request)
+            return SimpleNamespace(LoadBalancers=[])
+        return original(request)
+
+    fake.DescribeLoadBalancers = delayed
+    monkeypatch.setattr(mod.time, "sleep", lambda unused: None)
+    module_args(state="present", name="public-app", address_type="Internet", vpc_id="vpc-8b0a1c2d",
+                zone_mappings=[{"ZoneId": "ap-guangzhou-3", "SubnetId": "subnet-x"}], waiter_delay=0)
+    result = run(mod.run_module)
+    assert result["load_balancer"]["LoadBalancerId"] == "alb-fake-001"
+    assert reads[0] == 3
+
+
+def test_present_fails_when_load_balancer_update_not_observable(monkeypatch):
+    fake = FakeAlbClient([_alb()])
+    _make_module(monkeypatch, fake)
+    fake.ModifyLoadBalancerAttributes = lambda request: SimpleNamespace()
+    module_args(state="present", load_balancer_id="alb-8b0a1c2d", name="renamed", waiter_timeout=0)
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "did not converge" in exc.value.args[0]["msg"]
+    assert exc.value.args[0]["load_balancer"]["LoadBalancerName"] == "public-app"
+
+
 def test_present_missing_creation_params_fails(monkeypatch):
     fake = FakeAlbClient()
     _make_module(monkeypatch, fake)
@@ -634,6 +667,28 @@ def test_absent_protected_disables_then_deletes(monkeypatch):
     disable = [c for c in fake.calls if c[0] == "ModifyLoadBalancerAttributes"][0][1]
     assert disable.DeletionProtection is False
     assert fake.albs == []
+
+
+def test_absent_does_not_delete_until_protection_disable_is_observable(monkeypatch):
+    fake = FakeAlbClient([_alb(DeletionProtection={"DeletionProtectionEnabled": True})])
+    _make_module(monkeypatch, fake)
+    fake.ModifyLoadBalancerAttributes = lambda request: SimpleNamespace()
+    module_args(state="absent", name="public-app", deletion_protection=False, waiter_timeout=0)
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "did not converge" in exc.value.args[0]["msg"]
+    assert "DeleteLoadBalancers" not in [name for name, unused in fake.calls]
+
+
+def test_absent_fails_when_delete_not_observable(monkeypatch):
+    fake = FakeAlbClient([_alb()])
+    _make_module(monkeypatch, fake)
+    fake.DeleteLoadBalancers = lambda request: SimpleNamespace()
+    module_args(state="absent", name="public-app", waiter_timeout=0)
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "did not converge" in exc.value.args[0]["msg"]
+    assert exc.value.args[0]["load_balancer"]["LoadBalancerId"] == "alb-8b0a1c2d"
 
 
 def test_absent_not_found_is_noop(monkeypatch):
