@@ -12,33 +12,126 @@ short_description: Manage Tencent Cloud WAF CC protection rules
 version_added: "0.14.0"
 description: Creates, updates and deletes a domain-level WAF CC rate-protection rule.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  domain: {type: str, required: true, description: Protected domain.}
-  rule_id: {type: int, description: Existing CC rule ID; preferred for rename and deletion.}
-  name: {type: str, description: Rule name.}
-  edition: {type: str, choices: [sparta-waf, clb-waf], default: sparta-waf, description: WAF edition.}
-  enabled: {type: bool, default: true, description: Whether the rule is enabled.}
-  threshold: {type: int, default: 60, description: Maximum requests in the detection interval.}
-  interval: {type: int, default: 60, description: Detection interval in seconds.}
-  action: {type: int, choices: [20, 21, 22, 23, 26, 27], default: 22, description: WAF CC action code.}
-  priority: {type: int, default: 50, description: Rule evaluation priority.}
-  valid_time: {type: int, default: 600, description: Action duration in seconds.}
-  url: {type: str, default: '', description: URL expression used by the simple match mode.}
-  match_function: {type: int, choices: [0, 1, 2, 3, 6, 7], default: 0, description: URL comparison function.}
-  advanced: {type: bool, default: false, description: Whether Session-based advanced detection is enabled.}
-  options: {type: list, elements: dict, default: [], description: Advanced SDK-compatible CC match options encoded by the module as canonical JSON.}
-  session_ids: {type: list, elements: int, default: [], description: Session definition IDs associated with this rule.}
-  limit_method: {type: str, default: only_limit, description: Rate-limiting method.}
-  logical_operator: {type: str, choices: [and, or], default: and, description: Relationship between advanced conditions.}
-  action_ratio: {type: int, default: 100, description: Percentage of matched traffic receiving the action.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  domain:
+    description:
+      - Protected domain.
+    type: str
+    required: true
+  rule_id:
+    description:
+      - Existing CC rule ID; preferred for rename and deletion.
+    type: int
+  name:
+    description:
+      - Rule name.
+    type: str
+  edition:
+    description:
+      - WAF edition.
+    type: str
+    choices: [sparta-waf, clb-waf]
+    default: sparta-waf
+  enabled:
+    description:
+      - Whether the rule is enabled.
+    type: bool
+    default: true
+  threshold:
+    description:
+      - Maximum requests in the detection interval.
+    type: int
+    default: 60
+  interval:
+    description:
+      - Detection interval in seconds.
+    type: int
+    default: 60
+  action:
+    description:
+      - WAF CC action code.
+    type: int
+    choices: [20, 21, 22, 23, 26, 27]
+    default: 22
+  priority:
+    description:
+      - Rule evaluation priority.
+    type: int
+    default: 50
+  valid_time:
+    description:
+      - Action duration in seconds.
+    type: int
+    default: 600
+  url:
+    description:
+      - URL expression used by the simple match mode.
+    type: str
+    default: ''
+  match_function:
+    description:
+      - URL comparison function.
+    type: int
+    choices: [0, 1, 2, 3, 6, 7]
+    default: 0
+  advanced:
+    description:
+      - Whether Session-based advanced detection is enabled.
+    type: bool
+    default: false
+  options:
+    description:
+      - Advanced SDK-compatible CC match options encoded by the module as canonical JSON.
+    type: list
+    default: []
+    elements: dict
+  session_ids:
+    description:
+      - Session definition IDs associated with this rule.
+    type: list
+    default: []
+    elements: int
+  limit_method:
+    description:
+      - Rate-limiting method.
+    type: str
+    default: only_limit
+  logical_operator:
+    description:
+      - Relationship between advanced conditions.
+    type: str
+    choices: [and, or]
+    default: and
+  action_ratio:
+    description:
+      - Percentage of matched traffic receiving the action.
+    type: int
+    default: 100
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

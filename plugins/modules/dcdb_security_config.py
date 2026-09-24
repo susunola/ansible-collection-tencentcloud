@@ -14,17 +14,43 @@ description:
   - Reconciles explicitly supplied DCDB security controls.
   - Data-at-rest encryption is one-way and cannot be disabled after activation.
 options:
-  instance_id: {type: str, required: true, description: DCDB instance ID.}
-  encryption_enabled: {type: bool, description: Enable irreversible data-at-rest encryption.}
-  ssl_enabled: {type: bool, description: Enable or disable instance SSL authentication.}
-  security_group_ids: {type: list, elements: str, description: Complete desired security-group ID set.}
+  instance_id:
+    description:
+      - DCDB instance ID.
+    type: str
+    required: true
+  encryption_enabled:
+    description:
+      - Enable irreversible data-at-rest encryption.
+    type: bool
+  ssl_enabled:
+    description:
+      - Enable or disable instance SSL authentication.
+    type: bool
+  security_group_ids:
+    description:
+      - Complete desired security-group ID set.
+    type: list
+    elements: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

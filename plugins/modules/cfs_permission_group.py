@@ -12,18 +12,45 @@ short_description: Manage Tencent Cloud CFS permission groups
 version_added: "0.14.0"
 description: Creates, updates and deletes CFS client permission groups.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  permission_group_id: {type: str, description: Existing permission group ID; preferred for rename and deletion.}
-  name: {type: str, description: Permission group name.}
-  description: {type: str, default: '', description: Permission group description.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  permission_group_id:
+    description:
+      - Existing permission group ID; preferred for rename and deletion.
+    type: str
+  name:
+    description:
+      - Permission group name.
+    type: str
+  description:
+    description:
+      - Permission group description.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

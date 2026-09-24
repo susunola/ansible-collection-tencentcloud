@@ -12,19 +12,49 @@ short_description: Govern a TDSQL-C PostgreSQL account
 version_added: "0.14.0"
 description: Reconciles an existing account description and performs explicitly requested password rotation.
 options:
-  cluster_id: {type: str, required: true, description: Cluster ID.}
-  account_name: {type: str, required: true, description: Existing database account name.}
-  description: {type: str, description: Account description.}
-  password: {type: str, description: New password used only with rotate_password=true.}
-  rotate_password: {type: bool, default: false, description: Explicitly rotate the write-only password.}
+  cluster_id:
+    description:
+      - Cluster ID.
+    type: str
+    required: true
+  account_name:
+    description:
+      - Existing database account name.
+    type: str
+    required: true
+  description:
+    description:
+      - Account description.
+    type: str
+  password:
+    description:
+      - New password used only with rotate_password=true.
+    type: str
+  rotate_password:
+    description:
+      - Explicitly rotate the write-only password.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

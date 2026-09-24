@@ -12,18 +12,45 @@ short_description: Manage Tencent Cloud CAM user group membership
 version_added: "0.13.0"
 description: Idempotently adds a CAM sub-user to or removes it from a user group.
 options:
-  state: {description: Desired membership state., type: str, choices: [present, absent], default: present}
-  group_id: {description: CAM user group ID., type: int, required: true}
-  sub_uin: {description: CAM sub-user UIN., type: int}
-  uid: {description: CAM sub-user UID., type: int}
+  state:
+    description:
+      - Desired membership state.
+    type: str
+    choices: [present, absent]
+    default: present
+  group_id:
+    description:
+      - CAM user group ID.
+    type: int
+    required: true
+  sub_uin:
+    description:
+      - CAM sub-user UIN.
+    type: int
+  uid:
+    description:
+      - CAM sub-user UID.
+    type: int
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

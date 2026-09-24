@@ -13,16 +13,41 @@ short_description: Gather Tencent Cloud TSE registry-engine topology
 version_added: "0.14.0"
 description: Returns replica and server-interface topology for Nacos or ZooKeeper registry engines.
 options:
-  instance_id: {type: str, required: true, description: TSE engine instance ID.}
-  engine_type: {type: str, required: true, choices: [nacos, zookeeper], description: Registry-engine family.}
-  page_size: {type: int, default: 100, description: Number of records requested per API call.}
+  instance_id:
+    description:
+      - TSE engine instance ID.
+    type: str
+    required: true
+  engine_type:
+    description:
+      - Registry-engine family.
+    type: str
+    required: true
+    choices: [nacos, zookeeper]
+  page_size:
+    description:
+      - Number of records requested per API call.
+    type: int
+    default: 100
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

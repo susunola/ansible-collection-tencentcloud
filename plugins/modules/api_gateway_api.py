@@ -14,30 +14,112 @@ version_added: "0.14.0"
 description: Creates, updates and deletes an API within an API Gateway service, including MOCK and SCF backends.
 options:
 
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  service_id: {type: str, required: true, description: Parent service ID.}
-  api_id: {type: str, description: Existing API ID.}
-  name: {type: str, description: API name.}
-  path: {type: str, default: /, description: Public request path.}
-  method: {type: str, choices: [GET, POST, PUT, DELETE, HEAD, ANY, OPTIONS, PATCH], default: ANY, description: HTTP method.}
-  description: {type: str, default: '', description: API description.}
-  auth_type: {type: str, choices: [NONE, SECRET, OAUTH], default: NONE, description: Authentication type.}
-  service_type: {type: str, choices: [HTTP, MOCK, SCF], default: MOCK, description: Backend type.}
-  service_timeout: {type: int, default: 15, description: Backend timeout in seconds.}
-  mock_response: {type: str, default: '{}', description: MOCK response body.}
-  scf_function_name: {type: str, description: SCF function name; required for an SCF backend.}
-  scf_function_namespace: {type: str, default: default, description: SCF function namespace.}
-  scf_function_qualifier: {type: str, default: '$LATEST', description: SCF version or alias qualifier.}
-  scf_function_type: {type: str, choices: [EVENT, HTTP], default: EVENT, description: SCF event or web-function mode.}
-  scf_integrated_response: {type: bool, default: false, description: Enable SCF integrated response handling.}
-  enable_cors: {type: bool, default: false, description: Enable CORS.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  service_id:
+    description:
+      - Parent service ID.
+    type: str
+    required: true
+  api_id:
+    description:
+      - Existing API ID.
+    type: str
+  name:
+    description:
+      - API name.
+    type: str
+  path:
+    description:
+      - Public request path.
+    type: str
+    default: /
+  method:
+    description:
+      - HTTP method.
+    type: str
+    choices: [GET, POST, PUT, DELETE, HEAD, ANY, OPTIONS, PATCH]
+    default: ANY
+  description:
+    description:
+      - API description.
+    type: str
+    default: ''
+  auth_type:
+    description:
+      - Authentication type.
+    type: str
+    choices: [NONE, SECRET, OAUTH]
+    default: NONE
+  service_type:
+    description:
+      - Backend type.
+    type: str
+    choices: [HTTP, MOCK, SCF]
+    default: MOCK
+  service_timeout:
+    description:
+      - Backend timeout in seconds.
+    type: int
+    default: 15
+  mock_response:
+    description:
+      - MOCK response body.
+    type: str
+    default: '{}'
+  scf_function_name:
+    description:
+      - SCF function name; required for an SCF backend.
+    type: str
+  scf_function_namespace:
+    description:
+      - SCF function namespace.
+    type: str
+    default: default
+  scf_function_qualifier:
+    description:
+      - SCF version or alias qualifier.
+    type: str
+    default: $LATEST
+  scf_function_type:
+    description:
+      - SCF event or web-function mode.
+    type: str
+    choices: [EVENT, HTTP]
+    default: EVENT
+  scf_integrated_response:
+    description:
+      - Enable SCF integrated response handling.
+    type: bool
+    default: false
+  enable_cors:
+    description:
+      - Enable CORS.
+    type: bool
+    default: false
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

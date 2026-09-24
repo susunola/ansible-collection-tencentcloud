@@ -13,18 +13,48 @@ short_description: Manage Tencent Cloud API Gateway service releases
 version_added: "0.14.0"
 description: Publishes or unpublishes an API Gateway service environment.
 options:
-  state: {description: Desired release state., type: str, choices: [present, absent], default: present}
-  service_id: {description: API Gateway service ID., type: str, required: true}
-  environment: {description: Release environment., type: str, choices: [test, prepub, release], default: release}
-  description: {description: Release description., type: str, default: Managed by Ansible}
+  state:
+    description:
+      - Desired release state.
+    type: str
+    choices: [present, absent]
+    default: present
+  service_id:
+    description:
+      - API Gateway service ID.
+    type: str
+    required: true
+  environment:
+    description:
+      - Release environment.
+    type: str
+    choices: [test, prepub, release]
+    default: release
+  description:
+    description:
+      - Release description.
+    type: str
+    default: Managed by Ansible
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

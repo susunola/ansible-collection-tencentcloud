@@ -13,20 +13,57 @@ short_description: Manage Tencent Cloud Config delivery settings
 version_added: "0.14.0"
 description: Reconciles Config change and resource-list delivery to a COS or CLS target ARN.
 options:
-  enabled: {type: bool, default: true, description: Whether configuration delivery is enabled.}
-  name: {type: str, required: true, description: Delivery service name.}
-  target_arn: {type: str, required: true, description: Six-part COS or CLS target resource ARN.}
-  prefix: {type: str, default: config, description: Delivery object or log prefix.}
-  delivery_type: {type: str, required: true, description: Config delivery target type accepted by the API.}
-  content_type: {type: int, choices: [1, 2, 3], default: 3, description: "One for changes, two for resource lists or three for both."}
+  enabled:
+    description:
+      - Whether configuration delivery is enabled.
+    type: bool
+    default: true
+  name:
+    description:
+      - Delivery service name.
+    type: str
+    required: true
+  target_arn:
+    description:
+      - Six-part COS or CLS target resource ARN.
+    type: str
+    required: true
+  prefix:
+    description:
+      - Delivery object or log prefix.
+    type: str
+    default: config
+  delivery_type:
+    description:
+      - Config delivery target type accepted by the API.
+    type: str
+    required: true
+  content_type:
+    description:
+      - One for changes, two for resource lists or three for both.
+    type: int
+    choices: [1, 2, 3]
+    default: 3
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 

@@ -12,43 +12,125 @@ short_description: Manage Tencent Cloud TcaplusDB clusters
 version_added: "0.14.0"
 description: Creates, renames, rotates credentials for and deletes TcaplusDB clusters, including optional server and proxy topology.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, description: Existing cluster ID.}
-  name: {type: str, description: Cluster name.}
-  idl_type: {type: str, choices: [TDR, PROTO], default: TDR, description: Interface definition language type; immutable after creation.}
-  vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  subnet_id: {type: str, description: Subnet ID; immutable after creation.}
-  password: {type: str, description: Password required during creation and as the old credential during rotation.}
-  new_password: {type: str, description: New password to rotate to on an existing cluster.}
-  rotate_password: {type: bool, default: false, description: Explicitly request password rotation on this run.}
-  old_password_expire_time: {type: str, description: API-formatted expiration time for the old password.}
-  cluster_type: {type: int, description: Cluster type; immutable after creation.}
-  auth_type: {type: int, description: Authentication type; immutable after creation.}
-  ipv6: {type: bool, default: false, description: Enable IPv6 during creation.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - Existing cluster ID.
+    type: str
+  name:
+    description:
+      - Cluster name.
+    type: str
+  idl_type:
+    description:
+      - Interface definition language type; immutable after creation.
+    type: str
+    choices: [TDR, PROTO]
+    default: TDR
+  vpc_id:
+    description:
+      - VPC ID; immutable after creation.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID; immutable after creation.
+    type: str
+  password:
+    description:
+      - Password required during creation and as the old credential during rotation.
+    type: str
+  new_password:
+    description:
+      - New password to rotate to on an existing cluster.
+    type: str
+  rotate_password:
+    description:
+      - Explicitly request password rotation on this run.
+    type: bool
+    default: false
+  old_password_expire_time:
+    description:
+      - API-formatted expiration time for the old password.
+    type: str
+  cluster_type:
+    description:
+      - Cluster type; immutable after creation.
+    type: int
+  auth_type:
+    description:
+      - Authentication type; immutable after creation.
+    type: int
+  ipv6:
+    description:
+      - Enable IPv6 during creation.
+    type: bool
+    default: false
   servers:
     type: list
     elements: dict
     description: Initial storage server topology.
     suboptions:
-      server_uid: {type: str, required: true, description: Server resource UID.}
-      machine_type: {type: str, required: true, description: Server machine type.}
+      server_uid:
+        description:
+          - Server resource UID.
+        type: str
+        required: true
+      machine_type:
+        description:
+          - Server machine type.
+        type: str
+        required: true
   proxies:
     type: list
     elements: dict
     description: Initial proxy topology.
     suboptions:
-      proxy_uid: {type: str, required: true, description: Proxy resource UID.}
-      machine_type: {type: str, required: true, description: Proxy machine type.}
-      available_count: {type: int, required: true, description: Proxy count.}
-  tags: {type: dict, default: {}, description: Tags applied during creation.}
+      proxy_uid:
+        description:
+          - Proxy resource UID.
+        type: str
+        required: true
+      machine_type:
+        description:
+          - Proxy machine type.
+        type: str
+        required: true
+      available_count:
+        description:
+          - Proxy count.
+        type: int
+        required: true
+  tags:
+    description:
+      - Tags applied during creation.
+    type: dict
+    default:
+      {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

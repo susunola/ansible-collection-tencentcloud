@@ -15,46 +15,152 @@ description:
   - Creates, updates and deletes DLC data laboratory workspaces.
   - Resource configuration, catalog mounts and advanced cluster options are immutable after creation.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired lifecycle state.}
-  name: {type: str, required: true, description: Exact laboratory name and immutable identity.}
-  resource_partition_id: {type: str, description: Resource partition ID.}
-  queue: {type: str, description: Queue name.}
-  lab_image: {type: str, description: Required development-tool image.}
-  image: {type: str, description: Optional explicit Ray cluster image.}
-  description: {type: str, description: Laboratory description.}
-  image_pull_policy: {type: str, choices: [Always, IfNotPresent, Never], description: Ray image pull policy.}
-  lab_image_pull_policy: {type: str, choices: [Always, IfNotPresent, Never], description: Lab sidecar image pull policy.}
-  image_pull_type: {type: str, choices: [BuiltIn, Custom, CustomCcr], description: Ray image source type.}
-  lab_image_pull_type: {type: str, choices: [BuiltIn, Custom, CustomCcr], description: Lab image source type.}
-  resource_config_id: {type: str, description: Managed resource-configuration ID.}
-  group_id: {type: str, description: Compute group ID.}
-  priority: {type: int, description: Scheduling priority from 1 to 9.}
-  enable_token: {type: bool, description: Enable access-token authentication.}
-  example_id: {type: str, description: Example template ID.}
-  code_archive_url: {type: str, description: Example or project code archive URL.}
+  state:
+    description:
+      - Desired lifecycle state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Exact laboratory name and immutable identity.
+    type: str
+    required: true
+  resource_partition_id:
+    description:
+      - Resource partition ID.
+    type: str
+  queue:
+    description:
+      - Queue name.
+    type: str
+  lab_image:
+    description:
+      - Required development-tool image.
+    type: str
+  image:
+    description:
+      - Optional explicit Ray cluster image.
+    type: str
+  description:
+    description:
+      - Laboratory description.
+    type: str
+  image_pull_policy:
+    description:
+      - Ray image pull policy.
+    type: str
+    choices: [Always, IfNotPresent, Never]
+  lab_image_pull_policy:
+    description:
+      - Lab sidecar image pull policy.
+    type: str
+    choices: [Always, IfNotPresent, Never]
+  image_pull_type:
+    description:
+      - Ray image source type.
+    type: str
+    choices: [BuiltIn, Custom, CustomCcr]
+  lab_image_pull_type:
+    description:
+      - Lab image source type.
+    type: str
+    choices: [BuiltIn, Custom, CustomCcr]
+  resource_config_id:
+    description:
+      - Managed resource-configuration ID.
+    type: str
+  group_id:
+    description:
+      - Compute group ID.
+    type: str
+  priority:
+    description:
+      - Scheduling priority from 1 to 9.
+    type: int
+  enable_token:
+    description:
+      - Enable access-token authentication.
+    type: bool
+  example_id:
+    description:
+      - Example template ID.
+    type: str
+  code_archive_url:
+    description:
+      - Example or project code archive URL.
+    type: str
   tags:
     type: list
     elements: dict
     description: Exact Tencent Cloud tag set.
     suboptions:
-      key: {type: str, required: true, description: Tag key.}
-      value: {type: str, required: true, description: Tag value.}
-  persistent_work_dir: {type: dict, description: Persistent workspace directory contract passed to DLC.}
-  resource_config: {type: str, description: Creation-time resource configuration JSON.}
-  catalog: {type: str, description: Creation-time volume and mount configuration JSON.}
-  advanced_options: {type: str, description: Creation-time flattened Ray cluster options JSON.}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize laboratory deletion.}
-  wait: {type: bool, default: true, description: Wait for lifecycle and field convergence.}
-  waiter_delay: {type: int, default: 10, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 1800, description: Overall convergence timeout.}
+      key:
+        description:
+          - Tag key.
+        type: str
+        required: true
+      value:
+        description:
+          - Tag value.
+        type: str
+        required: true
+  persistent_work_dir:
+    description:
+      - Persistent workspace directory contract passed to DLC.
+    type: dict
+  resource_config:
+    description:
+      - Creation-time resource configuration JSON.
+    type: str
+  catalog:
+    description:
+      - Creation-time volume and mount configuration JSON.
+    type: str
+  advanced_options:
+    description:
+      - Creation-time flattened Ray cluster options JSON.
+    type: str
+  allow_delete:
+    description:
+      - Explicitly authorize laboratory deletion.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for lifecycle and field convergence.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between polls.
+    type: int
+    default: 10
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 1800
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -241,7 +347,7 @@ def wait_lab(module, client, models, p, absent=False, expected=None):
 
 
 def run_module():
-    tag_options = {"key": {"required": True}, "value": {"required": True}}
+    tag_options = {"key": {"required": True, "no_log": False}, "value": {"required": True}}
     spec = {
         "state": {"choices": ["present", "absent"], "default": "present"},
         "name": {"required": True},

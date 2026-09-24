@@ -12,35 +12,125 @@ short_description: Manage Tencent Cloud Oceanus dedicated clusters
 version_added: "0.14.0"
 description: Creates, scales, waits for and deletes dedicated Oceanus compute clusters.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, description: Existing cluster ID.}
-  name: {type: str, description: Cluster name; immutable after creation.}
-  region_id: {type: int, description: Numeric region ID; required for creation.}
-  zone_id: {type: int, description: Numeric availability-zone ID; required for creation.}
-  login_password: {type: str, description: Initial Flink UI administrator password.}
-  vpc_descriptions: {type: list, elements: dict, description: SDK VPCDescription list; immutable after creation.}
-  default_cos_bucket: {type: str, description: Default checkpoint and artifact COS bucket; immutable after creation.}
-  cu: {type: int, description: Desired CU count following 12 + 7n.}
-  cu_memory: {type: int, choices: [0, 2, 4, 8], description: CU memory ratio; immutable after creation.}
-  remark: {type: str, description: Creation-time cluster description.}
-  period: {type: int, default: 1, description: Prepaid purchase period in months.}
-  charge_type: {type: str, choices: [PREPAID, POSTPAID_BY_SECOND], default: POSTPAID_BY_SECOND, description: Billing mode; immutable after creation.}
-  cluster_type: {type: str, choices: [MULTI_AZ_CLUSTER], description: Multi-zone cluster marker.}
-  renew_flag: {type: str, choices: [NOTIFY_AND_MANUAL_RENEW, NOTIFY_AND_AUTO_RENEW, DISABLE_NOTIFY_AND_MANUAL_RENEW], description: Prepaid renewal behavior.}
-  flink_ui_access_type: {type: str, choices: [NetworkAccess_INTERNAL, NetworkAccess_EXTERNAL], description: Flink UI network access; immutable after creation.}
-  slave_vpc_descriptions: {type: list, elements: dict, description: SDK SlaveVpcDescriptions list for multi-zone creation.}
-  allow_scale_down: {type: bool, default: false, description: Explicitly authorize reducing cluster CU.}
-  wait: {type: bool, default: true, description: Wait for running or absent convergence.}
-  waiter_delay: {type: int, default: 10, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 1800, description: Overall convergence timeout.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - Existing cluster ID.
+    type: str
+  name:
+    description:
+      - Cluster name; immutable after creation.
+    type: str
+  region_id:
+    description:
+      - Numeric region ID; required for creation.
+    type: int
+  zone_id:
+    description:
+      - Numeric availability-zone ID; required for creation.
+    type: int
+  login_password:
+    description:
+      - Initial Flink UI administrator password.
+    type: str
+  vpc_descriptions:
+    description:
+      - SDK VPCDescription list; immutable after creation.
+    type: list
+    elements: dict
+  default_cos_bucket:
+    description:
+      - Default checkpoint and artifact COS bucket; immutable after creation.
+    type: str
+  cu:
+    description:
+      - Desired CU count following 12 + 7n.
+    type: int
+  cu_memory:
+    description:
+      - CU memory ratio; immutable after creation.
+    type: int
+    choices: [0, 2, 4, 8]
+  remark:
+    description:
+      - Creation-time cluster description.
+    type: str
+  period:
+    description:
+      - Prepaid purchase period in months.
+    type: int
+    default: 1
+  charge_type:
+    description:
+      - Billing mode; immutable after creation.
+    type: str
+    choices: [PREPAID, POSTPAID_BY_SECOND]
+    default: POSTPAID_BY_SECOND
+  cluster_type:
+    description:
+      - Multi-zone cluster marker.
+    type: str
+    choices: [MULTI_AZ_CLUSTER]
+  renew_flag:
+    description:
+      - Prepaid renewal behavior.
+    type: str
+    choices: [NOTIFY_AND_MANUAL_RENEW, NOTIFY_AND_AUTO_RENEW, DISABLE_NOTIFY_AND_MANUAL_RENEW]
+  flink_ui_access_type:
+    description:
+      - Flink UI network access; immutable after creation.
+    type: str
+    choices: [NetworkAccess_INTERNAL, NetworkAccess_EXTERNAL]
+  slave_vpc_descriptions:
+    description:
+      - SDK SlaveVpcDescriptions list for multi-zone creation.
+    type: list
+    elements: dict
+  allow_scale_down:
+    description:
+      - Explicitly authorize reducing cluster CU.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for running or absent convergence.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between polls.
+    type: int
+    default: 10
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 1800
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

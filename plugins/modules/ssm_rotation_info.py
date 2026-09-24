@@ -13,16 +13,36 @@ short_description: Gather Tencent Cloud Secrets Manager rotation state
 version_added: "0.14.0"
 description: Returns current rotation configuration and optionally the visible recent rotation history.
 options:
-  secret_name: {type: str, required: true, description: Secret name.}
-  include_history: {type: bool, default: true, description: Include recent rotation version IDs and account metadata.}
+  secret_name:
+    description:
+      - Secret name.
+    type: str
+    required: true
+  include_history:
+    description:
+      - Include recent rotation version IDs and account metadata.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

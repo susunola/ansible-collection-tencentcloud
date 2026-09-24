@@ -13,30 +13,84 @@ short_description: Manage Tencent Cloud Config alarm policies
 version_added: "0.14.0"
 description: Creates, updates, enables, disables and deletes non-compliance notification policies.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired policy state.}
-  alarm_policy_id: {type: int, description: Existing alarm policy ID; preferred for updates and deletion.}
-  name: {type: str, description: "Policy name, also used for lookup."}
-  event_type: {type: int, choices: [1], default: 1, description: Resource non-compliance event type.}
-  event_scopes: {type: list, elements: int, choices: [1, 2], default: [1], description: Exact account scopes; one is current account and two is multi-account.}
-  risk_levels: {type: list, elements: int, choices: [1, 2, 3], default: [1, 2, 3], description: Exact risk levels to notify.}
-  notice_time: {type: str, description: Notification time window; required when state is present.}
-  notification_mechanism: {type: str, description: Notification mechanism; required when state is present.}
-  enabled: {type: bool, default: true, description: Whether the policy is active.}
+  state:
+    description:
+      - Desired policy state.
+    type: str
+    choices: [present, absent]
+    default: present
+  alarm_policy_id:
+    description:
+      - Existing alarm policy ID; preferred for updates and deletion.
+    type: int
+  name:
+    description:
+      - Policy name, also used for lookup.
+    type: str
+  event_type:
+    description:
+      - Resource non-compliance event type.
+    type: int
+    choices: [1]
+    default: 1
+  event_scopes:
+    description:
+      - Exact account scopes; one is current account and two is multi-account.
+    type: list
+    choices: [1, 2]
+    default: [1]
+    elements: int
+  risk_levels:
+    description:
+      - Exact risk levels to notify.
+    type: list
+    choices: [1, 2, 3]
+    default: [1, 2, 3]
+    elements: int
+  notice_time:
+    description:
+      - Notification time window; required when state is present.
+    type: str
+  notification_mechanism:
+    description:
+      - Notification mechanism; required when state is present.
+    type: str
+  enabled:
+    description:
+      - Whether the policy is active.
+    type: bool
+    default: true
   notice_period:
     type: list
     elements: int
     choices: [1, 2, 3, 4, 5, 6, 7]
     default: [1, 2, 3, 4, 5, 6, 7]
     description: Exact weekdays on which notifications are sent.
-  description: {type: str, default: '', description: Policy description.}
+  description:
+    description:
+      - Policy description.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 

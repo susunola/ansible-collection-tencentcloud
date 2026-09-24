@@ -15,17 +15,41 @@ description:
   - Reads DLC Notebook session logs with offset pagination until the API returns a short page.
   - A configurable page cap prevents unbounded reads when the service returns repeated full pages.
 options:
-  session_id: {type: str, required: true, description: Exact Notebook session ID.}
-  page_size: {type: int, default: 200, description: 'Log lines requested per page, from 1 to 1000.'}
-  max_pages: {type: int, default: 100, description: 'Maximum number of pages fetched, from 1 to 1000.'}
+  session_id:
+    description:
+      - Exact Notebook session ID.
+    type: str
+    required: true
+  page_size:
+    description:
+      - Log lines requested per page, from 1 to 1000.
+    type: int
+    default: 200
+  max_pages:
+    description:
+      - Maximum number of pages fetched, from 1 to 1000.
+    type: int
+    default: 100
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

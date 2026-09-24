@@ -13,22 +13,65 @@ short_description: Manage Tencent Cloud EdgeOne zones
 version_added: "0.14.0"
 description: Creates, updates, pauses, enables and deletes EdgeOne zones.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired zone state.}
-  zone_id: {type: str, description: Existing EdgeOne zone ID; preferred for updates and deletion.}
-  name: {type: str, description: "Zone name, also used for lookup."}
-  zone_type: {type: str, choices: [partial, full, noDomainAccess, dnsPodAccess, ai], default: partial, description: Zone access type.}
-  area: {type: str, choices: [global, mainland, overseas], default: overseas, description: Layer-seven acceleration area.}
-  alias_name: {type: str, description: Optional same-name zone identifier.}
-  plan_id: {type: str, description: Optional EdgeOne plan ID applied only during creation.}
-  enabled: {type: bool, default: true, description: Whether the zone is enabled rather than paused.}
+  state:
+    description:
+      - Desired zone state.
+    type: str
+    choices: [present, absent]
+    default: present
+  zone_id:
+    description:
+      - Existing EdgeOne zone ID; preferred for updates and deletion.
+    type: str
+  name:
+    description:
+      - Zone name, also used for lookup.
+    type: str
+  zone_type:
+    description:
+      - Zone access type.
+    type: str
+    choices: [partial, full, noDomainAccess, dnsPodAccess, ai]
+    default: partial
+  area:
+    description:
+      - Layer-seven acceleration area.
+    type: str
+    choices: [global, mainland, overseas]
+    default: overseas
+  alias_name:
+    description:
+      - Optional same-name zone identifier.
+    type: str
+  plan_id:
+    description:
+      - Optional EdgeOne plan ID applied only during creation.
+    type: str
+  enabled:
+    description:
+      - Whether the zone is enabled rather than paused.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 

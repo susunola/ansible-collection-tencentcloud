@@ -12,18 +12,47 @@ short_description: Manage Tencent Cloud TSE gateway WAF protection
 version_added: "0.14.0"
 description: Reconciles global, service or route WAF protection using per-resource status readback.
 options:
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  scope: {type: str, choices: [Global, Service, Route], required: true, description: Protection scope.}
-  resource_ids: {type: list, elements: str, description: Service or route IDs; required outside Global scope.}
-  enabled: {type: bool, required: true, description: Desired WAF protection status.}
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  scope:
+    description:
+      - Protection scope.
+    type: str
+    required: true
+    choices: [Global, Service, Route]
+  resource_ids:
+    description:
+      - Service or route IDs; required outside Global scope.
+    type: list
+    elements: str
+  enabled:
+    description:
+      - Desired WAF protection status.
+    type: bool
+    required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

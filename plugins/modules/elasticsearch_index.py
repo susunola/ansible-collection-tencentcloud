@@ -14,21 +14,62 @@ description:
   - Creates, updates and deletes normal or autonomous Elasticsearch indexes through the Tencent Cloud API.
   - Metadata comparison tolerates service-added settings while enforcing every requested mapping and setting.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: Elasticsearch cluster ID.}
-  name: {type: str, required: true, description: Index name.}
-  index_type: {type: str, choices: [normal, auto], default: normal, description: Normal or autonomous index type.}
-  metadata: {type: dict, description: Index mappings and settings. Required when C(state=present).}
-  username: {type: str, required: true, description: Cluster access username.}
-  password: {type: str, required: true, description: Cluster access password.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Elasticsearch cluster ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Index name.
+    type: str
+    required: true
+  index_type:
+    description:
+      - Normal or autonomous index type.
+    type: str
+    choices: [normal, auto]
+    default: normal
+  metadata:
+    description:
+      - Index mappings and settings. Required when C(state=present).
+    type: dict
+  username:
+    description:
+      - Cluster access username.
+    type: str
+    required: true
+  password:
+    description:
+      - Cluster access password.
+    type: str
+    required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

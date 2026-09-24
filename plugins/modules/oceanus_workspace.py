@@ -12,18 +12,44 @@ short_description: Manage Tencent Cloud Oceanus workspaces
 version_added: "0.14.0"
 description: Creates, renames, describes and deletes Oceanus workspaces, the ownership boundary for jobs, resources and variables.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  workspace_id: {type: str, description: Existing workspace ID.}
-  name: {type: str, description: Workspace name.}
-  description: {type: str, description: Workspace description.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  workspace_id:
+    description:
+      - Existing workspace ID.
+    type: str
+  name:
+    description:
+      - Workspace name.
+    type: str
+  description:
+    description:
+      - Workspace description.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

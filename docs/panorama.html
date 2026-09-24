@@ -180,7 +180,7 @@
         <div class="badge-row">
           <span class="pill">Galaxy <b>v1.4.0</b> 已发布</span>
           <span class="pill">仓库 main <b>1005 模块</b>（v1.4.0 发布时为 891）</span>
-          <span class="pill">sanity ignore <b>268 / 预算 268</b></span>
+          <span class="pill">sanity ignore <b>144 / 封顶 144</b></span>
           <span class="pill">覆盖 <b>204 产品</b> · 71 含写</span>
           <span class="pill">gate <b>80</b> · 实测 <b>92.65%</b></span>
         </div>
@@ -287,7 +287,7 @@
           <li><span class="tag">覆盖面</span><b>模块 1005、write 456、info 549，均列四家第一</b>（azure 426/212 次之）。549 个 *_info 中 548 个由 SDK introspection 生成（禁止手改），另 1 个手写（gaap_layer4_listener_info：GAAP 四层监听的列表 API 分为 TCP / UDP 两个 sibling action，生成器无法表达），是三家官方库没有的「全产品可发现」能力。</li>
           <li><span class="tag">写读配对</span><b>v1.1 起系统性关闭 read-surface 缺口</b>：shared resolver 铺到 VPC / TKE / 负载均衡 / 数据库家族，CVM / Lighthouse / database / TCR 读面逐批补齐 —— write 之后能用同一 collection 读回状态的主力产品已闭环。</li>
           <li><span class="tag">组合能力</span><b>68 个 roles（61 个达 solution 成熟度）</b>（含 launch / clb_http / web_stack / tke_cluster / disaster_recovery 等）vs 三家官方 0 个组合 role；一次调用编排多资源 + teardown。</li>
-          <li><span class="tag">质量治理</span><b>生成式治理</b>：generated 模块由 spec 生成、禁止手改。许可证头、公共参数文档和等待超时默认值整改后 sanity ignore 债务降至 <b>268 条</b>（67 条 × 4 个 core 版本 ignore 文件，268 封顶 + CI guard step）；余下参数、文档和 lint 豁免仍需逐项清除，不能视为通过质量审查。<b>coverage gate 80 已达成</b>（09-14 实测 92.65%）。</li>
+          <li><span class="tag">质量治理</span><b>生成式治理</b>：generated 模块由 spec 生成、禁止手改。许可证头、公共参数文档和等待超时默认值整改后 sanity ignore 债务降至 <b>144 条</b>（36 条 × 4 个 core 版本 ignore 文件）。守卫已由「预算制」改为「棘轮制」：9 类禁止忽略码封顶 <b>0</b>，总条目封顶 <b>144</b>，命中任一禁止码即 CI 失败，每条豁免必须带理由注释，且两个上限都只减不增。<b>coverage gate 80 已达成</b>（09-14 实测 92.65%）。</li>
           <li><span class="tag">单测密度</span>1,068 个模块级单测文件 / 10,674 个测试函数（脚本实测）；CI 口径（contract + module_utils + modules）13,654 条：13,601 过 / 31 跳 / 22 xfail（09-15 实测），语句覆盖 92.65%。<b>456 个 write 模块已全部有专属单测文件</b>（09-08 时还缺 111 个）。</li>
           <li><span class="tag">演进对齐</span>ansible-core 门槛 ≥2.19（2.16-2.18 已 EOL），CI 矩阵 2.19/2.20/2.21 × py 3.11/3.12/3.13 —— 主动对齐演进而非历史声明。</li>
         </ul>
@@ -298,7 +298,7 @@
           <li><span class="tag">集成测试</span><b>34 个 target 目录（33 个进 registry，21 个在默认清单）vs amazon 160 / google 115</b>（azure 产物无）。旗舰零覆盖已从 13 个降到 <b>6 个</b>（redis_instance / cos_object / scf_function / ckafka_instance / cbs_disk / nat_gateway）—— cvm_instance / vpc / subnet / cdb_instance / tke_cluster 已立 target，但 billed target 仍未进默认清单；cvm_image / lighthouse 曾是两个孤儿 target（两侧都不在），09-14 已补进 registry 并加「目录 vs registry」反向校验（G1-d 关闭）。</li>
           <li><span class="tag">读面缺口</span><b>112 个 write 模块没有同名 _info，但 backlog 已归零：0 个待补项、0 个 backlog 产品</b>（scripts/gap_backlog.py 实测）：57 个已由 KNOWN_COVERAGE 映射到确实返回该资源的别的 _info（tse 14 / tdmq 13 / dlc 6 等）、55 个资源根本没有列表 API（cos 13 / tse 13 / teo 7），剩下 21 个读面产品全部读得回来。09-14 由 curated TARGETS 一次生成 100 个 _info（读面缺口 226 → 126，backlog 128 → 28）；09-15 再由 13 条 curated target、14 条 KNOWN_COVERAGE 映射与 1 个手写模块（<code>gaap_layer4_listener_info</code>——GAAP 四层监听的列表 API 分为 TCP / UDP 两个 sibling action，生成器无法表达）把最后 28 个收干，<b>backlog 28 → 0、backlog 产品 18 → 0</b>。curated 目标由 <code>scripts/check_info_targets.py --check</code> 双向守住（已进 CI）：目标声明了却没落出 <code>_info</code> 模块或单测、或 spec 带着 1.5.0 标记却无人声明，都会立刻失败；<code>KNOWN_GAPS</code> 现为空集且不再是停车场——新 write 模块必须落地即被覆盖，否则 <code>scripts/audit_info_coverage.py --check</code> 立刻失败。</li>
           <li><span class="tag">单测广度</span>write 侧已闭合（<b>456 / 456 全部有专属单测文件</b>，09-08 时缺 111 个）；info 侧 36 个缺口已于 09-14 收口 —— <b>549 / 549 个 _info 全部有专属单测文件</b>（write 面 456 / 456 亦全）。92.65% 覆盖率仍由深测模块拉高，分布不均。</li>
-          <li><span class="tag">结构补课</span>plugin_utils（5）/ action（tc_wait）/ filter（tags）/ docsite（Sphinx -W 构建，产物已入库）已补齐，<b>extensions.yml 已落地</b>（声明 plugins/event_source 扩展；09-14 起由 scripts/check_extensions_metadata.py --check 双向校验，声明缺失或指向空目录即失败）；doc_fragments 6 个（amazon 5 个）；module_utils 16 个（amazon 42）。4 个 event_source（cmq/cls/cos/tke）09-14 补齐 EXAMPLES 块与载荷字段文档、修正 2 处永不匹配的规则条件，并由 test_examples.py 双向校验（P1-08 关闭）；ansible-core 与 antsibull-docs 都不识别该扩展类型，docsite 入口仍缺。</li>
+          <li><span class="tag">结构补课</span>plugin_utils（5）/ action（tc_wait）/ filter（tags）/ docsite（Sphinx -W 构建，产物已入库）已补齐，<b>extensions.yml 已落地</b>（声明 plugins/event_source 扩展；09-14 起由 scripts/check_extensions_metadata.py --check 双向校验，声明缺失或指向空目录即失败）；doc_fragments 7 个（amazon 5 个）；module_utils 16 个（amazon 42）。4 个 event_source（cmq/cls/cos/tke）09-14 补齐 EXAMPLES 块与载荷字段文档、修正 2 处永不匹配的规则条件，并由 test_examples.py 双向校验（P1-08 关闭）；ansible-core 与 antsibull-docs 都不识别该扩展类型，docsite 入口仍缺。</li>
           <li><span class="tag">生态信任</span>Galaxy 下载 553（09-14 实拉）vs 91.3M / 17.1M / 11.9M；inclusion #89 尚在评审，<b>暂无第三方采用证据</b>。</li>
           <li><span class="tag">维护资源</span>个人维护 vs 厂商 + Red Hat/社区团队；issue 响应与版本节奏是长期风险（缓解：生成式治理 + 自动化 CI 已把人均负担压低）。</li>
         </ul>

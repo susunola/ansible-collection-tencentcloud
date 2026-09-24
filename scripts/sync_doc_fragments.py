@@ -63,7 +63,40 @@ OPTION_FRAGMENTS = {
     "waiter_delay": "waiter",
     "waiter_timeout": "waiter",
 }
-KNOWN_FRAGMENTS = set(BASE_FRAGMENTS) | set(OPTION_FRAGMENTS.values())
+KNOWN_FRAGMENTS = set(BASE_FRAGMENTS) | set(OPTION_FRAGMENTS.values()) | {"timeout"}
+RUNTIME_FRAGMENTS = frozenset(OPTION_FRAGMENTS.values())
+
+# ``timeout`` lives in its own fragment so that a module which needs the
+# option name for something else can shadow it without the shared
+# documentation leaking a default the module does not apply.
+# dlc_notebook_session, tat_command, tat_invocation and tse_gateway_service
+# define their own ``timeout`` (a product API field, minutes of session or
+# command lifetime) and therefore must not reference the fragment; every other
+# module must.
+_TIMEOUT_OVERRIDE_RE = re.compile(r'"timeout"\s*:\s*\{')
+TIMEOUT_FRAGMENT = "timeout"
+
+
+def needs_timeout_fragment(text):
+    """True when the module accepts the SDK request-timeout option."""
+    return not _TIMEOUT_OVERRIDE_RE.search(text)
+
+# The runtime options are injected by ``base_argument_spec()`` -- reached
+# either directly or through ``TencentCloudModule``.  The legacy
+# ``tencentcloud_argument_spec()`` helper (module_utils/tencentcloud.py) does
+# NOT add them: it is kept for the discovery modules only.  Documenting an
+# option a module does not accept is a validate-modules error
+# (``nonexistent-parameter-documented``), so the fragment references have to
+# follow the spec builder rather than blanket-applying.
+_BASE_SPEC_RE = re.compile(r"\bbase_argument_spec\s*\(|\bTencentCloudModule\s*\(")
+_LEGACY_SPEC_RE = re.compile(r"\btencentcloud_argument_spec\s*\(")
+
+
+def accepts_runtime_options(text):
+    """True when the plugin's argument_spec carries the runtime options."""
+    if _LEGACY_SPEC_RE.search(text):
+        return False
+    return bool(_BASE_SPEC_RE.search(text))
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODULE_GLOB = os.path.join(REPO_ROOT, "plugins", "modules", "*.py")
@@ -226,24 +259,55 @@ def current_fragment_names(text):
 
 
 def fragments_and_stripped(text):
-    """Return (desired_fragment_names, inline_option_names_to_strip)."""
+    """Return (desired_fragment_names, inline_option_names_to_strip).
+
+    Every module accepts the runtime options because
+    ``module_utils.base.base_argument_spec()`` injects them, so a module that
+    documents none of them inline MUST reference the owning fragment.  Adding
+    the fragment only when an inline copy happened to be present is what let
+    a merge that dropped the fragment references go unnoticed: the module
+    ended up with neither the inline text nor the fragment, and this function
+    reported "nothing to do".
+
+    Deciding the fragment set and deciding what to strip are two steps: a
+    generic inline copy is redundant once its fragment is referenced, and the
+    waiter fragment is all-or-nothing only for a module that does not accept
+    the options at all (adding it there would document an option the module
+    rejects).
+    """
     fragments = list(BASE_FRAGMENTS)
+    if needs_timeout_fragment(text):
+        fragments.append(TIMEOUT_FRAGMENT)
+    runtime = accepts_runtime_options(text)
     verdicts = {}
     for name in OPTION_FRAGMENTS:
         parsed = find_option_block(text, name)
         if parsed:
             verdicts[name] = option_is_generic(name, parsed[2])
-    waiter_ok = "waiter_delay" in verdicts and "waiter_timeout" in verdicts and verdicts["waiter_delay"] and verdicts["waiter_timeout"]
-    stripped = []
+    waiter_ok = ("waiter_delay" in verdicts and "waiter_timeout" in verdicts
+                 and verdicts["waiter_delay"] and verdicts["waiter_timeout"])
+
+    # Step 1: which option fragments does this carrier need?
+    needed = set()
     for name, fragment in sorted(OPTION_FRAGMENTS.items()):
-        if name not in verdicts:
-            continue
-        if fragment == "waiter" and not waiter_ok:
-            continue
-        if verdicts[name]:
-            if fragment not in fragments:
-                fragments.append(fragment)
-            stripped.append(name)
+        if name in verdicts and verdicts[name]:
+            # A generic inline copy.  Point the module at the fragment, except
+            # for the all-or-nothing waiter pair on a module that cannot
+            # actually accept the options.
+            if fragment == "waiter" and not waiter_ok and not runtime:
+                continue
+            needed.add(fragment)
+        elif runtime:
+            # Either a product-specific override (the sibling may still need
+            # the fragment) or no inline copy at all.
+            needed.add(fragment)
+    for fragment in sorted(needed):
+        if fragment not in fragments:
+            fragments.append(fragment)
+
+    # Step 2: a generic inline copy is redundant once its fragment is in use.
+    stripped = [name for name in sorted(OPTION_FRAGMENTS)
+                if verdicts.get(name) and OPTION_FRAGMENTS[name] in fragments]
     return fragments, stripped
 
 
@@ -343,6 +407,41 @@ def check_all():
         missing_base = [f for f in BASE_FRAGMENTS if f not in current]
         if missing_base:
             problems.append("%s: missing base fragment(s) %s" % (path, sorted(missing_base)))
+        # The runtime options come from base_argument_spec(), so a carrier
+        # that accepts them must document them -- via the owning fragment, or
+        # via an inline override that fragments_and_stripped() keeps.
+        if accepts_runtime_options(text):
+            desired = fragments_and_stripped(text)[0]
+            missing_runtime = [f for f in desired if f in RUNTIME_FRAGMENTS and f not in current]
+            if missing_runtime:
+                problems.append(
+                    "%s: missing runtime fragment(s) %s -- the module accepts these "
+                    "options from base_argument_spec() but documents them nowhere"
+                    % (path, sorted(missing_runtime)))
+        else:
+            # The inverse: documenting an option the module does not accept
+            # is a validate-modules error, and silently passing here is how a
+            # revert that dropped the spec builder stayed invisible.
+            wrong_runtime = sorted(set(current) & RUNTIME_FRAGMENTS)
+            if wrong_runtime:
+                problems.append(
+                    "%s: references runtime fragment(s) %s but its argument_spec does "
+                    "not include them (legacy tencentcloud_argument_spec()); either "
+                    "drop the references or switch the module to base_argument_spec()"
+                    % (path, wrong_runtime))
+
+        # ``timeout``: required unless the module shadows the option.
+        if needs_timeout_fragment(text):
+            if TIMEOUT_FRAGMENT not in current:
+                problems.append(
+                    "%s: missing the '%s' fragment -- the module accepts the shared "
+                    "request-timeout option but documents it nowhere"
+                    % (path, TIMEOUT_FRAGMENT))
+        elif TIMEOUT_FRAGMENT in current:
+            problems.append(
+                "%s: references the '%s' fragment but overrides 'timeout' in its "
+                "argument_spec, so the fragment's default does not apply"
+                % (path, TIMEOUT_FRAGMENT))
         unknown = sorted(set(current) - KNOWN_FRAGMENTS)
         if unknown:
             problems.append("%s: unknown fragment reference(s) %s" % (path, unknown))

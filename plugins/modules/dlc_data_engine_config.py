@@ -15,43 +15,105 @@ description:
   - Reconciles the complete custom configuration pair set for an existing DLC data engine.
   - Optionally reconciles its Spark session resource template and supports exact engine-name resolution.
 options:
-  engine_id: {type: str, description: Exact DLC data-engine ID.}
-  engine_name: {type: str, description: Exact DLC data-engine name resolved to its ID.}
+  engine_id:
+    description:
+      - Exact DLC data-engine ID.
+    type: str
+  engine_name:
+    description:
+      - Exact DLC data-engine name resolved to its ID.
+    type: str
   config_pairs:
     type: list
     elements: dict
     required: true
     description: Complete desired custom configuration set.
     suboptions:
-      key: {type: str, required: true, description: Configuration item name.}
-      value: {type: str, required: true, description: Configuration item value.}
+      key:
+        description:
+          - Configuration item name.
+        type: str
+        required: true
+      value:
+        description:
+          - Configuration item value.
+        type: str
+        required: true
   session_resource_template:
     type: dict
     description: Optional desired Spark session resource template; omit to preserve the current template.
     suboptions:
-      driver_size: {type: str, description: Driver size.}
-      executor_size: {type: str, description: Executor size.}
-      executor_nums: {type: int, description: Initial executor count.}
-      executor_max_numbers: {type: int, description: Maximum dynamic executor count.}
+      driver_size:
+        description:
+          - Driver size.
+        type: str
+      executor_size:
+        description:
+          - Executor size.
+        type: str
+      executor_nums:
+        description:
+          - Initial executor count.
+        type: int
+      executor_max_numbers:
+        description:
+          - Maximum dynamic executor count.
+        type: int
       running_time_parameters:
         type: list
         elements: dict
         description: Complete runtime parameter set for the session template.
         suboptions:
-          key: {type: str, required: true, description: Runtime parameter name.}
-          value: {type: str, required: true, description: Runtime parameter value.}
-  allow_empty: {type: bool, default: false, description: Explicitly authorize clearing every custom configuration pair.}
-  wait: {type: bool, default: true, description: Wait for readable configuration convergence.}
-  waiter_delay: {type: int, default: 3, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 180, description: Overall convergence timeout.}
+          key:
+            description:
+              - Runtime parameter name.
+            type: str
+            required: true
+          value:
+            description:
+              - Runtime parameter value.
+            type: str
+            required: true
+  allow_empty:
+    description:
+      - Explicitly authorize clearing every custom configuration pair.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for readable configuration convergence.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between polls.
+    type: int
+    default: 3
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 180
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -205,7 +267,7 @@ def wait_config(module, client, models, p, engine_id, target):
 
 
 def run_module():
-    pair = {"key": {"required": True}, "value": {"required": True}}
+    pair = {"key": {"required": True, "no_log": False}, "value": {"required": True}}
     template = {
         "driver_size": {},
         "executor_size": {},

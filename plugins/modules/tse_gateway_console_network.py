@@ -13,20 +13,57 @@ short_description: Manage Tencent Cloud TSE gateway console network access
 version_added: "0.14.0"
 description: Opens or closes the Konga console network, reconciles access control and waits for network state convergence.
 options:
-  gateway_id: {type: str, required: true, description: Cloud-native API gateway ID.}
-  state: {type: str, choices: [open, closed], default: open, description: Desired console network state.}
-  network_type: {type: str, choices: [Open], default: Open, description: Console network type supported by Tencent Cloud.}
-  access_control: {type: dict, description: Exact SDK NetworkAccessControl payload used when opening the console.}
-  waiter_delay: {type: int, default: 5, description: Polling interval while waiting for convergence.}
-  waiter_timeout: {type: int, default: 600, description: Maximum convergence wait.}
+  gateway_id:
+    description:
+      - Cloud-native API gateway ID.
+    type: str
+    required: true
+  state:
+    description:
+      - Desired console network state.
+    type: str
+    choices: [open, closed]
+    default: open
+  network_type:
+    description:
+      - Console network type supported by Tencent Cloud.
+    type: str
+    choices: [Open]
+    default: Open
+  access_control:
+    description:
+      - Exact SDK NetworkAccessControl payload used when opening the console.
+    type: dict
+  waiter_delay:
+    description:
+      - Polling interval while waiting for convergence.
+    type: int
+    default: 5
+  waiter_timeout:
+    description:
+      - Maximum convergence wait.
+    type: int
+    default: 600
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

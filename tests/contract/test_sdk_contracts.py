@@ -11830,8 +11830,12 @@ def test_tke_cluster_deletion_protection():
     module = _import_plugin("tke_cluster_deletion_protection")
     models = _models("tke.v20180525")
     fake = _RecordingModule()
+    # The module fails closed unless DescribeClusters returns exactly one
+    # cluster whose ClusterId matches the one it asked for, so the fixture has
+    # to carry the id; without it describe_state called fail_json and the
+    # double, which has no fail_json, raised AttributeError instead.
     client = SimpleNamespace(DescribeClusters=lambda request: SimpleNamespace(
-        Clusters=[SimpleNamespace(DeletionProtection=True)],
+        Clusters=[SimpleNamespace(ClusterId="cls-xxxxxxxx", DeletionProtection=True)],
     ))
     errors = []
     assert module.describe_state(fake, client, models, "cls-xxxxxxxx") is True

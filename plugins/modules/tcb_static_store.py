@@ -14,22 +14,56 @@ description:
   - Creates or destroys the environment-level CloudBase static store.
   - Waits through asynchronous C(init), C(process), and C(destroying) states.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  env_id: {type: str, required: true, description: CloudBase environment ID.}
-  enable_union: {type: bool, default: true, description: Enable the unified domain at creation.}
-  external_storage: {type: dict, description: Creation-time SDK ExternalStorage payload.}
-  cdn_domain: {type: str, description: CDN domain used by destruction; defaults to the discovered store domain.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  env_id:
+    description:
+      - CloudBase environment ID.
+    type: str
+    required: true
+  enable_union:
+    description:
+      - Enable the unified domain at creation.
+    type: bool
+    default: true
+  external_storage:
+    description:
+      - Creation-time SDK ExternalStorage payload.
+    type: dict
+  cdn_domain:
+    description:
+      - CDN domain used by destruction; defaults to the discovered store domain.
+    type: str
 
-  waiter_delay: {type: int, default: 5, description: Polling interval.}
-  waiter_timeout: {type: int, default: 600, description: Provisioning or destruction timeout.}
+  waiter_timeout:
+    description:
+      - Provisioning or destruction timeout.
+    type: int
+    default: 600
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -13,22 +13,71 @@ version_added: "0.14.0"
 description: Creates, updates and deletes full-text indexes for CLS topics.
 options:
 
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  topic_id: {type: str, required: true, description: CLS topic ID.}
-  enabled: {type: bool, default: true, description: Enable indexing.}
-  case_sensitive: {type: bool, default: false, description: Use case-sensitive full-text matching.}
-  full_text_delimiters: {type: str, default: ',; ', description: Full-text tokenizer characters.}
-  contain_zh: {type: bool, default: true, description: Enable Chinese tokenization.}
-  include_internal_fields: {type: bool, default: false, description: Index internal fields.}
-  metadata_flag: {type: int, choices: [0, 1], default: 0, description: Metadata indexing flag.}
-  coverage_field: {type: str, description: Field used for log coverage.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  topic_id:
+    description:
+      - CLS topic ID.
+    type: str
+    required: true
+  enabled:
+    description:
+      - Enable indexing.
+    type: bool
+    default: true
+  case_sensitive:
+    description:
+      - Use case-sensitive full-text matching.
+    type: bool
+    default: false
+  full_text_delimiters:
+    description:
+      - Full-text tokenizer characters.
+    type: str
+    default: ',; '
+  contain_zh:
+    description:
+      - Enable Chinese tokenization.
+    type: bool
+    default: true
+  include_internal_fields:
+    description:
+      - Index internal fields.
+    type: bool
+    default: false
+  metadata_flag:
+    description:
+      - Metadata indexing flag.
+    type: int
+    choices: [0, 1]
+    default: 0
+  coverage_field:
+    description:
+      - Field used for log coverage.
+    type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

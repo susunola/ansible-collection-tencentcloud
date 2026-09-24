@@ -12,32 +12,110 @@ short_description: Manage a Tencent Cloud Monitor alarm policy
 version_added: "0.13.0"
 description: Creates, updates, enables, disables and deletes a Cloud Monitor alarm policy.
 options:
-  state: {description: Desired lifecycle state., type: str, choices: [present, absent], default: present}
-  policy_id: {description: Existing alarm policy ID., type: str}
-  name: {description: Alarm policy name., type: str}
-  module: {description: API module selector., type: str, default: monitor}
-  monitor_type: {description: Monitor data source type., type: str, default: MT_QCE}
-  namespace: {description: Product namespace such as C(QCE/CVM)., type: str}
-  remark: {description: Alarm policy remark., type: str, default: ''}
-  enabled: {description: Whether evaluation is enabled., type: bool, default: true}
-  condition: {description: Alarm metric condition in Tencent Cloud API shape., type: raw}
-  event_condition: {description: Event alarm condition in Tencent Cloud API shape., type: raw}
-  notice_ids: {description: Alarm notification rule IDs., type: list, elements: str, default: []}
-  project_id: {description: Project ID assigned when creating the policy., type: int}
-  filter: {description: Alarm-policy dimension filter in Tencent Cloud API shape., type: raw}
-  group_by: {description: Dimension names used to aggregate alarm objects., type: list, elements: str}
-  trigger_tasks: {description: Alarm trigger tasks in Tencent Cloud API shape., type: list, elements: raw}
-  hierarchical_notices: {description: Hierarchical notification bindings in Tencent Cloud API shape., type: list, elements: raw}
-  notice_content_template_bindings: {description: Notification content-template bindings in Tencent Cloud API shape., type: list, elements: raw}
-  tags: {description: Alarm-policy tags applied at creation., type: dict}
+  state:
+    description:
+      - Desired lifecycle state.
+    type: str
+    choices: [present, absent]
+    default: present
+  policy_id:
+    description:
+      - Existing alarm policy ID.
+    type: str
+  name:
+    description:
+      - Alarm policy name.
+    type: str
+  module:
+    description:
+      - API module selector.
+    type: str
+    default: monitor
+  monitor_type:
+    description:
+      - Monitor data source type.
+    type: str
+    default: MT_QCE
+  namespace:
+    description:
+      - Product namespace such as C(QCE/CVM).
+    type: str
+  remark:
+    description:
+      - Alarm policy remark.
+    type: str
+    default: ''
+  enabled:
+    description:
+      - Whether evaluation is enabled.
+    type: bool
+    default: true
+  condition:
+    description:
+      - Alarm metric condition in Tencent Cloud API shape.
+    type: raw
+  event_condition:
+    description:
+      - Event alarm condition in Tencent Cloud API shape.
+    type: raw
+  notice_ids:
+    description:
+      - Alarm notification rule IDs.
+    type: list
+    default: []
+    elements: str
+  project_id:
+    description:
+      - Project ID assigned when creating the policy.
+    type: int
+  filter:
+    description:
+      - Alarm-policy dimension filter in Tencent Cloud API shape.
+    type: raw
+  group_by:
+    description:
+      - Dimension names used to aggregate alarm objects.
+    type: list
+    elements: str
+  trigger_tasks:
+    description:
+      - Alarm trigger tasks in Tencent Cloud API shape.
+    type: list
+    elements: raw
+  hierarchical_notices:
+    description:
+      - Hierarchical notification bindings in Tencent Cloud API shape.
+    type: list
+    elements: raw
+  notice_content_template_bindings:
+    description:
+      - Notification content-template bindings in Tencent Cloud API shape.
+    type: list
+    elements: raw
+  tags:
+    description:
+      - Alarm-policy tags applied at creation.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

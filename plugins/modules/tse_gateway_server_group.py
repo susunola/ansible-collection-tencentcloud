@@ -12,25 +12,70 @@ short_description: Manage a Tencent Cloud TSE gateway server group
 version_added: "0.14.0"
 description: Creates, resizes, updates and deletes a non-default cloud-native API gateway server group.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  group_id: {type: str, description: Existing group ID.}
-  name: {type: str, description: Group name.}
-  node_config: {type: dict, description: SDK CloudNativeAPIGatewayNodeConfig payload.}
-  subnet_id: {type: str, description: Subnet ID used at creation.}
-  description: {type: str, description: Group description.}
-  internet_max_bandwidth_out: {type: int, description: Public bandwidth used at creation.}
-  internet_config: {type: dict, description: SDK InternetConfig payload used at creation.}
-  waiter_delay: {type: int, default: 5, description: Reconciliation polling interval.}
-  waiter_timeout: {type: int, default: 600, description: Reconciliation timeout.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  group_id:
+    description:
+      - Existing group ID.
+    type: str
+  name:
+    description:
+      - Group name.
+    type: str
+  node_config:
+    description:
+      - SDK CloudNativeAPIGatewayNodeConfig payload.
+    type: dict
+  subnet_id:
+    description:
+      - Subnet ID used at creation.
+    type: str
+  description:
+    description:
+      - Group description.
+    type: str
+  internet_max_bandwidth_out:
+    description:
+      - Public bandwidth used at creation.
+    type: int
+  internet_config:
+    description:
+      - SDK InternetConfig payload used at creation.
+    type: dict
+  waiter_timeout:
+    description:
+      - Reconciliation timeout.
+    type: int
+    default: 600
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

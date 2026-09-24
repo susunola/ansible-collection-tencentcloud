@@ -15,19 +15,52 @@ description:
   - C(default) restores the service-reported default value.
   - Reports restart requirements but never restarts the cluster implicitly.
 options:
-  state: {type: str, choices: [present, default], default: present, description: Set an explicit value or restore the default.}
-  instance_id: {type: str, required: true, description: CDW PostgreSQL instance ID.}
-  node_type: {type: str, choices: [cn, dn], required: true, description: Node type receiving the parameter.}
-  name: {type: str, required: true, description: Parameter name.}
-  value: {type: str, description: Desired value when state is present.}
+  state:
+    description:
+      - Set an explicit value or restore the default.
+    type: str
+    choices: [present, default]
+    default: present
+  instance_id:
+    description:
+      - CDW PostgreSQL instance ID.
+    type: str
+    required: true
+  node_type:
+    description:
+      - Node type receiving the parameter.
+    type: str
+    required: true
+    choices: [cn, dn]
+  name:
+    description:
+      - Parameter name.
+    type: str
+    required: true
+  value:
+    description:
+      - Desired value when state is present.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

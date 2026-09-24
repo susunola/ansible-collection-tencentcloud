@@ -13,24 +13,59 @@ short_description: Manage a Tencent Cloud TSF traffic lane
 version_added: "0.15.0"
 description: Creates, updates and deletes a TSF traffic lane while protecting its observable deployment-group membership as immutable.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired resource state.}
-  lane_id: {type: str, description: Existing lane ID; exact name is used when omitted.}
-  name: {type: str, required: true, description: Lane name.}
-  remark: {type: str, description: Lane remark.}
+  state:
+    description:
+      - Desired resource state.
+    type: str
+    choices: [present, absent]
+    default: present
+  lane_id:
+    description:
+      - Existing lane ID; exact name is used when omitted.
+    type: str
+  name:
+    description:
+      - Lane name.
+    type: str
+    required: true
+  remark:
+    description:
+      - Lane remark.
+    type: str
   deployment_groups:
     type: list
     elements: dict
     description: Exact deployment-group membership, required when creating and immutable afterwards.
     suboptions:
-      group_id: {type: str, required: true, description: TSF deployment group ID.}
-      entrance: {type: bool, default: false, description: Whether this is the lane entrance group.}
+      group_id:
+        description:
+          - TSF deployment group ID.
+        type: str
+        required: true
+      entrance:
+        description:
+          - Whether this is the lane entrance group.
+        type: bool
+        default: false
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

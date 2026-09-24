@@ -15,30 +15,85 @@ description:
   - Reconciles the complete user and work-group access policy for an exact DLC UDF identity.
   - Access, user and group ordering is normalized and clearing the entire policy requires explicit authorization.
 options:
-  name: {type: str, required: true, description: Exact UDF name.}
-  database_name: {type: str, required: true, description: Database name or global-function for a global UDF.}
-  catalog_name: {type: str, required: true, description: Data catalog name.}
+  name:
+    description:
+      - Exact UDF name.
+    type: str
+    required: true
+  database_name:
+    description:
+      - Database name or global-function for a global UDF.
+    type: str
+    required: true
+  catalog_name:
+    description:
+      - Data catalog name.
+    type: str
+    required: true
   policy_infos:
     type: list
     elements: dict
     required: true
     description: Complete desired UDF policy set.
     suboptions:
-      accesses: {type: list, elements: str, required: true, description: 'Access types such as select, alter or drop.'}
-      users: {type: list, elements: str, default: [], description: Exact user identity set.}
-      groups: {type: list, elements: str, default: [], description: Exact work-group identity set.}
-  allow_empty: {type: bool, default: false, description: Explicitly authorize clearing every UDF policy entry.}
-  wait: {type: bool, default: true, description: Wait for readable policy convergence.}
-  waiter_delay: {type: int, default: 3, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 180, description: Overall convergence timeout.}
+      accesses:
+        description:
+          - Access types such as select, alter or drop.
+        type: list
+        required: true
+        elements: str
+      users:
+        description:
+          - Exact user identity set.
+        type: list
+        default: []
+        elements: str
+      groups:
+        description:
+          - Exact work-group identity set.
+        type: list
+        default: []
+        elements: str
+  allow_empty:
+    description:
+      - Explicitly authorize clearing every UDF policy entry.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for readable policy convergence.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between polls.
+    type: int
+    default: 3
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 180
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

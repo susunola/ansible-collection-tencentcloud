@@ -13,25 +13,88 @@ version_added: "0.14.0"
 description: Creates, updates and deletes CLS LogListener machine groups.
 options:
 
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  group_id: {type: str, description: Existing machine group ID.}
-  name: {type: str, description: Machine group name.}
-  group_type: {type: str, choices: [ip, label], default: ip, description: Machine identity type.}
-  values: {type: list, elements: str, default: [], description: Exact IP addresses or labels.}
-  tags: {type: dict, default: {}, description: Exact resource tags.}
-  auto_update: {type: bool, default: false, description: Automatically update LogListener.}
-  update_start_time: {type: str, default: '00:00:00', description: Update window start.}
-  update_end_time: {type: str, default: '23:59:59', description: Update window end.}
-  service_logging: {type: bool, default: false, description: Enable LogListener service logs.}
-  delay_cleanup_time: {type: int, default: 0, description: Offline machine cleanup delay.}
-  os_type: {type: int, choices: [0, 1], default: 0, description: Operating system type at creation.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  group_id:
+    description:
+      - Existing machine group ID.
+    type: str
+  name:
+    description:
+      - Machine group name.
+    type: str
+  group_type:
+    description:
+      - Machine identity type.
+    type: str
+    choices: [ip, label]
+    default: ip
+  values:
+    description:
+      - Exact IP addresses or labels.
+    type: list
+    default: []
+    elements: str
+  tags:
+    description:
+      - Exact resource tags.
+    type: dict
+    default:
+      {}
+  auto_update:
+    description:
+      - Automatically update LogListener.
+    type: bool
+    default: false
+  update_start_time:
+    description:
+      - Update window start.
+    type: str
+    default: 00:00:00
+  update_end_time:
+    description:
+      - Update window end.
+    type: str
+    default: '23:59:59'
+  service_logging:
+    description:
+      - Enable LogListener service logs.
+    type: bool
+    default: false
+  delay_cleanup_time:
+    description:
+      - Offline machine cleanup delay.
+    type: int
+    default: 0
+  os_type:
+    description:
+      - Operating system type at creation.
+    type: int
+    choices: [0, 1]
+    default: 0
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -12,19 +12,49 @@ short_description: Manage Tencent Cloud Lighthouse instance snapshots
 version_added: "0.14.0"
 description: Creates, renames, waits for and deletes Lighthouse system-disk snapshots.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  snapshot_id: {type: str, description: Existing snapshot ID; preferred for rename and deletion.}
-  instance_id: {type: str, description: Source Lighthouse instance ID used for creation and lookup.}
-  name: {type: str, description: Snapshot name.}
-  wait: {type: bool, default: true, description: Wait for the snapshot to reach NORMAL after creation.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  snapshot_id:
+    description:
+      - Existing snapshot ID; preferred for rename and deletion.
+    type: str
+  instance_id:
+    description:
+      - Source Lighthouse instance ID used for creation and lookup.
+    type: str
+  name:
+    description:
+      - Snapshot name.
+    type: str
+  wait:
+    description:
+      - Wait for the snapshot to reach NORMAL after creation.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

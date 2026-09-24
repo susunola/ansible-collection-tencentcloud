@@ -15,20 +15,54 @@ description:
   - Initializes the account-level DLC query-result COS location and reconciles its advanced location settings.
   - The base store location is immutable after initialization because DLC exposes no reset or delete operation.
 options:
-  store_location: {type: str, required: true, description: Base COSN query-result path.}
-  advanced_enabled: {type: bool, description: Enable or disable advanced result storage.}
-  advanced_store_location: {type: str, description: Advanced COSN result path; required when enabling advanced storage.}
-  wait: {type: bool, default: true, description: Wait for readable configuration convergence.}
-  waiter_delay: {type: int, default: 3, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 180, description: Overall convergence timeout.}
+  store_location:
+    description:
+      - Base COSN query-result path.
+    type: str
+    required: true
+  advanced_enabled:
+    description:
+      - Enable or disable advanced result storage.
+    type: bool
+  advanced_store_location:
+    description:
+      - Advanced COSN result path; required when enabling advanced storage.
+    type: str
+  wait:
+    description:
+      - Wait for readable configuration convergence.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between polls.
+    type: int
+    default: 3
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 180
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

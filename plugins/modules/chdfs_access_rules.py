@@ -12,24 +12,53 @@ short_description: Reconcile Tencent Cloud CHDFS access rules
 version_added: "0.14.0"
 description: Reconciles the complete access-rule set of a CHDFS access group.
 options:
-  access_group_id: {type: str, required: true, description: Access group ID.}
+  access_group_id:
+    description:
+      - Access group ID.
+    type: str
+    required: true
   rules:
     type: list
     elements: dict
     required: true
     description: Exact desired rule set, matched by address.
     suboptions:
-      address: {type: str, required: true, description: CIDR or IP address.}
-      access_mode: {type: int, required: true, choices: [1, 2], description: Read-only or read-write mode.}
-      priority: {type: int, required: true, description: Priority from 1 through 100.}
+      address:
+        description:
+          - CIDR or IP address.
+        type: str
+        required: true
+      access_mode:
+        description:
+          - Read-only or read-write mode.
+        type: int
+        required: true
+        choices: [1, 2]
+      priority:
+        description:
+          - Priority from 1 through 100.
+        type: int
+        required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

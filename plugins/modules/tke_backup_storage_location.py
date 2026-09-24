@@ -14,21 +14,60 @@ description:
   - Creates and deletes a regional TKE backup storage location backed by object storage.
   - The API exposes no update operation; configuration drift requires explicit C(force_replace=true).
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  name: {type: str, required: true, description: Backup storage location name.}
-  storage_region: {type: str, description: Region containing the object storage bucket.}
-  bucket: {type: str, description: Object storage bucket name.}
-  provider: {type: str, default: tencentcloud, description: Storage provider.}
-  path: {type: str, default: '', description: Object prefix inside the bucket.}
-  force_replace: {type: bool, default: false, description: Delete and recreate when immutable configuration differs.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Backup storage location name.
+    type: str
+    required: true
+  storage_region:
+    description:
+      - Region containing the object storage bucket.
+    type: str
+  bucket:
+    description:
+      - Object storage bucket name.
+    type: str
+  provider:
+    description:
+      - Storage provider.
+    type: str
+    default: tencentcloud
+  path:
+    description:
+      - Object prefix inside the bucket.
+    type: str
+    default: ''
+  force_replace:
+    description:
+      - Delete and recreate when immutable configuration differs.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

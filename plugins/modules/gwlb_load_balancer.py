@@ -12,22 +12,61 @@ short_description: Manage Tencent Cloud Gateway Load Balancers
 version_added: "0.14.0"
 description: Creates, updates and deletes Gateway Load Balancer instances with deletion protection.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  load_balancer_id: {type: str, description: Existing GWLB ID.}
-  name: {type: str, description: GWLB name.}
-  vpc_id: {type: str, description: VPC ID required for creation and immutable afterwards.}
-  subnet_id: {type: str, description: Subnet ID required for creation and immutable afterwards.}
-  charge_type: {type: str, default: POSTPAID_BY_HOUR, description: Creation-time billing type.}
-  deletion_protection: {type: bool, description: Enable deletion protection.}
-  tags: {type: dict, description: Creation-time tags.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  load_balancer_id:
+    description:
+      - Existing GWLB ID.
+    type: str
+  name:
+    description:
+      - GWLB name.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID required for creation and immutable afterwards.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID required for creation and immutable afterwards.
+    type: str
+  charge_type:
+    description:
+      - Creation-time billing type.
+    type: str
+    default: POSTPAID_BY_HOUR
+  deletion_protection:
+    description:
+      - Enable deletion protection.
+    type: bool
+  tags:
+    description:
+      - Creation-time tags.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

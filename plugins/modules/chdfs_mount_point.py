@@ -12,19 +12,49 @@ short_description: Manage Tencent Cloud CHDFS mount points
 version_added: "0.14.0"
 description: Creates, updates and deletes CHDFS mount points.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  mount_point_id: {type: str, description: Existing mount point ID.}
-  file_system_id: {type: str, required: true, description: Parent file system ID.}
-  name: {type: str, description: Mount point name.}
-  status: {type: int, description: Mount point status accepted by CHDFS.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  mount_point_id:
+    description:
+      - Existing mount point ID.
+    type: str
+  file_system_id:
+    description:
+      - Parent file system ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Mount point name.
+    type: str
+  status:
+    description:
+      - Mount point status accepted by CHDFS.
+    type: int
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

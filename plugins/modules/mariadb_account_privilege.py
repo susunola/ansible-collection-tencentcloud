@@ -14,23 +14,74 @@ description:
   - Reconciles the complete privileges for one account scope such as global, database, table, view, procedure, function or column.
   - C(state=absent) clears privileges only for the selected scope.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired privilege-set state.}
-  instance_id: {type: str, required: true, description: MariaDB instance ID.}
-  username: {type: str, required: true, description: Account name.}
-  host: {type: str, default: '%', description: Account host expression.}
-  database: {type: str, default: '*', description: Database name or C(*) for global privileges.}
-  object_type: {type: str, choices: ['*', table, view, proc, func], default: '*', description: Scoped object type.}
-  object_name: {type: str, default: '*', description: "Table, view, procedure or function name."}
-  column: {type: str, default: '*', description: Column name for table scopes or C(*) for the whole table.}
-  privileges: {type: list, elements: str, default: [], description: Complete desired privilege names for this scope.}
+  state:
+    description:
+      - Desired privilege-set state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - MariaDB instance ID.
+    type: str
+    required: true
+  username:
+    description:
+      - Account name.
+    type: str
+    required: true
+  host:
+    description:
+      - Account host expression.
+    type: str
+    default: '%'
+  database:
+    description:
+      - Database name or C(*) for global privileges.
+    type: str
+    default: '*'
+  object_type:
+    description:
+      - Scoped object type.
+    type: str
+    choices: ['*', table, view, proc, func]
+    default: '*'
+  object_name:
+    description:
+      - Table, view, procedure or function name.
+    type: str
+    default: '*'
+  column:
+    description:
+      - Column name for table scopes or C(*) for the whole table.
+    type: str
+    default: '*'
+  privileges:
+    description:
+      - Complete desired privilege names for this scope.
+    type: list
+    default: []
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

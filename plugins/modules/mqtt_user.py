@@ -12,19 +12,51 @@ short_description: Manage Tencent Cloud MQTT users
 version_added: "0.14.0"
 description: Creates, updates and deletes MQTT username/password identities. Passwords are write-only and used only during creation.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: MQTT instance ID.}
-  username: {type: str, required: true, description: MQTT username.}
-  password: {type: str, description: Password required for creation; the API cannot update or read it.}
-  remark: {type: str, default: '', description: User remark.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - MQTT instance ID.
+    type: str
+    required: true
+  username:
+    description:
+      - MQTT username.
+    type: str
+    required: true
+  password:
+    description:
+      - Password required for creation; the API cannot update or read it.
+    type: str
+  remark:
+    description:
+      - User remark.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -12,16 +12,38 @@ short_description: Gather installed Managed Grafana integrations
 version_added: "1.4.0"
 description: Reads integrations installed in a Tencent Cloud Managed Grafana instance.
 options:
-  instance_id: {description: Grafana instance ID., type: str, required: true}
-  integration_id: {description: Exact integration ID., type: str}
-  kind: {description: Exact integration type code., type: str}
+  instance_id:
+    description:
+      - Grafana instance ID.
+    type: str
+    required: true
+  integration_id:
+    description:
+      - Exact integration ID.
+    type: str
+  kind:
+    description:
+      - Exact integration type code.
+    type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

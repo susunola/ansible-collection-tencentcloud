@@ -15,27 +15,82 @@ description:
   - Creates, updates and deletes a named Doris workload group.
   - Optionally reconciles the instance-wide workload-group switch.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: CDW Doris instance ID.}
-  name: {type: str, required: true, description: Workload group name.}
-  cpu_share: {type: int, description: Relative CPU weight.}
-  memory_limit: {type: int, description: Memory percentage limit.}
-  enable_memory_overcommit: {type: bool, description: Allow memory overcommit.}
-  cpu_hard_limit: {type: str, description: CPU hard limit accepted by the Doris API.}
-  min_cpu_percent: {type: int, description: Minimum reserved CPU percentage on Doris 4.1 or later.}
-  min_memory_percent: {type: int, description: Minimum reserved memory percentage on Doris 4.1 or later.}
-  max_concurrency: {type: int, description: Maximum concurrent queries.}
-  max_queue_size: {type: int, description: Maximum queued queries.}
-  queue_timeout: {type: int, description: Queue timeout in milliseconds.}
-  workload_groups_enabled: {type: bool, description: Desired instance-wide workload-group switch.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - CDW Doris instance ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Workload group name.
+    type: str
+    required: true
+  cpu_share:
+    description:
+      - Relative CPU weight.
+    type: int
+  memory_limit:
+    description:
+      - Memory percentage limit.
+    type: int
+  enable_memory_overcommit:
+    description:
+      - Allow memory overcommit.
+    type: bool
+  cpu_hard_limit:
+    description:
+      - CPU hard limit accepted by the Doris API.
+    type: str
+  min_cpu_percent:
+    description:
+      - Minimum reserved CPU percentage on Doris 4.1 or later.
+    type: int
+  min_memory_percent:
+    description:
+      - Minimum reserved memory percentage on Doris 4.1 or later.
+    type: int
+  max_concurrency:
+    description:
+      - Maximum concurrent queries.
+    type: int
+  max_queue_size:
+    description:
+      - Maximum queued queries.
+    type: int
+  queue_timeout:
+    description:
+      - Queue timeout in milliseconds.
+    type: int
+  workload_groups_enabled:
+    description:
+      - Desired instance-wide workload-group switch.
+    type: bool
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -13,20 +13,56 @@ short_description: Gather Tencent Cloud TSE configuration file inventory
 version_added: "0.14.0"
 description: Returns a paginated configuration file catalog filtered by namespace, group, name, ID or tags.
 options:
-  instance_id: {type: str, required: true, description: TSE engine instance ID.}
-  namespace: {type: str, description: Configuration namespace filter.}
-  group: {type: str, description: Configuration group filter.}
-  name: {type: str, description: Configuration file name filter.}
-  config_file_id: {type: str, description: Configuration file ID filter.}
-  tags: {type: list, elements: dict, description: SDK ConfigFileTag filter payloads.}
-  page_size: {type: int, default: 100, description: Number of files requested per API call.}
+  instance_id:
+    description:
+      - TSE engine instance ID.
+    type: str
+    required: true
+  namespace:
+    description:
+      - Configuration namespace filter.
+    type: str
+  group:
+    description:
+      - Configuration group filter.
+    type: str
+  name:
+    description:
+      - Configuration file name filter.
+    type: str
+  config_file_id:
+    description:
+      - Configuration file ID filter.
+    type: str
+  tags:
+    description:
+      - SDK ConfigFileTag filter payloads.
+    type: list
+    elements: dict
+  page_size:
+    description:
+      - Number of files requested per API call.
+    type: int
+    default: 100
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

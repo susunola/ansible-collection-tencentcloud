@@ -12,22 +12,69 @@ short_description: Manage a Tencent Cloud TSF virtual-machine deployment group
 version_added: "0.15.0"
 description: Creates, updates and deletes a TSF virtual-machine deployment group without conflating package deployment or runtime state.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired resource state.}
-  group_id: {type: str, description: Existing deployment group ID; scoped exact name is used when omitted.}
-  name: {type: str, required: true, description: Deployment group name.}
-  application_id: {type: str, required: true, description: Owning TSF application ID.}
-  namespace_id: {type: str, required: true, description: Owning TSF namespace ID.}
-  cluster_id: {type: str, required: true, description: Owning TSF cluster ID.}
-  description: {type: str, description: Deployment group description.}
-  alias: {type: str, description: Deployment group display remark.}
-  resource_type: {type: str, choices: [DEF], default: DEF, description: 'Deployment group resource type, immutable after creation.'}
+  state:
+    description:
+      - Desired resource state.
+    type: str
+    choices: [present, absent]
+    default: present
+  group_id:
+    description:
+      - Existing deployment group ID; scoped exact name is used when omitted.
+    type: str
+  name:
+    description:
+      - Deployment group name.
+    type: str
+    required: true
+  application_id:
+    description:
+      - Owning TSF application ID.
+    type: str
+    required: true
+  namespace_id:
+    description:
+      - Owning TSF namespace ID.
+    type: str
+    required: true
+  cluster_id:
+    description:
+      - Owning TSF cluster ID.
+    type: str
+    required: true
+  description:
+    description:
+      - Deployment group description.
+    type: str
+  alias:
+    description:
+      - Deployment group display remark.
+    type: str
+  resource_type:
+    description:
+      - Deployment group resource type, immutable after creation.
+    type: str
+    choices: [DEF]
+    default: DEF
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

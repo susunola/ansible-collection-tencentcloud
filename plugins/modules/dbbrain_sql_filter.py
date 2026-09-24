@@ -12,22 +12,69 @@ short_description: Manage Tencent Cloud DBbrain SQL filters
 version_added: "0.14.0"
 description: Manages active SQL concurrency filters through DBbrain.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  instance_id: {description: Database instance ID., type: str, required: true}
-  sql_type: {description: SQL statement type to match., type: str, choices: [SELECT, UPDATE, DELETE, INSERT, REPLACE], required: true}
-  filter_key: {description: Comma-separated SQL keywords matched with logical AND., type: str, required: true}
-  max_concurrency: {description: Maximum concurrent matching statements; zero rejects all., type: int, required: true}
-  duration: {description: Filter lifetime in seconds; -1 means indefinitely., type: int, default: -1}
-  session_token: {description: Short-lived token returned by VerifyUserAccount., type: str, required: true}
-  product: {description: Database product family., type: str, choices: [mysql, cynosdb], default: mysql}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Database instance ID.
+    type: str
+    required: true
+  sql_type:
+    description:
+      - SQL statement type to match.
+    type: str
+    required: true
+    choices: [SELECT, UPDATE, DELETE, INSERT, REPLACE]
+  filter_key:
+    description:
+      - Comma-separated SQL keywords matched with logical AND.
+    type: str
+    required: true
+  max_concurrency:
+    description:
+      - Maximum concurrent matching statements; zero rejects all.
+    type: int
+    required: true
+  duration:
+    description:
+      - Filter lifetime in seconds; -1 means indefinitely.
+    type: int
+    default: -1
+  session_token:
+    description:
+      - Short-lived token returned by VerifyUserAccount.
+    type: str
+    required: true
+  product:
+    description:
+      - Database product family.
+    type: str
+    choices: [mysql, cynosdb]
+    default: mysql
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r"""

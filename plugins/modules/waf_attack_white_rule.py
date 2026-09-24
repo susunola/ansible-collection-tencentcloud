@@ -12,23 +12,74 @@ short_description: Manage Tencent Cloud WAF attack-signature allow rules
 version_added: "0.14.0"
 description: Creates, updates and deletes domain-level WAF attack-signature allow rules.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  domain: {type: str, required: true, description: Protected domain.}
-  rule_id: {type: int, description: Existing allow-rule ID; preferred for rename and deletion.}
-  name: {type: str, description: Rule name.}
-  enabled: {type: bool, default: true, description: Whether the allow rule is enabled.}
-  mode: {type: int, choices: [0, 1], default: 0, description: Match individual signature IDs or signature type IDs.}
-  signature_ids: {type: list, elements: str, default: [], description: Exact set of attack signature IDs used in mode 0.}
-  type_ids: {type: list, elements: str, default: [], description: Exact set of signature category IDs used in mode 1.}
-  rules: {type: list, elements: dict, default: [], description: SDK-compatible request matching conditions.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  domain:
+    description:
+      - Protected domain.
+    type: str
+    required: true
+  rule_id:
+    description:
+      - Existing allow-rule ID; preferred for rename and deletion.
+    type: int
+  name:
+    description:
+      - Rule name.
+    type: str
+  enabled:
+    description:
+      - Whether the allow rule is enabled.
+    type: bool
+    default: true
+  mode:
+    description:
+      - Match individual signature IDs or signature type IDs.
+    type: int
+    choices: [0, 1]
+    default: 0
+  signature_ids:
+    description:
+      - Exact set of attack signature IDs used in mode 0.
+    type: list
+    default: []
+    elements: str
+  type_ids:
+    description:
+      - Exact set of signature category IDs used in mode 1.
+    type: list
+    default: []
+    elements: str
+  rules:
+    description:
+      - SDK-compatible request matching conditions.
+    type: list
+    default: []
+    elements: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

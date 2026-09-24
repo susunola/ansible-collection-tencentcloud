@@ -14,20 +14,61 @@ description:
   - Reconciles the singleton geographic-blocking rule for a protected WAF domain.
   - C(state=absent) disables the rule because the WAF API does not delete this singleton configuration.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Whether geographic blocking is configured and enabled.}
-  domain: {type: str, required: true, description: Protected domain.}
-  areas: {type: list, elements: dict, default: [], description: SDK-compatible Area entries to block.}
-  job_type: {type: str, choices: [TimedJob, CronJob], default: TimedJob, description: Scheduling mode.}
-  job_datetime: {type: dict, default: {}, description: SDK-compatible JobDateTime schedule.}
-  language: {type: str, choices: [cn, en], default: cn, description: Language used by area names.}
+  state:
+    description:
+      - Whether geographic blocking is configured and enabled.
+    type: str
+    choices: [present, absent]
+    default: present
+  domain:
+    description:
+      - Protected domain.
+    type: str
+    required: true
+  areas:
+    description:
+      - SDK-compatible Area entries to block.
+    type: list
+    default: []
+    elements: dict
+  job_type:
+    description:
+      - Scheduling mode.
+    type: str
+    choices: [TimedJob, CronJob]
+    default: TimedJob
+  job_datetime:
+    description:
+      - SDK-compatible JobDateTime schedule.
+    type: dict
+    default:
+      {}
+  language:
+    description:
+      - Language used by area names.
+    type: str
+    choices: [cn, en]
+    default: cn
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

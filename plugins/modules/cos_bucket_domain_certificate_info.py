@@ -10,16 +10,39 @@ short_description: Gather a Tencent Cloud COS custom-domain certificate
 version_added: "1.4.0"
 description: Returns the effective certificate status and managed certificate ID for one COS custom domain.
 options:
-  name: {description: Bucket short name or full name., type: str, required: true}
-  appid: {description: Tencent Cloud AppId used in the bucket suffix., type: str}
-  domain_name: {description: Custom domain bound to the bucket., type: str, required: true}
+  name:
+    description:
+      - Bucket short name or full name.
+    type: str
+    required: true
+  appid:
+    description:
+      - Tencent Cloud AppId used in the bucket suffix.
+    type: str
+  domain_name:
+    description:
+      - Custom domain bound to the bucket.
+    type: str
+    required: true
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

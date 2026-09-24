@@ -733,6 +733,8 @@ action_groups:
     - tcr_immutable_tag_rule_info
     - tcr_instance
     - tcr_instance_info
+    - tcr_internal_endpoint
+    - tcr_internal_endpoint_info
     - tcr_namespace
     - tcr_namespace_info
     - tcr_replication_instance

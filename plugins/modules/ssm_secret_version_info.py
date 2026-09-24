@@ -15,19 +15,48 @@ description:
   - Lists version metadata or retrieves one exact version.
   - Secret material is read only when C(include_secret_value=true); use task-level C(no_log=true) in that mode.
 options:
-  secret_name: {type: str, required: true, description: Secret name.}
-  version_id: {type: str, description: Exact version ID.}
-  include_secret_value: {type: bool, default: false, description: Retrieve sensitive SecretString or SecretBinary for version_id.}
-  encryption_public_key: {type: str, description: Optional public key used by supported encrypted-response flows.}
-  encryption_algorithm: {type: str, description: Optional encrypted-response algorithm.}
+  secret_name:
+    description:
+      - Secret name.
+    type: str
+    required: true
+  version_id:
+    description:
+      - Exact version ID.
+    type: str
+  include_secret_value:
+    description:
+      - Retrieve sensitive SecretString or SecretBinary for version_id.
+    type: bool
+    default: false
+  encryption_public_key:
+    description:
+      - Optional public key used by supported encrypted-response flows.
+    type: str
+  encryption_algorithm:
+    description:
+      - Optional encrypted-response algorithm.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

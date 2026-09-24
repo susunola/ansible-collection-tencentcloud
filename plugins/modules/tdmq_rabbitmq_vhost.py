@@ -12,20 +12,57 @@ short_description: Manage TDMQ RabbitMQ virtual hosts
 version_added: "0.14.0"
 description: Creates, updates and deletes RabbitMQ virtual hosts, including message tracing and initial mirror policy.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: TDMQ RabbitMQ instance ID.}
-  name: {type: str, required: true, description: Virtual host name.}
-  description: {type: str, default: '', description: Virtual host description.}
-  trace_enabled: {type: bool, default: false, description: Enable message tracing.}
-  mirror_queue_policy: {type: bool, default: true, description: Immutable initial mirror queue policy.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - TDMQ RabbitMQ instance ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Virtual host name.
+    type: str
+    required: true
+  description:
+    description:
+      - Virtual host description.
+    type: str
+    default: ''
+  trace_enabled:
+    description:
+      - Enable message tracing.
+    type: bool
+    default: false
+  mirror_queue_policy:
+    description:
+      - Immutable initial mirror queue policy.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

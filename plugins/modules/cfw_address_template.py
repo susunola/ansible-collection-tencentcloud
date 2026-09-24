@@ -13,21 +13,62 @@ short_description: Manage Tencent Cloud Cloud Firewall address templates
 version_added: "0.14.0"
 description: Creates, updates and deletes reusable Cloud Firewall IP or domain templates.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  uuid: {description: Existing address template UUID., type: str}
-  name: {description: Address template name., type: str}
-  template_type: {description: Address template type., type: str, choices: [ip, domain], default: ip}
-  addresses: {description: Exact set of IP networks or domain names., type: list, elements: str}
-  description: {description: Address template description., type: str, default: ''}
-  ip_version: {description: IP version for IP templates., type: int, choices: [0, 1], default: 0}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  uuid:
+    description:
+      - Existing address template UUID.
+    type: str
+  name:
+    description:
+      - Address template name.
+    type: str
+  template_type:
+    description:
+      - Address template type.
+    type: str
+    choices: [ip, domain]
+    default: ip
+  addresses:
+    description:
+      - Exact set of IP networks or domain names.
+    type: list
+    elements: str
+  description:
+    description:
+      - Address template description.
+    type: str
+    default: ''
+  ip_version:
+    description:
+      - IP version for IP templates.
+    type: int
+    choices: [0, 1]
+    default: 0
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

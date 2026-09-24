@@ -16,17 +16,37 @@ description:
   - Reads every backend page before calculating changes. With C(purge=true),
     backends omitted from C(targets) are removed.
 options:
-  target_group_id: {type: str, required: true, description: Target group ID.}
+  target_group_id:
+    description:
+      - Target group ID.
+    type: str
+    required: true
   targets:
     type: list
     elements: dict
     default: []
     description: Desired backend targets.
     suboptions:
-      ip: {type: str, required: true, description: Backend ENI IP address.}
-      port: {type: int, required: true, description: Backend service port.}
-      weight: {type: int, default: 10, description: Backend weight from 0 to 100.}
-  purge: {type: bool, default: true, description: Remove backends not listed in targets.}
+      ip:
+        description:
+          - Backend ENI IP address.
+        type: str
+        required: true
+      port:
+        description:
+          - Backend service port.
+        type: int
+        required: true
+      weight:
+        description:
+          - Backend weight from 0 to 100.
+        type: int
+        default: 10
+  purge:
+    description:
+      - Remove backends not listed in targets.
+    type: bool
+    default: true
 
 attributes:
   check_mode:
@@ -41,6 +61,7 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter

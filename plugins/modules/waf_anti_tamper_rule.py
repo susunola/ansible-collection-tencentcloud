@@ -12,21 +12,59 @@ short_description: Manage Tencent Cloud WAF anti-tamper URL rules
 version_added: "0.14.0"
 description: Creates, updates, enables and deletes protected URL snapshots for a WAF domain.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  domain: {type: str, required: true, description: Protected domain.}
-  rule_id: {type: int, description: Existing rule ID; preferred for rename and deletion.}
-  name: {type: str, description: Rule name.}
-  uri: {type: str, description: URI protected against tampering.}
-  enabled: {type: bool, default: true, description: Whether protection is active.}
-  refresh: {type: bool, default: false, description: Refresh the cached protected content when the rule otherwise matches.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  domain:
+    description:
+      - Protected domain.
+    type: str
+    required: true
+  rule_id:
+    description:
+      - Existing rule ID; preferred for rename and deletion.
+    type: int
+  name:
+    description:
+      - Rule name.
+    type: str
+  uri:
+    description:
+      - URI protected against tampering.
+    type: str
+  enabled:
+    description:
+      - Whether protection is active.
+    type: bool
+    default: true
+  refresh:
+    description:
+      - Refresh the cached protected content when the rule otherwise matches.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

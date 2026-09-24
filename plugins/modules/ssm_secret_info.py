@@ -15,25 +15,80 @@ description:
   - Returns exact Secret metadata or a bounded, filtered inventory.
   - Never retrieves Secret values.
 options:
-  secret_name: {type: str, description: Exact Secret name.}
-  state_filter: {type: int, choices: [0, 1, 2, 3, 4, 5], default: 0, description: API state filter in list mode.}
-  search_name: {type: str, description: Name search expression in list mode.}
-  tag_filters: {type: dict, default: {}, description: Tag keys mapped to value lists in list mode.}
-  secret_type: {type: int, choices: [0, 1, 2, 3, 4], description: Secret type filter.}
-  product_name: {type: str, description: Cloud product name filter.}
-  encrypt_type: {type: int, choices: [0, 1], description: Encryption type filter.}
-  instance_id: {type: str, description: Cloud product instance filter.}
-  order: {type: str, choices: [ascending, descending], default: descending, description: Creation-time ordering.}
-  page_size: {type: int, default: 100, description: 'Results requested per page, from 1 to 100.'}
-  max_pages: {type: int, default: 1000, description: Maximum pages fetched.}
+  secret_name:
+    description:
+      - Exact Secret name.
+    type: str
+  state_filter:
+    description:
+      - API state filter in list mode.
+    type: int
+    choices: [0, 1, 2, 3, 4, 5]
+    default: 0
+  search_name:
+    description:
+      - Name search expression in list mode.
+    type: str
+  tag_filters:
+    description:
+      - Tag keys mapped to value lists in list mode.
+    type: dict
+    default:
+      {}
+  secret_type:
+    description:
+      - Secret type filter.
+    type: int
+    choices: [0, 1, 2, 3, 4]
+  product_name:
+    description:
+      - Cloud product name filter.
+    type: str
+  encrypt_type:
+    description:
+      - Encryption type filter.
+    type: int
+    choices: [0, 1]
+  instance_id:
+    description:
+      - Cloud product instance filter.
+    type: str
+  order:
+    description:
+      - Creation-time ordering.
+    type: str
+    choices: [ascending, descending]
+    default: descending
+  page_size:
+    description:
+      - Results requested per page, from 1 to 100.
+    type: int
+    default: 100
+  max_pages:
+    description:
+      - Maximum pages fetched.
+    type: int
+    default: 1000
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

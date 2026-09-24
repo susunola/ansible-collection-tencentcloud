@@ -12,20 +12,52 @@ short_description: Manage Tencent Cloud CHDFS access groups
 version_added: "0.14.0"
 description: Creates, updates and deletes CHDFS access groups.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  access_group_id: {type: str, description: Existing access group ID.}
-  name: {type: str, description: Access group name.}
-  vpc_type: {type: int, description: Creation-time VPC type.}
-  vpc_id: {type: str, description: Creation-time VPC ID.}
-  description: {type: str, description: Access group description.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  access_group_id:
+    description:
+      - Existing access group ID.
+    type: str
+  name:
+    description:
+      - Access group name.
+    type: str
+  vpc_type:
+    description:
+      - Creation-time VPC type.
+    type: int
+  vpc_id:
+    description:
+      - Creation-time VPC ID.
+    type: str
+  description:
+    description:
+      - Access group description.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

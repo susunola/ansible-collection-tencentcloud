@@ -97,8 +97,6 @@ jobs:
         run: python scripts/check_extensions_metadata.py --check
       - name: Curated info targets shipped
         run: python scripts/check_info_targets.py --check
-      - name: Docs figures match the repo
-        run: python scripts/check_doc_figures.py --check
       - name: Roadmap badges match the acceptance criteria
         run: python scripts/check_roadmap_status.py --check
       # event_source is the one plugin type neither ansible-core nor
@@ -116,6 +114,16 @@ jobs:
         run: ruff check . --no-cache
       - name: Sanity ignore budget
         run: python scripts/check_sanity_ignore.py
+      # The reviewer's headline finding: 432 modules documented their options as
+      # single-line flow mappings.  Nothing upstream can see that -- a flow
+      # mapping is legal YAML, validate-modules accepts it, and
+      # sync_doc_fragments accepts it by design.
+      # Reviewer MUST FIX: every module must document check mode support and
+      # idempotency through an attributes block.
+      - name: Modules document check_mode and idempotency
+        run: python scripts/add_module_attributes.py --check
+      - name: Module docs are block style
+        run: python scripts/normalize_module_docs.py --check
       - name: Sanity tests
         run: ansible-test sanity --color --python ${{ matrix.python }}
       - name: Unit tests
@@ -169,6 +177,12 @@ jobs:
             coverage.xml
             coverage-html/
           if-no-files-found: warn
+      # Deliberately last: this guard reads figures out of docs/panorama.html
+      # and has twice gone red for its own bookkeeping.  While it sat above
+      # the test steps, that failure skipped sanity and units entirely, which
+      # is how 4,559 validate-modules errors reached main unnoticed.
+      - name: Docs figures match the repo
+        run: python scripts/check_doc_figures.py --check
       - name: Build collection
         run: ansible-galaxy collection build
 

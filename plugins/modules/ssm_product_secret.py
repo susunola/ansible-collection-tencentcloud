@@ -14,36 +14,164 @@ description:
   - Creates and governs database credentials whose account lifecycle and rotation are managed by SSM.
   - Creation is asynchronous and is not reported complete until the SSM task succeeds.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  secret_name: {type: str, required: true, description: SSM secret name.}
-  product_name: {type: str, description: Product identifier returned by the SSM supported-products API; required for creation.}
-  instance_id: {type: str, description: Bound cloud product instance ID; required for creation.}
-  username_prefix: {type: str, description: Generated database account prefix of at most eight characters; required for creation.}
-  domains: {type: list, elements: str, default: ['%'], description: Account host domains.}
-  privileges: {type: list, elements: dict, default: [], description: Product privilege units accepted by SSM.}
-  description: {type: str, default: managed by Ansible, description: Secret description.}
-  kms_key_id: {type: str, description: Customer KMS key ID.}
-  kms_hsm_cluster_id: {type: str, description: Dedicated KMS HSM cluster ID.}
-  encrypt_type: {type: int, choices: [0, 1], default: 0, description: KMS or software-key encryption.}
-  tags: {type: dict, default: {}, description: Creation tags.}
-  enabled: {type: bool, default: true, description: Whether the secret is enabled.}
-  rotation_enabled: {type: bool, default: false, description: Whether automatic rotation is enabled.}
-  rotation_frequency: {type: int, default: 30, description: Rotation frequency in days.}
-  rotation_begin_time: {type: str, description: First rotation time in C(YYYY-MM-DD HH:MM:SS) format.}
-  account_remark: {type: str, description: Database account remark.}
-  account_type: {type: str, choices: [L3], description: SQL Server account type.}
-  recovery_window_days: {type: int, default: 7, description: Deletion recovery window from 0 through 30 days.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  secret_name:
+    description:
+      - SSM secret name.
+    type: str
+    required: true
+  product_name:
+    description:
+      - Product identifier returned by the SSM supported-products API; required for creation.
+    type: str
+  instance_id:
+    description:
+      - Bound cloud product instance ID; required for creation.
+    type: str
+  username_prefix:
+    description:
+      - Generated database account prefix of at most eight characters; required for creation.
+    type: str
+  domains:
+    description:
+      - Account host domains.
+    type: list
+    default: ['%']
+    elements: str
+  privileges:
+    description:
+      - Product privilege units attached to the secret.
+      - Each entry names one object and the privilege granted on it; SSM accepts a flat list of units rather than a nested grant tree.
+    type: list
+    elements: dict
+    default: []
+    suboptions:
+      privilege_name:
+        description: Name of the privilege to grant on the object.
+        type: str
+      privileges:
+        description: Privileges granted on the object named by this unit.
+        type: list
+        elements: str
+      database:
+        description: Database the privilege applies to.
+        type: str
+      table_name:
+        description: Table the privilege applies to.
+        type: str
+      column_name:
+        description: Column the privilege applies to.
+        type: str
+      schema_name:
+        description: Schema the privilege applies to.
+        type: str
+      sequence_name:
+        description: Sequence the privilege applies to.
+        type: str
+      procedure_name:
+        description: Stored procedure the privilege applies to.
+        type: str
+      type_name:
+        description: User-defined type the privilege applies to.
+        type: str
+      function_name:
+        description: Function the privilege applies to.
+        type: str
+      view_name:
+        description: View the privilege applies to.
+        type: str
+      matview_name:
+        description: Materialized view the privilege applies to.
+        type: str
+  description:
+    description:
+      - Secret description.
+    type: str
+    default: managed by Ansible
+  kms_key_id:
+    description:
+      - Customer KMS key ID.
+    type: str
+  kms_hsm_cluster_id:
+    description:
+      - Dedicated KMS HSM cluster ID.
+    type: str
+  encrypt_type:
+    description:
+      - KMS or software-key encryption.
+    type: int
+    choices: [0, 1]
+    default: 0
+  tags:
+    description:
+      - Creation tags.
+    type: dict
+    default:
+      {}
+  enabled:
+    description:
+      - Whether the secret is enabled.
+    type: bool
+    default: true
+  rotation_enabled:
+    description:
+      - Whether automatic rotation is enabled.
+    type: bool
+    default: false
+  rotation_frequency:
+    description:
+      - Rotation frequency in days.
+    type: int
+    default: 30
+  rotation_begin_time:
+    description:
+      - First rotation time in C(YYYY-MM-DD HH:MM:SS) format.
+    type: str
+  account_remark:
+    description:
+      - Database account remark.
+    type: str
+  account_type:
+    description:
+      - SQL Server account type.
+    type: str
+    choices: [L3]
+  recovery_window_days:
+    description:
+      - Deletion recovery window from 0 through 30 days.
+    type: int
+    default: 7
 
-  waiter_delay: {type: int, default: 5, description: Async polling interval.}
-  waiter_timeout: {type: int, default: 600, description: Async polling timeout.}
+  waiter_timeout:
+    description:
+      - Async polling timeout.
+    type: int
+    default: 600
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

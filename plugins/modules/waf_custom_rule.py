@@ -12,26 +12,89 @@ short_description: Manage Tencent Cloud WAF custom rules
 version_added: "0.14.0"
 description: Creates, updates and deletes a domain-level WAF custom rule.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  domain: {type: str, required: true, description: Protected domain.}
-  rule_id: {type: int, description: Existing rule ID.}
-  name: {type: str, description: Rule name.}
-  edition: {type: str, choices: [sparta-waf, clb-waf], default: sparta-waf, description: WAF edition.}
-  priority: {type: int, default: 100, description: Evaluation priority from 1 to 100.}
-  action: {type: str, choices: ['1', '2', '3', '4', '5'], default: '1', description: WAF action code.}
-  strategies: {type: list, elements: dict, default: [], description: SDK-compatible match strategies.}
-  logical_operator: {type: str, choices: [and, or], default: and, description: Relationship between strategies.}
-  redirect: {type: str, default: '', description: Redirect URL for redirect actions.}
-  expire_time: {type: int, default: 0, description: Unix expiration time; zero means permanent.}
-  action_ratio: {type: int, default: 100, description: Percentage of matched requests receiving the action.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  domain:
+    description:
+      - Protected domain.
+    type: str
+    required: true
+  rule_id:
+    description:
+      - Existing rule ID.
+    type: int
+  name:
+    description:
+      - Rule name.
+    type: str
+  edition:
+    description:
+      - WAF edition.
+    type: str
+    choices: [sparta-waf, clb-waf]
+    default: sparta-waf
+  priority:
+    description:
+      - Evaluation priority from 1 to 100.
+    type: int
+    default: 100
+  action:
+    description:
+      - WAF action code.
+    type: str
+    choices: ['1', '2', '3', '4', '5']
+    default: '1'
+  strategies:
+    description:
+      - SDK-compatible match strategies.
+    type: list
+    default: []
+    elements: dict
+  logical_operator:
+    description:
+      - Relationship between strategies.
+    type: str
+    choices: [and, or]
+    default: and
+  redirect:
+    description:
+      - Redirect URL for redirect actions.
+    type: str
+    default: ''
+  expire_time:
+    description:
+      - Unix expiration time; zero means permanent.
+    type: int
+    default: 0
+  action_ratio:
+    description:
+      - Percentage of matched requests receiving the action.
+    type: int
+    default: 100
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

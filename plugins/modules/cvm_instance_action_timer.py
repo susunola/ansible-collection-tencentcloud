@@ -12,18 +12,45 @@ short_description: Manage Tencent Cloud CVM instance action timers
 version_added: "0.14.0"
 description: Creates, replaces and deletes an unexecuted scheduled termination timer for one CVM instance.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: CVM instance ID.}
-  action_time: {type: str, description: UTC ISO8601 execution time at least five minutes in the future.}
-  timer_id: {type: str, description: Existing action-timer ID; useful when more than one timer exists.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - CVM instance ID.
+    type: str
+    required: true
+  action_time:
+    description:
+      - UTC ISO8601 execution time at least five minutes in the future.
+    type: str
+  timer_id:
+    description:
+      - Existing action-timer ID; useful when more than one timer exists.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

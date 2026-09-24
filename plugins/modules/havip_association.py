@@ -12,18 +12,48 @@ short_description: Manage Tencent Cloud HAVIP drift-scope associations
 version_added: "0.14.0"
 description: Associates or disassociates a CVM instance or elastic network interface with a HAVIP drift scope.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired association state.}
-  havip_id: {type: str, required: true, description: HAVIP ID.}
-  instance_id: {type: str, required: true, description: CVM instance or ENI ID.}
-  instance_type: {type: str, choices: [CVM, ENI], required: true, description: Associated resource type.}
+  state:
+    description:
+      - Desired association state.
+    type: str
+    choices: [present, absent]
+    default: present
+  havip_id:
+    description:
+      - HAVIP ID.
+    type: str
+    required: true
+  instance_id:
+    description:
+      - CVM instance or ENI ID.
+    type: str
+    required: true
+  instance_type:
+    description:
+      - Associated resource type.
+    type: str
+    required: true
+    choices: [CVM, ENI]
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

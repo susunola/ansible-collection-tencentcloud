@@ -15,39 +15,136 @@ description:
   - Credential material is redacted from normal results. Set C(reveal_secret_value=true) only when a protected downstream task must capture it.
   - Protocol and credential configuration changes require explicit destructive rotation.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  secret_key_id: {type: str, description: Existing secret key ID.}
-  name: {type: str, description: Instance-unique secret key name.}
-  secret_type: {type: str, choices: [ApiKey, Basic, Hmac, OAuth2, JWT], description: Credential protocol.}
-  generate_type: {type: str, choices: [System, Custom, KMS], description: Credential generation mode.}
-  resource_type: {type: str, choices: [Consumer, ModelService], description: Owning resource type.}
-  status: {type: str, choices: [Enable, Disable], description: Credential status; creation defaults to Enable.}
-  secret_value: {type: str, description: Custom secret material.}
-  kms_key_name: {type: str, description: KMS key name.}
-  kms_key_version: {type: str, description: KMS key version.}
-  description: {type: str, description: Credential description.}
-  provider: {type: str, description: 'External provider, for example Dify.'}
-  jwt_credential_config: {type: dict, description: JWT credential configuration passed to the API.}
-  oauth_credential_config: {type: dict, description: OAuth credential configuration passed to the API.}
-  oidc_credential_config: {type: dict, description: OIDC credential configuration passed to the API.}
-  aksk_credential_config: {type: dict, description: AK/SK credential configuration passed to the API.}
-  cam_credential_config: {type: dict, description: CAM credential configuration passed to the API.}
-  bearer_token_credential_config: {type: dict, description: Bearer token configuration passed to the API.}
-  basic_credential_config: {type: dict, description: Basic Auth configuration passed to the API.}
-  custom_header_credential_config: {type: dict, description: Custom header credential configuration passed to the API.}
-  query_param_credential_config: {type: dict, description: Query parameter credential configuration passed to the API.}
-  rotate_secret: {type: bool, default: false, description: Delete and recreate an existing credential.}
-  allow_recreate: {type: bool, default: false, description: Required safety guard for destructive rotation.}
-  reveal_secret_value: {type: bool, default: false, description: Explicitly return plaintext secret_value.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  secret_key_id:
+    description:
+      - Existing secret key ID.
+    type: str
+  name:
+    description:
+      - Instance-unique secret key name.
+    type: str
+  secret_type:
+    description:
+      - Credential protocol.
+    type: str
+    choices: [ApiKey, Basic, Hmac, OAuth2, JWT]
+  generate_type:
+    description:
+      - Credential generation mode.
+    type: str
+    choices: [System, Custom, KMS]
+  resource_type:
+    description:
+      - Owning resource type.
+    type: str
+    choices: [Consumer, ModelService]
+  status:
+    description:
+      - Credential status; creation defaults to Enable.
+    type: str
+    choices: [Enable, Disable]
+  secret_value:
+    description:
+      - Custom secret material.
+    type: str
+  kms_key_name:
+    description:
+      - KMS key name.
+    type: str
+  kms_key_version:
+    description:
+      - KMS key version.
+    type: str
+  description:
+    description:
+      - Credential description.
+    type: str
+  provider:
+    description:
+      - External provider, for example Dify.
+    type: str
+  jwt_credential_config:
+    description:
+      - JWT credential configuration passed to the API.
+    type: dict
+  oauth_credential_config:
+    description:
+      - OAuth credential configuration passed to the API.
+    type: dict
+  oidc_credential_config:
+    description:
+      - OIDC credential configuration passed to the API.
+    type: dict
+  aksk_credential_config:
+    description:
+      - AK/SK credential configuration passed to the API.
+    type: dict
+  cam_credential_config:
+    description:
+      - CAM credential configuration passed to the API.
+    type: dict
+  bearer_token_credential_config:
+    description:
+      - Bearer token configuration passed to the API.
+    type: dict
+  basic_credential_config:
+    description:
+      - Basic Auth configuration passed to the API.
+    type: dict
+  custom_header_credential_config:
+    description:
+      - Custom header credential configuration passed to the API.
+    type: dict
+  query_param_credential_config:
+    description:
+      - Query parameter credential configuration passed to the API.
+    type: dict
+  rotate_secret:
+    description:
+      - Delete and recreate an existing credential.
+    type: bool
+    default: false
+  allow_recreate:
+    description:
+      - Required safety guard for destructive rotation.
+    type: bool
+    default: false
+  reveal_secret_value:
+    description:
+      - Explicitly return plaintext secret_value.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -219,7 +316,7 @@ def run_module():
         "status": {"choices": ["Enable", "Disable"]},
         "secret_value": {"no_log": True},
         "kms_key_name": {},
-        "kms_key_version": {},
+        "kms_key_version": {"no_log": False},
         "description": {},
         "provider": {},
         "rotate_secret": {"type": "bool", "default": False},

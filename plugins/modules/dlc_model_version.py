@@ -15,24 +15,67 @@ description:
   - Ensures that an immutable version exists for a DLC inference model.
   - The DLC API exposes neither version update nor deletion; conflicting metadata for an existing version is reported instead of overwritten.
 options:
-  model_uid: {type: str, required: true, description: Parent inference-model UID.}
-  version: {type: str, required: true, description: Exact immutable version label.}
-  description: {type: str, description: Version description.}
-  storage_uri: {type: str, description: Version storage URI.}
-  use_custom_storage: {type: bool, description: Whether the version uses customer storage.}
-  storage_type: {type: str, choices: [LOCAL, CFS, COS, CFSTurbo, GooseFS], description: Version upload source type.}
-  goosefs_config: {type: dict, description: GooseFSConfig-compatible creation object.}
-  wait: {type: bool, default: true, description: Wait until the version is visible.}
-  waiter_delay: {type: int, default: 5, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 300, description: Overall convergence timeout.}
+  model_uid:
+    description:
+      - Parent inference-model UID.
+    type: str
+    required: true
+  version:
+    description:
+      - Exact immutable version label.
+    type: str
+    required: true
+  description:
+    description:
+      - Version description.
+    type: str
+  storage_uri:
+    description:
+      - Version storage URI.
+    type: str
+  use_custom_storage:
+    description:
+      - Whether the version uses customer storage.
+    type: bool
+  storage_type:
+    description:
+      - Version upload source type.
+    type: str
+    choices: [LOCAL, CFS, COS, CFSTurbo, GooseFS]
+  goosefs_config:
+    description:
+      - GooseFSConfig-compatible creation object.
+    type: dict
+  wait:
+    description:
+      - Wait until the version is visible.
+    type: bool
+    default: true
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 300
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

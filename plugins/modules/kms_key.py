@@ -12,29 +12,82 @@ short_description: Manage a Tencent Cloud KMS key
 version_added: "0.13.0"
 description: Creates and manages the enabled state, description, rotation and scheduled deletion of a customer master key.
 options:
-  state: {description: Desired lifecycle state., type: str, choices: [present, absent], default: present}
-  key_id: {description: Existing KMS key ID. Takes precedence over O(alias)., type: str}
-  alias: {description: Alias used to find or create the key. Exact matching is applied to API search results., type: str}
-  description: {description: Human-readable key description., type: str, default: ''}
+  state:
+    description:
+      - Desired lifecycle state.
+    type: str
+    choices: [present, absent]
+    default: present
+  key_id:
+    description:
+      - Existing KMS key ID. Takes precedence over O(alias).
+    type: str
+  alias:
+    description:
+      - Alias used to find or create the key. Exact matching is applied to API search results.
+    type: str
+  description:
+    description:
+      - Human-readable key description.
+    type: str
+    default: ''
   key_usage:
     description: Cryptographic use of the key. Defaults to C(ENCRYPT_DECRYPT) when creating.
     type: str
     choices: [ENCRYPT_DECRYPT, ASYMMETRIC_DECRYPT_RSA_2048, ASYMMETRIC_DECRYPT_SM2, ASYMMETRIC_SIGN_VERIFY_ECC, ASYMMETRIC_SIGN_VERIFY_SM2]
-  key_type: {description: KMS key origin type. Defaults to C(1) when creating., type: int, choices: [1, 2]}
-  tags: {description: Tags applied when creating the key., type: dict}
-  enabled: {description: Whether the key is enabled., type: bool, default: true}
-  rotation_enabled: {description: "Whether automatic rotation is enabled. When omitted, rotation is not managed.", type: bool}
-  rotation_days: {description: Automatic rotation period in days., type: int, default: 365}
-  deletion_window_days: {description: Waiting period before permanent deletion., type: int, default: 7}
-  deletion_protection: {description: Refuse O(state=absent) while enabled., type: bool, default: false}
+  key_type:
+    description:
+      - KMS key origin type. Defaults to C(1) when creating.
+    type: int
+    choices: [1, 2]
+  tags:
+    description:
+      - Tags applied when creating the key.
+    type: dict
+  enabled:
+    description:
+      - Whether the key is enabled.
+    type: bool
+    default: true
+  rotation_enabled:
+    description:
+      - Whether automatic rotation is enabled. When omitted, rotation is not managed.
+    type: bool
+  rotation_days:
+    description:
+      - Automatic rotation period in days.
+    type: int
+    default: 365
+  deletion_window_days:
+    description:
+      - Waiting period before permanent deletion.
+    type: int
+    default: 7
+  deletion_protection:
+    description:
+      - Refuse O(state=absent) while enabled.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

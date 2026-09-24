@@ -13,28 +13,80 @@ short_description: Manage a Tencent Cloud TSF traffic lane rule
 version_added: "0.15.0"
 description: Creates, updates, enables, disables and deletes a fully observable TSF traffic lane rule.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired resource state.}
-  rule_id: {type: str, description: Existing rule ID; exact lane-scoped name is used when omitted.}
-  name: {type: str, required: true, description: Rule name.}
-  lane_id: {type: str, required: true, description: Owning traffic lane ID.}
-  remark: {type: str, description: Rule remark.}
-  enabled: {type: bool, default: true, description: Whether the rule is enabled.}
-  tag_relationship: {type: str, choices: [RELEATION_AND, RELEATION_OR], default: RELEATION_AND, description: 'Relationship between tags, using TSF API values.'}
+  state:
+    description:
+      - Desired resource state.
+    type: str
+    choices: [present, absent]
+    default: present
+  rule_id:
+    description:
+      - Existing rule ID; exact lane-scoped name is used when omitted.
+    type: str
+  name:
+    description:
+      - Rule name.
+    type: str
+    required: true
+  lane_id:
+    description:
+      - Owning traffic lane ID.
+    type: str
+    required: true
+  remark:
+    description:
+      - Rule remark.
+    type: str
+  enabled:
+    description:
+      - Whether the rule is enabled.
+    type: bool
+    default: true
+  tag_relationship:
+    description:
+      - Relationship between tags, using TSF API values.
+    type: str
+    choices: [RELEATION_AND, RELEATION_OR]
+    default: RELEATION_AND
   tags:
     type: list
     elements: dict
     description: Exact request tag conditions; required when creating.
     suboptions:
-      name: {type: str, required: true, description: Request tag name.}
-      operator: {type: str, required: true, description: TSF tag matching operator.}
-      value: {type: str, required: true, description: Match value.}
+      name:
+        description:
+          - Request tag name.
+        type: str
+        required: true
+      operator:
+        description:
+          - TSF tag matching operator.
+        type: str
+        required: true
+      value:
+        description:
+          - Match value.
+        type: str
+        required: true
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

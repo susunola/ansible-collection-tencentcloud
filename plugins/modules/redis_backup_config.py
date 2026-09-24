@@ -12,19 +12,53 @@ short_description: Manage TencentDB for Redis automatic backup configuration
 version_added: "0.14.0"
 description: Reconciles backup weekdays, time period, backup type and retention for a Redis instance.
 options:
-  instance_id: {type: str, required: true, description: Redis instance ID.}
-  week_days: {type: list, elements: str, required: true, description: Backup weekdays.}
-  time_period: {type: str, required: true, description: Daily backup time period.}
-  backup_type: {type: int, choices: [0, 1, 2], default: 0, description: Automatic backup type.}
-  storage_days: {type: int, required: true, description: Backup retention days.}
+  instance_id:
+    description:
+      - Redis instance ID.
+    type: str
+    required: true
+  week_days:
+    description:
+      - Backup weekdays.
+    type: list
+    required: true
+    elements: str
+  time_period:
+    description:
+      - Daily backup time period.
+    type: str
+    required: true
+  backup_type:
+    description:
+      - Automatic backup type.
+    type: int
+    choices: [0, 1, 2]
+    default: 0
+  storage_days:
+    description:
+      - Backup retention days.
+    type: int
+    required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

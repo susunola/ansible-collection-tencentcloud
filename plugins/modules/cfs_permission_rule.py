@@ -12,12 +12,36 @@ short_description: Manage Tencent Cloud CFS permission rules
 version_added: "0.14.0"
 description: Creates, updates and deletes one client rule in a CFS permission group.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  permission_group_id: {type: str, required: true, description: Parent CFS permission group ID.}
-  rule_id: {type: str, description: Existing rule ID; preferred when changing the client expression.}
-  client_ip: {type: str, description: "Authorized client IP, CIDR or wildcard expression."}
-  priority: {type: int, default: 1, description: Rule priority.}
-  access: {type: str, choices: [RO, RW], default: RW, description: Read-only or read-write access.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  permission_group_id:
+    description:
+      - Parent CFS permission group ID.
+    type: str
+    required: true
+  rule_id:
+    description:
+      - Existing rule ID; preferred when changing the client expression.
+    type: str
+  client_ip:
+    description:
+      - Authorized client IP, CIDR or wildcard expression.
+    type: str
+  priority:
+    description:
+      - Rule priority.
+    type: int
+    default: 1
+  access:
+    description:
+      - Read-only or read-write access.
+    type: str
+    choices: [RO, RW]
+    default: RW
   user_permission:
     type: str
     choices: [all_squash, no_all_squash, root_squash, no_root_squash]
@@ -28,9 +52,21 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -15,22 +15,67 @@ description:
   - This is an action module; C(state=started) creates a new invocation on every execution.
   - Parameters and command content are redacted from output. Task output is hidden unless explicitly requested.
 options:
-  state: {type: str, choices: [started, cancelled], default: started, description: Start a new invocation or cancel an existing one.}
-  invocation_id: {type: str, description: Existing invocation ID required for cancellation.}
-  command_id: {type: str, description: Reusable command ID required when starting.}
-  instance_ids: {type: list, elements: str, default: [], description: 'Target CVM, Lighthouse or managed instance IDs, up to 200.'}
-  parameters: {type: dict, default: {}, description: Command placeholder values.}
-  username: {type: str, description: Least-privilege operating-system user override.}
-  working_directory: {type: str, description: Working-directory override.}
-  timeout: {type: int, description: Command timeout override from 1 through 86400 seconds.}
-  output_cos_bucket_url: {type: str, description: HTTPS COS bucket URL for full logs.}
-  output_cos_key_prefix: {type: str, description: COS key prefix for logs.}
-  wait: {type: bool, default: true, description: Wait for all instance tasks to reach terminal states.}
-  fail_on_task_error: {type: bool, default: true, description: Fail when any task is unsuccessful.}
-  include_output: {type: bool, default: false, description: Return task output; use task-level C(no_log=true) when enabled.}
-
-  waiter_delay: {type: int, default: 5, description: Polling interval.}
-  waiter_timeout: {type: int, default: 900, description: Overall execution wait timeout.}
+  state:
+    description:
+      - Start a new invocation or cancel an existing one.
+    type: str
+    choices: [started, cancelled]
+    default: started
+  invocation_id:
+    description:
+      - Existing invocation ID required for cancellation.
+    type: str
+  command_id:
+    description:
+      - Reusable command ID required when starting.
+    type: str
+  instance_ids:
+    description:
+      - Target CVM, Lighthouse or managed instance IDs, up to 200.
+    type: list
+    default: []
+    elements: str
+  parameters:
+    description:
+      - Command placeholder values.
+    type: dict
+    default:
+      {}
+  username:
+    description:
+      - Least-privilege operating-system user override.
+    type: str
+  working_directory:
+    description:
+      - Working-directory override.
+    type: str
+  timeout:
+    description:
+      - Command timeout override from 1 through 86400 seconds.
+    type: int
+  output_cos_bucket_url:
+    description:
+      - HTTPS COS bucket URL for full logs.
+    type: str
+  output_cos_key_prefix:
+    description:
+      - COS key prefix for logs.
+    type: str
+  wait:
+    description:
+      - Wait for all instance tasks to reach terminal states.
+    type: bool
+    default: true
+  fail_on_task_error:
+    description:
+      - Fail when any task is unsuccessful.
+    type: bool
+    default: true
+  include_output:
+    description:
+      - Return task output; use task-level C(no_log=true) when enabled.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -39,6 +84,17 @@ extends_documentation_fragment:
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -143,7 +199,7 @@ def run_module():
             "working_directory": {},
             "timeout": {"type": "int"},
             "output_cos_bucket_url": {},
-            "output_cos_key_prefix": {},
+            "output_cos_key_prefix": {"no_log": False},
             "wait": {"type": "bool", "default": True},
             "fail_on_task_error": {"type": "bool", "default": True},
             "include_output": {"type": "bool", "default": False},

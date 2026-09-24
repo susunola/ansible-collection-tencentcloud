@@ -12,44 +12,143 @@ short_description: Manage Tencent Cloud DB Custom clusters
 version_added: "0.14.0"
 description: Creates and destroys DB Custom clusters and reconciles exact node membership, tags and deletion protection.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, description: Existing DB Custom cluster ID.}
-  name: {type: str, description: Cluster name; immutable after creation.}
-  description: {type: str, description: Cluster description; immutable after creation.}
-  container_vpc_id: {type: str, description: Container-network VPC ID; immutable after creation.}
-  container_subnet_ids: {type: list, elements: str, description: Container-network subnet IDs; immutable after creation.}
-  api_server_vpc_id: {type: str, description: API-server VPC ID; immutable after creation.}
-  api_server_subnet_id: {type: str, description: API-server subnet ID; immutable after creation.}
-  deletion_protection: {type: bool, description: Desired deletion protection; defaults to true during creation and must explicitly be false before deletion.}
-  tags: {type: dict, description: Exact desired cluster tags.}
-  client_token: {type: str, description: Caller-provided creation idempotency token.}
-  node_ids: {type: list, elements: str, description: Exact desired set of existing DB Custom node IDs attached to the cluster.}
-  node_image_id: {type: str, description: Image applied when attaching nodes.}
-  login_password: {type: str, description: Node login password used during attach or detach.}
-  login_key_id: {type: str, description: Single SSH key ID used during attach or detach.}
-  keep_image_login: {type: bool, description: Preserve image login settings during attach or detach.}
-  labels: {type: dict, description: Initial Kubernetes labels for newly attached nodes.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - Existing DB Custom cluster ID.
+    type: str
+  name:
+    description:
+      - Cluster name; immutable after creation.
+    type: str
+  description:
+    description:
+      - Cluster description; immutable after creation.
+    type: str
+  container_vpc_id:
+    description:
+      - Container-network VPC ID; immutable after creation.
+    type: str
+  container_subnet_ids:
+    description:
+      - Container-network subnet IDs; immutable after creation.
+    type: list
+    elements: str
+  api_server_vpc_id:
+    description:
+      - API-server VPC ID; immutable after creation.
+    type: str
+  api_server_subnet_id:
+    description:
+      - API-server subnet ID; immutable after creation.
+    type: str
+  deletion_protection:
+    description:
+      - Desired deletion protection; defaults to true during creation and must explicitly be false before
+        deletion.
+    type: bool
+  tags:
+    description:
+      - Exact desired cluster tags.
+    type: dict
+  client_token:
+    description:
+      - Caller-provided creation idempotency token.
+    type: str
+  node_ids:
+    description:
+      - Exact desired set of existing DB Custom node IDs attached to the cluster.
+    type: list
+    elements: str
+  node_image_id:
+    description:
+      - Image applied when attaching nodes.
+    type: str
+  login_password:
+    description:
+      - Node login password used during attach or detach.
+    type: str
+  login_key_id:
+    description:
+      - Single SSH key ID used during attach or detach.
+    type: str
+  keep_image_login:
+    description:
+      - Preserve image login settings during attach or detach.
+    type: bool
+  labels:
+    description:
+      - Initial Kubernetes labels for newly attached nodes.
+    type: dict
   taints:
     type: list
     elements: dict
     description: Initial Kubernetes taints for newly attached nodes.
     suboptions:
-      key: {type: str, required: true, description: Taint key.}
-      value: {type: str, description: Optional taint value.}
-      effect: {type: str, required: true, choices: [NoSchedule, PreferNoSchedule, NoExecute], description: Scheduling effect.}
-  host_name: {type: str, description: Host-name pattern for newly attached nodes.}
-  host_name_type: {type: int, choices: [0, 1, 2], description: "Reuse, explicitly set or automatically assign host names."}
-  allow_node_removal: {type: bool, default: false, description: Authorize removal when node_ids omits currently attached nodes.}
-  force_node_removal: {type: bool, default: false, description: Force removal even when business pods are running.}
-  remove_nodes_on_delete: {type: bool, default: false, description: Authorize detaching every node before cluster destruction.}
+      key:
+        description:
+          - Taint key.
+        type: str
+        required: true
+      value:
+        description:
+          - Optional taint value.
+        type: str
+      effect:
+        description:
+          - Scheduling effect.
+        type: str
+        required: true
+        choices: [NoSchedule, PreferNoSchedule, NoExecute]
+  host_name:
+    description:
+      - Host-name pattern for newly attached nodes.
+    type: str
+  host_name_type:
+    description:
+      - Reuse, explicitly set or automatically assign host names.
+    type: int
+    choices: [0, 1, 2]
+  allow_node_removal:
+    description:
+      - Authorize removal when node_ids omits currently attached nodes.
+    type: bool
+    default: false
+  force_node_removal:
+    description:
+      - Force removal even when business pods are running.
+    type: bool
+    default: false
+  remove_nodes_on_delete:
+    description:
+      - Authorize detaching every node before cluster destruction.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

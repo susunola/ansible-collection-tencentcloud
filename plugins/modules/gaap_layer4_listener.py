@@ -13,34 +13,122 @@ short_description: Manage Tencent Cloud GAAP TCP and UDP listeners
 version_added: "0.14.0"
 description: Creates, updates and deletes one idempotent GAAP layer-4 listener on a proxy or proxy group.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  listener_id: {type: str, description: Existing listener ID.}
-  proxy_id: {type: str, description: Parent GAAP proxy ID.}
-  group_id: {type: str, description: Parent GAAP proxy group ID.}
-  name: {type: str, description: Listener name.}
-  protocol: {type: str, choices: [TCP, UDP], required: true, description: Listener protocol.}
-  port: {type: int, description: Listener port; immutable after creation.}
-  scheduler: {type: str, choices: [rr, wrr, lc, lrtt], default: rr, description: Origin scheduling algorithm.}
-  real_server_type: {type: str, choices: [IP, DOMAIN], default: IP, description: Origin identity type.}
-  health_check: {type: bool, default: false, description: Enable origin health checks.}
-  delay_loop: {type: int, description: Health-check interval in seconds.}
-  connect_timeout: {type: int, description: Health-check timeout in seconds.}
-  healthy_threshold: {type: int, description: Consecutive successes required.}
-  unhealthy_threshold: {type: int, description: Consecutive failures required.}
-  failover: {type: bool, default: false, description: Enable master/standby origin mode.}
-  client_ip_method: {type: int, choices: [0, 1], description: TCP client IP method; 0 is TOA and 1 is Proxy Protocol.}
-  udp_check_type: {type: str, choices: [PORT, PING], description: UDP health-check type.}
-  udp_check_port: {type: int, description: UDP probe port.}
-  send_context: {type: str, description: UDP probe request text.}
-  receive_context: {type: str, description: UDP probe expected response text.}
-  force_delete_bound: {type: bool, default: false, description: Allow deletion when origins remain bound.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  listener_id:
+    description:
+      - Existing listener ID.
+    type: str
+  proxy_id:
+    description:
+      - Parent GAAP proxy ID.
+    type: str
+  group_id:
+    description:
+      - Parent GAAP proxy group ID.
+    type: str
+  name:
+    description:
+      - Listener name.
+    type: str
+  protocol:
+    description:
+      - Listener protocol.
+    type: str
+    required: true
+    choices: [TCP, UDP]
+  port:
+    description:
+      - Listener port; immutable after creation.
+    type: int
+  scheduler:
+    description:
+      - Origin scheduling algorithm.
+    type: str
+    choices: [rr, wrr, lc, lrtt]
+    default: rr
+  real_server_type:
+    description:
+      - Origin identity type.
+    type: str
+    choices: [IP, DOMAIN]
+    default: IP
+  health_check:
+    description:
+      - Enable origin health checks.
+    type: bool
+    default: false
+  delay_loop:
+    description:
+      - Health-check interval in seconds.
+    type: int
+  connect_timeout:
+    description:
+      - Health-check timeout in seconds.
+    type: int
+  healthy_threshold:
+    description:
+      - Consecutive successes required.
+    type: int
+  unhealthy_threshold:
+    description:
+      - Consecutive failures required.
+    type: int
+  failover:
+    description:
+      - Enable master/standby origin mode.
+    type: bool
+    default: false
+  client_ip_method:
+    description:
+      - TCP client IP method; 0 is TOA and 1 is Proxy Protocol.
+    type: int
+    choices: [0, 1]
+  udp_check_type:
+    description:
+      - UDP health-check type.
+    type: str
+    choices: [PORT, PING]
+  udp_check_port:
+    description:
+      - UDP probe port.
+    type: int
+  send_context:
+    description:
+      - UDP probe request text.
+    type: str
+  receive_context:
+    description:
+      - UDP probe expected response text.
+    type: str
+  force_delete_bound:
+    description:
+      - Allow deletion when origins remain bound.
+    type: bool
+    default: false
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -12,29 +12,94 @@ short_description: Manage a Tencent Cloud TSF cluster
 version_added: "0.15.0"
 description: Creates, updates and deletes a TSF cluster while protecting immutable placement fields.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, description: Existing cluster ID; exact name is used when omitted.}
-  name: {type: str, required: true, description: Cluster name.}
-  cluster_type: {type: str, choices: [V, C, S], description: Cluster type; required when creating.}
-  description: {type: str, description: Cluster description.}
-  remark_name: {type: str, description: Cluster display remark.}
-  vpc_id: {type: str, description: 'VPC ID, immutable after creation.'}
-  subnet_id: {type: str, description: 'Subnet ID, immutable after creation.'}
-  cluster_cidr: {type: str, description: 'Container and service CIDR, immutable after creation.'}
-  tsf_region_id: {type: str, description: 'TSF region ID, immutable after creation.'}
-  tsf_zone_id: {type: str, description: 'TSF zone ID, immutable after creation.'}
-  cluster_version: {type: str, description: 'Cluster version, immutable after creation.'}
-  max_node_pods: {type: int, description: Maximum pods per node at creation.}
-  max_cluster_services: {type: int, description: Maximum services at creation.}
-  enable_log_collection: {type: bool, description: Enable CLS collection.}
-  unbind_only: {type: bool, default: false, description: Unbind instead of deleting the underlying container cluster.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - Existing cluster ID; exact name is used when omitted.
+    type: str
+  name:
+    description:
+      - Cluster name.
+    type: str
+    required: true
+  cluster_type:
+    description:
+      - Cluster type; required when creating.
+    type: str
+    choices: [V, C, S]
+  description:
+    description:
+      - Cluster description.
+    type: str
+  remark_name:
+    description:
+      - Cluster display remark.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID, immutable after creation.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID, immutable after creation.
+    type: str
+  cluster_cidr:
+    description:
+      - Container and service CIDR, immutable after creation.
+    type: str
+  tsf_region_id:
+    description:
+      - TSF region ID, immutable after creation.
+    type: str
+  tsf_zone_id:
+    description:
+      - TSF zone ID, immutable after creation.
+    type: str
+  cluster_version:
+    description:
+      - Cluster version, immutable after creation.
+    type: str
+  max_node_pods:
+    description:
+      - Maximum pods per node at creation.
+    type: int
+  max_cluster_services:
+    description:
+      - Maximum services at creation.
+    type: int
+  enable_log_collection:
+    description:
+      - Enable CLS collection.
+    type: bool
+  unbind_only:
+    description:
+      - Unbind instead of deleting the underlying container cluster.
+    type: bool
+    default: false
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

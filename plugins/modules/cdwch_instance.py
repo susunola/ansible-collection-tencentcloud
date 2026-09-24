@@ -12,51 +12,170 @@ short_description: Manage Tencent Cloud TCHouse-C instances
 version_added: "0.14.0"
 description: Creates and destroys TCHouse-C instances and reconciles ClickHouse and ZooKeeper node count, specification and disk capacity.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, description: Existing instance ID.}
-  name: {type: str, description: Instance name; immutable after creation.}
-  zone: {type: str, description: Primary availability zone; immutable after creation.}
-  vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  subnet_id: {type: str, description: Subnet ID; immutable after creation.}
-  product_version: {type: str, description: TCHouse-C version; immutable after creation.}
-  high_availability: {type: bool, description: Enable ClickHouse high availability during creation.}
-  zk_high_availability: {type: bool, description: Enable ZooKeeper high availability during creation.}
-  data_spec_name: {type: str, description: ClickHouse node specification.}
-  data_node_count: {type: int, description: Desired ClickHouse node count.}
-  data_disk_size: {type: int, description: Desired ClickHouse disk size in GiB; expansion only.}
-  common_spec_name: {type: str, description: ZooKeeper node specification.}
-  common_node_count: {type: int, description: Desired ZooKeeper node count.}
-  common_disk_size: {type: int, description: Desired ZooKeeper disk size in GiB; expansion only.}
-  charge_type: {type: str, choices: [PREPAID, POSTPAID_BY_HOUR], description: Billing mode; defaults to POSTPAID_BY_HOUR during creation.}
-  period_months: {type: int, default: 1, description: Prepaid purchase period.}
-  auto_renew: {type: bool, default: false, description: Prepaid auto-renewal during creation.}
-  password: {type: str, description: Initial default-user password.}
-  tags: {type: dict, description: Creation-time tags; immutable because the product API exposes no tag update endpoint.}
-  cls_logset_id: {type: str, description: Initial CLS logset ID.}
-  cos_bucket_name: {type: str, description: Initial COS bucket name.}
-  mount_disk_type: {type: int, choices: [0, 1, 2], description: "No mount, raw disk or LVM mount mode."}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Existing instance ID.
+    type: str
+  name:
+    description:
+      - Instance name; immutable after creation.
+    type: str
+  zone:
+    description:
+      - Primary availability zone; immutable after creation.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID; immutable after creation.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID; immutable after creation.
+    type: str
+  product_version:
+    description:
+      - TCHouse-C version; immutable after creation.
+    type: str
+  high_availability:
+    description:
+      - Enable ClickHouse high availability during creation.
+    type: bool
+  zk_high_availability:
+    description:
+      - Enable ZooKeeper high availability during creation.
+    type: bool
+  data_spec_name:
+    description:
+      - ClickHouse node specification.
+    type: str
+  data_node_count:
+    description:
+      - Desired ClickHouse node count.
+    type: int
+  data_disk_size:
+    description:
+      - Desired ClickHouse disk size in GiB; expansion only.
+    type: int
+  common_spec_name:
+    description:
+      - ZooKeeper node specification.
+    type: str
+  common_node_count:
+    description:
+      - Desired ZooKeeper node count.
+    type: int
+  common_disk_size:
+    description:
+      - Desired ZooKeeper disk size in GiB; expansion only.
+    type: int
+  charge_type:
+    description:
+      - Billing mode; defaults to POSTPAID_BY_HOUR during creation.
+    type: str
+    choices: [PREPAID, POSTPAID_BY_HOUR]
+  period_months:
+    description:
+      - Prepaid purchase period.
+    type: int
+    default: 1
+  auto_renew:
+    description:
+      - Prepaid auto-renewal during creation.
+    type: bool
+    default: false
+  password:
+    description:
+      - Initial default-user password.
+    type: str
+  tags:
+    description:
+      - Creation-time tags; immutable because the product API exposes no tag update endpoint.
+    type: dict
+  cls_logset_id:
+    description:
+      - Initial CLS logset ID.
+    type: str
+  cos_bucket_name:
+    description:
+      - Initial COS bucket name.
+    type: str
+  mount_disk_type:
+    description:
+      - No mount, raw disk or LVM mount mode.
+    type: int
+    choices: [0, 1, 2]
   secondary_zones:
     type: list
     elements: dict
     description: Creation-time secondary availability zones.
     suboptions:
-      zone: {type: str, required: true, description: Secondary availability zone.}
-      subnet_id: {type: str, required: true, description: Secondary-zone subnet ID.}
-      user_ip_count: {type: int, description: Available subnet IP count.}
-  scale_out_cluster: {type: str, description: Virtual cluster receiving newly added ClickHouse nodes.}
-  user_subnet_ip_count: {type: int, description: Remaining subnet IP count required by scale-out.}
-  scale_out_node_ip: {type: str, description: Metadata synchronization node IP required by scale-out.}
-  reduce_shard_info: {type: list, elements: str, description: Shard IP groups required by scale-in.}
-  allow_scale_in: {type: bool, default: false, description: Explicitly authorize reducing data or common node count.}
-  rolling_spec_change: {type: bool, default: true, description: Use rolling restart for specification changes.}
+      zone:
+        description:
+          - Secondary availability zone.
+        type: str
+        required: true
+      subnet_id:
+        description:
+          - Secondary-zone subnet ID.
+        type: str
+        required: true
+      user_ip_count:
+        description:
+          - Available subnet IP count.
+        type: int
+  scale_out_cluster:
+    description:
+      - Virtual cluster receiving newly added ClickHouse nodes.
+    type: str
+  user_subnet_ip_count:
+    description:
+      - Remaining subnet IP count required by scale-out.
+    type: int
+  scale_out_node_ip:
+    description:
+      - Metadata synchronization node IP required by scale-out.
+    type: str
+  reduce_shard_info:
+    description:
+      - Shard IP groups required by scale-in.
+    type: list
+    elements: str
+  allow_scale_in:
+    description:
+      - Explicitly authorize reducing data or common node count.
+    type: bool
+    default: false
+  rolling_spec_change:
+    description:
+      - Use rolling restart for specification changes.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -13,50 +13,143 @@ short_description: Manage Tencent Cloud EdgeOne managed WAF rules
 version_added: "0.14.0"
 description: Exactly reconciles managed WAF configuration without modifying custom, rate-limit, exception, or Bot policies.
 options:
-  zone_id: {type: str, required: true, description: EdgeOne zone ID.}
-  scope: {type: str, choices: [zone, template, host], default: zone, description: Security policy scope.}
-  template_id: {type: str, description: Web security template ID required for template scope.}
-  host: {type: str, description: Acceleration domain required for host scope.}
-  enabled: {type: bool, default: true, description: Whether managed WAF protection is enabled.}
-  detection_only: {type: bool, default: false, description: Force all managed rules into monitor mode.}
-  semantic_analysis: {type: bool, default: false, description: Enable semantic request analysis.}
-  auto_update: {type: bool, default: true, description: Automatically update to the latest managed ruleset.}
+  zone_id:
+    description:
+      - EdgeOne zone ID.
+    type: str
+    required: true
+  scope:
+    description:
+      - Security policy scope.
+    type: str
+    choices: [zone, template, host]
+    default: zone
+  template_id:
+    description:
+      - Web security template ID required for template scope.
+    type: str
+  host:
+    description:
+      - Acceleration domain required for host scope.
+    type: str
+  enabled:
+    description:
+      - Whether managed WAF protection is enabled.
+    type: bool
+    default: true
+  detection_only:
+    description:
+      - Force all managed rules into monitor mode.
+    type: bool
+    default: false
+  semantic_analysis:
+    description:
+      - Enable semantic request analysis.
+    type: bool
+    default: false
+  auto_update:
+    description:
+      - Automatically update to the latest managed ruleset.
+    type: bool
+    default: true
   groups:
     type: list
     elements: dict
     default: []
     description: Exact managed-rule group overrides; omitted groups use service defaults.
     suboptions:
-      group_id: {type: str, required: true, description: Managed rule-group ID.}
-      sensitivity: {type: str, choices: [loose, normal, strict, extreme, custom], default: normal, description: Group sensitivity.}
-      action: {type: str, choices: [Deny, Monitor, Disabled], default: Deny, description: Group action for non-custom sensitivity.}
+      group_id:
+        description:
+          - Managed rule-group ID.
+        type: str
+        required: true
+      sensitivity:
+        description:
+          - Group sensitivity.
+        type: str
+        choices: [loose, normal, strict, extreme, custom]
+        default: normal
+      action:
+        description:
+          - Group action for non-custom sensitivity.
+        type: str
+        choices: [Deny, Monitor, Disabled]
+        default: Deny
       rule_actions:
         type: list
         elements: dict
         default: []
         description: Exact per-rule actions used only with custom sensitivity.
         suboptions:
-          rule_id: {type: str, required: true, description: Managed rule ID.}
-          action: {type: str, choices: [Deny, Monitor, Disabled], required: true, description: Rule-specific action.}
+          rule_id:
+            description:
+              - Managed rule ID.
+            type: str
+            required: true
+          action:
+            description:
+              - Rule-specific action.
+            type: str
+            required: true
+            choices: [Deny, Monitor, Disabled]
   frequent_scanning:
     type: dict
-    default: {}
+    default:
+      {}
     description: High-frequency managed-rule hit protection.
     suboptions:
-      enabled: {type: bool, default: false, description: Whether high-frequency scanning protection is enabled.}
-      action: {type: str, choices: [Deny, Monitor], default: Deny, description: Enforcement action.}
-      count_by: {type: str, choices: [http.request.ip, http.request.xff_header_ip], default: http.request.ip, description: Client identity field.}
-      block_threshold: {type: int, default: 100, description: Managed-rule hit threshold.}
-      counting_period: {type: int, default: 60, description: Counting window in seconds.}
-      action_duration: {type: int, default: 600, description: Enforcement duration in seconds.}
+      enabled:
+        description:
+          - Whether high-frequency scanning protection is enabled.
+        type: bool
+        default: false
+      action:
+        description:
+          - Enforcement action.
+        type: str
+        choices: [Deny, Monitor]
+        default: Deny
+      count_by:
+        description:
+          - Client identity field.
+        type: str
+        choices: [http.request.ip, http.request.xff_header_ip]
+        default: http.request.ip
+      block_threshold:
+        description:
+          - Managed-rule hit threshold.
+        type: int
+        default: 100
+      counting_period:
+        description:
+          - Counting window in seconds.
+        type: int
+        default: 60
+      action_duration:
+        description:
+          - Enforcement duration in seconds.
+        type: int
+        default: 600
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 

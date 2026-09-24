@@ -14,24 +14,73 @@ description:
   - Creates and deletes a named workspace resource and its initial immutable version.
   - Deletion is blocked while any job configuration references the resource unless explicitly authorized.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired resource state.}
-  resource_id: {type: str, description: Existing resource ID.}
-  name: {type: str, description: Resource name.}
-  workspace_id: {type: str, required: true, description: Owning Oceanus workspace ID.}
-  resource_type: {type: int, choices: [1], default: 1, description: Resource type; currently JAR.}
-  resource_location: {type: dict, description: Initial SDK ResourceLoc containing COS storage location.}
-  remark: {type: str, description: Resource description.}
-  version_remark: {type: str, description: Initial version description.}
-  folder_id: {type: str, default: root, description: Resource folder ID.}
-  allow_delete_in_use: {type: bool, default: false, description: Explicitly authorize deleting a resource referenced by job configurations.}
+  state:
+    description:
+      - Desired resource state.
+    type: str
+    choices: [present, absent]
+    default: present
+  resource_id:
+    description:
+      - Existing resource ID.
+    type: str
+  name:
+    description:
+      - Resource name.
+    type: str
+  workspace_id:
+    description:
+      - Owning Oceanus workspace ID.
+    type: str
+    required: true
+  resource_type:
+    description:
+      - Resource type; currently JAR.
+    type: int
+    choices: [1]
+    default: 1
+  resource_location:
+    description:
+      - Initial SDK ResourceLoc containing COS storage location.
+    type: dict
+  remark:
+    description:
+      - Resource description.
+    type: str
+  version_remark:
+    description:
+      - Initial version description.
+    type: str
+  folder_id:
+    description:
+      - Resource folder ID.
+    type: str
+    default: root
+  allow_delete_in_use:
+    description:
+      - Explicitly authorize deleting a resource referenced by job configurations.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

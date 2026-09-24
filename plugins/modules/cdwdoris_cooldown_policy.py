@@ -15,18 +15,44 @@ description:
   - Creates or updates a named hot/cold tiering policy.
   - The service exposes no standalone policy deletion operation; policies are removed with their instance.
 options:
-  instance_id: {type: str, required: true, description: CDW Doris instance ID.}
-  name: {type: str, required: true, description: Cooldown policy name.}
-  cooldown_ttl: {type: str, description: Relative cooldown TTL accepted by Doris.}
-  cooldown_datetime: {type: str, description: Absolute cooldown datetime accepted by Doris.}
+  instance_id:
+    description:
+      - CDW Doris instance ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Cooldown policy name.
+    type: str
+    required: true
+  cooldown_ttl:
+    description:
+      - Relative cooldown TTL accepted by Doris.
+    type: str
+  cooldown_datetime:
+    description:
+      - Absolute cooldown datetime accepted by Doris.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -24,7 +24,8 @@ options:
       - CVM key pair API filter names mapped to lists of values, e.g.
         I(key-name), I(project-id), I(tag-key) or I(tag-value).
     type: dict
-    default: {}
+    default:
+      {}
   page_size:
     description: Number of results requested per API call (maximum 100).
     type: int
@@ -33,6 +34,18 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

@@ -12,19 +12,52 @@ short_description: Manage Tencent Cloud VPC address templates
 version_added: "0.14.0"
 description: Creates, updates and deletes reusable VPC IP address templates.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  template_id: {type: str, description: Existing address-template ID.}
-  name: {type: str, description: Address-template name.}
-  addresses: {type: list, elements: str, default: [], description: "Exact set of IPv4 addresses, CIDRs or ranges."}
-  address_extra: {type: list, elements: dict, default: [], description: Exact SDK-compatible extended address entries.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  template_id:
+    description:
+      - Existing address-template ID.
+    type: str
+  name:
+    description:
+      - Address-template name.
+    type: str
+  addresses:
+    description:
+      - Exact set of IPv4 addresses, CIDRs or ranges.
+    type: list
+    default: []
+    elements: str
+  address_extra:
+    description:
+      - Exact SDK-compatible extended address entries.
+    type: list
+    default: []
+    elements: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

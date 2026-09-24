@@ -12,16 +12,37 @@ short_description: Manage a Tencent Cloud Managed Grafana IP whitelist
 version_added: "0.14.0"
 description: Reconciles the complete internet-access IP whitelist of a Grafana instance.
 options:
-  instance_id: {type: str, required: true, description: Grafana instance ID.}
-  addresses: {type: list, elements: str, default: [], description: Exact IP address and CIDR whitelist.}
+  instance_id:
+    description:
+      - Grafana instance ID.
+    type: str
+    required: true
+  addresses:
+    description:
+      - Exact IP address and CIDR whitelist.
+    type: list
+    default: []
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

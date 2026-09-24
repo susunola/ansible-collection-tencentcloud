@@ -13,24 +13,79 @@ version_added: "0.14.0"
 description: Creates, enables, disables, replaces and deletes SCF function triggers.
 options:
 
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  function_name: {type: str, required: true, description: Function name.}
-  namespace: {type: str, default: default, description: Function namespace.}
-  qualifier: {type: str, default: '$LATEST', description: Function version or alias.}
-  name: {type: str, required: true, description: Trigger name.}
-  trigger_type: {type: str, required: true, description: "Trigger type such as timer, cos, cmq or apigw."}
-  trigger_desc: {type: str, description: Service-specific trigger description JSON or expression. Required when state is present.}
-  enabled: {type: bool, default: true, description: Enable the trigger.}
-  custom_argument: {type: str, description: Custom trigger argument.}
-  description: {type: str, default: '', description: Human-readable description.}
-  force_replace: {type: bool, default: false, description: Replace the trigger when immutable configuration changes.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  function_name:
+    description:
+      - Function name.
+    type: str
+    required: true
+  namespace:
+    description:
+      - Function namespace.
+    type: str
+    default: default
+  qualifier:
+    description:
+      - Function version or alias.
+    type: str
+    default: $LATEST
+  name:
+    description:
+      - Trigger name.
+    type: str
+    required: true
+  trigger_type:
+    description:
+      - Trigger type such as timer, cos, cmq or apigw.
+    type: str
+    required: true
+  trigger_desc:
+    description:
+      - Service-specific trigger description JSON or expression. Required when state is present.
+    type: str
+  enabled:
+    description:
+      - Enable the trigger.
+    type: bool
+    default: true
+  custom_argument:
+    description:
+      - Custom trigger argument.
+    type: str
+  description:
+    description:
+      - Human-readable description.
+    type: str
+    default: ''
+  force_replace:
+    description:
+      - Replace the trigger when immutable configuration changes.
+    type: bool
+    default: false
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

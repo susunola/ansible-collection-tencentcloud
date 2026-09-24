@@ -12,29 +12,79 @@ short_description: Manage TencentDB for SQL Server accounts
 version_added: "0.14.0"
 description: Creates and deletes accounts, reconciles database privileges and remarks, and explicitly rotates passwords.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: SQL Server instance ID.}
-  username: {type: str, required: true, description: Account name.}
-  password: {type: str, description: Password for creation or explicit rotation.}
-  rotate_password: {type: bool, default: false, description: Explicitly replace the account password.}
-  remark: {type: str, default: '', description: Account remark.}
-  account_type: {type: str, choices: [L0, L1, L2, L3], default: L3, description: Account privilege tier.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - SQL Server instance ID.
+    type: str
+    required: true
+  username:
+    description:
+      - Account name.
+    type: str
+    required: true
+  password:
+    description:
+      - Password for creation or explicit rotation.
+    type: str
+  rotate_password:
+    description:
+      - Explicitly replace the account password.
+    type: bool
+    default: false
+  remark:
+    description:
+      - Account remark.
+    type: str
+    default: ''
+  account_type:
+    description:
+      - Account privilege tier.
+    type: str
+    choices: [L0, L1, L2, L3]
+    default: L3
   database_privileges:
     type: list
     elements: dict
     default: []
     description: Complete desired database privilege set.
     suboptions:
-      database: {type: str, required: true, description: Database name.}
-      privilege: {type: str, choices: [ReadWrite, ReadOnly, DBOwner], required: true, description: Database privilege.}
+      database:
+        description:
+          - Database name.
+        type: str
+        required: true
+      privilege:
+        description:
+          - Database privilege.
+        type: str
+        required: true
+        choices: [ReadWrite, ReadOnly, DBOwner]
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

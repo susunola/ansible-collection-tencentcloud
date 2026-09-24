@@ -90,7 +90,8 @@ options:
       - Environment variables as a dict of key/value pairs, written to
         V(CreateFunctionRequest.Environment.Variables).
     type: dict
-    default: {}
+    default:
+      {}
   role:
     description:
       - IAM role name (CAM role) the function runs as.
@@ -114,9 +115,21 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

@@ -15,21 +15,61 @@ description:
   - Reconciles the complete privilege set for one account at global, database or table scope.
   - An empty privilege list explicitly revokes all privileges at that scope.
 options:
-  instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
-  username: {type: str, required: true, description: Login username.}
-  host: {type: str, default: '%', description: Allowed client host paired with username.}
-  scope: {type: str, choices: [global, database, table], required: true, description: Privilege scope.}
-  database: {type: str, description: Database name required by database and table scopes.}
-  table: {type: str, description: Table name required by table scope.}
-  privileges: {type: list, elements: str, required: true, description: Full desired privilege set at the selected scope.}
+  instance_id:
+    description:
+      - Stable TDSQL MySQL instance ID.
+    type: str
+    required: true
+  username:
+    description:
+      - Login username.
+    type: str
+    required: true
+  host:
+    description:
+      - Allowed client host paired with username.
+    type: str
+    default: '%'
+  scope:
+    description:
+      - Privilege scope.
+    type: str
+    required: true
+    choices: [global, database, table]
+  database:
+    description:
+      - Database name required by database and table scopes.
+    type: str
+  table:
+    description:
+      - Table name required by table scope.
+    type: str
+  privileges:
+    description:
+      - Full desired privilege set at the selected scope.
+    type: list
+    required: true
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

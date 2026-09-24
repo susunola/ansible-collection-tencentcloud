@@ -14,50 +14,182 @@ description:
   - Creates, renames, waits for and terminates EMR clusters through the current C(CreateCluster) API.
   - Complex scene and node topology objects retain the Tencent Cloud SDK field names so new EMR shapes remain usable.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, description: Existing EMR cluster ID.}
-  name: {type: str, description: Cluster name used for lookup and updates.}
-  product_version: {type: str, description: Creation-time EMR product version.}
-  enable_ha: {type: bool, description: Creation-time high-availability setting.}
-  charge_type: {type: str, choices: [PREPAID, POSTPAID_BY_HOUR], description: Creation-time charge type.}
-  login_settings: {type: dict, description: SDK LoginSettings payload containing a password or public key ID.}
-  scene_software_config: {type: dict, description: SDK SceneSoftwareConfig payload.}
-  prepaid: {type: dict, description: SDK InstanceChargePrepaid payload for prepaid clusters.}
-  security_group_ids: {type: list, elements: str, description: Security group IDs.}
-  bootstrap_actions: {type: list, elements: dict, description: SDK ScriptBootstrapActionConfig payloads.}
-  client_token: {type: str, description: Caller-provided creation idempotency token.}
-  need_master_wan: {type: str, choices: [NEED_MASTER_WAN, NOT_NEED_MASTER_WAN], description: Master public-network setting.}
-  enable_remote_login: {type: bool, description: Whether remote login is enabled.}
-  enable_kerberos: {type: bool, description: Whether Kerberos authentication is enabled.}
-  custom_conf: {type: str, description: Custom software configuration JSON.}
-  tags: {type: dict, description: Creation-time tags.}
-  disaster_recover_group_ids: {type: list, elements: str, description: Placement group IDs.}
-  enable_cbs_encrypt: {type: bool, description: Whether data disks use CBS encryption.}
-  enable_cbs_system_encrypt: {type: bool, description: Whether system disks use CBS encryption.}
-  meta_db_info: {type: dict, description: SDK CustomMetaDBInfo payload.}
-  depend_services: {type: list, elements: dict, description: SDK DependService payloads.}
-  zone_resource_configurations: {type: list, elements: dict, description: SDK ZoneResourceConfiguration payloads describing the complete node topology.}
-  cos_bucket: {type: str, description: COS path for supported separated-storage scenes.}
-  node_marks: {type: list, elements: dict, description: SDK NodeMark payloads.}
-  load_balancer_id: {type: str, description: Creation-time load balancer ID.}
-  default_meta_version: {type: str, description: Default metadata database version.}
-  need_cdb_audit: {type: int, description: Whether database audit is enabled.}
-  source_ip: {type: str, description: Security source IP.}
-  partition_number: {type: int, description: Placement-group partition number.}
-  web_ui_version: {type: int, choices: [0, 1], description: Web UI response mode.}
-  retain_tke_cluster: {type: bool, default: false, description: Retain the associated TKE cluster during termination.}
-  wait: {type: bool, default: true, description: Wait for running or absent convergence.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - Existing EMR cluster ID.
+    type: str
+  name:
+    description:
+      - Cluster name used for lookup and updates.
+    type: str
+  product_version:
+    description:
+      - Creation-time EMR product version.
+    type: str
+  enable_ha:
+    description:
+      - Creation-time high-availability setting.
+    type: bool
+  charge_type:
+    description:
+      - Creation-time charge type.
+    type: str
+    choices: [PREPAID, POSTPAID_BY_HOUR]
+  login_settings:
+    description:
+      - SDK LoginSettings payload containing a password or public key ID.
+    type: dict
+  scene_software_config:
+    description:
+      - SDK SceneSoftwareConfig payload.
+    type: dict
+  prepaid:
+    description:
+      - SDK InstanceChargePrepaid payload for prepaid clusters.
+    type: dict
+  security_group_ids:
+    description:
+      - Security group IDs.
+    type: list
+    elements: str
+  bootstrap_actions:
+    description:
+      - SDK ScriptBootstrapActionConfig payloads.
+    type: list
+    elements: dict
+  client_token:
+    description:
+      - Caller-provided creation idempotency token.
+    type: str
+  need_master_wan:
+    description:
+      - Master public-network setting.
+    type: str
+    choices: [NEED_MASTER_WAN, NOT_NEED_MASTER_WAN]
+  enable_remote_login:
+    description:
+      - Whether remote login is enabled.
+    type: bool
+  enable_kerberos:
+    description:
+      - Whether Kerberos authentication is enabled.
+    type: bool
+  custom_conf:
+    description:
+      - Custom software configuration JSON.
+    type: str
+  tags:
+    description:
+      - Creation-time tags.
+    type: dict
+  disaster_recover_group_ids:
+    description:
+      - Placement group IDs.
+    type: list
+    elements: str
+  enable_cbs_encrypt:
+    description:
+      - Whether data disks use CBS encryption.
+    type: bool
+  enable_cbs_system_encrypt:
+    description:
+      - Whether system disks use CBS encryption.
+    type: bool
+  meta_db_info:
+    description:
+      - SDK CustomMetaDBInfo payload.
+    type: dict
+  depend_services:
+    description:
+      - SDK DependService payloads.
+    type: list
+    elements: dict
+  zone_resource_configurations:
+    description:
+      - SDK ZoneResourceConfiguration payloads describing the complete node topology.
+    type: list
+    elements: dict
+  cos_bucket:
+    description:
+      - COS path for supported separated-storage scenes.
+    type: str
+  node_marks:
+    description:
+      - SDK NodeMark payloads.
+    type: list
+    elements: dict
+  load_balancer_id:
+    description:
+      - Creation-time load balancer ID.
+    type: str
+  default_meta_version:
+    description:
+      - Default metadata database version.
+    type: str
+  need_cdb_audit:
+    description:
+      - Whether database audit is enabled.
+    type: int
+  source_ip:
+    description:
+      - Security source IP.
+    type: str
+  partition_number:
+    description:
+      - Placement-group partition number.
+    type: int
+  web_ui_version:
+    description:
+      - Web UI response mode.
+    type: int
+    choices: [0, 1]
+  retain_tke_cluster:
+    description:
+      - Retain the associated TKE cluster during termination.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for running or absent convergence.
+    type: bool
+    default: true
 
-  waiter_delay: {type: int, default: 10, description: Seconds between polling attempts.}
-  waiter_timeout: {type: int, default: 1800, description: Overall polling timeout in seconds.}
+  waiter_delay:
+    description:
+      - Seconds between polling attempts.
+    type: int
+    default: 10
+  waiter_timeout:
+    description:
+      - Overall polling timeout in seconds.
+    type: int
+    default: 1800
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+attributes:
+  check_mode:
+    description:
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
+    support: full
+  idempotency:
+    description:
+      - Reconciles the resource against its live state, so running again
+        with the same arguments leaves it unchanged and reports C(changed=false).
+    support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
