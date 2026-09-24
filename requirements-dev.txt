@@ -1,5 +1,5 @@
 -r requirements.txt
-ansible-core>=2.21.3,<2.22
+ansible-core>=2.21.4,<2.22
 pytest>=9.1.1
 # ansible-test integration --coverage and ansible-test coverage xml/report
 # shell out to `python -m coverage` in the controller interpreter, so the
