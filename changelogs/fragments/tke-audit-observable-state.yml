@@ -1,0 +1,4 @@
+bugfixes:
+  - tke_cluster_audit - read the nested Audit switch for the requested cluster,
+    reject unobservable state and destination drift, and wait for convergence
+    after enable or disable operations.

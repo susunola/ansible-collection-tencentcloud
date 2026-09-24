@@ -4,8 +4,8 @@ Drives ``run_module()`` against an in-memory fake TKE client whose
 enable / disable operations mutate an audit-switch store so post-write
 describes converge immediately.
 
-The switch is a pure on/off: once the desired state matches, the module
-reports unchanged even if CLS destination parameters differ.
+The audit switch is nested under a cluster entry. Its CLS destination is
+observable and a mismatch must fail rather than report a false no-op.
 
 Scenario matrix:
 
@@ -74,7 +74,7 @@ class FakeTkeClient(object):
 
     def DescribeLogSwitches(self, request):
         self._record("DescribeLogSwitches", request)
-        items = [FakeResource(self.switch)] if self.switch is not None else []
+        items = [SimpleNamespace(ClusterId=CLUSTER_ID, Audit=FakeResource(self.switch))] if self.switch is not None else []
         return SimpleNamespace(SwitchSet=items)
 
     def EnableClusterAudit(self, request):
@@ -102,8 +102,7 @@ def _make_module(monkeypatch, fake, models=None):
 
 
 def test_already_disabled_is_idempotent(monkeypatch):
-    # An empty SwitchSet reads as disabled: {"Enable": False}.
-    fake = FakeTkeClient(switch=None)
+    fake = FakeTkeClient(switch={"Enable": False})
     _make_module(monkeypatch, fake)
     _disabled_args()
     result = run(mod.run_module)
@@ -131,15 +130,30 @@ def test_already_enabled_is_idempotent(monkeypatch):
     assert not [c for c, unused in fake.calls if c != "DescribeLogSwitches"]
 
 
-def test_enabled_ignores_destination_drift(monkeypatch):
-    # The module is a pure switch: different topic/logset values on an
-    # already-enabled cluster do not count as drift.
+def test_enabled_rejects_destination_drift(monkeypatch):
     fake = FakeTkeClient(switch=_switch())
     _make_module(monkeypatch, fake)
     _enabled_args(topic_id="topic-other")
-    result = run(mod.run_module)
-    assert result["changed"] is False
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "different CLS destination" in exc.value.args[0]["msg"]
     assert "EnableClusterAudit" not in [c for c, unused in fake.calls]
+
+
+def test_missing_cluster_switch_fails_closed(monkeypatch):
+    fake = FakeTkeClient(switch=None)
+    _make_module(monkeypatch, fake)
+    _disabled_args()
+    with pytest.raises(AnsibleFailJson):
+        run(mod.run_module)
+
+
+def test_switch_error_fails_closed(monkeypatch):
+    fake = FakeTkeClient(switch=_switch(ErrorMsg="read failed"))
+    _make_module(monkeypatch, fake)
+    _enabled_args()
+    with pytest.raises(AnsibleFailJson):
+        run(mod.run_module)
 
 
 def test_enabling_requires_logset_and_topic(monkeypatch):

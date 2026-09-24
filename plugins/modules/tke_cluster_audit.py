@@ -10,7 +10,11 @@ DOCUMENTATION = r"""
 module: tke_cluster_audit
 short_description: Manage Tencent Cloud TKE cluster audit logging
 version_added: "0.14.0"
-description: Enables or disables Kubernetes audit logging to a CLS topic.
+description:
+  - Enables or disables Kubernetes audit logging to a CLS topic.
+  - Reads the nested audit switch and verifies the requested CLS destination.
+  - An enabled audit switch cannot be retargeted in place; disable it explicitly
+    before enabling it with another destination.
 options:
   state: {type: str, choices: [enabled, disabled], default: enabled, description: Desired audit state.}
   cluster_id: {type: str, required: true, description: TKE cluster ID.}
@@ -36,6 +40,8 @@ EXAMPLES = r"""
     topic_region: ap-guangzhou
 """
 RETURN = r"""audit: {description: Effective audit switch metadata., type: dict, returned: always}"""
+import time
+
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
@@ -67,10 +73,38 @@ def build_disable(models, p):
 
 def find(module, client, models, cluster_id):
     response = module.sdk_call(client.DescribeLogSwitches, build_describe(models, cluster_id))
-    items = list(response.SwitchSet or [])
-    if not items:
-        return {"Enable": False}
-    return items[0]._serialize(allow_none=True)
+    items = getattr(response, "SwitchSet", None)
+    if items is None:
+        raise ValueError("DescribeLogSwitches did not return SwitchSet")
+    matches = [item for item in items if getattr(item, "ClusterId", None) == cluster_id]
+    if len(matches) != 1:
+        raise ValueError("DescribeLogSwitches did not return exactly one switch for the requested cluster")
+    audit = getattr(matches[0], "Audit", None)
+    if audit is None:
+        raise ValueError("DescribeLogSwitches did not return the cluster Audit switch")
+    value = audit._serialize(allow_none=True)
+    if not isinstance(value.get("Enable"), bool):
+        raise ValueError("DescribeLogSwitches returned an indeterminate Audit enable state")
+    if value.get("ErrorMsg"):
+        raise ValueError("DescribeLogSwitches reported an Audit switch error: %s" % value["ErrorMsg"])
+    return value
+
+
+def destination_drift(current, params):
+    fields = {"LogsetId": params["logset_id"], "TopicId": params["topic_id"]}
+    if params.get("topic_region"):
+        fields["TopicRegion"] = params["topic_region"]
+    return [field for field, desired in fields.items() if current.get(field) != desired]
+
+
+def converged(current, params):
+    enabled = params["state"] == "enabled"
+    if current["Enable"] != enabled:
+        return False
+    status = current.get("Status")
+    if status and status != ("opened" if enabled else "closed"):
+        return False
+    return not (enabled and destination_drift(current, params))
 
 
 def run_module():
@@ -92,18 +126,31 @@ def run_module():
     client = module.create_client(cm.TkeClient, "tke.tencentcloudapi.com")
     try:
         current = find(module, client, models, p["cluster_id"])
-        enabled = bool(current.get("Enable"))
         target_enabled = p["state"] == "enabled"
-        if enabled == target_enabled:
+        if target_enabled and current["Enable"]:
+            drift = destination_drift(current, p)
+            if drift:
+                module.fail_json(msg="TKE audit is already enabled with a different CLS destination; disable it explicitly before retargeting",
+                                 cluster_id=p["cluster_id"], drift_fields=drift, audit=current)
+        if converged(current, p):
             module.exit_json(changed=False, audit=current)
         target = {"Enable": target_enabled, "LogsetId": p.get("logset_id"), "TopicId": p.get("topic_id"), "TopicRegion": p.get("topic_region")}
         diff = maybe_diff(module, current, target)
         if not module.check_mode:
-            module.sdk_call(
-                client.EnableClusterAudit if target_enabled else client.DisableClusterAudit,
-                build_enable(models, p) if target_enabled else build_disable(models, p),
-            )
-            current = find(module, client, models, p["cluster_id"])
+            if current["Enable"] != target_enabled:
+                module.sdk_call(
+                    client.EnableClusterAudit if target_enabled else client.DisableClusterAudit,
+                    build_enable(models, p) if target_enabled else build_disable(models, p),
+                )
+            deadline = time.monotonic() + p["waiter_timeout"]
+            while True:
+                current = find(module, client, models, p["cluster_id"])
+                if converged(current, p):
+                    break
+                if time.monotonic() >= deadline:
+                    module.fail_json(msg="TKE audit switch did not converge to the requested state",
+                                     cluster_id=p["cluster_id"], audit=current)
+                time.sleep(p["waiter_delay"])
         module.exit_json(changed=True, **(diff or {}), audit=current)
     except Exception as exc:
         fail_from_sdk_error(module, exc)
