@@ -97,7 +97,7 @@ attributes:
   idempotent:
     description: Compares observable listener settings before sending write requests.
     support: partial
-    details: Asynchronous API changes are not polled to convergence after a write.
+    details: Waits for observable listener settings to converge after writes.
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -134,6 +134,7 @@ listener:
   returned: always
 """
 import json
+import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import require_immutable_unchanged, fail_from_sdk_error
@@ -232,6 +233,8 @@ def find(module, client, models, p):
         return None
     value = module.sdk_call(client.DescribeListenerDetail, describe_request(models, p, matches[0]["ListenerId"]))._serialize(allow_none=True)
     value.pop("RequestId", None)
+    if value.get("ListenerId") != matches[0]["ListenerId"]:
+        module.fail_json(msg="ALB listener detail is not observable", listener_id=matches[0]["ListenerId"])
     return value
 
 
@@ -272,6 +275,18 @@ def desired(p, current=None):
     }
 
 
+def wait_for_listener(module, client, models, p, expected):
+    deadline = time.monotonic() + max(0, p["waiter_timeout"])
+    while True:
+        observed = find(module, client, models, p)
+        if (observed is None if expected is None else observed is not None and comparable(observed) == expected):
+            return observed
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            module.fail_json(msg="ALB listener did not converge before timeout", listener=observed, expected=expected)
+        time.sleep(min(max(0, p["waiter_delay"]), remaining))
+
+
 def run_module():
     spec = {
         "state": {"choices": ["present", "absent"], "default": "present"},
@@ -308,6 +323,8 @@ def run_module():
             diff = maybe_diff(module, current, None)
             if not module.check_mode:
                 module.sdk_call(client.DeleteListener, delete_request(models, p, current["ListenerId"]))
+                p["listener_id"] = current["ListenerId"]
+                wait_for_listener(module, client, models, p, None)
             module.exit_json(changed=True, **(diff or {}), listener=None)
         if not current:
             missing = [k for k in ("name", "port", "protocol", "default_actions") if p.get(k) is None]
@@ -341,7 +358,7 @@ def run_module():
                 update_request(models, effective, current["ListenerId"]) if current else create_request(models, effective),
             )
             p["listener_id"] = current["ListenerId"] if current else response.ListenerId
-            current = find(module, client, models, p)
+            current = wait_for_listener(module, client, models, p, target)
         module.exit_json(changed=True, **(diff or {}), listener=current if not module.check_mode else target)
     except Exception as exc:
         fail_from_sdk_error(module, exc)

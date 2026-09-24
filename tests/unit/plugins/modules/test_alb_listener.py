@@ -396,6 +396,16 @@ def test_find_matches_by_listener_id(monkeypatch):
     assert "RequestId" not in value  # detail envelope is popped
 
 
+def test_find_fails_when_listener_detail_is_unobservable(monkeypatch):
+    fake = FakeAlbClient([_listener()])
+    _make_module(monkeypatch, fake)
+    fake.DescribeListenerDetail = lambda request: FakeResource({"RequestId": "req-fake"})
+    module = FakeModule(_params(listener_id="lbl-8b0a1c2d"))
+    with pytest.raises(AnsibleFailJson) as exc:
+        mod.find(module, fake, FakeAlbModels(), module.params)
+    assert "detail is not observable" in exc.value.args[0]["msg"]
+
+
 def test_find_matches_by_port_and_protocol(monkeypatch):
     fake = FakeAlbClient([_listener()])
     _make_module(monkeypatch, fake)
@@ -621,6 +631,40 @@ def test_present_creates_listener(monkeypatch):
     assert not any("ModifyListenerAttributes" == n for n in names)
 
 
+def test_present_waits_for_delayed_listener_read(monkeypatch):
+    fake = FakeAlbClient()
+    _make_module(monkeypatch, fake)
+    original = fake.DescribeListeners
+    reads = [0]
+
+    def delayed(request):
+        reads[0] += 1
+        if reads[0] == 2:
+            fake._record("DescribeListeners", request)
+            return SimpleNamespace(Listeners=[])
+        return original(request)
+
+    fake.DescribeListeners = delayed
+    monkeypatch.setattr(mod.time, "sleep", lambda unused: None)
+    module_args(state="present", load_balancer_id="alb-8b0a1c2d", name="https-prod",
+                port=443, protocol="HTTPS", default_actions=[{"Type": "ForwardGroup", "Value": "x"}], waiter_delay=0)
+    result = run(mod.run_module)
+    assert result["listener"]["ListenerId"] == "lbl-fake-001"
+    assert reads[0] == 3
+
+
+def test_present_fails_when_listener_write_not_observable(monkeypatch):
+    fake = FakeAlbClient([_listener()])
+    _make_module(monkeypatch, fake)
+    fake.ModifyListenerAttributes = lambda request: SimpleNamespace()
+    module_args(state="present", load_balancer_id="alb-8b0a1c2d", listener_id="lbl-8b0a1c2d",
+                name="https-v2", waiter_timeout=0)
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "did not converge" in exc.value.args[0]["msg"]
+    assert exc.value.args[0]["listener"]["ListenerName"] == "https-prod"
+
+
 def test_present_noop_returns_unchanged(monkeypatch):
     fake = FakeAlbClient([_listener()])
     _make_module(monkeypatch, fake)
@@ -729,6 +773,17 @@ def test_absent_removes_listener(monkeypatch):
     names = [c[0] for c in fake.calls]
     assert names.count("DeleteListener") == 1
     assert fake.listeners == []
+
+
+def test_absent_fails_when_listener_delete_not_observable(monkeypatch):
+    fake = FakeAlbClient([_listener()])
+    _make_module(monkeypatch, fake)
+    fake.DeleteListener = lambda request: SimpleNamespace()
+    module_args(state="absent", load_balancer_id="alb-8b0a1c2d", listener_id="lbl-8b0a1c2d", waiter_timeout=0)
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "did not converge" in exc.value.args[0]["msg"]
+    assert exc.value.args[0]["listener"]["ListenerId"] == "lbl-8b0a1c2d"
 
 
 def test_absent_not_found_is_noop(monkeypatch):

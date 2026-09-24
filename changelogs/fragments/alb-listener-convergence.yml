@@ -1,0 +1,2 @@
+bugfixes:
+  - alb_listener - wait for observable listener create, update, and delete convergence; reject detail responses that do not identify the requested listener.
