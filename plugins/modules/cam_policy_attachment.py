@@ -51,9 +51,10 @@ attributes:
     support: full
   idempotency:
     description:
-      - 'Reconciles the resource against its live state: running again with
-        the same arguments leaves it unchanged and reports C(changed=false).'
-    support: full
+      - The module does not read the resource back to compare it with the
+        requested state, so a repeated run may issue the write again instead
+        of reporting C(changed=false).
+    support: partial
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

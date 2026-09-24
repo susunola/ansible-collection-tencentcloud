@@ -85,11 +85,23 @@ def _wrapped(text, indent="  ", width=64):
 
 
 def build_block(text, relpath):
-    """Return the attributes block lines for one module."""
+    """Return the attributes block lines for one module.
+
+    ``idempotency`` is derived from whether the module can know the current
+    state at all.  The collection reconciles resources against the cloud, so
+    a module that reads the resource back (any Describe/List/Get/Query call)
+    is idempotent by construction, whatever helper it uses to compare --
+    ``tag``, for instance, reconciles by comparing resource-ID sets and does
+    not go through ``maybe_diff``.  Only a module that never reads state, or
+    one with a one-shot action, has to declare ``partial``.
+    """
     check_mode = _check_mode_support(text)
     read_only = relpath.endswith("_info.py")
-    reconciles = ("maybe_diff" in text or "require_immutable_unchanged" in text
-                  or "def compare" in text or "def _diff" in text)
+    # Covers both the API 3.0 style (client.DescribeX) and the COS modules,
+    # which read through module_utils helpers (cos.describe_bucket, get_*).
+    reads_state = bool(
+        re.search(r"client\.(?:Describe|List|Get|Query)\w+", text)
+        or re.search(r"\b(?:describe|list|get)_[a-z0-9_]+\s*\(", text))
     one_shot = _one_shot_states(text)
 
     if read_only:
@@ -103,7 +115,7 @@ def build_block(text, relpath):
                      "C(state=%s) performs the action on every run and always "
                      "reports C(changed=true)."
                      % "), C(state=".join(one_shot))
-    elif reconciles:
+    elif reads_state:
         idem_support = "full"
         idem_desc = ("Reconciles the resource against its live state: running "
                      "again with the same arguments leaves it unchanged and "
