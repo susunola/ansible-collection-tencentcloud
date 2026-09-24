@@ -7,8 +7,8 @@ basic.env_fallback = lambda names, default=None: default
 sys.modules.setdefault("ansible", types.ModuleType("ansible"))
 sys.modules.setdefault("ansible.module_utils", types.ModuleType("ansible.module_utils"))
 sys.modules.setdefault("ansible.module_utils.basic", basic)
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_domain import normalize as normalize_domains
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_domain_certificate import normalize as normalize_certificate
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import normalize_bucket_domain as normalize_domains
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import normalize_bucket_domain_certificate as normalize_certificate
 
 def test_domain_normalize_sorts_rules():
     value = {"DomainRule": [{"Name": "z.example"}, {"Name": "a.example"}]}

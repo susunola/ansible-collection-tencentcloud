@@ -7,9 +7,9 @@ basic.env_fallback = lambda names, default=None: default
 sys.modules.setdefault("ansible", types.ModuleType("ansible"))
 sys.modules.setdefault("ansible.module_utils", types.ModuleType("ansible.module_utils"))
 sys.modules.setdefault("ansible.module_utils.basic", basic)
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_inventory import normalize as normalize_inventory
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_replication import normalize as normalize_replication
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_response_control import normalize as normalize_control
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import normalize_bucket_inventory as normalize_inventory
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import normalize_bucket_replication as normalize_replication
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import normalize_bucket_response_control as normalize_control
 
 def test_replication_normalize_sorts_rules():
     value = {"Role": "role", "Rule": [{"ID": "b"}, {"ID": "a"}]}

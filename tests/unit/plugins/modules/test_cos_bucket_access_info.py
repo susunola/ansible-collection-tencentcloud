@@ -10,8 +10,8 @@ sys.modules.setdefault("ansible", types.ModuleType("ansible"))
 sys.modules.setdefault("ansible.module_utils", types.ModuleType("ansible.module_utils"))
 sys.modules.setdefault("ansible.module_utils.basic", basic)
 
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_intelligent_tiering import normalize as normalize_tiering
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_referer import normalize as normalize_referer
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import normalize_bucket_intelligent_tiering as normalize_tiering
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import normalize_bucket_referer as normalize_referer
 
 
 def test_referer_normalize_sorts_domains_and_handles_disabled():
