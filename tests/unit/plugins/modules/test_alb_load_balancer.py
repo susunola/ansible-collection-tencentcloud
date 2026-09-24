@@ -233,6 +233,11 @@ def test_list_request_fields():
     assert request.MaxResults == 100
 
 
+def test_list_request_uses_next_token():
+    request = mod.list_request(FakeAlbModels(), "page-2")
+    assert request.NextToken == "page-2"
+
+
 def test_describe_request_fields():
     request = mod.describe_request(FakeAlbModels(), "alb-abc")
     assert request.LoadBalancerId == "alb-abc"
@@ -335,6 +340,52 @@ def test_find_matches_by_name(monkeypatch):
     assert value["LoadBalancerId"] == "alb-8b0a1c2d"
 
 
+def test_find_matches_name_on_later_page(monkeypatch):
+    fake = FakeAlbClient([_alb()])
+    _make_module(monkeypatch, fake)
+
+    def paged(request):
+        fake._record("DescribeLoadBalancers", request)
+        if not getattr(request, "NextToken", None):
+            return SimpleNamespace(LoadBalancers=[FakeResource(_alb(LoadBalancerId="alb-other", LoadBalancerName="other"))], NextToken="page-2")
+        return SimpleNamespace(LoadBalancers=[FakeResource(_alb())], NextToken=None)
+
+    fake.DescribeLoadBalancers = paged
+    module = FakeModule(_params(name="public-app"))
+    assert mod.find(module, fake, FakeAlbModels(), module.params)["LoadBalancerId"] == "alb-8b0a1c2d"
+    assert [getattr(request, "NextToken", None) for name, request in fake.calls if name == "DescribeLoadBalancers"] == [None, "page-2"]
+
+
+def test_find_repeated_page_token_fails_closed(monkeypatch):
+    fake = FakeAlbClient()
+    _make_module(monkeypatch, fake)
+    fake.DescribeLoadBalancers = lambda request: SimpleNamespace(LoadBalancers=[], NextToken="same-page")
+    module = FakeModule(_params(name="public-app"))
+    with pytest.raises(AnsibleFailJson) as exc:
+        mod.find(module, fake, FakeAlbModels(), module.params)
+    assert "repeated token" in exc.value.args[0]["msg"]
+
+
+def test_find_missing_list_fails_closed(monkeypatch):
+    fake = FakeAlbClient()
+    _make_module(monkeypatch, fake)
+    fake.DescribeLoadBalancers = lambda request: SimpleNamespace(LoadBalancers=None, NextToken=None)
+    module = FakeModule(_params(name="public-app"))
+    with pytest.raises(AnsibleFailJson) as exc:
+        mod.find(module, fake, FakeAlbModels(), module.params)
+    assert "not observable" in exc.value.args[0]["msg"]
+
+
+def test_find_mismatched_detail_id_fails_closed(monkeypatch):
+    fake = FakeAlbClient([_alb()])
+    _make_module(monkeypatch, fake)
+    fake.DescribeLoadBalancerDetail = lambda request: SimpleNamespace(LoadBalancerDetail=FakeResource(_alb(LoadBalancerId="alb-other")))
+    module = FakeModule(_params(name="public-app"))
+    with pytest.raises(AnsibleFailJson) as exc:
+        mod.find(module, fake, FakeAlbModels(), module.params)
+    assert "does not match" in exc.value.args[0]["msg"]
+
+
 def test_find_multiple_matches_fails(monkeypatch):
     fake = FakeAlbClient(
         [
@@ -352,7 +403,8 @@ def test_find_multiple_matches_fails(monkeypatch):
 def test_protected_reads_nested_enabled_flag():
     assert mod._protected(_alb(DeletionProtection={"DeletionProtectionEnabled": True})) is True
     assert mod._protected(_alb()) is False
-    assert mod._protected({}) is False
+    with pytest.raises(ValueError, match="not observable"):
+        mod._protected({})
 
 
 # ---------------------------------------------------------------------------
@@ -547,6 +599,16 @@ def test_absent_removes_unprotected(monkeypatch):
     assert names.count("DeleteLoadBalancers") == 1
     assert "ModifyLoadBalancerAttributes" not in names  # no protection to lift
     assert fake.albs == []
+
+
+def test_absent_does_not_delete_when_protection_state_missing(monkeypatch):
+    fake = FakeAlbClient([_alb(DeletionProtection=None)])
+    _make_module(monkeypatch, fake)
+    module_args(state="absent", name="public-app", deletion_protection=False)
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "not observable" in str(exc.value.args[0])
+    assert "DeleteLoadBalancers" not in [name for name, request in fake.calls]
 
 
 def test_absent_protected_requires_opt_out(monkeypatch):

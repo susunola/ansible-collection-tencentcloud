@@ -10,7 +10,12 @@ DOCUMENTATION = r"""
 module: alb_load_balancer
 short_description: Manage Tencent Cloud Application Load Balancers
 version_added: "0.14.0"
-description: Creates, updates and deletes ALB instances, including address-type conversion and deletion protection.
+description:
+  - Creates, updates, and deletes ALB instances, including address-type
+    conversion and deletion protection.
+  - Reads every ALB list page before deciding that an instance is absent or
+    uniquely identified by name. Refuses to delete when protection state
+    cannot be read.
 options:
   state: {type: str, choices: [present, absent], default: present, description: Desired state.}
   load_balancer_id: {type: str, description: Existing ALB ID.}
@@ -30,6 +35,15 @@ options:
   deletion_protection_reason: {type: str, default: Managed by Ansible, description: Protection reason.}
   tags: {type: dict, description: Creation-time tags.}
   client_token: {type: str, description: Optional idempotency token.}
+
+attributes:
+  check_mode:
+    description: Predicts changes without sending API write requests.
+    support: full
+  idempotent:
+    description: Compares observable ALB settings before writing.
+    support: partial
+    details: Asynchronous create, update, and delete operations are not polled to convergence.
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -71,9 +85,11 @@ def _model(cls, value):
     return x
 
 
-def list_request(models):
+def list_request(models, next_token=None):
     r = models.DescribeLoadBalancersRequest()
     r.MaxResults = 100
+    if next_token:
+        r.NextToken = next_token
     return r
 
 
@@ -126,26 +142,44 @@ def delete_request(models, p, load_balancer_id):
 
 
 def find(module, client, models, p):
-    response = module.sdk_call(client.DescribeLoadBalancers, list_request(models))
     matches = []
-    for item in response.LoadBalancers or []:
-        value = item._serialize(allow_none=True)
-        if (p.get("load_balancer_id") and value.get("LoadBalancerId") == p["load_balancer_id"]) or (
-            not p.get("load_balancer_id") and value.get("LoadBalancerName") == p.get("name")
-        ):
-            matches.append(value)
+    next_token = None
+    seen_tokens = set()
+    while True:
+        response = module.sdk_call(client.DescribeLoadBalancers, list_request(models, next_token))
+        if getattr(response, "LoadBalancers", None) is None:
+            module.fail_json(msg="ALB load balancer list is not observable")
+        for item in response.LoadBalancers:
+            value = item._serialize(allow_none=True)
+            if (p.get("load_balancer_id") and value.get("LoadBalancerId") == p["load_balancer_id"]) or (
+                not p.get("load_balancer_id") and value.get("LoadBalancerName") == p.get("name")
+            ):
+                matches.append(value)
+        next_token = getattr(response, "NextToken", None)
+        if not next_token:
+            break
+        if next_token in seen_tokens:
+            module.fail_json(msg="ALB load balancer pagination returned a repeated token")
+        seen_tokens.add(next_token)
     if len(matches) > 1:
         module.fail_json(msg="Multiple ALBs matched; specify load_balancer_id")
     if not matches:
         return None
-    value = module.sdk_call(client.DescribeLoadBalancerDetail, describe_request(models, matches[0]["LoadBalancerId"])).LoadBalancerDetail._serialize(
-        allow_none=True
-    )
+    detail = module.sdk_call(client.DescribeLoadBalancerDetail, describe_request(models, matches[0]["LoadBalancerId"])).LoadBalancerDetail
+    if detail is None:
+        module.fail_json(msg="ALB load balancer detail is not observable", load_balancer_id=matches[0]["LoadBalancerId"])
+    value = detail._serialize(allow_none=True)
+    if value.get("LoadBalancerId") != matches[0]["LoadBalancerId"]:
+        module.fail_json(msg="ALB load balancer detail ID does not match the list result", load_balancer_id=matches[0]["LoadBalancerId"])
     return value
 
 
 def _protected(value):
-    return bool((value.get("DeletionProtection") or {}).get("DeletionProtectionEnabled"))
+    protection = value.get("DeletionProtection")
+    enabled = protection.get("DeletionProtectionEnabled") if isinstance(protection, dict) else None
+    if not isinstance(enabled, bool):
+        raise ValueError("ALB deletion protection state is not observable")
+    return enabled
 
 
 def run_module():

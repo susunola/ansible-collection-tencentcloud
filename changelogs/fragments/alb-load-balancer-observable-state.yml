@@ -1,0 +1,4 @@
+bugfixes:
+  - alb_load_balancer - read all list pages before matching an instance,
+    reject mismatched detail responses, and refuse changes when deletion
+    protection state cannot be observed.
