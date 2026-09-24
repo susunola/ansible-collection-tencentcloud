@@ -18,6 +18,7 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
@@ -35,7 +36,9 @@ intelligent_tiering: {description: Effective default intelligent-tiering rule or
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_intelligent_tiering import get_rule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import (
+    get_bucket_intelligent_tiering_rule,
+)
 
 
 def run_module():
@@ -43,7 +46,7 @@ def run_module():
     cos.require_cos_sdk(module)
     bucket = cos.bucket_full_name(module.params["name"], cos.resolve_appid(module))
     try:
-        rule = get_rule(cos.create_cos_client(module), bucket)
+        rule = get_bucket_intelligent_tiering_rule(cos.create_cos_client(module), bucket)
         module.exit_json(changed=False, intelligent_tiering_rules=[rule] if rule else [], intelligent_tiering=rule)
     except Exception as exc:
         cos.fail_on_cos_error(module, exc)

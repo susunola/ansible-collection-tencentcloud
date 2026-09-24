@@ -18,6 +18,7 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
@@ -35,14 +36,16 @@ domain_certificate: {description: Effective certificate configuration or null., 
 '''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_domain_certificate import get_certificate
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import (
+    get_bucket_domain_certificate,
+)
 
 def run_module():
     module = TencentCloudModule(argument_spec={"name": {"required": True}, "appid": {}, "domain_name": {"required": True}}, supports_check_mode=True)
     cos.require_cos_sdk(module)
     bucket = cos.bucket_full_name(module.params["name"], cos.resolve_appid(module))
     try:
-        value = get_certificate(cos.create_cos_client(module), bucket, module.params["domain_name"])
+        value = get_bucket_domain_certificate(cos.create_cos_client(module), bucket, module.params["domain_name"])
         module.exit_json(changed=False, domain_certificates=[value] if value else [], domain_certificate=value)
     except Exception as exc:
         cos.fail_on_cos_error(module, exc)

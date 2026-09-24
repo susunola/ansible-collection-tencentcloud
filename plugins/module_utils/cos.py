@@ -19,6 +19,7 @@ COS-specific ones below.
 """
 
 from __future__ import absolute_import, division, print_function
+import copy
 
 __metaclass__ = type
 
@@ -547,3 +548,214 @@ def get_bucket_lifecycle(client, full_name):
     # {"LifecycleConfiguration": {"Rule": [...]}}.
     body = (result or {}).get("LifecycleConfiguration") or result or {}
     return lifecycle_rules_current(body.get("Rule") or [])
+
+# ---------------------------------------------------------------------------
+# Bucket sub-resource readers
+#
+# These used to live in the matching write module, which forced the _info
+# module to import plugins/modules/<x>.py -- rejected by the `import` sanity
+# test, because a module must not import another module.
+# -------------------------------------------------------------------------
+
+
+# ---- bucket_domain_certificate (moved out of plugins/modules/cos_bucket_domain_certificate.py so the matching
+#      _info module can reuse it without importing a module) ----
+def normalize_bucket_domain_certificate(value):
+    if not value:
+        return None
+    root = value.get("DomainCertificate", value)
+    info = root.get("CertificateInfo") or {}
+    return {"Status": root.get("Status"), "CertType": root.get("CertType") or info.get("CertType"), "CertificateInfo": {"CertID": info.get("CertID")}}
+
+
+def get_bucket_domain_certificate(client, bucket, domain_name):
+    try:
+        return normalize_bucket_domain_certificate(client.get_bucket_domain_certificate(Bucket=bucket, DomainName=domain_name))
+    except Exception as exc:
+        if is_not_found(exc):
+            return None
+        raise
+
+
+# ---- bucket_domain (moved out of plugins/modules/cos_bucket_domain.py so the matching
+#      _info module can reuse it without importing a module) ----
+def normalize_bucket_domain(value):
+    if not value:
+        return None
+    root = value.get("DomainConfiguration", value)
+    rules = root.get("DomainRule") or []
+    if isinstance(rules, dict):
+        rules = [rules]
+    return {"DomainRule": sorted(rules, key=lambda item: item.get("Name") or "")}
+
+
+def get_bucket_domain(client, bucket):
+    try:
+        response = client.get_bucket_domain(Bucket=bucket)
+        return normalize_bucket_domain(response), response.get("x-cos-domain-txt-verification")
+    except Exception as exc:
+        if is_not_found(exc):
+            return None, None
+        raise
+
+
+# ---- bucket_intelligent_tiering (moved out of plugins/modules/cos_bucket_intelligent_tiering.py so the matching
+#      _info module can reuse it without importing a module) ----
+def normalize_bucket_intelligent_tiering(value):
+    if not value:
+        return None
+    root = value.get("IntelligentTieringConfiguration", value)
+    tiering = root.get("Tiering") or {}
+    return {
+        "Id": root.get("Id") or "default",
+        "Status": root.get("Status"),
+        "Tiering": {"AccessTier": tiering.get("AccessTier"), "Days": int(tiering["Days"]), "RequestFrequent": int(tiering["RequestFrequent"])},
+    }
+
+
+def get_bucket_intelligent_tiering_rule(client, bucket):
+    try:
+        return normalize_bucket_intelligent_tiering(client.get_bucket_intelligenttiering_v2(Bucket=bucket, Id="default"))
+    except Exception as exc:
+        if is_not_found(exc):
+            return None
+        raise
+
+
+# ---- bucket_inventory (moved out of plugins/modules/cos_bucket_inventory.py so the matching
+#      _info module can reuse it without importing a module) ----
+def normalize_bucket_inventory(value, inventory_id):
+    if not value:
+        return None
+    result = copy.deepcopy(value.get("InventoryConfiguration", value))
+    result["Id"] = inventory_id
+    optional = result.get("OptionalFields")
+    if optional and isinstance(optional.get("Field"), list):
+        optional["Field"] = sorted(optional["Field"])
+    return result
+
+
+def get_bucket_inventory(client, bucket, inventory_id):
+    try:
+        return normalize_bucket_inventory(client.get_bucket_inventory(Bucket=bucket, Id=inventory_id), inventory_id)
+    except Exception as exc:
+        if is_not_found(exc):
+            return None
+        raise
+
+
+# ---- bucket_object_lock (moved out of plugins/modules/cos_bucket_object_lock.py so the matching
+#      _info module can reuse it without importing a module) ----
+def normalize_bucket_object_lock(value):
+    if not value:
+        return None
+    root = value.get("ObjectLockConfiguration", value)
+    result = {"ObjectLockEnabled": root.get("ObjectLockEnabled")}
+    rule = root.get("Rule") or {}
+    retention = rule.get("DefaultRetention") or {}
+    if retention:
+        normalized = {"Mode": retention.get("Mode")}
+        if retention.get("Days") is not None:
+            normalized["Days"] = int(retention["Days"])
+        if retention.get("Years") is not None:
+            normalized["Years"] = int(retention["Years"])
+        result["Rule"] = {"DefaultRetention": normalized}
+    return result
+
+
+def get_bucket_object_lock(client, bucket):
+    try:
+        return normalize_bucket_object_lock(client.get_bucket_object_lock(Bucket=bucket))
+    except Exception as exc:
+        if is_not_found(exc):
+            return None
+        raise
+
+
+# ---- bucket_origin (moved out of plugins/modules/cos_bucket_origin.py so the matching
+#      _info module can reuse it without importing a module) ----
+def normalize_bucket_origin(value):
+    if not value:
+        return None
+    root = value.get("OriginConfiguration", value)
+    rules = root.get("OriginRule") or []
+    if isinstance(rules, dict):
+        rules = [rules]
+    return {"OriginRule": sorted(rules, key=lambda item: int(item.get("RulePriority") or 0))}
+
+
+def get_bucket_origin(client, bucket):
+    try:
+        return normalize_bucket_origin(client.get_bucket_origin(Bucket=bucket))
+    except Exception as exc:
+        if is_not_found(exc):
+            return None
+        raise
+
+
+# ---- bucket_referer (moved out of plugins/modules/cos_bucket_referer.py so the matching
+#      _info module can reuse it without importing a module) ----
+def normalize_bucket_referer(value):
+    if not value:
+        return None
+    root = value.get("RefererConfiguration", value)
+    if root.get("Status") != "Enabled":
+        return None
+    domains = (root.get("DomainList") or {}).get("Domain") or []
+    if isinstance(domains, str):
+        domains = [domains]
+    return {
+        "Status": "Enabled",
+        "RefererType": root.get("RefererType"),
+        "EmptyReferConfiguration": root.get("EmptyReferConfiguration"),
+        "DomainList": {"Domain": sorted(domains)},
+    }
+
+
+def get_bucket_referer(client, bucket):
+    try:
+        return normalize_bucket_referer(client.get_bucket_referer(Bucket=bucket))
+    except Exception as exc:
+        if is_not_found(exc):
+            return None
+        raise
+
+
+# ---- bucket_replication (moved out of plugins/modules/cos_bucket_replication.py so the matching
+#      _info module can reuse it without importing a module) ----
+def normalize_bucket_replication(value):
+    if not value:
+        return None
+    root = value.get("ReplicationConfiguration", value)
+    rules = root.get("Rule") or []
+    return {"Role": root.get("Role"), "Rule": sorted(rules, key=lambda x: (x.get("ID") or "", x.get("Prefix") or ""))}
+
+
+def get_bucket_replication(client, bucket):
+    try:
+        return normalize_bucket_replication(client.get_bucket_replication(Bucket=bucket))
+    except Exception as exc:
+        if is_not_found(exc):
+            return None
+        raise
+
+
+# ---- bucket_response_control (moved out of plugins/modules/cos_bucket_response_control.py so the matching
+#      _info module can reuse it without importing a module) ----
+def normalize_bucket_response_control(value):
+    if not value:
+        return None
+    root = value.get("ResponseControlConfiguration", value)
+    params = (root.get("ControlParamList") or {}).get("Param") or []
+    if isinstance(params, str):
+        params = [params]
+    return {"ControlParamList": {"Param": sorted(params)}}
+
+
+def get_bucket_response_control(client, bucket):
+    try:
+        return normalize_bucket_response_control(client.get_bucket_response_control(Bucket=bucket))
+    except Exception as exc:
+        if is_not_found(exc):
+            return None
+        raise

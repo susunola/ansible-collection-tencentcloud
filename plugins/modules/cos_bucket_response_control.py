@@ -31,6 +31,7 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
@@ -43,6 +44,9 @@ EXAMPLES = r"""
     parameters: [response-content-type, response-content-disposition]
 """
 RETURN = r"""response_control: {description: Effective response-control configuration., type: dict, returned: always}"""
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import (
+    get_bucket_response_control, normalize_bucket_response_control as normalize,
+)
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
@@ -55,25 +59,6 @@ PARAMETERS = [
     "response-content-language",
     "response-expires",
 ]
-
-
-def normalize(value):
-    if not value:
-        return None
-    root = value.get("ResponseControlConfiguration", value)
-    params = (root.get("ControlParamList") or {}).get("Param") or []
-    if isinstance(params, str):
-        params = [params]
-    return {"ControlParamList": {"Param": sorted(params)}}
-
-
-def get_control(client, bucket):
-    try:
-        return normalize(client.get_bucket_response_control(Bucket=bucket))
-    except Exception as exc:
-        if cos.is_not_found(exc):
-            return None
-        raise
 
 
 def run_module():
@@ -92,7 +77,7 @@ def run_module():
     bucket = cos.bucket_full_name(p["name"], cos.resolve_appid(module))
     client = cos.create_cos_client(module)
     try:
-        current = get_control(client, bucket)
+        current = get_bucket_response_control(client, bucket)
         target = normalize({"ControlParamList": {"Param": p.get("parameters") or []}}) if p["state"] == "present" else None
         if current == target:
             module.exit_json(changed=False, response_control=current)

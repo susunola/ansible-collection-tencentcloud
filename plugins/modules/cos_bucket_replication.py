@@ -22,6 +22,7 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
@@ -38,26 +39,12 @@ EXAMPLES = r"""
         Destination: {Bucket: qcs::cos:ap-shanghai::archive-1250000000, StorageClass: STANDARD}
 """
 RETURN = r"""replication: {description: Effective replication configuration., type: dict, returned: always}"""
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import (
+    get_bucket_replication, normalize_bucket_replication as normalize,
+)
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-
-
-def normalize(value):
-    if not value:
-        return None
-    root = value.get("ReplicationConfiguration", value)
-    rules = root.get("Rule") or []
-    return {"Role": root.get("Role"), "Rule": sorted(rules, key=lambda x: (x.get("ID") or "", x.get("Prefix") or ""))}
-
-
-def get_replication(client, bucket):
-    try:
-        return normalize(client.get_bucket_replication(Bucket=bucket))
-    except Exception as exc:
-        if cos.is_not_found(exc):
-            return None
-        raise
 
 
 def run_module():
@@ -76,7 +63,7 @@ def run_module():
     bucket = cos.bucket_full_name(module.params["name"], cos.resolve_appid(module))
     client = cos.create_cos_client(module)
     try:
-        current = get_replication(client, bucket)
+        current = get_bucket_replication(client, bucket)
         target = normalize({"Role": module.params.get("role"), "Rule": module.params.get("rules") or []})
         if module.params["state"] == "absent":
             if current is None:

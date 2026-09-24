@@ -134,9 +134,19 @@ def _default_targets(root):
 
 
 def _ignore_budget(root):
+    """Ceiling the ratchet allows for restricted codes.
+
+    This used to read ``BASELINE_TOTAL`` -- the size the ignore files were
+    allowed to grow to.  The guard is now a ratchet that forbids the
+    must-not-ignore codes outright, so the meaningful figure is the sum of
+    the per-code ceilings: 0 means the collection claims no exemption at all
+    for those codes.
+    """
     text = (root / IGNORE_CHECK).read_text(encoding="utf-8")
-    match = re.search(r"^BASELINE_TOTAL\s*=\s*(\d+)", text, re.M)
-    return int(match.group(1)) if match else 0
+    block = re.search(r"^CEILING\s*=\s*\{(.*?)^\}", text, re.M | re.S)
+    if not block:
+        return 0
+    return sum(int(n) for n in re.findall(r":\s*(\d+)", block.group(1)))
 
 
 def _ignore_total(root):

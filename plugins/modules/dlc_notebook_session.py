@@ -38,7 +38,14 @@ options:
       key: {type: str, required: true, description: Argument key.}
       value: {type: str, required: true, description: Argument value.}
   proxy_user: {type: str, description: Creation-time proxy user.}
-  timeout: {type: int, description: Creation-time session timeout in seconds.}
+  timeout:
+    description:
+      - Creation-time session timeout in seconds, sent to the API as
+        V(TimeoutInSecond).
+      - This is a notebook-session property rather than the SDK request
+        timeout. Because the option name is reused, the shared
+        connection-timeout setting is not configurable in this module.
+    type: int
   allow_replace: {type: bool, default: false, description: Explicitly authorize deleting and recreating a session whose immutable settings drift.}
   allow_delete: {type: bool, default: false, description: Explicitly authorize session deletion.}
   wait: {type: bool, default: true, description: Wait until a created session is usable or a deleted session is terminal.}

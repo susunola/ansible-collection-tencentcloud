@@ -18,6 +18,7 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
@@ -35,14 +36,16 @@ inventory: {description: Effective inventory rule or null., returned: always, ty
 '''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_inventory import get_inventory
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import (
+    get_bucket_inventory,
+)
 
 def run_module():
     module = TencentCloudModule(argument_spec={"name": {"required": True}, "appid": {}, "inventory_id": {"required": True}}, supports_check_mode=True)
     cos.require_cos_sdk(module)
     bucket = cos.bucket_full_name(module.params["name"], cos.resolve_appid(module))
     try:
-        value = get_inventory(cos.create_cos_client(module), bucket, module.params["inventory_id"])
+        value = get_bucket_inventory(cos.create_cos_client(module), bucket, module.params["inventory_id"])
         module.exit_json(changed=False, inventories=[value] if value else [], inventory=value)
     except Exception as exc:
         cos.fail_on_cos_error(module, exc)

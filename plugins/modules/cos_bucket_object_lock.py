@@ -26,6 +26,7 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
@@ -43,35 +44,12 @@ EXAMPLES = r"""
 
 RETURN = r"""object_lock: {description: Effective object-lock configuration., type: dict, returned: always}"""
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import (
+    get_bucket_object_lock,
+)
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-
-
-def normalize(value):
-    if not value:
-        return None
-    root = value.get("ObjectLockConfiguration", value)
-    result = {"ObjectLockEnabled": root.get("ObjectLockEnabled")}
-    rule = root.get("Rule") or {}
-    retention = rule.get("DefaultRetention") or {}
-    if retention:
-        normalized = {"Mode": retention.get("Mode")}
-        if retention.get("Days") is not None:
-            normalized["Days"] = int(retention["Days"])
-        if retention.get("Years") is not None:
-            normalized["Years"] = int(retention["Years"])
-        result["Rule"] = {"DefaultRetention": normalized}
-    return result
-
-
-def get_object_lock(client, bucket):
-    try:
-        return normalize(client.get_bucket_object_lock(Bucket=bucket))
-    except Exception as exc:
-        if cos.is_not_found(exc):
-            return None
-        raise
 
 
 def desired(p):
@@ -84,6 +62,18 @@ def desired(p):
             retention["Years"] = p["retention_years"]
         result["Rule"] = {"DefaultRetention": retention}
     return result
+
+
+# ---- bucket_origin (moved out of plugins/modules/cos_bucket_origin.py so the matching
+#      _info module can reuse it without importing a module) ----
+def normalize_bucket_origin(value):
+    if not value:
+        return None
+    root = value.get("OriginConfiguration", value)
+    rules = root.get("OriginRule") or []
+    if isinstance(rules, dict):
+        rules = [rules]
+    return {"OriginRule": sorted(rules, key=lambda item: int(item.get("RulePriority") or 0))}
 
 
 def run_module():
@@ -109,7 +99,7 @@ def run_module():
     bucket = cos.bucket_full_name(p["name"], cos.resolve_appid(module))
     client = cos.create_cos_client(module)
     try:
-        current = get_object_lock(client, bucket)
+        current = get_bucket_object_lock(client, bucket)
         if p["state"] == "absent":
             if current is None:
                 module.exit_json(changed=False, object_lock=None)

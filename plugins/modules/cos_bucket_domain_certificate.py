@@ -25,6 +25,7 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
@@ -47,26 +48,12 @@ EXAMPLES = r"""
 """
 RETURN = r"""domain_certificate: {description: Effective certificate status and identity., type: dict, returned: always}"""
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import (
+    get_bucket_domain_certificate,
+)
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-
-
-def normalize(value):
-    if not value:
-        return None
-    root = value.get("DomainCertificate", value)
-    info = root.get("CertificateInfo") or {}
-    return {"Status": root.get("Status"), "CertType": root.get("CertType") or info.get("CertType"), "CertificateInfo": {"CertID": info.get("CertID")}}
-
-
-def get_certificate(client, bucket, domain_name):
-    try:
-        return normalize(client.get_bucket_domain_certificate(Bucket=bucket, DomainName=domain_name))
-    except Exception as exc:
-        if cos.is_not_found(exc):
-            return None
-        raise
 
 
 def run_module():
@@ -86,7 +73,7 @@ def run_module():
     bucket = cos.bucket_full_name(p["name"], cos.resolve_appid(module))
     client = cos.create_cos_client(module)
     try:
-        current = get_certificate(client, bucket, p["domain_name"])
+        current = get_bucket_domain_certificate(client, bucket, p["domain_name"])
         target = {"Status": "Enabled", "CertType": "CustomCert", "CertificateInfo": {"CertID": p["certificate_id"]}} if p["state"] == "present" else None
         if current == target:
             module.exit_json(changed=False, domain_certificate=current)

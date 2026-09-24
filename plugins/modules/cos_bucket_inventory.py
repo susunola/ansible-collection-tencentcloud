@@ -22,6 +22,7 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
@@ -43,29 +44,12 @@ EXAMPLES = r"""
 """
 RETURN = r"""inventory: {description: Effective inventory rule., type: dict, returned: always}"""
 import copy
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import (
+    get_bucket_inventory, normalize_bucket_inventory as normalize,
+)
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-
-
-def normalize(value, inventory_id):
-    if not value:
-        return None
-    result = copy.deepcopy(value.get("InventoryConfiguration", value))
-    result["Id"] = inventory_id
-    optional = result.get("OptionalFields")
-    if optional and isinstance(optional.get("Field"), list):
-        optional["Field"] = sorted(optional["Field"])
-    return result
-
-
-def get_inventory(client, bucket, inventory_id):
-    try:
-        return normalize(client.get_bucket_inventory(Bucket=bucket, Id=inventory_id), inventory_id)
-    except Exception as exc:
-        if cos.is_not_found(exc):
-            return None
-        raise
 
 
 def run_module():
@@ -85,7 +69,7 @@ def run_module():
     client = cos.create_cos_client(module)
     inventory_id = module.params["inventory_id"]
     try:
-        current = get_inventory(client, bucket, inventory_id)
+        current = get_bucket_inventory(client, bucket, inventory_id)
         target = normalize(module.params.get("configuration"), inventory_id)
         if module.params["state"] == "absent":
             if current is None:

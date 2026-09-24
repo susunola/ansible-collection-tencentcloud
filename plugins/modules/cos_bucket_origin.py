@@ -21,6 +21,7 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
@@ -37,28 +38,12 @@ EXAMPLES = r"""
         OriginParameter: {Protocol: https, FollowRedirect: 'true', HttpRedirectCode: 302}
 """
 RETURN = r"""origin: {description: Effective origin configuration., type: dict, returned: always}"""
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import (
+    get_bucket_origin, normalize_bucket_origin as normalize,
+)
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-
-
-def normalize(value):
-    if not value:
-        return None
-    root = value.get("OriginConfiguration", value)
-    rules = root.get("OriginRule") or []
-    if isinstance(rules, dict):
-        rules = [rules]
-    return {"OriginRule": sorted(rules, key=lambda item: int(item.get("RulePriority") or 0))}
-
-
-def get_origin(client, bucket):
-    try:
-        return normalize(client.get_bucket_origin(Bucket=bucket))
-    except Exception as exc:
-        if cos.is_not_found(exc):
-            return None
-        raise
 
 
 def run_module():
@@ -77,7 +62,7 @@ def run_module():
     bucket = cos.bucket_full_name(p["name"], cos.resolve_appid(module))
     client = cos.create_cos_client(module)
     try:
-        current = get_origin(client, bucket)
+        current = get_bucket_origin(client, bucket)
         target = normalize({"OriginRule": p.get("rules") or []}) if p["state"] == "present" else None
         if current == target:
             module.exit_json(changed=False, origin=current)

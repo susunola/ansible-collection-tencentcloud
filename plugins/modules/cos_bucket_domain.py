@@ -21,6 +21,7 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
@@ -36,29 +37,12 @@ RETURN = r"""
 domains: {description: Effective custom-domain configuration., type: dict, returned: always}
 txt_verification: {description: DNS TXT verification value returned by COS., type: str, returned: when available}
 """
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import (
+    get_bucket_domain, normalize_bucket_domain as normalize,
+)
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-
-
-def normalize(value):
-    if not value:
-        return None
-    root = value.get("DomainConfiguration", value)
-    rules = root.get("DomainRule") or []
-    if isinstance(rules, dict):
-        rules = [rules]
-    return {"DomainRule": sorted(rules, key=lambda item: item.get("Name") or "")}
-
-
-def get_domains(client, bucket):
-    try:
-        response = client.get_bucket_domain(Bucket=bucket)
-        return normalize(response), response.get("x-cos-domain-txt-verification")
-    except Exception as exc:
-        if cos.is_not_found(exc):
-            return None, None
-        raise
 
 
 def run_module():
@@ -76,7 +60,7 @@ def run_module():
     bucket = cos.bucket_full_name(module.params["name"], cos.resolve_appid(module))
     client = cos.create_cos_client(module)
     try:
-        current, verification = get_domains(client, bucket)
+        current, verification = get_bucket_domain(client, bucket)
         target = normalize({"DomainRule": module.params.get("rules") or []})
         if module.params["state"] == "absent":
             target = None

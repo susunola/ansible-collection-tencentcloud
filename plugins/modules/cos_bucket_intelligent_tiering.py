@@ -25,6 +25,7 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
@@ -39,30 +40,12 @@ EXAMPLES = r"""
 """
 RETURN = r"""intelligent_tiering: {description: Effective intelligent-tiering rule., type: dict, returned: always}"""
 
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import (
+    get_bucket_intelligent_tiering_rule,
+)
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-
-
-def normalize(value):
-    if not value:
-        return None
-    root = value.get("IntelligentTieringConfiguration", value)
-    tiering = root.get("Tiering") or {}
-    return {
-        "Id": root.get("Id") or "default",
-        "Status": root.get("Status"),
-        "Tiering": {"AccessTier": tiering.get("AccessTier"), "Days": int(tiering["Days"]), "RequestFrequent": int(tiering["RequestFrequent"])},
-    }
-
-
-def get_rule(client, bucket):
-    try:
-        return normalize(client.get_bucket_intelligenttiering_v2(Bucket=bucket, Id="default"))
-    except Exception as exc:
-        if cos.is_not_found(exc):
-            return None
-        raise
 
 
 def run_module():
@@ -83,7 +66,7 @@ def run_module():
     bucket = cos.bucket_full_name(p["name"], cos.resolve_appid(module))
     client = cos.create_cos_client(module)
     try:
-        current = get_rule(client, bucket)
+        current = get_bucket_intelligent_tiering_rule(client, bucket)
         if p["state"] == "absent":
             if current is None:
                 module.exit_json(changed=False, intelligent_tiering=None)

@@ -17,6 +17,7 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
@@ -33,14 +34,16 @@ replication: {description: Effective replication configuration or null., returne
 '''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_replication import get_replication
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import (
+    get_bucket_replication,
+)
 
 def run_module():
     module = TencentCloudModule(argument_spec={"name": {"required": True}, "appid": {}}, supports_check_mode=True)
     cos.require_cos_sdk(module)
     bucket = cos.bucket_full_name(module.params["name"], cos.resolve_appid(module))
     try:
-        value = get_replication(cos.create_cos_client(module), bucket)
+        value = get_bucket_replication(cos.create_cos_client(module), bucket)
         module.exit_json(changed=False, replications=[value] if value else [], replication=value)
     except Exception as exc:
         cos.fail_on_cos_error(module, exc)

@@ -23,6 +23,7 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
@@ -36,35 +37,12 @@ EXAMPLES = r"""
     domains: ['*.example.com', example.com]
 """
 RETURN = r"""referer: {description: Effective hotlink-protection configuration., type: dict, returned: always}"""
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos import (
+    get_bucket_referer, normalize_bucket_referer as normalize,
+)
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-
-
-def normalize(value):
-    if not value:
-        return None
-    root = value.get("RefererConfiguration", value)
-    if root.get("Status") != "Enabled":
-        return None
-    domains = (root.get("DomainList") or {}).get("Domain") or []
-    if isinstance(domains, str):
-        domains = [domains]
-    return {
-        "Status": "Enabled",
-        "RefererType": root.get("RefererType"),
-        "EmptyReferConfiguration": root.get("EmptyReferConfiguration"),
-        "DomainList": {"Domain": sorted(domains)},
-    }
-
-
-def get_referer(client, bucket):
-    try:
-        return normalize(client.get_bucket_referer(Bucket=bucket))
-    except Exception as exc:
-        if cos.is_not_found(exc):
-            return None
-        raise
 
 
 def run_module():
@@ -84,7 +62,7 @@ def run_module():
     bucket = cos.bucket_full_name(module.params["name"], cos.resolve_appid(module))
     client = cos.create_cos_client(module)
     try:
-        current = get_referer(client, bucket)
+        current = get_bucket_referer(client, bucket)
         target = normalize(
             {
                 "Status": "Enabled",

@@ -34,6 +34,7 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.timeout
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

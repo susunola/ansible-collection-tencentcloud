@@ -63,8 +63,23 @@ OPTION_FRAGMENTS = {
     "waiter_delay": "waiter",
     "waiter_timeout": "waiter",
 }
-KNOWN_FRAGMENTS = set(BASE_FRAGMENTS) | set(OPTION_FRAGMENTS.values())
+KNOWN_FRAGMENTS = set(BASE_FRAGMENTS) | set(OPTION_FRAGMENTS.values()) | {"timeout"}
 RUNTIME_FRAGMENTS = frozenset(OPTION_FRAGMENTS.values())
+
+# ``timeout`` lives in its own fragment so that a module which needs the
+# option name for something else can shadow it without the shared
+# documentation leaking a default the module does not apply.
+# dlc_notebook_session, tat_command, tat_invocation and tse_gateway_service
+# define their own ``timeout`` (a product API field, minutes of session or
+# command lifetime) and therefore must not reference the fragment; every other
+# module must.
+_TIMEOUT_OVERRIDE_RE = re.compile(r'"timeout"\s*:\s*\{')
+TIMEOUT_FRAGMENT = "timeout"
+
+
+def needs_timeout_fragment(text):
+    """True when the module accepts the SDK request-timeout option."""
+    return not _TIMEOUT_OVERRIDE_RE.search(text)
 
 # The runtime options are injected by ``base_argument_spec()`` -- reached
 # either directly or through ``TencentCloudModule``.  The legacy
@@ -255,6 +270,8 @@ def fragments_and_stripped(text):
     reported "nothing to do".
     """
     fragments = list(BASE_FRAGMENTS)
+    if needs_timeout_fragment(text):
+        fragments.append(TIMEOUT_FRAGMENT)
     runtime = accepts_runtime_options(text)
     verdicts = {}
     for name in OPTION_FRAGMENTS:
@@ -398,6 +415,19 @@ def check_all():
                     "not include them (legacy tencentcloud_argument_spec()); either "
                     "drop the references or switch the module to base_argument_spec()"
                     % (path, wrong_runtime))
+
+        # ``timeout``: required unless the module shadows the option.
+        if needs_timeout_fragment(text):
+            if TIMEOUT_FRAGMENT not in current:
+                problems.append(
+                    "%s: missing the '%s' fragment -- the module accepts the shared "
+                    "request-timeout option but documents it nowhere"
+                    % (path, TIMEOUT_FRAGMENT))
+        elif TIMEOUT_FRAGMENT in current:
+            problems.append(
+                "%s: references the '%s' fragment but overrides 'timeout' in its "
+                "argument_spec, so the fragment's default does not apply"
+                % (path, TIMEOUT_FRAGMENT))
         unknown = sorted(set(current) - KNOWN_FRAGMENTS)
         if unknown:
             problems.append("%s: unknown fragment reference(s) %s" % (path, unknown))

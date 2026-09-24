@@ -57,6 +57,10 @@ BASE_FRAGMENTS = (
     "susunola.tencentcloud.credentials",
     "susunola.tencentcloud.region",
     "susunola.tencentcloud.connection",
+    # ``timeout`` lives in its own fragment so a module that needs the option
+    # name for a product API field can shadow it without inheriting the
+    # shared default.  Every generated module accepts it, so it belongs here.
+    "susunola.tencentcloud.timeout",
 )
 # Runtime options (retries/user_agent/waiter_*) are only accepted by
 # resource modules; read-only modules reference the base fragments alone.
