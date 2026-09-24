@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
@@ -18,7 +21,52 @@ options:
   instance_id: {type: str, description: Bound cloud product instance ID; required for creation.}
   username_prefix: {type: str, description: Generated database account prefix of at most eight characters; required for creation.}
   domains: {type: list, elements: str, default: ['%'], description: Account host domains.}
-  privileges: {type: list, elements: dict, default: [], description: Product privilege units accepted by SSM.}
+  privileges:
+    description:
+      - Product privilege units attached to the secret.
+      - Each entry names one object and the privilege granted on it; SSM
+        accepts a flat list of units rather than a nested grant tree.
+    type: list
+    elements: dict
+    default: []
+    suboptions:
+      privilege_name:
+        description: Name of the privilege to grant on the object.
+        type: str
+      privileges:
+        description: Privileges granted on the object named by this unit.
+        type: list
+        elements: str
+      database:
+        description: Database the privilege applies to.
+        type: str
+      table_name:
+        description: Table the privilege applies to.
+        type: str
+      column_name:
+        description: Column the privilege applies to.
+        type: str
+      schema_name:
+        description: Schema the privilege applies to.
+        type: str
+      sequence_name:
+        description: Sequence the privilege applies to.
+        type: str
+      procedure_name:
+        description: Stored procedure the privilege applies to.
+        type: str
+      type_name:
+        description: User-defined type the privilege applies to.
+        type: str
+      function_name:
+        description: Function the privilege applies to.
+        type: str
+      view_name:
+        description: View the privilege applies to.
+        type: str
+      matview_name:
+        description: Materialized view the privilege applies to.
+        type: str
   description: {type: str, default: managed by Ansible, description: Secret description.}
   kms_key_id: {type: str, description: Customer KMS key ID.}
   kms_hsm_cluster_id: {type: str, description: Dedicated KMS HSM cluster ID.}
@@ -32,13 +80,13 @@ options:
   account_type: {type: str, choices: [L3], description: SQL Server account type.}
   recovery_window_days: {type: int, default: 7, description: Deletion recovery window from 0 through 30 days.}
 
-  waiter_delay: {type: int, default: 5, description: Async polling interval.}
-  waiter_timeout: {type: int, default: 600, description: Async polling timeout.}
-
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

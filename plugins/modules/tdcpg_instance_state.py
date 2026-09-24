@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
@@ -15,13 +18,13 @@ options:
   state: {type: str, choices: [running, isolated, restarted], required: true, description: Desired action or state.}
   period_months: {type: int, default: 1, description: Recovery purchase period for prepaid instances.}
 
-  waiter_delay: {type: int, default: 5, description: Polling interval.}
-  waiter_timeout: {type: int, default: 300, description: Convergence timeout.}
-
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

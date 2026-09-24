@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
@@ -14,13 +17,13 @@ options:
   endpoint_id: {type: str, required: true, description: Endpoint ID.}
   state: {type: str, choices: [open, closed], default: closed, description: Desired public access state.}
 
-  waiter_delay: {type: int, default: 5, description: Polling interval.}
-  waiter_timeout: {type: int, default: 180, description: Convergence timeout.}
-
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

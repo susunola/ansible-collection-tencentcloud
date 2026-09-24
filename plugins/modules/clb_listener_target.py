@@ -89,10 +89,6 @@ options:
         deregister task to finish.
     type: int
     default: 120
-  waiter_delay:
-    description: Interval in seconds between state polls while waiting.
-    type: int
-    default: 5
 notes:
   - Requires the C(tencentcloud-sdk-python-clb) package on the controller.
   - Uses the C(clb.tencentcloudapi.com) endpoint by default.
@@ -104,6 +100,9 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

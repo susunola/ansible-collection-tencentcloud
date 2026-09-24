@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
@@ -41,13 +44,16 @@ options:
   allow_delete: {type: bool, default: false, description: Explicitly authorize definition deletion.}
   allow_delete_running: {type: bool, default: false, description: Explicitly authorize deletion while tasks are active.}
   wait: {type: bool, default: true, description: Wait for definition convergence.}
-  waiter_delay: {type: int, default: 5, description: Seconds between polls.}
+
   waiter_timeout: {type: int, default: 300, description: Overall convergence timeout.}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

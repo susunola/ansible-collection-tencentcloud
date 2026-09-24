@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
@@ -50,13 +53,16 @@ options:
   allow_delete: {type: bool, default: false, description: Explicitly authorize table deletion.}
   allow_delete_data: {type: bool, default: false, description: Explicitly authorize deletion or replacement when the catalog reports stored data.}
   wait: {type: bool, default: true, description: Wait for DDL task and catalog convergence.}
-  waiter_delay: {type: int, default: 5, description: Seconds between polls.}
+
   waiter_timeout: {type: int, default: 900, description: Overall convergence timeout.}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -337,7 +343,7 @@ def run_module():
         "table_format": {},
         "data_format": {"choices": ["TextFile", "CSV", "Json", "Parquet", "ORC", "AVRO"], "default": "Parquet"},
         "location": {},
-        "primary_keys": {"type": "list", "elements": "str"},
+        "primary_keys": {"type": "list", "elements": "str", "no_log": False},
         "columns": {"type": "list", "elements": "dict", "options": col},
         "partitions": {"type": "list", "elements": "dict", "options": part},
         "data_engine_name": {},

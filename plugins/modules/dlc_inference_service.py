@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
@@ -50,6 +53,9 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -211,7 +217,7 @@ def wait_service(module, client, models, p, expected):
 
 
 def run_module():
-    tag = {"key": {"required": True}, "value": {"required": True}}
+    tag = {"key": {"required": True, "no_log": False}, "value": {"required": True}}
     spec = {"state": {"choices": ["running", "stopped"], "default": "running"}, "name": {"required": True}}
     for key in CREATE_FIELDS:
         spec[key] = {}
@@ -224,7 +230,7 @@ def run_module():
             "autoscaling_enabled": {"type": "bool"},
             "min_replicas": {"type": "int"},
             "max_replicas": {"type": "int"},
-            "api_key_ids": {"type": "list", "elements": "str"},
+            "api_key_ids": {"type": "list", "elements": "str", "no_log": False},
             "is_custom": {"type": "bool"},
             "resource_tags": {"type": "list", "elements": "dict", "options": tag},
             "wait": {"type": "bool", "default": True},

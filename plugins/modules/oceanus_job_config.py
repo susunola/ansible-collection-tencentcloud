@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
@@ -19,8 +22,60 @@ options:
   remark: {type: str, description: Version remark.}
   default_parallelism: {type: int, description: Default job parallelism.}
   properties: {type: list, elements: dict, description: SDK Property list.}
-  resource_refs: {type: list, elements: dict, description: ResourceRef list binding managed Oceanus resource IDs and immutable versions to this job version.}
-  resource_ref_names: {type: list, elements: dict, description: Resource references resolved by unique name inside the workspace; omitted Version selects the latest resource version.}
+  resource_refs:
+    description:
+      - Resource references that bind managed Oceanus resources to this job
+        version by resource ID.
+      - Each entry pins an immutable resource version, so re-running the module
+        does not silently move the job onto a newer resource version.
+    type: list
+    elements: dict
+    suboptions:
+      ResourceId:
+        description:
+          - ID of the managed Oceanus resource, for example C(res-xxxxxxxx).
+          - The resource must live in O(workspace_id).
+        type: str
+        required: true
+      Version:
+        description:
+          - Immutable resource version to bind.
+          - The resource must already have this version; the module does not
+            create resource versions.
+        type: int
+        required: true
+      Type:
+        description:
+          - Resource type discriminator used by the Oceanus API.
+        type: int
+        choices: [0, 1, 2, 3, 4]
+        required: true
+  resource_ref_names:
+    description:
+      - Resource references resolved by unique resource name inside
+        O(workspace_id) instead of by ID.
+      - Use this when the resource was created by the same play and its ID is
+        not known ahead of time.
+    type: list
+    elements: dict
+    suboptions:
+      Name:
+        description:
+          - Unique name of the managed Oceanus resource inside the workspace.
+        type: str
+        required: true
+      Version:
+        description:
+          - Resource version to bind. When omitted, the latest available
+            resource version is selected, which makes the task non-deterministic
+            across resource updates.
+        type: int
+      Type:
+        description:
+          - Resource type discriminator used by the Oceanus API.
+        type: int
+        choices: [0, 1, 2, 3, 4]
+        required: true
   auto_delete_oldest: {type: bool, default: false, description: Automatically delete the earliest deletable version at the service limit.}
   cos_bucket: {type: str, description: Job artifact COS bucket.}
   log_collect: {type: bool, description: Enable log collection.}
@@ -58,6 +113,9 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

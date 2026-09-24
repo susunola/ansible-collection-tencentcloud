@@ -20,13 +20,15 @@ options:
   force_redeploy: {type: bool, default: false, description: Redeploy even when the active version and configuration already match.}
   wait: {type: bool, default: true, description: Wait until the requested version is active and no deployment remains in progress.}
 
-  waiter_delay: {type: int, default: 5, description: Seconds between polling attempts.}
   waiter_timeout: {type: int, default: 1800, description: Overall polling timeout in seconds.}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

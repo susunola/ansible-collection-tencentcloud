@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
@@ -27,13 +30,13 @@ options:
   fail_on_task_error: {type: bool, default: true, description: Fail when any task is unsuccessful.}
   include_output: {type: bool, default: false, description: Return task output; use task-level C(no_log=true) when enabled.}
 
-  waiter_delay: {type: int, default: 5, description: Polling interval.}
-  waiter_timeout: {type: int, default: 900, description: Overall execution wait timeout.}
-
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -138,7 +141,7 @@ def run_module():
             "working_directory": {},
             "timeout": {"type": "int"},
             "output_cos_bucket_url": {},
-            "output_cos_key_prefix": {},
+            "output_cos_key_prefix": {"no_log": False},
             "wait": {"type": "bool", "default": True},
             "fail_on_task_error": {"type": "bool", "default": True},
             "include_output": {"type": "bool", "default": False},

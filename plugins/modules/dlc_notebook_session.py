@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
@@ -39,13 +42,16 @@ options:
   allow_replace: {type: bool, default: false, description: Explicitly authorize deleting and recreating a session whose immutable settings drift.}
   allow_delete: {type: bool, default: false, description: Explicitly authorize session deletion.}
   wait: {type: bool, default: true, description: Wait until a created session is usable or a deleted session is terminal.}
-  waiter_delay: {type: int, default: 5, description: Seconds between polls.}
+
   waiter_timeout: {type: int, default: 900, description: Overall lifecycle timeout.}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -222,7 +228,7 @@ def wait_session(module, client, models, p, session_id, present):
 
 
 def run_module():
-    pair = {"key": {"required": True}, "value": {"required": True}}
+    pair = {"key": {"required": True, "no_log": False}, "value": {"required": True}}
     spec = {
         "state": {"choices": ["present", "absent"], "default": "present"},
         "session_id": {},

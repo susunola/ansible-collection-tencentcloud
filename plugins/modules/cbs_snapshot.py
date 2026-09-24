@@ -64,10 +64,6 @@ options:
         desired state.
     type: int
     default: 120
-  waiter_delay:
-    description: Interval in seconds between state polls while waiting.
-    type: int
-    default: 5
 notes:
   - Requires the C(tencentcloud-sdk-python-cbs) package on the controller.
   - Only disks with snapshot ability can be snapshotted; the error
@@ -79,6 +75,9 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

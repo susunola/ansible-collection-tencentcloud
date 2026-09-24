@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright: (c) 2026, Tencent Cloud Ansible Collection Contributors
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
@@ -43,6 +46,9 @@ extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
   - susunola.tencentcloud.connection
+  - susunola.tencentcloud.retry
+  - susunola.tencentcloud.user_agent
+  - susunola.tencentcloud.waiter
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -214,7 +220,7 @@ def wait_cluster(module, client, models, p, absent=False, expected=None):
 
 
 def run_module():
-    tag_options = {"key": {"required": True}, "value": {"required": True}}
+    tag_options = {"key": {"required": True, "no_log": False}, "value": {"required": True}}
     spec = {
         "state": {"choices": ["present", "absent"], "default": "present"},
         "name": {"required": True},
