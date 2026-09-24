@@ -1,0 +1,7 @@
+bugfixes:
+  - Document the runtime options accepted by modules using TencentCloudModule
+    through the existing retry, user-agent and waiter doc fragments.
+  - Add missing GPLv3 license headers to modules and remove obsolete sanity
+    ignores after validating the modules against ansible-core 2.21.
+  - Align README controller requirements with meta/runtime.yml and describe
+    module idempotency and check-mode support without blanket guarantees.

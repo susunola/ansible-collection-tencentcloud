@@ -9,8 +9,8 @@ in the `ansible-collections` GitHub organization.
 
 ## Capability overview
 
-The collection covers **204 Tencent Cloud product domains** through **1025 modules**,
-including **456 resource modules**, **569 read-only `_info` modules**, and **68
+The collection covers **204 Tencent Cloud product domains** through **1027 modules**,
+including **457 resource modules**, **570 read-only `_info` modules**, and **68
 reusable roles**. The README highlights how to navigate the collection instead of
 rendering the entire catalog by default.
 
@@ -33,10 +33,13 @@ all of them in reverse order. Every command on that page is copy-pasteable and
 the outputs are the real shape.
 
 <details>
-<summary><strong>Browse all 456 resource modules</strong></summary>
+<summary><strong>Browse resource modules</strong></summary>
 
-Resource modules are idempotent and support `state: present|absent`, check mode,
-and diff unless their individual documentation states otherwise.
+Resource modules aim to reconcile observable cloud state. Their check-mode,
+diff, and idempotency behavior varies by API and module; inspect each module's
+documentation before using it in a production workflow. In particular, an
+API accepting a write request is not by itself proof that repeated runs are
+idempotent.
 
 | Module (FQCN) | Purpose | Examples |
 | --- | --- | --- |
@@ -500,7 +503,7 @@ and diff unless their individual documentation states otherwise.
 </details>
 
 <details>
-<summary><strong>Browse all 569 read-only <code>_info</code> modules</strong></summary>
+<summary><strong>Browse read-only <code>_info</code> modules</strong></summary>
 
 Read-only `_info` modules (return `changed=false`):
 
@@ -1161,8 +1164,13 @@ for product-level write, discovery and reusable-role maturity.
 
 ## Requirements
 
-- ansible-core 2.16 or newer
-- Python 3.10 or newer
+Releases follow [Semantic Versioning](https://semver.org/). See the
+[changelog](CHANGELOG.rst) for release changes and compatibility notes.
+
+- ansible-core 2.19 or newer (the minimum declared in `meta/runtime.yml`)
+- Python 3.11 or newer on the control node; use a Python version supported by
+  your chosen ansible-core release (CI covers 3.11 with 2.19, 3.12 with 2.20,
+  and 3.13 with 2.21)
 - `tencentcloud-sdk-python` 3.0.1000 or newer
 - `tencentcloud-sdk-python-tag` 3.0.1000 or newer (only for tag reconciliation)
 - `tencentcloud-sdk-python-tat` 3.0.1000 or newer (only for the `tat` connection plugin)
