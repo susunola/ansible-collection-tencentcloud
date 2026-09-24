@@ -8330,6 +8330,13 @@ def _documentation(spec):
     else:
         lines[-1] = "options: {}"
     lines += extends_lines(BASE_FRAGMENTS)
+    # Generated modules are read-only, so their attributes block is the fixed
+    # one for a discovery module.  build_block() is the single source of that
+    # text: importing it keeps the generated modules byte-identical to what
+    # scripts/add_module_attributes.py would write, which is what the
+    # --check modes on both scripts assert.
+    from add_module_attributes import build_block
+    lines += build_block("supports_check_mode=True", "%s_info.py" % spec["module"])
     lines += [
         f"author: {AUTHOR}",
     ]
@@ -8887,7 +8894,14 @@ def run_module():
 
 def render_module(spec):
     """Render the full source of the module described by *spec*."""
-    return f"""\
+    # The spec-driven options below are emitted as single-line flow mappings,
+    # which is what the reviewer objected to.  Rather than duplicate the
+    # block-style formatting rules here, run the generated source through the
+    # same normalizer CI enforces, so generated and hand-written modules can
+    # never drift apart on documentation style.
+    from normalize_module_docs import normalize_text
+
+    source = f"""\
 {HEADER}
 DOCUMENTATION = r'''
 {_documentation(spec)}
@@ -8913,6 +8927,8 @@ def main():
 if __name__ == "__main__":
     main()
 """
+    normalized, _changed = normalize_text(source)
+    return normalized
 
 
 def module_path(spec):
