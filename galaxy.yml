@@ -23,6 +23,19 @@ build_ignore:
   # tarball built on a machine that has built the docsite ships ~250 MB of
   # Sphinx HTML. scripts/release_check.py --dry-run asserts the size.
   - docs/docsite/build
+  # Internal working documents.  These are maintained in the repo but are
+  # not user documentation: gap-closure plans, benchmark dashboards and a
+  # Chinese-language retrospective.  Shipping them in the tarball put
+  # non-English, non-user-facing material in every install.
+  - docs/gap-closure.md
+  - docs/internal-community-post.md
+  - docs/panorama.html
+  - docs/capability-map.html
+  - docs/demo.html
+  - docs/roadmap.md
+  - docs/coverage-batching.md
+  - docs/depth-cvm-vpc.md
+  - docs/depth-recommendations.md
   - docs/docsite/rst/collections
   # Tool caches and coverage output. Same reason, and worse: these change
   # while tooling runs, so a build that packages them can produce a tarball

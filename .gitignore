@@ -17,3 +17,7 @@ coverage-html/
 
 # ansible-test generated inventory
 tests/integration/inventory
+
+# generated docsite output (built by docs/docsite/build.sh)
+docs/docsite/build/
+docs/docsite/rst/collections/
