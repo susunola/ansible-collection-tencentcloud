@@ -1,0 +1,3 @@
+bugfixes:
+  - alb_target_group - apply target type and protocol defaults only on creation, so managing an existing non-HTTP target group without specifying its protocol does not cause false immutable drift.
+  - tc_alb_application_entry - omit unspecified target type and protocol for existing ALB target groups.

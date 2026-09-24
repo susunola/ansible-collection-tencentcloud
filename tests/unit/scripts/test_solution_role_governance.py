@@ -123,6 +123,7 @@ def test_alb_teardown_removes_listeners_and_backends_before_parents():
     assert "deletion_protection: false" in main
     assert "'TargetGroupConfig': {'TargetGroups':" in group
     assert "ForwardGroupConfig" not in group
+    assert 'protocol: "{{ _tc_alb_target_group.protocol | default(omit) }}"' in group
 
 
 def test_mqtt_teardown_removes_policies_and_children_before_instance():

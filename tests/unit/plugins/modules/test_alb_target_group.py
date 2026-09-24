@@ -408,6 +408,25 @@ def test_present_creates_target_group(monkeypatch):
     assert create.VpcId == "vpc-1"
 
 
+def test_present_create_uses_protocol_default_only_at_creation(monkeypatch):
+    fake = FakeAlbClient()
+    _make_module(monkeypatch, fake)
+    module_args(state="present", name="app-http", vpc_id="vpc-1")
+    result = run(mod.run_module)
+    assert result["target_group"]["Protocol"] == "HTTP"
+    assert result["target_group"]["TargetType"] == "Instance"
+
+
+def test_present_omitted_protocol_preserves_existing_https_group(monkeypatch):
+    fake = FakeAlbClient([_group(Protocol="HTTPS")])
+    _make_module(monkeypatch, fake)
+    module_args(state="present", target_group_id="lbtg-1")
+    result = run(mod.run_module)
+    assert result["changed"] is False
+    assert result["target_group"]["Protocol"] == "HTTPS"
+    assert "ModifyTargetGroupAttributes" not in [name for name, unused in fake.calls]
+
+
 def test_present_waits_for_delayed_target_group_read(monkeypatch):
     fake = FakeAlbClient()
     _make_module(monkeypatch, fake)

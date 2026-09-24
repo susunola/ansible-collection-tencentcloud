@@ -19,8 +19,8 @@ options:
   target_group_id: {type: str, description: Existing target group ID.}
   name: {type: str, description: Target group name.}
   vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  target_type: {type: str, choices: [Instance], default: Instance, description: Backend target type; immutable after creation.}
-  protocol: {type: str, choices: [HTTP, HTTPS, GRPC, GRPCS], default: HTTP, description: Backend protocol; immutable after creation.}
+  target_type: {type: str, choices: [Instance], description: Backend target type; defaults to Instance on creation and is immutable thereafter.}
+  protocol: {type: str, choices: [HTTP, HTTPS, GRPC, GRPCS], description: Backend protocol; defaults to HTTP on creation and is immutable thereafter.}
   scheduler_algorithm: {type: str, choices: [wrr, wlc], default: wrr, description: Load-balancing algorithm.}
   keepalive_enabled: {type: bool, default: false, description: Enable backend keepalive.}
   health_check: {type: dict, description: SDK HealthCheckConfig payload.}
@@ -95,7 +95,7 @@ def _tags(models, values):
 
 def create_request(models, p):
     r = models.CreateTargetGroupRequest()
-    r.TargetType, r.VpcId, r.Protocol, r.TargetGroupName = p["target_type"], p["vpc_id"], p["protocol"], p["name"]
+    r.TargetType, r.VpcId, r.Protocol, r.TargetGroupName = p.get("target_type") or "Instance", p["vpc_id"], p.get("protocol") or "HTTP", p["name"]
     r.SchedulerAlgorithm, r.KeepaliveEnabled = p["scheduler_algorithm"], p["keepalive_enabled"]
     r.HealthCheckConfig, r.StickySessionConfig, r.Tags = (
         _model(models.HealthCheckConfig, p.get("health_check")),
@@ -164,8 +164,8 @@ def desired(p, current=None):
     return {
         "TargetGroupName": p.get("name") or old.get("TargetGroupName"),
         "VpcId": p.get("vpc_id") or old.get("VpcId"),
-        "TargetType": p.get("target_type") or old.get("TargetType"),
-        "Protocol": p.get("protocol") or old.get("Protocol"),
+        "TargetType": p.get("target_type") or old.get("TargetType") or "Instance",
+        "Protocol": p.get("protocol") or old.get("Protocol") or "HTTP",
         "SchedulerAlgorithm": p["scheduler_algorithm"],
         "KeepaliveEnabled": p["keepalive_enabled"],
         "HealthCheckConfig": p.get("health_check") if p.get("health_check") is not None else old.get("HealthCheckConfig"),
@@ -191,8 +191,8 @@ def run_module():
         "target_group_id": {},
         "name": {},
         "vpc_id": {},
-        "target_type": {"choices": ["Instance"], "default": "Instance"},
-        "protocol": {"choices": ["HTTP", "HTTPS", "GRPC", "GRPCS"], "default": "HTTP"},
+        "target_type": {"choices": ["Instance"]},
+        "protocol": {"choices": ["HTTP", "HTTPS", "GRPC", "GRPCS"]},
         "scheduler_algorithm": {"choices": ["wrr", "wlc"], "default": "wrr"},
         "keepalive_enabled": {"type": "bool", "default": False},
         "health_check": {"type": "dict"},
