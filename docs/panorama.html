@@ -287,7 +287,7 @@
           <li><span class="tag">覆盖面</span><b>模块 1005、write 456、info 549，均列四家第一</b>（azure 426/212 次之）。549 个 *_info 中 548 个由 SDK introspection 生成（禁止手改），另 1 个手写（gaap_layer4_listener_info：GAAP 四层监听的列表 API 分为 TCP / UDP 两个 sibling action，生成器无法表达），是三家官方库没有的「全产品可发现」能力。</li>
           <li><span class="tag">写读配对</span><b>v1.1 起系统性关闭 read-surface 缺口</b>：shared resolver 铺到 VPC / TKE / 负载均衡 / 数据库家族，CVM / Lighthouse / database / TCR 读面逐批补齐 —— write 之后能用同一 collection 读回状态的主力产品已闭环。</li>
           <li><span class="tag">组合能力</span><b>68 个 roles（61 个达 solution 成熟度）</b>（含 launch / clb_http / web_stack / tke_cluster / disaster_recovery 等）vs 三家官方 0 个组合 role；一次调用编排多资源 + teardown。</li>
-          <li><span class="tag">质量治理</span><b>生成式治理</b>：generated 模块由 spec 生成、禁止手改；幂等 + check mode 全量内置。sanity ignore 债务 <b>204 条</b>（51 条 × 4 个 core 版本 ignore 文件）。已由「预算制」改为「棘轮制」：9 类禁止忽略码的封顶为 <b>0</b>，命中任何一条即 CI 失败，每条豁免都必须带理由注释，总数只减不增。<b>coverage gate 80 已达成</b>（实测 92.65%）。</li>
+          <li><span class="tag">质量治理</span><b>生成式治理</b>：generated 模块由 spec 生成、禁止手改；幂等 + check mode 全量内置。sanity ignore 债务 <b>204 条</b>（51 条 × 4 个 core 版本 ignore 文件）。已由「预算制」改为「棘轮制」：9 类禁止忽略码的封顶为 <b>0</b>，总条目封顶 <b>204</b>，命中任一禁止码即 CI 失败，每条豁免必须带理由注释，且两个上限都只减不增。<b>coverage gate 80 已达成</b>（实测 92.65%）。</li>
           <li><span class="tag">单测密度</span>1,068 个模块级单测文件 / 10,674 个测试函数（脚本实测）；CI 口径（contract + module_utils + modules）13,654 条：13,601 过 / 31 跳 / 22 xfail（09-15 实测），语句覆盖 92.65%。<b>456 个 write 模块已全部有专属单测文件</b>（09-08 时还缺 111 个）。</li>
           <li><span class="tag">演进对齐</span>ansible-core 门槛 ≥2.19（2.16-2.18 已 EOL），CI 矩阵 2.19/2.20/2.21 × py 3.11/3.12/3.13 —— 主动对齐演进而非历史声明。</li>
         </ul>

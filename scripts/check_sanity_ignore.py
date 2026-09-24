@@ -71,6 +71,11 @@ CONDITIONAL = frozenset((
     "validate-modules:undocumented-parameter",
 ))
 
+# Ceiling for the TOTAL number of entries across all four files.  Like the
+# per-code ceilings this only goes down: the whole point of replacing the old
+# BASELINE_TOTAL budget is that the debt shrinks rather than being managed.
+TOTAL_CEILING = 204
+
 # Ratchet: the census measured when this guard was introduced (2026-09-24).
 # These numbers may only go DOWN.  Raising one requires deleting the finding,
 # not the assertion -- see docs/sanity-ignore-remediation.md.
@@ -141,6 +146,11 @@ def main():
             problems.append(
                 "%s: %d entr(y/ies) exceed the ratchet ceiling %d "
                 "(the ceiling only goes down)" % (code, counts[code], ceiling))
+
+    if total > TOTAL_CEILING:
+        problems.append(
+            "%d entr(y/ies) in total exceed the ratchet ceiling %d "
+            "(the ceiling only goes down)" % (total, TOTAL_CEILING))
 
     if uncommented:
         problems.append(

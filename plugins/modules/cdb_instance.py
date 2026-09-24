@@ -170,8 +170,8 @@ extends_documentation_fragment:
 attributes:
   check_mode:
     description:
-      - 'Can run in C(check_mode): the module reads the current state and
-        predicts the result without issuing a write API call.'
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
     support: full
   idempotency:
     description:

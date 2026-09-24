@@ -143,10 +143,8 @@ def _ignore_budget(root):
     for those codes.
     """
     text = (root / IGNORE_CHECK).read_text(encoding="utf-8")
-    block = re.search(r"^CEILING\s*=\s*\{(.*?)^\}", text, re.M | re.S)
-    if not block:
-        return 0
-    return sum(int(n) for n in re.findall(r":\s*(\d+)", block.group(1)))
+    match = re.search(r"^TOTAL_CEILING\s*=\s*(\d+)", text, re.M)
+    return int(match.group(1)) if match else 0
 
 
 def _ignore_total(root):

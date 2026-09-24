@@ -268,6 +268,12 @@ def fragments_and_stripped(text):
     a merge that dropped the fragment references go unnoticed: the module
     ended up with neither the inline text nor the fragment, and this function
     reported "nothing to do".
+
+    Deciding the fragment set and deciding what to strip are two steps: a
+    generic inline copy is redundant once its fragment is referenced, and the
+    waiter fragment is all-or-nothing only for a module that does not accept
+    the options at all (adding it there would document an option the module
+    rejects).
     """
     fragments = list(BASE_FRAGMENTS)
     if needs_timeout_fragment(text):
@@ -278,22 +284,30 @@ def fragments_and_stripped(text):
         parsed = find_option_block(text, name)
         if parsed:
             verdicts[name] = option_is_generic(name, parsed[2])
-    stripped = []
+    waiter_ok = ("waiter_delay" in verdicts and "waiter_timeout" in verdicts
+                 and verdicts["waiter_delay"] and verdicts["waiter_timeout"])
+
+    # Step 1: which option fragments does this carrier need?
+    needed = set()
     for name, fragment in sorted(OPTION_FRAGMENTS.items()):
-        if name in verdicts and not verdicts[name]:
-            # A product-specific inline override.  Keep it -- Ansible merges
-            # module documentation over the fragment -- but the owning
-            # fragment still has to be referenced, because it may also cover a
-            # sibling option (waiter_delay/waiter_timeout share one fragment)
-            # that this module does not document at all.
-            if runtime and fragment not in fragments:
-                fragments.append(fragment)
-            continue
-        if name in verdicts:
-            # Generic inline copy: the fragment is the single source of truth.
-            stripped.append(name)
-        if runtime and fragment not in fragments:
+        if name in verdicts and verdicts[name]:
+            # A generic inline copy.  Point the module at the fragment, except
+            # for the all-or-nothing waiter pair on a module that cannot
+            # actually accept the options.
+            if fragment == "waiter" and not waiter_ok and not runtime:
+                continue
+            needed.add(fragment)
+        elif runtime:
+            # Either a product-specific override (the sibling may still need
+            # the fragment) or no inline copy at all.
+            needed.add(fragment)
+    for fragment in sorted(needed):
+        if fragment not in fragments:
             fragments.append(fragment)
+
+    # Step 2: a generic inline copy is redundant once its fragment is in use.
+    stripped = [name for name in sorted(OPTION_FRAGMENTS)
+                if verdicts.get(name) and OPTION_FRAGMENTS[name] in fragments]
     return fragments, stripped
 
 

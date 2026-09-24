@@ -40,13 +40,13 @@ extends_documentation_fragment:
 attributes:
   check_mode:
     description:
-      - 'Can run in C(check_mode): the module reads the current state and
-        predicts the result without issuing a write API call.'
+      - Can run in C(check_mode), reading the current state and predicting
+        the result without issuing a write API call.
     support: full
   idempotency:
     description:
-      - 'Read-only: every run returns the current state and never changes
-        the target, so a repeated run reports C(changed=false).'
+      - Read-only, so every run returns the current state and never changes
+        the target, and a repeated run reports C(changed=false).
     support: full
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''

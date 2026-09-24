@@ -112,8 +112,8 @@ def build_block(text, relpath):
 
     if read_only:
         idem_support = "full"
-        idem_desc = ("Read-only: every run returns the current state and never "
-                     "changes the target, so a repeated run reports "
+        idem_desc = ("Read-only, so every run returns the current state and never "
+                     "changes the target, and a repeated run reports "
                      "C(changed=false).")
     elif one_shot:
         idem_support = "partial"
@@ -123,7 +123,7 @@ def build_block(text, relpath):
                      % "), C(state=".join(one_shot))
     elif reads_state:
         idem_support = "full"
-        idem_desc = ("Reconciles the resource against its live state: running "
+        idem_desc = ("Reconciles the resource against its live state, so running "
                      "again with the same arguments leaves it unchanged and "
                      "reports C(changed=false).")
     else:
@@ -133,8 +133,8 @@ def build_block(text, relpath):
                      "write again instead of reporting C(changed=false).")
 
     if check_mode == "full":
-        cm_desc = ("Can run in C(check_mode): the module reads the current state "
-                   "and predicts the result without issuing a write API call.")
+        cm_desc = ("Can run in C(check_mode), reading the current state and "
+                   "predicting the result without issuing a write API call.")
     else:
         cm_desc = "Does not support C(check_mode)."
 
