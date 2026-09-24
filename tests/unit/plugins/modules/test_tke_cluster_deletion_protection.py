@@ -189,6 +189,31 @@ def test_cluster_not_found_fails(monkeypatch):
     assert "EnableClusterDeletionProtection" not in [c for c, unused in fake.calls]
 
 
+def test_missing_protection_state_fails_closed(monkeypatch):
+    fake = FakeTkeClient(clusters=[("cls-abc123", None)])
+    _make_module(monkeypatch, fake)
+    module_args(cluster_id="cls-abc123", state="absent")
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "not observable" in exc.value.args[0]["msg"]
+    assert "DisableClusterDeletionProtection" not in [c for c, unused in fake.calls]
+
+
+def test_wrong_cluster_response_fails_closed(monkeypatch):
+    class WrongClusterClient(FakeTkeClient):
+        def DescribeClusters(self, request):
+            self._record("DescribeClusters", request)
+            return SimpleNamespace(Clusters=[_cluster("cls-other", False)])
+
+    fake = WrongClusterClient()
+    _make_module(monkeypatch, fake)
+    module_args(cluster_id="cls-abc123", state="present")
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(mod.run_module)
+    assert "exactly one matching" in exc.value.args[0]["msg"]
+    assert "EnableClusterDeletionProtection" not in [c for c, unused in fake.calls]
+
+
 def test_sdk_failure_maps_to_error_envelope(monkeypatch):
     class Boom(Exception):
         pass

@@ -58,6 +58,8 @@ deletion_protection:
   type: bool
 '''
 
+import time
+
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 
 
@@ -71,9 +73,15 @@ def describe_state(module, client, models, cluster_id):
     request.ClusterIds = [cluster_id]
     response = module.sdk_call(client.DescribeClusters, request)
     clusters = list(getattr(response, "Clusters", None) or [])
-    if not clusters:
+    matches = [cluster for cluster in clusters if getattr(cluster, "ClusterId", None) == cluster_id]
+    if not matches and not clusters:
         module.fail_json(msg="TKE cluster %s not found" % cluster_id, cluster_id=cluster_id)
-    return bool(getattr(clusters[0], "DeletionProtection", False))
+    if len(matches) != 1:
+        module.fail_json(msg="DescribeClusters did not return exactly one matching TKE cluster", cluster_id=cluster_id)
+    state = getattr(matches[0], "DeletionProtection", None)
+    if not isinstance(state, bool):
+        module.fail_json(msg="TKE cluster deletion protection state is not observable", cluster_id=cluster_id)
+    return state
 
 
 def run_module():
@@ -114,7 +122,14 @@ def run_module():
             module.sdk_call(client.EnableClusterDeletionProtection, request)
         else:
             module.sdk_call(client.DisableClusterDeletionProtection, request)
-        final = describe_state(module, client, models, p["cluster_id"])
+        deadline = time.monotonic() + p["waiter_timeout"]
+        while True:
+            final = describe_state(module, client, models, p["cluster_id"])
+            if final == desired:
+                break
+            if time.monotonic() >= deadline:
+                module.fail_json(msg="TKE cluster deletion protection did not converge", cluster_id=p["cluster_id"], deletion_protection=final)
+            time.sleep(p["waiter_delay"])
         module.exit_json(
             changed=True,
             cluster_id=p["cluster_id"],

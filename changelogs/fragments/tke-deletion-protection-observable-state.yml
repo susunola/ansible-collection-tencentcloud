@@ -1,0 +1,4 @@
+bugfixes:
+  - tke_cluster_deletion_protection - reject missing or mismatched cluster
+    state instead of treating it as unprotected, and verify post-write
+    convergence before reporting success.
