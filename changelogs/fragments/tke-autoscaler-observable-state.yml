@@ -1,0 +1,3 @@
+bugfixes:
+  - tke_cluster_autoscaler - reject requested options that the API cannot
+    observe and poll after writes until the requested settings are visible.

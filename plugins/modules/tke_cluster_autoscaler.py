@@ -20,6 +20,8 @@ description:
   - This module is idempotent. Running it twice with the same options
     reports C(changed=false) on the second run.
   - Supports check mode; no API write happens in check mode, only reads.
+  - If a requested option cannot be observed from the API, the module fails
+    instead of assuming a value and writing blindly.
 options:
   cluster_id:
     description: ID of the TKE cluster, e.g. C(cls-xxxxxxxx).
@@ -151,6 +153,8 @@ OPTION_FIELDS = (
     ("unregistered_node_removal_time", "UnregisteredNodeRemovalTime"),
 )
 
+import time
+
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
@@ -200,6 +204,11 @@ def run_module():
             if p[param] is not None:
                 provided[field] = p[param]
 
+        unobservable = [field for field in provided if current.get(field) is None]
+        if unobservable:
+            module.fail_json(msg="TKE autoscaler options are not observable: %s" %
+                             ", ".join(sorted(unobservable)), cluster_id=p["cluster_id"])
+
         changed_fields = {}
         for field, value in provided.items():
             if current.get(field) != value:
@@ -223,11 +232,16 @@ def run_module():
         request.ClusterId = p["cluster_id"]
         request.ClusterAsGroupOption = option
         module.sdk_call(client.ModifyClusterAsGroupOptionAttribute, request)
-        observed = current_options(module, client, models, p["cluster_id"])
-        unconfirmed = [field for field, value in provided.items() if observed.get(field) != value]
-        if unconfirmed:
-            module.fail_json(msg="TKE autoscaler options did not reach the requested state: %s" %
-                             ", ".join(sorted(unconfirmed)), cluster_id=p["cluster_id"])
+        deadline = time.monotonic() + p["waiter_timeout"]
+        while True:
+            observed = current_options(module, client, models, p["cluster_id"])
+            unconfirmed = [field for field, value in provided.items() if observed.get(field) != value]
+            if not unconfirmed:
+                break
+            if time.monotonic() >= deadline:
+                module.fail_json(msg="TKE autoscaler options did not reach the requested state: %s" %
+                                 ", ".join(sorted(unconfirmed)), cluster_id=p["cluster_id"])
+            time.sleep(p["waiter_delay"])
         module.exit_json(changed=True, **(diff or {}), cluster_id=p["cluster_id"],
                          msg="Updated autoscaler options: {0}".format(", ".join(sorted(changed_fields))))
     except Exception as exc:

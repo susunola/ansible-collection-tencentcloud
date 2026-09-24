@@ -145,13 +145,22 @@ def test_check_mode_reports_without_writing(client):
     client.ModifyClusterAsGroupOptionAttribute.assert_not_called()
 
 
-def test_updates_when_current_option_empty(client):
+def test_missing_requested_option_fails_closed(client):
     client.options = {}
     module_args(cluster_id=CLUSTER_ID, is_scale_down_enabled=True)
-    result = run(tke_cluster_autoscaler.run_module)
-    assert result["changed"] is True
-    request = client.ModifyClusterAsGroupOptionAttribute.call_args[0][0]
-    assert request.ClusterAsGroupOption.IsScaleDownEnabled is True
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(tke_cluster_autoscaler.run_module)
+    assert "not observable" in exc.value.args[0]["msg"]
+    client.ModifyClusterAsGroupOptionAttribute.assert_not_called()
+
+
+def test_null_requested_option_fails_closed(client):
+    client.options["IsScaleDownEnabled"] = None
+    module_args(cluster_id=CLUSTER_ID, is_scale_down_enabled=False)
+    with pytest.raises(AnsibleFailJson) as exc:
+        run(tke_cluster_autoscaler.run_module)
+    assert "IsScaleDownEnabled" in exc.value.args[0]["msg"]
+    client.ModifyClusterAsGroupOptionAttribute.assert_not_called()
 
 
 def test_invalid_expander_choice_fails(client):
@@ -182,7 +191,25 @@ def test_missing_describe_option_fails_closed(client):
 
 def test_update_requires_observed_convergence(client):
     client.ModifyClusterAsGroupOptionAttribute = MagicMock(return_value=SimpleNamespace())
-    module_args(cluster_id=CLUSTER_ID, scale_down_unneeded_time=20)
+    module_args(cluster_id=CLUSTER_ID, scale_down_unneeded_time=20, waiter_timeout=0)
     with pytest.raises(AnsibleFailJson) as exc:
         run(tke_cluster_autoscaler.run_module)
     assert "did not reach" in exc.value.args[0]["msg"]
+
+
+def test_update_waits_for_observed_convergence(client, monkeypatch):
+    original = client.DescribeClusterAsGroupOption
+    calls = []
+
+    def describe(request):
+        calls.append(request)
+        if len(calls) == 2:
+            return SimpleNamespace(ClusterAsGroupOption=FakeResource(dict(BASE_CURRENT)))
+        return original(request)
+
+    client.DescribeClusterAsGroupOption = describe
+    monkeypatch.setattr(tke_cluster_autoscaler.time, "sleep", lambda seconds: None)
+    module_args(cluster_id=CLUSTER_ID, scale_down_unneeded_time=20, waiter_delay=0)
+    result = run(tke_cluster_autoscaler.run_module)
+    assert result["changed"] is True
+    assert len(calls) == 3
