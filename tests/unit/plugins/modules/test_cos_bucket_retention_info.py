@@ -10,7 +10,7 @@ sys.modules.setdefault("ansible", types.ModuleType("ansible"))
 sys.modules.setdefault("ansible.module_utils", types.ModuleType("ansible.module_utils"))
 sys.modules.setdefault("ansible.module_utils.basic", basic)
 
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_object_lock import normalize as normalize_lock
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_object_lock as normalize_lock
 from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_origin import normalize as normalize_origin
 
 

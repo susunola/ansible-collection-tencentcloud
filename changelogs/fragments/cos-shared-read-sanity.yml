@@ -1,0 +1,6 @@
+bugfixes:
+  - COS bucket configuration - move nine shared read and normalization paths
+    into module_utils so info modules no longer import other modules, which
+    Ansible's import sanity test disallows.
+  - Fix formatting and test-helper naming issues surfaced by the complete
+    Ansible sanity suite.

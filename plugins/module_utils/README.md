@@ -1,7 +1,7 @@
 # module_utils layout and dependency direction
 
 `plugins/module_utils/` holds every shared helper behind the collection's
-modules: 16 files, ~3,200 lines. It is the single home for logic shared by
+modules: 17 files. It is the single home for logic shared by
 the ~440 write modules and the module generator, so keeping the boundaries
 explicit matters more here than in any other directory — a helper with
 unclear ownership gets duplicated by the next generated module, and an
@@ -34,6 +34,7 @@ module needs cannot live in `plugin_utils`.
 | | `inventory.py` | Unified multi-product inventory query layer: source registry, standardised `tc_*` host fields, cross-product de-duplication, cache keying | `client`, `paging` |
 | **4 · Product-private helpers** | `monitor.py` | Monitor-specific shared computation | — |
 | | `cos.py` | COS client wrapper (S3-style API, not API 3.0) | `client` |
+| | `cos_bucket_read.py` | Shared normalized COS bucket configuration reads used by write and `_info` modules | `cos` |
 | | `tdmysql.py` | TDSQL MySQL-specific shared logic | — |
 
 ## Dependency direction
@@ -108,6 +109,7 @@ Same graph as a flat table:
 | `base.py` | `client`, `retries` | 2 |
 | `resolver.py` | `tagging` | 2 |
 | `cos.py` | `client` | 2 |
+| `cos_bucket_read.py` | `cos` | 3 |
 | `inventory.py` | `client`, `paging` | 2 |
 | `lifecycle.py` | `base`, `errors` | 3 |
 | `tencentcloud.py` | `client`, `errors`, `paging` | 4 (shim) |

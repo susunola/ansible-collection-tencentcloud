@@ -38,27 +38,9 @@ EXAMPLES = r"""
 """
 RETURN = r"""origin: {description: Effective origin configuration., type: dict, returned: always}"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_origin as normalize, get_origin
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-
-
-def normalize(value):
-    if not value:
-        return None
-    root = value.get("OriginConfiguration", value)
-    rules = root.get("OriginRule") or []
-    if isinstance(rules, dict):
-        rules = [rules]
-    return {"OriginRule": sorted(rules, key=lambda item: int(item.get("RulePriority") or 0))}
-
-
-def get_origin(client, bucket):
-    try:
-        return normalize(client.get_bucket_origin(Bucket=bucket))
-    except Exception as exc:
-        if cos.is_not_found(exc):
-            return None
-        raise
 
 
 def run_module():

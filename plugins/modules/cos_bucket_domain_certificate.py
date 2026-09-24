@@ -48,25 +48,9 @@ EXAMPLES = r"""
 RETURN = r"""domain_certificate: {description: Effective certificate status and identity., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import get_certificate
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-
-
-def normalize(value):
-    if not value:
-        return None
-    root = value.get("DomainCertificate", value)
-    info = root.get("CertificateInfo") or {}
-    return {"Status": root.get("Status"), "CertType": root.get("CertType") or info.get("CertType"), "CertificateInfo": {"CertID": info.get("CertID")}}
-
-
-def get_certificate(client, bucket, domain_name):
-    try:
-        return normalize(client.get_bucket_domain_certificate(Bucket=bucket, DomainName=domain_name))
-    except Exception as exc:
-        if cos.is_not_found(exc):
-            return None
-        raise
 
 
 def run_module():

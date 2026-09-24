@@ -40,29 +40,9 @@ EXAMPLES = r"""
 RETURN = r"""intelligent_tiering: {description: Effective intelligent-tiering rule., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import get_rule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-
-
-def normalize(value):
-    if not value:
-        return None
-    root = value.get("IntelligentTieringConfiguration", value)
-    tiering = root.get("Tiering") or {}
-    return {
-        "Id": root.get("Id") or "default",
-        "Status": root.get("Status"),
-        "Tiering": {"AccessTier": tiering.get("AccessTier"), "Days": int(tiering["Days"]), "RequestFrequent": int(tiering["RequestFrequent"])},
-    }
-
-
-def get_rule(client, bucket):
-    try:
-        return normalize(client.get_bucket_intelligenttiering_v2(Bucket=bucket, Id="default"))
-    except Exception as exc:
-        if cos.is_not_found(exc):
-            return None
-        raise
 
 
 def run_module():

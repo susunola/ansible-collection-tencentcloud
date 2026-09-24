@@ -34,7 +34,7 @@ object_lock: {description: Effective object-lock configuration or null., returne
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_object_lock import get_object_lock
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import get_object_lock
 
 
 def run_module():

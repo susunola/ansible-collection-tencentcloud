@@ -34,7 +34,7 @@ referer: {description: Effective referer configuration or null., returned: alway
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_referer import get_referer
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import get_referer
 
 
 def run_module():

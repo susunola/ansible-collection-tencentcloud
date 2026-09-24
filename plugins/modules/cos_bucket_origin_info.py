@@ -34,7 +34,7 @@ origin: {description: Effective origin configuration or null., returned: always,
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_origin import get_origin
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import get_origin
 
 
 def run_module():

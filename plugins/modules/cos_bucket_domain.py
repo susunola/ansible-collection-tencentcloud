@@ -37,28 +37,9 @@ domains: {description: Effective custom-domain configuration., type: dict, retur
 txt_verification: {description: DNS TXT verification value returned by COS., type: str, returned: when available}
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_domains as normalize, get_domains
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-
-
-def normalize(value):
-    if not value:
-        return None
-    root = value.get("DomainConfiguration", value)
-    rules = root.get("DomainRule") or []
-    if isinstance(rules, dict):
-        rules = [rules]
-    return {"DomainRule": sorted(rules, key=lambda item: item.get("Name") or "")}
-
-
-def get_domains(client, bucket):
-    try:
-        response = client.get_bucket_domain(Bucket=bucket)
-        return normalize(response), response.get("x-cos-domain-txt-verification")
-    except Exception as exc:
-        if cos.is_not_found(exc):
-            return None, None
-        raise
 
 
 def run_module():

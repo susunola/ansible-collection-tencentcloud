@@ -34,7 +34,7 @@ intelligent_tiering: {description: Effective default intelligent-tiering rule or
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_intelligent_tiering import get_rule
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import get_rule
 
 
 def run_module():

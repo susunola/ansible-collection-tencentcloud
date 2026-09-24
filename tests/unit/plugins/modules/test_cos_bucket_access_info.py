@@ -10,7 +10,7 @@ sys.modules.setdefault("ansible", types.ModuleType("ansible"))
 sys.modules.setdefault("ansible.module_utils", types.ModuleType("ansible.module_utils"))
 sys.modules.setdefault("ansible.module_utils.basic", basic)
 
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_intelligent_tiering import normalize as normalize_tiering
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_tiering
 from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_referer import normalize as normalize_referer
 
 

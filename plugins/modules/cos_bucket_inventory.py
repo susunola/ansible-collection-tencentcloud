@@ -44,28 +44,9 @@ EXAMPLES = r"""
 RETURN = r"""inventory: {description: Effective inventory rule., type: dict, returned: always}"""
 import copy
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_inventory as normalize, get_inventory
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-
-
-def normalize(value, inventory_id):
-    if not value:
-        return None
-    result = copy.deepcopy(value.get("InventoryConfiguration", value))
-    result["Id"] = inventory_id
-    optional = result.get("OptionalFields")
-    if optional and isinstance(optional.get("Field"), list):
-        optional["Field"] = sorted(optional["Field"])
-    return result
-
-
-def get_inventory(client, bucket, inventory_id):
-    try:
-        return normalize(client.get_bucket_inventory(Bucket=bucket, Id=inventory_id), inventory_id)
-    except Exception as exc:
-        if cos.is_not_found(exc):
-            return None
-        raise
 
 
 def run_module():

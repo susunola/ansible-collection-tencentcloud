@@ -32,7 +32,8 @@ response_control: {description: Effective response-control configuration or null
 '''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
-from ansible_collections.susunola.tencentcloud.plugins.modules.cos_bucket_response_control import get_control
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import get_control
+
 
 def run_module():
     module = TencentCloudModule(argument_spec={"name": {"required": True}, "appid": {}}, supports_check_mode=True)
@@ -44,8 +45,10 @@ def run_module():
     except Exception as exc:
         cos.fail_on_cos_error(module, exc)
 
+
 def main():
     run_module()
+
 
 if __name__ == "__main__":
     main()

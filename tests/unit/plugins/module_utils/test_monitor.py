@@ -32,7 +32,7 @@ class FakeModule:
 
 def test_find_policy_uses_describe_alarm_policies_response_and_paginates():
     target = {"PolicyId": "policy-target", "PolicyName": "target"}
-    first_page = [FakePolicy({"PolicyId": "policy-other", "PolicyName": "other"}) for _ in range(100)]
+    first_page = [FakePolicy({"PolicyId": "policy-other", "PolicyName": "other"}) for unused_index in range(100)]
     module = FakeModule([
         SimpleNamespace(Policies=first_page, TotalCount=101),
         SimpleNamespace(Policies=[FakePolicy(target)], TotalCount=101),
@@ -84,9 +84,13 @@ def test_notice_waiter_fails_if_state_does_not_converge(monkeypatch):
     monkeypatch.setattr(monitor, "find_policy", lambda *args: stale)
     ticks = iter([0, 2])
     monkeypatch.setattr(monitor.time, "time", lambda: next(ticks))
+
+    def fail_json(**kwargs):
+        raise ValueError(kwargs["msg"])
+
     module = SimpleNamespace(
         params={"waiter_timeout": 1, "waiter_delay": 0},
-        fail_json=lambda **kwargs: (_ for _ in ()).throw(ValueError(kwargs["msg"])),
+        fail_json=fail_json,
     )
     desired = {"notice_ids": ["new"], "hierarchical_notices": [], "notice_content_template_bindings": []}
     with pytest.raises(ValueError, match="Timed out waiting"):

@@ -44,6 +44,7 @@ EXAMPLES = r"""
 """
 RETURN = r"""response_control: {description: Effective response-control configuration., type: dict, returned: always}"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_control as normalize, get_control
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 
@@ -55,25 +56,6 @@ PARAMETERS = [
     "response-content-language",
     "response-expires",
 ]
-
-
-def normalize(value):
-    if not value:
-        return None
-    root = value.get("ResponseControlConfiguration", value)
-    params = (root.get("ControlParamList") or {}).get("Param") or []
-    if isinstance(params, str):
-        params = [params]
-    return {"ControlParamList": {"Param": sorted(params)}}
-
-
-def get_control(client, bucket):
-    try:
-        return normalize(client.get_bucket_response_control(Bucket=bucket))
-    except Exception as exc:
-        if cos.is_not_found(exc):
-            return None
-        raise
 
 
 def run_module():

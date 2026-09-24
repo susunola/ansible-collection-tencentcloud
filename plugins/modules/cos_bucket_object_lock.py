@@ -44,34 +44,9 @@ EXAMPLES = r"""
 RETURN = r"""object_lock: {description: Effective object-lock configuration., type: dict, returned: always}"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import get_object_lock
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-
-
-def normalize(value):
-    if not value:
-        return None
-    root = value.get("ObjectLockConfiguration", value)
-    result = {"ObjectLockEnabled": root.get("ObjectLockEnabled")}
-    rule = root.get("Rule") or {}
-    retention = rule.get("DefaultRetention") or {}
-    if retention:
-        normalized = {"Mode": retention.get("Mode")}
-        if retention.get("Days") is not None:
-            normalized["Days"] = int(retention["Days"])
-        if retention.get("Years") is not None:
-            normalized["Years"] = int(retention["Years"])
-        result["Rule"] = {"DefaultRetention": normalized}
-    return result
-
-
-def get_object_lock(client, bucket):
-    try:
-        return normalize(client.get_bucket_object_lock(Bucket=bucket))
-    except Exception as exc:
-        if cos.is_not_found(exc):
-            return None
-        raise
 
 
 def desired(p):

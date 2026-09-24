@@ -37,34 +37,9 @@ EXAMPLES = r"""
 """
 RETURN = r"""referer: {description: Effective hotlink-protection configuration., type: dict, returned: always}"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
+from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_referer as normalize, get_referer
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
-
-
-def normalize(value):
-    if not value:
-        return None
-    root = value.get("RefererConfiguration", value)
-    if root.get("Status") != "Enabled":
-        return None
-    domains = (root.get("DomainList") or {}).get("Domain") or []
-    if isinstance(domains, str):
-        domains = [domains]
-    return {
-        "Status": "Enabled",
-        "RefererType": root.get("RefererType"),
-        "EmptyReferConfiguration": root.get("EmptyReferConfiguration"),
-        "DomainList": {"Domain": sorted(domains)},
-    }
-
-
-def get_referer(client, bucket):
-    try:
-        return normalize(client.get_bucket_referer(Bucket=bucket))
-    except Exception as exc:
-        if cos.is_not_found(exc):
-            return None
-        raise
 
 
 def run_module():
