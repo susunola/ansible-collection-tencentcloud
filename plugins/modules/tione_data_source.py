@@ -17,19 +17,66 @@ description:
   - Existing creation-field drift is reported because TIONE exposes no data-source update API.
   - Name lookup rejects ambiguity; destructive operations require both a stable ID and an explicit guard.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired data-source presence.}
-  name: {type: str, description: Exact data-source name; required for creation.}
-  data_source_id: {type: str, description: Stable data-source ID; optional for lookup and required for deletion.}
-  project_id: {type: str, description: Optional TI workspace ID.}
-  source_type: {type: str, description: Storage data-source type; required for creation.}
-  permission: {type: str, choices: [RW, RO], description: Data-source access permission; required for creation.}
-  storage_id: {type: str, description: Storage instance ID; required for creation.}
-  mount_config: {type: dict, description: MountConfigureInfo-compatible mount configuration.}
-  tags: {type: list, elements: dict, description: Tag-compatible resource tags.}
-  allow_delete: {type: bool, default: false, description: Explicit destructive-operation guard.}
-  wait: {type: bool, default: true, description: Wait for creation visibility or deletion disappearance.}
-  waiter_delay: {type: int, default: 5, description: Seconds between visibility checks.}
-  waiter_timeout: {type: int, default: 300, description: Overall visibility timeout.}
+  state:
+    description:
+      - Desired data-source presence.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Exact data-source name; required for creation.
+    type: str
+  data_source_id:
+    description:
+      - Stable data-source ID; optional for lookup and required for deletion.
+    type: str
+  project_id:
+    description:
+      - Optional TI workspace ID.
+    type: str
+  source_type:
+    description:
+      - Storage data-source type; required for creation.
+    type: str
+  permission:
+    description:
+      - Data-source access permission; required for creation.
+    type: str
+    choices: [RW, RO]
+  storage_id:
+    description:
+      - Storage instance ID; required for creation.
+    type: str
+  mount_config:
+    description:
+      - MountConfigureInfo-compatible mount configuration.
+    type: dict
+  tags:
+    description:
+      - Tag-compatible resource tags.
+    type: list
+    elements: dict
+  allow_delete:
+    description:
+      - Explicit destructive-operation guard.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for creation visibility or deletion disappearance.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between visibility checks.
+    type: int
+    default: 5
+  waiter_timeout:
+    description:
+      - Overall visibility timeout.
+    type: int
+    default: 300
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

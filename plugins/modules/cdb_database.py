@@ -12,10 +12,28 @@ short_description: Manage databases in TencentDB for MySQL
 version_added: "0.14.0"
 description: Creates and deletes a database and protects its immutable character set from silent drift.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: CDB instance ID.}
-  name: {type: str, required: true, description: Database name.}
-  character_set: {type: str, choices: [utf8, gbk, latin1, utf8mb4], default: utf8mb4, description: Database character set.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - CDB instance ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Database name.
+    type: str
+    required: true
+  character_set:
+    description:
+      - Database character set.
+    type: str
+    choices: [utf8, gbk, latin1, utf8mb4]
+    default: utf8mb4
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

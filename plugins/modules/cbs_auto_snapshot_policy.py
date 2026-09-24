@@ -12,15 +12,52 @@ short_description: Manage Tencent Cloud CBS automatic snapshot policies
 version_added: "0.14.0"
 description: Creates, updates and deletes an automatic snapshot policy and reconciles its exact set of bound cloud disks.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  policy_id: {type: str, description: Existing policy ID; preferred for rename and deletion.}
-  name: {type: str, description: Policy name.}
-  schedules: {type: list, elements: dict, default: [], description: SDK-compatible Policy schedule list.}
-  enabled: {type: bool, default: true, description: Whether scheduled snapshots are active.}
-  permanent: {type: bool, default: false, description: Whether generated snapshots are retained permanently.}
-  retention_days: {type: int, default: 7, description: Snapshot retention days when permanent is false.}
-  disk_ids: {type: list, elements: str, default: [], description: Exact set of CBS cloud disks bound to the policy.}
-  force_delete: {type: bool, default: false, description: Unbind all cloud disks before deleting the policy.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  policy_id:
+    description:
+      - Existing policy ID; preferred for rename and deletion.
+    type: str
+  name:
+    description:
+      - Policy name.
+    type: str
+  schedules:
+    description:
+      - SDK-compatible Policy schedule list.
+    type: list
+    default: []
+    elements: dict
+  enabled:
+    description:
+      - Whether scheduled snapshots are active.
+    type: bool
+    default: true
+  permanent:
+    description:
+      - Whether generated snapshots are retained permanently.
+    type: bool
+    default: false
+  retention_days:
+    description:
+      - Snapshot retention days when permanent is false.
+    type: int
+    default: 7
+  disk_ids:
+    description:
+      - Exact set of CBS cloud disks bound to the policy.
+    type: list
+    default: []
+    elements: str
+  force_delete:
+    description:
+      - Unbind all cloud disks before deleting the policy.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

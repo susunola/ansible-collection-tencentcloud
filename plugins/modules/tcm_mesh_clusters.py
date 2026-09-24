@@ -12,8 +12,17 @@ short_description: Reconcile Tencent Cloud Mesh cluster links
 version_added: "0.14.0"
 description: Reconciles the exact cluster set linked to a Tencent Cloud Mesh instance.
 options:
-  mesh_id: {type: str, required: true, description: Mesh ID.}
-  clusters: {type: list, elements: dict, required: true, description: "Exact desired SDK Cluster payload set, keyed by ClusterId."}
+  mesh_id:
+    description:
+      - Mesh ID.
+    type: str
+    required: true
+  clusters:
+    description:
+      - Exact desired SDK Cluster payload set, keyed by ClusterId.
+    type: list
+    required: true
+    elements: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

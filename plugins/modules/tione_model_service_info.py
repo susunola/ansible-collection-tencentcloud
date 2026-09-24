@@ -16,15 +16,52 @@ description:
   - Returns one exact service version, one service group, or a filtered inventory of service groups and their versions.
   - List mode supports workspace, service status, model-version and tag filters with bounded offset pagination.
 options:
-  service_id: {type: str, description: Exact deployed service-version ID.}
-  service_group_id: {type: str, description: Exact service-group ID.}
-  project_id: {type: str, description: Optional TI workspace ID.}
-  filters: {type: dict, default: {}, description: Service-group API filters used in list mode.}
-  tag_filters: {type: dict, default: {}, description: Tag keys mapped to values or value lists in list mode.}
-  order_field: {type: str, choices: [CreateTime, UpdateTime], default: UpdateTime, description: List sort field.}
-  order: {type: str, choices: [ASC, DESC], default: DESC, description: List sort direction.}
-  page_size: {type: int, default: 100, description: 'Service groups requested per page, from 1 to 100.'}
-  max_pages: {type: int, default: 1000, description: 'Maximum pages fetched, from 1 to 1000.'}
+  service_id:
+    description:
+      - Exact deployed service-version ID.
+    type: str
+  service_group_id:
+    description:
+      - Exact service-group ID.
+    type: str
+  project_id:
+    description:
+      - Optional TI workspace ID.
+    type: str
+  filters:
+    description:
+      - Service-group API filters used in list mode.
+    type: dict
+    default:
+      {}
+  tag_filters:
+    description:
+      - Tag keys mapped to values or value lists in list mode.
+    type: dict
+    default:
+      {}
+  order_field:
+    description:
+      - List sort field.
+    type: str
+    choices: [CreateTime, UpdateTime]
+    default: UpdateTime
+  order:
+    description:
+      - List sort direction.
+    type: str
+    choices: [ASC, DESC]
+    default: DESC
+  page_size:
+    description:
+      - Service groups requested per page, from 1 to 100.
+    type: int
+    default: 100
+  max_pages:
+    description:
+      - Maximum pages fetched, from 1 to 1000.
+    type: int
+    default: 1000
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

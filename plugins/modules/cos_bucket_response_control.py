@@ -12,9 +12,21 @@ short_description: Manage Tencent Cloud COS response-header controls
 version_added: "0.14.0"
 description: Reconciles the response query parameters allowed for a COS bucket.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  name: {type: str, required: true, description: Bucket short name or full name.}
-  appid: {type: str, description: Tencent Cloud AppId used in the bucket suffix.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Bucket short name or full name.
+    type: str
+    required: true
+  appid:
+    description:
+      - Tencent Cloud AppId used in the bucket suffix.
+    type: str
   parameters:
     type: list
     elements: str

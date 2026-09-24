@@ -12,10 +12,25 @@ short_description: Manage Tencent Cloud COS bucket policies
 version_added: "0.14.0"
 description: Reconciles the complete access policy document of a COS bucket.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  name: {type: str, required: true, description: Bucket short name or full name.}
-  appid: {type: str, description: Tencent Cloud AppId used in the bucket suffix.}
-  policy: {type: dict, description: Complete COS bucket policy document.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Bucket short name or full name.
+    type: str
+    required: true
+  appid:
+    description:
+      - Tencent Cloud AppId used in the bucket suffix.
+    type: str
+  policy:
+    description:
+      - Complete COS bucket policy document.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

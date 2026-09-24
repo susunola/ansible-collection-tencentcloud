@@ -13,17 +13,54 @@ version_added: "0.14.0"
 description: Creates, updates and deletes scheduled capacity changes.
 options:
 
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  scaling_group_id: {type: str, required: true, description: Auto Scaling group ID.}
-  action_id: {type: str, description: Existing scheduled action ID.}
-  name: {type: str, description: Scheduled action name.}
-  min_size: {type: int, description: Minimum capacity. Required when state is present.}
-  desired_capacity: {type: int, description: Desired capacity. Required when state is present.}
-  max_size: {type: int, description: Maximum capacity. Required when state is present.}
-  start_time: {type: str, description: First execution time in ISO 8601 format. Required when state is present.}
-  end_time: {type: str, description: Recurrence end time in ISO 8601 format.}
-  recurrence: {type: str, description: Cron recurrence expression.}
-  disable_update_desired_capacity: {type: bool, default: false, description: Preserve current desired capacity.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  scaling_group_id:
+    description:
+      - Auto Scaling group ID.
+    type: str
+    required: true
+  action_id:
+    description:
+      - Existing scheduled action ID.
+    type: str
+  name:
+    description:
+      - Scheduled action name.
+    type: str
+  min_size:
+    description:
+      - Minimum capacity. Required when state is present.
+    type: int
+  desired_capacity:
+    description:
+      - Desired capacity. Required when state is present.
+    type: int
+  max_size:
+    description:
+      - Maximum capacity. Required when state is present.
+    type: int
+  start_time:
+    description:
+      - First execution time in ISO 8601 format. Required when state is present.
+    type: str
+  end_time:
+    description:
+      - Recurrence end time in ISO 8601 format.
+    type: str
+  recurrence:
+    description:
+      - Cron recurrence expression.
+    type: str
+  disable_update_desired_capacity:
+    description:
+      - Preserve current desired capacity.
+    type: bool
+    default: false
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

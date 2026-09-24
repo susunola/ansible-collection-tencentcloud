@@ -16,9 +16,22 @@ description:
   - Reconciles the weekly maintenance days, start time and one-to-three-hour duration.
   - Normalizes API C(HH:MM-HH:MM) ranges and accepts C(HH:MM) or C(HH:MM:SS) start times.
 options:
-  instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
-  start_time: {type: str, required: true, description: Maintenance start time in HH:MM or HH:MM:SS format.}
-  duration_hours: {type: int, choices: [1, 2, 3], required: true, description: Maintenance duration in hours.}
+  instance_id:
+    description:
+      - Stable TDSQL MySQL instance ID.
+    type: str
+    required: true
+  start_time:
+    description:
+      - Maintenance start time in HH:MM or HH:MM:SS format.
+    type: str
+    required: true
+  duration_hours:
+    description:
+      - Maintenance duration in hours.
+    type: int
+    required: true
+    choices: [1, 2, 3]
   week_days:
     description:
       - Non-empty set of weekdays the maintenance window applies to.

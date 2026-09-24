@@ -15,12 +15,34 @@ description:
   - Creates, updates and deletes the remote peer definition used by IPsec VPN connections.
   - Supports idempotency, check mode, diff output and bounded convergence polling.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  customer_gateway_id: {description: Existing customer gateway ID., type: str}
-  name: {description: Customer gateway name., type: str}
-  ip_address: {description: Public IPv4 address of the remote VPN device., type: str}
-  bgp_asn: {description: BGP autonomous system number., type: int}
-  tags: {description: Tags applied when creating the gateway., type: dict, default: {}}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  customer_gateway_id:
+    description:
+      - Existing customer gateway ID.
+    type: str
+  name:
+    description:
+      - Customer gateway name.
+    type: str
+  ip_address:
+    description:
+      - Public IPv4 address of the remote VPN device.
+    type: str
+  bgp_asn:
+    description:
+      - BGP autonomous system number.
+    type: int
+  tags:
+    description:
+      - Tags applied when creating the gateway.
+    type: dict
+    default:
+      {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

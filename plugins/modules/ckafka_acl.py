@@ -13,14 +13,49 @@ version_added: "0.14.0"
 description: Creates and deletes exact CKafka ACL grants idempotently.
 options:
 
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: CKafka instance ID.}
-  resource_type: {type: str, choices: [TOPIC, GROUP, CLUSTER, TRANSACTIONAL_ID], required: true, description: Kafka resource type.}
-  resource_name: {type: str, required: true, description: Kafka resource name.}
-  operation: {type: str, required: true, description: Kafka ACL operation.}
-  permission: {type: str, choices: [ALLOW, DENY], default: ALLOW, description: Permission type.}
-  host: {type: str, default: '*', description: Client host pattern.}
-  principal: {type: str, required: true, description: Kafka principal.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - CKafka instance ID.
+    type: str
+    required: true
+  resource_type:
+    description:
+      - Kafka resource type.
+    type: str
+    required: true
+    choices: [TOPIC, GROUP, CLUSTER, TRANSACTIONAL_ID]
+  resource_name:
+    description:
+      - Kafka resource name.
+    type: str
+    required: true
+  operation:
+    description:
+      - Kafka ACL operation.
+    type: str
+    required: true
+  permission:
+    description:
+      - Permission type.
+    type: str
+    choices: [ALLOW, DENY]
+    default: ALLOW
+  host:
+    description:
+      - Client host pattern.
+    type: str
+    default: '*'
+  principal:
+    description:
+      - Kafka principal.
+    type: str
+    required: true
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

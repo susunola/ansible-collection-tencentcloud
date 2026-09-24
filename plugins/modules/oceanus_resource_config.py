@@ -15,14 +15,44 @@ description:
   - Publishes an immutable resource version only when its managed content differs from the latest version.
   - Deletion is blocked while a job configuration references the selected version unless explicitly authorized.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Ensure the desired latest version or remove a historical version.}
-  resource_id: {type: str, required: true, description: Oceanus resource ID.}
-  workspace_id: {type: str, required: true, description: Owning Oceanus workspace ID.}
-  version: {type: int, description: Resource version required for deletion.}
-  resource_location: {type: dict, description: SDK ResourceLoc containing the version artifact location.}
-  remark: {type: str, description: Version description.}
-  auto_delete_oldest: {type: bool, default: false, description: Automatically delete the earliest deletable version at the service limit.}
-  allow_delete_in_use: {type: bool, default: false, description: Explicitly authorize deleting a version referenced by job configurations.}
+  state:
+    description:
+      - Ensure the desired latest version or remove a historical version.
+    type: str
+    choices: [present, absent]
+    default: present
+  resource_id:
+    description:
+      - Oceanus resource ID.
+    type: str
+    required: true
+  workspace_id:
+    description:
+      - Owning Oceanus workspace ID.
+    type: str
+    required: true
+  version:
+    description:
+      - Resource version required for deletion.
+    type: int
+  resource_location:
+    description:
+      - SDK ResourceLoc containing the version artifact location.
+    type: dict
+  remark:
+    description:
+      - Version description.
+    type: str
+  auto_delete_oldest:
+    description:
+      - Automatically delete the earliest deletable version at the service limit.
+    type: bool
+    default: false
+  allow_delete_in_use:
+    description:
+      - Explicitly authorize deleting a version referenced by job configurations.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

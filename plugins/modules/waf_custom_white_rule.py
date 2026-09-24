@@ -12,16 +12,57 @@ short_description: Manage Tencent Cloud WAF precision allowlist rules
 version_added: "0.14.0"
 description: Creates, updates, enables and deletes domain-level precision allowlist rules.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  domain: {type: str, required: true, description: Protected domain.}
-  rule_id: {type: int, description: Existing rule ID; preferred for rename and deletion.}
-  name: {type: str, description: Rule name.}
-  priority: {type: int, default: 100, description: Rule priority.}
-  bypass_modules: {type: str, default: '', description: Comma-separated WAF modules bypassed by the rule.}
-  strategies: {type: list, elements: dict, default: [], description: SDK-compatible Strategy match conditions.}
-  logical_operator: {type: str, choices: [and, or], default: and, description: Relationship between strategies.}
-  expire_time: {type: int, default: 0, description: Expiration timestamp or 0 for no expiration.}
-  enabled: {type: bool, default: true, description: Whether the rule is active.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  domain:
+    description:
+      - Protected domain.
+    type: str
+    required: true
+  rule_id:
+    description:
+      - Existing rule ID; preferred for rename and deletion.
+    type: int
+  name:
+    description:
+      - Rule name.
+    type: str
+  priority:
+    description:
+      - Rule priority.
+    type: int
+    default: 100
+  bypass_modules:
+    description:
+      - Comma-separated WAF modules bypassed by the rule.
+    type: str
+    default: ''
+  strategies:
+    description:
+      - SDK-compatible Strategy match conditions.
+    type: list
+    default: []
+    elements: dict
+  logical_operator:
+    description:
+      - Relationship between strategies.
+    type: str
+    choices: [and, or]
+    default: and
+  expire_time:
+    description:
+      - Expiration timestamp or 0 for no expiration.
+    type: int
+    default: 0
+  enabled:
+    description:
+      - Whether the rule is active.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

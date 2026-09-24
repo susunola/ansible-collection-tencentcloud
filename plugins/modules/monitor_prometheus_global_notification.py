@@ -18,8 +18,16 @@ description:
     configurations. If the API is unavailable, the module fails rather than
     claiming convergence.
 options:
-  instance_id: {type: str, required: true, description: Prometheus instance ID.}
-  notification: {type: dict, required: true, description: SDK-compatible PrometheusNotificationItem configuration.}
+  instance_id:
+    description:
+      - Prometheus instance ID.
+    type: str
+    required: true
+  notification:
+    description:
+      - SDK-compatible PrometheusNotificationItem configuration.
+    type: dict
+    required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

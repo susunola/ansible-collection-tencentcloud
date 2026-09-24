@@ -13,20 +13,73 @@ short_description: Manage Tencent Cloud account-level CloudAudit delivery
 version_added: "0.14.0"
 description: Reconciles account-level management-event delivery to COS, optional CMQ notifications, KMS encryption and logging state.
 options:
-  audit_name: {type: str, required: true, description: Existing account-level audit name.}
-  enabled: {type: bool, default: true, description: Whether CloudAudit logging is running.}
-  read_write_attribute: {type: int, choices: [1, 2, 3], default: 3, description: "One for read events, two for write events or three for all events."}
-  cos_region: {type: str, required: true, description: COS delivery region.}
-  cos_bucket_name: {type: str, required: true, description: COS destination bucket name.}
-  create_new_bucket: {type: bool, default: false, description: Ask CloudAudit to create the COS bucket.}
-  log_file_prefix: {type: str, default: CloudAudit, description: COS log object prefix.}
-  cmq_notify: {type: bool, default: false, description: Enable real-time CMQ queue notifications.}
-  cmq_region: {type: str, description: CMQ queue region; required when cmq_notify is true.}
-  cmq_queue_name: {type: str, description: CMQ queue name; required when cmq_notify is true.}
-  create_new_queue: {type: bool, default: false, description: Ask CloudAudit to create the CMQ queue.}
-  kms_encryption: {type: bool, default: false, description: Encrypt delivered COS objects with KMS.}
-  kms_region: {type: str, description: KMS region; required when kms_encryption is true.}
-  key_id: {type: str, description: Existing KMS key ID used for encryption.}
+  audit_name:
+    description:
+      - Existing account-level audit name.
+    type: str
+    required: true
+  enabled:
+    description:
+      - Whether CloudAudit logging is running.
+    type: bool
+    default: true
+  read_write_attribute:
+    description:
+      - One for read events, two for write events or three for all events.
+    type: int
+    choices: [1, 2, 3]
+    default: 3
+  cos_region:
+    description:
+      - COS delivery region.
+    type: str
+    required: true
+  cos_bucket_name:
+    description:
+      - COS destination bucket name.
+    type: str
+    required: true
+  create_new_bucket:
+    description:
+      - Ask CloudAudit to create the COS bucket.
+    type: bool
+    default: false
+  log_file_prefix:
+    description:
+      - COS log object prefix.
+    type: str
+    default: CloudAudit
+  cmq_notify:
+    description:
+      - Enable real-time CMQ queue notifications.
+    type: bool
+    default: false
+  cmq_region:
+    description:
+      - CMQ queue region; required when cmq_notify is true.
+    type: str
+  cmq_queue_name:
+    description:
+      - CMQ queue name; required when cmq_notify is true.
+    type: str
+  create_new_queue:
+    description:
+      - Ask CloudAudit to create the CMQ queue.
+    type: bool
+    default: false
+  kms_encryption:
+    description:
+      - Encrypt delivered COS objects with KMS.
+    type: bool
+    default: false
+  kms_region:
+    description:
+      - KMS region; required when kms_encryption is true.
+    type: str
+  key_id:
+    description:
+      - Existing KMS key ID used for encryption.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

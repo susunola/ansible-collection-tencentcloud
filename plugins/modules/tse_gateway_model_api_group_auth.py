@@ -13,12 +13,35 @@ short_description: Manage TSE gateway Model API consumer group authorization
 version_added: "0.14.0"
 description: Reconciles Model API authorization using ConsumerGroupModelScopes readback and delta-based mutations.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Whether every listed group is authorized.}
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  model_api_id: {type: str, description: Model API ID.}
-  model_api_name: {type: str, description: Model API name resolved within the gateway.}
-  consumer_group_ids: {type: list, elements: str, description: 'Unique consumer group IDs, one through ten entries.'}
-  consumer_group_names: {type: list, elements: str, description: Unique consumer group names resolved within the gateway.}
+  state:
+    description:
+      - Whether every listed group is authorized.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  model_api_id:
+    description:
+      - Model API ID.
+    type: str
+  model_api_name:
+    description:
+      - Model API name resolved within the gateway.
+    type: str
+  consumer_group_ids:
+    description:
+      - Unique consumer group IDs, one through ten entries.
+    type: list
+    elements: str
+  consumer_group_names:
+    description:
+      - Unique consumer group names resolved within the gateway.
+    type: list
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

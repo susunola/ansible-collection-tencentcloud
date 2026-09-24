@@ -15,13 +15,39 @@ description:
   - Returns an exact invocation with its instance tasks or a bounded invocation inventory.
   - Command content and parameter values are always redacted; task output is opt-in.
 options:
-  invocation_id: {type: str, description: Exact invocation ID.}
-  command_id: {type: str, description: Command ID filter in list mode.}
-  instance_kind: {type: str, choices: [CVM, LIGHTHOUSE], description: Instance-kind filter in list mode.}
-  include_tasks: {type: bool, default: true, description: Return per-instance tasks in exact mode.}
-  include_output: {type: bool, default: false, description: Return task output; use task-level C(no_log=true) when enabled.}
-  page_size: {type: int, default: 100, description: 'Results per API request, from 1 through 100.'}
-  max_pages: {type: int, default: 1000, description: Maximum pages fetched.}
+  invocation_id:
+    description:
+      - Exact invocation ID.
+    type: str
+  command_id:
+    description:
+      - Command ID filter in list mode.
+    type: str
+  instance_kind:
+    description:
+      - Instance-kind filter in list mode.
+    type: str
+    choices: [CVM, LIGHTHOUSE]
+  include_tasks:
+    description:
+      - Return per-instance tasks in exact mode.
+    type: bool
+    default: true
+  include_output:
+    description:
+      - Return task output; use task-level C(no_log=true) when enabled.
+    type: bool
+    default: false
+  page_size:
+    description:
+      - Results per API request, from 1 through 100.
+    type: int
+    default: 100
+  max_pages:
+    description:
+      - Maximum pages fetched.
+    type: int
+    default: 1000
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

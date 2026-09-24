@@ -12,10 +12,26 @@ short_description: Manage Tencent Cloud CynosDB backup configuration
 version_added: "0.14.0"
 description: Reconciles the automatic backup window and retention duration of a CynosDB cluster.
 options:
-  cluster_id: {type: str, required: true, description: CynosDB cluster ID.}
-  backup_start: {type: int, default: 10800, description: Backup window start as seconds after midnight.}
-  backup_end: {type: int, default: 14400, description: Backup window end as seconds after midnight.}
-  retention_seconds: {type: int, default: 604800, description: Backup retention duration in seconds.}
+  cluster_id:
+    description:
+      - CynosDB cluster ID.
+    type: str
+    required: true
+  backup_start:
+    description:
+      - Backup window start as seconds after midnight.
+    type: int
+    default: 10800
+  backup_end:
+    description:
+      - Backup window end as seconds after midnight.
+    type: int
+    default: 14400
+  retention_seconds:
+    description:
+      - Backup retention duration in seconds.
+    type: int
+    default: 604800
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

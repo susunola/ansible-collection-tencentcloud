@@ -19,16 +19,8 @@ plugins/modules/cos_bucket_replication_info.py pep8:E305  # blank-line count aro
 plugins/modules/cos_bucket_response_control_info.py pep8:E305  # blank-line count around a nested definition, kept for local grouping readability
 scripts/sync_doc_fragments.py pep8:E305  # blank-line count around a nested definition, kept for local grouping readability
 plugins/lookup/resource_id.py pep8:E501  # long SDK identifier or URL cannot be wrapped without hurting readability
-plugins/modules/dcdb_backup_config.py pep8:E501  # long SDK identifier or URL cannot be wrapped without hurting readability
-plugins/modules/dlc_data_mask_strategy.py pep8:E501  # long SDK identifier or URL cannot be wrapped without hurting readability
-plugins/modules/dlc_user.py pep8:E501  # long SDK identifier or URL cannot be wrapped without hurting readability
-plugins/modules/dlc_work_group.py pep8:E501  # long SDK identifier or URL cannot be wrapped without hurting readability
 plugins/modules/oceanus_job_config.py pep8:E501  # long SDK identifier or URL cannot be wrapped without hurting readability
 plugins/modules/private_dns_zone.py pep8:E501  # long SDK identifier or URL cannot be wrapped without hurting readability
-plugins/modules/tione_dataset.py pep8:E501  # long SDK identifier or URL cannot be wrapped without hurting readability
-plugins/modules/tione_training_model_version_info.py pep8:E501  # long SDK identifier or URL cannot be wrapped without hurting readability
-plugins/modules/tse_cloud_native_gateway.py pep8:E501  # long SDK identifier or URL cannot be wrapped without hurting readability
-plugins/modules/tse_gateway_service_source.py pep8:E501  # long SDK identifier or URL cannot be wrapped without hurting readability
 plugins/modules/tse_governance_instance.py pep8:E501  # long SDK identifier or URL cannot be wrapped without hurting readability
 plugins/modules/tsf_application_config.py pep8:E501  # long SDK identifier or URL cannot be wrapped without hurting readability
 plugins/modules/tsf_container_deployment_group.py pep8:E501  # long SDK identifier or URL cannot be wrapped without hurting readability

@@ -12,10 +12,25 @@ short_description: Manage Tencent Cloud COS static website configuration
 version_added: "0.14.0"
 description: Reconciles the complete static website configuration of a COS bucket.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  name: {type: str, required: true, description: Bucket short name or full name.}
-  appid: {type: str, description: Tencent Cloud AppId used in the bucket suffix.}
-  configuration: {type: dict, description: Complete COS SDK-compatible WebsiteConfiguration document.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Bucket short name or full name.
+    type: str
+    required: true
+  appid:
+    description:
+      - Tencent Cloud AppId used in the bucket suffix.
+    type: str
+  configuration:
+    description:
+      - Complete COS SDK-compatible WebsiteConfiguration document.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

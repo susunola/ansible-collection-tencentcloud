@@ -12,14 +12,49 @@ short_description: Manage Tencent Cloud DBbrain SQL filters
 version_added: "0.14.0"
 description: Manages active SQL concurrency filters through DBbrain.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  instance_id: {description: Database instance ID., type: str, required: true}
-  sql_type: {description: SQL statement type to match., type: str, choices: [SELECT, UPDATE, DELETE, INSERT, REPLACE], required: true}
-  filter_key: {description: Comma-separated SQL keywords matched with logical AND., type: str, required: true}
-  max_concurrency: {description: Maximum concurrent matching statements; zero rejects all., type: int, required: true}
-  duration: {description: Filter lifetime in seconds; -1 means indefinitely., type: int, default: -1}
-  session_token: {description: Short-lived token returned by VerifyUserAccount., type: str, required: true}
-  product: {description: Database product family., type: str, choices: [mysql, cynosdb], default: mysql}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Database instance ID.
+    type: str
+    required: true
+  sql_type:
+    description:
+      - SQL statement type to match.
+    type: str
+    required: true
+    choices: [SELECT, UPDATE, DELETE, INSERT, REPLACE]
+  filter_key:
+    description:
+      - Comma-separated SQL keywords matched with logical AND.
+    type: str
+    required: true
+  max_concurrency:
+    description:
+      - Maximum concurrent matching statements; zero rejects all.
+    type: int
+    required: true
+  duration:
+    description:
+      - Filter lifetime in seconds; -1 means indefinitely.
+    type: int
+    default: -1
+  session_token:
+    description:
+      - Short-lived token returned by VerifyUserAccount.
+    type: str
+    required: true
+  product:
+    description:
+      - Database product family.
+    type: str
+    choices: [mysql, cynosdb]
+    default: mysql
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

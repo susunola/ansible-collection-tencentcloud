@@ -15,12 +15,37 @@ description:
   - Creates, updates and deletes a priority-addressed canary rule for one gateway service.
   - C(config) accepts the SDK CloudNativeAPIGatewayCanaryRule shape; C(Priority) is supplied from the stable module identity.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  service_id: {type: str, required: true, description: Owning service ID.}
-  priority: {type: int, required: true, description: Unique rule priority from 0 through 100.}
-  rule_type: {type: str, choices: [Standard, Lane], default: Standard, description: Rule category used for lookup.}
-  config: {type: dict, description: SDK CloudNativeAPIGatewayCanaryRule payload excluding Priority.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  service_id:
+    description:
+      - Owning service ID.
+    type: str
+    required: true
+  priority:
+    description:
+      - Unique rule priority from 0 through 100.
+    type: int
+    required: true
+  rule_type:
+    description:
+      - Rule category used for lookup.
+    type: str
+    choices: [Standard, Lane]
+    default: Standard
+  config:
+    description:
+      - SDK CloudNativeAPIGatewayCanaryRule payload excluding Priority.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

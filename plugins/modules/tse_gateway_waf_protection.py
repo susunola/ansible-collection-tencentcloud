@@ -13,10 +13,27 @@ short_description: Manage Tencent Cloud TSE gateway WAF protection
 version_added: "0.14.0"
 description: Reconciles global, service or route WAF protection using per-resource status readback.
 options:
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  scope: {type: str, choices: [Global, Service, Route], required: true, description: Protection scope.}
-  resource_ids: {type: list, elements: str, description: Service or route IDs; required outside Global scope.}
-  enabled: {type: bool, required: true, description: Desired WAF protection status.}
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  scope:
+    description:
+      - Protection scope.
+    type: str
+    required: true
+    choices: [Global, Service, Route]
+  resource_ids:
+    description:
+      - Service or route IDs; required outside Global scope.
+    type: list
+    elements: str
+  enabled:
+    description:
+      - Desired WAF protection status.
+    type: bool
+    required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

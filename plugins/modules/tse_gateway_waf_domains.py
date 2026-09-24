@@ -13,10 +13,28 @@ short_description: Manage Tencent Cloud TSE gateway WAF domains
 version_added: "0.14.0"
 description: Adds, removes or exactly reconciles gateway domains registered for WAF protection.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Whether listed domains are registered.}
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  domains: {type: list, elements: str, required: true, description: Unique domain names.}
-  purge_unlisted: {type: bool, default: false, description: 'With state=present, remove registered domains not listed here.'}
+  state:
+    description:
+      - Whether listed domains are registered.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  domains:
+    description:
+      - Unique domain names.
+    type: list
+    required: true
+    elements: str
+  purge_unlisted:
+    description:
+      - With state=present, remove registered domains not listed here.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -12,14 +12,42 @@ short_description: Manage Tencent Cloud VPC high-availability virtual IPs
 version_added: "0.14.0"
 description: Creates, renames and deletes HAVIPs with guarded replacement of immutable network placement.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  havip_id: {type: str, description: Existing HAVIP ID.}
-  name: {type: str, description: HAVIP name.}
-  vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  subnet_id: {type: str, description: Subnet ID; immutable after creation.}
-  vip: {type: str, description: Requested private virtual IP; omit for automatic allocation.}
-  check_associate: {type: bool, default: false, description: Restrict HAVIP drift to its declared associations.}
-  force_replace: {type: bool, default: false, description: Recreate the HAVIP when immutable placement changes.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  havip_id:
+    description:
+      - Existing HAVIP ID.
+    type: str
+  name:
+    description:
+      - HAVIP name.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID; immutable after creation.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID; immutable after creation.
+    type: str
+  vip:
+    description:
+      - Requested private virtual IP; omit for automatic allocation.
+    type: str
+  check_associate:
+    description:
+      - Restrict HAVIP drift to its declared associations.
+    type: bool
+    default: false
+  force_replace:
+    description:
+      - Recreate the HAVIP when immutable placement changes.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

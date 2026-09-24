@@ -12,11 +12,32 @@ short_description: Manage Tencent Cloud CKafka Datahub topics
 version_added: "0.14.0"
 description: Creates, updates and deletes a CKafka Datahub elastic topic while suppressing returned credentials.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  name: {type: str, required: true, description: Datahub topic resource name.}
-  partition_num: {type: int, default: 1, description: Immutable partition count.}
-  retention_ms: {type: int, default: 86400000, description: Message retention in milliseconds.}
-  note: {type: str, default: '', description: Topic note.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Datahub topic resource name.
+    type: str
+    required: true
+  partition_num:
+    description:
+      - Immutable partition count.
+    type: int
+    default: 1
+  retention_ms:
+    description:
+      - Message retention in milliseconds.
+    type: int
+    default: 86400000
+  note:
+    description:
+      - Topic note.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

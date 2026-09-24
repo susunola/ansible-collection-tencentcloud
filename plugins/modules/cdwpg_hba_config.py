@@ -15,20 +15,51 @@ description:
   - Replaces the complete user-managed pg_hba rule list while preserving rule order.
   - Emptying the list requires explicit authorization because it can remove database access.
 options:
-  instance_id: {type: str, required: true, description: CDW PostgreSQL instance ID.}
+  instance_id:
+    description:
+      - CDW PostgreSQL instance ID.
+    type: str
+    required: true
   rules:
     type: list
     elements: dict
     required: true
     description: Exact ordered HBA rule list.
     suboptions:
-      type: {type: str, required: true, description: Connection type such as host or hostssl.}
-      database: {type: str, required: true, description: Database selector.}
-      user: {type: str, required: true, description: User selector.}
-      address: {type: str, required: true, description: Client address or CIDR.}
-      method: {type: str, required: true, description: Authentication method.}
-      mask: {type: str, description: Optional service mask value.}
-  allow_empty: {type: bool, default: false, description: Explicitly authorize removing every user-managed HBA rule.}
+      type:
+        description:
+          - Connection type such as host or hostssl.
+        type: str
+        required: true
+      database:
+        description:
+          - Database selector.
+        type: str
+        required: true
+      user:
+        description:
+          - User selector.
+        type: str
+        required: true
+      address:
+        description:
+          - Client address or CIDR.
+        type: str
+        required: true
+      method:
+        description:
+          - Authentication method.
+        type: str
+        required: true
+      mask:
+        description:
+          - Optional service mask value.
+        type: str
+  allow_empty:
+    description:
+      - Explicitly authorize removing every user-managed HBA rule.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

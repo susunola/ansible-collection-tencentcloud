@@ -117,7 +117,8 @@ options:
       - Tags to apply to the cluster as a dict, for example I(env=prod).
       - Only applied at creation.
     type: dict
-    default: {}
+    default:
+      {}
 notes:
   - Requires the C(tencentcloud-sdk-python-tke) package on the controller.
   - Cluster creation takes 10-20 minutes; the module returns as soon as

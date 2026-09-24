@@ -12,10 +12,25 @@ short_description: Manage Tencent Cloud CAM user group membership
 version_added: "0.13.0"
 description: Idempotently adds a CAM sub-user to or removes it from a user group.
 options:
-  state: {description: Desired membership state., type: str, choices: [present, absent], default: present}
-  group_id: {description: CAM user group ID., type: int, required: true}
-  sub_uin: {description: CAM sub-user UIN., type: int}
-  uid: {description: CAM sub-user UID., type: int}
+  state:
+    description:
+      - Desired membership state.
+    type: str
+    choices: [present, absent]
+    default: present
+  group_id:
+    description:
+      - CAM user group ID.
+    type: int
+    required: true
+  sub_uin:
+    description:
+      - CAM sub-user UIN.
+    type: int
+  uid:
+    description:
+      - CAM sub-user UID.
+    type: int
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

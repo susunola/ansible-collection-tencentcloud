@@ -15,18 +15,67 @@ description:
   - Creates, discovers, updates and deletes DLC authorized users.
   - Description and user type are mutable; alias and account type are immutable.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired DLC user state.}
-  user_id: {type: str, required: true, description: CAM sub-user UIN or role account identifier.}
-  description: {type: str, description: Mutable user description.}
-  user_type: {type: str, choices: [ADMIN, COMMON], description: Desired DLC user type; defaults to COMMON only during creation.}
-  alias: {type: str, description: Creation-time user alias shorter than 50 characters.}
-  principal_type: {type: str, choices: [UserAccount, RoleAccount], default: UserAccount, description: Creation-time DLC principal type.}
-  account_source: {type: str, choices: [TencentAccount, EntraAccount], default: TencentAccount, description: 'Account source used by query, update and deletion APIs.'}
-  initial_policies: {type: list, elements: dict, description: Policies attached during creation; use dedicated policy resources for ongoing reconciliation.}
-  initial_work_group_ids: {type: list, elements: int, description: Work groups attached during creation; use C(dlc_work_group_membership) for ongoing reconciliation.}
-  allow_delete_bound: {type: bool, default: false, description: Explicitly authorize deleting a user that still has policies or work groups.}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize user deletion.}
-  wait: {type: bool, default: true, description: Wait for mutation convergence.}
+  state:
+    description:
+      - Desired DLC user state.
+    type: str
+    choices: [present, absent]
+    default: present
+  user_id:
+    description:
+      - CAM sub-user UIN or role account identifier.
+    type: str
+    required: true
+  description:
+    description:
+      - Mutable user description.
+    type: str
+  user_type:
+    description:
+      - Desired DLC user type; defaults to COMMON only during creation.
+    type: str
+    choices: [ADMIN, COMMON]
+  alias:
+    description:
+      - Creation-time user alias shorter than 50 characters.
+    type: str
+  principal_type:
+    description:
+      - Creation-time DLC principal type.
+    type: str
+    choices: [UserAccount, RoleAccount]
+    default: UserAccount
+  account_source:
+    description:
+      - Account source used by query, update and deletion APIs.
+    type: str
+    choices: [TencentAccount, EntraAccount]
+    default: TencentAccount
+  initial_policies:
+    description:
+      - Policies attached during creation; use dedicated policy resources for ongoing reconciliation.
+    type: list
+    elements: dict
+  initial_work_group_ids:
+    description:
+      - Work groups attached during creation; use C(dlc_work_group_membership) for ongoing reconciliation.
+    type: list
+    elements: int
+  allow_delete_bound:
+    description:
+      - Explicitly authorize deleting a user that still has policies or work groups.
+    type: bool
+    default: false
+  allow_delete:
+    description:
+      - Explicitly authorize user deletion.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for mutation convergence.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -13,22 +13,61 @@ short_description: Manage Tencent Cloud Lighthouse data disks
 version_added: "0.14.0"
 description: Creates, renames, attaches, detaches and terminates Lighthouse data disks.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  disk_id: {type: str, description: Existing disk ID; preferred for updates and deletion.}
-  name: {type: str, description: "Disk name, also used for lookup when disk_id is omitted."}
-  zone: {type: str, description: Availability zone; required for creation.}
-  disk_size: {type: int, description: Disk size in GiB; required for creation.}
-  disk_type: {type: str, choices: [CLOUD_PREMIUM, CLOUD_SSD], description: Disk media type; required for creation.}
-  prepaid_period: {type: int, description: Subscription period in months; required for creation.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  disk_id:
+    description:
+      - Existing disk ID; preferred for updates and deletion.
+    type: str
+  name:
+    description:
+      - Disk name, also used for lookup when disk_id is omitted.
+    type: str
+  zone:
+    description:
+      - Availability zone; required for creation.
+    type: str
+  disk_size:
+    description:
+      - Disk size in GiB; required for creation.
+    type: int
+  disk_type:
+    description:
+      - Disk media type; required for creation.
+    type: str
+    choices: [CLOUD_PREMIUM, CLOUD_SSD]
+  prepaid_period:
+    description:
+      - Subscription period in months; required for creation.
+    type: int
   renew_flag:
     type: str
     choices: [NOTIFY_AND_AUTO_RENEW, NOTIFY_AND_MANUAL_RENEW, DISABLE_NOTIFY_AND_MANUAL_RENEW]
     default: NOTIFY_AND_MANUAL_RENEW
     description: Renewal policy.
-  instance_id: {type: str, description: Exact Lighthouse instance attachment to enforce; omit to keep the disk detached.}
-  force_replace: {type: bool, default: false, description: "Recreate when immutable size, type or zone differs."}
-  force_detach: {type: bool, default: false, description: Allow detaching a disk before replacement or deletion.}
-  wait: {type: bool, default: true, description: Wait for attachment and lifecycle operations to settle.}
+  instance_id:
+    description:
+      - Exact Lighthouse instance attachment to enforce; omit to keep the disk detached.
+    type: str
+  force_replace:
+    description:
+      - Recreate when immutable size, type or zone differs.
+    type: bool
+    default: false
+  force_detach:
+    description:
+      - Allow detaching a disk before replacement or deletion.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for attachment and lifecycle operations to settle.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

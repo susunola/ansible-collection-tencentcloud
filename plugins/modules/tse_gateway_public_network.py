@@ -13,15 +13,47 @@ short_description: Manage a Tencent Cloud TSE gateway public network
 version_added: "0.14.0"
 description: Creates, updates and deletes a gateway-group public CLB and reconciles its access-control policy.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  group_id: {type: str, description: Native gateway server group ID.}
-  group_name: {type: str, description: Native gateway server group name resolved within the gateway.}
-  network_id: {type: str, description: Existing public network ID.}
-  config: {type: dict, description: SDK InternetConfig payload used for creation and mutable CLB fields.}
-  access_control: {type: dict, description: Exact SDK NetworkAccessControl payload.}
-  address_version: {type: str, choices: [IPV4, IPV6], default: IPV4, description: Public address family used for deletion.}
-  vip: {type: str, description: Public VIP; required by the API when a group has multiple public networks.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  group_id:
+    description:
+      - Native gateway server group ID.
+    type: str
+  group_name:
+    description:
+      - Native gateway server group name resolved within the gateway.
+    type: str
+  network_id:
+    description:
+      - Existing public network ID.
+    type: str
+  config:
+    description:
+      - SDK InternetConfig payload used for creation and mutable CLB fields.
+    type: dict
+  access_control:
+    description:
+      - Exact SDK NetworkAccessControl payload.
+    type: dict
+  address_version:
+    description:
+      - Public address family used for deletion.
+    type: str
+    choices: [IPV4, IPV6]
+    default: IPV4
+  vip:
+    description:
+      - Public VIP; required by the API when a group has multiple public networks.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -13,10 +13,28 @@ short_description: Manage TDSQL-C PostgreSQL instance runtime state
 version_added: "0.14.0"
 description: Isolates or recovers cluster instances, or performs an explicitly requested restart.
 options:
-  cluster_id: {type: str, required: true, description: Cluster ID.}
-  instance_ids: {type: list, elements: str, required: true, description: Exact instances to operate on.}
-  state: {type: str, choices: [running, isolated, restarted], required: true, description: Desired action or state.}
-  period_months: {type: int, default: 1, description: Recovery purchase period for prepaid instances.}
+  cluster_id:
+    description:
+      - Cluster ID.
+    type: str
+    required: true
+  instance_ids:
+    description:
+      - Exact instances to operate on.
+    type: list
+    required: true
+    elements: str
+  state:
+    description:
+      - Desired action or state.
+    type: str
+    required: true
+    choices: [running, isolated, restarted]
+  period_months:
+    description:
+      - Recovery purchase period for prepaid instances.
+    type: int
+    default: 1
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -16,9 +16,20 @@ description:
   - Returns one exact TIONE training-model version by stable version ID or lists versions within one parent model.
   - Parent-scoped list mode prevents versions from different models being mixed by display name.
 options:
-  model_id: {type: str, description: Parent training-model ID; required in list mode.}
-  version_id: {type: str, description: Exact model-version ID; switches to detail mode.}
-  filters: {type: dict, default: {}, description: 'Parent-scoped version filters such as TrainingModelVersionId, ModelVersionType, ModelFormat or AlgorithmFramework.'}
+  model_id:
+    description:
+      - Parent training-model ID; required in list mode.
+    type: str
+  version_id:
+    description:
+      - Exact model-version ID; switches to detail mode.
+    type: str
+  filters:
+    description:
+      - Parent-scoped version filters such as TrainingModelVersionId, ModelVersionType, ModelFormat or AlgorithmFramework.
+    type: dict
+    default:
+      {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

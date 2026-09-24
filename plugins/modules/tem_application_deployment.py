@@ -12,15 +12,47 @@ short_description: Deploy Tencent Cloud TEM application versions
 version_added: "0.14.0"
 description: Declaratively deploys a named application version and skips deployment when the active configuration already contains the requested values.
 options:
-  application_id: {type: str, required: true, description: TEM application ID.}
-  environment_id: {type: str, required: true, description: TEM environment ID.}
-  deploy_version: {type: str, required: true, description: Desired deployment version name.}
-  configuration: {type: dict, required: true, description: SDK DeployApplicationRequest fields using their original field names.}
-  source_channel: {type: int, default: 0, description: TEM source channel.}
-  force_redeploy: {type: bool, default: false, description: Redeploy even when the active version and configuration already match.}
-  wait: {type: bool, default: true, description: Wait until the requested version is active and no deployment remains in progress.}
+  application_id:
+    description:
+      - TEM application ID.
+    type: str
+    required: true
+  environment_id:
+    description:
+      - TEM environment ID.
+    type: str
+    required: true
+  deploy_version:
+    description:
+      - Desired deployment version name.
+    type: str
+    required: true
+  configuration:
+    description:
+      - SDK DeployApplicationRequest fields using their original field names.
+    type: dict
+    required: true
+  source_channel:
+    description:
+      - TEM source channel.
+    type: int
+    default: 0
+  force_redeploy:
+    description:
+      - Redeploy even when the active version and configuration already match.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait until the requested version is active and no deployment remains in progress.
+    type: bool
+    default: true
 
-  waiter_timeout: {type: int, default: 1800, description: Overall polling timeout in seconds.}
+  waiter_timeout:
+    description:
+      - Overall polling timeout in seconds.
+    type: int
+    default: 1800
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

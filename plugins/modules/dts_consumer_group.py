@@ -13,12 +13,36 @@ short_description: Manage Tencent Cloud DTS consumer groups
 version_added: "0.14.0"
 description: Creates, updates and deletes Kafka consumer groups for DTS data subscriptions.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  subscribe_id: {description: DTS subscription instance ID., type: str, required: true}
-  consumer_group_name: {description: Consumer group suffix or full generated name., type: str, required: true}
-  account_name: {description: Consumer account suffix or full generated name., type: str, required: true}
-  password: {description: Password used only when creating the consumer group., type: str}
-  description: {description: Consumer group description., type: str, default: ''}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  subscribe_id:
+    description:
+      - DTS subscription instance ID.
+    type: str
+    required: true
+  consumer_group_name:
+    description:
+      - Consumer group suffix or full generated name.
+    type: str
+    required: true
+  account_name:
+    description:
+      - Consumer account suffix or full generated name.
+    type: str
+    required: true
+  password:
+    description:
+      - Password used only when creating the consumer group.
+    type: str
+  description:
+    description:
+      - Consumer group description.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

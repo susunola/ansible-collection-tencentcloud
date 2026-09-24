@@ -12,27 +12,66 @@ short_description: Manage Tencent Cloud CynosDB account privileges
 version_added: "0.14.0"
 description: Reconciles the complete global, database and table privilege set for a CynosDB account.
 options:
-  cluster_id: {type: str, required: true, description: CynosDB cluster ID.}
-  account_name: {type: str, required: true, description: Database account name.}
-  host: {type: str, default: '%', description: Account host pattern.}
-  global_privileges: {type: list, elements: str, default: [], description: Exact global privilege set.}
+  cluster_id:
+    description:
+      - CynosDB cluster ID.
+    type: str
+    required: true
+  account_name:
+    description:
+      - Database account name.
+    type: str
+    required: true
+  host:
+    description:
+      - Account host pattern.
+    type: str
+    default: '%'
+  global_privileges:
+    description:
+      - Exact global privilege set.
+    type: list
+    default: []
+    elements: str
   database_privileges:
     type: list
     elements: dict
     default: []
     description: Exact database privilege assignments.
     suboptions:
-      database: {type: str, required: true, description: Database name.}
-      privileges: {type: list, elements: str, required: true, description: Exact privilege set for the database.}
+      database:
+        description:
+          - Database name.
+        type: str
+        required: true
+      privileges:
+        description:
+          - Exact privilege set for the database.
+        type: list
+        required: true
+        elements: str
   table_privileges:
     type: list
     elements: dict
     default: []
     description: Exact table privilege assignments.
     suboptions:
-      database: {type: str, required: true, description: Database name.}
-      table: {type: str, required: true, description: Table name.}
-      privileges: {type: list, elements: str, required: true, description: Exact privilege set for the table.}
+      database:
+        description:
+          - Database name.
+        type: str
+        required: true
+      table:
+        description:
+          - Table name.
+        type: str
+        required: true
+      privileges:
+        description:
+          - Exact privilege set for the table.
+        type: list
+        required: true
+        elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

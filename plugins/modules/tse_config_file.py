@@ -13,19 +13,65 @@ short_description: Manage a Tencent Cloud TSE configuration file
 version_added: "0.14.0"
 description: Creates, updates and deletes configuration file content and metadata. Publishing is managed separately from draft content.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: TSE engine instance ID.}
-  namespace: {type: str, required: true, description: Configuration namespace.}
-  group: {type: str, required: true, description: Configuration group.}
-  name: {type: str, required: true, description: Configuration file name.}
-  content: {type: str, description: Exact draft content.}
-  format: {type: str, description: Configuration format.}
-  comment: {type: str, description: Configuration description.}
-  tags: {type: list, elements: dict, description: SDK configuration tag entries.}
-  supported_client: {type: int, description: Supported client type.}
-  persistent: {type: dict, description: SDK ConfigFilePersistent payload.}
-  encrypted: {type: bool, description: Enable encryption.}
-  encrypt_algo: {type: str, description: Encryption algorithm.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - TSE engine instance ID.
+    type: str
+    required: true
+  namespace:
+    description:
+      - Configuration namespace.
+    type: str
+    required: true
+  group:
+    description:
+      - Configuration group.
+    type: str
+    required: true
+  name:
+    description:
+      - Configuration file name.
+    type: str
+    required: true
+  content:
+    description:
+      - Exact draft content.
+    type: str
+  format:
+    description:
+      - Configuration format.
+    type: str
+  comment:
+    description:
+      - Configuration description.
+    type: str
+  tags:
+    description:
+      - SDK configuration tag entries.
+    type: list
+    elements: dict
+  supported_client:
+    description:
+      - Supported client type.
+    type: int
+  persistent:
+    description:
+      - SDK ConfigFilePersistent payload.
+    type: dict
+  encrypted:
+    description:
+      - Enable encryption.
+    type: bool
+  encrypt_algo:
+    description:
+      - Encryption algorithm.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

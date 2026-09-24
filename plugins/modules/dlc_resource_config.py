@@ -16,18 +16,61 @@ description:
   - Creates, updates and deletes reusable DLC Head and Worker resource templates.
   - Worker sets, environment variables and labels are order-insensitive and capacity reduction is guarded.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired lifecycle state.}
-  name: {type: str, required: true, description: Exact template name and immutable identity.}
-  template_type: {type: str, choices: [Ray, ray, Spark, spark], description: Template workload type.}
-  description: {type: str, description: Template description.}
-  head: {type: dict, description: HeadSpecDTO-compatible Head node configuration using snake_case or SDK field names.}
-  workers: {type: list, elements: dict, description: Exact WorkerSpecDTO-compatible Worker set using snake_case or SDK field names.}
-  allow_scale_down: {type: bool, default: false, description: Explicitly authorize reducing Head or Worker capacity or removing Workers.}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize template deletion.}
-  allow_delete_in_use: {type: bool, default: false, description: Explicitly authorize deletion while Labs or Ray clusters reference the template.}
-  wait: {type: bool, default: true, description: Wait for lifecycle and field convergence.}
+  state:
+    description:
+      - Desired lifecycle state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Exact template name and immutable identity.
+    type: str
+    required: true
+  template_type:
+    description:
+      - Template workload type.
+    type: str
+    choices: [Ray, ray, Spark, spark]
+  description:
+    description:
+      - Template description.
+    type: str
+  head:
+    description:
+      - HeadSpecDTO-compatible Head node configuration using snake_case or SDK field names.
+    type: dict
+  workers:
+    description:
+      - Exact WorkerSpecDTO-compatible Worker set using snake_case or SDK field names.
+    type: list
+    elements: dict
+  allow_scale_down:
+    description:
+      - Explicitly authorize reducing Head or Worker capacity or removing Workers.
+    type: bool
+    default: false
+  allow_delete:
+    description:
+      - Explicitly authorize template deletion.
+    type: bool
+    default: false
+  allow_delete_in_use:
+    description:
+      - Explicitly authorize deletion while Labs or Ray clusters reference the template.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for lifecycle and field convergence.
+    type: bool
+    default: true
 
-  waiter_timeout: {type: int, default: 300, description: Overall convergence timeout.}
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 300
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

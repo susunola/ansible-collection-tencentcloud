@@ -76,17 +76,34 @@ options:
       - Maximum message size in bytes, written to
         V(CreateTopicRequest.MaxMessageBytes).
     type: int
-  min_insync_replicas: {description: Minimum in-sync replicas., type: int}
-  unclean_leader_election: {description: Allow an out-of-sync replica to become leader., type: bool}
-  producer_quota_mb: {description: Producer quota in MB/s; -1 means unlimited., type: int}
-  consumer_quota_mb: {description: Consumer quota in MB/s; -1 means unlimited., type: int}
-  message_timestamp_type: {description: Timestamp stored with messages., type: str, choices: [CreateTime, LogAppendTime]}
+  min_insync_replicas:
+    description:
+      - Minimum in-sync replicas.
+    type: int
+  unclean_leader_election:
+    description:
+      - Allow an out-of-sync replica to become leader.
+    type: bool
+  producer_quota_mb:
+    description:
+      - Producer quota in MB/s; -1 means unlimited.
+    type: int
+  consumer_quota_mb:
+    description:
+      - Consumer quota in MB/s; -1 means unlimited.
+    type: int
+  message_timestamp_type:
+    description:
+      - Timestamp stored with messages.
+    type: str
+    choices: [CreateTime, LogAppendTime]
   tags:
     description:
       - Tags to apply to the topic as a dict, for example I(env=prod).
       - Only applied at creation.
     type: dict
-    default: {}
+    default:
+      {}
 notes:
   - Requires the C(tencentcloud-sdk-python-ckafka) package on the controller.
   - The CKafka instance itself is not created or destroyed by this module;

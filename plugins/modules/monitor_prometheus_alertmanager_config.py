@@ -12,8 +12,16 @@ short_description: Manage Managed Prometheus Alertmanager configuration
 version_added: "0.14.0"
 description: Replaces the singleton Alertmanager configuration of a Prometheus instance.
 options:
-  instance_id: {type: str, required: true, description: Prometheus instance ID.}
-  config: {type: dict, required: true, description: SDK-compatible PrometheusAlertmanagerConfigV2 configuration.}
+  instance_id:
+    description:
+      - Prometheus instance ID.
+    type: str
+    required: true
+  config:
+    description:
+      - SDK-compatible PrometheusAlertmanagerConfigV2 configuration.
+    type: dict
+    required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

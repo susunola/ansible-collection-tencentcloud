@@ -12,11 +12,34 @@ short_description: Manage TDMQ RocketMQ namespace role permissions
 version_added: "0.14.0"
 description: Grants an exact set of produce and consume permissions to a RocketMQ role in a namespace.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, required: true, description: RocketMQ cluster ID.}
-  namespace: {type: str, required: true, description: RocketMQ namespace.}
-  role_name: {type: str, required: true, description: RocketMQ role name.}
-  permissions: {type: list, elements: str, choices: [produce, consume], default: [produce, consume], description: Exact namespace permission set.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - RocketMQ cluster ID.
+    type: str
+    required: true
+  namespace:
+    description:
+      - RocketMQ namespace.
+    type: str
+    required: true
+  role_name:
+    description:
+      - RocketMQ role name.
+    type: str
+    required: true
+  permissions:
+    description:
+      - Exact namespace permission set.
+    type: list
+    choices: [produce, consume]
+    default: [produce, consume]
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

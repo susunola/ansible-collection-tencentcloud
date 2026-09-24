@@ -14,17 +14,40 @@ short_description: Manage a Tencent Cloud TSF traffic lane
 version_added: "0.15.0"
 description: Creates, updates and deletes a TSF traffic lane while protecting its observable deployment-group membership as immutable.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired resource state.}
-  lane_id: {type: str, description: Existing lane ID; exact name is used when omitted.}
-  name: {type: str, required: true, description: Lane name.}
-  remark: {type: str, description: Lane remark.}
+  state:
+    description:
+      - Desired resource state.
+    type: str
+    choices: [present, absent]
+    default: present
+  lane_id:
+    description:
+      - Existing lane ID; exact name is used when omitted.
+    type: str
+  name:
+    description:
+      - Lane name.
+    type: str
+    required: true
+  remark:
+    description:
+      - Lane remark.
+    type: str
   deployment_groups:
     type: list
     elements: dict
     description: Exact deployment-group membership, required when creating and immutable afterwards.
     suboptions:
-      group_id: {type: str, required: true, description: TSF deployment group ID.}
-      entrance: {type: bool, default: false, description: Whether this is the lane entrance group.}
+      group_id:
+        description:
+          - TSF deployment group ID.
+        type: str
+        required: true
+      entrance:
+        description:
+          - Whether this is the lane entrance group.
+        type: bool
+        default: false
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

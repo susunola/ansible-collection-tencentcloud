@@ -15,9 +15,22 @@ description:
   - Adds or removes a previously authorized primary account from Private DNS.
   - The target account must complete the Tencent Cloud authorization prerequisite before creation.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired relationship state.}
-  uin: {type: str, required: true, description: Target primary account UIN.}
-  account: {type: str, required: true, description: Target primary account login name.}
+  state:
+    description:
+      - Desired relationship state.
+    type: str
+    choices: [present, absent]
+    default: present
+  uin:
+    description:
+      - Target primary account UIN.
+    type: str
+    required: true
+  account:
+    description:
+      - Target primary account login name.
+    type: str
+    required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

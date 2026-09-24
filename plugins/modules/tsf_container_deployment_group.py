@@ -13,33 +13,115 @@ short_description: Manage a Tencent Cloud TSF container deployment group
 version_added: "0.15.0"
 description: Manages container group identity, replicas, resources, service exposure and rolling-update settings separately from image deployment and runtime start or stop actions.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired resource state.}
-  group_id: {type: str, description: Existing group ID; scoped exact name is used when omitted.}
-  name: {type: str, required: true, description: Deployment group name.}
-  application_id: {type: str, required: true, description: Owning application ID.}
-  namespace_id: {type: str, required: true, description: Owning namespace ID.}
-  cluster_id: {type: str, required: true, description: Owning container cluster ID.}
-  replicas: {type: int, description: Desired replica count; required when state is present.}
-  cpu_request: {type: str, description: "Requested application CPU cores, immutable after creation."}
-  cpu_limit: {type: str, description: "Application CPU limit, immutable after creation."}
-  memory_request: {type: str, description: "Requested application memory in MiB, immutable after creation."}
-  memory_limit: {type: str, description: "Application memory limit in MiB, immutable after creation."}
-  access_type: {type: int, choices: [0, 1, 2], default: 1, description: "Service access type; public, cluster internal or NodePort."}
+  state:
+    description:
+      - Desired resource state.
+    type: str
+    choices: [present, absent]
+    default: present
+  group_id:
+    description:
+      - Existing group ID; scoped exact name is used when omitted.
+    type: str
+  name:
+    description:
+      - Deployment group name.
+    type: str
+    required: true
+  application_id:
+    description:
+      - Owning application ID.
+    type: str
+    required: true
+  namespace_id:
+    description:
+      - Owning namespace ID.
+    type: str
+    required: true
+  cluster_id:
+    description:
+      - Owning container cluster ID.
+    type: str
+    required: true
+  replicas:
+    description:
+      - Desired replica count; required when state is present.
+    type: int
+  cpu_request:
+    description:
+      - Requested application CPU cores, immutable after creation.
+    type: str
+  cpu_limit:
+    description:
+      - Application CPU limit, immutable after creation.
+    type: str
+  memory_request:
+    description:
+      - Requested application memory in MiB, immutable after creation.
+    type: str
+  memory_limit:
+    description:
+      - Application memory limit in MiB, immutable after creation.
+    type: str
+  access_type:
+    description:
+      - Service access type; public, cluster internal or NodePort.
+    type: int
+    choices: [0, 1, 2]
+    default: 1
   protocol_ports:
     type: list
     elements: dict
     description: Exact service port definitions.
     suboptions:
-      protocol: {type: str, choices: [TCP, UDP], required: true, description: Transport protocol.}
-      port: {type: int, required: true, description: Service port exposed by the deployment group.}
-      target_port: {type: int, required: true, description: Container port receiving service traffic.}
-      node_port: {type: int, description: Node port used when access_type selects NodePort.}
-      name: {type: str, description: Optional service port name.}
-  update_type: {type: int, choices: [0, 1], default: 0, description: Fast or rolling update strategy.}
-  update_interval: {type: int, description: Rolling update interval in seconds.}
-  subnet_id: {type: str, description: Service subnet ID.}
-  alias: {type: str, description: Deployment group remark.}
-  resource_type: {type: str, choices: [DEF], default: DEF, description: "Resource type, immutable after creation."}
+      protocol:
+        description:
+          - Transport protocol.
+        type: str
+        required: true
+        choices: [TCP, UDP]
+      port:
+        description:
+          - Service port exposed by the deployment group.
+        type: int
+        required: true
+      target_port:
+        description:
+          - Container port receiving service traffic.
+        type: int
+        required: true
+      node_port:
+        description:
+          - Node port used when access_type selects NodePort.
+        type: int
+      name:
+        description:
+          - Optional service port name.
+        type: str
+  update_type:
+    description:
+      - Fast or rolling update strategy.
+    type: int
+    choices: [0, 1]
+    default: 0
+  update_interval:
+    description:
+      - Rolling update interval in seconds.
+    type: int
+  subnet_id:
+    description:
+      - Service subnet ID.
+    type: str
+  alias:
+    description:
+      - Deployment group remark.
+    type: str
+  resource_type:
+    description:
+      - Resource type, immutable after creation.
+    type: str
+    choices: [DEF]
+    default: DEF
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

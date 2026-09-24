@@ -13,19 +13,69 @@ short_description: Manage a Tencent Cloud TSE governance service
 version_added: "0.14.0"
 description: Creates, updates and deletes a governance service with exact operator and visibility sets.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: TSE engine instance ID.}
-  namespace: {type: str, required: true, description: Governance namespace name.}
-  name: {type: str, required: true, description: Service name.}
-  comment: {type: str, description: Service description.}
-  department: {type: str, description: Owning department.}
-  business: {type: str, description: Owning business.}
-  metadata: {type: list, elements: dict, description: SDK service metadata entries.}
-  user_ids: {type: list, elements: str, description: Exact operator user IDs.}
-  group_ids: {type: list, elements: str, description: Exact operator group IDs.}
-  export_to: {type: list, elements: str, description: Exact namespaces allowed to discover the service.}
-  sync_to_global_registry: {type: bool, description: Synchronize to the global registry.}
-  service_type: {type: int, choices: [0, 1, 2], default: 0, description: 'Microservice, MCP Server or AI Agent type.'}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - TSE engine instance ID.
+    type: str
+    required: true
+  namespace:
+    description:
+      - Governance namespace name.
+    type: str
+    required: true
+  name:
+    description:
+      - Service name.
+    type: str
+    required: true
+  comment:
+    description:
+      - Service description.
+    type: str
+  department:
+    description:
+      - Owning department.
+    type: str
+  business:
+    description:
+      - Owning business.
+    type: str
+  metadata:
+    description:
+      - SDK service metadata entries.
+    type: list
+    elements: dict
+  user_ids:
+    description:
+      - Exact operator user IDs.
+    type: list
+    elements: str
+  group_ids:
+    description:
+      - Exact operator group IDs.
+    type: list
+    elements: str
+  export_to:
+    description:
+      - Exact namespaces allowed to discover the service.
+    type: list
+    elements: str
+  sync_to_global_registry:
+    description:
+      - Synchronize to the global registry.
+    type: bool
+  service_type:
+    description:
+      - Microservice, MCP Server or AI Agent type.
+    type: int
+    choices: [0, 1, 2]
+    default: 0
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

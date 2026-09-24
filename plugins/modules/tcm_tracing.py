@@ -13,11 +13,29 @@ short_description: Manage Tencent Cloud Mesh tracing
 version_added: "0.14.0"
 description: Reconciles distributed tracing, sampling and APM or Zipkin destinations for a TCM mesh.
 options:
-  mesh_id: {type: str, required: true, description: TCM mesh ID.}
-  enabled: {type: bool, default: true, description: Enable distributed tracing.}
-  sampling: {type: float, default: 1.0, description: Trace sampling value accepted by TCM.}
-  apm: {type: dict, description: SDK APM destination payload.}
-  zipkin: {type: dict, description: SDK TracingZipkin payload.}
+  mesh_id:
+    description:
+      - TCM mesh ID.
+    type: str
+    required: true
+  enabled:
+    description:
+      - Enable distributed tracing.
+    type: bool
+    default: true
+  sampling:
+    description:
+      - Trace sampling value accepted by TCM.
+    type: float
+    default: 1.0
+  apm:
+    description:
+      - SDK APM destination payload.
+    type: dict
+  zipkin:
+    description:
+      - SDK TracingZipkin payload.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -12,27 +12,103 @@ short_description: Manage Tencent Cloud CynosDB clusters
 version_added: "0.14.0"
 description: Creates, renames, expands, upgrades, isolates and permanently removes CynosDB clusters.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, description: Existing cluster ID.}
-  name: {type: str, description: Cluster name.}
-  zone: {type: str, description: Primary availability zone; immutable after creation.}
-  slave_zone: {type: str, description: Secondary availability zone.}
-  vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  subnet_id: {type: str, description: Subnet ID; immutable after creation.}
-  db_type: {type: str, choices: [MYSQL, POSTGRESQL], default: MYSQL, description: Database engine.}
-  db_version: {type: str, description: Database-compatible version; immutable after creation.}
-  cynos_version: {type: str, description: Upgradeable Cynos kernel version.}
-  cpu: {type: int, description: Initial instance CPU cores.}
-  memory: {type: int, description: Initial instance memory in GiB.}
-  instance_count: {type: int, default: 1, description: Initial instance count.}
-  storage: {type: int, description: Expandable storage limit in GiB.}
-  admin_password: {type: str, description: Initial administrator password.}
-  port: {type: int, default: 3306, description: Database port.}
-  pay_mode: {type: int, choices: [0, 1], default: 0, description: Postpaid or prepaid billing mode.}
-  period_months: {type: int, default: 1, description: Prepaid purchase period.}
-  auto_renew: {type: bool, default: false, description: Automatically renew prepaid clusters.}
-  security_group_ids: {type: list, elements: str, default: [], description: Security groups bound during creation.}
-  purge: {type: bool, default: false, description: Permanently remove an already isolated cluster.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - Existing cluster ID.
+    type: str
+  name:
+    description:
+      - Cluster name.
+    type: str
+  zone:
+    description:
+      - Primary availability zone; immutable after creation.
+    type: str
+  slave_zone:
+    description:
+      - Secondary availability zone.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID; immutable after creation.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID; immutable after creation.
+    type: str
+  db_type:
+    description:
+      - Database engine.
+    type: str
+    choices: [MYSQL, POSTGRESQL]
+    default: MYSQL
+  db_version:
+    description:
+      - Database-compatible version; immutable after creation.
+    type: str
+  cynos_version:
+    description:
+      - Upgradeable Cynos kernel version.
+    type: str
+  cpu:
+    description:
+      - Initial instance CPU cores.
+    type: int
+  memory:
+    description:
+      - Initial instance memory in GiB.
+    type: int
+  instance_count:
+    description:
+      - Initial instance count.
+    type: int
+    default: 1
+  storage:
+    description:
+      - Expandable storage limit in GiB.
+    type: int
+  admin_password:
+    description:
+      - Initial administrator password.
+    type: str
+  port:
+    description:
+      - Database port.
+    type: int
+    default: 3306
+  pay_mode:
+    description:
+      - Postpaid or prepaid billing mode.
+    type: int
+    choices: [0, 1]
+    default: 0
+  period_months:
+    description:
+      - Prepaid purchase period.
+    type: int
+    default: 1
+  auto_renew:
+    description:
+      - Automatically renew prepaid clusters.
+    type: bool
+    default: false
+  security_group_ids:
+    description:
+      - Security groups bound during creation.
+    type: list
+    default: []
+    elements: str
+  purge:
+    description:
+      - Permanently remove an already isolated cluster.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

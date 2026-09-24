@@ -14,20 +14,56 @@ description:
   - Creates and deletes MongoDB accounts, reconciles database roles and explicitly rotates passwords.
   - The account description is immutable after creation in the current API.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: MongoDB instance ID.}
-  username: {type: str, required: true, description: Account name.}
-  password: {type: str, description: Account password for creation or explicit rotation.}
-  rotate_password: {type: bool, default: false, description: Explicitly reset the account password.}
-  mongo_user_password: {type: str, description: "Password of the built-in mongouser, required for create and delete."}
-  description: {type: str, default: '', description: Immutable account description.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - MongoDB instance ID.
+    type: str
+    required: true
+  username:
+    description:
+      - Account name.
+    type: str
+    required: true
+  password:
+    description:
+      - Account password for creation or explicit rotation.
+    type: str
+  rotate_password:
+    description:
+      - Explicitly reset the account password.
+    type: bool
+    default: false
+  mongo_user_password:
+    description:
+      - Password of the built-in mongouser, required for create and delete.
+    type: str
+  description:
+    description:
+      - Immutable account description.
+    type: str
+    default: ''
   roles:
     type: list
     elements: dict
     description: Complete desired database role set. Required when C(state=present).
     suboptions:
-      namespace: {type: str, required: true, description: Database namespace or C(*).}
-      access: {type: str, choices: [none, read, read_write], required: true, description: Access level.}
+      namespace:
+        description:
+          - Database namespace or C(*).
+        type: str
+        required: true
+      access:
+        description:
+          - Access level.
+        type: str
+        required: true
+        choices: [none, read, read_write]
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

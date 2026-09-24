@@ -13,10 +13,26 @@ short_description: Manage Tencent Cloud Mesh Prometheus integration
 version_added: "0.14.0"
 description: Links, reconciles or unlinks Tencent Cloud or third-party Prometheus from a TCM mesh.
 options:
-  mesh_id: {type: str, required: true, description: TCM mesh ID.}
-  state: {type: str, choices: [present, absent], default: present, description: Desired integration state.}
-  config: {type: dict, description: 'SDK PrometheusConfig payload, including optional CustomProm credentials.'}
-  rotate_credentials: {type: bool, default: false, description: Force relinking when write-only credentials must be rotated.}
+  mesh_id:
+    description:
+      - TCM mesh ID.
+    type: str
+    required: true
+  state:
+    description:
+      - Desired integration state.
+    type: str
+    choices: [present, absent]
+    default: present
+  config:
+    description:
+      - SDK PrometheusConfig payload, including optional CustomProm credentials.
+    type: dict
+  rotate_credentials:
+    description:
+      - Force relinking when write-only credentials must be rotated.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -12,29 +12,110 @@ short_description: Manage Tencent Cloud PostgreSQL instances
 version_added: "0.14.0"
 description: Creates, renames, resizes, isolates and optionally destroys TencentDB for PostgreSQL instances.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, description: Existing PostgreSQL instance ID.}
-  name: {type: str, description: Instance name.}
-  zone: {type: str, description: Primary availability zone; immutable after creation.}
-  vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  subnet_id: {type: str, description: Subnet ID; immutable after creation.}
-  spec_code: {type: str, description: Sales specification code required during creation.}
-  storage: {type: int, description: "Storage size in GiB, adjustable after creation."}
-  cpu: {type: int, description: CPU cores for specification changes.}
-  memory: {type: int, description: Memory in GiB for specification changes.}
-  major_version: {type: str, description: PostgreSQL major version; immutable after creation.}
-  charset: {type: str, choices: [UTF8, LATIN1], default: UTF8, description: Database character set.}
-  admin_name: {type: str, default: dbadmin, description: Initial administrator name.}
-  admin_password: {type: str, description: Initial administrator password.}
-  charge_type: {type: str, choices: [PREPAID, POSTPAID_BY_HOUR], default: POSTPAID_BY_HOUR, description: Billing mode.}
-  period_months: {type: int, default: 1, description: Purchase period in months.}
-  auto_renew: {type: int, choices: [0, 1, 2], description: "Manual renewal, automatic renewal or no renewal for prepaid instances."}
-  security_group_ids: {type: list, elements: str, default: [], description: Security groups bound during creation.}
-  deletion_protection: {type: bool, default: false, description: Enable deletion protection during creation.}
-  purge: {type: bool, default: false, description: Permanently destroy an already isolated instance instead of retaining it in the recycle bin.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Existing PostgreSQL instance ID.
+    type: str
+  name:
+    description:
+      - Instance name.
+    type: str
+  zone:
+    description:
+      - Primary availability zone; immutable after creation.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID; immutable after creation.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID; immutable after creation.
+    type: str
+  spec_code:
+    description:
+      - Sales specification code required during creation.
+    type: str
+  storage:
+    description:
+      - Storage size in GiB, adjustable after creation.
+    type: int
+  cpu:
+    description:
+      - CPU cores for specification changes.
+    type: int
+  memory:
+    description:
+      - Memory in GiB for specification changes.
+    type: int
+  major_version:
+    description:
+      - PostgreSQL major version; immutable after creation.
+    type: str
+  charset:
+    description:
+      - Database character set.
+    type: str
+    choices: [UTF8, LATIN1]
+    default: UTF8
+  admin_name:
+    description:
+      - Initial administrator name.
+    type: str
+    default: dbadmin
+  admin_password:
+    description:
+      - Initial administrator password.
+    type: str
+  charge_type:
+    description:
+      - Billing mode.
+    type: str
+    choices: [PREPAID, POSTPAID_BY_HOUR]
+    default: POSTPAID_BY_HOUR
+  period_months:
+    description:
+      - Purchase period in months.
+    type: int
+    default: 1
+  auto_renew:
+    description:
+      - Manual renewal, automatic renewal or no renewal for prepaid instances.
+    type: int
+    choices: [0, 1, 2]
+  security_group_ids:
+    description:
+      - Security groups bound during creation.
+    type: list
+    default: []
+    elements: str
+  deletion_protection:
+    description:
+      - Enable deletion protection during creation.
+    type: bool
+    default: false
+  purge:
+    description:
+      - Permanently destroy an already isolated instance instead of retaining it in the recycle bin.
+    type: bool
+    default: false
 
-  waiter_delay: {description: Seconds between polling attempts., type: int, default: 10}
-  waiter_timeout: {description: Overall polling timeout in seconds., type: int, default: 900}
+  waiter_delay:
+    description:
+      - Seconds between polling attempts.
+    type: int
+    default: 10
+  waiter_timeout:
+    description:
+      - Overall polling timeout in seconds.
+    type: int
+    default: 900
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

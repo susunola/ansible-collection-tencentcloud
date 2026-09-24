@@ -15,18 +15,64 @@ description:
   - Creates an Oceanus metadata table and updates its DDL when it changes.
   - The Oceanus API does not expose metadata-table deletion, so this module manages the present lifecycle only.
 options:
-  table_name: {type: str, required: true, description: Metadata table name used as identity.}
-  database_name: {type: str, required: true, description: Metadata database name used for lookup.}
-  database_id: {type: int, required: true, description: Metadata database numeric ID used for creation.}
-  catalog_name: {type: str, default: default_catalog, description: Catalog name used for lookup.}
-  catalog_id: {type: int, default: 0, description: Catalog numeric ID used for creation.}
-  workspace_id: {type: str, required: true, description: Owning Oceanus workspace ID.}
-  cluster_id: {type: str, required: true, description: Oceanus cluster used to validate and apply the DDL.}
-  flink_version: {type: str, required: true, description: Flink version used to validate and apply the DDL.}
-  ddl: {type: str, required: true, description: Plain-text CREATE TABLE DDL; the module performs required Base64 encoding.}
-  comment: {type: str, description: Table remark passed during creation and DDL updates; the read API does not expose it independently.}
-  resource_refs: {type: list, elements: dict, description: SDK ResourceRef dependencies used during creation; the update API does not accept this field.}
-  async_task_id: {type: str, description: Existing Oceanus asynchronous validation task ID.}
+  table_name:
+    description:
+      - Metadata table name used as identity.
+    type: str
+    required: true
+  database_name:
+    description:
+      - Metadata database name used for lookup.
+    type: str
+    required: true
+  database_id:
+    description:
+      - Metadata database numeric ID used for creation.
+    type: int
+    required: true
+  catalog_name:
+    description:
+      - Catalog name used for lookup.
+    type: str
+    default: default_catalog
+  catalog_id:
+    description:
+      - Catalog numeric ID used for creation.
+    type: int
+    default: 0
+  workspace_id:
+    description:
+      - Owning Oceanus workspace ID.
+    type: str
+    required: true
+  cluster_id:
+    description:
+      - Oceanus cluster used to validate and apply the DDL.
+    type: str
+    required: true
+  flink_version:
+    description:
+      - Flink version used to validate and apply the DDL.
+    type: str
+    required: true
+  ddl:
+    description:
+      - Plain-text CREATE TABLE DDL; the module performs required Base64 encoding.
+    type: str
+    required: true
+  comment:
+    description:
+      - Table remark passed during creation and DDL updates; the read API does not expose it independently.
+    type: str
+  resource_refs:
+    description:
+      - SDK ResourceRef dependencies used during creation; the update API does not accept this field.
+    type: list
+    elements: dict
+  async_task_id:
+    description:
+      - Existing Oceanus asynchronous validation task ID.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

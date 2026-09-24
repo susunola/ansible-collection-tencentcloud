@@ -12,14 +12,41 @@ short_description: Manage Tencent Cloud GooseFS filesets
 version_added: "0.14.0"
 description: Creates, updates and deletes GooseFS filesets and their quota limits.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  file_system_id: {type: str, required: true, description: GooseFS file system ID.}
-  fileset_id: {type: str, description: Existing fileset ID.}
-  name: {type: str, description: Fileset name and immutable after creation.}
-  directory: {type: str, description: Fileset directory and immutable after creation.}
-  quota_size_limit: {type: str, description: "Capacity quota in bytes; represented as a decimal string by the SDK."}
-  quota_files_limit: {type: str, description: "File-count quota; represented as a decimal string by the SDK."}
-  audit_state: {type: str, description: Audit state.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  file_system_id:
+    description:
+      - GooseFS file system ID.
+    type: str
+    required: true
+  fileset_id:
+    description:
+      - Existing fileset ID.
+    type: str
+  name:
+    description:
+      - Fileset name and immutable after creation.
+    type: str
+  directory:
+    description:
+      - Fileset directory and immutable after creation.
+    type: str
+  quota_size_limit:
+    description:
+      - Capacity quota in bytes; represented as a decimal string by the SDK.
+    type: str
+  quota_files_limit:
+    description:
+      - File-count quota; represented as a decimal string by the SDK.
+    type: str
+  audit_state:
+    description:
+      - Audit state.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

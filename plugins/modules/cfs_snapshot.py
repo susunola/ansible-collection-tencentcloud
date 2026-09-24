@@ -12,12 +12,34 @@ short_description: Manage Tencent Cloud CFS snapshots
 version_added: "0.14.0"
 description: Creates, updates and deletes manual CFS file-system snapshots.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  snapshot_id: {type: str, description: Existing snapshot ID; preferred for rename and deletion.}
-  file_system_id: {type: str, description: Source CFS file system ID; immutable after creation.}
-  name: {type: str, description: Snapshot name.}
-  alive_days: {type: int, default: 0, description: Retention in days; zero means permanent retention.}
-  force_replace: {type: bool, default: false, description: Delete and recreate when the source file system changes.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  snapshot_id:
+    description:
+      - Existing snapshot ID; preferred for rename and deletion.
+    type: str
+  file_system_id:
+    description:
+      - Source CFS file system ID; immutable after creation.
+    type: str
+  name:
+    description:
+      - Snapshot name.
+    type: str
+  alive_days:
+    description:
+      - Retention in days; zero means permanent retention.
+    type: int
+    default: 0
+  force_replace:
+    description:
+      - Delete and recreate when the source file system changes.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

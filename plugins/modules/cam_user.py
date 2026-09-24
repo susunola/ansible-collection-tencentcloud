@@ -58,7 +58,8 @@ options:
       - CAM does not return sub-user tags in its own APIs, so current tags
         are read through the tag service on every C(state=present) run.
     type: dict
-    default: {}
+    default:
+      {}
 notes:
   - Requires the C(tencentcloud-sdk-python-cam) package on the controller.
   - Tag reconciliation additionally requires C(tencentcloud-sdk-python-tag).

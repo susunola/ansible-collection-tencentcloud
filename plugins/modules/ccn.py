@@ -15,17 +15,59 @@ description:
   - Creates, updates and deletes CCN backbone network instances.
   - Reconciles mutable name, description and routing feature flags.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  ccn_id: {description: Existing CCN ID., type: str}
-  name: {description: CCN name., type: str}
-  description: {description: CCN description., type: str, default: ''}
-  qos_level: {description: QoS level applied at creation., type: str, default: AU}
-  instance_charge_type: {description: CCN billing mode applied at creation., type: str, choices: [PREPAID, POSTPAID], default: POSTPAID}
-  bandwidth_limit_type: {description: Bandwidth limit direction., type: str, choices: [OUTER_REGION_LIMIT, INTER_REGION_LIMIT]}
-  route_ecmp: {description: Enable equal-cost multi-path routing., type: bool}
-  route_overlap: {description: Enable overlapping route publication., type: bool}
-  traffic_marking_policy: {description: Enable traffic marking policies., type: bool}
-  tags: {description: Tags applied at creation., type: dict, default: {}}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  ccn_id:
+    description:
+      - Existing CCN ID.
+    type: str
+  name:
+    description:
+      - CCN name.
+    type: str
+  description:
+    description:
+      - CCN description.
+    type: str
+    default: ''
+  qos_level:
+    description:
+      - QoS level applied at creation.
+    type: str
+    default: AU
+  instance_charge_type:
+    description:
+      - CCN billing mode applied at creation.
+    type: str
+    choices: [PREPAID, POSTPAID]
+    default: POSTPAID
+  bandwidth_limit_type:
+    description:
+      - Bandwidth limit direction.
+    type: str
+    choices: [OUTER_REGION_LIMIT, INTER_REGION_LIMIT]
+  route_ecmp:
+    description:
+      - Enable equal-cost multi-path routing.
+    type: bool
+  route_overlap:
+    description:
+      - Enable overlapping route publication.
+    type: bool
+  traffic_marking_policy:
+    description:
+      - Enable traffic marking policies.
+    type: bool
+  tags:
+    description:
+      - Tags applied at creation.
+    type: dict
+    default:
+      {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

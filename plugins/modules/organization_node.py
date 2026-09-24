@@ -13,12 +13,35 @@ short_description: Manage Tencent Cloud Organization nodes
 version_added: "0.14.0"
 description: Creates, renames and deletes organizational units in Tencent Cloud Organization.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  node_id: {description: Existing organization node ID., type: int}
-  parent_node_id: {description: Parent organization node ID., type: int}
-  name: {description: Organization node name., type: str}
-  remark: {description: Organization node remark., type: str, default: ''}
-  tags: {description: Tags assigned when creating the node., type: dict, default: {}}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  node_id:
+    description:
+      - Existing organization node ID.
+    type: int
+  parent_node_id:
+    description:
+      - Parent organization node ID.
+    type: int
+  name:
+    description:
+      - Organization node name.
+    type: str
+  remark:
+    description:
+      - Organization node remark.
+    type: str
+    default: ''
+  tags:
+    description:
+      - Tags assigned when creating the node.
+    type: dict
+    default:
+      {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

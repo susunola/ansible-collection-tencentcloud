@@ -12,11 +12,34 @@ short_description: Manage notification bindings for a Cloud Monitor alarm policy
 version_added: "0.13.0"
 description: Reconciles notification rules, hierarchical notices and content templates independently from alarm conditions.
 options:
-  policy_id: {description: Alarm policy ID., type: str, required: true}
-  module: {description: API module selector., type: str, default: monitor}
-  notice_ids: {description: Exact notification rule ID set., type: list, elements: str, default: []}
-  hierarchical_notices: {description: Hierarchical notification bindings in Tencent Cloud API shape., type: list, elements: raw, default: []}
-  notice_content_template_bindings: {description: Notification content-template bindings in Tencent Cloud API shape., type: list, elements: raw, default: []}
+  policy_id:
+    description:
+      - Alarm policy ID.
+    type: str
+    required: true
+  module:
+    description:
+      - API module selector.
+    type: str
+    default: monitor
+  notice_ids:
+    description:
+      - Exact notification rule ID set.
+    type: list
+    default: []
+    elements: str
+  hierarchical_notices:
+    description:
+      - Hierarchical notification bindings in Tencent Cloud API shape.
+    type: list
+    default: []
+    elements: raw
+  notice_content_template_bindings:
+    description:
+      - Notification content-template bindings in Tencent Cloud API shape.
+    type: list
+    default: []
+    elements: raw
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

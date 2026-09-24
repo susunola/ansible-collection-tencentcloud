@@ -14,7 +14,11 @@ short_description: Gather Tencent Cloud TDSQL MySQL backup policy
 version_added: "0.14.0"
 description: Returns the complete backup-policy list reported for an instance without assuming cardinality.
 options:
-  instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
+  instance_id:
+    description:
+      - Stable TDSQL MySQL instance ID.
+    type: str
+    required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -15,15 +15,49 @@ description:
   - Creates, discovers, updates and deletes DLC data masking strategies.
   - Normalizes user and work-group ordering for stable idempotency.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired strategy state.}
-  strategy_id: {type: str, description: Existing masking strategy ID.}
-  name: {type: str, description: 'Strategy name, required for creation and usable for exact discovery.'}
-  strategy_type: {type: str, choices: [MASK_SHOW_FIRST_4, MASK_SHOW_LAST_4, MASK_HASH, MASK_DATE_SHOW_YEAR, MASK_NULL, MASK_DEFAULT], description: Desired masking method.}
-  description: {type: str, description: Desired strategy description.}
-  groups: {type: list, elements: dict, description: Desired GroupInfo list containing WorkGroupId and StrategyType.}
-  users: {type: list, elements: str, description: Exact desired sub-account UIN list.}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize strategy deletion.}
-  wait: {type: bool, default: true, description: Wait for mutation convergence.}
+  state:
+    description:
+      - Desired strategy state.
+    type: str
+    choices: [present, absent]
+    default: present
+  strategy_id:
+    description:
+      - Existing masking strategy ID.
+    type: str
+  name:
+    description:
+      - Strategy name, required for creation and usable for exact discovery.
+    type: str
+  strategy_type:
+    description:
+      - Desired masking method.
+    type: str
+    choices: [MASK_SHOW_FIRST_4, MASK_SHOW_LAST_4, MASK_HASH, MASK_DATE_SHOW_YEAR, MASK_NULL, MASK_DEFAULT]
+  description:
+    description:
+      - Desired strategy description.
+    type: str
+  groups:
+    description:
+      - Desired GroupInfo list containing WorkGroupId and StrategyType.
+    type: list
+    elements: dict
+  users:
+    description:
+      - Exact desired sub-account UIN list.
+    type: list
+    elements: str
+  allow_delete:
+    description:
+      - Explicitly authorize strategy deletion.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for mutation convergence.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

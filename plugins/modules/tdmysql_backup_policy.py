@@ -16,15 +16,44 @@ description:
   - Reconciles the single backup policy returned for an instance.
   - Storage type is derived from the backup method because the API write model accepts it but the read model does not return it.
 options:
-  instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
-  backup_start_time: {type: str, description: Backup window start in HH:MM format.}
-  backup_end_time: {type: str, description: Backup window end in HH:MM format.}
-  backup_method: {type: str, choices: [physical, snapshot], description: Physical or snapshot backup method.}
-  enable_full: {type: bool, description: Enable full backups.}
-  enable_log: {type: bool, description: Enable log backups.}
-  full_retention_days: {type: int, description: Full-backup retention period.}
-  log_retention_days: {type: int, description: Log-backup retention period.}
-  period_time: {type: str, description: "API weekday expression such as 0,1,2,3,4,5,6."}
+  instance_id:
+    description:
+      - Stable TDSQL MySQL instance ID.
+    type: str
+    required: true
+  backup_start_time:
+    description:
+      - Backup window start in HH:MM format.
+    type: str
+  backup_end_time:
+    description:
+      - Backup window end in HH:MM format.
+    type: str
+  backup_method:
+    description:
+      - Physical or snapshot backup method.
+    type: str
+    choices: [physical, snapshot]
+  enable_full:
+    description:
+      - Enable full backups.
+    type: bool
+  enable_log:
+    description:
+      - Enable log backups.
+    type: bool
+  full_retention_days:
+    description:
+      - Full-backup retention period.
+    type: int
+  log_retention_days:
+    description:
+      - Log-backup retention period.
+    type: int
+  period_time:
+    description:
+      - API weekday expression such as 0,1,2,3,4,5,6.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

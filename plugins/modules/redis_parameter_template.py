@@ -13,12 +13,35 @@ version_added: "0.14.0"
 description: Creates, updates and deletes reusable Redis parameter templates.
 options:
 
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  template_id: {type: str, description: Existing template ID.}
-  name: {type: str, description: Template name.}
-  description: {type: str, default: '', description: Template description.}
-  product_type: {type: int, description: Redis product type required at creation.}
-  parameters: {type: dict, default: {}, description: Exact parameter name and value mapping.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  template_id:
+    description:
+      - Existing template ID.
+    type: str
+  name:
+    description:
+      - Template name.
+    type: str
+  description:
+    description:
+      - Template description.
+    type: str
+    default: ''
+  product_type:
+    description:
+      - Redis product type required at creation.
+    type: int
+  parameters:
+    description:
+      - Exact parameter name and value mapping.
+    type: dict
+    default:
+      {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

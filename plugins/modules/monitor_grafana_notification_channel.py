@@ -12,12 +12,37 @@ short_description: Manage Tencent Cloud Managed Grafana notification channels
 version_added: "0.14.0"
 description: Creates, updates and deletes a Grafana notification channel backed by alarm notification templates.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: Grafana instance ID.}
-  channel_id: {type: str, description: Existing channel ID.}
-  name: {type: str, description: Channel name.}
-  receivers: {type: list, elements: str, default: [], description: Alarm notification template IDs.}
-  organization_ids: {type: list, elements: str, default: ['1'], description: Grafana organization IDs.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Grafana instance ID.
+    type: str
+    required: true
+  channel_id:
+    description:
+      - Existing channel ID.
+    type: str
+  name:
+    description:
+      - Channel name.
+    type: str
+  receivers:
+    description:
+      - Alarm notification template IDs.
+    type: list
+    default: []
+    elements: str
+  organization_ids:
+    description:
+      - Grafana organization IDs.
+    type: list
+    default: ['1']
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

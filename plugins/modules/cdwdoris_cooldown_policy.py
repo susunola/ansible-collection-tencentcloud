@@ -16,10 +16,24 @@ description:
   - Creates or updates a named hot/cold tiering policy.
   - The service exposes no standalone policy deletion operation; policies are removed with their instance.
 options:
-  instance_id: {type: str, required: true, description: CDW Doris instance ID.}
-  name: {type: str, required: true, description: Cooldown policy name.}
-  cooldown_ttl: {type: str, description: Relative cooldown TTL accepted by Doris.}
-  cooldown_datetime: {type: str, description: Absolute cooldown datetime accepted by Doris.}
+  instance_id:
+    description:
+      - CDW Doris instance ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Cooldown policy name.
+    type: str
+    required: true
+  cooldown_ttl:
+    description:
+      - Relative cooldown TTL accepted by Doris.
+    type: str
+  cooldown_datetime:
+    description:
+      - Absolute cooldown datetime accepted by Doris.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

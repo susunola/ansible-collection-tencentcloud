@@ -13,15 +13,50 @@ short_description: Manage a Tencent Cloud TSE gateway service source
 version_added: "0.14.0"
 description: Manages gateway integrations with registry, Kubernetes, private DNS and customer DNS service sources.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  source_id: {type: str, description: Service source ID or backing source instance ID.}
-  source_name: {type: str, description: Service source name.}
-  source_type: {type: str, choices: [TSE-Nacos, TSE-Consul, TSE-PolarisMesh, Customer-Nacos, Customer-Consul, Customer-PolarisMesh, TSF, TKE, EKS, PrivateDNS, Customer-DNS], description: Service source type.}
-  source_info: {type: dict, description: SDK SourceInfo payload. Password and access-token values are write-only.}
-  rotate_credentials: {type: bool, default: false, description: Force an update when write-only credentials in source_info must be rotated.}
-  waiter_delay: {type: int, default: 3, description: Reconciliation polling interval.}
-  waiter_timeout: {type: int, default: 180, description: Reconciliation timeout.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  source_id:
+    description:
+      - Service source ID or backing source instance ID.
+    type: str
+  source_name:
+    description:
+      - Service source name.
+    type: str
+  source_type:
+    description:
+      - Service source type.
+    type: str
+    choices: [TSE-Nacos, TSE-Consul, TSE-PolarisMesh, Customer-Nacos, Customer-Consul, Customer-PolarisMesh,
+      TSF, TKE, EKS, PrivateDNS, Customer-DNS]
+  source_info:
+    description:
+      - SDK SourceInfo payload. Password and access-token values are write-only.
+    type: dict
+  rotate_credentials:
+    description:
+      - Force an update when write-only credentials in source_info must be rotated.
+    type: bool
+    default: false
+  waiter_delay:
+    description:
+      - Reconciliation polling interval.
+    type: int
+    default: 3
+  waiter_timeout:
+    description:
+      - Reconciliation timeout.
+    type: int
+    default: 180
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

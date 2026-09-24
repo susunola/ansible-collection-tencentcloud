@@ -15,13 +15,40 @@ description:
   - Adds, updates or removes one instance key/value parameter.
   - Reports whether the service marks the change as requiring a restart; it never restarts the cluster implicitly.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Set the value or restore the parameter to its unconfigured state.}
-  instance_id: {type: str, required: true, description: CDW ClickHouse instance ID.}
-  name: {type: str, required: true, description: Configuration key.}
-  value: {type: str, description: Desired configuration value.}
-  remark: {type: str, description: Change annotation recorded by the service.}
-  wait: {type: bool, default: true, description: Wait until the configuration list reflects the change.}
-  waiter_delay: {type: int, default: 3, description: Seconds between polls.}
+  state:
+    description:
+      - Set the value or restore the parameter to its unconfigured state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - CDW ClickHouse instance ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Configuration key.
+    type: str
+    required: true
+  value:
+    description:
+      - Desired configuration value.
+    type: str
+  remark:
+    description:
+      - Change annotation recorded by the service.
+    type: str
+  wait:
+    description:
+      - Wait until the configuration list reflects the change.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between polls.
+    type: int
+    default: 3
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

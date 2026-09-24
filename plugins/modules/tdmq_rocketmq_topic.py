@@ -12,13 +12,43 @@ short_description: Manage TDMQ RocketMQ topics
 version_added: "0.14.0"
 description: Creates, updates and deletes a RocketMQ topic in a namespace.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, required: true, description: RocketMQ cluster ID.}
-  namespace: {type: str, required: true, description: RocketMQ namespace.}
-  name: {type: str, required: true, description: Topic name.}
-  topic_type: {type: str, choices: [Normal, GlobalOrder, PartitionedOrder, Transaction, DelayScheduled], default: Normal, description: Immutable topic type.}
-  partition_num: {type: int, default: 1, description: Number of read and write partitions.}
-  remark: {type: str, default: '', description: Topic remark.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - RocketMQ cluster ID.
+    type: str
+    required: true
+  namespace:
+    description:
+      - RocketMQ namespace.
+    type: str
+    required: true
+  name:
+    description:
+      - Topic name.
+    type: str
+    required: true
+  topic_type:
+    description:
+      - Immutable topic type.
+    type: str
+    choices: [Normal, GlobalOrder, PartitionedOrder, Transaction, DelayScheduled]
+    default: Normal
+  partition_num:
+    description:
+      - Number of read and write partitions.
+    type: int
+    default: 1
+  remark:
+    description:
+      - Topic remark.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

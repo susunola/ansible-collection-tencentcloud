@@ -12,32 +12,121 @@ short_description: Manage Tencent Cloud RabbitMQ Serverless queues
 version_added: "0.14.0"
 description: Creates, updates and deletes RabbitMQ Serverless classic or quorum queues while protecting immutable queue arguments.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: RabbitMQ Serverless instance ID.}
-  virtual_host: {type: str, required: true, description: Virtual-host name.}
-  name: {type: str, required: true, description: Queue name.}
-  queue_type: {type: str, choices: [classic, quorum], description: Queue type; defaults to classic during creation.}
-  durable: {type: bool, description: Durable flag; defaults to true during creation.}
-  auto_delete: {type: bool, description: Automatic deletion flag; defaults to false during creation.}
-  remark: {type: str, default: '', description: Queue remark.}
-  message_ttl: {type: int, description: Message TTL in milliseconds.}
-  auto_expire: {type: int, description: Unused-queue expiration in milliseconds; immutable after creation.}
-  max_length: {type: int, description: Maximum message count; immutable after creation.}
-  max_length_bytes: {type: int, description: Maximum byte size; immutable after creation.}
-  delivery_limit: {type: int, description: Quorum delivery limit; immutable after creation.}
-  overflow_behaviour: {type: str, choices: [drop-head, reject-publish, reject-publish-dlx], description: Overflow behavior; immutable after creation.}
-  dead_letter_exchange: {type: str, description: Dead-letter exchange.}
-  dead_letter_routing_key: {type: str, description: Dead-letter routing key.}
-  single_active_consumer: {type: bool, description: Single-active-consumer flag; immutable after creation.}
-  maximum_priority: {type: int, description: Classic queue maximum priority; immutable after creation.}
-  lazy_mode: {type: bool, description: Classic lazy mode; immutable after creation.}
-  master_locator: {type: str, choices: [min-masters, client-local, random], description: Classic master locator; immutable after creation.}
-  max_in_memory_length: {type: int, description: Quorum in-memory message limit; immutable after creation.}
-  max_in_memory_bytes: {type: int, description: Quorum in-memory byte limit; immutable after creation.}
-  node: {type: str, description: Preferred queue node; immutable after creation.}
-  dead_letter_strategy: {type: str, choices: [at-most-once, at-least-once], description: Quorum dead-letter strategy; immutable after creation.}
-  queue_leader_locator: {type: str, choices: [client-local, balanced], description: Quorum leader locator; immutable after creation.}
-  quorum_initial_group_size: {type: int, description: Initial quorum replica count; immutable after creation.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - RabbitMQ Serverless instance ID.
+    type: str
+    required: true
+  virtual_host:
+    description:
+      - Virtual-host name.
+    type: str
+    required: true
+  name:
+    description:
+      - Queue name.
+    type: str
+    required: true
+  queue_type:
+    description:
+      - Queue type; defaults to classic during creation.
+    type: str
+    choices: [classic, quorum]
+  durable:
+    description:
+      - Durable flag; defaults to true during creation.
+    type: bool
+  auto_delete:
+    description:
+      - Automatic deletion flag; defaults to false during creation.
+    type: bool
+  remark:
+    description:
+      - Queue remark.
+    type: str
+    default: ''
+  message_ttl:
+    description:
+      - Message TTL in milliseconds.
+    type: int
+  auto_expire:
+    description:
+      - Unused-queue expiration in milliseconds; immutable after creation.
+    type: int
+  max_length:
+    description:
+      - Maximum message count; immutable after creation.
+    type: int
+  max_length_bytes:
+    description:
+      - Maximum byte size; immutable after creation.
+    type: int
+  delivery_limit:
+    description:
+      - Quorum delivery limit; immutable after creation.
+    type: int
+  overflow_behaviour:
+    description:
+      - Overflow behavior; immutable after creation.
+    type: str
+    choices: [drop-head, reject-publish, reject-publish-dlx]
+  dead_letter_exchange:
+    description:
+      - Dead-letter exchange.
+    type: str
+  dead_letter_routing_key:
+    description:
+      - Dead-letter routing key.
+    type: str
+  single_active_consumer:
+    description:
+      - Single-active-consumer flag; immutable after creation.
+    type: bool
+  maximum_priority:
+    description:
+      - Classic queue maximum priority; immutable after creation.
+    type: int
+  lazy_mode:
+    description:
+      - Classic lazy mode; immutable after creation.
+    type: bool
+  master_locator:
+    description:
+      - Classic master locator; immutable after creation.
+    type: str
+    choices: [min-masters, client-local, random]
+  max_in_memory_length:
+    description:
+      - Quorum in-memory message limit; immutable after creation.
+    type: int
+  max_in_memory_bytes:
+    description:
+      - Quorum in-memory byte limit; immutable after creation.
+    type: int
+  node:
+    description:
+      - Preferred queue node; immutable after creation.
+    type: str
+  dead_letter_strategy:
+    description:
+      - Quorum dead-letter strategy; immutable after creation.
+    type: str
+    choices: [at-most-once, at-least-once]
+  queue_leader_locator:
+    description:
+      - Quorum leader locator; immutable after creation.
+    type: str
+    choices: [client-local, balanced]
+  quorum_initial_group_size:
+    description:
+      - Initial quorum replica count; immutable after creation.
+    type: int
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

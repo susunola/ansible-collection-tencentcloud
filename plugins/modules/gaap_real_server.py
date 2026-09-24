@@ -14,12 +14,34 @@ short_description: Manage Tencent Cloud GAAP real servers
 version_added: "0.14.0"
 description: Registers, renames and explicitly removes reusable GAAP origin identities.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  real_server_id: {type: str, description: Existing real-server ID.}
-  address: {type: str, description: Exact origin IP address or domain.}
-  name: {type: str, description: Origin display name.}
-  project_id: {type: int, default: 0, description: Tencent Cloud project ID.}
-  allow_shared_delete: {type: bool, default: false, description: 'Authorize global removal, which can affect every listener using this origin.'}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  real_server_id:
+    description:
+      - Existing real-server ID.
+    type: str
+  address:
+    description:
+      - Exact origin IP address or domain.
+    type: str
+  name:
+    description:
+      - Origin display name.
+    type: str
+  project_id:
+    description:
+      - Tencent Cloud project ID.
+    type: int
+    default: 0
+  allow_shared_delete:
+    description:
+      - Authorize global removal, which can affect every listener using this origin.
+    type: bool
+    default: false
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

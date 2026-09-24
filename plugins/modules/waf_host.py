@@ -12,12 +12,36 @@ short_description: Manage Tencent Cloud WAF protected hosts
 version_added: "0.14.0"
 description: Creates, updates and deletes a protected WAF host on an instance.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: WAF instance ID.}
-  domain: {type: str, required: true, description: Protected domain name.}
-  domain_id: {type: str, description: Existing protected-domain ID.}
-  host: {type: dict, description: Complete SDK-compatible HostRecord configuration.}
-  tags: {type: dict, default: {}, description: Tags applied when creating the host.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - WAF instance ID.
+    type: str
+    required: true
+  domain:
+    description:
+      - Protected domain name.
+    type: str
+    required: true
+  domain_id:
+    description:
+      - Existing protected-domain ID.
+    type: str
+  host:
+    description:
+      - Complete SDK-compatible HostRecord configuration.
+    type: dict
+  tags:
+    description:
+      - Tags applied when creating the host.
+    type: dict
+    default:
+      {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

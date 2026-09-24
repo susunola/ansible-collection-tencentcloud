@@ -14,11 +14,27 @@ short_description: Manage Tencent Cloud TDSQL MySQL SSL state
 version_added: "0.14.0"
 description: Reconciles instance SSL enablement and waits for both the asynchronous Flow and final SSL state.
 options:
-  instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
-  enabled: {type: bool, required: true, description: Desired SSL state.}
-  wait: {type: bool, default: true, description: Wait for SSL convergence.}
+  instance_id:
+    description:
+      - Stable TDSQL MySQL instance ID.
+    type: str
+    required: true
+  enabled:
+    description:
+      - Desired SSL state.
+    type: bool
+    required: true
+  wait:
+    description:
+      - Wait for SSL convergence.
+    type: bool
+    default: true
 
-  waiter_timeout: {type: int, default: 600, description: Overall convergence timeout.}
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 600
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

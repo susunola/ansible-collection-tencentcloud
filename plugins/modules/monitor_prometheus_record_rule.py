@@ -12,10 +12,26 @@ short_description: Manage Tencent Cloud Managed Prometheus recording rules
 version_added: "0.14.0"
 description: Creates, updates and deletes a named Prometheus recording-rule YAML document.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: Prometheus instance ID.}
-  name: {type: str, required: true, description: Recording-rule document name.}
-  content: {type: str, description: Prometheus recording-rule YAML.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Prometheus instance ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Recording-rule document name.
+    type: str
+    required: true
+  content:
+    description:
+      - Prometheus recording-rule YAML.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -13,26 +13,96 @@ short_description: Manage a Tencent Cloud TSE cloud-native API gateway
 version_added: "0.14.0"
 description: Creates, updates and deletes cloud-native API gateways with topology drift protection and node specification reconciliation.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  gateway_id: {type: str, description: Existing gateway ID.}
-  name: {type: str, description: Gateway name.}
-  gateway_type: {type: str, choices: [kong], default: kong, description: Gateway engine type.}
-  gateway_version: {type: str, description: Gateway engine version.}
-  node_config: {type: dict, description: SDK CloudNativeAPIGatewayNodeConfig payload.}
-  spec_group_id: {type: str, description: Gateway group ID used when changing node_config on an existing gateway. The group must be the default group represented by the gateway NodeConfig readback.}
-  vpc_config: {type: dict, description: SDK CloudNativeAPIGatewayVpcConfig payload.}
-  description: {type: str, description: Gateway description.}
-  tags: {type: list, elements: dict, description: SDK InstanceTagInfo entries.}
-  enable_cls: {type: bool, description: Enable CLS logging; the API cannot disable it after activation.}
-  feature_version: {type: str, choices: [TRIAL, STANDARD, PROFESSIONAL], description: Product edition.}
-  internet_max_bandwidth_out: {type: int, description: Public egress bandwidth in Mbps.}
-  ingress_class_name: {type: str, description: Ingress class name.}
-  trade_type: {type: int, choices: [0, 1], description: Postpaid or prepaid billing; creation defaults to postpaid.}
-  internet_config: {type: dict, description: SDK InternetConfig payload.}
-  prometheus_id: {type: str, description: Associated Prometheus instance ID.}
-  internet_pay_mode: {type: str, choices: [BANDWIDTH, TRAFFIC], description: Public network billing mode.}
-  delete_protect: {type: bool, description: Enable deletion protection.}
-  delete_cls_topic: {type: bool, default: false, description: Delete the associated CLS topic with the gateway.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Existing gateway ID.
+    type: str
+  name:
+    description:
+      - Gateway name.
+    type: str
+  gateway_type:
+    description:
+      - Gateway engine type.
+    type: str
+    choices: [kong]
+    default: kong
+  gateway_version:
+    description:
+      - Gateway engine version.
+    type: str
+  node_config:
+    description:
+      - SDK CloudNativeAPIGatewayNodeConfig payload.
+    type: dict
+  spec_group_id:
+    description:
+      - Gateway group ID used when changing node_config on an existing gateway. The group must be the default
+        group represented by the gateway NodeConfig readback.
+    type: str
+  vpc_config:
+    description:
+      - SDK CloudNativeAPIGatewayVpcConfig payload.
+    type: dict
+  description:
+    description:
+      - Gateway description.
+    type: str
+  tags:
+    description:
+      - SDK InstanceTagInfo entries.
+    type: list
+    elements: dict
+  enable_cls:
+    description:
+      - Enable CLS logging; the API cannot disable it after activation.
+    type: bool
+  feature_version:
+    description:
+      - Product edition.
+    type: str
+    choices: [TRIAL, STANDARD, PROFESSIONAL]
+  internet_max_bandwidth_out:
+    description:
+      - Public egress bandwidth in Mbps.
+    type: int
+  ingress_class_name:
+    description:
+      - Ingress class name.
+    type: str
+  trade_type:
+    description:
+      - Postpaid or prepaid billing; creation defaults to postpaid.
+    type: int
+    choices: [0, 1]
+  internet_config:
+    description:
+      - SDK InternetConfig payload.
+    type: dict
+  prometheus_id:
+    description:
+      - Associated Prometheus instance ID.
+    type: str
+  internet_pay_mode:
+    description:
+      - Public network billing mode.
+    type: str
+    choices: [BANDWIDTH, TRAFFIC]
+  delete_protect:
+    description:
+      - Enable deletion protection.
+    type: bool
+  delete_cls_topic:
+    description:
+      - Delete the associated CLS topic with the gateway.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

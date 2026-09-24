@@ -12,20 +12,76 @@ short_description: Manage Tencent Cloud MQTT authorization policies
 version_added: "0.14.0"
 description: Creates, updates and deletes data-plane authorization policies for MQTT instances.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: MQTT instance ID.}
-  policy_id: {type: int, description: Existing policy ID.}
-  name: {type: str, description: Policy name.}
-  priority: {type: int, description: Unique policy priority; lower values run first.}
-  effect: {type: str, choices: [allow, deny], description: Allow or deny decision.}
-  actions: {type: list, elements: str, choices: [connect, pub, sub], description: MQTT operations.}
-  resources: {type: list, elements: str, description: Topic resource patterns.}
-  username: {type: str, default: '', description: Optional username condition.}
-  client_id: {type: str, default: '', description: Optional client ID condition.}
-  ip: {type: str, default: '', description: Optional IP or CIDR condition.}
-  retain: {type: int, choices: [1, 2, 3], description: Retained-message match mode.}
-  qos: {type: list, elements: int, choices: [0, 1, 2], description: Matching QoS values.}
-  remark: {type: str, default: '', description: Policy remark.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - MQTT instance ID.
+    type: str
+    required: true
+  policy_id:
+    description:
+      - Existing policy ID.
+    type: int
+  name:
+    description:
+      - Policy name.
+    type: str
+  priority:
+    description:
+      - Unique policy priority; lower values run first.
+    type: int
+  effect:
+    description:
+      - Allow or deny decision.
+    type: str
+    choices: [allow, deny]
+  actions:
+    description:
+      - MQTT operations.
+    type: list
+    choices: [connect, pub, sub]
+    elements: str
+  resources:
+    description:
+      - Topic resource patterns.
+    type: list
+    elements: str
+  username:
+    description:
+      - Optional username condition.
+    type: str
+    default: ''
+  client_id:
+    description:
+      - Optional client ID condition.
+    type: str
+    default: ''
+  ip:
+    description:
+      - Optional IP or CIDR condition.
+    type: str
+    default: ''
+  retain:
+    description:
+      - Retained-message match mode.
+    type: int
+    choices: [1, 2, 3]
+  qos:
+    description:
+      - Matching QoS values.
+    type: list
+    choices: [0, 1, 2]
+    elements: int
+  remark:
+    description:
+      - Policy remark.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

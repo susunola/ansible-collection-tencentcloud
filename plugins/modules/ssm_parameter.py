@@ -76,7 +76,8 @@ options:
       - Tags to apply to the secret as a dict, for example I(env=prod).
       - Only applied at creation.
     type: dict
-    default: {}
+    default:
+      {}
   delete_mode:
     description:
       - C(soft) schedules the secret for deletion after

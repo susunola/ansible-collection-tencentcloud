@@ -14,15 +14,52 @@ version_added: "0.14.0"
 description: Creates, updates and deletes subscriptions for TDMQ Pulsar topics.
 options:
 
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  cluster_id: {description: Pulsar cluster ID., type: str, required: true}
-  environment_id: {description: Pulsar namespace name., type: str, required: true}
-  topic_name: {description: Parent topic name., type: str, required: true}
-  name: {description: Subscription name., type: str, required: true}
-  remark: {description: Subscription remark., type: str, default: ''}
-  idempotent: {description: Enable broker-side idempotency., type: bool, default: true}
-  auto_create_policy_topic: {description: Automatically create retry and dead-letter policy topics., type: bool, default: true}
-  force: {description: Force deletion even when consumers are connected., type: bool, default: false}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - Pulsar cluster ID.
+    type: str
+    required: true
+  environment_id:
+    description:
+      - Pulsar namespace name.
+    type: str
+    required: true
+  topic_name:
+    description:
+      - Parent topic name.
+    type: str
+    required: true
+  name:
+    description:
+      - Subscription name.
+    type: str
+    required: true
+  remark:
+    description:
+      - Subscription remark.
+    type: str
+    default: ''
+  idempotent:
+    description:
+      - Enable broker-side idempotency.
+    type: bool
+    default: true
+  auto_create_policy_topic:
+    description:
+      - Automatically create retry and dead-letter policy topics.
+    type: bool
+    default: true
+  force:
+    description:
+      - Force deletion even when consumers are connected.
+    type: bool
+    default: false
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

@@ -12,9 +12,22 @@ short_description: Manage Tencent Cloud GWLB target group associations
 version_added: "0.14.0"
 description: Associates or disassociates a Gateway Load Balancer and target group.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  load_balancer_id: {type: str, required: true, description: GWLB ID.}
-  target_group_id: {type: str, required: true, description: Target group ID.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  load_balancer_id:
+    description:
+      - GWLB ID.
+    type: str
+    required: true
+  target_group_id:
+    description:
+      - Target group ID.
+    type: str
+    required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -16,16 +16,54 @@ description:
   - Creates and deletes saved DLC SQL scripts using exact-name discovery.
   - Since DLC has no script update API, content drift is blocked unless explicit replacement is authorized.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired lifecycle state.}
-  name: {type: str, required: true, description: Exact saved-script name and identity.}
-  sql_statement: {type: str, description: Plain-text SQL content; required on creation.}
-  description: {type: str, description: 'Script description, at most 50 characters.'}
-  database_name: {type: str, description: Default database name.}
-  allow_replace: {type: bool, default: false, description: Explicitly authorize delete-and-recreate when immutable script content drifts.}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize script deletion.}
-  wait: {type: bool, default: true, description: Wait for lifecycle and field convergence.}
-  waiter_delay: {type: int, default: 3, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 180, description: Overall convergence timeout.}
+  state:
+    description:
+      - Desired lifecycle state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Exact saved-script name and identity.
+    type: str
+    required: true
+  sql_statement:
+    description:
+      - Plain-text SQL content; required on creation.
+    type: str
+  description:
+    description:
+      - Script description, at most 50 characters.
+    type: str
+  database_name:
+    description:
+      - Default database name.
+    type: str
+  allow_replace:
+    description:
+      - Explicitly authorize delete-and-recreate when immutable script content drifts.
+    type: bool
+    default: false
+  allow_delete:
+    description:
+      - Explicitly authorize script deletion.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for lifecycle and field convergence.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between polls.
+    type: int
+    default: 3
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 180
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -15,9 +15,22 @@ description:
   - Exactly reconciles writable DLC authorization policies attached to a work group.
   - Ignores server-generated policy IDs, sources, operators and timestamps while preferring PolicyId for precise detach operations.
 options:
-  work_group_id: {type: int, required: true, description: DLC work-group ID.}
-  policies: {type: list, elements: dict, required: true, description: Exact desired SDK Policy list.}
-  allow_empty: {type: bool, default: false, description: Explicitly authorize removing every policy from the work group.}
+  work_group_id:
+    description:
+      - DLC work-group ID.
+    type: int
+    required: true
+  policies:
+    description:
+      - Exact desired SDK Policy list.
+    type: list
+    required: true
+    elements: dict
+  allow_empty:
+    description:
+      - Explicitly authorize removing every policy from the work group.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

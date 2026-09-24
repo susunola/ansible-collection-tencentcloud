@@ -132,7 +132,8 @@ options:
       - Tags to apply to the instance as a dict, for example I(env=prod).
       - Only applied at creation.
     type: dict
-    default: {}
+    default:
+      {}
 notes:
   - Requires the C(tencentcloud-sdk-python-mongodb) package on the
     controller.

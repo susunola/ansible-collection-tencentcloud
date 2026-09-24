@@ -12,13 +12,41 @@ short_description: Manage Tencent Cloud RabbitMQ Serverless virtual hosts
 version_added: "0.14.0"
 description: Creates, updates and deletes RabbitMQ Serverless virtual hosts.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: RabbitMQ Serverless instance ID.}
-  name: {type: str, required: true, description: Virtual-host name.}
-  description: {type: str, default: '', description: Virtual-host description.}
-  mirror_queue_policy: {type: bool, default: true, description: Immutable initial mirror-queue policy.}
-  trace_enabled: {type: bool, description: Message tracing value used during creation or an explicit trace update.}
-  apply_trace: {type: bool, default: false, description: Explicitly write trace_enabled because the service does not return its current value.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - RabbitMQ Serverless instance ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Virtual-host name.
+    type: str
+    required: true
+  description:
+    description:
+      - Virtual-host description.
+    type: str
+    default: ''
+  mirror_queue_policy:
+    description:
+      - Immutable initial mirror-queue policy.
+    type: bool
+    default: true
+  trace_enabled:
+    description:
+      - Message tracing value used during creation or an explicit trace update.
+    type: bool
+  apply_trace:
+    description:
+      - Explicitly write trace_enabled because the service does not return its current value.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

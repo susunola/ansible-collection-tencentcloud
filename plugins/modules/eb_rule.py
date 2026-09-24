@@ -12,13 +12,39 @@ short_description: Manage Tencent Cloud EventBridge rules
 version_added: "0.14.0"
 description: Creates, updates and deletes EventBridge event-routing rules.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  event_bus_id: {type: str, required: true, description: Event bus ID.}
-  rule_id: {type: str, description: Existing rule ID.}
-  name: {type: str, description: Rule name.}
-  event_pattern: {type: str, description: Event pattern JSON string.}
-  enabled: {type: bool, default: true, description: Enable the rule.}
-  description: {type: str, default: '', description: Rule description.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  event_bus_id:
+    description:
+      - Event bus ID.
+    type: str
+    required: true
+  rule_id:
+    description:
+      - Existing rule ID.
+    type: str
+  name:
+    description:
+      - Rule name.
+    type: str
+  event_pattern:
+    description:
+      - Event pattern JSON string.
+    type: str
+  enabled:
+    description:
+      - Enable the rule.
+    type: bool
+    default: true
+  description:
+    description:
+      - Rule description.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

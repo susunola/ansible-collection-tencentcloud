@@ -13,16 +13,54 @@ short_description: Manage a Tencent Cloud TSE configuration file group
 version_added: "0.14.0"
 description: Creates, updates and deletes a namespace-scoped configuration group with exact operator sets.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: TSE engine instance ID.}
-  namespace: {type: str, required: true, description: Configuration namespace.}
-  name: {type: str, required: true, description: Configuration group name.}
-  comment: {type: str, description: Group description.}
-  department: {type: str, description: Owning department.}
-  business: {type: str, description: Owning business.}
-  user_ids: {type: list, elements: str, description: Exact operator user IDs.}
-  group_ids: {type: list, elements: str, description: Exact operator group IDs.}
-  tags: {type: list, elements: dict, description: SDK ConfigFileGroupTag entries.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - TSE engine instance ID.
+    type: str
+    required: true
+  namespace:
+    description:
+      - Configuration namespace.
+    type: str
+    required: true
+  name:
+    description:
+      - Configuration group name.
+    type: str
+    required: true
+  comment:
+    description:
+      - Group description.
+    type: str
+  department:
+    description:
+      - Owning department.
+    type: str
+  business:
+    description:
+      - Owning business.
+    type: str
+  user_ids:
+    description:
+      - Exact operator user IDs.
+    type: list
+    elements: str
+  group_ids:
+    description:
+      - Exact operator group IDs.
+    type: list
+    elements: str
+  tags:
+    description:
+      - SDK ConfigFileGroupTag entries.
+    type: list
+    elements: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

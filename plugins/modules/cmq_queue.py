@@ -11,14 +11,47 @@ short_description: Manage Tencent Cloud CMQ queues
 version_added: "0.14.0"
 description: Manages CMQ queue lifecycle and delivery settings using the CMQ management actions.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  queue_name: {description: Queue name., type: str, required: true}
-  max_msg_heap_num: {description: Maximum queued message count., type: int, default: 10000000}
-  polling_wait_seconds: {description: Long-poll wait time in seconds., type: int, default: 0}
-  visibility_timeout: {description: Message visibility timeout in seconds., type: int, default: 30}
-  max_msg_size: {description: Maximum message size in bytes; immutable after creation., type: int, default: 1048576}
-  msg_retention_seconds: {description: Message retention period in seconds., type: int, default: 3600}
-  rewind_seconds: {description: Maximum message rewind period in seconds., type: int, default: 0}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  queue_name:
+    description:
+      - Queue name.
+    type: str
+    required: true
+  max_msg_heap_num:
+    description:
+      - Maximum queued message count.
+    type: int
+    default: 10000000
+  polling_wait_seconds:
+    description:
+      - Long-poll wait time in seconds.
+    type: int
+    default: 0
+  visibility_timeout:
+    description:
+      - Message visibility timeout in seconds.
+    type: int
+    default: 30
+  max_msg_size:
+    description:
+      - Maximum message size in bytes; immutable after creation.
+    type: int
+    default: 1048576
+  msg_retention_seconds:
+    description:
+      - Message retention period in seconds.
+    type: int
+    default: 3600
+  rewind_seconds:
+    description:
+      - Maximum message rewind period in seconds.
+    type: int
+    default: 0
   retention_size_in_mb:
     description:
       - Rewind storage quota in MB. The API validates this field on every

@@ -16,40 +16,160 @@ description:
   - Creates, updates, starts, suspends, switches images and deletes private DLC data engines.
   - Engine identity, type, billing, network and generation are immutable after creation.
 options:
-  state: {type: str, choices: [present, running, suspended, absent], default: present, description: Desired engine lifecycle state.}
-  name: {type: str, required: true, description: Data engine name.}
-  engine_type: {type: str, choices: [spark, presto, kyuubi], description: Engine type required for creation.}
-  cluster_type: {type: str, description: Cluster resource type required for creation.}
-  mode: {type: int, choices: [0, 1, 2], description: Billing mode required for creation.}
-  size: {type: int, description: Desired engine CU size.}
-  min_clusters: {type: int, description: Desired minimum cluster count.}
-  max_clusters: {type: int, description: Desired maximum cluster count.}
-  auto_resume: {type: bool, description: Automatically resume the engine.}
-  auto_suspend: {type: bool, description: Automatically suspend an idle engine.}
-  auto_suspend_time: {type: int, description: Idle minutes before automatic suspension.}
-  max_concurrency: {type: int, description: Maximum concurrent tasks per cluster.}
-  tolerable_queue_time: {type: int, description: Queue duration before elasticity may trigger.}
-  crontab_resume_suspend: {type: int, choices: [0, 1], description: Disable or enable the scheduled resume/suspend policy.}
-  crontab_resume_suspend_strategy: {type: dict, description: Complete SDK scheduled resume/suspend strategy.}
-  elastic_switch: {type: bool, description: Enable prepaid Spark-batch elasticity.}
-  elastic_limit: {type: int, description: Maximum prepaid Spark-batch elastic capacity.}
-  schedule_elasticity_conf: {type: dict, description: Complete SDK time-based elasticity configuration.}
-  description: {type: str, description: 'Engine description, at most 250 characters.'}
-  cidr_block: {type: str, description: Creation-time VPC CIDR block.}
-  engine_network_id: {type: str, description: Creation-time engine network ID.}
-  engine_exec_type: {type: str, choices: [SQL, BATCH], description: Creation-time execution type.}
-  resource_type: {type: str, choices: [Standard_CU, Memory_CU], description: Creation-time resource type.}
-  engine_generation: {type: str, choices: [Native, SuperSQL], description: Creation-time engine generation.}
-  image_version_name: {type: str, description: 'Desired engine image name, resolved to an online image version ID for existing engines.'}
-  allow_image_switch: {type: bool, default: false, description: Explicitly authorize switching an existing engine image.}
-  standby_cluster: {type: bool, description: Enable or disable the engine standby cluster for high availability.}
-  allow_standby_switch: {type: bool, default: false, description: Explicitly authorize changing standby-cluster availability and cost posture.}
-  pay_mode: {type: int, choices: [0, 1], default: 0, description: Payment type used during creation.}
-  allow_scale_down: {type: bool, default: false, description: Explicitly authorize reducing size or cluster bounds.}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize engine deletion.}
-  wait: {type: bool, default: true, description: Wait for lifecycle and configuration convergence.}
-  waiter_delay: {type: int, default: 10, description: Seconds between convergence polls.}
-  waiter_timeout: {type: int, default: 1800, description: Overall convergence timeout in seconds.}
+  state:
+    description:
+      - Desired engine lifecycle state.
+    type: str
+    choices: [present, running, suspended, absent]
+    default: present
+  name:
+    description:
+      - Data engine name.
+    type: str
+    required: true
+  engine_type:
+    description:
+      - Engine type required for creation.
+    type: str
+    choices: [spark, presto, kyuubi]
+  cluster_type:
+    description:
+      - Cluster resource type required for creation.
+    type: str
+  mode:
+    description:
+      - Billing mode required for creation.
+    type: int
+    choices: [0, 1, 2]
+  size:
+    description:
+      - Desired engine CU size.
+    type: int
+  min_clusters:
+    description:
+      - Desired minimum cluster count.
+    type: int
+  max_clusters:
+    description:
+      - Desired maximum cluster count.
+    type: int
+  auto_resume:
+    description:
+      - Automatically resume the engine.
+    type: bool
+  auto_suspend:
+    description:
+      - Automatically suspend an idle engine.
+    type: bool
+  auto_suspend_time:
+    description:
+      - Idle minutes before automatic suspension.
+    type: int
+  max_concurrency:
+    description:
+      - Maximum concurrent tasks per cluster.
+    type: int
+  tolerable_queue_time:
+    description:
+      - Queue duration before elasticity may trigger.
+    type: int
+  crontab_resume_suspend:
+    description:
+      - Disable or enable the scheduled resume/suspend policy.
+    type: int
+    choices: [0, 1]
+  crontab_resume_suspend_strategy:
+    description:
+      - Complete SDK scheduled resume/suspend strategy.
+    type: dict
+  elastic_switch:
+    description:
+      - Enable prepaid Spark-batch elasticity.
+    type: bool
+  elastic_limit:
+    description:
+      - Maximum prepaid Spark-batch elastic capacity.
+    type: int
+  schedule_elasticity_conf:
+    description:
+      - Complete SDK time-based elasticity configuration.
+    type: dict
+  description:
+    description:
+      - Engine description, at most 250 characters.
+    type: str
+  cidr_block:
+    description:
+      - Creation-time VPC CIDR block.
+    type: str
+  engine_network_id:
+    description:
+      - Creation-time engine network ID.
+    type: str
+  engine_exec_type:
+    description:
+      - Creation-time execution type.
+    type: str
+    choices: [SQL, BATCH]
+  resource_type:
+    description:
+      - Creation-time resource type.
+    type: str
+    choices: [Standard_CU, Memory_CU]
+  engine_generation:
+    description:
+      - Creation-time engine generation.
+    type: str
+    choices: [Native, SuperSQL]
+  image_version_name:
+    description:
+      - Desired engine image name, resolved to an online image version ID for existing engines.
+    type: str
+  allow_image_switch:
+    description:
+      - Explicitly authorize switching an existing engine image.
+    type: bool
+    default: false
+  standby_cluster:
+    description:
+      - Enable or disable the engine standby cluster for high availability.
+    type: bool
+  allow_standby_switch:
+    description:
+      - Explicitly authorize changing standby-cluster availability and cost posture.
+    type: bool
+    default: false
+  pay_mode:
+    description:
+      - Payment type used during creation.
+    type: int
+    choices: [0, 1]
+    default: 0
+  allow_scale_down:
+    description:
+      - Explicitly authorize reducing size or cluster bounds.
+    type: bool
+    default: false
+  allow_delete:
+    description:
+      - Explicitly authorize engine deletion.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for lifecycle and configuration convergence.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between convergence polls.
+    type: int
+    default: 10
+  waiter_timeout:
+    description:
+      - Overall convergence timeout in seconds.
+    type: int
+    default: 1800
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

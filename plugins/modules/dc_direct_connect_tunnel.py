@@ -12,26 +12,92 @@ short_description: Manage Tencent Cloud Direct Connect tunnels
 version_added: "0.14.0"
 description: Creates, updates and deletes Direct Connect tunnels with BGP or static routing configuration.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  tunnel_id: {type: str, description: Existing tunnel ID.}
-  name: {type: str, description: Tunnel name.}
-  direct_connect_id: {type: str, description: Physical connection ID required for creation and immutable afterwards.}
-  owner_account: {type: str, description: Creation-time owner account.}
-  network_type: {type: str, description: Network type required for creation and immutable afterwards.}
-  network_region: {type: str, description: Network region required for creation and immutable afterwards.}
-  vpc_id: {type: str, description: VPC ID required for VPC tunnels and immutable afterwards.}
-  direct_connect_gateway_id: {type: str, description: Direct Connect gateway ID required for creation and immutable afterwards.}
-  bandwidth: {type: int, description: Tunnel bandwidth in Mbps.}
-  route_type: {type: str, choices: [BGP, STATIC], description: Route type required for creation and immutable afterwards.}
-  bgp_peer: {type: dict, description: SDK BgpPeer payload including ASN and optional authentication key.}
-  route_filter_prefixes: {type: list, elements: str, description: Customer route CIDRs.}
-  vlan: {type: int, description: Tunnel VLAN.}
-  tencent_address: {type: str, description: Tencent-side IPv4 address.}
-  customer_address: {type: str, description: Customer-side IPv4 address.}
-  tencent_backup_address: {type: str, description: Tencent-side backup IPv4 address.}
-  bfd_enabled: {type: int, choices: [0, 1], description: Enable BFD.}
-  nqa_enabled: {type: int, choices: [0, 1], description: Enable NQA.}
-  tags: {type: dict, description: Creation-time tags.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  tunnel_id:
+    description:
+      - Existing tunnel ID.
+    type: str
+  name:
+    description:
+      - Tunnel name.
+    type: str
+  direct_connect_id:
+    description:
+      - Physical connection ID required for creation and immutable afterwards.
+    type: str
+  owner_account:
+    description:
+      - Creation-time owner account.
+    type: str
+  network_type:
+    description:
+      - Network type required for creation and immutable afterwards.
+    type: str
+  network_region:
+    description:
+      - Network region required for creation and immutable afterwards.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID required for VPC tunnels and immutable afterwards.
+    type: str
+  direct_connect_gateway_id:
+    description:
+      - Direct Connect gateway ID required for creation and immutable afterwards.
+    type: str
+  bandwidth:
+    description:
+      - Tunnel bandwidth in Mbps.
+    type: int
+  route_type:
+    description:
+      - Route type required for creation and immutable afterwards.
+    type: str
+    choices: [BGP, STATIC]
+  bgp_peer:
+    description:
+      - SDK BgpPeer payload including ASN and optional authentication key.
+    type: dict
+  route_filter_prefixes:
+    description:
+      - Customer route CIDRs.
+    type: list
+    elements: str
+  vlan:
+    description:
+      - Tunnel VLAN.
+    type: int
+  tencent_address:
+    description:
+      - Tencent-side IPv4 address.
+    type: str
+  customer_address:
+    description:
+      - Customer-side IPv4 address.
+    type: str
+  tencent_backup_address:
+    description:
+      - Tencent-side backup IPv4 address.
+    type: str
+  bfd_enabled:
+    description:
+      - Enable BFD.
+    type: int
+    choices: [0, 1]
+  nqa_enabled:
+    description:
+      - Enable NQA.
+    type: int
+    choices: [0, 1]
+  tags:
+    description:
+      - Creation-time tags.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

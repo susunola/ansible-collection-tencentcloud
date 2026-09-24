@@ -12,15 +12,51 @@ short_description: Manage Tencent Cloud Managed Prometheus alert groups
 version_added: "0.14.0"
 description: Creates, updates and deletes Prometheus alert groups and their rules.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: Prometheus instance ID.}
-  group_id: {type: str, description: Existing alert-group ID.}
-  name: {type: str, description: Alert-group name.}
-  enabled: {type: bool, default: true, description: Enable every rule in the group.}
-  receivers: {type: list, elements: str, default: [], description: Alarm notification template IDs.}
-  custom_receiver: {type: dict, description: SDK-compatible custom receiver.}
-  repeat_interval: {type: str, default: 1h, description: Notification repeat interval.}
-  rules: {type: list, elements: dict, default: [], description: SDK-compatible alert rules.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Prometheus instance ID.
+    type: str
+    required: true
+  group_id:
+    description:
+      - Existing alert-group ID.
+    type: str
+  name:
+    description:
+      - Alert-group name.
+    type: str
+  enabled:
+    description:
+      - Enable every rule in the group.
+    type: bool
+    default: true
+  receivers:
+    description:
+      - Alarm notification template IDs.
+    type: list
+    default: []
+    elements: str
+  custom_receiver:
+    description:
+      - SDK-compatible custom receiver.
+    type: dict
+  repeat_interval:
+    description:
+      - Notification repeat interval.
+    type: str
+    default: 1h
+  rules:
+    description:
+      - SDK-compatible alert rules.
+    type: list
+    default: []
+    elements: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

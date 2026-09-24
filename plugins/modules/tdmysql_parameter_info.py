@@ -14,8 +14,16 @@ short_description: Gather Tencent Cloud TDSQL MySQL instance parameters
 version_added: "0.14.0"
 description: Returns current parameter values, defaults, constraints and restart requirements.
 options:
-  instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
-  names: {type: list, elements: str, description: Optional exact parameter names to return.}
+  instance_id:
+    description:
+      - Stable TDSQL MySQL instance ID.
+    type: str
+    required: true
+  names:
+    description:
+      - Optional exact parameter names to return.
+    type: list
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

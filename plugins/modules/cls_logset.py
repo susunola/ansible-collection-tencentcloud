@@ -13,10 +13,24 @@ short_description: Manage Tencent Cloud CLS logsets
 version_added: "0.14.0"
 description: Creates, renames, retags and deletes CLS logsets idempotently.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  logset_id: {description: Existing logset ID., type: str}
-  name: {description: Logset name., type: str}
-  tags: {description: Exact tag dictionary., type: dict}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  logset_id:
+    description:
+      - Existing logset ID.
+    type: str
+  name:
+    description:
+      - Logset name.
+    type: str
+  tags:
+    description:
+      - Exact tag dictionary.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

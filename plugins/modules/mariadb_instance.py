@@ -12,22 +12,83 @@ short_description: Manage Tencent Cloud MariaDB instances
 version_added: "0.14.0"
 description: Creates, renames, resizes, isolates and optionally destroys TencentDB for MariaDB instances.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, description: Existing MariaDB instance ID.}
-  name: {type: str, description: Instance name.}
-  zones: {type: list, elements: str, description: Primary and replica availability zones.}
-  node_count: {type: int, choices: [2, 3], description: Database node count; defaults to 2 during creation.}
-  memory: {type: int, description: Memory in GiB.}
-  storage: {type: int, description: Storage in GiB.}
-  db_version: {type: str, choices: ['8.0', '5.7', '10.1'], description: Database engine version.}
-  vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  subnet_id: {type: str, description: Subnet ID; immutable after creation.}
-  charge_type: {type: str, choices: [PREPAID, POSTPAID_BY_HOUR], default: POSTPAID_BY_HOUR, description: Billing mode.}
-  period_months: {type: int, default: 1, description: Prepaid purchase period in months.}
-  auto_renew: {type: bool, default: false, description: Enable prepaid automatic renewal at creation.}
-  security_group_ids: {type: list, elements: str, default: [], description: Security groups bound at creation.}
-  ipv6: {type: bool, default: false, description: Enable IPv6 at creation.}
-  purge: {type: bool, default: false, description: Permanently destroy an already isolated instance.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Existing MariaDB instance ID.
+    type: str
+  name:
+    description:
+      - Instance name.
+    type: str
+  zones:
+    description:
+      - Primary and replica availability zones.
+    type: list
+    elements: str
+  node_count:
+    description:
+      - Database node count; defaults to 2 during creation.
+    type: int
+    choices: [2, 3]
+  memory:
+    description:
+      - Memory in GiB.
+    type: int
+  storage:
+    description:
+      - Storage in GiB.
+    type: int
+  db_version:
+    description:
+      - Database engine version.
+    type: str
+    choices: ['8.0', '5.7', '10.1']
+  vpc_id:
+    description:
+      - VPC ID; immutable after creation.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID; immutable after creation.
+    type: str
+  charge_type:
+    description:
+      - Billing mode.
+    type: str
+    choices: [PREPAID, POSTPAID_BY_HOUR]
+    default: POSTPAID_BY_HOUR
+  period_months:
+    description:
+      - Prepaid purchase period in months.
+    type: int
+    default: 1
+  auto_renew:
+    description:
+      - Enable prepaid automatic renewal at creation.
+    type: bool
+    default: false
+  security_group_ids:
+    description:
+      - Security groups bound at creation.
+    type: list
+    default: []
+    elements: str
+  ipv6:
+    description:
+      - Enable IPv6 at creation.
+    type: bool
+    default: false
+  purge:
+    description:
+      - Permanently destroy an already isolated instance.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -17,7 +17,8 @@ options:
   filters:
     description: SCF API filter names mapped to lists of values.
     type: dict
-    default: {}
+    default:
+      {}
   page_size:
     description: Number of results requested per API call.
     type: int

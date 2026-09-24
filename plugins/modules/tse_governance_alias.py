@@ -13,15 +13,49 @@ short_description: Manage a Tencent Cloud TSE governance service alias
 version_added: "0.14.0"
 description: Creates, retargets, updates and deletes a namespace-scoped governance service alias.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: TSE engine instance ID.}
-  alias: {type: str, required: true, description: Service alias.}
-  alias_namespace: {type: str, required: true, description: Namespace containing the alias.}
-  service: {type: str, description: Target service name.}
-  namespace: {type: str, description: Target service namespace.}
-  comment: {type: str, description: Alias description.}
-  waiter_delay: {type: int, default: 2, description: Reconciliation polling interval.}
-  waiter_timeout: {type: int, default: 60, description: Reconciliation timeout.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - TSE engine instance ID.
+    type: str
+    required: true
+  alias:
+    description:
+      - Service alias.
+    type: str
+    required: true
+  alias_namespace:
+    description:
+      - Namespace containing the alias.
+    type: str
+    required: true
+  service:
+    description:
+      - Target service name.
+    type: str
+  namespace:
+    description:
+      - Target service namespace.
+    type: str
+  comment:
+    description:
+      - Alias description.
+    type: str
+  waiter_delay:
+    description:
+      - Reconciliation polling interval.
+    type: int
+    default: 2
+  waiter_timeout:
+    description:
+      - Reconciliation timeout.
+    type: int
+    default: 60
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

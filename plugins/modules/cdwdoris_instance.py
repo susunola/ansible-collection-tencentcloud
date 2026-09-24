@@ -12,30 +12,105 @@ short_description: Manage Tencent Cloud CDW Doris instances
 version_added: "0.14.0"
 description: Creates, renames, waits for and destroys CDW Doris instances.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, description: Existing instance ID.}
-  name: {type: str, description: Instance name used for lookup and rename.}
-  zone: {type: str, description: Creation-time availability zone.}
-  fe_spec: {type: dict, description: SDK CreateInstanceSpec payload for FE nodes.}
-  be_spec: {type: dict, description: SDK CreateInstanceSpec payload for BE nodes.}
-  ha: {type: bool, description: Creation-time high-availability flag.}
-  vpc_id: {type: str, description: Creation-time VPC ID.}
-  subnet_id: {type: str, description: Creation-time subnet ID.}
-  product_version: {type: str, description: Creation-time product version.}
-  charge_properties: {type: dict, description: SDK ChargeProperties payload.}
-  admin_password: {type: str, description: Initial Doris administrator password.}
-  tags: {type: dict, description: Creation-time tags.}
-  ha_type: {type: int, description: Creation-time HA type.}
-  case_sensitive: {type: int, description: Whether table names are case-sensitive.}
-  enable_multi_zones: {type: bool, description: Whether multi-zone deployment is enabled.}
-  multi_zone_infos: {type: list, elements: dict, description: SDK NetworkInfo payloads for multi-zone deployment.}
-  is_ssc: {type: bool, description: Whether storage-compute separation is enabled.}
-  ssc_cu: {type: int, description: Compute units for storage-compute separation.}
-  cache_data_disk_size: {type: int, description: Cache data disk size.}
-  wait: {type: bool, default: true, description: Wait for serving or absent convergence.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Existing instance ID.
+    type: str
+  name:
+    description:
+      - Instance name used for lookup and rename.
+    type: str
+  zone:
+    description:
+      - Creation-time availability zone.
+    type: str
+  fe_spec:
+    description:
+      - SDK CreateInstanceSpec payload for FE nodes.
+    type: dict
+  be_spec:
+    description:
+      - SDK CreateInstanceSpec payload for BE nodes.
+    type: dict
+  ha:
+    description:
+      - Creation-time high-availability flag.
+    type: bool
+  vpc_id:
+    description:
+      - Creation-time VPC ID.
+    type: str
+  subnet_id:
+    description:
+      - Creation-time subnet ID.
+    type: str
+  product_version:
+    description:
+      - Creation-time product version.
+    type: str
+  charge_properties:
+    description:
+      - SDK ChargeProperties payload.
+    type: dict
+  admin_password:
+    description:
+      - Initial Doris administrator password.
+    type: str
+  tags:
+    description:
+      - Creation-time tags.
+    type: dict
+  ha_type:
+    description:
+      - Creation-time HA type.
+    type: int
+  case_sensitive:
+    description:
+      - Whether table names are case-sensitive.
+    type: int
+  enable_multi_zones:
+    description:
+      - Whether multi-zone deployment is enabled.
+    type: bool
+  multi_zone_infos:
+    description:
+      - SDK NetworkInfo payloads for multi-zone deployment.
+    type: list
+    elements: dict
+  is_ssc:
+    description:
+      - Whether storage-compute separation is enabled.
+    type: bool
+  ssc_cu:
+    description:
+      - Compute units for storage-compute separation.
+    type: int
+  cache_data_disk_size:
+    description:
+      - Cache data disk size.
+    type: int
+  wait:
+    description:
+      - Wait for serving or absent convergence.
+    type: bool
+    default: true
 
-  waiter_delay: {type: int, default: 10, description: Seconds between polling attempts.}
-  waiter_timeout: {type: int, default: 1800, description: Overall polling timeout in seconds.}
+  waiter_delay:
+    description:
+      - Seconds between polling attempts.
+    type: int
+    default: 10
+  waiter_timeout:
+    description:
+      - Overall polling timeout in seconds.
+    type: int
+    default: 1800
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

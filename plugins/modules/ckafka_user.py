@@ -12,12 +12,35 @@ short_description: Manage Tencent Cloud CKafka users
 version_added: "0.14.0"
 description: Creates and deletes CKafka users and performs explicit password rotation with the current password.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: CKafka instance ID.}
-  name: {type: str, required: true, description: User name.}
-  password: {type: str, description: Password for user creation or the new password during rotation.}
-  rotate_password: {type: bool, default: false, description: Explicitly replace the password.}
-  current_password: {type: str, description: Current password required by CKafka during rotation.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - CKafka instance ID.
+    type: str
+    required: true
+  name:
+    description:
+      - User name.
+    type: str
+    required: true
+  password:
+    description:
+      - Password for user creation or the new password during rotation.
+    type: str
+  rotate_password:
+    description:
+      - Explicitly replace the password.
+    type: bool
+    default: false
+  current_password:
+    description:
+      - Current password required by CKafka during rotation.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

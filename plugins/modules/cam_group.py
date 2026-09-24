@@ -13,10 +13,25 @@ version_added: "0.14.0"
 description: Creates, renames, updates and deletes CAM groups.
 options:
 
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  group_id: {type: int, description: Existing CAM group ID.}
-  name: {type: str, description: Group name.}
-  remark: {type: str, default: '', description: Group remark.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  group_id:
+    description:
+      - Existing CAM group ID.
+    type: int
+  name:
+    description:
+      - Group name.
+    type: str
+  remark:
+    description:
+      - Group remark.
+    type: str
+    default: ''
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

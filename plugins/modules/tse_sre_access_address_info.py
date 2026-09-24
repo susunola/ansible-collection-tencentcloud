@@ -13,11 +13,27 @@ short_description: Gather Tencent Cloud TSE registry-engine access addresses
 version_added: "0.14.0"
 description: Returns client, console, Apollo environment and Polaris limiter access endpoints and bandwidth metadata.
 options:
-  instance_id: {type: str, required: true, description: TSE engine instance ID.}
-  vpc_id: {type: str, description: VPC used to resolve an intranet endpoint.}
-  subnet_id: {type: str, description: Subnet used to resolve an intranet endpoint.}
-  workload: {type: str, description: Additional engine workload such as pushgateway or polaris-limiter.}
-  engine_region: {type: str, description: Deployment region override for the queried endpoint.}
+  instance_id:
+    description:
+      - TSE engine instance ID.
+    type: str
+    required: true
+  vpc_id:
+    description:
+      - VPC used to resolve an intranet endpoint.
+    type: str
+  subnet_id:
+    description:
+      - Subnet used to resolve an intranet endpoint.
+    type: str
+  workload:
+    description:
+      - Additional engine workload such as pushgateway or polaris-limiter.
+    type: str
+  engine_region:
+    description:
+      - Deployment region override for the queried endpoint.
+    type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

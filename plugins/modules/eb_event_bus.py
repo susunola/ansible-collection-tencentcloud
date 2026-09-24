@@ -12,12 +12,33 @@ short_description: Manage Tencent Cloud EventBridge event buses
 version_added: "0.14.0"
 description: Creates, updates and deletes custom EventBridge event buses.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  event_bus_id: {type: str, description: Existing event bus ID.}
-  name: {type: str, description: Event bus name.}
-  description: {type: str, default: '', description: Event bus description.}
-  save_days: {type: int, description: Event retention in days.}
-  enable_store: {type: bool, description: Enable event storage.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  event_bus_id:
+    description:
+      - Existing event bus ID.
+    type: str
+  name:
+    description:
+      - Event bus name.
+    type: str
+  description:
+    description:
+      - Event bus description.
+    type: str
+    default: ''
+  save_days:
+    description:
+      - Event retention in days.
+    type: int
+  enable_store:
+    description:
+      - Enable event storage.
+    type: bool
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

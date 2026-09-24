@@ -14,12 +14,36 @@ description:
   - Creates, updates and deletes CVM placement groups.
   - Placement type is immutable; replacement is allowed only for an empty group.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  group_id: {type: str, description: Existing placement-group ID.}
-  name: {type: str, description: Placement-group name.}
-  placement_type: {type: str, choices: [HOST, SW, RACK], default: HOST, description: Failure-domain level.}
-  affinity: {type: int, default: 1, description: Placement affinity from 1 through 10.}
-  force_replace: {type: bool, default: false, description: Replace an empty group when immutable properties change or affinity must decrease.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  group_id:
+    description:
+      - Existing placement-group ID.
+    type: str
+  name:
+    description:
+      - Placement-group name.
+    type: str
+  placement_type:
+    description:
+      - Failure-domain level.
+    type: str
+    choices: [HOST, SW, RACK]
+    default: HOST
+  affinity:
+    description:
+      - Placement affinity from 1 through 10.
+    type: int
+    default: 1
+  force_replace:
+    description:
+      - Replace an empty group when immutable properties change or affinity must decrease.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

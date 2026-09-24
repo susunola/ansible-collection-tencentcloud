@@ -16,27 +16,101 @@ description:
   - Creates, updates and deletes standard DLC engine resource groups.
   - Reconciles base settings, Spark executor capacity and network bindings from readable API state.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired lifecycle state.}
-  name: {type: str, required: true, description: Exact resource-group name.}
-  data_engine_name: {type: str, description: 'Parent standard engine name, required for creation and immutable afterwards.'}
-  auto_launch: {type: bool, description: Automatically launch when a task is submitted.}
-  auto_pause: {type: bool, description: Automatically pause while idle.}
-  auto_pause_time: {type: int, description: Idle minutes before automatic pause.}
-  max_concurrency: {type: int, description: Maximum concurrent tasks.}
-  driver_cu_spec: {type: str, description: Spark driver CU specification.}
-  executor_cu_spec: {type: str, description: Spark executor CU specification.}
-  min_executors: {type: int, description: Minimum executor count.}
-  max_executors: {type: int, description: Maximum executor count.}
-  network_config_names: {type: list, elements: str, description: Exact network configuration bindings.}
-  static_config: {type: dict, description: Exact static Spark configuration map; omitted keys are removed.}
-  dynamic_config: {type: dict, description: Exact dynamic Spark configuration map; omitted keys are removed.}
-  launch_now: {type: bool, default: false, description: Launch immediately after creation.}
-  effective_now: {type: bool, default: false, description: Restart immediately when resource or network configuration changes.}
-  allow_scale_down: {type: bool, default: false, description: Explicitly authorize reducing executor capacity.}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize deletion.}
-  wait: {type: bool, default: true, description: Wait for lifecycle and field convergence.}
-  waiter_delay: {type: int, default: 10, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 1800, description: Overall convergence timeout.}
+  state:
+    description:
+      - Desired lifecycle state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Exact resource-group name.
+    type: str
+    required: true
+  data_engine_name:
+    description:
+      - Parent standard engine name, required for creation and immutable afterwards.
+    type: str
+  auto_launch:
+    description:
+      - Automatically launch when a task is submitted.
+    type: bool
+  auto_pause:
+    description:
+      - Automatically pause while idle.
+    type: bool
+  auto_pause_time:
+    description:
+      - Idle minutes before automatic pause.
+    type: int
+  max_concurrency:
+    description:
+      - Maximum concurrent tasks.
+    type: int
+  driver_cu_spec:
+    description:
+      - Spark driver CU specification.
+    type: str
+  executor_cu_spec:
+    description:
+      - Spark executor CU specification.
+    type: str
+  min_executors:
+    description:
+      - Minimum executor count.
+    type: int
+  max_executors:
+    description:
+      - Maximum executor count.
+    type: int
+  network_config_names:
+    description:
+      - Exact network configuration bindings.
+    type: list
+    elements: str
+  static_config:
+    description:
+      - Exact static Spark configuration map; omitted keys are removed.
+    type: dict
+  dynamic_config:
+    description:
+      - Exact dynamic Spark configuration map; omitted keys are removed.
+    type: dict
+  launch_now:
+    description:
+      - Launch immediately after creation.
+    type: bool
+    default: false
+  effective_now:
+    description:
+      - Restart immediately when resource or network configuration changes.
+    type: bool
+    default: false
+  allow_scale_down:
+    description:
+      - Explicitly authorize reducing executor capacity.
+    type: bool
+    default: false
+  allow_delete:
+    description:
+      - Explicitly authorize deletion.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for lifecycle and field convergence.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between polls.
+    type: int
+    default: 10
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 1800
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

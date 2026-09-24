@@ -12,10 +12,26 @@ short_description: Manage Tencent Cloud VPC address-template groups
 version_added: "0.14.0"
 description: Creates, updates and deletes reusable groups of VPC address templates.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  group_id: {type: str, description: Existing address-template group ID.}
-  name: {type: str, description: Group name.}
-  template_ids: {type: list, elements: str, default: [], description: Exact member address-template ID set.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  group_id:
+    description:
+      - Existing address-template group ID.
+    type: str
+  name:
+    description:
+      - Group name.
+    type: str
+  template_ids:
+    description:
+      - Exact member address-template ID set.
+    type: list
+    default: []
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

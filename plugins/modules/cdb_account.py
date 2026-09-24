@@ -12,14 +12,46 @@ short_description: Manage TencentDB for MySQL accounts
 version_added: "0.14.0"
 description: Creates, updates, rotates and deletes a CDB account identified by user and host.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: CDB instance ID.}
-  username: {type: str, required: true, description: Account name.}
-  host: {type: str, default: '%', description: Account host expression.}
-  password: {type: str, description: Password for creation or rotation.}
-  rotate_password: {type: bool, default: false, description: Explicitly replace the account password.}
-  description: {type: str, default: '', description: Account description.}
-  max_user_connections: {type: int, default: 10240, description: Maximum connections for this account.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - CDB instance ID.
+    type: str
+    required: true
+  username:
+    description:
+      - Account name.
+    type: str
+    required: true
+  host:
+    description:
+      - Account host expression.
+    type: str
+    default: '%'
+  password:
+    description:
+      - Password for creation or rotation.
+    type: str
+  rotate_password:
+    description:
+      - Explicitly replace the account password.
+    type: bool
+    default: false
+  description:
+    description:
+      - Account description.
+    type: str
+    default: ''
+  max_user_connections:
+    description:
+      - Maximum connections for this account.
+    type: int
+    default: 10240
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

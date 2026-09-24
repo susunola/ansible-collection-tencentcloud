@@ -14,9 +14,20 @@ short_description: Gather Tencent Cloud TSE gateway runtime topology
 version_added: "0.14.0"
 description: Returns gateway network configuration, protocol ports, public addresses and optional group nodes.
 options:
-  gateway_id: {type: str, required: true, description: Cloud-native API gateway ID.}
-  group_id: {type: str, description: 'Optional gateway group ID used to scope configuration, addresses and nodes.'}
-  page_size: {type: int, default: 100, description: Number of nodes requested per API call.}
+  gateway_id:
+    description:
+      - Cloud-native API gateway ID.
+    type: str
+    required: true
+  group_id:
+    description:
+      - Optional gateway group ID used to scope configuration, addresses and nodes.
+    type: str
+  page_size:
+    description:
+      - Number of nodes requested per API call.
+    type: int
+    default: 100
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

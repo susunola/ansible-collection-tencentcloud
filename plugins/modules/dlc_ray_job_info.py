@@ -16,16 +16,53 @@ description:
   - Reads one Ray job by strong ID and optionally gathers its status history, events, Pods and submitted YAML.
   - Page-number and context-token diagnostics are bounded to prevent unbounded reads.
 options:
-  ray_job_id: {type: str, required: true, description: Exact Ray job ID.}
-  include_history: {type: bool, default: false, description: Include paginated job status history.}
-  include_events: {type: bool, default: false, description: Include context-paginated Ray job events.}
-  include_pods: {type: bool, default: false, description: Include paginated Ray job Pods.}
-  include_yaml: {type: bool, default: false, description: Include the submitted RayJob YAML.}
-  start_time: {type: int, description: Optional diagnostic start timestamp in milliseconds.}
-  end_time: {type: int, description: Optional diagnostic end timestamp in milliseconds.}
-  event_type: {type: str, description: Optional ASCII event type such as Normal or Warning.}
-  page_size: {type: int, default: 100, description: 'History, event and Pod page size, from 1 to 200.'}
-  max_pages: {type: int, default: 100, description: 'Maximum pages per diagnostic stream, from 1 to 1000.'}
+  ray_job_id:
+    description:
+      - Exact Ray job ID.
+    type: str
+    required: true
+  include_history:
+    description:
+      - Include paginated job status history.
+    type: bool
+    default: false
+  include_events:
+    description:
+      - Include context-paginated Ray job events.
+    type: bool
+    default: false
+  include_pods:
+    description:
+      - Include paginated Ray job Pods.
+    type: bool
+    default: false
+  include_yaml:
+    description:
+      - Include the submitted RayJob YAML.
+    type: bool
+    default: false
+  start_time:
+    description:
+      - Optional diagnostic start timestamp in milliseconds.
+    type: int
+  end_time:
+    description:
+      - Optional diagnostic end timestamp in milliseconds.
+    type: int
+  event_type:
+    description:
+      - Optional ASCII event type such as Normal or Warning.
+    type: str
+  page_size:
+    description:
+      - History, event and Pod page size, from 1 to 200.
+    type: int
+    default: 100
+  max_pages:
+    description:
+      - Maximum pages per diagnostic stream, from 1 to 1000.
+    type: int
+    default: 100
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

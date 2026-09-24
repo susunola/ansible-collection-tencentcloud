@@ -114,6 +114,12 @@ jobs:
         run: ruff check . --no-cache
       - name: Sanity ignore budget
         run: python scripts/check_sanity_ignore.py
+      # The reviewer's headline finding: 432 modules documented their options as
+      # single-line flow mappings.  Nothing upstream can see that -- a flow
+      # mapping is legal YAML, validate-modules accepts it, and
+      # sync_doc_fragments accepts it by design.
+      - name: Module docs are block style
+        run: python scripts/normalize_module_docs.py --check
       - name: Sanity tests
         run: ansible-test sanity --color --python ${{ matrix.python }}
       - name: Unit tests

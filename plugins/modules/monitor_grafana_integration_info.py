@@ -13,9 +13,19 @@ short_description: Gather installed Managed Grafana integrations
 version_added: "1.4.0"
 description: Reads integrations installed in a Tencent Cloud Managed Grafana instance.
 options:
-  instance_id: {description: Grafana instance ID., type: str, required: true}
-  integration_id: {description: Exact integration ID., type: str}
-  kind: {description: Exact integration type code., type: str}
+  instance_id:
+    description:
+      - Grafana instance ID.
+    type: str
+    required: true
+  integration_id:
+    description:
+      - Exact integration ID.
+    type: str
+  kind:
+    description:
+      - Exact integration type code.
+    type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

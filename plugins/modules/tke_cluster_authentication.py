@@ -12,9 +12,21 @@ short_description: Manage Tencent Cloud TKE cluster authentication options
 version_added: "0.14.0"
 description: Reconciles service-account and OIDC authentication options for a TKE cluster.
 options:
-  cluster_id: {type: str, required: true, description: TKE cluster ID.}
-  service_accounts: {type: dict, required: true, description: SDK-compatible ServiceAccount authentication options.}
-  oidc: {type: dict, required: true, description: SDK-compatible OIDC authentication options.}
+  cluster_id:
+    description:
+      - TKE cluster ID.
+    type: str
+    required: true
+  service_accounts:
+    description:
+      - SDK-compatible ServiceAccount authentication options.
+    type: dict
+    required: true
+  oidc:
+    description:
+      - SDK-compatible OIDC authentication options.
+    type: dict
+    required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -14,14 +14,43 @@ short_description: Manage a Tencent Cloud TSF package repository
 version_added: "0.15.0"
 description: Creates, updates and deletes a TSF package repository with immutable storage placement protection.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired resource state.}
-  repository_id: {type: str, description: Existing repository ID; exact name and type are used when omitted.}
-  name: {type: str, required: true, description: Repository name.}
-  repository_type: {type: str, choices: [default, private], required: true, description: Repository type.}
-  description: {type: str, description: Repository description.}
-  bucket_name: {type: str, description: 'COS bucket name, required for a private repository.'}
-  bucket_region: {type: str, description: 'COS bucket region, required for a private repository.'}
-  directory: {type: str, description: Repository directory in the COS bucket.}
+  state:
+    description:
+      - Desired resource state.
+    type: str
+    choices: [present, absent]
+    default: present
+  repository_id:
+    description:
+      - Existing repository ID; exact name and type are used when omitted.
+    type: str
+  name:
+    description:
+      - Repository name.
+    type: str
+    required: true
+  repository_type:
+    description:
+      - Repository type.
+    type: str
+    required: true
+    choices: [default, private]
+  description:
+    description:
+      - Repository description.
+    type: str
+  bucket_name:
+    description:
+      - COS bucket name, required for a private repository.
+    type: str
+  bucket_region:
+    description:
+      - COS bucket region, required for a private repository.
+    type: str
+  directory:
+    description:
+      - Repository directory in the COS bucket.
+    type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

@@ -14,12 +14,37 @@ short_description: Retire all Tencent Cloud TSE governance instances on a host
 version_added: "0.14.0"
 description: Discovers every governance service instance registered on one host, removes them in batches and waits for the host to become empty.
 options:
-  state: {type: str, choices: [absent], default: absent, description: Desired host registration state.}
-  instance_id: {type: str, required: true, description: TSE engine instance ID.}
-  host: {type: str, required: true, description: Host or IP whose governance registrations must be removed.}
-  batch_size: {type: int, default: 100, description: Maximum registrations deleted per API request.}
-  waiter_delay: {type: int, default: 2, description: Polling interval while waiting for convergence.}
-  waiter_timeout: {type: int, default: 60, description: Maximum convergence wait.}
+  state:
+    description:
+      - Desired host registration state.
+    type: str
+    choices: [absent]
+    default: absent
+  instance_id:
+    description:
+      - TSE engine instance ID.
+    type: str
+    required: true
+  host:
+    description:
+      - Host or IP whose governance registrations must be removed.
+    type: str
+    required: true
+  batch_size:
+    description:
+      - Maximum registrations deleted per API request.
+    type: int
+    default: 100
+  waiter_delay:
+    description:
+      - Polling interval while waiting for convergence.
+    type: int
+    default: 2
+  waiter_timeout:
+    description:
+      - Maximum convergence wait.
+    type: int
+    default: 60
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

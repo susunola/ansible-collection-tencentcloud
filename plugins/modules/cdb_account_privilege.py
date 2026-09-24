@@ -14,38 +14,99 @@ description:
   - Reconciles the complete global, database, table and column privilege set for one CDB account.
   - C(state=absent) revokes all managed privileges without deleting the account.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired privilege-set state.}
-  instance_id: {type: str, required: true, description: CDB instance ID.}
-  username: {type: str, required: true, description: Account name.}
-  host: {type: str, default: '%', description: Account host expression.}
-  global_privileges: {type: list, elements: str, default: [], description: Global privilege names.}
+  state:
+    description:
+      - Desired privilege-set state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - CDB instance ID.
+    type: str
+    required: true
+  username:
+    description:
+      - Account name.
+    type: str
+    required: true
+  host:
+    description:
+      - Account host expression.
+    type: str
+    default: '%'
+  global_privileges:
+    description:
+      - Global privilege names.
+    type: list
+    default: []
+    elements: str
   database_privileges:
     type: list
     elements: dict
     default: []
     description: Per-database privilege sets.
     suboptions:
-      database: {type: str, required: true, description: Database name.}
-      privileges: {type: list, elements: str, required: true, description: Privilege names.}
+      database:
+        description:
+          - Database name.
+        type: str
+        required: true
+      privileges:
+        description:
+          - Privilege names.
+        type: list
+        required: true
+        elements: str
   table_privileges:
     type: list
     elements: dict
     default: []
     description: Per-table privilege sets.
     suboptions:
-      database: {type: str, required: true, description: Database name.}
-      table: {type: str, required: true, description: Table name.}
-      privileges: {type: list, elements: str, required: true, description: Privilege names.}
+      database:
+        description:
+          - Database name.
+        type: str
+        required: true
+      table:
+        description:
+          - Table name.
+        type: str
+        required: true
+      privileges:
+        description:
+          - Privilege names.
+        type: list
+        required: true
+        elements: str
   column_privileges:
     type: list
     elements: dict
     default: []
     description: Per-column privilege sets.
     suboptions:
-      database: {type: str, required: true, description: Database name.}
-      table: {type: str, required: true, description: Table name.}
-      column: {type: str, required: true, description: Column name.}
-      privileges: {type: list, elements: str, required: true, description: Privilege names.}
+      database:
+        description:
+          - Database name.
+        type: str
+        required: true
+      table:
+        description:
+          - Table name.
+        type: str
+        required: true
+      column:
+        description:
+          - Column name.
+        type: str
+        required: true
+      privileges:
+        description:
+          - Privilege names.
+        type: list
+        required: true
+        elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

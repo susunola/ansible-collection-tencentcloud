@@ -12,8 +12,17 @@ short_description: Manage Tencent Cloud WAF threat-intelligence blocking
 version_added: "0.14.0"
 description: Reconciles the account-level WAF threat-intelligence blocking configuration.
 options:
-  enabled: {type: bool, default: true, description: Whether threat-intelligence blocking is active.}
-  tags: {type: list, elements: str, default: [], description: Exact threat-intelligence tag set to block.}
+  enabled:
+    description:
+      - Whether threat-intelligence blocking is active.
+    type: bool
+    default: true
+  tags:
+    description:
+      - Exact threat-intelligence tag set to block.
+    type: list
+    default: []
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

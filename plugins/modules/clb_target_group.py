@@ -15,24 +15,75 @@ description:
   - Creates, updates and deletes CLB target groups.
   - Reconciles backend IP, port and weight as an exact set.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  target_group_id: {description: Existing target group ID., type: str}
-  name: {description: Target group name., type: str}
-  vpc_id: {description: VPC ID., type: str}
-  port: {description: Default backend port., type: int}
-  type: {description: Target group generation., type: str, choices: [v1, v2], default: v2}
-  protocol: {description: Backend protocol for a v2 target group., type: str, choices: [TCP, UDP, HTTP, HTTPS, GRPC], default: TCP}
-  schedule_algorithm: {description: Scheduling algorithm., type: str, choices: [WRR, LEAST_CONN, IP_HASH]}
-  weight: {description: Default backend weight., type: int}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  target_group_id:
+    description:
+      - Existing target group ID.
+    type: str
+  name:
+    description:
+      - Target group name.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID.
+    type: str
+  port:
+    description:
+      - Default backend port.
+    type: int
+  type:
+    description:
+      - Target group generation.
+    type: str
+    choices: [v1, v2]
+    default: v2
+  protocol:
+    description:
+      - Backend protocol for a v2 target group.
+    type: str
+    choices: [TCP, UDP, HTTP, HTTPS, GRPC]
+    default: TCP
+  schedule_algorithm:
+    description:
+      - Scheduling algorithm.
+    type: str
+    choices: [WRR, LEAST_CONN, IP_HASH]
+  weight:
+    description:
+      - Default backend weight.
+    type: int
   instances:
     description: Exact backend member set.
     type: list
     elements: dict
     suboptions:
-      ip: {description: Backend private IP., type: str, required: true}
-      port: {description: Backend port., type: int, required: true}
-      weight: {description: Backend weight from 0 to 100., type: int, default: 10}
-  tags: {description: Tags applied at creation., type: dict, default: {}}
+      ip:
+        description:
+          - Backend private IP.
+        type: str
+        required: true
+      port:
+        description:
+          - Backend port.
+        type: int
+        required: true
+      weight:
+        description:
+          - Backend weight from 0 to 100.
+        type: int
+        default: 10
+  tags:
+    description:
+      - Tags applied at creation.
+    type: dict
+    default:
+      {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

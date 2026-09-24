@@ -12,19 +12,62 @@ short_description: Manage Tencent Cloud GooseFS file systems
 version_added: "0.14.0"
 description: Creates, expands and deletes GooseFS file systems while protecting immutable topology.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  file_system_id: {type: str, description: Existing file system ID.}
-  name: {type: str, description: File system name and immutable after creation.}
-  description: {type: str, default: '', description: Creation-time description.}
-  vpc_id: {type: str, description: VPC ID required for creation and immutable afterwards.}
-  subnet_id: {type: str, description: Subnet ID required for creation and immutable afterwards.}
-  zone: {type: str, description: Availability zone required for creation and immutable afterwards.}
-  file_system_type: {type: str, description: GooseFS product type required for creation and immutable afterwards.}
-  build_elements: {type: list, elements: dict, description: SDK GooseFSxBuildElement payloads required by GooseFSx products.}
-  capacity: {type: int, description: Desired GooseFSx capacity; only expansion is supported.}
-  security_group_id: {type: str, description: Creation-time security group ID.}
-  cluster_port: {type: int, description: Creation-time cluster port.}
-  tags: {type: dict, description: Creation-time tags.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  file_system_id:
+    description:
+      - Existing file system ID.
+    type: str
+  name:
+    description:
+      - File system name and immutable after creation.
+    type: str
+  description:
+    description:
+      - Creation-time description.
+    type: str
+    default: ''
+  vpc_id:
+    description:
+      - VPC ID required for creation and immutable afterwards.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID required for creation and immutable afterwards.
+    type: str
+  zone:
+    description:
+      - Availability zone required for creation and immutable afterwards.
+    type: str
+  file_system_type:
+    description:
+      - GooseFS product type required for creation and immutable afterwards.
+    type: str
+  build_elements:
+    description:
+      - SDK GooseFSxBuildElement payloads required by GooseFSx products.
+    type: list
+    elements: dict
+  capacity:
+    description:
+      - Desired GooseFSx capacity; only expansion is supported.
+    type: int
+  security_group_id:
+    description:
+      - Creation-time security group ID.
+    type: str
+  cluster_port:
+    description:
+      - Creation-time cluster port.
+    type: int
+  tags:
+    description:
+      - Creation-time tags.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

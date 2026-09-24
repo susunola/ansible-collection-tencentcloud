@@ -83,7 +83,8 @@ options:
       - Kubernetes labels applied to the nodes as a dict, written to
         V(ModifyClusterNodePoolRequest.Labels).
     type: dict
-    default: {}
+    default:
+      {}
   taints:
     description:
       - Kubernetes taints applied to the nodes as a list of dicts with
@@ -118,7 +119,8 @@ options:
       - Tags to apply to the node pool as a dict, for example I(env=prod).
       - Only applied at creation.
     type: dict
-    default: {}
+    default:
+      {}
 notes:
   - Requires the C(tencentcloud-sdk-python-tke) package on the controller.
   - The node pool is considered up to date as soon as the create API

@@ -12,21 +12,81 @@ short_description: Manage Tencent Cloud Elasticsearch cluster snapshots
 version_added: "0.14.0"
 description: Creates and deletes a named Elasticsearch snapshot with explicit replacement for immutable configuration drift.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: Elasticsearch instance ID.}
-  repository_name: {type: str, required: true, description: Snapshot repository name used for lookup and deletion.}
-  name: {type: str, required: true, description: Snapshot name.}
-  indices: {type: list, elements: str, default: ['*'], description: Exact index selection captured by the snapshot.}
-  repository_type: {type: int, choices: [0, 1], default: 0, description: Tencent-managed or customer repository.}
-  storage_days: {type: int, default: 7, description: Snapshot storage duration in days.}
-  lock_retention: {type: bool, default: false, description: Enable COS backup lock.}
-  retain_until: {type: str, description: ISO timestamp through which the snapshot is locked.}
-  retention_grace_days: {type: int, default: 0, description: Backup-lock grace period in days.}
-  remote_cos: {type: bool, default: false, description: Enable cross-region snapshot storage.}
-  remote_region: {type: str, description: Cross-region snapshot destination.}
-  multi_az: {type: bool, default: false, description: Use multi-AZ COS storage.}
-  max_snapshot_per_sec: {type: str, description: Maximum per-node snapshot write rate.}
-  force_replace: {type: bool, default: false, description: Delete and recreate a snapshot whose immutable configuration differs.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Elasticsearch instance ID.
+    type: str
+    required: true
+  repository_name:
+    description:
+      - Snapshot repository name used for lookup and deletion.
+    type: str
+    required: true
+  name:
+    description:
+      - Snapshot name.
+    type: str
+    required: true
+  indices:
+    description:
+      - Exact index selection captured by the snapshot.
+    type: list
+    default: ['*']
+    elements: str
+  repository_type:
+    description:
+      - Tencent-managed or customer repository.
+    type: int
+    choices: [0, 1]
+    default: 0
+  storage_days:
+    description:
+      - Snapshot storage duration in days.
+    type: int
+    default: 7
+  lock_retention:
+    description:
+      - Enable COS backup lock.
+    type: bool
+    default: false
+  retain_until:
+    description:
+      - ISO timestamp through which the snapshot is locked.
+    type: str
+  retention_grace_days:
+    description:
+      - Backup-lock grace period in days.
+    type: int
+    default: 0
+  remote_cos:
+    description:
+      - Enable cross-region snapshot storage.
+    type: bool
+    default: false
+  remote_region:
+    description:
+      - Cross-region snapshot destination.
+    type: str
+  multi_az:
+    description:
+      - Use multi-AZ COS storage.
+    type: bool
+    default: false
+  max_snapshot_per_sec:
+    description:
+      - Maximum per-node snapshot write rate.
+    type: str
+  force_replace:
+    description:
+      - Delete and recreate a snapshot whose immutable configuration differs.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

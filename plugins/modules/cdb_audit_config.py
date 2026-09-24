@@ -12,9 +12,22 @@ short_description: Manage TencentDB for MySQL audit configuration
 version_added: "0.14.0"
 description: Enables, configures or closes database audit logging for a CDB instance.
 options:
-  instance_id: {type: str, required: true, description: CDB instance ID.}
-  enabled: {type: bool, default: true, description: Whether database audit logging is enabled.}
-  retention_days: {type: int, choices: [7, 30, 180, 365, 1095, 1825], default: 30, description: Audit-log retention while enabled.}
+  instance_id:
+    description:
+      - CDB instance ID.
+    type: str
+    required: true
+  enabled:
+    description:
+      - Whether database audit logging is enabled.
+    type: bool
+    default: true
+  retention_days:
+    description:
+      - Audit-log retention while enabled.
+    type: int
+    choices: [7, 30, 180, 365, 1095, 1825]
+    default: 30
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

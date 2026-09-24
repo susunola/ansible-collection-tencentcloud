@@ -13,14 +13,48 @@ short_description: Manage Tencent Cloud Config cross-account aggregate delivery
 version_added: "0.14.0"
 description: Reconciles aggregate Config changes and resource inventories to COS or CLS.
 options:
-  account_group_id: {type: str, required: true, description: Config aggregator account-group ID.}
-  enabled: {type: bool, default: true, description: Whether aggregate delivery is enabled.}
-  name: {type: str, required: true, description: Delivery service name.}
-  target_arn: {type: str, required: true, description: Six-part COS or CLS target resource ARN.}
-  prefix: {type: str, default: config, description: Delivery prefix.}
-  delivery_type: {type: str, choices: [COS, CLS], required: true, description: Destination service type.}
-  delivery_uin: {type: int, default: 0, description: Delegated administrator destination UIN or zero for the administrator account.}
-  content_type: {type: int, choices: [1, 2, 3], default: 3, description: "One for changes, two for resource lists or three for both."}
+  account_group_id:
+    description:
+      - Config aggregator account-group ID.
+    type: str
+    required: true
+  enabled:
+    description:
+      - Whether aggregate delivery is enabled.
+    type: bool
+    default: true
+  name:
+    description:
+      - Delivery service name.
+    type: str
+    required: true
+  target_arn:
+    description:
+      - Six-part COS or CLS target resource ARN.
+    type: str
+    required: true
+  prefix:
+    description:
+      - Delivery prefix.
+    type: str
+    default: config
+  delivery_type:
+    description:
+      - Destination service type.
+    type: str
+    required: true
+    choices: [COS, CLS]
+  delivery_uin:
+    description:
+      - Delegated administrator destination UIN or zero for the administrator account.
+    type: int
+    default: 0
+  content_type:
+    description:
+      - One for changes, two for resource lists or three for both.
+    type: int
+    choices: [1, 2, 3]
+    default: 3
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

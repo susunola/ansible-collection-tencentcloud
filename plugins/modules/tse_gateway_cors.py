@@ -13,18 +13,64 @@ short_description: Manage CORS policy on a Tencent Cloud TSE gateway resource
 version_added: "0.14.0"
 description: Creates, updates and deletes the CORS plugin bound to one gateway service or route.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  scope: {type: str, choices: [service, route], required: true, description: Bound resource type.}
-  resource_id: {type: str, required: true, description: Service or route ID.}
-  enabled: {type: bool, description: Whether the plugin is enabled; creation defaults to true.}
-  origins: {type: list, elements: str, description: Allowed origins.}
-  headers: {type: list, elements: str, description: Allowed request headers.}
-  methods: {type: list, elements: str, description: Allowed methods.}
-  exposed_headers: {type: list, elements: str, description: Response headers exposed to browsers.}
-  max_age: {type: int, description: Preflight cache duration in seconds.}
-  credentials: {type: bool, description: Allow credentialed cross-origin requests.}
-  preflight_continue: {type: bool, description: Forward OPTIONS requests upstream.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  scope:
+    description:
+      - Bound resource type.
+    type: str
+    required: true
+    choices: [service, route]
+  resource_id:
+    description:
+      - Service or route ID.
+    type: str
+    required: true
+  enabled:
+    description:
+      - Whether the plugin is enabled; creation defaults to true.
+    type: bool
+  origins:
+    description:
+      - Allowed origins.
+    type: list
+    elements: str
+  headers:
+    description:
+      - Allowed request headers.
+    type: list
+    elements: str
+  methods:
+    description:
+      - Allowed methods.
+    type: list
+    elements: str
+  exposed_headers:
+    description:
+      - Response headers exposed to browsers.
+    type: list
+    elements: str
+  max_age:
+    description:
+      - Preflight cache duration in seconds.
+    type: int
+  credentials:
+    description:
+      - Allow credentialed cross-origin requests.
+    type: bool
+  preflight_continue:
+    description:
+      - Forward OPTIONS requests upstream.
+    type: bool
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

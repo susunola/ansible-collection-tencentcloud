@@ -13,11 +13,32 @@ short_description: Manage Tencent Cloud TSE service or route rate limiting
 version_added: "0.14.0"
 description: Creates, updates and deletes a rate-limit plugin on one gateway service or route.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired plugin state.}
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  scope: {type: str, choices: [service, route], required: true, description: Protected resource type.}
-  resource: {type: str, required: true, description: 'Service name or ID, or route name or ID.'}
-  config: {type: dict, description: SDK CloudNativeAPIGatewayRateLimitDetail payload.}
+  state:
+    description:
+      - Desired plugin state.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  scope:
+    description:
+      - Protected resource type.
+    type: str
+    required: true
+    choices: [service, route]
+  resource:
+    description:
+      - Service name or ID, or route name or ID.
+    type: str
+    required: true
+  config:
+    description:
+      - SDK CloudNativeAPIGatewayRateLimitDetail payload.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

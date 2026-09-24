@@ -13,13 +13,41 @@ short_description: Manage Tencent Cloud Oceanus folders
 version_added: "0.14.0"
 description: Creates, renames, moves and safely deletes Oceanus job or resource folders inside a workspace.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired folder state.}
-  folder_id: {type: str, description: Existing folder ID; required to rename a folder without recreating it.}
-  name: {type: str, description: Folder name.}
-  workspace_id: {type: str, required: true, description: Owning Oceanus workspace ID.}
-  folder_type: {type: int, choices: [0, 1], required: true, description: Job folder or resource dependency folder.}
-  parent_id: {type: str, default: root, description: Desired parent folder ID.}
-  allow_delete_nonempty: {type: bool, default: false, description: Explicitly authorize deleting a folder that contains children or resources.}
+  state:
+    description:
+      - Desired folder state.
+    type: str
+    choices: [present, absent]
+    default: present
+  folder_id:
+    description:
+      - Existing folder ID; required to rename a folder without recreating it.
+    type: str
+  name:
+    description:
+      - Folder name.
+    type: str
+  workspace_id:
+    description:
+      - Owning Oceanus workspace ID.
+    type: str
+    required: true
+  folder_type:
+    description:
+      - Job folder or resource dependency folder.
+    type: int
+    required: true
+    choices: [0, 1]
+  parent_id:
+    description:
+      - Desired parent folder ID.
+    type: str
+    default: root
+  allow_delete_nonempty:
+    description:
+      - Explicitly authorize deleting a folder that contains children or resources.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

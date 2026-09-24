@@ -12,17 +12,61 @@ short_description: Manage Tencent Cloud CFS automatic snapshot policies
 version_added: "0.14.0"
 description: Manages an automatic snapshot schedule and its exact set of bound CFS file systems.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  policy_id: {type: str, description: Existing policy ID; preferred for rename and deletion.}
-  name: {type: str, description: Policy name.}
-  hour: {type: str, default: '00', description: Comma-separated snapshot hours.}
-  day_of_week: {type: str, default: '', description: Comma-separated weekdays for weekly schedules.}
-  day_of_month: {type: str, default: '', description: Comma-separated month days for monthly schedules.}
-  interval_days: {type: int, default: 0, description: Day interval for interval schedules.}
-  alive_days: {type: int, default: 0, description: Snapshot retention in days; zero means permanent.}
-  enabled: {type: bool, default: true, description: Whether automatic snapshot creation is active.}
-  file_system_ids: {type: list, elements: str, default: [], description: Exact set of file systems bound to the policy.}
-  force_delete: {type: bool, default: false, description: Unbind all file systems before deleting the policy.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  policy_id:
+    description:
+      - Existing policy ID; preferred for rename and deletion.
+    type: str
+  name:
+    description:
+      - Policy name.
+    type: str
+  hour:
+    description:
+      - Comma-separated snapshot hours.
+    type: str
+    default: '00'
+  day_of_week:
+    description:
+      - Comma-separated weekdays for weekly schedules.
+    type: str
+    default: ''
+  day_of_month:
+    description:
+      - Comma-separated month days for monthly schedules.
+    type: str
+    default: ''
+  interval_days:
+    description:
+      - Day interval for interval schedules.
+    type: int
+    default: 0
+  alive_days:
+    description:
+      - Snapshot retention in days; zero means permanent.
+    type: int
+    default: 0
+  enabled:
+    description:
+      - Whether automatic snapshot creation is active.
+    type: bool
+    default: true
+  file_system_ids:
+    description:
+      - Exact set of file systems bound to the policy.
+    type: list
+    default: []
+    elements: str
+  force_delete:
+    description:
+      - Unbind all file systems before deleting the policy.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

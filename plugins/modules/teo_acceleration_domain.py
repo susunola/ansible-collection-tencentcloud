@@ -13,18 +13,68 @@ short_description: Manage Tencent Cloud EdgeOne acceleration domains
 version_added: "0.14.0"
 description: Creates, updates, enables, disables and deletes EdgeOne acceleration domains.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired domain state.}
-  zone_id: {type: str, required: true, description: EdgeOne zone ID.}
-  domain_name: {type: str, required: true, description: Acceleration domain name.}
-  origin_type: {type: str, choices: [IP_DOMAIN, COS, AWS_S3, ORIGIN_GROUP, VOD], default: IP_DOMAIN, description: Origin type.}
-  origin: {type: str, description: "Origin address, origin-group ID, or VOD application ID."}
-  host_header: {type: str, description: Custom origin Host header for IP_DOMAIN origins.}
-  origin_protocol: {type: str, choices: [FOLLOW, HTTP, HTTPS], default: FOLLOW, description: Origin protocol.}
-  http_origin_port: {type: int, default: 80, description: HTTP origin port.}
-  https_origin_port: {type: int, default: 443, description: HTTPS origin port.}
-  ipv6_status: {type: str, choices: [follow, 'on', 'off'], default: follow, description: IPv6 access state.}
-  enabled: {type: bool, default: true, description: Whether the acceleration domain is online.}
-  force: {type: bool, default: false, description: Force disabling or deletion when associated resources exist.}
+  state:
+    description:
+      - Desired domain state.
+    type: str
+    choices: [present, absent]
+    default: present
+  zone_id:
+    description:
+      - EdgeOne zone ID.
+    type: str
+    required: true
+  domain_name:
+    description:
+      - Acceleration domain name.
+    type: str
+    required: true
+  origin_type:
+    description:
+      - Origin type.
+    type: str
+    choices: [IP_DOMAIN, COS, AWS_S3, ORIGIN_GROUP, VOD]
+    default: IP_DOMAIN
+  origin:
+    description:
+      - Origin address, origin-group ID, or VOD application ID.
+    type: str
+  host_header:
+    description:
+      - Custom origin Host header for IP_DOMAIN origins.
+    type: str
+  origin_protocol:
+    description:
+      - Origin protocol.
+    type: str
+    choices: [FOLLOW, HTTP, HTTPS]
+    default: FOLLOW
+  http_origin_port:
+    description:
+      - HTTP origin port.
+    type: int
+    default: 80
+  https_origin_port:
+    description:
+      - HTTPS origin port.
+    type: int
+    default: 443
+  ipv6_status:
+    description:
+      - IPv6 access state.
+    type: str
+    choices: [follow, 'on', 'off']
+    default: follow
+  enabled:
+    description:
+      - Whether the acceleration domain is online.
+    type: bool
+    default: true
+  force:
+    description:
+      - Force disabling or deletion when associated resources exist.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

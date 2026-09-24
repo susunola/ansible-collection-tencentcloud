@@ -12,17 +12,56 @@ short_description: Manage Tencent Cloud CLS collection configurations
 version_added: "0.14.0"
 description: Creates, updates and deletes LogListener collection configurations.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  config_id: {type: str, description: Existing configuration ID.}
-  name: {type: str, description: Configuration name.}
-  topic_id: {type: str, description: Destination CLS topic ID.}
-  path: {type: str, default: '', description: File collection path.}
-  log_type: {type: str, default: minimalist_log, description: CLS extraction mode.}
-  extract_rule: {type: dict, description: SDK-compatible extraction rule.}
-  exclude_paths: {type: list, elements: dict, default: [], description: SDK-compatible excluded path definitions.}
-  user_define_rule: {type: str, description: Serialized custom collection rule.}
-  advanced_config: {type: str, description: Serialized advanced collection configuration.}
-  input_type: {type: str, description: Log input type.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  config_id:
+    description:
+      - Existing configuration ID.
+    type: str
+  name:
+    description:
+      - Configuration name.
+    type: str
+  topic_id:
+    description:
+      - Destination CLS topic ID.
+    type: str
+  path:
+    description:
+      - File collection path.
+    type: str
+    default: ''
+  log_type:
+    description:
+      - CLS extraction mode.
+    type: str
+    default: minimalist_log
+  extract_rule:
+    description:
+      - SDK-compatible extraction rule.
+    type: dict
+  exclude_paths:
+    description:
+      - SDK-compatible excluded path definitions.
+    type: list
+    default: []
+    elements: dict
+  user_define_rule:
+    description:
+      - Serialized custom collection rule.
+    type: str
+  advanced_config:
+    description:
+      - Serialized advanced collection configuration.
+    type: str
+  input_type:
+    description:
+      - Log input type.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

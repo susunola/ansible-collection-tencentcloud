@@ -16,18 +16,41 @@ description:
   - The current Config API exposes no aggregator update or delete operation;
     name, type and account membership are therefore treated as immutable.
 options:
-  account_group_id: {type: str, description: Existing aggregator account-group ID; preferred for lookup.}
-  name: {type: str, required: true, description: "Aggregator name, also used for lookup."}
-  description: {type: str, default: '', description: Aggregator description.}
-  aggregator_type: {type: str, required: true, description: Aggregator type accepted by Tencent Cloud Config.}
+  account_group_id:
+    description:
+      - Existing aggregator account-group ID; preferred for lookup.
+    type: str
+  name:
+    description:
+      - Aggregator name, also used for lookup.
+    type: str
+    required: true
+  description:
+    description:
+      - Aggregator description.
+    type: str
+    default: ''
+  aggregator_type:
+    description:
+      - Aggregator type accepted by Tencent Cloud Config.
+    type: str
+    required: true
   accounts:
     description: Exact immutable member-account set used at creation.
     type: list
     elements: dict
     default: []
     suboptions:
-      member_uin: {type: int, required: true, description: Member account UIN.}
-      member_name: {type: str, required: true, description: Member account display name.}
+      member_uin:
+        description:
+          - Member account UIN.
+        type: int
+        required: true
+      member_name:
+        description:
+          - Member account display name.
+        type: str
+        required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

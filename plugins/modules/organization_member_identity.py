@@ -12,9 +12,22 @@ short_description: Reconcile Tencent Cloud Organization member identities
 version_added: "0.14.0"
 description: Adds and removes organization access identities until a member has exactly the requested identity IDs.
 options:
-  member_uin: {type: int, required: true, description: Organization member UIN.}
-  identity_ids: {type: list, elements: int, required: true, description: Complete desired set of identity IDs.}
-  purge: {type: bool, default: true, description: Remove identities not listed in C(identity_ids).}
+  member_uin:
+    description:
+      - Organization member UIN.
+    type: int
+    required: true
+  identity_ids:
+    description:
+      - Complete desired set of identity IDs.
+    type: list
+    required: true
+    elements: int
+  purge:
+    description:
+      - Remove identities not listed in C(identity_ids).
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

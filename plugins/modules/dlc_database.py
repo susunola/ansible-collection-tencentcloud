@@ -15,17 +15,55 @@ description:
   - Creates, discovers, waits for and deletes DLC metadata databases.
   - Database name, comment and governance policy are immutable because DLC exposes no general database update API.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired database state.}
-  name: {type: str, required: true, description: Database name.}
-  datasource_connection_name: {type: str, default: DataLakeCatalog, description: Catalog or data-source connection name.}
-  comment: {type: str, description: Creation-time database comment.}
-  govern_policy: {type: dict, description: Creation-time SDK DataGovernPolicy object; compared with readable governance metadata.}
-  smart_policy: {type: dict, description: Creation-time SDK SmartPolicy object; DLC does not return it from database describe.}
-  allow_delete_nonempty: {type: bool, default: false, description: Explicitly authorize deleting a database containing tables.}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize database deletion.}
-  wait: {type: bool, default: true, description: Wait for presence or absence convergence.}
+  state:
+    description:
+      - Desired database state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Database name.
+    type: str
+    required: true
+  datasource_connection_name:
+    description:
+      - Catalog or data-source connection name.
+    type: str
+    default: DataLakeCatalog
+  comment:
+    description:
+      - Creation-time database comment.
+    type: str
+  govern_policy:
+    description:
+      - Creation-time SDK DataGovernPolicy object; compared with readable governance metadata.
+    type: dict
+  smart_policy:
+    description:
+      - Creation-time SDK SmartPolicy object; DLC does not return it from database describe.
+    type: dict
+  allow_delete_nonempty:
+    description:
+      - Explicitly authorize deleting a database containing tables.
+    type: bool
+    default: false
+  allow_delete:
+    description:
+      - Explicitly authorize database deletion.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for presence or absence convergence.
+    type: bool
+    default: true
 
-  waiter_timeout: {type: int, default: 300, description: Overall convergence timeout.}
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 300
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

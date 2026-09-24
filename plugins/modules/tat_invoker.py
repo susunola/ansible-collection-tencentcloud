@@ -12,17 +12,59 @@ short_description: Manage Tencent Cloud TAT scheduled invokers
 version_added: "0.14.0"
 description: Creates, updates, enables, disables and deletes a scheduled TAT command invoker.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  invoker_id: {type: str, description: Existing invoker ID; preferred for rename and deletion.}
-  name: {type: str, description: Invoker name.}
-  command_id: {type: str, description: Existing TAT command ID.}
-  instance_ids: {type: list, elements: str, default: [], description: "Exact set of target CVM, Lighthouse or managed instance IDs."}
-  username: {type: str, description: Operating-system user used to run the command.}
-  parameters: {type: dict, default: {}, description: Command parameter values encoded as canonical JSON.}
-  policy: {type: str, choices: [ONCE, RECURRENCE], default: RECURRENCE, description: One-time or recurring schedule policy.}
-  recurrence: {type: str, description: Five-field crontab expression interpreted in Beijing time.}
-  invoke_time: {type: str, description: ISO8601 execution time required for an ONCE policy.}
-  enabled: {type: bool, default: true, description: Whether the invoker is active.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  invoker_id:
+    description:
+      - Existing invoker ID; preferred for rename and deletion.
+    type: str
+  name:
+    description:
+      - Invoker name.
+    type: str
+  command_id:
+    description:
+      - Existing TAT command ID.
+    type: str
+  instance_ids:
+    description:
+      - Exact set of target CVM, Lighthouse or managed instance IDs.
+    type: list
+    default: []
+    elements: str
+  username:
+    description:
+      - Operating-system user used to run the command.
+    type: str
+  parameters:
+    description:
+      - Command parameter values encoded as canonical JSON.
+    type: dict
+    default:
+      {}
+  policy:
+    description:
+      - One-time or recurring schedule policy.
+    type: str
+    choices: [ONCE, RECURRENCE]
+    default: RECURRENCE
+  recurrence:
+    description:
+      - Five-field crontab expression interpreted in Beijing time.
+    type: str
+  invoke_time:
+    description:
+      - ISO8601 execution time required for an ONCE policy.
+    type: str
+  enabled:
+    description:
+      - Whether the invoker is active.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

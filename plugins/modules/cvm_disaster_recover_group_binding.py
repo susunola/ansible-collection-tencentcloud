@@ -12,10 +12,27 @@ short_description: Bind a Tencent Cloud CVM instance to a placement group
 version_added: "0.14.0"
 description: Adds or removes one CVM instance from a placement group.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired binding state.}
-  instance_id: {type: str, required: true, description: CVM instance ID.}
-  group_id: {type: str, required: true, description: Placement-group ID.}
-  force_migrate: {type: bool, default: false, description: Allow host migration and instance restart when needed to establish the binding.}
+  state:
+    description:
+      - Desired binding state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - CVM instance ID.
+    type: str
+    required: true
+  group_id:
+    description:
+      - Placement-group ID.
+    type: str
+    required: true
+  force_migrate:
+    description:
+      - Allow host migration and instance restart when needed to establish the binding.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

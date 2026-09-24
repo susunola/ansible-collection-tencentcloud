@@ -14,7 +14,11 @@ short_description: Gather Tencent Cloud TSE instance tag metadata
 version_added: "0.14.0"
 description: Returns the tag associations reported for a TSE registry engine or cloud-native gateway instance.
 options:
-  instance_id: {type: str, required: true, description: TSE instance ID.}
+  instance_id:
+    description:
+      - TSE instance ID.
+    type: str
+    required: true
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

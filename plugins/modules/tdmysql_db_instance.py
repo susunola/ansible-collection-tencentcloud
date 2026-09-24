@@ -12,43 +12,170 @@ short_description: Manage Tencent Cloud TDMysql instances
 version_added: "0.14.0"
 description: Creates, expands, upgrades, renames, isolates, recovers and permanently destroys TDMysql instances and reconciles security groups and renewal.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, description: Existing instance ID.}
-  name: {type: str, description: Instance display name.}
-  zone: {type: str, description: Primary availability zone; immutable after creation.}
-  zones: {type: list, elements: str, description: Multi-AZ placement.}
-  vpc_id: {type: str, description: VPC ID; immutable after creation.}
-  subnet_id: {type: str, description: Subnet ID; immutable after creation.}
-  spec_code: {type: str, description: Product specification code.}
-  disk: {type: int, description: Storage-node disk size in GiB.}
-  storage_node_count: {type: int, description: Storage-node count.}
-  replications: {type: int, description: Odd storage replica count; immutable after creation.}
-  full_replications: {type: int, description: Full replica count.}
-  storage_node_cpu: {type: int, description: CPU cores per storage node.}
-  storage_node_memory: {type: int, description: Memory in GiB per storage node.}
-  storage_type: {type: str, choices: [CLOUD_HSSD, CLOUD_TCS], description: Storage type.}
-  instance_type: {type: str, choices: [separate, hybrid], description: Instance architecture; immutable after creation.}
-  instance_mode: {type: str, description: Instance operating mode; immutable after creation.}
-  sql_mode: {type: str, choices: [MySQL, HBase], description: Compatibility mode; immutable after creation.}
-  create_version: {type: str, description: Initial database version; immutable after creation.}
-  instance_count: {type: int, choices: [1], default: 1, description: Number of instances created.}
-  pay_mode: {type: str, choices: ['0', '1'], default: '0', description: Postpaid or prepaid billing mode.}
-  period_months: {type: int, default: 1, description: Prepaid purchase period.}
-  auto_renew: {type: bool, description: Desired prepaid auto-renewal.}
-  az_mode: {type: int, choices: [1, 2, 3], description: "Single-AZ, multi-AZ secondary or multi-AZ primary mode."}
-  primary_zone: {type: str, description: Primary AZ used when az_mode is 3.}
-  port: {type: int, description: Custom database port.}
-  template_id: {type: str, description: Initial parameter-template ID.}
-  init_params: {type: dict, description: Initial database parameters.}
-  auto_scale_min: {type: float, description: Initial minimum serverless CCU.}
-  auto_scale_max: {type: float, description: Initial maximum serverless CCU.}
-  security_group_ids: {type: list, elements: str, description: Full desired security-group set.}
-  username: {type: str, description: Initial administrator username.}
-  password: {type: str, description: Initial administrator password.}
-  encryption: {type: bool, default: false, description: Enable transparent encryption during creation.}
-  tags: {type: dict, description: Tags applied during creation.}
-  recover: {type: bool, default: false, description: Recover an isolated instance when state is present.}
-  purge: {type: bool, default: false, description: Permanently destroy an already isolated instance.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Existing instance ID.
+    type: str
+  name:
+    description:
+      - Instance display name.
+    type: str
+  zone:
+    description:
+      - Primary availability zone; immutable after creation.
+    type: str
+  zones:
+    description:
+      - Multi-AZ placement.
+    type: list
+    elements: str
+  vpc_id:
+    description:
+      - VPC ID; immutable after creation.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID; immutable after creation.
+    type: str
+  spec_code:
+    description:
+      - Product specification code.
+    type: str
+  disk:
+    description:
+      - Storage-node disk size in GiB.
+    type: int
+  storage_node_count:
+    description:
+      - Storage-node count.
+    type: int
+  replications:
+    description:
+      - Odd storage replica count; immutable after creation.
+    type: int
+  full_replications:
+    description:
+      - Full replica count.
+    type: int
+  storage_node_cpu:
+    description:
+      - CPU cores per storage node.
+    type: int
+  storage_node_memory:
+    description:
+      - Memory in GiB per storage node.
+    type: int
+  storage_type:
+    description:
+      - Storage type.
+    type: str
+    choices: [CLOUD_HSSD, CLOUD_TCS]
+  instance_type:
+    description:
+      - Instance architecture; immutable after creation.
+    type: str
+    choices: [separate, hybrid]
+  instance_mode:
+    description:
+      - Instance operating mode; immutable after creation.
+    type: str
+  sql_mode:
+    description:
+      - Compatibility mode; immutable after creation.
+    type: str
+    choices: [MySQL, HBase]
+  create_version:
+    description:
+      - Initial database version; immutable after creation.
+    type: str
+  instance_count:
+    description:
+      - Number of instances created.
+    type: int
+    choices: [1]
+    default: 1
+  pay_mode:
+    description:
+      - Postpaid or prepaid billing mode.
+    type: str
+    choices: ['0', '1']
+    default: '0'
+  period_months:
+    description:
+      - Prepaid purchase period.
+    type: int
+    default: 1
+  auto_renew:
+    description:
+      - Desired prepaid auto-renewal.
+    type: bool
+  az_mode:
+    description:
+      - Single-AZ, multi-AZ secondary or multi-AZ primary mode.
+    type: int
+    choices: [1, 2, 3]
+  primary_zone:
+    description:
+      - Primary AZ used when az_mode is 3.
+    type: str
+  port:
+    description:
+      - Custom database port.
+    type: int
+  template_id:
+    description:
+      - Initial parameter-template ID.
+    type: str
+  init_params:
+    description:
+      - Initial database parameters.
+    type: dict
+  auto_scale_min:
+    description:
+      - Initial minimum serverless CCU.
+    type: float
+  auto_scale_max:
+    description:
+      - Initial maximum serverless CCU.
+    type: float
+  security_group_ids:
+    description:
+      - Full desired security-group set.
+    type: list
+    elements: str
+  username:
+    description:
+      - Initial administrator username.
+    type: str
+  password:
+    description:
+      - Initial administrator password.
+    type: str
+  encryption:
+    description:
+      - Enable transparent encryption during creation.
+    type: bool
+    default: false
+  tags:
+    description:
+      - Tags applied during creation.
+    type: dict
+  recover:
+    description:
+      - Recover an isolated instance when state is present.
+    type: bool
+    default: false
+  purge:
+    description:
+      - Permanently destroy an already isolated instance.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

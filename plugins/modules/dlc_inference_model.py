@@ -17,29 +17,88 @@ description:
   - The DLC API does not expose model deletion; this module deliberately provides presence management only.
   - Model type, provider, tasks and storage settings are creation-time fields and immutable drift is reported explicitly.
 options:
-  name: {type: str, required: true, description: Exact model name.}
-  model_uid: {type: str, description: Stable model UID; used as identity when supplied.}
-  model_type: {type: str, description: 'Model type such as LLM, Embedding or Reranker; required on creation.'}
-  initial_version: {type: str, description: Initial version label; required on creation and not treated as drift after later versions are published.}
-  provider: {type: str, description: Creation-time model provider.}
-  description: {type: str, description: Mutable model description.}
-  parameter_size: {type: str, description: Mutable parameter-size label such as 7B.}
-  tags: {type: list, elements: str, description: Exact order-insensitive model tag set.}
-  tasks: {type: list, elements: str, description: Creation-time task set.}
-  storage_uri: {type: str, description: Creation-time model storage URI.}
-  use_custom_storage: {type: bool, description: Whether creation uses customer storage.}
-  storage_type: {type: str, choices: [Local, COS, CFS, CFSTurbo, GooseFS], description: Creation-time storage source type.}
-  goosefs_config: {type: dict, description: Creation-time GooseFSConfig-compatible object.}
+  name:
+    description:
+      - Exact model name.
+    type: str
+    required: true
+  model_uid:
+    description:
+      - Stable model UID; used as identity when supplied.
+    type: str
+  model_type:
+    description:
+      - Model type such as LLM, Embedding or Reranker; required on creation.
+    type: str
+  initial_version:
+    description:
+      - Initial version label; required on creation and not treated as drift after later versions are published.
+    type: str
+  provider:
+    description:
+      - Creation-time model provider.
+    type: str
+  description:
+    description:
+      - Mutable model description.
+    type: str
+  parameter_size:
+    description:
+      - Mutable parameter-size label such as 7B.
+    type: str
+  tags:
+    description:
+      - Exact order-insensitive model tag set.
+    type: list
+    elements: str
+  tasks:
+    description:
+      - Creation-time task set.
+    type: list
+    elements: str
+  storage_uri:
+    description:
+      - Creation-time model storage URI.
+    type: str
+  use_custom_storage:
+    description:
+      - Whether creation uses customer storage.
+    type: bool
+  storage_type:
+    description:
+      - Creation-time storage source type.
+    type: str
+    choices: [Local, COS, CFS, CFSTurbo, GooseFS]
+  goosefs_config:
+    description:
+      - Creation-time GooseFSConfig-compatible object.
+    type: dict
   resource_tags:
     type: list
     elements: dict
     description: Exact Tencent Cloud resource tag set.
     suboptions:
-      key: {type: str, required: true, description: Tag key.}
-      value: {type: str, required: true, description: Tag value.}
-  wait: {type: bool, default: true, description: Wait for model presence and mutable-field convergence.}
+      key:
+        description:
+          - Tag key.
+        type: str
+        required: true
+      value:
+        description:
+          - Tag value.
+        type: str
+        required: true
+  wait:
+    description:
+      - Wait for model presence and mutable-field convergence.
+    type: bool
+    default: true
 
-  waiter_timeout: {type: int, default: 300, description: Overall convergence timeout.}
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 300
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

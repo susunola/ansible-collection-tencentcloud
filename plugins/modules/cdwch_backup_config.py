@@ -13,12 +13,33 @@ short_description: Manage Tencent Cloud CDW ClickHouse backup configuration
 version_added: "0.14.0"
 description: Reconciles the backup service switch plus metadata and table-data schedules.
 options:
-  instance_id: {type: str, required: true, description: CDW ClickHouse instance ID.}
-  enabled: {type: bool, required: true, description: Whether backup is enabled.}
-  cos_bucket_name: {type: str, description: COS bucket used when enabling backup.}
-  meta_strategy: {type: dict, description: 'Metadata schedule with retain_days, week_days and execute_hour.'}
-  data_strategy: {type: dict, description: 'Table-data schedule with retain_days, week_days and execute_hour.'}
-  backup_tables: {type: list, elements: dict, description: Exact SDK BackupTableContent list for the data schedule.}
+  instance_id:
+    description:
+      - CDW ClickHouse instance ID.
+    type: str
+    required: true
+  enabled:
+    description:
+      - Whether backup is enabled.
+    type: bool
+    required: true
+  cos_bucket_name:
+    description:
+      - COS bucket used when enabling backup.
+    type: str
+  meta_strategy:
+    description:
+      - Metadata schedule with retain_days, week_days and execute_hour.
+    type: dict
+  data_strategy:
+    description:
+      - Table-data schedule with retain_days, week_days and execute_hour.
+    type: dict
+  backup_tables:
+    description:
+      - Exact SDK BackupTableContent list for the data schedule.
+    type: list
+    elements: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

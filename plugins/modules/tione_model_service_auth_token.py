@@ -17,16 +17,52 @@ description:
   - Stable C(token_id) is preferred; exact C(name) lookup rejects ambiguous matches.
   - Rotation is idempotently authorized with C(rotate_from_token_id). The token value is removed from results unless explicitly requested.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired token presence.}
-  service_group_id: {type: str, required: true, description: Stable online service-group ID.}
-  project_id: {type: str, description: Optional TI workspace ID used to read token inventory.}
-  token_id: {type: str, description: Stable token ID for update or deletion.}
-  name: {type: str, description: Exact token name; required for creation.}
-  description: {type: str, description: Token description.}
-  limits: {type: list, elements: dict, description: AuthTokenLimit-compatible rate limits.}
-  rotate_from_token_id: {type: str, description: Rotate only while the current token ID equals this value.}
-  show_token_value: {type: bool, default: false, description: Include the sensitive generated token value in the result.}
-  allow_delete: {type: bool, default: false, description: Explicit destructive-operation guard.}
+  state:
+    description:
+      - Desired token presence.
+    type: str
+    choices: [present, absent]
+    default: present
+  service_group_id:
+    description:
+      - Stable online service-group ID.
+    type: str
+    required: true
+  project_id:
+    description:
+      - Optional TI workspace ID used to read token inventory.
+    type: str
+  token_id:
+    description:
+      - Stable token ID for update or deletion.
+    type: str
+  name:
+    description:
+      - Exact token name; required for creation.
+    type: str
+  description:
+    description:
+      - Token description.
+    type: str
+  limits:
+    description:
+      - AuthTokenLimit-compatible rate limits.
+    type: list
+    elements: dict
+  rotate_from_token_id:
+    description:
+      - Rotate only while the current token ID equals this value.
+    type: str
+  show_token_value:
+    description:
+      - Include the sensitive generated token value in the result.
+    type: bool
+    default: false
+  allow_delete:
+    description:
+      - Explicit destructive-operation guard.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

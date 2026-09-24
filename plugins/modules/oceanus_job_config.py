@@ -13,15 +13,47 @@ short_description: Manage Tencent Cloud Oceanus job configuration versions
 version_added: "0.14.0"
 description: Publishes a new immutable job configuration version only when managed fields differ from the latest version, and can explicitly delete a named historical version.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Ensure the desired latest configuration or remove a specified version.}
-  job_id: {type: str, required: true, description: Oceanus job ID.}
-  workspace_id: {type: str, required: true, description: Owning workspace ID.}
-  version: {type: int, description: Configuration version required for deletion.}
-  entrypoint_class: {type: str, description: JAR or Python entrypoint class.}
-  program_args: {type: str, description: SQL text or program arguments.}
-  remark: {type: str, description: Version remark.}
-  default_parallelism: {type: int, description: Default job parallelism.}
-  properties: {type: list, elements: dict, description: SDK Property list.}
+  state:
+    description:
+      - Ensure the desired latest configuration or remove a specified version.
+    type: str
+    choices: [present, absent]
+    default: present
+  job_id:
+    description:
+      - Oceanus job ID.
+    type: str
+    required: true
+  workspace_id:
+    description:
+      - Owning workspace ID.
+    type: str
+    required: true
+  version:
+    description:
+      - Configuration version required for deletion.
+    type: int
+  entrypoint_class:
+    description:
+      - JAR or Python entrypoint class.
+    type: str
+  program_args:
+    description:
+      - SQL text or program arguments.
+    type: str
+  remark:
+    description:
+      - Version remark.
+    type: str
+  default_parallelism:
+    description:
+      - Default job parallelism.
+    type: int
+  properties:
+    description:
+      - SDK Property list.
+    type: list
+    elements: dict
   resource_refs:
     description:
       - Resource references that bind managed Oceanus resources to this job
@@ -76,38 +108,141 @@ options:
         type: int
         choices: [0, 1, 2, 3, 4]
         required: true
-  auto_delete_oldest: {type: bool, default: false, description: Automatically delete the earliest deletable version at the service limit.}
-  cos_bucket: {type: str, description: Job artifact COS bucket.}
-  log_collect: {type: bool, description: Enable log collection.}
-  log_collect_type: {type: int, choices: [2, 3], description: CLS or COS log destination.}
-  cls_logset_id: {type: str, description: CLS logset ID.}
-  cls_topic_id: {type: str, description: CLS topic ID.}
-  log_level: {type: str, description: Job log level.}
-  python_version: {type: str, description: PyFlink runtime Python version.}
-  job_manager_spec: {type: float, description: Legacy JobManager CU specification.}
-  task_manager_spec: {type: float, description: Legacy TaskManager CU specification.}
-  clazz_levels: {type: list, elements: dict, description: Per-class SDK ClazzLevel logging overrides.}
-  expert_mode_on: {type: bool, description: Enable expert-mode operator configuration.}
-  expert_mode_configuration: {type: dict, description: SDK ExpertModeConfiguration payload.}
-  trace_mode_on: {type: bool, description: Enable operator trace collection.}
-  trace_mode_configuration: {type: dict, description: SDK TraceModeConfiguration payload.}
-  job_graph: {type: dict, description: SDK JobGraph operator topology configuration.}
-  es_serverless_index: {type: str, description: Elasticsearch Serverless log index.}
-  es_serverless_space: {type: str, description: Elasticsearch Serverless log space.}
-  auto_recover: {type: bool, description: Enable platform recovery.}
-  checkpoint_retained: {type: int, description: Number of retained checkpoints.}
-  checkpoint_timeout: {type: int, description: Checkpoint timeout in seconds.}
-  checkpoint_interval: {type: int, description: Checkpoint interval in seconds.}
-  job_manager_cpu: {type: float, description: JobManager CPU.}
-  job_manager_memory: {type: float, description: JobManager memory.}
-  task_manager_cpu: {type: float, description: TaskManager CPU.}
-  task_manager_memory: {type: float, description: TaskManager memory.}
-  flink_version: {type: str, description: Flink runtime version.}
-  jdk_version: {type: str, description: JDK runtime version.}
-  variable_replace_mode: {type: int, choices: [0, 1], description: Table-variable or global SQL-variable replacement mode.}
-  state_cos_bucket: {type: str, description: COS bucket used for Flink state.}
-  config_scope: {type: int, choices: [0, 1, 2], default: 0, description: 'Full, development-only or operations-only scope.'}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize deletion of a historical configuration version.}
+  auto_delete_oldest:
+    description:
+      - Automatically delete the earliest deletable version at the service limit.
+    type: bool
+    default: false
+  cos_bucket:
+    description:
+      - Job artifact COS bucket.
+    type: str
+  log_collect:
+    description:
+      - Enable log collection.
+    type: bool
+  log_collect_type:
+    description:
+      - CLS or COS log destination.
+    type: int
+    choices: [2, 3]
+  cls_logset_id:
+    description:
+      - CLS logset ID.
+    type: str
+  cls_topic_id:
+    description:
+      - CLS topic ID.
+    type: str
+  log_level:
+    description:
+      - Job log level.
+    type: str
+  python_version:
+    description:
+      - PyFlink runtime Python version.
+    type: str
+  job_manager_spec:
+    description:
+      - Legacy JobManager CU specification.
+    type: float
+  task_manager_spec:
+    description:
+      - Legacy TaskManager CU specification.
+    type: float
+  clazz_levels:
+    description:
+      - Per-class SDK ClazzLevel logging overrides.
+    type: list
+    elements: dict
+  expert_mode_on:
+    description:
+      - Enable expert-mode operator configuration.
+    type: bool
+  expert_mode_configuration:
+    description:
+      - SDK ExpertModeConfiguration payload.
+    type: dict
+  trace_mode_on:
+    description:
+      - Enable operator trace collection.
+    type: bool
+  trace_mode_configuration:
+    description:
+      - SDK TraceModeConfiguration payload.
+    type: dict
+  job_graph:
+    description:
+      - SDK JobGraph operator topology configuration.
+    type: dict
+  es_serverless_index:
+    description:
+      - Elasticsearch Serverless log index.
+    type: str
+  es_serverless_space:
+    description:
+      - Elasticsearch Serverless log space.
+    type: str
+  auto_recover:
+    description:
+      - Enable platform recovery.
+    type: bool
+  checkpoint_retained:
+    description:
+      - Number of retained checkpoints.
+    type: int
+  checkpoint_timeout:
+    description:
+      - Checkpoint timeout in seconds.
+    type: int
+  checkpoint_interval:
+    description:
+      - Checkpoint interval in seconds.
+    type: int
+  job_manager_cpu:
+    description:
+      - JobManager CPU.
+    type: float
+  job_manager_memory:
+    description:
+      - JobManager memory.
+    type: float
+  task_manager_cpu:
+    description:
+      - TaskManager CPU.
+    type: float
+  task_manager_memory:
+    description:
+      - TaskManager memory.
+    type: float
+  flink_version:
+    description:
+      - Flink runtime version.
+    type: str
+  jdk_version:
+    description:
+      - JDK runtime version.
+    type: str
+  variable_replace_mode:
+    description:
+      - Table-variable or global SQL-variable replacement mode.
+    type: int
+    choices: [0, 1]
+  state_cos_bucket:
+    description:
+      - COS bucket used for Flink state.
+    type: str
+  config_scope:
+    description:
+      - Full, development-only or operations-only scope.
+    type: int
+    choices: [0, 1, 2]
+    default: 0
+  allow_delete:
+    description:
+      - Explicitly authorize deletion of a historical configuration version.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

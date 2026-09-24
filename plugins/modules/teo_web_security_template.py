@@ -13,10 +13,25 @@ short_description: Manage Tencent Cloud EdgeOne web security templates
 version_added: "0.14.0"
 description: Creates, renames and deletes EdgeOne web security templates while preserving policy rules managed by dedicated rule resources.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired template state.}
-  zone_id: {type: str, required: true, description: EdgeOne zone ID.}
-  template_id: {type: str, description: Existing web security template ID.}
-  name: {type: str, description: "Template name, also used for lookup."}
+  state:
+    description:
+      - Desired template state.
+    type: str
+    choices: [present, absent]
+    default: present
+  zone_id:
+    description:
+      - EdgeOne zone ID.
+    type: str
+    required: true
+  template_id:
+    description:
+      - Existing web security template ID.
+    type: str
+  name:
+    description:
+      - Template name, also used for lookup.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

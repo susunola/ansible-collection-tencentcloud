@@ -12,22 +12,76 @@ short_description: Manage Tencent Cloud TEM environments
 version_added: "0.14.0"
 description: Creates, updates and destroys TEM environments.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  environment_id: {type: str, description: Existing environment ID.}
-  name: {type: str, description: Environment name and immutable identity.}
-  description: {type: str, description: Environment description.}
-  vpc_id: {type: str, description: VPC ID or name accepted by TEM.}
-  subnet_ids: {type: list, elements: str, description: Environment subnet IDs.}
-  kubernetes_version: {type: str, description: Creation-time Kubernetes version.}
-  source_channel: {type: int, default: 0, description: TEM source channel.}
-  enable_tsw_tracing: {type: bool, description: Enable TSW tracing.}
-  tags: {type: dict, description: Creation-time tags.}
-  environment_type: {type: str, choices: [test, pre, prod], default: prod, description: Environment stage.}
-  create_region: {type: str, description: Creation region override.}
-  setup_vpc: {type: bool, description: Create a VPC automatically.}
-  setup_prometheus: {type: bool, description: Create a Prometheus instance automatically.}
-  prometheus_id: {type: str, description: Existing Prometheus instance ID.}
-  apm_id: {type: str, description: Existing APM instance ID.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  environment_id:
+    description:
+      - Existing environment ID.
+    type: str
+  name:
+    description:
+      - Environment name and immutable identity.
+    type: str
+  description:
+    description:
+      - Environment description.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID or name accepted by TEM.
+    type: str
+  subnet_ids:
+    description:
+      - Environment subnet IDs.
+    type: list
+    elements: str
+  kubernetes_version:
+    description:
+      - Creation-time Kubernetes version.
+    type: str
+  source_channel:
+    description:
+      - TEM source channel.
+    type: int
+    default: 0
+  enable_tsw_tracing:
+    description:
+      - Enable TSW tracing.
+    type: bool
+  tags:
+    description:
+      - Creation-time tags.
+    type: dict
+  environment_type:
+    description:
+      - Environment stage.
+    type: str
+    choices: [test, pre, prod]
+    default: prod
+  create_region:
+    description:
+      - Creation region override.
+    type: str
+  setup_vpc:
+    description:
+      - Create a VPC automatically.
+    type: bool
+  setup_prometheus:
+    description:
+      - Create a Prometheus instance automatically.
+    type: bool
+  prometheus_id:
+    description:
+      - Existing Prometheus instance ID.
+    type: str
+  apm_id:
+    description:
+      - Existing APM instance ID.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

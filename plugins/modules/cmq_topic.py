@@ -14,13 +14,44 @@ version_added: "0.14.0"
 description: Creates, updates and deletes CMQ topics idempotently.
 options:
 
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  topic_name: {type: str, required: true, description: Topic name.}
-  max_msg_size: {type: int, default: 65536, description: Maximum message size.}
-  message_retention_seconds: {type: int, default: 86400, description: Message retention period.}
-  filter_type: {type: int, choices: [1, 2], default: 1, description: Subscription filter type.}
-  trace: {type: bool, default: false, description: Enable message tracing.}
-  tags: {type: dict, default: {}, description: Tags applied at creation.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  topic_name:
+    description:
+      - Topic name.
+    type: str
+    required: true
+  max_msg_size:
+    description:
+      - Maximum message size.
+    type: int
+    default: 65536
+  message_retention_seconds:
+    description:
+      - Message retention period.
+    type: int
+    default: 86400
+  filter_type:
+    description:
+      - Subscription filter type.
+    type: int
+    choices: [1, 2]
+    default: 1
+  trace:
+    description:
+      - Enable message tracing.
+    type: bool
+    default: false
+  tags:
+    description:
+      - Tags applied at creation.
+    type: dict
+    default:
+      {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

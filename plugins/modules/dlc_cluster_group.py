@@ -16,15 +16,46 @@ description:
   - Creates, updates and deletes DLC compute cluster groups used by persistent Ray clusters and laboratories.
   - Uses exact-name discovery, stable ID mutations, semantic JSON comparison and reference-aware deletion.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired lifecycle state.}
-  name: {type: str, required: true, description: Exact cluster-group name and identity.}
-  description: {type: str, description: Cluster-group description.}
-  config: {type: str, description: Cluster-group configuration as a JSON document.}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize cluster-group deletion.}
-  force_detach: {type: bool, default: false, description: Explicitly detach active clusters while deleting the group.}
-  wait: {type: bool, default: true, description: Wait for lifecycle and field convergence.}
+  state:
+    description:
+      - Desired lifecycle state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Exact cluster-group name and identity.
+    type: str
+    required: true
+  description:
+    description:
+      - Cluster-group description.
+    type: str
+  config:
+    description:
+      - Cluster-group configuration as a JSON document.
+    type: str
+  allow_delete:
+    description:
+      - Explicitly authorize cluster-group deletion.
+    type: bool
+    default: false
+  force_detach:
+    description:
+      - Explicitly detach active clusters while deleting the group.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for lifecycle and field convergence.
+    type: bool
+    default: true
 
-  waiter_timeout: {type: int, default: 300, description: Overall convergence timeout.}
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 300
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

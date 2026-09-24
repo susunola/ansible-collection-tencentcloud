@@ -14,16 +14,36 @@ description:
   - Creates, updates and deletes CKafka Datahub connection resources.
   - Credential-like fields are accepted with no-log protection and removed recursively from output and drift comparison.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  resource_id: {type: str, description: Existing connection resource ID; preferred for rename and deletion.}
-  name: {type: str, required: true, description: Connection resource name.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  resource_id:
+    description:
+      - Existing connection resource ID; preferred for rename and deletion.
+    type: str
+  name:
+    description:
+      - Connection resource name.
+    type: str
+    required: true
   connection_type:
     type: str
     required: true
     choices: [DTS, MONGODB, ES, CLICKHOUSE, MYSQL, TDSQL_C_MYSQL, POSTGRESQL, TDSQL_C_POSTGRESQL, MARIADB, SQLSERVER, DORIS, KAFKA, MQTT]
     description: Immutable connection type.
-  description: {type: str, default: '', description: Connection description.}
-  config: {type: dict, required: true, description: SDK-compatible connection parameter object for the selected type.}
+  description:
+    description:
+      - Connection description.
+    type: str
+    default: ''
+  config:
+    description:
+      - SDK-compatible connection parameter object for the selected type.
+    type: dict
+    required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

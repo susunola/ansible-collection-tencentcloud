@@ -12,9 +12,22 @@ short_description: Reconcile CHDFS mount point access-group bindings
 version_added: "0.14.0"
 description: Reconciles the exact access-group set associated with a CHDFS mount point.
 options:
-  file_system_id: {type: str, required: true, description: Parent file system ID used to read the mount point.}
-  mount_point_id: {type: str, required: true, description: Mount point ID.}
-  access_group_ids: {type: list, elements: str, required: true, description: Exact desired access-group ID set.}
+  file_system_id:
+    description:
+      - Parent file system ID used to read the mount point.
+    type: str
+    required: true
+  mount_point_id:
+    description:
+      - Mount point ID.
+    type: str
+    required: true
+  access_group_ids:
+    description:
+      - Exact desired access-group ID set.
+    type: list
+    required: true
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

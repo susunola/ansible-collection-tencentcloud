@@ -16,12 +16,33 @@ description:
   - Lists databases, or tables, views, procedures and functions within one database.
   - Both modes use bounded offset pagination.
 options:
-  instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
-  database: {type: str, description: Database whose objects are requested; omit to list databases.}
-  database_regexp: {type: str, description: Database-name expression in database-list mode.}
-  table_regexp: {type: str, description: Table-name expression in object-list mode.}
-  page_size: {type: int, default: 100, description: 'Items requested per page, from 1 to 100.'}
-  max_pages: {type: int, default: 1000, description: 'Maximum pages fetched, from 1 to 1000.'}
+  instance_id:
+    description:
+      - Stable TDSQL MySQL instance ID.
+    type: str
+    required: true
+  database:
+    description:
+      - Database whose objects are requested; omit to list databases.
+    type: str
+  database_regexp:
+    description:
+      - Database-name expression in database-list mode.
+    type: str
+  table_regexp:
+    description:
+      - Table-name expression in object-list mode.
+    type: str
+  page_size:
+    description:
+      - Items requested per page, from 1 to 100.
+    type: int
+    default: 100
+  max_pages:
+    description:
+      - Maximum pages fetched, from 1 to 1000.
+    type: int
+    default: 1000
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

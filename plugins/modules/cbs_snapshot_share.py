@@ -12,8 +12,17 @@ short_description: Manage Tencent Cloud CBS snapshot sharing permissions
 version_added: "0.14.0"
 description: Reconciles the exact set of Tencent Cloud account IDs allowed to use a data-disk snapshot in the same region.
 options:
-  snapshot_id: {type: str, required: true, description: CBS data-disk snapshot ID.}
-  account_ids: {type: list, elements: str, default: [], description: Exact set of recipient Tencent Cloud account IDs.}
+  snapshot_id:
+    description:
+      - CBS data-disk snapshot ID.
+    type: str
+    required: true
+  account_ids:
+    description:
+      - Exact set of recipient Tencent Cloud account IDs.
+    type: list
+    default: []
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

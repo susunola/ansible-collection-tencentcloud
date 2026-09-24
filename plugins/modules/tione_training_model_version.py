@@ -17,36 +17,141 @@ description:
   - Exact version-label discovery is always scoped to C(model_id); conflicting readable metadata is reported.
   - Version deletion requires a stable C(version_id), an explicit guard and a separate COS cleanup choice.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired model-version presence.}
-  model_id: {type: str, description: Stable parent training-model ID; required for presence.}
-  version_id: {type: str, description: Stable model-version ID; optional for lookup and required for deletion.}
-  version: {type: str, description: Exact model-version label; required for creation.}
-  import_method: {type: str, choices: [VERSION, EXIST], default: VERSION, description: Import a new version or register an existing version.}
-  reasoning_environment_source: {type: str, choices: [SYSTEM, CUSTOM], description: Inference-environment source.}
-  training_job_name: {type: str, description: Source training-task name.}
-  training_job_id: {type: str, description: Source training-task ID.}
-  training_job_version: {type: str, description: Source training-task version.}
-  training_model_cos_path: {type: dict, description: CosPathInfo-compatible source model directory.}
-  model_output_path: {type: dict, description: CosPathInfo-compatible target model directory.}
-  training_model_source: {type: str, choices: [JOB, COS], description: Model source.}
-  algorithm_framework: {type: str, description: Algorithm framework.}
-  reasoning_environment: {type: str, description: Inference environment.}
-  reasoning_environment_id: {type: str, description: Inference image ID.}
-  reasoning_image_info: {type: dict, description: ImageInfo-compatible custom inference image.}
-  training_model_index: {type: str, description: Model metrics or index metadata.}
-  model_move_mode: {type: str, choices: [CUT, COPY], description: Source model move mode.}
-  training_preference: {type: str, description: Training preference.}
-  model_version_type: {type: str, choices: [NORMAL, ACCELERATE], default: NORMAL, description: Model-version type.}
-  model_format: {type: str, description: Model serialization format.}
-  auto_clean: {type: str, choices: ['true', 'false'], description: Automatic version cleanup switch.}
-  max_reserved_models: {type: int, description: 'Maximum retained versions, from 1 to 24.'}
-  model_clean_period: {type: int, description: 'Cleanup interval in minutes, from 1 to 1440.'}
-  is_qat: {type: bool, description: Whether this is a quantization-aware-training model.}
-  delete_cos: {type: bool, default: false, description: Also remove version model files from COS.}
-  allow_delete: {type: bool, default: false, description: Explicit destructive-operation guard.}
-  wait: {type: bool, default: true, description: Wait for import completion or deletion disappearance.}
-  waiter_delay: {type: int, default: 10, description: Seconds between state checks.}
-  waiter_timeout: {type: int, default: 1800, description: Overall convergence timeout.}
+  state:
+    description:
+      - Desired model-version presence.
+    type: str
+    choices: [present, absent]
+    default: present
+  model_id:
+    description:
+      - Stable parent training-model ID; required for presence.
+    type: str
+  version_id:
+    description:
+      - Stable model-version ID; optional for lookup and required for deletion.
+    type: str
+  version:
+    description:
+      - Exact model-version label; required for creation.
+    type: str
+  import_method:
+    description:
+      - Import a new version or register an existing version.
+    type: str
+    choices: [VERSION, EXIST]
+    default: VERSION
+  reasoning_environment_source:
+    description:
+      - Inference-environment source.
+    type: str
+    choices: [SYSTEM, CUSTOM]
+  training_job_name:
+    description:
+      - Source training-task name.
+    type: str
+  training_job_id:
+    description:
+      - Source training-task ID.
+    type: str
+  training_job_version:
+    description:
+      - Source training-task version.
+    type: str
+  training_model_cos_path:
+    description:
+      - CosPathInfo-compatible source model directory.
+    type: dict
+  model_output_path:
+    description:
+      - CosPathInfo-compatible target model directory.
+    type: dict
+  training_model_source:
+    description:
+      - Model source.
+    type: str
+    choices: [JOB, COS]
+  algorithm_framework:
+    description:
+      - Algorithm framework.
+    type: str
+  reasoning_environment:
+    description:
+      - Inference environment.
+    type: str
+  reasoning_environment_id:
+    description:
+      - Inference image ID.
+    type: str
+  reasoning_image_info:
+    description:
+      - ImageInfo-compatible custom inference image.
+    type: dict
+  training_model_index:
+    description:
+      - Model metrics or index metadata.
+    type: str
+  model_move_mode:
+    description:
+      - Source model move mode.
+    type: str
+    choices: [CUT, COPY]
+  training_preference:
+    description:
+      - Training preference.
+    type: str
+  model_version_type:
+    description:
+      - Model-version type.
+    type: str
+    choices: [NORMAL, ACCELERATE]
+    default: NORMAL
+  model_format:
+    description:
+      - Model serialization format.
+    type: str
+  auto_clean:
+    description:
+      - Automatic version cleanup switch.
+    type: str
+    choices: ['true', 'false']
+  max_reserved_models:
+    description:
+      - Maximum retained versions, from 1 to 24.
+    type: int
+  model_clean_period:
+    description:
+      - Cleanup interval in minutes, from 1 to 1440.
+    type: int
+  is_qat:
+    description:
+      - Whether this is a quantization-aware-training model.
+    type: bool
+  delete_cos:
+    description:
+      - Also remove version model files from COS.
+    type: bool
+    default: false
+  allow_delete:
+    description:
+      - Explicit destructive-operation guard.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for import completion or deletion disappearance.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between state checks.
+    type: int
+    default: 10
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 1800
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

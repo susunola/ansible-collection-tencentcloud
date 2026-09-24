@@ -12,7 +12,11 @@ short_description: Gather Tencent Cloud Config aggregate delivery settings
 version_added: "1.4.0"
 description: Returns the complete observable delivery configuration for one Config account aggregator.
 options:
-  account_group_id: {description: Config aggregator account-group ID., type: str, required: true}
+  account_group_id:
+    description:
+      - Config aggregator account-group ID.
+    type: str
+    required: true
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

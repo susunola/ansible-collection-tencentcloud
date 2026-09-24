@@ -89,7 +89,8 @@ options:
       - Tags to apply to the certificate as a dict, for example I(env=prod).
       - Only applied at upload.
     type: dict
-    default: {}
+    default:
+      {}
 notes:
   - Requires the C(tencentcloud-sdk-python-ssl) package on the controller.
   - Keep O(private_key) out of V(--check) output; use V(no_log) on the task

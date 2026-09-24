@@ -13,15 +13,57 @@ short_description: Manage Tencent Cloud CMQ topic subscriptions
 version_added: "0.14.0"
 description: Creates, updates and deletes push subscriptions for a CMQ topic.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  topic_name: {type: str, required: true, description: Parent topic name.}
-  subscription_name: {type: str, required: true, description: Subscription name.}
-  protocol: {type: str, choices: [http, queue], default: http, description: Push protocol.}
-  endpoint: {type: str, required: true, description: Push URL or queue name.}
-  notify_strategy: {type: str, choices: [BACKOFF_RETRY, EXPONENTIAL_DECAY_RETRY], default: BACKOFF_RETRY, description: Retry strategy.}
-  notify_content_format: {type: str, choices: [JSON, SIMPLIFIED], default: JSON, description: Push payload format.}
-  filter_tags: {type: list, elements: str, default: [], description: Message filter tags.}
-  binding_key: {type: list, elements: str, default: [], description: Routing binding keys.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  topic_name:
+    description:
+      - Parent topic name.
+    type: str
+    required: true
+  subscription_name:
+    description:
+      - Subscription name.
+    type: str
+    required: true
+  protocol:
+    description:
+      - Push protocol.
+    type: str
+    choices: [http, queue]
+    default: http
+  endpoint:
+    description:
+      - Push URL or queue name.
+    type: str
+    required: true
+  notify_strategy:
+    description:
+      - Retry strategy.
+    type: str
+    choices: [BACKOFF_RETRY, EXPONENTIAL_DECAY_RETRY]
+    default: BACKOFF_RETRY
+  notify_content_format:
+    description:
+      - Push payload format.
+    type: str
+    choices: [JSON, SIMPLIFIED]
+    default: JSON
+  filter_tags:
+    description:
+      - Message filter tags.
+    type: list
+    default: []
+    elements: str
+  binding_key:
+    description:
+      - Routing binding keys.
+    type: list
+    default: []
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -12,8 +12,15 @@ short_description: Gather Tencent Cloud COS bucket default encryption
 version_added: "1.4.0"
 description: Returns the effective server-side encryption configuration of a COS bucket.
 options:
-  name: {description: Bucket short name or full name., type: str, required: true}
-  appid: {description: Tencent Cloud AppId used in the bucket suffix., type: str}
+  name:
+    description:
+      - Bucket short name or full name.
+    type: str
+    required: true
+  appid:
+    description:
+      - Tencent Cloud AppId used in the bucket suffix.
+    type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

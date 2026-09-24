@@ -13,9 +13,22 @@ short_description: Manage Tencent Cloud Data Lake Compute work-group members
 version_added: "0.14.0"
 description: Exactly reconciles the set of DLC users assigned to one work group.
 options:
-  work_group_id: {type: int, required: true, description: DLC work-group ID.}
-  user_ids: {type: list, elements: str, required: true, description: Exact desired set of DLC user IDs or CAM sub-user UINs.}
-  allow_empty: {type: bool, default: false, description: Explicitly authorize removing every member from the work group.}
+  work_group_id:
+    description:
+      - DLC work-group ID.
+    type: int
+    required: true
+  user_ids:
+    description:
+      - Exact desired set of DLC user IDs or CAM sub-user UINs.
+    type: list
+    required: true
+    elements: str
+  allow_empty:
+    description:
+      - Explicitly authorize removing every member from the work group.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -12,8 +12,16 @@ short_description: Manage internet access for Tencent Cloud Managed Grafana
 version_added: "0.14.0"
 description: Enables or disables internet access on a Grafana instance.
 options:
-  instance_id: {type: str, required: true, description: Grafana instance ID.}
-  enabled: {type: bool, default: false, description: Desired internet-access state.}
+  instance_id:
+    description:
+      - Grafana instance ID.
+    type: str
+    required: true
+  enabled:
+    description:
+      - Desired internet-access state.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

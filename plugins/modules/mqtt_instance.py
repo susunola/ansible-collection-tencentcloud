@@ -12,33 +12,104 @@ short_description: Manage Tencent Cloud MQTT instances
 version_added: "0.14.0"
 description: Creates, updates and deletes MQTT instances with explicit creation-only network and billing settings.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, description: Existing MQTT instance ID.}
-  name: {type: str, description: Instance name.}
-  instance_type: {type: str, choices: [BASIC, PRO, PLATINUM], description: Instance edition; required for creation.}
-  sku_code: {type: str, description: Product SKU; required for creation and mutable within supported edition boundaries.}
-  remark: {type: str, default: '', description: Instance remark.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Existing MQTT instance ID.
+    type: str
+  name:
+    description:
+      - Instance name.
+    type: str
+  instance_type:
+    description:
+      - Instance edition; required for creation.
+    type: str
+    choices: [BASIC, PRO, PLATINUM]
+  sku_code:
+    description:
+      - Product SKU; required for creation and mutable within supported edition boundaries.
+    type: str
+  remark:
+    description:
+      - Instance remark.
+    type: str
+    default: ''
   vpcs:
     type: list
     elements: dict
-    suboptions: {vpc_id: {type: str, required: true, description: VPC ID.}, subnet_id: {type: str, required: true, description: Subnet ID.}}
+    suboptions:
+      vpc_id:
+        type: str
+        required: true
+        description: VPC ID.
+      subnet_id:
+        type: str
+        required: true
+        description: Subnet ID.
     description: Creation-only VPC and subnet bindings.
-  enable_public: {type: bool, default: false, description: Enable public access during creation.}
-  bandwidth: {type: int, description: Public bandwidth in Mbps.}
+  enable_public:
+    description:
+      - Enable public access during creation.
+    type: bool
+    default: false
+  bandwidth:
+    description:
+      - Public bandwidth in Mbps.
+    type: int
   ip_rules:
     type: list
     elements: dict
     suboptions:
-      ip: {type: str, required: true, description: IP address or CIDR.}
-      allow: {type: bool, default: true, description: Allow matching traffic.}
-      remark: {type: str, default: '', description: Rule remark.}
+      ip:
+        description:
+          - IP address or CIDR.
+        type: str
+        required: true
+      allow:
+        description:
+          - Allow matching traffic.
+        type: bool
+        default: true
+      remark:
+        description:
+          - Rule remark.
+        type: str
+        default: ''
     description: Creation-time public IP rules.
-  tags: {type: dict, description: Creation-time tags.}
-  pay_mode: {type: int, choices: [0, 1], default: 0, description: Postpaid or prepaid billing.}
-  period_months: {type: int, default: 1, description: Prepaid purchase period.}
-  auto_renew: {type: bool, default: true, description: Prepaid automatic renewal.}
-  authorization_policy: {type: bool, description: Enable authorization policies.}
-  message_rate: {type: int, description: Per-client message rate limit.}
+  tags:
+    description:
+      - Creation-time tags.
+    type: dict
+  pay_mode:
+    description:
+      - Postpaid or prepaid billing.
+    type: int
+    choices: [0, 1]
+    default: 0
+  period_months:
+    description:
+      - Prepaid purchase period.
+    type: int
+    default: 1
+  auto_renew:
+    description:
+      - Prepaid automatic renewal.
+    type: bool
+    default: true
+  authorization_policy:
+    description:
+      - Enable authorization policies.
+    type: bool
+  message_rate:
+    description:
+      - Per-client message rate limit.
+    type: int
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

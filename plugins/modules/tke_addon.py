@@ -12,16 +12,57 @@ short_description: Manage a Tencent Kubernetes Engine addon
 version_added: "0.13.0"
 description: Installs, updates and removes a TKE addon with idempotent version and values management.
 options:
-  state: {description: Desired addon lifecycle state., type: str, choices: [present, absent], default: present}
-  cluster_id: {description: ID of the parent TKE cluster., type: str, required: true}
-  name: {description: Addon name from the TKE addon catalog., type: str, required: true}
-  version: {description: Addon version to install or enforce., type: str}
-  values: {description: "Addon values as a mapping or raw JSON/YAML string. When omitted on an existing addon, values are not managed.", type: raw}
-  values_file: {description: Controller-side JSON or YAML file containing addon values., type: path}
-  values_format: {description: Format used for O(values_file) or a string O(values)., type: str, choices: [auto, json, yaml], default: auto}
-  update_strategy: {description: Strategy used to apply addon values., type: str, choices: [merge, replace], default: merge}
-  api_dry_run: {description: Run the TKE API DryRun validation before installation or update., type: bool, default: false}
-  allow_downgrade: {description: Allow changing to a numerically lower addon version., type: bool, default: false}
+  state:
+    description:
+      - Desired addon lifecycle state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - ID of the parent TKE cluster.
+    type: str
+    required: true
+  name:
+    description:
+      - Addon name from the TKE addon catalog.
+    type: str
+    required: true
+  version:
+    description:
+      - Addon version to install or enforce.
+    type: str
+  values:
+    description:
+      - Addon values as a mapping or raw JSON/YAML string. When omitted on an existing addon, values are not
+        managed.
+    type: raw
+  values_file:
+    description:
+      - Controller-side JSON or YAML file containing addon values.
+    type: path
+  values_format:
+    description:
+      - Format used for O(values_file) or a string O(values).
+    type: str
+    choices: [auto, json, yaml]
+    default: auto
+  update_strategy:
+    description:
+      - Strategy used to apply addon values.
+    type: str
+    choices: [merge, replace]
+    default: merge
+  api_dry_run:
+    description:
+      - Run the TKE API DryRun validation before installation or update.
+    type: bool
+    default: false
+  allow_downgrade:
+    description:
+      - Allow changing to a numerically lower addon version.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -16,14 +16,43 @@ description:
   - Discovers an existing DLC network connection by exact name and reconciles its description.
   - The available DLC API does not expose creation or deletion of this resource, so an absent connection is reported instead of fabricated.
 options:
-  name: {type: str, required: true, description: Exact network-connection name.}
-  description: {type: str, required: true, description: Desired network-connection description.}
-  data_engine_name: {type: str, description: Optional exact data-engine name used to disambiguate the connection.}
-  vpc_id: {type: str, description: Optional source VPC ID used to disambiguate the connection.}
-  connection_type: {type: int, description: Optional network-connection type used to disambiguate the connection.}
-  wait: {type: bool, default: true, description: Wait for readable description convergence.}
-  waiter_delay: {type: int, default: 3, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 180, description: Overall convergence timeout.}
+  name:
+    description:
+      - Exact network-connection name.
+    type: str
+    required: true
+  description:
+    description:
+      - Desired network-connection description.
+    type: str
+    required: true
+  data_engine_name:
+    description:
+      - Optional exact data-engine name used to disambiguate the connection.
+    type: str
+  vpc_id:
+    description:
+      - Optional source VPC ID used to disambiguate the connection.
+    type: str
+  connection_type:
+    description:
+      - Optional network-connection type used to disambiguate the connection.
+    type: int
+  wait:
+    description:
+      - Wait for readable description convergence.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between polls.
+    type: int
+    default: 3
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 180
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

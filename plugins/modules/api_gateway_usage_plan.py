@@ -12,12 +12,35 @@ short_description: Manage Tencent Cloud API Gateway usage plans
 version_added: "0.14.0"
 description: Creates, updates and deletes API Gateway usage plans.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  usage_plan_id: {type: str, description: Existing usage plan ID.}
-  name: {type: str, description: Usage plan name.}
-  description: {type: str, default: '', description: Usage plan description.}
-  qps: {type: int, default: -1, description: Requests per second limit; -1 means unlimited.}
-  max_request_num: {type: int, default: -1, description: Total request limit; -1 means unlimited.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  usage_plan_id:
+    description:
+      - Existing usage plan ID.
+    type: str
+  name:
+    description:
+      - Usage plan name.
+    type: str
+  description:
+    description:
+      - Usage plan description.
+    type: str
+    default: ''
+  qps:
+    description:
+      - Requests per second limit; -1 means unlimited.
+    type: int
+    default: -1
+  max_request_num:
+    description:
+      - Total request limit; -1 means unlimited.
+    type: int
+    default: -1
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

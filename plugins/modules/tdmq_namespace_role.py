@@ -12,11 +12,34 @@ short_description: Manage TDMQ Pulsar namespace role permissions
 version_added: "0.14.0"
 description: Creates, updates and deletes role permission bindings in a Pulsar namespace.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, required: true, description: Pulsar cluster ID.}
-  namespace: {type: str, required: true, description: Pulsar namespace name.}
-  role_name: {type: str, required: true, description: TDMQ role name.}
-  permissions: {type: list, elements: str, choices: [produce, consume], default: [produce, consume], description: Complete desired permission set.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - Pulsar cluster ID.
+    type: str
+    required: true
+  namespace:
+    description:
+      - Pulsar namespace name.
+    type: str
+    required: true
+  role_name:
+    description:
+      - TDMQ role name.
+    type: str
+    required: true
+  permissions:
+    description:
+      - Complete desired permission set.
+    type: list
+    choices: [produce, consume]
+    default: [produce, consume]
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

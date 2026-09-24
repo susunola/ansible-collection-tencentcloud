@@ -12,11 +12,30 @@ short_description: Manage Tencent Cloud API Gateway API keys
 version_added: "0.14.0"
 description: Creates, rotates and deletes API Gateway client credentials.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  access_key_id: {type: str, description: Existing or manually assigned key ID.}
-  access_key_secret: {type: str, description: Secret for a manual key or secret rotation.}
-  name: {type: str, description: Key display name.}
-  key_type: {type: str, choices: [auto, manual], default: auto, description: Credential generation mode.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  access_key_id:
+    description:
+      - Existing or manually assigned key ID.
+    type: str
+  access_key_secret:
+    description:
+      - Secret for a manual key or secret rotation.
+    type: str
+  name:
+    description:
+      - Key display name.
+    type: str
+  key_type:
+    description:
+      - Credential generation mode.
+    type: str
+    choices: [auto, manual]
+    default: auto
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

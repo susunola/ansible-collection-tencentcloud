@@ -16,38 +16,130 @@ description:
   - Creates a DLC inference service and reconciles its operational state between C(running) and C(stopped).
   - The DLC API exposes no service update or deletion operation; readable creation-field conflicts fail explicitly and service removal is not claimed.
 options:
-  state: {type: str, choices: [running, stopped], default: running, description: Desired operational state.}
-  name: {type: str, required: true, description: Exact service name and identity.}
-  model_uid: {type: str, description: Parent inference-model UID; required on creation.}
-  model_version: {type: str, description: Immutable model version.}
-  engine: {type: str, choices: [vllm, xgboost], description: Inference engine; required on creation.}
-  replicas: {type: int, description: Initial deployment replica count.}
-  resource_partition_id: {type: str, description: Initial resource partition ID.}
-  image: {type: str, description: Ray Serve deployment image.}
-  model_identifier: {type: str, description: Immutable OpenAI-compatible model identifier.}
-  queue: {type: str, description: Initial K8s namespace or queue.}
-  deployment_name: {type: str, description: Initial deployment name.}
-  head_high_availability_enabled: {type: bool, description: Enable Ray head high availability at creation.}
-  advanced_params: {type: str, description: Initial advanced parameter JSON.}
-  image_pull_policy: {type: str, choices: [Always, IfNotPresent, Never], description: Initial image pull policy.}
-  autoscaling_enabled: {type: bool, description: Enable initial autoscaling.}
-  min_replicas: {type: int, description: Initial autoscaling minimum.}
-  max_replicas: {type: int, description: Initial autoscaling maximum.}
-  autoscaler_options: {type: str, description: Initial autoscaler JSON.}
-  api_key_ids: {type: list, elements: str, description: API key IDs bound during creation.}
-  advanced_options: {type: str, description: Initial flattened RayService options JSON.}
-  is_custom: {type: bool, description: Whether this is custom Ray Serve code.}
-  runtime_env: {type: str, description: Initial Python runtime environment JSON.}
+  state:
+    description:
+      - Desired operational state.
+    type: str
+    choices: [running, stopped]
+    default: running
+  name:
+    description:
+      - Exact service name and identity.
+    type: str
+    required: true
+  model_uid:
+    description:
+      - Parent inference-model UID; required on creation.
+    type: str
+  model_version:
+    description:
+      - Immutable model version.
+    type: str
+  engine:
+    description:
+      - Inference engine; required on creation.
+    type: str
+    choices: [vllm, xgboost]
+  replicas:
+    description:
+      - Initial deployment replica count.
+    type: int
+  resource_partition_id:
+    description:
+      - Initial resource partition ID.
+    type: str
+  image:
+    description:
+      - Ray Serve deployment image.
+    type: str
+  model_identifier:
+    description:
+      - Immutable OpenAI-compatible model identifier.
+    type: str
+  queue:
+    description:
+      - Initial K8s namespace or queue.
+    type: str
+  deployment_name:
+    description:
+      - Initial deployment name.
+    type: str
+  head_high_availability_enabled:
+    description:
+      - Enable Ray head high availability at creation.
+    type: bool
+  advanced_params:
+    description:
+      - Initial advanced parameter JSON.
+    type: str
+  image_pull_policy:
+    description:
+      - Initial image pull policy.
+    type: str
+    choices: [Always, IfNotPresent, Never]
+  autoscaling_enabled:
+    description:
+      - Enable initial autoscaling.
+    type: bool
+  min_replicas:
+    description:
+      - Initial autoscaling minimum.
+    type: int
+  max_replicas:
+    description:
+      - Initial autoscaling maximum.
+    type: int
+  autoscaler_options:
+    description:
+      - Initial autoscaler JSON.
+    type: str
+  api_key_ids:
+    description:
+      - API key IDs bound during creation.
+    type: list
+    elements: str
+  advanced_options:
+    description:
+      - Initial flattened RayService options JSON.
+    type: str
+  is_custom:
+    description:
+      - Whether this is custom Ray Serve code.
+    type: bool
+  runtime_env:
+    description:
+      - Initial Python runtime environment JSON.
+    type: str
   resource_tags:
     type: list
     elements: dict
     description: Exact readable Tencent Cloud resource tag set.
     suboptions:
-      key: {type: str, required: true, description: Tag key.}
-      value: {type: str, required: true, description: Tag value.}
-  wait: {type: bool, default: true, description: Wait for Running or Stopped convergence.}
-  waiter_delay: {type: int, default: 10, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 1800, description: Overall deployment convergence timeout.}
+      key:
+        description:
+          - Tag key.
+        type: str
+        required: true
+      value:
+        description:
+          - Tag value.
+        type: str
+        required: true
+  wait:
+    description:
+      - Wait for Running or Stopped convergence.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between polls.
+    type: int
+    default: 10
+  waiter_timeout:
+    description:
+      - Overall deployment convergence timeout.
+    type: int
+    default: 1800
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

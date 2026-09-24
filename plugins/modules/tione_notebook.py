@@ -17,38 +17,146 @@ description:
   - Mutable configuration drift is applied while stopped and the requested running state is restored afterwards.
   - Immutable network, billing and storage-source drift is reported explicitly instead of silently replacing persistent workspaces.
 options:
-  state: {type: str, choices: [running, stopped, absent], default: running, description: Desired notebook state.}
-  name: {type: str, description: Exact notebook name; required for creation.}
-  notebook_id: {type: str, description: Stable notebook ID; optional for lookup and required for deletion.}
-  project_id: {type: str, description: Optional TI workspace ID used during discovery.}
-  charge_type: {type: str, choices: [PREPAID, POSTPAID_BY_HOUR], description: Immutable billing mode; required for creation.}
-  resource_conf: {type: dict, description: ResourceConf-compatible compute configuration.}
-  log_enable: {type: bool, description: Enable log reporting.}
-  root_access: {type: bool, description: Enable root access.}
-  auto_stopping: {type: bool, description: Enable automatic stopping.}
-  direct_internet_access: {type: bool, description: Enable direct internet access.}
-  resource_group_id: {type: str, description: Prepaid resource-group ID.}
-  vpc_id: {type: str, description: Immutable VPC ID.}
-  subnet_id: {type: str, description: Immutable subnet ID.}
-  volume_source_type: {type: str, choices: [FREE, CLOUD_PREMIUM, CLOUD_SSD, CFS, CFS_TURBO, GooseFSx], description: Immutable storage source type.}
-  volume_size_gb: {type: int, description: Mutable storage volume size in GB.}
-  volume_source_cfs: {type: dict, description: Immutable CFSConfig-compatible storage configuration.}
-  volume_source_goosefs: {type: dict, description: Immutable GooseFS-compatible storage configuration.}
-  log_config: {type: dict, description: LogConfig-compatible log destination.}
-  lifecycle_script_id: {type: str, description: Lifecycle script ID.}
-  default_code_repo_id: {type: str, description: Default code repository ID.}
-  additional_code_repo_ids: {type: list, elements: str, description: 'Additional code repository IDs, at most three.'}
-  automatic_stop_time: {type: int, description: Automatic stop interval in hours.}
-  tags: {type: list, elements: dict, description: Tag-compatible notebook tags.}
-  data_configs: {type: list, elements: dict, description: DataConfig-compatible storage mounts.}
-  image_info: {type: dict, description: ImageInfo-compatible image selection.}
-  image_type: {type: str, choices: [SYSTEM, TCR, CCR], description: Notebook image type.}
-  ssh_config: {type: dict, description: SSHConfig-compatible SSH configuration.}
-  description: {type: str, description: Notebook description.}
-  allow_delete: {type: bool, default: false, description: Explicit destructive-operation guard.}
-  wait: {type: bool, default: true, description: Wait for state convergence.}
-  waiter_delay: {type: int, default: 10, description: Seconds between state checks.}
-  waiter_timeout: {type: int, default: 1800, description: Overall convergence timeout.}
+  state:
+    description:
+      - Desired notebook state.
+    type: str
+    choices: [running, stopped, absent]
+    default: running
+  name:
+    description:
+      - Exact notebook name; required for creation.
+    type: str
+  notebook_id:
+    description:
+      - Stable notebook ID; optional for lookup and required for deletion.
+    type: str
+  project_id:
+    description:
+      - Optional TI workspace ID used during discovery.
+    type: str
+  charge_type:
+    description:
+      - Immutable billing mode; required for creation.
+    type: str
+    choices: [PREPAID, POSTPAID_BY_HOUR]
+  resource_conf:
+    description:
+      - ResourceConf-compatible compute configuration.
+    type: dict
+  log_enable:
+    description:
+      - Enable log reporting.
+    type: bool
+  root_access:
+    description:
+      - Enable root access.
+    type: bool
+  auto_stopping:
+    description:
+      - Enable automatic stopping.
+    type: bool
+  direct_internet_access:
+    description:
+      - Enable direct internet access.
+    type: bool
+  resource_group_id:
+    description:
+      - Prepaid resource-group ID.
+    type: str
+  vpc_id:
+    description:
+      - Immutable VPC ID.
+    type: str
+  subnet_id:
+    description:
+      - Immutable subnet ID.
+    type: str
+  volume_source_type:
+    description:
+      - Immutable storage source type.
+    type: str
+    choices: [FREE, CLOUD_PREMIUM, CLOUD_SSD, CFS, CFS_TURBO, GooseFSx]
+  volume_size_gb:
+    description:
+      - Mutable storage volume size in GB.
+    type: int
+  volume_source_cfs:
+    description:
+      - Immutable CFSConfig-compatible storage configuration.
+    type: dict
+  volume_source_goosefs:
+    description:
+      - Immutable GooseFS-compatible storage configuration.
+    type: dict
+  log_config:
+    description:
+      - LogConfig-compatible log destination.
+    type: dict
+  lifecycle_script_id:
+    description:
+      - Lifecycle script ID.
+    type: str
+  default_code_repo_id:
+    description:
+      - Default code repository ID.
+    type: str
+  additional_code_repo_ids:
+    description:
+      - Additional code repository IDs, at most three.
+    type: list
+    elements: str
+  automatic_stop_time:
+    description:
+      - Automatic stop interval in hours.
+    type: int
+  tags:
+    description:
+      - Tag-compatible notebook tags.
+    type: list
+    elements: dict
+  data_configs:
+    description:
+      - DataConfig-compatible storage mounts.
+    type: list
+    elements: dict
+  image_info:
+    description:
+      - ImageInfo-compatible image selection.
+    type: dict
+  image_type:
+    description:
+      - Notebook image type.
+    type: str
+    choices: [SYSTEM, TCR, CCR]
+  ssh_config:
+    description:
+      - SSHConfig-compatible SSH configuration.
+    type: dict
+  description:
+    description:
+      - Notebook description.
+    type: str
+  allow_delete:
+    description:
+      - Explicit destructive-operation guard.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for state convergence.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between state checks.
+    type: int
+    default: 10
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 1800
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

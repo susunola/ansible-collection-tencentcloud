@@ -12,10 +12,25 @@ short_description: Manage Tencent Cloud CFS permission groups
 version_added: "0.14.0"
 description: Creates, updates and deletes CFS client permission groups.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  permission_group_id: {type: str, description: Existing permission group ID; preferred for rename and deletion.}
-  name: {type: str, description: Permission group name.}
-  description: {type: str, default: '', description: Permission group description.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  permission_group_id:
+    description:
+      - Existing permission group ID; preferred for rename and deletion.
+    type: str
+  name:
+    description:
+      - Permission group name.
+    type: str
+  description:
+    description:
+      - Permission group description.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

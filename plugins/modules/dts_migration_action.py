@@ -14,11 +14,34 @@ short_description: Control a Tencent Cloud DTS migration job
 version_added: "0.14.0"
 description: Starts, pauses, resumes, stops or completes a DTS migration job with state-aware idempotency.
 options:
-  job_id: {description: DTS migration job ID., type: str, required: true}
-  action: {description: Desired operation., type: str, required: true, choices: [start, pause, resume, stop, complete]}
-  resume_option: {description: Resume mode., type: str, choices: [normal, clearData, overwrite], default: normal}
-  complete_mode: {description: Completion mode for supported legacy MySQL jobs., type: str, choices: [waitForSync, immediately], default: waitForSync}
-  confirm_impact: {description: Explicitly authorize stop or complete operations., type: bool, default: false}
+  job_id:
+    description:
+      - DTS migration job ID.
+    type: str
+    required: true
+  action:
+    description:
+      - Desired operation.
+    type: str
+    required: true
+    choices: [start, pause, resume, stop, complete]
+  resume_option:
+    description:
+      - Resume mode.
+    type: str
+    choices: [normal, clearData, overwrite]
+    default: normal
+  complete_mode:
+    description:
+      - Completion mode for supported legacy MySQL jobs.
+    type: str
+    choices: [waitForSync, immediately]
+    default: waitForSync
+  confirm_impact:
+    description:
+      - Explicitly authorize stop or complete operations.
+    type: bool
+    default: false
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

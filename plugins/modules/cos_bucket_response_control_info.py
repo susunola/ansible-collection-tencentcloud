@@ -11,8 +11,15 @@ short_description: Gather Tencent Cloud COS response-header controls
 version_added: "1.4.0"
 description: Returns the normalized response query parameters allowed for a COS bucket.
 options:
-  name: {description: Bucket short name or full name., type: str, required: true}
-  appid: {description: Tencent Cloud AppId used in the bucket suffix., type: str}
+  name:
+    description:
+      - Bucket short name or full name.
+    type: str
+    required: true
+  appid:
+    description:
+      - Tencent Cloud AppId used in the bucket suffix.
+    type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

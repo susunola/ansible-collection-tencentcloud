@@ -15,10 +15,28 @@ description:
   - Exactly reconciles writable DLC authorization policies directly attached to a user.
   - Ignores server metadata while preferring policy IDs for precise detach operations.
 options:
-  user_id: {type: str, required: true, description: DLC user ID.}
-  account_source: {type: str, choices: [TencentAccount, EntraAccount], default: TencentAccount, description: User source for policy and query APIs.}
-  policies: {type: list, elements: dict, required: true, description: Exact desired SDK Policy list.}
-  allow_empty: {type: bool, default: false, description: Explicitly authorize removing every directly attached policy.}
+  user_id:
+    description:
+      - DLC user ID.
+    type: str
+    required: true
+  account_source:
+    description:
+      - User source for policy and query APIs.
+    type: str
+    choices: [TencentAccount, EntraAccount]
+    default: TencentAccount
+  policies:
+    description:
+      - Exact desired SDK Policy list.
+    type: list
+    required: true
+    elements: dict
+  allow_empty:
+    description:
+      - Explicitly authorize removing every directly attached policy.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

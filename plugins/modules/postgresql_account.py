@@ -15,14 +15,47 @@ description:
   - Creates, updates and deletes PostgreSQL instance accounts.
   - Password replacement is explicit because the API never returns the current password.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  instance_id: {description: PostgreSQL instance ID., type: str, required: true}
-  username: {description: Database account name., type: str, required: true}
-  password: {description: Password used at creation or explicit rotation., type: str}
-  rotate_password: {description: Explicitly reset the password during this run., type: bool, default: false}
-  account_type: {description: Account privilege type., type: str, choices: [normal, tencentDBSuper], default: normal}
-  remark: {description: Account remark., type: str, default: ''}
-  cam_auth: {description: Enable CAM verification for the account., type: bool, default: false}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - PostgreSQL instance ID.
+    type: str
+    required: true
+  username:
+    description:
+      - Database account name.
+    type: str
+    required: true
+  password:
+    description:
+      - Password used at creation or explicit rotation.
+    type: str
+  rotate_password:
+    description:
+      - Explicitly reset the password during this run.
+    type: bool
+    default: false
+  account_type:
+    description:
+      - Account privilege type.
+    type: str
+    choices: [normal, tencentDBSuper]
+    default: normal
+  remark:
+    description:
+      - Account remark.
+    type: str
+    default: ''
+  cam_auth:
+    description:
+      - Enable CAM verification for the account.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

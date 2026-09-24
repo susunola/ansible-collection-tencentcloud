@@ -12,12 +12,34 @@ short_description: Manage Tencent Cloud TKE cluster audit logging
 version_added: "0.14.0"
 description: Enables or disables Kubernetes audit logging to a CLS topic.
 options:
-  state: {type: str, choices: [enabled, disabled], default: enabled, description: Desired audit state.}
-  cluster_id: {type: str, required: true, description: TKE cluster ID.}
-  logset_id: {type: str, description: Destination CLS logset ID.}
-  topic_id: {type: str, description: Destination CLS topic ID.}
-  topic_region: {type: str, description: Region of the CLS topic.}
-  delete_logset_and_topic: {type: bool, default: false, description: Delete automatically created CLS resources when disabling.}
+  state:
+    description:
+      - Desired audit state.
+    type: str
+    choices: [enabled, disabled]
+    default: enabled
+  cluster_id:
+    description:
+      - TKE cluster ID.
+    type: str
+    required: true
+  logset_id:
+    description:
+      - Destination CLS logset ID.
+    type: str
+  topic_id:
+    description:
+      - Destination CLS topic ID.
+    type: str
+  topic_region:
+    description:
+      - Region of the CLS topic.
+    type: str
+  delete_logset_and_topic:
+    description:
+      - Delete automatically created CLS resources when disabling.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

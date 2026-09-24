@@ -15,19 +15,69 @@ description:
   - Creates, updates, enables, disables and deletes VPC flow logs.
   - Connects ENI, NAT, CCN or direct-connect traffic telemetry to a CLS topic.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  flow_log_id: {description: Existing flow log ID., type: str}
-  name: {description: Flow log name., type: str}
-  vpc_id: {description: VPC ID., type: str, required: true}
-  resource_type: {description: Observed resource type., type: str, choices: [NETWORKINTERFACE, NAT, CCN, DCG]}
-  resource_id: {description: Observed resource ID., type: str}
-  traffic_type: {description: Captured traffic decision., type: str, choices: [ACCEPT, REJECT, ALL], default: ALL}
-  cls_topic_id: {description: CLS topic ID receiving records., type: str}
-  cls_region: {description: Region containing the CLS topic., type: str}
-  description: {description: Flow log description., type: str, default: ''}
-  enabled: {description: Whether collection is enabled., type: bool, default: true}
-  period: {description: CCN collection period in seconds., type: int, choices: [60, 300, 600]}
-  tags: {description: Tags applied at creation., type: dict, default: {}}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  flow_log_id:
+    description:
+      - Existing flow log ID.
+    type: str
+  name:
+    description:
+      - Flow log name.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID.
+    type: str
+    required: true
+  resource_type:
+    description:
+      - Observed resource type.
+    type: str
+    choices: [NETWORKINTERFACE, NAT, CCN, DCG]
+  resource_id:
+    description:
+      - Observed resource ID.
+    type: str
+  traffic_type:
+    description:
+      - Captured traffic decision.
+    type: str
+    choices: [ACCEPT, REJECT, ALL]
+    default: ALL
+  cls_topic_id:
+    description:
+      - CLS topic ID receiving records.
+    type: str
+  cls_region:
+    description:
+      - Region containing the CLS topic.
+    type: str
+  description:
+    description:
+      - Flow log description.
+    type: str
+    default: ''
+  enabled:
+    description:
+      - Whether collection is enabled.
+    type: bool
+    default: true
+  period:
+    description:
+      - CCN collection period in seconds.
+    type: int
+    choices: [60, 300, 600]
+  tags:
+    description:
+      - Tags applied at creation.
+    type: dict
+    default:
+      {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -12,13 +12,42 @@ short_description: Manage Tencent Cloud RabbitMQ Serverless permissions
 version_added: "0.14.0"
 description: Reconciles a user's configure, write and read regex permissions for a Serverless virtual host.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: RabbitMQ Serverless instance ID.}
-  user: {type: str, required: true, description: Username.}
-  virtual_host: {type: str, required: true, description: Virtual-host name.}
-  configure_regex: {type: str, default: '.*', description: Configure-operation resource regex.}
-  write_regex: {type: str, default: '.*', description: Write-operation resource regex.}
-  read_regex: {type: str, default: '.*', description: Read-operation resource regex.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - RabbitMQ Serverless instance ID.
+    type: str
+    required: true
+  user:
+    description:
+      - Username.
+    type: str
+    required: true
+  virtual_host:
+    description:
+      - Virtual-host name.
+    type: str
+    required: true
+  configure_regex:
+    description:
+      - Configure-operation resource regex.
+    type: str
+    default: .*
+  write_regex:
+    description:
+      - Write-operation resource regex.
+    type: str
+    default: .*
+  read_regex:
+    description:
+      - Read-operation resource regex.
+    type: str
+    default: .*
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

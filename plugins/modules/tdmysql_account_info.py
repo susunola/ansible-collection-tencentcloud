@@ -16,10 +16,25 @@ description:
   - Returns all accounts for an instance or one account identified by the exact username and host pair.
   - Exact mode can also include the account's global privileges.
 options:
-  instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
-  username: {type: str, description: Exact login username.}
-  host: {type: str, default: '%', description: Exact allowed client host paired with username.}
-  include_global_privileges: {type: bool, default: true, description: Query global privileges in exact mode.}
+  instance_id:
+    description:
+      - Stable TDSQL MySQL instance ID.
+    type: str
+    required: true
+  username:
+    description:
+      - Exact login username.
+    type: str
+  host:
+    description:
+      - Exact allowed client host paired with username.
+    type: str
+    default: '%'
+  include_global_privileges:
+    description:
+      - Query global privileges in exact mode.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

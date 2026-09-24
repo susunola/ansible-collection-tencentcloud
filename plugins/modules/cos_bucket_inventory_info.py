@@ -11,9 +11,20 @@ short_description: Gather a Tencent Cloud COS bucket inventory rule
 version_added: "1.4.0"
 description: Returns one named normalized COS inventory rule.
 options:
-  name: {description: Bucket short name or full name., type: str, required: true}
-  appid: {description: Tencent Cloud AppId used in the bucket suffix., type: str}
-  inventory_id: {description: Inventory rule identifier., type: str, required: true}
+  name:
+    description:
+      - Bucket short name or full name.
+    type: str
+    required: true
+  appid:
+    description:
+      - Tencent Cloud AppId used in the bucket suffix.
+    type: str
+  inventory_id:
+    description:
+      - Inventory rule identifier.
+    type: str
+    required: true
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

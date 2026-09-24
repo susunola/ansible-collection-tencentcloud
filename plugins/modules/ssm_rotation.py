@@ -12,10 +12,25 @@ short_description: Manage Tencent Cloud SSM secret rotation settings
 version_added: "0.14.0"
 description: Reconciles automatic rotation status and schedule for an existing supported SSM secret.
 options:
-  secret_name: {type: str, required: true, description: Existing SSM secret name.}
-  enabled: {type: bool, default: true, description: Whether automatic rotation is enabled.}
-  frequency: {type: int, default: 30, description: Rotation frequency in days.}
-  begin_time: {type: str, description: First rotation time in C(YYYY-MM-DD HH:MM:SS) format.}
+  secret_name:
+    description:
+      - Existing SSM secret name.
+    type: str
+    required: true
+  enabled:
+    description:
+      - Whether automatic rotation is enabled.
+    type: bool
+    default: true
+  frequency:
+    description:
+      - Rotation frequency in days.
+    type: int
+    default: 30
+  begin_time:
+    description:
+      - First rotation time in C(YYYY-MM-DD HH:MM:SS) format.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

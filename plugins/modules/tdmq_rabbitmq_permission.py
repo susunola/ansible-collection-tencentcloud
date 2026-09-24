@@ -12,13 +12,42 @@ short_description: Manage TDMQ RabbitMQ virtual host permissions
 version_added: "0.14.0"
 description: Creates or updates a user's configure, write and read regex permissions for a virtual host and removes the binding when absent.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: TDMQ RabbitMQ instance ID.}
-  user: {type: str, required: true, description: RabbitMQ username.}
-  virtual_host: {type: str, required: true, description: Virtual host name.}
-  configure_regex: {type: str, default: '.*', description: Resource-name regex allowed for configure operations.}
-  write_regex: {type: str, default: '.*', description: Resource-name regex allowed for write operations.}
-  read_regex: {type: str, default: '.*', description: Resource-name regex allowed for read operations.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - TDMQ RabbitMQ instance ID.
+    type: str
+    required: true
+  user:
+    description:
+      - RabbitMQ username.
+    type: str
+    required: true
+  virtual_host:
+    description:
+      - Virtual host name.
+    type: str
+    required: true
+  configure_regex:
+    description:
+      - Resource-name regex allowed for configure operations.
+    type: str
+    default: .*
+  write_regex:
+    description:
+      - Resource-name regex allowed for write operations.
+    type: str
+    default: .*
+  read_regex:
+    description:
+      - Resource-name regex allowed for read operations.
+    type: str
+    default: .*
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

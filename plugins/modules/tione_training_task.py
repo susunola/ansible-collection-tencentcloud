@@ -17,42 +17,163 @@ description:
   - A successfully completed task satisfies C(state=started) and is never restarted automatically.
   - Failed tasks are surfaced explicitly; readable creation drift is reported because TIONE exposes no task update API.
 options:
-  state: {type: str, choices: [started, stopped, absent], default: started, description: Desired task lifecycle state.}
-  name: {type: str, description: Exact training-task name; required for creation.}
-  task_id: {type: str, description: Stable training-task ID; optional for lookup and required for deletion.}
-  project_id: {type: str, description: Optional TI workspace ID.}
-  charge_type: {type: str, choices: [PREPAID, POSTPAID_BY_HOUR], description: Billing mode; required for creation.}
-  resource_configs: {type: list, elements: dict, description: ResourceConfigInfo-compatible role resources; required for creation.}
-  framework_name: {type: str, description: Training framework name.}
-  framework_version: {type: str, description: Training framework version.}
-  framework_environment: {type: str, description: Framework runtime environment.}
-  resource_group_id: {type: str, description: Prepaid resource-group ID.}
-  tags: {type: list, elements: dict, description: Tag-compatible task tags.}
-  image_info: {type: dict, description: ImageInfo-compatible custom image.}
-  code_package_path: {type: dict, description: CosPathInfo-compatible code package.}
-  start_cmd_info: {type: dict, description: StartCmdInfo-compatible command.}
-  encoded_start_cmd_info: {type: dict, description: 'EncodedStartCmdInfo-compatible command, taking precedence over start_cmd_info.'}
-  training_mode: {type: str, description: Distributed training mode.}
-  data_configs: {type: list, elements: dict, description: 'DataConfig-compatible input mounts, at most ten.'}
-  data_source: {type: str, description: 'Data source type such as DATASET, COS, CFS, CFSTurbo, HDFS or GooseFSx.'}
-  vpc_id: {type: str, description: VPC ID.}
-  subnet_id: {type: str, description: Subnet ID.}
-  output: {type: dict, description: CosPathInfo-compatible training output.}
-  log_config: {type: dict, description: LogConfig-compatible CLS destination.}
-  tuning_parameters: {type: str, description: Training tuning parameters.}
-  log_enable: {type: bool, description: Enable log reporting.}
-  remark: {type: str, description: Task remark.}
-  callback_url: {type: str, description: Asynchronous lifecycle callback URL.}
-  code_repos: {type: list, elements: dict, description: CodeRepoConfig-compatible repositories.}
-  expose_network_config: {type: dict, description: ExposeNetworkConfig-compatible network exposure.}
-  envs: {type: list, elements: dict, description: EnvVar-compatible environment variables.}
-  train_tool_config: {type: dict, description: TrainToolConfig-compatible diagnostics.}
-  resource_supply_attribute: {type: dict, description: ResourceSupplyAttribute-compatible supply settings.}
-  queues: {type: list, elements: str, description: Queue IDs.}
-  allow_delete: {type: bool, default: false, description: Explicit destructive-operation guard.}
-  wait: {type: bool, default: true, description: Wait for lifecycle convergence.}
-  waiter_delay: {type: int, default: 10, description: Seconds between state checks.}
-  waiter_timeout: {type: int, default: 7200, description: Overall convergence timeout.}
+  state:
+    description:
+      - Desired task lifecycle state.
+    type: str
+    choices: [started, stopped, absent]
+    default: started
+  name:
+    description:
+      - Exact training-task name; required for creation.
+    type: str
+  task_id:
+    description:
+      - Stable training-task ID; optional for lookup and required for deletion.
+    type: str
+  project_id:
+    description:
+      - Optional TI workspace ID.
+    type: str
+  charge_type:
+    description:
+      - Billing mode; required for creation.
+    type: str
+    choices: [PREPAID, POSTPAID_BY_HOUR]
+  resource_configs:
+    description:
+      - ResourceConfigInfo-compatible role resources; required for creation.
+    type: list
+    elements: dict
+  framework_name:
+    description:
+      - Training framework name.
+    type: str
+  framework_version:
+    description:
+      - Training framework version.
+    type: str
+  framework_environment:
+    description:
+      - Framework runtime environment.
+    type: str
+  resource_group_id:
+    description:
+      - Prepaid resource-group ID.
+    type: str
+  tags:
+    description:
+      - Tag-compatible task tags.
+    type: list
+    elements: dict
+  image_info:
+    description:
+      - ImageInfo-compatible custom image.
+    type: dict
+  code_package_path:
+    description:
+      - CosPathInfo-compatible code package.
+    type: dict
+  start_cmd_info:
+    description:
+      - StartCmdInfo-compatible command.
+    type: dict
+  encoded_start_cmd_info:
+    description:
+      - EncodedStartCmdInfo-compatible command, taking precedence over start_cmd_info.
+    type: dict
+  training_mode:
+    description:
+      - Distributed training mode.
+    type: str
+  data_configs:
+    description:
+      - DataConfig-compatible input mounts, at most ten.
+    type: list
+    elements: dict
+  data_source:
+    description:
+      - Data source type such as DATASET, COS, CFS, CFSTurbo, HDFS or GooseFSx.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID.
+    type: str
+  subnet_id:
+    description:
+      - Subnet ID.
+    type: str
+  output:
+    description:
+      - CosPathInfo-compatible training output.
+    type: dict
+  log_config:
+    description:
+      - LogConfig-compatible CLS destination.
+    type: dict
+  tuning_parameters:
+    description:
+      - Training tuning parameters.
+    type: str
+  log_enable:
+    description:
+      - Enable log reporting.
+    type: bool
+  remark:
+    description:
+      - Task remark.
+    type: str
+  callback_url:
+    description:
+      - Asynchronous lifecycle callback URL.
+    type: str
+  code_repos:
+    description:
+      - CodeRepoConfig-compatible repositories.
+    type: list
+    elements: dict
+  expose_network_config:
+    description:
+      - ExposeNetworkConfig-compatible network exposure.
+    type: dict
+  envs:
+    description:
+      - EnvVar-compatible environment variables.
+    type: list
+    elements: dict
+  train_tool_config:
+    description:
+      - TrainToolConfig-compatible diagnostics.
+    type: dict
+  resource_supply_attribute:
+    description:
+      - ResourceSupplyAttribute-compatible supply settings.
+    type: dict
+  queues:
+    description:
+      - Queue IDs.
+    type: list
+    elements: str
+  allow_delete:
+    description:
+      - Explicit destructive-operation guard.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for lifecycle convergence.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between state checks.
+    type: int
+    default: 10
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 7200
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

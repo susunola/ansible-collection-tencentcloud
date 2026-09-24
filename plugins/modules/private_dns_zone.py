@@ -12,26 +12,64 @@ short_description: Manage a Tencent Cloud Private DNS zone
 version_added: "0.13.0"
 description: Creates, updates and deletes a private DNS zone and its VPC associations.
 options:
-  state: {description: Desired zone state., type: str, choices: [present, absent], default: present}
-  zone_id: {description: Existing private zone ID., type: str}
-  domain: {description: Private zone domain used to find or create the zone., type: str}
-  remark: {description: Zone remark., type: str, default: ''}
+  state:
+    description:
+      - Desired zone state.
+    type: str
+    choices: [present, absent]
+    default: present
+  zone_id:
+    description:
+      - Existing private zone ID.
+    type: str
+  domain:
+    description:
+      - Private zone domain used to find or create the zone.
+    type: str
+  remark:
+    description:
+      - Zone remark.
+    type: str
+    default: ''
   vpcs:
     description: Exact associated VPC list with C(region) and C(vpc_id).
     type: list
     elements: dict
     suboptions:
-      region: {description: Tencent Cloud region containing the VPC., type: str, required: true}
-      vpc_id: {description: VPC ID to associate with the zone., type: str, required: true}
+      region:
+        description:
+          - Tencent Cloud region containing the VPC.
+        type: str
+        required: true
+      vpc_id:
+        description:
+          - VPC ID to associate with the zone.
+        type: str
+        required: true
   account_vpcs:
     description: Exact VPC list from authorized primary accounts.
     type: list
     elements: dict
     suboptions:
-      uin: {description: VPC owner primary-account UIN., type: str, required: true}
-      region: {description: Tencent Cloud region containing the VPC., type: str, required: true}
-      vpc_id: {description: VPC ID to associate with the zone., type: str, required: true}
-  tags: {description: Tags applied when creating the zone., type: dict}
+      uin:
+        description:
+          - VPC owner primary-account UIN.
+        type: str
+        required: true
+      region:
+        description:
+          - Tencent Cloud region containing the VPC.
+        type: str
+        required: true
+      vpc_id:
+        description:
+          - VPC ID to associate with the zone.
+        type: str
+        required: true
+  tags:
+    description:
+      - Tags applied when creating the zone.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

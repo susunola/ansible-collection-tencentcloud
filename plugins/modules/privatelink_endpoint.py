@@ -13,16 +13,53 @@ short_description: Manage Tencent Cloud PrivateLink endpoints
 version_added: "0.14.0"
 description: Creates, updates and deletes consumer-side VPC endpoints connected to a PrivateLink endpoint service.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  endpoint_id: {description: Existing endpoint ID., type: str}
-  name: {description: Endpoint name., type: str}
-  vpc_id: {description: Consumer VPC ID., type: str}
-  subnet_id: {description: Consumer subnet ID., type: str}
-  endpoint_service_id: {description: Provider endpoint service ID., type: str}
-  endpoint_vip: {description: Requested private endpoint IP., type: str}
-  security_group_ids: {description: Exact security group ID set., type: list, elements: str}
-  ip_address_type: {description: Endpoint address family., type: str, choices: [IPv4, IPv6], default: IPv4}
-  tags: {description: Tags applied at creation., type: dict, default: {}}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  endpoint_id:
+    description:
+      - Existing endpoint ID.
+    type: str
+  name:
+    description:
+      - Endpoint name.
+    type: str
+  vpc_id:
+    description:
+      - Consumer VPC ID.
+    type: str
+  subnet_id:
+    description:
+      - Consumer subnet ID.
+    type: str
+  endpoint_service_id:
+    description:
+      - Provider endpoint service ID.
+    type: str
+  endpoint_vip:
+    description:
+      - Requested private endpoint IP.
+    type: str
+  security_group_ids:
+    description:
+      - Exact security group ID set.
+    type: list
+    elements: str
+  ip_address_type:
+    description:
+      - Endpoint address family.
+    type: str
+    choices: [IPv4, IPv6]
+    default: IPv4
+  tags:
+    description:
+      - Tags applied at creation.
+    type: dict
+    default:
+      {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

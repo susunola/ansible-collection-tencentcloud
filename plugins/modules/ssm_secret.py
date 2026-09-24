@@ -14,17 +14,59 @@ description:
   - Creates, describes, enables, disables, restores and schedules deletion of custom SSM secrets.
   - Initial secret material is used only at creation; manage subsequent immutable values with C(ssm_secret_version).
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired secret state.}
-  secret_name: {type: str, required: true, description: Globally unique secret name within the region.}
-  description: {type: str, default: managed by Ansible, description: Secret description.}
-  enabled: {type: bool, default: true, description: Whether an existing secret is enabled.}
-  initial_version_id: {type: str, default: SSM_Current, description: Initial version identifier used during creation.}
-  initial_secret_string: {type: str, description: Initial plain-text secret value.}
-  initial_secret_binary: {type: str, description: Initial base64-encoded binary secret value.}
-  kms_key_id: {type: str, description: KMS key ID used for encryption; immutable after creation.}
-  kms_hsm_cluster_id: {type: str, description: KMS dedicated HSM cluster ID used when no KMS key is specified.}
-  encrypt_type: {type: int, choices: [0, 1], default: 0, description: KMS or software-key encryption.}
-  recovery_window_days: {type: int, default: 7, description: Scheduled-deletion recovery window from 0 through 30 days.}
+  state:
+    description:
+      - Desired secret state.
+    type: str
+    choices: [present, absent]
+    default: present
+  secret_name:
+    description:
+      - Globally unique secret name within the region.
+    type: str
+    required: true
+  description:
+    description:
+      - Secret description.
+    type: str
+    default: managed by Ansible
+  enabled:
+    description:
+      - Whether an existing secret is enabled.
+    type: bool
+    default: true
+  initial_version_id:
+    description:
+      - Initial version identifier used during creation.
+    type: str
+    default: SSM_Current
+  initial_secret_string:
+    description:
+      - Initial plain-text secret value.
+    type: str
+  initial_secret_binary:
+    description:
+      - Initial base64-encoded binary secret value.
+    type: str
+  kms_key_id:
+    description:
+      - KMS key ID used for encryption; immutable after creation.
+    type: str
+  kms_hsm_cluster_id:
+    description:
+      - KMS dedicated HSM cluster ID used when no KMS key is specified.
+    type: str
+  encrypt_type:
+    description:
+      - KMS or software-key encryption.
+    type: int
+    choices: [0, 1]
+    default: 0
+  recovery_window_days:
+    description:
+      - Scheduled-deletion recovery window from 0 through 30 days.
+    type: int
+    default: 7
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

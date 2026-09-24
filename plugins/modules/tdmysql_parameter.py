@@ -16,11 +16,31 @@ description:
   - Reconciles a partial map of instance parameter names and values while preserving unspecified parameters.
   - Unknown parameter names are rejected before mutation and asynchronous changes wait on their task Flow.
 options:
-  instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
-  parameters: {type: dict, required: true, description: Parameter names mapped to complete desired string-compatible values.}
-  wait: {type: bool, default: true, description: Wait for asynchronous parameter application.}
-  waiter_delay: {type: int, default: 5, description: Seconds between Flow checks.}
-  waiter_timeout: {type: int, default: 600, description: Overall Flow timeout.}
+  instance_id:
+    description:
+      - Stable TDSQL MySQL instance ID.
+    type: str
+    required: true
+  parameters:
+    description:
+      - Parameter names mapped to complete desired string-compatible values.
+    type: dict
+    required: true
+  wait:
+    description:
+      - Wait for asynchronous parameter application.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between Flow checks.
+    type: int
+    default: 5
+  waiter_timeout:
+    description:
+      - Overall Flow timeout.
+    type: int
+    default: 600
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -16,11 +16,26 @@ description:
   - Returns callable endpoint metadata for an existing service group, or validates whether a proposed image/model/mount combination permits model acceleration.
   - Exactly one mode is selected by providing C(service_group_id) or at least one hot-update input.
 options:
-  service_group_id: {type: str, description: Service-group ID whose call metadata is requested.}
-  project_id: {type: str, description: Optional TI workspace ID for call-info mode.}
-  image_info: {type: dict, description: ImageInfo-compatible candidate image for acceleration preflight mode.}
-  model_info: {type: dict, description: ModelInfo-compatible candidate model for acceleration preflight mode.}
-  volume_mount: {type: dict, description: VolumeMount-compatible candidate mount for acceleration preflight mode.}
+  service_group_id:
+    description:
+      - Service-group ID whose call metadata is requested.
+    type: str
+  project_id:
+    description:
+      - Optional TI workspace ID for call-info mode.
+    type: str
+  image_info:
+    description:
+      - ImageInfo-compatible candidate image for acceleration preflight mode.
+    type: dict
+  model_info:
+    description:
+      - ModelInfo-compatible candidate model for acceleration preflight mode.
+    type: dict
+  volume_mount:
+    description:
+      - VolumeMount-compatible candidate mount for acceleration preflight mode.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

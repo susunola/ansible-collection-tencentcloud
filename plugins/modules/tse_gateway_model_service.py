@@ -15,11 +15,29 @@ description:
   - Creates, updates and deletes an AI gateway LLM model service.
   - C(config) uses the SDK request field names. ServiceType, ModelProvider, ModelProtocol and SecretKeyIds are immutable after creation.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  model_service_id: {type: str, description: Existing model service ID.}
-  name: {type: str, description: Instance-unique model service name.}
-  config: {type: dict, description: 'Model service configuration in SDK field shape, excluding Name and GatewayId.'}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  model_service_id:
+    description:
+      - Existing model service ID.
+    type: str
+  name:
+    description:
+      - Instance-unique model service name.
+    type: str
+  config:
+    description:
+      - Model service configuration in SDK field shape, excluding Name and GatewayId.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

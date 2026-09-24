@@ -16,20 +16,74 @@ description:
   - Creates, updates and drops exact DLC Data Management Service partition entries.
   - Partition values form the stable identity; parameters and storage descriptors are reconciled semantically.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired partition state.}
-  database_name: {type: str, required: true, description: Parent database name.}
-  table_name: {type: str, required: true, description: Parent table name.}
-  values: {type: list, elements: str, required: true, description: Ordered exact partition values and stable identity.}
-  schema_name: {type: str, description: Catalog schema name.}
-  name: {type: str, description: Partition display name.}
-  datasource_connection_name: {type: str, default: DataLakeCatalog, description: Data-source connection name.}
-  params: {type: dict, description: Exact partition parameter map.}
-  storage: {type: dict, description: DMSSds-compatible storage descriptor.}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize dropping the partition entry.}
-  delete_data: {type: bool, default: false, description: Also delete partition data when dropping the entry.}
-  wait: {type: bool, default: true, description: Wait for lifecycle and field convergence.}
-  waiter_delay: {type: int, default: 3, description: Seconds between polls.}
-  waiter_timeout: {type: int, default: 180, description: Overall convergence timeout.}
+  state:
+    description:
+      - Desired partition state.
+    type: str
+    choices: [present, absent]
+    default: present
+  database_name:
+    description:
+      - Parent database name.
+    type: str
+    required: true
+  table_name:
+    description:
+      - Parent table name.
+    type: str
+    required: true
+  values:
+    description:
+      - Ordered exact partition values and stable identity.
+    type: list
+    required: true
+    elements: str
+  schema_name:
+    description:
+      - Catalog schema name.
+    type: str
+  name:
+    description:
+      - Partition display name.
+    type: str
+  datasource_connection_name:
+    description:
+      - Data-source connection name.
+    type: str
+    default: DataLakeCatalog
+  params:
+    description:
+      - Exact partition parameter map.
+    type: dict
+  storage:
+    description:
+      - DMSSds-compatible storage descriptor.
+    type: dict
+  allow_delete:
+    description:
+      - Explicitly authorize dropping the partition entry.
+    type: bool
+    default: false
+  delete_data:
+    description:
+      - Also delete partition data when dropping the entry.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for lifecycle and field convergence.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between polls.
+    type: int
+    default: 3
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 180
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

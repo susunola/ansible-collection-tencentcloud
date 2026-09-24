@@ -12,15 +12,52 @@ short_description: Manage Tencent Cloud WAF sensitive-information leakage rules
 version_added: "0.14.0"
 description: Creates, updates and deletes response-data leakage protection rules for a protected domain.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  domain: {type: str, required: true, description: Protected domain.}
-  rule_id: {type: int, description: Existing rule ID; preferred for rename and deletion.}
-  name: {type: str, description: Rule name.}
-  action: {type: int, choices: [0, 1, 2, 3, 4], default: 0, description: "Action code for alert, replacement, partial display or blocking."}
-  strategies: {type: list, elements: dict, default: [], description: SDK-compatible response match strategies.}
-  uri: {type: str, default: '/', description: URL match expression; immutable after creation.}
-  enabled: {type: bool, default: true, description: Whether the rule is enabled.}
-  force_replace: {type: bool, default: false, description: Delete and recreate when immutable URI changes.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  domain:
+    description:
+      - Protected domain.
+    type: str
+    required: true
+  rule_id:
+    description:
+      - Existing rule ID; preferred for rename and deletion.
+    type: int
+  name:
+    description:
+      - Rule name.
+    type: str
+  action:
+    description:
+      - Action code for alert, replacement, partial display or blocking.
+    type: int
+    choices: [0, 1, 2, 3, 4]
+    default: 0
+  strategies:
+    description:
+      - SDK-compatible response match strategies.
+    type: list
+    default: []
+    elements: dict
+  uri:
+    description:
+      - URL match expression; immutable after creation.
+    type: str
+    default: /
+  enabled:
+    description:
+      - Whether the rule is enabled.
+    type: bool
+    default: true
+  force_replace:
+    description:
+      - Delete and recreate when immutable URI changes.
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

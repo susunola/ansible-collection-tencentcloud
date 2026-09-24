@@ -15,17 +15,39 @@ version_added: "0.14.0"
 description:
   - Lists DLC Notebook sessions with complete pagination and optional engine, state, keyword and engine-generation filters.
 options:
-  data_engine_name: {type: str, description: Return sessions for this exact data-engine name.}
+  data_engine_name:
+    description:
+      - Return sessions for this exact data-engine name.
+    type: str
   states:
     type: list
     elements: str
     choices: [not_started, starting, idle, busy, shutting_down, error, dead, killed, success]
     description: Return sessions in any of these lifecycle states.
-  keyword: {type: str, description: 'DLC notebook keyword filter over engine name, session ID or session name.'}
-  engine_generation: {type: str, choices: [supersql, native], description: Filter by engine generation.}
-  sort_fields: {type: list, elements: str, description: API-supported session sort fields.}
-  ascending: {type: bool, default: false, description: Sort in ascending order.}
-  page_size: {type: int, default: 100, description: 'Number of sessions requested per page, from 1 to 100.'}
+  keyword:
+    description:
+      - DLC notebook keyword filter over engine name, session ID or session name.
+    type: str
+  engine_generation:
+    description:
+      - Filter by engine generation.
+    type: str
+    choices: [supersql, native]
+  sort_fields:
+    description:
+      - API-supported session sort fields.
+    type: list
+    elements: str
+  ascending:
+    description:
+      - Sort in ascending order.
+    type: bool
+    default: false
+  page_size:
+    description:
+      - Number of sessions requested per page, from 1 to 100.
+    type: int
+    default: 100
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -12,12 +12,34 @@ short_description: Manage DNSPod custom line groups
 version_added: "0.14.0"
 description: Creates, updates and deletes a domain-scoped DNSPod custom line group with exact membership.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  domain: {type: str, description: Domain name.}
-  domain_id: {type: int, description: "Domain ID, which takes precedence over domain."}
-  line_group_id: {type: int, description: Existing group ID; preferred for rename and deletion.}
-  name: {type: str, required: true, description: Custom line group name.}
-  lines: {type: list, elements: str, description: Exact set of custom line names in the group.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  domain:
+    description:
+      - Domain name.
+    type: str
+  domain_id:
+    description:
+      - Domain ID, which takes precedence over domain.
+    type: int
+  line_group_id:
+    description:
+      - Existing group ID; preferred for rename and deletion.
+    type: int
+  name:
+    description:
+      - Custom line group name.
+    type: str
+    required: true
+  lines:
+    description:
+      - Exact set of custom line names in the group.
+    type: list
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

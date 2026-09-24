@@ -13,12 +13,37 @@ short_description: Manage Tencent Cloud TCR replication rules
 version_added: "0.14.0"
 description: Creates, updates, enables and deletes Enterprise Edition TCR replication policies.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  registry_id: {description: Source registry ID., type: str, required: true}
-  destination_registry_id: {description: Destination replication registry ID., type: str, required: true}
-  destination_region_id: {description: Destination region numeric ID., type: int, required: true}
-  name: {description: Replication rule name., type: str, required: true}
-  destination_namespace: {description: Destination namespace template., type: str, default: ''}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  registry_id:
+    description:
+      - Source registry ID.
+    type: str
+    required: true
+  destination_registry_id:
+    description:
+      - Destination replication registry ID.
+    type: str
+    required: true
+  destination_region_id:
+    description:
+      - Destination region numeric ID.
+    type: int
+    required: true
+  name:
+    description:
+      - Replication rule name.
+    type: str
+    required: true
+  destination_namespace:
+    description:
+      - Destination namespace template.
+    type: str
+    default: ''
   filters:
     description: Replication filters with type and value.
     type: list
@@ -33,10 +58,26 @@ options:
         description: Value to match for the filter type.
         type: str
         required: true
-  override: {description: Overwrite an existing destination image., type: bool, default: true}
-  deletion: {description: Replicate source image deletion., type: bool, default: false}
-  enabled: {description: Enable the replication rule., type: bool, default: true}
-  description: {description: Rule description., type: str, default: ''}
+  override:
+    description:
+      - Overwrite an existing destination image.
+    type: bool
+    default: true
+  deletion:
+    description:
+      - Replicate source image deletion.
+    type: bool
+    default: false
+  enabled:
+    description:
+      - Enable the replication rule.
+    type: bool
+    default: true
+  description:
+    description:
+      - Rule description.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

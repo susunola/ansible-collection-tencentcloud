@@ -12,22 +12,69 @@ short_description: Manage Tencent Cloud CKafka ACL rules
 version_added: "0.14.0"
 description: Creates and deletes prefixed or preset Topic ACL rules and updates whether preset rules apply to newly created topics.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: CKafka instance ID.}
-  name: {type: str, required: true, description: ACL rule name.}
-  pattern_type: {type: str, choices: [PREFIXED, PRESET], default: PREFIXED, description: Prefix matching or preset policy.}
-  pattern: {type: str, description: Topic prefix required for C(PREFIXED) rules.}
-  apply_to_new_topics: {type: bool, default: false, description: Apply a preset rule to newly created topics.}
-  comment: {type: str, default: '', description: Immutable ACL rule comment.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - CKafka instance ID.
+    type: str
+    required: true
+  name:
+    description:
+      - ACL rule name.
+    type: str
+    required: true
+  pattern_type:
+    description:
+      - Prefix matching or preset policy.
+    type: str
+    choices: [PREFIXED, PRESET]
+    default: PREFIXED
+  pattern:
+    description:
+      - Topic prefix required for C(PREFIXED) rules.
+    type: str
+  apply_to_new_topics:
+    description:
+      - Apply a preset rule to newly created topics.
+    type: bool
+    default: false
+  comment:
+    description:
+      - Immutable ACL rule comment.
+    type: str
+    default: ''
   rules:
     type: list
     elements: dict
     description: Immutable ACL entries contained by the rule. Required when C(state=present).
     suboptions:
-      operation: {type: str, choices: [All, Read, Write], required: true, description: Allowed Kafka operation.}
-      permission: {type: str, choices: [Allow, Deny], required: true, description: Allow or deny decision.}
-      host: {type: str, default: '*', description: Client host pattern.}
-      principal: {type: str, required: true, description: Principal such as C(User:producer).}
+      operation:
+        description:
+          - Allowed Kafka operation.
+        type: str
+        required: true
+        choices: [All, Read, Write]
+      permission:
+        description:
+          - Allow or deny decision.
+        type: str
+        required: true
+        choices: [Allow, Deny]
+      host:
+        description:
+          - Client host pattern.
+        type: str
+        default: '*'
+      principal:
+        description:
+          - Principal such as C(User:producer).
+        type: str
+        required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

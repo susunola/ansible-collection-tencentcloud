@@ -13,15 +13,52 @@ short_description: Manage Tencent Cloud Cloud Firewall NAT DNAT rules
 version_added: "0.14.0"
 description: Creates, updates and deletes NAT firewall destination-NAT forwarding rules.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired rule state.}
-  firewall_instance_id: {type: str, required: true, description: Cloud Firewall NAT instance ID.}
-  mode: {type: int, choices: [0, 1], default: 0, description: Zero for CFW-created mode or one for access mode.}
-  protocol: {type: str, choices: [TCP, UDP], required: true, description: Forwarding protocol.}
-  public_ip: {type: str, required: true, description: Public elastic IP used to identify the rule.}
-  public_port: {type: int, required: true, description: Public port used to identify the rule.}
-  private_ip: {type: str, description: Private destination IP; required when state is present.}
-  private_port: {type: int, description: Private destination port; required when state is present.}
-  description: {type: str, default: '', description: Rule description.}
+  state:
+    description:
+      - Desired rule state.
+    type: str
+    choices: [present, absent]
+    default: present
+  firewall_instance_id:
+    description:
+      - Cloud Firewall NAT instance ID.
+    type: str
+    required: true
+  mode:
+    description:
+      - Zero for CFW-created mode or one for access mode.
+    type: int
+    choices: [0, 1]
+    default: 0
+  protocol:
+    description:
+      - Forwarding protocol.
+    type: str
+    required: true
+    choices: [TCP, UDP]
+  public_ip:
+    description:
+      - Public elastic IP used to identify the rule.
+    type: str
+    required: true
+  public_port:
+    description:
+      - Public port used to identify the rule.
+    type: int
+    required: true
+  private_ip:
+    description:
+      - Private destination IP; required when state is present.
+    type: str
+  private_port:
+    description:
+      - Private destination port; required when state is present.
+    type: int
+  description:
+    description:
+      - Rule description.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

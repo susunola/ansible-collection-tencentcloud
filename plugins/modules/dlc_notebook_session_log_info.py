@@ -16,9 +16,21 @@ description:
   - Reads DLC Notebook session logs with offset pagination until the API returns a short page.
   - A configurable page cap prevents unbounded reads when the service returns repeated full pages.
 options:
-  session_id: {type: str, required: true, description: Exact Notebook session ID.}
-  page_size: {type: int, default: 200, description: 'Log lines requested per page, from 1 to 1000.'}
-  max_pages: {type: int, default: 100, description: 'Maximum number of pages fetched, from 1 to 1000.'}
+  session_id:
+    description:
+      - Exact Notebook session ID.
+    type: str
+    required: true
+  page_size:
+    description:
+      - Log lines requested per page, from 1 to 1000.
+    type: int
+    default: 200
+  max_pages:
+    description:
+      - Maximum number of pages fetched, from 1 to 1000.
+    type: int
+    default: 100
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

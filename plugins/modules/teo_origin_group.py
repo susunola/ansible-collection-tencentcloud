@@ -13,20 +13,55 @@ short_description: Manage Tencent Cloud EdgeOne origin groups
 version_added: "0.14.0"
 description: Creates, updates and deletes EdgeOne origin groups with exact origin-record convergence.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired origin-group state.}
-  zone_id: {type: str, required: true, description: EdgeOne zone ID.}
-  group_id: {type: str, description: Existing origin-group ID; preferred for updates and deletion.}
-  name: {type: str, description: "Origin-group name, also used for lookup."}
-  group_type: {type: str, choices: [GENERAL, HTTP], default: GENERAL, description: Origin-group type.}
-  host_header: {type: str, description: Optional origin Host header for HTTP groups.}
+  state:
+    description:
+      - Desired origin-group state.
+    type: str
+    choices: [present, absent]
+    default: present
+  zone_id:
+    description:
+      - EdgeOne zone ID.
+    type: str
+    required: true
+  group_id:
+    description:
+      - Existing origin-group ID; preferred for updates and deletion.
+    type: str
+  name:
+    description:
+      - Origin-group name, also used for lookup.
+    type: str
+  group_type:
+    description:
+      - Origin-group type.
+    type: str
+    choices: [GENERAL, HTTP]
+    default: GENERAL
+  host_header:
+    description:
+      - Optional origin Host header for HTTP groups.
+    type: str
   records:
     type: list
     elements: dict
     description: Exact ordered-independent set of origin records.
     suboptions:
-      record: {type: str, required: true, description: "IPv4, IPv6, domain, or object-storage endpoint."}
-      record_type: {type: str, choices: [IP_DOMAIN, COS, AWS_S3], default: IP_DOMAIN, description: Origin record type.}
-      weight: {type: int, description: Optional traffic weight from 0 through 100.}
+      record:
+        description:
+          - IPv4, IPv6, domain, or object-storage endpoint.
+        type: str
+        required: true
+      record_type:
+        description:
+          - Origin record type.
+        type: str
+        choices: [IP_DOMAIN, COS, AWS_S3]
+        default: IP_DOMAIN
+      weight:
+        description:
+          - Optional traffic weight from 0 through 100.
+        type: int
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

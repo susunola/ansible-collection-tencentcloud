@@ -13,14 +13,46 @@ version_added: "0.14.0"
 description: Creates, updates and deletes reusable TencentDB for PostgreSQL parameter templates.
 options:
 
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  template_id: {type: str, description: Existing parameter template ID.}
-  name: {type: str, description: Template name.}
-  description: {type: str, default: '', description: Template description.}
-  database_major_version: {type: str, description: PostgreSQL major version required at creation.}
-  database_engine: {type: str, default: postgresql, description: Database engine required at creation.}
-  parameters: {type: dict, default: {}, description: Parameter name and expected value mapping to enforce.}
-  reset_parameters: {type: list, elements: str, default: [], description: Parameter names to reset to template defaults.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  template_id:
+    description:
+      - Existing parameter template ID.
+    type: str
+  name:
+    description:
+      - Template name.
+    type: str
+  description:
+    description:
+      - Template description.
+    type: str
+    default: ''
+  database_major_version:
+    description:
+      - PostgreSQL major version required at creation.
+    type: str
+  database_engine:
+    description:
+      - Database engine required at creation.
+    type: str
+    default: postgresql
+  parameters:
+    description:
+      - Parameter name and expected value mapping to enforce.
+    type: dict
+    default:
+      {}
+  reset_parameters:
+    description:
+      - Parameter names to reset to template defaults.
+    type: list
+    default: []
+    elements: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

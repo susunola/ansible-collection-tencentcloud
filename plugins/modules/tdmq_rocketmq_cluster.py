@@ -14,10 +14,26 @@ description:
   - Creates, renames and deletes a standard RocketMQ cluster.
   - Use C(cluster_id) for stable identity when changing C(name).
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, description: Existing cluster ID; required for unambiguous rename and preferred for deletion.}
-  name: {type: str, required: true, description: Cluster name.}
-  remark: {type: str, default: '', description: Cluster remark.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - Existing cluster ID; required for unambiguous rename and preferred for deletion.
+    type: str
+  name:
+    description:
+      - Cluster name.
+    type: str
+    required: true
+  remark:
+    description:
+      - Cluster remark.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

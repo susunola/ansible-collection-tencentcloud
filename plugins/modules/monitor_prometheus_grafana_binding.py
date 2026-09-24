@@ -12,9 +12,22 @@ short_description: Bind Managed Prometheus and Grafana instances
 version_added: "0.14.0"
 description: Binds or unbinds a Managed Grafana instance from a Prometheus instance.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: Prometheus instance ID.}
-  grafana_id: {type: str, required: true, description: Grafana instance ID.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - Prometheus instance ID.
+    type: str
+    required: true
+  grafana_id:
+    description:
+      - Grafana instance ID.
+    type: str
+    required: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

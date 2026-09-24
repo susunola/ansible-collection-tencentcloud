@@ -13,16 +13,54 @@ short_description: Manage Tencent Cloud Mesh access logging
 version_added: "0.14.0"
 description: Reconciles access-log collection, encoding and destinations for a TCM mesh.
 options:
-  mesh_id: {type: str, required: true, description: TCM mesh ID.}
-  enabled: {type: bool, default: true, description: Enable access-log collection.}
-  selected_range: {type: dict, description: SDK SelectedRange payload.}
-  template: {type: str, choices: [istio, trace, custom], default: istio, description: Access-log template.}
-  encoding: {type: str, choices: [TEXT, JSON], default: TEXT, description: Output encoding.}
-  format: {type: str, description: Custom access-log format.}
-  cls: {type: dict, description: SDK CLS destination payload.}
-  enable_stdout: {type: bool, default: true, description: Send logs to standard output.}
-  enable_server: {type: bool, default: false, description: Send logs to a third-party gRPC server.}
-  server_address: {type: str, description: Third-party gRPC server address.}
+  mesh_id:
+    description:
+      - TCM mesh ID.
+    type: str
+    required: true
+  enabled:
+    description:
+      - Enable access-log collection.
+    type: bool
+    default: true
+  selected_range:
+    description:
+      - SDK SelectedRange payload.
+    type: dict
+  template:
+    description:
+      - Access-log template.
+    type: str
+    choices: [istio, trace, custom]
+    default: istio
+  encoding:
+    description:
+      - Output encoding.
+    type: str
+    choices: [TEXT, JSON]
+    default: TEXT
+  format:
+    description:
+      - Custom access-log format.
+    type: str
+  cls:
+    description:
+      - SDK CLS destination payload.
+    type: dict
+  enable_stdout:
+    description:
+      - Send logs to standard output.
+    type: bool
+    default: true
+  enable_server:
+    description:
+      - Send logs to a third-party gRPC server.
+    type: bool
+    default: false
+  server_address:
+    description:
+      - Third-party gRPC server address.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

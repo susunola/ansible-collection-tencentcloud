@@ -12,10 +12,27 @@ short_description: Manage TDMQ RocketMQ namespaces
 version_added: "0.14.0"
 description: Creates, updates and deletes a RocketMQ namespace in a TDMQ cluster.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, required: true, description: RocketMQ cluster ID.}
-  name: {type: str, required: true, description: Namespace name.}
-  remark: {type: str, default: '', description: Namespace remark.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - RocketMQ cluster ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Namespace name.
+    type: str
+    required: true
+  remark:
+    description:
+      - Namespace remark.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -13,8 +13,17 @@ short_description: Manage Tencent Cloud Config resource recorder
 version_added: "0.14.0"
 description: Enables or disables the Config recorder and reconciles the exact monitored resource-type set.
 options:
-  enabled: {type: bool, default: true, description: Whether resource configuration recording is enabled.}
-  resource_types: {type: list, elements: str, default: [], description: Exact set of Tencent Cloud resource-type identifiers to record.}
+  enabled:
+    description:
+      - Whether resource configuration recording is enabled.
+    type: bool
+    default: true
+  resource_types:
+    description:
+      - Exact set of Tencent Cloud resource-type identifiers to record.
+    type: list
+    default: []
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

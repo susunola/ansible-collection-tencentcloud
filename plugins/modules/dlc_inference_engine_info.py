@@ -16,18 +16,46 @@ description:
   - Lists DLC inference runtimes and their model compatibility, visibility, enablement and capability declarations.
   - Uses bounded page-number pagination, time bounds, stable filters and ordered sorting.
 options:
-  start_time: {type: int, description: Optional creation-time lower bound in milliseconds.}
-  end_time: {type: int, description: Optional creation-time upper bound in milliseconds.}
-  filters: {type: dict, default: {}, description: Inference-engine API filter names mapped to values or value lists.}
+  start_time:
+    description:
+      - Optional creation-time lower bound in milliseconds.
+    type: int
+  end_time:
+    description:
+      - Optional creation-time upper bound in milliseconds.
+    type: int
+  filters:
+    description:
+      - Inference-engine API filter names mapped to values or value lists.
+    type: dict
+    default:
+      {}
   sort_fields:
     type: list
     elements: dict
     description: Ordered API sort definitions.
     suboptions:
-      field: {type: str, required: true, description: API entity field name.}
-      order: {type: str, choices: [ASC, DESC], default: ASC, description: Sort direction.}
-  page_size: {type: int, default: 200, description: 'Engines requested per page, from 1 to 200.'}
-  max_pages: {type: int, default: 1000, description: 'Maximum pages fetched, from 1 to 1000.'}
+      field:
+        description:
+          - API entity field name.
+        type: str
+        required: true
+      order:
+        description:
+          - Sort direction.
+        type: str
+        choices: [ASC, DESC]
+        default: ASC
+  page_size:
+    description:
+      - Engines requested per page, from 1 to 200.
+    type: int
+    default: 200
+  max_pages:
+    description:
+      - Maximum pages fetched, from 1 to 1000.
+    type: int
+    default: 1000
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

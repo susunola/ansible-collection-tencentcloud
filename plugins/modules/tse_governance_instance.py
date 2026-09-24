@@ -13,23 +13,84 @@ short_description: Manage a Tencent Cloud TSE governance service instance
 version_added: "0.14.0"
 description: Registers, updates and removes a service instance using namespace, service, host and port identity. Supply governance_instance_id when changing identity fields.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: TSE engine instance ID.}
-  governance_instance_id: {type: str, description: Existing governance service instance ID.}
-  namespace: {type: str, required: true, description: Service namespace.}
-  service: {type: str, required: true, description: Service name.}
-  host: {type: str, required: true, description: Instance host or IP.}
-  port: {type: int, required: true, description: Instance listening port.}
-  protocol: {type: str, description: Instance protocol.}
-  instance_version: {type: str, description: Application version.}
-  weight: {type: int, description: Load-balancing weight.}
-  healthy: {type: bool, description: Administrative health state.}
-  isolate: {type: bool, description: Isolation state.}
-  enable_health_check: {type: bool, description: Enable heartbeat health checks.}
-  ttl: {type: int, description: Heartbeat TTL in seconds.}
-  metadata: {type: list, elements: dict, description: Authoritative SDK Metadata list.}
-  waiter_delay: {type: int, default: 2, description: Reconciliation polling interval.}
-  waiter_timeout: {type: int, default: 60, description: Reconciliation timeout.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - TSE engine instance ID.
+    type: str
+    required: true
+  governance_instance_id:
+    description:
+      - Existing governance service instance ID.
+    type: str
+  namespace:
+    description:
+      - Service namespace.
+    type: str
+    required: true
+  service:
+    description:
+      - Service name.
+    type: str
+    required: true
+  host:
+    description:
+      - Instance host or IP.
+    type: str
+    required: true
+  port:
+    description:
+      - Instance listening port.
+    type: int
+    required: true
+  protocol:
+    description:
+      - Instance protocol.
+    type: str
+  instance_version:
+    description:
+      - Application version.
+    type: str
+  weight:
+    description:
+      - Load-balancing weight.
+    type: int
+  healthy:
+    description:
+      - Administrative health state.
+    type: bool
+  isolate:
+    description:
+      - Isolation state.
+    type: bool
+  enable_health_check:
+    description:
+      - Enable heartbeat health checks.
+    type: bool
+  ttl:
+    description:
+      - Heartbeat TTL in seconds.
+    type: int
+  metadata:
+    description:
+      - Authoritative SDK Metadata list.
+    type: list
+    elements: dict
+  waiter_delay:
+    description:
+      - Reconciliation polling interval.
+    type: int
+    default: 2
+  waiter_timeout:
+    description:
+      - Reconciliation timeout.
+    type: int
+    default: 60
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

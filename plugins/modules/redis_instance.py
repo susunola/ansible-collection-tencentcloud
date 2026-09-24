@@ -120,7 +120,8 @@ options:
       - Tags to apply to the instance as a dict, for example I(env=prod).
       - Only applied at creation.
     type: dict
-    default: {}
+    default:
+      {}
   waiter_timeout:
     description:
       - Overall timeout in seconds for lifecycle state polling; it bounds

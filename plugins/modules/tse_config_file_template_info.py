@@ -14,7 +14,11 @@ short_description: Gather Tencent Cloud TSE configuration file templates
 version_added: "0.14.0"
 description: Returns the configuration templates available to a TSE registry-engine instance.
 options:
-  instance_id: {type: str, required: true, description: TSE engine instance ID.}
+  instance_id:
+    description:
+      - TSE engine instance ID.
+    type: str
+    required: true
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

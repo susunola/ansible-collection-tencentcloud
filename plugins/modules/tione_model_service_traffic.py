@@ -16,13 +16,35 @@ description:
   - Reconciles a TIONE service group's request-authorization switch and per-version traffic weights.
   - Weight entries must use unique stable service IDs, be non-negative and total exactly 100.
 options:
-  service_group_id: {type: str, required: true, description: Stable online service-group ID.}
-  project_id: {type: str, description: Optional TI workspace ID used to read the group.}
-  authorization_enable: {type: bool, description: Whether inference requests require authorization.}
-  weights: {type: list, elements: dict, description: WeightEntry-compatible ServiceId and Weight mappings.}
-  wait: {type: bool, default: true, description: Wait for weight convergence.}
+  service_group_id:
+    description:
+      - Stable online service-group ID.
+    type: str
+    required: true
+  project_id:
+    description:
+      - Optional TI workspace ID used to read the group.
+    type: str
+  authorization_enable:
+    description:
+      - Whether inference requests require authorization.
+    type: bool
+  weights:
+    description:
+      - WeightEntry-compatible ServiceId and Weight mappings.
+    type: list
+    elements: dict
+  wait:
+    description:
+      - Wait for weight convergence.
+    type: bool
+    default: true
 
-  waiter_timeout: {type: int, default: 600, description: Overall weight convergence timeout.}
+  waiter_timeout:
+    description:
+      - Overall weight convergence timeout.
+    type: int
+    default: 600
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

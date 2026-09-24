@@ -12,17 +12,59 @@ short_description: Manage Tencent Cloud RabbitMQ Serverless exchanges
 version_added: "0.14.0"
 description: Creates, updates and deletes RabbitMQ Serverless exchanges while protecting immutable routing semantics.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: RabbitMQ Serverless instance ID.}
-  virtual_host: {type: str, required: true, description: Virtual-host name.}
-  name: {type: str, required: true, description: Exchange name.}
-  exchange_type: {type: str, choices: [fanout, direct, topic, headers, x-delayed-message], description: Exchange type; defaults to direct during creation.}
-  remark: {type: str, default: '', description: Exchange remark.}
-  durable: {type: bool, description: Durable exchange flag; defaults to true during creation.}
-  auto_delete: {type: bool, description: Automatic deletion flag; defaults to false during creation.}
-  internal: {type: bool, description: Internal-only exchange flag; defaults to false during creation.}
-  alternate_exchange: {type: str, default: '', description: Alternate exchange for unroutable messages.}
-  delayed_exchange_type: {type: str, choices: [fanout, direct, topic, headers], description: Backing type for a delayed exchange.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - RabbitMQ Serverless instance ID.
+    type: str
+    required: true
+  virtual_host:
+    description:
+      - Virtual-host name.
+    type: str
+    required: true
+  name:
+    description:
+      - Exchange name.
+    type: str
+    required: true
+  exchange_type:
+    description:
+      - Exchange type; defaults to direct during creation.
+    type: str
+    choices: [fanout, direct, topic, headers, x-delayed-message]
+  remark:
+    description:
+      - Exchange remark.
+    type: str
+    default: ''
+  durable:
+    description:
+      - Durable exchange flag; defaults to true during creation.
+    type: bool
+  auto_delete:
+    description:
+      - Automatic deletion flag; defaults to false during creation.
+    type: bool
+  internal:
+    description:
+      - Internal-only exchange flag; defaults to false during creation.
+    type: bool
+  alternate_exchange:
+    description:
+      - Alternate exchange for unroutable messages.
+    type: str
+    default: ''
+  delayed_exchange_type:
+    description:
+      - Backing type for a delayed exchange.
+    type: str
+    choices: [fanout, direct, topic, headers]
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

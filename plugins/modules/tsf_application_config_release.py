@@ -14,10 +14,26 @@ short_description: Manage a Tencent Cloud TSF application configuration release
 version_added: "0.15.0"
 description: Publishes or revokes an exact TSF application configuration version for a deployment group. Release metadata is immutable after publication.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired release state.}
-  config_id: {type: str, required: true, description: Configuration version ID.}
-  group_id: {type: str, required: true, description: Target deployment group ID.}
-  release_description: {type: str, description: Release description.}
+  state:
+    description:
+      - Desired release state.
+    type: str
+    choices: [present, absent]
+    default: present
+  config_id:
+    description:
+      - Configuration version ID.
+    type: str
+    required: true
+  group_id:
+    description:
+      - Target deployment group ID.
+    type: str
+    required: true
+  release_description:
+    description:
+      - Release description.
+    type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

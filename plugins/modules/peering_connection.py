@@ -96,7 +96,8 @@ options:
       - Tags to apply to the connection as a dict, for example I(env=prod).
       - Only applied at creation; existing connections are left untouched.
     type: dict
-    default: {}
+    default:
+      {}
 notes:
   - Requires the C(tencentcloud-sdk-python-vpc) package on the controller.
   - Deleting a peering connection does not require the peer's consent.

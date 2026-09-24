@@ -15,17 +15,53 @@ description:
   - Creates, discovers, waits for and deletes DLC user VPC endpoint connections.
   - VPC, subnet, endpoint name, optional VIP and engine-network identity are immutable.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired connection state.}
-  engine_network_id: {type: str, required: true, description: DLC engine network ID.}
-  endpoint_id: {type: str, description: Existing DLC user VPC endpoint ID.}
-  endpoint_name: {type: str, description: Endpoint name; required for creation and usable for discovery.}
-  vpc_id: {type: str, description: User VPC ID required for creation.}
-  subnet_id: {type: str, description: User subnet ID required for creation; the API does not return it after creation.}
-  endpoint_vip: {type: str, description: Optional creation-time endpoint VIP; the API does not return it after creation.}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize endpoint deletion.}
-  wait: {type: bool, default: true, description: Wait for presence or absence convergence.}
+  state:
+    description:
+      - Desired connection state.
+    type: str
+    choices: [present, absent]
+    default: present
+  engine_network_id:
+    description:
+      - DLC engine network ID.
+    type: str
+    required: true
+  endpoint_id:
+    description:
+      - Existing DLC user VPC endpoint ID.
+    type: str
+  endpoint_name:
+    description:
+      - Endpoint name; required for creation and usable for discovery.
+    type: str
+  vpc_id:
+    description:
+      - User VPC ID required for creation.
+    type: str
+  subnet_id:
+    description:
+      - User subnet ID required for creation; the API does not return it after creation.
+    type: str
+  endpoint_vip:
+    description:
+      - Optional creation-time endpoint VIP; the API does not return it after creation.
+    type: str
+  allow_delete:
+    description:
+      - Explicitly authorize endpoint deletion.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for presence or absence convergence.
+    type: bool
+    default: true
 
-  waiter_timeout: {type: int, default: 300, description: Overall convergence timeout.}
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 300
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

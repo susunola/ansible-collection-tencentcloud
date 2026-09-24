@@ -14,11 +14,32 @@ description:
   - Creates, updates and deletes a WAF protection object group.
   - Domain membership is reconciled as an exact set.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  group_id: {type: int, description: Existing protection group ID; preferred for rename and deletion.}
-  name: {type: str, required: true, description: Protection group name.}
-  domains: {type: list, elements: str, default: [], description: Exact set of WAF domains assigned to the group.}
-  remark: {type: str, default: '', description: Protection group remark.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  group_id:
+    description:
+      - Existing protection group ID; preferred for rename and deletion.
+    type: int
+  name:
+    description:
+      - Protection group name.
+    type: str
+    required: true
+  domains:
+    description:
+      - Exact set of WAF domains assigned to the group.
+    type: list
+    default: []
+    elements: str
+  remark:
+    description:
+      - Protection group remark.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

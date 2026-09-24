@@ -14,9 +14,21 @@ short_description: Run and wait for a Tencent Cloud DTS migration check
 version_added: "0.14.0"
 description: Starts a DTS pre-migration check when needed and waits for a conclusive result.
 options:
-  job_id: {description: DTS migration job ID., type: str, required: true}
-  wait: {description: Wait for the check to finish., type: bool, default: true}
-  fail_on_check_error: {description: Fail when DTS reports a failed or non-passing check., type: bool, default: true}
+  job_id:
+    description:
+      - DTS migration job ID.
+    type: str
+    required: true
+  wait:
+    description:
+      - Wait for the check to finish.
+    type: bool
+    default: true
+  fail_on_check_error:
+    description:
+      - Fail when DTS reports a failed or non-passing check.
+    type: bool
+    default: true
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

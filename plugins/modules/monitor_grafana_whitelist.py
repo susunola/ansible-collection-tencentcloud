@@ -12,8 +12,17 @@ short_description: Manage a Tencent Cloud Managed Grafana IP whitelist
 version_added: "0.14.0"
 description: Reconciles the complete internet-access IP whitelist of a Grafana instance.
 options:
-  instance_id: {type: str, required: true, description: Grafana instance ID.}
-  addresses: {type: list, elements: str, default: [], description: Exact IP address and CIDR whitelist.}
+  instance_id:
+    description:
+      - Grafana instance ID.
+    type: str
+    required: true
+  addresses:
+    description:
+      - Exact IP address and CIDR whitelist.
+    type: list
+    default: []
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

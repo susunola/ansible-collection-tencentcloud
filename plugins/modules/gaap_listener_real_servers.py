@@ -16,18 +16,42 @@ description:
   - Replaces a TCP or UDP listener's complete origin binding set through BindListenerRealServers.
   - Empty O(real_servers) safely unbinds all origins without deleting the reusable origin resources.
 options:
-  listener_id: {type: str, required: true, description: GAAP TCP or UDP listener ID.}
+  listener_id:
+    description:
+      - GAAP TCP or UDP listener ID.
+    type: str
+    required: true
   real_servers:
     type: list
     elements: dict
     default: []
     description: Complete desired origin binding set.
     suboptions:
-      real_server_id: {type: str, required: true, description: Registered GAAP origin ID.}
-      address: {type: str, required: true, description: Origin IP address or domain.}
-      port: {type: int, required: true, description: Origin port.}
-      weight: {type: int, default: 1, description: Weight for weighted round-robin.}
-      failover_role: {type: str, choices: [master, slave], description: Role when listener failover is enabled.}
+      real_server_id:
+        description:
+          - Registered GAAP origin ID.
+        type: str
+        required: true
+      address:
+        description:
+          - Origin IP address or domain.
+        type: str
+        required: true
+      port:
+        description:
+          - Origin port.
+        type: int
+        required: true
+      weight:
+        description:
+          - Weight for weighted round-robin.
+        type: int
+        default: 1
+      failover_role:
+        description:
+          - Role when listener failover is enabled.
+        type: str
+        choices: [master, slave]
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

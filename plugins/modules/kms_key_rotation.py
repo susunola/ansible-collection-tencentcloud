@@ -12,9 +12,21 @@ short_description: Manage automatic rotation for a Tencent Cloud KMS key
 version_added: "0.13.0"
 description: Enables or disables automatic rotation and reconciles its period independently from key lifecycle.
 options:
-  key_id: {description: KMS key ID., type: str, required: true}
-  enabled: {description: Whether automatic rotation is enabled., type: bool, default: true}
-  rotation_days: {description: Rotation period in days when enabled., type: int, default: 365}
+  key_id:
+    description:
+      - KMS key ID.
+    type: str
+    required: true
+  enabled:
+    description:
+      - Whether automatic rotation is enabled.
+    type: bool
+    default: true
+  rotation_days:
+    description:
+      - Rotation period in days when enabled.
+    type: int
+    default: 365
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

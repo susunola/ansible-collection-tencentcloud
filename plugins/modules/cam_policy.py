@@ -67,7 +67,8 @@ options:
         changes on an existing policy go through the tag service with
         service type C(cam) and resource prefix C(policy).
     type: dict
-    default: {}
+    default:
+      {}
 notes:
   - Requires the C(tencentcloud-sdk-python-cam) package on the controller.
   - Tag reconciliation additionally requires C(tencentcloud-sdk-python-tag).

@@ -13,29 +13,99 @@ short_description: Manage Tencent Cloud EdgeOne precise rate-limiting rules
 version_added: "0.14.0"
 description: Exactly reconciles precise L7 rate-limiting rules without modifying other EdgeOne security policy modules.
 options:
-  zone_id: {type: str, required: true, description: EdgeOne zone ID.}
-  scope: {type: str, choices: [zone, template, host], default: zone, description: Security policy scope.}
-  template_id: {type: str, description: Web security template ID required for template scope.}
-  host: {type: str, description: Acceleration domain required for host scope.}
+  zone_id:
+    description:
+      - EdgeOne zone ID.
+    type: str
+    required: true
+  scope:
+    description:
+      - Security policy scope.
+    type: str
+    choices: [zone, template, host]
+    default: zone
+  template_id:
+    description:
+      - Web security template ID required for template scope.
+    type: str
+  host:
+    description:
+      - Acceleration domain required for host scope.
+    type: str
   rules:
     type: list
     elements: dict
     required: true
     description: Exact precise rate-limiting rule set; an empty list clears these rules.
     suboptions:
-      rule_id: {type: str, description: Existing rule ID; otherwise an existing rule is matched by unique name.}
-      name: {type: str, required: true, description: Rule name.}
-      condition: {type: str, required: true, description: EdgeOne request-matching expression.}
-      mode: {type: str, choices: [Block, Throttle], default: Block, description: Block the source or only excess requests.}
-      count_by: {type: list, elements: str, required: true, description: One through five request characteristics used as the counter key.}
-      threshold: {type: int, required: true, description: Maximum requests allowed in the counting window.}
-      counting_period: {type: str, choices: [1s, 5s, 10s, 20s, 30s, 40s, 50s, 1m, 2m, 5m, 10m, 1h], required: true, description: Counting window.}
-      action_duration: {type: str, default: 60s, description: "Block action duration with s, m, h, or d suffix."}
-      action: {type: str, choices: [Monitor, Deny, Challenge, Redirect], default: Deny, description: Enforcement action.}
-      challenge_option: {type: str, choices: [JSChallenge, ManagedChallenge], default: ManagedChallenge, description: Challenge type when action is Challenge.}
-      redirect_url: {type: str, description: Redirect destination required when action is Redirect.}
-      priority: {type: int, default: 0, description: Priority from 0 through 100.}
-      enabled: {type: bool, default: true, description: Whether the rule is enabled.}
+      rule_id:
+        description:
+          - Existing rule ID; otherwise an existing rule is matched by unique name.
+        type: str
+      name:
+        description:
+          - Rule name.
+        type: str
+        required: true
+      condition:
+        description:
+          - EdgeOne request-matching expression.
+        type: str
+        required: true
+      mode:
+        description:
+          - Block the source or only excess requests.
+        type: str
+        choices: [Block, Throttle]
+        default: Block
+      count_by:
+        description:
+          - One through five request characteristics used as the counter key.
+        type: list
+        required: true
+        elements: str
+      threshold:
+        description:
+          - Maximum requests allowed in the counting window.
+        type: int
+        required: true
+      counting_period:
+        description:
+          - Counting window.
+        type: str
+        required: true
+        choices: [1s, 5s, 10s, 20s, 30s, 40s, 50s, 1m, 2m, 5m, 10m, 1h]
+      action_duration:
+        description:
+          - Block action duration with s, m, h, or d suffix.
+        type: str
+        default: 60s
+      action:
+        description:
+          - Enforcement action.
+        type: str
+        choices: [Monitor, Deny, Challenge, Redirect]
+        default: Deny
+      challenge_option:
+        description:
+          - Challenge type when action is Challenge.
+        type: str
+        choices: [JSChallenge, ManagedChallenge]
+        default: ManagedChallenge
+      redirect_url:
+        description:
+          - Redirect destination required when action is Redirect.
+        type: str
+      priority:
+        description:
+          - Priority from 0 through 100.
+        type: int
+        default: 0
+      enabled:
+        description:
+          - Whether the rule is enabled.
+        type: bool
+        default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

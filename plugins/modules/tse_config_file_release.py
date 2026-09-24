@@ -13,25 +13,93 @@ short_description: Manage a Tencent Cloud TSE configuration file release
 version_added: "0.14.0"
 description: Publishes exact configuration content, rolls an existing release back to a desired version, or deletes the release.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: TSE engine instance ID.}
-  namespace: {type: str, required: true, description: Configuration namespace.}
-  group: {type: str, required: true, description: Configuration group.}
-  name: {type: str, required: true, description: Configuration file name.}
-  release_name: {type: str, required: true, description: Stable release name.}
-  release_id: {type: str, description: Existing release ID.}
-  content: {type: str, description: Exact released content.}
-  format: {type: str, description: Configuration format.}
-  comment: {type: str, description: Configuration comment stored in the release.}
-  release_description: {type: str, description: Release description.}
-  supported_client: {type: int, description: Supported client type.}
-  persistent: {type: dict, description: SDK ConfigFilePersistent payload.}
-  beta_labels: {type: list, elements: dict, description: SDK gray-release label entries.}
-  release_type: {type: str, description: Release type such as gray.}
-  rollback_version: {type: str, description: Historical version that must become active; mutually exclusive with content publication fields.}
-  strict_enable: {type: bool, default: true, description: Ask Tencent Cloud to reject conflicting release versions.}
-  waiter_delay: {type: int, default: 2, description: Reconciliation polling interval.}
-  waiter_timeout: {type: int, default: 60, description: Reconciliation timeout.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - TSE engine instance ID.
+    type: str
+    required: true
+  namespace:
+    description:
+      - Configuration namespace.
+    type: str
+    required: true
+  group:
+    description:
+      - Configuration group.
+    type: str
+    required: true
+  name:
+    description:
+      - Configuration file name.
+    type: str
+    required: true
+  release_name:
+    description:
+      - Stable release name.
+    type: str
+    required: true
+  release_id:
+    description:
+      - Existing release ID.
+    type: str
+  content:
+    description:
+      - Exact released content.
+    type: str
+  format:
+    description:
+      - Configuration format.
+    type: str
+  comment:
+    description:
+      - Configuration comment stored in the release.
+    type: str
+  release_description:
+    description:
+      - Release description.
+    type: str
+  supported_client:
+    description:
+      - Supported client type.
+    type: int
+  persistent:
+    description:
+      - SDK ConfigFilePersistent payload.
+    type: dict
+  beta_labels:
+    description:
+      - SDK gray-release label entries.
+    type: list
+    elements: dict
+  release_type:
+    description:
+      - Release type such as gray.
+    type: str
+  rollback_version:
+    description:
+      - Historical version that must become active; mutually exclusive with content publication fields.
+    type: str
+  strict_enable:
+    description:
+      - Ask Tencent Cloud to reject conflicting release versions.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Reconciliation polling interval.
+    type: int
+    default: 2
+  waiter_timeout:
+    description:
+      - Reconciliation timeout.
+    type: int
+    default: 60
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

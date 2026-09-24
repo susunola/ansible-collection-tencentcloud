@@ -14,8 +14,17 @@ description:
   - Reconciles the complete set of user-managed firewall rules on one Lighthouse instance.
   - Rules omitted from O(rules) are deleted; include every rule that should remain.
 options:
-  instance_id: {type: str, required: true, description: Lighthouse instance ID.}
-  rules: {type: list, elements: dict, default: [], description: Complete desired SDK-compatible FirewallRule list.}
+  instance_id:
+    description:
+      - Lighthouse instance ID.
+    type: str
+    required: true
+  rules:
+    description:
+      - Complete desired SDK-compatible FirewallRule list.
+    type: list
+    default: []
+    elements: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

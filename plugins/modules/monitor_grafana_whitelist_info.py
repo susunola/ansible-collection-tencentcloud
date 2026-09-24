@@ -13,7 +13,11 @@ short_description: Gather a Managed Grafana IP whitelist
 version_added: "1.4.0"
 description: Reads the complete internet-access whitelist of a Tencent Cloud Managed Grafana instance.
 options:
-  instance_id: {description: Grafana instance ID., type: str, required: true}
+  instance_id:
+    description:
+      - Grafana instance ID.
+    type: str
+    required: true
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

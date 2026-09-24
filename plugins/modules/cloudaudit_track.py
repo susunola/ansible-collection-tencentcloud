@@ -13,21 +13,78 @@ short_description: Manage Tencent Cloud CloudAudit tracks
 version_added: "0.14.0"
 description: Creates, updates and deletes audit tracks and their delivery destinations.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  track_id: {description: Existing audit track ID., type: int}
-  name: {description: Audit track name., type: str}
-  enabled: {description: Enable event delivery., type: bool, default: true}
-  action_type: {description: Event action category., type: str, choices: ['*', Read, Write], default: '*'}
-  resource_type: {description: Product identifier or C(*) for every product., type: str, default: '*'}
-  event_names: {description: Exact event API name list., type: list, elements: str, default: ['*']}
-  track_all_members: {description: Deliver organization member events., type: bool, default: false}
-  storage_type: {description: Delivery storage type., type: str, choices: [cos, cls, ckafka]}
-  storage_region: {description: Delivery storage region., type: str}
-  storage_name: {description: Delivery destination storage identifier., type: str}
-  storage_prefix: {description: COS object prefix., type: str, default: ''}
-  storage_account_id: {description: Destination account ID., type: str}
-  storage_app_id: {description: Destination application ID., type: str}
-  compress: {description: Compress delivered logs., type: bool, default: true}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  track_id:
+    description:
+      - Existing audit track ID.
+    type: int
+  name:
+    description:
+      - Audit track name.
+    type: str
+  enabled:
+    description:
+      - Enable event delivery.
+    type: bool
+    default: true
+  action_type:
+    description:
+      - Event action category.
+    type: str
+    choices: ['*', Read, Write]
+    default: '*'
+  resource_type:
+    description:
+      - Product identifier or C(*) for every product.
+    type: str
+    default: '*'
+  event_names:
+    description:
+      - Exact event API name list.
+    type: list
+    default: ['*']
+    elements: str
+  track_all_members:
+    description:
+      - Deliver organization member events.
+    type: bool
+    default: false
+  storage_type:
+    description:
+      - Delivery storage type.
+    type: str
+    choices: [cos, cls, ckafka]
+  storage_region:
+    description:
+      - Delivery storage region.
+    type: str
+  storage_name:
+    description:
+      - Delivery destination storage identifier.
+    type: str
+  storage_prefix:
+    description:
+      - COS object prefix.
+    type: str
+    default: ''
+  storage_account_id:
+    description:
+      - Destination account ID.
+    type: str
+  storage_app_id:
+    description:
+      - Destination application ID.
+    type: str
+  compress:
+    description:
+      - Compress delivered logs.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

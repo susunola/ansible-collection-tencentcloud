@@ -15,11 +15,30 @@ description:
   - Creates or destroys the environment-level CloudBase static store.
   - Waits through asynchronous C(init), C(process), and C(destroying) states.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  env_id: {type: str, required: true, description: CloudBase environment ID.}
-  enable_union: {type: bool, default: true, description: Enable the unified domain at creation.}
-  external_storage: {type: dict, description: Creation-time SDK ExternalStorage payload.}
-  cdn_domain: {type: str, description: CDN domain used by destruction; defaults to the discovered store domain.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  env_id:
+    description:
+      - CloudBase environment ID.
+    type: str
+    required: true
+  enable_union:
+    description:
+      - Enable the unified domain at creation.
+    type: bool
+    default: true
+  external_storage:
+    description:
+      - Creation-time SDK ExternalStorage payload.
+    type: dict
+  cdn_domain:
+    description:
+      - CDN domain used by destruction; defaults to the discovered store domain.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

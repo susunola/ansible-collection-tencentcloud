@@ -17,13 +17,41 @@ description:
   - Uses the stable service-version ID; service creation and configuration drift are intentionally outside this module.
   - Failed and abnormal states are surfaced explicitly instead of repeatedly issuing lifecycle actions.
 options:
-  service_id: {type: str, required: true, description: Stable deployed service-version ID.}
-  project_id: {type: str, description: Optional TI workspace ID.}
-  state: {type: str, choices: [running, stopped, absent], default: running, description: Desired operational state.}
-  allow_delete: {type: bool, default: false, description: Explicit destructive-operation guard.}
-  wait: {type: bool, default: true, description: Wait for lifecycle convergence.}
-  waiter_delay: {type: int, default: 10, description: Seconds between state checks.}
-  waiter_timeout: {type: int, default: 1800, description: Overall convergence timeout.}
+  service_id:
+    description:
+      - Stable deployed service-version ID.
+    type: str
+    required: true
+  project_id:
+    description:
+      - Optional TI workspace ID.
+    type: str
+  state:
+    description:
+      - Desired operational state.
+    type: str
+    choices: [running, stopped, absent]
+    default: running
+  allow_delete:
+    description:
+      - Explicit destructive-operation guard.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for lifecycle convergence.
+    type: bool
+    default: true
+  waiter_delay:
+    description:
+      - Seconds between state checks.
+    type: int
+    default: 10
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 1800
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -13,7 +13,11 @@ short_description: Gather Managed Prometheus Alertmanager configuration
 version_added: "1.4.0"
 description: Reads the Alertmanager configuration of a Tencent Cloud Managed Prometheus instance.
 options:
-  instance_id: {description: Prometheus instance ID., type: str, required: true}
+  instance_id:
+    description:
+      - Prometheus instance ID.
+    type: str
+    required: true
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

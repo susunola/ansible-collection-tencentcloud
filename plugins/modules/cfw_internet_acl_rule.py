@@ -13,21 +13,80 @@ short_description: Manage Tencent Cloud Cloud Firewall internet border ACL rules
 version_added: "0.14.0"
 description: Creates, updates and removes internet border access-control rules.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired rule state.}
-  rule_uuid: {type: int, description: Existing rule UUID; preferred for updates and deletion.}
-  description: {type: str, description: "Rule description, also used as the unique lookup key when rule_uuid is omitted."}
-  source: {type: str, description: "Source address, domain or address-template UUID."}
-  source_type: {type: str, choices: [ip, domain, ip_template, domain_template], default: ip, description: Source value type.}
-  destination: {type: str, description: "Destination address, domain or address-template UUID."}
-  destination_type: {type: str, choices: [ip, domain, ip_template, domain_template], default: ip, description: Destination value type.}
-  protocol: {type: str, choices: [ANY, TCP, UDP, ICMP], default: ANY, description: Network protocol.}
-  ports: {type: str, default: "-1/-1", description: Port expression accepted by Cloud Firewall.}
-  action: {type: str, choices: [observe, block, accept], default: accept, description: Rule action.}
-  direction: {type: str, choices: [outbound, inbound], default: outbound, description: Traffic direction.}
-  enabled: {type: bool, default: true, description: Whether the rule is enabled.}
-  order_index: {type: int, description: Rule insertion or execution order; defaults to append on creation.}
-  scope: {type: str, description: Optional internet-border instance scope.}
-  parameter_template_id: {type: str, description: Optional protocol-port parameter template ID.}
+  state:
+    description:
+      - Desired rule state.
+    type: str
+    choices: [present, absent]
+    default: present
+  rule_uuid:
+    description:
+      - Existing rule UUID; preferred for updates and deletion.
+    type: int
+  description:
+    description:
+      - Rule description, also used as the unique lookup key when rule_uuid is omitted.
+    type: str
+  source:
+    description:
+      - Source address, domain or address-template UUID.
+    type: str
+  source_type:
+    description:
+      - Source value type.
+    type: str
+    choices: [ip, domain, ip_template, domain_template]
+    default: ip
+  destination:
+    description:
+      - Destination address, domain or address-template UUID.
+    type: str
+  destination_type:
+    description:
+      - Destination value type.
+    type: str
+    choices: [ip, domain, ip_template, domain_template]
+    default: ip
+  protocol:
+    description:
+      - Network protocol.
+    type: str
+    choices: [ANY, TCP, UDP, ICMP]
+    default: ANY
+  ports:
+    description:
+      - Port expression accepted by Cloud Firewall.
+    type: str
+    default: -1/-1
+  action:
+    description:
+      - Rule action.
+    type: str
+    choices: [observe, block, accept]
+    default: accept
+  direction:
+    description:
+      - Traffic direction.
+    type: str
+    choices: [outbound, inbound]
+    default: outbound
+  enabled:
+    description:
+      - Whether the rule is enabled.
+    type: bool
+    default: true
+  order_index:
+    description:
+      - Rule insertion or execution order; defaults to append on creation.
+    type: int
+  scope:
+    description:
+      - Optional internet-border instance scope.
+    type: str
+  parameter_template_id:
+    description:
+      - Optional protocol-port parameter template ID.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -16,13 +16,41 @@ description:
   - Reconciles one named load-based or time-based automatic scaling strategy.
   - Deletion requires explicit authorization because EMR also destroys nodes created by the rule.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, required: true, description: EMR cluster ID.}
-  group_id: {type: int, description: EMR scaling group ID.}
-  strategy_type: {type: str, choices: [load, time], required: true, description: Scaling strategy type.}
-  name: {type: str, required: true, description: Unique strategy name in the cluster.}
-  strategy: {type: dict, description: SDK LoadAutoScaleStrategy or TimeAutoScaleStrategy fields.}
-  allow_node_termination: {type: bool, default: false, description: Authorize deletion and its associated scaled-node termination.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - EMR cluster ID.
+    type: str
+    required: true
+  group_id:
+    description:
+      - EMR scaling group ID.
+    type: int
+  strategy_type:
+    description:
+      - Scaling strategy type.
+    type: str
+    required: true
+    choices: [load, time]
+  name:
+    description:
+      - Unique strategy name in the cluster.
+    type: str
+    required: true
+  strategy:
+    description:
+      - SDK LoadAutoScaleStrategy or TimeAutoScaleStrategy fields.
+    type: dict
+  allow_node_termination:
+    description:
+      - Authorize deletion and its associated scaled-node termination.
+    type: bool
+    default: false
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

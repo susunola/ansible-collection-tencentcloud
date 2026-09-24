@@ -16,29 +16,95 @@ description:
   - Creates, updates and deletes queues inside a DLC resource partition.
   - Resource usage is exact-set managed and guarded against accidental scale-down.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired lifecycle state.}
-  partition_code: {type: str, required: true, description: Parent resource partition code.}
-  name: {type: str, required: true, description: Exact queue name and immutable identity.}
-  queue_type: {type: int, choices: [1, 2], description: 'Queue type, 1 dedicated or 2 shared.'}
-  description: {type: str, description: Queue description.}
+  state:
+    description:
+      - Desired lifecycle state.
+    type: str
+    choices: [present, absent]
+    default: present
+  partition_code:
+    description:
+      - Parent resource partition code.
+    type: str
+    required: true
+  name:
+    description:
+      - Exact queue name and immutable identity.
+    type: str
+    required: true
+  queue_type:
+    description:
+      - Queue type, 1 dedicated or 2 shared.
+    type: int
+    choices: [1, 2]
+  description:
+    description:
+      - Queue description.
+    type: str
   resource_usages:
     type: list
     elements: dict
     description: Exact resource type and usage ranges.
     suboptions:
-      resource_type: {type: str, required: true, description: DLC resource package type.}
-      billing_item: {type: str, required: true, description: DLC billing item.}
-      instance_type: {type: str, description: GPU machine type when applicable.}
-      spec: {type: str, required: true, description: Resource specification string.}
-      gpu_type: {type: str, description: GPU type when applicable.}
-      min: {type: int, required: true, description: Minimum usage.}
-      max: {type: int, required: true, description: Maximum usage.}
-  allow_scale_down: {type: bool, default: false, description: Explicitly authorize removing or reducing resource ranges.}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize queue deletion.}
-  allow_delete_default: {type: bool, default: false, description: Explicitly authorize deleting a default queue.}
-  wait: {type: bool, default: true, description: Wait for lifecycle and field convergence.}
+      resource_type:
+        description:
+          - DLC resource package type.
+        type: str
+        required: true
+      billing_item:
+        description:
+          - DLC billing item.
+        type: str
+        required: true
+      instance_type:
+        description:
+          - GPU machine type when applicable.
+        type: str
+      spec:
+        description:
+          - Resource specification string.
+        type: str
+        required: true
+      gpu_type:
+        description:
+          - GPU type when applicable.
+        type: str
+      min:
+        description:
+          - Minimum usage.
+        type: int
+        required: true
+      max:
+        description:
+          - Maximum usage.
+        type: int
+        required: true
+  allow_scale_down:
+    description:
+      - Explicitly authorize removing or reducing resource ranges.
+    type: bool
+    default: false
+  allow_delete:
+    description:
+      - Explicitly authorize queue deletion.
+    type: bool
+    default: false
+  allow_delete_default:
+    description:
+      - Explicitly authorize deleting a default queue.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for lifecycle and field convergence.
+    type: bool
+    default: true
 
-  waiter_timeout: {type: int, default: 300, description: Overall convergence timeout.}
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 300
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

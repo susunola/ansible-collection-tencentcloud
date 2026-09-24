@@ -12,16 +12,59 @@ short_description: Manage Tencent Cloud WAF OWASP allowlist rules
 version_added: "0.14.0"
 description: Creates, updates and deletes domain-level OWASP rule or rule-type allowlists.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  domain: {type: str, required: true, description: Protected domain.}
-  rule_id: {type: int, description: Existing allowlist rule ID.}
-  name: {type: str, description: Allowlist rule name.}
-  allow_type: {type: int, choices: [0, 1], default: 0, description: Allow specific rule IDs or rule-type IDs.}
-  owasp_ids: {type: list, elements: int, default: [], description: OWASP rule or rule-type IDs to allow.}
-  strategies: {type: list, elements: dict, default: [], description: SDK-compatible Strategy match conditions.}
-  logical_operator: {type: str, choices: [and, or], default: and, description: Relationship between strategies.}
-  expire_time: {type: int, default: 0, description: Expiration timestamp or 0 for permanent.}
-  enabled: {type: bool, default: true, description: Whether the rule is active.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  domain:
+    description:
+      - Protected domain.
+    type: str
+    required: true
+  rule_id:
+    description:
+      - Existing allowlist rule ID.
+    type: int
+  name:
+    description:
+      - Allowlist rule name.
+    type: str
+  allow_type:
+    description:
+      - Allow specific rule IDs or rule-type IDs.
+    type: int
+    choices: [0, 1]
+    default: 0
+  owasp_ids:
+    description:
+      - OWASP rule or rule-type IDs to allow.
+    type: list
+    default: []
+    elements: int
+  strategies:
+    description:
+      - SDK-compatible Strategy match conditions.
+    type: list
+    default: []
+    elements: dict
+  logical_operator:
+    description:
+      - Relationship between strategies.
+    type: str
+    choices: [and, or]
+    default: and
+  expire_time:
+    description:
+      - Expiration timestamp or 0 for permanent.
+    type: int
+    default: 0
+  enabled:
+    description:
+      - Whether the rule is active.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

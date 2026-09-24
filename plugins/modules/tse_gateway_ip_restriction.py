@@ -13,13 +13,42 @@ short_description: Manage IP access control on a Tencent Cloud TSE gateway resou
 version_added: "0.14.0"
 description: Creates, updates and deletes the IP restriction plugin bound to one gateway service or route.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  scope: {type: str, choices: [service, route], required: true, description: Bound resource type.}
-  resource_id: {type: str, required: true, description: Service or route ID.}
-  enabled: {type: bool, description: Whether the plugin is enabled; creation defaults to true.}
-  restriction_type: {type: str, choices: [whiteList, blackList], description: Allow-list or deny-list behavior.}
-  addresses: {type: list, elements: str, description: Exact IP addresses or CIDR ranges.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  scope:
+    description:
+      - Bound resource type.
+    type: str
+    required: true
+    choices: [service, route]
+  resource_id:
+    description:
+      - Service or route ID.
+    type: str
+    required: true
+  enabled:
+    description:
+      - Whether the plugin is enabled; creation defaults to true.
+    type: bool
+  restriction_type:
+    description:
+      - Allow-list or deny-list behavior.
+    type: str
+    choices: [whiteList, blackList]
+  addresses:
+    description:
+      - Exact IP addresses or CIDR ranges.
+    type: list
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -16,11 +16,31 @@ description:
   - Reads configuration, file-tree and README metadata for one exact DLC model version.
   - Each artifact call can be disabled independently to fit least-privilege automation and model formats without that artifact.
 options:
-  model_uid: {type: str, required: true, description: Parent inference-model UID.}
-  model_version: {type: str, required: true, description: Exact immutable model version.}
-  include_config: {type: bool, default: true, description: Read the model config.json artifact.}
-  include_files: {type: bool, default: true, description: Read the model file tree.}
-  include_readme: {type: bool, default: true, description: Read model README metadata and Markdown.}
+  model_uid:
+    description:
+      - Parent inference-model UID.
+    type: str
+    required: true
+  model_version:
+    description:
+      - Exact immutable model version.
+    type: str
+    required: true
+  include_config:
+    description:
+      - Read the model config.json artifact.
+    type: bool
+    default: true
+  include_files:
+    description:
+      - Read the model file tree.
+    type: bool
+    default: true
+  include_readme:
+    description:
+      - Read model README metadata and Markdown.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

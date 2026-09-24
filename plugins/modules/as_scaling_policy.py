@@ -13,22 +13,64 @@ version_added: "0.14.0"
 description: Creates, updates and deletes simple or target-tracking scaling policies.
 options:
 
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  scaling_group_id: {type: str, required: true, description: Auto Scaling group ID.}
-  policy_id: {type: str, description: Existing policy ID.}
-  name: {type: str, description: Policy name.}
-  policy_type: {type: str, choices: [SIMPLE, TARGET_TRACKING], default: SIMPLE, description: Policy type.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  scaling_group_id:
+    description:
+      - Auto Scaling group ID.
+    type: str
+    required: true
+  policy_id:
+    description:
+      - Existing policy ID.
+    type: str
+  name:
+    description:
+      - Policy name.
+    type: str
+  policy_type:
+    description:
+      - Policy type.
+    type: str
+    choices: [SIMPLE, TARGET_TRACKING]
+    default: SIMPLE
   adjustment_type:
     description: Capacity adjustment type.
     type: str
     choices: [CHANGE_IN_CAPACITY, EXACT_CAPACITY, PERCENT_CHANGE_IN_CAPACITY]
     default: CHANGE_IN_CAPACITY
-  adjustment_value: {type: int, default: 1, description: Capacity adjustment value.}
-  cooldown: {type: int, default: 300, description: Cooldown seconds.}
-  predefined_metric_type: {type: str, description: Target-tracking metric.}
-  target_value: {type: int, description: Target metric value.}
-  estimated_instance_warmup: {type: int, default: 300, description: Instance warmup seconds.}
-  disable_scale_in: {type: bool, default: false, description: Disable target-tracking scale-in.}
+  adjustment_value:
+    description:
+      - Capacity adjustment value.
+    type: int
+    default: 1
+  cooldown:
+    description:
+      - Cooldown seconds.
+    type: int
+    default: 300
+  predefined_metric_type:
+    description:
+      - Target-tracking metric.
+    type: str
+  target_value:
+    description:
+      - Target metric value.
+    type: int
+  estimated_instance_warmup:
+    description:
+      - Instance warmup seconds.
+    type: int
+    default: 300
+  disable_scale_in:
+    description:
+      - Disable target-tracking scale-in.
+    type: bool
+    default: false
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

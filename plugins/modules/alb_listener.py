@@ -12,24 +12,89 @@ short_description: Manage Tencent Cloud ALB listeners
 version_added: "0.14.0"
 description: Creates, updates and deletes ALB HTTP, HTTPS and QUIC listeners with default target-group actions.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  load_balancer_id: {type: str, required: true, description: ALB ID.}
-  listener_id: {type: str, description: Existing listener ID.}
-  name: {type: str, description: Listener name.}
-  port: {type: int, description: Frontend port; immutable after creation.}
-  protocol: {type: str, choices: [HTTP, HTTPS, QUIC], description: Listener protocol; immutable after creation.}
-  default_actions: {type: list, elements: dict, description: SDK DefaultAction payloads normally forwarding to target groups.}
-  certificate_ids: {type: list, elements: str, description: Server certificate IDs.}
-  ca_enabled: {type: bool, default: false, description: Enable mutual TLS.}
-  ca_certificate_ids: {type: list, elements: str, description: CA certificate IDs.}
-  security_policy_id: {type: str, description: TLS security policy ID.}
-  gzip_enabled: {type: bool, default: true, description: Enable Gzip compression.}
-  http2_enabled: {type: bool, description: Enable HTTP/2 for HTTPS.}
-  idle_timeout: {type: int, default: 15, description: Idle timeout in seconds.}
-  request_timeout: {type: int, default: 60, description: Backend request timeout in seconds.}
-  x_forwarded_for: {type: dict, description: SDK XForwardedForConfig payload.}
-  tags: {type: dict, description: Creation-time tags.}
-  client_token: {type: str, description: Optional idempotency token.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  load_balancer_id:
+    description:
+      - ALB ID.
+    type: str
+    required: true
+  listener_id:
+    description:
+      - Existing listener ID.
+    type: str
+  name:
+    description:
+      - Listener name.
+    type: str
+  port:
+    description:
+      - Frontend port; immutable after creation.
+    type: int
+  protocol:
+    description:
+      - Listener protocol; immutable after creation.
+    type: str
+    choices: [HTTP, HTTPS, QUIC]
+  default_actions:
+    description:
+      - SDK DefaultAction payloads normally forwarding to target groups.
+    type: list
+    elements: dict
+  certificate_ids:
+    description:
+      - Server certificate IDs.
+    type: list
+    elements: str
+  ca_enabled:
+    description:
+      - Enable mutual TLS.
+    type: bool
+    default: false
+  ca_certificate_ids:
+    description:
+      - CA certificate IDs.
+    type: list
+    elements: str
+  security_policy_id:
+    description:
+      - TLS security policy ID.
+    type: str
+  gzip_enabled:
+    description:
+      - Enable Gzip compression.
+    type: bool
+    default: true
+  http2_enabled:
+    description:
+      - Enable HTTP/2 for HTTPS.
+    type: bool
+  idle_timeout:
+    description:
+      - Idle timeout in seconds.
+    type: int
+    default: 15
+  request_timeout:
+    description:
+      - Backend request timeout in seconds.
+    type: int
+    default: 60
+  x_forwarded_for:
+    description:
+      - SDK XForwardedForConfig payload.
+    type: dict
+  tags:
+    description:
+      - Creation-time tags.
+    type: dict
+  client_token:
+    description:
+      - Optional idempotency token.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

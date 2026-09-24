@@ -93,7 +93,8 @@ options:
       - Tags to apply to the gateway as a dict, for example I(env=prod).
       - Only applied at creation.
     type: dict
-    default: {}
+    default:
+      {}
 notes:
   - Requires the C(tencentcloud-sdk-python-vpc) package on the controller.
   - NAT gateways are billed per hour while present; delete them as soon as

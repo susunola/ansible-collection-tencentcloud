@@ -12,15 +12,46 @@ short_description: Manage Tencent Cloud EventBridge rule targets
 version_added: "0.14.0"
 description: Creates, updates and deletes delivery targets attached to EventBridge rules.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  event_bus_id: {type: str, required: true, description: Event bus ID.}
-  rule_id: {type: str, required: true, description: Rule ID.}
-  target_id: {type: str, description: Existing target ID.}
-  target_type: {type: str, description: Target service type; immutable after creation.}
-  target_description: {type: dict, description: SDK TargetDescription payload; immutable after creation.}
-  enable_batch_delivery: {type: bool, description: Enable batched event delivery.}
-  batch_timeout: {type: int, description: Maximum batch wait in seconds.}
-  batch_event_count: {type: int, description: Maximum events per batch.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  event_bus_id:
+    description:
+      - Event bus ID.
+    type: str
+    required: true
+  rule_id:
+    description:
+      - Rule ID.
+    type: str
+    required: true
+  target_id:
+    description:
+      - Existing target ID.
+    type: str
+  target_type:
+    description:
+      - Target service type; immutable after creation.
+    type: str
+  target_description:
+    description:
+      - SDK TargetDescription payload; immutable after creation.
+    type: dict
+  enable_batch_delivery:
+    description:
+      - Enable batched event delivery.
+    type: bool
+  batch_timeout:
+    description:
+      - Maximum batch wait in seconds.
+    type: int
+  batch_event_count:
+    description:
+      - Maximum events per batch.
+    type: int
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

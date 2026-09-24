@@ -15,17 +15,61 @@ description:
   - Creates an SSH key pair and stores its private key in SSM without returning private material.
   - Reconciles description, enabled state, recovery and scheduled deletion.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  secret_name: {type: str, required: true, description: SSM secret name.}
-  ssh_key_name: {type: str, description: CVM key-pair name; required for creation and immutable afterward.}
-  project_id: {type: int, default: 0, description: Tencent Cloud project ID.}
-  description: {type: str, default: managed by Ansible, description: Secret description.}
-  kms_key_id: {type: str, description: Customer KMS key ID.}
-  kms_hsm_cluster_id: {type: str, description: Dedicated KMS HSM cluster ID.}
-  encrypt_type: {type: int, choices: [0, 1], default: 0, description: KMS or software-key encryption.}
-  tags: {type: dict, default: {}, description: Creation tags.}
-  enabled: {type: bool, default: true, description: Whether the secret is enabled.}
-  recovery_window_days: {type: int, default: 7, description: Deletion recovery window from 0 through 30 days.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  secret_name:
+    description:
+      - SSM secret name.
+    type: str
+    required: true
+  ssh_key_name:
+    description:
+      - CVM key-pair name; required for creation and immutable afterward.
+    type: str
+  project_id:
+    description:
+      - Tencent Cloud project ID.
+    type: int
+    default: 0
+  description:
+    description:
+      - Secret description.
+    type: str
+    default: managed by Ansible
+  kms_key_id:
+    description:
+      - Customer KMS key ID.
+    type: str
+  kms_hsm_cluster_id:
+    description:
+      - Dedicated KMS HSM cluster ID.
+    type: str
+  encrypt_type:
+    description:
+      - KMS or software-key encryption.
+    type: int
+    choices: [0, 1]
+    default: 0
+  tags:
+    description:
+      - Creation tags.
+    type: dict
+    default:
+      {}
+  enabled:
+    description:
+      - Whether the secret is enabled.
+    type: bool
+    default: true
+  recovery_window_days:
+    description:
+      - Deletion recovery window from 0 through 30 days.
+    type: int
+    default: 7
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

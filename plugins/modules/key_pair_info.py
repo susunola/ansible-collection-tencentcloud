@@ -24,7 +24,8 @@ options:
       - CVM key pair API filter names mapped to lists of values, e.g.
         I(key-name), I(project-id), I(tag-key) or I(tag-value).
     type: dict
-    default: {}
+    default:
+      {}
   page_size:
     description: Number of results requested per API call (maximum 100).
     type: int

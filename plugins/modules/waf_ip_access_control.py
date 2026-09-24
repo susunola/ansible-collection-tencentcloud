@@ -13,15 +13,50 @@ short_description: Manage Tencent Cloud WAF IP access-control rules
 version_added: "0.14.0"
 description: Creates, updates and deletes WAF IP allowlist or blocklist rules.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  rule_id: {description: Existing WAF rule ID., type: int}
-  domain: {description: Protected domain name., type: str, required: true}
-  action: {description: IP rule action., type: str, choices: [allow, block], required: true}
-  ip_list: {description: Exact list of IP addresses and CIDRs., type: list, elements: str}
-  note: {description: Rule note., type: str, default: ''}
-  valid_until: {description: Unix timestamp when the rule expires. Zero means permanent., type: int, default: 0}
-  instance_id: {description: WAF instance ID., type: str}
-  edition: {description: WAF edition identifier., type: str}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  rule_id:
+    description:
+      - Existing WAF rule ID.
+    type: int
+  domain:
+    description:
+      - Protected domain name.
+    type: str
+    required: true
+  action:
+    description:
+      - IP rule action.
+    type: str
+    required: true
+    choices: [allow, block]
+  ip_list:
+    description:
+      - Exact list of IP addresses and CIDRs.
+    type: list
+    elements: str
+  note:
+    description:
+      - Rule note.
+    type: str
+    default: ''
+  valid_until:
+    description:
+      - Unix timestamp when the rule expires. Zero means permanent.
+    type: int
+    default: 0
+  instance_id:
+    description:
+      - WAF instance ID.
+    type: str
+  edition:
+    description:
+      - WAF edition identifier.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

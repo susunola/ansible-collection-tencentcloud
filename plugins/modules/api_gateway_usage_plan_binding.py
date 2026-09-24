@@ -12,11 +12,32 @@ short_description: Bind API Gateway usage plans to service environments or APIs
 version_added: "0.14.0"
 description: Idempotently manages a usage-plan environment binding.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  usage_plan_id: {type: str, required: true, description: Usage plan ID.}
-  service_id: {type: str, required: true, description: Service ID.}
-  environment: {type: str, choices: [test, prepub, release], default: release, description: Service environment.}
-  api_id: {type: str, description: API ID. Omit for a service-level binding.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  usage_plan_id:
+    description:
+      - Usage plan ID.
+    type: str
+    required: true
+  service_id:
+    description:
+      - Service ID.
+    type: str
+    required: true
+  environment:
+    description:
+      - Service environment.
+    type: str
+    choices: [test, prepub, release]
+    default: release
+  api_id:
+    description:
+      - API ID. Omit for a service-level binding.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

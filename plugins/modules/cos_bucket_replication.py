@@ -12,11 +12,30 @@ short_description: Manage Tencent Cloud COS bucket replication
 version_added: "0.14.0"
 description: Reconciles the complete cross-region replication configuration of a COS bucket.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  name: {type: str, required: true, description: Source bucket short name or full name.}
-  appid: {type: str, description: Tencent Cloud AppId used in the bucket suffix.}
-  role: {type: str, description: CAM role QCS used by COS replication.}
-  rules: {type: list, elements: dict, description: Complete COS SDK-compatible replication Rule list.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Source bucket short name or full name.
+    type: str
+    required: true
+  appid:
+    description:
+      - Tencent Cloud AppId used in the bucket suffix.
+    type: str
+  role:
+    description:
+      - CAM role QCS used by COS replication.
+    type: str
+  rules:
+    description:
+      - Complete COS SDK-compatible replication Rule list.
+    type: list
+    elements: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

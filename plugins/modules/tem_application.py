@@ -12,24 +12,86 @@ short_description: Manage Tencent Cloud TEM applications
 version_added: "0.14.0"
 description: Creates, updates and deletes TEM application definitions.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  application_id: {type: str, description: Existing application ID.}
-  name: {type: str, description: Application name and immutable identity.}
-  description: {type: str, description: Application description.}
-  use_default_image_service: {type: int, choices: [0, 1], description: Use the default image service.}
-  repo_type: {type: int, choices: [0, 1], description: Image repository type.}
-  instance_id: {type: str, description: Enterprise registry instance ID.}
-  repo_server: {type: str, description: Image repository server.}
-  repo_name: {type: str, description: Image repository name.}
-  source_channel: {type: int, default: 0, description: TEM source channel.}
-  subnet_ids: {type: list, elements: str, description: Application subnet IDs.}
-  coding_language: {type: str, description: Application programming language.}
-  deploy_mode: {type: str, description: Deployment mode.}
-  enable_tracing: {type: int, choices: [0, 1], description: APM tracing switch.}
-  default_repo_parameters: {type: dict, description: SDK UseDefaultRepoParameters payload.}
-  tags: {type: dict, description: Creation-time tags.}
-  environment_id: {type: str, description: Environment used when deleting a deployed application.}
-  delete_if_no_running_version: {type: bool, default: true, description: Delete the application when it has no running version.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  application_id:
+    description:
+      - Existing application ID.
+    type: str
+  name:
+    description:
+      - Application name and immutable identity.
+    type: str
+  description:
+    description:
+      - Application description.
+    type: str
+  use_default_image_service:
+    description:
+      - Use the default image service.
+    type: int
+    choices: [0, 1]
+  repo_type:
+    description:
+      - Image repository type.
+    type: int
+    choices: [0, 1]
+  instance_id:
+    description:
+      - Enterprise registry instance ID.
+    type: str
+  repo_server:
+    description:
+      - Image repository server.
+    type: str
+  repo_name:
+    description:
+      - Image repository name.
+    type: str
+  source_channel:
+    description:
+      - TEM source channel.
+    type: int
+    default: 0
+  subnet_ids:
+    description:
+      - Application subnet IDs.
+    type: list
+    elements: str
+  coding_language:
+    description:
+      - Application programming language.
+    type: str
+  deploy_mode:
+    description:
+      - Deployment mode.
+    type: str
+  enable_tracing:
+    description:
+      - APM tracing switch.
+    type: int
+    choices: [0, 1]
+  default_repo_parameters:
+    description:
+      - SDK UseDefaultRepoParameters payload.
+    type: dict
+  tags:
+    description:
+      - Creation-time tags.
+    type: dict
+  environment_id:
+    description:
+      - Environment used when deleting a deployed application.
+    type: str
+  delete_if_no_running_version:
+    description:
+      - Delete the application when it has no running version.
+    type: bool
+    default: true
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

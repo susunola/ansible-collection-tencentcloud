@@ -16,13 +16,41 @@ description:
   - Reconciles the complete privilege set for one account at global, database or table scope.
   - An empty privilege list explicitly revokes all privileges at that scope.
 options:
-  instance_id: {type: str, required: true, description: Stable TDSQL MySQL instance ID.}
-  username: {type: str, required: true, description: Login username.}
-  host: {type: str, default: '%', description: Allowed client host paired with username.}
-  scope: {type: str, choices: [global, database, table], required: true, description: Privilege scope.}
-  database: {type: str, description: Database name required by database and table scopes.}
-  table: {type: str, description: Table name required by table scope.}
-  privileges: {type: list, elements: str, required: true, description: Full desired privilege set at the selected scope.}
+  instance_id:
+    description:
+      - Stable TDSQL MySQL instance ID.
+    type: str
+    required: true
+  username:
+    description:
+      - Login username.
+    type: str
+    required: true
+  host:
+    description:
+      - Allowed client host paired with username.
+    type: str
+    default: '%'
+  scope:
+    description:
+      - Privilege scope.
+    type: str
+    required: true
+    choices: [global, database, table]
+  database:
+    description:
+      - Database name required by database and table scopes.
+    type: str
+  table:
+    description:
+      - Table name required by table scope.
+    type: str
+  privileges:
+    description:
+      - Full desired privilege set at the selected scope.
+    type: list
+    required: true
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

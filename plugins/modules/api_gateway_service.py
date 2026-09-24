@@ -13,16 +13,58 @@ short_description: Manage Tencent Cloud API Gateway services
 version_added: "0.14.0"
 description: Creates, updates and deletes API Gateway service containers.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  service_id: {description: Existing service ID., type: str}
-  name: {description: Service name., type: str}
-  description: {description: Service description., type: str, default: ''}
-  protocol: {description: Service protocol., type: str, choices: [http, https, http&https], default: http&https}
-  network_types: {description: Exact enabled network types., type: list, elements: str, choices: [INNER, OUTER], default: [OUTER]}
-  ip_version: {description: Service address family applied at creation., type: str, choices: [IPv4, IPv6], default: IPv4}
-  vpc_id: {description: VPC ID for private API Gateway services., type: str}
-  instance_id: {description: Dedicated API Gateway instance ID., type: str}
-  tags: {description: Tags applied at creation., type: dict, default: {}}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  service_id:
+    description:
+      - Existing service ID.
+    type: str
+  name:
+    description:
+      - Service name.
+    type: str
+  description:
+    description:
+      - Service description.
+    type: str
+    default: ''
+  protocol:
+    description:
+      - Service protocol.
+    type: str
+    choices: [http, https, http&https]
+    default: http&https
+  network_types:
+    description:
+      - Exact enabled network types.
+    type: list
+    choices: [INNER, OUTER]
+    default: [OUTER]
+    elements: str
+  ip_version:
+    description:
+      - Service address family applied at creation.
+    type: str
+    choices: [IPv4, IPv6]
+    default: IPv4
+  vpc_id:
+    description:
+      - VPC ID for private API Gateway services.
+    type: str
+  instance_id:
+    description:
+      - Dedicated API Gateway instance ID.
+    type: str
+  tags:
+    description:
+      - Tags applied at creation.
+    type: dict
+    default:
+      {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -16,11 +16,29 @@ description:
   - C(config) uses SDK request field names. SceneType, RequestProtocol and RouteList are immutable after creation.
   - Service associations are normalized from direct, weighted and model-name routes for idempotent comparison.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  gateway_id: {type: str, required: true, description: Gateway ID.}
-  model_api_id: {type: str, description: Existing Model API ID.}
-  name: {type: str, description: Instance-unique Model API name.}
-  config: {type: dict, description: 'Model API configuration in SDK field shape, excluding Name and GatewayId.'}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  gateway_id:
+    description:
+      - Gateway ID.
+    type: str
+    required: true
+  model_api_id:
+    description:
+      - Existing Model API ID.
+    type: str
+  name:
+    description:
+      - Instance-unique Model API name.
+    type: str
+  config:
+    description:
+      - Model API configuration in SDK field shape, excluding Name and GatewayId.
+    type: dict
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

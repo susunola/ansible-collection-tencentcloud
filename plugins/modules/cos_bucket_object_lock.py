@@ -15,12 +15,34 @@ description:
   - Enables COS object lock and manages its default retention rule.
   - Object lock cannot be disabled after it has been enabled on a bucket; requesting C(state=absent) fails instead of reporting a false change.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired object-lock state.}
-  name: {type: str, required: true, description: Bucket short name or full name.}
-  appid: {type: str, description: Tencent Cloud AppId used in the bucket suffix.}
-  retention_mode: {type: str, choices: [GOVERNANCE, COMPLIANCE], description: Default retention mode.}
-  retention_days: {type: int, description: Default retention period in days.}
-  retention_years: {type: int, description: Default retention period in years.}
+  state:
+    description:
+      - Desired object-lock state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Bucket short name or full name.
+    type: str
+    required: true
+  appid:
+    description:
+      - Tencent Cloud AppId used in the bucket suffix.
+    type: str
+  retention_mode:
+    description:
+      - Default retention mode.
+    type: str
+    choices: [GOVERNANCE, COMPLIANCE]
+  retention_days:
+    description:
+      - Default retention period in days.
+    type: int
+  retention_years:
+    description:
+      - Default retention period in years.
+    type: int
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

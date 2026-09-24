@@ -12,11 +12,29 @@ short_description: Manage DNSPod domain custom lines
 version_added: "0.14.0"
 description: Creates, updates and deletes a domain-scoped DNSPod custom routing line.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  domain: {type: str, description: Domain name.}
-  domain_id: {type: int, description: "Domain ID, which takes precedence over domain."}
-  name: {type: str, required: true, description: Custom line name and immutable identity.}
-  area: {type: str, description: Custom line IP range expression separated with hyphens.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  domain:
+    description:
+      - Domain name.
+    type: str
+  domain_id:
+    description:
+      - Domain ID, which takes precedence over domain.
+    type: int
+  name:
+    description:
+      - Custom line name and immutable identity.
+    type: str
+    required: true
+  area:
+    description:
+      - Custom line IP range expression separated with hyphens.
+    type: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -14,15 +14,49 @@ short_description: Configure a Tencent Cloud DTS migration job
 version_added: "0.14.0"
 description: Reconciles the source, destination, migration options and schedule of a purchased DTS migration job.
 options:
-  job_id: {description: DTS migration job ID., type: str, required: true}
-  name: {description: Migration job name., type: str}
-  run_mode: {description: Job run mode., type: str, choices: [immediate, timed], default: immediate}
-  expected_run_time: {description: Expected start time for timed mode., type: str}
-  source: {description: Source endpoint fields accepted by DTS DBEndpointInfo., type: dict, required: true}
-  destination: {description: Destination endpoint fields accepted by DTS DBEndpointInfo., type: dict, required: true}
-  migration_options: {description: Fields accepted by DTS MigrateOption., type: dict, required: true}
-  tags: {description: Job tags., type: dict}
-  auto_retry_minutes: {description: Automatic retry window in minutes; 0 disables retries., type: int, default: 0}
+  job_id:
+    description:
+      - DTS migration job ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Migration job name.
+    type: str
+  run_mode:
+    description:
+      - Job run mode.
+    type: str
+    choices: [immediate, timed]
+    default: immediate
+  expected_run_time:
+    description:
+      - Expected start time for timed mode.
+    type: str
+  source:
+    description:
+      - Source endpoint fields accepted by DTS DBEndpointInfo.
+    type: dict
+    required: true
+  destination:
+    description:
+      - Destination endpoint fields accepted by DTS DBEndpointInfo.
+    type: dict
+    required: true
+  migration_options:
+    description:
+      - Fields accepted by DTS MigrateOption.
+    type: dict
+    required: true
+  tags:
+    description:
+      - Job tags.
+    type: dict
+  auto_retry_minutes:
+    description:
+      - Automatic retry window in minutes; 0 disables retries.
+    type: int
+    default: 0
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

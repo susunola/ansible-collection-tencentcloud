@@ -12,12 +12,36 @@ short_description: Manage Tencent Cloud COS hotlink protection
 version_added: "0.14.0"
 description: Reconciles the complete referer allowlist or denylist of a COS bucket.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  name: {type: str, required: true, description: Bucket short name or full name.}
-  appid: {type: str, description: Tencent Cloud AppId used in the bucket suffix.}
-  referer_type: {type: str, choices: [White-List, Black-List], description: Referer rule mode.}
-  allow_empty: {type: bool, default: true, description: Whether requests with an empty Referer are allowed.}
-  domains: {type: list, elements: str, description: Referer domain patterns managed as an exact set.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Bucket short name or full name.
+    type: str
+    required: true
+  appid:
+    description:
+      - Tencent Cloud AppId used in the bucket suffix.
+    type: str
+  referer_type:
+    description:
+      - Referer rule mode.
+    type: str
+    choices: [White-List, Black-List]
+  allow_empty:
+    description:
+      - Whether requests with an empty Referer are allowed.
+    type: bool
+    default: true
+  domains:
+    description:
+      - Referer domain patterns managed as an exact set.
+    type: list
+    elements: str
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

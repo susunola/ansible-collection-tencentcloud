@@ -12,10 +12,27 @@ short_description: Manage Tencent Cloud MQTT topics
 version_added: "0.14.0"
 description: Creates, updates and deletes MQTT topics.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: MQTT instance ID.}
-  topic: {type: str, required: true, description: Topic name.}
-  remark: {type: str, default: '', description: Topic remark.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - MQTT instance ID.
+    type: str
+    required: true
+  topic:
+    description:
+      - Topic name.
+    type: str
+    required: true
+  remark:
+    description:
+      - Topic remark.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -12,14 +12,47 @@ short_description: Manage TDMQ RabbitMQ bindings
 version_added: "0.14.0"
 description: Creates and deletes immutable exchange-to-queue or exchange-to-exchange bindings.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  instance_id: {type: str, required: true, description: TDMQ RabbitMQ instance ID.}
-  virtual_host: {type: str, required: true, description: Virtual host name.}
-  binding_id: {type: int, description: Existing binding ID.}
-  source_exchange: {type: str, required: true, description: Source exchange name.}
-  destination_type: {type: str, choices: [queue, exchange], required: true, description: Destination resource type.}
-  destination: {type: str, required: true, description: Destination queue or exchange name.}
-  routing_key: {type: str, default: '', description: Binding routing key.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  instance_id:
+    description:
+      - TDMQ RabbitMQ instance ID.
+    type: str
+    required: true
+  virtual_host:
+    description:
+      - Virtual host name.
+    type: str
+    required: true
+  binding_id:
+    description:
+      - Existing binding ID.
+    type: int
+  source_exchange:
+    description:
+      - Source exchange name.
+    type: str
+    required: true
+  destination_type:
+    description:
+      - Destination resource type.
+    type: str
+    required: true
+    choices: [queue, exchange]
+  destination:
+    description:
+      - Destination queue or exchange name.
+    type: str
+    required: true
+  routing_key:
+    description:
+      - Binding routing key.
+    type: str
+    default: ''
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

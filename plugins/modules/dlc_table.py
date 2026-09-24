@@ -16,45 +16,148 @@ description:
   - Generates table DDL with DLC, submits it as an SQL task and verifies the resulting table through the catalog.
   - Table comments are updated in place; immutable schema and storage drift requires explicitly authorized replacement.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired table state.}
-  name: {type: str, required: true, description: Exact table name.}
-  database_name: {type: str, required: true, description: Parent database name.}
-  datasource_connection_name: {type: str, default: DataLakeCatalog, description: Catalog or data-source connection name.}
-  comment: {type: str, description: Table comment.}
-  table_type: {type: str, default: TABLE, description: Catalog table type.}
-  table_format: {type: str, description: 'Table storage format such as HIVE, ICEBERG or LAKEFS.'}
-  data_format: {type: str, choices: [TextFile, CSV, Json, Parquet, ORC, AVRO], default: Parquet, description: Physical data format.}
-  location: {type: str, description: COS table location.}
-  primary_keys: {type: list, elements: str, description: T-Iceberg primary-key columns.}
+  state:
+    description:
+      - Desired table state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Exact table name.
+    type: str
+    required: true
+  database_name:
+    description:
+      - Parent database name.
+    type: str
+    required: true
+  datasource_connection_name:
+    description:
+      - Catalog or data-source connection name.
+    type: str
+    default: DataLakeCatalog
+  comment:
+    description:
+      - Table comment.
+    type: str
+  table_type:
+    description:
+      - Catalog table type.
+    type: str
+    default: TABLE
+  table_format:
+    description:
+      - Table storage format such as HIVE, ICEBERG or LAKEFS.
+    type: str
+  data_format:
+    description:
+      - Physical data format.
+    type: str
+    choices: [TextFile, CSV, Json, Parquet, ORC, AVRO]
+    default: Parquet
+  location:
+    description:
+      - COS table location.
+    type: str
+  primary_keys:
+    description:
+      - T-Iceberg primary-key columns.
+    type: list
+    elements: str
   columns:
     type: list
     elements: dict
     description: Ordered table columns; required on creation.
     suboptions:
-      name: {type: str, required: true, description: Column name.}
-      type: {type: str, required: true, description: DLC column type.}
-      comment: {type: str, description: Column comment.}
-      precision: {type: int, description: Decimal precision.}
-      scale: {type: int, description: Decimal scale.}
-      nullable: {type: bool, description: Whether the column accepts null values.}
+      name:
+        description:
+          - Column name.
+        type: str
+        required: true
+      type:
+        description:
+          - DLC column type.
+        type: str
+        required: true
+      comment:
+        description:
+          - Column comment.
+        type: str
+      precision:
+        description:
+          - Decimal precision.
+        type: int
+      scale:
+        description:
+          - Decimal scale.
+        type: int
+      nullable:
+        description:
+          - Whether the column accepts null values.
+        type: bool
   partitions:
     type: list
     elements: dict
     description: Ordered partition definition.
     suboptions:
-      name: {type: str, required: true, description: Partition column name.}
-      type: {type: str, required: true, description: Partition type.}
-      comment: {type: str, description: Partition comment.}
-      transform: {type: str, description: Iceberg transform strategy.}
-      transform_args: {type: list, elements: str, description: Transform arguments.}
-  data_engine_name: {type: str, description: Data engine used to execute generated DDL.}
-  resource_group_name: {type: str, description: Spark resource group used for DDL execution.}
-  allow_replace: {type: bool, default: false, description: Explicitly authorize delete-and-recreate for immutable schema drift.}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize table deletion.}
-  allow_delete_data: {type: bool, default: false, description: Explicitly authorize deletion or replacement when the catalog reports stored data.}
-  wait: {type: bool, default: true, description: Wait for DDL task and catalog convergence.}
+      name:
+        description:
+          - Partition column name.
+        type: str
+        required: true
+      type:
+        description:
+          - Partition type.
+        type: str
+        required: true
+      comment:
+        description:
+          - Partition comment.
+        type: str
+      transform:
+        description:
+          - Iceberg transform strategy.
+        type: str
+      transform_args:
+        description:
+          - Transform arguments.
+        type: list
+        elements: str
+  data_engine_name:
+    description:
+      - Data engine used to execute generated DDL.
+    type: str
+  resource_group_name:
+    description:
+      - Spark resource group used for DDL execution.
+    type: str
+  allow_replace:
+    description:
+      - Explicitly authorize delete-and-recreate for immutable schema drift.
+    type: bool
+    default: false
+  allow_delete:
+    description:
+      - Explicitly authorize table deletion.
+    type: bool
+    default: false
+  allow_delete_data:
+    description:
+      - Explicitly authorize deletion or replacement when the catalog reports stored data.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for DDL task and catalog convergence.
+    type: bool
+    default: true
 
-  waiter_timeout: {type: int, default: 900, description: Overall convergence timeout.}
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 900
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

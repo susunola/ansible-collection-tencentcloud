@@ -13,11 +13,33 @@ short_description: Manage Tencent Cloud EdgeOne security template bindings
 version_added: "0.14.0"
 description: Reconciles the exact set of acceleration domains bound to an EdgeOne web security template.
 options:
-  zone_id: {type: str, required: true, description: EdgeOne zone ID.}
-  template_id: {type: str, required: true, description: Web security template ID.}
-  domains: {type: list, elements: str, required: true, description: Exact set of acceleration domains bound to the template.}
-  overwrite: {type: bool, default: true, description: Replace another template currently bound to a requested domain.}
-  unbind_policy: {type: str, choices: [keep-policy, use-default], default: keep-policy, description: Policy retained by domains removed from the template.}
+  zone_id:
+    description:
+      - EdgeOne zone ID.
+    type: str
+    required: true
+  template_id:
+    description:
+      - Web security template ID.
+    type: str
+    required: true
+  domains:
+    description:
+      - Exact set of acceleration domains bound to the template.
+    type: list
+    required: true
+    elements: str
+  overwrite:
+    description:
+      - Replace another template currently bound to a requested domain.
+    type: bool
+    default: true
+  unbind_policy:
+    description:
+      - Policy retained by domains removed from the template.
+    type: str
+    choices: [keep-policy, use-default]
+    default: keep-policy
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

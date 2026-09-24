@@ -12,16 +12,57 @@ short_description: Manage Tencent Cloud TDMQ Pulsar namespaces
 version_added: "0.14.0"
 description: Creates, updates and deletes Pulsar namespaces including retention and subscription lifecycle policies.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired state.}
-  cluster_id: {type: str, required: true, description: Pulsar cluster ID.}
-  name: {type: str, required: true, description: Namespace name.}
-  message_ttl: {type: int, default: 86400, description: Unconsumed message TTL in seconds.}
-  remark: {type: str, default: '', description: Namespace remark.}
-  retention_minutes: {type: int, default: 0, description: Retained message duration in minutes.}
-  retention_size_mb: {type: int, default: 0, description: Retained message size in MiB.}
-  auto_subscription_creation: {type: bool, default: false, description: Automatically create missing subscriptions.}
-  subscription_expiration_enabled: {type: bool, default: false, description: Automatically clean inactive subscriptions.}
-  subscription_expiration_time: {type: int, default: 0, description: Inactive subscription expiration time.}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  cluster_id:
+    description:
+      - Pulsar cluster ID.
+    type: str
+    required: true
+  name:
+    description:
+      - Namespace name.
+    type: str
+    required: true
+  message_ttl:
+    description:
+      - Unconsumed message TTL in seconds.
+    type: int
+    default: 86400
+  remark:
+    description:
+      - Namespace remark.
+    type: str
+    default: ''
+  retention_minutes:
+    description:
+      - Retained message duration in minutes.
+    type: int
+    default: 0
+  retention_size_mb:
+    description:
+      - Retained message size in MiB.
+    type: int
+    default: 0
+  auto_subscription_creation:
+    description:
+      - Automatically create missing subscriptions.
+    type: bool
+    default: false
+  subscription_expiration_enabled:
+    description:
+      - Automatically clean inactive subscriptions.
+    type: bool
+    default: false
+  subscription_expiration_time:
+    description:
+      - Inactive subscription expiration time.
+    type: int
+    default: 0
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

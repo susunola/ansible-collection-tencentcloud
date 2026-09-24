@@ -13,22 +13,87 @@ short_description: Manage Tencent Cloud Auto Scaling groups
 version_added: "0.14.0"
 description: Creates, updates and deletes Auto Scaling groups without creating instances unless desired capacity is explicitly positive.
 options:
-  state: {description: Desired state., type: str, choices: [present, absent], default: present}
-  scaling_group_id: {description: Existing Auto Scaling group ID., type: str}
-  name: {description: Auto Scaling group name., type: str}
-  launch_configuration_id: {description: Launch configuration ID., type: str}
-  vpc_id: {description: VPC ID., type: str}
-  subnet_ids: {description: Ordered subnet priority list., type: list, elements: str}
-  min_size: {description: Minimum instance count., type: int, default: 0}
-  max_size: {description: Maximum instance count., type: int, default: 0}
-  desired_capacity: {description: Desired instance count. A positive value can create billable CVM instances., type: int, default: 0}
-  default_cooldown: {description: Default cooldown in seconds., type: int, default: 300}
-  termination_policy: {description: Instance termination policy., type: str, choices: [OLDEST_INSTANCE, NEWEST_INSTANCE], default: OLDEST_INSTANCE}
-  retry_policy: {description: Scaling retry policy., type: str, choices: [IMMEDIATE_RETRY, INCREMENTAL_INTERVALS, NO_RETRY], default: IMMEDIATE_RETRY}
-  subnet_policy: {description: Multi-subnet allocation policy., type: str, choices: [PRIORITY, EQUALITY], default: PRIORITY}
-  health_check_type: {description: Instance health check type., type: str, choices: [CVM, CLB], default: CVM}
-  capacity_rebalance: {description: Proactively replace interrupted spot instances., type: bool, default: false}
-  project_id: {description: Project ID., type: int, default: 0}
+  state:
+    description:
+      - Desired state.
+    type: str
+    choices: [present, absent]
+    default: present
+  scaling_group_id:
+    description:
+      - Existing Auto Scaling group ID.
+    type: str
+  name:
+    description:
+      - Auto Scaling group name.
+    type: str
+  launch_configuration_id:
+    description:
+      - Launch configuration ID.
+    type: str
+  vpc_id:
+    description:
+      - VPC ID.
+    type: str
+  subnet_ids:
+    description:
+      - Ordered subnet priority list.
+    type: list
+    elements: str
+  min_size:
+    description:
+      - Minimum instance count.
+    type: int
+    default: 0
+  max_size:
+    description:
+      - Maximum instance count.
+    type: int
+    default: 0
+  desired_capacity:
+    description:
+      - Desired instance count. A positive value can create billable CVM instances.
+    type: int
+    default: 0
+  default_cooldown:
+    description:
+      - Default cooldown in seconds.
+    type: int
+    default: 300
+  termination_policy:
+    description:
+      - Instance termination policy.
+    type: str
+    choices: [OLDEST_INSTANCE, NEWEST_INSTANCE]
+    default: OLDEST_INSTANCE
+  retry_policy:
+    description:
+      - Scaling retry policy.
+    type: str
+    choices: [IMMEDIATE_RETRY, INCREMENTAL_INTERVALS, NO_RETRY]
+    default: IMMEDIATE_RETRY
+  subnet_policy:
+    description:
+      - Multi-subnet allocation policy.
+    type: str
+    choices: [PRIORITY, EQUALITY]
+    default: PRIORITY
+  health_check_type:
+    description:
+      - Instance health check type.
+    type: str
+    choices: [CVM, CLB]
+    default: CVM
+  capacity_rebalance:
+    description:
+      - Proactively replace interrupted spot instances.
+    type: bool
+    default: false
+  project_id:
+    description:
+      - Project ID.
+    type: int
+    default: 0
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

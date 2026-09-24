@@ -13,9 +13,22 @@ short_description: Manage public access for a TDSQL-C PostgreSQL endpoint
 version_added: "0.14.0"
 description: Opens or closes endpoint public access and waits for observable endpoint convergence.
 options:
-  cluster_id: {type: str, required: true, description: Cluster ID.}
-  endpoint_id: {type: str, required: true, description: Endpoint ID.}
-  state: {type: str, choices: [open, closed], default: closed, description: Desired public access state.}
+  cluster_id:
+    description:
+      - Cluster ID.
+    type: str
+    required: true
+  endpoint_id:
+    description:
+      - Endpoint ID.
+    type: str
+    required: true
+  state:
+    description:
+      - Desired public access state.
+    type: str
+    choices: [open, closed]
+    default: closed
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

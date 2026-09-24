@@ -16,39 +16,132 @@ description:
   - Manages reusable DLC job specifications for group, cluster or serverless submission.
   - Reconciles JSON documents and tags semantically and blocks deletion while jobs are running by default.
 options:
-  state: {type: str, choices: [present, absent], default: present, description: Desired lifecycle state.}
-  name: {type: str, required: true, description: Exact job-specification name and identity.}
-  entrypoint: {type: str, description: Job entrypoint command; required on creation.}
-  description: {type: str, description: Job-specification description.}
-  image: {type: str, description: Container image address.}
-  image_pull_type: {type: str, choices: [Builtin, Custom], description: Image source type.}
-  image_pull_policy: {type: str, choices: [Always, IfNotPresent, Never], description: Image pull policy.}
-  resource_config: {type: str, description: Inline resource configuration JSON.}
-  resource_config_id: {type: str, description: Reusable resource-template ID.}
-  runtime_env: {type: str, description: Runtime environment JSON.}
-  catalog: {type: str, description: Volume and mount JSON.}
-  autoscaler_options: {type: str, description: Autoscaler JSON.}
-  advanced_options: {type: str, description: Advanced job options JSON.}
-  resource_partition_id: {type: str, description: Default resource partition ID.}
-  queue: {type: str, description: Default queue name.}
-  group_id: {type: str, description: Default compute-group ID.}
-  cluster_id: {type: str, description: Default persistent cluster ID.}
-  job_package: {type: str, description: Job package URL.}
-  job_package_name: {type: str, description: Job package name.}
-  priority: {type: int, description: Priority from 1 to 9.}
-  dispatch_strategy: {type: str, choices: [RANDOM], description: Group dispatch strategy.}
+  state:
+    description:
+      - Desired lifecycle state.
+    type: str
+    choices: [present, absent]
+    default: present
+  name:
+    description:
+      - Exact job-specification name and identity.
+    type: str
+    required: true
+  entrypoint:
+    description:
+      - Job entrypoint command; required on creation.
+    type: str
+  description:
+    description:
+      - Job-specification description.
+    type: str
+  image:
+    description:
+      - Container image address.
+    type: str
+  image_pull_type:
+    description:
+      - Image source type.
+    type: str
+    choices: [Builtin, Custom]
+  image_pull_policy:
+    description:
+      - Image pull policy.
+    type: str
+    choices: [Always, IfNotPresent, Never]
+  resource_config:
+    description:
+      - Inline resource configuration JSON.
+    type: str
+  resource_config_id:
+    description:
+      - Reusable resource-template ID.
+    type: str
+  runtime_env:
+    description:
+      - Runtime environment JSON.
+    type: str
+  catalog:
+    description:
+      - Volume and mount JSON.
+    type: str
+  autoscaler_options:
+    description:
+      - Autoscaler JSON.
+    type: str
+  advanced_options:
+    description:
+      - Advanced job options JSON.
+    type: str
+  resource_partition_id:
+    description:
+      - Default resource partition ID.
+    type: str
+  queue:
+    description:
+      - Default queue name.
+    type: str
+  group_id:
+    description:
+      - Default compute-group ID.
+    type: str
+  cluster_id:
+    description:
+      - Default persistent cluster ID.
+    type: str
+  job_package:
+    description:
+      - Job package URL.
+    type: str
+  job_package_name:
+    description:
+      - Job package name.
+    type: str
+  priority:
+    description:
+      - Priority from 1 to 9.
+    type: int
+  dispatch_strategy:
+    description:
+      - Group dispatch strategy.
+    type: str
+    choices: [RANDOM]
   tags:
     type: list
     elements: dict
     description: Exact Tencent Cloud tag set.
     suboptions:
-      key: {type: str, required: true, description: Tag key.}
-      value: {type: str, required: true, description: Tag value.}
-  allow_delete: {type: bool, default: false, description: Explicitly authorize deletion.}
-  allow_delete_running: {type: bool, default: false, description: Explicitly authorize deletion while jobs are running.}
-  wait: {type: bool, default: true, description: Wait for lifecycle and field convergence.}
+      key:
+        description:
+          - Tag key.
+        type: str
+        required: true
+      value:
+        description:
+          - Tag value.
+        type: str
+        required: true
+  allow_delete:
+    description:
+      - Explicitly authorize deletion.
+    type: bool
+    default: false
+  allow_delete_running:
+    description:
+      - Explicitly authorize deletion while jobs are running.
+    type: bool
+    default: false
+  wait:
+    description:
+      - Wait for lifecycle and field convergence.
+    type: bool
+    default: true
 
-  waiter_timeout: {type: int, default: 300, description: Overall convergence timeout.}
+  waiter_timeout:
+    description:
+      - Overall convergence timeout.
+    type: int
+    default: 300
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
