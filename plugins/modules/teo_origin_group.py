@@ -106,6 +106,12 @@ EXAMPLES = r"""
         weight: 70
       - record: 192.0.2.11
         weight: 30
+
+- name: Delete the origin group
+  susunola.tencentcloud.teo_origin_group:
+    state: absent
+    name: app-origins
+    zone_id: zone-xxxxxxxx
 """
 
 RETURN = r"""origin_group:

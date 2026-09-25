@@ -135,6 +135,12 @@ EXAMPLES = r"""
     paths: [/orders]
     protocols: [https]
     strip_path: true
+
+- name: Delete the route
+  susunola.tencentcloud.tse_gateway_route:
+    state: absent
+    gateway_id: gateway-xxxxxxxx
+    name: orders-api
 """
 RETURN = r"""route:
   description:

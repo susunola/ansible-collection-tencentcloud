@@ -151,6 +151,12 @@ EXAMPLES = r"""
     default_cos_bucket: flink-artifacts-1250000000
     cu: 19
     charge_type: POSTPAID_BY_SECOND
+
+- name: Delete the cluster
+  susunola.tencentcloud.oceanus_cluster:
+    state: absent
+    name: production-flink
+    wait: false
 """
 RETURN = r"""cluster:
   description:

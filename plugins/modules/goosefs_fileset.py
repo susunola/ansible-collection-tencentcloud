@@ -84,6 +84,13 @@ EXAMPLES = r"""
     directory: /analytics
     quota_size_limit: '1099511627776'
     quota_files_limit: '1000000'
+
+- name: Delete the fileset
+  susunola.tencentcloud.goosefs_fileset:
+    state: absent
+    directory: /analytics
+    file_system_id: x-c60-xxxxxxxx
+    name: analytics
 """
 RETURN = r"""fileset:
   description:

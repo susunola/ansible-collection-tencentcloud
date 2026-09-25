@@ -106,6 +106,12 @@ EXAMPLES = r"""
     day_of_week: 1,2,3,4,5,6,7
     alive_days: 30
     file_system_ids: [cfs-xxxxxxxx, cfs-yyyyyyyy]
+
+- name: Delete the policy
+  susunola.tencentcloud.cfs_auto_snapshot_policy:
+    state: absent
+    force_delete: true
+    name: nightly-production
 """
 RETURN = r"""policy:
   description:

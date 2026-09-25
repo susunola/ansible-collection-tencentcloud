@@ -83,6 +83,12 @@ EXAMPLES = r"""
     name: production
     description: Production workloads
     mirror_queue_policy: true
+
+- name: Delete the virtual host
+  susunola.tencentcloud.trabbit_serverless_vhost:
+    state: absent
+    instance_id: amqp-xxxxxxxx
+    name: production
 """
 RETURN = r"""virtual_host:
   description:

@@ -152,6 +152,11 @@ EXAMPLES = r"""
     memory: 4
     storage: 100
     admin_password: "{{ vault_cynosdb_password }}"
+
+- name: Delete the cluster
+  susunola.tencentcloud.cynosdb_cluster:
+    state: absent
+    name: production-cynosdb
 """
 RETURN = r"""cluster:
   description:

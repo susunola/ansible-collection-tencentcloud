@@ -97,6 +97,12 @@ EXAMPLES = r"""
     signature_ids: ['100001', '100002']
     rules:
       - {MatchField: URI, MatchMethod: prefix, MatchContent: /health, MatchParams: ''}
+
+- name: Delete the rule
+  susunola.tencentcloud.waf_attack_white_rule:
+    state: absent
+    domain: api.example.com
+    name: allow-health-check-signatures
 """
 RETURN = r"""rule:
   description:

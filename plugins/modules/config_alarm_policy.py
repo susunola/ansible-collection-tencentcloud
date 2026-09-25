@@ -111,6 +111,11 @@ EXAMPLES = r"""
     notice_period: [1, 2, 3, 4, 5]
     notice_time: 09:00-18:00
     notification_mechanism: USER
+
+- name: Delete the alarm policy
+  susunola.tencentcloud.config_alarm_policy:
+    state: absent
+    name: high-risk-compliance
 """
 
 RETURN = r"""alarm_policy:

@@ -115,6 +115,12 @@ EXAMPLES = r"""
     origin_type: ORIGIN_GROUP
     origin: origin-xxxxxxxx
     origin_protocol: HTTPS
+
+- name: Delete the acceleration domain
+  susunola.tencentcloud.teo_acceleration_domain:
+    state: absent
+    domain_name: app.example.com
+    zone_id: zone-xxxxxxxx
 """
 
 RETURN = r"""acceleration_domain:

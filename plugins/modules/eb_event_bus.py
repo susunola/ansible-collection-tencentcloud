@@ -75,6 +75,11 @@ EXAMPLES = r"""
     description: Production application events
     enable_store: true
     save_days: 7
+
+- name: Delete the event bus
+  susunola.tencentcloud.eb_event_bus:
+    state: absent
+    name: production-events
 """
 RETURN = r"""event_bus:
   description:

@@ -103,6 +103,12 @@ EXAMPLES = r"""
     lane_id: lane-xxxxxxxx
     tags:
       - {name: x-canary, operator: EQUAL, value: 'true'}
+
+- name: Delete the lane rule
+  susunola.tencentcloud.tsf_lane_rule:
+    state: absent
+    lane_id: lane-xxxxxxxx
+    name: checkout-canary-header
 """
 RETURN = r"""lane_rule:
   description:

@@ -75,6 +75,11 @@ EXAMPLES = r"""
         Status: Enabled
         Prefix: logs/
         Destination: {Bucket: qcs::cos:ap-shanghai::archive-1250000000, StorageClass: STANDARD}
+
+- name: Delete the replication
+  susunola.tencentcloud.cos_bucket_replication:
+    state: absent
+    name: source-data
 """
 RETURN = r"""replication:
   description:

@@ -82,6 +82,11 @@ EXAMPLES = r"""
     cluster_id: cls-xxxxxxxx
     access: private
     subnet_id: subnet-xxxxxxxx
+
+- name: Delete the endpoint
+  susunola.tencentcloud.tke_cluster_endpoint:
+    state: absent
+    cluster_id: cls-xxxxxxxx
 """
 RETURN = r"""endpoint:
   description:

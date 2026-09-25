@@ -136,6 +136,11 @@ EXAMPLES = r"""
     shard_memory: 8
     shard_storage: 100
     shard_count: 2
+
+- name: Delete the instance
+  susunola.tencentcloud.dcdb_instance:
+    state: absent
+    name: production-dcdb
 """
 RETURN = r"""instance:
   description:

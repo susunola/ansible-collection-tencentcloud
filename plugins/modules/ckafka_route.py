@@ -106,6 +106,11 @@ EXAMPLES = r"""
     vpc_id: vpc-xxxxxxxx
     subnet_id: subnet-xxxxxxxx
     security_group_ids: [sg-xxxxxxxx]
+
+- name: Delete the route
+  susunola.tencentcloud.ckafka_route:
+    state: absent
+    instance_id: ckafka-xxxxxxxx
 """
 RETURN = r"""route:
   description:

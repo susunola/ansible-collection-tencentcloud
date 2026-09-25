@@ -70,6 +70,12 @@ EXAMPLES = r"""
     file_system_id: f-xxxxxxxx
     name: analytics-mount
     status: 1
+
+- name: Delete the mount point
+  susunola.tencentcloud.chdfs_mount_point:
+    state: absent
+    file_system_id: f-xxxxxxxx
+    name: analytics-mount
 """
 RETURN = r"""mount_point:
   description:

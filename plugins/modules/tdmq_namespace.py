@@ -97,6 +97,12 @@ EXAMPLES = r"""
     message_ttl: 604800
     retention_minutes: 1440
     retention_size_mb: 10240
+
+- name: Delete the namespace
+  susunola.tencentcloud.tdmq_namespace:
+    state: absent
+    cluster_id: pulsar-xxxxxxxx
+    name: production
 """
 RETURN = r"""namespace:
   description:

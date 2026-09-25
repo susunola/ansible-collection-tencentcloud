@@ -89,6 +89,13 @@ EXAMPLES = r"""
     target_type: scf
     target_description:
       ResourceDescription: '{"Region":"ap-guangzhou","Namespace":"default","FunctionName":"consume"}'
+
+- name: Delete the target
+  susunola.tencentcloud.eb_target:
+    state: absent
+    event_bus_id: eb-l8q2xxxx
+    rule_id: rule-4y4xxxx
+    target_type: scf
 """
 RETURN = r"""target:
   description:

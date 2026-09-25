@@ -74,6 +74,12 @@ EXAMPLES = r"""
     name: order-service
     permission_type: TopicAndGroup
     remark: Order service identity
+
+- name: Delete the role
+  susunola.tencentcloud.tdmq_rocketmq_role:
+    state: absent
+    cluster_id: rocketmq-xxxxxxxx
+    name: order-service
 """
 RETURN = r"""role:
   description:

@@ -86,6 +86,12 @@ EXAMPLES = r"""
     cron_config:
       Enabled: true
       Params: [{Period: daily, StartAt: '09:00', TargetReplicas: 4}]
+
+- name: Delete the strategy
+  susunola.tencentcloud.tse_gateway_autoscaler_strategy:
+    state: absent
+    gateway_id: gateway-xxxxxxxx
+    name: production-elasticity
 """
 RETURN = r"""strategy:
   description:

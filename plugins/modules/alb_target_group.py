@@ -97,6 +97,11 @@ EXAMPLES = r"""
     vpc_id: vpc-xxxxxxxx
     protocol: HTTP
     health_check: {HealthCheckEnabled: true, HealthCheckPath: /health}
+
+- name: Delete the target group
+  susunola.tencentcloud.alb_target_group:
+    state: absent
+    name: application-http
 """
 RETURN = r"""target_group:
   description:

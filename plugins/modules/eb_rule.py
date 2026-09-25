@@ -80,6 +80,12 @@ EXAMPLES = r"""
     event_bus_id: eb-l8q2xxxx
     name: order-created
     event_pattern: '{"source":["orders"]}'
+
+- name: Delete the rule
+  susunola.tencentcloud.eb_rule:
+    state: absent
+    event_bus_id: eb-l8q2xxxx
+    name: order-created
 """
 RETURN = r"""rule:
   description:

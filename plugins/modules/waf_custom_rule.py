@@ -112,6 +112,12 @@ EXAMPLES = r"""
     action: '1'
     strategies:
       - {Field: URI, CompareFunc: contains, Content: /admin, CaseNotSensitive: 1}
+
+- name: Delete the rule
+  susunola.tencentcloud.waf_custom_rule:
+    state: absent
+    domain: api.example.com
+    name: block-admin
 """
 RETURN = r"""rule:
   description:

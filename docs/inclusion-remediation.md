@@ -65,6 +65,35 @@ Each claim below is checkable with the command in the same row.
 | Every role declares the core floor the collection requires | `python scripts/check_quality_gates.py` |
 | Every core module's `state` says what its choices do | `python scripts/enrich_state_docs.py --check` |
 | Every core id/name pair says which one to give | `python scripts/enrich_identity_docs.py --check` |
+| Every module that can delete shows how | `python scripts/add_delete_examples.py --check` |
+
+### Every module that can delete shows how
+
+270 write modules accept `state: absent` and 70 showed it. The delete example is
+the call a reader copies when they want something gone, and the call with the
+least room for guessing: which option identifies the resource, and which
+create-only parameters the module still demands.
+
+`add_delete_examples.py` writes the other 231 from the module's own code. The
+identity is the set of options its lookup helper reads — mapped back through
+the call site, because a helper may take `p` or the individual values — plus
+whatever its `required_one_of` names, and the values are the ones its create
+example already uses. Two details are worth naming, because both were found by
+a module coming out wrong:
+
+* A flag the delete path reads but which is not identity comes from the **unit
+  test's delete call**, not from the create example. `alb_load_balancer`'s
+  create example sets `deletion_protection: true`, and the module refuses to
+  delete a protected load balancer; copying that value would have documented a
+  call the API rejects. `cbs_auto_snapshot_policy` gets `force_delete: true` the
+  same way.
+* A create-only payload is never copied. `cdwch_instance`'s create example
+  carries a spec name and an inline password; neither appears in its delete
+  example, because the lookup does not read them.
+
+Every generated example is validated against its argument spec by
+`check_module_examples.py`, which fails on an undeclared option or a missing
+required one — so a wrong example cannot ship quietly.
 
 ### An id and a name are alternatives, and the docs say so
 

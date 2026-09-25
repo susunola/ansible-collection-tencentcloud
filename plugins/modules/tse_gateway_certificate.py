@@ -111,6 +111,13 @@ EXAMPLES = r"""
     bind_domains: [api.example.com]
     cert_type: SVR
     cert_usage: SERVER
+
+- name: Delete the certificate info
+  susunola.tencentcloud.tse_gateway_certificate:
+    state: absent
+    force_delete: true
+    gateway_id: gateway-xxxxxxxx
+    name: public-api
 """
 RETURN = r"""certificate_info:
   description:

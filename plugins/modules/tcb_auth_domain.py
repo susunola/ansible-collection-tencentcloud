@@ -62,6 +62,12 @@ EXAMPLES = r"""
 - susunola.tencentcloud.tcb_auth_domain:
     env_id: env-xxxxxxxx
     domain: app.example.com
+
+- name: Delete the auth domain
+  susunola.tencentcloud.tcb_auth_domain:
+    state: absent
+    domain: app.example.com
+    env_id: env-xxxxxxxx
 """
 RETURN = r"""auth_domain:
   description:

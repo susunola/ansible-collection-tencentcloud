@@ -86,6 +86,12 @@ EXAMPLES = r"""
     bucket_name: tsf-packages-1250000000
     bucket_region: ap-guangzhou
     directory: releases
+
+- name: Delete the repository
+  susunola.tencentcloud.tsf_repository:
+    state: absent
+    name: production-packages
+    repository_type: private
 """
 RETURN = r"""repository:
   description:

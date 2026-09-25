@@ -105,6 +105,12 @@ EXAMPLES = r"""
     roles:
       - namespace: orders
         access: read_write
+
+- name: Delete the account
+  susunola.tencentcloud.mongodb_account:
+    state: absent
+    instance_id: cmgo-xxxxxxxx
+    username: app
 """
 RETURN = r"""account:
   description:

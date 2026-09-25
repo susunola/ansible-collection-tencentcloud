@@ -96,13 +96,12 @@ SKELETON_TEST_RATCHET = 0
 # Write modules that accept ``state: absent`` and never show it. Deletion is
 # the operation with the most consequence and the one a reader cannot guess:
 # which option identifies the resource, and which create-only parameters the
-# module still demands. 270 modules support deletion and 38 of them document
-# it; the rest is authoring work with a ratchet rather than a generator,
-# because generating the identity from the create example also drags in
-# create-only payloads (a spec name, a client-id list, an inline key) and an
-# example that mixes a name from one fixture with an id from another finds
-# neither. Every one of the 38 was derived from the module's own delete path.
-DELETE_EXAMPLE_RATCHET = 232
+# module still demands. All 270 now document it: 38 written by hand and the
+# rest by ``scripts/add_delete_examples.py``, which takes the identity from the
+# options the module's own lookup reads, the values from its create example,
+# and a delete-path flag such as ``deletion_protection`` from the unit test's
+# delete call rather than from the create example that turns it on.
+DELETE_EXAMPLE_RATCHET = 0
 
 _DOC_RE = re.compile(r"DOCUMENTATION = r?(['\"]{3})(.*?)\1", re.S)
 

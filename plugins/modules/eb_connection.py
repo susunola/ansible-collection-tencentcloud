@@ -86,6 +86,12 @@ EXAMPLES = r"""
     connection_type: ckafka
     connection_description:
       ResourceDescription: '{"InstanceId":"ckafka-xxxx","TopicName":"orders"}'
+
+- name: Delete the connection
+  susunola.tencentcloud.eb_connection:
+    state: absent
+    event_bus_id: eb-l8q2xxxx
+    name: kafka-orders
 """
 RETURN = r"""connection:
   description:

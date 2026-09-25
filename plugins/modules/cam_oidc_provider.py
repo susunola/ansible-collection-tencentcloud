@@ -78,6 +78,11 @@ EXAMPLES = r"""
     identity_url: https://token.actions.githubusercontent.com
     client_ids: [sts.tencentcloudapi.com]
     identity_key: "{{ lookup('file', 'oidc-public.pem') | b64encode }}"
+
+- name: Delete the oidc provider
+  susunola.tencentcloud.cam_oidc_provider:
+    state: absent
+    name: ci-workloads
 """
 RETURN = r"""oidc_provider:
   description:

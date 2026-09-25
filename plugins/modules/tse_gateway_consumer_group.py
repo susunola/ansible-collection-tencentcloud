@@ -72,6 +72,12 @@ EXAMPLES = r"""
     gateway_id: gateway-xxxxxxxx
     name: trusted-clients
     status: Enable
+
+- name: Delete the consumer group
+  susunola.tencentcloud.tse_gateway_consumer_group:
+    state: absent
+    gateway_id: gateway-xxxxxxxx
+    name: trusted-clients
 """
 RETURN = r"""consumer_group:
   description:

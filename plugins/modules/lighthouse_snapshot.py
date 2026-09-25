@@ -71,6 +71,11 @@ EXAMPLES = r"""
 - susunola.tencentcloud.lighthouse_snapshot:
     instance_id: lhins-xxxxxxxx
     name: before-upgrade
+
+- name: Delete the snapshot
+  susunola.tencentcloud.lighthouse_snapshot:
+    state: absent
+    name: before-upgrade
 """
 RETURN = r"""snapshot:
   description:

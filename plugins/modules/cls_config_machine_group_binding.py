@@ -63,6 +63,12 @@ EXAMPLES = r"""
 - susunola.tencentcloud.cls_config_machine_group_binding:
     config_id: config-xxxxxxxx
     group_id: group-xxxxxxxx
+
+- name: Delete the binding
+  susunola.tencentcloud.cls_config_machine_group_binding:
+    state: absent
+    config_id: config-xxxxxxxx
+    group_id: group-xxxxxxxx
 """
 RETURN = r"""binding:
   description:

@@ -83,6 +83,13 @@ EXAMPLES = r"""
     name: orders
     topic_type: PartitionedOrder
     partition_num: 6
+
+- name: Delete the topic
+  susunola.tencentcloud.tdmq_rocketmq_topic:
+    state: absent
+    cluster_id: rocketmq-xxxxxxxx
+    name: orders
+    namespace: production
 """
 RETURN = r"""topic:
   description:

@@ -93,6 +93,13 @@ EXAMPLES = r"""
       Addresses: [10.0.0.20:8848]
       VpcInfo: {VpcID: vpc-xxxxxxxx, SubnetID: subnet-xxxxxxxx}
       Auth: {Username: gateway-reader, Password: "{{ vault_nacos_password }}"}
+
+- name: Delete the source
+  susunola.tencentcloud.tse_gateway_service_source:
+    state: absent
+    gateway_id: gateway-xxxxxxxx
+    source_id: nacos-instance-id
+    source_name: customer-nacos
 """
 RETURN = r"""source:
   description:

@@ -74,6 +74,13 @@ EXAMPLES = r"""
       Enabled: true
       QpsThresholds: [{Unit: second, Max: 100}]
       LimitBy: service
+
+- name: Delete the rate limit
+  susunola.tencentcloud.tse_gateway_rate_limit:
+    state: absent
+    gateway_id: gateway-xxxxxxxx
+    resource: orders-api
+    scope: route
 """
 RETURN = r"""rate_limit:
   description:

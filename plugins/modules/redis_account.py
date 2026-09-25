@@ -97,6 +97,12 @@ EXAMPLES = r"""
     name: application
     password: '{{ vault_redis_password }}'
     privilege: rw
+
+- name: Delete the account
+  susunola.tencentcloud.redis_account:
+    state: absent
+    instance_id: crs-xxxxxxxx
+    name: application
 """
 RETURN = r"""account:
   description:

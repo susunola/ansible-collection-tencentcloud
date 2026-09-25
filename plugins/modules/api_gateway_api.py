@@ -148,6 +148,12 @@ EXAMPLES = r"""
     scf_function_namespace: default
     scf_function_qualifier: production
     scf_function_type: EVENT
+
+- name: Delete the api
+  susunola.tencentcloud.api_gateway_api:
+    state: absent
+    name: health
+    service_id: service-xxxxxxxx
 """
 RETURN = r"""api:
   description:

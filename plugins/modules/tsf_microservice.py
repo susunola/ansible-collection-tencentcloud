@@ -70,6 +70,12 @@ EXAMPLES = r"""
     namespace_id: namespace-xxxxxxxx
     name: orders
     description: Order service
+
+- name: Delete the microservice
+  susunola.tencentcloud.tsf_microservice:
+    state: absent
+    name: orders
+    namespace_id: namespace-xxxxxxxx
 """
 RETURN = r"""microservice:
   description:

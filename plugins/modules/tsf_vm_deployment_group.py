@@ -92,6 +92,14 @@ EXAMPLES = r"""
     namespace_id: namespace-xxxxxxxx
     cluster_id: cluster-xxxxxxxx
     description: Production VM group
+
+- name: Delete the deployment group
+  susunola.tencentcloud.tsf_vm_deployment_group:
+    state: absent
+    application_id: application-xxxxxxxx
+    cluster_id: cluster-xxxxxxxx
+    name: orders-production
+    namespace_id: namespace-xxxxxxxx
 """
 RETURN = r"""deployment_group:
   description:

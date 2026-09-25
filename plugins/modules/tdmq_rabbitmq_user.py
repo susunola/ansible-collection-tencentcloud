@@ -95,6 +95,12 @@ EXAMPLES = r"""
     password: '{{ vault_rabbitmq_password }}'
     tags: [management]
     max_connections: 100
+
+- name: Delete the user
+  susunola.tencentcloud.tdmq_rabbitmq_user:
+    state: absent
+    instance_id: amqp-xxxxxxxx
+    name: application
 """
 RETURN = r"""user:
   description:

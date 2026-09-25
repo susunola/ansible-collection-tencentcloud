@@ -93,6 +93,12 @@ EXAMPLES = r"""
     instance_ids: [lhins-xxxxxxxx, lhins-yyyyyyyy]
     association_type: ONLINE
     username: root
+
+- name: Delete the key pair
+  susunola.tencentcloud.lighthouse_key_pair:
+    state: absent
+    force_delete: true
+    name: production-automation
 """
 RETURN = r"""key_pair:
   description:

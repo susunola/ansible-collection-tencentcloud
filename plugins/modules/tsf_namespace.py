@@ -91,6 +91,11 @@ EXAMPLES = r"""
     cluster_id: cluster-xxxxxxxx
     resource_type: DEF
     high_availability: true
+
+- name: Delete the namespace
+  susunola.tencentcloud.tsf_namespace:
+    state: absent
+    name: production
 """
 RETURN = r"""namespace:
   description:

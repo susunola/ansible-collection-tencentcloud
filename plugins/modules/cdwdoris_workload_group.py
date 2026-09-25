@@ -111,6 +111,12 @@ EXAMPLES = r"""
     max_queue_size: 15
     queue_timeout: 5000
     workload_groups_enabled: true
+
+- name: Delete the workload group
+  susunola.tencentcloud.cdwdoris_workload_group:
+    state: absent
+    instance_id: cdwdoris-xxxxxxxx
+    name: interactive
 """
 RETURN = r"""workload_group:
   description:

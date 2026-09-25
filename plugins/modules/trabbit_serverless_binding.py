@@ -91,6 +91,15 @@ EXAMPLES = r"""
     destination_type: queue
     destination: order-workers
     routing_key: orders.created
+
+- name: Delete the binding
+  susunola.tencentcloud.trabbit_serverless_binding:
+    state: absent
+    destination: order-workers
+    destination_type: queue
+    instance_id: amqp-xxxxxxxx
+    source_exchange: orders
+    virtual_host: production
 """
 RETURN = r"""binding:
   description:

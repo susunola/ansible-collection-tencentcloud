@@ -77,6 +77,11 @@ EXAMPLES = r"""
     region: ap-guangzhou
     name: archive
     transition_days: 60
+
+- name: Delete the intelligent tiering
+  susunola.tencentcloud.cos_bucket_intelligent_tiering:
+    state: absent
+    name: archive
 """
 RETURN = r"""intelligent_tiering:
   description:

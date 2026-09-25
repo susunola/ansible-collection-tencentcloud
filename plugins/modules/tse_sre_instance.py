@@ -176,6 +176,11 @@ EXAMPLES = r"""
     admin_name: admin
     admin_password: "{{ vault_tse_password }}"
     internet_access: false
+
+- name: Delete the instance
+  susunola.tencentcloud.tse_sre_instance:
+    state: absent
+    name: production-nacos
 """
 RETURN = r"""instance:
   description:

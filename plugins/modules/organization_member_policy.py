@@ -76,6 +76,12 @@ EXAMPLES = r"""
     name: operations-access
     identity_id: 12
     description: Operations access policy
+
+- name: Delete the policy
+  susunola.tencentcloud.organization_member_policy:
+    state: absent
+    member_uin: 100000000001
+    name: operations-access
 """
 RETURN = r"""policy:
   description:

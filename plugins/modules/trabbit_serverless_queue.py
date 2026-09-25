@@ -166,6 +166,13 @@ EXAMPLES = r"""
     durable: true
     message_ttl: 86400000
     dead_letter_exchange: orders-dlx
+
+- name: Delete the queue
+  susunola.tencentcloud.trabbit_serverless_queue:
+    state: absent
+    instance_id: amqp-xxxxxxxx
+    name: order-workers
+    virtual_host: production
 """
 RETURN = r"""queue:
   description:

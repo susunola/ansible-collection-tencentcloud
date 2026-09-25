@@ -76,6 +76,12 @@ EXAMPLES = r"""
     instance_id: ckafka-xxxxxxxx
     name: producer
     password: '{{ vault_ckafka_password }}'
+
+- name: Delete the user
+  susunola.tencentcloud.ckafka_user:
+    state: absent
+    instance_id: ckafka-xxxxxxxx
+    name: producer
 """
 RETURN = r"""user:
   description:

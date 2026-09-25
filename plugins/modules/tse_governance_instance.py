@@ -131,6 +131,15 @@ EXAMPLES = r"""
     weight: 100
     enable_health_check: true
     ttl: 5
+
+- name: Delete the governance instance
+  susunola.tencentcloud.tse_governance_instance:
+    state: absent
+    host: 10.0.0.30
+    instance_id: ins-xxxxxxxx
+    namespace: production
+    port: 8080
+    service: orders
 """
 RETURN = r"""governance_instance:
   description:

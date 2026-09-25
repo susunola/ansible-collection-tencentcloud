@@ -82,6 +82,13 @@ EXAMPLES = r"""
     config:
       Resource: ckafka-xxxxxxxx
       SelfBuilt: false
+
+- name: Delete the connection
+  susunola.tencentcloud.ckafka_datahub_connection:
+    state: absent
+    config: {Resource: ckafka-xxxxxxxx, SelfBuilt: false}
+    connection_type: KAFKA
+    name: analytics-kafka
 """
 RETURN = r"""connection:
   description:

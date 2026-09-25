@@ -152,6 +152,12 @@ EXAMPLES = r"""
     product_version: 2.1
     charge_properties: {ChargeType: POSTPAID_BY_HOUR}
     admin_password: "{{ vault_doris_password }}"
+
+- name: Delete the instance
+  susunola.tencentcloud.cdwdoris_instance:
+    state: absent
+    name: analytics-doris
+    wait: true
 """
 RETURN = r"""instance:
   description:

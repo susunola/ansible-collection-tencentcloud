@@ -104,6 +104,12 @@ EXAMPLES = r"""
     database_privileges:
       - database: orders
         privilege: ReadWrite
+
+- name: Delete the account
+  susunola.tencentcloud.sqlserver_account:
+    state: absent
+    instance_id: mssql-xxxxxxxx
+    username: app
 """
 RETURN = r"""account:
   description:

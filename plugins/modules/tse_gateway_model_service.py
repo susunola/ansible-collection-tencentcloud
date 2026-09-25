@@ -77,6 +77,12 @@ EXAMPLES = r"""
       DefaultModel: gpt-4.1
       ConnectTimeout: 10000
       ReadTimeout: 60000
+
+- name: Delete the model service
+  susunola.tencentcloud.tse_gateway_model_service:
+    state: absent
+    gateway_id: gateway-xxxxxxxx
+    name: openai-primary
 """
 RETURN = r"""model_service:
   description:

@@ -73,6 +73,13 @@ EXAMPLES = r"""
     gateway_id: gateway-xxxxxxxx
     consumer_group_name: trusted-clients
     consumer_names: [mobile-app, batch-worker]
+
+- name: Delete the membership
+  susunola.tencentcloud.tse_gateway_consumer_group_membership:
+    state: absent
+    consumer_group_name: trusted-clients
+    consumer_names: [mobile-app, batch-worker]
+    gateway_id: gateway-xxxxxxxx
 """
 RETURN = r"""membership:
   description:

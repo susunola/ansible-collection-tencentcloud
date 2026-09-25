@@ -67,6 +67,12 @@ EXAMPLES = r"""
     config_id: config-xxxxxxxx
     group_id: group-xxxxxxxx
     release_description: Production settings
+
+- name: Delete the release
+  susunola.tencentcloud.tsf_application_config_release:
+    state: absent
+    config_id: config-xxxxxxxx
+    group_id: group-xxxxxxxx
 """
 RETURN = r"""release:
   description:

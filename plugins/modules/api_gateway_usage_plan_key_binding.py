@@ -62,6 +62,12 @@ EXAMPLES = r"""
 - susunola.tencentcloud.api_gateway_usage_plan_key_binding:
     usage_plan_id: usagePlan-xxxxxxxx
     access_key_id: AKIDxxxxxxxx
+
+- name: Delete the binding
+  susunola.tencentcloud.api_gateway_usage_plan_key_binding:
+    state: absent
+    access_key_id: AKIDxxxxxxxx
+    usage_plan_id: usagePlan-xxxxxxxx
 """
 RETURN = r"""binding:
   description:

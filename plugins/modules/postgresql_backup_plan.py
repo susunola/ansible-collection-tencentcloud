@@ -97,6 +97,12 @@ EXAMPLES = r"""
     min_start_time: 03:00:00
     max_start_time: 04:00:00
     retention_days: 30
+
+- name: Delete the backup plan
+  susunola.tencentcloud.postgresql_backup_plan:
+    state: absent
+    instance_id: postgres-xxxxxxxx
+    name: production
 """
 RETURN = r"""backup_plan:
   description:

@@ -89,6 +89,11 @@ EXAMPLES = r"""
     name: production-mysql80
     engine_version: '8.0'
     parameters: {max_connections: '2000'}
+
+- name: Delete the parameter template
+  susunola.tencentcloud.cdb_parameter_template:
+    state: absent
+    name: production-mysql80
 """
 RETURN = r"""parameter_template:
   description:

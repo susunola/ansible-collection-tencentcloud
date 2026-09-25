@@ -95,6 +95,13 @@ EXAMPLES = r"""
     instance_id: ins-xxxxxxxx
     namespace: production
     name: application
+
+- name: Delete the group
+  susunola.tencentcloud.tse_config_file_group:
+    state: absent
+    instance_id: ins-xxxxxxxx
+    name: application
+    namespace: production
 """
 RETURN = r"""group:
   description:

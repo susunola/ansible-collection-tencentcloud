@@ -80,6 +80,11 @@ EXAMPLES = r"""
     name: production-spread
     placement_type: RACK
     affinity: 2
+
+- name: Delete the placement group
+  susunola.tencentcloud.cvm_disaster_recover_group:
+    state: absent
+    name: production-spread
 """
 RETURN = r"""placement_group:
   description:

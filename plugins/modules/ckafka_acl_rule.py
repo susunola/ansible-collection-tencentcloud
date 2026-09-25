@@ -115,6 +115,12 @@ EXAMPLES = r"""
       - operation: Write
         permission: Allow
         principal: User:producer
+
+- name: Delete the acl rule
+  susunola.tencentcloud.ckafka_acl_rule:
+    state: absent
+    instance_id: ckafka-xxxxxxxx
+    name: orders-producers
 """
 RETURN = r"""acl_rule:
   description:

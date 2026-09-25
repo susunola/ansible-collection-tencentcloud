@@ -143,6 +143,11 @@ EXAMPLES = r"""
     customer_name: Example Corp
     customer_contact_mail: network@example.com
     customer_contact_number: '13800000000'
+
+- name: Delete the direct connect
+  susunola.tencentcloud.dc_direct_connect:
+    state: absent
+    name: primary-circuit
 """
 RETURN = r"""direct_connect:
   description:

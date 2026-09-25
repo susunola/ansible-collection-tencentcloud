@@ -92,6 +92,12 @@ EXAMPLES = r"""
     name: application
     password: "{{ vault_rabbitmq_password }}"
     tags: [management]
+
+- name: Delete the user
+  susunola.tencentcloud.trabbit_serverless_user:
+    state: absent
+    instance_id: amqp-xxxxxxxx
+    name: application
 """
 RETURN = r"""user:
   description:

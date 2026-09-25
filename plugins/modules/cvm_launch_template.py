@@ -85,6 +85,11 @@ EXAMPLES = r"""
       ImageId: img-xxxxxxxx
       InstanceType: S5.MEDIUM4
       SecurityGroupIds: [sg-xxxxxxxx]
+
+- name: Delete the launch template
+  susunola.tencentcloud.cvm_launch_template:
+    state: absent
+    name: web-production
 """
 RETURN = r"""launch_template:
   description:

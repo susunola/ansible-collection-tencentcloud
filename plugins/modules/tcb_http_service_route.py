@@ -71,6 +71,12 @@ EXAMPLES = r"""
       Protocol: https
       Routes:
         - {Path: /api, UpstreamResourceType: cloudrun, UpstreamResourceName: backend}
+
+- name: Delete the route
+  susunola.tencentcloud.tcb_http_service_route:
+    state: absent
+    domain: api.example.com
+    env_id: env-xxxxxxxx
 """
 RETURN = r"""route:
   description:

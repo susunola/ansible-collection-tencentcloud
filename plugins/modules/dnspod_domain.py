@@ -82,6 +82,11 @@ EXAMPLES = r"""
 - susunola.tencentcloud.dnspod_domain:
     name: example.com
     remark: Public production zone
+
+- name: Delete the domain
+  susunola.tencentcloud.dnspod_domain:
+    state: absent
+    name: example.com
 """
 RETURN = r"""domain:
   description:

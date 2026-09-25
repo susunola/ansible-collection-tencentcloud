@@ -64,6 +64,12 @@ EXAMPLES = r"""
 - susunola.tencentcloud.private_dns_account:
     uin: '100000000001'
     account: dns-consumer@example.com
+
+- name: Delete the account binding
+  susunola.tencentcloud.private_dns_account:
+    state: absent
+    account: dns-consumer@example.com
+    uin: '100000000001'
 """
 RETURN = r"""account_binding:
   description:

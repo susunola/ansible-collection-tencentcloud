@@ -107,6 +107,11 @@ EXAMPLES = r"""
     file_system_type: GooseFSx
     build_elements: [{Model: GOOSFSX_C60, Capacity: 10}]
     capacity: 10
+
+- name: Delete the file system
+  susunola.tencentcloud.goosefs_file_system:
+    state: absent
+    name: analytics-cache
 """
 RETURN = r"""file_system:
   description:

@@ -117,6 +117,11 @@ EXAMPLES = r"""
     vpc_id: vpc-xxxxxxxx
     subnet_id: subnet-xxxxxxxx
     enable_log_collection: true
+
+- name: Delete the cluster
+  susunola.tencentcloud.tsf_cluster:
+    state: absent
+    name: production
 """
 RETURN = r"""cluster:
   description:

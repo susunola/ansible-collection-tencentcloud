@@ -76,6 +76,11 @@ EXAMPLES = r"""
     file_system_id: cfs-xxxxxxxx
     name: before-upgrade
     alive_days: 30
+
+- name: Delete the snapshot
+  susunola.tencentcloud.cfs_snapshot:
+    state: absent
+    name: before-upgrade
 """
 RETURN = r"""snapshot:
   description:

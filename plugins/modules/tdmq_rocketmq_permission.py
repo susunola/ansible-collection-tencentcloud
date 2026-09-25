@@ -73,6 +73,13 @@ EXAMPLES = r"""
     namespace: production
     role_name: order-service
     permissions: [produce, consume]
+
+- name: Delete the permission
+  susunola.tencentcloud.tdmq_rocketmq_permission:
+    state: absent
+    cluster_id: rocketmq-xxxxxxxx
+    namespace: production
+    role_name: order-service
 """
 RETURN = r"""permission:
   description:

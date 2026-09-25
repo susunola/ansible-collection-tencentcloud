@@ -73,6 +73,11 @@ EXAMPLES = r"""
     region: ap-guangzhou
     name: downloads
     parameters: [response-content-type, response-content-disposition]
+
+- name: Delete the response control
+  susunola.tencentcloud.cos_bucket_response_control:
+    state: absent
+    name: downloads
 """
 RETURN = r"""response_control:
   description:

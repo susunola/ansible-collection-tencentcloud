@@ -143,6 +143,12 @@ EXAMPLES = r"""
     cluster_type: 1
     flink_version: Flink-1.17
     desired_status: stopped
+
+- name: Delete the job
+  susunola.tencentcloud.oceanus_job:
+    state: absent
+    name: orders-stream
+    workspace_id: space-xxxxxxxx
 """
 RETURN = r"""job:
   description:

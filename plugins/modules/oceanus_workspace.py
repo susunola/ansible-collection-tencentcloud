@@ -64,6 +64,11 @@ EXAMPLES = r"""
 - susunola.tencentcloud.oceanus_workspace:
     name: production-streaming
     description: Production Flink jobs and resources
+
+- name: Delete the workspace
+  susunola.tencentcloud.oceanus_workspace:
+    state: absent
+    name: production-streaming
 """
 RETURN = r"""workspace:
   description:

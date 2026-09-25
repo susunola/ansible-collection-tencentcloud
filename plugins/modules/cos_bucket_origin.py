@@ -71,6 +71,11 @@ EXAMPLES = r"""
         OriginType: Mirror
         OriginCondition: {HTTPStatusCode: 404, Prefix: images/}
         OriginParameter: {Protocol: https, FollowRedirect: 'true', HttpRedirectCode: 302}
+
+- name: Delete the origin
+  susunola.tencentcloud.cos_bucket_origin:
+    state: absent
+    name: media
 """
 RETURN = r"""origin:
   description:

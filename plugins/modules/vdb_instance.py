@@ -194,6 +194,11 @@ EXAMPLES = r"""
     memory: 16
     disk_size: 500
     replica_count: 3
+
+- name: Delete the instance
+  susunola.tencentcloud.vdb_instance:
+    state: absent
+    name: production-vectors
 """
 RETURN = r"""instance:
   description:

@@ -97,6 +97,12 @@ EXAMPLES = r"""
       - {Hour: [2], DayOfWeek: [0, 1, 2, 3, 4, 5, 6]}
     retention_days: 30
     disk_ids: [disk-xxxxxxxx, disk-yyyyyyyy]
+
+- name: Delete the policy
+  susunola.tencentcloud.cbs_auto_snapshot_policy:
+    state: absent
+    force_delete: true
+    name: nightly-production
 """
 RETURN = r"""policy:
   description:

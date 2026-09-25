@@ -146,6 +146,11 @@ EXAMPLES = r"""
     instance_type: PRO
     sku_code: pro_2k
     vpcs: [{vpc_id: vpc-xxxxxxxx, subnet_id: subnet-xxxxxxxx}]
+
+- name: Delete the instance
+  susunola.tencentcloud.mqtt_instance:
+    state: absent
+    name: production-mqtt
 """
 RETURN = r"""instance:
   description:

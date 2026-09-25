@@ -88,6 +88,11 @@ EXAMPLES = r"""
     name: production-pg15
     database_major_version: '15'
     parameters: {max_connections: '1000'}
+
+- name: Delete the parameter template
+  susunola.tencentcloud.postgresql_parameter_template:
+    state: absent
+    name: production-pg15
 """
 RETURN = r"""parameter_template:
   description:

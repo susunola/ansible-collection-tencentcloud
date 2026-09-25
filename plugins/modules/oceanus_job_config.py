@@ -277,6 +277,14 @@ EXAMPLES = r"""
     auto_recover: true
     resource_ref_names:
       - {Name: orders-processor, Type: 1}
+
+- name: Delete the job config
+  susunola.tencentcloud.oceanus_job_config:
+    state: absent
+    allow_delete: true
+    job_id: cql-xxxxxxxx
+    version: 99
+    workspace_id: space-xxxxxxxx
 """
 RETURN = r"""job_config:
   description:

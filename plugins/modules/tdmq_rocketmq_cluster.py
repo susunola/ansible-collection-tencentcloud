@@ -69,6 +69,11 @@ EXAMPLES = r"""
 - susunola.tencentcloud.tdmq_rocketmq_cluster:
     cluster_id: rocketmq-xxxxxxxx
     name: application-messaging-v2
+
+- name: Delete the cluster
+  susunola.tencentcloud.tdmq_rocketmq_cluster:
+    state: absent
+    name: application-messaging
 """
 RETURN = r"""cluster:
   description:

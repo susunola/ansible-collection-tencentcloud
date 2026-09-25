@@ -120,6 +120,12 @@ EXAMPLES = r"""
     effect: allow
     actions: [connect, pub]
     resources: [orders/#]
+
+- name: Delete the policy
+  susunola.tencentcloud.mqtt_authorization_policy:
+    state: absent
+    instance_id: mqtt-xxxxxxxx
+    name: application-publish
 """
 RETURN = r"""policy:
   description:

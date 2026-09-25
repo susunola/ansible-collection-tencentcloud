@@ -143,6 +143,11 @@ EXAMPLES = r"""
         identifier: cos-public-read-prohibited
         managed_rule_identifier: cos-public-read-prohibited
         config_rule_id: cr-xxxxxxxx
+
+- name: Delete the compliance pack
+  susunola.tencentcloud.config_compliance_pack:
+    state: absent
+    name: production-security
 """
 
 RETURN = r"""compliance_pack:

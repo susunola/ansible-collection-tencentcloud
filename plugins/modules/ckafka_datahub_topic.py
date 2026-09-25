@@ -74,6 +74,11 @@ EXAMPLES = r"""
     partition_num: 6
     retention_ms: 604800000
     note: Order event stream
+
+- name: Delete the datahub topic
+  susunola.tencentcloud.ckafka_datahub_topic:
+    state: absent
+    name: 1250000000-orders-stream
 """
 RETURN = r"""datahub_topic:
   description:

@@ -98,6 +98,11 @@ EXAMPLES = r"""
     name: security-appliances
     vpc_id: vpc-xxxxxxxx
     health_check: {HealthSwitch: true, Protocol: TCP, Port: 80}
+
+- name: Delete the target group
+  susunola.tencentcloud.gwlb_target_group:
+    state: absent
+    name: security-appliances
 """
 RETURN = r"""target_group:
   description:

@@ -96,6 +96,12 @@ EXAMPLES = r"""
     uri: /customers
     strategies:
       - {Field: information, CompareFunc: contains, Content: phone}
+
+- name: Delete the rule
+  susunola.tencentcloud.waf_anti_info_leak_rule:
+    state: absent
+    domain: api.example.com
+    name: mask-phone-numbers
 """
 RETURN = r"""rule:
   description:

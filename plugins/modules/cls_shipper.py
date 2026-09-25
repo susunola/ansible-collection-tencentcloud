@@ -148,6 +148,13 @@ EXAMPLES = r"""
     prefix: cls/archive/
     content: {Format: json}
     compress: {Format: gzip}
+
+- name: Delete the shipper
+  susunola.tencentcloud.cls_shipper:
+    state: absent
+    bucket: logs-1250000000
+    name: archive-to-cos
+    topic_id: 0f6c6e3a-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 """
 RETURN = r"""shipper:
   description:

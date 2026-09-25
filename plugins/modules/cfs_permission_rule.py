@@ -85,6 +85,12 @@ EXAMPLES = r"""
     access: RW
     user_permission: root_squash
     priority: 10
+
+- name: Delete the rule
+  susunola.tencentcloud.cfs_permission_rule:
+    state: absent
+    client_ip: 10.0.0.0/16
+    permission_group_id: pgroup-xxxxxxxx
 """
 RETURN = r"""rule:
   description:

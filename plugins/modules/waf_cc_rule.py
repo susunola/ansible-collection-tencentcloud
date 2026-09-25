@@ -151,6 +151,12 @@ EXAMPLES = r"""
     action: 22
     url: /login
     match_function: 0
+
+- name: Delete the rule
+  susunola.tencentcloud.waf_cc_rule:
+    state: absent
+    domain: api.example.com
+    name: protect-login
 """
 RETURN = r"""rule:
   description:

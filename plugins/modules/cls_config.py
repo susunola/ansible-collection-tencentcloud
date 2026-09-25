@@ -100,6 +100,11 @@ EXAMPLES = r"""
     topic_id: topic-xxxxxxxx
     path: /var/log/nginx/access.log
     log_type: minimalist_log
+
+- name: Delete the config
+  susunola.tencentcloud.cls_config:
+    state: absent
+    name: nginx-access
 """
 RETURN = r"""config:
   description:

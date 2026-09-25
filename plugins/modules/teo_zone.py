@@ -98,6 +98,11 @@ EXAMPLES = r"""
     zone_id: zone-xxxxxxxx
     name: example.com
     enabled: false
+
+- name: Delete the zone
+  susunola.tencentcloud.teo_zone:
+    state: absent
+    name: example.com
 """
 
 RETURN = r"""zone:

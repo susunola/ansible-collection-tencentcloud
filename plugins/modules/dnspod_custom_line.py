@@ -71,6 +71,12 @@ EXAMPLES = r"""
     domain: example.com
     name: office-network
     area: 203.0.113.1-203.0.113.254
+
+- name: Delete the custom line
+  susunola.tencentcloud.dnspod_custom_line:
+    state: absent
+    domain: example.com
+    name: office-network
 """
 RETURN = r"""custom_line:
   description:

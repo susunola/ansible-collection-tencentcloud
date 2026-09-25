@@ -59,6 +59,12 @@ EXAMPLES = r"""
 - susunola.tencentcloud.gwlb_target_group_association:
     load_balancer_id: gwlb-xxxxxxxx
     target_group_id: lbtg-xxxxxxxx
+
+- name: Delete the association
+  susunola.tencentcloud.gwlb_target_group_association:
+    state: absent
+    load_balancer_id: gwlb-xxxxxxxx
+    target_group_id: lbtg-xxxxxxxx
 """
 RETURN = r"""association:
   description:

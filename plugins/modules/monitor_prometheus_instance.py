@@ -99,6 +99,11 @@ EXAMPLES = r"""
     subnet_id: subnet-xxxxxxxx
     zone: ap-guangzhou-3
     retention_days: 30
+
+- name: Delete the instance
+  susunola.tencentcloud.monitor_prometheus_instance:
+    state: absent
+    name: production-observability
 """
 RETURN = r"""instance:
   description:

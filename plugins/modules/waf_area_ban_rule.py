@@ -84,6 +84,11 @@ EXAMPLES = r"""
     job_datetime:
       Timed: [{StartDateTime: 1788134400, EndDateTime: 1788220800}]
       TimeTZone: Asia/Shanghai
+
+- name: Delete the rule
+  susunola.tencentcloud.waf_area_ban_rule:
+    state: absent
+    domain: api.example.com
 """
 RETURN = r"""rule:
   description:

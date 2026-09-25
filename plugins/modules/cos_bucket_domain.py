@@ -67,6 +67,11 @@ EXAMPLES = r"""
     name: public-site
     rules:
       - {Name: static.example.com, Type: REST, Status: ENABLED, ForcedReplacement: CNAME}
+
+- name: Delete the domains
+  susunola.tencentcloud.cos_bucket_domain:
+    state: absent
+    name: public-site
 """
 RETURN = r"""
 domains:

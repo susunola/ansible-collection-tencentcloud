@@ -66,6 +66,13 @@ EXAMPLES = r"""
     havip_id: havip-xxxxxxxx
     instance_id: ins-xxxxxxxx
     instance_type: CVM
+
+- name: Delete the association
+  susunola.tencentcloud.havip_association:
+    state: absent
+    havip_id: havip-xxxxxxxx
+    instance_id: ins-xxxxxxxx
+    instance_type: CVM
 """
 RETURN = r"""association:
   description:

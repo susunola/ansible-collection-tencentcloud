@@ -74,6 +74,12 @@ EXAMPLES = r"""
 - susunola.tencentcloud.gaap_real_server:
     address: 10.0.1.10
     name: orders-primary
+
+- name: Delete the real server
+  susunola.tencentcloud.gaap_real_server:
+    state: absent
+    address: 10.0.1.10
+    allow_shared_delete: true
 """
 RETURN = r"""real_server:
   description:

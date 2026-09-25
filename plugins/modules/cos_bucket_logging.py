@@ -71,6 +71,11 @@ EXAMPLES = r"""
     name: application-data
     target_bucket: audit-logs-1250000000
     target_prefix: cos/application-data/
+
+- name: Delete the logging
+  susunola.tencentcloud.cos_bucket_logging:
+    state: absent
+    name: application-data
 """
 RETURN = r"""logging:
   description:

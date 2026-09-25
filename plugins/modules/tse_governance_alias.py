@@ -92,6 +92,13 @@ EXAMPLES = r"""
     alias: orders-api
     namespace: production
     service: orders
+
+- name: Delete the alias info
+  susunola.tencentcloud.tse_governance_alias:
+    state: absent
+    alias: orders-api
+    alias_namespace: shared
+    instance_id: ins-xxxxxxxx
 """
 RETURN = r"""alias_info:
   description:

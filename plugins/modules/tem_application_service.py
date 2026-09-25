@@ -86,6 +86,14 @@ EXAMPLES = r"""
     service:
       Ports: [8080]
       PortMappingItemList: [{Port: 80, TargetPort: 8080, Protocol: TCP}]
+
+- name: Delete the service
+  susunola.tencentcloud.tem_application_service:
+    state: absent
+    access_type: CLUSTER
+    application_id: app-xxxxxxxx
+    environment_id: en-xxxxxxxx
+    name: order-api
 """
 RETURN = r"""service:
   description:

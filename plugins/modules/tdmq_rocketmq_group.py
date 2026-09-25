@@ -92,6 +92,13 @@ EXAMPLES = r"""
     namespace: production
     name: order-workers
     retry_max_times: 12
+
+- name: Delete the group
+  susunola.tencentcloud.tdmq_rocketmq_group:
+    state: absent
+    cluster_id: rocketmq-xxxxxxxx
+    name: order-workers
+    namespace: production
 """
 RETURN = r"""group:
   description:

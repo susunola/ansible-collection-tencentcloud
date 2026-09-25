@@ -85,6 +85,11 @@ EXAMPLES = r"""
     subnet_id: subnet-xxxxxxxx
     vip: 10.0.1.100
     check_associate: true
+
+- name: Delete the havip
+  susunola.tencentcloud.havip:
+    state: absent
+    name: database-vip
 """
 RETURN = r"""havip:
   description:

@@ -79,6 +79,12 @@ EXAMPLES = r"""
           AccountId: '1250000000'
           Bucket: qcs::cos:ap-guangzhou::inventory-1250000000
           Format: CSV
+
+- name: Delete the inventory
+  susunola.tencentcloud.cos_bucket_inventory:
+    state: absent
+    inventory_id: daily-objects
+    name: application-data
 """
 RETURN = r"""inventory:
   description:

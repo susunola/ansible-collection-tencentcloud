@@ -83,6 +83,12 @@ EXAMPLES = r"""
     vpc_id: vpc-xxxxxxxx
     subnet_id: subnet-xxxxxxxx
     deletion_protection: true
+
+- name: Delete the load balancer
+  susunola.tencentcloud.gwlb_load_balancer:
+    state: absent
+    deletion_protection: false
+    name: security-appliance
 """
 RETURN = r"""load_balancer:
   description:

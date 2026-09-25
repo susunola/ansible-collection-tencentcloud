@@ -90,6 +90,14 @@ EXAMPLES = r"""
       StorageType: 1
       Param: {Bucket: flink-artifacts-1250000000, Path: jars/orders-1.1.jar, Region: ap-guangzhou}
     remark: release-1.1
+
+- name: Delete the resource config
+  susunola.tencentcloud.oceanus_resource_config:
+    state: absent
+    allow_delete_in_use: true
+    resource_id: resource-xxxxxxxx
+    version: 3
+    workspace_id: space-xxxxxxxx
 """
 RETURN = r"""resource_config:
   description:

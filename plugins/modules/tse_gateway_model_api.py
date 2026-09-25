@@ -77,6 +77,12 @@ EXAMPLES = r"""
       ModelServiceRoute:
         SelectedTypes: [Weighted]
         WeightedConfig: [{ModelServiceId: model-service-xxxxxxxx, Weight: 100}]
+
+- name: Delete the model api
+  susunola.tencentcloud.tse_gateway_model_api:
+    state: absent
+    gateway_id: gateway-xxxxxxxx
+    name: chat-completions
 """
 RETURN = r"""model_api:
   description:

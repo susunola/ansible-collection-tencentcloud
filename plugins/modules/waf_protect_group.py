@@ -74,6 +74,11 @@ EXAMPLES = r"""
     domains:
       - api.example.com
       - www.example.com
+
+- name: Delete the protect group
+  susunola.tencentcloud.waf_protect_group:
+    state: absent
+    name: production-apps
 """
 RETURN = r"""protect_group:
   description:

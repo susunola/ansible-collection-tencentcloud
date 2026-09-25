@@ -71,6 +71,11 @@ EXAMPLES = r"""
           principal: {qcs: ['qcs::cam::uin/100000000001:uin/100000000001']}
           action: [name/cos:GetObject]
           resource: ['qcs::cos:ap-guangzhou:uid/1250000000:application-data-1250000000/*']
+
+- name: Delete the policy
+  susunola.tencentcloud.cos_bucket_policy:
+    state: absent
+    name: application-data
 """
 RETURN = r"""policy:
   description:

@@ -214,6 +214,13 @@ EXAMPLES = r"""
       - VirtualPrivateCloud: {VpcId: vpc-xxxxxxxx, SubnetId: subnet-xxxxxxxx}
         Placement: {Zone: ap-guangzhou-3}
         AllNodeResourceSpec: {}
+
+- name: Delete the cluster
+  susunola.tencentcloud.emr_cluster:
+    state: absent
+    name: analytics-emr
+    retain_tke_cluster: true
+    wait: false
 """
 RETURN = r"""cluster:
   description:

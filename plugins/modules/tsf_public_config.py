@@ -75,6 +75,12 @@ EXAMPLES = r"""
     name: shared-observability
     version: v1
     value: 'logging: {level: INFO}'
+
+- name: Delete the config
+  susunola.tencentcloud.tsf_public_config:
+    state: absent
+    name: shared-observability
+    version: v1
 """
 RETURN = r"""config:
   description:

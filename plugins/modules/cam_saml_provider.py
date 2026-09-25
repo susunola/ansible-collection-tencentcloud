@@ -68,6 +68,11 @@ EXAMPLES = r"""
     name: corporate-idp
     description: Corporate identity provider
     metadata_document: "{{ lookup('file', 'metadata.xml') | b64encode }}"
+
+- name: Delete the saml provider
+  susunola.tencentcloud.cam_saml_provider:
+    state: absent
+    name: corporate-idp
 """
 RETURN = r"""saml_provider:
   description:

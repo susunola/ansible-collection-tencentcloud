@@ -84,6 +84,11 @@ EXAMPLES = r"""
     remediation_template_id: rt-xxxxxxxx
     invoke_type: AUTO
     source_type: CONFIG
+
+- name: Delete the remediation
+  susunola.tencentcloud.config_remediation:
+    state: absent
+    rule_id: cr-xxxxxxxx
 """
 
 RETURN = r"""remediation:

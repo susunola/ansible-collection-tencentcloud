@@ -76,6 +76,11 @@ EXAMPLES = r"""
 - susunola.tencentcloud.cbs_disk_backup:
     disk_id: disk-xxxxxxxx
     name: before-database-upgrade
+
+- name: Delete the disk backup
+  susunola.tencentcloud.cbs_disk_backup:
+    state: absent
+    name: before-database-upgrade
 """
 RETURN = r"""disk_backup:
   description:

@@ -81,6 +81,11 @@ EXAMPLES = r"""
     name: audit-archive
     retention_mode: COMPLIANCE
     retention_years: 7
+
+- name: Delete the object lock
+  susunola.tencentcloud.cos_bucket_object_lock:
+    state: absent
+    name: audit-archive
 """
 
 RETURN = r"""object_lock:

@@ -72,6 +72,12 @@ EXAMPLES = r"""
     instance_id: grafana-xxxxxxxx
     kind: tencent-cloud-prometheus
     content: '{}'
+
+- name: Delete the integration
+  susunola.tencentcloud.monitor_grafana_integration:
+    state: absent
+    instance_id: grafana-xxxxxxxx
+    kind: tencent-cloud-prometheus
 """
 RETURN = r"""integration:
   description:

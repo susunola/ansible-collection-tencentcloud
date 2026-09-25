@@ -76,6 +76,12 @@ EXAMPLES = r"""
     domain: example.com
     name: corporate-networks
     lines: [office-network, vpn-network]
+
+- name: Delete the line group
+  susunola.tencentcloud.dnspod_line_group:
+    state: absent
+    domain: example.com
+    name: corporate-networks
 """
 RETURN = r"""line_group:
   description:

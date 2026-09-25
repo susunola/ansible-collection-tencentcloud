@@ -67,6 +67,11 @@ EXAMPLES = r"""
     configuration:
       IndexDocument: {Suffix: index.html}
       ErrorDocument: {Key: error.html}
+
+- name: Delete the website
+  susunola.tencentcloud.cos_bucket_website:
+    state: absent
+    name: public-site
 """
 RETURN = r"""website:
   description:

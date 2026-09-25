@@ -124,6 +124,13 @@ EXAMPLES = r"""
     name: before-upgrade
     indices: [orders, customers]
     storage_days: 30
+
+- name: Delete the snapshot
+  susunola.tencentcloud.elasticsearch_snapshot:
+    state: absent
+    instance_id: es-xxxxxxxx
+    name: before-upgrade
+    repository_name: es-xxxxxxxx
 """
 RETURN = r"""snapshot:
   description:

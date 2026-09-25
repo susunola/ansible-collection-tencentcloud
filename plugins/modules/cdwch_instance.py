@@ -200,6 +200,11 @@ EXAMPLES = r"""
     common_node_count: 3
     common_disk_size: 100
     password: "{{ vault_clickhouse_password }}"
+
+- name: Delete the instance
+  susunola.tencentcloud.cdwch_instance:
+    state: absent
+    name: production-clickhouse
 """
 RETURN = r"""instance:
   description:

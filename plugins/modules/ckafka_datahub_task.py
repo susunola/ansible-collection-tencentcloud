@@ -122,6 +122,14 @@ EXAMPLES = r"""
       Type: TOPIC
       TopicParam: {Resource: 1250000000-orders}
     tasks_max: 2
+
+- name: Delete the datahub task
+  susunola.tencentcloud.ckafka_datahub_task:
+    state: absent
+    name: mysql-orders-to-datahub
+    source_resource: {MySQLParam: {Database: orders, Resource: resource-xxxxxxxx, Table: '*'}, Type: MYSQL}
+    target_resource: {TopicParam: {Resource: 1250000000-orders}, Type: TOPIC}
+    task_type: SOURCE
 """
 RETURN = r"""datahub_task:
   description:

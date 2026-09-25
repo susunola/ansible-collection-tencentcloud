@@ -117,6 +117,11 @@ EXAMPLES = r"""
     resources:
       - {SpecName: S_4_16_H, Count: 2, Type: cn}
       - {SpecName: S_8_32_H, Count: 3, Type: dn}
+
+- name: Delete the instance
+  susunola.tencentcloud.cdwpg_instance:
+    state: absent
+    name: analytics-pg
 """
 RETURN = r"""instance:
   description:

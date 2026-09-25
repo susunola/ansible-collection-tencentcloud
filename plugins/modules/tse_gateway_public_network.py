@@ -98,6 +98,12 @@ EXAMPLES = r"""
     access_control:
       Mode: Whitelist
       CidrWhiteList: [203.0.113.0/24]
+
+- name: Delete the public network
+  susunola.tencentcloud.tse_gateway_public_network:
+    state: absent
+    gateway_id: gateway-xxxxxxxx
+    group_name: production-secondary
 """
 RETURN = r"""public_network:
   description:

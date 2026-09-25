@@ -84,6 +84,11 @@ EXAMPLES = r"""
 - susunola.tencentcloud.cmq_topic:
     topic_name: order-events
     message_retention_seconds: 172800
+
+- name: Delete the topic
+  susunola.tencentcloud.cmq_topic:
+    state: absent
+    topic_name: order-events
 """
 RETURN = r"""topic:
   description:

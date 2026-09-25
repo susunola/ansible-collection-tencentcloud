@@ -78,6 +78,11 @@ EXAMPLES = r"""
     referer_type: White-List
     allow_empty: false
     domains: ['*.example.com', example.com]
+
+- name: Delete the referer
+  susunola.tencentcloud.cos_bucket_referer:
+    state: absent
+    name: public-assets
 """
 RETURN = r"""referer:
   description:

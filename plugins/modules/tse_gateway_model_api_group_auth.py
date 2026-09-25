@@ -73,6 +73,13 @@ EXAMPLES = r"""
     gateway_id: gateway-xxxxxxxx
     model_api_name: chat-completions
     consumer_group_names: [trusted-clients]
+
+- name: Delete the authorization
+  susunola.tencentcloud.tse_gateway_model_api_group_auth:
+    state: absent
+    consumer_group_names: [trusted-clients]
+    gateway_id: gateway-xxxxxxxx
+    model_api_name: chat-completions
 """
 RETURN = r"""authorization:
   description:

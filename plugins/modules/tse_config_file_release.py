@@ -146,6 +146,15 @@ EXAMPLES = r"""
     name: orders.yaml
     release_name: production
     rollback_version: '12'
+
+- name: Delete the release
+  susunola.tencentcloud.tse_config_file_release:
+    state: absent
+    group: application
+    instance_id: ins-xxxxxxxx
+    name: orders.yaml
+    namespace: production
+    release_name: production
 """
 RETURN = r"""release:
   description:

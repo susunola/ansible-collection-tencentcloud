@@ -100,6 +100,12 @@ EXAMPLES = r"""
       - {Namespace: production, Service: checkout}
     rules:
       - {Name: gray, Enable: true}
+
+- name: Delete the lane group
+  susunola.tencentcloud.tse_governance_lane_group:
+    state: absent
+    instance_id: ins-xxxxxxxx
+    name: checkout-gray
 """
 RETURN = r"""lane_group:
   description:

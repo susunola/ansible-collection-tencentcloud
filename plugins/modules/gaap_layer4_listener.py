@@ -147,6 +147,13 @@ EXAMPLES = r"""
     port: 3306
     scheduler: wrr
     health_check: true
+
+- name: Delete the listener
+  susunola.tencentcloud.gaap_layer4_listener:
+    state: absent
+    name: mysql
+    protocol: TCP
+    proxy_id: proxy-xxxxxxxx
 """
 RETURN = r"""listener:
   description:

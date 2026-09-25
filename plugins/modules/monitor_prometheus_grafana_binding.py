@@ -63,6 +63,12 @@ EXAMPLES = r"""
 - susunola.tencentcloud.monitor_prometheus_grafana_binding:
     instance_id: prom-xxxxxxxx
     grafana_id: grafana-xxxxxxxx
+
+- name: Delete the binding
+  susunola.tencentcloud.monitor_prometheus_grafana_binding:
+    state: absent
+    grafana_id: grafana-xxxxxxxx
+    instance_id: prom-xxxxxxxx
 """
 RETURN = r"""binding:
   description:

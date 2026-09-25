@@ -80,6 +80,12 @@ EXAMPLES = r"""
     domain: www.example.com
     name: protect-homepage
     uri: /index.html
+
+- name: Delete the rule
+  susunola.tencentcloud.waf_anti_tamper_rule:
+    state: absent
+    domain: www.example.com
+    name: protect-homepage
 """
 RETURN = r"""rule:
   description:

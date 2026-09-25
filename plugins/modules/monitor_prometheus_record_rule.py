@@ -73,6 +73,12 @@ EXAMPLES = r"""
           rules:
             - record: job:http_requests:rate5m
               expr: sum by (job) (rate(http_requests_total[5m]))
+
+- name: Delete the record rule
+  susunola.tencentcloud.monitor_prometheus_record_rule:
+    state: absent
+    instance_id: prom-xxxxxxxx
+    name: application-rollups
 """
 RETURN = r"""record_rule:
   description:

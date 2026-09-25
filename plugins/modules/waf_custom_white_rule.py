@@ -100,6 +100,12 @@ EXAMPLES = r"""
     bypass_modules: owasp,acl
     strategies:
       - {Field: URI, CompareFunc: prefix, Content: /health, Arg: ''}
+
+- name: Delete the rule
+  susunola.tencentcloud.waf_custom_white_rule:
+    state: absent
+    domain: api.example.com
+    name: allow-health-check
 """
 RETURN = r"""rule:
   description:

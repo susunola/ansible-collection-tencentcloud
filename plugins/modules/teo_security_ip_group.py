@@ -77,6 +77,12 @@ EXAMPLES = r"""
     content:
       - 192.0.2.0/24
       - 2001:db8::/48
+
+- name: Delete the ip group
+  susunola.tencentcloud.teo_security_ip_group:
+    state: absent
+    name: trusted-offices
+    zone_id: zone-xxxxxxxx
 """
 
 RETURN = r"""ip_group:

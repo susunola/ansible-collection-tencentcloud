@@ -1,0 +1,22 @@
+---
+minor_changes:
+  - >-
+    module docs - every module that can delete now shows how. 270 write
+    modules accept I(state=absent) and 70 showed it; the remaining 231 gained
+    an example, so a reader no longer has to infer the delete call from the
+    create call. The identity comes from the options the module's own lookup
+    helper reads -- mapped back through the call site when the helper takes
+    values rather than the parameter mapping -- and the values come from the
+    module's own create example, so the pair reads as one resource created and
+    then removed. ``scripts/add_delete_examples.py --check`` keeps it that way
+    and the ratchet is now 0.
+  - >-
+    scripts/add_delete_examples.py - take a delete-path flag from the unit
+    test's delete call, not from the create example. ``alb_load_balancer``
+    refuses to delete a load balancer whose I(deletion_protection) is on, and
+    its create example turns it on, so copying the create value would have
+    documented a call the API rejects; the test's delete call passes
+    C(false), and that is what the example uses. ``cbs_auto_snapshot_policy``
+    gets C(force_delete=true) the same way. Every generated example is
+    validated against its argument spec by ``check_module_examples.py``, which
+    fails on an undeclared option or a missing required one.

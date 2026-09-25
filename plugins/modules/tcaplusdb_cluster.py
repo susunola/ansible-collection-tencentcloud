@@ -147,6 +147,11 @@ EXAMPLES = r"""
     vpc_id: vpc-xxxxxxxx
     subnet_id: subnet-xxxxxxxx
     password: "{{ vault_tcaplus_password }}"
+
+- name: Delete the cluster
+  susunola.tencentcloud.tcaplusdb_cluster:
+    state: absent
+    name: production-tcaplus
 """
 RETURN = r"""cluster:
   description:

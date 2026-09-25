@@ -162,6 +162,14 @@ EXAMPLES = r"""
     memory_request: '512'
     memory_limit: '1024'
     protocol_ports: [{protocol: TCP, port: 80, target_port: 8080, name: http}]
+
+- name: Delete the deployment group
+  susunola.tencentcloud.tsf_container_deployment_group:
+    state: absent
+    application_id: application-xxxxxxxx
+    cluster_id: cluster-xxxxxxxx
+    name: orders-production
+    namespace_id: namespace-xxxxxxxx
 """
 RETURN = r"""deployment_group:
   description:

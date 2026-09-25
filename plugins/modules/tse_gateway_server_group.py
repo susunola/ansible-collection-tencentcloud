@@ -89,6 +89,12 @@ EXAMPLES = r"""
     name: production-secondary
     node_config: {Specification: 4c8g, Number: 3}
     subnet_id: subnet-xxxxxxxx
+
+- name: Delete the group
+  susunola.tencentcloud.tse_gateway_server_group:
+    state: absent
+    gateway_id: gateway-xxxxxxxx
+    name: production-secondary
 """
 RETURN = r"""
 group:

@@ -83,6 +83,11 @@ EXAMPLES = r"""
     deployment_groups:
       - {group_id: group-xxxxxxxx, entrance: true}
       - {group_id: group-yyyyyyyy}
+
+- name: Delete the lane
+  susunola.tencentcloud.tsf_lane:
+    state: absent
+    name: checkout-canary
 """
 RETURN = r"""lane:
   description:

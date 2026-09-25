@@ -106,6 +106,14 @@ EXAMPLES = r"""
     name: orders.yaml
     format: YAML
     content: "server:\n  port: 8080\n"
+
+- name: Delete the config file
+  susunola.tencentcloud.tse_config_file:
+    state: absent
+    group: application
+    instance_id: ins-xxxxxxxx
+    name: orders.yaml
+    namespace: production
 """
 RETURN = r"""config_file:
   description:

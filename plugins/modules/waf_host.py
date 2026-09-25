@@ -81,6 +81,12 @@ EXAMPLES = r"""
       Region: ap-guangzhou
       LoadBalancerSet: []
       FlowMode: 1
+
+- name: Delete the waf host
+  susunola.tencentcloud.waf_host:
+    state: absent
+    domain: api.example.com
+    instance_id: waf_2xxxxxxxx
 """
 RETURN = r"""waf_host:
   description:

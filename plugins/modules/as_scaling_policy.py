@@ -110,6 +110,12 @@ EXAMPLES = r"""
     scaling_group_id: asg-xxxxxxxx
     name: add-two
     adjustment_value: 2
+
+- name: Delete the scaling policy
+  susunola.tencentcloud.as_scaling_policy:
+    state: absent
+    name: add-two
+    scaling_group_id: asg-xxxxxxxx
 """
 RETURN = r"""scaling_policy:
   description:

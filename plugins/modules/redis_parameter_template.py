@@ -78,6 +78,11 @@ EXAMPLES = r"""
     name: production-redis
     product_type: 2
     parameters: {timeout: '300'}
+
+- name: Delete the parameter template
+  susunola.tencentcloud.redis_parameter_template:
+    state: absent
+    name: production-redis
 """
 RETURN = r"""parameter_template:
   description:

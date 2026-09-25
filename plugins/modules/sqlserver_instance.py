@@ -131,6 +131,11 @@ EXAMPLES = r"""
     memory: 8
     storage: 100
     db_version: '2019'
+
+- name: Delete the instance
+  susunola.tencentcloud.sqlserver_instance:
+    state: absent
+    name: production-sqlserver
 """
 RETURN = r"""instance:
   description:

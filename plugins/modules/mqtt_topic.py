@@ -68,6 +68,12 @@ EXAMPLES = r"""
     instance_id: mqtt-xxxxxxxx
     topic: orders/created
     remark: Order events
+
+- name: Delete the topic info
+  susunola.tencentcloud.mqtt_topic:
+    state: absent
+    instance_id: mqtt-xxxxxxxx
+    topic: orders/created
 """
 RETURN = r"""topic_info:
   description:

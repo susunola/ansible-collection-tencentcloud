@@ -111,6 +111,13 @@ EXAMPLES = r"""
     namespace: production
     name: orders
     export_to: [shared]
+
+- name: Delete the service
+  susunola.tencentcloud.tse_governance_service:
+    state: absent
+    instance_id: ins-xxxxxxxx
+    name: orders
+    namespace: production
 """
 RETURN = r"""service:
   description:

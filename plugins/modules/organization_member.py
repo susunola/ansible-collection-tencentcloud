@@ -93,6 +93,11 @@ EXAMPLES = r"""
     account_name: production-team
     node_id: 1001
     remark: Production account
+
+- name: Delete the member
+  susunola.tencentcloud.organization_member:
+    state: absent
+    name: production-team
 """
 RETURN = r"""member:
   description:

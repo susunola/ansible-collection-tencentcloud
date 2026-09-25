@@ -80,6 +80,14 @@ EXAMPLES = r"""
     workspace_id: space-xxxxxxxx
     folder_type: 0
     parent_id: root
+
+- name: Delete the folder
+  susunola.tencentcloud.oceanus_folder:
+    state: absent
+    allow_delete_nonempty: true
+    folder_type: 0
+    name: production-jobs
+    workspace_id: space-xxxxxxxx
 """
 RETURN = r"""folder:
   description:

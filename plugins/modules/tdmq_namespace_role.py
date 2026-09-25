@@ -73,6 +73,13 @@ EXAMPLES = r"""
     namespace: production
     role_name: application
     permissions: [produce, consume]
+
+- name: Delete the namespace role
+  susunola.tencentcloud.tdmq_namespace_role:
+    state: absent
+    cluster_id: pulsar-xxxxxxxx
+    namespace: production
+    role_name: application
 """
 RETURN = r"""namespace_role:
   description:

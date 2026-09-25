@@ -82,6 +82,11 @@ EXAMPLES = r"""
     storage_region: ap-guangzhou
     bucket: tke-backup-1250000000
     path: production/
+
+- name: Delete the backup storage location
+  susunola.tencentcloud.tke_backup_storage_location:
+    state: absent
+    name: production-backups
 """
 RETURN = r"""backup_storage_location:
   description:

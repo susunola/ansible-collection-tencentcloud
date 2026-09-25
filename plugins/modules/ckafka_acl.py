@@ -92,6 +92,15 @@ EXAMPLES = r"""
     resource_name: orders
     operation: READ
     principal: User:analytics
+
+- name: Delete the acl
+  susunola.tencentcloud.ckafka_acl:
+    state: absent
+    instance_id: ckafka-xxxxxxxx
+    operation: READ
+    principal: User:analytics
+    resource_name: orders
+    resource_type: TOPIC
 """
 RETURN = r"""acl:
   description:

@@ -91,6 +91,11 @@ EXAMPLES = r"""
     source_region: ap-guangzhou
     destination_region: ap-shanghai
     instance_class: small
+
+- name: Delete the migration job
+  susunola.tencentcloud.dts_migration_job:
+    state: absent
+    name: mysql-migration
 """
 RETURN = r"""migration_job:
   description:

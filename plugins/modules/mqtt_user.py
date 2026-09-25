@@ -72,6 +72,12 @@ EXAMPLES = r"""
     instance_id: mqtt-xxxxxxxx
     username: application
     password: "{{ vault_mqtt_password }}"
+
+- name: Delete the user
+  susunola.tencentcloud.mqtt_user:
+    state: absent
+    instance_id: mqtt-xxxxxxxx
+    username: application
 """
 RETURN = r"""user:
   description:

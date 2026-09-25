@@ -104,6 +104,11 @@ EXAMPLES = r"""
     recurrence: 0 2 * * *
     parameters:
       environment: production
+
+- name: Delete the invoker
+  susunola.tencentcloud.tat_invoker:
+    state: absent
+    name: nightly-maintenance
 """
 RETURN = r"""invoker:
   description:

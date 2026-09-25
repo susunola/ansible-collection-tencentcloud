@@ -108,6 +108,13 @@ EXAMPLES = r"""
     package_id: baas_package
     resources: [flexdb, storage, function]
     renew_flag: NOTIFY_AND_MANUAL_RENEW
+
+- name: Delete the environment
+  susunola.tencentcloud.tcb_environment:
+    state: absent
+    alias: production-app
+    bypass_destroy_check: true
+    force_destroy: true
 """
 RETURN = r"""environment:
   description:

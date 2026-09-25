@@ -100,6 +100,12 @@ EXAMPLES = r"""
     max_size: 8
     start_time: '2026-09-01T01:00:00+08:00'
     recurrence: '0 0 9 * * MON-FRI'
+
+- name: Delete the scheduled action
+  susunola.tencentcloud.as_scheduled_action:
+    state: absent
+    name: weekday-scale-out
+    scaling_group_id: asg-xxxxxxxx
 """
 RETURN = r"""scheduled_action:
   description:

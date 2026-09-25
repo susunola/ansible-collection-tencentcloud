@@ -142,6 +142,11 @@ EXAMPLES = r"""
     tencent_address: 192.0.2.1/30
     customer_address: 192.0.2.2/30
     bgp_peer: {Asn: 65001}
+
+- name: Delete the tunnel
+  susunola.tencentcloud.dc_direct_connect_tunnel:
+    state: absent
+    name: production-vpc
 """
 RETURN = r"""tunnel:
   description:

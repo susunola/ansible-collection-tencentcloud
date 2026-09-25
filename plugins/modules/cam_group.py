@@ -68,6 +68,11 @@ EXAMPLES = r"""
 - susunola.tencentcloud.cam_group:
     name: platform-engineers
     remark: Platform engineering team
+
+- name: Delete the group
+  susunola.tencentcloud.cam_group:
+    state: absent
+    name: platform-engineers
 """
 RETURN = r"""group:
   description:

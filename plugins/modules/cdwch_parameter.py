@@ -84,6 +84,12 @@ EXAMPLES = r"""
     name: max_concurrent_queries
     value: '200'
     remark: Managed by Ansible
+
+- name: Delete the parameter
+  susunola.tencentcloud.cdwch_parameter:
+    state: absent
+    instance_id: cdwch-xxxxxxxx
+    name: max_concurrent_queries
 """
 RETURN = r"""parameter:
   description:

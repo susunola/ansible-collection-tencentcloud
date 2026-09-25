@@ -87,6 +87,11 @@ EXAMPLES = r"""
     zone: ap-guangzhou-3
     cluster_type: STANDARD
     remark: Production RDMA placement
+
+- name: Delete the hpc cluster
+  susunola.tencentcloud.cvm_hpc_cluster:
+    state: absent
+    name: rdma-production
 """
 RETURN = r"""hpc_cluster:
   description:

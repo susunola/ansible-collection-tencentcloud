@@ -143,6 +143,12 @@ EXAMPLES = r"""
     storage_size: 500
     cluster_version: '3.13.7'
     deletion_protection: true
+
+- name: Delete the instance
+  susunola.tencentcloud.tdmq_rabbitmq_instance:
+    state: absent
+    deletion_protection: false
+    name: production-rabbitmq
 """
 RETURN = r"""instance:
   description:

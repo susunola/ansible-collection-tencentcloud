@@ -73,6 +73,11 @@ EXAMPLES = r"""
     name: analytics-access
     vpc_type: 1
     vpc_id: vpc-xxxxxxxx
+
+- name: Delete the access group
+  susunola.tencentcloud.chdfs_access_group:
+    state: absent
+    name: analytics-access
 """
 RETURN = r"""access_group:
   description:

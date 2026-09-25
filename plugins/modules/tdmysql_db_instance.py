@@ -224,6 +224,11 @@ EXAMPLES = r"""
     storage_node_cpu: 4
     storage_node_memory: 16
     password: "{{ vault_tdmysql_password }}"
+
+- name: Delete the instance
+  susunola.tencentcloud.tdmysql_db_instance:
+    state: absent
+    name: production-tdmysql
 """
 RETURN = r"""instance:
   description:

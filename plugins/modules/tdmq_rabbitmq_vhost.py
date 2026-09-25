@@ -76,6 +76,12 @@ EXAMPLES = r"""
     name: production
     description: Production workloads
     trace_enabled: true
+
+- name: Delete the virtual host
+  susunola.tencentcloud.tdmq_rabbitmq_vhost:
+    state: absent
+    instance_id: amqp-xxxxxxxx
+    name: production
 """
 RETURN = r"""virtual_host:
   description:

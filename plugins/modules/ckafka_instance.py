@@ -155,6 +155,11 @@ EXAMPLES = r"""
     disk_size: 500
     bandwidth: 40
     partitions: 400
+
+- name: Delete the instance
+  susunola.tencentcloud.ckafka_instance:
+    state: absent
+    name: production-kafka
 """
 RETURN = r"""instance:
   description:

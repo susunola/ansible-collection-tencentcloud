@@ -102,6 +102,11 @@ EXAMPLES = r"""
     rotate_from_token_id: token-current-id
     show_token_value: true
   no_log: true
+
+- name: Delete the auth token
+  susunola.tencentcloud.tione_model_service_auth_token:
+    state: absent
+    service_group_id: ms-group-xxxxxxxx
 """
 RETURN = r"""
 auth_token:

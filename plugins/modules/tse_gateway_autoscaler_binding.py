@@ -79,6 +79,13 @@ EXAMPLES = r"""
     strategy_name: production-elasticity
     group_names: [production-secondary]
     purge_unlisted: true
+
+- name: Delete the binding
+  susunola.tencentcloud.tse_gateway_autoscaler_binding:
+    state: absent
+    gateway_id: gateway-xxxxxxxx
+    group_names: [production-secondary]
+    strategy_name: production-elasticity
 """
 RETURN = r"""binding:
   description:

@@ -145,6 +145,12 @@ EXAMPLES = r"""
     database_privileges:
       - database: orders
         privileges: [SELECT, INSERT, UPDATE]
+
+- name: Delete the privileges
+  susunola.tencentcloud.cdb_account_privilege:
+    state: absent
+    instance_id: cdb-xxxxxxxx
+    username: app
 """
 RETURN = r"""privileges:
   description:

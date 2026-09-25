@@ -67,6 +67,11 @@ EXAMPLES = r"""
     name: application-data
     rules:
       - ApplyServerSideEncryptionByDefault: {SSEAlgorithm: AES256}
+
+- name: Delete the encryption
+  susunola.tencentcloud.cos_bucket_encryption:
+    state: absent
+    name: application-data
 """
 RETURN = r"""encryption:
   description:

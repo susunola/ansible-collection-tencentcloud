@@ -105,6 +105,13 @@ EXAMPLES = r"""
     origins: ['https://app.example.com']
     methods: [GET, POST]
     credentials: true
+
+- name: Delete the cors
+  susunola.tencentcloud.tse_gateway_cors:
+    state: absent
+    gateway_id: gateway-xxxxxxxx
+    resource_id: route-xxxxxxxx
+    scope: route
 """
 RETURN = r"""cors:
   description:

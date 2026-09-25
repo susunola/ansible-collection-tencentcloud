@@ -91,6 +91,12 @@ EXAMPLES = r"""
     host: 10.%
     password: '{{ vault_mysql_password }}'
     description: Application account
+
+- name: Delete the account
+  susunola.tencentcloud.cdb_account:
+    state: absent
+    instance_id: cdb-xxxxxxxx
+    username: app
 """
 RETURN = r"""account:
   description:

@@ -131,6 +131,11 @@ EXAMPLES = r"""
     db_version: '10.1'
     vpc_id: vpc-xxxxxxxx
     subnet_id: subnet-xxxxxxxx
+
+- name: Delete the instance
+  susunola.tencentcloud.mariadb_instance:
+    state: absent
+    name: production-mariadb
 """
 RETURN = r"""instance:
   description:

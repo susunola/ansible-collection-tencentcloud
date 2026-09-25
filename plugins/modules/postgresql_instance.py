@@ -156,6 +156,11 @@ EXAMPLES = r"""
     storage: 100
     major_version: '15'
     admin_password: "{{ vault_postgres_password }}"
+
+- name: Delete the instance
+  susunola.tencentcloud.postgresql_instance:
+    state: absent
+    name: production-postgres
 """
 RETURN = r"""instance:
   description:

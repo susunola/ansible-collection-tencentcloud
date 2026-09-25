@@ -68,6 +68,11 @@ EXAMPLES = r"""
 - susunola.tencentcloud.vpc_address_template_group:
     name: trusted-sources
     template_ids: [ipm-xxxxxxxx, ipm-yyyyyyyy]
+
+- name: Delete the address template group
+  susunola.tencentcloud.vpc_address_template_group:
+    state: absent
+    name: trusted-sources
 """
 RETURN = r"""address_template_group:
   description:

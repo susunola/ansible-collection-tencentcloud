@@ -114,6 +114,11 @@ EXAMPLES = r"""
     microservice_type: N
     description: Order service
     framework_type: SpringCloud
+
+- name: Delete the application
+  susunola.tencentcloud.tsf_application:
+    state: absent
+    name: orders
 """
 RETURN = r"""application:
   description:

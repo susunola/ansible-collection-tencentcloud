@@ -86,6 +86,11 @@ EXAMPLES = r"""
     name: production-dashboards
     vpc_id: vpc-xxxxxxxx
     subnet_ids: [subnet-xxxxxxxx]
+
+- name: Delete the instance
+  susunola.tencentcloud.monitor_grafana_instance:
+    state: absent
+    name: production-dashboards
 """
 RETURN = r"""instance:
   description:

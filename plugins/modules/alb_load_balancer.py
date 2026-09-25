@@ -117,6 +117,12 @@ EXAMPLES = r"""
       - {ZoneId: ap-guangzhou-3, SubnetId: subnet-xxxxxxxx}
       - {ZoneId: ap-guangzhou-4, SubnetId: subnet-yyyyyyyy}
     deletion_protection: true
+
+- name: Delete the load balancer
+  susunola.tencentcloud.alb_load_balancer:
+    state: absent
+    deletion_protection: false
+    name: public-app
 """
 RETURN = r"""load_balancer:
   description:

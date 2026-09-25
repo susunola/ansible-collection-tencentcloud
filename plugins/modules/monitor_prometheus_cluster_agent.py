@@ -79,6 +79,12 @@ EXAMPLES = r"""
     cluster_id: cls-xxxxxxxx
     cluster_type: tke
     region: ap-guangzhou
+
+- name: Delete the agent
+  susunola.tencentcloud.monitor_prometheus_cluster_agent:
+    state: absent
+    cluster_id: cls-xxxxxxxx
+    instance_id: prom-xxxxxxxx
 """
 RETURN = r"""agent:
   description:

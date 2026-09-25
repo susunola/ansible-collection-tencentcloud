@@ -66,6 +66,12 @@ EXAMPLES = r"""
     instance_id: ins-xxxxxxxx
     group_id: ps-xxxxxxxx
     force_migrate: true
+
+- name: Delete the binding
+  susunola.tencentcloud.cvm_disaster_recover_group_binding:
+    state: absent
+    group_id: ps-xxxxxxxx
+    instance_id: ins-xxxxxxxx
 """
 RETURN = r"""binding:
   description:

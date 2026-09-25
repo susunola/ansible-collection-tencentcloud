@@ -82,6 +82,13 @@ EXAMPLES = r"""
     resource_id: service-xxxxxxxx
     restriction_type: whiteList
     addresses: [10.0.0.0/8, 192.0.2.10]
+
+- name: Delete the ip restriction
+  susunola.tencentcloud.tse_gateway_ip_restriction:
+    state: absent
+    gateway_id: gateway-xxxxxxxx
+    resource_id: service-xxxxxxxx
+    scope: service
 """
 RETURN = r"""ip_restriction:
   description:

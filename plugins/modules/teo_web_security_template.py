@@ -66,6 +66,12 @@ EXAMPLES = r"""
     region: ap-guangzhou
     zone_id: zone-xxxxxxxx
     name: production_security
+
+- name: Delete the security template
+  susunola.tencentcloud.teo_web_security_template:
+    state: absent
+    name: production_security
+    zone_id: zone-xxxxxxxx
 """
 
 RETURN = r"""security_template:

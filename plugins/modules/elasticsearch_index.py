@@ -93,6 +93,14 @@ EXAMPLES = r"""
       mappings:
         properties:
           order_id: {type: keyword}
+
+- name: Delete the index
+  susunola.tencentcloud.elasticsearch_index:
+    state: absent
+    instance_id: es-xxxxxxxx
+    name: orders
+    password: '{{ vault_elasticsearch_password }}'
+    username: elastic
 """
 RETURN = r"""index:
   description:

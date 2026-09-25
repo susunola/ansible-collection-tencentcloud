@@ -70,6 +70,12 @@ EXAMPLES = r"""
     instance_id: cdb-xxxxxxxx
     name: orders
     character_set: utf8mb4
+
+- name: Delete the database
+  susunola.tencentcloud.cdb_database:
+    state: absent
+    instance_id: cdb-xxxxxxxx
+    name: orders
 """
 RETURN = r"""database:
   description:

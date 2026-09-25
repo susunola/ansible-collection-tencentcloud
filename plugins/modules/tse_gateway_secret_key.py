@@ -159,6 +159,12 @@ EXAMPLES = r"""
     secret_type: ApiKey
     generate_type: System
     resource_type: Consumer
+
+- name: Delete the secret key
+  susunola.tencentcloud.tse_gateway_secret_key:
+    state: absent
+    gateway_id: gateway-xxxxxxxx
+    name: mobile-api-key
 """
 RETURN = r"""
 secret_key:

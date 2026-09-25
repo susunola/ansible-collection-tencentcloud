@@ -80,6 +80,13 @@ EXAMPLES = r"""
       job_name: application
       static_configs:
         - targets: ['10.0.0.8:9100']
+
+- name: Delete the scrape job
+  susunola.tencentcloud.monitor_prometheus_scrape_job:
+    state: absent
+    agent_id: agent-xxxxxxxx
+    instance_id: prom-xxxxxxxx
+    name: application
 """
 RETURN = r"""scrape_job:
   description:

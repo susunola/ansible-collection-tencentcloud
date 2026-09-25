@@ -102,6 +102,12 @@ EXAMPLES = r"""
     instance_id: tdsqlshard-xxxxxxxx
     username: application
     password: '{{ vault_dcdb_password }}'
+
+- name: Delete the account
+  susunola.tencentcloud.dcdb_account:
+    state: absent
+    instance_id: tdsqlshard-xxxxxxxx
+    username: application
 """
 RETURN = r"""account:
   description:

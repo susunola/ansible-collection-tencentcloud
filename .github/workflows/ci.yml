@@ -135,6 +135,8 @@ jobs:
         run: python scripts/check_examples.py --check
       - name: Module examples run as written
         run: python scripts/check_module_examples.py --check
+      - name: Every module that can delete shows it
+        run: python scripts/add_delete_examples.py --check
       - name: Generated test skeletons are unmodified
         run: python scripts/generate_module_test_skeleton.py --check
       - name: Documentation links resolve

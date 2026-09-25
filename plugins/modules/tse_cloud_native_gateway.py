@@ -141,6 +141,12 @@ EXAMPLES = r"""
     name: production-gateway
     node_config: {Specification: 4c8g, Number: 4}
     spec_group_id: group-xxxxxxxx
+
+- name: Delete the gateway
+  susunola.tencentcloud.tse_cloud_native_gateway:
+    state: absent
+    gateway_id: gateway-xxxxxxxx
+    name: production-gateway
 """
 RETURN = r"""
 gateway:

@@ -101,6 +101,14 @@ EXAMPLES = r"""
     private_ip: 10.0.1.10
     private_port: 8443
     description: application HTTPS
+
+- name: Delete the rule
+  susunola.tencentcloud.cfw_nat_dnat_rule:
+    state: absent
+    firewall_instance_id: cfwnat-xxxxxxxx
+    protocol: TCP
+    public_ip: 203.0.113.10
+    public_port: 443
 """
 
 RETURN = r"""rule:

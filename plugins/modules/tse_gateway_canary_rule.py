@@ -84,6 +84,13 @@ EXAMPLES = r"""
       BalancedServiceList:
         - {ServiceID: service-stable, Percent: 90}
         - {ServiceID: service-canary, Percent: 10}
+
+- name: Delete the canary rule
+  susunola.tencentcloud.tse_gateway_canary_rule:
+    state: absent
+    gateway_id: gateway-xxxxxxxx
+    priority: 90
+    service_id: service-xxxxxxxx
 """
 RETURN = r"""canary_rule:
   description:

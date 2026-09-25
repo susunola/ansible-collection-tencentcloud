@@ -101,6 +101,12 @@ EXAMPLES = r"""
     ssh_key_name: prod_bastion
     project_id: 0
     tags: {env: prod}
+
+- name: Delete the secret
+  susunola.tencentcloud.ssm_ssh_key_pair_secret:
+    state: absent
+    recovery_window_days: 3
+    secret_name: prod-bastion-key
 """
 RETURN = r"""
 secret:

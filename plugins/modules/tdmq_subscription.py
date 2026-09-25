@@ -95,6 +95,14 @@ EXAMPLES = r"""
     environment_id: production
     topic_name: orders
     name: order-workers
+
+- name: Delete the subscription
+  susunola.tencentcloud.tdmq_subscription:
+    state: absent
+    cluster_id: pulsar-xxxxxxxx
+    environment_id: production
+    name: order-workers
+    topic_name: orders
 """
 RETURN = r"""subscription:
   description:

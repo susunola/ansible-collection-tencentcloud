@@ -91,6 +91,14 @@ EXAMPLES = r"""
       StrategyStatus: 1
       CalmDownTime: 300
       LoadMetricsConditions: {LoadMetrics: []}
+
+- name: Delete the strategy
+  susunola.tencentcloud.emr_auto_scale_strategy:
+    state: absent
+    allow_node_termination: true
+    cluster_id: emr-xxxxxxxx
+    name: scale-task-on-yarn-pressure
+    strategy_type: load
 """
 RETURN = r"""strategy:
   description:

@@ -111,6 +111,11 @@ EXAMPLES = r"""
     name: production-web
     group_type: label
     values: [production-web]
+
+- name: Delete the machine group
+  susunola.tencentcloud.cls_machine_group:
+    state: absent
+    name: production-web
 """
 RETURN = r"""machine_group:
   description:

@@ -122,6 +122,12 @@ EXAMPLES = r"""
     health_check_config:
       EnableActiveHealthCheck: true
       ActiveHealthCheck: {HealthyInterval: 5, UnhealthyInterval: 5, HttpPath: /healthz}
+
+- name: Delete the service
+  susunola.tencentcloud.tse_gateway_service:
+    state: absent
+    gateway_id: gateway-xxxxxxxx
+    name: orders
 """
 RETURN = r"""service:
   description:

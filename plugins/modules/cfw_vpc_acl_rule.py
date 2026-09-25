@@ -126,6 +126,12 @@ EXAMPLES = r"""
     destination: 10.20.0.0/16
     protocol: TCP
     ports: "443"
+
+- name: Delete the rule
+  susunola.tencentcloud.cfw_vpc_acl_rule:
+    state: absent
+    description: allow-vpc-https
+    edge_id: vpcfw-edge-xxxxxxxx
 """
 
 RETURN = r"""rule:

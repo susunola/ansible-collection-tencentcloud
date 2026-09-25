@@ -129,6 +129,13 @@ EXAMPLES = r"""
     use_default_image_service: 1
     coding_language: JAVA
     deploy_mode: IMAGE
+
+- name: Delete the application
+  susunola.tencentcloud.tem_application:
+    state: absent
+    delete_if_no_running_version: false
+    environment_id: env-1
+    name: order-api
 """
 RETURN = r"""application:
   description:

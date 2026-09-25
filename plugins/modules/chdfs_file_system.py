@@ -99,6 +99,11 @@ EXAMPLES = r"""
     name: analytics
     capacity_quota: 1099511627776
     posix_acl: true
+
+- name: Delete the file system
+  susunola.tencentcloud.chdfs_file_system:
+    state: absent
+    name: analytics
 """
 RETURN = r"""file_system:
   description:

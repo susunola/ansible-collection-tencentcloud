@@ -190,6 +190,11 @@ EXAMPLES = r"""
     rotation_enabled: true
     rotation_begin_time: '2026-09-02 02:00:00'
     rotation_frequency: 30
+
+- name: Delete the secret
+  susunola.tencentcloud.ssm_product_secret:
+    state: absent
+    secret_name: orders-db-managed
 """
 RETURN = r"""secret:
   description:

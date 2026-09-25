@@ -127,6 +127,12 @@ EXAMPLES = r"""
     protocol: TCP
     ports: "443"
     action: accept
+
+- name: Delete the rule
+  susunola.tencentcloud.cfw_nat_acl_rule:
+    state: absent
+    description: allow-app-egress
+    direction: outbound
 """
 
 RETURN = r"""rule:

@@ -93,6 +93,11 @@ EXAMPLES = r"""
 - susunola.tencentcloud.cls_index:
     topic_id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
     contain_zh: true
+
+- name: Delete the index
+  susunola.tencentcloud.cls_index:
+    state: absent
+    topic_id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 """
 RETURN = r"""index:
   description:

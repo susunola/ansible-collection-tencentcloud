@@ -102,6 +102,13 @@ EXAMPLES = r"""
     name: every-hour
     trigger_type: timer
     trigger_desc: 0 0 * * * * *
+
+- name: Delete the trigger
+  susunola.tencentcloud.scf_trigger:
+    state: absent
+    function_name: rotate-logs
+    name: every-hour
+    trigger_type: timer
 """
 RETURN = r"""trigger:
   description:

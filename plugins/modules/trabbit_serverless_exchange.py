@@ -102,6 +102,13 @@ EXAMPLES = r"""
     name: orders
     exchange_type: topic
     durable: true
+
+- name: Delete the exchange
+  susunola.tencentcloud.trabbit_serverless_exchange:
+    state: absent
+    instance_id: amqp-xxxxxxxx
+    name: orders
+    virtual_host: production
 """
 RETURN = r"""exchange:
   description:

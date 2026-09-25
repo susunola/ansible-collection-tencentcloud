@@ -100,6 +100,15 @@ EXAMPLES = r"""
     object_type: table
     object_name: events
     privileges: [SELECT, INSERT, UPDATE]
+
+- name: Delete the privileges
+  susunola.tencentcloud.mariadb_account_privilege:
+    state: absent
+    database: orders
+    instance_id: tdsql-xxxxxxxx
+    object_name: events
+    object_type: table
+    username: app
 """
 RETURN = r"""privileges:
   description:

@@ -66,6 +66,11 @@ EXAMPLES = r"""
 - susunola.tencentcloud.cvm_instance_action_timer:
     instance_id: ins-xxxxxxxx
     action_time: '2026-09-01T12:00:00Z'
+
+- name: Delete the action timer
+  susunola.tencentcloud.cvm_instance_action_timer:
+    state: absent
+    instance_id: ins-xxxxxxxx
 """
 RETURN = r"""action_timer:
   description:

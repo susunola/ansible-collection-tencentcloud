@@ -83,6 +83,13 @@ EXAMPLES = r"""
     value: |-
       features:
         checkout: true
+
+- name: Delete the config
+  susunola.tencentcloud.tsf_application_config:
+    state: absent
+    application_id: application-xxxxxxxx
+    name: orders-settings
+    version: v1
 """
 RETURN = r"""config:
   description:

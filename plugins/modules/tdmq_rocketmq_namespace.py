@@ -65,6 +65,12 @@ EXAMPLES = r"""
     cluster_id: rocketmq-xxxxxxxx
     name: production
     remark: Production workloads
+
+- name: Delete the namespace
+  susunola.tencentcloud.tdmq_rocketmq_namespace:
+    state: absent
+    cluster_id: rocketmq-xxxxxxxx
+    name: production
 """
 RETURN = r"""namespace:
   description:

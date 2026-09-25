@@ -78,6 +78,12 @@ EXAMPLES = r"""
 - susunola.tencentcloud.tcb_static_store:
     env_id: env-xxxxxxxx
     enable_union: true
+
+- name: Delete the static store
+  susunola.tencentcloud.tcb_static_store:
+    state: absent
+    cdn_domain: cdn.example.com
+    env_id: env-xxxxxxxx
 """
 RETURN = r"""static_store:
   description:

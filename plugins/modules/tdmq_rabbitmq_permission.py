@@ -83,6 +83,13 @@ EXAMPLES = r"""
     configure_regex: '^orders\\.'
     write_regex: '^orders\\.'
     read_regex: '^orders\\.'
+
+- name: Delete the permission
+  susunola.tencentcloud.tdmq_rabbitmq_permission:
+    state: absent
+    instance_id: amqp-xxxxxxxx
+    user: application
+    virtual_host: production
 """
 RETURN = r"""permission:
   description:

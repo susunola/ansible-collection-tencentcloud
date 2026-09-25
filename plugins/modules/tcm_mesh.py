@@ -103,6 +103,11 @@ EXAMPLES = r"""
     mesh_version: 1.20.5
     mesh_type: HOSTED
     config: {Istio: {DisablePolicyChecks: false}}
+
+- name: Delete the mesh
+  susunola.tencentcloud.tcm_mesh:
+    state: absent
+    name: production-mesh
 """
 RETURN = r"""mesh:
   description:

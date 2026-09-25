@@ -105,6 +105,12 @@ EXAMPLES = r"""
     username: app
     password: '{{ vault_mariadb_password }}'
     description: Application account
+
+- name: Delete the account
+  susunola.tencentcloud.mariadb_account:
+    state: absent
+    instance_id: tdsql-xxxxxxxx
+    username: app
 """
 RETURN = r"""account:
   description:

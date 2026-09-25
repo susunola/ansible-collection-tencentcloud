@@ -73,6 +73,11 @@ EXAMPLES = r"""
 - susunola.tencentcloud.vpc_address_template:
     name: office-networks
     addresses: [10.10.0.0/16, 192.0.2.10]
+
+- name: Delete the address template
+  susunola.tencentcloud.vpc_address_template:
+    state: absent
+    name: office-networks
 """
 RETURN = r"""address_template:
   description:

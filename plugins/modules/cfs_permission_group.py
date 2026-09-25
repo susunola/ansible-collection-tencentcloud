@@ -66,6 +66,11 @@ EXAMPLES = r"""
 - susunola.tencentcloud.cfs_permission_group:
     name: production-nfs-clients
     description: Production application subnets
+
+- name: Delete the permission group
+  susunola.tencentcloud.cfs_permission_group:
+    state: absent
+    name: production-nfs-clients
 """
 RETURN = r"""permission_group:
   description:

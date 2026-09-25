@@ -76,6 +76,11 @@ EXAMPLES = r"""
     name: production-clients
     qps: 100
     max_request_num: 1000000
+
+- name: Delete the usage plan
+  susunola.tencentcloud.api_gateway_usage_plan:
+    state: absent
+    name: production-clients
 """
 RETURN = r"""usage_plan:
   description:

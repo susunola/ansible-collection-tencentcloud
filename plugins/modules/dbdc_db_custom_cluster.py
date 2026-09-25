@@ -175,6 +175,14 @@ EXAMPLES = r"""
     node_ids: [dbcn-aaaaaaaa, dbcn-bbbbbbbb]
     node_image_id: img-xxxxxxxx
     login_key_id: skey-xxxxxxxx
+
+- name: Delete the cluster
+  susunola.tencentcloud.dbdc_db_custom_cluster:
+    state: absent
+    deletion_protection: false
+    login_key_id: skey-1
+    name: production-db-custom
+    remove_nodes_on_delete: true
 """
 RETURN = r"""cluster:
   description:

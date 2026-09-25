@@ -97,6 +97,12 @@ EXAMPLES = r"""
     object_type: table
     object_name: events
     privileges: [SELECT, INSERT, UPDATE]
+
+- name: Delete the privileges
+  susunola.tencentcloud.dcdb_account_privilege:
+    state: absent
+    instance_id: tdsqlshard-xxxxxxxx
+    username: application
 """
 RETURN = r"""privileges:
   description:

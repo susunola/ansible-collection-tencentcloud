@@ -79,6 +79,12 @@ EXAMPLES = r"""
     instance_id: grafana-xxxxxxxx
     name: operations
     receivers: [notice-xxxxxxxx]
+
+- name: Delete the channel
+  susunola.tencentcloud.monitor_grafana_notification_channel:
+    state: absent
+    instance_id: grafana-xxxxxxxx
+    name: operations
 """
 RETURN = r"""channel:
   description:

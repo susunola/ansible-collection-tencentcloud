@@ -259,6 +259,14 @@ EXAMPLES = r"""
 - susunola.tencentcloud.tione_model_service:
     service_id: ms-xxxxxxxx
     replicas: 4
+
+- name: Delete the service
+  susunola.tencentcloud.tione_model_service:
+    state: absent
+    allow_delete: true
+    project_id: prj-xyz
+    service_id: ms-8b0a1c2d
+    wait: true
 """
 RETURN = r"""
 service:

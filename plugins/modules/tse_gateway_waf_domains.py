@@ -66,6 +66,12 @@ EXAMPLES = r"""
     gateway_id: gateway-xxxxxxxx
     domains: [api.example.com]
     purge_unlisted: true
+
+- name: Delete the waf domains
+  susunola.tencentcloud.tse_gateway_waf_domains:
+    state: absent
+    domains: [api.example.com]
+    gateway_id: gateway-xxxxxxxx
 """
 RETURN = r"""waf_domains:
   description:

@@ -116,6 +116,14 @@ EXAMPLES = r"""
     password: '{{ vault_reporting_password }}'
     description: Read-only reporting account
     global_privileges: [SELECT]
+
+- name: Delete the account
+  susunola.tencentcloud.tdmysql_account:
+    state: absent
+    allow_delete: true
+    instance_id: tdsql3-xxxxxxxx
+    username: reporting
+    wait: false
 """
 RETURN = r"""
 account:

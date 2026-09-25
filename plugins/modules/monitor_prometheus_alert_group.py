@@ -95,6 +95,12 @@ EXAMPLES = r"""
     receivers: [notice-xxxxxxxx]
     rules:
       - {RuleName: high-error-rate, Expr: 'rate(errors_total[5m]) > 1', Duration: 5m, State: 2}
+
+- name: Delete the alert group
+  susunola.tencentcloud.monitor_prometheus_alert_group:
+    state: absent
+    instance_id: prom-xxxxxxxx
+    name: application-alerts
 """
 RETURN = r"""alert_group:
   description:

@@ -92,6 +92,12 @@ EXAMPLES = r"""
       ImageId: img-xxxxxxxx
       InstanceType: S5.LARGE8
     make_default: true
+
+- name: Delete the launch template version
+  susunola.tencentcloud.cvm_launch_template_version:
+    state: absent
+    description: web-v2
+    template_id: lt-xxxxxxxx
 """
 RETURN = r"""launch_template_version:
   description:

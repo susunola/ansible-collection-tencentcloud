@@ -76,6 +76,12 @@ EXAMPLES = r"""
     secret_name: prod/database
     version_id: release-2026-08-30
     secret_string: "{{ vault_database_password }}"
+
+- name: Delete the version
+  susunola.tencentcloud.ssm_secret_version:
+    state: absent
+    secret_name: prod/database
+    version_id: release-2026-08-30
 """
 RETURN = r"""version:
   description:

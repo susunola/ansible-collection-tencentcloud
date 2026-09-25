@@ -102,6 +102,12 @@ EXAMPLES = r"""
     owasp_ids: [100001, 100002]
     strategies:
       - {Field: URI, CompareFunc: prefix, Content: /health, Arg: ''}
+
+- name: Delete the rule
+  susunola.tencentcloud.waf_owasp_white_rule:
+    state: absent
+    domain: api.example.com
+    name: allow-health-signatures
 """
 RETURN = r"""rule:
   description:

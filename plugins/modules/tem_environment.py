@@ -119,6 +119,11 @@ EXAMPLES = r"""
     vpc_id: vpc-xxxxxxxx
     subnet_ids: [subnet-xxxxxxxx]
     environment_type: prod
+
+- name: Delete the environment
+  susunola.tencentcloud.tem_environment:
+    state: absent
+    name: production
 """
 RETURN = r"""environment:
   description:

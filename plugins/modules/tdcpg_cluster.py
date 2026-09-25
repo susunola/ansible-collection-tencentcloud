@@ -145,6 +145,11 @@ EXAMPLES = r"""
     memory: 8
     instance_count: 2
     db_version: '13.3'
+
+- name: Delete the cluster
+  susunola.tencentcloud.tdcpg_cluster:
+    state: absent
+    name: production-tdcpg
 """
 RETURN = r"""cluster:
   description:

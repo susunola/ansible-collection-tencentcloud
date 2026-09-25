@@ -72,6 +72,12 @@ EXAMPLES = r"""
     gateway_id: gateway-xxxxxxxx
     name: mobile-application
     priority: High
+
+- name: Delete the consumer
+  susunola.tencentcloud.tse_gateway_consumer:
+    state: absent
+    gateway_id: gateway-xxxxxxxx
+    name: mobile-application
 """
 RETURN = r"""consumer:
   description:
