@@ -47,6 +47,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODULES_DIR = os.path.join(REPO_ROOT, "plugins", "modules")
 CORE_SUBSET = os.path.join(REPO_ROOT, "tests", "quality", "core-subset.yml")
 COVERAGE_YML = os.path.join(REPO_ROOT, "tests", "integration", "coverage.yml")
+RUNTIME_YML = os.path.join(REPO_ROOT, "meta", "runtime.yml")
 UNIT_TESTS = os.path.join(REPO_ROOT, "tests", "unit", "plugins", "modules")
 INTEGRATION_WF = os.path.join(REPO_ROOT, ".github", "workflows", "integration.yml")
 
@@ -252,6 +253,40 @@ def return_sample_findings():
     return sorted(found)
 
 
+def role_meta_findings():
+    """Roles whose galaxy_info disagrees with the collection's own metadata.
+
+    ``meta/runtime.yml`` is the collection's ansible-core floor and the README
+    restates it; a role's ``min_ansible_version`` is a third copy, and all
+    sixty-four roles said 2.16 while the collection required 2.19.  A role
+    page that advertises a floor the rest of the collection does not support
+    is how a user ends up installing something that will not run, so this is a
+    hard check rather than a ratchet.
+    """
+    with open(RUNTIME_YML, encoding="utf-8") as handle:
+        runtime = yaml.safe_load(handle)
+    floor = re.search(r"(\d+\.\d+)", runtime["requires_ansible"]).group(1)
+
+    problems = []
+    roles = sorted(glob.glob(os.path.join(REPO_ROOT, "roles", "*")))
+    for role in roles:
+        meta = os.path.join(role, "meta", "main.yml")
+        name = os.path.basename(role)
+        if not os.path.exists(meta):
+            problems.append("roles/%s: no meta/main.yml" % name)
+            continue
+        with open(meta, encoding="utf-8") as handle:
+            info = (yaml.safe_load(handle) or {}).get("galaxy_info") or {}
+        declared = str(info.get("min_ansible_version"))
+        if declared != floor:
+            problems.append("roles/%s: min_ansible_version %s, collection requires %s"
+                            % (name, declared, floor))
+        if info.get("license") != "GPL-3.0-or-later":
+            problems.append("roles/%s: license is %r, expected GPL-3.0-or-later"
+                            % (name, info.get("license")))
+    return problems
+
+
 def _gated_modules():
     """Map each gated module to the target(s) that would cover it."""
     registry, dispatched = _registry_and_dispatch()
@@ -272,6 +307,7 @@ def main():
     gated, missing = integration_findings()
     idempotency = idempotency_findings()
     samples = return_sample_findings()
+    role_meta = role_meta_findings()
 
     if args.show:
         print("description restates the option name: %d option(s)" % len(docs))
@@ -313,6 +349,7 @@ def main():
             "core-subset modules with no integration target at all: %d, "
             "ratchet is %d (the ratchet only goes down)"
             % (len(missing), INTEGRATION_MISSING_RATCHET))
+    problems.extend(role_meta)
     if len(samples) > RETURN_SAMPLE_RATCHET:
         problems.append(
             "modules whose RETURN carries no sample: %d, ratchet is %d "
@@ -339,6 +376,8 @@ def main():
           % (len(idempotency), IDEMPOTENCY_RATCHET))
     print("ok: %d module(s) have a RETURN with no sample (ratchet %d)"
           % (len(samples), RETURN_SAMPLE_RATCHET))
+    print("ok: all %d role(s) declare the collection's ansible-core floor"
+          % len(glob.glob(os.path.join(REPO_ROOT, "roles", "*"))))
     return 0
 
 

@@ -1,0 +1,26 @@
+---
+galaxy_info:
+  role_name: tc_doris_analytics_platform
+  namespace: susunola
+  author: Tencent Cloud Ansible Collection Contributors (@susunola)
+  description: Builds a CDW Doris analytics platform and reconciles named workload groups after the instance
+    becomes available. Destruction is guarded and removes workload groups before destroying the instance
+  company: Tencent Cloud
+  license: GPL-3.0-or-later
+  min_ansible_version: '2.19'
+  platforms:
+  - name: Generic
+    versions:
+    - all
+  - name: macOS
+    versions:
+    - all
+  - name: Windows
+    versions:
+    - all
+  galaxy_tags:
+  - tencentcloud
+  - doris
+  - analytics
+  - cloud
+dependencies: []
