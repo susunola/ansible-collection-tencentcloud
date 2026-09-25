@@ -43,7 +43,8 @@ options:
     default: mysql
   template_type:
     description:
-      - Template type.
+      - Template type, passed to the CDB API as V(TemplateType).
+      - The value must match the type the template was created with.
     type: int
     default: 0
   parameters:

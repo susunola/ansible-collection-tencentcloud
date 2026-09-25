@@ -34,7 +34,11 @@ options:
     type: str
   policy_type:
     description:
-      - Policy type.
+      - How the policy adjusts capacity when it runs.
+      - C(SIMPLE) applies one adjustment per run, sized by the policy's own
+        parameters.
+      - C(TARGET_TRACKING) keeps the chosen metric at a target value by
+        adjusting capacity as the metric moves.
     type: str
     choices: [SIMPLE, TARGET_TRACKING]
     default: SIMPLE

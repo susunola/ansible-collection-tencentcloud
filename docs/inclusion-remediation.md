@@ -115,6 +115,32 @@ closed unless exactly one returned cluster matches the id it asked for, so
 `describe_state` called `fail_json` on a double that has no `fail_json` and
 raised `AttributeError`. The fixture carries the id now.
 
+### The core subset, and what it still does not reach
+
+1,027 modules across 220 product prefixes is not a claim anyone can review.
+`tests/quality/core-subset.yml` names the 35 products this collection asks to
+be judged on — 317 modules — and `scripts/check_quality_gates.py` holds two
+ratchets over it and over everything else:
+
+- **no option description may merely repeat the option name.** This is
+  deliberately not a length rule: a length threshold flags thousands of good
+  one-line descriptions ("Whether the listener should exist.") while missing
+  the actual defect, and a gate that cries wolf gets disabled — which is how
+  the sanity ignore files reached 519 entries. 91 remain, all outside the core
+  subset; the 12 inside it are written.
+- **a core write module must have an integration target that runs.** This is
+  the honest number and it is uncomfortable: the workflow dispatches 21
+  targets covering **24 of the 166 write modules in the core subset**, and 20
+  core products — cvm, tke, cbs, redis, mongodb, postgresql, mariadb,
+  sqlserver, tdmysql, cynosdb, alb, as, dnspod, eks, lighthouse and others —
+  have no covered write module at all. The dispatch list is ordered by cost
+  tier, so the modules users need most were exactly the ones left out.
+
+**That gap, not the documentation, is the largest remaining distance between
+this collection and the standard it claims.** Closing it needs integration
+targets written against a real account, and the ratchet makes the distance
+visible in every CI run until they are.
+
 ## What this record does not claim
 
 - **1,509 option descriptions (26%) are still under 25 characters**

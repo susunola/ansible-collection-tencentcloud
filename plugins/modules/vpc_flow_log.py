@@ -31,7 +31,7 @@ options:
     type: str
   vpc_id:
     description:
-      - VPC ID.
+      - VPC whose traffic this flow log captures.
     type: str
     required: true
   resource_type:

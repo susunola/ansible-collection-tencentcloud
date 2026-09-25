@@ -18,7 +18,8 @@ description:
 options:
   target_group_id:
     description:
-      - Target group ID.
+      - Target group the backends are attached to and reconciled against.
+      - The group must already exist in the same ALB instance.
     type: str
     required: true
   targets:

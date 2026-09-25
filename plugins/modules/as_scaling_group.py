@@ -29,11 +29,13 @@ options:
     type: str
   launch_configuration_id:
     description:
-      - Launch configuration ID.
+      - Launch configuration that new instances in this group are created from.
+      - Changing it affects instances launched afterwards; instances already running are not rebuilt.
     type: str
   vpc_id:
     description:
-      - VPC ID.
+      - VPC the scaling group launches its instances into.
+      - It is fixed when the group is created; a scaling group cannot move to another VPC afterwards.
     type: str
   subnet_ids:
     description:
@@ -91,7 +93,7 @@ options:
     default: false
   project_id:
     description:
-      - Project ID.
+      - Cloud project the scaling group is filed under, used for billing attribution and project-scoped access control.
     type: int
     default: 0
 

@@ -120,6 +120,11 @@ jobs:
       # sync_doc_fragments accepts it by design.
       # Reviewer MUST FIX: every module must document check mode support and
       # idempotency through an attributes block.
+      # Two ratchets over the core subset (tests/quality/core-subset.yml):
+      # an option description may not merely repeat the option name, and a
+      # core write module must have an integration target that actually runs.
+      - name: Core subset quality gates
+        run: python scripts/check_quality_gates.py
       - name: Modules document check_mode, diff_mode and idempotent
         run: python scripts/add_module_attributes.py --check
       - name: Module docs are block style

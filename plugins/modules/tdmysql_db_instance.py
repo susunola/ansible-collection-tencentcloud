@@ -53,7 +53,8 @@ options:
     type: int
   storage_node_count:
     description:
-      - Storage-node count.
+      - Number of storage nodes backing the instance.
+      - More nodes raise the throughput the instance can sustain.
     type: int
   replications:
     description:
@@ -73,7 +74,8 @@ options:
     type: int
   storage_type:
     description:
-      - Storage type.
+      - Storage medium holding the instance's data.
+      - C(CLOUD_HSSD) is the standard cloud SSD tier; C(CLOUD_TCS) is the higher-throughput tier.
     type: str
     choices: [CLOUD_HSSD, CLOUD_TCS]
   instance_type:

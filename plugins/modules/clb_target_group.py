@@ -31,7 +31,8 @@ options:
     type: str
   vpc_id:
     description:
-      - VPC ID.
+      - VPC the target group belongs to.
+      - Backends bound to the group must be reachable inside this VPC.
     type: str
   port:
     description:

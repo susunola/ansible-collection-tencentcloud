@@ -29,7 +29,8 @@ options:
     required: true
   backup_method:
     description:
-      - Backup method.
+      - Backup mode for the instance.
+      - C(physical) copies the data files and restores a whole instance. C(logical) dumps SQL statements and can restore individual tables.
     type: str
     choices: [physical, logical]
     default: physical
@@ -39,7 +40,8 @@ options:
     type: int
   backup_time_window:
     description:
-      - Backup time window.
+      - Time of day when automatic backups run, sent to the API as V(BackupTimeWindow).
+      - Set it so the backup does not overlap the instance's peak traffic.
     type: str
 
 extends_documentation_fragment:
