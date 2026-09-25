@@ -40,6 +40,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.organization_member_identity
+    description: Reconcile Tencent Cloud Organization member identities.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

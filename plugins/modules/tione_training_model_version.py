@@ -176,6 +176,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tione_training_model_version_info
+    description: Gather Tencent Cloud TIONE training-model versions.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

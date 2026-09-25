@@ -65,6 +65,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cdb_audit_rule_info
+    description: Gather information about Tencent Cloud CDB audit rules.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

@@ -44,6 +44,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.monitor_grafana_integration
+    description: Manage Tencent Cloud Managed Grafana integrations.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''

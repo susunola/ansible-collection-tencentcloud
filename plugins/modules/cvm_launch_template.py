@@ -71,6 +71,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cvm_launch_template_info
+    description: Gather information about Tencent Cloud CVM launch templates.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

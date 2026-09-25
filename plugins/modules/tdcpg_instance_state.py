@@ -66,6 +66,9 @@ attributes:
         performs the action on every run and always reports C(changed=true).
     support: partial
     details: C(state=restarted) has no settled state to converge to, so it cannot report C(changed=false) on a repeat run.
+seealso:
+  - module: susunola.tencentcloud.tdcpg_instance_state_info
+    description: Gather information about Tencent Cloud TDCPG cluster instances.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

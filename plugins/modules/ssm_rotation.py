@@ -56,6 +56,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.ssm_rotation_info
+    description: Gather Tencent Cloud Secrets Manager rotation state.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

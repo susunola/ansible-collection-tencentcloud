@@ -48,6 +48,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tione_model_service_traffic
+    description: Manage Tencent Cloud TIONE service authorization and version traffic.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

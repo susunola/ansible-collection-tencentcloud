@@ -154,6 +154,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dbdc_db_custom_cluster_info
+    description: Gather information about Tencent Cloud DBDC db custom clusters.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

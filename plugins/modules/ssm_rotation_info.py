@@ -43,6 +43,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.ssm_rotation
+    description: Manage Tencent Cloud SSM secret rotation settings.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

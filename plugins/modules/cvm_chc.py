@@ -128,6 +128,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cvm_chc_info
+    description: Gather information about Tencent Cloud CHC host network configuration.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

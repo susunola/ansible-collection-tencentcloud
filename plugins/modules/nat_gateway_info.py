@@ -43,6 +43,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.nat_gateway
+    description: Manage Tencent Cloud NAT gateways.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

@@ -39,6 +39,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.apigateway_api_app
+    description: Create or delete a Tencent Cloud API Gateway application.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

@@ -127,6 +127,8 @@ jobs:
       # A check nobody runs is how a regression lands: this collection's
       # sanity step was itself skipped for a day because a step above it
       # failed, which is the same failure mode one level up.
+      - name: Modules cross-reference their read-only counterpart
+        run: python scripts/add_module_seealso.py --check
       - name: Module headers are complete
         run: python scripts/fix_module_headers.py --check
       - name: Example playbooks resolve

@@ -39,6 +39,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.gwlb_target_group_instances
+    description: Reconcile Tencent Cloud GWLB target group instances.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

@@ -39,6 +39,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dlc_data_mask_strategy
+    description: Manage Tencent Cloud Data Lake Compute masking strategies.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

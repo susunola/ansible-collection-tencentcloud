@@ -37,6 +37,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.api_gateway_usage_plan_key_binding
+    description: Bind API Gateway keys to usage plans.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

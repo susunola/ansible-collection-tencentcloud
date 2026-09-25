@@ -33,6 +33,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dts_migration_check
+    description: Run and wait for a Tencent Cloud DTS migration check.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

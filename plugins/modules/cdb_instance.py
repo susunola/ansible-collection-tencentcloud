@@ -184,6 +184,9 @@ attributes:
         performs the action on every run and always reports C(changed=true).
     support: partial
     details: C(state=restarted) has no settled state to converge to, so it cannot report C(changed=false) on a repeat run.
+seealso:
+  - module: susunola.tencentcloud.cdb_instance_info
+    description: Gather information about TencentDB for MySQL instances.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

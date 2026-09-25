@@ -52,6 +52,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.privatelink_endpoint_service
+    description: Manage Tencent Cloud PrivateLink endpoint services.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

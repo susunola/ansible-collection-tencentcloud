@@ -34,6 +34,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dlc_network_connection
+    description: Reconcile Tencent Cloud DLC network-connection metadata.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

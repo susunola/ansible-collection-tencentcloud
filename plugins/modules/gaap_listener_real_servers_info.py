@@ -33,6 +33,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.gaap_listener_real_servers
+    description: Reconcile Tencent Cloud GAAP listener origin bindings.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

@@ -31,6 +31,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cdb_parameter_template
+    description: Manage Tencent Cloud CDB parameter templates.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

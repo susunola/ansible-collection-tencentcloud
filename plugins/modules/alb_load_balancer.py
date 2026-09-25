@@ -100,6 +100,9 @@ extends_documentation_fragment:
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+seealso:
+  - module: susunola.tencentcloud.alb_load_balancer_info
+    description: Gather information about Tencent Cloud ALB instances.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

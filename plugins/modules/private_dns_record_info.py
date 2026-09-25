@@ -42,6 +42,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.private_dns_record
+    description: Manage a Tencent Cloud Private DNS record.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

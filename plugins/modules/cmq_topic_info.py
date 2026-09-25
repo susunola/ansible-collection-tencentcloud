@@ -49,6 +49,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cmq_topic
+    description: Manage Tencent Cloud CMQ topics.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

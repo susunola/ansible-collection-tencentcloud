@@ -52,6 +52,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.trabbit_serverless_queue
+    description: Manage Tencent Cloud RabbitMQ Serverless queues.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

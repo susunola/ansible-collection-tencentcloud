@@ -33,6 +33,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tdcpg_endpoint_wan
+    description: Manage public access for a TDSQL-C PostgreSQL endpoint.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

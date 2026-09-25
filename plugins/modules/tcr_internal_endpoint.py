@@ -68,6 +68,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tcr_internal_endpoint_info
+    description: Gather TCR internal endpoint information.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

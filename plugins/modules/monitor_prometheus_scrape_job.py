@@ -65,6 +65,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.monitor_prometheus_scrape_job_info
+    description: Gather information about Tencent Cloud Monitor Prometheus scrape jobs.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

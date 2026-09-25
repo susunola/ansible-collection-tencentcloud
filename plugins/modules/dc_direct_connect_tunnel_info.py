@@ -43,6 +43,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dc_direct_connect_tunnel
+    description: Manage Tencent Cloud Direct Connect tunnels.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

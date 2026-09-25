@@ -53,6 +53,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.api_gateway_usage_plan_key_binding_info
+    description: Gather information about Tencent Cloud APIGATEWAY usage plan secret ids.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

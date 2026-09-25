@@ -68,6 +68,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.monitor_prometheus_cluster_agent_info
+    description: Gather information about Tencent Cloud Monitor Prometheus cluster agents.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

@@ -252,6 +252,9 @@ attributes:
         performs the action on every run and always reports C(changed=true).
     support: partial
     details: C(state=rebooted) has no settled state to converge to, so it cannot report C(changed=false) on a repeat run.
+seealso:
+  - module: susunola.tencentcloud.cvm_instance_info
+    description: Gather information about Tencent Cloud CVM instances.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
