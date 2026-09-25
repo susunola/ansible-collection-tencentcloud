@@ -221,6 +221,35 @@ tencentcloud_region: "{{ e2e_inputs.TENCENTCLOUD_REGION
 A missing file yields `{}`, so the documented default still applies and a plain
 `ansible-playbook` run (where `env` *does* work) is unaffected.
 
+### 2.6 What the coverage gap actually is
+
+`scripts/check_quality_gates.py` reports two numbers, and they need different
+answers. As of 2026-09-25 they were 8 and 134, and the small one is the one
+that matters.
+
+**Eight core-subset modules have a target that is written and never runs**,
+because its gate variables above are unset. These are the flagship modules:
+
+| module | target | cost | what has to be set |
+|---|---|---|---|
+| `cvm_instance` | cvm_instance | medium | `TENCENTCLOUD_CVM_INSTANCE_IMAGE_ID` (secret), `..._INSTANCE_TYPE`, `..._ZONE` |
+| `cdb_instance` | cdb_instance | high | `TENCENTCLOUD_RUN_BILLED_TARGETS=1`, `..._CDB_ENGINE_VERSION`, `..._CDB_MEMORY`, `..._CDB_VOLUME`, `..._CDB_ZONE` |
+| `tke_cluster` | tke_cluster | high | `TENCENTCLOUD_RUN_BILLED_TARGETS=1`, `..._TKE_CLUSTER_VERSION`, `..._ZONE` |
+| `cvm_image` | cvm_image | high | `TENCENTCLOUD_CVM_IMAGE_SOURCE_INSTANCE`, `..._ZONE` |
+| `lighthouse_instance` | lighthouse | high | `TENCENTCLOUD_LH_BLUEPRINT_ID`, `..._LH_BUNDLE_ID`, `..._LH_ZONE` |
+| `cls_alarm` | cls_alarm | medium | `TENCENTCLOUD_CLS_ALARM_UIN` (secret) |
+| `tke_addon` | tke_addon | medium | `TENCENTCLOUD_TKE_CLUSTER_ID` (secret), `..._TKE_ADDON_NAME`, `..._TKE_ADDON_VERSION`; needs a running cluster, so it cannot be dispatched without `tke_cluster` |
+| `redis_replication_group` | redis_replication_group | high | nothing helps — the account is not whitelisted (§2.4) |
+
+Seven of the eight are a configuration and budget decision, not engineering:
+the targets exist, the workflow already wires every variable, and adding the
+target name to the dispatch list is the whole change. The eighth is blocked by
+the account.
+
+**The other 134 core-subset write modules have no target at all.** That is
+authoring work, and the ratchet in `scripts/check_quality_gates.py` reports it
+separately so the two are never confused for one another.
+
 ## 3. Billing guardrails
 
 - Workflow: 40-minute wall cap + run serialisation + a default dispatch list

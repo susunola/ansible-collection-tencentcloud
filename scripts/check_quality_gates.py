@@ -57,7 +57,8 @@ INTEGRATION_WF = os.path.join(REPO_ROOT, ".github", "workflows", "integration.ym
 # That gap, not the documentation, is the largest remaining distance between
 # this collection and the standard it claims.
 DOC_RATCHET = 91
-INTEGRATION_RATCHET = 142
+INTEGRATION_GATED_RATCHET = 8
+INTEGRATION_MISSING_RATCHET = 134
 
 # Write modules whose unit tests never run ``run_module`` twice, so nothing
 # checks the idempotency the attributes claim.  Small, but the claim is
@@ -123,31 +124,78 @@ def doc_findings():
     return found
 
 
-def integration_findings():
-    """Core-subset modules with no integration target in the default dispatch."""
+def _registry_and_dispatch():
+    """(coverage registry, dispatched target names, gated target names)."""
     with open(INTEGRATION_WF, encoding="utf-8") as handle:
         workflow = handle.read()
     match = re.search(r"inputs\.targets \|\| '([^']+)'", workflow)
     dispatched = set(match.group(1).split()) if match else set()
-
     with open(COVERAGE_YML, encoding="utf-8") as handle:
         registry = yaml.safe_load(handle).get("targets") or {}
+    return registry, dispatched
+
+
+def integration_findings():
+    """Core-subset modules with no integration target in the default dispatch.
+
+    Two different problems, and they need different answers:
+
+    ``gated``
+        The target exists and is written; it simply never runs because its
+        cloud-account gate variables are unset.  This is a configuration and
+        budget decision, not engineering, and it is where the flagship
+        modules are -- cvm_instance, tke_cluster, cdb_instance among them.
+    ``missing``
+        No target at all.  This one is authoring work.
+
+    Reporting them as one number would hide which of the two is being asked
+    for.
+    """
+    registry, dispatched = _registry_and_dispatch()
+    module_targets = {}
+    for target, entry in registry.items():
+        for module in (entry or {}).get("modules") or []:
+            module_targets.setdefault(module, []).append(target)
+
     covered = set()
     for target, entry in registry.items():
         if target in dispatched:
             covered.update((entry or {}).get("modules") or [])
 
-    products = core_products()
-    found = []
+    gated, missing = [], []
     for path in module_paths():
         name = os.path.basename(path)[:-3]
-        if not in_core(name, products):
+        if name.endswith("_info") or not in_core(name):
             continue
-        if name.endswith("_info"):
+        if name in covered:
             continue
-        if name not in covered:
-            found.append(name)
-    return sorted(found)
+        (gated if module_targets.get(name) else missing).append(name)
+    return sorted(gated), sorted(missing)
+
+
+def integration_gates():
+    """Map each gated target to the environment variables it waits on."""
+    gates = {}
+    for target in sorted({t for modules in _gated_targets().values() for t in modules}):
+        directory = os.path.join(REPO_ROOT, "tests", "integration", "targets", target)
+        found = set()
+        for root, _dirs, files in os.walk(directory):
+            for name in files:
+                if not name.endswith((".yml", ".yaml")):
+                    continue
+                with open(os.path.join(root, name), encoding="utf-8") as handle:
+                    found.update(re.findall(r"TENCENTCLOUD_[A-Z0-9_]+", handle.read()))
+        gates[target] = sorted(found)
+    return gates
+
+
+def _gated_targets():
+    registry, dispatched = _registry_and_dispatch()
+    module_targets = {}
+    for target, entry in registry.items():
+        for module in (entry or {}).get("modules") or []:
+            module_targets.setdefault(module, []).append(target)
+    return module_targets
 
 
 def _unit_test_sources():
@@ -183,6 +231,16 @@ def idempotency_findings():
     return sorted(found)
 
 
+def _gated_modules():
+    """Map each gated module to the target(s) that would cover it."""
+    registry, dispatched = _registry_and_dispatch()
+    module_targets = {}
+    for target, entry in registry.items():
+        for module in (entry or {}).get("modules") or []:
+            module_targets.setdefault(module, []).append(target)
+    return {name: sorted(module_targets[name]) for name in integration_findings()[0]}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--print", dest="show", action="store_true",
@@ -190,7 +248,7 @@ def main():
     args = parser.parse_args()
 
     docs = doc_findings()
-    integrations = integration_findings()
+    gated, missing = integration_findings()
     idempotency = idempotency_findings()
 
     if args.show:
@@ -199,10 +257,17 @@ def main():
         for module, count in by_module.most_common():
             print("   %-44s %d" % (module, count))
         print()
-        print("core-subset write modules with no dispatched integration target: %d"
-              % len(integrations))
-        for name in integrations:
+        print("core-subset write modules whose target exists but never runs: %d"
+              % len(gated))
+        for name, targets in sorted(_gated_modules().items()):
+            print("   %-30s -> %s" % (name, ", ".join(targets)))
+        print()
+        print("core-subset write modules with no integration target at all: %d"
+              % len(missing))
+        for name in missing[:40]:
             print("   %s" % name)
+        if len(missing) > 40:
+            print("   ... and %d more" % (len(missing) - 40))
         print()
         print("write modules whose tests never run the module twice: %d" % len(idempotency))
         for name in idempotency:
@@ -214,11 +279,16 @@ def main():
         problems.append(
             "description restates the option name: %d, ratchet is %d "
             "(the ratchet only goes down)" % (len(docs), DOC_RATCHET))
-    if len(integrations) > INTEGRATION_RATCHET:
+    if len(gated) > INTEGRATION_GATED_RATCHET:
         problems.append(
-            "core-subset modules with no dispatched integration target: %d, "
+            "core-subset modules whose target exists but never runs: %d, "
             "ratchet is %d (the ratchet only goes down)"
-            % (len(integrations), INTEGRATION_RATCHET))
+            % (len(gated), INTEGRATION_GATED_RATCHET))
+    if len(missing) > INTEGRATION_MISSING_RATCHET:
+        problems.append(
+            "core-subset modules with no integration target at all: %d, "
+            "ratchet is %d (the ratchet only goes down)"
+            % (len(missing), INTEGRATION_MISSING_RATCHET))
     if len(idempotency) > IDEMPOTENCY_RATCHET:
         problems.append(
             "write modules whose tests never run the module twice: %d, "
@@ -233,8 +303,10 @@ def main():
 
     print("ok: %d option description(s) merely restate the option name "
           "(ratchet %d)" % (len(docs), DOC_RATCHET))
-    print("ok: %d core-subset module(s) lack a dispatched integration target "
-          "(ratchet %d)" % (len(integrations), INTEGRATION_RATCHET))
+    print("ok: %d core-subset module(s) have a target that never runs "
+          "(ratchet %d)" % (len(gated), INTEGRATION_GATED_RATCHET))
+    print("ok: %d core-subset module(s) have no integration target "
+          "(ratchet %d)" % (len(missing), INTEGRATION_MISSING_RATCHET))
     print("ok: %d write module(s) lack a two-run test (ratchet %d)"
           % (len(idempotency), IDEMPOTENCY_RATCHET))
     return 0
