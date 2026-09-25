@@ -1,0 +1,35 @@
+---
+bugfixes:
+  - >-
+    tat_invocation - stop claiming ``idempotent: full``. The block said
+    "running again with the same arguments leaves it unchanged and reports
+    C(changed=false)" while the module's own description two paragraphs above
+    says "this is an action module; C(state=started) creates a new invocation
+    on every execution", and every exit path in ``run_module`` passes
+    ``changed=True`` -- including C(state=cancelled) and check mode. The block
+    is now ``partial``, names both states, and says there is no state to
+    compare against.
+  - >-
+    scripts/add_module_attributes.py - compare an existing attributes block
+    with what the module's code supports. The generator inserts a block once
+    and never rewrites it, so ``--check`` proved only that a block existed: a
+    module could claim ``full`` for the rest of its life with nothing to
+    contradict it, which is how the claim above survived. An attribute may
+    still claim *less* than the rules allow -- the ALB modules say ``partial``
+    for ``diff_mode`` and ``idempotent`` and explain what is excluded, which
+    is more useful than the boilerplate -- but never more.
+  - >-
+    scripts/add_module_attributes.py - read ``started`` as a one-shot state for
+    ``tat_invocation``, and say "every C(state) value" when no state converges.
+    ``started`` cannot be one-shot in general: it converges for
+    ``lighthouse_instance``, which starts a stopped instance and reports
+    C(changed=false) when it is already running. The state whose meaning
+    depends on the module is now recorded per module, and a module with no
+    converging state no longer has the word "most" applied to a set where it
+    is false.
+minor_changes:
+  - >-
+    unit tests - add tests/unit/scripts/test_add_module_attributes.py. The
+    script had none, which is why the wrong claim above was in a file nothing
+    read: the tests pin both directions of the support rule, the per-module
+    one-shot override, and that the generator never rewrites an existing block.

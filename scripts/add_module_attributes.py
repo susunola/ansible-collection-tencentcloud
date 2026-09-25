@@ -50,14 +50,33 @@ _DOC_RE = re.compile(
 _ONE_SHOT_STATES = ("rebooted", "restarted", "invoked", "run", "executed",
                     "rotated", "retried", "resumed")
 
+#: States whose meaning is the module's, not the word's. ``started`` converges
+#: for a resource with a running/stopped lifecycle -- ``lighthouse_instance``
+#: starts an instance that is stopped and reports C(changed=false) when it is
+#: already running -- and creates a new record for an action module.
+#: ``tat_invocation`` says so itself, in its own description: "This is an
+#: action module; C(state=started) creates a new invocation on every
+#: execution." It claimed ``idempotent: full`` anyway, because the derived rule
+#: only knew the one-shot words above.
+_MODULE_ONE_SHOT_STATES = {
+    "tat_invocation": ("cancelled", "started"),
+}
 
-def _one_shot_states(text):
-    found = []
+
+def _state_choices(text):
+    """Return the values the ``state`` option accepts, sorted."""
+    for choices in re.findall(r'"state":\s*\{[^}]*"choices":\s*\[([^\]]*)\]', text):
+        return sorted(set(re.findall(r'"([a-z_]+)"', choices)))
+    return []
+
+
+def _one_shot_states(text, name=None):
+    found = set(_MODULE_ONE_SHOT_STATES.get(name, ()))
     for choices in re.findall(r'"state":\s*\{[^}]*"choices":\s*\[([^\]]*)\]', text):
         for value in re.findall(r'"([a-z_]+)"', choices):
             if value in _ONE_SHOT_STATES:
-                found.append(value)
-    return sorted(set(found))
+                found.add(value)
+    return sorted(found)
 
 
 def _check_mode_support(text):
@@ -108,7 +127,8 @@ def build_block(text, relpath):
         or "require_immutable_unchanged" in text
         or re.search(r"client\.(?:Describe|List|Get|Query)\w+", text)
         or re.search(r"\b(?:describe|list|get|find|iter|wait_for|is)_[a-z0-9_]+\s*\(", text))
-    one_shot = _one_shot_states(text)
+    one_shot = _one_shot_states(text, os.path.basename(relpath)[:-3])
+    all_states = _state_choices(text)
 
     if read_only:
         idem_support = "full"
@@ -116,6 +136,16 @@ def build_block(text, relpath):
                      "changes the target, and a repeated run reports "
                      "C(changed=false).")
         idem_details = None
+    elif one_shot and all_states and set(one_shot) >= set(all_states):
+        # An action module with no converging state at all. Saying "most
+        # C(state) values converge" about a module where none does is the same
+        # kind of untrue sentence as the claim this replaced.
+        idem_support = "partial"
+        idem_desc = ("Every C(state) value (%s) performs the action on every run "
+                     "and always reports C(changed=true)."
+                     % ", ".join("C(state=%s)" % state for state in one_shot))
+        idem_details = ("There is no state to compare against, so a repeat run "
+                        "cannot report C(changed=false).")
     elif one_shot:
         idem_support = "partial"
         states = "), C(state=".join(one_shot)
@@ -195,6 +225,71 @@ def add_attributes(source, relpath):
     return source[:start] + new_body + source[match.end("body"):], True
 
 
+#: How strong a claim is. ``full`` is the strongest, and any attribute block
+#: may claim less than the rules allow -- ``alb_listener`` says ``partial`` for
+#: both ``diff_mode`` and ``idempotent`` and explains why, which is more useful
+#: than the boilerplate. It may not claim more.
+_SUPPORT_RANK = {"none": 0, "partial": 1, "full": 2}
+_ATTRIBUTES = ("check_mode", "diff_mode", "idempotent")
+
+
+def _committed_supports(body):
+    """Return {attribute: support} for the attributes block in *body*."""
+    block = re.search(r"(?m)^attributes:\n((?:[ \t]+.*\n|\n)*)", body)
+    if not block:
+        return {}
+    found = {}
+    current = None
+    for line in block.group(1).splitlines():
+        match = re.match(r"^  ([a-z_]+):\s*$", line)
+        if match:
+            current = match.group(1)
+            continue
+        match = re.match(r"^    support:\s*(\w+)", line)
+        if match and current:
+            found[current] = match.group(1)
+            current = None
+    return found
+
+
+def overclaimed(text, relpath):
+    """Return the attributes whose committed claim is stronger than allowed.
+
+    The generator used to insert a block once and never look at it again, so a
+    module could claim ``idempotent: full`` for the rest of its life and every
+    check stayed green -- ``tat_invocation`` claimed exactly that while its own
+    description says "this is an action module; C(state=started) creates a new
+    invocation on every execution", and every one of its exit paths passes
+    ``changed=True``. Comparing the committed support levels against the
+    derived ones is what makes the claim checkable.
+    """
+    match = _DOC_RE.search(text)
+    if not match:
+        return []
+    committed = _committed_supports(match.group("body"))
+    if not committed:
+        return []
+    derived = {}
+    for line in build_block(text, relpath):
+        found = re.match(r"^  ([a-z_]+):\s*$", line)
+        if found:
+            current = found.group(1)
+            continue
+        found = re.match(r"^    support:\s*(\w+)", line)
+        if found and current:
+            derived[current] = found.group(1)
+    problems = []
+    for name in _ATTRIBUTES:
+        claimed = committed.get(name)
+        allowed = derived.get(name)
+        if claimed is None or allowed is None:
+            continue
+        if _SUPPORT_RANK.get(claimed, 0) > _SUPPORT_RANK.get(allowed, 0):
+            problems.append("%s: claims support=%s, the module's code supports %s"
+                            % (name, claimed, allowed))
+    return problems
+
+
 def module_paths():
     return sorted(glob.glob(MODULE_GLOB))
 
@@ -206,31 +301,42 @@ def main():
     args = parser.parse_args()
 
     missing = []
+    overclaimed_found = []
     for path in module_paths():
         relpath = os.path.relpath(path, REPO_ROOT)
         with open(path, encoding="utf-8") as handle:
             source = handle.read()
         new_source, changed = add_attributes(source, relpath)
-        if not changed:
+        if changed:
+            missing.append(path)
+            if not args.check:
+                with open(path, "w", encoding="utf-8") as handle:
+                    handle.write(new_source)
             continue
-        missing.append(path)
-        if not args.check:
-            with open(path, "w", encoding="utf-8") as handle:
-                handle.write(new_source)
+        for problem in overclaimed(source, relpath):
+            overclaimed_found.append("%s: %s" % (relpath, problem))
 
     if args.check:
-        if missing:
-            for path in missing:
-                print("%s: DOCUMENTATION has no attributes block"
-                      % os.path.relpath(path, REPO_ROOT))
-            print("attributes: %d module(s) do not document check_mode/idempotency"
-                  % len(missing))
+        for path in missing:
+            print("%s: DOCUMENTATION has no attributes block"
+                  % os.path.relpath(path, REPO_ROOT))
+        for problem in overclaimed_found:
+            print(problem)
+        if missing or overclaimed_found:
+            if missing:
+                print("attributes: %d module(s) do not document check_mode/idempotency"
+                      % len(missing))
+            if overclaimed_found:
+                print("attributes: %d claim(s) are stronger than the module supports"
+                      % len(overclaimed_found))
             return 1
-        print("attributes: all %d module(s) document check_mode and idempotent"
-              % len(module_paths()))
+        print("attributes: all %d module(s) document check_mode and idempotent, "
+              "and none overclaims" % len(module_paths()))
         return 0
 
     print("added an attributes block to %d module(s)" % len(missing))
+    for problem in overclaimed_found:
+        print("left alone (fix by hand): %s" % problem)
     return 0
 
 

@@ -91,9 +91,10 @@ attributes:
     support: full
   idempotent:
     description:
-      - Reconciles the resource against its live state, so running again
-        with the same arguments leaves it unchanged and reports C(changed=false).
-    support: full
+      - Every C(state) value (C(state=cancelled), C(state=started)) performs
+        the action on every run and always reports C(changed=true).
+    support: partial
+    details: There is no state to compare against, so a repeat run cannot report C(changed=false).
 seealso:
   - module: susunola.tencentcloud.tat_invocation_info
     description: Gather Tencent Cloud TAT invocations and instance tasks.
