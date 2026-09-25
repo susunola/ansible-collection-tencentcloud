@@ -65,6 +65,10 @@ DOC_FRAGMENTS_DIR = REPO_ROOT / "plugins" / "doc_fragments"
 # either directory enrols it in this check automatically.
 EXAMPLE_DIRS = ("docs/examples", "playbooks")
 
+#: Integration targets are checked with the same rules; a test can point this
+#: at a throwaway tree the way it points MODULES_DIR at one.
+TARGETS_DIR = REPO_ROOT / "tests" / "integration" / "targets"
+
 COLLECTION = "susunola.tencentcloud"
 COLLECTION_PREFIX = COLLECTION + "."
 
@@ -99,6 +103,9 @@ ALLOWED_UNDEFINED = {
     "omit", "play_hosts", "playbook_dir", "inventory_dir", "role_name",
     "tencentcloud_region", "tencentcloud_secret_id", "tencentcloud_secret_key",
     "tencentcloud_token", "tencentcloud_profile",
+    # Ansible's own settings, readable from any play or task.
+    "ansible_playbook_python", "ansible_python_interpreter", "ansible_connection",
+    "ansible_user", "ansible_host", "ansible_port", "ansible_check_mode",
 }
 
 # Jinja/Python literals that look like names inside an expression.
@@ -110,6 +117,8 @@ JINJA_KEYWORDS = {
 JINJA_REF_RE = re.compile(r"{{\s*(.*?)\s*}}", re.S)
 CONDITION_RE = re.compile(r"(?:\bwhen\b|\buntil\b|\bfailed_when\b|\bchanged_when\b)\s*:\s*(.+?)\s*$", re.M)
 GUARDED_RE = re.compile(r"([A-Za-z_]\w*)\s+is\s+(?:defined|undefined)")
+#: ``x is <test>`` -- the right-hand side is a Jinja test, never a variable.
+JINJA_TEST_RE = re.compile(r"\bis\s+(?:not\s+)?[A-Za-z_]\w*")
 EXTRA_VAR_RE = re.compile(r"-e\s+([A-Za-z_]\w*)\s*=")
 IDENT_RE = re.compile(r"(?<![.\w'\"])([A-Za-z_]\w*)")
 
@@ -209,15 +218,27 @@ def discover(roots=None):
 
 
 def iter_task_blocks(tasks):
-    """Yield every task mapping, descending into block/rescue/always."""
+    """Yield every task mapping, descending into block/rescue/always.
+
+    The `vars:` of a wrapping task is copied onto each of the tasks inside it,
+    so a block that declares its variables applies them here too.
+    """
     for task in tasks or []:
         if not isinstance(task, dict):
             continue
         yield task
+        inherited = task.get("vars") if isinstance(task.get("vars"), dict) else {}
         for key in ("block", "rescue", "always"):
             nested = task.get(key)
             if isinstance(nested, list):
-                yield from iter_task_blocks(nested)
+                for inner in iter_task_blocks(nested):
+                    if inherited and isinstance(inner.get("vars"), dict):
+                        merged = dict(inherited)
+                        merged.update(inner["vars"])
+                        inner = dict(inner, vars=merged)
+                    elif inherited:
+                        inner = dict(inner, vars=dict(inherited))
+                    yield inner
 
 
 def task_action(task):
@@ -264,6 +285,7 @@ def expression_names(expression):
     """
     names = set()
     expression = GUARDED_RE.sub("", str(expression))
+    expression = JINJA_TEST_RE.sub("", expression)
     for chunk in expression.split("|")[:1]:
         for match in IDENT_RE.finditer(chunk):
             name = match.group(1)
@@ -317,6 +339,13 @@ def play_defined_names(play):
         if isinstance(register, str) and register:
             defined.add(register)
         defined.update(_set_fact_keys(task))
+        # A task may declare its own vars, and the integration targets do it
+        # constantly: the payload a later task compares against is built in a
+        # `vars:` block on the task that creates it. Counting them is what
+        # makes this checker usable on a task list as well as on a playbook.
+        declared = task.get("vars")
+        if isinstance(declared, dict):
+            defined.update(str(key) for key in declared)
         for key in ("loop_control",):
             control = task.get(key)
             if isinstance(control, dict) and isinstance(control.get("loop_var"), str):
@@ -388,6 +417,95 @@ def display_path(path):
         return str(path)
 
 
+def check_tasks(tasks, path, label, cache, inventory, published, extra_vars, guarded, problems):
+    """Check one list of tasks: module names resolve, options are declared, and
+    every variable read is defined somewhere.
+
+    Shared by the example playbooks and the integration targets. A target is a
+    list of tasks rather than a play, and the same rules apply to it -- with
+    more at stake, because a target only runs in the credentialed weekly job
+    (and eight of them never run at all), so an option name that no longer
+    exists costs a real run against a real account to discover.
+    """
+    for task in iter_task_blocks(tasks):
+        fqcn, params = task_action(task)
+        if fqcn is None or not fqcn.startswith(COLLECTION_PREFIX):
+            continue
+        short = fqcn[len(COLLECTION_PREFIX):]
+        inventory["modules"].add(short)
+        if not (MODULES_DIR / (short + ".py")).is_file():
+            problems.append(("modules", "%s: %s calls %s, which is not in plugins/modules/"
+                             % (path.name, label, fqcn)))
+            continue
+        declared = module_options(short, cache["modules"])
+        if not declared:
+            # The DOCUMENTATION block could not be parsed; saying
+            # "every option is undeclared" would be worse than silence.
+            continue
+        for key in sorted(params):
+            if key in ANSIBLE_KEYWORDS:
+                continue
+            if key not in declared:
+                problems.append(("options", "%s: %s passes %s to %s, which does not declare that option"
+                                 % (path.name, label, key, short)))
+
+    play = {"tasks": list(tasks)}
+    referenced = play_variable_names(play)
+    defined = play_defined_names(play)
+    for name in sorted(referenced):
+        if name in ALLOWED_UNDEFINED or name in JINJA_KEYWORDS:
+            continue
+        if name in defined or name in published or name in extra_vars or name in guarded:
+            continue
+        problems.append(("vars", "%s: %s reads %s, which is not declared in vars, registered, "
+                         "documented as an extra var or guarded with 'is defined'"
+                         % (path.name, label, name)))
+
+
+def discover_targets():
+    """Return every integration target task file, sorted."""
+    return sorted(TARGETS_DIR.glob("*/tasks/*.yml")) if TARGETS_DIR.is_dir() else []
+
+
+def check_target(path, cache=None):
+    """Return (problems, inventory) for one integration target task file."""
+    cache = {"modules": {}, "roles": {}, "facts": {}} if cache is None else cache
+    problems = []
+    inventory = {"path": display_path(path), "plays": 1, "modules": set(), "roles": set()}
+    text = path.read_text(encoding="utf-8")
+    target = path.parent.parent.name
+    label = "target %s" % target
+    try:
+        tasks = yaml.safe_load(text)
+    except Exception as exc:
+        problems.append(("yaml", "%s is not valid YAML: %s" % (path.name, exc)))
+        return problems, inventory
+    if tasks is None:
+        return problems, inventory
+    if not isinstance(tasks, list):
+        problems.append(("yaml", "%s is not a list of tasks" % path.name))
+        return problems, inventory
+
+    # A target's variables live in its own vars/main.yml as well as in the
+    # task list, and its inputs are materialised there by
+    # scripts/integration_inputs.py.
+    published = set()
+    vars_file = path.parent.parent / "vars" / "main.yml"
+    if vars_file.is_file():
+        try:
+            declared = yaml.safe_load(vars_file.read_text(encoding="utf-8"))
+        except Exception:
+            declared = None
+        if isinstance(declared, dict):
+            published.update(str(key) for key in declared)
+    for task in iter_task_blocks(tasks):
+        published.update(_set_fact_keys(task))
+
+    check_tasks(tasks, path, label, cache, inventory,
+                published, set(EXTRA_VAR_RE.findall(text)), set(GUARDED_RE.findall(text)), problems)
+    return problems, inventory
+
+
 def check_playbook(path, cache=None):
     """Return (problems, inventory) for one playbook file."""
     cache = {"modules": {}, "roles": {}, "facts": {}} if cache is None else cache
@@ -422,6 +540,11 @@ def check_playbook(path, cache=None):
         for name, _role_vars in role_entries(play):
             if name.startswith(COLLECTION_PREFIX):
                 published.update(role_published_names(name[len(COLLECTION_PREFIX):], cache["facts"]))
+        play_vars = play.get("vars")
+        if isinstance(play_vars, dict):
+            # The play's own vars are as much in scope as a registered result;
+            # check_tasks only sees the task list, so they are handed over here.
+            published.update(str(key) for key in play_vars)
         for task in iter_task_blocks(play.get("tasks") or []):
             published.update(_set_fact_keys(task))
 
@@ -450,44 +573,23 @@ def check_playbook(path, cache=None):
                     problems.append(("roles", "%s: role %s has no readable defaults/main.yml, so its variables cannot be checked"
                                      % (path.name, short)))
 
-        for task in iter_task_blocks(play.get("tasks") or []):
-            fqcn, params = task_action(task)
-            if fqcn is None or not fqcn.startswith(COLLECTION_PREFIX):
-                continue
-            short = fqcn[len(COLLECTION_PREFIX):]
-            inventory["modules"].add(short)
-            if not (MODULES_DIR / (short + ".py")).is_file():
-                problems.append(("modules", "%s: play %r calls %s, which is not in plugins/modules/"
-                                 % (path.name, label, fqcn)))
-                continue
-            declared = module_options(short, cache["modules"])
-            if not declared:
-                # The DOCUMENTATION block could not be parsed; saying
-                # "every option is undeclared" would be worse than silence.
-                continue
-            for key in sorted(params):
-                if key in ANSIBLE_KEYWORDS:
-                    continue
-                if key not in declared:
-                    problems.append(("options", "%s: play %r passes %s to %s, which does not declare that option"
-                                     % (path.name, label, key, short)))
-
-        referenced = play_variable_names(play)
-        defined = play_defined_names(play)
-        for name in sorted(referenced):
-            if name in ALLOWED_UNDEFINED or name in JINJA_KEYWORDS:
-                continue
-            if name in defined or name in published or name in extra_vars or name in guarded:
-                continue
-            problems.append(("vars", "%s: play %r reads %s, which is not declared in vars, registered, "
-                             "documented as an extra var or guarded with 'is defined'"
-                             % (path.name, label, name)))
+        check_tasks(play.get("tasks") or [], path, label, cache, inventory,
+                    published, extra_vars, guarded, problems)
 
     return problems, inventory
 
 
-def check(roots=None):
-    """Return (problems, inventories) for every discovered playbook."""
+def check(roots=None, targets=True):
+    """Return (problems, inventories) for every discovered playbook and target.
+
+    The integration targets are checked with the same rules as the example
+    playbooks: a target is a list of tasks rather than a play, and it needs the
+    same guarantees -- that the modules it names exist, that the options it
+    passes exist, and that the variables it reads are defined somewhere. A
+    target gets less feedback than a playbook does: it runs only in the
+    credentialed weekly job, and eight of them are gated and never dispatched,
+    so a renamed option would be found by a real run against a real account.
+    """
     cache = {"modules": {}, "roles": {}, "facts": {}}
     problems = []
     inventories = []
@@ -498,6 +600,14 @@ def check(roots=None):
         found, inventory = check_playbook(path, cache)
         problems.extend(found)
         inventories.append(inventory)
+    if targets:
+        target_paths = discover_targets()
+        if not target_paths:
+            problems.append(("discovery", "no integration targets found under tests/integration/targets"))
+        for path in target_paths:
+            found, inventory = check_target(path, cache)
+            problems.extend(found)
+            inventories.append(inventory)
     return problems, inventories
 
 
@@ -526,13 +636,15 @@ def main(argv=None):
     parser.add_argument("--path", action="append", default=None,
                         help="directory to scan (repeatable); defaults to %s"
                              % ", ".join(EXAMPLE_DIRS))
+    parser.add_argument("--no-targets", dest="targets", action="store_false",
+                        help="skip the integration targets, which are checked too")
     args = parser.parse_args(argv)
 
     if yaml is None:
         print("PyYAML is required (pip install pyyaml)", file=sys.stderr)
         return 2
 
-    problems, inventories = check(args.path)
+    problems, inventories = check(args.path, targets=args.targets)
 
     if args.json:
         print(json.dumps(
@@ -547,7 +659,7 @@ def main(argv=None):
             for kind, detail in problems:
                 print("  - [%s] %s" % (kind, detail), file=sys.stderr)
             return 1
-        print("example playbooks: %d file(s) checked" % len(inventories))
+        print("examples: %d playbook/target file(s) checked" % len(inventories))
         return 0
 
     print_inventory(inventories)

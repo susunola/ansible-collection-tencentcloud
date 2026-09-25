@@ -131,7 +131,7 @@ jobs:
         run: python scripts/add_module_seealso.py --check
       - name: Module headers are complete
         run: python scripts/fix_module_headers.py --check
-      - name: Example playbooks resolve
+      - name: Example playbooks and integration targets resolve
         run: python scripts/check_examples.py --check
       - name: Module examples run as written
         run: python scripts/check_module_examples.py --check

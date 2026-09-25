@@ -67,7 +67,32 @@ Each claim below is checkable with the command in the same row.
 | Every core id/name pair says which one to give | `python scripts/enrich_identity_docs.py --check` |
 | Every module that can delete shows how | `python scripts/add_delete_examples.py --check` |
 | Every module documents the keys it returns | `python scripts/check_return_docs.py --check` |
+| The examples and every integration target resolve | `python scripts/check_examples.py --check` |
 | Every shared helper is covered by its own tests | `python scripts/check_shared_coverage.py --coverage-xml coverage.xml` |
+
+### The targets are checked, not just written
+
+`check_examples.py` validated the example playbooks: module names resolve,
+options are declared, variables are defined. The 34 integration targets had
+none of that. They needed it more — a target runs only in the credentialed
+weekly job, and eight of them are gated and never dispatched, so a renamed
+option costs a real run against a real account to discover.
+
+The same rules now apply to a target, which is a list of tasks rather than a
+play. Two rules had to be right first, and both were the reason the first run
+reported 17 of 34 targets as broken:
+
+* a task's own `vars:` are in scope. The targets build the payload a later task
+  compares against in a `vars:` block on the task that creates it, and the
+  checker did not count them.
+* `x is changed` and `x is not failed` read a Jinja *test*. The checker took
+  `failed` for a variable.
+
+Fixing the first also removed a latent false positive in the playbook checker,
+which had the same blind spot. All 34 targets pass, and the three failures the
+check is meant to catch — a module that does not exist, an option that is not
+declared, a variable nobody defines — were each verified by breaking a target
+and watching it fail.
 
 ### The coverage floor could not see one untested file
 

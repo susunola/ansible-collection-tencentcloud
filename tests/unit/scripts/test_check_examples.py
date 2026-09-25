@@ -31,7 +31,7 @@ def check_examples():
 def tree(tmp_path, check_examples):
     """Point the script's lookup dirs at a throwaway repository layout."""
     saved = (check_examples.MODULES_DIR, check_examples.ROLES_DIR,
-             check_examples.DOC_FRAGMENTS_DIR)
+             check_examples.DOC_FRAGMENTS_DIR, check_examples.TARGETS_DIR)
     modules = tmp_path / "plugins" / "modules"
     roles = tmp_path / "roles"
     fragments = tmp_path / "plugins" / "doc_fragments"
@@ -40,9 +40,13 @@ def tree(tmp_path, check_examples):
     check_examples.MODULES_DIR = modules
     check_examples.ROLES_DIR = roles
     check_examples.DOC_FRAGMENTS_DIR = fragments
+    # The integration targets are checked by the same run; a fixture that
+    # redirects the module tree has to redirect them too, or the real targets
+    # are measured against a module directory that holds one fake module.
+    check_examples.TARGETS_DIR = tmp_path / "tests" / "integration" / "targets"
     yield tmp_path
     (check_examples.MODULES_DIR, check_examples.ROLES_DIR,
-     check_examples.DOC_FRAGMENTS_DIR) = saved
+     check_examples.DOC_FRAGMENTS_DIR, check_examples.TARGETS_DIR) = saved
 
 
 def write_module(tree, name, options=(), fragments=()):
@@ -83,16 +87,127 @@ def kinds(problems):
     return {kind for kind, detail in problems}
 
 
+def write_target(tree, body, name="vpc"):
+    """Create an integration target task file in the throwaway tree."""
+    path = tree / "tests" / "integration" / "targets" / name / "tasks" / "main.yml"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(body, encoding="utf-8")
+    return path
+
+
+def example_root(tree):
+    """A playbook directory inside the fixture, so a target test does not also
+    scan the real docs/examples against the fixture's module tree."""
+    directory = tree / "examples"
+    directory.mkdir(exist_ok=True)
+    write_playbook(directory, "---\n- name: demo\n  hosts: localhost\n  tasks: []\n")
+    return [str(directory)]
+
+
+# --------------------------------------------------------------------------
+# integration targets
+# --------------------------------------------------------------------------
+
+def test_a_target_calling_a_missing_module_is_reported(tree, check_examples):
+    """A target runs only in the credentialed weekly job, so a renamed module
+    would be found by a real run against a real account."""
+    write_target(tree, """---
+- name: Create a network
+  susunola.tencentcloud.ghost_vpc:
+    name: demo
+""")
+    problems, _inventories = check_examples.check(roots=example_root(tree), targets=True)
+    assert any("ghost_vpc" in detail for _kind, detail in problems)
+
+
+def test_a_target_passing_an_undeclared_option_is_reported(tree, check_examples):
+    write_module(tree, "vpc", options=["name"])
+    write_target(tree, """---
+- name: Create a network
+  susunola.tencentcloud.vpc:
+    name: demo
+    nam: typo
+""")
+    problems, _inventories = check_examples.check(roots=example_root(tree), targets=True)
+    assert any("nam" in detail and "does not declare" in detail for _kind, detail in problems)
+
+
+def test_a_target_reading_an_undefined_variable_is_reported(tree, check_examples):
+    write_module(tree, "vpc", options=["name"])
+    write_target(tree, """---
+- name: Create a network
+  susunola.tencentcloud.vpc:
+    name: "{{ ghost_name }}"
+""")
+    problems, _inventories = check_examples.check(roots=example_root(tree), targets=True)
+    assert any("ghost_name" in detail for _kind, detail in problems)
+
+
+def test_a_target_variable_declared_on_the_task_is_defined(tree, check_examples):
+    """The targets build a payload in a task's own vars: block and compare
+    against it later, so a task's vars count as defined names."""
+    write_module(tree, "vpc", options=["name"])
+    write_target(tree, """---
+- name: Create a network
+  vars:
+    vpc_name: demo
+  susunola.tencentcloud.vpc:
+    name: "{{ vpc_name }}"
+
+- name: Read it back
+  susunola.tencentcloud.vpc:
+    name: "{{ vpc_name }}"
+""")
+    problems, _inventories = check_examples.check(roots=example_root(tree), targets=True)
+    assert problems == [], problems
+
+
+def test_a_target_variable_declared_in_vars_main_is_defined(tree, check_examples):
+    """A target's inputs are materialised in its own vars/main.yml."""
+    write_module(tree, "vpc", options=["name"])
+    write_target(tree, """---
+- name: Create a network
+  susunola.tencentcloud.vpc:
+    name: "{{ vpc_name }}"
+""")
+    (tree / "tests" / "integration" / "targets" / "vpc" / "vars").mkdir(parents=True)
+    (tree / "tests" / "integration" / "targets" / "vpc" / "vars" / "main.yml").write_text(
+        "---\nvpc_name: demo\n", encoding="utf-8")
+    problems, _inventories = check_examples.check(roots=example_root(tree), targets=True)
+    assert problems == [], problems
+
+
+def test_a_jinja_test_is_not_a_variable(tree, check_examples):
+    """``x is failed`` reads a test, not a variable named failed."""
+    write_module(tree, "vpc", options=["name"])
+    write_target(tree, """---
+- name: Create a network
+  susunola.tencentcloud.vpc:
+    name: demo
+  register: created
+
+- name: Check it
+  ansible.builtin.assert:
+    that:
+      - created is changed
+      - created is not failed
+""")
+    problems, _inventories = check_examples.check(roots=example_root(tree), targets=True)
+    assert problems == [], problems
+
+
 # --------------------------------------------------------------------------
 # the real repository
 # --------------------------------------------------------------------------
 
 def test_repository_examples_pass_the_check(check_examples):
-    """The shipped examples must be clean; this is what CI asserts."""
+    """The shipped examples and integration targets must be clean; this is
+    what CI asserts."""
     problems, inventories = check_examples.check()
     assert problems == [], problems
-    assert len(inventories) == 11
+    assert len(inventories) == 11 + len(check_examples.discover_targets())
     assert any("06_full_chain" in item["path"] for item in inventories)
+    assert any("tests/integration/targets/vpc" in item["path"] for item in inventories)
 
 
 def test_main_check_exits_zero_on_the_real_tree(check_examples):
@@ -390,7 +505,9 @@ def test_main_without_check_prints_the_inventory(tree, check_examples, capsys):
       ansible.builtin.debug:
         msg: hello
 """, name="pb.yml")
-    assert check_examples.main(["--path", str(tree)]) == 0
+    # --no-targets because the fixture has no target tree: an empty one is a
+    # discovery problem, which is the point of reporting it in a real run.
+    assert check_examples.main(["--path", str(tree), "--no-targets"]) == 0
     assert "1 example playbook(s)" in capsys.readouterr().out
 
 

@@ -1,0 +1,26 @@
+---
+minor_changes:
+  - >-
+    scripts/check_examples.py - check the integration targets with the same
+    rules as the example playbooks. A target is a list of tasks rather than a
+    play, and the same guarantees apply to it: the modules it names exist, the
+    options it passes are declared, and the variables it reads are defined
+    somewhere. It needed them more than a playbook does -- a target runs only
+    in the credentialed weekly job, and eight of the thirty-four are gated and
+    never dispatched, so a renamed option would be found by a real run against
+    a real account. All 34 pass, and the CI step is now "Example playbooks and
+    integration targets resolve".
+  - >-
+    scripts/check_examples.py - count a task's own C(vars) as defined names,
+    and treat the right-hand side of C(x is <test>) as a Jinja test rather than
+    a variable. The targets build the payload a later task compares against in
+    a C(vars) block on the task that creates it, and assert with C(is changed)
+    and C(is not failed); without both rules every target reported variables
+    that do not exist. The first rule also removes a latent false positive in
+    the playbook checker, which had the same blind spot.
+  - >-
+    tests - make the integration target directory a module constant so a test
+    fixture can point it at a throwaway tree, the way it already does for the
+    module and role directories. Six tests cover the new behaviour, including
+    the three failures the checker is meant to catch and the two ways a target
+    declares its variables.
