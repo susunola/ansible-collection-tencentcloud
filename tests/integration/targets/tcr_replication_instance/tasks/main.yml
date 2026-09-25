@@ -36,6 +36,20 @@
         that:
           - created is changed
           - reconciled is not changed
+
+    - name: Check mode must not modify anything
+      susunola.tencentcloud.tcr_replication_instance:
+        state: absent
+        registry_id: "{{ tcr_registry_id }}"
+        replication_region_id: "{{ tcr_replication_region_id | int }}"
+        replication_region_name: "{{ tcr_replication_region_name }}"
+      check_mode: true
+      register: check_delete
+
+    - name: Check mode predicts a change
+      ansible.builtin.assert:
+        that:
+          - check_delete is changed
   always:
     - name: Delete replication instance
       susunola.tencentcloud.tcr_replication_instance:

@@ -70,6 +70,20 @@
           - instance_second.instance.InstanceId == instance_create.instance.InstanceId
       when: lh_bundle_id | length > 0 and lh_blueprint_id | length > 0
 
+    - name: Check mode must not modify anything
+      susunola.tencentcloud.lighthouse_instance:
+        state: absent
+        instance_name: "{{ instance_name }}"
+      check_mode: true
+      register: check_delete
+      when: lh_bundle_id | length > 0 and lh_blueprint_id | length > 0
+
+    - name: Check mode predicts a change
+      ansible.builtin.assert:
+        that:
+          - check_delete is changed
+      when: lh_bundle_id | length > 0 and lh_blueprint_id | length > 0
+
     - name: Delete the instance
       susunola.tencentcloud.lighthouse_instance:
         state: absent

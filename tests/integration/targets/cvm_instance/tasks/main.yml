@@ -147,6 +147,18 @@
           - instance_second is not changed
           - instance_second.instance.InstanceId == instance_create.instance.InstanceId
 
+    - name: Check mode must not modify anything
+      susunola.tencentcloud.cvm_instance:
+        state: absent
+        instance_id: "{{ instance_create.instance.InstanceId }}"
+      check_mode: true
+      register: check_delete
+
+    - name: Check mode predicts a change
+      ansible.builtin.assert:
+        that:
+          - check_delete is changed
+
     - name: Terminate the instance
       susunola.tencentcloud.cvm_instance:
         state: absent

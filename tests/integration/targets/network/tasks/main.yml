@@ -48,6 +48,18 @@
         that:
           - vpc_second is not changed
 
+    - name: Check mode must not modify anything
+      susunola.tencentcloud.vpc:
+        state: absent
+        vpc_id: "{{ vpc_create.vpc.VpcId }}"
+      check_mode: true
+      register: check_delete
+
+    - name: Check mode predicts a change
+      ansible.builtin.assert:
+        that:
+          - check_delete is changed
+
     - name: Create a subnet in the VPC
       susunola.tencentcloud.subnet:
         state: present

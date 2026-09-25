@@ -55,16 +55,33 @@ def _write_target(root, tasks):
     (base / "tasks" / "main.yml").write_text(tasks, encoding="utf-8")
 
 
+# The shape every target in this repository uses: one task that wraps a
+# `block` and an `always`, so the cleanup runs when the block fails. The
+# `always` used to be indented inside the assert task, which Ansible does not
+# accept -- a task has no `always` -- and the teardown audit is what noticed.
 GOOD_TASKS = """---
-- name: Create a demo thing
-  susunola.tencentcloud.demo_thing:
-    state: present
-  register: created
+- name: Demo thing end-to-end
+  block:
+    - name: Create a demo thing
+      susunola.tencentcloud.demo_thing:
+        state: present
+      register: created
 
-- name: It changed
-  ansible.builtin.assert:
-    that:
-      - created is changed
+    - name: It changed
+      ansible.builtin.assert:
+        that:
+          - created is changed
+
+    - name: Check mode must not modify anything
+      susunola.tencentcloud.demo_thing:
+        state: absent
+      check_mode: true
+      register: check_delete
+
+    - name: Check mode predicts a change
+      ansible.builtin.assert:
+        that:
+          - check_delete is changed
 
   always:
     - name: Clean up
@@ -103,9 +120,14 @@ def test_field_guard_uses_base_register(target_tree):
 
 
 def test_group_module_defaults_is_not_an_fqcn(target_tree):
+    # The create task sits inside a block, so the keys added under it are
+    # indented to match; the needle is matched without its leading spaces.
     tasks = GOOD_TASKS.replace(
-        "- name: Create a demo thing",
-        "- name: Create a demo thing\n  module_defaults:\n    group/susunola.tencentcloud.all:\n      region: ap-guangzhou\n",
+        "    - name: Create a demo thing\n",
+        "    - name: Create a demo thing\n"
+        "      module_defaults:\n"
+        "        group/susunola.tencentcloud.all:\n"
+        "          region: ap-guangzhou\n",
     )
     _write_target(target_tree, tasks)
     assert _AUDIT.main() == 0

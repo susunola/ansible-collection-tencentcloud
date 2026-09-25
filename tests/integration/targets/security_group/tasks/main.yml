@@ -1,68 +1,94 @@
 ---
-- name: Create a security group
-  susunola.tencentcloud.security_group:
+# End-to-end coverage for security_group: create + idempotency + check mode +
+# delete, with the deletion in an `always` block so a failure half way through
+# does not leave the group behind. Security groups are free of charge, but a
+# leaked one is still attached to nothing and shows up in the cleanup sweep.
+#
+# The name is chosen before the block rather than read back from the creation
+# result: `always` runs when creation fails, and the result would not exist.
+- name: Security group end-to-end
+  vars:
     region: "{{ tencentcloud_region }}"
-    state: present
-    name: "ansible-sg-it-{{ 99999999 | random }}"
-    description: integration test security group
-    tags:
-      ansible_test: "true"
-  register: create_result
+    run_id: "{{ 99999999 | random }}"
+    sg_name: "ansible-sg-it-{{ run_id }}"
+  module_defaults:
+    group/susunola.tencentcloud.all:
+      region: "{{ region }}"
+  block:
+    # NOTE: a `vars:` block is templated lazily, so a `| random` name is
+    # re-rolled on EVERY reference - the group would be created under one name
+    # and deleted under another, which fails the run and leaks the resource.
+    # Freeze the name once with set_fact (facts outrank play vars).
+    - name: Freeze the per-run resource name
+      ansible.builtin.set_fact:
+        run_id: "{{ run_id }}"
 
-- name: Creation reports changed
-  ansible.builtin.assert:
-    that:
-      - create_result is changed
-      - create_result.security_group.SecurityGroupId is defined
+    - name: Create a security group
+      susunola.tencentcloud.security_group:
+        state: present
+        name: "{{ sg_name }}"
+        description: integration test security group
+        tags:
+          ansible_test: "true"
+      register: create_result
 
-- name: Create the same group again (idempotency)
-  susunola.tencentcloud.security_group:
-    region: "{{ tencentcloud_region }}"
-    state: present
-    name: "{{ create_result.security_group.SecurityGroupName }}"
-    description: integration test security group
-    tags:
-      ansible_test: "true"
-  register: second_run
+    - name: Creation reports changed with an ID
+      ansible.builtin.assert:
+        that:
+          - create_result is changed
+          - create_result.security_group.SecurityGroupId is defined
 
-- name: Second run reports no change
-  ansible.builtin.assert:
-    that:
-      - second_run is not changed
+    - name: Create the same group again (idempotency)
+      susunola.tencentcloud.security_group:
+        state: present
+        name: "{{ sg_name }}"
+        description: integration test security group
+        tags:
+          ansible_test: "true"
+      register: second_run
 
-- name: Check mode must not modify anything
-  susunola.tencentcloud.security_group:
-    region: "{{ tencentcloud_region }}"
-    state: absent
-    name: "{{ create_result.security_group.SecurityGroupName }}"
-  check_mode: true
-  register: check_delete
+    - name: Second run reports no change
+      ansible.builtin.assert:
+        that:
+          - second_run is not changed
 
-- name: Check mode predicts a change
-  ansible.builtin.assert:
-    that:
-      - check_delete is changed
+    - name: Check mode must not modify anything
+      susunola.tencentcloud.security_group:
+        state: absent
+        name: "{{ sg_name }}"
+      check_mode: true
+      register: check_delete
 
-- name: Delete the security group
-  susunola.tencentcloud.security_group:
-    region: "{{ tencentcloud_region }}"
-    state: absent
-    name: "{{ create_result.security_group.SecurityGroupName }}"
-  register: delete_result
+    - name: Check mode predicts a change
+      ansible.builtin.assert:
+        that:
+          - check_delete is changed
 
-- name: Deletion reports changed
-  ansible.builtin.assert:
-    that:
-      - delete_result is changed
+    - name: Delete the security group
+      susunola.tencentcloud.security_group:
+        state: absent
+        name: "{{ sg_name }}"
+      register: delete_result
 
-- name: Delete again (idempotency for absent)
-  susunola.tencentcloud.security_group:
-    region: "{{ tencentcloud_region }}"
-    state: absent
-    name: "{{ create_result.security_group.SecurityGroupName }}"
-  register: second_delete
+    - name: Deletion reports changed
+      ansible.builtin.assert:
+        that:
+          - delete_result is changed
 
-- name: Second delete reports no change
-  ansible.builtin.assert:
-    that:
-      - second_delete is not changed
+    - name: Delete again (idempotency for absent)
+      susunola.tencentcloud.security_group:
+        state: absent
+        name: "{{ sg_name }}"
+      register: second_delete
+
+    - name: Second delete reports no change
+      ansible.builtin.assert:
+        that:
+          - second_delete is not changed
+
+  always:
+    - name: Delete the security group if the run failed mid-way
+      susunola.tencentcloud.security_group:
+        state: absent
+        name: "{{ sg_name }}"
+      ignore_errors: true

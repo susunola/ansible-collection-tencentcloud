@@ -160,6 +160,10 @@ def main() -> int:
                 errors.append(f"{p}: YAML error: {exc}")
         audit_tasks(base / "tasks/main.yml")
     errors.extend(audit_conditionals())
+    errors.extend(audit_teardowns())
+    errors.extend(audit_check_mode())
+    errors.extend(audit_lazy_random_names())
+    errors.extend(audit_registry_claims())
     errors.extend(audit_workflow_targets())
     errors.extend(audit_workflow_input_parity())
     # coverage registry + workflow parse
@@ -177,7 +181,9 @@ def main() -> int:
         "AUDIT OK: 5 targets x 3 files + coverage.yml + integration.yml parse; "
         "all FQCNs resolve; when-guards reference earlier registers; "
         "no bare or malformed conditionals; dispatch default matches the run fallback; "
-        "per-target gates are exported where ansible-test can still see them"
+        "per-target gates are exported where ansible-test can still see them; "
+        "every target that creates a resource tears it down in an 'always' block "
+        "and predicts the change in check mode"
     )
     return 0
 
@@ -207,6 +213,174 @@ def audit_conditionals(root: Path | None = None) -> list[str]:
                         f"{path}: 'when: {cond.strip()}' chains a filter onto a comparison "
                         "result - the task fails at runtime with 'object of type X has no len()'"
                     )
+    return problems
+
+
+def audit_teardowns(root: Path | None = None) -> list[str]:
+    """Targets that create a resource and never delete it in an ``always`` block.
+
+    Every target here provisions something in a real Tencent Cloud account.
+    Thirty-two of the thirty-three ended with a delete in an ``always`` block,
+    so a failure half way through left the account as it found it; the
+    thirty-third deleted on the success path only, which is exactly the run
+    that failed. The check is deliberately about the *block structure* and not
+    about a deletion somewhere in the file: a delete that the failing task
+    never reaches is not a teardown.
+    """
+    root = root or ROOT
+    problems: list[str] = []
+    for path in sorted((root / "tests/integration/targets").glob("*/tasks/main.yml")):
+        try:
+            data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001 - reported by the parse check
+            continue
+        if not _creates_a_resource(data):
+            continue
+        if _deletes_in_always(data):
+            continue
+        problems.append(
+            "%s: creates a resource but deletes it outside an 'always' block, so a "
+            "failure mid-run leaves it behind" % path)
+    return problems
+
+
+def _creates_a_resource(data) -> bool:
+    """True when the target asks a module for ``state: present``."""
+    for task in walk_tasks(data):
+        if isinstance(task, dict):
+            for key, value in task.items():
+                if isinstance(value, dict) and value.get("state") == "present":
+                    return True
+    return False
+
+
+def _deletes_in_always(data) -> bool:
+    """True when an ``always`` block asks a module for ``state: absent``."""
+    for node in data if isinstance(data, list) else [data]:
+        if not isinstance(node, dict):
+            continue
+        for task in walk_tasks(node.get("always") or []):
+            if not isinstance(task, dict):
+                continue
+            for value in task.values():
+                if isinstance(value, dict) and value.get("state") == "absent":
+                    return True
+    return False
+
+
+def _all_mappings(node):
+    """Yield every mapping in a parsed task document, at any depth."""
+    if isinstance(node, dict):
+        yield node
+        for value in node.values():
+            yield from _all_mappings(value)
+    elif isinstance(node, list):
+        for item in node:
+            yield from _all_mappings(item)
+
+
+def audit_lazy_random_names(root: Path | None = None) -> list[str]:
+    """Targets that give a resource a ``| random`` name they never freeze.
+
+    A ``vars:`` block on a task is templated lazily, so ``name:
+    "ansible-it-{{ 99999999 | random }}"`` is re-rolled on every reference: the
+    resource is created under one name and deleted under another, which fails
+    the run and leaks it. Every target in this repository freezes the name with
+    a ``set_fact`` first -- facts outrank play vars -- and this check exists
+    because a rewritten target lost its freeze step while gaining an ``always``
+    teardown, so the teardown deleted a name that had never been created.
+
+    The document is walked rather than its tasks: the ``vars:`` that matters
+    belongs to the task that wraps the ``block``, and the task walker yields
+    what is inside a block, not the block's own task.
+    """
+    root = root or ROOT
+    problems: list[str] = []
+    for path in sorted((root / "tests/integration/targets").glob("*/tasks/main.yml")):
+        try:
+            data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001 - reported by the parse check
+            continue
+        mappings = list(_all_mappings(data))
+        lazy = False
+        for mapping in mappings:
+            task_vars = mapping.get("vars")
+            if isinstance(task_vars, dict) and any(
+                    isinstance(value, str) and "| random" in value for value in task_vars.values()):
+                lazy = True
+                break
+        if not lazy:
+            continue
+        frozen = any("set_fact" in str(key) for mapping in mappings for key in mapping)
+        if frozen:
+            continue
+        problems.append(
+            "%s: gives a resource a '| random' name in a lazy vars: block and never "
+            "freezes it with set_fact, so the create and the delete use different "
+            "names and the resource leaks" % path)
+    return problems
+
+
+def audit_registry_claims(root: Path | None = None) -> list[str]:
+    """Coverage entries claiming a module the target never calls.
+
+    ``tests/integration/coverage.yml`` is what the quality gate counts when it
+    reports how many core modules have an integration target, so an entry that
+    is not backed by a task is a coverage number that is too good. Three were:
+    ``security_group_rule`` belonged to the ``network`` target rather than to
+    ``security_group``, and ``network_acl`` and ``clb_rule`` were called by no
+    target at all -- the last of which made the real gap one larger than the
+    number the repository had been quoting.
+    """
+    root = root or ROOT
+    coverage = root / "tests/integration/coverage.yml"
+    try:
+        parsed = yaml.safe_load(coverage.read_text(encoding="utf-8")) or {}
+        registry = parsed.get("targets") or {}
+    except Exception as exc:  # noqa: BLE001
+        return ["%s: %s" % (coverage, exc)]
+    if not isinstance(registry, dict):
+        return ["%s: 'targets' is not a mapping of target to coverage" % coverage]
+    problems: list[str] = []
+    for target, info in sorted(registry.items()):
+        directory = root / "tests/integration/targets" / target
+        text = "".join(
+            path.read_text(encoding="utf-8")
+            for path in sorted(directory.rglob("*.yml"))) if directory.is_dir() else ""
+        for module in info.get("modules") or []:
+            if ("susunola.tencentcloud.%s:" % module) not in text:
+                problems.append(
+                    "%s: claims %s, but the target never calls it -- move the entry to "
+                    "the target that does, or drop it and let the gap show"
+                    % (coverage, module))
+    return problems
+
+
+def audit_check_mode(root: Path | None = None) -> list[str]:
+    """Targets that never run a module in check mode.
+
+    Check mode is a headline claim of this collection: every write module
+    documents ``check_mode: full`` and each has a unit test that runs it
+    against a fake. Twenty-three of the thirty-three targets also ran one
+    against the real API, and ten did not -- so for those the claim rested on
+    the fake alone. A target that creates something has a state to predict, so
+    it is expected to exercise it.
+    """
+    root = root or ROOT
+    problems: list[str] = []
+    for path in sorted((root / "tests/integration/targets").glob("*/tasks/main.yml")):
+        try:
+            data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001 - reported by the parse check
+            continue
+        if not _creates_a_resource(data):
+            continue
+        if any(task.get("check_mode") in (True, "true", "yes")
+               for task in walk_tasks(data) if isinstance(task, dict)):
+            continue
+        problems.append(
+            "%s: creates a resource but never runs a task in check mode, so its "
+            "check-mode claim is only tested against a fake" % path)
     return problems
 
 

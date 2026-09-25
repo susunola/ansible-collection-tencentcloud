@@ -5,13 +5,13 @@ targets:
   cam_user: {cost: free, modules: [cam_user], account_blocked: true}
   cam_group_membership: {cost: free, modules: [cam_group_membership], account_blocked: true}
   key_pair: {cost: free, modules: [key_pair]}
-  security_group: {cost: free, modules: [security_group, security_group_rule]}
+  security_group: {cost: free, modules: [security_group]}
   # vpc/subnet have dedicated flagship targets below (P0-01/02); keep the
   # module->target mapping unique so the registry validator passes.
-  network: {cost: low, modules: [route_table, network_acl, eip]}
+  network: {cost: low, modules: [route_table, security_group_rule, eip]}
   cos_bucket: {cost: low, modules: [cos_bucket]}
   cfs_file_system: {cost: medium, modules: [cfs_file_system]}
-  clb_http: {cost: medium, modules: [clb_load_balancer, clb_listener, clb_rule]}
+  clb_http: {cost: medium, modules: [clb_load_balancer, clb_listener]}
   kms_key: {cost: low, modules: [kms_key, kms_key_rotation]}
   # Monitor has no alarm view map for QCE/CVM on this account (2.4): "view not
   # found", so the policy lifecycle cannot run regardless of the gate.

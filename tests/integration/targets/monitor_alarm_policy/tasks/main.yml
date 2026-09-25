@@ -120,6 +120,18 @@
               - notice_update is changed
               - notice_second is not changed
           when: notice_id | length > 0
+
+        - name: Check mode must not modify anything
+          susunola.tencentcloud.monitor_alarm_policy:
+            state: absent
+            policy_id: "{{ created.policy.PolicyId }}"
+          check_mode: true
+          register: check_delete
+
+        - name: Check mode predicts a change
+          ansible.builtin.assert:
+            that:
+              - check_delete is changed
   always:
     - name: Delete integration policy
       susunola.tencentcloud.monitor_alarm_policy:

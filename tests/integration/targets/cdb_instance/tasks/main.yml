@@ -105,6 +105,18 @@
           - db_second is not changed
           - db_second.instance.InstanceId == db_create.instance.InstanceId
 
+    - name: Check mode must not modify anything
+      susunola.tencentcloud.cdb_instance:
+        state: absent
+        instance_id: "{{ db_create.instance.InstanceId }}"
+      check_mode: true
+      register: check_delete
+
+    - name: Check mode predicts a change
+      ansible.builtin.assert:
+        that:
+          - check_delete is changed
+
     - name: Isolate the instance (stops billing)
       susunola.tencentcloud.cdb_instance:
         state: absent

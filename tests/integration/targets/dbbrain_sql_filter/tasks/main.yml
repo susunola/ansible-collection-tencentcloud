@@ -40,6 +40,22 @@
         that:
           - created is changed
           - reconciled is not changed
+
+    - name: Check mode must not modify anything
+      susunola.tencentcloud.dbbrain_sql_filter:
+        state: absent
+        instance_id: "{{ dbbrain_instance_id }}"
+        sql_type: SELECT
+        filter_key: ansible_e2e_marker
+        max_concurrency: 1
+        session_token: "{{ dbbrain_session_token }}"
+      check_mode: true
+      register: check_delete
+
+    - name: Check mode predicts a change
+      ansible.builtin.assert:
+        that:
+          - check_delete is changed
   always:
     - name: Terminate SQL filter
       susunola.tencentcloud.dbbrain_sql_filter:

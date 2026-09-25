@@ -136,6 +136,19 @@
           - cluster_second is not changed
           - cluster_second.cluster.ClusterId == cluster_create.cluster.ClusterId
 
+    - name: Check mode must not modify anything
+      susunola.tencentcloud.tke_cluster:
+        state: absent
+        cluster_id: "{{ cluster_create.cluster.ClusterId }}"
+        instance_delete_mode: retain
+      check_mode: true
+      register: check_delete
+
+    - name: Check mode predicts a change
+      ansible.builtin.assert:
+        that:
+          - check_delete is changed
+
     - name: Delete the cluster, retaining any instances
       susunola.tencentcloud.tke_cluster:
         state: absent

@@ -1,0 +1,44 @@
+---
+minor_changes:
+  - >-
+    integration tests - run ten more targets in check mode. Thirty-three
+    targets create real resources and twenty-three of them asserted that a
+    check-mode delete reports a change without making one; the other ten left
+    the claim to the module's unit tests, which run against fakes. Each new
+    pair is placed after the resource exists and before its deletion, reuses
+    the identity arguments from that target's own delete task, and mirrors a
+    behaviour its unit test already proves. Targets that delete in an `always`
+    block keep the pair at the end of the block, ahead of that teardown.
+  - >-
+    integration tests - `security_group` now deletes in an `always` block. It
+    was the only target of the thirty-three that deleted on the success path
+    only, which is precisely the path a failure skips, so a run that failed
+    half way through left the group behind. Rewriting it also revealed a
+    second trap: a `vars:` block is templated lazily, so the `| random` name
+    would be re-rolled on every reference and the teardown would have deleted a
+    name that was never created. The name is frozen with `set_fact` first, as
+    every other target does.
+  - >-
+    scripts/audit_integration_targets.py - four new checks over
+    `tests/integration/targets`. A target that creates a resource must delete
+    it in an `always` block, must run something in check mode, and must freeze
+    any `| random` name before using it; and every module
+    `tests/integration/coverage.yml` credits to a target must actually be
+    called by it. Each was verified by removing the thing it checks and
+    watching it fail.
+bugfixes:
+  - >-
+    integration coverage - three modules were credited to a target that never
+    called them. `security_group_rule` is exercised by the `network` target and
+    was credited to `security_group`; `network_acl` and `clb_rule` are
+    exercised by nothing at all, and the last of those is a core-subset write
+    module, so the honest gap is 135 rather than the 134 the repository had
+    been quoting. The registry is corrected and
+    `scripts/check_quality_gates.py` carries the corrected ratchet, with the
+    reason recorded next to the number rather than in a commit message.
+  - >-
+    tests - `GOOD_TASKS` in tests/unit/scripts/test_audit_integration_targets.py
+    indented its `always:` inside an `ansible.builtin.assert` task. Ansible
+    gives a task no `always`, so the fixture described a target that could not
+    have run, and it passed because nothing checked the block structure until
+    the teardown audit did.

@@ -59,7 +59,16 @@ INTEGRATION_WF = os.path.join(REPO_ROOT, ".github", "workflows", "integration.ym
 # this collection and the standard it claims.
 DOC_RATCHET = 0
 INTEGRATION_GATED_RATCHET = 8
-INTEGRATION_MISSING_RATCHET = 134
+# Corrected from 134: three modules were credited to a target that never
+# called them. ``security_group_rule`` is exercised by the ``network`` target
+# and was credited to ``security_group``, and ``network_acl`` and ``clb_rule``
+# are exercised by nothing at all. The first was a mis-attribution, so moving
+# it changes no count; ``clb_rule`` is a core-subset write module, so the gap
+# is one larger than the registry claimed. This is a correction, not a
+# regression, and the count now cannot go up again by itself:
+# ``audit_integration_targets.py`` fails when a target claims a module its
+# tasks never call.
+INTEGRATION_MISSING_RATCHET = 135
 
 # Write modules whose unit tests never run ``run_module`` twice, so nothing
 # checks the idempotency the attributes claim.  Small, but the claim is

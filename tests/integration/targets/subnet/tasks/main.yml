@@ -85,6 +85,18 @@
           - subnet_second is not changed
           - subnet_second.subnet.SubnetId == subnet_create.subnet.SubnetId
 
+    - name: Check mode must not modify anything
+      susunola.tencentcloud.subnet:
+        state: absent
+        subnet_id: "{{ subnet_create.subnet.SubnetId }}"
+      check_mode: true
+      register: check_delete
+
+    - name: Check mode predicts a change
+      ansible.builtin.assert:
+        that:
+          - check_delete is changed
+
     - name: Delete the subnet
       susunola.tencentcloud.subnet:
         state: absent

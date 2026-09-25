@@ -69,6 +69,20 @@
           - image_second.image.ImageId == image_create.image.ImageId
       when: source_instance | length > 0
 
+    - name: Check mode must not modify anything
+      susunola.tencentcloud.cvm_image:
+        state: absent
+        image_name: "{{ image_name }}"
+      check_mode: true
+      register: check_delete
+      when: source_instance | length > 0
+
+    - name: Check mode predicts a change
+      ansible.builtin.assert:
+        that:
+          - check_delete is changed
+      when: source_instance | length > 0
+
     - name: Delete the image
       susunola.tencentcloud.cvm_image:
         state: absent
