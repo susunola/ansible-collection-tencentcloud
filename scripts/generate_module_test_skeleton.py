@@ -669,6 +669,26 @@ def render(analysis):
         lines.append("")
         lines.append("")
     # state stubs
+    #
+    # A read-only module has no state to reconcile: it lists what the API has
+    # and returns it. Emitting ``test_run_module_present_reconcile`` for one
+    # produced a stub whose first line passes ``state='present'`` to a module
+    # with no such option, so the only way to make it pass was to notice the
+    # stub was describing a different kind of module.
+    if analysis["name"].endswith("_info"):
+        where = "module lines %d-%d" % (analysis["run_start"], analysis["run_end"])
+        reason = ("TODO(human): finish the read path: back the fake client with a "
+                  "store, then assert the returned payload, total_count and request_id")
+        lines.append('@pytest.mark.xfail(reason="%s", strict=False)' % reason)
+        lines.append("def test_run_module_lists_the_resource(client):  # %s" % where)
+        lines.append("    _run_args()")
+        lines.append("    # Give the fake client a store first, then run and assert the")
+        lines.append("    # returned payload, total_count and request_id, and that no write")
+        lines.append("    # operation was recorded.")
+        lines.append('    pytest.fail("unfinished skeleton")')
+        lines.append("")
+        return "\n".join(_pad_top_level_spacing(lines)).rstrip() + "\n"
+
     stubs = [("present", "reconcile")]
     if analysis["has_absent"]:
         stubs.append(("absent", "remove"))

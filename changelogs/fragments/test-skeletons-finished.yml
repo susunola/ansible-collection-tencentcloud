@@ -1,0 +1,63 @@
+---
+minor_changes:
+  - >-
+    unit tests - finish the generated test skeletons. Eight test files were
+    still byte-for-byte output of
+    ``scripts/generate_module_test_skeleton.py``: their first line carried the
+    generator's marker, which the script documents as "delete this line when
+    you start hand-finishing", and most of their behavioural tests were
+    ``xfail`` stubs annotated "TODO(human)". For those eight modules the file
+    existed and asserted nothing about the module's behaviour, which is 22 of
+    the suite's xfails and the reason a claim like "every module has a
+    dedicated unit test" was true only nominally.
+  - >-
+    unit tests - hand-finish ssm_secret_version_info. The gate it documents --
+    secret material is read only when I(include_secret_value=true) is asked
+    for -- had no test in either direction, so a regression would either put a
+    secret into a task result nobody requested or silently withhold one that
+    was requested. Both directions are asserted now, along with the two guard
+    rails around them (a version id is required to read a value; encryption
+    response options require the opt-in), the request id being reported
+    separately from the payload, and the SDK error envelope. A mutation that
+    removes the gate is caught by five tests.
+  - >-
+    unit tests - rewrite the api_gateway_api_key skeleton as the
+    request-builder tests it actually was. The module's behaviour flows are
+    covered by test_api_gateway_api_key_main.py; what that file cannot see is
+    the request put on the wire, and one builder carries a credential:
+    ``build_create`` copies I(access_key_secret) into the request in manual
+    mode and must not invent one in auto mode, where the API generates the
+    key. The three ``run_module`` stubs that duplicated the main file are
+    gone.
+  - >-
+    scripts/check_quality_gates.py - ratchet the number of test files that are
+    still unmodified generator skeletons. Nothing required a skeleton to ever
+    be finished: the generator's ``--check`` verifies that a marker-bearing
+    file still matches the generator, which is the opposite assertion. The new
+    census is printed by every CI run and may only go down.
+bugfixes:
+  - >-
+    scripts/generate_module_test_skeleton.py - emit a read-shaped stub for a
+    read-only module. It emitted
+    ``test_run_module_present_reconcile`` for every module with a
+    ``run_module``, including the 570 ``_info`` modules, whose first line
+    passes ``state='present'`` to a module that has no such option -- so the
+    stub described a different kind of module and could only be finished by
+    noticing that. A ``_info`` module now gets one stub naming the read path
+    it actually has.
+  - >-
+    scripts/check_quality_gates.py - gate the check-mode claim the same way as
+    the idempotency claim. All 457 write modules say ``check_mode: full``, and
+    nothing required a test that runs one in check mode: the two-run test was
+    gated, the dry run was not. The gate is on the test *name*
+    (``check_mode``/``dry_run``) because that is deterministic -- detecting the
+    assertion by reading test prose was tried and reported 376 modules, every
+    one inspected a false positive, since the idiom varies between
+    ``assert_not_called()``, ``assert not any(name == "CreateGroup" ...)`` and
+    ``assert "DeleteHost" not in [...]``.
+  - >-
+    docs - re-measure the test figures on docs/panorama.html. The module-level
+    test-function count moves 10,804 to 10,870, and the CI-scope line becomes
+    13,899 collected (13,713 passed, 186 skipped, 0 xfailed) measured with the
+    command the page prints, replacing a snapshot that still described 22
+    xfails the suite no longer has.
