@@ -68,6 +68,10 @@ jobs:
       # inventory option it never read.
       - name: Plugin options are options the plugin reads
         run: python scripts/check_plugin_options.py --check
+      # The other direction from validate-modules: an option the argument spec
+      # declares that no code path reads. ckafka_topic declared tags this way.
+      - name: Module options are options the module reads
+        run: python scripts/check_module_options.py --check
       # Every captured RETURN sample is re-derived from the module's own unit
       # tests, so a sample cannot outlive the payload it documents. Hand
       # written samples are exempt (a test's fake response may carry fewer

@@ -195,6 +195,21 @@ def _first(collection):
     return collection[0] if collection else None
 
 
+def _tags(models, values):
+    """Build the API's tag list from the ``tags`` dict.
+
+    CKafka's model is ``Tag``/``TagKey``/``TagValue``, so the shared
+    ``build_sdk_tags`` helper (which sets ``Key``/``Value``) would send a list
+    of empty tags.
+    """
+    result = []
+    for key, value in sorted((values or {}).items()):
+        tag = models.Tag()
+        tag.TagKey, tag.TagValue = key, value
+        result.append(tag)
+    return result
+
+
 def find_topic(module, client, models, instance_id, topic_name):
     """Return the matching topic dict or None."""
     request = models.DescribeTopicRequest()
@@ -237,6 +252,10 @@ def _create(module, client, models, params):
         request.UncleanLeaderElectionEnable = int(params["unclean_leader_election"])
     if params.get("message_timestamp_type") is not None:
         request.LogMsgTimestampType = params["message_timestamp_type"]
+    if params.get("tags"):
+        # Documented as creation-only: the tag set of an existing topic is not
+        # reconciled by this module.
+        request.Tags = _tags(models, params["tags"])
     return module.sdk_call(client.CreateTopic, request)
 
 

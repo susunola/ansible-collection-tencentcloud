@@ -1,0 +1,23 @@
+---
+bugfixes:
+  - >-
+    ckafka_topic - send ``tags`` when the topic is created. The option was
+    documented as "applied at creation" and no code path read it, so a topic
+    came back without the tags the playbook asked for and nothing said so.
+    CKafka's model is ``Tag``/``TagKey``/``TagValue``, so the shared
+    ``build_sdk_tags`` helper (which sets ``Key``/``Value``) would have sent a
+    list of empty tags; the module builds the API shape itself.
+minor_changes:
+  - >-
+    scripts/check_module_options.py - new guard, wired into CI as "Module
+    options are options the module reads". ``validate-modules`` checks that
+    the documentation matches the argument spec and the example checker checks
+    that the examples pass declared options; nothing checked that a declared
+    option is read at all, which is how the ``tags`` defect above survived.
+    An option counts as read when its name appears beyond its own declaration
+    in the module or in a module helper the module imports
+    (``cos.resolve_appid(module)`` reads ``appid`` inside
+    ``module_utils/cos.py``). Nested sub-options are out of scope -- a generic
+    mapper may rename their keys (``mqtt_instance._items`` turns ``vpc_id``
+    into ``VpcId``) -- and an option whose only choice is also its default is
+    a constant with nothing to branch on.

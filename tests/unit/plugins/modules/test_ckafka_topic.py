@@ -17,7 +17,12 @@ class FakeRequest(object):
     pass
 
 
+class FakeTag(object):
+    pass
+
+
 class FakeModels(object):
+    Tag = FakeTag
     DescribeTopicRequest = FakeRequest
     DescribeTopicAttributesRequest = FakeRequest
     CreateTopicRequest = FakeRequest
@@ -158,6 +163,50 @@ def test_create_sends_all_provided_fields():
     assert request.MinInsyncReplicas == 2
     assert request.UncleanLeaderElectionEnable == 0
     assert request.LogMsgTimestampType == "LogAppendTime"
+
+
+def test_create_sends_tags_in_the_api_shape():
+    """``tags`` is documented as applied at creation, so creation must send it.
+
+    CKafka's tag model is ``TagKey``/``TagValue``: building it with the shared
+    ``build_sdk_tags`` helper would send a list of empty tags.
+    """
+    client = FakeClient(FakeResponse())
+    module = FakeModule()
+    _create(module, client, FakeModels, {
+        "instance_id": "ckafka-1",
+        "topic_name": "order-events",
+        "partition_num": 3,
+        "replica_num": 2,
+        "retention_ms": None,
+        "retention_bytes": None,
+        "clean_up_policy": None,
+        "note": None,
+        "max_message_bytes": None,
+        "tags": {"env": "prod", "team": "data"},
+    })
+    tags = client.calls[-1].Tags
+    assert [(tag.TagKey, tag.TagValue) for tag in tags] == [
+        ("env", "prod"), ("team", "data"),
+    ]
+
+
+def test_create_omits_tags_when_none_are_given():
+    client = FakeClient(FakeResponse())
+    module = FakeModule()
+    _create(module, client, FakeModels, {
+        "instance_id": "ckafka-1",
+        "topic_name": "order-events",
+        "partition_num": 3,
+        "replica_num": 2,
+        "retention_ms": None,
+        "retention_bytes": None,
+        "clean_up_policy": None,
+        "note": None,
+        "max_message_bytes": None,
+        "tags": {},
+    })
+    assert not hasattr(client.calls[-1], "Tags")
 
 
 def test_create_omits_optional_fields():

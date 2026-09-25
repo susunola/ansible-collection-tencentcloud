@@ -97,6 +97,11 @@
 32. SDK drift sentinel (0.12.0): `info_specs_auto.py` carries a
     `GENERATED_SDK_VERSION` stamp; `check_sdk_drift.py` fails CI with
     regeneration instructions when the environment SDK drifts. **Done**
+32h. Module options vs the module (0.12.0):
+    `check_module_options.py` fails when a module declares an option no code
+    path reads (an imported helper counts as a read). It found
+    `ckafka_topic.tags`, which is now sent on create in the API's
+    `TagKey`/`TagValue` shape. **Done**
 32g. Plugin options vs the plugin (0.12.0):
     `check_plugin_options.py` requires every documented lookup/inventory
     option to appear in a `get_option` call; it found

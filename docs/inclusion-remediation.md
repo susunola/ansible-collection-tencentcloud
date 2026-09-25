@@ -72,6 +72,7 @@ Each claim below is checkable with the command in the same row.
 | Every captured `RETURN` sample still matches the payload its module's tests produce | `python scripts/add_return_samples.py --check` |
 | Every option that is a secret by name carries `no_log`, and no message interpolates one | `python scripts/check_secret_handling.py --check` |
 | Every option a plugin documents is an option it reads | `python scripts/check_plugin_options.py --check` |
+| Every option a module declares is an option it reads | `python scripts/check_module_options.py --check` |
 | The SDK release the artifacts were generated from is one users may install | `python scripts/check_sdk_drift.py --check` |
 | Every SDK reference resolves at the declared SDK floor | `python scripts/check_sdk_floor.py --check` |
 | The debt censuses are frozen and may only shrink | `python scripts/check_quality_gates.py` |
@@ -130,6 +131,25 @@ All 173 playbook, target and role files pass, and the three failure modes were
 each verified by editing a role and watching the gate fail: a module that does
 not exist, an option the module does not declare, and a variable nobody
 defines.
+
+**A declared option that did nothing.** `ckafka_topic` offers `tags`
+("Tags to apply to the topic as a dict, for example `env=prod`. Only applied
+at creation.") and no code path read it: a playbook that set tags got a topic
+without them, silently. It is sent on create now, in CKafka's own
+`Tag`/`TagKey`/`TagValue` shape — the shared `build_sdk_tags` helper sets
+`Key`/`Value`, which this API ignores, so the module builds the shape itself.
+The same audit found `tse_governance_host_retirement.state`, which offers
+`choices: [absent]` and `default: absent`: a constant with nothing to branch
+on, and the gate says so rather than demanding a read.
+
+`scripts/check_module_options.py` closes the class: a declared option must be
+read somewhere — its name beyond its own declaration in the module, or in a
+module helper the module imports, which is how `cos.resolve_appid(module)`
+reads `appid` inside `module_utils/cos.py`. Two shapes are deliberately out of
+scope: a nested sub-option, because a generic mapper may rename its key
+(`mqtt_instance._items` turns `vpc_id` into `VpcId`), and a single-choice
+constant. 1,027 modules and 5,711 declared options pass; the `tags` defect was
+re-created to watch the gate name it.
 
 **A documented option that did nothing.** `plugins/inventory/tencentcloud_sg.py`
 documented `include_sgless` — "whether to include ENIs that carry no matching
