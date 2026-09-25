@@ -84,6 +84,9 @@ extends_documentation_fragment:
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+seealso:
+  - module: susunola.tencentcloud.alb_target_group_info
+    description: Gather information about Tencent Cloud ALB target groups.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -93,7 +96,11 @@ EXAMPLES = r"""
     protocol: HTTP
     health_check: {HealthCheckEnabled: true, HealthCheckPath: /health}
 """
-RETURN = r"""target_group: {description: Effective ALB target group metadata., type: dict, returned: always}"""
+RETURN = r"""target_group:
+  description:
+    - Effective ALB target group metadata.
+  returned: always
+  type: dict"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

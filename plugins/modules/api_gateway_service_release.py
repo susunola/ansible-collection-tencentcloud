@@ -60,6 +60,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.api_gateway_service_release_info
+    description: Gather information about Tencent Cloud APIGATEWAY service environment release histories.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -67,8 +70,18 @@ EXAMPLES = r'''
     service_id: service-xxxxxxxx
     environment: release
     description: production release
+
+- name: Take the release offline
+  susunola.tencentcloud.api_gateway_service_release:
+    state: absent
+    service_id: service-xxxxxxxx
+    environment: release
 '''
-RETURN = r'''release: {description: Service environment release metadata., type: dict, returned: always}'''
+RETURN = r'''release:
+  description:
+    - Service environment release metadata.
+  returned: always
+  type: dict'''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

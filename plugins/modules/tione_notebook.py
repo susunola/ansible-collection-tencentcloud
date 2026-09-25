@@ -181,6 +181,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tione_notebook_info
+    description: Gather Tencent Cloud TIONE notebooks.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -201,8 +204,16 @@ EXAMPLES = r"""
     allow_delete: true
 """
 RETURN = r"""
-notebook: {description: Effective TIONE notebook detail., type: dict, returned: always}
-notebook_id: {description: Stable notebook ID., type: str, returned: when available}
+notebook:
+  description:
+    - Effective TIONE notebook detail.
+  returned: always
+  type: dict
+notebook_id:
+  description:
+    - Stable notebook ID.
+  returned: when available
+  type: str
 """
 
 import json

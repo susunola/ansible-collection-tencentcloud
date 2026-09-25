@@ -100,6 +100,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dlc_user_info
+    description: Gather information about Tencent Cloud DLC users.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -114,8 +117,16 @@ EXAMPLES = r"""
     state: absent
     allow_delete: true
 """
-RETURN = r"""user: {description: Effective DLC user metadata., type: dict, returned: always}
-user_id: {description: DLC user identifier., type: str, returned: always}"""
+RETURN = r"""user:
+  description:
+    - Effective DLC user metadata.
+  returned: always
+  type: dict
+user_id:
+  description:
+    - DLC user identifier.
+  returned: always
+  type: str"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

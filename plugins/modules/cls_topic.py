@@ -96,6 +96,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cls_topic_info
+    description: Gather information about Tencent Cloud CLS log topics.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -104,9 +107,19 @@ EXAMPLES = r'''
     name: network-flow
     period: 30
     partition_count: 2
+
+- name: Delete the topic
+  susunola.tencentcloud.cls_topic:
+    state: absent
+    logset_id: logset-xxxxxxxx
+    name: network-flow
 '''
 RETURN = r'''
-topic: {description: CLS topic metadata., type: dict, returned: always}
+topic:
+  description:
+    - CLS topic metadata.
+  returned: always
+  type: dict
 '''
 
 import time

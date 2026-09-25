@@ -68,8 +68,7 @@ options:
     description:
       - Rule input parameter values keyed by parameter name.
     type: dict
-    default:
-      {}
+    default: {}
   description:
     description:
       - Rule description.
@@ -85,8 +84,7 @@ options:
     description:
       - Exact evaluated tag scope.
     type: dict
-    default:
-      {}
+    default: {}
   excluded_resource_ids:
     description:
       - Exact resource exclusion list.
@@ -118,6 +116,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.config_rule_info
+    description: Gather information about Tencent Cloud Config Config rules.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -128,9 +129,18 @@ EXAMPLES = r'''
     resource_types: [QCS::CBS::Disk]
     risk_level: 1
     regions: [ap-guangzhou, ap-shanghai]
+
+- name: Delete the rule
+  susunola.tencentcloud.config_rule:
+    state: absent
+    name: require-encrypted-disks
 '''
 RETURN = r'''
-rule: {description: Config compliance rule metadata., type: dict, returned: always}
+rule:
+  description:
+    - Config compliance rule metadata.
+  returned: always
+  type: dict
 '''
 
 import time

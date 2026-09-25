@@ -56,15 +56,27 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cls_logset_info
+    description: Gather information about Tencent Cloud CLS logsets.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
 - susunola.tencentcloud.cls_logset:
     name: production-logs
     tags: {env: prod}
+
+- name: Delete the logset
+  susunola.tencentcloud.cls_logset:
+    state: absent
+    name: production-logs
 '''
 RETURN = r'''
-logset: {description: CLS logset metadata., type: dict, returned: always}
+logset:
+  description:
+    - CLS logset metadata.
+  returned: always
+  type: dict
 '''
 
 import time

@@ -107,6 +107,9 @@ extends_documentation_fragment:
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+seealso:
+  - module: susunola.tencentcloud.alb_listener_info
+    description: Gather information about Tencent Cloud ALB listeners.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

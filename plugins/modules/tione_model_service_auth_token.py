@@ -104,8 +104,16 @@ EXAMPLES = r"""
   no_log: true
 """
 RETURN = r"""
-auth_token: {description: 'Effective token metadata, with Value removed by default.', type: dict, returned: always}
-token_id: {description: Stable token ID., type: str, returned: when available}
+auth_token:
+  description:
+    - Effective token metadata, with Value removed by default.
+  returned: always
+  type: dict
+token_id:
+  description:
+    - Stable token ID.
+  returned: when available
+  type: str
 """
 
 import copy

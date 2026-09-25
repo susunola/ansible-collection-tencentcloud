@@ -117,8 +117,7 @@ options:
       - Tags to apply to the cluster as a dict, for example I(env=prod).
       - Only applied at creation.
     type: dict
-    default:
-      {}
+    default: {}
 notes:
   - Requires the C(tencentcloud-sdk-python-tke) package on the controller.
   - Cluster creation takes 10-20 minutes; the module returns as soon as
@@ -149,6 +148,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tke_cluster_info
+    description: Gather information about Tencent Cloud TKE clusters.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

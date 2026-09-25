@@ -56,6 +56,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.ssm_rotation_info
+    description: Gather Tencent Cloud Secrets Manager rotation state.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -65,7 +68,11 @@ EXAMPLES = r"""
     frequency: 30
     begin_time: '2026-09-01 02:00:00'
 """
-RETURN = r"""rotation: {description: Effective SSM rotation configuration., type: dict, returned: always}"""
+RETURN = r"""rotation:
+  description:
+    - Effective SSM rotation configuration.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

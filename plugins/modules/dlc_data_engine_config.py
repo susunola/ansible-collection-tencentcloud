@@ -134,8 +134,16 @@ EXAMPLES = r"""
       executor_max_numbers: 8
 """
 RETURN = r"""
-data_engine_config: {description: Effective normalized engine configuration., type: dict, returned: always}
-engine_id: {description: Resolved DLC data-engine ID., type: str, returned: always}
+data_engine_config:
+  description:
+    - Effective normalized engine configuration.
+  returned: always
+  type: dict
+engine_id:
+  description:
+    - Resolved DLC data-engine ID.
+  returned: always
+  type: str
 """
 
 import json

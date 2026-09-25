@@ -80,6 +80,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.lighthouse_key_pair_info
+    description: Gather information about Tencent Cloud Lighthouse key pairs.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -90,7 +93,11 @@ EXAMPLES = r"""
     association_type: ONLINE
     username: root
 """
-RETURN = r"""key_pair: {description: Lighthouse key pair metadata., type: dict, returned: always}"""
+RETURN = r"""key_pair:
+  description:
+    - Lighthouse key pair metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

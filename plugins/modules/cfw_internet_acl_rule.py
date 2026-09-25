@@ -112,6 +112,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cfw_internet_acl_rule_info
+    description: Gather information about Tencent Cloud CFW acl rules.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 
@@ -135,7 +138,11 @@ EXAMPLES = r"""
     state: absent
 """
 
-RETURN = r"""rule: {description: Cloud Firewall internet ACL rule metadata., type: dict, returned: always}"""
+RETURN = r"""rule:
+  description:
+    - Cloud Firewall internet ACL rule metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -66,9 +66,21 @@ EXAMPLES = r"""
     model_info: {ModelVersionId: modelversion-xxxxxxxx}
 """
 RETURN = r"""
-call_info: {description: All available gateway and intranet call metadata., type: dict, returned: in service_group_id mode}
-model_turbo_flag: {description: Allowed or Forbidden acceleration preflight result., type: str, returned: in preflight mode}
-request_id: {description: Tencent Cloud request ID., type: str, returned: always}
+call_info:
+  description:
+    - All available gateway and intranet call metadata.
+  returned: in service_group_id mode
+  type: dict
+model_turbo_flag:
+  description:
+    - Allowed or Forbidden acceleration preflight result.
+  returned: in preflight mode
+  type: str
+request_id:
+  description:
+    - Tencent Cloud request ID.
+  returned: always
+  type: str
 """
 
 import json

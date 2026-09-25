@@ -82,8 +82,7 @@ options:
       - Tags to apply to the gateway as a dict, for example I(env=prod).
       - Only applied at creation.
     type: dict
-    default:
-      {}
+    default: {}
 notes:
   - Requires the C(tencentcloud-sdk-python-vpc) package on the controller.
   - Deleting a gateway also removes its associated VPN connections and routes;
@@ -112,6 +111,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.vpn_gateway_info
+    description: Gather information about Tencent Cloud VPN gateways.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

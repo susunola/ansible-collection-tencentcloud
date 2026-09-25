@@ -80,7 +80,11 @@ EXAMPLES = r'''
       CidrWhiteList: [203.0.113.0/24]
 '''
 RETURN = r'''
-console_network: {description: Effective console network metadata with credential fields removed., type: dict, returned: always}
+console_network:
+  description:
+    - Effective console network metadata with credential fields removed.
+  returned: always
+  type: dict
 '''
 
 import json

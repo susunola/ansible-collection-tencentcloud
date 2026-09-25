@@ -33,6 +33,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cdwdoris_user_workload_group
+    description: Bind a Tencent Cloud CDW Doris user to a workload group.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

@@ -76,8 +76,7 @@ options:
     description:
       - Tags applied at creation.
     type: dict
-    default:
-      {}
+    default: {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -103,6 +102,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.vpc_flow_log_info
+    description: Gather information about Tencent Cloud VPC flow logs.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
@@ -114,10 +116,20 @@ EXAMPLES = r'''
     resource_id: eni-xxxxxxxx
     cls_topic_id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
     traffic_type: ALL
+
+- name: Delete the flow log
+  susunola.tencentcloud.vpc_flow_log:
+    state: absent
+    vpc_id: vpc-xxxxxxxx
+    name: app-eni-traffic
 '''
 
 RETURN = r'''
-flow_log: {description: Flow log metadata., type: dict, returned: always}
+flow_log:
+  description:
+    - Flow log metadata.
+  returned: always
+  type: dict
 '''
 
 import time

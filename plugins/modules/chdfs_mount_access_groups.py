@@ -53,6 +53,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.chdfs_mount_access_groups_info
+    description: Gather CHDFS mount point access-group bindings.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -61,7 +64,12 @@ EXAMPLES = r"""
     mount_point_id: mp-xxxxxxxx
     access_group_ids: [ag-xxxxxxxx]
 """
-RETURN = r"""access_group_ids: {description: Effective access-group IDs., type: list, elements: str, returned: always}"""
+RETURN = r"""access_group_ids:
+  description:
+    - Effective access-group IDs.
+  returned: always
+  type: list
+  elements: str"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

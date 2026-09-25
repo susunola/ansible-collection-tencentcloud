@@ -78,7 +78,11 @@ EXAMPLES = r"""
         SelectedTypes: [Weighted]
         WeightedConfig: [{ModelServiceId: model-service-xxxxxxxx, Weight: 100}]
 """
-RETURN = r"""model_api: {description: Effective Model API metadata and configuration., type: dict, returned: always}"""
+RETURN = r"""model_api:
+  description:
+    - Effective Model API metadata and configuration.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

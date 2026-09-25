@@ -55,6 +55,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.private_dns_account_info
+    description: Gather information about Tencent Cloud PRIVATEDNS private dns accounts.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -62,7 +65,11 @@ EXAMPLES = r"""
     uin: '100000000001'
     account: dns-consumer@example.com
 """
-RETURN = r"""account_binding: {description: Effective cross-account relationship., type: dict, returned: always}"""
+RETURN = r"""account_binding:
+  description:
+    - Effective cross-account relationship.
+  returned: always
+  type: dict"""
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

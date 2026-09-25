@@ -20,8 +20,7 @@ options:
   filters:
     description: MQTT API filter names mapped to lists of values.
     type: dict
-    default:
-      {}
+    default: {}
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -42,6 +41,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.mqtt_topic
+    description: Manage Tencent Cloud MQTT topics.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

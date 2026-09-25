@@ -92,6 +92,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cfs_auto_snapshot_policy_info
+    description: Gather information about Tencent Cloud CFS automatic snapshot policies.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -102,7 +105,11 @@ EXAMPLES = r"""
     alive_days: 30
     file_system_ids: [cfs-xxxxxxxx, cfs-yyyyyyyy]
 """
-RETURN = r"""policy: {description: CFS automatic snapshot policy metadata., type: dict, returned: always}"""
+RETURN = r"""policy:
+  description:
+    - CFS automatic snapshot policy metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

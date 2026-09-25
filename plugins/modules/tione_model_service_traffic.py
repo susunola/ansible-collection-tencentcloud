@@ -68,6 +68,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tione_model_service_traffic_info
+    description: Gather information about Tencent Cloud TIONE model service groups.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -79,7 +82,11 @@ EXAMPLES = r"""
       - {ServiceId: ms-v2, Weight: 10}
 """
 RETURN = r"""
-service_group: {description: Effective service-group detail., type: dict, returned: always}
+service_group:
+  description:
+    - Effective service-group detail.
+  returned: always
+  type: dict
 """
 
 import json

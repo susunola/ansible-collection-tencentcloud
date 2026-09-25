@@ -67,7 +67,11 @@ EXAMPLES = r"""
     instance_id: ins-xxxxxxxx
     instance_type: CVM
 """
-RETURN = r"""association: {description: Effective HAVIP association., type: dict, returned: always}"""
+RETURN = r"""association:
+  description:
+    - Effective HAVIP association.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

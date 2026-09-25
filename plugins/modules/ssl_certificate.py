@@ -89,8 +89,7 @@ options:
       - Tags to apply to the certificate as a dict, for example I(env=prod).
       - Only applied at upload.
     type: dict
-    default:
-      {}
+    default: {}
 notes:
   - Requires the C(tencentcloud-sdk-python-ssl) package on the controller.
   - Keep O(private_key) out of V(--check) output; use V(no_log) on the task
@@ -119,6 +118,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.ssl_certificate_info
+    description: Gather information about Tencent Cloud SSL certificates.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

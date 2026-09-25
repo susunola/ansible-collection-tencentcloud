@@ -125,6 +125,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.config_compliance_pack_info
+    description: Gather information about Tencent Cloud Config compliance packs.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 
@@ -142,7 +145,11 @@ EXAMPLES = r"""
         config_rule_id: cr-xxxxxxxx
 """
 
-RETURN = r"""compliance_pack: {description: Config compliance pack metadata., type: dict, returned: always}"""
+RETURN = r"""compliance_pack:
+  description:
+    - Config compliance pack metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -85,7 +85,11 @@ EXAMPLES = r"""
         - {ServiceID: service-stable, Percent: 90}
         - {ServiceID: service-canary, Percent: 10}
 """
-RETURN = r"""canary_rule: {description: Effective canary rule., type: dict, returned: always}"""
+RETURN = r"""canary_rule:
+  description:
+    - Effective canary rule.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

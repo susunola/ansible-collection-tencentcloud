@@ -72,6 +72,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.goosefs_fileset_info
+    description: Gather information about Tencent Cloud GOOSEFS filesets.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -82,7 +85,11 @@ EXAMPLES = r"""
     quota_size_limit: '1099511627776'
     quota_files_limit: '1000000'
 """
-RETURN = r"""fileset: {description: Effective GooseFS fileset metadata., type: dict, returned: always}"""
+RETURN = r"""fileset:
+  description:
+    - Effective GooseFS fileset metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import require_immutable_unchanged, fail_from_sdk_error

@@ -45,7 +45,6 @@ options:
       - Required when I(state=present).
     type: list
     elements: dict
-    required: true
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
@@ -65,6 +64,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cdb_audit_rule_info
+    description: Gather information about Tencent Cloud CDB audit rules.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
@@ -143,7 +145,11 @@ def run_module():
             "rule_name": {"type": "str", "required": True},
             "description": {"type": "str"},
             "audit_all": {"type": "bool", "default": False},
-            "rule_filters": {"type": "list", "elements": "dict", "required": True},
+            # Not ``required``: the delete path addresses the rule by name and
+            # never reads the filters, so demanding them there would make
+            # I(state=absent) impossible to call. required_if below is the
+            # real requirement.
+            "rule_filters": {"type": "list", "elements": "dict"},
         },
         required_if=[("state", "present", ("rule_filters",))],
         supports_check_mode=True,

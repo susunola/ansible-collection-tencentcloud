@@ -107,6 +107,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.mqtt_authorization_policy_info
+    description: Gather information about Tencent Cloud MQTT authorization policies.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -118,7 +121,11 @@ EXAMPLES = r"""
     actions: [connect, pub]
     resources: [orders/#]
 """
-RETURN = r"""policy: {description: Effective MQTT authorization policy., type: dict, returned: always}"""
+RETURN = r"""policy:
+  description:
+    - Effective MQTT authorization policy.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

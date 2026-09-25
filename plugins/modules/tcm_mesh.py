@@ -92,6 +92,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tcm_mesh_info
+    description: Gather information about Tencent Cloud TCM meshes.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -101,7 +104,11 @@ EXAMPLES = r"""
     mesh_type: HOSTED
     config: {Istio: {DisablePolicyChecks: false}}
 """
-RETURN = r"""mesh: {description: Effective service mesh metadata., type: dict, returned: always}"""
+RETURN = r"""mesh:
+  description:
+    - Effective service mesh metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

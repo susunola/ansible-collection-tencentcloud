@@ -83,6 +83,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.postgresql_backup_plan_info
+    description: Gather information about Tencent Cloud PostgreSQL backup plans.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -94,7 +97,11 @@ EXAMPLES = r"""
     max_start_time: 04:00:00
     retention_days: 30
 """
-RETURN = r"""backup_plan: {description: PostgreSQL backup-plan metadata., type: dict, returned: always}"""
+RETURN = r"""backup_plan:
+  description:
+    - PostgreSQL backup-plan metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

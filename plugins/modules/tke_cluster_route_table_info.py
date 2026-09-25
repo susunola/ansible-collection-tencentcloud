@@ -30,6 +30,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tke_cluster_route_table
+    description: Create or delete a Tencent Cloud TKE cluster route table.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

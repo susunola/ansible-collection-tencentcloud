@@ -143,8 +143,16 @@ EXAMPLES = r"""
     spec_group_id: group-xxxxxxxx
 """
 RETURN = r"""
-gateway: {description: Effective gateway metadata., type: dict, returned: always}
-task_id: {description: Tencent Cloud asynchronous task ID for a node specification change., type: str, returned: when node_config changes}
+gateway:
+  description:
+    - Effective gateway metadata.
+  returned: always
+  type: dict
+task_id:
+  description:
+    - Tencent Cloud asynchronous task ID for a node specification change.
+  returned: when node_config changes
+  type: str
 """
 import json
 import time

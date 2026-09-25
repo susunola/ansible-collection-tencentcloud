@@ -43,6 +43,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.ssm_rotation
+    description: Manage Tencent Cloud SSM secret rotation settings.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -50,9 +53,21 @@ EXAMPLES = r"""
     secret_name: prod/database
 """
 RETURN = r"""
-rotation: {description: Rotation configuration and schedule., type: dict, returned: always}
-history: {description: Recent rotation history., type: dict, returned: when include_history is true}
-request_id: {description: Request ID from the final API call., type: str, returned: always}
+rotation:
+  description:
+    - Rotation configuration and schedule.
+  returned: always
+  type: dict
+history:
+  description:
+    - Recent rotation history.
+  returned: when include_history is true
+  type: dict
+request_id:
+  description:
+    - Request ID from the final API call.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

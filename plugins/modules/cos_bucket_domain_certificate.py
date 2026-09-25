@@ -64,6 +64,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cos_bucket_domain_certificate_info
+    description: Gather a Tencent Cloud COS custom-domain certificate.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -81,7 +84,11 @@ EXAMPLES = r"""
     domain_name: static.example.com
     state: absent
 """
-RETURN = r"""domain_certificate: {description: Effective certificate status and identity., type: dict, returned: always}"""
+RETURN = r"""domain_certificate:
+  description:
+    - Effective certificate status and identity.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import get_certificate

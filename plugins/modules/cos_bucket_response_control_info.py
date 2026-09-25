@@ -38,6 +38,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cos_bucket_response_control
+    description: Manage Tencent Cloud COS response-header controls.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -46,8 +49,17 @@ EXAMPLES = r'''
     name: downloads
 '''
 RETURN = r'''
-response_controls: {description: Response-control configuration as an empty or single-element list., returned: always, type: list, elements: dict}
-response_control: {description: Effective response-control configuration or null., returned: always, type: dict}
+response_controls:
+  description:
+    - Response-control configuration as an empty or single-element list.
+  returned: always
+  type: list
+  elements: dict
+response_control:
+  description:
+    - Effective response-control configuration or null.
+  returned: always
+  type: dict
 '''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -67,6 +67,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tat_invocation
+    description: Invoke or cancel a Tencent Cloud TAT command.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -76,12 +79,38 @@ EXAMPLES = r"""
     command_id: cmd-xxxxxxxx
 """
 RETURN = r"""
-invocation: {description: Exact redacted invocation., type: dict, returned: exact mode}
-tasks: {description: Exact invocation instance tasks., type: list, elements: dict, returned: exact mode}
-invocations: {description: Matching redacted invocations., type: list, elements: dict, returned: list mode}
-total_count: {description: Matching invocation count., type: int, returned: list mode}
-truncated: {description: Whether max_pages stopped pagination., type: bool, returned: list mode}
-request_id: {description: Last Tencent Cloud request ID., type: str, returned: always}
+invocation:
+  description:
+    - Exact redacted invocation.
+  returned: exact mode
+  type: dict
+tasks:
+  description:
+    - Exact invocation instance tasks.
+  returned: exact mode
+  type: list
+  elements: dict
+invocations:
+  description:
+    - Matching redacted invocations.
+  returned: list mode
+  type: list
+  elements: dict
+total_count:
+  description:
+    - Matching invocation count.
+  returned: list mode
+  type: int
+truncated:
+  description:
+    - Whether max_pages stopped pagination.
+  returned: list mode
+  type: bool
+request_id:
+  description:
+    - Last Tencent Cloud request ID.
+  returned: always
+  type: str
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

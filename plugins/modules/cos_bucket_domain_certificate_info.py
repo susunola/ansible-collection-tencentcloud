@@ -43,6 +43,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cos_bucket_domain_certificate
+    description: Manage Tencent Cloud COS custom-domain certificates.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -52,8 +55,17 @@ EXAMPLES = r'''
     domain_name: static.example.com
 '''
 RETURN = r'''
-domain_certificates: {description: Certificate configuration as an empty or single-element list., returned: always, type: list, elements: dict}
-domain_certificate: {description: Effective certificate configuration or null., returned: always, type: dict}
+domain_certificates:
+  description:
+    - Certificate configuration as an empty or single-element list.
+  returned: always
+  type: list
+  elements: dict
+domain_certificate:
+  description:
+    - Effective certificate configuration or null.
+  returned: always
+  type: dict
 '''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

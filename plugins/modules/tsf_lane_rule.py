@@ -92,6 +92,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tsf_lane_rule_info
+    description: Gather information about Tencent Cloud TSF lane rules.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -101,7 +104,11 @@ EXAMPLES = r"""
     tags:
       - {name: x-canary, operator: EQUAL, value: 'true'}
 """
-RETURN = r"""lane_rule: {description: Effective TSF lane rule metadata., type: dict, returned: always}"""
+RETURN = r"""lane_rule:
+  description:
+    - Effective TSF lane rule metadata.
+  returned: always
+  type: dict"""
 
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

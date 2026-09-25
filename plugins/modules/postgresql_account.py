@@ -81,6 +81,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.postgresql_account_info
+    description: Gather information about Tencent Cloud PostgreSQL accounts.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -89,9 +92,19 @@ EXAMPLES = r'''
     username: app_user
     password: '{{ vault_database_password }}'
     remark: Application account
+
+- name: Delete the account
+  susunola.tencentcloud.postgresql_account:
+    state: absent
+    instance_id: postgres-xxxxxxxx
+    username: app_user
 '''
 RETURN = r'''
-account: {description: PostgreSQL account metadata., type: dict, returned: always}
+account:
+  description:
+    - PostgreSQL account metadata.
+  returned: always
+  type: dict
 '''
 
 import time

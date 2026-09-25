@@ -63,6 +63,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cos_bucket_response_control_info
+    description: Gather Tencent Cloud COS response-header controls.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -71,7 +74,11 @@ EXAMPLES = r"""
     name: downloads
     parameters: [response-content-type, response-content-disposition]
 """
-RETURN = r"""response_control: {description: Effective response-control configuration., type: dict, returned: always}"""
+RETURN = r"""response_control:
+  description:
+    - Effective response-control configuration.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_control as normalize, get_control
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

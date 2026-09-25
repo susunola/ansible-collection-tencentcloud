@@ -88,6 +88,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.gwlb_target_group_info
+    description: Gather information about Tencent Cloud GWLB target groups.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -96,7 +99,11 @@ EXAMPLES = r"""
     vpc_id: vpc-xxxxxxxx
     health_check: {HealthSwitch: true, Protocol: TCP, Port: 80}
 """
-RETURN = r"""target_group: {description: Effective GWLB target group metadata., type: dict, returned: always}"""
+RETURN = r"""target_group:
+  description:
+    - Effective GWLB target group metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

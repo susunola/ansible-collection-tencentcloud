@@ -90,6 +90,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.waf_owasp_white_rule_info
+    description: Gather information about Tencent Cloud WAF OWASP-whitelist rules.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -100,7 +103,11 @@ EXAMPLES = r"""
     strategies:
       - {Field: URI, CompareFunc: prefix, Content: /health, Arg: ''}
 """
-RETURN = r"""rule: {description: Effective OWASP allowlist rule., type: dict, returned: always}"""
+RETURN = r"""rule:
+  description:
+    - Effective OWASP allowlist rule.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

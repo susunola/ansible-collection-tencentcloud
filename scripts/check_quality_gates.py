@@ -47,6 +47,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODULES_DIR = os.path.join(REPO_ROOT, "plugins", "modules")
 CORE_SUBSET = os.path.join(REPO_ROOT, "tests", "quality", "core-subset.yml")
 COVERAGE_YML = os.path.join(REPO_ROOT, "tests", "integration", "coverage.yml")
+RUNTIME_YML = os.path.join(REPO_ROOT, "meta", "runtime.yml")
 UNIT_TESTS = os.path.join(REPO_ROOT, "tests", "unit", "plugins", "modules")
 INTEGRATION_WF = os.path.join(REPO_ROOT, ".github", "workflows", "integration.yml")
 
@@ -64,6 +65,25 @@ INTEGRATION_MISSING_RATCHET = 134
 # checks the idempotency the attributes claim.  Small, but the claim is
 # user-facing and the three core-subset entries are worth naming.
 IDEMPOTENCY_RATCHET = 0
+
+# RETURN entries with no ``sample``.  A sample has to show the real shape of
+# the payload -- the curated ones carry ID formats like ``ins-xxxxxxxx``,
+# which is most of their value.  Generating them from the SDK model was tried
+# and rejected: it produced 110 lines of ``"string"`` and ``0`` for
+# cvm_instance, which is longer than the curated sample and says less.  So
+# this is authoring work with a ratchet rather than a generator.
+RETURN_SAMPLE_RATCHET = 976
+
+# Write modules that accept ``state: absent`` and never show it. Deletion is
+# the operation with the most consequence and the one a reader cannot guess:
+# which option identifies the resource, and which create-only parameters the
+# module still demands. 270 modules support deletion and 38 of them document
+# it; the rest is authoring work with a ratchet rather than a generator,
+# because generating the identity from the create example also drags in
+# create-only payloads (a spec name, a client-id list, an inline key) and an
+# example that mixes a name from one fixture with an id from another finds
+# neither. Every one of the 38 was derived from the module's own delete path.
+DELETE_EXAMPLE_RATCHET = 232
 
 _DOC_RE = re.compile(r"DOCUMENTATION = r?(['\"]{3})(.*?)\1", re.S)
 
@@ -231,6 +251,89 @@ def idempotency_findings():
     return sorted(found)
 
 
+def return_sample_findings():
+    """Modules whose RETURN entries carry no sample."""
+    found = []
+    for path in module_paths():
+        with open(path, encoding="utf-8") as handle:
+            text = handle.read()
+        match = re.search(r"RETURN = r?(['\"]{3})(.*?)\1", text, re.S)
+        if not match or "sample:" in match.group(2):
+            continue
+        found.append(os.path.basename(path)[:-3])
+    return sorted(found)
+
+
+def delete_example_findings():
+    """Write modules that accept ``state: absent`` but never show it.
+
+    Deletion is the operation with the most consequence and the one a reader
+    is least able to guess: which option identifies the resource, and which
+    create-only parameters the module still demands. 38 modules documented
+    only how to create their resource. Every one of them now has a delete
+    example, and this is the gate that keeps it that way -- the identity
+    options in each example are the ones the module's own delete path
+    resolves the resource from, and ``scripts/check_module_examples.py``
+    re-validates them against the argument spec on every run.
+    """
+    found = []
+    for path in module_paths():
+        name = os.path.basename(path)[:-3]
+        if name.endswith("_info"):
+            continue
+        with open(path, encoding="utf-8") as handle:
+            text = handle.read()
+        doc = re.search(r"DOCUMENTATION = r?(['\"]{3})(.*?)\1", text, re.S)
+        if not doc:
+            continue
+        try:
+            parsed = yaml.safe_load(doc.group(2))
+        except yaml.YAMLError:
+            continue
+        state = ((parsed or {}).get("options") or {}).get("state")
+        if not isinstance(state, dict) or "absent" not in (state.get("choices") or []):
+            continue
+        examples = re.search(r"EXAMPLES = r?(['\"]{3})(.*?)\1", text, re.S)
+        if examples and re.search(r"state:\s*[\"']?absent", examples.group(2)):
+            continue
+        found.append(name)
+    return sorted(found)
+
+
+def role_meta_findings():
+    """Roles whose galaxy_info disagrees with the collection's own metadata.
+
+    ``meta/runtime.yml`` is the collection's ansible-core floor and the README
+    restates it; a role's ``min_ansible_version`` is a third copy, and all
+    sixty-four roles said 2.16 while the collection required 2.19.  A role
+    page that advertises a floor the rest of the collection does not support
+    is how a user ends up installing something that will not run, so this is a
+    hard check rather than a ratchet.
+    """
+    with open(RUNTIME_YML, encoding="utf-8") as handle:
+        runtime = yaml.safe_load(handle)
+    floor = re.search(r"(\d+\.\d+)", runtime["requires_ansible"]).group(1)
+
+    problems = []
+    roles = sorted(glob.glob(os.path.join(REPO_ROOT, "roles", "*")))
+    for role in roles:
+        meta = os.path.join(role, "meta", "main.yml")
+        name = os.path.basename(role)
+        if not os.path.exists(meta):
+            problems.append("roles/%s: no meta/main.yml" % name)
+            continue
+        with open(meta, encoding="utf-8") as handle:
+            info = (yaml.safe_load(handle) or {}).get("galaxy_info") or {}
+        declared = str(info.get("min_ansible_version"))
+        if declared != floor:
+            problems.append("roles/%s: min_ansible_version %s, collection requires %s"
+                            % (name, declared, floor))
+        if info.get("license") != "GPL-3.0-or-later":
+            problems.append("roles/%s: license is %r, expected GPL-3.0-or-later"
+                            % (name, info.get("license")))
+    return problems
+
+
 def _gated_modules():
     """Map each gated module to the target(s) that would cover it."""
     registry, dispatched = _registry_and_dispatch()
@@ -250,6 +353,9 @@ def main():
     docs = doc_findings()
     gated, missing = integration_findings()
     idempotency = idempotency_findings()
+    samples = return_sample_findings()
+    deletes = delete_example_findings()
+    role_meta = role_meta_findings()
 
     if args.show:
         print("description restates the option name: %d option(s)" % len(docs))
@@ -272,6 +378,13 @@ def main():
         print("write modules whose tests never run the module twice: %d" % len(idempotency))
         for name in idempotency:
             print("   %s" % name)
+        print()
+        print("modules whose RETURN carries no sample: %d" % len(samples))
+        print()
+        print("write modules that accept state=absent with no delete example: %d"
+              % len(deletes))
+        for name in deletes:
+            print("   %s" % name)
         return 0
 
     problems = []
@@ -289,6 +402,16 @@ def main():
             "core-subset modules with no integration target at all: %d, "
             "ratchet is %d (the ratchet only goes down)"
             % (len(missing), INTEGRATION_MISSING_RATCHET))
+    problems.extend(role_meta)
+    if len(samples) > RETURN_SAMPLE_RATCHET:
+        problems.append(
+            "modules whose RETURN carries no sample: %d, ratchet is %d "
+            "(the ratchet only goes down)" % (len(samples), RETURN_SAMPLE_RATCHET))
+    if len(deletes) > DELETE_EXAMPLE_RATCHET:
+        problems.append(
+            "write modules that accept state=absent with no delete example: %d, "
+            "ratchet is %d (the ratchet only goes down)"
+            % (len(deletes), DELETE_EXAMPLE_RATCHET))
     if len(idempotency) > IDEMPOTENCY_RATCHET:
         problems.append(
             "write modules whose tests never run the module twice: %d, "
@@ -309,6 +432,12 @@ def main():
           "(ratchet %d)" % (len(missing), INTEGRATION_MISSING_RATCHET))
     print("ok: %d write module(s) lack a two-run test (ratchet %d)"
           % (len(idempotency), IDEMPOTENCY_RATCHET))
+    print("ok: %d module(s) have a RETURN with no sample (ratchet %d)"
+          % (len(samples), RETURN_SAMPLE_RATCHET))
+    print("ok: %d write module(s) accept state=absent with no delete example "
+          "(ratchet %d)" % (len(deletes), DELETE_EXAMPLE_RATCHET))
+    print("ok: all %d role(s) declare the collection's ansible-core floor"
+          % len(glob.glob(os.path.join(REPO_ROOT, "roles", "*"))))
     return 0
 
 

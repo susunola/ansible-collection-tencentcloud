@@ -30,6 +30,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dlc_store_location
+    description: Configure Tencent Cloud DLC query-result storage locations.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

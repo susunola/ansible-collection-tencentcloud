@@ -121,6 +121,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.as_scaling_group_info
+    description: Gather information about Tencent Cloud auto scaling groups.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -132,9 +135,18 @@ EXAMPLES = r'''
     min_size: 0
     max_size: 10
     desired_capacity: 0
+
+- name: Delete the scaling group
+  susunola.tencentcloud.as_scaling_group:
+    state: absent
+    name: web-fleet
 '''
 RETURN = r'''
-scaling_group: {description: Auto Scaling group metadata., type: dict, returned: always}
+scaling_group:
+  description:
+    - Auto Scaling group metadata.
+  returned: always
+  type: dict
 '''
 
 import time

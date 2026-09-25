@@ -101,6 +101,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tdmq_topic_info
+    description: Gather information about Tencent Cloud TDMQ topics.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -110,9 +113,20 @@ EXAMPLES = r'''
     name: orders
     partitions: 4
     message_ttl: 86400
+
+- name: Delete the topic
+  susunola.tencentcloud.tdmq_topic:
+    state: absent
+    cluster_id: pulsar-xxxxxxxx
+    environment_id: production
+    name: orders
 '''
 RETURN = r'''
-topic: {description: TDMQ Pulsar topic metadata., type: dict, returned: always}
+topic:
+  description:
+    - TDMQ Pulsar topic metadata.
+  returned: always
+  type: dict
 '''
 
 import time

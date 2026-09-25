@@ -123,6 +123,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dc_direct_connect_tunnel_info
+    description: Gather information about Tencent Cloud DC direct connect tunnels.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -140,7 +143,11 @@ EXAMPLES = r"""
     customer_address: 192.0.2.2/30
     bgp_peer: {Asn: 65001}
 """
-RETURN = r"""tunnel: {description: Effective Direct Connect tunnel metadata., type: dict, returned: always}"""
+RETURN = r"""tunnel:
+  description:
+    - Effective Direct Connect tunnel metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver

@@ -176,6 +176,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tione_training_model_version_info
+    description: Gather Tencent Cloud TIONE training-model versions.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -197,9 +200,21 @@ EXAMPLES = r"""
     delete_cos: false
 """
 RETURN = r"""
-model_version: {description: Effective TIONE training-model version., type: dict, returned: always}
-model_id: {description: Stable parent model ID., type: str, returned: when available}
-version_id: {description: Stable model-version ID., type: str, returned: when available}
+model_version:
+  description:
+    - Effective TIONE training-model version.
+  returned: always
+  type: dict
+model_id:
+  description:
+    - Stable parent model ID.
+  returned: when available
+  type: str
+version_id:
+  description:
+    - Stable model-version ID.
+  returned: when available
+  type: str
 """
 
 import json

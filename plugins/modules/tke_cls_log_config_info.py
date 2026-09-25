@@ -39,6 +39,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tke_cls_log_config
+    description: Create or delete a TKE cluster CLS log configuration.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

@@ -69,6 +69,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tcb_static_store_info
+    description: Gather information about Tencent Cloud TCB static stores.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -76,7 +79,11 @@ EXAMPLES = r"""
     env_id: env-xxxxxxxx
     enable_union: true
 """
-RETURN = r"""static_store: {description: Effective static hosting metadata., type: dict, returned: always}"""
+RETURN = r"""static_store:
+  description:
+    - Effective static hosting metadata.
+  returned: always
+  type: dict"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

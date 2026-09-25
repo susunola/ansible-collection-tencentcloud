@@ -38,6 +38,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.vdb_instance
+    description: Manage Tencent Cloud VectorDB instances.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

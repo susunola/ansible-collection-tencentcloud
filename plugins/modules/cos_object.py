@@ -80,8 +80,7 @@ options:
       - User-defined object metadata as a dict; keys are sent as
         C(x-cos-meta-<key>) headers. Replaced in full on upload.
     type: dict
-    default:
-      {}
+    default: {}
   storage_class:
     description:
       - Storage class of the object, for example C(STANDARD), C(STANDARD_IA),
@@ -139,6 +138,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cos_object_info
+    description: Gather information about Tencent Cloud COS objects.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

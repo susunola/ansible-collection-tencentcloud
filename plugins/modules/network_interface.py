@@ -83,8 +83,7 @@ options:
       - Tags to apply to the interface as a dict, for example I(env=prod).
       - Only applied at creation.
     type: dict
-    default:
-      {}
+    default: {}
 notes:
   - Requires the C(tencentcloud-sdk-python-vpc) package on the controller.
   - An interface that is attached to an instance cannot be deleted; detach
@@ -113,6 +112,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.network_interface_info
+    description: Gather information about Tencent Cloud elastic network interfaces.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

@@ -40,8 +40,7 @@ options:
     description:
       - Tags assigned when creating the node.
     type: dict
-    default:
-      {}
+    default: {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -67,6 +66,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.organization_node_info
+    description: Gather information about Tencent Cloud ORGANIZATION nodes.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -76,9 +78,18 @@ EXAMPLES = r'''
     remark: Production business units
     tags:
       environment: production
+
+- name: Delete the organization node
+  susunola.tencentcloud.organization_node:
+    state: absent
+    name: Production
 '''
 RETURN = r'''
-node: {description: Organization node metadata., type: dict, returned: always}
+node:
+  description:
+    - Organization node metadata.
+  returned: always
+  type: dict
 '''
 
 import time

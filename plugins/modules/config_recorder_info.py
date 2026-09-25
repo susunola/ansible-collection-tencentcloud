@@ -27,6 +27,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.config_recorder
+    description: Manage Tencent Cloud Config resource recorder.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -34,9 +37,22 @@ EXAMPLES = r'''
     region: ap-guangzhou
 '''
 RETURN = r'''
-recorders: {description: Recorder state as a single-element list., returned: always, type: list, elements: dict}
-recorder: {description: Recorder state and monitored resource types., returned: always, type: dict}
-request_id: {description: Request ID returned by the API., returned: always, type: str}
+recorders:
+  description:
+    - Recorder state as a single-element list.
+  returned: always
+  type: list
+  elements: dict
+recorder:
+  description:
+    - Recorder state and monitored resource types.
+  returned: always
+  type: dict
+request_id:
+  description:
+    - Request ID returned by the API.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule

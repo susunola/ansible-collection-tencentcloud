@@ -79,6 +79,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tcr_immutable_tag_rule_info
+    description: Gather information about Tencent Cloud TCR immutable tag rules.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

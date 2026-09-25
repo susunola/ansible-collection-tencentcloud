@@ -1,0 +1,27 @@
+---
+galaxy_info:
+  role_name: tc_clickhouse_platform
+  namespace: susunola
+  author: Tencent Cloud Ansible Collection Contributors (@susunola)
+  description: Creates or scales a TCHouse-C ClickHouse instance, reconciles instance parameters, and
+    configures metadata and table-data backups. Destruction is guarded and disables backup before destroying
+    the instance
+  company: Tencent Cloud
+  license: GPL-3.0-or-later
+  min_ansible_version: '2.19'
+  platforms:
+  - name: Generic
+    versions:
+    - all
+  - name: macOS
+    versions:
+    - all
+  - name: Windows
+    versions:
+    - all
+  galaxy_tags:
+  - tencentcloud
+  - clickhouse
+  - analytics
+  - cloud
+dependencies: []

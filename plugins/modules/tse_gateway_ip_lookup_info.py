@@ -45,8 +45,16 @@ EXAMPLES = r'''
   register: gateway_lookup
 '''
 RETURN = r'''
-gateway_info: {description: Gateway instance information associated with the IP., type: dict, returned: always}
-request_id: {description: Tencent Cloud request ID., type: str, returned: always}
+gateway_info:
+  description:
+    - Gateway instance information associated with the IP.
+  returned: always
+  type: dict
+request_id:
+  description:
+    - Tencent Cloud request ID.
+  returned: always
+  type: str
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

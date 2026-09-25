@@ -57,6 +57,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cam_saml_provider_info
+    description: Gather information about Tencent Cloud CAM SAML identity providers.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -65,7 +68,11 @@ EXAMPLES = r"""
     description: Corporate identity provider
     metadata_document: "{{ lookup('file', 'metadata.xml') | b64encode }}"
 """
-RETURN = r"""saml_provider: {description: CAM SAML provider metadata., type: dict, returned: always}"""
+RETURN = r"""saml_provider:
+  description:
+    - CAM SAML provider metadata.
+  returned: always
+  type: dict"""
 import base64
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -55,7 +55,11 @@ EXAMPLES = r"""
     enabled: true
     tags: [botnet, scanner]
 """
-RETURN = r"""threat_intelligence: {description: Effective threat-intelligence configuration., type: dict, returned: always}"""
+RETURN = r"""threat_intelligence:
+  description:
+    - Effective threat-intelligence configuration.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

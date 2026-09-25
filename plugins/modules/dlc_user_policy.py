@@ -69,9 +69,24 @@ EXAMPLES = r"""
     policies:
       - {Catalog: DataLakeCatalog, Database: sales, Table: orders, Operation: SELECT, PolicyType: TABLE}
 """
-RETURN = r"""policies: {description: Effective normalized direct policy set., type: list, elements: dict, returned: always}
-added: {description: Policies attached by this run., type: list, elements: dict, returned: always}
-removed: {description: Policies detached by this run., type: list, elements: dict, returned: always}"""
+RETURN = r"""policies:
+  description:
+    - Effective normalized direct policy set.
+  returned: always
+  type: list
+  elements: dict
+added:
+  description:
+    - Policies attached by this run.
+  returned: always
+  type: list
+  elements: dict
+removed:
+  description:
+    - Policies detached by this run.
+  returned: always
+  type: list
+  elements: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

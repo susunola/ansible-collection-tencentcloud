@@ -61,6 +61,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cos_bucket_logging_info
+    description: Gather Tencent Cloud COS bucket access logging.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -69,7 +72,11 @@ EXAMPLES = r"""
     target_bucket: audit-logs-1250000000
     target_prefix: cos/application-data/
 """
-RETURN = r"""logging: {description: Effective logging configuration., type: dict, returned: always}"""
+RETURN = r"""logging:
+  description:
+    - Effective logging configuration.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

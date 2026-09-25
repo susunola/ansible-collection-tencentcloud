@@ -77,7 +77,11 @@ EXAMPLES = r"""
     description: Production workloads
     trace_enabled: true
 """
-RETURN = r"""virtual_host: {description: RabbitMQ virtual host metadata., type: dict, returned: always}"""
+RETURN = r"""virtual_host:
+  description:
+    - RabbitMQ virtual host metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

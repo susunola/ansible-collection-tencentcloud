@@ -60,6 +60,56 @@ Each claim below is checkable with the command in the same row.
 | Every module declares GPL-3.0-or-later in its header (181 were missing) | `python scripts/fix_module_headers.py --check` |
 | Generated and hand-written modules cannot drift on documentation style | `python scripts/generate_info_modules.py --check` |
 | The fragment set matches each module's `argument_spec` | `python scripts/sync_doc_fragments.py --check` |
+| Every shipped example runs as written | `python scripts/check_module_examples.py --check` |
+| Every module links to its read-only counterpart | `python scripts/add_module_seealso.py --check` |
+| Every role declares the core floor the collection requires | `python scripts/check_quality_gates.py` |
+
+### A guard for the examples that ship inside modules, and what it found
+
+Nothing validated the `EXAMPLES` block *inside* a module. `validate-modules`
+proves the string exists and parses as YAML; `scripts/check_examples.py` reads
+the playbooks under `docs/examples/` and `playbooks/` but not the examples that
+ship in the 1,027 modules; and the integration targets, which would run one,
+need an account. The example is the first thing a user copies, and it was the
+one part of a module no check read.
+
+`scripts/check_module_examples.py` closes that statically. It resolves every
+module an example calls, checks each option against the module's own
+`DOCUMENTATION` and doc fragments, and checks that options the module marks
+`required` are passed. Its first run found three defects that had shipped:
+
+- `tse_governance_alias_info` called `tse_governance_aliase_info`, a module
+  that does not exist, so the example failed with "couldn't resolve
+  module/action" before reaching Tencent Cloud.
+- `lcic_answer_info` omitted `question_id`, which its argument spec marks
+  required, so the example failed with "missing required arguments".
+- `cdb_audit_rule` shipped a delete example without `rule_filters` while the
+  argument spec marked that option unconditionally required — the
+  documentation said "required when `state=present`", the code said always, and
+  the code won, which made deleting an audit rule impossible. `required_if`
+  already expressed the intent; the unconditional requirement is gone. The
+  unit tests passed throughout because they passed the filters on the delete
+  path too, which is how a test holds a bug in place rather than catching it.
+
+The first two are documentation defects. The third is a functional one, and it
+is the reason the guard checks `required` and not only option names.
+
+### Delete examples, and the 232 that are still missing
+
+The same guard makes delete examples checkable, so 38 write modules that
+documented only how to create their resource now document how to delete it.
+The identity options come from each module's own delete path rather than from
+its create example, which matters in both directions: `alb_load_balancer`
+refuses to delete a load balancer whose `deletion_protection` is on, so its
+delete example clears it, while `dbbrain_sql_filter` and `cmq_subscription`
+mark their create parameters unconditionally required, so those have to be
+passed to delete as well. 232 write modules that support deletion still show
+only how to create, and that number is a ratchet in
+`scripts/check_quality_gates.py` and is printed by every CI run. Generating
+the remaining examples was tried and rejected: the identity has to come from
+the module's own delete path, because a create example carries payloads a
+delete does not need, and mixing a name from one fixture with an id from
+another produces a task that finds neither.
 
 ### The ignore files are a ratchet now, not a budget
 

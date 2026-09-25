@@ -123,6 +123,24 @@ jobs:
       # Two ratchets over the core subset (tests/quality/core-subset.yml):
       # an option description may not merely repeat the option name, and a
       # core write module must have an integration target that actually runs.
+      # Four guards that existed and were never invoked from any workflow.
+      # A check nobody runs is how a regression lands: this collection's
+      # sanity step was itself skipped for a day because a step above it
+      # failed, which is the same failure mode one level up.
+      - name: Modules cross-reference their read-only counterpart
+        run: python scripts/add_module_seealso.py --check
+      - name: Module headers are complete
+        run: python scripts/fix_module_headers.py --check
+      - name: Example playbooks resolve
+        run: python scripts/check_examples.py --check
+      - name: Module examples run as written
+        run: python scripts/check_module_examples.py --check
+      - name: Generated test skeletons are unmodified
+        run: python scripts/generate_module_test_skeleton.py --check
+      - name: Porting table resolves
+        run: python scripts/check_porting_map.py --check
+      - name: Integration target layout is complete
+        run: python scripts/audit_integration_targets.py
       - name: Core subset quality gates
         run: python scripts/check_quality_gates.py
       - name: Modules document check_mode, diff_mode and idempotent

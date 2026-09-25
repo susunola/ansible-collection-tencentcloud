@@ -75,7 +75,11 @@ EXAMPLES = r"""
     permission_type: TopicAndGroup
     remark: Order service identity
 """
-RETURN = r"""role: {description: RocketMQ role metadata with all credential fields removed., type: dict, returned: always}"""
+RETURN = r"""role:
+  description:
+    - RocketMQ role metadata with all credential fields removed.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -96,8 +96,7 @@ options:
       - Tags to apply to the connection as a dict, for example I(env=prod).
       - Only applied at creation; existing connections are left untouched.
     type: dict
-    default:
-      {}
+    default: {}
 notes:
   - Requires the C(tencentcloud-sdk-python-vpc) package on the controller.
   - Deleting a peering connection does not require the peer's consent.
@@ -125,6 +124,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.peering_connection_info
+    description: Gather information about Tencent Cloud VPC peering connections.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

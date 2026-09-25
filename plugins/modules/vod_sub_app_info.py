@@ -37,6 +37,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.vod_sub_app
+    description: Manage Tencent Cloud VOD sub-applications.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

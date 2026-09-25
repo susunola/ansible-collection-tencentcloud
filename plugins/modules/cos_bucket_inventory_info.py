@@ -43,6 +43,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cos_bucket_inventory
+    description: Manage Tencent Cloud COS bucket inventory rules.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -52,8 +55,17 @@ EXAMPLES = r'''
     inventory_id: daily-objects
 '''
 RETURN = r'''
-inventories: {description: Inventory rule as an empty or single-element list., returned: always, type: list, elements: dict}
-inventory: {description: Effective inventory rule or null., returned: always, type: dict}
+inventories:
+  description:
+    - Inventory rule as an empty or single-element list.
+  returned: always
+  type: list
+  elements: dict
+inventory:
+  description:
+    - Effective inventory rule or null.
+  returned: always
+  type: dict
 '''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

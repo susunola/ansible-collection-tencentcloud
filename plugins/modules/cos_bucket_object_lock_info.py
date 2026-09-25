@@ -39,6 +39,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cos_bucket_object_lock
+    description: Manage Tencent Cloud COS bucket object lock.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -47,8 +50,17 @@ EXAMPLES = r'''
     name: audit-archive
 '''
 RETURN = r'''
-object_locks: {description: Object-lock configuration as an empty or single-element list., returned: always, type: list, elements: dict}
-object_lock: {description: Effective object-lock configuration or null., returned: always, type: dict}
+object_locks:
+  description:
+    - Object-lock configuration as an empty or single-element list.
+  returned: always
+  type: list
+  elements: dict
+object_lock:
+  description:
+    - Effective object-lock configuration or null.
+  returned: always
+  type: dict
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos

@@ -34,6 +34,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dlc_database
+    description: Manage Tencent Cloud Data Lake Compute metadata databases.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

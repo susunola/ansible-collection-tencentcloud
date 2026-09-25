@@ -93,8 +93,7 @@ options:
     description:
       - Tags applied at creation.
     type: dict
-    default:
-      {}
+    default: {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -120,6 +119,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.vpn_connection_info
+    description: Gather information about Tencent Cloud VPN connections.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
@@ -133,10 +135,19 @@ EXAMPLES = r'''
     security_policy_databases:
       - local_cidr: 10.0.0.0/16
         remote_cidr: 192.168.0.0/16
+
+- name: Delete the tunnel
+  susunola.tencentcloud.vpn_connection:
+    state: absent
+    name: office-tunnel
 '''
 
 RETURN = r'''
-vpn_connection: {description: VPN connection metadata., type: dict, returned: always}
+vpn_connection:
+  description:
+    - VPN connection metadata.
+  returned: always
+  type: dict
 '''
 
 import time

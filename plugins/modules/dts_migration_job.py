@@ -53,8 +53,7 @@ options:
     description:
       - Tags applied at creation.
     type: dict
-    default:
-      {}
+    default: {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
@@ -79,6 +78,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dts_migration_job_info
+    description: Gather information about Tencent Cloud DTS migration jobs.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -90,7 +92,11 @@ EXAMPLES = r"""
     destination_region: ap-shanghai
     instance_class: small
 """
-RETURN = r"""migration_job: {description: DTS migration job metadata., type: dict, returned: always}"""
+RETURN = r"""migration_job:
+  description:
+    - DTS migration job metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

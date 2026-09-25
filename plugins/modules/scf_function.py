@@ -90,8 +90,7 @@ options:
       - Environment variables as a dict of key/value pairs, written to
         V(CreateFunctionRequest.Environment.Variables).
     type: dict
-    default:
-      {}
+    default: {}
   role:
     description:
       - IAM role name (CAM role) the function runs as.
@@ -135,6 +134,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.scf_function_info
+    description: Gather information about Tencent Cloud SCF functions.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

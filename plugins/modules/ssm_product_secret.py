@@ -111,8 +111,7 @@ options:
     description:
       - Creation tags.
     type: dict
-    default:
-      {}
+    default: {}
   enabled:
     description:
       - Whether the secret is enabled.
@@ -192,7 +191,11 @@ EXAMPLES = r"""
     rotation_begin_time: '2026-09-02 02:00:00'
     rotation_frequency: 30
 """
-RETURN = r"""secret: {description: Effective metadata without credential values., type: dict, returned: always}"""
+RETURN = r"""secret:
+  description:
+    - Effective metadata without credential values.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found

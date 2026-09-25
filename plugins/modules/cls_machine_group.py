@@ -43,8 +43,7 @@ options:
     description:
       - Exact resource tags.
     type: dict
-    default:
-      {}
+    default: {}
   auto_update:
     description:
       - Automatically update LogListener.
@@ -100,6 +99,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cls_machine_group_info
+    description: Gather information about Tencent Cloud CLS machine groups.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -108,7 +110,11 @@ EXAMPLES = r"""
     group_type: label
     values: [production-web]
 """
-RETURN = r"""machine_group: {description: CLS machine group metadata., type: dict, returned: always}"""
+RETURN = r"""machine_group:
+  description:
+    - CLS machine group metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -63,7 +63,11 @@ attributes:
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""- susunola.tencentcloud.dts_migration_action: {job_id: dts-abcd1234, action: start}"""
-RETURN = r"""migration_job: {description: DTS migration job detail after the operation., type: dict, returned: always}"""
+RETURN = r"""migration_job:
+  description:
+    - DTS migration job detail after the operation.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

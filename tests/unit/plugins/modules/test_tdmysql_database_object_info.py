@@ -106,28 +106,28 @@ def client(monkeypatch):
 
 
 @pytest.mark.xfail(reason="TODO(human): finish helper database_request: assert the module's real contract", strict=False)
-def test_database_request_helper(client):  # plugins/modules/tdmysql_database_object_info.py:50-55
+def test_database_request_helper(client):  # plugins/modules/tdmysql_database_object_info.py:107-112
     # Seed client.items first, then invoke mod.database_request(...) and assert the contract.
     # Do not invoke database_request yet: it needs a store-backed fake read op.
     pytest.fail("unfinished skeleton")
 
 
 @pytest.mark.xfail(reason="TODO(human): finish helper object_request: assert the module's real contract", strict=False)
-def test_object_request_helper(client):  # plugins/modules/tdmysql_database_object_info.py:58-64
+def test_object_request_helper(client):  # plugins/modules/tdmysql_database_object_info.py:115-121
     # Seed client.items first, then invoke mod.object_request(...) and assert the contract.
     # Do not invoke object_request yet: it needs a store-backed fake read op.
     pytest.fail("unfinished skeleton")
 
 
 @pytest.mark.xfail(reason="TODO(human): finish helper read_databases: assert the module's real contract", strict=False)
-def test_read_databases_helper(client):  # plugins/modules/tdmysql_database_object_info.py:67-79
+def test_read_databases_helper(client):  # plugins/modules/tdmysql_database_object_info.py:124-136
     # Seed client.items first, then invoke mod.read_databases(...) and assert the contract.
     # Do not invoke read_databases yet: it needs a store-backed fake read op.
     pytest.fail("unfinished skeleton")
 
 
 @pytest.mark.xfail(reason="TODO(human): finish helper read_objects: assert the module's real contract", strict=False)
-def test_read_objects_helper(client):  # plugins/modules/tdmysql_database_object_info.py:82-98
+def test_read_objects_helper(client):  # plugins/modules/tdmysql_database_object_info.py:139-155
     # Seed client.items first, then invoke mod.read_objects(...) and assert the contract.
     # Do not invoke read_objects yet: it needs a store-backed fake read op.
     pytest.fail("unfinished skeleton")
@@ -137,7 +137,7 @@ def test_read_objects_helper(client):  # plugins/modules/tdmysql_database_object
 # ---------------------------------------------------------------------------
 
 
-def test_sdk_error_is_reported(monkeypatch):  # module lines 107-134
+def test_sdk_error_is_reported(monkeypatch):  # module lines 164-191
     monkeypatch.setattr(TencentCloudModule, "require_sdk", lambda self: None)
     for loader in ('_load',):
         monkeypatch.setattr(
@@ -168,7 +168,7 @@ class _BoomClient(object):
 
 
 @pytest.mark.xfail(reason="TODO(human): finish the present reconcile path: seed the fake store, assert changed/msg/no-write invariants", strict=False)
-def test_run_module_present_reconcile(client):  # module lines 107-134
+def test_run_module_present_reconcile(client):  # module lines 164-191
     _run_args(state='present')
     # Wire the store first: seed client.items, then run and assert
     # result["changed"] / result["msg"] and which sdk calls were recorded.

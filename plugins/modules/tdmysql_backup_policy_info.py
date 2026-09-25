@@ -38,6 +38,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tdmysql_backup_policy
+    description: Manage Tencent Cloud TDSQL MySQL backup policy.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -45,9 +48,22 @@ EXAMPLES = r"""
     instance_id: tdsql3-xxxxxxxx
 """
 RETURN = r"""
-backup_policies: {description: Backup-policy metadata., type: list, elements: dict, returned: always}
-total_count: {description: Policy count reported by the API., type: int, returned: always}
-request_id: {description: Tencent Cloud request ID., type: str, returned: always}
+backup_policies:
+  description:
+    - Backup-policy metadata.
+  returned: always
+  type: list
+  elements: dict
+total_count:
+  description:
+    - Policy count reported by the API.
+  returned: always
+  type: int
+request_id:
+  description:
+    - Tencent Cloud request ID.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

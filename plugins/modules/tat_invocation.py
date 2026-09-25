@@ -39,8 +39,7 @@ options:
     description:
       - Command placeholder values.
     type: dict
-    default:
-      {}
+    default: {}
   username:
     description:
       - Least-privilege operating-system user override.
@@ -95,6 +94,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tat_invocation_info
+    description: Gather Tencent Cloud TAT invocations and instance tasks.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -105,9 +107,22 @@ EXAMPLES = r"""
     parameters: {release: '2026.09'}
 """
 RETURN = r"""
-invocation_id: {description: TAT invocation ID., type: str, returned: always}
-tasks: {description: Per-instance task results with sensitive command data redacted., type: list, elements: dict, returned: when waiting}
-status_summary: {description: Counts keyed by terminal task status., type: dict, returned: when waiting}
+invocation_id:
+  description:
+    - TAT invocation ID.
+  returned: always
+  type: str
+tasks:
+  description:
+    - Per-instance task results with sensitive command data redacted.
+  returned: when waiting
+  type: list
+  elements: dict
+status_summary:
+  description:
+    - Counts keyed by terminal task status.
+  returned: when waiting
+  type: dict
 """
 import json
 import time

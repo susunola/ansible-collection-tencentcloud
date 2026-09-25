@@ -181,6 +181,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dlc_table_info
+    description: Gather information about Tencent Cloud DLC tables.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -204,8 +207,17 @@ EXAMPLES = r"""
     allow_delete: true
 """
 RETURN = r"""
-table: {description: Effective DLC catalog table., type: dict, returned: always}
-task_ids: {description: DDL task IDs submitted during creation., type: list, elements: str, returned: when created}
+table:
+  description:
+    - Effective DLC catalog table.
+  returned: always
+  type: dict
+task_ids:
+  description:
+    - DDL task IDs submitted during creation.
+  returned: when created
+  type: list
+  elements: str
 """
 
 import base64

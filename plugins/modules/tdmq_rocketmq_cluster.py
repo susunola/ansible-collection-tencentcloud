@@ -70,7 +70,11 @@ EXAMPLES = r"""
     cluster_id: rocketmq-xxxxxxxx
     name: application-messaging-v2
 """
-RETURN = r"""cluster: {description: RocketMQ cluster metadata with credential fields removed., type: dict, returned: always}"""
+RETURN = r"""cluster:
+  description:
+    - RocketMQ cluster metadata with credential fields removed.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

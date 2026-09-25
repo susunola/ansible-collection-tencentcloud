@@ -57,6 +57,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cos_bucket_encryption_info
+    description: Gather Tencent Cloud COS bucket default encryption.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -65,7 +68,11 @@ EXAMPLES = r"""
     rules:
       - ApplyServerSideEncryptionByDefault: {SSEAlgorithm: AES256}
 """
-RETURN = r"""encryption: {description: Effective encryption configuration., type: dict, returned: always}"""
+RETURN = r"""encryption:
+  description:
+    - Effective encryption configuration.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

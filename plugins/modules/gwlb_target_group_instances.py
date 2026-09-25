@@ -68,6 +68,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.gwlb_target_group_instances_info
+    description: Gather information about Tencent Cloud GWLB target group instances.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -77,7 +80,12 @@ EXAMPLES = r"""
       - {ip: 10.0.1.10, port: 6081, weight: 50}
       - {ip: 10.0.1.11, port: 6081, weight: 50}
 """
-RETURN = r"""instances: {description: Effective GWLB backend instances., type: list, elements: dict, returned: always}"""
+RETURN = r"""instances:
+  description:
+    - Effective GWLB backend instances.
+  returned: always
+  type: list
+  elements: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

@@ -262,6 +262,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.oceanus_job_config_info
+    description: Gather information about Tencent Cloud Oceanus job config versions.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -275,8 +278,16 @@ EXAMPLES = r"""
     resource_ref_names:
       - {Name: orders-processor, Type: 1}
 """
-RETURN = r"""job_config: {description: Effective configuration version., type: dict, returned: always}
-version: {description: Effective configuration version number., type: int, returned: when present}"""
+RETURN = r"""job_config:
+  description:
+    - Effective configuration version.
+  returned: always
+  type: dict
+version:
+  description:
+    - Effective configuration version number.
+  returned: when present
+  type: int"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

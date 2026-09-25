@@ -38,6 +38,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cvm_instance_action_timer
+    description: Manage Tencent Cloud CVM instance action timers.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

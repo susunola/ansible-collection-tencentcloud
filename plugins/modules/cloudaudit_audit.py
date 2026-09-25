@@ -105,6 +105,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cloudaudit_audit_info
+    description: Gather information about Tencent Cloud CLOUDAUDIT audits.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 
@@ -121,7 +124,11 @@ EXAMPLES = r"""
     key_id: key-xxxxxxxx
 """
 
-RETURN = r"""audit: {description: Account-level CloudAudit configuration., type: dict, returned: always}"""
+RETURN = r"""audit:
+  description:
+    - Account-level CloudAudit configuration.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

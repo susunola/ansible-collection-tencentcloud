@@ -124,6 +124,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tse_config_file_release_info
+    description: Gather Tencent Cloud TSE configuration release audit data.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -144,7 +147,11 @@ EXAMPLES = r"""
     release_name: production
     rollback_version: '12'
 """
-RETURN = r"""release: {description: Effective configuration release metadata and content., type: dict, returned: always}"""
+RETURN = r"""release:
+  description:
+    - Effective configuration release metadata and content.
+  returned: always
+  type: dict"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -36,6 +36,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dcdb_security_config
+    description: Manage Tencent Cloud DCDB encryption, SSL and security groups.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

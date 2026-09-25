@@ -108,7 +108,7 @@ def client(monkeypatch):
 
 
 @pytest.mark.xfail(reason="TODO(human): finish helper request: assert the module's real contract", strict=False)
-def test_request_helper(client):  # plugins/modules/ssm_rotation_info.py:45-48
+def test_request_helper(client):  # plugins/modules/ssm_rotation_info.py:83-86
     # Seed client.items first, then invoke mod.request(...) and assert the contract.
     # Do not invoke request yet: it needs a store-backed fake read op.
     pytest.fail("unfinished skeleton")
@@ -118,14 +118,14 @@ def test_request_helper(client):  # plugins/modules/ssm_rotation_info.py:45-48
 # ---------------------------------------------------------------------------
 
 
-def test_required_arguments_enforced(monkeypatch):  # module lines 51-71
+def test_required_arguments_enforced(monkeypatch):  # module lines 89-109
     monkeypatch.setattr(TencentCloudModule, "require_sdk", lambda self: None)
     module_args()
     with pytest.raises(AnsibleFailJson):
         run(mod.run_module)
 
 
-def test_sdk_error_is_reported(monkeypatch):  # module lines 51-71
+def test_sdk_error_is_reported(monkeypatch):  # module lines 89-109
     monkeypatch.setattr(TencentCloudModule, "require_sdk", lambda self: None)
     for loader in ('_load',):
         monkeypatch.setattr(
@@ -156,7 +156,7 @@ class _BoomClient(object):
 
 
 @pytest.mark.xfail(reason="TODO(human): finish the present reconcile path: seed the fake store, assert changed/msg/no-write invariants", strict=False)
-def test_run_module_present_reconcile(client):  # module lines 51-71
+def test_run_module_present_reconcile(client):  # module lines 89-109
     _run_args(state='present')
     # Wire the store first: seed client.items, then run and assert
     # result["changed"] / result["msg"] and which sdk calls were recorded.

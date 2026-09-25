@@ -62,8 +62,7 @@ options:
       - Default placeholder values.
       - Omitted from the request when empty because TAT rejects the field unless C(enable_parameters) is true.
     type: dict
-    default:
-      {}
+    default: {}
   username:
     description:
       - Operating system user used to execute the command.
@@ -82,8 +81,7 @@ options:
       - Tags assigned when creating the command.
       - Applied on create only - TAT does not return tags so they are never reconciled.
     type: dict
-    default:
-      {}
+    default: {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -108,6 +106,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tat_command_info
+    description: Gather information about Tencent Cloud TAT commands.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -117,9 +118,18 @@ EXAMPLES = r'''
       #!/bin/bash
       curl -fsSL https://example.com/install.sh | bash
     timeout: 300
+
+- name: Delete the command
+  susunola.tencentcloud.tat_command:
+    state: absent
+    name: install-agent
 '''
 RETURN = r'''
-command: {description: TAT command metadata., type: dict, returned: always}
+command:
+  description:
+    - TAT command metadata.
+  returned: always
+  type: dict
 '''
 
 import base64

@@ -22,8 +22,7 @@ options:
       - Subnet API filter names mapped to lists of values, for example
         C(vpc-id), C(subnet-name), C(cidr-block), C(zone) or C(is-default).
     type: dict
-    default:
-      {}
+    default: {}
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -44,6 +43,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.subnet
+    description: Manage Tencent Cloud VPC subnets.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

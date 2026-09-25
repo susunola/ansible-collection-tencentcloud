@@ -120,8 +120,7 @@ options:
       - Tags to apply to the instance as a dict, for example I(env=prod).
       - Only applied at creation.
     type: dict
-    default:
-      {}
+    default: {}
   waiter_timeout:
     description:
       - Overall timeout in seconds for lifecycle state polling; it bounds
@@ -163,6 +162,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.redis_instance_info
+    description: Gather information about TencentDB for Redis instances.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

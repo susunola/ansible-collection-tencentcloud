@@ -94,7 +94,11 @@ EXAMPLES = r"""
     challenge_option: ManagedChallenge
 """
 
-RETURN = r"""bot_lite: {description: Current normalized basic Bot protection configuration., type: dict, returned: always}"""
+RETURN = r"""bot_lite:
+  description:
+    - Current normalized basic Bot protection configuration.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

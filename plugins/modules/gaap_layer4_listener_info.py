@@ -59,6 +59,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.gaap_layer4_listener
+    description: Manage Tencent Cloud GAAP TCP and UDP listeners.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

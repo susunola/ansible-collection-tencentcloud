@@ -154,8 +154,16 @@ EXAMPLES = r"""
     state: absent
     allow_delete: true
 """
-RETURN = r"""resource_group: {description: Effective standard engine resource-group metadata., type: dict, returned: always}
-resource_group_id: {description: Standard engine resource-group ID., type: str, returned: when present}"""
+RETURN = r"""resource_group:
+  description:
+    - Effective standard engine resource-group metadata.
+  returned: always
+  type: dict
+resource_group_id:
+  description:
+    - Standard engine resource-group ID.
+  returned: when present
+  type: str"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

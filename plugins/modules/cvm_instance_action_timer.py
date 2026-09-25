@@ -56,6 +56,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cvm_instance_action_timer_info
+    description: Gather information about Tencent Cloud CVM instance action timers.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -63,7 +66,11 @@ EXAMPLES = r"""
     instance_id: ins-xxxxxxxx
     action_time: '2026-09-01T12:00:00Z'
 """
-RETURN = r"""action_timer: {description: Effective scheduled action., type: dict, returned: always}"""
+RETURN = r"""action_timer:
+  description:
+    - Effective scheduled action.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

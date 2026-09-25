@@ -44,6 +44,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.monitor_grafana_integration
+    description: Manage Tencent Cloud Managed Grafana integrations.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -52,9 +55,22 @@ EXAMPLES = r'''
     instance_id: grafana-xxxxxxxx
 '''
 RETURN = r'''
-integrations: {description: Matching integrations., returned: always, type: list, elements: dict}
-integration: {description: Single integration when exactly one matches., returned: always, type: dict}
-request_id: {description: Request ID of the API call., returned: always, type: str}
+integrations:
+  description:
+    - Matching integrations.
+  returned: always
+  type: list
+  elements: dict
+integration:
+  description:
+    - Single integration when exactly one matches.
+  returned: always
+  type: dict
+request_id:
+  description:
+    - Request ID of the API call.
+  returned: always
+  type: str
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

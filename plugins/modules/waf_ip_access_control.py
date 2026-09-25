@@ -90,9 +90,19 @@ EXAMPLES = r'''
     action: block
     ip_list: [203.0.113.0/24, 198.51.100.10]
     note: Known abusive sources
+
+- name: Delete the access-control entry
+  susunola.tencentcloud.waf_ip_access_control:
+    state: absent
+    domain: api.example.com
+    action: block
 '''
 RETURN = r'''
-rule: {description: WAF IP access-control rule metadata., type: dict, returned: always}
+rule:
+  description:
+    - WAF IP access-control rule metadata.
+  returned: always
+  type: dict
 '''
 
 import time

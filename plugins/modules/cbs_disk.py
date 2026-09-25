@@ -117,8 +117,7 @@ options:
       - Tags to apply to the disk as a dict, for example I(env=prod).
       - Only applied at creation.
     type: dict
-    default:
-      {}
+    default: {}
 notes:
   - Requires the C(tencentcloud-sdk-python-cbs) package on the controller.
   - POSTPAID_BY_HOUR disks are billed per hour while present; terminate them
@@ -147,6 +146,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cbs_disk_info
+    description: Gather information about Tencent Cloud CBS disks.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

@@ -93,6 +93,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.lighthouse_disk_info
+    description: Gather information about Tencent Cloud Lighthouse disks.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 
@@ -115,7 +118,11 @@ EXAMPLES = r"""
     force_detach: true
 """
 
-RETURN = r"""disk: {description: Lighthouse disk metadata., type: dict, returned: always}"""
+RETURN = r"""disk:
+  description:
+    - Lighthouse disk metadata.
+  returned: always
+  type: dict"""
 
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

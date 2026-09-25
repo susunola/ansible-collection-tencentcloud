@@ -101,6 +101,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tione_data_source_info
+    description: Gather Tencent Cloud TIONE data sources.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -120,8 +123,16 @@ EXAMPLES = r"""
     allow_delete: true
 """
 RETURN = r"""
-data_source: {description: Effective TIONE data-source metadata., type: dict, returned: always}
-data_source_id: {description: Stable data-source ID., type: str, returned: when available}
+data_source:
+  description:
+    - Effective TIONE data-source metadata.
+  returned: always
+  type: dict
+data_source_id:
+  description:
+    - Stable data-source ID.
+  returned: when available
+  type: str
 """
 
 import json

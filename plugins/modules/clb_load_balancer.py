@@ -105,8 +105,7 @@ options:
         value are updated. Requires the C(tencentcloud-sdk-python-tag) package
         and the tag service to be enabled for the account.
     type: dict
-    default:
-      {}
+    default: {}
   waiter_timeout:
     description:
       - Maximum time in seconds to wait for the load balancer to reach the
@@ -148,6 +147,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.clb_load_balancer_info
+    description: Gather information about Tencent Cloud CLB load balancers.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

@@ -24,8 +24,7 @@ options:
       - CVM key pair API filter names mapped to lists of values, e.g.
         I(key-name), I(project-id), I(tag-key) or I(tag-value).
     type: dict
-    default:
-      {}
+    default: {}
   page_size:
     description: Number of results requested per API call (maximum 100).
     type: int
@@ -46,6 +45,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.key_pair
+    description: Manage Tencent Cloud CVM key pairs.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

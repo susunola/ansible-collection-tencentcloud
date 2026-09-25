@@ -64,6 +64,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cdwch_backup_config_info
+    description: Gather information about Tencent Cloud CDWCH backup configs.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -75,7 +78,11 @@ EXAMPLES = r"""
     data_strategy: {retain_days: 14, week_days: '0,6', execute_hour: 3}
     backup_tables: [{Database: analytics, Table: events}]
 """
-RETURN = r"""backup_config: {description: Effective backup configuration., type: dict, returned: always}"""
+RETURN = r"""backup_config:
+  description:
+    - Effective backup configuration.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

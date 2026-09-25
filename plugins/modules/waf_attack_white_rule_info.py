@@ -38,6 +38,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.waf_attack_white_rule
+    description: Manage Tencent Cloud WAF attack-signature allow rules.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

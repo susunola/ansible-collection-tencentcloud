@@ -23,8 +23,7 @@ options:
   filters:
     description: GAAP API filter names mapped to lists of values.
     type: dict
-    default:
-      {}
+    default: {}
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -45,6 +44,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.gaap_real_server
+    description: Manage Tencent Cloud GAAP real servers.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

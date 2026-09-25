@@ -22,14 +22,12 @@ options:
     description:
       - Data-source API filter names mapped to values or value lists.
     type: dict
-    default:
-      {}
+    default: {}
   tag_filters:
     description:
       - Tag keys mapped to tag values or value lists.
     type: dict
-    default:
-      {}
+    default: {}
   order_field:
     description:
       - API field used for ordering.
@@ -70,6 +68,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tione_data_source
+    description: Manage Tencent Cloud TIONE data sources.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -84,10 +85,27 @@ EXAMPLES = r"""
     order: DESC
 """
 RETURN = r"""
-data_sources: {description: Matching TIONE data sources., type: list, elements: dict, returned: always}
-total_count: {description: Number of data sources reported by the API., type: int, returned: always}
-truncated: {description: Whether max_pages stopped pagination., type: bool, returned: always}
-request_id: {description: Request ID from the final page., type: str, returned: always}
+data_sources:
+  description:
+    - Matching TIONE data sources.
+  returned: always
+  type: list
+  elements: dict
+total_count:
+  description:
+    - Number of data sources reported by the API.
+  returned: always
+  type: int
+truncated:
+  description:
+    - Whether max_pages stopped pagination.
+  returned: always
+  type: bool
+request_id:
+  description:
+    - Request ID from the final page.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

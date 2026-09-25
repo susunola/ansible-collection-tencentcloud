@@ -55,8 +55,7 @@ options:
         value are updated. Requires the C(tencentcloud-sdk-python-tag) package
         and the tag service to be enabled for the account.
     type: dict
-    default:
-      {}
+    default: {}
 notes:
   - Requires the C(tencentcloud-sdk-python-vpc) package on the controller.
   - Tag reconciliation additionally requires C(tencentcloud-sdk-python-tag).
@@ -85,6 +84,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.security_group_info
+    description: Gather information about Tencent Cloud security groups.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

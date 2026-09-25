@@ -17,8 +17,7 @@ options:
   filters:
     description: TDCPG API filter names (for example ClusterName) mapped to lists of values.
     type: dict
-    default:
-      {}
+    default: {}
   page_size:
     description: Number of results requested per API call.
     type: int
@@ -39,6 +38,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tdcpg_cluster
+    description: Manage Tencent Cloud TDSQL-C PostgreSQL clusters.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

@@ -144,7 +144,11 @@ EXAMPLES = r"""
     cluster_version: '3.13.7'
     deletion_protection: true
 """
-RETURN = r"""instance: {description: Effective RabbitMQ dedicated-instance metadata., type: dict, returned: always}"""
+RETURN = r"""instance:
+  description:
+    - Effective RabbitMQ dedicated-instance metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

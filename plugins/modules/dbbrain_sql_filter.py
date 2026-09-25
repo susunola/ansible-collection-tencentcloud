@@ -80,6 +80,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dbbrain_sql_filter_info
+    description: Gather information about Tencent Cloud DBBRAIN sql filters.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r"""
@@ -89,8 +92,21 @@ EXAMPLES = r"""
     filter_key: select,user
     max_concurrency: 10
     session_token: "{{ dbbrain_session_token }}"
+
+- name: Delete the SQL filter
+  susunola.tencentcloud.dbbrain_sql_filter:
+    state: absent
+    instance_id: cdb-xxxxxxxx
+    sql_type: SELECT
+    filter_key: select,user
+    max_concurrency: 10
+    session_token: "{{ dbbrain_session_token }}"
 """
-RETURN = r"""sql_filter: {description: SQL filter metadata., type: dict, returned: always}"""
+RETURN = r"""sql_filter:
+  description:
+    - SQL filter metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

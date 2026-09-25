@@ -146,6 +146,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tione_dataset_info
+    description: Gather information about Tencent Cloud TIONE datasets.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -164,8 +167,16 @@ EXAMPLES = r"""
     allow_delete: true
 """
 RETURN = r"""
-dataset: {description: Effective TIONE dataset group metadata., type: dict, returned: always}
-dataset_id: {description: Stable dataset ID., type: str, returned: when available}
+dataset:
+  description:
+    - Effective TIONE dataset group metadata.
+  returned: always
+  type: dict
+dataset_id:
+  description:
+    - Stable dataset ID.
+  returned: when available
+  type: str
 """
 
 import json

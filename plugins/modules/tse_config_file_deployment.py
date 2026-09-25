@@ -120,9 +120,22 @@ EXAMPLES = r'''
     release_name: production
     format: YAML
     content: "server:\n  port: 8080\n"
+
+- name: Delete the release
+  susunola.tencentcloud.tse_config_file_deployment:
+    state: absent
+    instance_id: ins-xxxxxxxx
+    namespace: production
+    group: application
+    name: orders.yaml
+    release_name: production
 '''
 RETURN = r'''
-deployment: {description: Effective configuration file and release metadata., type: dict, returned: always}
+deployment:
+  description:
+    - Effective configuration file and release metadata.
+  returned: always
+  type: dict
 '''
 
 import json

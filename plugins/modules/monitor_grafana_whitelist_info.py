@@ -36,6 +36,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.monitor_grafana_whitelist
+    description: Manage a Tencent Cloud Managed Grafana IP whitelist.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -44,8 +47,17 @@ EXAMPLES = r'''
     instance_id: grafana-xxxxxxxx
 '''
 RETURN = r'''
-whitelist: {description: IP addresses and CIDR ranges in the whitelist., returned: always, type: list, elements: str}
-request_id: {description: Request ID of the API call., returned: always, type: str}
+whitelist:
+  description:
+    - IP addresses and CIDR ranges in the whitelist.
+  returned: always
+  type: list
+  elements: str
+request_id:
+  description:
+    - Request ID of the API call.
+  returned: always
+  type: str
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

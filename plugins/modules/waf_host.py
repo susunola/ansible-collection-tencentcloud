@@ -40,8 +40,7 @@ options:
     description:
       - Tags applied when creating the host.
     type: dict
-    default:
-      {}
+    default: {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -67,6 +66,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.waf_host_info
+    description: Gather information about Tencent Cloud WAF protected hosts.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -80,7 +82,11 @@ EXAMPLES = r"""
       LoadBalancerSet: []
       FlowMode: 1
 """
-RETURN = r"""waf_host: {description: Effective protected-host metadata., type: dict, returned: always}"""
+RETURN = r"""waf_host:
+  description:
+    - Effective protected-host metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found

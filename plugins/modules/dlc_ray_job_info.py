@@ -93,13 +93,44 @@ EXAMPLES = r"""
     include_yaml: true
 """
 RETURN = r"""
-ray_job: {description: Ray job detail., type: dict, returned: always}
-history: {description: Ordered job status history., type: list, elements: dict, returned: always}
-events: {description: Ordered Ray job events., type: list, elements: dict, returned: always}
-pods: {description: Matching Ray job Pods., type: list, elements: dict, returned: always}
-yaml: {description: Submitted RayJob YAML., type: str, returned: when include_yaml}
-truncated: {description: Diagnostic stream truncation flags., type: dict, returned: always}
-request_id: {description: Request ID from the Ray job detail call., type: str, returned: always}
+ray_job:
+  description:
+    - Ray job detail.
+  returned: always
+  type: dict
+history:
+  description:
+    - Ordered job status history.
+  returned: always
+  type: list
+  elements: dict
+events:
+  description:
+    - Ordered Ray job events.
+  returned: always
+  type: list
+  elements: dict
+pods:
+  description:
+    - Matching Ray job Pods.
+  returned: always
+  type: list
+  elements: dict
+yaml:
+  description:
+    - Submitted RayJob YAML.
+  returned: when include_yaml
+  type: str
+truncated:
+  description:
+    - Diagnostic stream truncation flags.
+  returned: always
+  type: dict
+request_id:
+  description:
+    - Request ID from the Ray job detail call.
+  returned: always
+  type: str
 """
 
 import re

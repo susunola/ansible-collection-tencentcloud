@@ -38,6 +38,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cos_bucket_domain
+    description: Manage Tencent Cloud COS custom domains.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -46,9 +49,22 @@ EXAMPLES = r'''
     name: public-site
 '''
 RETURN = r'''
-domain_configurations: {description: Domain configuration as an empty or single-element list., returned: always, type: list, elements: dict}
-domains: {description: Effective custom-domain configuration or null., returned: always, type: dict}
-txt_verification: {description: DNS TXT verification value returned by COS., returned: always, type: str}
+domain_configurations:
+  description:
+    - Domain configuration as an empty or single-element list.
+  returned: always
+  type: list
+  elements: dict
+domains:
+  description:
+    - Effective custom-domain configuration or null.
+  returned: always
+  type: dict
+txt_verification:
+  description:
+    - DNS TXT verification value returned by COS.
+  returned: always
+  type: str
 '''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -61,6 +61,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cos_bucket_inventory_info
+    description: Gather a Tencent Cloud COS bucket inventory rule.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -77,7 +80,11 @@ EXAMPLES = r"""
           Bucket: qcs::cos:ap-guangzhou::inventory-1250000000
           Format: CSV
 """
-RETURN = r"""inventory: {description: Effective inventory rule., type: dict, returned: always}"""
+RETURN = r"""inventory:
+  description:
+    - Effective inventory rule.
+  returned: always
+  type: dict"""
 import copy
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_inventory as normalize, get_inventory

@@ -60,6 +60,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tke_cluster_route_table_info
+    description: Gather information about Tencent Cloud TKE cluster route tables.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

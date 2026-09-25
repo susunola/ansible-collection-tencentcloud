@@ -78,7 +78,11 @@ EXAMPLES = r"""
     topic_id: topic-xxxxxxxx
     topic_region: ap-guangzhou
 """
-RETURN = r"""audit: {description: Effective audit switch metadata., type: dict, returned: always}"""
+RETURN = r"""audit:
+  description:
+    - Effective audit switch metadata.
+  returned: always
+  type: dict"""
 import time
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

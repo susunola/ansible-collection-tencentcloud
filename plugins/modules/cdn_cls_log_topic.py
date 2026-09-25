@@ -97,6 +97,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cdn_cls_log_topic_info
+    description: Gather information about Tencent Cloud CDN cls log topics.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 
@@ -122,7 +125,11 @@ EXAMPLES = r"""
     state: absent
 """
 
-RETURN = r"""topic: {description: CDN CLS topic metadata and exact domain bindings., type: dict, returned: always}"""
+RETURN = r"""topic:
+  description:
+    - CDN CLS topic metadata and exact domain bindings.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

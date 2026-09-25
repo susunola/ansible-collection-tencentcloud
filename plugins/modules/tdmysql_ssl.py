@@ -58,6 +58,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tdmysql_ssl_info
+    description: Gather information about Tencent Cloud TDMYSQL instance ssl.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -66,7 +69,11 @@ EXAMPLES = r"""
     enabled: true
 """
 RETURN = r"""
-ssl: {description: Effective SSL state., type: dict, returned: always}
+ssl:
+  description:
+    - Effective SSL state.
+  returned: always
+  type: dict
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

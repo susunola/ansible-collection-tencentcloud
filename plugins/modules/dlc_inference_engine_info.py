@@ -27,8 +27,7 @@ options:
     description:
       - Inference-engine API filter names mapped to values or value lists.
     type: dict
-    default:
-      {}
+    default: {}
   sort_fields:
     type: list
     elements: dict
@@ -85,10 +84,27 @@ EXAMPLES = r"""
       - {field: Name, order: ASC}
 """
 RETURN = r"""
-engines: {description: Matching DLC inference engines and capability declarations., type: list, elements: dict, returned: always}
-total_count: {description: Number of engines reported by the API., type: int, returned: always}
-truncated: {description: Whether max_pages stopped pagination., type: bool, returned: always}
-request_id: {description: Request ID from the final page., type: str, returned: always}
+engines:
+  description:
+    - Matching DLC inference engines and capability declarations.
+  returned: always
+  type: list
+  elements: dict
+total_count:
+  description:
+    - Number of engines reported by the API.
+  returned: always
+  type: int
+truncated:
+  description:
+    - Whether max_pages stopped pagination.
+  returned: always
+  type: bool
+request_id:
+  description:
+    - Request ID from the final page.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

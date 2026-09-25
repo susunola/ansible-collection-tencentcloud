@@ -56,7 +56,12 @@ EXAMPLES = r"""
     clusters:
       - {ClusterId: cls-xxxxxxxx, Region: ap-guangzhou, Role: REMOTE}
 """
-RETURN = r"""clusters: {description: Effective linked cluster metadata., type: list, elements: dict, returned: always}"""
+RETURN = r"""clusters:
+  description:
+    - Effective linked cluster metadata.
+  returned: always
+  type: list
+  elements: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

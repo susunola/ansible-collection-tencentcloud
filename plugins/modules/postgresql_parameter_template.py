@@ -45,8 +45,7 @@ options:
     description:
       - Parameter name and expected value mapping to enforce.
     type: dict
-    default:
-      {}
+    default: {}
   reset_parameters:
     description:
       - Parameter names to reset to template defaults.
@@ -77,6 +76,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.postgresql_parameter_template_info
+    description: Gather information about Tencent Cloud PostgreSQL parameter templates.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -85,7 +87,11 @@ EXAMPLES = r"""
     database_major_version: '15'
     parameters: {max_connections: '1000'}
 """
-RETURN = r"""parameter_template: {description: PostgreSQL parameter template metadata., type: dict, returned: always}"""
+RETURN = r"""parameter_template:
+  description:
+    - PostgreSQL parameter template metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

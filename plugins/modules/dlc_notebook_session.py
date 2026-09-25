@@ -144,6 +144,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dlc_notebook_session_info
+    description: Gather Tencent Cloud DLC Notebook sessions.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -162,8 +165,16 @@ EXAMPLES = r"""
     allow_delete: true
 """
 RETURN = r"""
-session: {description: Effective Notebook session metadata., type: dict, returned: always}
-session_id: {description: DLC Notebook session ID., type: str, returned: when present}
+session:
+  description:
+    - Effective Notebook session metadata.
+  returned: always
+  type: dict
+session_id:
+  description:
+    - DLC Notebook session ID.
+  returned: when present
+  type: str
 """
 
 import json

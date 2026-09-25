@@ -80,6 +80,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tse_governance_alias_info
+    description: Gather information about Tencent Cloud TSE governance aliases.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -90,7 +93,11 @@ EXAMPLES = r"""
     namespace: production
     service: orders
 """
-RETURN = r"""alias_info: {description: Effective governance alias metadata., type: dict, returned: always}"""
+RETURN = r"""alias_info:
+  description:
+    - Effective governance alias metadata.
+  returned: always
+  type: dict"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -103,6 +103,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tcr_replication_rule_info
+    description: Gather information about Tencent Cloud TCR replication rules.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -113,8 +116,20 @@ EXAMPLES = r'''
     name: production-images
     filters:
       - {type: namespace, value: production}
+
+- name: Delete the replication rule
+  susunola.tencentcloud.tcr_replication_rule:
+    state: absent
+    registry_id: tcr-xxxxxxxx
+    destination_registry_id: tcr-yyyyyyyy
+    destination_region_id: 4
+    name: production-images
 '''
-RETURN = r'''replication_rule: {description: Replication rule metadata., type: dict, returned: always}'''
+RETURN = r'''replication_rule:
+  description:
+    - Replication rule metadata.
+  returned: always
+  type: dict'''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

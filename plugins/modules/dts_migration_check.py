@@ -47,10 +47,17 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dts_migration_check_info
+    description: Gather information about Tencent Cloud DTS migration check jobs.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""- susunola.tencentcloud.dts_migration_check: {job_id: dts-abcd1234}"""
-RETURN = r"""migration_check: {description: DTS check status and step details., type: dict, returned: always}"""
+RETURN = r"""migration_check:
+  description:
+    - DTS check status and step details.
+  returned: always
+  type: dict"""
 
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

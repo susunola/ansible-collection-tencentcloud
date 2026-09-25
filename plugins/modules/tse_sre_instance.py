@@ -158,6 +158,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tse_sre_instance_info
+    description: Gather information about Tencent Cloud TSE sre instances.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -174,7 +177,11 @@ EXAMPLES = r"""
     admin_password: "{{ vault_tse_password }}"
     internet_access: false
 """
-RETURN = r"""instance: {description: Effective TSE registry-engine metadata., type: dict, returned: always}"""
+RETURN = r"""instance:
+  description:
+    - Effective TSE registry-engine metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

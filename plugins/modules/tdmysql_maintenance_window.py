@@ -63,6 +63,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tdmysql_maintenance_window_info
+    description: Gather information about Tencent Cloud TDMYSQL maintenance window.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -73,7 +76,11 @@ EXAMPLES = r"""
     week_days: [Tuesday, Saturday]
 """
 RETURN = r"""
-maintenance_window: {description: Effective normalized window and weekdays., type: dict, returned: always}
+maintenance_window:
+  description:
+    - Effective normalized window and weekdays.
+  returned: always
+  type: dict
 """
 
 import re

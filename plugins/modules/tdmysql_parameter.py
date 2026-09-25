@@ -65,6 +65,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tdmysql_parameter_info
+    description: Gather Tencent Cloud TDSQL MySQL instance parameters.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -75,8 +78,16 @@ EXAMPLES = r"""
       slow_query_log: 'ON'
 """
 RETURN = r"""
-parameters: {description: Effective requested parameters including constraints and restart requirements., type: dict, returned: always}
-restart_required: {description: Whether any changed parameter requires a restart., type: bool, returned: always}
+parameters:
+  description:
+    - Effective requested parameters including constraints and restart requirements.
+  returned: always
+  type: dict
+restart_required:
+  description:
+    - Whether any changed parameter requires a restart.
+  returned: always
+  type: bool
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

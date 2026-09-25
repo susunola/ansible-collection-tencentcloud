@@ -96,9 +96,19 @@ EXAMPLES = r'''
     name: cbs
     version: 1.4.0
     values: {replicaCount: 2}
+
+- name: Uninstall the addon
+  susunola.tencentcloud.tke_addon:
+    state: absent
+    cluster_id: cls-abc123
+    name: cbs
 '''
 RETURN = r'''
-addon: {description: Addon metadata with raw values redacted, type: dict, returned: always}
+addon:
+  description:
+    - Addon metadata with raw values redacted
+  returned: always
+  type: dict
 '''
 
 import base64

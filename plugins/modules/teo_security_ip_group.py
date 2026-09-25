@@ -62,6 +62,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.teo_security_ip_group_info
+    description: Gather information about Tencent Cloud EdgeOne security IP groups.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 
@@ -76,7 +79,11 @@ EXAMPLES = r"""
       - 2001:db8::/48
 """
 
-RETURN = r"""ip_group: {description: EdgeOne security IP-group metadata and complete content., type: dict, returned: always}"""
+RETURN = r"""ip_group:
+  description:
+    - EdgeOne security IP-group metadata and complete content.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

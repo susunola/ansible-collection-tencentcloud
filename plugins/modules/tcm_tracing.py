@@ -69,7 +69,11 @@ EXAMPLES = r"""
     sampling: 1.0
     apm: {Enable: true}
 """
-RETURN = r"""tracing: {description: Effective TCM tracing configuration., type: dict, returned: always}"""
+RETURN = r"""tracing:
+  description:
+    - Effective TCM tracing configuration.
+  returned: always
+  type: dict"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

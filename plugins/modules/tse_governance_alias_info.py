@@ -34,12 +34,15 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tse_governance_alias
+    description: Manage a Tencent Cloud TSE governance service alias.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
 EXAMPLES = r'''
 - name: List all governance aliases
-  susunola.tencentcloud.tse_governance_aliase_info:
+  susunola.tencentcloud.tse_governance_alias_info:
     region: ap-guangzhou
 '''
 

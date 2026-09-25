@@ -76,6 +76,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tione_model_service_state_info
+    description: Gather information about Tencent Cloud TIONE model services.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -89,8 +92,16 @@ EXAMPLES = r"""
     allow_delete: true
 """
 RETURN = r"""
-service: {description: Effective service detail., type: dict, returned: always}
-service_id: {description: Stable service-version ID., type: str, returned: always}
+service:
+  description:
+    - Effective service detail.
+  returned: always
+  type: dict
+service_id:
+  description:
+    - Stable service-version ID.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

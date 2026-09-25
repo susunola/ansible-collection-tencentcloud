@@ -43,6 +43,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tdmysql_parameter
+    description: Manage Tencent Cloud TDSQL MySQL instance parameters.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -51,7 +54,11 @@ EXAMPLES = r"""
     names: [max_connections, slow_query_log]
 """
 RETURN = r"""
-parameters: {description: Parameter metadata keyed by name., type: dict, returned: always}
+parameters:
+  description:
+    - Parameter metadata keyed by name.
+  returned: always
+  type: dict
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

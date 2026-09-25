@@ -87,6 +87,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dlc_database_info
+    description: Gather information about Tencent Cloud DLC databases.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -99,8 +102,16 @@ EXAMPLES = r"""
     state: absent
     allow_delete: true
 """
-RETURN = r"""database: {description: Effective DLC database metadata., type: dict, returned: always}
-batch_id: {description: DLC asynchronous mutation batch ID., type: str, returned: when changed}"""
+RETURN = r"""database:
+  description:
+    - Effective DLC database metadata.
+  returned: always
+  type: dict
+batch_id:
+  description:
+    - DLC asynchronous mutation batch ID.
+  returned: when changed
+  type: str"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

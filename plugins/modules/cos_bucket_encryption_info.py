@@ -39,6 +39,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cos_bucket_encryption
+    description: Manage Tencent Cloud COS default bucket encryption.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -47,8 +50,17 @@ EXAMPLES = r'''
     name: application-data
 '''
 RETURN = r'''
-encryptions: {description: Encryption configuration as an empty or single-element list., returned: always, type: list, elements: dict}
-encryption: {description: Effective encryption configuration or null., returned: always, type: dict}
+encryptions:
+  description:
+    - Encryption configuration as an empty or single-element list.
+  returned: always
+  type: list
+  elements: dict
+encryption:
+  description:
+    - Effective encryption configuration or null.
+  returned: always
+  type: dict
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos

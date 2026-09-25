@@ -52,14 +52,12 @@ options:
     description:
       - Instance tags.
     type: dict
-    default:
-      {}
+    default: {}
   instance_attributes:
     description:
       - Additional instance attributes.
     type: dict
-    default:
-      {}
+    default: {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -85,6 +83,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.monitor_prometheus_instance_info
+    description: Gather information about Tencent Cloud Managed Service for Prometheus instances.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -95,7 +96,11 @@ EXAMPLES = r"""
     zone: ap-guangzhou-3
     retention_days: 30
 """
-RETURN = r"""instance: {description: Managed Prometheus instance metadata., type: dict, returned: always}"""
+RETURN = r"""instance:
+  description:
+    - Managed Prometheus instance metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

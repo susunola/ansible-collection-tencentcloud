@@ -34,6 +34,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.mongodb_backup_config
+    description: Manage TencentDB for MongoDB automatic backup rules.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

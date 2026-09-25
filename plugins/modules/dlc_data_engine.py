@@ -194,6 +194,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dlc_data_engine_info
+    description: Gather information about Tencent Cloud DLC data engines.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -214,8 +217,16 @@ EXAMPLES = r"""
     state: absent
     allow_delete: true
 """
-RETURN = r"""data_engine: {description: Effective DLC data-engine metadata., type: dict, returned: always}
-data_engine_id: {description: DLC data-engine ID., type: str, returned: when present}"""
+RETURN = r"""data_engine:
+  description:
+    - Effective DLC data-engine metadata.
+  returned: always
+  type: dict
+data_engine_id:
+  description:
+    - DLC data-engine ID.
+  returned: when present
+  type: str"""
 
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

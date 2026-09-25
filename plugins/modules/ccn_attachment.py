@@ -75,6 +75,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.ccn_attachment_info
+    description: Gather information about Tencent Cloud CCN attachments.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
@@ -85,10 +88,23 @@ EXAMPLES = r'''
     instance_region: ap-guangzhou
     instance_type: VPC
     description: Production VPC
+
+- name: Detach the VPC
+  susunola.tencentcloud.ccn_attachment:
+    region: ap-guangzhou
+    state: absent
+    ccn_id: ccn-xxxxxxxx
+    instance_id: vpc-xxxxxxxx
+    instance_region: ap-guangzhou
+    instance_type: VPC
 '''
 
 RETURN = r'''
-attachment: {description: CCN attachment metadata., type: dict, returned: always}
+attachment:
+  description:
+    - CCN attachment metadata.
+  returned: always
+  type: dict
 '''
 
 import time

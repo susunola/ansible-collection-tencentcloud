@@ -81,9 +81,22 @@ EXAMPLES = r"""
     max_results: 500
 """
 RETURN = r"""
-statement: {description: Notebook statement metadata., type: dict, returned: always}
-result_pages: {description: Ordered SQL-result pages with schema and statistics., type: list, elements: dict, returned: when include_sql_result}
-request_id: {description: Request ID from the statement lookup., type: str, returned: always}
+statement:
+  description:
+    - Notebook statement metadata.
+  returned: always
+  type: dict
+result_pages:
+  description:
+    - Ordered SQL-result pages with schema and statistics.
+  returned: when include_sql_result
+  type: list
+  elements: dict
+request_id:
+  description:
+    - Request ID from the statement lookup.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

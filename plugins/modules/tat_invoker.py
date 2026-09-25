@@ -44,8 +44,7 @@ options:
     description:
       - Command parameter values encoded as canonical JSON.
     type: dict
-    default:
-      {}
+    default: {}
   policy:
     description:
       - One-time or recurring schedule policy.
@@ -90,6 +89,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tat_invoker_info
+    description: Gather information about Tencent Cloud TAT invokers.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -103,7 +105,11 @@ EXAMPLES = r"""
     parameters:
       environment: production
 """
-RETURN = r"""invoker: {description: TAT invoker metadata with command parameters redacted., type: dict, returned: always}"""
+RETURN = r"""invoker:
+  description:
+    - TAT invoker metadata with command parameters redacted.
+  returned: always
+  type: dict"""
 import hashlib
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

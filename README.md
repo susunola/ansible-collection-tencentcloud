@@ -1331,6 +1331,10 @@ smoke-tests the tarball. See [`docs/release.md`](docs/release.md).
 variables); run it after touching anything under `docs/examples/` or
 `playbooks/`. See [`docs/examples/README.md`](docs/examples/README.md).
 
+`python scripts/check_module_examples.py --check` validates the `EXAMPLES`
+block *inside* every module: each module it calls must exist, every option
+must be declared, and the options the module marks `required` must be passed.
+
 Integration tests require Tencent Cloud credentials and run only when
 `TENCENTCLOUD_SECRET_ID` / `TENCENTCLOUD_SECRET_KEY` are set (see
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)).

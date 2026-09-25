@@ -57,6 +57,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cos_bucket_domain_info
+    description: Gather Tencent Cloud COS custom domains.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -66,8 +69,16 @@ EXAMPLES = r"""
       - {Name: static.example.com, Type: REST, Status: ENABLED, ForcedReplacement: CNAME}
 """
 RETURN = r"""
-domains: {description: Effective custom-domain configuration., type: dict, returned: always}
-txt_verification: {description: DNS TXT verification value returned by COS., type: str, returned: when available}
+domains:
+  description:
+    - Effective custom-domain configuration.
+  returned: always
+  type: dict
+txt_verification:
+  description:
+    - DNS TXT verification value returned by COS.
+  returned: when available
+  type: str
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_domains as normalize, get_domains

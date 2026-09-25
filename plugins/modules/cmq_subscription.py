@@ -89,6 +89,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cmq_subscription_info
+    description: Gather information about Tencent Cloud TDMQ cmq subscriptions.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -96,8 +99,19 @@ EXAMPLES = r'''
     topic_name: order-events
     subscription_name: order-webhook
     endpoint: https://example.com/events
+
+- name: Delete the subscription
+  susunola.tencentcloud.cmq_subscription:
+    state: absent
+    topic_name: order-events
+    subscription_name: order-webhook
+    endpoint: https://example.com/events
 '''
-RETURN = r'''subscription: {description: Subscription metadata., type: dict, returned: always}'''
+RETURN = r'''subscription:
+  description:
+    - Subscription metadata.
+  returned: always
+  type: dict'''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

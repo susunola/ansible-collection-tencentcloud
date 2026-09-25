@@ -42,6 +42,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.ckafka_acl_rule
+    description: Manage Tencent Cloud CKafka ACL rules.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

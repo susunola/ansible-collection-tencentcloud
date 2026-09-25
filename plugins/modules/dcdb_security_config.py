@@ -56,6 +56,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dcdb_security_config_info
+    description: Gather information about Tencent Cloud DCDB db security groups.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -65,7 +68,11 @@ EXAMPLES = r"""
     ssl_enabled: true
     security_group_ids: [sg-aaaaaaaa, sg-bbbbbbbb]
 """
-RETURN = r"""security_config: {description: Effective normalized DCDB security controls., type: dict, returned: always}"""
+RETURN = r"""security_config:
+  description:
+    - Effective normalized DCDB security controls.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

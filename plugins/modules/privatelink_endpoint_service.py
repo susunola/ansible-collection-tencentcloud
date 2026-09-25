@@ -55,8 +55,7 @@ options:
     description:
       - Tags applied at creation.
     type: dict
-    default:
-      {}
+    default: {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -82,6 +81,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.privatelink_endpoint_service_info
+    description: Gather information about Tencent Cloud VPC end point services.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -90,9 +92,18 @@ EXAMPLES = r'''
     vpc_id: vpc-xxxxxxxx
     service_instance_id: lb-xxxxxxxx
     auto_accept: true
+
+- name: Delete the endpoint service
+  susunola.tencentcloud.privatelink_endpoint_service:
+    state: absent
+    name: internal-api
 '''
 RETURN = r'''
-endpoint_service: {description: PrivateLink endpoint service metadata., type: dict, returned: always}
+endpoint_service:
+  description:
+    - PrivateLink endpoint service metadata.
+  returned: always
+  type: dict
 '''
 
 import time

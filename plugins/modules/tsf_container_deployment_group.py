@@ -145,6 +145,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tsf_container_deployment_group_info
+    description: Gather information about Tencent Cloud TSF container deployment groups.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -160,7 +163,11 @@ EXAMPLES = r"""
     memory_limit: '1024'
     protocol_ports: [{protocol: TCP, port: 80, target_port: 8080, name: http}]
 """
-RETURN = r"""deployment_group: {description: Effective container deployment group metadata., type: dict, returned: always}"""
+RETURN = r"""deployment_group:
+  description:
+    - Effective container deployment group metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

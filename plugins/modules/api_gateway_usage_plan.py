@@ -66,6 +66,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.api_gateway_usage_plan_info
+    description: Gather information about Tencent Cloud APIGATEWAY usage plans.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -74,7 +77,11 @@ EXAMPLES = r"""
     qps: 100
     max_request_num: 1000000
 """
-RETURN = r"""usage_plan: {description: Usage plan metadata., type: dict, returned: always}"""
+RETURN = r"""usage_plan:
+  description:
+    - Usage plan metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

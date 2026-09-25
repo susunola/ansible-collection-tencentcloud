@@ -83,6 +83,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.private_dns_record_info
+    description: Gather information about Tencent Cloud PRIVATEDNS private zone records.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -91,9 +94,21 @@ EXAMPLES = r'''
     subdomain: api
     record_type: A
     value: 10.0.0.8
+
+- name: Delete the record
+  susunola.tencentcloud.private_dns_record:
+    state: absent
+    zone_id: zone-abc123
+    subdomain: api
+    record_type: A
+    value: 10.0.0.8
 '''
 RETURN = r'''
-record: {description: Private DNS record metadata, type: dict, returned: always}
+record:
+  description:
+    - Private DNS record metadata
+  returned: always
+  type: dict
 '''
 
 import json

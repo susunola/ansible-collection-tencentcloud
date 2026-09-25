@@ -121,6 +121,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dcdb_instance_info
+    description: Gather information about Tencent Cloud DCDB instances.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -134,7 +137,11 @@ EXAMPLES = r"""
     shard_storage: 100
     shard_count: 2
 """
-RETURN = r"""instance: {description: Effective DCDB instance metadata., type: dict, returned: always}"""
+RETURN = r"""instance:
+  description:
+    - Effective DCDB instance metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -78,6 +78,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tdmysql_backup_policy_info
+    description: Gather Tencent Cloud TDSQL MySQL backup policy.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -93,7 +96,11 @@ EXAMPLES = r"""
     period_time: '0,1,2,3,4,5,6'
 """
 RETURN = r"""
-backup_policy: {description: Effective backup-policy metadata., type: dict, returned: always}
+backup_policy:
+  description:
+    - Effective backup-policy metadata.
+  returned: always
+  type: dict
 """
 
 import json

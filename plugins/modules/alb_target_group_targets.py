@@ -66,6 +66,9 @@ extends_documentation_fragment:
   - susunola.tencentcloud.retry
   - susunola.tencentcloud.user_agent
   - susunola.tencentcloud.waiter
+seealso:
+  - module: susunola.tencentcloud.alb_target_group_targets_info
+    description: Gather information about Tencent Cloud ALB target group targets.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -75,7 +78,12 @@ EXAMPLES = r"""
       - {ip: 10.0.1.10, port: 8080, weight: 50}
       - {ip: 10.0.1.11, port: 8080, weight: 50}
 """
-RETURN = r"""targets: {description: Effective ALB backend targets., type: list, elements: dict, returned: always}"""
+RETURN = r"""targets:
+  description:
+    - Effective ALB backend targets.
+  returned: always
+  type: list
+  elements: dict"""
 import time
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

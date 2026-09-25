@@ -63,6 +63,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.api_gateway_usage_plan_binding_info
+    description: Gather information about Tencent Cloud APIGATEWAY service usage plans.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -70,8 +73,19 @@ EXAMPLES = r'''
     usage_plan_id: usagePlan-xxxxxxxx
     service_id: service-xxxxxxxx
     environment: release
+
+- name: Unbind the usage plan
+  susunola.tencentcloud.api_gateway_usage_plan_binding:
+    state: absent
+    usage_plan_id: usagePlan-xxxxxxxx
+    service_id: service-xxxxxxxx
+    environment: release
 '''
-RETURN = r'''binding: {description: Normalized usage plan binding., type: dict, returned: always}'''
+RETURN = r'''binding:
+  description:
+    - Normalized usage plan binding.
+  returned: always
+  type: dict'''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -61,6 +61,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cos_bucket_replication_info
+    description: Gather Tencent Cloud COS bucket replication.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -73,7 +76,11 @@ EXAMPLES = r"""
         Prefix: logs/
         Destination: {Bucket: qcs::cos:ap-shanghai::archive-1250000000, StorageClass: STANDARD}
 """
-RETURN = r"""replication: {description: Effective replication configuration., type: dict, returned: always}"""
+RETURN = r"""replication:
+  description:
+    - Effective replication configuration.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_replication as normalize, get_replication
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

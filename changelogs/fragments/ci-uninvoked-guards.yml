@@ -1,0 +1,21 @@
+---
+minor_changes:
+  - >-
+    ci - run four guards that existed, passed when invoked by hand, and were
+    invoked by nothing. ``scripts/fix_module_headers.py --check``,
+    ``scripts/check_examples.py --check``,
+    ``scripts/check_porting_map.py --check`` and
+    ``scripts/audit_integration_targets.py`` now each have their own step in
+    ``.github/workflows/ci.yml``. A check nobody runs is not a check: this
+    collection's sanity step was itself skipped for a day because a step above
+    it failed, which is the same failure mode one level up, and a guard that
+    only ever runs on a maintainer's laptop stops being run at all as soon as
+    the maintainer changes.
+  - >-
+    scripts/check_quality_gates.py - guard the number of ``RETURN`` blocks
+    with no ``sample``. A sample earns its place by showing the real shape of
+    the payload; the curated ones carry ID formats such as ``ins-xxxxxxxx``,
+    which is most of their value, so this is recorded as a ratchet at 976
+    rather than generated. Deriving samples from the SDK response model was
+    tried and rejected because it produced 110 lines of ``"string"`` and ``0``
+    for ``cvm_instance`` -- longer than the curated sample and saying less.

@@ -88,6 +88,23 @@ example hits first:
 | `role-vars` | a `tc_*` variable a role does not declare in `defaults/main.yml` |
 | `vars` | a variable a play reads but never declares, registers, documents as `-e name=` or guards with `is defined` |
 
+The same rules apply one level down, to the `EXAMPLES` block *inside* each
+module — the snippet a user copies out of `ansible-doc` rather than out of this
+repository:
+
+```bash
+python scripts/check_module_examples.py --check   # every module example runs as written
+python scripts/check_module_examples.py           # how many modules were read
+```
+
+It resolves each module an example calls, checks every option against that
+module's `DOCUMENTATION` and its doc fragments, and checks that options the
+module marks `required` are passed. The last one is not a style rule: it
+found `cdb_audit_rule`, whose delete example omitted `rule_filters` while the
+argument spec marked that option unconditionally required, which made deleting
+an audit rule impossible — the documentation said "required when
+`state=present`" and the code disagreed.
+
 Run it locally before touching an example:
 
 ```bash

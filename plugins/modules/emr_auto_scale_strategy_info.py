@@ -36,6 +36,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.emr_auto_scale_strategy
+    description: Manage Tencent Cloud EMR automatic scaling strategies.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 

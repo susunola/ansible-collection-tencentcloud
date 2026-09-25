@@ -68,6 +68,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dts_consumer_group_info
+    description: Gather information about Tencent Cloud DTS consumer groups.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -77,9 +80,20 @@ EXAMPLES = r'''
     account_name: analytics-reader
     password: secure-password
     description: Analytics consumers
+
+- name: Delete the consumer group
+  susunola.tencentcloud.dts_consumer_group:
+    state: absent
+    subscribe_id: subs-xxxxxxxx
+    consumer_group_name: analytics
+    account_name: analytics-reader
 '''
 RETURN = r'''
-consumer_group: {description: DTS consumer group metadata., type: dict, returned: always}
+consumer_group:
+  description:
+    - DTS consumer group metadata.
+  returned: always
+  type: dict
 '''
 
 import time

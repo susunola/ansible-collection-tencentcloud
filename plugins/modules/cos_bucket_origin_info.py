@@ -39,6 +39,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cos_bucket_origin
+    description: Manage Tencent Cloud COS bucket origin rules.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -47,8 +50,17 @@ EXAMPLES = r'''
     name: media
 '''
 RETURN = r'''
-origins: {description: Origin configuration as an empty or single-element list., returned: always, type: list, elements: dict}
-origin: {description: Effective origin configuration or null., returned: always, type: dict}
+origins:
+  description:
+    - Origin configuration as an empty or single-element list.
+  returned: always
+  type: list
+  elements: dict
+origin:
+  description:
+    - Effective origin configuration or null.
+  returned: always
+  type: dict
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos

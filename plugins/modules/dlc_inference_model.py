@@ -122,6 +122,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dlc_inference_model_info
+    description: Gather Tencent Cloud DLC inference models.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -139,9 +142,21 @@ EXAMPLES = r"""
       - {key: environment, value: production}
 """
 RETURN = r"""
-model: {description: Effective DLC inference model metadata., type: dict, returned: always}
-model_uid: {description: Stable model UID., type: str, returned: always}
-model_id: {description: DLC numeric or internal model ID., type: str, returned: when available}
+model:
+  description:
+    - Effective DLC inference model metadata.
+  returned: always
+  type: dict
+model_uid:
+  description:
+    - Stable model UID.
+  returned: always
+  type: str
+model_id:
+  description:
+    - DLC numeric or internal model ID.
+  returned: when available
+  type: str
 """
 
 import json

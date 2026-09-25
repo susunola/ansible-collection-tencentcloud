@@ -84,6 +84,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cdwpg_hba_config_info
+    description: Gather information about Tencent Cloud CDWPG user hba configs.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -92,8 +95,17 @@ EXAMPLES = r"""
     rules:
       - {type: hostssl, database: all, user: analysts, address: 10.0.0.0/16, method: md5}
 """
-RETURN = r"""rules: {description: Effective ordered HBA rules., type: list, elements: dict, returned: always}
-task_id: {description: Service task ID., type: int, returned: when changed}"""
+RETURN = r"""rules:
+  description:
+    - Effective ordered HBA rules.
+  returned: always
+  type: list
+  elements: dict
+task_id:
+  description:
+    - Service task ID.
+  returned: when changed
+  type: int"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

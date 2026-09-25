@@ -95,6 +95,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.private_dns_zone_info
+    description: Gather information about Tencent Cloud PRIVATEDNS private zones.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -103,9 +106,19 @@ EXAMPLES = r'''
     vpcs:
       - region: ap-guangzhou
         vpc_id: vpc-abc123
+
+- name: Delete the private zone
+  susunola.tencentcloud.private_dns_zone:
+    region: ap-guangzhou
+    state: absent
+    domain: internal.example.com
 '''
 RETURN = r'''
-zone: {description: Private DNS zone metadata, type: dict, returned: always}
+zone:
+  description:
+    - Private DNS zone metadata
+  returned: always
+  type: dict
 '''
 
 import json

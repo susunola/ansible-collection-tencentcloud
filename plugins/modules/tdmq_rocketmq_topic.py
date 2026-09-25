@@ -84,7 +84,11 @@ EXAMPLES = r"""
     topic_type: PartitionedOrder
     partition_num: 6
 """
-RETURN = r"""topic: {description: RocketMQ topic metadata., type: dict, returned: always}"""
+RETURN = r"""topic:
+  description:
+    - RocketMQ topic metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -136,7 +136,11 @@ EXAMPLES = r"""
     protocols: [https]
     strip_path: true
 """
-RETURN = r"""route: {description: Effective gateway route metadata., type: dict, returned: always}"""
+RETURN = r"""route:
+  description:
+    - Effective gateway route metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

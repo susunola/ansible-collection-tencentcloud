@@ -93,7 +93,11 @@ EXAMPLES = r"""
     name: order-workers
     retry_max_times: 12
 """
-RETURN = r"""group: {description: RocketMQ consumer group metadata., type: dict, returned: always}"""
+RETURN = r"""group:
+  description:
+    - RocketMQ consumer group metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

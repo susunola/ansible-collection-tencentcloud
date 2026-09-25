@@ -121,6 +121,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.monitor_alarm_policy_info
+    description: Gather information about Tencent Cloud Monitor alarm policies.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -130,9 +133,18 @@ EXAMPLES = r'''
     condition:
       IsUnionRule: 0
       Rules: []
+
+- name: Delete the alarm policy
+  susunola.tencentcloud.monitor_alarm_policy:
+    state: absent
+    name: cvm-cpu-high
 '''
 RETURN = r'''
-policy: {description: Alarm policy metadata, type: dict, returned: always}
+policy:
+  description:
+    - Alarm policy metadata
+  returned: always
+  type: dict
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

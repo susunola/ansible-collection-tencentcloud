@@ -57,6 +57,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cos_bucket_origin_info
+    description: Gather Tencent Cloud COS bucket origin rules.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -69,7 +72,11 @@ EXAMPLES = r"""
         OriginCondition: {HTTPStatusCode: 404, Prefix: images/}
         OriginParameter: {Protocol: https, FollowRedirect: 'true', HttpRedirectCode: 302}
 """
-RETURN = r"""origin: {description: Effective origin configuration., type: dict, returned: always}"""
+RETURN = r"""origin:
+  description:
+    - Effective origin configuration.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_origin as normalize, get_origin
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

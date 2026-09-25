@@ -81,6 +81,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cynosdb_account_info
+    description: Gather information about Tencent Cloud CynosDB accounts.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -89,9 +92,19 @@ EXAMPLES = r'''
     account_name: app_user
     password: '{{ vault_database_password }}'
     description: Application account
+
+- name: Delete the account
+  susunola.tencentcloud.cynosdb_account:
+    state: absent
+    cluster_id: cynosdbmysql-xxxxxxxx
+    account_name: app_user
 '''
 RETURN = r'''
-account: {description: CynosDB account metadata., type: dict, returned: always}
+account:
+  description:
+    - CynosDB account metadata.
+  returned: always
+  type: dict
 '''
 
 import time

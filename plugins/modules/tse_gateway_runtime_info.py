@@ -55,12 +55,38 @@ EXAMPLES = r'''
   register: gateway_runtime
 '''
 RETURN = r'''
-network_config: {description: Gateway or group network configuration., type: dict, returned: always}
-ports: {description: Gateway protocol port configuration., type: dict, returned: always}
-public_addresses: {description: Public address configurations., type: list, elements: dict, returned: always}
-nodes: {description: Nodes in the selected gateway group., type: list, elements: dict, returned: always}
-node_count: {description: Node count reported by the API., type: int, returned: always}
-request_ids: {description: Request IDs keyed by query type., type: dict, returned: always}
+network_config:
+  description:
+    - Gateway or group network configuration.
+  returned: always
+  type: dict
+ports:
+  description:
+    - Gateway protocol port configuration.
+  returned: always
+  type: dict
+public_addresses:
+  description:
+    - Public address configurations.
+  returned: always
+  type: list
+  elements: dict
+nodes:
+  description:
+    - Nodes in the selected gateway group.
+  returned: always
+  type: list
+  elements: dict
+node_count:
+  description:
+    - Node count reported by the API.
+  returned: always
+  type: int
+request_ids:
+  description:
+    - Request IDs keyed by query type.
+  returned: always
+  type: dict
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

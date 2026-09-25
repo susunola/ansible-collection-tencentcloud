@@ -31,14 +31,12 @@ options:
     description:
       - Training-task API filters used in list mode.
     type: dict
-    default:
-      {}
+    default: {}
   tag_filters:
     description:
       - Tag keys mapped to values or value lists in list mode.
     type: dict
-    default:
-      {}
+    default: {}
   order_field:
     description:
       - List sort field.
@@ -81,6 +79,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tione_training_task
+    description: Manage Tencent Cloud TIONE training tasks.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -95,11 +96,32 @@ EXAMPLES = r"""
       team: ml-platform
 """
 RETURN = r"""
-training_task: {description: Exact training-task detail., type: dict, returned: when task_id is provided}
-training_tasks: {description: Matching training tasks., type: list, elements: dict, returned: in list mode}
-total_count: {description: Number of tasks reported by the API., type: int, returned: in list mode}
-truncated: {description: Whether max_pages stopped pagination., type: bool, returned: in list mode}
-request_id: {description: Request ID from the exact request or final page., type: str, returned: always}
+training_task:
+  description:
+    - Exact training-task detail.
+  returned: when task_id is provided
+  type: dict
+training_tasks:
+  description:
+    - Matching training tasks.
+  returned: in list mode
+  type: list
+  elements: dict
+total_count:
+  description:
+    - Number of tasks reported by the API.
+  returned: in list mode
+  type: int
+truncated:
+  description:
+    - Whether max_pages stopped pagination.
+  returned: in list mode
+  type: bool
+request_id:
+  description:
+    - Request ID from the exact request or final page.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

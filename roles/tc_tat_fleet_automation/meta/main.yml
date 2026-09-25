@@ -3,5 +3,5 @@ galaxy_info:
   author: Tencent Cloud Ansible Collection Contributors
   description: Run and schedule governed TAT commands across a Tencent Cloud fleet
   license: GPL-3.0-or-later
-  min_ansible_version: "2.16"
+  min_ansible_version: "2.19"
 dependencies: []

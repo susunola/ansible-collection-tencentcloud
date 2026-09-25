@@ -198,6 +198,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tione_training_task_info
+    description: Gather Tencent Cloud TIONE training tasks.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -221,8 +224,16 @@ EXAMPLES = r"""
     allow_delete: true
 """
 RETURN = r"""
-training_task: {description: Effective training-task detail., type: dict, returned: always}
-task_id: {description: Stable training-task ID., type: str, returned: when available}
+training_task:
+  description:
+    - Effective training-task detail.
+  returned: always
+  type: dict
+task_id:
+  description:
+    - Stable training-task ID.
+  returned: when available
+  type: str
 """
 
 import json

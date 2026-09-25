@@ -27,8 +27,7 @@ options:
     description:
       - Parent-scoped version filters such as TrainingModelVersionId, ModelVersionType, ModelFormat or AlgorithmFramework.
     type: dict
-    default:
-      {}
+    default: {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -49,6 +48,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tione_training_model_version
+    description: Manage versions of an existing Tencent Cloud TIONE training model.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -62,10 +64,27 @@ EXAMPLES = r"""
       AlgorithmFramework: PYTORCH
 """
 RETURN = r"""
-model_version: {description: Exact training-model version detail., type: dict, returned: when version_id is provided}
-model_versions: {description: Versions within the selected parent model., type: list, elements: dict, returned: in list mode}
-total_count: {description: Number of returned parent-scoped versions., type: int, returned: in list mode}
-request_id: {description: Tencent Cloud request ID., type: str, returned: always}
+model_version:
+  description:
+    - Exact training-model version detail.
+  returned: when version_id is provided
+  type: dict
+model_versions:
+  description:
+    - Versions within the selected parent model.
+  returned: in list mode
+  type: list
+  elements: dict
+total_count:
+  description:
+    - Number of returned parent-scoped versions.
+  returned: in list mode
+  type: int
+request_id:
+  description:
+    - Tencent Cloud request ID.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -59,10 +59,20 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cam_policy_attachment_info
+    description: Gather information about Tencent Cloud CAM policy attachments.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
 - susunola.tencentcloud.cam_policy_attachment:
+    policy_id: 123456
+    target_type: role
+    target_name: deployment-role
+
+- name: Detach the policy
+  susunola.tencentcloud.cam_policy_attachment:
+    state: absent
     policy_id: 123456
     target_type: role
     target_name: deployment-role

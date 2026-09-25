@@ -76,7 +76,11 @@ EXAMPLES = r"""
     mesh_id: mesh-xxxxxxxx
     state: absent
 """
-RETURN = r"""prometheus: {description: Effective Prometheus configuration with secrets redacted., type: dict, returned: always}"""
+RETURN = r"""prometheus:
+  description:
+    - Effective Prometheus configuration with secrets redacted.
+  returned: always
+  type: dict"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -32,8 +32,7 @@ options:
     description:
       - Model-version API filter names mapped to values or value lists.
     type: dict
-    default:
-      {}
+    default: {}
   sort_fields:
     type: list
     elements: dict
@@ -80,6 +79,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dlc_model_version
+    description: Publish immutable Tencent Cloud DLC model versions.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -90,10 +92,27 @@ EXAMPLES = r"""
       - {field: CreateTime, order: DESC}
 """
 RETURN = r"""
-model_versions: {description: Matching versions from the selected parent model., type: list, elements: dict, returned: always}
-total_count: {description: Number of versions reported by the API., type: int, returned: always}
-truncated: {description: Whether max_pages stopped pagination., type: bool, returned: always}
-request_id: {description: Request ID from the final page., type: str, returned: always}
+model_versions:
+  description:
+    - Matching versions from the selected parent model.
+  returned: always
+  type: list
+  elements: dict
+total_count:
+  description:
+    - Number of versions reported by the API.
+  returned: always
+  type: int
+truncated:
+  description:
+    - Whether max_pages stopped pagination.
+  returned: always
+  type: bool
+request_id:
+  description:
+    - Request ID from the final page.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -164,6 +164,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dlc_inference_service_info
+    description: Gather Tencent Cloud DLC inference services.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -187,8 +190,16 @@ EXAMPLES = r"""
     state: stopped
 """
 RETURN = r"""
-inference_service: {description: Effective inference-service metadata., type: dict, returned: always}
-service_id: {description: Stable DLC inference-service ID., type: str, returned: always}
+inference_service:
+  description:
+    - Effective inference-service metadata.
+  returned: always
+  type: dict
+service_id:
+  description:
+    - Stable DLC inference-service ID.
+  returned: always
+  type: str
 """
 
 import json

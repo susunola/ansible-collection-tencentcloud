@@ -48,6 +48,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.monitor_grafana_whitelist_info
+    description: Gather a Managed Grafana IP whitelist.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -55,7 +58,12 @@ EXAMPLES = r"""
     instance_id: grafana-xxxxxxxx
     addresses: [203.0.113.10/32]
 """
-RETURN = r"""whitelist: {description: Effective whitelist., type: list, elements: str, returned: always}"""
+RETURN = r"""whitelist:
+  description:
+    - Effective whitelist.
+  returned: always
+  type: list
+  elements: str"""
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

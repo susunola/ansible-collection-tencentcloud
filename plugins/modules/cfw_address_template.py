@@ -74,6 +74,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cfw_address_template_info
+    description: Gather information about Tencent Cloud CFW address templates.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -82,9 +85,18 @@ EXAMPLES = r'''
     template_type: ip
     addresses: [10.0.0.0/8, 192.168.0.0/16]
     description: Internal networks
+
+- name: Delete the address template
+  susunola.tencentcloud.cfw_address_template:
+    state: absent
+    name: trusted-networks
 '''
 RETURN = r'''
-template: {description: Cloud Firewall address template metadata., type: dict, returned: always}
+template:
+  description:
+    - Cloud Firewall address template metadata.
+  returned: always
+  type: dict
 '''
 
 import time

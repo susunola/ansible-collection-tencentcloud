@@ -81,6 +81,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dlc_model_version_info
+    description: Gather versions of a Tencent Cloud DLC inference model.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -93,8 +96,16 @@ EXAMPLES = r"""
     use_custom_storage: true
 """
 RETURN = r"""
-model_version: {description: Effective immutable model version., type: dict, returned: always}
-version_id: {description: DLC version ID., type: str, returned: when available}
+model_version:
+  description:
+    - Effective immutable model version.
+  returned: always
+  type: dict
+version_id:
+  description:
+    - DLC version ID.
+  returned: when available
+  type: str
 """
 
 import json

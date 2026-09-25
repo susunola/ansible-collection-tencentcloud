@@ -6152,7 +6152,7 @@ SPECS = [
         "return_total_doc": "Number of governance aliases reported by the API.",
         "examples": """\
 - name: List all governance aliases
-  susunola.tencentcloud.tse_governance_aliase_info:
+  susunola.tencentcloud.tse_governance_alias_info:
     region: ap-guangzhou
 """,
     },
@@ -8014,6 +8014,12 @@ REQUIRED_PARAM_OVERRIDES = {
 #: New example blocks for overridden modules (the auto-generated "List all X"
 #: examples omit the required parameters and are unusable as-is).
 REQUIRED_EXAMPLE_OVERRIDES = {
+    "lcic_answer_info": """\
+- name: List answers of a question
+  susunola.tencentcloud.lcic_answer_info:
+    region: ap-guangzhou
+    question_id: "12345678"
+""",
     "teo_function_info": """\
 - name: List functions of a zone
   susunola.tencentcloud.teo_function_info:
@@ -8384,6 +8390,11 @@ def _documentation(spec):
     # modes on both scripts assert.
     build_block = _sibling_script("add_module_attributes").build_block
     lines += build_block("supports_check_mode=True", "%s_info.py" % spec["module"])
+    # A generated _info module cross-references the write module that manages
+    # the same resource; seealso() computes it from the catalogue so the two
+    # cannot disagree about whether the counterpart exists.
+    seealso = _sibling_script("add_module_seealso")
+    lines += seealso.build_block(spec["module"], set(seealso.modules()))
     lines += [
         f"author: {AUTHOR}",
     ]

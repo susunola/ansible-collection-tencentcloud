@@ -59,6 +59,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tdcpg_endpoint_wan_info
+    description: Gather information about Tencent Cloud TDCPG cluster endpoints.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -67,7 +70,11 @@ EXAMPLES = r"""
     endpoint_id: tdcpg-ep-xxxxxxxx
     state: closed
 """
-RETURN = r"""endpoint: {description: Effective endpoint metadata., type: dict, returned: always}"""
+RETURN = r"""endpoint:
+  description:
+    - Effective endpoint metadata.
+  returned: always
+  type: dict"""
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

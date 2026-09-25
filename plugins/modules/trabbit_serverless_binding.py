@@ -78,6 +78,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.trabbit_serverless_binding_info
+    description: Gather information about Tencent Cloud TRABBIT serverless bindings.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -89,7 +92,11 @@ EXAMPLES = r"""
     destination: order-workers
     routing_key: orders.created
 """
-RETURN = r"""binding: {description: RabbitMQ Serverless binding metadata., type: dict, returned: always}"""
+RETURN = r"""binding:
+  description:
+    - RabbitMQ Serverless binding metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

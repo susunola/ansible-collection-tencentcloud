@@ -41,8 +41,7 @@ options:
     description:
       - SDK-compatible JobDateTime schedule.
     type: dict
-    default:
-      {}
+    default: {}
   language:
     description:
       - Language used by area names.
@@ -86,7 +85,11 @@ EXAMPLES = r"""
       Timed: [{StartDateTime: 1788134400, EndDateTime: 1788220800}]
       TimeTZone: Asia/Shanghai
 """
-RETURN = r"""rule: {description: Effective geographic-blocking configuration., type: dict, returned: always}"""
+RETURN = r"""rule:
+  description:
+    - Effective geographic-blocking configuration.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

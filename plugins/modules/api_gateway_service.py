@@ -63,8 +63,7 @@ options:
     description:
       - Tags applied at creation.
     type: dict
-    default:
-      {}
+    default: {}
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -90,6 +89,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.api_gateway_service_info
+    description: Gather information about Tencent Cloud API Gateway services.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -98,9 +100,18 @@ EXAMPLES = r'''
     protocol: http&https
     network_types: [OUTER]
     description: Order service APIs
+
+- name: Delete the API service
+  susunola.tencentcloud.api_gateway_service:
+    state: absent
+    name: order-api
 '''
 RETURN = r'''
-service: {description: API Gateway service metadata., type: dict, returned: always}
+service:
+  description:
+    - API Gateway service metadata.
+  returned: always
+  type: dict
 '''
 
 import time

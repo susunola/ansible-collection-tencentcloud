@@ -1,0 +1,51 @@
+---
+bugfixes:
+  - >-
+    cdb_audit_rule - allow I(state=absent) to be called without
+    I(rule_filters). The argument spec marked the nested filter payload
+    ``required`` while the module's own documentation said it was required
+    only when I(state=present), and the delete path never reads it, so
+    deleting an audit rule failed with "missing required arguments" before any
+    API call. The unconditional requirement is gone and ``required_if`` --
+    which was already there and already says what was meant -- is now the only
+    one. The unit tests passed because they supplied the filters on the delete
+    path too, which is how a test can hold a bug in place; the three delete
+    tests now call the module the way a user has to.
+  - >-
+    tse_governance_alias_info - the shipped example called
+    ``tse_governance_aliase_info``, a module that does not exist, so the
+    copy-paste failed with "couldn't resolve module/action" before reaching
+    Tencent Cloud. The name is corrected in the generator spec that produces
+    the module, not only in the module, which is what the regeneration check
+    would have demanded anyway.
+  - >-
+    lcic_answer_info - the shipped example omitted I(question_id), which the
+    module marks required, so it failed with "missing required arguments".
+    Every module that takes a required parameter it cannot infer now gets an
+    example that passes it, and this was the one that had been missed.
+minor_changes:
+  - >-
+    scripts/check_module_examples.py - new guard, and the reason the three
+    defects above were found rather than reported by a user. Nothing validated
+    the ``EXAMPLES`` block *inside* a module: ``validate-modules`` proves the
+    string exists and parses as YAML, ``scripts/check_examples.py`` covers the
+    playbooks under ``docs/examples/`` and ``playbooks/`` but not the examples
+    that ship in the 1,027 modules, and the integration targets are the only
+    thing that would run one. The guard resolves every module an example
+    calls, checks each option it passes against the module's own
+    ``DOCUMENTATION`` and doc fragments, and checks that every option the
+    module marks ``required`` is passed, so the example can be run as written.
+    It is wired into CI as "Module examples run as written".
+  - >-
+    module docs - document how to delete the resource. 270 write modules
+    accept I(state: absent) and 70 of them showed it; 38 of the rest now do,
+    each derived from the module's own delete path -- the arguments its
+    ``build_delete_request`` call resolves the resource from -- rather than
+    from the create example, because deletion is where a create-only flag
+    matters (``alb_load_balancer`` refuses to delete a protected load
+    balancer, which its delete example now says) and where a module can
+    demand a parameter that has nothing to do with deleting. The remaining
+    232 are held by a ratchet in ``scripts/check_quality_gates.py``: they are
+    authoring work, because generating the identity from the create example
+    also drags in create-only payloads and an example that mixes a name from
+    one fixture with an id from another finds neither resource.

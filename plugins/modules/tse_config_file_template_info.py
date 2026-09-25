@@ -45,9 +45,22 @@ EXAMPLES = r'''
   register: config_templates
 '''
 RETURN = r'''
-templates: {description: Available configuration file templates., type: list, elements: dict, returned: always}
-total_count: {description: Template count reported by Tencent Cloud., type: int, returned: always}
-request_id: {description: Tencent Cloud request ID., type: str, returned: always}
+templates:
+  description:
+    - Available configuration file templates.
+  returned: always
+  type: list
+  elements: dict
+total_count:
+  description:
+    - Template count reported by Tencent Cloud.
+  returned: always
+  type: int
+request_id:
+  description:
+    - Tencent Cloud request ID.
+  returned: always
+  type: str
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

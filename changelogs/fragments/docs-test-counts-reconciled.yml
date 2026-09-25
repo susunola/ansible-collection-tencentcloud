@@ -1,0 +1,17 @@
+---
+bugfixes:
+  - >-
+    docs - reconcile the test-count figures in docs/panorama.html. The page
+    stated the module-level test-function count as 10,674 in its headline chip
+    and in three other places while stating 10,804 in a fifth, and the same
+    for the unit-test file counts (1,136/1,137/1,068 against 1,163/1,092), so
+    one page quoted two different values for the same measured quantity under
+    the same stated counting rule. Everything now reads 1,163 files, 1,092
+    module-level files and 10,804 module-level test functions, all three
+    re-measured rather than adjusted by hand.
+minor_changes:
+  - >-
+    docs - record the second-pass findings in docs/inclusion-remediation.md:
+    the module-example guard, the three shipped examples it found unusable,
+    and the cdb_audit_rule delete path that its `required` check exposed as a
+    functional defect rather than a documentation one.

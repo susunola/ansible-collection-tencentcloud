@@ -36,6 +36,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.monitor_prometheus_alertmanager_config
+    description: Manage Managed Prometheus Alertmanager configuration.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 EXAMPLES = r'''
@@ -44,8 +47,16 @@ EXAMPLES = r'''
     instance_id: prom-xxxxxxxx
 '''
 RETURN = r'''
-config: {description: Alertmanager configuration returned by the API., returned: always, type: dict}
-request_id: {description: Request ID of the API call., returned: always, type: str}
+config:
+  description:
+    - Alertmanager configuration returned by the API.
+  returned: always
+  type: dict
+request_id:
+  description:
+    - Request ID of the API call.
+  returned: always
+  type: str
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

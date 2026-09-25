@@ -68,6 +68,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.cos_bucket_object_lock_info
+    description: Gather Tencent Cloud COS bucket object lock.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 
@@ -80,7 +83,11 @@ EXAMPLES = r"""
     retention_years: 7
 """
 
-RETURN = r"""object_lock: {description: Effective object-lock configuration., type: dict, returned: always}"""
+RETURN = r"""object_lock:
+  description:
+    - Effective object-lock configuration.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import get_object_lock

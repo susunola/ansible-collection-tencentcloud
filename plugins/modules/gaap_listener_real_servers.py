@@ -75,6 +75,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.gaap_listener_real_servers_info
+    description: Gather information about Tencent Cloud GAAP listener real servers.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -84,7 +87,11 @@ EXAMPLES = r"""
       - {real_server_id: rs-aaaaaaaa, address: 10.0.1.10, port: 3306, weight: 10}
       - {real_server_id: rs-bbbbbbbb, address: 10.0.1.11, port: 3306, weight: 20}
 """
-RETURN = r"""real_servers: {description: Effective GAAP listener bindings., type: list, returned: always}"""
+RETURN = r"""real_servers:
+  description:
+    - Effective GAAP listener bindings.
+  returned: always
+  type: list"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

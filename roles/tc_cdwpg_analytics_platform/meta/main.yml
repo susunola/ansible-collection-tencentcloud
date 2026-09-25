@@ -1,0 +1,27 @@
+---
+galaxy_info:
+  role_name: tc_cdwpg_analytics_platform
+  namespace: susunola
+  author: Tencent Cloud Ansible Collection Contributors (@susunola)
+  description: Creates a CDW PostgreSQL instance, reconciles CN/DN parameters, and installs an exact ordered
+    pg_hba access policy. Parameter restart requirements are reported but the role never restarts a production
+    cluster implicitly
+  company: Tencent Cloud
+  license: GPL-3.0-or-later
+  min_ansible_version: '2.19'
+  platforms:
+  - name: Generic
+    versions:
+    - all
+  - name: macOS
+    versions:
+    - all
+  - name: Windows
+    versions:
+    - all
+  galaxy_tags:
+  - tencentcloud
+  - cdwpg
+  - postgresql
+  - cloud
+dependencies: []

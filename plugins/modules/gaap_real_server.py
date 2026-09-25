@@ -65,6 +65,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.gaap_real_server_info
+    description: Gather information about Tencent Cloud GAAP real servers.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -72,7 +75,11 @@ EXAMPLES = r"""
     address: 10.0.1.10
     name: orders-primary
 """
-RETURN = r"""real_server: {description: Effective GAAP real server., type: dict, returned: always}"""
+RETURN = r"""real_server:
+  description:
+    - Effective GAAP real server.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

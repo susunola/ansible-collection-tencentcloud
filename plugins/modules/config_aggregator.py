@@ -76,6 +76,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.config_aggregator_info
+    description: Gather information about Tencent Cloud Config aggregators.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 
@@ -90,7 +93,11 @@ EXAMPLES = r"""
         member_name: production
 """
 
-RETURN = r"""aggregator: {description: Config aggregator metadata., type: dict, returned: always}"""
+RETURN = r"""aggregator:
+  description:
+    - Config aggregator metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -84,6 +84,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.dcdb_account_privilege_info
+    description: Gather information about Tencent Cloud DCDB account privilege.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -95,7 +98,12 @@ EXAMPLES = r"""
     object_name: events
     privileges: [SELECT, INSERT, UPDATE]
 """
-RETURN = r"""privileges: {description: Effective sorted privilege names., type: list, elements: str, returned: always}"""
+RETURN = r"""privileges:
+  description:
+    - Effective sorted privilege names.
+  returned: always
+  type: list
+  elements: str"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

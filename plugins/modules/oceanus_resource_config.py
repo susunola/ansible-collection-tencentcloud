@@ -77,6 +77,9 @@ attributes:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.oceanus_resource_config_info
+    description: Gather information about Tencent Cloud Oceanus resource config versions.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
@@ -88,8 +91,16 @@ EXAMPLES = r"""
       Param: {Bucket: flink-artifacts-1250000000, Path: jars/orders-1.1.jar, Region: ap-guangzhou}
     remark: release-1.1
 """
-RETURN = r"""resource_config: {description: Effective immutable resource version., type: dict, returned: always}
-version: {description: Effective resource version number., type: int, returned: when present}"""
+RETURN = r"""resource_config:
+  description:
+    - Effective immutable resource version.
+  returned: always
+  type: dict
+version:
+  description:
+    - Effective resource version number.
+  returned: when present
+  type: int"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

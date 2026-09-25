@@ -34,6 +34,9 @@ attributes:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).
     support: full
+seealso:
+  - module: susunola.tencentcloud.tse_config_file_group
+    description: Manage a Tencent Cloud TSE configuration file group.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 '''
 
