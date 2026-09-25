@@ -132,3 +132,28 @@ def test_paginate_returns_items_and_total():
     )
     assert items == [1, 2]
     assert total == 2
+
+
+# ---------------------------------------------------------------------------
+# loading without the SDK
+# ---------------------------------------------------------------------------
+
+def test_the_placeholder_exception_loads_without_the_sdk(monkeypatch):
+    """The module is importable where the SDK is not, which is how the unit
+    suite itself runs. The placeholder keeps the name resolvable so
+    ``sdk_call``'s except clause stays valid and a test can patch it."""
+    import importlib
+    import sys
+
+    blocked = "tencentcloud.common.exception.tencent_cloud_sdk_exception"
+    monkeypatch.setitem(sys.modules, blocked, None)
+    reloaded = importlib.reload(tc)
+    try:
+        assert reloaded.HAS_TENCENTCLOUD_SDK is False
+        placeholder = reloaded.TencentCloudSDKException
+        assert issubclass(placeholder, Exception)
+        assert placeholder("boom").get_code() is None
+        assert placeholder("boom").get_request_id() is None
+    finally:
+        monkeypatch.undo()
+        importlib.reload(tc)

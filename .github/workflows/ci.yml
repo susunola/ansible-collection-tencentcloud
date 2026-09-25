@@ -198,6 +198,12 @@ jobs:
             --cov=plugins/module_utils --cov=plugins/modules \
             --cov-report=term-missing --cov-report=xml:${GITHUB_WORKSPACE}/coverage.xml \
             --cov-report=html:${GITHUB_WORKSPACE}/coverage-html --cov-fail-under=80
+          # The 80% gate is measured over module_utils and modules together,
+          # so one shared helper with no tests moves it by a fraction of a
+          # point. cos_bucket_read.py sat at 89% that way, with twelve
+          # uncovered lines every one of which was a defensive branch the API
+          # itself reaches. Each shared helper is now held to its own floor.
+          python scripts/check_shared_coverage.py --coverage-xml "${GITHUB_WORKSPACE}/coverage.xml"
       # Coverage is reported as an artifact so the numbers behind the
       # 80% gate are inspectable (XML for tooling, HTML for humans),
       # even when the run fails the threshold. upload-artifact resolves

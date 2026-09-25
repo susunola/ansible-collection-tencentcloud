@@ -67,6 +67,30 @@ Each claim below is checkable with the command in the same row.
 | Every core id/name pair says which one to give | `python scripts/enrich_identity_docs.py --check` |
 | Every module that can delete shows how | `python scripts/add_delete_examples.py --check` |
 | Every module documents the keys it returns | `python scripts/check_return_docs.py --check` |
+| Every shared helper is covered by its own tests | `python scripts/check_shared_coverage.py --coverage-xml coverage.xml` |
+
+### The coverage floor could not see one untested file
+
+The coverage gate measures `plugins/module_utils` and `plugins/modules`
+together and fails below 80. That is a good measure of the whole surface and a
+blind one for a single file: a shared helper can arrive with no tests and move
+the total by a fraction of a point.
+
+Two were in that state, and both had the same shape — every uncovered line was
+a *defensive* branch, the kind the API reaches and a well-formed test payload
+never does. `cos_bucket_read.py` sat at 89%: an empty payload reads as absence,
+and COS returns a single `DomainRule`/`OriginRule` as a mapping rather than a
+list and a single `Domain`/`Param` as a string rather than a list. None of
+those coercions had ever run. `monitor.py` was also at 89%, missing its
+ambiguous-name guard, both waiter timeouts and the tag ordering in the create
+request. They are at 100% and 97% now, and `check_shared_coverage.py` holds
+each of the 23 shared files to its own floor so the next one cannot land
+untested.
+
+The gate found `module_utils/tencentcloud.py` at 81% on its first run — a file
+my own census had missed because I truncated the sorted list with `head`. Its
+uncovered branch was the placeholder `TencentCloudSDKException` that exists for
+SDK-less environments, which is how the unit suite itself runs.
 
 ### `RETURN` is a promise, and now it is checked
 

@@ -1,0 +1,24 @@
+---
+minor_changes:
+  - >-
+    scripts/check_shared_coverage.py - new gate, run by the coverage step, that
+    holds every file under C(plugins/module_utils) and C(plugins/plugin_utils)
+    to its own coverage floor. The existing gate measures module_utils and
+    modules together and fails below 80, which is a good measure of the whole
+    surface and a blind one for a single file: a shared helper can arrive with
+    no tests at all and move the total by a fraction of a point.
+  - >-
+    unit tests - cover the defensive branches of the two shared helpers with no
+    direct test. C(cos_bucket_read.py) sat at 89% with twelve uncovered lines,
+    every one of them a branch the API itself reaches: an empty payload reads
+    as absence, a single C(DomainRule) or C(OriginRule) arrives as a mapping
+    rather than a list, and a single C(Domain) or C(Param) arrives as a string
+    rather than a list. The module tests all pass well-formed payloads, so none
+    of those branches had ever run; the file is at 100% now. C(monitor.py) went
+    from 89% to 97% by covering the ambiguous-name guard, both waiter timeouts,
+    the convergence comparison and the tag ordering in the create request.
+  - >-
+    unit tests - load C(module_utils/tencentcloud.py) without the SDK. Its
+    placeholder C(TencentCloudSDKException) exists for exactly that
+    environment, and nothing had ever exercised it: the branch was uncovered
+    while the collection's own unit suite runs with the SDK absent.
