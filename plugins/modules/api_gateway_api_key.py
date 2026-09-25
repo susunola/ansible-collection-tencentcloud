@@ -10,7 +10,12 @@ DOCUMENTATION = r"""
 module: api_gateway_api_key
 short_description: Manage Tencent Cloud API Gateway API keys
 version_added: "0.14.0"
-description: Creates, rotates and deletes API Gateway client credentials.
+description:
+  - Creates, rotates and deletes API Gateway client credentials.
+  - The API returns a generated secret only in the response that creates the key, so
+    the creation task is the only chance to read it. Credential material is redacted
+    from results by default; set C(reveal_secret_value=true) on that task when the
+    secret has to be captured, and give the task C(no_log=true).
 options:
   state:
     description:
@@ -36,6 +41,15 @@ options:
     type: str
     choices: [auto, manual]
     default: auto
+  reveal_secret_value:
+    description:
+      - Return the generated secret on the run that creates the key. The API never exposes it
+        again, so a key created without this is unusable unless the secret was supplied with
+        I(key_type=manual).
+      - Off by default, because the value is written to the task result and from there to any
+        log the play keeps. Set it together with task-level C(no_log=true).
+    type: bool
+    default: false
 
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
@@ -67,13 +81,29 @@ seealso:
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""
-- susunola.tencentcloud.api_gateway_api_key:
+- name: Create an API key
+  susunola.tencentcloud.api_gateway_api_key:
     name: production-client
     key_type: auto
+  register: api_key
+
+- name: Create an API key and capture its generated secret
+  susunola.tencentcloud.api_gateway_api_key:
+    name: production-client
+    key_type: auto
+    reveal_secret_value: true
+  no_log: true
+  register: api_key_secret
+
+- name: Delete an API key
+  susunola.tencentcloud.api_gateway_api_key:
+    name: production-client
+    state: absent
 """
 RETURN = r"""api_key:
   description:
-    - API key metadata. Secret values are redacted.
+    - API key metadata. C(AccessKeySecret) is present only on the run that created the key,
+      and only when I(reveal_secret_value=true).
   returned: always
   type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
@@ -156,6 +186,7 @@ def run_module():
             "access_key_secret": {"no_log": True},
             "name": {},
             "key_type": {"choices": ["auto", "manual"], "default": "auto"},
+            "reveal_secret_value": {"type": "bool", "default": False},
         },
         required_one_of=[("access_key_id", "name")],
         required_if=[("key_type", "manual", ["access_key_id", "access_key_secret"])],
@@ -187,7 +218,13 @@ def run_module():
         diff = maybe_diff(module, None, target)
         if not module.check_mode:
             result = module.sdk_call(client.CreateApiKey, build_create(models, p)).Result
-            current = safe(result._serialize(allow_none=True))
+            current = result._serialize(allow_none=True)
+            # CreateApiKey is the only response that carries the generated
+            # secret: DescribeApiKey and DescribeApiKeysStatus do not return
+            # it. Redacting unconditionally, as this did, produced a key whose
+            # credential the caller could never learn.
+            if not p["reveal_secret_value"]:
+                current = safe(current)
         module.exit_json(changed=True, **(diff or {}), api_key=current)
     except Exception as exc:
         fail_from_sdk_error(module, exc)

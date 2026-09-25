@@ -95,11 +95,17 @@ class FakeApigatewayClient(object):
     def CreateApiKey(self, request):
         self._record("CreateApiKey", request)
         self._next += 1
+        supplied = getattr(request, "AccessKeySecret", None)
         item = {
             "AccessKeyId": getattr(request, "AccessKeyId", None) or "AKID-%d" % (2000 + self._next),
             "SecretName": getattr(request, "SecretName", None),
             "AccessKeyType": getattr(request, "AccessKeyType", "auto"),
-            "AccessKeySecret": getattr(request, "AccessKeySecret", None),
+            # The API generates the secret when the caller does not supply one,
+            # and returns it in this response and in no other. A fake that
+            # echoed the request alone made auto mode look like it had no
+            # secret at all, which is how a module that always stripped it
+            # passed its tests.
+            "AccessKeySecret": supplied or "secret-%d" % (3000 + self._next),
             "Status": 1,
         }
         self.keys.append(item)
@@ -299,3 +305,39 @@ def test_sdk_failure_maps_to_error_payload(monkeypatch):
     payload = exc.value.args[0]
     assert payload["msg"] == "Tencent Cloud API request failed"
     assert "connection dropped" in payload["error"]
+
+
+def test_created_secret_is_redacted_by_default(monkeypatch):
+    """The API returns the generated secret once. Redacting it by default
+    keeps it out of task results and logs, which is the right default."""
+    fake = FakeApigatewayClient()
+    _make_module(monkeypatch, fake)
+    module_args(state="present", name="production-client", key_type="auto")
+    result = run(mod.run_module)
+    assert result["api_key"]["AccessKeyId"]
+    assert "AccessKeySecret" not in result["api_key"]
+
+
+def test_created_secret_is_returned_when_asked_for(monkeypatch):
+    """CreateApiKey is the only response that carries the secret -- the describe
+    calls never return it -- so a key created without this flag can never be
+    used. The module used to strip it unconditionally."""
+    fake = FakeApigatewayClient()
+    _make_module(monkeypatch, fake)
+    module_args(state="present", name="production-client", key_type="auto",
+                reveal_secret_value=True)
+    result = run(mod.run_module)
+    assert result["api_key"]["AccessKeySecret"]
+    assert result["api_key"]["AccessKeyId"]
+
+
+def test_reveal_does_not_invent_a_secret_for_an_existing_key(monkeypatch):
+    """A key that already exists has no secret to reveal, so the flag must not
+    fabricate one or fail: the run is an idempotent no-op as before."""
+    fake = FakeApigatewayClient(keys=[_key()])
+    _make_module(monkeypatch, fake)
+    module_args(state="present", name="production-client", reveal_secret_value=True)
+    result = run(mod.run_module)
+    assert result["changed"] is False
+    assert "AccessKeySecret" not in result["api_key"]
+    assert "CreateApiKey" not in _names(fake)
