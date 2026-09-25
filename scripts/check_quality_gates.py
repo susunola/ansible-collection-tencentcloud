@@ -62,7 +62,7 @@ INTEGRATION_RATCHET = 142
 # Write modules whose unit tests never run ``run_module`` twice, so nothing
 # checks the idempotency the attributes claim.  Small, but the claim is
 # user-facing and the three core-subset entries are worth naming.
-IDEMPOTENCY_RATCHET = 5
+IDEMPOTENCY_RATCHET = 0
 
 _DOC_RE = re.compile(r"DOCUMENTATION = r?(['\"]{3})(.*?)\1", re.S)
 
