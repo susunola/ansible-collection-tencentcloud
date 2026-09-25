@@ -65,6 +65,14 @@ INTEGRATION_MISSING_RATCHET = 134
 # user-facing and the three core-subset entries are worth naming.
 IDEMPOTENCY_RATCHET = 0
 
+# RETURN entries with no ``sample``.  A sample has to show the real shape of
+# the payload -- the curated ones carry ID formats like ``ins-xxxxxxxx``,
+# which is most of their value.  Generating them from the SDK model was tried
+# and rejected: it produced 110 lines of ``"string"`` and ``0`` for
+# cvm_instance, which is longer than the curated sample and says less.  So
+# this is authoring work with a ratchet rather than a generator.
+RETURN_SAMPLE_RATCHET = 976
+
 _DOC_RE = re.compile(r"DOCUMENTATION = r?(['\"]{3})(.*?)\1", re.S)
 
 
@@ -231,6 +239,19 @@ def idempotency_findings():
     return sorted(found)
 
 
+def return_sample_findings():
+    """Modules whose RETURN entries carry no sample."""
+    found = []
+    for path in module_paths():
+        with open(path, encoding="utf-8") as handle:
+            text = handle.read()
+        match = re.search(r"RETURN = r?(['\"]{3})(.*?)\1", text, re.S)
+        if not match or "sample:" in match.group(2):
+            continue
+        found.append(os.path.basename(path)[:-3])
+    return sorted(found)
+
+
 def _gated_modules():
     """Map each gated module to the target(s) that would cover it."""
     registry, dispatched = _registry_and_dispatch()
@@ -250,6 +271,7 @@ def main():
     docs = doc_findings()
     gated, missing = integration_findings()
     idempotency = idempotency_findings()
+    samples = return_sample_findings()
 
     if args.show:
         print("description restates the option name: %d option(s)" % len(docs))
@@ -272,6 +294,8 @@ def main():
         print("write modules whose tests never run the module twice: %d" % len(idempotency))
         for name in idempotency:
             print("   %s" % name)
+        print()
+        print("modules whose RETURN carries no sample: %d" % len(samples))
         return 0
 
     problems = []
@@ -289,6 +313,10 @@ def main():
             "core-subset modules with no integration target at all: %d, "
             "ratchet is %d (the ratchet only goes down)"
             % (len(missing), INTEGRATION_MISSING_RATCHET))
+    if len(samples) > RETURN_SAMPLE_RATCHET:
+        problems.append(
+            "modules whose RETURN carries no sample: %d, ratchet is %d "
+            "(the ratchet only goes down)" % (len(samples), RETURN_SAMPLE_RATCHET))
     if len(idempotency) > IDEMPOTENCY_RATCHET:
         problems.append(
             "write modules whose tests never run the module twice: %d, "
@@ -309,6 +337,8 @@ def main():
           "(ratchet %d)" % (len(missing), INTEGRATION_MISSING_RATCHET))
     print("ok: %d write module(s) lack a two-run test (ratchet %d)"
           % (len(idempotency), IDEMPOTENCY_RATCHET))
+    print("ok: %d module(s) have a RETURN with no sample (ratchet %d)"
+          % (len(samples), RETURN_SAMPLE_RATCHET))
     return 0
 
 
