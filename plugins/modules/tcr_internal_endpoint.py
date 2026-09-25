@@ -28,7 +28,7 @@ options:
     type: str
     required: true
   vpc_id:
-    description: VPC ID.
+    description: VPC whose private access to the registry is managed.
     type: str
     required: true
   subnet_id:

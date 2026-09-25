@@ -21,7 +21,7 @@ options:
     default: present
   function_name:
     description:
-      - Function name.
+      - Name of the function the trigger is attached to.
     type: str
     required: true
   namespace:

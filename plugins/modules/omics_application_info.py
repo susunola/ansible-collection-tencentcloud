@@ -15,7 +15,7 @@ version_added: "0.8.0"
 description: Returns OMICS applications visible in a Tencent Cloud region.
 options:
   project_id:
-    description: Project ID.
+    description: OMICS project whose applications are returned.
     type: str
     required: true
   filters:

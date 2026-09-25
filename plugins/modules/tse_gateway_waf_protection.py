@@ -14,7 +14,7 @@ description: Reconciles global, service or route WAF protection using per-resour
 options:
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway whose WAF protection switch is managed.
     type: str
     required: true
   scope:

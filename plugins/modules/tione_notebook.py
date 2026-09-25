@@ -94,7 +94,7 @@ options:
     type: dict
   lifecycle_script_id:
     description:
-      - Lifecycle script ID.
+      - Lifecycle script run as the notebook starts or stops.
     type: str
   default_code_repo_id:
     description:

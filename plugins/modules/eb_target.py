@@ -20,12 +20,12 @@ options:
     default: present
   event_bus_id:
     description:
-      - Event bus ID.
+      - Event bus the rule belongs to.
     type: str
     required: true
   rule_id:
     description:
-      - Rule ID.
+      - Rule whose targets are reconciled.
     type: str
     required: true
   target_id:

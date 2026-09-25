@@ -39,7 +39,7 @@ options:
     required: true
   destination_type:
     description:
-      - Destination type.
+      - Kind of destination the binding routes to.
     type: str
     required: true
     choices: [queue, exchange]
@@ -50,7 +50,7 @@ options:
     required: true
   routing_key:
     description:
-      - Routing key.
+      - Routing key that selects this binding.
     type: str
     default: ''
 

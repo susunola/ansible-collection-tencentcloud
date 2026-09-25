@@ -14,7 +14,7 @@ description: Reconciles the exact cluster set linked to a Tencent Cloud Mesh ins
 options:
   mesh_id:
     description:
-      - Mesh ID.
+      - Mesh whose cluster links are reconciled.
     type: str
     required: true
   clusters:

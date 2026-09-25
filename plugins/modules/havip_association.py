@@ -20,7 +20,7 @@ options:
     default: present
   havip_id:
     description:
-      - HAVIP ID.
+      - HAVIP the drift-scope associations are managed on.
     type: str
     required: true
   instance_id:

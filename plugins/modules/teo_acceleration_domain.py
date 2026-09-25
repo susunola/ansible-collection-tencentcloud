@@ -31,7 +31,7 @@ options:
     required: true
   origin_type:
     description:
-      - Origin type.
+      - Whether the origin is a single server, a group or a cloud object store.
     type: str
     choices: [IP_DOMAIN, COS, AWS_S3, ORIGIN_GROUP, VOD]
     default: IP_DOMAIN
@@ -45,18 +45,18 @@ options:
     type: str
   origin_protocol:
     description:
-      - Origin protocol.
+      - Protocol used to reach the origin server.
     type: str
     choices: [FOLLOW, HTTP, HTTPS]
     default: FOLLOW
   http_origin_port:
     description:
-      - HTTP origin port.
+      - Origin port used for plain HTTP back-to-origin requests.
     type: int
     default: 80
   https_origin_port:
     description:
-      - HTTPS origin port.
+      - Origin port used for HTTPS back-to-origin requests.
     type: int
     default: 443
   ipv6_status:

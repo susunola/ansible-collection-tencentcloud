@@ -28,7 +28,7 @@ options:
     required: true
   resource_partition_id:
     description:
-      - Resource partition ID.
+      - Resource partition the lab draws its compute from.
     type: str
   queue:
     description:

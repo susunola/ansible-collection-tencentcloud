@@ -15,7 +15,7 @@ description: Returns current rotation configuration and optionally the visible r
 options:
   secret_name:
     description:
-      - Secret name.
+      - Secret whose rotation configuration is returned.
     type: str
     required: true
   include_history:

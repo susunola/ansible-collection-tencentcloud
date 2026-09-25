@@ -36,7 +36,7 @@ options:
     type: str
   resource_partition_id:
     description:
-      - Resource partition ID.
+      - Resource partition the Ray cluster draws its compute from.
     type: str
   queue:
     description:
@@ -48,7 +48,7 @@ options:
     type: str
   image_pull_policy:
     description:
-      - Image pull policy.
+      - When the container image is pulled for the cluster.
     type: str
     choices: [Always, IfNotPresent, Never]
   image_pull_type:

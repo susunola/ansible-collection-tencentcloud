@@ -20,7 +20,7 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway the service source is configured on.
     type: str
     required: true
   source_id:

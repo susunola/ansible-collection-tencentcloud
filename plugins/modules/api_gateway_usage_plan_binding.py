@@ -20,12 +20,12 @@ options:
     default: present
   usage_plan_id:
     description:
-      - Usage plan ID.
+      - Usage plan the service environment is bound to.
     type: str
     required: true
   service_id:
     description:
-      - Service ID.
+      - API Gateway service whose environment is bound to the usage plan.
     type: str
     required: true
   environment:

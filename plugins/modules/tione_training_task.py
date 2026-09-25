@@ -96,11 +96,11 @@ options:
     type: str
   vpc_id:
     description:
-      - VPC ID.
+      - VPC the training task runs in.
     type: str
   subnet_id:
     description:
-      - Subnet ID.
+      - Subnet the training task runs in; it must belong to O(vpc_id).
     type: str
   output:
     description:

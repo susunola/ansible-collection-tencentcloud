@@ -67,7 +67,7 @@ options:
     default: 60
   delay_message_policy:
     description:
-      - Delay-message policy.
+      - How delayed delivery is handled for messages on the topic.
     type: str
     choices: [defaultPolicy, timingwheelPolicy]
     default: defaultPolicy

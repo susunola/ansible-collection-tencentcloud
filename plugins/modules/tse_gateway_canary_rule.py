@@ -22,7 +22,7 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway the canary rule applies to.
     type: str
     required: true
   service_id:

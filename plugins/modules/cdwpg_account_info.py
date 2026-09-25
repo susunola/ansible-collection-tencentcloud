@@ -15,7 +15,7 @@ version_added: "0.8.0"
 description: Returns CDWPG accounts visible in a Tencent Cloud region.
 options:
   instance_id:
-    description: Instance ID.
+    description: CDWPG instance whose accounts are returned.
     type: str
     required: true
   page_size:

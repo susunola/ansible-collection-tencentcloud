@@ -72,7 +72,7 @@ options:
     choices: [JOB, COS]
   algorithm_framework:
     description:
-      - Algorithm framework.
+      - Training framework the model version was produced with.
     type: str
   reasoning_environment:
     description:
@@ -97,11 +97,11 @@ options:
     choices: [CUT, COPY]
   training_preference:
     description:
-      - Training preference.
+      - Training environment the version was produced in.
     type: str
   model_version_type:
     description:
-      - Model-version type.
+      - Kind of model version being registered.
     type: str
     choices: [NORMAL, ACCELERATE]
     default: NORMAL

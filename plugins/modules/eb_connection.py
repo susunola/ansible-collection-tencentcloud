@@ -20,7 +20,7 @@ options:
     default: present
   event_bus_id:
     description:
-      - Event bus ID.
+      - Event bus the connection belongs to.
     type: str
     required: true
   connection_id:

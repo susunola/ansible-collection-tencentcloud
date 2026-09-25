@@ -14,7 +14,7 @@ description: Reconciles an existing account description and performs explicitly 
 options:
   cluster_id:
     description:
-      - Cluster ID.
+      - TDSQL-C PostgreSQL cluster the account belongs to.
     type: str
     required: true
   account_name:

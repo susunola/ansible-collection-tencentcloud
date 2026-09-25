@@ -20,7 +20,7 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway whose WAF-protected domains are managed.
     type: str
     required: true
   domains:

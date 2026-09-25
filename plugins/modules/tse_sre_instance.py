@@ -63,7 +63,7 @@ options:
     elements: int
   storage_type:
     description:
-      - Storage type.
+      - Storage backing the service registry instance.
     type: str
   storage_capacity:
     description:

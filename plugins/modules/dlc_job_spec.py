@@ -45,7 +45,7 @@ options:
     choices: [Builtin, Custom]
   image_pull_policy:
     description:
-      - Image pull policy.
+      - When the container image is pulled for the job.
     type: str
     choices: [Always, IfNotPresent, Never]
   resource_config:
@@ -94,7 +94,7 @@ options:
     type: str
   job_package_name:
     description:
-      - Job package name.
+      - Name of the job package the specification runs.
     type: str
   priority:
     description:

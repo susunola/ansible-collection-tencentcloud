@@ -20,7 +20,7 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway the server group is attached to.
     type: str
     required: true
   group_id:

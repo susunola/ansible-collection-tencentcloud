@@ -17,7 +17,7 @@ description:
 options:
   secret_name:
     description:
-      - Secret name.
+      - Secret whose versions are returned.
     type: str
     required: true
   version_id:

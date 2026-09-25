@@ -26,7 +26,7 @@ options:
     required: true
   subscription_name:
     description:
-      - Subscription name.
+      - Name of the subscription, unique within the topic.
     type: str
     required: true
   protocol:

@@ -19,7 +19,7 @@ options:
     default: present
   queue_name:
     description:
-      - Queue name.
+      - Name of the queue, unique within the CMQ namespace.
     type: str
     required: true
   max_msg_heap_num:

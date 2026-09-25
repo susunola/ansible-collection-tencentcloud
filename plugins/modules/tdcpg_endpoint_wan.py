@@ -14,12 +14,12 @@ description: Opens or closes endpoint public access and waits for observable end
 options:
   cluster_id:
     description:
-      - Cluster ID.
+      - TDSQL-C PostgreSQL cluster the endpoint belongs to.
     type: str
     required: true
   endpoint_id:
     description:
-      - Endpoint ID.
+      - Endpoint whose public access is managed.
     type: str
     required: true
   state:

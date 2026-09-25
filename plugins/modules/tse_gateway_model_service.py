@@ -22,7 +22,7 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway the model service runs behind.
     type: str
     required: true
   model_service_id:

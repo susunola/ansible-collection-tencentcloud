@@ -20,7 +20,7 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway whose CORS policy is managed.
     type: str
     required: true
   scope:

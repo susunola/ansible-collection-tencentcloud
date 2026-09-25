@@ -20,7 +20,7 @@ options:
     default: present
   usage_plan_id:
     description:
-      - Usage plan ID.
+      - Usage plan the API key is bound to.
     type: str
     required: true
   access_key_id:

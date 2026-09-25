@@ -45,7 +45,7 @@ options:
     type: str
   audit_state:
     description:
-      - Audit state.
+      - State of the fileset auditing feature.
     type: str
 
 extends_documentation_fragment:

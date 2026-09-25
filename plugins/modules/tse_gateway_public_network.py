@@ -20,7 +20,7 @@ options:
     default: present
   gateway_id:
     description:
-      - Gateway ID.
+      - Gateway whose public network access is managed.
     type: str
     required: true
   group_id:
