@@ -114,6 +114,11 @@ jobs:
         run: ruff check . --no-cache
       - name: Sanity ignore budget
         run: python scripts/check_sanity_ignore.py
+      # P0 remediation freeze: module/role/plugin/README/ignore counts
+      # must not rise. 2.0 allowlist is recorded but not enforced until
+      # the cut PR enables --strict.
+      - name: Remediation freeze
+        run: python scripts/check_remediation_freeze.py
       # The reviewer's headline finding: 432 modules documented their options as
       # single-line flow mappings.  Nothing upstream can see that -- a flow
       # mapping is legal YAML, validate-modules accepts it, and
