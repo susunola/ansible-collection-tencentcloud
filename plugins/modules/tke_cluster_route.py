@@ -49,7 +49,7 @@ attributes:
       - Can run in C(check_mode), reading the current state and predicting
         the result without issuing a write API call.
     support: full
-  idempotency:
+  idempotent:
     description:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).

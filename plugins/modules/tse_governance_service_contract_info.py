@@ -64,7 +64,7 @@ attributes:
       - Can run in C(check_mode), reading the current state and predicting
         the result without issuing a write API call.
     support: full
-  idempotency:
+  idempotent:
     description:
       - Read-only, so every run returns the current state and never changes
         the target, and a repeated run reports C(changed=false).

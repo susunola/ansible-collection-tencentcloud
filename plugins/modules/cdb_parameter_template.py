@@ -43,7 +43,8 @@ options:
     default: mysql
   template_type:
     description:
-      - Template type.
+      - Template type, passed to the CDB API as V(TemplateType).
+      - The value must match the type the template was created with.
     type: int
     default: 0
   parameters:
@@ -66,7 +67,12 @@ attributes:
       - Can run in C(check_mode), reading the current state and predicting
         the result without issuing a write API call.
     support: full
-  idempotency:
+  diff_mode:
+    description:
+      - Returns the difference between the observed and the requested state
+        when the task runs with C(--diff).
+    support: full
+  idempotent:
     description:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).

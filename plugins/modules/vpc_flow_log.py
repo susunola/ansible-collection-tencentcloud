@@ -31,7 +31,7 @@ options:
     type: str
   vpc_id:
     description:
-      - VPC ID.
+      - VPC whose traffic this flow log captures.
     type: str
     required: true
   resource_type:
@@ -93,7 +93,12 @@ attributes:
       - Can run in C(check_mode), reading the current state and predicting
         the result without issuing a write API call.
     support: full
-  idempotency:
+  diff_mode:
+    description:
+      - Returns the difference between the observed and the requested state
+        when the task runs with C(--diff).
+    support: full
+  idempotent:
     description:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).

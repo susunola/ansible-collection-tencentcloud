@@ -34,7 +34,11 @@ options:
     type: str
   policy_type:
     description:
-      - Policy type.
+      - How the policy adjusts capacity when it runs.
+      - C(SIMPLE) applies one adjustment per run, sized by the policy's own
+        parameters.
+      - C(TARGET_TRACKING) keeps the chosen metric at a target value by
+        adjusting capacity as the metric moves.
     type: str
     choices: [SIMPLE, TARGET_TRACKING]
     default: SIMPLE
@@ -85,7 +89,12 @@ attributes:
       - Can run in C(check_mode), reading the current state and predicting
         the result without issuing a write API call.
     support: full
-  idempotency:
+  diff_mode:
+    description:
+      - Returns the difference between the observed and the requested state
+        when the task runs with C(--diff).
+    support: full
+  idempotent:
     description:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).

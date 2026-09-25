@@ -53,7 +53,8 @@ options:
     type: int
   storage_node_count:
     description:
-      - Storage-node count.
+      - Number of storage nodes backing the instance.
+      - More nodes raise the throughput the instance can sustain.
     type: int
   replications:
     description:
@@ -73,7 +74,8 @@ options:
     type: int
   storage_type:
     description:
-      - Storage type.
+      - Storage medium holding the instance's data.
+      - C(CLOUD_HSSD) is the standard cloud SSD tier; C(CLOUD_TCS) is the higher-throughput tier.
     type: str
     choices: [CLOUD_HSSD, CLOUD_TCS]
   instance_type:
@@ -191,7 +193,12 @@ attributes:
       - Can run in C(check_mode), reading the current state and predicting
         the result without issuing a write API call.
     support: full
-  idempotency:
+  diff_mode:
+    description:
+      - Returns the difference between the observed and the requested state
+        when the task runs with C(--diff).
+    support: full
+  idempotent:
     description:
       - Reconciles the resource against its live state, so running again
         with the same arguments leaves it unchanged and reports C(changed=false).

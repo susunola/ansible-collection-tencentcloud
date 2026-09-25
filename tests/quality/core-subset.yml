@@ -1,0 +1,62 @@
+# The subset this collection asks to be judged on.
+#
+# 1,027 modules across 220 product prefixes is not a reviewable claim: a
+# reviewer cannot read them, and we cannot honestly assert a quality bar for
+# content nobody has read.  These products are the ones a typical production
+# Tencent Cloud user actually needs, and they are the ones we commit to
+# holding at the full bar -- complete documentation, a runnable integration
+# target, and a dedicated unit test.
+#
+# Everything outside this list stays on Galaxy and keeps its own ratchets, so
+# quality can only improve; it is simply not what we are asking to be judged
+# on.
+#
+# Source of the split: the module catalogue by product prefix, weighted by
+# whether the service appears in a typical Tencent Cloud deployment.  The
+# production tiers the collection already uses for products with a write
+# module are a useful cross-check.
+version: 1
+
+products:
+  # compute
+  - cvm
+  - lighthouse
+  - as
+  - key_pair
+  # network
+  - vpc
+  - subnet
+  - security_group
+  - eip
+  - clb
+  - alb
+  - network_interface
+  - route_table
+  - nat_gateway
+  # storage
+  - cos
+  - cbs
+  - cfs
+  # containers
+  - tke
+  - eks
+  # databases
+  - cdb
+  - tdmysql
+  - mariadb
+  - postgresql
+  - sqlserver
+  - redis
+  - mongodb
+  - cynosdb
+  # identity, DNS, observability, security
+  - cam
+  - dnspod
+  - private_dns
+  - cls
+  - monitor
+  - kms
+  - ssl_certificate
+  # configuration management
+  - tag
+  - cvm_disaster_recover_group
