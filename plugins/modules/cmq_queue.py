@@ -95,6 +95,11 @@ EXAMPLES = r"""
     queue_name: jobs
     polling_wait_seconds: 10
     visibility_timeout: 60
+
+- name: Delete the queue
+  susunola.tencentcloud.cmq_queue:
+    state: absent
+    queue_name: jobs
 """
 RETURN = r"""queue:
   description:

@@ -65,6 +65,11 @@ EXAMPLES = r'''
 - susunola.tencentcloud.cls_logset:
     name: production-logs
     tags: {env: prod}
+
+- name: Delete the logset
+  susunola.tencentcloud.cls_logset:
+    state: absent
+    name: production-logs
 '''
 RETURN = r'''
 logset:

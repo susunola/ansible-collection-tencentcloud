@@ -92,6 +92,15 @@ EXAMPLES = r"""
     filter_key: select,user
     max_concurrency: 10
     session_token: "{{ dbbrain_session_token }}"
+
+- name: Delete the SQL filter
+  susunola.tencentcloud.dbbrain_sql_filter:
+    state: absent
+    instance_id: cdb-xxxxxxxx
+    sql_type: SELECT
+    filter_key: select,user
+    max_concurrency: 10
+    session_token: "{{ dbbrain_session_token }}"
 """
 RETURN = r"""sql_filter:
   description:

@@ -98,6 +98,12 @@ EXAMPLES = r'''
     record_type: A
     content: 203.0.113.10
     ttl: 300
+
+- name: Delete the record
+  susunola.tencentcloud.teo_dns_record:
+    state: absent
+    zone_id: zone-xxxxxxxx
+    name: api.example.com
 '''
 RETURN = r'''
 record:

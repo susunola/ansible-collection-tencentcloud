@@ -164,6 +164,11 @@ EXAMPLES = r'''
       - {protocol: TCP, port: '443', cidr: 10.0.0.0/8, action: ACCEPT, priority: 1}
     egress:
       - {protocol: ALL, cidr: 0.0.0.0/0, action: ACCEPT, priority: 1}
+
+- name: Delete the network ACL
+  susunola.tencentcloud.network_acl:
+    state: absent
+    name: app-acl
 '''
 
 RETURN = r'''

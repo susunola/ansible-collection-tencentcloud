@@ -129,6 +129,11 @@ EXAMPLES = r'''
     resource_types: [QCS::CBS::Disk]
     risk_level: 1
     regions: [ap-guangzhou, ap-shanghai]
+
+- name: Delete the rule
+  susunola.tencentcloud.config_rule:
+    state: absent
+    name: require-encrypted-disks
 '''
 RETURN = r'''
 rule:

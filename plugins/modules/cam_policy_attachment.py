@@ -69,6 +69,13 @@ EXAMPLES = r'''
     policy_id: 123456
     target_type: role
     target_name: deployment-role
+
+- name: Detach the policy
+  susunola.tencentcloud.cam_policy_attachment:
+    state: absent
+    policy_id: 123456
+    target_type: role
+    target_name: deployment-role
 '''
 RETURN = r'''
 attachment:

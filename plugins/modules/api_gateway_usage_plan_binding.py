@@ -73,6 +73,13 @@ EXAMPLES = r'''
     usage_plan_id: usagePlan-xxxxxxxx
     service_id: service-xxxxxxxx
     environment: release
+
+- name: Unbind the usage plan
+  susunola.tencentcloud.api_gateway_usage_plan_binding:
+    state: absent
+    usage_plan_id: usagePlan-xxxxxxxx
+    service_id: service-xxxxxxxx
+    environment: release
 '''
 RETURN = r'''binding:
   description:

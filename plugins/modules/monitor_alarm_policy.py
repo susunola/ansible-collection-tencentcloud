@@ -133,6 +133,11 @@ EXAMPLES = r'''
     condition:
       IsUnionRule: 0
       Rules: []
+
+- name: Delete the alarm policy
+  susunola.tencentcloud.monitor_alarm_policy:
+    state: absent
+    name: cvm-cpu-high
 '''
 RETURN = r'''
 policy:

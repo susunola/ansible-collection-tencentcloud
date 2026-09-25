@@ -85,6 +85,11 @@ EXAMPLES = r'''
     template_type: ip
     addresses: [10.0.0.0/8, 192.168.0.0/16]
     description: Internal networks
+
+- name: Delete the address template
+  susunola.tencentcloud.cfw_address_template:
+    state: absent
+    name: trusted-networks
 '''
 RETURN = r'''
 template:

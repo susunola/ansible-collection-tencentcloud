@@ -92,6 +92,11 @@ EXAMPLES = r'''
     vpc_id: vpc-xxxxxxxx
     service_instance_id: lb-xxxxxxxx
     auto_accept: true
+
+- name: Delete the endpoint service
+  susunola.tencentcloud.privatelink_endpoint_service:
+    state: absent
+    name: internal-api
 '''
 RETURN = r'''
 endpoint_service:

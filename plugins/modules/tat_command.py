@@ -118,6 +118,11 @@ EXAMPLES = r'''
       #!/bin/bash
       curl -fsSL https://example.com/install.sh | bash
     timeout: 300
+
+- name: Delete the command
+  susunola.tencentcloud.tat_command:
+    state: absent
+    name: install-agent
 '''
 RETURN = r'''
 command:

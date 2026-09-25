@@ -113,6 +113,13 @@ EXAMPLES = r'''
     name: orders
     partitions: 4
     message_ttl: 86400
+
+- name: Delete the topic
+  susunola.tencentcloud.tdmq_topic:
+    state: absent
+    cluster_id: pulsar-xxxxxxxx
+    environment_id: production
+    name: orders
 '''
 RETURN = r'''
 topic:

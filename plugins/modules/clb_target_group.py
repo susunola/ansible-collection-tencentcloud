@@ -124,6 +124,11 @@ EXAMPLES = r'''
     instances:
       - {ip: 10.0.1.10, port: 8080, weight: 20}
       - {ip: 10.0.1.11, port: 8080, weight: 20}
+
+- name: Delete the target group
+  susunola.tencentcloud.clb_target_group:
+    state: absent
+    name: api-backends
 '''
 
 RETURN = r'''

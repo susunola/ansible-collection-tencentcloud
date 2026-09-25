@@ -110,6 +110,11 @@ EXAMPLES = r'''
 - susunola.tencentcloud.kms_key:
     alias: production-data
     description: Encrypt production data
+
+- name: Schedule the key for deletion
+  susunola.tencentcloud.kms_key:
+    state: absent
+    alias: production-data
 '''
 RETURN = r'''
 key:

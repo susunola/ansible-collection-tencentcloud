@@ -80,6 +80,13 @@ EXAMPLES = r'''
     account_name: analytics-reader
     password: secure-password
     description: Analytics consumers
+
+- name: Delete the consumer group
+  susunola.tencentcloud.dts_consumer_group:
+    state: absent
+    subscribe_id: subs-xxxxxxxx
+    consumer_group_name: analytics
+    account_name: analytics-reader
 '''
 RETURN = r'''
 consumer_group:

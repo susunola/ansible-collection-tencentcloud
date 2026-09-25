@@ -92,6 +92,12 @@ EXAMPLES = r'''
     account_name: app_user
     password: '{{ vault_database_password }}'
     description: Application account
+
+- name: Delete the account
+  susunola.tencentcloud.cynosdb_account:
+    state: absent
+    cluster_id: cynosdbmysql-xxxxxxxx
+    account_name: app_user
 '''
 RETURN = r'''
 account:

@@ -70,6 +70,12 @@ EXAMPLES = r'''
     service_id: service-xxxxxxxx
     environment: release
     description: production release
+
+- name: Take the release offline
+  susunola.tencentcloud.api_gateway_service_release:
+    state: absent
+    service_id: service-xxxxxxxx
+    environment: release
 '''
 RETURN = r'''release:
   description:

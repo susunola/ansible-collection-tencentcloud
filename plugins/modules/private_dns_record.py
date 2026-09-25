@@ -94,6 +94,14 @@ EXAMPLES = r'''
     subdomain: api
     record_type: A
     value: 10.0.0.8
+
+- name: Delete the record
+  susunola.tencentcloud.private_dns_record:
+    state: absent
+    zone_id: zone-abc123
+    subdomain: api
+    record_type: A
+    value: 10.0.0.8
 '''
 RETURN = r'''
 record:

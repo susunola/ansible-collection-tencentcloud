@@ -74,6 +74,17 @@ IDEMPOTENCY_RATCHET = 0
 # this is authoring work with a ratchet rather than a generator.
 RETURN_SAMPLE_RATCHET = 976
 
+# Write modules that accept ``state: absent`` and never show it. Deletion is
+# the operation with the most consequence and the one a reader cannot guess:
+# which option identifies the resource, and which create-only parameters the
+# module still demands. 270 modules support deletion and 38 of them document
+# it; the rest is authoring work with a ratchet rather than a generator,
+# because generating the identity from the create example also drags in
+# create-only payloads (a spec name, a client-id list, an inline key) and an
+# example that mixes a name from one fixture with an id from another finds
+# neither. Every one of the 38 was derived from the module's own delete path.
+DELETE_EXAMPLE_RATCHET = 232
+
 _DOC_RE = re.compile(r"DOCUMENTATION = r?(['\"]{3})(.*?)\1", re.S)
 
 
@@ -253,6 +264,42 @@ def return_sample_findings():
     return sorted(found)
 
 
+def delete_example_findings():
+    """Write modules that accept ``state: absent`` but never show it.
+
+    Deletion is the operation with the most consequence and the one a reader
+    is least able to guess: which option identifies the resource, and which
+    create-only parameters the module still demands. 38 modules documented
+    only how to create their resource. Every one of them now has a delete
+    example, and this is the gate that keeps it that way -- the identity
+    options in each example are the ones the module's own delete path
+    resolves the resource from, and ``scripts/check_module_examples.py``
+    re-validates them against the argument spec on every run.
+    """
+    found = []
+    for path in module_paths():
+        name = os.path.basename(path)[:-3]
+        if name.endswith("_info"):
+            continue
+        with open(path, encoding="utf-8") as handle:
+            text = handle.read()
+        doc = re.search(r"DOCUMENTATION = r?(['\"]{3})(.*?)\1", text, re.S)
+        if not doc:
+            continue
+        try:
+            parsed = yaml.safe_load(doc.group(2))
+        except yaml.YAMLError:
+            continue
+        state = ((parsed or {}).get("options") or {}).get("state")
+        if not isinstance(state, dict) or "absent" not in (state.get("choices") or []):
+            continue
+        examples = re.search(r"EXAMPLES = r?(['\"]{3})(.*?)\1", text, re.S)
+        if examples and re.search(r"state:\s*[\"']?absent", examples.group(2)):
+            continue
+        found.append(name)
+    return sorted(found)
+
+
 def role_meta_findings():
     """Roles whose galaxy_info disagrees with the collection's own metadata.
 
@@ -307,6 +354,7 @@ def main():
     gated, missing = integration_findings()
     idempotency = idempotency_findings()
     samples = return_sample_findings()
+    deletes = delete_example_findings()
     role_meta = role_meta_findings()
 
     if args.show:
@@ -332,6 +380,11 @@ def main():
             print("   %s" % name)
         print()
         print("modules whose RETURN carries no sample: %d" % len(samples))
+        print()
+        print("write modules that accept state=absent with no delete example: %d"
+              % len(deletes))
+        for name in deletes:
+            print("   %s" % name)
         return 0
 
     problems = []
@@ -354,6 +407,11 @@ def main():
         problems.append(
             "modules whose RETURN carries no sample: %d, ratchet is %d "
             "(the ratchet only goes down)" % (len(samples), RETURN_SAMPLE_RATCHET))
+    if len(deletes) > DELETE_EXAMPLE_RATCHET:
+        problems.append(
+            "write modules that accept state=absent with no delete example: %d, "
+            "ratchet is %d (the ratchet only goes down)"
+            % (len(deletes), DELETE_EXAMPLE_RATCHET))
     if len(idempotency) > IDEMPOTENCY_RATCHET:
         problems.append(
             "write modules whose tests never run the module twice: %d, "
@@ -376,6 +434,8 @@ def main():
           % (len(idempotency), IDEMPOTENCY_RATCHET))
     print("ok: %d module(s) have a RETURN with no sample (ratchet %d)"
           % (len(samples), RETURN_SAMPLE_RATCHET))
+    print("ok: %d write module(s) accept state=absent with no delete example "
+          "(ratchet %d)" % (len(deletes), DELETE_EXAMPLE_RATCHET))
     print("ok: all %d role(s) declare the collection's ansible-core floor"
           % len(glob.glob(os.path.join(REPO_ROOT, "roles", "*"))))
     return 0

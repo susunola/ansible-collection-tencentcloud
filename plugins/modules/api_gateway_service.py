@@ -100,6 +100,11 @@ EXAMPLES = r'''
     protocol: http&https
     network_types: [OUTER]
     description: Order service APIs
+
+- name: Delete the API service
+  susunola.tencentcloud.api_gateway_service:
+    state: absent
+    name: order-api
 '''
 RETURN = r'''
 service:

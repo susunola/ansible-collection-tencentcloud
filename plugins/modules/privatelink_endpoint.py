@@ -96,6 +96,11 @@ EXAMPLES = r'''
     subnet_id: subnet-xxxxxxxx
     endpoint_service_id: vpcsvc-xxxxxxxx
     security_group_ids: [sg-xxxxxxxx]
+
+- name: Delete the endpoint
+  susunola.tencentcloud.privatelink_endpoint:
+    state: absent
+    name: internal-api-client
 '''
 RETURN = r'''
 endpoint:

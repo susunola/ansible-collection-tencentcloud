@@ -116,6 +116,14 @@ EXAMPLES = r'''
     name: production-images
     filters:
       - {type: namespace, value: production}
+
+- name: Delete the replication rule
+  susunola.tencentcloud.tcr_replication_rule:
+    state: absent
+    registry_id: tcr-xxxxxxxx
+    destination_registry_id: tcr-yyyyyyyy
+    destination_region_id: 4
+    name: production-images
 '''
 RETURN = r'''replication_rule:
   description:

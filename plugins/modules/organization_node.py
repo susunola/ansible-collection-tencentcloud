@@ -78,6 +78,11 @@ EXAMPLES = r'''
     remark: Production business units
     tags:
       environment: production
+
+- name: Delete the organization node
+  susunola.tencentcloud.organization_node:
+    state: absent
+    name: Production
 '''
 RETURN = r'''
 node:

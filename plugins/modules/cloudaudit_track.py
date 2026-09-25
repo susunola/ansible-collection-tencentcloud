@@ -124,6 +124,12 @@ EXAMPLES = r'''
     action_type: '*'
     resource_type: '*'
     event_names: ['*']
+
+- name: Delete the trail
+  susunola.tencentcloud.cloudaudit_track:
+    region: ap-guangzhou
+    state: absent
+    name: organization-events
 '''
 RETURN = r'''
 track:

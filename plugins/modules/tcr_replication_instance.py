@@ -72,6 +72,13 @@ EXAMPLES = r"""
     registry_id: tcr-xxxxxxxx
     replication_region_id: 1
     replication_region_name: ap-shanghai
+
+- name: Delete the replication instance
+  susunola.tencentcloud.tcr_replication_instance:
+    state: absent
+    registry_id: tcr-xxxxxxxx
+    replication_region_id: 1
+    replication_region_name: ap-shanghai
 """
 RETURN = r"""replication_instance:
   description:

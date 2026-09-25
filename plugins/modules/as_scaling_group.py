@@ -135,6 +135,11 @@ EXAMPLES = r'''
     min_size: 0
     max_size: 10
     desired_capacity: 0
+
+- name: Delete the scaling group
+  susunola.tencentcloud.as_scaling_group:
+    state: absent
+    name: web-fleet
 '''
 RETURN = r'''
 scaling_group:

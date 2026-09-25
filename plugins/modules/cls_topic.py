@@ -107,6 +107,12 @@ EXAMPLES = r'''
     name: network-flow
     period: 30
     partition_count: 2
+
+- name: Delete the topic
+  susunola.tencentcloud.cls_topic:
+    state: absent
+    logset_id: logset-xxxxxxxx
+    name: network-flow
 '''
 RETURN = r'''
 topic:

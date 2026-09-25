@@ -104,6 +104,11 @@ EXAMPLES = r'''
     description: Production multi-region network
     route_ecmp: true
     tags: {env: prod}
+
+- name: Delete the CCN
+  susunola.tencentcloud.ccn:
+    state: absent
+    name: global-backbone
 '''
 
 RETURN = r'''

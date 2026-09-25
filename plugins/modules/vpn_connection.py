@@ -135,6 +135,11 @@ EXAMPLES = r'''
     security_policy_databases:
       - local_cidr: 10.0.0.0/16
         remote_cidr: 192.168.0.0/16
+
+- name: Delete the tunnel
+  susunola.tencentcloud.vpn_connection:
+    state: absent
+    name: office-tunnel
 '''
 
 RETURN = r'''

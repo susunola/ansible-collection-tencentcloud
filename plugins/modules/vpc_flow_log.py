@@ -116,6 +116,12 @@ EXAMPLES = r'''
     resource_id: eni-xxxxxxxx
     cls_topic_id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
     traffic_type: ALL
+
+- name: Delete the flow log
+  susunola.tencentcloud.vpc_flow_log:
+    state: absent
+    vpc_id: vpc-xxxxxxxx
+    name: app-eni-traffic
 '''
 
 RETURN = r'''

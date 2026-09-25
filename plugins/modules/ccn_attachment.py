@@ -88,6 +88,15 @@ EXAMPLES = r'''
     instance_region: ap-guangzhou
     instance_type: VPC
     description: Production VPC
+
+- name: Detach the VPC
+  susunola.tencentcloud.ccn_attachment:
+    region: ap-guangzhou
+    state: absent
+    ccn_id: ccn-xxxxxxxx
+    instance_id: vpc-xxxxxxxx
+    instance_region: ap-guangzhou
+    instance_type: VPC
 '''
 
 RETURN = r'''

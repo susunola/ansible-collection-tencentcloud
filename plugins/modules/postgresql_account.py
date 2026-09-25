@@ -92,6 +92,12 @@ EXAMPLES = r'''
     username: app_user
     password: '{{ vault_database_password }}'
     remark: Application account
+
+- name: Delete the account
+  susunola.tencentcloud.postgresql_account:
+    state: absent
+    instance_id: postgres-xxxxxxxx
+    username: app_user
 '''
 RETURN = r'''
 account:

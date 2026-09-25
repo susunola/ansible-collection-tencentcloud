@@ -65,6 +65,12 @@ EXAMPLES = r'''
 - susunola.tencentcloud.cam_group_membership:
     group_id: 12345
     sub_uin: 100000000001
+
+- name: Remove the user from the group
+  susunola.tencentcloud.cam_group_membership:
+    state: absent
+    group_id: 12345
+    sub_uin: 100000000001
 '''
 RETURN = r'''
 membership:

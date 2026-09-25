@@ -99,6 +99,13 @@ EXAMPLES = r'''
     topic_name: order-events
     subscription_name: order-webhook
     endpoint: https://example.com/events
+
+- name: Delete the subscription
+  susunola.tencentcloud.cmq_subscription:
+    state: absent
+    topic_name: order-events
+    subscription_name: order-webhook
+    endpoint: https://example.com/events
 '''
 RETURN = r'''subscription:
   description:

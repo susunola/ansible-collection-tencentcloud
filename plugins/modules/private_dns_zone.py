@@ -106,6 +106,12 @@ EXAMPLES = r'''
     vpcs:
       - region: ap-guangzhou
         vpc_id: vpc-abc123
+
+- name: Delete the private zone
+  susunola.tencentcloud.private_dns_zone:
+    region: ap-guangzhou
+    state: absent
+    domain: internal.example.com
 '''
 RETURN = r'''
 zone:
