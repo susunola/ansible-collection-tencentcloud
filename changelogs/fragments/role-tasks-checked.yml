@@ -1,0 +1,20 @@
+---
+minor_changes:
+  - >-
+    scripts/check_examples.py - check the roles' own task files. The example
+    playbooks and the integration targets were validated (modules resolve,
+    options are declared, variables are defined) and the 68 roles were not,
+    even though no test executes a role either: a renamed option or a module
+    that no longer exists in a role would have been found by a user's first
+    playbook run rather than by CI, in the part of the collection most people
+    copy. The 128 role task files now run through the same rules against the
+    scope a role really has -- its ``defaults/main.yml`` inputs, its
+    ``vars/main.yml``, everything it ``set_fact``s or ``register``s, and
+    everything its own files define for each other. Two checker rules had to
+    be corrected first, and both were false positives rather than defects: a
+    role's files include each other, so a ``loop_var`` declared in
+    ``main.yml`` is the variable the included file reads; and
+    ``lookup('...', name, resource_type='vpc')`` reads two variables, not the
+    function name and the keyword names. All 173 playbook, target and role
+    files pass, and the three failure modes were each verified by breaking a
+    role and watching the gate fail.

@@ -275,18 +275,32 @@ def task_action(task):
     return candidates[0]
 
 
+#: A Jinja function call (``lookup(...)``) and a keyword argument
+#: (``resource_type='vpc'``) both look like names to a tokeniser. Neither is a
+#: variable read, and both appear in the roles' lookups.
+JINJA_CALL_RE = re.compile(r"\b([A-Za-z_]\w*)\s*\(")
+JINJA_KWARG_RE = re.compile(r"[(,]\s*[A-Za-z_]\w*\s*=")
+
+
 def expression_names(expression):
     """Return the bare variable names a Jinja expression reads.
 
     Filters are dropped (everything after the first ``|``): the variable
     itself is on the left, and the filter names are not variables. An
     ``X is defined`` test is removed too -- ``defined`` is not a variable,
-    and the name it guards is allowed to be absent by definition.
+    and the name it guards is allowed to be absent by definition. Function
+    calls and keyword arguments are removed as well: ``lookup(...)`` and
+    ``resource_type='vpc'`` are not reads of ``lookup`` or ``resource_type``.
     """
     names = set()
     expression = GUARDED_RE.sub("", str(expression))
     expression = JINJA_TEST_RE.sub("", expression)
     for chunk in expression.split("|")[:1]:
+        # Calls first: masking a keyword argument inserts a "(", and a call
+        # removal running afterwards would then eat the argument in front of
+        # it (``tc_demo_name, resource_type=`` became ``tc_demo_name(``).
+        chunk = JINJA_CALL_RE.sub("", chunk)
+        chunk = JINJA_KWARG_RE.sub("(", chunk)
         for match in IDENT_RE.finditer(chunk):
             name = match.group(1)
             if name not in JINJA_KEYWORDS:
@@ -467,6 +481,104 @@ def discover_targets():
     return sorted(TARGETS_DIR.glob("*/tasks/*.yml")) if TARGETS_DIR.is_dir() else []
 
 
+def discover_role_tasks():
+    """Return every role task file, sorted."""
+    if not ROLES_DIR.is_dir():
+        return []
+    return sorted(ROLES_DIR.glob("*/tasks/**/*.yml"))
+
+
+def role_vars_vars(role, cache):
+    """Return the names ``roles/<role>/vars/main.yml`` declares."""
+    cache = {} if cache is None else cache
+    if role in cache:
+        return cache[role]
+    names = set()
+    path = ROLES_DIR / role / "vars" / "main.yml"
+    if path.is_file():
+        try:
+            parsed = yaml.safe_load(path.read_text(encoding="utf-8"))
+        except Exception:
+            parsed = None
+        if isinstance(parsed, dict):
+            names.update(str(key) for key in parsed)
+    cache[role] = names
+    return names
+
+
+def role_defined_names(role, cache):
+    """Return every name the role defines in any of its task files.
+
+    A role's task files are included from each other, so a ``set_fact``,
+    ``register``, task ``vars`` or custom ``loop_var`` in one file is in scope
+    in the file it includes. Reading them per file instead reported every such
+    handoff -- ``_tc_rabbitmq_vhost`` is a ``loop_var`` in ``main.yml`` used by
+    ``virtual_host.yml`` -- as an undefined variable.
+    """
+    cache = {} if cache is None else cache
+    if role in cache:
+        return cache[role]
+    names = set()
+    tasks_dir = ROLES_DIR / role / "tasks"
+    files = sorted(tasks_dir.rglob("*.yml")) if tasks_dir.is_dir() else []
+    for task_file in files:
+        try:
+            parsed = yaml.safe_load(task_file.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if isinstance(parsed, dict):
+            parsed = parsed.get("tasks") or []
+        if isinstance(parsed, list):
+            names |= play_defined_names({"tasks": parsed})
+    cache[role] = names
+    return names
+
+
+def check_role_tasks(path, cache=None):
+    """Return (problems, inventory) for one role task file.
+
+    A role's own tasks were the one place a module call went unchecked: the
+    example playbooks and the integration targets are validated, but the 68
+    roles only ever ran in a real account, so a renamed option or a module
+    that no longer exists would surface as a user's failed playbook. The
+    scope is the role's: its ``defaults/main.yml`` inputs, its
+    ``vars/main.yml``, and everything it ``set_fact``s or ``register``s
+    anywhere in the role.
+    """
+    cache = {"modules": {}, "roles": {}, "facts": {}, "role_vars": {},
+             "role_defined": {}} if cache is None else cache
+    cache.setdefault("role_vars", {})
+    cache.setdefault("role_defined", {})
+    problems = []
+    relative = path.relative_to(ROLES_DIR)
+    role = relative.parts[0]
+    label = "role %s (%s)" % (role, relative.parts[-1])
+    inventory = {"path": display_path(path), "plays": 1, "modules": set(),
+                 "roles": {role}}
+    text = path.read_text(encoding="utf-8")
+    try:
+        parsed = yaml.safe_load(text)
+    except Exception as exc:
+        problems.append(("yaml", "%s is not valid YAML: %s" % (relative, exc)))
+        return problems, inventory
+    if parsed is None:
+        return problems, inventory
+    if isinstance(parsed, dict):
+        parsed = parsed.get("tasks") or []
+    if not isinstance(parsed, list):
+        problems.append(("yaml", "%s is not a list of tasks" % relative))
+        return problems, inventory
+
+    published = set(role_default_vars(role, cache["roles"]))
+    published |= role_vars_vars(role, cache["role_vars"])
+    published |= role_published_names(role, cache["facts"])
+    published |= role_defined_names(role, cache["role_defined"])
+    check_tasks(parsed, path, label, cache, inventory, published,
+                set(EXTRA_VAR_RE.findall(text)), set(GUARDED_RE.findall(text)),
+                problems)
+    return problems, inventory
+
+
 def check_target(path, cache=None):
     """Return (problems, inventory) for one integration target task file."""
     cache = {"modules": {}, "roles": {}, "facts": {}} if cache is None else cache
@@ -579,8 +691,9 @@ def check_playbook(path, cache=None):
     return problems, inventory
 
 
-def check(roots=None, targets=True):
-    """Return (problems, inventories) for every discovered playbook and target.
+def check(roots=None, targets=True, roles=True):
+    """Return (problems, inventories) for every discovered playbook, target and
+    role task file.
 
     The integration targets are checked with the same rules as the example
     playbooks: a target is a list of tasks rather than a play, and it needs the
@@ -606,6 +719,14 @@ def check(roots=None, targets=True):
             problems.append(("discovery", "no integration targets found under tests/integration/targets"))
         for path in target_paths:
             found, inventory = check_target(path, cache)
+            problems.extend(found)
+            inventories.append(inventory)
+    if roles:
+        role_paths = discover_role_tasks()
+        if not role_paths:
+            problems.append(("discovery", "no role task files found under roles/"))
+        for path in role_paths:
+            found, inventory = check_role_tasks(path, cache)
             problems.extend(found)
             inventories.append(inventory)
     return problems, inventories
@@ -638,13 +759,16 @@ def main(argv=None):
                              % ", ".join(EXAMPLE_DIRS))
     parser.add_argument("--no-targets", dest="targets", action="store_false",
                         help="skip the integration targets, which are checked too")
+    parser.add_argument("--no-roles", dest="roles", action="store_false",
+                        help="skip the role task files, which are checked too")
     args = parser.parse_args(argv)
 
     if yaml is None:
         print("PyYAML is required (pip install pyyaml)", file=sys.stderr)
         return 2
 
-    problems, inventories = check(args.path, targets=args.targets)
+    problems, inventories = check(args.path, targets=args.targets,
+                                  roles=args.roles)
 
     if args.json:
         print(json.dumps(
@@ -659,7 +783,7 @@ def main(argv=None):
             for kind, detail in problems:
                 print("  - [%s] %s" % (kind, detail), file=sys.stderr)
             return 1
-        print("examples: %d playbook/target file(s) checked" % len(inventories))
+        print("examples: %d playbook/target/role file(s) checked" % len(inventories))
         return 0
 
     print_inventory(inventories)

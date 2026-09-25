@@ -1332,10 +1332,12 @@ Releases are cut from `v*` tags; `python scripts/release_check.py` checks a
 release is publishable before the tag is pushed and `--dry-run` builds and
 smoke-tests the tarball. See [`docs/release.md`](docs/release.md).
 
-`python scripts/check_examples.py --check` validates the example playbooks
-(modules resolve, options are declared, role variables exist, no undefined
-variables); run it after touching anything under `docs/examples/` or
-`playbooks/`. See [`docs/examples/README.md`](docs/examples/README.md).
+`python scripts/check_examples.py --check` validates the example playbooks,
+the integration targets and the role task files (modules resolve, options are
+declared, role variables exist, no undefined variables); run it after touching
+anything under `docs/examples/`, `playbooks/`, `roles/` or
+`tests/integration/targets/`. See
+[`docs/examples/README.md`](docs/examples/README.md).
 
 `python scripts/check_module_examples.py --check` validates the `EXAMPLES`
 block *inside* every module: each module it calls must exist, every option

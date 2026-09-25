@@ -146,7 +146,10 @@ jobs:
         run: python scripts/add_module_seealso.py --check
       - name: Module headers are complete
         run: python scripts/fix_module_headers.py --check
-      - name: Example playbooks and integration targets resolve
+      # The same rules cover the roles: a role's tasks are checked against
+      # the module tree, its own defaults/vars and everything it publishes,
+      # because a role only ever runs in a real account.
+      - name: Playbooks, integration targets and role tasks resolve
         run: python scripts/check_examples.py --check
       - name: Module examples run as written
         run: python scripts/check_module_examples.py --check

@@ -116,7 +116,8 @@ def test_a_target_calling_a_missing_module_is_reported(tree, check_examples):
   susunola.tencentcloud.ghost_vpc:
     name: demo
 """)
-    problems, _inventories = check_examples.check(roots=example_root(tree), targets=True)
+    problems, _inventories = check_examples.check(
+        roots=example_root(tree), targets=True, roles=False)
     assert any("ghost_vpc" in detail for _kind, detail in problems)
 
 
@@ -128,7 +129,8 @@ def test_a_target_passing_an_undeclared_option_is_reported(tree, check_examples)
     name: demo
     nam: typo
 """)
-    problems, _inventories = check_examples.check(roots=example_root(tree), targets=True)
+    problems, _inventories = check_examples.check(
+        roots=example_root(tree), targets=True, roles=False)
     assert any("nam" in detail and "does not declare" in detail for _kind, detail in problems)
 
 
@@ -139,7 +141,8 @@ def test_a_target_reading_an_undefined_variable_is_reported(tree, check_examples
   susunola.tencentcloud.vpc:
     name: "{{ ghost_name }}"
 """)
-    problems, _inventories = check_examples.check(roots=example_root(tree), targets=True)
+    problems, _inventories = check_examples.check(
+        roots=example_root(tree), targets=True, roles=False)
     assert any("ghost_name" in detail for _kind, detail in problems)
 
 
@@ -158,7 +161,8 @@ def test_a_target_variable_declared_on_the_task_is_defined(tree, check_examples)
   susunola.tencentcloud.vpc:
     name: "{{ vpc_name }}"
 """)
-    problems, _inventories = check_examples.check(roots=example_root(tree), targets=True)
+    problems, _inventories = check_examples.check(
+        roots=example_root(tree), targets=True, roles=False)
     assert problems == [], problems
 
 
@@ -173,7 +177,8 @@ def test_a_target_variable_declared_in_vars_main_is_defined(tree, check_examples
     (tree / "tests" / "integration" / "targets" / "vpc" / "vars").mkdir(parents=True)
     (tree / "tests" / "integration" / "targets" / "vpc" / "vars" / "main.yml").write_text(
         "---\nvpc_name: demo\n", encoding="utf-8")
-    problems, _inventories = check_examples.check(roots=example_root(tree), targets=True)
+    problems, _inventories = check_examples.check(
+        roots=example_root(tree), targets=True, roles=False)
     assert problems == [], problems
 
 
@@ -192,7 +197,8 @@ def test_a_jinja_test_is_not_a_variable(tree, check_examples):
       - created is changed
       - created is not failed
 """)
-    problems, _inventories = check_examples.check(roots=example_root(tree), targets=True)
+    problems, _inventories = check_examples.check(
+        roots=example_root(tree), targets=True, roles=False)
     assert problems == [], problems
 
 
@@ -205,7 +211,8 @@ def test_repository_examples_pass_the_check(check_examples):
     what CI asserts."""
     problems, inventories = check_examples.check()
     assert problems == [], problems
-    assert len(inventories) == 11 + len(check_examples.discover_targets())
+    assert len(inventories) == (11 + len(check_examples.discover_targets())
+                                + len(check_examples.discover_role_tasks()))
     assert any("06_full_chain" in item["path"] for item in inventories)
     assert any("tests/integration/targets/vpc" in item["path"] for item in inventories)
 
@@ -507,9 +514,124 @@ def test_main_without_check_prints_the_inventory(tree, check_examples, capsys):
 """, name="pb.yml")
     # --no-targets because the fixture has no target tree: an empty one is a
     # discovery problem, which is the point of reporting it in a real run.
-    assert check_examples.main(["--path", str(tree), "--no-targets"]) == 0
+    assert check_examples.main(["--path", str(tree), "--no-targets",
+                                "--no-roles"]) == 0
     assert "1 example playbook(s)" in capsys.readouterr().out
 
 
 def test_main_reports_when_nothing_is_discovered(tmp_path, check_examples):
     assert check_examples.main(["--check", "--path", str(tmp_path / "empty")]) == 1
+
+
+# --------------------------------------------------------------------------
+# role task files
+# --------------------------------------------------------------------------
+
+def write_role_task(tree, role, body, name="main.yml"):
+    """Create a role task file in the throwaway tree."""
+    path = tree / "roles" / role / "tasks" / name
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(body, encoding="utf-8")
+    return path
+
+
+def test_a_role_task_calling_a_missing_module_is_reported(tree, check_examples):
+    """A role only ever runs in a real account, so nothing else would notice.
+
+    The 68 roles are the one place a module reference went unchecked: the
+    example playbooks and the integration targets are validated, a role's
+    tasks were not, and no test executes them.
+    """
+    write_module(tree, "vpc", options=["name"])
+    write_role(tree, "tc_demo", variables=["tc_demo_name"])
+    write_role_task(tree, "tc_demo", """---
+- name: Create a network
+  susunola.tencentcloud.vpc_nonexistent:
+    name: "{{ tc_demo_name }}"
+""")
+    problems, _inventories = check_examples.check(roots=example_root(tree), targets=False)
+    assert "modules" in kinds(problems)
+    assert any("vpc_nonexistent" in detail for detail in
+               [detail for _kind, detail in problems])
+
+
+def test_a_role_task_passing_an_undeclared_option_is_reported(tree, check_examples):
+    write_module(tree, "vpc", options=["name"])
+    write_role(tree, "tc_demo", variables=["tc_demo_name"])
+    write_role_task(tree, "tc_demo", """---
+- name: Create a network
+  susunola.tencentcloud.vpc:
+    name: "{{ tc_demo_name }}"
+    bogus_option: 1
+""")
+    problems, _inventories = check_examples.check(roots=example_root(tree), targets=False)
+    assert "options" in kinds(problems)
+
+
+def test_a_role_task_reading_an_undefined_variable_is_reported(tree, check_examples):
+    write_module(tree, "vpc", options=["name"])
+    write_role(tree, "tc_demo", variables=["tc_demo_name"])
+    write_role_task(tree, "tc_demo", """---
+- name: Create a network
+  susunola.tencentcloud.vpc:
+    name: "{{ tc_demo_missing }}"
+""")
+    problems, _inventories = check_examples.check(roots=example_root(tree), targets=False)
+    assert "vars" in kinds(problems)
+
+
+def test_a_role_task_variable_from_a_sibling_file_is_defined(tree, check_examples):
+    """A role's files include each other, so one scope covers the role."""
+    write_module(tree, "vpc", options=["name"])
+    write_role(tree, "tc_demo")
+    write_role_task(tree, "tc_demo", """---
+- name: Publish the name
+  ansible.builtin.set_fact:
+    tc_demo_name: demo
+""", name="prepare.yml")
+    write_role_task(tree, "tc_demo", """---
+- name: Create a network
+  susunola.tencentcloud.vpc:
+    name: "{{ tc_demo_name }}"
+""", name="main.yml")
+    problems, _inventories = check_examples.check(roots=example_root(tree), targets=False)
+    assert problems == []
+
+
+def test_a_role_custom_loop_var_from_a_sibling_file_is_defined(tree, check_examples):
+    """``loop_control.loop_var`` is how a role includes a file per item."""
+    write_module(tree, "vpc", options=["name"])
+    write_role(tree, "tc_demo")
+    write_role_task(tree, "tc_demo", """---
+- name: Create each network
+  ansible.builtin.include_tasks: create.yml
+  loop:
+    - demo
+  loop_control:
+    loop_var: tc_demo_network
+""", name="main.yml")
+    write_role_task(tree, "tc_demo", """---
+- name: Create a network
+  susunola.tencentcloud.vpc:
+    name: "{{ tc_demo_network }}"
+""", name="create.yml")
+    problems, _inventories = check_examples.check(roots=example_root(tree), targets=False)
+    assert problems == []
+
+
+def test_a_lookup_call_is_not_a_variable_read(check_examples):
+    """``lookup('...', resource_type='vpc')`` reads no variable.
+
+    The name of the function and the name of a keyword argument are not
+    variables, and the roles use both on every resolve-by-name step.
+    """
+    names = check_examples.expression_names(
+        "lookup('susunola.tencentcloud.resource_id', tc_demo_name, "
+        "resource_type='vpc', region=tc_demo_region)")
+    assert names == {"tc_demo_name", "tc_demo_region"}
+
+
+def test_committed_role_tasks_pass_the_check(check_examples):
+    """The repository's own roles must pass, not just the fixture's."""
+    problems, _inventories = check_examples.check(targets=False)
+    assert problems == []

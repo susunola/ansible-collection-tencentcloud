@@ -487,7 +487,7 @@ A fuller chain, including the web stack that consumes these ids, is
 ```bash
 ansible-playbook your_playbook.yml --syntax-check
 ansible-playbook your_playbook.yml --check --diff
-python scripts/check_examples.py --check        # if it lands in docs/examples/ or playbooks/
+python scripts/check_examples.py --check        # docs/examples/, playbooks/, roles/, targets/
 python scripts/audit_info_coverage.py --check   # if you touched a write module
 ```
 

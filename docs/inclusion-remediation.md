@@ -67,7 +67,7 @@ Each claim below is checkable with the command in the same row.
 | Every core id/name pair says which one to give | `python scripts/enrich_identity_docs.py --check` |
 | Every module that can delete shows how | `python scripts/add_delete_examples.py --check` |
 | Every module documents the keys it returns | `python scripts/check_return_docs.py --check` |
-| The examples and every integration target resolve | `python scripts/check_examples.py --check` |
+| The examples, every integration target and every role task resolve | `python scripts/check_examples.py --check` |
 | Every shared helper is covered by its own tests | `python scripts/check_shared_coverage.py --coverage-xml coverage.xml` |
 | Every captured `RETURN` sample still matches the payload its module's tests produce | `python scripts/add_return_samples.py --check` |
 | Every option that is a secret by name carries `no_log`, and no message interpolates one | `python scripts/check_secret_handling.py --check` |
@@ -98,6 +98,37 @@ which had the same blind spot. All 34 targets pass, and the three failures the
 check is meant to catch — a module that does not exist, an option that is not
 declared, a variable nobody defines — were each verified by breaking a target
 and watching it fail.
+
+### The 68 roles are checked too
+
+The roles were the last place a module call went unchecked. The example
+playbooks are validated, the integration targets are validated, and a role's
+own task files were not — and no test executes a role either, because that
+needs an account. So a renamed option or a module that no longer exists in a
+role would have been found by a user's first playbook run rather than by CI,
+in the part of the collection most people actually copy.
+
+`check_examples.py` now walks `roles/*/tasks/**/*.yml` with the same rules,
+against the scope a role really has: its `defaults/main.yml` inputs, its
+`vars/main.yml`, everything it `set_fact`s or `register`s, and everything its
+own files define for each other — 128 task files, checked in the same run as
+the playbooks and the targets.
+
+Two rules had to be fixed to make that scope right, and both were false
+positives in the checker rather than defects in the roles:
+
+* a role's task files include each other, so a `loop_var` declared in
+  `main.yml` (`loop_var: _tc_rabbitmq_vhost`) is the variable the included
+  file reads. Reading each file in isolation reported every such handoff as an
+  undefined variable;
+* `lookup('…resource_id', name, resource_type='vpc', region=…)` reads exactly
+  two variables. The checker counted the function name and the keyword names
+  as variables too, which the roles use on every resolve-by-name step.
+
+All 173 playbook, target and role files pass, and the three failure modes were
+each verified by editing a role and watching the gate fail: a module that does
+not exist, an option the module does not declare, and a variable nobody
+defines.
 
 ### The coverage floor could not see one untested file
 
