@@ -96,7 +96,11 @@ EXAMPLES = r"""
     path: /var/log/nginx/access.log
     log_type: minimalist_log
 """
-RETURN = r"""config: {description: CLS collection configuration metadata., type: dict, returned: always}"""
+RETURN = r"""config:
+  description:
+    - CLS collection configuration metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

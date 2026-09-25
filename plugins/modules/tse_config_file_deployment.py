@@ -122,7 +122,11 @@ EXAMPLES = r'''
     content: "server:\n  port: 8080\n"
 '''
 RETURN = r'''
-deployment: {description: Effective configuration file and release metadata., type: dict, returned: always}
+deployment:
+  description:
+    - Effective configuration file and release metadata.
+  returned: always
+  type: dict
 '''
 
 import json

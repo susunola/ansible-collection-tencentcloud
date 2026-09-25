@@ -40,9 +40,22 @@ EXAMPLES = r'''
     account_group_id: ag-xxxxxxxx
 '''
 RETURN = r'''
-deliveries: {description: Aggregate delivery configuration as a single-element list., returned: always, type: list, elements: dict}
-delivery: {description: Aggregate Config delivery configuration., returned: always, type: dict}
-request_id: {description: Request ID returned by the API., returned: always, type: str}
+deliveries:
+  description:
+    - Aggregate delivery configuration as a single-element list.
+  returned: always
+  type: list
+  elements: dict
+delivery:
+  description:
+    - Aggregate Config delivery configuration.
+  returned: always
+  type: dict
+request_id:
+  description:
+    - Request ID returned by the API.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule

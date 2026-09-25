@@ -76,7 +76,11 @@ EXAMPLES = r"""
     allow_empty: false
     domains: ['*.example.com', example.com]
 """
-RETURN = r"""referer: {description: Effective hotlink-protection configuration., type: dict, returned: always}"""
+RETURN = r"""referer:
+  description:
+    - Effective hotlink-protection configuration.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_referer as normalize, get_referer
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -143,7 +143,11 @@ EXAMPLES = r"""
       - database: orders
         privileges: [SELECT, INSERT, UPDATE]
 """
-RETURN = r"""privileges: {description: Normalized account privilege set., type: dict, returned: always}"""
+RETURN = r"""privileges:
+  description:
+    - Normalized account privilege set.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

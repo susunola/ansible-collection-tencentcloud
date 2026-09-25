@@ -132,7 +132,11 @@ EXAMPLES = r'''
       Rules: []
 '''
 RETURN = r'''
-policy: {description: Alarm policy metadata, type: dict, returned: always}
+policy:
+  description:
+    - Alarm policy metadata
+  returned: always
+  type: dict
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

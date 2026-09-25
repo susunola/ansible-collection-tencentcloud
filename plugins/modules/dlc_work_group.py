@@ -84,8 +84,16 @@ EXAMPLES = r"""
     state: absent
     allow_delete_nonempty: true
 """
-RETURN = r"""work_group: {description: Effective DLC work-group metadata., type: dict, returned: always}
-work_group_id: {description: DLC work-group ID., type: int, returned: when present}"""
+RETURN = r"""work_group:
+  description:
+    - Effective DLC work-group metadata.
+  returned: always
+  type: dict
+work_group_id:
+  description:
+    - DLC work-group ID.
+  returned: when present
+  type: int"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

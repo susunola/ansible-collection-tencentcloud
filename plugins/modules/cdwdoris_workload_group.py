@@ -109,8 +109,16 @@ EXAMPLES = r"""
     queue_timeout: 5000
     workload_groups_enabled: true
 """
-RETURN = r"""workload_group: {description: Effective workload group., type: dict, returned: always}
-workload_groups_status: {description: Instance-wide workload-group status., type: str, returned: always}"""
+RETURN = r"""workload_group:
+  description:
+    - Effective workload group.
+  returned: always
+  type: dict
+workload_groups_status:
+  description:
+    - Instance-wide workload-group status.
+  returned: always
+  type: str"""
 
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

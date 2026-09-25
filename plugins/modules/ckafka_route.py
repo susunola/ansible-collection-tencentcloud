@@ -104,7 +104,11 @@ EXAMPLES = r"""
     subnet_id: subnet-xxxxxxxx
     security_group_ids: [sg-xxxxxxxx]
 """
-RETURN = r"""route: {description: CKafka route metadata., type: dict, returned: always}"""
+RETURN = r"""route:
+  description:
+    - CKafka route metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

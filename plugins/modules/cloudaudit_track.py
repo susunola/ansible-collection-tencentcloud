@@ -123,7 +123,11 @@ EXAMPLES = r'''
     event_names: ['*']
 '''
 RETURN = r'''
-track: {description: CloudAudit track metadata., type: dict, returned: always}
+track:
+  description:
+    - CloudAudit track metadata.
+  returned: always
+  type: dict
 '''
 
 import time

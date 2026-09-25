@@ -69,7 +69,11 @@ EXAMPLES = r"""
     target_bucket: audit-logs-1250000000
     target_prefix: cos/application-data/
 """
-RETURN = r"""logging: {description: Effective logging configuration., type: dict, returned: always}"""
+RETURN = r"""logging:
+  description:
+    - Effective logging configuration.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

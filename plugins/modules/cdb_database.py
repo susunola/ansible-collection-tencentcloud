@@ -67,7 +67,11 @@ EXAMPLES = r"""
     name: orders
     character_set: utf8mb4
 """
-RETURN = r"""database: {description: CDB database metadata., type: dict, returned: always}"""
+RETURN = r"""database:
+  description:
+    - CDB database metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -105,7 +105,11 @@ EXAMPLES = r"""
         weight: 30
 """
 
-RETURN = r"""origin_group: {description: EdgeOne origin-group metadata., type: dict, returned: always}"""
+RETURN = r"""origin_group:
+  description:
+    - EdgeOne origin-group metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

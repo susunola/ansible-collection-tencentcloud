@@ -84,7 +84,11 @@ EXAMPLES = r"""
     vpc_id: vpc-xxxxxxxx
     subnet_ids: [subnet-xxxxxxxx]
 """
-RETURN = r"""instance: {description: Managed Grafana instance metadata., type: dict, returned: always}"""
+RETURN = r"""instance:
+  description:
+    - Managed Grafana instance metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

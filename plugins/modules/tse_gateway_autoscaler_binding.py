@@ -80,7 +80,11 @@ EXAMPLES = r"""
     group_names: [production-secondary]
     purge_unlisted: true
 """
-RETURN = r"""binding: {description: Effective strategy group bindings., type: dict, returned: always}"""
+RETURN = r"""binding:
+  description:
+    - Effective strategy group bindings.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

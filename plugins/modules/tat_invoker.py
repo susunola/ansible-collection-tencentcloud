@@ -103,7 +103,11 @@ EXAMPLES = r"""
     parameters:
       environment: production
 """
-RETURN = r"""invoker: {description: TAT invoker metadata with command parameters redacted., type: dict, returned: always}"""
+RETURN = r"""invoker:
+  description:
+    - TAT invoker metadata with command parameters redacted.
+  returned: always
+  type: dict"""
 import hashlib
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

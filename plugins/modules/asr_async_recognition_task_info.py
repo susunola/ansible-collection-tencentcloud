@@ -13,7 +13,8 @@ module: asr_async_recognition_task_info
 short_description: Gather information about Tencent Cloud ASR async recognition tasks
 version_added: "0.9.0"
 description: Returns ASR async recognition tasks visible in a Tencent Cloud region.
-options: {}
+options:
+  {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

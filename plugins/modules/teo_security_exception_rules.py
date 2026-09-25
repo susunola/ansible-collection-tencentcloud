@@ -154,7 +154,11 @@ EXAMPLES = r"""
             target_field: multipart
 """
 
-RETURN = r"""rules: {description: Current normalized security exception rules., type: list, returned: always}"""
+RETURN = r"""rules:
+  description:
+    - Current normalized security exception rules.
+  returned: always
+  type: list"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

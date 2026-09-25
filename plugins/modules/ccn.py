@@ -105,7 +105,11 @@ EXAMPLES = r'''
 '''
 
 RETURN = r'''
-ccn: {description: CCN metadata., type: dict, returned: always}
+ccn:
+  description:
+    - CCN metadata.
+  returned: always
+  type: dict
 '''
 
 import time

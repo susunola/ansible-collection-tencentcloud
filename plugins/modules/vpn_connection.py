@@ -136,7 +136,11 @@ EXAMPLES = r'''
 '''
 
 RETURN = r'''
-vpn_connection: {description: VPN connection metadata., type: dict, returned: always}
+vpn_connection:
+  description:
+    - VPN connection metadata.
+  returned: always
+  type: dict
 '''
 
 import time

@@ -69,7 +69,11 @@ EXAMPLES = r"""
       Routes:
         - {Path: /api, UpstreamResourceType: cloudrun, UpstreamResourceName: backend}
 """
-RETURN = r"""route: {description: Effective domain and route metadata., type: dict, returned: always}"""
+RETURN = r"""route:
+  description:
+    - Effective domain and route metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

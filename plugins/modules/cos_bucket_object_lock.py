@@ -80,7 +80,11 @@ EXAMPLES = r"""
     retention_years: 7
 """
 
-RETURN = r"""object_lock: {description: Effective object-lock configuration., type: dict, returned: always}"""
+RETURN = r"""object_lock:
+  description:
+    - Effective object-lock configuration.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import get_object_lock

@@ -66,7 +66,11 @@ EXAMPLES = r"""
     name: archive-after-30-days
     cooldown_ttl: 30 DAY
 """
-RETURN = r"""policy: {description: Effective cooldown policy., type: dict, returned: always}"""
+RETURN = r"""policy:
+  description:
+    - Effective cooldown policy.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

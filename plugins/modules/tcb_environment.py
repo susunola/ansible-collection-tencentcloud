@@ -106,7 +106,11 @@ EXAMPLES = r"""
     resources: [flexdb, storage, function]
     renew_flag: NOTIFY_AND_MANUAL_RENEW
 """
-RETURN = r"""environment: {description: Effective CloudBase environment metadata., type: dict, returned: always}"""
+RETURN = r"""environment:
+  description:
+    - Effective CloudBase environment metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

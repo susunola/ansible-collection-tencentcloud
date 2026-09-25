@@ -102,7 +102,11 @@ EXAMPLES = r"""
     alive_days: 30
     file_system_ids: [cfs-xxxxxxxx, cfs-yyyyyyyy]
 """
-RETURN = r"""policy: {description: CFS automatic snapshot policy metadata., type: dict, returned: always}"""
+RETURN = r"""policy:
+  description:
+    - CFS automatic snapshot policy metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

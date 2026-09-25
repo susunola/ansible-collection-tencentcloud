@@ -146,7 +146,11 @@ EXAMPLES = r"""
     scf_function_qualifier: production
     scf_function_type: EVENT
 """
-RETURN = r"""api: {description: API metadata., type: dict, returned: always}"""
+RETURN = r"""api:
+  description:
+    - API metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

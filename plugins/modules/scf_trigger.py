@@ -100,7 +100,11 @@ EXAMPLES = r"""
     trigger_type: timer
     trigger_desc: 0 0 * * * * *
 """
-RETURN = r"""trigger: {description: SCF trigger metadata., type: dict, returned: always}"""
+RETURN = r"""trigger:
+  description:
+    - SCF trigger metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

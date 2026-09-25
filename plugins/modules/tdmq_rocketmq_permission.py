@@ -74,7 +74,11 @@ EXAMPLES = r"""
     role_name: order-service
     permissions: [produce, consume]
 """
-RETURN = r"""permission: {description: RocketMQ namespace role permission metadata., type: dict, returned: always}"""
+RETURN = r"""permission:
+  description:
+    - RocketMQ namespace role permission metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

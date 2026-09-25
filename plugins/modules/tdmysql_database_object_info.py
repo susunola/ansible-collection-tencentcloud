@@ -72,11 +72,32 @@ EXAMPLES = r"""
     database: application
 """
 RETURN = r"""
-databases: {description: Database metadata., type: list, elements: dict, returned: in database-list mode}
-objects: {description: 'Tables, views, procedures and functions.', type: dict, returned: in object-list mode}
-total_count: {description: Matching database count reported by the API., type: int, returned: in database-list mode}
-truncated: {description: Whether max_pages stopped pagination., type: bool, returned: always}
-request_id: {description: Request ID from the final page., type: str, returned: always}
+databases:
+  description:
+    - Database metadata.
+  returned: in database-list mode
+  type: list
+  elements: dict
+objects:
+  description:
+    - Tables, views, procedures and functions.
+  returned: in object-list mode
+  type: dict
+total_count:
+  description:
+    - Matching database count reported by the API.
+  returned: in database-list mode
+  type: int
+truncated:
+  description:
+    - Whether max_pages stopped pagination.
+  returned: always
+  type: bool
+request_id:
+  description:
+    - Request ID from the final page.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

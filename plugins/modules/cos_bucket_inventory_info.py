@@ -52,8 +52,17 @@ EXAMPLES = r'''
     inventory_id: daily-objects
 '''
 RETURN = r'''
-inventories: {description: Inventory rule as an empty or single-element list., returned: always, type: list, elements: dict}
-inventory: {description: Effective inventory rule or null., returned: always, type: dict}
+inventories:
+  description:
+    - Inventory rule as an empty or single-element list.
+  returned: always
+  type: list
+  elements: dict
+inventory:
+  description:
+    - Effective inventory rule or null.
+  returned: always
+  type: dict
 '''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -60,7 +60,11 @@ EXAMPLES = r"""
     config_id: config-xxxxxxxx
     group_id: group-xxxxxxxx
 """
-RETURN = r"""binding: {description: Normalized CLS config binding., type: dict, returned: always}"""
+RETURN = r"""binding:
+  description:
+    - Normalized CLS config binding.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

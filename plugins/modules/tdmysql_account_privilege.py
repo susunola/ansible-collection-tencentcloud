@@ -86,7 +86,11 @@ EXAMPLES = r"""
     privileges: [SELECT]
 """
 RETURN = r"""
-privilege: {description: Effective scoped privilege metadata., type: dict, returned: always}
+privilege:
+  description:
+    - Effective scoped privilege metadata.
+  returned: always
+  type: dict
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

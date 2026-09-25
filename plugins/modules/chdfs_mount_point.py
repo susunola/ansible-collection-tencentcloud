@@ -68,7 +68,11 @@ EXAMPLES = r"""
     name: analytics-mount
     status: 1
 """
-RETURN = r"""mount_point: {description: Effective CHDFS mount point metadata., type: dict, returned: always}"""
+RETURN = r"""mount_point:
+  description:
+    - Effective CHDFS mount point metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

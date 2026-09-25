@@ -60,8 +60,17 @@ EXAMPLES = r"""
       - {Protocol: TCP, Port: '443', CidrBlock: 0.0.0.0/0, Action: ACCEPT, FirewallRuleDescription: HTTPS}
 """
 RETURN = r"""
-rules: {description: Effective normalized firewall rule set., type: list, elements: dict, returned: always}
-firewall_version: {description: Optimistic-concurrency version returned by Lighthouse., type: int, returned: always}
+rules:
+  description:
+    - Effective normalized firewall rule set.
+  returned: always
+  type: list
+  elements: dict
+firewall_version:
+  description:
+    - Optimistic-concurrency version returned by Lighthouse.
+  returned: always
+  type: int
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

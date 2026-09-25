@@ -91,7 +91,11 @@ EXAMPLES = r'''
     remark: Application account
 '''
 RETURN = r'''
-account: {description: PostgreSQL account metadata., type: dict, returned: always}
+account:
+  description:
+    - PostgreSQL account metadata.
+  returned: always
+  type: dict
 '''
 
 import time

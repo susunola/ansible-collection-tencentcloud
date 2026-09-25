@@ -52,9 +52,22 @@ EXAMPLES = r'''
     instance_id: grafana-xxxxxxxx
 '''
 RETURN = r'''
-integrations: {description: Matching integrations., returned: always, type: list, elements: dict}
-integration: {description: Single integration when exactly one matches., returned: always, type: dict}
-request_id: {description: Request ID of the API call., returned: always, type: str}
+integrations:
+  description:
+    - Matching integrations.
+  returned: always
+  type: list
+  elements: dict
+integration:
+  description:
+    - Single integration when exactly one matches.
+  returned: always
+  type: dict
+request_id:
+  description:
+    - Request ID of the API call.
+  returned: always
+  type: str
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

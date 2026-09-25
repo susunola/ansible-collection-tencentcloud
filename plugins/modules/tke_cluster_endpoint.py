@@ -82,7 +82,11 @@ EXAMPLES = r"""
     access: private
     subnet_id: subnet-xxxxxxxx
 """
-RETURN = r"""endpoint: {description: Effective endpoint address and network metadata., type: dict, returned: always}"""
+RETURN = r"""endpoint:
+  description:
+    - Effective endpoint address and network metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -114,7 +114,11 @@ EXAMPLES = r"""
     origin_protocol: HTTPS
 """
 
-RETURN = r"""acceleration_domain: {description: EdgeOne acceleration-domain metadata., type: dict, returned: always}"""
+RETURN = r"""acceleration_domain:
+  description:
+    - EdgeOne acceleration-domain metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

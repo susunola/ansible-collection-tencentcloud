@@ -75,7 +75,11 @@ EXAMPLES = r"""
       - api.example.com
       - www.example.com
 """
-RETURN = r"""protect_group: {description: WAF protection object group metadata., type: dict, returned: always}"""
+RETURN = r"""protect_group:
+  description:
+    - WAF protection object group metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

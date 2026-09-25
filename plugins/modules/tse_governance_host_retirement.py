@@ -78,8 +78,17 @@ EXAMPLES = r'''
     state: absent
 '''
 RETURN = r'''
-removed_instances: {description: Governance instances discovered before retirement., type: list, elements: dict, returned: always}
-host: {description: Retired host identity., type: str, returned: always}
+removed_instances:
+  description:
+    - Governance instances discovered before retirement.
+  returned: always
+  type: list
+  elements: dict
+host:
+  description:
+    - Retired host identity.
+  returned: always
+  type: str
 '''
 
 import json

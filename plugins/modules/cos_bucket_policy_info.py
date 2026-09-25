@@ -47,8 +47,17 @@ EXAMPLES = r'''
     name: application-data
 '''
 RETURN = r'''
-policies: {description: Bucket policy as an empty or single-element list., returned: always, type: list, elements: dict}
-policy: {description: Effective normalized bucket policy or null., returned: always, type: dict}
+policies:
+  description:
+    - Bucket policy as an empty or single-element list.
+  returned: always
+  type: list
+  elements: dict
+policy:
+  description:
+    - Effective normalized bucket policy or null.
+  returned: always
+  type: dict
 '''
 
 import json

@@ -221,8 +221,16 @@ EXAMPLES = r"""
     allow_delete: true
 """
 RETURN = r"""
-training_task: {description: Effective training-task detail., type: dict, returned: always}
-task_id: {description: Stable training-task ID., type: str, returned: when available}
+training_task:
+  description:
+    - Effective training-task detail.
+  returned: always
+  type: dict
+task_id:
+  description:
+    - Stable training-task ID.
+  returned: when available
+  type: str
 """
 
 import json

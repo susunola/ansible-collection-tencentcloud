@@ -130,7 +130,11 @@ EXAMPLES = r'''
     regions: [ap-guangzhou, ap-shanghai]
 '''
 RETURN = r'''
-rule: {description: Config compliance rule metadata., type: dict, returned: always}
+rule:
+  description:
+    - Config compliance rule metadata.
+  returned: always
+  type: dict
 '''
 
 import time

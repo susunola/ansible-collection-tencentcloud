@@ -50,9 +50,21 @@ EXAMPLES = r"""
     secret_name: prod/database
 """
 RETURN = r"""
-rotation: {description: Rotation configuration and schedule., type: dict, returned: always}
-history: {description: Recent rotation history., type: dict, returned: when include_history is true}
-request_id: {description: Request ID from the final API call., type: str, returned: always}
+rotation:
+  description:
+    - Rotation configuration and schedule.
+  returned: always
+  type: dict
+history:
+  description:
+    - Recent rotation history.
+  returned: when include_history is true
+  type: dict
+request_id:
+  description:
+    - Request ID from the final API call.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -93,7 +93,11 @@ EXAMPLES = r"""
     period_time: '0,1,2,3,4,5,6'
 """
 RETURN = r"""
-backup_policy: {description: Effective backup-policy metadata., type: dict, returned: always}
+backup_policy:
+  description:
+    - Effective backup-policy metadata.
+  returned: always
+  type: dict
 """
 
 import json

@@ -204,8 +204,17 @@ EXAMPLES = r"""
     allow_delete: true
 """
 RETURN = r"""
-table: {description: Effective DLC catalog table., type: dict, returned: always}
-task_ids: {description: DDL task IDs submitted during creation., type: list, elements: str, returned: when created}
+table:
+  description:
+    - Effective DLC catalog table.
+  returned: always
+  type: dict
+task_ids:
+  description:
+    - DDL task IDs submitted during creation.
+  returned: when created
+  type: list
+  elements: str
 """
 
 import base64

@@ -99,7 +99,11 @@ EXAMPLES = r"""
       Mode: Whitelist
       CidrWhiteList: [203.0.113.0/24]
 """
-RETURN = r"""public_network: {description: Effective public network metadata., type: dict, returned: always}"""
+RETURN = r"""public_network:
+  description:
+    - Effective public network metadata.
+  returned: always
+  type: dict"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

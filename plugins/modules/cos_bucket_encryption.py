@@ -65,7 +65,11 @@ EXAMPLES = r"""
     rules:
       - ApplyServerSideEncryptionByDefault: {SSEAlgorithm: AES256}
 """
-RETURN = r"""encryption: {description: Effective encryption configuration., type: dict, returned: always}"""
+RETURN = r"""encryption:
+  description:
+    - Effective encryption configuration.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

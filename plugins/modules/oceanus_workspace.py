@@ -62,7 +62,11 @@ EXAMPLES = r"""
     name: production-streaming
     description: Production Flink jobs and resources
 """
-RETURN = r"""workspace: {description: Effective Oceanus workspace metadata., type: dict, returned: always}"""
+RETURN = r"""workspace:
+  description:
+    - Effective Oceanus workspace metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

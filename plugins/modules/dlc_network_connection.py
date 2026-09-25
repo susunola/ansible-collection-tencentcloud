@@ -86,7 +86,11 @@ EXAMPLES = r"""
     description: Production analytics data-source route
 """
 RETURN = r"""
-network_connection: {description: Effective DLC network-connection metadata., type: dict, returned: always}
+network_connection:
+  description:
+    - Effective DLC network-connection metadata.
+  returned: always
+  type: dict
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

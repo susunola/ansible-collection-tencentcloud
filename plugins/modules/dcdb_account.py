@@ -100,7 +100,11 @@ EXAMPLES = r"""
     username: application
     password: '{{ vault_dcdb_password }}'
 """
-RETURN = r"""account: {description: DCDB account metadata., type: dict, returned: always}"""
+RETURN = r"""account:
+  description:
+    - DCDB account metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

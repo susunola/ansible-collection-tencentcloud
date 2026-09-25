@@ -161,8 +161,16 @@ EXAMPLES = r"""
     resource_type: Consumer
 """
 RETURN = r"""
-secret_key: {description: Effective credential metadata with secret material redacted., type: dict, returned: always}
-secret_value: {description: Plaintext credential value when explicitly requested., type: str, returned: reveal_secret_value is true}
+secret_key:
+  description:
+    - Effective credential metadata with secret material redacted.
+  returned: always
+  type: dict
+secret_value:
+  description:
+    - Plaintext credential value when explicitly requested.
+  returned: reveal_secret_value is true
+  type: str
 """
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

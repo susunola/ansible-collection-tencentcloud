@@ -47,8 +47,17 @@ EXAMPLES = r'''
     name: application-data
 '''
 RETURN = r'''
-logging_configurations: {description: Logging configuration as an empty or single-element list., returned: always, type: list, elements: dict}
-logging: {description: Effective logging configuration or null., returned: always, type: dict}
+logging_configurations:
+  description:
+    - Logging configuration as an empty or single-element list.
+  returned: always
+  type: list
+  elements: dict
+logging:
+  description:
+    - Effective logging configuration or null.
+  returned: always
+  type: dict
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos

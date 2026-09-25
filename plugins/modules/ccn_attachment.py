@@ -88,7 +88,11 @@ EXAMPLES = r'''
 '''
 
 RETURN = r'''
-attachment: {description: CCN attachment metadata., type: dict, returned: always}
+attachment:
+  description:
+    - CCN attachment metadata.
+  returned: always
+  type: dict
 '''
 
 import time

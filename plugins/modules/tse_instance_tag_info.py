@@ -45,9 +45,22 @@ EXAMPLES = r'''
   register: instance_tags
 '''
 RETURN = r'''
-instance_id: {description: Instance ID returned by Tencent Cloud., type: str, returned: always}
-tags: {description: Instance tag metadata., type: list, elements: dict, returned: always}
-request_id: {description: Tencent Cloud request ID., type: str, returned: always}
+instance_id:
+  description:
+    - Instance ID returned by Tencent Cloud.
+  returned: always
+  type: str
+tags:
+  description:
+    - Instance tag metadata.
+  returned: always
+  type: list
+  elements: dict
+request_id:
+  description:
+    - Tencent Cloud request ID.
+  returned: always
+  type: str
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

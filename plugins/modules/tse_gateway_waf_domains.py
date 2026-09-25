@@ -67,7 +67,12 @@ EXAMPLES = r"""
     domains: [api.example.com]
     purge_unlisted: true
 """
-RETURN = r"""waf_domains: {description: Effective registered WAF domains., type: list, elements: str, returned: always}"""
+RETURN = r"""waf_domains:
+  description:
+    - Effective registered WAF domains.
+  returned: always
+  type: list
+  elements: str"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

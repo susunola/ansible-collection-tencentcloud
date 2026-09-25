@@ -134,7 +134,11 @@ EXAMPLES = r'''
     desired_capacity: 0
 '''
 RETURN = r'''
-scaling_group: {description: Auto Scaling group metadata., type: dict, returned: always}
+scaling_group:
+  description:
+    - Auto Scaling group metadata.
+  returned: always
+  type: dict
 '''
 
 import time

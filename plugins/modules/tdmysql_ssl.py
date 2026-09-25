@@ -66,7 +66,11 @@ EXAMPLES = r"""
     enabled: true
 """
 RETURN = r"""
-ssl: {description: Effective SSL state., type: dict, returned: always}
+ssl:
+  description:
+    - Effective SSL state.
+  returned: always
+  type: dict
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

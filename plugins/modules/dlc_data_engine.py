@@ -214,8 +214,16 @@ EXAMPLES = r"""
     state: absent
     allow_delete: true
 """
-RETURN = r"""data_engine: {description: Effective DLC data-engine metadata., type: dict, returned: always}
-data_engine_id: {description: DLC data-engine ID., type: str, returned: when present}"""
+RETURN = r"""data_engine:
+  description:
+    - Effective DLC data-engine metadata.
+  returned: always
+  type: dict
+data_engine_id:
+  description:
+    - DLC data-engine ID.
+  returned: when present
+  type: str"""
 
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

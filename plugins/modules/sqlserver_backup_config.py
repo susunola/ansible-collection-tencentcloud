@@ -79,7 +79,11 @@ EXAMPLES = r"""
     backup_cycle: [1, 3, 5]
     retention_days: 30
 """
-RETURN = r"""backup_config: {description: Effective SQL Server backup configuration., type: dict, returned: always}"""
+RETURN = r"""backup_config:
+  description:
+    - Effective SQL Server backup configuration.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

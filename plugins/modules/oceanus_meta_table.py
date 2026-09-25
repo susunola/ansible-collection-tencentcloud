@@ -111,8 +111,16 @@ EXAMPLES = r"""
       CREATE TABLE orders (id BIGINT, amount DECIMAL(18, 2))
       WITH ('connector' = 'kafka')
 """
-RETURN = r"""meta_table: {description: Effective metadata table identity and encoded DDL., type: dict, returned: always}
-table_id: {description: Oceanus metadata table ID., type: str, returned: when available}"""
+RETURN = r"""meta_table:
+  description:
+    - Effective metadata table identity and encoded DDL.
+  returned: always
+  type: dict
+table_id:
+  description:
+    - Oceanus metadata table ID.
+  returned: when available
+  type: str"""
 import base64
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

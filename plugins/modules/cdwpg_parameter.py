@@ -75,9 +75,21 @@ EXAMPLES = r"""
     name: max_connections
     value: '500'
 """
-RETURN = r"""parameter: {description: Effective parameter metadata., type: dict, returned: always}
-restart_required: {description: Whether applying the value requires restart., type: bool, returned: always}
-task_id: {description: Asynchronous service task ID., type: int, returned: when changed}"""
+RETURN = r"""parameter:
+  description:
+    - Effective parameter metadata.
+  returned: always
+  type: dict
+restart_required:
+  description:
+    - Whether applying the value requires restart.
+  returned: always
+  type: bool
+task_id:
+  description:
+    - Asynchronous service task ID.
+  returned: when changed
+  type: int"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

@@ -73,7 +73,11 @@ EXAMPLES = r"""
     week_days: [Tuesday, Saturday]
 """
 RETURN = r"""
-maintenance_window: {description: Effective normalized window and weekdays., type: dict, returned: always}
+maintenance_window:
+  description:
+    - Effective normalized window and weekdays.
+  returned: always
+  type: dict
 """
 
 import re

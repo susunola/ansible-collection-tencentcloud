@@ -112,7 +112,11 @@ EXAMPLES = r"""
       - {ZoneId: ap-guangzhou-4, SubnetId: subnet-yyyyyyyy}
     deletion_protection: true
 """
-RETURN = r"""load_balancer: {description: Effective ALB metadata., type: dict, returned: always}"""
+RETURN = r"""load_balancer:
+  description:
+    - Effective ALB metadata.
+  returned: always
+  type: dict"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

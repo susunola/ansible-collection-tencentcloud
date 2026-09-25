@@ -44,8 +44,17 @@ EXAMPLES = r'''
     instance_id: grafana-xxxxxxxx
 '''
 RETURN = r'''
-whitelist: {description: IP addresses and CIDR ranges in the whitelist., returned: always, type: list, elements: str}
-request_id: {description: Request ID of the API call., returned: always, type: str}
+whitelist:
+  description:
+    - IP addresses and CIDR ranges in the whitelist.
+  returned: always
+  type: list
+  elements: str
+request_id:
+  description:
+    - Request ID of the API call.
+  returned: always
+  type: str
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -96,7 +96,11 @@ EXAMPLES = r'''
     security_group_ids: [sg-xxxxxxxx]
 '''
 RETURN = r'''
-endpoint: {description: PrivateLink endpoint metadata., type: dict, returned: always}
+endpoint:
+  description:
+    - PrivateLink endpoint metadata.
+  returned: always
+  type: dict
 '''
 
 import time

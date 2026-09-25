@@ -98,8 +98,16 @@ EXAMPLES = r"""
     state: absent
     allow_delete: true
 """
-RETURN = r"""strategy: {description: Effective normalized masking strategy., type: dict, returned: always}
-strategy_id: {description: DLC masking strategy ID., type: str, returned: when present}"""
+RETURN = r"""strategy:
+  description:
+    - Effective normalized masking strategy.
+  returned: always
+  type: dict
+strategy_id:
+  description:
+    - DLC masking strategy ID.
+  returned: when present
+  type: str"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

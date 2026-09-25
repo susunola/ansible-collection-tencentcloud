@@ -65,7 +65,11 @@ EXAMPLES = r"""
     group_id: group-xxxxxxxx
     release_description: Production settings
 """
-RETURN = r"""release: {description: Effective TSF configuration release metadata., type: dict, returned: always}"""
+RETURN = r"""release:
+  description:
+    - Effective TSF configuration release metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

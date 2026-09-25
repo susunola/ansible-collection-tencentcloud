@@ -61,7 +61,12 @@ EXAMPLES = r"""
     mount_point_id: mp-xxxxxxxx
     access_group_ids: [ag-xxxxxxxx]
 """
-RETURN = r"""access_group_ids: {description: Effective access-group IDs., type: list, elements: str, returned: always}"""
+RETURN = r"""access_group_ids:
+  description:
+    - Effective access-group IDs.
+  returned: always
+  type: list
+  elements: str"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

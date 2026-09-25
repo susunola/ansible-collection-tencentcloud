@@ -34,9 +34,22 @@ EXAMPLES = r'''
     region: ap-guangzhou
 '''
 RETURN = r'''
-deliveries: {description: Delivery configuration as a single-element list., returned: always, type: list, elements: dict}
-delivery: {description: Config delivery configuration., returned: always, type: dict}
-request_id: {description: Request ID returned by the API., returned: always, type: str}
+deliveries:
+  description:
+    - Delivery configuration as a single-element list.
+  returned: always
+  type: list
+  elements: dict
+delivery:
+  description:
+    - Config delivery configuration.
+  returned: always
+  type: dict
+request_id:
+  description:
+    - Request ID returned by the API.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule

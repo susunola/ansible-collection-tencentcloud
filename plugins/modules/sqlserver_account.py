@@ -101,7 +101,11 @@ EXAMPLES = r"""
       - database: orders
         privilege: ReadWrite
 """
-RETURN = r"""account: {description: SQL Server account metadata., type: dict, returned: always}"""
+RETURN = r"""account:
+  description:
+    - SQL Server account metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

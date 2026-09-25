@@ -79,7 +79,11 @@ EXAMPLES = r"""
       - {ServiceId: ms-v2, Weight: 10}
 """
 RETURN = r"""
-service_group: {description: Effective service-group detail., type: dict, returned: always}
+service_group:
+  description:
+    - Effective service-group detail.
+  returned: always
+  type: dict
 """
 
 import json

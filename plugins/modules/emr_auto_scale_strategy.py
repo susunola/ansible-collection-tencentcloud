@@ -89,7 +89,11 @@ EXAMPLES = r"""
       CalmDownTime: 300
       LoadMetricsConditions: {LoadMetrics: []}
 """
-RETURN = r"""strategy: {description: Effective automatic scaling strategy., type: dict, returned: always}"""
+RETURN = r"""strategy:
+  description:
+    - Effective automatic scaling strategy.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import changed, maybe_diff

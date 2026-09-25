@@ -149,7 +149,11 @@ EXAMPLES = r"""
     url: /login
     match_function: 0
 """
-RETURN = r"""rule: {description: WAF CC rule metadata., type: dict, returned: always}"""
+RETURN = r"""rule:
+  description:
+    - WAF CC rule metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

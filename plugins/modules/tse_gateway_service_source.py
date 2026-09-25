@@ -94,7 +94,11 @@ EXAMPLES = r"""
       VpcInfo: {VpcID: vpc-xxxxxxxx, SubnetID: subnet-xxxxxxxx}
       Auth: {Username: gateway-reader, Password: "{{ vault_nacos_password }}"}
 """
-RETURN = r"""source: {description: Effective service source metadata., type: dict, returned: always}"""
+RETURN = r"""source:
+  description:
+    - Effective service source metadata.
+  returned: always
+  type: dict"""
 import copy
 import json
 import time

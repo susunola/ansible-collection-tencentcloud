@@ -90,7 +90,11 @@ EXAMPLES = r"""
     password: "{{ vault_rabbitmq_password }}"
     tags: [management]
 """
-RETURN = r"""user: {description: RabbitMQ Serverless user metadata without password., type: dict, returned: always}"""
+RETURN = r"""user:
+  description:
+    - RabbitMQ Serverless user metadata without password.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

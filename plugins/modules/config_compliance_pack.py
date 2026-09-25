@@ -142,7 +142,11 @@ EXAMPLES = r"""
         config_rule_id: cr-xxxxxxxx
 """
 
-RETURN = r"""compliance_pack: {description: Config compliance pack metadata., type: dict, returned: always}"""
+RETURN = r"""compliance_pack:
+  description:
+    - Config compliance pack metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

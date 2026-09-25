@@ -164,8 +164,16 @@ EXAMPLES = r"""
     allow_delete: true
 """
 RETURN = r"""
-dataset: {description: Effective TIONE dataset group metadata., type: dict, returned: always}
-dataset_id: {description: Stable dataset ID., type: str, returned: when available}
+dataset:
+  description:
+    - Effective TIONE dataset group metadata.
+  returned: always
+  type: dict
+dataset_id:
+  description:
+    - Stable dataset ID.
+  returned: when available
+  type: str
 """
 
 import json

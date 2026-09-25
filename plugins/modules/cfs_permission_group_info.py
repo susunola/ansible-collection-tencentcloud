@@ -13,7 +13,8 @@ module: cfs_permission_group_info
 short_description: Gather information about Tencent Cloud CFS permission groups
 version_added: "1.1.0"
 description: Returns the CFS permission groups of the account.
-options: {}
+options:
+  {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

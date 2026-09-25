@@ -90,7 +90,11 @@ EXAMPLES = r"""
     topic_id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
     contain_zh: true
 """
-RETURN = r"""index: {description: CLS index metadata., type: dict, returned: always}"""
+RETURN = r"""index:
+  description:
+    - CLS index metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

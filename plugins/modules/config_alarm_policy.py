@@ -110,7 +110,11 @@ EXAMPLES = r"""
     notification_mechanism: USER
 """
 
-RETURN = r"""alarm_policy: {description: Config alarm policy metadata., type: dict, returned: always}"""
+RETURN = r"""alarm_policy:
+  description:
+    - Config alarm policy metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

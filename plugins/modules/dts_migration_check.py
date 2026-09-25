@@ -50,7 +50,11 @@ attributes:
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""- susunola.tencentcloud.dts_migration_check: {job_id: dts-abcd1234}"""
-RETURN = r"""migration_check: {description: DTS check status and step details., type: dict, returned: always}"""
+RETURN = r"""migration_check:
+  description:
+    - DTS check status and step details.
+  returned: always
+  type: dict"""
 
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

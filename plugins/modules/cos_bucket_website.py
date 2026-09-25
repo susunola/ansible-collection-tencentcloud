@@ -65,7 +65,11 @@ EXAMPLES = r"""
       IndexDocument: {Suffix: index.html}
       ErrorDocument: {Key: error.html}
 """
-RETURN = r"""website: {description: Effective website configuration., type: dict, returned: always}"""
+RETURN = r"""website:
+  description:
+    - Effective website configuration.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -150,7 +150,11 @@ EXAMPLES = r"""
     charge_properties: {ChargeType: POSTPAID_BY_HOUR}
     admin_password: "{{ vault_doris_password }}"
 """
-RETURN = r"""instance: {description: Effective CDW Doris instance metadata., type: dict, returned: always}"""
+RETURN = r"""instance:
+  description:
+    - Effective CDW Doris instance metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

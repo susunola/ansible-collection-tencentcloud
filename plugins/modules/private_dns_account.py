@@ -62,7 +62,11 @@ EXAMPLES = r"""
     uin: '100000000001'
     account: dns-consumer@example.com
 """
-RETURN = r"""account_binding: {description: Effective cross-account relationship., type: dict, returned: always}"""
+RETURN = r"""account_binding:
+  description:
+    - Effective cross-account relationship.
+  returned: always
+  type: dict"""
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

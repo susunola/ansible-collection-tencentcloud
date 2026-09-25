@@ -51,7 +51,11 @@ EXAMPLES = r"""
     names: [max_connections, slow_query_log]
 """
 RETURN = r"""
-parameters: {description: Parameter metadata keyed by name., type: dict, returned: always}
+parameters:
+  description:
+    - Parameter metadata keyed by name.
+  returned: always
+  type: dict
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

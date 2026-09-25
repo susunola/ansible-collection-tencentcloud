@@ -75,7 +75,11 @@ EXAMPLES = r"""
       QpsThresholds: [{Unit: second, Max: 100}]
       LimitBy: service
 """
-RETURN = r"""rate_limit: {description: Effective rate-limit configuration., type: dict, returned: always}"""
+RETURN = r"""rate_limit:
+  description:
+    - Effective rate-limit configuration.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

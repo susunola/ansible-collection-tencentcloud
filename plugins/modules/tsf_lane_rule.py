@@ -101,7 +101,11 @@ EXAMPLES = r"""
     tags:
       - {name: x-canary, operator: EQUAL, value: 'true'}
 """
-RETURN = r"""lane_rule: {description: Effective TSF lane rule metadata., type: dict, returned: always}"""
+RETURN = r"""lane_rule:
+  description:
+    - Effective TSF lane rule metadata.
+  returned: always
+  type: dict"""
 
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

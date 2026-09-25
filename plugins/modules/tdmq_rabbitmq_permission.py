@@ -84,7 +84,11 @@ EXAMPLES = r"""
     write_regex: '^orders\\.'
     read_regex: '^orders\\.'
 """
-RETURN = r"""permission: {description: RabbitMQ virtual host permission metadata., type: dict, returned: always}"""
+RETURN = r"""permission:
+  description:
+    - RabbitMQ virtual host permission metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

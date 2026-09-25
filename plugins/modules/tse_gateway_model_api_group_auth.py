@@ -74,7 +74,11 @@ EXAMPLES = r"""
     model_api_name: chat-completions
     consumer_group_names: [trusted-clients]
 """
-RETURN = r"""authorization: {description: Model API and effective consumer group authorization., type: dict, returned: always}"""
+RETURN = r"""authorization:
+  description:
+    - Model API and effective consumer group authorization.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

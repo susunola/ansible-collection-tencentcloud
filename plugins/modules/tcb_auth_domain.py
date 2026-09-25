@@ -60,7 +60,11 @@ EXAMPLES = r"""
     env_id: env-xxxxxxxx
     domain: app.example.com
 """
-RETURN = r"""auth_domain: {description: Effective authentication-domain metadata., type: dict, returned: always}"""
+RETURN = r"""auth_domain:
+  description:
+    - Effective authentication-domain metadata.
+  returned: always
+  type: dict"""
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

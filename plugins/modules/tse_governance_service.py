@@ -109,7 +109,11 @@ EXAMPLES = r"""
     name: orders
     export_to: [shared]
 """
-RETURN = r"""service: {description: Effective governance service metadata., type: dict, returned: always}"""
+RETURN = r"""service:
+  description:
+    - Effective governance service metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

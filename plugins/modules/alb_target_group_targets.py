@@ -75,7 +75,12 @@ EXAMPLES = r"""
       - {ip: 10.0.1.10, port: 8080, weight: 50}
       - {ip: 10.0.1.11, port: 8080, weight: 50}
 """
-RETURN = r"""targets: {description: Effective ALB backend targets., type: list, elements: dict, returned: always}"""
+RETURN = r"""targets:
+  description:
+    - Effective ALB backend targets.
+  returned: always
+  type: list
+  elements: dict"""
 import time
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

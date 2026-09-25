@@ -77,7 +77,11 @@ EXAMPLES = r"""
     start_time: 03:00
     backup_method: physical
 """
-RETURN = r"""backup_config: {description: Effective backup configuration., type: dict, returned: always}"""
+RETURN = r"""backup_config:
+  description:
+    - Effective backup configuration.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

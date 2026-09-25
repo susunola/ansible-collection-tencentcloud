@@ -60,7 +60,11 @@ EXAMPLES = r"""
     usage_plan_id: usagePlan-xxxxxxxx
     access_key_id: AKIDxxxxxxxx
 """
-RETURN = r"""binding: {description: Normalized key binding., type: dict, returned: always}"""
+RETURN = r"""binding:
+  description:
+    - Normalized key binding.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

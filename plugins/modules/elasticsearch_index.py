@@ -91,7 +91,11 @@ EXAMPLES = r"""
         properties:
           order_id: {type: keyword}
 """
-RETURN = r"""index: {description: Elasticsearch index metadata., type: dict, returned: always}"""
+RETURN = r"""index:
+  description:
+    - Elasticsearch index metadata.
+  returned: always
+  type: dict"""
 
 import json
 

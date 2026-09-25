@@ -13,7 +13,8 @@ module: advisor_strategy_info
 short_description: Gather information about Tencent Cloud ADVISOR strategies
 version_added: "0.9.0"
 description: Returns ADVISOR strategies visible in a Tencent Cloud region.
-options: {}
+options:
+  {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

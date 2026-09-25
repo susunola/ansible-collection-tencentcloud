@@ -63,8 +63,17 @@ EXAMPLES = r"""
     host: 10.%
 """
 RETURN = r"""
-accounts: {description: Matching account metadata., type: list, elements: dict, returned: always}
-request_id: {description: Request ID from the final API call., type: str, returned: always}
+accounts:
+  description:
+    - Matching account metadata.
+  returned: always
+  type: list
+  elements: dict
+request_id:
+  description:
+    - Request ID from the final API call.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

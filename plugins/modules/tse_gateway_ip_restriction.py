@@ -83,7 +83,11 @@ EXAMPLES = r"""
     restriction_type: whiteList
     addresses: [10.0.0.0/8, 192.0.2.10]
 """
-RETURN = r"""ip_restriction: {description: Effective IP restriction policy., type: dict, returned: always}"""
+RETURN = r"""ip_restriction:
+  description:
+    - Effective IP restriction policy.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

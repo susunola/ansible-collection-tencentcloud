@@ -93,7 +93,11 @@ EXAMPLES = r"""
     polling_wait_seconds: 10
     visibility_timeout: 60
 """
-RETURN = r"""queue: {description: Queue metadata., type: dict, returned: always}"""
+RETURN = r"""queue:
+  description:
+    - Queue metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import (

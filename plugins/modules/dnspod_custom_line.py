@@ -68,7 +68,11 @@ EXAMPLES = r"""
     name: office-network
     area: 203.0.113.1-203.0.113.254
 """
-RETURN = r"""custom_line: {description: DNSPod custom line metadata., type: dict, returned: always}"""
+RETURN = r"""custom_line:
+  description:
+    - DNSPod custom line metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

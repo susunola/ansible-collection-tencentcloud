@@ -13,7 +13,8 @@ module: dlc_store_location_info
 short_description: Gather information about Tencent Cloud DLC store location
 version_added: "0.9.0"
 description: Returns DLC store location visible in a Tencent Cloud region.
-options: {}
+options:
+  {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

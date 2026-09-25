@@ -84,7 +84,11 @@ EXAMPLES = r"""
     connection_description:
       ResourceDescription: '{"InstanceId":"ckafka-xxxx","TopicName":"orders"}'
 """
-RETURN = r"""connection: {description: Effective EventBridge connection metadata., type: dict, returned: always}"""
+RETURN = r"""connection:
+  description:
+    - Effective EventBridge connection metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

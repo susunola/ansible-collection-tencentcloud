@@ -87,7 +87,11 @@ EXAMPLES = r"""
       Enabled: true
       Params: [{Period: daily, StartAt: '09:00', TargetReplicas: 4}]
 """
-RETURN = r"""strategy: {description: Effective autoscaling strategy., type: dict, returned: always}"""
+RETURN = r"""strategy:
+  description:
+    - Effective autoscaling strategy.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

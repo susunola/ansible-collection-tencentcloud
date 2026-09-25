@@ -54,7 +54,11 @@ EXAMPLES = r"""
     instance_id: prom-xxxxxxxx
     config: {InhibitRules: []}
 """
-RETURN = r"""config: {description: Effective Alertmanager configuration., type: dict, returned: always}"""
+RETURN = r"""config:
+  description:
+    - Effective Alertmanager configuration.
+  returned: always
+  type: dict"""
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

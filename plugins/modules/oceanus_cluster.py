@@ -149,7 +149,11 @@ EXAMPLES = r"""
     cu: 19
     charge_type: POSTPAID_BY_SECOND
 """
-RETURN = r"""cluster: {description: Effective Oceanus cluster metadata., type: dict, returned: always}"""
+RETURN = r"""cluster:
+  description:
+    - Effective Oceanus cluster metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

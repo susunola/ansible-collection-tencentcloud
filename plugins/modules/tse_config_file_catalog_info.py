@@ -73,9 +73,22 @@ EXAMPLES = r'''
   register: config_catalog
 '''
 RETURN = r'''
-config_files: {description: Matching configuration files., type: list, elements: dict, returned: always}
-total_count: {description: File count reported by Tencent Cloud., type: int, returned: always}
-request_id: {description: Request ID of the last API call., type: str, returned: always}
+config_files:
+  description:
+    - Matching configuration files.
+  returned: always
+  type: list
+  elements: dict
+total_count:
+  description:
+    - File count reported by Tencent Cloud.
+  returned: always
+  type: int
+request_id:
+  description:
+    - Request ID of the last API call.
+  returned: always
+  type: str
 '''
 
 import json

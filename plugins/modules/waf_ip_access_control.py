@@ -92,7 +92,11 @@ EXAMPLES = r'''
     note: Known abusive sources
 '''
 RETURN = r'''
-rule: {description: WAF IP access-control rule metadata., type: dict, returned: always}
+rule:
+  description:
+    - WAF IP access-control rule metadata.
+  returned: always
+  type: dict
 '''
 
 import time

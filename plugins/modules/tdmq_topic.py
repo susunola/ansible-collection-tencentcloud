@@ -112,7 +112,11 @@ EXAMPLES = r'''
     message_ttl: 86400
 '''
 RETURN = r'''
-topic: {description: TDMQ Pulsar topic metadata., type: dict, returned: always}
+topic:
+  description:
+    - TDMQ Pulsar topic metadata.
+  returned: always
+  type: dict
 '''
 
 import time

@@ -91,8 +91,16 @@ EXAMPLES = r"""
     subnet_id: subnet-xxxxxxxx
 """
 RETURN = r"""
-group: {description: Effective server group metadata., type: dict, returned: always}
-task_id: {description: Latest asynchronous task ID., type: str, returned: when supplied by Tencent Cloud}
+group:
+  description:
+    - Effective server group metadata.
+  returned: always
+  type: dict
+task_id:
+  description:
+    - Latest asynchronous task ID.
+  returned: when supplied by Tencent Cloud
+  type: str
 """
 import json
 import time

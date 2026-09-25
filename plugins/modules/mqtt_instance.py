@@ -144,7 +144,11 @@ EXAMPLES = r"""
     sku_code: pro_2k
     vpcs: [{vpc_id: vpc-xxxxxxxx, subnet_id: subnet-xxxxxxxx}]
 """
-RETURN = r"""instance: {description: Effective MQTT instance metadata., type: dict, returned: always}"""
+RETURN = r"""instance:
+  description:
+    - Effective MQTT instance metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

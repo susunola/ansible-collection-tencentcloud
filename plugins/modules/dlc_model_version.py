@@ -93,8 +93,16 @@ EXAMPLES = r"""
     use_custom_storage: true
 """
 RETURN = r"""
-model_version: {description: Effective immutable model version., type: dict, returned: always}
-version_id: {description: DLC version ID., type: str, returned: when available}
+model_version:
+  description:
+    - Effective immutable model version.
+  returned: always
+  type: dict
+version_id:
+  description:
+    - DLC version ID.
+  returned: when available
+  type: str
 """
 
 import json

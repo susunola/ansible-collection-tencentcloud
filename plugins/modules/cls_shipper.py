@@ -145,7 +145,11 @@ EXAMPLES = r"""
     content: {Format: json}
     compress: {Format: gzip}
 """
-RETURN = r"""shipper: {description: CLS COS shipper metadata., type: dict, returned: always}"""
+RETURN = r"""shipper:
+  description:
+    - CLS COS shipper metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

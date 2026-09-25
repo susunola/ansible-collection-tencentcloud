@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Rewrite flow-style option documentation as block style.
+"""Rewrite flow-style documentation as block style, in both blocks.
 
 Why
 ---
@@ -17,8 +17,10 @@ the block parses, ``validate-modules`` accepts it, and
 
 What it does
 ------------
-Rewrites *only* the option entries that are written as a single-line flow
-mapping, and leaves every other byte of the file alone -- including the
+Rewrites *only* the entries that are written as a single-line flow mapping --
+``DOCUMENTATION.options`` and ``RETURN`` both, because they have the same
+shape and 418 modules wrote their return values the same unreadable way -- and
+leaves every other byte of the file alone -- including the
 ``r'''`` quoting, the surrounding keys and the code below.  A full YAML
 round-trip of the whole DOCUMENTATION block would be shorter to write, but it
 would also reflow ``version_added`` and every description in the file, and the
@@ -51,7 +53,9 @@ MODULE_GLOB = os.path.join(REPO_ROOT, "plugins", "modules", "*.py")
 _DOC_RE = re.compile(
     r"(?P<open>DOCUMENTATION\s*=\s*r?)(?P<q>'''|\"\"\")(?P<body>.*?)(?P=q)", re.S)
 # A top-level option written as one flow mapping on a single line.
-_FLOW_OPTION_RE = re.compile(r"^(?P<indent> +)(?P<name>[A-Za-z0-9_]+): (?P<flow>\{.*\})$", re.M)
+_FLOW_OPTION_RE = re.compile(r"^(?P<indent> *)(?P<name>[A-Za-z0-9_]+): (?P<flow>\{.*\})$", re.M)
+_RETURN_RE = re.compile(
+    r"(?P<open>RETURN\s*=\s*r?)(?P<q>'''|\"\"\")(?P<body>.*?)(?P=q)", re.S)
 _VERSION_RE = re.compile(r"^(?P<key> *version_added: )(?P<value>[0-9][^\s]*)$", re.M)
 
 
@@ -83,6 +87,8 @@ _Dumper.add_representer(_BlockSeq, _represent_block_seq)
 # cvm_instance.py): prose first, then the machine-readable facts.
 _KEY_ORDER = ("description", "type", "required", "choices", "default",
               "elements", "aliases", "suboptions", "version_added")
+# RETURN entries read best in the order ansible-doc renders them.
+_RETURN_KEY_ORDER = ("description", "returned", "type", "elements", "sample")
 
 
 def _wrap_descriptions(value):
@@ -100,15 +106,15 @@ def _wrap_descriptions(value):
     return value
 
 
-def _order_keys(mapping):
-    known = [k for k in _KEY_ORDER if k in mapping]
-    rest = [k for k in mapping if k not in _KEY_ORDER]
+def _order_keys(mapping, order=_KEY_ORDER):
+    known = [k for k in order if k in mapping]
+    rest = [k for k in mapping if k not in order]
     return {k: mapping[k] for k in known + rest}
 
 
-def _dump_option(name, indent, mapping):
+def _dump_option(name, indent, mapping, order=_KEY_ORDER):
     """Render one option mapping as block-style YAML lines."""
-    mapping = _order_keys(_wrap_descriptions(mapping))
+    mapping = _order_keys(_wrap_descriptions(mapping), order)
     text = yaml.dump(mapping, Dumper=_Dumper, default_flow_style=False,
                      sort_keys=False, width=100, allow_unicode=True, indent=2)
     text = _VERSION_RE.sub(lambda m: '%s"%s"' % (m.group("key"), m.group("value")), text)
@@ -116,15 +122,10 @@ def _dump_option(name, indent, mapping):
     return ["%s%s:" % (indent, name)] + ["%s  %s" % (indent, line) for line in lines]
 
 
-def normalize_text(source):
-    """Return (new_source, changed) with flow-style options expanded."""
-    match = _DOC_RE.search(source)
-    if not match:
-        return source, False
-    body = match.group("body")
+def _expand(body, is_return):
+    """Expand the flow-style entries in one documentation block."""
     if ": {" not in body:
-        return source, False
-
+        return body, False
     out, changed = [], False
     for line in body.split("\n"):
         hit = _FLOW_OPTION_RE.match(line)
@@ -144,14 +145,34 @@ def normalize_text(source):
         for key in ("description",):
             if isinstance(mapping.get(key), str):
                 mapping[key] = [mapping[key]]
-        out.extend(_dump_option(hit.group("name"), indent, mapping))
+        order = _RETURN_KEY_ORDER if is_return else _KEY_ORDER
+        out.extend(_dump_option(hit.group("name"), indent, mapping, order))
         changed = True
 
     if not changed:
-        return source, False
-    new_body = "\n".join(out)
-    start = match.start("body")
-    return source[:start] + new_body + source[match.end("body"):], True
+        return body, False
+    return "\n".join(out), True
+
+
+def normalize_text(source):
+    """Return (new_source, changed) with flow-style entries expanded.
+
+    Both blocks are handled: DOCUMENTATION.options is where the reviewer
+    found the problem, and RETURN has the same shape -- 418 modules wrote
+    their return values as one-line flow mappings, which is the half of a
+    module's documentation a reader consults to know what they will get back.
+    """
+    changed_any = False
+    for pattern, is_return in ((_RETURN_RE, True), (_DOC_RE, False)):
+        match = pattern.search(source)
+        if not match:
+            continue
+        new_body, changed = _expand(match.group("body"), is_return)
+        if not changed:
+            continue
+        source = source[:match.start("body")] + new_body + source[match.end("body"):]
+        changed_any = True
+    return source, changed_any
 
 
 def module_paths():
@@ -179,11 +200,12 @@ def main():
     if args.check:
         if remaining:
             for path in remaining:
-                print("%s: options documented as single-line flow mappings"
+                print("%s: entries documented as single-line flow mappings"
                       % os.path.relpath(path, REPO_ROOT))
-            print("doc style: %d module(s) still use flow-style option docs" % len(remaining))
+            print("doc style: %d module(s) still use flow-style docs" % len(remaining))
             return 1
-        print("doc style: all %d module(s) use block-style option docs" % len(module_paths()))
+        print("doc style: all %d module(s) use block-style docs in DOCUMENTATION and RETURN"
+              % len(module_paths()))
         return 0
 
     print("normalized option documentation in %d module(s)" % len(remaining))

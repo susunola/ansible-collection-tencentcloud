@@ -107,7 +107,11 @@ EXAMPLES = r"""
       - database: orders
         privileges: [select, insert, update, delete]
 """
-RETURN = r"""account_privileges: {description: Effective complete CynosDB account privilege set., type: dict, returned: always}"""
+RETURN = r"""account_privileges:
+  description:
+    - Effective complete CynosDB account privilege set.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

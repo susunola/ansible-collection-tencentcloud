@@ -100,8 +100,16 @@ EXAMPLES = r"""
     state: absent
     allow_delete: true
 """
-RETURN = r"""connection: {description: Effective DLC user VPC connection metadata., type: dict, returned: always}
-endpoint_id: {description: DLC user VPC endpoint ID., type: str, returned: when present}"""
+RETURN = r"""connection:
+  description:
+    - Effective DLC user VPC connection metadata.
+  returned: always
+  type: dict
+endpoint_id:
+  description:
+    - DLC user VPC endpoint ID.
+  returned: when present
+  type: str"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

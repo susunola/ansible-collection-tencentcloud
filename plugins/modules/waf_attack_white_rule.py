@@ -95,7 +95,11 @@ EXAMPLES = r"""
     rules:
       - {MatchField: URI, MatchMethod: prefix, MatchContent: /health, MatchParams: ''}
 """
-RETURN = r"""rule: {description: WAF attack-signature allow-rule metadata., type: dict, returned: always}"""
+RETURN = r"""rule:
+  description:
+    - WAF attack-signature allow-rule metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

@@ -97,7 +97,11 @@ EXAMPLES = r'''
     subscription_name: order-webhook
     endpoint: https://example.com/events
 '''
-RETURN = r'''subscription: {description: Subscription metadata., type: dict, returned: always}'''
+RETURN = r'''subscription:
+  description:
+    - Subscription metadata.
+  returned: always
+  type: dict'''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

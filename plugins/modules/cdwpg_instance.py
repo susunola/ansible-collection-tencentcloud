@@ -115,7 +115,11 @@ EXAMPLES = r"""
       - {SpecName: S_4_16_H, Count: 2, Type: cn}
       - {SpecName: S_8_32_H, Count: 3, Type: dn}
 """
-RETURN = r"""instance: {description: Effective CDW PostgreSQL instance metadata., type: dict, returned: always}"""
+RETURN = r"""instance:
+  description:
+    - Effective CDW PostgreSQL instance metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

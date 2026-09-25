@@ -71,7 +71,11 @@ EXAMPLES = r'''
     service_id: service-xxxxxxxx
     environment: release
 '''
-RETURN = r'''binding: {description: Normalized usage plan binding., type: dict, returned: always}'''
+RETURN = r'''binding:
+  description:
+    - Normalized usage plan binding.
+  returned: always
+  type: dict'''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

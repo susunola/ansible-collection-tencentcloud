@@ -66,7 +66,11 @@ EXAMPLES = r"""
     group_id: ps-xxxxxxxx
     force_migrate: true
 """
-RETURN = r"""binding: {description: Effective instance placement-group binding., type: dict, returned: always}"""
+RETURN = r"""binding:
+  description:
+    - Effective instance placement-group binding.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

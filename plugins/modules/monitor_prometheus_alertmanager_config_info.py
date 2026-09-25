@@ -44,8 +44,16 @@ EXAMPLES = r'''
     instance_id: prom-xxxxxxxx
 '''
 RETURN = r'''
-config: {description: Alertmanager configuration returned by the API., returned: always, type: dict}
-request_id: {description: Request ID of the API call., returned: always, type: str}
+config:
+  description:
+    - Alertmanager configuration returned by the API.
+  returned: always
+  type: dict
+request_id:
+  description:
+    - Request ID of the API call.
+  returned: always
+  type: str
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

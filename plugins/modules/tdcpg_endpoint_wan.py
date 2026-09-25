@@ -67,7 +67,11 @@ EXAMPLES = r"""
     endpoint_id: tdcpg-ep-xxxxxxxx
     state: closed
 """
-RETURN = r"""endpoint: {description: Effective endpoint metadata., type: dict, returned: always}"""
+RETURN = r"""endpoint:
+  description:
+    - Effective endpoint metadata.
+  returned: always
+  type: dict"""
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

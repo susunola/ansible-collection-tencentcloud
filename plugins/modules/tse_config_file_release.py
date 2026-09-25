@@ -144,7 +144,11 @@ EXAMPLES = r"""
     release_name: production
     rollback_version: '12'
 """
-RETURN = r"""release: {description: Effective configuration release metadata and content., type: dict, returned: always}"""
+RETURN = r"""release:
+  description:
+    - Effective configuration release metadata and content.
+  returned: always
+  type: dict"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -93,7 +93,11 @@ EXAMPLES = r'''
     value: 10.0.0.8
 '''
 RETURN = r'''
-record: {description: Private DNS record metadata, type: dict, returned: always}
+record:
+  description:
+    - Private DNS record metadata
+  returned: always
+  type: dict
 '''
 
 import json

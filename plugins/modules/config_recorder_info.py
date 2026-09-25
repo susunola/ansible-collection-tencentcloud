@@ -34,9 +34,22 @@ EXAMPLES = r'''
     region: ap-guangzhou
 '''
 RETURN = r'''
-recorders: {description: Recorder state as a single-element list., returned: always, type: list, elements: dict}
-recorder: {description: Recorder state and monitored resource types., returned: always, type: dict}
-request_id: {description: Request ID returned by the API., returned: always, type: str}
+recorders:
+  description:
+    - Recorder state as a single-element list.
+  returned: always
+  type: list
+  elements: dict
+recorder:
+  description:
+    - Recorder state and monitored resource types.
+  returned: always
+  type: dict
+request_id:
+  description:
+    - Request ID returned by the API.
+  returned: always
+  type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule

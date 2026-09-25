@@ -150,7 +150,11 @@ EXAMPLES = r"""
         action_duration: 10m
 """
 
-RETURN = r"""rules: {description: Current normalized precise rate-limiting rules., type: list, returned: always}"""
+RETURN = r"""rules:
+  description:
+    - Current normalized precise rate-limiting rules.
+  returned: always
+  type: list"""
 
 import re
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

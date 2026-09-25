@@ -140,7 +140,11 @@ EXAMPLES = r"""
     customer_address: 192.0.2.2/30
     bgp_peer: {Asn: 65001}
 """
-RETURN = r"""tunnel: {description: Effective Direct Connect tunnel metadata., type: dict, returned: always}"""
+RETURN = r"""tunnel:
+  description:
+    - Effective Direct Connect tunnel metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver

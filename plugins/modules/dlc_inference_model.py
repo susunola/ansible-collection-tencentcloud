@@ -139,9 +139,21 @@ EXAMPLES = r"""
       - {key: environment, value: production}
 """
 RETURN = r"""
-model: {description: Effective DLC inference model metadata., type: dict, returned: always}
-model_uid: {description: Stable model UID., type: str, returned: always}
-model_id: {description: DLC numeric or internal model ID., type: str, returned: when available}
+model:
+  description:
+    - Effective DLC inference model metadata.
+  returned: always
+  type: dict
+model_uid:
+  description:
+    - Stable model UID.
+  returned: always
+  type: str
+model_id:
+  description:
+    - DLC numeric or internal model ID.
+  returned: when available
+  type: str
 """
 
 import json

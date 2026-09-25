@@ -74,7 +74,11 @@ EXAMPLES = r"""
     qps: 100
     max_request_num: 1000000
 """
-RETURN = r"""usage_plan: {description: Usage plan metadata., type: dict, returned: always}"""
+RETURN = r"""usage_plan:
+  description:
+    - Usage plan metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

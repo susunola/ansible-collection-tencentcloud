@@ -91,7 +91,11 @@ EXAMPLES = r'''
     description: Application account
 '''
 RETURN = r'''
-account: {description: CynosDB account metadata., type: dict, returned: always}
+account:
+  description:
+    - CynosDB account metadata.
+  returned: always
+  type: dict
 '''
 
 import time

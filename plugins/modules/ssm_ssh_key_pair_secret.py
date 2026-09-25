@@ -104,8 +104,16 @@ EXAMPLES = r"""
     tags: {env: prod}
 """
 RETURN = r"""
-secret: {description: Effective metadata without private key material., type: dict, returned: always}
-ssh_key_id: {description: Created CVM key-pair ID; returned only on creation., type: str, returned: changed}
+secret:
+  description:
+    - Effective metadata without private key material.
+  returned: always
+  type: dict
+ssh_key_id:
+  description:
+    - Created CVM key-pair ID; returned only on creation.
+  returned: changed
+  type: str
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -84,7 +84,11 @@ EXAMPLES = r"""
     bucket_region: ap-guangzhou
     directory: releases
 """
-RETURN = r"""repository: {description: Effective TSF repository metadata., type: dict, returned: always}"""
+RETURN = r"""repository:
+  description:
+    - Effective TSF repository metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

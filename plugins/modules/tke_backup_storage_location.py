@@ -82,7 +82,11 @@ EXAMPLES = r"""
     bucket: tke-backup-1250000000
     path: production/
 """
-RETURN = r"""backup_storage_location: {description: TKE backup storage location metadata., type: dict, returned: always}"""
+RETURN = r"""backup_storage_location:
+  description:
+    - TKE backup storage location metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

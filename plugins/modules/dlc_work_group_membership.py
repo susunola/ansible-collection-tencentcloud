@@ -60,9 +60,24 @@ EXAMPLES = r"""
     work_group_id: 10042
     user_ids: ['100012345678', '100087654321']
 """
-RETURN = r"""user_ids: {description: Effective sorted work-group member IDs., type: list, elements: str, returned: always}
-added: {description: Member IDs added by this run., type: list, elements: str, returned: always}
-removed: {description: Member IDs removed by this run., type: list, elements: str, returned: always}"""
+RETURN = r"""user_ids:
+  description:
+    - Effective sorted work-group member IDs.
+  returned: always
+  type: list
+  elements: str
+added:
+  description:
+    - Member IDs added by this run.
+  returned: always
+  type: list
+  elements: str
+removed:
+  description:
+    - Member IDs removed by this run.
+  returned: always
+  type: list
+  elements: str"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

@@ -75,7 +75,11 @@ EXAMPLES = r"""
     name: archive
     transition_days: 60
 """
-RETURN = r"""intelligent_tiering: {description: Effective intelligent-tiering rule., type: dict, returned: always}"""
+RETURN = r"""intelligent_tiering:
+  description:
+    - Effective intelligent-tiering rule.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import get_rule

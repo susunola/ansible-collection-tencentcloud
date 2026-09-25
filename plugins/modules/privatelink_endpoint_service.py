@@ -92,7 +92,11 @@ EXAMPLES = r'''
     auto_accept: true
 '''
 RETURN = r'''
-endpoint_service: {description: PrivateLink endpoint service metadata., type: dict, returned: always}
+endpoint_service:
+  description:
+    - PrivateLink endpoint service metadata.
+  returned: always
+  type: dict
 '''
 
 import time

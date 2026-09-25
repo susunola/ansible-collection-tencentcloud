@@ -99,11 +99,32 @@ EXAMPLES = r"""
     tag_filters: {environment: [production]}
 """
 RETURN = r"""
-secret: {description: Exact Secret metadata., type: dict, returned: in exact mode}
-secrets: {description: Matching Secret metadata., type: list, elements: dict, returned: in list mode}
-total_count: {description: Matching count., type: int, returned: in list mode}
-truncated: {description: Whether max_pages stopped pagination., type: bool, returned: in list mode}
-request_id: {description: Tencent Cloud request ID., type: str, returned: always}
+secret:
+  description:
+    - Exact Secret metadata.
+  returned: in exact mode
+  type: dict
+secrets:
+  description:
+    - Matching Secret metadata.
+  returned: in list mode
+  type: list
+  elements: dict
+total_count:
+  description:
+    - Matching count.
+  returned: in list mode
+  type: int
+truncated:
+  description:
+    - Whether max_pages stopped pagination.
+  returned: in list mode
+  type: bool
+request_id:
+  description:
+    - Tencent Cloud request ID.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

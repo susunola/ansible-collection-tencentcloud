@@ -68,7 +68,11 @@ EXAMPLES = r"""
     name: production_security
 """
 
-RETURN = r"""security_template: {description: EdgeOne web security template and binding summary., type: dict, returned: always}"""
+RETURN = r"""security_template:
+  description:
+    - EdgeOne web security template and binding summary.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

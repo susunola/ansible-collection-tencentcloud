@@ -128,8 +128,16 @@ EXAMPLES = r"""
     allow_delete: true
 """
 RETURN = r"""
-partition: {description: Effective DLC table partition., type: dict, returned: always}
-partition_identity: {description: 'Stable database, table and values identity.', type: dict, returned: always}
+partition:
+  description:
+    - Effective DLC table partition.
+  returned: always
+  type: dict
+partition_identity:
+  description:
+    - Stable database, table and values identity.
+  returned: always
+  type: dict
 """
 
 import json

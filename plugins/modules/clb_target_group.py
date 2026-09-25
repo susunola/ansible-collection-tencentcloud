@@ -125,7 +125,11 @@ EXAMPLES = r'''
 '''
 
 RETURN = r'''
-target_group: {description: Target group metadata including Instances., type: dict, returned: always}
+target_group:
+  description:
+    - Target group metadata including Instances.
+  returned: always
+  type: dict
 '''
 
 import time

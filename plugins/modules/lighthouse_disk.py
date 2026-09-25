@@ -115,7 +115,11 @@ EXAMPLES = r"""
     force_detach: true
 """
 
-RETURN = r"""disk: {description: Lighthouse disk metadata., type: dict, returned: always}"""
+RETURN = r"""disk:
+  description:
+    - Lighthouse disk metadata.
+  returned: always
+  type: dict"""
 
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

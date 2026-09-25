@@ -60,7 +60,12 @@ EXAMPLES = r"""
     member_uin: 100000000001
     identity_ids: [1, 12]
 """
-RETURN = r"""identity_ids: {description: Resulting identity ID set., type: list, elements: int, returned: always}"""
+RETURN = r"""identity_ids:
+  description:
+    - Resulting identity ID set.
+  returned: always
+  type: list
+  elements: int"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

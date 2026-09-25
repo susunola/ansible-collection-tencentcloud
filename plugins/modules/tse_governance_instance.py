@@ -129,7 +129,11 @@ EXAMPLES = r"""
     enable_health_check: true
     ttl: 5
 """
-RETURN = r"""governance_instance: {description: Effective governance service instance metadata., type: dict, returned: always}"""
+RETURN = r"""governance_instance:
+  description:
+    - Effective governance service instance metadata.
+  returned: always
+  type: dict"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

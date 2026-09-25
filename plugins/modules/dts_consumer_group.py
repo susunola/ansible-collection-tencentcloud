@@ -79,7 +79,11 @@ EXAMPLES = r'''
     description: Analytics consumers
 '''
 RETURN = r'''
-consumer_group: {description: DTS consumer group metadata., type: dict, returned: always}
+consumer_group:
+  description:
+    - DTS consumer group metadata.
+  returned: always
+  type: dict
 '''
 
 import time

@@ -127,7 +127,11 @@ EXAMPLES = r"""
     storage: 100
     db_version: '2019'
 """
-RETURN = r"""instance: {description: Effective SQL Server instance metadata., type: dict, returned: always}"""
+RETURN = r"""instance:
+  description:
+    - Effective SQL Server instance metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

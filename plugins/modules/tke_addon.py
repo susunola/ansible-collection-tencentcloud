@@ -98,7 +98,11 @@ EXAMPLES = r'''
     values: {replicaCount: 2}
 '''
 RETURN = r'''
-addon: {description: Addon metadata with raw values redacted, type: dict, returned: always}
+addon:
+  description:
+    - Addon metadata with raw values redacted
+  returned: always
+  type: dict
 '''
 
 import base64

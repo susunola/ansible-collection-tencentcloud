@@ -89,7 +89,11 @@ EXAMPLES = r"""
     destination: order-workers
     routing_key: orders.created
 """
-RETURN = r"""binding: {description: RabbitMQ binding metadata., type: dict, returned: always}"""
+RETURN = r"""binding:
+  description:
+    - RabbitMQ binding metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

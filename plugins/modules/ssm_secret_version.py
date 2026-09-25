@@ -74,7 +74,11 @@ EXAMPLES = r"""
     version_id: release-2026-08-30
     secret_string: "{{ vault_database_password }}"
 """
-RETURN = r"""version: {description: Secret version metadata without its sensitive value., type: dict, returned: always}"""
+RETURN = r"""version:
+  description:
+    - Secret version metadata without its sensitive value.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

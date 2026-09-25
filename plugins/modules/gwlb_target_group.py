@@ -96,7 +96,11 @@ EXAMPLES = r"""
     vpc_id: vpc-xxxxxxxx
     health_check: {HealthSwitch: true, Protocol: TCP, Port: 80}
 """
-RETURN = r"""target_group: {description: Effective GWLB target group metadata., type: dict, returned: always}"""
+RETURN = r"""target_group:
+  description:
+    - Effective GWLB target group metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

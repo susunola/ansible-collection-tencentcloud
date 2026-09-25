@@ -90,7 +90,11 @@ EXAMPLES = r"""
     max_concurrency: 10
     session_token: "{{ dbbrain_session_token }}"
 """
-RETURN = r"""sql_filter: {description: SQL filter metadata., type: dict, returned: always}"""
+RETURN = r"""sql_filter:
+  description:
+    - SQL filter metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

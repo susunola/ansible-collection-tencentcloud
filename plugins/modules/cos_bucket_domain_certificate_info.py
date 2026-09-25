@@ -52,8 +52,17 @@ EXAMPLES = r'''
     domain_name: static.example.com
 '''
 RETURN = r'''
-domain_certificates: {description: Certificate configuration as an empty or single-element list., returned: always, type: list, elements: dict}
-domain_certificate: {description: Effective certificate configuration or null., returned: always, type: dict}
+domain_certificates:
+  description:
+    - Certificate configuration as an empty or single-element list.
+  returned: always
+  type: list
+  elements: dict
+domain_certificate:
+  description:
+    - Effective certificate configuration or null.
+  returned: always
+  type: dict
 '''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

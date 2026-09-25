@@ -77,7 +77,11 @@ EXAMPLES = r"""
       static_configs:
         - targets: ['10.0.0.8:9100']
 """
-RETURN = r"""scrape_job: {description: Prometheus scrape-job metadata., type: dict, returned: always}"""
+RETURN = r"""scrape_job:
+  description:
+    - Prometheus scrape-job metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

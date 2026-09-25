@@ -62,10 +62,27 @@ EXAMPLES = r"""
       AlgorithmFramework: PYTORCH
 """
 RETURN = r"""
-model_version: {description: Exact training-model version detail., type: dict, returned: when version_id is provided}
-model_versions: {description: Versions within the selected parent model., type: list, elements: dict, returned: in list mode}
-total_count: {description: Number of returned parent-scoped versions., type: int, returned: in list mode}
-request_id: {description: Tencent Cloud request ID., type: str, returned: always}
+model_version:
+  description:
+    - Exact training-model version detail.
+  returned: when version_id is provided
+  type: dict
+model_versions:
+  description:
+    - Versions within the selected parent model.
+  returned: in list mode
+  type: list
+  elements: dict
+total_count:
+  description:
+    - Number of returned parent-scoped versions.
+  returned: in list mode
+  type: int
+request_id:
+  description:
+    - Tencent Cloud request ID.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

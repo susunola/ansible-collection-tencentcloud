@@ -115,7 +115,11 @@ EXAMPLES = r"""
     global_privileges: [SELECT]
 """
 RETURN = r"""
-account: {description: Effective account metadata., type: dict, returned: always}
+account:
+  description:
+    - Effective account metadata.
+  returned: always
+  type: dict
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

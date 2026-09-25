@@ -97,7 +97,11 @@ EXAMPLES = r"""
     start_time: '2026-09-01T01:00:00+08:00'
     recurrence: '0 0 9 * * MON-FRI'
 """
-RETURN = r"""scheduled_action: {description: Scheduled action metadata., type: dict, returned: always}"""
+RETURN = r"""scheduled_action:
+  description:
+    - Scheduled action metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

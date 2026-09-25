@@ -82,9 +82,21 @@ EXAMPLES = r"""
     value: '200'
     remark: Managed by Ansible
 """
-RETURN = r"""parameter: {description: Effective parameter metadata., type: dict, returned: always}
-restart_required: {description: Whether the service marks this parameter as requiring restart., type: bool, returned: always}
-flow_id: {description: Asynchronous change flow ID., type: int, returned: when changed}"""
+RETURN = r"""parameter:
+  description:
+    - Effective parameter metadata.
+  returned: always
+  type: dict
+restart_required:
+  description:
+    - Whether the service marks this parameter as requiring restart.
+  returned: always
+  type: bool
+flow_id:
+  description:
+    - Asynchronous change flow ID.
+  returned: when changed
+  type: int"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

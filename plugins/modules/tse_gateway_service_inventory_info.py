@@ -62,10 +62,27 @@ EXAMPLES = r'''
   register: gateway_inventory
 '''
 RETURN = r'''
-services: {description: Gateway services with nested route relationships., type: list, elements: dict, returned: always}
-upstreams: {description: Upstream target data keyed by service name., type: dict, returned: always}
-total_count: {description: Service count reported by the API., type: int, returned: always}
-request_ids: {description: Request IDs for inventory and upstream queries., type: dict, returned: always}
+services:
+  description:
+    - Gateway services with nested route relationships.
+  returned: always
+  type: list
+  elements: dict
+upstreams:
+  description:
+    - Upstream target data keyed by service name.
+  returned: always
+  type: dict
+total_count:
+  description:
+    - Service count reported by the API.
+  returned: always
+  type: int
+request_ids:
+  description:
+    - Request IDs for inventory and upstream queries.
+  returned: always
+  type: dict
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -98,13 +98,42 @@ EXAMPLES = r"""
       environment: production
 """
 RETURN = r"""
-service: {description: Exact deployed service-version detail., type: dict, returned: when service_id is provided}
-service_group: {description: Exact service-group detail., type: dict, returned: when service_group_id is provided}
-service_groups: {description: Matching service groups and embedded versions., type: list, elements: dict, returned: in list mode}
-total_count: {description: Number of matching service groups., type: int, returned: in list mode}
-global_total_count: {description: Total service groups in the current account and region., type: int, returned: in list mode}
-truncated: {description: Whether max_pages stopped pagination., type: bool, returned: in list mode}
-request_id: {description: Request ID from the exact request or final page., type: str, returned: always}
+service:
+  description:
+    - Exact deployed service-version detail.
+  returned: when service_id is provided
+  type: dict
+service_group:
+  description:
+    - Exact service-group detail.
+  returned: when service_group_id is provided
+  type: dict
+service_groups:
+  description:
+    - Matching service groups and embedded versions.
+  returned: in list mode
+  type: list
+  elements: dict
+total_count:
+  description:
+    - Number of matching service groups.
+  returned: in list mode
+  type: int
+global_total_count:
+  description:
+    - Total service groups in the current account and region.
+  returned: in list mode
+  type: int
+truncated:
+  description:
+    - Whether max_pages stopped pagination.
+  returned: in list mode
+  type: bool
+request_id:
+  description:
+    - Request ID from the exact request or final page.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

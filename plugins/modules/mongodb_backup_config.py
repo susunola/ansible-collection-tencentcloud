@@ -95,7 +95,11 @@ EXAMPLES = r"""
     active_weekdays: [1, 2, 3, 4, 5]
     retention_days: 30
 """
-RETURN = r"""backup_config: {description: Normalized MongoDB backup rules., type: dict, returned: always}"""
+RETURN = r"""backup_config:
+  description:
+    - Normalized MongoDB backup rules.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

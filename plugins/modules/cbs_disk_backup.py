@@ -72,7 +72,11 @@ EXAMPLES = r"""
     disk_id: disk-xxxxxxxx
     name: before-database-upgrade
 """
-RETURN = r"""disk_backup: {description: CBS disk backup point metadata., type: dict, returned: always}"""
+RETURN = r"""disk_backup:
+  description:
+    - CBS disk backup point metadata.
+  returned: always
+  type: dict"""
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

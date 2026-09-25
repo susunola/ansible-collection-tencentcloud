@@ -77,7 +77,11 @@ EXAMPLES = r"""
     placement_type: RACK
     affinity: 2
 """
-RETURN = r"""placement_group: {description: Effective placement-group metadata., type: dict, returned: always}"""
+RETURN = r"""placement_group:
+  description:
+    - Effective placement-group metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

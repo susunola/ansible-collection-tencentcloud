@@ -145,7 +145,11 @@ EXAMPLES = r"""
     scheduler: wrr
     health_check: true
 """
-RETURN = r"""listener: {description: Effective GAAP listener., type: dict, returned: always}"""
+RETURN = r"""listener:
+  description:
+    - Effective GAAP listener.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import changed, maybe_diff

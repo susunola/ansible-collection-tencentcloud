@@ -100,7 +100,11 @@ EXAMPLES = r"""
     exchange_type: topic
     durable: true
 """
-RETURN = r"""exchange: {description: RabbitMQ Serverless exchange metadata., type: dict, returned: always}"""
+RETURN = r"""exchange:
+  description:
+    - RabbitMQ Serverless exchange metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import require_immutable_unchanged, fail_from_sdk_error

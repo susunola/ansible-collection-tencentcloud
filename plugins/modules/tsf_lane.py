@@ -81,7 +81,11 @@ EXAMPLES = r"""
       - {group_id: group-xxxxxxxx, entrance: true}
       - {group_id: group-yyyyyyyy}
 """
-RETURN = r"""lane: {description: Effective TSF lane metadata., type: dict, returned: always}"""
+RETURN = r"""lane:
+  description:
+    - Effective TSF lane metadata.
+  returned: always
+  type: dict"""
 
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

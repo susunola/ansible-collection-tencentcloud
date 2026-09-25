@@ -97,7 +97,11 @@ EXAMPLES = r'''
     ttl: 300
 '''
 RETURN = r'''
-record: {description: EdgeOne DNS record metadata., type: dict, returned: always}
+record:
+  description:
+    - EdgeOne DNS record metadata.
+  returned: always
+  type: dict
 '''
 
 import time

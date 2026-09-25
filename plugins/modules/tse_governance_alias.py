@@ -90,7 +90,11 @@ EXAMPLES = r"""
     namespace: production
     service: orders
 """
-RETURN = r"""alias_info: {description: Effective governance alias metadata., type: dict, returned: always}"""
+RETURN = r"""alias_info:
+  description:
+    - Effective governance alias metadata.
+  returned: always
+  type: dict"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

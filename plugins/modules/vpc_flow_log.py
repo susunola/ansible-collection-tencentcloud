@@ -117,7 +117,11 @@ EXAMPLES = r'''
 '''
 
 RETURN = r'''
-flow_log: {description: Flow log metadata., type: dict, returned: always}
+flow_log:
+  description:
+    - Flow log metadata.
+  returned: always
+  type: dict
 '''
 
 import time

@@ -174,7 +174,11 @@ EXAMPLES = r"""
     admin_password: "{{ vault_tse_password }}"
     internet_access: false
 """
-RETURN = r"""instance: {description: Effective TSE registry-engine metadata., type: dict, returned: always}"""
+RETURN = r"""instance:
+  description:
+    - Effective TSE registry-engine metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

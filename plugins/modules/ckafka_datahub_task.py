@@ -120,7 +120,11 @@ EXAMPLES = r"""
       TopicParam: {Resource: 1250000000-orders}
     tasks_max: 2
 """
-RETURN = r"""datahub_task: {description: CKafka Datahub task metadata with credential fields removed., type: dict, returned: always}"""
+RETURN = r"""datahub_task:
+  description:
+    - CKafka Datahub task metadata with credential fields removed.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found

@@ -90,7 +90,11 @@ EXAMPLES = r"""
     cluster_id: cluster-xxxxxxxx
     description: Production VM group
 """
-RETURN = r"""deployment_group: {description: Effective VM deployment group metadata., type: dict, returned: always}"""
+RETURN = r"""deployment_group:
+  description:
+    - Effective VM deployment group metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import require_immutable_unchanged, fail_from_sdk_error

@@ -119,7 +119,12 @@ EXAMPLES = r"""
     allow_empty: true
 """
 RETURN = r"""
-udf_policy: {description: Effective normalized UDF policy set., type: list, elements: dict, returned: always}
+udf_policy:
+  description:
+    - Effective normalized UDF policy set.
+  returned: always
+  type: list
+  elements: dict
 """
 
 import json

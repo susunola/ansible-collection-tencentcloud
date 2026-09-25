@@ -94,7 +94,11 @@ EXAMPLES = r"""
     encoding: JSON
     enable_stdout: true
 """
-RETURN = r"""access_log: {description: Effective TCM access-log configuration., type: dict, returned: always}"""
+RETURN = r"""access_log:
+  description:
+    - Effective TCM access-log configuration.
+  returned: always
+  type: dict"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

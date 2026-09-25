@@ -107,7 +107,11 @@ EXAMPLES = r"""
     name: add-two
     adjustment_value: 2
 """
-RETURN = r"""scaling_policy: {description: Scaling policy metadata., type: dict, returned: always}"""
+RETURN = r"""scaling_policy:
+  description:
+    - Scaling policy metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

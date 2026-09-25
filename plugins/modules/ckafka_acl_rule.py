@@ -113,7 +113,11 @@ EXAMPLES = r"""
         permission: Allow
         principal: User:producer
 """
-RETURN = r"""acl_rule: {description: CKafka ACL rule metadata., type: dict, returned: always}"""
+RETURN = r"""acl_rule:
+  description:
+    - CKafka ACL rule metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

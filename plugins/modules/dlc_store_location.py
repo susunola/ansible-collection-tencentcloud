@@ -77,7 +77,11 @@ EXAMPLES = r"""
     advanced_store_location: cosn://analytics-results/advanced/
 """
 RETURN = r"""
-store_location_config: {description: Effective base and advanced storage settings., type: dict, returned: always}
+store_location_config:
+  description:
+    - Effective base and advanced storage settings.
+  returned: always
+  type: dict
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

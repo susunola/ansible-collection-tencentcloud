@@ -12,7 +12,8 @@ short_description: Gather cloud products supported by Tencent Cloud SSM
 version_added: "0.14.0"
 description:
   - Returns the region-specific product identifiers accepted by C(ssm_product_secret).
-options: {}
+options:
+  {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region
@@ -39,9 +40,22 @@ EXAMPLES = r"""
   register: ssm_products
 """
 RETURN = r"""
-products: {description: Product identifiers supported in the selected region., type: list, elements: str, returned: always}
-total_count: {description: Number of supported products., type: int, returned: always}
-request_id: {description: Tencent Cloud request ID., type: str, returned: always}
+products:
+  description:
+    - Product identifiers supported in the selected region.
+  returned: always
+  type: list
+  elements: str
+total_count:
+  description:
+    - Number of supported products.
+  returned: always
+  type: int
+request_id:
+  description:
+    - Tencent Cloud request ID.
+  returned: always
+  type: str
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

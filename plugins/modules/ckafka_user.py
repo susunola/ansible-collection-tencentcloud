@@ -74,7 +74,11 @@ EXAMPLES = r"""
     name: producer
     password: '{{ vault_ckafka_password }}'
 """
-RETURN = r"""user: {description: CKafka user metadata., type: dict, returned: always}"""
+RETURN = r"""user:
+  description:
+    - CKafka user metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

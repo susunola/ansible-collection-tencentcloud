@@ -47,8 +47,17 @@ EXAMPLES = r'''
     name: archive
 '''
 RETURN = r'''
-intelligent_tiering_rules: {description: Default rule as an empty or single-element list., returned: always, type: list, elements: dict}
-intelligent_tiering: {description: Effective default intelligent-tiering rule or null., returned: always, type: dict}
+intelligent_tiering_rules:
+  description:
+    - Default rule as an empty or single-element list.
+  returned: always
+  type: list
+  elements: dict
+intelligent_tiering:
+  description:
+    - Effective default intelligent-tiering rule or null.
+  returned: always
+  type: dict
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos

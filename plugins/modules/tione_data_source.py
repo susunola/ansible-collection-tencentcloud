@@ -120,8 +120,16 @@ EXAMPLES = r"""
     allow_delete: true
 """
 RETURN = r"""
-data_source: {description: Effective TIONE data-source metadata., type: dict, returned: always}
-data_source_id: {description: Stable data-source ID., type: str, returned: when available}
+data_source:
+  description:
+    - Effective TIONE data-source metadata.
+  returned: always
+  type: dict
+data_source_id:
+  description:
+    - Stable data-source ID.
+  returned: when available
+  type: str
 """
 
 import json

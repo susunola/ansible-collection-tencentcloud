@@ -58,9 +58,22 @@ EXAMPLES = r"""
     page_size: 200
 """
 RETURN = r"""
-logs: {description: Ordered Notebook session log lines., type: list, elements: str, returned: always}
-truncated: {description: Whether max_pages stopped a sequence of full pages., type: bool, returned: always}
-request_id: {description: Request ID from the final page., type: str, returned: always}
+logs:
+  description:
+    - Ordered Notebook session log lines.
+  returned: always
+  type: list
+  elements: str
+truncated:
+  description:
+    - Whether max_pages stopped a sequence of full pages.
+  returned: always
+  type: bool
+request_id:
+  description:
+    - Request ID from the final page.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -61,7 +61,11 @@ EXAMPLES = r"""
     enabled: true
     retention_days: 180
 """
-RETURN = r"""audit_config: {description: Normalized audit configuration., type: dict, returned: always}"""
+RETURN = r"""audit_config:
+  description:
+    - Normalized audit configuration.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

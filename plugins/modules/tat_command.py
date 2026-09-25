@@ -119,7 +119,11 @@ EXAMPLES = r'''
     timeout: 300
 '''
 RETURN = r'''
-command: {description: TAT command metadata., type: dict, returned: always}
+command:
+  description:
+    - TAT command metadata.
+  returned: always
+  type: dict
 '''
 
 import base64

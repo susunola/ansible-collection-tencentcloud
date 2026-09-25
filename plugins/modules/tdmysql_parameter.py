@@ -75,8 +75,16 @@ EXAMPLES = r"""
       slow_query_log: 'ON'
 """
 RETURN = r"""
-parameters: {description: Effective requested parameters including constraints and restart requirements., type: dict, returned: always}
-restart_required: {description: Whether any changed parameter requires a restart., type: bool, returned: always}
+parameters:
+  description:
+    - Effective requested parameters including constraints and restart requirements.
+  returned: always
+  type: dict
+restart_required:
+  description:
+    - Whether any changed parameter requires a restart.
+  returned: always
+  type: bool
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

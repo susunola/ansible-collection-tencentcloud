@@ -74,7 +74,11 @@ EXAMPLES = r"""
     identity_id: 12
     description: Operations access policy
 """
-RETURN = r"""policy: {description: Organization member access policy metadata., type: dict, returned: always}"""
+RETURN = r"""policy:
+  description:
+    - Organization member access policy metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

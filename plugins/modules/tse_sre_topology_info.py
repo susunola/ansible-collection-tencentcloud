@@ -59,11 +59,33 @@ EXAMPLES = r'''
 '''
 
 RETURN = r'''
-replicas: {description: Engine replica topology., type: list, elements: dict, returned: always}
-interfaces: {description: Engine server interfaces., type: list, elements: dict, returned: always}
-replica_count: {description: Replica count reported by the API., type: int, returned: always}
-interface_count: {description: Interface count reported by the API., type: int, returned: always}
-request_ids: {description: Request IDs of the last replica and interface API calls., type: dict, returned: always}
+replicas:
+  description:
+    - Engine replica topology.
+  returned: always
+  type: list
+  elements: dict
+interfaces:
+  description:
+    - Engine server interfaces.
+  returned: always
+  type: list
+  elements: dict
+replica_count:
+  description:
+    - Replica count reported by the API.
+  returned: always
+  type: int
+interface_count:
+  description:
+    - Interface count reported by the API.
+  returned: always
+  type: int
+request_ids:
+  description:
+    - Request IDs of the last replica and interface API calls.
+  returned: always
+  type: dict
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

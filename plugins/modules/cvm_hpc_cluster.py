@@ -84,7 +84,11 @@ EXAMPLES = r"""
     cluster_type: STANDARD
     remark: Production RDMA placement
 """
-RETURN = r"""hpc_cluster: {description: Effective HPC cluster metadata., type: dict, returned: always}"""
+RETURN = r"""hpc_cluster:
+  description:
+    - Effective HPC cluster metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

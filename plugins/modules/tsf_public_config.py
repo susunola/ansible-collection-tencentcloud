@@ -73,7 +73,11 @@ EXAMPLES = r"""
     version: v1
     value: 'logging: {level: INFO}'
 """
-RETURN = r"""config: {description: Effective TSF public configuration version., type: dict, returned: always}"""
+RETURN = r"""config:
+  description:
+    - Effective TSF public configuration version.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

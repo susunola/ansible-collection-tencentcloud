@@ -71,7 +71,11 @@ EXAMPLES = r"""
     vpc_type: 1
     vpc_id: vpc-xxxxxxxx
 """
-RETURN = r"""access_group: {description: Effective CHDFS access group metadata., type: dict, returned: always}"""
+RETURN = r"""access_group:
+  description:
+    - Effective CHDFS access group metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import require_immutable_unchanged, fail_from_sdk_error

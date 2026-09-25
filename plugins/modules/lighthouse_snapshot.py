@@ -67,7 +67,11 @@ EXAMPLES = r"""
     instance_id: lhins-xxxxxxxx
     name: before-upgrade
 """
-RETURN = r"""snapshot: {description: Lighthouse snapshot metadata., type: dict, returned: always}"""
+RETURN = r"""snapshot:
+  description:
+    - Lighthouse snapshot metadata.
+  returned: always
+  type: dict"""
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

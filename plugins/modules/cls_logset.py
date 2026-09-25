@@ -64,7 +64,11 @@ EXAMPLES = r'''
     tags: {env: prod}
 '''
 RETURN = r'''
-logset: {description: CLS logset metadata., type: dict, returned: always}
+logset:
+  description:
+    - CLS logset metadata.
+  returned: always
+  type: dict
 '''
 
 import time

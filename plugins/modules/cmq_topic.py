@@ -83,7 +83,11 @@ EXAMPLES = r"""
     topic_name: order-events
     message_retention_seconds: 172800
 """
-RETURN = r"""topic: {description: Topic metadata., type: dict, returned: always}"""
+RETURN = r"""topic:
+  description:
+    - Topic metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

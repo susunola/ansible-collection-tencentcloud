@@ -47,8 +47,17 @@ EXAMPLES = r'''
     name: media
 '''
 RETURN = r'''
-origins: {description: Origin configuration as an empty or single-element list., returned: always, type: list, elements: dict}
-origin: {description: Effective origin configuration or null., returned: always, type: dict}
+origins:
+  description:
+    - Origin configuration as an empty or single-element list.
+  returned: always
+  type: list
+  elements: dict
+origin:
+  description:
+    - Effective origin configuration or null.
+  returned: always
+  type: dict
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos

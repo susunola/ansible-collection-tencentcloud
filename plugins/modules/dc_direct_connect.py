@@ -141,7 +141,11 @@ EXAMPLES = r"""
     customer_contact_mail: network@example.com
     customer_contact_number: '13800000000'
 """
-RETURN = r"""direct_connect: {description: Effective physical Direct Connect metadata., type: dict, returned: always}"""
+RETURN = r"""direct_connect:
+  description:
+    - Effective physical Direct Connect metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver

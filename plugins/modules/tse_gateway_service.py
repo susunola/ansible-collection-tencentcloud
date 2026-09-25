@@ -123,7 +123,11 @@ EXAMPLES = r"""
       EnableActiveHealthCheck: true
       ActiveHealthCheck: {HealthyInterval: 5, UnhealthyInterval: 5, HttpPath: /healthz}
 """
-RETURN = r"""service: {description: Effective gateway service metadata., type: dict, returned: always}"""
+RETURN = r"""service:
+  description:
+    - Effective gateway service metadata.
+  returned: always
+  type: dict"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

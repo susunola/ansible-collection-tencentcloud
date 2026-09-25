@@ -98,7 +98,11 @@ EXAMPLES = r"""
     retention_minutes: 1440
     retention_size_mb: 10240
 """
-RETURN = r"""namespace: {description: TDMQ Pulsar namespace metadata., type: dict, returned: always}"""
+RETURN = r"""namespace:
+  description:
+    - TDMQ Pulsar namespace metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

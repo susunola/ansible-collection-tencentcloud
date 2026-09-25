@@ -47,8 +47,17 @@ EXAMPLES = r'''
     name: audit-archive
 '''
 RETURN = r'''
-object_locks: {description: Object-lock configuration as an empty or single-element list., returned: always, type: list, elements: dict}
-object_lock: {description: Effective object-lock configuration or null., returned: always, type: dict}
+object_locks:
+  description:
+    - Object-lock configuration as an empty or single-element list.
+  returned: always
+  type: list
+  elements: dict
+object_lock:
+  description:
+    - Effective object-lock configuration or null.
+  returned: always
+  type: dict
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos

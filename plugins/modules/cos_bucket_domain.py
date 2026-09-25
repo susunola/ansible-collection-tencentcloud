@@ -66,8 +66,16 @@ EXAMPLES = r"""
       - {Name: static.example.com, Type: REST, Status: ENABLED, ForcedReplacement: CNAME}
 """
 RETURN = r"""
-domains: {description: Effective custom-domain configuration., type: dict, returned: always}
-txt_verification: {description: DNS TXT verification value returned by COS., type: str, returned: when available}
+domains:
+  description:
+    - Effective custom-domain configuration.
+  returned: always
+  type: dict
+txt_verification:
+  description:
+    - DNS TXT verification value returned by COS.
+  returned: when available
+  type: str
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_domains as normalize, get_domains

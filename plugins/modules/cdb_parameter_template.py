@@ -85,7 +85,11 @@ EXAMPLES = r"""
     engine_version: '8.0'
     parameters: {max_connections: '2000'}
 """
-RETURN = r"""parameter_template: {description: CDB parameter template metadata., type: dict, returned: always}"""
+RETURN = r"""parameter_template:
+  description:
+    - CDB parameter template metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

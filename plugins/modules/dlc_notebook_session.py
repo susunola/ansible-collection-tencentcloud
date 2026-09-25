@@ -162,8 +162,16 @@ EXAMPLES = r"""
     allow_delete: true
 """
 RETURN = r"""
-session: {description: Effective Notebook session metadata., type: dict, returned: always}
-session_id: {description: DLC Notebook session ID., type: str, returned: when present}
+session:
+  description:
+    - Effective Notebook session metadata.
+  returned: always
+  type: dict
+session_id:
+  description:
+    - DLC Notebook session ID.
+  returned: when present
+  type: str
 """
 
 import json

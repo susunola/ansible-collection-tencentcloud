@@ -105,7 +105,11 @@ EXAMPLES = r'''
         vpc_id: vpc-abc123
 '''
 RETURN = r'''
-zone: {description: Private DNS zone metadata, type: dict, returned: always}
+zone:
+  description:
+    - Private DNS zone metadata
+  returned: always
+  type: dict
 '''
 
 import json

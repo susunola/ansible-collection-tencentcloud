@@ -78,7 +78,11 @@ EXAMPLES = r'''
       environment: production
 '''
 RETURN = r'''
-node: {description: Organization node metadata., type: dict, returned: always}
+node:
+  description:
+    - Organization node metadata.
+  returned: always
+  type: dict
 '''
 
 import time

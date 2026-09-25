@@ -143,7 +143,11 @@ EXAMPLES = r"""
     instance_count: 2
     db_version: '13.3'
 """
-RETURN = r"""cluster: {description: Effective TDSQL-C PostgreSQL cluster metadata., type: dict, returned: always}"""
+RETURN = r"""cluster:
+  description:
+    - Effective TDSQL-C PostgreSQL cluster metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

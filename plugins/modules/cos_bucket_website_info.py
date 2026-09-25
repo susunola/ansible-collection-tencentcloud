@@ -47,8 +47,17 @@ EXAMPLES = r'''
     name: public-site
 '''
 RETURN = r'''
-websites: {description: Website configuration as an empty or single-element list., returned: always, type: list, elements: dict}
-website: {description: Effective website configuration or null., returned: always, type: dict}
+websites:
+  description:
+    - Website configuration as an empty or single-element list.
+  returned: always
+  type: list
+  elements: dict
+website:
+  description:
+    - Effective website configuration or null.
+  returned: always
+  type: dict
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos

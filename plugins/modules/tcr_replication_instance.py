@@ -70,7 +70,11 @@ EXAMPLES = r"""
     replication_region_id: 1
     replication_region_name: ap-shanghai
 """
-RETURN = r"""replication_instance: {description: Replication instance metadata., type: dict, returned: always}"""
+RETURN = r"""replication_instance:
+  description:
+    - Replication instance metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

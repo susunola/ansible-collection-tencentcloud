@@ -171,7 +171,11 @@ EXAMPLES = r"""
         action: Deny
 """
 
-RETURN = r"""managed_rules: {description: Current normalized managed WAF configuration., type: dict, returned: always}"""
+RETURN = r"""managed_rules:
+  description:
+    - Current normalized managed WAF configuration.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

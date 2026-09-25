@@ -93,7 +93,11 @@ EXAMPLES = r"""
     namespace: production
     name: application
 """
-RETURN = r"""group: {description: Effective configuration group metadata., type: dict, returned: always}"""
+RETURN = r"""group:
+  description:
+    - Effective configuration group metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

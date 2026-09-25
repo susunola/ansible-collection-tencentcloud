@@ -79,9 +79,22 @@ EXAMPLES = r"""
     engine_generation: supersql
 """
 RETURN = r"""
-sessions: {description: Matching DLC Notebook sessions., type: list, elements: dict, returned: always}
-total_count: {description: Number of sessions reported by the API., type: int, returned: always}
-request_id: {description: Request ID from the final page., type: str, returned: always}
+sessions:
+  description:
+    - Matching DLC Notebook sessions.
+  returned: always
+  type: list
+  elements: dict
+total_count:
+  description:
+    - Number of sessions reported by the API.
+  returned: always
+  type: int
+request_id:
+  description:
+    - Request ID from the final page.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

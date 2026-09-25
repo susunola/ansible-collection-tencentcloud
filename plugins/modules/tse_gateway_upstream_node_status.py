@@ -86,7 +86,11 @@ EXAMPLES = r'''
     status: UNHEALTHY
 '''
 RETURN = r'''
-node: {description: Effective upstream target metadata., type: dict, returned: always}
+node:
+  description:
+    - Effective upstream target metadata.
+  returned: always
+  type: dict
 '''
 
 import time

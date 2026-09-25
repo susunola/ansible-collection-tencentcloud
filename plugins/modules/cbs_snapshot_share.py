@@ -60,7 +60,12 @@ EXAMPLES = r"""
     snapshot_id: snap-xxxxxxxx
     account_ids: []
 """
-RETURN = r"""share_permissions: {description: Effective sorted recipient account IDs., type: list, elements: str, returned: always}"""
+RETURN = r"""share_permissions:
+  description:
+    - Effective sorted recipient account IDs.
+  returned: always
+  type: list
+  elements: str"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

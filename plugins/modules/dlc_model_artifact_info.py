@@ -73,10 +73,26 @@ EXAMPLES = r"""
     include_readme: false
 """
 RETURN = r"""
-config: {description: 'Model config response, including raw ConfigJson and parsed Config when valid JSON.', type: dict, returned: when include_config}
-files: {description: Model file-tree response., type: dict, returned: when include_files}
-readme: {description: Model README and descriptive metadata., type: dict, returned: when include_readme}
-request_ids: {description: Request IDs keyed by requested artifact., type: dict, returned: always}
+config:
+  description:
+    - Model config response, including raw ConfigJson and parsed Config when valid JSON.
+  returned: when include_config
+  type: dict
+files:
+  description:
+    - Model file-tree response.
+  returned: when include_files
+  type: dict
+readme:
+  description:
+    - Model README and descriptive metadata.
+  returned: when include_readme
+  type: dict
+request_ids:
+  description:
+    - Request IDs keyed by requested artifact.
+  returned: always
+  type: dict
 """
 
 import json

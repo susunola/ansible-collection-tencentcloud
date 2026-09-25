@@ -258,8 +258,16 @@ EXAMPLES = r"""
     replicas: 4
 """
 RETURN = r"""
-service: {description: Effective service detail., type: dict, returned: always}
-service_id: {description: Stable service-version ID., type: str, returned: when available}
+service:
+  description:
+    - Effective service detail.
+  returned: always
+  type: dict
+service_id:
+  description:
+    - Stable service-version ID.
+  returned: when available
+  type: str
 """
 
 import json

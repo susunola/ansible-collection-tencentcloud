@@ -98,7 +98,12 @@ EXAMPLES = r"""
     object_name: events
     privileges: [SELECT, INSERT, UPDATE]
 """
-RETURN = r"""privileges: {description: Resulting normalized privilege names., type: list, elements: str, returned: always}"""
+RETURN = r"""privileges:
+  description:
+    - Resulting normalized privilege names.
+  returned: always
+  type: list
+  elements: str"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

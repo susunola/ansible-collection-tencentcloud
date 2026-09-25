@@ -100,7 +100,11 @@ EXAMPLES = r'''
     description: Order service APIs
 '''
 RETURN = r'''
-service: {description: API Gateway service metadata., type: dict, returned: always}
+service:
+  description:
+    - API Gateway service metadata.
+  returned: always
+  type: dict
 '''
 
 import time

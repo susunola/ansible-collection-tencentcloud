@@ -84,7 +84,11 @@ EXAMPLES = r"""
       Ports: [8080]
       PortMappingItemList: [{Port: 80, TargetPort: 8080, Protocol: TCP}]
 """
-RETURN = r"""service: {description: Effective TEM service access metadata., type: dict, returned: always}"""
+RETURN = r"""service:
+  description:
+    - Effective TEM service access metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

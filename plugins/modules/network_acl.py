@@ -165,7 +165,11 @@ EXAMPLES = r'''
 '''
 
 RETURN = r'''
-network_acl: {description: Network ACL metadata., type: dict, returned: always}
+network_acl:
+  description:
+    - Network ACL metadata.
+  returned: always
+  type: dict
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

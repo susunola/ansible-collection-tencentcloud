@@ -70,7 +70,11 @@ EXAMPLES = r"""
     username: application
     password: "{{ vault_mqtt_password }}"
 """
-RETURN = r"""user: {description: Effective MQTT user metadata without password., type: dict, returned: always}"""
+RETURN = r"""user:
+  description:
+    - Effective MQTT user metadata without password.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

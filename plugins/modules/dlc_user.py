@@ -114,8 +114,16 @@ EXAMPLES = r"""
     state: absent
     allow_delete: true
 """
-RETURN = r"""user: {description: Effective DLC user metadata., type: dict, returned: always}
-user_id: {description: DLC user identifier., type: str, returned: always}"""
+RETURN = r"""user:
+  description:
+    - Effective DLC user metadata.
+  returned: always
+  type: dict
+user_id:
+  description:
+    - DLC user identifier.
+  returned: always
+  type: str"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -109,7 +109,11 @@ EXAMPLES = r"""
     state: absent
     recovery_window_days: 14
 """
-RETURN = r"""secret: {description: Effective secret metadata without secret material., type: dict, returned: always}"""
+RETURN = r"""secret:
+  description:
+    - Effective secret metadata without secret material.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found

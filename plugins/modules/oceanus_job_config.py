@@ -275,8 +275,16 @@ EXAMPLES = r"""
     resource_ref_names:
       - {Name: orders-processor, Type: 1}
 """
-RETURN = r"""job_config: {description: Effective configuration version., type: dict, returned: always}
-version: {description: Effective configuration version number., type: int, returned: when present}"""
+RETURN = r"""job_config:
+  description:
+    - Effective configuration version.
+  returned: always
+  type: dict
+version:
+  description:
+    - Effective configuration version number.
+  returned: when present
+  type: int"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -187,8 +187,16 @@ EXAMPLES = r"""
     state: stopped
 """
 RETURN = r"""
-inference_service: {description: Effective inference-service metadata., type: dict, returned: always}
-service_id: {description: Stable DLC inference-service ID., type: str, returned: always}
+inference_service:
+  description:
+    - Effective inference-service metadata.
+  returned: always
+  type: dict
+service_id:
+  description:
+    - Stable DLC inference-service ID.
+  returned: always
+  type: str
 """
 
 import json

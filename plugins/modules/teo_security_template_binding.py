@@ -79,7 +79,11 @@ EXAMPLES = r"""
       - api.example.com
 """
 
-RETURN = r"""bindings: {description: Current template binding records and deployment states., type: list, returned: always}"""
+RETURN = r"""bindings:
+  description:
+    - Current template binding records and deployment states.
+  returned: always
+  type: list"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

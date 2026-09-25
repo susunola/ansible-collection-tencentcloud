@@ -89,8 +89,16 @@ EXAMPLES = r"""
     allow_delete: true
 """
 RETURN = r"""
-service: {description: Effective service detail., type: dict, returned: always}
-service_id: {description: Stable service-version ID., type: str, returned: always}
+service:
+  description:
+    - Effective service detail.
+  returned: always
+  type: dict
+service_id:
+  description:
+    - Stable service-version ID.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

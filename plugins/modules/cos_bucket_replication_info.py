@@ -46,8 +46,17 @@ EXAMPLES = r'''
     name: source-data
 '''
 RETURN = r'''
-replications: {description: Replication configuration as an empty or single-element list., returned: always, type: list, elements: dict}
-replication: {description: Effective replication configuration or null., returned: always, type: dict}
+replications:
+  description:
+    - Replication configuration as an empty or single-element list.
+  returned: always
+  type: list
+  elements: dict
+replication:
+  description:
+    - Effective replication configuration or null.
+  returned: always
+  type: dict
 '''
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -47,8 +47,17 @@ EXAMPLES = r'''
     name: application-data
 '''
 RETURN = r'''
-encryptions: {description: Encryption configuration as an empty or single-element list., returned: always, type: list, elements: dict}
-encryption: {description: Effective encryption configuration or null., returned: always, type: dict}
+encryptions:
+  description:
+    - Encryption configuration as an empty or single-element list.
+  returned: always
+  type: list
+  elements: dict
+encryption:
+  description:
+    - Effective encryption configuration or null.
+  returned: always
+  type: dict
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos

@@ -73,7 +73,11 @@ EXAMPLES = r"""
     name: mobile-application
     priority: High
 """
-RETURN = r"""consumer: {description: Effective gateway consumer metadata., type: dict, returned: always}"""
+RETURN = r"""consumer:
+  description:
+    - Effective gateway consumer metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

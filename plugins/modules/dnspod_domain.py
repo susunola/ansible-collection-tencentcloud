@@ -79,7 +79,11 @@ EXAMPLES = r"""
     name: example.com
     remark: Public production zone
 """
-RETURN = r"""domain: {description: DNSPod domain metadata., type: dict, returned: always}"""
+RETURN = r"""domain:
+  description:
+    - DNSPod domain metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

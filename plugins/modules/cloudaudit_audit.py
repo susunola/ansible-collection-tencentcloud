@@ -121,7 +121,11 @@ EXAMPLES = r"""
     key_id: key-xxxxxxxx
 """
 
-RETURN = r"""audit: {description: Account-level CloudAudit configuration., type: dict, returned: always}"""
+RETURN = r"""audit:
+  description:
+    - Account-level CloudAudit configuration.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

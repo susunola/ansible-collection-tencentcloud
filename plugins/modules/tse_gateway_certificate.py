@@ -112,7 +112,11 @@ EXAMPLES = r"""
     cert_type: SVR
     cert_usage: SERVER
 """
-RETURN = r"""certificate_info: {description: Effective certificate metadata with private key redacted., type: dict, returned: always}"""
+RETURN = r"""certificate_info:
+  description:
+    - Effective certificate metadata with private key redacted.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -127,7 +127,11 @@ EXAMPLES = r"""
     coding_language: JAVA
     deploy_mode: IMAGE
 """
-RETURN = r"""application: {description: Effective TEM application metadata., type: dict, returned: always}"""
+RETURN = r"""application:
+  description:
+    - Effective TEM application metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

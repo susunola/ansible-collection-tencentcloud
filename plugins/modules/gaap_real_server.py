@@ -72,7 +72,11 @@ EXAMPLES = r"""
     address: 10.0.1.10
     name: orders-primary
 """
-RETURN = r"""real_server: {description: Effective GAAP real server., type: dict, returned: always}"""
+RETURN = r"""real_server:
+  description:
+    - Effective GAAP real server.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

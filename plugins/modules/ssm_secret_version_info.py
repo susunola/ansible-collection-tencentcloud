@@ -69,9 +69,22 @@ EXAMPLES = r"""
   no_log: true
 """
 RETURN = r"""
-versions: {description: Version metadata., type: list, elements: dict, returned: when secret material is not requested}
-secret_value: {description: Sensitive exact version response., type: dict, returned: when include_secret_value is true}
-request_id: {description: Tencent Cloud request ID., type: str, returned: always}
+versions:
+  description:
+    - Version metadata.
+  returned: when secret material is not requested
+  type: list
+  elements: dict
+secret_value:
+  description:
+    - Sensitive exact version response.
+  returned: when include_secret_value is true
+  type: dict
+request_id:
+  description:
+    - Tencent Cloud request ID.
+  returned: always
+  type: str
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

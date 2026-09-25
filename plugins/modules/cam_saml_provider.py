@@ -65,7 +65,11 @@ EXAMPLES = r"""
     description: Corporate identity provider
     metadata_document: "{{ lookup('file', 'metadata.xml') | b64encode }}"
 """
-RETURN = r"""saml_provider: {description: CAM SAML provider metadata., type: dict, returned: always}"""
+RETURN = r"""saml_provider:
+  description:
+    - CAM SAML provider metadata.
+  returned: always
+  type: dict"""
 import base64
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

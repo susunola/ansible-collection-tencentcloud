@@ -81,7 +81,11 @@ EXAMPLES = r"""
     domain_name: static.example.com
     state: absent
 """
-RETURN = r"""domain_certificate: {description: Effective certificate status and identity., type: dict, returned: always}"""
+RETURN = r"""domain_certificate:
+  description:
+    - Effective certificate status and identity.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import get_certificate

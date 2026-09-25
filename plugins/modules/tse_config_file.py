@@ -107,7 +107,11 @@ EXAMPLES = r"""
     format: YAML
     content: "server:\n  port: 8080\n"
 """
-RETURN = r"""config_file: {description: Effective configuration file metadata and content., type: dict, returned: always}"""
+RETURN = r"""config_file:
+  description:
+    - Effective configuration file metadata and content.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

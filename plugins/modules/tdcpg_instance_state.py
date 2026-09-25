@@ -74,7 +74,12 @@ EXAMPLES = r"""
     instance_ids: [tdcpg-ins-xxxxxxxx]
     state: running
 """
-RETURN = r"""instances: {description: Effective selected instance metadata., type: list, elements: dict, returned: always}"""
+RETURN = r"""instances:
+  description:
+    - Effective selected instance metadata.
+  returned: always
+  type: list
+  elements: dict"""
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

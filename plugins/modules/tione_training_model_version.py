@@ -197,9 +197,21 @@ EXAMPLES = r"""
     delete_cos: false
 """
 RETURN = r"""
-model_version: {description: Effective TIONE training-model version., type: dict, returned: always}
-model_id: {description: Stable parent model ID., type: str, returned: when available}
-version_id: {description: Stable model-version ID., type: str, returned: when available}
+model_version:
+  description:
+    - Effective TIONE training-model version.
+  returned: always
+  type: dict
+model_id:
+  description:
+    - Stable parent model ID.
+  returned: when available
+  type: str
+version_id:
+  description:
+    - Stable model-version ID.
+  returned: when available
+  type: str
 """
 
 import json

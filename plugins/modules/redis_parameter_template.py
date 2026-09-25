@@ -74,7 +74,11 @@ EXAMPLES = r"""
     product_type: 2
     parameters: {timeout: '300'}
 """
-RETURN = r"""parameter_template: {description: Redis parameter template metadata., type: dict, returned: always}"""
+RETURN = r"""parameter_template:
+  description:
+    - Redis parameter template metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

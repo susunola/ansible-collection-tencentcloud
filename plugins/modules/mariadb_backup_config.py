@@ -78,7 +78,11 @@ EXAMPLES = r"""
     end_time: '03:00'
     weekdays: [Monday, Wednesday, Friday]
 """
-RETURN = r"""backup_config: {description: Normalized MariaDB backup configuration., type: dict, returned: always}"""
+RETURN = r"""backup_config:
+  description:
+    - Normalized MariaDB backup configuration.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

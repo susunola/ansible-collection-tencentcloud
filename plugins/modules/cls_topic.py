@@ -106,7 +106,11 @@ EXAMPLES = r'''
     partition_count: 2
 '''
 RETURN = r'''
-topic: {description: CLS topic metadata., type: dict, returned: always}
+topic:
+  description:
+    - CLS topic metadata.
+  returned: always
+  type: dict
 '''
 
 import time

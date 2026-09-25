@@ -13,7 +13,8 @@ module: cam_saml_provider_info
 short_description: Gather information about Tencent Cloud CAM SAML identity providers
 version_added: "1.2.0"
 description: Returns the SAML identity providers of the account.
-options: {}
+options:
+  {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

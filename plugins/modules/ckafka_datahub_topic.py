@@ -72,7 +72,11 @@ EXAMPLES = r"""
     retention_ms: 604800000
     note: Order event stream
 """
-RETURN = r"""datahub_topic: {description: CKafka Datahub topic metadata without username or password., type: dict, returned: always}"""
+RETURN = r"""datahub_topic:
+  description:
+    - CKafka Datahub topic metadata without username or password.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found

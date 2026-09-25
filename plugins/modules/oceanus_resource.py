@@ -96,8 +96,16 @@ EXAMPLES = r"""
       StorageType: 1
       Param: {Bucket: flink-artifacts-1250000000, Path: jars/orders-1.0.jar, Region: ap-guangzhou}
 """
-RETURN = r"""resource: {description: Effective Oceanus resource metadata., type: dict, returned: always}
-version: {description: Initial resource version., type: int, returned: when created}"""
+RETURN = r"""resource:
+  description:
+    - Effective Oceanus resource metadata.
+  returned: always
+  type: dict
+version:
+  description:
+    - Initial resource version.
+  returned: when created
+  type: int"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

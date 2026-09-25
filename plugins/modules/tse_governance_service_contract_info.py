@@ -79,10 +79,28 @@ EXAMPLES = r'''
   register: service_contracts
 '''
 RETURN = r'''
-contracts: {description: Matching service contract definitions., type: list, elements: dict, returned: always}
-versions: {description: Contract versions available for the service., type: list, elements: dict, returned: always}
-total_count: {description: Contract count reported by the API., type: int, returned: always}
-request_ids: {description: Request IDs for contract and version queries., type: dict, returned: always}
+contracts:
+  description:
+    - Matching service contract definitions.
+  returned: always
+  type: list
+  elements: dict
+versions:
+  description:
+    - Contract versions available for the service.
+  returned: always
+  type: list
+  elements: dict
+total_count:
+  description:
+    - Contract count reported by the API.
+  returned: always
+  type: int
+request_ids:
+  description:
+    - Request IDs for contract and version queries.
+  returned: always
+  type: dict
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

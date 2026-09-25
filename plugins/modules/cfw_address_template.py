@@ -84,7 +84,11 @@ EXAMPLES = r'''
     description: Internal networks
 '''
 RETURN = r'''
-template: {description: Cloud Firewall address template metadata., type: dict, returned: always}
+template:
+  description:
+    - Cloud Firewall address template metadata.
+  returned: always
+  type: dict
 '''
 
 import time

@@ -13,7 +13,8 @@ module: billing_balance_info
 short_description: Gather information about the Tencent Cloud account balance
 version_added: "0.7.0"
 description: Returns the balance of the Tencent Cloud account.
-options: {}
+options:
+  {}
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
   - susunola.tencentcloud.region

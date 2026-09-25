@@ -78,7 +78,11 @@ EXAMPLES = r"""
       ConnectTimeout: 10000
       ReadTimeout: 60000
 """
-RETURN = r"""model_service: {description: Effective model service metadata and configuration., type: dict, returned: always}"""
+RETURN = r"""model_service:
+  description:
+    - Effective model service metadata and configuration.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

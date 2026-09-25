@@ -90,7 +90,11 @@ EXAMPLES = r"""
     destination_region: ap-shanghai
     instance_class: small
 """
-RETURN = r"""migration_job: {description: DTS migration job metadata., type: dict, returned: always}"""
+RETURN = r"""migration_job:
+  description:
+    - DTS migration job metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

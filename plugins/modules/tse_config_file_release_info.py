@@ -81,12 +81,39 @@ EXAMPLES = r'''
   register: release_audit
 '''
 RETURN = r'''
-releases: {description: Matching current configuration releases., type: list, elements: dict, returned: always}
-versions: {description: Available immutable release versions., type: list, elements: dict, returned: always}
-histories: {description: Publication and rollback history entries., type: list, elements: dict, returned: always}
-release_count: {description: Release count reported by the API., type: int, returned: always}
-history_count: {description: History count reported by the API., type: int, returned: always}
-request_ids: {description: Request IDs keyed by query type., type: dict, returned: always}
+releases:
+  description:
+    - Matching current configuration releases.
+  returned: always
+  type: list
+  elements: dict
+versions:
+  description:
+    - Available immutable release versions.
+  returned: always
+  type: list
+  elements: dict
+histories:
+  description:
+    - Publication and rollback history entries.
+  returned: always
+  type: list
+  elements: dict
+release_count:
+  description:
+    - Release count reported by the API.
+  returned: always
+  type: int
+history_count:
+  description:
+    - History count reported by the API.
+  returned: always
+  type: int
+request_ids:
+  description:
+    - Request IDs keyed by query type.
+  returned: always
+  type: dict
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

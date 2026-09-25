@@ -54,7 +54,11 @@ EXAMPLES = r"""
     instance_id: grafana-xxxxxxxx
     enabled: true
 """
-RETURN = r"""enabled: {description: Effective internet-access state., type: bool, returned: always}"""
+RETURN = r"""enabled:
+  description:
+    - Effective internet-access state.
+  returned: always
+  type: bool"""
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -80,7 +80,11 @@ EXAMPLES = r"""
       Resource: ckafka-xxxxxxxx
       SelfBuilt: false
 """
-RETURN = r"""connection: {description: CKafka Datahub connection metadata with credential fields removed., type: dict, returned: always}"""
+RETURN = r"""connection:
+  description:
+    - CKafka Datahub connection metadata with credential fields removed.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found

@@ -78,9 +78,21 @@ EXAMPLES = r"""
     workspace_id: space-xxxxxxxx
     description: before-release-2026-08-31
 """
-RETURN = r"""savepoint: {description: Existing or newly created savepoint metadata., type: dict, returned: always}
-savepoint_id: {description: Savepoint serial ID., type: str, returned: when available}
-savepoint_path: {description: Savepoint restore path., type: str, returned: when available}"""
+RETURN = r"""savepoint:
+  description:
+    - Existing or newly created savepoint metadata.
+  returned: always
+  type: dict
+savepoint_id:
+  description:
+    - Savepoint serial ID.
+  returned: when available
+  type: str
+savepoint_path:
+  description:
+    - Savepoint restore path.
+  returned: when available
+  type: str"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_task

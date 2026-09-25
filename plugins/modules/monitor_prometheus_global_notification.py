@@ -60,7 +60,11 @@ EXAMPLES = r"""
     instance_id: prom-xxxxxxxx
     notification: {Enabled: true, Type: amp, RepeatInterval: 1h, ReceiverGroups: [notice-xxxxxxxx]}
 """
-RETURN = r"""notification: {description: Effective global notification configuration., type: dict, returned: always}"""
+RETURN = r"""notification:
+  description:
+    - Effective global notification configuration.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

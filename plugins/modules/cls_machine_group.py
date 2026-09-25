@@ -108,7 +108,11 @@ EXAMPLES = r"""
     group_type: label
     values: [production-web]
 """
-RETURN = r"""machine_group: {description: CLS machine group metadata., type: dict, returned: always}"""
+RETURN = r"""machine_group:
+  description:
+    - CLS machine group metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

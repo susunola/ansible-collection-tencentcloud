@@ -98,7 +98,11 @@ EXAMPLES = r"""
     rules:
       - {Name: gray, Enable: true}
 """
-RETURN = r"""lane_group: {description: Effective governance lane group metadata., type: dict, returned: always}"""
+RETURN = r"""lane_group:
+  description:
+    - Effective governance lane group metadata.
+  returned: always
+  type: dict"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

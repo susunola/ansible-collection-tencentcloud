@@ -78,7 +78,11 @@ EXAMPLES = r"""
     name: order-created
     event_pattern: '{"source":["orders"]}'
 """
-RETURN = r"""rule: {description: Effective EventBridge rule metadata., type: dict, returned: always}"""
+RETURN = r"""rule:
+  description:
+    - Effective EventBridge rule metadata.
+  returned: always
+  type: dict"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

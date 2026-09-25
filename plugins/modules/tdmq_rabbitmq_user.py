@@ -96,7 +96,11 @@ EXAMPLES = r"""
     tags: [management]
     max_connections: 100
 """
-RETURN = r"""user: {description: RabbitMQ user metadata., type: dict, returned: always}"""
+RETURN = r"""user:
+  description:
+    - RabbitMQ user metadata.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

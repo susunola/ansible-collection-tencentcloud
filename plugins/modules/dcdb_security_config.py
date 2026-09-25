@@ -65,7 +65,11 @@ EXAMPLES = r"""
     ssl_enabled: true
     security_group_ids: [sg-aaaaaaaa, sg-bbbbbbbb]
 """
-RETURN = r"""security_config: {description: Effective normalized DCDB security controls., type: dict, returned: always}"""
+RETURN = r"""security_config:
+  description:
+    - Effective normalized DCDB security controls.
+  returned: always
+  type: dict"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

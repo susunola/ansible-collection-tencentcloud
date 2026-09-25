@@ -93,7 +93,11 @@ EXAMPLES = r"""
     protocol: HTTP
     health_check: {HealthCheckEnabled: true, HealthCheckPath: /health}
 """
-RETURN = r"""target_group: {description: Effective ALB target group metadata., type: dict, returned: always}"""
+RETURN = r"""target_group:
+  description:
+    - Effective ALB target group metadata.
+  returned: always
+  type: dict"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

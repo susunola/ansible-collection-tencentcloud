@@ -87,7 +87,11 @@ EXAMPLES = r"""
     target_description:
       ResourceDescription: '{"Region":"ap-guangzhou","Namespace":"default","FunctionName":"consume"}'
 """
-RETURN = r"""target: {description: Effective EventBridge target metadata., type: dict, returned: always}"""
+RETURN = r"""target:
+  description:
+    - Effective EventBridge target metadata.
+  returned: always
+  type: dict"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
