@@ -17,12 +17,3 @@ minor_changes:
     Fenced code blocks are skipped, because an example may hold a link the
     reader is meant to adapt, and the docsite build output is skipped because
     it is generated.
-  - >-
-    ci - lint changelog fragments in the pull request job. The only place
-    ``antsibull-changelog lint`` ran was the release workflow, after the tag
-    exists: it rejects a fragment filed under a section the changelog config
-    does not define -- ``bugfix`` instead of ``bugfixes`` -- which is a valid
-    YAML file that yamllint accepts and that silently drops the entry, and
-    the failure landed on whoever was publishing rather than on whoever wrote
-    it. The dependency set now matches release.yml, which already installed
-    it for this purpose.

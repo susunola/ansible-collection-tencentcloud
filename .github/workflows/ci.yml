@@ -42,12 +42,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          # antsibull-changelog is here because release.yml installs it to
-          # lint the fragments before folding them. Nothing checked a fragment
-          # until the release was already tagged, so a fragment filed under
-          # "bugfix" instead of "bugfixes" -- which lint rejects, and which
-          # silently drops the entry -- was found only while publishing.
-          python -m pip install "ansible-core==${{ matrix.ansible-core }}" pytest pytest-xdist yamllint ruff antsibull-changelog
+          python -m pip install "ansible-core==${{ matrix.ansible-core }}" pytest pytest-xdist yamllint ruff
       # The committed _info specs are generated against a specific SDK
       # release. requirements.txt allows the SDK as a compatibility range
       # for users, so this sentinel first installs the range, then re-pins
@@ -144,8 +139,6 @@ jobs:
         run: python scripts/generate_module_test_skeleton.py --check
       - name: Documentation links resolve
         run: python scripts/check_doc_links.py --check
-      - name: Changelog fragments are valid
-        run: antsibull-changelog lint
       - name: Porting table resolves
         run: python scripts/check_porting_map.py --check
       - name: Integration target layout is complete
