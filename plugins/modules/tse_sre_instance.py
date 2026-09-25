@@ -186,7 +186,22 @@ RETURN = r"""instance:
   description:
     - Effective TSE registry-engine metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InstanceId: ins-8b0a1c2d
+    Name: production-nacos
+    Type: nacos
+    Edition: STANDARD
+    SpecId: spec-1
+    Replica: 3
+    VpcId: vpc-1
+    SubnetId: subnet-1
+    StorageType: CLOUD_SSD
+    StorageCapacity: 50
+    Status: running
+    EnableInternet: false
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

@@ -140,6 +140,20 @@ target_group:
     - Target group metadata including Instances.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    TargetGroupId: lbtg-new-1
+    TargetGroupName: api-backends
+    VpcId: vpc-abc
+    Type: v2
+    Protocol: TCP
+    Instances:
+      - ip: 10.0.1.10
+        port: 8080
+        weight: 20
+      - ip: 10.0.1.11
+        port: 8080
+        weight: 10
 '''
 
 import time

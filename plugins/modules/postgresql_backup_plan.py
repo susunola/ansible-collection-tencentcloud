@@ -108,7 +108,21 @@ RETURN = r"""backup_plan:
   description:
     - PostgreSQL backup-plan metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    PlanId: pp-1001
+    PlanName: production
+    BackupPeriodType: week
+    BackupPeriod:
+      - friday
+      - monday
+      - wednesday
+    MinBackupStartTime: 03:00:00
+    MaxBackupStartTime: 04:00:00
+    BaseBackupRetentionPeriod: 45
+    LogBackupRetentionPeriod: 60
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

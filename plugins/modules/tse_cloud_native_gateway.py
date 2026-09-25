@@ -154,11 +154,32 @@ gateway:
     - Effective gateway metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    GatewayId: gateway-1
+    Name: production-gateway
+    Type: kong
+    GatewayVersion: 2.8.1
+    Status: running
+    Description: Renamed production gateway
+    EnableCls: true
+    InternetPayMode: BANDWIDTH
+    DeleteProtect: false
+    NodeConfig:
+      Specification: 4c8g
+      Number: 2
+    VpcConfig:
+      VpcId: vpc-1
+      SubnetId: subnet-1
+    FeatureVersion: STANDARD
+    TradeType: 0
+    IngressClassName: kong
 task_id:
   description:
     - Tencent Cloud asynchronous task ID for a node specification change.
   returned: when node_config changes
   type: str
+  sample: task-99
 """
 import json
 import time

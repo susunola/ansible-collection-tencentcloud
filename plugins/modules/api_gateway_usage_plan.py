@@ -86,7 +86,16 @@ RETURN = r"""usage_plan:
   description:
     - Usage plan metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    UsagePlanId: usagePlan-1001
+    UsagePlanName: production-clients
+    UsagePlanDesc: Primary production plan
+    MaxRequestNumPreSec: 100
+    MaxRequestNum: 5000000
+    CreatedTime: '2026-01-01T00:00:00Z'
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

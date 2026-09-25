@@ -97,18 +97,22 @@ cluster_id:
   description: ID of the upgraded cluster.
   returned: always
   type: str
+  sample: cls-12345678
 current_version:
   description: Kubernetes version the cluster was running before this run.
   returned: always
   type: str
+  sample: 1.28.5
 desired_version:
   description: Kubernetes version requested by the module.
   returned: always
   type: str
+  sample: 1.28.5
 changed:
   description: Whether an upgrade was submitted.
   returned: always
   type: bool
+  sample: false
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver

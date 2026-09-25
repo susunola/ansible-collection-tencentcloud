@@ -94,7 +94,17 @@ RETURN = r"""load_balancer:
   description:
     - Effective GWLB metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    LoadBalancerId: lb-new100
+    LoadBalancerName: glb-new
+    VpcId: vpc-2
+    SubnetId: subnet-2
+    DeleteProtect: false
+    LBChargeType: POSTPAID_BY_HOUR
+    Tags: []
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import require_immutable_unchanged, fail_from_sdk_error

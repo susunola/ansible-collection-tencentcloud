@@ -141,7 +141,20 @@ RETURN = r"""instance:
   description:
     - Effective SQL Server instance metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InstanceId: mssql-8b0a1c2d
+    Name: production-sqlserver
+    Zone: ap-guangzhou-3
+    UniqVpcId: vpc-abcdef12
+    UniqSubnetId: subnet-abcdef12
+    Memory: 16
+    Storage: 200
+    Cpu: 8
+    Version: '2019'
+    Status: 2
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

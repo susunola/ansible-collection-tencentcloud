@@ -175,7 +175,30 @@ RETURN = r"""deployment_group:
   description:
     - Effective container deployment group metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    GroupId: group-8b0a1c2d
+    GroupName: orders-production
+    ApplicationId: application-xxx
+    NamespaceId: namespace-xxx
+    ClusterId: cluster-xxx
+    InstanceNum: 3
+    CpuRequest: '0.5'
+    CpuLimit: '1'
+    MemRequest: '512'
+    MemLimit: '1024'
+    AccessType: 1
+    UpdateType: 0
+    UpdateIvl: 0
+    Alias: renamed-orders
+    GroupResourceType: DEF
+    ProtocolPorts:
+      - Protocol: TCP
+        Port: 443
+        TargetPort: 8443
+        Name: https
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

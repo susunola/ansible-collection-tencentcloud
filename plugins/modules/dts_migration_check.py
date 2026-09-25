@@ -57,7 +57,12 @@ RETURN = r"""migration_check:
   description:
     - DTS check status and step details.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Status: notStarted
+    CheckFlag: checkNotPass
+"""
 
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

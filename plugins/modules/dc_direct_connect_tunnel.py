@@ -152,7 +152,32 @@ RETURN = r"""tunnel:
   description:
     - Effective Direct Connect tunnel metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    DirectConnectTunnelId: dcx-8b0a1c2d
+    DirectConnectTunnelName: tunnel-prod
+    DirectConnectId: dc-8b0a1c2d
+    NetworkType: VPC
+    NetworkRegion: ap-guangzhou
+    VpcId: vpc-8b0a1c2d
+    DirectConnectGatewayId: dcg-8b0a1c2d
+    Bandwidth: 500
+    RouteType: BGP
+    BgpPeer:
+      Asn: 65001
+    RouteFilterPrefixes:
+      - Cidr: 10.0.0.0/16
+    Vlan: 100
+    TencentAddress: 192.0.2.1/30
+    CustomerAddress: 192.0.2.2/30
+    TencentBackupAddress: 192.0.2.5/30
+    BfdEnable: 1
+    NqaEnable: 0
+    Tags:
+      - Key: env
+        Value: prod
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver

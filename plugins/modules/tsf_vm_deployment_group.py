@@ -105,7 +105,18 @@ RETURN = r"""deployment_group:
   description:
     - Effective VM deployment group metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    GroupId: group-7
+    GroupName: orders
+    ApplicationId: app-1
+    NamespaceId: ns-1
+    ClusterId: cluster-1
+    GroupDesc: prod
+    Alias: new-alias
+    GroupResourceType: DEF
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import require_immutable_unchanged, fail_from_sdk_error

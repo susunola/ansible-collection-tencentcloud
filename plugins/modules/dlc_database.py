@@ -107,11 +107,17 @@ RETURN = r"""database:
     - Effective DLC database metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    DatabaseName: analytics
+    Comment: Curated analytics datasets
 batch_id:
   description:
     - DLC asynchronous mutation batch ID.
   returned: when changed
-  type: str"""
+  type: str
+  sample: batch-del
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

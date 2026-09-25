@@ -128,11 +128,25 @@ data_source:
     - Effective TIONE data-source metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Id: datasource-8b0a1c2d
+    Name: shared-training-cfs
+    Type: CFS
+    Permission: RW
+    StorageId: cfs-123
+    MountConfigure:
+      WorkDir: /training
+      MountPath: /data
+    Tags:
+      - TagKey: environment
+        TagValue: production
 data_source_id:
   description:
     - Stable data-source ID.
   returned: when available
   type: str
+  sample: datasource-8b0a1c2d
 """
 
 import json

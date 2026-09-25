@@ -104,7 +104,19 @@ RETURN = r"""strategy:
   description:
     - Effective automatic scaling strategy.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ScaleAction: 1
+    ScaleNum: 2
+    StrategyStatus: 1
+    CalmDownTime: 300
+    LoadMetricsConditions:
+      LoadMetrics: []
+    StrategyName: task-scale-on-yarn
+    GroupId: 2
+    StrategyId: as-strategy-new-001
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import changed, maybe_diff

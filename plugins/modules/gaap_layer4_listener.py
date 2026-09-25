@@ -159,7 +159,22 @@ RETURN = r"""listener:
   description:
     - Effective GAAP listener.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ListenerId: listener-new-001
+    ListenerName: udp-syslog
+    Port: 514
+    Protocol: UDP
+    Scheduler: rr
+    RealServerType: IP
+    HealthCheck: 1
+    FailoverSwitch: 0
+    CheckType: PORT
+    CheckPort: 514
+    SendContext: probe
+    RecvContext: pong
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import changed, maybe_diff

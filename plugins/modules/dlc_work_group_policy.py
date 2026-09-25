@@ -70,18 +70,61 @@ RETURN = r"""policies:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Database: marketing
+      Catalog: DataLakeCatalog
+      Table: ''
+      Operation: SELECT
+      PolicyType: DATABASE
+      Function: ''
+      View: ''
+      Column: ''
+      DataEngine: ''
+      ReAuth: false
+      EngineGeneration: ''
+      Model: ''
 added:
   description:
     - Policies attached by this run.
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Database: marketing
+      Catalog: DataLakeCatalog
+      Table: ''
+      Operation: SELECT
+      PolicyType: DATABASE
+      Function: ''
+      View: ''
+      Column: ''
+      DataEngine: ''
+      ReAuth: false
+      EngineGeneration: ''
+      Model: ''
 removed:
   description:
     - Policies detached by this run.
   returned: always
   type: list
-  elements: dict"""
+  elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Database: marketing
+      Catalog: DataLakeCatalog
+      Table: ''
+      Operation: SELECT
+      PolicyType: DATABASE
+      Function: ''
+      View: ''
+      Column: ''
+      DataEngine: ''
+      ReAuth: false
+      EngineGeneration: ''
+      Model: ''
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

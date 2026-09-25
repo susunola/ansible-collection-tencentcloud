@@ -80,18 +80,22 @@ route_table_name:
   description: Route table the operation targeted.
   returned: always
   type: str
+  sample: cls-abc123
 destination_cidr_block:
   description: Destination CIDR block of the route.
   returned: always
   type: str
+  sample: 10.4.0.0/16
 gateway_ip:
   description: Next-hop gateway IP of the route.
   returned: always
   type: str
+  sample: 10.4.0.12
 exists:
   description: Whether the route exists after the operation.
   returned: always
   type: bool
+  sample: false
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

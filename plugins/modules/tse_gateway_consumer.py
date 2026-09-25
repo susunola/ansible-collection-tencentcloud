@@ -83,7 +83,16 @@ RETURN = r"""consumer:
   description:
     - Effective gateway consumer metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ConsumerId: consumer-1
+    Name: mobile-application
+    Priority: Medium
+    Description: notes
+    GatewayId: gateway-abc
+    CreateTime: '2026-01-01'
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

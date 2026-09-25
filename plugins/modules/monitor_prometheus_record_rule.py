@@ -84,7 +84,14 @@ RETURN = r"""record_rule:
   description:
     - Prometheus recording-rule metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Name: application-rollups
+    Content: "groups:\n  - name: application\n    rules:\n      - record: job:http_requests:rate5m\n     \
+      \   expr: sum by (job) (rate(http_requests_total[5m]))\n      - record: job:http_requests:rate1m\n \
+      \       expr: rate(http_requests_total[1m])\n"
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

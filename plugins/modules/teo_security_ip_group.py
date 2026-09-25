@@ -89,7 +89,15 @@ RETURN = r"""ip_group:
   description:
     - EdgeOne security IP-group metadata and complete content.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    GroupId: 2001
+    Name: trusted-offices
+    Content:
+      - 2001:db8::/48
+      - 192.0.2.0/24
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

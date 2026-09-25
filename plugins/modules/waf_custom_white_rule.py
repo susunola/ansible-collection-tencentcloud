@@ -111,7 +111,23 @@ RETURN = r"""rule:
   description:
     - Effective precision allowlist rule.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    RuleId: 100
+    Name: allow-health-check
+    Domain: api.example.com
+    SortId: '100'
+    Bypass: owasp,acl
+    Strategies:
+      - Field: URI
+        Arg: ''
+        CompareFunc: prefix
+        Content: /health
+    LogicalOp: and
+    ExpireTime: '0'
+    Status: 1
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

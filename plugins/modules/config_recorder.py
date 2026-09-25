@@ -70,7 +70,16 @@ RETURN = r"""recorder:
   description:
     - Config recorder state and monitored resource types.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Status: 1
+    Items: []
+    ResourceTypes:
+      - QCS::CBS::Disk
+      - QCS::CVM::Instance
+      - QCS::VPC::VPC
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

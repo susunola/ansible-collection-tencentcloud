@@ -105,11 +105,19 @@ RETURN = r"""connection:
     - Effective DLC user VPC connection metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    UserVpcEndpointId: vpce-8b0a1c2d
+    UserVpcEndpointName: analytics-endpoint
+    EngineNetworkId: engine-network-abc
+    UserVpcId: vpc-abc
 endpoint_id:
   description:
     - DLC user VPC endpoint ID.
   returned: when present
-  type: str"""
+  type: str
+  sample: vpce-8b0a1c2d
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

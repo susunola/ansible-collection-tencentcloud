@@ -85,7 +85,13 @@ RETURN = r"""instances:
     - Effective GWLB backend instances.
   returned: always
   type: list
-  elements: dict"""
+  elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - ip: 10.0.1.11
+      port: 6081
+      weight: 50
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

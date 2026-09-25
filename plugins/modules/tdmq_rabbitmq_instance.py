@@ -154,7 +154,24 @@ RETURN = r"""instance:
   description:
     - Effective RabbitMQ dedicated-instance metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InstanceId: rabbitmq-prod-1
+    InstanceName: production-rabbitmq
+    InstanceVersion: 3.11.8
+    ClusterStatus: 1
+    NodeCount: 3
+    MaxStorage: 200
+    EnableDeletionProtection: false
+    Remark: production broker
+    Tags:
+      - TagKey: env
+        TagValue: staging
+    Vpcs:
+      - VpcId: vpc-aaaa1111
+        SubnetId: subnet-bbbb2222
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

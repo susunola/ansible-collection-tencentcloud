@@ -96,7 +96,17 @@ RETURN = r"""fileset:
   description:
     - Effective GooseFS fileset metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    FileSystemId: x-c60-abc
+    FsetId: fset-1001
+    FsetName: analytics
+    FsetDir: /analytics
+    QuotaSizeLimit: '1099511627776'
+    QuotaFilesLimit: '1000000'
+    AuditState: 'off'
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import require_immutable_unchanged, fail_from_sdk_error

@@ -148,6 +148,22 @@ vpn_connection:
     - VPN connection metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    VpnConnectionId: vpnx-1
+    VpnConnectionName: office
+    CustomerGatewayId: cgw-1
+    VpnGatewayId: vpngw-1
+    VpcId: vpc-1
+    RouteType: Policy
+    NegotiationType: passive
+    DpdEnable: 1
+    DpdTimeout: '30'
+    DpdAction: clear
+    SecurityPolicyDatabaseSet:
+      - LocalCidrBlock: 10.0.0.0/16
+        RemoteCidrBlock:
+          - 192.168.0.0/16
 '''
 
 import time

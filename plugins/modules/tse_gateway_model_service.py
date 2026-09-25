@@ -88,7 +88,22 @@ RETURN = r"""model_service:
   description:
     - Effective model service metadata and configuration.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Id: ms-8b0a1c2d
+    Name: openai-primary
+    ServiceType: LLMService
+    ModelProvider: OpenAI
+    ModelProtocol: OpenAI/v1
+    ModelSelector: Specify
+    SecretKeyIds:
+      - secret-key-1
+    DefaultModel: gpt-4.1
+    Description: primary
+    ConnectTimeout: 10000
+    ReadTimeout: 60000
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

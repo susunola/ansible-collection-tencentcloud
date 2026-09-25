@@ -107,6 +107,12 @@ account:
     - PostgreSQL account metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    UserName: app_user
+    Remark: Application account
+    UserType: normal
+    OpenCam: false
 '''
 
 import time

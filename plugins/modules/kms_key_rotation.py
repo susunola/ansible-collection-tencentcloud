@@ -68,6 +68,12 @@ rotation:
   description: Effective rotation configuration.
   type: dict
   returned: always
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    enabled: false
+    rotation_days: 90
+    last_rotation_time: '2026-08-01 00:00:00'
+    next_rotation_time: '2026-10-30 00:00:00'
 '''
 
 import time

@@ -72,7 +72,14 @@ RETURN = r"""rotation:
   description:
     - Effective SSM rotation configuration.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    EnableRotation: false
+    Frequency: 30
+    LatestRotateTime: '2026-08-01 02:00:00'
+    NextRotateBeginTime: '2026-09-30 02:00:00'
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

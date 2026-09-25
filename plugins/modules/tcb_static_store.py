@@ -89,7 +89,14 @@ RETURN = r"""static_store:
   description:
     - Effective static hosting metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    EnvId: env-abcdefgh
+    Status: creating
+    CdnDomain: static-env-abcdefgh.example.com
+    EnableUnion: true
+"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

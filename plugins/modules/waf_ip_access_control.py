@@ -103,6 +103,17 @@ rule:
     - WAF IP access-control rule metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    RuleId: 401
+    ActionType: 42
+    Domain: api.example.com
+    IpList:
+      - 192.0.2.9
+      - 198.51.100.10
+      - 203.0.113.0/24
+    Note: Known abusive sources
+    ValidTs: 0
 '''
 
 import time

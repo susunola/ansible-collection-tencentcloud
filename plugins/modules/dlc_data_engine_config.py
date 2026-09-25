@@ -139,11 +139,22 @@ data_engine_config:
     - Effective normalized engine configuration.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    DataEngineId: engine-8b0a1c2d
+    DataEngineConfigPairs:
+      - ConfigItem: spark.sql.shuffle.partitions
+        ConfigValue: '200'
+    SessionResourceTemplate:
+      DriverSize: medium
+      ExecutorSize: large
+      ExecutorNums: 2
 engine_id:
   description:
     - Resolved DLC data-engine ID.
   returned: always
   type: str
+  sample: engine-8b0a1c2d
 """
 
 import json

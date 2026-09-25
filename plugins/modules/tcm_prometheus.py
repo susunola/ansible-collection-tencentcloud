@@ -80,7 +80,15 @@ RETURN = r"""prometheus:
   description:
     - Effective Prometheus configuration with secrets redacted.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Region: ap-guangzhou
+    InstanceId: prom-abcdefgh
+    CustomProm:
+      Username: monitor
+    DisplayName: managed
+"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

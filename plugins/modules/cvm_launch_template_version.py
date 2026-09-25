@@ -103,7 +103,19 @@ RETURN = r"""launch_template_version:
   description:
     - Effective immutable version metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    LaunchTemplateId: lt-abc
+    LaunchTemplateVersion: 100
+    LaunchTemplateVersionDescription: web-v2
+    LaunchTemplateVersionData:
+      ImageId: img-2
+      InstanceType: S5.LARGE8
+      Placement:
+        Zone: ap-guangzhou-3
+    IsDefaultVersion: false
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

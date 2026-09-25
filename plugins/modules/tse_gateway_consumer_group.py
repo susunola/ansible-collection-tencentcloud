@@ -83,7 +83,14 @@ RETURN = r"""consumer_group:
   description:
     - Effective consumer group metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ConsumerGroupId: cg-8b0a1c2d
+    Name: trusted-clients
+    Status: Enable
+    Description: trusted api clients
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

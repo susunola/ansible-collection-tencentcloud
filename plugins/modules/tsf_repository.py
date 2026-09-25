@@ -97,7 +97,17 @@ RETURN = r"""repository:
   description:
     - Effective TSF repository metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    RepositoryId: repo-1
+    RepositoryName: packages
+    RepositoryType: private
+    RepositoryDesc: production
+    BucketName: packages-1250000000
+    BucketRegion: ap-guangzhou
+    Directory: releases
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

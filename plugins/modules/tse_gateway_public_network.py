@@ -109,7 +109,23 @@ RETURN = r"""public_network:
   description:
     - Effective public network metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    GatewayId: gateway-abcdef
+    GroupId: group-prod
+    NetworkId: net-new-001
+    Vip: 203.0.113.11
+    Status: Open
+    InternetAddressVersion: IPV4
+    InternetPayMode: BANDWIDTH
+    InternetMaxBandwidthOut: 20
+    Description: production ingress
+    AccessControl:
+      Mode: Whitelist
+      CidrWhiteList:
+        - 203.0.113.0/24
+"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

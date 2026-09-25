@@ -114,11 +114,20 @@ auth_token:
     - Effective token metadata, with Value removed by default.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Base:
+      Id: token-new-001
+      Name: production-client
+    Limits:
+      - Strategy: PerMinute
+        Max: 1200
 token_id:
   description:
     - Stable token ID.
   returned: when available
   type: str
+  sample: token-new-001
 """
 
 import copy

@@ -103,7 +103,19 @@ RETURN = r"""index:
   description:
     - CLS index metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Status: false
+    IncludeInternalFields: false
+    MetadataFlag: 0
+    CoverageField: message
+    Rule:
+      FullText:
+        CaseSensitive: false
+        Tokenizer: ',; '
+        ContainZH: true
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

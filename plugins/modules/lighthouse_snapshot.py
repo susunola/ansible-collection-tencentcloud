@@ -81,7 +81,15 @@ RETURN = r"""snapshot:
   description:
     - Lighthouse snapshot metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    SnapshotId: lhsnap-8b0a1c2d
+    SnapshotName: before-upgrade
+    SnapshotState: NORMAL
+    LatestOperationState: SUCCEEDED
+    InstanceId: lhins-8b0a1c2d
+"""
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -153,7 +153,27 @@ RETURN = r"""direct_connect:
   description:
     - Effective physical Direct Connect metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    DirectConnectId: dc-8b0a1c2d
+    DirectConnectName: primary-circuit
+    AccessPointId: ap-8b0a1c2d
+    LineOperator: ChinaTelecom
+    PortType: 10GBase-LR
+    CircuitCode: circuit-123
+    Location: Customer IDC A
+    Bandwidth: 2000
+    TencentAddress: 192.0.2.1/30
+    CustomerAddress: 192.0.2.2/30
+    CustomerName: Renamed Corp
+    CustomerContactMail: network@example.com
+    CustomerContactNumber: '13800000000'
+    FaultReportContactPerson: ops
+    FaultReportContactNumber: '13900000000'
+    FaultReportContactEmail: ops@example.com
+    SignLaw: true
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver

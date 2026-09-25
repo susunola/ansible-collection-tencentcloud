@@ -95,7 +95,17 @@ RETURN = r"""config:
   description:
     - Effective TSF application configuration version.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ConfigId: config-7
+    ApplicationId: app-a
+    ConfigName: settings
+    ConfigVersion: v1
+    ConfigValue: 'feature: true'
+    ConfigVersionDesc: initial
+    ConfigType: application
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -125,6 +125,15 @@ udf_policy:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Accesses:
+        - select
+      Users:
+        - u1
+        - u2
+      Groups:
+        - g1
 """
 
 import json

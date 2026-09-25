@@ -142,7 +142,22 @@ RETURN = r"""rule:
   description:
     - Cloud Firewall internet ACL rule metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    SourceContent: 10.0.0.0/8
+    SourceType: net
+    TargetContent: 203.0.113.0/24
+    TargetType: net
+    Protocol: ANY
+    Port: -1/-1
+    RuleAction: accept
+    Direction: 0
+    OrderIndex: -1
+    Enable: 'true'
+    Description: allow-trusted-https
+    Uuid: 10001
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

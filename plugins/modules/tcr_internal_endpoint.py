@@ -96,6 +96,12 @@ endpoint:
   description: Observed private VPC access link, or null when absent.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    VpcId: vpc-abc
+    SubnetId: subnet-abc
+    Status: Creating
+    AccessIp: 10.0.0.2
 '''
 
 import time

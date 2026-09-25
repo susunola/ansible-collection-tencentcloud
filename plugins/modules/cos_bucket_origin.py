@@ -81,7 +81,17 @@ RETURN = r"""origin:
   description:
     - Effective origin configuration.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    OriginRule:
+      - RulePriority: 1
+        OriginType: COS
+        OriginValue: source-1250000000.cos.ap-guangzhou.myqcloud.com
+      - RulePriority: 2
+        OriginType: COS
+        OriginValue: backup-1250000000.cos.ap-guangzhou.myqcloud.com
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_origin as normalize, get_origin
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

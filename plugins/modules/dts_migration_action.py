@@ -67,7 +67,12 @@ RETURN = r"""migration_job:
   description:
     - DTS migration job detail after the operation.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    JobId: dts-abcd1234
+    Status: manualPaused
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

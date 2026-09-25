@@ -76,7 +76,15 @@ RETURN = r"""action_timer:
   description:
     - Effective scheduled action.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InstanceId: ins-123456
+    ActionTimerId: atm-2001
+    TimerAction: TerminateInstances
+    ActionTime: '2026-10-01T00:00:00Z'
+    Status: UNDO
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

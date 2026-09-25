@@ -124,7 +124,19 @@ RETURN = r"""disk:
   description:
     - Lighthouse disk metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    DiskId: lhdisk-8b0a1c2d
+    DiskName: app-data
+    Zone: ap-guangzhou-3
+    DiskSize: 100
+    DiskType: CLOUD_SSD
+    DiskState: ATTACHED
+    LatestOperationState: SUCCEEDED
+    Attached: true
+    InstanceId: lhins-10
+"""
 
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

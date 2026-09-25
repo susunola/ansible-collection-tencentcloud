@@ -158,7 +158,23 @@ RETURN = r"""rules:
   description:
     - Current normalized security exception rules.
   returned: always
-  type: list"""
+  type: list
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - name: trusted_upload_payload
+      condition: $http.request.uri.path eq '/upload'
+      enabled: true
+      skip_scope: ManagedRules
+      skip_option: SkipOnSpecifiedRequestFields
+      web_security_modules: []
+      managed_rule_ids: []
+      managed_rule_group_ids:
+        - OWASP
+      request_fields:
+        - field_scope: body
+          condition: ''
+          target_field: multipart
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

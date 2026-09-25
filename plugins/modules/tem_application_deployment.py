@@ -101,10 +101,26 @@ deployment:
   description: Effective TEM service version metadata.
   type: dict
   returned: always
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InitPodNum: 2
+    CpuSpec: 2
+    MemorySpec: 4
+    DeployMode: IMAGE
+    ImgRepo: ccr.ccs.tencentyun.com/example/order:v2026.08.30
+    SecurityGroupIds:
+      - sg-abc123
+    ApplicationId: app-abc123
+    EnvironmentId: en-abc123
+    DeployVersion: v2026.08.30
+    SourceChannel: 0
+    VersionId: ver-2001
+    UnderDeploying: false
 version_id:
   description: Version ID returned by deployment.
   type: str
   returned: changed
+  sample: ver-2001
 """
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

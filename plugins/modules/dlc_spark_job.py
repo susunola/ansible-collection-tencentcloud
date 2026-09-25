@@ -193,10 +193,24 @@ spark_job:
   description: Effective Spark job-definition metadata.
   type: dict
   returned: always
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    JobId: job-8b0a1c2d
+    JobName: daily-customer-etl
+    TaskNum: 0
+    JobType: 1
+    DataEngine: production-spark
+    JobFile: cosn://analytics/jobs/customer-etl.jar
+    RoleArn: 100000000001
+    JobDriverSize: medium
+    JobExecutorSize: large
+    JobExecutorNums: 2
+    IsLocal: cos
 spark_job_id:
   description: Spark job-definition ID.
   type: str
   returned: when present
+  sample: job-8b0a1c2d
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

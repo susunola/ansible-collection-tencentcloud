@@ -106,27 +106,40 @@ secret:
     - Exact Secret metadata.
   returned: in exact mode
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    SecretName: prod/database
+    Description: production database
+    Status: Enabled
 secrets:
   description:
     - Matching Secret metadata.
   returned: in list mode
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - SecretName: prod/database
+      Description: production database
+      Status: Enabled
 total_count:
   description:
     - Matching count.
   returned: in list mode
   type: int
+  sample: 10
 truncated:
   description:
     - Whether max_pages stopped pagination.
   returned: in list mode
   type: bool
+  sample: false
 request_id:
   description:
     - Tencent Cloud request ID.
   returned: always
   type: str
+  sample: req-list-3
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

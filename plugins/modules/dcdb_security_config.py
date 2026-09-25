@@ -72,7 +72,16 @@ RETURN = r"""security_config:
   description:
     - Effective normalized DCDB security controls.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    encryption_enabled: true
+    ssl_enabled: true
+    ssl_status: 2
+    security_group_ids:
+      - sg-a
+      - sg-b
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

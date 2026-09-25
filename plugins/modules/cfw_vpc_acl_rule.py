@@ -138,7 +138,23 @@ RETURN = r"""rule:
   description:
     - Cloud Firewall inter-VPC ACL rule metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    SourceContent: 10.0.0.0/16
+    SourceType: net
+    DestContent: 10.20.0.0/16
+    DestType: net
+    Protocol: ANY
+    Port: -1/-1
+    RuleAction: accept
+    Description: allow-vpc-https
+    EdgeId: vpcfw-edge-1
+    OrderIndex: -1
+    Enable: 'true'
+    IpVersion: 0
+    Uuid: 10001
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

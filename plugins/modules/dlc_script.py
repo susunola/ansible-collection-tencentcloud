@@ -110,10 +110,18 @@ script:
   description: Effective saved-script metadata and plain-text SQL.
   type: dict
   returned: always
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ScriptId: script-new-001
+    ScriptName: daily-sales
+    SQLStatement: SELECT sale_date, SUM(amount) FROM sales GROUP BY sale_date
+    ScriptDesc: Daily sales aggregation
+    DatabaseName: analytics
 script_id:
   description: DLC script ID.
   type: str
   returned: when present
+  sample: script-new-001
 """
 
 import base64

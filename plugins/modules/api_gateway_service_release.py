@@ -81,7 +81,15 @@ RETURN = r'''release:
   description:
     - Service environment release metadata.
   returned: always
-  type: dict'''
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ServiceId: service-abc
+    EnvironmentName: release
+    Status: 1
+    ReleaseDesc: production cutover
+    ReleaseVersion: 20260901-xyz
+'''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

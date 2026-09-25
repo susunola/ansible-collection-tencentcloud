@@ -129,7 +129,22 @@ RETURN = r'''replication_rule:
   description:
     - Replication rule metadata.
   returned: always
-  type: dict'''
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    RegistryId: tcr-abc
+    Name: production-images
+    DestNamespace: prod
+    Override: true
+    Deletion: false
+    Filters:
+      - Type: namespace
+        Value: production
+    Enabled: false
+    Description: ''
+    DestinationRegistryId: tcr-dst
+    DestinationRegionId: 4
+'''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

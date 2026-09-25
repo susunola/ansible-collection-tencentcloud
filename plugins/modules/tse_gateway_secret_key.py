@@ -172,11 +172,21 @@ secret_key:
     - Effective credential metadata with secret material redacted.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    SecretKeyId: sk-1
+    Name: mobile-api-key
+    SecretType: ApiKey
+    GenerateType: System
+    ResourceType: Consumer
+    Status: Disable
+    Description: mobile api key
 secret_value:
   description:
     - Plaintext credential value when explicitly requested.
   returned: reveal_secret_value is true
   type: str
+  sample: sk-plaintext-value
 """
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

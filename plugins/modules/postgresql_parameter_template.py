@@ -98,7 +98,18 @@ RETURN = r"""parameter_template:
   description:
     - PostgreSQL parameter template metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    TemplateId: tpl-1
+    TemplateName: prod-pg15
+    TemplateDescription: new desc
+    DBMajorVersion: '15'
+    DBEngine: postgresql
+    ParamInfoSet:
+      - Name: max_connections
+        CurrentValue: '1000'
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

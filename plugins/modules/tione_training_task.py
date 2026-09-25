@@ -229,11 +229,25 @@ training_task:
     - Effective training-task detail.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Id: train-8b0a1c2d
+    Name: customer-support-sft
+    Status: STOPPED
+    ChargeType: POSTPAID_BY_HOUR
+    ResourceConfigInfos:
+      - Role: WORKER
+        InstanceType: TI.GN10X.2XLARGE40.POST
+        InstanceNum: 1
+    FrameworkName: PYTORCH
+    FrameworkVersion: '2.4'
+    FrameworkEnvironment: torch2.4-py3.10-cuda12.1-gpu
 task_id:
   description:
     - Stable training-task ID.
   returned: when available
   type: str
+  sample: train-8b0a1c2d
 """
 
 import json

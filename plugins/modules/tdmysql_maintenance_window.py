@@ -81,6 +81,13 @@ maintenance_window:
     - Effective normalized window and weekdays.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InstanceId: tdsql3-abcdef12
+    MaintenanceWindow: 23:30-00:30
+    WeekDays:
+      - Tuesday
+      - Saturday
 """
 
 import re

@@ -93,14 +93,17 @@ rule_name:
   description: Name of the audit rule the operation targeted.
   returned: always
   type: str
+  sample: rule-host-prod
 rule_id:
   description: Rule ID of the audit rule after the operation (empty when absent).
   returned: always
   type: str
+  sample: rule-1
 exists:
   description: Whether the audit rule exists after the operation.
   returned: always
   type: bool
+  sample: false
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

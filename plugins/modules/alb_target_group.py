@@ -111,7 +111,22 @@ RETURN = r"""target_group:
   description:
     - Effective ALB target group metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    TargetGroupId: lbtg-20001
+    TargetGroupName: app-http
+    VpcId: vpc-1
+    TargetType: Instance
+    Protocol: HTTP
+    SchedulerAlgorithm: wrr
+    KeepaliveEnabled: false
+    HealthCheckConfig:
+      HealthCheckEnabled: true
+      HealthCheckPath: /health
+    StickySessionConfig:
+      StickySessionSwitch: 'OFF'
+"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

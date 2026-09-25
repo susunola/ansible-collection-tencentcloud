@@ -106,11 +106,25 @@ RETURN = r"""strategy:
     - Effective normalized masking strategy.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    StrategyId: dms-000001
+    StrategyName: mask-customer-phone
+    StrategyType: MASK_SHOW_LAST_4
+    StrategyDesc: Reveal only the final four digits
+    Groups:
+      - WorkGroupId: 10042
+        StrategyType: MASK_SHOW_LAST_4
+    Users:
+      - '100012345678'
+      - '1000999888777'
 strategy_id:
   description:
     - DLC masking strategy ID.
   returned: when present
-  type: str"""
+  type: str
+  sample: dms-new-001
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

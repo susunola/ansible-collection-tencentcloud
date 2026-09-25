@@ -117,7 +117,25 @@ RETURN = r"""cors:
   description:
     - Effective CORS policy.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Enabled: true
+    Origins:
+      - https://app.example.com
+    Headers:
+      - Content-Type
+      - X-Custom
+    Methods:
+      - GET
+      - POST
+      - PUT
+    ExposedHeaders:
+      - X-Request-Id
+    MaxAge: 600
+    Credentials: true
+    PreFlightContinue: false
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

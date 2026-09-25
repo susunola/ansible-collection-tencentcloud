@@ -78,16 +78,27 @@ versions:
   returned: when secret material is not requested
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - VersionId: v2
+      CreateTime: '2026-02-01 00:00:00'
+      SecretName: prod/database
 secret_value:
   description:
     - Sensitive exact version response.
   returned: when include_secret_value is true
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    SecretName: prod/database
+    VersionId: v2
+    SecretString: correct-horse-battery-staple
 request_id:
   description:
     - Tencent Cloud request ID.
   returned: always
   type: str
+  sample: req-value
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

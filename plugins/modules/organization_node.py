@@ -90,6 +90,15 @@ node:
     - Organization node metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    NodeId: 201
+    ParentNodeId: 1001
+    Name: New Business Unit
+    Remark: new bu
+    Tags:
+      - TagKey: env
+        TagValue: prod
 '''
 
 import time

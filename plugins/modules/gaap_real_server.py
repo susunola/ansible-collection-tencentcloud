@@ -85,7 +85,14 @@ RETURN = r"""real_server:
   description:
     - Effective GAAP real server.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    RealServerId: rs-aaaaaaaa
+    RealServerIP: 10.0.1.10
+    RealServerName: orders-primary-v2
+    ProjectId: 0
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

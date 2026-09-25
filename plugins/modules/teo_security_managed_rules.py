@@ -174,7 +174,30 @@ RETURN = r"""managed_rules:
   description:
     - Current normalized managed WAF configuration.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    enabled: true
+    detection_only: false
+    semantic_analysis: false
+    auto_update: true
+    groups:
+      - group_id: OWASP
+        sensitivity: custom
+        action: Deny
+        rule_actions:
+          - rule_id: sqli
+            action: Monitor
+          - rule_id: xss
+            action: Disabled
+    frequent_scanning:
+      enabled: false
+      action: Deny
+      count_by: http.request.ip
+      block_threshold: 100
+      counting_period: 60
+      action_duration: 600
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -85,6 +85,15 @@ console_network:
     - Effective console network metadata with credential fields removed.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ConsoleType: Konga
+    NetType: Open
+    Status: Open
+    AccessControl:
+      Mode: Whitelist
+      CidrWhiteList:
+        - 203.0.113.0/24
 '''
 
 import json

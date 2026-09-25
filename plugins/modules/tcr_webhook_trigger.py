@@ -116,18 +116,22 @@ registry_id:
   description: Registry ID the operation targeted.
   returned: always
   type: str
+  sample: tcr-abc
 namespace:
   description: Namespace name the operation targeted.
   returned: always
   type: str
+  sample: prod
 trigger_id:
   description: Server-assigned trigger ID after a create, or the matched trigger ID.
   returned: always
   type: str
+  sample: '101'
 exists:
   description: Whether the webhook trigger exists after the operation.
   returned: always
   type: bool
+  sample: false
 '''
 
 import json

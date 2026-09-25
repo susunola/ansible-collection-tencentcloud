@@ -165,7 +165,28 @@ RETURN = r"""instance:
   description:
     - Effective CKafka instance attributes.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InstanceId: ckafka-1
+    InstanceName: prod-kafka
+    Status: 1
+    InstanceChargeType: POSTPAID_BY_HOUR
+    VpcId: vpc-1
+    SubnetId: subnet-1
+    Version: 2.8.1
+    ZoneIds:
+      - 100003
+    ZoneId: 100003
+    DiskSize: 500
+    Bandwidth: 40
+    PartitionNumber: 400
+    MsgRetentionTime: 10080
+    MaxMessageByte: 1048576
+    RetentionBytes: -1
+    UncleanLeaderElectionEnable: 0
+    DeleteProtectionEnable: 0
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

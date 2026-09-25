@@ -85,7 +85,18 @@ RETURN = r"""replication:
   description:
     - Effective replication configuration.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Role: qcs::cam::uin/100000000001:uin/100000000001
+    Rule:
+      - ID: rule-1
+        Prefix: docs/
+        Status: Enabled
+        Destination:
+          Bucket: backup-1250000000
+          StorageClass: STANDARD_IA
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_replication as normalize, get_replication
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

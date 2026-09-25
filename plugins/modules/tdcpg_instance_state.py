@@ -83,11 +83,17 @@ RETURN = r"""instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - InstanceId: tdcpg-ins-aaa
+      Status: isolated
+      ClusterId: tdcpg-cluster-abc
 restarted:
   description:
     - Whether the run restarted the instances rather than moving them to O(state).
   returned: when the instance state was changed
   type: bool
+  sample: false
 """
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

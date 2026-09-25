@@ -100,7 +100,18 @@ RETURN = r"""delivery:
   description:
     - Aggregate Config delivery metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    AccountGroupId: ag-77
+    Status: 1
+    DeliverName: organization-archive
+    TargetArn: qcs::cos:ap-guangzhou:100000000001:prefix/1250000000/config-org
+    DeliverPrefix: config
+    DeliverType: COS
+    DeliverUin: 125000000002
+    DeliverContentType: 3
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

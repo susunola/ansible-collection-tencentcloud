@@ -150,10 +150,12 @@ cluster_id:
   description: ID of the cluster whose autoscaler options were managed.
   returned: always
   type: str
+  sample: cls-12345678
 changed:
   description: Whether any autoscaler option was modified.
   returned: always
   type: bool
+  sample: false
 '''
 
 # module parameter -> ClusterAsGroupOption field

@@ -101,6 +101,18 @@ backup_policy:
     - Effective backup-policy metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    BackupStartTime: 02:00
+    BackupEndTime: 06:00
+    BackupMethod: snapshot
+    EnableFull: true
+    EnableLog: true
+    FullRetentionPeriod: 7
+    LogRetentionPeriod: 7
+    PeriodTime: 0,1,2,3,4,5,6
+    InstanceId: tdsql3-instance-abc
+    StorageType: SNAPSHOT
 """
 
 import json

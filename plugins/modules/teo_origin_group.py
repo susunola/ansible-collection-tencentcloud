@@ -118,7 +118,21 @@ RETURN = r"""origin_group:
   description:
     - EdgeOne origin-group metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    GroupId: origin-group-10001
+    Name: web-origins
+    Type: HTTP
+    HostHeader: origin.example.com
+    Records:
+      - Record: 192.0.2.10
+        Type: IP_DOMAIN
+        Weight: 70
+      - Record: 192.0.2.11
+        Type: IP_DOMAIN
+        Weight: 30
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

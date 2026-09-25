@@ -98,7 +98,14 @@ RETURN = r"""bot_lite:
   description:
     - Current normalized basic Bot protection configuration.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    captcha_page_enabled: false
+    ai_crawler_enabled: false
+    ai_crawler_action: Monitor
+    challenge_option: ManagedChallenge
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

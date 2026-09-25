@@ -109,6 +109,17 @@ record:
     - Private DNS record metadata
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    RecordId: pr-new1001
+    ZoneId: zone-abc123
+    SubDomain: api
+    RecordType: A
+    RecordValue: 10.0.0.8
+    TTL: 300
+    Remark: web api
+    MX: 10
+    Weight: 5
 '''
 
 import json

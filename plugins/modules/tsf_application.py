@@ -124,7 +124,19 @@ RETURN = r"""application:
   description:
     - Effective application metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ApplicationId: application-8b0a1c2d
+    ApplicationName: orders
+    ApplicationType: C
+    MicroserviceType: N
+    ApplicationDesc: renamed service
+    FrameworkType: SpringCloud
+    ApplicationRuntimeType: C
+    ProgramLanguage: Java
+    ApplicationRemarkName: orders-v2
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

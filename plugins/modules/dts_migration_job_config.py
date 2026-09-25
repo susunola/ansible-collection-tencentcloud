@@ -93,7 +93,30 @@ RETURN = r"""migration_job:
   description:
     - Current DTS migration job detail.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    JobId: dts-abcd1234
+    Status: checkPass
+    JobName: migration-job
+    RunMode: timed
+    ExpectRunTime: '2026-09-10 02:00:00'
+    SrcInfo:
+      Region: ap-guangzhou
+      DatabaseType: mysql
+      InstanceId: cdb-source
+    DstInfo:
+      Region: ap-shanghai
+      DatabaseType: mysql
+      InstanceId: cdb-target
+    MigrateOption:
+      MigrateType: fullAndIncrement
+      Consistency: afterMigration
+    Tags:
+      - TagKey: team
+        TagValue: data
+    AutoRetryTimeRangeMinutes: 0
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import changed, maybe_diff

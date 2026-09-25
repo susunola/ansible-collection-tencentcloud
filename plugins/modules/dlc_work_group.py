@@ -92,11 +92,20 @@ RETURN = r"""work_group:
     - Effective DLC work-group metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    WorkGroupId: 20001
+    WorkGroupName: analytics-engineers
+    WorkGroupDescription: Production lakehouse users
+    UserSet: []
+    PolicySet: []
 work_group_id:
   description:
     - DLC work-group ID.
   returned: when present
-  type: int"""
+  type: int
+  sample: 20001
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

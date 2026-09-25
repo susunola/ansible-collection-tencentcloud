@@ -73,7 +73,17 @@ RETURN = r"""backup_config:
   description:
     - Effective CynosDB backup configuration.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ClusterId: cynosdbmysql-abc123
+    BackupTimeBeg: 10800
+    BackupTimeEnd: 14400
+    ReserveDuration: 604800
+    RequestId: req-fake
+    Status: 2
+    InstanceName: orders
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

@@ -116,7 +116,15 @@ RETURN = r"""account:
   description:
     - MongoDB account metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    UserName: app
+    UserDesc: ''
+    AuthRole:
+      - NameSpace: billing
+        Mask: 3
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

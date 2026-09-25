@@ -100,14 +100,28 @@ cluster_group:
   description: Effective DLC cluster-group metadata.
   type: dict
   returned: always
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Id: grp-8b0a1c2d
+    Name: shared-ray-compute
+    Description: Shared managed compute group
+    Config: '{"dispatchStrategy":"DISPATCH_RANDOM"}'
+    Deleted: false
 cluster_group_id:
   description: DLC cluster-group ID.
   type: str
   returned: when present
+  sample: grp-8b0a1c2d
 active_clusters:
   description: Active cluster count and samples observed before deletion.
   type: dict
   returned: when deletion is considered
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    count: 3
+    samples:
+      - ClusterId: cluster-active-1
+        Status: Running
 """
 
 import json

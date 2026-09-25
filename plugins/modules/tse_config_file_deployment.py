@@ -136,6 +136,28 @@ deployment:
     - Effective configuration file and release metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    release:
+      Id: rel-new-001
+      Name: production
+      Version: v1
+      Namespace: prod-ns
+      Group: application
+      FileName: orders.yaml
+      Content: "server:\n  port: 9090\n"
+      Format: YAML
+      Comment: release comment
+    config_file:
+      Id: cfg-new-001
+      Name: orders.yaml
+      Namespace: prod-ns
+      Group: application
+      Content: "server:\n  port: 9090\n"
+      Format: YAML
+      Comment: release comment
+    config_file_id: cfg-new-001
+    release_id: rel-new-001
 '''
 
 import json

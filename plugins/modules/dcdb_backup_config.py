@@ -86,7 +86,19 @@ RETURN = r"""backup_config:
   description:
     - Normalized DCDB backup configuration.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    retention_days: 15
+    start_time: 02:00
+    end_time: 03:00
+    weekdays:
+      - Monday
+      - Wednesday
+      - Friday
+      - Sunday
+    archive_after_days: 90
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

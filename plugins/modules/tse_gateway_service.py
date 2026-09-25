@@ -133,7 +133,30 @@ RETURN = r"""service:
   description:
     - Effective gateway service metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ID: svc-orders
+    Name: orders
+    Protocol: http
+    Timeout: 30000
+    Retries: 2
+    UpstreamType: IPList
+    UpstreamInfo:
+      Targets:
+        - Host: 10.0.0.20
+          Port: 9090
+          Weight: 100
+    Path: /orders
+    HealthCheckConfig:
+      EnableActiveHealthCheck: true
+      ActiveHealthCheck:
+        HttpPath: /healthz
+    Targets:
+      - Host: 10.0.0.20
+        Port: 9090
+        Weight: 100
+"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

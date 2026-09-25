@@ -94,6 +94,17 @@ privilege:
     - Effective scoped privilege metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InstanceId: tdsql3-abcdef12
+    UserName: reporting
+    Host: '%'
+    Scope: table
+    Privileges:
+      - INSERT
+      - SELECT
+    Database: analytics
+    Table: orders
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

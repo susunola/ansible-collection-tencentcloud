@@ -85,6 +85,14 @@ store_location_config:
     - Effective base and advanced storage settings.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    StoreLocation: cosn://analytics-results/
+    AdvancedEnabled: false
+    AdvancedStoreLocation: cosn://analytics-results/advanced/
+    HasLakeFs: false
+    LakeFsStatus: ''
+    BucketType: ''
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -116,11 +116,20 @@ RETURN = r"""meta_table:
     - Effective metadata table identity and encoded DDL.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Catalog: default_catalog
+    Database: production
+    Table: orders
+    DDL: Q1JFQVRFIFRBQkxFIG9yZGVycyAoaWQgQklHSU5ULCBhbW91bnQgREVDSU1BTCgxOCwgMikpIFdJVEggKCdjb25uZWN0b3InID0gJ2thZmthJyk=
+    SerialId: meta-1001
 table_id:
   description:
     - Oceanus metadata table ID.
   returned: when available
-  type: str"""
+  type: str
+  sample: meta-1001
+"""
 import base64
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -74,7 +74,12 @@ RETURN = r"""binding:
   description:
     - Normalized CLS config binding.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ConfigId: config-abc123
+    GroupId: group-abc123
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

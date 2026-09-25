@@ -105,7 +105,22 @@ RETURN = r"""source:
   description:
     - Effective service source metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    SourceID: nacos-123
+    SourceName: customer-nacos
+    SourceType: Customer-Nacos
+    SourceInfo:
+      Addresses:
+        - 10.0.0.20:8848
+      VpcInfo:
+        VpcID: vpc-abc
+        SubnetID: subnet-abc
+      Auth:
+        Username: gateway-reader
+        Password: sekrit
+"""
 import copy
 import json
 import time

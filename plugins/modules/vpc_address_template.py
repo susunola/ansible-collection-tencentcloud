@@ -83,7 +83,19 @@ RETURN = r"""address_template:
   description:
     - Effective address-template metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    AddressTemplateId: ipm-aaaa
+    AddressTemplateName: office-networks
+    AddressSet:
+      - 10.10.0.0/16
+      - 192.0.2.10
+    AddressExtraSet:
+      - Type: ip
+        Address: 10.0.0.5/32
+        Description: db server
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

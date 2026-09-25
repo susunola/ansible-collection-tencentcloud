@@ -64,10 +64,12 @@ cluster_id:
   description: Cluster ID the operation targeted.
   returned: always
   type: str
+  sample: cls-abc123
 deletion_protection:
   description: Whether deletion protection is enabled after the operation.
   returned: always
   type: bool
+  sample: false
 '''
 
 import time

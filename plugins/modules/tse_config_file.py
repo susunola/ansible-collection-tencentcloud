@@ -119,7 +119,17 @@ RETURN = r"""config_file:
   description:
     - Effective configuration file metadata and content.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Name: orders.yaml
+    Namespace: production
+    Group: application
+    Content: "server:\n  port: 8080\n"
+    Format: YAML
+    Comment: order config
+    Id: cf-new
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

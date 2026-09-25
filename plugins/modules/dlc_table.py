@@ -212,12 +212,48 @@ table:
     - Effective DLC catalog table.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    TableBaseInfo:
+      DatabaseName: analytics
+      TableName: daily_sales
+      DatasourceConnectionName: DataLakeCatalog
+      TableComment: Updated table comment
+      Type: TABLE
+      TableFormat: ICEBERG
+      PrimaryKeys:
+        - k1
+    Columns:
+      - Name: sale_date
+        Type: date
+        Comment: the date
+        Nullable: 'false'
+        Position: 0
+      - Name: amount
+        Type: decimal(18,2)
+        Precision: 18
+        Scale: 2
+        Position: 1
+    Partitions:
+      - Name: sale_date
+        Type: date
+        Comment: partitioned by date
+        Transform: day
+        TransformArgs:
+          - x
+    Location: cosn://analytics-bucket/daily_sales/
+    InputFormatShort: PARQUET
+    StorageSize: 0
+    RecordCount: 0
 task_ids:
   description:
     - DDL task IDs submitted during creation.
   returned: when created
   type: list
   elements: str
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - task-1
 """
 
 import base64

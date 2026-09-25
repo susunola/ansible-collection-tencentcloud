@@ -109,7 +109,16 @@ RETURN = r"""zone:
   description:
     - EdgeOne zone metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ZoneId: zone-abc123
+    ZoneName: example.com
+    Type: partial
+    Area: global
+    AliasZoneName: alias1
+    Paused: false
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

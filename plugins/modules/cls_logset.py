@@ -81,6 +81,15 @@ logset:
     - CLS logset metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    LogsetId: logset-new-001
+    LogsetName: production-logs
+    Tags:
+      - Key: env
+        Value: prod
+      - Key: team
+        Value: sre
 '''
 
 import time

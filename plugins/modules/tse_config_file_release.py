@@ -160,7 +160,19 @@ RETURN = r"""release:
   description:
     - Effective configuration release metadata and content.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Id: rel-new
+    Version: '13'
+    Name: production
+    Namespace: prod
+    Group: application
+    FileName: orders.yaml
+    Content: "server:\n  port: 8080\n"
+    Format: YAML
+    Comment: orders config
+"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

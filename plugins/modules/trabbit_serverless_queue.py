@@ -178,7 +178,22 @@ RETURN = r"""queue:
   description:
     - RabbitMQ Serverless queue metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    QueueName: order-workers
+    VirtualHost: production
+    InstanceId: amqp-8b0a1c2d
+    QueueType: classic
+    Durable: true
+    AutoDelete: false
+    Remark: workers-v2
+    MessageTTL: 60000
+    DeadLetterExchange: orders-dlx
+    DeadLetterRoutingKey: retry.key
+    SingleActiveConsumer: false
+    LazyMode: false
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import require_immutable_unchanged, fail_from_sdk_error

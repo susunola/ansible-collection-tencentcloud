@@ -109,6 +109,12 @@ addon:
     - Addon metadata with raw values redacted
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    AddonName: cbs
+    AddonVersion: 1.4.0
+    RawValues: <redacted>
+    Phase: Succeeded
 '''
 
 import base64

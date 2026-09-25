@@ -91,7 +91,14 @@ RETURN = r"""real_servers:
   description:
     - Effective GAAP listener bindings.
   returned: always
-  type: list"""
+  type: list
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - RealServerId: rs-a
+      RealServerIP: 10.0.0.1
+      RealServerPort: 3306
+      RealServerWeight: 10
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

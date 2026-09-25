@@ -108,6 +108,16 @@ endpoint:
     - PrivateLink endpoint metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    EndPointId: vpce-8b0a1c2d
+    EndPointName: internal-api-client
+    VpcId: vpc-abc
+    SubnetId: subnet-abc
+    EndPointServiceId: vpcsvc-xyz
+    GroupSet:
+      - SecurityGroupId: sg-1
+    IpAddressType: IPv4
 '''
 
 import time

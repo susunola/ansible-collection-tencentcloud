@@ -121,7 +121,21 @@ RETURN = r"""scaling_policy:
   description:
     - Scaling policy metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    AutoScalingPolicyId: asp-new100
+    AutoScalingGroupId: asg-1
+    ScalingPolicyName: track-cpu
+    ScalingPolicyType: TARGET_TRACKING
+    AdjustmentType: CHANGE_IN_CAPACITY
+    AdjustmentValue: 1
+    Cooldown: 300
+    PredefinedMetricType: ASG_AVG_CPU_UTILIZATION
+    TargetValue: 60
+    EstimatedInstanceWarmup: 300
+    DisableScaleIn: false
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

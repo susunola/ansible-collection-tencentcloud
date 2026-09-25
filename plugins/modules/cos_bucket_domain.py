@@ -79,11 +79,21 @@ domains:
     - Effective custom-domain configuration.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    DomainRule:
+      - Name: downloads.example.com
+        Type: REST
+        Status: ENABLED
+      - Name: static.example.com
+        Type: REST
+        Status: ENABLED
 txt_verification:
   description:
     - DNS TXT verification value returned by COS.
   returned: when available
   type: str
+  sample: cos-domain-verification-abc123
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_domains as normalize, get_domains

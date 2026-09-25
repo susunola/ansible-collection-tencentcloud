@@ -192,10 +192,29 @@ job_spec:
   description: Effective DLC job specification.
   type: dict
   returned: always
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Id: spec-123
+    Name: daily-ray-etl
+    Entrypoint: python main.py
+    Description: Daily ETL
+    Image: ccr.ccs.tencentyun.com/analytics/ray:stable
+    ImagePullType: Custom
+    ImagePullPolicy: Always
+    ResourceConfigId: rc-1
+    GroupId: cg-1
+    Priority: 5
+    Tags:
+      - TagKey: workload
+        TagValue: etl
+    DispatchStrategy: RANDOM
+    HasRunningJobs: false
+    ResourceConfig: '{"cpu":4}'
 job_spec_id:
   description: DLC job-specification ID.
   type: str
   returned: when present
+  sample: spec-new-001
 """
 
 import json

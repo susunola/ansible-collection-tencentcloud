@@ -101,11 +101,22 @@ model_version:
     - Effective immutable model version.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Version: v2
+    VersionId: mv-001
+    Description: Quantized production release
+    UseCustomStorage: true
+    StorageType: GooseFS
+    GooseFSConfig:
+      Name: bge-fs
+      Type: HDFS
 version_id:
   description:
     - DLC version ID.
   returned: when available
   type: str
+  sample: mv-001
 """
 
 import json

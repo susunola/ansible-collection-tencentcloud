@@ -104,6 +104,14 @@ endpoint_service:
     - PrivateLink endpoint service metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    EndPointServiceId: vpcsvc-new-001
+    ServiceName: internal-api
+    VpcId: vpc-abc
+    ServiceInstanceId: lb-abc
+    AutoAcceptFlag: true
+    IpAddressType: IPv4
 '''
 
 import time

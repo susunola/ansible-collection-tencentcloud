@@ -163,10 +163,26 @@ ray_cluster:
   description: Effective DLC Ray cluster metadata.
   type: dict
   returned: always
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Name: analytics-ray
+    Description: analytics
+    ResourcePartitionId: rp-100
+    Queue: notebooks
+    Image: ccr.ccs.tencentyun.com/dlc/ray:latest
+    ImagePullType: BuiltIn
+    ResourceConfigId: rc-1
+    Priority: 5
+    Tags:
+      - TagKey: environment
+        TagValue: production
+    Id: ray-new-001
+    Type: CLUSTER
 ray_cluster_id:
   description: DLC Ray cluster ID.
   type: str
   returned: when present
+  sample: rc-8b0a1c2d
 """
 
 import json

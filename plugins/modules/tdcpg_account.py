@@ -76,11 +76,17 @@ RETURN = r"""account:
     - Effective account metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    AccountName: root
+    AccountDescription: Platform administrator
+    ClusterId: tdcpg-cluster-abc
 password_rotated:
   description:
     - Whether this run reset the account password, taken from O(rotate_password).
   returned: when the account is created or updated
   type: bool
+  sample: false
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

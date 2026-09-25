@@ -146,7 +146,23 @@ RETURN = r"""route:
   description:
     - Effective gateway route metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ID: route-1001
+    Name: orders
+    ServiceID: service-2001
+    Methods:
+      - GET
+      - POST
+    Hosts:
+      - orders.example.com
+    Paths:
+      - /orders
+    Protocols:
+      - https
+    StripPath: true
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

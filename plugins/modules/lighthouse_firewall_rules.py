@@ -69,11 +69,20 @@ rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Protocol: TCP
+      Port: '22'
+      CidrBlock: 10.0.0.0/8
+      Ipv6CidrBlock: ''
+      Action: ACCEPT
+      FirewallRuleDescription: administration
 firewall_version:
   description:
     - Optimistic-concurrency version returned by Lighthouse.
   returned: always
   type: int
+  sample: 1
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

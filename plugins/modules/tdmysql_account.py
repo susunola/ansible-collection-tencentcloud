@@ -131,6 +131,15 @@ account:
     - Effective account metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InstanceId: tdsql3-abcd1234
+    UserName: reporting
+    Host: '%'
+    Description: Read-only reporting account
+    GlobalPrivileges:
+      - SELECT
+      - UPDATE
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

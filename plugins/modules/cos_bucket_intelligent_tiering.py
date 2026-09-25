@@ -87,7 +87,16 @@ RETURN = r"""intelligent_tiering:
   description:
     - Effective intelligent-tiering rule.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Id: default
+    Status: Enabled
+    Tiering:
+      AccessTier: INFREQUENT
+      Days: 60
+      RequestFrequent: 1
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import get_rule

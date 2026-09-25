@@ -77,7 +77,14 @@ RETURN = r"""website:
   description:
     - Effective website configuration.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    IndexDocument:
+      Suffix: index.html
+    ErrorDocument:
+      Key: error.html
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

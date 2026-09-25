@@ -84,7 +84,14 @@ RETURN = r"""replication_instance:
   description:
     - Replication instance metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ReplicationRegistryId: tcr-repl-1
+    ReplicationRegionId: 1
+    ReplicationRegionName: ap-shanghai
+    Status: Running
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

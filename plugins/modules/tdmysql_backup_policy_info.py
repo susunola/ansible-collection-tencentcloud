@@ -54,16 +54,28 @@ backup_policies:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - BackupMethod: physical
+      BackupStartTime: 00:00
+      BackupEndTime: 04:00
+      EnableFull: true
+      EnableLog: false
+      FullRetentionPeriod: 7
+      LogRetentionPeriod: 7
+      PeriodTime: 0,1,2,3,4,5,6
 total_count:
   description:
     - Policy count reported by the API.
   returned: always
   type: int
+  sample: 3
 request_id:
   description:
     - Tencent Cloud request ID.
   returned: always
   type: str
+  sample: req-policy
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

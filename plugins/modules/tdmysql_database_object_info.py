@@ -78,26 +78,44 @@ databases:
   returned: in database-list mode
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - DbName: application
+      Status: online
 objects:
   description:
     - Tables, views, procedures and functions.
   returned: in object-list mode
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Tables:
+      - TableName: table_0
+      - TableName: table_1
+      - TableName: table_2
+      - TableName: table_3
+      - TableName: table_4
+    Views: []
+    Procs: []
+    Funcs: []
 total_count:
   description:
     - Matching database count reported by the API.
   returned: in database-list mode
   type: int
+  sample: 6
 truncated:
   description:
     - Whether max_pages stopped pagination.
   returned: always
   type: bool
+  sample: false
 request_id:
   description:
     - Request ID from the final page.
   returned: always
   type: str
+  sample: req-databases-4
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

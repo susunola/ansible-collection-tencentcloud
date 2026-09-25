@@ -194,10 +194,28 @@ lab:
   description: Effective DLC laboratory metadata.
   type: dict
   returned: always
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Id: lab-000001
+    Name: analytics-notebook
+    Type: WORKSPACE
+    Status: RUNNING
+    ResourcePartitionId: rp-1
+    Queue: default
+    LabImage: ccr.ccs.tencentyun.com/dlc/jupyter:latest
+    ImagePullType: BuiltIn
+    LabImagePullType: BuiltIn
+    Description: Analytics lab
+    Priority: 5
+    EnableToken: true
+    Tags: []
+    AdvancedOptions:
+      alpha: true
 lab_id:
   description: DLC laboratory ID.
   type: str
   returned: when present
+  sample: lab-new-001
 """
 
 import json

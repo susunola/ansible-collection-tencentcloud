@@ -109,7 +109,20 @@ RETURN = r"""file_system:
   description:
     - Effective CHDFS file system metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    FileSystemId: f4mp1e-0000
+    FileSystemName: analytics
+    Description: ETL output
+    CapacityQuota: 1099511627776
+    SuperUsers:
+      - root
+    PosixAcl: true
+    EnableRanger: true
+    RangerServiceAddresses:
+      - rm:9000
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

@@ -128,18 +128,22 @@ sub_app_id:
   description: ID of the matched or newly created sub-application.
   returned: when known
   type: int
+  sample: 1400001001
 sub_app_name:
   description: Name of the managed sub-application.
   returned: always
   type: str
+  sample: media-prod
 status:
   description: Status of the sub-application.
   returned: when a matching sub-application exists
   type: str
+  sample: Destroyed
 changed:
   description: Whether an API write happened.
   returned: always
   type: bool
+  sample: false
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

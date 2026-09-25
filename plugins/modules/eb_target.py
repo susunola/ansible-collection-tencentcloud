@@ -101,7 +101,17 @@ RETURN = r"""target:
   description:
     - Effective EventBridge target metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    TargetId: tgt-1
+    Type: scf
+    TargetDescription:
+      ResourceDescription: '{"Region":"ap-guangzhou","FunctionName":"consume"}'
+    EnableBatchDelivery: true
+    BatchTimeout: 30
+    BatchEventCount: 5
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

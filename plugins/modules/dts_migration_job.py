@@ -101,7 +101,14 @@ RETURN = r"""migration_job:
   description:
     - DTS migration job metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    JobId: dts-1001
+    JobName: renamed-migration
+    TradeInfo:
+      InstanceClass: micro
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

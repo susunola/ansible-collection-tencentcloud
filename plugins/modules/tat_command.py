@@ -130,6 +130,22 @@ command:
     - TAT command metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    CommandId: cmd-8b0a1c2d
+    CommandName: install-agent
+    Content: ZWNobyBoaSB1cGRhdGVk
+    Description: bump
+    CommandType: SHELL
+    WorkingDirectory: /root
+    Timeout: 60
+    EnableParameter: false
+    DefaultParameters: ''
+    Username: root
+    CreatedBy: USER
+    Tags:
+      - Key: env
+        Value: prod
 '''
 
 import base64

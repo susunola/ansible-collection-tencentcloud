@@ -92,7 +92,15 @@ RETURN = r"""endpoint:
   description:
     - Effective endpoint address and network metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ClusterId: cls-1234
+    Access: private
+    Endpoint: https://10.0.0.10
+    SecurityGroup: sg-1
+    SubnetId: subnet-1
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

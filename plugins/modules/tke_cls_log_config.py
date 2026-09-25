@@ -103,14 +103,17 @@ cluster_id:
   description: Cluster ID the operation targeted.
   returned: always
   type: str
+  sample: cls-abc123
 log_config_name:
   description: Log configuration name the operation targeted.
   returned: always
   type: str
+  sample: stdout
 exists:
   description: Whether the log configuration exists after the operation.
   returned: always
   type: bool
+  sample: false
 '''
 
 import json

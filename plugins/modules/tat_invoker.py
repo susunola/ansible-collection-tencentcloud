@@ -114,7 +114,23 @@ RETURN = r"""invoker:
   description:
     - TAT invoker metadata with command parameters redacted.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InvokerId: ivk-8b0a1c2d
+    Name: nightly-maintenance
+    Type: SCHEDULE
+    CommandId: cmd-8b0a1c2d
+    InstanceIds:
+      - ins-8b0a1c2d
+      - ins-9c3d2e1f
+    Username: root
+    Parameters: <redacted>
+    ScheduleSettings:
+      Policy: RECURRENCE
+      Recurrence: 0 2 * * *
+    Enable: false
+"""
 import hashlib
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

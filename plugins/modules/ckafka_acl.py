@@ -106,7 +106,16 @@ RETURN = r"""acl:
   description:
     - CKafka ACL metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ResourceType: 2
+    ResourceName: orders
+    Operation: 3
+    PermissionType: 3
+    Host: '*'
+    Principal: User:analytics
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

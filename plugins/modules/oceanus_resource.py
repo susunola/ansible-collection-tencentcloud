@@ -111,6 +111,21 @@ RETURN = r"""resource:
     - Effective Oceanus resource metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ResourceId: r-8a1b2c3d
+    Name: orders-processor
+    ResourceType: 1
+    ResourceLoc:
+      StorageType: 1
+      Param:
+        Bucket: flink-artifacts-1250000000
+        Path: jars/orders-1.0.jar
+        Region: ap-guangzhou
+    Remark: orders pipeline
+    FolderId: root
+    WorkSpaceId: space-abc
+    LatestResourceConfigVersion: 3
 version:
   description:
     - Initial resource version.

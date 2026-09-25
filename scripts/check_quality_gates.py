@@ -79,9 +79,16 @@ IDEMPOTENCY_RATCHET = 0
 # the payload -- the curated ones carry ID formats like ``ins-xxxxxxxx``,
 # which is most of their value.  Generating them from the SDK model was tried
 # and rejected: it produced 110 lines of ``"string"`` and ``0`` for
-# cvm_instance, which is longer than the curated sample and says less.  So
-# this is authoring work with a ratchet rather than a generator.
-RETURN_SAMPLE_RATCHET = 976
+# cvm_instance, which is longer than the curated sample and says less.
+#
+# The way in is the module's own unit tests: each already builds a payload and
+# asserts on it, so ``scripts/add_return_samples.py`` records what every module
+# produced under test and documents that, minus ``None`` values and Ansible's
+# own keys.  413 modules gained a sample that way, which is why this moved
+# from 976 to 563.  What is left is generated modules (the generator owns
+# their RETURN and its --check would flag an edit) and modules whose tests
+# build a private harness instead of the shared one.
+RETURN_SAMPLE_RATCHET = 563
 
 # Write modules that claim ``check_mode: full`` with no dry-run test. The
 # claim is user-facing and load-bearing: a user runs --check expecting no

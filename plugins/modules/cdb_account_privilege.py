@@ -156,7 +156,29 @@ RETURN = r"""privileges:
   description:
     - Normalized account privilege set.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    GlobalPrivileges:
+      - INSERT
+      - SELECT
+    DatabasePrivileges:
+      - database: orders
+        privileges:
+          - insert
+          - select
+    TablePrivileges:
+      - database: orders
+        table: line_items
+        privileges:
+          - select
+    ColumnPrivileges:
+      - database: orders
+        table: line_items
+        column: id
+        privileges:
+          - select
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

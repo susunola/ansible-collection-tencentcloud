@@ -97,6 +97,10 @@
 32. SDK drift sentinel (0.12.0): `info_specs_auto.py` carries a
     `GENERATED_SDK_VERSION` stamp; `check_sdk_drift.py` fails CI with
     regeneration instructions when the environment SDK drifts. **Done**
+32c. Captured RETURN samples (0.12.0): `add_return_samples.py` records each
+    module's own unit-test payload and documents it, 413 modules gained a
+    sample, and the census fell from 976 to 563 with a gate that re-runs the
+    capture. **Done**
 32b. Declared SDK floor is real (0.12.0): the stamp must sit inside the
     `requirements.txt` range and `check_sdk_floor.py` resolves every SDK
     package, client module, client class and spec request model at that

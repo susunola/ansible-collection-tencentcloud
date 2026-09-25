@@ -107,6 +107,14 @@ account:
     - CynosDB account metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    AccountName: app_user
+    Host: '%'
+    Description: application account
+    MaxUserConnections: 100
+    PasswordRotation: 0
+    AccountPassword: NewP@ss
 '''
 
 import time

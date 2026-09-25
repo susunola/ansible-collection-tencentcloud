@@ -1,0 +1,23 @@
+---
+minor_changes:
+  - >-
+    scripts/add_return_samples.py - document what a module returns with the
+    payload its own tests produce. 976 of 1,027 modules named their return
+    keys and never showed the shape behind them; the obvious generator (walk
+    the SDK response model) was tried and rejected because it produced 110
+    lines of ``"string"`` and ``0`` for ``cvm_instance``. This runs the module
+    test suite with a recorder on the harness's ``exit_json``, keeps what each
+    module actually produced, and writes that under every documented key that
+    has no sample -- dropping ``None`` values and the keys Ansible adds to
+    every result, and skipping generated modules, whose ``RETURN`` the
+    generator owns. 413 modules gained a sample and the census moved from 976
+    to 563. A sample the script wrote carries a marker comment, and
+    ``add_return_samples.py --check`` (a new CI step, "Return samples match
+    the tests that produce them") re-runs the capture and fails when one stops
+    matching the payloads its tests produce. Hand-written samples are exempt
+    on purpose: ``vpc`` documents the fields the API returns while its unit
+    test stubs six of them.
+  - >-
+    scripts/check_quality_gates.py - the ``RETURN`` sample census drops from
+    976 to 563 and keeps its frozen baseline list, so the number can only go
+    down from here and a new module still cannot add to it.

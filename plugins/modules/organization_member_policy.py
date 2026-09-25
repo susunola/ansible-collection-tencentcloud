@@ -87,7 +87,14 @@ RETURN = r"""policy:
   description:
     - Organization member access policy metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    PolicyId: 201
+    PolicyName: operations-access
+    IdentityId: 30
+    Description: Operations access policy
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

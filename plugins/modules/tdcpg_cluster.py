@@ -155,7 +155,22 @@ RETURN = r"""cluster:
   description:
     - Effective TDSQL-C PostgreSQL cluster metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ClusterId: cluster-9c1d2e3f
+    ClusterName: production-tdcpg
+    Status: isolated
+    Zone: ap-guangzhou-3
+    DBVersion: '13.3'
+    DBMajorVersion: '13'
+    DBKernelVersion: pg13.3
+    EndpointSet:
+      - VpcId: vpc-aaa111
+        SubnetId: subnet-bbb222
+    AutoRenewFlag: 0
+    PayMode: POSTPAID_BY_HOUR
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -111,7 +111,22 @@ RETURN = r"""lane_group:
   description:
     - Effective governance lane group metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ID: lane-1a2b3c4d
+    Name: checkout-gray
+    Description: renamed description
+    TrafficEntries:
+      - Namespace: production
+        Service: edge-gateway
+    Destinations:
+      - Namespace: production
+        Service: checkout
+    Rules:
+      - Name: gray
+        Enable: true
+"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

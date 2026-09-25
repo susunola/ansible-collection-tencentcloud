@@ -101,6 +101,13 @@ RETURN = r"""rules:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Type: hostssl
+      Database: all
+      User: analysts
+      Address: 10.0.0.0/16
+      Method: md5
 task_id:
   description:
     - Service task ID.

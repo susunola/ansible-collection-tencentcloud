@@ -92,7 +92,13 @@ RETURN = r"""scrape_job:
   description:
     - Prometheus scrape-job metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    JobId: job-abc123
+    Name: application
+    Config: "job_name: application\nstatic_configs:\n  - targets: ['10.0.0.8:9100']\n  - targets: ['10.0.0.9:9100']\n"
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

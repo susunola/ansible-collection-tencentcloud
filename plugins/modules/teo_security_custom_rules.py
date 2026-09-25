@@ -120,7 +120,16 @@ RETURN = r"""rules:
   description:
     - Current normalized custom security rules.
   returned: always
-  type: list"""
+  type: list
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - name: block_known_attackers
+      condition: $http.request.uri.path eq '/admin'
+      action: Deny
+      enabled: true
+      rule_type: PreciseMatchRule
+      priority: 10
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

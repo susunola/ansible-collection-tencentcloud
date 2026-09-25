@@ -113,17 +113,30 @@ invocation_id:
     - TAT invocation ID.
   returned: always
   type: str
+  sample: inv-existing
 tasks:
   description:
     - Per-instance task results with sensitive command data redacted.
   returned: when waiting
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - InvocationTaskId: invt-001-0
+      InstanceId: ins-aaaa
+      TaskStatus: SUCCESS
+      TaskResult:
+        Output: output-of-SUCCESS
+        ExitCode: 0
 status_summary:
   description:
     - Counts keyed by terminal task status.
   returned: when waiting
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    SUCCESS: 1
+    FAILED: 1
 """
 import json
 import time

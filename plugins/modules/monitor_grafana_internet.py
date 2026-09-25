@@ -58,7 +58,9 @@ RETURN = r"""enabled:
   description:
     - Effective internet-access state.
   returned: always
-  type: bool"""
+  type: bool
+  sample: false
+"""
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -94,6 +94,13 @@ consumer_group:
     - DTS consumer group metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    SubscribeId: subs-aaaa
+    ConsumerGroupName: analytics
+    Account: analytics-reader
+    Description: Analytics consumers
+    ConsumerGroupId: cg-new-1
 '''
 
 import time

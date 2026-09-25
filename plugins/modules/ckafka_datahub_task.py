@@ -135,7 +135,30 @@ RETURN = r"""datahub_task:
   description:
     - CKafka Datahub task metadata with credential fields removed.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    TaskId: task-fake-1
+    TaskName: mysql-orders-to-datahub
+    TaskType: SOURCE
+    SourceResource:
+      Type: MYSQL
+      MySQLParam:
+        Resource: resource-8b0a1c2d
+        Database: orders
+        Table: '*'
+    TargetResource:
+      Type: TOPIC
+      TopicParam:
+        Resource: 1250000000-orders
+    TransformParam: {}
+    TransformsParam: {}
+    Description: order pipeline
+    TaskMax: 2
+    SyncThrottleLimit: 30
+    AutoExpandFlag: false
+    Status: 1
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found

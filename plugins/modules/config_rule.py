@@ -141,6 +141,28 @@ rule:
     - Config compliance rule metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ConfigRuleId: cr-8b0a1c2d
+    Identifier: CBS_DISK_ENCRYPTED
+    IdentifierType: SYSTEM
+    RuleName: require-encrypted-disks
+    ResourceType:
+      - QCS::CBS::Disk
+    TriggerType:
+      - MessageType: ConfigurationItemChangeNotification
+    RiskLevel: 1
+    InputParameter:
+      - ParameterKey: team
+        Type: Optional
+        Value: security
+    Description: require disk encryption
+    RegionsScope:
+      - ap-shanghai
+    TagsScope:
+      - TagKey: env
+        TagValue: prod
+    ExcludeResourceIdsScope: []
 '''
 
 import time

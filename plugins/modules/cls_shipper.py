@@ -160,7 +160,28 @@ RETURN = r"""shipper:
   description:
     - CLS COS shipper metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ShipperId: shipper-fake-001
+    TopicId: 0f6c6e3a-8b0a
+    ShipperName: archive-to-cos
+    Bucket: logs-1250000000
+    Prefix: ''
+    Status: false
+    Interval: 300
+    MaxSize: 256
+    Partition: '%Y/%m/%d/%H'
+    Compress:
+      Format: gzip
+    Content:
+      Format: json
+    FilterRules: []
+    FilenameMode: 0
+    StorageType: STANDARD
+    TimeZone: UTC+08:00
+    DSLFilter: ''
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

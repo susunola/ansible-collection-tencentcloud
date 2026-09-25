@@ -172,11 +172,23 @@ dataset:
     - Effective TIONE dataset group metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    DatasetId: ds-8b0a1c2d
+    DatasetName: customer-support-sft
+    DatasetType: TYPE_DATASET_LLM
+    DatasetScene: LLM
+    StorageDataPath:
+      Bucket: ml-datasets-1250000000
+      Region: ap-guangzhou
+      Paths:
+        - /support/sft/
 dataset_id:
   description:
     - Stable dataset ID.
   returned: when available
   type: str
+  sample: ds-8b0a1c2d
 """
 
 import json

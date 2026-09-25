@@ -77,14 +77,19 @@ load_balancer_id:
   description: CLB instance the operation targeted.
   returned: always
   type: str
+  sample: lb-abc123
 snat_ips:
   description: SNAT IPs currently attached to the CLB after the operation.
   returned: always
   type: list
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - 10.0.0.11
 changed:
   description: Whether any SNAT IPs were added or removed.
   returned: always
   type: bool
+  sample: false
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

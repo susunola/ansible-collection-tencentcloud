@@ -82,7 +82,16 @@ RETURN = r"""route:
   description:
     - Effective domain and route metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Domain: api.example.com
+    Protocol: http
+    Routes:
+      - Path: /v2
+        UpstreamResourceType: cloudrun
+        UpstreamResourceName: backend-v2
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

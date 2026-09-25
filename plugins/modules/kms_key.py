@@ -123,6 +123,15 @@ key:
   description: KMS key metadata or null when deletion is scheduled.
   type: dict
   returned: always
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    KeyId: kms-abc123
+    Alias: app-key
+    Description: app key
+    KeyUsage: ENCRYPT_DECRYPT
+    Type: 1
+    KeyState: PendingDelete
+    RotateDays: 365
 '''
 
 

@@ -127,7 +127,21 @@ RETURN = r"""acceleration_domain:
   description:
     - EdgeOne acceleration-domain metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ZoneId: zone-1
+    DomainName: app.example.com
+    OriginDetail:
+      OriginType: IP_DOMAIN
+      Origin: 192.0.2.10
+      HostHeader: ''
+    OriginProtocol: FOLLOW
+    HttpOriginPort: 80
+    HttpsOriginPort: 443
+    IPv6Status: follow
+    DomainStatus: offline
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

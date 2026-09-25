@@ -83,11 +83,21 @@ RETURN = r"""parameter:
     - Effective parameter metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ParamName: max_connections
+    RunningValue: '100'
+    LatestValue: '200'
+    DefaultValue: '100'
+    NeedRestart: true
+    EffectiveValue: '200'
+    NodeCount: 1
 restart_required:
   description:
     - Whether applying the value requires restart.
   returned: always
   type: bool
+  sample: true
 task_id:
   description:
     - Asynchronous service task ID.

@@ -85,6 +85,7 @@ plugin_name:
   description: Plugin name the operation targeted.
   returned: always
   type: str
+  sample: allow-office
 plugin_id:
   description: Server-assigned plugin ID after a create, or the matched plugin ID.
   returned: always
@@ -93,6 +94,7 @@ exists:
   description: Whether the plugin exists after the operation.
   returned: always
   type: bool
+  sample: false
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

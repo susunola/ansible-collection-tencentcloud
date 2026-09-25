@@ -133,10 +133,35 @@ resource_config:
   description: Effective DLC resource template metadata.
   type: dict
   returned: always
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Id: rc-8b0a1c2d
+    Name: analytics-ray-small
+    Type: Ray
+    Description: Shared notebook and Ray template
+    Head:
+      Name: head
+      PodCpu: 4
+      PodMem: 16
+      PodNum: 4
+      ResourceType: CPU
+      Spec: 4
+      BillingItem: sv_dlc_standard_cu_standard_cu
+    Worker:
+      - Name: workers
+        PodCpu: 4
+        PodMem: 16
+        MinPodNum: 1
+        MaxPodNum: 8
+        EnableAutoScaling: true
+        ResourceType: CPU
+        Spec: 4
+        BillingItem: sv_dlc_standard_cu_standard_cu
 resource_config_id:
   description: DLC resource template ID.
   type: str
   returned: when present
+  sample: rc-8b0a1c2d
 references:
   description: Labs and Ray clusters referencing the template during deletion.
   type: list

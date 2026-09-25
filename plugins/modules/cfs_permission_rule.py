@@ -96,7 +96,16 @@ RETURN = r"""rule:
   description:
     - CFS permission rule metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    PGroupId: pgroup-abc123
+    RuleId: 1001
+    AuthClientIp: 10.1.0.0/16
+    Priority: 1
+    RWPermission: RO
+    UserPermission: no_root_squash
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

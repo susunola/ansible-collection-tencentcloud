@@ -234,7 +234,31 @@ RETURN = r"""instance:
   description:
     - Effective TDMysql instance metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InstanceId: tdsql-8b0a1c2d
+    InstanceName: prod-tdmysql
+    Status: isolating
+    Zone: ap-guangzhou-3
+    VpcId: vpc-0a1b2c3d
+    SubnetId: subnet-4e5f6a7b
+    Disk: 200
+    StorageNodeNum: 3
+    Replications: 3
+    StorageNodeCpu: 4
+    StorageNodeMem: 16
+    StorageType: CLOUD_HSSD
+    InstanceType: separate
+    InstanceMode: basic
+    SQLMode: MySQL
+    CreateVersion: MySQL-8.0
+    PayMode: '0'
+    RenewFlag: 1
+    SecurityGroupIds:
+      - sg-0aa1
+      - sg-0bb2
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

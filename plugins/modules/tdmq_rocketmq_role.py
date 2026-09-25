@@ -85,7 +85,13 @@ RETURN = r"""role:
   description:
     - RocketMQ role metadata with all credential fields removed.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    RoleName: order-service
+    Remark: Order service identity
+    PermType: TopicAndGroup
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

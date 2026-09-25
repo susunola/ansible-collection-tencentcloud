@@ -146,7 +146,31 @@ RETURN = r"""instance:
   description:
     - Effective DCDB instance metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InstanceId: dcdb-1a2b3c4d
+    InstanceName: renamed-dcdb
+    Status: 2
+    Paymode: 0
+    Region: ap-guangzhou
+    VpcId: vpc-1111
+    SubnetId: subnet-2222
+    DbVersionId: '8.0'
+    Memory: 16
+    Storage: 100
+    ShardCount: 2
+    NodeCount: 2
+    ShardDetail:
+      - ShardInstanceId: shard-1
+        Memory: 16
+        Storage: 100
+        NodeCount: 2
+      - ShardInstanceId: shard-2
+        Memory: 16
+        Storage: 100
+        NodeCount: 2
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

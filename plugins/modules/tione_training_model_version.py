@@ -205,16 +205,31 @@ model_version:
     - Effective TIONE training-model version.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    TrainingModelVersionId: modelversion-new-001
+    TrainingModelStatus: STATUS_SUCCESS
+    TrainingModelId: model-x
+    TrainingModelVersion: v2
+    AlgorithmFramework: PYTORCH
+    ModelFormat: PYTORCH
+    ReasoningEnvironmentId: ti-infer-pytorch
+    ReasoningEnvironmentSource: SYSTEM
+    TrainingJobId: train-1
+    TrainingModelSource: JOB
+    TrainingJobVersion: instance-1
 model_id:
   description:
     - Stable parent model ID.
   returned: when available
   type: str
+  sample: model-x
 version_id:
   description:
     - Stable model-version ID.
   returned: when available
   type: str
+  sample: modelversion-new-001
 """
 
 import json

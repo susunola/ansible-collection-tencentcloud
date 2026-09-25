@@ -105,7 +105,17 @@ RETURN = r"""queue:
   description:
     - Queue metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    QueueName: jobs
+    MaxMsgHeapNum: 1000000
+    PollingWaitSeconds: 10
+    VisibilityTimeout: 30
+    MaxMsgSize: 65536
+    MsgRetentionSeconds: 345600
+    RewindSeconds: 86400
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import (

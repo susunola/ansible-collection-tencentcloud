@@ -58,16 +58,28 @@ rotation:
     - Rotation configuration and schedule.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    SecretName: prod/database
+    RotationEnabled: true
+    RotationInterval: 30
 history:
   description:
     - Recent rotation history.
   returned: when include_history is true
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    SecretName: prod/database
+    RotationVersions:
+      - v3
+      - v2
 request_id:
   description:
     - Request ID from the final API call.
   returned: always
   type: str
+  sample: req-attribute
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -88,7 +88,14 @@ RETURN = r"""domain_certificate:
   description:
     - Effective certificate status and identity.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Status: Enabled
+    CertType: CustomCert
+    CertificateInfo:
+      CertID: 8u9example
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import get_certificate

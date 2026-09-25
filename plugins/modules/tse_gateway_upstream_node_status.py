@@ -91,6 +91,11 @@ node:
     - Effective upstream target metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Host: 10.0.0.20
+    Port: 8080
+    Health: UNHEALTHY
 '''
 
 import time

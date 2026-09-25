@@ -61,7 +61,13 @@ RETURN = r"""clusters:
     - Effective linked cluster metadata.
   returned: always
   type: list
-  elements: dict"""
+  elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - ClusterId: cls-abc123
+      Region: ap-guangzhou
+      Role: REMOTE
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

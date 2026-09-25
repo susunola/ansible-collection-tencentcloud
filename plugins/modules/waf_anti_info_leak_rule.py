@@ -107,7 +107,20 @@ RETURN = r"""rule:
   description:
     - WAF leakage-protection rule metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    RuleId: 100
+    Name: mask-phone-numbers
+    Domain: api.example.com
+    Action: 1
+    Strategies:
+      - Field: information
+        CompareFunc: contains
+        Content: phone
+    Uri: /customers
+    Status: 1
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

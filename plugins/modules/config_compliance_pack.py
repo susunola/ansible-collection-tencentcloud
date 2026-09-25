@@ -154,7 +154,26 @@ RETURN = r"""compliance_pack:
   description:
     - Config compliance pack metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    CompliancePackId: cp-8b0a1c2d
+    CompliancePackName: production-security
+    Description: Production baseline
+    RiskLevel: 1
+    ConfigRules:
+      - RuleName: public-bucket-denied
+        RiskLevel: 1
+        Identifier: cos-public-read-prohibited
+        ConfigRuleId: cr-9f6e5d4c
+        ManagedRuleIdentifier: cos-public-read-prohibited
+        Description: Deny public reads
+        InputParameter:
+          - ParameterKey: region
+            Type: string
+            Value: ap-guangzhou
+    Status: UN_ACTIVE
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

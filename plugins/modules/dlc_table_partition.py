@@ -136,11 +136,31 @@ partition:
     - Effective DLC table partition.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    DatabaseName: analytics
+    TableName: daily_sales
+    DatasourceConnectionName: DataLakeCatalog
+    Values:
+      - '2026-08-31'
+    Name: sale_date=2026-08-31-v2
+    Params:
+      - Key: source
+        Value: batch
+    Sds:
+      Location: cosn://analytics-bucket/daily_sales/sale_date=2026-08-31/
 partition_identity:
   description:
     - Stable database, table and values identity.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    database_name: analytics
+    table_name: daily_sales
+    values:
+      - '2026-08-31'
+    datasource_connection_name: DataLakeCatalog
 """
 
 import json

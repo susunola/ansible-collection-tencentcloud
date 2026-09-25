@@ -119,6 +119,14 @@ zone:
     - Private DNS zone metadata
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ZoneId: zone-pdns-101
+    Domain: internal.example.com
+    Remark: prod
+    VpcSet:
+      - Region: ap-guangzhou
+        UniqVpcId: vpc-abc123
 '''
 
 import json

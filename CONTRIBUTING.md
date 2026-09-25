@@ -96,6 +96,23 @@ An SDK upgrade is therefore a deliberate, reviewed change:
 The `cos-python-sdk-v5` line (only used by the `cos_*` modules) is
 intentionally loose.
 
+## `RETURN` samples
+
+A module's `RETURN` block names its keys; a `sample` shows the shape behind
+them. Samples written by `scripts/add_return_samples.py` are captured from the
+module's own unit-test payloads and carry a marker comment, and
+`scripts/add_return_samples.py --check` re-runs that capture in CI and fails
+when a sample stops matching. Two rules follow:
+
+- if you change a test's fake response shape, re-run the script: the gate
+  names the module and key that no longer match;
+- a sample written by hand is exempt from the check, because a unit test's
+  fake response may carry fewer fields than the API returns. Mark nothing by
+  hand: either let the script write the sample, or leave the key without one.
+
+Generated modules are skipped by the script — `generate_info_modules.py` owns
+their `RETURN` and would flag the edit.
+
 ## Roles
 
 Roles use the `tc_` prefix (e.g. `tc_launch`, `tc_clb_http`). Every role
@@ -137,7 +154,8 @@ policy):
 
 **CI gates a merge must not weaken.** `audit_info_coverage.py --check`,
 `check_module_tiers.py --check`, `check_sdk_drift.py --check`,
-`check_sdk_floor.py --check`, `generate_info_modules.py --check`,
+`check_sdk_floor.py --check`, `add_return_samples.py --check`,
+`generate_info_modules.py --check`,
 `check_sanity_ignore.py`, `ruff check .`,
 the sanity tests, and the unit/contract run at `--cov-fail-under=80`. A PR
 that lowers a threshold to get green is the one thing a reviewer should always

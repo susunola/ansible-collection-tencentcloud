@@ -102,14 +102,17 @@ rule_template_name:
   description: Name of the audit rule template the operation targeted.
   returned: always
   type: str
+  sample: tmpl-host-prod
 rule_template_id:
   description: Template ID of the audit rule template after the operation (empty when absent).
   returned: always
   type: str
+  sample: tmpl-1
 exists:
   description: Whether the audit rule template exists after the operation.
   returned: always
   type: bool
+  sample: false
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

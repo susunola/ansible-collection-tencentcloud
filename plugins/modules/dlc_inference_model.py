@@ -147,11 +147,32 @@ model:
     - Effective DLC inference model metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Name: embedding-bge
+    ModelUid: model-bge-managed
+    ModelId: '42'
+    ModelType: Embedding
+    Provider: BAAI
+    Description: updated bge description
+    ParameterSize: 1.5B
+    Tags:
+      - embedding
+      - nlp
+    Tasks:
+      - Embedding
+    StorageType: COS
+    StorageUri: cos://model-bucket/bge/v1/
+    HasCustomStorage: false
+    ResourceTags:
+      - TagKey: environment
+        TagValue: production
 model_uid:
   description:
     - Stable model UID.
   returned: always
   type: str
+  sample: model-bge-managed
 model_id:
   description:
     - DLC numeric or internal model ID.

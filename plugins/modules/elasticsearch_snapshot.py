@@ -136,7 +136,22 @@ RETURN = r"""snapshot:
   description:
     - Elasticsearch snapshot metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    SnapshotName: before-upgrade
+    Indices:
+      - customers
+      - orders
+    EsRepositoryType: 0
+    StorageDuration: 30
+    CosRetention: 1
+    RetainUntilDate: '2027-01-01T00:00:00Z'
+    RetentionGraceTime: 0
+    RemoteCos: 1
+    RemoteCosRegion: ap-shanghai
+    MultiAz: 1
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

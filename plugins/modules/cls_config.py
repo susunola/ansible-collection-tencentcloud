@@ -110,7 +110,21 @@ RETURN = r"""config:
   description:
     - CLS collection configuration metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ConfigId: cs-2001
+    Name: nginx-access
+    Output: topic-1001
+    Path: /var/log/nginx/access.log
+    LogType: minimalist_log
+    ExtractRule:
+      delimiter: '|'
+    ExcludePaths:
+      - Type: Path
+        Value: /tmp/err.log
+    UserDefineRule: '{"k":1}'
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

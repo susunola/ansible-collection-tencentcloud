@@ -148,6 +148,25 @@ policy:
     - Alarm policy metadata
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    PolicyId: policy-1a2b3c4d
+    PolicyName: cvm-cpu-high
+    Remark: ''
+    Enable: 1
+    MonitorType: MT_QCE
+    Namespace: QCE/CVM
+    Condition:
+      IsUnionRule: 0
+      Rules: []
+    NoticeIds: []
+    ProjectId: 0
+    GroupBy: []
+    TriggerTasks:
+      - TaskType: RUN_GROUP
+    HierarchicalNotices: []
+    NoticeContentTmplBindInfos: []
+    Tags: []
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

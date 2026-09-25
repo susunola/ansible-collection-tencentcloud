@@ -84,11 +84,16 @@ removed_instances:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Host: 10.0.0.30
+      Port: 8080
 host:
   description:
     - Retired host identity.
   returned: always
   type: str
+  sample: 10.0.0.30
 '''
 
 import json

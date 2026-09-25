@@ -188,7 +188,30 @@ RETURN = r"""cluster:
   description:
     - Effective DB Custom cluster detail including attached nodes.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ClusterId: dbcc-123
+    ClusterName: prod-dbcc
+    ClusterDescription: production db custom
+    ClusterStatus: Running
+    DeletionProtection: true
+    Tags:
+      - Key: env
+        Value: staging
+      - Key: team
+        Value: infra
+    ContainerNetwork:
+      VpcId: vpc-0a1
+      SubnetIds:
+        - subnet-1
+        - subnet-2
+    ApiServerNetwork:
+      VpcId: vpc-0a1
+      SubnetId: subnet-1
+    Nodes:
+      - NodeId: dbcn-222
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

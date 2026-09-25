@@ -63,7 +63,11 @@ RETURN = r"""whitelist:
     - Effective whitelist.
   returned: always
   type: list
-  elements: str"""
+  elements: str
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - 203.0.113.10/32
+"""
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -109,7 +109,11 @@ RETURN = r"""privileges:
     - Effective sorted privilege names.
   returned: always
   type: list
-  elements: str"""
+  elements: str
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - SELECT
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

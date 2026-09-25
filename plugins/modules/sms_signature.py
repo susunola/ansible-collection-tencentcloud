@@ -150,10 +150,12 @@ sign_id:
   description: ID of the matched or newly applied signature.
   returned: when known
   type: int
+  sample: 9999
 sign_name:
   description: Name of the managed signature.
   returned: always
   type: str
+  sample: Tencent Cloud
 status_code:
   description:
     - Review status of the existing signature. 0 means active, 1 means in
@@ -161,6 +163,7 @@ status_code:
       otherwise unavailable.
   returned: when a matching signature exists
   type: int
+  sample: 1
 review_reply:
   description: Review feedback, usually the rejection reason.
   returned: when a matching signature exists
@@ -169,6 +172,7 @@ changed:
   description: Whether an API write happened.
   returned: always
   type: bool
+  sample: false
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

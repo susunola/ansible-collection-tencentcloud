@@ -88,7 +88,17 @@ RETURN = r"""referer:
   description:
     - Effective hotlink-protection configuration.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Status: Enabled
+    RefererType: White-List
+    EmptyReferConfiguration: Allow
+    DomainList:
+      Domain:
+        - api.example.com
+        - www.example.com
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_referer as normalize, get_referer
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

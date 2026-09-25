@@ -117,6 +117,14 @@ ccn:
     - CCN metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    CcnId: ccn-new-001
+    CcnName: global-backbone
+    CcnDescription: Production multi-region network
+    RouteECMPFlag: false
+    RouteOverlapFlag: false
+    TrafficMarkingPolicyFlag: false
 '''
 
 import time

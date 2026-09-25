@@ -85,7 +85,22 @@ RETURN = r"""backup_config:
   description:
     - Normalized MariaDB backup configuration.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    retention_days: 7
+    start_time: '23:00'
+    end_time: '23:30'
+    weekdays:
+      - Monday
+      - Tuesday
+      - Wednesday
+      - Thursday
+      - Friday
+      - Saturday
+      - Sunday
+    archive_after_days: 180
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

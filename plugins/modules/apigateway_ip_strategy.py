@@ -84,18 +84,22 @@ service_id:
   description: Service ID the operation targeted.
   returned: always
   type: str
+  sample: service-abc
 strategy_name:
   description: Strategy name the operation targeted.
   returned: always
   type: str
+  sample: allow-office
 strategy_id:
   description: Server-assigned strategy ID after a create, or the matched strategy ID.
   returned: always
   type: str
+  sample: strat-1
 exists:
   description: Whether the IP strategy exists after the operation.
   returned: always
   type: bool
+  sample: false
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

@@ -291,6 +291,16 @@ RETURN = r"""job_config:
     - Effective configuration version.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ProgramArgs: SELECT 1
+    Remark: first cut
+    DefaultParallelism: 4
+    JobId: cql-abcdefgh
+    WorkSpaceId: space-abcdefgh
+    AutoDelete: 0
+    ConfigScope: 0
+    Version: 1
 version:
   description:
     - Effective configuration version number.

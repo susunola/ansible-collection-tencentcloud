@@ -186,6 +186,21 @@ cluster:
   description: Effective THPC cluster overview.
   type: dict
   returned: always
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ClusterId: hpc-1
+    ClusterName: prod-hpc
+    ClusterStatus: RUNNING
+    DeletionProtection: 'OFF'
+    Placement:
+      Zone: ap-guangzhou-3
+    VpcId: vpc-1
+    SchedulerType: SLURM
+    SchedulerVersion: '2025.1'
+    ManagerNodeCount: 2
+    ComputeNodeCount: 3
+    LoginNodeCount: 1
+    AutoScalingType: THPC_AS
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

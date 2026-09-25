@@ -177,6 +177,26 @@ network_acl:
     - Network ACL metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    NetworkAclId: acl-new-001
+    NetworkAclName: app-acl
+    VpcId: vpc-8b0a1c2d
+    IngressEntries:
+      - Protocol: TCP
+        Action: ACCEPT
+        Priority: 1
+        Description: ''
+        Port: '443'
+        CidrBlock: 10.0.0.0/8
+    EgressEntries:
+      - Protocol: ALL
+        Action: ACCEPT
+        Priority: 1
+        Description: ''
+        CidrBlock: 0.0.0.0/0
+    SubnetSet:
+      - SubnetId: subnet-aaaa
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

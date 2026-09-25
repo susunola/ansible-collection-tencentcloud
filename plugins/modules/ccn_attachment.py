@@ -105,6 +105,12 @@ attachment:
     - CCN attachment metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InstanceId: vpc-8b0a1c2d
+    InstanceRegion: ap-guangzhou
+    InstanceType: VPC
+    Description: production
 '''
 
 import time

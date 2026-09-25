@@ -83,11 +83,18 @@ parameters:
     - Effective requested parameters including constraints and restart requirements.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    max_connections:
+      Param: max_connections
+      Value: '2000'
+      NeedRestart: false
 restart_required:
   description:
     - Whether any changed parameter requires a restart.
   returned: always
   type: bool
+  sample: false
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

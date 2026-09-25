@@ -154,7 +154,23 @@ RETURN = r"""rules:
   description:
     - Current normalized precise rate-limiting rules.
   returned: always
-  type: list"""
+  type: list
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - name: login_limit
+      condition: $http.request.uri.path eq '/login'
+      mode: Block
+      count_by:
+        - http.request.ip
+      threshold: 30
+      counting_period: 1m
+      action_duration: 10m
+      action: Redirect
+      challenge_option: ManagedChallenge
+      redirect_url: https://verify.example.com
+      priority: 0
+      enabled: true
+"""
 
 import re
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

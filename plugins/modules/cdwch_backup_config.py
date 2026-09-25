@@ -82,7 +82,22 @@ RETURN = r"""backup_config:
   description:
     - Effective backup configuration.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    enabled: true
+    meta_strategy:
+      RetainDays: 30
+      WeekDays: 1,3,5
+      ExecuteHour: 2
+    data_strategy:
+      RetainDays: 14
+      WeekDays: 0,6
+      ExecuteHour: 3
+    backup_tables:
+      - Database: analytics
+        Table: events
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

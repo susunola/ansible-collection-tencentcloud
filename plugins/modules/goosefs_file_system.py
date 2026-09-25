@@ -117,7 +117,19 @@ RETURN = r"""file_system:
   description:
     - Effective GooseFS file system metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    FileSystemId: fs-1
+    Name: analytics-cache
+    Description: Analytics cache
+    VpcId: vpc-1
+    SubnetId: subnet-1
+    Zone: ap-guangzhou-3
+    Type: GooseFSx
+    GooseFSxAttribute:
+      Capacity: 20
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

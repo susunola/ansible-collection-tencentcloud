@@ -200,7 +200,18 @@ RETURN = r"""secret:
   description:
     - Effective metadata without credential values.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    SecretName: orders-db-managed
+    Description: managed by Ansible
+    ProductName: Mysql
+    ResourceID: cdb-xxxxxxxx
+    Status: PendingDelete
+    RotationStatus: 0
+    RotationFrequency: 30
+    RequestId: req-describe
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found

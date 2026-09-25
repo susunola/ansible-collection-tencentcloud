@@ -170,11 +170,30 @@ session:
     - Effective Notebook session metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    SessionId: sess-new-001
+    Name: analyst-pyspark
+    State: idle
+    Kind: pyspark
+    DataEngineName: production-spark
+    Arguments:
+      - Key: spark.executor.memory
+        Value: 8g
+    ProgramDependentFiles:
+      - cosn://b/a.py
+      - cosn://b/b.py
+    ExecutorNumbers: 2
+    ExecutorMaxNumbers: 4
+    ProgramDependentJars: []
+    ProgramDependentPython: []
+    ProgramArchives: []
 session_id:
   description:
     - DLC Notebook session ID.
   returned: when present
   type: str
+  sample: sess-new-001
 """
 
 import json

@@ -157,7 +157,18 @@ RETURN = r"""cluster:
   description:
     - Effective TcaplusDB cluster metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ClusterId: cluster-1a2b3c4d
+    ClusterName: renamed-tcaplus
+    IdlType: TDR
+    VpcId: vpc-1111
+    SubnetId: subnet-2222
+    ClusterStatus: 1
+    ClusterType: 1
+    Password: old-secret
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

@@ -204,7 +204,29 @@ RETURN = r"""instance:
   description:
     - Effective VectorDB instance metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InstanceId: vdb-1
+    Name: prod-vdb
+    Status: running
+    Zone: ap-guangzhou-3
+    ProductType: 1
+    InstanceType: NORMAL
+    EngineName: VectorDB
+    EngineVersion: '1.0'
+    NodeType: nvme
+    Networks:
+      - VpcId: vpc-1
+        SubnetId: subnet-1
+    Cpu: 8
+    Memory: 16
+    Disk: 500
+    ReplicaNum: 5
+    SecurityGroupIds:
+      - sg-1
+      - sg-2
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

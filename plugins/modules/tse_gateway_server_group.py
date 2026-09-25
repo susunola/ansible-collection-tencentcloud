@@ -102,11 +102,24 @@ group:
     - Effective server group metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    GroupId: group-sec-001
+    Name: production-secondary-v2
+    Status: Running
+    IsFirstGroup: 0
+    SubnetIds: subnet-1
+    InternetMaxBandwidthOut: 2
+    Description: secondary production pool
+    NodeConfig:
+      Specification: 4c8g
+      Number: 3
 task_id:
   description:
     - Latest asynchronous task ID.
   returned: when supplied by Tencent Cloud
   type: str
+  sample: task-1
 """
 import json
 import time

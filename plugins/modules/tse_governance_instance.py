@@ -145,7 +145,20 @@ RETURN = r"""governance_instance:
   description:
     - Effective governance service instance metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Service: orders
+    Namespace: production
+    Host: 10.0.0.30
+    Port: 8080
+    Protocol: http
+    Weight: 100
+    Id: gov-001
+    Metadatas:
+      - Key: environment
+        Value: production
+"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

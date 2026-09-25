@@ -141,7 +141,21 @@ RETURN = r"""instance:
   description:
     - Effective MariaDB instance metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InstanceId: tdsql-mariadb-1
+    InstanceName: renamed-mariadb
+    Status: 2
+    Paymode: postpaid_by_hour
+    Memory: 8
+    Storage: 100
+    Zone: ap-guangzhou-3
+    DbVersionId: '10.1'
+    UniqueVpcId: vpc-aaa111
+    UniqueSubnetId: subnet-bbb222
+    NodeCount: 2
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

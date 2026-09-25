@@ -157,6 +157,21 @@ queue:
   description: Effective DLC partition queue metadata.
   type: dict
   returned: always
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Id: 1001
+    PartitionCode: rp-8b0a1c2d
+    QueueName: notebooks
+    IsDefault: false
+    Description: Interactive analytics capacity
+    QueueType: 1
+    ResourceUsage:
+      - ResourceSpec:
+          ResourceType: CU
+          BillingItem: sv_dlc_standard_cu_standard_cu
+          Spec: 0:1:4:0
+        Min: 32
+        Max: 128
 queue_id:
   description: DLC partition queue ID.
   type: int

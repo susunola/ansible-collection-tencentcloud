@@ -106,7 +106,16 @@ RETURN = r"""user:
   description:
     - RabbitMQ user metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    User: application
+    Description: api
+    Tags:
+      - management
+    MaxConnections: 100
+    CamAuthEnabled: true
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

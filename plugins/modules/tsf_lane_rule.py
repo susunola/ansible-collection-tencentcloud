@@ -114,7 +114,20 @@ RETURN = r"""lane_rule:
   description:
     - Effective TSF lane rule metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    RuleId: lane-rule-new-001
+    RuleName: checkout-canary-header
+    Remark: checkout canary
+    LaneId: lane-xxx
+    RuleTagRelationship: RELEATION_AND
+    RuleTagList:
+      - TagName: x-canary
+        TagOperator: EQUAL
+        TagValue: 'true'
+    Enable: false
+"""
 
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

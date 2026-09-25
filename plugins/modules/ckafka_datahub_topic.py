@@ -84,7 +84,14 @@ RETURN = r"""datahub_topic:
   description:
     - CKafka Datahub topic metadata without username or password.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Name: 1250000000-orders-stream
+    PartitionNum: 6
+    RetentionMs: 604800000
+    Note: Order event stream
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found

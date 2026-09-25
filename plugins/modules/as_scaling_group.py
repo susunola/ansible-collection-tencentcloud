@@ -150,6 +150,27 @@ scaling_group:
     - Auto Scaling group metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    AutoScalingGroupId: asg-new-1
+    AutoScalingGroupName: web-fleet
+    LaunchConfigurationId: asc-abc
+    VpcId: vpc-abc
+    SubnetIdSet:
+      - subnet-aaa
+      - subnet-bbb
+    MinSize: 0
+    MaxSize: 5
+    DesiredCapacity: 0
+    DefaultCooldown: 120
+    TerminationPolicySet:
+      - NEWEST_INSTANCE
+    RetryPolicy: INCREMENTAL_INTERVALS
+    MultiZoneSubnetPolicy: EQUALITY
+    HealthCheckType: CLB
+    CapacityRebalance: true
+    ProjectId: 1001
+    AutoScalingGroupStatus: NORMAL
 '''
 
 import time

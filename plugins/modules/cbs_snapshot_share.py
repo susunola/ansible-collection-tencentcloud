@@ -68,7 +68,11 @@ RETURN = r"""share_permissions:
     - Effective sorted recipient account IDs.
   returned: always
   type: list
-  elements: str"""
+  elements: str
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - '100001122000'
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

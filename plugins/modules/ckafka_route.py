@@ -116,7 +116,16 @@ RETURN = r"""route:
   description:
     - CKafka route metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    RouteId: 1001
+    VipType: 3
+    AccessType: 0
+    VpcId: vpc-1
+    Subnet: subnet-1
+    Note: orders
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

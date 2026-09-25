@@ -87,7 +87,13 @@ RETURN = r"""targets:
     - Effective ALB backend targets.
   returned: always
   type: list
-  elements: dict"""
+  elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - ip: 10.0.1.10
+      port: 8080
+      weight: 80
+"""
 import time
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

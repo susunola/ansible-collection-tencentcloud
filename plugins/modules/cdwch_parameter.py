@@ -96,11 +96,17 @@ RETURN = r"""parameter:
     - Effective parameter metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ConfKey: max_concurrent_queries
+    ConfValue: '200'
+    NeedRestart: false
 restart_required:
   description:
     - Whether the service marks this parameter as requiring restart.
   returned: always
   type: bool
+  sample: false
 flow_id:
   description:
     - Asynchronous change flow ID.

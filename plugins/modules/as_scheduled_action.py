@@ -111,7 +111,20 @@ RETURN = r"""scheduled_action:
   description:
     - Scheduled action metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ScheduledActionId: asa-2001
+    ScheduledActionName: weekday-scale-out
+    AutoScalingGroupId: asg-1001
+    MinSize: 2
+    DesiredCapacity: 4
+    MaxSize: 8
+    StartTime: '2026-09-01T01:00:00+08:00'
+    EndTime: '2026-12-31T23:59:59+08:00'
+    Recurrence: 0 0 9 * * MON-FRI
+    DisableUpdateDesiredCapacity: true
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

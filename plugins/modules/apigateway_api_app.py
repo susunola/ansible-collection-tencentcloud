@@ -72,14 +72,17 @@ api_app_name:
   description: Name of the API Gateway application the operation targeted.
   returned: always
   type: str
+  sample: mobile-client
 api_app_id:
   description: Application ID of the API app after the operation (empty when absent).
   returned: always
   type: str
+  sample: app-1
 exists:
   description: Whether the API app exists after the operation.
   returned: always
   type: bool
+  sample: false
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

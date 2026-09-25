@@ -71,7 +71,16 @@ RETURN = r"""waf_protection:
   description:
     - Effective WAF state for the requested scope and resources.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Scope: Service
+    Status:
+      svc-1: true
+      svc-2: true
+    AffectedResourceIds:
+      - svc-2
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

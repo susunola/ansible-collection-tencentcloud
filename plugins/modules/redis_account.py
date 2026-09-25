@@ -108,7 +108,18 @@ RETURN = r"""account:
   description:
     - Redis account metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InstanceId: crs-abc123
+    AccountName: application
+    AccountPassword: new-secret
+    Privilege: rw
+    ReadonlyPolicy:
+      - master
+    Remark: billing app
+    EncryptPassword: false
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

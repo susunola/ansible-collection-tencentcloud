@@ -126,18 +126,22 @@ cluster_id:
   description: ID of the matched or newly created cluster.
   returned: when known
   type: str
+  sample: eks-fake-0001
 cluster_name:
   description: Name of the managed cluster.
   returned: always
   type: str
+  sample: eks-prod
 status:
   description: Status of the existing cluster.
   returned: when a matching cluster exists
   type: str
+  sample: running
 changed:
   description: Whether an API write happened.
   returned: always
   type: bool
+  sample: false
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

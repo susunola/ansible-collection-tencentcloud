@@ -86,16 +86,28 @@ RETURN = r"""savepoint:
     - Existing or newly created savepoint metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Id: 2
+    SerialId: sp-new-00000001
+    Description: before-release-2026-08-31
+    Status: 1
+    RecordType: 1
+    Path: cos://savepoint-1250000000/sp-new-00000001
+    CreateTime: 99
 savepoint_id:
   description:
     - Savepoint serial ID.
   returned: when available
   type: str
+  sample: sp-new-00000001
 savepoint_path:
   description:
     - Savepoint restore path.
   returned: when available
-  type: str"""
+  type: str
+  sample: cos://savepoint-1250000000/sp-new-00000001
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.waiters import wait_for_task

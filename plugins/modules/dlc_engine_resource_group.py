@@ -159,11 +159,34 @@ RETURN = r"""resource_group:
     - Effective standard engine resource-group metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    EngineResourceGroupId: rg-8b0a1c2d
+    EngineResourceGroupName: spark-etl
+    DataEngineName: spark-prod
+    ResourceGroupState: 2
+    NetworkConfigNames:
+      - base
+      - data
+    StaticConfig:
+      spark.sql.shuffle.partitions: '200'
+    DynamicConfig:
+      spark.executor.heartbeatInterval: 10s
+    AutoLaunch: 0
+    AutoPause: 0
+    AutoPauseTime: 15
+    MaxConcurrency: 8
+    DriverCuSpec: medium
+    ExecutorCuSpec: large
+    MinExecutorNums: 2
+    MaxExecutorNums: 10
 resource_group_id:
   description:
     - Standard engine resource-group ID.
   returned: when present
-  type: str"""
+  type: str
+  sample: rg-8b0a1c2d
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

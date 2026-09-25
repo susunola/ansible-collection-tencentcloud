@@ -113,7 +113,25 @@ RETURN = r"""rule:
   description:
     - Effective OWASP allowlist rule.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    RuleId: 100
+    Name: allow-health-signatures
+    Domain: api.example.com
+    Ids:
+      - 100001
+      - 100002
+    Type: 0
+    Strategies:
+      - Field: URI
+        Arg: ''
+        CompareFunc: prefix
+        Content: /health
+    LogicalOp: and
+    Status: 1
+    ExpireTime: 0
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

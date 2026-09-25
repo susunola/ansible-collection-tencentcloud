@@ -222,11 +222,32 @@ RETURN = r"""data_engine:
     - Effective DLC data-engine metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    DataEngineId: engine-8b0a1c2d
+    DataEngineName: spark-prod
+    State: 2
+    EngineType: spark
+    EngineTypeDetail: SparkSQL
+    EngineExecType: SQL
+    ClusterType: spark_cu
+    Mode: 1
+    PayMode: 0
+    Message: renamed description
+    Size: 16
+    MinClusters: 1
+    MaxClusters: 3
+    AutoResume: true
+    ImageVersionName: '0.9'
+    ImageVersionId: img-0
+    StartStandbyCluster: false
 data_engine_id:
   description:
     - DLC data-engine ID.
   returned: when present
-  type: str"""
+  type: str
+  sample: engine-8b0a1c2d
+"""
 
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

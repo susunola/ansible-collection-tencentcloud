@@ -97,7 +97,26 @@ RETURN = r"""strategy:
   description:
     - Effective autoscaling strategy.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    GatewayId: gateway-1001
+    StrategyId: strategy-1001
+    StrategyName: production-elasticity
+    Description: peak-time elasticity
+    Config:
+      Enabled: true
+      MaxReplicas: 10
+      Metrics:
+        - Type: Resource
+          ResourceName: cpu
+          TargetType: Utilization
+          TargetValue: 60
+    CronConfig:
+      Enabled: false
+      Params: []
+    MaxReplicas: 25
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

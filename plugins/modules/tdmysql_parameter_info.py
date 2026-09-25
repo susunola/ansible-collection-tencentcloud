@@ -59,6 +59,26 @@ parameters:
     - Parameter metadata keyed by name.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    max_connections:
+      Param: max_connections
+      Value: '151'
+      Default: '151'
+      NeedRestart: 0
+      Description: Maximum permitted simultaneous client connections
+    slow_query_log:
+      Param: slow_query_log
+      Value: 'ON'
+      Default: 'OFF'
+      NeedRestart: 1
+      Description: Whether the slow query log is enabled
+    innodb_buffer_pool_size:
+      Param: innodb_buffer_pool_size
+      Value: '134217728'
+      Default: '134217728'
+      NeedRestart: 0
+      Description: InnoDB buffer pool size in bytes
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

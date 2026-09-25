@@ -108,7 +108,20 @@ RETURN = r"""namespace:
   description:
     - TDMQ Pulsar namespace metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    EnvironmentId: ns-prod
+    ClusterId: pulsar-1
+    MsgTTL: 604800
+    Remark: production
+    RetentionPolicy:
+      TimeInMinutes: 1440
+      SizeInMB: 10240
+    AutoSubscriptionCreation: true
+    SubscriptionExpirationTimeEnable: true
+    SubscriptionExpirationTime: 3600
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

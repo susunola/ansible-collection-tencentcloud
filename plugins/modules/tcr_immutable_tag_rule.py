@@ -111,10 +111,12 @@ registry_id:
   description: Registry ID the operation targeted.
   returned: always
   type: str
+  sample: tcr-abc
 namespace_name:
   description: Namespace name the operation targeted.
   returned: always
   type: str
+  sample: prod
 rule_id:
   description: Server-assigned rule ID after a create, or the matched rule ID.
   returned: always
@@ -123,6 +125,7 @@ exists:
   description: Whether the immutable tag rule exists after the operation.
   returned: always
   type: bool
+  sample: false
 '''
 
 import json

@@ -88,7 +88,19 @@ RETURN = r"""parameter_template:
   description:
     - Redis parameter template metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    TemplateId: tmpl-1a2b3c4d
+    Name: production-redis
+    Description: ''
+    ProductType: 2
+    Items:
+      - Name: maxmemory-policy
+        CurrentValue: allkeys-lru
+      - Name: timeout
+        CurrentValue: '300'
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

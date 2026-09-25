@@ -108,7 +108,25 @@ RETURN = r"""rule:
   description:
     - WAF attack-signature allow-rule metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    WhiteRuleId: 7
+    Name: allow-health-check
+    Domain: api.example.com
+    Status: 1
+    Mode: 1
+    SignatureIds:
+      - '100001'
+      - '100002'
+    TypeIds:
+      - '200001'
+    MatchInfo:
+      - MatchField: URI
+        MatchMethod: prefix
+        MatchContent: /health
+        MatchParams: ''
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

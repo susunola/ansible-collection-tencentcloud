@@ -123,11 +123,19 @@ RETURN = r"""workload_group:
     - Effective workload group.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    WorkloadGroupName: interactive
+    CpuShare: 900
+    MemoryLimit: 40
+    MaxConcurrencyNum: 30
 workload_groups_status:
   description:
     - Instance-wide workload-group status.
   returned: always
-  type: str"""
+  type: str
+  sample: close
+"""
 
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

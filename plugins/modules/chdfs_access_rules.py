@@ -80,7 +80,14 @@ RETURN = r"""rules:
     - Effective CHDFS access rules.
   returned: always
   type: list
-  elements: dict"""
+  elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - AccessRuleId: ar-12
+      Address: 192.168.1.0/24
+      AccessMode: 1
+      Priority: 20
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

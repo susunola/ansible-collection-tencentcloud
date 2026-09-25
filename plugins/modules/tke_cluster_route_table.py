@@ -84,10 +84,12 @@ route_table_name:
   description: Route table name the operation targeted.
   returned: always
   type: str
+  sample: cls-abc123
 exists:
   description: Whether the route table exists after the operation.
   returned: always
   type: bool
+  sample: false
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

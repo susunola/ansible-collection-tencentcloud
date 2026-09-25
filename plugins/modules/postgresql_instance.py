@@ -166,7 +166,21 @@ RETURN = r"""instance:
   description:
     - Effective PostgreSQL instance metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    DBInstanceId: postgres-8b0a1c2d
+    DBInstanceName: production-postgres
+    Zone: ap-guangzhou-3
+    VpcId: vpc-abc
+    SubnetId: subnet-abc
+    DBInstanceCpu: 2
+    DBInstanceMemory: 4
+    DBInstanceStorage: 100
+    DBMajorVersion: '15'
+    AutoRenew: 0
+    DBInstanceStatus: isolated
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import resolver
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

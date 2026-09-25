@@ -115,7 +115,17 @@ RETURN = r"""rule:
   description:
     - Cloud Firewall NAT DNAT rule metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    FwInsId: cfwnat-abc
+    IpProtocol: TCP
+    PublicIpAddress: 203.0.113.10
+    PublicPort: 443
+    PrivateIpAddress: 10.0.1.99
+    PrivatePort: 9000
+    Description: app https
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

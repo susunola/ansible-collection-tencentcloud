@@ -105,7 +105,15 @@ RETURN = r"""api_key:
     - API key metadata. C(AccessKeySecret) is present only on the run that created the key,
       and only when I(reveal_secret_value=true).
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    AccessKeyId: AKID-2001
+    SecretName: production-client
+    AccessKeyType: auto
+    AccessKeySecret: secret-3001
+    Status: 1
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found

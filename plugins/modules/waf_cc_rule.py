@@ -162,7 +162,26 @@ RETURN = r"""rule:
   description:
     - WAF CC rule metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Name: protect-login
+    Status: 1
+    Advance: '0'
+    Limit: '100'
+    Interval: '60'
+    ActionType: '22'
+    Priority: 50
+    ValidTime: 600
+    Url: /login
+    MatchFunc: 0
+    Options: '[]'
+    SessionApplied: []
+    LimitMethod: only_limit
+    LogicalOp: and
+    ActionRatio: 100
+    RuleId: 70001
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -103,6 +103,14 @@ repository:
   description: Repository returned by Tencent Cloud, or null after deletion.
   type: dict
   returned: always
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    RegistryId: tcr-abc
+    NamespaceName: production
+    Name: api
+    RepositoryName: api
+    BriefDescription: Production API images
+    Description: ''
 '''
 
 

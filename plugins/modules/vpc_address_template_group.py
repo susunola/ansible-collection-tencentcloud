@@ -78,7 +78,15 @@ RETURN = r"""address_template_group:
   description:
     - Effective template-group metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    AddressTemplateGroupId: ipmg-n0001
+    AddressTemplateGroupName: trusted-sources
+    AddressTemplateIdSet:
+      - ipm-1001
+      - ipm-1002
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

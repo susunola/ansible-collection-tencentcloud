@@ -94,6 +94,7 @@ name:
   description: Alarm notice name the operation targeted.
   returned: always
   type: str
+  sample: oncall-email
 alarm_notice_id:
   description: Server-assigned alarm notice ID after a create, or the matched notice ID.
   returned: always
@@ -102,6 +103,7 @@ exists:
   description: Whether the alarm notice exists after the operation.
   returned: always
   type: bool
+  sample: false
 '''
 
 import json

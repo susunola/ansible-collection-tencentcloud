@@ -79,18 +79,27 @@ RETURN = r"""waf_domains:
   returned: always
   type: list
   elements: str
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - www.example.com
 added_domains:
   description:
     - Domains this run added to the gateway's WAF domain list.
   returned: when the domain set changed
   type: list
   elements: str
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - docs.example.com
 removed_domains:
   description:
     - Domains this run removed from the gateway's WAF domain list.
   returned: when the domain set changed
   type: list
   elements: str
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - www.example.com
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

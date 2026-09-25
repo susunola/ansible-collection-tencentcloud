@@ -81,7 +81,13 @@ RETURN = r"""logging:
   description:
     - Effective logging configuration.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    LoggingEnabled:
+      TargetBucket: audit-logs-1250000000
+      TargetPrefix: cos/application-data/
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -91,6 +91,11 @@ customer_gateway:
   description: Customer gateway metadata.
   type: dict
   returned: always
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    CustomerGatewayId: cgw-1
+    CustomerGatewayName: office
+    IpAddress: 203.0.113.10
 '''
 
 import time

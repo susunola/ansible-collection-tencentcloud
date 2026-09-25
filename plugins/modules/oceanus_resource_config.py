@@ -104,6 +104,20 @@ RETURN = r"""resource_config:
     - Effective immutable resource version.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ResourceId: resource-8b0a1c2d
+    WorkSpaceId: space-8b0a1c2d
+    ResourceLoc:
+      StorageType: 1
+      Param:
+        Bucket: flink-artifacts-1250000000
+        Path: jars/orders-1.2.jar
+        Region: ap-guangzhou
+    Remark: release-1.2
+    AutoDelete: 0
+    Version: 4
+    Status: 1
 version:
   description:
     - Effective resource version number.

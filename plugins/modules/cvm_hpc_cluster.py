@@ -97,7 +97,16 @@ RETURN = r"""hpc_cluster:
   description:
     - Effective HPC cluster metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    HpcClusterId: hpc-2001
+    Name: rdma-production
+    Zone: ap-guangzhou-3
+    Remark: managed by Ansible
+    HpcClusterType: CDC
+    HpcClusterBusinessId: biz-1
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

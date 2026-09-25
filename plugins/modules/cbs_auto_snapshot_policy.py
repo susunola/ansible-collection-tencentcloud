@@ -108,7 +108,29 @@ RETURN = r"""policy:
   description:
     - CBS automatic snapshot policy metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    AutoSnapshotPolicyId: asp-fake-10001
+    AutoSnapshotPolicyName: nightly
+    Policy:
+      - Hour:
+          - 2
+        DayOfWeek:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+    IsActivated: 1
+    IsPermanent: 0
+    RetentionDays: 7
+    DiskIdSet:
+      - disk-a
+      - disk-b
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

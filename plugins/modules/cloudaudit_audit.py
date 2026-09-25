@@ -128,7 +128,24 @@ RETURN = r"""audit:
   description:
     - Account-level CloudAudit configuration.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    AuditName: default
+    AuditStatus: '1'
+    ReadWriteAttribute: 3
+    CosRegion: ap-guangzhou
+    CosBucketName: audit-logs-1250000000
+    IsCreateNewBucket: 0
+    LogFilePrefix: CloudAudit
+    IsEnableCmqNotify: 1
+    CmqRegion: ap-shanghai
+    CmqQueueName: queue-audit
+    IsCreateNewQueue: 0
+    IsEnableKmsEncry: 1
+    KmsRegion: ap-shanghai
+    KeyId: key-abc
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

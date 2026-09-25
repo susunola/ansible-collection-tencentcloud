@@ -103,7 +103,15 @@ RETURN = r"""user:
   description:
     - RabbitMQ Serverless user metadata without password.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    User: application
+    Description: ''
+    Tags: []
+    MaxConnections: 200
+    MaxChannels: 100
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

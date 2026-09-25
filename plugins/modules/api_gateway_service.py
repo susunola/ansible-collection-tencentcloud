@@ -112,6 +112,16 @@ service:
     - API Gateway service metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ServiceId: service-abc123
+    ServiceName: order-api
+    ServiceDesc: Order service APIs
+    Protocol: http&https
+    NetTypes:
+      - INNER
+      - OUTER
+    Status: active
 '''
 
 import time

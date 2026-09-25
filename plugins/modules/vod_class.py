@@ -107,14 +107,17 @@ class_name:
   description: Name of the managed class.
   returned: always
   type: str
+  sample: marketing
 parent_id:
   description: Parent class ID of the managed class.
   returned: always
   type: int
+  sample: -1
 changed:
   description: Whether an API write happened.
   returned: always
   type: bool
+  sample: false
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

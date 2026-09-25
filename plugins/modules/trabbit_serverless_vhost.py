@@ -94,7 +94,15 @@ RETURN = r"""virtual_host:
   description:
     - RabbitMQ Serverless virtual-host metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InstanceId: amqp-abc123
+    VirtualHost: production
+    Description: Renamed production workloads
+    MirrorQueuePolicyFlag: true
+    TraceFlag: false
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import require_immutable_unchanged, fail_from_sdk_error

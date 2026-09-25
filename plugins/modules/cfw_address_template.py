@@ -97,6 +97,14 @@ template:
     - Cloud Firewall address template metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Uuid: cfw-template-abc
+    Name: trusted-networks
+    Detail: Internal networks
+    IpString: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+    Type: 1
+    IpVersion: 0
 '''
 
 import time

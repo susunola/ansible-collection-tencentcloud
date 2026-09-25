@@ -136,6 +136,26 @@ listener:
   description: Observed listener details, or C(null) when absent.
   type: dict
   returned: always
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ListenerId: lbl-8b0a1c2d
+    LoadBalancerId: alb-8b0a1c2d
+    ListenerName: https-prod
+    ListenerPort: 443
+    ListenerProtocol: HTTPS
+    DefaultActions:
+      - Type: ForwardGroup
+        TargetGroupConfig:
+          TargetGroups:
+            - TargetGroupId: alb-tg-8b0a1c2d
+              Weight: 100
+    CertificateIds: []
+    CaEnabled: false
+    CaCertificateIds: []
+    GzipEnabled: true
+    IdleTimeout: 15
+    RequestTimeout: 60
+    Tags: []
 """
 import json
 import time

@@ -74,6 +74,10 @@ ssl:
     - Effective SSL state.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InstanceId: tdsql3-abcdef12
+    SSLStatus: disabled
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

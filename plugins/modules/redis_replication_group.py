@@ -80,6 +80,7 @@ group_name:
   description: Replication group name the operation targeted.
   returned: always
   type: str
+  sample: app-cache-ha
 group_id:
   description: Server-assigned group ID after a create, or the matched group ID.
   returned: always
@@ -88,6 +89,7 @@ exists:
   description: Whether the replication group exists after the operation.
   returned: always
   type: bool
+  sample: false
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

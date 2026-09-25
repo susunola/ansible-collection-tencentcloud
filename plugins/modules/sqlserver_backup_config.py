@@ -83,7 +83,21 @@ RETURN = r"""backup_config:
   description:
     - Effective SQL Server backup configuration.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    InstanceId: mssql-abc123
+    Region: ap-guangzhou
+    Name: orders-db
+    BackupCycleType: weekly
+    BackupTime: 03:00
+    BackupCycle:
+      - 1
+      - 3
+      - 5
+    BackupModel: master_pkg
+    BackupSaveDays: 30
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

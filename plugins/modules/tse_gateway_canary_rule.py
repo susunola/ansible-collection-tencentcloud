@@ -96,7 +96,26 @@ RETURN = r"""canary_rule:
   description:
     - Effective canary rule.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Priority: 90
+    RuleType: Standard
+    Enabled: true
+    ConditionList:
+      - Type: header
+        Key: X-Canary
+        Operator: exact
+        Value: beta
+    BalancedServiceList:
+      - ServiceID: service-stable
+        Percent: 90
+      - ServiceID: service-canary
+        Percent: 10
+    GatewayId: gateway-abc
+    ServiceId: service-orders
+    CreateTime: '2026-01-01'
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

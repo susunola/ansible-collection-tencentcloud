@@ -111,6 +111,17 @@ record:
     - EdgeOne DNS record metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    RecordId: record-8b0a1c2d
+    ZoneId: zone-abcdef12
+    Name: api.example.com
+    Type: A
+    Content: 203.0.113.20
+    Location: Default
+    TTL: 600
+    Weight: -1
+    Priority: 0
 '''
 
 import time

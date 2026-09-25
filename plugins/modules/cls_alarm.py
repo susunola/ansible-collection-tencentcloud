@@ -105,6 +105,7 @@ name:
   description: Alarm name the operation targeted.
   returned: always
   type: str
+  sample: error-spike
 alarm_id:
   description: Server-assigned alarm ID after a create, or the matched alarm ID.
   returned: always
@@ -113,6 +114,7 @@ exists:
   description: Whether the alarm exists after the operation.
   returned: always
   type: bool
+  sample: false
 '''
 
 import json

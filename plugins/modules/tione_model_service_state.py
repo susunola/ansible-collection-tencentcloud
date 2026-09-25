@@ -97,11 +97,18 @@ service:
     - Effective service detail.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ServiceId: ms-1a2b3c4d
+    Status: stopped
+    ServiceName: bert-classifier
+    Version: v1
 service_id:
   description:
     - Stable service-version ID.
   returned: always
   type: str
+  sample: ms-1a2b3c4d
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -209,11 +209,24 @@ notebook:
     - Effective TIONE notebook detail.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Id: nb-new-001
+    Status: running
+    Name: llm-finetuning
+    ChargeType: POSTPAID_BY_HOUR
+    AutoStopping: true
+    DirectInternetAccess: false
+    VolumeSourceType: CLOUD_PREMIUM
+    VolumeSizeInGB: 100
+    AutomaticStopTime: 4
+    Description: production
 notebook_id:
   description:
     - Stable notebook ID.
   returned: when available
   type: str
+  sample: nb-8b0a1c2d
 """
 
 import json

@@ -83,7 +83,12 @@ RETURN = r"""bindings:
   description:
     - Current template binding records and deployment states.
   returned: always
-  type: list"""
+  type: list
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - Entity: app.example.com
+      Status: online
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

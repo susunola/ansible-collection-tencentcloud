@@ -121,7 +121,27 @@ RETURN = r"""machine_group:
   description:
     - CLS machine group metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    GroupId: group-abc123
+    GroupName: production-web
+    MachineGroupType:
+      Type: ip
+      Values:
+        - 10.0.0.1
+        - 10.0.0.2
+    Tags:
+      - Key: env
+        Value: prod
+      - Key: tier
+        Value: web
+    AutoUpdate: false
+    UpdateStartTime: 00:00:00
+    UpdateEndTime: '23:59:59'
+    ServiceLogging: false
+    DelayCleanupTime: 0
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

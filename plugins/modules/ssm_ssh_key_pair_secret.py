@@ -114,11 +114,20 @@ secret:
     - Effective metadata without private key material.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    SecretName: prod-bastion-key
+    Description: managed by Ansible
+    ResourceName: prod_bastion
+    ProjectID: 0
+    SecretType: 2
+    Status: PendingDelete
 ssh_key_id:
   description:
     - Created CVM key-pair ID; returned only on creation.
   returned: changed
   type: str
+  sample: skey-created-001
 """
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

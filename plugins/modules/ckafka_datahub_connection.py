@@ -94,7 +94,17 @@ RETURN = r"""connection:
   description:
     - CKafka Datahub connection metadata with credential fields removed.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ResourceId: cc-fake-001
+    ResourceName: analytics-kafka
+    Type: KAFKA
+    Description: Analytics destination
+    KafkaConnectParam:
+      Resource: ckafka-8b0a1c2d
+      SelfBuilt: false
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found

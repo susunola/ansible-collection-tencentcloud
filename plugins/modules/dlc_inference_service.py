@@ -195,11 +195,29 @@ inference_service:
     - Effective inference-service metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ServiceId: isvc-new-001
+    Name: bge-openai
+    Status: Running
+    ModelUid: model-bge-managed
+    Engine: vllm
+    Replicas: 2
+    ResourcePartitionId: rp-00000001
+    Image: ccr.ccs.tencentyun.com/inference/vllm:stable
+    ModelIdentifier: bge-production
+    Queue: inference
+    ResourceTags:
+      - TagKey: env
+        TagValue: prod
+      - TagKey: team
+        TagValue: ml
 service_id:
   description:
     - Stable DLC inference-service ID.
   returned: always
   type: str
+  sample: isvc-8b0a1c2d
 """
 
 import json

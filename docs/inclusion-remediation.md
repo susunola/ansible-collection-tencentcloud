@@ -69,6 +69,7 @@ Each claim below is checkable with the command in the same row.
 | Every module documents the keys it returns | `python scripts/check_return_docs.py --check` |
 | The examples and every integration target resolve | `python scripts/check_examples.py --check` |
 | Every shared helper is covered by its own tests | `python scripts/check_shared_coverage.py --coverage-xml coverage.xml` |
+| Every captured `RETURN` sample still matches the payload its module's tests produce | `python scripts/add_return_samples.py --check` |
 | The SDK release the artifacts were generated from is one users may install | `python scripts/check_sdk_drift.py --check` |
 | Every SDK reference resolves at the declared SDK floor | `python scripts/check_sdk_floor.py --check` |
 | The debt censuses are frozen and may only shrink | `python scripts/check_quality_gates.py` |
@@ -141,6 +142,35 @@ gate: it required the rules to derive an attribute before comparing support, so
 a module documenting `diff_mode` while never calling `maybe_diff` was skipped
 instead of reported. Three ALB modules were in exactly that state — they build
 a diff and never said so — and the hole is closed.
+
+**The samples.** 976 of the 1,027 modules named their return keys and never
+showed the shape behind them. The obvious generator — walk the SDK response
+model — was tried and rejected: it produced 110 lines of `"string"` and `0` for
+`cvm_instance`, longer than the curated sample and saying less. The source that
+does work is the module's own unit tests: each already builds a payload and
+asserts on it, so `scripts/add_return_samples.py` runs the module test suite
+with a recorder on the harness's `exit_json`, keeps what every module actually
+produced, and documents that — minus `None` values and the keys Ansible adds to
+every result. 413 modules gained a sample that way, and the census moved from
+976 to 563.
+
+Two limits are deliberate rather than worked around:
+
+- **generated modules are skipped.** `generate_info_modules.py` owns their
+  `RETURN` and its `--check` would flag the edit, so the 502 generated modules
+  keep an unsampled `RETURN` until the generator learns to emit one.
+- **only what a test produced is written.** A documented key no payload
+  carried keeps its description and no sample, rather than gaining something
+  plausible. Two keys are in that state for a different reason: their payload
+  is a base64 blob or a one-line JSON document that cannot be wrapped under
+  the 160-character line the pep8 test allows.
+
+A sample the script wrote carries a marker comment (YAML drops comments, so
+the rendered docs are unchanged) and `--check` re-runs the capture and fails
+when one stops matching the payloads its tests produce. Hand-written samples
+are exempt on purpose: `vpc` documents the fields the API returns while its
+unit test stubs six of them, and a check that called that a defect would be
+wrong about the documentation rather than about the code.
 
 ### Every module that can delete shows how
 
@@ -379,9 +409,9 @@ packages are absent from 3.1.174. That is the mechanism by which a module can
 be shipped that no user of the documented range can run.
 
 Two censuses of existing debt are also frozen as shrink-only lists
-(`scripts/quality_baselines/`) rather than left as bare ceiling numbers: 976
-`RETURN` blocks with no `sample` and 135 core-subset write modules with no
-integration target. A stock ceiling cannot tell "fixed three, broke three"
+(`scripts/quality_baselines/`) rather than left as bare ceiling numbers: 563
+`RETURN` blocks with no `sample` (was 976 before the capture above) and 135
+core-subset write modules with no integration target. A stock ceiling cannot tell "fixed three, broke three"
 apart from "fixed nothing", and it charges a new module for the sins of the
 old ones. A module that is not on a list must not have the finding, a listed
 module that no longer has it must be delisted (the gate names it, and

@@ -87,6 +87,18 @@ service_group:
     - Effective service-group detail.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ServiceGroupId: ms-group-abc
+    AuthorizationEnable: false
+    WeightUpdateStatus: ''
+    Services:
+      - ServiceId: ms-v1
+        Weight: 90
+        Status: Normal
+      - ServiceId: ms-v2
+        Weight: 10
+        Status: Normal
 """
 
 import json

@@ -127,6 +127,18 @@ topic:
     - TDMQ Pulsar topic metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    TopicName: orders
+    ClusterId: pulsar-abc
+    EnvironmentId: production
+    Partitions: 4
+    PulsarTopicType: 2
+    Remark: orders queue
+    MsgTTL: 3600
+    IsolateConsumerEnable: true
+    AckTimeOut: 30
+    DelayMessagePolicy: timingwheelPolicy
 '''
 
 import time

@@ -77,6 +77,15 @@ notice:
   description: Effective notification binding configuration.
   type: dict
   returned: always
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    notice_ids:
+      - notice-1
+    hierarchical_notices:
+      - NoticeId: hn-2
+        State: 1
+    notice_content_template_bindings:
+      - TemplateId: tmpl-1
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

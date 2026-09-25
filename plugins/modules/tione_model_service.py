@@ -274,11 +274,26 @@ service:
     - Effective service detail.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ServiceId: ms-new-001
+    Status: normal
+    ServiceGroupName: fraud-detection
+    ServiceDescription: fraud scoring
+    ChargeType: POSTPAID_BY_HOUR
+    ImageInfo:
+      ImageType: TCR
+      ImageUrl: ccr.ccs.tencentyun.com/ml/fraud:v3
+    InstanceType: TI.S.LARGE.POST
+    ScaleMode: MANUAL
+    Replicas: 2
+    InferTemplateId: tpl-1
 service_id:
   description:
     - Stable service-version ID.
   returned: when available
   type: str
+  sample: ms-8b0a1c2d
 """
 
 import json

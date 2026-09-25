@@ -76,10 +76,12 @@ domain:
   description: Custom domain name the operation targeted.
   returned: always
   type: str
+  sample: functions.example.com
 exists:
   description: Whether the custom domain exists after the operation.
   returned: always
   type: bool
+  sample: false
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

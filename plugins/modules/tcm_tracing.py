@@ -73,7 +73,14 @@ RETURN = r"""tracing:
   description:
     - Effective TCM tracing configuration.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Enable: true
+    Sampling: 1.0
+    Zipkin:
+      Address: http://zipkin.collector:9411/api/v2/spans
+"""
 import json
 import time
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

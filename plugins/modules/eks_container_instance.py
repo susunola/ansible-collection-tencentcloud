@@ -311,18 +311,22 @@ eks_ci_id:
   description: ID of the matched or newly created container instance.
   returned: when known
   type: str
+  sample: eksci-fake-001
 eks_ci_name:
   description: Name of the managed container instance.
   returned: always
   type: str
+  sample: ci-prod
 status:
   description: Status of the existing container instance.
   returned: when a matching instance exists
   type: str
+  sample: Running
 changed:
   description: Whether an API write happened.
   returned: always
   type: bool
+  sample: false
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

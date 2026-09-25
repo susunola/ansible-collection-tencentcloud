@@ -137,6 +137,24 @@ track:
     - CloudAudit track metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    TrackId: 2001
+    Name: organization-events
+    Status: 1
+    ActionType: '*'
+    ResourceType: '*'
+    EventNames:
+      - '*'
+    TrackForAllMembers: 0
+    Storage:
+      StorageType: cos
+      StorageRegion: ap-guangzhou
+      StorageName: bucket-name
+      StoragePrefix: ''
+      Compress: 1
+      StorageAccountId: '123456789'
+      StorageAppId: app-000
 '''
 
 import time

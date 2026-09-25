@@ -90,7 +90,25 @@ RETURN = r"""inventory:
   description:
     - Effective inventory rule.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    IsEnabled: 'True'
+    IncludedObjectVersions: All
+    Schedule:
+      Frequency: Daily
+    Destination:
+      COSBucketDestination:
+        AccountId: '1250000000'
+        Bucket: qcs::cos:ap-guangzhou::inventory-1250000000
+        Format: CSV
+    Id: daily-objects
+    OptionalFields:
+      Field:
+        - ETag
+        - LastModifiedTime
+        - Size
+"""
 import copy
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.cos_bucket_read import normalize_inventory as normalize, get_inventory

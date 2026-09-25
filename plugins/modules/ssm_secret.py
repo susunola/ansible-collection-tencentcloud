@@ -116,7 +116,15 @@ RETURN = r"""secret:
   description:
     - Effective secret metadata without secret material.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    SecretName: prod-db
+    Description: managed by Ansible
+    Status: PendingDelete
+    SecretType: 0
+    EncryptType: 0
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.errors import is_not_found

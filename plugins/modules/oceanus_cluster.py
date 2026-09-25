@@ -162,7 +162,16 @@ RETURN = r"""cluster:
   description:
     - Effective Oceanus cluster metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ClusterId: cluster-8b0a1c2d
+    Name: production-flink
+    Status: 2
+    CuNum: 26
+    CuMem: 4
+    DefaultCOSBucket: flink-artifacts-1250000000
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

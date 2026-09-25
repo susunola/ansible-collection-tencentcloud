@@ -123,7 +123,18 @@ RETURN = r"""service:
   description:
     - Effective governance service metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Name: orders
+    Namespace: prod
+    Type: 0
+    Comment: Ordering API
+    UserIds:
+      - u1
+    ExportTo:
+      - shared
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

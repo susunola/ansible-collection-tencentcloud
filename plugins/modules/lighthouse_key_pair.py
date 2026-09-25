@@ -104,7 +104,16 @@ RETURN = r"""key_pair:
   description:
     - Lighthouse key pair metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    KeyId: lhkey-8b0a1c2d
+    KeyName: production-automation
+    PublicKey: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMockPublicKeyMaterial
+    AssociatedInstanceIds:
+      - lhins-1
+      - lhins-2
+"""
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.lifecycle import fail_from_sdk_error

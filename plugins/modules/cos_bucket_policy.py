@@ -81,7 +81,20 @@ RETURN = r"""policy:
   description:
     - Effective normalized bucket policy.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    version: '2.0'
+    statement:
+      - effect: allow
+        principal:
+          qcs:
+            - qcs::cam::uin/100000000001:uin/100000000001
+        action:
+          - name/cos:GetObject
+        resource:
+          - qcs::cos:ap-guangzhou:uid/1250000000:application-data-1250000000/*
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils import cos
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

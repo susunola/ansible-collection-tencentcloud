@@ -103,7 +103,16 @@ RETURN = r"""member:
   description:
     - Organization member metadata.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    MemberUin: 100000000001
+    Name: prod-team
+    AccountName: prod-team
+    NodeId: 2002
+    Remark: tuned
+    IsAllowQuit: Denied
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

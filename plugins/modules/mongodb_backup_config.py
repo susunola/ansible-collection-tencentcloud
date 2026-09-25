@@ -102,7 +102,25 @@ RETURN = r"""backup_config:
   description:
     - Normalized MongoDB backup rules.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    backup_method: 1
+    backup_hour: 2
+    frequency_hours: 24
+    active_weekdays:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+    retention_days: 60
+    oplog_retention_days: 30
+    backup_version: 1
+    alert_threshold: 100
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

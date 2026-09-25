@@ -124,6 +124,21 @@ topic:
     - CLS topic metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    TopicId: topic-1
+    LogsetId: logset-1
+    TopicName: network-flow
+    PartitionCount: 1
+    Period: 30
+    StorageType: hot
+    AutoSplit: true
+    MaxSplitPartitions: 50
+    Describes: ''
+    HotPeriod: 7
+    Tags:
+      - Key: env
+        Value: prod
 '''
 
 import time

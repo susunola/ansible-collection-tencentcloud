@@ -72,11 +72,21 @@ accounts:
   returned: always
   type: list
   elements: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - UserName: reporting
+      Host: 10.%
+      Description: Read-only reporting account
+      GlobalPrivileges:
+        - INSERT
+        - SELECT
+        - UPDATE
 request_id:
   description:
     - Request ID from the final API call.
   returned: always
   type: str
+  sample: req-privileges
 """
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

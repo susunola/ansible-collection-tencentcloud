@@ -79,7 +79,14 @@ RETURN = r"""cluster:
   description:
     - RocketMQ cluster metadata with credential fields removed.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    ClusterId: rocketmq-prod123
+    ClusterName: renamed-cluster
+    Remark: shared application cluster
+    Status: running
+"""
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff

@@ -98,10 +98,14 @@ security_group_ids:
   returned: always
   type: list
   elements: str
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    - sg-bbbbbbbb
 changed:
   description: Whether the security-group set was modified.
   returned: always
   type: bool
+  sample: false
 '''
 
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule

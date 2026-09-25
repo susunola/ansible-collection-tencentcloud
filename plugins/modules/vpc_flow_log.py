@@ -132,6 +132,19 @@ flow_log:
     - Flow log metadata.
   returned: always
   type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    FlowLogId: fl-new-1
+    FlowLogName: app-eni-traffic
+    VpcId: vpc-abc
+    ResourceType: NETWORKINTERFACE
+    ResourceId: eni-xyz
+    TrafficType: ALL
+    CloudLogId: topic-12345678
+    CloudLogRegion: ap-guangzhou
+    FlowLogDescription: app ENI traffic
+    StorageType: cls
+    Enable: true
 '''
 
 import time

@@ -123,7 +123,20 @@ RETURN = r"""certificate_info:
   description:
     - Effective certificate metadata with private key redacted.
   returned: always
-  type: dict"""
+  type: dict
+  sample:
+    # shape captured from this module's unit tests -- scripts/add_return_samples.py
+    Id: cert-gw-1
+    Name: public-api
+    CertSource: ssl
+    CertType: SVR
+    CertUsage: SERVER
+    CertId: jDZJ5jSa
+    BindDomains:
+      - api.example.com
+      - www.example.com
+    ReferCount: 0
+"""
 import json
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.base import TencentCloudModule
 from ansible_collections.susunola.tencentcloud.plugins.module_utils.comparison import maybe_diff
