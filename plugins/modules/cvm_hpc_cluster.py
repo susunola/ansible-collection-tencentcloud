@@ -14,7 +14,8 @@ description: Creates, updates and deletes CVM high-performance clusters with gua
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the hpc cluster with V(CreateHpcCluster) when it does not exist and updates it with
+        V(ModifyHpcClusterAttribute) when it differs. C(absent) deletes it with V(DeleteHpcClusters).
     type: str
     choices: [present, absent]
     default: present

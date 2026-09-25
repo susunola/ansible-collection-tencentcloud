@@ -14,7 +14,8 @@ description: Creates, updates and deletes a PostgreSQL backup plan.
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the backup plan with V(CreateBackupPlan) when it does not exist and updates it with
+        V(ModifyBackupPlan) when it differs. C(absent) deletes it with V(DeleteBackupPlan).
     type: str
     choices: [present, absent]
     default: present

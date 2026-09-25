@@ -14,7 +14,8 @@ description: Creates, updates and deletes one client rule in a CFS permission gr
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the rule with V(CreateCfsRule) when it does not exist and updates it with V(UpdateCfsRule)
+        when it differs. C(absent) deletes it with V(DeleteCfsRule).
     type: str
     choices: [present, absent]
     default: present

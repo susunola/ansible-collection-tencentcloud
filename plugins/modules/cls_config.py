@@ -14,7 +14,8 @@ description: Creates, updates and deletes LogListener collection configurations.
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the config with V(CreateConfig) when it does not exist and updates it with V(ModifyConfig)
+        when it differs. C(absent) deletes it with V(DeleteConfig).
     type: str
     choices: [present, absent]
     default: present

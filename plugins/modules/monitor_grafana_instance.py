@@ -14,7 +14,8 @@ description: Creates, renames and deletes a Managed Grafana instance.
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the instance with V(CreateGrafanaInstance) when it does not exist and updates it
+        with V(ModifyGrafanaInstance) when it differs. C(absent) deletes it with V(DeleteGrafanaInstance).
     type: str
     choices: [present, absent]
     default: present

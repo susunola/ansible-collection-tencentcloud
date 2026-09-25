@@ -16,7 +16,8 @@ description:
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the backup storage location with V(CreateBackupStorageLocation) when it does not
+        exist. C(absent) deletes it with V(DeleteBackupStorageLocation).
     type: str
     choices: [present, absent]
     default: present

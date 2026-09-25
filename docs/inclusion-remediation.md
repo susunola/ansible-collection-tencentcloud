@@ -63,6 +63,30 @@ Each claim below is checkable with the command in the same row.
 | Every shipped example runs as written | `python scripts/check_module_examples.py --check` |
 | Every module links to its read-only counterpart | `python scripts/add_module_seealso.py --check` |
 | Every role declares the core floor the collection requires | `python scripts/check_quality_gates.py` |
+| Every core module's `state` says what its choices do | `python scripts/enrich_state_docs.py --check` |
+
+### `state` now says what it does
+
+Sixty-seven core-subset modules described `state` as "Desired state." — a
+sentence that is true of every `state` option in every collection, and that
+tells a reader nothing they could not read off the two choices underneath.
+They now name the calls: `enrich_state_docs.py` reads the module's syntax tree
+and writes the sentence from its own code.
+
+It is not a text search. This collection writes the two phases four different
+ways — `if state == "absent"` before or after the present path, a bare
+`desired_present` flag whose *body* is the present path, a `state == "present"`
+guard with the absent path falling past it, and a ternary that picks the call
+(`client.Bind if present else client.Unbind`). Each of those was found by a
+module coming out wrong in review, and a reading that missed one put a create
+call under `absent` or dropped the delete sentence entirely.
+
+Two rules keep it honest. Alternative calls are joined with "or", because
+`mariadb_instance` creates with `CreateHourDBInstance` **or** `CreateDBInstance`
+depending on the billing mode and listing both as steps would be false. And a
+module whose delete path cannot be read is left alone rather than described
+without it: a `state` description that never mentions deletion is worse than
+the thin one it would replace.
 
 ### A guard for the examples that ship inside modules, and what it found
 

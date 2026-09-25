@@ -14,7 +14,10 @@ description: Creates, updates, enables, disables and deletes a Cloud Monitor ala
 options:
   state:
     description:
-      - Desired lifecycle state.
+      - C(present) creates the policy with V(CreateAlarmPolicy) when it does not exist and updates it with V(ModifyAlarmPolicyInfo),
+        V(ModifyAlarmPolicyStatus), V(ModifyAlarmPolicyCondition), V(ModifyAlarmPolicyNotice) or V(ModifyAlarmPolicyTasks)
+        when it differs. C(absent) deletes it with V(DeleteAlarmPolicy).
+      - The module waits for the change to be observable before returning, bounded by O(waiter_timeout).
     type: str
     choices: [present, absent]
     default: present

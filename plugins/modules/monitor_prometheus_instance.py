@@ -14,7 +14,9 @@ description: Creates, updates and terminates a pay-as-you-go Managed Prometheus 
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the instance with V(CreatePrometheusMultiTenantInstancePostPayMode) when it does
+        not exist and updates it with V(ModifyPrometheusInstanceAttributes) when it differs. C(absent) deletes
+        it with V(TerminatePrometheusInstances).
     type: str
     choices: [present, absent]
     default: present

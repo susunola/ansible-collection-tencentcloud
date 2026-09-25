@@ -16,7 +16,8 @@ description:
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the launch template with V(CreateLaunchTemplate) when it does not exist and updates
+        it with V(ModifyLaunchTemplateDefaultVersion) when it differs. C(absent) deletes it with V(DeleteLaunchTemplate).
     type: str
     choices: [present, absent]
     default: present

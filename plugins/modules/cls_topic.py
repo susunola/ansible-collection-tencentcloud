@@ -15,7 +15,9 @@ description: Creates, updates and deletes CLS log topics within a logset.
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the topic with V(CreateTopic) when it does not exist and updates it with V(ModifyTopic)
+        when it differs. C(absent) deletes it with V(DeleteTopic).
+      - The module waits for the change to be observable before returning, bounded by O(waiter_timeout).
     type: str
     choices: [present, absent]
     default: present

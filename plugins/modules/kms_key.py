@@ -14,7 +14,9 @@ description: Creates and manages the enabled state, description, rotation and sc
 options:
   state:
     description:
-      - Desired lifecycle state.
+      - C(present) creates the key with V(CreateKey) when it does not exist and updates it with V(UpdateKeyDescription)
+        when it differs. C(absent) removes it with V(ScheduleKeyDeletion).
+      - The module waits for the change to be observable before returning, bounded by O(waiter_timeout).
     type: str
     choices: [present, absent]
     default: present

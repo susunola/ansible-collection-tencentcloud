@@ -14,7 +14,8 @@ description: Adds or removes one CVM instance from a placement group.
 options:
   state:
     description:
-      - Desired binding state.
+      - C(present) updates it with V(ModifyInstancesDisasterRecoverGroup) when it differs. C(absent) deletes
+        it with V(DeleteInstancesDisasterRecoverGroups).
     type: str
     choices: [present, absent]
     default: present

@@ -14,7 +14,8 @@ description: Creates, updates and deletes manual CFS file-system snapshots.
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the snapshot with V(CreateCfsSnapshot) when it does not exist and updates it with
+        V(UpdateCfsSnapshotAttribute) when it differs. C(absent) deletes it with V(DeleteCfsSnapshot).
     type: str
     choices: [present, absent]
     default: present

@@ -15,7 +15,8 @@ options:
 
   state:
     description:
-      - Desired state.
+      - C(present) creates the domain with V(CreateDomain) when it does not exist and updates it with V(ModifyDomainRemark)
+        or V(ModifyDomainStatus) when it differs. C(absent) deletes it with V(DeleteDomain).
     type: str
     choices: [present, absent]
     default: present

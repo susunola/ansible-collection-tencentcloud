@@ -15,7 +15,8 @@ options:
 
   state:
     description:
-      - Desired state.
+      - C(present) creates the scheduled action with V(CreateScheduledAction) when it does not exist and updates
+        it with V(ModifyScheduledAction) when it differs. C(absent) deletes it with V(DeleteScheduledAction).
     type: str
     choices: [present, absent]
     default: present

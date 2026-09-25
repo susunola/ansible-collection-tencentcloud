@@ -17,7 +17,10 @@ description:
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the target group with V(CreateTargetGroup) or V(RegisterTargetGroupInstances) when
+        it does not exist and updates it with V(ModifyTargetGroupAttribute) when it differs. C(absent) deletes
+        it with V(DeleteTargetGroups).
+      - The module waits for the change to be observable before returning, bounded by O(waiter_timeout).
     type: str
     choices: [present, absent]
     default: present

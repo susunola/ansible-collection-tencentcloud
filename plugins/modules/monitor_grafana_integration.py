@@ -14,7 +14,8 @@ description: Creates, updates and deletes a Managed Grafana integration.
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the integration with V(CreateGrafanaIntegration) when it does not exist and updates
+        it with V(UpdateGrafanaIntegration) when it differs. C(absent) deletes it with V(DeleteGrafanaIntegration).
     type: str
     choices: [present, absent]
     default: present

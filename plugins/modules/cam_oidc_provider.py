@@ -14,7 +14,8 @@ description: Creates, updates and deletes a CAM OpenID Connect identity provider
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the oidc provider with V(CreateOIDCConfig) when it does not exist and updates it
+        with V(UpdateOIDCConfig) when it differs. C(absent) deletes it with V(DeleteOIDCConfig).
     type: str
     choices: [present, absent]
     default: present

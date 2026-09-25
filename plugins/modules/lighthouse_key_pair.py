@@ -14,7 +14,8 @@ description: Imports and deletes Lighthouse public SSH keys and reconciles their
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the key pair with V(ImportKeyPair) when it does not exist. C(absent) deletes it with
+        V(DeleteKeyPairs).
     type: str
     choices: [present, absent]
     default: present

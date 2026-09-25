@@ -14,7 +14,10 @@ description: Creates, renames, resizes, isolates and optionally destroys Tencent
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the instance with V(CreateInstances) when it does not exist and updates it with V(ModifyDBInstanceName),
+        V(ModifyDBInstanceSpec) or V(SetAutoRenewFlag) when it differs. C(absent) removes it with V(DestroyDBInstance)
+        or V(IsolateDBInstances).
+      - The module waits for the change to be observable before returning, bounded by O(waiter_timeout).
     type: str
     choices: [present, absent]
     default: present

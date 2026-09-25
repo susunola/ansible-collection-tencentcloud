@@ -14,7 +14,8 @@ description: Creates, updates and deletes Prometheus alert groups and their rule
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the alert group with V(CreatePrometheusAlertGroup) when it does not exist and updates
+        it with V(UpdatePrometheusAlertGroup) when it differs. C(absent) deletes it with V(DeletePrometheusAlertGroups).
     type: str
     choices: [present, absent]
     default: present

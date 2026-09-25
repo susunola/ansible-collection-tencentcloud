@@ -15,7 +15,9 @@ description: Creates, renames, attaches, detaches and terminates Lighthouse data
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the disk with V(CreateDisks) or V(AttachDisks) when it does not exist and updates
+        it with V(ModifyDisksAttribute) when it differs. C(absent) removes it with V(DetachDisks) or V(TerminateDisks).
+      - The module waits for the change to be observable before returning, bounded by O(waiter_timeout).
     type: str
     choices: [present, absent]
     default: present

@@ -14,7 +14,8 @@ description: Creates and deletes a database and protects its immutable character
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the database with V(CreateDatabase) when it does not exist. C(absent) deletes it
+        with V(DeleteDatabase).
     type: str
     choices: [present, absent]
     default: present

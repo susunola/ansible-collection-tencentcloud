@@ -14,7 +14,8 @@ description: Creates, updates and deletes a domain-scoped DNSPod custom line gro
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the line group with V(CreateLineGroup) when it does not exist and updates it with
+        V(ModifyLineGroup) when it differs. C(absent) deletes it with V(DeleteLineGroup).
     type: str
     choices: [present, absent]
     default: present

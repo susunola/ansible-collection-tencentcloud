@@ -14,7 +14,8 @@ description: Creates and deletes accounts, reconciles database privileges and re
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the account with V(CreateAccount) when it does not exist and updates it with V(ModifyAccountPrivilege),
+        V(ModifyAccountRemark) or V(ResetAccountPassword) when it differs. C(absent) deletes it with V(DeleteAccount).
     type: str
     choices: [present, absent]
     default: present

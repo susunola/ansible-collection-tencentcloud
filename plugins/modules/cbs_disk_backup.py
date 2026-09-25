@@ -14,7 +14,9 @@ description: Creates, waits for and deletes persistent CBS cloud-disk backup poi
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the disk backup with V(CreateDiskBackup) when it does not exist. C(absent) deletes
+        it with V(DeleteDiskBackups).
+      - The module waits for the change to be observable before returning, bounded by O(waiter_timeout).
     type: str
     choices: [present, absent]
     default: present

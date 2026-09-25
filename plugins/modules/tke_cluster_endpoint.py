@@ -14,7 +14,8 @@ description: Creates or deletes a public or private Kubernetes API endpoint for 
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the endpoint with V(CreateClusterEndpoint) when it does not exist. C(absent) deletes
+        it with V(DeleteClusterEndpoint).
     type: str
     choices: [present, absent]
     default: present

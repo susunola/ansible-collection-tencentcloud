@@ -15,7 +15,8 @@ options:
 
   state:
     description:
-      - Desired state.
+      - C(present) creates the scaling policy with V(CreateScalingPolicy) when it does not exist and updates
+        it with V(ModifyScalingPolicy) when it differs. C(absent) deletes it with V(DeleteScalingPolicy).
     type: str
     choices: [present, absent]
     default: present

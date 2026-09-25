@@ -14,7 +14,8 @@ description: Creates, replaces and deletes an unexecuted scheduled termination t
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the action timer with V(ImportInstancesActionTimer) when it does not exist. C(absent)
+        deletes it with V(DeleteInstancesActionTimer).
     type: str
     choices: [present, absent]
     default: present

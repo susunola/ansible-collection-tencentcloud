@@ -1,0 +1,31 @@
+---
+minor_changes:
+  - >-
+    module docs - say what each ``state`` choice does, instead of "Desired
+    state.". 67 core-subset modules described the option every resource module
+    has with the one sentence that is true of every ``state`` option in every
+    collection. Each now names the API calls behind the two choices, derived
+    from the module's own code: "C(present) creates the load balancer with
+    V(CreateLoadBalancer) when it does not exist and updates it with
+    V(ModifyLoadBalancerAttributes) or V(ModifyLoadBalancerAddressType) when
+    it differs. C(absent) deletes it with V(DeleteLoadBalancers)." plus the
+    waiter sentence for the modules that wait.
+  - >-
+    scripts/enrich_state_docs.py - new generator, wired into CI as "State
+    documentation names the calls it makes". It reads the module's syntax tree
+    rather than its text, because the three shapes this collection writes are
+    all present: ``if state == "absent"`` first or last, a bare
+    ``desired_present`` flag whose body is the *present* path, and a ternary
+    that picks the call -- ``client.Bind if present else client.Unbind``. It
+    only touches a ``state`` option whose choices are exactly present/absent
+    and whose description is under 25 characters, and it refuses to write
+    anything when it cannot find both a create and a delete path, because a
+    description that never mentions deletion is worse than the thin one it
+    would replace.
+  - >-
+    module docs - join alternative calls with "or" rather than listing them in
+    sequence. ``mariadb_instance`` creates with V(CreateHourDBInstance) or
+    V(CreateDBInstance) depending on the billing mode, and naming both as steps
+    the module performs would have been wrong. Deletion keeps the module's own
+    verb: ``cynosdb_cluster`` says "removes it with V(IsolateCluster)" rather
+    than "deletes it", because isolating a cluster is not deleting it.

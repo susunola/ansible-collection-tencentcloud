@@ -14,7 +14,8 @@ description: Binds or unbinds a Kubernetes cluster as a Prometheus collection ag
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the agent with V(CreatePrometheusClusterAgent) when it does not exist. C(absent)
+        deletes it with V(DeletePrometheusClusterAgent).
     type: str
     choices: [present, absent]
     default: present

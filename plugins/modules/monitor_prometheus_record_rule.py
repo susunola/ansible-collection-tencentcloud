@@ -14,7 +14,8 @@ description: Creates, updates and deletes a named Prometheus recording-rule YAML
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the record rule with V(CreatePrometheusRecordRuleYaml) when it does not exist and
+        updates it with V(ModifyPrometheusRecordRuleYaml) when it differs. C(absent) deletes it with V(DeletePrometheusRecordRuleYaml).
     type: str
     choices: [present, absent]
     default: present

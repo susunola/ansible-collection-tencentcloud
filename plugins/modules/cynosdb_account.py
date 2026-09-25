@@ -15,7 +15,9 @@ description: Creates, updates and deletes CynosDB cluster accounts with explicit
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the account with V(CreateAccounts) when it does not exist and updates it with V(ModifyAccountDescription)
+        or V(ResetAccountPassword) when it differs. C(absent) deletes it with V(DeleteAccounts).
+      - The module waits for the change to be observable before returning, bounded by O(waiter_timeout).
     type: str
     choices: [present, absent]
     default: present

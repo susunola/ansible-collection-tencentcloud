@@ -14,7 +14,9 @@ description: Creates, updates and deletes an automatic snapshot policy and recon
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the policy with V(CreateAutoSnapshotPolicy) or V(BindAutoSnapshotPolicy) when it
+        does not exist and updates it with V(ModifyAutoSnapshotPolicyAttribute) when it differs. C(absent) removes
+        it with V(UnbindAutoSnapshotPolicy) or V(DeleteAutoSnapshotPolicies).
     type: str
     choices: [present, absent]
     default: present

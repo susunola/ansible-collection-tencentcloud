@@ -14,7 +14,8 @@ description: Binds or unbinds a Managed Grafana instance from a Prometheus insta
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the binding with V(BindPrometheusManagedGrafana) when it does not exist. C(absent)
+        removes it with V(UnbindPrometheusManagedGrafana).
     type: str
     choices: [present, absent]
     default: present

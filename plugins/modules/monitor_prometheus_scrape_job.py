@@ -14,7 +14,8 @@ description: Creates, updates and deletes a scrape job attached to a Prometheus 
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the scrape job with V(CreatePrometheusScrapeJob) when it does not exist and updates
+        it with V(UpdatePrometheusScrapeJob) when it differs. C(absent) deletes it with V(DeletePrometheusScrapeJobs).
     type: str
     choices: [present, absent]
     default: present

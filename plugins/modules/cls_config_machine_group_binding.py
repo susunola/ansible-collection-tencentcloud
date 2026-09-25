@@ -14,7 +14,8 @@ description: Idempotently applies or removes a CLS collection configuration on a
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the binding with V(ApplyConfigToMachineGroup) when it does not exist. C(absent) deletes
+        it with V(DeleteConfigFromMachineGroup).
     type: str
     choices: [present, absent]
     default: present

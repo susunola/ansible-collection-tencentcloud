@@ -14,7 +14,8 @@ description: Creates, updates and deletes CFS client permission groups.
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the permission group with V(CreateCfsPGroup) when it does not exist and updates it
+        with V(UpdateCfsPGroup) when it differs. C(absent) deletes it with V(DeleteCfsPGroup).
     type: str
     choices: [present, absent]
     default: present

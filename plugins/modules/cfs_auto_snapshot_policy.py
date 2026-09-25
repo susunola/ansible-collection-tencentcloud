@@ -14,7 +14,9 @@ description: Manages an automatic snapshot schedule and its exact set of bound C
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the policy with V(CreateAutoSnapshotPolicy) or V(BindAutoSnapshotPolicy) when it
+        does not exist and updates it with V(UpdateAutoSnapshotPolicy) when it differs. C(absent) removes it
+        with V(UnbindAutoSnapshotPolicy) or V(DeleteAutoSnapshotPolicy).
     type: str
     choices: [present, absent]
     default: present

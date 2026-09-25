@@ -14,7 +14,9 @@ description: Creates, updates and deletes reusable groups of VPC address templat
 options:
   state:
     description:
-      - Desired state.
+      - C(present) creates the address template group with V(CreateAddressTemplateGroup) when it does not exist
+        and updates it with V(ModifyAddressTemplateGroupAttribute) when it differs. C(absent) deletes it with
+        V(DeleteAddressTemplateGroup).
     type: str
     choices: [present, absent]
     default: present

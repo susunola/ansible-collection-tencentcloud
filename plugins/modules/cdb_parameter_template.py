@@ -15,7 +15,8 @@ options:
 
   state:
     description:
-      - Desired state.
+      - C(present) creates the parameter template with V(CreateParamTemplate) when it does not exist and updates
+        it with V(ModifyParamTemplate) when it differs. C(absent) deletes it with V(DeleteParamTemplate).
     type: str
     choices: [present, absent]
     default: present
