@@ -55,11 +55,17 @@ attributes:
       - Can run in C(check_mode), reading the current state and predicting
         the result without issuing a write API call.
     support: full
-  idempotency:
+  diff_mode:
+    description:
+      - Returns the difference between the observed and the requested state
+        when the task runs with C(--diff).
+    support: full
+  idempotent:
     description:
       - Most C(state) values converge and are idempotent, but C(state=restarted)
         performs the action on every run and always reports C(changed=true).
     support: partial
+    details: C(state=restarted) has no settled state to converge to, so it cannot report C(changed=false) on a repeat run.
 author: Tencent Cloud Ansible Collection Contributors (@susunola)
 """
 EXAMPLES = r"""

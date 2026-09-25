@@ -115,22 +115,29 @@ def build_block(text, relpath):
         idem_desc = ("Read-only, so every run returns the current state and never "
                      "changes the target, and a repeated run reports "
                      "C(changed=false).")
+        idem_details = None
     elif one_shot:
         idem_support = "partial"
+        states = "), C(state=".join(one_shot)
         idem_desc = ("Most C(state) values converge and are idempotent, but "
                      "C(state=%s) performs the action on every run and always "
-                     "reports C(changed=true)."
-                     % "), C(state=".join(one_shot))
+                     "reports C(changed=true)." % states)
+        idem_details = ("C(state=%s) has no settled state to converge to, so it "
+                        "cannot report C(changed=false) on a repeat run." % states)
     elif reads_state:
         idem_support = "full"
         idem_desc = ("Reconciles the resource against its live state, so running "
                      "again with the same arguments leaves it unchanged and "
                      "reports C(changed=false).")
+        idem_details = None
     else:
         idem_support = "partial"
         idem_desc = ("The module does not read the resource back to compare it "
                      "with the requested state, so a repeated run may issue the "
                      "write again instead of reporting C(changed=false).")
+        idem_details = ("The module cannot tell whether the resource already "
+                        "matches the request, so a repeated run may repeat the "
+                        "write.")
 
     if check_mode == "full":
         cm_desc = ("Can run in C(check_mode), reading the current state and "
@@ -141,9 +148,29 @@ def build_block(text, relpath):
     lines = ["attributes:", "  check_mode:"]
     lines += _wrapped(cm_desc, "    ")
     lines.append("    support: %s" % check_mode)
-    lines.append("  idempotency:")
+
+    # ``diff_mode`` is one of the three attributes ansible-core actually
+    # defines (ansible.builtin.action_common_attributes, alongside check_mode
+    # and platform), and the collection can state it precisely: a module that
+    # calls maybe_diff() builds a before/after payload.
+    if "maybe_diff" in text:
+        lines.append("  diff_mode:")
+        lines += _wrapped(
+            "Returns the difference between the observed and the requested state "
+            "when the task runs with C(--diff).", "    ")
+        lines.append("    support: full")
+
+    # The key is ``idempotent``, not ``idempotency``: ansible-core defines no
+    # such attribute, and community.postgresql -- the collection the reviewer
+    # pointed at as the example -- spells it ``idempotent``.
+    lines.append("  idempotent:")
     lines += _wrapped(idem_desc, "    ")
     lines.append("    support: %s" % idem_support)
+    if idem_details:
+        # The documentation standard requires details whenever support is
+        # partial, so a reader learns how it falls short rather than only that
+        # it does.
+        lines.append("    details: %s" % idem_details)
     return lines
 
 
@@ -199,7 +226,7 @@ def main():
             print("attributes: %d module(s) do not document check_mode/idempotency"
                   % len(missing))
             return 1
-        print("attributes: all %d module(s) document check_mode and idempotency"
+        print("attributes: all %d module(s) document check_mode and idempotent"
               % len(module_paths()))
         return 0
 
