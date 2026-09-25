@@ -97,6 +97,11 @@
 32. SDK drift sentinel (0.12.0): `info_specs_auto.py` carries a
     `GENERATED_SDK_VERSION` stamp; `check_sdk_drift.py` fails CI with
     regeneration instructions when the environment SDK drifts. **Done**
+32d. Secret handling audited (0.12.0): `check_secret_handling.py` requires
+    `no_log: True` on every option that is a secret by name (a flag is out of
+    scope, an idempotency token is exempt) and rejects any message that
+    interpolates one. 71 secret-shaped options audited, 0 unguarded, 0
+    interpolations. **Done**
 32c. Captured RETURN samples (0.12.0): `add_return_samples.py` records each
     module's own unit-test payload and documents it, 413 modules gained a
     sample, and the census fell from 976 to 563 with a gate that re-runs the

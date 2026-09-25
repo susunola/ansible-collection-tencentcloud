@@ -58,6 +58,11 @@ jobs:
           python scripts/check_sdk_drift.py --check
       - name: Declared SDK floor is real
         run: python scripts/check_sdk_floor.py --check
+      # An option that is a secret by name must carry no_log: True, and no
+      # message may interpolate its value. A flag such as rotate_password is
+      # out of scope: it cannot carry a credential.
+      - name: Secrets cannot reach a log
+        run: python scripts/check_secret_handling.py --check
       # Every captured RETURN sample is re-derived from the module's own unit
       # tests, so a sample cannot outlive the payload it documents. Hand
       # written samples are exempt (a test's fake response may carry fewer

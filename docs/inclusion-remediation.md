@@ -70,6 +70,7 @@ Each claim below is checkable with the command in the same row.
 | The examples and every integration target resolve | `python scripts/check_examples.py --check` |
 | Every shared helper is covered by its own tests | `python scripts/check_shared_coverage.py --coverage-xml coverage.xml` |
 | Every captured `RETURN` sample still matches the payload its module's tests produce | `python scripts/add_return_samples.py --check` |
+| Every option that is a secret by name carries `no_log`, and no message interpolates one | `python scripts/check_secret_handling.py --check` |
 | The SDK release the artifacts were generated from is one users may install | `python scripts/check_sdk_drift.py --check` |
 | Every SDK reference resolves at the declared SDK floor | `python scripts/check_sdk_floor.py --check` |
 | The debt censuses are frozen and may only shrink | `python scripts/check_quality_gates.py` |

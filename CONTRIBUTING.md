@@ -155,7 +155,7 @@ policy):
 **CI gates a merge must not weaken.** `audit_info_coverage.py --check`,
 `check_module_tiers.py --check`, `check_sdk_drift.py --check`,
 `check_sdk_floor.py --check`, `add_return_samples.py --check`,
-`generate_info_modules.py --check`,
+`check_secret_handling.py --check`, `generate_info_modules.py --check`,
 `check_sanity_ignore.py`, `ruff check .`,
 the sanity tests, and the unit/contract run at `--cov-fail-under=80`. A PR
 that lowers a threshold to get green is the one thing a reviewer should always
