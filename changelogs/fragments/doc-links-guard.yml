@@ -17,3 +17,14 @@ minor_changes:
     Fenced code blocks are skipped, because an example may hold a link the
     reader is meant to adapt, and the docsite build output is skipped because
     it is generated.
+  - >-
+    scripts/check_changelog_fragments.py - new guard, wired into CI as
+    "Changelog fragments use a configured section". ``antsibull-changelog
+    lint`` is the real check and it ran in exactly one place: the release
+    workflow, after the release tag exists. It rejects a fragment filed under
+    a section ``changelogs/config.yaml`` does not define -- ``bugfix`` for
+    ``bugfixes`` -- which is valid YAML, so yamllint accepts it and the entry
+    is silently dropped from the release notes. This check reads the section
+    list out of the config and answers that one question; the authoritative
+    lint still runs at release time, and the dependency tree it needs is not
+    worth installing into three CI legs to answer it.
