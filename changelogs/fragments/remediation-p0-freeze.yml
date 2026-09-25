@@ -1,0 +1,12 @@
+---
+major_changes:
+  - >-
+    collection - P0 remediation freeze is in force. Module, role, plugin,
+    README, and sanity-ignore counts must not rise. The 2.0.0 core allowlist
+    and the binding freeze text live in docs/core-allowlist.yml and
+    docs/REMEDIATION.md. New modules and generated specs are rejected until
+    the public surface is cut.
+minor_changes:
+  - >-
+    ci - scripts/check_remediation_freeze.py ratchets the public-surface
+    counts and is wired into the sanity job.
