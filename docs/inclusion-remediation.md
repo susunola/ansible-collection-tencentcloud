@@ -94,6 +94,23 @@ module an example calls, checks each option against the module's own
 The first two are documentation defects. The third is a functional one, and it
 is the reason the guard checks `required` and not only option names.
 
+### Delete examples, and the 232 that are still missing
+
+The same guard makes delete examples checkable, so 38 write modules that
+documented only how to create their resource now document how to delete it.
+The identity options come from each module's own delete path rather than from
+its create example, which matters in both directions: `alb_load_balancer`
+refuses to delete a load balancer whose `deletion_protection` is on, so its
+delete example clears it, while `dbbrain_sql_filter` and `cmq_subscription`
+mark their create parameters unconditionally required, so those have to be
+passed to delete as well. 232 write modules that support deletion still show
+only how to create, and that number is a ratchet in
+`scripts/check_quality_gates.py` and is printed by every CI run. Generating
+the remaining examples was tried and rejected: the identity has to come from
+the module's own delete path, because a create example carries payloads a
+delete does not need, and mixing a name from one fixture with an id from
+another produces a task that finds neither.
+
 ### The ignore files are a ratchet now, not a budget
 
 `scripts/check_sanity_ignore.py` used to enforce `BASELINE_TOTAL = 2600`, a
