@@ -1,0 +1,21 @@
+---
+bugfixes:
+  - >-
+    unit tests - refresh eight generated test skeletons whose comments
+    pointed at the wrong lines of the module they test. The generator embeds
+    the source range each stub should exercise (``# module lines 89-109``),
+    and the module these eight describe has moved since they were written, so
+    a maintainer following the pointer landed somewhere unrelated. Nothing
+    regenerated them because ``generate_module_test_skeleton.py --check``,
+    which is the mode that detects exactly this, was never invoked from any
+    workflow. The eight files are otherwise byte-identical to their committed
+    content: only the line references changed.
+minor_changes:
+  - >-
+    ci - run ``scripts/generate_module_test_skeleton.py --check``. The
+    generator's contract is that a file still carrying its marker comment is
+    unmodified generator output, and a file that has been hand-finished has
+    had the marker deleted. Nothing enforced that, so a skeleton could be
+    hand-edited without deleting the marker and the next regeneration would
+    silently overwrite the work. The new step, "Generated test skeletons are
+    unmodified", fails on either half of that contract.

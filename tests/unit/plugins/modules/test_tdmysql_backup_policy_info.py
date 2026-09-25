@@ -105,14 +105,14 @@ def client(monkeypatch):
 # ---------------------------------------------------------------------------
 
 
-def test_required_arguments_enforced(monkeypatch):  # module lines 39-50
+def test_required_arguments_enforced(monkeypatch):  # module lines 74-85
     monkeypatch.setattr(TencentCloudModule, "require_sdk", lambda self: None)
     module_args()
     with pytest.raises(AnsibleFailJson):
         run(mod.run_module)
 
 
-def test_sdk_error_is_reported(monkeypatch):  # module lines 39-50
+def test_sdk_error_is_reported(monkeypatch):  # module lines 74-85
     monkeypatch.setattr(TencentCloudModule, "require_sdk", lambda self: None)
     for loader in ('_load',):
         monkeypatch.setattr(
@@ -143,7 +143,7 @@ class _BoomClient(object):
 
 
 @pytest.mark.xfail(reason="TODO(human): finish the present reconcile path: seed the fake store, assert changed/msg/no-write invariants", strict=False)
-def test_run_module_present_reconcile(client):  # module lines 39-50
+def test_run_module_present_reconcile(client):  # module lines 74-85
     _run_args(state='present')
     # Wire the store first: seed client.items, then run and assert
     # result["changed"] / result["msg"] and which sdk calls were recorded.

@@ -135,6 +135,8 @@ jobs:
         run: python scripts/check_examples.py --check
       - name: Module examples run as written
         run: python scripts/check_module_examples.py --check
+      - name: Generated test skeletons are unmodified
+        run: python scripts/generate_module_test_skeleton.py --check
       - name: Porting table resolves
         run: python scripts/check_porting_map.py --check
       - name: Integration target layout is complete

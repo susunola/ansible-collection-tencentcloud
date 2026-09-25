@@ -125,42 +125,42 @@ def client(monkeypatch):
 # ---------------------------------------------------------------------------
 
 
-def test_build_get_fields():  # plugins/modules/api_gateway_api_key.py:48-51
+def test_build_get_fields():  # plugins/modules/api_gateway_api_key.py:91-94
     request = mod.build_get(FakeModels(), 'key-xxxx')
-    assert request.AccessKeyId == 'key-xxxx'  # module line 50
+    assert request.AccessKeyId == 'key-xxxx'  # module line 93
 
 
-def test_build_list_fields():  # plugins/modules/api_gateway_api_key.py:54-61
+def test_build_list_fields():  # plugins/modules/api_gateway_api_key.py:97-104
     request = mod.build_list(FakeModels(), 'name-xxxx')
-    assert request.Offset == 0  # module line 56
-    assert request.Limit == 100  # module line 56
+    assert request.Offset == 0  # module line 99
+    assert request.Limit == 100  # module line 99
 
 
-def test_build_create_fields():  # plugins/modules/api_gateway_api_key.py:64-69
+def test_build_create_fields():  # plugins/modules/api_gateway_api_key.py:107-112
     request = mod.build_create(FakeModels(), _params())
-    assert request.AccessKeyType == 'auto'  # module line 66
+    assert request.AccessKeyType == 'auto'  # module line 109
 
 
-def test_build_update_fields():  # plugins/modules/api_gateway_api_key.py:72-75
+def test_build_update_fields():  # plugins/modules/api_gateway_api_key.py:115-118
     request = mod.build_update(FakeModels(), 'key-xxxx', 'secret-xxxx')
-    assert request.AccessKeyId == 'key-xxxx'  # module line 74
-    assert request.AccessKeySecret == 'secret-xxxx'  # module line 74
+    assert request.AccessKeyId == 'key-xxxx'  # module line 117
+    assert request.AccessKeySecret == 'secret-xxxx'  # module line 117
 
 
-def test_build_delete_fields():  # plugins/modules/api_gateway_api_key.py:78-81
+def test_build_delete_fields():  # plugins/modules/api_gateway_api_key.py:121-124
     request = mod.build_delete(FakeModels(), 'key-xxxx')
-    assert request.AccessKeyId == 'key-xxxx'  # module line 80
+    assert request.AccessKeyId == 'key-xxxx'  # module line 123
 
 
 @pytest.mark.xfail(reason="TODO(human): finish helper safe: assert the module's real contract", strict=False)
-def test_safe_helper(client):  # plugins/modules/api_gateway_api_key.py:84-89
+def test_safe_helper(client):  # plugins/modules/api_gateway_api_key.py:127-132
     # Seed client.items first, then invoke mod.safe(...) and assert the contract.
     # Do not invoke safe yet: it needs a store-backed fake read op.
     pytest.fail("unfinished skeleton")
 
 
 @pytest.mark.xfail(reason="TODO(human): finish helper find: assert the module's real contract", strict=False)
-def test_find_helper(client):  # plugins/modules/api_gateway_api_key.py:92-105
+def test_find_helper(client):  # plugins/modules/api_gateway_api_key.py:135-148
     # Seed client.items first, then invoke mod.find(...) and assert the contract.
     # Do not invoke find yet: it needs a store-backed fake read op.
     pytest.fail("unfinished skeleton")
@@ -170,14 +170,14 @@ def test_find_helper(client):  # plugins/modules/api_gateway_api_key.py:92-105
 # ---------------------------------------------------------------------------
 
 
-def test_required_arguments_enforced(monkeypatch):  # module lines 108-150
+def test_required_arguments_enforced(monkeypatch):  # module lines 151-193
     monkeypatch.setattr(TencentCloudModule, "require_sdk", lambda self: None)
     module_args()
     with pytest.raises(AnsibleFailJson):
         run(mod.run_module)
 
 
-def test_sdk_error_is_reported(monkeypatch):  # module lines 108-150
+def test_sdk_error_is_reported(monkeypatch):  # module lines 151-193
     monkeypatch.setattr(TencentCloudModule, "require_sdk", lambda self: None)
     for loader in ('_load',):
         monkeypatch.setattr(
@@ -210,7 +210,7 @@ class _BoomClient(object):
 
 
 @pytest.mark.xfail(reason="TODO(human): finish the present reconcile path: seed the fake store, assert changed/msg/no-write invariants", strict=False)
-def test_run_module_present_reconcile(client):  # module lines 108-150
+def test_run_module_present_reconcile(client):  # module lines 151-193
     _run_args(state='present')
     # Wire the store first: seed client.items, then run and assert
     # result["changed"] / result["msg"] and which sdk calls were recorded.
@@ -218,7 +218,7 @@ def test_run_module_present_reconcile(client):  # module lines 108-150
 
 
 @pytest.mark.xfail(reason="TODO(human): finish the absent remove path: seed the fake store, assert changed/msg/no-write invariants", strict=False)
-def test_run_module_absent_remove(client):  # module lines 108-150
+def test_run_module_absent_remove(client):  # module lines 151-193
     _run_args(state='absent')
     # Wire the store first: seed client.items, then run and assert
     # result["changed"] / result["msg"] and which sdk calls were recorded.
@@ -226,7 +226,7 @@ def test_run_module_absent_remove(client):  # module lines 108-150
 
 
 @pytest.mark.xfail(reason="TODO(human): finish the check_mode dry_run path: seed the fake store, assert changed/msg/no-write invariants", strict=False)
-def test_run_module_check_mode_dry_run(client):  # module lines 108-150
+def test_run_module_check_mode_dry_run(client):  # module lines 151-193
     _run_args(_ansible_check_mode=True)
     # Wire the store first: seed client.items, then run and assert
     # result["changed"] / result["msg"] and which sdk calls were recorded.
