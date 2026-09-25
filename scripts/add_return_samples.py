@@ -273,12 +273,22 @@ class PayloadRecorder(object):
 
 
 def capture(test_paths=None):
-    """Run the module unit tests and return ``{module_name: [payload, ...]}``."""
+    """Run the module unit tests and return ``{module_name: [payload, ...]}``.
+
+    A test run that does not pass is not a source of truth: a failing test, a
+    collection error or an environment missing the SDK all leave modules
+    without payloads, which would quietly turn into unverified samples.
+    """
     recorder = PayloadRecorder(MODULES_DIR)
     recorder.install()
     targets = [str(path) for path in (test_paths or [TESTS_DIR])]
-    pytest.main(["-q", "-p", "no:randomly", "--no-header", "-p", "no:cacheprovider"]
-                + targets, plugins=[recorder])
+    rc = pytest.main(["-q", "-p", "no:randomly", "--no-header",
+                      "-p", "no:cacheprovider"] + targets, plugins=[recorder])
+    if rc != pytest.ExitCode.OK:
+        raise SystemExit(
+            "the module unit tests did not pass (pytest exit code %s): the "
+            "payloads a RETURN sample is derived from cannot be trusted until "
+            "they do" % int(rc))
     return {Path(path).stem: payloads
             for path, payloads in recorder.payloads.items()}
 
