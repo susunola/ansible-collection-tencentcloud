@@ -15,16 +15,16 @@ version_added: "1.5.0"
 description: Returns EMR clusters visible in a Tencent Cloud region.
 options:
   display_strategy:
-    description: Display strategy. API field C(DisplayStrategy).
+    description: Sets the C(DisplayStrategy) field of V(DescribeInstances); omit it to leave that field unset.
     type: str
   project_id:
-    description: Project id. API field C(ProjectId).
+    description: Sets the C(ProjectId) field of V(DescribeInstances); omit it to leave that field unset.
     type: int
   order_field:
-    description: Order field. API field C(OrderField).
+    description: Sets the C(OrderField) field of V(DescribeInstances); omit it to leave that field unset.
     type: str
   asc:
-    description: Asc. API field C(Asc).
+    description: Sets the C(Asc) field of V(DescribeInstances); omit it to leave that field unset.
     type: int
   cluster_ids:
     description: Cluster IDs to return.

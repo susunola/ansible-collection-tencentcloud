@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns APIGATEWAY service environment release histories visible in a Tencent Cloud region.
 options:
   service_id:
-    description: Service id. API field C(ServiceId).
+    description: Sets the C(ServiceId) field of V(DescribeServiceEnvironmentReleaseHistory); omit it to leave that field unset.
     type: str
   environment_name:
-    description: Environment name. API field C(EnvironmentName).
+    description: Sets the C(EnvironmentName) field of V(DescribeServiceEnvironmentReleaseHistory); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

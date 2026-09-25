@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns EMR auto scale strategies visible in a Tencent Cloud region.
 options:
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeAutoScaleStrategies); omit it to leave that field unset.
     type: str
   group_id:
-    description: Group id. API field C(GroupId).
+    description: Sets the C(GroupId) field of V(DescribeAutoScaleStrategies); omit it to leave that field unset.
     type: int
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

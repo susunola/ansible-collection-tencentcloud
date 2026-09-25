@@ -15,30 +15,30 @@ version_added: "1.5.0"
 description: Returns TRABBIT serverless exchanges visible in a Tencent Cloud region.
 options:
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeRabbitMQServerlessExchanges); omit it to leave that field unset.
     type: str
   virtual_host:
-    description: Virtual host. API field C(VirtualHost).
+    description: Sets the C(VirtualHost) field of V(DescribeRabbitMQServerlessExchanges); omit it to leave that field unset.
     type: str
   search_word:
-    description: Search word. API field C(SearchWord).
+    description: Sets the C(SearchWord) field of V(DescribeRabbitMQServerlessExchanges); omit it to leave that field unset.
     type: str
   exchange_type_filters:
-    description: Exchange type filters. API field C(ExchangeTypeFilters).
+    description: Sets the C(ExchangeTypeFilters) field of V(DescribeRabbitMQServerlessExchanges); omit it to leave that field unset.
     type: list
     elements: str
   exchange_creator_filters:
-    description: Exchange creator filters. API field C(ExchangeCreatorFilters).
+    description: Sets the C(ExchangeCreatorFilters) field of V(DescribeRabbitMQServerlessExchanges); omit it to leave that field unset.
     type: list
     elements: str
   exchange_name:
-    description: Exchange name. API field C(ExchangeName).
+    description: Sets the C(ExchangeName) field of V(DescribeRabbitMQServerlessExchanges); omit it to leave that field unset.
     type: str
   sort_element:
-    description: Sort element. API field C(SortElement).
+    description: Sets the C(SortElement) field of V(DescribeRabbitMQServerlessExchanges); omit it to leave that field unset.
     type: str
   sort_order:
-    description: Sort order. API field C(SortOrder).
+    description: Sets the C(SortOrder) field of V(DescribeRabbitMQServerlessExchanges); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

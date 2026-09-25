@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns TEM environments visible in a Tencent Cloud region.
 options:
   source_channel:
-    description: Source channel. API field C(SourceChannel).
+    description: Sets the C(SourceChannel) field of V(DescribeEnvironments); omit it to leave that field unset.
     type: int
   environment_id:
-    description: Environment id. API field C(EnvironmentId).
+    description: Sets the C(EnvironmentId) field of V(DescribeEnvironments); omit it to leave that field unset.
     type: str
   filters:
     description: TEM API filter names mapped to lists of values.

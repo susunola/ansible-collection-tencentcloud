@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns REDIS replication groups visible in a Tencent Cloud region.
 options:
   group_id:
-    description: Group id. API field C(GroupId).
+    description: Sets the C(GroupId) field of V(DescribeReplicationGroup); omit it to leave that field unset.
     type: str
   search_key:
-    description: Search key. API field C(SearchKey).
+    description: Sets the C(SearchKey) field of V(DescribeReplicationGroup); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

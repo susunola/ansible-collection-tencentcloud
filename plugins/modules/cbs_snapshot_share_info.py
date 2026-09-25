@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns CBS snapshot share permissions visible in a Tencent Cloud region.
 options:
   snapshot_id:
-    description: Snapshot id. API field C(SnapshotId).
+    description: Sets the C(SnapshotId) field of V(DescribeSnapshotSharePermission); omit it to leave that field unset.
     type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

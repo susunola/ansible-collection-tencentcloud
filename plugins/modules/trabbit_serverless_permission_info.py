@@ -15,13 +15,13 @@ version_added: "1.5.0"
 description: Returns TRABBIT serverless permissions visible in a Tencent Cloud region.
 options:
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeRabbitMQServerlessPermission); omit it to leave that field unset.
     type: str
   user:
-    description: User. API field C(User).
+    description: Sets the C(User) field of V(DescribeRabbitMQServerlessPermission); omit it to leave that field unset.
     type: str
   virtual_host:
-    description: Virtual host. API field C(VirtualHost).
+    description: Sets the C(VirtualHost) field of V(DescribeRabbitMQServerlessPermission); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

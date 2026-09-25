@@ -15,13 +15,13 @@ version_added: "1.5.0"
 description: Returns TEM deployments visible in a Tencent Cloud region.
 options:
   application_id:
-    description: Application id. API field C(ApplicationId).
+    description: Sets the C(ApplicationId) field of V(DescribeDeployApplicationDetail); omit it to leave that field unset.
     type: str
   environment_id:
-    description: Environment id. API field C(EnvironmentId).
+    description: Sets the C(EnvironmentId) field of V(DescribeDeployApplicationDetail); omit it to leave that field unset.
     type: str
   version_id:
-    description: Version id. API field C(VersionId).
+    description: Sets the C(VersionId) field of V(DescribeDeployApplicationDetail); omit it to leave that field unset.
     type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

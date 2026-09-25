@@ -15,14 +15,14 @@ version_added: "1.5.0"
 description: Returns VPC end points visible in a Tencent Cloud region.
 options:
   end_point_id:
-    description: End point id. API field C(EndPointId).
+    description: Sets the C(EndPointId) field of V(DescribeVpcEndPoint); omit it to leave that field unset.
     type: list
     elements: str
   ip_address_type:
-    description: Ip address type. API field C(IpAddressType).
+    description: Sets the C(IpAddressType) field of V(DescribeVpcEndPoint); omit it to leave that field unset.
     type: str
   max_results:
-    description: Max results. API field C(MaxResults).
+    description: Sets the C(MaxResults) field of V(DescribeVpcEndPoint); omit it to leave that field unset.
     type: int
   filters:
     description: VPC API filter names mapped to lists of values.

@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns GWLB gateway load balancers visible in a Tencent Cloud region.
 options:
   search_key:
-    description: Search key. API field C(SearchKey).
+    description: Sets the C(SearchKey) field of V(DescribeGatewayLoadBalancers); omit it to leave that field unset.
     type: str
   gateway_load_balancer_ids:
     description: Gateway load balancer IDs to return. Mutually exclusive with O(filters).

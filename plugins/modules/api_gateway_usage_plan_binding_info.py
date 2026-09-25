@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns APIGATEWAY service usage plans visible in a Tencent Cloud region.
 options:
   service_id:
-    description: Service id. API field C(ServiceId).
+    description: Sets the C(ServiceId) field of V(DescribeServiceUsagePlan); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

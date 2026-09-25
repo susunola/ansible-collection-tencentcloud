@@ -15,14 +15,14 @@ version_added: "1.5.0"
 description: Returns TDMQ cmq topics visible in a Tencent Cloud region.
 options:
   topic_name:
-    description: Topic name. API field C(TopicName).
+    description: Sets the C(TopicName) field of V(DescribeCmqTopics); omit it to leave that field unset.
     type: str
   topic_name_list:
-    description: Topic name list. API field C(TopicNameList).
+    description: Sets the C(TopicNameList) field of V(DescribeCmqTopics); omit it to leave that field unset.
     type: list
     elements: str
   is_tag_filter:
-    description: Is tag filter. API field C(IsTagFilter).
+    description: Sets the C(IsTagFilter) field of V(DescribeCmqTopics); omit it to leave that field unset.
     type: bool
   filters:
     description: TDMQ API filter names mapped to lists of values.

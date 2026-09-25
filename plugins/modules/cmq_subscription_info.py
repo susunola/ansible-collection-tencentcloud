@@ -15,16 +15,16 @@ version_added: "1.5.0"
 description: Returns TDMQ cmq subscriptions visible in a Tencent Cloud region.
 options:
   topic_name:
-    description: Topic name. API field C(TopicName).
+    description: Sets the C(TopicName) field of V(DescribeCmqSubscriptionDetail); omit it to leave that field unset.
     type: str
   subscription_name:
-    description: Subscription name. API field C(SubscriptionName).
+    description: Sets the C(SubscriptionName) field of V(DescribeCmqSubscriptionDetail); omit it to leave that field unset.
     type: str
   queue_name:
-    description: Queue name. API field C(QueueName).
+    description: Sets the C(QueueName) field of V(DescribeCmqSubscriptionDetail); omit it to leave that field unset.
     type: str
   query_type:
-    description: Query type. API field C(QueryType).
+    description: Sets the C(QueryType) field of V(DescribeCmqSubscriptionDetail); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

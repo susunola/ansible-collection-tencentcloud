@@ -15,48 +15,48 @@ version_added: "1.5.0"
 description: Returns DTS migration jobs visible in a Tencent Cloud region.
 options:
   job_id:
-    description: Job id. API field C(JobId).
+    description: Sets the C(JobId) field of V(DescribeMigrationJobs); omit it to leave that field unset.
     type: str
   job_name:
-    description: Job name. API field C(JobName).
+    description: Sets the C(JobName) field of V(DescribeMigrationJobs); omit it to leave that field unset.
     type: str
   status:
-    description: Status. API field C(Status).
+    description: Sets the C(Status) field of V(DescribeMigrationJobs); omit it to leave that field unset.
     type: list
     elements: str
   src_instance_id:
-    description: Src instance id. API field C(SrcInstanceId).
+    description: Sets the C(SrcInstanceId) field of V(DescribeMigrationJobs); omit it to leave that field unset.
     type: str
   src_region:
-    description: Src region. API field C(SrcRegion).
+    description: Sets the C(SrcRegion) field of V(DescribeMigrationJobs); omit it to leave that field unset.
     type: str
   src_database_type:
-    description: Src database type. API field C(SrcDatabaseType).
+    description: Sets the C(SrcDatabaseType) field of V(DescribeMigrationJobs); omit it to leave that field unset.
     type: list
     elements: str
   src_access_type:
-    description: Src access type. API field C(SrcAccessType).
+    description: Sets the C(SrcAccessType) field of V(DescribeMigrationJobs); omit it to leave that field unset.
     type: list
     elements: str
   dst_instance_id:
-    description: Dst instance id. API field C(DstInstanceId).
+    description: Sets the C(DstInstanceId) field of V(DescribeMigrationJobs); omit it to leave that field unset.
     type: str
   dst_region:
-    description: Dst region. API field C(DstRegion).
+    description: Sets the C(DstRegion) field of V(DescribeMigrationJobs); omit it to leave that field unset.
     type: str
   dst_database_type:
-    description: Dst database type. API field C(DstDatabaseType).
+    description: Sets the C(DstDatabaseType) field of V(DescribeMigrationJobs); omit it to leave that field unset.
     type: list
     elements: str
   dst_access_type:
-    description: Dst access type. API field C(DstAccessType).
+    description: Sets the C(DstAccessType) field of V(DescribeMigrationJobs); omit it to leave that field unset.
     type: list
     elements: str
   run_mode:
-    description: Run mode. API field C(RunMode).
+    description: Sets the C(RunMode) field of V(DescribeMigrationJobs); omit it to leave that field unset.
     type: str
   order_seq:
-    description: Order seq. API field C(OrderSeq).
+    description: Sets the C(OrderSeq) field of V(DescribeMigrationJobs); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

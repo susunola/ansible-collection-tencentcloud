@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns CBS disk backups visible in a Tencent Cloud region.
 options:
   order:
-    description: Order. API field C(Order).
+    description: Sets the C(Order) field of V(DescribeDiskBackups); omit it to leave that field unset.
     type: str
   order_field:
-    description: Order field. API field C(OrderField).
+    description: Sets the C(OrderField) field of V(DescribeDiskBackups); omit it to leave that field unset.
     type: str
   disk_backup_ids:
     description: Disk backup IDs to return. Mutually exclusive with O(filters).

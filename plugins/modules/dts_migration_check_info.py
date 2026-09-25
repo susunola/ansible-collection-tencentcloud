@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns DTS migration check jobs visible in a Tencent Cloud region.
 options:
   job_id:
-    description: Job id. API field C(JobId).
+    description: Sets the C(JobId) field of V(DescribeMigrationCheckJob); omit it to leave that field unset.
     type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

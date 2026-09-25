@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns APIGATEWAY ip strategies visible in a Tencent Cloud region.
 options:
   service_id:
-    description: Service id. API field C(ServiceId).
+    description: Sets the C(ServiceId) field of V(DescribeIPStrategysStatus); omit it to leave that field unset.
     type: str
   filters:
     description: APIGATEWAY API filter names mapped to lists of values.

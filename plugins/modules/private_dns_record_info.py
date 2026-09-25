@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns PRIVATEDNS private zone records visible in a Tencent Cloud region.
 options:
   zone_id:
-    description: Zone id. API field C(ZoneId).
+    description: Sets the C(ZoneId) field of V(DescribePrivateZoneRecordList); omit it to leave that field unset.
     type: str
   filters:
     description: PRIVATEDNS API filter names mapped to lists of values.

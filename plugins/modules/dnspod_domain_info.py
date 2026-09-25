@@ -15,13 +15,13 @@ version_added: "1.5.0"
 description: Returns DNSPOD domains visible in a Tencent Cloud region.
 options:
   type:
-    description: Type. API field C(Type).
+    description: Sets the C(Type) field of V(DescribeDomainList); omit it to leave that field unset.
     type: str
   group_id:
-    description: Group id. API field C(GroupId).
+    description: Sets the C(GroupId) field of V(DescribeDomainList); omit it to leave that field unset.
     type: int
   keyword:
-    description: Keyword. API field C(Keyword).
+    description: Sets the C(Keyword) field of V(DescribeDomainList); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

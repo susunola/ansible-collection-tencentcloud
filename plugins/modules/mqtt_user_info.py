@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns MQTT users visible in a Tencent Cloud region.
 options:
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeUserList); omit it to leave that field unset.
     type: str
   filters:
     description: MQTT API filter names mapped to lists of values.

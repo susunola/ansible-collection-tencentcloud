@@ -15,22 +15,22 @@ version_added: "1.5.0"
 description: Returns TRABBIT serverless queues visible in a Tencent Cloud region.
 options:
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeRabbitMQServerlessQueues); omit it to leave that field unset.
     type: str
   virtual_host:
-    description: Virtual host. API field C(VirtualHost).
+    description: Sets the C(VirtualHost) field of V(DescribeRabbitMQServerlessQueues); omit it to leave that field unset.
     type: str
   search_word:
-    description: Search word. API field C(SearchWord).
+    description: Sets the C(SearchWord) field of V(DescribeRabbitMQServerlessQueues); omit it to leave that field unset.
     type: str
   queue_type:
-    description: Queue type. API field C(QueueType).
+    description: Sets the C(QueueType) field of V(DescribeRabbitMQServerlessQueues); omit it to leave that field unset.
     type: str
   sort_element:
-    description: Sort element. API field C(SortElement).
+    description: Sets the C(SortElement) field of V(DescribeRabbitMQServerlessQueues); omit it to leave that field unset.
     type: str
   sort_order:
-    description: Sort order. API field C(SortOrder).
+    description: Sets the C(SortOrder) field of V(DescribeRabbitMQServerlessQueues); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns GAAP real servers visible in a Tencent Cloud region.
 options:
   project_id:
-    description: Project id. API field C(ProjectId).
+    description: Sets the C(ProjectId) field of V(DescribeRealServers); omit it to leave that field unset.
     type: int
   search_value:
-    description: Search value. API field C(SearchValue).
+    description: Sets the C(SearchValue) field of V(DescribeRealServers); omit it to leave that field unset.
     type: str
   filters:
     description: GAAP API filter names mapped to lists of values.

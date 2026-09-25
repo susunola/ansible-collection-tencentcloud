@@ -15,13 +15,13 @@ version_added: "1.5.0"
 description: Returns CKAFKA acls visible in a Tencent Cloud region.
 options:
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeACL); omit it to leave that field unset.
     type: str
   resource_type:
-    description: Resource type. API field C(ResourceType).
+    description: Sets the C(ResourceType) field of V(DescribeACL); omit it to leave that field unset.
     type: int
   resource_name:
-    description: Resource name. API field C(ResourceName).
+    description: Sets the C(ResourceName) field of V(DescribeACL); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

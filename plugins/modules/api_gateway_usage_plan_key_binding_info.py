@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns APIGATEWAY usage plan secret ids visible in a Tencent Cloud region.
 options:
   usage_plan_id:
-    description: Usage plan id. API field C(UsagePlanId).
+    description: Sets the C(UsagePlanId) field of V(DescribeUsagePlanSecretIds); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

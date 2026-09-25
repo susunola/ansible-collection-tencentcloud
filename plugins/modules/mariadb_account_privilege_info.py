@@ -15,25 +15,25 @@ version_added: "1.5.0"
 description: Returns MARIADB account privilege visible in a Tencent Cloud region.
 options:
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeAccountPrivileges); omit it to leave that field unset.
     type: str
   user_name:
-    description: User name. API field C(UserName).
+    description: Sets the C(UserName) field of V(DescribeAccountPrivileges); omit it to leave that field unset.
     type: str
   host:
-    description: Host. API field C(Host).
+    description: Sets the C(Host) field of V(DescribeAccountPrivileges); omit it to leave that field unset.
     type: str
   db_name:
-    description: Db name. API field C(DbName).
+    description: Sets the C(DbName) field of V(DescribeAccountPrivileges); omit it to leave that field unset.
     type: str
   type:
-    description: Type. API field C(Type).
+    description: Sets the C(Type) field of V(DescribeAccountPrivileges); omit it to leave that field unset.
     type: str
   object:
-    description: Object. API field C(Object).
+    description: Sets the C(Object) field of V(DescribeAccountPrivileges); omit it to leave that field unset.
     type: str
   col_name:
-    description: Col name. API field C(ColName).
+    description: Sets the C(ColName) field of V(DescribeAccountPrivileges); omit it to leave that field unset.
     type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -15,16 +15,16 @@ version_added: "1.5.0"
 description: Returns CDWCH cn instances visible in a Tencent Cloud region.
 options:
   search_instance_id:
-    description: Search instance id. API field C(SearchInstanceID).
+    description: Sets the C(SearchInstanceID) field of V(DescribeCNInstances); omit it to leave that field unset.
     type: str
   search_instance_name:
-    description: Search instance name. API field C(SearchInstanceName).
+    description: Sets the C(SearchInstanceName) field of V(DescribeCNInstances); omit it to leave that field unset.
     type: str
   instance_type:
-    description: Instance type. API field C(InstanceType).
+    description: Sets the C(InstanceType) field of V(DescribeCNInstances); omit it to leave that field unset.
     type: str
   components:
-    description: Components. API field C(Components).
+    description: Sets the C(Components) field of V(DescribeCNInstances); omit it to leave that field unset.
     type: list
     elements: str
   page_size:

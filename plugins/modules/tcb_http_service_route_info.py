@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns TCB http service routes visible in a Tencent Cloud region.
 options:
   env_id:
-    description: Env id. API field C(EnvId).
+    description: Sets the C(EnvId) field of V(DescribeHTTPServiceRoute); omit it to leave that field unset.
     type: str
   filters:
     description: TCB API filter names mapped to lists of values.

@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns CHDFS access groups visible in a Tencent Cloud region.
 options:
   vpc_id:
-    description: Vpc id. API field C(VpcId).
+    description: Sets the C(VpcId) field of V(DescribeAccessGroups); omit it to leave that field unset.
     type: str
   owner_uin:
-    description: Owner uin. API field C(OwnerUin).
+    description: Sets the C(OwnerUin) field of V(DescribeAccessGroups); omit it to leave that field unset.
     type: int
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

@@ -15,16 +15,16 @@ version_added: "1.5.0"
 description: Returns CKAFKA datahub topics visible in a Tencent Cloud region.
 options:
   search_word:
-    description: Search word. API field C(SearchWord).
+    description: Sets the C(SearchWord) field of V(DescribeDatahubTopics); omit it to leave that field unset.
     type: str
   query_from_connect_resource:
-    description: Query from connect resource. API field C(QueryFromConnectResource).
+    description: Sets the C(QueryFromConnectResource) field of V(DescribeDatahubTopics); omit it to leave that field unset.
     type: bool
   connect_resource_id:
-    description: Connect resource id. API field C(ConnectResourceId).
+    description: Sets the C(ConnectResourceId) field of V(DescribeDatahubTopics); omit it to leave that field unset.
     type: str
   topic_regular_expression:
-    description: Topic regular expression. API field C(TopicRegularExpression).
+    description: Sets the C(TopicRegularExpression) field of V(DescribeDatahubTopics); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

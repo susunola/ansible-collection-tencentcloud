@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns DCDB backup configs visible in a Tencent Cloud region.
 options:
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeBackupConfigs); omit it to leave that field unset.
     type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

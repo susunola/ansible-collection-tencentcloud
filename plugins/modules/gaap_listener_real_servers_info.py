@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns GAAP listener real servers visible in a Tencent Cloud region.
 options:
   listener_id:
-    description: Listener id. API field C(ListenerId).
+    description: Sets the C(ListenerId) field of V(DescribeListenerRealServers); omit it to leave that field unset.
     type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

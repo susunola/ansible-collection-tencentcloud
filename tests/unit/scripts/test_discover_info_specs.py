@@ -61,8 +61,9 @@ def _fields(**rtypes):
     return {name: _prop(rtype) for name, rtype in rtypes.items()}
 
 
-def _one(discover, **rtypes):
-    params, dropped = discover._extra_params(_fields(**rtypes), set(), discover._RESERVED)
+def _one(discover, action=None, **rtypes):
+    params, dropped = discover._extra_params(
+        _fields(**rtypes), set(), discover._RESERVED, action)
     return params, dropped
 
 
@@ -72,7 +73,7 @@ def _one(discover, **rtypes):
 
 
 def test_list_of_str_gets_elements(discover):
-    params, dropped = _one(discover, IndexStatusList="list of str")
+    params, dropped = _one(discover, action="DescribeIndexList", IndexStatusList="list of str")
     assert dropped == []
     assert params == [{
         "name": "index_status_list",
@@ -80,8 +81,38 @@ def test_list_of_str_gets_elements(discover):
         "type": "list",
         "elements": "str",
         "required": False,
-        "doc": "Index status list. API field C(IndexStatusList).",
+        "doc": "Sets the C(IndexStatusList) field of V(DescribeIndexList); omit it to "
+               "leave that field unset.",
     }]
+
+
+def test_extra_param_doc_names_the_action_and_field(discover):
+    """A reader needs the API call and the field to look either one up. The
+    first version of this text said "Index status list. API field
+    C(IndexStatusList)." -- the first clause restating the option and the
+    action nowhere."""
+    params, _dropped = _one(discover, action="DescribeIndexList", IndexStatusList="list of str")
+    assert "V(DescribeIndexList)" in params[0]["doc"]
+    assert "C(IndexStatusList)" in params[0]["doc"]
+
+
+def test_extra_param_doc_does_not_restate_the_option(discover):
+    params, _dropped = _one(discover, action="DescribeIndexList", IndexStatusList="list of str")
+    words = set(re.sub(r"[^a-z0-9]+", " ", params[0]["doc"].lower()).split())
+    assert "index" not in words
+    assert "status" not in words
+
+
+def test_required_extra_param_says_the_api_needs_it(discover):
+    """The SDK marks a required request field in its own docstring; the option
+    the generator exposes has to repeat that, or a user meets the failure at
+    call time instead of reading it in the docs."""
+    prop = _prop("str", doc="Question id.\n是否必填：是")
+    params, _dropped = discover._extra_params(
+        {"QuestionId": prop}, set(), discover._RESERVED, "DescribeQuestionList")
+    assert params[0]["required"] is True
+    assert params[0]["doc"] == ("Sets the C(QuestionId) field of V(DescribeQuestionList), "
+                                "which the API requires.")
 
 
 def test_list_of_int_gets_elements(discover):

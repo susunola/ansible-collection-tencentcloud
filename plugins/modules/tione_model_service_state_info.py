@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns TIONE model services visible in a Tencent Cloud region.
 options:
   service_group_id:
-    description: Service group id. API field C(ServiceGroupId).
+    description: Sets the C(ServiceGroupId) field of V(DescribeModelServiceGroup); omit it to leave that field unset.
     type: str
   ti_project_id:
-    description: Ti project id. API field C(TiProjectId).
+    description: Sets the C(TiProjectId) field of V(DescribeModelServiceGroup); omit it to leave that field unset.
     type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

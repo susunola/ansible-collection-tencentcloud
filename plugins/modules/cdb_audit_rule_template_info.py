@@ -15,14 +15,14 @@ version_added: "1.5.0"
 description: Returns CDB audit rule templates visible in a Tencent Cloud region.
 options:
   rule_template_names:
-    description: Rule template names. API field C(RuleTemplateNames).
+    description: Sets the C(RuleTemplateNames) field of V(DescribeAuditRuleTemplates); omit it to leave that field unset.
     type: list
     elements: str
   alarm_level:
-    description: Alarm level. API field C(AlarmLevel).
+    description: Sets the C(AlarmLevel) field of V(DescribeAuditRuleTemplates); omit it to leave that field unset.
     type: int
   alarm_policy:
-    description: Alarm policy. API field C(AlarmPolicy).
+    description: Sets the C(AlarmPolicy) field of V(DescribeAuditRuleTemplates); omit it to leave that field unset.
     type: int
   audit_rule_template_ids:
     description: Audit rule template IDs to return.

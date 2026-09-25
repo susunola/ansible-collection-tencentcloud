@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns DTS consumer groups visible in a Tencent Cloud region.
 options:
   subscribe_id:
-    description: Subscribe id. API field C(SubscribeId).
+    description: Sets the C(SubscribeId) field of V(DescribeConsumerGroups); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

@@ -15,13 +15,13 @@ version_added: "1.5.0"
 description: Returns CHDFS mount points visible in a Tencent Cloud region.
 options:
   file_system_id:
-    description: File system id. API field C(FileSystemId).
+    description: Sets the C(FileSystemId) field of V(DescribeMountPoints); omit it to leave that field unset.
     type: str
   access_group_id:
-    description: Access group id. API field C(AccessGroupId).
+    description: Sets the C(AccessGroupId) field of V(DescribeMountPoints); omit it to leave that field unset.
     type: str
   owner_uin:
-    description: Owner uin. API field C(OwnerUin).
+    description: Sets the C(OwnerUin) field of V(DescribeMountPoints); omit it to leave that field unset.
     type: int
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

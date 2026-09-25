@@ -15,29 +15,29 @@ version_added: "1.5.0"
 description: Returns ES indexes visible in a Tencent Cloud region.
 options:
   index_type:
-    description: Index type. API field C(IndexType).
+    description: Sets the C(IndexType) field of V(DescribeIndexList); omit it to leave that field unset.
     type: str
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeIndexList); omit it to leave that field unset.
     type: str
   index_name:
-    description: Index name. API field C(IndexName).
+    description: Sets the C(IndexName) field of V(DescribeIndexList); omit it to leave that field unset.
     type: str
   username:
-    description: Username. API field C(Username).
+    description: Sets the C(Username) field of V(DescribeIndexList); omit it to leave that field unset.
     type: str
   password:
-    description: Password. API field C(Password).
+    description: Sets the C(Password) field of V(DescribeIndexList); omit it to leave that field unset.
     type: str
   order_by:
-    description: Order by. API field C(OrderBy).
+    description: Sets the C(OrderBy) field of V(DescribeIndexList); omit it to leave that field unset.
     type: str
   index_status_list:
-    description: Index status list. API field C(IndexStatusList).
+    description: Sets the C(IndexStatusList) field of V(DescribeIndexList); omit it to leave that field unset.
     type: list
     elements: str
   order:
-    description: Order. API field C(Order).
+    description: Sets the C(Order) field of V(DescribeIndexList); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

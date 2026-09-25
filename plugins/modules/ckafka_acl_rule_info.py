@@ -15,16 +15,16 @@ version_added: "1.5.0"
 description: Returns CKAFKA acl rules visible in a Tencent Cloud region.
 options:
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeAclRule); omit it to leave that field unset.
     type: str
   rule_name:
-    description: Rule name. API field C(RuleName).
+    description: Sets the C(RuleName) field of V(DescribeAclRule); omit it to leave that field unset.
     type: str
   pattern_type:
-    description: Pattern type. API field C(PatternType).
+    description: Sets the C(PatternType) field of V(DescribeAclRule); omit it to leave that field unset.
     type: str
   is_simplified:
-    description: Is simplified. API field C(IsSimplified).
+    description: Sets the C(IsSimplified) field of V(DescribeAclRule); omit it to leave that field unset.
     type: bool
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

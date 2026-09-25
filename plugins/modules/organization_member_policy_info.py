@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns ORGANIZATION member policies visible in a Tencent Cloud region.
 options:
   member_uin:
-    description: Member uin. API field C(MemberUin).
+    description: Sets the C(MemberUin) field of V(DescribeOrganizationMemberPolicies); omit it to leave that field unset.
     type: int
   search_key:
-    description: Search key. API field C(SearchKey).
+    description: Sets the C(SearchKey) field of V(DescribeOrganizationMemberPolicies); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

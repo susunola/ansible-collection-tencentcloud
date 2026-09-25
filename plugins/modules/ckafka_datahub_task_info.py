@@ -15,19 +15,19 @@ version_added: "1.5.0"
 description: Returns CKAFKA datahub tasks visible in a Tencent Cloud region.
 options:
   search_word:
-    description: Search word. API field C(SearchWord).
+    description: Sets the C(SearchWord) field of V(DescribeDatahubTasks); omit it to leave that field unset.
     type: str
   target_type:
-    description: Target type. API field C(TargetType).
+    description: Sets the C(TargetType) field of V(DescribeDatahubTasks); omit it to leave that field unset.
     type: str
   task_type:
-    description: Task type. API field C(TaskType).
+    description: Sets the C(TaskType) field of V(DescribeDatahubTasks); omit it to leave that field unset.
     type: str
   source_type:
-    description: Source type. API field C(SourceType).
+    description: Sets the C(SourceType) field of V(DescribeDatahubTasks); omit it to leave that field unset.
     type: str
   resource:
-    description: Resource. API field C(Resource).
+    description: Sets the C(Resource) field of V(DescribeDatahubTasks); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

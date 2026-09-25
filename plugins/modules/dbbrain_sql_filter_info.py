@@ -15,18 +15,18 @@ version_added: "1.5.0"
 description: Returns DBBRAIN sql filters visible in a Tencent Cloud region.
 options:
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeSqlFilters); omit it to leave that field unset.
     type: str
   filter_ids:
-    description: Filter ids. API field C(FilterIds).
+    description: Sets the C(FilterIds) field of V(DescribeSqlFilters); omit it to leave that field unset.
     type: list
     elements: int
   statuses:
-    description: Statuses. API field C(Statuses).
+    description: Sets the C(Statuses) field of V(DescribeSqlFilters); omit it to leave that field unset.
     type: list
     elements: str
   product:
-    description: Product. API field C(Product).
+    description: Sets the C(Product) field of V(DescribeSqlFilters); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns CDWPG instances visible in a Tencent Cloud region.
 options:
   search_instance_id:
-    description: Search instance id. API field C(SearchInstanceId).
+    description: Sets the C(SearchInstanceId) field of V(DescribeInstances); omit it to leave that field unset.
     type: str
   search_instance_name:
-    description: Search instance name. API field C(SearchInstanceName).
+    description: Sets the C(SearchInstanceName) field of V(DescribeInstances); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

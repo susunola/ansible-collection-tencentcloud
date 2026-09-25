@@ -15,22 +15,22 @@ version_added: "1.5.0"
 description: Returns CFW address templates visible in a Tencent Cloud region.
 options:
   by:
-    description: By. API field C(By).
+    description: Sets the C(By) field of V(DescribeAddressTemplateList); omit it to leave that field unset.
     type: str
   order:
-    description: Order. API field C(Order).
+    description: Sets the C(Order) field of V(DescribeAddressTemplateList); omit it to leave that field unset.
     type: str
   search_value:
-    description: Search value. API field C(SearchValue).
+    description: Sets the C(SearchValue) field of V(DescribeAddressTemplateList); omit it to leave that field unset.
     type: str
   uuid:
-    description: Uuid. API field C(Uuid).
+    description: Sets the C(Uuid) field of V(DescribeAddressTemplateList); omit it to leave that field unset.
     type: str
   template_type:
-    description: Template type. API field C(TemplateType).
+    description: Sets the C(TemplateType) field of V(DescribeAddressTemplateList); omit it to leave that field unset.
     type: str
   template_id:
-    description: Template id. API field C(TemplateId).
+    description: Sets the C(TemplateId) field of V(DescribeAddressTemplateList); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

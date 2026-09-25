@@ -15,16 +15,16 @@ version_added: "1.5.0"
 description: Returns TRABBIT serverless users visible in a Tencent Cloud region.
 options:
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeRabbitMQServerlessUser); omit it to leave that field unset.
     type: str
   search_user:
-    description: Search user. API field C(SearchUser).
+    description: Sets the C(SearchUser) field of V(DescribeRabbitMQServerlessUser); omit it to leave that field unset.
     type: str
   user:
-    description: User. API field C(User).
+    description: Sets the C(User) field of V(DescribeRabbitMQServerlessUser); omit it to leave that field unset.
     type: str
   tags:
-    description: Tags. API field C(Tags).
+    description: Sets the C(Tags) field of V(DescribeRabbitMQServerlessUser); omit it to leave that field unset.
     type: list
     elements: str
   page_size:

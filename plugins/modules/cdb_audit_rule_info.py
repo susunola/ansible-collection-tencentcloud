@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns CDB audit rules visible in a Tencent Cloud region.
 options:
   rule_id:
-    description: Rule id. API field C(RuleId).
+    description: Sets the C(RuleId) field of V(DescribeAuditRules); omit it to leave that field unset.
     type: str
   rule_name:
-    description: Rule name. API field C(RuleName).
+    description: Sets the C(RuleName) field of V(DescribeAuditRules); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

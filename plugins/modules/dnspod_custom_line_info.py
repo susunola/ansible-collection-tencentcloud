@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns DNSPOD domain custom lines visible in a Tencent Cloud region.
 options:
   domain:
-    description: Domain. API field C(Domain).
+    description: Sets the C(Domain) field of V(DescribeDomainCustomLineList); omit it to leave that field unset.
     type: str
   domain_id:
-    description: Domain id. API field C(DomainId).
+    description: Sets the C(DomainId) field of V(DescribeDomainCustomLineList); omit it to leave that field unset.
     type: int
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

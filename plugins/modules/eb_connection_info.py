@@ -15,13 +15,13 @@ version_added: "1.5.0"
 description: Returns EB connections visible in a Tencent Cloud region.
 options:
   event_bus_id:
-    description: Event bus id. API field C(EventBusId).
+    description: Sets the C(EventBusId) field of V(ListConnections); omit it to leave that field unset.
     type: str
   order_by:
-    description: Order by. API field C(OrderBy).
+    description: Sets the C(OrderBy) field of V(ListConnections); omit it to leave that field unset.
     type: str
   order:
-    description: Order. API field C(Order).
+    description: Sets the C(Order) field of V(ListConnections); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

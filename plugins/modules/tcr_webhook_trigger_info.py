@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns TCR webhook triggers visible in a Tencent Cloud region.
 options:
   registry_id:
-    description: Registry id. API field C(RegistryId).
+    description: Sets the C(RegistryId) field of V(DescribeWebhookTrigger); omit it to leave that field unset.
     type: str
   namespace:
-    description: Namespace. API field C(Namespace).
+    description: Sets the C(Namespace) field of V(DescribeWebhookTrigger); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

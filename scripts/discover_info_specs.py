@@ -228,7 +228,7 @@ def _snake(field):
     return "_".join(word.lower() for word in _camel_words(field)) or field.lower()
 
 
-def _extra_params(request_props, managed, reserved):
+def _extra_params(request_props, managed, reserved, action=None):
     """Describe the request fields the generator cannot express itself.
 
     A list API is often scoped to a parent resource
@@ -257,9 +257,16 @@ def _extra_params(request_props, managed, reserved):
             "field": name,
             "type": _EXTRA_TYPES[rtype],
             "required": required,
-            "doc": "%s. API field C(%s)%s." % (
-                _humanize(name).capitalize(), name,
-                ", required by the API" if required else ""),
+            # Naming the API field is useful; naming it twice is not. The
+            # old text was "<Field name in words>. API field C(<Field>).",
+            # whose first clause restates the option and whose second is the
+            # only part that says anything -- and it left out the action the
+            # field belongs to, which is what a reader needs to look it up.
+            "doc": (
+                "Sets the C(%s) field of V(%s)%s." % (
+                    name, action or "the list action",
+                    ", which the API requires" if required
+                    else "; omit it to leave that field unset")),
         }
         if rtype in _EXTRA_ELEMENTS:
             param["elements"] = _EXTRA_ELEMENTS[rtype]
@@ -579,7 +586,7 @@ def _analyze_action(models, action, allow_extra=False):
             reserved.update(("page_size", "page_number"))
         elif pagination == "token":
             reserved.add("max_results")
-        extra_params, dropped = _extra_params(request_props, managed, reserved)
+        extra_params, dropped = _extra_params(request_props, managed, reserved, action)
         fatal = ["%s (%s)" % (name, why) for name, why, required in dropped if required]
         if fatal:
             return None, ("required request field(s) cannot be exposed: %s"

@@ -15,13 +15,13 @@ version_added: "1.5.0"
 description: Returns TDCPG cluster instances visible in a Tencent Cloud region.
 options:
   cluster_id:
-    description: Cluster id. API field C(ClusterId).
+    description: Sets the C(ClusterId) field of V(DescribeClusterInstances); omit it to leave that field unset.
     type: str
   order_by:
-    description: Order by. API field C(OrderBy).
+    description: Sets the C(OrderBy) field of V(DescribeClusterInstances); omit it to leave that field unset.
     type: str
   order_by_type:
-    description: Order by type. API field C(OrderByType).
+    description: Sets the C(OrderByType) field of V(DescribeClusterInstances); omit it to leave that field unset.
     type: str
   filters:
     description: TDCPG API filter names mapped to lists of values.

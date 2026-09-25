@@ -15,13 +15,13 @@ version_added: "1.5.0"
 description: Returns ES cluster snapshots visible in a Tencent Cloud region.
 options:
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeClusterSnapshot); omit it to leave that field unset.
     type: str
   repository_name:
-    description: Repository name. API field C(RepositoryName).
+    description: Sets the C(RepositoryName) field of V(DescribeClusterSnapshot); omit it to leave that field unset.
     type: str
   snapshot_name:
-    description: Snapshot name. API field C(SnapshotName).
+    description: Sets the C(SnapshotName) field of V(DescribeClusterSnapshot); omit it to leave that field unset.
     type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

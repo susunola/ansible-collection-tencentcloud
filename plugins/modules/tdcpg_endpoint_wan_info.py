@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns TDCPG cluster endpoints visible in a Tencent Cloud region.
 options:
   cluster_id:
-    description: Cluster id. API field C(ClusterId).
+    description: Sets the C(ClusterId) field of V(DescribeClusterEndpoints); omit it to leave that field unset.
     type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

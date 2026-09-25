@@ -15,22 +15,22 @@ version_added: "1.5.0"
 description: Returns CYNOSDB account privilege visible in a Tencent Cloud region.
 options:
   cluster_id:
-    description: Cluster id. API field C(ClusterId).
+    description: Sets the C(ClusterId) field of V(DescribeAccountPrivileges); omit it to leave that field unset.
     type: str
   account_name:
-    description: Account name. API field C(AccountName).
+    description: Sets the C(AccountName) field of V(DescribeAccountPrivileges); omit it to leave that field unset.
     type: str
   host:
-    description: Host. API field C(Host).
+    description: Sets the C(Host) field of V(DescribeAccountPrivileges); omit it to leave that field unset.
     type: str
   db:
-    description: Db. API field C(Db).
+    description: Sets the C(Db) field of V(DescribeAccountPrivileges); omit it to leave that field unset.
     type: str
   type:
-    description: Type. API field C(Type).
+    description: Sets the C(Type) field of V(DescribeAccountPrivileges); omit it to leave that field unset.
     type: str
   table_name:
-    description: Table name. API field C(TableName).
+    description: Sets the C(TableName) field of V(DescribeAccountPrivileges); omit it to leave that field unset.
     type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

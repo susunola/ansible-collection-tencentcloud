@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns CLS alarm notices visible in a Tencent Cloud region.
 options:
   has_alarm_shield_count:
-    description: Has alarm shield count. API field C(HasAlarmShieldCount).
+    description: Sets the C(HasAlarmShieldCount) field of V(DescribeAlarmNotices); omit it to leave that field unset.
     type: bool
   filters:
     description: CLS API filter names mapped to lists of values.

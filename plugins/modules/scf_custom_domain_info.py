@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns SCF custom domains visible in a Tencent Cloud region.
 options:
   order_by:
-    description: Order by. API field C(OrderBy).
+    description: Sets the C(OrderBy) field of V(ListCustomDomains); omit it to leave that field unset.
     type: str
   order:
-    description: Order. API field C(Order).
+    description: Sets the C(Order) field of V(ListCustomDomains); omit it to leave that field unset.
     type: str
   filters:
     description: SCF API filter names mapped to lists of values.

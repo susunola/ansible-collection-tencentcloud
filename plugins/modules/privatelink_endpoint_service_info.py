@@ -15,13 +15,13 @@ version_added: "1.5.0"
 description: Returns VPC end point services visible in a Tencent Cloud region.
 options:
   is_list_authorized_end_point_service:
-    description: Is list authorized end point service. API field C(IsListAuthorizedEndPointService).
+    description: Sets the C(IsListAuthorizedEndPointService) field of V(DescribeVpcEndPointService); omit it to leave that field unset.
     type: bool
   ip_address_type:
-    description: Ip address type. API field C(IpAddressType).
+    description: Sets the C(IpAddressType) field of V(DescribeVpcEndPointService); omit it to leave that field unset.
     type: str
   max_results:
-    description: Max results. API field C(MaxResults).
+    description: Sets the C(MaxResults) field of V(DescribeVpcEndPointService); omit it to leave that field unset.
     type: int
   end_point_service_ids:
     description: End point service IDs to return. Mutually exclusive with O(filters).

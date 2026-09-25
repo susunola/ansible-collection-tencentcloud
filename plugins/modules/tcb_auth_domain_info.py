@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns TCB auth domains visible in a Tencent Cloud region.
 options:
   env_id:
-    description: Env id. API field C(EnvId).
+    description: Sets the C(EnvId) field of V(DescribeAuthDomains); omit it to leave that field unset.
     type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

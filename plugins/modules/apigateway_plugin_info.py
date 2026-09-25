@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns APIGATEWAY plugins visible in a Tencent Cloud region.
 options:
   plugin_name:
-    description: Plugin name. API field C(PluginName).
+    description: Sets the C(PluginName) field of V(DescribePlugins); omit it to leave that field unset.
     type: str
   plugin_type:
-    description: Plugin type. API field C(PluginType).
+    description: Sets the C(PluginType) field of V(DescribePlugins); omit it to leave that field unset.
     type: str
   plugin_ids:
     description: Plugin IDs to return. Mutually exclusive with O(filters).

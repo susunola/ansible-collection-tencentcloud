@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns CDWCH parameters visible in a Tencent Cloud region.
 options:
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeInstanceKeyValConfigs); omit it to leave that field unset.
     type: str
   search_config_name:
-    description: Search config name. API field C(SearchConfigName).
+    description: Sets the C(SearchConfigName) field of V(DescribeInstanceKeyValConfigs); omit it to leave that field unset.
     type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

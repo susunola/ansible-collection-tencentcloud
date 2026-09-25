@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns DCDB db security groups visible in a Tencent Cloud region.
 options:
   product:
-    description: Product. API field C(Product).
+    description: Sets the C(Product) field of V(DescribeDBSecurityGroups); omit it to leave that field unset.
     type: str
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeDBSecurityGroups); omit it to leave that field unset.
     type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

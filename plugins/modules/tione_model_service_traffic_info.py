@@ -15,13 +15,13 @@ version_added: "1.5.0"
 description: Returns TIONE model service groups visible in a Tencent Cloud region.
 options:
   ti_project_id:
-    description: Ti project id. API field C(TiProjectId).
+    description: Sets the C(TiProjectId) field of V(DescribeModelServiceGroups); omit it to leave that field unset.
     type: str
   order:
-    description: Order. API field C(Order).
+    description: Sets the C(Order) field of V(DescribeModelServiceGroups); omit it to leave that field unset.
     type: str
   order_field:
-    description: Order field. API field C(OrderField).
+    description: Sets the C(OrderField) field of V(DescribeModelServiceGroups); omit it to leave that field unset.
     type: str
   filters:
     description: TIONE API filter names mapped to lists of values.

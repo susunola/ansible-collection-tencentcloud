@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns GOOSEFS filesets visible in a Tencent Cloud region.
 options:
   file_system_id:
-    description: File system id. API field C(FileSystemId).
+    description: Sets the C(FileSystemId) field of V(DescribeFilesets); omit it to leave that field unset.
     type: str
   fileset_dirs:
-    description: Fileset dirs. API field C(FilesetDirs).
+    description: Sets the C(FilesetDirs) field of V(DescribeFilesets); omit it to leave that field unset.
     type: list
     elements: str
   fileset_ids:

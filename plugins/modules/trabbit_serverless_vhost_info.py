@@ -15,16 +15,16 @@ version_added: "1.5.0"
 description: Returns TRABBIT serverless vhosts visible in a Tencent Cloud region.
 options:
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeRabbitMQServerlessVirtualHost); omit it to leave that field unset.
     type: str
   virtual_host:
-    description: Virtual host. API field C(VirtualHost).
+    description: Sets the C(VirtualHost) field of V(DescribeRabbitMQServerlessVirtualHost); omit it to leave that field unset.
     type: str
   sort_element:
-    description: Sort element. API field C(SortElement).
+    description: Sets the C(SortElement) field of V(DescribeRabbitMQServerlessVirtualHost); omit it to leave that field unset.
     type: str
   sort_order:
-    description: Sort order. API field C(SortOrder).
+    description: Sets the C(SortOrder) field of V(DescribeRabbitMQServerlessVirtualHost); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

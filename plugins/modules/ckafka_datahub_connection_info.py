@@ -15,13 +15,13 @@ version_added: "1.5.0"
 description: Returns CKAFKA datahub connections visible in a Tencent Cloud region.
 options:
   type:
-    description: Type. API field C(Type).
+    description: Sets the C(Type) field of V(DescribeConnectResources); omit it to leave that field unset.
     type: str
   search_word:
-    description: Search word. API field C(SearchWord).
+    description: Sets the C(SearchWord) field of V(DescribeConnectResources); omit it to leave that field unset.
     type: str
   resource_region:
-    description: Resource region. API field C(ResourceRegion).
+    description: Sets the C(ResourceRegion) field of V(DescribeConnectResources); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

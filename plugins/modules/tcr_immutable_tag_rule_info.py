@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns TCR immutable tag rules visible in a Tencent Cloud region.
 options:
   registry_id:
-    description: Registry id. API field C(RegistryId).
+    description: Sets the C(RegistryId) field of V(DescribeImmutableTagRules); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

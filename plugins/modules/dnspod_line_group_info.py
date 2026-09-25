@@ -15,13 +15,13 @@ version_added: "1.5.0"
 description: Returns DNSPOD line groups visible in a Tencent Cloud region.
 options:
   domain:
-    description: Domain. API field C(Domain).
+    description: Sets the C(Domain) field of V(DescribeLineGroupList); omit it to leave that field unset.
     type: str
   sort_type:
-    description: Sort type. API field C(SortType).
+    description: Sets the C(SortType) field of V(DescribeLineGroupList); omit it to leave that field unset.
     type: str
   domain_id:
-    description: Domain id. API field C(DomainId).
+    description: Sets the C(DomainId) field of V(DescribeLineGroupList); omit it to leave that field unset.
     type: int
   page_size:
     description: Number of results requested per API call.

@@ -1,0 +1,20 @@
+---
+minor_changes:
+  - >-
+    module docs - stop describing an option by naming it twice. The generated
+    ``_info`` options that wrap an API request field were documented as
+    "Service id. API field C(ServiceId).", where the first clause restates the
+    option and the second says the only thing the text has to say -- and the
+    action the field belongs to was missing, which is what a reader needs to
+    look it up. They now read "Sets the C(ServiceId) field of
+    V(DescribeServiceEnvironmentReleaseHistory); omit it to leave that field
+    unset.", or ", which the API requires" for a field marked required in the
+    SDK. 270 options across 97 modules.
+  - >-
+    scripts/discover_info_specs.py - the template that produced that text, and
+    the test that pinned it. The new text names the action and the field, and
+    the tests assert both the wording and the two properties that motivated
+    it: the description names the call, and it does not repeat the option's own
+    words. The "omit it to leave that field unset" half is not a stylistic
+    choice -- the generated module only assigns the request field when the
+    option is set, and the required variant is assigned unconditionally.

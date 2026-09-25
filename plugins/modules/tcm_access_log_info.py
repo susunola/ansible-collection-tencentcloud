@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns TCM access log configs visible in a Tencent Cloud region.
 options:
   mesh_id:
-    description: Mesh id. API field C(MeshId).
+    description: Sets the C(MeshId) field of V(DescribeAccessLogConfig); omit it to leave that field unset.
     type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

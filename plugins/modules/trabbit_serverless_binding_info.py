@@ -15,22 +15,22 @@ version_added: "1.5.0"
 description: Returns TRABBIT serverless bindings visible in a Tencent Cloud region.
 options:
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeRabbitMQServerlessBindings); omit it to leave that field unset.
     type: str
   virtual_host:
-    description: Virtual host. API field C(VirtualHost).
+    description: Sets the C(VirtualHost) field of V(DescribeRabbitMQServerlessBindings); omit it to leave that field unset.
     type: str
   search_word:
-    description: Search word. API field C(SearchWord).
+    description: Sets the C(SearchWord) field of V(DescribeRabbitMQServerlessBindings); omit it to leave that field unset.
     type: str
   source_exchange:
-    description: Source exchange. API field C(SourceExchange).
+    description: Sets the C(SourceExchange) field of V(DescribeRabbitMQServerlessBindings); omit it to leave that field unset.
     type: str
   queue_name:
-    description: Queue name. API field C(QueueName).
+    description: Sets the C(QueueName) field of V(DescribeRabbitMQServerlessBindings); omit it to leave that field unset.
     type: str
   destination_exchange:
-    description: Destination exchange. API field C(DestinationExchange).
+    description: Sets the C(DestinationExchange) field of V(DescribeRabbitMQServerlessBindings); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

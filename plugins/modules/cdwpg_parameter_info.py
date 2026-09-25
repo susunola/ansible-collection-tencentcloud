@@ -15,11 +15,11 @@ version_added: "1.5.0"
 description: Returns CDWPG parameters visible in a Tencent Cloud region.
 options:
   node_types:
-    description: Node types. API field C(NodeTypes).
+    description: Sets the C(NodeTypes) field of V(DescribeDBParams); omit it to leave that field unset.
     type: list
     elements: str
   instance_id:
-    description: Instance id. API field C(InstanceId).
+    description: Sets the C(InstanceId) field of V(DescribeDBParams); omit it to leave that field unset.
     type: str
   page_size:
     description: Number of results requested per API call.

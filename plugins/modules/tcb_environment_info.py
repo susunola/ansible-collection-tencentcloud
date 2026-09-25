@@ -15,13 +15,13 @@ version_added: "1.5.0"
 description: Returns TCB envs visible in a Tencent Cloud region.
 options:
   env_id:
-    description: Env id. API field C(EnvId).
+    description: Sets the C(EnvId) field of V(DescribeEnvs); omit it to leave that field unset.
     type: str
   is_visible:
-    description: Is visible. API field C(IsVisible).
+    description: Sets the C(IsVisible) field of V(DescribeEnvs); omit it to leave that field unset.
     type: bool
   channels:
-    description: Channels. API field C(Channels).
+    description: Sets the C(Channels) field of V(DescribeEnvs); omit it to leave that field unset.
     type: list
     elements: str
   page_size:

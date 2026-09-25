@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns TKE cluster routes visible in a Tencent Cloud region.
 options:
   route_table_name:
-    description: Route table name. API field C(RouteTableName).
+    description: Sets the C(RouteTableName) field of V(DescribeClusterRoutes); omit it to leave that field unset.
     type: str
   filters:
     description: TKE API filter names mapped to lists of values.

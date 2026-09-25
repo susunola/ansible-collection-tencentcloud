@@ -15,7 +15,7 @@ version_added: "1.5.0"
 description: Returns CDN cls log topics visible in a Tencent Cloud region.
 options:
   channel:
-    description: Channel. API field C(Channel).
+    description: Sets the C(Channel) field of V(ListClsLogTopics); omit it to leave that field unset.
     type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

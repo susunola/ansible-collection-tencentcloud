@@ -15,19 +15,19 @@ version_added: "1.5.0"
 description: Returns CFW nat fw dnat rules visible in a Tencent Cloud region.
 options:
   index:
-    description: Index. API field C(Index).
+    description: Sets the C(Index) field of V(DescribeNatFwDnatRule); omit it to leave that field unset.
     type: str
   start_time:
-    description: Start time. API field C(StartTime).
+    description: Sets the C(StartTime) field of V(DescribeNatFwDnatRule); omit it to leave that field unset.
     type: str
   end_time:
-    description: End time. API field C(EndTime).
+    description: Sets the C(EndTime) field of V(DescribeNatFwDnatRule); omit it to leave that field unset.
     type: str
   order:
-    description: Order. API field C(Order).
+    description: Sets the C(Order) field of V(DescribeNatFwDnatRule); omit it to leave that field unset.
     type: str
   by:
-    description: By. API field C(By).
+    description: Sets the C(By) field of V(DescribeNatFwDnatRule); omit it to leave that field unset.
     type: str
   filters:
     description: CFW API filter names mapped to lists of values.

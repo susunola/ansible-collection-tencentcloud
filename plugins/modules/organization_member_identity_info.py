@@ -15,10 +15,10 @@ version_added: "1.5.0"
 description: Returns ORGANIZATION member auth identities visible in a Tencent Cloud region.
 options:
   member_uin:
-    description: Member uin. API field C(MemberUin).
+    description: Sets the C(MemberUin) field of V(DescribeOrganizationMemberAuthIdentities); omit it to leave that field unset.
     type: int
   identity_id:
-    description: Identity id. API field C(IdentityId).
+    description: Sets the C(IdentityId) field of V(DescribeOrganizationMemberAuthIdentities); omit it to leave that field unset.
     type: int
   page_size:
     description: Number of results requested per API call.

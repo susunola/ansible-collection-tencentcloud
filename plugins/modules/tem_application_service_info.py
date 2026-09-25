@@ -15,13 +15,13 @@ version_added: "1.5.0"
 description: Returns TEM application services visible in a Tencent Cloud region.
 options:
   environment_id:
-    description: Environment id. API field C(EnvironmentId).
+    description: Sets the C(EnvironmentId) field of V(DescribeApplicationServiceList); omit it to leave that field unset.
     type: str
   application_id:
-    description: Application id. API field C(ApplicationId).
+    description: Sets the C(ApplicationId) field of V(DescribeApplicationServiceList); omit it to leave that field unset.
     type: str
   source_channel:
-    description: Source channel. API field C(SourceChannel).
+    description: Sets the C(SourceChannel) field of V(DescribeApplicationServiceList); omit it to leave that field unset.
     type: int
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials

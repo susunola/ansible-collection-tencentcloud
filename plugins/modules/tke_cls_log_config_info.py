@@ -15,13 +15,13 @@ version_added: "1.5.0"
 description: Returns TKE log config visible in a Tencent Cloud region.
 options:
   cluster_id:
-    description: Cluster id. API field C(ClusterId).
+    description: Sets the C(ClusterId) field of V(DescribeLogConfigs); omit it to leave that field unset.
     type: str
   cluster_type:
-    description: Cluster type. API field C(ClusterType).
+    description: Sets the C(ClusterType) field of V(DescribeLogConfigs); omit it to leave that field unset.
     type: str
   log_config_names:
-    description: Log config names. API field C(LogConfigNames).
+    description: Sets the C(LogConfigNames) field of V(DescribeLogConfigs); omit it to leave that field unset.
     type: str
 extends_documentation_fragment:
   - susunola.tencentcloud.credentials
