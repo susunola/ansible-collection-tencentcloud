@@ -1167,7 +1167,7 @@ for product-level write, discovery and reusable-role maturity.
 ## Requirements
 
 Releases follow [Semantic Versioning](https://semver.org/). See the
-[changelog](CHANGELOG.rst) for release changes and compatibility notes.
+[changelog](changelogs/CHANGELOG.rst) for release changes and compatibility notes.
 
 - ansible-core 2.19 or newer (the minimum declared in `meta/runtime.yml`)
 - Python 3.11 or newer on the control node; use a Python version supported by

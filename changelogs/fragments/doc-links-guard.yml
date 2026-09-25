@@ -1,0 +1,19 @@
+---
+bugfixes:
+  - >-
+    docs - the README's changelog link pointed at ``CHANGELOG.rst`` in the
+    repository root, and the release workflow writes it to
+    ``changelogs/CHANGELOG.rst``, so the front page of the collection answered
+    its own "see the changelog" link with a 404. Nothing checked relative
+    links, which is why it survived: a broken link is invisible to every test,
+    every sanity test and every guard that reads the file's contents rather
+    than following them.
+minor_changes:
+  - >-
+    scripts/check_doc_links.py - new guard, wired into CI as "Documentation
+    links resolve". It resolves all 1,064 relative links in the 90 Markdown
+    files this repository ships -- the README, ``docs/``, the role READMEs,
+    ``tests/`` and ``changelogs/`` -- against the file that contains them.
+    Fenced code blocks are skipped, because an example may hold a link the
+    reader is meant to adapt, and the docsite build output is skipped because
+    it is generated.
