@@ -27,7 +27,7 @@ options:
     type: str
   name:
     description:
-      - Launch-template name.
+      - Identifies the launch template to manage; one of this or O(template_id) is required.
     type: str
   initial_data:
     description:

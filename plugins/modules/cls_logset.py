@@ -23,11 +23,13 @@ options:
     default: present
   logset_id:
     description:
-      - Existing logset ID.
+      - Identifies the logset to manage; one of this or O(name) is required, and the module matches on the id
+        when it is given.
     type: str
   name:
     description:
-      - Logset name.
+      - Identifies the logset to manage; one of this or O(logset_id) is required, and the name is only used
+        when O(logset_id) is not given.
     type: str
   tags:
     description:

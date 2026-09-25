@@ -64,6 +64,37 @@ Each claim below is checkable with the command in the same row.
 | Every module links to its read-only counterpart | `python scripts/add_module_seealso.py --check` |
 | Every role declares the core floor the collection requires | `python scripts/check_quality_gates.py` |
 | Every core module's `state` says what its choices do | `python scripts/enrich_state_docs.py --check` |
+| Every core id/name pair says which one to give | `python scripts/enrich_identity_docs.py --check` |
+
+### An id and a name are alternatives, and the docs say so
+
+Thirty-eight core modules accept both an id and a name for the same resource
+and documented them as "Existing policy ID." and "Policy name." — two
+unrelated-looking options. A reader cannot tell whether both are needed, which
+one wins, or whether the name only works at creation.
+
+Both answers are already in the module. The argument spec declares
+`required_one_of=[("policy_id", "name")]`, so exactly one must be given, and
+the lookup helper tests the id and falls back to the name, so the id wins when
+both are given — written either as `not p.get("load_balancer_id")` inside
+`run_module` or as a bare `not group_id` in a `find` helper that `run_module`
+passes the option to. `enrich_identity_docs.py` reads both and writes:
+
+> Identifies the policy to manage; one of this or `O(name)` is required, and
+> the module matches on the id when it is given.
+
+When the fallback cannot be read, the sentence stops after the half the
+argument spec proves. Nothing is guessed.
+
+**One thing this got wrong first, and how it was caught.** Both generators were
+given an "ownership" rule — a description the generator wrote may be rewritten
+by it, so changing the rule updates the text. The identity generator can claim
+its sentence, because `one of this or O(` appears in nothing else. The `state`
+generator cannot: forty-six hand-written descriptions, including
+`cvm_instance`, `cdb_instance` and `key_pair`, open with the same
+`C(present) ` the generator writes, so claiming an opening as ownership
+flagged 19 curated descriptions for overwriting. The check reports thin
+descriptions instead, and the curated text is left alone.
 
 ### `state` now says what it does
 

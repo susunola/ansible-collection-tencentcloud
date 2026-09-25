@@ -26,7 +26,7 @@ options:
     type: str
   name:
     description:
-      - Policy name.
+      - Identifies the policy to manage; one of this or O(policy_id) is required.
     type: str
   hour:
     description:

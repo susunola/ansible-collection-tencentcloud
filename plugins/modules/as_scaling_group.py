@@ -27,7 +27,8 @@ options:
     type: str
   name:
     description:
-      - Auto Scaling group name.
+      - Identifies the scaling group to manage; one of this or O(scaling_group_id) is required, and the name
+        is only used when O(scaling_group_id) is not given.
     type: str
   launch_configuration_id:
     description:

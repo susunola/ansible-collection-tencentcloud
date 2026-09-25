@@ -26,11 +26,11 @@ options:
     required: true
   plan_id:
     description:
-      - Existing plan ID.
+      - Identifies the backup plan to manage; one of this or O(name) is required.
     type: str
   name:
     description:
-      - Backup plan name.
+      - Identifies the backup plan to manage; one of this or O(plan_id) is required.
     type: str
   period_type:
     description:

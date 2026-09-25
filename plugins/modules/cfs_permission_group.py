@@ -25,7 +25,7 @@ options:
     type: str
   name:
     description:
-      - Permission group name.
+      - Identifies the permission group to manage; one of this or O(permission_group_id) is required.
     type: str
   description:
     description:

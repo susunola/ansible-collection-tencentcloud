@@ -27,7 +27,7 @@ options:
     type: str
   name:
     description:
-      - Instance name.
+      - Identifies the instance to manage; one of this or O(instance_id) is required.
     type: str
   zone:
     description:

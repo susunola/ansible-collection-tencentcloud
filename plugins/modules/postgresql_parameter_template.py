@@ -26,7 +26,8 @@ options:
     type: str
   name:
     description:
-      - Template name.
+      - Identifies the parameter template to manage; one of this or O(template_id) is required, and the name
+        is only used when O(template_id) is not given.
     type: str
   description:
     description:

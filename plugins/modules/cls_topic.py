@@ -23,7 +23,8 @@ options:
     default: present
   topic_id:
     description:
-      - Existing topic ID.
+      - Identifies the topic to manage; one of this or O(name) is required, and the module matches on the id
+        when it is given.
     type: str
   logset_id:
     description:
@@ -32,7 +33,8 @@ options:
     required: true
   name:
     description:
-      - Topic name.
+      - Identifies the topic to manage; one of this or O(topic_id) is required, and the name is only used when
+        O(topic_id) is not given.
     type: str
   partition_count:
     description:

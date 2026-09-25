@@ -22,11 +22,13 @@ options:
     default: present
   instance_id:
     description:
-      - Existing instance ID.
+      - Identifies the instance to manage; one of this or O(name) is required, and the module matches on the
+        id when it is given.
     type: str
   name:
     description:
-      - Instance name.
+      - Identifies the instance to manage; one of this or O(instance_id) is required, and the name is only used
+        when O(instance_id) is not given.
     type: str
   vpc_id:
     description:

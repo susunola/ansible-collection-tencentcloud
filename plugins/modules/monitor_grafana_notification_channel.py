@@ -26,11 +26,11 @@ options:
     required: true
   channel_id:
     description:
-      - Existing channel ID.
+      - Identifies the channel to manage; one of this or O(name) is required.
     type: str
   name:
     description:
-      - Channel name.
+      - Identifies the channel to manage; one of this or O(channel_id) is required.
     type: str
   receivers:
     description:

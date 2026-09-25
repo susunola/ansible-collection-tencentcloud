@@ -25,7 +25,8 @@ options:
     type: str
   name:
     description:
-      - Configuration name.
+      - Identifies the config to manage; one of this or O(config_id) is required, and the name is only used
+        when O(config_id) is not given.
     type: str
   topic_id:
     description:

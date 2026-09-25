@@ -240,4 +240,6 @@ def test_enrichment_keeps_the_rest_of_the_option(state_docs):
 def test_enrichment_is_idempotent(state_docs):
     """Running it twice must not wrap the sentence again."""
     once = state_docs.enrich(module_source(ABSENT_LAST))
+    # The written sentence is no longer thin, and this generator claims no
+    # ownership of a description it did not write, so a second pass declines.
     assert state_docs.enrich(once) is None

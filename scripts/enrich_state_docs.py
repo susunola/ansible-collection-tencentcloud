@@ -392,14 +392,22 @@ def state_span(body):
                 break
             if re.match(r"^    description:\s*", lines[offset]):
                 end = offset + 1
-                while end < len(lines) and re.match(r"^      \S", lines[end]):
+                while end < len(lines) and re.match(r"^ {6,}\S", lines[end]):
                     end += 1
                 return offset, end
     return None
 
 
 def thin_state(body):
-    """True when ``options.state`` exists, is present/absent, and is thin."""
+    """True when ``options.state`` exists, is present/absent, and says too little.
+
+    Ownership is deliberately not claimed here. Forty-six hand-written
+    descriptions in this collection -- ``cvm_instance``, ``cdb_instance``,
+    ``key_pair`` and the rest of the flagship set -- open with the same
+    "C(present) " that this script writes, so a description cannot be claimed
+    on its opening words, and claiming it on length alone would overwrite the
+    text that made the module readable in the first place.
+    """
     parsed = documentation(body)
     if not parsed:
         return False
@@ -455,7 +463,10 @@ def candidates():
         with open(path, encoding="utf-8") as handle:
             source = handle.read()
         new_source = enrich(source)
-        if new_source is None:
+        if new_source is None or new_source == source:
+            # Nothing to change. The generator owns the sentences it wrote, so
+            # a module it has already described comes back through here on
+            # every run; only a difference is a finding.
             continue
         found.append((path, source, new_source))
     return found

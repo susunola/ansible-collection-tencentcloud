@@ -26,7 +26,7 @@ options:
     type: str
   name:
     description:
-      - Group name.
+      - Identifies the address template group to manage; one of this or O(group_id) is required.
     type: str
   template_ids:
     description:

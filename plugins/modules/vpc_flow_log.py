@@ -25,11 +25,11 @@ options:
     default: present
   flow_log_id:
     description:
-      - Existing flow log ID.
+      - Identifies the flow log to manage; one of this or O(name) is required.
     type: str
   name:
     description:
-      - Flow log name.
+      - Identifies the flow log to manage; one of this or O(flow_log_id) is required.
     type: str
   vpc_id:
     description:

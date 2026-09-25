@@ -27,7 +27,7 @@ options:
     type: str
   name:
     description:
-      - Placement-group name.
+      - Identifies the placement group to manage; one of this or O(group_id) is required.
     type: str
   placement_type:
     description:

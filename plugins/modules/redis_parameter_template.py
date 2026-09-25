@@ -22,11 +22,13 @@ options:
     default: present
   template_id:
     description:
-      - Existing template ID.
+      - Identifies the parameter template to manage; one of this or O(name) is required, and the module matches
+        on the id when it is given.
     type: str
   name:
     description:
-      - Template name.
+      - Identifies the parameter template to manage; one of this or O(template_id) is required, and the name
+        is only used when O(template_id) is not given.
     type: str
   description:
     description:

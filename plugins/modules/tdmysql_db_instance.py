@@ -23,11 +23,11 @@ options:
     default: present
   instance_id:
     description:
-      - Existing instance ID.
+      - Identifies the instance to manage; one of this or O(name) is required.
     type: str
   name:
     description:
-      - Instance display name.
+      - Identifies the instance to manage; one of this or O(instance_id) is required.
     type: str
   zone:
     description:

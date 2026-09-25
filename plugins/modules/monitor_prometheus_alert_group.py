@@ -26,11 +26,11 @@ options:
     required: true
   group_id:
     description:
-      - Existing alert-group ID.
+      - Identifies the alert group to manage; one of this or O(name) is required.
     type: str
   name:
     description:
-      - Alert-group name.
+      - Identifies the alert group to manage; one of this or O(group_id) is required.
     type: str
   enabled:
     description:

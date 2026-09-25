@@ -25,7 +25,7 @@ options:
     type: str
   name:
     description:
-      - Immutable key pair name.
+      - Identifies the key pair to manage; one of this or O(key_id) is required.
     type: str
   public_key:
     description:

@@ -1,0 +1,24 @@
+---
+minor_changes:
+  - >-
+    module docs - say which of an id and a name identifies the resource. 38
+    core modules accept both for the same resource and described them as
+    "Existing policy ID." and "Policy name.", which leaves a reader unable to
+    tell whether both are needed or what happens when both are given. They now
+    read "Identifies the policy to manage; one of this or O(name) is required,
+    and the module matches on the id when it is given."
+  - >-
+    scripts/enrich_identity_docs.py - new generator, wired into CI as "Identity
+    options say which one to give". Both halves of the sentence come from the
+    module: the argument spec declares required_one_of=[("policy_id", "name")]
+    so exactly one must be given, and the lookup helper tests the id and falls
+    back to the name, so the id wins -- written either as
+    ``not p.get("load_balancer_id")`` inside run_module or as a bare
+    ``not group_id`` in a find helper that run_module passes the option to.
+    When the fallback cannot be read, the sentence stops after the half the
+    spec proves rather than guessing.
+  - >-
+    docs - the generators now compare content instead of candidacy. Both
+    scripts treated "this option looks thin" as the finding, so a module they
+    had already described came back as needing work on every run. A module is
+    now reported only when the file differs from what the rule produces.

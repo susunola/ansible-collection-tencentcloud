@@ -27,11 +27,11 @@ options:
     required: true
   policy_id:
     description:
-      - Existing policy ID.
+      - Identifies the scaling policy to manage; one of this or O(name) is required.
     type: str
   name:
     description:
-      - Policy name.
+      - Identifies the scaling policy to manage; one of this or O(policy_id) is required.
     type: str
   policy_type:
     description:

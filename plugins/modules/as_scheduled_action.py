@@ -31,7 +31,7 @@ options:
     type: str
   name:
     description:
-      - Scheduled action name.
+      - Identifies the scheduled action to manage; one of this or O(action_id) is required.
     type: str
   min_size:
     description:

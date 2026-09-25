@@ -28,11 +28,11 @@ options:
     default: present
   load_balancer_id:
     description:
-      - Existing ALB ID.
+      - Identifies the load balancer to manage; one of this or O(name) is required.
     type: str
   name:
     description:
-      - ALB name.
+      - Identifies the load balancer to manage; one of this or O(load_balancer_id) is required.
     type: str
   address_type:
     description:

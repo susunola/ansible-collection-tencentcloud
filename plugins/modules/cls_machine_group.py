@@ -26,7 +26,8 @@ options:
     type: str
   name:
     description:
-      - Machine group name.
+      - Identifies the machine group to manage; one of this or O(group_id) is required, and the name is only
+        used when O(group_id) is not given.
     type: str
   group_type:
     description:

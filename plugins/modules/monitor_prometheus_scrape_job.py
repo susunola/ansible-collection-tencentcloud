@@ -31,7 +31,7 @@ options:
     required: true
   job_id:
     description:
-      - Existing scrape-job ID.
+      - Identifies the scrape job to manage; one of this or O(name) is required.
     type: str
   name:
     description:

@@ -29,7 +29,7 @@ options:
     type: str
   name:
     description:
-      - Snapshot name.
+      - Identifies the snapshot to manage; one of this or O(snapshot_id) is required.
     type: str
   alive_days:
     description:

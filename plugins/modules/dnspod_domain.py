@@ -26,7 +26,8 @@ options:
     type: int
   name:
     description:
-      - Domain name.
+      - Identifies the domain to manage; one of this or O(domain_id) is required, and the name is only used
+        when O(domain_id) is not given.
     type: str
   group_id:
     description:

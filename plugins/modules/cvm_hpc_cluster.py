@@ -21,11 +21,11 @@ options:
     default: present
   cluster_id:
     description:
-      - Existing HPC cluster ID.
+      - Identifies the hpc cluster to manage; one of this or O(name) is required.
     type: str
   name:
     description:
-      - Cluster name.
+      - Identifies the hpc cluster to manage; one of this or O(cluster_id) is required.
     type: str
   zone:
     description:

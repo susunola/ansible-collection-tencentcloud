@@ -29,7 +29,7 @@ options:
     type: str
   name:
     description:
-      - Target group name.
+      - Identifies the target group to manage; one of this or O(target_group_id) is required.
     type: str
   vpc_id:
     description:

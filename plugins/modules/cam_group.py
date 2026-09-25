@@ -22,11 +22,13 @@ options:
     default: present
   group_id:
     description:
-      - Existing CAM group ID.
+      - Identifies the group to manage; one of this or O(name) is required, and the module matches on the id
+        when it is given.
     type: int
   name:
     description:
-      - Group name.
+      - Identifies the group to manage; one of this or O(group_id) is required, and the name is only used when
+        O(group_id) is not given.
     type: str
   remark:
     description:

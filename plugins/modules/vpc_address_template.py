@@ -25,7 +25,7 @@ options:
     type: str
   name:
     description:
-      - Address-template name.
+      - Identifies the address template to manage; one of this or O(template_id) is required.
     type: str
   addresses:
     description:
